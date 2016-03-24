@@ -1,0 +1,248 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+id    col1    
+1     1994-07-01 08:59:59.000 Asia/Seoul KST     
+2     1994-07-01 08:59:59.000 Asia/Seoul KST     
+3     1994-07-01 08:59:59.000 Asia/Seoul KST     
+4     1994-07-01 08:59:59.000 Asia/Seoul KST     
+5     1994-07-01 08:59:59.000 Asia/Seoul KST     
+6     1994-07-01 08:59:59.000 Asia/Seoul KST     
+7     1994-07-01 08:59:59.000 Asia/Seoul KST     
+8     1994-07-01 08:59:59.000 Asia/Seoul KST     
+9     1994-07-01 08:59:59.000 Asia/Seoul KST     
+10     1994-07-01 08:59:59.000 Asia/Seoul KST     
+11     1994-07-01 08:59:59.000 Asia/Seoul KST     
+12     1994-07-01 08:59:59.000 Asia/Seoul KST     
+13     1994-07-01 08:59:59.000 Asia/Seoul KST     
+14     1994-07-01 08:59:59.000 Asia/Seoul KST     
+15     1994-07-01 08:59:59.000 Asia/Seoul KST     
+16     1994-07-01 08:59:59.000 Asia/Seoul KST     
+
+===================================================
+(select distinct col2 from tz_test where id=5)    
+2013-12-10 08:30:00.000 Europe/Riga EET     
+2013-12-10 08:30:00.000 Europe/Riga EET     
+2013-12-10 08:30:00.000 Europe/Riga EET     
+2013-12-10 08:30:00.000 Europe/Riga EET     
+2013-12-10 08:30:00.000 Europe/Riga EET     
+2013-12-10 08:30:00.000 Europe/Riga EET     
+2013-12-10 08:30:00.000 Europe/Riga EET     
+2013-12-10 08:30:00.000 Europe/Riga EET     
+2013-12-10 08:30:00.000 Europe/Riga EET     
+2013-12-10 08:30:00.000 Europe/Riga EET     
+2013-12-10 08:30:00.000 Europe/Riga EET     
+2013-12-10 08:30:00.000 Europe/Riga EET     
+2013-12-10 08:30:00.000 Europe/Riga EET     
+2013-12-10 08:30:00.000 Europe/Riga EET     
+2013-12-10 08:30:00.000 Europe/Riga EET     
+
+===================================================
+id    col1    col2    
+1     2013-12-10 15:30:00.000 Asia/Seoul KST     2013-12-10 15:30:00.000 Asia/Seoul KST     
+3     2013-12-10 15:30:00.000 Asia/Seoul KST     null     
+4     2011-05-12 21:12:56.000 Asia/Seoul KST     2011-05-12 17:12:56.000 +05:00     
+5     2013-12-10 15:30:00.000 Asia/Seoul KST     2013-12-10 08:30:00.000 Europe/Riga EET     
+6     2011-05-12 21:12:56.000 Asia/Seoul KST     2011-05-12 10:12:56.000 America/Noronha FNT     
+7     2014-09-01 03:00:20.000 Asia/Seoul KST     null     
+8     1992-07-10 08:00:00.000 Asia/Seoul KST     1992-07-10 02:00:00.000 Europe/Bucharest EEST     
+9     1992-07-10 09:00:00.000 Asia/Seoul KST     1992-07-10 03:00:00.000 Europe/Bucharest EEST     
+10     1992-07-10 09:00:00.000 Asia/Seoul KST     1992-07-10 02:00:00.000 +02:00     
+11     1994-07-01 08:59:59.000 Asia/Seoul KST     1994-06-30 23:59:59.000 UTC UTC     
+12     1994-07-01 08:59:59.000 Asia/Seoul KST     1994-06-30 23:59:59.000 UTC UTC     
+13     1994-07-01 07:59:59.000 Asia/Seoul KST     1994-07-01 01:59:59.000 Europe/Bucharest EEST     
+14     1994-07-01 08:00:00.000 Asia/Seoul KST     1994-07-01 02:00:00.000 Europe/Bucharest EEST     
+15     1994-07-01 08:59:59.000 Asia/Seoul KST     1994-07-01 02:59:59.000 Europe/Bucharest EEST     
+16     1994-07-01 08:59:59.000 Asia/Seoul KST     1994-07-01 02:59:59.000 Europe/Bucharest EEST     
+
+===================================================
+id    col1    (select distinct col2 from tz_test t2 where t1.col1=t2.col1 and t2.col2=t2.col1)    
+1     2013-12-10 15:30:00.000 Asia/Seoul KST     2013-12-10 15:30:00.000 Asia/Seoul KST     
+2     null     null     
+3     2013-12-10 15:30:00.000 Asia/Seoul KST     2013-12-10 15:30:00.000 Asia/Seoul KST     
+4     2011-05-12 21:12:56.000 Asia/Seoul KST     2011-05-12 17:12:56.000 +05:00     
+5     2013-12-10 15:30:00.000 Asia/Seoul KST     2013-12-10 15:30:00.000 Asia/Seoul KST     
+6     2011-05-12 21:12:56.000 Asia/Seoul KST     2011-05-12 17:12:56.000 +05:00     
+7     2014-09-01 03:00:20.000 Asia/Seoul KST     null     
+8     1992-07-10 08:00:00.000 Asia/Seoul KST     1992-07-10 02:00:00.000 Europe/Bucharest EEST     
+9     1992-07-10 09:00:00.000 Asia/Seoul KST     1992-07-10 03:00:00.000 Europe/Bucharest EEST     
+10     1992-07-10 09:00:00.000 Asia/Seoul KST     1992-07-10 03:00:00.000 Europe/Bucharest EEST     
+11     1994-07-01 08:59:59.000 Asia/Seoul KST     1994-06-30 23:59:59.000 UTC UTC     
+12     1994-07-01 08:59:59.000 Asia/Seoul KST     null     
+13     1994-07-01 07:59:59.000 Asia/Seoul KST     1994-07-01 01:59:59.000 Europe/Bucharest EEST     
+14     1994-07-01 08:00:00.000 Asia/Seoul KST     1994-07-01 02:00:00.000 Europe/Bucharest EEST     
+15     1994-07-01 08:59:59.000 Asia/Seoul KST     1994-06-30 23:59:59.000 UTC UTC     
+16     1994-07-01 08:59:59.000 Asia/Seoul KST     null     
+
+===================================================
+id    col2    abcd    
+1     2013-12-10 15:30:00.000 Asia/Seoul KST     1992-07-10 09:00:00.000 Asia/Seoul KST.0,1992-07-10 09:00:00.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,     
+2     2011-05-12 21:12:56.000 Asia/Seoul KST     1992-07-10 09:00:00.000 Asia/Seoul KST.0,1992-07-10 09:00:00.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,     
+3     null     1992-07-10 09:00:00.000 Asia/Seoul KST.0,1992-07-10 09:00:00.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,     
+4     2011-05-12 17:12:56.000 +05:00     1992-07-10 09:00:00.000 Asia/Seoul KST.0,1992-07-10 09:00:00.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,     
+5     2013-12-10 08:30:00.000 Europe/Riga EET     1992-07-10 09:00:00.000 Asia/Seoul KST.0,1992-07-10 09:00:00.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,     
+6     2011-05-12 10:12:56.000 America/Noronha FNT     1992-07-10 09:00:00.000 Asia/Seoul KST.0,1992-07-10 09:00:00.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,     
+7     null     1992-07-10 09:00:00.000 Asia/Seoul KST.0,1992-07-10 09:00:00.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,     
+8     1992-07-10 02:00:00.000 Europe/Bucharest EEST     1992-07-10 09:00:00.000 Asia/Seoul KST.0,1992-07-10 09:00:00.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,     
+9     1992-07-10 03:00:00.000 Europe/Bucharest EEST     1992-07-10 09:00:00.000 Asia/Seoul KST.0,1992-07-10 09:00:00.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,     
+10     1992-07-10 02:00:00.000 +02:00     1992-07-10 09:00:00.000 Asia/Seoul KST.0,1992-07-10 09:00:00.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,     
+11     1994-06-30 23:59:59.000 UTC UTC     1992-07-10 09:00:00.000 Asia/Seoul KST.0,1992-07-10 09:00:00.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,     
+12     1994-06-30 23:59:59.000 UTC UTC     1992-07-10 09:00:00.000 Asia/Seoul KST.0,1992-07-10 09:00:00.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,     
+13     1994-07-01 01:59:59.000 Europe/Bucharest EEST     1992-07-10 09:00:00.000 Asia/Seoul KST.0,1992-07-10 09:00:00.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,     
+14     1994-07-01 02:00:00.000 Europe/Bucharest EEST     1992-07-10 09:00:00.000 Asia/Seoul KST.0,1992-07-10 09:00:00.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,     
+15     1994-07-01 02:59:59.000 Europe/Bucharest EEST     1992-07-10 09:00:00.000 Asia/Seoul KST.0,1992-07-10 09:00:00.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,     
+16     1994-07-01 02:59:59.000 Europe/Bucharest EEST     1992-07-10 09:00:00.000 Asia/Seoul KST.0,1992-07-10 09:00:00.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,1994-07-01 08:59:59.000 Asia/Seoul KST.0,     
+
+===================================================
+0
+===================================================
+id    col1    col2    
+8     1992-07-10 02:00:00.000 Europe/Bucharest EEST     1992-07-10 02:00:00.000 Europe/Bucharest EEST     
+
+===================================================
+id    col1    col2    
+2     null     2011-05-12 21:12:56.000 Asia/Seoul KST     
+4     2011-05-12 15:12:56.000 Europe/Bucharest EEST     2011-05-12 17:12:56.000 +05:00     
+6     2011-05-12 15:12:56.000 Europe/Bucharest EEST     2011-05-12 10:12:56.000 America/Noronha FNT     
+8     1992-07-10 02:00:00.000 Europe/Bucharest EEST     1992-07-10 02:00:00.000 Europe/Bucharest EEST     
+9     1992-07-10 03:00:00.000 Europe/Bucharest EEST     1992-07-10 03:00:00.000 Europe/Bucharest EEST     
+10     1992-07-10 03:00:00.000 Europe/Bucharest EEST     1992-07-10 02:00:00.000 +02:00     
+11     1994-07-01 02:59:59.000 Europe/Bucharest EEST     1994-06-30 23:59:59.000 UTC UTC     
+12     1994-07-01 02:59:59.000 Europe/Bucharest EEST     1994-06-30 23:59:59.000 UTC UTC     
+13     1994-07-01 01:59:59.000 Europe/Bucharest EEST     1994-07-01 01:59:59.000 Europe/Bucharest EEST     
+14     1994-07-01 02:00:00.000 Europe/Bucharest EEST     1994-07-01 02:00:00.000 Europe/Bucharest EEST     
+15     1994-07-01 02:59:59.000 Europe/Bucharest EEST     1994-07-01 02:59:59.000 Europe/Bucharest EEST     
+16     1994-07-01 02:59:59.000 Europe/Bucharest EEST     1994-07-01 02:59:59.000 Europe/Bucharest EEST     
+
+===================================================
+id    col1    col2    
+1     2013-12-10 08:30:00.000 Europe/Bucharest EET     2013-12-10 15:30:00.000 Asia/Seoul KST     
+4     2011-05-12 15:12:56.000 Europe/Bucharest EEST     2011-05-12 17:12:56.000 +05:00     
+5     2013-12-10 08:30:00.000 Europe/Bucharest EET     2013-12-10 08:30:00.000 Europe/Riga EET     
+6     2011-05-12 15:12:56.000 Europe/Bucharest EEST     2011-05-12 10:12:56.000 America/Noronha FNT     
+
+===================================================
+id    col1    col2    
+1     2013-12-10 08:30:00.000 Europe/Bucharest EET     2013-12-10 15:30:00.000 Asia/Seoul KST     
+3     2013-12-10 08:30:00.000 Europe/Bucharest EET     null     
+4     2011-05-12 15:12:56.000 Europe/Bucharest EEST     2011-05-12 17:12:56.000 +05:00     
+5     2013-12-10 08:30:00.000 Europe/Bucharest EET     2013-12-10 08:30:00.000 Europe/Riga EET     
+6     2011-05-12 15:12:56.000 Europe/Bucharest EEST     2011-05-12 10:12:56.000 America/Noronha FNT     
+8     1992-07-10 02:00:00.000 Europe/Bucharest EEST     1992-07-10 02:00:00.000 Europe/Bucharest EEST     
+9     1992-07-10 03:00:00.000 Europe/Bucharest EEST     1992-07-10 03:00:00.000 Europe/Bucharest EEST     
+10     1992-07-10 03:00:00.000 Europe/Bucharest EEST     1992-07-10 02:00:00.000 +02:00     
+11     1994-07-01 02:59:59.000 Europe/Bucharest EEST     1994-06-30 23:59:59.000 UTC UTC     
+13     1994-07-01 01:59:59.000 Europe/Bucharest EEST     1994-07-01 01:59:59.000 Europe/Bucharest EEST     
+14     1994-07-01 02:00:00.000 Europe/Bucharest EEST     1994-07-01 02:00:00.000 Europe/Bucharest EEST     
+15     1994-07-01 02:59:59.000 Europe/Bucharest EEST     1994-07-01 02:59:59.000 Europe/Bucharest EEST     
+
+===================================================
+id    col1    col2    
+4     2011-05-12 15:12:56.000 Europe/Bucharest EEST     2011-05-12 17:12:56.000 +05:00     
+6     2011-05-12 15:12:56.000 Europe/Bucharest EEST     2011-05-12 10:12:56.000 America/Noronha FNT     
+
+===================================================
+id    col1    col2    
+1     2013-12-10 08:30:00.000 Europe/Bucharest EET     2013-12-10 15:30:00.000 Asia/Seoul KST     
+3     2013-12-10 08:30:00.000 Europe/Bucharest EET     null     
+4     2011-05-12 15:12:56.000 Europe/Bucharest EEST     2011-05-12 17:12:56.000 +05:00     
+5     2013-12-10 08:30:00.000 Europe/Bucharest EET     2013-12-10 08:30:00.000 Europe/Riga EET     
+6     2011-05-12 15:12:56.000 Europe/Bucharest EEST     2011-05-12 10:12:56.000 America/Noronha FNT     
+8     1992-07-10 02:00:00.000 Europe/Bucharest EEST     1992-07-10 02:00:00.000 Europe/Bucharest EEST     
+9     1992-07-10 03:00:00.000 Europe/Bucharest EEST     1992-07-10 03:00:00.000 Europe/Bucharest EEST     
+10     1992-07-10 03:00:00.000 Europe/Bucharest EEST     1992-07-10 02:00:00.000 +02:00     
+11     1994-07-01 02:59:59.000 Europe/Bucharest EEST     1994-06-30 23:59:59.000 UTC UTC     
+12     1994-07-01 02:59:59.000 Europe/Bucharest EEST     1994-06-30 23:59:59.000 UTC UTC     
+13     1994-07-01 01:59:59.000 Europe/Bucharest EEST     1994-07-01 01:59:59.000 Europe/Bucharest EEST     
+14     1994-07-01 02:00:00.000 Europe/Bucharest EEST     1994-07-01 02:00:00.000 Europe/Bucharest EEST     
+15     1994-07-01 02:59:59.000 Europe/Bucharest EEST     1994-07-01 02:59:59.000 Europe/Bucharest EEST     
+16     1994-07-01 02:59:59.000 Europe/Bucharest EEST     1994-07-01 02:59:59.000 Europe/Bucharest EEST     
+
+===================================================
+id    col1    col2    
+8     1992-07-10 02:00:00.000 Europe/Bucharest EEST     1992-07-10 02:00:00.000 Europe/Bucharest EEST     
+9     1992-07-10 03:00:00.000 Europe/Bucharest EEST     1992-07-10 03:00:00.000 Europe/Bucharest EEST     
+13     1994-07-01 01:59:59.000 Europe/Bucharest EEST     1994-07-01 01:59:59.000 Europe/Bucharest EEST     
+14     1994-07-01 02:00:00.000 Europe/Bucharest EEST     1994-07-01 02:00:00.000 Europe/Bucharest EEST     
+15     1994-07-01 02:59:59.000 Europe/Bucharest EEST     1994-07-01 02:59:59.000 Europe/Bucharest EEST     
+16     1994-07-01 02:59:59.000 Europe/Bucharest EEST     1994-07-01 02:59:59.000 Europe/Bucharest EEST     
+
+===================================================
+id    col1    col2    case when col1=col2 then 'equal' else 'not equal' end    
+1     2013-12-10 08:30:00.000 Europe/Bucharest EET     2013-12-10 15:30:00.000 Asia/Seoul KST     equal     
+2     null     2011-05-12 21:12:56.000 Asia/Seoul KST     not equal     
+3     2013-12-10 08:30:00.000 Europe/Bucharest EET     null     not equal     
+4     2011-05-12 15:12:56.000 Europe/Bucharest EEST     2011-05-12 17:12:56.000 +05:00     equal     
+5     2013-12-10 08:30:00.000 Europe/Bucharest EET     2013-12-10 08:30:00.000 Europe/Riga EET     equal     
+6     2011-05-12 15:12:56.000 Europe/Bucharest EEST     2011-05-12 10:12:56.000 America/Noronha FNT     equal     
+7     2014-08-31 21:00:20.000 Europe/Bucharest EEST     null     not equal     
+8     1992-07-10 02:00:00.000 Europe/Bucharest EEST     1992-07-10 02:00:00.000 Europe/Bucharest EEST     equal     
+9     1992-07-10 03:00:00.000 Europe/Bucharest EEST     1992-07-10 03:00:00.000 Europe/Bucharest EEST     equal     
+10     1992-07-10 03:00:00.000 Europe/Bucharest EEST     1992-07-10 02:00:00.000 +02:00     equal     
+11     1994-07-01 02:59:59.000 Europe/Bucharest EEST     1994-06-30 23:59:59.000 UTC UTC     equal     
+12     1994-07-01 02:59:59.000 Europe/Bucharest EEST     1994-06-30 23:59:59.000 UTC UTC     not equal     
+13     1994-07-01 01:59:59.000 Europe/Bucharest EEST     1994-07-01 01:59:59.000 Europe/Bucharest EEST     equal     
+14     1994-07-01 02:00:00.000 Europe/Bucharest EEST     1994-07-01 02:00:00.000 Europe/Bucharest EEST     equal     
+15     1994-07-01 02:59:59.000 Europe/Bucharest EEST     1994-07-01 02:59:59.000 Europe/Bucharest EEST     equal     
+16     1994-07-01 02:59:59.000 Europe/Bucharest EEST     1994-07-01 02:59:59.000 Europe/Bucharest EEST     not equal     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0

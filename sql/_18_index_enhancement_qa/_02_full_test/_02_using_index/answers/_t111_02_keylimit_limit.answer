@@ -1,0 +1,117 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+rownum    a    c    
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx_t?_ac keylimit ?, ? term[?] (covers)
+    filtr: term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select rownum, t?.a, t?.c from t? t? where (t?.a> ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) and t?.c= ?:?  using index t?.idx_t?_ac keylimit ?,?
+===================================================
+rownum    a    c    
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx_t?_ac keylimit ?, ? term[?] (covers)
+    filtr: term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select rownum, t?.a, t?.c from t? t? where (t?.a> ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) and t?.c= ?:?  using index t?.idx_t?_ac(+) keylimit ?,?
+===================================================
+rownum    a    c    
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: t?_a node[?]
+               index: idx_t?_ac keylimit ?, ? term[?] (covers)
+               filtr: term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t?_b node[?]
+               index: idx_t?_ac keylimit ?, ? term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select rownum, t?_a.a, t?_a.c from t? t?_a, t? t?_b where (t?_a.a> ?:? ) and (t?_b.a> ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) and t?_b.c= ?:?  and t?_a.c= ?:?  using index t?_a.idx_t?_ac(+) keylimit ?,?, t?_b.idx_t?_ac(+) keylimit ?,?
+===================================================
+rownum    a    c    
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx_t?_ac keylimit ?, ? term[?] (covers)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select rownum, t?.a, t?.c from t? t? where (t?.a> ?:? ) and t?.c= ?:?  using index t?.idx_t?_ac(+) keylimit ?,?, t?.idx_t?_ac(+) keylimit ?,?
+===================================================
+Error:-493
+===================================================
+Error:-493
+===================================================
+Error:-493
+===================================================
+a    b    c    
+1     Adalius     086     
+2     Agassi     086     
+3     Ahman     086     
+4     Alcott     086     
+5     Ali     086     
+6     Bdalius     011     
+7     Bgassi     011     
+8     Bhman     011     
+9     Blcott     011     
+10     Bli     011     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx_t?_abc (covers)
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.b, t?.c from t? t? order by ?, ?, ?
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+0
+===================================================
+0

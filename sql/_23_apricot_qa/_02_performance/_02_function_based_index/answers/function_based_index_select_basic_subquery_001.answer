@@ -1,0 +1,171 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+count( char_length(a))    10    (select count(a))    
+1     10     1     
+
+Query plan:
+sscan
+    class: db_root node[?]
+    cost:  ? card ?
+Query stmt:
+(select count(a_?) from db_root db_root)
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a?a term[?]
+    cost:  ? card ?
+Query stmt:
+(select count( char_length(t?.a)), t?.a from t? t? where  lower(t?.b)>'?')
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Query stmt:
+select a_?, ?, (select count(a_?) from db_root db_root) from (select count( char_length(t?.a)), t?.a from t? t? where  lower(t?.b)>'?') t? (a_?, a_?)
+===================================================
+count( char_length(a))    10    (select count( lower(b)))    
+1     10     1     
+
+Query plan:
+sscan
+    class: db_root node[?]
+    cost:  ? card ?
+Query stmt:
+(select count( lower(a_?)) from db_root db_root)
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a?a term[?]
+    cost:  ? card ?
+Query stmt:
+(select count( char_length(t?.a)), t?.b from t? t? where  lower(t?.b)>'?')
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Query stmt:
+select a_?, ?, (select count( lower(a_?)) from db_root db_root) from (select count( char_length(t?.a)), t?.b from t? t? where  lower(t?.b)>'?') t? (a_?, a_?)
+===================================================
+count( char_length( lower(b)))    10    (select count( lower(b)))    
+1     10     1     
+
+Query plan:
+sscan
+    class: db_root node[?]
+    cost:  ? card ?
+Query stmt:
+(select count( lower(a_?)) from db_root db_root)
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a?a term[?]
+    cost:  ? card ?
+Query stmt:
+(select count( char_length( lower(t?.b))), t?.b from t? t? where  lower(t?.b)>'?')
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Query stmt:
+select a_?, ?, (select count( lower(a_?)) from db_root db_root) from (select count( char_length( lower(t?.b))), t?.b from t? t? where  lower(t?.b)>'?') t? (a_?, a_?)
+===================================================
+count( char_length( lower(b)))    10    (select count( lower(b)))    
+1     10     1     
+
+Query plan:
+sscan
+    class: db_root node[?]
+    cost:  ? card ?
+Query stmt:
+(select count( lower(a_?)) from db_root db_root)
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select count( char_length( lower(t?.b))), t?.b from t? t? where (t?.a> ?:? ))
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Query stmt:
+select a_?, ?, (select count( lower(a_?)) from db_root db_root) from (select count( char_length( lower(t?.b))), t?.b from t? t? where (t?.a> ?:? )) t? (a_?, a_?)
+===================================================
+count( char_length( lower(b)))    10    (select count( lower(b)) from t1 where a>'0')    
+1     10     1     
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select count( lower(t?.b)) from t? t? where (t?.a> ?:? ))
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Query stmt:
+select count( char_length( lower(t?.b))), ?, (select count( lower(t?.b)) from t? t? where (t?.a> ?:? )) from t? t?
+===================================================
+count( char_length( lower(b)))    10    (select count(a))    
+1     10     1     
+
+Query plan:
+sscan
+    class: db_root node[?]
+    cost:  ? card ?
+Query stmt:
+(select count(a_?) from db_root db_root)
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select count( char_length( lower(t?.b))), t?.a from t? t? where (t?.a> ?:? ))
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Query stmt:
+select a_?, ?, (select count(a_?) from db_root db_root) from (select count( char_length( lower(t?.b))), t?.a from t? t? where (t?.a> ?:? )) t? (a_?, a_?)
+===================================================
+count( char_length(a))    10    (select count(a))    
+1     10     1     
+
+Query plan:
+sscan
+    class: db_root node[?]
+    cost:  ? card ?
+Query stmt:
+(select count(a_?) from db_root db_root)
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select count( char_length(t?.a)), t?.a from t? t? where (t?.a> ?:? ))
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Query stmt:
+select a_?, ?, (select count(a_?) from db_root db_root) from (select count( char_length(t?.a)), t?.a from t? t? where (t?.a> ?:? )) t? (a_?, a_?)
+===================================================
+0
+===================================================
+0
+===================================================
+0

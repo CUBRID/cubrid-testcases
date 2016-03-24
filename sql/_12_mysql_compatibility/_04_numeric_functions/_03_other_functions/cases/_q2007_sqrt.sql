@@ -1,0 +1,12 @@
+--+ holdcas on;
+set system parameters 'compat_mode=mysql';
+SELECT SQRT(0) FROM db_root;
+SELECT SQRT('1') FROM db_root;
+SELECT SQRT(-1) FROM db_root;
+SELECT SQRT(NULL) FROM db_root;
+select sqrt(9223372036854775807) from db_root;
+select sqrt(900000000000000000000) from db_root;
+select sqrt(pow(1983,2)) from db_root;
+select pow(sqrt(900000000000000000000),2) from db_root;
+set system parameters 'compat_mode=cubrid';commit;
+--+ holdcas off;

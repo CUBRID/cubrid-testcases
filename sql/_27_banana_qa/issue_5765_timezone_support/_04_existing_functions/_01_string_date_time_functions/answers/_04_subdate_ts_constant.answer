@@ -1,0 +1,154 @@
+===================================================
+0
+===================================================
+0
+===================================================
+if( date_sub(timestampltz '2014-03-01 12:00:00 AM -8:00', INTERVAL 1000 MILLISECOND)=timestamptz '2014-02-28 23:59:59 -8:00', 'ok', 'nok')    
+ok     
+
+===================================================
+if( date_sub(timestamptz '2014-03-01 12:00:00 AM Asia/Shanghai', INTERVAL 1 SECOND)=timestamptz '2014-02-28 23:59:59 +8:00', 'ok', 'nok')    
+ok     
+
+===================================================
+if( date_sub(timestamptz '2014-03-01 12:00:00 AM +9:00', INTERVAL 10 MINUTE)=timestampltz '2014-02-28 23:50:00', 'ok', 'nok')    
+ok     
+
+===================================================
+if( date_sub(timestampltz '2014-02-28 20:00:00', INTERVAL 5 HOUR)=timestamptz '2014-03-01 12:00:00 AM UTC', 'ok', 'nok')    
+nok     
+
+===================================================
+if( date_sub('2014-03-01 12:00:00 AM -5:00', INTERVAL 1 DAY)=timestamptz '2014-02-28 12:00:00 AM America/New_York', 'ok', 'nok')    
+ok     
+
+===================================================
+if( date_sub(timestamptz '2014-03-14 11:59:59 PM Asia/Pyongyang', INTERVAL 2 WEEK)=timestamptz '2014-02-28 23:59:59', 'ok', 'nok')    
+ok     
+
+===================================================
+if( date_sub(timestampltz '2014-12-28 23:59:59', INTERVAL 10 MONTH)=timestamptz '2014-2-28 22:59:59 Asia/Chongqing', 'ok', 'nok')    
+ok     
+
+===================================================
+if( date_sub(timestamptz '2015-02-28 15:59:59 -8:00', INTERVAL 12 QUARTER)=timestamptz '2012-02-29 23:59:59 +0:00', 'ok', 'nok')    
+nok     
+
+===================================================
+if( date_sub(timestamptz '2021-02-27 22:00:00 -10:00', INTERVAL 9 YEAR)=timestamptz '2012-02-28 12:00:00 AM -8:00', 'ok', 'nok')    
+ok     
+
+===================================================
+0
+===================================================
+if( date_sub('2008-10-20 13:58:59', INTERVAL '-1:1' MINUTE_SECOND)=timestamptz '2008-10-20 16:00:00 UTC', 'ok', 'nok')    
+ok     
+
+===================================================
+if( date_sub('2008-10-20 13:00:00', INTERVAL '1:1' MINUTE_SECOND)=timestampltz '2008-10-20 16:58:59 UTC', 'ok', 'nok')    
+nok     
+
+===================================================
+if( date_sub('2008-10-18 1:00:00 am', INTERVAL '1:1' HOUR_MINUTE)=timestamptz '2008-10-17 22:59:00 -3:00', 'ok', 'nok')    
+nok     
+
+===================================================
+if( date_sub('2008-10-18 4:00:00 AM America/Argentina/Tucuman', INTERVAL '1 5:30:30' DAY_SECOND)='2008-10-16 21:30:00', 'ok', 'nok')    
+nok     
+
+===================================================
+if( date_sub(timestamptz '2008-10-18 22:30:00', INTERVAL '2-1' YEAR_MONTH)='2006-9-18 21:30:00', 'ok', 'nok')    
+nok     
+
+===================================================
+date_sub('2009-3-14 21:59:59', INTERVAL '-2:00:01' HOUR_SECOND)    
+12:00:00.000 AM 03/15/2009     
+
+===================================================
+date_sub('2009-3-15 12:30:01 AM', INTERVAL '1:00:01' HOUR_SECOND)    
+11:30:00.000 PM 03/14/2009     
+
+===================================================
+if( date_sub('2009-3-15 12:30:01 AM', INTERVAL '1:00:01' HOUR_SECOND)='2009-3-14 11:30:00 PM', 'ok', 'nok')    
+nok     
+
+===================================================
+if( date_sub('2009-3-15 12:30:01 AM', INTERVAL '2:00:01' HOUR_SECOND)='2009-3-14 11:30:00 PM', 'ok', 'nok')    
+nok     
+
+===================================================
+if( date_sub('2009-3-15 12:30:01 AM', INTERVAL '3:00:01' HOUR_SECOND)='2009-3-14 10:30:00 PM', 'ok', 'nok')    
+nok     
+
+===================================================
+if( date_sub('2009-3-14 23:11:12', INTERVAL '1' HOUR)=timestamptz '2009-3-14 23:11:12', 'ok', 'nok')    
+nok     
+
+===================================================
+if( date_sub('2009-3-14 23:11:12  America/Argentina/Cordoba', INTERVAL '1' HOUR)=timestamptz '2009-3-14 23:11:12', 'ok', 'nok')    
+nok     
+
+===================================================
+if( date_sub('2009-3-14 23:11:12 America/Argentina/Cordoba ART', INTERVAL '1' HOUR)='2009-3-14 23:11:12 America/Argentina/Cordoba', 'ok', 'nok')    
+nok     
+
+===================================================
+if( date_sub('2009-3-14 23:11:12 America/Argentina/Cordoba ART', INTERVAL '1' HOUR)='2009-3-14 23:11:12 America/Argentina/Cordoba ARST', 'ok', 'nok')    
+nok     
+
+===================================================
+if( date_sub('2009-3-15 12:11:12 AM', INTERVAL '1' HOUR)='2009-3-14 23:11:12 America/Argentina/Cordoba ART', 'ok', 'nok')    
+nok     
+
+===================================================
+if( date_sub('2009-3-15 12:11:12 AM', INTERVAL '2' HOUR)='2009-3-14 23:11:12 America/Argentina/Cordoba ARST', 'ok', 'nok')    
+nok     
+
+===================================================
+if( date_sub('2009-3-14 23:11:12 America/Argentina/Cordoba KST', INTERVAL '1' HOUR)='2009-3-15 12:11:12 AM', 'ok', 'nok')    
+nok     
+
+===================================================
+if( date_sub('2008-12-31 20:59:59', INTERVAL '-1' SECOND)=timestamptz '2008-12-31 20:59:59', 'ok', 'nok')    
+nok     
+
+===================================================
+if( date_sub('2008-12-31 20:59:59', INTERVAL '1' SECOND)=timestamptz '2008-12-31 20:59:59', 'ok', 'nok')    
+nok     
+
+===================================================
+if( date_sub(timestampltz '2008-12-31 20:59:59 America/Argentina/Cordoba', INTERVAL '-2' SECOND)='2009-01-01 12:00:00 am UTC', 'ok', 'nok')    
+nok     
+
+===================================================
+if( date_sub(timestamptz '2008-12-31 21:00:00 America/Argentina/Cordoba', INTERVAL '2' SECOND)='2008-12-31 20:59:59', 'ok', 'nok')    
+nok     
+
+===================================================
+if( date_sub(timestampltz '2009-01-01 12:00:00 am UTC', INTERVAL '1' SECOND)='2008-12-31 20:59:59 America/Argentina/Cordoba', 'ok', 'nok')    
+nok     
+
+===================================================
+if( date_sub(timestamptz '2009-01-01 12:00:00 am UTC', INTERVAL '2' SECOND)='2008-12-31 20:59:59 America/Argentina/Cordoba', 'ok', 'nok')    
+nok     
+
+===================================================
+if( date_sub(timestamptz '2009-01-01 12:00:00 AM UTC', INTERVAL '1:00:01' HOUR_SECOND)=timestamptz '2008-12-31 22:59:59 UTC', 'ok', 'nok')    
+ok     
+
+===================================================
+if( date_sub(timestampltz '2009-01-01 12:00:00 AM UTC', INTERVAL '1:00:02' HOUR_SECOND)=timestamptz '2008-12-31 22:59:59 UTC', 'ok', 'nok')    
+nok     
+
+===================================================
+if( subdate(timestamptz '2008-10-18 23:59:00', 1)='2008-10-17 23:59:00', 'ok', 'nok')    
+ok     
+
+===================================================
+if( subdate('2009-3-15 22:11:12 America/Argentina/Cordoba', 1)=timestamptz '2009-3-14 23:11:12', 'ok', 'nok')    
+nok     
+
+===================================================
+0
+===================================================
+0

@@ -1,0 +1,82 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+c2    
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_? term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select t?.c? from t? t? where (t?.c?> ?:? )
+===================================================
+c2    
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.c? from t? t? where t?.c? is not null 
+===================================================
+c2    
+null     
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.c? from t? t? where t?.c? is null 
+===================================================
+1
+===================================================
+c2    
+1     
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.c? from t? t? where t?.c? is not null  using index none
+===================================================
+c2    
+1     
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.c? from t? t? where t?.c? is not null  using index t?.i_?
+===================================================
+c2    
+1     
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.c? from t? t? where t?.c? is not null  using index t?.i_?
+===================================================
+0
+===================================================
+0
+===================================================
+0

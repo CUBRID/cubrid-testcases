@@ -1,0 +1,50 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+upper(a)    
+A     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_upper_a term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select  upper(t?.a) from t? t? where  upper(t?.a)='A' using index t?.i_t?_upper_a order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+upper(a)    
+B     
+A     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_upper_a term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select  upper(t?.a) from t? t? where  upper(t?.a)<'C' order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+upper(a)    
+A     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_upper_a term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select  upper(t?.a) from t? t? where  upper(t?.a)='A' order by ?
+/* ---> skip ORDER BY */
+===================================================
+0

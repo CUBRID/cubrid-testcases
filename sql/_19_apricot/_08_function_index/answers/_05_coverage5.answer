@@ -1,0 +1,84 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    
+t1     1     idx     1     null     A     3     null     null     YES     BTREE      sqrt([t1].[d])     null     
+t1     1     idx2     1     i     A     2     null     null     YES     BTREE     null     null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    
+t1     1     idx     1     null     A     3     null     null     YES     BTREE      sqrt([t1].[newd])     null     
+t1     1     idx2     1     i     A     2     null     null     YES     BTREE     null     null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    
+t1     1     idx     1     null     A     3     null     null     YES     BTREE      sqrt([t1].[newd])     null     
+t1     1     idx2     1     newi     A     2     null     null     YES     BTREE     null     null     
+
+===================================================
+newi    newd    
+16     256.0     
+20     400.0     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.newi, t?.newd from t? t? where  sqrt(t?.newd)>?
+===================================================
+newi    newd    
+16     256.0     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx? term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.newi, t?.newd from t? t? where (t?.newi< ?:? ) using index t?.idx?(+)
+===================================================
+1
+===================================================
+newi    newd    
+16     256.0     
+20     400.0     
+30     900.0     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.newi, t?.newd from t? t? where  sqrt(t?.newd)>?
+===================================================
+newi    newd    
+16     256.0     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx? term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.newi, t?.newd from t? t? where (t?.newi< ?:? ) using index t?.idx?(+)
+===================================================
+0

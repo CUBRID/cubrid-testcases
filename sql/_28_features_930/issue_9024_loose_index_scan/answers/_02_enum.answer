@@ -1,0 +1,418 @@
+===================================================
+0
+===================================================
+1000
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+a    groupby_num()    max(c)    min(c)    
+     1     0     0     
+A     2     1     1     
+B     3     2     2     
+C     4     3     3     
+D     5     4     4     
+E     6     5     5     
+F     7     6     6     
+G     8     7     7     
+H     9     8     8     
+I     10     9     9     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_all (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t?.a, groupby_num(), max(t?.c), min(t?.c) from t? t? where (t?.c> ?:? ) group by t?.a
+/* ---> skip GROUP BY */
+===================================================
+c    groupby_num()    max(a)    min(a)    
+0     1               
+1     2     A     A     
+2     3     B     B     
+3     4     C     C     
+4     5     D     D     
+5     6     E     E     
+6     7     F     F     
+7     8     G     G     
+8     9     H     H     
+9     10     I     I     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t?.c, groupby_num(), max(t?.a), min(t?.a) from t? t? where (t?.c> ?:? ) group by t?.c
+===================================================
+a    b    c    d    e    f    g    
+     0     0     0     0     0     0     
+A     1     1     1     1     1     1     
+B     2     2     2     2     2     2     
+C     3     3     3     3     3     3     
+D     4     4     4     4     4     4     
+E     5     5     5     5     5     5     
+F     6     6     6     6     6     6     
+G     7     7     7     7     7     7     
+H     8     8     8     8     8     8     
+I     9     9     9     9     9     9     
+
+Query plan:
+temp(distinct)
+    subplan: temp(group by)
+                 subplan: iscan
+                              class: t? node[?]
+                              index: i_t?_all 
+                              filtr: term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?]
+                              sargs: term[?]
+                              sort:  ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc
+                              cost:  ? card ?
+                 sort:  ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ distinct t?.a, t?.b, t?.c, t?.d, t?.e, t?.f, t?.g from t? t? where  cast(t?.a as integer)>=? and (t?.b>= ?:? ) and (t?.c>= ?:? ) and (t?.d>= ?:? ) and (t?.e>= ?:? ) and (t?.f>= ?:? ) and (t?.g>= ?:? ) group by t?.g, t?.f, t?.e, t?.d, t?.c, t?.b, t?.a
+===================================================
+a    b    c    d    e    f    max(g)    
+     0     0     0     0     0     0     
+A     1     1     1     1     1     1     
+B     2     2     2     2     2     2     
+C     3     3     3     3     3     3     
+D     4     4     4     4     4     4     
+E     5     5     5     5     5     5     
+F     6     6     6     6     6     6     
+G     7     7     7     7     7     7     
+H     8     8     8     8     8     8     
+I     9     9     9     9     9     9     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_all 
+                 filtr: term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?]
+                 sargs: term[?]
+                 sort:  ? asc, ? asc, ? asc, ? asc, ? asc, ? asc
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t?.a, t?.b, t?.c, t?.d, t?.e, t?.f, max(t?.g) from t? t? where  cast(t?.a as integer)>=? and (t?.b>= ?:? ) and (t?.c>= ?:? ) and (t?.d>= ?:? ) and (t?.e>= ?:? ) and (t?.f>= ?:? ) and (t?.g>= ?:? ) group by t?.g, t?.f, t?.e, t?.d, t?.c, t?.b, t?.a
+===================================================
+a    b    c    d    e    f    max(g)    
+     0     0     0     0     0     0     
+A     1     1     1     1     1     1     
+B     2     2     2     2     2     2     
+C     3     3     3     3     3     3     
+D     4     4     4     4     4     4     
+E     5     5     5     5     5     5     
+F     6     6     6     6     6     6     
+G     7     7     7     7     7     7     
+H     8     8     8     8     8     8     
+I     9     9     9     9     9     9     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_all 
+                 filtr: term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?]
+                 sargs: term[?]
+                 sort:  ? asc, ? asc, ? asc, ? asc, ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t?.a, t?.b, t?.c, t?.d, t?.e, t?.f, max(t?.g) from t? t? where  cast(t?.a as integer)>=? and (t?.b>= ?:? ) and (t?.c>= ?:? ) and (t?.d>= ?:? ) and (t?.e>= ?:? ) and (t?.f>= ?:? ) and (t?.g>= ?:? ) group by t?.f, t?.e, t?.d, t?.c, t?.b, t?.a
+===================================================
+0
+===================================================
+a    b    
+     0     
+A     1     
+B     2     
+C     3     
+D     4     
+E     5     
+F     6     
+G     7     
+H     8     
+I     9     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: v? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+(select /*+ INDEX_LS */ v?.a, v?.b from t? v? where ( cast(v?.a as bigint) mod  cast(? as bigint)=?) group by v?.a, v?.b)
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Query stmt:
+select v?.a, v?.b from (select /*+ INDEX_LS */ v?.a, v?.b from t? v? where ( cast(v?.a as bigint) mod  cast(? as bigint)=?) group by v?.a, v?.b) v? (a, b)
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: v? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+(select /*+ INDEX_LS */ v?.a, v?.b from t? v? where ( cast(v?.a as bigint) mod  cast(? as bigint)=?) group by v?.a, v?.b)
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Query stmt:
+select v?.a, v?.b from (select /*+ INDEX_LS */ v?.a, v?.b from t? v? where ( cast(v?.a as bigint) mod  cast(? as bigint)=?) group by v?.a, v?.b) v? (a, b)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: v? node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ v?.a, v?.b from (select v?.a, v?.b from (select /*+ INDEX_LS */ v?.a, v?.b from t? v? where ( cast(v?.a as bigint) mod  cast(? as bigint)=?) group by v?.a, v?.b) v? (a, b) union all select v?.a, v?.b from (select /*+ INDEX_LS */ v?.a, v?.b from t? v? where ( cast(v?.a as bigint) mod  cast(? as bigint)=?) group by v?.a, v?.b) v? (a, b)) v? (a, b) order by ?, ?
+===================================================
+0
+===================================================
+a    b    
+null     null     
+     0     
+A     1     
+B     2     
+C     3     
+D     4     
+E     5     
+F     6     
+G     7     
+H     8     
+I     9     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t?.a, t?.b from t? t? where (t?.h> ?:? ) group by t?.a, t?.b
+===================================================
+a    b    max(h)    min(h)    count(*)    
+A     1     981     81     11     
+B     2     972     72     11     
+C     3     963     63     11     
+D     4     954     54     11     
+E     5     945     45     11     
+F     6     936     36     11     
+G     7     927     27     11     
+H     8     918     18     11     
+I     9     999     9     12     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t?.a, t?.b, max(t?.h), min(t?.h), count(*) from t? t? where t?.h mod ?=? and (t?.b> ?:? ) group by t?.a, t?.b
+===================================================
+0
+===================================================
+a    b    c    
+A     1     1     
+B     2     2     
+C     3     3     
+D     4     4     
+E     5     5     
+F     6     6     
+G     7     7     
+H     8     8     
+I     9     9     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: v? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select /*+ INDEX_LS */ distinct v?.a, v?.b, v?.c from t? v? where ( cast(v?.a as integer)>?))
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ v?.a, v?.b, v?.c from (select /*+ INDEX_LS */ distinct v?.a, v?.b, v?.c from t? v? where ( cast(v?.a as integer)>?)) v? (a, b, c)
+===================================================
+0
+===================================================
+0
+===================================================
+a    b    c    d    e    f    g    
+null     null     null     null     10     11     11     
+null     null     null     null     11     11     11     
+A     1     1     1     1     1     1     
+B     2     2     2     2     2     2     
+C     3     3     3     3     3     3     
+D     4     4     4     4     4     4     
+E     5     5     5     5     5     5     
+F     6     6     6     6     6     6     
+G     7     7     7     7     7     7     
+H     8     8     8     8     8     8     
+I     9     9     9     9     9     9     
+I     9     9     9     11     11     11     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: v? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct v?.a, v?.b, v?.c, v?.d, v?.e, v?.f, v?.g from t? v? where (v?.g> ?:? ))
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Query stmt:
+select v?.a, v?.b, v?.c, v?.d, v?.e, v?.f, v?.g from (select distinct v?.a, v?.b, v?.c, v?.d, v?.e, v?.f, v?.g from t? v? where (v?.g> ?:? )) v? (a, b, c, d, e, f, g)
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Query stmt:
+(select max(v?.a), max(v?.b), max(v?.c), max(v?.d), max(v?.e), max(v?.f), max(v?.g) from t? v? having max(v?.g)>?)
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Query stmt:
+select v?.a, v?.b, v?.c, v?.d, v?.e, v?.f, v?.g from (select max(v?.a), max(v?.b), max(v?.c), max(v?.d), max(v?.e), max(v?.f), max(v?.g) from t? v? having max(v?.g)>?) v? (a, b, c, d, e, f, g)
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ v?.a, v?.b, v?.c, v?.d, v?.e, v?.f, v?.g from (select v?.a, v?.b, v?.c, v?.d, v?.e, v?.f, v?.g from (select distinct v?.a, v?.b, v?.c, v?.d, v?.e, v?.f, v?.g from t? v? where (v?.g> ?:? )) v? (a, b, c, d, e, f, g) union all select v?.a, v?.b, v?.c, v?.d, v?.e, v?.f, v?.g from (select max(v?.a), max(v?.b), max(v?.c), max(v?.d), max(v?.e), max(v?.f), max(v?.g) from t? v? having max(v?.g)>?) v? (a, b, c, d, e, f, g)) v? (a, b, c, d, e, f, g)
+===================================================
+max(a)    min(b)    
+I     1     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: v? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct v?.a, v?.b, v?.g, v?.c, v?.d, v?.e, v?.f from t? v? where (v?.g> ?:? ))
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Query stmt:
+select v?.a, v?.b, v?.g, v?.c, v?.d, v?.e, v?.f from (select distinct v?.a, v?.b, v?.g, v?.c, v?.d, v?.e, v?.f from t? v? where (v?.g> ?:? )) v? (a, b, g, c, d, e, f)
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Query stmt:
+(select max(v?.a), max(v?.b), max(v?.g), max(v?.c), max(v?.d), max(v?.e), max(v?.f) from t? v? having max(v?.g)>?)
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Query stmt:
+select v?.a, v?.b, v?.g, v?.c, v?.d, v?.e, v?.f from (select max(v?.a), max(v?.b), max(v?.g), max(v?.c), max(v?.d), max(v?.e), max(v?.f) from t? v? having max(v?.g)>?) v? (a, b, g, c, d, e, f)
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ max(v?.a), min(v?.b) from (select v?.a, v?.b, v?.g, v?.c, v?.d, v?.e, v?.f from (select distinct v?.a, v?.b, v?.g, v?.c, v?.d, v?.e, v?.f from t? v? where (v?.g> ?:? )) v? (a, b, g, c, d, e, f) union all select v?.a, v?.b, v?.g, v?.c, v?.d, v?.e, v?.f from (select max(v?.a), max(v?.b), max(v?.g), max(v?.c), max(v?.d), max(v?.e), max(v?.f) from t? v? having max(v?.g)>?) v? (a, b, g, c, d, e, f)) v? (a, b, g, c, d, e, f)
+===================================================
+max(c)    
+null     
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: v? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct v?.c, v?.g, v?.a, v?.b, v?.d, v?.e, v?.f from t? v? where (v?.g> ?:? ))
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Query stmt:
+select v?.c, v?.g, v?.a, v?.b, v?.d, v?.e, v?.f from (select distinct v?.c, v?.g, v?.a, v?.b, v?.d, v?.e, v?.f from t? v? where (v?.g> ?:? )) v? (c, g, a, b, d, e, f)
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Query stmt:
+(select max(v?.c), max(v?.g), max(v?.a), max(v?.b), max(v?.d), max(v?.e), max(v?.f) from t? v? having max(v?.g)>?)
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Query stmt:
+select v?.c, v?.g, v?.a, v?.b, v?.d, v?.e, v?.f from (select max(v?.c), max(v?.g), max(v?.a), max(v?.b), max(v?.d), max(v?.e), max(v?.f) from t? v? having max(v?.g)>?) v? (c, g, a, b, d, e, f)
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: v? node[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ max(v?.c) from (select v?.c, v?.g, v?.a, v?.b, v?.d, v?.e, v?.f from (select distinct v?.c, v?.g, v?.a, v?.b, v?.d, v?.e, v?.f from t? v? where (v?.g> ?:? )) v? (c, g, a, b, d, e, f) union all select v?.c, v?.g, v?.a, v?.b, v?.d, v?.e, v?.f from (select max(v?.c), max(v?.g), max(v?.a), max(v?.b), max(v?.d), max(v?.e), max(v?.f) from t? v? having max(v?.g)>?) v? (c, g, a, b, d, e, f)) v? (c, g, a, b, d, e, f) group by v?.a, v?.b
+===================================================
+0
+===================================================
+0

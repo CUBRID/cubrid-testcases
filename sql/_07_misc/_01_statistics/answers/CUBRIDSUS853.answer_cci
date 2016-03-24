@@ -1,0 +1,131 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+min(c)    min(v)    min(s)    min(nc)    min(vnc)    min(b)    min(vb)    min(i)    min(sm)    min(n)    min(f)    min(d)    min(m)    min(da)    min(ti)    min(ts)    
+a              a     a     a              a     a000     a0     1     1     1     1.0     1.0     1.0     2009-01-01     01:01:01     2009-01-01 11:11:11.0     
+
+Query plan:
+sscan
+    class: foo node[?]
+    cost:  ? card ?
+Query stmt:
+select min(foo.c), min(foo.v), min(foo.s), min(foo.nc), min(foo.vnc), min(foo.b), min(foo.vb), min(foo.i), min(foo.sm), min(foo.n), min(foo.f), min(foo.d), min(foo.m), min(foo.da), min(foo.ti), min(foo.ts) from foo foo
+===================================================
+max(c)    max(v)    max(s)    max(nc)    max(vnc)    max(b)    max(vb)    max(i)    max(sm)    max(n)    max(f)    max(d)    max(m)    max(da)    max(ti)    max(ts)    
+c              c     c     c              c     c000     c0     3     3     3     3.0     3.0     3.0     2009-01-03     01:01:03     2009-01-01 11:11:13.0     
+
+Query plan:
+sscan
+    class: foo node[?]
+    cost:  ? card ?
+Query stmt:
+select max(foo.c), max(foo.v), max(foo.s), max(foo.nc), max(foo.vnc), max(foo.b), max(foo.vb), max(foo.i), max(foo.sm), max(foo.n), max(foo.f), max(foo.d), max(foo.m), max(foo.da), max(foo.ti), max(foo.ts) from foo foo
+===================================================
+sum({c})    sum({v})    sum({s})    sum({nc})    sum({vnc})    sum({b})    sum({vb})    sum(i)    sum(sm)    sum(n)    sum(f)    sum(d)    sum(m)    sum({da})    sum({ti})    sum({ts})    sum(se)    sum(mu)    sum(li)    
+a         ,b         ,c         ,     a,b,c,     a,b,c,     a         ,b         ,c         ,     a,b,c,     A000,B000,C000,     A0,B0,C0,     6     6     6     6.0     6.0     6.0     2009-01-01,2009-01-02,2009-01-03,     01:01:01,01:01:02,01:01:03,     2009-01-01 11:11:11.0,2009-01-01 11:11:12.0,2009-01-01 11:11:13.0,     1,2,3,     1,2,3,     1,2,3,     
+
+Query plan:
+sscan
+    class: foo node[?]
+    cost:  ? card ?
+Query stmt:
+select sum({foo.c}), sum({foo.v}), sum({foo.s}), sum({foo.nc}), sum({foo.vnc}), sum({foo.b}), sum({foo.vb}), sum(foo.i), sum(foo.sm), sum(foo.n), sum(foo.f), sum(foo.d), sum(foo.m), sum({foo.da}), sum({foo.ti}), sum({foo.ts}), sum(foo.se), sum(foo.mu), sum(foo.li) from foo foo
+===================================================
+avg(i)    avg(sm)    avg(n)    avg(f)    avg(d)    avg(m)    
+2.0     2.0     2.0     2.0     2.0     2.0     
+
+Query plan:
+sscan
+    class: foo node[?]
+    cost:  ? card ?
+Query stmt:
+select avg(foo.i), avg(foo.sm), avg(foo.n), avg(foo.f), avg(foo.d), avg(foo.m) from foo foo
+===================================================
+variance(i)    variance(sm)    variance(n)    variance(f)    variance(d)    variance(m)    
+0.666666667     0.666666667     0.666666667     0.666666667     0.666666667     0.666666667     
+
+Query plan:
+sscan
+    class: foo node[?]
+    cost:  ? card ?
+Query stmt:
+select variance(foo.i), variance(foo.sm), variance(foo.n), variance(foo.f), variance(foo.d), variance(foo.m) from foo foo
+===================================================
+stddev(i)    stddev(sm)    stddev(n)    stddev(f)    stddev(d)    stddev(m)    
+0.816496581     0.816496581     0.816496581     0.816496581     0.816496581     0.816496581     
+
+Query plan:
+sscan
+    class: foo node[?]
+    cost:  ? card ?
+Query stmt:
+select stddev(foo.i), stddev(foo.sm), stddev(foo.n), stddev(foo.f), stddev(foo.d), stddev(foo.m) from foo foo
+min(c)    min(v)    min(s)    min(nc)    min(vnc)    min(b)    min(vb)    min(i)    min(sm)    min(n)    min(f)    min(d)    min(m)    min(da)    min(ti)    min(ts)    
+null     null     null     null     null     null     null     null     null     null     null     null     null     null     null     null     
+
+Query plan:
+sscan
+    class: foo node[?]
+    cost:  ? card ?
+Query stmt:
+select stddev(foo.i), stddev(foo.sm), stddev(foo.n), stddev(foo.f), stddev(foo.d), stddev(foo.m) from foo foo
+===================================================
+max(c)    max(v)    max(s)    max(nc)    max(vnc)    max(b)    max(vb)    max(i)    max(sm)    max(n)    max(f)    max(d)    max(m)    max(da)    max(ti)    max(ts)    
+null     null     null     null     null     null     null     null     null     null     null     null     null     null     null     null     
+
+Query plan:
+sscan
+    class: foo node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select max(foo.c), max(foo.v), max(foo.s), max(foo.nc), max(foo.vnc), max(foo.b), max(foo.vb), max(foo.i), max(foo.sm), max(foo.n), max(foo.f), max(foo.d), max(foo.m), max(foo.da), max(foo.ti), max(foo.ts) from foo foo where ? <> ?
+===================================================
+sum({c})    sum({v})    sum({s})    sum({nc})    sum({vnc})    sum({b})    sum({vb})    sum(i)    sum(sm)    sum(n)    sum(f)    sum(d)    sum(m)    sum({da})    sum({ti})    sum({ts})    sum(se)    sum(mu)    sum(li)    
+null     null     null     null     null     null     null     null     null     null     null     null     null     null     null     null     null     null     null     
+
+Query plan:
+sscan
+    class: foo node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select sum({foo.c}), sum({foo.v}), sum({foo.s}), sum({foo.nc}), sum({foo.vnc}), sum({foo.b}), sum({foo.vb}), sum(foo.i), sum(foo.sm), sum(foo.n), sum(foo.f), sum(foo.d), sum(foo.m), sum({foo.da}), sum({foo.ti}), sum({foo.ts}), sum(foo.se), sum(foo.mu), sum(foo.li) from foo foo where ? <> ?
+===================================================
+avg(i)    avg(sm)    avg(n)    avg(f)    avg(d)    avg(m)    
+null     null     null     null     null     null     
+
+Query plan:
+sscan
+    class: foo node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select avg(foo.i), avg(foo.sm), avg(foo.n), avg(foo.f), avg(foo.d), avg(foo.m) from foo foo where ? <> ?
+===================================================
+variance(i)    variance(sm)    variance(n)    variance(f)    variance(d)    variance(m)    
+null     null     null     null     null     null     
+
+Query plan:
+sscan
+    class: foo node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select variance(foo.i), variance(foo.sm), variance(foo.n), variance(foo.f), variance(foo.d), variance(foo.m) from foo foo where ? <> ?
+===================================================
+stddev(i)    stddev(sm)    stddev(n)    stddev(f)    stddev(d)    stddev(m)    
+null     null     null     null     null     null     
+
+0
+===================================================
+0
+0

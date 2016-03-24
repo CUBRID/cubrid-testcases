@@ -1,0 +1,1 @@
+select rownum from (select 1 as dual) as dual connect by 1 = 1;

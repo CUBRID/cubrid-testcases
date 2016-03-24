@@ -1,0 +1,26 @@
+SELECT ADDDATE('1991-01-01 00:00:00', 10000000);
+SELECT ADDDATE('1991-01-01 00:00:00', -10000000);
+
+SELECT ADDDATE('1991-01-01 00:00:00', '10000000000');
+SELECT ADDDATE('1991-01-01 00:00:00', '10000000000');
+
+
+SELECT ADDDATE('1991-01-01 00:00:00', '10000000000'),ADDDATE('1991-01-01 00:00:00', '10000000000');
+SELECT ADDDATE('1991-01-01 00:00:00', '10000000000'),ADDDATE('1991-01-01 00:00:00', '10000000000');
+
+drop table if exists t1
+create table t1(id int primary key, col1 datetime default SYSDATETIME unique, col2 datetime default SYSDATETIME not null, col3 datetime default SYSDATETIME, col4 datetime default SYSDATETIME);
+
+insert into t1 values(1, datetime'12/12/2000 12:12:12.123', '12/12/2000 12:12:12.123', '12/12/2000 12:12:12.123', '12/12/2000 12:12:12.123');
+insert into t1 values(2, datetime'11/11/2000 11:11:11.123', '11/11/2000 11:11:11.123', '11/11/2000 11:11:11.123', '11/11/2000 11:11:11.123');
+insert into t1 values(3, datetime'10/10/2000 10:10:10.123', '10/10/2000 10:10:10.123', '10/10/2000 10:10:10.123', '10/10/2000 10:10:10.123');
+insert into t1 values(4, datetime'09/09/2000 09:09:09.123', '09/09/2000 09:09:09.123', '09/09/2000 09:09:09.123', '09/09/2000 09:09:09.123');
+insert into t1 values(5, datetime'08/08/2000 08:08:08.123', '08/08/2000 08:08:08.123', '08/08/2000 08:08:08.123', '08/08/2000 08:08:08.123');
+
+SELECT ADDDATE(col1, 18) from t1 where t1.id = 333;
+SELECT ADDDATE(col4, -999) from t1 order by t1.id ;
+
+SELECT ADDDATE(col1, '10000000'),ADDDATE(col2, '10000000') from t1;
+SELECT ADDDATE(col2, '10000000'),ADDDATE(col1, '10000000') from t1;
+SELECT ADDDATE(col2, '10000000'),ADDDATE(col1, '10000000') from t1;
+drop table t1;

@@ -1,0 +1,5 @@
+autocommit off;
+insert into kitsch_v (attr_1, attr_5, set_attr_1, atom_c, cattr6, csetattr6)
+values ('100', NULL, {'10'}, '', 0, {});
+rollback work;
+rollback;

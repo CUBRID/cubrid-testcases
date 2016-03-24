@@ -1,0 +1,11 @@
+autocommit off;
+create class x (intseq sequence(int));
+insert into x values ({1, 2, 3, 4});
+insert into x values (sequence{1, 2} + sequence{ 3, 4});
+insert into x values (set{1, 2, 3} + set{ 3, 4});
+update x set intseq = intseq + {7, 8};
+select intseq from x;
+select  {2} + {2} from db_root;
+select set{2} + set{2} from db_root;
+select sequence{2} + sequence{2} from db_root;
+rollback;

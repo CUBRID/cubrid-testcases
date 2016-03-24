@@ -1,0 +1,78 @@
+/*
+ * Streaming Query ctl using 1 client
+ *
+ * $Revision: 1.2 $
+ */
+MC: setup NUM_CLIENTS = 1;
+
+C1: create table big00(a int, b varchar(40));
+C1: grant all on big00 to public;
+
+C1: insert into big00 values (0,'zero');
+C1: insert into big00 values (1,'one');
+C1: insert into big00 values (2,'two');
+C1: insert into big00 values (3,'three');
+C1: insert into big00 values (4,'four');
+C1: insert into big00 values (5,'five');
+C1: insert into big00 values (6,'six');
+C1: insert into big00 values (7,'seven');
+C1: insert into big00 values (8,'eight');
+C1: insert into big00 values (9,'nine');
+
+C1: insert into big00 select 10  +a, '1' +b from big00;
+C1: insert into big00 select 20  +a, '2' +b from big00;
+C1: insert into big00 select 40  +a, '4' +b from big00;
+C1: insert into big00 select 100  +a, '8' +b from big00;
+C1: insert into big00 select 200 +a, 'a' +b from big00;
+C1: insert into big00 select 400 +a, 'b' +b from big00;
+C1: insert into big00 select 1000 +a, 'c' +b from big00;
+
+C1: update statistics on big00;
+
+C1: create table big00index(a int, b char(40));
+
+C1: insert into big00index select * from big00;
+C1: create index on big00index(a);
+C1: create index on big00index(b);
+
+C1: create table big00indexstat(a int, b char(40));
+C1: create index on big00indexstat(a);
+C1: create index on big00indexstat(b);
+C1: insert into big00indexstat select * from big00;
+C1: update statistics on big00indexstat;
+
+C1: create table big00indexunique(a int unique not null, b char(40) unique not null);
+C1: insert into big00indexunique select * from big00;
+C1: create index on big00indexunique(a);
+C1: create index on big00indexunique(b);
+
+C1: select count(*) from big00;
+C1: select count(*) from big00index;
+C1: select count(*) from big00indexstat;
+C1: select count(*) from big00indexunique;
+
+C1: async select * from big00;
+C1: async select * from big00index;
+C1: async select * from big00indexstat;
+C1: async select * from big00indexunique;
+
+C1: read_one 0;
+C1: read_one 1;
+C1: read_one 2;
+C1: read_one 3;
+
+C1: async_wait 0;
+C1: async_count 0;
+
+C1: async_wait 1;
+C1: async_count 1;
+
+C1: async_wait 2;
+C1: async_count 2;
+
+C1: async_wait 3;
+C1: async_count 3;
+
+C1: rollback work;
+
+C1: quit;

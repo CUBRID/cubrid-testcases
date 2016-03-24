@@ -1,0 +1,13 @@
+-- [er]create a serial with a MINVALUE NODE error
+
+CREATE SERIAL ddl_0001_serial
+START WITH -2
+INCREMENT BY -1
+MAXVALUE 10000000
+MINVALUE -1000;
+
+
+
+
+
+DROP SERIAL ddl_0001_serial;

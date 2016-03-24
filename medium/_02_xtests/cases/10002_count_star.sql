@@ -1,0 +1,14 @@
+autocommit off;
+create class a (a_i int, b_i int);
+create class b (a_i int, b_i int);
+insert into a values(1,1);
+insert into a values(1,2);
+insert into b values(1,1);
+insert into b values(1,2);
+create vclass v(a int,b int) as select a_i,b_i from a union select a_i,b_i from b;
+select * from v;
+select count(*) from v;
+create view v_sub2 under v (a,b,c) as select a,b,'qwer' from v;
+select * from all v;
+select count(*) from all v;
+rollback;

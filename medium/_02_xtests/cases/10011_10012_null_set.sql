@@ -1,0 +1,11 @@
+autocommit off;
+create table a ( c char(1));
+insert into a values('e');
+select set{'a',c} from a;
+select set{c,cast('a' as varchar)} from a;
+select set{c,cast('e' as varchar)} from a; 
+select set{c,cast('w' as varchar)} from a;
+create table b ( c varchar(1),v char(1));
+insert into b values('e','e');
+select v,c,set{v,c} from b;
+rollback;

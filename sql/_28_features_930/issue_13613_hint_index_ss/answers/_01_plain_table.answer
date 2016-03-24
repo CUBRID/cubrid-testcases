@@ -1,0 +1,442 @@
+===================================================
+0
+===================================================
+0
+===================================================
+10000
+===================================================
+0
+===================================================
+0
+===================================================
+10000
+===================================================
+1    
+1     
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: t? node[?]
+               index: i_ac term[?] (index skip scan)
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_SS(t?) */ ? from t? t?, t? t? where (t?.b< ?:? ) and (t?.c< ?:? ) and (t?.c< ?:? ) and (inst_num()<= ?:? )
+===================================================
+1    
+1     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: t? node[?]
+               sargs: term[?] AND term[?] AND term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t? node[?]
+               index: i_ac term[?] (covers) (index skip scan)
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_SS(t?) */ ? from t? t?, t? t? where (t?.b< ?:? ) and (t?.c< ?:? ) and (t?.c< ?:? ) and (inst_num()<= ?:? )
+===================================================
+1    
+1     
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: t? node[?]
+               index: i_ac term[?] (index skip scan)
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t? node[?]
+               index: i_ac term[?] (covers) (index skip scan)
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_SS(t?, t?) */ ? from t? t?, t? t? where (t?.b< ?:? ) and (t?.c< ?:? ) and (t?.c< ?:? ) and (inst_num()<= ?:? )
+===================================================
+1    
+1     
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: t? node[?]
+               index: i_ac term[?] (index skip scan)
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t? node[?]
+               index: i_ac term[?] (covers) (index skip scan)
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_SS(t?, t?) */ ? from t? t?, t? t? where (t?.b< ?:? ) and (t?.c< ?:? ) and (t?.c< ?:? ) and (inst_num()<= ?:? )
+===================================================
+1    
+1     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: t? node[?]
+               sargs: term[?] AND term[?] AND term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ ? from t? t?, t? t? where (t?.b< ?:? ) and (t?.c< ?:? ) and (t?.c< ?:? ) and (inst_num()<= ?:? )
+===================================================
+1    
+1     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: t? node[?]
+               sargs: term[?] AND term[?] AND term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ ? from t? t?, t? t? where (t?.b< ?:? ) and (t?.c< ?:? ) and (t?.c< ?:? ) and (inst_num()<= ?:? )
+===================================================
+1    
+1     
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: t? node[?]
+               index: i_ac term[?] (index skip scan)
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t? node[?]
+               index: i_ac term[?] (covers) (index skip scan)
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_SS */ ? from t? t?, t? t? where (t?.b< ?:? ) and (t?.c< ?:? ) and (t?.c< ?:? ) and (inst_num()<= ?:? )
+===================================================
+1    
+1     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: t? node[?]
+               sargs: term[?] AND term[?] AND term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_INDEX_SS */ ? from t? t?, t? t? where (t?.b< ?:? ) and (t?.c< ?:? ) and (t?.c< ?:? ) and (inst_num()<= ?:? )
+===================================================
+1    
+1     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: t? node[?]
+               sargs: term[?] AND term[?] AND term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_INDEX_SS */ ? from t? t?, t? t? where (t?.b< ?:? ) and (t?.c< ?:? ) and (t?.c< ?:? ) and (inst_num()<= ?:? )
+===================================================
+1    
+1     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: t? node[?]
+               sargs: term[?] AND term[?] AND term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_INDEX_SS */ ? from t? t?, t? t? where (t?.b< ?:? ) and (t?.c< ?:? ) and (t?.c< ?:? ) and (inst_num()<= ?:? )
+===================================================
+1    
+1     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: t? node[?]
+               sargs: term[?] AND term[?] AND term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_INDEX_SS */ ? from t? t?, t? t? where (t?.b< ?:? ) and (t?.c< ?:? ) and (t?.c< ?:? ) and (inst_num()<= ?:? )
+===================================================
+1    
+1     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: t? node[?]
+               sargs: term[?] AND term[?] AND term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_INDEX_SS */ ? from t? t?, t? t? where (t?.b< ?:? ) and (t?.c< ?:? ) and (t?.c< ?:? ) and (inst_num()<= ?:? )
+===================================================
+1    
+1     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: t? node[?]
+               sargs: term[?] AND term[?] AND term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_INDEX_SS */ ? from t? t?, t? t? where (t?.b< ?:? ) and (t?.c< ?:? ) and (t?.c< ?:? ) and (inst_num()<= ?:? )
+===================================================
+id    a    b    c    id    a    b    c    
+1     1     1     1     1     1     1     1     
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: t? node[?]
+               index: i_ac term[?] (index skip scan)
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t? node[?]
+               index: i_ac term[?] (index skip scan)
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_SS */ t?.id, t?.a, t?.b, t?.c, t?.id, t?.a, t?.b, t?.c from t? t?, t? t? where (t?.b< ?:? ) and (t?.c< ?:? ) and (t?.c< ?:? ) and (inst_num()<= ?:? )
+===================================================
+1    
+1     
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: t? node[?]
+               index: i_ac term[?] (index skip scan)
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_SS(t?) */ ? from t? t?, t? t? where (t?.b< ?:? ) and (t?.c< ?:? ) and (t?.c< ?:? ) and (inst_num()<= ?:? )
+===================================================
+1    
+1     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: t? node[?]
+               sargs: term[?] AND term[?] AND term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t? node[?]
+               index: i_ac term[?] (covers) (index skip scan)
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_SS(t?) */ ? from t? t?, t? t? where (t?.b< ?:? ) and (t?.c< ?:? ) and (t?.c< ?:? ) and (inst_num()<= ?:? )
+===================================================
+1
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?] AND term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ t?, class t?, t?.c from t? t? where (t?.b< ?:? ) and (t?.c< ?:? ) and (inst_num()<= ?:? )
+===================================================
+id    a    b    c    
+1     1     1     1     
+4     4     4     4     
+
+===================================================
+0
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: t? node[?]
+               sargs: term[?] AND term[?] AND term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ ? from t? t?, t? t? where (t?.b< ?:? ) and (t?.c< ?:? ) and (t?.c< ?:? ) and (inst_num()<= ?:? )
+===================================================
+Error:-996
+===================================================
+0
+===================================================
+1    
+1     
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: s? node[?]
+               index: i_ac term[?] (index skip scan)
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: s? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_SS(s?) */ ? from t? s?, t? s? where (s?.b< ?:? ) and (s?.c< ?:? ) and (s?.c< ?:? ) and (inst_num()<= ?:? )
+===================================================
+1    
+1     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: s? node[?]
+               sargs: term[?] AND term[?] AND term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: s? node[?]
+               index: i_ac term[?] (covers) (index skip scan)
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_SS(s?) */ ? from t? s?, t? s? where (s?.b< ?:? ) and (s?.c< ?:? ) and (s?.c< ?:? ) and (inst_num()<= ?:? )
+===================================================
+1    
+1     
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: s? node[?]
+               index: i_ac term[?] (index skip scan)
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: s? node[?]
+               index: i_ac term[?] (covers) (index skip scan)
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_SS(s?, s?) */ ? from t? s?, t? s? where (s?.b< ?:? ) and (s?.c< ?:? ) and (s?.c< ?:? ) and (inst_num()<= ?:? )
+===================================================
+0
+===================================================
+col    
+1     
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: v? node[?]
+               index: i_ac term[?] (index skip scan)
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: s? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_SS(s?) */ ? from t? v?, t? s? where (v?.b< ?:? ) and (v?.c< ?:? ) and (s?.c< ?:? ) and (inst_num()<= ?:? )
+===================================================
+col    
+1     
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: v? node[?]
+               index: i_ac term[?] (index skip scan)
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: s? node[?]
+               index: i_ac term[?] (covers) (index skip scan)
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_SS */ ? from t? v?, t? s? where (v?.b< ?:? ) and (v?.c< ?:? ) and (s?.c< ?:? ) and (inst_num()<= ?:? )
+===================================================
+0
+===================================================
+0
+===================================================
+0

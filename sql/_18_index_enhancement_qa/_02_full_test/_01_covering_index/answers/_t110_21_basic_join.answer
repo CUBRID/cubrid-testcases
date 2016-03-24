@@ -1,0 +1,235 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+count(t1.a||t1.b||t1.c||t2.b||t2.c)    
+4     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: t? node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count( cast(t?.a as varchar)|| cast(t?.b as varchar)||t?.c|| cast(t?.b as varchar)||t?.c) from t? t?, t? t?
+===================================================
+count(t1.a||t1.b||t1.c||t2.d||t2.a||t2.b||t2.c||t2.d)    
+4     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: t? node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count( cast(t?.a as varchar)|| cast(t?.b as varchar)||t?.c|| cast(t?.d as varchar)|| cast(t?.a as varchar)|| cast(t?.b as varchar)||t?.c|| cast(t?.d as varchar)) from t? t?, t? t?
+===================================================
+count(t1.a||t2.a)    
+4     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: t? node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count( cast(t?.a as varchar)|| cast(t?.a as varchar)) from t? t?, t? t?
+===================================================
+count(t1.a)    
+2     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: t? node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t? node[?]
+               index: idx_t?_a term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(t?.a) from t? t?, t? t? where (t?.a> ?:? )
+===================================================
+count(t1.a)    
+2     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: t? node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t? node[?]
+               index: idx_t?_ab term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(t?.a) from t? t?, t? t? where (t?.a> ?:? ) and (t?.b> ?:? )
+===================================================
+count(t1.a)    
+1     
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: t? node[?]
+               index: idx_t?_ab term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t? node[?]
+               index: idx_t?_ab term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(t?.a) from t? t?, t? t? where (t?.a> ?:? ) and (t?.b> ?:? ) and (t?.a> ?:? ) and (t?.b> ?:? )
+===================================================
+count(t1.a)    
+4     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: t? node[?]
+               sargs: term[?] AND term[?] AND term[?] AND term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(t?.a) from t? t?, t? t? where t?.a is not null  and t?.b is not null  and t?.c is not null  and t?.d is not null 
+===================================================
+count(t1.a)    
+4     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: t? node[?]
+               sargs: term[?] AND term[?] AND term[?] AND term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               sargs: term[?] AND term[?] AND term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(t?.a) from t? t?, t? t? where t?.a is not null  and t?.b is not null  and t?.c is not null  and t?.d is not null  and t?.a is not null  and t?.b is not null  and t?.c is not null  and t?.d is not null 
+===================================================
+count(t1.c)    
+4     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: t? node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(t?.c) from t? t?, t? t? where t?.a is not null  and t?.b is not null 
+===================================================
+count(t1.c||t2.d)    
+4     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: t? node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(t?.c|| cast(t?.d as varchar)) from t? t?, t? t? where t?.a is not null  and t?.b is not null  and t?.a is not null  and t?.b is not null 
+===================================================
+count(t1.a)    
+4     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: t? node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(t?.a) from t? t?, t? t? where t?.d is not null  and t?.c is not null  and t?.d is not null  and t?.a is not null 
+===================================================
+count(t1.a)    
+4     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: t? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(t?.a) from t? t?, t? t? where t?.d is not null  and t?.c is not null  and t?.b is not null 
+===================================================
+0
+===================================================
+0
+===================================================
+0

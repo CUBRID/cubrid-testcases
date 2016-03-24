@@ -1,0 +1,68 @@
+===================================================
+0
+===================================================
+0
+===================================================
+_utf8'single quotes test('')'    _utf8'single quotes test('')'    if( strcmp(_utf8'single quotes test('')', _utf8'single quotes test('')')=0, _utf8'ok', _utf8'nok')    
+single quotes test(')     single quotes test(')     ok     
+
+===================================================
+_utf8'double quotes test(")'    _utf8'double quotes test(")'    if( strcmp(_utf8'double quotes test(")', _utf8'double quotes test(")')=0, _utf8'ok', _utf8'nok')    
+double quotes test(")     double quotes test(")     ok     
+
+===================================================
+_utf8'abcdefghijklm
+opqs	uvwxyz'    _utf8'abcdefghijklm
+opqs	uvwxyz'    if( strcmp(_utf8'abcdefghijklm
+opqs	uvwxyz', _utf8'abcdefghijklm
+opqs	uvwxyz')=0, _utf8'ok', _utf8'nok')    
+abcdefghijklm
+opqs	uvwxyz     abcdefghijklm
+opqs	uvwxyz     ok     
+
+===================================================
+_utf8'\'    char_length(_utf8'\')    if( char_length(_utf8'\')=1, _utf8'ok', _utf8'nok')    
+\     1     ok     
+
+===================================================
+_utf8'""'    char_length(_utf8'""')    if( char_length(_utf8'""')=2, _utf8'ok', _utf8'nok')    
+""     2     ok     
+
+===================================================
+_utf8''''''    char_length(_utf8'''''')    if( char_length(_utf8'''''')=2, _utf8'ok', _utf8'nok')    
+''     2     ok     
+
+===================================================
+0
+===================================================
+_utf8'\%'    if( strcmp(_utf8'\%', _utf8'\%')=0, _utf8'ok', _utf8'nok')    
+\%     ok     
+
+===================================================
+_utf8'\_'    if( strcmp(_utf8'\_', _utf8'\_')=0, _utf8'ok', _utf8'nok')    
+\_     ok     
+
+===================================================
+0
+===================================================
+2
+===================================================
+if((select a from t1 where a like _utf8'aaa\%' escape _utf8'\')=_utf8'aaa%', _utf8'ok', _utf8'nok')    
+ok     
+
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+if((select a from t1 where a like _utf8'aaa\_' escape _utf8'\')=_utf8'aaa_', _utf8'ok', _utf8'nok')    
+ok     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0

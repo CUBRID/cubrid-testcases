@@ -1,0 +1,15 @@
+autocommit off;
+create class fooo(a integer, b integer);
+insert into fooo values(12, 2);
+create index i_fooo_a on fooo(a);
+select * from fooo where a > 5;
+savepoint 'a';
+drop class fooo;
+rollback work to savepoint 'a';
+select 'before commit', a from fooo where a > 5;
+commit work;
+insert into fooo values(15, 15);
+select 'after commit', a, b from fooo where a > 5;
+drop class fooo;
+commit work;
+rollback;

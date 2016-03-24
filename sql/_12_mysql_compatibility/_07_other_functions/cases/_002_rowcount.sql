@@ -1,0 +1,1 @@
+SELECT ROW_COUNT() FROM db_root;

@@ -1,0 +1,16 @@
+autocommit off;
+create table mindex_object(a int, b varchar(10), c object);
+create table mindex_oid(a int, b varchar(10), c mindex_oid);
+insert into mindex_object values(1, 'a', NULL);
+insert into mindex_object values(1, 'a', NULL) into :x;
+update object :x set c = :x;
+insert into mindex_oid values(1, 'a', NULL);
+insert into mindex_oid values(1, 'a', NULL) into :x;
+update object :x set c = :x;
+create index i_mindex_object_a_b_c on mindex_object(a, b, c);
+create index i_mindex_oid_a_b_c on mindex_oid(a, b, c);
+--set optimization: level 257;
+--set optimization: cost 'iscan' 0;
+select * from mindex_object where a=1 and b='a';
+select * from mindex_oid where a=1 and b='a';
+rollback;

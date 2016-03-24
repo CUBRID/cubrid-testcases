@@ -1,0 +1,13 @@
+--+ holdcas on;
+set system parameters 'compat_mode=mysql';
+select ASIN(1) from db_root;
+select ASIN(0) from db_root;
+select ASIN(-1) from db_root;
+select ASIN(ASIN(1)) from db_root;
+select ASIN(ASIN(0) - field(ASIN(1),1,0,2,3)) from db_root;
+select asin(asin(1)-1) ;
+select concat(asin(1),asin(-1),asin(0)) from db_root;
+select concat_ws(asin(-1),asin(1),asin(0)) from db_root;
+select strcmp(concat_ws(asin(-1),asin(1),asin(0)),concat(asin(1),asin(-1),asin(0))) from db_root;
+set system parameters 'compat_mode=cubrid';commit;
+--+ holdcas off;

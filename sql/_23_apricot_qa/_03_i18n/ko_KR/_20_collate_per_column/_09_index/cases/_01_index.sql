@@ -1,0 +1,20 @@
+--+ holdcas on;
+set names utf8;
+create table t1 (s1 string collate 'utf8_ko_cs_uca');
+create table t2 (s1 string collate 'utf8_gen');
+insert into t1 values ('가'),( '伽');
+insert into t2 values ('가'),( '伽');
+create index idx on t1(s1);
+create index idx on t2(s1);
+select /*+ RECOMPILE */ s1 from t1 order by 1;
+select /*+ RECOMPILE */ s1 from t2 order by 1;
+alter table  t1 CHANGE s1 s1 varchar(10) collate 'utf8_gen';
+alter table  t2 CHANGE s1 s1 varchar(10) collate 'utf8_ko_cs_uca';
+select /*+ RECOMPILE */ s1 from t1 order by 1;
+select /*+ RECOMPILE */ s1 from t2 order by 1;
+drop t1;
+drop t2;
+set names iso88591;
+commit;
+--+ holdcas off;
+

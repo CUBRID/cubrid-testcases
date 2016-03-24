@@ -1,0 +1,14 @@
+autocommit off;
+create class foo (a1 int);
+insert into foo values (1);
+select * from foo;
+alter foo add attribute a2 int unique;
+alter foo add attribute a2 int, unique(a1, a2);
+create class bar (a1 int);
+alter bar add attribute a2 int unique;
+create class baz (a1 int);
+insert into baz values (1);
+select * from baz;
+delete from baz;
+alter baz add attribute a2 int unique;
+rollback;

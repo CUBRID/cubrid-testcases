@@ -1,0 +1,104 @@
+===================================================
+0
+===================================================
+0
+===================================================
+Field    Type    Collation    Null    Key    Default    Extra    Comment    
+s1     CHAR(5)     utf8_en_cs     YES          null          null     
+s2     VARCHAR(1073741823)     utf8_en_ci     YES          null          null     
+s3     CLOB     null     YES          null          null     
+
+===================================================
+3
+===================================================
+0
+===================================================
+Field    Type    Collation    Null    Key    Default    Extra    Comment    
+e1     ENUM('char1', 'char2', 'char3')     utf8_en_cs     YES          null          null     
+e2     ENUM('string1', 'string2', 'string3')     utf8_en_ci     YES          null          null     
+e3     ENUM('clob1', 'clob2', 'clob3')     utf8_en_cs     YES          null          null     
+
+===================================================
+3
+===================================================
+s1    s2    cast(s3 as varchar)    
+char1     string1     clob1     
+char2     string2     clob2     
+char3     string3     clob3     
+
+===================================================
+e1    e2    e3    
+char1     string1     clob1     
+char2     string2     clob2     
+char3     string3     clob3     
+
+===================================================
+0
+===================================================
+0
+===================================================
+Field    Type    Collation    Null    Key    Default    Extra    Comment    
+e1     ENUM('char1', 'char2', 'char3')     utf8_en_cs     YES          null          null     
+e2     ENUM('string1', 'string2', 'string3')     utf8_en_ci     YES          null          null     
+e3     ENUM('clob1', 'clob2', 'clob3')     utf8_en_cs     YES          null          null     
+
+===================================================
+e1    e2    e3    
+char1     string1     clob1     
+char2     string2     clob2     
+char3     string3     clob3     
+
+===================================================
+0
+===================================================
+0
+===================================================
+cast(_utf8'a' as enum('a', 'b', 'c') collate utf8_bin)    
+a     
+
+===================================================
+0
+===================================================
+Field    Type    Collation    Null    Key    Default    Extra    Comment    
+a     ENUM('a', 'b', 'c')     utf8_bin     YES          null          null     
+
+===================================================
+a    
+a     
+
+===================================================
+0
+===================================================
+cast( cast('a' as enum('a', 'b', 'c')) as integer)    
+1     
+
+===================================================
+0
+===================================================
+Field    Type    Collation    Null    Key    Default    Extra    Comment    
+a     INTEGER     null     YES          null          null     
+
+===================================================
+a    
+1     
+
+===================================================
+0
+===================================================
+cast( cast(_utf8'a' as enum('a', 'b', 'c') collate utf8_bin) as varchar)    
+a     
+
+===================================================
+0
+===================================================
+Field    Type    Collation    Null    Key    Default    Extra    Comment    
+a     VARCHAR(1073741823)     iso88591_bin     YES          null          null     
+
+===================================================
+a    
+a     
+
+===================================================
+0
+===================================================
+0

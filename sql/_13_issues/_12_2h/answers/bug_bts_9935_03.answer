@@ -1,0 +1,1350 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+Error:-1109
+===================================================
+1
+===================================================
+1
+===================================================
+Error:-1109
+===================================================
+1
+===================================================
+i    j    
+5     5     
+15     15     
+
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t t
+===================================================
+i    j    
+5     5     
+
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t__p__p? t
+===================================================
+0
+===================================================
+0
+===================================================
+Error:-272
+===================================================
+Error:-272
+===================================================
+i    j    
+5     5     
+15     15     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t t order by ?
+===================================================
+i    j    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: t_i_j term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t__p__p? t where (t.i> ?:? )
+===================================================
+i    j    
+5     5     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: t_i_j term[?] (covers) (multi_range_opt)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t__p__p? t where ((t.i= ?:? ) or (t.i= ?:? )) order by ? for orderby_num()<= ?:? 
+===================================================
+i    j    i    j    
+5     5     5     5     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: t node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t?.i, t?.j from t__p__p? t, t?__p__p? t?
+===================================================
+i    j    
+5     5     
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: t node[?]
+               index: t_i_j term[?] (covers)
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t__p__p? t, t?__p__p? t? where t?.i= ?:?  and t.i= ?:?  and t.i=t?.i order by ?
+/* ---> skip ORDER BY */
+===================================================
+i    j    
+5     5     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: t_i_j term[?] (covers)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t__p__p? t where (t.i> ?:? ) group by t.i
+/* ---> skip GROUP BY */
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+count(*)    
+2     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: t_i_j term[?] (covers) (index skip scan)
+    cost:  ? card ?
+Query stmt:
+(select /*+ INDEX_SS */ t.i, t.j from t t where (t.j>= ?:?  and t.j<= ?:? ) using index t.t_i_j)
+Query plan:
+sscan
+    class: tt node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select /*+ INDEX_SS */ t.i, t.j from t t where (t.j>= ?:?  and t.j<= ?:? ) using index t.t_i_j) tt (i, j)
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1000
+===================================================
+1000
+===================================================
+i    j    count(*)    
+6.0     6.0     2     
+7.0     7.0     2     
+8.0     8.0     2     
+9.0     9.0     2     
+10.0     10.0     2     
+11.0     11.0     2     
+12.0     12.0     2     
+13.0     13.0     2     
+14.0     14.0     2     
+15.0     15.0     2     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: idx_t_i term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, count(*) from t t where (t.i> ?:?  and t.i< ?:? ) group by t.i having groupby_num()<=? and (t.j> ?:? )
+===================================================
+i    j    count(*)    
+16.0     16.0     2     
+17.0     17.0     2     
+18.0     18.0     2     
+19.0     19.0     2     
+20.0     20.0     2     
+21.0     21.0     2     
+22.0     22.0     2     
+23.0     23.0     2     
+24.0     24.0     2     
+25.0     25.0     2     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: idx_t_i term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, count(*) from t t where (t.i> ?:?  and t.i< ?:? ) group by t.i having groupby_num()<=? and groupby_num()>? and (t.j> ?:? )
+===================================================
+i    j    count(*)    
+21.0     21.0     2     
+22.0     22.0     2     
+23.0     23.0     2     
+24.0     24.0     2     
+25.0     25.0     2     
+26.0     26.0     2     
+27.0     27.0     2     
+28.0     28.0     2     
+29.0     29.0     2     
+30.0     30.0     2     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, count(*) from t t where t.i is not null  group by t.i having groupby_num()<=? and groupby_num()>? and sum(t.i)>?
+===================================================
+i    j    
+16.0     16.0     
+17.0     17.0     
+18.0     18.0     
+19.0     19.0     
+20.0     20.0     
+21.0     21.0     
+22.0     22.0     
+23.0     23.0     
+24.0     24.0     
+25.0     25.0     
+26.0     26.0     
+27.0     27.0     
+28.0     28.0     
+29.0     29.0     
+30.0     30.0     
+31.0     31.0     
+32.0     32.0     
+33.0     33.0     
+34.0     34.0     
+35.0     35.0     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: idx_t_i term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t t where (t.i> ?:?  and t.i< ?:? ) group by t.j having groupby_num()<=? and groupby_num()>? and (t.i> ?:? )
+===================================================
+i    j    k    
+14.0     14.0     2008-12-25     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.k from t t where (t.k>= ?:?  and t.k<= ?:? ) group by t.k having groupby_num()<=?
+===================================================
+i    j    k    l    m    n    count(l)    
+103.0     103.0     2008-12-25     103     103                                                                                                                                                                                                          103     2     
+104.0     104.0     2008-12-25     104     104                                                                                                                                                                                                          104     2     
+105.0     105.0     2008-12-25     105     105                                                                                                                                                                                                          105     2     
+106.0     106.0     2008-12-25     106     106                                                                                                                                                                                                          106     2     
+107.0     107.0     2008-12-25     107     107                                                                                                                                                                                                          107     2     
+108.0     108.0     2008-12-25     108     108                                                                                                                                                                                                          108     2     
+109.0     109.0     2008-12-25     109     109                                                                                                                                                                                                          109     2     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: idx_t_i term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.k, t.l, t.m, t.n, count(t.l) from t t where (t.i> ?:?  and t.i< ?:? ) group by t.l having groupby_num()<=? and groupby_num()>? and (t.j> ?:? )
+===================================================
+i    j    k    l    m    n    
+102.0     102.0     2008-12-25     102     102                                                                                                                                                                                                          102     
+103.0     103.0     2008-12-25     103     103                                                                                                                                                                                                          103     
+104.0     104.0     2008-12-25     104     104                                                                                                                                                                                                          104     
+105.0     105.0     2008-12-25     105     105                                                                                                                                                                                                          105     
+106.0     106.0     2008-12-25     106     106                                                                                                                                                                                                          106     
+107.0     107.0     2008-12-25     107     107                                                                                                                                                                                                          107     
+108.0     108.0     2008-12-25     108     108                                                                                                                                                                                                          108     
+109.0     109.0     2008-12-25     109     109                                                                                                                                                                                                          109     
+11.0     11.0     2008-12-25     11     11                                                                                                                                                                                                           11     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.k, t.l, t.m, t.n from t t where (t.m> ?:?  and t.m< ?:? ) group by t.m having groupby_num()<=? and groupby_num()>?
+===================================================
+i    j    k    l    m    n    avg(n)    
+103.0     103.0     2008-12-25     103     103                                                                                                                                                                                                          103     103.0     
+104.0     104.0     2008-12-25     104     104                                                                                                                                                                                                          104     104.0     
+105.0     105.0     2008-12-25     105     105                                                                                                                                                                                                          105     105.0     
+106.0     106.0     2008-12-25     106     106                                                                                                                                                                                                          106     106.0     
+107.0     107.0     2008-12-25     107     107                                                                                                                                                                                                          107     107.0     
+108.0     108.0     2008-12-25     108     108                                                                                                                                                                                                          108     108.0     
+109.0     109.0     2008-12-25     109     109                                                                                                                                                                                                          109     109.0     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.k, t.l, t.m, t.n, avg(t.n) from t t where (t.n> ?:?  and t.n< ?:? ) group by t.n having groupby_num()<=? and groupby_num()>?
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+2
+===================================================
+3
+===================================================
+3
+===================================================
+2
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+2
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+a    b    c    
+17     afg     operators list     
+
+Query plan:
+temp(group by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: iscan
+                            class: t node[?]
+                            index: i_t_d term[?] (covers)
+                            cost:  ? card ?
+                 inner: temp
+                            order: UNORDERED
+                            subplan: sscan
+                                         class: t? node[?]
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t?.c from t t left outer join t? t? on t.a=t?.a where (t.a> ?:? ) group by t.a having groupby_num()<=? and groupby_num()>?
+===================================================
+a    b    c    
+17     afg     operators list     
+
+Query plan:
+temp(group by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: t node[?]
+                            index: i_t_d term[?] (covers)
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t? node[?]
+                            index: i_t?_a term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t?.c from t t, t? t? where (t.a> ?:? ) and t.a=t?.a group by t.a having groupby_num()<=? and groupby_num()>?
+===================================================
+a    b    c    
+
+===================================================
+a    b    c    
+11     xab     book descr     
+12     xxy     book chapters     
+13     xa0     author names     
+
+Query plan:
+temp(group by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: t node[?]
+                            index: i_t_d term[?] (covers)
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t? node[?]
+                            index: i_t?_a term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t?.c from t t, t? t? where ((t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? )) and t.a=t?.a group by t.a having groupby_num()<=? and groupby_num()>?
+===================================================
+a    b    c    count(*)    avg(t.a)    
+11     xab     book descr     2     11.0     
+12     xxy     book chapters     2     12.0     
+13     xa0     author names     2     13.0     
+
+Query plan:
+temp(distinct)
+    subplan: temp(group by)
+                 subplan: idx-join (inner join)
+                              outer: iscan
+                                         class: t node[?]
+                                         index: i_t_d term[?] (covers)
+                                         cost:  ? card ?
+                              inner: iscan
+                                         class: t? node[?]
+                                         index: i_t?_a term[?]
+                                         cost:  ? card ?
+                              cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select distinct t.a, t.b, t?.c, count(*), avg(t.a) from t t, t? t? where ((t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? )) and t.a=t?.a group by t.a having groupby_num()<=? and groupby_num()>?
+===================================================
+a    b    c    count(*)    avg(t.a)    
+11     xab     book descr     2     11.0     
+12     xxy     book chapters     2     12.0     
+13     xa0     author names     2     13.0     
+
+Query plan:
+temp(group by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: t node[?]
+                            index: i_t_d term[?] (covers)
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t? node[?]
+                            index: i_t?_a term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t?.c, count(*), avg(t.a) from t t, t? t? where ((t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? )) and t.a=t?.a group by t.a having groupby_num()<=? and groupby_num()>?
+===================================================
+a    b    c    count(*)    
+10     aab     the textbook     2     
+11     xab     book descr     2     
+12     xxy     book chapters     2     
+
+Query plan:
+temp(distinct)
+    subplan: temp(group by)
+                 subplan: idx-join (inner join)
+                              outer: iscan
+                                         class: t node[?]
+                                         index: i_t_d term[?] (covers)
+                                         cost:  ? card ?
+                              inner: iscan
+                                         class: t? node[?]
+                                         index: i_t?_a term[?]
+                                         cost:  ? card ?
+                              cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select distinct t.a, t.b, t?.c, count(*) from t t, t? t? where ((t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? )) and t.a=t?.a group by t.a having groupby_num()<=?
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+3
+===================================================
+2
+===================================================
+3
+===================================================
+3
+===================================================
+2
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+8
+===================================================
+8
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+a    b    c    
+17     afg     operators list     
+
+Query plan:
+temp(group by)
+    subplan: idx-join (left outer join)
+                 outer: iscan
+                            class: t node[?]
+                            index: i_t_d term[?] (covers)
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t? node[?]
+                            index: i_t?_a term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t?.c from t t left outer join t? t? on t.a=t?.a where (t.a> ?:? ) group by t.a having groupby_num()<=? and groupby_num()>?
+===================================================
+a    b    c    
+17     afg     operators list     
+
+Query plan:
+temp(group by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: t node[?]
+                            index: i_t_d term[?] (covers)
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t? node[?]
+                            index: i_t?_a term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t?.c from t t, t? t? where (t.a> ?:? ) and t.a=t?.a group by t.a having groupby_num()<=? and groupby_num()>?
+===================================================
+a    b    c    
+
+Query plan:
+temp(group by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: t node[?]
+                            index: i_t_d term[?] (covers)
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t? node[?]
+                            index: i_t?_a term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t?.c from t t, t? t? where ((t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? )) and t.a=t?.a group by t.c having groupby_num()<=? and groupby_num()>? and (t.a> ?:? )
+===================================================
+a    b    c    
+13     xa0     author names     
+11     xab     book descr     
+12     xxy     book chapters     
+
+Query plan:
+temp(group by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: t node[?]
+                            index: i_t_d term[?] (covers)
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t? node[?]
+                            index: i_t?_a term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t?.c from t t, t? t? where ((t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? )) and t.a=t?.a group by t.b having groupby_num()<=? and groupby_num()>? and (t.a> ?:?  and t.a< ?:? )
+===================================================
+a    b    c    count(*)    
+12     xxy     book chapters     4     
+11     xab     book descr     4     
+10     aab     the textbook     4     
+
+Query plan:
+temp(group by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: t node[?]
+                            index: i_t_d term[?] (covers)
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t? node[?]
+                            index: i_t?_a term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t?.c, count(*) from t t, t? t? where ((t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? )) and t.a=t?.a group by t.c having groupby_num()<=? and groupby_num()>? and (t.a> ?:?  and t.a< ?:? )
+===================================================
+a    b    c    count(*)    
+
+Query plan:
+temp(group by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: t node[?]
+                            index: i_t_d term[?] (covers)
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t? node[?]
+                            index: i_t?_a term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t?.c, count(*) from t t, t? t? where ((t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? )) and t.a=t?.a group by t.c having groupby_num()<=? and groupby_num()>? and (t.a> ?:?  and t.a< ?:? )
+===================================================
+a    b    c    count(*)    
+
+Query plan:
+temp(group by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: t node[?]
+                            index: i_t_d term[?] (covers)
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t? node[?]
+                            index: i_t?_a term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t?.c, count(*) from t t, t? t? where ((t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? )) and t.a=t?.a group by t.c having groupby_num()<=? and groupby_num()>? and (t.a> ?:?  and t.a< ?:? )
+===================================================
+a    b    c    count(*)    
+
+Query plan:
+temp(distinct)
+    subplan: temp(group by)
+                 subplan: idx-join (inner join)
+                              outer: iscan
+                                         class: t node[?]
+                                         index: i_t_d term[?] (covers)
+                                         cost:  ? card ?
+                              inner: iscan
+                                         class: t? node[?]
+                                         index: i_t?_a term[?]
+                                         cost:  ? card ?
+                              cost:  ? card ?
+                 sort:  
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select distinct t.a, t.b, t?.c, count(*) from t t, t? t? where ((t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? )) and t.a=t?.a group by t.c having groupby_num()<=? and groupby_num()>? and (t.a> ?:?  and t.a< ?:? )
+===================================================
+a    b    c    count(*)    
+13     xa0     author names     4     
+12     xxy     book chapters     4     
+11     xab     book descr     4     
+
+Query plan:
+temp(group by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: t node[?]
+                            index: i_t_d term[?] (covers)
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t? node[?]
+                            index: i_t?_a term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t?.c, count(*) from t t, t? t? where ((t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? )) and t.a=t?.a group by t.c having groupby_num()<=? and (t.a> ?:?  and t.a< ?:? )
+===================================================
+a    b    c    count(*)    
+13     xa0     author names     4     
+12     xxy     book chapters     4     
+11     xab     book descr     4     
+
+Query plan:
+temp(group by)
+    subplan: idx-join (left outer join)
+                 outer: iscan
+                            class: t node[?]
+                            index: i_t_d term[?] (covers)
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t? node[?]
+                            index: i_t?_a term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t?.c, count(*) from t t left outer join t? t? on t.a=t?.a where ((t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? )) group by t.c having groupby_num()<=? and (t.a> ?:?  and t.a< ?:? )
+===================================================
+a    b    c    count(*)    
+10     aab     the textbook     4     
+11     xab     book descr     4     
+12     xxy     book chapters     4     
+
+Query plan:
+temp(order by)
+    subplan: temp(group by)
+                 subplan: idx-join (inner join)
+                              outer: iscan
+                                         class: t node[?]
+                                         index: i_t_d term[?] (covers)
+                                         cost:  ? card ?
+                              inner: iscan
+                                         class: t? node[?]
+                                         index: i_t?_a term[?]
+                                         cost:  ? card ?
+                              cost:  ? card ?
+                 sort:  
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t?.c, count(*) from t t, t? t? where ((t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? )) and t.a=t?.a group by t.c having (t.a> ?:?  and t.a< ?:? ) order by ? for orderby_num()<= ?:? 
+===================================================
+a    b    c    count(*)    
+13     xa0     author names     4     
+12     xxy     book chapters     4     
+11     xab     book descr     4     
+10     aab     the textbook     4     
+
+Query plan:
+temp(group by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: t node[?]
+                            index: i_t_d term[?] (covers)
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t? node[?]
+                            index: i_t?_a term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t?.c, count(*) from t t, t? t? where ((t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? )) and t.a=t?.a group by t.c having groupby_num()<=? and (t.a> ?:?  and t.a< ?:? )
+===================================================
+a    b    c    count(*)    
+10     aab     the textbook     4     
+11     xab     book descr     4     
+12     xxy     book chapters     4     
+13     xa0     author names     4     
+
+Query plan:
+temp(order by)
+    subplan: temp(group by)
+                 subplan: idx-join (inner join)
+                              outer: iscan
+                                         class: t node[?]
+                                         index: i_t_d term[?] (covers)
+                                         cost:  ? card ?
+                              inner: iscan
+                                         class: t? node[?]
+                                         index: i_t?_a term[?]
+                                         cost:  ? card ?
+                              cost:  ? card ?
+                 sort:  
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t?.c, count(*) from t t, t? t? where ((t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? )) and t.a=t?.a group by t.c having (t.a> ?:?  and t.a< ?:? ) order by ? for orderby_num()<= ?:? 
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+72
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+0
+===================================================
+a    b    a    b    c    d    e    
+3     2     3     2     2     1     1.0     
+1     2     1     2     2     1     2.0     
+3     2     3     2     2     1     2.0     
+3     2     3     2     2     1     3.0     
+1     2     1     2     2     1     3.0     
+1     2     1     2     2     1     1.0     
+3     2     3     2     1     1     3.0     
+1     2     1     2     1     1     3.0     
+3     2     3     2     1     1     2.0     
+3     2     3     2     1     1     1.0     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: s node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t node[?]
+                            index: idx_a_b_cd_d term[?] AND term[?]
+                            filtr: term[?] AND term[?] AND term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ s.a, s.b, t.a, t.b, t.c, t.d, t.e from s s inner join t t on s.b=t.b and s.a=t.a where ((t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? )) and t.b<>? and t.a<>? and t.d<>? order by ? desc , ? for orderby_num()<= ?:? 
+===================================================
+a    b    a    b    c    d    e    
+1     2     1     2     2     1     3.0     
+1     2     1     2     2     1     2.0     
+1     2     1     2     2     1     1.0     
+1     2     1     2     1     1     3.0     
+1     2     1     2     1     1     2.0     
+1     2     1     2     1     1     1.0     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: s node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t node[?]
+                            index: idx_a_b_cd_d term[?] AND term[?]
+                            filtr: term[?] AND term[?] AND term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ s.a, s.b, t.a, t.b, t.c, t.d, t.e from s s inner join t t on s.b=t.b and s.a=t.a where t.a not in multiset{?, ?, ?, ?, ?} and t.b<>? and t.a<>? and t.d<>? order by ? desc , ? for orderby_num()<= ?:? 
+===================================================
+a    b    a    b    c    d    e    
+1     2     1     2     2     1     3.0     
+1     2     1     2     2     1     2.0     
+1     2     1     2     2     1     1.0     
+1     2     1     2     1     1     3.0     
+1     2     1     2     1     1     2.0     
+1     2     1     2     1     1     1.0     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: s node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t node[?]
+                            index: idx_a_b_cd_d term[?] AND term[?]
+                            filtr: term[?] AND term[?] AND term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ s.a, s.b, t.a, t.b, t.c, t.d, t.e from s s inner join t t where t.a not in multiset{?, ?, ?, ?, ?} and t.b<>? and t.a<>? and t.d<>? and s.a=t.a and s.b=t.b order by ? desc , ? for orderby_num()<= ?:? 
+===================================================
+a    b    a    b    c    d    e    
+1     2     1     2     2     1     1.0     
+1     2     1     2     2     1     2.0     
+1     2     1     2     2     1     3.0     
+1     2     1     2     1     1     1.0     
+1     2     1     2     1     1     2.0     
+1     2     1     2     1     1     3.0     
+
+Query plan:
+temp(order by)
+    subplan: temp
+                 order: a[?]
+                 subplan: m-join (right outer join)
+                              edge:  term[?] AND term[?]
+                              outer: temp
+                                         order: a[?]
+                                         subplan: sscan
+                                                      class: s node[?]
+                                                      cost:  ? card ?
+                                         cost:  ? card ?
+                              inner: temp
+                                         order: a[?]
+                                         subplan: temp(sort limit)
+                                                      subplan: sscan
+                                                                   class: t node[?]
+                                                                   sargs: term[?] AND term[?] AND term[?] AND term[?]
+                                                                   cost:  ? card ?
+                                                      cost:  ? card ?
+                                         cost:  ? card ?
+                              cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_MERGE */ s.a, s.b, t.a, t.b, t.c, t.d, t.e from s s right outer join t t on s.b=t.b and s.a=t.a where t.a not in multiset{?, ?, ?, ?, ?} and t.b<>? and t.a<>? and t.d<>? order by ? desc , ?, ? for orderby_num()<= ?:? 
+===================================================
+a    b    a    b    c    d    e    
+1     2     1     2     2     1     3.0     
+1     2     1     2     2     1     2.0     
+1     2     1     2     2     1     1.0     
+1     2     1     2     1     1     3.0     
+1     2     1     2     1     1     2.0     
+1     2     1     2     1     1     1.0     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: s node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t node[?]
+                            index: idx_a_b_cd_d term[?] AND term[?]
+                            filtr: term[?] AND term[?] AND term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ s.a, s.b, t.a, t.b, t.c, t.d, t.e from s s inner join t t on s.b=t.b and s.a=t.a where t.a not in multiset{?, ?, ?, ?, ?} and t.b<>? and t.a<>? and t.d<>? order by ? desc , ? for orderby_num()<= ?:? 
+===================================================
+a    b    c    d    e    a    b    
+1     1     2     1     2.0     3     1     
+1     1     2     1     3.0     3     1     
+1     1     2     1     1.0     3     1     
+1     1     2     1     2.0     2     1     
+1     1     2     1     3.0     1     1     
+1     1     2     1     3.0     2     1     
+1     1     2     1     1.0     1     1     
+1     1     2     1     1.0     2     1     
+1     1     2     1     2.0     1     1     
+3     1     2     1     1.0     1     1     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: iscan
+                            class: t node[?]
+                            index: idx_a_b_cd_d term[?] AND term[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: s node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ t.a, t.b, t.c, t.d, t.e, s.a, s.b from t t inner join s s on s.b=t.b and s.b= ?:?  where ((t.a= ?:? ) or (t.a= ?:? )) and t.b= ?:?  order by ? desc , ? for orderby_num()<= ?:? 
+===================================================
+a    b    c    d    e    a    b    
+1     1     2     1     3.0     1     2     
+3     1     2     1     2.0     3     1     
+1     1     2     1     2.0     1     1     
+1     1     2     1     3.0     1     1     
+3     1     2     1     1.0     3     1     
+3     1     2     1     1.0     3     2     
+1     1     2     1     1.0     1     1     
+1     1     2     1     1.0     1     2     
+1     1     2     1     2.0     1     2     
+3     1     2     1     2.0     3     2     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: iscan
+                            class: t node[?]
+                            index: idx_a_b_cd_d term[?] AND term[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: s node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ t.a, t.b, t.c, t.d, t.e, s.a, s.b from t t inner join s s on s.a=t.a where ((t.a= ?:? ) or (t.a= ?:? )) and t.b= ?:?  order by ? desc , ? for orderby_num()<= ?:? 
+===================================================
+a    b    c    d    e    a    b    
+1     1     2     1     2.0     1     2     
+3     1     2     1     3.0     1     2     
+1     1     2     1     1.0     1     2     
+3     1     2     1     1.0     1     2     
+1     1     2     1     3.0     1     2     
+3     1     2     1     2.0     1     2     
+1     1     2     2     3.0     1     2     
+1     1     2     2     1.0     1     2     
+1     1     2     2     2.0     1     2     
+3     1     2     2     1.0     1     2     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: iscan
+                            class: t node[?]
+                            index: idx_a_b_cd_d term[?] AND term[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: s node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ t.a, t.b, t.c, t.d, t.e, s.a, s.b from t t inner join s s on s.a=t.b and s.a= ?:?  and s.b=t.c where ((t.a= ?:? ) or (t.a= ?:? )) and t.b= ?:?  order by ? desc , ? for orderby_num()<= ?:? 
+===================================================
+a    b    c    d    e    a    b    
+3     1     1     2     1.0     1     1     
+3     1     1     2     2.0     2     1     
+1     1     1     2     3.0     3     1     
+1     1     1     2     3.0     3     2     
+3     1     1     2     1.0     1     2     
+1     1     1     2     1.0     1     1     
+1     1     1     2     1.0     1     2     
+1     1     1     2     2.0     2     1     
+1     1     1     2     2.0     2     2     
+3     1     1     2     2.0     2     2     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: iscan
+                            class: t node[?]
+                            index: idx_a_b_cd_d term[?] AND term[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: s node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ t.a, t.b, t.c, t.d, t.e, s.a, s.b from t t inner join s s on s.a=t.e where ((t.a= ?:? ) or (t.a= ?:? )) and t.b= ?:?  order by ?, ? desc  for orderby_num()<= ?:? 
+===================================================
+a    b    c    d    e    a    b    
+1     1     2     2     1.0     1     1     
+1     1     2     1     3.0     1     1     
+1     1     2     2     3.0     1     1     
+1     1     2     1     1.0     1     1     
+1     1     2     1     2.0     1     1     
+1     1     2     2     2.0     1     1     
+1     1     2     2     1.0     1     2     
+1     1     2     1     3.0     1     2     
+1     1     2     1     2.0     1     2     
+1     1     2     1     1.0     1     2     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: iscan
+                            class: t node[?]
+                            index: idx_a_b_cd_d term[?] AND term[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: s node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ t.a, t.b, t.c, t.d, t.e, s.a, s.b from t t inner join s s on s.a=t.a where ((t.a= ?:? ) or (t.a= ?:? )) and t.b= ?:?  order by ? desc , ?, ?, ? for orderby_num()<= ?:? 
+===================================================
+a    b    c    d    e    a    b    
+1     1     2     2     1.0     1     1     
+1     1     2     1     3.0     1     1     
+1     1     2     2     3.0     1     1     
+1     1     2     1     1.0     1     1     
+1     1     2     1     2.0     1     1     
+1     1     2     2     2.0     1     1     
+1     1     2     2     1.0     1     2     
+1     1     2     1     3.0     1     2     
+1     1     2     1     2.0     1     2     
+1     1     2     1     1.0     1     2     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: iscan
+                            class: t node[?]
+                            index: idx_a_b_cd_d term[?] AND term[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: s node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_MULTI_RANGE_OPT */ t.a, t.b, t.c, t.d, t.e, s.a, s.b from t t inner join s s on s.a=t.a where ((t.a= ?:? ) or (t.a= ?:? )) and t.b= ?:?  order by ? desc , ?, ?, ? for orderby_num()<= ?:? 
+===================================================
+a    b    c    d    e    sa    sb    ua    ub    
+1     1     2     1     2.0     3     1     1     1     
+1     1     2     1     3.0     3     1     1     1     
+1     1     2     1     1.0     3     1     1     1     
+1     1     2     1     2.0     2     1     1     1     
+1     1     2     1     3.0     1     1     1     1     
+1     1     2     1     3.0     2     1     1     1     
+1     1     2     1     1.0     1     1     1     1     
+1     1     2     1     1.0     2     1     1     1     
+1     1     2     1     2.0     1     1     1     1     
+3     1     2     1     1.0     1     1     1     1     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: nl-join (cross join)
+                            outer: iscan
+                                       class: t node[?]
+                                       index: idx_a_b_cd_d term[?] AND term[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: s node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: iscan
+                            class: u node[?]
+                            index: idx_u_a term[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ t.a, t.b, t.c, t.d, t.e, s.a, s.b, u.a, u.b from t t, s s, u u where ((t.a= ?:? ) or (t.a= ?:? )) and u.b= ?:?  and u.a= ?:?  and s.b= ?:?  and t.b= ?:?  and t.b=s.b and t.b=u.a and s.b=u.b order by ? desc , ? for orderby_num()<= ?:? 
+===================================================
+a    b    c    d    e    sa    sb    ua    ub    
+1     1     2     1     2.0     1     1     1     1     
+3     1     2     1     3.0     3     1     1     1     
+1     1     2     1     1.0     1     1     1     1     
+3     1     2     1     1.0     3     1     1     1     
+1     1     2     1     3.0     1     1     1     1     
+3     1     2     1     2.0     3     1     1     1     
+1     1     2     2     3.0     1     1     1     1     
+1     1     2     2     1.0     1     1     1     1     
+1     1     2     2     2.0     1     1     1     1     
+3     1     2     2     1.0     3     1     1     1     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: nl-join (inner join)
+                            edge:  term[?]
+                            outer: iscan
+                                       class: t node[?]
+                                       index: idx_a_b_cd_d term[?] AND term[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: s node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: iscan
+                            class: u node[?]
+                            index: idx_u_a term[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ t.a, t.b, t.c, t.d, t.e, s.a, s.b, u.a, u.b from t t, s s, u u where t.a=s.a and s.b=u.b and ((t.a= ?:? ) or (t.a= ?:? )) and u.a= ?:?  and t.b= ?:?  and t.b=u.a order by ? desc , ? for orderby_num()<= ?:? 
+===================================================
+a    b    c    d    e    sa    sb    ua    ub    
+3     1     2     1     1.0     3     1     1     1     
+1     1     2     1     2.0     1     1     1     1     
+3     1     2     1     2.0     3     1     1     1     
+3     1     2     1     3.0     3     1     1     1     
+1     1     2     1     3.0     1     1     1     1     
+1     1     2     1     1.0     1     1     1     1     
+3     1     1     1     3.0     3     1     1     1     
+1     1     1     1     3.0     1     1     1     1     
+3     1     1     1     2.0     3     1     1     1     
+3     1     1     1     1.0     3     1     1     1     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: nl-join (inner join)
+                            edge:  term[?]
+                            outer: iscan
+                                       class: t node[?]
+                                       index: idx_a_b_cd_d term[?] AND term[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: s node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: iscan
+                            class: u node[?]
+                            index: idx_u_a term[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ t.a, t.b, t.c, t.d, t.e, s.a, s.b, u.a, u.b from t t, s s, u u where t.a=s.a and t.d=u.a and s.b=u.b and ((t.a= ?:? ) or (t.a= ?:? )) and t.b= ?:?  order by ? desc , ? for orderby_num()<= ?:? 
+===================================================
+a    b    c    d    e    sa    sb    ua    ub    
+1     1     2     1     1.0     1     1     1     1     
+1     1     2     2     1.0     1     1     1     1     
+1     1     2     2     2.0     2     1     1     1     
+1     1     2     1     2.0     2     1     1     1     
+1     1     2     1     3.0     3     1     1     1     
+1     1     2     2     3.0     3     1     1     1     
+3     1     2     1     1.0     1     1     1     1     
+3     1     2     2     1.0     1     1     1     1     
+3     1     2     1     2.0     2     1     1     1     
+3     1     2     2     2.0     2     1     1     1     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: nl-join (inner join)
+                            edge:  term[?]
+                            outer: iscan
+                                       class: t node[?]
+                                       index: idx_a_b_cd_d term[?] AND term[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: s node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: iscan
+                            class: u node[?]
+                            index: idx_u_a term[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ t.a, t.b, t.c, t.d, t.e, s.a, s.b, u.a, u.b from t t, s s, u u where t.e=s.a and s.b=u.b and ((t.a= ?:? ) or (t.a= ?:? )) and u.a= ?:?  and t.b= ?:?  and t.b=u.a order by ? desc , ?, ? for orderby_num()<= ?:? 
+===================================================
+0
+===================================================
+0
+===================================================
+0

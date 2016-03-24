@@ -1,0 +1,338 @@
+===================================================
+position('abc' in '123abc134')    
+4     
+
+===================================================
+position('abc' in '')    
+0     
+
+===================================================
+position('' in '123abc134')    
+1     
+
+===================================================
+position('' in '')    
+1     
+
+===================================================
+substring('this is a test' from 6)    
+is a test     
+
+===================================================
+substring('this is a test' from 6 for 3)    
+is      
+
+===================================================
+substring('1234567' from 4 for 12)    
+4567     
+
+===================================================
+substring('' from 4 for 12)    
+     
+
+===================================================
+octet_length('123456789012')    
+12     
+
+===================================================
+bit_length(B'101011011')    
+9     
+
+===================================================
+char_length('123456789012')    
+12     
+
+===================================================
+lower('THIS IS A TEST')    
+this is a test     
+
+===================================================
+upper('this is a test')    
+THIS IS A TEST     
+
+===================================================
+trim(both  from '   this is a test    ')    
+this is a test     
+
+===================================================
+trim(both  from '       ')    
+     
+
+===================================================
+trim(leading  from '       ')    
+     
+
+===================================================
+trim(trailing  from '       ')    
+     
+
+===================================================
+trim(both  from '       ')    
+     
+
+===================================================
+trim(leading  from '   this is a test    ')    
+this is a test         
+
+===================================================
+trim(trailing  from '   this is a test    ')    
+   this is a test     
+
+===================================================
+trim(both  from '   this is a test    ')    
+this is a test     
+
+===================================================
+trim(leading '1' from '1111211this is a test11211')    
+211this is a test11211     
+
+===================================================
+trim(trailing '1' from '1111211this is a test11211')    
+1111211this is a test112     
+
+===================================================
+trim(both '1' from '1111211this is a test11211')    
+211this is a test112     
+
+===================================================
+trim(both ' ' from '   12e3r908   ')    
+12e3r908     
+
+===================================================
+'this is a test'+'foo foo foo'    
+this is a testfoo foo foo     
+
+===================================================
+'this is a test'+' '    
+this is a test      
+
+===================================================
+' '+'foo foo foo'    
+ foo foo foo     
+
+===================================================
+' '+' '    
+       
+
+===================================================
+''+''    
+     
+
+===================================================
+B''+B''    
+null     
+
+===================================================
+B'101011011'+X'abc'    
+add5e0     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+a    position('abc' in a)    
+1111234324311111     0     
+123abc134     4     
+   this is a test        0     
+THIS IS A TEST     0     
+thIS iS a TEst     0     
+
+===================================================
+a    b    position(b in a)    
+1111234324311111     abc     0     
+123abc134     abc     4     
+   this is a test        abc     0     
+THIS IS A TEST     abc     0     
+thIS iS a TEst     abc     0     
+
+===================================================
+a    c    substring(a from c)    
+1111234324311111     6     34324311111     
+123abc134     6     c134     
+   this is a test        6     is is a test        
+THIS IS A TEST     6     IS A TEST     
+thIS iS a TEst     6     iS a TEst     
+
+===================================================
+a    c    substring(a from c for c/2)    
+1111234324311111     6     343     
+123abc134     6     c13     
+   this is a test        6     is      
+THIS IS A TEST     6     IS      
+thIS iS a TEst     6     iS      
+
+===================================================
+a    octet_length(a)    
+1111234324311111     16     
+123abc134     9     
+   this is a test        20     
+THIS IS A TEST     14     
+thIS iS a TEst     14     
+
+===================================================
+a    bit_length(a)    
+1111234324311111     128     
+123abc134     72     
+   this is a test        160     
+THIS IS A TEST     112     
+thIS iS a TEst     112     
+
+===================================================
+a    char_length(a)    
+1111234324311111     16     
+123abc134     9     
+   this is a test        20     
+THIS IS A TEST     14     
+thIS iS a TEst     14     
+
+===================================================
+a    lower(a)    
+1111234324311111     1111234324311111     
+123abc134     123abc134     
+   this is a test           this is a test        
+THIS IS A TEST     this is a test     
+thIS iS a TEst     this is a test     
+
+===================================================
+a    upper(a)    
+1111234324311111     1111234324311111     
+123abc134     123ABC134     
+   this is a test           THIS IS A TEST        
+THIS IS A TEST     THIS IS A TEST     
+thIS iS a TEst     THIS IS A TEST     
+
+===================================================
+a    trim(both  from a)    
+1111234324311111     1111234324311111     
+123abc134     123abc134     
+   this is a test        this is a test     
+THIS IS A TEST     THIS IS A TEST     
+thIS iS a TEst     thIS iS a TEst     
+
+===================================================
+a    trim(leading  from a)    
+1111234324311111     1111234324311111     
+123abc134     123abc134     
+   this is a test        this is a test        
+THIS IS A TEST     THIS IS A TEST     
+thIS iS a TEst     thIS iS a TEst     
+
+===================================================
+a    trim(trailing  from a)    
+1111234324311111     1111234324311111     
+123abc134     123abc134     
+   this is a test           this is a test     
+THIS IS A TEST     THIS IS A TEST     
+thIS iS a TEst     thIS iS a TEst     
+
+===================================================
+a    trim(both  from a)    
+1111234324311111     1111234324311111     
+123abc134     123abc134     
+   this is a test        this is a test     
+THIS IS A TEST     THIS IS A TEST     
+thIS iS a TEst     thIS iS a TEst     
+
+===================================================
+a    trim(leading '1' from a)    
+1111234324311111     234324311111     
+123abc134     23abc134     
+   this is a test           this is a test        
+THIS IS A TEST     THIS IS A TEST     
+thIS iS a TEst     thIS iS a TEst     
+
+===================================================
+a    trim(trailing '1' from a)    
+1111234324311111     11112343243     
+123abc134     123abc134     
+   this is a test           this is a test        
+THIS IS A TEST     THIS IS A TEST     
+thIS iS a TEst     thIS iS a TEst     
+
+===================================================
+a    trim(both '1' from a)    
+1111234324311111     2343243     
+123abc134     23abc134     
+   this is a test           this is a test        
+THIS IS A TEST     THIS IS A TEST     
+thIS iS a TEst     thIS iS a TEst     
+
+===================================================
+a    trim(both ' ' from a)    
+1111234324311111     1111234324311111     
+123abc134     123abc134     
+   this is a test        this is a test     
+THIS IS A TEST     THIS IS A TEST     
+thIS iS a TEst     thIS iS a TEst     
+
+===================================================
+a    b    trim(leading b from a)    
+1111234324311111     1     234324311111     
+123abc134     1     23abc134     
+   this is a test        1        this is a test        
+THIS IS A TEST     1     THIS IS A TEST     
+thIS iS a TEst     1     thIS iS a TEst     
+
+===================================================
+a    b    trim(trailing b from a)    
+1111234324311111     1     11112343243     
+123abc134     1     123abc134     
+   this is a test        1        this is a test        
+THIS IS A TEST     1     THIS IS A TEST     
+thIS iS a TEst     1     thIS iS a TEst     
+
+===================================================
+a    b    trim(both b from a)    
+1111234324311111     1     2343243     
+123abc134     1     23abc134     
+   this is a test        1        this is a test        
+THIS IS A TEST     1     THIS IS A TEST     
+thIS iS a TEst     1     thIS iS a TEst     
+
+===================================================
+a    b    a+b    
+1111234324311111     1     11112343243111111     
+1111234324311111     abc     1111234324311111abc     
+123abc134     1     123abc1341     
+123abc134     abc     123abc134abc     
+   this is a test        1        this is a test   1     
+   this is a test        abc        this is a test   abc     
+THIS IS A TEST     1     THIS IS A TEST1     
+THIS IS A TEST     abc     THIS IS A TESTabc     
+thIS iS a TEst     1     thIS iS a TEst1     
+thIS iS a TEst     abc     thIS iS a TEstabc     
+
+===================================================
+a    b    substring(a from  position(b in a) for  char_length(b)+2)    
+1111234324311111     1     111     
+1111234324311111     abc     11112     
+123abc134     1     123     
+123abc134     abc     abc13     
+   this is a test        1             
+   this is a test        abc        th     
+THIS IS A TEST     1     THI     
+THIS IS A TEST     abc     THIS      
+thIS iS a TEst     1     thI     
+thIS iS a TEst     abc     thIS      
+
+===================================================
+0

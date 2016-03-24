@@ -1,0 +1,14 @@
+--+ holdcas on;
+set names utf8;
+create table t1 (s1 string charset utf8 collate 'utf8_ko_cs_uca');
+insert into t1 values ('가'),( '伽');
+select * from t1 order by 1;
+SHOW full COLUMNS FROM t1;
+create table t2 (s1 string charset utf8 collate 'utf8_gen');
+insert into t2 select * from t1;
+select * from t2 order by 1;
+SHOW full COLUMNS FROM t2;
+drop t1,t2;
+set names iso88591;
+commit;
+--+ holdcas off;

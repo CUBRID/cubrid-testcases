@@ -1,0 +1,10 @@
+autocommit off;
+create class foo (a int, b int unique);
+create class bar as subclass of foo (c int, d int unique);
+insert into foo values(1, 1);
+insert into foo values(1, 2);
+insert into foo values(1, 1);
+select * from foo;
+select * from bar;
+rollback work;
+rollback;

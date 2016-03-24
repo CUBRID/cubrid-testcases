@@ -1,0 +1,160 @@
+--+ holdcas on;
+set names utf8;
+set system parameters 'intl_number_lang = tr_TR';
+set system parameters 'intl_date_lang = tr_TR';
+-- TO_CHAR (TIMESTAMP, day)
+select 'TO_CHAR(TIMESTAMP, day)';
+--test
+SELECT TO_CHAR(TIMESTAMP'03:49:19 PM 05/01/2011', 'day' , 'ko_KR' );
+
+
+select 'TO_CHAR(TIMESTAMP, dy)';
+--test
+SELECT TO_CHAR(TIMESTAMP'03:49:19 PM 05/07/2011', 'dy' , 'ko_KR' );
+
+select 'TO_CHAR(TIMESTAMP, DAY)';
+--test
+SELECT TO_CHAR(TIMESTAMP'13:49:19  05/02/2011', 'DAY' , 'ko_KR' );
+
+
+select 'TO_CHAR(TIMESTAMP, DY)';
+--test
+SELECT TO_CHAR(TIMESTAMP'13:49:19  05/03/2011', 'DY' , 'ko_KR' );
+
+
+select 'TO_CHAR(TIMESTAMP, MONTH)';
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-01-01 10:11:12', 'MONTH' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-02-01 10:11:12', 'MONTH' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-03-01 10:11:12', 'MONTH' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-04-01 10:11:12', 'MONTH' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-05-01 10:11:12', 'MONTH' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-06-01 10:11:12', 'MONTH' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-07-01 10:11:12', 'MONTH' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-08-01 10:11:12', 'MONTH' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-09-01 10:11:12', 'MONTH' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-10-01 10:11:12', 'MONTH' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-11-01 10:11:12', 'MONTH' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-12-01 10:11:12', 'MONTH' , 'ko_KR' );
+
+select 'TO_CHAR(TIMESTAMP, month)';
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-01-01 10:11:12', 'month' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-02-01 10:11:12', 'month' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-03-01 10:11:12', 'month' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-04-01 10:11:12', 'month' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-05-01 10:11:12', 'month' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-06-01 10:11:12', 'month' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-07-01 10:11:12', 'month' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-08-01 10:11:12', 'month' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-09-01 10:11:12', 'month' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-10-01 10:11:12', 'month' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-11-01 10:11:12', 'month' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-12-01 10:11:12', 'month' , 'ko_KR' );
+
+select 'TO_CHAR(TIMESTAMP, MON)';
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-01-01 10:11:12', 'MON' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-02-01 10:11:12', 'MON' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-03-01 10:11:12', 'MON' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-04-01 10:11:12', 'MON' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-05-01 10:11:12', 'MON' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-06-01 10:11:12', 'MON' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-07-01 10:11:12', 'MON' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-08-01 10:11:12', 'MON' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-09-01 10:11:12', 'MON' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-10-01 10:11:12', 'MON' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-11-01 10:11:12', 'MON' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-12-01 10:11:12', 'MON' , 'ko_KR' );
+
+select 'TO_CHAR(TIMESTAMP, mon)';
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-01-01 10:11:12', 'mon' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-02-01 10:11:12', 'mon' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-03-01 10:11:12', 'mon' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-04-01 10:11:12', 'mon' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-05-01 10:11:12', 'mon' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-06-01 10:11:12', 'mon' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-07-01 10:11:12', 'mon' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-08-01 10:11:12', 'mon' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-09-01 10:11:12', 'mon' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-10-01 10:11:12', 'mon' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-11-01 10:11:12', 'mon' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-12-01 10:11:12', 'mon' , 'ko_KR' );
+
+select 'TO_CHAR(TIMESTAMP, AM/PM)';
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-12-01 10:11:12', 'HH:MI:SS AM' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-12-01 20:11:12', 'HH:MI:SS PM' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-12-01 10:11:12', 'HH:MI:SS am' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-12-01 20:11:12', 'HH:MI:SS pm' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-12-01 10:11:12', 'HH:MI:SS Am' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-12-01 20:11:12', 'HH:MI:SS Pm' , 'ko_KR' );
+
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-12-01 10:11:12', 'HH:MI:SS a.m.' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-12-01 20:11:12', 'HH:MI:SS p.m.' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-12-01 10:11:12', 'HH:MI:SS A.M.' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-12-01 20:11:12', 'HH:MI:SS A.M.' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-12-01 10:11:12', 'HH:MI:SS A.m.' , 'ko_KR' );
+--test
+SELECT TO_CHAR(TIMESTAMP'2011-12-01 20:11:12', 'HH:MI:SS A.m.' , 'ko_KR' );
+
+set system parameters 'intl_date_lang = en_US';
+set system parameters 'intl_number_lang = en_US';
+set names iso88591;
+commit;
+--+ holdcas off;

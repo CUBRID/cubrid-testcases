@@ -1,0 +1,492 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+10
+===================================================
+0
+===================================================
+0
+===================================================
+10
+===================================================
+0
+===================================================
+id    id    
+2     2     
+2     2     
+2     2     
+2     2     
+3     3     
+3     3     
+3     3     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+7     7     
+7     7     
+7     7     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: t? node[?]
+               index: idx_tbl? term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t? node[?]
+               index: idx_tbl? term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.id from tbl t?, tbl? t? where t?.id=t?.id and (t?.id> ?:? ) and t?.[text] is not null  and t?.prefix is not null 
+===================================================
+id    id    text    
+2     2     AABBC     
+2     2     AABBC     
+2     2     AACCB     
+2     2     AACCB     
+3     3     ABABC     
+3     3     ABABC     
+3     3     BABBC     
+3     3     BABBC     
+4     4     CAABC     
+5     5     AAABC     
+6     6     ABBBC     
+7     7     AACBC     
+7     7     AACBC     
+7     7     ACABC     
+7     7     ACABC     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: t? node[?]
+               index: idx_tbl? term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t? node[?]
+               index: idx_tbl? term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.id, t?.[text] from tbl t?, tbl? t? where t?.id=t?.id and (t?.id> ?:? ) and t?.[text] is not null  and t?.prefix is not null 
+===================================================
+id    id    prefix    
+2     2     AAB     
+2     2     AAB     
+2     2     AAC     
+2     2     AAC     
+3     3     ABA     
+3     3     ABA     
+3     3     BAB     
+3     3     BAB     
+4     4     CAA     
+5     5     AAA     
+6     6     ABB     
+7     7     AAC     
+7     7     AAC     
+7     7     ACA     
+7     7     ACA     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: t? node[?]
+                            index: idx_tbl? term[?] (covers)
+                            filtr: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t? node[?]
+                            index: idx_tbl? term[?] (covers)
+                            filtr: term[?]
+                            cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.id, t?.prefix from tbl t?, tbl? t? where t?.id=t?.id and (t?.id> ?:? ) and t?.[text] is not null  and t?.prefix is not null  order by ?, ?, ?
+===================================================
+id    id    text    prefix    
+2     2     AABBC     AAB     
+2     2     AABBC     AAC     
+2     2     AACCB     AAB     
+2     2     AACCB     AAC     
+3     3     ABABC     ABA     
+3     3     ABABC     BAB     
+3     3     BABBC     ABA     
+3     3     BABBC     BAB     
+4     4     CAABC     CAA     
+5     5     AAABC     AAA     
+6     6     ABBBC     ABB     
+7     7     AACBC     AAC     
+7     7     AACBC     ACA     
+7     7     ACABC     AAC     
+7     7     ACABC     ACA     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: t? node[?]
+                            index: idx_tbl? term[?] (covers)
+                            filtr: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t? node[?]
+                            index: idx_tbl? term[?] (covers)
+                            filtr: term[?]
+                            cost:  ? card ?
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.id, t?.[text], t?.prefix from tbl t?, tbl? t? where t?.id=t?.id and (t?.id> ?:? ) and t?.[text] is not null  and t?.prefix is not null  order by ?, ?, ?, ?
+===================================================
+id    id    id    
+2     2     2     
+2     2     2     
+2     2     2     
+2     2     2     
+2     2     2     
+2     2     2     
+2     2     2     
+2     2     2     
+3     3     3     
+3     3     3     
+3     3     3     
+3     3     3     
+3     3     3     
+3     3     3     
+3     3     3     
+3     3     3     
+4     4     4     
+5     5     5     
+6     6     6     
+7     7     7     
+7     7     7     
+7     7     7     
+7     7     7     
+7     7     7     
+7     7     7     
+7     7     7     
+7     7     7     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: iscan
+                          class: t? node[?]
+                          index: idx_tbl? term[?] (covers)
+                          filtr: term[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: t? node[?]
+                          index: idx_tbl? term[?] (covers)
+                          filtr: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: t? node[?]
+               index: idx_tbl? term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.id, t?.id from tbl t?, tbl? t?, tbl? t? where t?.id=t?.id and t?.id=t?.id and (t?.id> ?:? ) and t?.[text] is not null  and t?.prefix is not null  and t?.prefix is not null 
+===================================================
+id    id    prefix    
+2     2     AA     
+2     2     AA     
+2     2     AA     
+2     2     AA     
+2     2     AA     
+2     2     AA     
+2     2     AA     
+2     2     AA     
+3     3     AB     
+3     3     BA     
+3     3     AB     
+3     3     BA     
+3     3     AB     
+3     3     BA     
+3     3     AB     
+3     3     BA     
+4     4     CA     
+5     5     AA     
+6     6     AB     
+7     7     AA     
+7     7     AC     
+7     7     AA     
+7     7     AC     
+7     7     AA     
+7     7     AC     
+7     7     AA     
+7     7     AC     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: iscan
+                          class: t? node[?]
+                          index: idx_tbl? term[?] (covers)
+                          filtr: term[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: t? node[?]
+                          index: idx_tbl? term[?] (covers)
+                          filtr: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: t? node[?]
+               index: idx_tbl? term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.id, t?.prefix from tbl t?, tbl? t?, tbl? t? where t?.id=t?.id and t?.id=t?.id and (t?.id> ?:? ) and t?.[text] is not null  and t?.prefix is not null  and t?.prefix is not null 
+===================================================
+id    text    
+2     AABBC     
+2     AABBC     
+2     AACCB     
+2     AACCB     
+3     ABABC     
+3     ABABC     
+3     BABBC     
+3     BABBC     
+4     CAABC     
+5     AAABC     
+6     ABBBC     
+7     AACBC     
+7     AACBC     
+7     ACABC     
+7     ACABC     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: t? node[?]
+               index: idx_tbl? term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t? node[?]
+               index: idx_tbl? term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.[text] from tbl t?, tbl? t? where (t?.id> ?:? ) and t?.[text] is not null  and t?.prefix is not null  and t?.id=t?.id
+===================================================
+id    text    
+2     AABBC     
+2     AABBC     
+2     AACCB     
+2     AACCB     
+3     ABABC     
+3     ABABC     
+3     BABBC     
+3     BABBC     
+4     CAABC     
+5     AAABC     
+6     ABBBC     
+7     AACBC     
+7     AACBC     
+7     ACABC     
+7     ACABC     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: t? node[?]
+               index: idx_tbl? term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t? node[?]
+               index: idx_tbl? term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.[text] from tbl t?, tbl? t? where (t?.id> ?:? ) and t?.[text] is not null  and t?.prefix is not null  and t?.id=t?.id
+===================================================
+id    text    
+2     AABBC     
+2     AABBC     
+2     AACCB     
+2     AACCB     
+3     ABABC     
+3     ABABC     
+3     BABBC     
+3     BABBC     
+4     CAABC     
+5     AAABC     
+6     ABBBC     
+7     AACBC     
+7     AACBC     
+7     ACABC     
+7     ACABC     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: t? node[?]
+               index: idx_tbl? term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t? node[?]
+               index: idx_tbl? term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.[text] from tbl t?, tbl? t? where (t?.id> ?:? ) and t?.[text] is not null  and t?.prefix is not null  and t?.id=t?.id
+===================================================
+id    
+1     
+2     
+2     
+3     
+3     
+4     
+5     
+6     
+7     
+7     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx_tbl? term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+(select t?.id from tbl? t? where t?.id=t?.id)
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx_tbl? term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+(select t?.id, (select t?.id from tbl? t? where t?.id=t?.id) from tbl? t? where t?.id= ?:? )
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: t? node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: t? node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.id from tbl t?, (select t?.id, (select t?.id from tbl? t? where t?.id=t?.id) from tbl? t? where t?.id= ?:? ) t? (id, t?_?) where t?.id is not null  order by ?
+===================================================
+id    text    (select t2.id from tbl2 t2 where t1.id=t2.id)    
+1     AAABC     1     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx_tbl? term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+(select t?.id from tbl? t? where t?.id=t?.id)
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx_tbl? term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.[text], (select t?.id from tbl? t? where t?.id=t?.id) from tbl t? where t?.id= ?:? 
+===================================================
+id    text    
+2     AABBC     
+2     AACCB     
+3     ABABC     
+3     BABBC     
+4     CAABC     
+5     AAABC     
+6     ABBBC     
+7     AACBC     
+7     ACABC     
+
+Query plan:
+temp(distinct)
+    subplan: iscan
+                 class: t? node[?]
+                 index: idx_tbl? term[?] (covers)
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct t?.id from tbl? t? where t?.id=t?.id)
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx_tbl? term[?] (covers)
+    sargs: term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.[text] from tbl t? where t?.id in (select distinct t?.id from tbl? t? where t?.id=t?.id) and (t?.id> ?:? )
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+0

@@ -1,0 +1,13 @@
+SELECT CEIL(0) from db_root;
+SELECT CEIL(1) from db_root;
+SELECT CEIL(-1) from db_root;
+SELECT CEIL('-123') from db_root;
+SELECT CEIL('123.6') from db_root;
+select ceil(13.2) as c1, ceil(-13.2) as c2;
+--select ceil(9223372036854775807.1) from db_root;
+select substr(to_char(ceil(9223372036854775807.1)), 0, 18) from db_root;
+--select ceil(-9223372036854775807.1) from db_root;
+select substr(to_char(ceil(-9223372036854775807.1)), 0, 19) from db_root;
+select ceil(acos(-1) ) from db_root;
+select CEILING(acos(-1) ) from db_root;
+select atan(CEILING(acos(-1) )) from db_root;

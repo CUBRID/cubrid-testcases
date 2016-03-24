@@ -1,0 +1,25 @@
+autocommit off;
+create class a (a1 char(6), a2 char(5));
+insert into a (a1,a2) values ('9/21','11111');
+create class b (b1 char(6), b2 char(6));
+insert into b (b1,b2) values ('9/21', '111111');
+create class c (c1 char(6), c2 char(5));
+insert into c (c1,c2) values ('10:10','11111');
+create class d (d1 char(6), d2 char(6));
+insert into d (d1,d2) values ('10:10','111111');
+create class e (e1 char(15), e2 char(15));
+insert into e (e1,e2) values ('9/21/1996 10:10','11111');
+create class f (f1 char(15), f2 char(5));
+insert into f (f1,f2) values ('9/21/1996 10:10','11111');
+select extract(day from cast(a1 as date)) - 21  from a;
+select extract(month from cast(a1 as date)) - 9  from a;
+select extract(year from cast(a1 as date)) - extract(year from sys_date)  from a;
+select extract(day from cast(b1 as date)) - 21  from b;
+select extract(month from cast(b1 as date)) - 9  from b;
+select extract(year from cast(b1 as date)) - extract(year from sys_date)  from b;
+select cast(c1 as time) from c;
+select cast(d1 as time) from d;
+select cast (e1 as utime) from e;
+select cast (f1 as utime) from f;
+	
+rollback;

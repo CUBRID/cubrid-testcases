@@ -1,0 +1,380 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+id    col1    col2    
+1     2013-12-10 08:30:00.000 Europe/Bucharest EET     2013-12-10 15:30:00.000 Asia/Seoul KST     
+3     2013-12-10 08:30:00.000 Europe/Bucharest EET     2013-12-10 03:00:00.000 -03:30     
+5     2013-12-10 08:30:00.000 Europe/Bucharest EET     2013-12-10 08:30:00.000 Europe/Riga EET     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: tz_test node[?]
+                 index: idx? term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where tz_test.col?= ?:?  order by ?
+===================================================
+0
+===================================================
+id    col1    col2    
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: tz_test node[?]
+                 index: idx? term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where (tz_test.col?> ?:? ) order by ?
+===================================================
+0
+===================================================
+id    col1    col2    
+1     2013-12-10 15:30:00.000 Asia/Seoul KST     2013-12-10 15:30:00.000 Asia/Seoul KST     
+3     2013-12-10 15:30:00.000 Asia/Seoul KST     2013-12-10 03:00:00.000 -03:30     
+5     2013-12-10 15:30:00.000 Asia/Seoul KST     2013-12-10 08:30:00.000 Europe/Riga EET     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: tz_test node[?]
+                 index: idx? term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where tz_test.col?= ?:?  order by ?, ?
+===================================================
+0
+===================================================
+id    col1    col2    
+2     2011-05-12 16:12:56.000 +04:00     2011-05-12 21:12:56.000 Asia/Seoul KST     
+6     2011-05-12 16:12:56.000 +04:00     2011-05-12 10:12:56.000 America/Noronha FNT     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: tz_test node[?]
+                 index: idx? term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where tz_test.col?= ?:?  order by ?
+===================================================
+id    col2    col1    
+2     2011-05-12 21:12:56.000 Asia/Seoul KST     2011-05-12 16:12:56.000 +04:00     
+6     2011-05-12 10:12:56.000 America/Noronha FNT     2011-05-12 16:12:56.000 +04:00     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: tz_test node[?]
+                 index: idx? term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where tz_test.col?= ?:?  order by ?
+===================================================
+0
+===================================================
+id    col1    col2    
+2     2011-05-12 20:12:56.000 Australia/Perth AWST     2011-05-12 21:12:56.000 Asia/Seoul KST     
+6     2011-05-12 20:12:56.000 Australia/Perth AWST     2011-05-12 10:12:56.000 America/Noronha FNT     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: tz_test node[?]
+                 index: idx? term[?]
+                 filtr: term[?]
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where (tz_test.col?< ?:? ) and (tz_test.col?> ?:? ) order by ?
+===================================================
+id    col1    col2    
+1     2013-12-10 14:30:00.000 Australia/Perth AWST     2013-12-10 15:30:00.000 Asia/Seoul KST     
+2     2011-05-12 20:12:56.000 Australia/Perth AWST     2011-05-12 21:12:56.000 Asia/Seoul KST     
+3     2013-12-10 14:30:00.000 Australia/Perth AWST     2013-12-10 03:00:00.000 -03:30     
+5     2013-12-10 14:30:00.000 Australia/Perth AWST     2013-12-10 08:30:00.000 Europe/Riga EET     
+6     2011-05-12 20:12:56.000 Australia/Perth AWST     2011-05-12 10:12:56.000 America/Noronha FNT     
+7     1992-07-10 07:00:00.000 Australia/Perth AWST     1992-07-10 02:00:00.000 Europe/Bucharest EEST     
+8     1992-07-10 08:00:00.000 Australia/Perth AWST     1992-07-10 03:00:00.000 Europe/Bucharest EEST     
+9     1992-07-10 08:00:00.000 Australia/Perth AWST     1992-07-10 02:00:00.000 +02:00     
+10     1994-07-01 07:59:59.000 Australia/Perth AWST     1994-06-30 23:59:59.000 UTC UTC     
+12     1994-07-01 06:59:59.000 Australia/Perth AWST     1994-07-01 01:59:59.000 Europe/Bucharest EEST     
+13     1994-07-01 07:00:00.000 Australia/Perth AWST     1994-07-01 02:00:00.000 Europe/Bucharest EEST     
+14     1994-07-01 07:59:59.000 Australia/Perth AWST     1994-07-01 02:59:59.000 Europe/Bucharest EEST     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tz_test node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where tz_test.col?= cast(tz_test.col? as timestamptz) order by ?
+===================================================
+a    b    
+1992-07-10 08:00:00.000 Australia/Perth AWST     02:00:00 AM 07/10/1992 +02:00     
+1992-07-10 08:00:00.000 Australia/Perth AWST     03:00:00 AM 07/10/1992 Europe/Bucharest EEST     
+
+Query plan:
+iscan
+    class: tz_test node[?]
+    index: idx? term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select tz_test.col?, tz_test.col? from tz_test tz_test where tz_test.col?= ?:?  order by ?)
+/* ---> skip ORDER BY */
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.col?,  to_char(t.col?) from (select tz_test.col?, tz_test.col? from tz_test tz_test where tz_test.col?= ?:?  order by ?) t (col?, col?) order by ?
+===================================================
+id    col1    col2    
+6     2011-05-12 20:12:56.000 Australia/Perth AWST     2011-05-12 10:12:56.000 America/Noronha FNT     
+7     1992-07-10 07:00:00.000 Australia/Perth AWST     1992-07-10 02:00:00.000 Europe/Bucharest EEST     
+8     1992-07-10 08:00:00.000 Australia/Perth AWST     1992-07-10 03:00:00.000 Europe/Bucharest EEST     
+9     1992-07-10 08:00:00.000 Australia/Perth AWST     1992-07-10 02:00:00.000 +02:00     
+10     1994-07-01 07:59:59.000 Australia/Perth AWST     1994-06-30 23:59:59.000 UTC UTC     
+11     1994-07-01 07:59:59.000 Australia/Perth AWST     1994-06-30 23:59:59.000 UTC UTC     
+12     1994-07-01 06:59:59.000 Australia/Perth AWST     1994-07-01 01:59:59.000 Europe/Bucharest EEST     
+13     1994-07-01 07:00:00.000 Australia/Perth AWST     1994-07-01 02:00:00.000 Europe/Bucharest EEST     
+14     1994-07-01 07:59:59.000 Australia/Perth AWST     1994-07-01 02:59:59.000 Europe/Bucharest EEST     
+15     1994-07-01 07:59:59.000 Australia/Perth AWST     1994-07-01 02:59:59.000 Europe/Bucharest EEST     
+
+Query plan:
+iscan
+    class: tz_test node[?]
+    index: idx? term[?]
+    filtr: term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where (tz_test.id> ?:? ) and (tz_test.col?< ?:? ) order by ?
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+id    col1    col2    
+1     2013-12-10 08:30:00.000 Europe/Bucharest EET     2013-12-10 15:30:00.000 Asia/Seoul KST     
+2     2011-05-12 15:12:56.000 Europe/Bucharest EEST     2011-05-12 21:12:56.000 Asia/Seoul KST     
+3     2013-12-10 08:30:00.000 Europe/Bucharest EET     2013-12-10 03:00:00.000 -03:30     
+5     2013-12-10 08:30:00.000 Europe/Bucharest EET     2013-12-10 08:30:00.000 Europe/Riga EET     
+6     2011-05-12 15:12:56.000 Europe/Bucharest EEST     2011-05-12 10:12:56.000 America/Noronha FNT     
+8     1992-07-10 03:00:00.000 Europe/Bucharest EEST     1992-07-10 03:00:00.000 Europe/Bucharest EEST     
+9     1992-07-10 03:00:00.000 Europe/Bucharest EEST     1992-07-10 02:00:00.000 +02:00     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+id    col1    col2    
+7     1992-07-10 02:00:00.000 Europe/Bucharest EEST     1992-07-10 02:00:00.000 Europe/Bucharest EEST     
+8     1992-07-10 03:00:00.000 Europe/Bucharest EEST     1992-07-10 03:00:00.000 Europe/Bucharest EEST     
+9     1992-07-10 03:00:00.000 Europe/Bucharest EEST     1992-07-10 02:00:00.000 +02:00     
+10     1994-07-01 02:59:59.000 Europe/Bucharest EEST     1994-06-30 23:59:59.000 UTC UTC     
+11     1994-07-01 02:59:59.000 Europe/Bucharest EEST     1994-06-30 23:59:59.000 UTC UTC     
+12     1994-07-01 01:59:59.000 Europe/Bucharest EEST     1994-07-01 01:59:59.000 Europe/Bucharest EEST     
+13     1994-07-01 02:00:00.000 Europe/Bucharest EEST     1994-07-01 02:00:00.000 Europe/Bucharest EEST     
+14     1994-07-01 02:59:59.000 Europe/Bucharest EEST     1994-07-01 02:59:59.000 Europe/Bucharest EEST     
+15     1994-07-01 02:59:59.000 Europe/Bucharest EEST     1994-07-01 02:59:59.000 Europe/Bucharest EEST     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: tz_test node[?]
+                 index: filter_idx? term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where (tz_test.col?< ?:? ) using index tz_test.filter_idx? order by ?, ?
+===================================================
+0
+===================================================
+id    col1    col2    
+7     1992-07-09 22:00:00.000 Atlantic/Cape_Verde CVT     1992-07-10 02:00:00.000 Europe/Bucharest EEST     
+8     1992-07-09 23:00:00.000 Atlantic/Cape_Verde CVT     1992-07-10 03:00:00.000 Europe/Bucharest EEST     
+9     1992-07-09 23:00:00.000 Atlantic/Cape_Verde CVT     1992-07-10 02:00:00.000 +02:00     
+10     1994-06-30 22:59:59.000 Atlantic/Cape_Verde CVT     1994-06-30 23:59:59.000 UTC UTC     
+11     1994-06-30 22:59:59.000 Atlantic/Cape_Verde CVT     1994-06-30 23:59:59.000 UTC UTC     
+12     1994-06-30 21:59:59.000 Atlantic/Cape_Verde CVT     1994-07-01 01:59:59.000 Europe/Bucharest EEST     
+13     1994-06-30 22:00:00.000 Atlantic/Cape_Verde CVT     1994-07-01 02:00:00.000 Europe/Bucharest EEST     
+14     1994-06-30 22:59:59.000 Atlantic/Cape_Verde CVT     1994-07-01 02:59:59.000 Europe/Bucharest EEST     
+15     1994-06-30 22:59:59.000 Atlantic/Cape_Verde CVT     1994-07-01 02:59:59.000 Europe/Bucharest EEST     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: tz_test node[?]
+                 index: filter_idx? term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where (tz_test.col?< ?:? ) using index tz_test.filter_idx? order by ?
+===================================================
+id    col1    col2    
+2     2011-05-12 11:12:56.000 Atlantic/Cape_Verde CVT     2011-05-12 21:12:56.000 Asia/Seoul KST     
+6     2011-05-12 11:12:56.000 Atlantic/Cape_Verde CVT     2011-05-12 10:12:56.000 America/Noronha FNT     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: tz_test node[?]
+                 index: filter_idx? term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where (tz_test.col?> ?:? ) using index tz_test.filter_idx?(+) order by ?
+===================================================
+0
+===================================================
+id    col1    col2    
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tz_test node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where tz_test.col?= ?:?  using index tz_test.filter_idx? order by ?
+===================================================
+0
+===================================================
+id    col1    col2    
+5     2013-12-10 08:30:00.000 Europe/Bucharest EET     2013-12-10 08:30:00.000 Europe/Riga EET     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tz_test node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where  hour( cast(tz_test.col? as varchar))=? using index tz_test.function_idx?(+) order by ?, ?, ?
+===================================================
+id    col1    col2    
+12     1994-07-01 01:59:59.000 Europe/Bucharest EEST     1994-07-01 01:59:59.000 Europe/Bucharest EEST     
+13     1994-07-01 02:00:00.000 Europe/Bucharest EEST     1994-07-01 02:00:00.000 Europe/Bucharest EEST     
+10     1994-07-01 02:59:59.000 Europe/Bucharest EEST     1994-06-30 23:59:59.000 UTC UTC     
+14     1994-07-01 02:59:59.000 Europe/Bucharest EEST     1994-07-01 02:59:59.000 Europe/Bucharest EEST     
+11     1994-07-01 02:59:59.000 Europe/Bucharest EEST     1994-06-30 23:59:59.000 UTC UTC     
+15     1994-07-01 02:59:59.000 Europe/Bucharest EEST     1994-07-01 02:59:59.000 Europe/Bucharest EEST     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: tz_test node[?]
+                 index: function_idx? term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where  year( cast(tz_test.col? as varchar))=? using index tz_test.function_idx? order by ?, ?, ?
+===================================================
+0
+===================================================
+0
+===================================================
+0

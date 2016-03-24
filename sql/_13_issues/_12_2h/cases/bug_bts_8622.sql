@@ -1,0 +1,69 @@
+select time('1104209');
+select to_datetime('1104209','YYMMDDH');
+select timestamp('1104209am');
+select timestamp('1104209pm');
+select timestamp('1104209 pm');
+select time_to_sec('1104209');
+
+--DATE
+--[[[[Y]Y]YY]M]MDD
+--SELECT CAST('101' AS DATE);
+select if(cast('101' AS DATE)=date(concat(year(sysdate),'-01-01')),'ok','nok');
+--SELECT CAST('0101' AS DATE);
+select if(cast('0101' AS DATE)=date(concat(year(sysdate),'-01-01')),'ok','nok');
+SELECT CAST('120101' AS DATE);
+--SELECT CAST('0120101' AS DATE); --error
+SELECT CAST('20120101' AS DATE);
+
+--MM/DD/YYYY
+SELECT CAST('01/02/2012' AS DATE);
+SELECT CAST('2012-01-01' AS DATE);
+
+--[[[[Y]Y]YY]-M]M-DD
+--SELECT CAST('1-01' AS DATE);
+select if(cast('1-01' AS DATE)=date(concat(year(sysdate),'-01-01')),'ok','nok');
+--SELECT CAST('01-01' AS DATE);
+select if(cast('01-01' AS DATE)=date(concat(year(sysdate),'-01-01')),'ok','nok');
+SELECT CAST('12-1-01' AS DATE);
+--SELECT CAST('012-01-01' AS DATE); --error
+SELECT CAST('2012-01-01' AS DATE);
+
+--TIME
+--HH[:MM[:SS]] ["am"|"pm"]
+--SELECT CAST('11' AS TIME); --error
+SELECT CAST('11:20' AS TIME);
+SELECT CAST('11:20:30' AS TIME);
+SELECT CAST('11:20 am' AS TIME);
+SELECT CAST('11:20:30 pm' AS TIME);
+
+--SELECT CAST('25' AS TIME); --error
+SELECT CAST('11:80' AS TIME);
+SELECT CAST('11:20:80' AS TIME);
+
+
+--DATETIME
+--YYYY-MM-DD HH:MM:SS[.msec]
+SELECT CAST('2012-01-02 11:20:30.888888888888888888' AS DATETIME);
+SELECT CAST('2012-01-02 11:20:30' AS DATETIME);
+
+--YY-MM-DD HH:MM:[SS[.msec]]
+SELECT CAST('12-01-02 11:20' AS DATETIME);
+SELECT CAST('12-01-02 11:20:30' AS DATETIME);
+SELECT CAST('12-01-02 11:20:30.9999999999' AS DATETIME);
+
+--YY-MM-DD H
+SELECT CAST('12-01-02 6' AS DATETIME);
+SELECT CAST('12-01-02 16' AS DATETIME);
+--expected error
+SELECT CAST('12-01-02 26' AS DATETIME); 
+
+
+--TIMESTAMP
+--YYYY-MM-DD HH:MM:SS
+SELECT CAST('2012-01-02 12:00:00' AS TIMESTAMP);
+--YY-MM-DD HH:MM:[SS]
+SELECT CAST('12-01-02 12:00' AS TIMESTAMP);
+SELECT CAST('12-01-02 12:00:00' AS TIMESTAMP);
+--YY-MM-DD H
+SELECT CAST('12-01-02 10' AS TIMESTAMP);
+

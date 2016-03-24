@@ -1,0 +1,138 @@
+===================================================
+0
+===================================================
+1000
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+a    
+null     
+B     
+Y     
+b     
+y     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_all (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? asc collate iso?_en_cs
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t?.a from t? t? where (t?.c> ?:? ) group by t?.a
+/* ---> skip GROUP BY */
+===================================================
+b    max(a)    min(a)    
+null     b     B     
+y     y     Y     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    sort:  ? asc collate iso?_en_ci
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t?.b, max(t?.a), min(t?.a) from t? t? where (t?.c>= ?:? ) group by t?.b
+===================================================
+a    
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_all (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? asc collate iso?_en_cs
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t?.a from t? t? where (t?.c> ?:? ) group by t?.a having max(t?.b collate iso?_en_ci)='a' collate iso?_en_ci
+/* ---> skip GROUP BY */
+===================================================
+a    
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_all (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? asc collate iso?_en_cs
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t?.a from t? t? where (t?.c> ?:? ) group by t?.a having max(t?.b collate iso?_en_cs)='a' collate iso?_en_cs
+/* ---> skip GROUP BY */
+===================================================
+a    
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_all (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? asc collate iso?_en_cs
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t?.a from t? t? where (t?.c> ?:? ) group by t?.a having max(t?.b collate iso?_en_cs)='A' collate iso?_en_cs
+/* ---> skip GROUP BY */
+===================================================
+a    
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_all (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? asc collate iso?_en_cs
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t?.a from t? t? where (t?.c> ?:? ) group by t?.a having t?.a= cast(max(t?.b collate iso?_en_ci) as varchar(?) collate iso?_en_cs)
+/* ---> skip GROUP BY */
+===================================================
+a    max(b collate iso88591_en_cs)    min(b collate iso88591_en_cs)    
+Y     y     y     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t?.a, max(t?.b collate iso?_en_cs), min(t?.b collate iso?_en_cs) from t? t? where t?.h mod ?=? group by t?.a collate iso?_en_ci
+===================================================
+a    max(b collate iso88591_en_cs)    min(b collate iso88591_en_cs)    
+null     null     null     
+B     null     null     
+Y     y     y     
+b     null     null     
+y     Y     Y     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 sort:  ? asc collate iso?_en_cs
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t?.a, max(t?.b collate iso?_en_cs), min(t?.b collate iso?_en_cs) from t? t? where (t?.c> ?:? ) group by t?.a collate iso?_bin
+===================================================
+0

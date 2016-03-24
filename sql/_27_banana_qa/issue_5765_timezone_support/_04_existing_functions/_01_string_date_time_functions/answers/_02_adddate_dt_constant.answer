@@ -1,0 +1,118 @@
+===================================================
+0
+===================================================
+0
+===================================================
+if( date_add(datetimetz '2014-02-28 23:59:59.999 -8:00', INTERVAL 1000 MILLISECOND)=datetimeltz '2014-03-01 12:00:00.999 AM -8:00', 'ok', 'nok')    
+ok     
+
+===================================================
+if( date_add(datetimeltz '2014-02-28 23:59:59.999 Asia/Shanghai', INTERVAL 1 SECOND)=datetimeltz '2014-03-01 12:00:00.999 AM +8:00', 'ok', 'nok')    
+ok     
+
+===================================================
+if( date_add(datetimetz '2014-02-28 23:50:00.999', INTERVAL 10 MINUTE)=datetimeltz '2014-03-01 12:00:00.999 AM +9:00', 'ok', 'nok')    
+ok     
+
+===================================================
+if( date_add(datetimeltz '2014-02-28 20:00:00.999 -9:00', INTERVAL -5 HOUR)=datetimeltz '2014-03-01 12:00:00.999 AM UTC', 'ok', 'nok')    
+ok     
+
+===================================================
+if( date_add(datetimetz '2014-02-28 12:00:00.999 AM America/New_York', INTERVAL 1 DAY)=datetimeltz '2014-03-01 12:00:00.999 AM -5:00', 'ok', 'nok')    
+ok     
+
+===================================================
+if( date_add(datetimetz '2014-02-28 23:59:59.999', INTERVAL 2 WEEK)=datetimeltz '2014-03-14 11:59:59.999 PM Asia/Pyongyang', 'ok', 'nok')    
+ok     
+
+===================================================
+if( date_add(datetimeltz '2014-02-28 23:59:59.999', INTERVAL 10 MONTH)=datetimeltz '2014-12-28 22:59:59.999 Asia/Chongqing', 'ok', 'nok')    
+ok     
+
+===================================================
+if( date_add(datetimetz '2012-02-29 23:59:59.999 +0:00', INTERVAL 12 QUARTER)=datetimeltz '2015-02-28 15:59:59.999 -8:00', 'ok', 'nok')    
+ok     
+
+===================================================
+if( date_add(datetimetz '2012-02-29 12:00:00.999 AM -8:00', INTERVAL 9 YEAR)=datetimeltz '2021-02-27 22:00:00.999 -10:00', 'ok', 'nok')    
+ok     
+
+===================================================
+0
+===================================================
+if( date_add('2008-10-20 13:58:59.999', INTERVAL '1:1' MINUTE_SECOND)=datetimetz '2008-10-20 16:00:00.999 UTC', 'ok', 'nok')    
+ok     
+
+===================================================
+if( date_add('2008-10-18 22:59:00.999 -3:00', INTERVAL '1:1' HOUR_MINUTE)=datetimetz '2008-10-19 1:00:00.999 am', 'ok', 'nok')    
+ok     
+
+===================================================
+if( date_add('2008-10-17 21:30:00.999 America/Argentina/Tucuman', INTERVAL '1 5:30:00.999' DAY_SECOND)=datetimetz '2008-10-19 4:00:00.999 AM', 'ok', 'nok')    
+ok     
+
+===================================================
+if( date_add(datetimeltz '2006-9-18 21:30:00.999', INTERVAL '2-1' YEAR_MONTH)=datetimetz '2008-10-18 21:30:00.999', 'ok', 'nok')    
+ok     
+
+===================================================
+if( date_add(datetimetz '2006-9-18 21:30:00.999', INTERVAL '2-1' YEAR_MONTH)=datetimetz '2008-10-18 21:30:00.999', 'ok', 'nok')    
+ok     
+
+===================================================
+date_add('2009-3-14 21:59:59.999', INTERVAL '2:00:01.999' HOUR_SECOND)    
+12:00:00.999 AM 03/15/2009     
+
+===================================================
+if( date_add(datetimeltz '2009-3-14 21:59:59.999', INTERVAL '2:00:01.999' HOUR_SECOND)='2009-3-14 11:00:00.999 PM America/Argentina/Cordoba ART', 'ok', 'nok')    
+ok     
+
+===================================================
+if( date_add(datetimeltz '2009-3-14 23:11:12.999', INTERVAL '1' HOUR)=datetimetz '2009-3-14 23:11:12.999 America/Argentina/Cordoba ART', 'ok', 'nok')    
+ok     
+
+===================================================
+if( date_add('2009-3-14 23:11:12.999 America/Argentina/Cordoba', INTERVAL '1' HOUR)=datetimetz '2009-3-14 23:11:12.999 America/Argentina/Cordoba ART', 'ok', 'nok')    
+ok     
+
+===================================================
+if( date_add('2009-3-14 23:11:12.999 America/Argentina/Cordoba ARST', INTERVAL '1' HOUR)=datetimetz '2009-3-14 23:11:12.999 America/Argentina/Cordoba ART', 'ok', 'nok')    
+ok     
+
+===================================================
+if( date_add('2009-3-14 23:11:12.999 America/Argentina/Cordoba ART', INTERVAL '1' HOUR)=datetimetz '2009-3-15 12:11:12.999 AM', 'ok', 'nok')    
+ok     
+
+===================================================
+if( date_add('2009-3-14 23:11:12.999 America/Argentina/Cordoba KST', INTERVAL '1' HOUR)=datetimetz '2009-3-15 12:11:12.999 AM', 'ok', 'nok')    
+ok     
+
+===================================================
+if( date_add('2008-12-31 21:59:59.999', INTERVAL '1' MILLISECOND)=datetimetz '2008-12-31 22:00:00', 'ok', 'nok')    
+ok     
+
+===================================================
+if( date_add(datetimetz '2008-12-31 21:59:59.999 America/Argentina/Cordoba', INTERVAL '2' SECOND)='2009-01-01 12:00:01.999 am UTC', 'ok', 'nok')    
+ok     
+
+===================================================
+if( date_add(datetimetz '2008-12-31 22:59:59.999 +00:00', INTERVAL '1:00:00.001' HOUR_MILLISECOND)=datetimeltz '2009-01-01 00:00:00 UTC', 'ok', 'nok')    
+ok     
+
+===================================================
+if( date_add('2008-12-31 22:59:59.999 UTC', INTERVAL '1:00:00.002' HOUR_MILLISECOND)=datetimetz '2009-01-01 12:00:00.001 AM UTC', 'ok', 'nok')    
+ok     
+
+===================================================
+if( adddate(datetimetz '2008-10-18 22:59:00.999', 1)=datetimetz '2008-10-19 23:59:00.999', 'ok', 'nok')    
+ok     
+
+===================================================
+if( adddate('2009-3-14 23:11:12.999 America/Argentina/Cordoba', 1)=datetimetz '2009-3-15 23:11:12.999', 'ok', 'nok')    
+ok     
+
+===================================================
+0
+===================================================
+0

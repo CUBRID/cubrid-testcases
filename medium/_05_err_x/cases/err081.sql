@@ -1,0 +1,11 @@
+autocommit off;
+(select descr from product_c) union (select price from product_v);
+(select descr from product_c) intersection (select price from product_v);
+(select descr from product_c) difference (select price from product_v);
+(select price, descr from product_c) union (select price from product_v);
+(select price, descr from product_c) intersection (select price from product_v);
+(select price, descr from product_c) difference (select price from product_v);
+(select price, descr from product_c) union (select descr, price from product_v);
+(select price, descr from product_c) intersection (select descr, price from product_v);
+(select price, descr from product_c) difference (select descr, price from product_v);
+rollback;

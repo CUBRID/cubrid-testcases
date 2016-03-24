@@ -1,0 +1,14 @@
+create class ddl_0001 ( col1 int, col2 integer , col3 smallint , col4 decimal(8,7), col5 integer);
+insert into ddl_0001 values(1, 1001,1001, 1.00011,10001);
+insert into ddl_0001 values(2, 1002,1002, 1.00011,10001);
+insert into ddl_0001 values(3, 1003,1003, 1.00011,10001);
+insert into ddl_0001 values(4, 1004,1004, 1.00011,10001);
+insert into ddl_0001 values(5, 1005,1005, 1.00011,10001);
+insert into ddl_0001 values(6, 1006,1006, 1.00011,10001);
+insert into ddl_0001 values(7, 1007,1007, 1.00011,10001);
+insert into ddl_0001 values(8, 1008,1008, 1.00011,10001);
+insert into ddl_0001 values(9, 1009,1009, 1.00011,10001);
+select * from ddl_0001 where col1=1.00510 order by 1,2,3;
+create reverse index ddl_0001_idx5 on ddl_0001(col1 asc,col2 desc);
+select * from ddl_0001 where col1 =5 order by 1,2,3;
+drop class ddl_0001;

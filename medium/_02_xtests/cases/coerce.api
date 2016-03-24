@@ -1,0 +1,49 @@
+-- $Revision: 1.2 $
+-- this api input will test the error reporting for db_value_coerce
+-- Created in response to PR 7301
+-- Modified in response to PR 6558
+
+db_type_to_db_domain
+DB_TYPE_SHORT
+1
+db_type_to_db_domain
+DB_TYPE_STRING
+2
+db_make_int
+3
+100000
+
+-- this should fail due to overflow
+db_value_coerce
+3
+4
+1
+
+-- this should work
+db_value_coerce
+3
+4
+2
+db_get_string
+4
+-- PERFORMANCE 13
+-- <WIN16
+-- smallint
+-- character varying
+-- db_value_coerce returned -427
+-- error:  Data overflow on data type "smallint".
+-- db_get_string returned 100000
+-- WIN16>
+-- <WIN32
+-- smallint
+-- character varying
+-- db_value_coerce returned -427
+-- error:  Data overflow on data type "smallint".
+-- db_get_string returned 100000
+-- WIN32>
+-- OUTPUT
+-- smallint
+-- character varying
+-- db_value_coerce returned -427
+-- error:  Data overflow on data type "smallint".
+-- db_get_string returned 100000

@@ -1,0 +1,10 @@
+drop table if exists t1;
+drop view if exists v1;
+create table t1( a int);
+create view v1 as select * from t1 where a is not null;
+alter view v1 add query select * from t1 where a is not null;
+select count( * ) from v1;
+drop table if exists t1;
+select * from v1;
+show create view v1;
+drop view v1;

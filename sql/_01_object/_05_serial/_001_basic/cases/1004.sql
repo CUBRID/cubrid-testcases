@@ -1,0 +1,13 @@
+-- create a serial with conditions like START WITH 1 INCREMENT BY 1 MINVALUE 1 MAXVALUE 10000000000,and then drop this serial
+
+CREATE SERIAL ddl_0001_serial
+START WITH 1
+INCREMENT BY 1
+MINVALUE 1
+MAXVALUE 10000000000;
+
+
+
+
+
+DROP SERIAL ddl_0001_serial;

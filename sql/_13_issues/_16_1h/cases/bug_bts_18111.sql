@@ -1,0 +1,12 @@
+drop table if exists t1;
+create table t1 (s1 char(26), s2 char(50));
+insert into t1 value ('2001-10-11 10:11:12 +09:00', '5555');
+select cast (s1 as timestamptz) from t1;
+select cast (s1 as timestampltz) from t1;
+select cast (s1 as datetimetz) from t1;
+select cast (s1 as datetimeltz) from t1;
+select cast (s1 as time) from t1;
+select cast (s1 as date) from t1;
+select cast (s1 as timestamp) from t1;
+select cast (s1 as datetime) from t1;
+drop table t1;

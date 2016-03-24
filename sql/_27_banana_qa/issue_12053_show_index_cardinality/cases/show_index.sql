@@ -1,0 +1,11 @@
+drop table if exists foo;
+create table foo (a int, b int, c int);
+create index idx1 on foo (a);
+insert into foo values (1,1,1), (2,2,2), (3,3,3);
+create index idx2 on foo (b);
+insert into foo values (4,4,4), (5,5,5), (6,6,6);
+create index idx3 on foo (c);
+show index in foo;
+update statistics on foo with fullscan;
+show index in foo;
+drop table if exists foo;

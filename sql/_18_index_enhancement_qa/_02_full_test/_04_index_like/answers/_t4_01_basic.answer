@@ -1,0 +1,472 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+id    v    c    s    
+1     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+2     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+3     dbms qa2 part     dbms qa2 part            dbms qa2 part     
+4     dbms qa2 part     dbms qa2 part            dbms qa2 part     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_v term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.v, t?.c, t?.s from t? t? where (t?.v>= ?:?  and t?.v< ?:? )
+===================================================
+id    v    c    s    
+1     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+2     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_v term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.v, t?.c, t?.s from t? t? where (t?.v>= ?:?  and t?.v< ?:? )
+===================================================
+id    v    c    s    
+1     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+2     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_v term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.v, t?.c, t?.s from t? t? where (t?.v>= ?:?  and t?.v< ?:? )
+===================================================
+id    v    c    s    
+1     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+2     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_v term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.v, t?.c, t?.s from t? t? where t?.v= ?:? 
+===================================================
+id    v    c    s    
+4     dbms qa2 part     dbms qa2 part            dbms qa2 part     
+3     dbms qa2 part     dbms qa2 part            dbms qa2 part     
+2     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+1     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_v term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.v, t?.c, t?.s from t? t? where (t?.v>= ?:?  and t?.v< ?:? ) order by ? desc , ? desc 
+===================================================
+id    v    c    s    
+1     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+2     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+3     dbms qa2 part     dbms qa2 part            dbms qa2 part     
+4     dbms qa2 part     dbms qa2 part            dbms qa2 part     
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.v, t?.c, t?.s from t? t? where t?.v like  ?:? 
+===================================================
+id    v    c    s    
+1     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+2     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.v, t?.c, t?.s from t? t? where t?.v like  ?:? 
+===================================================
+id    v    c    s    
+1     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+2     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.v, t?.c, t?.s from t? t? where t?.v like  ?:? 
+===================================================
+id    v    c    s    
+1     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+2     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.v, t?.c, t?.s from t? t? where t?.v like  ?:? 
+===================================================
+id    v    c    s    
+1     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+2     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+3     dbms qa2 part     dbms qa2 part            dbms qa2 part     
+4     dbms qa2 part     dbms qa2 part            dbms qa2 part     
+6                                        
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.v, t?.c, t?.s from t? t? where t?.v is not null 
+===================================================
+id    v    c    s    
+1     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+2     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+3     dbms qa2 part     dbms qa2 part            dbms qa2 part     
+4     dbms qa2 part     dbms qa2 part            dbms qa2 part     
+6                                        
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.v, t?.c, t?.s from t? t? where t?.v is not null 
+===================================================
+id    v    c    s    
+1     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+2     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+3     dbms qa2 part     dbms qa2 part            dbms qa2 part     
+4     dbms qa2 part     dbms qa2 part            dbms qa2 part     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_c term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.v, t?.c, t?.s from t? t? where (t?.c>= ?:?  and t?.c< ?:? )
+===================================================
+id    v    c    s    
+1     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+2     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_c term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.v, t?.c, t?.s from t? t? where (t?.c>= ?:?  and t?.c< ?:? )
+===================================================
+id    v    c    s    
+1     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+2     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_c term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.v, t?.c, t?.s from t? t? where (t?.c>= ?:?  and t?.c< ?:? )
+===================================================
+id    v    c    s    
+1     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+2     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_c term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.v, t?.c, t?.s from t? t? where t?.c= ?:? 
+===================================================
+id    v    c    s    
+4     dbms qa2 part     dbms qa2 part            dbms qa2 part     
+3     dbms qa2 part     dbms qa2 part            dbms qa2 part     
+2     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+1     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_c term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.v, t?.c, t?.s from t? t? where (t?.c>= ?:?  and t?.c< ?:? ) order by ? desc , ? desc 
+===================================================
+id    v    c    s    
+1     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+2     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+3     dbms qa2 part     dbms qa2 part            dbms qa2 part     
+4     dbms qa2 part     dbms qa2 part            dbms qa2 part     
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.v, t?.c, t?.s from t? t? where t?.c like  ?:? 
+===================================================
+id    v    c    s    
+1     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+2     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.v, t?.c, t?.s from t? t? where t?.c like  ?:? 
+===================================================
+id    v    c    s    
+1     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+2     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.v, t?.c, t?.s from t? t? where t?.c like  ?:? 
+===================================================
+id    v    c    s    
+1     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+2     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.v, t?.c, t?.s from t? t? where t?.c like  ?:? 
+===================================================
+id    v    c    s    
+1     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+2     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+3     dbms qa2 part     dbms qa2 part            dbms qa2 part     
+4     dbms qa2 part     dbms qa2 part            dbms qa2 part     
+6                                        
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.v, t?.c, t?.s from t? t? where t?.c is not null 
+===================================================
+id    v    c    s    
+1     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+2     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+3     dbms qa2 part     dbms qa2 part            dbms qa2 part     
+4     dbms qa2 part     dbms qa2 part            dbms qa2 part     
+6                                        
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.v, t?.c, t?.s from t? t? where t?.c is not null 
+===================================================
+id    v    c    s    
+1     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+2     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+3     dbms qa2 part     dbms qa2 part            dbms qa2 part     
+4     dbms qa2 part     dbms qa2 part            dbms qa2 part     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_s term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.v, t?.c, t?.s from t? t? where (t?.s>= ?:?  and t?.s< ?:? )
+===================================================
+id    v    c    s    
+1     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+2     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_s term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.v, t?.c, t?.s from t? t? where (t?.s>= ?:?  and t?.s< ?:? )
+===================================================
+id    v    c    s    
+1     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+2     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_s term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.v, t?.c, t?.s from t? t? where (t?.s>= ?:?  and t?.s< ?:? )
+===================================================
+id    v    c    s    
+1     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+2     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_s term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.v, t?.c, t?.s from t? t? where t?.s= ?:? 
+===================================================
+id    v    c    s    
+4     dbms qa2 part     dbms qa2 part            dbms qa2 part     
+3     dbms qa2 part     dbms qa2 part            dbms qa2 part     
+2     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+1     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_s term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.v, t?.c, t?.s from t? t? where (t?.s>= ?:?  and t?.s< ?:? ) order by ? desc , ? desc 
+===================================================
+id    v    c    s    
+1     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+2     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+3     dbms qa2 part     dbms qa2 part            dbms qa2 part     
+4     dbms qa2 part     dbms qa2 part            dbms qa2 part     
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.v, t?.c, t?.s from t? t? where t?.s like  ?:? 
+===================================================
+id    v    c    s    
+1     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+2     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.v, t?.c, t?.s from t? t? where t?.s like  ?:? 
+===================================================
+id    v    c    s    
+1     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+2     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.v, t?.c, t?.s from t? t? where t?.s like  ?:? 
+===================================================
+id    v    c    s    
+1     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+2     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.v, t?.c, t?.s from t? t? where t?.s like  ?:? 
+===================================================
+id    v    c    s    
+1     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+2     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+3     dbms qa2 part     dbms qa2 part            dbms qa2 part     
+4     dbms qa2 part     dbms qa2 part            dbms qa2 part     
+6                                        
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.v, t?.c, t?.s from t? t? where t?.s is not null 
+===================================================
+id    v    c    s    
+1     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+2     dbms qa1 part     dbms qa1 part            dbms qa1 part     
+3     dbms qa2 part     dbms qa2 part            dbms qa2 part     
+4     dbms qa2 part     dbms qa2 part            dbms qa2 part     
+6                                        
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.v, t?.c, t?.s from t? t? where t?.s is not null 
+===================================================
+0
+===================================================
+0
+===================================================
+0

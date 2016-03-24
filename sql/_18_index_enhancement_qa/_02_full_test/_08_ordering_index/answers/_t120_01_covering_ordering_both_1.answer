@@ -1,0 +1,234 @@
+===================================================
+0
+===================================================
+0
+===================================================
+5
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+b    
+3     
+4     
+5     
+8     
+9     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_b_a term[?] (covers)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.b from t? t? where (t?.a< ?:? ) and (t?.b> ?:? ) order by ?
+/* ---> skip ORDER BY */
+===================================================
+b    
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_a_b_c term[?] (covers)
+                 filtr: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.b from t? t? where (t?.a< ?:? ) and (t?.b> ?:? ) and t?.c= ?:?  order by ?
+===================================================
+a    b    c    d    
+2     3     4     234     
+3     4     5     345     
+4     5     6     456     
+5     8     7     587     
+5     9     9     599     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_b_c term[?]
+    sargs: term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.b, t?.c, t?.d from t? t? where (t?.a< ?:? ) and (t?.b> ?:? ) using index t?.i_t?_b_c order by ?
+/* ---> skip ORDER BY */
+===================================================
+a    b    c    d    
+2     3     4     234     
+3     4     5     345     
+4     5     6     456     
+5     8     7     587     
+5     9     9     599     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_a_b term[?]
+                 filtr: term[?]
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.b, t?.c, t?.d from t? t? where (t?.a< ?:? ) and (t?.b> ?:? ) using index t?.i_t?_a_b order by ?
+===================================================
+b    
+3     
+4     
+5     
+8     
+9     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.b from t? t? where (t?.a< ?:? ) and (t?.b> ?:? ) using index none order by ?
+===================================================
+b    
+3     
+4     
+5     
+8     
+9     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_a_b_c term[?] (covers)
+                 filtr: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.b, t?.c from t? t? where (t?.a< ?:? ) and (t?.b> ?:? ) order by ?
+===================================================
+b    
+3     
+4     
+5     
+8     
+9     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_a_b_c term[?] (covers)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.b, t?.c from t? t? where (t?.a< ?:? ) order by ?
+===================================================
+b    
+3     
+4     
+5     
+8     
+9     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_b_c term[?] (covers)
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.b, t?.c from t? t? where (t?.b> ?:? ) order by ?
+===================================================
+b    
+8     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_b_c term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.b, t?.c from t? t? where t?.b= ?:?  order by ?
+/* ---> skip ORDER BY */
+===================================================
+a    c    
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a_c term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.c from t? t? where t?.a= ?:?  order by ?
+/* ---> skip ORDER BY */
+===================================================
+a    b    
+5     8     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_b_a term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.b from t? t? where t?.b= ?:?  order by ?
+/* ---> skip ORDER BY */
+===================================================
+a    b    c    
+2     3     4     
+3     4     5     
+4     5     6     
+5     8     7     
+5     9     9     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a_b_c (covers)
+    filtr: term[?]
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.b, t?.c from t? t? where (t?.b> ?:? ) order by ?, ?, ?
+/* ---> skip ORDER BY */
+===================================================
+a    c    
+5     9     
+5     7     
+4     6     
+3     5     
+2     4     
+
+a    c    
+5     7     
+
+0
+===================================================
+0
+===================================================
+0

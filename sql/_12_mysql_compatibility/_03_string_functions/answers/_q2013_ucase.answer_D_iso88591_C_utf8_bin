@@ -1,0 +1,32 @@
+===================================================
+upper(_utf8'중국이다,i''m chinese!')    
+중국이다,I'M CHINESE!     
+
+===================================================
+upper(_utf8'~!@#$%^&*()_+|''\=-,./')    
+~!@#$%^&*()_+|'\=-,./     
+
+===================================================
+upper( concat_ws(1, 2, 3, 4, 5, 6, 7, 8, 9))    
+213141516171819     
+
+===================================================
+upper( concat_ws(_utf8'a', _utf8'b', _utf8'c', _utf8'd', _utf8'e', _utf8'f'))    
+BACADAEAF     
+
+===================================================
+upper( concat(_utf8'a', _utf8'b', _utf8'c', _utf8'd', _utf8'e', _utf8'f'))    
+ABCDEF     
+
+===================================================
+field( upper( concat(_utf8'A', _utf8'b', _utf8'c', _utf8'd', _utf8'e', _utf8'f')), _utf8'aBCDEF',  upper( concat_ws(_utf8'ABCd', _utf8'E', _utf8'f')),  upper( concat(_utf8'ABCd', _utf8'E', _utf8'f')))    
+3     
+
+===================================================
+concat_ws( upper( concat(_utf8's', 600)),  upper(_utf8'mmm'), 2<<3)    
+MMMS60016     
+
+===================================================
+concat_ws( upper( concat(_utf8's', 600)),  upper(_utf8'mmm'),  char_length( upper(_utf8'aa'))<< char_length(_utf8'abc'))    
+MMMS60016     
+

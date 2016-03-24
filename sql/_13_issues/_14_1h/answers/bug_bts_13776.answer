@@ -1,0 +1,346 @@
+===================================================
+0
+===================================================
+0
+===================================================
+10000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+i    j    k    
+1     1     green     
+
+Query plan:
+iscan
+    class: v? node[?]
+    index: idx_t? term[?] (covers) (index skip scan)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ v?.i, v?.j, v?.k from t? v? where (v?.j<= ?:? ) and v?.k= ?:? 
+===================================================
+i    j    
+1     1     
+
+Query plan:
+iscan
+    class: v? node[?]
+    index: idx_t? term[?] (covers) (index skip scan)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ v?.i, v?.j from t? v? where (v?.j<= ?:? ) and v?.k= ?:? 
+===================================================
+i    j    k    i    j    k    
+1     1     green     1     1     green     
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: v? node[?]
+               index: idx_t? term[?] (covers) (index skip scan)
+               filtr: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: v? node[?]
+               index: idx_t? term[?] (covers) (index skip scan)
+               filtr: term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ v?.i, v?.j, v?.k, v?.i, v?.j, v?.k from t? v?, t? v? where (v?.j<= ?:? ) and (v?.j<= ?:? ) and  cast('green' as integer)<=? and (v?.k= ?:? ) and v?.k= ?:?  and (v?.k=v?.k)
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+i    j    k    i    j    k    
+1     1     green     1     1     green     
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: v? node[?]
+               index: idx_t? term[?] (covers) (index skip scan)
+               filtr: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: v? node[?]
+               index: idx_t? term[?] (covers) (index skip scan)
+               filtr: term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS(t?, t?) */ v?.i, v?.j, v?.k, v?.i, v?.j, v?.k from t? v?, t? v? where (v?.j<= ?:? ) and (v?.j<= ?:? ) and  cast('green' as integer)<=? and (v?.k= ?:? ) and v?.k= ?:?  and (v?.k=v?.k)
+===================================================
+0
+===================================================
+10000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+c1    c2    c3    c4    c5    c6    
+1     1     green     1     1     1     
+2     2     blue     2     2     2     
+3     3     yellow     3     3     3     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: t? node[?]
+               index: idx_t? term[?] (covers) (index skip scan)
+               cost:  ? card ?
+    inner: iscan
+               class: v? node[?]
+               index: idx_t? term[?] AND term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS(t?, t?) */ v?.i, v?.j, v?.k, t?.i, t?.j, t?.col? from t? v?, t? t? where (t?.i<= ?:? ) and v?.i=t?.i and v?.j=t?.j
+===================================================
+c1    c2    c3    c4    c5    c6    
+1     1     green     1     1     1     
+2     2     blue     2     2     2     
+3     3     yellow     3     3     3     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: t? node[?]
+               index: idx_t? term[?] (covers) (index skip scan)
+               cost:  ? card ?
+    inner: iscan
+               class: v? node[?]
+               index: idx_t? term[?] AND term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS(t?) */ v?.i, v?.j, v?.k, t?.i, t?.j, t?.col? from t? v?, t? t? where (t?.i<= ?:? ) and v?.i=t?.i and v?.j=t?.j
+===================================================
+c1    c2    c3    c4    c5    c6    
+1     1     green     1     1     1     
+2     2     blue     2     2     2     
+3     3     yellow     3     3     3     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: t? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: v? node[?]
+               index: idx_t? term[?] AND term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS(t?) */ v?.i, v?.j, v?.k, t?.i, t?.j, t?.col? from t? v?, t? t? where (t?.i<= ?:? ) and v?.i=t?.i and v?.j=t?.j
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+10000
+===================================================
+0
+===================================================
+0
+===================================================
+10000
+===================================================
+0
+===================================================
+0
+===================================================
+col    
+1     
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: v? node[?]
+               index: i_ac term[?] (index skip scan)
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: s? node[?]
+               index: i_ac term[?] (covers) (index skip scan)
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_SS */ ? from t? v?, t? s? where (v?.b< ?:? ) and (v?.c< ?:? ) and (s?.c< ?:? ) and (inst_num()<= ?:? )
+===================================================
+0
+===================================================
+col    
+1     
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: v? node[?]
+               index: i_ac term[?] (index skip scan)
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: s? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_SS(s?) */ ? from t? v?, t? s? where (v?.b< ?:? ) and (v?.c< ?:? ) and (s?.c< ?:? ) and (inst_num()<= ?:? )
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+10000
+===================================================
+0
+===================================================
+0
+===================================================
+10000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+i    j    k    a    b    c    
+1     1     green     1     1     green     
+1     1     green     5     5     green     
+5     5     green     1     1     green     
+5     5     green     5     5     green     
+9     9     green     1     1     green     
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: v? node[?]
+               index: idx_t? term[?] (covers) (index skip scan)
+               filtr: term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_SS(t?) */ v?.i, v?.j, v?.k, t?.a, t?.b, t?.c from t? v?, t? t? where (v?.j<= ?:? ) and (t?.b<= ?:? ) and (inst_num()<= ?:? ) and v?.k= ?:?  and t?.c= ?:?  and v?.k=t?.c
+===================================================
+i    j    k    a    b    c    
+1     1     green     1     1     green     
+1     1     green     5     5     green     
+5     5     green     1     1     green     
+5     5     green     5     5     green     
+9     9     green     1     1     green     
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: v? node[?]
+               index: idx_t? term[?] (covers) (index skip scan)
+               filtr: term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t? node[?]
+               index: idx_t? term[?] (covers) (index skip scan)
+               filtr: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_SS(t?, t?) */ v?.i, v?.j, v?.k, t?.a, t?.b, t?.c from t? v?, t? t? where (v?.j<= ?:? ) and (t?.b<= ?:? ) and (inst_num()<= ?:? ) and v?.k= ?:?  and t?.c= ?:?  and v?.k=t?.c
+===================================================
+i    j    k    a    b    c    
+1     1     green     1     1     green     
+1     1     green     5     5     green     
+5     5     green     1     1     green     
+5     5     green     5     5     green     
+9     9     green     1     1     green     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: v? node[?]
+               sargs: term[?] AND term[?] AND term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t? node[?]
+               index: idx_t? term[?] (covers) (index skip scan)
+               filtr: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_SS(t?) */ v?.i, v?.j, v?.k, t?.a, t?.b, t?.c from t? v?, t? t? where (v?.j<= ?:? ) and (t?.b<= ?:? ) and (inst_num()<= ?:? ) and v?.k= ?:?  and t?.c= ?:?  and v?.k=t?.c
+===================================================
+i    j    k    a    b    c    
+1     1     green     1     1     green     
+1     1     green     5     5     green     
+5     5     green     1     1     green     
+5     5     green     5     5     green     
+9     9     green     1     1     green     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: v? node[?]
+               sargs: term[?] AND term[?] AND term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t? node[?]
+               index: idx_t? term[?] (covers) (index skip scan)
+               filtr: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_SS(t?) */ v?.i, v?.j, v?.k, t?.a, t?.b, t?.c from t? v?, t? t? where (v?.j<= ?:? ) and (t?.b<= ?:? ) and (inst_num()<= ?:? ) and v?.k= ?:?  and t?.c= ?:?  and v?.k=t?.c
+===================================================
+0
+===================================================
+0

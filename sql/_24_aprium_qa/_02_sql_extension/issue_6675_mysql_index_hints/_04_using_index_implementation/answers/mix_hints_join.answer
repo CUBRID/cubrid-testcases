@@ -1,0 +1,558 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+count(t1.d||t2.d||t3.d||t4.d||t5.d||t6.d||t7.d||t8.d||t9.d||t10.d)    
+1024     
+
+Query plan:
+nl-join (cross join)
+    outer: nl-join (cross join)
+               outer: nl-join (cross join)
+                          outer: nl-join (cross join)
+                                     outer: nl-join (cross join)
+                                                outer: nl-join (cross join)
+                                                           outer: nl-join (cross join)
+                                                                      outer: nl-join (cross join)
+                                                                                 outer: nl-join (cross join)
+                                                                                            outer: iscan
+                                                                                                       class: t? node[?]
+                                                                                                       index: idx_t?_bc term[?]
+                                                                                                       filtr: term[?]
+                                                                                                       cost:  ? card ?
+                                                                                            inner: sscan
+                                                                                                       class: t? node[?]
+                                                                                                       sargs: term[?] AND term[?]
+                                                                                                       cost:  ? card ?
+                                                                                            cost:  ? card ?
+                                                                                 inner: sscan
+                                                                                            class: t? node[?]
+                                                                                            sargs: term[?] AND term[?]
+                                                                                            cost:  ? card ?
+                                                                                 cost:  ? card ?
+                                                                      inner: iscan
+                                                                                 class: t? node[?]
+                                                                                 index: idx_t?_bcd term[?] (covers)
+                                                                                 filtr: term[?]
+                                                                                 cost:  ? card ?
+                                                                      cost:  ? card ?
+                                                           inner: iscan
+                                                                      class: t? node[?]
+                                                                      index: idx_t?_bc term[?]
+                                                                      filtr: term[?]
+                                                                      cost:  ? card ?
+                                                           cost:  ? card ?
+                                                inner: iscan
+                                                           class: t? node[?]
+                                                           index: idx_t?_bcd term[?] (covers)
+                                                           filtr: term[?]
+                                                           cost:  ? card ?
+                                                cost:  ? card ?
+                                     inner: iscan
+                                                class: t? node[?]
+                                                index: idx_t?_bcd term[?] (covers)
+                                                filtr: term[?]
+                                                cost:  ? card ?
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: t? node[?]
+                                     sargs: term[?] AND term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: t? node[?]
+                          sargs: term[?] AND term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: t? node[?]
+               index: idx_t?_bc term[?]
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count( cast(t?.d as varchar)|| cast(t?.d as varchar)|| cast(t?.d as varchar)|| cast(t?.d as varchar)|| cast(t?.d as varchar)|| cast(t?.d as varchar)|| cast(t?.d as varchar)|| cast(t?.d as varchar)|| cast(t?.d as varchar)|| cast(t?.d as varchar)) from t? t?, t? t?, t? t?, t? t?, t? t?, t? t?, t? t?, t? t?, t? t?, t? t? where (t?.c> ?:? ) and (t?.b> ?:? ) and (t?.c> ?:? ) and (t?.b> ?:? ) and (t?.c> ?:? ) and (t?.b> ?:? ) and (t?.c> ?:? ) and (t?.b> ?:? ) and (t?.c> ?:? ) and (t?.b> ?:? ) and (t?.c> ?:? ) and (t?.b> ?:? ) and (t?.c> ?:? ) and (t?.b> ?:? ) and (t?.c> ?:? ) and (t?.b> ?:? ) and (t?.c> ?:? ) and (t?.b> ?:? ) and (t?.c> ?:? ) and (t?.b> ?:? ) using index t?.none, t?.none, t?.none, t?.idx_t?_bcd(-), t?.idx_t?_abc(+), t?.idx_t?_bc(+), t?.idx_t?_bc
+===================================================
+count(t1.d||t2.d||t3.d||t4.d||t5.d||t6.d||t7.d||t8.d||t9.d||t10.d)    
+1024     
+
+Query plan:
+nl-join (cross join)
+    outer: nl-join (cross join)
+               outer: nl-join (cross join)
+                          outer: nl-join (cross join)
+                                     outer: nl-join (cross join)
+                                                outer: nl-join (cross join)
+                                                           outer: nl-join (cross join)
+                                                                      outer: nl-join (cross join)
+                                                                                 outer: nl-join (cross join)
+                                                                                            outer: iscan
+                                                                                                       class: t? node[?]
+                                                                                                       index: idx_t?_bc term[?]
+                                                                                                       filtr: term[?]
+                                                                                                       cost:  ? card ?
+                                                                                            inner: iscan
+                                                                                                       class: t? node[?]
+                                                                                                       index: idx_t?_bcd term[?] (covers)
+                                                                                                       filtr: term[?]
+                                                                                                       cost:  ? card ?
+                                                                                            cost:  ? card ?
+                                                                                 inner: iscan
+                                                                                            class: t? node[?]
+                                                                                            index: idx_t?_bc term[?]
+                                                                                            filtr: term[?]
+                                                                                            cost:  ? card ?
+                                                                                 cost:  ? card ?
+                                                                      inner: iscan
+                                                                                 class: t? node[?]
+                                                                                 index: idx_t?_bcd term[?] (covers)
+                                                                                 filtr: term[?]
+                                                                                 cost:  ? card ?
+                                                                      cost:  ? card ?
+                                                           inner: iscan
+                                                                      class: t? node[?]
+                                                                      index: idx_t?_bcd term[?] (covers)
+                                                                      filtr: term[?]
+                                                                      cost:  ? card ?
+                                                           cost:  ? card ?
+                                                inner: iscan
+                                                           class: t? node[?]
+                                                           index: idx_t?_bcd term[?] (covers)
+                                                           filtr: term[?]
+                                                           cost:  ? card ?
+                                                cost:  ? card ?
+                                     inner: iscan
+                                                class: t? node[?]
+                                                index: idx_t?_bcd term[?] (covers)
+                                                filtr: term[?]
+                                                cost:  ? card ?
+                                     cost:  ? card ?
+                          inner: iscan
+                                     class: t? node[?]
+                                     index: idx_t?_bcd term[?] (covers)
+                                     filtr: term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: iscan
+                          class: t? node[?]
+                          index: idx_t?_bc term[?]
+                          filtr: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: t? node[?]
+               index: idx_t?_bcd term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count( cast(t?.d as varchar)|| cast(t?.d as varchar)|| cast(t?.d as varchar)|| cast(t?.d as varchar)|| cast(t?.d as varchar)|| cast(t?.d as varchar)|| cast(t?.d as varchar)|| cast(t?.d as varchar)|| cast(t?.d as varchar)|| cast(t?.d as varchar)) from t? t?, t? t?, t? t?, t? t?, t? t?, t? t?, t? t?, t? t?, t? t?, t? t? where (t?.c> ?:? ) and (t?.b> ?:? ) and (t?.c> ?:? ) and (t?.b> ?:? ) and (t?.c> ?:? ) and (t?.b> ?:? ) and (t?.c> ?:? ) and (t?.b> ?:? ) and (t?.c> ?:? ) and (t?.b> ?:? ) and (t?.c> ?:? ) and (t?.b> ?:? ) and (t?.c> ?:? ) and (t?.b> ?:? ) and (t?.c> ?:? ) and (t?.b> ?:? ) and (t?.c> ?:? ) and (t?.b> ?:? ) and (t?.c> ?:? ) and (t?.b> ?:? ) using index t?.idx_t?_bcd(-), t?.idx_t?_bc(+), t?.idx_t?_bc, t?.idx_t?_abcd
+===================================================
+count(t1.d||t2.d||t3.d||t4.d||t5.d||t6.d||t7.d||t8.d||t9.d||t10.d)    
+1024     
+
+Query plan:
+nl-join (cross join)
+    outer: nl-join (cross join)
+               outer: nl-join (cross join)
+                          outer: nl-join (cross join)
+                                     outer: nl-join (cross join)
+                                                outer: nl-join (cross join)
+                                                           outer: nl-join (cross join)
+                                                                      outer: nl-join (cross join)
+                                                                                 outer: nl-join (cross join)
+                                                                                            outer: iscan
+                                                                                                       class: t? node[?]
+                                                                                                       index: idx_t?_bcd term[?] (covers)
+                                                                                                       filtr: term[?]
+                                                                                                       cost:  ? card ?
+                                                                                            inner: iscan
+                                                                                                       class: t? node[?]
+                                                                                                       index: idx_t?_bc term[?]
+                                                                                                       filtr: term[?]
+                                                                                                       cost:  ? card ?
+                                                                                            cost:  ? card ?
+                                                                                 inner: iscan
+                                                                                            class: t? node[?]
+                                                                                            index: idx_t?_bcd term[?] (covers)
+                                                                                            filtr: term[?]
+                                                                                            cost:  ? card ?
+                                                                                 cost:  ? card ?
+                                                                      inner: iscan
+                                                                                 class: t? node[?]
+                                                                                 index: idx_t?_b term[?]
+                                                                                 sargs: term[?]
+                                                                                 cost:  ? card ?
+                                                                      cost:  ? card ?
+                                                           inner: iscan
+                                                                      class: t? node[?]
+                                                                      index: idx_t?_bcd term[?] (covers)
+                                                                      filtr: term[?]
+                                                                      cost:  ? card ?
+                                                           cost:  ? card ?
+                                                inner: iscan
+                                                           class: t? node[?]
+                                                           index: idx_t?_bcd term[?] (covers)
+                                                           filtr: term[?]
+                                                           cost:  ? card ?
+                                                cost:  ? card ?
+                                     inner: iscan
+                                                class: t? node[?]
+                                                index: idx_t?_bcd term[?] (covers)
+                                                filtr: term[?]
+                                                cost:  ? card ?
+                                     cost:  ? card ?
+                          inner: iscan
+                                     class: t? node[?]
+                                     index: idx_t?_bcd term[?] (covers)
+                                     filtr: term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: iscan
+                          class: t? node[?]
+                          index: idx_t?_bcd term[?] (covers)
+                          filtr: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: t? node[?]
+               index: idx_t?_b term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count( cast(t?.d as varchar)|| cast(t?.d as varchar)|| cast(t?.d as varchar)|| cast(t?.d as varchar)|| cast(t?.d as varchar)|| cast(t?.d as varchar)|| cast(t?.d as varchar)|| cast(t?.d as varchar)|| cast(t?.d as varchar)|| cast(t?.d as varchar)) from t? t?, t? t?, t? t?, t? t?, t? t?, t? t?, t? t?, t? t?, t? t?, t? t? where (t?.c> ?:? ) and (t?.b> ?:? ) and (t?.c> ?:? ) and (t?.b> ?:? ) and (t?.c> ?:? ) and (t?.b> ?:? ) and (t?.c> ?:? ) and (t?.b> ?:? ) and (t?.c> ?:? ) and (t?.b> ?:? ) and (t?.c> ?:? ) and (t?.b> ?:? ) and (t?.c> ?:? ) and (t?.b> ?:? ) and (t?.c> ?:? ) and (t?.b> ?:? ) and (t?.c> ?:? ) and (t?.b> ?:? ) and (t?.c> ?:? ) and (t?.b> ?:? ) using index all except t?.idx_t?_bcd, t?.idx_t?_bc, t?.idx_t?_bcd, t?.idx_t?_bc, t?.idx_t?_bcd, t?.idx_t?_abcd
+===================================================
+count(t1.d||t2.d||t3.d||t4.d||t5.d||t6.d||t7.d||t8.d||t9.d||t10.d)    
+1024     
+
+Query plan:
+nl-join (cross join)
+    outer: nl-join (cross join)
+               outer: nl-join (cross join)
+                          outer: nl-join (cross join)
+                                     outer: nl-join (cross join)
+                                                outer: nl-join (cross join)
+                                                           outer: nl-join (cross join)
+                                                                      outer: nl-join (cross join)
+                                                                                 outer: nl-join (cross join)
+                                                                                            outer: sscan
+                                                                                                       class: t? node[?]
+                                                                                                       sargs: term[?] AND term[?]
+                                                                                                       cost:  ? card ?
+                                                                                            inner: sscan
+                                                                                                       class: t? node[?]
+                                                                                                       sargs: term[?] AND term[?]
+                                                                                                       cost:  ? card ?
+                                                                                            cost:  ? card ?
+                                                                                 inner: sscan
+                                                                                            class: t? node[?]
+                                                                                            sargs: term[?] AND term[?]
+                                                                                            cost:  ? card ?
+                                                                                 cost:  ? card ?
+                                                                      inner: sscan
+                                                                                 class: t? node[?]
+                                                                                 sargs: term[?] AND term[?]
+                                                                                 cost:  ? card ?
+                                                                      cost:  ? card ?
+                                                           inner: sscan
+                                                                      class: t? node[?]
+                                                                      sargs: term[?] AND term[?]
+                                                                      cost:  ? card ?
+                                                           cost:  ? card ?
+                                                inner: sscan
+                                                           class: t? node[?]
+                                                           sargs: term[?] AND term[?]
+                                                           cost:  ? card ?
+                                                cost:  ? card ?
+                                     inner: sscan
+                                                class: t? node[?]
+                                                sargs: term[?] AND term[?]
+                                                cost:  ? card ?
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: t? node[?]
+                                     sargs: term[?] AND term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: t? node[?]
+                          sargs: term[?] AND term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count( cast(t?.d as varchar)|| cast(t?.d as varchar)|| cast(t?.d as varchar)|| cast(t?.d as varchar)|| cast(t?.d as varchar)|| cast(t?.d as varchar)|| cast(t?.d as varchar)|| cast(t?.d as varchar)|| cast(t?.d as varchar)|| cast(t?.d as varchar)) from t? t?, t? t?, t? t?, t? t?, t? t?, t? t?, t? t?, t? t?, t? t?, t? t? where (t?.c> ?:? ) and (t?.b> ?:? ) and (t?.c> ?:? ) and (t?.b> ?:? ) and (t?.c> ?:? ) and (t?.b> ?:? ) and (t?.c> ?:? ) and (t?.b> ?:? ) and (t?.c> ?:? ) and (t?.b> ?:? ) and (t?.c> ?:? ) and (t?.b> ?:? ) and (t?.c> ?:? ) and (t?.b> ?:? ) and (t?.c> ?:? ) and (t?.b> ?:? ) and (t?.c> ?:? ) and (t?.b> ?:? ) and (t?.c> ?:? ) and (t?.b> ?:? ) using index none
+===================================================
+Error:-494
+===================================================
+0
+===================================================
+0
+===================================================
+0

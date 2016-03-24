@@ -1,0 +1,10 @@
+--+ holdcas on;
+set names utf8;
+CREATE TABLE t1 ( a varchar(10) charset utf8 collate utf8_bin);
+insert into t1 values ('A'), ('a');
+set names utf8 collate utf8_en_ci;
+select /*+ recompile */ * from t1 where a='A' and a='a' order by 1;
+drop table t1;
+set names iso88591;
+commit;
+--+ holdcas off;

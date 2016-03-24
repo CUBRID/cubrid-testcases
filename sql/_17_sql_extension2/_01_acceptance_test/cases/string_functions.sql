@@ -1,0 +1,48 @@
+--INSERT FUNCTION
+--pear
+SELECT INSERT('paper', 2, 3, 'ea');
+--paper
+SELECT INSERT('paper', -1, 3, 'ea');
+--pea
+SELECT INSERT('paper', 2, 20, 'ea');
+
+
+--REPEAT FUNCTION
+SELECT REPEAT('hello', 2);
+
+CREATE TABLE aoo(a char(5), b varchar(10), c int);
+INSERT INTO aoo VALUES ('aoo', 'boo', 4);
+
+SELECT REPEAT(a, c) FROM aoo;
+SELECT REPEAT(b, c) FROM aoo;
+
+DROP TABLE aoo;
+
+
+--SPACE FUNCTION
+SELECT SPACE(5);
+--10
+SELECT LENGTH(SPACE(10));
+--8
+SELECT LENGTH(SPACE(LENGTH('12345678')));
+
+
+--SUBSTRING_INDEX FUNCTION
+SELECT SUBSTRING_INDEX('www.baidu.com', '.', 2);
+SELECT SUBSTRING_INDEX('www.baidu.com', '.', -2);
+SELECT SUBSTRING_INDEX(123/456/789, '/', 1);
+SELECT SUBSTRING_INDEX(123/456/789, '/', -1);
+
+--ELT FUNCTION
+SELECT ELT(1, 'AAA', 'BBB', 'CCC', 'DDD', 'EEE');
+SELECT ELT(2, 'AAA', 'BBB', 'CCC', 'DDD', 'EEE');
+SELECT ELT(3, 'AAA', 'BBB', 'CCC', 'DDD', 'EEE');
+SELECT ELT(4, 'AAA', 'BBB', 'CCC', 'DDD', 'EEE');
+SELECT ELT(5, 'AAA', 'BBB', 'CCC', 'DDD', 'EEE');
+--NULL
+SELECT ELT(6, 'AAA', 'BBB', 'CCC', 'DDD', 'EEE');
+--NULL
+SELECT ELT(0, 'AAA', 'BBB', 'CCC', 'DDD', 'EEE');
+
+
+

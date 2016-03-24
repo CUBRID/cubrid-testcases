@@ -1,0 +1,14 @@
+autocommit off;
+create class a (a_i int, b_i int);
+create class b (a_i int, b_i int);
+create class c (a_i int, b_i int);
+insert into a values(1,1);
+insert into a values(1,2);
+insert into b values(1,1);
+insert into b values(2,2);
+insert into c values(2,3);
+insert into c values(2,1);
+select count(*) from a,b,c;
+select count(*) from a,b,c where a.a_i=b.b_i and b.b_i=c.a_i;
+select count(*) from a,b,c where a.b_i=b.b_i and b.b_i=c.b_i;
+rollback;

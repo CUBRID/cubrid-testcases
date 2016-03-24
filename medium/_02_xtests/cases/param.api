@@ -1,0 +1,38 @@
+-- $Revision: 1.2 $
+-- test reading parameters from parsed but uncompiled statements.
+
+db_open_buffer
+SELECT * FROM location WHERE latitude < :x AND longitude > :y
+0 -- session output
+
+db_get_parameters
+0 -- session input
+1 -- statement 1
+2 -- parameter output
+
+print_parameter
+0 -- session input
+2 -- parameter input
+
+db_parameter_next
+2 -- parameter input
+3 -- parameter output
+
+print_parameter
+0 -- session input
+3 -- parameter input
+
+db_close_session
+0
+-- PERFORMANCE 38
+-- <WIN16
+--  :x
+--  :y
+-- WIN16>
+-- <WIN32
+--  :x
+--  :y
+-- WIN32>
+-- OUTPUT
+--  :x
+--  :y

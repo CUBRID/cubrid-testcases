@@ -1,0 +1,11 @@
+SELECT RADIANS(90) FROM db_root;
+
+SELECT RADIANS('90') FROM db_root;
+
+SELECT RADIANS('a') FROM db_root;
+
+SELECT RADIANS(NULL) FROM db_root;
+
+SELECT RADIANS(1.1) FROM db_root;
+
+select radians(123456789012345.12345) from db_root;

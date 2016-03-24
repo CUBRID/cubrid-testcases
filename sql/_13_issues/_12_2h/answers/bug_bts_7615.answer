@@ -1,0 +1,90 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+a    b    c    
+99     1     1     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.b, t?.c from t? t? where (t?.a> ?:? ) using index t?.i_t?_a(+)
+===================================================
+1
+===================================================
+a    b    c    
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.b, t?.c from t? t? where (t?.a> ?:? ) using index t?.i_t?_a(+)
+===================================================
+1
+===================================================
+1
+===================================================
+a    b    c    
+12     2     10     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_a term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.b, t?.c from t? t? where (t?.a> ?:? ) using index t?.i_t?_a(+) order by ?, ?
+===================================================
+2
+===================================================
+1
+===================================================
+a    b    c    
+111     1     100     
+111     2     100     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_a term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.b, t?.c from t? t? where (t?.a> ?:? ) using index t?.i_t?_a(+) order by ?, ?
+===================================================
+a    b    c    
+111     1     100     
+111     2     100     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_a 
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.b, t?.c from t? t? using index t?.i_t?_a(+) order by ?, ?
+===================================================
+0
+===================================================
+0

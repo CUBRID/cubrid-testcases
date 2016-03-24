@@ -1,0 +1,13 @@
+SELECT LEFT('''''''', 3) from db_root;
+SELECT LEFT('''''''', '3') from db_root;
+SELECT LEFT('''''''', CHAR_LENGTH('333') | 1) from db_root;
+SELECT LEFT('''''''', FIELD('ej', 'Hej', 'ej', 'Heja', 'hej', 'foo') ) from db_root;
+SELECT LEFT('''''''', FIELD('ej', 'Hej', 'ej', 'Heja', 'hej', 'foo') | 1) from db_root;
+SELECT LEFT(lcase('FOOBARFOOBAR'), 5) from db_root;
+SELECT LEFT(concat(lcase('FOO'),left(lcase('FOOBARFOOBAR'),3)), 5) from db_root;
+select concat_ws(left('I Love You',CHAR_LENGTH(left('중국abc이다',6))),8,8) from db_root;
+SELECT LEFT('AA', 1999999999) from db_root;
+SELECT LEFT('AA', 2000000000) from db_root;
+select 1 as a from (select left('중국abc이다',6) from db_root) as t1;
+select CHAR_LENGTH(left('중국abc이다',3)) ;
+select CHAR_LENGTH(left('중국abc이다',6)) ;

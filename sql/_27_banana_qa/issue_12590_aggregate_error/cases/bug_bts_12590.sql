@@ -1,0 +1,12 @@
+drop table if exists t1;
+drop table if exists t2;
+create table t1(i int);
+create table t2(i int);
+insert into t1 values(1);
+insert into t1 values(2);
+insert into t1 values(3);
+insert into t2 values(1);
+insert into t2 values(2);
+select (select sum(t1.i) from t2) from t1;
+drop table if exists t1;
+drop table if exists t2;

@@ -1,0 +1,11 @@
+autocommit off;
+create class a (i int, s3 char(3), s4 char(4));
+insert into a values (2, '1 1', '2 2 ');
+insert into a values (1, '10 ', '20  ');
+select * from a where s3 like '1__' and s4 like '2__%';
+select * from a where s3 like '1%' and s4 like '2%';
+select * from a where s3 like '1_%' and s4 like '2_%';
+select * from a where s3 like '1__';
+select * from a where s3 like '1 _';
+select * from a where s3 like '1 %';
+rollback;

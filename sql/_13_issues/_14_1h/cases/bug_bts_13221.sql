@@ -1,0 +1,15 @@
+--+ holdcas on;
+drop table if exists foo;
+create table foo (a int, b int not null);
+insert into foo(b) values (1);
+alter /*+ SKIP_UPDATE_NULL */ table foo modify a int not null;
+select a from foo;
+select is_nullable from db_attribute where class_name = 'foo' and attr_name = 'a';
+drop table if exists foo;
+create table foo (a int, b int not null);
+insert into foo(b) values (1);
+alter table foo modify a int not null;
+select a from foo;
+select is_nullable from db_attribute where class_name = 'foo' and attr_name = 'a';
+drop table foo;
+--+ holdcas off;

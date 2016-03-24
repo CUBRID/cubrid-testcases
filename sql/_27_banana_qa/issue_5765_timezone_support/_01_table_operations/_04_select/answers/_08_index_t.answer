@@ -1,0 +1,360 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+id    col1    col2    
+1     2015-09-17 03:30:00.0 America/Belem BRT     2015-09-17 15:30:00.0 +09:00     
+3     2015-09-17 03:30:00.0 America/Belem BRT     2015-09-17 03:00:00.0 -03:30     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: tz_test node[?]
+                 index: idx? term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where tz_test.col?= ?:?  order by ?
+===================================================
+0
+===================================================
+id    col1    col2    
+2     2015-09-17 07:42:56.0 -04:30     2015-09-17 21:12:56.0 +09:00     
+4     2015-09-17 07:42:56.0 -04:30     null     
+5     2015-09-17 07:00:00.0 -04:30     2015-09-17 08:30:00.0 America/La_Paz BOT     
+6     2015-09-17 08:42:56.0 -04:30     2015-09-17 10:12:56.0 America/Noronha FNT     
+10     2015-09-17 19:29:59.0 -04:30     2015-09-17 23:59:59.0 UTC UTC     
+11     2015-09-17 19:29:59.001 -04:30     2015-09-17 23:59:59.001 UTC UTC     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: tz_test node[?]
+                 index: idx? term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where (tz_test.col?> ?:? ) order by ?
+===================================================
+0
+===================================================
+id    col1    col2    
+1     2015-09-17 15:30:00.0 Asia/Seoul KST     2015-09-17 15:30:00.0 +09:00     
+3     2015-09-17 15:30:00.0 Asia/Seoul KST     2015-09-17 03:00:00.0 -03:30     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: tz_test node[?]
+                 index: idx? term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where tz_test.col?= ?:?  order by ?, ?
+===================================================
+0
+===================================================
+id    col1    col2    
+2     2015-09-17 16:12:56.0 +04:00     2015-09-17 21:12:56.0 +09:00     
+6     2015-09-17 17:12:56.0 +04:00     2015-09-17 10:12:56.0 America/Noronha FNT     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: tz_test node[?]
+                 index: idx? term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where tz_test.col?= ?:?  order by ?
+===================================================
+id    col2    col1    
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: tz_test node[?]
+                 index: idx? term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where tz_test.col?= ?:?  order by ?
+===================================================
+0
+===================================================
+id    col1    col2    
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: tz_test node[?]
+                 index: idx? term[?]
+                 filtr: term[?]
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where (tz_test.col?< ?:? ) and (tz_test.col?> ?:? ) order by ?
+===================================================
+id    col1    col2    
+1     2015-09-17 13:30:00.0 Indian/Christmas CXT     2015-09-17 15:30:00.0 +09:00     
+2     2015-09-17 19:12:56.0 Indian/Christmas CXT     2015-09-17 21:12:56.0 +09:00     
+3     2015-09-17 13:30:00.0 Indian/Christmas CXT     2015-09-17 03:00:00.0 -03:30     
+7     2015-09-17 12:00:00.0 Indian/Christmas CXT     2015-09-17 02:00:00.0 America/Belem BRT     
+8     2015-09-17 13:00:00.0 Indian/Christmas CXT     2015-09-17 03:00:00.0 America/Belem BRT     
+9     2015-09-17 07:00:00.0 Indian/Christmas CXT     2015-09-17 02:00:00.0 +02:00     
+10     2015-09-18 06:59:59.0 Indian/Christmas CXT     2015-09-17 23:59:59.0 UTC UTC     
+11     2015-09-18 06:59:59.001 Indian/Christmas CXT     2015-09-17 23:59:59.001 UTC UTC     
+12     2015-09-17 11:59:59.0 Indian/Christmas CXT     2015-09-17 01:59:59.0 America/Belem BRT     
+13     2015-09-17 11:59:59.001 Indian/Christmas CXT     2015-09-17 01:59:59.001 America/Belem BRT     
+14     2015-09-17 12:59:59.0 Indian/Christmas CXT     2015-09-17 02:59:59.0 America/Belem BRT     
+15     2015-09-17 12:59:59.001 Indian/Christmas CXT     2015-09-17 02:59:59.001 America/Belem BRT     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tz_test node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where tz_test.col?= cast(tz_test.col? as datetimetz) order by ?
+===================================================
+col1    col2    
+2015-09-17 13:00:00.0 Indian/Christmas CXT     2015-09-17 03:00:00.0 America/Belem BRT     
+
+Query plan:
+iscan
+    class: tz_test node[?]
+    index: idx? term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tz_test.col?, tz_test.col? from tz_test tz_test where tz_test.col?= ?:?  order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    col1    col2    
+7     2015-09-17 12:00:00.0 Indian/Christmas CXT     2015-09-17 02:00:00.0 America/Belem BRT     
+8     2015-09-17 13:00:00.0 Indian/Christmas CXT     2015-09-17 03:00:00.0 America/Belem BRT     
+9     2015-09-17 07:00:00.0 Indian/Christmas CXT     2015-09-17 02:00:00.0 +02:00     
+12     2015-09-17 11:59:59.0 Indian/Christmas CXT     2015-09-17 01:59:59.0 America/Belem BRT     
+13     2015-09-17 11:59:59.001 Indian/Christmas CXT     2015-09-17 01:59:59.001 America/Belem BRT     
+14     2015-09-17 12:59:59.0 Indian/Christmas CXT     2015-09-17 02:59:59.0 America/Belem BRT     
+15     2015-09-17 12:59:59.001 Indian/Christmas CXT     2015-09-17 02:59:59.001 America/Belem BRT     
+
+Query plan:
+iscan
+    class: tz_test node[?]
+    index: idx? term[?]
+    filtr: term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where (tz_test.id> ?:? ) and (tz_test.col?< ?:? ) order by ?
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+id    col1    col2    
+1     2015-09-17 03:30:00.0 America/Belem BRT     2015-09-17 15:30:00.0 +09:00     
+2     2015-09-17 09:12:56.0 America/Belem BRT     2015-09-17 21:12:56.0 +09:00     
+3     2015-09-17 03:30:00.0 America/Belem BRT     2015-09-17 03:00:00.0 -03:30     
+5     2015-09-17 08:30:00.0 America/Belem BRT     2015-09-17 08:30:00.0 America/La_Paz BOT     
+6     2015-09-17 10:12:56.0 America/Belem BRT     2015-09-17 10:12:56.0 America/Noronha FNT     
+8     2015-09-17 03:00:00.0 America/Belem BRT     2015-09-17 03:00:00.0 America/Belem BRT     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+id    col1    col2    
+7     2015-09-17 02:00:00.0 America/Belem BRT     2015-09-17 02:00:00.0 America/Belem BRT     
+8     2015-09-17 03:00:00.0 America/Belem BRT     2015-09-17 03:00:00.0 America/Belem BRT     
+9     2015-09-16 21:00:00.0 America/Belem BRT     2015-09-17 02:00:00.0 +02:00     
+12     2015-09-17 01:59:59.0 America/Belem BRT     2015-09-17 01:59:59.0 America/Belem BRT     
+13     2015-09-17 01:59:59.001 America/Belem BRT     2015-09-17 01:59:59.001 America/Belem BRT     
+14     2015-09-17 02:59:59.0 America/Belem BRT     2015-09-17 02:59:59.0 America/Belem BRT     
+15     2015-09-17 02:59:59.001 America/Belem BRT     2015-09-17 02:59:59.001 America/Belem BRT     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: tz_test node[?]
+                 index: filter_idx? term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where (tz_test.col?< ?:? ) using index tz_test.filter_idx? order by ?, ?
+===================================================
+0
+===================================================
+id    col1    col2    
+7     2015-09-17 04:00:00.0 Atlantic/Cape_Verde CVT     2015-09-17 02:00:00.0 America/Belem BRT     
+8     2015-09-17 05:00:00.0 Atlantic/Cape_Verde CVT     2015-09-17 03:00:00.0 America/Belem BRT     
+9     2015-09-16 23:00:00.0 Atlantic/Cape_Verde CVT     2015-09-17 02:00:00.0 +02:00     
+12     2015-09-17 03:59:59.0 Atlantic/Cape_Verde CVT     2015-09-17 01:59:59.0 America/Belem BRT     
+13     2015-09-17 03:59:59.001 Atlantic/Cape_Verde CVT     2015-09-17 01:59:59.001 America/Belem BRT     
+14     2015-09-17 04:59:59.0 Atlantic/Cape_Verde CVT     2015-09-17 02:59:59.0 America/Belem BRT     
+15     2015-09-17 04:59:59.001 Atlantic/Cape_Verde CVT     2015-09-17 02:59:59.001 America/Belem BRT     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: tz_test node[?]
+                 index: filter_idx? term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where (tz_test.col?< ?:? ) using index tz_test.filter_idx? order by ?
+===================================================
+id    col1    col2    
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: tz_test node[?]
+                 index: filter_idx? term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where (tz_test.col?> ?:? ) using index tz_test.filter_idx?(+) order by ?
+===================================================
+0
+===================================================
+id    col1    col2    
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tz_test node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where tz_test.col?= ?:?  using index tz_test.filter_idx? order by ?
+===================================================
+0
+===================================================
+id    col1    col2    
+5     2015-09-17 08:30:00.0 America/Belem BRT     2015-09-17 08:30:00.0 America/La_Paz BOT     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tz_test node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where  hour( cast(tz_test.col? as varchar))=? using index tz_test.function_idx?(+) order by ?, ?, ?
+===================================================
+id    col1    col2    
+12     2015-09-17 01:59:59.0 America/Belem BRT     2015-09-17 01:59:59.0 America/Belem BRT     
+13     2015-09-17 01:59:59.001 America/Belem BRT     2015-09-17 01:59:59.001 America/Belem BRT     
+14     2015-09-17 02:59:59.0 America/Belem BRT     2015-09-17 02:59:59.0 America/Belem BRT     
+15     2015-09-17 02:59:59.001 America/Belem BRT     2015-09-17 02:59:59.001 America/Belem BRT     
+10     2015-09-17 20:59:59.0 America/Belem BRT     2015-09-17 23:59:59.0 UTC UTC     
+11     2015-09-17 20:59:59.001 America/Belem BRT     2015-09-17 23:59:59.001 UTC UTC     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: tz_test node[?]
+                 index: function_idx? term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where  second( cast(tz_test.col? as varchar))=? using index tz_test.function_idx? order by ?, ?, ?
+===================================================
+0
+===================================================
+0
+===================================================
+0

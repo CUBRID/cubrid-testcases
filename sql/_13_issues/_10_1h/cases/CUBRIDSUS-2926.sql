@@ -1,0 +1,45 @@
+create table tbl (
+a int not null unique,
+b int default 0,
+c int);
+
+insert into tbl values (0, 0, 0), (1, 1, 1);
+
+select * from tbl;
+
+-- expression
+create table t1 (a int, b int, c int) as select (a*0), b, c from tbl;
+create table t2 (a int, b int, c int) as select a, (b*0), c from tbl;
+create table t3 (a int, b int, c int) as select a, b, (c*0) from tbl;
+
+create table t4 (a int, b int, c int) as select a+b, b+c, c+a from tbl;
+create table t5 (a int, b int, c int) as select a+b+c, a*b*c, a-b-c from tbl;
+
+-- constant as name
+create table t6 (a int, b int, c int) as select 1, 2, 3 from tbl;
+
+-- alias
+create table t7 (a int, b int, c int) as select tbl.c as a, tbl.a as b, tbl.b as c from tbl;
+create table t8 (a int, b int, c int) as select tbl.a+tbl.b as a, tbl.b+tbl.c as b, tbl.c+tbl.a as c from tbl;
+
+
+
+select * from t1;
+select * from t2;
+select * from t3;
+select * from t4;
+select * from t5;
+select * from t6;
+select * from t7;
+select * from t8;
+
+
+drop tbl;
+drop t1;
+drop t2;
+drop t3;
+drop t4;
+drop t5;
+drop t6;
+drop t7;
+drop t8;

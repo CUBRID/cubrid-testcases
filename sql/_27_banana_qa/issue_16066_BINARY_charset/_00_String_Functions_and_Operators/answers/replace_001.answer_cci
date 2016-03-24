@@ -1,0 +1,120 @@
+===================================================
+0
+===================================================
+replace(_binary'12345abcdeabcde', _binary'abcde', null)    
+null     
+
+===================================================
+replace(_binary'12345abcdeabcde', null, _binary'abcde')    
+null     
+
+===================================================
+replace(null, _binary'12345abcdeabcde', _binary'abcde')    
+null     
+
+===================================================
+replace(_binary'12345abcdeabcde', _binary'abcde', _binary'ABCDE')    
+12345ABCDEABCDE     
+
+===================================================
+replace(_binary'12345abcdeabcde', _binary'abcde')    
+12345     
+
+===================================================
+replace(_binary'문자열', _binary'문자', _binary'문자열')    
+문자열열     
+
+===================================================
+replace(_binary'문자열', _binary'문자')    
+열     
+
+===================================================
+replace(_binary'문자열', _binary'자문', _binary'string')    
+문자열     
+
+===================================================
+replace(_binary'你好我好大家好', _binary'好', _binary'开心')    
+你开心我开心大家开心     
+
+===================================================
+replace(_binary'你好我好大家好', _binary'好')    
+你我大家     
+
+===================================================
+coercibility(_binary'abcdefg')    coercibility( cast(_utf8'abc' as varchar collate euckr_bin))    coercibility(_utf8'abc')    coercibility( cast(_utf8'def' as varchar))    
+9     6     10     6     
+
+===================================================
+replace(_binary'abcdefg',  cast(_utf8'abc' as varchar collate euckr_bin),  cast(_utf8'def' as varchar collate euckr_bin))    
+defdefg     
+
+===================================================
+replace(_binary'abcdefg',  cast(_utf8'abc' as varchar),  cast(_utf8'def' as varchar))    
+defdefg     
+
+===================================================
+replace(_binary'abcdefg', _utf8'', _utf8'def')    
+abcdefg     
+
+===================================================
+Error:-494
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+replace(cmt,  chr(10 using binary), _binary'\n')    
+This is a test for\nnew line.     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+id    replace(col_binary, col_binary)    replace(col_binary, col_binary, col_euckr)    
+1          ť�긮��     
+2          ����������ʫ��     
+3          CUBRID     
+4          ���������     
+
+===================================================
+id    replace(col_binary, col_euckr, col_binary+col_euckr)    replace(col_binary, col_utf8, col_binary+col_utf8)    replace(col_binary, col_iso, col_binary+col_iso)    
+1     큐브리드     큐브리드큐브리드     큐브리드     
+2     你好我好大家好     你好我好大家好你好我好大家好     你好我好大家好     
+3     CUBRIDCUBRID     CUBRIDCUBRID     CUBRIDCUBRID     
+4     ÀÀÏ     ÀÀÏÀÀÏ     ÀÀÏ     
+
+===================================================
+id    replace(col_binary,  cast(_utf8'큐브' as varchar collate euckr_bin),  cast(_utf8'다이아' as varchar collate euckr_bin))    replace(col_euckr,  cast(_utf8'큐브' as varchar collate euckr_bin),  cast(_utf8'다이아' as varchar collate euckr_bin))    replace(col_utf8, _binary'큐브', _binary'다이아')    replace(col_iso,  cast(_utf8'큐브' as varchar collate euckr_bin),  cast(_utf8'다이아' as varchar collate euckr_bin))    
+1     큐브리드     ���̾Ƹ���     다이아리드     ??????     
+
+===================================================
+id    replace(col_binary,  cast(_utf8'好' as varchar collate euckr_bin),  cast(_utf8'开心' as varchar collate euckr_bin))    replace(col_euckr,  cast(_utf8'好' as varchar collate euckr_bin),  cast(_utf8'开心' as varchar collate euckr_bin))    replace(col_utf8, _binary'好', _binary'开心')    replace(col_iso,  cast(_utf8'好' as varchar collate euckr_bin),  cast(_utf8'开心' as varchar collate euckr_bin))    
+2     你好我好大家好     ���?���?����ʫ?��     你开心我开心大家开心     ??????????????     
+
+===================================================
+1
+===================================================
+replace(col_binary, col_iso, col_euckr)    
+defdef     
+
+===================================================
+0
+===================================================
+0

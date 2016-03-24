@@ -1,0 +1,20 @@
+AUtocommit off;
+drop table if exists tb1;
+create table tb1(id int,text varchar(25),des varchar(100));
+create index i_t_id_text on tb1(id, text);
+commit;
+savepoint sp1;
+insert into tb1 values(1,'txt','des');
+savepoint sp2;
+alter table tb1 add column j int;
+savepoint sp3;
+alter table tb1 drop column des;
+savepoint sp4;
+select * from tb1 where id > -1 using index i_t_id_text(+);
+rollback to savepoint sp4;
+select * from tb1 where id > -1 using index i_t_id_text(+);
+rollback to savepoint sp2;
+select * from tb1 where id > -1 using index i_t_id_text(+);
+drop table tb1;
+AUtocommit on;
+

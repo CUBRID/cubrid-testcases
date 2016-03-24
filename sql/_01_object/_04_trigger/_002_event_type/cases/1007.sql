@@ -1,0 +1,15 @@
+--Create trigger with insert tigger event type
+CREATE CLASS ddl_0001( n int );
+CREATE CLASS ddl_0002( n int );
+
+CREATE TRIGGER DCL1	
+BEFORE INSERT ON ddl_0001	
+EXECUTE INSERT INTO ddl_0002 values( 1 );
+
+INSERT INTO ddl_0001 VALUES ( 1 );
+
+SELECT * FROM ddl_0002;
+
+DROP TRIGGER DCL1;
+DROP CLASS ddl_0001;
+DROP CLASS ddl_0002;

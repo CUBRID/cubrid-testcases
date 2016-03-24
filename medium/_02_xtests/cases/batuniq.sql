@@ -1,0 +1,14 @@
+autocommit off;
+create class foo (a int unique);
+insert into foo values(0);
+insert into foo values(1);
+insert into foo values(2);
+insert into foo values(3);
+insert into foo values(4);
+select * from foo;
+update foo set a = a + 5;
+select * from foo;
+update foo set a = a + 1;
+select * from foo;
+rollback work;
+rollback;

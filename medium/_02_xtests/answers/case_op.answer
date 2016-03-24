@@ -1,0 +1,1069 @@
+===================================================
+nullif(null, null)    
+null     
+
+===================================================
+nullif(1, null)    
+1     
+
+===================================================
+nullif(null, 1)    
+null     
+
+===================================================
+nullif(1, 1)    
+null     
+
+===================================================
+nullif('', ' ')    
+null     
+
+===================================================
+nullif('a', ' a')    
+a     
+
+===================================================
+nullif(nullif(10, 10.01), 10)    
+null     
+
+===================================================
+nullif(nullif(10, 10.01), 11)    
+10     
+
+===================================================
+nullif(B'1111', X'f')    
+null     
+
+===================================================
+nullif(\USD10.00, 10)    
+null     
+
+===================================================
+nullif(\USD10.00, 10.01)    
+10.0     
+
+===================================================
+nullif(date '07/18/1992', date '07/18/1993')    
+1992-07-18     
+
+===================================================
+nullif({1, 2}, {'1', 2})    
+null     
+
+===================================================
+nullif(set{1, 2}, {2, 1})    
+null     
+
+===================================================
+nullif(set{1, 2}, set{2, 1})    
+null     
+
+===================================================
+nullif(set{'1', '2'}, multiset{'1', '2'})    
+null     
+
+===================================================
+coalesce(nullif(1, 1), 2)    
+2     
+
+===================================================
+coalesce(nullif(1, 1), nullif(2, 2), nullif(3, 3))    
+null     
+
+===================================================
+coalesce(null, 'null', null)    
+null     
+
+===================================================
+coalesce(coalesce(null, B'1111'), coalesce(X'f', B'1111'))    
+f0     
+
+===================================================
+coalesce(1, 1.0, \USD1.00)    
+1.0     
+
+===================================================
+case null when 1 then 1 end    
+null     
+
+===================================================
+case 1 when 1 then 1 end    
+1     
+
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+b_x    nullif(b_x, b_x)    
+null     null     
+null     null     
+null     null     
+null     null     
+true     null     
+
+===================================================
+i_x    d_y    nullif(i_x, d_y)    
+10     null     10.0     
+10     null     10.0     
+10     null     10.0     
+10     10.0     null     
+10     11.0     10.0     
+11     null     11.0     
+11     null     11.0     
+11     null     11.0     
+11     10.0     11.0     
+11     11.0     null     
+
+===================================================
+str_x    nullif(str_x, 'aaa')    
+null     null     
+null     null     
+null     null     
+null     null     
+aaa     null     
+
+===================================================
+s_x    s_y    nullif(s_x, s_y)    
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+
+===================================================
+m_z    i_x    nullif(m_z, i_x)    
+10.0     null     10.0     
+10.0     null     10.0     
+10.0     null     10.0     
+10.0     10     null     
+10.0     11     10.0     
+11.0     null     11.0     
+11.0     null     11.0     
+11.0     null     11.0     
+11.0     10     11.0     
+11.0     11     null     
+12.0     null     12.0     
+12.0     null     12.0     
+12.0     null     12.0     
+12.0     10     12.0     
+12.0     11     12.0     
+13.0     null     13.0     
+13.0     null     13.0     
+13.0     null     13.0     
+13.0     10     13.0     
+13.0     11     13.0     
+
+===================================================
+str_x    str_y    nullif(str_x, str_y)    
+aaa     null     aaa     
+aaa     null     aaa     
+aaa     aaa     null     
+aaa     bbb     aaa     
+aaa     ccc     aaa     
+
+===================================================
+tt_x    tt_y    nullif(tt_x, tt_y)    
+11:12:13     null     11:12:13     
+11:12:13     null     11:12:13     
+11:12:13     null     11:12:13     
+11:12:13     11:12:13     null     
+11:12:13     21:22:23     11:12:13     
+
+===================================================
+b_x    b_y    coalesce(b_x, b_y)    
+null     c0     true     
+null     c0     true     
+null     c0     true     
+null     c0     true     
+null     f0     true     
+null     f0     true     
+null     f0     true     
+null     f0     true     
+true     null     true     
+true     null     true     
+true     null     true     
+true     c0     true     
+true     f0     true     
+
+===================================================
+i_x    d_y    m_z    coalesce(m_z, d_y, i_x)    
+null     null     10.0     10.0     
+null     null     11.0     11.0     
+null     null     12.0     12.0     
+null     null     13.0     13.0     
+null     null     10.0     10.0     
+null     null     11.0     11.0     
+null     null     12.0     12.0     
+null     null     13.0     13.0     
+null     null     10.0     10.0     
+null     null     11.0     11.0     
+null     null     12.0     12.0     
+null     null     13.0     13.0     
+null     null     10.0     10.0     
+null     null     11.0     11.0     
+null     null     12.0     12.0     
+null     null     13.0     13.0     
+null     null     10.0     10.0     
+null     null     11.0     11.0     
+null     null     12.0     12.0     
+null     null     13.0     13.0     
+null     null     10.0     10.0     
+null     null     11.0     11.0     
+null     null     12.0     12.0     
+null     null     13.0     13.0     
+null     null     10.0     10.0     
+null     null     11.0     11.0     
+null     null     12.0     12.0     
+null     null     13.0     13.0     
+null     null     10.0     10.0     
+null     null     11.0     11.0     
+null     null     12.0     12.0     
+null     null     13.0     13.0     
+null     null     10.0     10.0     
+null     null     11.0     11.0     
+null     null     12.0     12.0     
+null     null     13.0     13.0     
+null     10.0     10.0     10.0     
+null     10.0     11.0     11.0     
+null     10.0     12.0     12.0     
+null     10.0     13.0     13.0     
+null     10.0     null     10.0     
+null     10.0     10.0     10.0     
+null     10.0     11.0     11.0     
+null     10.0     12.0     12.0     
+null     10.0     13.0     13.0     
+null     10.0     null     10.0     
+null     10.0     10.0     10.0     
+null     10.0     11.0     11.0     
+null     10.0     12.0     12.0     
+null     10.0     13.0     13.0     
+null     10.0     null     10.0     
+null     11.0     10.0     10.0     
+null     11.0     11.0     11.0     
+null     11.0     12.0     12.0     
+null     11.0     13.0     13.0     
+null     11.0     null     11.0     
+null     11.0     10.0     10.0     
+null     11.0     11.0     11.0     
+null     11.0     12.0     12.0     
+null     11.0     13.0     13.0     
+null     11.0     null     11.0     
+null     11.0     10.0     10.0     
+null     11.0     11.0     11.0     
+null     11.0     12.0     12.0     
+null     11.0     13.0     13.0     
+null     11.0     null     11.0     
+10     null     10.0     10.0     
+10     null     11.0     11.0     
+10     null     12.0     12.0     
+10     null     13.0     13.0     
+10     null     null     10.0     
+10     null     10.0     10.0     
+10     null     11.0     11.0     
+10     null     12.0     12.0     
+10     null     13.0     13.0     
+10     null     null     10.0     
+10     null     10.0     10.0     
+10     null     11.0     11.0     
+10     null     12.0     12.0     
+10     null     13.0     13.0     
+10     null     null     10.0     
+10     10.0     10.0     10.0     
+10     10.0     11.0     11.0     
+10     10.0     12.0     12.0     
+10     10.0     13.0     13.0     
+10     10.0     null     10.0     
+10     11.0     10.0     10.0     
+10     11.0     11.0     11.0     
+10     11.0     12.0     12.0     
+10     11.0     13.0     13.0     
+10     11.0     null     11.0     
+11     null     10.0     10.0     
+11     null     11.0     11.0     
+11     null     12.0     12.0     
+11     null     13.0     13.0     
+11     null     null     11.0     
+11     null     10.0     10.0     
+11     null     11.0     11.0     
+11     null     12.0     12.0     
+11     null     13.0     13.0     
+11     null     null     11.0     
+11     null     10.0     10.0     
+11     null     11.0     11.0     
+11     null     12.0     12.0     
+11     null     13.0     13.0     
+11     null     null     11.0     
+11     10.0     10.0     10.0     
+11     10.0     11.0     11.0     
+11     10.0     12.0     12.0     
+11     10.0     13.0     13.0     
+11     10.0     null     10.0     
+11     11.0     10.0     10.0     
+11     11.0     11.0     11.0     
+11     11.0     12.0     12.0     
+11     11.0     13.0     13.0     
+11     11.0     null     11.0     
+
+===================================================
+s_x    s_y    coalesce(s_x, s_y, {})    
+null     null          
+null     null          
+null     null          
+null     null          
+null     null          
+null     null          
+null     null          
+null     null          
+null     null          
+null     null          
+null     null          
+null     null          
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+
+===================================================
+str_x    str_y    str_z    coalesce(str_x, str_y, str_z, 'eee')    
+null     null     aaa            aaa            
+null     null     bbb            bbb            
+null     null     ccc            ccc            
+null     null     ddd            ddd            
+null     null     null     eee     
+null     null     aaa            aaa            
+null     null     bbb            bbb            
+null     null     ccc            ccc            
+null     null     ddd            ddd            
+null     null     null     eee     
+null     null     aaa            aaa            
+null     null     bbb            bbb            
+null     null     ccc            ccc            
+null     null     ddd            ddd            
+null     null     null     eee     
+null     null     aaa            aaa            
+null     null     bbb            bbb            
+null     null     ccc            ccc            
+null     null     ddd            ddd            
+null     null     null     eee     
+null     null     aaa            aaa            
+null     null     bbb            bbb            
+null     null     ccc            ccc            
+null     null     ddd            ddd            
+null     null     null     eee     
+null     null     aaa            aaa            
+null     null     bbb            bbb            
+null     null     ccc            ccc            
+null     null     ddd            ddd            
+null     null     null     eee     
+null     null     aaa            aaa            
+null     null     bbb            bbb            
+null     null     ccc            ccc            
+null     null     ddd            ddd            
+null     null     null     eee     
+null     null     aaa            aaa            
+null     null     bbb            bbb            
+null     null     ccc            ccc            
+null     null     ddd            ddd            
+null     null     null     eee     
+null     aaa     aaa            aaa     
+null     aaa     bbb            aaa     
+null     aaa     ccc            aaa     
+null     aaa     ddd            aaa     
+null     aaa     null     aaa     
+null     aaa     aaa            aaa     
+null     aaa     bbb            aaa     
+null     aaa     ccc            aaa     
+null     aaa     ddd            aaa     
+null     aaa     null     aaa     
+null     aaa     aaa            aaa     
+null     aaa     bbb            aaa     
+null     aaa     ccc            aaa     
+null     aaa     ddd            aaa     
+null     aaa     null     aaa     
+null     aaa     aaa            aaa     
+null     aaa     bbb            aaa     
+null     aaa     ccc            aaa     
+null     aaa     ddd            aaa     
+null     aaa     null     aaa     
+null     bbb     aaa            bbb     
+null     bbb     bbb            bbb     
+null     bbb     ccc            bbb     
+null     bbb     ddd            bbb     
+null     bbb     null     bbb     
+null     bbb     aaa            bbb     
+null     bbb     bbb            bbb     
+null     bbb     ccc            bbb     
+null     bbb     ddd            bbb     
+null     bbb     null     bbb     
+null     bbb     aaa            bbb     
+null     bbb     bbb            bbb     
+null     bbb     ccc            bbb     
+null     bbb     ddd            bbb     
+null     bbb     null     bbb     
+null     bbb     aaa            bbb     
+null     bbb     bbb            bbb     
+null     bbb     ccc            bbb     
+null     bbb     ddd            bbb     
+null     bbb     null     bbb     
+null     ccc     aaa            ccc     
+null     ccc     bbb            ccc     
+null     ccc     ccc            ccc     
+null     ccc     ddd            ccc     
+null     ccc     null     ccc     
+null     ccc     aaa            ccc     
+null     ccc     bbb            ccc     
+null     ccc     ccc            ccc     
+null     ccc     ddd            ccc     
+null     ccc     null     ccc     
+null     ccc     aaa            ccc     
+null     ccc     bbb            ccc     
+null     ccc     ccc            ccc     
+null     ccc     ddd            ccc     
+null     ccc     null     ccc     
+null     ccc     aaa            ccc     
+null     ccc     bbb            ccc     
+null     ccc     ccc            ccc     
+null     ccc     ddd            ccc     
+null     ccc     null     ccc     
+aaa     null     aaa            aaa     
+aaa     null     bbb            aaa     
+aaa     null     ccc            aaa     
+aaa     null     ddd            aaa     
+aaa     null     null     aaa     
+aaa     null     aaa            aaa     
+aaa     null     bbb            aaa     
+aaa     null     ccc            aaa     
+aaa     null     ddd            aaa     
+aaa     null     null     aaa     
+aaa     aaa     aaa            aaa     
+aaa     aaa     bbb            aaa     
+aaa     aaa     ccc            aaa     
+aaa     aaa     ddd            aaa     
+aaa     aaa     null     aaa     
+aaa     bbb     aaa            aaa     
+aaa     bbb     bbb            aaa     
+aaa     bbb     ccc            aaa     
+aaa     bbb     ddd            aaa     
+aaa     bbb     null     aaa     
+aaa     ccc     aaa            aaa     
+aaa     ccc     bbb            aaa     
+aaa     ccc     ccc            aaa     
+aaa     ccc     ddd            aaa     
+aaa     ccc     null     aaa     
+
+===================================================
+b_x    b_y    case B'1111' when b_x then b_x when b_y then b_y end    
+null     c0     null     
+null     c0     null     
+null     c0     null     
+null     c0     null     
+null     f0     true     
+null     f0     true     
+null     f0     true     
+null     f0     true     
+true     null     true     
+true     null     true     
+true     null     true     
+true     c0     true     
+true     f0     true     
+
+===================================================
+i_x    d_y    m_z    case m_z when i_x then i_x when d_y then d_y else 0 end    
+null     null     10.0     0.0     
+null     null     11.0     0.0     
+null     null     12.0     0.0     
+null     null     13.0     0.0     
+null     null     null     0.0     
+null     null     10.0     0.0     
+null     null     11.0     0.0     
+null     null     12.0     0.0     
+null     null     13.0     0.0     
+null     null     null     0.0     
+null     null     10.0     0.0     
+null     null     11.0     0.0     
+null     null     12.0     0.0     
+null     null     13.0     0.0     
+null     null     null     0.0     
+null     null     10.0     0.0     
+null     null     11.0     0.0     
+null     null     12.0     0.0     
+null     null     13.0     0.0     
+null     null     null     0.0     
+null     null     10.0     0.0     
+null     null     11.0     0.0     
+null     null     12.0     0.0     
+null     null     13.0     0.0     
+null     null     null     0.0     
+null     null     10.0     0.0     
+null     null     11.0     0.0     
+null     null     12.0     0.0     
+null     null     13.0     0.0     
+null     null     null     0.0     
+null     null     10.0     0.0     
+null     null     11.0     0.0     
+null     null     12.0     0.0     
+null     null     13.0     0.0     
+null     null     null     0.0     
+null     null     10.0     0.0     
+null     null     11.0     0.0     
+null     null     12.0     0.0     
+null     null     13.0     0.0     
+null     null     null     0.0     
+null     null     10.0     0.0     
+null     null     11.0     0.0     
+null     null     12.0     0.0     
+null     null     13.0     0.0     
+null     null     null     0.0     
+null     10.0     10.0     10.0     
+null     10.0     11.0     0.0     
+null     10.0     12.0     0.0     
+null     10.0     13.0     0.0     
+null     10.0     null     0.0     
+null     10.0     10.0     10.0     
+null     10.0     11.0     0.0     
+null     10.0     12.0     0.0     
+null     10.0     13.0     0.0     
+null     10.0     null     0.0     
+null     10.0     10.0     10.0     
+null     10.0     11.0     0.0     
+null     10.0     12.0     0.0     
+null     10.0     13.0     0.0     
+null     10.0     null     0.0     
+null     11.0     10.0     0.0     
+null     11.0     11.0     11.0     
+null     11.0     12.0     0.0     
+null     11.0     13.0     0.0     
+null     11.0     null     0.0     
+null     11.0     10.0     0.0     
+null     11.0     11.0     11.0     
+null     11.0     12.0     0.0     
+null     11.0     13.0     0.0     
+null     11.0     null     0.0     
+null     11.0     10.0     0.0     
+null     11.0     11.0     11.0     
+null     11.0     12.0     0.0     
+null     11.0     13.0     0.0     
+null     11.0     null     0.0     
+10     null     10.0     10.0     
+10     null     11.0     0.0     
+10     null     12.0     0.0     
+10     null     13.0     0.0     
+10     null     null     0.0     
+10     null     10.0     10.0     
+10     null     11.0     0.0     
+10     null     12.0     0.0     
+10     null     13.0     0.0     
+10     null     null     0.0     
+10     null     10.0     10.0     
+10     null     11.0     0.0     
+10     null     12.0     0.0     
+10     null     13.0     0.0     
+10     null     null     0.0     
+10     10.0     10.0     10.0     
+10     10.0     11.0     0.0     
+10     10.0     12.0     0.0     
+10     10.0     13.0     0.0     
+10     10.0     null     0.0     
+10     11.0     10.0     10.0     
+10     11.0     11.0     11.0     
+10     11.0     12.0     0.0     
+10     11.0     13.0     0.0     
+10     11.0     null     0.0     
+11     null     10.0     0.0     
+11     null     11.0     11.0     
+11     null     12.0     0.0     
+11     null     13.0     0.0     
+11     null     null     0.0     
+11     null     10.0     0.0     
+11     null     11.0     11.0     
+11     null     12.0     0.0     
+11     null     13.0     0.0     
+11     null     null     0.0     
+11     null     10.0     0.0     
+11     null     11.0     11.0     
+11     null     12.0     0.0     
+11     null     13.0     0.0     
+11     null     null     0.0     
+11     10.0     10.0     10.0     
+11     10.0     11.0     11.0     
+11     10.0     12.0     0.0     
+11     10.0     13.0     0.0     
+11     10.0     null     0.0     
+11     11.0     10.0     0.0     
+11     11.0     11.0     11.0     
+11     11.0     12.0     0.0     
+11     11.0     13.0     0.0     
+11     11.0     null     0.0     
+
+===================================================
+str_z    str_x    str_y    case str_z when str_x then str_x when str_y then str_y end    
+aaa            null     aaa     aaa     
+aaa            null     aaa     aaa     
+aaa            null     aaa     aaa     
+aaa            null     aaa     aaa     
+aaa            null     bbb     null     
+aaa            null     bbb     null     
+aaa            null     bbb     null     
+aaa            null     bbb     null     
+aaa            null     ccc     null     
+aaa            null     ccc     null     
+aaa            null     ccc     null     
+aaa            null     ccc     null     
+aaa            aaa     null     aaa     
+aaa            aaa     null     aaa     
+aaa            aaa     aaa     aaa     
+aaa            aaa     bbb     aaa     
+aaa            aaa     ccc     aaa     
+bbb            null     aaa     null     
+bbb            null     aaa     null     
+bbb            null     aaa     null     
+bbb            null     aaa     null     
+bbb            null     bbb     bbb     
+bbb            null     bbb     bbb     
+bbb            null     bbb     bbb     
+bbb            null     bbb     bbb     
+bbb            null     ccc     null     
+bbb            null     ccc     null     
+bbb            null     ccc     null     
+bbb            null     ccc     null     
+bbb            aaa     null     null     
+bbb            aaa     null     null     
+bbb            aaa     aaa     null     
+bbb            aaa     bbb     bbb     
+bbb            aaa     ccc     null     
+ccc            null     aaa     null     
+ccc            null     aaa     null     
+ccc            null     aaa     null     
+ccc            null     aaa     null     
+ccc            null     bbb     null     
+ccc            null     bbb     null     
+ccc            null     bbb     null     
+ccc            null     bbb     null     
+ccc            null     ccc     ccc     
+ccc            null     ccc     ccc     
+ccc            null     ccc     ccc     
+ccc            null     ccc     ccc     
+ccc            aaa     null     null     
+ccc            aaa     null     null     
+ccc            aaa     aaa     null     
+ccc            aaa     bbb     null     
+ccc            aaa     ccc     ccc     
+ddd            null     aaa     null     
+ddd            null     aaa     null     
+ddd            null     aaa     null     
+ddd            null     aaa     null     
+ddd            null     bbb     null     
+ddd            null     bbb     null     
+ddd            null     bbb     null     
+ddd            null     bbb     null     
+ddd            null     ccc     null     
+ddd            null     ccc     null     
+ddd            null     ccc     null     
+ddd            null     ccc     null     
+ddd            aaa     null     null     
+ddd            aaa     null     null     
+ddd            aaa     aaa     null     
+ddd            aaa     bbb     null     
+ddd            aaa     ccc     null     
+
+===================================================
+b_x    b_y    case when b_y>b_x then b_y+b_x when b_x>b_y then b_x+b_y end    
+null     c0     null     
+null     c0     null     
+null     c0     null     
+null     c0     null     
+null     f0     null     
+null     f0     null     
+null     f0     null     
+null     f0     null     
+true     null     null     
+true     null     null     
+true     null     null     
+true     c0     f0c0     
+true     f0     null     
+
+===================================================
+i_x    d_y    m_z    case when i_x>=d_y then case when i_x>=m_z then i_x else m_z end else case when d_y>=m_z then d_y else m_z end end    
+null     null     10.0     10.0     
+null     null     11.0     11.0     
+null     null     12.0     12.0     
+null     null     13.0     13.0     
+null     null     10.0     10.0     
+null     null     11.0     11.0     
+null     null     12.0     12.0     
+null     null     13.0     13.0     
+null     null     10.0     10.0     
+null     null     11.0     11.0     
+null     null     12.0     12.0     
+null     null     13.0     13.0     
+null     null     10.0     10.0     
+null     null     11.0     11.0     
+null     null     12.0     12.0     
+null     null     13.0     13.0     
+null     null     10.0     10.0     
+null     null     11.0     11.0     
+null     null     12.0     12.0     
+null     null     13.0     13.0     
+null     null     10.0     10.0     
+null     null     11.0     11.0     
+null     null     12.0     12.0     
+null     null     13.0     13.0     
+null     null     10.0     10.0     
+null     null     11.0     11.0     
+null     null     12.0     12.0     
+null     null     13.0     13.0     
+null     null     10.0     10.0     
+null     null     11.0     11.0     
+null     null     12.0     12.0     
+null     null     13.0     13.0     
+null     null     10.0     10.0     
+null     null     11.0     11.0     
+null     null     12.0     12.0     
+null     null     13.0     13.0     
+null     10.0     10.0     10.0     
+null     10.0     11.0     11.0     
+null     10.0     12.0     12.0     
+null     10.0     13.0     13.0     
+null     10.0     null     null     
+null     10.0     10.0     10.0     
+null     10.0     11.0     11.0     
+null     10.0     12.0     12.0     
+null     10.0     13.0     13.0     
+null     10.0     null     null     
+null     10.0     10.0     10.0     
+null     10.0     11.0     11.0     
+null     10.0     12.0     12.0     
+null     10.0     13.0     13.0     
+null     10.0     null     null     
+null     11.0     10.0     11.0     
+null     11.0     11.0     11.0     
+null     11.0     12.0     12.0     
+null     11.0     13.0     13.0     
+null     11.0     null     null     
+null     11.0     10.0     11.0     
+null     11.0     11.0     11.0     
+null     11.0     12.0     12.0     
+null     11.0     13.0     13.0     
+null     11.0     null     null     
+null     11.0     10.0     11.0     
+null     11.0     11.0     11.0     
+null     11.0     12.0     12.0     
+null     11.0     13.0     13.0     
+null     11.0     null     null     
+10     null     10.0     10.0     
+10     null     11.0     11.0     
+10     null     12.0     12.0     
+10     null     13.0     13.0     
+10     null     null     null     
+10     null     10.0     10.0     
+10     null     11.0     11.0     
+10     null     12.0     12.0     
+10     null     13.0     13.0     
+10     null     null     null     
+10     null     10.0     10.0     
+10     null     11.0     11.0     
+10     null     12.0     12.0     
+10     null     13.0     13.0     
+10     null     null     null     
+10     10.0     10.0     10.0     
+10     10.0     11.0     11.0     
+10     10.0     12.0     12.0     
+10     10.0     13.0     13.0     
+10     10.0     null     null     
+10     11.0     10.0     11.0     
+10     11.0     11.0     11.0     
+10     11.0     12.0     12.0     
+10     11.0     13.0     13.0     
+10     11.0     null     null     
+11     null     10.0     10.0     
+11     null     11.0     11.0     
+11     null     12.0     12.0     
+11     null     13.0     13.0     
+11     null     null     null     
+11     null     10.0     10.0     
+11     null     11.0     11.0     
+11     null     12.0     12.0     
+11     null     13.0     13.0     
+11     null     null     null     
+11     null     10.0     10.0     
+11     null     11.0     11.0     
+11     null     12.0     12.0     
+11     null     13.0     13.0     
+11     null     null     null     
+11     10.0     10.0     11.0     
+11     10.0     11.0     11.0     
+11     10.0     12.0     12.0     
+11     10.0     13.0     13.0     
+11     10.0     null     null     
+11     11.0     10.0     11.0     
+11     11.0     11.0     11.0     
+11     11.0     12.0     12.0     
+11     11.0     13.0     13.0     
+11     11.0     null     null     
+
+===================================================
+i_x    d_y    case when 1=1 then i_x else d_y end    
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     10.0     null     
+null     10.0     null     
+null     10.0     null     
+null     11.0     null     
+null     11.0     null     
+null     11.0     null     
+10     null     10.0     
+10     null     10.0     
+10     null     10.0     
+10     10.0     10.0     
+10     11.0     10.0     
+11     null     11.0     
+11     null     11.0     
+11     null     11.0     
+11     10.0     11.0     
+11     11.0     11.0     
+
+===================================================
+s_x    s_y    case when 1=1 then s_x else s_y end    
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+
+===================================================
+s_x    s_y    case when 1=2 then s_x else s_y end    
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+
+===================================================
+tt_x    tt_y    case when 1=1 then tt_x else tt_y end    
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     11:12:13     null     
+null     11:12:13     null     
+null     11:12:13     null     
+null     11:12:13     null     
+null     21:22:23     null     
+null     21:22:23     null     
+null     21:22:23     null     
+null     21:22:23     null     
+11:12:13     null     11:12:13     
+11:12:13     null     11:12:13     
+11:12:13     null     11:12:13     
+11:12:13     11:12:13     11:12:13     
+11:12:13     21:22:23     11:12:13     
+
+===================================================
+tt_x    tt_y    case when 1=2 then tt_x else tt_y end    
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     11:12:13     11:12:13     
+null     11:12:13     11:12:13     
+null     11:12:13     11:12:13     
+null     11:12:13     11:12:13     
+null     21:22:23     21:22:23     
+null     21:22:23     21:22:23     
+null     21:22:23     21:22:23     
+null     21:22:23     21:22:23     
+11:12:13     null     null     
+11:12:13     null     null     
+11:12:13     null     null     
+11:12:13     11:12:13     11:12:13     
+11:12:13     21:22:23     21:22:23     
+
+===================================================
+i_x    m_z    case when 1=1 then i_x else m_z end    
+null     null     null     
+null     null     null     
+null     null     null     
+null     10.0     null     
+null     10.0     null     
+null     10.0     null     
+null     11.0     null     
+null     11.0     null     
+null     11.0     null     
+null     12.0     null     
+null     12.0     null     
+null     12.0     null     
+null     13.0     null     
+null     13.0     null     
+null     13.0     null     
+10     null     10.0     
+10     10.0     10.0     
+10     11.0     10.0     
+10     12.0     10.0     
+10     13.0     10.0     
+11     null     11.0     
+11     10.0     11.0     
+11     11.0     11.0     
+11     12.0     11.0     
+11     13.0     11.0     
+
+===================================================
+i_x    d_y    case when i_x is not null  then i_x when 1<2 then d_y end    
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     null     null     
+null     10.0     10.0     
+null     10.0     10.0     
+null     10.0     10.0     
+null     11.0     11.0     
+null     11.0     11.0     
+null     11.0     11.0     
+10     null     10.0     
+10     null     10.0     
+10     null     10.0     
+10     10.0     10.0     
+10     11.0     10.0     
+11     null     11.0     
+11     null     11.0     
+11     null     11.0     
+11     10.0     11.0     
+11     11.0     11.0     
+
+===================================================
+0
+===================================================
+1
+===================================================
+w1    w2    case when 1=2 then w1 else w2 end    
+1234.12     1235     1235.00     
+
+===================================================
+0

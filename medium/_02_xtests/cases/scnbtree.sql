@@ -1,0 +1,14 @@
+autocommit off;
+create class foo (x int unique);
+create class subfoo under foo;
+--set optimization: level 257;
+insert into foo values(1);
+insert into subfoo values(2);
+select * from all foo where x = 1;
+select * from all foo where x = 2;
+select count(*) from all foo where x = 1;
+select count(*) from all foo where x = 2;
+drop subfoo;
+select count(*) from all foo where x = 1;
+select count(*) from all foo where x = 2;
+rollback;

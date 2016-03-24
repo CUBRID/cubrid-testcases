@@ -1,0 +1,43 @@
+===================================================
+0
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+a    b    c    
+0     10     10     
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.b, t?.c from t? t? where t?.b= ?:? 
+===================================================
+a    b    c    
+0     10     10     
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.b, t?.c from t? t? where t?.b= ?:?  using index t?.i_t?
+===================================================
+a    b    c    
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t? 
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.b, t?.c from t? t? where t?.b= ?:?  using index t?.i_t?(+)
+===================================================
+0

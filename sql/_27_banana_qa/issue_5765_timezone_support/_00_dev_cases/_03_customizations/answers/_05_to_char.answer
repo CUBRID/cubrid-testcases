@@ -1,0 +1,134 @@
+===================================================
+to_char(datetime '2/12/2012 23:59:59', 'HH24:MI, DD, MONTH, YYYY TZR TZH TZM TZD')    
+23:59, 12, FEBRUARY , 2012 Asia/Seoul +09 00 KST     
+
+===================================================
+to_char(datetime '2/12/2012 23:59:59', 'HH24:MI, TZR, DD, TZH, MONTH, YYYY, TZM TZD')    
+23:59, Asia/Seoul, 12, +09, FEBRUARY , 2012, 00 KST     
+
+===================================================
+to_char(timestamp '2/12/2012 23:59:59', 'HH24:MI, DD, MONTH, YYYY TZR TZH TZM TZD')    
+23:59, 12, FEBRUARY , 2012 Asia/Seoul +09 00 KST     
+
+===================================================
+to_char(timestamp '2/12/2012 23:59:59', 'HH24:MI, TZR, DD, TZH, MONTH, YYYY, TZM TZD')    
+23:59, Asia/Seoul, 12, +09, FEBRUARY , 2012, 00 KST     
+
+===================================================
+to_char(time '23:59:59', 'HH24:MI:SS TZR TZH TZM TZD')    
+23:59:59 Asia/Seoul +09 00 KST     
+
+===================================================
+to_char(time '23:59:59', 'TZR HH24:MI TZH SS TZM TZD')    
+Asia/Seoul 23:59 +09 59 00 KST     
+
+===================================================
+to_char(datetimetz '2/12/2012 23:59:59')    
+11:59:59.000 PM 02/12/2012 Asia/Seoul KST     
+
+===================================================
+to_char(datetimetz '2/12/2012 23:59:59 Europe/Zurich CET')    
+11:59:59.000 PM 02/12/2012 Europe/Zurich CET     
+
+===================================================
+Error:-494
+===================================================
+to_char(datetimetz '2/12/2012 23:59:59', 'TZR TZH TZM')    
+Asia/Seoul +09 00     
+
+===================================================
+to_char(datetimetz '2/12/2012 23:59:59 Europe/Paris CET', 'HH24:MI, DD, MONTH, YYYY TZR TZD TZH TZM')    
+23:59, 12, FEBRUARY , 2012 Europe/Paris CET +01 00     
+
+===================================================
+to_char(datetimetz '2/12/2012 23:59:59 Europe/Paris CET', 'HH24:MI, DD, TZR ,MONTH, TZD, YYYY TZH TZM')    
+23:59, 12, Europe/Paris ,FEBRUARY , CET, 2012 +01 00     
+
+===================================================
+Error:-494
+===================================================
+to_char(datetimeltz '4/05/2005 23:59:59')    
+11:59:59.000 PM 04/05/2005 Asia/Seoul KST     
+
+===================================================
+to_char(datetimeltz '2/12/2012 23:59:59', 'TZR TZH TZM')    
+Asia/Seoul +09 00     
+
+===================================================
+to_char(datetimeltz '2/12/2012 23:59:59', 'HH24:MI, DD, MONTH, YYYY TZR TZD TZH TZM')    
+23:59, 12, FEBRUARY , 2012 Asia/Seoul KST +09 00     
+
+===================================================
+to_char(datetimeltz '11/05/2016 23:59:59', 'HH24:MI, DD, TZR ,MONTH, TZD, YYYY TZH TZM')    
+23:59, 05, Asia/Seoul ,NOVEMBER , KST, 2016 +09 00     
+
+===================================================
+to_char(timestamptz '2/12/2012 23:59:59')    
+11:59:59 PM 02/12/2012 Asia/Seoul KST     
+
+===================================================
+to_char(timestamptz '2/12/2012 23:59:59 Europe/Zurich CET')    
+11:59:59 PM 02/12/2012 Europe/Zurich CET     
+
+===================================================
+Error:-494
+===================================================
+to_char(timestamptz '2/12/2012 23:59:59', 'TZR TZH TZM')    
+Asia/Seoul +09 00     
+
+===================================================
+to_char(timestamptz '2/12/2012 23:59:59 Europe/Paris CET', 'HH24:MI, DD, MONTH, YYYY TZR TZD TZH TZM')    
+23:59, 12, FEBRUARY , 2012 Europe/Paris CET +01 00     
+
+===================================================
+to_char(timestamptz '2/12/2012 23:59:59 Europe/Paris CET', 'HH24:MI, DD, TZR ,MONTH, TZD, YYYY TZH TZM')    
+23:59, 12, Europe/Paris ,FEBRUARY , CET, 2012 +01 00     
+
+===================================================
+Error:-494
+===================================================
+to_char(timestampltz '4/05/2005 23:59:59')    
+11:59:59 PM 04/05/2005 Asia/Seoul KST     
+
+===================================================
+to_char(timestampltz '2/12/2012 23:59:59', 'TZR TZH TZM')    
+Asia/Seoul +09 00     
+
+===================================================
+to_char(timestampltz '2/12/2012 23:59:59', 'HH24:MI, DD, MONTH, YYYY TZR TZD TZH TZM')    
+23:59, 12, FEBRUARY , 2012 Asia/Seoul KST +09 00     
+
+===================================================
+to_char(timestampltz '11/05/2016 23:59:59', 'HH24:MI, DD, TZR ,MONTH, TZD, YYYY TZH TZM')    
+23:59, 05, Asia/Seoul ,NOVEMBER , KST, 2016 +09 00     
+
+===================================================
+to_char(time '23:59:59')    
+11:59:59 PM     
+
+===================================================
+Error:-494
+===================================================
+to_char(time '23:59:59', 'TZR TZH TZM')    
+Asia/Seoul +09 00     
+
+===================================================
+to_char( to_datetime_tz('2/12/2012 23:59:59'), 'TZR TZD TZH TZM')    
+Asia/Seoul KST +09 00     
+
+===================================================
+to_char( to_datetime_tz('08-Dec-25 13:10:30.999 Europe/Vienna CET', 'YY-Mon-DD HH24:MI:SS.FF TZR TZD'), 'HH24:MI, DD, MONTH, YYYY TZR TZD TZH TZM')    
+13:10, 25, DECEMBER , 2008 Europe/Vienna CET +01 00     
+
+===================================================
+to_char( to_timestamp_tz('2/12/2012 23:59:59'), 'TZR TZD TZH TZM')    
+Asia/Seoul KST +09 00     
+
+===================================================
+to_char( to_timestamp_tz('08-Dec-25 13:10:30 Europe/Vienna CET', 'YY-Mon-DD HH24:MI:SS TZR TZD'), 'HH24:MI, DD, MONTH, YYYY TZR TZD TZH TZM')    
+13:10, 25, DECEMBER , 2008 Europe/Vienna CET +01 00     
+
+===================================================
+Error:-494
+===================================================
+Error:-494

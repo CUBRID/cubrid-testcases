@@ -1,0 +1,11 @@
+-- TIME_FORMAT
+--+ holdcas on;
+set names iso88591;
+set system parameters 'intl_date_lang = ko_KR';
+SELECT TIME_FORMAT('22:23:24', '%l:%i%s %r');
+
+SELECT TIME_FORMAT('10:23:24', '%l:%i%s %r');
+set system parameters 'intl_date_lang = en_US';
+set names iso88591;
+commit;
+--+ holdcas off;

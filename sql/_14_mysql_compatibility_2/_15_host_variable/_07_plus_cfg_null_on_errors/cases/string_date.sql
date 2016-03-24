@@ -1,0 +1,97 @@
+--- string + date = string 		(native )
+--+ holdcas on;
+set system parameters 'return_null_on_function_errors=yes';
+
+create table t1 (s1 varchar(10), d2 date);
+
+insert into t1 values ('2001-10-11',date'2001-10-11');
+select s1+d2 from t1;
+truncate table t1;
+
+insert into t1 values ('10',date'2001-10-11');
+select s1+d2 from t1;
+truncate table t1;
+
+insert into t1 values ('1.123e1',date'2001-10-11');
+select s1+d2 from t1;
+truncate table t1;
+
+insert into t1 values ('abc',date'2001-10-11');
+select s1+d2 from t1;
+truncate table t1;
+
+insert into t1 values (NULL,date'2001-10-11');
+select s1+d2 from t1;
+truncate table t1;
+
+insert into t1 values ('abc',NULL);
+select s1+d2 from t1;
+truncate table t1;
+
+
+-- columns , HV
+insert into t1 values ('abc',date'2001-10-11');
+
+prepare st from 'select s1 + ? from t1'
+execute st using date'2001-10-11';
+
+prepare st from 'select ? + d2 from t1'
+execute st using n'abc';
+
+prepare st from 'select s1 + ? from t1'
+execute st using NULL;
+
+truncate table t1;
+insert into t1 values (NULL,date'2001-10-11');
+insert into t1 values ('abc',NULL);
+
+prepare st from 'select s1 + ? from t1'
+execute st using NULL;
+
+prepare st from 'select ? + d2 from t1'
+execute st using NULL;
+
+drop table t1;
+
+-- constants
+select '2001-10-11' + date'2001-10-11';
+
+select '2001' + date'2001-10-11';
+
+select 'abc' + date'2001-10-11';
+
+select time'10:11:12' + n'abc';
+
+select timestamp'2001-10-11 10:11:12' + n'10';
+
+select NULL + date'2001-10-11';
+
+-- 2 HV
+prepare st from 'select ? + ?'
+execute st using '34',date'2001-10-11';
+
+prepare st from 'select ? + ?'
+execute st using date'2001-10-11','34';
+
+prepare st from 'select ? + ?'
+execute st using NULL,'34';
+
+prepare st from 'select ? + ?'
+execute st using '34',NULL;
+
+prepare st from 'select ? + ?'
+execute st using n'34',time'10:11:12';
+
+-- 1 HV
+prepare st from 'select ''34'' + ?'
+execute st using date'2001-10-11';
+
+prepare st from 'select time''10:11:12'' + ?'
+execute st using n'2';
+
+prepare st from 'select time''10:11:12'' + ?'
+execute st using NULL;
+
+set system parameters 'return_null_on_function_errors=no';
+commit;
+--+ holdcas off;

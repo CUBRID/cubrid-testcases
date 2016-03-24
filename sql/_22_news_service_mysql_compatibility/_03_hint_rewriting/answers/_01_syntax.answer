@@ -1,0 +1,447 @@
+===================================================
+0
+===================================================
+0
+===================================================
+10000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+Error:-493
+===================================================
+a    
+AZ-100                   
+AZ-1000                  
+AZ-10000                 
+AZ-10002                 
+AZ-10004                 
+AZ-10006                 
+AZ-10008                 
+AZ-10010                 
+AZ-10012                 
+AZ-10014                 
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.a from t? t? where (t?.a> ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) using index t?.i_t?_a, t?.i_t?_a_b
+===================================================
+a    
+AZ-100                   
+AZ-1000                  
+AZ-10000                 
+AZ-10002                 
+AZ-10004                 
+AZ-10006                 
+AZ-10008                 
+AZ-10010                 
+AZ-10012                 
+AZ-10014                 
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a_b term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.a from t? t? where (t?.a> ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) using index t?.i_t?_a_b
+===================================================
+a    
+AZ-100                   
+AZ-1000                  
+AZ-10000                 
+AZ-10002                 
+AZ-10004                 
+AZ-10006                 
+AZ-10008                 
+AZ-10010                 
+AZ-10012                 
+AZ-10014                 
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a from t? t? where (t?.a> ?:? ) using index t?.pk_t?_id order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+===================================================
+a    
+AZ-100                   
+AZ-1000                  
+AZ-10000                 
+AZ-10002                 
+AZ-10004                 
+AZ-10006                 
+AZ-10008                 
+AZ-10010                 
+AZ-10012                 
+AZ-10014                 
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.a from t? t? where (t?.a> ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) using index t?.i_t?_a, t?.i_t?_a_b, t?.pk_t?_id
+===================================================
+a    
+AZ-100                   
+AZ-1000                  
+AZ-10000                 
+AZ-10002                 
+AZ-10004                 
+AZ-10006                 
+AZ-10008                 
+AZ-10010                 
+AZ-10012                 
+AZ-10014                 
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.a from t? t? where (t?.a> ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) using index t?.i_t?_a, t?.i_t?_a_b, t?.pk_t?_id
+===================================================
+Error:-493
+===================================================
+Error:-494
+===================================================
+Error:-493
+===================================================
+Error:-493
+===================================================
+Error:-494
+===================================================
+a    
+AZ-100                   
+AZ-1000                  
+AZ-10000                 
+AZ-10002                 
+AZ-10004                 
+AZ-10006                 
+AZ-10008                 
+AZ-10010                 
+AZ-10012                 
+AZ-10014                 
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.a from t? t? where (t?.a> ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) using index t?.i_t?_a
+===================================================
+Error:-493
+===================================================
+a    
+AZ-100                   
+AZ-1000                  
+AZ-10000                 
+AZ-10002                 
+AZ-10004                 
+AZ-10006                 
+AZ-10008                 
+AZ-10010                 
+AZ-10012                 
+AZ-10014                 
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.a from t? t? where (t?.a> ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) using index t?.i_t?_a(+), t?.i_t?_a_b(+)
+===================================================
+a    
+AZ-100                   
+AZ-1000                  
+AZ-10000                 
+AZ-10002                 
+AZ-10004                 
+AZ-10006                 
+AZ-10008                 
+AZ-10010                 
+AZ-10012                 
+AZ-10014                 
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a_b term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.a from t? t? where (t?.a> ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) using index t?.i_t?_a_b(+)
+===================================================
+a    
+AZ-100                   
+AZ-1000                  
+AZ-10000                 
+AZ-10002                 
+AZ-10004                 
+AZ-10006                 
+AZ-10008                 
+AZ-10010                 
+AZ-10012                 
+AZ-10014                 
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a from t? t? where (t?.a> ?:? ) using index t?.pk_t?_id(+) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+===================================================
+a    
+AZ-100                   
+AZ-1000                  
+AZ-10000                 
+AZ-10002                 
+AZ-10004                 
+AZ-10006                 
+AZ-10008                 
+AZ-10010                 
+AZ-10012                 
+AZ-10014                 
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.a from t? t? where (t?.a> ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) using index t?.i_t?_a(+), t?.i_t?_a_b(+), t?.pk_t?_id(+)
+===================================================
+a    
+AZ-100                   
+AZ-1000                  
+AZ-10000                 
+AZ-10002                 
+AZ-10004                 
+AZ-10006                 
+AZ-10008                 
+AZ-10010                 
+AZ-10012                 
+AZ-10014                 
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.a from t? t? where (t?.a> ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) using index t?.i_t?_a(+), t?.i_t?_a_b(+), t?.pk_t?_id(+)
+===================================================
+Error:-493
+===================================================
+Error:-494
+===================================================
+Error:-493
+===================================================
+Error:-493
+===================================================
+Error:-494
+===================================================
+a    
+AZ-100                   
+AZ-1000                  
+AZ-10000                 
+AZ-10002                 
+AZ-10004                 
+AZ-10006                 
+AZ-10008                 
+AZ-10010                 
+AZ-10012                 
+AZ-10014                 
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.a from t? t? where (t?.a> ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) using index t?.i_t?_a(+)
+===================================================
+Error:-493
+===================================================
+a    
+AZ-100                   
+AZ-1000                  
+AZ-10000                 
+AZ-10002                 
+AZ-10004                 
+AZ-10006                 
+AZ-10008                 
+AZ-10010                 
+AZ-10012                 
+AZ-10014                 
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a from t? t? where (t?.a> ?:? ) using index t?.i_t?_a(-), t?.i_t?_a_b(-) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+===================================================
+a    
+AZ-100                   
+AZ-1000                  
+AZ-10000                 
+AZ-10002                 
+AZ-10004                 
+AZ-10006                 
+AZ-10008                 
+AZ-10010                 
+AZ-10012                 
+AZ-10014                 
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a from t? t? where (t?.a> ?:? ) using index t?.i_t?_a_b(-) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+a    
+AZ-100                   
+AZ-1000                  
+AZ-10000                 
+AZ-10002                 
+AZ-10004                 
+AZ-10006                 
+AZ-10008                 
+AZ-10010                 
+AZ-10012                 
+AZ-10014                 
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a from t? t? where (t?.a> ?:? ) using index t?.pk_t?_id(-) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+a    
+AZ-100                   
+AZ-1000                  
+AZ-10000                 
+AZ-10002                 
+AZ-10004                 
+AZ-10006                 
+AZ-10008                 
+AZ-10010                 
+AZ-10012                 
+AZ-10014                 
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a from t? t? where (t?.a> ?:? ) using index t?.i_t?_a(-), t?.i_t?_a_b(-), t?.pk_t?_id(-) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+===================================================
+a    
+AZ-100                   
+AZ-1000                  
+AZ-10000                 
+AZ-10002                 
+AZ-10004                 
+AZ-10006                 
+AZ-10008                 
+AZ-10010                 
+AZ-10012                 
+AZ-10014                 
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a from t? t? where (t?.a> ?:? ) using index t?.i_t?_a(-), t?.i_t?_a_b(-), t?.pk_t?_id(-) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+===================================================
+Error:-493
+===================================================
+Error:-494
+===================================================
+Error:-493
+===================================================
+Error:-493
+===================================================
+Error:-494
+===================================================
+a    
+AZ-100                   
+AZ-1000                  
+AZ-10000                 
+AZ-10002                 
+AZ-10004                 
+AZ-10006                 
+AZ-10008                 
+AZ-10010                 
+AZ-10012                 
+AZ-10014                 
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a_b term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a from t? t? where (t?.a> ?:? ) using index t?.i_t?_a(-) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+Error:-493
+===================================================
+Error:-493
+===================================================
+0

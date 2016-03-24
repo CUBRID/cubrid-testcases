@@ -1,0 +1,10 @@
+autocommit off;
+create table key_filter_test(s varchar(10), t varchar(10));
+insert into key_filter_test values('a', 'a');
+insert into key_filter_test values('z', 'z');
+create index i_key_filter_test_s_t on key_filter_test(s, t);
+--set optimization: level 257;
+--set optimization: cost 'iscan' 0;
+select * from key_filter_test where s < 'z' and t = 'a';
+select * from key_filter_test where s > 't' and t = 'z';
+rollback;

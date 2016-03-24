@@ -1,0 +1,16 @@
+--+ holdcas on;
+drop table if exists t2;
+SET NAMES utf8 COLLATE utf8_de_exp_ai_ci; 
+CREATE TABLE t2 ( code VARCHAR(10)) collate utf8_de_exp_ai_ci PARTITION BY HASH (code) PARTITIONS 4;
+insert into t2(code) values ('AE');
+insert into t2(code) values ('ae');
+insert into t2(code) values ('Ä');
+insert into t2(code) values ('ä');
+select code from t2;
+select distinct code from t2;
+select * from t2 where code='ä';
+select * from t2 where code='ae';
+select * from t2 where code like 'ae%';
+drop t2;
+SET NAMES iso88591;
+--+ holdcas off;

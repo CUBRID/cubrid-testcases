@@ -1,0 +1,11 @@
+--+ holdcas on;
+set names utf8;
+SELECT FIND_IN_SET('가','1,2,a,伽,가,佳,假,價,加,可,呵,哥,嘉,嫁,家');
+SELECT FIND_IN_SET('가','가1,가,佳,假,價,加,可,呵,哥,嘉,嫁,家');
+SELECT FIND_IN_SET('가 ','가  ,가 ,佳,假,價,加,可,呵,哥,嘉,嫁,家');
+SELECT FIND_IN_SET(' ','가  ,가 ,佳,假,價,加,可,呵,哥,嘉,嫁,家,, ');
+SELECT FIND_IN_SET('','가  ,가 ,佳,假,價,加,可,呵,哥,嘉,嫁,家,, ');
+SELECT FIND_IN_SET('가伽','1,2,a,伽,가伽,佳,假,價,加,可,呵,哥,嘉,嫁,家');
+set names iso88591;
+commit;
+--+ holdcas off;

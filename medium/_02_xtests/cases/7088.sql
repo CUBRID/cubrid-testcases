@@ -1,0 +1,11 @@
+autocommit off;
+create class foo1 (a int);
+create class foo2 under foo1 (b int);
+insert into foo2 (a, b) values (1, 1);
+select a, b from foo2;
+alter class foo2 add attribute a int;
+select a, b from foo2;
+insert into foo2 (a, b) values (2, 2);
+alter class foo2 drop attribute a;
+select a, b from foo2;
+rollback;

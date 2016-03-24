@@ -1,0 +1,209 @@
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+2
+===================================================
+4
+===================================================
+8
+===================================================
+16
+===================================================
+32
+===================================================
+64
+===================================================
+128
+===================================================
+256
+===================================================
+512
+===================================================
+0
+===================================================
+0
+===================================================
+n    n2    n3    s    
+0     0     0     abcdefghijklmnopqrstuvwxyz     
+0     1     1     abcdefghijklmnopqrstuvwxyz     
+
+Query plan:
+sscan
+    class: foo node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select foo.n, foo.n?, foo.n?, foo.s from foo foo where ((foo.n?= ?:? ) or (foo.n?= ?:? ))
+===================================================
+n    n2    n3    s    
+0     0     0     abcdefghijklmnopqrstuvwxyz     
+0     1     1     abcdefghijklmnopqrstuvwxyz     
+
+Query plan:
+sscan
+    class: foo node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select foo.n, foo.n?, foo.n?, foo.s from foo foo where ((foo.n?= ?:? ) or (foo.n?= ?:? )) using index foo.idx?
+===================================================
+n    n2    n3    s    
+0     0     0     abcdefghijklmnopqrstuvwxyz     
+0     1     1     abcdefghijklmnopqrstuvwxyz     
+
+Query plan:
+sscan
+    class: foo node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_INDEX_SS */ foo.n, foo.n?, foo.n?, foo.s from foo foo where ((foo.n?= ?:? ) or (foo.n?= ?:? ))
+===================================================
+n    n2    n3    s    
+0     0     0     abcdefghijklmnopqrstuvwxyz     
+0     1     1     abcdefghijklmnopqrstuvwxyz     
+
+n    n2    n3    s    
+0     0     0     abcdefghijklmnopqrstuvwxyz     
+0     1     1     abcdefghijklmnopqrstuvwxyz     
+
+Query plan:
+iscan
+    class: foo node[?]
+    index: idx? term[?] (index skip scan)
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ foo.n, foo.n?, foo.n?, foo.s from foo foo where ((foo.n?= ?:? ) or (foo.n?= ?:? )) using index foo.idx?
+===================================================
+n    n2    n3    s    
+0     0     0     abcdefghijklmnopqrstuvwxyz     
+0     1     1     abcdefghijklmnopqrstuvwxyz     
+
+Query plan:
+sscan
+    class: foo node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_INDEX_SS */ foo.n, foo.n?, foo.n?, foo.s from foo foo where ((foo.n?= ?:? ) or (foo.n?= ?:? )) using index foo.idx?
+===================================================
+n    n2    
+0     0     
+0     1     
+
+Query plan:
+iscan
+    class: foo node[?]
+    index: idx? term[?] AND term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_INDEX_SS */ foo.n, foo.n? from foo foo where ((foo.n?= ?:? ) or (foo.n?= ?:? )) and foo.n= ?:? 
+===================================================
+0
+===================================================
+n    n2    n3    s    
+0     0     0     abcdefghijklmnopqrstuvwxyz     
+0     1     1     abcdefghijklmnopqrstuvwxyz     
+
+Query plan:
+iscan
+    class: v? node[?]
+    index: idx? term[?] (index skip scan)
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ v?.n, v?.n?, v?.n?, v?.s from foo v? where ((v?.n?= ?:?  or v?.n?= ?:? )) using index v?.idx?
+===================================================
+n    n2    n3    s    
+0     0     0     abcdefghijklmnopqrstuvwxyz     
+0     1     1     abcdefghijklmnopqrstuvwxyz     
+
+Query plan:
+sscan
+    class: v? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_INDEX_SS */ v?.n, v?.n?, v?.n?, v?.s from foo v? where ((v?.n?= ?:?  or v?.n?= ?:? )) using index v?.idx?
+===================================================
+0
+===================================================
+0
+===================================================
+n    n2    n3    s    
+0     0     0     abcdefghijklmnopqrstuvwxyz     
+0     1     1     abcdefghijklmnopqrstuvwxyz     
+
+Query plan:
+sscan
+    class: v? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_INDEX_SS */ v?.n, v?.n?, v?.n?, v?.s from foo v? where ((v?.n?= ?:?  or v?.n?= ?:? )) using index v?.idx?
+===================================================
+n    n2    n3    s    
+0     0     0     abcdefghijklmnopqrstuvwxyz     
+0     1     1     abcdefghijklmnopqrstuvwxyz     
+
+Query plan:
+sscan
+    class: v? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_INDEX_SS */ v?.n, v?.n?, v?.n?, v?.s from foo v? where ((v?.n?= ?:?  or v?.n?= ?:? )) using index v?.idx?
+===================================================
+0
+===================================================
+0
+===================================================
+n    n2    n3    s    
+0     0     0     abcdefghijklmnopqrstuvwxyz     
+0     1     1     abcdefghijklmnopqrstuvwxyz     
+
+Query plan:
+iscan
+    class: v? node[?]
+    index: idx? term[?] (index skip scan)
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ v?.n, v?.n?, v?.n?, v?.s from foo v? where ((v?.n?= ?:?  or v?.n?= ?:? )) using index v?.idx?
+===================================================
+n    n2    n3    s    
+0     0     0     abcdefghijklmnopqrstuvwxyz     
+0     1     1     abcdefghijklmnopqrstuvwxyz     
+
+Query plan:
+sscan
+    class: v? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_INDEX_SS */ v?.n, v?.n?, v?.n?, v?.s from foo v? where ((v?.n?= ?:?  or v?.n?= ?:? )) using index v?.idx?
+===================================================
+0
+===================================================
+n    n2    n3    s    
+0     1     1     abcdefghijklmnopqrstuvwxyz     
+0     2     2     abcdefghijklmnopqrstuvwxyz     
+
+===================================================
+0
+===================================================
+n    n2    n3    s    
+0     1     1     abcdefghijklmnopqrstuvwxyz     
+0     2     2     abcdefghijklmnopqrstuvwxyz     
+
+===================================================
+n    n2    n3    s    
+0     2     2     abcdefghijklmnopqrstuvwxyz     
+0     3     3     abcdefghijklmnopqrstuvwxyz     
+
+===================================================
+0
+===================================================
+0

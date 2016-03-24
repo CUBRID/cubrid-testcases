@@ -1,0 +1,62 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+col1    col2    col3    col4    
+1     test     F     2010-11-02 18:55:00.0     
+
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Query stmt:
+select t?.col?, t?.col?, t?.col?, t?.col? from t? t?
+===================================================
+col1    col2    col3    col4    
+1     test     F     2010-11-02 18:55:00.0     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: t?_? term[?] (covers)
+    filtr: term[?] AND term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.col?, t?.col?, t?.col?, t?.col? from t? t? where (t?.col?> ?:? ) and (t?.col?<= ?:? ) and t?.col?= ?:?  and t?.col?= ?:? 
+===================================================
+col1    col2    col3    col4    
+1     test     F     2010-11-02 18:55:00.0     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: t?_? (covers)
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.col?, t?.col?, t?.col?, t?.col? from t? t? order by ?, ?, ?, ?
+/* ---> skip ORDER BY */
+===================================================
+col1    col2    col3    col4    
+1     test     F     2010-11-02 18:55:00.0     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: t?_? (covers)
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.col?, t?.col?, t?.col?, t?.col? from t? t? group by t?.col?, t?.col?, t?.col?, t?.col?
+/* ---> skip GROUP BY */
+===================================================
+0
+===================================================
+0
+===================================================
+0

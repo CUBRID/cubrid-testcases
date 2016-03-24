@@ -1,0 +1,5 @@
+SELECT REVERSE('abc') FROM db_root;
+
+SELECT REVERSE(124) FROM db_root;
+
+SELECT REVERSE(NULL) FROM db_root;

@@ -1,0 +1,13 @@
+drop table if exists t1;
+drop table if exists t2;
+create table t1(a enum('a', 'b', 'c'));
+insert into t1 values  (1), (2), (3);
+create table t2 as select cast(a as ENUM('a', 'b', 'c', 'a', 'a', 'a')) col, a from t1;
+create table t2 as select cast(a as ENUM('a', 'b', 'c','d')) col, a from t1;
+select cast(a as ENUM('e','f','g','a', 'c','b', 'd')) + 0 col from t2 where col=1;
+insert into t2(a) select cast(a as ENUM('e','f','g','a', 'c','b', 'd')) col from t2 where col='a';
+select * from t2 where cast(col as ENUM('e','f','g','a', 'c','b', 'd')) >4 order by a;
+select * from t2 where cast(col as ENUM('e','f','g','a', 'c','m','b', 'd')) >6;
+select * from t2 where cast(col as ENUM('e','f','g','a', 'c','m','b', 'd')) >'e';
+select * from t2 where cast(col as ENUM('e','f','g','a', 'c','m','b', 'd')) >=cast(a as ENUM('e','f','g','a', 'c','m','b', 'd')) order by a;
+drop table t1,t2;

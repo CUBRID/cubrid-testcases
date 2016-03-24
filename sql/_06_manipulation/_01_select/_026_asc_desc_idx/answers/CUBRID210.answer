@@ -1,0 +1,149 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+a    b    
+1     300     
+1     200     
+1     100     
+
+Query plan:
+iscan
+    class: xoo node[?]
+    index: idx? term[?] AND term[?] (covers) (multi_range_opt)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_IDX */ xoo.a, xoo.b from xoo xoo where (xoo.b> ?:? ) and xoo.a= ?:?  order by ? desc  for orderby_num() between  ?:?  and  ?:? 
+===================================================
+a    b    
+1     300     
+1     200     
+1     100     
+
+Query plan:
+iscan
+    class: xoo node[?]
+    index: idx? term[?] AND term[?] (covers)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_IDX */ xoo.a, xoo.b from xoo xoo where (xoo.b> ?:? ) and xoo.a= ?:?  order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+a    b    
+1     300     
+1     200     
+1     100     
+
+Query plan:
+iscan
+    class: xoo node[?]
+    index: idx? term[?] AND term[?] (covers) (multi_range_opt)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_IDX */ xoo.a, xoo.b from xoo xoo where (xoo.b> ?:? ) and xoo.a= ?:?  order by ? desc  for orderby_num() between  ?:?  and  ?:? 
+===================================================
+a    b    
+1     300     
+1     200     
+1     100     
+
+Query plan:
+iscan
+    class: xoo node[?]
+    index: idx? term[?] AND term[?] (covers)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_IDX */ xoo.a, xoo.b from xoo xoo where (xoo.b> ?:? ) and xoo.a= ?:?  order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+a    b    
+30     300     
+50     200     
+
+Query plan:
+iscan
+    class: xoo node[?]
+    index: idx? term[?] (covers)
+    filtr: term[?]
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_IDX */ xoo.a, xoo.b from xoo xoo where (xoo.a> ?:? ) and (xoo.b> ?:? ) order by ?, ? desc  for orderby_num() between  ?:?  and  ?:? 
+/* ---> skip ORDER BY */
+===================================================
+a    b    
+30     300     
+50     200     
+
+Query plan:
+iscan
+    class: xoo node[?]
+    index: idx? term[?] (covers)
+    filtr: term[?]
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_IDX */ xoo.a, xoo.b from xoo xoo where (xoo.a> ?:? ) and (xoo.b> ?:? ) order by ?, ? desc 
+/* ---> skip ORDER BY */
+===================================================
+a    b    
+50     200     
+100     0     
+
+Query plan:
+iscan
+    class: xoo node[?]
+    index: idx? term[?] (covers)
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_IDX */ xoo.a, xoo.b from xoo xoo where (xoo.a> ?:? ) order by ?, ? desc  for orderby_num() between  ?:?  and  ?:? 
+/* ---> skip ORDER BY */
+===================================================
+a    b    
+30     300     
+50     200     
+100     0     
+
+Query plan:
+iscan
+    class: xoo node[?]
+    index: idx? term[?] (covers)
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_IDX */ xoo.a, xoo.b from xoo xoo where (xoo.a> ?:? ) order by ?, ? desc 
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+0
+===================================================
+0

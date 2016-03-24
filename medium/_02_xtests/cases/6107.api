@@ -1,0 +1,51 @@
+-- indirect test for problem that caused pr6107, ie, 
+-- make sure that db_query_format_name's return value does not change
+-- (PowerBuilder & other PC applications count on it being a qualified name)
+verbose_off
+error_exit
+db_execute
+create class foo (x char(10))
+1
+db_execute 
+select foo.x from foo
+2
+db_get_query_result_format
+2
+db_query_format_attr_name
+db_query_format_free
+db_query_end
+2
+
+db_execute 
+select x from foo
+3
+db_get_query_result_format
+3
+db_query_format_attr_name
+db_query_format_free
+db_query_end
+3
+
+-- $Revision: 1.2 $
+
+-- PERFORMANCE 14
+-- <WIN16
+-- db_execute returned 0 rows
+-- db_execute returned 0 rows
+-- db_query_format_attr_name returned x
+-- db_execute returned 0 rows
+-- db_query_format_attr_name returned x
+-- WIN16>
+-- <WIN32
+-- db_execute returned 0 rows
+-- db_execute returned 0 rows
+-- db_query_format_attr_name returned x
+-- db_execute returned 0 rows
+-- db_query_format_attr_name returned x
+-- WIN32>
+-- OUTPUT
+-- db_execute returned 0 rows
+-- db_execute returned 0 rows
+-- db_query_format_attr_name returned x
+-- db_execute returned 0 rows
+-- db_query_format_attr_name returned x

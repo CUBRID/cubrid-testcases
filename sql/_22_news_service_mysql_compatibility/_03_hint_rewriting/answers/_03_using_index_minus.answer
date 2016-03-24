@@ -1,0 +1,91 @@
+===================================================
+0
+===================================================
+10000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+Error:-493
+===================================================
+Error:-493
+===================================================
+Error:-493
+===================================================
+Error:-493
+===================================================
+Error:-493
+===================================================
+sum(id)    
+50005000     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a term[?]
+    cost:  ? card ?
+Query stmt:
+select sum(t?.id) from t? t? where (t?.a> ?:? )
+===================================================
+sum(id)    
+50005000     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_id_a_b term[?] (covers)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select sum(t?.id) from t? t? where (t?.a> ?:? ) and (t?.id> ?:? ) using index t?.pk_t?_id(-)
+===================================================
+sum( char_length(a))    
+200000     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select sum( char_length(t?.a)) from t? t? where (t?.a> ?:? ) using index t?.i_t?_a(+)
+===================================================
+sum( char_length(a))    
+200000     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a_b term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select sum( char_length(t?.a)) from t? t? where (t?.a> ?:? ) using index t?.i_t?_a(-)
+===================================================
+sum( char_length(a))    
+200000     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a_b term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select sum( char_length(t?.a)) from t? t? where (t?.a> ?:? ) using index t?.i_t?_a(-)
+===================================================
+Error:-493
+===================================================
+sum( char_length(a))    
+200000     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a_b term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select sum( char_length(t?.a)) from t? t? where (t?.a> ?:? ) using index t?.i_t?_a(-)
+===================================================
+0

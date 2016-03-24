@@ -1,0 +1,12 @@
+autocommit off;
+create class foo (n int);
+create index i_foo_n on foo(n);
+insert into foo values(12);
+select * from foo;
+commit work;
+drop index i_foo_n on foo(n);
+commit work;
+delete from foo where n = 12;
+drop foo;
+commit work;
+rollback;

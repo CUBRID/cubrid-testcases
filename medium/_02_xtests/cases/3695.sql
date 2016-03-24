@@ -1,0 +1,13 @@
+autocommit off;
+create class test1 (a string default 'wrong value');
+alter class test1 modify a string default 'right value';
+create class test2 as subclass of test1 (a string);
+insert into test2 values ('another value');
+alter class test1 modify a string default 'right value 2';
+insert into test2 values ('another value');
+select * from test2;
+alter class test2 drop a;
+select * from test2;
+insert into test2 default values;
+select * from test2;
+rollback;

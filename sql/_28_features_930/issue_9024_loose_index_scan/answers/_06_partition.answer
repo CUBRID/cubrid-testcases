@@ -1,0 +1,584 @@
+===================================================
+0
+===================================================
+1000
+===================================================
+0
+===================================================
+c    max(a)    
+1     1     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_LS */ t?.c, max(t?.a) from t?__p__before_? t? where (t?.c>= ?:? ) group by t?.c
+===================================================
+c    max(a)    
+0     0     
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_LS */ t?.c, max(t?.a) from t? t? where (t?.c>= ?:? ) group by t?.c
+===================================================
+x1.c+x2.c    max(x1.a)    max(x2.b)    
+3     1     2     
+
+Query plan:
+temp(group by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: iscan
+                            class: x? node[?]
+                            index: i_t?_all (covers) (loose index scan on prefix ?)
+                            cost:  ? card ?
+                 inner: iscan
+                            class: x? node[?]
+                            index: i_t?_all (covers) (loose index scan on prefix ?)
+                            filtr: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_LS */ x?.c+x?.c, max(x?.a), max(x?.b) from t?__p__before_? x?, t?__p__before_? x? where x?.c=x?.c+? group by x?.c+x?.c
+===================================================
+0
+===================================================
+c    max(a)    
+0     0     
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_all? (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_LS */ t?.c, max(t?.a) from t? t? where (t?.c>= ?:? ) group by t?.c
+===================================================
+c    
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct t?.a from t? t? where (t?.c> ?:? ))
+Query plan:
+temp(distinct)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: iscan
+                            class: t? node[?]
+                            index: i_t?_all? (covers) (loose index scan on prefix ?)
+                            cost:  ? card ?
+                 inner: sscan
+                            class: av? node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_LS */ distinct t?.c from t? t?, (select distinct t?.a from t? t? where (t?.c> ?:? )) av? (av_?) where t?.c=av?.av_?
+===================================================
+c    
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+
+Query plan:
+temp(distinct)
+    subplan: temp(group by)
+                 subplan: sscan
+                              class: t? node[?]
+                              sargs: term[?]
+                              cost:  ? card ?
+                 sort:  ? desc
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct t?.a from t? t? where (t?.c> ?:? ) group by t?.a desc )
+Query plan:
+temp(distinct)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: iscan
+                            class: t? node[?]
+                            index: i_t?_all? (covers) (loose index scan on prefix ?)
+                            cost:  ? card ?
+                 inner: sscan
+                            class: av? node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_LS */ distinct t?.c from t? t?, (select distinct t?.a from t? t? where (t?.c> ?:? ) group by t?.a desc ) av? (av_?) where t?.c=av?.av_?
+===================================================
+max(c)    
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+
+Query plan:
+temp(distinct)
+    subplan: temp(group by)
+                 subplan: sscan
+                              class: t? node[?]
+                              sargs: term[?]
+                              cost:  ? card ?
+                 sort:  ? desc
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct t?.a from t? t? where (t?.c> ?:? ) group by t?.a desc )
+Query plan:
+temp(group by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: iscan
+                            class: t? node[?]
+                            index: i_t?_all (covers) (loose index scan on prefix ?)
+                            cost:  ? card ?
+                 inner: sscan
+                            class: av? node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_LS */ max(t?.c) from t? t?, (select distinct t?.a from t? t? where (t?.c> ?:? ) group by t?.a desc ) av? (av_?) where t?.c=av?.av_? group by t?.f
+===================================================
+max(c)    
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct t?.a from t? t? where (t?.c> ?:? ))
+Query plan:
+temp(group by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: iscan
+                            class: t? node[?]
+                            index: i_t?_all (covers) (loose index scan on prefix ?)
+                            cost:  ? card ?
+                 inner: sscan
+                            class: av? node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_LS */ max(t?.c) from t? t?, (select distinct t?.a from t? t? where (t?.c> ?:? )) av? (av_?) where t?.c=av?.av_? group by t?.f
+===================================================
+max(c)    
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct t?.a from t? t? where (t?.c>tt.c))
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: tt node[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 sargs: term[?]
+                 subqs: ?
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_LS */ max(tt.c) from t? tt where tt.c in (select distinct t?.a from t? t? where (t?.c>tt.c)) group by tt.f
+===================================================
+max(c)    
+9     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_all? (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_LS */ max(t?.c) from t? t? where (t?.c>= ?:? )
+===================================================
+s    
+3     
+4     
+5     
+6     
+7     
+8     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: tt node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+(select tt.g from t? tt where tt.c=a_? group by tt.f)
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+(select /*+ ORDERED INDEX_LS */ t?.c from t? t? where (t?.e>= ?:?  and t?.e<= ?:? ) group by t?.c)
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Query stmt:
+select (select tt.g from t? tt where tt.c=a_? group by tt.f) from (select /*+ ORDERED INDEX_LS */ t?.c from t? t? where (t?.e>= ?:?  and t?.e<= ?:? ) group by t?.c) t? (a_?)
+===================================================
+first_value(c) over (partition by c mod 5 order by c)    
+0     
+1     
+2     
+3     
+4     
+
+Query plan:
+temp(distinct)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_all? (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: first_value partition by (? asc nulls first) order by (? asc nulls first)
+Query stmt:
+select /*+ ORDERED INDEX_LS */ distinct first_value(t?.c) over (partition by ? order by ?) from t? t? where (t?.c>= ?:? )
+===================================================
+a    b    c    d    e    f    g    
+0     0     0     0     0     0     0     
+1     1     1     1     1     1     1     
+2     2     2     2     2     2     2     
+3     3     3     3     3     3     3     
+4     4     4     4     4     4     4     
+5     5     5     5     5     5     5     
+6     6     6     6     6     6     6     
+7     7     7     7     7     7     7     
+8     8     8     8     8     8     8     
+9     9     9     9     9     9     9     
+
+Query plan:
+temp(distinct)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_LS */ distinct t?.a, t?.b, t?.c, t?.d, t?.e, t?.f, t?.g from t? t? where (t?.d>= ?:? )
+===================================================
+a    b    c    
+0     0     0     
+1     1     1     
+2     2     2     
+3     3     3     
+4     4     4     
+5     5     5     
+6     6     6     
+7     7     7     
+8     8     8     
+9     9     9     
+
+Query plan:
+temp(distinct)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_LS */ distinct t?.a, t?.b, t?.c from t? t? where (t?.d>= ?:? )
+===================================================
+a    b    c    
+0     0     0     
+1     1     1     
+2     2     2     
+3     3     3     
+4     4     4     
+5     5     5     
+6     6     6     
+7     7     7     
+8     8     8     
+9     9     9     
+
+Query plan:
+temp(distinct)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_all? (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_LS */ distinct t?.a, t?.b, t?.c from t? t? where (t?.c>= ?:? )
+===================================================
+a    b    c    
+0     0     0     
+1     1     1     
+2     2     2     
+3     3     3     
+4     4     4     
+5     5     5     
+6     6     6     
+7     7     7     
+8     8     8     
+9     9     9     
+
+Query plan:
+temp(distinct)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_LS */ distinct t?.a, t?.b, t?.c from t? t? where (t?.c>= ?:? ) using index t?.i_t?_all
+===================================================
+0
+===================================================
+a    b    c    
+0     0     0     
+1     1     1     
+2     2     2     
+3     3     3     
+4     4     4     
+5     5     5     
+6     6     6     
+7     7     7     
+8     8     8     
+9     9     9     
+
+Query plan:
+temp(distinct)
+    subplan: iscan
+                 class: v? node[?]
+                 index: i_t?_all? (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select /*+ ORDERED INDEX_LS */ distinct v?.a, v?.b, v?.c from t? v? where (v?.c>= ?:? ))
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_LS */ v?.a, v?.b, v?.c from (select /*+ ORDERED INDEX_LS */ distinct v?.a, v?.b, v?.c from t? v? where (v?.c>= ?:? )) v? (a, b, c)
+===================================================
+0
+===================================================
+a    b    c    
+0     0     0     
+1     1     1     
+2     2     2     
+3     3     3     
+4     4     4     
+5     5     5     
+6     6     6     
+7     7     7     
+8     8     8     
+9     9     9     
+
+Query plan:
+temp(distinct)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_LS */ distinct t?.a, t?.b, t?.c from t? t? where (t?.c>= ?:? ) using index t?.i_t?_all
+===================================================
+a    b    c    
+0     0     0     
+1     1     1     
+2     2     2     
+3     3     3     
+4     4     4     
+5     5     5     
+6     6     6     
+7     7     7     
+8     8     8     
+9     9     9     
+
+Query plan:
+temp(distinct)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_all? (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_LS */ distinct t?.a, t?.b, t?.c from t? t? where (t?.c>= ?:? ) using index t?.i_t?_all?
+===================================================
+a    b    c    
+0     0     0     
+1     1     1     
+2     2     2     
+3     3     3     
+4     4     4     
+5     5     5     
+6     6     6     
+7     7     7     
+8     8     8     
+9     9     9     
+
+Query plan:
+temp(distinct)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_LS */ distinct t?.a, t?.b, t?.c from t? t? where (t?.c>= ?:? ) using index t?.i_t?_all?(-)
+===================================================
+a    b    c    
+0     0     0     
+1     1     1     
+2     2     2     
+3     3     3     
+4     4     4     
+5     5     5     
+6     6     6     
+7     7     7     
+8     8     8     
+9     9     9     
+
+Query plan:
+temp(distinct)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_all? (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_LS */ distinct t?.a, t?.b, t?.c from t? t? where (t?.c>= ?:? ) using index t?.i_t?_all(-)
+===================================================
+a    b    c    
+0     0     0     
+1     1     1     
+2     2     2     
+3     3     3     
+4     4     4     
+5     5     5     
+6     6     6     
+7     7     7     
+8     8     8     
+9     9     9     
+
+Query plan:
+temp(distinct)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_LS */ distinct t?.a, t?.b, t?.c from t? t? where (t?.c>= ?:? ) using index t?.i_t?_all(+)
+===================================================
+0

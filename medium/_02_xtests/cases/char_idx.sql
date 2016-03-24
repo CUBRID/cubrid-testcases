@@ -1,0 +1,17 @@
+autocommit off;
+create class foo (b char(7));
+insert into foo values ('one');
+insert into foo values ('two');
+insert into foo values ('three');
+insert into foo select * from foo;
+insert into foo select * from foo;
+insert into foo select * from foo;
+insert into foo select * from foo;
+select count(*) from foo where b = 'three';
+select * from foo where b = 'two';
+create index i_foo_b on foo(b);
+--set optimization: cost 'iscan' 0;
+--set optimization: level 257;
+select count(*) from foo where b = 'three';
+select * from foo where b = 'two';
+rollback;

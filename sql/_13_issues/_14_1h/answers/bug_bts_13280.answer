@@ -1,0 +1,192 @@
+===================================================
+0
+===================================================
+20
+===================================================
+0
+===================================================
+a    max(g)    
+     0     
+A     1     
+B     2     
+C     3     
+D     4     
+E     5     
+F     6     
+G     7     
+H     8     
+I     9     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t?.a, max(t?.g) from t? t? where  cast(t?.a as integer)>=? group by t?.a
+===================================================
+a    max(g)    
+     0     
+A     1     
+B     2     
+C     3     
+D     4     
+E     5     
+F     6     
+G     7     
+H     8     
+I     9     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_all (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t?.a, max(t?.g) from t? t? where (t?.b>= ?:? ) group by t?.a
+/* ---> skip GROUP BY */
+===================================================
+a    max(g)    
+     0     
+A     1     
+B     2     
+C     3     
+D     4     
+E     5     
+F     6     
+G     7     
+H     8     
+I     9     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_all (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t?.a, max(t?.g) from t? t? where (t?.c>= ?:? ) group by t?.a
+/* ---> skip GROUP BY */
+===================================================
+a    max(g)    
+     0     
+A     1     
+B     2     
+C     3     
+D     4     
+E     5     
+F     6     
+G     7     
+H     8     
+I     9     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_all (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t?.a, max(t?.g) from t? t? where (t?.d>= ?:? ) group by t?.a
+/* ---> skip GROUP BY */
+===================================================
+a    max(g)    
+     0     
+A     1     
+B     2     
+C     3     
+D     4     
+E     5     
+F     6     
+G     7     
+H     8     
+I     9     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_all (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t?.a, max(t?.g) from t? t? where (t?.e>= ?:? ) group by t?.a
+/* ---> skip GROUP BY */
+===================================================
+a    max(g)    
+     0     
+A     1     
+B     2     
+C     3     
+D     4     
+E     5     
+F     6     
+G     7     
+H     8     
+I     9     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_all (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t?.a, max(t?.g) from t? t? where (t?.f>= ?:? ) group by t?.a
+/* ---> skip GROUP BY */
+===================================================
+a    max(g)    
+     0     
+A     1     
+B     2     
+C     3     
+D     4     
+E     5     
+F     6     
+G     7     
+H     8     
+I     9     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_all (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t?.a, max(t?.g) from t? t? where (t?.g>= ?:? ) group by t?.a
+/* ---> skip GROUP BY */
+===================================================
+a    max(g)    
+     0     
+A     1     
+B     2     
+C     3     
+D     4     
+E     5     
+F     6     
+G     7     
+H     8     
+I     9     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t?.a, max(t?.g) from t? t? where (t?.h>= ?:? ) group by t?.a
+===================================================
+0

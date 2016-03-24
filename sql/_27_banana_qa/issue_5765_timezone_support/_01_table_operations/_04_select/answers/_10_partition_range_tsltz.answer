@@ -1,0 +1,341 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+Error:-494
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+tz_test     CREATE TABLE [tz_test] ([id] INTEGER, [tsltz] TIMESTAMPLTZ, [str] CHARACTER VARYING(50),  INDEX [idx] ([tsltz])) COLLATE iso88591_bin PARTITION BY RANGE ([tsltz])  (PARTITION [p1] VALUES LESS THAN (timestampltz '01:00:00 AM 06/01/1990 +00:00'), PARTITION [p2] VALUES LESS THAN (timestampltz '05:00:00 AM 06/01/1990 +00:00'), PARTITION [p3] VALUES LESS THAN (timestampltz '08:00:00 AM 06/01/1990 +00:00'), PARTITION [p4] VALUES LESS THAN (timestampltz '11:00:00 AM 06/01/1990 +00:00'))     
+
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+tz_test     CREATE TABLE [tz_test] ([id] INTEGER, [tsltz] TIMESTAMPLTZ, [str] CHARACTER VARYING(50),  INDEX [idx] ([tsltz])) COLLATE iso88591_bin PARTITION BY RANGE ([tsltz])  (PARTITION [p1] VALUES LESS THAN (timestampltz '03:00:00 PM 05/31/1990 Pacific/Kiritimati LINT'), PARTITION [p2] VALUES LESS THAN (timestampltz '07:00:00 PM 05/31/1990 Pacific/Kiritimati LINT'), PARTITION [p3] VALUES LESS THAN (timestampltz '10:00:00 PM 05/31/1990 Pacific/Kiritimati LINT'), PARTITION [p4] VALUES LESS THAN (timestampltz '01:00:00 AM 06/01/1990 Pacific/Kiritimati LINT'))     
+
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+tz_test     CREATE TABLE [tz_test] ([id] INTEGER, [tsltz] TIMESTAMPLTZ, [str] CHARACTER VARYING(50),  INDEX [idx] ([tsltz])) COLLATE iso88591_bin PARTITION BY RANGE ([tsltz])  (PARTITION [p1] VALUES LESS THAN (timestampltz '12:00:00 AM 06/01/1990 -01:00'), PARTITION [p2] VALUES LESS THAN (timestampltz '04:00:00 AM 06/01/1990 -01:00'), PARTITION [p3] VALUES LESS THAN (timestampltz '07:00:00 AM 06/01/1990 -01:00'), PARTITION [p4] VALUES LESS THAN (timestampltz '10:00:00 AM 06/01/1990 -01:00'))     
+
+===================================================
+Error:-891
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+id    tsltz    str    
+1     1990-05-31 12:59:59.0 Pacific/Kwajalein KWAT     p1     
+2     1990-05-31 14:00:00.0 Pacific/Kwajalein KWAT     p2     
+3     1990-05-31 17:00:00.0 Pacific/Kwajalein KWAT     p3     
+4     1990-05-31 22:59:59.0 Pacific/Kwajalein KWAT     p4     
+
+===================================================
+id    tsltz    str    
+1     1990-05-31 12:59:59.0 Pacific/Kwajalein KWAT     p1     
+
+===================================================
+id    tsltz    str    
+2     1990-05-31 14:00:00.0 Pacific/Kwajalein KWAT     p2     
+
+===================================================
+id    tsltz    str    
+3     1990-05-31 17:00:00.0 Pacific/Kwajalein KWAT     p3     
+
+===================================================
+id    tsltz    str    
+4     1990-05-31 22:59:59.0 Pacific/Kwajalein KWAT     p4     
+
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+tz_test     CREATE TABLE [tz_test] ([id] INTEGER, [tsltz] TIMESTAMPLTZ, [str] CHARACTER VARYING(50),  INDEX [idx] ([tsltz])) COLLATE iso88591_bin PARTITION BY RANGE ([tsltz])  (PARTITION [p1] VALUES LESS THAN (timestampltz '09:00:00 PM 05/31/1990 America/New_York EDT'), PARTITION [p2] VALUES LESS THAN (timestampltz '01:00:00 AM 06/01/1990 America/New_York EDT'), PARTITION [p3] VALUES LESS THAN (timestampltz '04:00:00 AM 06/01/1990 America/New_York EDT'), PARTITION [p4] VALUES LESS THAN (timestampltz '07:00:00 AM 06/01/1990 America/New_York EDT'))     
+
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+id    tsltz    str    
+1     1990-05-31 20:59:59.0 America/New_York EDT     p1     
+2     1990-05-31 22:00:00.0 America/New_York EDT     p2     
+3     1990-06-01 01:00:00.0 America/New_York EDT     p3     
+4     1990-06-01 06:59:59.0 America/New_York EDT     p4     
+11     null     p1     
+11     1990-05-30 21:00:00.0 America/New_York EDT     p1     
+11     1990-05-31 18:59:59.0 America/New_York EDT     p1     
+22     1990-06-01 00:00:00.0 America/New_York EDT     p2     
+33     1990-06-01 01:00:00.0 America/New_York EDT     p3     
+44     1990-06-01 06:59:59.0 America/New_York EDT     p4     
+
+===================================================
+id    tsltz    str    
+1     1990-05-31 20:59:59.0 America/New_York EDT     p1     
+11     null     p1     
+11     1990-05-30 21:00:00.0 America/New_York EDT     p1     
+11     1990-05-31 18:59:59.0 America/New_York EDT     p1     
+
+===================================================
+id    tsltz    str    
+2     1990-05-31 22:00:00.0 America/New_York EDT     p2     
+22     1990-06-01 00:00:00.0 America/New_York EDT     p2     
+
+===================================================
+id    tsltz    str    
+3     1990-06-01 01:00:00.0 America/New_York EDT     p3     
+33     1990-06-01 01:00:00.0 America/New_York EDT     p3     
+
+===================================================
+id    tsltz    str    
+4     1990-06-01 06:59:59.0 America/New_York EDT     p4     
+44     1990-06-01 06:59:59.0 America/New_York EDT     p4     
+
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+Error:-891
+===================================================
+1
+===================================================
+id    tsltz    str    
+1     1990-06-01 03:59:59.0 Africa/Cairo EEST     p1     
+2     1990-06-01 05:00:00.0 Africa/Cairo EEST     p2     
+3     1990-06-01 08:00:00.0 Africa/Cairo EEST     p3     
+4     1990-06-01 13:59:59.0 Africa/Cairo EEST     p4     
+11     null     p1     
+11     1990-05-31 04:00:00.0 Africa/Cairo EEST     p1     
+11     1990-06-01 01:59:59.0 Africa/Cairo EEST     p1     
+22     1990-06-01 07:00:00.0 Africa/Cairo EEST     p2     
+33     1990-06-01 08:00:00.0 Africa/Cairo EEST     p3     
+44     1990-06-01 13:59:59.0 Africa/Cairo EEST     p4     
+111     1990-06-01 03:00:00.0 Africa/Cairo EEST     p1     
+222     1990-06-01 07:00:00.0 Africa/Cairo EEST     p2     
+333     1990-06-01 08:00:00.0 Africa/Cairo EEST     p3     
+444     1990-06-01 13:59:59.0 Africa/Cairo EEST     p4     
+
+===================================================
+id    tsltz    str    
+1     1990-06-01 03:59:59.0 Africa/Cairo EEST     p1     
+11     null     p1     
+11     1990-05-31 04:00:00.0 Africa/Cairo EEST     p1     
+11     1990-06-01 01:59:59.0 Africa/Cairo EEST     p1     
+111     1990-06-01 03:00:00.0 Africa/Cairo EEST     p1     
+
+===================================================
+id    tsltz    str    
+2     1990-06-01 05:00:00.0 Africa/Cairo EEST     p2     
+22     1990-06-01 07:00:00.0 Africa/Cairo EEST     p2     
+222     1990-06-01 07:00:00.0 Africa/Cairo EEST     p2     
+
+===================================================
+id    tsltz    str    
+3     1990-06-01 08:00:00.0 Africa/Cairo EEST     p3     
+33     1990-06-01 08:00:00.0 Africa/Cairo EEST     p3     
+333     1990-06-01 08:00:00.0 Africa/Cairo EEST     p3     
+
+===================================================
+id    tsltz    str    
+4     1990-06-01 13:59:59.0 Africa/Cairo EEST     p4     
+44     1990-06-01 13:59:59.0 Africa/Cairo EEST     p4     
+444     1990-06-01 13:59:59.0 Africa/Cairo EEST     p4     
+
+===================================================
+0
+===================================================
+1
+===================================================
+id    tsltz    str    
+2     1990-06-01 05:00:00.0 Europe/Riga EEST     p2     
+22     1990-06-01 07:00:00.0 Europe/Riga EEST     p2     
+
+===================================================
+id    tsltz    str    
+3     1990-06-01 08:00:00.0 Europe/Riga EEST     p3     
+33     1990-06-01 08:00:00.0 Europe/Riga EEST     p3     
+333     1990-06-01 08:00:00.0 Europe/Riga EEST     p3     
+333     1990-06-01 10:30:21.0 Europe/Riga EEST     moved from p2 to p3     
+
+===================================================
+1
+===================================================
+id    tsltz    str    
+1     1990-06-01 03:59:59.0 Europe/Riga EEST     p1     
+11     null     p1     
+11     1990-06-01 01:59:59.0 Europe/Riga EEST     p1     
+111     1990-06-01 03:00:00.0 Europe/Riga EEST     p1     
+
+===================================================
+id    tsltz    str    
+4     1990-06-01 13:59:59.0 Europe/Riga EEST     p4     
+44     1990-06-01 13:59:59.0 Europe/Riga EEST     moved from p1 to p4     
+44     1990-06-01 13:59:59.0 Europe/Riga EEST     p4     
+444     1990-06-01 13:59:59.0 Europe/Riga EEST     p4     
+
+===================================================
+2
+===================================================
+id    tsltz    str    
+1     1990-06-01 03:59:59.0 Europe/Riga EEST     p1     
+2     1990-06-01 01:59:59.0 Europe/Riga EEST     moved from p2 to p1     
+11     null     p1     
+11     1990-06-01 01:59:59.0 Europe/Riga EEST     p1     
+22     1990-06-01 03:59:59.0 Europe/Riga EEST     moved from p2 to p1     
+111     1990-06-01 03:00:00.0 Europe/Riga EEST     p1     
+
+===================================================
+id    tsltz    str    
+
+===================================================
+3
+===================================================
+id    tsltz    str    
+1     1990-06-01 03:59:59.0 Europe/Riga EEST     p1     
+2     1990-06-01 01:59:59.0 Europe/Riga EEST     moved from p2 to p1     
+3     1990-06-01 08:00:01.0 Europe/Riga EEST     added 1 sec     
+4     1990-06-01 13:59:59.0 Europe/Riga EEST     p4     
+11     null     p1     
+11     1990-06-01 01:59:59.0 Europe/Riga EEST     p1     
+22     1990-06-01 03:59:59.0 Europe/Riga EEST     moved from p2 to p1     
+33     1990-06-01 08:00:01.0 Europe/Riga EEST     added 1 sec     
+44     1990-06-01 13:59:59.0 Europe/Riga EEST     moved from p1 to p4     
+44     1990-06-01 13:59:59.0 Europe/Riga EEST     p4     
+111     1990-06-01 03:00:00.0 Europe/Riga EEST     p1     
+333     1990-06-01 08:00:01.0 Europe/Riga EEST     added 1 sec     
+333     1990-06-01 10:30:21.0 Europe/Riga EEST     moved from p2 to p3     
+444     1990-06-01 13:59:59.0 Europe/Riga EEST     p4     
+
+===================================================
+id    tsltz    str    
+1     1990-06-01 03:59:59.0 Europe/Riga EEST     p1     
+2     1990-06-01 01:59:59.0 Europe/Riga EEST     moved from p2 to p1     
+11     null     p1     
+11     1990-06-01 01:59:59.0 Europe/Riga EEST     p1     
+22     1990-06-01 03:59:59.0 Europe/Riga EEST     moved from p2 to p1     
+111     1990-06-01 03:00:00.0 Europe/Riga EEST     p1     
+
+===================================================
+id    tsltz    str    
+
+===================================================
+id    tsltz    str    
+3     1990-06-01 08:00:01.0 Europe/Riga EEST     added 1 sec     
+33     1990-06-01 08:00:01.0 Europe/Riga EEST     added 1 sec     
+333     1990-06-01 08:00:01.0 Europe/Riga EEST     added 1 sec     
+333     1990-06-01 10:30:21.0 Europe/Riga EEST     moved from p2 to p3     
+
+===================================================
+id    tsltz    str    
+4     1990-06-01 13:59:59.0 Europe/Riga EEST     p4     
+44     1990-06-01 13:59:59.0 Europe/Riga EEST     moved from p1 to p4     
+44     1990-06-01 13:59:59.0 Europe/Riga EEST     p4     
+444     1990-06-01 13:59:59.0 Europe/Riga EEST     p4     
+
+===================================================
+2
+===================================================
+id    tsltz    str    
+1     1990-06-01 03:59:59.0 Europe/Riga EEST     p1     
+2     1990-06-01 01:59:59.0 Europe/Riga EEST     moved from p2 to p1     
+11     null     substract 1 sec from p1     
+11     1990-06-01 01:59:58.0 Europe/Riga EEST     substract 1 sec from p1     
+22     1990-06-01 03:59:59.0 Europe/Riga EEST     moved from p2 to p1     
+111     1990-06-01 03:00:00.0 Europe/Riga EEST     p1     
+
+===================================================
+Error:-494
+===================================================
+0
+===================================================
+Error:-494
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+tz_test     CREATE TABLE [tz_test] ([id] INTEGER, [tsltz] TIMESTAMPLTZ, [str] CHARACTER VARYING(50),  INDEX [idx] ([tsltz])) COLLATE iso88591_bin PARTITION BY RANGE ([tsltz])  (PARTITION [p1] VALUES LESS THAN (timestampltz '10:00:00 AM 06/01/1990 Asia/Shanghai CDT'), PARTITION [p2] VALUES LESS THAN (timestampltz '02:00:00 PM 06/01/1990 Asia/Shanghai CDT'), PARTITION [p3] VALUES LESS THAN (timestampltz '05:00:00 PM 06/01/1990 Asia/Shanghai CDT'), PARTITION [p4] VALUES LESS THAN (timestampltz '08:00:00 PM 06/01/1990 Asia/Shanghai CDT'))     
+
+===================================================
+id    tsltz    str    
+1     1990-06-01 09:59:59.0 Asia/Shanghai CDT     p1     
+2     1990-06-01 07:59:59.0 Asia/Shanghai CDT     moved from p2 to p1     
+3     1990-06-01 14:00:01.0 Asia/Shanghai CDT     added 1 sec     
+4     1990-06-01 19:59:59.0 Asia/Shanghai CDT     p4     
+11     null     substract 1 sec from p1     
+11     1990-06-01 07:59:58.0 Asia/Shanghai CDT     substract 1 sec from p1     
+22     1990-06-01 09:59:59.0 Asia/Shanghai CDT     moved from p2 to p1     
+33     1990-06-01 14:00:01.0 Asia/Shanghai CDT     added 1 sec     
+44     1990-06-01 19:59:59.0 Asia/Shanghai CDT     moved from p1 to p4     
+44     1990-06-01 19:59:59.0 Asia/Shanghai CDT     p4     
+111     1990-06-01 09:00:00.0 Asia/Shanghai CDT     p1     
+333     1990-06-01 14:00:01.0 Asia/Shanghai CDT     added 1 sec     
+333     1990-06-01 16:30:21.0 Asia/Shanghai CDT     moved from p2 to p3     
+444     1990-06-01 19:59:59.0 Asia/Shanghai CDT     p4     
+
+===================================================
+0
+===================================================
+id    tsltz    str    
+3     1990-06-01 14:00:01.0 Asia/Shanghai CDT     added 1 sec     
+33     1990-06-01 14:00:01.0 Asia/Shanghai CDT     added 1 sec     
+333     1990-06-01 14:00:01.0 Asia/Shanghai CDT     added 1 sec     
+
+===================================================
+id    tsltz    str    
+333     1990-06-01 16:30:21.0 Asia/Shanghai CDT     moved from p2 to p3     
+
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+tz_test     CREATE TABLE [tz_test] ([id] INTEGER, [tsltz] TIMESTAMPLTZ, [str] CHARACTER VARYING(50),  INDEX [idx] ([tsltz])) COLLATE iso88591_bin     
+
+===================================================
+id    tsltz    str    
+1     1990-06-01 09:59:59.0 Asia/Shanghai CDT     p1     
+2     1990-06-01 07:59:59.0 Asia/Shanghai CDT     moved from p2 to p1     
+3     1990-06-01 14:00:01.0 Asia/Shanghai CDT     added 1 sec     
+4     1990-06-01 19:59:59.0 Asia/Shanghai CDT     p4     
+11     null     substract 1 sec from p1     
+11     1990-06-01 07:59:58.0 Asia/Shanghai CDT     substract 1 sec from p1     
+22     1990-06-01 09:59:59.0 Asia/Shanghai CDT     moved from p2 to p1     
+33     1990-06-01 14:00:01.0 Asia/Shanghai CDT     added 1 sec     
+44     1990-06-01 19:59:59.0 Asia/Shanghai CDT     moved from p1 to p4     
+44     1990-06-01 19:59:59.0 Asia/Shanghai CDT     p4     
+111     1990-06-01 09:00:00.0 Asia/Shanghai CDT     p1     
+333     1990-06-01 14:00:01.0 Asia/Shanghai CDT     added 1 sec     
+333     1990-06-01 16:30:21.0 Asia/Shanghai CDT     moved from p2 to p3     
+444     1990-06-01 19:59:59.0 Asia/Shanghai CDT     p4     
+
+===================================================
+Error:-493
+===================================================
+0
+===================================================
+0

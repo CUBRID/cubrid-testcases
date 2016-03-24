@@ -1,0 +1,18 @@
+autocommit off;
+create class foo (a int not null, b string not null, c int);
+create class bar (d int, e int);
+insert into bar values (NULL, 1);
+insert into bar values (1, 2);
+insert into bar values (2, 3);
+insert into foo select d, '12345', NULL from bar;
+insert into foo(c) values(1);
+insert into foo select NULL, NULL, NULL from cabin;
+insert into foo select 1, '12345', NULL from cabin;
+insert into foo values(1, '12345', NULL);
+insert into foo values(2, '23456', 0);
+update foo set a = 0, b = '54321';
+update foo set a = (select d from bar where e = 1), b = '2', c = NULL;
+create class beta (f string);
+insert into beta values(NULL);
+update foo set a = 1, b = (select f from beta), c = NULL;
+rollback;

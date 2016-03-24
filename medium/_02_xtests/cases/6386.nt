@@ -1,0 +1,68 @@
+# $Revision: 1.2 $
+#
+# Microsoft Visual C++ makefile for UniSQL/X under NT.
+#
+
+MODULE=e6386
+LIBON=oreson32
+LIBCL=orescl32
+
+!include $(UNISQLX)\vars32.mak
+
+EXTRA_SYMBOLS = /DUCI_TEMPORARY /DPRODUCE_ANSI_CODE /DYY_CHAR=char \
+		/DZZCOL /DMBS_CASECMP_AVAILABLE
+EXTRA_INCLUDES = /I$(UNISQLX)\pccts\h
+
+OFILES = e6386.obj
+
+# Set the default flags to the set used for binaries
+CFLAGS=$(EXE_CFLAGS)
+LFLAGS=$(EXE_LFLAGS)
+
+ESQL    =    $(UNISQLX)\esqlx.exe  
+SQLXLIB =    $(UNISQLX)\lib\ordbon32.lib
+SQLXLIB_CS = $(UNISQLX)\lib\ordbcl32.lib
+ESQLXLIB =   $(UNISQLX)\lib\oreson32.lib 
+ESQLXLIB_CS =$(UNISQLX)\lib\orescl32.lib 
+
+# SYSLIB is defined in vars.mak
+
+LIBS=    $(SQLXLIB) $(ESQLXLIB) $(SYSLIB)
+LIBS_CS= $(SQLXLIB_CS) $(ESQLXLIB_CS) $(SYSLIB)
+
+default:
+	@echo Specify target 'clean', 'include', 'bin', or 'all'
+
+clean:
+        @-del $(MODULE).c               $(DEL_REDIRECT)
+	@-del *.obj                     $(DEL_REDIRECT)
+	@-del *.pdb                     $(DEL_REDIRECT)
+	@-del *.exe                     $(DEL_REDIRECT)
+	@-del *.war                     $(DEL_REDIRECT)
+	@-del *.map                     $(DEL_REDIRECT)
+	@-del *.lko                     $(DEL_REDIRECT)
+	@-del $(LIBON).def              $(DEL_REDIRECT)
+	@-del $(LIBCL).def              $(DEL_REDIRECT)
+
+
+# the executable to pre-process source files
+$(MODULE).exe: $(OFILES)
+	$(link) $(LFLAGS) /map /out:$@ $(OFILES) $(LIBS) >$*.lko
+#	@copy $@ $(UNISQLX)
+
+bin: $(MODULE).exe
+
+all: clean bin
+
+.SUFFIXES: .ec .c .obj
+
+.EC.C:
+   $(ESQL) $*.ec
+
+.EC.OBJ:
+   $(ESQL) $*.ec
+   $(CC) $(CFLAGS) $*.C > $*.war
+
+.C.OBJ:
+   $(CC) $(CFLAGS) $*.C > $*.war
+

@@ -1,0 +1,112 @@
+===================================================
+0
+===================================================
+0
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    
+foo     1     idx_foo_trunc     1     null     A     0     null     null     YES     BTREE      trunc([foo].[a], -1)     null     
+
+Query stmt:
+show index from  foo foo
+===================================================
+6
+===================================================
+a    
+15     
+178     
+2200     
+7001     
+
+Query plan:
+iscan
+    class: foo node[?]
+    index: idx_foo_trunc term[?]
+    cost:  ? card ?
+Query stmt:
+select foo.a from foo foo where  trunc(foo.a, -?)>?
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    
+foo     1     idx_foo_abs     1     null     A     0     null     null     YES     BTREE      abs(- cast([foo].[a] as double))     null     
+
+Query stmt:
+show index from  foo foo
+===================================================
+3
+===================================================
+a    
+-1        
+5         
+11        
+
+Query plan:
+iscan
+    class: foo node[?]
+    index: idx_foo_abs term[?]
+    cost:  ? card ?
+Query stmt:
+select foo.a from foo foo where  abs(- cast(foo.a as double))>?
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    
+foo     1     idx_foo_translate     1     null     A     2     null     null     YES     BTREE      translate([foo].[str], [foo].[c1], [foo].[c2])     null     
+
+Query stmt:
+show index from  foo foo
+===================================================
+original    translated    
+abcabc     dbcdbc     
+
+Query plan:
+iscan
+    class: foo node[?]
+    index: idx_foo_translate term[?]
+    cost:  ? card ?
+Query stmt:
+select foo.str,  translate(foo.str, foo.c?, foo.c?) from foo foo where  translate(foo.str, foo.c?, foo.c?) in multiset{'dbcdbc', 'smthsmth'}
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    
+foo     1     idx_foo_elt     1     null     A     3     null     null     YES     BTREE     elt(3, [foo].[a], [foo].[b], [foo].[c])     null     
+
+Query stmt:
+show index from  foo foo
+===================================================
+a    b    c    
+ccc     aaa     bbb     
+aaa     bbb     ccc     
+
+Query plan:
+iscan
+    class: foo node[?]
+    index: idx_foo_elt term[?]
+    cost:  ? card ?
+Query stmt:
+select foo.a, foo.b, foo.c from foo foo where elt(?, foo.a, foo.b, foo.c)>'aaa'
+===================================================
+0

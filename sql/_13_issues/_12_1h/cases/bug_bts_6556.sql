@@ -1,0 +1,55 @@
+create table t1 (id int constraint pk primary key);
+insert into t1 values(1),(2),(3);
+create table t11 (id int foreign key references t1(id));
+insert into t11 values(2);
+insert into t11 values(20);
+create table t12 (id int constraint fk_12 references t1(id)); 
+insert into t12 values (3),(3);
+create table t13 (id int, constraint fk_13 FOREIGN KEY (id) references t1(id));
+insert into t13 values(1),(2),(3),(4);
+select * from t11 order by 1;
+select * from t12 order by 1;
+select * from t13 order by 1;
+delete from t1 where id=2;
+truncate table t1;
+alter table t11 drop constraint fk_t11_id;
+alter table t12 drop constraint fk_12;
+alter table t13 drop constraint fk_13;
+truncate table t1;
+alter table t12 add constraint fk foreign key(id) references t1(id);
+
+create table t2 (id varchar(10) primary key);
+insert into t2 values('1'),('2'),('3'),('5');
+create table t21 (id int);
+alter table t21 add (id1 varchar(10) foreign key references t2(id) on delete cascade);
+alter table t21 add (id2 varchar(10) constraint fk_211 references t2(id) on update set null);
+alter table t21 add (id3 varchar(10), constraint fk_212 FOREIGN KEY (id3) references t2(id));
+insert into t21 values(1,'1','1','2'),(2,'2','2','2'),(3,'5','3','5');
+insert into t21 values(4,'4','4','4');
+update t21 set id2='33' where id=3;
+update t2 set id='33' where id='3';
+select *from t2 order by 1;
+select * from t21 order by 1;
+delete from t2 where id='2';
+delete from t2 where id='5';
+
+create table t3 (d date constraint pk primary key);
+insert into t3 values('2012-5-4'),('2011-5-6'),('2011-3-2');
+create table t31 (id date);
+alter table t31 add constraint fk_31 FOREIGN KEY (id) references t3(d);
+insert into t31 values('2011-5-6');
+insert into t31 values('2011-5-18');
+alter table t31 drop constraint fk_31; 
+insert into t31 values('2011-5-18');
+delete from t3 where d='2011-5-6';
+
+drop t1;
+drop t2;
+drop t3;
+drop t11;
+drop t12;
+drop t13;
+drop t21;
+drop t31;
+drop t2;
+

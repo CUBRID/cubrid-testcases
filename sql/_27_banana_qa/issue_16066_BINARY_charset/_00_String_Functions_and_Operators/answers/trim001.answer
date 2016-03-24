@@ -1,0 +1,94 @@
+===================================================
+0
+===================================================
+trim(both  from _binary'  字符串1   ')    
+20 20 E5 AD 97 E7 AC A6 E4 B8 B2 31 20 20 20      
+
+===================================================
+trim(both  from  cast(_utf8'문자열 2' as varchar collate euckr_bin))    
+문자열 2     
+
+===================================================
+trim(both  from  cast(_utf8'Öö_Şş_Üü2' as varchar))    
+Öö_??_Üü2     
+
+===================================================
+trim(both _binary'i' from _binary'iiiiiOlympiciiiii')    
+4F 6C 79 6D 70 69 63      
+
+===================================================
+trim(both _binary'棒' from _binary'棒棒棒棒字符串2棒棒棒棒')    
+E5 AD 97 E7 AC A6 E4 B8 B2 32      
+
+===================================================
+trim(both  cast(_utf8'문' as varchar collate euckr_bin) from  cast(_utf8'문문문문자열 2문문문' as varchar collate euckr_bin))    
+자열 2     
+
+===================================================
+trim(both  cast(_utf8'Öö' as varchar) from  cast(_utf8'ÖöÖöÖöÖö_Şş_Üü2ÖöÖöÖöÖö' as varchar))    
+_??_Üü2     
+
+===================================================
+trim(both _binary'棒' from  cast(_utf8'문문문문자열 2문문문' as varchar collate euckr_bin))    
+문문문문자열 2문문문     
+
+===================================================
+trim(both _binary'棒' from  cast(_utf8'ÖöÖöÖöÖö_Şş_Üü2ÖöÖöÖö' as varchar))    
+ÖöÖöÖöÖö_??_Üü2ÖöÖöÖö     
+
+===================================================
+trim(leading _binary'i' from _binary'iiiiiOlympiciiiii')    
+4F 6C 79 6D 70 69 63 69 69 69 69 69      
+
+===================================================
+trim(leading _binary'棒' from _binary'棒棒棒棒字符串2棒棒棒棒')    
+E5 AD 97 E7 AC A6 E4 B8 B2 32 E6 A3 92 E6 A3 92 E6 A3 92 E6 A3 92      
+
+===================================================
+trim(leading  cast(_utf8'문' as varchar collate euckr_bin) from  cast(_utf8'문문문자열 2문문문문' as varchar collate euckr_bin))    
+자열 2문문문문     
+
+===================================================
+trim(leading  cast(_utf8'Öö' as varchar) from  cast(_utf8'ÖöÖöÖöÖö_Şş_Üü2ÖöÖöÖö' as varchar))    
+_??_Üü2ÖöÖöÖö     
+
+===================================================
+trim(leading _binary'棒' from  cast(_utf8'문문문문자열 2문문문' as varchar collate euckr_bin))    
+문문문문자열 2문문문     
+
+===================================================
+trim(leading _binary'棒' from  cast(_utf8'ÖöÖöÖöÖö_Şş_Üü2ÖöÖöÖö' as varchar))    
+ÖöÖöÖöÖö_??_Üü2ÖöÖöÖö     
+
+===================================================
+trim(trailing _binary'i' from _binary'iiiiiOlympiciiiii')    
+69 69 69 69 69 4F 6C 79 6D 70 69 63      
+
+===================================================
+trim(trailing _binary'棒' from _binary'棒棒棒棒字符串2棒棒棒棒')    
+E6 A3 92 E6 A3 92 E6 A3 92 E6 A3 92 E5 AD 97 E7 AC A6 E4 B8 B2 32      
+
+===================================================
+trim(trailing  cast(_utf8'문' as varchar collate euckr_bin) from  cast(_utf8'문문문문자열 2문문문' as varchar collate euckr_bin))    
+문문문문자열 2     
+
+===================================================
+trim(trailing  cast(_utf8'Öö' as varchar) from  cast(_utf8'ÖöÖöÖöÖö_Şş_Üü2ÖöÖöÖöÖö' as varchar))    
+ÖöÖöÖöÖö_??_Üü2     
+
+===================================================
+trim(trailing _binary'棒' from  cast(_utf8'문문문문자열 2문문문' as varchar collate euckr_bin))    
+문문문문자열 2문문문     
+
+===================================================
+trim(trailing _binary'棒' from  cast(_utf8'ÖöÖöÖöÖö_Şş_Üü2ÖöÖöÖö' as varchar))    
+ÖöÖöÖöÖö_??_Üü2ÖöÖöÖö     
+
+===================================================
+trim(both  chr(0 using binary) from _binary'iiiiiOlympiciiiii')    
+69 69 69 69 69 4F 6C 79 6D 70 69 63 69 69 69 69 69      
+
+===================================================
+0
+===================================================
+0

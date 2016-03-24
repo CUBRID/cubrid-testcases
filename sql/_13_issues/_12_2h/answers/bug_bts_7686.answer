@@ -1,0 +1,62 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+a    b    
+a     a     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_upper_b term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.b from t? t? where  upper(t?.b)='A' using index t?.i_upper_b
+===================================================
+0
+===================================================
+a    b    
+a     a     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_upper_b term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.b from t? t? where  upper(t?.b)='A' using index t?.i_upper_b
+===================================================
+0
+===================================================
+a    b    
+b     b     
+
+Query plan:
+iscan
+    class: b node[?]
+    index: i_upper_b term[?]
+    cost:  ? card ?
+Query stmt:
+select b.a, b.b from b b where  upper(b.b)='B'
+===================================================
+0
+===================================================
+a    ddd    
+a     a              
+
+Query plan:
+iscan
+    class: b node[?]
+    index: i_upper_b term[?]
+    cost:  ? card ?
+Query stmt:
+select b.a, b.ddd from b b where  upper(b.ddd)='A'
+===================================================
+0
+===================================================
+0

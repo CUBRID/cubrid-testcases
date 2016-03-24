@@ -1,0 +1,9 @@
+SELECT  inet_aton('0.0.0.4-1');
+SELECT  inet_aton('0.0.1-1.0');
+SELECT  inet_aton('0.0.0.4*2');
+SELECT  inet_aton('0.0.0.4/2');
+SELECT  inet_aton('0.0.0.2/4');
+SELECT  inet_aton('0.0.0.4^');
+SELECT  inet_aton('0.0.0.4!');
+SELECT  inet_aton('0.0.0.4%');
+SELECT  inet_aton('0.0.0.!4');

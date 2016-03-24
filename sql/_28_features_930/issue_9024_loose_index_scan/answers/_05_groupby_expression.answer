@@ -1,0 +1,433 @@
+===================================================
+0
+===================================================
+1000
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+a    
+null     
+X     
+x     
+
+Query plan:
+temp(distinct)
+    subplan: temp(group by)
+                 subplan: iscan
+                              class: t? node[?]
+                              index: i_t?_all (covers) (loose index scan on prefix ?)
+                              filtr: term[?]
+                              sort:  ? asc collate iso?_en_cs
+                              cost:  ? card ?
+                 sort:  
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ distinct t?.a from t? t? where (t?.c> ?:? ) group by t?.a collate iso?_en_ci||t?.b|| cast(t?.c as varchar collate iso?_en_ci)|| cast(t?.d as varchar collate iso?_en_ci)|| cast(t?.e as varchar collate iso?_en_ci)|| cast(t?.f as varchar collate iso?_en_ci)|| cast(t?.g as varchar collate iso?_en_ci)
+===================================================
+a    
+null     
+X     
+x     
+
+Query plan:
+temp(distinct)
+    subplan: temp(group by)
+                 subplan: iscan
+                              class: t? node[?]
+                              index: i_t?_all (covers) (loose index scan on prefix ?)
+                              filtr: term[?]
+                              sort:  ? asc collate iso?_en_cs
+                              cost:  ? card ?
+                 sort:  
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ distinct t?.a from t? t? where (t?.c> ?:? ) group by t?.a collate iso?_en_ci||t?.b|| cast(t?.c as varchar collate iso?_en_ci)|| cast(t?.d as varchar collate iso?_en_ci)|| cast(t?.e as varchar collate iso?_en_ci)|| cast(t?.f as varchar collate iso?_en_ci)|| cast(t?.g as varchar collate iso?_en_ci) desc 
+===================================================
+upper(a)    max(g)    min(g)    
+null     null     null     
+X     9     1     
+Z     11     11     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */  upper(t?.a), max(t?.g), min(t?.g) from t? t? where (t?.c> ?:? ) group by  upper(t?.a)
+===================================================
+upper(a)    max(g)    min(g)    
+Z     11     11     
+X     9     1     
+null     null     null     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */  upper(t?.a), max(t?.g), min(t?.g) from t? t? where (t?.c> ?:? ) group by  upper(t?.a) desc 
+===================================================
+lower(a)    max(g)    min(g)    
+null     null     null     
+x     9     1     
+z     11     11     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */  lower(t?.a), max(t?.g), min(t?.g) from t? t? where (t?.c> ?:? ) group by  lower(t?.a)
+===================================================
+lower(a)    max(g)    min(g)    
+z     11     11     
+x     9     1     
+null     null     null     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */  lower(t?.a), max(t?.g), min(t?.g) from t? t? where (t?.c> ?:? ) group by  lower(t?.a) desc 
+===================================================
+0
+===================================================
+max(a)    max(b)    max(c)    max(d)    max(e)    max(f)    max(g)    
+z     Y     99     9     11     11     11     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ max(t?.a), max(t?.b), max(t?.c), max(t?.d), max(t?.e), max(t?.f), max(t?.g) from t? t? where (t?.c> ?:? ) group by @v?
+===================================================
+min(a)    min(b)    min(c)    min(d)    min(e)    min(f)    min(g)    
+X     Y     1     1     1     1     1     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ min(t?.a), min(t?.b), min(t?.c), min(t?.d), min(t?.e), min(t?.f), min(t?.g) from t? t? where (t?.c> ?:? ) group by @v?
+===================================================
+min(a)    min(b)    min(c)    min(d)    min(e)    min(f)    min(g)    
+z     null     99     null     11     11     11     
+x     y     1     1     1     1     1     
+Z     null     88     null     10     11     11     
+X     Y     2     2     2     2     2     
+null     null     99     null     null     null     null     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ min(t?.a), min(t?.b), min(t?.c), min(t?.d), min(t?.e), min(t?.f), min(t?.g) from t? t? where (t?.c> ?:? ) group by @v?, t?.a desc 
+===================================================
+min(a)    min(b)    min(c)    min(d)    min(e)    min(f)    min(g)    
+X     Y     0     0     0     0     0     
+X     Y     0     0     0     0     0     
+X     Y     0     0     0     0     0     
+X     Y     0     0     0     0     0     
+X     Y     0     0     0     0     0     
+X     Y     0     0     0     0     0     
+X     Y     0     0     0     0     0     
+X     Y     0     0     0     0     0     
+X     Y     0     0     0     0     0     
+X     Y     0     0     0     0     0     
+X     Y     0     0     0     0     0     
+X     Y     0     0     0     0     0     
+X     Y     0     0     0     0     0     
+X     Y     0     0     0     0     0     
+X     Y     0     0     0     0     0     
+X     Y     0     0     0     0     0     
+X     Y     0     0     0     0     0     
+X     Y     0     0     0     0     0     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ min(t?.a), min(t?.b), min(t?.c), min(t?.d), min(t?.e), min(t?.f), min(t?.g) from t? t? where (t?.c>= ?:? ) group by  cast((@v? := @v?+?) as bigint) mod  cast(? as bigint)
+===================================================
+0
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t?.c+ ?:? + ?:? , max(t?.g) from t? t? where (t?.c>= ?:? ) group by t?.c+ ?:? + ?:? 
+===================================================
+c+ ?:0 + ?:1    max(g)    
+20     0     
+21     1     
+22     2     
+23     3     
+24     4     
+25     5     
+26     6     
+27     7     
+28     8     
+29     9     
+108     11     
+119     11     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t?.c+ ?:? + ?:? , max(t?.g) from t? t? where (t?.c>= ?:? ) group by t?.c+ ?:? + ?:? 
+===================================================
+0
+===================================================
+lower(a)    max(g)    min(g)    
+null     null     null     
+x     9     1     
+z     11     11     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */  lower(t?.a), max(t?.g), min(t?.g) from t? t? where (t?.c> ?:? ) group by  lower(t?.a) having max(t?.c)<?
+===================================================
+lower(a)    max(g)    min(g)    
+null     null     null     
+x     9     1     
+z     11     11     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */  lower(t?.a), max(t?.g), min(t?.g) from t? t? where (t?.c> ?:? ) group by  lower(t?.a) having max(t?.c) is not null 
+===================================================
+lower(a)    max(g)    min(g)    
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */  lower(t?.a), max(t?.g), min(t?.g) from t? t? where (t?.c> ?:? ) group by  lower(t?.a) having max(t?.c) is null 
+===================================================
+lower(a)    max(g)    min(g)    
+null     null     null     
+x     9     1     
+z     11     11     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */  lower(t?.a), max(t?.g), min(t?.g) from t? t? where (t?.c> ?:? ) group by  lower(t?.a) having max(t?.c)<?
+===================================================
+lower(a)    max(g)    min(g)    
+null     null     null     
+x     9     1     
+z     11     11     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: w node[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */  lower(w.a), max(w.g), min(w.g) from t? w where (w.c> ?:? ) group by  lower(w.a) having max(w.c)<?
+===================================================
+lower(a)    max(g)    min(g)    
+null     11     1     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: w node[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */  lower(w.a), max(w.g), min(w.g) from t? w where (w.c>?) group by  last_insert_id()  having max(w.c)<?
+===================================================
+max(b)    a    
+null     z     
+y     x     
+null     Z     
+Y     X     
+null     null     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: w node[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 sort:  ? asc collate iso?_en_cs
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ max(w.b), w.a from t? w where (w.c> ?:? ) group by  CURRENT_DATETIME , w.a desc 
+===================================================
+max(b)    a    
+null     null     
+Y     X     
+null     Z     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: w node[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 sort:  ? asc collate iso?_en_cs
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ max(w.b), w.a from t? w where (w.c> ?:? ) group by  CURRENT_DATETIME , w.a collate iso?_en_ci
+===================================================
+Error:-493
+===================================================
+a    a like 'X%'    
+null     null     
+Z     0     
+X     1     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: w node[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 sort:  ? asc collate iso?_en_cs
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ w.a, w.a like 'X%' collate iso?_en_cs from t? w where (w.c> ?:? ) group by w.a like 'X%' collate iso?_en_cs
+===================================================
+max(b)    a    
+y     x     
+Y     X     
+y     x     
+Y     X     
+y     x     
+Y     X     
+y     x     
+Y     X     
+y     x     
+null     Z     
+null     null     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: w node[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 sort:  ? asc collate iso?_en_cs
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ max(w.b), w.a from t? w where (w.c> ?:? ) group by w.c
+===================================================
+0
+===================================================
+0

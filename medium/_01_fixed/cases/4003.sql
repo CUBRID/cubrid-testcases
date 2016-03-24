@@ -1,0 +1,12 @@
+autocommit off;
+create class c0 (a0 int);
+insert into c0 values (27) to :homey;
+create class c1 (a1 c0 default :homey);
+insert into c1 default values;
+select * from c1;
+alter class c1 add attribute a2 c0 shared :homey;
+select * from c1;
+update c1 set a2 = :homey;
+select * from c1;
+drop c0, c1;
+rollback;

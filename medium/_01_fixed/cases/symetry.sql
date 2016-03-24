@@ -1,0 +1,12 @@
+autocommit off;
+create class symetry( i int, f float);
+insert into symetry values (2, 2.2);
+select * from symetry where i=f;
+select * from symetry where f=i;
+select * from symetry where i=2.2;
+select * from symetry where 2.2=i;
+select * from symetry where 2=f;
+select * from symetry where f=2;
+select * from symetry where 2=2.2;
+select * from symetry where 2.2=2;
+rollback;

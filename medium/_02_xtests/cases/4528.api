@@ -1,0 +1,126 @@
+
+-- The following information should be in the database
+--  this is being tested against.
+--
+--  create class another2_element
+--  alter class another2_element add class attribute
+--   another2_children sequence(time)
+--   default {'12:30:00', '1:30:00', NULL, '12:40:00', '1:40:00'}
+--
+-- This test program retrieve sequence values and
+--   modifies the second value to NULL.
+-- Use 4517.api to see print all the values to
+--   verify it has been changed.
+
+db_execute
+create class another2_element
+4
+
+db_execute
+alter class another2_element add class attribute another2_children sequence(time) default {'12:30:00', '1:30:00', NULL, '12:40:00', '1:40:00'}
+4
+
+db_find_class
+another2_element
+0
+
+db_get
+0
+another2_children
+1
+
+get_set
+1
+2
+
+db_set_get
+2
+0
+3
+
+db_value_print
+3
+
+db_set_get
+2
+1
+3
+
+
+make_value
+3
+DB_TYPE_NULL
+
+db_seq_put
+2
+1
+3
+
+db_value_print
+3
+
+db_set_get
+2
+2
+3
+
+db_value_print
+3
+
+db_set_get
+2
+3
+3
+
+db_value_print
+3
+
+db_set_get
+2
+4
+3
+
+db_value_print
+3
+
+db_value_clear
+3
+
+db_set_free
+2
+
+db_value_clear
+1
+
+
+-- $Revision: 1.2 $
+
+
+
+-- PERFORMANCE 19
+-- <WIN16
+-- db_execute returned 0 rows
+-- db_execute returned 0 rows
+-- time '12:30:00 PM'
+-- NULL
+-- NULL
+-- time '12:40:00 PM'
+-- time '01:40:00 AM'
+-- WIN16>
+-- <WIN32
+-- db_execute returned 0 rows
+-- db_execute returned 0 rows
+-- time '12:30:00 PM'
+-- NULL
+-- NULL
+-- time '12:40:00 PM'
+-- time '01:40:00 AM'
+-- WIN32>
+-- OUTPUT
+-- db_execute returned 0 rows
+-- db_execute returned 0 rows
+-- time '12:30:00 PM'
+-- NULL
+-- NULL
+-- time '12:40:00 PM'
+-- time '01:40:00 AM'

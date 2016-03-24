@@ -1,0 +1,16 @@
+--+ holdcas on;
+set names utf8;
+SELECT TO_CHAR(datetime'2011-05-01 10:11:12.678', 'day','de_DE');
+SELECT TO_CHAR(datetime'2011-05-01 10:11:12.678', 'day','en_US');
+SELECT TO_CHAR(datetime'2011-05-01 10:11:12.678', 'day','es_ES');
+SELECT TO_CHAR(datetime'2011-05-01 10:11:12.678', 'day','fr_FR');
+SELECT TO_CHAR(datetime'2011-05-01 10:11:12.678', 'day','it_IT');
+SELECT TO_CHAR(datetime'2011-05-01 10:11:12.678', 'day','ja_JP');
+SELECT TO_CHAR(datetime'2011-05-01 10:11:12.678', 'day','km_KH');
+SELECT TO_CHAR(datetime'2011-05-01 10:11:12.678', 'day','ko_KR');
+SELECT TO_CHAR(datetime'2011-05-01 10:11:12.678', 'day','tr_TR');
+SELECT TO_CHAR(datetime'2011-05-01 10:11:12.678', 'day','vi_VN');
+SELECT TO_CHAR(datetime'2011-05-01 10:11:12.678', 'day','zh_CN');
+set names iso88591;
+commit;
+--+ holdcas off;

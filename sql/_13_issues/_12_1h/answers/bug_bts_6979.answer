@@ -1,0 +1,64 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    
+foo     1     idx_foo_weekday_a     1     null     A     0     null     null     YES     BTREE      weekday( cast([foo].[a] as varchar))     null     
+foo     1     idx_foo_weekday_b     1     null     A     0     null     null     YES     BTREE      weekday([foo].[b])     null     
+
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+a    b    
+2010-01-01     2011-01-01     
+2010-01-02     2011-01-02     
+2010-01-03     2011-01-03     
+
+Query plan:
+iscan
+    class: foo node[?]
+    index: idx_foo_weekday_a term[?]
+    cost:  ? card ?
+Query stmt:
+select foo.a, foo.b from foo foo where  weekday( cast(foo.a as varchar))>=?
+===================================================
+a    b    
+2010-01-01     2011-01-01     
+2010-01-02     2011-01-02     
+
+Query plan:
+iscan
+    class: foo node[?]
+    index: idx_foo_weekday_b term[?]
+    cost:  ? card ?
+Query stmt:
+select foo.a, foo.b from foo foo where  weekday(foo.b)>=?
+===================================================
+0
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    
+foo     1     idx_foo_weekday_a     1     null     A     5     null     null     YES     BTREE      weekday( cast([foo].[a] as varchar))     null     
+
+===================================================
+Error:-176
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+Error:-176
+===================================================
+0

@@ -1,0 +1,15 @@
+autocommit off;
+create class a (a_i int);
+insert into a values (1);
+insert into a values (2);
+create class a_sub under a ( c_i int);
+insert into a_sub (a_i,c_i) values (3,210);
+select * from a;
+select * from a_sub;
+select * from all a;
+create vclass v (a) as select a_i from all a;
+select * from v;
+select count(*) from v;
+select * from all v;
+select count(*) from all v;
+rollback;

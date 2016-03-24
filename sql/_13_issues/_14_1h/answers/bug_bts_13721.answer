@@ -1,0 +1,32 @@
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+id    a    b    c    
+1     a     a     a     
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.id, t?.a, t?.b, t?.c from t? t? where  cast(t?.b as varchar(?) collate iso?_en_cs)='a' collate iso?_en_cs and t?.b= ?:?  using index none
+===================================================
+id    a    b    c    
+1     a     a     a     
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS(t?) */ t?.id, t?.a, t?.b, t?.c from t? t? where  cast(t?.b as varchar(?) collate iso?_en_cs)='a' collate iso?_en_cs and t?.b= ?:? 
+===================================================
+0

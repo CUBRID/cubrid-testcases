@@ -1,0 +1,152 @@
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+10
+===================================================
+20
+===================================================
+40
+===================================================
+80
+===================================================
+160
+===================================================
+320
+===================================================
+640
+===================================================
+1280
+===================================================
+2560
+===================================================
+5120
+===================================================
+10240
+===================================================
+20480
+===================================================
+40960
+===================================================
+81920
+===================================================
+0
+===================================================
+0
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    
+t1     1     i_t1_s1_i1     1     s1     A     163840     null     null     YES     BTREE     null     null     
+t1     1     i_t1_s1_i1     2     i1     A     163840     null     null     YES     BTREE     null     null     
+
+Query stmt:
+show index from  t? t?
+===================================================
+count(*)    
+163840     
+
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from t? t?
+===================================================
+s1    i1    
+aaA     1     
+aAa     2     
+aaA     3     
+abAa     4     
+AbaA     5     
+AbAa     6     
+aaA     7     
+aaa     8     
+AaA     9     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_s?_i? term[?] (covers) (index skip scan)
+                 sort:  ? asc collate utf?_en_ci, ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t?.s?, t?.i? from t? t? where (t?.i?< ?:? ) order by ?
+===================================================
+s1    i1    
+aAa     2     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_s?_i? term[?] (covers) (index skip scan)
+    sort:  ? asc collate utf?_en_ci
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t?.s?, t?.i? from t? t? where t?.i?= ?:?  order by ?
+/* ---> skip ORDER BY */
+===================================================
+s1    i1    
+aaA     1     
+aAa     2     
+aaA     3     
+aaA     7     
+aaa     8     
+AaA     9     
+abAa     4     
+AbaA     5     
+AbAa     6     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_s?_i? term[?] (covers) (index skip scan)
+    sort:  ? asc collate utf?_en_ci, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t?.s?, t?.i? from t? t? where (t?.i?< ?:? ) order by ?, ?
+/* ---> skip ORDER BY */
+===================================================
+s1    i1    
+abAa     4     
+AbaA     5     
+AbAa     6     
+aaA     1     
+aAa     2     
+aaA     3     
+aaA     7     
+aaa     8     
+AaA     9     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_s?_i? term[?] (covers) (index skip scan)
+                 sort:  ? asc collate utf?_en_ci, ? asc
+                 cost:  ? card ?
+    sort:  ? desc collate utf?_en_ci, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t?.s?, t?.i? from t? t? where (t?.i?< ?:? ) order by ? desc , ?
+===================================================
+0

@@ -1,0 +1,100 @@
+===================================================
+0
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+min(b)    
+a              
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: foo node[?]
+                 index: idx? term[?] AND term[?] (covers)
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select min(foo.b) from foo foo where foo.c= ?:?  and foo.a= ?:?  group by foo.a, foo.b
+===================================================
+min(b)    
+a              
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: foo node[?]
+                 index: idx? term[?] (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ min(foo.b) from foo foo where foo.c= ?:?  and foo.a= ?:?  group by foo.a, foo.b using index foo.idx?
+===================================================
+a    b    
+a              a              
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: foo node[?]
+                 index: idx? term[?] AND term[?] (covers)
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select foo.a, foo.b from foo foo where (foo.c>= ?:?  and foo.c<= ?:? ) and foo.a= ?:?  group by foo.a, foo.b using index foo.idx?
+===================================================
+a    b    
+a              a              
+
+Query plan:
+iscan
+    class: foo node[?]
+    index: idx? term[?] (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ foo.a, foo.b from foo foo where (foo.c>= ?:?  and foo.c<= ?:? ) and foo.a= ?:?  group by foo.a, foo.b using index foo.idx?
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+a              a              
+
+Query plan:
+temp(distinct)
+    subplan: iscan
+                 class: foo node[?]
+                 index: idx? term[?] AND term[?] (covers)
+                 sort:  ? asc
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select distinct foo.a, foo.b from foo foo where foo.c= ?:?  and foo.a= ?:? 
+===================================================
+a    b    
+a              a              
+
+Query plan:
+temp(distinct)
+    subplan: iscan
+                 class: foo node[?]
+                 index: idx? term[?] (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ distinct foo.a, foo.b from foo foo where foo.c= ?:?  and foo.a= ?:?  using index foo.idx?
+===================================================
+0

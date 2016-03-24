@@ -1,0 +1,60 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+i    d    
+16     256.0     
+20     400.0     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx? term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.i, t?.d from t? t? where  sqrt(t?.d)>?
+===================================================
+i    d    
+16     256.0     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.i, t?.d from t? t? where (t?.i< ?:? ) using index t?.idx(+)
+===================================================
+0
+===================================================
+3
+===================================================
+i    d    
+16     256.0     
+20     400.0     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx? term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.i, t?.d from t? t? where  sqrt(t?.d)>?
+===================================================
+i    d    
+16     256.0     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.i, t?.d from t? t? where (t?.i< ?:? ) using index t?.idx(+)
+===================================================
+0

@@ -1,0 +1,37 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+v    char_length(v)    
+dbms qa 90     10     
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.v,  char_length(t?.v) from t? t? where (t?.v>= ?:?  and t?.v< ?:? ) and  trim(both  from t?.v)='dbms qa ?' using index none
+===================================================
+v    char_length(v)    
+dbms qa 90     10     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_v term[?]
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.v,  char_length(t?.v) from t? t? where (t?.v>= ?:?  and t?.v< ?:? ) and  trim(both  from t?.v)='dbms qa ?'
+===================================================
+0
+===================================================
+0
+===================================================
+0

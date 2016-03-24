@@ -1,0 +1,11 @@
+SELECT DEGREES(0) from db_root;
+SELECT DEGREES(1) from db_root;
+SELECT DEGREES(-1) from db_root;
+SELECT DEGREES(PI() + PI()) from db_root;
+SELECT DEGREES(PI() *2 ) from db_root;
+SELECT DEGREES(DEGREES(PI())) from db_root;
+SELECT DEGREES(9223372036854775807) from db_root;
+SELECT DEGREES(-9223372036854775807) from db_root;
+select DEGREES(char_length('aaa')) from db_root;
+select ceil(DEGREES(char_length('aaa'))) from db_root;
+select DEGREES(char_length(TO_CHAR( ceil(DEGREES(char_length('aaa'))))));

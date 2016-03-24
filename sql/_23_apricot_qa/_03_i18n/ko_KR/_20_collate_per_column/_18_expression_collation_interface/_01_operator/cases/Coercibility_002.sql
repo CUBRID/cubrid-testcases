@@ -1,0 +1,21 @@
+--+ holdcas on;
+set names utf8;
+CREATE TABLE t2 (s1 STRING COLLATE utf8_en_cs, s2 STRING COLLATE utf8_bin);
+insert into t2 values('i','h');
+insert into t2 values('A','a');
+SELECT s1, s2 FROM t2 WHERE s1 > s2;
+drop table t2;
+
+CREATE TABLE t2 (s1 STRING COLLATE utf8_en_cs, s2 STRING COLLATE iso88591_bin);
+insert into t2 values('i','h');
+insert into t2 values('A','a');
+SELECT s1, s2 FROM t2 WHERE s1 > s2;
+drop table t2;
+CREATE TABLE t2 (s1 STRING COLLATE iso88591_en_cs, s2 STRING COLLATE utf8_bin);
+insert into t2 values('i','h');
+insert into t2 values('A','a');
+SELECT s1, s2 FROM t2 WHERE s1 > s2;
+drop table t2;
+set names iso88591;
+commit;
+--+ holdcas off;

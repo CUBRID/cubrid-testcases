@@ -1,0 +1,163 @@
+===================================================
+0
+===================================================
+10000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+a    
+AZ-1                     
+AZ-10                    
+AZ-100                   
+AZ-1000                  
+AZ-10000                 
+AZ-1001                  
+AZ-1002                  
+AZ-1003                  
+AZ-1004                  
+AZ-1005                  
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.a from t? t? where (t?.a> ?:? ) and (inst_num()<= ?:? ) using index t?.i_t?_a
+===================================================
+a    
+AZ-1                     
+AZ-10                    
+AZ-100                   
+AZ-1000                  
+AZ-10000                 
+AZ-1001                  
+AZ-1002                  
+AZ-1003                  
+AZ-1004                  
+AZ-1005                  
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.a from t? t? where (t?.a> ?:? ) and (inst_num()<= ?:? ) using index t?.i_t?_a
+===================================================
+a    
+AZ-10                    
+AZ-100                   
+AZ-1000                  
+AZ-10000                 
+AZ-1001                  
+AZ-1002                  
+AZ-1003                  
+AZ-1004                  
+AZ-1005                  
+AZ-1006                  
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.a from t? t? where (t?.a> ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) using index t?.i_t?_a
+===================================================
+a    
+AZ-1                     
+AZ-10                    
+AZ-100                   
+AZ-1000                  
+AZ-10000                 
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.a from t? t? where (t?.a> ?:? ) and (inst_num()<= ?:? ) using index t?.i_t?_a
+===================================================
+a    
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.a from t? t? where (t?.a> ?:? ) and (inst_num()<= ?:? ) using index t?.i_t?_a
+===================================================
+Error:-493
+===================================================
+a    
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.a from t? t? where (t?.a> ?:? ) and (inst_num()<= ?:? ) using index t?.i_t?_a
+===================================================
+id mod 10    count(*)    
+0     1000     
+1     1000     
+2     1000     
+3     1000     
+4     1000     
+5     1000     
+6     1000     
+7     1000     
+8     1000     
+9     1000     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: pk_t?_id term[?] (covers)
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select t?.id mod ?, count(*) from t? t? where (t?.id> ?:? ) group by t?.id mod ? using index t?.pk_t?_id
+===================================================
+id mod 10    count(*)    
+0     1000     
+1     1000     
+2     1000     
+3     1000     
+4     1000     
+5     1000     
+6     1000     
+7     1000     
+8     1000     
+9     1000     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: pk_t?_id term[?] (covers)
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select t?.id mod ?, count(*) from t? t? where (t?.id> ?:? ) group by t?.id mod ? using index t?.pk_t?_id
+===================================================
+Error:-493
+===================================================
+0

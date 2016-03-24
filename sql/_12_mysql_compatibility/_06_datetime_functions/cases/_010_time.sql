@@ -1,0 +1,15 @@
+SELECT TIME('2003-12-31 01:02:03') FROM db_root;
+
+SELECT TIME('2003-12-31 01:02:03.000123') FROM db_root;
+
+SELECT TIME_TO_SEC('22:23:00') FROM db_root;
+
+SELECT TIME_FORMAT('100:00:00', '%H %k %h %I %l') FROM db_root;
+
+SELECT TIME(NULL) FROM db_root;
+
+SELECT TIME(NULL) FROM db_root;
+
+SELECT TIME_TO_SEC(NULL) FROM db_root;
+
+SELECT TIME_FORMAT(NULL, '%H %k %h %I %l') FROM db_root;

@@ -1,0 +1,47 @@
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+0
+bar    
+a     
+
+Query plan:
+sscan
+    class: foo node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select foo.bar from foo foo where foo.bar like  ?:?  and (foo.bar>= like_match_lower_bound( ?:? ) and foo.bar< like_match_upper_bound( ?:? ))
+0
+===================================================
+0
+bar    
+a     
+null     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: foo node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select foo.bar from foo foo where (foo.bar is null  or foo.bar like  ?:? ) order by ? desc 
+0
+===================================================
+0
+bar    
+
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

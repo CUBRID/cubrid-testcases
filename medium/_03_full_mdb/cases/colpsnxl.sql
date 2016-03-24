@@ -1,0 +1,27 @@
+autocommit off;
+create class foo (x int);
+insert into foo values (1);
+
+insert into foo select x + 1 from foo;    
+insert into foo select x + 2 from foo;    
+insert into foo select x + 4 from foo;    
+insert into foo select x + 8 from foo;    
+insert into foo select x + 16 from foo;   
+insert into foo select x + 32 from foo;   
+insert into foo select x + 64 from foo;   
+insert into foo select x + 128 from foo;  
+insert into foo select x + 256 from foo;  
+insert into foo select x + 512 from foo;  
+insert into foo select x + 1024 from foo; 
+select count(*) from foo where x between 0 and 2049;
+create index i_foo_x on foo(x);
+update foo set x = 40;
+select count(*) from foo where x = 40;
+insert into foo values(100);
+select * from foo where x = 100;
+insert into foo values(120);
+select * from foo where x > 100;
+insert into foo values (20);
+select * from foo where x < 40;
+drop foo;
+rollback;

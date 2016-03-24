@@ -1,0 +1,16 @@
+select 1 >> 2 from db_root;
+select 100 >> 2 from db_root;
+select 1102322432 >> 2 from db_root;
+select '1' >> 2 from db_root;
+select NULL >> 2 from db_root;
+select 'a' >> 2 from db_root;
+select 1 >> '2' from db_root;
+select '1' >> '2' from db_root;
+select NULL >> '2' from db_root;
+select 'a' >> '2' from db_root;
+select 1 >> NULL from db_root;
+select '1' >> NULL from db_root;
+select NULL >> NULL from db_root;
+select 'a' >> NULL from db_root;
+select 1234567890 >> 128 from db_root;
+select 1234567890 >> 123456789 from db_root;

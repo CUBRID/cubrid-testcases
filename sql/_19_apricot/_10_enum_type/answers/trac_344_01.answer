@@ -1,0 +1,736 @@
+===================================================
+0
+===================================================
+0
+===================================================
+7
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+7
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+i    e1    i    s    
+1     Sunday     3     Tuesday     
+1     Sunday     4     Wednesday     
+1     Sunday     4     kkk     
+1     Sunday     5     Thursday     
+1     Sunday     10     kkk     
+2     Monday     1     Sunday     
+2     Monday     3     Tuesday     
+2     Monday     4     Wednesday     
+2     Monday     4     kkk     
+2     Monday     5     Thursday     
+2     Monday     7     Saturday     
+2     Monday     10     kkk     
+3     Tuesday     4     Wednesday     
+3     Tuesday     4     kkk     
+3     Tuesday     10     kkk     
+4     Wednesday     4     kkk     
+4     Wednesday     10     kkk     
+5     Thursday     3     Tuesday     
+5     Thursday     4     Wednesday     
+5     Thursday     4     kkk     
+5     Thursday     10     kkk     
+6     Friday     1     Sunday     
+6     Friday     2     Monday     
+6     Friday     3     Tuesday     
+6     Friday     4     Wednesday     
+6     Friday     4     kkk     
+6     Friday     5     Thursday     
+6     Friday     7     Saturday     
+6     Friday     10     Monday     
+6     Friday     10     kkk     
+7     Saturday     1     Sunday     
+7     Saturday     3     Tuesday     
+7     Saturday     4     Wednesday     
+7     Saturday     4     kkk     
+7     Saturday     5     Thursday     
+7     Saturday     10     kkk     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: t? node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: t? node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.i, t?.e?, t?.i, t?.s from t? t?, t? t? where (t?.s> cast(t?.e? as varchar)) order by ?, ?, ?, ?
+===================================================
+i    e1    i    s    
+1     Sunday     2     Monday     
+1     Sunday     3     Tuesday     
+1     Sunday     4     Wednesday     
+1     Sunday     4     kkk     
+1     Sunday     5     Thursday     
+1     Sunday     6     Friday     
+1     Sunday     7     Saturday     
+1     Sunday     10     Monday     
+1     Sunday     10     kkk     
+2     Monday     3     Tuesday     
+2     Monday     4     Wednesday     
+2     Monday     4     kkk     
+2     Monday     5     Thursday     
+2     Monday     6     Friday     
+2     Monday     7     Saturday     
+2     Monday     10     Monday     
+2     Monday     10     kkk     
+3     Tuesday     4     Wednesday     
+3     Tuesday     4     kkk     
+3     Tuesday     5     Thursday     
+3     Tuesday     6     Friday     
+3     Tuesday     7     Saturday     
+3     Tuesday     10     Monday     
+3     Tuesday     10     kkk     
+4     Wednesday     5     Thursday     
+4     Wednesday     6     Friday     
+4     Wednesday     7     Saturday     
+4     Wednesday     10     Monday     
+4     Wednesday     10     kkk     
+5     Thursday     6     Friday     
+5     Thursday     7     Saturday     
+5     Thursday     10     Monday     
+5     Thursday     10     kkk     
+6     Friday     7     Saturday     
+6     Friday     10     Monday     
+6     Friday     10     kkk     
+7     Saturday     10     Monday     
+7     Saturday     10     kkk     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: t? node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: t? node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.i, t?.e?, t?.i, t?.s from t? t?, t? t? where (t?.i> cast(t?.e? as integer)) order by ?, ?, ?, ?
+===================================================
+i    e1    i    s    
+1     Sunday     1     Sunday     
+1     Sunday     3     Tuesday     
+1     Sunday     4     Wednesday     
+1     Sunday     4     kkk     
+1     Sunday     5     Thursday     
+1     Sunday     10     kkk     
+2     Monday     1     Sunday     
+2     Monday     2     Monday     
+2     Monday     3     Tuesday     
+2     Monday     4     Wednesday     
+2     Monday     4     kkk     
+2     Monday     5     Thursday     
+2     Monday     7     Saturday     
+2     Monday     10     Monday     
+2     Monday     10     kkk     
+3     Tuesday     3     Tuesday     
+3     Tuesday     4     Wednesday     
+3     Tuesday     4     kkk     
+3     Tuesday     10     kkk     
+4     Wednesday     4     Wednesday     
+4     Wednesday     4     kkk     
+4     Wednesday     10     kkk     
+5     Thursday     3     Tuesday     
+5     Thursday     4     Wednesday     
+5     Thursday     4     kkk     
+5     Thursday     5     Thursday     
+5     Thursday     10     kkk     
+6     Friday     1     Sunday     
+6     Friday     2     Monday     
+6     Friday     3     Tuesday     
+6     Friday     4     Wednesday     
+6     Friday     4     kkk     
+6     Friday     5     Thursday     
+6     Friday     6     Friday     
+6     Friday     7     Saturday     
+6     Friday     10     Monday     
+6     Friday     10     kkk     
+7     Saturday     1     Sunday     
+7     Saturday     3     Tuesday     
+7     Saturday     4     Wednesday     
+7     Saturday     4     kkk     
+7     Saturday     5     Thursday     
+7     Saturday     7     Saturday     
+7     Saturday     10     kkk     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: t? node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: t? node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.i, t?.e?, t?.i, t?.s from t? t?, t? t? where (t?.s>= cast(t?.e? as varchar)) order by ?, ?, ?, ?
+===================================================
+i    e1    i    s    
+1     Sunday     1     Sunday     
+1     Sunday     2     Monday     
+1     Sunday     3     Tuesday     
+1     Sunday     4     Wednesday     
+1     Sunday     4     kkk     
+1     Sunday     5     Thursday     
+1     Sunday     6     Friday     
+1     Sunday     7     Saturday     
+1     Sunday     10     Monday     
+1     Sunday     10     kkk     
+2     Monday     2     Monday     
+2     Monday     3     Tuesday     
+2     Monday     4     Wednesday     
+2     Monday     4     kkk     
+2     Monday     5     Thursday     
+2     Monday     6     Friday     
+2     Monday     7     Saturday     
+2     Monday     10     Monday     
+2     Monday     10     kkk     
+3     Tuesday     3     Tuesday     
+3     Tuesday     4     Wednesday     
+3     Tuesday     4     kkk     
+3     Tuesday     5     Thursday     
+3     Tuesday     6     Friday     
+3     Tuesday     7     Saturday     
+3     Tuesday     10     Monday     
+3     Tuesday     10     kkk     
+4     Wednesday     4     Wednesday     
+4     Wednesday     4     kkk     
+4     Wednesday     5     Thursday     
+4     Wednesday     6     Friday     
+4     Wednesday     7     Saturday     
+4     Wednesday     10     Monday     
+4     Wednesday     10     kkk     
+5     Thursday     5     Thursday     
+5     Thursday     6     Friday     
+5     Thursday     7     Saturday     
+5     Thursday     10     Monday     
+5     Thursday     10     kkk     
+6     Friday     6     Friday     
+6     Friday     7     Saturday     
+6     Friday     10     Monday     
+6     Friday     10     kkk     
+7     Saturday     7     Saturday     
+7     Saturday     10     Monday     
+7     Saturday     10     kkk     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: t? node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: t? node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.i, t?.e?, t?.i, t?.s from t? t?, t? t? where (t?.i>= cast(t?.e? as integer)) order by ?, ?, ?, ?
+===================================================
+i    e1    i    s    
+1     Sunday     2     Monday     
+1     Sunday     6     Friday     
+1     Sunday     7     Saturday     
+1     Sunday     10     Monday     
+2     Monday     6     Friday     
+3     Tuesday     1     Sunday     
+3     Tuesday     2     Monday     
+3     Tuesday     5     Thursday     
+3     Tuesday     6     Friday     
+3     Tuesday     7     Saturday     
+3     Tuesday     10     Monday     
+4     Wednesday     1     Sunday     
+4     Wednesday     2     Monday     
+4     Wednesday     3     Tuesday     
+4     Wednesday     5     Thursday     
+4     Wednesday     6     Friday     
+4     Wednesday     7     Saturday     
+4     Wednesday     10     Monday     
+5     Thursday     1     Sunday     
+5     Thursday     2     Monday     
+5     Thursday     6     Friday     
+5     Thursday     7     Saturday     
+5     Thursday     10     Monday     
+7     Saturday     2     Monday     
+7     Saturday     6     Friday     
+7     Saturday     10     Monday     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: t? node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: t? node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.i, t?.e?, t?.i, t?.s from t? t?, t? t? where (t?.s< cast(t?.e? as varchar)) order by ?, ?, ?, ?
+===================================================
+i    e1    i    s    
+2     Monday     1     Sunday     
+3     Tuesday     1     Sunday     
+3     Tuesday     2     Monday     
+4     Wednesday     1     Sunday     
+4     Wednesday     2     Monday     
+4     Wednesday     3     Tuesday     
+5     Thursday     1     Sunday     
+5     Thursday     2     Monday     
+5     Thursday     3     Tuesday     
+5     Thursday     4     Wednesday     
+5     Thursday     4     kkk     
+6     Friday     1     Sunday     
+6     Friday     2     Monday     
+6     Friday     3     Tuesday     
+6     Friday     4     Wednesday     
+6     Friday     4     kkk     
+6     Friday     5     Thursday     
+7     Saturday     1     Sunday     
+7     Saturday     2     Monday     
+7     Saturday     3     Tuesday     
+7     Saturday     4     Wednesday     
+7     Saturday     4     kkk     
+7     Saturday     5     Thursday     
+7     Saturday     6     Friday     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: t? node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: t? node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.i, t?.e?, t?.i, t?.s from t? t?, t? t? where (t?.i< cast(t?.e? as integer)) order by ?, ?, ?, ?
+===================================================
+i    e1    i    s    
+1     Sunday     1     Sunday     
+1     Sunday     2     Monday     
+1     Sunday     6     Friday     
+1     Sunday     7     Saturday     
+1     Sunday     10     Monday     
+2     Monday     2     Monday     
+2     Monday     6     Friday     
+2     Monday     10     Monday     
+3     Tuesday     1     Sunday     
+3     Tuesday     2     Monday     
+3     Tuesday     3     Tuesday     
+3     Tuesday     5     Thursday     
+3     Tuesday     6     Friday     
+3     Tuesday     7     Saturday     
+3     Tuesday     10     Monday     
+4     Wednesday     1     Sunday     
+4     Wednesday     2     Monday     
+4     Wednesday     3     Tuesday     
+4     Wednesday     4     Wednesday     
+4     Wednesday     5     Thursday     
+4     Wednesday     6     Friday     
+4     Wednesday     7     Saturday     
+4     Wednesday     10     Monday     
+5     Thursday     1     Sunday     
+5     Thursday     2     Monday     
+5     Thursday     5     Thursday     
+5     Thursday     6     Friday     
+5     Thursday     7     Saturday     
+5     Thursday     10     Monday     
+6     Friday     6     Friday     
+7     Saturday     2     Monday     
+7     Saturday     6     Friday     
+7     Saturday     7     Saturday     
+7     Saturday     10     Monday     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: t? node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: t? node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.i, t?.e?, t?.i, t?.s from t? t?, t? t? where (t?.s<= cast(t?.e? as varchar)) order by ?, ?, ?, ?
+===================================================
+i    e1    i    s    
+1     Sunday     1     Sunday     
+2     Monday     1     Sunday     
+2     Monday     2     Monday     
+3     Tuesday     1     Sunday     
+3     Tuesday     2     Monday     
+3     Tuesday     3     Tuesday     
+4     Wednesday     1     Sunday     
+4     Wednesday     2     Monday     
+4     Wednesday     3     Tuesday     
+4     Wednesday     4     Wednesday     
+4     Wednesday     4     kkk     
+5     Thursday     1     Sunday     
+5     Thursday     2     Monday     
+5     Thursday     3     Tuesday     
+5     Thursday     4     Wednesday     
+5     Thursday     4     kkk     
+5     Thursday     5     Thursday     
+6     Friday     1     Sunday     
+6     Friday     2     Monday     
+6     Friday     3     Tuesday     
+6     Friday     4     Wednesday     
+6     Friday     4     kkk     
+6     Friday     5     Thursday     
+6     Friday     6     Friday     
+7     Saturday     1     Sunday     
+7     Saturday     2     Monday     
+7     Saturday     3     Tuesday     
+7     Saturday     4     Wednesday     
+7     Saturday     4     kkk     
+7     Saturday     5     Thursday     
+7     Saturday     6     Friday     
+7     Saturday     7     Saturday     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: t? node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: t? node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.i, t?.e?, t?.i, t?.s from t? t?, t? t? where (t?.i<= cast(t?.e? as integer)) order by ?, ?, ?, ?
+===================================================
+i    e1    i    s    
+1     Sunday     1     Sunday     
+2     Monday     2     Monday     
+2     Monday     10     Monday     
+3     Tuesday     3     Tuesday     
+4     Wednesday     4     Wednesday     
+4     Wednesday     4     kkk     
+5     Thursday     5     Thursday     
+6     Friday     6     Friday     
+7     Saturday     7     Saturday     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: t? node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: t? node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.i, t?.e?, t?.i, t?.s from t? t?, t? t? where ((t?.e?=t?.i) or (t?.e?=t?.s)) order by ?, ?, ?, ?
+===================================================
+i    e1    i    s    
+1     Sunday     1     Sunday     
+1     Sunday     2     Monday     
+1     Sunday     3     Tuesday     
+1     Sunday     4     Wednesday     
+1     Sunday     4     kkk     
+1     Sunday     5     Thursday     
+1     Sunday     6     Friday     
+1     Sunday     7     Saturday     
+1     Sunday     10     Monday     
+1     Sunday     10     kkk     
+2     Monday     2     Monday     
+2     Monday     10     Monday     
+3     Tuesday     3     Tuesday     
+4     Wednesday     4     Wednesday     
+5     Thursday     5     Thursday     
+6     Friday     1     Sunday     
+6     Friday     2     Monday     
+6     Friday     3     Tuesday     
+6     Friday     4     Wednesday     
+6     Friday     4     kkk     
+6     Friday     5     Thursday     
+6     Friday     6     Friday     
+6     Friday     7     Saturday     
+6     Friday     10     Monday     
+6     Friday     10     kkk     
+7     Saturday     7     Saturday     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: t? node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: t? node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.i, t?.e?, t?.i, t?.s from t? t?, t? t? where ((t?.e?= ?:? ) or (t?.e?=t?.s) or (t?.e?= ?:? )) order by ?, ?, ?, ?
+===================================================
+i    e1    i    s    
+1     Sunday     1     Sunday     
+2     Monday     2     Monday     
+2     Monday     10     Monday     
+3     Tuesday     3     Tuesday     
+4     Wednesday     4     Wednesday     
+5     Thursday     5     Thursday     
+6     Friday     6     Friday     
+7     Saturday     7     Saturday     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: t? node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: t? node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.i, t?.e?, t?.i, t?.s from t? t?, t? t? where t?.s= cast(t?.e? as varchar) order by ?, ?, ?, ?
+===================================================
+e1    
+Sunday     
+Monday     
+Tuesday     
+Wednesday     
+Thursday     
+Friday     
+Saturday     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: t? node[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct t?.s from t? t?)
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: av? node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t? node[?]
+                            index: idx? term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.e?, t?.i from t? t?, (select distinct t?.s from t? t?) av? (av_?) where t?.e?=av?.av_? order by ?
+===================================================
+e1    
+Saturday     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct t?.s from t? t? where t?.s= ?:? )
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: av? node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t? node[?]
+                            index: idx? term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.e?, t?.i from t? t?, (select distinct t?.s from t? t? where t?.s= ?:? ) av? (av_?) where t?.e?=av?.av_? order by ?
+===================================================
+e1    
+Sunday     
+Monday     
+Tuesday     
+Wednesday     
+Thursday     
+Friday     
+Saturday     
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.s from t? t? where t?.s= ?:? 
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.s from t? t? where t?.s<>'Saturday'
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: av? node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t? node[?]
+                            index: idx? term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.e?, t?.i from t? t?, (select t?.s from t? t? where t?.s= ?:?  union select t?.s from t? t? where t?.s<>'Saturday') av? (av_?) where t?.e?=av?.av_? order by ?
+===================================================
+e1    
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: t? node[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct t?.s from t? t?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.e?, t?.i from t? t? where t?.e? not in (select distinct t?.s from t? t?) order by ?
+===================================================
+e1    
+Sunday     
+Monday     
+Tuesday     
+Wednesday     
+Thursday     
+Friday     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct t?.s from t? t? where t?.s= ?:? )
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.e?, t?.i from t? t? where t?.e? not in (select distinct t?.s from t? t? where t?.s= ?:? ) order by ?
+===================================================
+e1    
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.s from t? t? where t?.s= ?:? 
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.s from t? t? where t?.s<>'Saturday'
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.e?, t?.i from t? t? where t?.e? not in (select t?.s from t? t? where t?.s= ?:?  union select t?.s from t? t? where t?.s<>'Saturday') order by ?
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

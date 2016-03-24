@@ -1,0 +1,132 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+0
+===================================================
+a    b    c    
+0     10     10     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t? term[?] (index skip scan)
+    cost:  ? card ?
+Query stmt:
+(select /*+ INDEX_SS */ t?.a, t?.b, t?.c from t? t? where t?.b= ?:? )
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select [__t?].a, [__t?].b, [__t?].c from (select /*+ INDEX_SS */ t?.a, t?.b, t?.c from t? t? where t?.b= ?:? ) [__t?] (a, b, c) order by ?, ? for orderby_num()<= ?:? 
+===================================================
+a    
+0     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t? term[?] (covers) (index skip scan)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t?.a from t? t? where t?.b= ?:?  order by ? for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+b    
+10     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t? term[?] (covers) (index skip scan)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t?.b from t? t? where t?.b= ?:?  and (inst_num())<= ?:? 
+===================================================
+c    
+10     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t? term[?] (index skip scan)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t?.c from t? t? where t?.b= ?:?  order by ? for orderby_num()<= ?:? 
+===================================================
+a    b    
+0     10     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t? term[?] (covers) (index skip scan)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t?.a, t?.b from t? t? where t?.b= ?:?  order by ? for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+a    c    
+0     10     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t? term[?] (index skip scan)
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t?.a, t?.c from t? t? where t?.b= ?:?  order by ?, ? for orderby_num()<= ?:? 
+===================================================
+b    c    
+10     10     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t? term[?] (index skip scan)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t?.b, t?.c from t? t? where t?.b= ?:?  order by ? for orderby_num()<= ?:? 
+===================================================
+a    b    c    
+0     10     10     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t? term[?] (index skip scan)
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t?.a, t?.b, t?.c from t? t? where t?.b= ?:?  order by ?, ? for orderby_num()<= ?:? 
+===================================================
+0
+===================================================
+0

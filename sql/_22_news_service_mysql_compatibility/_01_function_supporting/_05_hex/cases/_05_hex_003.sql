@@ -1,0 +1,12 @@
+--test
+SELECT HEX(255), CONV(HEX(255),16,10);
+--test
+SELECT STRCMP(HEX(255), CONV(HEX(255),16,10));
+--test
+SELECT CONCAT( HEX('FF'), '_',CONV('FF',16,10));
+--test
+SELECT BIT_LENGTH(HEX('1'));
+--test
+--SELECT BIT_TO_BLOB(HEX(255));
+--test
+--SELECT BIT_TO_BLOB(HEX('FF'));

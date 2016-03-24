@@ -1,0 +1,12 @@
+
+SELECT STR_TO_DATE('9 -1234 -11','%m %Y %y');
+SELECT STR_TO_DATE('9 1 3','%s %h %i');
+SELECT STR_TO_DATE('9 1','%s %h');
+SELECT STR_TO_DATE('9 1999 30','%m %Y %d');
+SELECT STR_TO_DATE('9 1999 31','%m %Y %d');
+SELECT STR_TO_DATE('9 1999','%m %Y');
+SELECT STR_TO_DATE('9','%m');
+SELECT STR_TO_DATE('9','%s');
+
+
+

@@ -1,0 +1,11 @@
+autocommit off;
+create class foo( a int );
+insert into foo values(1);
+insert into foo values(2);
+create view fff( b foo ) as select x from foo x;
+create view ggg( c fff ) as select y from fff y;
+select c.b.a from ggg;
+select c.b from ggg;
+drop foo; 
+drop fff, ggg;
+commit;

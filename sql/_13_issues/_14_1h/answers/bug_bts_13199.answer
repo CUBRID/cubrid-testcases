@@ -1,0 +1,599 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+10000
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+10000
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+2000
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+30
+===================================================
+0
+===================================================
+0
+===================================================
+id    name    address    telephone    id    course_id    score    course_id    course_name    
+7010001     lindaiyu     ancient mansion of jia     10000000002     7010001     1     89.0     1     math     
+7010003     jiabaoyu     ancient mansion of jia     10000000004     7010003     1     87.0     1     math     
+7010005     xuebaocai     ancient mansion of jia     10000000006     7010005     1     91.0     1     math     
+7010007     shixiangyun     ancient mansion of jia     10000000008     7010007     1     null     1     math     
+7010009     wangxifeng     ancient mansion of jia     10000000010     7010009     1     null     1     math     
+7010001     lindaiyu     ancient mansion of jia     10000000002     7010001     2     95.0     2     literature     
+7010003     jiabaoyu     ancient mansion of jia     10000000004     7010003     2     93.0     2     literature     
+7010005     xuebaocai     ancient mansion of jia     10000000006     7010005     2     85.0     2     literature     
+7010007     shixiangyun     ancient mansion of jia     10000000008     7010007     2     null     2     literature     
+7010009     wangxifeng     ancient mansion of jia     10000000010     7010009     2     null     2     literature     
+7010001     lindaiyu     ancient mansion of jia     10000000002     7010001     3     76.0     3     science     
+7010003     jiabaoyu     ancient mansion of jia     10000000004     7010003     3     74.0     3     science     
+7010005     xuebaocai     ancient mansion of jia     10000000006     7010005     3     72.0     3     science     
+7010007     shixiangyun     ancient mansion of jia     10000000008     7010007     3     null     3     science     
+7010009     wangxifeng     ancient mansion of jia     10000000010     7010009     3     null     3     science     
+7010001     lindaiyu     ancient mansion of jia     10000000002     7010001     4     60.0     4     physical     
+7010003     jiabaoyu     ancient mansion of jia     10000000004     7010003     4     62.0     4     physical     
+7010005     xuebaocai     ancient mansion of jia     10000000006     7010005     4     64.0     4     physical     
+7010007     shixiangyun     ancient mansion of jia     10000000008     7010007     4     null     4     physical     
+7010009     wangxifeng     ancient mansion of jia     10000000010     7010009     4     null     4     physical     
+7010001     lindaiyu     ancient mansion of jia     10000000002     7010001     5     10.0     5     chemistry     
+7010003     jiabaoyu     ancient mansion of jia     10000000004     7010003     5     20.0     5     chemistry     
+7010005     xuebaocai     ancient mansion of jia     10000000006     7010005     5     30.0     5     chemistry     
+7010007     shixiangyun     ancient mansion of jia     10000000008     7010007     5     null     5     chemistry     
+7010009     wangxifeng     ancient mansion of jia     10000000010     7010009     5     null     5     chemistry     
+
+Query plan:
+temp
+    order: course_id[?]
+    subplan: m-join (inner join)
+                 edge:  term[?]
+                 outer: temp
+                            order: course_id[?]
+                            subplan: m-join (inner join)
+                                         edge:  term[?]
+                                         outer: temp
+                                                    order: id[?]
+                                                    subplan: sscan
+                                                                 class: t? node[?]
+                                                                 cost:  ? card ?
+                                                    cost:  ? card ?
+                                         inner: temp
+                                                    order: id[?]
+                                                    subplan: sscan
+                                                                 class: t? node[?]
+                                                                 cost:  ? card ?
+                                                    cost:  ? card ?
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 inner: temp
+                            order: course_id[?]
+                            subplan: sscan
+                                         class: t? node[?]
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_MERGE */ t?.id, t?.[name], t?.address, t?.telephone, t?.id, t?.course_id, t?.score, t?.course_id, t?.course_name from sinfo t?, sscore t?, scourse t? where t?.id=t?.id and t?.course_id=t?.course_id
+===================================================
+id    name    address    telephone    id    course_id    score    course_id    course_name    
+7010005     xuebaocai     ancient mansion of jia     10000000006     7010005     1     91.0     1     math     
+7010005     xuebaocai     ancient mansion of jia     10000000006     7010005     2     85.0     2     literature     
+7010005     xuebaocai     ancient mansion of jia     10000000006     7010005     3     72.0     3     science     
+7010005     xuebaocai     ancient mansion of jia     10000000006     7010005     4     64.0     4     physical     
+7010005     xuebaocai     ancient mansion of jia     10000000006     7010005     5     30.0     5     chemistry     
+
+Query plan:
+idx-join (inner join)
+    outer: nl-join (cross join)
+               outer: iscan
+                          class: t? node[?]
+                          index: t?_idx term[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: t? node[?]
+                          index: t?_idx term[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: t? node[?]
+               index: t?_idx term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt: [Warning: HINT ignored]
+select t?.id, t?.[name], t?.address, t?.telephone, t?.id, t?.course_id, t?.score, t?.course_id, t?.course_name from sinfo t?, sscore t?, scourse t? where t?.course_id=t?.course_id and t?.score is not null  and t?.id= ?:?  and t?.id= ?:?  and t?.id=t?.id
+===================================================
+id    name    course_id    score    course_name    
+7010001     lindaiyu     2     95.0     literature     
+
+Query plan:
+temp
+    order: course_id[?]
+    subplan: m-join (inner join)
+                 edge:  term[?]
+                 outer: temp
+                            order: course_id[?]
+                            subplan: m-join (inner join)
+                                         edge:  term[?]
+                                         outer: temp
+                                                    order: id[?]
+                                                    subplan: iscan
+                                                                 class: t? node[?]
+                                                                 index: t?_idx term[?]
+                                                                 cost:  ? card ?
+                                                    cost:  ? card ?
+                                         inner: temp
+                                                    order: id[?]
+                                                    subplan: sscan
+                                                                 class: t? node[?]
+                                                                 sargs: term[?]
+                                                                 cost:  ? card ?
+                                                    cost:  ? card ?
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 inner: temp
+                            order: course_id[?]
+                            subplan: sscan
+                                         class: t? node[?]
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_MERGE */ t?.id, t?.[name], t?.course_id, t?.score, t?.course_name from sinfo t?, sscore t?, scourse t? where t?.id=t?.id and t?.course_id=t?.course_id and (t?.id< ?:? ) and (t?.score> ?:? )
+===================================================
+id    name    address    telephone    id    course_id    score    course_id    course_name    
+7010001     lindaiyu     ancient mansion of jia     10000000002     7010001     1     89.0     1     math     
+7010001     lindaiyu     ancient mansion of jia     10000000002     7010001     2     95.0     2     literature     
+7010003     jiabaoyu     ancient mansion of jia     10000000004     7010003     1     87.0     1     math     
+7010003     jiabaoyu     ancient mansion of jia     10000000004     7010003     2     93.0     2     literature     
+7010005     xuebaocai     ancient mansion of jia     10000000006     7010005     1     91.0     1     math     
+7010005     xuebaocai     ancient mansion of jia     10000000006     7010005     2     85.0     2     literature     
+7010007     shixiangyun     ancient mansion of jia     10000000008     7010007     1     null     1     math     
+7010007     shixiangyun     ancient mansion of jia     10000000008     7010007     2     null     2     literature     
+7010009     wangxifeng     ancient mansion of jia     10000000010     7010009     1     null     1     math     
+7010009     wangxifeng     ancient mansion of jia     10000000010     7010009     2     null     2     literature     
+
+Query plan:
+temp(order by)
+    subplan: temp
+                 order: course_id[?]
+                 subplan: m-join (inner join)
+                              edge:  term[?]
+                              outer: temp
+                                         order: course_id[?]
+                                         subplan: m-join (inner join)
+                                                      edge:  term[?]
+                                                      outer: temp
+                                                                 order: id[?]
+                                                                 subplan: sscan
+                                                                              class: t? node[?]
+                                                                              cost:  ? card ?
+                                                                 cost:  ? card ?
+                                                      inner: temp
+                                                                 order: id[?]
+                                                                 subplan: iscan
+                                                                              class: t? node[?]
+                                                                              index: t?_idx term[?] (index skip scan)
+                                                                              cost:  ? card ?
+                                                                 cost:  ? card ?
+                                                      cost:  ? card ?
+                                         cost:  ? card ?
+                              inner: temp
+                                         order: course_id[?]
+                                         subplan: sscan
+                                                      class: t? node[?]
+                                                      cost:  ? card ?
+                                         cost:  ? card ?
+                              cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED INDEX_SS USE_MERGE */ t?.id, t?.[name], t?.address, t?.telephone, t?.id, t?.course_id, t?.score, t?.course_id, t?.course_name from sinfo t?, sscore t?, scourse t? where t?.id=t?.id and t?.course_id=t?.course_id and (t?.course_id< ?:? ) order by ?
+===================================================
+id    name    address    telephone    id    course_id    score    course_id    course_name    
+7010003     jiabaoyu     ancient mansion of jia     10000000004     7010003     4     62.0     4     physical     
+7010005     xuebaocai     ancient mansion of jia     10000000006     7010005     4     64.0     4     physical     
+
+Query plan:
+temp(order by)
+    subplan: temp
+                 order: id[?]
+                 subplan: m-join (inner join)
+                              edge:  term[?]
+                              outer: temp
+                                         order: id[?]
+                                         subplan: m-join (inner join)
+                                                      edge:  term[?]
+                                                      outer: temp
+                                                                 order: course_id[?]
+                                                                 subplan: sscan
+                                                                              class: t? node[?]
+                                                                              sargs: term[?]
+                                                                              cost:  ? card ?
+                                                                 cost:  ? card ?
+                                                      inner: temp
+                                                                 order: course_id[?]
+                                                                 subplan: sscan
+                                                                              class: t? node[?]
+                                                                              sargs: term[?]
+                                                                              cost:  ? card ?
+                                                                 cost:  ? card ?
+                                                      cost:  ? card ?
+                                         cost:  ? card ?
+                              inner: temp
+                                         order: id[?]
+                                         subplan: sscan
+                                                      class: t? node[?]
+                                                      cost:  ? card ?
+                                         cost:  ? card ?
+                              cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_MERGE */ t?.id, t?.[name], t?.address, t?.telephone, t?.id, t?.course_id, t?.score, t?.course_id, t?.course_name from sinfo t?, sscore t?, scourse t? where t?.id=t?.id and t?.course_id=t?.course_id and (t?.score> ?:? ) and t?.course_name= ?:?  order by ?, ?
+===================================================
+course_id    avg_score    course_name    
+2     91.0     literature     
+1     89.0     math     
+3     74.0     science     
+4     62.0     physical     
+5     20.0     chemistry     
+
+Query plan:
+temp(order by)
+    subplan: temp(group by)
+                 subplan: temp
+                              order: course_id[?]
+                              subplan: m-join (inner join)
+                                           edge:  term[?]
+                                           outer: temp
+                                                      order: course_id[?]
+                                                      subplan: m-join (inner join)
+                                                                   edge:  term[?]
+                                                                   outer: temp
+                                                                              order: id[?]
+                                                                              subplan: sscan
+                                                                                           class: t? node[?]
+                                                                                           cost:  ? card ?
+                                                                              cost:  ? card ?
+                                                                   inner: temp
+                                                                              order: id[?]
+                                                                              subplan: sscan
+                                                                                           class: t? node[?]
+                                                                                           cost:  ? card ?
+                                                                              cost:  ? card ?
+                                                                   cost:  ? card ?
+                                                      cost:  ? card ?
+                                           inner: temp
+                                                      order: course_id[?]
+                                                      subplan: sscan
+                                                                   class: t? node[?]
+                                                                   cost:  ? card ?
+                                                      cost:  ? card ?
+                                           cost:  ? card ?
+                              cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_MERGE */ t?.course_id, avg(t?.score), t?.course_name from sinfo t?, sscore t?, scourse t? where t?.id=t?.id and t?.course_id=t?.course_id group by t?.course_id order by ? desc 
+===================================================
+course_id    avg_score    course_name    
+2     91.0     literature     
+1     89.0     math     
+3     74.0     science     
+
+Query plan:
+temp(order by)
+    subplan: temp(group by)
+                 subplan: temp
+                              order: course_id[?]
+                              subplan: m-join (inner join)
+                                           edge:  term[?]
+                                           outer: temp
+                                                      order: course_id[?]
+                                                      subplan: m-join (inner join)
+                                                                   edge:  term[?]
+                                                                   outer: temp
+                                                                              order: id[?]
+                                                                              subplan: sscan
+                                                                                           class: t? node[?]
+                                                                                           cost:  ? card ?
+                                                                              cost:  ? card ?
+                                                                   inner: temp
+                                                                              order: id[?]
+                                                                              subplan: sscan
+                                                                                           class: t? node[?]
+                                                                                           cost:  ? card ?
+                                                                              cost:  ? card ?
+                                                                   cost:  ? card ?
+                                                      cost:  ? card ?
+                                           inner: temp
+                                                      order: course_id[?]
+                                                      subplan: sscan
+                                                                   class: t? node[?]
+                                                                   cost:  ? card ?
+                                                      cost:  ? card ?
+                                           cost:  ? card ?
+                              cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_MERGE */ t?.course_id, avg(t?.score), t?.course_name from sinfo t?, sscore t?, scourse t? where t?.id=t?.id and t?.course_id=t?.course_id group by t?.course_id having avg(t?.score)>? order by ? desc 
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+i    j    v    i    
+1     1     one     1     
+
+Query plan:
+temp
+    order: i[?]
+    subplan: m-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: temp
+                            order: i[?]
+                            subplan: sscan
+                                         class: f node[?]
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 inner: temp
+                            order: i[?]
+                            subplan: sscan
+                                         class: b node[?]
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_MERGE */ f.i, f.j, b.v, b.i from foo f inner join bar b on f.j=b.i and f.i=b.i
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+i    j    k    v    i    k    
+1     1     10     one                                1     20     
+
+Query plan:
+temp
+    order: i[?]
+    subplan: m-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: temp
+                            order: i[?]
+                            subplan: sscan
+                                         class: f node[?]
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 inner: temp
+                            order: i[?]
+                            subplan: sscan
+                                         class: b node[?]
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_MERGE */ f.i, f.j, f.k, b.v, b.i, b.k from foo f inner join bar b on (f.k<b.k) and f.j=b.i and f.i=b.i
+===================================================
+i    j    k    v    i    k    
+1     1     10     one                                1     20     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?] AND term[?] AND term[?]
+    outer: sscan
+               class: f node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?] AND term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ f.i, f.j, f.k, b.v, b.i, b.k from foo f inner join bar b on (f.k<b.k) and f.j=b.i and f.i=b.i
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+v    i    j    k    v    i    k    
+one     1     1     2     one     1     2     
+
+Query plan:
+temp
+    order: k[?]
+    subplan: m-join (inner join)
+                 edge:  term[?] AND term[?] AND term[?]
+                 outer: temp
+                            order: k[?]
+                            subplan: sscan
+                                         class: f node[?]
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 inner: temp
+                            order: k[?]
+                            subplan: sscan
+                                         class: b node[?]
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_MERGE */ b.v, f.i, f.j, f.k, b.v, b.i, b.k from foo f inner join bar b on f.k=b.k and f.j=b.i and f.i=b.i
+===================================================
+v    i    j    k    v    i    k    
+one     1     1     2     one     1     2     
+
+Query plan:
+temp
+    order: k[?]
+    subplan: m-join (inner join)
+                 edge:  term[?] AND term[?] AND term[?]
+                 outer: temp
+                            order: k[?]
+                            subplan: sscan
+                                         class: b node[?]
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 inner: temp
+                            order: k[?]
+                            subplan: sscan
+                                         class: f node[?]
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_MERGE */ b.v, f.i, f.j, f.k, b.v, b.i, b.k from bar b inner join foo f on f.k=b.k and f.j=b.i and f.i=b.i
+===================================================
+0
+===================================================
+0

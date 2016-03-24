@@ -1,0 +1,421 @@
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+4
+===================================================
+8
+===================================================
+16
+===================================================
+32
+===================================================
+64
+===================================================
+128
+===================================================
+256
+===================================================
+512
+===================================================
+1024
+===================================================
+1024
+===================================================
+0
+===================================================
+n    min(n2)    
+0     0     
+1     0     
+2     0     
+3     0     
+4     0     
+5     0     
+6     0     
+7     0     
+8     0     
+9     0     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: foo node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select foo.n, min(foo.n?) from  all foo foo where foo.n?= ?:?  group by foo.n
+===================================================
+n    min(n2)    
+0     0     
+1     0     
+2     0     
+3     0     
+4     0     
+5     0     
+6     0     
+7     0     
+8     0     
+9     0     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: foo node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select foo.n, min(foo.n?) from  all foo foo where foo.n?= ?:?  group by foo.n using index foo.idx?
+===================================================
+n    min(n2)    
+0     0     
+1     0     
+2     0     
+3     0     
+4     0     
+5     0     
+6     0     
+7     0     
+8     0     
+9     0     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: foo node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_INDEX_LS */ foo.n, min(foo.n?) from  all foo foo where foo.n?= ?:?  group by foo.n
+===================================================
+n    min(n2)    
+0     0     
+1     0     
+2     0     
+3     0     
+4     0     
+5     0     
+6     0     
+7     0     
+8     0     
+9     0     
+
+Query plan:
+iscan
+    class: foo node[?]
+    index: idx? (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ foo.n, min(foo.n?) from  all foo foo where foo.n?= ?:?  group by foo.n
+/* ---> skip GROUP BY */
+===================================================
+n    min(n2)    
+0     0     
+1     0     
+2     0     
+3     0     
+4     0     
+5     0     
+6     0     
+7     0     
+8     0     
+9     0     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: foo node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_INDEX_LS */ foo.n, min(foo.n?) from  all foo foo where foo.n?= ?:?  group by foo.n
+===================================================
+n    min(n2)    
+0     0     
+1     0     
+2     0     
+3     0     
+4     0     
+5     0     
+6     0     
+7     0     
+8     0     
+9     0     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: foo node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_INDEX_LS */ foo.n, min(foo.n?) from  all foo foo where foo.n?= ?:?  group by foo.n
+===================================================
+0
+===================================================
+n    min_n2    
+0     0     
+1     0     
+2     0     
+3     0     
+4     0     
+5     0     
+6     0     
+7     0     
+8     0     
+9     0     
+
+Query plan:
+iscan
+    class: v? node[?]
+    index: idx? (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select /*+ INDEX_LS */ v?.n, min(v?.n?) from  all foo v? where (v?.n?= ?:? ) group by v?.n)
+/* ---> skip GROUP BY */
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ v?.n, v?.min_n? from (select /*+ INDEX_LS */ v?.n, min(v?.n?) from  all foo v? where (v?.n?= ?:? ) group by v?.n) v? (n, min_n?)
+===================================================
+n    min_n2    
+0     0     
+1     0     
+2     0     
+3     0     
+4     0     
+5     0     
+6     0     
+7     0     
+8     0     
+9     0     
+
+Query plan:
+iscan
+    class: v? node[?]
+    index: idx? (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select /*+ INDEX_LS */ v?.n, min(v?.n?) from  all foo v? where (v?.n?= ?:? ) group by v?.n)
+/* ---> skip GROUP BY */
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_INDEX_LS */ v?.n, v?.min_n? from (select /*+ INDEX_LS */ v?.n, min(v?.n?) from  all foo v? where (v?.n?= ?:? ) group by v?.n) v? (n, min_n?)
+===================================================
+0
+===================================================
+0
+===================================================
+n    min_n2    
+0     0     
+1     0     
+2     0     
+3     0     
+4     0     
+5     0     
+6     0     
+7     0     
+8     0     
+9     0     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: v? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select /*+ NO_INDEX_LS */ v?.n, min(v?.n?) from  all foo v? where (v?.n?= ?:? ) group by v?.n)
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ v?.n, v?.min_n? from (select /*+ NO_INDEX_LS */ v?.n, min(v?.n?) from  all foo v? where (v?.n?= ?:? ) group by v?.n) v? (n, min_n?)
+===================================================
+n    min_n2    
+0     0     
+1     0     
+2     0     
+3     0     
+4     0     
+5     0     
+6     0     
+7     0     
+8     0     
+9     0     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: v? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select /*+ NO_INDEX_LS */ v?.n, min(v?.n?) from  all foo v? where (v?.n?= ?:? ) group by v?.n)
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_INDEX_LS */ v?.n, v?.min_n? from (select /*+ NO_INDEX_LS */ v?.n, min(v?.n?) from  all foo v? where (v?.n?= ?:? ) group by v?.n) v? (n, min_n?)
+===================================================
+0
+===================================================
+0
+===================================================
+n    min_n2    
+0     0     
+1     0     
+2     0     
+3     0     
+4     0     
+5     0     
+6     0     
+7     0     
+8     0     
+9     0     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: v? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select v?.n, min(v?.n?) from  all foo v? where (v?.n?= ?:? ) group by v?.n)
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ v?.n, v?.min_n? from (select v?.n, min(v?.n?) from  all foo v? where (v?.n?= ?:? ) group by v?.n) v? (n, min_n?)
+===================================================
+n    min_n2    
+0     0     
+1     0     
+2     0     
+3     0     
+4     0     
+5     0     
+6     0     
+7     0     
+8     0     
+9     0     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: v? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select v?.n, min(v?.n?) from  all foo v? where (v?.n?= ?:? ) group by v?.n)
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_INDEX_LS */ v?.n, v?.min_n? from (select v?.n, min(v?.n?) from  all foo v? where (v?.n?= ?:? ) group by v?.n) v? (n, min_n?)
+===================================================
+0
+===================================================
+n    min(n2)    
+0     0     
+1     0     
+2     0     
+3     0     
+4     0     
+5     0     
+6     0     
+7     0     
+8     0     
+9     0     
+
+===================================================
+0
+Query plan:
+iscan
+    class: foo node[?]
+    index: idx? (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ foo.n, min(foo.n?) from  all foo foo where (foo.n?>= ?:?  and foo.n?<= ?:? ) group by foo.n
+/* ---> skip GROUP BY */
+===================================================
+n    min_n2    
+0     0     
+1     0     
+2     0     
+3     0     
+4     0     
+5     0     
+6     0     
+7     0     
+8     0     
+9     0     
+
+Query plan:
+iscan
+    class: foo node[?]
+    index: idx? (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ foo.n, min(foo.n?) from  all foo foo where (foo.n?>= ?:?  and foo.n?<= ?:? ) group by foo.n
+/* ---> skip GROUP BY */
+===================================================
+n    min_n2    
+
+Query plan:
+iscan
+    class: foo node[?]
+    index: idx? (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ foo.n, min(foo.n?) from  all foo foo where (foo.n?>= ?:?  and foo.n?<= ?:? ) group by foo.n
+/* ---> skip GROUP BY */
+===================================================
+0
+===================================================
+0

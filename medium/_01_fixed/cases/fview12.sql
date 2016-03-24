@@ -1,0 +1,16 @@
+autocommit off;
+create class c0 (a int, b int);
+insert into c0 values ( 2,3);
+insert into c0 values ( 2,9);
+insert into c0 values ( 1,3);
+create view v0(a,b) as select a, avg(b) from c0 group by a;
+create view v1(a,b) as select a, avg(b) from v0 group by a;
+select * from c0;
+select a, avg(b) from c0 group by a;
+select * from v0;
+select v0 from v0;
+select v0,a,b from v0;
+select * from v1;
+select v1 from v1;
+select v1,a,b from v1;
+rollback;

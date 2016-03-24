@@ -1,0 +1,10 @@
+--+ holdcas on;
+create serial s3 start with 3 increment by 2;
+select s3.next_value;
+select s3.next_value;
+select name,current_val,increment_val,max_val,min_val,started,cached_num from db_serial where name = 's3';
+alter serial s3 cache 7;
+select name,current_val,increment_val,max_val,min_val,started,cached_num from db_serial where name = 's3';
+drop serial s3;
+commit;
+--+ holdcas off;

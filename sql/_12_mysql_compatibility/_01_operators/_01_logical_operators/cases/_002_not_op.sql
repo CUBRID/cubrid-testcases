@@ -1,0 +1,12 @@
+select 1 from db_root where not 0=0;
+select 1 from db_root where not 1=0;
+select 1 from db_root where not NULL=0;
+select 1 from db_root where not 2=0;
+select 1 from db_root where not 'a'=0;
+select 1 from db_root where not 1234567890123456=0;
+select 1 from db_root where ! 0=0;
+select 1 from db_root where ! 1=0;
+select 1 from db_root where ! NULL=0;
+select 1 from db_root where ! 2=0;
+select 1 from db_root where ! 'a'=0;
+select 1 from db_root where ! 1234567890123456=0;

@@ -1,0 +1,17 @@
+autocommit off;
+create class a (a_i int, b_i int);
+create class b (a_i int, b_i int);
+insert into a values(1,1);
+insert into a values(1,2);
+insert into b values(1,1);
+insert into b values(1,2);
+create vclass v1(a int,b int) as select a_i,b_i from a union select a_i,b_i from b; 
+create vclass v2(a int,b int) as select a_i,b_i from a union all select a_i,b_i from b; 
+create vclass v3(a int,b int); 
+select * from v1;
+select * from v2;
+select v1.a,v2.b from v1,v2;
+select v2.a,v2.b from v1,v2 where v1.b=v2.b;
+select * from v3;
+select v1.a,v3.b from v1,v3;
+rollback;

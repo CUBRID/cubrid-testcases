@@ -1,0 +1,154 @@
+===================================================
+0
+===================================================
+1000
+===================================================
+0
+===================================================
+0
+===================================================
+max(g)    
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ max(t?.g) from t? t? where (t?.c> ?:? ) group by t?.b, t?.c, t?.d, t?.e, t?.f
+===================================================
+max(g)    
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ max(t?.g) from t? t? where (t?.c> ?:? ) group by t?.b
+===================================================
+max(g)    
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ max(t?.g) from t? t? where (t?.c> ?:? ) group by  lower(t?.a)
+===================================================
+max(g)    
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ max(t?.g) from t? t? where (t?.c> ?:? ) group by t?.b,  lower(t?.a)
+===================================================
+id    a    b    c    d    e    f    g    h    
+1     A     1     1     1     1     1     1     1     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_all term[?]
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t?.id, t?.a, t?.b, t?.c, t?.d, t?.e, t?.f, t?.g, t?.h,  lower(t?.a) from t? t? where  lower(t?.a)>'' order by ? for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+id    a    b    c    d    e    f    g    h    
+1000     J     0     0     0     0     0     0     1000     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_all term[?] (desc_index)
+    sort:  ? desc, ? desc, ? desc, ? desc, ? desc, ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t?.id, t?.a, t?.b, t?.c, t?.d, t?.e, t?.f, t?.g, t?.h,  lower(t?.a) from t? t? where  lower(t?.a)>'' order by ? desc  for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+id    a    b    c    d    e    f    g    h    
+1000     J     0     0     0     0     0     0     1000     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_all term[?] (desc_index)
+    sort:  ? desc, ? desc, ? desc, ? desc, ? desc, ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t?.id, t?.a, t?.b, t?.c, t?.d, t?.e, t?.f, t?.g, t?.h,  lower(t?.a) from t? t? where  lower(t?.a)>'c' order by ? desc  for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+id    a    b    c    d    e    f    g    h    
+10     J     0     0     0     0     0     0     10     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_all term[?]
+                 sort:  ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? desc, ? desc, ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t?.id, t?.a, t?.b, t?.c, t?.d, t?.e, t?.f, t?.g, t?.h,  lower(t?.a) from t? t? where  lower(t?.a)>'c' order by ? desc , ? desc , ? desc , ? desc , ? desc  for orderby_num()<= ?:? 
+===================================================
+0

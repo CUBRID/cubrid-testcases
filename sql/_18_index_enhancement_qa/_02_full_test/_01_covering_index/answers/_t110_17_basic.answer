@@ -1,0 +1,100 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+count(age||user_name)    
+1     
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count( cast(t?.age as varchar)||t?.user_name) from t? t? where (rownum= ?:? )
+===================================================
+count(user_id||age||user_name)    
+1     
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count( cast(t?.user_id as varchar)|| cast(t?.age as varchar)||t?.user_name) from t? t? where (rownum= ?:? )
+===================================================
+count(a.age||a.user_name)    col1    
+4     1     
+
+Query plan:
+sscan
+    class: b node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select count(b.age) from t? b where (rownum= ?:? ))
+Query plan:
+sscan
+    class: c node[?]
+    cost:  ? card ?
+Query stmt:
+(select c.user_id from t? c)
+Query plan:
+sscan
+    class: a node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count( cast(a.age as varchar)||a.user_name), (select count(b.age) from t? b where (rownum= ?:? )) from t? a where  exists (select c.user_id from t? c)
+===================================================
+count(a.user_id)    
+4     
+
+Query plan:
+iscan
+    class: a node[?]
+    index: idx_t?_age_name term[?]
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(a.user_id) from t? a where (a.age> ?:? ) and a.user_name is not null 
+===================================================
+count(a.user_id)    
+16     
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: a node[?]
+               index: idx_t?_age_name term[?]
+               filtr: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx_t?_age term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ count(a.user_id) from t? a, t? b where (a.age> ?:? ) and a.user_name is not null  and (b.age> ?:? )
+===================================================
+0
+===================================================
+0
+===================================================
+0

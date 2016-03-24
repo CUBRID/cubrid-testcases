@@ -1,0 +1,11 @@
+drop if exists t1;
+create table t1 (s1 char varying(32),i1 int);
+insert into t1 values('123456789012345678901234567890++',1);
+insert into t1 values('123456789012345678901234567890++',2);
+insert into t1 values('123456789012345678901234567890++',3);
+insert into t1 values('123456789012345678901234567890++',3);
+insert into t1 values('123456789012345678901234567890++',2);
+insert into t1 values('123456789012345678901234567890++',4);
+insert into t1 values('123456789012345678901234567890++',3);
+select i1,group_concat(s1) from t1 group by i1;
+drop t1;

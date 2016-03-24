@@ -1,0 +1,68 @@
+===================================================
+0
+===================================================
+0
+===================================================
+'single quotes test('')' collate iso88591_en_ci    'single quotes test('')' collate iso88591_en_ci    if( strcmp('single quotes test('')' collate iso88591_en_ci, 'single quotes test('')' collate iso88591_en_ci)=0, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+single quotes test(')     single quotes test(')     ok     
+
+===================================================
+'double quotes test(")' collate iso88591_en_ci    'double quotes test(")' collate iso88591_en_ci    if( strcmp('double quotes test(")' collate iso88591_en_ci, 'double quotes test(")' collate iso88591_en_ci)=0, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+double quotes test(")     double quotes test(")     ok     
+
+===================================================
+'abcdefghijklm
+opqs	uvwxyz' collate iso88591_en_ci    'abcdefghijklm
+opqs	uvwxyz' collate iso88591_en_ci    if( strcmp('abcdefghijklm
+opqs	uvwxyz' collate iso88591_en_ci, 'abcdefghijklm
+opqs	uvwxyz' collate iso88591_en_ci)=0, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+abcdefghijklm
+opqs	uvwxyz     abcdefghijklm
+opqs	uvwxyz     ok     
+
+===================================================
+'\' collate iso88591_en_ci    char_length('\' collate iso88591_en_ci)    if( char_length('\' collate iso88591_en_ci)=1, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+\     1     ok     
+
+===================================================
+'""' collate iso88591_en_ci    char_length('""' collate iso88591_en_ci)    if( char_length('""' collate iso88591_en_ci)=2, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+""     2     ok     
+
+===================================================
+'''''' collate iso88591_en_ci    char_length('''''' collate iso88591_en_ci)    if( char_length('''''' collate iso88591_en_ci)=2, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+''     2     ok     
+
+===================================================
+0
+===================================================
+'\%' collate iso88591_en_ci    if( strcmp('\%' collate iso88591_en_ci, '\%' collate iso88591_en_ci)=0, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+\%     ok     
+
+===================================================
+'\_' collate iso88591_en_ci    if( strcmp('\_' collate iso88591_en_ci, '\_' collate iso88591_en_ci)=0, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+\_     ok     
+
+===================================================
+0
+===================================================
+2
+===================================================
+if((select a from t1 where a like 'aaa\%' collate iso88591_en_ci escape '\')='aaa%' collate iso88591_en_ci, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+ok     
+
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+if((select a from t1 where a like 'aaa\_' collate iso88591_en_ci escape '\')='aaa_' collate iso88591_en_ci, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+ok     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0

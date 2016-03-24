@@ -1,0 +1,13 @@
+--+ holdcas on;
+set names utf8;
+create table t1 (s1 string charset utf8);
+create table t2 (s1 string charset binary);
+insert into t1 values ('가'),( '伽'),('a'),('Ǖ');
+insert into t2 values ('가'),( '伽'),('a'),('Ǖ');
+select s1,length(s1),LENGTHB(s1),CHARACTER_LENGTH(s1),CHAR_LENGTH(s1),BIT_LENGTH (s1),OCTET_LENGTH (s1) from t1 order by s1;
+select s1,length(s1),LENGTHB(s1),CHARACTER_LENGTH(s1),CHAR_LENGTH(s1),BIT_LENGTH (s1),OCTET_LENGTH (s1) from t2 order by s1;
+drop t1;
+drop t2;
+set names iso88591;
+commit;
+--+ holdcas off;

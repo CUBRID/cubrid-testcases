@@ -1,0 +1,83 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+10
+===================================================
+10
+===================================================
+a    b    
+11     full testing 1     
+20     full testing 10     
+12     full testing 2     
+13     full testing 3     
+14     full testing 4     
+15     full testing 5     
+16     full testing 6     
+17     full testing 7     
+18     full testing 8     
+19     full testing 9     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: t?_b term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.b from t? t? where (t?.b>= ?:?  and t?.b< ?:? )
+===================================================
+a    b    
+3     acceptance testing 3     
+13     full testing 3     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.b from t? t? where t?.b like  ?:?  order by ?
+===================================================
+a    b    
+1     acceptance testing 1     
+2     acceptance testing 2     
+3     acceptance testing 3     
+4     acceptance testing 4     
+5     acceptance testing 5     
+6     acceptance testing 6     
+7     acceptance testing 7     
+8     acceptance testing 8     
+9     acceptance testing 9     
+10     acceptance testing 10     
+11     full testing 1     
+12     full testing 2     
+13     full testing 3     
+14     full testing 4     
+15     full testing 5     
+16     full testing 6     
+17     full testing 7     
+18     full testing 8     
+19     full testing 9     
+20     full testing 10     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.b from t? t? where t?.b like  ?:?  order by ?
+===================================================
+0
+0
+===================================================
+0

@@ -1,0 +1,512 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+Error:-272
+===================================================
+15
+===================================================
+a    b    c    
+1     2         8     
+1     4         7     
+1     9         8     
+2     3         8     
+3     7         8     
+4     8         8     
+5     5         0     
+6     8         8     
+7     2         9     
+8     9         2     
+9     2         8     
+
+Query plan:
+iscan
+    class: xoo node[?]
+    index: i_ab 
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select xoo.a, xoo.b, xoo.c from xoo xoo group by xoo.a, xoo.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    c    
+9     2         8     
+8     9         2     
+7     2         9     
+6     8         8     
+5     5         0     
+4     8         8     
+3     7         8     
+2     3         8     
+1     9         8     
+1     4         7     
+1     2         8     
+
+Query plan:
+iscan
+    class: xoo node[?]
+    index: i_ab  (desc_index)
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select xoo.a, xoo.b, xoo.c from xoo xoo group by xoo.a desc , xoo.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    c    
+7     2         9     
+9     2         8     
+2     3         8     
+5     5         0     
+3     7         8     
+4     8         8     
+6     8         8     
+1     9         8     
+8     9         2     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: xoo node[?]
+                 index: i_ab 
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select xoo.a, xoo.b, xoo.c from xoo xoo group by xoo.a order by ?
+/* ---> skip GROUP BY */
+===================================================
+a    b    group_concat(b)    
+1     2         2         
+1     4         4    ,4    ,4    ,4         
+1     9         9         
+2     3         3         
+3     7         7         
+4     8         8         
+5     5         5         
+6     8         8         
+7     2         2         
+8     9         9    ,9         
+9     2         2         
+
+Query plan:
+iscan
+    class: xoo node[?]
+    index: i_ab (covers)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select xoo.a, xoo.b, group_concat(xoo.b) from xoo xoo group by xoo.a, xoo.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    c    
+1     4         1     
+1     4         3     
+1     4         7     
+1     9         8     
+7     2         9     
+8     9         2     
+
+Query plan:
+temp(order by)
+    subplan: temp(group by)
+                 subplan: sscan
+                              class: xoo node[?]
+                              sargs: term[?]
+                              cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select xoo.a, xoo.b, xoo.c from xoo xoo where (xoo.c> ?:? ) group by xoo.c order by ?, ?
+===================================================
+count(*)    c    
+1     1     
+1     2     
+2     3     
+2     7     
+7     8     
+1     9     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: xoo node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select count(*), xoo.c from xoo xoo where (xoo.c> ?:? ) group by xoo.c
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+20
+===================================================
+a    b    c    
+null     null     a     
+null     1         a     
+null     2         a     
+null     3         b     
+1     2         8     
+1     4         7     
+1     9         8     
+2     3         8     
+3     7         8     
+4     8         8     
+5     5         0     
+6     8         8     
+7     2         9     
+8     9         3     
+9     2         8     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: xoo? node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select xoo?.a, xoo?.b, xoo?.c from xoo? xoo? group by xoo?.a, xoo?.b
+===================================================
+a    b    c    
+9     2         8     
+8     9         3     
+7     2         9     
+6     8         8     
+5     5         0     
+4     8         8     
+3     7         8     
+2     3         8     
+1     9         8     
+1     4         7     
+1     2         8     
+null     3         b     
+null     2         a     
+null     1         a     
+null     null     a     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: xoo? node[?]
+                 cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select xoo?.a, xoo?.b, xoo?.c from xoo? xoo? group by xoo?.a desc , xoo?.b desc 
+===================================================
+a    b    c    
+null     null     a     
+7     2         9     
+9     2         8     
+2     3         8     
+5     5         0     
+3     7         8     
+4     8         8     
+6     8         8     
+1     9         8     
+8     9         3     
+
+Query plan:
+temp(order by)
+    subplan: temp(group by)
+                 subplan: sscan
+                              class: xoo? node[?]
+                              cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select xoo?.a, xoo?.b, xoo?.c from xoo? xoo? group by xoo?.a order by ?
+===================================================
+a    b    c    
+1     2         8     
+1     4         7     
+1     9         8     
+2     3         8     
+3     7         8     
+4     8         8     
+5     5         0     
+6     8         8     
+7     2         9     
+8     9         3     
+9     2         8     
+
+Query plan:
+iscan
+    class: xoo? node[?]
+    index: i_abc term[?] (covers)
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select xoo?.a, xoo?.b, xoo?.c from xoo? xoo? where (xoo?.a> ?:? ) group by xoo?.a, xoo?.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    c    
+9     2         8     
+8     9         2     
+7     2         9     
+6     8         8     
+5     5         0     
+4     8         8     
+3     7         8     
+2     3         8     
+1     9         8     
+1     4         1     
+1     2         8     
+
+Query plan:
+iscan
+    class: xoo? node[?]
+    index: i_abc term[?] (covers) (desc_index)
+    sort:  ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select xoo?.a, xoo?.b, xoo?.c from xoo? xoo? where (xoo?.a> ?:? ) group by xoo?.a desc , xoo?.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    c    
+1     2         8     
+1     4         7     
+1     9         8     
+2     3         8     
+3     7         8     
+4     8         8     
+5     5         0     
+6     8         8     
+7     2         9     
+8     9         3     
+9     2         8     
+
+Query plan:
+iscan
+    class: xoo? node[?]
+    index: i_abc (covers)
+    filtr: term[?]
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select xoo?.a, xoo?.b, xoo?.c from xoo? xoo? where xoo?.a is not null  group by xoo?.a, xoo?.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    c    
+9     2         8     
+8     9         2     
+7     2         9     
+6     8         8     
+5     5         0     
+4     8         8     
+3     7         8     
+2     3         8     
+1     9         8     
+1     4         1     
+1     2         8     
+
+Query plan:
+iscan
+    class: xoo? node[?]
+    index: i_abc (covers) (desc_index)
+    filtr: term[?]
+    sort:  ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select xoo?.a, xoo?.b, xoo?.c from xoo? xoo? where xoo?.a is not null  group by xoo?.a desc , xoo?.b desc 
+/* ---> skip GROUP BY */
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+0
+===================================================
+a    b    c    d    e    
+1     2     3     4     5     
+1     2     3     5     6     
+1     2     4     5     6     
+1     3     4     5     6     
+2     3     4     5     6     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: xoo? node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select xoo?.a, xoo?.b, xoo?.c, xoo?.d, xoo?.e from xoo? xoo? group by xoo?.a, xoo?.b, xoo?.c, xoo?.d
+===================================================
+a    b    c    d    e    
+1     2     3     4     6     
+1     2     3     5     6     
+1     2     4     5     6     
+1     3     4     5     6     
+2     3     4     5     6     
+
+Query plan:
+iscan
+    class: xoo? node[?]
+    index: i_abcd term[?]
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select xoo?.a, xoo?.b, xoo?.c, xoo?.d, xoo?.e from xoo? xoo? where (xoo?.a> ?:? ) group by xoo?.a, xoo?.b, xoo?.c, xoo?.d
+/* ---> skip GROUP BY */
+===================================================
+a    b    c    d    e    
+1     2     4     5     6     
+1     3     4     5     6     
+2     3     4     5     6     
+
+Query plan:
+iscan
+    class: xoo? node[?]
+    index: i_abcd term[?]
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select xoo?.a, xoo?.b, xoo?.c, xoo?.d, xoo?.e from xoo? xoo? where (xoo?.a> ?:? ) group by xoo?.a, xoo?.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    c    d    e    
+1     3     4     5     6     
+2     3     4     5     6     
+
+Query plan:
+iscan
+    class: xoo? node[?]
+    index: i_abcd term[?]
+    filtr: term[?] AND term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select xoo?.a, xoo?.b, xoo?.c, xoo?.d, xoo?.e from xoo? xoo? where (xoo?.a> ?:? ) and xoo?.c= ?:?  and xoo?.b= ?:?  group by xoo?.a, xoo?.d
+/* ---> skip GROUP BY */
+===================================================
+min(a)    
+1     
+1     
+2     
+
+Query plan:
+iscan
+    class: xoo? node[?]
+    index: i_abcd term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select min(xoo?.a) from xoo? xoo? where (xoo?.a> ?:? ) group by xoo?.a, xoo?.b
+/* ---> skip GROUP BY */
+===================================================
+max(d)    
+5     
+5     
+5     
+
+Query plan:
+iscan
+    class: xoo? node[?]
+    index: i_abcd term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select max(xoo?.d) from xoo? xoo? where (xoo?.a> ?:? ) group by xoo?.a, xoo?.b
+/* ---> skip GROUP BY */
+===================================================
+sum(a*b*c*d*e)    
+264     
+180     
+240     
+360     
+720     
+
+Query plan:
+iscan
+    class: xoo? node[?]
+    index: i_abcd term[?]
+    cost:  ? card ?
+Query stmt:
+select sum(xoo?.a*xoo?.b*xoo?.c*xoo?.d*xoo?.e) from xoo? xoo? where (xoo?.a> ?:? ) group by xoo?.a, xoo?.b, xoo?.c, xoo?.d
+/* ---> skip GROUP BY */
+===================================================
+sum(a*b*c*d*e)    
+264     
+180     
+240     
+360     
+720     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: xoo? node[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select sum(xoo?.a*xoo?.b*xoo?.c*xoo?.d*xoo?.e) from xoo? xoo? group by xoo?.a, xoo?.b, xoo?.c, xoo?.d
+===================================================
+sum(a*b*c*d*e)    
+264     
+180     
+240     
+360     
+720     
+
+Query plan:
+iscan
+    class: xoo? node[?]
+    index: i_abcd term[?]
+    cost:  ? card ?
+Query stmt:
+select sum(xoo?.a*xoo?.b*xoo?.c*xoo?.d*xoo?.e) from xoo? xoo? where (xoo?.a> ?:? ) group by xoo?.a, xoo?.b, xoo?.c, xoo?.d
+/* ---> skip GROUP BY */
+===================================================
+sum(a*b*c*d*e)    
+264     
+180     
+240     
+360     
+720     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: xoo? node[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select sum(xoo?.a*xoo?.b*xoo?.c*xoo?.d*xoo?.e) from xoo? xoo? group by xoo?.a, xoo?.b, xoo?.c, xoo?.d
+===================================================
+sum(a+b+c)    e    
+12     5     
+6     6     
+7     6     
+17     6     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: xoo? node[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select sum(xoo?.a+xoo?.b+xoo?.c), xoo?.e from xoo? xoo? group by xoo?.b, xoo?.c, xoo?.d
+===================================================
+0
+===================================================
+0
+0

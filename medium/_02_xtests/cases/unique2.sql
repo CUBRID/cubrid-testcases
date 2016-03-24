@@ -1,0 +1,14 @@
+autocommit off;
+create class foo1 (a int, b int unique, c int);
+create class foo2 (a int, b int, c int, unique(b));
+create class foo3 (a int, b int, c int, unique(a,b));
+create class foo4 (a int, b int, c int);
+alter foo4 add unique(a,b);
+create class foo5 (a int unique, b int, c int);
+alter class foo5 add attribute d float, unique(a,d);
+create class bar1 as subclass of foo3 (d int);
+create class bar2 as subclass of foo1 (b int, d int, unique(b,d));
+select * from db_class where class_name like 'foo%';
+rollback;
+commit;
+autocommit on;

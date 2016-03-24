@@ -1,0 +1,63 @@
+--         test db_get on vclass with select in select list of query spec
+-- REQUIRES: m.g that has defined c_h_manager with select in select list
+--     output should be with 'order by'
+
+verbose_off
+error_exit
+db_query_execute
+select p from inventory_sel p where quantity = 3000
+1
+db_query_first_tuple
+1
+db_query_get_tuple_value_by_name
+1
+p
+0
+get_object
+0
+1
+--         this should succeed
+db_get
+1
+product
+3
+get_object
+3
+4
+db_get
+4
+descr
+5
+db_value_print
+5
+db_get
+1
+ca
+3
+db_value_print
+3
+db_get
+1
+location
+3
+db_value_print
+3
+--
+quit
+
+-- $Revision: 1.2 $
+-- PERFORMANCE 12
+-- <WIN16 ERROR
+-- db_query_execute returned -492
+-- query error on line 1, pos 8
+-- error:  Vclass inventory_sel is not updatable. Only updatable vclasses are allowed to select VIDs.
+-- WIN16>
+-- <WIN32 ERROR
+-- db_query_execute returned -492
+-- query error on line 1, pos 8
+-- error:  Vclass inventory_sel is not updatable. Only updatable vclasses are allowed to select VIDs.
+-- WIN32>
+-- OUTPUT ERROR
+-- db_query_execute returned -492
+-- query error on line 1, pos 8
+-- error:  Vclass inventory_sel is not updatable. Only updatable vclasses are allowed to select VIDs.

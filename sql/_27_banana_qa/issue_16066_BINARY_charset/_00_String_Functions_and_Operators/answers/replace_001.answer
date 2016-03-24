@@ -1,0 +1,120 @@
+===================================================
+0
+===================================================
+replace(_binary'12345abcdeabcde', _binary'abcde', null)    
+null     
+
+===================================================
+replace(_binary'12345abcdeabcde', null, _binary'abcde')    
+null     
+
+===================================================
+replace(null, _binary'12345abcdeabcde', _binary'abcde')    
+null     
+
+===================================================
+replace(_binary'12345abcdeabcde', _binary'abcde', _binary'ABCDE')    
+31 32 33 34 35 41 42 43 44 45 41 42 43 44 45      
+
+===================================================
+replace(_binary'12345abcdeabcde', _binary'abcde')    
+31 32 33 34 35      
+
+===================================================
+replace(_binary'문자열', _binary'문자', _binary'문자열')    
+EB AC B8 EC 9E 90 EC 97 B4 EC 97 B4      
+
+===================================================
+replace(_binary'문자열', _binary'문자')    
+EC 97 B4      
+
+===================================================
+replace(_binary'문자열', _binary'자문', _binary'string')    
+EB AC B8 EC 9E 90 EC 97 B4      
+
+===================================================
+replace(_binary'你好我好大家好', _binary'好', _binary'开心')    
+E4 BD A0 E5 BC 80 E5 BF 83 E6 88 91 E5 BC 80 E5 BF 83 E5 A4 A7 E5 AE B6 E5 BC 80 E5 BF 83      
+
+===================================================
+replace(_binary'你好我好大家好', _binary'好')    
+E4 BD A0 E6 88 91 E5 A4 A7 E5 AE B6      
+
+===================================================
+coercibility(_binary'abcdefg')    coercibility( cast(_utf8'abc' as varchar collate euckr_bin))    coercibility(_utf8'abc')    coercibility( cast(_utf8'def' as varchar))    
+9     6     10     6     
+
+===================================================
+replace(_binary'abcdefg',  cast(_utf8'abc' as varchar collate euckr_bin),  cast(_utf8'def' as varchar collate euckr_bin))    
+defdefg     
+
+===================================================
+replace(_binary'abcdefg',  cast(_utf8'abc' as varchar),  cast(_utf8'def' as varchar))    
+defdefg     
+
+===================================================
+replace(_binary'abcdefg', _utf8'', _utf8'def')    
+61 62 63 64 65 66 67      
+
+===================================================
+Error:-494
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+replace(cmt,  chr(10 using binary), _binary'\n')    
+This is a test for\nnew line.     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+id    replace(col_binary, col_binary)    replace(col_binary, col_binary, col_euckr)    
+1          C5 A5 BA EA B8 AE B5 E5      
+2          8F B0 DF FB BF E4 B2 FB BF D3 DE CA AB FB BF      
+3          43 55 42 52 49 44      
+4          8F AA A2 8F AA A2 8F AA C1      
+
+===================================================
+id    replace(col_binary, col_euckr, col_binary+col_euckr)    replace(col_binary, col_utf8, col_binary+col_utf8)    replace(col_binary, col_iso, col_binary+col_iso)    
+1     ED 81 90 EB B8 8C EB A6 AC EB 93 9C      ED 81 90 EB B8 8C EB A6 AC EB 93 9C ED 81 90 EB B8 8C EB A6 AC EB 93 9C      ED 81 90 EB B8 8C EB A6 AC EB 93 9C      
+2     E4 BD A0 E5 A5 BD E6 88 91 E5 A5 BD E5 A4 A7 E5 AE B6 E5 A5 BD      E4 BD A0 E5 A5 BD E6 88 91 E5 A5 BD E5 A4 A7 E5 AE B6 E5 A5 BD E4 BD A0 E5 A5 BD E6 88 91 E5 A5 BD E5 A4 A7 E5 AE B6 E5 A5 BD      E4 BD A0 E5 A5 BD E6 88 91 E5 A5 BD E5 A4 A7 E5 AE B6 E5 A5 BD      
+3     43 55 42 52 49 44 43 55 42 52 49 44      43 55 42 52 49 44 43 55 42 52 49 44      43 55 42 52 49 44 43 55 42 52 49 44      
+4     C3 80 C3 80 C3 8F      C3 80 C3 80 C3 8F C3 80 C3 80 C3 8F      C3 80 C3 80 C3 8F      
+
+===================================================
+id    replace(col_binary,  cast(_utf8'큐브' as varchar collate euckr_bin),  cast(_utf8'다이아' as varchar collate euckr_bin))    replace(col_euckr,  cast(_utf8'큐브' as varchar collate euckr_bin),  cast(_utf8'다이아' as varchar collate euckr_bin))    replace(col_utf8, _binary'큐브', _binary'다이아')    replace(col_iso,  cast(_utf8'큐브' as varchar collate euckr_bin),  cast(_utf8'다이아' as varchar collate euckr_bin))    
+1     ED 81 90 EB B8 8C EB A6 AC EB 93 9C      다이아리드     다이아리드     ??????     
+
+===================================================
+id    replace(col_binary,  cast(_utf8'好' as varchar collate euckr_bin),  cast(_utf8'开心' as varchar collate euckr_bin))    replace(col_euckr,  cast(_utf8'好' as varchar collate euckr_bin),  cast(_utf8'开心' as varchar collate euckr_bin))    replace(col_utf8, _binary'好', _binary'开心')    replace(col_iso,  cast(_utf8'好' as varchar collate euckr_bin),  cast(_utf8'开心' as varchar collate euckr_bin))    
+2     E4 BD A0 E5 A5 BD E6 88 91 E5 A5 BD E5 A4 A7 E5 AE B6 E5 A5 BD      ��心我?心大家?心     你开心我开心大家开心     ??????????????     
+
+===================================================
+1
+===================================================
+replace(col_binary, col_iso, col_euckr)    
+64 65 66 64 65 66      
+
+===================================================
+0
+===================================================
+0

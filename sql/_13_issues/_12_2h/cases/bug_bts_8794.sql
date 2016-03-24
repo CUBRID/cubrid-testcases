@@ -1,0 +1,1 @@
+select * from db_root group by 'a';
