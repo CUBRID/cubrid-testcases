@@ -1,0 +1,55 @@
+/*
+Test Case: delete & insert
+Priority: 1
+Reference case:
+Author: Rong Xu
+
+Test Point:
+-    Insert: X_LOCK on first key OID for unique indexes.
+-    Delete: X_LOCK acquired on current instance 
+A begin delete
+B begin insert which satisfy the delete condition
+B commit
+A commit
+
+NUM_CLIENTS = 2
+C1: delete from t where col=1;
+C2: insert into t values(1,1);
+C2: select * from t where col=1; --expected 16 row selected
+*/
+
+MC: setup NUM_CLIENTS = 2;
+
+C1: set transaction lock timeout INFINITE;
+C1: set transaction isolation level repeatable read;
+
+C2: set transaction lock timeout INFINITE;
+C2: set transaction isolation level repeatable read;
+
+/* preparation */
+C1: drop table if exists t;
+C1: create table t(id int,col int);
+C1: insert into t select rownum,rownum%100 from db_class a,db_class b, db_class c limit 1500;
+C1: create index idx_col on t(col);
+C1: create index idx_id on t(id);
+C1: commit work;
+MC: wait until C1 ready;
+
+/* test case */
+C1: delete from t where col=1;
+MC: wait until C1 ready;
+C2: insert into t values(1,1);
+MC: wait until C2 ready;
+
+/* expect no value*/
+C1: select * from t where id=1;
+MC: wait until C1 ready;
+/* expect 16 rows selected */
+C2: select * from t where col=1 order by 1,2;
+C2: commit;
+MC: wait until C2 ready;
+C1: commit work;
+MC: wait until C1 ready;
+
+C1: quit;
+C2: quit;
