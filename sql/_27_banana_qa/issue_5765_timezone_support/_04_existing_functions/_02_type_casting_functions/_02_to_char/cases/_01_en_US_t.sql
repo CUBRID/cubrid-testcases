@@ -56,7 +56,7 @@ execute st using 'HH:MI:SS PM TZH';
 execute st using 'HH:MI:SS PM TZH:TZM';
 
 
-set time zone 'Africa/El_Aaiun';
+set time zone 'Asia/Shanghai';
 prepare st from 'select id, to_char(ts+1, ?, ''en_US'') from tz_test order by 1';
 
 execute st using 'HH24:MI:SS TZR';
