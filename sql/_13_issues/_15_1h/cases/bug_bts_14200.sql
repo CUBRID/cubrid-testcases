@@ -4,6 +4,6 @@ insert into t1 values(2,'2013-10-12',n'welcome',3);
 set trace on output json;
 select * from t1;
 show trace;
-select TRIM(REPLACE(list_dbs(),'demodb', ''));
+select if (locate(database(), list_dbs())=0,'NOK','OK');
 do list_dbs();
 drop t1;
