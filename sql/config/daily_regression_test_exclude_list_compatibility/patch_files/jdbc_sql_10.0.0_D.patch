@@ -1,0 +1,504 @@
+Index: _24_aprium_qa/_03_other/issue_7441_MRO/answers/_09_mro_test.answer
+===================================================================
+--- _24_aprium_qa/_03_other/issue_7441_MRO/answers/_09_mro_test.answer	(revision 32442)
++++ _24_aprium_qa/_03_other/issue_7441_MRO/answers/_09_mro_test.answer	(working copy)
+@@ -1076,34 +1076,9 @@
+ ===================================================
+ 0
+ ===================================================
+-a    b    c    d    e    
+-3     1     5     3     5     
+-1     1     3     1     3     
+-
+-Query plan:
+-iscan
+-    class: t node[?]
+-    index: idx_a_b_cd_d_ed term[?] AND term[?] (covers) (multi_range_opt)
+-    sort:  ? asc, ? desc, ? asc, ? desc
+-    cost:  ? card ?
+-Query stmt:
+-select t.a, t.b, t.c, t.d, t.e from t t where ((t.a= ?:? ) or (t.a= ?:? )) and t.b= ?:?  order by ? desc , ? for orderby_num()<= ?:? 
++Error:-2005
+ ===================================================
+-a    b    c    d    e    
+-3     1     5     3     5     
+-1     1     3     1     3     
+-
+-Query plan:
+-temp(distinct)
+-    subplan: iscan
+-                 class: t node[?]
+-                 index: idx_a_b_cd_d_ed term[?] AND term[?] (covers)
+-                 sort:  ? asc, ? desc, ? asc, ? desc
+-                 cost:  ? card ?
+-    sort:  ? desc, ? asc
+-    cost:  ? card ?
+-Query stmt:
+-select distinct t.a, t.b, t.c, t.d, t.e from t t where ((t.a= ?:? ) or (t.a= ?:? )) and t.b= ?:?  order by ? desc , ? for orderby_num()<= ?:? 
++Error:-2005
+ ===================================================
+ 0
+ ===================================================
+Index: _24_aprium_qa/_01_i18n/issue_10753_charset_conversion/_02_alter_change/answers/_01_alter_utf8_euc_enum_str.answer
+===================================================================
+--- _24_aprium_qa/_01_i18n/issue_10753_charset_conversion/_02_alter_change/answers/_01_alter_utf8_euc_enum_str.answer	(revision 32442)
++++ _24_aprium_qa/_01_i18n/issue_10753_charset_conversion/_02_alter_change/answers/_01_alter_utf8_euc_enum_str.answer	(working copy)
+@@ -15,13 +15,7 @@
+ ===================================================
+ 1
+ ===================================================
+-i1    e1    hex(e1)    cast(e1 as integer)    
+-1     매     EBA7A4     1     
+-2     뉴     EB89B4     2     
+-3     얼     EC96BC     3     
+-4     소     EC868C     4     
+-5     개     EAB09C     5     
+-
++Error:-2005
+ ===================================================
+ 0
+ ===================================================
+@@ -35,13 +29,7 @@
+ ===================================================
+ 0
+ ===================================================
+-i1    e1    hex(e1)    cast(e1 as integer)    
+-1     매     EBA7A4     1     
+-2     뉴     EB89B4     2     
+-3     얼     EC96BC     3     
+-4     소     EC868C     4     
+-5     개     EAB09C     5     
+-
++Error:-2005
+ ===================================================
+ 0
+ ===================================================
+Index: _24_aprium_qa/_01_i18n/issue_10753_charset_conversion/_02_alter_change/answers/_02_alter_utf8_euc_str_str.answer
+===================================================================
+--- _24_aprium_qa/_01_i18n/issue_10753_charset_conversion/_02_alter_change/answers/_02_alter_utf8_euc_str_str.answer	(revision 32442)
++++ _24_aprium_qa/_01_i18n/issue_10753_charset_conversion/_02_alter_change/answers/_02_alter_utf8_euc_str_str.answer	(working copy)
+@@ -15,13 +15,7 @@
+ ===================================================
+ 1
+ ===================================================
+-i1    e1    hex(e1)    
+-1     매     EBA7A4     
+-2     뉴     EB89B4     
+-3     얼     EC96BC     
+-4     소     EC868C     
+-5     개     EAB09C     
+-
++Error:-2005
+ ===================================================
+ 0
+ ===================================================
+Index: _13_issues/_13_1h/answers/bug_bts_11639.answer
+===================================================================
+--- _13_issues/_13_1h/answers/bug_bts_11639.answer	(revision 32442)
++++ _13_issues/_13_1h/answers/bug_bts_11639.answer	(working copy)
+@@ -19,9 +19,6 @@
+ ===================================================
+ 0
+ ===================================================
+-a    b    c    d    e    
+-3     1     5     3     5     
+-1     1     3     1     3     
+-
++Error:-2005
+ ===================================================
+ 0
+Index: _13_issues/_13_2h/answers/bug_bts_10854.answer
+===================================================================
+--- _13_issues/_13_2h/answers/bug_bts_10854.answer	(revision 32442)
++++ _13_issues/_13_2h/answers/bug_bts_10854.answer	(working copy)
+@@ -17,22 +17,13 @@
+ ===================================================
+ 1
+ ===================================================
+-col    a    
+-b     b     
+-c     c     
+-
++Error:-2005
+ ===================================================
+-col    a    
+-b     b     
+-
++Error:-2005
+ ===================================================
+ col    a    
+ 
+ ===================================================
+-col    a    
+-a     a     
+-b     b     
+-c     c     
+-
++Error:-2005
+ ===================================================
+ 0
+Index: _26_features_920/issue_9405_ro_locale/_03_string_func/answers/_009_pad.answer
+===================================================================
+--- _26_features_920/issue_9405_ro_locale/_03_string_func/answers/_009_pad.answer	(revision 32442)
++++ _26_features_920/issue_9405_ro_locale/_03_string_func/answers/_009_pad.answer	(working copy)
+@@ -9,101 +9,37 @@
+ ===================================================
+ 1
+ ===================================================
+-id    name    lpad(name, 5, _utf8'x')    
+-1     Bună ziua     Bună      
+-2     Îți     xxÎți     
+-3     Nu înțeleg     Nu în     
+-
++Error:-2005
+ ===================================================
+-id    name    lpad(name, 1, _utf8'î')    
+-1     Bună ziua     B     
+-2     Îți     Î     
+-3     Nu înțeleg     N     
+-
++Error:-2005
+ ===================================================
+-id    name    lpad(name, 15, _utf8'Șâ')    
+-1     Bună ziua     ȘâȘâȘâBună ziua     
+-2     Îți     ȘâȘâȘâȘâȘâȘâÎți     
+-3     Nu înțeleg     ȘâȘâȘNu înțeleg     
+-
++Error:-2005
+ ===================================================
+-id    name    lpad(name, 10, _utf8'2ıĂ ')    
+-1     Bună ziua     2Bună ziua     
+-2     Îți     2ıĂ 2ıĂÎți     
+-3     Nu înțeleg     Nu înțeleg     
+-
++Error:-2005
+ ===================================================
+-id    name    lpad(name, 100, _utf8'2ĂâÎț오')    
+-1     Bună ziua     2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2Bună ziua     
+-2     Îți     2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2Îți     
+-3     Nu înțeleg     2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오Nu înțeleg     
+-
++Error:-2005
+ ===================================================
+-id    name    lpad(name, null, _utf8'2a')    
+-1     Bună ziua     null     
+-2     Îți     null     
+-3     Nu înțeleg     null     
+-
++Error:-2005
+ ===================================================
+-id    name    lpad(name, 10, null)    
+-1     Bună ziua     null     
+-2     Îți     null     
+-3     Nu înțeleg     null     
+-
++Error:-2005
+ ===================================================
+-id    name    lpad(name, -1, _utf8'â')    
+-1     Bună ziua     null     
+-2     Îți     null     
+-3     Nu înțeleg     null     
+-
++Error:-2005
+ ===================================================
+-id    name    rpad(name, 5, _utf8'x')    
+-1     Bună ziua     Bună      
+-2     Îți     Îțixx     
+-3     Nu înțeleg     Nu în     
+-
++Error:-2005
+ ===================================================
+-id    name    rpad(name, 1, _utf8'î')    
+-1     Bună ziua     B     
+-2     Îți     Î     
+-3     Nu înțeleg     N     
+-
++Error:-2005
+ ===================================================
+-id    name    rpad(name, 15, _utf8'Șâ')    
+-1     Bună ziua     Bună ziuaȘâȘâȘâ     
+-2     Îți     ÎțiȘâȘâȘâȘâȘâȘâ     
+-3     Nu înțeleg     Nu înțelegȘâȘâȘ     
+-
++Error:-2005
+ ===================================================
+-id    name    rpad(name, 10, _utf8'2ıĂ ')    
+-1     Bună ziua     Bună ziua2     
+-2     Îți     Îți2ıĂ 2ıĂ     
+-3     Nu înțeleg     Nu înțeleg     
+-
++Error:-2005
+ ===================================================
+-id    name    rpad(name, 100, _utf8'2ĂâÎț오')    
+-1     Bună ziua     Bună ziua2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2     
+-2     Îți     Îți2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2     
+-3     Nu înțeleg     Nu înțeleg2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오2ĂâÎț오     
+-
++Error:-2005
+ ===================================================
+-id    name    rpad(name, null, _utf8'2a')    
+-1     Bună ziua     null     
+-2     Îți     null     
+-3     Nu înțeleg     null     
+-
++Error:-2005
+ ===================================================
+-id    name    rpad(name, 10, null)    
+-1     Bună ziua     null     
+-2     Îți     null     
+-3     Nu înțeleg     null     
+-
++Error:-2005
+ ===================================================
+-id    name    rpad(name, -1, _utf8'â')    
+-1     Bună ziua     null     
+-2     Îți     null     
+-3     Nu înțeleg     null     
+-
++Error:-2005
+ ===================================================
+ 0
+ ===================================================
+Index: _26_features_920/issue_7395_dml/answers/01_nulls_first_last_004.answer
+===================================================================
+--- _26_features_920/issue_7395_dml/answers/01_nulls_first_last_004.answer	(revision 32442)
++++ _26_features_920/issue_7395_dml/answers/01_nulls_first_last_004.answer	(working copy)
+@@ -7,28 +7,15 @@
+ ===================================================
+ 4
+ ===================================================
+-id    e    
+-7     null     
+-8     null     
+-1     a     
+-5     a     
+-2     b     
+-6     b     
+-3     c     
+-4     xyz     
+-
++Error:-2005
+ ===================================================
+ group_concat(e order by e)    
+ a,a,b,b,c,xyz     
+ 
+ ===================================================
+-max(e)    
+-xyz     
+-
++Error:-2005
+ ===================================================
+-min(e)    
+-a     
+-
++Error:-2005
+ ===================================================
+ sum(e)    
+ 13     
+@@ -853,38 +840,11 @@
+ 4     
+ 
+ ===================================================
+-e    case e when 1 then 10 when 2 then e when 3 then e else e end    
+-null     null     
+-null     null     
+-a     10     
+-a     10     
+-b     2     
+-b     2     
+-c     3     
+-xyz     4     
+-
++Error:-2005
+ ===================================================
+-e    case when e=1 then 10 when e=2 then e when e=3 then e else e end    
+-null     null     
+-null     null     
+-a     10     
+-a     10     
+-b     2     
+-b     2     
+-c     3     
+-xyz     4     
+-
++Error:-2005
+ ===================================================
+-ifnull(e, null)    ifnull(null, e)    
+-null     null     
+-null     null     
+-a     a     
+-a     a     
+-b     b     
+-b     b     
+-c     c     
+-xyz     xyz     
+-
++Error:-2005
+ ===================================================
+ nullif(e, null)    nullif(e, e)    
+ null     null     
+@@ -897,16 +857,7 @@
+ xyz     null     
+ 
+ ===================================================
+-nvl(e, null)    nvl(null, e)    
+-null     null     
+-null     null     
+-a     a     
+-a     a     
+-b     b     
+-b     b     
+-c     c     
+-xyz     xyz     
+-
++Error:-2005
+ ===================================================
+ nvl2(e, e, e)    nvl2(null, e, e)    
+ null     null     
+@@ -930,25 +881,9 @@
+ 1     
+ 
+ ===================================================
+-id    e    
+-1     a     
+-2     b     
+-3     c     
+-4     xyz     
+-5     a     
+-6     b     
+-
++Error:-2005
+ ===================================================
+-e    md5(e)    md5( cast(e as varchar))    
+-null     null     null     
+-null     null     null     
+-a     0cc175b9c0f1b6a831c399e269772661     0cc175b9c0f1b6a831c399e269772661     
+-a     0cc175b9c0f1b6a831c399e269772661     0cc175b9c0f1b6a831c399e269772661     
+-b     92eb5ffee6ae2fec3ad71c777531578f     92eb5ffee6ae2fec3ad71c777531578f     
+-b     92eb5ffee6ae2fec3ad71c777531578f     92eb5ffee6ae2fec3ad71c777531578f     
+-c     4a8a08f09d37b73795649038408b5f33     4a8a08f09d37b73795649038408b5f33     
+-xyz     d16fb36f0911f878998c136191af705e     d16fb36f0911f878998c136191af705e     
+-
++Error:-2005
+ ===================================================
+ 0
+ ===================================================
+@@ -960,28 +895,15 @@
+ ===================================================
+ 4
+ ===================================================
+-id    e    
+-1     a     
+-5     a     
+-2     b     
+-6     b     
+-3     c     
+-4     xyz     
+-7     null     
+-8     null     
+-
++Error:-2005
+ ===================================================
+ group_concat(e order by e)    
+ a,a,b,b,c,xyz     
+ 
+ ===================================================
+-max(e)    
+-xyz     
+-
++Error:-2005
+ ===================================================
+-min(e)    
+-a     
+-
++Error:-2005
+ ===================================================
+ sum(e)    
+ 13     
+@@ -1806,38 +1728,11 @@
+ null     
+ 
+ ===================================================
+-e    case e when 1 then 10 when 2 then e when 3 then e else e end    
+-a     10     
+-a     10     
+-b     2     
+-b     2     
+-c     3     
+-xyz     4     
+-null     null     
+-null     null     
+-
++Error:-2005
+ ===================================================
+-e    case when e=1 then 10 when e=2 then e when e=3 then e else e end    
+-a     10     
+-a     10     
+-b     2     
+-b     2     
+-c     3     
+-xyz     4     
+-null     null     
+-null     null     
+-
++Error:-2005
+ ===================================================
+-ifnull(e, null)    ifnull(null, e)    
+-a     a     
+-a     a     
+-b     b     
+-b     b     
+-c     c     
+-xyz     xyz     
+-null     null     
+-null     null     
+-
++Error:-2005
+ ===================================================
+ nullif(e, null)    nullif(e, e)    
+ a     null     
+@@ -1850,16 +1745,7 @@
+ null     null     
+ 
+ ===================================================
+-nvl(e, null)    nvl(null, e)    
+-a     a     
+-a     a     
+-b     b     
+-b     b     
+-c     c     
+-xyz     xyz     
+-null     null     
+-null     null     
+-
++Error:-2005
+ ===================================================
+ nvl2(e, e, e)    nvl2(null, e, e)    
+ a     a     
+@@ -1883,24 +1769,8 @@
+ 1     
+ 
+ ===================================================
+-id    e    
+-1     a     
+-2     b     
+-3     c     
+-4     xyz     
+-5     a     
+-6     b     
+-
++Error:-2005
+ ===================================================
+-e    md5(e)    md5( cast(e as varchar))    
+-a     0cc175b9c0f1b6a831c399e269772661     0cc175b9c0f1b6a831c399e269772661     
+-a     0cc175b9c0f1b6a831c399e269772661     0cc175b9c0f1b6a831c399e269772661     
+-b     92eb5ffee6ae2fec3ad71c777531578f     92eb5ffee6ae2fec3ad71c777531578f     
+-b     92eb5ffee6ae2fec3ad71c777531578f     92eb5ffee6ae2fec3ad71c777531578f     
+-c     4a8a08f09d37b73795649038408b5f33     4a8a08f09d37b73795649038408b5f33     
+-xyz     d16fb36f0911f878998c136191af705e     d16fb36f0911f878998c136191af705e     
+-null     null     null     
+-null     null     null     
+-
++Error:-2005
+ ===================================================
+ 0
