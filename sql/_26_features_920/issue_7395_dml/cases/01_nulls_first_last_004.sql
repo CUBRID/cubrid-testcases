@@ -89,7 +89,7 @@ select round(e) from t1 order by 1 nulls first;
 select sign(e) from t1 order by 1 nulls first;
 select sin(e) from t1 order by 1 nulls first;
 select sqrt(e) from t1 order by 1 nulls first;
-select tan(e) from t1 order by 1 nulls first;
+select tan(e)||'' from t1 order by 1 nulls first;
 select trunc(e, 1), trunc(12345, e) from t1 order by 1 nulls first, 2;
 select truncate(e, 1), truncate(12345, e) from t1 order by 1 nulls first, 2;
 
@@ -200,7 +200,7 @@ select round(e) from t1 order by 1 nulls last;
 select sign(e) from t1 order by 1 nulls last;
 select sin(e) from t1 order by 1 nulls last;
 select sqrt(e) from t1 order by 1 nulls last;
-select tan(e) from t1 order by 1 nulls last;
+select tan(e)||'' from t1 order by 1 nulls last;
 select trunc(e, 1), trunc(12345, e) from t1 order by 1 nulls last, 2;
 select truncate(e, 1), truncate(12345, e) from t1 order by 1 nulls last, 2;
 

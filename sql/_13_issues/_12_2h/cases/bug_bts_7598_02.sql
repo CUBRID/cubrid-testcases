@@ -85,7 +85,7 @@ select round(e) from t1 order by 1;
 select sign(e) from t1 order by 1;
 select sin(e) from t1 order by 1;
 select sqrt(e) from t1 order by 1;
-select tan(e) from t1 order by 1;
+select tan(e)||'' from t1 order by 1;
 select trunc(e, 1), trunc(12345, e) from t1 order by 1, 2;
 select truncate(e, 1), truncate(12345, e) from t1 order by 1, 2;
 
