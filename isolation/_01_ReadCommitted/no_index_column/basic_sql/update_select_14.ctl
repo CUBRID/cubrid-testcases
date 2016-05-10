@@ -42,11 +42,11 @@ C1: commit;
 MC: wait until C1 ready;
 C2: update t1 set id=3 where id=2;
 MC: wait until C2 ready;
-C1: select * from t1 order by 1;
+C1: select * from t1 order by 1,2;
 MC: wait until C1 ready;
-C2: select * from t1 order by 1;
+C2: select * from t1 order by 1,2;
 MC: wait until C2 ready;
-C3: select * from t1 order by 1;
+C3: select * from t1 order by 1,2;
 MC: wait until C3 ready;
 
 C1: commit;

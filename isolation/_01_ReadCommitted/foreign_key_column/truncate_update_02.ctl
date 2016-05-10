@@ -39,8 +39,8 @@ MC: wait until C2 blocked;
 C1: rollback;
 MC: wait until C2 ready;
 
-C2: SELECT * FROM t_primary ORDER BY id;
-C2: SELECT * FROM t_foreign ORDER BY id;
+C2: SELECT * FROM t_primary ORDER BY 1,2;
+C2: SELECT * FROM t_foreign ORDER BY 1,2;
 C2: commit;
 
 C2: quit;

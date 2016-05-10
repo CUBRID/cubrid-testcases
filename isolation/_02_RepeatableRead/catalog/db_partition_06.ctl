@@ -45,7 +45,7 @@ C2: CREATE TABLE t5(code CHAR (3), name VARCHAR (50) ) PARTITION BY HASH (code) 
 MC: wait until C2 ready;
 C3: ALTER TABLE t2 DROP PARTITION p1;
 MC: wait until C2 ready;
-C4: select * from db_partition;
+C4: select * from db_partition order by 1,2,3;
 MC: wait until C4 ready;
 C1: commit;
 MC: wait until C1 ready;
@@ -53,9 +53,9 @@ C2: commit;
 MC: wait until C2 ready;
 C3: commit;
 MC: wait until C3 ready;
-C4: select * from db_partition;
+C4: select * from db_partition order by 1,2,3;
 C4: commit;
-C4: select * from db_partition;
+C4: select * from db_partition order by 1,2,3;
 C4: commit;
 MC: wait until C3 ready;
 
@@ -69,7 +69,7 @@ MC: wait until C3 ready;
 C4: create table t6(id int,col char(10)) partition by range(id)(partition p1 values less than (10),partition p2 values less than (100));
 C4: alter table t1 add partition(partition p3 values less than (200),partition p4 values less than MAXVALUE);
 MC: wait until C4 blocked;
-C1: select * from db_partition;
+C1: select * from db_partition order by 1,2,3;
 C1: commit;
 MC: wait until C1 ready;
 
@@ -79,9 +79,9 @@ C3: rollback;
 MC: wait until C3 ready;
 C4: rollback;
 MC: wait until C4 ready;
-C1: select * from db_partition;
+C1: select * from db_partition order by 1,2,3;
 C1: commit;
-C1: select * from db_partition;
+C1: select * from db_partition order by 1,2,3;
 C1: commit;
 MC: wait until C1 ready;
 

@@ -34,7 +34,7 @@ MC: wait until C2 ready;
 C1: commit work;
 
 /* expected (1,' a')(1,'a  ')*/
-C2: select * from t order by 1;
+C2: select * from t order by 1,2;
 C2: commit;
 
 C2: quit;

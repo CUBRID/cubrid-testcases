@@ -37,17 +37,17 @@ MC: wait until C1 ready;
 /* test case */
 C1: DELETE FROM t1 WHERE ROWNUM = 1;
 MC: wait until C1 ready;
-C2: select * from t1;
+C2: select * from t1 order by 1,2;
 /* expect: C2 doesn't need to wait for C1 */
 MC: wait until C2 ready;
 C1: commit;
 C1: UPDATE t1 SET title = 'abcd' WHERE ROWNUM = 2;
 MC: wait until C1 ready;
 /* expect:  C2 doesn't need to wait for C1 */
-C2: select * from t1;
+C2: select * from t1 order by 1,2;
 MC: wait until C2 ready;
 C1: commit;
-C2: select * from t1;
+C2: select * from t1 order by 1,2;
 C2: commit;
 
 /* test point 2: read committed */
@@ -67,17 +67,17 @@ MC: wait until C1 ready;
 /* test case */
 C1: DELETE FROM t1 WHERE ROWNUM = 1;
 MC: wait until C1 ready;
-C2: select * from t1;
+C2: select * from t1 order by 1,2;
 /* expect: C2 doesn't need to wait for C1 */
 MC: wait until C2 ready;
 C1: commit;
 C1: UPDATE t1 SET title = 'abcd' WHERE ROWNUM < 2;
 MC: wait until C1 ready;
 /* expect:  C2 doesn't need to wait for C1 */
-C2: select * from t1;
+C2: select * from t1 order by 1,2;
 MC: wait until C2 ready;
 C1: commit;
-C2: select * from t1;
+C2: select * from t1 order by 1,2;
 C2: commit;
 
 C1: quit;

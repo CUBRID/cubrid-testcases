@@ -39,13 +39,13 @@ C2: INSERT INTO tt1 VALUES(1,'fun');
 MC: wait until C2 blocked;
 C1: commit;
 MC: wait until C2 ready;
-C1: SELECT * FROM tt1 ORDER BY id;
-C1: SELECT * FROM hi ORDER BY id;
+C1: SELECT * FROM tt1 ORDER BY 1,2;
+C1: SELECT * FROM hi ORDER BY 1,2;
 C1: commit;
 MC: wait until C1 ready;
 C2: commit;
-C2: SELECT * FROM hi ORDER BY id;
-C2: SELECT * FROM tt1 ORDER BY id;
+C2: SELECT * FROM hi ORDER BY 1,2;
+C2: SELECT * FROM tt1 ORDER BY 1,2;
 C2: commit;
 
 /* different row */
@@ -59,11 +59,11 @@ MC: wait until C1 ready;
 C2: commit;
 MC: wait until C2 ready;
 
-C1: SELECT * FROM tt1 ORDER BY id;
-C1: SELECT * FROM hi ORDER BY id;
+C1: SELECT * FROM tt1 ORDER BY 1,2;
+C1: SELECT * FROM hi ORDER BY 1,2;
 C1: commit work;
 MC: wait until C1 ready;
-C2: SELECT * FROM hi ORDER BY id;
+C2: SELECT * FROM hi ORDER BY 1,2;
 C2: commit;
 C2: quit;
 C1: quit;

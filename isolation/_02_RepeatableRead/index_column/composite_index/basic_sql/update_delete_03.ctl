@@ -52,13 +52,13 @@ C2: DELETE FROM t1 WHERE id = 7 AND col = 'abc';
 /* expect: C2 doesn't need to wait once C1 completed */
 MC: wait until C2 ready;
 /* expect: C1 select - id = 1 is updated */
-C1: SELECT * FROM t1 ORDER BY 1,2;
+C1: SELECT * FROM t1 ORDER BY 1,2,3;
 C1: commit;
 /* expect: 1 row (id=7)deleted message, C1 select - id = 7 is deleted, id = 1 is unchanged */
-C2: SELECT * FROM t1 ORDER BY 1,2;
+C2: SELECT * FROM t1 ORDER BY 1,2,3;
 C2: commit;
 /* expect: the instances of id = 7 is deleted, id = 1 is updated */
-C3: select * from t1 ORDER BY 1,2;
+C3: SELECT * from t1 ORDER BY 1,2,3;
 
 C3: commit;
 C1: quit;

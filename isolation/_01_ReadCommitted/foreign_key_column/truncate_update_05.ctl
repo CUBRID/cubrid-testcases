@@ -37,7 +37,7 @@ MC: wait until C1 ready;
 C2: TRUNCATE TABLE t_primary;
 MC: sleep 1;
 MC: wait until C2 blocked;
-C1: SELECT * FROM t_foreign ORDER BY id;
+C1: SELECT * FROM t_foreign ORDER BY 1,2;
 C1: commit;
 MC: wait until C2 ready;
 C2: commit;

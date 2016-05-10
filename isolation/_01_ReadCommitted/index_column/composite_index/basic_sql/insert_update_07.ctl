@@ -45,7 +45,7 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* expected (6,a)(7,b)(8,abc)(6,a)(7,b)(8,c) */
-C2: select * from t order by 1;
+C2: select * from t order by 1,2;
 C2: commit;
 
 C2: quit;

@@ -47,21 +47,21 @@ C1: COMMIT WORK;
 MC: wait until C1 ready;
 
 /* test case */
-C1: SELECT * FROM t1 a RIGHT JOIN t2 b ON a.id = b.id WHERE b.id >1 and b.id <7;
+C1: SELECT * FROM t1 a RIGHT JOIN t2 b ON a.id = b.id WHERE b.id >1 and b.id <7 order by 1,2,3,4,5;
 MC: wait until C1 ready;
 C2: update (t1 left join t2 on t1.id = t2.id) left join t3 on t1.valueid = t3.valueid set t1.col=t1.col+' a', t3.valueid=t1.valueid where t1.id=2 and t1.valueid=0 and t1.col is not null;
 MC: wait until C2 ready;
 C1: insert into t3(valueid, str) SELECT a.valueid, a.col+'xx' FROM t1 a RIGHT JOIN t2 b ON a.id = b.id WHERE b.id >1 and b.id <7;
 MC: wait until C1 ready;
-C2: SELECT * FROM t1 order by 1,2;
+C2: SELECT * FROM t1 order by 1,2,3;
 C2: SELECT * FROM t3 order by 1,2;
 C2: COMMIT;
 C2: SELECT * FROM t3 order by 1,2;
 MC: wait until C2 ready;
-C1: SELECT * FROM t1 order by 1,2;
+C1: SELECT * FROM t1 order by 1,2,3;
 C1: SELECT * FROM t3 order by 1,2;
 C1: COMMIT;
-C1: SELECT * FROM t1 order by 1,2;
+C1: SELECT * FROM t1 order by 1,2,3;
 MC: wait until C1 ready;
 
 C1: quit;
