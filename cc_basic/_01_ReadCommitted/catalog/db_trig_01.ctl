@@ -23,24 +23,24 @@ C1: CREATE TABLE tt1( id INT, col VARCHAR(10));
 C1: commit;
 
 /* test case */
-C1: select * from db_trig;
+C1: select * from db_trig order by 1;
 MC: wait until C1 ready;
 C2: CREATE TRIGGER tt1_insert AFTER INSERT ON tt1 EXECUTE INSERT INTO hi(id,col) VALUES(obj.id, obj.col);
 MC: wait until C2 ready;
-C1: select * from db_trig;
+C1: select * from db_trig order by 1;
 MC: wait until C1 ready;
 C2: commit;
 MC: wait until C2 ready;
-C1: select * from db_trig;
+C1: select * from db_trig order by 1;
 C1: commit;
 
 C1: CREATE TRIGGER tt1_del AFTER INSERT ON tt1 EXECUTE DELETE FROM hi WHERE id = obj.id;
 MC: wait until C1 ready;
-C2: select * from db_trig;
+C2: select * from db_trig order by 1;
 MC: wait until C2 ready;
 C1: rollback;
 MC: wait until C1 ready;
-C2: select * from db_trig;
+C2: select * from db_trig order by 1;
 MC: wait until C2 ready;
 C2: commit; 
 

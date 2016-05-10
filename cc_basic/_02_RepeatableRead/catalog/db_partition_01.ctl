@@ -25,7 +25,7 @@ C1: commit;
 C1: create table t1(id int,col char(10)) partition by range(id)(partition p1 values less than (10),partition p2 values less than (100));
 MC: wait until C1 ready;
 
-C2: select * from db_partition;
+C2: select * from db_partition order by 1,2,3;
 MC: wait until C2 ready;
 C1: commit;
 MC: wait until C1 ready;
@@ -36,13 +36,13 @@ MC: sleep 1;
 C1: create table t2(id int,col char(10)) partition by range(id)(partition p1 values less than (10),partition p2 values less than (100));
 MC: wait until C1 ready;
 
-C2: select * from db_partition;
+C2: select * from db_partition order by 1,2,3;
 MC: wait until C2 ready;
 C1: commit;
 MC: wait until C1 ready;
 C2: commit;
 MC: wait until C2 ready;
-C2: select * from db_partition;
+C2: select * from db_partition order by 1,2,3;
 C2: commit;
 MC: wait until C2 ready;
 

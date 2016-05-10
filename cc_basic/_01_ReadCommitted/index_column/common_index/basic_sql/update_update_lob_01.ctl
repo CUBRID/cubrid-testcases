@@ -50,17 +50,17 @@ MC: wait until C1 ready;
 C2: UPDATE t1 SET content = CHAR_TO_CLOB('test lob 1') WHERE id = 2;
 /* expect: no transactions need to wait */
 MC: wait until C2 ready;
-C1: SELECT id, CLOB_TO_CHAR(content) FROM t1;
+C1: SELECT id, CLOB_TO_CHAR(content) FROM t1 order by 1;
 C1: COMMIT;
 MC: wait until C1 ready;
 
 /* expect: C2 select - id = 1,2 is updated */
-C2: SELECT id, CLOB_TO_CHAR(content) FROM t1;
+C2: SELECT id, CLOB_TO_CHAR(content) FROM t1 order by 1;
 MC: wait until C2 ready;
 C2: commit;
 
 /* expect: the instances of id = 1,2 is updated */
-C3: SELECT id, CLOB_TO_CHAR(content) FROM t1;
+C3: SELECT id, CLOB_TO_CHAR(content) FROM t1 order by 1;
 MC: wait until C3 ready;
 
 

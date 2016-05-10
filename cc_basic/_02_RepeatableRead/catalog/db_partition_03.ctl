@@ -34,15 +34,15 @@ C1: alter table t2 reorganize partition p1 into(partition p1_1 values less than 
 MC: wait until C1 ready;
 C2: rename t1 as t1_rename;
 MC: wait until C2 ready;
-C3: select * from db_partition;
+C3: select * from db_partition order by 1,2,3;
 MC: wait until C3 ready;
 C1: commit;
 MC: wait until C1 ready;
 C2: commit;
 MC: wait until C2 ready;
-C3: select * from db_partition;
+C3: select * from db_partition order by 1,2,3;
 C3: commit;
-C3: select * from db_partition;
+C3: select * from db_partition order by 1,2,3;
 C3: commit;
 MC: wait until C3 ready;
 
@@ -51,15 +51,15 @@ C2: alter table t3 reorganize partition p1 into(partition p1_1 values less than 
 MC: wait until C2 ready;
 C3: rename t3 as t3_rename;
 MC: wait until C3 blocked;
-C1: select * from db_partition;
+C1: select * from db_partition order by 1,2,3;
 MC: wait until C1 ready;
 C2: commit;
 MC: wait until C2 ready;
 C3: commit;
 MC: wait until C3 ready;
-C1: select * from db_partition;
+C1: select * from db_partition order by 1,2,3;
 C1: commit;
-C1: select * from db_partition;
+C1: select * from db_partition order by 1,2,3;
 C1: drop table t1_rename,t3_rename;
 C1: commit;
 MC: wait until C1 ready;

@@ -33,13 +33,13 @@ C1: create table t1(id int,col char(10)) partition by range(id)(partition p1 val
 MC: wait until C1 ready;
 C2: alter table t2 add partition(partition p3 values less than (3000));  
 MC: wait until C2 ready;
-C3: select * from db_partition;
+C3: select * from db_partition order by 1,2,3;
 MC: wait until C3 ready;
 C1: commit;
 MC: wait until C1 ready;
 C2: commit;
 MC: wait until C2 ready;
-C3: select * from db_partition;
+C3: select * from db_partition order by 1,2,3;
 C3: commit;
 MC: wait until C3 ready;
 
@@ -48,13 +48,13 @@ C1: create table t3(id int,col char(10)) partition by range(id)(partition p1 val
 MC: wait until C1 ready;
 C2: create table t3(id int,col char(10)) partition by hash(id) partitions 4;
 MC: wait until C2 blocked;
-C3: select * from db_partition;
+C3: select * from db_partition order by 1,2,3;
 MC: wait until C3 ready;
 C1: commit;
 MC: wait until C1 ready;
 C2: commit;
 MC: wait until C2 ready;
-C3: select * from db_partition;
+C3: select * from db_partition order by 1,2,3;
 C3: commit;
 MC: wait until C3 ready;
 C3: quit;

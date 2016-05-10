@@ -46,10 +46,10 @@ C1: COMMIT WORK;
 MC: wait until C1 ready;
 
 /* test case */
-C1: SELECT title, DECR(read_count) FROM t1 WHERE title IN ('book1','book5') AND id != 1;
+C1: SELECT title, DECR(read_count) FROM t1 WHERE title IN ('book1','book5') AND id != 1 order by 1,2;
 MC: wait until C1 ready; 
 
-C2: SELECT * FROM t1 WHERE read_count = 2; 
+C2: SELECT * FROM t1 WHERE read_count = 2 order by 1; 
 /* expect: no transactions need to wait, assume C1 finished before C2 */
 MC: wait until C2 ready;
 
@@ -60,7 +60,7 @@ C1: commit;
 MC: wait until C1 ready;
 
 /* expect: C2 select - id = 5,6 are selected */
-C2: SELECT * FROM t1 WHERE read_count = 2; 
+C2: SELECT * FROM t1 WHERE read_count = 2 order by 1; 
 C2: commit;
 MC: wait until C2 ready;
 
