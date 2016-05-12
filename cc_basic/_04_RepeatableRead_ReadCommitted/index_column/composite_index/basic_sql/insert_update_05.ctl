@@ -35,7 +35,7 @@ C2: update t set id=8,col='d' where id=7;
 MC: wait until C2 ready;
 C1: commit work;
 C2: commit;
-C2: select * from t order by 1;
+C2: select * from t order by 1,2;
 C2: commit;
 
 C2: quit;

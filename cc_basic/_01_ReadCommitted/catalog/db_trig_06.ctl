@@ -58,7 +58,7 @@ MC: wait until C1 ready;
 C2: ALTER TRIGGER tt1_insert STATUS INACTIVE;
 MC: wait until C2 blocked;
 C3: CREATE TRIGGER tt1_delete BEFORE DELETE ON tt1 EXECUTE DELETE FROM hi WHERE id = obj.id+4;
-MC: wait until C2 blocked;
+MC: wait until C3 blocked;
 C4: select * from db_trig order by 1;
 MC: wait until C4 ready;
 C1: commit;
