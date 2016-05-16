@@ -38,7 +38,7 @@ C2: ALTER SERIAL s1 START WITH 200 MAXVALUE 500;
 MC: wait until C2 ready;
 C3: drop SERIAL s1;
 MC: wait until C3 blocked; 
-C4: select * from db_serial;
+C4: select name, current_val, increment_val, max_val, min_val, cyclic, started, class_name, att_name, cached_num, comment from db_serial;
 MC: wait until C4 blocked;
 
 C1: commit;
@@ -49,7 +49,7 @@ C4: commit;
 MC: wait until C4 ready;
 C3: commit;
 MC: wait until C3 ready;
-C4: select * from db_serial;
+C4: select name, current_val, increment_val, max_val, min_val, cyclic, started, class_name, att_name, cached_num, comment from db_serial;
 C4: commit;
 MC: wait until C4 ready;
 
@@ -57,7 +57,7 @@ C2: drop SERIAL s2;
 MC: wait until C2 ready;
 C3: drop SERIAL s3;
 MC: wait until C3 ready;
-C1: select * from db_serial;
+C1: select name, current_val, increment_val, max_val, min_val, cyclic, started, class_name, att_name, cached_num, comment from db_serial;
 MC: wait until C1 blocked;
 MC: sleep 2;
 C2: rollback;
@@ -67,7 +67,7 @@ MC: wait until C3 ready;
 C1: commit;
 MC: wait until C1 ready;
 
-C1: select * from db_serial;
+C1: select name, current_val, increment_val, max_val, min_val, cyclic, started, class_name, att_name, cached_num, comment from db_serial;
 C1: drop serial s2;
 C1: drop serial s3;
 C1: commit;
