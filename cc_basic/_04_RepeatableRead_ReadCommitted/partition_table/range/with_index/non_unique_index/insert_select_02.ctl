@@ -57,16 +57,21 @@ MC: wait until C2 ready;
 
 /* test case */
 C1: insert into t values(9999,'abc','a');
+MC: wait until C1 ready;
 /* expected 9003 */
 C2: select max(id) from t where id>0;
 /* expected 4003 */
 C2: select max(id) from t where id<5000;
 /* expected 9003 */
 C2: select max(id) from t where id>5000;
+MC: wait until C2 ready;
 C1: commit;
+MC: wait until C1 ready;
+
 /* expected 9999 */
 C2: select max(id) from t where id>0;
 C2: commit work;
+MC: wait until C2 ready;
 
 C2: quit;
 C1: quit;
