@@ -42,7 +42,7 @@ C1: commit;
 MC: wait until C1 ready;
 C2: SELECT * FROM tt1 ORDER BY id;
 C2: CREATE SERIAL s2 START WITH 10 INCREMENT BY -1;
-C2: SELECT * FROM db_serial;
+C2: select name, current_val, increment_val, max_val, min_val, cyclic, started, class_name, att_name, cached_num, comment from db_serial;
 C2: commit;
 C2: quit;
 C1: quit;
