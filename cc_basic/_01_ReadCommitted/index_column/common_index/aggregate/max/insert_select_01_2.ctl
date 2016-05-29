@@ -9,14 +9,8 @@ Reading queries can only have a look at data committed before the queries began
 changes committed after the query started are never seen
 there are many unvacuum version, test select max(id) correctness
 combination
- a) some user committed before the query begin
- b) some begin before the select begin, but commit after the select begin
- c) some begin before the select begin, commit after the select end
- d) some begin after the select begin, commit before the select end
- e) some begin after the select begin, commit after the select end
 
 NUM_CLIENTS = 6
-prepare(1,3,7)
 */
 
 MC: setup NUM_CLIENTS = 6;
@@ -119,24 +113,22 @@ C1: commit;
 MC: wait until C1 ready;
 
 /*
-  stage1 | select begin |stage2 | select end| stage3
-  C1: 1,1|C2: 1,2|C3:2,2|C4: 2,3|C5, 1,3
+  start test
 */
 C1: insert into t select * from t where id between 3 and 5;
-C5: insert into t select * from t where id between 2 and 4 and sleep(4)=0;
+MC: wait until C1 ready;
+C5: insert into t select * from t where id between 2 and 4;
+MC: wait until C5 ready;
 C1: commit;
 MC: wait until C1 ready;
 C2: insert into t values(1,'aa');
-
-/* expected 10 group */
-C6: select t.col,max(t.id) from (select sleep(1)) x, t where id between 1 and 9000 group by t.col order by t.col;
-C3: insert into t values(1,'cc');
+MC: wait until C2 ready;
+C4: insert into t select * from t where id between 4 and 5;
+MC: wait until C4 ready;
+C6: select t.col,max(t.id) from t where id between 1 and 9000 group by t.col order by t.col;
+MC: wait until C6 ready;
 C2: commit;
 MC: wait until C2 ready;
-C3: commit;
-MC: wait until C3 ready;
-C4: insert into t select * from t where id between 4 and 5 and sleep(2)=0;
-MC: wait until C6 ready;
 C4: commit;
 MC: wait until C4 ready;
 C5: commit;
