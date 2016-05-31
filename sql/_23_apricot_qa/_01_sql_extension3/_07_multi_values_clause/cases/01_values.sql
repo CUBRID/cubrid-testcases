@@ -141,3 +141,5 @@ execute s using 1,2,3;
 values(1),(2),('3');
 prepare s from 'values(?),(?),(?)';
 execute s using 1,2,'3';
+
+deallocate prepare s;

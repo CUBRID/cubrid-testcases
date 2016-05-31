@@ -32,6 +32,7 @@ execute st using '12311',date'2000-10-10';
 -- should fail
 select left(NULL);
 
+drop prepare st;
 drop table t1;
 
 

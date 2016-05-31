@@ -34,7 +34,7 @@ prepare s from 'select time_format(s1, ?) from t2 order by 1'
 execute s using '%H _%p';
 
 
-
+drop prepare s;
 drop table t1;
 drop table t2;
 drop table tf;

@@ -42,7 +42,7 @@ execute s using 'aa','0';
 prepare s from 'select * from t3 where ? > ifnull(s1,?)  order by 1'
 execute s using 'aa','0';
 
-
+drop prepare s;
 drop table t1;
 drop table t2;
 drop table t3;

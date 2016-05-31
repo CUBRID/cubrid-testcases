@@ -62,5 +62,6 @@ execute st using NULL;
 prepare st from 'select NULL + ?'
 execute st using '2';
 
+drop prepare st;
 set system parameters 'plus_as_concat=yes';commit;
 --+ holdcas off;

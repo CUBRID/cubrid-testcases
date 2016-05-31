@@ -41,6 +41,7 @@ execute st using n'1',n'3';
 
 prepare st from 'select strcmp(?,?)'
 execute st using '123','43';
+drop prepare st;
 
 drop table t1;
 

@@ -397,3 +397,4 @@ execute s using '1.2345';
 execute s using '1.2345';
 select round(123, 'default');
 select round(to_date('11:59:59.500 am 2012-12-21'), 'default');
+deallocate prepare s;

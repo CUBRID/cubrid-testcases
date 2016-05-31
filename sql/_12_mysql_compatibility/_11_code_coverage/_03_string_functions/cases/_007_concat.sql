@@ -70,4 +70,5 @@ select concat(b) from t1;
 
 select concat(b) from t1 group by a;
 
+drop prepare st;
 drop table t1;

@@ -57,3 +57,5 @@ execute st using 5,2;
 
 prepare st from 'select if(? - ?=n''3'',1,0)'
 execute st using '5','2';
+
+drop prepare st;

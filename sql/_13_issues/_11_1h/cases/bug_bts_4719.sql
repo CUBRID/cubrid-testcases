@@ -52,6 +52,7 @@ execute stmt using '1234567890ABCDEF';
 prepare stmt from 'select /*+ recompile */ a from t2 where a like cast ((?+''%'') as varchar(11))'
 execute stmt using '123456789';
 
+drop prepare stmt;
 drop t2;
 set  system parameters 'dont_reuse_heap_file=no';
 

@@ -43,4 +43,5 @@ prepare stmt from 'select * from t3 where id1 > char_length(concat_ws('-', unix_
 prepare stmt from 'select * from t3 where id1 > char_length(mid(concat_ws(''-'',unix_timestamp(),''abc''),2,3));';
 prepare stmt from 'select * from t3 where id1 > greatest(unix_timestamp());';
 
+drop prepare stmt;
 drop table t3;

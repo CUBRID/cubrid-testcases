@@ -62,6 +62,7 @@ execute st using '2001-10-11',4;
 
 prepare st from 'insert into t1(d1) values (? - ?)'
 execute st using '2001-10-1','4';
+drop prepare st;
 
 select * from t1 order by 1,2,3,4;
 truncate table t1;

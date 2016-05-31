@@ -124,6 +124,7 @@ execute stmt1 using '3','3';
  prepare stmt2 from 'insert into foo values (?,from_unixtime(unix_timestamp(?)))';
 execute stmt2 using '4','1970-01-02';
 select * from foo order by 1;
-
+drop prepare stmt1;
+drop prepare stmt2;
 drop table foo;
 set system parameters 'insert_execution_mode=3';

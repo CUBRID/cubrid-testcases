@@ -31,7 +31,7 @@ prepare st from 'select right(?,?)'
 execute st using '12311',date'2000-10-10';
 
 select right(NULL);
-
+drop prepare st;
 drop table t1;
 
 
