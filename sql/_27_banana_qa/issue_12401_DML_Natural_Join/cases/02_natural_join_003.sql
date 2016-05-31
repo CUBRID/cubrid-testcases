@@ -150,6 +150,5 @@ select /*+ RECOMPILE*/ * from (select i1+1 as i2 from t1 order by 1) t1 natural 
 
 
 select i2 as i1_1 from t2 order by 1;
-
 drop table t1;
 drop table t2;

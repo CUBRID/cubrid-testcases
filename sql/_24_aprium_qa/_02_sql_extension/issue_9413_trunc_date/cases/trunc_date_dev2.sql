@@ -240,4 +240,5 @@ execute s using N'day';
 execute s using N'dy';
 execute s using N'q';
 
+deallocate prepare s;
 select trunc(timestamp'2012-10-26', cast(N'yyyy' as nchar varying(3)));

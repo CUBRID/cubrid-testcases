@@ -104,7 +104,7 @@ execute st using 0.123123e1;
 -- overflow
 prepare st from 'select ? + ?'
 execute st using '222123456789',213456789;
-
+drop prepare st;
 
 set system parameters 'return_null_on_function_errors=no';
 commit;

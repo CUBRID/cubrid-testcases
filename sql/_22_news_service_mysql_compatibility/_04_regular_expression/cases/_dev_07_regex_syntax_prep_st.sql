@@ -152,3 +152,5 @@ execute rlike_st using 'nofox here', @word_fox;
 execute rlike_st using 'lady is foxy', @word_fox;
 execute rlike_st using 'the foxx is not an animal', @word_fox;
 DROP VARIABLE @word_fox;
+deallocate prepare rlike_st;
+

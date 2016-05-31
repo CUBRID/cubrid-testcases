@@ -36,6 +36,7 @@ execute st using '123';
 
 select reverse(NULL);
 
+drop prepare st;
 drop table t1;
 
 

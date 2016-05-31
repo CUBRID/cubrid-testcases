@@ -71,3 +71,6 @@ prepare s from 'values(1,2),(3,4) union all values(?,1),(?,2)';
 execute s using 1,2;
 prepare s from 'values(?,2),(?,4) union all values(?,1),(?,2)';
 execute s using 1,2,3,4;
+
+deallocate prepare s;
+

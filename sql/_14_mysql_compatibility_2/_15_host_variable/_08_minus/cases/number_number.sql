@@ -94,3 +94,5 @@ execute st using 4,4.3;
 -- overflow
 prepare st from 'select ? - ?'
 execute st using 1223456789,1223456789;
+
+drop prepare st;

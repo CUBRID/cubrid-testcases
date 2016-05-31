@@ -19,5 +19,9 @@ prepare st2 from 'select * from t1 where a>? and a<?;';
 execute st2 using 1,2;
 execute st2 using 10,1;
 
+drop prepare q1;
+drop prepare st1;
+drop prepare st;
+drop prepare st2;
 drop t1;
 drop xoo;

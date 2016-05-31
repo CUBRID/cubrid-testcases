@@ -44,4 +44,5 @@ select field(NULL);
 
 select field('11','22','22','11');
 
+drop prepare st;
 drop table t1;

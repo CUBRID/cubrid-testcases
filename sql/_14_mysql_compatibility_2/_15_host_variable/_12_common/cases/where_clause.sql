@@ -71,6 +71,7 @@ select 1 from t1,table(set{i2}) as t(i) where i1 in set{t.i+2};
 prepare st from 'select 1 from t1,table(set{i2}) as t(i) where i1 in set{t.i+?}'
 execute st using 2.0;	
 
+drop prepare st;
 drop table t1;
 set  system parameters 'dont_reuse_heap_file=no';
 commit;

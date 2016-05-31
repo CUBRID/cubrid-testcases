@@ -25,6 +25,14 @@ execute st7 using 2, '1', 2, 2, '1', 2;
 execute st8 using '  a  ', '  a  ';
 select collation(upper('a')) collation, coercibility(upper('a')) coeribility;
 
+deallocate prepare st1;
+deallocate prepare st2;
+deallocate prepare st3;
+deallocate prepare st4;
+deallocate prepare st5;
+deallocate prepare st6;
+deallocate prepare st7;
+deallocate prepare st8;
 set names iso88591;
 commit;
 --+ holdcas off;

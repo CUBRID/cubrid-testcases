@@ -65,5 +65,6 @@ insert into t1 select rownum,rownum,rownum,rownum,rownum,rownum from db_class li
 prepare s from 'select a from t1 where a between ? and ? and rownum < ? and b between ? and ? and c between ? and ?' ;
 execute s using 1, 2,3,4,5,6,7;
 drop table t1;
+drop prepare s;
 
 set names iso88591;

@@ -17,6 +17,6 @@ prepare s from 'select s1 + time(?) from t2 order by 1'
 execute s using '2001-11-12';
 
 
-
+drop prepare s;
 drop table t1;
 drop table t2;

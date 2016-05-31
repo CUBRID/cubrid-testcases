@@ -39,4 +39,4 @@ execute s using NULL, NULL;
 evaluate power(NULL, NULL) into :expected; 
 
 select case when :expected <=> :result then 'YES' else 'NO' end as case6;
-
+drop prepare s;

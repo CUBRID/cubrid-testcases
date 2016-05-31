@@ -40,5 +40,6 @@ execute st using '2.0';
 prepare st from 'select if(? + ?=n''3'',1,0)'
 execute st using '1','2';
 
+drop prepare st;
 set system parameters 'plus_as_concat=yes';commit;
 --+ holdcas off;

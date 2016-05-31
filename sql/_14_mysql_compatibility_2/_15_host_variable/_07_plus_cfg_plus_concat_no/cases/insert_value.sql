@@ -66,6 +66,7 @@ execute st using '2001-10-1','4';
 
 select * from t1 order by 1,2,3,4;
 
+drop prepare st;
 drop table t1;
 
 set system parameters 'plus_as_concat=yes';commit;

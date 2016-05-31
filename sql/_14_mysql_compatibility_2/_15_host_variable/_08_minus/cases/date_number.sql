@@ -51,3 +51,5 @@ execute st using 4;
 
 prepare st from 'select ? - date''2001-01-11'''
 execute st using 4.123;
+
+drop prepare st;

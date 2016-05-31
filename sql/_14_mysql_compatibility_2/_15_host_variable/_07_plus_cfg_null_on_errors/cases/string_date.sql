@@ -92,6 +92,7 @@ execute st using n'2';
 prepare st from 'select time''10:11:12'' + ?'
 execute st using NULL;
 
+drop prepare st;
 set system parameters 'return_null_on_function_errors=no';
 commit;
 --+ holdcas off;

@@ -59,7 +59,7 @@ prepare stmt from 'select c from tbl where c like (select * from tbl where c = '
 $varchar, $%, $varchar, $\
 select c from tbl where c like (select * from tbl where c = '\') + ? escape ? order by 1;
 
-
+drop prepare stmt;
 drop table reff;
 drop table tbl;
 commit;

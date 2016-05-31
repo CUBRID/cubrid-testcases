@@ -23,7 +23,7 @@ select inet_aton(:x);
 
 prepare s from 'select a from pp where a = inet_aton(?)';
 execute s using '0.0.0.1';
-
+drop prepare s;
 
 SET OPTIMIZATION LEVEL 257;
 

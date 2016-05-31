@@ -42,3 +42,5 @@ execute st using {'abc', 123456, 'cde'}, 123;
 
 prepare st from 'select {123, 345, 456} + ?'
 execute st using '567';
+
+deallocate prepare st;
