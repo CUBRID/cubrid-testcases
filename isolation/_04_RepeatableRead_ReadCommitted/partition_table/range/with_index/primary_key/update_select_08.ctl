@@ -36,12 +36,12 @@ C1: update t1 set id=id+1 where id<10;
 MC: wait until C1 ready;
 C2: select * from t1 where id>1 order by 1,2;
 C2: select * from t1 order by id;
-MC: wait until C1 ready;
+MC: wait until C2 ready;
 C1: commit;
+MC: wait until C1 ready;
 C2: select * from t1 where id>1 order by 1,2;
 C2: select * from t1 order by id;
 C2: commit;
-MC: wait until C1 ready;
 MC: wait until C2 ready;
 
 
