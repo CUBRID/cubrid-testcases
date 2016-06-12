@@ -36,7 +36,7 @@ C6: set transaction isolation level read committed;
 C1: DROP TABLE IF EXISTS tb1;
 C1: CREATE TABLE tb1(id BIGINT PRIMARY KEY,col VARCHAR(10));
 C1: set @newincr=0;
-C1: INSERT INTO tb1 SELECT (@newincr:=@newincr+1),(@newincr)%10 FROM db_class a,db_class b,db_class c,db_class d LIMIT 100000;
+C1: INSERT INTO tb1 SELECT (@newincr:=@newincr+1),(@newincr)%10 FROM db_class a,db_class b,db_class c,db_class d LIMIT 10000;
 C1: commit;
 MC: sleep 6;
 MC: wait until C1 ready;

@@ -74,7 +74,7 @@ C1: COMMIT;
 MC: wait until C1 ready;
 C2: SELECT * FROM t1 order by 1,2;
 C2: SELECT * FROM t3 order by 1,2;
-MC: wait until C1 ready;
+MC: wait until C2 ready;
 C3: SELECT * FROM t1 order by 1,2;
 C3: SELECT * FROM t3 order by 1,2;
 C3: COMMIT;
