@@ -45,16 +45,17 @@ C3: set transaction isolation level read committed;
 C1: DROP TABLE IF EXISTS t1;
 C1: CREATE TABLE t1(id INT, title VARCHAR(10), read_count INT);
 C1: CREATE INDEX idx_id on t1(id);
-C1: INSERT INTO t1 VALUES(1,'book1',3),(2,'book2',5),(3,'book3',1),(4,'book4',0),(5,'book5',3),(6,'book6',2),(7,'book7',0);
+C1: INSERT INTO t1 VALUES(1,'book1',3),(2,'book2',5),(3,'book3',1),(4,'book4',0),(5,'book5',4),(6,'book6',2),(7,'book7',0);
 C1: COMMIT WORK;
 MC: wait until C1 ready;
 
 /* test case */
-C1: SELECT title, DECR(read_count) FROM (select sleep(2)) x, t1 WHERE read_count = 3 AND id IN (2,5,6) order by 1,2; 
 C2: SELECT title, INCR(read_count) FROM t1 WHERE read_count = 2 order by 1,2;
-/* expect: no transactions need to wait, assume C2 finished before C1 */
 MC: wait until C2 ready;
+C1: SELECT title, DECR(read_count) FROM t1 WHERE read_count = 3 AND id IN (2,5,6) order by 1,2; 
 MC: wait until C1 ready;
+/* expect: no transactions need to wait, assume C2 finished before C1 */
+
 /* expect: C2 select - id = 6 is updated */
 C2: SELECT * FROM t1 order by 1,2,3;
 C2: commit;
