@@ -43,8 +43,6 @@ C1: insert into t(s) select s||id from t;
 C1: insert into t(s) select s||id from t;
 MC: wait until C1 ready;
 C1: insert into t(s) select s||id from t;
-MC: wait until C1 ready;
-C1: select count(*) from t;
 C1: COMMIT;
 MC: wait until C1 ready;
 
@@ -63,7 +61,6 @@ C1: commit;
 MC: wait until C1 ready;
 
 C2: update t set s = id||repeat('cubrid',130) where id>0;
-C2: select count(*) from t;
 C2: commit;
 MC: wait until C2 ready;
 
