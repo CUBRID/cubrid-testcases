@@ -47,15 +47,14 @@ C1: COMMIT WORK;
 MC: wait until C1 ready;
 
 /* test case */
-C1: SELECT t1.* FROM (select sleep(4)) x, t1 WHERE read_count = 0 order by 1,2,3; 
-C2: SELECT DECR(read_count) FROM t1 WHERE id = 3; 
 /* expect: no transactions need to wait, assume C2 finished before C1 */
+C2: SELECT DECR(read_count) FROM t1 WHERE id = 3; 
 MC: wait until C2 ready;
+C1: SELECT t1.* FROM t1 WHERE read_count = 0 order by 1,2,3; 
 MC: wait until C1 ready;
 /* expect: C2 select - id = 3 is updated */
 C2: SELECT * FROM t1 order by 1,2,3;
 C2: commit;
-/* expect: C1 finishes the execution after C2 commit, C1 select - id = 4,7 are selected */
 MC: wait until C2 ready;
 C1: commit;
 MC: wait until C1 ready;
