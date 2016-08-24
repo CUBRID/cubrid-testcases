@@ -38,9 +38,12 @@ MC: wait until C1 ready;
 
 /* test case */
 C1: UPDATE tb1 SET id=id+100000 WHERE id%2=0;
+MC: wait until C1 ready;
 C2: DELETE FROM tb1 WHERE id=1 or id=199998;
+MC: wait until C2 ready;
 /* expected (1,199998) */ 
 C3: SELECT MIN(id),MAX(id) FROM tb1;
+MC: wait until C3 ready;
 C2: commit work;
 MC: wait until C2 ready;
 
@@ -49,6 +52,7 @@ MC: wait until C1 ready;
 /* expected  (3, 199996)*/
 C2: SELECT MIN(id),MAX(id) FROM tb1;
 C2: commit;
+MC: wait until C2 ready;
 
 C2: quit;
 C1: quit;
