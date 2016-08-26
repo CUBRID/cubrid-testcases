@@ -51,15 +51,14 @@ C1: COMMIT WORK;
 MC: wait until C1 ready;
 
 /* test case */
-C1: UPDATE t1 SET read_count = 0 WHERE (id = 3 or read_count = 3) and sleep(2)=0; 
 C2: SELECT DECR(read_count) FROM t1 WHERE title IN ('book5');
-/* expect: no transactions need to wait, assume C2 finished before C1 */
 MC: wait until C2 ready;
+C1: UPDATE t1 SET read_count = 0 WHERE (id = 3 or read_count = 3); 
+MC: wait until C1 ready;
 /* expect: C2 select - id = 5 is updated */
 C2: SELECT * FROM t1 order by 1,2,3;
 C2: commit;
-/* expect: C1 finish the execution after C2 commit, 2 rows (id=1,3) updated message, C1 select - id = 1,3 are updated */
-MC: wait until C1 ready;
+MC: wait until C2 ready;
 C1: SELECT * FROM t1 order by 1,2,3;
 C1: commit;
 MC: wait until C1 ready;
