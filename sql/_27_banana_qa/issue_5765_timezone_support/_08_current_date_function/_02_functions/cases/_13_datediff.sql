@@ -6,7 +6,7 @@ set @x2=(select current_datetime);
 set @x3=(select adddate(current_datetime,interval 2 month));
 set @x4=(select adddate(current_datetime,interval 2 hour));
 select if (datediff(@x2,@x1) in(0,1), 'ok', 'nok');
-select if (month(@x3)-month(@x1) in (2,-10), 'ok', 'nok');
+select if (month(@x3)-month(@x1) in (2,-10,3,-9), 'ok', 'nok');
 select if (hour(@x4)-hour(@x1) in (6, -18), 'ok', 'nok');
 drop variable @x1,@x2,@x3,@x4;
 
