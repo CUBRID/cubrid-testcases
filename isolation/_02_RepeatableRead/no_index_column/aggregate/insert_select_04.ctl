@@ -36,13 +36,14 @@ MC: wait until C1 ready;
 C1: update t set id=col-1 where id%2=0;
 MC: wait until C1 ready;
 
-C2: insert into t select t.* from (select sleep(10))x, t where id%3=0;
-C3: select count(t.id) from (select sleep(5)) x, t order by col;
+C2: insert into t select t.* from t where id%3=0;
+MC: wait until C2 ready;
+
+C3: select count(t.id) from t order by col;
+MC: wait until C3 ready;
+
 C1: commit;
 MC: wait until C1 ready;
-
-MC: wait until C2 ready;
-MC: wait until C3 ready;
 
 C2: commit;
 MC: wait until C2 ready;
