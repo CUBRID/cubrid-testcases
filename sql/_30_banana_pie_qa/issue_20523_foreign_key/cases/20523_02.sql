@@ -1,12 +1,9 @@
 -- TEST CASE For:
--- [CBRD-20523] Foreign Key Referential Constraints check on INSERT
+-- [CBRD-20523] Foreign Key Referential Constraints check on UPDATE
 -- Notice:
 -- We changed the rule to check 'Foreign Key Referential Constraints' on INSERT/UPDATE
 -- So, apply of this test case to former CUBRID will lead to verdict 'fail'
 --
--- 
--- CREATE two TABLEs, Parent/Child Respectively
--- 
 -- 1. CREATE Parent TABLE
 CREATE TABLE a_tbl (
 ID INT,
@@ -33,14 +30,24 @@ INSERT INTO b_tbl VALUES (102,2,2,'John');
 INSERT INTO b_tbl VALUES (103,NULL,NULL,'Mary');
 -- 5. Check the result of INSERT
 select * from b_tbl;
--- 6. INSERT INTO CHILD TABLE(Check Foreign Key Referential Constraints check condition)
-INSERT INTO b_tbl VALUES (201,NULL,1,'Bill');
-INSERT INTO b_tbl VALUES (202,9,NULL,'Harry');
--- 7. Check Result
-select * from b_tbl;
--- Case3: not permitted
--- 8. This is the error case: CUBRID should respond it is ERROR.
-INSERT INTO b_tbl VALUES (301,9,1,'Jane');
--- 9. drop Tables
+--
+-- 6. DO Update
+UPDATE b_tbl
+set id=NULL
+where id_b = 101;
+
+UPDATE b_tbl
+set id=8
+where id_b= 103;
+--
+-- 7. Check RESULT for verdict
+--
+SELECT * FROM B_TBL;
+--
+-- 8. This should be failed
+UPDATE b_tbl
+set name_id = 1
+where id_b = 103;
+
 drop class b_tbl;
 drop class a_tbl;
