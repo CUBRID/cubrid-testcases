@@ -1,9 +1,13 @@
 -- TEST CASE For:
--- [CBRD-20523] Foreign Key Referential Constraints check on UPDATE
+-- [CBRD-20523] Foreign Key Referential
+--   Constraints on check on UPDATE
 -- Notice:
--- We changed the rule to check 'Foreign Key Referential Constraints' on INSERT/UPDATE
--- So, apply of this test case to former CUBRID will lead to verdict 'fail'
+--   We changed the rule to check 'Foreign Key
+--   Referential Constraints' on INSERT/UPDATE
+--   So, apply this test case to former CUBRID
+--   will lead to verdict 'fail'
 --
+DROP TABLE IF EXISTS a_tbl;
 -- 1. CREATE Parent TABLE
 CREATE TABLE a_tbl (
 ID INT,
@@ -11,7 +15,9 @@ name_id INT,
 phone VARCHAR(10),
 CONSTRAINT pk_id PRIMARY KEY (id,name_id)
 );
--- 2. CREATE Child TABLE WITH FOREIGN KEY
+--
+DROP TABLE IF EXISTS b_tbl;
+-- 2. CREATE Child TABLE WITH FOREIGN KEYs
 CREATE TABLE b_tbl (
 ID_b INT NOT NULL,
 ID INT,
@@ -44,10 +50,10 @@ where id_b= 103;
 --
 SELECT * FROM B_TBL;
 --
--- 8. This should be failed
+-- 8. NOT PERMITTED CASE: (Invalid Foreign Key)
 UPDATE b_tbl
 set name_id = 1
 where id_b = 103;
-
+-- DROP Tables
 drop class b_tbl;
 drop class a_tbl;
