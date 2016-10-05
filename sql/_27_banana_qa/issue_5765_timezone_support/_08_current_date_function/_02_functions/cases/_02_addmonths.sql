@@ -1,4 +1,5 @@
 --+ holdcas on;
+-- modified for timezone difference of two cities
 set @x1=(select adddate(current_date,interval 1 month));
 set @x2=(select add_months(current_date,1));
 select if(month(@x1)-month(@x2)=0,'ok','nok');
