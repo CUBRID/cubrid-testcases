@@ -7,7 +7,9 @@
 --   So, apply this test case to former CUBRID
 --   will lead to verdict 'fail'
 --
+DROP TABLE IF EXISTS b_tbl;
 DROP TABLE IF EXISTS a_tbl;
+
 -- 1. CREATE Parent TABLE
 CREATE TABLE a_tbl (
 ID INT,
@@ -15,8 +17,7 @@ name_id INT,
 phone VARCHAR(10),
 CONSTRAINT pk_id PRIMARY KEY (id,name_id)
 );
---
-DROP TABLE IF EXISTS b_tbl;
+
 -- 2. CREATE Child TABLE WITH FOREIGN KEYs
 CREATE TABLE b_tbl (
 ID_b INT NOT NULL,
@@ -35,7 +36,7 @@ INSERT INTO b_tbl VALUES (101,1,1,'George');
 INSERT INTO b_tbl VALUES (102,2,2,'John');
 INSERT INTO b_tbl VALUES (103,NULL,NULL,'Mary');
 -- 5. Check the result of INSERT
-select * from b_tbl;
+select * from b_tbl order by 1;
 --
 -- 6. DO Update
 UPDATE b_tbl
@@ -48,7 +49,7 @@ where id_b= 103;
 --
 -- 7. Check RESULT for verdict
 --
-SELECT * FROM B_TBL;
+SELECT * FROM B_TBL order by 1;
 --
 -- 8. NOT PERMITTED CASE: (Invalid Foreign Key)
 UPDATE b_tbl
