@@ -47,7 +47,8 @@ C1: COMMIT WORK;
 MC: wait until C1 ready;
 
 /* test case */
-C1: DELETE FROM t1 WHERE read_count = 0 and 0 = (select sleep(4)); 
+C1: DELETE FROM t1 WHERE read_count = 0; 
+MC: wait until C1 ready;
 C2: SELECT DECR(read_count) FROM t1 WHERE id = 3;
 /* expect: no transactions need to wait, assume C2 finished before C1 */
 MC: wait until C2 ready;
