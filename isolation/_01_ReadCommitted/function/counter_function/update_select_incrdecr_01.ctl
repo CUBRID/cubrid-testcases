@@ -48,10 +48,10 @@ C1: COMMIT WORK;
 MC: wait until C1 ready;
 
 /* test case */
-C1: UPDATE t1 SET read_count = 6 WHERE read_count >= 5 and sleep(4)=0; 
 C2: SELECT INCR(read_count) FROM t1 WHERE id = 5;
 /* expect: no transactions need to wait, assume C2 finished before C1 */
 MC: wait until C2 ready;
+C1: UPDATE t1 SET read_count = 6 WHERE read_count >= 5 ;
 MC: wait until C1 ready;
 /* expect: C2 select - id = 5 is updated */
 C2: SELECT * FROM t1 order by 1,2,3;
