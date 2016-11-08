@@ -26,3 +26,6 @@ select * from t3;
 alter table t3 change s1 s1 char(200);
 select disk_size(s1), length(s1) from t3; 
 select * from t3;
+
+
+drop table if exists t1, t2, t3;
