@@ -13,9 +13,9 @@ insert into sub_t1 values('Moon', 27);
 insert into sub_t1 values('Star', 22);
 insert into sub_t1 values('K', 21);
 
-select * from t1;
+select * from t1 order by 1,2;
 
-select * from sub_t1;
+select * from sub_t1 order by 1,2;
 
 drop class t1;
 drop class sub_t1;

@@ -16,6 +16,6 @@ insert into t1 values({301,202},{'xxx','yyyy','xxx'},
                        {date'05/18/2008', date'05/19/2008', date'05/08/1998'});
 insert into t1 (c1) values(select c1 from t1 where c1 = {101,102});
 
-select * from t1 order by 1;
+select * from t1 order by 1,2,3;
 
 drop class t1;                                             
