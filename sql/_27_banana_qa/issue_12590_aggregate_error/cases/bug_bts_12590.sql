@@ -7,6 +7,6 @@ insert into t1 values(2);
 insert into t1 values(3);
 insert into t2 values(1);
 insert into t2 values(2);
-select (select sum(t1.i) from t2) from t1;
+select (select sum(t1.i) from t2) from t1 order by 1;
 drop table if exists t1;
 drop table if exists t2;

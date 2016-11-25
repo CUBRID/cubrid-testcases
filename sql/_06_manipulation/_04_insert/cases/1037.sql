@@ -12,8 +12,8 @@ insert into t2 values(1, (insert into t1 values(6,'g') to t01));
 
 insert into t2 values(2, t01);
 insert into t2 values(3, t01);
-select * from t1;
-select c1,c2.c1,c2.c2 from t2;
+select * from t1 order by 1,2;
+select c1,c2.c1,c2.c2 from t2 order by 1,2;
 drop variable t01;
 insert into t2 values(4, t01);
 insert into t2 values(5, t01);

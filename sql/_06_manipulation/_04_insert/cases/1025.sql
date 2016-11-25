@@ -4,5 +4,5 @@ insert into t1 values(1001, {'golf', 'handicap'});
 insert into t1 values(1002, {'football', 'basketball'});
 insert into t1 values(1003, {'xxx', 'yyy', 'zzz'});
 
-select * from t1;
+select * from t1 order by 1;
 drop class t1;

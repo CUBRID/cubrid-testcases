@@ -28,9 +28,9 @@ insert into foo values ( 3, 3, 2147483647, null );
 insert into foo values ( 3, 3, 2147483647, '2013-10-10 12:12:12.111' );
 
 
-select * from foo where a = 1 and b >= 3 using index none;
-select * from foo where a = 2 and b >= 3 using index none;
-select * from foo where a = 3 and b >= 3 using index none;
+select * from foo where a = 1 and b >= 3 using index none order by c,d;
+select * from foo where a = 2 and b >= 3 using index none order by c,d;
+select * from foo where a = 3 and b >= 3 using index none order by c,d;
 
 create index idx1 on foo ( a , b , c );
 select a, b from foo where a = 1 and b >= 3 using index idx1 order by b desc;

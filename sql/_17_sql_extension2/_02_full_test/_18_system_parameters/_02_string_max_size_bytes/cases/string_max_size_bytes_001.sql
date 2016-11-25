@@ -33,7 +33,7 @@ select a, length(group_concat(b)) from foo group by a order by 1;
 
 set system parameters 'group_concat_max_len=100';
 select length(b) from foo order by 1;
-select a, group_concat(b order by b desc) from foo group by a order by 1;
+select a, group_concat(b order by b) from foo group by a order by 1;
 select a, length(group_concat(b)) from foo group by a order by 1;
 
 drop table foo;

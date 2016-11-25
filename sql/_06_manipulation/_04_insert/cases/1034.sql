@@ -15,5 +15,5 @@ insert into t1 values(t01.col1, t01.col2);
 insert into t1 values(t01.col1, t01.col2);
 insert into t1 values(t01.col1, t01.col2);
 
-select * from t1;
+select * from t1 order by 1,2;
 drop class t1;

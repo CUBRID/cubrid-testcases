@@ -6,21 +6,21 @@ insert into t1 values(2,'2013-12-2',n'Welcome',2);
 insert into t1 values(2,'2013-10-12',n'welcome',2); 
 insert into t1 values(2,'2013-10-12',n'welcome',3);
 
-select a, max(b) from t1 group by d;
-select a, max(b) - min(b) from t1 group by c, d;
-select a, max(b) from t1 group by d having min(b)>'2013-1-4';
-select a, max(b) from (select a, b from t1 where d>1 order by a, b) group by a, b;
-select a, max(b) from (select a, b from t1 where d>1 order by a, b) group by b;
-select a, count(c) from t1 group by b;
+select a, max(b) from t1 group by d order by 1,2;
+select a, max(b) - min(b) from t1 group by c, d order by 1,2;
+select a, max(b) from t1 group by d having min(b)>'2013-1-4' order by 1,2;
+select a, max(b) from (select a, b from t1 where d>1 order by a, b) group by a, b order by 1,2;
+select a, max(b) from (select a, b from t1 where d>1 order by a, b) group by b order by 1,2;
+select a, count(c) from t1 group by b order by 1,2;
 
 
 
-select /*+ no_hash_aggregation */ a, max(b) from t1 group by d;
-select /*+ no_hash_aggregation */ a, max(b) - min(b) from t1 group by c, d;
-select /*+ no_hash_aggregation */ a, max(b) from t1 group by d having min(b)>'2013-1-4';
-select /*+ no_hash_aggregation */ a, max(b) from (select a, b from t1 where d>1 order by a, b) group by a, b;
-select /*+ no_hash_aggregation */ a, max(b) from (select a, b from t1 where d>1 order by a, b) group by b;
-select /*+ no_hash_aggregation */ a, count(c) from t1 group by b;
+select /*+ no_hash_aggregation */ a, max(b) from t1 group by d order by 1,2;
+select /*+ no_hash_aggregation */ a, max(b) - min(b) from t1 group by c, d order by 1,2;
+select /*+ no_hash_aggregation */ a, max(b) from t1 group by d having min(b)>'2013-1-4' order by 1,2;
+select /*+ no_hash_aggregation */ a, max(b) from (select a, b from t1 where d>1 order by a, b) group by a, b order by 1,2;
+select /*+ no_hash_aggregation */ a, max(b) from (select a, b from t1 where d>1 order by a, b) group by b order by 1,2;
+select /*+ no_hash_aggregation */ a, count(c) from t1 group by b order by 1,2;
 
 
 drop table t1;
@@ -36,25 +36,25 @@ insert into t4 values(10086,{'a6b','dfffffffffffffffff', '261'}, {'11999','2013-
 insert into t4 values(10110,{'abf','dfffffffffffffffff', '291'}, {'11999','2013-1-1','fff'}, {'fb','cd'}, {'7'});
 insert into t4 values(10110,{'ab','dfffffffffffffffff', '2112'}, {'11999','2013-1-1','fff'}, {'fb','cd'}, {'a'});
 
-select id, max(id) from t4 group by a;
-select id, max(id) from t4 group by b;
-select id, max(id) from t4 group by c;
-select id, max(id) from t4 group by d;
-select id, max(id) from t4 group by a,b,c,d;
-select id, max(id) from t4 group by b ASC;
-select id, max(id) from t4 group by b DESC;
-select id, max(id) from t4 group by b with rollup;
-select id, sum(id), avg(id), sum(id)/avg(id) from t4 group by a,b,c,d;
+select group_concat(id order by id), max(id) from t4 group by a order by 1,2;
+select group_concat(id order by id), max(id) from t4 group by b order by 1,2;
+select group_concat(id order by id), max(id) from t4 group by c order by 1,2;
+select group_concat(id order by id), max(id) from t4 group by d order by 1,2;
+select group_concat(id order by id), max(id) from t4 group by a,b,c,d order by 1,2;
+select group_concat(id order by id), max(id) from t4 group by b ASC order by 1,2;
+select group_concat(id order by id), max(id) from t4 group by b DESC order by 1,2;
+select group_concat(id order by id), max(id) from t4 group by b with rollup order by 1,2;
+select group_concat(id order by id), sum(id), avg(id), sum(id)/avg(id) from t4 group by a,b,c,d order by 1,2;
 
-select /*+ no_hash_aggregation */ id, max(id) from t4 group by a;
-select /*+ no_hash_aggregation */ id, max(id) from t4 group by b;
-select /*+ no_hash_aggregation */ id, max(id) from t4 group by c;
-select /*+ no_hash_aggregation */ id, max(id) from t4 group by d;
-select /*+ no_hash_aggregation */ id, max(id) from t4 group by a,b,c,d;
-select /*+ no_hash_aggregation */ id, max(id) from t4 group by b ASC;
-select /*+ no_hash_aggregation */ id, max(id) from t4 group by b DESC;
-select /*+ no_hash_aggregation */ id, max(id) from t4 group by b with rollup;
-select /*+ no_hash_aggregation */ id, sum(id), avg(id), sum(id)/avg(id) from t4 group by a,b,c,d;
+select /*+ no_hash_aggregation */ group_concat(id order by id), max(id) from t4 group by a order by 1,2;
+select /*+ no_hash_aggregation */ group_concat(id order by id), max(id) from t4 group by b order by 1,2;
+select /*+ no_hash_aggregation */ group_concat(id order by id), max(id) from t4 group by c order by 1,2;
+select /*+ no_hash_aggregation */ group_concat(id order by id), max(id) from t4 group by d order by 1,2;
+select /*+ no_hash_aggregation */ group_concat(id order by id), max(id) from t4 group by a,b,c,d order by 1,2;
+select /*+ no_hash_aggregation */ group_concat(id order by id), max(id) from t4 group by b ASC order by 1,2;
+select /*+ no_hash_aggregation */ group_concat(id order by id), max(id) from t4 group by b DESC order by 1,2;
+select /*+ no_hash_aggregation */ group_concat(id order by id), max(id) from t4 group by b with rollup order by 1,2;
+select /*+ no_hash_aggregation */ group_concat(id order by id), sum(id), avg(id), sum(id)/avg(id) from t4 group by a,b,c,d order by 1,2;
 
 drop table t4;
 
@@ -77,21 +77,21 @@ insert into t5 values(-133333, 'Welcome to use CUBRID', 'For more details please
 insert into t5 values(799, 'Welcome to use CUBRIDff', 'For more details please refer to fmanual', 'Topic Quick Reference Table', 'The contents of the CUBRID Datiabase Management System (CUBRID DBMS) product manual are as follows:');
 insert into t5 select * from t5;
 
-select id, sum(id) from t5 where id <> 0 group by a;
-select id, sum(id) from t5 where id <> 0 group by b;
-select id, sum(id) from t5 where id <> 0 group by c;
-select id, sum(id) from t5 where id <> 0 group by d;
-select id, sum(id) from t5 where id <> 0 group by a, b;
-select id, sum(id) from t5 where id <> 0 group by a, c;
-select id, sum(id) from t5 where id <> 0 group by a, d;
+select group_concat(id order by id), sum(id) from t5 where id <> 0 group by a order by 1,2;
+select group_concat(id order by id), sum(id) from t5 where id <> 0 group by b order by 1,2;
+select group_concat(id order by id), sum(id) from t5 where id <> 0 group by c order by 1,2;
+select group_concat(id order by id), sum(id) from t5 where id <> 0 group by d order by 1,2;
+select group_concat(id order by id), sum(id) from t5 where id <> 0 group by a, b order by 1,2;
+select group_concat(id order by id), sum(id) from t5 where id <> 0 group by a, c order by 1,2;
+select group_concat(id order by id), sum(id) from t5 where id <> 0 group by a, d order by 1,2;
 
-select /*+ no_hash_aggregation */ id, sum(id) from t5 where id <> 0 group by a;
-select /*+ no_hash_aggregation */ id, sum(id) from t5 where id <> 0 group by b;
-select /*+ no_hash_aggregation */ id, sum(id) from t5 where id <> 0 group by c;
-select /*+ no_hash_aggregation */ id, sum(id) from t5 where id <> 0 group by d;
-select /*+ no_hash_aggregation */ id, sum(id) from t5 where id <> 0 group by a, b;
-select /*+ no_hash_aggregation */ id, sum(id) from t5 where id <> 0 group by a, c;
-select /*+ no_hash_aggregation */ id, sum(id) from t5 where id <> 0 group by a, d;
+select /*+ no_hash_aggregation */ group_concat(id order by id), sum(id) from t5 where id <> 0 group by a order by 1,2;
+select /*+ no_hash_aggregation */ group_concat(id order by id), sum(id) from t5 where id <> 0 group by b order by 1,2;
+select /*+ no_hash_aggregation */ group_concat(id order by id), sum(id) from t5 where id <> 0 group by c order by 1,2;
+select /*+ no_hash_aggregation */ group_concat(id order by id), sum(id) from t5 where id <> 0 group by d order by 1,2;
+select /*+ no_hash_aggregation */ group_concat(id order by id), sum(id) from t5 where id <> 0 group by a, b order by 1,2;
+select /*+ no_hash_aggregation */ group_concat(id order by id), sum(id) from t5 where id <> 0 group by a, c order by 1,2;
+select /*+ no_hash_aggregation */ group_concat(id order by id), sum(id) from t5 where id <> 0 group by a, d order by 1,2;
 
 drop table t5;
 
