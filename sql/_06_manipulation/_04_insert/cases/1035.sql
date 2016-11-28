@@ -12,8 +12,8 @@ insert into t2 values(1, insert into t1 values(6,'g'));
 insert into t2 values(2, insert into t1 values(7,'h'));
 
 
-select * from t1;
-select c1,c2.c1,c2.c2 from t2;
+select * from t1 order by 1;
+select c1,c2.c1,c2.c2 from t2 order by 1;
 
 drop class t1;
 drop class t2;
