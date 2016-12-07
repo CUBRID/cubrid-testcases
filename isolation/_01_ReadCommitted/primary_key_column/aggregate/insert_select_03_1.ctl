@@ -31,17 +31,17 @@ C3: set transaction isolation level read committed;
 C1: drop table if exists t;
 C1: create table t(id bigint  primary key,col varchar(10));
 C1: set @newincr=0;
-C1: insert into t select (@newincr:=@newincr+1),(@newincr)%100 from db_class a,db_class b,db_class c,db_class d limit 100000;
+C1: insert into t select (@newincr:=@newincr+1),(@newincr)%100 from db_class a,db_class b,db_class c,db_class d limit 10000;
 C1: commit;
 C1: update t set id=id-1,col=col+id;
 C1: commit;
 MC: wait until C1 ready;
 
 /* test case */
-C1: update t set id=id+100000 where id%4=0;
+C1: update t set id=id+10000 where id%4=0;
 MC: wait until C1 ready;
 
-C2: insert into t select id+100000,col from t where id%2=1;
+C2: insert into t select id+10000,col from t where id%2=1;
 MC: wait until C2 ready;
 
 C3: select distinct min(id)>id-col+8,max(id)!=789 from t group by col;
