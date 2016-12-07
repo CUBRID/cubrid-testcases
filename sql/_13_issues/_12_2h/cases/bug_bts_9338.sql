@@ -7,7 +7,7 @@ select count(*)  from tbl;
 
 select count (i) from tbl;
 
-select * from tbl limit 1;
+select * from tbl order by i limit 1;
 
 drop table tbl;
 
@@ -19,7 +19,7 @@ select count(*)  from tbl;
 
 select count (i) from tbl;
 
-select * from tbl limit 1;
+select * from tbl order by i limit 1;
 
 drop table tbl;
 
@@ -33,7 +33,7 @@ select count (j) from tbl;
 
 select count (i) from tbl;
 
-select * from tbl limit 1;
+select * from tbl order by i limit 1;
 
 drop table tbl;
 
