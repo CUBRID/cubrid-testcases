@@ -46,7 +46,7 @@ MC: wait until C1 ready;
 C1: update t1 set col='aa' where id<4;
 C1: select * from t1 order by 1,2;
 MC: wait until C1 ready;
-C2: update t1 set col='bb' where col='abc';
+C2: update t1 set col='bb' where col='abc' and (select sleep(2)=0);
 MC: wait until C2 blocked;
 C3: update t1 set id=6 where id>2; 
 MC: wait until C3 blocked;
