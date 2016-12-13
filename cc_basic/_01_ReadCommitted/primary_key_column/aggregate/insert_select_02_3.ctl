@@ -31,17 +31,17 @@ C3: set transaction isolation level read committed;
 C1: drop table if exists t;
 C1: create table t(id bigint primary key,col varchar(10));
 C1: set @newincr=0;
-C1: insert into t select (@newincr:=@newincr+1),(@newincr)%100 from db_class a,db_class b,db_class c,db_class d limit 100000;
+C1: insert into t select (@newincr:=@newincr+1),(@newincr)%100 from db_class a,db_class b,db_class c,db_class d limit 10000;
 C1: commit;
 C1: update t set id=id-1,col=col+1;
 C1: commit;
 MC: wait until C1 ready;
 
 /* test case */
-C1: update t set id=id+100000 where id%2=0;
+C1: update t set id=id+10000 where id%2=0;
 MC: wait until C1 ready;
 
-C2: insert into t select id+100000,col from t where id%3=0;
+C2: insert into t select id+10000,col from t where id%3=0;
 MC: wait until C2 blocked;
 
 C3: select avg(t1.id) from t t1 left outer join (select sum(t.col) as col from t where id>5) as t2 on t1.id=t2.col group by t2.col;
