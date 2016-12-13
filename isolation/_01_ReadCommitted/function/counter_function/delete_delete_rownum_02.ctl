@@ -42,6 +42,7 @@ C1: DROP TABLE IF EXISTS t1;
 C1: CREATE TABLE t1(id INT, col VARCHAR(10), tag VARCHAR(2));
 C1: INSERT INTO t1 VALUES(1,'abc','A'),(2,'def','B'),(3,'ghi','C'),(4,'jkl','D'),(5,'mno','E'),(6,'pqr','F'),(7,'abc','G');
 C1: COMMIT WORK;
+C1: SELECT count(*) FROM t1;
 MC: wait until C1 ready;
 
 /* test case */
@@ -50,16 +51,16 @@ MC: wait until C1 ready;
 C2: DELETE FROM t1 WHERE ROWNUM <= 2; 
 /* expect: C2 needs to wait until C1 completed */
 MC: wait until C2 blocked;
-/* expect: C1 select - id = 1,2,3 are deleted */
-C1: SELECT * FROM t1 order by 1,2,3;
+/* expect: C1 3 rows deleted */
+C1: SELECT count(*) FROM t1;
 C1: commit;
-/* expect: 2 rows (id=4,5)deleted message should generated once C2 ready, C2 select - id = 1-5 are deleted */
+/* expect: 2 rows deleted message should generated once C2 ready */
 MC: wait until C2 ready;
-C2: SELECT * FROM t1 order by 1,2,3;
+C2: SELECT count(*) FROM t1;
 C2: commit;
 MC: wait until C2 ready;
-/* expect: the instances of id = 1,2,3,4,5 are deleted */
-C3: select * from t1 order by 1,2,3;
+/* expect: 5 rows deleted */
+C3: select count(*) from t1;
 C3: commit;
 
 C1: quit;
