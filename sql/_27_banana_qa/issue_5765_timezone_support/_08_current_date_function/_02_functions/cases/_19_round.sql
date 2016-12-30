@@ -1,5 +1,5 @@
 --+ holdcas on;
-set timezone '-01:00';
+set timezone '+01:00';
 set @x1=(select round(current_date,'yy'));
 set timezone '+14:00';
 set @x2=(select round(current_date,'yy'));
