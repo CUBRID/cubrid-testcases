@@ -3,7 +3,7 @@
 
 --1. marginal values: timestamptz argument
 --select week(timestamptz'00:00:00 01/01');
-select if(week(timestamptz'00:00:00 01/01')=week(timestamptz'00:00:00 01/01/2014'),'ok','nok');
+select if( week(timestamptz'00:00:00 01/01') - week(timestamptz'00:00:00 01/01/2014') in (0,1),'ok','nok');
 
 select week(timestamptz'03:14:07 1/19/2038');
 
