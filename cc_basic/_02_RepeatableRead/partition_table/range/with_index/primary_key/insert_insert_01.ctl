@@ -31,21 +31,25 @@ MC: wait until C1 ready;
 
 /* test case */
 C1: insert into t values(1,'abc');
+MC: wait until C1 ready;
 C2: insert into t values(1,'abc');
 MC: wait until C2 blocked;
 
 /* expect (1,'abc') */
 C1: select * from t order by 1;
 C1: rollback work;
+MC: wait until C1 ready;
 
 MC: wait until C2 ready;
 /* expect (11,'abc')*/
 C2: select * from t order by 1;
 C2: commit work;
+MC: wait until C2 ready;
 
 /* expect (11,'abc')*/
 C1: select * from t order by 1;
 C1: commit;
+MC: wait until C1 ready;
 
 C2: quit;
 C1: quit;
