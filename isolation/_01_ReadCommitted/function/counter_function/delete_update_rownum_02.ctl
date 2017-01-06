@@ -51,16 +51,17 @@ MC: wait until C1 ready;
 C2: UPDATE t1 SET tag = 'X' WHERE ROWNUM >= 6; 
 /* expect: C2 needs to wait until C1 completed */
 MC: wait until C2 blocked;
-/* expect: C1 select - id = 5,6,7 are deleted */
-C1: SELECT * FROM t1 order by 1,2;
+/* expect: C1 3 rows are deleted */
+C1: SELECT count(*) FROM t1;
 C1: commit;
 /* expect: no instance updated message once C2 ready, C2 select - no instance is deleted */
 MC: wait until C2 ready;
-C2: SELECT * FROM t1 order by 1,2;
+C2: SELECT count(*) FROM t1;
 C2: commit;
 MC: wait until C2 ready;
-/* expect: the instances of id = 5,6,7 are deleted, no instance is updated */
-C3: select * from t1 order by 1,2;
+/* expect: left 4 rows and no tag is updated to 'X' */
+C3: select count(*) from t1;
+C3: select * from t1 where tag = 'X' ;
 C3: commit;
 MC: wait until C3 ready;
 
