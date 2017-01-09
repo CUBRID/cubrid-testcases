@@ -51,14 +51,14 @@ C2: DELETE FROM t1 WHERE ROWNUM < 3;
 /* expect: no transactions need to wait */
 MC: wait until C2 blocked;
 
-/* expect: C1 select - id = 6,7 are deleted */
-C1: SELECT * FROM t1 order by 1,2,3;
+/* expect: C1 2 rows are deleted */
+C1: SELECT count(*) FROM t1;
 C1: commit;
 MC: wait until C1 ready;
 MC: wait until C2 ready;
 
-/* expect: C2 select - id = 1,2 are deleted */
-C2: SELECT * FROM t1 order by 1,2,3;
+/* expect: C2 2 rows are deleted */
+C2: SELECT count(*) FROM t1;
 MC: wait until C2 ready;
 
 C1: commit;
@@ -67,8 +67,8 @@ MC: wait until C1 ready;
 C2: commit;
 MC: wait until C2 ready;
 
-/* expect: the instances of id = 1,2,6,7 are deleted */
-C3: select * from t1 order by 1,2,3;
+/* expect: left 3 rows */
+C3: select count(*) from t1;
 MC: wait until C3 ready;
 
 C1: quit;
