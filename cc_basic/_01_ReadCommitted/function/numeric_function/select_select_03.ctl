@@ -42,10 +42,10 @@ C1: COMMIT WORK;
 MC: wait until C1 ready;
 
 /* test case */
-C1: SELECT * FROM t1 WHERE ABS(status) = 1; 
+C1: SELECT * FROM t1 WHERE ABS(status) = 1 order by id; 
 MC: wait until C1 ready;
 
-C2: SELECT * FROM t1 WHERE title IN ('book1','book3','book7'); 
+C2: SELECT * FROM t1 WHERE title IN ('book1','book3','book7') order by id; 
 /* expect: no transactions need to wait, assume C1 finished before C2 */
 MC: wait until C2 ready;
 /* expect: C1 select - id = 4,6 are selected */
