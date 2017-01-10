@@ -3,7 +3,7 @@
 
 --1. pass different formats of timestamptz arguments
 --select week(timestamptz'13:14:55 10/08');
-select if(week(timestamptz'13:14:55 10/08')=week(timestamptz'13:14:55 10/08/2014'),'ok','nok');
+select if( abs(week(timestamptz'13:14:55 10/08')-week(timestamptz'13:14:55 10/08/2014')) in (0,1),'ok','nok');
 
 select week(timestamptz'2:22:22 8/12/2010');
 
