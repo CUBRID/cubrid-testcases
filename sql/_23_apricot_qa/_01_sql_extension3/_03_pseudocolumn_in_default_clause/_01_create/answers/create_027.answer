@@ -7,12 +7,6 @@
 ===================================================
 0
 ===================================================
-Field    Type    Null    Key    Default    Extra    
-col1     TIMESTAMP     YES          CURRENT_TIMESTAMP          
-col2     TIMESTAMP     YES          UNIX_TIMESTAMP          
-col3     DATETIME     YES          SYS_TIMESTAMP          
-
-===================================================
 1
 ===================================================
 if(( SYS_TIMESTAMP -col1)<2 and ( SYS_TIMESTAMP -col2)<2 and ( SYS_DATETIME -col3)<2000, 'ok', 'nok')    
@@ -21,6 +15,12 @@ ok
 ok     
 
 ===================================================
+Field    Type    Null    Key    Default    Extra    
+col1     TIMESTAMP     YES          CURRENT_TIMESTAMP          
+col2     TIMESTAMP     YES          UNIX_TIMESTAMP          
+col3     DATETIME     YES          SYS_TIMESTAMP          
+
+===================================================
 0
 ===================================================
 0
@@ -32,6 +32,17 @@ ok
 1
 ===================================================
 0
+===================================================
+if(( SYS_DATE -col1)=0 and ( SYS_DATETIME -col2)<2000 and col3= CURRENT_USER , 'ok', 'nok')    
+ok     
+ok     
+
+===================================================
+1
+===================================================
+if(( SYS_DATE -col1)=0 and ( SYS_DATETIME -col2)<2000 and col3= CURRENT_USER , 'ok', 'nok')    
+ok     
+
 ===================================================
 Field    Type    Null    Key    Default    Extra    
 col1     DATE     YES          SYS_DATE          
@@ -40,19 +51,6 @@ col3     VARCHAR(1073741823)     YES          CURRENT_USER
 col4     CHAR(20)     YES          CURRENT_USER          
 
 ===================================================
-if(( SYS_DATE -col1)=0 and ( SYS_DATETIME -col2)<2000 and col3= CURRENT_USER , 'ok', 'nok')    
-ok     
-ok     
-
-===================================================
-1
-===================================================
-if(( SYS_DATE -col1)=0 and ( SYS_DATETIME -col2)<2000 and col3= CURRENT_USER , 'ok', 'nok')    
-ok     
-ok     
-ok     
-
-===================================================
 0
 ===================================================
 0
@@ -62,6 +60,16 @@ ok
 1
 ===================================================
 0
+===================================================
+if(( SYS_TIMESTAMP -col1)<2000 and ( SYS_TIMESTAMP -col2)<2000 and ( SYS_DATETIME -col3)<2000, 'ok', 'nok')    
+ok     
+
+===================================================
+1
+===================================================
+if(( SYS_TIMESTAMP -col1)<2000 and ( SYS_TIMESTAMP -col2)<2000 and ( SYS_DATETIME -col3)<2000, 'ok', 'nok')    
+ok     
+
 ===================================================
 Field    Type    Null    Key    Default    Extra    
 col1     DATETIME     NO          CURRENT_TIMESTAMP          
@@ -69,17 +77,6 @@ col2     TIMESTAMP     NO          UNIX_TIMESTAMP
 col3     DATETIME     YES          SYS_TIMESTAMP          
 
 ===================================================
-if(( SYS_TIMESTAMP -col1)<2000 and ( SYS_TIMESTAMP -col2)<2000 and ( SYS_DATETIME -col3)<2000, 'ok', 'nok')    
-ok     
-
-===================================================
-1
-===================================================
-if(( SYS_TIMESTAMP -col1)<2000 and ( SYS_TIMESTAMP -col2)<2000 and ( SYS_DATETIME -col3)<2000, 'ok', 'nok')    
-ok     
-ok     
-
-===================================================
 0
 ===================================================
 0
@@ -89,22 +86,21 @@ ok
 1
 ===================================================
 0
+===================================================
+if(( SYS_DATE -col1)=0 and ( SYS_DATETIME -col2)<2000 and col4= CURRENT_USER , 'ok', 'nok')    
+ok     
+
+===================================================
+1
+===================================================
+if(( SYS_DATE -col1)=0 and ( SYS_DATETIME -col2)<2000 and col4= CURRENT_USER , 'ok', 'nok')    
+ok     
+
 ===================================================
 Field    Type    Null    Key    Default    Extra    
 col1     DATE     NO          SYS_DATE          
 col2     DATETIME     YES          SYS_DATETIME          
 col4     CHAR(20)     NO          CURRENT_USER          
-
-===================================================
-if(( SYS_DATE -col1)=0 and ( SYS_DATETIME -col2)<2000 and col4= CURRENT_USER , 'ok', 'nok')    
-ok     
-
-===================================================
-1
-===================================================
-if(( SYS_DATE -col1)=0 and ( SYS_DATETIME -col2)<2000 and col4= CURRENT_USER , 'ok', 'nok')    
-ok     
-ok     
 
 ===================================================
 0
