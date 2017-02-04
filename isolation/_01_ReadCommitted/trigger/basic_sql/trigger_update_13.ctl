@@ -39,11 +39,11 @@ MC: wait until C1 ready;
 C2: commit;
 MC: wait until C2 ready;
 
-C1: SELECT * FROM tt1 ORDER BY id;
-C1: SELECT * FROM hi ORDER BY id;
+C1: SELECT * FROM tt1 ORDER BY id, col;
+C1: SELECT * FROM hi ORDER BY id, col;
 C1: commit work;
 MC: wait until C1 ready;
-C2: SELECT * FROM hi ORDER BY id;
+C2: SELECT * FROM hi ORDER BY id, col;
 
 C2: quit;
 C1: quit;
