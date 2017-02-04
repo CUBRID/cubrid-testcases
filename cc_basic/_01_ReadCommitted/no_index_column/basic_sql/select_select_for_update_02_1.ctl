@@ -43,10 +43,10 @@ C1: COMMIT WORK;
 MC: wait until C1 ready;
 
 /* test case */
-C1: SELECT * FROM t1 WHERE id >= 2 and id <= 3 FOR UPDATE;
+C1: SELECT * FROM t1 WHERE id >= 2 and id <= 3 order by 1 FOR UPDATE;
 MC: wait until C1 ready;
 
-C2: SELECT * FROM t1 WHERE id >= 1 and id <= 2;
+C2: SELECT * FROM t1 WHERE id >= 1 and id <= 2 order by 1;
 /* expect: C2 will not be blocked here */
 MC: wait until C2 ready;
 C1: UPDATE t1 SET col = 'abcd' WHERE id >= 2 and id <= 3;
