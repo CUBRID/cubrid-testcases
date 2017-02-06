@@ -32,7 +32,7 @@ C1: commit;
 MC: wait until C1 ready;
 
 /* test case */
-C1: select * from t1 where id=1 order by id;
+C1: select * from t1 where id=1 order by id, col;
 MC: wait until C1 ready;
 C2: update t1 set col='aa' where col='abc';
 MC: wait until C1 ready;
