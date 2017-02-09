@@ -28,4 +28,4 @@ INSERT INTO fk_test2(col1, col2) VALUES ('aa',null);
 INSERT INTO fk_test2(col1, col2) VALUES (NULL,'bb');
 
 ALTER TABLE fk_test2 ADD CONSTRAINT fk_test1_fk_another FOREIGN KEY (col1,col2) REFERENCES fk_test1(col1,col2);
-
+drop table if exists fk_test2, fk_test1;
