@@ -39,10 +39,10 @@ C1: COMMIT WORK;
 MC: wait until C1 ready;
 
 /* test case */
-C1: SELECT * FROM t1 WHERE TRIM(col) = 'def'; 
+C1: SELECT * FROM t1 WHERE TRIM(col) = 'def' order by 1; 
 MC: wait until C1 ready;
 
-C2: SELECT * FROM t1 WHERE INSTR(TRIM(col),'b') = 2;  
+C2: SELECT * FROM t1 WHERE INSTR(TRIM(col),'b') = 2 order by 1;  
 /* expect: no transactions need to wait, assume C1 finished before C2 */
 MC: wait until C2 ready;
 
