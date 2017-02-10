@@ -41,9 +41,9 @@ C1: COMMIT WORK;
 MC: wait until C1 ready;
 
 /* test case */
-C1: SELECT * FROM t1 WHERE RIGHT(col,3) = 'efg'; 
+C1: SELECT * FROM t1 WHERE RIGHT(col,3) = 'efg' order by 1; 
 MC: wait until C1 ready;
-C2: SELECT * FROM t1 WHERE RIGHT(col,3) = 'xyz'; 
+C2: SELECT * FROM t1 WHERE RIGHT(col,3) = 'xyz' order by 1; 
 /* expect: no transactions need to wait, assume C1 finished before C2 */
 MC: wait until C2 ready;
 /* expect: C1 select - id = 1,4 are selected */
