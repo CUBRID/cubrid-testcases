@@ -14,7 +14,7 @@ select count(*) from (select rand() / 100 from xoo) x;
 select count(*) from (select cast ( rand() as double) from xoo) x;
 select count(*) from (select to_char ( rand() ) from xoo) x;
 select count(*) from (select rand() + 100 from xoo) x;
-select count(*) from (select rand(), rand() from xoo) x;
+select count(*) from (select rand() rand_x, rand() rand_y from xoo) x;
 
 insert into xoo select to_number(rand()) from xoo;
 select count(*) from (select * from xoo) x;

@@ -9,7 +9,7 @@
 ===================================================
 1
 ===================================================
-a    b    J_3    
+a    b    count(foo.c)    
 1     1     3     
 
 Query plan:
@@ -26,9 +26,9 @@ sscan
     class: J node[?]
     cost:  ? card ?
 Query stmt:
-select J.a, J.b, J.J_? from (select foo.a, foo.b, count(foo.c) from foo foo group by foo.a) J (a, b, J_?)
+select J.a, J.b, J.[count(foo.c)] from (select foo.a, foo.b, count(foo.c) from foo foo group by foo.a) J (a, b, [count(foo.c)])
 ===================================================
-a    b    J_3    
+a    b    count(foo.c)    
 1     1     3     
 
 Query plan:
@@ -45,7 +45,7 @@ sscan
     class: J node[?]
     cost:  ? card ?
 Query stmt:
-select J.a, J.b, J.J_? from (select foo.a, foo.b, count(foo.c) from foo foo group by foo.a having foo.b= ?:? ) J (a, b, J_?)
+select J.a, J.b, J.[count(foo.c)] from (select foo.a, foo.b, count(foo.c) from foo foo group by foo.a having foo.b= ?:? ) J (a, b, [count(foo.c)])
 ===================================================
 a    b    count(c)    
 1     1     3     
@@ -242,7 +242,7 @@ select foo.a, foo.b, count(foo.c) from foo foo group by foo.a, foo.b having foo.
 ===================================================
 1
 ===================================================
-a    b    J_3    
+a    b    count(foo.c)    
 1     3     3     
 
 Query plan:
@@ -259,9 +259,9 @@ sscan
     class: J node[?]
     cost:  ? card ?
 Query stmt:
-select J.a, J.b, J.J_? from (select foo.a, foo.b, count(foo.c) from foo foo group by foo.a) J (a, b, J_?)
+select J.a, J.b, J.[count(foo.c)] from (select foo.a, foo.b, count(foo.c) from foo foo group by foo.a) J (a, b, [count(foo.c)])
 ===================================================
-a    b    J_3    
+a    b    count(foo.c)    
 
 Query plan:
 temp(group by)
@@ -277,9 +277,9 @@ sscan
     class: J node[?]
     cost:  ? card ?
 Query stmt:
-select J.a, J.b, J.J_? from (select foo.a, foo.b, count(foo.c) from foo foo group by foo.a having foo.b= ?:? ) J (a, b, J_?)
+select J.a, J.b, J.[count(foo.c)] from (select foo.a, foo.b, count(foo.c) from foo foo group by foo.a having foo.b= ?:? ) J (a, b, [count(foo.c)])
 ===================================================
-a    b    J_3    
+a    b    count(foo.c)    
 1     3     3     
 
 Query plan:
@@ -297,7 +297,7 @@ sscan
     class: J node[?]
     cost:  ? card ?
 Query stmt:
-select J.a, J.b, J.J_? from (select foo.a, foo.b, count(foo.c) from foo foo where foo.a= ?:?  group by foo.a) J (a, b, J_?)
+select J.a, J.b, J.[count(foo.c)] from (select foo.a, foo.b, count(foo.c) from foo foo where foo.a= ?:?  group by foo.a) J (a, b, [count(foo.c)])
 ===================================================
 a    b    count(c)    
 
@@ -510,7 +510,7 @@ select foo.a, foo.b, count(foo.c) from foo foo group by foo.a, foo.b having foo.
 ===================================================
 1
 ===================================================
-a    b    J_3    
+a    b    count(foo.c)    
 1     1     3     
 2     2     2     
 
@@ -531,9 +531,9 @@ temp(order by)
     sort:  ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select J.a, J.b, J.J_? from (select foo.a, foo.b, count(foo.c) from foo foo group by foo.a) J (a, b, J_?) order by ?, ?, ?
+select J.a, J.b, J.[count(foo.c)] from (select foo.a, foo.b, count(foo.c) from foo foo group by foo.a) J (a, b, [count(foo.c)]) order by ?, ?, ?
 ===================================================
-a    b    J_3    
+a    b    count(foo.c)    
 1     1     3     
 
 Query plan:
@@ -550,7 +550,7 @@ sscan
     class: J node[?]
     cost:  ? card ?
 Query stmt:
-select J.a, J.b, J.J_? from (select foo.a, foo.b, count(foo.c) from foo foo group by foo.a having foo.b= ?:? ) J (a, b, J_?)
+select J.a, J.b, J.[count(foo.c)] from (select foo.a, foo.b, count(foo.c) from foo foo group by foo.a having foo.b= ?:? ) J (a, b, [count(foo.c)])
 ===================================================
 a    b    count(c)    
 1     1     3     
@@ -729,7 +729,7 @@ select foo.a, foo.b, count(foo.c) from foo foo group by foo.a, foo.b+? having fo
 ===================================================
 1
 ===================================================
-a    b    J_3    
+a    b    count(foo.c)    
 1     1     3     
 2     1     2     
 
@@ -750,9 +750,9 @@ temp(order by)
     sort:  ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select J.a, J.b, J.J_? from (select foo.a, foo.b, count(foo.c) from foo foo group by foo.a) J (a, b, J_?) order by ?, ?, ?
+select J.a, J.b, J.[count(foo.c)] from (select foo.a, foo.b, count(foo.c) from foo foo group by foo.a) J (a, b, [count(foo.c)]) order by ?, ?, ?
 ===================================================
-a    b    J_3    
+a    b    count(foo.c)    
 1     1     3     
 2     1     2     
 
@@ -770,7 +770,7 @@ sscan
     class: J node[?]
     cost:  ? card ?
 Query stmt:
-select J.a, J.b, J.J_? from (select foo.a, foo.b, count(foo.c) from foo foo group by foo.a having foo.b= ?:? ) J (a, b, J_?)
+select J.a, J.b, J.[count(foo.c)] from (select foo.a, foo.b, count(foo.c) from foo foo group by foo.a having foo.b= ?:? ) J (a, b, [count(foo.c)])
 ===================================================
 a    b    count(c)    
 1     1     3     

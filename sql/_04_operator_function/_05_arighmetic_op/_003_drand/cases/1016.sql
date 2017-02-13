@@ -14,7 +14,7 @@ select count(*) from (select drand() / 100 from xoo) x;
 select count(*) from (select cast ( drand() as double) from xoo) x;
 select count(*) from (select to_char ( drand() ) from xoo) x;
 select count(*) from (select drand() + 100 from xoo) x;
-select count(*) from (select drand(), drand() from xoo) x;
+select count(*) from (select drand() drand_x, drand() drand_y from xoo) x;
 
 select count(*) from (select to_char(drand()) from xoo) x;
 select count(*) from (select * from xoo) x;
