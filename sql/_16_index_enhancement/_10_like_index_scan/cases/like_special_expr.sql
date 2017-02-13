@@ -28,7 +28,7 @@ set system parameters 'require_like_escape_character = true';
 
 set system parameters 'no_backslash_escapes = true';
 
-select * from tbl where c like '%';
+select * from tbl where c like '%' order by 1;
 
 set system parameters 'require_like_escape_character = false';
 
