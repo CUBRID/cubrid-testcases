@@ -20,5 +20,5 @@ SELECT n+1 FROM cte WHERE n < 5
 )
 SELECT * FROM cte;
 
-
+drop variable @v;
 drop table if exists t1;
