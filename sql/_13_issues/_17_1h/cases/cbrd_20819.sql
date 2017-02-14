@@ -92,5 +92,26 @@ GROUP BY a, bxx with rollup order by a,bxx
 )
 select * from cte_SVfQR2ylM;
 
+-- CBRD-20821 issue section
+drop table if exists t1;
+
+create table t1(a int, b int, c int);
+
+insert into t1 values(1,1,1);
+
+insert into t1 values(2,null,2);
+
+insert into t1 values(2,null,2);
+
+insert into t1 values(2,3,2);
+
+insert into t1 values(2,2,2);
+
+WITH cte_HIBnTj4yv AS
+(
+select a, b as bxx from t1 group by bxx having bxx is not null
+)
+select * from cte_HIBnTj4yv order by 1;
+
 drop table t1;
 
