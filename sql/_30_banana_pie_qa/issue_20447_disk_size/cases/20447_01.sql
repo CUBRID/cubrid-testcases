@@ -59,6 +59,25 @@ select disk_size(123) from t1;
 drop t1;
 
 
+drop table if exists t2;
+
+create table t2(i1 int,s1 string);
+
+insert into t2 values(1,repeat('abc',100));
+
+insert into t2 values(2,repeat('abc',100));
+
+insert into t2 values(3,repeat('def',100));
+
+create index idx_t2 on t2(s1);
+
+select disk_size(s1) from t2 where s1 like 'abc%';
+
+select disk_size(substr(s1,6,100)) from t2 order by i1;
+
+drop t2;
+
+
 -- prepare
 prepare st from 'select disk_size(?)';
 

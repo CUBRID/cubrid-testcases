@@ -31,6 +31,8 @@ select disk_size(n'test');
 
 select disk_size(1000);
 
+select disk_size(cast(100.01 as double));
+
 -- disk_size about I18N test,please see https://github.com/CUBRID/cubrid-testcases/blob/develop/sql/_13_issues/_16_2h/cases/cbrd_20576.sql
 
 --+ holdcas off;
