@@ -85,5 +85,6 @@ select max(id), name from student group BY 1=1 order by 1,2
 select * from cte_HtmT8bWTY;
 
 drop table if exists t1;
+drop table if exists student;
 
 
