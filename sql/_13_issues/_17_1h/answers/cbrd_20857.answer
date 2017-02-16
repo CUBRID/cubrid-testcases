@@ -1,0 +1,154 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+avg([__t1].a)    max([__t1].b)    
+-1.0     2017-02-10     
+1.0     2017-02-16     
+2.0     2017-02-13     
+
+===================================================
+trace    
+{
+  "Query Plan": [
+    {
+      "SORT (order by)": {
+        "TABLE SCAN": {
+          "table": "t?"
+        }
+      },
+      "rewritten query": "(select t?.a, t?.b, t?.c, t?.d from t? t? order by ?, ?, ?, ?)"
+    },
+    {
+      "SORT (group by)": {
+        "TABLE SCAN": {
+          "table": "__t?"
+        }
+      },
+      "rewritten query": "select avg([__t?].a), max([__t?].b) from (select t?.a, t?.b, t?.c, t?.d from t? t? order by ?, ?, ?, ?) [__t?] (a, b, c, d) group by [__t?].d"
+    },
+    {
+      "SORT (order by)": {
+        "TABLE SCAN": {
+          "table": "cte_Z?EqZHVEA"
+        }
+      },
+      "rewritten query": "with cte_Z?EqZHVEA([avg([__t?].a)], [max([__t?].b)], [max([__t?].b)]) as (select avg([__t?].a), max([__t?].b) from (select t?.a, t?.b, t?.c, t?.d from t? t? order by ?, ?, ?, ?) [__t?] (a, b, c, d) group by [__t?].d)select cte_Z?EqZHVEA.[avg([__t?].a)], cte_Z?EqZHVEA.[max([__t?].b)] from  cte_Z?EqZHVEA order by ?"
+    }
+  ],
+  "Trace Statistics": {
+    "SELECT": {
+      "time": ?,
+      "fetch": ?,
+      "ioread": ?,
+      "SCAN": {
+        "access": "temp",
+        "temp": {
+          "time": ?,
+          "fetch": ?,
+          "ioread": ?,
+          "readrows": ?,
+          "rows": ?
+        }
+      },
+      "ORDERBY": {
+        "time": ?,
+        "sort": true,
+        "page": ?,
+        "ioread": ?
+      },
+      "SUBQUERY (uncorrelated)": {
+        "CTE": {
+          "non_recursive_part": {
+            "SELECT": {
+              "time": ?,
+              "fetch": ?,
+              "ioread": ?,
+              "SCAN": {
+                "access": "temp",
+                "temp": {
+                  "time": ?,
+                  "fetch": ?,
+                  "ioread": ?,
+                  "readrows": ?,
+                  "rows": ?
+                }
+              },
+              "GROUPBY": {
+                "time": ?,
+                "hash": true,
+                "sort": true,
+                "page": ?,
+                "ioread": ?,
+                "rows": ?
+              },
+              "SUBQUERY (uncorrelated)": {
+                "SELECT": {
+                  "time": ?,
+                  "fetch": ?,
+                  "ioread": ?,
+                  "SCAN": {
+                    "access": "table (t?)",
+                    "heap": {
+                      "time": ?,
+                      "fetch": ?,
+                      "ioread": ?,
+                      "readrows": ?,
+                      "rows": ?
+                    }
+                  },
+                  "ORDERBY": {
+                    "time": ?,
+                    "sort": true,
+                    "page": ?,
+                    "ioread": ?
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}     
+
+===================================================
+0
+===================================================
+avg([__t1].a)    max([__t1].b)    
+-1.0     2017-02-10     
+1.0     2017-02-16     
+2.0     2017-02-13     
+
+===================================================
+trace    
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, ioread: ?)
+              SCAN (table: t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+Error:-494
