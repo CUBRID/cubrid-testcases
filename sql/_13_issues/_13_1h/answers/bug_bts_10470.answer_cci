@@ -54,44 +54,36 @@ sscan
 Query stmt:
 (select DUMMY.a_? from (select count(*) from t? DUMMY where (DUMMY.a= ?:? )) DUMMY (a_?))
 Query plan:
-nl-join (left outer join)
-    outer: nl-join (inner join)
-               edge:  table(?) -> t node[?]
-               outer: iscan
-                          class: u node[?]
-                          index: u_db_user_name term[?]
-                          cost:  ? card ?
-               inner: sscan
-                          class: t node[?]
-                          sargs: table(?) -> t node[?]
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: db_user node[?]
-               sargs: t node[?] g -> db_user node[?]
-               cost:  ? card ?
-    sargs: t node[?] g -> db_user node[?]
+follow
+    edge:  t node[?] g -> db_user node[?]
+    head:  nl-join (inner join)
+              edge:  table(?) -> t node[?]
+              outer: iscan
+                         class: u node[?]
+                         index: u_db_user_name term[?]
+                         cost:  ? card ?
+              inner: sscan
+                         class: t node[?]
+                         sargs: table(?) -> t node[?]
+                         cost:  ? card ?
+              cost:  ? card ?
     cost:  ? card ?
 Query stmt:
 (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER )
 Query plan:
-nl-join (left outer join)
-    outer: nl-join (inner join)
-               edge:  table(?) -> t node[?]
-               outer: iscan
-                          class: u node[?]
-                          index: u_db_user_name term[?]
-                          cost:  ? card ?
-               inner: sscan
-                          class: t node[?]
-                          sargs: table(?) -> t node[?]
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: db_user node[?]
-               sargs: t node[?] g -> db_user node[?]
-               cost:  ? card ?
-    sargs: t node[?] g -> db_user node[?]
+follow
+    edge:  t node[?] g -> db_user node[?]
+    head:  nl-join (inner join)
+              edge:  table(?) -> t node[?]
+              outer: iscan
+                         class: u node[?]
+                         index: u_db_user_name term[?]
+                         cost:  ? card ?
+              inner: sscan
+                         class: t node[?]
+                         sargs: table(?) -> t node[?]
+                         cost:  ? card ?
+              cost:  ? card ?
     cost:  ? card ?
 Query stmt:
 (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER )
@@ -109,26 +101,26 @@ Query stmt:
 Query plan:
 follow
     edge:  _db_class node[?] owner -> db_user node[?]
-    head:  nl-join (cross join)
-              outer: idx-join (inner join)
+    head:  idx-join (inner join)
+              outer: nl-join (cross join)
                          outer: iscan
-                                    class: _db_class node[?]
+                                    class: c node[?]
                                     index: i__db_class_class_name term[?]
                                     cost:  ? card ?
                          inner: iscan
-                                    class: VC node[?]
-                                    index: i__db_query_spec_class_of VC node[?] class_of -> _db_class node[?]
+                                    class: _db_class node[?]
+                                    index: i__db_class_class_name term[?]
                                     cost:  ? card ?
                          cost:  ? card ?
               inner: iscan
-                         class: c node[?]
-                         index: i__db_class_class_name term[?]
+                         class: VC node[?]
+                         index: i__db_query_spec_class_of VC node[?] class_of -> _db_class node[?]
                          cost:  ? card ?
               cost:  ? card ?
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select  if(VC.class_of.class_name='',  cast((select DUMMY.a_? from (select count(*) from t? DUMMY where (DUMMY.a= ?:? )) DUMMY (a_?)) as varchar), VC.class_of.class_name),  if(c.[comment] is null  or c.[comment]='', VC.spec, VC.spec+ cast(' comment=''' as varchar)+c.[comment]+ cast('''' as varchar)) from [_db_query_spec] VC, [_db_class] c where ( CURRENT_USER ='DBA' or {VC.class_of.[owner].[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) or {VC.class_of} subseteq (select sum(set{au.class_of}) from [_db_auth] au where {[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) and au.auth_type= ?:? )) and (c.class_name= ?:? ) and (VC.class_of.class_name= ?:? ) and (VC.class_of.class_name=c.class_name)
+select  if(VC.class_of.class_name='',  cast((select DUMMY.a_? from (select count(*) from t? DUMMY where (DUMMY.a= ?:? )) DUMMY (a_?)) as varchar), VC.class_of.class_name),  if(c.[comment] is null  or c.[comment]='', VC.spec, VC.spec, ' comment=''', c.[comment], '''') from [_db_query_spec] VC, [_db_class] c where ( CURRENT_USER ='DBA' or {VC.class_of.[owner].[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) or {VC.class_of} subseteq (select sum(set{au.class_of}) from [_db_auth] au where {[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) and au.auth_type= ?:? )) and (c.class_name= ?:? ) and (VC.class_of.class_name= ?:? ) and (VC.class_of.class_name=c.class_name)
 ===================================================
 0
 ===================================================
