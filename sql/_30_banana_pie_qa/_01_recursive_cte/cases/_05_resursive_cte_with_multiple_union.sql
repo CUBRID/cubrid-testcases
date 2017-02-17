@@ -24,66 +24,66 @@ ORDER BY R;
 drop table if exists many_fields; 
 
 drop table if exists cbrd_loc, cbrd_cond;
-CREATE TABLE cbrd_loc (enty_key NUMERIC, cbrd_check_pt_rout_key_n NUMERIC, cbrd_check_pt_pred_key_n NUMERIC);  
-CREATE TABLE cbrd_cond (enty_key NUMERIC, cbrd_chkpcond_rout_key_n NUMERIC,  cbrd_chkpcond_pred_key_n NUMERIC); 
+CREATE TABLE cbrd_loc (cbrd_key NUMERIC, cbrd_check_dt_key_v1 NUMERIC, cbrd_check_dted_key_v2 NUMERIC);  
+CREATE TABLE cbrd_cond (cbrd_key NUMERIC, cbrd_testdata_r_key_n NUMERIC,  cbrd_testdata_py_key_n NUMERIC); 
 
 insert into cbrd_loc values(1,1,2);
 insert into cbrd_loc values(2,2,3);
 
-with t ( loc_enty_key, cbrd_check_pt_pred_key_n, cond_enty_key, enty_key ) as (
-       select loc.enty_key, loc.cbrd_check_pt_pred_key_n, cond.enty_key, loc2.enty_key
-       from   cbrd_loc loc join cbrd_cond cond on cond.cbrd_chkpcond_pred_key_n = loc.enty_key
-                         join cbrd_loc  loc2 on loc2.cbrd_check_pt_pred_key_n = cond.enty_key       
+with t ( loc_cbrd_key, cbrd_check_dted_key_v2, cond_cbrd_key, cbrd_key ) as (
+       select loc.cbrd_key, loc.cbrd_check_dted_key_v2, cond.cbrd_key, loc2.cbrd_key
+       from   cbrd_loc loc join cbrd_cond cond on cond.cbrd_testdata_py_key_n = loc.cbrd_key
+                         join cbrd_loc  loc2 on loc2.cbrd_check_dted_key_v2 = cond.cbrd_key       
      ),
-     r ( loc_enty_key, cond_enty_key, enty_key, lvl ) as (
-       select  t.loc_enty_key, t.cond_enty_key, t.enty_key, 1
+     r ( loc_cbrd_key, cond_cbrd_key, cbrd_key, lvl ) as (
+       select  t.loc_cbrd_key, t.cond_cbrd_key, t.cbrd_key, 1
          from  t
-         where t.cbrd_check_pt_pred_key_n = 64251705940
+         where t.cbrd_check_dted_key_v2 = 64251705940
        union all
-       select  t.loc_enty_key, t.cond_enty_key, t.enty_key, r.lvl + 1
-         from  t join r on t.cbrd_check_pt_pred_key_n = r.cond_enty_key
+       select  t.loc_cbrd_key, t.cond_cbrd_key, t.cbrd_key, r.lvl + 1
+         from  t join r on t.cbrd_check_dted_key_v2 = r.cond_cbrd_key
      )
-select   loc_enty_key, cond_enty_key, enty_key, lvl
+select   loc_cbrd_key, cond_cbrd_key, cbrd_key, lvl
 from     r
-order by lvl, loc_enty_key
+order by lvl, loc_cbrd_key
 ;
 
 WITH testt AS (
-              SELECT  loc.enty_key loc_enty_key,
-                      loc.cbrd_check_pt_pred_key_n,
-                      cond.enty_key cond_enty_key,
-                      cond.cbrd_chkpcond_pred_key_n
+              SELECT  loc.cbrd_key loc_cbrd_key,
+                      loc.cbrd_check_dted_key_v2,
+                      cond.cbrd_key cond_cbrd_key,
+                      cond.cbrd_testdata_py_key_n
                 FROM      cbrd_loc loc
                       LEFT JOIN
                           cbrd_cond cond
-                        ON cond.cbrd_chkpcond_pred_key_n = loc.enty_key
+                        ON cond.cbrd_testdata_py_key_n = loc.cbrd_key
               ),
       r(
-        loc_enty_key,
-        cond_enty_key,
+        loc_cbrd_key,
+        cond_cbrd_key,
         lvl
         ) as (
-              SELECT  loc_enty_key,
-                      cond_enty_key,
+              SELECT  loc_cbrd_key,
+                      cond_cbrd_key,
                       1
                 FROM  testt
-                WHERE cbrd_check_pt_pred_key_n = 64251705940
+                WHERE cbrd_check_dted_key_v2 = 64251705940
               UNION ALL
-              SELECT  testt.loc_enty_key,
-                      testt.cond_enty_key,
+              SELECT  testt.loc_cbrd_key,
+                      testt.cond_cbrd_key,
                       lvl + 1
                 FROM  r,
                       testt
-                WHERE r.cond_enty_key = testt.cbrd_check_pt_pred_key_n
+                WHERE r.cond_cbrd_key = testt.cbrd_check_dted_key_v2
             )
-SELECT  r.loc_enty_key,
-        r.cond_enty_key,
-        loc.enty_key,
+SELECT  r.loc_cbrd_key,
+        r.cond_cbrd_key,
+        loc.cbrd_key,
         lvl
   FROM      r
         JOIN
             cbrd_loc loc
-          ON loc.cbrd_check_pt_pred_key_n = r.cond_enty_key
+          ON loc.cbrd_check_dted_key_v2 = r.cond_cbrd_key
 ORDER BY lvl,
-        r.loc_enty_key;
+        r.loc_cbrd_key;
 drop table if exists cbrd_loc, cbrd_cond;

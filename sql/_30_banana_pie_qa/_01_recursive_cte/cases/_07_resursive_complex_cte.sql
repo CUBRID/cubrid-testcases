@@ -1,13 +1,13 @@
 drop table if exists CbrdStmt;
 CREATE TABLE CbrdStmt
-(PLANT_NO varchar(100),
+(PK_NO varchar(100),
 Cbrd_Data_Vol numeric(29, 5),
 CbrdResCTERemoveDataTT numeric(29, 5),
-MTR_NO varchar(100),
-MTR_SFX varchar(100),
-TRNX_ID bigint,
+CBD_NO varchar(100),
+CBD_TDD varchar(100),
+MM_ID bigint,
 REC_STATUS_CD varchar(100),
-ACCT_DT DateTime);
+OK_DT DateTime);
 
 insert into CbrdStmt
 select '043','0','50','36563','','83062200','OR','12/1/2011' union all
@@ -35,39 +35,39 @@ select '002','1205.15','0','36563','A','138365544','OR','2/1/2012';
 
 WITH RemoveData AS
    (
-   SELECT a.PLANT_NO,a.Cbrd_Data_Vol,a.CbrdResCTERemoveDataTT, a.MTR_NO, a.MTR_SFX, a.TRNX_ID, a.REC_STATUS_CD, 
-MAX(a.ACCT_DT) ACCT_DT
+   SELECT a.PK_NO,a.Cbrd_Data_Vol,a.CbrdResCTERemoveDataTT, a.CBD_NO, a.CBD_TDD, a.MM_ID, a.REC_STATUS_CD, 
+MAX(a.OK_DT) OK_DT
    FROM CbrdStmt a
    WHERE a.REC_STATUS_CD = 'RR'
-   GROUP BY a.PLANT_NO,a.Cbrd_Data_Vol,a.CbrdResCTERemoveDataTT, a.MTR_NO, a.MTR_SFX, a.TRNX_ID, a.REC_STATUS_CD
+   GROUP BY a.PK_NO,a.Cbrd_Data_Vol,a.CbrdResCTERemoveDataTT, a.CBD_NO, a.CBD_TDD, a.MM_ID, a.REC_STATUS_CD
    HAVING COUNT(a.REC_STATUS_CD) > 2
    ),
   RemoveData2 AS 
    (
-   SELECT plant_no "PlantNumber"
+   SELECT PK_NO "PKNumber"
    ,SUM(-a.Cbrd_Data_Vol) "CbrdDataVol"
    ,SUM(CbrdResCTERemoveDataTT) "CbrdRemoveDataTT"
    FROM RemoveData a
-   GROUP BY plant_no
+   GROUP BY PK_NO
    ),
   OriginalData AS
    (
-   SELECT a.PLANT_NO "PlantNumber"
+   SELECT a.PK_NO "PKNumber"
    ,SUM(a.Cbrd_Data_Vol) "CbrdDataVol"
    ,SUM(CASE WHEN a.REC_STATUS_CD = 'RR' THEN -a.CbrdResCTERemoveDataTT ELSE a.CbrdResCTERemoveDataTT END) "CbrdRemoveDataTT"
    FROM CbrdStmt a
-   LEFT OUTER JOIN (SELECT MTR_NO, MTR_SFX, TRNX_ID, REC_STATUS_CD, MAX(ACCT_DT) ACCT_DT
+   LEFT OUTER JOIN (SELECT CBD_NO, CBD_TDD, MM_ID, REC_STATUS_CD, MAX(OK_DT) OK_DT
    FROM CbrdStmt 
    WHERE REC_STATUS_CD = 'RR'
-   GROUP BY MTR_NO, MTR_SFX, TRNX_ID, REC_STATUS_CD
-   HAVING COUNT(TRNX_ID) > 1) b
-   ON a.MTR_NO = b.MTR_NO
-   AND a.TRNX_ID = b.TRNX_ID
+   GROUP BY CBD_NO, CBD_TDD, MM_ID, REC_STATUS_CD
+   HAVING COUNT(MM_ID) > 1) b
+   ON a.CBD_NO = b.CBD_NO
+   AND a.MM_ID = b.MM_ID
    AND a.Rec_Status_Cd = b.REC_STATUS_CD
-   AND a.Acct_Dt = b.ACCT_DT
-   WHERE a.ACCT_DT > '1/1/2010'
-   AND b.MTR_NO IS NULL 
-   GROUP BY a.PLANT_NO
+   AND a.OK_DT = b.OK_DT
+   WHERE a.OK_DT > '1/1/2010'
+   AND b.CBD_NO IS NULL 
+   GROUP BY a.PK_NO
    ),
 UnionCTE AS (   
 SELECT *
@@ -76,9 +76,9 @@ UNION
 SELECT *
 FROM OriginalData
 )
-SELECT PlantNumber, SUM(CbrdDataVol) AS CbrdDataVol,SUM(CbrdRemoveDataTT) AS CbrdRemoveDataTT
+SELECT PKNumber, SUM(CbrdDataVol) AS CbrdDataVol,SUM(CbrdRemoveDataTT) AS CbrdRemoveDataTT
 FROM UnionCTE
-GROUP BY PlantNumber order by 1,2,3;
+GROUP BY PKNumber order by 1,2,3;
 
 
 WITH family (id, name, parent_id) AS
