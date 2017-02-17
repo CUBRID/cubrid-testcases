@@ -1,9 +1,9 @@
 drop table if exists t1;
 
 create table t1(a int, b date, c nchar, d enum('red','yellow','blue','green'));
-insert into t1 values(1,curdate(), NULL, 1);
-insert into t1 values(2,curdate()-3, NULL, 2);
-insert into t1 values(-1,curdate()-6, NULL, 3);
+insert into t1 values(1,to_date('2017-02-16'), NULL, 1);
+insert into t1 values(2,to_date('2017-02-16')-3, NULL, 2);
+insert into t1 values(-1,to_date('2017-02-16')-6, NULL, 3);
 set trace on output json;
 WITH cte_Z2EqZHVEA AS
 (
