@@ -1,15 +1,15 @@
-drop table if exists GasStmt;
-CREATE TABLE GasStmt
+drop table if exists CbrdStmt;
+CREATE TABLE CbrdStmt
 (PLANT_NO varchar(100),
-ALLOC_WHDV_VOL numeric(29, 5),
-KW_CTR_REDELIVERED_HV numeric(29, 5),
+Cbrd_Data_Vol numeric(29, 5),
+CbrdResCTERemoveDataTT numeric(29, 5),
 MTR_NO varchar(100),
 MTR_SFX varchar(100),
 TRNX_ID bigint,
 REC_STATUS_CD varchar(100),
 ACCT_DT DateTime);
 
-insert into GasStmt
+insert into CbrdStmt
 select '043','0','50','36563','','83062200','OR','12/1/2011' union all
 select '002','0','100','36563','','83062222','OR','12/1/2011' union all
 select '002','0','-.99','36563','','-83062299','RR','12/1/2011' union all
@@ -35,29 +35,29 @@ select '002','1205.15','0','36563','A','138365544','OR','2/1/2012';
 
 WITH RemoveData AS
    (
-   SELECT a.PLANT_NO,a.ALLOC_WHDV_VOL,a.KW_CTR_REDELIVERED_HV, a.MTR_NO, a.MTR_SFX, a.TRNX_ID, a.REC_STATUS_CD, 
+   SELECT a.PLANT_NO,a.Cbrd_Data_Vol,a.CbrdResCTERemoveDataTT, a.MTR_NO, a.MTR_SFX, a.TRNX_ID, a.REC_STATUS_CD, 
 MAX(a.ACCT_DT) ACCT_DT
-   FROM GasStmt a
+   FROM CbrdStmt a
    WHERE a.REC_STATUS_CD = 'RR'
-   GROUP BY a.PLANT_NO,a.ALLOC_WHDV_VOL,a.KW_CTR_REDELIVERED_HV, a.MTR_NO, a.MTR_SFX, a.TRNX_ID, a.REC_STATUS_CD
+   GROUP BY a.PLANT_NO,a.Cbrd_Data_Vol,a.CbrdResCTERemoveDataTT, a.MTR_NO, a.MTR_SFX, a.TRNX_ID, a.REC_STATUS_CD
    HAVING COUNT(a.REC_STATUS_CD) > 2
    ),
   RemoveData2 AS 
    (
    SELECT plant_no "PlantNumber"
-   ,SUM(-a.ALLOC_WHDV_VOL) "PlantStandardGrossWellheadMcf"
-   ,SUM(KW_CTR_REDELIVERED_HV) "KeepWholeResidueMMBtu"
+   ,SUM(-a.Cbrd_Data_Vol) "CbrdDataVol"
+   ,SUM(CbrdResCTERemoveDataTT) "CbrdRemoveDataTT"
    FROM RemoveData a
    GROUP BY plant_no
    ),
   OriginalData AS
    (
    SELECT a.PLANT_NO "PlantNumber"
-   ,SUM(a.ALLOC_WHDV_VOL) "PlantStandardGrossWellheadMcf"
-   ,SUM(CASE WHEN a.REC_STATUS_CD = 'RR' THEN -a.KW_CTR_REDELIVERED_HV ELSE a.KW_CTR_REDELIVERED_HV END) "KeepWholeResidueMMBtu"
-   FROM GasStmt a
+   ,SUM(a.Cbrd_Data_Vol) "CbrdDataVol"
+   ,SUM(CASE WHEN a.REC_STATUS_CD = 'RR' THEN -a.CbrdResCTERemoveDataTT ELSE a.CbrdResCTERemoveDataTT END) "CbrdRemoveDataTT"
+   FROM CbrdStmt a
    LEFT OUTER JOIN (SELECT MTR_NO, MTR_SFX, TRNX_ID, REC_STATUS_CD, MAX(ACCT_DT) ACCT_DT
-   FROM GasStmt 
+   FROM CbrdStmt 
    WHERE REC_STATUS_CD = 'RR'
    GROUP BY MTR_NO, MTR_SFX, TRNX_ID, REC_STATUS_CD
    HAVING COUNT(TRNX_ID) > 1) b
@@ -76,7 +76,7 @@ UNION
 SELECT *
 FROM OriginalData
 )
-SELECT PlantNumber, SUM(PlantStandardGrossWellheadMcf) AS PlantStandardGrossWellheadMcf,SUM(KeepWholeResidueMMBtu) AS KeepWholeResidueMMBtu
+SELECT PlantNumber, SUM(CbrdDataVol) AS CbrdDataVol,SUM(CbrdRemoveDataTT) AS CbrdRemoveDataTT
 FROM UnionCTE
 GROUP BY PlantNumber order by 1,2,3;
 
