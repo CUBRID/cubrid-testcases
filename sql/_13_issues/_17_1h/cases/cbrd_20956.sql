@@ -38,8 +38,6 @@ drop table if exists t2;
 
 create table t2 (i1 varchar, i2 varchar, i3 int, i4 nchar varying, primary key(i1,i2,i3,i4));
 
-create index i_t1_123 on t2(i1, i2, i3,i4);
-
 insert into t2 values ('a', repeat('a',300),1,n'a');
 insert into t2 values ('b', repeat('b',300),2,n'b');
 insert into t2 values ('c', repeat('c',300),3,n'c');
