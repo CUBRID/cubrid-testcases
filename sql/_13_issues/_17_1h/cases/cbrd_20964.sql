@@ -40,4 +40,5 @@ ORDER BY a,
          b, 
          distance;
 
+DROP VIEW IF EXISTS cbrd_cte2;
 DROP TABLE IF EXISTS cbrd_cte;
