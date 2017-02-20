@@ -142,3 +142,5 @@ SELECT ID, MAX(ID) MAX_ID
 FROM CTE
 GROUP BY D
 ) order by 1;
+
+drop CbrdStmt; 
