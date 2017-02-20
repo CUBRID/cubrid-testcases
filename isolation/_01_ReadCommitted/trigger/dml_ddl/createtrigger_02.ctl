@@ -37,8 +37,11 @@ C2: INSERT INTO tt1 VALUES(3,'run');
 MC: wait until C2 ready;
 C2: SELECT * FROM hi order by 1,2;
 C2: commit work; 
+MC: wait until C2 ready;
 C1: SELECT * FROM hi order by 1,2;
+MC: wait until C1 ready;
 C2: SELECT * FROM hi order by 1,2;
+MC: wait until C2 ready;
 
 C2: quit;
 C1: quit;
