@@ -1,0 +1,167 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+5
+===================================================
+10
+===================================================
+20
+===================================================
+40
+===================================================
+80
+===================================================
+160
+===================================================
+320
+===================================================
+640
+===================================================
+1280
+===================================================
+2560
+===================================================
+5120
+===================================================
+10240
+===================================================
+20480
+===================================================
+40960
+===================================================
+3528
+===================================================
+0
+===================================================
+a    max([__t1].b)    
+1     2013-01-02     
+1     2013-10-12     
+2     2013-12-02     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (t?)
+
+  rewritten query: (select t?.a, t?.b, t?.c, t?.d from t? t? order by ?, ?, ?, ?)
+
+  SORT (group by)
+    TABLE SCAN (__t?)
+
+  rewritten query: select [__t?].a, max([__t?].b) from (select t?.a, t?.b, t?.c, t?.d from t? t? order by ?, ?, ?, ?) [__t?] (a, b, c, d) group by [__t?].d
+
+  SORT (order by)
+    TABLE SCAN (cte_?I?nizhY)
+
+  rewritten query: with cte_?I?nizhY(a, [max([__t?].b)]) as (select [__t?].a, max([__t?].b) from (select t?.a, t?.b, t?.c, t?.d from t? t? order by ?, ?, ?, ?) [__t?] (a, b, c, d) group by [__t?].d)select cte_?I?nizhY.a, cte_?I?nizhY.[max([__t?].b)] from  cte_?I?nizhY order by ?, ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, ioread: ?)
+              SCAN (table: t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+count(*)    
+3     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (t?)
+
+  rewritten query: (select t?.a, t?.b, t?.c, t?.d from t? t? order by ?, ?, ?, ?)
+
+  SORT (group by)
+    TABLE SCAN (__t?)
+
+  rewritten query: select [__t?].a, max([__t?].b) from (select t?.a, t?.b, t?.c, t?.d from t? t? order by ?, ?, ?, ?) [__t?] (a, b, c, d) group by [__t?].d
+
+  TABLE SCAN (cte_?I?nizhY)
+
+  rewritten query: with cte_?I?nizhY(a, [max([__t?].b)]) as (select [__t?].a, max([__t?].b) from (select t?.a, t?.b, t?.c, t?.d from t? t? order by ?, ?, ?, ?) [__t?] (a, b, c, d) group by [__t?].d)select count(*) from  cte_?I?nizhY
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, ioread: ?)
+              SCAN (table: t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+count(*)    
+3     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (t?)
+
+  rewritten query: (select t?.a, t?.b, t?.c, t?.d from t? t? order by ?, ?, ?, ?)
+
+  SORT (group by)
+    TABLE SCAN (__t?)
+
+  rewritten query: select [__t?].a, max([__t?].b) from (select t?.a, t?.b, t?.c, t?.d from t? t? order by ?, ?, ?, ?) [__t?] (a, b, c, d) group by [__t?].d
+
+  TABLE SCAN (cte_?I?nizhY)
+
+  rewritten query: select count(*) from  cte_?I?nizhY
+
+  TABLE SCAN (cte_?)
+
+  rewritten query: with cte_?I?nizhY(a, [max([__t?].b)]) as (select [__t?].a, max([__t?].b) from (select t?.a, t?.b, t?.c, t?.d from t? t? order by ?, ?, ?, ?) [__t?] (a, b, c, d) group by [__t?].d), cte_?([count(*)]) as (select count(*) from  cte_?I?nizhY)select cte_?.[count(*)] from  cte_?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, ioread: ?)
+              SCAN (table: t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
