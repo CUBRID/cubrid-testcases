@@ -16,6 +16,7 @@ drop table t1;
 --CASE 2, query plan
 set names euckr;
 create table t1(a varchar);
+--@queryplan
 select /*+ recompile */ * from t1 where cast(a as char(10)) = 'a';
 
 drop table t1;
