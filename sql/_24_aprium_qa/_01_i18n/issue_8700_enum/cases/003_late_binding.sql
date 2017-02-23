@@ -20,7 +20,7 @@ drop prepare x;
 --conditional expressions & session variables
 prepare x from 'select * from t1 where e1 in (?, ?, ?, ?) order by 1, 2, 3, 4';
 execute x using 1, 2, 4, 7;
-select @v1:=e1 collate iso88591_bin from t1 where e1=2 order by 1;
+select @v1:=cast( e1 as varchar collate iso88591_bin) from t1 where e1=2 order by 1;
 execute x using 'Tuesday', 'Thursday', 'Sunday', @v1;
 drop variable @v1;
 drop prepare x;

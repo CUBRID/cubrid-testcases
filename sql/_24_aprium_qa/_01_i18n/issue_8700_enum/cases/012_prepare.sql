@@ -8,13 +8,13 @@ insert into t1 values (1, 1, 1, 1), (2, 2, 2, 2);
 select * from t1 order by 1, 2, 3, 4;
 
 prepare stmt1 from 'select * from t1 where e1 = ?';
-select @v1:=e2 collate iso88591_bin from t1 where t1.i = 1 order by 1;
+select @v1:=cast(e2 as varchar collate iso88591_bin) from t1 where t1.i = 1 order by 1;
 execute stmt1 using @v1;
 drop prepare stmt1;
 drop variable @v1;
 
 prepare stmt2 from 'select * from t1 where e2 = ?';
-select @v2:=e3 collate iso88591_bin from t1 where t1.i = 1 order by 1;
+select @v2:=cast(e3 as varchar collate iso88591_bin) from t1 where t1.i = 1 order by 1;
 execute stmt2 using @v2;
 drop prepare stmt2;
 drop variable @v2;
