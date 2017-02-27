@@ -8,7 +8,7 @@ create table t2 (c int);
 insert into t2 values
   (2), (4), (5), (3);  
 with t as (select a from t1 where b >= 'c') 
-  select t2.*,t.* from t2,t where t2.c=t.a;
+  select t2.*,t.* from t2,t where t2.c=t.a order by 1,2;
 
 drop table if exists t1,t2;
 create table t1 (a int, b  varchar(32));
