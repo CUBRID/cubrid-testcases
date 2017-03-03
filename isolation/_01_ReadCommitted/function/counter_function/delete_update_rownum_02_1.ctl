@@ -47,7 +47,7 @@ MC: wait until C1 ready;
 /* test case */
 C1: DELETE FROM t1 WHERE id >= 4 and id <= 6 and ROWNUM <= 2; 
 MC: wait until C1 ready;
-C2: UPDATE t1 SET id = 0, col = 'abcd' WHERE id IN (5,6,7) and ROWNUM = 2; 
+C2: UPDATE t1 SET id = 0, col = 'abcd' WHERE id IN (5,6,7) and ROWNUM <= 2; 
 /* expect: C2 needs to wait until C1 completed */
 MC: wait until C2 blocked;
 /* expect: C1 select - id = 4,5 are deleted */
