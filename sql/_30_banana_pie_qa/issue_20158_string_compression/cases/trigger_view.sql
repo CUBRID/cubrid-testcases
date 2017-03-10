@@ -15,6 +15,10 @@ insert into t2 values('aa');
 
 select length(s1),disk_size(s1),s1 from t1;
 
+drop trigger tri_ti;
+
+drop t1,t2;
+
 
 -- view
 drop table if exists t3;
@@ -35,7 +39,9 @@ select id,length(name),disk_size(name),name from v_t3 order by id;
 
 alter view v_t3 add query select * from t3 where id in(1,2) group by name limit 2;  
 
-select distinct id,length(name),disk_size(name),name from v_t3 order by id;   
+select distinct id,length(name),disk_size(name),name from v_t3 order by id; 
+
+drop view v_t3;  
 
 drop t3;
 
