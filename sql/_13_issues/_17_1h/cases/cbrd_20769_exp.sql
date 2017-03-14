@@ -105,4 +105,4 @@ drop prepare stmt;
 drop table if exists t2;
 drop table if exists tbl;
 drop table if exists foo;
-
+DEALLOCATE VARIABLE  @a, @b;
