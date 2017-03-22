@@ -250,4 +250,4 @@ FROM MyCTE AS R where R.Number>2000000
 )
 SELECT Number
 FROM MyCTE;
-set system parameters 'CTE_MAX_RECURSIONS=2000';
+set system parameters 'CTE_MAX_RECURSIONS=DEFAULT';
