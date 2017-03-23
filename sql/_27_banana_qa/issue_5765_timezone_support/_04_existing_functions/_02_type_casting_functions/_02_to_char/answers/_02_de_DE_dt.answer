@@ -35,10 +35,10 @@ id    ts    dttz1    dttz2
 
 ===================================================
 id    ts    dttz1    dttz2    
-1     America/Sao_Paulo BRST     America/Sao_Paulo BRST     America/Sao_Paulo BRST     
-2     America/Sao_Paulo BRT     America/Sao_Paulo BRT     America/New_York EDT     
-3     America/Sao_Paulo BRT     America/Sao_Paulo BRT     Asia/Seoul KST     
-4     America/Sao_Paulo BRST     America/Sao_Paulo BRST     Europe/London GMT     
+1     America/Sao_Paulo -02     America/Sao_Paulo -02     America/Sao_Paulo -02     
+2     America/Sao_Paulo -03     America/Sao_Paulo -03     America/New_York EDT     
+3     America/Sao_Paulo -03     America/Sao_Paulo -03     Asia/Seoul KST     
+4     America/Sao_Paulo -02     America/Sao_Paulo -02     Europe/London GMT     
 
 ===================================================
 id    ts    dttz1    dttz2    
@@ -63,24 +63,24 @@ id    ts
 
 ===================================================
 id    to_char(dtltz, _utf8'TZD:TZM')    
-1     BRST:00     
-2     BRT:00     
-3     BRT:00     
-4     BRST:00     
+1     -02:00     
+2     -03:00     
+3     -03:00     
+4     -02:00     
 
 ===================================================
 id    to_char(ts, _utf8'TZH:TZM TZR TZD')    
-1     -02:00 America/Sao_Paulo BRST     
-2     -03:00 America/Sao_Paulo BRT     
-3     -03:00 America/Sao_Paulo BRT     
-4     -02:00 America/Sao_Paulo BRST     
+1     -02:00 America/Sao_Paulo -02     
+2     -03:00 America/Sao_Paulo -03     
+3     -03:00 America/Sao_Paulo -03     
+4     -02:00 America/Sao_Paulo -02     
 
 ===================================================
 id    to_char(ts)    to_char(dtltz)    to_char(dttz)    
-1     10:30:45.999 PM 12/31/2025     10:55:45.999 PM 12/31/2025 America/Sao_Paulo BRST     10:30:45.999 PM 12/31/2025 America/Sao_Paulo BRST     
-2     07:30:21.999 PM 06/30/2014     06:00:21.999 AM 06/30/2014 America/Sao_Paulo BRT     07:30:21.999 PM 06/30/2014 America/New_York EDT     
-3     07:30:21.999 AM 06/30/2014     06:30:21.999 PM 06/29/2014 America/Sao_Paulo BRT     07:30:21.999 AM 06/30/2014 Asia/Seoul KST     
-4     11:59:59.999 PM 12/31/2008     09:59:59.999 PM 12/31/2008 America/Sao_Paulo BRST     11:59:59.999 PM 12/31/2008 Europe/London GMT     
+1     10:30:45.999 PM 12/31/2025     10:55:45.999 PM 12/31/2025 America/Sao_Paulo -02     10:30:45.999 PM 12/31/2025 America/Sao_Paulo -02     
+2     07:30:21.999 PM 06/30/2014     06:00:21.999 AM 06/30/2014 America/Sao_Paulo -03     07:30:21.999 PM 06/30/2014 America/New_York EDT     
+3     07:30:21.999 AM 06/30/2014     06:30:21.999 PM 06/29/2014 America/Sao_Paulo -03     07:30:21.999 AM 06/30/2014 Asia/Seoul KST     
+4     11:59:59.999 PM 12/31/2008     09:59:59.999 PM 12/31/2008 America/Sao_Paulo -02     11:59:59.999 PM 12/31/2008 Europe/London GMT     
 
 ===================================================
 0
@@ -143,7 +143,7 @@ id    to_char(ts+1,  ?:0 , 'de_DE')    to_char(dtltz+1,  ?:1 , 'de_DE')    to_ch
 
 ===================================================
 id    to_char(ts+1,  ?:0 , 'de_DE')    to_char(dtltz+1,  ?:1 , 'de_DE')    to_char(dttz+1,  ?:2 , 'de_DE')    
-1     12/31/2025 22:30:46 Europe/London;GMT     01/01/2026 00:55:46 Europe/London;GMT     12/31/2025 22:30:46 America/Sao_Paulo;BRST     
+1     12/31/2025 22:30:46 Europe/London;GMT     01/01/2026 00:55:46 Europe/London;GMT     12/31/2025 22:30:46 America/Sao_Paulo;-02     
 2     06/30/2014 19:30:22 Europe/London;BST     06/30/2014 10:00:22 Europe/London;BST     06/30/2014 19:30:22 America/New_York;EDT     
 3     06/30/2014 07:30:22 Europe/London;BST     06/29/2014 22:30:22 Europe/London;BST     06/30/2014 07:30:22 Asia/Seoul;KST     
 4     01/01/2009 00:00:00 Europe/London;GMT     01/01/2009 00:00:00 Europe/London;GMT     01/01/2009 00:00:00 Europe/London;GMT     
@@ -157,7 +157,7 @@ id    to_char(ts+1,  ?:0 , 'de_DE')    to_char(dtltz+1,  ?:1 , 'de_DE')    to_ch
 
 ===================================================
 id    to_char(ts+1,  ?:0 , 'de_DE')    to_char(dtltz+1,  ?:1 , 'de_DE')    to_char(dttz+1,  ?:2 , 'de_DE')    
-1     12/31/2025 22:30:46 GMT     01/01/2026 00:55:46 GMT     12/31/2025 22:30:46 BRST     
+1     12/31/2025 22:30:46 GMT     01/01/2026 00:55:46 GMT     12/31/2025 22:30:46 -02     
 2     06/30/2014 19:30:22 BST     06/30/2014 10:00:22 BST     06/30/2014 19:30:22 EDT     
 3     06/30/2014 07:30:22 BST     06/29/2014 22:30:22 BST     06/30/2014 07:30:22 KST     
 4     01/01/2009 00:00:00 GMT     01/01/2009 00:00:00 GMT     01/01/2009 00:00:00 GMT     
