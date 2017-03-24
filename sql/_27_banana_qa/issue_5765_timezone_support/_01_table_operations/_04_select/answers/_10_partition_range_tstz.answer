@@ -10,19 +10,19 @@ Error:-494
 0
 ===================================================
 TABLE    CREATE TABLE    
-tz_test     CREATE TABLE [tz_test] ([id] INTEGER, [tstz] TIMESTAMPTZ, [str] CHARACTER VARYING(50),  INDEX [idx] ([tstz])) COLLATE iso88591_bin PARTITION BY RANGE ([tstz])  (PARTITION [p1] VALUES LESS THAN (timestamptz '01:00:00 AM 06/01/1990 +00:00'), PARTITION [p2] VALUES LESS THAN (timestamptz '01:00:00 AM 06/01/1990 -04:00'), PARTITION [p3] VALUES LESS THAN (timestamptz '08:00:00 AM 06/01/1990 +00:00'), PARTITION [p4] VALUES LESS THAN (timestamptz '11:00:00 PM 05/31/1990 Pacific/Kwajalein KWAT'))     
+tz_test     CREATE TABLE [tz_test] ([id] INTEGER, [tstz] TIMESTAMPTZ, [str] CHARACTER VARYING(50),  INDEX [idx] ([tstz])) COLLATE iso88591_bin PARTITION BY RANGE ([tstz])  (PARTITION [p1] VALUES LESS THAN (timestamptz '01:00:00 AM 06/01/1990 +00:00'), PARTITION [p2] VALUES LESS THAN (timestamptz '01:00:00 AM 06/01/1990 -04:00'), PARTITION [p3] VALUES LESS THAN (timestamptz '08:00:00 AM 06/01/1990 +00:00'), PARTITION [p4] VALUES LESS THAN (timestamptz '11:00:00 PM 05/31/1990 Pacific/Kwajalein -12'))     
 
 ===================================================
 0
 ===================================================
 TABLE    CREATE TABLE    
-tz_test     CREATE TABLE [tz_test] ([id] INTEGER, [tstz] TIMESTAMPTZ, [str] CHARACTER VARYING(50),  INDEX [idx] ([tstz])) COLLATE iso88591_bin PARTITION BY RANGE ([tstz])  (PARTITION [p1] VALUES LESS THAN (timestamptz '01:00:00 AM 06/01/1990 +00:00'), PARTITION [p2] VALUES LESS THAN (timestamptz '01:00:00 AM 06/01/1990 -04:00'), PARTITION [p3] VALUES LESS THAN (timestamptz '08:00:00 AM 06/01/1990 +00:00'), PARTITION [p4] VALUES LESS THAN (timestamptz '11:00:00 PM 05/31/1990 Pacific/Kwajalein KWAT'))     
+tz_test     CREATE TABLE [tz_test] ([id] INTEGER, [tstz] TIMESTAMPTZ, [str] CHARACTER VARYING(50),  INDEX [idx] ([tstz])) COLLATE iso88591_bin PARTITION BY RANGE ([tstz])  (PARTITION [p1] VALUES LESS THAN (timestamptz '01:00:00 AM 06/01/1990 +00:00'), PARTITION [p2] VALUES LESS THAN (timestamptz '01:00:00 AM 06/01/1990 -04:00'), PARTITION [p3] VALUES LESS THAN (timestamptz '08:00:00 AM 06/01/1990 +00:00'), PARTITION [p4] VALUES LESS THAN (timestamptz '11:00:00 PM 05/31/1990 Pacific/Kwajalein -12'))     
 
 ===================================================
 0
 ===================================================
 TABLE    CREATE TABLE    
-tz_test     CREATE TABLE [tz_test] ([id] INTEGER, [tstz] TIMESTAMPTZ, [str] CHARACTER VARYING(50),  INDEX [idx] ([tstz])) COLLATE iso88591_bin PARTITION BY RANGE ([tstz])  (PARTITION [p1] VALUES LESS THAN (timestamptz '01:00:00 AM 06/01/1990 +00:00'), PARTITION [p2] VALUES LESS THAN (timestamptz '01:00:00 AM 06/01/1990 -04:00'), PARTITION [p3] VALUES LESS THAN (timestamptz '08:00:00 AM 06/01/1990 +00:00'), PARTITION [p4] VALUES LESS THAN (timestamptz '11:00:00 PM 05/31/1990 Pacific/Kwajalein KWAT'))     
+tz_test     CREATE TABLE [tz_test] ([id] INTEGER, [tstz] TIMESTAMPTZ, [str] CHARACTER VARYING(50),  INDEX [idx] ([tstz])) COLLATE iso88591_bin PARTITION BY RANGE ([tstz])  (PARTITION [p1] VALUES LESS THAN (timestamptz '01:00:00 AM 06/01/1990 +00:00'), PARTITION [p2] VALUES LESS THAN (timestamptz '01:00:00 AM 06/01/1990 -04:00'), PARTITION [p3] VALUES LESS THAN (timestamptz '08:00:00 AM 06/01/1990 +00:00'), PARTITION [p4] VALUES LESS THAN (timestamptz '11:00:00 PM 05/31/1990 Pacific/Kwajalein -12'))     
 
 ===================================================
 Error:-891
@@ -41,7 +41,7 @@ id    tstz    str
 1     1990-05-31 23:59:59.0 -01:00     p1     
 2     1990-06-01 01:00:00.0 -01:00     p2     
 3     1990-06-01 04:00:00.0 -01:00     p3     
-4     1990-05-31 22:59:59.0 Pacific/Kwajalein KWAT     p4     
+4     1990-05-31 22:59:59.0 Pacific/Kwajalein -12     p4     
 
 ===================================================
 id    tstz    str    
@@ -57,7 +57,7 @@ id    tstz    str
 
 ===================================================
 id    tstz    str    
-4     1990-05-31 22:59:59.0 Pacific/Kwajalein KWAT     p4     
+4     1990-05-31 22:59:59.0 Pacific/Kwajalein -12     p4     
 
 ===================================================
 1
@@ -69,7 +69,7 @@ id    tstz    str
 0
 ===================================================
 TABLE    CREATE TABLE    
-tz_test     CREATE TABLE [tz_test] ([id] INTEGER, [tstz] TIMESTAMPTZ, [str] CHARACTER VARYING(50),  INDEX [idx] ([tstz])) COLLATE iso88591_bin PARTITION BY RANGE ([tstz])  (PARTITION [p1] VALUES LESS THAN (timestamptz '01:00:00 AM 06/01/1990 +00:00'), PARTITION [p2] VALUES LESS THAN (timestamptz '01:00:00 AM 06/01/1990 -04:00'), PARTITION [p3] VALUES LESS THAN (timestamptz '08:00:00 AM 06/01/1990 +00:00'), PARTITION [p4] VALUES LESS THAN (timestamptz '11:00:00 PM 05/31/1990 Pacific/Kwajalein KWAT'))     
+tz_test     CREATE TABLE [tz_test] ([id] INTEGER, [tstz] TIMESTAMPTZ, [str] CHARACTER VARYING(50),  INDEX [idx] ([tstz])) COLLATE iso88591_bin PARTITION BY RANGE ([tstz])  (PARTITION [p1] VALUES LESS THAN (timestamptz '01:00:00 AM 06/01/1990 +00:00'), PARTITION [p2] VALUES LESS THAN (timestamptz '01:00:00 AM 06/01/1990 -04:00'), PARTITION [p3] VALUES LESS THAN (timestamptz '08:00:00 AM 06/01/1990 +00:00'), PARTITION [p4] VALUES LESS THAN (timestamptz '11:00:00 PM 05/31/1990 Pacific/Kwajalein -12'))     
 
 ===================================================
 1
@@ -82,12 +82,12 @@ id    tstz    str
 1     1990-05-31 23:59:59.0 -01:00     p1     
 2     1990-06-01 01:00:00.0 -01:00     p2     
 3     1990-06-01 04:00:00.0 -01:00     p3     
-4     1990-05-31 22:59:59.0 Pacific/Kwajalein KWAT     p4     
+4     1990-05-31 22:59:59.0 Pacific/Kwajalein -12     p4     
 11     null     p1     
 11     1990-05-31 03:00:00.0 +02:00     p1     
 11     1990-05-31 23:59:59.0 +01:00     p1     
 22     1990-06-01 13:00:00.0 Asia/Seoul KST     p2     
-33     1990-06-01 17:00:00.0 Pacific/Kosrae KOST     p3     
+33     1990-06-01 17:00:00.0 Pacific/Kosrae +12     p3     
 44     1990-05-31 22:59:59.0 -12:00     p4     
 
 ===================================================
@@ -105,11 +105,11 @@ id    tstz    str
 ===================================================
 id    tstz    str    
 3     1990-06-01 04:00:00.0 -01:00     p3     
-33     1990-06-01 17:00:00.0 Pacific/Kosrae KOST     p3     
+33     1990-06-01 17:00:00.0 Pacific/Kosrae +12     p3     
 
 ===================================================
 id    tstz    str    
-4     1990-05-31 22:59:59.0 Pacific/Kwajalein KWAT     p4     
+4     1990-05-31 22:59:59.0 Pacific/Kwajalein -12     p4     
 44     1990-05-31 22:59:59.0 -12:00     p4     
 
 ===================================================
@@ -129,12 +129,12 @@ id    tstz    str
 1     1990-05-31 23:59:59.0 -01:00     p1     
 2     1990-06-01 01:00:00.0 -01:00     p2     
 3     1990-06-01 04:00:00.0 -01:00     p3     
-4     1990-05-31 22:59:59.0 Pacific/Kwajalein KWAT     p4     
+4     1990-05-31 22:59:59.0 Pacific/Kwajalein -12     p4     
 11     null     p1     
 11     1990-05-31 03:00:00.0 +02:00     p1     
 11     1990-05-31 23:59:59.0 +01:00     p1     
 22     1990-06-01 13:00:00.0 Asia/Seoul KST     p2     
-33     1990-06-01 17:00:00.0 Pacific/Kosrae KOST     p3     
+33     1990-06-01 17:00:00.0 Pacific/Kosrae +12     p3     
 44     1990-05-31 22:59:59.0 -12:00     p4     
 111     1990-06-01 03:00:00.0 Africa/Cairo EEST     p1     
 222     1990-06-01 07:00:00.0 Africa/Cairo EEST     p2     
@@ -158,12 +158,12 @@ id    tstz    str
 ===================================================
 id    tstz    str    
 3     1990-06-01 04:00:00.0 -01:00     p3     
-33     1990-06-01 17:00:00.0 Pacific/Kosrae KOST     p3     
+33     1990-06-01 17:00:00.0 Pacific/Kosrae +12     p3     
 333     1990-06-01 08:00:00.0 Africa/Cairo EEST     p3     
 
 ===================================================
 id    tstz    str    
-4     1990-05-31 22:59:59.0 Pacific/Kwajalein KWAT     p4     
+4     1990-05-31 22:59:59.0 Pacific/Kwajalein -12     p4     
 44     1990-05-31 22:59:59.0 -12:00     p4     
 444     1990-06-01 13:59:59.0 Africa/Cairo EEST     p4     
 
@@ -179,7 +179,7 @@ id    tstz    str
 ===================================================
 id    tstz    str    
 3     1990-06-01 04:00:00.0 -01:00     p3     
-33     1990-06-01 17:00:00.0 Pacific/Kosrae KOST     p3     
+33     1990-06-01 17:00:00.0 Pacific/Kosrae +12     p3     
 333     1990-06-01 08:00:00.0 Africa/Cairo EEST     p3     
 333     1990-06-01 10:30:21.0 Europe/Riga EEST     moved from p2 to p3     
 
@@ -194,7 +194,7 @@ id    tstz    str
 
 ===================================================
 id    tstz    str    
-4     1990-05-31 22:59:59.0 Pacific/Kwajalein KWAT     p4     
+4     1990-05-31 22:59:59.0 Pacific/Kwajalein -12     p4     
 44     1990-06-01 13:59:59.0 Europe/Riga EEST     moved from p1 to p4     
 44     1990-05-31 22:59:59.0 -12:00     p4     
 444     1990-06-01 13:59:59.0 Africa/Cairo EEST     p4     
@@ -220,11 +220,11 @@ id    tstz    str
 1     1990-05-31 23:59:59.0 -01:00     p1     
 2     1990-05-31 21:59:59.0 -01:00     moved from p2 to p1     
 3     1990-06-01 04:00:01.0 -01:00     added 1 sec     
-4     1990-05-31 22:59:59.0 Pacific/Kwajalein KWAT     p4     
+4     1990-05-31 22:59:59.0 Pacific/Kwajalein -12     p4     
 11     null     p1     
 11     1990-05-31 23:59:59.0 +01:00     p1     
 22     1990-06-01 09:59:59.0 Asia/Seoul KST     moved from p2 to p1     
-33     1990-06-01 17:00:01.0 Pacific/Kosrae KOST     added 1 sec     
+33     1990-06-01 17:00:01.0 Pacific/Kosrae +12     added 1 sec     
 44     1990-06-01 13:59:59.0 Europe/Riga EEST     moved from p1 to p4     
 44     1990-05-31 22:59:59.0 -12:00     p4     
 111     1990-06-01 03:00:00.0 Africa/Cairo EEST     p1     
@@ -247,13 +247,13 @@ id    tstz    str
 ===================================================
 id    tstz    str    
 3     1990-06-01 04:00:01.0 -01:00     added 1 sec     
-33     1990-06-01 17:00:01.0 Pacific/Kosrae KOST     added 1 sec     
+33     1990-06-01 17:00:01.0 Pacific/Kosrae +12     added 1 sec     
 333     1990-06-01 08:00:01.0 Africa/Cairo EEST     added 1 sec     
 333     1990-06-01 10:30:21.0 Europe/Riga EEST     moved from p2 to p3     
 
 ===================================================
 id    tstz    str    
-4     1990-05-31 22:59:59.0 Pacific/Kwajalein KWAT     p4     
+4     1990-05-31 22:59:59.0 Pacific/Kwajalein -12     p4     
 44     1990-06-01 13:59:59.0 Europe/Riga EEST     moved from p1 to p4     
 44     1990-05-31 22:59:59.0 -12:00     p4     
 444     1990-06-01 13:59:59.0 Africa/Cairo EEST     p4     
@@ -279,18 +279,18 @@ Error:-494
 0
 ===================================================
 TABLE    CREATE TABLE    
-tz_test     CREATE TABLE [tz_test] ([id] INTEGER, [tstz] TIMESTAMPTZ, [str] CHARACTER VARYING(50),  INDEX [idx] ([tstz])) COLLATE iso88591_bin PARTITION BY RANGE ([tstz])  (PARTITION [p1] VALUES LESS THAN (timestamptz '01:00:00 AM 06/01/1990 +00:00'), PARTITION [p2] VALUES LESS THAN (timestamptz '05:00:00 AM 06/01/1990 UTC UTC'), PARTITION [p3] VALUES LESS THAN (timestamptz '08:00:00 AM 06/01/1990 +00:00'), PARTITION [p4] VALUES LESS THAN (timestamptz '11:00:00 PM 05/31/1990 Pacific/Kwajalein KWAT'))     
+tz_test     CREATE TABLE [tz_test] ([id] INTEGER, [tstz] TIMESTAMPTZ, [str] CHARACTER VARYING(50),  INDEX [idx] ([tstz])) COLLATE iso88591_bin PARTITION BY RANGE ([tstz])  (PARTITION [p1] VALUES LESS THAN (timestamptz '01:00:00 AM 06/01/1990 +00:00'), PARTITION [p2] VALUES LESS THAN (timestamptz '05:00:00 AM 06/01/1990 UTC UTC'), PARTITION [p3] VALUES LESS THAN (timestamptz '08:00:00 AM 06/01/1990 +00:00'), PARTITION [p4] VALUES LESS THAN (timestamptz '11:00:00 PM 05/31/1990 Pacific/Kwajalein -12'))     
 
 ===================================================
 id    tstz    str    
 1     1990-05-31 23:59:59.0 -01:00     p1     
 2     1990-05-31 21:59:59.0 -01:00     moved from p2 to p1     
 3     1990-06-01 04:00:01.0 -01:00     added 1 sec     
-4     1990-05-31 22:59:59.0 Pacific/Kwajalein KWAT     p4     
+4     1990-05-31 22:59:59.0 Pacific/Kwajalein -12     p4     
 11     null     substract 1 sec from p1     
 11     1990-05-31 23:59:58.0 +01:00     substract 1 sec from p1     
 22     1990-06-01 09:59:59.0 Asia/Seoul KST     moved from p2 to p1     
-33     1990-06-01 17:00:01.0 Pacific/Kosrae KOST     added 1 sec     
+33     1990-06-01 17:00:01.0 Pacific/Kosrae +12     added 1 sec     
 44     1990-06-01 13:59:59.0 Europe/Riga EEST     moved from p1 to p4     
 44     1990-05-31 22:59:59.0 -12:00     p4     
 111     1990-06-01 03:00:00.0 Africa/Cairo EEST     p1     
@@ -303,7 +303,7 @@ id    tstz    str
 ===================================================
 id    tstz    str    
 3     1990-06-01 04:00:01.0 -01:00     added 1 sec     
-33     1990-06-01 17:00:01.0 Pacific/Kosrae KOST     added 1 sec     
+33     1990-06-01 17:00:01.0 Pacific/Kosrae +12     added 1 sec     
 333     1990-06-01 08:00:01.0 Africa/Cairo EEST     added 1 sec     
 
 ===================================================
@@ -321,11 +321,11 @@ id    tstz    str
 1     1990-05-31 23:59:59.0 -01:00     p1     
 2     1990-05-31 21:59:59.0 -01:00     moved from p2 to p1     
 3     1990-06-01 04:00:01.0 -01:00     added 1 sec     
-4     1990-05-31 22:59:59.0 Pacific/Kwajalein KWAT     p4     
+4     1990-05-31 22:59:59.0 Pacific/Kwajalein -12     p4     
 11     null     substract 1 sec from p1     
 11     1990-05-31 23:59:58.0 +01:00     substract 1 sec from p1     
 22     1990-06-01 09:59:59.0 Asia/Seoul KST     moved from p2 to p1     
-33     1990-06-01 17:00:01.0 Pacific/Kosrae KOST     added 1 sec     
+33     1990-06-01 17:00:01.0 Pacific/Kosrae +12     added 1 sec     
 44     1990-06-01 13:59:59.0 Europe/Riga EEST     moved from p1 to p4     
 44     1990-05-31 22:59:59.0 -12:00     p4     
 111     1990-06-01 03:00:00.0 Africa/Cairo EEST     p1     
