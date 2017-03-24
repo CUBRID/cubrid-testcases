@@ -56,7 +56,8 @@ select str_to_date('2000-April-2nd 3:00:03 pm Asia/Baku-AZT', '%Y-%M-%D %r %TZR-
 select str_to_date('2000-April-2nd 3:00:03 pm Asia/Baku-AZST 4:00', '%Y-%M-%D %r %TZR-%TZD %TZH:%TZM');
 select str_to_date('2000-April-2nd 3:00:03 pm Asia/Baku-BAKST', '%Y-%M-%D %r %TZR-%TZD');
 select str_to_date('1991-April-2nd 3:00:03 pm Asia/Baku-BAKST', '%Y-%M-%D %r %TZR-%TZD');
-select str_to_date('11 30 59 pm Feb/27th/2000 America/Fortaleza -03', '%h %i %S %p %b/%D/%Y %TZR %TZD');
+--CBRD-21129
+select str_to_date('11 30 59 pm Feb/27th/2000 America/Fortaleza -02', '%h %i %S %p %b/%D/%Y %TZR %TZD');
 
 
 --test: special time
