@@ -26,8 +26,8 @@ set timezone 'Asia/Tehran';
 -- +3:30
 select if(timestamptz'2025-07-01 13:00:00'+3600=timestampltz'2025-07-01 13:00:00 +3:30', 'ok', 'nok');
 select if(timestamptz'2025-07-01 13:00:00'-timestampltz'2025-07-01 13:00:00 +3:30'=-3600, 'ok', 'nok');
-select if(timestamptz'2025-09-21 23:00:00 Asia/Tehran IRST'-timestampltz'2025-09-21 23:00:00 Asia/Tehran IRDT'=3600, 'ok', 'nok');
-select if(timestamptz'2025-09-21 23:59:59 Asia/Tehran IRDT'+1=timestampltz'2025-09-21 23:00:00 Asia/Tehran IRST', 'ok', 'nok');
+select if(timestamptz'2025-09-21 23:00:00 Asia/Tehran +0330'-timestampltz'2025-09-21 23:00:00 Asia/Tehran +0430'=3600, 'ok', 'nok');
+select if(timestamptz'2025-09-21 23:59:59 Asia/Tehran +0430'+1=timestampltz'2025-09-21 23:00:00 Asia/Tehran +0330', 'ok', 'nok');
 --test: ambiguous value
 select timestamptz'2025-09-21 23:00:00'-1;
 --test: [er] non-existent value

@@ -33,10 +33,10 @@ select if(subdate('2009-3-15 12:30:01 AM', interval '3:00:01' hour_second)='2009
 --??
 select if(subdate('2009-3-14 23:11:12', interval '1' hour)=timestamptz'2009-3-14 23:11:12', 'ok', 'nok');
 select if(subdate('2009-3-14 23:11:12  America/Argentina/Cordoba', interval '1' hour)=timestamptz'2009-3-14 23:11:12', 'ok', 'nok');
-select if(subdate('2009-3-14 23:11:12 America/Argentina/Cordoba ART', interval '1' hour)='2009-3-14 23:11:12 America/Argentina/Cordoba', 'ok', 'nok');
-select if(subdate('2009-3-14 23:11:12 America/Argentina/Cordoba ART', interval '1' hour)='2009-3-14 23:11:12 America/Argentina/Cordoba ARST', 'ok', 'nok');
-select if(subdate('2009-3-15 12:11:12 AM', interval '1' hour)='2009-3-14 23:11:12 America/Argentina/Cordoba ART', 'ok', 'nok');
-select if(subdate('2009-3-15 12:11:12 AM', interval '2' hour)='2009-3-14 23:11:12 America/Argentina/Cordoba ARST', 'ok', 'nok');
+select if(subdate('2009-3-14 23:11:12 America/Argentina/Cordoba -03', interval '1' hour)='2009-3-14 23:11:12 America/Argentina/Cordoba', 'ok', 'nok');
+select if(subdate('2009-3-14 23:11:12 America/Argentina/Cordoba -03', interval '1' hour)='2009-3-14 23:11:12 America/Argentina/Cordoba -02', 'ok', 'nok');
+select if(subdate('2009-3-15 12:11:12 AM', interval '1' hour)='2009-3-14 23:11:12 America/Argentina/Cordoba -03', 'ok', 'nok');
+select if(subdate('2009-3-15 12:11:12 AM', interval '2' hour)='2009-3-14 23:11:12 America/Argentina/Cordoba -02', 'ok', 'nok');
 --[er]
 select if(subdate('2009-3-14 23:11:12 America/Argentina/Cordoba KST', interval '1' hour)='2009-3-15 12:11:12 AM', 'ok', 'nok');
 

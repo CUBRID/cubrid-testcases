@@ -24,8 +24,8 @@
 id    ts    coalesce(ts, 1)    dtltz    coalesce(dtltz, ts, 1)    dttz    coalesce(dtltz, dttz, 1)    
 1     1971-01-01 00:00:00.999     12:00:00.999 AM 01/01/1971     1971-01-01 16:00:00.999 Asia/Seoul KST     04:00:00.999 PM 01/01/1971 Asia/Seoul KST     null     04:00:00.999 PM 01/01/1971 Asia/Seoul KST     
 2     null     1     1981-01-01 13:00:00.999 Asia/Seoul KST     01:00:00.999 PM 01/01/1981 Asia/Seoul KST     1981-01-01 05:00:00.999 Europe/Vienna CET     01:00:00.999 PM 01/01/1981 Asia/Seoul KST     
-3     null     1     null     1     1993-12-31 23:00:00.999 America/Asuncion PYST     11:00:00.999 PM 12/31/1993 America/Asuncion PYST     
-4     2004-06-20 08:00:00.999     08:00:00.999 AM 06/20/2004     2004-06-20 06:30:00.999 Asia/Seoul KST     06:30:00.999 AM 06/20/2004 Asia/Seoul KST     2004-06-20 08:00:00.999 Australia/Lord_Howe LHST     06:30:00.999 AM 06/20/2004 Asia/Seoul KST     
+3     null     1     null     1     1993-12-31 23:00:00.999 America/Asuncion -03     11:00:00.999 PM 12/31/1993 America/Asuncion -03     
+4     2004-06-20 08:00:00.999     08:00:00.999 AM 06/20/2004     2004-06-20 06:30:00.999 Asia/Seoul KST     06:30:00.999 AM 06/20/2004 Asia/Seoul KST     2004-06-20 08:00:00.999 Australia/Lord_Howe +1030     06:30:00.999 AM 06/20/2004 Asia/Seoul KST     
 5     2015-08-13 14:00:00.999     02:00:00.999 PM 08/13/2015     2015-08-13 18:00:00.999 Asia/Seoul KST     06:00:00.999 PM 08/13/2015 Asia/Seoul KST     null     06:00:00.999 PM 08/13/2015 Asia/Seoul KST     
 6     2023-03-23 18:59:59.999     06:59:59.999 PM 03/23/2023     null     06:59:59.999 PM 03/23/2023 Asia/Seoul KST     null     1     
 7     2035-09-20 21:30:56.999     09:30:56.999 PM 09/20/2035     2035-09-21 05:30:56.999 Asia/Seoul KST     05:30:56.999 AM 09/21/2035 Asia/Seoul KST     2035-09-20 21:30:56.999 Africa/Casablanca WEST     05:30:56.999 AM 09/21/2035 Asia/Seoul KST     
@@ -48,8 +48,8 @@ id    ts    dtltz    rs
 id    dttz    dtltz    rs    
 1     null     1971-01-01 16:00:00.999 Asia/Seoul KST     default     
 2     1981-01-01 05:00:00.999 Europe/Vienna CET     1981-01-01 13:00:00.999 Asia/Seoul KST     dtltz=dttz     
-3     1993-12-31 23:00:00.999 America/Asuncion PYST     null     default     
-4     2004-06-20 08:00:00.999 Australia/Lord_Howe LHST     2004-06-20 06:30:00.999 Asia/Seoul KST     dtltz=dttz     
+3     1993-12-31 23:00:00.999 America/Asuncion -03     null     default     
+4     2004-06-20 08:00:00.999 Australia/Lord_Howe +1030     2004-06-20 06:30:00.999 Asia/Seoul KST     dtltz=dttz     
 5     null     2015-08-13 18:00:00.999 Asia/Seoul KST     default     
 6     null     null     dtltz=dttz     
 7     2035-09-20 21:30:56.999 Africa/Casablanca WEST     2035-09-21 05:30:56.999 Asia/Seoul KST     dtltz=dttz     
@@ -66,8 +66,8 @@ Error:-494
 id    ts    dtltz    dttz    greatest    
 1     1971-01-01 00:00:00.999     1971-01-01 16:00:00.999 Asia/Seoul KST     null     null     
 2     null     1981-01-01 13:00:00.999 Asia/Seoul KST     1981-01-01 05:00:00.999 Europe/Vienna CET     null     
-3     null     null     1993-12-31 23:00:00.999 America/Asuncion PYST     null     
-4     2004-06-20 08:00:00.999     2004-06-20 06:30:00.999 Asia/Seoul KST     2004-06-20 08:00:00.999 Australia/Lord_Howe LHST     2004-06-20 08:00:00.999 Asia/Seoul KST     
+3     null     null     1993-12-31 23:00:00.999 America/Asuncion -03     null     
+4     2004-06-20 08:00:00.999     2004-06-20 06:30:00.999 Asia/Seoul KST     2004-06-20 08:00:00.999 Australia/Lord_Howe +1030     2004-06-20 08:00:00.999 Asia/Seoul KST     
 5     2015-08-13 14:00:00.999     2015-08-13 18:00:00.999 Asia/Seoul KST     null     null     
 6     2023-03-23 18:59:59.999     null     null     null     
 7     2035-09-20 21:30:56.999     2035-09-21 05:30:56.999 Asia/Seoul KST     2035-09-20 21:30:56.999 Africa/Casablanca WEST     2035-09-20 21:30:56.999 Africa/Casablanca WEST     
@@ -90,8 +90,8 @@ id    ts    rs
 id    dttz    dtltz    rs    
 1     null     1971-01-01 16:00:00.999 Asia/Seoul KST     not equal     
 2     1981-01-01 05:00:00.999 Europe/Vienna CET     1981-01-01 13:00:00.999 Asia/Seoul KST     equal     
-3     1993-12-31 23:00:00.999 America/Asuncion PYST     null     not equal     
-4     2004-06-20 08:00:00.999 Australia/Lord_Howe LHST     2004-06-20 06:30:00.999 Asia/Seoul KST     equal     
+3     1993-12-31 23:00:00.999 America/Asuncion -03     null     not equal     
+4     2004-06-20 08:00:00.999 Australia/Lord_Howe +1030     2004-06-20 06:30:00.999 Asia/Seoul KST     equal     
 5     null     2015-08-13 18:00:00.999 Asia/Seoul KST     not equal     
 6     null     null     not equal     
 7     2035-09-20 21:30:56.999 Africa/Casablanca WEST     2035-09-21 05:30:56.999 Asia/Seoul KST     equal     
@@ -114,8 +114,8 @@ id    ts    dtltz    rs
 id    dttz    dtltz    rs    
 1     null     1971-01-01 16:00:00.999 Asia/Seoul KST     1971-01-01 16:00:00.999 Asia/Seoul KST     
 2     1981-01-01 05:00:00.999 Europe/Vienna CET     1981-01-01 13:00:00.999 Asia/Seoul KST     1981-01-01 13:00:00.999 Asia/Seoul KST     
-3     1993-12-31 23:00:00.999 America/Asuncion PYST     null     1993-12-31 23:00:00.999 America/Asuncion PYST     
-4     2004-06-20 08:00:00.999 Australia/Lord_Howe LHST     2004-06-20 06:30:00.999 Asia/Seoul KST     2004-06-20 06:30:00.999 Asia/Seoul KST     
+3     1993-12-31 23:00:00.999 America/Asuncion -03     null     1993-12-31 23:00:00.999 America/Asuncion -03     
+4     2004-06-20 08:00:00.999 Australia/Lord_Howe +1030     2004-06-20 06:30:00.999 Asia/Seoul KST     2004-06-20 06:30:00.999 Asia/Seoul KST     
 5     null     2015-08-13 18:00:00.999 Asia/Seoul KST     2015-08-13 18:00:00.999 Asia/Seoul KST     
 6     null     null     null     
 7     2035-09-20 21:30:56.999 Africa/Casablanca WEST     2035-09-21 05:30:56.999 Asia/Seoul KST     2035-09-21 05:30:56.999 Asia/Seoul KST     
@@ -126,8 +126,8 @@ id    dttz    dtltz    rs
 id    ts    isnull(ts)    dtltz    isnull(dtltz)    dttz    isnull(dttz)    
 1     1971-01-01 00:00:00.999     0     1971-01-01 16:00:00.999 Asia/Seoul KST     0     null     1     
 2     null     1     1981-01-01 13:00:00.999 Asia/Seoul KST     0     1981-01-01 05:00:00.999 Europe/Vienna CET     0     
-3     null     1     null     1     1993-12-31 23:00:00.999 America/Asuncion PYST     0     
-4     2004-06-20 08:00:00.999     0     2004-06-20 06:30:00.999 Asia/Seoul KST     0     2004-06-20 08:00:00.999 Australia/Lord_Howe LHST     0     
+3     null     1     null     1     1993-12-31 23:00:00.999 America/Asuncion -03     0     
+4     2004-06-20 08:00:00.999     0     2004-06-20 06:30:00.999 Asia/Seoul KST     0     2004-06-20 08:00:00.999 Australia/Lord_Howe +1030     0     
 5     2015-08-13 14:00:00.999     0     2015-08-13 18:00:00.999 Asia/Seoul KST     0     null     1     
 6     2023-03-23 18:59:59.999     0     null     1     null     1     
 7     2035-09-20 21:30:56.999     0     2035-09-21 05:30:56.999 Asia/Seoul KST     0     2035-09-20 21:30:56.999 Africa/Casablanca WEST     0     
@@ -138,8 +138,8 @@ id    ts    isnull(ts)    dtltz    isnull(dtltz)    dttz    isnull(dttz)
 id    ts    dtltz    dttz    least    
 1     1971-01-01 00:00:00.999     1971-01-01 16:00:00.999 Asia/Seoul KST     null     null     
 2     null     1981-01-01 13:00:00.999 Asia/Seoul KST     1981-01-01 05:00:00.999 Europe/Vienna CET     null     
-3     null     null     1993-12-31 23:00:00.999 America/Asuncion PYST     null     
-4     2004-06-20 08:00:00.999     2004-06-20 06:30:00.999 Asia/Seoul KST     2004-06-20 08:00:00.999 Australia/Lord_Howe LHST     2004-06-20 08:00:00.999 Australia/Lord_Howe LHST     
+3     null     null     1993-12-31 23:00:00.999 America/Asuncion -03     null     
+4     2004-06-20 08:00:00.999     2004-06-20 06:30:00.999 Asia/Seoul KST     2004-06-20 08:00:00.999 Australia/Lord_Howe +1030     2004-06-20 08:00:00.999 Australia/Lord_Howe +1030     
 5     2015-08-13 14:00:00.999     2015-08-13 18:00:00.999 Asia/Seoul KST     null     null     
 6     2023-03-23 18:59:59.999     null     null     null     
 7     2035-09-20 21:30:56.999     2035-09-21 05:30:56.999 Asia/Seoul KST     2035-09-20 21:30:56.999 Africa/Casablanca WEST     2035-09-20 21:30:56.999 Asia/Seoul KST     
@@ -150,8 +150,8 @@ id    ts    dtltz    dttz    least
 id    dttz    ts    nullif(dttz, ts)    
 1     null     1971-01-01 00:00:00.999     null     
 2     1981-01-01 05:00:00.999 Europe/Vienna CET     null     1981-01-01 05:00:00.999 Europe/Vienna CET     
-3     1993-12-31 23:00:00.999 America/Asuncion PYST     null     1993-12-31 23:00:00.999 America/Asuncion PYST     
-4     2004-06-20 08:00:00.999 Australia/Lord_Howe LHST     2004-06-20 08:00:00.999     2004-06-20 08:00:00.999 Australia/Lord_Howe LHST     
+3     1993-12-31 23:00:00.999 America/Asuncion -03     null     1993-12-31 23:00:00.999 America/Asuncion -03     
+4     2004-06-20 08:00:00.999 Australia/Lord_Howe +1030     2004-06-20 08:00:00.999     2004-06-20 08:00:00.999 Australia/Lord_Howe +1030     
 5     null     2015-08-13 14:00:00.999     null     
 6     null     2023-03-23 18:59:59.999     null     
 7     2035-09-20 21:30:56.999 Africa/Casablanca WEST     2035-09-20 21:30:56.999     2035-09-20 21:30:56.999 Africa/Casablanca WEST     
@@ -162,8 +162,8 @@ id    dttz    ts    nullif(dttz, ts)
 id    dttz    dtltz    nullif(dttz, dtltz)    
 1     null     1971-01-01 16:00:00.999 Asia/Seoul KST     null     
 2     1981-01-01 05:00:00.999 Europe/Vienna CET     1981-01-01 13:00:00.999 Asia/Seoul KST     null     
-3     1993-12-31 23:00:00.999 America/Asuncion PYST     null     1993-12-31 23:00:00.999 America/Asuncion PYST     
-4     2004-06-20 08:00:00.999 Australia/Lord_Howe LHST     2004-06-20 06:30:00.999 Asia/Seoul KST     null     
+3     1993-12-31 23:00:00.999 America/Asuncion -03     null     1993-12-31 23:00:00.999 America/Asuncion -03     
+4     2004-06-20 08:00:00.999 Australia/Lord_Howe +1030     2004-06-20 06:30:00.999 Asia/Seoul KST     null     
 5     null     2015-08-13 18:00:00.999 Asia/Seoul KST     null     
 6     null     null     null     
 7     2035-09-20 21:30:56.999 Africa/Casablanca WEST     2035-09-21 05:30:56.999 Asia/Seoul KST     null     
@@ -174,7 +174,7 @@ id    dttz    dtltz    nullif(dttz, dtltz)
 id    ts    rs    
 1     1971-01-01 00:00:00.999     1971-01-01 00:00:04.599 Asia/Seoul KST     
 2     null     1981-01-01 04:58:34.599 Europe/Vienna CET     
-3     null     1993-12-31 22:58:34.599 America/Asuncion PYST     
+3     null     1993-12-31 22:58:34.599 America/Asuncion -03     
 4     2004-06-20 08:00:00.999     2004-06-20 08:00:04.599 Asia/Seoul KST     
 5     2015-08-13 14:00:00.999     2015-08-13 14:00:04.599 Asia/Seoul KST     
 6     2023-03-23 18:59:59.999     2023-03-23 19:00:03.599 Asia/Seoul KST     
@@ -186,7 +186,7 @@ id    ts    rs
 id    dtltz    rs    
 1     1971-01-01 16:00:00.999 Asia/Seoul KST     1971-01-01 16:02:53.799 Asia/Seoul KST     
 2     1981-01-01 13:00:00.999 Asia/Seoul KST     1981-01-01 13:02:53.799 Asia/Seoul KST     
-3     null     1993-12-31 22:59:57.399 America/Asuncion PYST     
+3     null     1993-12-31 22:59:57.399 America/Asuncion -03     
 4     2004-06-20 06:30:00.999 Asia/Seoul KST     2004-06-20 06:32:53.799 Asia/Seoul KST     
 5     2015-08-13 18:00:00.999 Asia/Seoul KST     2015-08-13 18:02:53.799 Asia/Seoul KST     
 6     null     null     
@@ -198,7 +198,7 @@ id    dtltz    rs
 id    dtltz    rs    
 1     1971-01-01 16:00:00.999 Asia/Seoul KST     1971-01-01 18:24:00.999 Asia/Seoul KST     
 2     1981-01-01 13:00:00.999 Asia/Seoul KST     1981-01-01 15:24:00.999 Asia/Seoul KST     
-3     null     1993-12-31 22:59:57.399 America/Asuncion PYST     
+3     null     1993-12-31 22:59:57.399 America/Asuncion -03     
 4     2004-06-20 06:30:00.999 Asia/Seoul KST     2004-06-20 08:54:00.999 Asia/Seoul KST     
 5     2015-08-13 18:00:00.999 Asia/Seoul KST     2015-08-13 20:24:00.999 Asia/Seoul KST     
 6     null     null     
@@ -210,8 +210,8 @@ id    dtltz    rs
 id    ts    rs    
 1     1971-01-01 00:00:00.999     1971-01-02 04:00:00.999 Asia/Seoul KST     
 2     null     1981-01-01 05:00:00.998 Europe/Vienna CET     
-3     null     1993-12-31 23:00:00.998 America/Asuncion PYST     
-4     2004-06-20 08:00:00.999     2004-06-20 08:00:00.998 Australia/Lord_Howe LHST     
+3     null     1993-12-31 23:00:00.998 America/Asuncion -03     
+4     2004-06-20 08:00:00.999     2004-06-20 08:00:00.998 Australia/Lord_Howe +1030     
 5     2015-08-13 14:00:00.999     2015-08-14 06:00:00.999 Asia/Seoul KST     
 6     2023-03-23 18:59:59.999     null     
 7     2035-09-20 21:30:56.999     2035-09-20 21:30:56.998 Africa/Casablanca WEST     

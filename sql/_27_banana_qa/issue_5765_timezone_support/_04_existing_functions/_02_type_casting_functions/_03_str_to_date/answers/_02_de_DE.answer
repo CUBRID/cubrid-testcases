@@ -117,16 +117,16 @@ str_to_date(_utf8'12th Januar, 2099 11:33:10 vorm. Asia/Shanghai', _utf8'%D %M, 
 2099-01-12 11:33:10.0 Asia/Shanghai CST     
 
 ===================================================
-str_to_date(_utf8'2000-April-2nd 3:00:03 nachm. Asia/Baku-AZST', _utf8'%Y-%M-%D %r %TZR-%TZD')    
-2000-04-02 15:00:03.0 Asia/Baku AZST     
+str_to_date(_utf8'2000-April-2nd 3:00:03 nachm. Asia/Baku-+05', _utf8'%Y-%M-%D %r %TZR-%TZD')    
+2000-04-02 15:00:03.0 Asia/Baku +05     
 
 ===================================================
 str_to_date(_utf8'11 30 59 nachm. Feb/27th/2000 America/Fortaleza', _utf8'%h %i %S %p %b/%D/%Y %TZR')    
-2000-02-27 23:30:59.0 America/Fortaleza BRT     
+2000-02-27 23:30:59.0 America/Fortaleza -03     
 
 ===================================================
-str_to_date(_utf8'11 30 59 nachm. Feb/27th/2000 America/Fortaleza BRT', _utf8'%h %i %S %p %b/%D/%Y %TZR %TZD')    
-2000-02-27 23:30:59.0 America/Fortaleza BRT     
+str_to_date(_utf8'11 30 59 nachm. Feb/27th/2000 America/Fortaleza -03', _utf8'%h %i %S %p %b/%D/%Y %TZR %TZD')    
+2000-02-27 23:30:59.0 America/Fortaleza -03     
 
 ===================================================
 Error:-494
@@ -153,39 +153,39 @@ str_to_date(_utf8'12 01 01 vorm. 1993/Mär/28th', _utf8'%h %i %s %p %Y/%b/%D')
 1993-03-28 00:01:01.0     
 
 ===================================================
-if( str_to_date(_utf8'23:00/00 1993. Jan. 23th Pacific/Efate', _utf8'%H:%i/%s %Y. %b. %D %TZR')=timestamptz '1993-01-23 23:00:00 Pacific/Efate VUST', _utf8'ok', _utf8'nok')    
+if( str_to_date(_utf8'23:00/00 1993. Jan. 23th Pacific/Efate', _utf8'%H:%i/%s %Y. %b. %D %TZR')=timestamptz '1993-01-23 23:00:00 Pacific/Efate +12', _utf8'ok', _utf8'nok')    
 ok     
 
 ===================================================
-str_to_date(_utf8'11:00/01 Nachm. 1993. Jan. 23th Pacific/Efate VUT', _utf8'%h:%i/%s %p %Y. %b. %D %TZR %TZD')    
-1993-01-23 23:00:01.0 Pacific/Efate VUT     
+str_to_date(_utf8'11:00/01 Nachm. 1993. Jan. 23th Pacific/Efate +11', _utf8'%h:%i/%s %p %Y. %b. %D %TZR %TZD')    
+1993-01-23 23:00:01.0 Pacific/Efate +12     
 
 ===================================================
-str_to_date(_utf8'11:59/59 Nachm. 1993. Jan. 23th Pacific/Efate-VUST', _utf8'%h:%i/%s %p %Y. %b. %D %TZR-%TZD')    
-1993-01-23 23:59:59.0 Pacific/Efate VUST     
+str_to_date(_utf8'11:59/59 Nachm. 1993. Jan. 23th Pacific/Efate-+12', _utf8'%h:%i/%s %p %Y. %b. %D %TZR-%TZD')    
+1993-01-23 23:59:59.0 Pacific/Efate +12     
 
 ===================================================
-if( str_to_date(_utf8'11 30 59 nachm. Feb/26th/2000 America/Fortaleza', _utf8'%h %i %S %p %b/%D/%Y %TZR')=timestamptz '2000-02-26 23:30:59 America/Fortaleza BRST', _utf8'ok', _utf8'nok')    
+if( str_to_date(_utf8'11 30 59 nachm. Feb/26th/2000 America/Fortaleza', _utf8'%h %i %S %p %b/%D/%Y %TZR')=timestamptz '2000-02-26 23:30:59 America/Fortaleza -02', _utf8'ok', _utf8'nok')    
 ok     
 
 ===================================================
-str_to_date(_utf8'11 30 59 nachm. Feb/26th/2000 America/Fortaleza BRT', _utf8'%h %i %S %p %b/%D/%Y %TZR %TZD')    
-2000-02-26 23:30:59.0 America/Fortaleza BRT     
+str_to_date(_utf8'11 30 59 nachm. Feb/26th/2000 America/Fortaleza -03', _utf8'%h %i %S %p %b/%D/%Y %TZR %TZD')    
+2000-02-26 23:30:59.0 America/Fortaleza -02     
 
 ===================================================
-str_to_date(_utf8'11 30 59 nachm. Feb/26th/2000 America/Fortaleza BRST', _utf8'%h %i %S %p %b/%D/%Y %TZR %TZD')    
-2000-02-26 23:30:59.0 America/Fortaleza BRST     
+str_to_date(_utf8'11 30 59 nachm. Feb/26th/2000 America/Fortaleza -02', _utf8'%h %i %S %p %b/%D/%Y %TZR %TZD')    
+2000-02-26 23:30:59.0 America/Fortaleza -02     
 
 ===================================================
 Error:-494
 ===================================================
 Error:-494
 ===================================================
-if( to_char(timestamptz '01:40:00 AM 04/06/2008 Australia/Lord_Howe', _utf8'TZD')=_utf8'LHDT', _utf8'ok', _utf8'nok')    
+if( to_char(timestamptz '01:40:00 AM 04/06/2008 Australia/Lord_Howe', _utf8'TZD')=_utf8'+11', _utf8'ok', _utf8'nok')    
 ok     
 
 ===================================================
-if( to_char(timestamptz '01:40:00 AM 04/06/2008 Australia/Lord_Howe'+1800, _utf8'TZD')=_utf8'LHST', _utf8'ok', _utf8'nok')    
+if( to_char(timestamptz '01:40:00 AM 04/06/2008 Australia/Lord_Howe'+1800, _utf8'TZD')=_utf8'+1030', _utf8'ok', _utf8'nok')    
 ok     
 
 ===================================================

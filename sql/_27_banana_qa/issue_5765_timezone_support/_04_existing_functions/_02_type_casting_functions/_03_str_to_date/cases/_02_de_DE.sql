@@ -48,9 +48,9 @@ select str_to_date('1999 Dienstag -10', '%Y %W %TZH');
 select str_to_date('23-10-4th 11:33:10 Nachm. +4:30', '%y-%c-%D %r %TZH:%TZM');
 select str_to_date('Dezember 3rd, 1931 11:33:10 Nachm. 33', '%M %D, %Y %r %TZM');
 select str_to_date('12th Januar, 2099 11:33:10 vorm. Asia/Shanghai', '%D %M, %Y %h:%i:%s %p %TZR');
-select str_to_date('2000-April-2nd 3:00:03 nachm. Asia/Baku-AZST', '%Y-%M-%D %r %TZR-%TZD');
+select str_to_date('2000-April-2nd 3:00:03 nachm. Asia/Baku-+05', '%Y-%M-%D %r %TZR-%TZD');
 select str_to_date('11 30 59 nachm. Feb/27th/2000 America/Fortaleza', '%h %i %S %p %b/%D/%Y %TZR');
-select str_to_date('11 30 59 nachm. Feb/27th/2000 America/Fortaleza BRT', '%h %i %S %p %b/%D/%Y %TZR %TZD');
+select str_to_date('11 30 59 nachm. Feb/27th/2000 America/Fortaleza -03', '%h %i %S %p %b/%D/%Y %TZR %TZD');
 --test: [er] unmatched TZR and TZD 
 select str_to_date('2000-April-2nd 3:00:03 nachm. Asia/Baku-AZT', '%Y-%M-%D %r %TZR-%TZD');
 select str_to_date('2000-April-2nd 3:00:03 nachm. Asia/Baku-AZST 4:00', '%Y-%M-%D %r %TZR-%TZD %TZH:%TZM');
@@ -69,17 +69,17 @@ set timezone 'Europe/Bucharest';
 select str_to_date('12 01 01 vorm. 1993/Mär/28th', '%h %i %s %p %Y/%b/%D');
 --DST: ambiguous time
 --BUG: CUBRIDSUS-16862
-select if(str_to_date('23:00/00 1993. Jan. 23th Pacific/Efate', '%H:%i/%s %Y. %b. %D %TZR')=timestamptz'1993-01-23 23:00:00 Pacific/Efate VUST', 'ok', 'nok');
-select str_to_date('11:00/01 Nachm. 1993. Jan. 23th Pacific/Efate VUT', '%h:%i/%s %p %Y. %b. %D %TZR %TZD');
-select str_to_date('11:59/59 Nachm. 1993. Jan. 23th Pacific/Efate-VUST', '%h:%i/%s %p %Y. %b. %D %TZR-%TZD');
+select if(str_to_date('23:00/00 1993. Jan. 23th Pacific/Efate', '%H:%i/%s %Y. %b. %D %TZR')=timestamptz'1993-01-23 23:00:00 Pacific/Efate +12', 'ok', 'nok');
+select str_to_date('11:00/01 Nachm. 1993. Jan. 23th Pacific/Efate +11', '%h:%i/%s %p %Y. %b. %D %TZR %TZD');
+select str_to_date('11:59/59 Nachm. 1993. Jan. 23th Pacific/Efate-+12', '%h:%i/%s %p %Y. %b. %D %TZR-%TZD');
 --BUG: CUBRIDSUS-16862
-select if(str_to_date('11 30 59 nachm. Feb/26th/2000 America/Fortaleza', '%h %i %S %p %b/%D/%Y %TZR')=timestamptz'2000-02-26 23:30:59 America/Fortaleza BRST', 'ok', 'nok');
-select str_to_date('11 30 59 nachm. Feb/26th/2000 America/Fortaleza BRT', '%h %i %S %p %b/%D/%Y %TZR %TZD');
-select str_to_date('11 30 59 nachm. Feb/26th/2000 America/Fortaleza BRST', '%h %i %S %p %b/%D/%Y %TZR %TZD');
+select if(str_to_date('11 30 59 nachm. Feb/26th/2000 America/Fortaleza', '%h %i %S %p %b/%D/%Y %TZR')=timestamptz'2000-02-26 23:30:59 America/Fortaleza -02', 'ok', 'nok');
+select str_to_date('11 30 59 nachm. Feb/26th/2000 America/Fortaleza -03', '%h %i %S %p %b/%D/%Y %TZR %TZD');
+select str_to_date('11 30 59 nachm. Feb/26th/2000 America/Fortaleza -02', '%h %i %S %p %b/%D/%Y %TZR %TZD');
 select if(str_to_date('1 40 00 vorm. April/6th/2008 Australia/Lord_Howe HRDT', '%h %i %S %p %b/%D/%Y %TZR %TZD')=timestamptz'01:40:00 AM 04/06/2008 Australia/Lord_Howe', 'ok', 'nok');
 select str_to_date('1 40 00 vorm. April/6th/2008 Australia/Lord_Howe', '%h %i %S %p %b/%D/%Y %TZR %TZD')+1800;
-select if(to_char(timestamptz'01:40:00 AM 04/06/2008 Australia/Lord_Howe', 'TZD')='LHDT', 'ok', 'nok');
-select if(to_char(timestamptz'01:40:00 AM 04/06/2008 Australia/Lord_Howe'+1800, 'TZD')='LHST', 'ok', 'nok');
+select if(to_char(timestamptz'01:40:00 AM 04/06/2008 Australia/Lord_Howe', 'TZD')='+11', 'ok', 'nok');
+select if(to_char(timestamptz'01:40:00 AM 04/06/2008 Australia/Lord_Howe'+1800, 'TZD')='+1030', 'ok', 'nok');
 
 
 --test: all transitions of 'Europe/Uzhgorod'

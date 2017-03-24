@@ -57,20 +57,20 @@ if(timestamptz '2025-07-01 13:00:00'-timestampltz '2025-07-01 13:00:00 +3:30'=-3
 ok     
 
 ===================================================
-if(timestamptz '2025-09-21 23:00:00 Asia/Tehran IRST'-timestampltz '2025-09-21 23:00:00 Asia/Tehran IRDT'=3600, 'ok', 'nok')    
+if(timestamptz '2025-09-21 23:00:00 Asia/Tehran +0330'-timestampltz '2025-09-21 23:00:00 Asia/Tehran +0430'=3600, 'ok', 'nok')    
 ok     
 
 ===================================================
-if(timestamptz '2025-09-21 23:59:59 Asia/Tehran IRDT'+1=timestampltz '2025-09-21 23:00:00 Asia/Tehran IRST', 'ok', 'nok')    
+if(timestamptz '2025-09-21 23:59:59 Asia/Tehran +0430'+1=timestampltz '2025-09-21 23:00:00 Asia/Tehran +0330', 'ok', 'nok')    
 ok     
 
 ===================================================
 timestamptz '2025-09-21 23:00:00'-1    
-2025-09-21 22:59:59.0 Asia/Tehran IRDT     
+2025-09-21 22:59:59.0 Asia/Tehran +0430     
 
 ===================================================
 timestampltz '2025-03-22 12:00:00 AM +3:30'    
-2025-03-22 01:00:00.0 Asia/Tehran IRDT     
+2025-03-22 01:00:00.0 Asia/Tehran +0430     
 
 ===================================================
 if(timestamptz '2025-03-21 23:59:59'+1=timestampltz '2025-03-22 1:00:00', 'ok', 'nok')    

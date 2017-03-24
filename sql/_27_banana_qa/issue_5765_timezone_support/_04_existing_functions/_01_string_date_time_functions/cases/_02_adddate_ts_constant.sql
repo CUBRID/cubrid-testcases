@@ -34,13 +34,13 @@ select if(date_add(timestamptz'2006-9-19 21:30:00', interval '2-1' year_month)='
 --BUG: CUBRIDSUS-15181, resolved
 select adddate('2009-3-14 21:59:59', interval '2:00:01' hour_second);
 --BUG: CUBRIDSUS-17263, resolved
-select if(adddate(timestampltz'2009-3-14 21:59:59', interval '2:00:01' hour_second)='2009-3-14 11:00:00 PM America/Argentina/Cordoba ART', 'ok', 'nok');
-select if(adddate(timestampltz'2009-3-14 23:11:12', interval '1' hour)=timestamptz'2009-3-14 23:11:12 America/Argentina/Cordoba ART', 'ok', 'nok');
-select if(adddate(timestamptz'2009-3-14 23:11:12', interval '1' hour)=timestamptz'2009-3-14 23:11:12 America/Argentina/Cordoba ART', 'ok', 'nok');
-select if(adddate('2009-3-14 23:11:12 America/Argentina/Cordoba', interval '1' hour)=timestamptz'2009-3-14 23:11:12 America/Argentina/Cordoba ART', 'ok', 'nok');
+select if(adddate(timestampltz'2009-3-14 21:59:59', interval '2:00:01' hour_second)='2009-3-14 11:00:00 PM America/Argentina/Cordoba -03', 'ok', 'nok');
+select if(adddate(timestampltz'2009-3-14 23:11:12', interval '1' hour)=timestamptz'2009-3-14 23:11:12 America/Argentina/Cordoba -03', 'ok', 'nok');
+select if(adddate(timestamptz'2009-3-14 23:11:12', interval '1' hour)=timestamptz'2009-3-14 23:11:12 America/Argentina/Cordoba -03', 'ok', 'nok');
+select if(adddate('2009-3-14 23:11:12 America/Argentina/Cordoba', interval '1' hour)=timestamptz'2009-3-14 23:11:12 America/Argentina/Cordoba -03', 'ok', 'nok');
 --BUG: CUBRIDSUS-17332
-select if(adddate('2009-3-14 23:11:12 America/Argentina/Cordoba ARST', interval '1' hour)=timestamptz'2009-3-14 23:11:12 America/Argentina/Cordoba ART', 'ok', 'nok');
-select if(adddate('2009-3-14 23:11:12 America/Argentina/Cordoba ART', interval '1' hour)=timestamptz'2009-3-15 12:11:12 AM', 'ok', 'nok');
+select if(adddate('2009-3-14 23:11:12 America/Argentina/Cordoba -02', interval '1' hour)=timestamptz'2009-3-14 23:11:12 America/Argentina/Cordoba -03', 'ok', 'nok');
+select if(adddate('2009-3-14 23:11:12 America/Argentina/Cordoba -03', interval '1' hour)=timestamptz'2009-3-15 12:11:12 AM', 'ok', 'nok');
 --[er]
 select if(adddate('2009-3-14 23:11:12 America/Argentina/Cordoba KST', interval '1' hour)=timestamptz'2009-3-15 12:11:12 AM', 'ok', 'nok');
 
