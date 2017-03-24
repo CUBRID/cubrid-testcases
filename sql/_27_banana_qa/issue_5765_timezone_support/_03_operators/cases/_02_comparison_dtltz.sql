@@ -31,18 +31,18 @@ insert into tz_test values(6, '2025-07-01 13:00:00.999');
 select if(ts=datetimeltz'2025-07-01 13:00:00.999 +3:30', 'nok', 'ok') from tz_test where id=6;
 select if(ts<datetimetz'2025-07-01 13:00:00.999 +3:30', 'ok', 'nok') from tz_test where id=6;
 --test: ?? ambiguous value
-insert into tz_test values(7, '2025-09-21 23:00:00.999 Asia/Tehran IRST');
-select if(ts>datetimeltz'2025-09-21 23:00:00.999 Asia/Tehran IRDT', 'ok', 'nok') from tz_test where id=7;
-insert into tz_test values(8, '2025-09-22 00:00:00.999 Asia/Tehran IRST');
-select if(ts!=datetimetz'2025-09-21 23:00:00.999 Asia/Tehran IRDT', 'ok', 'nok') from tz_test where id=8;
+insert into tz_test values(7, '2025-09-21 23:00:00.999 Asia/Tehran +0330');
+select if(ts>datetimeltz'2025-09-21 23:00:00.999 Asia/Tehran +0430', 'ok', 'nok') from tz_test where id=7;
+insert into tz_test values(8, '2025-09-22 00:00:00.999 Asia/Tehran +0330');
+select if(ts!=datetimetz'2025-09-21 23:00:00.999 Asia/Tehran +0430', 'ok', 'nok') from tz_test where id=8;
 --test: ambiguous value
 insert into tz_test values(9, '2025-09-21 23:00:00.999');
 select if(ts<datetimeltz'2025-09-21 23:00:00.999 +3:30', 'ok', 'nok') from tz_test where id=9;
 --test: [er] non-existent value
 insert into tz_test values(10, '2025-03-22 12:00:00.999 AM');
 select if(datetimetz'2025-03-22 12:00:00.999 AM +3:00'>=ts, 'nok', 'ok') from tz_test where id=10;
-insert into tz_test values(11, '2025-09-21 23:00:00.999 Asia/Tehran IRST');
-select if(ts>datetimetz'2025-09-22 00:00:00.999 Asia/Tehran IRDT', 'nok', 'ok') from tz_test where id=11;
+insert into tz_test values(11, '2025-09-21 23:00:00.999 Asia/Tehran +0330');
+select if(ts>datetimetz'2025-09-22 00:00:00.999 Asia/Tehran +0430', 'nok', 'ok') from tz_test where id=11;
 
 
 drop table tz_test; 

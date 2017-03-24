@@ -50,9 +50,9 @@ execute st using '1999 Tuesday -10', '%Y %W %TZH';
 execute st using '23-10-4th 11:33:10 PM +4:30', '%y-%c-%D %r %TZH:%TZM';
 execute st using 'December 3rd, 1931 11:33:10 PM 33', '%M %D, %Y %r %TZM';
 execute st using '12th January, 2099 11:33:10 am Asia/Shanghai', '%D %M, %Y %h:%i:%s %p %TZR';
-execute st using '2000-April-2nd 3:00:03 pm Asia/Baku-AZST', '%Y-%M-%D %r %TZR-%TZD';
+execute st using '2000-April-2nd 3:00:03 pm Asia/Baku-+05', '%Y-%M-%D %r %TZR-%TZD';
 execute st using '11 30 59 pm Feb/27th/2000 America/Fortaleza', '%h %i %S %p %b/%D/%Y %TZR';
-execute st using '11 30 59 pm Feb/27th/2000 America/Fortaleza BRT', '%h %i %S %p %b/%D/%Y %TZR %TZD';
+execute st using '11 30 59 pm Feb/27th/2000 America/Fortaleza -03', '%h %i %S %p %b/%D/%Y %TZR %TZD';
 --test: [er] unmatched TZR and TZD 
 execute st using '2000-April-2nd 3:00:03 pm Asia/Baku-AZT', '%Y-%M-%D %r %TZR-%TZD';
 execute st using '2000-April-2nd 3:00:03 pm Asia/Baku-AZST 4:00', '%Y-%M-%D %r %TZR-%TZD %TZH:%TZM';
@@ -72,12 +72,12 @@ execute st using '12 01 01 am 1993/Mar/28th', '%h %i %s %p %Y/%b/%D';
 --DST: ambiguous time
 --BUG: CUBRIDSUS-16862, resolved
 execute st using '23:00/00 1993. Jan. 23th Pacific/Efate', '%H:%i/%s %Y. %b. %D %TZR';
-execute st using '11:00/01 PM 1993. Jan. 23th Pacific/Efate VUT', '%h:%i/%s %p %Y. %b. %D %TZR %TZD';
-execute st using '11:59/59 PM 1993. Jan. 23th Pacific/Efate-VUST', '%h:%i/%s %p %Y. %b. %D %TZR-%TZD';
+execute st using '11:00/01 PM 1993. Jan. 23th Pacific/Efate +11', '%h:%i/%s %p %Y. %b. %D %TZR %TZD';
+execute st using '11:59/59 PM 1993. Jan. 23th Pacific/Efate-+12', '%h:%i/%s %p %Y. %b. %D %TZR-%TZD';
 --BUG: CUBRIDSUS-16862, resolved
 execute st using '11 30 59 pm Feb/26th/2000 America/Fortaleza', '%h %i %S %p %b/%D/%Y %TZR';
-execute st using '11 30 59 pm Feb/26th/2000 America/Fortaleza BRT', '%h %i %S %p %b/%D/%Y %TZR %TZD';
-execute st using '11 30 59 pm Feb/26th/2000 America/Fortaleza BRST', '%h %i %S %p %b/%D/%Y %TZR %TZD';
+execute st using '11 30 59 pm Feb/26th/2000 America/Fortaleza -03', '%h %i %S %p %b/%D/%Y %TZR %TZD';
+execute st using '11 30 59 pm Feb/26th/2000 America/Fortaleza -02', '%h %i %S %p %b/%D/%Y %TZR %TZD';
 
 
 --test: all transitions of 'Europe/Uzhgorod'

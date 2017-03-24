@@ -44,9 +44,9 @@ set timezone 'Asia/Tehran';
 insert into tz_test values(6, datetimeltz'2025-07-01 13:00:00.999');
 select if(dt+3600*1000=datetimeltz'2025-07-01 13:00:00.999 +3:30', 'ok', 'nok') from tz_test where id=6;
 select if(dt-datetimeltz'2025-07-01 13:00:00.999 +3:30'=-3600*1000, 'ok', 'nok') from tz_test where id=6;
-insert into tz_test values(7, datetimeltz'2025-09-21 23:00:00.999 Asia/Tehran IRST');
-select if(dt-datetimeltz'2025-09-21 23:00:00.999 Asia/Tehran IRDT'=0, 'ok', 'nok') from tz_test where id=7;
-select if(datetimeltz'2025-09-21 23:59:59.999 Asia/Tehran IRDT'+1000-3600*1000=dt, 'ok', 'nok') from tz_test where id=7;
+insert into tz_test values(7, datetimeltz'2025-09-21 23:00:00.999 Asia/Tehran +0330');
+select if(dt-datetimeltz'2025-09-21 23:00:00.999 Asia/Tehran +0430'=0, 'ok', 'nok') from tz_test where id=7;
+select if(datetimeltz'2025-09-21 23:59:59.999 Asia/Tehran +0430'+1000-3600*1000=dt, 'ok', 'nok') from tz_test where id=7;
 --test: [er] ambiguous value
 insert into tz_test values(8, datetimeltz'2025-09-21 22:59:59.999');
 select dt+3601*1000 from tz_test where id=8;

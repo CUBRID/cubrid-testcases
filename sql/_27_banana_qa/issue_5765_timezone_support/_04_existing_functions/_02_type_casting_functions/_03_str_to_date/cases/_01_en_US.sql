@@ -48,15 +48,16 @@ select str_to_date('1999 Tuesday -10', '%Y %W %TZH');
 select str_to_date('23-10-4th 11:33:10 PM +4:30', '%y-%c-%D %r %TZH:%TZM');
 select str_to_date('December 3rd, 1931 11:33:10 PM 33', '%M %D, %Y %r %TZM');
 select str_to_date('12th January, 2099 11:33:10 am Asia/Shanghai', '%D %M, %Y %h:%i:%s %p %TZR');
-select str_to_date('2000-April-2nd 3:00:03 pm Asia/Baku-AZST', '%Y-%M-%D %r %TZR-%TZD');
+select str_to_date('2000-April-2nd 3:00:03 pm Asia/Baku-+05', '%Y-%M-%D %r %TZR-%TZD');
 select str_to_date('11 30 59 pm Feb/27th/2000 America/Fortaleza', '%h %i %S %p %b/%D/%Y %TZR');
-select str_to_date('11 30 59 pm Feb/27th/2000 America/Fortaleza BRT', '%h %i %S %p %b/%D/%Y %TZR %TZD');
+select str_to_date('11 30 59 pm Feb/27th/2000 America/Fortaleza -03', '%h %i %S %p %b/%D/%Y %TZR %TZD');
 --test: [er] unmatched TZR and TZD 
 select str_to_date('2000-April-2nd 3:00:03 pm Asia/Baku-AZT', '%Y-%M-%D %r %TZR-%TZD');
 select str_to_date('2000-April-2nd 3:00:03 pm Asia/Baku-AZST 4:00', '%Y-%M-%D %r %TZR-%TZD %TZH:%TZM');
 select str_to_date('2000-April-2nd 3:00:03 pm Asia/Baku-BAKST', '%Y-%M-%D %r %TZR-%TZD');
 select str_to_date('1991-April-2nd 3:00:03 pm Asia/Baku-BAKST', '%Y-%M-%D %r %TZR-%TZD');
-select str_to_date('11 30 59 pm Feb/27th/2000 America/Fortaleza BRST', '%h %i %S %p %b/%D/%Y %TZR %TZD');
+--CBRD-21129
+select str_to_date('11 30 59 pm Feb/27th/2000 America/Fortaleza -02', '%h %i %S %p %b/%D/%Y %TZR %TZD');
 
 
 --test: special time
@@ -69,18 +70,18 @@ set timezone 'Europe/Bucharest';
 select str_to_date('12 01 01 am 1993/Mar/28th', '%h %i %s %p %Y/%b/%D');
 --DST: ambiguous time
 --BUG: CUBRIDSUS-16862, resolved
-select if(str_to_date('23:00/00 1993. Jan. 23th Pacific/Efate', '%H:%i/%s %Y. %b. %D %TZR')=timestamptz'1993-01-23 23:00:00 Pacific/Efate VUST', 'ok', 'nok');
-select str_to_date('11:00/01 PM 1993. Jan. 23th Pacific/Efate VUT', '%h:%i/%s %p %Y. %b. %D %TZR %TZD');
-select str_to_date('11:59/59 PM 1993. Jan. 23th Pacific/Efate-VUST', '%h:%i/%s %p %Y. %b. %D %TZR-%TZD');
+select if(str_to_date('23:00/00 1993. Jan. 23th Pacific/Efate', '%H:%i/%s %Y. %b. %D %TZR')=timestamptz'1993-01-23 23:00:00 Pacific/Efate +12', 'ok', 'nok');
+select str_to_date('11:00/01 PM 1993. Jan. 23th Pacific/Efate +11', '%h:%i/%s %p %Y. %b. %D %TZR %TZD');
+select str_to_date('11:59/59 PM 1993. Jan. 23th Pacific/Efate-+12', '%h:%i/%s %p %Y. %b. %D %TZR-%TZD');
 --BUG: CUBRIDSUS-16862, resolved
-select if(str_to_date('11 30 59 pm Feb/26th/2000 America/Fortaleza', '%h %i %S %p %b/%D/%Y %TZR')=timestamptz'2000-02-26 23:30:59 America/Fortaleza BRST', 'ok', 'nok');
-select str_to_date('11 30 59 pm Feb/26th/2000 America/Fortaleza BRT', '%h %i %S %p %b/%D/%Y %TZR %TZD');
-select str_to_date('11 30 59 pm Feb/26th/2000 America/Fortaleza BRST', '%h %i %S %p %b/%D/%Y %TZR %TZD');
-select if(str_to_date('1 40 00 am April/6th/2008 Australia/Lord_Howe LHDT', '%h %i %S %p %M/%D/%Y %TZR %TZD')=timestamptz'01:40:00 AM 04/06/2008 Australia/Lord_Howe', 'ok', 'nok');
+select if(str_to_date('11 30 59 pm Feb/26th/2000 America/Fortaleza', '%h %i %S %p %b/%D/%Y %TZR')=timestamptz'2000-02-26 23:30:59 America/Fortaleza -02', 'ok', 'nok');
+select str_to_date('11 30 59 pm Feb/26th/2000 America/Fortaleza -03', '%h %i %S %p %b/%D/%Y %TZR %TZD');
+select str_to_date('11 30 59 pm Feb/26th/2000 America/Fortaleza -02', '%h %i %S %p %b/%D/%Y %TZR %TZD');
+select if(str_to_date('1 40 00 am April/6th/2008 Australia/Lord_Howe +11', '%h %i %S %p %M/%D/%Y %TZR %TZD')=timestamptz'01:40:00 AM 04/06/2008 Australia/Lord_Howe', 'ok', 'nok');
 select str_to_date('1 40 00 am Apr/6th/2008 Australia/Lord_Howe', '%h %i %S %p %b/%D/%Y %TZR %TZD')+1800;
 --BUG: CUBRIDSUS-16399
-select if(to_char(timestamptz'01:40:00 AM 04/06/2008 Australia/Lord_Howe', 'TZD')='LHDT', 'ok', 'nok');
-select if(to_char(timestamptz'01:40:00 AM 04/06/2008 Australia/Lord_Howe'+1800, 'TZD')='LHST', 'ok', 'nok');
+select if(to_char(timestamptz'01:40:00 AM 04/06/2008 Australia/Lord_Howe', 'TZD')='+11', 'ok', 'nok');
+select if(to_char(timestamptz'01:40:00 AM 04/06/2008 Australia/Lord_Howe'+1800, 'TZD')='+1030', 'ok', 'nok');
 
 
 --test: all transitions of 'Europe/Uzhgorod'

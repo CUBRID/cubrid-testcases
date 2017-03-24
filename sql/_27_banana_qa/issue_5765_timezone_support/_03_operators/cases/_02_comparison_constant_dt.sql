@@ -21,16 +21,16 @@ select if(datetimetz'2014-10-10 13:50:59.999 +0:00'<=datetimetz'2014-10-10 13:50
 set timezone 'Asia/Tehran';
 select if(datetimeltz'2025-07-01 13:00:00.999'=datetimetz'2025-07-01 13:00:00.999 +3:30', 'nok', 'ok');
 select if(datetimeltz'2025-07-01 13:00:00.999'<datetimetz'2025-07-01 13:00:00.999 +3:30', 'ok', 'nok');
-select if(datetimeltz'2025-09-21 23:00:00.999 Asia/Tehran IRST'>datetimetz'2025-09-21 23:00:00.999 Asia/Tehran IRDT', 'ok', 'nok');
-select if(datetimeltz'2025-09-22 00:00:00.999 Asia/Tehran IRST'!=datetimetz'2025-09-21 23:00:00.999 Asia/Tehran IRDT', 'ok', 'nok');
+select if(datetimeltz'2025-09-21 23:00:00.999 Asia/Tehran +0330'>datetimetz'2025-09-21 23:00:00.999 Asia/Tehran +0430', 'ok', 'nok');  
+select if(datetimeltz'2025-09-22 00:00:00.999 Asia/Tehran +0330'!=datetimetz'2025-09-21 23:00:00.999 Asia/Tehran +0430', 'ok', 'nok');  
 --test: ambiguous value
 select if(datetimeltz'2025-09-21 23:00:00.999'<datetimetz'2025-09-21 23:00:00.999 +3:30', 'ok', 'nok');
 --test: [er] non-existent value
 --BUG: CUBRIDSUS-16370, resolved
 select datetimeltz'2025-03-22 12:00:00.999 AM';
-select datetimetz'2025-09-22 00:00:00.999 Asia/Tehran IRDT';
+select datetimetz'2025-09-22 00:00:00.999 Asia/Tehran +0430';
 select if(datetimeltz'2025-03-22 12:00:00.999 AM +3:00'>=datetimetz'2025-03-22 1:00:00.999 AM', 'ok', 'nok');
-select if(datetimeltz'2025-09-21 23:00:00.999 Asia/Tehran IRST'>datetimetz'2025-09-21 23:00:00.999 Asia/Tehran IRDT', 'ok', 'nok');
+select if(datetimeltz'2025-09-21 23:00:00.999 Asia/Tehran +0330'>datetimetz'2025-09-21 23:00:00.999 Asia/Tehran +0430', 'ok', 'nok');        
 
 --test: ps
 prepare st from 'select if(?=?, ''ok'', ''nok'')';
@@ -38,7 +38,7 @@ execute st using datetimetz'2025-07-01 13:00:00.999', datetimetz'2025-07-01 13:0
 deallocate prepare st;
 
 prepare st from 'select if(?>?, ''ok'', ''nok'')';
-execute st using datetimeltz'2025-09-21 23:00:00.999 Asia/Tehran IRST', datetimetz'2025-09-21 23:00:00.999 Asia/Tehran IRDT';
+execute st using datetimeltz'2025-09-21 23:00:00.999 Asia/Tehran +0330', datetimetz'2025-09-21 23:00:00.999 Asia/Tehran +0430';
 deallocate prepare st;
 
 prepare st from 'select if(?>=?, ''nok'', ''ok'')';

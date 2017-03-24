@@ -31,11 +31,11 @@ select if(date_add(datetimetz'2006-9-18 21:30:00.999', interval '2-1' year_month
 select adddate('2009-3-14 21:59:59.999', interval '2:00:01.999' hour_second);
 --BUG: CUBRIDSUS-17263, resolved
 --BUG: CUBRIDSUS-17332
-select if(adddate(datetimeltz'2009-3-14 21:59:59.999', interval '2:00:01.999' hour_second)='2009-3-14 11:00:00.999 PM America/Argentina/Cordoba ART', 'ok', 'nok');
-select if(adddate(datetimeltz'2009-3-14 23:11:12.999', interval '1' hour)=datetimetz'2009-3-14 23:11:12.999 America/Argentina/Cordoba ART', 'ok', 'nok');
-select if(adddate('2009-3-14 23:11:12.999 America/Argentina/Cordoba', interval '1' hour)=datetimetz'2009-3-14 23:11:12.999 America/Argentina/Cordoba ART', 'ok', 'nok');
-select if(adddate('2009-3-14 23:11:12.999 America/Argentina/Cordoba ARST', interval '1' hour)=datetimetz'2009-3-14 23:11:12.999 America/Argentina/Cordoba ART', 'ok', 'nok');
-select if(adddate('2009-3-14 23:11:12.999 America/Argentina/Cordoba ART', interval '1' hour)=datetimetz'2009-3-15 12:11:12.999 AM', 'ok', 'nok');
+select if(adddate(datetimeltz'2009-3-14 21:59:59.999', interval '2:00:01.999' hour_second)='2009-3-14 11:00:00.999 PM America/Argentina/Cordoba -03', 'ok', 'nok');
+select if(adddate(datetimeltz'2009-3-14 23:11:12.999', interval '1' hour)=datetimetz'2009-3-14 23:11:12.999 America/Argentina/Cordoba -03', 'ok', 'nok');
+select if(adddate('2009-3-14 23:11:12.999 America/Argentina/Cordoba', interval '1' hour)=datetimetz'2009-3-14 23:11:12.999 America/Argentina/Cordoba -03', 'ok', 'nok');
+select if(adddate('2009-3-14 23:11:12.999 America/Argentina/Cordoba -02', interval '1' hour)=datetimetz'2009-3-14 23:11:12.999 America/Argentina/Cordoba -03', 'ok', 'nok');
+select if(adddate('2009-3-14 23:11:12.999 America/Argentina/Cordoba -03', interval '1' hour)=datetimetz'2009-3-15 12:11:12.999 AM', 'ok', 'nok');
 --[er]
 select if(adddate('2009-3-14 23:11:12.999 America/Argentina/Cordoba KST', interval '1' hour)=datetimetz'2009-3-15 12:11:12.999 AM', 'ok', 'nok');
 

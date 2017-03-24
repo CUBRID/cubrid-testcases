@@ -83,18 +83,18 @@ select if(date_add(dttz, interval '2-1' year_month)='2008-10-19 22:30:00.999', '
 insert into tz_test values(13, datetimeltz'2009-3-14 22:00:00.000', '2009-3-14 21:59:59.999', '2009-3-14 21:59:59.999');
 --[error]??
 select adddate(dt, interval '2:00:01.999' hour_second) from tz_test where id=13 order by 1;
-select if(adddate(dtltz, interval '2:00:01.999' hour_second)=datetimetz'2009-3-14 11:00:00.999 PM America/Argentina/Cordoba ART', 'ok', 'nok') from tz_test where id=13 order by 1;
-select if(adddate(dttz, interval '2:00:01.999' hour_second)=datetimetz'2009-3-14 11:00:00.999 PM America/Argentina/Cordoba ART', 'ok', 'nok') from tz_test where id=13 order by 1;
+select if(adddate(dtltz, interval '2:00:01.999' hour_second)=datetimetz'2009-3-14 11:00:00.999 PM America/Argentina/Cordoba -03', 'ok', 'nok') from tz_test where id=13 order by 1;
+select if(adddate(dttz, interval '2:00:01.999' hour_second)=datetimetz'2009-3-14 11:00:00.999 PM America/Argentina/Cordoba -03', 'ok', 'nok') from tz_test where id=13 order by 1;
 
 insert into tz_test values(14, datetimetz'2009-3-14 23:11:12.999', '2009-3-14 23:11:12.999', '2009-3-14 23:11:12.999');
 --BUG: CUBRIDSUS-17263, resolved
 --BUG: CUBRIDSUS-17332
-select if(adddate(dttz, interval '1' hour)=datetimetz'2009-3-14 23:11:12.999 America/Argentina/Cordoba ART', 'ok', 'nok') from tz_test where id=14 order by 1;
-select if(adddate(dtltz, interval '1' hour)=datetimetz'2009-3-14 23:11:12.999 America/Argentina/Cordoba ART', 'ok', 'nok') from tz_test where id=14 order by 1;
-select if(adddate(dt, interval '1' hour)=(datetimetz'2009-3-14 23:11:12.999 America/Argentina/Cordoba ART'+3600000), 'ok', 'nok') from tz_test where id=14 order by 1;
+select if(adddate(dttz, interval '1' hour)=datetimetz'2009-3-14 23:11:12.999 America/Argentina/Cordoba -03', 'ok', 'nok') from tz_test where id=14 order by 1;
+select if(adddate(dtltz, interval '1' hour)=datetimetz'2009-3-14 23:11:12.999 America/Argentina/Cordoba -03', 'ok', 'nok') from tz_test where id=14 order by 1;
+select if(adddate(dt, interval '1' hour)=(datetimetz'2009-3-14 23:11:12.999 America/Argentina/Cordoba -03'+3600000), 'ok', 'nok') from tz_test where id=14 order by 1;
 
-insert into tz_test values(15, datetimeltz'2009-3-14 23:11:12.999 America/Argentina/Cordoba ARST', '2009-3-14 23:11:12.999 America/Argentina/Cordoba ARST', '2009-3-14 23:11:12.999 America/Argentina/Cordoba ART');
-select if(adddate(dt, interval '1' hour)='2009-3-15 00:11:12.999 America/Argentina/Cordoba ART', 'ok', 'nok') from tz_test where id=15 order by 1;
+insert into tz_test values(15, datetimeltz'2009-3-14 23:11:12.999 America/Argentina/Cordoba -02', '2009-3-14 23:11:12.999 America/Argentina/Cordoba -02', '2009-3-14 23:11:12.999 America/Argentina/Cordoba -03');
+select if(adddate(dt, interval '1' hour)='2009-3-15 00:11:12.999 America/Argentina/Cordoba -03', 'ok', 'nok') from tz_test where id=15 order by 1;
 select if(adddate(dtltz, interval '1' hour)=(datetimetz'2009-3-15 12:11:12.999 AM' - 3600000), 'ok', 'nok') from tz_test where id=15 order by 1;
 select if(adddate(dttz, interval '1' hour)='2009-3-15 12:11:12.999 AM', 'ok', 'nok') from tz_test where id=15 order by 1;
 

@@ -16,7 +16,7 @@ insert into tz_test(col1, col2) values(datetime'2011-05-12 8:12:16.999', datetim
 set timezone '+06:00';
 insert into tz_test(col1, col2) values(datetime'2011-05-12 6:12:18.999', datetimetz'2011-05-12 7:12:49.999 America/Port_of_Spain');
 set timezone '+04:00';
-insert into tz_test(col1, col2) values(datetime'2011-05-12 4:12:20.999', datetimetz'2011-05-12 9:12:47.999 America/Noronha FNT');
+insert into tz_test(col1, col2) values(datetime'2011-05-12 4:12:20.999', datetimetz'2011-05-12 9:12:47.999 America/Noronha -02');
 set timezone '+02:00';
 insert into tz_test(col1, col2) values(datetime'2011-05-12 2:12:22.999', datetimetz'2011-05-12 13:12:45.999 PM CET');
 set timezone '-00:00';
@@ -26,11 +26,11 @@ insert into tz_test(col1, col2) values(datetime'2011-05-11 23:12:26.999', dateti
 set timezone '-3:00';
 insert into tz_test(col1, col2) values(datetime'2011-05-11 21:12:28.999', datetimetz'2011-05-12 6:12:39.999 PM Asia/Vientiane');
 set timezone '-5:00';
-insert into tz_test(col1, col2) values(datetime'2011-05-11 19:12:30.999', datetimetz'2011-05-12 8:12:37.999 PM Asia/Dili TLT');
+insert into tz_test(col1, col2) values(datetime'2011-05-11 19:12:30.999', datetimetz'2011-05-12 8:12:37.999 PM Asia/Dili +09');
 set timezone '-7:00';
 insert into tz_test(col1, col2) values(datetime'2011-05-11 17:12:32.999', datetimetz'2011-05-12 10:12:35.999 PM Asia/Vladivostok');
 set timezone '-9:00';
-insert into tz_test(col1, col2) values(datetime'2011-05-11 15:12:34.999', datetimetz'2011-05-12 12:12:33.999 AM Pacific/Fakaofo TKT');
+insert into tz_test(col1, col2) values(datetime'2011-05-11 15:12:34.999', datetimetz'2011-05-12 12:12:33.999 AM Pacific/Fakaofo -11');
 set timezone '-11:00';
 insert into tz_test(col1, col2) values(datetime'2011-05-11 13:12:36.999', datetimetz'2011-05-13 1:12:31.999 AM Pacific/Kiritimati');
 

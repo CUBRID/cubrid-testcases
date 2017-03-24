@@ -87,12 +87,12 @@ select if(adddate(tstz, interval '2:00:01' hour_second)=datetimetz'2009-3-14 11:
 
 insert into tz_test values(14, timestamptz'2009-3-14 23:11:12', '2009-3-14 23:11:12', '2009-3-14 23:11:12');
 --BUG: CUBRIDSUS-17263, resolved
-select if(adddate(tstz, interval '1' hour)=timestamptz'2009-3-14 23:11:12 America/Argentina/Cordoba ART', 'ok', 'nok') from tz_test where id=14 order by 1;
-select if(adddate(tsltz, interval '1' hour)=timestamptz'2009-3-14 23:11:12 America/Argentina/Cordoba ART', 'ok', 'nok') from tz_test where id=14 order by 1;
-select if(adddate(ts, interval '1' hour)='2009-3-14 23:11:12 America/Argentina/Cordoba ART', 'ok', 'nok') from tz_test where id=14 order by 1;
+select if(adddate(tstz, interval '1' hour)=timestamptz'2009-3-14 23:11:12 America/Argentina/Cordoba -03', 'ok', 'nok') from tz_test where id=14 order by 1;
+select if(adddate(tsltz, interval '1' hour)=timestamptz'2009-3-14 23:11:12 America/Argentina/Cordoba -03', 'ok', 'nok') from tz_test where id=14 order by 1;
+select if(adddate(ts, interval '1' hour)='2009-3-14 23:11:12 America/Argentina/Cordoba -03', 'ok', 'nok') from tz_test where id=14 order by 1;
 
-insert into tz_test values(15, timestampltz'2009-3-14 23:11:12 America/Argentina/Cordoba ARST', '2009-3-14 23:11:12 America/Argentina/Cordoba ARST', '2009-3-14 23:11:12 America/Argentina/Cordoba ART');
-select if(adddate(ts, interval '1' hour)='2009-3-14 23:11:12 America/Argentina/Cordoba ART', 'ok', 'nok') from tz_test where id=15 order by 1;
+insert into tz_test values(15, timestampltz'2009-3-14 23:11:12 America/Argentina/Cordoba -02', '2009-3-14 23:11:12 America/Argentina/Cordoba -02', '2009-3-14 23:11:12 America/Argentina/Cordoba -03');
+select if(adddate(ts, interval '1' hour)='2009-3-14 23:11:12 America/Argentina/Cordoba -03', 'ok', 'nok') from tz_test where id=15 order by 1;
 select if(adddate(tsltz, interval '1' hour)=(timestamp'2009-3-15 12:11:12 AM' - 3600), 'ok', 'nok') from tz_test where id=15 order by 1;
 select if(adddate(tstz, interval '1' hour)='2009-3-15 12:11:12 AM', 'ok', 'nok') from tz_test where id=15 order by 1;
 

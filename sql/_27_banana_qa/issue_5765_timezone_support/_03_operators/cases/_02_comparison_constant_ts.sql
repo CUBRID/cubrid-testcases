@@ -21,16 +21,16 @@ select if(timestamptz'2014-10-10 13:50:59 +0:00'<=timestamptz'2014-10-10 13:50:5
 set timezone 'Asia/Tehran';
 select if(timestampltz'2025-07-01 13:00:00'=timestamptz'2025-07-01 13:00:00 +3:30', 'nok', 'ok');
 select if(timestampltz'2025-07-01 13:00:00'<timestamptz'2025-07-01 13:00:00 +3:30', 'ok', 'nok');
-select if(timestampltz'2025-09-21 23:00:00 Asia/Tehran IRST'>timestamptz'2025-09-21 23:00:00 Asia/Tehran IRDT', 'ok', 'nok');
-select if(timestampltz'2025-09-22 00:00:00 Asia/Tehran IRST'!=timestamptz'2025-09-21 23:00:00 Asia/Tehran IRDT', 'ok', 'nok');
+select if(timestampltz'2025-09-21 23:00:00 Asia/Tehran +0330'>timestamptz'2025-09-21 23:00:00 Asia/Tehran +0430', 'ok', 'nok');
+select if(timestampltz'2025-09-22 00:00:00 Asia/Tehran +0330'!=timestamptz'2025-09-21 23:00:00 Asia/Tehran +0430', 'ok', 'nok');
 --test: ambiguous value
 select if(timestampltz'2025-09-21 23:00:00'<timestamptz'2025-09-21 23:00:00 +3:30', 'ok', 'nok');
 --test: [er] non-existent value
 --BUG: CUBRIDSUS-16370, resolved
 select timestampltz'2025-03-22 12:00:00 AM';
-select timestamptz'2025-09-22 00:00:00 Asia/Tehran IRDT';
+select timestamptz'2025-09-22 00:00:00 Asia/Tehran +0430';
 select if(timestampltz'2025-03-22 12:00:00 AM +3:00'> timestamptz'2025-03-22 01:00:00 AM', 'ok', 'nok');
-select if(timestampltz'2025-09-21 23:00:00 Asia/Tehran IRST'>timestamptz'2025-09-21 23:00:00 Asia/Tehran IRDT', 'ok', 'nok');
+select if(timestampltz'2025-09-21 23:00:00 Asia/Tehran +0330'>timestamptz'2025-09-21 23:00:00 Asia/Tehran +0430', 'ok', 'nok');
 
 --test: ps
 prepare st from 'select if(?=?, ''ok'', ''nok'')';
@@ -38,7 +38,7 @@ execute st using timestamptz'2025-07-01 13:00:00', timestamptz'2025-07-01 13:00:
 deallocate prepare st;
 
 prepare st from 'select if(?>?, ''ok'', ''nok'')';
-execute st using timestampltz'2025-09-21 23:00:00 Asia/Tehran IRST', timestamptz'2025-09-21 23:00:00 Asia/Tehran IRDT';
+execute st using timestampltz'2025-09-21 23:00:00 Asia/Tehran +0330', timestamptz'2025-09-21 23:00:00 Asia/Tehran +0430';
 deallocate prepare st;
 
 prepare st from 'select if(?>=?, ''nok'', ''ok'')';
