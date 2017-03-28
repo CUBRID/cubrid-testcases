@@ -113,7 +113,7 @@ select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where tz_test
 ===================================================
 id    col1    col2    
 2     2011-05-12 16:12:56.999 +04:00     2011-05-12 21:12:56.999 Asia/Seoul KST     
-6     2011-05-12 16:12:56.999 +04:00     2011-05-12 10:12:56.999 America/Noronha FNT     
+6     2011-05-12 16:12:56.999 +04:00     2011-05-12 10:12:56.999 America/Noronha -02     
 
 Query plan:
 temp(order by)
@@ -128,7 +128,7 @@ select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where tz_test
 ===================================================
 id    col2    col1    
 2     2011-05-12 21:12:56.999 Asia/Seoul KST     2011-05-12 16:12:56.999 +04:00     
-6     2011-05-12 10:12:56.999 America/Noronha FNT     2011-05-12 16:12:56.999 +04:00     
+6     2011-05-12 10:12:56.999 America/Noronha -02     2011-05-12 16:12:56.999 +04:00     
 
 Query plan:
 temp(order by)
@@ -145,7 +145,7 @@ select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where tz_test
 ===================================================
 id    col1    col2    
 2     2011-05-12 20:12:56.999 Australia/Perth AWST     2011-05-12 21:12:56.999 Asia/Seoul KST     
-6     2011-05-12 20:12:56.999 Australia/Perth AWST     2011-05-12 10:12:56.999 America/Noronha FNT     
+6     2011-05-12 20:12:56.999 Australia/Perth AWST     2011-05-12 10:12:56.999 America/Noronha -02     
 
 Query plan:
 temp(order by)
@@ -165,7 +165,7 @@ id    col1    col2
 2     2011-05-12 20:12:56.999 Australia/Perth AWST     2011-05-12 21:12:56.999 Asia/Seoul KST     
 3     2013-12-10 14:30:00.999 Australia/Perth AWST     2013-12-10 03:00:00.999 -03:30     
 5     2013-12-10 14:30:00.999 Australia/Perth AWST     2013-12-10 08:30:00.999 Europe/Riga EET     
-6     2011-05-12 20:12:56.999 Australia/Perth AWST     2011-05-12 10:12:56.999 America/Noronha FNT     
+6     2011-05-12 20:12:56.999 Australia/Perth AWST     2011-05-12 10:12:56.999 America/Noronha -02     
 7     1992-07-10 07:00:00.999 Australia/Perth AWST     1992-07-10 02:00:00.999 Europe/Bucharest EEST     
 8     1992-07-10 08:00:00.999 Australia/Perth AWST     1992-07-10 03:00:00.999 Europe/Bucharest EEST     
 9     1992-07-10 08:00:00.999 Australia/Perth AWST     1992-07-10 02:00:00.999 +02:00     
@@ -211,7 +211,7 @@ Query stmt:
 select t.col?,  to_char(t.col?) from (select tz_test.col?, tz_test.col? from tz_test tz_test where tz_test.col?= ?:?  order by ?) t (col?, col?) order by ?
 ===================================================
 id    col1    col2    
-6     2011-05-12 20:12:56.999 Australia/Perth AWST     2011-05-12 10:12:56.999 America/Noronha FNT     
+6     2011-05-12 20:12:56.999 Australia/Perth AWST     2011-05-12 10:12:56.999 America/Noronha -02     
 7     1992-07-10 07:00:00.999 Australia/Perth AWST     1992-07-10 02:00:00.999 Europe/Bucharest EEST     
 8     1992-07-10 08:00:00.999 Australia/Perth AWST     1992-07-10 03:00:00.999 Europe/Bucharest EEST     
 9     1992-07-10 08:00:00.999 Australia/Perth AWST     1992-07-10 02:00:00.999 +02:00     
@@ -240,7 +240,7 @@ id    col1    col2
 2     2011-05-12 15:12:56.999 Europe/Bucharest EEST     2011-05-12 21:12:56.999 Asia/Seoul KST     
 3     2013-12-10 08:30:00.999 Europe/Bucharest EET     2013-12-10 03:00:00.999 -03:30     
 5     2013-12-10 08:30:00.999 Europe/Bucharest EET     2013-12-10 08:30:00.999 Europe/Riga EET     
-6     2011-05-12 15:12:56.999 Europe/Bucharest EEST     2011-05-12 10:12:56.999 America/Noronha FNT     
+6     2011-05-12 15:12:56.999 Europe/Bucharest EEST     2011-05-12 10:12:56.999 America/Noronha -02     
 8     1992-07-10 03:00:00.999 Europe/Bucharest EEST     1992-07-10 03:00:00.999 Europe/Bucharest EEST     
 9     1992-07-10 03:00:00.999 Europe/Bucharest EEST     1992-07-10 02:00:00.999 +02:00     
 
@@ -287,15 +287,15 @@ select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where (tz_tes
 0
 ===================================================
 id    col1    col2    
-7     1992-07-09 22:00:00.999 Atlantic/Cape_Verde CVT     1992-07-10 02:00:00.999 Europe/Bucharest EEST     
-8     1992-07-09 23:00:00.999 Atlantic/Cape_Verde CVT     1992-07-10 03:00:00.999 Europe/Bucharest EEST     
-9     1992-07-09 23:00:00.999 Atlantic/Cape_Verde CVT     1992-07-10 02:00:00.999 +02:00     
-10     1994-06-30 22:59:59.999 Atlantic/Cape_Verde CVT     1994-06-30 23:59:59.999 UTC UTC     
-11     1994-06-30 23:00:00.000 Atlantic/Cape_Verde CVT     1994-07-01 00:00:00.000 UTC UTC     
-12     1994-06-30 21:59:59.999 Atlantic/Cape_Verde CVT     1994-07-01 01:59:59.999 Europe/Bucharest EEST     
-13     1994-06-30 22:00:00.000 Atlantic/Cape_Verde CVT     1994-07-01 02:00:00.000 Europe/Bucharest EEST     
-14     1994-06-30 22:59:59.999 Atlantic/Cape_Verde CVT     1994-07-01 02:59:59.999 Europe/Bucharest EEST     
-15     1994-06-30 23:00:00.000 Atlantic/Cape_Verde CVT     1994-07-01 03:00:00.000 Europe/Bucharest EEST     
+7     1992-07-09 22:00:00.999 Atlantic/Cape_Verde -01     1992-07-10 02:00:00.999 Europe/Bucharest EEST     
+8     1992-07-09 23:00:00.999 Atlantic/Cape_Verde -01     1992-07-10 03:00:00.999 Europe/Bucharest EEST     
+9     1992-07-09 23:00:00.999 Atlantic/Cape_Verde -01     1992-07-10 02:00:00.999 +02:00     
+10     1994-06-30 22:59:59.999 Atlantic/Cape_Verde -01     1994-06-30 23:59:59.999 UTC UTC     
+11     1994-06-30 23:00:00.000 Atlantic/Cape_Verde -01     1994-07-01 00:00:00.000 UTC UTC     
+12     1994-06-30 21:59:59.999 Atlantic/Cape_Verde -01     1994-07-01 01:59:59.999 Europe/Bucharest EEST     
+13     1994-06-30 22:00:00.000 Atlantic/Cape_Verde -01     1994-07-01 02:00:00.000 Europe/Bucharest EEST     
+14     1994-06-30 22:59:59.999 Atlantic/Cape_Verde -01     1994-07-01 02:59:59.999 Europe/Bucharest EEST     
+15     1994-06-30 23:00:00.000 Atlantic/Cape_Verde -01     1994-07-01 03:00:00.000 Europe/Bucharest EEST     
 
 Query plan:
 temp(order by)
@@ -310,8 +310,8 @@ Query stmt:
 select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where (tz_test.col?< ?:? ) using index tz_test.filter_idx? order by ?
 ===================================================
 id    col1    col2    
-2     2011-05-12 11:12:56.999 Atlantic/Cape_Verde CVT     2011-05-12 21:12:56.999 Asia/Seoul KST     
-6     2011-05-12 11:12:56.999 Atlantic/Cape_Verde CVT     2011-05-12 10:12:56.999 America/Noronha FNT     
+2     2011-05-12 11:12:56.999 Atlantic/Cape_Verde -01     2011-05-12 21:12:56.999 Asia/Seoul KST     
+6     2011-05-12 11:12:56.999 Atlantic/Cape_Verde -01     2011-05-12 10:12:56.999 America/Noronha -02     
 
 Query plan:
 temp(order by)

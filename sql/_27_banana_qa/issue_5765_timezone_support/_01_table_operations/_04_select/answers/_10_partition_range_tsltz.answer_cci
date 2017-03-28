@@ -16,7 +16,7 @@ tz_test     CREATE TABLE [tz_test] ([id] INTEGER, [tsltz] TIMESTAMPLTZ, [str] CH
 0
 ===================================================
 TABLE    CREATE TABLE    
-tz_test     CREATE TABLE [tz_test] ([id] INTEGER, [tsltz] TIMESTAMPLTZ, [str] CHARACTER VARYING(50),  INDEX [idx] ([tsltz])) COLLATE iso88591_bin PARTITION BY RANGE ([tsltz])  (PARTITION [p1] VALUES LESS THAN (timestampltz '03:00:00 PM 05/31/1990 Pacific/Kiritimati LINT'), PARTITION [p2] VALUES LESS THAN (timestampltz '07:00:00 PM 05/31/1990 Pacific/Kiritimati LINT'), PARTITION [p3] VALUES LESS THAN (timestampltz '10:00:00 PM 05/31/1990 Pacific/Kiritimati LINT'), PARTITION [p4] VALUES LESS THAN (timestampltz '01:00:00 AM 06/01/1990 Pacific/Kiritimati LINT'))     
+tz_test     CREATE TABLE [tz_test] ([id] INTEGER, [tsltz] TIMESTAMPLTZ, [str] CHARACTER VARYING(50),  INDEX [idx] ([tsltz])) COLLATE iso88591_bin PARTITION BY RANGE ([tsltz])  (PARTITION [p1] VALUES LESS THAN (timestampltz '03:00:00 PM 05/31/1990 Pacific/Kiritimati -10'), PARTITION [p2] VALUES LESS THAN (timestampltz '07:00:00 PM 05/31/1990 Pacific/Kiritimati -10'), PARTITION [p3] VALUES LESS THAN (timestampltz '10:00:00 PM 05/31/1990 Pacific/Kiritimati -10'), PARTITION [p4] VALUES LESS THAN (timestampltz '01:00:00 AM 06/01/1990 Pacific/Kiritimati -10'))     
 
 ===================================================
 0
@@ -38,26 +38,26 @@ Error:-891
 1
 ===================================================
 id    tsltz    str    
-1     1990-05-31 12:59:59.000 Pacific/Kwajalein KWAT     p1     
-2     1990-05-31 14:00:00.000 Pacific/Kwajalein KWAT     p2     
-3     1990-05-31 17:00:00.000 Pacific/Kwajalein KWAT     p3     
-4     1990-05-31 22:59:59.000 Pacific/Kwajalein KWAT     p4     
+1     1990-05-31 12:59:59.000 Pacific/Kwajalein -12     p1     
+2     1990-05-31 14:00:00.000 Pacific/Kwajalein -12     p2     
+3     1990-05-31 17:00:00.000 Pacific/Kwajalein -12     p3     
+4     1990-05-31 22:59:59.000 Pacific/Kwajalein -12     p4     
 
 ===================================================
 id    tsltz    str    
-1     1990-05-31 12:59:59.000 Pacific/Kwajalein KWAT     p1     
+1     1990-05-31 12:59:59.000 Pacific/Kwajalein -12     p1     
 
 ===================================================
 id    tsltz    str    
-2     1990-05-31 14:00:00.000 Pacific/Kwajalein KWAT     p2     
+2     1990-05-31 14:00:00.000 Pacific/Kwajalein -12     p2     
 
 ===================================================
 id    tsltz    str    
-3     1990-05-31 17:00:00.000 Pacific/Kwajalein KWAT     p3     
+3     1990-05-31 17:00:00.000 Pacific/Kwajalein -12     p3     
 
 ===================================================
 id    tsltz    str    
-4     1990-05-31 22:59:59.000 Pacific/Kwajalein KWAT     p4     
+4     1990-05-31 22:59:59.000 Pacific/Kwajalein -12     p4     
 
 ===================================================
 1
