@@ -36,7 +36,7 @@ select to_timestamp_tz('10:10:45 America/Cayman EST -5:00', 'HH:MI:SS TZR TZD TZ
 select to_timestamp_tz('20 10 45 +10/00', 'SS HH MI +TZH/TZM');
 select to_timestamp_tz('20 10 45 +-10/33', 'SS HH MI +TZH/TZM');
 select if(to_timestamp_tz('05 55 58 am America/Manaus', 'HH MI SS AM TZR')=from_tz(subdate( addtime( CURRENT_DATE , time '05:55:58 am'),  day( CURRENT_DATE )-1),'America/Manaus'),'ok','nok');
-select if(to_timestamp_tz('05 55 58 PM America/Manaus AMT', 'HH MI SS AM TZR TZD')=from_tz(subdate( addtime( CURRENT_DATE , time '05:55:58 pm'),  day( CURRENT_DATE )-1),'America/Manaus AMT'),'ok','nok');
+select if(to_timestamp_tz('05 55 58 PM America/Manaus -04', 'HH MI SS AM TZR TZD')=from_tz(subdate( addtime( CURRENT_DATE , time '05:55:58 pm'),  day( CURRENT_DATE )-1),'America/Manaus -04'),'ok','nok');
 select to_timestamp_tz('05 55 58 PM America/Manaus, AMST', 'HH MI SS AM TZR,TZD');
 select to_timestamp_tz('EST 12:34:22 [PM] America/New_York', 'TZD HH:MI:SS [AM] TZR');
 select to_timestamp_tz('EDT-12:34:22 (pm) America/New_York', 'TZD-HH:MI:SS (AM) TZR');
@@ -47,15 +47,15 @@ select to_timestamp_tz('1999 Tuesday -10', 'YYYY DAY TZH');
 select to_timestamp_tz('23-10-4 11:33:10 PM +4:30', 'YY-MM-DD HH:MI:SS PM TZH:TZM');
 select to_timestamp_tz('December 3, 1971 11:33:10 PM 33', 'MONTH DD, YYYY HH:MI:SS PM TZM');
 select to_timestamp_tz('12 January, 2037 11:33:10 am Asia/Shanghai', 'DD MONTH, YYYY HH:MI:SS AM TZR');
-select to_timestamp_tz('2000-April-2 3:00:03 pm Asia/Baku-AZST', 'YYYY-MONTH-DD HH:MI:SS PM TZR-TZD');
+select to_timestamp_tz('2000-April-2 3:00:03 pm Asia/Baku-+05', 'YYYY-MONTH-DD HH:MI:SS PM TZR-TZD');
 select to_timestamp_tz('11 30 59 pm Feb/27/2000 America/Fortaleza', 'HH MI SS AM MON/DD/YYYY TZR');
-select to_timestamp_tz('11 30 59 pm Feb/27/2000 America/Fortaleza BRT', 'HH MI SS AM MON/DD/YYYY TZR TZD');
-select to_timestamp_tz('1991-April-2 3:00:03 pm Asia/Baku-BAKST', 'YYYY-MONTH-DD HH:MI:SS PM TZR-TZD');
+select to_timestamp_tz('11 30 59 pm Feb/27/2000 America/Fortaleza -03', 'HH MI SS AM MON/DD/YYYY TZR TZD');
+select to_timestamp_tz('1991-April-2 3:00:03 pm Asia/Baku-+04', 'YYYY-MONTH-DD HH:MI:SS PM TZR-TZD');
 --test: [er] unmatched TZR and TZD 
 select to_timestamp_tz('2000-April-2 3:00:03 pm Asia/Baku-AZT', 'YYYY-MONTH-DD HH:MI:SS PM TZR-TZD');
-select to_timestamp_tz('2000-April-2 3:00:03 pm Asia/Baku-AZST 4:00', 'YYYY-MONTH-DD HH:MI:SS PM TZR-TZD TZH:TZM');
-select to_timestamp_tz('2000-April-2 3:00:03 pm Asia/Baku-BAKST', 'YYYY-MONTH-DD HH:MI:SS PM TZR-TZD');
-select to_timestamp_tz('11 30 59 pm Feb/27/2000 America/Fortaleza BRST', 'HH MI SS AM MON/DD/YYYY TZR TZD');
+select to_timestamp_tz('2000-April-2 3:00:03 pm Asia/Baku-+05 4:00', 'YYYY-MONTH-DD HH:MI:SS PM TZR-TZD TZH:TZM');
+select to_timestamp_tz('2000-April-2 3:00:03 pm Asia/Baku-+04', 'YYYY-MONTH-DD HH:MI:SS PM TZR-TZD');
+select to_timestamp_tz('11 30 59 pm Feb/27/2000 America/Fortaleza -02', 'HH MI SS AM MON/DD/YYYY TZR TZD');
 
 
 --test: special time
@@ -68,11 +68,11 @@ set timezone 'Europe/Bucharest';
 select to_timestamp_tz('12 01 01 am 1993/Mar/28', 'HH MI SS AM YYYY/MON/DD');
 --DST: ambiguous time
 select to_timestamp_tz('23:00/00 1993. Jan. 24 Pacific/Efate', 'HH24:MI/SS YYYY. MON. DD TZR');
-select to_timestamp_tz('11:00/01 PM 1993. Jan. 24 Pacific/Efate VUT', 'HH:MI/SS AM YYYY. MON. DD TZR TZD');
+select to_timestamp_tz('11:00/01 PM 1993. Jan. 24 Pacific/Efate +11', 'HH:MI/SS AM YYYY. MON. DD TZR TZD');
 select to_timestamp_tz('11:59/59 PM 1993. Jan. 24 Pacific/Efate-VUST', 'HH:MI/SS AM YYYY. MON. DD TZR-TZD');
 select to_timestamp_tz('11 30 59 pm Feb/26/2000 America/Fortaleza', 'HH MI SS AM MON/DD/YYYY TZR');
-select to_timestamp_tz('11 30 59 pm Feb/26/2000 America/Fortaleza BRT', 'HH MI SS AM MON/DD/YYYY TZR TZD');
-select to_timestamp_tz('11 30 59 pm Feb/26/2000 America/Fortaleza BRST', 'HH MI SS AM MON/DD/YYYY TZR TZD');
+select to_timestamp_tz('11 30 59 pm Feb/26/2000 America/Fortaleza -03', 'HH MI SS AM MON/DD/YYYY TZR TZD');
+select to_timestamp_tz('11 30 59 pm Feb/26/2000 America/Fortaleza -02', 'HH MI SS AM MON/DD/YYYY TZR TZD');
 
 
 --test: all transitions of 'Europe/Uzhgorod'

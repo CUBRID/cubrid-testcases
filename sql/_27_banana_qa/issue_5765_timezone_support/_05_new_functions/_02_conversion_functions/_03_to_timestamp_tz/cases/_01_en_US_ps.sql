@@ -42,7 +42,7 @@ execute st using '20 10 45 +10/00', 'SS HH MI +TZH/TZM';
 execute st using '20 10 45 +-10/33', 'SS HH MI +TZH/TZM';
 prepare st from 'select to_char(to_timestamp_tz(?, ?),?)';
 execute st using '05 55 58 am America/Manaus', 'HH MI SS AM TZR','DD,HH24:MI:SS TZR TZD';
-execute st using '05 55 58 PM America/Manaus AMT', 'HH MI SS AM TZR TZD','DD,HH24:MI:SS TZR TZD';
+execute st using '05 55 58 PM America/Manaus -04', 'HH MI SS AM TZR TZD','DD,HH24:MI:SS TZR TZD';
 prepare st from 'select to_timestamp_tz(?, ?)';
 execute st using '05 55 58 PM America/Manaus AMST', 'HH MI SS AM TZR,TZD';
 execute st using 'EST 12:34:22 [PM] America/New_York', 'TZD HH:MI:SS [AM] TZR';
@@ -54,15 +54,15 @@ execute st using '1999 Tuesday -10', 'YYYY DD TZH';
 execute st using '23-10-4 23:33:10 +4:30', 'YY-MM-DD HH24:MI:SS TZH:TZM';
 execute st using 'December 3, 1931 11:33:10 PM 33', 'MONTH DD, YYYY HH:MI:SS PM TZM';
 execute st using '12 January, 2099 11:33:10 am Asia/Shanghai', 'DD MONTH, YYYY HH:MI:SS AM TZR';
-execute st using '2000-April-2 3:00:03 pm Asia/Baku-AZST', 'YYYY-MONTH-DD HH:MI:SS PM TZR-TZD';
+execute st using '2000-April-2 3:00:03 pm Asia/Baku-+05', 'YYYY-MONTH-DD HH:MI:SS PM TZR-TZD';
 execute st using '11 30 59 pm Feb/27/2000 America/Fortaleza', 'HH MI SS AM MON/DD/YYYY TZR';
-execute st using '11 30 59 pm Feb/27/2000 America/Fortaleza BRT', 'HH MI SS AM MON/DD/YYYY TZR TZD';
+execute st using '11 30 59 pm Feb/27/2000 America/Fortaleza -03', 'HH MI SS AM MON/DD/YYYY TZR TZD';
 --test: [er] unmatched TZR a TZD 
 execute st using '2000-April-2 3:00:03 pm Asia/Baku-AZT', 'YYYY-MONTH-DD HH:MI:SS PM TZR-TZD';
-execute st using '2000-April-2 3:00:03 pm Asia/Baku-AZST 4:00', 'YYYY-MONTH-DD HH:MI:SS PM TZR-TZD TZH:TZM';
-execute st using '2000-April-2 3:00:03 pm Asia/Baku-BAKST', 'YYYY-MONTH-DD HH:MI:SS PM TZR-TZD';
-execute st using '1991-April-2 3:00:03 pm Asia/Baku-BAKST', 'YYYY-MONTH-DD HH:MI:SS PM TZR-TZD';
-execute st using '11 30 59 pm Feb/27/2000 America/Fortaleza BRST', 'HH MI SS AM MON/DD/YYYY TZR TZD';
+execute st using '2000-April-2 3:00:03 pm Asia/Baku-+05 4:00', 'YYYY-MONTH-DD HH:MI:SS PM TZR-TZD TZH:TZM';
+execute st using '2000-April-2 3:00:03 pm Asia/Baku-+04', 'YYYY-MONTH-DD HH:MI:SS PM TZR-TZD';
+execute st using '1991-April-2 3:00:03 pm Asia/Baku-+04', 'YYYY-MONTH-DD HH:MI:SS PM TZR-TZD';
+execute st using '11 30 59 pm Feb/27/2000 America/Fortaleza -02', 'HH MI SS AM MON/DD/YYYY TZR TZD';
 
 
 --test: special time
@@ -75,11 +75,11 @@ set timezone 'Europe/Buchare';
 execute st using '12 01 01 am 1993/Mar/28', 'HH MI SS AM YYYY/MON/DD';
 --DST: ambiguous time
 execute st using '23:00/00 1993. Jan. 24 Pacific/Efate', 'HH24:MI/SS YYYY. MON. DD TZR';
-execute st using '11:00/01 PM 1993. Jan. 24 Pacific/Efate VUT', 'HH:MI/SS AM YYYY. MON. DD TZR TZD';
+execute st using '11:00/01 PM 1993. Jan. 24 Pacific/Efate +11', 'HH:MI/SS AM YYYY. MON. DD TZR TZD';
 execute st using '11:59/59 PM 1993. Jan. 24 Pacific/Efate-VUST', 'HH:MI/SS AM YYYY. MON. DD TZR-TZD';
 execute st using '11 30 59 pm Feb/26/2000 America/Fortaleza', 'HH MI SS AM MON/DD/YYYY TZR';
-execute st using '11 30 59 pm Feb/26/2000 America/Fortaleza BRT', 'HH MI SS AM MON/DD/YYYY TZR TZD';
-execute st using '11 30 59 pm Feb/26/2000 America/Fortaleza BRST', 'HH MI SS AM MON/DD/YYYY TZR TZD';
+execute st using '11 30 59 pm Feb/26/2000 America/Fortaleza -03', 'HH MI SS AM MON/DD/YYYY TZR TZD';
+execute st using '11 30 59 pm Feb/26/2000 America/Fortaleza -02', 'HH MI SS AM MON/DD/YYYY TZR TZD';
 
 
 --test: all transitions of 'Europe/Uzhgorod'
