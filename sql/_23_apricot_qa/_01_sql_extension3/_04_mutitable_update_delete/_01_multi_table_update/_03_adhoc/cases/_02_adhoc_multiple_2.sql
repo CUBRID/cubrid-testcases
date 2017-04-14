@@ -147,7 +147,7 @@ drop table t2;
 
 create table t1(a int, b int);
 create table t2(a int, b int);
-insert into t1 select rownum, rownum from db_class s1, db_class s2, db_class s3, db_class s4 limit 100000;
+insert into t1 select rownum, rownum from db_class s1, db_class s2 limit 150;
 insert into t2 values (4,4),(3,3),(2,2),(1,1);
 update t1, t2 set t1.b=100 where t1.a%4+1 in (select a from t2);
 select count(*) from t1 where b=100;

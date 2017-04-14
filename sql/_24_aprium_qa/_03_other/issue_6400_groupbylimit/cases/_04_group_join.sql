@@ -34,19 +34,19 @@ create index idx_t_m_i on t (m,l,j,i,k);
 
 create index idx_t_n_i on t (n,m,l,j,i,k);
 
-insert into t select rownum,rownum, TO_DATE('12/25/2008'),rownum||'',rownum||'',rownum from db_class a,db_class b limit 1000;
+insert into t select rownum,rownum, TO_DATE('12/25/2008'),rownum||'',rownum||'',rownum from db_class a,db_class b limit 100;
 
-insert into t select rownum,rownum, TO_DATE('12/25/2009'),rownum||'',rownum||'',rownum from db_class a,db_class b limit 1000;
+insert into t select rownum,rownum, TO_DATE('12/25/2009'),rownum||'',rownum||'',rownum from db_class a,db_class b limit 100;
 
 create table t2 like t;
 
 insert into t2 select * from t;
 
-select /*+ recompile */ t.i,t2.j from t left join t2 on t.i=t2.i where t.i > 5 and t2.i < 200 group by t.i having t.j > 0 limit 10;
+select /*+ recompile USE_IDX */ t.i,t2.j from t left join t2 on t.i=t2.i where t.i > 5 and t2.i < 100 group by t.i having t.j > 0 limit 10;
 
-select /*+ recompile */ t.i,t2.j,count(*) from t left join t2 on t.i=t2.i where t.i > 5 and t2.i < 200 group by t.i having t.j > 0 limit 10,10;
+select /*+ recompile USE_IDX */ t.i,t2.j,count(*) from t left join t2 on t.i=t2.i where t.i > 5 and t2.i < 100 group by t.i having t.j > 0 limit 10,10;
 
-select /*+ recompile */ t.i,t.j from t left join t2 on t.i=t2.i where t.i > 5 and t2.i < 200 group by t.i having t.j > 0 limit 10,10;
+select /*+ recompile USE_IDX */ t.i,t.j from t left join t2 on t.i=t2.i where t.i > 5 and t2.i < 100 group by t.i having t.j > 0 limit 10,10;
 
 select /*+ recompile */ t.i,t2.j from t left join t2 on t.i=t2.i where t.i > 5 and t2.i < 200 group by t.i,t.j having t.j > 0  and t.i+0 >0 limit 10;
 
