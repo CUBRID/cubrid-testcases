@@ -30,7 +30,7 @@ select * from t1;
 update (select f2 from t1) as at1 set at1.f2=at1.f2+1;
 select * from t1;
 
---[OK] column alias error
+--[OK] column alias update
 update (select f2 as t1_f2 from t1) set t1_f2=t1_f2+1;
 select * from t1;
 
