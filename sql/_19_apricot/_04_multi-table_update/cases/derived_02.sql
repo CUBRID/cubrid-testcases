@@ -14,7 +14,7 @@ select * from t1 order by 1;
 select * from t2 order by 1;
 select * from t_tr order by 1, 2;
 
-update t1inner join (select * from t2) t on t1.i=t.i set t.i=t1.i + 1;
+update t1 inner join (select * from t2) t on t1.i=t.i set t.i=t1.i + 1;
 select * from t1 order by 1;
 select * from t2 order by 1;
 select * from t_tr order by 1, 2;
