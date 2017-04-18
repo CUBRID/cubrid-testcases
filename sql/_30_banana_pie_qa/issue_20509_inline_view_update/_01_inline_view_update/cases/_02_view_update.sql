@@ -1,4 +1,5 @@
--- (inline) view update test 
+-- TEST CASE For:
+-- [CBRD-20509] Inline View Update : Update via view 
 
 drop table if exists t1;
 drop table if exists t2;
@@ -27,18 +28,25 @@ create view vw_alias as select f2 t1_f2 from t1;
 insert into t1 values(1,1);
 insert into t2 values(1,1), (2,2);
 insert into t3 values(1,1), (2,2), (3,3);
+select * from vw_unall;
 
 --[OK] view update 
 update vw_select set f2=f2+1;
+select * from vw_unall;
 update vw_alias set t1_f2=t1_f2+1;
+select * from vw_unall;
 update vw_unall set f2=f2+1;
+select * from vw_unall;
 
 --[NOK] view update restriction  : set operators
 update vw_diff set f2=f2+1;
 update vw_inter set f2=f2+1;
 update vw_union set f2=f2+1;
-update vw_unall_3tables set f2=f2+1;
+select * from vw_unall;
 
+--[NOK] view update error  : when a inline view contains 3 or more 'UNION ALL's [legacy error]  
+update vw_unall_3tables set f2=f2+1;
+select * from vw_unall;
 
 drop table t1;
 drop table t2;
