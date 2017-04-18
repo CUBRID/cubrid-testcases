@@ -11,7 +11,6 @@ insert into foo select x, y from foo; --128
 insert into foo select x, y from foo; --256
 insert into foo select x, y from foo; --512
 create index i_foo_x on foo(x);
-create index i_foo_y on foo(y);
 --set optimization: cost 'iscan' 0;
 --set optimization: level 257;
 select count(*) from foo a, foo b 
