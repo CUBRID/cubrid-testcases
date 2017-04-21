@@ -5,11 +5,11 @@
 ===================================================
 0
 ===================================================
-1000000
+100000
 ===================================================
 0
 ===================================================
-1000000
+100000
 ===================================================
 1
 ===================================================
@@ -22,53 +22,183 @@
 a    
 null     
 
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a from t? t? where t?.a is null  group by t?.a
 ===================================================
 a    b    
 null     null     
 
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.b from t? t? where t?.a is null  group by t?.a, t?.b
 ===================================================
 a    c    
 null     null     
 
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.c from t? t? where t?.b is null  group by t?.a, t?.c
 ===================================================
 a    b    
 null     null     
 
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.b from t? t? where t?.a is null  group by t?.a
 ===================================================
 a    b    
 null     null     
 
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.b from t? t? where t?.b is null  group by t?.a
 ===================================================
 a    b    
 null     null     
 
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.b from t? t? where t?.c is null  group by t?.a
 ===================================================
 a    
 null     
 
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a from t? t? where t?.a is null  group by t?.a
 ===================================================
 a    min(b)    
 null     null     
 
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, min(t?.b) from t? t? where t?.a is null  group by t?.a, t?.b
 ===================================================
 a    c    
 null     null     
 
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.c from t? t? where t?.b is null  group by t?.a, t?.c
 ===================================================
 a    min(b)    
 null     null     
 
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, min(t?.b) from t? t? where t?.a is null  group by t?.a
 ===================================================
 a    min(b)    
 null     null     
 
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, min(t?.b) from t? t? where t?.b is null  group by t?.a
 ===================================================
 a    min(b)    
 null     null     
 
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, min(t?.b) from t? t? where t?.c is null  group by t?.a
 ===================================================
 a    min(b)    
 
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx_t?_abc term[?] (covers)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, min(t?.b) from t? t? where (t?.a> ?:? ) and t?.c is null  group by t?.a
+/* ---> skip GROUP BY */
 ===================================================
 0
 ===================================================
@@ -79,10 +209,40 @@ a    min(b)
 a    
 null     
 
+Query plan:
+temp(group by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: t? node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: c? node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a from t? t?, c? c? where t?.a is null  group by t?.a
 ===================================================
 a    c    
 null     null     
 
+Query plan:
+temp(group by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: t? node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: c? node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.c from t? t?, c? c? where t?.b is null  group by t?.a, t?.c
 ===================================================
 0
 ===================================================
@@ -92,11 +252,11 @@ null     null
 ===================================================
 0
 ===================================================
-1000000
+100000
 ===================================================
 0
 ===================================================
-1000000
+100000
 ===================================================
 1
 ===================================================
@@ -109,53 +269,183 @@ null     null
 a    
 null     
 
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a from t? t? where t?.a is null  order by ? for orderby_num()<= ?:? 
 ===================================================
 a    b    
 null     null     
 
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.b from t? t? where t?.a is null  order by ?, ? for orderby_num()<= ?:? 
 ===================================================
 a    c    
 null     null     
 
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.c from t? t? where t?.b is null  order by ?, ? for orderby_num()<= ?:? 
 ===================================================
 a    b    
 null     null     
 
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.b from t? t? where t?.a is null  order by ? for orderby_num()<= ?:? 
 ===================================================
 a    b    
 null     null     
 
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.b from t? t? where t?.b is null  order by ? for orderby_num()<= ?:? 
 ===================================================
 a    b    
 null     null     
 
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.b from t? t? where t?.c is null  order by ? for orderby_num()<= ?:? 
 ===================================================
 a    
 null     
 
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a from t? t? where t?.a is null  group by t?.a
 ===================================================
 a    min(b)    
 null     null     
 
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, min(t?.b) from t? t? where t?.a is null  group by t?.a, t?.b
 ===================================================
 a    c    
 null     null     
 
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.c from t? t? where t?.b is null  group by t?.a, t?.c
 ===================================================
 a    min(b)    
 null     null     
 
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, min(t?.b) from t? t? where t?.a is null  group by t?.a
 ===================================================
 a    min(b)    
 null     null     
 
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, min(t?.b) from t? t? where t?.b is null  group by t?.a
 ===================================================
 a    min(b)    
 null     null     
 
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, min(t?.b) from t? t? where t?.c is null  group by t?.a
 ===================================================
 a    min(b)    
 
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx_t?_abc term[?] (covers)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, min(t?.b) from t? t? where (t?.a> ?:? ) and t?.c is null  group by t?.a
+/* ---> skip GROUP BY */
 ===================================================
 0
 ===================================================
