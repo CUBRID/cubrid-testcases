@@ -29,7 +29,7 @@ temp(order by)
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-select student.id, student.score from student student group by student.s_class having (student.score>= ?:? ) order by ? desc  for orderby_num()<= ?:? 
+select student.id, student.score from student student group by student.s_class having (student.score>= ?:? ) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
 ===================================================
 id    score    
 10     90.0     
@@ -43,7 +43,7 @@ iscan
     index: i_s_? term[?] AND term[?] (multi_range_opt)
     cost:  ? card ?
 Query stmt:
-select student.id, student.score from student student where ((student.s_class= ?:? ) or (student.s_class= ?:? )) and (student.score>= ?:? ) order by ? for orderby_num()<= ?:? 
+select student.id, student.score from student student where ((student.s_class= ?:? ) or (student.s_class= ?:? )) and (student.score>= ?:? ) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 ===================================================
 id    score    
 5     98.0     
@@ -57,7 +57,7 @@ iscan
     index: i_s_? term[?] AND term[?] (multi_range_opt) (desc_index)
     cost:  ? card ?
 Query stmt:
-select student.id, student.score from student student where ((student.s_class= ?:? ) or (student.s_class= ?:? )) and (student.score>= ?:? ) order by ? desc  for orderby_num()<= ?:? 
+select student.id, student.score from student student where ((student.s_class= ?:? ) or (student.s_class= ?:? )) and (student.score>= ?:? ) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
 ===================================================
 id    score    
 5     98.0     
@@ -71,7 +71,7 @@ iscan
     index: i_s_? term[?] AND term[?] (multi_range_opt) (desc_index)
     cost:  ? card ?
 Query stmt:
-select student.id, student.score from student student where ((student.s_class= ?:? ) or (student.s_class= ?:? )) and (student.score>= ?:? ) order by ? desc  for orderby_num()<= ?:? 
+select student.id, student.score from student student where ((student.s_class= ?:? ) or (student.s_class= ?:? )) and (student.score>= ?:? ) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
 ===================================================
 id    score    
 3     90.5     
@@ -85,7 +85,7 @@ iscan
     index: i_s_? term[?] AND term[?] (multi_range_opt)
     cost:  ? card ?
 Query stmt:
-select student.id, student.score from student student where ((student.s_class= ?:? ) or (student.s_class= ?:? )) and (student.score>= ?:? ) order by ? for orderby_num()<= ?:? 
+select student.id, student.score from student student where ((student.s_class= ?:? ) or (student.s_class= ?:? )) and (student.score>= ?:? ) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 ===================================================
 id    score    
 10     90.0     
@@ -99,7 +99,7 @@ iscan
     index: i_s_? term[?] AND term[?] (multi_range_opt)
     cost:  ? card ?
 Query stmt:
-select student.id, student.score from student student where ((student.s_class= ?:? ) or (student.s_class= ?:? ) or (student.s_class= ?:? ) or (student.s_class= ?:? )) and (student.score>= ?:? ) order by ? for orderby_num()<= ?:? 
+select student.id, student.score from student student where ((student.s_class= ?:? ) or (student.s_class= ?:? ) or (student.s_class= ?:? ) or (student.s_class= ?:? )) and (student.score>= ?:? ) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 ===================================================
 id    score    
 10     90.0     
@@ -116,7 +116,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select student.id, student.score from student student where (student.score>= ?:? ) order by ? for orderby_num()<= ?:? 
+select student.id, student.score from student student where (student.score>= ?:? ) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 ===================================================
 0
 ===================================================
@@ -142,7 +142,7 @@ iscan
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select tt.a, tt.b from tt tt where ((tt.a= ?:? ) or (tt.a= ?:? )) order by ? for orderby_num()<= ?:? 
+select tt.a, tt.b from tt tt where ((tt.a= ?:? ) or (tt.a= ?:? )) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 ===================================================
 0
 ===================================================
@@ -184,7 +184,7 @@ temp(order by)
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-select t.i?, t.i?, t.i? from t t where (t.i?>= ?:?  and t.i?<= ?:? ) order by ? desc  for orderby_num()<= ?:? 
+select t.i?, t.i?, t.i? from t t where (t.i?>= ?:?  and t.i?<= ?:? ) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
 ===================================================
 i1    i2    i3    
 2     0     20     
@@ -200,7 +200,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t.i?, t.i?, t.i? from t t where (t.i?>= ?:?  and t.i?<= ?:? ) order by ? for orderby_num()<= ?:? 
+select t.i?, t.i?, t.i? from t t where (t.i?>= ?:?  and t.i?<= ?:? ) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 ===================================================
 i1    i2    i3    
 1     0     10     
@@ -213,7 +213,7 @@ iscan
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.i?, t.i?, t.i? from t t where t.i?= ?:?  order by ? for orderby_num()<= ?:? 
+select t.i?, t.i?, t.i? from t t where t.i?= ?:?  order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 ===================================================
 i1    i2    i3    
 0     0     0     
@@ -226,7 +226,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t.i?, t.i?, t.i? from t t where ((t.i?= ?:? ) or (t.i?= ?:? )) and (inst_num()<= ?:? )
+select t.i?, t.i?, t.i? from t t where ((t.i?= ?:?  or t.i?= ?:? )) and (inst_num()> ?:?  and inst_num()<= ?:? )
 ===================================================
 0
 ===================================================
@@ -250,7 +250,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t.id from t t where (t.id> ?:? ) and (inst_num()<= ?:? )
+select t.id from t t where (t.id> ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? )
 ===================================================
 0
 ===================================================
@@ -285,6 +285,6 @@ nl-join (cross join)
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ t?.i, t?.j, t?.k, t?.i, t?.j from t? t?, t? t? where ((t?.j= ?:? ) or (t?.j= ?:? ) or (t?.j= ?:? ) or (t?.j= ?:? )) and t?.i= ?:?  and t?.i= ?:?  and t?.i=t?.i order by ? for orderby_num()<= ?:? 
+select /*+ ORDERED */ t?.i, t?.j, t?.k, t?.i, t?.j from t? t?, t? t? where ((t?.j= ?:? ) or (t?.j= ?:? ) or (t?.j= ?:? ) or (t?.j= ?:? )) and t?.i= ?:?  and t?.i= ?:?  and t?.i=t?.i order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 ===================================================
 0

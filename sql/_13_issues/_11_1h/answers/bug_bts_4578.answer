@@ -32,7 +32,7 @@ iscan
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.a, count(*), sum(t?.b), sum(t?.c) from t? t? group by t?.a using index t?.i_abc keylimit ?,?
+select t?.a, count(*), sum(t?.b), sum(t?.c) from t? t? group by t?.a using index t?.i_abc keylimit  ?:? , ?:? 
 /* ---> skip GROUP BY */
 ===================================================
 a    count(*)    sum(b)    sum(c)    
@@ -44,7 +44,7 @@ iscan
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.a, count(*), sum(t?.b), sum(t?.c) from t? t? where (t?.a> ?:? ) group by t?.a using index t?.i_abc keylimit ?,?
+select t?.a, count(*), sum(t?.b), sum(t?.c) from t? t? where (t?.a> ?:? ) group by t?.a using index t?.i_abc keylimit  ?:? , ?:? 
 /* ---> skip GROUP BY */
 ===================================================
 0
