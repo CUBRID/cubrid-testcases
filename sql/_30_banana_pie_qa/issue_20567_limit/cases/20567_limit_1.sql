@@ -11,10 +11,10 @@ insert into t1 values (1,1),(2,1),(3,1);
 update t1 set a=4 where b=1 limit 0+1+0;
 update t1 set b=2 where b=1 limit 0+2*1;
 update t1 set b=4 where b=1;
-select * from t1;
+select * from t1 order by a,b;
 delete from t1 where b=2 limit 0+10/9;
 delete from t1 limit 0+1;
-select * from t1;
+select * from t1 order by a,b;
 drop table t1;
 
 create table t1 (i int);

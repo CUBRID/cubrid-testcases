@@ -22,7 +22,7 @@ select * from t2 where a = any(select avg(t2.c/100) from t1 where b in (select m
 
 --view
 create view v1 as select t1.a, t2.c from t1, t2 where t1.b=t2.b limit 0+1, 1+2-3+4*5/2;
-select * from v1 limit 0+0, 1+200 ;
+select * from v1 order by 1 limit 0+0, 1+200 ;
 select * from v1 where a is not null order by a desc limit 0+0, 1+(200*0)/3+4/3 ;
 show create view v1;
 drop view v1;
@@ -74,7 +74,7 @@ insert into t2 select rownum from db_class limit 0, 4*11+4;
 
 select * FROM t1 LEFT JOIN t2 ON t1.a=t2.a WHERE t1.a=25 limit 43453481*1-3234324/101 ;
 update statistics on all classes;
-select /*+ recompile use_nl */ * FROM t1 LEFT JOIN t2 ON t1.a=t2.a limit 0-21312+21312,32344*32344/32344/32344*10 ;
+select /*+ recompile use_nl */ * FROM t1 LEFT JOIN t2 ON t1.a=t2.a order by t1.a limit 0-21312+21312,32344*32344/32344/32344*10 ;
 
 drop table if exists t1, t2;
 

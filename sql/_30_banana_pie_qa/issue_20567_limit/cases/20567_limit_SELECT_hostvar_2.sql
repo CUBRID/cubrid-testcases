@@ -107,7 +107,7 @@ SET @c=2;
 prepare stmt from 'select * from t order by 1, 2 limit ?, 1*?/3*?/?/1*?'; 
 execute stmt using @c, @c, @a, @b, @c ;
 
-prepare stmt from 'SELECT t1.* FROM (SELECT * FROM t AS t2 WHERE i > 5 LIMIT ?+? ) AS t1 LIMIT ?/?,?*?';
+prepare stmt from 'SELECT t1.* FROM (SELECT * FROM t AS t2 WHERE i > 5 LIMIT ?+? ) AS t1 order by 1 LIMIT ?/?,?*?';
 execute stmt using  2, 3, 5 , 4, 3 ,2 ;
 
 DEALLOCATE PREPARE  stmt;
