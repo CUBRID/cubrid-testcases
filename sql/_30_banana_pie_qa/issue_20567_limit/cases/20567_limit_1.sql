@@ -16,9 +16,9 @@ select * from t1 order by a,b;
 update t1 set b=4 where b=1 order by a ;
 select * from t1 order by a,b;
 delete from t1 where b=2 limit 0+10/9;
-select * from t1 order by a,b;
-delete from t1 order by t1.a limit 0+1;
-select * from t1 order by a,b;
+select count(*) from t1;
+delete from t1 limit 0+1;
+select count(*) from t1;
 drop table t1;
 
 create table t1 (i int);
