@@ -7,7 +7,7 @@ insert into t values(3,'book3','2009-12-24');
 insert into t values(4,'book4','2010-12-24');
 insert into t values(2,'book2','2008-12-24');
 create index idx1  on t(col3) where year(col3)>2008;
-select * from t where year(col3)>2008 limit 0,1;
+select * from t where year(col3)>2008 order by 1 limit 0,1;
 select col3 from t where year(col3)>2008 using index idx1(+) keylimit 0,1;
 select col3 from t where year(col3)>2008 using index idx1(+) keylimit 0+1,1;
 select col3 from t where year(col3)>2008 using index idx1(+) keylimit 0+1,2-1;

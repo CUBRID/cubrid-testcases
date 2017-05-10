@@ -7,11 +7,11 @@ insert into t values(4,'book4','2010-12-24');
 insert into t values(5,'book2','2008-12-24');
 insert into t values(6,'book2','2011-12-24');
 insert into t values(7,'book5','2008-12-24');
-CREATE INDEX idx1 ON t(year(col3));
-CREATE INDEX idx2 ON t(col2);
-CREATE INDEX idx3 ON t(year(col3),col2);
+CREATE INDEX idx1 ON t(year(col3),col1);
+CREATE INDEX idx2 ON t(col2,col1);
+CREATE INDEX idx3 ON t(year(col3),col2,col1);
 SELECT /*+ recompile */* FROM t
-WHERE year(col3)=2008 and col2='book2' ;
+WHERE year(col3)=2008 and col2='book2' order by 1,2,3;
 SELECT *
 FROM t
 WHERE year(col3)=2008 and col2='book2' using index idx1(+) keylimit 0+0+0+0+0+0+0,1-1+1;
@@ -21,8 +21,8 @@ FROM t
 WHERE year(col3)=2008 and col2='book2' using index idx2(+) keylimit 2-(2*1),1;
 SELECT *
 FROM t
-WHERE year(col3)=2008 or col2='book2' using index idx2(+) keylimit 1*(2-2),3;
+WHERE year(col3)=2008 or col2='book2' using index idx2(+) keylimit 1*(2-2),3 order by 1,2,3;
 SELECT *
 FROM t
-WHERE year(col3)=2008 or col2='book2' using index idx1(+) keylimit 0,3;
+WHERE year(col3)=2008 or col2='book2' using index idx1(+) keylimit 0,3 order by 1,2,3;
 drop table if exists t;

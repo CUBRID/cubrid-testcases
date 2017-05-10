@@ -20,13 +20,13 @@ insert into x select /*+ recompile */ id,score from student where s_class in ('1
 select * from x order by 1,2;
 insert into x select /*+ recompile */ id,score from student where s_class in ('1','3') and score>=90 order by score desc limit 1,10*10*10;
 select * from x order by 1,2;
-insert into x select /*+ recompile */ id,score from student group by s_class having score>=90 order by score desc limit 0*8,0+1;
+insert into x select /*+ recompile */ id,score from (select * from student order by 1,2,3) group by s_class having score>=90 order by score desc limit 0*8,0+1;
 select * from x order by 1,2;
 insert into x select /*+ recompile */ id,score from student where s_class in ('1','2') and score>=90 order by score limit 0*5,4+0;
 select * from x order by 1,2;
 insert into x select /*+ recompile */ id,score from student where s_class in ('1','3') and score>=90 order by score desc limit 4-4,2+3;
 select * from x order by 1,2;
-insert into x select /*+ recompile */ id,score from student where score>=90 order by score limit 0*1,4*1;
+insert into x select /*+ recompile */ id,score from (select * from student order by 1,2,3) where score>=90 order by score limit 0*1,4*1;
 select * from x order by 1,2;
 set system parameters 'multi_range_optimization_limit=100';
-drop student;
+drop if exists x,student;

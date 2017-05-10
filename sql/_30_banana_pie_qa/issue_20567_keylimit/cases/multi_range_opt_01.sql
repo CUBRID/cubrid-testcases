@@ -14,9 +14,9 @@ select /*+ recompile */ id,score from student where s_class in ('1','3') and sco
 select /*+ recompile */ id,score from student where s_class in ('1','3') and score>=90 order by score desc limit 0,10*10*10;
 select /*+ recompile */ id,score from student where s_class in ('1','3') and score>=90 order by score desc limit 1,10*10*10;
 
-select /*+ recompile */ id,score from student group by s_class having score>=90 order by score desc limit 0*8,0+1;
+select /*+ recompile */ id,score from (select * from student order by 1,2,3) group by s_class having score>=90 order by score desc limit 0*8,0+1;
 select /*+ recompile */ id,score from student where s_class in ('1','2') and score>=90 order by score limit 0*5,4+0;
 select /*+ recompile */ id,score from student where s_class in ('1','3') and score>=90 order by score desc limit 4-4,2+3;
-select /*+ recompile */ id,score from student where score>=90 order by score limit 0*1,4*1;
+select /*+ recompile */ id,score from (select * from student order by 1,2,3) where score>=90 order by score limit 0*1,4*1;
 set system parameters 'multi_range_optimization_limit=100';
 drop student;

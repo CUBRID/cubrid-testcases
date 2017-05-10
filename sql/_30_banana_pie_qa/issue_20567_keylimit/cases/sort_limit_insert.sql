@@ -3,8 +3,8 @@ CREATE TABLE t(i int PRIMARY KEY, j int, k int);
 CREATE TABLE u(i int, j int, k int);
 ALTER TABLE u ADD constraint fk_t_u_i FOREIGN KEY(i) REFERENCES t(i);
 CREATE INDEX i_u_j ON u(j);
-INSERT INTO t select ROWNUM, ROWNUM, ROWNUM FROM db_root connect by level<=1000;
-INSERT INTO u select 1+(ROWNUM % 1000), ROWNUM, ROWNUM FROM db_root connect by level<=5000;
+INSERT INTO t select ROWNUM, ROWNUM, ROWNUM FROM db_root connect by level<=10;
+INSERT INTO u select 1+(ROWNUM % 10), ROWNUM, ROWNUM FROM db_root connect by level<=50;
 
 drop if exists x;
 CREATE TABLE x(i int, j int, k int,l int,m int,n int);

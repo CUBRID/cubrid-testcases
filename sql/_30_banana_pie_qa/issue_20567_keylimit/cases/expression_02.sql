@@ -8,7 +8,7 @@ create index idx_t_job on t(job);
 
 --expr:unsign int
 select * from t where job='unkown' using index pk_t_i keylimit 0,3  order by 1 desc;
-select * from t using index pk_t_i keylimit 0,3 ;
+select * from t using index pk_t_i keylimit 0,3 order by 1,2,3;
 select * from t where i >5 using index pk_t_i keylimit 0,3 ;
 select * from t where i >3 using index pk_t_i keylimit 1*3*1*1,3*2 ;  
 select * from t where i >5 using index pk_t_i keylimit 0,3 ;
