@@ -196,7 +196,7 @@ iscan
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ NO_DESC_IDX */ x.a, x.b from x x where (x.a> ?:? ) using index x.pk_x_a keylimit ?,? order by ? for orderby_num() between  ?:?  and  ?:? 
+select /*+ NO_DESC_IDX */ x.a, x.b from x x where (x.a> ?:? ) using index x.pk_x_a keylimit  ?:? , ?:?  order by ? for orderby_num() between  ?:?  and  ?:? 
 /* ---> skip ORDER BY */
 ===================================================
 a    b    
@@ -211,7 +211,7 @@ iscan
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ NO_DESC_IDX */ x.a, x.b from x x where (x.a> ?:? ) using index x.pk_x_a keylimit ?,? order by ? for orderby_num() between  ?:?  and  ?:? 
+select /*+ NO_DESC_IDX */ x.a, x.b from x x where (x.a> ?:? ) using index x.pk_x_a keylimit  ?:? , ?:?  order by ? for orderby_num() between  ?:?  and  ?:? 
 /* ---> skip ORDER BY */
 ===================================================
 a    b    
@@ -229,7 +229,7 @@ temp(order by)
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-select /*+ NO_DESC_IDX */ x.a, x.b from x x where (x.a> ?:? ) using index x.pk_x_a keylimit ?,? order by ? desc  for orderby_num() between  ?:?  and  ?:? 
+select /*+ NO_DESC_IDX */ x.a, x.b from x x where (x.a> ?:? ) using index x.pk_x_a keylimit  ?:? , ?:?  order by ? desc  for orderby_num() between  ?:?  and  ?:? 
 ===================================================
 a    b    
 5     1     
@@ -246,7 +246,7 @@ temp(order by)
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-select /*+ NO_DESC_IDX */ x.a, x.b from x x where (x.a> ?:? ) using index x.pk_x_a keylimit ?,? order by ? desc  for orderby_num() between  ?:?  and  ?:? 
+select /*+ NO_DESC_IDX */ x.a, x.b from x x where (x.a> ?:? ) using index x.pk_x_a keylimit  ?:? , ?:?  order by ? desc  for orderby_num() between  ?:?  and  ?:? 
 ===================================================
 a    b    a    b    
 1     1     11     1     
@@ -284,7 +284,7 @@ iscan
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select /*+ NO_DESC_IDX */ x.a, x.b from x x where (x.a> ?:? ) using index x.pk_x_a keylimit ?,? order by ? for orderby_num() between  ?:?  and  ?:? )
+(select /*+ NO_DESC_IDX */ x.a, x.b from x x where (x.a> ?:? ) using index x.pk_x_a keylimit  ?:? , ?:?  order by ? for orderby_num() between  ?:?  and  ?:? )
 /* ---> skip ORDER BY */
 Query plan:
 temp(order by)
@@ -300,7 +300,7 @@ temp(order by)
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-select t.a, t.b, y.a, y.b from (select /*+ NO_DESC_IDX */ x.a, x.b from x x where (x.a> ?:? ) using index x.pk_x_a keylimit ?,? order by ? for orderby_num() between  ?:?  and  ?:? ) t (a, b), y y where (y.a> ?:? ) order by ? desc 
+select t.a, t.b, y.a, y.b from (select /*+ NO_DESC_IDX */ x.a, x.b from x x where (x.a> ?:? ) using index x.pk_x_a keylimit  ?:? , ?:?  order by ? for orderby_num() between  ?:?  and  ?:? ) t (a, b), y y where (y.a> ?:? ) order by ? desc 
 ===================================================
 a    b    
 11     1     
@@ -352,14 +352,14 @@ iscan
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select /*+ NO_DESC_IDX */ x.a, x.b from x x where (x.a> ?:? ) using index x.pk_x_a keylimit ?,? order by ? for orderby_num() between  ?:?  and  ?:? )
+(select /*+ NO_DESC_IDX */ x.a, x.b from x x where (x.a> ?:? ) using index x.pk_x_a keylimit  ?:? , ?:?  order by ? for orderby_num() between  ?:?  and  ?:? )
 /* ---> skip ORDER BY */
 Query plan:
 sscan
     class: t node[?]
     cost:  ? card ?
 Query stmt:
-select t.a, t.b from ((select y.a, y.b from y y where (y.a> ?:? ) order by ? desc ) union all (select /*+ NO_DESC_IDX */ x.a, x.b from x x where (x.a> ?:? ) using index x.pk_x_a keylimit ?,? order by ? for orderby_num() between  ?:?  and  ?:? )) t (a, b)
+select t.a, t.b from ((select y.a, y.b from y y where (y.a> ?:? ) order by ? desc ) union all (select /*+ NO_DESC_IDX */ x.a, x.b from x x where (x.a> ?:? ) using index x.pk_x_a keylimit  ?:? , ?:?  order by ? for orderby_num() between  ?:?  and  ?:? )) t (a, b)
 ===================================================
 co    
 1     
@@ -570,7 +570,7 @@ temp(order by)
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-select /*+ NO_DESC_IDX */ athlete?.[name], athlete?.event from athlete? athlete? where (athlete?.[name]> ?:? ) using index athlete?.i_athlete?_name keylimit ?,? order by ? desc 
+select /*+ NO_DESC_IDX */ athlete?.[name], athlete?.event from athlete? athlete? where (athlete?.[name]> ?:? ) using index athlete?.i_athlete?_name keylimit  ?:? , ?:?  order by ? desc 
 ===================================================
 name    event    
 Hwang Young-Cho     Athletics     
@@ -586,7 +586,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ NO_DESC_IDX */ athlete?.[name], athlete?.event from athlete? athlete? where (athlete?.[name]> ?:? ) using index athlete?.i_athlete?_name keylimit ?,? order by ?
+select /*+ NO_DESC_IDX */ athlete?.[name], athlete?.event from athlete? athlete? where (athlete?.[name]> ?:? ) using index athlete?.i_athlete?_name keylimit  ?:? , ?:?  order by ?
 ===================================================
 0
 ===================================================

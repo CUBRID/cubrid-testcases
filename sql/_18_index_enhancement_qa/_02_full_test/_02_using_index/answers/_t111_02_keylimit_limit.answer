@@ -37,7 +37,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select rownum, t?.a, t?.c from t? t? where (t?.a> ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) and t?.c= ?:?  using index t?.idx_t?_ac keylimit ?,?
+select rownum, t?.a, t?.c from t? t? where (t?.a> ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) and t?.c= ?:?  using index t?.idx_t?_ac keylimit  ?:? , ?:? 
 ===================================================
 rownum    a    c    
 
@@ -49,7 +49,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select rownum, t?.a, t?.c from t? t? where (t?.a> ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) and t?.c= ?:?  using index t?.idx_t?_ac(+) keylimit ?,?
+select rownum, t?.a, t?.c from t? t? where (t?.a> ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) and t?.c= ?:?  using index t?.idx_t?_ac(+) keylimit  ?:? , ?:? 
 ===================================================
 rownum    a    c    
 
@@ -69,7 +69,7 @@ nl-join (cross join)
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select rownum, t?_a.a, t?_a.c from t? t?_a, t? t?_b where (t?_a.a> ?:? ) and (t?_b.a> ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) and t?_b.c= ?:?  and t?_a.c= ?:?  using index t?_a.idx_t?_ac(+) keylimit ?,?, t?_b.idx_t?_ac(+) keylimit ?,?
+select rownum, t?_a.a, t?_a.c from t? t?_a, t? t?_b where (t?_a.a> ?:? ) and (t?_b.a> ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) and t?_b.c= ?:?  and t?_a.c= ?:?  using index t?_a.idx_t?_ac(+) keylimit  ?:? , ?:? , t?_b.idx_t?_ac(+) keylimit  ?:? , ?:? 
 ===================================================
 rownum    a    c    
 
@@ -80,7 +80,7 @@ iscan
     filtr: term[?]
     cost:  ? card ?
 Query stmt:
-select rownum, t?.a, t?.c from t? t? where (t?.a> ?:? ) and t?.c= ?:?  using index t?.idx_t?_ac(+) keylimit ?,?, t?.idx_t?_ac(+) keylimit ?,?
+select rownum, t?.a, t?.c from t? t? where (t?.a> ?:? ) and t?.c= ?:?  using index t?.idx_t?_ac(+) keylimit  ?:? , ?:? , t?.idx_t?_ac(+) keylimit  ?:? , ?:? 
 ===================================================
 Error:-493
 ===================================================

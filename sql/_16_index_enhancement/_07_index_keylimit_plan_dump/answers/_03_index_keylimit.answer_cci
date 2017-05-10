@@ -173,7 +173,7 @@ iscan
     index: i_tab?_id keylimit ? term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select tab?.id from tab? tab? where (tab?.id> ?:? ) using index tab?.i_tab?_id(+) keylimit ?
+select tab?.id from tab? tab? where (tab?.id> ?:? ) using index tab?.i_tab?_id(+) keylimit  ?:? 
 ===================================================
 id    
 1     
@@ -187,7 +187,7 @@ iscan
     filtr: term[?]
     cost:  ? card ?
 Query stmt:
-select tab?.id from tab? tab? where (tab?.id> ?:? ) and (tab?.num> ?:? ) using index tab?.i_tab?_id_num(+) keylimit ?
+select tab?.id from tab? tab? where (tab?.id> ?:? ) and (tab?.num> ?:? ) using index tab?.i_tab?_id_num(+) keylimit  ?:? 
 ===================================================
 id    text    
 4     vwx     
@@ -207,7 +207,7 @@ nl-join (cross join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select tab?.id, tab?.[text] from tab? tab?, tab? tab? where (tab?.id> ?:? ) and (tab?.[text]< ?:? ) using index tab?.i_tab?_id(+) keylimit ?,?, tab?.i_tab?_text(+) keylimit ?,?
+select tab?.id, tab?.[text] from tab? tab?, tab? tab? where (tab?.id> ?:? ) and (tab?.[text]< ?:? ) using index tab?.i_tab?_id(+) keylimit  ?:? , ?:? , tab?.i_tab?_text(+) keylimit  ?:? , ?:? 
 ===================================================
 id    num    id    
 1     0     5     
@@ -229,7 +229,7 @@ nl-join (cross join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select tab?.id, tab?.num, tab?.id from tab? tab?, tab? tab? where (tab?.id> ?:? ) and (tab?.id> ?:? ) using index tab?.i_tab?_id_num(+) keylimit ?, tab?.i_tab?_id(+) keylimit ?,?
+select tab?.id, tab?.num, tab?.id from tab? tab?, tab? tab? where (tab?.id> ?:? ) and (tab?.id> ?:? ) using index tab?.i_tab?_id_num(+) keylimit  ?:? , tab?.i_tab?_id(+) keylimit  ?:? , ?:? 
 ===================================================
 id    
 1     
@@ -244,7 +244,7 @@ iscan
     index: i_tab?_id keylimit ?, ? term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select tab?.id from tab? tab? where (tab?.id> ?:? ) using index tab?.i_tab?_id(+) keylimit ?,?
+select tab?.id from tab? tab? where (tab?.id> ?:? ) using index tab?.i_tab?_id(+) keylimit  ?:? , ?:? 
 ===================================================
 Error:-454
 ===================================================
@@ -268,7 +268,7 @@ iscan
     index: i_test_table_col_timestamp_col_datetime keylimit ? term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select test_table.col_timestamp, test_table.col_datetime from test_table test_table where (test_table.col_timestamp> ?:? ) using index test_table.i_test_table_col_timestamp_col_datetime(+) keylimit ?
+select test_table.col_timestamp, test_table.col_datetime from test_table test_table where (test_table.col_timestamp> ?:? ) using index test_table.i_test_table_col_timestamp_col_datetime(+) keylimit  ?:? 
 ===================================================
 col_timestamp    
 2007-05-03 18:59:12.0     
@@ -281,7 +281,7 @@ iscan
     index: i_test_table_col_timestamp_col_datetime keylimit ?, ? term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select test_table.col_timestamp from test_table test_table where (test_table.col_timestamp> ?:? ) using index test_table.i_test_table_col_timestamp_col_datetime(+) keylimit ?,?
+select test_table.col_timestamp from test_table test_table where (test_table.col_timestamp> ?:? ) using index test_table.i_test_table_col_timestamp_col_datetime(+) keylimit  ?:? , ?:? 
 ===================================================
 col_smallint    col_float    col_string    
 123     1.234     abcdefghijklmn     
@@ -301,7 +301,7 @@ iscan
     filtr: term[?]
     cost:  ? card ?
 Query stmt:
-select test_table.col_smallint, test_table.col_float, test_table.col_string from test_table test_table where (test_table.col_smallint> ?:? ) and test_table.col_string like  ?:?  using index test_table.i_test_table_col_smallint_col_float_col_string(+) keylimit ?,?
+select test_table.col_smallint, test_table.col_float, test_table.col_string from test_table test_table where (test_table.col_smallint> ?:? ) and test_table.col_string like  ?:?  using index test_table.i_test_table_col_smallint_col_float_col_string(+) keylimit  ?:? , ?:? 
 ===================================================
 col_timestamp    col_datetime    
 2003-05-03 18:59:12.0     2010-05-03 18:59:12.203     
@@ -317,7 +317,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select test_table.col_timestamp, test_table.col_datetime from test_table test_table where test_table.col_varchar_? like  ?:?  and (test_table.col_timestamp> ?:? ) using index test_table.i_test_table_col_timestamp_col_datetime(+) keylimit ?
+select test_table.col_timestamp, test_table.col_datetime from test_table test_table where test_table.col_varchar_? like  ?:?  and (test_table.col_timestamp> ?:? ) using index test_table.i_test_table_col_timestamp_col_datetime(+) keylimit  ?:? 
 ===================================================
 id    id    
 2282     501     
@@ -417,7 +417,7 @@ nl-join (cross join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select a.id, b.id from t? a, t? b where (a.id> ?:?  and a.id< ?:? ) and (b.id> ?:? ) using index a.i_t?_id(+) keylimit ?,?, b.i_t?_id(+) keylimit ?
+select a.id, b.id from t? a, t? b where (a.id> ?:?  and a.id< ?:? ) and (b.id> ?:? ) using index a.i_t?_id(+) keylimit  ?:? , ?:? , b.i_t?_id(+) keylimit  ?:? 
 ===================================================
 id    id    
 2282     2282     
@@ -454,7 +454,7 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select a.id, b.id from t? a, t? b where (a.id> ?:?  and a.id< ?:? ) and a.id=b.id using index a.i_t?_id(+) keylimit ?,?, b.i_t?_id(+) keylimit ?
+select a.id, b.id from t? a, t? b where (a.id> ?:?  and a.id< ?:? ) and a.id=b.id using index a.i_t?_id(+) keylimit  ?:? , ?:? , b.i_t?_id(+) keylimit  ?:? 
 ===================================================
 id    id    
 
@@ -470,7 +470,7 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select a.id, b.id from t? a, t? b where (a.id> ?:?  and a.id< ?:? ) and a.id=b.id using index a.i_t?_id(+) keylimit ?,?, b.i_t?_id(+) keylimit ?
+select a.id, b.id from t? a, t? b where (a.id> ?:?  and a.id< ?:? ) and a.id=b.id using index a.i_t?_id(+) keylimit  ?:? , ?:? , b.i_t?_id(+) keylimit  ?:? 
 ===================================================
 text    
 BDBDC     
@@ -497,7 +497,7 @@ iscan
     index: i_t?_text keylimit ?, ? term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select t?.[text] from t? t? where (t?.[text]> ?:? ) using index t?.i_t?_text(+) keylimit ?,?
+select t?.[text] from t? t? where (t?.[text]> ?:? ) using index t?.i_t?_text(+) keylimit  ?:? , ?:? 
 ===================================================
 id    text    
 501     ADBAB     
@@ -579,7 +579,7 @@ iscan
     filtr: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.id, t?.[text] from t? t? where (t?.id> ?:? ) and (t?.[text]< ?:? ) using index t?.i_t?_id_text(+) keylimit ?
+select t?.id, t?.[text] from t? t? where (t?.id> ?:? ) and (t?.[text]< ?:? ) using index t?.i_t?_id_text(+) keylimit  ?:? 
 ===================================================
 id    text    
 580     ADDDA     
@@ -661,7 +661,7 @@ iscan
     filtr: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.id, t?.[text] from t? t? where (t?.id> ?:? ) and (t?.[text]> ?:? ) using index t?.i_t?_id_text(+) keylimit ?
+select t?.id, t?.[text] from t? t? where (t?.id> ?:? ) and (t?.[text]> ?:? ) using index t?.i_t?_id_text(+) keylimit  ?:? 
 ===================================================
 text    text    
 ACAEB     ABCA     
@@ -772,7 +772,7 @@ nl-join (cross join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select a.[text], b.[text] from t? a, t? b where (a.[text]>= ?:?  and a.[text]<= ?:? ) and (b.[text]>= ?:?  and b.[text]<= ?:? ) using index a.i_t?_text(+) keylimit ?,?
+select a.[text], b.[text] from t? a, t? b where (a.[text]>= ?:?  and a.[text]<= ?:? ) and (b.[text]>= ?:?  and b.[text]<= ?:? ) using index a.i_t?_text(+) keylimit  ?:? , ?:? 
 ===================================================
 id    parentid    text    
 3022     3029     DEBD     
@@ -843,7 +843,7 @@ iscan
     sort:  ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t?.id, t?.parentid, t?.[text] from t? t? where (t?.id> ?:? ) and (t?.parentid> ?:? ) using index t?.i_t?_id_parentid_text(+) keylimit ?,? order by ?, ?
+select t?.id, t?.parentid, t?.[text] from t? t? where (t?.id> ?:? ) and (t?.parentid> ?:? ) using index t?.i_t?_id_parentid_text(+) keylimit  ?:? , ?:?  order by ?, ?
 /* ---> skip ORDER BY */
 ===================================================
 id    parentid    text    
@@ -881,7 +881,7 @@ temp(order by)
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t?.id, t?.parentid, t?.[text] from t? t? where (t?.id< ?:? ) start with t?.[text]= ?:?  connect by  prior t?.id=t?.parentid using index t?.i_t?_id_parentid_text(+) keylimit ? order by ?, ?
+select t?.id, t?.parentid, t?.[text] from t? t? where (t?.id< ?:? ) start with t?.[text]= ?:?  connect by  prior t?.id=t?.parentid using index t?.i_t?_id_parentid_text(+) keylimit  ?:?  order by ?, ?
 ===================================================
 0
 ===================================================
