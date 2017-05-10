@@ -14,20 +14,30 @@ select * from t order by 1;
 prepare stmt from 'select * from t order by 1, 2 limit ?,  ?+?';
 execute stmt using 4,  1,  3  ;
 execute stmt using -4,  1,  3  ;
+execute stmt using '', 1,  3  ;
+execute stmt using  4, ' ', 3;
+execute stmt using  4, 1, '3';
+execute stmt using  '4', '1', '0';
 
 --Statement 2
 prepare stmt from 'select * from t order by 1, 2 limit ?+?,  ?-?';
 execute stmt using 1, 3,  8, 4  ;
+execute stmt using null, null, null, null;
+
 prepare stmt from 'select * from t order by 1, 2 limit ?*?,  ?-?';
 execute stmt using 1, 3,  8, 4  ;
+execute stmt using null, null, null, null;
 
 --Statement 3
 prepare stmt from 'select * from t order by 1, 2 limit ?-?,  ?*2'; 
+execute stmt using null, null, null;
 execute stmt using 8, 4, 2  ;
 
 --Statement 4
 prepare stmt from 'select * from t order by 1, 2 limit ?*2,  ?/?'; 
+execute stmt using null, null, null;
 execute stmt using 2, 12, 3 ;
+
 
 --Statement 5
 prepare stmt from 'select * from t order by 1, 2 limit ?/?,  (?+?)+(?-?)';
@@ -47,6 +57,7 @@ execute stmt using 1,3,8,4,  7,3,1,2,1 ;
 
 --Statement 9
 prepare stmt from 'select * from t order by 1, 2 limit ?-(?-?)*?+?,  1-(?-?)/?+?';
+execute stmt using null, null, null, null, null, null, null, null, null;
 execute stmt using 7,3,1,2,1,  7,1,3,5 ;
 
 --Statement 10
