@@ -15,13 +15,13 @@ insert into t2 values(5, 'e', 200);
 insert into t2 values(7, 'g', 200);
 insert into t2 values(9, 'i', 300);
 
-select a, b, (select avg(c) from t1 where a=ttt.a limit 20-1) as average from t1 ttt order by 1, 2 limit (1-1+2)*8/16, 5*2-1-3*1;
-select a, b, average from (select a, b, (select sum(c) from t2 where a=t1.a limit 1-0*9) as average from t1 limit  1+4-1) where a < 8 order by 1, 2 limit 1-1, 5/2+1;
+select a, b, (select avg(c) from t1 where a=ttt.a order by t1.a limit 20-1) as average from t1 ttt order by 1, 2 limit (1-1+2)*8/16, 5*2-1-3*1;
+select a, b, average from (select a, b, (select sum(c) from t2 where a=t1.a order by t2.a limit 1-0*9) as average from t1 order by t1.a limit 1+4-1) where a < 8 order by 1, 2 limit 1-1, 5/2+1;
 select * from t1 where b in (select max(b) from t2 where a=t1.a) order by 1, 2 limit 1+0*1, 2*(2+1);
 select * from t2 where a = any(select avg(t2.c/100) from t1 where b in (select max(b) from t2)) order by 1, 2 limit 1+0-0.1, 5*2.00+1;
 
 --view
-create view v1 as select t1.a, t2.c from t1, t2 where t1.b=t2.b limit 0+1, 1+2-3+4*5/2;
+create view v1 as select t1.a, t2.c from t1, t2 where t1.b=t2.b order by t1.a limit 0+1, 1+2-3+4*5/2;
 select * from v1 order by 1 limit 0+0, 1+200 ;
 select * from v1 where a is not null order by a desc limit 0+0, 1+(200*0)/3+4/3 ;
 show create view v1;

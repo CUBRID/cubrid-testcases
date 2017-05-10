@@ -74,7 +74,7 @@ select * from t order by 1, 2 limit 4,  ' '+3;
 select * from t order by 1, 2 limit null, null+null;
 
 
-SELECT t1.* FROM (SELECT * FROM t AS t2 WHERE i > 5 LIMIT 2+3 ) AS t1 LIMIT 5/4,3*2;
+SELECT t1.* FROM (SELECT * FROM t AS t2 WHERE i > 5 order by 1 LIMIT 2+3 ) AS t1 LIMIT 5/4,3*2;
 select * from t order by 1, 2 limit a-2,    4;
 select * from t order by 1, 2 limit 2,    4*a;
 

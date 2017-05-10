@@ -78,21 +78,24 @@ sscan
 Query stmt:
 (select t?.a_? from (select sum(t?.c) from t? t? where t?.a=t?.a) t? (a_?) where (inst_num()<= ?:? ))
 Query plan:
-sscan
-    class: t? node[?]
-    sargs: term[?] AND term[?]
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select t?.a, t?.b, (select t?.a_? from (select sum(t?.c) from t? t? where t?.a=t?.a) t? (a_?) where (inst_num()<= ?:? )) from t? t? where (inst_num()<= ?:? ) and (t?.a< ?:? ))
+(select t?.a, t?.b, (select t?.a_? from (select sum(t?.c) from t? t? where t?.a=t?.a) t? (a_?) where (inst_num()<= ?:? )) from t? t? order by ? for orderby_num()<= ?:? )
 Query plan:
 temp(order by)
     subplan: sscan
                  class: __t? node[?]
+                 sargs: term[?]
                  cost:  ? card ?
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select [__t?].a, [__t?].b, [__t?].average from (select t?.a, t?.b, (select t?.a_? from (select sum(t?.c) from t? t? where t?.a=t?.a) t? (a_?) where (inst_num()<= ?:? )) as [average] from t? t? where (inst_num()<= ?:? ) and (t?.a< ?:? )) [__t?] (a, b, average) order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+select [__t?].a, [__t?].b, [__t?].average from (select t?.a, t?.b, (select t?.a_? from (select sum(t?.c) from t? t? where t?.a=t?.a) t? (a_?) where (inst_num()<= ?:? )) as [average] from t? t? order by ? for orderby_num()<= ?:? ) [__t?] (a, b, average) where ([__t?].a< ?:? ) order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 ===================================================
 a    b    c    
 3     c     2     
@@ -131,18 +134,25 @@ temp(order by)
                  edge:  term[?]
                  outer: sscan
                             class: t? node[?]
-                            sargs: term[?]
                             cost:  ? card ?
                  inner: sscan
                             class: v? node[?]
                             sargs: term[?]
                             cost:  ? card ?
-                 sargs: term[?]
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select v?.a, t?.c from t? v?, t? t? where (v?.b=t?.b) and (inst_num()> ?:?  and inst_num()<= ?:? ) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+(select v?.a, t?.c from t? v?, t? t? where (v?.b=t?.b) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? )
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: v? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select v?.a, v?.c from (select v?.a, t?.c from t? v?, t? t? where (v?.b=t?.b) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? ) v? (a, c) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 ===================================================
 a    c    
 5     200     
@@ -154,21 +164,28 @@ temp(order by)
                  edge:  term[?]
                  outer: sscan
                             class: t? node[?]
-                            sargs: term[?]
                             cost:  ? card ?
                  inner: sscan
                             class: v? node[?]
                             sargs: term[?] AND term[?]
                             cost:  ? card ?
-                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select v?.a, t?.c from t? v?, t? t? where (v?.a is not null ) and (v?.b=t?.b) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? )
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: v? node[?]
                  cost:  ? card ?
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-select v?.a, t?.c from t? v?, t? t? where (v?.a is not null ) and (v?.b=t?.b) and (inst_num()> ?:?  and inst_num()<= ?:? ) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+select v?.a, v?.c from (select v?.a, t?.c from t? v?, t? t? where (v?.a is not null ) and (v?.b=t?.b) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? ) v? (a, c) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
 ===================================================
 View    Create View    
-v1     select [t1].[a], [t2].[c] from [t1] [t1], [t2] [t2] where ([t1].[b]=[t2].[b]) and inst_num()>0+1 and inst_num()<=0+1+1+2-3+4*5/2     
+v1     select [t1].[a], [t2].[c] from [t1] [t1], [t2] [t2] where [t1].[b]=[t2].[b] order by 1 for orderby_num()>0+1 and orderby_num()<=0+1+1+2-3+4*5/2     
 
 ===================================================
 0
