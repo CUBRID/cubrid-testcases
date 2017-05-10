@@ -12,6 +12,8 @@ select * from t order by 1;
 
 --Statement 1
 prepare stmt from 'select * from t order by 1, 2 limit ?,  ?+?';
+execute stmt using '', '', '';
+execute stmt using ' ', ' ', ' ';
 execute stmt using 4,  1,  3  ;
 execute stmt using -4,  1,  3  ;
 execute stmt using '', 1,  3  ;
@@ -21,12 +23,12 @@ execute stmt using  '4', '1', '0';
 
 --Statement 2
 prepare stmt from 'select * from t order by 1, 2 limit ?+?,  ?-?';
-execute stmt using 1, 3,  8, 4  ;
 execute stmt using null, null, null, null;
+execute stmt using 1, 3,  8, 4  ;
 
 prepare stmt from 'select * from t order by 1, 2 limit ?*?,  ?-?';
-execute stmt using 1, 3,  8, 4  ;
 execute stmt using null, null, null, null;
+execute stmt using 1, 3,  8, 4  ;
 
 --Statement 3
 prepare stmt from 'select * from t order by 1, 2 limit ?-?,  ?*2'; 
