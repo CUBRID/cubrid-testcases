@@ -60,12 +60,12 @@ CREATE INDEX i_tab_j ON tab (j);
 SELECT j,k
 FROM tab
 WHERE j > 0
-GROUP BY j,k  limit  6-1,1*6/3;
-SELECT j,k
+GROUP BY j,k order by j,k  limit  6-1,1*6/3;
+SELECT j
 FROM tab
 WHERE j > 0
 GROUP BY j,k using index i_tab_j(+)  keylimit  6-1,1*6/3;
-SELECT j,k
+SELECT j
 FROM tab
 WHERE j > 0
 GROUP BY j,k using index i_tab_j(+)  keylimit  0,6;

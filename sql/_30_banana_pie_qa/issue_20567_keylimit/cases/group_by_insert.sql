@@ -76,16 +76,13 @@ insert into x select j,k
 FROM tab
 WHERE j > 0
 GROUP BY j,k  limit  6-1,1*6/3;
-select * from x order by 1,2
 insert into x select j,k
 FROM tab
 WHERE j > 0
 GROUP BY j,k using index i_tab_j(+)  keylimit  6-1,1*6/3;
-select * from x order by 1,2
 insert into x select j,k
 FROM tab
 WHERE j > 0
 GROUP BY j,k using index i_tab_j(+)  keylimit  0,6;
-select * from x order by 1,2
 drop if exists tab,x;
 
