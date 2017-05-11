@@ -46,7 +46,7 @@ CREATE VIEW cbrd2 (a, b) AS
   WHERE tc.path_string NOT LIKE concat('%', e.b, '.%')
 )
 SELECT * FROM transitive_closure
-ORDER BY a, b, distance;
+ORDER BY a, b, distance, path_string;
 
 WITH RECURSIVE transitive_closure(a, b, distance, path_string) AS
 ( SELECT a, b, 1 AS distance,
@@ -64,7 +64,7 @@ WITH RECURSIVE transitive_closure(a, b, distance, path_string) AS
 )
   SELECT * FROM transitive_closure
    WHERE b = 6 -- destination
-ORDER BY a, b, distance;
+ORDER BY a, b, distance, path_string;
 
 WITH RECURSIVE transitive_closure(a, b, distance, path_string) AS
 ( SELECT  a, b, 1 AS distance,
@@ -80,7 +80,7 @@ WITH RECURSIVE transitive_closure(a, b, distance, path_string) AS
   WHERE tc.path_string NOT LIKE concat('%', e.b, '.%')
 )
 SELECT * FROM transitive_closure
-ORDER BY a, b, distance;
+ORDER BY a, b, distance, path_string;
 
 WITH RECURSIVE transitive_closure(a, b, distance, path_string)
 AS
