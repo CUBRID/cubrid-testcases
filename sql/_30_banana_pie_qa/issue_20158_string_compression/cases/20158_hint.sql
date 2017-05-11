@@ -90,7 +90,7 @@ insert into u values(repeat('a4',300), repeat('b',300), repeat('c',300));
 
 insert into u values(repeat('a5',300), repeat('b',300), repeat('c',300));
 
-SELECT /*+ RECOMPILE */ * FROM u, t WHERE u.i = t.i AND u.j > 'a' ORDER BY u.j LIMIT 2;
+SELECT /*+ RECOMPILE */ * FROM u, t WHERE u.i = t.i AND u.j > 'a' ORDER BY u.j, u.i LIMIT 2;
 
 drop u;
 
