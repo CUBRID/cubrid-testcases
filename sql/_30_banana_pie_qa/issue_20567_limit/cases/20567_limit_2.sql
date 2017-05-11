@@ -74,6 +74,7 @@ insert into t2 select rownum from db_class limit 0, 4*11+4;
 
 select * FROM t1 LEFT JOIN t2 ON t1.a=t2.a WHERE t1.a=25 limit 43453481*1-3234324/101 ;
 update statistics on all classes;
+--@queryplan
 select /*+ recompile use_nl */ * FROM t1 LEFT JOIN t2 ON t1.a=t2.a order by t1.a limit 0-21312+21312,32344*32344/32344/32344*10 ;
 
 drop table if exists t1, t2;
