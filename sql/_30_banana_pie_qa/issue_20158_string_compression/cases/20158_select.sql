@@ -23,7 +23,7 @@ select max(i2) from (select i1,i2 from t where i2>'a' and i1>'a' union all selec
 
 select * from t t1 where i1 >(select max(i2) from (select i1+i2 from t where i1=t1.i1 and i1<'c'));
 
-select i1+'1',row_number() over(partition by i2 order by i2)from t where i1<'d';
+select i1+'1',row_number() over(partition by i2 order by i2)from t where i1<'d' order by 1,2;
 
 select /*+ recompile */* from t where i1 between 'a' and 'd' and i2 between 'a' and 'c' order by 1 limit 1;
 
@@ -38,7 +38,7 @@ SELECT * FROM t ORDER BY i2 NULLS FIRST,i1 desc limit 2;
 
 select i1,list(select i2 from t where i1>'b') as aa from t order by i1 desc,i2 limit 1;
 
-select * from t group by disk_size(i2);
+select group_concat(i1 order by i1), i2, disk_size(i2) from t group by disk_size(i2) order by 1,2,3;
 
 select i1,ifnull(i2,'test') from t group by i1 order by 1,2;
 
