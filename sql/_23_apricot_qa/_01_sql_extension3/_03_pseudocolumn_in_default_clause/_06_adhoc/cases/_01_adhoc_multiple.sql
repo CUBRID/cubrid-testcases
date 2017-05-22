@@ -300,7 +300,7 @@ create table t1;
 ALTER t1 ALTER column a1 SET DEFAULT USER;
 drop table t1;
 
-create table t1(a1 varchar(1));
+create table t1(a1 varchar(3));
 ALTER t1 ALTER column a1 SET DEFAULT USER;
 drop table t1;
 
@@ -308,7 +308,7 @@ create table t1(a1 varchar(10));
 ALTER t1 ALTER column a1 SET DEFAULT USER;
 drop table t1;
 
-create table t1(a1 varchar(1) DEFAULT USER);
+create table t1(a1 varchar(10) DEFAULT USER);
 ALTER t1 ALTER column a1 SET DEFAULT USER;
 drop table t1;
 
@@ -330,7 +330,7 @@ drop table t1;
 
 
 create table t1(a1 int auto_increment);
-ALTER t1 add column a2 varchar(2) DEFAULT USER;
+ALTER t1 add column a2 varchar(6) DEFAULT USER;
 drop table t1;
 
 create table t1(a1 varchar not null, b int);
@@ -362,7 +362,7 @@ drop table t1;
 drop view v1;
 
 
-create table t1(a1 varchar(2) default USER, b int);
+create table t1(a1 varchar(3) default USER, b int);
 insert into t1(b) values (1);
 --TODO: must return one record.
 select * from t1;

@@ -1,10 +1,10 @@
 
 drop table if exists t1;
-create table t1(a1 varchar(2) default USER, b int);
+create table t1(a1 varchar(10) default USER, b int);
 insert into t1(b) values (1);
 select * from t1 order by 1;
 drop t1;
-create table t1(a1 varchar(1) default USER, b int);
+create table t1(a1 varchar(10) default USER, b int);
 insert into t1(b) values (1);
 select * from t1 order by 1;
 drop t1;
