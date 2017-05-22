@@ -32,7 +32,7 @@ create table foo(col datetime default '0000-01-11 03:14:07.0001 (GMT)');
 create table foo(col timestamp default '2039-01-10 03:14:07.0001 (GMT)');
 
 create table foo(col bit(10) default 6);
-create table foo(col bit(1) default X'6');
+create table foo(col bit(10) default X'6');
 desc foo;
 drop table foo;
 create table foo(col  BIT VARYING(2) default b'0101');
