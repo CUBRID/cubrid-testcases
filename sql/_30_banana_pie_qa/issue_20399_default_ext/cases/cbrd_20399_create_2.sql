@@ -114,16 +114,12 @@ alter table t3 add s4 varchar default to_char(systimestamp,'HH:MI:SS AM MM/DD/YY
 
 alter table t3 add s5 varchar default to_char('06:07:44 PM 05/09/2017','HH:MI:SS AM MM/DD/YYYY');
 
--- NULL, please see the comment
--- http://jira.cubrid.org/browse/CBRD-21269?focusedCommentId=4743403&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-4743403
-alter table t3 add s6 datetime default sysdatetime; 
-
--- isnull(s4) is 0 and isnull(s6) is 1
-select i1,s2,s3,isnull(s4),s5,isnull(s6) from t3 order by 1; 
+-- isnull(s4) is 0
+select i1,s2,s3,isnull(s4),s5 from t3 order by 1; 
 
 insert into t3(i1) values(4);
 
-select i1,s2,s3,isnull(s4),s5,isnull(s6) from t3 order by 1; 
+select i1,s2,s3,isnull(s4),s5 from t3 order by 1; 
 
 drop t3;
 
