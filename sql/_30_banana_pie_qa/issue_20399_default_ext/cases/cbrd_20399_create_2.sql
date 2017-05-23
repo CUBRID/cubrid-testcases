@@ -1,3 +1,5 @@
+--+ holdcas off;
+
 -- 1. test limit length of column with default clause.
 drop table if exists t1;
 
@@ -185,3 +187,19 @@ insert into t1(i1) values(1);
 select * from t1;
 
 drop t1;
+
+SET TIME ZONE 'America/Los_Angeles';
+
+drop table if exists t1;
+
+create table t1(s1 datetimetz default to_char(CURRENT_DATETIME,'HH:MI:SS.FF AM MM/DD/YYYY'),s2 datetimetz);
+
+insert into t1(s2) values(to_char(CURRENT_DATETIME,'HH:MI:SS.FF AM MM/DD/YYYY'));
+
+select if(s1=s2,'ok','nok') from t1;
+
+drop t1;
+
+SET TIME ZONE 'Asia/Seoul';
+
+--+ holdcas off;
