@@ -69,7 +69,7 @@ alter table a_parent_1 add primary key(id,name);
 
 alter table b_child_1 add constraint fk_parent_id FOREIGN KEY(id,name) REFERENCES a_parent_1(id,name);
 
-select disk_size(a.id),disk_size(b.id),a.id,b.id from a_parent_1 a,b_child_1 b where a.id=b.id order by 1,2;
+select disk_size(a.id),disk_size(b.id),a.id,b.id from a_parent_1 a,b_child_1 b where a.id=b.id order by 1,2,3;
 
 
 drop table b_child;
