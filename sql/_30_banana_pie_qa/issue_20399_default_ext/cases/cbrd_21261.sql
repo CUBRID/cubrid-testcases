@@ -13,7 +13,7 @@ insert into t2(s2) values(to_char(CURRENT_TIMESTAMP,'HH:MI:SS AM MM/DD/YYYY TZR'
 
 select if(s1=s2,'ok','nok') from t2;
 
-select attr_name,default_value from db_attribute where class_name='t2';
+select attr_name,default_value from db_attribute where class_name='t2' order by 1;
 
 drop table t2;
 
@@ -32,7 +32,7 @@ delete from t2;
 
 select if(s1=s2,'ok','nok') from t2;
 
-select attr_name,default_value from db_attribute where class_name='t2';
+select attr_name,default_value from db_attribute where class_name='t2' order by 1;
 
 drop table t2;
 
@@ -46,7 +46,7 @@ insert into t2(s2) values(to_char(CURRENT_DATETIME,'HH:MI:SS.FF AM MM/DD/YYYY TZ
 
 select if(s1=s2,'ok','nok') from t2;
 
-select attr_name,default_value from db_attribute where class_name='t2';
+select attr_name,default_value from db_attribute where class_name='t2' order by 1;
 
 drop table t2;
 
@@ -65,7 +65,7 @@ delete from t2;
 
 select if(s1=s2,'ok','nok') from t2;
 
-select attr_name,default_value from db_attribute where class_name='t2';
+select attr_name,default_value from db_attribute where class_name='t2' order by 1;
 
 drop table t2;
 
@@ -80,7 +80,7 @@ insert into t2(s2) values(to_char(CURRENT_DATE,'MM/DD/YYYY'));
 
 select if(s1=s2,'ok','nok') from t2;
 
-select attr_name,default_value from db_attribute where class_name='t2';
+select attr_name,default_value from db_attribute where class_name='t2' order by 1;
 
 drop table t2;
 
@@ -99,7 +99,7 @@ delete from t2;
 
 select if(s1=s2,'ok','nok') from t2;
 
-select attr_name,default_value from db_attribute where class_name='t2';
+select attr_name,default_value from db_attribute where class_name='t2' order by 1;
 
 drop table t2;
 
@@ -113,7 +113,7 @@ insert into t2(s2) values(to_char(CURRENT_TIME,'HH:MI:SS AM TZR'));
 
 select if(s1=s2,'ok','nok') from t2;
 
-select attr_name,default_value from db_attribute where class_name='t2';
+select attr_name,default_value from db_attribute where class_name='t2' order by 1;
 
 drop table t2;
 
@@ -132,7 +132,7 @@ delete from t2;
 
 select if(s1=s2,'ok','nok') from t2;
 
-select attr_name,default_value from db_attribute where class_name='t2';
+select attr_name,default_value from db_attribute where class_name='t2' order by 1;
 
 drop table t2;
 
@@ -146,7 +146,7 @@ insert into t2(s2) values(to_char(LOCALTIME,'HH:MI:SS AM MM/DD/YYYY TZR'));
 
 select if(s1=s2,'ok','nok') from t2;
 
-select attr_name,default_value from db_attribute where class_name='t2';
+select attr_name,default_value from db_attribute where class_name='t2' order by 1;
 
 drop table t2;
 
@@ -165,7 +165,7 @@ delete from t2;
 
 select if(s1=s2,'ok','nok') from t2;
 
-select attr_name,default_value from db_attribute where class_name='t2';
+select attr_name,default_value from db_attribute where class_name='t2' order by 1;
 
 drop table t2;
 
@@ -179,7 +179,7 @@ insert into t2(s2) values(to_char(NOW(),'HH:MI:SS.FF AM MM/DD/YYYY TZR'));
 
 select if(s1=s2,'ok','nok') from t2;
 
-select attr_name,default_value from db_attribute where class_name='t2';
+select attr_name,default_value from db_attribute where class_name='t2' order by 1;
 
 drop table t2;
 
@@ -198,7 +198,7 @@ delete from t2;
 
 select if(s1=s2,'ok','nok') from t2;
 
-select attr_name,default_value from db_attribute where class_name='t2';
+select attr_name,default_value from db_attribute where class_name='t2' order by 1;
 
 drop table t2;
 
@@ -213,7 +213,7 @@ insert into t2(s2) values(to_char(SYSDATETIME,'HH:MI:SS.FF AM MM/DD/YYYY TZR'));
 
 select if(s1=s2,'ok','nok') from t2;
 
-select attr_name,default_value from db_attribute where class_name='t2';
+select attr_name,default_value from db_attribute where class_name='t2' order by 1;
 
 drop table t2;
 
@@ -232,7 +232,7 @@ delete from t2;
 
 select if(s1=s2,'ok','nok') from t2;
 
-select attr_name,default_value from db_attribute where class_name='t2';
+select attr_name,default_value from db_attribute where class_name='t2' order by 1;
 
 drop table t2;
 

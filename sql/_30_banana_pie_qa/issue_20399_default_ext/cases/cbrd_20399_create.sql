@@ -25,11 +25,11 @@ insert into t1_l(i1,s3) value(1,SYSTIMESTAMP);
 select s1,if(s2=s3,'ok','nok') from t1_l order by 1;
 
 
-select attr_name,default_value from db_attribute where class_name='t1';
+select attr_name,default_value from db_attribute where class_name='t1' order by 1;
 
-select attr_name,default_value from db_attribute where class_name='t1_a';
+select attr_name,default_value from db_attribute where class_name='t1_a' order by 1;
 
-select attr_name,default_value from db_attribute where class_name='t1_l';
+select attr_name,default_value from db_attribute where class_name='t1_l' order by 1;
 
 
 create table t1_t(col1 t1);
@@ -74,11 +74,11 @@ insert into t2_l(s2) values(to_char(SYSDATETIME,'YYYY-MM-DD HH24:MI'));
 select if(s1=s2,'ok','nok') from t2_l;
 
 
-select attr_name,default_value from db_attribute where class_name='t2';
+select attr_name,default_value from db_attribute where class_name='t2' order by 1;
 
-select attr_name,default_value from db_attribute where class_name='t2_a';
+select attr_name,default_value from db_attribute where class_name='t2_a' order by 1;
 
-select attr_name,default_value from db_attribute where class_name='t2_l';
+select attr_name,default_value from db_attribute where class_name='t2_l' order by 1;
 
 
 create table t2_t(col1 t2);
