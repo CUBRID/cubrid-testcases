@@ -86,3 +86,4 @@ delete from t1 where c3 = default(c3);
 insert into t1 values(9, default to_char(sysdatetime, 'YYYYMMDD'), default);
 select * from t1;
 drop t1;
+drop t2;

@@ -11,3 +11,4 @@ select case when c1=c2 then 'ok' else 'nok' end from tt where c2 is not null;
 select attr_name, default_value from db_attribute where class_name='tt'; 
 
 drop table if exists t1;
+drop table if exists tt;
