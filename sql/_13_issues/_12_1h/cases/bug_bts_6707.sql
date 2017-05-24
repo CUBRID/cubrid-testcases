@@ -9,7 +9,7 @@ insert into foo values(1), (2), (3);
 alter table foo add column b timestamp default CURRENT_TIMESTAMP;
 
 --CURRENT_TIMESTAMP default value will not be evaluated at declaration time
-select * from foo order by 1;
+select a, if ( b is not null , 'ok','nok') from foo order by 1;
 show columns in foo;
 
 --TEST: insert after add column
