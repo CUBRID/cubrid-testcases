@@ -57,6 +57,7 @@ select if(c10 is not null, 'ok', 'nok') from t1;
 update t1 set c10 = default(c9);
 select if(c10 is not null, 'ok', 'nok') from  t1;
 select attr_name, default_value from db_attribute where class_name = 't1' and attr_name='c10';
+set names iso88591;
 
 drop table if exists t1;
 create class t1(c1 int, c2 set varchar(10));

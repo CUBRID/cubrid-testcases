@@ -13,6 +13,7 @@ create table ta(d varchar(100) default to_char(sysdate, 'YYYY-MM-DD') UNIQUE, an
 insert into ta value (default, to_char(sysdate, 'YYYY-MM-DD'));
 insert into ta value (default(d), to_char(sysdate, 'YYYY-MM-DD'));
 select d=answer from ta;
+drop ta;
 
 drop table if exists t3;
 create table t3 (c1 int  DEFAULT to_char(sysdate, 'YYYY')  not null);

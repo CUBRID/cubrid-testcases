@@ -14,6 +14,6 @@ update src4 set cc = default;
 alter src4 alter column cc  set default to_char(systime, 'HH:MI:SS AM');
 update src4 set cc=default;
 select (cc regexp '^[0-9]{4}-[0-9]{2}-[0-9]{2}$') as date_default_val from src4;
-drop table if exists src4
+drop table if exists src4;
 
 
