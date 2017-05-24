@@ -15,7 +15,7 @@ select c1,c2,c9, if(c3 is not null, 'ok', 'nok') from t1 order by c1;
 
 alter t1 alter column c3 set default to_char(sysdatetime, 'YYYYMMDD');
 insert into t1(c1, c2, c9) values(4, {'cccc'}, to_char(sysdatetime, 'YYYYMMDD'));
-select case when c3=c9 then 'ok' else 'nok' end from t1 order by c1;
+select c1, c2, nvl2(c9, c9=to_char(sysdatetime, 'YYYYMMDD'), c9), if(c3 is not null, 'ok', 'nok') from t1 order by c1;
 
 alter t1 alter column c3 set default to_char(systimestamp, 'HH24:MI:SS DD/MM/YYYY TZR');
 alter t1 alter column c4 set default to_char(systimestamp, 'HH24:MI:SS DD/MM/YYYY TZR');
