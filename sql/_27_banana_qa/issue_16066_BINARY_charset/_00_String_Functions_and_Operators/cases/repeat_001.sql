@@ -26,8 +26,8 @@ insert into t1 values(3, cast( _utf8'ÀÏ' as string charset iso88591), 'ÀÏ', 
 
 set names binary;
 -- CUBRIDSUS-17766
-select * from t1 order by id;
-select id, col_binary, repeat(col_binary, 3),repeat(col_euckr, 3),repeat(col_utf8, 3),repeat(col_iso, 3) from t1 order by id;
+select id, col_binary, col_binary, HEX(col_euckr), col_utf8, col_iso from t1 order by id;
+select id, col_binary, repeat(col_binary, 3),HEX(repeat(col_euckr, 3)),repeat(col_utf8, 3),repeat(col_iso, 3) from t1 order by id;
 
 drop t1;
 

@@ -57,7 +57,7 @@ REPLACE(col_utf8, '큐브' , '다이아'  ),
 REPLACE(col_iso, cast(_utf8'큐브' as string charset euckr ), cast(_utf8'다이아' as string charset euckr)) from t where id=1;
 SELECT id, 
 REPLACE(col_binary,cast(_utf8'好' as string charset euckr) ,cast( _utf8'开心' as string charset euckr)), 
-REPLACE(col_euckr, cast(_utf8'好' as string charset euckr) , cast(_utf8'开心' as string charset euckr) ), 
+HEX(REPLACE(col_euckr, cast(_utf8'好' as string charset euckr) , cast(_utf8'开心' as string charset euckr) )), 
 REPLACE(col_utf8, '好' , '开心'  ), 
 REPLACE(col_iso, cast(_utf8'好' as string charset euckr) ,cast( _utf8'开心' as string charset euckr)) from t where id=2;
 

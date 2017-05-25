@@ -34,7 +34,7 @@ insert into t1 values(3, '큐브리드','큐브리드', '큐브리드', '큐브�
 insert into t1 values(4, 'ÀÏ', 'ÀÏ','ÀÏ', 'ÀÏ');
 
 set names binary;
-select * from t1 order by 1;
+select id, col_binary, HEX(col_euckr), col_utf8, col_iso from t1 order by 1;
 SELECT id, OCTET_LENGTH(col_binary), OCTET_LENGTH(col_euckr),OCTET_LENGTH(col_utf8),OCTET_LENGTH(col_iso) from t1 order by id;
 
 drop table t1;
