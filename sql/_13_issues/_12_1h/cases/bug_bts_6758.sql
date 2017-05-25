@@ -15,7 +15,7 @@ desc foo;
 
 alter table foo alter column a set default UNIX_TIMESTAMP();
 desc foo;
-alter table foo alter column d set default UNIX_TIMESTAMP();
+alter table foo alter column d set default to_char(UNIX_TIMESTAMP());
 desc foo;
 
 alter table foo alter column b set default SYSDATE;
@@ -24,7 +24,7 @@ alter table foo alter column a set default SYSDATE;
 desc foo;
 alter table foo alter column c set default SYSDATE;
 desc foo;
-alter table foo alter column d set default SYSDATE;
+alter table foo alter column d set default to_char(SYSDATE);
 desc foo;
 
 alter table foo alter column c set default SYSDATETIME;
@@ -33,7 +33,7 @@ alter table foo alter column a set default SYSDATETIME;
 desc foo;
 alter table foo alter column b set default SYSDATETIME;
 desc foo;
-alter table foo alter column d set default SYSDATETIME;
+alter table foo alter column d set default to_char(SYSDATETIME);
 desc foo;
 
 alter table foo alter column d set default USER;

@@ -34,16 +34,18 @@ create table foo(col timestamp default '2039-01-10 03:14:07.0001 (GMT)');
 create table foo(col bit(10) default 6);
 create table foo(col bit(10) default X'6');
 desc foo;
-drop table foo;
-create table foo(col  BIT VARYING(2) default b'0101');
 
-create table foo(col char(1) default 1);
-create table foo(col varchar(1) default 1);
-create table foo(col string(1) default 1);
-create table foo(col nchar(1) default 1);
-create table foo(col nchar varying(1) default 1);
+drop table if exists foo, foo1, foo2, foo3, foo4, foo5, foo6, foo7, foo8;
 
-CREATE TABLE foo(col set(int, CHAR(1)) default 1);
-CREATE TABLE foo(col multiset(int, CHAR(1)) default 1);
-CREATE TABLE foo(col list(int, CHAR(1)) default 1);
-drop table foo;
+create table foo(col  BIT VARYING(20) default b'0101');
+
+create table foo1(col char(1) default 1);
+create table foo2(col varchar(1) default 1);
+create table foo3(col string default 1);
+create table foo4(col nchar(1) default 1);
+create table foo5(col nchar varying(1) default 1);
+
+CREATE TABLE foo6(col set(int, CHAR(1)) default {1});
+CREATE TABLE foo7(col multiset(int, CHAR(1)) default {1});
+CREATE TABLE foo8(col list(int, CHAR(1)) default {1});
+drop table if exists foo, foo1, foo2, foo3, foo4, foo5, foo6, foo7, foo8;
