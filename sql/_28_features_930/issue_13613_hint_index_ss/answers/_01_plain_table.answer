@@ -318,6 +318,46 @@ id    a    b    c
 1     1     1     1     
 4     4     4     4     
 
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: iscan
+                            class: t? node[?]
+                            index: i_ac term[?] (index skip scan)
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: t? node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select /*+ ORDERED INDEX_SS(t?) */ t?.id, t?.a, t?.b, t?.c from t? t?, t? t? where (t?.b< ?:? ) and (t?.c< ?:? ) and (t?.c< ?:? ) order by ? for orderby_num()<= ?:? )
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: t? node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t? node[?]
+                            index: i_ac term[?] (covers) (index skip scan)
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+(select /*+ ORDERED INDEX_SS(t?) */ t?.id, t?.a, t?.b, t?.c from t? t?, t? t? where (t?.b< ?:? ) and (t?.c< ?:? ) and (t?.c< ?:? ) order by ? desc  for orderby_num()<= ?:? )
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ [__t?].id, [__t?].a, [__t?].b, [__t?].c from ((select /*+ ORDERED INDEX_SS(t?) */ t?.id, t?.a, t?.b, t?.c from t? t?, t? t? where (t?.b< ?:? ) and (t?.c< ?:? ) and (t?.c< ?:? ) order by ? for orderby_num()<= ?:? ) union (select /*+ ORDERED INDEX_SS(t?) */ t?.id, t?.a, t?.b, t?.c from t? t?, t? t? where (t?.b< ?:? ) and (t?.c< ?:? ) and (t?.c< ?:? ) order by ? desc  for orderby_num()<= ?:? )) [__t?] (id, a, b, c)
 ===================================================
 0
 Query plan:
