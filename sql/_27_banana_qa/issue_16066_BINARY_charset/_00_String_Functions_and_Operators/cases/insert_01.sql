@@ -1,7 +1,7 @@
 --+ holdcas on;
 set names binary;
 SELECT INSERT('我我们中国中',2,2,'测试');
-SELECT INSERT('다운로드' collate euckr_bin,2,2,'라라');
+SELECT HEX(INSERT('다운로드' collate euckr_bin,2,2,'라라'));
 SELECT INSERT(_iso88591'abcdef',2,2,_utf8'测试');
 
 -- prepare clause

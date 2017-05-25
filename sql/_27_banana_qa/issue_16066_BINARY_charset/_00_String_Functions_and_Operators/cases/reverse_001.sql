@@ -21,8 +21,8 @@ insert into t1 values(3, 'ÀÏ', 'ÀÏ', 'ÀÏ', 'ÀÏ');
 insert into t1 values(4, 'CUBRID', 'CUBRID','CUBRID','CUBRID');
 
 set names binary;
-select * from t1 order by 1;
-SELECT id, REVERSE(col_binary), REVERSE(col_euckr),REVERSE(col_utf8),REVERSE(col_iso) from t1 order by id;
+select id, col_binary, HEX(col_euckr), col_utf8, col_iso from t1 order by 1;
+SELECT id, REVERSE(col_binary), HEX(REVERSE(col_euckr)),REVERSE(col_utf8),REVERSE(col_iso) from t1 order by id;
 
 drop table t1;
 
