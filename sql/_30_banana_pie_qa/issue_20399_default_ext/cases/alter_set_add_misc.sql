@@ -1,7 +1,7 @@
 drop table if exists t0;
-create table t0(id int default to_char(sysdate, 'DD'));
-insert into t0 value default;
-select * from t0;
+create table t0(id int default to_char(sysdate, 'DD'), col datetime );
+insert into t0 value (default, sysdate);
+select if(to_char(id) = to_char(col,'DD'), 'OK', 'NOK') from t0;  
 show create table t0;
 alter t0 alter id set default to_char(sysdate, 'YY');
 insert into t0 value default;
