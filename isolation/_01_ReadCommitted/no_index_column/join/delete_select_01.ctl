@@ -37,7 +37,7 @@ MC: wait until C1 ready;
 C1: DELETE a,b FROM tb1 a INNER JOIN tb2 b ON a.id = b.id WHERE a.id = 1;
 MC: wait until C1 ready;
 
-C2: SELECT * FROM tb1 a INNER JOIN tb2 b ON a.id = b.id WHERE a.id = 2 or b.id = 3;
+C2: SELECT * FROM tb1 a INNER JOIN tb2 b ON a.id = b.id WHERE a.id = 2 or b.id = 3 order by 1,2;
 /* expect: no tansactions need to wait */
 MC: wait until C2 ready;
 /* expect: C1 - tb1 id = 1 is deleted, tb2 id = 1 is deleted */
