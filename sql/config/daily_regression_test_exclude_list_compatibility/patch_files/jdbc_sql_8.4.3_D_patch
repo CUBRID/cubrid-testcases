@@ -46,32 +46,6 @@ Index: _13_issues/_14_1h/answers/bug_bts_13760.answer
  
  ===================================================
  Error:-622
-Index: _13_issues/_15_1h/answers/bug_bts_14200.answer
-===================================================================
---- _13_issues/_15_1h/answers/bug_bts_14200.answer	(revision 61825)
-+++ _13_issues/_15_1h/answers/bug_bts_14200.answer	(working copy)
-@@ -7,9 +7,7 @@
- ===================================================
- 0
- ===================================================
--a    b    c    d    
--2     2013-10-12     w     blue     
--
-+Error:-2005
- ===================================================
- trace    
- {
-@@ -39,8 +37,8 @@
- }     
- 
- ===================================================
--trim(both  from  replace( list_dbs() , 'demodb', ''))    
--basic     
-+if( locate( database(),  list_dbs() )=0, 'NOK', 'OK')    
-+OK     
- 
- ===================================================
- 0
 Index: _13_issues/_15_1h/answers/bug_bts_17430.answer
 ===================================================================
 --- _13_issues/_15_1h/answers/bug_bts_17430.answer	(revision 61825)
@@ -3202,46 +3176,6 @@ Index: _27_banana_qa/issue_12401_DML_Natural_Join/answers/01_natural_join_QA_Eff
  ===================================================
  0
  ===================================================
-Index: _27_banana_qa/issue_14186_show_timezone/answers/show_timezones_02.answer
-===================================================================
---- _27_banana_qa/issue_14186_show_timezone/answers/show_timezones_02.answer	(revision 61825)
-+++ _27_banana_qa/issue_14186_show_timezone/answers/show_timezones_02.answer	(working copy)
-@@ -1176,7 +1176,7 @@
- 
- ===================================================
- timestamptz '2012-03-20 10:00:00 AM Europe/Berlin'    
--2012-03-20 10:00:00.0 Europe/Berlin CET     
-+2012-03-20 10:00:00.0     
- 
- ===================================================
- timezone_region    
-@@ -1766,7 +1766,7 @@
- 
- ===================================================
- timestampltz '2012-03-20 23:00:00 +06:00'    
--2012-03-20 22:00:00.0 +05:00     
-+2012-03-20 22:00:00.0     
- 
- ===================================================
- timezone_region    
-@@ -2356,7 +2356,7 @@
- 
- ===================================================
- timestampltz '2012-03-20 23:00:00 -10:00'    
--2012-03-21 14:00:00.0 +05:00     
-+2012-03-21 14:00:00.0     
- 
- ===================================================
- timezone_region    
-@@ -2946,7 +2946,7 @@
- 
- ===================================================
- timestampltz '2012-03-20 23:00:00 +12:00'    
--2012-03-20 16:00:00.0 +05:00     
-+2012-03-20 16:00:00.0     
- 
- ===================================================
- timezone_region    
 Index: _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/chr_01.answer
 ===================================================================
 --- _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/chr_01.answer	(revision 61825)
@@ -3372,71 +3306,6 @@ Index: _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operato
  
  ===================================================
  0
-Index: _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/insert_01.answer
-===================================================================
---- _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/insert_01.answer	(revision 61825)
-+++ _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/insert_01.answer	(working copy)
-@@ -2,11 +2,11 @@
- 0
- ===================================================
- insert(_binary'我我们中国中', 2, 2, _binary'测试')    
--E6 E6 B5 8B E8 AF 95 E6 88 91 E4 BB AC E4 B8 AD E5 9B BD E4 B8 AD      
-+�测试我们中国中     
- 
- ===================================================
- insert(_euckr'다운로드' collate euckr_bin, 2, 2, _binary'라라')    
--��쇰??濡��     
-+�라�??로드     
- 
- ===================================================
- Error:-494
-@@ -16,11 +16,11 @@
- 0
- ===================================================
- insert( ?:0 , 2, 2,  ?:1 )    
--E6 EC 9D B4 EC 83 81 E6 88 91 E4 BB AC E4 B8 AD E5 9B BD E4 B8 AD      
-+�이상我们中国中     
- 
- ===================================================
- insert( ?:0 , 2, 2,  ?:1 )    
--61 65 66 64      
-+aefd     
- 
- ===================================================
- 0
-@@ -34,11 +34,11 @@
- 1
- ===================================================
- insert(col1, 2, 2, _utf8'测试')    
--E4 E6 B5 8B E8 AF 95 E5 9B BD E4 B8 AD E6 88 91 E6 88 91 E4 BB AC 00 00 00 00 00 00 00 00 00 00 00 00      
-+�测试国中我我们                 
- 
- ===================================================
- insert(col2, 2, 2, _binary'测试')    
--?æµè¯???     
-+?测试???     
- 
- ===================================================
- 0
-@@ -52,15 +52,15 @@
- 0
- ===================================================
- insert(col1, 2, 2,  ?:0 )    
--E4 E6 B5 8B E8 AF 95 E5 9B BD E4 B8 AD E6 88 91 E6 88 91 E4 BB AC 00 00 00 00 00 00 00 00 00 00 00 00      
-+�测试国中我我们                 
- 
- ===================================================
- insert(col2, 2, 2,  ?:0 )    
--?ë¼???     
-+?라???     
- 
- ===================================================
- insert(col3, 2, 2,  ?:0 )    
--최확장장라     
-+��Ȯ�����     
- 
- ===================================================
- 0
 Index: _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/left_01.answer
 ===================================================================
 --- _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/left_01.answer	(revision 61825)
@@ -3553,321 +3422,6 @@ Index: _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operato
  lpad(col3, 8,  ?:0 )    
 -  안녕 하세요     
 +  �ȳ� �ϼ���     
- 
- ===================================================
- 0
-Index: _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/octet_length_001.answer
-===================================================================
---- _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/octet_length_001.answer	(revision 61825)
-+++ _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/octet_length_001.answer	(working copy)
-@@ -78,10 +78,10 @@
- 0
- ===================================================
- id    col_binary    col_euckr    col_utf8    col_iso    
--1     43 55 42 52 49 44      CUBRID     CUBRID     CUBRID     
--2     E4 BD A0 E6 88 91 E4 BB 96      �色끈�     你我他     ???     
--3     ED 81 90 EB B8 8C EB A6 AC EB      큐브리드     큐브리드     ????     
--4     C3 80 C3 8F      ��ち     ÀÏ     ÀÏ     
-+1     CUBRID     CUBRID     CUBRID     CUBRID     
-+2     你我他     �����     你我他     ???     
-+3     큐브리�     ť�긮��     큐브리드     ????     
-+4     ÀÏ     ������     ÀÏ     ��     
- 
- ===================================================
- id    octet_length(col_binary)    octet_length(col_euckr)    octet_length(col_utf8)    octet_length(col_iso)    
-Index: _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/regexp002.answer
-===================================================================
---- _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/regexp002.answer	(revision 61825)
-+++ _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/regexp002.answer	(working copy)
-@@ -16,54 +16,54 @@
- 1
- ===================================================
- col_binary    col_euckr    col_utf8    col_iso    
--EB AC B8 EC 9E 90 EC 97 B4 EB      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
-+문자열�     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
- 
- ===================================================
- col_binary    col_euckr    col_utf8    col_iso    
--EB AC B8 EC 9E 90 EC 97 B4 EB      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
--B9 AE C0 DA BF AD B9 AE C0 DA      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
--C0 CF C0 CF C0 CF C0 CF C0 CF      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
--D6 F6 5F 3F 3F 5F DC FC 32 D6      문자열문자열문자열     문자열문자열문자열     Öö_??_Üü2Ö     
-+문자열�     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
-+���ڿ�����     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
-+����������     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
-+��_??_��     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ��_??_��     
- 
- ===================================================
- col_binary    col_euckr    col_utf8    col_iso    
--EB AC B8 EC 9E 90 EC 97 B4 EB      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
--B9 AE C0 DA BF AD B9 AE C0 DA      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
--C0 CF C0 CF C0 CF C0 CF C0 CF      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
--D6 F6 5F 3F 3F 5F DC FC 32 D6      문자열문자열문자열     문자열문자열문자열     Öö_??_Üü2Ö     
-+문자열�     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
-+���ڿ�����     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
-+����������     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
-+��_??_��     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ��_??_��     
- 
- ===================================================
- col_binary    col_euckr    col_utf8    col_iso    
--EB AC B8 EC 9E 90 EC 97 B4 EB      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
--B9 AE C0 DA BF AD B9 AE C0 DA      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
--C0 CF C0 CF C0 CF C0 CF C0 CF      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
-+문자열�     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
-+���ڿ�����     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
-+����������     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
- 
- ===================================================
- col_binary    col_euckr    col_utf8    col_iso    
- 
- ===================================================
- col_binary    col_euckr    col_utf8    col_iso    
--EB AC B8 EC 9E 90 EC 97 B4 EB      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
-+문자열�     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
- 
- ===================================================
- col_binary    col_euckr    col_utf8    col_iso    
--EB AC B8 EC 9E 90 EC 97 B4 EB      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
--B9 AE C0 DA BF AD B9 AE C0 DA      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
--C0 CF C0 CF C0 CF C0 CF C0 CF      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
--D6 F6 5F 3F 3F 5F DC FC 32 D6      문자열문자열문자열     문자열문자열문자열     Öö_??_Üü2Ö     
-+문자열�     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
-+���ڿ�����     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
-+����������     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
-+��_??_��     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ��_??_��     
- 
- ===================================================
- col_binary    col_euckr    col_utf8    col_iso    
--EB AC B8 EC 9E 90 EC 97 B4 EB      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
--B9 AE C0 DA BF AD B9 AE C0 DA      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
--C0 CF C0 CF C0 CF C0 CF C0 CF      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
--D6 F6 5F 3F 3F 5F DC FC 32 D6      문자열문자열문자열     문자열문자열문자열     Öö_??_Üü2Ö     
-+문자열�     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
-+���ڿ�����     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
-+����������     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
-+��_??_��     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ��_??_��     
- 
- ===================================================
- col_binary    col_euckr    col_utf8    col_iso    
--EB AC B8 EC 9E 90 EC 97 B4 EB      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
--B9 AE C0 DA BF AD B9 AE C0 DA      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
--C0 CF C0 CF C0 CF C0 CF C0 CF      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
-+문자열�     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
-+���ڿ�����     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
-+����������     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
- 
- ===================================================
- 0
-Index: _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/repeat_001.answer
-===================================================================
---- _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/repeat_001.answer	(revision 61825)
-+++ _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/repeat_001.answer	(working copy)
-@@ -2,7 +2,7 @@
- 0
- ===================================================
- repeat(_binary'Cubrid', 3)    
--43 75 62 72 69 64 43 75 62 72 69 64 43 75 62 72 69 64      
-+CubridCubridCubrid     
- 
- ===================================================
- char_length( repeat(_binary'C', 33554432))    
-@@ -36,15 +36,15 @@
- Error:-494
- ===================================================
- repeat(_binary'한국', 3)    
--ED 95 9C EA B5 AD ED 95 9C EA B5 AD ED 95 9C EA B5 AD      
-+한국한국한국     
- 
- ===================================================
- repeat(_binary'中国', 3)    
--E4 B8 AD E5 9B BD E4 B8 AD E5 9B BD E4 B8 AD E5 9B BD      
-+中国中国中国     
- 
- ===================================================
- repeat(_binary'ÀÀÀ', 3)    
--C3 80 C3 80 C3 80 C3 80 C3 80 C3 80 C3 80 C3 80 C3 80      
-+ÀÀÀÀÀÀÀÀÀ     
- 
- ===================================================
- 0
-@@ -62,15 +62,15 @@
- 0
- ===================================================
- id    col_binary    col_euckr    col_utf8    col_iso    
--1     E4 B8 AD E5 9B BD      中?     中国     ??     
--2     C7 D1 B1 B9      한국     한국     ÀÏ     
--3     C0 CF      ��ち     ÀÏ     ÀÏ     
-+1     中国     �     中国     ??     
-+2     �ѱ�     �ѱ�     한국     ��     
-+3     ��     ������     ÀÏ     ��     
- 
- ===================================================
- id    col_binary    repeat(col_binary, 3)    repeat(col_euckr, 3)    repeat(col_utf8, 3)    repeat(col_iso, 3)    
--1     E4 B8 AD E5 9B BD      E4 B8 AD E5 9B BD E4 B8 AD E5 9B BD E4 B8 AD E5 9B BD      中?中?中?     中国中国中国     ??????     
--2     C7 D1 B1 B9      C7 D1 B1 B9 C7 D1 B1 B9 C7 D1 B1 B9      한국한국한국     한국한국한국     ÀÏÀÏÀÏ     
--3     C0 CF      C0 CF C0 CF C0 CF      ��ち��ち��ち     ÀÏÀÏÀÏ     ÀÏÀÏÀÏ     
-+1     中国     中国中国中国     ��?��?�     中国中国中国     ??????     
-+2     �ѱ�     �ѱ��ѱ��ѱ�     �ѱ��ѱ��ѱ�     한국한국한국     ������     
-+3     ��     ������     ������������������     ÀÏÀÏÀÏ     ������     
- 
- ===================================================
- 0
-Index: _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/replace_001.answer
-===================================================================
---- _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/replace_001.answer	(revision 61825)
-+++ _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/replace_001.answer	(working copy)
-@@ -14,31 +14,31 @@
- 
- ===================================================
- replace(_binary'12345abcdeabcde', _binary'abcde', _binary'ABCDE')    
--31 32 33 34 35 41 42 43 44 45 41 42 43 44 45      
-+12345ABCDEABCDE     
- 
- ===================================================
- replace(_binary'12345abcdeabcde', _binary'abcde')    
--31 32 33 34 35      
-+12345     
- 
- ===================================================
- replace(_binary'문자열', _binary'문자', _binary'문자열')    
--EB AC B8 EC 9E 90 EC 97 B4 EC 97 B4      
-+문자열열     
- 
- ===================================================
- replace(_binary'문자열', _binary'문자')    
--EC 97 B4      
-+열     
- 
- ===================================================
- replace(_binary'문자열', _binary'자문', _binary'string')    
--EB AC B8 EC 9E 90 EC 97 B4      
-+문자열     
- 
- ===================================================
- replace(_binary'你好我好大家好', _binary'好', _binary'开心')    
--E4 BD A0 E5 BC 80 E5 BF 83 E6 88 91 E5 BC 80 E5 BF 83 E5 A4 A7 E5 AE B6 E5 BC 80 E5 BF 83      
-+你开心我开心大家开心     
- 
- ===================================================
- replace(_binary'你好我好大家好', _binary'好')    
--E4 BD A0 E6 88 91 E5 A4 A7 E5 AE B6      
-+你我大家     
- 
- ===================================================
- coercibility(_binary'abcdefg')    coercibility( cast(_utf8'abc' as varchar collate euckr_bin))    coercibility(_utf8'abc')    coercibility( cast(_utf8'def' as varchar))    
-@@ -54,7 +54,7 @@
- 
- ===================================================
- replace(_binary'abcdefg', _utf8'', _utf8'def')    
--61 62 63 64 65 66 67      
-+abcdefg     
- 
- ===================================================
- Error:-494
-@@ -88,31 +88,31 @@
- 0
- ===================================================
- id    replace(col_binary, col_binary)    replace(col_binary, col_binary, col_euckr)    
--1          C5 A5 BA EA B8 AE B5 E5      
--2          8F B0 DF FB BF E4 B2 FB BF D3 DE CA AB FB BF      
--3          43 55 42 52 49 44      
--4          8F AA A2 8F AA A2 8F AA C1      
-+1          ť�긮��     
-+2          ��������ʫ�     
-+3          CUBRID     
-+4          ���������     
- 
- ===================================================
- id    replace(col_binary, col_euckr, col_binary+col_euckr)    replace(col_binary, col_utf8, col_binary+col_utf8)    replace(col_binary, col_iso, col_binary+col_iso)    
--1     ED 81 90 EB B8 8C EB A6 AC EB 93 9C      ED 81 90 EB B8 8C EB A6 AC EB 93 9C ED 81 90 EB B8 8C EB A6 AC EB 93 9C      ED 81 90 EB B8 8C EB A6 AC EB 93 9C      
--2     E4 BD A0 E5 A5 BD E6 88 91 E5 A5 BD E5 A4 A7 E5 AE B6 E5 A5 BD      E4 BD A0 E5 A5 BD E6 88 91 E5 A5 BD E5 A4 A7 E5 AE B6 E5 A5 BD E4 BD A0 E5 A5 BD E6 88 91 E5 A5 BD E5 A4 A7 E5 AE B6 E5 A5 BD      E4 BD A0 E5 A5 BD E6 88 91 E5 A5 BD E5 A4 A7 E5 AE B6 E5 A5 BD      
--3     43 55 42 52 49 44 43 55 42 52 49 44      43 55 42 52 49 44 43 55 42 52 49 44      43 55 42 52 49 44 43 55 42 52 49 44      
--4     C3 80 C3 80 C3 8F      C3 80 C3 80 C3 8F C3 80 C3 80 C3 8F      C3 80 C3 80 C3 8F      
-+1     큐브리드     큐브리드큐브리드     큐브리드     
-+2     你好我好大家好     你好我好大家好你好我好大家好     你好我好大家好     
-+3     CUBRIDCUBRID     CUBRIDCUBRID     CUBRIDCUBRID     
-+4     ÀÀÏ     ÀÀÏÀÀÏ     ÀÀÏ     
- 
- ===================================================
- id    replace(col_binary,  cast(_utf8'큐브' as varchar collate euckr_bin),  cast(_utf8'다이아' as varchar collate euckr_bin))    replace(col_euckr,  cast(_utf8'큐브' as varchar collate euckr_bin),  cast(_utf8'다이아' as varchar collate euckr_bin))    replace(col_utf8, _binary'큐브', _binary'다이아')    replace(col_iso,  cast(_utf8'큐브' as varchar collate euckr_bin),  cast(_utf8'다이아' as varchar collate euckr_bin))    
--1     ED 81 90 EB B8 8C EB A6 AC EB 93 9C      다이아리드     다이아리드     ??????     
-+1     큐브리드     ���̾Ƹ���     다이아리드     ??????     
- 
- ===================================================
- id    replace(col_binary,  cast(_utf8'好' as varchar collate euckr_bin),  cast(_utf8'开心' as varchar collate euckr_bin))    replace(col_euckr,  cast(_utf8'好' as varchar collate euckr_bin),  cast(_utf8'开心' as varchar collate euckr_bin))    replace(col_utf8, _binary'好', _binary'开心')    replace(col_iso,  cast(_utf8'好' as varchar collate euckr_bin),  cast(_utf8'开心' as varchar collate euckr_bin))    
--2     E4 BD A0 E5 A5 BD E6 88 91 E5 A5 BD E5 A4 A7 E5 AE B6 E5 A5 BD      ��心我?心大家?心     你开心我开心大家开心     ??????????????     
-+2     你好我好大家好     ���?���?����ʫ?�     你开心我开心大家开心     ??????????????     
- 
- ===================================================
- 1
- ===================================================
- replace(col_binary, col_iso, col_euckr)    
--64 65 66 64 65 66      
-+defdef     
- 
- ===================================================
- 0
-Index: _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/reverse_001.answer
-===================================================================
---- _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/reverse_001.answer	(revision 61825)
-+++ _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/reverse_001.answer	(working copy)
-@@ -2,27 +2,27 @@
- 0
- ===================================================
- reverse(_binary'CUBRID')    
--44 49 52 42 55 43      
-+DIRBUC     
- 
- ===================================================
- reverse(_binary'문자열')    
--B4 97 EC 90 9E EC B8 AC EB      
-+��쐞츬�     
- 
- ===================================================
- reverse( cast(_utf8'문자열' as varchar collate euckr_bin))    
--열자문     
-+���ڹ�     
- 
- ===================================================
- reverse(_binary'ÀÏ')    
--8F C3 80 C3      
-+�À�     
- 
- ===================================================
- reverse( cast(_utf8'ÀÏ' as varchar))    
--ÏÀ     
-+��     
- 
- ===================================================
- reverse(_binary'中国国')    
--BD 9B E5 BD 9B E5 AD B8 E4      
-+��彛學�     
- 
- ===================================================
- reverse(_utf8'中国国')    
-@@ -54,17 +54,17 @@
- 0
- ===================================================
- id    col_binary    col_euckr    col_utf8    col_iso    
--1     EB AC B8 EC 9E 90 EC 97 B4      문자열     문자열     ???     
--2     E4 B8 AD E5 9B BD      中?     中国     ??     
--3     C3 80 C3 8F      ��ち     ÀÏ     ÀÏ     
--4     43 55 42 52 49 44      CUBRID     CUBRID     CUBRID     
-+1     문자열     ���ڿ�     문자열     ???     
-+2     中国     �     中国     ??     
-+3     ÀÏ     ������     ÀÏ     ��     
-+4     CUBRID     CUBRID     CUBRID     CUBRID     
- 
- ===================================================
- id    reverse(col_binary)    reverse(col_euckr)    reverse(col_utf8)    reverse(col_iso)    
--1     B4 97 EC 90 9E EC B8 AC EB      열자문     열자문     ???     
--2     BD 9B E5 AD B8 E4      ?中     国中     ??     
--3     8F C3 80 C3      ��あ     ÏÀ     ÏÀ     
--4     44 49 52 42 55 43      DIRBUC     DIRBUC     DIRBUC     
-+1     ��쐞츬�     ���ڹ�     열자문     ???     
-+2     ��學�     ?�     国中     ??     
-+3     �À�     ������     ÏÀ     ��     
-+4     DIRBUC     DIRBUC     DIRBUC     DIRBUC     
  
  ===================================================
  0
@@ -4670,39 +4224,6 @@ Index: _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operato
  
  ===================================================
  0
-Index: _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/translate001.answer
-===================================================================
---- _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/translate001.answer	(revision 61825)
-+++ _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/translate001.answer	(working copy)
-@@ -22,23 +22,23 @@
- 
- ===================================================
- translate( cast(_utf8'문자열 2' as varchar collate euckr_bin),  cast(_utf8'문자열' as varchar collate euckr_bin),  cast(_utf8'문자' as varchar collate euckr_bin))    
--문자 2     
-+���� 2     
- 
- ===================================================
- translate( cast(_utf8'Öö_Şş_Üü2' as varchar),  cast(_utf8'Öö_Şş' as varchar),  cast(_utf8'Öö' as varchar))    
--ÖöÜü2     
-+����     
- 
- ===================================================
- translate(_binary'문자열 2',  cast(_utf8'문자' as varchar collate euckr_bin), _utf8'字符串2')    
--臾몄??��2     
-+문�??열 2     
- 
- ===================================================
- translate(_binary'Öö_Şş_Üü2',  cast(_utf8'문자열 2' as varchar collate euckr_bin), _utf8'字符串2')    
--�철_��_�체     
-+Öö_Şş_Üü     
- 
- ===================================================
- translate( cast(_utf8'문자열 2' as varchar collate euckr_bin),  cast(_utf8'문자' as varchar collate euckr_bin), _utf8'字符串2')    
--字符열 2     
-+�ݬ�� 2     
- 
- ===================================================
- Error:-494
 Index: _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/translate002.answer
 ===================================================================
 --- _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/translate002.answer	(revision 61825)
@@ -5584,114 +5105,6 @@ Index: _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operato
  
  ===================================================
  0
-Index: _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/rtrim_001.answer
-===================================================================
---- _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/rtrim_001.answer
-+++ _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/rtrim_001.answer
-@@ -2,7 +2,7 @@
- 0
- ===================================================
- concat(_binary'_',  rtrim(_binary'     空格     '), _binary'_')    
--5F 20 20 20 20 20 E7 A9 BA E6 A0 BC 5F      
-+_     空格_     
- 
- ===================================================
- rtrim(null, _binary'空空格格')    
-@@ -14,15 +14,15 @@ null
- 
- ===================================================
- rtrim(_binary'空空格格', _binary'格')    
--E7 A9 BA E7 A9 BA      
-+空空     
- 
- ===================================================
- concat(_binary'_',  rtrim(_binary'     011101     ', _binary'01     '), _binary'_')    
--5F 20 20 20 20 20 30 31 31 31 5F      
-+_     0111_     
- 
- ===================================================
- concat(_binary'_',  rtrim(_binary'     011101     ', _binary' '), _binary'_')    
--5F 20 20 20 20 20 30 31 31 31 30 31 5F      
-+_     011101_     
- 
- ===================================================
- concat(_binary'_',  rtrim(_utf8'     空格     '), _binary'_')    
-@@ -38,31 +38,31 @@ null
- 
- ===================================================
- rtrim(_utf8'空空格格', _binary'格')    
--E7 A9 BA E7 A9 BA      
-+空空     
- 
- ===================================================
- rtrim(_binary'空空格格', _utf8'格')    
--E7 A9 BA E7 A9 BA      
-+空空     
- 
- ===================================================
- rtrim(_utf8'     011101     ', _binary'01     ')    
--20 20 20 20 20 30 31 31 31      
-+     0111     
- 
- ===================================================
- rtrim(_binary'     011101     ', _utf8'01     ')    
--20 20 20 20 20 30 31 31 31      
-+     0111     
- 
- ===================================================
- concat(_binary'_',  rtrim(_utf8'     011101     ', _binary' '), _binary'_')    
--5F 20 20 20 20 20 30 31 31 31 30 31 5F      
-+_     011101_     
- 
- ===================================================
- concat(_binary'_',  rtrim(_binary'     011101     ', _utf8' '), _binary'_')    
--5F 20 20 20 20 20 30 31 31 31 30 31 5F      
-+_     011101_     
- 
- ===================================================
- concat(_binary'_',  rtrim( cast(_utf8'  스페이스 바  ' as varchar collate euckr_bin)), _binary'_')    
--_  스페이스 바_     
-+_  �����̽� ��_     
- 
- ===================================================
- rtrim( cast(_utf8'스페이스 바' as varchar collate euckr_bin), null)    
-@@ -74,11 +74,11 @@ null
- 
- ===================================================
- rtrim( cast(_utf8'  스페이스 바' as varchar collate euckr_bin), _binary'바')    
--  스페이스 바     
-+  �����̽� ��     
- 
- ===================================================
- rtrim(_binary'  스페이스 바',  cast(_utf8'바' as varchar collate euckr_bin))    
--  �ㅽ??�댁?�諛?     
-+  스�??이�?� �?     
- 
- ===================================================
- rtrim( cast(_utf8'     011101     ' as varchar collate euckr_bin), _binary'01     ')    
-@@ -98,7 +98,7 @@ _     011101_
- 
- ===================================================
- concat(_binary'_',  rtrim( cast(_utf8'     ÀÀÀ     ' as varchar)), _binary'_')    
--_     ÀÀÀ_     
-+_     ���_     
- 
- ===================================================
- rtrim( cast(_utf8'ÀÀÀÂÂ' as varchar), null)    
-@@ -110,11 +110,11 @@ null
- 
- ===================================================
- rtrim( cast(_utf8'ÀÀÀÂÂ' as varchar), _binary'Â')    
--ÀÀÀÂÂ     
-+�����     
- 
- ===================================================
- rtrim(_binary'ÀÀÀÂÂ',  cast(_utf8'Â' as varchar))    
--ÃÃÃÃÃ     
-+ÀÀÀÂÂ     
- 
- ===================================================
- rtrim( cast(_utf8'     011101     ' as varchar), _binary'01     ')    
 Index: _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/trim001.answer
 ===================================================================
 --- _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/trim001.answer
@@ -49016,3 +48429,568 @@ index e30ef44..c91bd0b 100644
 +Error:-2005
  ===================================================
  0
+diff --git _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/insert_01.answer _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/insert_01.answer
+index bb63433..5276620 100755
+--- _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/insert_01.answer
++++ _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/insert_01.answer
+@@ -2,7 +2,7 @@
+ 0
+ ===================================================
+ insert(_binary'我我们中国中', 2, 2, _binary'测试')    
+-E6 E6 B5 8B E8 AF 95 E6 88 91 E4 BB AC E4 B8 AD E5 9B BD E4 B8 AD      
++�测试我们中国中     
+ 
+ ===================================================
+ hex(insert(_euckr'다운로드' collate euckr_bin, 2, 2, _binary'라라'))    
+@@ -16,11 +16,11 @@ Error:-494
+ 0
+ ===================================================
+ insert( ?:0 , 2, 2,  ?:1 )    
+-E6 EC 9D B4 EC 83 81 E6 88 91 E4 BB AC E4 B8 AD E5 9B BD E4 B8 AD      
++�이상我们中国中     
+ 
+ ===================================================
+ insert( ?:0 , 2, 2,  ?:1 )    
+-61 65 66 64      
++aefd     
+ 
+ ===================================================
+ 0
+@@ -34,11 +34,11 @@ insert( ?:0 , 2, 2,  ?:1 )
+ 1
+ ===================================================
+ insert(col1, 2, 2, _utf8'测试')    
+-E4 E6 B5 8B E8 AF 95 E5 9B BD E4 B8 AD E6 88 91 E6 88 91 E4 BB AC 00 00 00 00 00 00 00 00 00 00 00 00      
++�测试国中我我们                 
+ 
+ ===================================================
+ insert(col2, 2, 2, _binary'测试')    
+-?æµè¯???     
++?测试???     
+ 
+ ===================================================
+ 0
+@@ -52,15 +52,15 @@ insert(col2, 2, 2, _binary'测试')
+ 0
+ ===================================================
+ insert(col1, 2, 2,  ?:0 )    
+-E4 E6 B5 8B E8 AF 95 E5 9B BD E4 B8 AD E6 88 91 E6 88 91 E4 BB AC 00 00 00 00 00 00 00 00 00 00 00 00      
++�测试国中我我们                 
+ 
+ ===================================================
+ insert(col2, 2, 2,  ?:0 )    
+-?ë¼???     
++?라???     
+ 
+ ===================================================
+ insert(col3, 2, 2,  ?:0 )    
+-최확장장라     
++��Ȯ�����     
+ 
+ ===================================================
+ 0
+diff --git _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/octet_length_001.answer _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/octet_length_001.answer
+index 5a34a17..151d0fe 100644
+--- _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/octet_length_001.answer
++++ _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/octet_length_001.answer
+@@ -78,10 +78,10 @@ null     5     3     2
+ 0
+ ===================================================
+ id    col_binary    hex(col_euckr)    col_utf8    col_iso    
+-1     43 55 42 52 49 44      435542524944     CUBRID     CUBRID     
+-2     E4 BD A0 E6 88 91 E4 BB 96      8FB0DFE4B2F6E2     你我他     ???     
+-3     ED 81 90 EB B8 8C EB A6 AC EB      C5A5BAEAB8AEB5E5     큐브리드     ????     
+-4     C3 80 C3 8F      8FAAA28FAAC1     ÀÏ     ÀÏ     
++1     CUBRID     435542524944     CUBRID     CUBRID     
++2     你我他     8FB0DFE4B2F6E2     你我他     ???     
++3     큐브리�     C5A5BAEAB8AEB5E5     큐브리드     ????     
++4     ÀÏ     8FAAA28FAAC1     ÀÏ     ��     
+ 
+ ===================================================
+ id    octet_length(col_binary)    octet_length(col_euckr)    octet_length(col_utf8)    octet_length(col_iso)    
+diff --git _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/repeat_001.answer _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/repeat_001.answer
+index 79640fc..28eca74 100644
+--- _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/repeat_001.answer
++++ _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/repeat_001.answer
+@@ -2,7 +2,7 @@
+ 0
+ ===================================================
+ repeat(_binary'Cubrid', 3)    
+-43 75 62 72 69 64 43 75 62 72 69 64 43 75 62 72 69 64      
++CubridCubridCubrid     
+ 
+ ===================================================
+ char_length( repeat(_binary'C', 33554432))    
+@@ -36,15 +36,15 @@ null
+ Error:-494
+ ===================================================
+ repeat(_binary'한국', 3)    
+-ED 95 9C EA B5 AD ED 95 9C EA B5 AD ED 95 9C EA B5 AD      
++한국한국한국     
+ 
+ ===================================================
+ repeat(_binary'中国', 3)    
+-E4 B8 AD E5 9B BD E4 B8 AD E5 9B BD E4 B8 AD E5 9B BD      
++中国中国中国     
+ 
+ ===================================================
+ repeat(_binary'ÀÀÀ', 3)    
+-C3 80 C3 80 C3 80 C3 80 C3 80 C3 80 C3 80 C3 80 C3 80      
++ÀÀÀÀÀÀÀÀÀ     
+ 
+ ===================================================
+ 0
+@@ -62,15 +62,15 @@ C3 80 C3 80 C3 80 C3 80 C3 80 C3 80 C3 80 C3 80 C3 80
+ 0
+ ===================================================
+ id    col_binary    col_binary    hex(col_euckr)    col_utf8    col_iso    
+-1     E4 B8 AD E5 9B BD      E4 B8 AD E5 9B BD      F1E93F     中国     ??     
+-2     C7 D1 B1 B9      C7 D1 B1 B9      C7D1B1B9     한국     ÀÏ     
+-3     C0 CF      C0 CF      8FAAA28FAAC1     ÀÏ     ÀÏ     
++1     中国     中国     F1E93F     中国     ??     
++2     �ѱ�     �ѱ�     C7D1B1B9     한국     ��     
++3     ��     ��     8FAAA28FAAC1     ÀÏ     ��     
+ 
+ ===================================================
+ id    col_binary    repeat(col_binary, 3)    hex( repeat(col_euckr, 3))    repeat(col_utf8, 3)    repeat(col_iso, 3)    
+-1     E4 B8 AD E5 9B BD      E4 B8 AD E5 9B BD E4 B8 AD E5 9B BD E4 B8 AD E5 9B BD      F1E93FF1E93FF1E93F     中国中国中国     ??????     
+-2     C7 D1 B1 B9      C7 D1 B1 B9 C7 D1 B1 B9 C7 D1 B1 B9      C7D1B1B9C7D1B1B9C7D1B1B9     한국한국한국     ÀÏÀÏÀÏ     
+-3     C0 CF      C0 CF C0 CF C0 CF      8FAAA28FAAC18FAAA28FAAC18FAAA28FAAC1     ÀÏÀÏÀÏ     ÀÏÀÏÀÏ     
++1     中国     中国中国中国     F1E93FF1E93FF1E93F     中国中国中国     ??????     
++2     �ѱ�     �ѱ��ѱ��ѱ�     C7D1B1B9C7D1B1B9C7D1B1B9     한국한국한국     ������     
++3     ��     ������     8FAAA28FAAC18FAAA28FAAC18FAAA28FAAC1     ÀÏÀÏÀÏ     ������     
+ 
+ ===================================================
+ 0
+diff --git _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/replace_001.answer _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/replace_001.answer
+index 0c4a340..3021294 100644
+--- _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/replace_001.answer
++++ _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/replace_001.answer
+@@ -14,31 +14,31 @@ null
+ 
+ ===================================================
+ replace(_binary'12345abcdeabcde', _binary'abcde', _binary'ABCDE')    
+-31 32 33 34 35 41 42 43 44 45 41 42 43 44 45      
++12345ABCDEABCDE     
+ 
+ ===================================================
+ replace(_binary'12345abcdeabcde', _binary'abcde')    
+-31 32 33 34 35      
++12345     
+ 
+ ===================================================
+ replace(_binary'문자열', _binary'문자', _binary'문자열')    
+-EB AC B8 EC 9E 90 EC 97 B4 EC 97 B4      
++문자열열     
+ 
+ ===================================================
+ replace(_binary'문자열', _binary'문자')    
+-EC 97 B4      
++열     
+ 
+ ===================================================
+ replace(_binary'문자열', _binary'자문', _binary'string')    
+-EB AC B8 EC 9E 90 EC 97 B4      
++문자열     
+ 
+ ===================================================
+ replace(_binary'你好我好大家好', _binary'好', _binary'开心')    
+-E4 BD A0 E5 BC 80 E5 BF 83 E6 88 91 E5 BC 80 E5 BF 83 E5 A4 A7 E5 AE B6 E5 BC 80 E5 BF 83      
++你开心我开心大家开心     
+ 
+ ===================================================
+ replace(_binary'你好我好大家好', _binary'好')    
+-E4 BD A0 E6 88 91 E5 A4 A7 E5 AE B6      
++你我大家     
+ 
+ ===================================================
+ coercibility(_binary'abcdefg')    coercibility( cast(_utf8'abc' as varchar collate euckr_bin))    coercibility(_utf8'abc')    coercibility( cast(_utf8'def' as varchar))    
+@@ -54,7 +54,7 @@ defdefg
+ 
+ ===================================================
+ replace(_binary'abcdefg', _utf8'', _utf8'def')    
+-61 62 63 64 65 66 67      
++abcdefg     
+ 
+ ===================================================
+ Error:-494
+@@ -88,31 +88,31 @@ This is a test for\nnew line.
+ 0
+ ===================================================
+ id    replace(col_binary, col_binary)    replace(col_binary, col_binary, col_euckr)    
+-1          C5 A5 BA EA B8 AE B5 E5      
+-2          8F B0 DF FB BF E4 B2 FB BF D3 DE CA AB FB BF      
+-3          43 55 42 52 49 44      
+-4          8F AA A2 8F AA A2 8F AA C1      
++1          ť�긮��     
++2          ��������ʫ�     
++3          CUBRID     
++4          ���������     
+ 
+ ===================================================
+ id    replace(col_binary, col_euckr, col_binary+col_euckr)    replace(col_binary, col_utf8, col_binary+col_utf8)    replace(col_binary, col_iso, col_binary+col_iso)    
+-1     ED 81 90 EB B8 8C EB A6 AC EB 93 9C      ED 81 90 EB B8 8C EB A6 AC EB 93 9C ED 81 90 EB B8 8C EB A6 AC EB 93 9C      ED 81 90 EB B8 8C EB A6 AC EB 93 9C      
+-2     E4 BD A0 E5 A5 BD E6 88 91 E5 A5 BD E5 A4 A7 E5 AE B6 E5 A5 BD      E4 BD A0 E5 A5 BD E6 88 91 E5 A5 BD E5 A4 A7 E5 AE B6 E5 A5 BD E4 BD A0 E5 A5 BD E6 88 91 E5 A5 BD E5 A4 A7 E5 AE B6 E5 A5 BD      E4 BD A0 E5 A5 BD E6 88 91 E5 A5 BD E5 A4 A7 E5 AE B6 E5 A5 BD      
+-3     43 55 42 52 49 44 43 55 42 52 49 44      43 55 42 52 49 44 43 55 42 52 49 44      43 55 42 52 49 44 43 55 42 52 49 44      
+-4     C3 80 C3 80 C3 8F      C3 80 C3 80 C3 8F C3 80 C3 80 C3 8F      C3 80 C3 80 C3 8F      
++1     큐브리드     큐브리드큐브리드     큐브리드     
++2     你好我好大家好     你好我好大家好你好我好大家好     你好我好大家好     
++3     CUBRIDCUBRID     CUBRIDCUBRID     CUBRIDCUBRID     
++4     ÀÀÏ     ÀÀÏÀÀÏ     ÀÀÏ     
+ 
+ ===================================================
+ id    replace(col_binary,  cast(_utf8'큐브' as varchar collate euckr_bin),  cast(_utf8'다이아' as varchar collate euckr_bin))    replace(col_euckr,  cast(_utf8'큐브' as varchar collate euckr_bin),  cast(_utf8'다이아' as varchar collate euckr_bin))    replace(col_utf8, _binary'큐브', _binary'다이아')    replace(col_iso,  cast(_utf8'큐브' as varchar collate euckr_bin),  cast(_utf8'다이아' as varchar collate euckr_bin))    
+-1     ED 81 90 EB B8 8C EB A6 AC EB 93 9C      다이아리드     다이아리드     ??????     
++1     큐브리드     ���̾Ƹ���     다이아리드     ??????     
+ 
+ ===================================================
+ id    replace(col_binary,  cast(_utf8'好' as varchar collate euckr_bin),  cast(_utf8'开心' as varchar collate euckr_bin))    hex( replace(col_euckr,  cast(_utf8'好' as varchar collate euckr_bin),  cast(_utf8'开心' as varchar collate euckr_bin)))    replace(col_utf8, _binary'好', _binary'开心')    replace(col_iso,  cast(_utf8'好' as varchar collate euckr_bin),  cast(_utf8'开心' as varchar collate euckr_bin))    
+-2     E4 BD A0 E5 A5 BD E6 88 91 E5 A5 BD E5 A4 A7 E5 AE B6 E5 A5 BD      8FB0DF3FE3FDE4B23FE3FDD3DECAAB3FE3FD     你开心我开心大家开心     ??????????????     
++2     你好我好大家好     8FB0DF3FE3FDE4B23FE3FDD3DECAAB3FE3FD     你开心我开心大家开心     ??????????????     
+ 
+ ===================================================
+ 1
+ ===================================================
+ replace(col_binary, col_iso, col_euckr)    
+-64 65 66 64 65 66      
++defdef     
+ 
+ ===================================================
+ 0
+diff --git _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/reverse_001.answer _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/reverse_001.answer
+index b86f7e5..4470f85 100644
+--- _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/reverse_001.answer
++++ _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/reverse_001.answer
+@@ -2,27 +2,27 @@
+ 0
+ ===================================================
+ reverse(_binary'CUBRID')    
+-44 49 52 42 55 43      
++DIRBUC     
+ 
+ ===================================================
+ reverse(_binary'문자열')    
+-B4 97 EC 90 9E EC B8 AC EB      
++��쐞츬�     
+ 
+ ===================================================
+ reverse( cast(_utf8'문자열' as varchar collate euckr_bin))    
+-열자문     
++���ڹ�     
+ 
+ ===================================================
+ reverse(_binary'ÀÏ')    
+-8F C3 80 C3      
++�À�     
+ 
+ ===================================================
+ reverse( cast(_utf8'ÀÏ' as varchar))    
+-ÏÀ     
++��     
+ 
+ ===================================================
+ reverse(_binary'中国国')    
+-BD 9B E5 BD 9B E5 AD B8 E4      
++��彛學�     
+ 
+ ===================================================
+ reverse(_utf8'中国国')    
+@@ -54,17 +54,17 @@ null
+ 0
+ ===================================================
+ id    col_binary    hex(col_euckr)    col_utf8    col_iso    
+-1     EB AC B8 EC 9E 90 EC 97 B4      B9AEC0DABFAD     문자열     ???     
+-2     E4 B8 AD E5 9B BD      F1E93F     中国     ??     
+-3     C3 80 C3 8F      8FAAA28FAAC1     ÀÏ     ÀÏ     
+-4     43 55 42 52 49 44      435542524944     CUBRID     CUBRID     
++1     문자열     B9AEC0DABFAD     문자열     ???     
++2     中国     F1E93F     中国     ??     
++3     ÀÏ     8FAAA28FAAC1     ÀÏ     ��     
++4     CUBRID     435542524944     CUBRID     CUBRID     
+ 
+ ===================================================
+ id    reverse(col_binary)    hex( reverse(col_euckr))    reverse(col_utf8)    reverse(col_iso)    
+-1     B4 97 EC 90 9E EC B8 AC EB      BFADC0DAB9AE     열자문     ???     
+-2     BD 9B E5 AD B8 E4      3FF1E9     国中     ??     
+-3     8F C3 80 C3      8FAAC18FAAA2     ÏÀ     ÏÀ     
+-4     44 49 52 42 55 43      444952425543     DIRBUC     DIRBUC     
++1     ��쐞츬�     BFADC0DAB9AE     열자문     ???     
++2     ��學�     3FF1E9     国中     ??     
++3     �À�     8FAAC18FAAA2     ÏÀ     ��     
++4     DIRBUC     444952425543     DIRBUC     DIRBUC     
+ 
+ ===================================================
+ 0
+diff --git _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/rtrim_001.answer _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/rtrim_001.answer
+index 4fcd0f5..e52a509 100755
+--- _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/rtrim_001.answer
++++ _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/rtrim_001.answer
+@@ -2,7 +2,7 @@
+ 0
+ ===================================================
+ concat(_binary'_',  rtrim(_binary'     空格     '), _binary'_')    
+-5F 20 20 20 20 20 E7 A9 BA E6 A0 BC 5F      
++_     空格_     
+ 
+ ===================================================
+ rtrim(null, _binary'空空格格')    
+@@ -14,15 +14,15 @@ null
+ 
+ ===================================================
+ rtrim(_binary'空空格格', _binary'格')    
+-E7 A9 BA E7 A9 BA      
++空空     
+ 
+ ===================================================
+ concat(_binary'_',  rtrim(_binary'     011101     ', _binary'01     '), _binary'_')    
+-5F 20 20 20 20 20 30 31 31 31 5F      
++_     0111_     
+ 
+ ===================================================
+ concat(_binary'_',  rtrim(_binary'     011101     ', _binary' '), _binary'_')    
+-5F 20 20 20 20 20 30 31 31 31 30 31 5F      
++_     011101_     
+ 
+ ===================================================
+ concat(_binary'_',  rtrim(_utf8'     空格     '), _binary'_')    
+@@ -38,31 +38,31 @@ null
+ 
+ ===================================================
+ rtrim(_utf8'空空格格', _binary'格')    
+-E7 A9 BA E7 A9 BA      
++空空     
+ 
+ ===================================================
+ rtrim(_binary'空空格格', _utf8'格')    
+-E7 A9 BA E7 A9 BA      
++空空     
+ 
+ ===================================================
+ rtrim(_utf8'     011101     ', _binary'01     ')    
+-20 20 20 20 20 30 31 31 31      
++     0111     
+ 
+ ===================================================
+ rtrim(_binary'     011101     ', _utf8'01     ')    
+-20 20 20 20 20 30 31 31 31      
++     0111     
+ 
+ ===================================================
+ concat(_binary'_',  rtrim(_utf8'     011101     ', _binary' '), _binary'_')    
+-5F 20 20 20 20 20 30 31 31 31 30 31 5F      
++_     011101_     
+ 
+ ===================================================
+ concat(_binary'_',  rtrim(_binary'     011101     ', _utf8' '), _binary'_')    
+-5F 20 20 20 20 20 30 31 31 31 30 31 5F      
++_     011101_     
+ 
+ ===================================================
+ concat(_binary'_',  rtrim( cast(_utf8'  스페이스 바  ' as varchar collate euckr_bin)), _binary'_')    
+-_  스페이스 바_     
++_  �����̽� ��_     
+ 
+ ===================================================
+ rtrim( cast(_utf8'스페이스 바' as varchar collate euckr_bin), null)    
+@@ -74,7 +74,7 @@ null
+ 
+ ===================================================
+ rtrim( cast(_utf8'  스페이스 바' as varchar collate euckr_bin), _binary'바')    
+-  스페이스 바     
++  �����̽� ��     
+ 
+ ===================================================
+ hex( rtrim(_binary'  스페이스 바',  cast(_utf8'바' as varchar collate euckr_bin)))    
+@@ -98,7 +98,7 @@ _     011101_
+ 
+ ===================================================
+ concat(_binary'_',  rtrim( cast(_utf8'     ÀÀÀ     ' as varchar)), _binary'_')    
+-_     ÀÀÀ_     
++_     ���_     
+ 
+ ===================================================
+ rtrim( cast(_utf8'ÀÀÀÂÂ' as varchar), null)    
+@@ -110,11 +110,11 @@ null
+ 
+ ===================================================
+ rtrim( cast(_utf8'ÀÀÀÂÂ' as varchar), _binary'Â')    
+-ÀÀÀÂÂ     
++�����     
+ 
+ ===================================================
+ rtrim(_binary'ÀÀÀÂÂ',  cast(_utf8'Â' as varchar))    
+-ÃÃÃÃÃ     
++ÀÀÀÂÂ     
+ 
+ ===================================================
+ rtrim( cast(_utf8'     011101     ' as varchar), _binary'01     ')    
+diff --git _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/translate001.answer _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/translate001.answer
+index 330669f..486192c 100755
+--- _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/translate001.answer
++++ _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/translate001.answer
+@@ -22,11 +22,11 @@ translate(_utf8'字符串1', _utf8'字符', _utf8'字')
+ 
+ ===================================================
+ translate( cast(_utf8'문자열 2' as varchar collate euckr_bin),  cast(_utf8'문자열' as varchar collate euckr_bin),  cast(_utf8'문자' as varchar collate euckr_bin))    
+-문자 2     
++���� 2     
+ 
+ ===================================================
+ translate( cast(_utf8'Öö_Şş_Üü2' as varchar),  cast(_utf8'Öö_Şş' as varchar),  cast(_utf8'Öö' as varchar))    
+-ÖöÜü2     
++����     
+ 
+ ===================================================
+ hex( translate(_binary'문자열 2',  cast(_utf8'문자' as varchar collate euckr_bin), _utf8'字符串2'))    
+@@ -34,11 +34,11 @@ EBACB8EC3F3FEC97B42032
+ 
+ ===================================================
+ translate(_binary'Öö_Şş_Üü2',  cast(_utf8'문자열 2' as varchar collate euckr_bin), _utf8'字符串2')    
+-�철_��_�체     
++Öö_Şş_Üü     
+ 
+ ===================================================
+ translate( cast(_utf8'문자열 2' as varchar collate euckr_bin),  cast(_utf8'문자' as varchar collate euckr_bin), _utf8'字符串2')    
+-字符열 2     
++�ݬ�� 2     
+ 
+ ===================================================
+ Error:-494
+diff --git _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/regexp002.answer _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/regexp002.answer
+index 807c09f..1f5436a 100755
+--- _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/regexp002.answer
++++ _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/regexp002.answer
+@@ -16,54 +16,54 @@
+ 1
+ ===================================================
+ col_binary    col_euckr    col_utf8    col_iso    
+-EB AC B8 EC 9E 90 EC 97 B4 EB      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
++문자열�     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
+ 
+ ===================================================
+ col_binary    col_euckr    col_utf8    col_iso    
+-EB AC B8 EC 9E 90 EC 97 B4 EB      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
+-B9 AE C0 DA BF AD B9 AE C0 DA      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
+-C0 CF C0 CF C0 CF C0 CF C0 CF      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
+-D6 F6 5F 3F 3F 5F DC FC 32 D6      문자열문자열문자열     문자열문자열문자열     Öö_??_Üü2Ö     
++문자열�     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
++���ڿ�����     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
++����������     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
++��_??_��     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ��_??_��     
+ 
+ ===================================================
+ col_binary    col_euckr    col_utf8    col_iso    
+-EB AC B8 EC 9E 90 EC 97 B4 EB      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
+-B9 AE C0 DA BF AD B9 AE C0 DA      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
+-C0 CF C0 CF C0 CF C0 CF C0 CF      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
+-D6 F6 5F 3F 3F 5F DC FC 32 D6      문자열문자열문자열     문자열문자열문자열     Öö_??_Üü2Ö     
++문자열�     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
++���ڿ�����     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
++����������     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
++��_??_��     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ��_??_��     
+ 
+ ===================================================
+ col_binary    col_euckr    col_utf8    col_iso    
+-EB AC B8 EC 9E 90 EC 97 B4 EB      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
+-B9 AE C0 DA BF AD B9 AE C0 DA      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
+-C0 CF C0 CF C0 CF C0 CF C0 CF      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
++문자열�     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
++���ڿ�����     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
++����������     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
+ 
+ ===================================================
+ col_binary    col_euckr    col_utf8    col_iso    
+ 
+ ===================================================
+ col_binary    col_euckr    col_utf8    col_iso    
+-EB AC B8 EC 9E 90 EC 97 B4 EB      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
++문자열�     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
+ 
+ ===================================================
+ col_binary    col_euckr    col_utf8    col_iso    
+-EB AC B8 EC 9E 90 EC 97 B4 EB      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
+-B9 AE C0 DA BF AD B9 AE C0 DA      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
+-C0 CF C0 CF C0 CF C0 CF C0 CF      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
+-D6 F6 5F 3F 3F 5F DC FC 32 D6      문자열문자열문자열     문자열문자열문자열     Öö_??_Üü2Ö     
++문자열�     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
++���ڿ�����     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
++����������     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
++��_??_��     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ��_??_��     
+ 
+ ===================================================
+ col_binary    col_euckr    col_utf8    col_iso    
+-EB AC B8 EC 9E 90 EC 97 B4 EB      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
+-B9 AE C0 DA BF AD B9 AE C0 DA      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
+-C0 CF C0 CF C0 CF C0 CF C0 CF      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
+-D6 F6 5F 3F 3F 5F DC FC 32 D6      문자열문자열문자열     문자열문자열문자열     Öö_??_Üü2Ö     
++문자열�     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
++���ڿ�����     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
++����������     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
++��_??_��     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ��_??_��     
+ 
+ ===================================================
+ col_binary    col_euckr    col_utf8    col_iso    
+-EB AC B8 EC 9E 90 EC 97 B4 EB      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
+-B9 AE C0 DA BF AD B9 AE C0 DA      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
+-C0 CF C0 CF C0 CF C0 CF C0 CF      문자열문자열문자열     문자열문자열문자열     ÀÏÀÏÀÏÀÏÀÏ     
++문자열�     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
++���ڿ�����     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
++����������     ���ڿ����ڿ����ڿ�     문자열문자열문자열     ����������     
+ 
+ ===================================================
+ 0
+diff --git a/sql/_13_issues/_15_1h/answers/bug_bts_14200.answer b/sql/_13_issues/_15_1h/answers/bug_bts_14200.answer
+index 1485563..ac99ec9 100644
+--- _13_issues/_15_1h/answers/bug_bts_14200.answer
++++ _13_issues/_15_1h/answers/bug_bts_14200.answer
+@@ -7,9 +7,7 @@
+ ===================================================
+ 0
+ ===================================================
+-a    b    c    d    
+-2     2013-10-12     w     blue     
+-
++Error:-2005
+ ===================================================
+ trace    
+ {
+diff --git a/sql/_27_banana_qa/issue_14186_show_timezone/answers/show_timezones_02.answer b/sql/_27_banana_qa/issue_14186_show_timezone/answers/show_timezones_02.answer
+index d1bfd22..f902a5c 100644
+--- _27_banana_qa/issue_14186_show_timezone/answers/show_timezones_02.answer
++++ _27_banana_qa/issue_14186_show_timezone/answers/show_timezones_02.answer
+@@ -1196,7 +1196,7 @@ Zulu
+ 
+ ===================================================
+ timestamptz '2012-03-20 10:00:00 AM Europe/Berlin'    
+-2012-03-20 10:00:00.0 Europe/Berlin CET     
++2012-03-20 10:00:00.0     
+ 
+ ===================================================
+ timezone_region    
+@@ -1796,7 +1796,7 @@ Zulu
+ 
+ ===================================================
+ timestampltz '2012-03-20 23:00:00 +06:00'    
+-2012-03-20 22:00:00.0 +05:00     
++2012-03-20 22:00:00.0     
+ 
+ ===================================================
+ timezone_region    
+@@ -2396,7 +2396,7 @@ Zulu
+ 
+ ===================================================
+ timestampltz '2012-03-20 23:00:00 -10:00'    
+-2012-03-21 14:00:00.0 +05:00     
++2012-03-21 14:00:00.0     
+ 
+ ===================================================
+ timezone_region    
+@@ -2996,7 +2996,7 @@ Zulu
+ 
+ ===================================================
+ timestampltz '2012-03-20 23:00:00 +12:00'    
+-2012-03-20 16:00:00.0 +05:00     
++2012-03-20 16:00:00.0     
+ 
+ ===================================================
+ timezone_region    
