@@ -15,7 +15,7 @@ with cte2 as
   select 1, default(name) as name from t1
   union all 
   select rownum, to_char(SYS_TIMESTAMP, 'HH:MI:SS AM MM/DD/YYYY') as name from t1
-) select id, name=to_char(SYS_TIMESTAMP, 'HH:MI:SS AM MM/DD/YYYY') as default_name from cte2;
+) select id, if(name in ('xbc', to_char(SYS_TIMESTAMP, 'HH:MI:SS AM MM/DD/YYYY'), (select answer from t1 where id=2)),'ok','nok') as default_name from cte2;
 
 
 with cte3 as 
@@ -24,7 +24,7 @@ with cte3 as
 ),
 cte4 as (
    select rownum as c4_id, to_char(SYS_TIMESTAMP, 'HH:MI:SS AM MM/DD/YYYY') as name from t1
-) select id, c4_id, cte3.name=cte4.name from cte3 join cte4 on id=c4_id;
+) select id, c4_id, if(cte3.name in ('xbc', (select answer from t1 where id=2)), 'ok', 'nok') from cte3 join cte4 on id=c4_id;
 
 
 drop table if exists t1;
