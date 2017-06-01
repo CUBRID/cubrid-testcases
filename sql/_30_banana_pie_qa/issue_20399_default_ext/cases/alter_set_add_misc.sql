@@ -1,7 +1,7 @@
 drop table if exists t0;
 create table t0(id int default to_char(sysdate, 'DD'), col datetime );
 insert into t0 value (default, sysdate);
-select if(to_char(id) = to_char(col,'DD'), 'OK', 'NOK') from t0;  
+select if(id = to_char(col,'DD'), 'OK', 'NOK') from t0;  
 show create table t0;
 alter t0 alter id set default to_char(sysdate, 'YY');
 insert into t0 value default;
@@ -24,15 +24,16 @@ show create table t3;
 drop table if exists t3;
 
 drop table if exists xoo;
-create class xoo ( id int primary key default to_char(sysdate, 'MM'), title varchar(100));
+create class xoo ( id int primary key default to_char(sysdate, 'MM'), dd date default sysdate, title varchar(100));
 insert into xoo value default;
 alter table xoo modify title varchar default to_char(systimestamp, 'HH:MI:SS AM MM/DD/YYYY');
-select * from xoo;
+select if(id=to_char(dd,'MM'),'OK','NOK'),title, @xx :=id from xoo;
 prepare xx from 'update xoo set title=default(title) where id =?'; 
-execute xx using '5';
+execute xx using @xx;
 prepare xx from 'update xoo set title=default(title)||? where id =?';
-execute xx using '- Meeting', '5';
+execute xx using '- Meeting', @xx;
 deallocate prepare xx;
+deallocate variable @xx;
 drop table if exists xoo;
 
 drop table if exists t1;
