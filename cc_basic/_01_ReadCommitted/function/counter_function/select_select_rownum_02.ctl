@@ -41,9 +41,9 @@ C1: COMMIT WORK;
 MC: wait until C1 ready;
 
 /* test case */
-C1: SELECT ROWNUM, id, col FROM t1 WHERE ROWNUM >= 5 ORDER BY 1,2,3;
+C1: SELECT ROWNUM, t.* from (select id, col FROM t1 order by id) t WHERE ROWNUM >= 5 ORDER BY 1;
 MC: wait until C1 ready; 
-C2: SELECT ROWNUM, id, col FROM t1 WHERE id = 6 ORDER BY 1,2,3; 
+C2: SELECT ROWNUM, t.* from (select id, col FROM t1 order by id) t WHERE t.id = 6; 
 /* expect: no transactions need to wait */
 MC: wait until C2 ready;
 /* expect: C1 select - id = 5-7 are selected */
