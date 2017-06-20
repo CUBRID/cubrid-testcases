@@ -2,7 +2,7 @@
 
 autocommit off;
 
-drpp table if exists t1, t2, t3, t4;
+drop table if exists t1, t2, t3, t4;
 
 CREATE TABLE t1 ( id INTEGER PRIMARY KEY,  name VARCHAR(10));
 
