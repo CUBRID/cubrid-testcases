@@ -20,8 +20,8 @@ set @x2=(select add_months(current_date,1));
 select if(month(@x1)-month(@x2)=expect_value, 'ok', concat('nok, ',month(@x1)-month(@x2),', ', expect_value,', ',now())) from
 (
   select @x1_year:=year(@x1), @x1_month:=month(@x1),
-    CASE WHEN @x_cur <= TIMESTAMP(@x1_year||'-1-2 0:00') THEN -11
-    WHEN @x_cur <= TIMESTAMP(@x1_year||'-'||@x1_month||'-2 0:00') THEN 1
+    CASE WHEN @x_cur < TIMESTAMP(@x1_year||'-1-2 0:00') THEN -11
+    WHEN @x_cur < TIMESTAMP(@x1_year||'-'||@x1_month||'-2 0:00') THEN 1
     ELSE 0 END expect_value
 ) t;
 drop variable @x1,@x2;
