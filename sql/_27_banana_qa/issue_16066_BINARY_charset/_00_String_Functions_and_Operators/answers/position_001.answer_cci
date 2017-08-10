@@ -1,0 +1,114 @@
+===================================================
+0
+===================================================
+position(_binary'' in _binary'12345abcdeabcde')    
+1     
+
+===================================================
+position(_binary'abcd' in _binary'12345abcdeabcde')    
+6     
+
+===================================================
+position(_binary'나' in _binary'12345가나다라마가나다라마')    cast(_utf8'나' as varchar collate binary)    cast(_utf8'12345가나다라마가나다라마' as varchar collate binary)    
+9     나     12345가나다라마가나다라마     
+
+===================================================
+position(_binary'f' in _binary'12345abcdeabcde')    
+0     
+
+===================================================
+position(B'1' in B'000011110000')    
+0     
+
+===================================================
+position(_binary'中国' in _binary'中国人民共和国')    cast(_utf8'中国' as varchar collate binary)    cast(_utf8'中国人民共和国' as varchar collate binary)    
+1     中国     中国人民共和国     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+col_binary    col_euckr    col_utf8    col_iso    
+000011110000     000011110000     000011110000     000011110000     
+12345abcdeabcde     12345abcdeabcde     12345abcdeabcde     12345abcdeabcde     
+12345가나다라마가나다라마     12345�����ٶ󸶰����ٶ�     12345가나다라마가나다라마     12345??????????     
+中国人民共和国     ��?��������?     中国人民共和国     ???????     
+
+===================================================
+col_binary    position(_binary'' in col_binary)    
+000011110000     1     
+12345abcdeabcde     1     
+12345가나다라마가나다라마     1     
+中国人民共和国     1     
+
+===================================================
+col_binary    position(_binary'' in col_euckr)    
+000011110000     1     
+12345abcdeabcde     1     
+12345가나다라마가나다라마     1     
+中国人民共和国     1     
+
+===================================================
+col_binary    position(_binary'' in col_utf8)    
+000011110000     1     
+12345abcdeabcde     1     
+12345가나다라마가나다라마     1     
+中国人民共和国     1     
+
+===================================================
+col_binary    position(_binary'' in col_iso)    
+000011110000     1     
+12345abcdeabcde     1     
+12345가나다라마가나다라마     1     
+中国人民共和国     1     
+
+===================================================
+col_binary    position(_binary'abcd' in col_binary)    position(_binary'abcd' in col_euckr)    position(_binary'abcd' in col_utf8)    position(_binary'abcd' in col_iso)    
+12345abcdeabcde     6     6     6     6     
+
+===================================================
+col_binary    position(_binary'나' in col_binary)    position(_binary'나' in col_euckr)    position(_binary'나' in col_utf8)    position(_binary'나' in col_iso)    
+12345가나다라마가나다라마     9     0     7     0     
+
+===================================================
+col_binary    position( cast(_utf8'나' as varchar collate binary) in col_binary)    position( cast(_utf8'나' as varchar collate euckr_bin) in col_euckr)    position(_utf8'나' in col_utf8)    
+12345가나다라마가나다라마     9     7     7     
+
+===================================================
+col_binary    position(_binary'f' in col_binary)    position(_binary'f' in col_euckr)    position(_binary'f' in col_utf8)    position(_binary'f' in col_iso)    
+000011110000     0     0     0     0     
+12345abcdeabcde     0     0     0     0     
+12345가나다라마가나다라마     0     0     0     0     
+中国人民共和国     0     0     0     0     
+
+===================================================
+col_binary    position(_binary'1' in col_binary)    position(_binary'1' in col_euckr)    position(_binary'1' in col_utf8)    position(_binary'1' in col_iso)    
+000011110000     5     5     5     5     
+12345abcdeabcde     1     1     1     1     
+12345가나다라마가나다라마     1     1     1     1     
+
+===================================================
+col_binary    position(_binary'中国' in col_binary)    position(_binary'中国' in col_euckr)    position(_binary'中国' in col_utf8)    position(_binary'中国' in col_iso)    
+中国人民共和国     1     0     1     0     
+
+===================================================
+col_binary    position( cast(_utf8'中国' as varchar collate binary) in col_binary)    position( cast(_utf8'中国' as varchar collate euckr_bin) in col_euckr)    position(_utf8'中国' in col_utf8)    position( cast(_utf8'中国' as varchar) in col_iso)    
+中国人民共和国     1     1     1     1     
+
+===================================================
+0
+===================================================
+0

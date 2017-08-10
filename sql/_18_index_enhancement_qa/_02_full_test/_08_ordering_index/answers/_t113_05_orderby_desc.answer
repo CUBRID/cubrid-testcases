@@ -1,0 +1,216 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+a    b    c    d    e    
+5     5     5     5     5     
+2     2     2     2     2     
+1     1     1     1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_abc term[?]
+    sort:  ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where (t.a> ?:? ) order by ? desc , ? desc , ? desc 
+/* ---> skip ORDER BY */
+===================================================
+a    b    c    d    e    
+5     5     5     5     5     
+2     2     2     2     2     
+1     1     1     1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_abc term[?]
+    sort:  ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where (t.a> ?:? ) order by ? desc , ? desc 
+/* ---> skip ORDER BY */
+===================================================
+a    b    c    d    e    
+5     5     5     5     5     
+2     2     2     2     2     
+1     1     1     1     1     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_abc term[?]
+                 sort:  ? desc, ? desc, ? desc
+                 cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where (t.a> ?:? ) order by ? desc , ? desc 
+===================================================
+a    b    c    d    e    
+5     5     5     5     5     
+2     2     2     2     2     
+1     1     1     1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_abc term[?]
+    sort:  ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where (t.a> ?:? ) order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+a    b    c    d    e    
+5     5     5     5     5     
+2     2     2     2     2     
+1     1     1     1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_abc term[?]
+    sort:  ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where (t.a> ?:? ) order by ? desc , ? desc , ? desc 
+/* ---> skip ORDER BY */
+===================================================
+a    b    c    d    e    
+5     5     5     5     5     
+2     2     2     2     2     
+1     1     1     1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_abc term[?]
+    sort:  ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where (t.a> ?:? ) order by ? desc , ? desc 
+/* ---> skip ORDER BY */
+===================================================
+a    b    c    d    e    
+5     5     5     5     5     
+2     2     2     2     2     
+1     1     1     1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_abc term[?]
+    sort:  ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where (t.a> ?:? ) order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+Error:-494
+===================================================
+a    b    c    d    e    
+5     5     5     5     5     
+2     2     2     2     2     
+1     1     1     1     1     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_abc term[?]
+                 sort:  ? desc, ? desc, ? desc
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where (t.a> ?:? ) order by ? desc 
+===================================================
+a    b    c    d    e    
+5     5     5     5     5     
+2     2     2     2     2     
+1     1     1     1     1     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_abc term[?]
+                 sort:  ? desc, ? desc, ? desc
+                 cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where (t.a> ?:? ) order by ? desc , ? desc 
+===================================================
+a    b    c    d    e    
+5     5     5     5     5     
+2     2     2     2     2     
+1     1     1     1     1     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_abc term[?]
+                 sort:  ? desc, ? desc, ? desc
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e, ?+? from t t where (t.a> ?:? ) order by ? desc 
+===================================================
+a    b    c    d    e    
+5     5     5     5     5     
+2     2     2     2     2     
+1     1     1     1     1     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_abc term[?]
+                 sort:  ? desc, ? desc, ? desc
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where (t.a> ?:? ) order by ? desc , ?
+===================================================
+Error:-494
+===================================================
+a    b    c    d    e    
+5     5     5     5     5     
+2     2     2     2     2     
+1     1     1     1     1     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_abc term[?]
+                 sort:  ? desc, ? desc, ? desc
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e,  cast(t.a as varchar)|| cast(t.a as varchar) from t t where (t.a> ?:? ) order by ? desc 
+===================================================
+0
+===================================================
+0
+===================================================
+0

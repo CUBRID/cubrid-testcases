@@ -1,0 +1,11 @@
+--+ holdcas on;
+create class z (a int, b clob, c string); 
+commit;
+insert into z values (1, char_to_clob('z'), 'z');
+select clob_to_char(b) from z where rownum = 1;
+update z set b = char_to_clob('zzz');
+select clob_to_char(b) from z;
+delete from z;
+drop z;
+commit;
+--+ holdcas off;

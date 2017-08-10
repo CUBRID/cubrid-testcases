@@ -1,0 +1,60 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+a    b    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx_ab term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from t t where t.a= ?:?  order by ?
+/* ---> skip ORDER BY */
+===================================================
+a    b    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx_ab term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from t t where t.a= ?:?  group by t.a, t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx_ab term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from t t where t.a= ?:?  order by ?
+/* ---> skip ORDER BY */
+===================================================
+a    b    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx_ab term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from t t where t.a= ?:?  group by t.a, t.b
+/* ---> skip GROUP BY */
+===================================================
+0
+===================================================
+0
+===================================================
+0

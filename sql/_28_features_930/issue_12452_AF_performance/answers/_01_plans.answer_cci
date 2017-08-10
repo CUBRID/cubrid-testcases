@@ -1,0 +1,872 @@
+===================================================
+0
+===================================================
+0
+===================================================
+20
+===================================================
+'compatible'    
+compatible     
+
+Query plan:
+sscan
+    class: db_root node[?]
+    cost:  ? card ?
+Query stmt:
+select 'compatible' from db_root db_root
+===================================================
+A1    A2    
+210     10.5     
+210     10.5     
+210     10.5     
+210     10.5     
+210     10.5     
+210     10.5     
+210     10.5     
+210     10.5     
+210     10.5     
+210     10.5     
+210     10.5     
+210     10.5     
+210     10.5     
+210     10.5     
+210     10.5     
+210     10.5     
+210     10.5     
+210     10.5     
+210     10.5     
+210     10.5     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key ()
+           func[?]: avg partition by () order by ()
+           func[?]: sum partition by () order by ()
+Query stmt:
+select sum(t.v) over (), avg(t.v) over () from t t order by ?, ?
+===================================================
+A1    A2    
+210     10.5     
+210     10.5     
+210     10.5     
+210     10.5     
+210     10.5     
+210     10.5     
+210     10.5     
+210     10.5     
+210     10.5     
+210     10.5     
+210     10.5     
+210     10.5     
+210     10.5     
+210     10.5     
+210     10.5     
+210     10.5     
+210     10.5     
+210     10.5     
+210     10.5     
+210     10.5     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: avg partition by (? asc nulls first) order by ()
+           func[?]: sum partition by (? asc nulls first) order by ()
+Query stmt:
+select sum(t.v) over (partition by ?), avg(t.v) over (partition by ?) from t t order by ?, ?
+===================================================
+A1    A2    
+20     20.0     
+36     4.5     
+36     4.5     
+36     4.5     
+36     4.5     
+36     4.5     
+36     4.5     
+36     4.5     
+36     4.5     
+69     11.5     
+69     11.5     
+69     11.5     
+69     11.5     
+69     11.5     
+69     11.5     
+85     17.0     
+85     17.0     
+85     17.0     
+85     17.0     
+85     17.0     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: avg partition by (? asc nulls first, ? asc nulls first) order by ()
+           func[?]: sum partition by (? asc nulls first, ? asc nulls first) order by ()
+Query stmt:
+select sum(t.v) over (partition by ?, ?), avg(t.v) over (partition by ?, ?) from t t order by ?, ?
+===================================================
+A1    A2    
+20     20.0     
+36     4.5     
+36     4.5     
+36     4.5     
+36     4.5     
+36     4.5     
+36     4.5     
+36     4.5     
+36     4.5     
+69     11.5     
+69     11.5     
+69     11.5     
+69     11.5     
+69     11.5     
+69     11.5     
+85     17.0     
+85     17.0     
+85     17.0     
+85     17.0     
+85     17.0     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: sum partition by (? asc nulls first, ? asc nulls first) order by ()
+           func[?]: avg partition by (? asc nulls first) order by ()
+Query stmt:
+select sum(t.v) over (partition by ?, ?), avg(t.v) over (partition by ?) from t t order by ?, ?
+===================================================
+A1    A2    
+6     4.5     
+6     4.5     
+6     4.5     
+15     4.5     
+15     4.5     
+15     17.0     
+19     11.5     
+19     11.5     
+20     20.0     
+31     17.0     
+36     4.5     
+36     4.5     
+36     4.5     
+55     11.5     
+55     11.5     
+55     11.5     
+69     11.5     
+85     17.0     
+85     17.0     
+85     17.0     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first, ? asc nulls first)
+           func[?]: sum partition by (? asc nulls first, ? asc nulls first) order by (? asc nulls first)
+           func[?]: avg partition by (? asc nulls first) order by ()
+Query stmt:
+select sum(t.v) over (partition by ?, ? order by ?), avg(t.v) over (partition by ?) from t t order by ?, ?
+===================================================
+A1    A2    
+36     4.5     
+36     4.5     
+36     4.5     
+36     4.5     
+36     4.5     
+36     4.5     
+36     4.5     
+36     4.5     
+105     11.5     
+105     11.5     
+105     11.5     
+105     11.5     
+105     11.5     
+105     11.5     
+190     17.0     
+190     17.0     
+190     17.0     
+190     17.0     
+190     17.0     
+210     20.0     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: avg partition by (? asc nulls first, ? asc nulls first) order by ()
+           func[?]: sum partition by (? asc nulls first) order by (? asc nulls first)
+Query stmt:
+select sum(t.v) over (partition by ? order by ?), avg(t.v) over (partition by ?, ?) from t t order by ?, ?
+===================================================
+A1    A2    
+1     1.0     
+3     1.5     
+6     2.0     
+9     9.0     
+10     2.5     
+15     3.0     
+15     15.0     
+19     9.5     
+20     20.0     
+21     3.5     
+28     4.0     
+30     10.0     
+31     15.5     
+36     4.5     
+42     10.5     
+48     16.0     
+55     11.0     
+66     16.5     
+69     11.5     
+85     17.0     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first, ? asc nulls first, ? asc nulls first)
+           func[?]: sum partition by (? asc nulls first, ? asc nulls first) order by (? asc nulls first, ? asc nulls first)
+           func[?]: avg partition by (? asc nulls first) order by (? asc nulls first, ? asc nulls first, ? asc nulls first)
+Query stmt:
+select sum(t.v) over (partition by ?, ? order by ?, ?), avg(t.v) over (partition by ? order by ?, ?, ?) from t t order by ?, ?
+===================================================
+A1    A2    
+1     1.0     
+3     1.5     
+4     4.0     
+6     2.0     
+6     6.0     
+9     4.5     
+9     9.0     
+11     11.0     
+13     6.5     
+14     14.0     
+15     15.0     
+16     16.0     
+17     17.0     
+19     9.5     
+20     20.0     
+21     7.0     
+23     11.5     
+35     17.5     
+36     12.0     
+54     18.0     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first, ? asc nulls first, ? asc nulls first)
+           func[?]: sum partition by (? asc nulls first, ? asc nulls first, ? asc nulls first) order by (? asc nulls first)
+           func[?]: avg partition by (? asc nulls first, ? asc nulls first) order by (? asc nulls first, ? asc nulls first)
+Query stmt:
+select sum(t.v) over (partition by ?, ?, ? order by ?), avg(t.v) over (partition by ?, ? order by ?, ?) from t t order by ?, ?
+===================================================
+A1    A2    
+1     10.5     
+3     10.5     
+4     10.5     
+6     10.5     
+6     10.5     
+9     10.5     
+9     10.5     
+11     10.5     
+13     10.5     
+14     10.5     
+15     10.5     
+16     10.5     
+17     10.5     
+19     10.5     
+20     10.5     
+21     10.5     
+23     10.5     
+35     10.5     
+36     10.5     
+54     10.5     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first, ? asc nulls first, ? asc nulls first)
+           func[?]: sum partition by (? asc nulls first, ? asc nulls first, ? asc nulls first) order by (? asc nulls first)
+           func[?]: avg partition by () order by ()
+Query stmt:
+select sum(t.v) over (partition by ?, ?, ? order by ?), avg(t.v) over () from t t order by ?, ?
+===================================================
+'incompatible'    
+incompatible     
+
+Query plan:
+sscan
+    class: db_root node[?]
+    cost:  ? card ?
+Query stmt:
+select 'incompatible' from db_root db_root
+===================================================
+A1    A2    
+36     8.571428571     
+36     9.5     
+36     9.6     
+36     10.333333333     
+36     11.25     
+36     12.333333333     
+36     12.4     
+36     12.714285714     
+105     9.5     
+105     9.6     
+105     10.166666667     
+105     10.333333333     
+105     11.25     
+105     12.333333333     
+190     10.333333333     
+190     11.25     
+190     12.333333333     
+190     12.4     
+190     12.714285714     
+210     11.25     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: avg partition by (? asc nulls first) order by (? asc nulls first)
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: sum partition by (? asc nulls first) order by (? asc nulls first)
+Query stmt:
+select sum(t.v) over (partition by ? order by ?), avg(t.v) over (partition by ? order by ?) from t t order by ?, ?
+===================================================
+A1    A2    
+60     4.5     
+60     4.5     
+60     4.5     
+60     11.5     
+60     11.5     
+60     17.0     
+60     20.0     
+61     4.5     
+61     4.5     
+61     11.5     
+61     11.5     
+61     11.5     
+61     17.0     
+89     4.5     
+89     4.5     
+89     4.5     
+89     11.5     
+89     17.0     
+89     17.0     
+89     17.0     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: avg partition by (? asc nulls first, ? asc nulls first) order by ()
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: sum partition by (? asc nulls first, ? asc nulls first) order by ()
+Query stmt:
+select sum(t.v) over (partition by ?, ?), avg(t.v) over (partition by ?, ?) from t t order by ?, ?
+===================================================
+A1    A2    
+6     3.666666667     
+6     4.666666667     
+6     5.5     
+9     3.666666667     
+9     4.666666667     
+14     11.333333333     
+15     16.0     
+16     16.0     
+19     11.0     
+19     11.333333333     
+20     20.0     
+21     3.666666667     
+21     4.666666667     
+21     5.5     
+36     11.0     
+36     11.333333333     
+36     13.0     
+54     16.0     
+54     18.0     
+54     19.0     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first, ? asc nulls first)
+           func[?]: avg partition by (? asc nulls first, ? asc nulls first, ? asc nulls first) order by ()
+    run[?]: sort with key (? asc nulls first, ? asc nulls first, ? asc nulls first)
+           func[?]: sum partition by (? asc nulls first, ? asc nulls first, ? asc nulls first) order by ()
+Query stmt:
+select sum(t.v) over (partition by ?, ?, ?), avg(t.v) over (partition by ?, ?, ?) from t t order by ?, ?
+===================================================
+A1    A2    
+6     2.0     
+6     2.0     
+6     2.0     
+15     6.666666667     
+15     7.666666667     
+15     7.666666667     
+19     5.0     
+19     5.0     
+20     8.571428571     
+31     9.307692308     
+36     8.875     
+36     8.875     
+36     8.875     
+55     8.75     
+55     8.75     
+55     8.75     
+69     9.176470588     
+85     10.5     
+85     10.5     
+85     10.5     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first, ? asc nulls first)
+           func[?]: sum partition by (? asc nulls first, ? asc nulls first) order by (? asc nulls first)
+    run[?]: sort with key (? asc nulls first, ? asc nulls first, ? asc nulls first)
+           func[?]: avg partition by (? asc nulls first) order by (? asc nulls first, ? asc nulls first)
+Query stmt:
+select sum(t.v) over (partition by ?, ? order by ?), avg(t.v) over (partition by ? order by ?, ?) from t t order by ?, ?
+===================================================
+A1    A2    
+6     2.0     
+6     2.0     
+6     2.0     
+15     6.666666667     
+15     7.666666667     
+15     7.666666667     
+19     5.0     
+19     5.0     
+20     8.571428571     
+31     9.307692308     
+36     8.875     
+36     8.875     
+36     8.875     
+55     8.75     
+55     8.75     
+55     8.75     
+69     9.176470588     
+85     10.5     
+85     10.5     
+85     10.5     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first, ? asc nulls first)
+           func[?]: avg partition by (? asc nulls first) order by (? asc nulls first, ? asc nulls first)
+    run[?]: sort with key (? asc nulls first, ? asc nulls first, ? asc nulls first)
+           func[?]: sum partition by (? asc nulls first, ? asc nulls first) order by (? asc nulls first)
+Query stmt:
+select sum(t.v) over (partition by ?, ? order by ?), avg(t.v) over (partition by ? order by ?, ?) from t t order by ?, ?
+===================================================
+'one run'    
+one run     
+
+Query plan:
+sscan
+    class: db_root node[?]
+    cost:  ? card ?
+Query stmt:
+select 'one run' from db_root db_root
+===================================================
+A1    A2    A3    A4    A5    A6    A7    A8    A9    
+1     1.0     null     0.0     null     0.0     1     1     2     
+3     1.5     0.707106781     0.5     0.5     0.25     1     2     3     
+6     2.0     1.0     0.816496581     1.0     0.666666667     1     3     4     
+9     9.0     null     0.0     null     0.0     9     9     10     
+10     2.5     1.290994449     1.118033989     1.666666667     1.25     1     4     5     
+15     3.0     1.58113883     1.414213562     2.5     2.0     1     5     6     
+15     15.0     null     0.0     null     0.0     15     15     16     
+19     9.5     0.707106781     0.5     0.5     0.25     9     10     11     
+20     20.0     null     0.0     null     0.0     20     20     null     
+21     3.5     1.870828693     1.707825128     3.5     2.916666667     1     6     7     
+28     4.0     2.160246899     2.0     4.666666667     4.0     1     7     8     
+30     10.0     1.0     0.816496581     1.0     0.666666667     9     11     12     
+31     15.5     0.707106781     0.5     0.5     0.25     15     16     17     
+36     4.5     2.449489743     2.291287847     6.0     5.25     1     8     9     
+42     10.5     1.290994449     1.118033989     1.666666667     1.25     9     12     13     
+48     16.0     1.0     0.816496581     1.0     0.666666667     15     17     18     
+55     11.0     1.58113883     1.414213562     2.5     2.0     9     13     14     
+66     16.5     1.290994449     1.118033989     1.666666667     1.25     15     18     19     
+69     11.5     1.870828693     1.707825128     3.5     2.916666667     9     14     15     
+85     17.0     1.58113883     1.414213562     2.5     2.0     15     19     20     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first, ? asc nulls first, ? asc nulls first)
+           func[?]: min partition by (? asc nulls first, ? asc nulls first) order by (? asc nulls first, ? asc nulls first)
+           func[?]: avg partition by (? asc nulls first, ? asc nulls first) order by (? asc nulls first, ? asc nulls first)
+           func[?]: sum partition by (? asc nulls first, ? asc nulls first) order by (? asc nulls first, ? asc nulls first)
+           func[?]: var_pop partition by (? asc nulls first, ? asc nulls first) order by (? asc nulls first, ? asc nulls first)
+           func[?]: stddev_samp partition by (? asc nulls first, ? asc nulls first) order by (? asc nulls first, ? asc nulls first)
+           func[?]: var_samp partition by (? asc nulls first, ? asc nulls first) order by (? asc nulls first, ? asc nulls first)
+           func[?]: stddev_pop partition by (? asc nulls first, ? asc nulls first) order by (? asc nulls first, ? asc nulls first)
+           func[?]: max partition by (? asc nulls first, ? asc nulls first) order by (? asc nulls first, ? asc nulls first)
+           func[?]: lead partition by () order by ()
+Query stmt:
+select sum(t.v) over (partition by ?, ? order by ?, ?), avg(t.v) over (partition by ?, ? order by ?, ?), stddev_samp(t.v) over (partition by ?, ? order by ?, ?), stddev_pop(t.v) over (partition by ?, ? order by ?, ?), var_samp(t.v) over (partition by ?, ? order by ?, ?), var_pop(t.v) over (partition by ?, ? order by ?, ?), min(t.v) over (partition by ?, ? order by ?, ?), max(t.v) over (partition by ?, ? order by ?, ?), lead(t.v, ?, null) over () from t t order by ?, ?, ?, ?, ?, ?, ?, ?, ?
+===================================================
+A1    A2    A3    A4    A5    A6    A7    A8    A9    
+210     4.5     1.0     0.0     35.0     5.25     1     1     2     
+210     4.5     1.0     0.5     35.0     5.25     1     2     3     
+210     4.5     1.0     0.816496581     35.0     5.25     1     3     4     
+210     4.5     1.58113883     1.118033989     35.0     5.25     4     4     5     
+210     4.5     1.58113883     1.414213562     35.0     5.25     4     5     6     
+210     4.5     2.449489743     1.707825128     35.0     5.25     6     6     7     
+210     4.5     2.449489743     2.0     35.0     5.25     6     7     8     
+210     4.5     2.449489743     2.291287847     35.0     5.25     6     8     9     
+210     7.5     3.027650354     2.581988897     35.0     2.916666667     9     9     10     
+210     7.5     3.027650354     2.872281323     35.0     2.916666667     9     10     11     
+210     7.5     3.894440482     3.16227766     35.0     2.916666667     11     11     12     
+210     7.5     3.894440482     3.45205253     35.0     2.916666667     11     12     13     
+210     7.5     3.894440482     3.741657387     35.0     2.916666667     11     13     14     
+210     7.5     4.183300133     4.031128874     35.0     2.916666667     14     14     15     
+210     10.0     4.472135955     4.320493799     35.0     2.0     15     15     16     
+210     10.0     4.760952286     4.609772229     35.0     2.0     16     16     17     
+210     10.0     5.627314339     4.898979486     35.0     2.0     17     17     18     
+210     10.0     5.627314339     5.188127472     35.0     2.0     17     18     19     
+210     10.0     5.627314339     5.477225575     35.0     2.0     17     19     20     
+210     10.5     5.916079783     5.766281297     35.0     0.0     20     20     null     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first, ? asc nulls first, ? asc nulls first)
+           func[?]: var_samp partition by (? asc nulls first) order by ()
+           func[?]: lead partition by () order by ()
+           func[?]: var_pop partition by (? asc nulls first, ? asc nulls first) order by ()
+           func[?]: stddev_pop partition by () order by (? asc nulls first, ? asc nulls first, ? asc nulls first, ? asc nulls first)
+           func[?]: max partition by (? asc nulls first, ? asc nulls first, ? asc nulls first, ? asc nulls first) order by ()
+           func[?]: avg partition by () order by (? asc nulls first, ? asc nulls first)
+           func[?]: sum partition by () order by (? asc nulls first)
+           func[?]: min partition by (? asc nulls first, ? asc nulls first, ? asc nulls first) order by ()
+           func[?]: stddev_samp partition by () order by (? asc nulls first, ? asc nulls first, ? asc nulls first)
+Query stmt:
+select sum(t.v) over (order by ?), avg(t.v) over (order by ?, ?), stddev_samp(t.v) over (order by ?, ?, ?), stddev_pop(t.v) over (order by ?, ?, ?, ?), var_samp(t.v) over (partition by ?), var_pop(t.v) over (partition by ?, ?), min(t.v) over (partition by ?, ?, ?), max(t.v) over (partition by ?, ?, ?, ?), lead(t.v, ?, null) over () from t t order by ?, ?, ?, ?, ?, ?, ?, ?, ?
+===================================================
+A1    A2    A3    A4    A5    A6    A7    A8    A9    
+210     4.5     0.707106781     0.0     6.0     2.0     4     4     5     
+210     4.5     0.707106781     0.0     6.0     2.0     4     5     6     
+210     4.5     1.0     0.0     6.0     0.666666667     1     1     2     
+210     4.5     1.0     0.0     6.0     0.666666667     1     2     3     
+210     4.5     1.0     0.0     6.0     0.666666667     1     3     4     
+210     4.5     1.0     0.0     6.0     5.25     6     6     7     
+210     4.5     1.0     0.0     6.0     5.25     6     7     8     
+210     4.5     1.0     0.0     6.0     5.25     6     8     9     
+210     11.5     null     0.0     17.5     2.916666667     14     14     15     
+210     11.5     0.707106781     0.0     17.5     0.25     9     9     10     
+210     11.5     0.707106781     0.0     17.5     0.25     9     10     11     
+210     11.5     1.0     0.0     17.5     2.0     11     11     12     
+210     11.5     1.0     0.0     17.5     2.0     11     12     13     
+210     11.5     1.0     0.0     17.5     2.0     11     13     14     
+210     17.0     null     0.0     31.666666667     0.0     15     15     16     
+210     17.0     null     0.0     31.666666667     0.25     16     16     17     
+210     17.0     1.0     0.0     31.666666667     2.0     17     17     18     
+210     17.0     1.0     0.0     31.666666667     2.0     17     18     19     
+210     17.0     1.0     0.0     31.666666667     2.0     17     19     20     
+210     20.0     null     0.0     35.0     0.0     20     20     null     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first, ? asc nulls first, ? asc nulls first)
+           func[?]: stddev_pop partition by (? asc nulls first, ? asc nulls first, ? asc nulls first, ? asc nulls first) order by ()
+           func[?]: stddev_samp partition by (? asc nulls first, ? asc nulls first, ? asc nulls first) order by ()
+           func[?]: var_pop partition by (? asc nulls first, ? asc nulls first) order by (? asc nulls first)
+           func[?]: min partition by (? asc nulls first, ? asc nulls first, ? asc nulls first) order by (? asc nulls first)
+           func[?]: avg partition by (? asc nulls first, ? asc nulls first) order by ()
+           func[?]: var_samp partition by (? asc nulls first) order by (? asc nulls first)
+           func[?]: sum partition by (? asc nulls first) order by ()
+           func[?]: max partition by (? asc nulls first, ? asc nulls first) order by (? asc nulls first, ? asc nulls first)
+           func[?]: lead partition by () order by ()
+Query stmt:
+select sum(t.v) over (partition by ?), avg(t.v) over (partition by ?, ?), stddev_samp(t.v) over (partition by ?, ?, ?), stddev_pop(t.v) over (partition by ?, ?, ?, ?), var_samp(t.v) over (partition by ? order by ?), var_pop(t.v) over (partition by ?, ? order by ?), min(t.v) over (partition by ?, ?, ? order by ?), max(t.v) over (partition by ?, ? order by ?, ?), lead(t.v, ?, null) over () from t t order by ?, ?, ?, ?, ?, ?, ?, ?, ?
+===================================================
+A1    A2    A3    A4    A5    A6    A7    A8    A9    
+210     4.5     0.707106781     0.0     6.0     2.0     4     4     5     
+210     4.5     0.707106781     0.0     6.0     2.0     4     5     6     
+210     4.5     1.0     0.0     6.0     0.666666667     1     1     2     
+210     4.5     1.0     0.0     6.0     0.666666667     1     2     3     
+210     4.5     1.0     0.0     6.0     0.666666667     1     3     4     
+210     4.5     1.0     0.0     6.0     5.25     6     6     7     
+210     4.5     1.0     0.0     6.0     5.25     6     7     8     
+210     4.5     1.0     0.0     6.0     5.25     6     8     9     
+210     11.5     null     0.0     17.5     2.916666667     14     14     15     
+210     11.5     0.707106781     0.0     17.5     0.25     9     9     10     
+210     11.5     0.707106781     0.0     17.5     0.25     9     10     11     
+210     11.5     1.0     0.0     17.5     2.0     11     11     12     
+210     11.5     1.0     0.0     17.5     2.0     11     12     13     
+210     11.5     1.0     0.0     17.5     2.0     11     13     14     
+210     17.0     null     0.0     31.666666667     0.0     15     15     16     
+210     17.0     null     0.0     31.666666667     0.25     16     16     17     
+210     17.0     1.0     0.0     31.666666667     2.0     17     17     18     
+210     17.0     1.0     0.0     31.666666667     2.0     17     18     19     
+210     17.0     1.0     0.0     31.666666667     2.0     17     19     20     
+210     20.0     null     0.0     35.0     0.0     20     20     null     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first, ? asc nulls first, ? asc nulls first)
+           func[?]: max partition by (? asc nulls first, ? asc nulls first) order by (? asc nulls first, ? asc nulls first)
+           func[?]: avg partition by (? asc nulls first, ? asc nulls first) order by ()
+           func[?]: min partition by (? asc nulls first, ? asc nulls first, ? asc nulls first) order by (? asc nulls first)
+           func[?]: stddev_samp partition by (? asc nulls first, ? asc nulls first, ? asc nulls first) order by ()
+           func[?]: sum partition by (? asc nulls first) order by ()
+           func[?]: stddev_pop partition by (? asc nulls first, ? asc nulls first, ? asc nulls first, ? asc nulls first) order by ()
+           func[?]: var_pop partition by (? asc nulls first, ? asc nulls first) order by (? asc nulls first)
+           func[?]: var_samp partition by (? asc nulls first) order by (? asc nulls first)
+           func[?]: lead partition by () order by ()
+Query stmt:
+select sum(t.v) over (partition by ?), avg(t.v) over (partition by ?, ?), stddev_samp(t.v) over (partition by ?, ?, ?), stddev_pop(t.v) over (partition by ?, ?, ?, ?), var_samp(t.v) over (partition by ? order by ?), var_pop(t.v) over (partition by ?, ? order by ?), min(t.v) over (partition by ?, ?, ? order by ?), max(t.v) over (partition by ?, ? order by ?, ?), lead(t.v, ?, null) over () from t t order by ?, ?, ?, ?, ?, ?, ?, ?, ?
+===================================================
+'two runs'    
+two runs     
+
+Query plan:
+sscan
+    class: db_root node[?]
+    cost:  ? card ?
+Query stmt:
+select 'two runs' from db_root db_root
+===================================================
+A1    A2    A3    A4    A5    A6    A7    A8    A9    
+210     4.5     0.707106781     0.0     6.0     2.0     4     4     11     
+210     4.5     0.707106781     0.0     6.0     2.0     5     5     12     
+210     4.5     1.0     0.0     6.0     0.666666667     1     1     9     
+210     4.5     1.0     0.0     6.0     0.666666667     2     2     10     
+210     4.5     1.0     0.0     6.0     0.666666667     3     3     4     
+210     4.5     1.0     0.0     6.0     5.25     6     6     14     
+210     4.5     1.0     0.0     6.0     5.25     7     7     18     
+210     4.5     1.0     0.0     6.0     5.25     8     8     19     
+210     11.5     null     4.0     17.5     2.916666667     14     14     17     
+210     11.5     0.707106781     4.0     17.5     0.25     9     9     15     
+210     11.5     0.707106781     4.0     17.5     0.25     10     10     3     
+210     11.5     1.0     0.0     17.5     2.0     13     13     6     
+210     11.5     1.0     3.5     17.5     2.0     11     11     16     
+210     11.5     1.0     3.5     17.5     2.0     12     12     13     
+210     17.0     null     4.921607687     31.666666667     0.25     16     16     5     
+210     17.0     null     5.734883511     31.666666667     0.0     15     15     20     
+210     17.0     1.0     4.642796092     31.666666667     2.0     17     17     7     
+210     17.0     1.0     5.5     31.666666667     2.0     18     18     8     
+210     17.0     1.0     5.5     31.666666667     2.0     19     19     null     
+210     20.0     null     7.084313658     35.0     0.0     20     20     2     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first, ? asc nulls first, ? asc nulls first)
+           func[?]: stddev_samp partition by (? asc nulls first, ? asc nulls first, ? asc nulls first) order by ()
+           func[?]: max partition by (? asc nulls first, ? asc nulls first) order by (? asc nulls first, ? asc nulls first)
+           func[?]: var_pop partition by (? asc nulls first, ? asc nulls first) order by (? asc nulls first)
+           func[?]: avg partition by (? asc nulls first, ? asc nulls first) order by ()
+           func[?]: var_samp partition by (? asc nulls first) order by (? asc nulls first)
+           func[?]: sum partition by (? asc nulls first) order by ()
+    run[?]: sort with key (? asc nulls first, ? asc nulls first, ? asc nulls first, ? asc nulls first)
+           func[?]: min partition by (? asc nulls first, ? asc nulls first, ? asc nulls first) order by (? asc nulls first)
+           func[?]: stddev_pop partition by (? asc nulls first, ? asc nulls first) order by (? asc nulls first, ? asc nulls first)
+           func[?]: lead partition by () order by ()
+Query stmt:
+select sum(t.v) over (partition by ?), avg(t.v) over (partition by ?, ?), stddev_samp(t.v) over (partition by ?, ?, ?), stddev_pop(t.v) over (partition by ?, ? order by ?, ?), var_samp(t.v) over (partition by ? order by ?), var_pop(t.v) over (partition by ?, ? order by ?), min(t.v) over (partition by ?, ?, ? order by ?), max(t.v) over (partition by ?, ? order by ?, ?), lead(t.v, ?, null) over () from t t order by ?, ?, ?, ?, ?, ?, ?, ?, ?
+===================================================
+A1    A2    A3    A4    A5    A6    A7    A8    A9    
+210     4.5     0.707106781     0.0     6.0     2.0     4     4     11     
+210     4.5     0.707106781     0.0     6.0     2.0     5     5     12     
+210     4.5     1.0     0.0     6.0     0.666666667     1     1     9     
+210     4.5     1.0     0.0     6.0     0.666666667     2     2     10     
+210     4.5     1.0     0.0     6.0     0.666666667     3     3     4     
+210     4.5     1.0     0.0     6.0     5.25     6     6     14     
+210     4.5     1.0     0.0     6.0     5.25     7     7     18     
+210     4.5     1.0     0.0     6.0     5.25     8     8     19     
+210     11.5     null     4.0     17.5     2.916666667     14     14     17     
+210     11.5     0.707106781     4.0     17.5     0.25     9     9     15     
+210     11.5     0.707106781     4.0     17.5     0.25     10     10     3     
+210     11.5     1.0     0.0     17.5     2.0     13     13     6     
+210     11.5     1.0     3.5     17.5     2.0     11     11     16     
+210     11.5     1.0     3.5     17.5     2.0     12     12     13     
+210     17.0     null     4.921607687     31.666666667     0.25     16     16     5     
+210     17.0     null     5.734883511     31.666666667     0.0     15     15     20     
+210     17.0     1.0     4.642796092     31.666666667     2.0     17     17     7     
+210     17.0     1.0     5.5     31.666666667     2.0     18     18     8     
+210     17.0     1.0     5.5     31.666666667     2.0     19     19     null     
+210     20.0     null     7.084313658     35.0     0.0     20     20     2     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first, ? asc nulls first)
+           func[?]: stddev_samp partition by (? asc nulls first, ? asc nulls first, ? asc nulls first) order by ()
+           func[?]: avg partition by (? asc nulls first, ? asc nulls first) order by ()
+           func[?]: sum partition by (? asc nulls first) order by ()
+           func[?]: var_pop partition by (? asc nulls first, ? asc nulls first) order by (? asc nulls first)
+           func[?]: var_samp partition by (? asc nulls first) order by (? asc nulls first)
+    run[?]: sort with key (? asc nulls first, ? asc nulls first, ? asc nulls first, ? asc nulls first)
+           func[?]: stddev_pop partition by (? asc nulls first, ? asc nulls first) order by (? asc nulls first, ? asc nulls first)
+           func[?]: min partition by (? asc nulls first, ? asc nulls first, ? asc nulls first) order by (? asc nulls first)
+           func[?]: max partition by (? asc nulls first, ? asc nulls first) order by (? asc nulls first, ? asc nulls first)
+           func[?]: lead partition by () order by ()
+Query stmt:
+select sum(t.v) over (partition by ?), avg(t.v) over (partition by ?, ?), stddev_samp(t.v) over (partition by ?, ?, ?), stddev_pop(t.v) over (partition by ?, ? order by ?, ?), var_samp(t.v) over (partition by ? order by ?), var_pop(t.v) over (partition by ?, ? order by ?), min(t.v) over (partition by ?, ?, ? order by ?), max(t.v) over (partition by ?, ? order by ?, ?), lead(t.v, ?, null) over () from t t order by ?, ?, ?, ?, ?, ?, ?, ?, ?
+===================================================
+'three runs'    
+three runs     
+
+Query plan:
+sscan
+    class: db_root node[?]
+    cost:  ? card ?
+Query stmt:
+select 'three runs' from db_root db_root
+===================================================
+A1    A2    A3    A4    A5    A6    A7    A8    A9    
+1     1.0     null     0.0     null     0.0     1     1     9     
+3     1.5     null     0.0     null     0.0     2     2     10     
+6     2.0     null     0.0     null     0.0     3     3     4     
+9     9.0     5.656854249     4.0     32.0     16.0     1     9     15     
+10     2.5     null     0.0     null     0.0     4     4     11     
+15     3.0     null     0.0     null     0.0     5     5     12     
+15     15.0     7.023769169     5.734883511     49.333333333     32.888888889     1     15     20     
+19     9.5     5.656854249     4.0     32.0     16.0     2     10     3     
+20     20.0     8.180260795     7.084313658     66.916666667     50.1875     1     20     2     
+21     3.5     null     0.0     null     0.0     6     6     14     
+28     4.0     null     0.0     null     0.0     7     7     18     
+30     10.0     4.949747468     3.5     24.5     12.25     4     11     16     
+31     15.5     6.027713773     4.921607687     36.333333333     24.222222222     4     16     5     
+36     4.5     null     0.0     null     0.0     8     8     19     
+42     10.5     4.949747468     3.5     24.5     12.25     5     12     13     
+48     16.0     5.686240703     4.642796092     32.333333333     21.555555556     6     17     7     
+55     11.0     null     0.0     null     0.0     13     13     6     
+66     16.5     7.778174593     5.5     60.5     30.25     7     18     8     
+69     11.5     5.656854249     4.0     32.0     16.0     6     14     17     
+85     17.0     7.778174593     5.5     60.5     30.25     8     19     null     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first, ? asc nulls first, ? asc nulls first)
+           func[?]: avg partition by (? asc nulls first, ? asc nulls first) order by (? asc nulls first, ? asc nulls first)
+           func[?]: sum partition by (? asc nulls first, ? asc nulls first) order by (? asc nulls first, ? asc nulls first)
+    run[?]: sort with key (? asc nulls first, ? asc nulls first, ? asc nulls first, ? asc nulls first)
+           func[?]: stddev_samp partition by (? asc nulls first, ? asc nulls first) order by (? asc nulls first, ? asc nulls first)
+           func[?]: var_samp partition by (? asc nulls first, ? asc nulls first) order by (? asc nulls first, ? asc nulls first)
+           func[?]: stddev_pop partition by (? asc nulls first, ? asc nulls first) order by (? asc nulls first, ? asc nulls first)
+    run[?]: sort with key (? asc nulls first, ? asc nulls first, ? asc nulls first, ? asc nulls first)
+           func[?]: var_pop partition by (? asc nulls first, ? asc nulls first) order by (? asc nulls first, ? asc nulls first)
+           func[?]: max partition by (? asc nulls first, ? asc nulls first) order by (? asc nulls first, ? asc nulls first)
+           func[?]: min partition by (? asc nulls first, ? asc nulls first) order by (? asc nulls first, ? asc nulls first)
+           func[?]: lead partition by () order by ()
+Query stmt:
+select sum(t.v) over (partition by ?, ? order by ?, ?), avg(t.v) over (partition by ?, ? order by ?, ?), stddev_samp(t.v) over (partition by ?, ? order by ?, ?), stddev_pop(t.v) over (partition by ?, ? order by ?, ?), var_samp(t.v) over (partition by ?, ? order by ?, ?), var_pop(t.v) over (partition by ?, ? order by ?, ?), min(t.v) over (partition by ?, ? order by ?, ?), max(t.v) over (partition by ?, ? order by ?, ?), lead(t.v, ?, null) over () from t t order by ?, ?, ?, ?, ?, ?, ?, ?, ?
+===================================================
+0

@@ -1,0 +1,1288 @@
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+2
+===================================================
+4
+===================================================
+8
+===================================================
+16
+===================================================
+32
+===================================================
+64
+===================================================
+128
+===================================================
+256
+===================================================
+512
+===================================================
+1024
+===================================================
+2048
+===================================================
+0
+===================================================
+4096
+===================================================
+4096
+===================================================
+4096
+===================================================
+4096
+===================================================
+4096
+===================================================
+4096
+===================================================
+4096
+===================================================
+0
+===================================================
+0
+===================================================
+i    j    
+null     2     
+1     2     
+2     2     
+3     2     
+4     2     
+5     2     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan)
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where t.j= ?:? 
+===================================================
+i    j    
+5     2     
+4     2     
+3     2     
+2     2     
+1     2     
+null     2     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan) (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where t.j= ?:?  order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+i    j    
+null     1     
+1     1     
+2     1     
+3     1     
+4     1     
+5     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan)
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where (t.j<= ?:? )
+===================================================
+i    j    
+null     1     
+null     3     
+1     1     
+1     3     
+2     1     
+2     3     
+3     1     
+3     3     
+4     1     
+4     3     
+5     1     
+5     3     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan)
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where ((t.j<= ?:? ) or (t.j= ?:? ))
+===================================================
+i    j    
+null     1     
+1     1     
+2     1     
+3     1     
+4     1     
+5     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where (t.j<= ?:? ) order by ?
+/* ---> skip ORDER BY */
+===================================================
+i    j    
+null     1     
+null     3     
+1     1     
+1     3     
+2     1     
+2     3     
+3     1     
+3     3     
+4     1     
+4     3     
+5     1     
+5     3     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where ((t.j<= ?:? ) or (t.j= ?:? )) order by ?
+/* ---> skip ORDER BY */
+===================================================
+i    j    
+5     1     
+4     1     
+3     1     
+2     1     
+1     1     
+null     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan) (desc_index)
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where (t.j< ?:? ) order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+i    j    
+5     3     
+5     1     
+4     3     
+4     1     
+3     3     
+3     1     
+2     3     
+2     1     
+1     3     
+1     1     
+null     3     
+null     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan) (desc_index)
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where ((t.j< ?:? ) or (t.j= ?:? )) order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+i    j    
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t t where t.j is null  and t.k= ?:?  order by ?
+===================================================
+i    j    
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t t where t.j<=>null and t.k= ?:?  order by ?
+===================================================
+i    j    
+null     3     
+1     3     
+2     3     
+3     3     
+4     3     
+5     3     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t t where t.k= ?:?  order by ?, ?
+===================================================
+0
+===================================================
+0
+===================================================
+4096
+===================================================
+0
+===================================================
+0
+===================================================
+i    j    
+2     2     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t t where t.j= ?:?  order by ?
+===================================================
+i    j    
+2     2     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t t where t.j= ?:?  order by ? desc 
+===================================================
+i    j    
+1     1     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t t where (t.j<= ?:? ) order by ? desc 
+===================================================
+i    j    
+1     1     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t t where (t.j<= ?:? ) order by ?
+===================================================
+0
+===================================================
+0
+===================================================
+4096
+===================================================
+4096
+===================================================
+4096
+===================================================
+4096
+===================================================
+4096
+===================================================
+4096
+===================================================
+4096
+===================================================
+0
+===================================================
+0
+===================================================
+i    j    
+null     2.0     
+1.0     2.0     
+2.0     2.0     
+3.0     2.0     
+4.0     2.0     
+5.0     2.0     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan)
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where t.j= ?:? 
+===================================================
+i    j    
+5.0     2.0     
+4.0     2.0     
+3.0     2.0     
+2.0     2.0     
+1.0     2.0     
+null     2.0     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan) (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where t.j= ?:?  order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+i    j    
+null     1.0     
+1.0     1.0     
+2.0     1.0     
+3.0     1.0     
+4.0     1.0     
+5.0     1.0     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan)
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where (t.j<= ?:? )
+===================================================
+i    j    
+null     1.0     
+null     3.0     
+1.0     1.0     
+1.0     3.0     
+2.0     1.0     
+2.0     3.0     
+3.0     1.0     
+3.0     3.0     
+4.0     1.0     
+4.0     3.0     
+5.0     1.0     
+5.0     3.0     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan)
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where ((t.j<= ?:? ) or (t.j= ?:? ))
+===================================================
+i    j    
+null     1.0     
+1.0     1.0     
+2.0     1.0     
+3.0     1.0     
+4.0     1.0     
+5.0     1.0     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where (t.j<= ?:? ) order by ?
+/* ---> skip ORDER BY */
+===================================================
+i    j    
+null     1.0     
+null     3.0     
+1.0     1.0     
+1.0     3.0     
+2.0     1.0     
+2.0     3.0     
+3.0     1.0     
+3.0     3.0     
+4.0     1.0     
+4.0     3.0     
+5.0     1.0     
+5.0     3.0     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where ((t.j<= ?:? ) or (t.j= ?:? )) order by ?
+/* ---> skip ORDER BY */
+===================================================
+i    j    
+5.0     1.0     
+4.0     1.0     
+3.0     1.0     
+2.0     1.0     
+1.0     1.0     
+null     1.0     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan) (desc_index)
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where (t.j< ?:? ) order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+i    j    
+5.0     3.0     
+5.0     1.0     
+4.0     3.0     
+4.0     1.0     
+3.0     3.0     
+3.0     1.0     
+2.0     3.0     
+2.0     1.0     
+1.0     3.0     
+1.0     1.0     
+null     3.0     
+null     1.0     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan) (desc_index)
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where ((t.j< ?:? ) or (t.j= ?:? )) order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+i    j    
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t t where t.j is null  and t.k= ?:?  order by ?
+===================================================
+i    j    
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t t where t.j<=>null and t.k= ?:?  order by ?
+===================================================
+i    j    
+null     3.0     
+1.0     3.0     
+2.0     3.0     
+3.0     3.0     
+4.0     3.0     
+5.0     3.0     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t t where t.k= ?:?  order by ?, ?
+===================================================
+0
+===================================================
+0
+===================================================
+4096
+===================================================
+0
+===================================================
+0
+===================================================
+i    j    
+2.0     2.0     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t t where t.j= ?:?  order by ?
+===================================================
+i    j    
+2.0     2.0     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t t where t.j= ?:?  order by ? desc 
+===================================================
+i    j    
+1.0     1.0     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t t where (t.j<= ?:? ) order by ? desc 
+===================================================
+i    j    
+1.0     1.0     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t t where (t.j<= ?:? ) order by ?
+===================================================
+0
+===================================================
+0
+===================================================
+4096
+===================================================
+4096
+===================================================
+4096
+===================================================
+4096
+===================================================
+4096
+===================================================
+4096
+===================================================
+4096
+===================================================
+0
+===================================================
+0
+===================================================
+i    j    
+null     2.0     
+1.02     2.0     
+2.03     2.0     
+3.12     2.0     
+4.21     2.0     
+5.43     2.0     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan)
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where t.j= ?:? 
+===================================================
+i    j    
+5.43     2.0     
+4.21     2.0     
+3.12     2.0     
+2.03     2.0     
+1.02     2.0     
+null     2.0     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan) (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where t.j= ?:?  order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+i    j    
+null     1.0     
+1.02     1.0     
+2.03     1.0     
+3.12     1.0     
+4.21     1.0     
+5.43     1.0     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan)
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where (t.j<= ?:? )
+===================================================
+i    j    
+null     1.0     
+null     3.0     
+1.02     1.0     
+1.02     3.0     
+2.03     1.0     
+2.03     3.0     
+3.12     1.0     
+3.12     3.0     
+4.21     1.0     
+4.21     3.0     
+5.43     1.0     
+5.43     3.0     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan)
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where ((t.j<= ?:? ) or (t.j= ?:? ))
+===================================================
+i    j    
+null     1.0     
+1.02     1.0     
+2.03     1.0     
+3.12     1.0     
+4.21     1.0     
+5.43     1.0     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where (t.j<= ?:? ) order by ?
+/* ---> skip ORDER BY */
+===================================================
+i    j    
+null     1.0     
+null     3.0     
+1.02     1.0     
+1.02     3.0     
+2.03     1.0     
+2.03     3.0     
+3.12     1.0     
+3.12     3.0     
+4.21     1.0     
+4.21     3.0     
+5.43     1.0     
+5.43     3.0     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where ((t.j<= ?:? ) or (t.j= ?:? )) order by ?
+/* ---> skip ORDER BY */
+===================================================
+i    j    
+5.43     1.0     
+4.21     1.0     
+3.12     1.0     
+2.03     1.0     
+1.02     1.0     
+null     1.0     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan) (desc_index)
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where (t.j< ?:? ) order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+i    j    
+5.43     3.0     
+5.43     1.0     
+4.21     3.0     
+4.21     1.0     
+3.12     3.0     
+3.12     1.0     
+2.03     3.0     
+2.03     1.0     
+1.02     3.0     
+1.02     1.0     
+null     3.0     
+null     1.0     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan) (desc_index)
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where ((t.j< ?:? ) or (t.j= ?:? )) order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+i    j    
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where t.j is null  and t.k= ?:?  order by ?
+===================================================
+i    j    
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where t.j<=>null and t.k= ?:?  order by ?
+===================================================
+i    j    
+null     3.0     
+1.02     3.0     
+2.03     3.0     
+3.12     3.0     
+4.21     3.0     
+5.43     3.0     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where t.k= ?:?  order by ?, ?
+===================================================
+0
+===================================================
+0
+===================================================
+4096
+===================================================
+0
+===================================================
+0
+===================================================
+i    j    
+2.0     2.0     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t t where t.j= ?:?  order by ?
+===================================================
+i    j    
+2.0     2.0     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t t where t.j= ?:?  order by ? desc 
+===================================================
+i    j    
+1.0     1.0     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t t where (t.j<= ?:? ) order by ? desc 
+===================================================
+i    j    
+1.0     1.0     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t t where (t.j<= ?:? ) order by ?
+===================================================
+0
+===================================================
+0
+===================================================
+4096
+===================================================
+4096
+===================================================
+4096
+===================================================
+4096
+===================================================
+4096
+===================================================
+4096
+===================================================
+4096
+===================================================
+0
+===================================================
+0
+===================================================
+i    j    
+null     2.0     
+1.0     2.0     
+2.0     2.0     
+3.0     2.0     
+4.0     2.0     
+5.0     2.0     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan)
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where t.j= ?:? 
+===================================================
+i    j    
+5.0     2.0     
+4.0     2.0     
+3.0     2.0     
+2.0     2.0     
+1.0     2.0     
+null     2.0     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan) (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where t.j= ?:?  order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+i    j    
+null     1.0     
+1.0     1.0     
+2.0     1.0     
+3.0     1.0     
+4.0     1.0     
+5.0     1.0     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan)
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where (t.j<= ?:? )
+===================================================
+i    j    
+null     1.0     
+null     3.0     
+1.0     1.0     
+1.0     3.0     
+2.0     1.0     
+2.0     3.0     
+3.0     1.0     
+3.0     3.0     
+4.0     1.0     
+4.0     3.0     
+5.0     1.0     
+5.0     3.0     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan)
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where ((t.j<= ?:? ) or (t.j= ?:? ))
+===================================================
+i    j    
+null     1.0     
+1.0     1.0     
+2.0     1.0     
+3.0     1.0     
+4.0     1.0     
+5.0     1.0     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where (t.j<= ?:? ) order by ?
+/* ---> skip ORDER BY */
+===================================================
+i    j    
+null     1.0     
+null     3.0     
+1.0     1.0     
+1.0     3.0     
+2.0     1.0     
+2.0     3.0     
+3.0     1.0     
+3.0     3.0     
+4.0     1.0     
+4.0     3.0     
+5.0     1.0     
+5.0     3.0     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where ((t.j<= ?:? ) or (t.j= ?:? )) order by ?
+/* ---> skip ORDER BY */
+===================================================
+i    j    
+5.0     1.0     
+4.0     1.0     
+3.0     1.0     
+2.0     1.0     
+1.0     1.0     
+null     1.0     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan) (desc_index)
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where (t.j<= ?:? ) order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+i    j    
+5.0     3.0     
+5.0     1.0     
+4.0     3.0     
+4.0     1.0     
+3.0     3.0     
+3.0     1.0     
+2.0     3.0     
+2.0     1.0     
+1.0     3.0     
+1.0     1.0     
+null     3.0     
+null     1.0     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan) (desc_index)
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where ((t.j<= ?:? ) or (t.j= ?:? )) order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+i    j    
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t t where t.j is null  and t.k= ?:?  order by ?
+===================================================
+i    j    
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t t where t.j<=>null and t.k= ?:?  order by ?
+===================================================
+i    j    
+null     3.0     
+1.0     3.0     
+2.0     3.0     
+3.0     3.0     
+4.0     3.0     
+5.0     3.0     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t t where t.k= ?:?  order by ?, ?
+===================================================
+0
+===================================================
+0
+===================================================
+4096
+===================================================
+4096
+===================================================
+4096
+===================================================
+4096
+===================================================
+4096
+===================================================
+4096
+===================================================
+4096
+===================================================
+0
+===================================================
+0
+===================================================
+i    j    
+null     1900-01-03     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan)
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where t.j= ?:? 
+===================================================
+i    j    
+null     1900-01-03     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan) (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where t.j= ?:?  order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+i    j    
+null     1900-01-02     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan)
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where (t.j< ?:? )
+===================================================
+i    j    
+null     1900-01-02     
+null     1900-01-04     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan)
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where ((t.j< ?:? ) or (t.j= ?:? ))
+===================================================
+i    j    
+null     1900-01-02     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where (t.j< ?:? ) order by ?
+/* ---> skip ORDER BY */
+===================================================
+i    j    
+null     1900-01-02     
+null     1900-01-04     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where ((t.j< ?:? ) or (t.j= ?:? )) order by ?
+/* ---> skip ORDER BY */
+===================================================
+i    j    
+null     1900-01-02     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan) (desc_index)
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where (t.j< ?:? ) order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+i    j    
+null     1900-01-04     
+null     1900-01-02     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_j_k term[?] (covers) (index skip scan) (desc_index)
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where ((t.j< ?:? ) or (t.j= ?:? )) order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+i    j    
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t t where t.j is null  and t.k= ?:?  order by ?
+===================================================
+i    j    
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t t where t.j<=>null and t.k= ?:?  order by ?
+===================================================
+i    j    
+null     1900-01-04     
+1.0     2000-01-01     
+2.0     2100-01-01     
+3.0     2200-01-01     
+4.0     2300-01-01     
+5.0     2400-01-01     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t t where t.k= ?:?  order by ?, ?
+===================================================
+0
+===================================================
+0

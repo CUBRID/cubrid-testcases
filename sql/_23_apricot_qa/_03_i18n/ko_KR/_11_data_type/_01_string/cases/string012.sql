@@ -1,0 +1,15 @@
+--+ holdcas on;
+set names utf8;
+create table t( a char(3) collate utf8_ko_cs_uca,   b varchar(3) collate utf8_ko_cs_uca,  c nchar(3) collate utf8_ko_cs_uca,  d NCHAR VARYING(3) collate utf8_ko_cs_uca,  e string collate utf8_ko_cs_uca);
+insert into t values ( 'a',  'a',  N'a',  N'a',  'a' );
+insert into t values ( '규',  '규',  N'규',  N'규',  '규' );
+insert into t values ( '你',  '你',  N'你',  N'你',  '你' );
+select * from t order by 1;
+delete from t where b>'규';
+select * from t order by 1;
+TRUNCATE TABLE t;
+select * from t order by 1;
+drop table t;
+set names iso88591;
+commit;
+--+ holdcas off;

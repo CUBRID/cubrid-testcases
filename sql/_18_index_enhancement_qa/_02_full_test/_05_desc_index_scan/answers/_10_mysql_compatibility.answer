@@ -1,0 +1,158 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+4
+===================================================
+id    a    b    
+8     8     8     
+7     7     7     
+6     6     6     
+5     5     5     
+4     4     4     
+3     3     3     
+2     2     2     
+1     1     1     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+id    a    b    
+8     8     8     
+7     7     7     
+6     6     6     
+5     5     5     
+4     4     4     
+3     3     3     
+2     2     2     
+1     1     1     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_ab term[?] (desc_index forced)
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) using index tb.i_tb_ab
+===================================================
+id    a    b    
+
+===================================================
+a    b    
+8     8     
+7     7     
+6     6     
+5     5     
+4     4     
+3     3     
+2     2     
+1     1     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_ab term[?] (covers) (desc_index forced)
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) using index tb.i_tb_ab
+===================================================
+a    b    
+8     8     
+7     7     
+6     6     
+5     5     
+4     4     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_ab term[?] (covers) (desc_index forced)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (tb.b>= ?:? ) using index tb.i_tb_ab
+===================================================
+a    b    
+7     7     
+6     6     
+5     5     
+4     4     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_ab keylimit ?, ? term[?] (covers) (desc_index forced)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (tb.b>= ?:? ) using index tb.i_tb_ab keylimit  ?:? , ?:? 
+===================================================
+a    b    
+7     7     
+6     6     
+5     5     
+4     4     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_ab term[?] (covers) (desc_index forced)
+    filtr: term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (tb.b>= ?:? ) and (rownum> ?:? ) using index tb.i_tb_ab
+===================================================
+4
+===================================================
+id    a    b    
+12     12     12     
+11     11     11     
+10     10     10     
+9     9     9     
+8     8     8     
+7     7     7     
+6     6     6     
+5     5     5     
+4     4     4     
+3     3     3     
+2     2     2     
+1     1     1     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

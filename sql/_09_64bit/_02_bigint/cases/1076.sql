@@ -1,0 +1,15 @@
+--MULTISET
+create class test_class (col_set MULTISET bigint);
+
+insert into test_class(col_set) values ({-9223372036854775808, 9223372036854775807});
+insert into test_class(col_set) values ({-100, 100});
+insert into test_class(col_set) values ({0, -0});
+insert into test_class(col_set) values ({NULL, NULL});
+insert into test_class(col_set) values ({-9223372036854775808, 9223372036854775807, 9223372036854775807});
+insert into test_class(col_set) values ({-100, 100, -100});
+insert into test_class(col_set) values ({NULL, NULL, null});
+insert into test_class(col_set) values ({-100, -10, 100, 10, 0});
+
+select * from test_class  order by 1;
+
+drop class test_class;

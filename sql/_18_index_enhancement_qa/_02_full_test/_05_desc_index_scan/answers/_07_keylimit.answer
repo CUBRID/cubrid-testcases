@@ -1,0 +1,87 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+id    a    
+3     3     
+2     2     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a keylimit ? term[?] (desc_index forced)
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) using index tb.i_tb_a keylimit  ?:? 
+===================================================
+id    a    
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a keylimit ? term[?] (desc_index forced)
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) using index tb.i_tb_a keylimit  ?:? 
+===================================================
+Error:-493
+===================================================
+id    a    
+2     2     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a keylimit ?, ? term[?] (desc_index forced)
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) using index tb.i_tb_a keylimit  ?:? , ?:? 
+===================================================
+id    a    
+2     2     
+1     1     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a keylimit ?, ? term[?] (desc_index forced)
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) using index tb.i_tb_a keylimit  ?:? , ?:? 
+===================================================
+id    a    
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a keylimit ?, ? term[?] (desc_index forced)
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) using index tb.i_tb_a keylimit  ?:? , ?:? 
+===================================================
+id    a    
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a keylimit ?, ? term[?] (desc_index forced)
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) using index tb.i_tb_a keylimit  ?:? , ?:? 
+===================================================
+0
+===================================================
+0
+===================================================
+0

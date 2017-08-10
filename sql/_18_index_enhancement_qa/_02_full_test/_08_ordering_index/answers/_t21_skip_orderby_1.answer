@@ -1,0 +1,124 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+id2    
+abcde     
+mnpqrt     
+abcd     
+abmnp     
+mnpde     
+
+Query plan:
+iscan
+    class: cov_t? node[?]
+    index: idx_covering_t? term[?] (covers)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select cov_t?.id? from cov_t? cov_t? where (cov_t?.id?< ?:? ) and (cov_t?.id?> ?:? )
+===================================================
+id2    
+abcd     
+abcde     
+abmnp     
+mnpde     
+mnpqrt     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: cov_t? node[?]
+                 index: idx_covering_t? term[?] (covers)
+                 filtr: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select cov_t?.id? from cov_t? cov_t? where (cov_t?.id?< ?:? ) and (cov_t?.id?> ?:? ) order by ?
+===================================================
+id2    
+mnpqrt     
+mnpde     
+abmnp     
+abcde     
+abcd     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: cov_t? node[?]
+                 index: idx_covering_t? term[?] (covers)
+                 filtr: term[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select cov_t?.id? from cov_t? cov_t? where (cov_t?.id?< ?:? ) and (cov_t?.id?> ?:? ) order by ? desc 
+===================================================
+id2    
+mnpde     
+abmnp     
+abcd     
+mnpqrt     
+abcde     
+
+Query plan:
+iscan
+    class: cov_t? node[?]
+    index: idx_covering_t? term[?] (covers) (desc_index)
+    filtr: term[?]
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select cov_t?.id?, cov_t?.id? from cov_t? cov_t? where (cov_t?.id?< ?:? ) and (cov_t?.id?> ?:? ) order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+id2    
+abcde     
+mnpqrt     
+abcd     
+abmnp     
+mnpde     
+
+Query plan:
+iscan
+    class: cov_t? node[?]
+    index: idx_covering_t? term[?] (covers)
+    filtr: term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select cov_t?.id?, cov_t?.id? from cov_t? cov_t? where (cov_t?.id?< ?:? ) and (cov_t?.id?> ?:? ) order by ?
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+0
+===================================================
+0

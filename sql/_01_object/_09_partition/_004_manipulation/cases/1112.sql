@@ -1,0 +1,18 @@
+--[er]test insert(char) for list partition(have no NULL value) with incorrect values out of  range
+create table list_test(id int ,
+				test_char char(50),
+				test_varchar varchar(2000),
+				test_bit bit(16),
+				test_varbit bit varying(20),
+				test_nchar nchar(50),
+				test_nvarchar nchar varying(2000),
+				test_string string,
+				test_datetime timestamp, primary key(id,test_char))
+	PARTITION BY LIST (test_char) (
+	    PARTITION p0 VALUES IN ('aaa','bbb','ddd')
+	);
+insert into list_test values(4,'ccc','ccc',B'11',B'1101',N'ccc',N'ccc','cccccccccc','2007-01-01 09:00:00');
+select * from list_test order by 1;
+
+
+drop table list_test;

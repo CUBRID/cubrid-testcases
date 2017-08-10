@@ -1,0 +1,11 @@
+CREATE TABLE tab0(pk INTEGER PRIMARY KEY, col0 INTEGER, col1 FLOAT, col2 VARCHAR, col3 INTEGER, col4 FLOAT, col5 VARCHAR);
+INSERT INTO tab0 VALUES(0,30,20.40,'nztwp',16,40.7,'fapep');
+INSERT INTO tab0 VALUES(1,25,54.31,'tzynq',2,2.58,'qpxlz');
+INSERT INTO tab0 VALUES(2,64,21.7,'kdbxx',97,51.56,'xngtg');
+INSERT INTO tab0 VALUES(4,92,30.98,'jwiwi',61,32.44,'zcrud');
+
+SELECT pk FROM tab0 WHERE ( col1 < 5352.61 ) OR (col3 IN (SELECT col3 FROM tab0 WHERE (col0<6148 OR col1<2656.25) AND col3<= 4512 AND col3>5623)); 
+SELECT pk FROM tab0 WHERE ( col1 < 5352.61 ) OR (col2 IN (SELECT col2 FROM tab0 WHERE (col0<6148 OR col1<2656.25) AND col3<= 4512 AND col3>5623)); 
+SELECT pk FROM tab0 WHERE ( col1 < 5352.61 ) OR (col1 IN (SELECT col1 FROM tab0 WHERE (col0<6148 OR col1<2656.25) AND col3<= 4512 AND col3>5623)); 
+
+drop tab0;

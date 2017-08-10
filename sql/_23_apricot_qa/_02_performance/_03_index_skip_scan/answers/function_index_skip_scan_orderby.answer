@@ -1,0 +1,294 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+i    j    k    l    
+1     2     4231     1944     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx 
+    filtr: term[?]
+    sargs: term[?]
+    sort:  ? asc, ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.k, t.l from t t where t.s<>'x' and t.j= ?:?  order by ?, ? desc  for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+i    j    k    l    
+1     2     4231     1944     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.k, t.l from t t where t.s<>'x' and t.j= ?:?  order by ?, ? desc  for orderby_num()<= ?:? 
+===================================================
+i    j    k    l    
+1     2     4231     1944     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx  (desc_index)
+    filtr: term[?]
+    sargs: term[?]
+    sort:  ? desc, ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.k, t.l from t t where t.s<>'x' and t.j= ?:?  order by ? desc  for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+i    j    k    l    
+1     2     4231     1944     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx  (desc_index)
+    filtr: term[?]
+    sargs: term[?]
+    sort:  ? desc, ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.k, t.l from t t where t.s<>'x' and t.j= ?:?  order by ? desc , ? for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+i    j    k    l    
+1     10     3498     1189     
+1     8     4096     1858     
+1     8     811     1271     
+1     6     565     1346     
+1     5     2480     1340     
+1     4     1993     1900     
+2     8     3717     1294     
+2     8     1625     1046     
+2     7     3472     1230     
+2     7     203     1700     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx 
+    filtr: term[?] AND term[?]
+    sargs: term[?]
+    sort:  ? asc, ? desc, ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.k, t.l from t t where (t.j> ?:? ) and t.i<>? and t.s<>'x' order by ?, ? desc , ? desc , ? for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+i    j    k    l    
+1     2     4231     1944     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx 
+    filtr: term[?] AND term[?]
+    sargs: term[?]
+    sort:  ? asc, ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.k, t.l from t t where t.i<>? and t.s<>'x' and t.j= ?:?  order by ?, ? desc , ? for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+i    j    k    l    
+1     4     1993     1900     
+1     5     2480     1340     
+1     6     565     1346     
+1     8     811     1271     
+1     8     4096     1858     
+1     10     3498     1189     
+2     7     203     1700     
+2     7     3472     1230     
+2     8     1625     1046     
+2     8     3717     1294     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?] AND term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.k, t.l from t t where (t.j> ?:? ) and t.i<>? and t.s<>'x' order by ?, ? for orderby_num()<= ?:? 
+===================================================
+i    j    k    l    
+1     10     3498     1189     
+1     8     4096     1858     
+1     8     811     1271     
+1     6     565     1346     
+1     5     2480     1340     
+1     4     1993     1900     
+2     8     3717     1294     
+2     8     1625     1046     
+2     7     3472     1230     
+2     7     203     1700     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx 
+    filtr: term[?] AND term[?]
+    sargs: term[?]
+    sort:  ? asc, ? desc, ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.k, t.l from t t where (t.j> ?:? ) and t.i<>? and t.s<>'x' order by ?, ? desc  for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+i    j    k    l    
+1     10     3498     1189     
+1     8     4096     1858     
+1     8     811     1271     
+1     6     565     1346     
+1     5     2480     1340     
+1     4     1993     1900     
+2     8     3717     1294     
+2     8     1625     1046     
+2     7     3472     1230     
+2     7     203     1700     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?] AND term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.k, t.l from t t where (t.j> ?:? ) and t.i<>? and t.s<>'x' order by ?, ? desc , ? desc , ? desc  for orderby_num()<= ?:? 
+===================================================
+i    j    k    l    
+1     4     1993     1900     
+1     5     2480     1340     
+1     6     565     1346     
+1     8     811     1271     
+1     8     4096     1858     
+1     10     3498     1189     
+2     7     203     1700     
+2     7     3472     1230     
+2     8     1625     1046     
+2     8     3717     1294     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?] AND term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.k, t.l from t t where (t.j> ?:? ) and t.i<>? and t.s<>'x' order by ?, ?, ?, ? desc  for orderby_num()<= ?:? 
+===================================================
+k    
+2503     
+3498     
+4096     
+811     
+565     
+2480     
+1993     
+3717     
+1625     
+3472     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx 
+    filtr: term[?]
+    sargs: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.k, t.i from t t where (t.j> ?:? ) and t.s<>'x' order by ? for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+k    
+2503     
+3498     
+4096     
+811     
+565     
+2480     
+1993     
+4231     
+4089     
+3717     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx 
+    filtr: term[?]
+    sargs: term[?]
+    sort:  ? asc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.k, t.i, t.j from t t where (t.k> ?:? ) and t.s<>'x' order by ?, ? desc  for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+k    
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.k, t.j from t t where t.s<>'x' and t.k= ?:?  order by ? desc  for orderby_num()<= ?:? 
+===================================================
+0
+===================================================
+0
+===================================================
+0

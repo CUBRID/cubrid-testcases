@@ -1,0 +1,165 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    
+blogtopic     1     my_filter_index     1     topicid     A     0     null     null     NO     BTREE     null     null     
+
+Query stmt:
+show index from  blogtopic blogtopic
+===================================================
+0
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    
+blogtopic     1     my_filter_index     1     topicid     A     0     null     null     NO     BTREE     null     null     
+
+Query stmt:
+show index from  blogtopic blogtopic
+===================================================
+0
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    
+blogtopic     1     my_filter_index     1     topicid     A     0     null     null     NO     BTREE     null     null     
+
+Query stmt:
+show index from  blogtopic blogtopic
+===================================================
+0
+===================================================
+Error:-493
+===================================================
+Error:-493
+===================================================
+Error:-493
+===================================================
+Error:-493
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    
+
+Query stmt:
+show index from  blogtopic blogtopic
+===================================================
+Error:-709
+===================================================
+0
+===================================================
+0
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    
+blogtopic     1     my_filter_index     1     topicid     A     1     null     null     NO     BTREE     null     null     
+
+Query stmt:
+show index from  blogtopic blogtopic
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+count(topicId)    
+1     
+
+Query plan:
+iscan
+    class: blogtopic node[?]
+    index: my_filter_index 
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(blogtopic.topicId) from blogtopic blogtopic where blogtopic.closedDate is null  using index blogtopic.my_filter_index(+)
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+count(topicId)    
+1     
+
+Query plan:
+iscan
+    class: blogtopic node[?]
+    index: my_filter_index term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select count(blogtopic.topicId) from blogtopic blogtopic where (blogtopic.topicId> ?:? ) using index blogtopic.my_filter_index(+)
+===================================================
+0
+===================================================
+count(topicId)    
+1     
+
+Query plan:
+iscan
+    class: blogtopic node[?]
+    index: my_filter_index term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select count(blogtopic.topicId) from blogtopic blogtopic where (blogtopic.topicId> ?:? ) using index blogtopic.my_filter_index(+)
+===================================================
+Error:-493
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+count(topicId)    
+1     
+
+Query plan:
+iscan
+    class: blogtopic node[?]
+    index: my_filter_index term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select count(blogtopic.topicId) from blogtopic blogtopic where (blogtopic.topicId> ?:? )
+===================================================
+0
+===================================================
+count(topicId)    
+1     
+
+Query plan:
+iscan
+    class: blogtopic node[?]
+    index: my_filter_index term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select count(blogtopic.topicId) from blogtopic blogtopic where (blogtopic.topicId> ?:? )
+===================================================
+0
+===================================================
+0
+===================================================
+8
+===================================================
+0
+===================================================
+Error:-494
+===================================================
+0
+===================================================
+0
+===================================================
+0

@@ -1,0 +1,360 @@
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+i    j    k    a    
+1     1     1     1.0     
+1     2     2     1.5     
+1     3     3     2.0     
+2     1     1     1.0     
+2     2     2     1.5     
+3     1     1     1.0     
+3     2     2     1.5     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: avg partition by (? asc nulls first) order by (? asc nulls first)
+Query stmt:
+select t.i, t.j, t.k, avg(t.k) over (partition by ? order by ?) from x t where (inst_num()<= ?:? ) order by ?, ?
+===================================================
+0
+===================================================
+0
+===================================================
+i    j    k    a    
+1     1     1     1.0     
+1     2     2     1.5     
+1     3     3     2.0     
+2     1     1     1.0     
+2     2     2     1.5     
+3     1     1     1.0     
+3     2     2     1.5     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: avg partition by (? asc nulls first) order by (? asc nulls first)
+Query stmt:
+select t.i, t.j, t.k, avg(t.k) over (partition by ? order by ?) from x t where (inst_num()<= ?:? ) order by ?, ?
+===================================================
+0
+===================================================
+0
+===================================================
+i    k    a    
+1     1     1.0     
+1     2     1.5     
+1     3     2.0     
+2     1     1.0     
+2     2     1.5     
+3     1     1.0     
+3     2     1.5     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: avg partition by (? asc nulls first) order by (? asc nulls first)
+Query stmt:
+select t.i, t.k, avg(t.k) over (partition by ? order by ?) from x t where (inst_num()<= ?:? ) order by ?, ?
+===================================================
+0
+===================================================
+0
+===================================================
+i    k    a    
+1     1     1.0     
+1     2     1.5     
+1     3     2.0     
+2     1     1.0     
+2     2     1.5     
+3     1     1.0     
+3     2     1.5     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: avg partition by (? asc nulls first) order by (? asc nulls first)
+Query stmt:
+select t.i, t.k, avg(t.k) over (partition by ? order by ?) from x t where (inst_num()<= ?:? ) order by ?, ?
+===================================================
+0
+===================================================
+0
+===================================================
+j    k    a    
+1     1     1.0     
+1     1     1.0     
+1     1     1.0     
+2     2     1.5     
+2     2     1.5     
+2     2     1.5     
+3     3     2.0     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: avg partition by (? asc nulls first) order by (? asc nulls first)
+Query stmt:
+select t.j, t.k, avg(t.k) over (partition by ? order by ?) from x t where (inst_num()<= ?:? ) order by ?, ?
+===================================================
+0
+===================================================
+0
+===================================================
+j    k    a    
+1     1     1.0     
+1     1     1.0     
+1     1     1.0     
+2     2     1.5     
+2     2     1.5     
+2     2     1.5     
+3     3     2.0     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: avg partition by (? asc nulls first) order by (? asc nulls first)
+Query stmt:
+select t.j, t.k, avg(t.k) over (partition by ? order by ?) from x t where (inst_num()<= ?:? ) order by ?, ?
+===================================================
+0
+===================================================
+0
+===================================================
+a    
+1.0     
+1.0     
+1.0     
+1.5     
+1.5     
+1.5     
+2.0     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: avg partition by (? asc nulls first) order by (? asc nulls first)
+Query stmt:
+select avg(t.k) over (partition by ? order by ?) from x t where (inst_num()<= ?:? ) order by ?
+===================================================
+0
+===================================================
+0
+===================================================
+a    
+1.0     
+1.0     
+1.0     
+1.5     
+1.5     
+1.5     
+2.0     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: avg partition by (? asc nulls first) order by (? asc nulls first)
+Query stmt:
+select avg(t.k) over (partition by ? order by ?) from x t where (inst_num()<= ?:? ) order by ?
+===================================================
+0
+===================================================
+Error:-245
+===================================================
+Error:-493
+===================================================
+Error:-494
+===================================================
+0
+===================================================
+a    
+1.5     
+1.5     
+1.5     
+1.5     
+2.0     
+2.0     
+2.0     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? desc nulls last)
+           func[?]: avg partition by (? desc nulls last) order by ()
+Query stmt:
+select avg(t.k) over (partition by ? desc ) from x t where (inst_num()<= ?:? ) order by ?
+===================================================
+0
+===================================================
+0
+===================================================
+a    
+1.5     
+1.5     
+1.5     
+1.5     
+2.0     
+2.0     
+2.0     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: avg partition by (? asc nulls first) order by ()
+Query stmt:
+select avg(t.k) over (partition by ?) from x t where (inst_num()<= ?:? ) order by ?
+===================================================
+0
+===================================================
+0
+===================================================
+a    
+1.0     
+1.0     
+1.0     
+2.0     
+2.0     
+2.0     
+3.0     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? desc nulls last)
+           func[?]: avg partition by (? asc nulls first, ? desc nulls last) order by ()
+Query stmt:
+select avg(t.k) over (partition by ?, ? desc ) from x t where (inst_num()<= ?:? ) order by ?
+===================================================
+0
+===================================================
+0
+===================================================
+a    
+1.5     
+1.5     
+1.5     
+1.5     
+2.0     
+2.0     
+2.0     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: avg partition by (? asc nulls first) order by ()
+Query stmt:
+select avg(t.k) over (partition by ?) from x t where (inst_num()<= ?:? ) order by ?
+===================================================
+0
+===================================================
+Error:-494
+===================================================
+Error:-493
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+Error:-493
+===================================================
+Error:-494
+===================================================
+0

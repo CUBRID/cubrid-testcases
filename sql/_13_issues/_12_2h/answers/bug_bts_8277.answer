@@ -1,0 +1,100 @@
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+log10(a)    
+1.0     
+2.0     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select  log?( cast(t.a as double)) from t t where  log?( cast(t.a as double))>? order by ?
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+a    log10(a)    
+10     1.0     
+100     2.0     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t node[?]
+                 index: idx term[?]
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a,  log?( cast(t.a as double)) from t t where  log?( cast(t.a as double))>? order by ?
+===================================================
+log10(a)    a    
+1.0     10     
+2.0     100     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select  log?( cast(t.a as double)), t.a from t t where  log?( cast(t.a as double))>? order by ?
+/* ---> skip ORDER BY */
+===================================================
+a    log10(a)    
+10     1.0     
+100     2.0     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a,  log?( cast(t.a as double)) from t t where  log?( cast(t.a as double))>? order by ?, ?
+/* ---> skip ORDER BY */
+===================================================
+log10(a)    a    
+1.0     10     
+2.0     100     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select  log?( cast(t.a as double)), t.a from t t where  log?( cast(t.a as double))>? order by ?, ?
+/* ---> skip ORDER BY */
+===================================================
+0

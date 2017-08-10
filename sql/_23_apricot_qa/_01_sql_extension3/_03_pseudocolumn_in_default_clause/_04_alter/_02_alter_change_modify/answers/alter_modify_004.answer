@@ -1,0 +1,148 @@
+===================================================
+0
+===================================================
+1
+===================================================
+if(col1 is null  and col3 is null  and col4=date '2012-12-12', 'ok', 'nok')    
+ok     
+
+===================================================
+0
+===================================================
+Error:-176
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     BIGINT     NO     PRI     null     auto_increment     
+col1     DATE     YES          SYS_DATE          
+col2     DATE     NO          null          
+col3     DATE     YES          null          
+col4     DATE     YES          12/12/2012          
+
+===================================================
+1
+===================================================
+if(( SYS_DATE -col1)=0, 'ok', 'nok')    
+ok     
+
+===================================================
+0
+===================================================
+Error:-176
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     BIGINT     NO     PRI     null     auto_increment     
+col1     DATE     YES          SYS_DATE          
+col2     DATE     NO          SYS_DATE          
+col3     DATE     YES          null          
+col4     DATE     YES          12/12/2012          
+
+===================================================
+1
+===================================================
+if(( SYS_DATE -col2)=0, 'ok', 'nok')    
+ok     
+
+===================================================
+0
+===================================================
+Error:-176
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     BIGINT     NO     PRI     null     auto_increment     
+col1     DATE     YES          SYS_DATE          
+col2     DATE     NO          SYS_DATE          
+col3     DATE     YES          SYS_DATE          
+col4     DATE     YES          12/12/2012          
+
+===================================================
+1
+===================================================
+if(( SYS_DATE -col3)=0 and col1=col2 and col2=col3, 'ok', 'nok')    
+ok     
+
+===================================================
+0
+===================================================
+Error:-176
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     BIGINT     NO     PRI     null     auto_increment     
+col1     DATE     YES          SYS_DATE          
+col2     DATE     NO          SYS_DATE          
+col3     DATE     YES          SYS_DATE          
+col4     DATE     YES          SYS_DATE          
+
+===================================================
+1
+===================================================
+if(( SYS_DATE -col4)=0 and col1=col2 and col2=col4 and col3='1945-10-01', 'ok', 'nok')    
+ok     
+
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     BIGINT     NO     PRI     null     auto_increment     
+col1     DATE     YES          SYS_DATE          
+col2     DATE     NO          SYS_DATE          
+col3     DATE     YES          SYS_DATE          
+col4     DATE     YES          09/09/1999          
+
+===================================================
+1
+===================================================
+if(col4='1999-09-09' and ( SYS_DATE -col2)=0 and col1=col2, 'ok', 'nok')    
+ok     
+
+===================================================
+0
+===================================================
+Error:-176
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     BIGINT     NO     PRI     null     auto_increment     
+col1     DATE     YES          SYS_DATE          
+col2     DATE     NO          SYS_DATE          
+col3     DATE     YES          SYS_DATE          
+col4     DATE     YES          SYS_DATE          
+
+===================================================
+1
+===================================================
+if(( SYS_DATE -col4)=0 and col1=col2 and col2=col4 and col3='1888-08-08', 'ok', 'nok')    
+ok     
+
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     BIGINT     NO     PRI     null     auto_increment     
+col1     DATE     YES          null          
+col2     DATE     YES          11/11/2011          
+col3     DATE     YES          SYS_TIMESTAMP          
+col4     DATE     YES          SYS_DATE          
+
+===================================================
+1
+===================================================
+if(col1 is null  and col2='2011-11-11 PM' and  SYS_DATE =col3 and col3=col4, 'ok', 'nok')    
+ok     
+
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     BIGINT     NO     PRI     null     auto_increment     
+col1     DATE     YES          SYS_DATE          
+col2     DATE     NO          SYS_DATE          
+col3     DATE     YES          SYS_DATE          
+col4     DATE     YES          SYS_DATE          
+
+===================================================
+1
+===================================================
+if(( SYS_DATE -col1)=0 and col1=col2 and col2=col3 and col3=col4, 'ok', 'nok')    
+ok     
+
+===================================================
+0

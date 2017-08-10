@@ -1,0 +1,355 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+id    val    id    val    
+1     value a1     1     value a1     
+2     value a2     2     value a2     
+3     value a3     3     value a3     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: b node[?]
+                            index: tj_id term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ a.id, a.val, b.id, b.val from tj a inner join tj b on a.id=b.id using index a.tj_id, b.tj_id order by ?
+===================================================
+id    val    id    val    
+1     value a1     1     value a1     
+2     value a2     2     value a2     
+3     value a3     3     value a3     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: b node[?]
+                            index: tj_id term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ a.id, a.val, b.id, b.val from tj a inner join tj b on a.id=b.id using index b.tj_id(+), a.tj_id order by ?
+===================================================
+id    val    id    val    
+1     value a1     1     value a1     
+2     value a2     2     value a2     
+3     value a3     3     value a3     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ a.id, a.val, b.id, b.val from tj a inner join tj b on a.id=b.id using index b.tj_id(-), a.tj_id order by ?
+===================================================
+id    val    id    val    
+1     value a1     1     value a1     
+2     value a2     2     value a2     
+3     value a3     3     value a3     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: b node[?]
+                            index: tj_id term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ a.id, a.val, b.id, b.val from tj a inner join tj b on a.id=b.id using index a.tj_id(+), b.tj_id order by ?
+===================================================
+id    val    id    val    
+1     value a1     1     value a1     
+2     value a2     2     value a2     
+3     value a3     3     value a3     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: b node[?]
+                            index: tj_id term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ a.id, a.val, b.id, b.val from tj a inner join tj b on a.id=b.id using index a.tj_id(+), b.tj_id(+) order by ?
+===================================================
+id    val    id    val    
+1     value a1     1     value a1     
+2     value a2     2     value a2     
+3     value a3     3     value a3     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ a.id, a.val, b.id, b.val from tj a inner join tj b on a.id=b.id using index b.tj_id(-), a.tj_id(+) order by ?
+===================================================
+id    val    id    val    
+1     value a1     1     value a1     
+2     value a2     2     value a2     
+3     value a3     3     value a3     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: b node[?]
+                            index: tj_id term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ a.id, a.val, b.id, b.val from tj a inner join tj b on a.id=b.id using index a.tj_id(-), b.tj_id order by ?
+===================================================
+id    val    id    val    
+1     value a1     1     value a1     
+2     value a2     2     value a2     
+3     value a3     3     value a3     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: b node[?]
+                            index: tj_id term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ a.id, a.val, b.id, b.val from tj a inner join tj b on a.id=b.id using index a.tj_id(-), b.tj_id(+) order by ?
+===================================================
+id    val    id    val    
+1     value a1     1     value a1     
+2     value a2     2     value a2     
+3     value a3     3     value a3     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ a.id, a.val, b.id, b.val from tj a inner join tj b on a.id=b.id using index a.tj_id(-), b.tj_id(-) order by ?
+===================================================
+id    val    id    val    
+1     value a1     1     value b1     
+2     value a2     2     value b2     
+3     value a3     3     value b3     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: x node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: tk node[?]
+                            index: tk_id term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ x.id, x.val, tk.id, tk.val from tj x inner join tk tk on x.id=tk.id using index x.tj_id order by ?
+===================================================
+id    val    id    val    
+1     value a1     1     value b1     
+2     value a2     2     value b2     
+3     value a3     3     value b3     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: x node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: tk node[?]
+                            index: tk_id term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ x.id, x.val, tk.id, tk.val from tj x inner join tk tk on x.id=tk.id using index x.tj_id(+) order by ?
+===================================================
+id    val    id    val    
+1     value a1     1     value b1     
+2     value a2     2     value b2     
+3     value a3     3     value b3     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: x node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: tk node[?]
+                            index: tk_id term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ x.id, x.val, tk.id, tk.val from tj x inner join tk tk on x.id=tk.id using index x.tj_id(-) order by ?
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+av    bv    
+value a1     value a1     
+value a2     value a2     
+value a3     value a3     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: tj_id term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select a.val, b.val from tj a, tj b where a.id=b.id using index a.tj_id, b.tj_id)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: sq node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ sq.av, sq.bv from (select a.val as [av], b.val as [bv] from tj a, tj b where a.id=b.id using index a.tj_id, b.tj_id) sq (av, bv) order by ?, ?
+===================================================
+id    val    
+1     value b1     
+2     value b2     
+3     value b3     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: x node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: tk node[?]
+               index: tk_id term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select x.id, tk.val from tj x, tk tk where x.id=tk.id using index x.tj_id)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: sq node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ sq.id, sq.val from (select x.id as [id], tk.val as [val] from tj x, tk tk where x.id=tk.id using index x.tj_id) sq (id, val) order by ?
+===================================================
+Error:-494
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

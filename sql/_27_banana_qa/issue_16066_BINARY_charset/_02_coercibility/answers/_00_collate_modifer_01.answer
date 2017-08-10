@@ -1,0 +1,72 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+Error:-494
+===================================================
+concat(col1 collate binary, _binary'abc')    
+BE C8 B3 E7 61 62 63      
+
+===================================================
+Error:-494
+===================================================
+coercibility(col1 collate binary)    coercibility(_binary'abc')    
+0     0     
+
+===================================================
+coercibility( concat(col1+col2))    
+5     
+
+===================================================
+coercibility( concat(col1+col2 collate utf8_bin))    
+6     
+
+===================================================
+coercibility(_binary'abc')    
+9     
+
+===================================================
+coercibility(_binary'abc'+(select col1 from t))    
+5     
+
+===================================================
+coercibility((select col2 collate utf8_gen from t where col2 collate utf8_es_cs=_binary'abc'))    
+4     
+
+===================================================
+coercibility((select col1 collate binary from t where col2 collate utf8_es_cs=_binary'abc'))    
+5     
+
+===================================================
+coercibility( cast((select col2 collate utf8_gen from t where col2 collate utf8_es_cs=_binary'abc') as varchar collate utf8_bin))    
+6     
+
+===================================================
+coercibility( cast((select col2 collate utf8_gen from t where col2 collate utf8_es_cs=_binary'abc') as varchar collate binary))    
+5     
+
+===================================================
+charset((select  cast(col1 as varchar collate utf8_bin) from t where col2 collate utf8_es_cs=_binary'abc'))    
+utf8     
+
+===================================================
+charset((select col1 from t where col2 collate utf8_es_cs=_binary'abc'))    
+binary     
+
+===================================================
+0
+===================================================
+coercibility( cast(@a as varchar collate binary))    
+5     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0

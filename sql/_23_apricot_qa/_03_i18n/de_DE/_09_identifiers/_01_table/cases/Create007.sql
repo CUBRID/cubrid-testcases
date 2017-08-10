@@ -1,0 +1,1 @@
+Create table ßä_öü-你好(ß#ä int, S#ä int);drop table ßä_öü-你好;

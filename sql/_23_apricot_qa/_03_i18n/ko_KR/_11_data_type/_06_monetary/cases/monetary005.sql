@@ -1,0 +1,12 @@
+create table t(a monetary default \CNY3);
+insert into t values(123);
+select * from t order by 1;
+update t set a =\CNY4 where a=123;
+select * from t order by 1;
+insert into t values($4);
+select * from t order by 1;
+update t set a =4 where a=$4;
+select * from t order by 1;
+update t set a =4 where a=4;
+select * from t order by 1;
+drop table t;

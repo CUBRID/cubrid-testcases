@@ -1,0 +1,99 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+10000
+===================================================
+10000
+===================================================
+10000
+===================================================
+0
+===================================================
+Error:-493
+===================================================
+0
+===================================================
+i    j    k    l    
+null     1     1     1     
+10     1     1     1     
+11     1     1     1     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.k, t.l from t t where t.j= ?:?  order by ?
+===================================================
+i    j    k    l    
+null     1     1     1     
+10     1     1     1     
+11     1     1     1     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.k, t.l from t t where t.j= any {?} order by ?
+===================================================
+i    j    k    l    
+null     1     1     1     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.k, t.l from t t where t.j= any {?} and t.i is null  order by ?
+===================================================
+i    j    k    l    
+10     1     1     1     
+11     1     1     1     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.k, t.l from t t where t.j= any {?} and t.i is not null  order by ?
+===================================================
+i    j    k    l    
+null     1     1     1     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.k, t.l from t t where t.j= any {?} and t.i is null  order by ? desc 
+===================================================
+0
+===================================================
+0
+===================================================
+0

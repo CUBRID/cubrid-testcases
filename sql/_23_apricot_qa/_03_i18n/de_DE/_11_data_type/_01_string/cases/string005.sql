@@ -1,0 +1,37 @@
+--+ holdcas on;
+set names utf8;
+create table t( a char(1200) collate utf8_de_exp,   b varchar(1200) collate utf8_de_exp,  c nchar(1200) collate utf8_de_exp,  d NCHAR VARYING(1200) collate utf8_de_exp,  e string collate utf8_de_exp);
+
+insert into t values ( 'a',  'a',  N'a',  N'a',  'a' );
+insert into t values ( upper('a'),  upper('a'),  upper(N'a'),  upper(N'a'),  upper('a'));
+insert into t values ( 'b',  'b',  N'b',  N'b',  'b' );
+insert into t values ( upper('b'),  upper('b'),  upper(N'b'),  upper(N'b'),  upper('b'));
+insert into t values ( 'ß',  'ß',  N'ß',  N'ß',  'ß' );
+insert into t values ( upper('ß'),  upper('ß'),  upper(N'ß'),  upper(N'ß'),  upper('ß'));
+insert into t values ( 'ä',  'ä',  N'ä',  N'ä',  'ä' );
+insert into t values ( upper('ä'),  upper('ä'),  upper(N'ä'),  upper(N'ä'),  upper('ä'));
+insert into t values ( 'ö',  'ö',  N'ö',  N'ö',  'ö' );
+insert into t values ( upper('ö'),  upper('ö'),  upper(N'ö'),  upper(N'ö'),  upper('ö'));
+insert into t values ( 'ü',  'ü',  N'ü',  N'ü',  'ü' );
+insert into t values ( upper('ü'),  upper('ü'),  upper(N'ü'),  upper(N'ü'),  upper('ü'));
+insert into t values ( '0',  '0',  N'0',  N'0',  '0' );
+insert into t values ( upper('0'),  upper('0'),  upper(N'0'),  upper(N'0'),  upper('0'));
+insert into t values ( '9',  '9',  N'9',  N'9',  '9' );
+insert into t values ( upper('9'),  upper('9'),  upper(N'9'),  upper(N'9'),  upper('9'));
+insert into t values ( '我',  '我',  N'我',  N'我',  '我' );
+insert into t values ( upper('我'),  upper('我'),  upper(N'我'),  upper(N'我'),  upper('我'));
+insert into t values ( 'ar',  'ar',  N'ar',  N'ar',  'ar' );
+insert into t values ( upper('ar'),  upper('ar'),  upper(N'ar'),  upper(N'ar'),  upper('ar'));
+insert into t values ( 'är',  'är',  N'är',  N'är',  'är' );
+insert into t values ( upper('är'),  upper('är'),  upper(N'är'),  upper(N'är'),  upper('är'));
+
+select * from t where b<'B' and b> '9' order by 1;
+select * from t where b<'B' and b> 'a' order by 1;
+select * from t where b<'AR'order by 1;
+select * from t where b<='AR' and b>'a'order by 1;
+select * from t where b<='AE' and b>'a'order by 1;
+select * from t where b<='AR' and b>='AE'order by 1;
+drop table t;
+set names iso88591;
+commit;
+--+ holdcas off;

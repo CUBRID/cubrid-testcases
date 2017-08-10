@@ -1,0 +1,104 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+id    mgrid    
+2.0     null     
+5.0     2.0     
+
+Query plan:
+iscan
+    class: tree node[?]
+    index: i_tree_id keylimit ? term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tree.id, tree.mgrid from tree tree where  log?(tree.id)>? start with  log?(tree.id)>? and  log?(tree.mgrid) is null  connect by  log?(tree.mgrid)= prior  log?(tree.id) using index tree.i_tree_id(+) keylimit  ?:? , tree.i_tree_mgrid(+) keylimit  ?:? 
+===================================================
+id    mgrid    
+2.0     null     
+5.0     2.0     
+6.0     2.0     
+7.0     6.0     
+
+Query plan:
+iscan
+    class: tree node[?]
+    index: i_tree_id term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tree.id, tree.mgrid from tree tree where  log?(tree.id)>? start with  log?(tree.id)>? and  log?(tree.mgrid) is null  connect by  prior tree.id=tree.mgrid
+===================================================
+id    mgrid    
+2.0     null     
+5.0     2.0     
+6.0     2.0     
+7.0     6.0     
+
+Query plan:
+iscan
+    class: tree node[?]
+    index: i_tree_id term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tree.id, tree.mgrid from tree tree where  log?(tree.id)>? start with  log?(tree.id)>? and tree.mgrid is null  connect by  prior tree.id=tree.mgrid
+===================================================
+id    mgrid    
+3.0     1.0     
+4.0     1.0     
+2.0     null     
+5.0     2.0     
+6.0     2.0     
+7.0     6.0     
+
+Query plan:
+sscan
+    class: tree node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select tree.id, tree.mgrid from tree tree where  log?(tree.id)>? start with (tree.id> ?:? ) and tree.mgrid is null  connect by  prior tree.id=tree.mgrid
+===================================================
+id    mgrid    
+1.0     null     
+3.0     1.0     
+4.0     1.0     
+2.0     null     
+5.0     2.0     
+6.0     2.0     
+7.0     6.0     
+
+Query plan:
+sscan
+    class: tree node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select tree.id, tree.mgrid from tree tree where (tree.id> ?:? ) start with (tree.id> ?:? ) and  log?(tree.mgrid) is null  connect by  prior tree.id=tree.mgrid
+===================================================
+0
+===================================================
+0
+===================================================
+0

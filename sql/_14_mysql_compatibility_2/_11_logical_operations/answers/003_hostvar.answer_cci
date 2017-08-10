@@ -1,0 +1,117 @@
+===================================================
+0
+===================================================
+0
+===================================================
+15
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+(1<>0 and  ?:0 <>0)    (1<>0 and  ?:1 <>0)    ( ?:2 <>0 and 0<>0)    (0<>0 and  ?:3 <>0)    
+1     0     0     0     
+
+Query plan:
+sscan
+    class: db_root node[?]
+    cost:  ? card ?
+Query stmt:
+select  ?:? <>?,  ?:? <>?, ?<>?, ?<>? from db_root db_root
+===================================================
+(1<>0 or  ?:0 <>0)    (1<>0 or  ?:1 <>0)    ( ?:2 <>0 or 0<>0)    (0<>0 or  ?:3 <>0)    
+1     1     1     0     
+
+Query plan:
+sscan
+    class: db_root node[?]
+    cost:  ? card ?
+Query stmt:
+select ?<>?, ?<>?,  ?:? <>?,  ?:? <>? from db_root db_root
+===================================================
+Error:-493
+===================================================
+Error:-181
+===================================================
+verdict    
+ok     
+
+Query plan:
+sscan
+    class: db_root node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select 'ok' from db_root db_root where  ?:? <>?
+===================================================
+verdict_empty    
+
+Query plan:
+sscan
+    class: db_root node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select 'not-ok' from db_root db_root where  ?:? <>?
+===================================================
+verdict    
+ok     
+
+Query plan:
+sscan
+    class: db_root node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select 'ok' from db_root db_root where  ?:? <>?
+===================================================
+verdict    
+ok     
+
+Query plan:
+sscan
+    class: db_root node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select 'ok' from db_root db_root where  ?:? <>?
+===================================================
+verdict_empty    
+huh?-not-ok     
+
+Query plan:
+sscan
+    class: db_root node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select 'huh?-not-ok' from db_root db_root where  ?:? <>?
+===================================================
+verdict_empty    
+not-ok     
+
+Query plan:
+sscan
+    class: db_root node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select 'not-ok' from db_root db_root where  ?:? <>?
+===================================================
+Error:-176
+===================================================
+Error:-176
+===================================================
+Error:-787
+===================================================
+Error:-787
+===================================================
+0
+===================================================
+0
+===================================================
+0

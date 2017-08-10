@@ -1,0 +1,131 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+host_year    nation    gold    silver    bronze    
+1988     NZL     3     2     8     
+1988     CAN     3     2     5     
+1996     KOR     7     15     5     
+2000     RUS     32     28     28     
+2004     JPN     16     9     12     
+
+Query plan:
+iscan
+    class: participant? node[?]
+    index: i? term[?]
+    cost:  ? card ?
+Query stmt:
+select participant?.host_year, participant?.nation, participant?.gold, participant?.silver, participant?.bronze from participant? participant? where (participant?.host_year> ?:? ) using index participant?.i?
+===================================================
+host_year    nation    gold    silver    bronze    
+1988     NZL     3     2     8     
+1988     CAN     3     2     5     
+1996     KOR     7     15     5     
+2000     RUS     32     28     28     
+2004     JPN     16     9     12     
+
+Query plan:
+iscan
+    class: participant? node[?]
+    index: i? term[?]
+    cost:  ? card ?
+Query stmt:
+select participant?.host_year, participant?.nation, participant?.gold, participant?.silver, participant?.bronze from participant? participant? where (participant?.host_year> ?:? ) using index participant?.i?(+)
+===================================================
+count(*)    
+5     
+
+Query plan:
+sscan
+    class: participant? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from participant? participant? where (participant?.host_year> ?:? ) using index participant?.i?(-)
+===================================================
+host_year    nation    gold    silver    bronze    
+1988     NZL     3     2     8     
+1988     CAN     3     2     5     
+1996     KOR     7     15     5     
+2000     RUS     32     28     28     
+2004     JPN     16     9     12     
+
+Query plan:
+iscan
+    class: participant? node[?]
+    index: i? term[?]
+    cost:  ? card ?
+Query stmt:
+select participant?.host_year, participant?.nation, participant?.gold, participant?.silver, participant?.bronze from participant? participant? where (participant?.host_year> ?:? ) using index participant?.i?
+===================================================
+host_year    nation    gold    silver    bronze    
+1988     NZL     3     2     8     
+1988     CAN     3     2     5     
+1996     KOR     7     15     5     
+2000     RUS     32     28     28     
+2004     JPN     16     9     12     
+
+Query plan:
+iscan
+    class: participant? node[?]
+    index: i? term[?]
+    cost:  ? card ?
+Query stmt:
+select participant?.host_year, participant?.nation, participant?.gold, participant?.silver, participant?.bronze from participant? participant? where (participant?.host_year> ?:? ) using index participant?.i?(+)
+===================================================
+count(*)    
+5     
+
+Query plan:
+sscan
+    class: participant? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from participant? participant? where (participant?.host_year> ?:? ) using index participant?.i?(-)
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+count(*)    
+5     
+
+Query plan:
+sscan
+    class: participant? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from participant? participant? where (participant?.host_year> ?:? ) using index none
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

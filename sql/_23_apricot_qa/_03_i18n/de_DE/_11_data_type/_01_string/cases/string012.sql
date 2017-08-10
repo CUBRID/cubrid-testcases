@@ -1,0 +1,15 @@
+--+ holdcas on;
+set names utf8;
+create table t( a char(3) collate utf8_de_exp,   b varchar(3) collate utf8_de_exp,  c nchar(3) collate utf8_de_exp,  d NCHAR VARYING(3) collate utf8_de_exp,  e string collate utf8_de_exp);
+insert into t values ( 'a',  'a',  N'a',  N'a',  'a' );
+insert into t values ( 'ä',  'ä',  N'ä',  N'ä',  'ä' );
+insert into t values ( '你',  '你',  N'你',  N'你',  '你' );
+select * from t order by 1;
+delete from t where b>'ä';
+select * from t order by 1;
+TRUNCATE TABLE t;
+select * from t order by 1;
+drop table t;
+set names iso88591;
+commit;
+--+ holdcas off;

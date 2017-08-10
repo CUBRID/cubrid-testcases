@@ -1,0 +1,135 @@
+===================================================
+0
+===================================================
+0
+===================================================
+9
+===================================================
+9
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    
+tpl     1     idx_tpl     1     i     A     21     null     null     YES     BTREE     null     null     
+
+Query stmt:
+show index from  tpl tpl
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    
+tpl__p__prime     1     idx_tpl     1     i     A     9     null     null     YES     BTREE     null     null     
+
+Query stmt:
+show index from  tpl__p__prime tpl__p__prime
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    
+tpl__p__mul_3     1     idx_tpl     1     i     A     9     null     null     YES     BTREE     null     null     
+
+Query stmt:
+show index from  tpl__p__mul_? tpl__p__mul_?
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    
+tpl__p__pow_4     1     idx_tpl     1     i     A     3     null     null     YES     BTREE     null     null     
+
+Query stmt:
+show index from  tpl__p__pow_? tpl__p__pow_?
+===================================================
+i    
+2     
+4     
+5     
+6     
+7     
+13     
+15     
+16     
+17     
+19     
+21     
+23     
+29     
+31     
+39     
+51     
+57     
+64     
+69     
+87     
+93     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: tpl node[?]
+                 index: idx_tpl term[?] (covers)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tpl.i from tpl tpl where (tpl.i> ?:? ) order by ?
+===================================================
+i    
+2     
+5     
+7     
+13     
+17     
+19     
+23     
+29     
+31     
+
+Query plan:
+iscan
+    class: tpl__p__prime node[?]
+    index: idx_tpl term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tpl__p__prime.i from tpl__p__prime tpl__p__prime where (tpl__p__prime.i> ?:? ) order by ?
+/* ---> skip ORDER BY */
+===================================================
+i    
+6     
+15     
+21     
+39     
+51     
+57     
+69     
+87     
+93     
+
+Query plan:
+iscan
+    class: tpl__p__mul_? node[?]
+    index: idx_tpl term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tpl__p__mul_?.i from tpl__p__mul_? tpl__p__mul_? where (tpl__p__mul_?.i> ?:? ) order by ?
+/* ---> skip ORDER BY */
+===================================================
+i    
+4     
+16     
+64     
+
+Query plan:
+iscan
+    class: tpl__p__pow_? node[?]
+    index: idx_tpl term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tpl__p__pow_?.i from tpl__p__pow_? tpl__p__pow_? where (tpl__p__pow_?.i> ?:? ) order by ?
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+0
+===================================================
+0

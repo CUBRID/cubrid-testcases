@@ -1,0 +1,174 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+i    c    j    
+1     a              1     
+1     a              2     
+1     a              3     
+1     a              null     
+1     b              1     
+1     b              2     
+1     b              null     
+1     null     null     
+2     a              1     
+2     a              2     
+2     a              null     
+2     b              1     
+2     b              null     
+2     null     null     
+null     null     null     
+
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.i, t.c, t.j from t t group by t.i, t.c, t.j with rollup
+===================================================
+i    c    j    
+1     a              1     
+1     a              2     
+1     a              3     
+1     a              null     
+1     b              1     
+1     b              2     
+1     b              null     
+2     a              1     
+2     a              2     
+2     a              null     
+2     b              1     
+2     b              null     
+
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.i, t.c, t.j from t t group by t.i, t.c, t.j with rollup having t.c is not null 
+===================================================
+i    c    j    
+1     a              2     
+1     a              3     
+1     b              2     
+2     a              2     
+
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.i, t.c, t.j from t t group by t.i, t.c, t.j with rollup having (t.j> ?:? )
+===================================================
+i    c    max(j)    
+1     a              3     
+1     null     3     
+null     null     3     
+
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.i, t.c, max(t.j) from t t group by t.i, t.c with rollup having max(t.j)>?
+===================================================
+i    c    j    count(j)    
+1     a              1     1     
+1     a              2     1     
+1     a              3     1     
+1     a              null     3     
+1     b              1     1     
+1     b              2     1     
+1     b              null     2     
+1     null     null     5     
+2     a              1     1     
+2     a              2     1     
+2     a              null     2     
+2     b              1     1     
+2     b              null     1     
+2     null     null     3     
+null     null     null     8     
+
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.i, t.c, t.j, count(t.j) from t t group by t.i, t.c, t.j with rollup
+===================================================
+i    c    count(j)    
+1     a              3     
+1     b              2     
+1     null     5     
+2     a              2     
+2     b              1     
+2     null     3     
+null     null     8     
+
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.i, t.c, count(t.j) from t t group by t.i, t.c with rollup
+===================================================
+i    c    count(j)    
+1     a              3     
+1     b              2     
+2     a              2     
+2     b              1     
+
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.i, t.c, count(t.j) from t t group by t.i, t.c with rollup having t.c is not null 
+===================================================
+i    c    count(j)    
+1     b              2     
+2     b              1     
+
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.i, t.c, count(t.j) from t t group by t.i, t.c with rollup having (t.c> ?:? )
+===================================================
+i    c    count(j)    
+1     a              3     
+1     null     5     
+null     null     8     
+
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.i, t.c, count(t.j) from t t group by t.i, t.c with rollup having max(t.j)>?
+===================================================
+Error:-494
+===================================================
+0
+===================================================
+0
+===================================================
+0

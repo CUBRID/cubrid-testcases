@@ -1,0 +1,17 @@
+--+ holdcas on;
+set names utf8;
+set system parameters 'intl_number_lang = de_DE';
+set system parameters 'intl_date_lang = de_DE';
+create table t( a DATE);
+insert into t value(DATE '31.1.2012' );
+insert into t value(DATE '29.2.2012' );
+insert into t value(DATE '30.2.2012' );
+insert into t value(DATE '29.2.2011' );
+insert into t value('31.1.2012' );
+select * from t order by 1;
+drop table t;
+set system parameters 'intl_date_lang = en_US';
+set system parameters 'intl_number_lang = en_US';
+set names iso88591;
+commit;
+--+ holdcas off;

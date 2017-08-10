@@ -1,0 +1,2628 @@
+===================================================
+0
+===================================================
+0
+===================================================
+15000
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+a    
+4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where t.a= ?:?  group by t.a
+===================================================
+a    
+4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where t.a= ?:?  group by t.a desc 
+===================================================
+a    b    
+4     null     
+4     -2147483648     
+4     4     
+4     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a, t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     2147483647     
+4     4     
+4     -2147483648     
+4     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a desc , t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     null     
+4     -2147483648     
+4     4     
+4     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a desc , t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     2147483647     
+4     4     
+4     -2147483648     
+4     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a, t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a, t.b
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a desc , t.b desc 
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a desc , t.b
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a, t.b desc 
+===================================================
+0
+===================================================
+0
+===================================================
+a    
+4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where t.a= ?:?  group by t.a
+===================================================
+a    
+4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where t.a= ?:?  group by t.a desc 
+===================================================
+a    b    
+4     null     
+4     -2147483648     
+4     4     
+4     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a, t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     2147483647     
+4     4     
+4     -2147483648     
+4     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a desc , t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     null     
+4     -2147483648     
+4     4     
+4     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a desc , t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     2147483647     
+4     4     
+4     -2147483648     
+4     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a, t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a, t.b
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a desc , t.b desc 
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a desc , t.b
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a, t.b desc 
+===================================================
+0
+===================================================
+0
+===================================================
+a    
+4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where t.a= ?:?  group by t.a
+===================================================
+a    
+4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where t.a= ?:?  group by t.a desc 
+===================================================
+a    b    
+4     null     
+4     -2147483648     
+4     4     
+4     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a, t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     2147483647     
+4     4     
+4     -2147483648     
+4     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a desc , t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     null     
+4     -2147483648     
+4     4     
+4     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a desc , t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     2147483647     
+4     4     
+4     -2147483648     
+4     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a, t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a, t.b
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a desc , t.b desc 
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a desc , t.b
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a, t.b desc 
+===================================================
+0
+===================================================
+0
+===================================================
+a    
+4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where t.a= ?:?  group by t.a
+===================================================
+a    
+4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where t.a= ?:?  group by t.a desc 
+===================================================
+a    b    
+4     null     
+4     -2147483648     
+4     4     
+4     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a, t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     2147483647     
+4     4     
+4     -2147483648     
+4     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a desc , t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     null     
+4     -2147483648     
+4     4     
+4     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a desc , t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     2147483647     
+4     4     
+4     -2147483648     
+4     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a, t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a, t.b
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a desc , t.b desc 
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a desc , t.b
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a, t.b desc 
+===================================================
+0
+===================================================
+0
+===================================================
+a    
+4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where t.a= ?:?  group by t.a
+===================================================
+a    
+4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where t.a= ?:?  group by t.a desc 
+===================================================
+a    b    
+4     null     
+4     -2147483648     
+4     4     
+4     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a, t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     2147483647     
+4     4     
+4     -2147483648     
+4     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a desc , t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     null     
+4     -2147483648     
+4     4     
+4     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a desc , t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     2147483647     
+4     4     
+4     -2147483648     
+4     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a, t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a, t.b
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a desc , t.b desc 
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a desc , t.b
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a, t.b desc 
+===================================================
+0
+===================================================
+0
+===================================================
+a    
+4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where t.a= ?:?  group by t.a
+===================================================
+a    
+4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where t.a= ?:?  group by t.a desc 
+===================================================
+a    b    
+4     null     
+4     -2147483648     
+4     4     
+4     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a, t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     2147483647     
+4     4     
+4     -2147483648     
+4     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a desc , t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     null     
+4     -2147483648     
+4     4     
+4     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a desc , t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     2147483647     
+4     4     
+4     -2147483648     
+4     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a, t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a, t.b
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a desc , t.b desc 
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a desc , t.b
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a, t.b desc 
+===================================================
+0
+===================================================
+0
+===================================================
+a    
+4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where t.a= ?:?  group by t.a
+===================================================
+a    
+4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where t.a= ?:?  group by t.a desc 
+===================================================
+a    b    
+4     null     
+4     -2147483648     
+4     4     
+4     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a, t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     2147483647     
+4     4     
+4     -2147483648     
+4     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a desc , t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     null     
+4     -2147483648     
+4     4     
+4     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a desc , t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     2147483647     
+4     4     
+4     -2147483648     
+4     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a, t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a, t.b
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a desc , t.b desc 
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a desc , t.b
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a, t.b desc 
+===================================================
+0
+===================================================
+0
+===================================================
+a    
+4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where t.a= ?:?  group by t.a
+===================================================
+a    
+4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where t.a= ?:?  group by t.a desc 
+===================================================
+a    b    
+4     null     
+4     -2147483648     
+4     4     
+4     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a, t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     2147483647     
+4     4     
+4     -2147483648     
+4     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a desc , t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     null     
+4     -2147483648     
+4     4     
+4     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a desc , t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     2147483647     
+4     4     
+4     -2147483648     
+4     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a, t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a, t.b
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a desc , t.b desc 
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a desc , t.b
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a, t.b desc 
+===================================================
+0
+===================================================
+0
+===================================================
+a    
+4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where t.a= ?:?  group by t.a
+===================================================
+a    
+4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where t.a= ?:?  group by t.a desc 
+===================================================
+a    b    
+4     null     
+4     -2147483648     
+4     4     
+4     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a, t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     2147483647     
+4     4     
+4     -2147483648     
+4     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a desc , t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     null     
+4     -2147483648     
+4     4     
+4     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a desc , t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     2147483647     
+4     4     
+4     -2147483648     
+4     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a, t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a, t.b
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a desc , t.b desc 
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a desc , t.b
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a, t.b desc 
+===================================================
+0
+===================================================
+0
+===================================================
+a    
+4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where t.a= ?:?  group by t.a
+===================================================
+a    
+4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where t.a= ?:?  group by t.a desc 
+===================================================
+a    b    
+4     null     
+4     -2147483648     
+4     4     
+4     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a, t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     2147483647     
+4     4     
+4     -2147483648     
+4     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a desc , t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     null     
+4     -2147483648     
+4     4     
+4     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a desc , t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     2147483647     
+4     4     
+4     -2147483648     
+4     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a, t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a, t.b
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a desc , t.b desc 
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a desc , t.b
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a, t.b desc 
+===================================================
+0
+===================================================
+0
+===================================================
+a    
+4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where t.a= ?:?  group by t.a
+===================================================
+a    
+4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where t.a= ?:?  group by t.a desc 
+===================================================
+a    b    
+4     null     
+4     -2147483648     
+4     4     
+4     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a, t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     2147483647     
+4     4     
+4     -2147483648     
+4     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a desc , t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     null     
+4     -2147483648     
+4     4     
+4     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a desc , t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     2147483647     
+4     4     
+4     -2147483648     
+4     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a, t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a, t.b
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a desc , t.b desc 
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a desc , t.b
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a, t.b desc 
+===================================================
+0
+===================================================
+0
+===================================================
+a    
+4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where t.a= ?:?  group by t.a
+===================================================
+a    
+4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where t.a= ?:?  group by t.a desc 
+===================================================
+a    b    
+4     null     
+4     -2147483648     
+4     4     
+4     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a, t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     2147483647     
+4     4     
+4     -2147483648     
+4     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a desc , t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     null     
+4     -2147483648     
+4     4     
+4     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a desc , t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     2147483647     
+4     4     
+4     -2147483648     
+4     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a, t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a, t.b
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a desc , t.b desc 
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a desc , t.b
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a, t.b desc 
+===================================================
+0
+===================================================
+0
+===================================================
+a    
+4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where t.a= ?:?  group by t.a
+===================================================
+a    
+4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where t.a= ?:?  group by t.a desc 
+===================================================
+a    b    
+4     null     
+4     -2147483648     
+4     4     
+4     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a, t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     2147483647     
+4     4     
+4     -2147483648     
+4     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a desc , t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     null     
+4     -2147483648     
+4     4     
+4     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a desc , t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     2147483647     
+4     4     
+4     -2147483648     
+4     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a, t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a, t.b
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a desc , t.b desc 
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a desc , t.b
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a, t.b desc 
+===================================================
+0
+===================================================
+0
+===================================================
+a    
+4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where t.a= ?:?  group by t.a
+===================================================
+a    
+4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where t.a= ?:?  group by t.a desc 
+===================================================
+a    b    
+4     null     
+4     -2147483648     
+4     4     
+4     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a, t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     2147483647     
+4     4     
+4     -2147483648     
+4     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a desc , t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     null     
+4     -2147483648     
+4     4     
+4     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a desc , t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     2147483647     
+4     4     
+4     -2147483648     
+4     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a, t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a, t.b
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a desc , t.b desc 
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a desc , t.b
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a, t.b desc 
+===================================================
+0
+===================================================
+0
+===================================================
+a    
+4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where t.a= ?:?  group by t.a
+===================================================
+a    
+4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where t.a= ?:?  group by t.a desc 
+===================================================
+a    b    
+4     null     
+4     -2147483648     
+4     4     
+4     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a, t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     2147483647     
+4     4     
+4     -2147483648     
+4     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a desc , t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     null     
+4     -2147483648     
+4     4     
+4     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a desc , t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     2147483647     
+4     4     
+4     -2147483648     
+4     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a, t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a, t.b
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a desc , t.b desc 
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a desc , t.b
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a, t.b desc 
+===================================================
+0
+===================================================
+0
+===================================================
+a    
+4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where t.a= ?:?  group by t.a
+===================================================
+a    
+4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where t.a= ?:?  group by t.a desc 
+===================================================
+a    b    
+4     null     
+4     -2147483648     
+4     4     
+4     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a, t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     2147483647     
+4     4     
+4     -2147483648     
+4     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a desc , t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     null     
+4     -2147483648     
+4     4     
+4     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a desc , t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     2147483647     
+4     4     
+4     -2147483648     
+4     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.a= ?:?  group by t.a, t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a, t.b
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a desc , t.b desc 
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a desc , t.b
+===================================================
+a    b    
+4     4     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] AND term[?] (covers) (loose index scan on prefix ?)
+                 cost:  ? card ?
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where t.b= ?:?  and t.a= ?:?  group by t.a, t.b desc 
+===================================================
+0
+===================================================
+0

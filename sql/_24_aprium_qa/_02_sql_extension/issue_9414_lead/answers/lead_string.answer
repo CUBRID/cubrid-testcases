@@ -1,0 +1,584 @@
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+col1    col2    lead(new.col3, 2, null) over ()    
+aaaaa                    This is a cat.     1990-1-1 1     
+aaaaa                    This is a cat.     1992-1-1 1     
+aaaaa                    This is a dog.     1994-1-1 1     
+aaaaa                    This is a dog.     2003-1-1 1     
+aaaaa                    This is a dog.     2004-1-1 1     
+bbbbb                    This is a cat.     2005-1-1 1     
+bbbbb                    This is a dog.     1999-1-1 1     
+bbbbb                    This is a dog.     2006-1-1 1     
+bbbbb                    This is a dog.     2007-1-1 1     
+bbbbb                    This is a dog.     2008-1-1 1     
+bbbbb                    This is a dog.     2009-1-1 1     
+bbbbb                    This is a rabbit.     2000-1-1 1     
+ccccc                    This is a dog.     1995-1-1 1     
+ccccc                    This is a dog.     2001-1-1 1     
+ccccc                    This is a rabbit.     1996-1-1 1     
+eeeee                    This is a cat.     1997-1-1 1     
+eeeee                    This is a dog.     1998-1-1 1     
+eeeee                    This is a dog.     2002-1-1 1     
+eeeee                    This is a rabbit.     null     
+zzzzz                    This is a dog.     null     
+
+===================================================
+col2    col3    next_v    
+This is a cat.     1991-1-1 1     character     
+This is a cat.     1993-1-1 1     character     
+This is a cat.     1995-1-1 1     character     
+This is a cat.     2004-1-1 1     string     
+This is a dog.     1990-1-1 1     character     
+This is a dog.     1992-1-1 1     character     
+This is a dog.     1994-1-1 1     string     
+This is a dog.     1996-1-1 1     character     
+This is a dog.     1997-1-1 1     character     
+This is a dog.     1999-1-1 1     string     
+This is a dog.     2000-1-1 1     string     
+This is a dog.     2002-1-1 1     null     
+This is a dog.     2003-1-1 1     string     
+This is a dog.     2005-1-1 1     string     
+This is a dog.     2006-1-1 1     string     
+This is a dog.     2008-1-1 1     string     
+This is a dog.     2009-1-1 1     string     
+This is a rabbit.     1998-1-1 1     string     
+This is a rabbit.     2001-1-1 1     character     
+This is a rabbit.     2007-1-1 1     character     
+
+===================================================
+col3    col4    next_v    
+1995-1-1 1     1222     eeeee                    
+1996-1-1 1     1234     ccccc                    
+1997-1-1 1     563     ccccc                    
+1998-1-1 1     111     ccccc                    
+1999-1-1 1     777     zzzzz                    
+2000-1-1 1     9898     bbbbb                    
+2001-1-1 1     1234     bbbbb                    
+2002-1-1 1     111     bbbbb                    
+2003-1-1 1     87     bbbbb                    
+2004-1-1 1     12356     bbbbb                    
+2005-1-1 1     3232     bbbbb                    
+2006-1-1 1     22222     bbbbb                    
+2007-1-1 1     999     default                  
+2008-1-1 1     87     default                  
+2009-1-1 1     111     default                  
+
+===================================================
+col4    col1    next_v    
+111     bbbbb                    This is a rabbit.     
+111     eeeee                    This is a dog.     
+111     zzzzz                    null     
+1222     eeeee                    This is a dog.     
+1234     aaaaa                    This is a dog.     
+1234     ccccc                    This is a cat.     
+1234     eeeee                    This is a dog.     
+12356     bbbbb                    This is a dog.     
+22222     aaaaa                    This is a cat.     
+22222     bbbbb                    This is a dog.     
+3232     bbbbb                    This is a dog.     
+563     eeeee                    This is a rabbit.     
+777     ccccc                    This is a dog.     
+87     aaaaa                    This is a dog.     
+87     bbbbb                    This is a dog.     
+87     bbbbb                    This is a dog.     
+888     aaaaa                    This is a dog.     
+9898     ccccc                    This is a rabbit.     
+999     aaaaa                    This is a cat.     
+999     bbbbb                    This is a dog.     
+
+===================================================
+col5    col3    next_v    
+character     1990-1-1 1     87     
+character     1991-1-1 1     999     
+character     1992-1-1 1     3232     
+character     1993-1-1 1     12356     
+character     1994-1-1 1     22222     
+character     1995-1-1 1     111     
+character     1996-1-1 1     aaa     
+character     1997-1-1 1     aaa     
+character     1998-1-1 1     aaa     
+character     1999-1-1 1     1234     
+string     2000-1-1 1     563     
+string     2001-1-1 1     111     
+string     2002-1-1 1     aaa     
+string     2003-1-1 1     111     
+string     2004-1-1 1     87     
+string     2005-1-1 1     999     
+string     2006-1-1 1     777     
+string     2007-1-1 1     1222     
+string     2008-1-1 1     9898     
+string     2009-1-1 1     1234     
+
+===================================================
+col1    col2    col3    col4    col5    col6    next_v    
+aaaaa                    This is a cat.     1991-1-1 1     22222     character     2345     character     
+aaaaa                    This is a cat.     1993-1-1 1     888     character     9999     character     
+aaaaa                    This is a dog.     1990-1-1 1     1234     character     1234     character     
+aaaaa                    This is a dog.     1992-1-1 1     87     character     1111     character     
+aaaaa                    This is a dog.     1994-1-1 1     999     character     2345     string     
+bbbbb                    This is a cat.     2004-1-1 1     12356     string     3333     string     
+bbbbb                    This is a dog.     2003-1-1 1     87     string     9999     string     
+bbbbb                    This is a dog.     2005-1-1 1     3232     string     1234     string     
+bbbbb                    This is a dog.     2006-1-1 1     22222     string     9999     string     
+bbbbb                    This is a dog.     2008-1-1 1     87     string     3456     string     
+bbbbb                    This is a dog.     2009-1-1 1     111     string     1818     string     
+bbbbb                    This is a rabbit.     2007-1-1 1     999     string     2345     character     
+ccccc                    This is a dog.     1999-1-1 1     777     character     5676     string     
+ccccc                    This is a dog.     2000-1-1 1     9898     string     5678     string     
+ccccc                    This is a rabbit.     2001-1-1 1     1234     string     2345     character     
+eeeee                    This is a cat.     1995-1-1 1     1222     character     5678     character     
+eeeee                    This is a dog.     1996-1-1 1     1234     character     2345     character     
+eeeee                    This is a dog.     1997-1-1 1     563     character     1111     character     
+eeeee                    This is a rabbit.     1998-1-1 1     111     character     9999     string     
+zzzzz                    This is a dog.     2002-1-1 1     111     string     1111     null     
+
+===================================================
+Error:-493
+===================================================
+Error:-493
+===================================================
+col1    col2    col3    col4    col5    next_v    
+aaaaa                    This is a cat.     1991-1-1 1     22222     character     9999     
+aaaaa                    This is a cat.     1993-1-1 1     888     character     1234     
+aaaaa                    This is a dog.     1990-1-1 1     1234     character     1111     
+aaaaa                    This is a dog.     1992-1-1 1     87     character     2345     
+aaaaa                    This is a dog.     1994-1-1 1     999     character     1000     
+bbbbb                    This is a cat.     2004-1-1 1     12356     string     9999     
+bbbbb                    This is a dog.     2003-1-1 1     87     string     1234     
+bbbbb                    This is a dog.     2005-1-1 1     3232     string     9999     
+bbbbb                    This is a dog.     2006-1-1 1     22222     string     3456     
+bbbbb                    This is a dog.     2008-1-1 1     87     string     1818     
+bbbbb                    This is a dog.     2009-1-1 1     111     string     2345     
+bbbbb                    This is a rabbit.     2007-1-1 1     999     string     1000     
+ccccc                    This is a dog.     1999-1-1 1     777     character     5678     
+ccccc                    This is a dog.     2000-1-1 1     9898     string     2345     
+ccccc                    This is a rabbit.     2001-1-1 1     1234     string     1000     
+eeeee                    This is a cat.     1995-1-1 1     1222     character     2345     
+eeeee                    This is a dog.     1996-1-1 1     1234     character     1111     
+eeeee                    This is a dog.     1997-1-1 1     563     character     9999     
+eeeee                    This is a rabbit.     1998-1-1 1     111     character     1000     
+zzzzz                    This is a dog.     2002-1-1 1     111     string     1000     
+
+===================================================
+col1    col2    col3    col4    col5    next_v    
+aaaaa                    This is a cat.     1991-1-1 1     22222     character     character     
+aaaaa                    This is a cat.     1993-1-1 1     888     character     string     
+bbbbb                    This is a cat.     2004-1-1 1     12356     string     character     
+eeeee                    This is a cat.     1995-1-1 1     1222     character     null     
+aaaaa                    This is a dog.     1990-1-1 1     1234     character     character     
+aaaaa                    This is a dog.     1992-1-1 1     87     character     character     
+aaaaa                    This is a dog.     1994-1-1 1     999     character     string     
+bbbbb                    This is a dog.     2003-1-1 1     87     string     string     
+bbbbb                    This is a dog.     2005-1-1 1     3232     string     string     
+bbbbb                    This is a dog.     2006-1-1 1     22222     string     string     
+bbbbb                    This is a dog.     2008-1-1 1     87     string     string     
+bbbbb                    This is a dog.     2009-1-1 1     111     string     character     
+ccccc                    This is a dog.     1999-1-1 1     777     character     string     
+ccccc                    This is a dog.     2000-1-1 1     9898     string     character     
+eeeee                    This is a dog.     1996-1-1 1     1234     character     character     
+eeeee                    This is a dog.     1997-1-1 1     563     character     string     
+zzzzz                    This is a dog.     2002-1-1 1     111     string     null     
+bbbbb                    This is a rabbit.     2007-1-1 1     999     string     string     
+ccccc                    This is a rabbit.     2001-1-1 1     1234     string     character     
+eeeee                    This is a rabbit.     1998-1-1 1     111     character     null     
+
+===================================================
+col1    col2    col3    col4    col5    next_v    
+aaaaa                    This is a dog.     1990-1-1 1     1234     character     zzz                      
+aaaaa                    This is a cat.     1991-1-1 1     22222     character     zzz                      
+aaaaa                    This is a dog.     1992-1-1 1     87     character     zzz                      
+aaaaa                    This is a cat.     1993-1-1 1     888     character     zzz                      
+aaaaa                    This is a dog.     1994-1-1 1     999     character     zzz                      
+eeeee                    This is a cat.     1995-1-1 1     1222     character     zzz                      
+eeeee                    This is a dog.     1996-1-1 1     1234     character     zzz                      
+eeeee                    This is a dog.     1997-1-1 1     563     character     zzz                      
+eeeee                    This is a rabbit.     1998-1-1 1     111     character     zzz                      
+ccccc                    This is a dog.     1999-1-1 1     777     character     zzz                      
+ccccc                    This is a dog.     2000-1-1 1     9898     string     zzz                      
+ccccc                    This is a rabbit.     2001-1-1 1     1234     string     zzz                      
+zzzzz                    This is a dog.     2002-1-1 1     111     string     zzz                      
+bbbbb                    This is a dog.     2003-1-1 1     87     string     zzz                      
+bbbbb                    This is a cat.     2004-1-1 1     12356     string     zzz                      
+bbbbb                    This is a dog.     2005-1-1 1     3232     string     zzz                      
+bbbbb                    This is a dog.     2006-1-1 1     22222     string     zzz                      
+bbbbb                    This is a rabbit.     2007-1-1 1     999     string     zzz                      
+bbbbb                    This is a dog.     2008-1-1 1     87     string     zzz                      
+bbbbb                    This is a dog.     2009-1-1 1     111     string     zzz                      
+
+===================================================
+col1    col2    col3    col4    col5    next_v    
+bbbbb                    This is a dog.     2009-1-1 1     111     string     null     
+eeeee                    This is a rabbit.     1998-1-1 1     111     character     null     
+zzzzz                    This is a dog.     2002-1-1 1     111     string     null     
+eeeee                    This is a cat.     1995-1-1 1     1222     character     null     
+aaaaa                    This is a dog.     1990-1-1 1     1234     character     null     
+ccccc                    This is a rabbit.     2001-1-1 1     1234     string     null     
+eeeee                    This is a dog.     1996-1-1 1     1234     character     null     
+bbbbb                    This is a cat.     2004-1-1 1     12356     string     null     
+aaaaa                    This is a cat.     1991-1-1 1     22222     character     null     
+bbbbb                    This is a dog.     2006-1-1 1     22222     string     null     
+bbbbb                    This is a dog.     2005-1-1 1     3232     string     null     
+eeeee                    This is a dog.     1997-1-1 1     563     character     null     
+ccccc                    This is a dog.     1999-1-1 1     777     character     null     
+aaaaa                    This is a dog.     1992-1-1 1     87     character     null     
+bbbbb                    This is a dog.     2003-1-1 1     87     string     null     
+bbbbb                    This is a dog.     2008-1-1 1     87     string     null     
+aaaaa                    This is a cat.     1993-1-1 1     888     character     null     
+ccccc                    This is a dog.     2000-1-1 1     9898     string     null     
+aaaaa                    This is a dog.     1994-1-1 1     999     character     null     
+bbbbb                    This is a rabbit.     2007-1-1 1     999     string     null     
+
+===================================================
+Error:-181
+===================================================
+col1    next_v    
+aaaaa                    2003-1-1 1     
+aaaaa                    2004-1-1 1     
+aaaaa                    2005-1-1 1     
+aaaaa                    2006-1-1 1     
+aaaaa                    2007-1-1 1     
+bbbbb                    1995-1-1 1     
+bbbbb                    1996-1-1 1     
+bbbbb                    1999-1-1 1     
+bbbbb                    2000-1-1 1     
+bbbbb                    2001-1-1 1     
+bbbbb                    2008-1-1 1     
+bbbbb                    2009-1-1 1     
+ccccc                    1997-1-1 1     
+ccccc                    1998-1-1 1     
+ccccc                    2002-1-1 1     
+eeeee                    null     
+eeeee                    null     
+eeeee                    null     
+eeeee                    null     
+zzzzz                    null     
+
+===================================================
+col2    col3    next_v    
+This is a cat.     1991-1-1 1     character     
+This is a cat.     1993-1-1 1     character     
+This is a cat.     1995-1-1 1     string     
+This is a cat.     2004-1-1 1     character     
+This is a dog.     1990-1-1 1     character     
+This is a dog.     1992-1-1 1     character     
+This is a dog.     1994-1-1 1     character     
+This is a dog.     1996-1-1 1     character     
+This is a dog.     1997-1-1 1     character     
+This is a dog.     1999-1-1 1     string     
+This is a dog.     2000-1-1 1     string     
+This is a dog.     2002-1-1 1     string     
+This is a dog.     2003-1-1 1     string     
+This is a dog.     2005-1-1 1     string     
+This is a dog.     2006-1-1 1     string     
+This is a dog.     2008-1-1 1     string     
+This is a dog.     2009-1-1 1     character     
+This is a rabbit.     1998-1-1 1     string     
+This is a rabbit.     2001-1-1 1     string     
+This is a rabbit.     2007-1-1 1     null     
+
+===================================================
+col1    col2    col3    col4    col5    next_v    
+aaaaa                    This is a cat.     1991-1-1 1     22222     character     bbbbb                    
+aaaaa                    This is a cat.     1993-1-1 1     888     character     bbbbb                    
+aaaaa                    This is a dog.     1990-1-1 1     1234     character     aaaaa                    
+aaaaa                    This is a dog.     1992-1-1 1     87     character     aaaaa                    
+aaaaa                    This is a dog.     1994-1-1 1     999     character     bbbbb                    
+bbbbb                    This is a cat.     2004-1-1 1     12356     string     ccccc                    
+bbbbb                    This is a dog.     2003-1-1 1     87     string     bbbbb                    
+bbbbb                    This is a dog.     2005-1-1 1     3232     string     bbbbb                    
+bbbbb                    This is a dog.     2006-1-1 1     22222     string     bbbbb                    
+bbbbb                    This is a dog.     2008-1-1 1     87     string     ccccc                    
+bbbbb                    This is a dog.     2009-1-1 1     111     string     ccccc                    
+bbbbb                    This is a rabbit.     2007-1-1 1     999     string     bbbbb                    
+ccccc                    This is a dog.     1999-1-1 1     777     character     eeeee                    
+ccccc                    This is a dog.     2000-1-1 1     9898     string     eeeee                    
+ccccc                    This is a rabbit.     2001-1-1 1     1234     string     eeeee                    
+eeeee                    This is a cat.     1995-1-1 1     1222     character     aaa                      
+eeeee                    This is a dog.     1996-1-1 1     1234     character     zzzzz                    
+eeeee                    This is a dog.     1997-1-1 1     563     character     aaa                      
+eeeee                    This is a rabbit.     1998-1-1 1     111     character     eeeee                    
+zzzzz                    This is a dog.     2002-1-1 1     111     string     aaa                      
+
+===================================================
+col3    next_v    
+1990-1-1 1     This is a rabbit.     
+1991-1-1 1     This is a cat.     
+1992-1-1 1     This is a cat.     
+1993-1-1 1     This is a dog.     
+1994-1-1 1     This is a dog.     
+1995-1-1 1     abc     
+1996-1-1 1     abc     
+1997-1-1 1     This is a dog.     
+1998-1-1 1     abc     
+1999-1-1 1     This is a dog.     
+2000-1-1 1     This is a dog.     
+2001-1-1 1     abc     
+2002-1-1 1     abc     
+2003-1-1 1     This is a dog.     
+2004-1-1 1     This is a dog.     
+2005-1-1 1     This is a rabbit.     
+2006-1-1 1     This is a dog.     
+2007-1-1 1     This is a dog.     
+2008-1-1 1     This is a cat.     
+2009-1-1 1     abc     
+
+===================================================
+col4    next_v    
+111     null     
+111     null     
+111     null     
+1222     null     
+1234     null     
+1234     null     
+1234     null     
+12356     null     
+22222     null     
+22222     null     
+3232     null     
+563     null     
+777     null     
+87     null     
+87     null     
+87     null     
+888     null     
+9898     null     
+999     null     
+999     null     
+
+===================================================
+Error:-494
+===================================================
+col1    col2    col3    col4    col5    next_v    
+aaaaa                    This is a cat.     1991-1-1 1     22222     character     1111     
+aaaaa                    This is a cat.     1993-1-1 1     888     character     2345     
+aaaaa                    This is a dog.     1990-1-1 1     1234     character     2345     
+aaaaa                    This is a dog.     1992-1-1 1     87     character     9999     
+aaaaa                    This is a dog.     1994-1-1 1     999     character     5678     
+bbbbb                    This is a cat.     2004-1-1 1     12356     string     1234     
+bbbbb                    This is a dog.     2003-1-1 1     87     string     3333     
+bbbbb                    This is a dog.     2005-1-1 1     3232     string     9999     
+bbbbb                    This is a dog.     2006-1-1 1     22222     string     2345     
+bbbbb                    This is a dog.     2008-1-1 1     87     string     1818     
+bbbbb                    This is a dog.     2009-1-1 1     111     string     null     
+bbbbb                    This is a rabbit.     2007-1-1 1     999     string     3456     
+ccccc                    This is a dog.     1999-1-1 1     777     character     5678     
+ccccc                    This is a dog.     2000-1-1 1     9898     string     2345     
+ccccc                    This is a rabbit.     2001-1-1 1     1234     string     1111     
+eeeee                    This is a cat.     1995-1-1 1     1222     character     2345     
+eeeee                    This is a dog.     1996-1-1 1     1234     character     1111     
+eeeee                    This is a dog.     1997-1-1 1     563     character     9999     
+eeeee                    This is a rabbit.     1998-1-1 1     111     character     5676     
+zzzzz                    This is a dog.     2002-1-1 1     111     string     9999     
+
+===================================================
+Error:-494
+===================================================
+col1    next_v    col2    col4    
+aaaaa                    1111     This is a cat.     888     
+aaaaa                    5678     This is a dog.     87     
+aaaaa                    9999     This is a cat.     22222     
+aaaaa                    9999     This is a dog.     1234     
+aaaaa                    9999     This is a dog.     999     
+bbbbb                    null     This is a rabbit.     999     
+bbbbb                    1111     This is a dog.     3232     
+bbbbb                    1111     This is a dog.     87     
+bbbbb                    1234     This is a dog.     22222     
+bbbbb                    2345     This is a cat.     12356     
+bbbbb                    2345     This is a dog.     111     
+bbbbb                    3456     This is a dog.     87     
+ccccc                    2345     This is a dog.     9898     
+ccccc                    2345     This is a rabbit.     1234     
+ccccc                    9999     This is a dog.     777     
+eeeee                    1234     This is a dog.     1234     
+eeeee                    2345     This is a rabbit.     111     
+eeeee                    3333     This is a cat.     1222     
+eeeee                    5676     This is a dog.     563     
+zzzzz                    1818     This is a dog.     111     
+
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+col1    col2    col3    col4    col5    next_v    
+aaaaa                    This is a cat.     1991-1-1 1     22222     character     This is a dog.     
+aaaaa                    This is a cat.     1993-1-1 1     888     character     This is a dog.     
+aaaaa                    This is a dog.     1990-1-1 1     1234     character     This is a cat.     
+aaaaa                    This is a dog.     1992-1-1 1     87     character     This is a cat.     
+aaaaa                    This is a dog.     1994-1-1 1     999     character     This is a rabbit.     
+bbbbb                    This is a cat.     2004-1-1 1     12356     string     This is a dog.     
+bbbbb                    This is a dog.     2003-1-1 1     87     string     This is a dog.     
+bbbbb                    This is a dog.     2005-1-1 1     3232     string     This is a dog.     
+bbbbb                    This is a dog.     2006-1-1 1     22222     string     This is a cat.     
+bbbbb                    This is a dog.     2008-1-1 1     87     string     This is a rabbit.     
+bbbbb                    This is a dog.     2009-1-1 1     111     string     This is a dog.     
+bbbbb                    This is a rabbit.     2007-1-1 1     999     string     This is a dog.     
+ccccc                    This is a dog.     1999-1-1 1     777     character     This is a dog.     
+ccccc                    This is a dog.     2000-1-1 1     9898     string     This is a dog.     
+ccccc                    This is a rabbit.     2001-1-1 1     1234     string     This is a rabbit.     
+eeeee                    This is a cat.     1995-1-1 1     1222     character     zzz     
+eeeee                    This is a dog.     1996-1-1 1     1234     character     This is a dog.     
+eeeee                    This is a dog.     1997-1-1 1     563     character     zzz     
+eeeee                    This is a rabbit.     1998-1-1 1     111     character     This is a cat.     
+zzzzz                    This is a dog.     2002-1-1 1     111     string     zzz     
+
+===================================================
+col1    col2    col3    lead(col2, 1, null) over (partition by col1 order by 1, 2, 3)    
+aaaaa                    This is a cat.     1991-1-1 1     This is a cat.     
+aaaaa                    This is a cat.     1993-1-1 1     This is a dog.     
+aaaaa                    This is a dog.     1990-1-1 1     This is a dog.     
+aaaaa                    This is a dog.     1992-1-1 1     This is a dog.     
+aaaaa                    This is a dog.     1994-1-1 1     null     
+bbbbb                    This is a cat.     2004-1-1 1     This is a dog.     
+bbbbb                    This is a dog.     2003-1-1 1     This is a dog.     
+bbbbb                    This is a dog.     2005-1-1 1     This is a dog.     
+bbbbb                    This is a dog.     2006-1-1 1     This is a dog.     
+bbbbb                    This is a dog.     2008-1-1 1     This is a dog.     
+bbbbb                    This is a dog.     2009-1-1 1     This is a rabbit.     
+bbbbb                    This is a rabbit.     2007-1-1 1     null     
+ccccc                    This is a dog.     1999-1-1 1     This is a dog.     
+ccccc                    This is a dog.     2000-1-1 1     This is a rabbit.     
+ccccc                    This is a rabbit.     2001-1-1 1     null     
+eeeee                    This is a cat.     1995-1-1 1     This is a dog.     
+eeeee                    This is a dog.     1996-1-1 1     This is a dog.     
+eeeee                    This is a dog.     1997-1-1 1     This is a rabbit.     
+eeeee                    This is a rabbit.     1998-1-1 1     null     
+zzzzz                    This is a dog.     2002-1-1 1     null     
+
+===================================================
+col2    col4    col1    lead(col5, 10, '333') over (partition by col2 order by col2, col4, col1 desc )    
+This is a cat.     1222     eeeee                    333     
+This is a cat.     12356     bbbbb                    333     
+This is a cat.     22222     aaaaa                    333     
+This is a cat.     888     aaaaa                    333     
+This is a dog.     111     bbbbb                    string     
+This is a dog.     111     zzzzz                    character     
+This is a dog.     1234     aaaaa                    333     
+This is a dog.     1234     eeeee                    character     
+This is a dog.     22222     bbbbb                    333     
+This is a dog.     3232     bbbbb                    333     
+This is a dog.     563     eeeee                    333     
+This is a dog.     777     ccccc                    333     
+This is a dog.     87     aaaaa                    333     
+This is a dog.     87     bbbbb                    333     
+This is a dog.     87     bbbbb                    333     
+This is a dog.     9898     ccccc                    333     
+This is a dog.     999     aaaaa                    333     
+This is a rabbit.     111     eeeee                    333     
+This is a rabbit.     1234     ccccc                    333     
+This is a rabbit.     999     bbbbb                    333     
+
+===================================================
+col3    next_v    col2    
+1990-1-1 1     null     This is a dog.     
+1991-1-1 1     null     This is a cat.     
+1992-1-1 1     null     This is a dog.     
+1993-1-1 1     null     This is a cat.     
+1994-1-1 1     null     This is a dog.     
+1995-1-1 1     null     This is a cat.     
+1996-1-1 1     null     This is a dog.     
+1997-1-1 1     null     This is a dog.     
+1998-1-1 1     null     This is a rabbit.     
+1999-1-1 1     null     This is a dog.     
+2000-1-1 1     null     This is a dog.     
+2001-1-1 1     null     This is a rabbit.     
+2002-1-1 1     null     This is a dog.     
+2003-1-1 1     null     This is a dog.     
+2004-1-1 1     null     This is a cat.     
+2005-1-1 1     null     This is a dog.     
+2006-1-1 1     null     This is a dog.     
+2007-1-1 1     null     This is a rabbit.     
+2008-1-1 1     null     This is a dog.     
+2009-1-1 1     null     This is a dog.     
+
+===================================================
+col4    col1    next_v    
+111     bbbbb                    null     
+111     eeeee                    This is a dog.     
+111     zzzzz                    This is a rabbit.     
+1222     eeeee                    null     
+1234     aaaaa                    null     
+1234     ccccc                    This is a dog.     
+1234     eeeee                    This is a rabbit.     
+12356     bbbbb                    null     
+22222     aaaaa                    null     
+22222     bbbbb                    This is a cat.     
+3232     bbbbb                    null     
+563     eeeee                    null     
+777     ccccc                    null     
+87     aaaaa                    null     
+87     bbbbb                    This is a dog.     
+87     bbbbb                    This is a dog.     
+888     aaaaa                    null     
+9898     ccccc                    null     
+999     aaaaa                    null     
+999     bbbbb                    This is a dog.     
+
+===================================================
+col5    col2    col4    lead(col3, 22, N'AAAA') over (partition by col5 order by col4, 1, 2)    
+character     This is a cat.     1222     AAAA           
+character     This is a cat.     22222     AAAA           
+character     This is a cat.     888     AAAA           
+character     This is a dog.     1234     AAAA           
+character     This is a dog.     1234     AAAA           
+character     This is a dog.     563     AAAA           
+character     This is a dog.     777     AAAA           
+character     This is a dog.     87     AAAA           
+character     This is a dog.     999     AAAA           
+character     This is a rabbit.     111     AAAA           
+string     This is a cat.     12356     AAAA           
+string     This is a dog.     111     AAAA           
+string     This is a dog.     111     AAAA           
+string     This is a dog.     22222     AAAA           
+string     This is a dog.     3232     AAAA           
+string     This is a dog.     87     AAAA           
+string     This is a dog.     87     AAAA           
+string     This is a dog.     9898     AAAA           
+string     This is a rabbit.     1234     AAAA           
+string     This is a rabbit.     999     AAAA           
+
+===================================================
+Error:-493
+===================================================
+0

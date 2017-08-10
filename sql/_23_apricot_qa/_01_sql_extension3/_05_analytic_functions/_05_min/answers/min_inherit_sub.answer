@@ -1,0 +1,518 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+col1    col2    min(col5) over ()    
+300000     abc0     12345     
+300000     abc0     12345     
+300000     cde0     12345     
+900000     abc0     12345     
+900000     abc0     12345     
+900000     bcd0     12345     
+900000     cde0     12345     
+a00000     abc0     12345     
+b00000     abc0     12345     
+b00000     abc0     12345     
+b00000     abc0     12345     
+b00000     bcd0     12345     
+b00000     bcd0     12345     
+f00000     abc0     12345     
+f00000     abc0     12345     
+f00000     abc0     12345     
+f00000     abc0     12345     
+f00000     abc0     12345     
+f00000     bcd0     12345     
+f00000     cde0     12345     
+
+===================================================
+col2    blob_to_bit(col3)    minimum    
+abc0     00     300000     
+abc0     10     300000     
+abc0     12     300000     
+abc0     13     300000     
+abc0     15     300000     
+abc0     16     300000     
+abc0     18     300000     
+abc0     19     300000     
+abc0     20     300000     
+abc0     40     300000     
+abc0     60     300000     
+abc0     70     300000     
+abc0     90     300000     
+bcd0     10     300000     
+bcd0     14     300000     
+bcd0     30     300000     
+bcd0     50     300000     
+cde0     11     300000     
+cde0     17     300000     
+cde0     80     300000     
+
+===================================================
+blob_to_bit(col3)    clob_to_char(col4)    minimum    
+00     cubrid     00     
+10     cubrid     00     
+13     mysql     00     
+14     mysql     00     
+15     mysql     00     
+16     mysql     00     
+17     mysql     00     
+18     mysql     00     
+19     mysql     00     
+20     cubrid     00     
+30     cubrid     00     
+40     cubrid     00     
+
+===================================================
+clob_to_char(col4)    col1    minimum    
+cubrid     300000     abc0     
+cubrid     900000     abc0     
+cubrid     900000     abc0     
+cubrid     900000     abc0     
+cubrid     900000     abc0     
+cubrid     b00000     abc0     
+cubrid     b00000     abc0     
+cubrid     b00000     abc0     
+cubrid     b00000     abc0     
+cubrid     b00000     abc0     
+mysql     300000     abc0     
+mysql     300000     abc0     
+mysql     a00000     abc0     
+mysql     f00000     abc0     
+mysql     f00000     abc0     
+mysql     f00000     abc0     
+mysql     f00000     abc0     
+mysql     f00000     abc0     
+mysql     f00000     abc0     
+mysql     f00000     abc0     
+
+===================================================
+col5    minimum    
+12345     12345     
+12345     12345     
+23456     12345     
+23456     12345     
+23456     12345     
+23456     12345     
+34567     12345     
+34567     12345     
+34567     12345     
+45634     12345     
+45678     12345     
+45678     12345     
+45678     12345     
+45678     12345     
+56789     12345     
+56789     12345     
+67891     12345     
+67891     12345     
+78901     12345     
+78901     12345     
+
+===================================================
+Error:-493
+===================================================
+Error:-493
+===================================================
+col1    col2    blob_to_bit(col3)    clob_to_char(col4)    minimum    
+300000     abc0     10     mysql     34567     
+300000     abc0     90     cubrid     34567     
+300000     cde0     11     mysql     34567     
+900000     abc0     60     cubrid     12345     
+900000     abc0     70     cubrid     12345     
+900000     bcd0     50     cubrid     12345     
+900000     cde0     80     cubrid     12345     
+a00000     abc0     12     mysql     45678     
+b00000     abc0     00     cubrid     12345     
+b00000     abc0     20     cubrid     12345     
+b00000     abc0     40     cubrid     12345     
+b00000     bcd0     10     cubrid     12345     
+b00000     bcd0     30     cubrid     12345     
+f00000     abc0     13     mysql     23456     
+f00000     abc0     15     mysql     23456     
+f00000     abc0     16     mysql     23456     
+f00000     abc0     18     mysql     23456     
+f00000     abc0     19     mysql     23456     
+f00000     bcd0     14     mysql     23456     
+f00000     cde0     17     mysql     23456     
+
+===================================================
+col1    col2    blob_to_bit(col3)    clob_to_char(col4)    minimum    
+300000     abc0     10     mysql     cubrid     
+300000     abc0     90     cubrid     cubrid     
+900000     abc0     60     cubrid     cubrid     
+900000     abc0     70     cubrid     cubrid     
+a00000     abc0     12     mysql     cubrid     
+b00000     abc0     00     cubrid     cubrid     
+b00000     abc0     20     cubrid     cubrid     
+b00000     abc0     40     cubrid     cubrid     
+f00000     abc0     13     mysql     cubrid     
+f00000     abc0     15     mysql     cubrid     
+f00000     abc0     16     mysql     cubrid     
+f00000     abc0     18     mysql     cubrid     
+f00000     abc0     19     mysql     cubrid     
+900000     bcd0     50     cubrid     cubrid     
+b00000     bcd0     10     cubrid     cubrid     
+b00000     bcd0     30     cubrid     cubrid     
+f00000     bcd0     14     mysql     cubrid     
+300000     cde0     11     mysql     cubrid     
+900000     cde0     80     cubrid     cubrid     
+f00000     cde0     17     mysql     cubrid     
+
+===================================================
+col1    col2    blob_to_bit(col3)    clob_to_char(col4)    minimum    
+b00000     abc0     00     cubrid     00     
+300000     abc0     10     mysql     10     
+b00000     bcd0     10     cubrid     10     
+300000     cde0     11     mysql     11     
+a00000     abc0     12     mysql     12     
+f00000     abc0     13     mysql     13     
+f00000     bcd0     14     mysql     14     
+f00000     abc0     15     mysql     15     
+f00000     abc0     16     mysql     16     
+f00000     cde0     17     mysql     17     
+f00000     abc0     18     mysql     18     
+f00000     abc0     19     mysql     19     
+b00000     abc0     20     cubrid     20     
+b00000     bcd0     30     cubrid     30     
+b00000     abc0     40     cubrid     40     
+900000     bcd0     50     cubrid     50     
+900000     abc0     60     cubrid     60     
+900000     abc0     70     cubrid     70     
+900000     cde0     80     cubrid     80     
+300000     abc0     90     cubrid     90     
+
+===================================================
+col1    col2    blob_to_bit(col3)    clob_to_char(col4)    minimum    
+300000     abc0     90     cubrid     abc0     
+900000     abc0     60     cubrid     abc0     
+900000     abc0     70     cubrid     abc0     
+900000     bcd0     50     cubrid     abc0     
+900000     cde0     80     cubrid     abc0     
+b00000     abc0     00     cubrid     abc0     
+b00000     abc0     20     cubrid     abc0     
+b00000     abc0     40     cubrid     abc0     
+b00000     bcd0     10     cubrid     abc0     
+b00000     bcd0     30     cubrid     abc0     
+300000     abc0     10     mysql     abc0     
+300000     cde0     11     mysql     abc0     
+a00000     abc0     12     mysql     abc0     
+f00000     abc0     13     mysql     abc0     
+f00000     abc0     15     mysql     abc0     
+f00000     abc0     16     mysql     abc0     
+f00000     abc0     18     mysql     abc0     
+f00000     abc0     19     mysql     abc0     
+f00000     bcd0     14     mysql     abc0     
+f00000     cde0     17     mysql     abc0     
+
+===================================================
+col1    minimum    
+300000     300000     
+300000     300000     
+300000     300000     
+900000     300000     
+900000     300000     
+900000     300000     
+900000     300000     
+a00000     300000     
+b00000     300000     
+b00000     300000     
+b00000     300000     
+b00000     300000     
+b00000     300000     
+f00000     300000     
+f00000     300000     
+f00000     300000     
+f00000     300000     
+f00000     300000     
+f00000     300000     
+f00000     300000     
+
+===================================================
+col2    blob_to_bit(col3)    minimum    
+abc0     00     abc0     
+abc0     10     abc0     
+abc0     12     abc0     
+abc0     13     abc0     
+abc0     15     abc0     
+abc0     16     abc0     
+abc0     18     abc0     
+abc0     19     abc0     
+abc0     20     abc0     
+abc0     40     abc0     
+abc0     60     abc0     
+abc0     70     abc0     
+abc0     90     abc0     
+bcd0     10     abc0     
+bcd0     14     abc0     
+bcd0     30     abc0     
+bcd0     50     abc0     
+cde0     11     abc0     
+cde0     17     abc0     
+cde0     80     abc0     
+
+===================================================
+col1    col2    blob_to_bit(col3)    clob_to_char(col4)    minimum    
+300000     cde0     11     mysql     67891     
+300000     abc0     10     mysql     45678     
+300000     abc0     90     cubrid     34567     
+900000     cde0     80     cubrid     23456     
+900000     bcd0     50     cubrid     23456     
+900000     abc0     60     cubrid     23456     
+900000     abc0     70     cubrid     12345     
+a00000     abc0     12     mysql     12345     
+b00000     bcd0     10     cubrid     12345     
+b00000     bcd0     30     cubrid     12345     
+b00000     abc0     00     cubrid     12345     
+b00000     abc0     20     cubrid     12345     
+b00000     abc0     40     cubrid     12345     
+f00000     cde0     17     mysql     12345     
+f00000     bcd0     14     mysql     12345     
+f00000     abc0     13     mysql     12345     
+f00000     abc0     15     mysql     12345     
+f00000     abc0     16     mysql     12345     
+f00000     abc0     18     mysql     12345     
+f00000     abc0     19     mysql     12345     
+
+===================================================
+blob_to_bit(col3)    minimum    
+00     cubrid     
+10     cubrid     
+10     mysql     
+11     mysql     
+12     mysql     
+13     mysql     
+14     mysql     
+15     mysql     
+16     mysql     
+17     mysql     
+18     mysql     
+19     mysql     
+20     cubrid     
+30     cubrid     
+40     cubrid     
+50     cubrid     
+60     cubrid     
+70     cubrid     
+80     cubrid     
+90     cubrid     
+
+===================================================
+clob_to_char(col4)    minimum    
+cubrid     12345     
+cubrid     12345     
+cubrid     12345     
+cubrid     12345     
+cubrid     12345     
+cubrid     12345     
+cubrid     12345     
+cubrid     12345     
+cubrid     12345     
+cubrid     12345     
+mysql     12345     
+mysql     12345     
+mysql     12345     
+mysql     12345     
+mysql     12345     
+mysql     12345     
+mysql     12345     
+mysql     12345     
+mysql     12345     
+mysql     12345     
+
+===================================================
+Error:-494
+===================================================
+col1    col2    blob_to_bit(col3)    clob_to_char(col4)    minimum    
+b00000     abc0     00     cubrid     12345     
+300000     abc0     10     mysql     12345     
+b00000     bcd0     10     cubrid     12345     
+300000     cde0     11     mysql     12345     
+a00000     abc0     12     mysql     12345     
+f00000     abc0     13     mysql     12345     
+f00000     bcd0     14     mysql     12345     
+f00000     abc0     15     mysql     12345     
+f00000     abc0     16     mysql     12345     
+f00000     cde0     17     mysql     12345     
+f00000     abc0     18     mysql     12345     
+f00000     abc0     19     mysql     12345     
+b00000     abc0     20     cubrid     12345     
+b00000     bcd0     30     cubrid     12345     
+b00000     abc0     40     cubrid     12345     
+900000     bcd0     50     cubrid     12345     
+900000     abc0     60     cubrid     12345     
+900000     abc0     70     cubrid     12345     
+900000     cde0     80     cubrid     12345     
+300000     abc0     90     cubrid     12345     
+
+===================================================
+Error:-494
+===================================================
+col1    minimum    col2    clob_to_char(col4)    
+b00000     12345     abc0     cubrid     
+b00000     12345     abc0     cubrid     
+b00000     12345     abc0     cubrid     
+900000     12345     abc0     cubrid     
+900000     12345     abc0     cubrid     
+300000     12345     abc0     cubrid     
+f00000     12345     abc0     mysql     
+f00000     12345     abc0     mysql     
+f00000     12345     abc0     mysql     
+f00000     12345     abc0     mysql     
+f00000     12345     abc0     mysql     
+a00000     12345     abc0     mysql     
+300000     12345     abc0     mysql     
+b00000     12345     bcd0     cubrid     
+b00000     12345     bcd0     cubrid     
+900000     12345     bcd0     cubrid     
+f00000     12345     bcd0     mysql     
+900000     12345     cde0     cubrid     
+f00000     12345     cde0     mysql     
+300000     12345     cde0     mysql     
+
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+col1    col2    blob_to_bit(col3)    clob_to_char(col4)    minimum    
+300000     cde0     11     mysql     67891     
+300000     abc0     10     mysql     45678     
+300000     abc0     90     cubrid     34567     
+900000     cde0     80     cubrid     23456     
+900000     bcd0     50     cubrid     23456     
+900000     abc0     60     cubrid     23456     
+900000     abc0     70     cubrid     12345     
+a00000     abc0     12     mysql     12345     
+b00000     bcd0     10     cubrid     12345     
+b00000     bcd0     30     cubrid     12345     
+b00000     abc0     00     cubrid     12345     
+b00000     abc0     20     cubrid     12345     
+b00000     abc0     40     cubrid     12345     
+f00000     cde0     17     mysql     12345     
+f00000     bcd0     14     mysql     12345     
+f00000     abc0     13     mysql     12345     
+f00000     abc0     15     mysql     12345     
+f00000     abc0     16     mysql     12345     
+f00000     abc0     18     mysql     12345     
+f00000     abc0     19     mysql     12345     
+
+===================================================
+col1    col2    blob_to_bit(col3)    min(col1) over (partition by col1 order by 1, 2,  blob_to_bit(col3))    
+300000     abc0     10     300000     
+300000     abc0     90     300000     
+300000     cde0     11     300000     
+900000     abc0     60     900000     
+900000     abc0     70     900000     
+900000     bcd0     50     900000     
+900000     cde0     80     900000     
+a00000     abc0     12     a00000     
+b00000     abc0     00     b00000     
+b00000     abc0     20     b00000     
+b00000     abc0     40     b00000     
+b00000     bcd0     10     b00000     
+b00000     bcd0     30     b00000     
+f00000     abc0     13     f00000     
+f00000     abc0     15     f00000     
+f00000     abc0     16     f00000     
+f00000     abc0     18     f00000     
+f00000     abc0     19     f00000     
+f00000     bcd0     14     f00000     
+f00000     cde0     17     f00000     
+
+===================================================
+col2    clob_to_char(col4)    col1    min(col2) over (partition by col2 order by col2,  clob_to_char(col4), col1 desc )    
+abc0     cubrid     b00000     abc0     
+abc0     cubrid     b00000     abc0     
+abc0     cubrid     b00000     abc0     
+abc0     cubrid     900000     abc0     
+abc0     cubrid     900000     abc0     
+abc0     cubrid     300000     abc0     
+abc0     mysql     f00000     abc0     
+abc0     mysql     f00000     abc0     
+abc0     mysql     f00000     abc0     
+abc0     mysql     f00000     abc0     
+abc0     mysql     f00000     abc0     
+abc0     mysql     a00000     abc0     
+abc0     mysql     300000     abc0     
+bcd0     cubrid     b00000     bcd0     
+bcd0     cubrid     b00000     bcd0     
+bcd0     cubrid     900000     bcd0     
+bcd0     mysql     f00000     bcd0     
+cde0     cubrid     900000     cde0     
+cde0     mysql     f00000     cde0     
+cde0     mysql     300000     cde0     
+
+===================================================
+Error:-493
+===================================================
+clob_to_char(col4)    col1    minimum    
+cubrid     b00000     00     
+cubrid     b00000     00     
+cubrid     b00000     00     
+cubrid     b00000     00     
+cubrid     b00000     00     
+cubrid     900000     00     
+cubrid     900000     00     
+cubrid     900000     00     
+cubrid     900000     00     
+cubrid     300000     00     
+mysql     f00000     13     
+mysql     f00000     13     
+mysql     f00000     13     
+mysql     f00000     13     
+mysql     f00000     13     
+mysql     f00000     13     
+mysql     f00000     13     
+mysql     a00000     12     
+mysql     300000     10     
+mysql     300000     10     
+
+===================================================
+Error:-493
+===================================================
+20
+===================================================
+0
+===================================================
+0

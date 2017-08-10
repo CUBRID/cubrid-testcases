@@ -1,0 +1,92 @@
+===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     INTEGER     NO     PRI     null     auto_increment     
+col1     TIMESTAMP     YES          CURRENT_TIMESTAMP          
+col2     DATE     YES          SYS_DATE          
+col3     DATETIME     YES          null          
+col4     VARCHAR(1073741823)     YES          null          
+
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     INTEGER     NO     PRI     null     auto_increment     
+col1     TIMESTAMP     YES          SYS_TIMESTAMP          
+col2     DATE     YES          SYS_DATE          
+col3     DATETIME     YES          SYS_DATETIME          
+col4     VARCHAR(1073741823)     YES          CURRENT_USER          
+
+===================================================
+1
+===================================================
+if(( CURRENT_TIMESTAMP -col1)<=1, 'ok', 'nok')    
+ok     
+
+===================================================
+if( SYS_DATE =col2, 'ok', 'nok')    
+ok     
+
+===================================================
+if(( SYS_DATETIME -col3)<=1000, 'ok', 'nok')    
+ok     
+
+===================================================
+if( CURRENT_USER =col4, 'ok', 'nok')    
+ok     
+
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     INTEGER     NO     PRI     null     auto_increment     
+col1     TIMESTAMP     NO          10:10:10 AM 10/10/2000          
+col2     DATE     YES          10/10/2000          
+col3     DATETIME     YES          10:10:10.100 AM 10/10/2000          
+col4     VARCHAR(1073741823)     YES          aaa          
+
+===================================================
+1
+===================================================
+if(count(*)=3, 'ok', 'nok')    
+ok     
+
+===================================================
+if(col1='2000-10-10 10:10:10' and col2='2000-10-10' and col3='2000-10-10 10:10:10.100' and col4='aaa', 'ok', 'nok')    
+ok     
+
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     INTEGER     NO     PRI     null     auto_increment     
+col1     TIMESTAMP     YES          UNIX_TIMESTAMP()          
+col2     DATE     YES          SYS_DATE          
+col3     DATETIME     YES          SYS_DATETIME          
+col4     VARCHAR(1073741823)     YES          CURRENT_USER          
+
+===================================================
+1
+===================================================
+if(( CURRENT_TIMESTAMP -col1)<=1, 'ok', 'nok')    
+ok     
+
+===================================================
+if( SYS_DATE =col2, 'ok', 'nok')    
+ok     
+
+===================================================
+if(( SYS_DATETIME -col3)<=1000, 'ok', 'nok')    
+ok     
+
+===================================================
+if( CURRENT_USER =col4, 'ok', 'nok')    
+ok     
+
+===================================================
+0

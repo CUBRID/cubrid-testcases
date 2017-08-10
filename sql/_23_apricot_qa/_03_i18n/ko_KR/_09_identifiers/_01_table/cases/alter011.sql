@@ -1,0 +1,6 @@
+CREATE TABLE 테이블 (테 int AUTO_INCREMENT);
+ALTER TABLE 테이블 AUTO_INCREMENT = 5;
+drop table 테이블;
+CREATE TABLE 테이블 (테 int AUTO_INCREMENT, 이 int AUTO_INCREMENT);
+ALTER TABLE 테이블 AUTO_INCREMENT = 5;
+drop table 테이블;

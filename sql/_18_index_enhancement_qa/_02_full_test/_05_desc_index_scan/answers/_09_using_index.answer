@@ -1,0 +1,104 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+a    
+3     
+4     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a keylimit ?, ? term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select tb.a from tb tb where (tb.a> ?:? ) using index tb.i_tb_a keylimit  ?:? , ?:? 
+===================================================
+a    
+2     
+1     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a keylimit ?, ? term[?] (covers) (desc_index forced)
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.a from tb tb where (tb.a> ?:? ) using index tb.i_tb_a keylimit  ?:? , ?:? 
+===================================================
+a    
+4     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a keylimit ?, ? term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) using index tb.i_tb_a keylimit  ?:? , ?:? 
+===================================================
+a    
+2     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a keylimit ?, ? term[?] (covers) (desc_index forced)
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) using index tb.i_tb_a keylimit  ?:? , ?:? 
+===================================================
+a    
+
+===================================================
+a    b    
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_ab keylimit ?, ? term[?] (covers)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (tb.b> ?:? ) using index tb.i_tb_ab keylimit  ?:? , ?:? 
+===================================================
+a    b    
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_ab keylimit ?, ? term[?] (covers) (desc_index forced)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (tb.b> ?:? ) using index tb.i_tb_ab keylimit  ?:? , ?:? 
+===================================================
+a    b    
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_ab keylimit ?, ? term[?] (covers) (desc_index forced)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (tb.b> ?:? ) using index tb.i_tb_ab keylimit  ?:? , ?:? 
+===================================================
+0
+===================================================
+0
+===================================================
+0

@@ -1,0 +1,126 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+a    
+2     
+1     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (covers) (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) group by tb.a desc  having groupby_num() between ? and ?
+/* ---> skip GROUP BY */
+===================================================
+a    
+
+===================================================
+a    
+3     
+2     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (covers) (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) group by tb.a desc  having groupby_num()<=?
+/* ---> skip GROUP BY */
+===================================================
+a    
+
+===================================================
+a    
+2     
+1     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (covers) (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) group by tb.a desc  having groupby_num()>=?
+/* ---> skip GROUP BY */
+===================================================
+a    
+
+===================================================
+a    
+1     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (covers) (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) group by tb.a desc  having groupby_num()- cast(? as bigint)>=?
+/* ---> skip GROUP BY */
+===================================================
+a    
+
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+a    
+3     
+1     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (covers) (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) group by tb.a desc  having groupby_num() mod  cast(? as bigint)=?
+/* ---> skip GROUP BY */
+===================================================
+a    
+3     
+1     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (covers) (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) group by tb.a desc  having groupby_num() in multiset{?, ?, ?}
+/* ---> skip GROUP BY */
+===================================================
+a    
+
+===================================================
+0
+===================================================
+0
+===================================================
+0

@@ -1,0 +1,64 @@
+create table err1(f float default exp(3),i int);
+create table err2(f float,i int);
+alter table err2 alter column f set default exp(3);
+create table err3(i int);
+alter table err3 add column f float default exp(3);
+insert into err1(i) values(100);
+insert into err2(i) values(NULL);
+insert into err3(i) values (100);
+select * from err1 order by 1;
+select * from err2 order by 1;
+select * from err3 order by 1;
+
+create table err4(v varchar default substr('abcdefghijk',3,5));
+create table err5(v varchar);
+alter table err5 alter column v set default substr('abcdefghijk',3,5);
+alter table err5 rename column v to vv;
+create table err6(v2 varchar);
+alter table err6 add column v varchar default substr('abcdefghijk',3,5);
+insert into err4(v) values default;
+insert into err5(vv) values default;
+insert into err6 values(default,default(v));
+select * from err4 order by 1;
+select * from err5 order by 1;
+select * from err6 order by 1;
+
+create table err7(d date default adddate('2002-02-28',3), i int);
+create table err8(d date,i int);
+alter table err8 alter column d set default  adddate('2040-02-28',3);
+create table err9(i int);
+alter table err9 add column d date default adddate('2044-02-28',3);
+insert into err7(i) values(4);
+insert into err8 values(default,0);
+insert into err9 values(9,NULL);
+insert into err9 values(9,default);
+select * from err7 order by 1;
+select * from err8 order by 1;
+select * from err9 order by d desc;
+
+create table err10(i int auto_increment(2,3));
+alter table err10 alter column i set default NULL;
+create table err11(f float,i int);
+alter table err11 change f f float default exp(3);
+create table err12(v varchar);
+alter table err12 modify v varchar default substr('abcdefghijk',3,5);
+insert into err10 values (default);
+insert into err11(i) values(3);
+insert into err12 values(NULL),(default);
+select * from err10 order by 1;
+select * from err11 order by 1;
+select * from err12 order by 1;
+
+drop err1;
+drop err2;
+drop err3;
+drop err4;
+drop err5;
+drop err6;
+drop err7;
+drop err8;
+drop err9;
+drop err10;
+drop err11;
+drop err12;
+

@@ -1,0 +1,336 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+a    b    c    d    e    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_abc term[?]
+    filtr: term[?]
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where (t.a> ?:? ) and (t.b> ?:? ) order by ?, ?, ?
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+a    b    c    d    e    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers)
+    filtr: term[?]
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where (t.a> ?:? ) and (t.b> ?:? ) order by ?, ?, ?, ?, ?
+/* ---> skip ORDER BY */
+===================================================
+a    b    c    d    e    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers)
+    filtr: term[?] AND term[?]
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where t.a is not null  and (t.b> ?:? ) order by ?, ?, ?, ?, ?
+/* ---> skip ORDER BY */
+===================================================
+a    b    c    d    e    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers)
+    filtr: term[?] AND term[?]
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where t.a is not null  and (t.b> ?:? ) order by ?
+/* ---> skip ORDER BY */
+===================================================
+a    b    c    d    e    
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where t.a is not null  and (t.b> ?:? ) using index none order by ?, ?
+===================================================
+a    b    c    d    e    
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where t.a is not null  and (t.b> ?:? ) using index none order by ?, ?, ?, ?, ?
+===================================================
+a    b    c    d    e    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers)
+    filtr: term[?] AND term[?]
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where t.a is not null  and (t.b> ?:? ) order by ?
+/* ---> skip ORDER BY */
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+a    b    c    d    e    
+1     1     1     1     1     
+2     2     2     2     2     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers)
+    filtr: term[?] AND term[?]
+    sargs: term[?]
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where t.a is not null  and (t.b> ?:? ) and (rownum< ?:? ) order by ?
+/* ---> skip ORDER BY */
+===================================================
+a    b    c    d    e    
+1     1     1     1     1     
+2     2     2     2     2     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e, t.a+? from t t where t.a is not null  and (t.b> ?:? ) using index none order by ?
+===================================================
+a    b    c    d    e    
+1     1     1     1     1     
+2     2     2     2     2     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where t.a is not null  and (t.b> ?:? ) using index none order by ?
+===================================================
+a    b    c    d    e    
+1     1     1     1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers)
+    filtr: term[?] AND term[?]
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where t.a is not null  and (t.b> ?:? ) order by ? for orderby_num()< ?:? 
+/* ---> skip ORDER BY */
+===================================================
+a    b    c    d    e    
+1     1     1     1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers)
+    filtr: term[?] AND term[?]
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where t.a is not null  and (t.b> ?:? ) order by ? for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+a    b    c    d    e    
+1     1     1     1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers)
+    filtr: term[?] AND term[?]
+    sargs: term[?]
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where t.a is not null  and (t.b> ?:? ) and (rownum= ?:? ) order by ?
+/* ---> skip ORDER BY */
+===================================================
+a    b    c    d    e    
+1     1     1     1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers)
+    filtr: term[?] AND term[?]
+    sargs: term[?]
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where t.a is not null  and (t.b> ?:? ) and (rownum= ?:? ) order by ?
+/* ---> skip ORDER BY */
+===================================================
+a    b    c    d    e    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers)
+    filtr: term[?] AND term[?]
+    sargs: term[?]
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where t.a is not null  and (t.b> ?:? ) and inst_num()*rownum=? order by ?
+/* ---> skip ORDER BY */
+===================================================
+a    b    c    d    e    
+2     2     2     2     2     
+1     1     1     1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers) (desc_index)
+    filtr: term[?] AND term[?]
+    sort:  ? desc, ? desc, ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where t.a is not null  and (t.b> ?:? ) order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+a    b    c    d    e    
+2     2     2     2     2     
+1     1     1     1     1     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where t.a is not null  and (t.b> ?:? ) using index none order by ? desc , ? desc 
+===================================================
+a    b    c    d    e    
+2     2     2     2     2     
+1     1     1     1     1     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where t.a is not null  and (t.b> ?:? ) order by ? desc , ?
+===================================================
+a    b    c    d    e    
+2     2     2     2     2     
+1     1     1     1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers) (desc_index)
+    filtr: term[?] AND term[?]
+    sort:  ? desc, ? desc, ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where t.a is not null  and (t.b> ?:? ) order by ? desc , ? desc , ? desc 
+/* ---> skip ORDER BY */
+===================================================
+a    b    c    d    e    
+2     2     2     2     2     
+1     1     1     1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers) (desc_index)
+    filtr: term[?] AND term[?]
+    sort:  ? desc, ? desc, ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where t.a is not null  and (t.b> ?:? ) order by ? desc , ? desc , ? desc , ? desc 
+/* ---> skip ORDER BY */
+===================================================
+a    b    c    d    e    
+2     2     2     2     2     
+1     1     1     1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers) (desc_index)
+    filtr: term[?] AND term[?]
+    sort:  ? desc, ? desc, ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where t.a is not null  and (t.b> ?:? ) order by ? desc , ? desc , ? desc , ? desc , ? desc 
+/* ---> skip ORDER BY */
+===================================================
+a    b    c    d    e    
+2     2     2     2     2     
+1     1     1     1     1     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? desc, ? desc, ? desc, ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where t.a is not null  and (t.b> ?:? ) using index none order by ? desc , ? desc , ? desc , ? desc , ?
+===================================================
+0
+===================================================
+0
+===================================================
+0

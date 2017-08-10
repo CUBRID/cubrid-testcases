@@ -1,0 +1,1 @@
+Create table ßäöü你好(ßÄ varchar(200) primary key default null);drop table ßäöü你好;
