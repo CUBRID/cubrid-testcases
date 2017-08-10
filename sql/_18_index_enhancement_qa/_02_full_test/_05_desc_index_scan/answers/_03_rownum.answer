@@ -1,0 +1,278 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+id    a    b    
+4     4     4     
+3     3     3     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sargs: term[?]
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (rownum<= ?:? ) order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+id    a    b    
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sargs: term[?]
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (rownum<= ?:? ) order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+id    a    b    
+4     4     4     
+3     3     3     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sargs: term[?]
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (rownum>= ?:?  and rownum<= ?:? ) order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+id    a    b    
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sargs: term[?]
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (rownum>= ?:?  and rownum<= ?:? ) order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+id    a    b    
+4     4     4     
+3     3     3     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_b term[?] (desc_index)
+    sargs: term[?]
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a, tb.b from tb tb where (tb.b>= ?:?  and tb.b<= ?:? ) and (rownum<= ?:? ) order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+id    a    b    
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_b term[?] (desc_index)
+    sargs: term[?]
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a, tb.b from tb tb where (tb.b>= ?:?  and tb.b<= ?:? ) and (rownum<= ?:? ) order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+id    a    b    
+4     4     4     
+3     3     3     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_b term[?] (desc_index)
+    sargs: term[?]
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a, tb.b from tb tb where (tb.b>= ?:?  and tb.b<= ?:? ) and (rownum>= ?:?  and rownum<= ?:? ) order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+id    a    b    
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_b term[?] (desc_index)
+    sargs: term[?]
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a, tb.b from tb tb where (tb.b>= ?:?  and tb.b<= ?:? ) and (rownum>= ?:?  and rownum<= ?:? ) order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+id    a    b    
+4     4     4     
+3     3     3     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (rownum<= ?:? ) using index tb.i_tb_a
+===================================================
+id    a    b    
+4     4     4     
+3     3     3     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (rownum>= ?:?  and rownum<= ?:? ) using index tb.i_tb_a
+===================================================
+id    a    b    
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (rownum<= ?:? ) using index tb.i_tb_a
+===================================================
+id    a    b    
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (rownum<= ?:? ) using index tb.i_tb_a
+===================================================
+id    a    b    
+4     4     4     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (rownum<= ?:? ) using index tb.i_tb_a
+===================================================
+id    a    b    
+4     4     4     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (rownum>= ?:?  and rownum<= ?:? ) using index tb.i_tb_a
+===================================================
+id    a    b    
+4     4     4     
+3     3     3     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_b term[?] (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a, tb.b from tb tb where (tb.b>= ?:?  and tb.b<= ?:? ) and (rownum<= ?:? ) using index tb.i_tb_b
+===================================================
+id    a    b    
+4     4     4     
+3     3     3     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_b term[?] (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a, tb.b from tb tb where (tb.b>= ?:?  and tb.b<= ?:? ) and (rownum>= ?:?  and rownum<= ?:? ) using index tb.i_tb_b
+===================================================
+id    a    b    
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_b term[?] (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a, tb.b from tb tb where (tb.b>= ?:?  and tb.b<= ?:? ) and (rownum<= ?:? ) using index tb.i_tb_b
+===================================================
+id    a    b    
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_b term[?] (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a, tb.b from tb tb where (tb.b>= ?:?  and tb.b<= ?:? ) and (rownum>= ?:?  and rownum<= ?:? ) using index tb.i_tb_b
+===================================================
+id    a    b    
+4     4     4     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_b term[?] (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a, tb.b from tb tb where (tb.b>= ?:?  and tb.b<= ?:? ) and (rownum<= ?:? ) using index tb.i_tb_b
+===================================================
+id    a    b    
+4     4     4     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_b term[?] (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a, tb.b from tb tb where (tb.b>= ?:?  and tb.b<= ?:? ) and (rownum>= ?:?  and rownum<= ?:? ) using index tb.i_tb_b
+===================================================
+0
+===================================================
+0
+===================================================
+0

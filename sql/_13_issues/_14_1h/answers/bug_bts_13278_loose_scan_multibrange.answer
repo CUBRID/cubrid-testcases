@@ -1,0 +1,1604 @@
+===================================================
+0
+===================================================
+0
+===================================================
+15000
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+a    b    
+5     null     
+5     -2147483648     
+5     5     
+5     2147483647     
+8     null     
+8     -2147483648     
+8     8     
+8     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a, t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+8     2147483647     
+8     8     
+8     -2147483648     
+8     null     
+5     2147483647     
+5     5     
+5     -2147483648     
+5     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a desc , t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+8     null     
+8     -2147483648     
+8     8     
+8     2147483647     
+5     null     
+5     -2147483648     
+5     5     
+5     2147483647     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a desc , t.b
+===================================================
+a    b    
+5     2147483647     
+5     5     
+5     -2147483648     
+5     null     
+8     2147483647     
+8     8     
+8     -2147483648     
+8     null     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a, t.b desc 
+===================================================
+0
+===================================================
+0
+===================================================
+a    b    
+5     null     
+5     -2147483648     
+5     5     
+5     2147483647     
+8     null     
+8     -2147483648     
+8     8     
+8     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a, t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+8     2147483647     
+8     8     
+8     -2147483648     
+8     null     
+5     2147483647     
+5     5     
+5     -2147483648     
+5     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a desc , t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+8     null     
+8     -2147483648     
+8     8     
+8     2147483647     
+5     null     
+5     -2147483648     
+5     5     
+5     2147483647     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a desc , t.b
+===================================================
+a    b    
+5     2147483647     
+5     5     
+5     -2147483648     
+5     null     
+8     2147483647     
+8     8     
+8     -2147483648     
+8     null     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a, t.b desc 
+===================================================
+0
+===================================================
+0
+===================================================
+a    b    
+5     null     
+5     -2147483648     
+5     5     
+5     2147483647     
+8     null     
+8     -2147483648     
+8     8     
+8     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a, t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+8     2147483647     
+8     8     
+8     -2147483648     
+8     null     
+5     2147483647     
+5     5     
+5     -2147483648     
+5     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a desc , t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+8     null     
+8     -2147483648     
+8     8     
+8     2147483647     
+5     null     
+5     -2147483648     
+5     5     
+5     2147483647     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a desc , t.b
+===================================================
+a    b    
+5     2147483647     
+5     5     
+5     -2147483648     
+5     null     
+8     2147483647     
+8     8     
+8     -2147483648     
+8     null     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a, t.b desc 
+===================================================
+0
+===================================================
+0
+===================================================
+a    b    
+5     null     
+5     -2147483648     
+5     5     
+5     2147483647     
+8     null     
+8     -2147483648     
+8     8     
+8     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a, t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+8     2147483647     
+8     8     
+8     -2147483648     
+8     null     
+5     2147483647     
+5     5     
+5     -2147483648     
+5     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a desc , t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+8     null     
+8     -2147483648     
+8     8     
+8     2147483647     
+5     null     
+5     -2147483648     
+5     5     
+5     2147483647     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a desc , t.b
+===================================================
+a    b    
+5     2147483647     
+5     5     
+5     -2147483648     
+5     null     
+8     2147483647     
+8     8     
+8     -2147483648     
+8     null     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a, t.b desc 
+===================================================
+0
+===================================================
+0
+===================================================
+a    b    
+5     null     
+5     -2147483648     
+5     5     
+5     2147483647     
+8     null     
+8     -2147483648     
+8     8     
+8     2147483647     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 sort:  ? asc, ? desc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a, t.b
+===================================================
+a    b    
+8     2147483647     
+8     8     
+8     -2147483648     
+8     null     
+5     2147483647     
+5     5     
+5     -2147483648     
+5     null     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 sort:  ? asc, ? desc
+                 cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a desc , t.b desc 
+===================================================
+a    b    
+8     null     
+8     -2147483648     
+8     8     
+8     2147483647     
+5     null     
+5     -2147483648     
+5     5     
+5     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a desc , t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+5     2147483647     
+5     5     
+5     -2147483648     
+5     null     
+8     2147483647     
+8     8     
+8     -2147483648     
+8     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a, t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+0
+===================================================
+0
+===================================================
+a    b    
+5     null     
+5     -2147483648     
+5     5     
+5     2147483647     
+8     null     
+8     -2147483648     
+8     8     
+8     2147483647     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 sort:  ? asc, ? desc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a, t.b
+===================================================
+a    b    
+8     2147483647     
+8     8     
+8     -2147483648     
+8     null     
+5     2147483647     
+5     5     
+5     -2147483648     
+5     null     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 sort:  ? asc, ? desc
+                 cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a desc , t.b desc 
+===================================================
+a    b    
+8     null     
+8     -2147483648     
+8     8     
+8     2147483647     
+5     null     
+5     -2147483648     
+5     5     
+5     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a desc , t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+5     2147483647     
+5     5     
+5     -2147483648     
+5     null     
+8     2147483647     
+8     8     
+8     -2147483648     
+8     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a, t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+0
+===================================================
+0
+===================================================
+a    b    
+5     null     
+5     -2147483648     
+5     5     
+5     2147483647     
+8     null     
+8     -2147483648     
+8     8     
+8     2147483647     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 sort:  ? asc, ? desc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a, t.b
+===================================================
+a    b    
+8     2147483647     
+8     8     
+8     -2147483648     
+8     null     
+5     2147483647     
+5     5     
+5     -2147483648     
+5     null     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 sort:  ? asc, ? desc
+                 cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a desc , t.b desc 
+===================================================
+a    b    
+8     null     
+8     -2147483648     
+8     8     
+8     2147483647     
+5     null     
+5     -2147483648     
+5     5     
+5     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a desc , t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+5     2147483647     
+5     5     
+5     -2147483648     
+5     null     
+8     2147483647     
+8     8     
+8     -2147483648     
+8     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a, t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+0
+===================================================
+0
+===================================================
+a    b    
+5     null     
+5     -2147483648     
+5     5     
+5     2147483647     
+8     null     
+8     -2147483648     
+8     8     
+8     2147483647     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 sort:  ? asc, ? desc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a, t.b
+===================================================
+a    b    
+8     2147483647     
+8     8     
+8     -2147483648     
+8     null     
+5     2147483647     
+5     5     
+5     -2147483648     
+5     null     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 sort:  ? asc, ? desc
+                 cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a desc , t.b desc 
+===================================================
+a    b    
+8     null     
+8     -2147483648     
+8     8     
+8     2147483647     
+5     null     
+5     -2147483648     
+5     5     
+5     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a desc , t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+5     2147483647     
+5     5     
+5     -2147483648     
+5     null     
+8     2147483647     
+8     8     
+8     -2147483648     
+8     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a, t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+0
+===================================================
+0
+===================================================
+a    b    
+5     null     
+5     -2147483648     
+5     5     
+5     2147483647     
+8     null     
+8     -2147483648     
+8     8     
+8     2147483647     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 sort:  ? desc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a, t.b
+===================================================
+a    b    
+8     2147483647     
+8     8     
+8     -2147483648     
+8     null     
+5     2147483647     
+5     5     
+5     -2147483648     
+5     null     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 sort:  ? desc, ? asc
+                 cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a desc , t.b desc 
+===================================================
+a    b    
+8     null     
+8     -2147483648     
+8     8     
+8     2147483647     
+5     null     
+5     -2147483648     
+5     5     
+5     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a desc , t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+5     2147483647     
+5     5     
+5     -2147483648     
+5     null     
+8     2147483647     
+8     8     
+8     -2147483648     
+8     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a, t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+0
+===================================================
+0
+===================================================
+a    b    
+5     null     
+5     -2147483648     
+5     5     
+5     2147483647     
+8     null     
+8     -2147483648     
+8     8     
+8     2147483647     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 sort:  ? desc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a, t.b
+===================================================
+a    b    
+8     2147483647     
+8     8     
+8     -2147483648     
+8     null     
+5     2147483647     
+5     5     
+5     -2147483648     
+5     null     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 sort:  ? desc, ? asc
+                 cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a desc , t.b desc 
+===================================================
+a    b    
+8     null     
+8     -2147483648     
+8     8     
+8     2147483647     
+5     null     
+5     -2147483648     
+5     5     
+5     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a desc , t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+5     2147483647     
+5     5     
+5     -2147483648     
+5     null     
+8     2147483647     
+8     8     
+8     -2147483648     
+8     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a, t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+0
+===================================================
+0
+===================================================
+a    b    
+5     null     
+5     -2147483648     
+5     5     
+5     2147483647     
+8     null     
+8     -2147483648     
+8     8     
+8     2147483647     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 sort:  ? desc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a, t.b
+===================================================
+a    b    
+8     2147483647     
+8     8     
+8     -2147483648     
+8     null     
+5     2147483647     
+5     5     
+5     -2147483648     
+5     null     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 sort:  ? desc, ? asc
+                 cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a desc , t.b desc 
+===================================================
+a    b    
+8     null     
+8     -2147483648     
+8     8     
+8     2147483647     
+5     null     
+5     -2147483648     
+5     5     
+5     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a desc , t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+5     2147483647     
+5     5     
+5     -2147483648     
+5     null     
+8     2147483647     
+8     8     
+8     -2147483648     
+8     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a, t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+0
+===================================================
+0
+===================================================
+a    b    
+5     null     
+5     -2147483648     
+5     5     
+5     2147483647     
+8     null     
+8     -2147483648     
+8     8     
+8     2147483647     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 sort:  ? desc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a, t.b
+===================================================
+a    b    
+8     2147483647     
+8     8     
+8     -2147483648     
+8     null     
+5     2147483647     
+5     5     
+5     -2147483648     
+5     null     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 sort:  ? desc, ? asc
+                 cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a desc , t.b desc 
+===================================================
+a    b    
+8     null     
+8     -2147483648     
+8     8     
+8     2147483647     
+5     null     
+5     -2147483648     
+5     5     
+5     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a desc , t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+5     2147483647     
+5     5     
+5     -2147483648     
+5     null     
+8     2147483647     
+8     8     
+8     -2147483648     
+8     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a, t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+0
+===================================================
+0
+===================================================
+a    b    
+5     null     
+5     -2147483648     
+5     5     
+5     2147483647     
+8     null     
+8     -2147483648     
+8     8     
+8     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a, t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+8     2147483647     
+8     8     
+8     -2147483648     
+8     null     
+5     2147483647     
+5     5     
+5     -2147483648     
+5     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a desc , t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+8     null     
+8     -2147483648     
+8     8     
+8     2147483647     
+5     null     
+5     -2147483648     
+5     5     
+5     2147483647     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 sort:  ? desc, ? desc
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a desc , t.b
+===================================================
+a    b    
+5     2147483647     
+5     5     
+5     -2147483648     
+5     null     
+8     2147483647     
+8     8     
+8     -2147483648     
+8     null     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 sort:  ? desc, ? desc
+                 cost:  ? card ?
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a, t.b desc 
+===================================================
+0
+===================================================
+0
+===================================================
+a    b    
+5     null     
+5     -2147483648     
+5     5     
+5     2147483647     
+8     null     
+8     -2147483648     
+8     8     
+8     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a, t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+8     2147483647     
+8     8     
+8     -2147483648     
+8     null     
+5     2147483647     
+5     5     
+5     -2147483648     
+5     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a desc , t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+8     null     
+8     -2147483648     
+8     8     
+8     2147483647     
+5     null     
+5     -2147483648     
+5     5     
+5     2147483647     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 sort:  ? desc, ? desc
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a desc , t.b
+===================================================
+a    b    
+5     2147483647     
+5     5     
+5     -2147483648     
+5     null     
+8     2147483647     
+8     8     
+8     -2147483648     
+8     null     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 sort:  ? desc, ? desc
+                 cost:  ? card ?
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a, t.b desc 
+===================================================
+0
+===================================================
+0
+===================================================
+a    b    
+5     null     
+5     -2147483648     
+5     5     
+5     2147483647     
+8     null     
+8     -2147483648     
+8     8     
+8     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a, t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+8     2147483647     
+8     8     
+8     -2147483648     
+8     null     
+5     2147483647     
+5     5     
+5     -2147483648     
+5     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a desc , t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+8     null     
+8     -2147483648     
+8     8     
+8     2147483647     
+5     null     
+5     -2147483648     
+5     5     
+5     2147483647     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 sort:  ? desc, ? desc
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a desc , t.b
+===================================================
+a    b    
+5     2147483647     
+5     5     
+5     -2147483648     
+5     null     
+8     2147483647     
+8     8     
+8     -2147483648     
+8     null     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 sort:  ? desc, ? desc
+                 cost:  ? card ?
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a, t.b desc 
+===================================================
+0
+===================================================
+0
+===================================================
+a    b    
+5     null     
+5     -2147483648     
+5     5     
+5     2147483647     
+8     null     
+8     -2147483648     
+8     8     
+8     2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?) (desc_index)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a, t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+8     2147483647     
+8     8     
+8     -2147483648     
+8     null     
+5     2147483647     
+5     5     
+5     -2147483648     
+5     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a desc , t.b desc 
+/* ---> skip GROUP BY */
+===================================================
+a    b    
+8     null     
+8     -2147483648     
+8     8     
+8     2147483647     
+5     null     
+5     -2147483648     
+5     5     
+5     2147483647     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 sort:  ? desc, ? desc
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a desc , t.b
+===================================================
+a    b    
+5     2147483647     
+5     5     
+5     -2147483648     
+5     null     
+8     2147483647     
+8     8     
+8     -2147483648     
+8     null     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+                 sort:  ? desc, ? desc
+                 cost:  ? card ?
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where ((t.a> ?:?  and t.a< ?:? ) or (t.a> ?:?  and t.a< ?:? )) group by t.a, t.b desc 
+===================================================
+0
+===================================================
+0

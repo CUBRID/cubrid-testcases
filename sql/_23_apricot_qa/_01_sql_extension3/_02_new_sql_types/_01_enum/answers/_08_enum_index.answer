@@ -1,0 +1,84 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+col1    col2    col3    col4    
+a     bb     1     33     
+b     cc     3     11     
+c     aa     2     11     
+e     bb     2     22     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: idx node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select idx.col?, idx.col?, idx.col?, idx.col? from idx idx order by ?
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+col1    col2    col3    col4    
+a     bb     1     33     
+b     cc     3     11     
+c     aa     2     11     
+
+Query plan:
+iscan
+    class: idx node[?]
+    index: idx? 
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select idx.col?, idx.col?, idx.col?, idx.col? from idx idx where  cast(idx.col? as varchar)<'e' order by ?
+/* ---> skip ORDER BY */
+===================================================
+col1    col2    col3    col4    
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: idx node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select idx.col?, idx.col?, idx.col?, idx.col? from idx idx where  cast(idx.col? as varchar)>'a' and  cast(idx.col? as varchar)<'c' order by ?
+===================================================
+col1    col2    col3    col4    
+a     bb     1     33     
+b     cc     3     11     
+c     aa     2     11     
+e     bb     2     22     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: idx node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select idx.col?, idx.col?, idx.col?, idx.col? from idx idx where  cast(idx.col? as varchar)<'e' and  cast(idx.col? as varchar)>'?' order by ?
+===================================================
+0
+===================================================
+0

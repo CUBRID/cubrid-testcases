@@ -1,0 +1,15 @@
+select 1 from db_root where 9223372036854775807 <=> 9223372036854775807;
+select 1 from db_root where -9223372036854775807 <=> -9223372036854775807;
+create table a1 (id int,name varchar(10));
+insert into a1 values (1,'null');
+insert into a1 values (2,'NULL');
+insert into a1 values (3,'');
+insert into a1 values (4,' ');
+insert into a1 values (5,NULL);
+insert into a1 values (6,null);
+select * from a1 order by id;
+select * from a1 where name = null order by id;
+select * from a1 where name <=> null order by id;
+select * from a1 where name  = 'null' order by id;
+select * from a1 where name  <=> 'null' order by id;
+drop a1;

@@ -1,0 +1,58 @@
+--+ holdcas on;
+set system parameters 'dont_reuse_heap_file=yes';
+create class imployees08 (imp08_id int);
+create class aonuses08 (attr imployees08, bonus int);
+create class imp08 (attr imployees08, salary int);
+
+insert into imployees08 values (153) into :a1;
+insert into aonuses08 values (:a1, 100);
+insert into imp08 values (:a1,200);
+insert into imployees08 values (154) into :a1;
+insert into aonuses08 values (:a1, 100);
+insert into imp08 values (:a1,500);
+insert into imployees08 values (155) into :a1;
+insert into aonuses08 values (:a1, 100);
+insert into imp08 values (:a1,550);
+insert into imployees08 values (156) into :a1;
+insert into aonuses08 values (:a1, 100);
+insert into imp08 values (:a1,350);
+insert into imployees08 values (157) into :a1;
+insert into aonuses08 values (:a1, 100);
+insert into imp08 values (:a1,600);
+insert into imployees08 values (158) into :a1;
+insert into aonuses08 values (:a1, 100);
+insert into imp08 values (:a1,450);
+insert into imployees08 values (159) into :a1;
+insert into aonuses08 values (:a1, 100);
+insert into imp08 values (:a1,550);
+insert into imployees08 values (160) into :a1;
+insert into aonuses08 values (:a1, 100);
+insert into imp08 values (:a1,650);
+insert into imployees08 values (161) into :a1;
+insert into aonuses08 values (:a1, 100);
+insert into imp08 values (:a1,700);
+insert into imployees08 values (162) into :a1;
+insert into aonuses08 values (:a1, 100);
+insert into imp08 values (:a1,520);
+insert into imployees08 values (163) into :a1;
+insert into aonuses08 values (:a1, 100);
+insert into imp08 values (:a1,675);
+
+insert into imployees08 values (201) into :a1;
+insert into imp08 values (:a1,400);
+insert into imployees08 values (202) into :a1;
+insert into imp08 values (:a1,450);
+insert into imployees08 values (203) into :a1;
+insert into imp08 values (:a1,300);
+select attr.imp08_id,salary from imp08;
+select attr.imp08_id,bonus from aonuses08;
+--merge into aonuses08 d using imp08 e on d.attr.imp08_id = e.attr.imp08_id when matched then update set d.bonus=d.bonus+e.salary*0.1 where e.salary<600 when not matched then insert (d.attr, d.bonus) values (e.attr, 100+e.salary*0.2) where e.salary<=400;
+
+select attr.imp08_id,bonus from aonuses08 order by 1;
+
+drop imp08;
+drop imployees08;
+drop aonuses08;
+set system parameters 'dont_reuse_heap_file=no';
+commit;
+--+ holdcas off;

@@ -1,0 +1,784 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+4
+===================================================
+8
+===================================================
+16
+===================================================
+32
+===================================================
+64
+===================================================
+128
+===================================================
+256
+===================================================
+512
+===================================================
+1024
+===================================================
+1024
+===================================================
+1024
+===================================================
+1024
+===================================================
+0
+===================================================
+0
+===================================================
+i    j    s    k    
+1     1023     1023     1023     
+1     1023     1023     1023     
+1     1023     1023     1024     
+1     1023     1023     1024     
+1     1024     1024     1023     
+1     1024     1024     1023     
+1     1024     1024     1024     
+1     1024     1024     1024     
+2     1023     1023     1023     
+2     1023     1023     1023     
+2     1023     1023     1024     
+2     1023     1023     1024     
+2     1024     1024     1023     
+2     1024     1024     1023     
+2     1024     1024     1024     
+2     1024     1024     1024     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: b node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: a node[?]
+                            index: i_a_i_j_k_l term[?] (index skip scan)
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ a.i, a.j, a.s, b.k from b b, a a where (a.j> ?:? ) and (b.k> ?:? ) order by ?, ?, ?, ?
+===================================================
+i    j    s    k    
+2     1024     1024     1024     
+2     1024     1024     1024     
+2     1024     1024     1023     
+2     1024     1024     1023     
+2     1023     1023     1024     
+2     1023     1023     1024     
+2     1023     1023     1023     
+2     1023     1023     1023     
+1     1024     1024     1024     
+1     1024     1024     1024     
+1     1024     1024     1023     
+1     1024     1024     1023     
+1     1023     1023     1024     
+1     1023     1023     1024     
+1     1023     1023     1023     
+1     1023     1023     1023     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: b node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: a node[?]
+                            index: i_a_i_j_k_l term[?] (index skip scan)
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc, ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ a.i, a.j, a.s, b.k from b b, a a where (a.j> ?:? ) and (b.k> ?:? ) order by ? desc , ? desc , ? desc , ? desc 
+===================================================
+i    j    s    k    
+1     1023     1023     1024     
+1     1023     1023     1024     
+1     1024     1024     1024     
+1     1024     1024     1024     
+2     1023     1023     1024     
+2     1023     1023     1024     
+2     1024     1024     1024     
+2     1024     1024     1024     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: b node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: a node[?]
+                            index: i_a_i_j_k_l term[?] (index skip scan)
+                            filtr: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ a.i, a.j, a.s, b.k from b b, a a where (a.j> ?:? ) and (a.k> ?:? ) and (b.k> ?:? ) order by ?, ?, ?, ?
+===================================================
+i    j    s    k    
+2     1024     1024     1024     
+2     1024     1024     1024     
+2     1023     1023     1024     
+2     1023     1023     1024     
+1     1024     1024     1024     
+1     1024     1024     1024     
+1     1023     1023     1024     
+1     1023     1023     1024     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: b node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: a node[?]
+                            index: i_a_i_j_k_l term[?] (index skip scan)
+                            filtr: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc, ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ a.i, a.j, a.s, b.k from b b, a a where (a.j> ?:? ) and (a.k> ?:? ) and (b.k> ?:? ) order by ? desc , ? desc , ? desc , ? desc 
+===================================================
+i    j    k    
+1     1023     1023     
+1     1023     1023     
+1     1023     1024     
+1     1023     1024     
+1     1024     1023     
+1     1024     1023     
+1     1024     1024     
+1     1024     1024     
+2     1023     1023     
+2     1023     1023     
+2     1023     1024     
+2     1023     1024     
+2     1024     1023     
+2     1024     1023     
+2     1024     1024     
+2     1024     1024     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: b node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: a node[?]
+                            index: i_a_i_j_k_l term[?] (covers) (index skip scan)
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ a.i, a.j, b.k from b b, a a where (a.j> ?:? ) and (b.k> ?:? ) order by ?, ?, ?
+===================================================
+i    j    k    
+2     1024     1024     
+2     1024     1024     
+2     1024     1023     
+2     1024     1023     
+2     1023     1024     
+2     1023     1024     
+2     1023     1023     
+2     1023     1023     
+1     1024     1024     
+1     1024     1024     
+1     1024     1023     
+1     1024     1023     
+1     1023     1024     
+1     1023     1024     
+1     1023     1023     
+1     1023     1023     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: b node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: a node[?]
+                            index: i_a_i_j_k_l term[?] (covers) (index skip scan)
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ a.i, a.j, b.k from b b, a a where (a.j> ?:? ) and (b.k> ?:? ) order by ? desc , ? desc , ? desc 
+===================================================
+i    j    k    
+1     1023     1024     
+1     1023     1024     
+1     1024     1024     
+1     1024     1024     
+2     1023     1024     
+2     1023     1024     
+2     1024     1024     
+2     1024     1024     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: b node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: a node[?]
+                            index: i_a_i_j_k_l term[?] (covers) (index skip scan)
+                            filtr: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ a.i, a.j, b.k from b b, a a where (a.j> ?:? ) and (a.k> ?:? ) and (b.k> ?:? ) order by ?, ?, ?
+===================================================
+i    j    k    
+2     1024     1024     
+2     1024     1024     
+2     1023     1024     
+2     1023     1024     
+1     1024     1024     
+1     1024     1024     
+1     1023     1024     
+1     1023     1024     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: b node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: a node[?]
+                            index: i_a_i_j_k_l term[?] (covers) (index skip scan)
+                            filtr: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ a.i, a.j, b.k from b b, a a where (a.j> ?:? ) and (a.k> ?:? ) and (b.k> ?:? ) order by ? desc , ? desc , ? desc 
+===================================================
+i    j    s    k    
+1     1023     1023     1024     
+1     1023     1023     1024     
+1     1024     1024     1024     
+1     1024     1024     1024     
+2     1023     1023     1024     
+2     1023     1023     1024     
+2     1024     1024     1024     
+2     1024     1024     1024     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: b node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: a node[?]
+                            index: i_a_i_j_k_l term[?] (index skip scan)
+                            filtr: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ a.i, a.j, a.s, b.k from b b, a a where (a.j> ?:? ) and (a.l> ?:? ) and (b.k> ?:? ) order by ?, ?, ?, ?
+===================================================
+i    j    s    k    
+2     1024     1024     1024     
+2     1024     1024     1024     
+2     1023     1023     1024     
+2     1023     1023     1024     
+1     1024     1024     1024     
+1     1024     1024     1024     
+1     1023     1023     1024     
+1     1023     1023     1024     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: b node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: a node[?]
+                            index: i_a_i_j_k_l term[?] (index skip scan)
+                            filtr: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc, ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ a.i, a.j, a.s, b.k from b b, a a where (a.j> ?:? ) and (a.l> ?:? ) and (b.k> ?:? ) order by ? desc , ? desc , ? desc , ? desc 
+===================================================
+i    j    k    
+1     1023     1024     
+1     1023     1024     
+1     1024     1024     
+1     1024     1024     
+2     1023     1024     
+2     1023     1024     
+2     1024     1024     
+2     1024     1024     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: b node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: a node[?]
+                            index: i_a_i_j_k_l term[?] (covers) (index skip scan)
+                            filtr: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ a.i, a.j, b.k from b b, a a where (a.j> ?:? ) and (a.l> ?:? ) and (b.k> ?:? ) order by ?, ?, ?
+===================================================
+i    j    k    
+2     1024     1024     
+2     1024     1024     
+2     1023     1024     
+2     1023     1024     
+1     1024     1024     
+1     1024     1024     
+1     1023     1024     
+1     1023     1024     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: b node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: a node[?]
+                            index: i_a_i_j_k_l term[?] (covers) (index skip scan)
+                            filtr: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ a.i, a.j, b.k from b b, a a where (a.j> ?:? ) and (a.l> ?:? ) and (b.k> ?:? ) order by ? desc , ? desc , ? desc 
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+i    j    s    k    
+1     1023     1023     1023     
+1     1023     1023     1023     
+1     1023     1023     1024     
+1     1023     1023     1024     
+1     1024     1024     1023     
+1     1024     1024     1023     
+1     1024     1024     1024     
+1     1024     1024     1024     
+2     1023     1023     1023     
+2     1023     1023     1023     
+2     1023     1023     1024     
+2     1023     1023     1024     
+2     1024     1024     1023     
+2     1024     1024     1023     
+2     1024     1024     1024     
+2     1024     1024     1024     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: b node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: a node[?]
+                            index: i_a_i_d_j_d_k_d_l_d term[?] (index skip scan)
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ a.i, a.j, a.s, b.k from b b, a a where (a.j> ?:? ) and (b.k> ?:? ) order by ?, ?, ?, ?
+===================================================
+i    j    s    k    
+2     1024     1024     1024     
+2     1024     1024     1024     
+2     1024     1024     1023     
+2     1024     1024     1023     
+2     1023     1023     1024     
+2     1023     1023     1024     
+2     1023     1023     1023     
+2     1023     1023     1023     
+1     1024     1024     1024     
+1     1024     1024     1024     
+1     1024     1024     1023     
+1     1024     1024     1023     
+1     1023     1023     1024     
+1     1023     1023     1024     
+1     1023     1023     1023     
+1     1023     1023     1023     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: b node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: a node[?]
+                            index: i_a_i_d_j_d_k_d_l_d term[?] (index skip scan)
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc, ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ a.i, a.j, a.s, b.k from b b, a a where (a.j> ?:? ) and (b.k> ?:? ) order by ? desc , ? desc , ? desc , ? desc 
+===================================================
+i    j    s    k    
+1     1023     1023     1024     
+1     1023     1023     1024     
+1     1024     1024     1024     
+1     1024     1024     1024     
+2     1023     1023     1024     
+2     1023     1023     1024     
+2     1024     1024     1024     
+2     1024     1024     1024     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: b node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: a node[?]
+                            index: i_a_i_d_j_d_k_d_l_d term[?] (index skip scan)
+                            filtr: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ a.i, a.j, a.s, b.k from b b, a a where (a.j> ?:? ) and (a.k> ?:? ) and (b.k> ?:? ) order by ?, ?, ?, ?
+===================================================
+i    j    s    k    
+2     1024     1024     1024     
+2     1024     1024     1024     
+2     1023     1023     1024     
+2     1023     1023     1024     
+1     1024     1024     1024     
+1     1024     1024     1024     
+1     1023     1023     1024     
+1     1023     1023     1024     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: b node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: a node[?]
+                            index: i_a_i_d_j_d_k_d_l_d term[?] (index skip scan)
+                            filtr: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc, ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ a.i, a.j, a.s, b.k from b b, a a where (a.j> ?:? ) and (a.k> ?:? ) and (b.k> ?:? ) order by ? desc , ? desc , ? desc , ? desc 
+===================================================
+i    j    k    
+1     1023     1023     
+1     1023     1023     
+1     1023     1024     
+1     1023     1024     
+1     1024     1023     
+1     1024     1023     
+1     1024     1024     
+1     1024     1024     
+2     1023     1023     
+2     1023     1023     
+2     1023     1024     
+2     1023     1024     
+2     1024     1023     
+2     1024     1023     
+2     1024     1024     
+2     1024     1024     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: b node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: a node[?]
+                            index: i_a_i_d_j_d_k_d_l_d term[?] (covers) (index skip scan)
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ a.i, a.j, b.k from b b, a a where (a.j> ?:? ) and (b.k> ?:? ) order by ?, ?, ?
+===================================================
+i    j    k    
+2     1024     1024     
+2     1024     1024     
+2     1024     1023     
+2     1024     1023     
+2     1023     1024     
+2     1023     1024     
+2     1023     1023     
+2     1023     1023     
+1     1024     1024     
+1     1024     1024     
+1     1024     1023     
+1     1024     1023     
+1     1023     1024     
+1     1023     1024     
+1     1023     1023     
+1     1023     1023     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: b node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: a node[?]
+                            index: i_a_i_d_j_d_k_d_l_d term[?] (covers) (index skip scan)
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ a.i, a.j, b.k from b b, a a where (a.j> ?:? ) and (b.k> ?:? ) order by ? desc , ? desc , ? desc 
+===================================================
+i    j    k    
+1     1023     1024     
+1     1023     1024     
+1     1024     1024     
+1     1024     1024     
+2     1023     1024     
+2     1023     1024     
+2     1024     1024     
+2     1024     1024     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: b node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: a node[?]
+                            index: i_a_i_d_j_d_k_d_l_d term[?] (covers) (index skip scan)
+                            filtr: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ a.i, a.j, b.k from b b, a a where (a.j> ?:? ) and (a.k> ?:? ) and (b.k> ?:? ) order by ?, ?, ?
+===================================================
+i    j    k    
+2     1024     1024     
+2     1024     1024     
+2     1023     1024     
+2     1023     1024     
+1     1024     1024     
+1     1024     1024     
+1     1023     1024     
+1     1023     1024     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: b node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: a node[?]
+                            index: i_a_i_d_j_d_k_d_l_d term[?] (covers) (index skip scan)
+                            filtr: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ a.i, a.j, b.k from b b, a a where (a.j> ?:? ) and (a.k> ?:? ) and (b.k> ?:? ) order by ? desc , ? desc , ? desc 
+===================================================
+i    j    s    k    
+1     1023     1023     1024     
+1     1023     1023     1024     
+1     1024     1024     1024     
+1     1024     1024     1024     
+2     1023     1023     1024     
+2     1023     1023     1024     
+2     1024     1024     1024     
+2     1024     1024     1024     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: b node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: a node[?]
+                            index: i_a_i_d_j_d_k_d_l_d term[?] (index skip scan)
+                            filtr: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ a.i, a.j, a.s, b.k from b b, a a where (a.j> ?:? ) and (a.l> ?:? ) and (b.k> ?:? ) order by ?, ?, ?, ?
+===================================================
+i    j    s    k    
+2     1024     1024     1024     
+2     1024     1024     1024     
+2     1023     1023     1024     
+2     1023     1023     1024     
+1     1024     1024     1024     
+1     1024     1024     1024     
+1     1023     1023     1024     
+1     1023     1023     1024     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: b node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: a node[?]
+                            index: i_a_i_d_j_d_k_d_l_d term[?] (index skip scan)
+                            filtr: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc, ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ a.i, a.j, a.s, b.k from b b, a a where (a.j> ?:? ) and (a.l> ?:? ) and (b.k> ?:? ) order by ? desc , ? desc , ? desc , ? desc 
+===================================================
+i    j    k    
+1     1023     1024     
+1     1023     1024     
+1     1024     1024     
+1     1024     1024     
+2     1023     1024     
+2     1023     1024     
+2     1024     1024     
+2     1024     1024     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: b node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: a node[?]
+                            index: i_a_i_d_j_d_k_d_l_d term[?] (covers) (index skip scan)
+                            filtr: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ a.i, a.j, b.k from b b, a a where (a.j> ?:? ) and (a.l> ?:? ) and (b.k> ?:? ) order by ?, ?, ?
+===================================================
+i    j    k    
+2     1024     1024     
+2     1024     1024     
+2     1023     1024     
+2     1023     1024     
+1     1024     1024     
+1     1024     1024     
+1     1023     1024     
+1     1023     1024     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: b node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: a node[?]
+                            index: i_a_i_d_j_d_k_d_l_d term[?] (covers) (index skip scan)
+                            filtr: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ a.i, a.j, b.k from b b, a a where (a.j> ?:? ) and (a.l> ?:? ) and (b.k> ?:? ) order by ? desc , ? desc , ? desc 
+===================================================
+0
+===================================================
+0
+===================================================
+0

@@ -1,0 +1,87 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+id    a    
+2     2     
+1     1     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) order by ? desc  for orderby_num() between  ?:?  and  ?:? 
+/* ---> skip ORDER BY */
+===================================================
+id    a    
+
+===================================================
+id    a    
+3     3     
+2     2     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) order by ? desc  for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+id    a    
+
+===================================================
+id    a    
+2     2     
+1     1     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) order by ? desc  for orderby_num()>= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+id    a    
+
+===================================================
+id    a    
+1     1     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) order by ? desc  for orderby_num()- cast(? as bigint)>=?
+/* ---> skip ORDER BY */
+===================================================
+id    a    
+
+===================================================
+0
+===================================================
+0
+===================================================
+0

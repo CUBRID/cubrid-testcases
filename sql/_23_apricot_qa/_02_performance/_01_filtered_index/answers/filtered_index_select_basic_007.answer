@@ -1,0 +1,239 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+Error:-631
+===================================================
+Error:-631
+===================================================
+Error:-631
+===================================================
+1
+===================================================
+a    b    
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_all (covers)
+    filtr: term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select tb.a, tb.b from tb tb where tb.a is null  using index tb.i_tb_a(+), tb.i_tb_b(+), tb.i_tb_all(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+a    b    
+3     3     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_all term[?] (covers)
+    filtr: term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select tb.a, tb.b from tb tb where (tb.a> ?:? ) and (tb.b> ?:? ) using index tb.i_tb_a(+), tb.i_tb_b(+), tb.i_tb_all(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+a    b    
+3     3     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sargs: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tb.a, tb.b from tb tb where (tb.a> ?:? ) and (tb.b> ?:? ) using index tb.i_tb_a(+), tb.i_tb_b(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+a    b    
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: tb node[?]
+                 index: i_tb_b term[?]
+                 sargs: term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tb.a, tb.b from tb tb where (tb.a> ?:? ) and (tb.b> ?:? ) using index tb.i_tb_b(+) order by ?
+===================================================
+a    b    
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sargs: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (tb.b> ?:? ) using index tb.i_tb_a(+), tb.i_tb_b(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+a    b    
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_all (covers)
+    filtr: term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select tb.a, tb.b from tb tb where (tb.b> ?:? ) using index tb.i_tb_a(+), tb.i_tb_b(+), tb.i_tb_all(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+a    b    
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_all (covers)
+    filtr: term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select tb.a, tb.b from tb tb where (tb.b> ?:? ) using index tb.i_tb_a(+), tb.i_tb_all(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+b    
+1     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_b term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tb.b from tb tb where (tb.b> ?:? ) using index tb.i_tb_b(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+a    
+3     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_all (covers)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tb.a from tb tb where (tb.b> ?:? ) using index tb.i_tb_a(+), tb.i_tb_all(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+a    b    
+2     2     
+3     3     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_all (covers)
+    filtr: term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select tb.a, tb.b from tb tb where (tb.b> ?:? ) using index tb.i_tb_a(+), tb.i_tb_b(+), tb.i_tb_all(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+a    
+3     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_all (covers)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tb.a from tb tb where (tb.b> ?:? ) using index tb.i_tb_a(+), tb.i_tb_b(+), tb.i_tb_all(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+a    
+3     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_all (covers)
+    filtr: term[?] AND term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tb.a from tb tb where (tb.b> ?:? ) and tb.a is not null  using index tb.i_tb_a(+), tb.i_tb_b(+), tb.i_tb_all(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+a    
+3     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a  (desc_index)
+    filtr: term[?]
+    sargs: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tb.a from tb tb where (tb.b> ?:? ) and tb.a is not null  using index tb.i_tb_a(+), tb.i_tb_b(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+b    
+1     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: tb node[?]
+                 index: i_tb_all term[?] (covers)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tb.b from tb tb where (tb.a> ?:? ) using index tb.i_tb_a(+), tb.i_tb_b(+), tb.i_tb_all(+) order by ?
+===================================================
+b    
+1     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: tb node[?]
+                 index: i_tb_all term[?] (covers)
+                 filtr: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tb.b from tb tb where (tb.a> ?:? ) and tb.b is not null  using index tb.i_tb_a(+), tb.i_tb_b(+), tb.i_tb_all(+) order by ?
+===================================================
+0
+===================================================
+0
+===================================================
+0

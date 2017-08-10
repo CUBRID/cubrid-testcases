@@ -1,0 +1,329 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+1
+===================================================
+0
+===================================================
+i    i    
+1     1     
+2     null     
+3     null     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: pt? node[?]
+                            cost:  ? card ?
+                 inner: temp
+                            order: UNORDERED
+                            subplan: sscan
+                                         class: pt? node[?]
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select pt?.i, pt?.i from pt? pt? left outer join pt? pt? on pt?.i=pt?.i order by ?, ?
+===================================================
+i    i    
+1     1     
+2     null     
+3     null     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: pt? node[?]
+                            cost:  ? card ?
+                 inner: temp
+                            order: UNORDERED
+                            subplan: sscan
+                                         class: pt? node[?]
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select pt?.i, pt?.i from pt? pt? left outer join pt? pt? on pt?.i=pt?.i order by ?, ?
+===================================================
+1
+===================================================
+i    i    
+1     1     
+1     1     
+2     null     
+3     null     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: pt? node[?]
+                            cost:  ? card ?
+                 inner: temp
+                            order: UNORDERED
+                            subplan: sscan
+                                         class: pt? node[?]
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select pt?.i, pt?.i from pt? pt? left outer join pt? pt? on pt?.i=pt?.i order by ?, ?
+===================================================
+1
+===================================================
+i    i    
+1     1     
+1     1     
+2     2     
+3     null     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: pt? node[?]
+                            cost:  ? card ?
+                 inner: temp
+                            order: UNORDERED
+                            subplan: sscan
+                                         class: pt? node[?]
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select pt?.i, pt?.i from pt? pt? left outer join pt? pt? on pt?.i=pt?.i order by ?, ?
+===================================================
+i    i    
+1     1     
+1     1     
+2     null     
+3     null     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: pt? node[?]
+                            cost:  ? card ?
+                 inner: temp
+                            order: UNORDERED
+                            subplan: iscan
+                                         class: pt? node[?]
+                                         index: idx term[?] (covers)
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 during:term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select pt?.i, pt?.i from pt? pt? left outer join pt? pt? on pt?.i=pt?.i and pt?.i= ?:?  and pt?.i= ?:?  order by ?, ?
+===================================================
+i    i    
+1     1     
+1     1     
+2     null     
+3     null     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: pt? node[?]
+                            cost:  ? card ?
+                 inner: temp
+                            order: UNORDERED
+                            subplan: iscan
+                                         class: pt? node[?]
+                                         index: idx term[?] (covers)
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 during:term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select pt?.i, pt?.i from pt? pt? left outer join pt? pt? on pt?.i=pt?.i and pt?.i= ?:?  and pt?.i= ?:?  order by ?, ?
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+1
+===================================================
+0
+===================================================
+i    i    
+null     2     
+null     3     
+1     1     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 inner: temp
+                            order: UNORDERED
+                            subplan: sscan
+                                         class: a node[?]
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select a.i, b.i from a a right outer join b b on a.i=b.i order by ?, ?
+===================================================
+i    i    
+1     1     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (left outer join)
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: b node[?]
+                            index: idx term[?] (covers)
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select b.i, a.i from b b right outer join a a on a.i=b.i order by ?, ?
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+5
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+i    i    
+null     5     
+null     6     
+1     1     
+2     2     
+3     3     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 inner: temp
+                            order: UNORDERED
+                            subplan: sscan
+                                         class: a node[?]
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select a.i, b.i from  all a a right outer join b b on a.i=b.i order by ?, ?
+===================================================
+i    i    
+2     2     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: a node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select a.i, b.i from  all a a, b b where b.i= ?:?  and a.i= ?:?  and a.i=b.i order by ?
+===================================================
+i    i    
+2     2     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: b node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: temp
+                            order: UNORDERED
+                            subplan: sscan
+                                         class: a node[?]
+                                         sargs: term[?]
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select a.i, b.i from  all a a right outer join b b on a.i=b.i and a.i= ?:?  where b.i= ?:?  order by ?
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

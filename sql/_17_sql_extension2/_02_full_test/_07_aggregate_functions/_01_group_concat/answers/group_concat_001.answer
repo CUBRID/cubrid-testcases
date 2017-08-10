@@ -1,0 +1,208 @@
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+name    blob_to_bit(img)    clob_to_char(doc)    
+null     null     www.google.com     
+cnn            a6     www.cnn.com     
+google         a6     www.google.com     
+google         abc012     google.com     
+google1        ba     null     
+google2        ffff     www.google.com     
+yahoo          ffff     www.yahoo.com     
+
+===================================================
+group_concat(name order by name)    
+cnn       ,google    ,google    ,google1   ,google2   ,yahoo          
+
+===================================================
+Error:-494
+===================================================
+group_concat( blob_to_bit(img) order by 1)    
+a6a6abc012baffffffff     
+
+===================================================
+Error:-494
+===================================================
+group_concat( clob_to_char(doc) order by 1)    
+google.com,www.cnn.com,www.google.com,www.google.com,www.google.com,www.yahoo.com     
+
+===================================================
+group_concat(name order by 1)    
+cnn       ,google    ,google    ,google1   ,google2   ,yahoo          
+
+===================================================
+group_concat( blob_to_bit(img) order by 1)    
+a6a6abc012baffffffff     
+
+===================================================
+group_concat( clob_to_char(doc) order by 1)    
+google.com,www.cnn.com,www.google.com,www.google.com,www.google.com,www.yahoo.com     
+
+===================================================
+group_concat(distinct name order by name)    
+cnn       ,google    ,google1   ,google2   ,yahoo          
+
+===================================================
+group_concat(distinct  blob_to_bit(img) order by 1)    
+a6abc012baffff     
+
+===================================================
+group_concat(distinct  clob_to_char(doc) order by 1)    
+google.com,www.cnn.com,www.google.com,www.yahoo.com     
+
+===================================================
+group_concat(distinct name order by 1)    
+cnn       ,google    ,google1   ,google2   ,yahoo          
+
+===================================================
+Error:-494
+===================================================
+name    group_concat(distinct  blob_to_bit(img) order by 1)    
+null     null     
+cnn            a6     
+google         a6abc012     
+google1        ba     
+google2        ffff     
+yahoo          ffff     
+
+===================================================
+Error:-494
+===================================================
+name    blob_to_bit(img)    group_concat(distinct  clob_to_char(doc) order by 1)    
+null     null     www.google.com     
+cnn            a6     www.cnn.com     
+google         a6     google.com,www.google.com     
+google1        ba     null     
+google2        ffff     www.google.com     
+yahoo          ffff     www.yahoo.com     
+
+===================================================
+group_concat(name order by name separator ' + ')    
+cnn        + google     + google     + google1    + google2    + yahoo          
+
+===================================================
+Error:-494
+===================================================
+group_concat( clob_to_char(doc) order by 1 separator '***')    
+google.com***www.cnn.com***www.google.com***www.google.com***www.google.com***www.yahoo.com     
+
+===================================================
+group_concat(name order by 1 separator ' + ')    
+cnn        + google     + google     + google1    + google2    + yahoo          
+
+===================================================
+Error:-494
+===================================================
+name    group_concat( blob_to_bit(img) separator X'ab')    
+null     null     
+cnn            a6     
+google         abc012aba6     
+google1        ba     
+google2        ffff     
+yahoo          ffff     
+
+===================================================
+name    group_concat( clob_to_char(doc) order by 1 separator '***')    
+null     www.google.com     
+cnn            www.cnn.com     
+google         google.com***www.google.com     
+google1        null     
+google2        www.google.com     
+yahoo          www.yahoo.com     
+
+===================================================
+group_concat(distinct name order by name separator ' + ')    
+cnn        + google     + google1    + google2    + yahoo          
+
+===================================================
+name    group_concat(distinct  blob_to_bit(img) order by 1 separator B'0101')    
+null     null     
+google         a6     
+google         abc012     
+google1        ba     
+yahoo          ffff     
+
+===================================================
+name    group_concat(distinct  clob_to_char(doc) order by 1 separator '***')    
+google1        null     
+google         google.com     
+cnn            www.cnn.com     
+google2        www.google.com     
+yahoo          www.yahoo.com     
+
+===================================================
+group_concat(name order by name)    
+cnn       ,google    ,google    ,google1   ,google2   ,yahoo          
+
+===================================================
+group_concat(distinct  blob_to_bit(img) order by 1)    
+a6abc012baffff     
+
+===================================================
+name    group_concat( clob_to_char(doc) order by 1)    
+null     www.google.com     
+cnn            www.cnn.com     
+google         google.com,www.google.com     
+google1        null     
+google2        www.google.com     
+yahoo          www.yahoo.com     
+
+===================================================
+Error:-494
+===================================================
+name    group_concat( clob_to_char(doc) order by 1 separator '...')    
+null     www.google.com     
+cnn            www.cnn.com     
+google         google.com...www.google.com     
+google1        null     
+google2        www.google.com     
+yahoo          www.yahoo.com     
+
+===================================================
+group_concat(name order by name desc )    
+yahoo     ,google2   ,google1   ,google    ,google    ,cnn            
+
+===================================================
+group_concat(distinct  blob_to_bit(img) order by 1 desc )    
+ffffbaabc012a6     
+
+===================================================
+name    group_concat( clob_to_char(doc) order by 1 desc )    
+null     www.google.com     
+cnn            www.cnn.com     
+google         www.google.com,google.com     
+google1        null     
+google2        www.google.com     
+yahoo          www.yahoo.com     
+
+===================================================
+group_concat( blob_to_bit(img) order by 1 desc  separator X'cd')    
+ffffcdffffcdbacdabc012cda6cda6     
+
+===================================================
+name    group_concat( clob_to_char(doc) order by 1 desc  separator '...')    
+null     www.google.com     
+cnn            www.cnn.com     
+google         www.google.com...google.com     
+google1        null     
+google2        www.google.com     
+yahoo          www.yahoo.com     
+
+===================================================
+7
+===================================================
+0

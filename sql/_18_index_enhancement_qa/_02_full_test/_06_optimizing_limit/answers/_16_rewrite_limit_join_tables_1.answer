@@ -1,0 +1,148 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+a    a    
+1     1     
+1     2     
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: x node[?]
+               index: i_x_a term[?] (covers)
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: y node[?]
+               index: i_y_a term[?] (covers)
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select x.a, y.a from x x, y y where (x.a> ?:? ) and (y.a> ?:? ) and (inst_num()<= ?:? )
+===================================================
+a    a    
+1     3     
+1     5     
+2     1     
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: x node[?]
+               index: i_x_a term[?] (covers)
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: y node[?]
+               index: i_y_a term[?] (covers)
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select x.a, y.a from x x, y y where (x.a> ?:? ) and (y.a> ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? )
+===================================================
+a    a    
+1     1     
+2     2     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: x node[?]
+               index: i_x_a term[?] (covers)
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: y node[?]
+               index: i_y_a term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select x.a, y.a from x x, y y where (x.a> ?:? ) and (y.a> ?:? ) and (inst_num()<= ?:? ) and x.a=y.a
+===================================================
+a    a    
+1     1     
+2     2     
+3     3     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: x node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: y node[?]
+               index: i_y_a term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select x.a, y.a from x x, y y where x.a is not null  and y.a is not null  and (inst_num()<= ?:? ) and x.a=y.a
+===================================================
+a    a    
+1     1     
+2     2     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: x node[?]
+               index: i_x_a term[?] (covers)
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: y node[?]
+               index: i_y_a term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select x.a, y.a from x x, y y where (x.a> ?:? ) and (y.a> ?:? ) and (inst_num()<= ?:? ) and x.a=y.a
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

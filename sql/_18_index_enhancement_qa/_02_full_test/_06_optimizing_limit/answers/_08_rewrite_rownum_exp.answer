@@ -1,0 +1,114 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+id    a    
+2     dbms qa2 part     
+4     aaa     
+6     ccc     
+8     ABA     
+10     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.a from t t where (t.id> ?:? ) and rownum mod  cast(? as bigint)=?
+===================================================
+id    a    
+1     dbms qa1 part     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.a from t t where (t.id> ?:? ) and rownum+ cast(? as bigint)=?
+===================================================
+id    a    
+2     dbms qa2 part     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.a from t t where (t.id> ?:? ) and rownum*rownum=?
+===================================================
+1    
+1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select ? from t t where ((t.id= ?:? ) or (t.id= ?:? )) and (rownum= ?:? )
+===================================================
+id    a    
+3     dbms qa2 part     
+
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.a from t t where t.id not in multiset{?, ?} and (rownum= ?:? )
+===================================================
+id    a    
+1     dbms qa1 part     
+2     dbms qa2 part     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.a from t t where ((t.id= ?:? ) or (t.id= ?:? )) and (rownum< ?:? )
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

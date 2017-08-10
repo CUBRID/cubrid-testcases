@@ -1,0 +1,1 @@
+Create table ßäöü你好(öü int,ßä varchar(200) SHARED'ßäöü你好' unique, S#ä varchar(200) default'helloßäöü你好');drop table ßäöü你好;

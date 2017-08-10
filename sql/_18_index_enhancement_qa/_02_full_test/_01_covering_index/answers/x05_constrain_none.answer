@@ -1,0 +1,95 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+a    
+1     
+
+Query plan:
+sscan
+    class: tb node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tb.a from tb tb where (tb.a<= ?:? )
+===================================================
+0
+===================================================
+a    
+null     
+
+Query plan:
+sscan
+    class: tb node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tb.a from tb tb where tb.a is null 
+===================================================
+a    
+1     
+2     
+3     
+
+Query plan:
+sscan
+    class: tb node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tb.a from tb tb where tb.a is not null 
+===================================================
+a    
+1     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select tb.a from tb tb where (tb.a<= ?:? )
+===================================================
+a    
+1     
+2     
+3     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select tb.a from tb tb where (tb.a>= ?:? )
+===================================================
+a    
+1     
+2     
+3     
+
+Query plan:
+sscan
+    class: tb node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tb.a from tb tb where  not tb.a<=>null
+===================================================
+a    
+
+===================================================
+0
+===================================================
+0
+===================================================
+0

@@ -1,0 +1,71 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+count(*)    
+2     
+
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select t.i, t.j from t t where (t.j>= ?:?  and t.j<= ?:? ))
+Query plan:
+sscan
+    class: tt node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select t.i, t.j from t t where (t.j>= ?:?  and t.j<= ?:? )) tt (i, j)
+===================================================
+count(*)    
+2     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: t_i_j term[?] (covers) (index skip scan)
+    cost:  ? card ?
+Query stmt:
+(select /*+ INDEX_SS */ t.i, t.j from t t where (t.j>= ?:?  and t.j<= ?:? ))
+Query plan:
+sscan
+    class: tt node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select /*+ INDEX_SS */ t.i, t.j from t t where (t.j>= ?:?  and t.j<= ?:? )) tt (i, j)
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+0     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: t_i_j term[?] (covers) (index skip scan)
+    cost:  ? card ?
+Query stmt:
+(select /*+ INDEX_SS */ t.i, t.j from t t where (t.j>= ?:?  and t.j<= ?:? ))
+Query plan:
+sscan
+    class: tt node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select /*+ INDEX_SS */ t.i, t.j from t t where (t.j>= ?:?  and t.j<= ?:? )) tt (i, j)
+===================================================
+0

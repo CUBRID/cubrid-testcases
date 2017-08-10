@@ -1,0 +1,24 @@
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+topicid    postdate    closeddate    
+
+Query plan:
+iscan
+    class: blogtopic node[?]
+    index: my_filter_index? term[?]
+    filtr: term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select blogtopic.topicid, blogtopic.postdate, blogtopic.closeddate from blogtopic blogtopic where ((blogtopic.topicId> ?:? ) or (blogtopic.topicId< ?:? )) and ((blogtopic.topicId> ?:? ) or (blogtopic.postDate> ?:? )) and ((blogtopic.topicId> ?:? ) or blogtopic.closedDate is null ) using index blogtopic.my_filter_index?(+), blogtopic.my_filter_index?(+)
+===================================================
+0

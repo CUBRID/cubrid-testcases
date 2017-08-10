@@ -1,0 +1,274 @@
+===================================================
+0
+===================================================
+14
+===================================================
+0
+===================================================
+0
+===================================================
+c    
+1              
+10             
+11             
+12             
+13             
+14             
+2              
+3              
+4              
+5              
+6              
+7              
+8              
+9              
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_c term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select t.c from t t where (t.c>= ?:?  and t.c<= ?:? )
+===================================================
+c    
+1              
+10             
+11             
+12             
+13             
+14             
+2              
+3              
+4              
+5              
+6              
+7              
+8              
+9              
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_c term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select t.c from t t where (t.c>= ?:?  and t.c<= ?:? )
+===================================================
+vc    
+1     
+10     
+11     
+12     
+13     
+14     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_vc term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select t.vc from t t where (t.vc>= ?:?  and t.vc<= ?:? )
+===================================================
+vc    
+1     
+10     
+11     
+12     
+13     
+14     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_vc term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select t.vc from t t where (t.vc>= ?:?  and t.vc<= ?:? )
+===================================================
+c    
+1              
+10             
+11             
+12             
+13             
+14             
+2              
+3              
+4              
+5              
+6              
+7              
+8              
+9              
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_c term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select t.c from t t where (t.c>= cast(? as varchar(?)) and t.c<= cast(? as varchar(?)))
+===================================================
+c    vc    
+1              1     
+10             10     
+11             11     
+12             12     
+13             13     
+14             14     
+2              2     
+3              3     
+4              4     
+5              5     
+6              6     
+7              7     
+8              8     
+9              9     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_c 
+    sargs: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.c, t.vc from t t where t.c=t.vc order by ?
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+0
+===================================================
+14
+===================================================
+0
+===================================================
+0
+===================================================
+c    
+1              
+10             
+11             
+12             
+13             
+14             
+2              
+3              
+4              
+5              
+6              
+7              
+8              
+9              
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_c term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select t.c from t t where (t.c>= ?:?  and t.c<= ?:? )
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+vc    
+1     
+10     
+11     
+12     
+13     
+14     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_vc term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select t.vc from t t where (t.vc>= ?:?  and t.vc<= ?:? )
+===================================================
+c    
+1              
+10             
+11             
+12             
+13             
+14             
+2              
+3              
+4              
+5              
+6              
+7              
+8              
+9              
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_c term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select t.c from t t where (t.c>= cast(? as nchar varying(?)) and t.c<= cast(? as nchar varying(?)))
+===================================================
+c    vc    
+1              1     
+10             10     
+11             11     
+12             12     
+13             13     
+14             14     
+2              2     
+3              3     
+4              4     
+5              5     
+6              6     
+7              7     
+8              8     
+9              9     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_c 
+    sargs: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.c, t.vc from t t where t.c=t.vc order by ?
+/* ---> skip ORDER BY */
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+0

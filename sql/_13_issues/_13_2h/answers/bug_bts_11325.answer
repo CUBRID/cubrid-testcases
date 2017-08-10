@@ -1,0 +1,109 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1500
+===================================================
+2000
+===================================================
+0
+===================================================
+2000
+===================================================
+0
+===================================================
+k    
+1     
+1     
+2     
+2     
+3     
+3     
+4     
+4     
+5     
+5     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: temp(sort limit)
+                            subplan: idx-join (inner join)
+                                         outer: sscan
+                                                    class: v node[?]
+                                                    cost:  ? card ?
+                                         inner: iscan
+                                                    class: u node[?]
+                                                    index: fk_u_t term[?]
+                                                    cost:  ? card ?
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t node[?]
+                            index: pk_t_i term[?] (covers)
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select u.k from u u, t t, v v where u.j=t.i and u.j=v.j order by ? for orderby_num()<= ?:? 
+===================================================
+k    
+1     
+1     
+2     
+2     
+3     
+3     
+4     
+4     
+5     
+5     
+
+Query plan:
+temp(order by)
+    subplan: temp
+                 order: UNORDERED
+                 subplan: m-join (inner join)
+                              edge:  term[?]
+                              outer: temp
+                                         order: j[?]
+                                         subplan: m-join (inner join)
+                                                      edge:  term[?]
+                                                      outer: temp
+                                                                 order: j[?]
+                                                                 subplan: sscan
+                                                                              class: u node[?]
+                                                                              cost:  ? card ?
+                                                                 cost:  ? card ?
+                                                      inner: temp
+                                                                 order: i[?]
+                                                                 subplan: sscan
+                                                                              class: t node[?]
+                                                                              cost:  ? card ?
+                                                                 cost:  ? card ?
+                                                      cost:  ? card ?
+                                         cost:  ? card ?
+                              inner: temp
+                                         order: j[?]
+                                         subplan: sscan
+                                                      class: v node[?]
+                                                      cost:  ? card ?
+                                         cost:  ? card ?
+                              cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_MERGE NO_SORT_LIMIT */ u.k from u u, t t, v v where u.j=t.i and u.j=v.j order by ? for orderby_num()<= ?:? 
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

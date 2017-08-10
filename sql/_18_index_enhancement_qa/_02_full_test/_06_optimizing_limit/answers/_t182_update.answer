@@ -1,0 +1,108 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+10000
+===================================================
+0
+===================================================
+a    b    c    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a_b_c_d term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c from t t where (t.a> ?:? ) and (rownum= ?:? )
+===================================================
+a    b    c    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a_b_c_d term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c from t t where (rownum= ?:? ) and t.a= ?:? 
+===================================================
+a    b    c    
+1     1     1              
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a_b_c_d term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c from t t where (t.a< ?:? ) and (rownum= ?:? )
+===================================================
+a    b    c    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a_b_c_d term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c from t t where (t.a< ?:? ) and (rownum= ?:? )
+===================================================
+a    b    c    
+1     1     1              
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a_b_c_d term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c from t t where (rownum= ?:? ) and t.a= ?:? 
+===================================================
+a    b    c    
+2     2     2              
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a_b_c_d term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c from t t where (t.a> ?:? ) and (rownum= ?:? )
+===================================================
+0
+===================================================
+1
+===================================================
+0
+1
+1
+1
+0
+===================================================
+count(*)    
+3     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a_b_c_d term[?] (covers) (index skip scan)
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ count(*) from t t where t.b= ?:? 
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

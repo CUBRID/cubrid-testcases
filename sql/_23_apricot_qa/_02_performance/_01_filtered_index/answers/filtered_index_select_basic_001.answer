@@ -1,0 +1,61 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+bugid    creationdate    author    subject    currentstatus    closed    
+1     2011-09-12 01:15:45.0     yin     fopen     0     0     
+
+Query plan:
+sscan
+    class: bugs node[?]
+    sargs: term[?] AND term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select bugs.bugid, bugs.creationdate, bugs.author, bugs.subject, bugs.currentstatus, bugs.closed from bugs bugs where bugs.Subject like  ?:?  and bugs.Closed= ?:?  and bugs.Author= ?:? 
+===================================================
+bugid    creationdate    author    subject    currentstatus    closed    
+1     2011-09-12 01:15:45.0     yin     fopen     0     0     
+
+Query plan:
+iscan
+    class: bugs node[?]
+    index: open_bugs 
+    sargs: term[?] AND term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select bugs.bugid, bugs.creationdate, bugs.author, bugs.subject, bugs.currentstatus, bugs.closed from bugs bugs where bugs.Subject like  ?:?  and bugs.Closed= ?:?  and bugs.Author= ?:?  using index bugs.open_bugs(+)
+===================================================
+bugid    creationdate    author    subject    currentstatus    closed    
+1     2011-09-12 01:15:45.0     yin     fopen     0     0     
+
+Query plan:
+iscan
+    class: bugs node[?]
+    index: open_bugs term[?]
+    sargs: term[?] AND term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select bugs.bugid, bugs.creationdate, bugs.author, bugs.subject, bugs.currentstatus, bugs.closed from bugs bugs where (bugs.bugID> ?:? ) and bugs.Subject like  ?:?  and bugs.Closed= ?:?  and bugs.Author= ?:?  using index bugs.open_bugs(+)
+===================================================
+bugid    creationdate    author    subject    currentstatus    closed    
+1     2011-09-12 01:15:45.0     yin     fopen     0     0     
+
+Query plan:
+iscan
+    class: bugs node[?]
+    index: open_bugs term[?]
+    sargs: term[?] AND term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select bugs.bugid, bugs.creationdate, bugs.author, bugs.subject, bugs.currentstatus, bugs.closed from bugs bugs where (bugs.bugID> ?:? ) and bugs.Subject like  ?:?  and bugs.Closed= ?:?  and bugs.Author= ?:?  using index bugs.open_bugs(+)
+===================================================
+0
+===================================================
+0
+===================================================
+0

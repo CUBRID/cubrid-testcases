@@ -1,0 +1,250 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+8
+===================================================
+0
+===================================================
+0
+===================================================
+8
+===================================================
+0
+===================================================
+0
+===================================================
+8
+===================================================
+i    i    
+5     5     
+5     5     
+5     5     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: di node[?]
+               index: i_di_i term[?] (covers) (desc_index)
+               cost:  ? card ?
+    inner: iscan
+               class: dj node[?]
+               index: i_dj_i term[?] (covers) (desc_index)
+               cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select di.i, dj.i from di di, dj dj where (di.i> ?:? ) and di.i=dj.i order by ? desc  for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+i    i    
+5     5     
+5     5     
+5     5     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: di node[?]
+               index: i_di_i term[?] (covers) (desc_index)
+               cost:  ? card ?
+    inner: iscan
+               class: dj node[?]
+               index: i_dj_i term[?] (covers) (desc_index)
+               cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ di.i, dj.i from di di, dj dj where (di.i> ?:? ) and di.i=dj.i order by ? desc  for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+i    i    x    
+5     5     3     
+5     5     2     
+5     5     1     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: di node[?]
+               index: i_di_i term[?] (covers) (desc_index)
+               cost:  ? card ?
+    inner: iscan
+               class: dk node[?]
+               index: i_dk term[?] AND term[?] (covers) (desc_index)
+               cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select di.i, dk.i, dk.x from di di, dk dk where (di.i> ?:? ) and di.i=dk.i and (dk.x> ?:? ) order by ? desc  for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+0
+===================================================
+i    i    x    
+5     5     1     
+5     5     2     
+5     5     3     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: di node[?]
+               index: i_di_i term[?] (covers) (desc_index)
+               cost:  ? card ?
+    inner: iscan
+               class: dk node[?]
+               index: i_dk_rev term[?] AND term[?] (covers) (desc_index)
+               cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select di.i, dk.i, dk.x from di di, dk dk where (di.i> ?:? ) and di.i=dk.i and (dk.x> ?:? ) order by ? desc  for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+i    i    x    
+5     5     1     
+5     5     2     
+5     5     3     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: iscan
+               class: di node[?]
+               index: i_di_i term[?] (covers) (desc_index)
+               cost:  ? card ?
+    inner: sscan
+               class: dk node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select di.i, dk.i, dk.x from di di, dk dk where (di.i> ?:? ) and di.i=dk.i and (dk.x> ?:? ) order by ? desc  for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+i    i    x    
+5     5     1     
+5     5     1     
+5     5     1     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: iscan
+                            class: di node[?]
+                            index: i_di_i term[?] (covers)
+                            cost:  ? card ?
+                 inner: sscan
+                            class: dk node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select di.i, dk.i, dk.x from di di, dk dk where (di.i> ?:? ) and di.i=dk.i and (dk.x> ?:? ) order by ? desc , ? for orderby_num()<= ?:? 
+===================================================
+i    i    i    x    
+5     5     5     1     
+5     5     5     2     
+5     5     5     3     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: idx-join (inner join)
+               outer: iscan
+                          class: di node[?]
+                          index: i_di_i term[?] (covers) (desc_index)
+                          cost:  ? card ?
+               inner: iscan
+                          class: dj node[?]
+                          index: i_dj_i term[?] (covers) (desc_index)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: dk node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select di.i, dj.i, dk.i, dk.x from di di, dj dj, dk dk where (di.i> ?:? ) and di.i=dj.i and dj.i=dk.i order by ? desc  for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+8
+===================================================
+i    i    i    
+5     5     5     
+5     5     5     
+5     5     5     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: idx-join (inner join)
+               outer: iscan
+                          class: di node[?]
+                          index: i_di_i term[?] (covers) (desc_index)
+                          cost:  ? card ?
+               inner: iscan
+                          class: dj node[?]
+                          index: i_dj_i term[?] (covers) (desc_index)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: dk node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select di.i, dj.i, dk.i from di di, dj dj, dk dk where (di.i> ?:? ) and di.i=dj.i and dj.i=dk.i order by ? desc  for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

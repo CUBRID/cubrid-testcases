@@ -1,0 +1,48 @@
+---CUBRIDSUS-7348
+--case 1.1 CREATE table
+CREATE TABLE t11 (x int DEFAULT NULL PRIMARY KEY);
+drop t11;
+
+--case 1.2 CREATE table
+CREATE TABLE t12(x int DEFAULT NULL, PRIMARY KEY (x));
+drop t12;
+
+--case 1.3  CREATE table
+CREATE TABLE t13 (x INT, y varchar(255) DEFAULT NULL , CONSTRAINT c1 PRIMARY KEY (x,y));
+drop t13;
+
+--case 2.1 ALTER modify/change table
+CREATE TABLE t21 (x int PRIMARY KEY);
+ALTER TABLE t21 MODIFY x int DEFAULT NULL;
+drop t21;
+
+--case 2.2 ALTER modify/change table
+CREATE TABLE t22 (x INT, y INT, CONSTRAINT c1 PRIMARY KEY (x,y));
+ALTER TABLE t22 MODIFY x int DEFAULT NULL;
+drop t22;
+
+--case 2.3 ALTER modify/change table
+CREATE TABLE t23 (x INT);
+ALTER TABLE t23 MODIFY x int DEFAULT NULL PRIMARY key;
+drop t23;
+
+--case 3.1 ALTER SET DEFAULT NULL
+CREATE TABLE t31 (x INT PRIMARY key);
+ALTER TABLE t31 ALTER COLUMN x SET DEFAULT NULL;
+drop t31;
+
+--case 4.1 ALTER ADD column
+CREATE TABLE t41 (x varchar(255));
+ALTER TABLE t41 ADD y int PRIMARY KEY DEFAULT NULL;
+drop t41;
+
+--case 5.1  ALTER ADD constraint
+CREATE TABLE t51 (x varchar(255) DEFAULT NULL);
+ALTER TABLE t51 ADD CONSTRAINT PRIMARY KEY(x); 
+drop t51;
+
+--case 5.2  ALTER ADD constraint
+CREATE TABLE t52 (x varchar(255));
+ALTER TABLE t52 ADD CONSTRAINT PRIMARY KEY(x); 
+drop t52;
+

@@ -1,0 +1,124 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+3
+===================================================
+3
+===================================================
+0
+===================================================
+i    j    i    
+1     1     1     
+2     2     1     
+3     3     1     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: t node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, ? from t t, db_root a order by ?
+===================================================
+0
+===================================================
+0
+===================================================
+i    j    i    j    vi    vj    
+1     1     1     1     1     1     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: v node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select a.i, a.j, v.i, v.j from u a right outer join v v on a.i=v.i)
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: t node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: a node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, a.i, a.j, a.vi, a.vj from t t, (select a.i, a.j, v.i, v.j from u a right outer join v v on a.i=v.i) a (i, j, vi, vj) where t.i=a.i order by ?
+===================================================
+0
+===================================================
+0
+===================================================
+i    j    i    j    vi    vj    
+1     1     1     1     1     1     
+1     1     1     1     3     3     
+1     1     1     1     5     5     
+2     2     2     2     1     1     
+2     2     2     2     3     3     
+2     2     2     2     5     5     
+3     3     null     null     null     null     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: v node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select a.i, a.j, v.i, v.j from u a, v v)
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: t node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: a node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, a.i, a.j, a.vi, a.vj from t t left outer join (select a.i, a.j, v.i, v.j from u a, v v) a (i, j, vi, vj) on t.i=a.i order by ?, ?, ?
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

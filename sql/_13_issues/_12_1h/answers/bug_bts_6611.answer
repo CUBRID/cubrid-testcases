@@ -1,0 +1,98 @@
+===================================================
+0
+===================================================
+0
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+bugid    creationdate    author    subject    description    currentstatus    closed    
+null     null     madden     fopen     null     null     0     
+
+Query plan:
+sscan
+    class: bugs node[?]
+    sargs: term[?] AND term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select bugs.bugid, bugs.creationdate, bugs.author, bugs.subject, bugs.description, bugs.currentstatus, bugs.closed from bugs bugs where bugs.Subject like  ?:?  and bugs.Closed= ?:?  and bugs.Author= ?:? 
+===================================================
+bugid    creationdate    author    subject    description    currentstatus    closed    
+
+Query plan:
+iscan
+    class: bugs node[?]
+    index: open_bugs 
+    sargs: term[?] AND term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select bugs.bugid, bugs.creationdate, bugs.author, bugs.subject, bugs.description, bugs.currentstatus, bugs.closed from bugs bugs where bugs.Subject like  ?:?  and bugs.Closed= ?:?  and bugs.Author= ?:?  using index bugs.open_bugs(+)
+===================================================
+bugid    creationdate    author    subject    description    currentstatus    closed    
+null     null     madden     fopen     null     null     0     
+
+Query plan:
+iscan
+    class: bugs node[?]
+    index: open_bugs_? 
+    filtr: term[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select bugs.bugid, bugs.creationdate, bugs.author, bugs.subject, bugs.description, bugs.currentstatus, bugs.closed from bugs bugs where bugs.Subject like  ?:?  and bugs.Closed= ?:?  and bugs.Author= ?:?  using index bugs.open_bugs_?(+)
+===================================================
+0
+===================================================
+0
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+0
+===================================================
+0
+===================================================
+Error:-631
+===================================================
+0
+===================================================
+bugid    creationdate    author    subject    description    currentstatus    closed    
+
+Query plan:
+sscan
+    class: bugs node[?]
+    sargs: term[?] AND term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select bugs.bugid, bugs.creationdate, bugs.author, bugs.subject, bugs.description, bugs.currentstatus, bugs.closed from bugs bugs where bugs.Subject like  ?:?  and bugs.Closed= ?:?  and bugs.Author= ?:? 
+===================================================
+bugid    creationdate    author    subject    description    currentstatus    closed    
+
+Query plan:
+iscan
+    class: bugs node[?]
+    index: open_bugs 
+    sargs: term[?] AND term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select bugs.bugid, bugs.creationdate, bugs.author, bugs.subject, bugs.description, bugs.currentstatus, bugs.closed from bugs bugs where bugs.Subject like  ?:?  and bugs.Closed= ?:?  and bugs.Author= ?:?  using index bugs.open_bugs(+)
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+Error:-494
+===================================================
+0

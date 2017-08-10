@@ -1,0 +1,456 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+i1    i2    i3    j1    j2    
+1     2     3     1     3     
+1     4     3     1     3     
+1     3     3     1     3     
+1     2     4     1     4     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: t? node[?]
+                            index: i_t?_i?_i?_i? term[?] AND term[?] AND term[?] (covers)
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t? node[?]
+                            index: i_t?_j?_j? term[?] AND term[?] (covers)
+                            cost:  ? card ?
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ t?.i?, t?.i?, t?.i?, t?.j?, t?.j? from t? t? inner join t? t? on t?.i?=t?.j? and t?.j?= ?:?  and t?.i?=t?.j? where ((t?.i?= ?:? ) or (t?.i?= ?:? ) or (t?.i?= ?:? )) and (t?.i?> ?:?  and t?.i?< ?:? ) and t?.i?= ?:?  order by ? for orderby_num()<= ?:? 
+===================================================
+j1    j2    i1    i2    i3    
+1     3     1     2     3     
+1     3     1     4     3     
+1     3     1     3     3     
+1     4     1     2     4     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: t? node[?]
+                            index: i_t?_j?_j? term[?] (covers)
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t? node[?]
+                            index: i_t?_i?_i?_i? term[?] AND term[?] AND term[?] (covers)
+                            filtr: term[?]
+                            cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ t?.j?, t?.j?, t?.i?, t?.i?, t?.i? from t? t? inner join t? t? on t?.i?=t?.j? and t?.j?= ?:?  and t?.i?=t?.j? where ((t?.i?= ?:? ) or (t?.i?= ?:? ) or (t?.i?= ?:? )) and (t?.i?> ?:?  and t?.i?< ?:? ) and t?.i?= ?:?  order by ? for orderby_num()<= ?:? 
+===================================================
+i1    i2    i3    j1    j2    
+1     4     3     1     4     
+1     3     3     1     3     
+1     3     4     1     3     
+1     4     4     1     4     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: t? node[?]
+                            index: i_t?_i?_i?_i? term[?] AND term[?] AND term[?] (covers)
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t? node[?]
+                            index: i_t?_j?_j? term[?] AND term[?] (covers)
+                            cost:  ? card ?
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ t?.i?, t?.i?, t?.i?, t?.j?, t?.j? from t? t? inner join t? t? on t?.i?=t?.j? and t?.j?= ?:?  and t?.i?=t?.j? where ((t?.i?= ?:? ) or (t?.i?= ?:? ) or (t?.i?= ?:? )) and (t?.i?> ?:?  and t?.i?< ?:? ) and t?.i?= ?:?  order by ? for orderby_num()<= ?:? 
+===================================================
+0
+===================================================
+i1    i2    i3    j1    j2    
+1     2     3     1     3     
+1     3     3     1     3     
+1     4     3     1     3     
+1     2     4     1     4     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: t? node[?]
+               index: i_t?_j?_j? term[?] (covers)
+               cost:  ? card ?
+    inner: iscan
+               class: t? node[?]
+               index: i_t?_i?_i?_i? term[?] AND term[?] AND term[?] (covers) (multi_range_opt)
+               filtr: term[?]
+               cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.i?, t?.i?, t?.i?, t?.j?, t?.j? from t? t?, t? t? where ((t?.i?= ?:? ) or (t?.i?= ?:? ) or (t?.i?= ?:? )) and (t?.i?> ?:?  and t?.i?< ?:? ) and t?.i?=t?.j? and t?.j?= ?:?  and t?.i?= ?:?  and t?.i?=t?.j? order by ? for orderby_num()<= ?:? 
+===================================================
+j1    j2    i1    i2    i3    
+1     3     1     2     3     
+1     3     1     3     3     
+1     3     1     4     3     
+1     4     1     2     4     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: t? node[?]
+               index: i_t?_j?_j? term[?] (covers)
+               cost:  ? card ?
+    inner: iscan
+               class: t? node[?]
+               index: i_t?_i?_i?_i? term[?] AND term[?] AND term[?] (covers) (multi_range_opt)
+               filtr: term[?]
+               cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.j?, t?.j?, t?.i?, t?.i?, t?.i? from t? t?, t? t? where ((t?.i?= ?:? ) or (t?.i?= ?:? ) or (t?.i?= ?:? )) and (t?.i?> ?:?  and t?.i?< ?:? ) and t?.i?=t?.j? and t?.j?= ?:?  and t?.i?= ?:?  and t?.i?=t?.j? order by ? for orderby_num()<= ?:? 
+===================================================
+i1    i2    i3    j1    j2    
+1     4     3     1     4     
+1     3     3     1     3     
+1     3     4     1     3     
+1     4     4     1     4     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: t? node[?]
+               index: i_t?_j?_j? term[?] (covers)
+               cost:  ? card ?
+    inner: iscan
+               class: t? node[?]
+               index: i_t?_i?_i?_i? term[?] AND term[?] AND term[?] (covers) (multi_range_opt)
+               filtr: term[?]
+               cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.i?, t?.i?, t?.i?, t?.j?, t?.j? from t? t?, t? t? where ((t?.i?= ?:? ) or (t?.i?= ?:? ) or (t?.i?= ?:? )) and (t?.i?> ?:?  and t?.i?< ?:? ) and t?.i?=t?.j? and t?.j?= ?:?  and t?.i?= ?:?  and t?.i?=t?.j? order by ? for orderby_num()<= ?:? 
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+7
+===================================================
+7
+===================================================
+3
+===================================================
+6
+===================================================
+6
+===================================================
+6
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+i    j    k    
+2     4     6     
+2     3     5     
+2     5     4     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: u node[?]
+                            index: i_u_i_j_k_d term[?] AND term[?] (covers)
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t node[?]
+                            index: i_t_j_i term[?] AND term[?] (covers)
+                            cost:  ? card ?
+                 sort:  ? asc, ? desc
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select u.i, u.j, u.k from t t, u u where t.i=u.j and ((u.j= ?:? ) or (u.j= ?:? ) or (u.j= ?:? )) and u.i= ?:?  and t.j= ?:?  order by ? desc  for orderby_num()<= ?:? 
+===================================================
+0
+===================================================
+i    j    k    
+2     4     6     
+2     3     5     
+2     5     4     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: t node[?]
+               index: i_t_j_i term[?] (covers)
+               cost:  ? card ?
+    inner: iscan
+               class: u node[?]
+               index: i_u_i_j_k_d term[?] AND term[?] (covers) (multi_range_opt)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select u.i, u.j, u.k from t t, u u where t.i=u.j and ((u.j= ?:? ) or (u.j= ?:? ) or (u.j= ?:? )) and u.i= ?:?  and t.j= ?:?  order by ? desc  for orderby_num()<= ?:? 
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+5
+===================================================
+3
+===================================================
+3
+===================================================
+3
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+i    k    p    
+1     3     8     
+1     3     8     
+1     2     7     
+1     2     7     
+1     1     6     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: iscan
+                            class: t node[?]
+                            index: i_t_i_k_p_d term[?] AND term[?] (covers)
+                            cost:  ? card ?
+                 inner: sscan
+                            class: u node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 sort:  ? asc, ? desc
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.k, t.p from t t, u u where ((t.k= ?:? ) or (t.k= ?:? ) or (t.k= ?:? )) and u.i= ?:?  and t.i= ?:?  and t.i=u.i order by ? desc  for orderby_num()<= ?:? 
+===================================================
+0
+===================================================
+i    k    p    
+1     3     8     
+1     3     8     
+1     2     7     
+1     2     7     
+1     1     6     
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: t node[?]
+               index: i_t_i_k_p_d term[?] AND term[?] (covers) (multi_range_opt)
+               cost:  ? card ?
+    inner: sscan
+               class: u node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.k, t.p from t t, u u where ((t.k= ?:? ) or (t.k= ?:? ) or (t.k= ?:? )) and u.i= ?:?  and t.i= ?:?  and t.i=u.i order by ? desc  for orderby_num()<= ?:? 
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+4
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+title    category    entry_date    
+Strategy to win     games     2011-02-14     
+Expansion released     games     2011-02-13     
+Talking parrot     pets     2011-02-07     
+The team and me     friends     2011-02-05     
+My new colleague     friends     2011-02-04     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: users node[?]
+                            index: i_users_name_id term[?] (covers)
+                            cost:  ? card ?
+                 inner: iscan
+                            class: posts node[?]
+                            index: i_posts_uid_category_entry_date_d term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select posts.title, posts.category, posts.entry_date from posts posts, users users where posts.uid=users.id and ((posts.category= ?:? ) or (posts.category= ?:? ) or (posts.category= ?:? ) or (posts.category= ?:? )) and users.[name]= ?:?  order by ? desc  for orderby_num()<= ?:? 
+===================================================
+0
+===================================================
+title    category    entry_date    
+Strategy to win     games     2011-02-14     
+Expansion released     games     2011-02-13     
+Talking parrot     pets     2011-02-07     
+The team and me     friends     2011-02-05     
+My new colleague     friends     2011-02-04     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: users node[?]
+               index: i_users_name_id term[?] (covers)
+               cost:  ? card ?
+    inner: iscan
+               class: posts node[?]
+               index: i_posts_uid_category_entry_date_d term[?] AND term[?] (multi_range_opt)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select posts.title, posts.category, posts.entry_date from posts posts, users users where posts.uid=users.id and ((posts.category= ?:? ) or (posts.category= ?:? ) or (posts.category= ?:? ) or (posts.category= ?:? )) and users.[name]= ?:?  order by ? desc  for orderby_num()<= ?:? 
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

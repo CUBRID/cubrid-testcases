@@ -1,0 +1,12 @@
+create table t(a char(10));
+create index idx1 on t(lower(a) asc);
+create index idx2 on t(lower(a) desc);
+show index in t;
+drop table t;
+create table t(a int, key idx1(log10(a) asc),index idx2 (log10(a) desc));
+show index in t;
+drop table t;
+create table t(a date);
+alter table t add index idx1(year(a) asc),add key idx2(year(a) desc);
+show index in t;
+drop table t;

@@ -1,0 +1,74 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+b    b    
+a     a     
+b     b     
+
+Query plan:
+sscan
+    class: s? node[?]
+    cost:  ? card ?
+Query stmt:
+(select s?.b from s? s?)
+Query plan:
+sscan
+    class: s? node[?]
+    cost:  ? card ?
+Query stmt:
+(select s?.b from s? s?)
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: t? node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select t?.b, t?.b from (select s?.b from s? s?) t? (b), (select s?.b from s? s?) t? (b) where t?.b=t?.b
+===================================================
+b    b    
+a     a     
+b     b     
+
+Query plan:
+sscan
+    class: s? node[?]
+    cost:  ? card ?
+Query stmt:
+(select s?.b from s? s?)
+Query plan:
+sscan
+    class: s? node[?]
+    cost:  ? card ?
+Query stmt:
+(select s?.b from s? s?)
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: t? node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select t?.b, t?.b from (select s?.b from s? s?) t? (b), (select s?.b from s? s?) t? (b) where t?.b= cast(t?.b as varchar(?))
+===================================================
+0

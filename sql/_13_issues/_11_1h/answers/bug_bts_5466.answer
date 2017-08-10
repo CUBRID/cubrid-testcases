@@ -1,0 +1,41 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+id    a    
+1     1     
+
+Query plan:
+iscan
+    class: test_tb node[?]
+    index: i_all term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select test_tb.id, test_tb.a from test_tb test_tb where test_tb.id= last_insert_id() 
+===================================================
+id    a    
+1     1     
+
+Query plan:
+iscan
+    class: test_tb node[?]
+    index: i_all term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select test_tb.id, test_tb.a from test_tb test_tb where test_tb.id= ?:? 
+===================================================
+id    a    
+1     1     
+
+Query plan:
+iscan
+    class: test_tb node[?]
+    index: i_all term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select test_tb.id, test_tb.a from test_tb test_tb where (test_tb.id> row_count() )
+===================================================
+0

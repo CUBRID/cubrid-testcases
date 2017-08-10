@@ -1,0 +1,157 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+a    
+a              
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.a from t t where  upper(t.a)='A'
+===================================================
+a    
+a              
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct 'A' from t t)
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: t node[?]
+               index: i? term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: av? node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select t.a from t t, (select distinct 'A' from t t) av? (av_?) where  upper(t.a)='A' and av?.av_?= upper(t.a)
+===================================================
+a    
+a              
+b              
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct  upper(t.a) from t t where (t.a< ?:? ))
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: av? node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t node[?]
+                            index: i? term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a from t t, (select distinct  upper(t.a) from t t where (t.a< ?:? )) av? (av_?) where av?.av_?= upper(t.a) order by ?
+===================================================
+a    
+b              
+c              
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct  upper(t.a) from t t where (t.a> ?:? ))
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: av? node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t node[?]
+                            index: i? term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a from t t, (select distinct  upper(t.a) from t t where (t.a> ?:? )) av? (av_?) where av?.av_?= upper(t.a) order by ?
+===================================================
+a    
+a              
+b              
+
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select distinct max( upper(t.a)) from t t where ((t.a= ?:? ) or (t.a= ?:? )))
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: av? node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: t node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a from t t, (select distinct max( upper(t.a)) from t t where ((t.a= ?:? ) or (t.a= ?:? ))) av? (av_?) where (av?.av_?> upper(t.a)) order by ?
+===================================================
+a    
+a              
+b              
+c              
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct  upper(t.a) from t t where (t.a< ?:? ))
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.a from t t where  upper(t.a)>= all (select distinct  upper(t.a) from t t where (t.a< ?:? ))
+===================================================
+0
+===================================================
+0

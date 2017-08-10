@@ -1,0 +1,1136 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+10
+===================================================
+10
+===================================================
+10
+===================================================
+a    b    
+1     1     
+1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a_b term[?] (covers) (multi_range_opt)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from t t where ((t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? )) order by ? for orderby_num()<= ?:? 
+===================================================
+a    b    
+1     1     
+1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a_b term[?] (covers) (multi_range_opt)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from t t where ((t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? )) order by ? for orderby_num()<= ?:? 
+===================================================
+a    b    
+3     3     
+3     3     
+3     3     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a_b term[?] (covers) (multi_range_opt)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from t t where t.a= ?:?  order by ? for orderby_num()<= ?:? 
+===================================================
+a    b    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a_b term[?] (covers) (multi_range_opt)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from t t where t.a= ?:?  order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+===================================================
+a    b    
+3     3     
+3     3     
+3     3     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a_b term[?] (covers) (multi_range_opt)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from t t where t.a= ?:?  order by ? for orderby_num()<= ?:? 
+===================================================
+a    b    
+3     3     
+3     3     
+3     3     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a_b term[?] (covers) (multi_range_opt)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from t t where t.a= ?:?  order by ? for orderby_num()<= ?:? 
+===================================================
+a    b    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a_b term[?] (covers) (multi_range_opt)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from t t where t.a= ?:?  order by ? for orderby_num()<= ?:? 
+===================================================
+a    b    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a_b term[?] (covers) (multi_range_opt)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from t t where t.a= ?:?  order by ? for orderby_num()<= ?:? 
+===================================================
+a    b    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a_b term[?] (covers) (multi_range_opt)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from t t where t.a= ?:?  order by ? for orderby_num()<= ?:? 
+===================================================
+a    b    
+3     3     
+3     3     
+3     3     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a_b term[?] (covers) (multi_range_opt) (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from t t where t.a= ?:?  order by ? desc  for orderby_num()<= ?:? 
+===================================================
+a    b    
+3     3     
+3     3     
+3     3     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a_b term[?] (covers) (multi_range_opt) (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from t t where t.a= ?:?  order by ? desc  for orderby_num()<= ?:? 
+===================================================
+a    b    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a_b term[?] (covers) (multi_range_opt) (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from t t where t.a= ?:?  order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+===================================================
+a    b    
+3     3     
+3     3     
+3     3     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a_b term[?] (covers) (multi_range_opt)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from t t where t.a= ?:?  order by ? for orderby_num()< ?:? 
+===================================================
+a    b    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a_b term[?] (covers) (multi_range_opt) (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from t t where t.a= ?:?  order by ? desc  for orderby_num()<= ?:? 
+===================================================
+a    b    
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from t t where t.b= ?:?  order by ? desc  for orderby_num()<= ?:? 
+===================================================
+a    b    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a_b term[?] (covers) (multi_range_opt) (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from t t where t.a= ?:?  order by ? desc  for orderby_num()<= ?:? 
+===================================================
+a    b    
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from t t where t.b= ?:?  order by ? desc  for orderby_num()<= ?:? 
+===================================================
+a    b    
+3     3     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a_b term[?] (covers) (multi_range_opt)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from t t where t.a= ?:?  order by ? for orderby_num() between  ?:?  and  ?:? 
+===================================================
+a    b    
+1     1     
+1     1     
+1     1     
+2     2     
+2     2     
+2     2     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_a_b term[?] (covers)
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from t t where (t.a< ?:? ) order by ? for orderby_num()<= ?:? 
+===================================================
+a    b    
+10     10     
+10     10     
+10     10     
+9     9     
+9     9     
+9     9     
+8     8     
+8     8     
+8     8     
+7     7     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from t t where t.a<>? order by ? desc  for orderby_num()<= ?:? 
+===================================================
+a    b    
+3     3     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a_b term[?] (covers) (multi_range_opt)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from t t where t.a= ?:?  order by ? for orderby_num() between  ?:?  and  ?:? 
+===================================================
+a    b    
+2     2     
+2     2     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a_b term[?] (covers) (multi_range_opt)
+    filtr: term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from t t where ((t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? )) and t.b<>? order by ? for orderby_num()<= ?:? 
+===================================================
+a    b    
+1     1     
+1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a_b term[?] (covers) (multi_range_opt)
+    filtr: term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from t t where ((t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? )) and ((t.b= ?:? ) or (t.b= ?:? ) or (t.b= ?:? )) order by ? for orderby_num()<= ?:? 
+===================================================
+a    b    
+1     1     
+1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a_b term[?] (covers) (multi_range_opt)
+    filtr: term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from t t where ((t.b= ?:? ) or (t.b= ?:? ) or (t.b= ?:? )) and ((t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? )) order by ? for orderby_num()<= ?:? 
+===================================================
+a    b    
+1     1     
+1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a_b term[?] (covers) (multi_range_opt)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from t t where ((t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? )) order by ? for orderby_num()<= ?:? 
+===================================================
+a    b    
+1     1     
+1     1     
+1     1     
+2     2     
+2     2     
+2     2     
+3     3     
+3     3     
+3     3     
+4     4     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from t t where (((t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? )) or ((t.b= ?:? ) or (t.b= ?:? ))) order by ? for orderby_num()<= ?:? 
+===================================================
+a    a+b    
+1     2     
+1     2     
+1     2     
+2     4     
+2     4     
+2     4     
+3     6     
+3     6     
+3     6     
+4     8     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.a+t.b, t.b from t t where (((t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? )) or ((t.b= ?:? ) or (t.b= ?:? ))) order by ? for orderby_num()<= ?:? 
+===================================================
+a    b    
+2     2     
+2     2     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_a_b term[?] (covers)
+                 filtr: term[?]
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from t t where ((t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? )) and t.b<>? order by ?, ? for orderby_num()<= ?:? 
+===================================================
+a    b    
+2     2     
+2     2     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from t t where t.b<>? order by ?, ? for orderby_num()<= ?:? 
+===================================================
+a    b    
+1     1     
+1     1     
+1     1     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from t t where t.b= ?:?  order by ? desc  for orderby_num()<= ?:? 
+===================================================
+a    b    
+1     1     
+1     1     
+1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a_b term[?] (covers) (multi_range_opt) (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from t t where t.a= ?:?  order by ? desc  for orderby_num()<= ?:? 
+===================================================
+a    b    
+1     1     
+1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a_b term[?] (covers)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from t t where (t.a< ?:? ) order by ? for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+a    b    
+3     3     
+3     3     
+
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from t t where t.b= ?:?  and (inst_num())<= ?:? 
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+72
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+0
+===================================================
+a    b    a    b    c    d    e    
+2     2     1     1     2     1     2     
+2     2     1     1     2     1     1     
+2     2     1     1     2     1     3     
+2     2     1     1     2     2     3     
+2     2     1     1     2     2     2     
+2     2     1     1     2     2     1     
+2     2     1     1     1     1     2     
+2     2     1     1     1     1     1     
+2     2     1     1     1     1     3     
+2     2     1     1     1     2     1     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: s node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t node[?]
+               index: idx_a_b_cd_d term[?] AND term[?] (multi_range_opt)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ s.a, s.b, t.a, t.b, t.c, t.d, t.e from s s inner join t t on s.b=t.b+? and s.b=?+? and s.a=t.a+? where ((t.a= ?:? ) or (t.a= ?:? )) and t.b= ?:?  order by ? desc , ? for orderby_num()<= ?:? 
+===================================================
+a    b    a    b    c    d    e    
+2     2     1     1     2     1     2     
+2     2     1     1     2     1     1     
+2     2     1     1     2     1     3     
+2     2     1     1     2     2     3     
+2     2     1     1     2     2     2     
+2     2     1     1     2     2     1     
+2     2     1     1     1     1     2     
+2     2     1     1     1     1     1     
+2     2     1     1     1     1     3     
+2     2     1     1     1     2     1     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: s node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t node[?]
+               index: idx_a_b_cd_d term[?] AND term[?] (multi_range_opt)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select s.a, s.b, t.a, t.b, t.c, t.d, t.e from s s, t t where ((t.a= ?:? ) or (t.a= ?:? )) and s.a=t.a+? and s.b=?+? and t.b= ?:?  and s.b=t.b+? order by ? desc , ? for orderby_num()<= ?:? 
+===================================================
+a    b    a    b    c    d    e    
+2     2     1     1     2     1     3     
+2     2     1     1     2     1     1     
+2     2     1     1     2     1     2     
+2     2     1     1     2     2     1     
+2     2     1     1     2     2     2     
+2     2     1     1     2     2     3     
+2     2     1     1     1     1     2     
+2     2     1     1     1     1     3     
+2     2     1     1     1     1     1     
+2     2     1     1     1     2     1     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: s node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t node[?]
+                            index: idx_a_b_cd_d term[?] AND term[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_MULTI_RANGE_OPT */ s.a, s.b, t.a, t.b, t.c, t.d, t.e from s s, t t where ((t.a= ?:? ) or (t.a= ?:? )) and s.a=t.a+? and s.b=?+? and t.b= ?:?  and s.b=t.b+? order by ? desc , ? for orderby_num()<= ?:? 
+===================================================
+a    b    a    b    c    d    e    
+2     2     1     1     2     1     2     
+2     2     1     1     2     1     1     
+2     2     1     1     2     1     3     
+2     2     1     1     2     2     3     
+2     2     1     1     2     2     2     
+2     2     1     1     2     2     1     
+2     2     1     1     1     1     2     
+2     2     1     1     1     1     1     
+2     2     1     1     1     1     3     
+2     2     1     1     1     2     1     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: s node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t node[?]
+               index: idx_a_b_cd_d term[?] AND term[?] (multi_range_opt)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select s.a, s.b, t.a, t.b, t.c, t.d, t.e from s s, t t where ((t.a= ?:? ) or (t.a= ?:? )) and s.a=t.a+? and s.b=?+? and t.b= ?:?  and s.b=t.b+? order by ? desc , ? for orderby_num()<= ?:? 
+===================================================
+a    b    a    b    c    d    e    
+2     1     1     1     2     1     2     
+2     1     1     1     2     1     1     
+2     1     1     1     2     1     3     
+2     1     1     1     2     2     3     
+2     1     1     1     2     2     2     
+2     1     1     1     2     2     1     
+2     1     1     1     1     1     2     
+2     1     1     1     1     1     1     
+2     1     1     1     1     1     3     
+2     1     1     1     1     2     1     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: s node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t node[?]
+               index: idx_a_b_cd_d term[?] AND term[?] (multi_range_opt)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select s.a, s.b, t.a, t.b, t.c, t.d, t.e from s s, t t where ((t.a= ?:? ) or (t.a= ?:? )) and s.a=t.a+? and s.b= ?:?  and t.b= ?:?  and s.b=t.b order by ? desc , ? for orderby_num()<= ?:? 
+===================================================
+a    b    a    b    c    d    e    
+2     1     1     1     2     1     2     
+2     1     1     1     2     1     1     
+2     1     1     1     2     1     3     
+2     1     1     1     2     2     3     
+2     1     1     1     2     2     2     
+2     1     1     1     2     2     1     
+2     1     1     1     1     1     2     
+2     1     1     1     1     1     1     
+2     1     1     1     1     1     3     
+2     1     1     1     1     2     1     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: s node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t node[?]
+               index: idx_a_b_cd_d term[?] AND term[?] (multi_range_opt)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_NL */ s.a, s.b, t.a, t.b, t.c, t.d, t.e from s s, t t where ((t.a= ?:? ) or (t.a= ?:? )) and s.a=t.a+? and s.b= ?:?  and t.b= ?:?  and s.b=t.b order by ? desc , ? for orderby_num()<= ?:? 
+===================================================
+a    b    a    b    c    d    e    
+2     1     1     1     2     1     2     
+2     1     1     1     2     1     1     
+2     1     1     1     2     1     3     
+2     1     1     1     2     2     3     
+2     1     1     1     2     2     2     
+2     1     1     1     2     2     1     
+2     1     1     1     1     1     2     
+2     1     1     1     1     1     1     
+2     1     1     1     1     1     3     
+2     1     1     1     1     2     1     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: s node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t node[?]
+               index: idx_a_b_cd_d term[?] AND term[?] (multi_range_opt)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_IDX */ s.a, s.b, t.a, t.b, t.c, t.d, t.e from s s, t t where ((t.a= ?:? ) or (t.a= ?:? )) and s.a=t.a+? and s.b= ?:?  and t.b= ?:?  and s.b=t.b order by ? desc , ? for orderby_num()<= ?:? 
+===================================================
+a    b    a    b    c    d    e    
+2     1     1     1     2     1     1     
+2     1     1     1     2     2     3     
+2     1     1     1     2     2     1     
+2     1     1     1     2     2     2     
+2     1     1     1     1     1     3     
+2     1     1     1     1     1     2     
+2     1     1     1     1     1     1     
+2     1     1     1     1     2     2     
+2     1     1     1     1     2     3     
+2     1     1     1     1     2     1     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: s node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t node[?]
+               index: idx_a_b_cd_d term[?] AND term[?] (multi_range_opt) (desc_index forced)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ s.a, s.b, t.a, t.b, t.c, t.d, t.e from s s, t t where ((t.a= ?:? ) or (t.a= ?:? )) and s.a=t.a+? and s.b= ?:?  and t.b= ?:?  and s.b=t.b order by ? desc , ? for orderby_num()<= ?:? 
+===================================================
+a    b    a    b    c    d    e    
+2     1     1     1     2     1     2     
+2     1     1     1     2     1     1     
+2     1     1     1     2     1     3     
+2     1     1     1     2     2     3     
+2     1     1     1     2     2     2     
+2     1     1     1     2     2     1     
+2     1     1     1     1     1     2     
+2     1     1     1     1     1     1     
+2     1     1     1     1     1     3     
+2     1     1     1     1     2     1     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: s node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t node[?]
+               index: idx_a_b_cd_d term[?] AND term[?] (multi_range_opt)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select s.a, s.b, t.a, t.b, t.c, t.d, t.e from s s, t t where ((t.a= ?:? ) or (t.a= ?:? )) and s.a=t.a+? and s.b= ?:?  and t.b= ?:?  and s.b=t.b order by ? desc , ? for orderby_num()<= ?:? 
+===================================================
+a    b    c    d    e    sa    sb    ua    ub    
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: idx-join (inner join)
+               outer: sscan
+                          class: s node[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: t node[?]
+                          index: idx_a_b_cd_d term[?] AND term[?] (multi_range_opt)
+                          filtr: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: u node[?]
+               index: idx_u_a term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select t.a, t.b, t.c, t.d, t.e, s.a, s.b, u.a, u.b from t t, s s, u u where t.a=s.a and s.b=u.b+? and ((t.a= ?:? ) or (t.a= ?:? )) and u.a= ?:?  and t.b= ?:?  and t.b=u.a order by ? desc , ? for orderby_num()<= ?:? )
+Query plan:
+sscan
+    class: __t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select [__t?].a, [__t?].b, [__t?].c, [__t?].d, [__t?].e, [__t?].sa, [__t?].sb, [__t?].ua, [__t?].ub from (select t.a, t.b, t.c, t.d, t.e, s.a as [sa], s.b as [sb], u.a as [ua], u.b as [ub] from t t, s s, u u where t.a=s.a and s.b=u.b+? and ((t.a= ?:? ) or (t.a= ?:? )) and u.a= ?:?  and t.b= ?:?  and t.b=u.a order by ? desc , ? for orderby_num()<= ?:? ) [__t?] (a, b, c, d, e, sa, sb, ua, ub) where (inst_num()<= ?:? )
+===================================================
+a    b    c    d    e    sa    sb    ua    ub    
+1     1     2     1     1     1     1     1     1     
+1     1     2     1     3     1     1     1     1     
+3     1     2     1     2     3     1     1     1     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: idx-join (inner join)
+               outer: sscan
+                          class: s node[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: t node[?]
+                          index: idx_a_b_cd_d term[?] AND term[?] (multi_range_opt)
+                          filtr: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: u node[?]
+               index: idx_u_a term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select t.a, t.b, t.c, t.d, t.e, s.a, s.b, u.a, u.b from t t, s s, u u where t.a=s.a and s.b=u.b and ((t.a= ?:? ) or (t.a= ?:? )) and u.a= ?:?  and t.b= ?:?  and t.b=u.a order by ? desc , ? for orderby_num()<= ?:? )
+Query plan:
+sscan
+    class: __t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select [__t?].a, [__t?].b, [__t?].c, [__t?].d, [__t?].e, [__t?].sa, [__t?].sb, [__t?].ua, [__t?].ub from (select t.a, t.b, t.c, t.d, t.e, s.a as [sa], s.b as [sb], u.a as [ua], u.b as [ub] from t t, s s, u u where t.a=s.a and s.b=u.b and ((t.a= ?:? ) or (t.a= ?:? )) and u.a= ?:?  and t.b= ?:?  and t.b=u.a order by ? desc , ? for orderby_num()<= ?:? ) [__t?] (a, b, c, d, e, sa, sb, ua, ub) where (inst_num()<= ?:? )
+===================================================
+0
+===================================================
+0
+===================================================
+72
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+a    b    c    d    e    
+1     1     2     1     1     
+3     1     2     1     2     
+3     1     2     1     3     
+1     1     2     1     2     
+1     1     2     1     3     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx_a_b_cd_d_ed term[?] AND term[?] (covers) (multi_range_opt)
+    sort:  ? asc, ? desc, ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where ((t.a= ?:? ) or (t.a= ?:? )) and t.b= ?:?  order by ? desc , ? for orderby_num()<= ?:? 
+===================================================
+0
+===================================================
+0
+===================================================
+50000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+a    b    c    d    e    
+1     1     3                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        3                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx_a_b_cd_d_ed term[?] AND term[?] (covers) (multi_range_opt)
+    sort:  ? asc, ? desc, ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where ((t.a= ?:? ) or (t.a= ?:? )) and t.b= ?:?  order by ? desc , ? for orderby_num()<= ?:? 
+===================================================
+0
+===================================================
+a    b    c    d    e    
+1     1     3                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        3                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+
+Query plan:
+iscan
+    class: p node[?]
+    index: i__db_partition_class_of_pname term[?] (covers)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+(select 'YES' from [_db_partition] p where p.class_of=a and p.pname is null )
+Query plan:
+nl-join (left outer join)
+    outer: nl-join (inner join)
+               edge:  table(?) -> t node[?]
+               outer: iscan
+                          class: u node[?]
+                          index: u_db_user_name term[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: t node[?]
+                          sargs: table(?) -> t node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: db_user node[?]
+               sargs: t node[?] g -> db_user node[?]
+               cost:  ? card ?
+    sargs: t node[?] g -> db_user node[?]
+    cost:  ? card ?
+Query stmt:
+(select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER )
+Query plan:
+nl-join (left outer join)
+    outer: nl-join (inner join)
+               edge:  table(?) -> t node[?]
+               outer: iscan
+                          class: u node[?]
+                          index: u_db_user_name term[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: t node[?]
+                          sargs: table(?) -> t node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: db_user node[?]
+               sargs: t node[?] g -> db_user node[?]
+               cost:  ? card ?
+    sargs: t node[?] g -> db_user node[?]
+    cost:  ? card ?
+Query stmt:
+(select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER )
+Query plan:
+follow
+    edge:  au node[?] grantee -> db_user node[?]
+    head:  sscan
+              class: au node[?]
+              sargs: term[?]
+              cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select sum(set{au.class_of}) from [_db_auth] au where {[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) and au.auth_type= ?:? )
+Query plan:
+follow
+    edge:  a node[?] owner -> db_user node[?]
+    head:  nl-join (inner join)
+              edge:  term[?]
+              outer: sscan
+                         class: coll node[?]
+                         cost:  ? card ?
+              inner: sscan
+                         class: a node[?]
+                         sargs: term[?]
+                         cost:  ? card ?
+              cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select a.class_name, ( cast(a.[owner].[name] as varchar(?))), ( cast(case a.class_type when ? then 'CLASS' when ? then 'VCLASS' else 'UNKNOW' end as varchar(?))), ( cast(case when  mod(a.is_system_class, ?)=? then 'YES' else 'NO' end as varchar(?))), ( cast(case when a.sub_classes is null  then 'NO' else nvl((select 'YES' from [_db_partition] p where p.class_of=a and p.pname is null ), 'NO') end as varchar(?))), ( cast(case when  mod(a.is_system_class/?, ?)=? then 'YES' else 'NO' end as varchar(?))), coll.coll_name, a.[comment] from [_db_class] a, [_db_collation] coll where (a.collation_id=coll.coll_id) and ( CURRENT_USER ='DBA' or {a.[owner].[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) or {a} subseteq (select sum(set{au.class_of}) from [_db_auth] au where {[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) and au.auth_type= ?:? )))
+Query plan:
+iscan
+    class: p node[?]
+    index: i__db_partition_class_of_pname term[?] (covers)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+(select 'YES' from [_db_partition] p where p.class_of=b and p.pname is null )
+Query plan:
+nl-join (left outer join)
+    outer: nl-join (inner join)
+               edge:  table(?) -> t node[?]
+               outer: iscan
+                          class: u node[?]
+                          index: u_db_user_name term[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: t node[?]
+                          sargs: table(?) -> t node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: db_user node[?]
+               sargs: t node[?] g -> db_user node[?]
+               cost:  ? card ?
+    sargs: t node[?] g -> db_user node[?]
+    cost:  ? card ?
+Query stmt:
+(select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER )
+Query plan:
+nl-join (left outer join)
+    outer: nl-join (inner join)
+               edge:  table(?) -> t node[?]
+               outer: iscan
+                          class: u node[?]
+                          index: u_db_user_name term[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: t node[?]
+                          sargs: table(?) -> t node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: db_user node[?]
+               sargs: t node[?] g -> db_user node[?]
+               cost:  ? card ?
+    sargs: t node[?] g -> db_user node[?]
+    cost:  ? card ?
+Query stmt:
+(select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER )
+Query plan:
+follow
+    edge:  au node[?] grantee -> db_user node[?]
+    head:  sscan
+              class: au node[?]
+              sargs: term[?]
+              cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select sum(set{au.class_of}) from [_db_auth] au where {[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) and au.auth_type= ?:? )
+Query plan:
+follow
+    edge:  b node[?] owner -> db_user node[?]
+    head:  nl-join (inner join)
+              edge:  term[?]
+              outer: sscan
+                         class: coll node[?]
+                         cost:  ? card ?
+              inner: sscan
+                         class: b node[?]
+                         sargs: term[?]
+                         cost:  ? card ?
+              cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select b.class_name, ( cast(b.[owner].[name] as varchar(?))), ( cast(case b.class_type when ? then 'CLASS' when ? then 'VCLASS' else 'UNKNOW' end as varchar(?))), ( cast(case when  mod(b.is_system_class, ?)=? then 'YES' else 'NO' end as varchar(?))), ( cast(case when b.sub_classes is null  then 'NO' else nvl((select 'YES' from [_db_partition] p where p.class_of=b and p.pname is null ), 'NO') end as varchar(?))), ( cast(case when  mod(b.is_system_class/?, ?)=? then 'YES' else 'NO' end as varchar(?))), coll.coll_name, b.[comment] from [_db_class] b, [_db_collation] coll where (b.collation_id=coll.coll_id) and ( CURRENT_USER ='DBA' or {b.[owner].[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) or {b} subseteq (select sum(set{au.class_of}) from [_db_auth] au where {[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) and au.auth_type= ?:? )))
+Query plan:
+temp(distinct)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct rownum from (select a.class_name, ( cast(a.[owner].[name] as varchar(?))), ( cast(case a.class_type when ? then 'CLASS' when ? then 'VCLASS' else 'UNKNOW' end as varchar(?))), ( cast(case when  mod(a.is_system_class, ?)=? then 'YES' else 'NO' end as varchar(?))), ( cast(case when a.sub_classes is null  then 'NO' else nvl((select 'YES' from [_db_partition] p where p.class_of=a and p.pname is null ), 'NO') end as varchar(?))), ( cast(case when  mod(a.is_system_class/?, ?)=? then 'YES' else 'NO' end as varchar(?))), coll.coll_name, a.[comment] from [_db_class] a, [_db_collation] coll where (a.collation_id=coll.coll_id) and ( CURRENT_USER ='DBA' or {a.[owner].[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) or {a} subseteq (select sum(set{au.class_of}) from [_db_auth] au where {[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) and au.auth_type= ?:? ))) a (class_name, owner_name, class_type, is_system_class, partitioned, is_reuse_oid_class, [collation], [comment]), (select b.class_name, ( cast(b.[owner].[name] as varchar(?))), ( cast(case b.class_type when ? then 'CLASS' when ? then 'VCLASS' else 'UNKNOW' end as varchar(?))), ( cast(case when  mod(b.is_system_class, ?)=? then 'YES' else 'NO' end as varchar(?))), ( cast(case when b.sub_classes is null  then 'NO' else nvl((select 'YES' from [_db_partition] p where p.class_of=b and p.pname is null ), 'NO') end as varchar(?))), ( cast(case when  mod(b.is_system_class/?, ?)=? then 'YES' else 'NO' end as varchar(?))), coll.coll_name, b.[comment] from [_db_class] b, [_db_collation] coll where (b.collation_id=coll.coll_id) and ( CURRENT_USER ='DBA' or {b.[owner].[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) or {b} subseteq (select sum(set{au.class_of}) from [_db_auth] au where {[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) and au.auth_type= ?:? ))) b (class_name, owner_name, class_type, is_system_class, partitioned, is_reuse_oid_class, [collation], [comment]))
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: av? node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t node[?]
+               index: idx_a_b_cd_d_ed term[?] AND term[?] (covers) (multi_range_opt)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t, (select distinct rownum from (select a.class_name, ( cast(a.[owner].[name] as varchar(?))), ( cast(case a.class_type when ? then 'CLASS' when ? then 'VCLASS' else 'UNKNOW' end as varchar(?))), ( cast(case when  mod(a.is_system_class, ?)=? then 'YES' else 'NO' end as varchar(?))), ( cast(case when a.sub_classes is null  then 'NO' else nvl((select 'YES' from [_db_partition] p where p.class_of=a and p.pname is null ), 'NO') end as varchar(?))), ( cast(case when  mod(a.is_system_class/?, ?)=? then 'YES' else 'NO' end as varchar(?))), coll.coll_name, a.[comment] from [_db_class] a, [_db_collation] coll where (a.collation_id=coll.coll_id) and ( CURRENT_USER ='DBA' or {a.[owner].[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) or {a} subseteq (select sum(set{au.class_of}) from [_db_auth] au where {[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) and au.auth_type= ?:? ))) a (class_name, owner_name, class_type, is_system_class, partitioned, is_reuse_oid_class, [collation], [comment]), (select b.class_name, ( cast(b.[owner].[name] as varchar(?))), ( cast(case b.class_type when ? then 'CLASS' when ? then 'VCLASS' else 'UNKNOW' end as varchar(?))), ( cast(case when  mod(b.is_system_class, ?)=? then 'YES' else 'NO' end as varchar(?))), ( cast(case when b.sub_classes is null  then 'NO' else nvl((select 'YES' from [_db_partition] p where p.class_of=b and p.pname is null ), 'NO') end as varchar(?))), ( cast(case when  mod(b.is_system_class/?, ?)=? then 'YES' else 'NO' end as varchar(?))), coll.coll_name, b.[comment] from [_db_class] b, [_db_collation] coll where (b.collation_id=coll.coll_id) and ( CURRENT_USER ='DBA' or {b.[owner].[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) or {b} subseteq (select sum(set{au.class_of}) from [_db_auth] au where {[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) and au.auth_type= ?:? ))) b (class_name, owner_name, class_type, is_system_class, partitioned, is_reuse_oid_class, [collation], [comment])) av? (av_?) where t.a=av?.av_? and t.b= ?:?  order by ? desc , ? for orderby_num()<= ?:? 
+===================================================
+0
+===================================================
+0
+===================================================
+50000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+a    b    c    d    e    
+3     1     5     3     5     
+1     1     3     1     3     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx_a_b_cd_d_ed term[?] AND term[?] (covers) (multi_range_opt)
+    sort:  ? asc, ? desc, ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where ((t.a= ?:? ) or (t.a= ?:? )) and t.b= ?:?  order by ? desc , ? for orderby_num()<= ?:? 
+===================================================
+a    b    c    d    e    
+3     1     5     3     5     
+1     1     3     1     3     
+
+Query plan:
+temp(distinct)
+    subplan: iscan
+                 class: t node[?]
+                 index: idx_a_b_cd_d_ed term[?] AND term[?] (covers)
+                 sort:  ? asc, ? desc, ? asc, ? desc
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select distinct t.a, t.b, t.c, t.d, t.e from t t where ((t.a= ?:? ) or (t.a= ?:? )) and t.b= ?:?  order by ? desc , ? for orderby_num()<= ?:? 
+===================================================
+0
+===================================================
+0
+===================================================
+0

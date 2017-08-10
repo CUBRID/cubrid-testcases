@@ -1,0 +1,65 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1000
+===================================================
+1000
+===================================================
+1000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+i    j    k    l    
+null     1     1     1     
+0      1     1     1     
+1      1     1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx term[?] (index skip scan)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where t.j= ?:?  order by ?
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+i    j    k    l    
+null     1     1     1     
+0      1     1     1     
+1      1     1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx term[?] (index skip scan)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where t.j= ?:?  using index t.idx order by ?
+/* ---> skip ORDER BY */
+===================================================
+i    j    k    l    
+null     1     1     1     
+0      1     1     1     
+1      1     1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx term[?] (index skip scan)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where t.j= ?:?  order by ?
+/* ---> skip ORDER BY */
+===================================================
+0

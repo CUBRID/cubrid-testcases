@@ -1,0 +1,10 @@
+create table t(a monetary);
+insert into t values(-9.9*10);
+insert into t values(\CNY-9.9*10);
+insert into t values($-9.9*10);
+select * from t order by 1;
+insert into t values(-9.9*0);
+insert into t values(\CNY-9.9*0);
+insert into t values($-9.9*0);
+select * from t order by 1;
+drop table t;

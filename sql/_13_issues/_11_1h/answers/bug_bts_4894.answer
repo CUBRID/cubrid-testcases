@@ -1,0 +1,56 @@
+===================================================
+0
+===================================================
+0
+===================================================
+5
+===================================================
+0
+===================================================
+a    b    c    
+5     8     7     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a_b_c (covers) (desc_index)
+    filtr: term[?]
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c from t t where t.b= ?:?  order by ? desc , ? desc 
+/* ---> skip ORDER BY */
+===================================================
+a    c    
+5     7     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a_b_c (covers) (desc_index)
+    filtr: term[?]
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.c from t t where t.b= ?:?  order by ? desc , ? desc 
+/* ---> skip ORDER BY */
+===================================================
+a    
+5     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a_b_c (covers) (desc_index)
+    filtr: term[?]
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.c from t t where t.b= ?:?  order by ? desc , ? desc 
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+0
+===================================================
+0

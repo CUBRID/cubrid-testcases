@@ -1,0 +1,37 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+a    case when a in (with cte(a) as ((select * from case_tbl where a=1))select * from cte) then 'one' when a in (with cte(a) as ((select * from case_tbl where a=2))select * from cte) then 'two' else 'other' end    
+1     one     
+2     two     
+3     other     
+null     other     
+
+===================================================
+a    case a when (with cte(a) as ((select * from case_tbl where a=1))select * from cte) then 'one' when (with cte(a) as ((select * from case_tbl where a=2))select * from cte) then 'two' else 'other' end    
+1     one     
+2     two     
+3     other     
+null     other     
+
+===================================================
+Error:-494
+===================================================
+a    case a when (with cte(a) as ((select * from case_tbl where a=1))select * from cte) then 1 when (with cte(a) as ((select * from case_tbl where a=2))select * from cte) then 1.2345 else 1.234567890 end    
+1     1.000000000     
+2     1.234500000     
+3     1.234567890     
+null     1.234567890     
+
+===================================================
+0

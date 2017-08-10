@@ -1,0 +1,908 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+id    a    
+3     3     
+2     2     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+id    a    
+3     3     
+2     2     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) using index tb.i_tb_a
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+id    a    
+3     3     
+2     2     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+id    a    
+3     3     
+2     2     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) using index tb.i_tb_a
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+id    a    
+3     3     
+2     2     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+id    a    
+3     3     
+2     2     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) using index tb.i_tb_a
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+id    a    
+3     3     
+2     2     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+id    a    
+3     3     
+2     2     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) using index tb.i_tb_a
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+id    a    
+3     9223372036854775806     
+2     -9223372036854775807     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+id    a    
+3     9223372036854775806     
+2     -9223372036854775807     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) using index tb.i_tb_a
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+id    a    
+3     1234567890.1232     
+2     1234567890.1231     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+id    a    
+3     1234567890.1232     
+2     1234567890.1231     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) using index tb.i_tb_a
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+id    a    
+3     1234567890.1232     
+2     1234567890.1231     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+id    a    
+3     1234567890.1232     
+2     1234567890.1231     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) using index tb.i_tb_a
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+id    a    
+3     0.01     
+2     0.0     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+id    a    
+3     0.01     
+2     0.0     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) using index tb.i_tb_a
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+id    a    
+3     0.01     
+2     0.0     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+id    a    
+3     0.01     
+2     0.0     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) using index tb.i_tb_a
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+id    a    
+3     0.0     
+2     -0.0     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+id    a    
+3     0.0     
+2     -0.0     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) using index tb.i_tb_a
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+id    a    
+3     0.0     
+2     -0.0     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+id    a    
+3     0.0     
+2     -0.0     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) using index tb.i_tb_a
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+id    a    
+3     3.123     
+2     2.123     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+id    a    
+3     3.123     
+2     2.123     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) using index tb.i_tb_a
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+id    a    
+3     2011-01-01     
+2     2010-12-31     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+id    a    
+3     2011-01-01     
+2     2010-12-31     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) using index tb.i_tb_a
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+id    a    
+3     22:44:00     
+2     22:43:00     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+id    a    
+3     22:44:00     
+2     22:43:00     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) using index tb.i_tb_a
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+id    a    
+3     2010-12-31 22:44:00.0     
+2     2010-12-31 22:43:00.0     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+id    a    
+3     2010-12-31 22:44:00.0     
+2     2010-12-31 22:43:00.0     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) using index tb.i_tb_a
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+id    a    
+3     2010-12-31 22:44:00.0     
+2     2010-12-31 22:43:00.0     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+id    a    
+3     2010-12-31 22:44:00.0     
+2     2010-12-31 22:43:00.0     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) using index tb.i_tb_a
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+id    a    
+3     80     
+2     40     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+id    a    
+3     80     
+2     40     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) using index tb.i_tb_a
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+id    a    
+3     80     
+2     40     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+id    a    
+3     80     
+2     40     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) using index tb.i_tb_a
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+id    a    
+3     10     
+2     01     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+id    a    
+3     10     
+2     01     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) using index tb.i_tb_a
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+id    a    
+3     10     
+2     01     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+id    a    
+3     10     
+2     01     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) using index tb.i_tb_a
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+id    a    
+3     10     
+2     01     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+id    a    
+3     10     
+2     01     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) using index tb.i_tb_a
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+id    a    
+3     10     
+2     01     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+id    a    
+3     10     
+2     01     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? ) using index tb.i_tb_a
+===================================================
+0
+===================================================
+0
+===================================================
+0

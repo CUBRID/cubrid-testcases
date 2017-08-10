@@ -1,0 +1,539 @@
+===================================================
+0
+===================================================
+dayofyear('2010-05-11' collate iso88591_en_ci)    
+131     
+
+===================================================
+dayofyear('2010-06-21' collate iso88591_en_ci)    
+172     
+
+===================================================
+dayofyear('2008-02-29' collate iso88591_en_ci)    
+60     
+
+===================================================
+dayofyear('1983-05-24' collate iso88591_en_ci)    
+144     
+
+===================================================
+dayofyear('22/11/2010' collate iso88591_en_ci)    
+null     
+
+===================================================
+dayofyear( str_to_date('12/25/1999' collate iso88591_en_ci, '%m/%d/%Y'))    
+359     
+
+===================================================
+dayofyear('2010-01-01 12:20:00' collate iso88591_en_ci)    
+1     
+
+===================================================
+0
+===================================================
+2
+===================================================
+char_col    dayofyear(char_col)    
+2010-01-02                           2     
+2010-01-02                           2     
+
+===================================================
+varchar_col    dayofyear(varchar_col)    
+1971-12-22 00:14:11     356     
+asdf     null     
+
+===================================================
+string_col    dayofyear(string_col)    
+10/04/2010 12:23:15.123     277     
+05/04/2010 12:23:15.123     124     
+
+===================================================
+bit_col    dayofyear(bit_col)    
+null     null     
+null     null     
+
+===================================================
+integer_col    dayofyear(integer_col)    
+12000     null     
+12000     null     
+
+===================================================
+smallint_col    dayofyear(smallint_col)    
+3     null     
+6     null     
+
+===================================================
+bigint_col    dayofyear(bigint_col)    
+1111111111     315     
+1111111111     315     
+
+===================================================
+float_col    if( dayofyear(float_col)= dayofyear( date( concat( year( SYS_DATE ), '-12-25' collate iso88591_en_ci))), 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+12.25     ok     
+12.25     ok     
+
+===================================================
+double_col    dayofyear(double_col)    
+111.11111111     null     
+111.11111111     null     
+
+===================================================
+float_col    if( dayofyear(numeric_col)= dayofyear( date( concat( year( SYS_DATE ), '-11-12' collate iso88591_en_ci))), 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+12.25     ok     
+12.25     ok     
+
+===================================================
+monetary_col    dayofyear(monetary_col)    
+1234.0     null     
+1234.0     null     
+
+===================================================
+date_col    dayofyear(date_col)    
+2010-01-02 00:00:00.0     2     
+2010-01-02 00:00:00.0     2     
+
+===================================================
+time_col    dayofyear(time_col)    
+12:10:09     283     
+12:10:09     283     
+
+===================================================
+timestamp_col    dayofyear(timestamp_col)    
+2008-10-11 10:49:51.0     285     
+2008-10-11 10:49:51.0     285     
+
+===================================================
+datetime_col    dayofyear(datetime_col)    
+1983-01-02 17:28:31.0     2     
+1983-01-02 17:28:31.0     2     
+
+===================================================
+Error:-494
+===================================================
+char_col    varchar_col    string_col    bit_col    integer_col    smallint_col    bigint_col    float_col    double_col    numeric_col    monetary_col    date_col    time_col    timestamp_col    datetime_col    set_col    
+2010-01-02                           1971-12-22 00:14:11     10/04/2010 12:23:15.123     null     12000     3     1111111111     12.25     111.11111111     11.12     1234.0     2010-01-02 00:00:00.0     12:10:09     2008-10-11 10:49:51.0     1983-01-02 17:28:31.0     null     
+
+===================================================
+char_col    varchar_col    string_col    bit_col    integer_col    smallint_col    bigint_col    float_col    double_col    numeric_col    monetary_col    date_col    time_col    timestamp_col    datetime_col    set_col    
+2010-01-02                           1971-12-22 00:14:11     10/04/2010 12:23:15.123     null     12000     3     1111111111     12.25     111.11111111     11.12     1234.0     2010-01-02 00:00:00.0     12:10:09     2008-10-11 10:49:51.0     1983-01-02 17:28:31.0     null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+attr_name    class_name    attr_type    def_order    from_class_name    from_attr_name    data_type    prec    scale    charset    collation    domain_class_name    default_value    is_nullable    comment    
+ dayofyear('2010-01-02' collate iso88591_en_ci)     dayofyear_tests     INSTANCE     0     null     null     INTEGER     10     0     Not applicable     Not applicable     null     null     YES     null     
+
+===================================================
+dayofyear('2010-01-02' collate iso88591_en_ci)    
+2     
+
+===================================================
+0
+===================================================
+0
+===================================================
+v    
+2     
+
+===================================================
+0
+===================================================
+rez    
+346     
+
+===================================================
+rez    
+2     
+
+===================================================
+rez    
+2     
+
+===================================================
+rez    
+null     
+
+===================================================
+rez    
+1     
+
+===================================================
+rez    
+
+===================================================
+dayofyear(datetime '2003-08-23 01:02:03.1234')    if( dayofyear(datetime '2010-08-23 01:02:03.1234')=235, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+235     ok     
+
+===================================================
+dayofyear(timestamp '2010-08-23 01:02:03')    if( dayofyear(timestamp '2010-08-23 01:02:03')=235, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+235     ok     
+
+===================================================
+dayofyear(date '2010-08-23')    if( dayofyear(date '2010-08-23')=235, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+235     ok     
+
+===================================================
+dayofyear('2010-08-23 01:02:03.1234' collate iso88591_en_ci)    if( dayofyear('2010-08-23 01:02:03.1234' collate iso88591_en_ci)=235, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+235     ok     
+
+===================================================
+dayofyear('2010-08-23 01:02:03' collate iso88591_en_ci)    if( dayofyear('2010-08-23 01:02:03' collate iso88591_en_ci)=235, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+235     ok     
+
+===================================================
+dayofyear('2010-08-23' collate iso88591_en_ci)    if( dayofyear('2010-08-23' collate iso88591_en_ci)=235, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+235     ok     
+
+===================================================
+if( dayofyear( SYS_DATE )= cast( date_format( SYS_DATE , '%j' collate iso88591_en_ci) as integer), 'ok' collate iso88591_en_ci, 'not ok' collate iso88591_en_ci)    
+ok     
+
+===================================================
+if( dayofyear( SYS_DATETIME )= cast( date_format( SYS_DATETIME , '%j' collate iso88591_en_ci) as integer), 'ok' collate iso88591_en_ci, 'not ok' collate iso88591_en_ci)    
+ok     
+
+===================================================
+if( dayofyear( SYS_TIMESTAMP )= cast( date_format( SYS_TIMESTAMP , '%j' collate iso88591_en_ci) as integer), 'ok' collate iso88591_en_ci, 'not ok' collate iso88591_en_ci)    
+ok     
+
+===================================================
+dayofyear('2010-01-01' collate iso88591_en_ci)    if( dayofyear('2010-01-01' collate iso88591_en_ci)=1, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+1     ok     
+
+===================================================
+dayofyear('2010-02-01' collate iso88591_en_ci)    if( dayofyear('2010-02-01' collate iso88591_en_ci)=32, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+32     ok     
+
+===================================================
+dayofyear('2010-03-01' collate iso88591_en_ci)    if( dayofyear('2010-03-01' collate iso88591_en_ci)=60, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+60     ok     
+
+===================================================
+dayofyear('2010-04-01' collate iso88591_en_ci)    if( dayofyear('2010-04-01' collate iso88591_en_ci)=91, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+91     ok     
+
+===================================================
+dayofyear('2010-05-01' collate iso88591_en_ci)    if( dayofyear('2010-05-01' collate iso88591_en_ci)=121, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+121     ok     
+
+===================================================
+dayofyear('2010-06-01' collate iso88591_en_ci)    if( dayofyear('2010-06-01' collate iso88591_en_ci)=152, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+152     ok     
+
+===================================================
+dayofyear('2010-07-01' collate iso88591_en_ci)    if( dayofyear('2010-07-01' collate iso88591_en_ci)=182, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+182     ok     
+
+===================================================
+dayofyear('2010-08-01' collate iso88591_en_ci)    if( dayofyear('2010-08-01' collate iso88591_en_ci)=213, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+213     ok     
+
+===================================================
+dayofyear('2010-09-01' collate iso88591_en_ci)    if( dayofyear('2010-09-01' collate iso88591_en_ci)=244, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+244     ok     
+
+===================================================
+dayofyear('2010-10-01' collate iso88591_en_ci)    if( dayofyear('2010-10-01' collate iso88591_en_ci)=274, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+274     ok     
+
+===================================================
+dayofyear('2010-11-01' collate iso88591_en_ci)    if( dayofyear('2010-11-01' collate iso88591_en_ci)=305, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+305     ok     
+
+===================================================
+dayofyear('2010-12-01' collate iso88591_en_ci)    if( dayofyear('2010-12-01' collate iso88591_en_ci)=335, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+335     ok     
+
+===================================================
+dayofyear('2000-01-01' collate iso88591_en_ci)    if( dayofyear('2000-01-01' collate iso88591_en_ci)=1, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+1     ok     
+
+===================================================
+dayofyear(date '2000-01-01'-1)    if( dayofyear(date '2000-01-01'-1)=365, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+365     ok     
+
+===================================================
+dayofyear('2000-12-31' collate iso88591_en_ci)    if( dayofyear('2000-12-31' collate iso88591_en_ci)=366, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+366     ok     
+
+===================================================
+dayofyear(date '2000-12-31'+1)    if( dayofyear(date '2000-12-31'+1)=1, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+1     ok     
+
+===================================================
+dayofyear('2000-01-00 01:02:03' collate iso88591_en_ci)    
+null     
+
+===================================================
+dayofyear('2000-12-32 01:02:03' collate iso88591_en_ci)    
+null     
+
+===================================================
+dayofyear('1999-2-29 01:02:03' collate iso88591_en_ci)    
+null     
+
+===================================================
+dayofyear('01:02:03' collate iso88591_en_ci)    
+34     
+
+===================================================
+0
+===================================================
+dayofyear('2010-05-11' collate iso88591_en_ci)    
+131     
+
+===================================================
+dayofyear('2010-06-21' collate iso88591_en_ci)    
+172     
+
+===================================================
+dayofyear('2008-02-29' collate iso88591_en_ci)    
+60     
+
+===================================================
+dayofyear('1983-05-24' collate iso88591_en_ci)    
+144     
+
+===================================================
+Error:-494
+===================================================
+dayofyear( str_to_date('12/25/1999' collate iso88591_en_ci, '%m/%d/%Y'))    
+359     
+
+===================================================
+dayofyear('2010-01-01 12:20:00' collate iso88591_en_ci)    
+1     
+
+===================================================
+0
+===================================================
+2
+===================================================
+char_col    dayofyear(char_col)    
+2010-01-02                           2     
+2010-01-02                           2     
+
+===================================================
+Error:-176
+===================================================
+string_col    dayofyear(string_col)    
+10/04/2010 12:23:15.123     277     
+05/04/2010 12:23:15.123     124     
+
+===================================================
+bit_col    dayofyear(bit_col)    
+null     null     
+null     null     
+
+===================================================
+Error:-176
+===================================================
+Error:-176
+===================================================
+bigint_col    dayofyear(bigint_col)    
+1111111111     315     
+1111111111     315     
+
+===================================================
+float_col    if( dayofyear(float_col)= dayofyear( date( concat( year( SYS_DATE ), '-12-25' collate iso88591_en_ci))), 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+12.25     ok     
+12.25     ok     
+
+===================================================
+Error:-176
+===================================================
+float_col    if( dayofyear(numeric_col)= dayofyear( date( concat( year( SYS_DATE ), '-11-12' collate iso88591_en_ci))), 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+12.25     ok     
+12.25     ok     
+
+===================================================
+Error:-176
+===================================================
+date_col    dayofyear(date_col)    
+2010-01-02 00:00:00.0     2     
+2010-01-02 00:00:00.0     2     
+
+===================================================
+time_col    dayofyear(time_col)    
+12:10:09     283     
+12:10:09     283     
+
+===================================================
+timestamp_col    dayofyear(timestamp_col)    
+2008-10-11 10:49:51.0     285     
+2008-10-11 10:49:51.0     285     
+
+===================================================
+datetime_col    dayofyear(datetime_col)    
+1983-01-02 17:28:31.0     2     
+1983-01-02 17:28:31.0     2     
+
+===================================================
+Error:-494
+===================================================
+char_col    varchar_col    string_col    bit_col    integer_col    smallint_col    bigint_col    float_col    double_col    numeric_col    monetary_col    date_col    time_col    timestamp_col    datetime_col    set_col    
+2010-01-02                           1971-12-22 00:14:11     10/04/2010 12:23:15.123     null     12000     3     1111111111     12.25     111.11111111     11.12     1234.0     2010-01-02 00:00:00.0     12:10:09     2008-10-11 10:49:51.0     1983-01-02 17:28:31.0     null     
+
+===================================================
+Error:-176
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+attr_name    class_name    attr_type    def_order    from_class_name    from_attr_name    data_type    prec    scale    charset    collation    domain_class_name    default_value    is_nullable    comment    
+ dayofyear('2010-01-02' collate iso88591_en_ci)     dayofyear_tests     INSTANCE     0     null     null     INTEGER     10     0     Not applicable     Not applicable     null     null     YES     null     
+
+===================================================
+dayofyear('2010-01-02' collate iso88591_en_ci)    
+2     
+
+===================================================
+0
+===================================================
+0
+===================================================
+v    
+2     
+
+===================================================
+0
+===================================================
+rez    
+346     
+
+===================================================
+rez    
+2     
+
+===================================================
+rez    
+2     
+
+===================================================
+Error:-176
+===================================================
+rez    
+1     
+
+===================================================
+rez    
+
+===================================================
+dayofyear(datetime '2003-08-23 01:02:03.1234')    if( dayofyear(datetime '2010-08-23 01:02:03.1234')=235, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+235     ok     
+
+===================================================
+dayofyear(timestamp '2010-08-23 01:02:03')    if( dayofyear(timestamp '2010-08-23 01:02:03')=235, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+235     ok     
+
+===================================================
+dayofyear(date '2010-08-23')    if( dayofyear(date '2010-08-23')=235, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+235     ok     
+
+===================================================
+dayofyear('2010-08-23 01:02:03.1234' collate iso88591_en_ci)    if( dayofyear('2010-08-23 01:02:03.1234' collate iso88591_en_ci)=235, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+235     ok     
+
+===================================================
+dayofyear('2010-08-23 01:02:03' collate iso88591_en_ci)    if( dayofyear('2010-08-23 01:02:03' collate iso88591_en_ci)=235, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+235     ok     
+
+===================================================
+dayofyear('2010-08-23' collate iso88591_en_ci)    if( dayofyear('2010-08-23' collate iso88591_en_ci)=235, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+235     ok     
+
+===================================================
+if( dayofyear( SYS_DATE )= cast( date_format( SYS_DATE , '%j' collate iso88591_en_ci) as integer), 'ok' collate iso88591_en_ci, 'not ok' collate iso88591_en_ci)    
+ok     
+
+===================================================
+if( dayofyear( SYS_DATETIME )= cast( date_format( SYS_DATETIME , '%j' collate iso88591_en_ci) as integer), 'ok' collate iso88591_en_ci, 'not ok' collate iso88591_en_ci)    
+ok     
+
+===================================================
+if( dayofyear( SYS_TIMESTAMP )= cast( date_format( SYS_TIMESTAMP , '%j' collate iso88591_en_ci) as integer), 'ok' collate iso88591_en_ci, 'not ok' collate iso88591_en_ci)    
+ok     
+
+===================================================
+dayofyear('2010-01-01' collate iso88591_en_ci)    if( dayofyear('2010-01-01' collate iso88591_en_ci)=1, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+1     ok     
+
+===================================================
+dayofyear('2010-02-01' collate iso88591_en_ci)    if( dayofyear('2010-02-01' collate iso88591_en_ci)=32, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+32     ok     
+
+===================================================
+dayofyear('2010-03-01' collate iso88591_en_ci)    if( dayofyear('2010-03-01' collate iso88591_en_ci)=60, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+60     ok     
+
+===================================================
+dayofyear('2010-04-01' collate iso88591_en_ci)    if( dayofyear('2010-04-01' collate iso88591_en_ci)=91, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+91     ok     
+
+===================================================
+dayofyear('2010-05-01' collate iso88591_en_ci)    if( dayofyear('2010-05-01' collate iso88591_en_ci)=121, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+121     ok     
+
+===================================================
+dayofyear('2010-06-01' collate iso88591_en_ci)    if( dayofyear('2010-06-01' collate iso88591_en_ci)=152, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+152     ok     
+
+===================================================
+dayofyear('2010-07-01' collate iso88591_en_ci)    if( dayofyear('2010-07-01' collate iso88591_en_ci)=182, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+182     ok     
+
+===================================================
+dayofyear('2010-08-01' collate iso88591_en_ci)    if( dayofyear('2010-08-01' collate iso88591_en_ci)=213, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+213     ok     
+
+===================================================
+dayofyear('2010-09-01' collate iso88591_en_ci)    if( dayofyear('2010-09-01' collate iso88591_en_ci)=244, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+244     ok     
+
+===================================================
+dayofyear('2010-10-01' collate iso88591_en_ci)    if( dayofyear('2010-10-01' collate iso88591_en_ci)=274, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+274     ok     
+
+===================================================
+dayofyear('2010-11-01' collate iso88591_en_ci)    if( dayofyear('2010-11-01' collate iso88591_en_ci)=305, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+305     ok     
+
+===================================================
+dayofyear('2010-12-01' collate iso88591_en_ci)    if( dayofyear('2010-12-01' collate iso88591_en_ci)=335, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+335     ok     
+
+===================================================
+dayofyear('2000-01-01' collate iso88591_en_ci)    if( dayofyear('2000-01-01' collate iso88591_en_ci)=1, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+1     ok     
+
+===================================================
+Error:-494
+===================================================
+dayofyear('2000-12-31' collate iso88591_en_ci)    if( dayofyear('2000-12-31' collate iso88591_en_ci)=366, 'ok' collate iso88591_en_ci, 'nok' collate iso88591_en_ci)    
+366     ok     
+
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+dayofyear('01:02:03' collate iso88591_en_ci)    
+34     
+
+===================================================
+0

@@ -1,0 +1,20 @@
+--+ holdcas on;
+drop table if exists t
+set names utf8;
+create table t(s string collate utf8_de_exp);
+create index i_t_s on t(s(2));
+insert into t values ('aBc');
+insert into t values ('aBa');
+insert into t values ('ABa');
+select * from t where s > 'ab';
+drop table t;
+create table t(s string collate utf8_gen);
+create index i_t_s on t(s(2));
+insert into t values ('aBc');
+insert into t values ('aBa');
+insert into t values ('ABa');
+select * from t where s > 'ab';
+drop table t;
+set names iso88591;
+commit;
+--+ holdcas off;

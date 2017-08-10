@@ -1,0 +1,70 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+a    
+2     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: my_index  (desc_index)
+    sargs: term[?]
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a from t t where (t.b> ?:? ) using index t.my_index(+) order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+a    
+2     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: my_index 
+    sargs: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a from t t where (t.b> ?:? ) using index t.my_index(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+a    
+2     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: my_index 
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.a from t t where (t.b> ?:? ) using index t.my_index(+)
+===================================================
+a    
+2     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a from t t where (t.b> ?:? ) order by ? desc 
+===================================================
+0
+===================================================
+0
+===================================================
+0

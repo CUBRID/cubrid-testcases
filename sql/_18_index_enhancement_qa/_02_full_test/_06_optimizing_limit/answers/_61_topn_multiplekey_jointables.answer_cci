@@ -1,0 +1,181 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+5
+===================================================
+5
+===================================================
+5
+===================================================
+5
+===================================================
+0
+===================================================
+0
+===================================================
+5
+===================================================
+5
+===================================================
+5
+===================================================
+5
+===================================================
+0
+===================================================
+0
+===================================================
+i1    i2    i3    i1    i2    i3    
+2     3     23     2     3     23     
+2     3     23     2     0     20     
+2     3     23     2     4     24     
+2     3     23     2     1     21     
+2     3     23     2     2     22     
+2     1     21     2     1     21     
+2     1     21     2     4     24     
+2     1     21     2     3     23     
+2     1     21     2     2     22     
+2     1     21     2     0     20     
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: t node[?]
+               index: i_t_all term[?] AND term[?] (covers) (multi_range_opt)
+               cost:  ? card ?
+    inner: iscan
+               class: s node[?]
+               index: i_s_all term[?] (covers)
+               cost:  ? card ?
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ t.i?, t.i?, t.i?, s.i?, s.i?, s.i? from t t, s s where ((t.i?= ?:? ) or (t.i?= ?:? ) or (t.i?= ?:? )) and s.i?= ?:?  and t.i?= ?:?  and t.i?=s.i? using index t.i_t_all order by ? desc  for orderby_num()<= ?:? 
+===================================================
+i1    i2    i3    i1    i2    i3    
+2     3     23     2     1     21     
+2     3     23     2     2     22     
+2     3     23     2     0     20     
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: t node[?]
+               index: i_t_all term[?] AND term[?] (covers) (multi_range_opt)
+               cost:  ? card ?
+    inner: iscan
+               class: s node[?]
+               index: i_s_all term[?] (covers)
+               cost:  ? card ?
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ t.i?, t.i?, t.i?, s.i?, s.i?, s.i? from t t, s s where ((t.i?= ?:? ) or (t.i?= ?:? ) or (t.i?= ?:? )) and s.i?= ?:?  and t.i?= ?:?  and t.i?=s.i? using index t.i_t_all order by ? desc  for orderby_num()<= ?:? 
+===================================================
+i1    i2    i3    i1    i2    i3    
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: t node[?]
+               index: i_t_all term[?] AND term[?] (covers) (multi_range_opt)
+               cost:  ? card ?
+    inner: iscan
+               class: s node[?]
+               index: i_s_all term[?] (covers)
+               cost:  ? card ?
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ t.i?, t.i?, t.i?, s.i?, s.i?, s.i? from t t, s s where ((t.i?= ?:? ) or (t.i?= ?:? ) or (t.i?= ?:? )) and s.i?= ?:?  and t.i?= ?:?  and t.i?=s.i? using index t.i_t_all order by ? desc  for orderby_num()<= ?:? 
+===================================================
+i1    i2    i3    i1    i2    i3    
+1     4     14     1     1     11     
+1     4     14     1     2     12     
+1     4     14     1     0     10     
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: t node[?]
+               index: i_t_all term[?] AND term[?] (covers) (multi_range_opt)
+               cost:  ? card ?
+    inner: iscan
+               class: s node[?]
+               index: i_s_all term[?] (covers)
+               cost:  ? card ?
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ t.i?, t.i?, t.i?, s.i?, s.i?, s.i? from t t, s s where ((t.i?= ?:? ) or (t.i?= ?:? ) or (t.i?= ?:? )) and s.i?= ?:?  and t.i?= ?:?  and t.i?=s.i? using index t.i_t_all order by ? desc  for orderby_num()<= ?:? 
+===================================================
+i1    i2    i3    i1    i2    i3    
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: t node[?]
+               index: i_t_all term[?] AND term[?] (covers) (multi_range_opt)
+               cost:  ? card ?
+    inner: iscan
+               class: s node[?]
+               index: i_s_all term[?] (covers)
+               cost:  ? card ?
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ t.i?, t.i?, t.i?, s.i?, s.i?, s.i? from t t, s s where ((t.i?= ?:? ) or (t.i?= ?:? ) or (t.i?= ?:? )) and t.i?= ?:?  and s.i?= ?:?  and t.i?=s.i? using index t.i_t_all order by ? desc  for orderby_num()<= ?:? 
+===================================================
+Error:-493
+===================================================
+i1    i2    i3    i1    i2    i3    
+3     2     32     3     0     30     
+3     2     32     3     1     31     
+3     2     32     3     2     32     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: t node[?]
+                            index: i_t_all term[?] AND term[?] (covers)
+                            cost:  ? card ?
+                 inner: iscan
+                            class: s node[?]
+                            index: i_s_all term[?] (covers)
+                            cost:  ? card ?
+                 sort:  ? asc, ? desc
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ t.i?, t.i?, t.i?, s.i?, s.i?, s.i? from t t, s s where t.i?=s.i? and ((t.i?= ?:? ) or (t.i?= ?:? ) or (t.i?= ?:? )) and t.i?= ?:?  using index t.i_t_all order by ? desc  for orderby_num()<= ?:? 
+===================================================
+i1    i2    i3    
+0     4     4     
+0     3     3     
+0     2     2     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] AND term[?] (covers) (multi_range_opt)
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ t.i?, t.i?, t.i? from t t where ((t.i?= ?:? ) or (t.i?= ?:? ) or (t.i?= ?:? )) and t.i?= ?:?  order by ? desc  for orderby_num()<= ?:? 
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

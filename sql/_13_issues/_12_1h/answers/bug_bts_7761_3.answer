@@ -1,0 +1,66 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+i    j    
+0     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx? term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t t where  mod(t.j, ?)=? and t.i= ?:?  using index t.idx?(+)
+===================================================
+i    j    
+1     0     
+1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t t where  abs(t.i)=? using index t.idx?(+)
+===================================================
+i    j    
+0     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx? term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t t where  abs(t.j)=? and t.i= ?:?  using index t.idx?(+)
+===================================================
+i    j    
+1     0     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx? term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t t where  mod(t.j, ?)=? and t.i= ?:?  using index t.idx?(+)
+===================================================
+0

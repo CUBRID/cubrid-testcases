@@ -1,0 +1,123 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+3
+===================================================
+3
+===================================================
+3
+===================================================
+3
+===================================================
+0
+===================================================
+nm    nm    
+
+Query plan:
+idx-join (inner join)
+    outer: nl-join (left outer join)
+               edge:  term[?]
+               outer: nl-join (left outer join)
+                          edge:  term[?]
+                          outer: idx-join (inner join)
+                                     outer: iscan
+                                                class: aaa node[?]
+                                                index: pk_aaa_id term[?] (covers)
+                                                cost:  ? card ?
+                                     inner: iscan
+                                                class: bbb node[?]
+                                                index: pk_bbb_id term[?]
+                                                filtr: term[?]
+                                                cost:  ? card ?
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: ccc node[?]
+                                     sargs: term[?] AND term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: ddd node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: eee node[?]
+               index: pk_eee_key? term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select eee.nm, ddd.nm from aaa aaa, bbb bbb left outer join ccc ccc on bbb.id=ccc.id and ccc.id= ?:?  left outer join ddd ddd on bbb.key?=ddd.key?, eee eee where bbb.key?=eee.key? and ((ddd.nm= ?:? ) or (eee.nm= ?:? )) and bbb.id= ?:?  and aaa.id= ?:?  and aaa.id=bbb.id
+===================================================
+nm    nm    
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?] AND term[?]
+    outer: nl-join (left outer join)
+               edge:  term[?]
+               outer: nl-join (left outer join)
+                          edge:  term[?]
+                          outer: nl-join (inner join)
+                                     edge:  term[?]
+                                     outer: sscan
+                                                class: aaa node[?]
+                                                sargs: term[?]
+                                                cost:  ? card ?
+                                     inner: sscan
+                                                class: bbb node[?]
+                                                sargs: term[?] AND term[?]
+                                                cost:  ? card ?
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: ccc node[?]
+                                     sargs: term[?] AND term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: ddd node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: eee node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select eee.nm, ddd.nm from aaa aaa, bbb bbb left outer join ccc ccc on bbb.id=ccc.id and ccc.id= ?:?  left outer join ddd ddd on bbb.key?=ddd.key?, eee eee where bbb.key?=eee.key? and ((ddd.nm= ?:? ) or (eee.nm= ?:? )) and bbb.id= ?:?  and aaa.id= ?:?  and aaa.id=bbb.id using index none
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
