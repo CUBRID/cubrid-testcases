@@ -26,9 +26,9 @@ insert into t1 values ('AbC1');
 create table t2 as select s1 + ' ' as s from t1;
 
 
-select * from t1 order by 1;
+select upper(s1) from t1 order by 1;
 
-select * from t2 order by 1;
+select upper(s) from t2 order by 1;
 
 
 drop table t1;

@@ -11,7 +11,7 @@ insert into medium_int values(-53, -54234, -542346.32423);
 insert into medium_int values(15896234, 15896, 15896.0101011);
 
 
-select * from medium_int order by 1;
+select * from medium_int order by 1,2,3;
 
 select col1+col2 from medium_int order by 1;
 --select col2*col2-col1 from medium_int order by 1;

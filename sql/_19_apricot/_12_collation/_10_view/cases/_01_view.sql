@@ -56,8 +56,8 @@ insert into t1 values ('AbC1');
 
 create view v1 as select * from t1;
 
-select * from t1 order by 1;
-select * from v1 order by 1;
+select upper(s1) from t1 order by 1;
+select upper(s1) from v1 order by 1;
 
 drop view v1;
 drop table t1;

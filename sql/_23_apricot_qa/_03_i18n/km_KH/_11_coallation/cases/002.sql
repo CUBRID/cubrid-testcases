@@ -27,9 +27,9 @@ insert into t values (10,'ហឡក៹');
 insert into t values (110,'*ហឡក៹');
 
 --test
-select * from t order by col2;
+select * from t order by col2, col1;
 --test
-select * from t order by col2 desc;
+select * from t order by col2 desc, col1;
 
 drop table t;
 set names iso88591;

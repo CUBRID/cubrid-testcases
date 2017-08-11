@@ -11,7 +11,7 @@ select e.empId , e.fname , e.sname , e.bossid
 FROM t e inner JOIN cte r ON ( e.bossId= r.a))
 SELECT c,b
 FROM cte SELECT *
-FROM t ;
+FROM t order by 1;
 
 WITH cte(a,b,c,d) as (select empId , fname , sname , bossId
 FROM t WHERE sname = 'o'
