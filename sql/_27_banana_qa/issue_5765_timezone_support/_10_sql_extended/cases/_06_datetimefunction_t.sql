@@ -28,10 +28,10 @@ insert into tztest select 4,null,addtime(c_tsltz1,time'0:03:10'),addtime(c_dtltz
 select c_tltz1,addtime(c_tltz1, time'12:59:1') from tztest where c_tltz1=datetimetz'2015-9-17 12:02:02 AM +9:00'; 
 --CUBRIDSUS-17532
 --select c_tltz1,addtime(c_tltz1, '12:59:1') from tztest where c_tltz1=datetimetz'2015-9-17 12:02:02 AM +9:00'; 
-select c_tltz1,addtime(c_tltz1, time'23:59:1') from tztest where c_tltz1=datetimetz'2015-9-17 12:00:02 AM +9:00';
+select c_tltz1,addtime(c_tltz1, time'23:59:1') from tztest where c_tltz1=datetimetz'2015-9-17 12:00:02 AM +9:00' order by 1,2;
 
 update tztest set c_tltz1=addtime(c_tltz1,time'12:00:01') where c_tltz1=datetimetz'2015-9-17 12:00:02 AM +9:00';
-select c_tltz1,c_tltz2,addtime(c_tltz1, c_tltz2 ) from tztest where c_tltz1=datetimetz'2015-9-17 12:00:03 PM +9:00';
+select c_tltz1,c_tltz2,addtime(c_tltz1, c_tltz2 ) from tztest where c_tltz1=datetimetz'2015-9-17 12:00:03 PM +9:00' order by 1,2,3;
 
 select c_tltz1,c_dtltz1,addtime(c_tltz1, c_dtltz1 ) from tztest where c_tltz1=datetimetz'2015-9-17 12:02:02 AM +9:00';
 select c_tltz1,c_dtltz1,addtime(c_tltz1, cast(c_dtltz1 as time) ) from tztest where c_tltz1=datetimetz'2015-9-17 12:02:02 AM +9:00';
@@ -74,7 +74,7 @@ select c_ttz1,addtime(c_ttz1, time'12:59:1') from tztest where c_ttz1=datetimetz
 select c_ttz1,addtime(c_ttz1, time'23:59:1') from tztest where c_ttz1=datetimetz'2015-9-17 12:00:02 AM +9:00';
 
 update tztest set c_ttz1=addtime(c_ttz1,time'12:00:01') where c_ttz1=datetimetz'2015-9-17 12:00:02 AM +9:00';
-select c_ttz1,c_ttz2,addtime(c_ttz1, c_ttz2 ) from tztest where c_ttz1=datetimetz'2015-9-17 12:00:03 PM +9:00';
+select c_ttz1,c_ttz2,addtime(c_ttz1, c_ttz2 ) from tztest where c_ttz1=datetimetz'2015-9-17 12:00:03 PM +9:00' order by 1,2,3;
 
 select c_ttz1,c_dtltz1,addtime(c_ttz1, c_dtltz1 ) from tztest where c_ttz1=datetimetz'2015-9-17 12:02:02 AM +9:00';
 select c_ttz1,c_dtltz1,addtime(c_ttz1, cast(c_dtltz1 as time) ) from tztest where c_ttz1=datetimetz'2015-9-17 12:02:02 AM +9:00';
