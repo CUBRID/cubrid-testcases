@@ -71,7 +71,7 @@ where host_year = '2000'
 order by host_year, event_code for orderby_num() between 1 and 10;
 
 select /*+ recompile */ orderby_num(), host_year
-from history h
+from (select * from history order by 1,2,3,4,5) h
 where host_year = '2000'
 group by host_year
 order by host_year;

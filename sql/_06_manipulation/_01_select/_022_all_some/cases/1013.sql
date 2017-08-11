@@ -8,8 +8,8 @@ insert into t1 values(104, 'ccc');
 insert into t1 values(105, 'eee');
 insert into t1 values(null, 'eee');
 
-select * from t1 where c1 < some(select c1 from t1 where c2='eee');
-select * from t1 where c1 = some(select c1 from t1 where c2='eee');
-select * from t1 where c1 > some(select c1 from t1 where c2='eee');
-select * from t1 where c1 <> some(select c1 from t1 where c2='eee');
+select * from t1 where c1 < some(select c1 from t1 where c2='eee') order by 1;
+select * from t1 where c1 = some(select c1 from t1 where c2='eee') order by 1;
+select * from t1 where c1 > some(select c1 from t1 where c2='eee') order by 1;
+select * from t1 where c1 <> some(select c1 from t1 where c2='eee') order by 1;
 drop class t1;

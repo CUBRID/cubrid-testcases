@@ -10,6 +10,6 @@ insert into t1 values(1004, 'd', date'10/12/1980', 103);
 insert into t1 values(1003, 'e', date'10/11/1981', 102);
 insert into t1 values(1003, 'f', date'10/05/1982', 103);
 
-select * from t1 where birthday = '10/11/1980';
+select * from t1 where birthday = '10/11/1980' order by 1;
 
 drop class t1;
