@@ -21,7 +21,7 @@ insert into tztest values(6,'abcd',99,timestampltz'1992-1-4 12:00:00 AM +9:00',d
      );
 
 --+++++++++++++++++Test case - timestampltz++++++++++++++++
-select c_tsltz1,count(*) from tztest where c_tsltz1 > timestampltz'1990-1-1 12:00:00 AM +9:00' group by year(c_tsltz1) order by c_tsltz1;
+select year(c_tsltz1),count(*) from tztest where c_tsltz1 > timestampltz'1990-1-1 12:00:00 AM +9:00' group by year(c_tsltz1) order by c_tsltz1;
 update tztest set c_varchar='updated' where exists (select * from tztest as B where tztest.id = B.id and tztest.c_tsltz1 = adddate(B.c_tsltz1, interval 1 DAY) );
 select * from tztest where c_varchar='updated';
 select A.id, A.c_tsltz1, max(A.c_float) from tztest as A, tztest as B where A.c_tsltz1 <= B.c_tsltz1 and A.id=B.id group by A.id having count( * ) <=3; 
