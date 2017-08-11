@@ -14,18 +14,18 @@ insert into func_04 values ( '11111111', '11111111', '11111111', 5);
 
 
 
-select a, to_date(a), b,to_date(b), c,to_date(c) from  func_04 where d=4	;
-select a, to_date( a, 'YYYY MM DD' ), to_date(a,'yyyy mm dd') from func_04 where d=1	;
-select a, to_date( a, 'YYYYMMDD' ), to_date(a,'yyyymmdd') from func_04 where d=1	;
-select b, to_date( b, 'YYYY MM DD' ), to_date(b,'yyyy mm dd') from func_04 where d=1	;
-select b, to_date( b, 'YYYYMMDD' ), to_date(b,'yyyymmdd') from func_04 where d=1	;
-select c, to_date( c, 'YYYY MM DD' ), to_date(c,'yyyy mm dd') from func_04 where d=1	;
-select c, to_date( c, 'YYYYMMDD' ), to_date(c,'yyyymmdd') from func_04 where d=1	;
-select c, to_date( c, 'YYYYMMDD' ), to_date(c,'yyyymmdd') from func_04 where a is null	;
-select  to_date(null ,null  ) from func_04 	;
-select  to_date(' 10000101' ,' yyyymmdd'  ) from func_04	;
-select c, to_date( a, 'yyyyddmm' ) from func_04  where d=5	;
-select c, to_date( a, 'ddmmyyyy' ) from func_04  where d=5	;
+select a, to_date(a), b,to_date(b), c,to_date(c) from  func_04 where d=4 order by 1;
+select a, to_date( a, 'YYYY MM DD' ), to_date(a,'yyyy mm dd') from func_04 where d=1 order by 1;
+select a, to_date( a, 'YYYYMMDD' ), to_date(a,'yyyymmdd') from func_04 where d=1 order by 1;
+select b, to_date( b, 'YYYY MM DD' ), to_date(b,'yyyy mm dd') from func_04 where d=1 order by 1;
+select b, to_date( b, 'YYYYMMDD' ), to_date(b,'yyyymmdd') from func_04 where d=1 order by 1;
+select c, to_date( c, 'YYYY MM DD' ), to_date(c,'yyyy mm dd') from func_04 where d=1 order by 1;
+select c, to_date( c, 'YYYYMMDD' ), to_date(c,'yyyymmdd') from func_04 where d=1 order by 1;
+select c, to_date( c, 'YYYYMMDD' ), to_date(c,'yyyymmdd') from func_04 where a is null order by 1;
+select  to_date(null ,null  ) from func_04 order by 1;
+select  to_date(' 10000101' ,' yyyymmdd'  ) from func_04 order by 1;
+select c, to_date( a, 'yyyyddmm' ) from func_04  where d=5 order by 1;
+select c, to_date( a, 'ddmmyyyy' ) from func_04  where d=5 order by 1;
 select to_date(null) from func_04;
 
 drop class func_04;

@@ -19,7 +19,7 @@ insert into t1 values (N'ü', 8);
 insert into t1 values (N'Ü', 9);
 
 select * from t1 order by 1, 2;
-select distinct a from t1 order by 1;
+select distinct upper(a) from t1 order by 1;
 drop table t1;
 
 
@@ -44,7 +44,7 @@ insert into t1 values (N'ü', 8);
 insert into t1 values (N'Ü', 9);
 
 select * from t1 order by 1, 2;
-select distinct a from t1 order by 1;
+select distinct upper(a) from t1 order by 1;
 
 drop table t1;
 

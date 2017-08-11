@@ -15,7 +15,7 @@ insert into t2 values(102, 'SA');
 insert into t2 values(103, 'RD');
 
 select * from t1 
-where  dept_id = (select id from t2 where dept_name = 'DB');
+where  dept_id = (select id from t2 where dept_name = 'DB') order by 1;
 
 drop class t1;
 drop class t2;
