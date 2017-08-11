@@ -76,11 +76,11 @@ INSERT INTO t(col2) VALUES(UPPER('៩'));
 --test
 SELECT * from t  where col2 between UPPER('ហ្ម') and 'ម' order by col2;
 --test
-SELECT * from t  where col2 between UPPER('n') and 'ម' order by col2 desc;
+SELECT * from t  where col2 between UPPER('n') and 'ម' order by col2 desc, col1;
 --test
-SELECT * from t  where col2 between UPPER('៣') and '៩' order by col2,col1 limit 3;
+SELECT * from t  where col2 between UPPER('៣') and '៩' order by col2, col1 limit 3;
 --test
-SELECT * from t  where col2 between UPPER('យ') and '៩' order by col2 desc,col1  limit 2;
+SELECT * from t  where col2 between UPPER('យ') and '៩' order by col2 desc, col1 limit 2;
 DROP TABLE t;
 set names iso88591;
 commit;

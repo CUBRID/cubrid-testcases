@@ -329,7 +329,7 @@ with recursive t as (select c from t2 where c >= 4)
 with recursive t as (select c from t2 where c >= 4)
   select t1.a,t1.b from t1,t
     where t1.a=t.c and
-          t.c in (4,4,4,3);
+          t.c in (4,4,4,3) order by 1,2;
  
 with recursive t as (select * from t1 where t1.a<5)
   select t2.c from t2,t where t2.c=t.a order by 1;

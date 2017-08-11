@@ -28,10 +28,10 @@ WITHIN GROUP(ORDER BY math, english, pe) AS percent_rank
 FROM cte;
 with recursive cte as (select * from scores)	 SELECT id, math, english, pe, grade, PERCENT_RANK() OVER(ORDER BY math, english, pe) AS percent_rank
 FROM cte
-ORDER BY percent_rank;
+ORDER BY percent_rank, id;
 with recursive cte as (select * from scores) SELECT id, math, english, pe, grade, PERCENT_RANK() OVER(PARTITION BY grade ORDER BY math, english, pe) AS percent_rank
 FROM cte
-ORDER BY grade, percent_rank;
+ORDER BY grade, percent_rank, id;
 drop if exists scores;
 CREATE TABLE scores([id] INT PRIMARY KEY AUTO_INCREMENT, [math] INT, english INT, [class] CHAR);
 INSERT INTO scores VALUES

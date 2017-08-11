@@ -33,51 +33,51 @@ select * from foo where a = 2 and b <= 3 using index none;
 select * from foo where a = 3 and b <= 3 using index none;
 
 create index idx1 on foo ( a , b , c );
-select * from foo where a = 1 and b <= 3 using index idx1 order by b;
-select * from foo where a = 2 and b <= 3 using index idx1 order by b;
-select * from foo where a = 3 and b <= 3 using index idx1 order by b;
+select * from foo where a = 1 and b <= 3 using index idx1 order by a,b,c,d;
+select * from foo where a = 2 and b <= 3 using index idx1 order by a,b,c,d;
+select * from foo where a = 3 and b <= 3 using index idx1 order by a,b,c,d;
 
 drop index idx1 on foo;
 create index idx1 on foo ( a , b , c desc);
-select * from foo where a = 1 and b <= 3 using index idx1 order by b;
-select * from foo where a = 2 and b <= 3 using index idx1 order by b;
-select * from foo where a = 3 and b <= 3 using index idx1 order by b;
+select * from foo where a = 1 and b <= 3 using index idx1 order by a,b,c,d;
+select * from foo where a = 2 and b <= 3 using index idx1 order by a,b,c,d;
+select * from foo where a = 3 and b <= 3 using index idx1 order by a,b,c,d;
 
 drop index idx1 on foo;
 create index idx1 on foo ( a , b desc, c );
-select * from foo where a = 1 and b <= 3 using index idx1 order by b;
-select * from foo where a = 2 and b <= 3 using index idx1 order by b;
-select * from foo where a = 3 and b <= 3 using index idx1 order by b;
+select * from foo where a = 1 and b <= 3 using index idx1 order by a,b,c,d;
+select * from foo where a = 2 and b <= 3 using index idx1 order by a,b,c,d;
+select * from foo where a = 3 and b <= 3 using index idx1 order by a,b,c,d;
 
 drop index idx1 on foo;
 create index idx1 on foo ( a , b desc, c desc);
-select * from foo where a = 1 and b <= 3 using index idx1 order by b;
-select * from foo where a = 2 and b <= 3 using index idx1 order by b;
-select * from foo where a = 3 and b <= 3 using index idx1 order by b;
+select * from foo where a = 1 and b <= 3 using index idx1 order by a,b,c,d;
+select * from foo where a = 2 and b <= 3 using index idx1 order by a,b,c,d;
+select * from foo where a = 3 and b <= 3 using index idx1 order by a,b,c,d;
 
 drop index idx1 on foo;
 create index idx1 on foo ( a desc, b , c );
-select * from foo where a = 1 and b <= 3 using index idx1 order by b;
-select * from foo where a = 2 and b <= 3 using index idx1 order by b;
-select * from foo where a = 3 and b <= 3 using index idx1 order by b;
+select * from foo where a = 1 and b <= 3 using index idx1 order by a,b,c,d;
+select * from foo where a = 2 and b <= 3 using index idx1 order by a,b,c,d;
+select * from foo where a = 3 and b <= 3 using index idx1 order by a,b,c,d;
 
 drop index idx1 on foo;
 create index idx1 on foo ( a desc, b , c desc);
-select * from foo where a = 1 and b <= 3 using index idx1 order by b;
-select * from foo where a = 2 and b <= 3 using index idx1 order by b;
-select * from foo where a = 3 and b <= 3 using index idx1 order by b;
+select * from foo where a = 1 and b <= 3 using index idx1 order by a,b,c,d;
+select * from foo where a = 2 and b <= 3 using index idx1 order by a,b,c,d;
+select * from foo where a = 3 and b <= 3 using index idx1 order by a,b,c,d;
 
 drop index idx1 on foo;
 create index idx1 on foo ( a desc, b desc, c );
-select * from foo where a = 1 and b <= 3 using index idx1 order by b;
-select * from foo where a = 2 and b <= 3 using index idx1 order by b;
-select * from foo where a = 3 and b <= 3 using index idx1 order by b;
+select * from foo where a = 1 and b <= 3 using index idx1 order by a,b,c,d;
+select * from foo where a = 2 and b <= 3 using index idx1 order by a,b,c,d;
+select * from foo where a = 3 and b <= 3 using index idx1 order by a,b,c,d;
 
 drop index idx1 on foo;
 create index idx1 on foo ( a desc, b desc, c desc);
-select * from foo where a = 1 and b <= 3 using index idx1 order by b;
-select * from foo where a = 2 and b <= 3 using index idx1 order by b;
-select * from foo where a = 3 and b <= 3 using index idx1 order by b;
+select * from foo where a = 1 and b <= 3 using index idx1 order by a,b,c,d;
+select * from foo where a = 2 and b <= 3 using index idx1 order by a,b,c,d;
+select * from foo where a = 3 and b <= 3 using index idx1 order by a,b,c,d;
 
 
 drop table foo;

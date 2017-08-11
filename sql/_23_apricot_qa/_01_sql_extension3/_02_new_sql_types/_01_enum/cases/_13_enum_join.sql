@@ -39,8 +39,8 @@ select * from join_t2 order by 1;
 
 
 --TEST: inner join, same enum columns
-select t1.id, t1.color, t2.id, t2.color from join_t1 t1, join_t2 t2 where t1.color=t2.color order by t1.id;
-select * from join_t1 t1 inner join join_t2 t2 on t1._day=t2._day order by t1.id;
+select t1.id, t1.color, t2.id, t2.color from join_t1 t1, join_t2 t2 where t1.color=t2.color order by t1.id, t2.id;
+select * from join_t1 t1 inner join join_t2 t2 on t1._day=t2._day order by t1.id, t2.id;
 --TEST: inner join, different enum columns
 select * from join_t1 t1, join_t2 t2 where t1.color=t2.fruit order by t1.id, t1.color, t2.id;
 select * from join_t1 t1 inner join join_t2 t2 on t1.str1=t2.str2 order by 1, 2, 6;
@@ -48,7 +48,7 @@ select * from join_t1 t1 inner join join_t2 t2 on t1.str1=t2.str2 order by 1, 2,
 
 --TEST: left outer join, same enum columns
 select * from join_t1 t1 left outer join join_t2 t2 on t1._day=t2._day where t1.color > 3 order by t2.id;
-select * from join_t2 t2 left outer join join_t1 t1 on t1.fruit=t2.fruit and t1.color=t2.color order by t1.id;
+select * from join_t2 t2 left outer join join_t1 t1 on t1.fruit=t2.fruit and t1.color=t2.color order by t1.id, t2.id;
 --TEST: left outer join, different enum columns
 select * from join_t1 t1 left outer join join_t2 t2 on t1.str1=t2.str2 order by 1, 2, 6;
 select * from join_t1 t1 left outer join join_t2 t2 on t1.str1=t2.str2 and t1._day=t2.fruit order by 1, 2, 6;

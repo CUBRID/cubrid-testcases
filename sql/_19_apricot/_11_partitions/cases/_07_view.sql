@@ -11,10 +11,10 @@ insert into tpr select i + 10 from tpr;
 insert into tpr select i + 20 from tpr;
 
 create view vpr1 as select * from tpr where i >12;
-select * from vpr1 where i % 2 = 0;
+select * from vpr1 where i % 2 = 0 order by i;
 
 create view vpr_10_1 as select * from tpr__p__p_10 where i % 2 = 0;
-select * from vpr_10_1;
+select * from vpr_10_1 order by i;
 
 drop view vpr1;
 drop view vpr_10_1;
