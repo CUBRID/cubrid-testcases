@@ -16,13 +16,13 @@ insert into percent_rank_tab values(2010,1,5000);
 insert into percent_rank_tab values(2010,2,6000);
 insert into percent_rank_tab values(2010,3,7000);
 
-select years,months,amount from percent_rank_tab;
-select years,months,amount,percent_rank() over(order by amount) from percent_rank_tab;
-select years,months,amount,percent_rank() over(order by amount nulls first ) from percent_rank_tab;
-select years,months,amount,percent_rank() over(partition by years order by amount) from percent_rank_tab;
-select years,months,amount,percent_rank() over(partition by years,months order by amount) from percent_rank_tab;
+select years,months,amount from percent_rank_tab order by 1,2,3;
+select years,months,amount,percent_rank() over(order by amount) from percent_rank_tab order by 1,2,3,4;
+select years,months,amount,percent_rank() over(order by amount nulls first ) from percent_rank_tab order by 1,2,3,4;
+select years,months,amount,percent_rank() over(partition by years order by amount) from percent_rank_tab order by 1,2,3,4;
+select years,months,amount,percent_rank() over(partition by years,months order by amount) from percent_rank_tab order by 1,2,3,4;
 
-select * from percent_rank_tab;
+select * from percent_rank_tab order by 1,2,3;
 drop table percent_rank_tab;
 
 ==============================================
@@ -45,13 +45,13 @@ insert into percent_rank_tab values(2010,1,5000);
 insert into percent_rank_tab values(2010,2,6000);
 insert into percent_rank_tab values(2010,3,7000);
 
-select years,months,amount from percent_rank_tab;
-select years,months,amount,percent_rank() over(order by amount) from percent_rank_tab;
-select years,months,amount,percent_rank() over(order by amount nulls first ) from percent_rank_tab;
-select years,months,amount,percent_rank() over(partition by years order by amount) from percent_rank_tab;
-select years,months,amount,percent_rank() over(partition by years,months order by amount) from percent_rank_tab;
+select years,months,amount from percent_rank_tab order by 1,2,3;
+select years,months,amount,percent_rank() over(order by amount) from percent_rank_tab order by 1,2,3,4;
+select years,months,amount,percent_rank() over(order by amount nulls first ) from percent_rank_tab order by 1,2,3,4;
+select years,months,amount,percent_rank() over(partition by years order by amount) from percent_rank_tab order by 1,2,3,4;
+select years,months,amount,percent_rank() over(partition by years,months order by amount) from percent_rank_tab order by 1,2,3,4;
 
-select * from percent_rank_tab;
+select * from percent_rank_tab order by 1,2,3;
 drop table percent_rank_tab;
 
 
@@ -76,15 +76,15 @@ INSERT INTO empsalary VALUES('sales', 3, 4800, '08/01/2007');
 INSERT INTO empsalary VALUES('develop', 8, 6000, '10/01/2006');
 INSERT INTO empsalary VALUES('develop', 11, 5200, '08/15/2007');
 
-select * from empsalary ;
+select * from empsalary order by 1,2,3,4;
 
 
-select sum(salary) OVER (PARTITION BY depname),avg(salary) OVER (PARTITION BY depname),depname,empno,salary,enroll_date  from empsalary;
+select sum(salary) OVER (PARTITION BY depname),avg(salary) OVER (PARTITION BY depname),depname,empno,salary,enroll_date  from empsalary order by 1,2,3,4,5;
 
-select sum(salary) OVER (PARTITION BY depname),avg(salary) OVER (PARTITION BY depname),percent_rank() over(partition by depname order by salary desc),depname,empno,salary,enroll_date  from empsalary;
+select sum(salary) OVER (PARTITION BY depname),avg(salary) OVER (PARTITION BY depname),percent_rank() over(partition by depname order by salary desc),depname,empno,salary,enroll_date  from empsalary order by 1,2,3,4,5;
 
-select percent_rank() over(partition by depname order by salary desc),depname,empno,salary,enroll_date from empsalary;
+select percent_rank() over(partition by depname order by salary desc),depname,empno,salary,enroll_date from empsalary order by 1,2,3,4,5;
 
-select percent_rank() over(partition by enroll_date order by salary desc),depname,empno,salary,enroll_date from empsalary;
+select percent_rank() over(partition by enroll_date order by salary desc),depname,empno,salary,enroll_date from empsalary order by 1,2,3,4,5;
 
 DROP TABLE IF EXISTS empsalary;

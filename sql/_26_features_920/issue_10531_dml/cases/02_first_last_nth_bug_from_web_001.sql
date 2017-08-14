@@ -163,11 +163,11 @@ VALUES (4, 2,'8/18/2011');
 INSERT INTO l_f_t
 VALUES (5, 2,null);
 
-SELECT id, s from l_f_t;
-SELECT id, FIRST_VALUE(s) OVER (PARTITION BY ID ORDER BY s DESC NULLS LAST) from l_f_t;
-SELECT id, FIRST_VALUE(s) OVER (PARTITION BY ID ORDER BY s DESC NULLS FIRST) from l_f_t;
-SELECT id, LAST_VALUE(s) OVER (PARTITION BY ID ORDER BY s NULLS LAST) from l_f_t;
-SELECT id, LAST_VALUE(s) OVER (PARTITION BY ID ORDER BY s NULLS FIRST) from l_f_t;
+SELECT id, s from l_f_t order by 1,2;
+SELECT id, FIRST_VALUE(s) OVER (PARTITION BY ID ORDER BY s DESC NULLS LAST) from l_f_t order by 1,2;
+SELECT id, FIRST_VALUE(s) OVER (PARTITION BY ID ORDER BY s DESC NULLS FIRST) from l_f_t order by 1,2;
+SELECT id, LAST_VALUE(s) OVER (PARTITION BY ID ORDER BY s NULLS LAST) from l_f_t order by 1,2;
+SELECT id, LAST_VALUE(s) OVER (PARTITION BY ID ORDER BY s NULLS FIRST) from l_f_t order by 1,2;
 drop table if exists l_f_t;
 
 drop table if exists t_h;
@@ -175,17 +175,17 @@ create table t_h(i int, p int, e varchar(10));
 
 insert into t_h values(1,0,'A');
 insert into t_h values(2,1,null);
-select i, p,e from t_h;
-select i, p,e from t_h start with i=2 connect by prior p=i;
+select i, p,e from t_h order by 1;
+select i, p,e from t_h start with i=2 connect by prior p=i order by 1;
 select i,p,e,first_value(e) over(partition by connect_by_root p order by e nulls first)
 from t_h
 start with i=2
-connect by prior p=i;
+connect by prior p=i order by 1;
 
 select i,p,e,first_value(e) over(partition by connect_by_root p order by e nulls last)
 from t_h
 start with i=2
-connect by prior p=i;
+connect by prior p=i order by 1;
 
 drop table if exists t_h;
 
@@ -196,10 +196,10 @@ insert into t values (102, 850,2);
 insert into t values (103,1250,3);
 insert into t values (105,1700,4);
 
-select e,s, r from t;
+select e,s, r from t order by 1;
 select e,s, r,
 nth_Value(e,r) over(order by e ) as emp,
 nth_Value(s,r) over(order by s ) as sal
-  from t;
+  from t order by 1;
 
 drop table if exists t;   
