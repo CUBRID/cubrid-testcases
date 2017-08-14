@@ -6,7 +6,7 @@ create table t1(id int primary key not null auto_increment,e enum('a', 'b', 'c',
 insert into t1(e) values (1), ('b'), (3), ('xyz');
 insert into t1(e) values (1), ('b'), (null), (null);
 
-select * from t1 order by 2 nulls first;
+select * from t1 order by 2 nulls first, 1;
 select group_concat(e order by e asc) from t1 order by 1 nulls first;
 select max(e) from t1 order by 1 nulls first;
 select min(e) from t1 order by 1 nulls first;

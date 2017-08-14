@@ -31,50 +31,50 @@ insert into scores(math, english, PE, grade)
 select id, math, english, pe, grade, 
        CUME_DIST() over(order by math, english, pe) as CUME_DIST, 
        PERCENT_RANK() over(order by math, english, pe) as PERCENT_RANK 
-       from scores order by CUME_DIST;
+       from scores order by CUME_DIST, 1,2,3,4,5;
 
 select id, math, english, pe, grade, 
        CUME_DIST() over(partition by grade order by math asc, english asc, pe asc) as CUME_DIST, 
        PERCENT_RANK() over(partition by grade order by math asc, english asc, pe asc) as PERCENT_RANK 
-       from scores order by PERCENT_RANK, id;
+       from scores order by PERCENT_RANK, 1,2,3,4,5;
 
 -- for desc
 select id, math, english, pe, grade, 
        CUME_DIST() over(order by math desc, english) as CUME, 
        PERCENT_RANK() over(order by english desc, pe desc) as PERCENT 
-       from scores;
+       from scores order by PERCENT, CUME, 1,2,3,4,5;
 
 select id, math, english, pe, grade,
        CUME_DIST() over(order by PE) as CUME, 
        PERCENT_RANK() over(order by PE) as PERCENT 
-       from scores;
+       from scores order by PERCENT, CUME, 1,2,3,4,5;
 
 select id, math, english, pe, grade, 
        CUME_DIST() over(partition by grade order by math desc, english desc, pe desc) as CUME_DIST, 
        PERCENT_RANK() over(partition by grade order by math desc, english desc, pe desc) as PERCENT_RANK 
-       from scores;
+       from scores order by PERCENT_RANK, CUME_DIST, 1,2,3,4,5;
 
 -- aggregate functions
 select CUME_DIST(60, 60, 'D') 
        within group(order by math, english, PE) as CUME
-       from scores;
+       from scores order by 1;
 
 select PERCENT_RANK(100, 100, 'A') 
        within group(order by math, english, PE) as PERCENT
-       from scores;
+       from scores order by 1;
 
 
 prepare st1 from 'select CUME_DIST(?,?,?) 
 	   		within group(order by math, english, PE)
-			as CUME from scores';
+			as CUME from scores order by 1';
 
 prepare st2 from 'select PERCENT_RANK(?,?,?) 
 	   		within group(order by math, english, PE) 
-			as PERCENT from scores';
+			as PERCENT from scores order by 1';
 
 prepare st3 from 'select CUME_DIST(?) within group(order by math desc) as CUME,
 	    	 	 PERCENT_RANK(?,?) within group(order by english, PE) 
-			 as PERCENT from scores';
+			 as PERCENT from scores order by 1,2';
 
 
 
@@ -108,11 +108,11 @@ execute st3 using 100, 100, 'A';
 --special cases:
 select CUME_DIST('85',65,'C') 
        within group(order by math, english, PE)
-       from scores;
+       from scores order by 1;
 
 select PERCENT_RANK('100'-10, '80'+'20', 'A')
        within group(order by math, english, PE)
-       from scores;
+       from scores order by 1;
 
 execute st1 using '85', 65, 'C';
 
@@ -122,7 +122,7 @@ select CUME_DIST(2, 70) within group(order by 2, 70) as CUME1,
        CUME_DIST(2, 70) within group(order by 3, english) as CUME4,
        CUME_DIST(2, 70) within group(order by '3', '69A') as CUME5,
        CUME_DIST(2, 70) within group(order by '2', '70') as CUME6
-       from scores;
+       from scores order by 1,2,3,4,5,6;
 
 select PERCENT_RANK(2, 70) within group(order by 2, 70) as PERCENT1,
        PERCENT_RANK(2, 70) within group(order by 1, english) as PERCENT2,
@@ -130,7 +130,7 @@ select PERCENT_RANK(2, 70) within group(order by 2, 70) as PERCENT1,
        PERCENT_RANK(2, 70) within group(order by 3, english) as PERCENT4,
        PERCENT_RANK(2, 70) within group(order by '3', '69A') as PERCENT5,
        PERCENT_RANK(2, 70) within group(order by '2', '70') as PERCENT6
-       from scores;
+       from scores order by 1,2,3,4,5,5,6;
 
 -- NULLs value
 insert into scores(math, english, PE, grade) 
@@ -143,31 +143,31 @@ insert into scores(math, english, PE, grade)
 select id, math, english, pe, grade, 
        CUME_DIST() over(order by math, english, pe) as CUME_DIST, 
        PERCENT_RANK() over(order by math, english, pe) as PERCENT_RANK 
-       from scores order by CUME_DIST;
+       from scores order by CUME_DIST, PERCENT_RANK, 1,2,3,4,5;
 
 select id, math, english, pe, grade, 
        CUME_DIST() over(partition by grade order by math asc, english asc, pe asc) as CUME_DIST, 
        PERCENT_RANK() over(partition by grade order by math asc, english asc, pe asc) as PERCENT_RANK 
-       from scores order by PERCENT_RANK, id;
+       from scores order by PERCENT_RANK, id, CUME_DIST, 2,3,4,5;
 
 --compatible with ORACLE:
 select id, math, english, pe, grade, 
        cume_dist() over(order by math nulls last, english nulls last, pe nulls last) as cume_dist, 
        percent_rank() over(order by math nulls last, english nulls last, pe nulls last) as percent_rank 
-       from scores order by cume_dist;
+       from scores order by cume_dist, percent_rank, 1,2,3,4,5;
 
 select id, math, english, pe, grade, 
        CUME_DIST() over(partition by grade order by math nulls last, english nulls last, 
        		   		  pe nulls last) as CUME_DIST, 
        PERCENT_RANK() over(partition by grade order by math nulls last, english nulls last, 
        		      		  pe nulls last) as PERCENT_RANK 
-       from scores order by PERCENT_RANK, id;
+       from scores order by PERCENT_RANK, id, CUME_DIST, 2,3,4,5;
 
 select CUME_DIST() over(partition by grade order by math asc nulls last) as CUME_DIST 
-       from scores; 
+       from scores order by 1; 
 
 select PERCENT_RANK() over(partition by grade order by pe desc nulls last) as PERCENT 
-       from scores; 
+       from scores order by 1; 
  
 execute st1 using 50, 70, 'A';
 execute st1 using NULL, 70, 'A';
@@ -184,46 +184,46 @@ execute st2 using NULL, NULL, NULL;
 select id, math, english, pe, grade,
        CUME_DIST() over(order by NULL) as CUME,
        PERCENT_RANK() over(order by NULL) as PERCENT 
-       from scores;
+       from scores order by CUME, PERCENT , 1,2,3,4,5;
 
 --illegals
 execute st1 using '85a', 65, 'C';
 
 select CUME_DIST(80) 
        within group(order by PE) as CUME_DIST
-       from scores;
+       from scores order by 1;
 
 select CUME_DIST(80, 20) 
        within group(order by math) as CUME_DIST
-       from scores;
+       from scores order by 1;
 
 select PERCENT_RANK(80) 
        within group(order by math, english) as CUME_DISD
-       from scores;
+       from scores order by 1;
 
 select CUME_DIST(80, '2a') 
        within group(order by math, english) as CUME_DIST
-       from scores;
+       from scores order by 1;
 
 select PERCENT_RANK(70)
        within group(partition by grade) as PERCENT_RANK
-       from scores;
+       from scores order by 1;
 
 select CUME_DIST(english) within group(order by english) as CUME
-       from scores;
+       from scores order by 1;
 
 select id, math, english, pe, CUME_DIST(), PERCENT_RANK() over(partition by grade)
-       from scores;
+       from scores order by 1,2,3,4,5,6;
 
-select CUME_DIST(1, 80, 'A') from scores;
+select CUME_DIST(1, 80, 'A') from scores order by 1;
 
-select CUME_DIST(1, 80, 'A') within group() from scores;
+select CUME_DIST(1, 80, 'A') within group() from scores order by 1;
 
-select CUME_DIST(1, 80, 'A') within group(order by NULL, NULL, NULL) from scores;
+select CUME_DIST(1, 80, 'A') within group(order by NULL, NULL, NULL) from scores order by 1;
 
-select CUME_DIST() over(order by 123) from scores;
+select CUME_DIST() over(order by 123) from scores order by 1;
 
-select PERCENT_RANK(NULL, 80, 'A') within group(order by NULL, NULL, NULL) from scores;
+select PERCENT_RANK(NULL, 80, 'A') within group(order by NULL, NULL, NULL) from scores order by 1;
 
 drop table scores;
 
