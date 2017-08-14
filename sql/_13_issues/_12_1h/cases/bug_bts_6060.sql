@@ -47,26 +47,26 @@ insert into history values(20005,'Hayes Joanna', 2004,  '12.37',   'time'       
 insert into history values(20048,'Takahashi Naoko',2000,'2.23', 'time'    );
 
 select /*+ recompile */ orderby_num(), h.* 
-from history h
+from (select * from history order by 1,2,3,4,5) h
 where host_year = '2004' 
 order by host_year, event_code for orderby_num() between 1 and 10;
 
 (
 select /*+ recompile */ orderby_num(), h.* 
-from history h
+from (select * from history order by 1,2,3,4,5) h
 where host_year = '2004' 
 order by host_year, event_code for orderby_num() between 1 and 10
 )
 union 
 (
 select /*+ recompile */ orderby_num(), h.* 
-from history h
+from (select * from history order by 1,2,3,4,5) h
 where host_year = '2000' 
 order by host_year, event_code for orderby_num() between 1 and 10
 );
 
 select /*+ recompile */ inst_num(), h.* 
-from history h
+from (select * from history order by 1,2,3,4,5) h
 where host_year = '2000' 
 order by host_year, event_code for orderby_num() between 1 and 10;
 
