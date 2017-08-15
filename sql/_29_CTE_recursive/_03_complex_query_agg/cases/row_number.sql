@@ -15,61 +15,61 @@ union all select 2, 5 as d
 union all select 2, 6 as d
 union all select 2, 7 as d);
  
-create table x as select *, row_number() over( order by 1 ) as rn from t;
+create table x as select *, row_number() over( order by 1 ,2  ) as rn from t;
 with t2 ( id, d, rn )
 as (
     select *
-    from x
+    from x order by 1,2,3
     )
 select *
 from t2 a
     inner join t2 b
         on b.id = a.id
        and b.d  = a.d
-order by a.rn;
+order by a.rn, a.d, a.id, b.rn, b.id, b.d;
 
 
 with t2 ( id, d, rn )
 as (
-    select *, row_number() over( order by 1) as rn from t
+    select *, row_number() over( order by 1,2) as rn from t order by 1,2,3
     )
 select *
 from t2 a
     inner join t2 b
         on b.id = a.id
        and b.d  = a.d
-order by a.rn;
+order by a.rn, a.d, a.rn, b.rn, b.id, b.d;
 
 with t2 ( id, d, rn )
 as (
-    select *, row_number() over( order by id) as rn from t
+    select *, row_number() over( order by id, 2) as rn from t order by 1,2,3
     )
 select *
 from t2 a
     inner join t2 b
         on b.id = a.id
        and b.d  = a.d
-order by a.rn;
+order by a.rn, a.d, a.id, b.rn, b.id, b.d;
 
 with t2 ( id, d, rn )
 as (
-    select *, row_number() over( order by d) as rn from t
+    select *, row_number() over( order by d, id) as rn from t order by 1,2,3
     )
 select *
 from t2 a
     inner join t2 b
         on b.id = a.id
        and b.d  = a.d
-order by a.rn;
+order by a.rn, a.d, a.id, b.rn, b.id, b.d;
 
 with t2 ( id, d, rn )
 as (
-    select *, row_number() over( ) as rn from t
+    select *, row_number() over( order by 1,2) as rn from t order by 1,2,3
     )
 select *
 from t2 a
     inner join t2 b
         on b.id = a.id
        and b.d  = a.d
-order by a.rn;
+order by a.rn, a.d, a.id, b.rn, b.id, b.d;
 drop if exists t,x;
