@@ -50,7 +50,7 @@ update md_datetime2 m2 left outer join md_datetime1 m1 on m1.col1=m2.col2 where 
 update md_datetime2 m2 left outer join md_datetime1 m1 on m1.col1=m2.col2 inner join md_datetime3 m3 on m3.col2=m1.col1 set m3.col1=m2.col1, m1.id1=truncate(m2.id2, 3) where m3.id3 < (select max(id2)/100 from md_datetime2);
 --TEST: check update result
 select if (count(*) = 4, 'ok', 'nok') from md_datetime1 where truncate(id1, 3)=id1;
-select if (count(*) > 3, 'ok', 'nok') from md_datetime3 where col1 in ('aa', 'abc', 'a', 'ababc', 'mysql', 'hellohello');
+select if (count(*) > 3, 'ok', 'nok') from md_datetime3 where col1 in ('aa', 'abc', 'a', 'abcabc', 'mysql', 'hellohello');
 
 
 --TEST: right outer join

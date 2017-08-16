@@ -63,11 +63,11 @@ prepare stmt from 'update md_time1 m1 left outer join md_time2 m2 on m1.col1=m2.
 execute stmt using 'updated3';
 deallocate prepare stmt;
 --TEST: success, 6 rows updated
-prepare stmt from 'update md_time1 m1 left outer join md_time2 m2 on m1.col1=m2.col2 set m2.col1=?, m1.id1=m2.id2+5 where m1.id1 > (select avg(id1) from md_time1)';
+prepare stmt from 'update md_time1 m1 left outer join md_time2 m2 on m1.col1=m2.col2 set m2.col1=?, m1.id1=m2.id2+5 where m1.id1 > (select avg(id1) from md_time1) and m2.id2 <> 565656565';
 execute stmt using 'updated4';
 deallocate prepare stmt;
 --TEST: check update result
-select if (count(*) = 6, 'ok', 'nok') from md_time2 where col1='updated4';
+select if (count(*) = 5, 'ok', 'nok') from md_time2 where col1='updated4';
 
 
 --TEST: right outer join
