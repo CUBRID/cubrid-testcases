@@ -4,7 +4,7 @@
 autocommit off;
 drop table if exists tz_test, character_types;
 
-create table tz_test (id int auto_increment, ts datetime, dtltz datetime with local time zone, dttz datetime with time zone);
+create table tz_test (id int auto_increment(1,1), ts datetime, dtltz datetime with local time zone, dttz datetime with time zone);
 set timezone '+10:00';
 
 create table character_types(id int auto_increment, a char(40), b varchar(40), c string, d enum('a', 'b', 'c'), e enum('08:00:00.999 PM 12/01/2020', '12:00:01.999 PM 01/02/2019 +08:00', '08:00:00.999 PM 12/01/2020 +09:00', '08:00:00.999 PM 12/01/2020 Asia/Tokyo'));
