@@ -143,3 +143,4 @@ prepare s from 'values(?),(?),(?)';
 execute s using 1,2,'3';
 
 deallocate prepare s;
+drop variable a,b,c;
