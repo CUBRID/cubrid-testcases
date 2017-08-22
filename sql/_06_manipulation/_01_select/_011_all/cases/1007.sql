@@ -18,6 +18,6 @@ insert into t1 values(102, 'bbb');
 insert into t1 values(103, 'ccc');
 insert into t1 values(104, 'ddd');
 
-select * from all t1;
+select * from all t1 order by 1,2;
 
 drop class t1;

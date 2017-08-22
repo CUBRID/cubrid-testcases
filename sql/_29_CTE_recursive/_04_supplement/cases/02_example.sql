@@ -44,8 +44,8 @@ SELECT ParentID,ID, a.Name,  n+1 FROM A
 INNER JOIN DirectReportsOfGreg as b on A.ParentID = b.EmployeeID
 )
 SELECT * FROM DirectReportsOfGreg 
-ORDER BY n
-select * From A;
+ORDER BY n, ManagerID, EmployeeID
+select * From A order by 1,2,3;
 
 WITH recursive DirectReportsOfGreg (ManagerID, EmployeeID, EmployeeName, n)
 AS
@@ -56,7 +56,7 @@ SELECT ParentID,ID, a.Name,  n+1 FROM A
 INNER JOIN DirectReportsOfGreg as b on A.ParentID = b.EmployeeID
 )
 SELECT * FROM DirectReportsOfGreg
-ORDER BY n;
+ORDER BY n, ManagerID, EmployeeID;
 
 WITH recursive DirectReportsOfGreg (ManagerID, EmployeeID, EmployeeName, n)
 AS
@@ -74,6 +74,6 @@ UNION ALL
 SELECT ParentID,ID, a.Name,  n+2 FROM A 
 INNER JOIN DirectReportsOfGreg2 as b on A.ParentID = b.EmployeeID
 )
-SELECT * FROM DirectReportsOfGreg,DirectReportsOfGreg2 ORDER BY 1 limit 10;
+SELECT * FROM DirectReportsOfGreg,DirectReportsOfGreg2 ORDER BY 1,2,3,4,5,6,7 limit 10;
 
 drop if exists A;

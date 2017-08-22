@@ -11,3 +11,4 @@ execute s using :a
 deallocate prepare s;
 evaluate str_to_date (:a, '%d,%m,%Y') into :expected;
 select case when :expected = :result then 'YES' else 'NO' end as case2;
+drop variable a,result,expected;

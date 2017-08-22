@@ -58,7 +58,7 @@ FROM
    sales_by_store
 WHERE
    store_sales > (all_sales / nbr_stores)
-;
+order by stores.store_name;
 
 with avg_sales(avg_sales) as (
 select ((select sum(quantity) from sales)/(select count(*) from stores))
@@ -69,6 +69,6 @@ from stores s,sales s1
 where s.store_key = s1.store_key  
 group by store_name
 )
-select a.name,a.sales from single_sales a,avg_sales b where a.sales >b.avg_sales;
+select a.name,a.sales from single_sales a,avg_sales b where a.sales >b.avg_sales order by name, sales;
 drop table if exists stores;
 drop table if exists sales;

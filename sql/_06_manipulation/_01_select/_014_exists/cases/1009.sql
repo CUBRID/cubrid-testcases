@@ -10,7 +10,7 @@ insert into DML_0001 values (4,'test1', {2,'test1'});
 insert into DML_0001 values (5,'test2', {2,'test2'});
 
 select * from dml_0001
-where exists(select int_col, var_col from dml_0001 where int_col = 5);
+where exists(select int_col, var_col from dml_0001 where int_col = 5) order by 1,2,3;
 
 
 drop class dml_0001;
