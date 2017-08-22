@@ -31,5 +31,5 @@ insert into DML_0002 values (1, 'test1', {a,b}, c , {c});
 
 
 drop class DML_0001;
-drop class DML_0002;
-drop class DML_0003;
+drop class DML_0002, DML_0003;
+drop variable a;

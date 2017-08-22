@@ -30,6 +30,8 @@ insert into ntile_dt values(null, '13:13:13', '2007-1-1 11:11:11', datetime'2011
 insert into ntile_dt values(date'1888-09-09', null, '2008-1-1 11:11:11', datetime'2011-11-11 11:11:11.111');
 insert into ntile_dt values(date'1888-09-09', '11:11:11', null, datetime'2011-11-11 11:11:11.111');
 
+rename table ntile_dt as ntile_dt_org;
+create view ntile_dt as select * from ntile_dt_org order by 1,2,3,4;
 
 --TEST: OVER() clause
 select col1, col2, ntile(5) over() b_num from (select * from ntile_dt order by 1,2,3,4) order by 1, 2, 3;
@@ -94,9 +96,8 @@ select col4, col1, ntile(21) over(partition by col4 order by 1, 2 desc) b_num fr
 select col1, col2, ntile(9) over(order by col1, col2 partition by col2) from ntile_dt;
 
 
-
-drop table ntile_dt; 
-
+drop view ntile_dt;
+drop table ntile_dt_org; 
 
 
 

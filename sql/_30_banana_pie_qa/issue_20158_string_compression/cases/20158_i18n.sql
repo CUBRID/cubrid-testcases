@@ -34,6 +34,7 @@ select col_binary into :a from t where i1=2 order by i1 desc limit 1;
 select :a;
 
 drop table t;
+drop variable a;
 
 set names iso88591;
 

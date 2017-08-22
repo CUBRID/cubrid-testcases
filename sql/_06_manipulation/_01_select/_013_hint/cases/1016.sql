@@ -54,7 +54,8 @@ insert into test values(7744, 'TURNER ',  'SALESMAN ',7698, date'09/08/1981',150
 select /*+ USE_IDX USE_MERGE ORDERED */
 testno, ename, dname, loc
 from   test e, p d
-where   e.pno = d.pno;
+where   e.pno = d.pno
+order by 1,2,3,4;
 
 drop class test;
 drop class p;

@@ -43,5 +43,5 @@ FROM scores
 )select * from cte order by 1,2;
 with recursive cte as (select * from scores) SELECT id, math, english, pe, grade, CUME_DIST() OVER(PARTITION BY grade ORDER BY math, english, pe) AS cume_dist
 FROM cte
-ORDER BY grade, cume_dist;
+ORDER BY grade, cume_dist,id;
 drop if exists scores;

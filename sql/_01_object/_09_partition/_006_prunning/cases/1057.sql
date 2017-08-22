@@ -11,8 +11,8 @@ create table range_test(id int,
 	insert into range_test values(2,'07:00:00','2005-06-01','2005-06-01 09:00:00');
 	insert into range_test values(3,'08:00:00','2005-12-01','2005-12-01 09:00:00');
 
-select * from range_test A, range_test B order by a.id;
-select a.test_date, b.test_date from range_test A, range_test B where a.test_date = '2005-06-01' order by a.id;
+select * from range_test A, range_test B order by 1,2,3,4,5,6;
+select a.test_date, b.test_date from range_test A, range_test B where a.test_date = '2005-06-01' order by 1,2;
 
 
 drop table range_test;
