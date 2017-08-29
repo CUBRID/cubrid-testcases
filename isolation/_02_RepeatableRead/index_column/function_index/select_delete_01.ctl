@@ -26,14 +26,16 @@ C1: CREATE INDEX idx ON tb1(CHAR_LENGTH(col));
 C1: commit;
 
 /* test case */
-C1: SELECT tb1.* FROM (select sleep(1)) x, tb1 USE INDEX (idx) WHERE CHAR_LENGTH(col)=id;
-
 C2: DELETE FROM tb1 USE INDEX (idx) WHERE CHAR_LENGTH(col)=id;
 C2: SELECT * FROM tb1 USE INDEX (idx) WHERE CHAR_LENGTH(col)=id order by 1,2;
-C2: commit;
 MC: wait until C2 ready;
+C1: SELECT tb1.* FROM (select sleep(1)) x, tb1 USE INDEX (idx) WHERE CHAR_LENGTH(col)=id order by 1,2;
+MC: wait until C1 ready;
 C1: SELECT * FROM tb1 USE INDEX (idx) WHERE CHAR_LENGTH(col)=id order by 1,2;
 C1: commit;
+MC: wait until C1 ready;
+C2: commit;
+MC: wait until C2 ready;
 C1: SELECT * FROM tb1 USE INDEX (idx) WHERE CHAR_LENGTH(col)=id order by 1,2;
 
 C1: commit;

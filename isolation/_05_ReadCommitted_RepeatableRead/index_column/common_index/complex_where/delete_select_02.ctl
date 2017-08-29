@@ -29,13 +29,13 @@ C1: commit work;
 /* test case */
 C1: DELETE FROM tb1 WHERE id <= 3;
 MC: wait until C1 ready;
-C2: SELECT * FROM tb1 WHERE salary BETWEEN 300 AND 400;
-C2: SELECT * FROM tb1 WHERE salary NOT BETWEEN 300 AND 400;
+C2: SELECT * FROM tb1 WHERE salary BETWEEN 300 AND 400 order by 1;
+C2: SELECT * FROM tb1 WHERE salary NOT BETWEEN 300 AND 400 order by 1;
 MC: wait until C2 ready;
 C1: commit;
 C1: DELETE FROM tb1 WHERE id=7;
 MC: wait until C1 ready;
-C2: SELECT * FROM tb1 WHERE name BETWEEN 'A' AND 'E';
+C2: SELECT * FROM tb1 WHERE name BETWEEN 'A' AND 'E' order by 1;
 MC: wait until C2 ready;
 C1: commit work;
 MC: wait until C1 ready;

@@ -57,11 +57,11 @@ MC: wait until C1 ready;
 
 /* test case */
 C1: INSERT INTO tt1 VALUES(1,'test');
-C1: select * from hi;
+C1: select * from hi order by 1,2;
 C1: DROP TRIGGER tt1_insert;
 C1: CREATE TRIGGER tt1_insert AFTER INSERT ON tt1 EXECUTE INSERT INTO hi VALUES(obj.id,obj.col||'from trigger');
 C1: INSERT INTO tt1 VALUES(2,'make');
-C1: select * from hi;
+C1: select * from hi order by 1,2;
 MC: wait until C1 ready;
 C2: INSERT INTO tt1 VALUES(3,'run'); 
 MC: sleep 1;
