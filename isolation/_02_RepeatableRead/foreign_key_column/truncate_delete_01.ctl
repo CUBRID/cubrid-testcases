@@ -36,11 +36,11 @@ C2: DELETE FROM t_foreign WHERE id=2;
 MC: wait until C2 blocked;
 C1: commit;
 MC: wait until C1 ready;
-C2: SELECT * FROM t_primary ORDER BY id;
-C2: SELECT * FROM t_foreign ORDER BY id;
+C2: SELECT * FROM t_primary ORDER BY id,col;
+C2: SELECT * FROM t_foreign ORDER BY id,col;
 C2: commit;
-C2: SELECT * FROM t_primary ORDER BY id;
-C2: SELECT * FROM t_foreign ORDER BY id;
+C2: SELECT * FROM t_primary ORDER BY id,col;
+C2: SELECT * FROM t_foreign ORDER BY id,col;
 C2: commit;
 
 C2: quit;

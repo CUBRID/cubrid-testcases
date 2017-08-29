@@ -32,7 +32,7 @@ C1: COMMIT WORK;
 MC: wait until C1 ready;
 
 /* test case */
-C2: select * from t order by 1;
+C2: select * from t order by 1,2;
 MC: wait until C2 ready;
 C1: DELETE FROM t WHERE id=1;
 MC: wait until C1 ready;
@@ -43,7 +43,7 @@ C1: commit;
 MC: wait until C1 ready;
 
 /* expect (1,'abc'), (1,'edf') */
-C2: select * from t order by 1;
+C2: select * from t order by 1,2;
 C2: commit;
 MC: wait until C2 ready;
 
