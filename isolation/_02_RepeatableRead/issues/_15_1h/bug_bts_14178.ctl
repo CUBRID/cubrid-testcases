@@ -58,7 +58,7 @@ C2: set transaction lock timeout INFINITE;
 C2: set transaction isolation level read committed;
 
 /* preparation */
-DROP TABLE IF EXISTS t1;
+DROP TABLE IF EXISTS t1,t2;
 CREATE TABLE t1(id INT, title VARCHAR(10));
 INSERT INTO t1 VALUES(1,'abc'),(2,'def'),(3,'ghi');
 rename table t1 as t2;
