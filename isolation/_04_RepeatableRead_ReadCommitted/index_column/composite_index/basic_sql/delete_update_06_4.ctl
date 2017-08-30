@@ -48,20 +48,26 @@ MC: wait until C1 ready;
 /* test case */
 C1: DELETE FROM t1 WHERE id IN (2,3,4);
 MC: wait until C1 ready;
+
 C2: UPDATE t1 SET id = 4, col = 'def' WHERE id = 5 or id = 2 or id = 4 and col != 'jkl';
 /* expect: C2 needs to wait once C1 completed */
 MC: wait until C2 blocked;
 /* expect: C1 select - id = 2,3,4 are deleted */
+
 C1: SELECT * FROM t1 order by 1,2;
 C1: commit;
 /* expect: 1 row (id=5)updated message should generated once C2 ready, C2 select - id = 5 is updated */
-MC: wait until C2 ready;
+MC: wait until C1 ready;
+
 C2: SELECT * FROM t1 order by 1,2;
 C2: commit;
+MC: wait until C2 ready;
+
 /* expect: id = 2,3,4 are deleted, id = 5 is updated */
 C3: select * from t1 order by 1,2;
-
 C3: commit;
+MC: wait until C3 ready;
+
 C1: quit;
 C2: quit;
 C3: quit;

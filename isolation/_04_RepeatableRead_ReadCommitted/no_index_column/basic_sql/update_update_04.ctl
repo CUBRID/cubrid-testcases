@@ -38,13 +38,20 @@ MC: wait until C1 ready;
 /* test case */
 C1: update t1 set id=3 where id<3;
 MC: wait until C1 ready;
+
 C2: update t1 set col='bb' where id=3;
 MC: wait until C2 ready;
-C1: commit;
-C2: commit;
-C3: select * from t1 order by 1,2;
 
+C1: commit;
+MC: wait until C1 ready;
+
+C2: commit;
+MC: wait until C2 ready;
+
+C3: select * from t1 order by 1,2;
 C3: commit;
+MC: wait until C3 ready;
+
 C1: quit;
 C2: quit;
 C3: quit;

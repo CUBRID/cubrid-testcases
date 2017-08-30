@@ -40,9 +40,10 @@ C1: DELETE FROM tb1 WHERE name='Tom';
 C1: SELECT * FROM tb1 ORDER BY dept_id,name;
 MC: wait until C1 ready;
 C1: commit work;
+MC: wait until C1 ready;
 C2: SELECT * FROM tb1 ORDER BY dept_id,name;
-MC: wait until C2 ready;
 C2: commit work;
+MC: wait until C2 ready;
 
 C2: quit;
 C1: quit;
