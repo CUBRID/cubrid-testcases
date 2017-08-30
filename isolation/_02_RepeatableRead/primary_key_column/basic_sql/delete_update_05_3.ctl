@@ -56,12 +56,15 @@ MC: wait until C2 ready;
 /* expect: C1 select - id = 1,7 are deleted */
 C1: SELECT * FROM t1 ORDER BY 1,2;
 C1: commit;
+MC: wait until C1 ready;
 /* expect: 1 row (id=2) updated message, C2 select - id = 2 is updated, but id = 1,7 are still existed */
 C2: SELECT * FROM t1 ORDER BY 1,2;
 C2: commit;
+MC: wait until C2 ready;
 /* expect: the instances of id = 2 is updated, whereas id = 1,7 are deleted */
 C3: select * from t1 ORDER BY 1,2;
 C3: commit;
+MC: wait until C3 ready;
 
 C1: quit;
 C2: quit;
