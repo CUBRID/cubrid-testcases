@@ -36,6 +36,8 @@ C2: set transaction isolation level repeatable read;
 C1: DROP TABLE IF EXISTS t1;
 C1: CREATE TABLE t1(id INT, col VARCHAR(10), tag VARCHAR(2));
 C1: INSERT INTO t1 VALUES(1,'abc','A');INSERT INTO t1 VALUES(2,'def','B');INSERT INTO t1 VALUES(3,'ghi','C');INSERT INTO t1 VALUES(4,'jkl','D');INSERT INTO t1 VALUES(5,'mno','E');INSERT INTO t1 VALUES(6,'pqr','F');INSERT INTO t1 VALUES(7,'abc','G');
+C1: RENAME TABLE t1 as t2;
+C1: CREATE TABLE t1 as SELECT * FROM t2 ORDER BY id; 
 C1: COMMIT WORK;
 MC: wait until C1 ready;
 

@@ -31,17 +31,20 @@ MC: wait until C1 ready;
 
 /* test case */
 C1: set @newincr=0;
-C1: insert into t select (@newincr:=@newincr+1),(@newincr) ||'a' from (select sleep(1)) x, t limit 3;
+C1: insert into t select (@newincr:=@newincr+1),(@newincr) ||'a' from t limit 3;
+MC: wait until C1 ready;
+
 C2: delete from t where id>0;
 C2: commit;
 MC: wait until C2 ready;
-MC: wait until C1 ready;
+
 C1: commit work;
 MC: wait until C1 ready;
 
 /* expected (1,1a)(2,2a)(3,3a) */
 C2: select * from t order by 1,2;
 C2: commit;
+MC: wait until C2 ready;
 
 C2: quit;
 C1: quit;

@@ -47,22 +47,32 @@ MC: wait until C1 ready;
 /* test case */
 C1: DELETE FROM t1 WHERE LENGTH(col) = 3;
 MC: wait until C1 ready;
+
 C2: UPDATE t1 SET tag = 'X' WHERE LENGTH(col) = 4;
 /* expect: no transactions need to wait */
 MC: wait until C2 ready;
+
 /* expect: C1 select - id = 3 is deleted */
 C1: SELECT * FROM t1 order by 1,2;
 MC: wait until C1 ready;
+
 /* expect: C2 select - id = 4,7 are updated */
 C2: SELECT * FROM t1 ORDER BY 1,2;
+MC: wait until C2 ready;
+
 C1: commit;
+MC: wait until C1 ready;
+
 /* expect: C2 select - id = 4,7 are updated, id = 3 is still visible */
 C2: SELECT * FROM t1 ORDER BY 1,2;
 C2: commit;
+MC: wait until C2 ready;
+
 /* expect: the instances of id = 3 is deleted, id = 4,7 are updated */
 C3: select * from t1 ORDER BY 1,2;
-
 C3: commit;
+MC: wait until C3 ready;
+
 C1: quit;
 C2: quit;
 C3: quit;

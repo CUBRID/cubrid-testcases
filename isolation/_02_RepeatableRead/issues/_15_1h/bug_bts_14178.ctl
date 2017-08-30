@@ -61,6 +61,8 @@ C2: set transaction isolation level read committed;
 DROP TABLE IF EXISTS t1;
 CREATE TABLE t1(id INT, title VARCHAR(10));
 INSERT INTO t1 VALUES(1,'abc'),(2,'def'),(3,'ghi');
+rename table t1 as t2;
+create table t1 as select * from t2 order by id;
 COMMIT WORK;
 MC: wait until C1 ready;
 

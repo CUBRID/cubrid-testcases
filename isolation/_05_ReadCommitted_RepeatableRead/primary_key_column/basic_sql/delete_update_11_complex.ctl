@@ -44,6 +44,7 @@ C1: select * from t_sub1 order by 1;
 C1: commit work;
 MC: wait until C1 ready;
 C2: commit;
+MC: wait until C2 ready;
 /* expected 10 */
 C1: select * from t order by 1;
 C1: commit;
