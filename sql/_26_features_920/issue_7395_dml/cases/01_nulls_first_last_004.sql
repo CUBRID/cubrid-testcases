@@ -117,7 +117,7 @@ create table t1(id int primary key not null auto_increment,e enum('a', 'b', 'c',
 insert into t1(e) values (1), ('b'), (3), ('xyz');
 insert into t1(e) values (1), ('b'), (null), (null);
 
-select * from t1 order by 2 nulls last;
+select * from t1 order by 2 nulls last,1;
 select group_concat(e order by e asc) from t1 order by 1 nulls last;
 select max(e) from t1 order by 1 nulls last;
 select min(e) from t1 order by 1 nulls last;
