@@ -37,15 +37,15 @@ create view ntile_dt as select * from ntile_dt_org order by 1,2,3,4;
 select col1, col2, ntile(5) over() b_num from (select * from ntile_dt order by 1,2,3,4) order by 1, 2, 3;
 select col1, col2, ntile(10) over() b_num from (select * from ntile_dt order by 1,2,3,4) order by 1, 2, 3;
 --TEST: with where clause
-select col3, col4, ntile(10) over() b_num from ntile_dt where col1 > '2000-12-12' order by 1;
-select col3, col4, ntile(13) over() b_num from ntile_dt where col1 > '2000-12-12' order by 1, 2;
+select col3, col4, ntile(10) over() b_num from (select * from ntile_dt order by 1,2,3,4) where col1 > '2000-12-12' order by 1;
+select col3, col4, ntile(13) over() b_num from (select * from ntile_dt order by 1,2,3,4) where col1 > '2000-12-12' order by 1, 2;
 
 
 
 --TEST: OVER(PARTITION BY) clause
 --TEST: partition by date
-select col1, col2, col3, col4, ntile(5) over(partition by col1) b_num from ntile_dt order by 1, 2, 3, 4;
-select col1, col2, col3, col4, ntile(6) over(partition by 1) b_num from ntile_dt order by 1, 2, 3, 4;
+select col1, col2, col3, col4, ntile(5) over(partition by col1) b_num from (select * from ntile_dt order by 1,2,3,4) order by 1, 2, 3, 4;
+select col1, col2, col3, col4, ntile(6) over(partition by 1) b_num from (select * from ntile_dt order by 1,2,3,4) order by 1, 2, 3, 4;
 --TEST: partition by time
 select col1, col2, col3, col4, ntile(3) over(partition by col2) b_num from (select * from ntile_dt order by 1,2,3,4) order by 1, 2, 3, 4;
 select col1, col2, col3, col4, ntile(10) over(partition by 2) b_num from (select * from ntile_dt order by 1,2,3,4) order by 1, 2, 3, 4;
