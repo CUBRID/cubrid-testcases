@@ -1,4 +1,4 @@
---test variance function with all keyword and types int,float,double, monetary 
+--test variance function with DISTINCT keyword and types int,float,double, monetary 
 create class tb (
 		varchartest     varchar(20),
 		sinttest        smallint,
@@ -27,14 +27,14 @@ insert into tb values ( '-1234567890', 5123, -45, -9876543210987654321012345678.
 insert into tb values ( '1234567890', 123, 45, 9876543210987654321012345678.0123456789, 987654.321, 987654321.987654321,987654.321, 9876.1,'char1234', DATE '08/14/2000', TIME '00:10:00', TIMESTAMP '08/14/2000 5:35:00 pm',B'0', N'test111', N'test111', B'1','qa test');
 
 
-select variance(all  chartest) from tb;
-select variance(all  datetest) from tb;
-select variance(all  timetest) from tb;
-select variance(all  timestamptest) from tb;
-select variance(all  bittest) from tb;
-select variance(all  nchartest) from tb;
-select variance(all  ncharvartest) from tb;
-select variance(all  bitvartest) from tb;
-select variance(all  stringtest) from tb;
+select variance(DISTINCT  chartest) from tb;
+select variance(DISTINCT  datetest) from tb;
+select variance(DISTINCT  timetest) from tb;
+select variance(DISTINCT  timestamptest) from tb;
+select variance(DISTINCT  bittest) from tb;
+select variance(DISTINCT  nchartest) from tb;
+select variance(DISTINCT  ncharvartest) from tb;
+select variance(DISTINCT  bitvartest) from tb;
+select variance(DISTINCT  stringtest) from tb;
 
 drop class tb;

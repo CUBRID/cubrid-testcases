@@ -1,4 +1,4 @@
---test variance function with UNIQUE keyword and types int,float,double, monetary 
+--test variance function with distinct keyword and types int,float,double, monetary 
 create class tb (
 		varchartest     varchar(20),
 		sinttest        smallint,

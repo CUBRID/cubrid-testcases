@@ -26,15 +26,10 @@ insert into tb values ( '1234567890', 123, 45, 9876543210987654321012345678.0123
 insert into tb values ( '-1234567890', 5123, -45, -9876543210987654321012345678.0123456789, -987654.321, -987654321.987654321,-987654.321, -9876.1,'-char123', DATE '08/14/1977', TIME '02:10:00', TIMESTAMP '08/14/1977 5:35:00 pm',B'0', N'test111', N'test111', B'1','qa test');
 insert into tb values ( '1234567890', 123, 45, 9876543210987654321012345678.0123456789, 987654.321, 987654321.987654321,987654.321, 9876.1,'char1234', DATE '08/14/2000', TIME '00:10:00', TIMESTAMP '08/14/2000 5:35:00 pm',B'0', N'test111', N'test111', B'1','qa test');
 
-
-select STDDEV(all  chartest) from tb;
-select STDDEV(all  datetest) from tb;
-select STDDEV(all  timetest) from tb;
-select STDDEV(all  timestamptest) from tb;
-select STDDEV(all  bittest) from tb;
-select STDDEV(all  nchartest) from tb;
-select STDDEV(all  ncharvartest) from tb;
-select STDDEV(all  bitvartest) from tb;
-select STDDEV(all  stringtest) from tb;
+select STDDEV(all inttest) from tb;
+select STDDEV(all floattest) from tb;
+select STDDEV(all realtest) from tb;
+select STDDEV(all doublepretest) from tb;
+select STDDEV(all moneytest) from tb;
 
 drop class tb;
