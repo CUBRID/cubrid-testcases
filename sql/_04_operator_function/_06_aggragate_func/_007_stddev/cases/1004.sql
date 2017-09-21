@@ -1,4 +1,4 @@
---test STDDEV function with UNIQUE keyword and types int,float,double, monetary 
+--test STDDEV function with distinct keyword and types int,float,double, monetary 
 create class tb (
 		varchartest     varchar(20),
 		sinttest        smallint,

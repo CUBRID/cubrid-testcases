@@ -18,6 +18,6 @@ insert into test_class values('aaaa','xxxxxx',N'abc',B'00001',B'01',55555,10001,
                               TIMESTAMP'01/31/1998 8:15:00 pm',{1000,500,20},
                               {1000,1000,1000},{50,1000,1000,1000});
                               
-select avg(col4) as avg_bit from test_class;
+select avg(col5) as avg_bit_varying from test_class;
 
 drop class test_class;
