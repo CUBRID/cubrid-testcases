@@ -17,16 +17,16 @@ insert into t values(null, '你我他','你我他', '你我他', '你我他');
 insert into t values(null, '你%我%他','你我他', '你我他', '你我他');
 
 set names binary;
-select col_binary from t where col_binary like '%你%';
-select col_binary from t where col_binary not like '%你%';
-select col_binary from t where col_binary like '_你%';
-select col_binary from t where col_binary not like '_你%';
-select col_binary from t where col_binary like '____';
-select col_binary from t where col_binary not like '____';
+select col_binary from t where col_binary like '%你%' order by 1;
+select col_binary from t where col_binary not like '%你%' order by 1;
+select col_binary from t where col_binary like '_你%' order by 1;
+select col_binary from t where col_binary not like '_你%' order by 1;
+select col_binary from t where col_binary like '____' order by 1;
+select col_binary from t where col_binary not like '____' order by 1;
 
 set system parameters 'no_backslash_escapes=no';
 set system parameters 'require_like_escape_character=yes';
-select col_binary from t where col_binary  like '%\%我%';
+select col_binary from t where col_binary  like '%\%我%' order by 1;
 
 set system parameters 'require_like_escape_character=no';
 set system parameters 'no_backslash_escapes=y';
