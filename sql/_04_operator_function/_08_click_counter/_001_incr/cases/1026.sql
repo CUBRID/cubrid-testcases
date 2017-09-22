@@ -7,6 +7,6 @@ insert into xoo values(3,null);
 
 select b, incr(b) from xoo where b is null order by 1,2;
 
-select * from xoo;
+select * from xoo order by 1;
 
 drop xoo;
