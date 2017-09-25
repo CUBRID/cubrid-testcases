@@ -43,3 +43,4 @@ update DML_0002 set ref_col = (select dml_0001 from dml_0001 where int_col=1), s
 
 drop DML_0002 ,DML_0003 ;
 drop DML_0001;
+drop variable a,b,c,d,e ;

@@ -57,3 +57,4 @@ drop table dml_0002;
 drop table dml_0003;
 drop table dml_0004;
 drop table dml_0005;
+drop variable a,b,c,d,e ;

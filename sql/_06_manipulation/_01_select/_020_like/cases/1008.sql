@@ -43,3 +43,4 @@ order by 1,dml_0001.var_col;
 drop DML_0001;
 drop DML_0002;
 drop DML_0003;
+drop variable a,b,c,d,e ;

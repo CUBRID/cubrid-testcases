@@ -8,6 +8,7 @@ create class tb1(
 );
 insert into tb1 (id, address) values(1, 'beijing');
 select tb1 into oid1 from tb1 where id = 1;
+drop variable oid1;
 drop class tb1;
 commit;
 
@@ -22,6 +23,7 @@ create class tb1(
 );
 insert into tb1 (id, address) values(1, 'beijing');
 select tb1 into a from tb1 where id = 1;
+drop variable a;
 drop class tb1;
 commit;
 
