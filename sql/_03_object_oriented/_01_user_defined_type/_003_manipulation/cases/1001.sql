@@ -44,3 +44,4 @@ select ref_col{a}.int_col from dml_0002, dml_0001 a  order by 1;
 drop class DML_0001;
 drop class DML_0002;
 drop class DML_0003;
+drop variable a,b,c,d,e ;

@@ -39,3 +39,4 @@ select *, ref_col.int_col from DML_0002;
 drop class DML_0001;
 drop class DML_0002;
 drop class DML_0003;
+drop variable a,b,c,d,e ;

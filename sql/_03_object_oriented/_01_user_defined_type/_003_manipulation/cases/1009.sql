@@ -47,3 +47,4 @@ select * from all DML_SUPER order by 1,2,3;
 drop class DML_SUPER;
 drop class DML_0001;
 drop class DML_0002;
+drop variable a, a1, a2, b, b1, b2;

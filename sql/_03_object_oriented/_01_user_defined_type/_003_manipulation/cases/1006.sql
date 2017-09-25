@@ -41,3 +41,4 @@ select var_col,ref_col.int_col, int_col from all DML_0001, DML_0002;
 drop class DML_0001;
 drop class DML_0002;
 drop class DML_0003;
+drop variable a,b,c,d,e ;

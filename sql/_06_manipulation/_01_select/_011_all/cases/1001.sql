@@ -70,3 +70,4 @@ drop class DML_0002;
 drop class DML_0003;
 drop class DML_0004;
 drop class DML_0005;
+drop variable a,b,c,d,e ;

@@ -53,3 +53,4 @@ update DML_0002 set ref_col = (select d from dml_0002 where int_col=a),
 drop class DML_0001;
 drop class DML_0002;
 drop class DML_0003;
+drop variable a,b,c,d,e ;

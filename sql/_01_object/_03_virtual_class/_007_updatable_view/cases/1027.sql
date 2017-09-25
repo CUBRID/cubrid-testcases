@@ -27,6 +27,6 @@ SELECT * FROM v1;
 select v1 from v1;
 
 
-
+drop variable a;
 drop class c1,c2;
 drop vclass v1;
