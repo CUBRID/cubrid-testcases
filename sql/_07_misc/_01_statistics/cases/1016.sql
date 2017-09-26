@@ -19,14 +19,14 @@ insert into t3 values(103, 'z');
 insert into t3 values(104, 'a');
 
 
-select * from t1 order by 1;
-select * from t2 order by 1;
-select * from t3 order by 1;
+select * from t1;
+select * from t2;
+select * from t3;
 
 update statistics on t1, t2, t3;
 
-select * from t1 order by 1;
-select * from t2 order by 1;
-select * from t3 order by 1;
+select * from t1;
+select * from t2;
+select * from t3;
 
 drop class t1, t2, t3;

@@ -55,7 +55,7 @@ select * from tz_test1 t1 right outer join tz_test2 t2 on t1.dtltz=t2.dtltz orde
 select t2.id, t1.dttz, t2.dt, t1.dt, t2.dtltz from tz_test1 t1 right outer join tz_test2 t2 on t1.dtltz=t2.dtltz where year(t1.dttz) < 2010 order by t2.id, t1.dttz, t2.dt, t1.dt, t2.dtltz;
 
 --test: mix
-select t1.id, t1.dtltz, t2.id, t2.dttz, t3.dttz, t1.dt, t2.dtltz, t3.dtltz from tz_test1 t1 right outer join tz_test2 t2 on t1.dtltz=t2.dttz inner join tz_test1 t3 on t2.dttz=t3.dttz order by 1,3,4, 5, 6, 7, 2;
+select t1.id, t1.dtltz, t2.id, t2.dttz, t3.dttz, t1.dt, t2.dtltz, t3.dtltz from tz_test1 t1 right outer join tz_test2 t2 on t1.dtltz=t2.dttz inner join tz_test1 t3 on t2.dttz=t3.dttz order by 1,2,4, 5, 6, 7, 2;
 
 --test: multi table update
 update tz_test1 t1 left outer join tz_test2 t2 on t1.dt=t2.dt and t1.dtltz=t2.dtltz and t1.dttz=t2.dttz set t1.dt=t2.dt+1, t2.dtltz=t1.dttz-10, t1.dttz=t1.dt-1;
