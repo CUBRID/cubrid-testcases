@@ -25,10 +25,10 @@ insert into t2 values(10,1.2e2,3);
 insert into t2 values(10,1.2e2,3);
 insert into t2 values(20,2.5e2,4);
 
-select * from (select * from t1 order by 1,2) t1 natural join (select * from t2 order by 1,2) t2 group by d1;
+select * from (select * from t1 order by 1,2) t1 natural join (select * from t2 order by 1,2) t2 group by d1 order by 1;
 
-select f1,i1+2 from (select * from t1 order by 1,2)  t1 natural join (select * from t2 order by 1,2)  t2 group by d1;
-prepare st from 'select f1,i1+? from t1 natural join t2 group by d1';
+select f1,i1+2 from (select * from t1 order by 1,2)  t1 natural join (select * from t2 order by 1,2)  t2 group by d1 order by 1;
+prepare st from 'select f1,i1+? from t1 natural join t2 group by d1 order by 1';
 execute st using 2;
 
 
@@ -92,7 +92,7 @@ insert into t2 values(3);
 insert into t2 values(5);
 
 select /*+ RECOMPILE*/ * from (select * from t1 order by 1,2) t1 natural join (select * from t2 order by 1) t2;
-select /*+ RECOMPILE*/ * from (select * from t1 order by 1,2) t1 natural left join (select * from t2 order by 1) t2;
+select /*+ RECOMPILE*/ * from (select * from t1 order by 1,2) t1 natural left join (select * from t2 order by 1) t2 order by 1;
 select /*+ RECOMPILE*/ * from (select * from t1 order by 1,2) t1 natural right join (select * from t2 order by 1) t2;
 
 
@@ -110,8 +110,8 @@ insert into t1 values(1);
 insert into t1 values(3);
 insert into t2 values(2);
 
-select * from (select i1+1 from t1) t1;
-select /*+ RECOMPILE*/ * from (select i1+1 from t1 order by 1) t1 natural join (select i2 as x from t2 order by 1) t2;
+select * from (select i1+1 from t1) t1 order by 1;
+select /*+ RECOMPILE*/ * from (select i1+1 from t1 order by 1) t1 natural join (select i2 as x from t2 order by 1) t2 order by 1;
 
 drop table if exists t1;
 drop table if exists t2;
@@ -127,7 +127,7 @@ insert into t2 values(2);
 
 select * from (select i1+1 from t1) t1;
 
-select * from (select i1+1 from t1) t1 natural join (select i1+1 from t2) t2;
+select * from (select i1+1 from t1) t1 natural join (select i1+1 from t2) t2 order by 1, 2;
 
 select * from (select i1+1 as i1 from t1) t1 natural join (select i1+1 as i1 from t2) t2;
 
@@ -144,9 +144,9 @@ insert into t1 values(1);
 insert into t1 values(3);
 insert into t2 values(2);
 
-select /*+ RECOMPILE*/ * from (select i1+1 from t1 order by 1) t1 natural join (select i2 as x from t2 order by 1) t2;
+select /*+ RECOMPILE*/ * from (select i1+1 from t1 order by 1) t1 natural join (select i2 as x from t2 order by 1) t2 order by 1;
 
-select /*+ RECOMPILE*/ * from (select i1+1 as i2 from t1 order by 1) t1 natural join (select i2 as i1 from t2 order by 1) t2;
+select /*+ RECOMPILE*/ * from (select i1+1 as i2 from t1 order by 1) t1 natural join (select i2 as i1 from t2 order by 1) t2 order by 1;
 
 
 select i2 as i1_1 from t2 order by 1;
