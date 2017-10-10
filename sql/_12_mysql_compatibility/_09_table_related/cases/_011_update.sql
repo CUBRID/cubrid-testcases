@@ -9,23 +9,15 @@ insert into tree values(6,2,'BB');
 insert into tree values(7,3,'AAA');
 insert into tree values(8,3,'AAB');
 
-select *
-	from tree
-	order by id;
+select * from tree order by id;
 
-insert into tree set
-		id=9,
-		parentid=default,
-		text='ABA';
-		
-insert into tree values(10,default,'ABB');
+update tree  set parentid=default, text='ABA' where id=6;
+update tree set parentid=default, text='ABB'  where id=7;
 
 alter table tree alter column parentid set default 5;
 
-insert into tree values(11,default,'BAA'),(12,default,'BAB');
+update tree set parentid=default, text='ABB' where id in (3,4);
 
-select *
-	from tree
-	order by id;
+select * from tree order by id;
 
 drop table tree;
