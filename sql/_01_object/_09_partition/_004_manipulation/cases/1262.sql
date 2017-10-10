@@ -1,4 +1,4 @@
---test delete(date): deleting all data in a list partition(has NULL) using many partitions and a delete statement with all of the partition key values
+--test delete(date): deleting all data in a list partition(has no NULL) using many partitions and a delete statement with all of the partition key values
 create table list_test(id int,	
 				   test_time time,
 				   test_date date,
@@ -27,7 +27,7 @@ insert into list_test values(17,'11:00:00','2006-04-01','2006-04-01 09:00:00');
 insert into list_test values(18,'11:10:00','2006-04-11','2006-04-11 09:00:00');
 insert into list_test values(19,'11:20:00','2006-04-21','2006-04-21 09:00:00');
 insert into list_test values(50,NULL,NULL,NULL);
-delete from list_test where  test_date     IN ('2006-03-01','2006-03-11',null,'2006-03-21');
+delete from list_test where  test_date     IN ('2006-03-01','2006-03-11','2006-03-21');
 select * from list_test__p__p0 order by id;
 select * from list_test__p__p1 order by id;
 select * from list_test__p__p2 order by id;
