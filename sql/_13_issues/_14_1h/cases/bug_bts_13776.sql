@@ -26,9 +26,9 @@ create view v3 as select /*+ recompile index_ss(t1,t2) */ t1.i c1,t1.j c2,t1.k c
 create view v4 as select /*+ recompile index_ss(t2) */ t1.i c1,t1.j c2,t1.k c3,t2.i c4,t2.j c5,t2.col1 c6 from t1,t2 where t2.i<=30 and t1.i=t2.i and t1.j=t2.j;
 create view v5 as select /*+ recompile index_ss(t1) */ t1.i c1,t1.j c2,t1.k c3,t2.i c4,t2.j c5,t2.col1 c6 from t1,t2 where t2.i<=30 and t1.i=t2.i and t1.j=t2.j;
 
-select /*+ recompile */ * from v3;
-select /*+ recompile */ * from v4;
-select /*+ recompile */ * from v5;
+select /*+ recompile */ * from v3 order by 1;
+select /*+ recompile */ * from v4 order by 1;
+select /*+ recompile */ * from v5 order by 1; 
 drop t1,t2;
 drop v1,v2,v3,v4,v5;
 
@@ -65,10 +65,10 @@ update statistics on all classes with fullscan;
 create view v1 as select /*+ recompile index_ss(t1) ordered */ * from t1,t2 where t1.j<=10 and t2.b<=8 and t1.k=t2.c and t2.c=2 limit 5;
 create view v2 as select /*+ recompile index_ss(t1,t2) ordered */ * from t1,t2 where t1.j<=10 and t2.b<=8 and t1.k=t2.c and t2.c=2 limit 5;
 create view v3 as select /*+ recompile index_ss(t2) ordered */ * from t1,t2 where t1.j<=10 and t2.b<=8 and t1.k=t2.c and t2.c=2 limit 5;
-select /*+ recompile index_ss(t2) */ * from v1;
-select /*+ recompile index_ss(t2) */ * from v2;
-select /*+ recompile index_ss(t2) */ * from v3;
-select /*+ recompile index_ss(t1) */ * from v3;
+select /*+ recompile index_ss(t2) */ * from v1 order by i, a;
+select /*+ recompile index_ss(t2) */ * from v2 order by i, a;
+select /*+ recompile index_ss(t2) */ * from v3 order by i, a;
+select /*+ recompile index_ss(t1) */ * from v3 order by i, a;
 
 drop t1,t2;
 drop view v1,v2,v3;

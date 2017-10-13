@@ -8,6 +8,6 @@ insert into t1 values('Kitty', 27);
 insert into t1 values('Cat', 23);
 
 
-select * from t1;
+select * from t1 order by 1;
 drop class t1;
 drop class sub_t1;

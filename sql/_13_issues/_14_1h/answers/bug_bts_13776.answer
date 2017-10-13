@@ -109,18 +109,22 @@ c1    c2    c3    c4    c5    c6
 3     3     yellow     3     3     3     
 
 Query plan:
-idx-join (inner join)
-    outer: iscan
-               class: t? node[?]
-               index: idx_t? term[?] (covers) (index skip scan)
-               cost:  ? card ?
-    inner: iscan
-               class: v? node[?]
-               index: idx_t? term[?] AND term[?] (covers)
-               cost:  ? card ?
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: t? node[?]
+                            index: idx_t? term[?] (covers) (index skip scan)
+                            cost:  ? card ?
+                 inner: iscan
+                            class: v? node[?]
+                            index: idx_t? term[?] AND term[?] (covers)
+                            cost:  ? card ?
+                 sort:  ? asc, ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS(t?, t?) */ v?.i, v?.j, v?.k, t?.i, t?.j, t?.col? from t? v?, t? t? where (t?.i<= ?:? ) and v?.i=t?.i and v?.j=t?.j
+select /*+ INDEX_SS(t?, t?) */ v?.i, v?.j, v?.k, t?.i, t?.j, t?.col? from t? v?, t? t? where (t?.i<= ?:? ) and v?.i=t?.i and v?.j=t?.j order by ?
 ===================================================
 c1    c2    c3    c4    c5    c6    
 1     1     green     1     1     1     
@@ -128,18 +132,22 @@ c1    c2    c3    c4    c5    c6
 3     3     yellow     3     3     3     
 
 Query plan:
-idx-join (inner join)
-    outer: iscan
-               class: t? node[?]
-               index: idx_t? term[?] (covers) (index skip scan)
-               cost:  ? card ?
-    inner: iscan
-               class: v? node[?]
-               index: idx_t? term[?] AND term[?] (covers)
-               cost:  ? card ?
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: t? node[?]
+                            index: idx_t? term[?] (covers) (index skip scan)
+                            cost:  ? card ?
+                 inner: iscan
+                            class: v? node[?]
+                            index: idx_t? term[?] AND term[?] (covers)
+                            cost:  ? card ?
+                 sort:  ? asc, ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS(t?) */ v?.i, v?.j, v?.k, t?.i, t?.j, t?.col? from t? v?, t? t? where (t?.i<= ?:? ) and v?.i=t?.i and v?.j=t?.j
+select /*+ INDEX_SS(t?) */ v?.i, v?.j, v?.k, t?.i, t?.j, t?.col? from t? v?, t? t? where (t?.i<= ?:? ) and v?.i=t?.i and v?.j=t?.j order by ?
 ===================================================
 c1    c2    c3    c4    c5    c6    
 1     1     green     1     1     1     
@@ -147,18 +155,21 @@ c1    c2    c3    c4    c5    c6
 3     3     yellow     3     3     3     
 
 Query plan:
-idx-join (inner join)
-    outer: sscan
-               class: t? node[?]
-               sargs: term[?]
-               cost:  ? card ?
-    inner: iscan
-               class: v? node[?]
-               index: idx_t? term[?] AND term[?] (covers)
-               cost:  ? card ?
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: t? node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: v? node[?]
+                            index: idx_t? term[?] AND term[?] (covers)
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS(t?) */ v?.i, v?.j, v?.k, t?.i, t?.j, t?.col? from t? v?, t? t? where (t?.i<= ?:? ) and v?.i=t?.i and v?.j=t?.j
+select /*+ INDEX_SS(t?) */ v?.i, v?.j, v?.k, t?.i, t?.j, t?.col? from t? v?, t? t? where (t?.i<= ?:? ) and v?.i=t?.i and v?.j=t?.j order by ?
 ===================================================
 0
 ===================================================
@@ -254,21 +265,25 @@ i    j    k    a    b    c
 9     9     green     1     1     green     
 
 Query plan:
-nl-join (cross join)
-    outer: iscan
-               class: v? node[?]
-               index: idx_t? term[?] (covers) (index skip scan)
-               filtr: term[?]
-               sargs: term[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t? node[?]
-               sargs: term[?] AND term[?]
-               cost:  ? card ?
-    sargs: term[?]
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: iscan
+                            class: v? node[?]
+                            index: idx_t? term[?] (covers) (index skip scan)
+                            filtr: term[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: t? node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 sargs: term[?]
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED INDEX_SS(t?) */ v?.i, v?.j, v?.k, t?.a, t?.b, t?.c from t? v?, t? t? where (v?.j<= ?:? ) and (t?.b<= ?:? ) and (inst_num()<= ?:? ) and v?.k= ?:?  and t?.c= ?:?  and v?.k=t?.c
+select /*+ ORDERED INDEX_SS(t?) */ v?.i, v?.j, v?.k, t?.a, t?.b, t?.c from t? v?, t? t? where (v?.j<= ?:? ) and (t?.b<= ?:? ) and (inst_num()<= ?:? ) and v?.k= ?:?  and t?.c= ?:?  and v?.k=t?.c order by ?, ?
 ===================================================
 i    j    k    a    b    c    
 1     1     green     1     1     green     
@@ -278,22 +293,26 @@ i    j    k    a    b    c
 9     9     green     1     1     green     
 
 Query plan:
-nl-join (cross join)
-    outer: iscan
-               class: v? node[?]
-               index: idx_t? term[?] (covers) (index skip scan)
-               filtr: term[?]
-               sargs: term[?]
-               cost:  ? card ?
-    inner: iscan
-               class: t? node[?]
-               index: idx_t? term[?] (covers) (index skip scan)
-               filtr: term[?]
-               cost:  ? card ?
-    sargs: term[?]
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: iscan
+                            class: v? node[?]
+                            index: idx_t? term[?] (covers) (index skip scan)
+                            filtr: term[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t? node[?]
+                            index: idx_t? term[?] (covers) (index skip scan)
+                            filtr: term[?]
+                            cost:  ? card ?
+                 sargs: term[?]
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED INDEX_SS(t?, t?) */ v?.i, v?.j, v?.k, t?.a, t?.b, t?.c from t? v?, t? t? where (v?.j<= ?:? ) and (t?.b<= ?:? ) and (inst_num()<= ?:? ) and v?.k= ?:?  and t?.c= ?:?  and v?.k=t?.c
+select /*+ ORDERED INDEX_SS(t?, t?) */ v?.i, v?.j, v?.k, t?.a, t?.b, t?.c from t? v?, t? t? where (v?.j<= ?:? ) and (t?.b<= ?:? ) and (inst_num()<= ?:? ) and v?.k= ?:?  and t?.c= ?:?  and v?.k=t?.c order by ?, ?
 ===================================================
 i    j    k    a    b    c    
 1     1     green     1     1     green     
@@ -303,20 +322,23 @@ i    j    k    a    b    c
 9     9     green     1     1     green     
 
 Query plan:
-nl-join (cross join)
-    outer: sscan
-               class: v? node[?]
-               sargs: term[?] AND term[?] AND term[?]
-               cost:  ? card ?
-    inner: iscan
-               class: t? node[?]
-               index: idx_t? term[?] (covers) (index skip scan)
-               filtr: term[?]
-               cost:  ? card ?
-    sargs: term[?]
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: v? node[?]
+                            sargs: term[?] AND term[?] AND term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t? node[?]
+                            index: idx_t? term[?] (covers) (index skip scan)
+                            filtr: term[?]
+                            cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED INDEX_SS(t?) */ v?.i, v?.j, v?.k, t?.a, t?.b, t?.c from t? v?, t? t? where (v?.j<= ?:? ) and (t?.b<= ?:? ) and (inst_num()<= ?:? ) and v?.k= ?:?  and t?.c= ?:?  and v?.k=t?.c
+select /*+ ORDERED INDEX_SS(t?) */ v?.i, v?.j, v?.k, t?.a, t?.b, t?.c from t? v?, t? t? where (v?.j<= ?:? ) and (t?.b<= ?:? ) and (inst_num()<= ?:? ) and v?.k= ?:?  and t?.c= ?:?  and v?.k=t?.c order by ?, ?
 ===================================================
 i    j    k    a    b    c    
 1     1     green     1     1     green     
@@ -326,20 +348,23 @@ i    j    k    a    b    c
 9     9     green     1     1     green     
 
 Query plan:
-nl-join (cross join)
-    outer: sscan
-               class: v? node[?]
-               sargs: term[?] AND term[?] AND term[?]
-               cost:  ? card ?
-    inner: iscan
-               class: t? node[?]
-               index: idx_t? term[?] (covers) (index skip scan)
-               filtr: term[?]
-               cost:  ? card ?
-    sargs: term[?]
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: v? node[?]
+                            sargs: term[?] AND term[?] AND term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t? node[?]
+                            index: idx_t? term[?] (covers) (index skip scan)
+                            filtr: term[?]
+                            cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED INDEX_SS(t?) */ v?.i, v?.j, v?.k, t?.a, t?.b, t?.c from t? v?, t? t? where (v?.j<= ?:? ) and (t?.b<= ?:? ) and (inst_num()<= ?:? ) and v?.k= ?:?  and t?.c= ?:?  and v?.k=t?.c
+select /*+ ORDERED INDEX_SS(t?) */ v?.i, v?.j, v?.k, t?.a, t?.b, t?.c from t? v?, t? t? where (v?.j<= ?:? ) and (t?.b<= ?:? ) and (inst_num()<= ?:? ) and v?.k= ?:?  and t?.c= ?:?  and v?.k=t?.c order by ?, ?
 ===================================================
 0
 ===================================================
