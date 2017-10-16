@@ -27,8 +27,8 @@ alter vclass v1 modify i2 int not null;
 
 insert into t1 set i2=2;
 
-select * from t1 order by 1;
-select * from v1 order by 1;
+select * from t1 order by 1,2;
+select * from v1 order by 1,2;
 
 desc t1;
 desc v1;

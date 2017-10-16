@@ -56,20 +56,20 @@ insert into test values (120,'Matthew','Weiss','MWEISS','650.123.1234','07/18/19
 
 
 select name1||'.'||name2 from test
-where ss > all (select avg(ss) from test group by did);
+where ss > all (select avg(ss) from test group by did) order by 1;
 
 select name1||'.'||name2 from test
-where ss < all (select avg(ss) from test group by did);
+where ss < all (select avg(ss) from test group by did) order by 1;
 
 set system parameters 'compat_mode=mysql';
 set system parameters 'pipes_as_concat=yes';
 
 
 select name1||'.'||name2 from test
-where ss > all (select avg(ss) from test group by did);
+where ss > all (select avg(ss) from test group by did) order by 1;
 
 select name1||'.'||name2 from test
-where ss < all (select avg(ss) from test group by did);
+where ss < all (select avg(ss) from test group by did) order by 1;
 
 set system parameters 'pipes_as_concat=no';
 set system parameters 'compat_mode=cubrid';

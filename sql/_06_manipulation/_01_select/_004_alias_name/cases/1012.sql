@@ -15,7 +15,7 @@ insert into t2 values(103, 'RD');
 
 select t1.id, name, birthday, dept_id 
 from  t1, (select * from t2 where dept_name = 'DB') DB_DEPT
-where  t1.dept_id = db_dept.id;
+where  t1.dept_id = db_dept.id order by 1,2,3,4;
 
 
 drop class t1;
