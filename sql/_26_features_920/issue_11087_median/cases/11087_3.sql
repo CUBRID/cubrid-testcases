@@ -190,8 +190,8 @@ select  a, median(c1) from median_p group by a having a>2 order by 1,2;
 
 select median(c2)  from median_p group by a order by 1; 
 select a, median(c2)  from median_p group by a order by 1,2;
-select a, c2, median(c2)  from median_p group by a having avg(c2) > 7 order by 1,2;
-select a, c2, avg(c2), median(c2)  from median_p group by a having avg(c2) > 7 order by 1,2;
+select a, count(c2), median(c2)  from median_p group by a having avg(c2) > 7 order by 1,2;
+select a, count(c2), avg(c2), median(c2)  from median_p group by a having avg(c2) > 7 order by 1,2;
 select a, count(c2), median(c2)  from median_p group by a having count(c2) > 2 order by 1,2;
 
 select  a, median(c1) over(partition by a)  from median_p  where a=4 order by 1,2;

@@ -9,6 +9,6 @@ insert into tb values(1, 'aaa1', 'bbb1');
 insert into tb values(2, 'aaa2', 'bbb2');
 insert into tb values(3, 'aaa3', 'bbb3');
 
-select * from tb;
+select * from tb order by 1,2,3;
 
 drop class tb;

@@ -28,17 +28,17 @@ select col1, col2, col3, col4, col5, 1  from   ts01
   union all
   select col1, col2, col3, col4, 0, 0 from   ts02
   difference
-  select col1, col2, col3, col4, 0, 0  from   ts01;
+  select col1, col2, col3, col4, 0, 0  from   ts01 order by 1;
 select col1, col2, col3, col4, col5, 1  from   ts01
   union all
   ( select col1, col2, col3, col4, 0, 0   from   ts02
     difference
-    select col1, col2, col3, col4, 0, 0    from   ts01 );
+    select col1, col2, col3, col4, 0, 0    from   ts01 ) order by 1;
 select col1, col2, col3, col4, col5, 1  from   ts01
   union all
   ( select col1, col2, col3, col4, 0.0, 0    from   ts02
     difference
-    select col1, col2, col3, col4, 0.0, 0    from   ts01 );
+    select col1, col2, col3, col4, 0.0, 0    from   ts01 ) order by 1;
 
 
 drop class ts01;
