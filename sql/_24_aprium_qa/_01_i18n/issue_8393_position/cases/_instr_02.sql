@@ -11,16 +11,16 @@ insert into t values (4,' ぁゝ_ぁゝ_ゝゝ_ぁゝゝ ');
 insert into t values (5,'ぁ _ぁ');
 insert into t values (5,'ゝぁ _ぁ');
 
-select i, s, instr (s,'ぁ',1) from t order by 1;
-select i, s, instr (s,'ぁ',-1) from t order by 1;
-select i, s, instr (s,'ぁゝ',1) from t order by 1;
-select i, s, instr (s,'ぁゝ',-1) from t order by 1;
-select i, s, instr (s,'ゝ',1) from t order by 1;
-select i, s, instr (s,'ゝ',-1) from t order by 1;
-select i, s, instr (s,'ゝゝ',1) from t order by 1;
-select i, s, instr (s,'ゝゝ',-1) from t order by 1;
-select i, s, instr (s,'ゝぁ',1) from t order by 1;
-select i, s, instr (s,'ゝぁ',-1) from t order by 1;
+select i, s, instr (s,'ぁ',1) from t order by 1,2,3;
+select i, s, instr (s,'ぁ',-1) from t order by 1,2,3;
+select i, s, instr (s,'ぁゝ',1) from t order by 1,2,3;
+select i, s, instr (s,'ぁゝ',-1) from t order by 1,2,3;
+select i, s, instr (s,'ゝ',1) from t order by 1,2,3;
+select i, s, instr (s,'ゝ',-1) from t order by 1,2,3;
+select i, s, instr (s,'ゝゝ',1) from t order by 1,2,3;
+select i, s, instr (s,'ゝゝ',-1) from t order by 1,2,3;
+select i, s, instr (s,'ゝぁ',1) from t order by 1,2,3;
+select i, s, instr (s,'ゝぁ',-1) from t order by 1,2,3;
 
 
 drop table t;
