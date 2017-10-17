@@ -193,7 +193,7 @@ drop table if exists t,s,u;
 
 create table t (a int, b bigint, c char(500), d char(500), e char(500));
 
-insert into t select rownum,rownum,rownum+2,rownum,rownum+2 from db_class a,db_class b ,db_class c limit 50000;
+insert into t select rownum,rownum,rownum+2,rownum,rownum+2 from db_class a,db_class b limit 500;
 
 create index idx_a_b_cd_d_ed on t (a, b, c desc, d, e desc);
 create index idx_a_b_cd_d on t (a, b, c desc, d);
@@ -218,7 +218,7 @@ drop table if exists t,s,u;
 
 create table t (a int, b enum('1','2','3','4','5'), c int, d int, e int) ;
 
-insert into t select rownum,1 ,rownum+2,rownum,rownum+2 from db_class a,db_class b ,db_class c limit 50000;
+insert into t select rownum,1 ,rownum+2,rownum,rownum+2 from db_class a,db_class b limit 500;
 
 create index idx_a_b_cd_d_ed on t (a, b, c desc, d, e desc);
 create index idx_a_b_cd_d on t (a, b, c desc, d);

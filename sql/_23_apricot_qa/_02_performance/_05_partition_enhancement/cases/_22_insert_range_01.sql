@@ -41,10 +41,6 @@ insert into t select v||cast(rand(-9)%1000 as varchar) from t;
 insert into t select v||cast(rand(90)%2000 as varchar) from t;
 
 insert into t select * from t;
-insert into t select * from t;
-insert into t select * from t;
-insert into t select * from t;
-insert into t select * from t;
 
 select * from db_partition where class_name='t' order by 2;
 select * from db_class where class_name='t';

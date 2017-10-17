@@ -1,6 +1,6 @@
 --+ holdcas on;
 set  system parameters 'dont_reuse_heap_file=yes';
-create table mille as select 0 as i from table({1,2,3,4,5,6,7,8,9,0}) t1, table({1,2,3,4,5,6,7,8,9,0}) t2, table({1,2,3,4,5,6,7,8,9,0}) t3, table({1,2,3,4,5,6,7,8,9,0}) t4, table({0,1,2,3,4,5,6,7,8,9}) t5;
+create table mille as select 0 as i from table({1,2,3,4}) t1, table({1,2,3,4}) t2, table({1,2,3,4}) t3, table({1,2,3,4}) t4, table({0,1,2,3}) t5;
 
 create table t (i int, j int, k int, l int);
 insert into t(i,j,k,l) select i+2, 2*((rownum-1)%50+1)-1+100,rownum, rownum from mille;

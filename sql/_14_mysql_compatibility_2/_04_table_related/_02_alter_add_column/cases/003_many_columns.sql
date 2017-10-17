@@ -13,11 +13,6 @@ insert into t (j) select j from t;
 insert into t (j) select j from t;
 insert into t (j) select j from t;
 insert into t (j) select j from t;
-insert into t (j) select j from t;
-insert into t (j) select j from t;
-insert into t (j) select j from t;
-insert into t (j) select j from t;
-insert into t (j) select j from t;
 
 select count(*) from t;
 

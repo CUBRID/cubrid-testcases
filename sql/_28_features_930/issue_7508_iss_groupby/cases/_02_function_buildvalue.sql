@@ -10,7 +10,7 @@ select
   rand(cast(unix_timestamp() as int)) mod 10,
   rand(cast(unix_timestamp() as int)) mod 100000,
   rand(cast(unix_timestamp() as int)) mod 100000
-from db_class a, db_class b, db_class c limit 20000;
+from db_class a, db_class b limit 200;
 
 -- add some randomness in distinct counts
 update t set k3 = 1 where rand(1) mod 30 = 0;
