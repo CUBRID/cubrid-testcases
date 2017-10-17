@@ -40,9 +40,9 @@ C1: COMMIT WORK;
 MC: wait until C1 ready;
 
 /* test case */
-C1: SELECT * FROM t1 WHERE ROWNUM >= 3 and ROWNUM <= 4;
+C1: SELECT * FROM (select * from t1 order by id) as t WHERE ROWNUM >= 3 and ROWNUM <= 4;
 MC: wait until C1 ready; 
-C2: SELECT * FROM t1 WHERE ROWNUM >= 4 and ROWNUM <= 5; 
+C2: SELECT * FROM (select * from t1 order by id) as t WHERE ROWNUM >= 4 and ROWNUM <= 5; 
 /* expect: no transactions need to wait */
 MC: wait until C2 ready;
 /* expect: C1 select - id = 3,4 are selected */
