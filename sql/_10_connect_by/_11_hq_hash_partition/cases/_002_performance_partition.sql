@@ -18,8 +18,6 @@ create table leafs(text varchar(32));
 insert into leafs values('A');
 insert into leafs values('B');
 insert into leafs values('C');
-insert into leafs values('D');
-insert into leafs values('E');
 
 insert into hash_test
         select 5+inst_num(),t.id,t.text+l.text
