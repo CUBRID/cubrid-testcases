@@ -41,6 +41,6 @@ select t.id,t.text,t2.text
     from tree t
         right join tree2 t2 on t.id=t2.treeid
     start with t.parentid is null and t.id in (1,2,8)
-    connect by prior t.id=t.parentid;
+    connect by prior t.id=t.parentid order by 1,2,3;
     
 drop tree, tree2;

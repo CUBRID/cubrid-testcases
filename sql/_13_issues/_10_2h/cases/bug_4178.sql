@@ -10,7 +10,7 @@ INSERT INTO tree VALUES (7,6,'Brown',1);
 
 select id,mgrid,name,sort,level from tree
 connect by prior id=mgrid
-ORDER SIBLINGS BY sort;
+ORDER SIBLINGS BY sort,id;
 
 drop table tree;
 
@@ -171,7 +171,7 @@ SELECT types,id,prnt_id,sort_sord,level FROM
 
      CONNECT BY NOCYCLE PRIOR ID = prnt_id 
 
-ORDER SIBLINGS BY sort_sord;
+ORDER SIBLINGS BY sort_sord,id;
 
 drop table foo;
 drop table foo1;
@@ -191,7 +191,7 @@ SELECT
 FROM ttt
 START WITH PID = 'A00' 
 CONNECT BY PRIOR ID = PID 
-ORDER SIBLINGS BY SEQ ;
+ORDER SIBLINGS BY SEQ, ID;
 
 drop table ttt;
 

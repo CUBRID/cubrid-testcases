@@ -25,35 +25,35 @@ insert into x values(2, 'c');
 insert into x values(3, 'b');
 
 -- Each two statements should return the same result.
-select i from x group by i;
-select i from x group by 1;
+select i from x group by i order by 1;
+select i from x group by 1 order by 1;
 
-select s from x group by s;
-select s from x group by 1;
+select s from x group by s order by 1;
+select s from x group by 1 order by 1;
 
-select i, s from x group by s;
-select i, s from x group by 2;
+select group_concat(i order by i), s from x group by s order by s;
+select group_concat(i order by i), s from x group by 2 order by 2;
 
-select i, s from x group by i;
-select i, s from x group by 1;
+select i, group_concat(s order by s) from x group by i order by i;
+select i, group_concat(s order by s) from x group by 1 order by 1;
 
-select i + 1, s from x group by i + 1;
-select i + 1, s from x group by 1;
+select i + 1, group_concat(s order by s) from x group by i + 1 order by 1;
+select i + 1, group_concat(s order by s) from x group by 1 order by 1;
 
-select sum(i + 1), concat(s, 'xxx') from x group by concat(s, 'xxx');
-select sum(i + 1), concat(s, 'xxx') from x group by 2;
+select sum(i + 1), concat(s, 'xxx') from x group by concat(s, 'xxx') order by 2;
+select sum(i + 1), concat(s, 'xxx') from x group by 2 order by 2;
 
-select i, s from x group by s, i;
-select i, s from x group by s, 1;
-
-
-select i,s from x group by 1,2;
-select x.i, x.s from x x group by x.i, x.s;
-select i,s from x group by s,1;
-select x.i, x.s from x x group by x.s, x.i;
+select i, s from x group by s, i order by s,i;
+select i, s from x group by s, 1 order by s,1;
 
 
-select sum(i), (select s from x where i=1 limit 1) from x group by 2;
+select i,s from x group by 1,2 order by 1,2;
+select x.i, x.s from x x group by x.i, x.s order by 1,2;
+select i,s from x group by s,1 order by s,1;
+select x.i, x.s from x x group by x.s, x.i order by 2,1;
+
+
+select sum(i), (select s from x where i=1 order by i limit 1) from x group by 2;
 
 
 drop table x;
