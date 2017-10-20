@@ -55,7 +55,7 @@ insert into test values(7788, 'SCOTT',  'ANALYST',7566, date'04/19/1987',3000.00
 insert into test values(7744, 'TURNER ',  'SALESMAN ',7698, date'09/08/1981',1500.00,null,10);
 
 delete from test where pno = (select pno from p where dname = 'SALES');
-select * from test;
+select * from test order by 1,2;
 
 
 drop class test;
