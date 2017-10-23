@@ -121,27 +121,30 @@ MC: wait until C1 ready;
   C1: 1,1|C2: 1,2|C3:2,2|C4: 2,3|C5, 1,3
 */
 C1: insert into t select * from t where id between 3 and 5;
-C5: insert into t select t.* from t where (id between 2 and 4) and (select sleep(4)) = 0;
+MC: wait until C1 ready;
+C5: insert into t select t.* from t where id between 2 and 4;
+MC: wait until C5 ready;
 C1: commit;
 MC: wait until C1 ready;
 C2: insert into t values(1,'aa');
 MC: wait until C2 ready;
 
 /* expected 10 group */
-C6: select col,avg(id) from t where (id between 1 and 9000) and (select sleep(3)) = 0 group by col order by col;
+C6: select col,avg(id) from t where id between 1 and 9000 group by col order by col;
+MC: wait until C6 ready;
 C3: insert into t values(1,'cc');
-MC: sleep 3;
+MC: wait until C3 ready;
 C2: commit;
 MC: wait until C2 ready;
 C3: commit;
-C4: insert into t select t.* from t where (id between 4 and 5) and (select sleep(2)) = 0;
-MC: wait until C6 ready;
+MC: wait until C3 ready;
+C4: insert into t select t.* from t where id between 4 and 5;
 C4: commit;
 MC: wait until C4 ready;
 C5: commit;
 MC: wait until C5 ready;
-
 C6: commit;
+MC: wait until C6 ready;
 C1: quit;
 C2: quit;
 C3: quit;
