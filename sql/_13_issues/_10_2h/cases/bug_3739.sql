@@ -10,8 +10,8 @@ insert into DML_0001 values (3,'test2', {1,'test2'});
 insert into DML_0001 values (4,'test1', {2,'test1'});
 insert into DML_0001 values (5,'test2', {2,'test2'});
 
-select int_col, var_col from dml_0001 group by int_col, var_col;
-select int_col, var_col from dml_0001 group by 1, 2;
+select int_col, var_col from dml_0001 group by int_col, var_col order by 1;
+select int_col, var_col from dml_0001 group by 1, 2 order by 1;
 
 drop table dml_0001;
 
@@ -53,7 +53,7 @@ select i,s from x group by s,1 order by s,1;
 select x.i, x.s from x x group by x.s, x.i order by 2,1;
 
 
-select sum(i), (select s from x where i=1 order by i limit 1) from x group by 2;
+select sum(i), (select s from x where i=1 order by i,s limit 1) from x group by 2;
 
 
 drop table x;
@@ -71,8 +71,8 @@ insert into z values(10, :obj2);
 insert into z values(20, :obj1);
 
 -- The following two statements should return the same result.
-select /*+ recompile */ sum(i), z.j.i from z group by z.j.i;
-select /*+ recompile */ sum(i), z.j.i from z group by 2;
+select /*+ recompile */ sum(i), z.j.i from z group by z.j.i order by 2;
+select /*+ recompile */ sum(i), z.j.i from z group by 2 order by 2;
 
 drop table y,z;
 commit;
