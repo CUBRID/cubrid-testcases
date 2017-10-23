@@ -9,9 +9,9 @@ INSERT INTO y VALUES({0,1,2});
 INSERT INTO y VALUES({3,4,5});
 INSERT INTO y VALUES({6,7,8});
 
-select col from x where col not in (select col from y);
+select col from x where col not in (select col from y) order by col;
 
-select col from x where col in (select col from y);
+select col from x where col in (select col from y) order by col;
 
 DROP CLASS X,Y;
 
@@ -49,12 +49,12 @@ insert into t1 values({105,106}, 'eee');
 
 insert into t1 values({107,108}, 'eee');
 
-select * from t1 where c1 < some(select c1 from t1 where c2='eee');
+select * from t1 where c1 < some(select c1 from t1 where c2='eee') order by 1,2;
 
-select * from t1 where c1 = some(select c1 from t1 where c2='eee');
+select * from t1 where c1 = some(select c1 from t1 where c2='eee') order by 1,2;
 
-select * from t1 where c1 > some(select c1 from t1 where c2='eee');
+select * from t1 where c1 > some(select c1 from t1 where c2='eee') order by 1,2;
 
-select * from t1 where c1 <> some(select c1 from t1 where c2='eee');
+select * from t1 where c1 <> some(select c1 from t1 where c2='eee') order by 1,2;
 
 DROP CLASS DML_0001,t1;

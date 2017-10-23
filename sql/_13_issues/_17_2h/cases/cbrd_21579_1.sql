@@ -34,12 +34,12 @@ VALUES(60, 70, 'A', 1), (95, 90, 'A', 2),
 SELECT id, math, english, pe, grade, 
 AVG(math) OVER (PARTITION BY grade ORDER BY id) avg_math,
 AVG(english) OVER (PARTITION BY grade) avg_english,
-DENSE_RANK() OVER (PARTITION BY grade ORDER BY pe DESC) AS d_rank,
-COUNT(*) OVER (ORDER BY grade) co,
-CUME_DIST() OVER(ORDER BY math, english, pe) AS cume_dist1,
-CUME_DIST() OVER(PARTITION BY grade ORDER BY math, english, pe) AS cume_dist2,
-PERCENT_RANK() OVER(ORDER BY math, english, pe) AS percent_rank,
-PERCENT_RANK() OVER(PARTITION BY grade ORDER BY math, english, pe) AS percent_rank2
+DENSE_RANK() OVER (PARTITION BY grade ORDER BY pe DESC,id) AS d_rank,
+COUNT(*) OVER (ORDER BY grade,id) co,
+CUME_DIST() OVER(ORDER BY math, english, pe,id) AS cume_dist1,
+CUME_DIST() OVER(PARTITION BY grade ORDER BY math, english, pe,id) AS cume_dist2,
+PERCENT_RANK() OVER(ORDER BY math, english, pe,id) AS percent_rank,
+PERCENT_RANK() OVER(PARTITION BY grade ORDER BY math, english, pe,id) AS percent_rank2
 FROM scores ORDER BY id;
 
 SELECT id, math, english, pe, grade, 
@@ -48,8 +48,8 @@ PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY math) OVER (PARTITION BY grade) AS pc
 FROM scores ORDER BY id;
   
 SELECT id, math, grade, 
-RANK() OVER (PARTITION BY grade ORDER BY math DESC) AS g_rank,
-ROW_NUMBER() OVER (PARTITION BY grade ORDER BY math DESC) AS r_num,
+RANK() OVER (PARTITION BY grade ORDER BY math DESC,id) AS g_rank,
+ROW_NUMBER() OVER (PARTITION BY grade ORDER BY math DESC,id) AS r_num,
 STDDEV_POP(math) OVER(PARTITION BY grade) std_pop,
 STDDEV_SAMP(math) OVER(PARTITION BY grade) std_samp,
 SUM(math) OVER (PARTITION BY grade ORDER BY id) sum_gold1,
@@ -59,19 +59,19 @@ VAR_SAMP(math) OVER(PARTITION BY grade) v_samp
 FROM scores ORDER BY id;
 
 SELECT id, grade, math,
-FIRST_VALUE(math) OVER(PARTITION BY grade ORDER BY grade, math) AS FIRST_val1,
-FIRST_VALUE(math) OVER(PARTITION BY grade ORDER BY grade, math NULLS FIRST) AS FIRST_val2,
-FIRST_VALUE(math) IGNORE NULLS OVER(PARTITION BY grade ORDER BY grade, math) AS FIRST_val3,
-LAST_VALUE(math) OVER(PARTITION BY grade ORDER BY grade, math) AS LAST_val1,
-LAST_VALUE(math) OVER(PARTITION BY grade ORDER BY grade, math NULLS FIRST) AS LAST_val2,
-NTH_VALUE(math, 2) IGNORE NULLS OVER(PARTITION BY grade ORDER BY grade, math NULLS FIRST) AS NTH_val1,
-NTH_VALUE(math,2) OVER(PARTITION BY grade ORDER BY grade, math NULLS FIRST) AS NTH_val2,
-LAG (math, 1, 10000) OVER (ORDER BY grade, math) prev_math,
-LEAD (math, 1,9999) OVER (ORDER BY grade, math) next_math,
+FIRST_VALUE(math) OVER(PARTITION BY grade ORDER BY grade, math,id) AS FIRST_val1,
+FIRST_VALUE(math) OVER(PARTITION BY grade ORDER BY grade, math,id NULLS FIRST) AS FIRST_val2,
+FIRST_VALUE(math) IGNORE NULLS OVER(PARTITION BY grade ORDER BY grade, math,id) AS FIRST_val3,
+LAST_VALUE(math) OVER(PARTITION BY grade ORDER BY grade, math,id) AS LAST_val1,
+LAST_VALUE(math) OVER(PARTITION BY grade ORDER BY grade, math,id NULLS FIRST) AS LAST_val2,
+NTH_VALUE(math, 2) IGNORE NULLS OVER(PARTITION BY grade ORDER BY grade, math,id NULLS FIRST) AS NTH_val1,
+NTH_VALUE(math,2) OVER(PARTITION BY grade ORDER BY grade, math,id NULLS FIRST) AS NTH_val2,
+LAG (math, 1, 10000) OVER (ORDER BY grade, math,id) prev_math,
+LEAD (math, 1,9999) OVER (ORDER BY grade, math,id) next_math,
 MAX(math) OVER (PARTITION BY grade) mx_math,
 MEDIAN(math) OVER (PARTITION BY grade) mdn_math,
 MIN(math) OVER (PARTITION BY grade) mn_math,
-NTILE(5) OVER (ORDER BY grade, math DESC) grade
+NTILE(5) OVER (ORDER BY grade, math DESC,id) grade
 FROM scores order by id;
 
 drop table if exists scores;
