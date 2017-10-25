@@ -60,8 +60,8 @@ select col2, percentile_disc(0.8) within group(order by round(col2/col1, 2) asc)
 select col5, percentile_disc(0.4) within group(order by width_bucket(col2, 500, 505, 5)) p_disc from p_disc group by col5 order by 1, 2;
 select col2 from (select col2, percentile_disc(900/1000) within group (order by SYSDATE) p_disc from p_disc group by col2 order by 1, 2) order by 1;
 select col2, if(p_disc-CURRENT_TIMESTAMP<=3, 'ok', 'nok') result from (select col2, percentile_disc(0) within group (order by CURRENT_TIMESTAMP desc) p_disc from p_disc group by col2) order by 1, 2;
-select col2, percentile_disc(1) within group (order by year(col4)) p_disc from p_disc group by col2 having col1<20 order by 1, 2;
-select col2, percentile_disc(0.7) within group (order by adddate(col4, 10) desc) p_disc from p_disc group by col2 having col1<20 order by 1, 2;
+select col2, percentile_disc(1) within group (order by year(col4)) p_disc from p_disc group by col2 having max(col1)<20 order by 1, 2;
+select col2, percentile_disc(0.7) within group (order by adddate(col4, 10) desc) p_disc from p_disc group by col2 having max(col1)<20 order by 1, 2;
 create view p_disc_v as select * from p_disc order by 1,2,3,4,5;
 select col5, percentile_disc(0.3) within group (order by to_char(col4, 'HH24:MI:SS.FF DD/MM/YYYY')) p_disc from p_disc_v group by col5 having max(col1)<20 order by 1, 2;
 --select new.col5, percentile_disc(0.3) within group (order by to_char(new.col4, 'HH24:MI:SS.FF DD/MM/YYYY')) p_disc from (select * from p_disc order by 1,2,3,4,5) new  group by new.col5 having new.col1<20 order by 1, 2;
