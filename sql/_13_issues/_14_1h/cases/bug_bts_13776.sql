@@ -62,9 +62,9 @@ insert into t2 select rownum ,rownum ,rownum%4+1 from db_root connect by level<=
 create index idx_t2 on t2 (a,b,c);
 update statistics on all classes with fullscan;
 
-create view v1 as select /*+ recompile index_ss(t1) ordered */ * from t1,t2 where t1.j<=10 and t2.b<=8 and t1.k=t2.c and t2.c=2 limit 5;
-create view v2 as select /*+ recompile index_ss(t1,t2) ordered */ * from t1,t2 where t1.j<=10 and t2.b<=8 and t1.k=t2.c and t2.c=2 limit 5;
-create view v3 as select /*+ recompile index_ss(t2) ordered */ * from t1,t2 where t1.j<=10 and t2.b<=8 and t1.k=t2.c and t2.c=2 limit 5;
+create view v1 as select /*+ recompile index_ss(t1) ordered */ * from t1,t2 where t1.j<=10 and t2.b<=8 and t1.k=t2.c and t2.c=2 order by t1.i, t2.a limit 5;
+create view v2 as select /*+ recompile index_ss(t1,t2) ordered */ * from t1,t2 where t1.j<=10 and t2.b<=8 and t1.k=t2.c and t2.c=2 order by t1.i, t2.a limit 5;
+create view v3 as select /*+ recompile index_ss(t2) ordered */ * from t1,t2 where t1.j<=10 and t2.b<=8 and t1.k=t2.c and t2.c=2 order by t1.i, t2.a limit 5;
 select /*+ recompile index_ss(t2) */ * from v1 order by i, a;
 select /*+ recompile index_ss(t2) */ * from v2 order by i, a;
 select /*+ recompile index_ss(t2) */ * from v3 order by i, a;
