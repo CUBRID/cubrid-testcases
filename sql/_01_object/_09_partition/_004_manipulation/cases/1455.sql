@@ -24,7 +24,8 @@ create table range_test(id int not null ,
 	insert into range_test values(6,'fff','fff',B'101',B'1111',N'fff',N'fff','ffffffffff','2007-01-01 09:00:00');
 	insert into range_test values(7,'hhh','hhh',B'101',B'1111',N'hhh',N'hhh','hhhhhhhhhh','2007-01-01 09:00:00');
 	insert into range_test values(8,'iii','iii',B'101',B'1111',N'iii',N'iii','iiiiiiiiii','2007-01-01 09:00:00');
-	update range_test set test_varchar  = 'bbb' where test_varchar = 'ccc'	update range_test set test_varchar  = 'jjj' where test_varchar = 'iii';
+	update range_test set test_varchar  = 'bbb' where test_varchar = 'ccc';
+	update range_test set test_varchar  = 'jjj' where test_varchar = 'iii';
 select * from range_test order by 1;
 
 

@@ -14,7 +14,7 @@ create table range_test(id int not null ,
 create table range_test2(id int not null primary key,	
 				test_time time,
 				test_date date,
-				test_timestamp timestamp)
+				test_timestamp timestamp);
 	insert into range_test2 values(1,'06:00:00','2005-01-01','2005-01-01 09:00:00');
 	insert into range_test2 values(2,'07:00:00','2005-06-01','2005-06-01 09:00:00');
 	insert into range_test2 values(3,'08:00:00','2005-12-01','2005-12-01 09:00:00');
