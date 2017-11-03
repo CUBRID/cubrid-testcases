@@ -38,7 +38,7 @@ MC: wait until C1 ready;
 /* test case */
 C1: update t1 set id=6 where id=5;
 MC: wait until C1 ready;
-C2: select * from t1 where id = 1;
+C2: select * from t1 where id = 1 order by 1,2;
 MC: wait until C2 ready;
 C1: rollback;
 MC: wait until C1 ready;
@@ -47,7 +47,7 @@ MC: wait until C2 ready;
 
 C1: update t1 set id=3 where col='def';
 MC: wait until C1 ready;
-C2: select * from t1 where id=1;
+C2: select * from t1 where id=1 order by 1,2;
 MC: wait until C2 ready;
 C1: rollback;
 MC: wait until C1 ready;
@@ -56,7 +56,7 @@ MC: wait until C2 ready;
 
 C1: update t1 set col='ddd' where col='def';
 MC: wait until C1 ready;
-C2: select * from t1 where id>4;
+C2: select * from t1 where id>4 order by 1,2;
 MC: wait until C2 ready;
 C1: commit;
 MC: wait until C1 ready;
