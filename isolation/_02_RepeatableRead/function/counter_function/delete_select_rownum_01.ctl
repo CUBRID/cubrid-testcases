@@ -40,9 +40,9 @@ C1: COMMIT WORK;
 MC: wait until C1 ready;
 
 /* test case */
-C1: DELETE FROM t1 WHERE ROWNUM = 5; 
+C1: DELETE FROM t1 WHERE id = (select id from t1  order by id  for ORDERBY_NUM()=5); 
 MC: wait until C1 ready;
-C2: SELECT * FROM t1 WHERE ROWNUM = 3; 
+C2: SELECT * FROM t1 WHERE id = (select id from t1  order by id  for ORDERBY_NUM()=3); 
 /* expect: no transactions need to wait, C2 select - id = 3 is selected */
 MC: wait until C2 ready;
 /* expect: C1 select - id = 5 is deleted */
