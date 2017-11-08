@@ -40,7 +40,7 @@ insert into test values(7744, 'TURNER ',  'SALESMAN ',7698, date'09/08/1981',150
 
 
 create vclass v_test as select ename, pno from test;
-select * from only v_test;
+select * from only v_test order by 1,2;
 
 drop class test;
 drop vclass v_test;
