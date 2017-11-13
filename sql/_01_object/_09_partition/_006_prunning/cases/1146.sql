@@ -73,7 +73,7 @@ select * from hash_test__p__p1 order by id;
 select * from hash_test__p__p2 order by id;
 select * from hash_test__p__p3 order by id;
 
-select * from hash_test where test_int = 1.0;
+select * from hash_test where test_int = 1.0 order by id;
 
 drop table hash_test;
 drop table hash_test2;

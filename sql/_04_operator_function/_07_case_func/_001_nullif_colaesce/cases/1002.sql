@@ -13,7 +13,7 @@ select max(         case         when aa='1' then bb         when aa='3' then bb
 select case when aa is null then '0' else aa end from A order by 1;
 select coalesce(aa, '0') from A order by 1;
 select nullif(aa,bb) from A order by 1;
- select ( case when aa = bb then null else aa end ) from A;
+select ( case when aa = bb then null else aa end ) from A order by 1;
 select coalesce(aa, aa) from A order by 1;
 select coalesce(aa,'1', '00') from A order by 1;
 select coalesce({1,2,3},{}) from A order by 1;

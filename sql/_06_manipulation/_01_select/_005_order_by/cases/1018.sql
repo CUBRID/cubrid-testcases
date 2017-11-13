@@ -14,10 +14,10 @@ insert into t1 values(1003, 'f', date'10/05/1982', 103);
 
 select id, name, extract(month from birthday) as mon, dept_id
 from   t1
-order by mon desc,id;
+order by mon desc,id,name,dept_id;
 select id, name, birthday as age, dept_id
 from t1
-order by age,id;
+order by age,id,name,dept_id;
 
 
 drop class t1;

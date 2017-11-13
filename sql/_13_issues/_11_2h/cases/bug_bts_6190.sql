@@ -6,7 +6,7 @@ select serial_next_value(s1), serial_next_value(s1, 1), serial_current_value(s1)
 insert into t values (s1.next_value, s1.next_value);
 select * from t;
 insert into t values (serial_next_value(s1), serial_next_value(s1));
-select * from t;
+select * from t order by a,b;
 
 drop serial s1;
 drop table t;
@@ -19,9 +19,9 @@ create table t (a int, b int);
 select s1.next_value, s1.current_value;
 select serial_next_value(s1, 10), serial_next_value(s1, 10), serial_current_value(s1);
 insert into t values (s1.next_value, s1.next_value);
-select * from t;
+select * from t order by a,b;
 insert into t values (serial_next_value(s1, 10), serial_next_value(s1, 10));
-select * from t;
+select * from t order by a,b;
 
 drop serial s1;
 drop table t;
@@ -48,9 +48,9 @@ create table t (a int, b int);
 select s1.next_value, s1.current_value;
 select serial_next_value(s1), serial_next_value(s1, 1), serial_current_value(s1);
 insert into t values (s1.next_value, s1.next_value);
-select * from t;
+select * from t order by a,b;
 insert into t values (serial_next_value(s1), serial_next_value(s1));
-select * from t;
+select * from t order by a,b;
 select serial_next_value(s1), serial_next_value(s1), serial_next_value(s1),
 serial_next_value(s1), serial_next_value(s1);
 select serial_next_value(s1), serial_next_value(s1), serial_next_value(s1),
@@ -66,9 +66,9 @@ create table t (a int, b int);
 select s1.next_value, s1.current_value;
 select serial_next_value(s1), serial_next_value(s1, 5), serial_current_value(s1);
 insert into t values (s1.next_value, s1.next_value);
-select * from t;
+select * from t order by a,b;
 insert into t values (serial_next_value(s1, 5), serial_next_value(s1, 5));
-select * from t;
+select * from t order by a,b;
 select serial_next_value(s1, 5), serial_next_value(s1, 5), serial_next_value(s1, 5),
 serial_next_value(s1, 5), serial_next_value(s1, 5);
 select serial_next_value(s1, 5), serial_next_value(s1, 5), serial_next_value(s1, 5),
@@ -84,9 +84,9 @@ create table t (a int, b int);
 select s1.next_value, s1.current_value;
 select serial_next_value(s1), serial_next_value(s1, 15), serial_current_value(s1);
 insert into t values (s1.next_value, s1.next_value);
-select * from t;
+select * from t order by a,b;
 insert into t values (serial_next_value(s1, 15), serial_next_value(s1, 15));
-select * from t;
+select * from t order by a,b;
 select serial_next_value(s1, 15), serial_next_value(s1, 15), serial_next_value(s1, 15),
 serial_next_value(s1, 15), serial_next_value(s1, 15);
 select serial_next_value(s1, 15), serial_next_value(s1, 15), serial_next_value(s1, 15),
