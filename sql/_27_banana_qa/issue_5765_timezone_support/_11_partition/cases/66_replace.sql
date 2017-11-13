@@ -96,3 +96,5 @@ insert into t values
 select i from t__p__p0 order by 1;
 select i from t__p__p1 order by 1;
 
+drop table t;
+

@@ -40,4 +40,4 @@ drop t;
 drop u;
 
 set system parameters 'dont_reuse_heap_file=no';
-autocommit on
+

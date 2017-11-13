@@ -37,4 +37,4 @@ drop table u;
 drop table t;
 
 set system parameters 'dont_reuse_heap_file=no';
-autocommit on
+

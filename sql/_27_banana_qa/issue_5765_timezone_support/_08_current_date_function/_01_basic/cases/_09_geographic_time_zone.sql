@@ -104,9 +104,6 @@ insert into t select(if(utc_time()-curtime()>0,timediff(utc_time(),curtime()), t
 set timezone 'Asia/Seoul';
 --insert into t select timediff(curtime(),utc_time());
 insert into t select(if(utc_time()-curtime()>0,timediff(utc_time(),curtime()), timediff(curtime(),utc_time())));
-
+drop table if exists t;
 set timezone 'Asia/Seoul';
-
-
-
 
