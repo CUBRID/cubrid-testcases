@@ -16,5 +16,6 @@ execute stmt using 'a','a';
 deallocate prepare stmt;
 
 set names iso88591;
+drop table t1;
 commit;
 --+ holdcas off;

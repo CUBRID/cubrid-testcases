@@ -50,5 +50,7 @@ partition p1 values less than maxvalue
 );
 select i from t__p__p0 order by 1;
 select i from t__p__p1 order by 1;
-drop table if exist t;
+drop table if exists t;
 set timezone 'Asia/Seoul';
+
+

@@ -13,11 +13,13 @@ set @x2=(select systimestamp);
 select if(hour(@x2)=hour(@x1),'ok','nok');
 drop variable @x2,@x1;
 
-
 drop table if exists t;
 create table t(i string unique);
 set timezone '+4:00';
 insert into t select timediff(sys_timestamp,utc_timestamp());
 set timezone '+2:00';
 insert into t select timediff(sys_timestamp,utc_timestamp());
+drop table if exists t;
 set timezone 'Asia/Seoul';
+
+

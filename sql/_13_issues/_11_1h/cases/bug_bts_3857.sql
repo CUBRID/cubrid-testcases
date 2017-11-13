@@ -1,3 +1,4 @@
+DROP CLASS IF EXISTS X,Y;
 CREATE TABLE x (col SET OF INT);
 CREATE TABLE y (col SET OF INT);
 INSERT INTO x VALUES({0,1,2});
@@ -34,7 +35,7 @@ select * from DML_0001 where set_col in (select set_col from DML_0001) order by 
 select * from DML_0001 where int_col in (select int_col from DML_0001) order by 1,2,3;
 select * from DML_0001 where set_col in (select set_col from DML_0001) order by 1,2,3;
 
-
+drop class if exists t1;
 create class t1 (c1 set int, c2 varchar(20));
 
 insert into t1 values({101,102}, 'aaa');

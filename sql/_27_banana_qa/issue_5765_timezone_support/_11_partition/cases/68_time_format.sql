@@ -112,4 +112,4 @@ select i from t__p__p1 order by 1;
 select i from t__p__p2 order by 1;
 select i from t__p__p3 order by 1;
 
-
+drop table t;
