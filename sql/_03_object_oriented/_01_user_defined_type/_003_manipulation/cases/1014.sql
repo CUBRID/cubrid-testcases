@@ -18,7 +18,7 @@ insert into tb1 values(1, insert into tb2 values(1, insert into tb3 values(1)));
 insert into tb1 values(2, insert into tb2 values(2, insert into tb3 values(2)));
 insert into tb1 values(3, insert into tb2 values(3, insert into tb3 values(3)));
 
-select col2.col2.col1 from tb1;
+select col2.col2.col1 from tb1 order by 1;
 
 update tb1 set col1=20 where col2.col2.col1 =1;
 
