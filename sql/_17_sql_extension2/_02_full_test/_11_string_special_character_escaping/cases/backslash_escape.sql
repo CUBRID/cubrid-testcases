@@ -14,6 +14,6 @@ select '\a\d\e';
 select '\'\"';
 select '\\';
 select '\\\\';
-set system parameters 'no_backslash_escapes=yes';
+set system parameters 'no_backslash_escapes=default';
 commit;
 --+ holdcas off;
