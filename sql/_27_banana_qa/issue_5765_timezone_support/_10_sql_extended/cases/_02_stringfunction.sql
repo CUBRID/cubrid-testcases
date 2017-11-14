@@ -37,45 +37,45 @@ insert into tztest select 6,null,addtime(c_tsltz1,time'2:04:10'),addtime(c_tsltz
    addtime(c_tsltz1,time'2:04:10'),addtime(c_tsltz2,time'0:06:10') from tztest;
 
 --Test Case - timestampltz
-select c_tsltz1,CHAR_LENGTH(c_tsltz1) from tztest where id =1 and DAY(c_tsltz1) <5;
-select CONCAT(c_tsltz1,' ',c_tsltz2) from tztest where id =3 and date(c_tsltz2) ='10/06/2000';
-select CONCAT(c_tsltz1,' ',c_tsltz2) from tztest where id =3 and cast(date(c_tsltz2) as date)='10/6/2000';
+select c_tsltz1,CHAR_LENGTH(c_tsltz1) from tztest where id =1 and DAY(c_tsltz1) <5 order by 1;
+select CONCAT(c_tsltz1,' ',c_tsltz2) from tztest where id =3 and date(c_tsltz2) ='10/06/2000' order by 1;
+select CONCAT(c_tsltz1,' ',c_tsltz2) from tztest where id =3 and cast(date(c_tsltz2) as date)='10/6/2000' order by 1;
 
-select STRCMP(c_tsltz1 , c_tsltz2) from tztest where id =3 and cast(date(c_tsltz2) as date)='10/6/2000';
-select STRCMP(c_tsltz1 , c_tsltz1) from tztest where id =3 and cast(date(c_tsltz2) as date)='10/6/2000';
-select concat(UCASE(c_tsltz1),' ', LCASE(c_tsltz2)) from tztest where id =3 and cast(date(c_tsltz2) as date)='10/6/2000';
+select STRCMP(c_tsltz1 , c_tsltz2) from tztest where id =3 and cast(date(c_tsltz2) as date)='10/6/2000' order by 1;
+select STRCMP(c_tsltz1 , c_tsltz1) from tztest where id =3 and cast(date(c_tsltz2) as date)='10/6/2000' order by 1;
+select concat(UCASE(c_tsltz1),' ', LCASE(c_tsltz2)) from tztest where id =3 and cast(date(c_tsltz2) as date)='10/6/2000' order by 1;
 
 --CUBRIDSUS-17510 resolved
-select c_tsltz2,ELT(id,c_tsltz1,c_tsltz2,c_dtltz1,c_dtltz2) from tztest where id=2 and date(c_tsltz2) ='10/01/2000';
-select c_dtltz1,ELT(id,c_tsltz1,c_tsltz2,c_dtltz1,c_dtltz2) from tztest where id=3 and date(c_tsltz2) ='10/01/2000';
+select c_tsltz2,ELT(id,c_tsltz1,c_tsltz2,c_dtltz1,c_dtltz2) from tztest where id=2 and date(c_tsltz2) ='10/01/2000' order by 1;
+select c_dtltz1,ELT(id,c_tsltz1,c_tsltz2,c_dtltz1,c_dtltz2) from tztest where id=3 and date(c_tsltz2) ='10/01/2000' order by 1;
 
-select FIELD('12:01:31 AM 10/05/2000 Asia/Seoul KST',c_tsltz1,c_tsltz2,c_dtltz1,c_dtltz2) from tztest where c_tsltz2='12:01:31 AM 10/05/2000 Asia/Seoul';
-select FIELD('12:01:31 AM 10/05/2000 Asia/Seoul KST',c_tsltz1,c_tsltz2,c_dtltz1,c_dtltz2) from tztest where c_tsltz2='12:01:30 AM 10/05/2000 Asia/Seoul';
+select FIELD('12:01:31 AM 10/05/2000 Asia/Seoul KST',c_tsltz1,c_tsltz2,c_dtltz1,c_dtltz2) from tztest where c_tsltz2='12:01:31 AM 10/05/2000 Asia/Seoul' order by 1;
+select FIELD('12:01:31 AM 10/05/2000 Asia/Seoul KST',c_tsltz1,c_tsltz2,c_dtltz1,c_dtltz2) from tztest where c_tsltz2='12:01:30 AM 10/05/2000 Asia/Seoul' order by 1;
 
 update tztest set c_varchar=repeat(c_tsltz1||c_dtltz1,500) where c_tsltz2 in (select max(c_tsltz2) from tztest);
-select length(c_varchar) from tztest where c_tsltz2 in (select max(c_tsltz2) from tztest);
+select length(c_varchar) from tztest where c_tsltz2 in (select max(c_tsltz2) from tztest) order by 1;
 
-select REPLACE(REPLACE('starttime:XX,endtime:YY','XX',c_tsltz1),'YY',c_tsltz2) from tztest where id=4 and day(c_tsltz1)=5;
+select REPLACE(REPLACE('starttime:XX,endtime:YY','XX',c_tsltz1),'YY',c_tsltz2) from tztest where id=4 and day(c_tsltz1)=5 order by 1;
 
 --Test Case - datetimeltz
-select c_dtltz1,CHAR_LENGTH(c_dtltz1) from tztest where id =1 and DAY(c_dtltz1) <5;
-select CONCAT(c_dtltz1,' ',c_dtltz2) from tztest where id =3 and date(c_dtltz2) ='10/06/2000';
-select CONCAT(c_dtltz1,' ',c_dtltz2) from tztest where id =3 and cast(date(c_dtltz2) as date)='10/6/2000';
+select c_dtltz1,CHAR_LENGTH(c_dtltz1) from tztest where id =1 and DAY(c_dtltz1) <5 order by 1;
+select CONCAT(c_dtltz1,' ',c_dtltz2) from tztest where id =3 and date(c_dtltz2) ='10/06/2000' order by 1;
+select CONCAT(c_dtltz1,' ',c_dtltz2) from tztest where id =3 and cast(date(c_dtltz2) as date)='10/6/2000' order by 1;
 
-select STRCMP(c_dtltz1 , c_dtltz2) from tztest where id =3 and cast(date(c_dtltz2) as date)='10/6/2000';
-select STRCMP(c_dtltz1 , c_dtltz1) from tztest where id =3 and cast(date(c_dtltz2) as date)='10/6/2000';
-select concat(UCASE(c_dtltz1),' ', LCASE(c_dtltz2)) from tztest where id =3 and cast(date(c_dtltz2) as date)='10/6/2000';
+select STRCMP(c_dtltz1 , c_dtltz2) from tztest where id =3 and cast(date(c_dtltz2) as date)='10/6/2000' order by 1;
+select STRCMP(c_dtltz1 , c_dtltz1) from tztest where id =3 and cast(date(c_dtltz2) as date)='10/6/2000' order by 1;
+select concat(UCASE(c_dtltz1),' ', LCASE(c_dtltz2)) from tztest where id =3 and cast(date(c_dtltz2) as date)='10/6/2000' order by 1;
 
 --CUBRIDSUS-17510
 --select ELT(id,c_dtltz1,c_dtltz2,c_dtltz1,c_dtltz2) from tztest where id=2 and date(c_dtltz2) ='10/01/2000';
 --select ELT(id,c_dtltz1,c_dtltz2,c_dtltz1,c_dtltz2) from tztest where id=3 and date(c_dtltz2) ='10/01/2000';
 
-select FIELD('12:01:31.000 AM 10/05/2000 Asia/Seoul KST',c_dtltz1,c_dtltz2,c_dtltz1,c_dtltz2) from tztest where c_dtltz2='12:01:31 AM 10/05/2000 Asia/Seoul';
+select FIELD('12:01:31.000 AM 10/05/2000 Asia/Seoul KST',c_dtltz1,c_dtltz2,c_dtltz1,c_dtltz2) from tztest where c_dtltz2='12:01:31 AM 10/05/2000 Asia/Seoul' order by 1;
 
 update tztest set c_varchar=repeat(c_dtltz1||c_dtltz1,500)  where c_dtltz2 in (select max(c_dtltz2) from tztest);
-select length(c_varchar) from tztest where c_dtltz2 in (select max(c_dtltz2) from tztest);
+select length(c_varchar) from tztest where c_dtltz2 in (select max(c_dtltz2) from tztest) order by 1;
 
-select REPLACE(REPLACE('starttime:XX,endtime:YY','XX',c_tsltz1),'YY',c_tsltz2) from tztest where id=4 and minute(c_tsltz1)=3 and day(c_tsltz1)=5;
+select REPLACE(REPLACE('starttime:XX,endtime:YY','XX',c_tsltz1),'YY',c_tsltz2) from tztest where id=4 and minute(c_tsltz1)=3 and day(c_tsltz1)=5 order by 1;
 
 --Test case -timeltz
 --CUBRIDSUS-17510

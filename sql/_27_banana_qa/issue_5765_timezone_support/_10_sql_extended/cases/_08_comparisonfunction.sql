@@ -22,17 +22,17 @@ insert into tztest select 3,null,addtime(c_tsltz1,time'0:02:01'),addtime(c_tsltz
 
 --++++++++++++++Test case timestampltz++++++++++++++++++++++++++++++++++++++++++
 update tztest set c_tsltz2=null where c_tsltz2 in (timestampltz'2000-10-3 12:00:00 AM +9:00');
-select c_tsltz1,c_tsltz2,IFNULL(c_tsltz2,c_tsltz1) from tztest where id =1; 
-select c_tsltz1,c_tsltz2,NVL(c_tsltz2,c_tsltz1) from tztest where  id =1;
-select c_tsltz1,c_tsltz2,NVL2(c_tsltz2,c_tsltz2,c_tsltz1) from tztest where id =1;
-select c_tsltz1,c_tsltz2 from tztest where isnull(c_tsltz2);
+select c_tsltz1,c_tsltz2,IFNULL(c_tsltz2,c_tsltz1) from tztest where id =1 order by 1,2; 
+select c_tsltz1,c_tsltz2,NVL(c_tsltz2,c_tsltz1) from tztest where  id =1 order by 1,2;
+select c_tsltz1,c_tsltz2,NVL2(c_tsltz2,c_tsltz2,c_tsltz1) from tztest where id =1 order by 1,2;
+select c_tsltz1,c_tsltz2 from tztest where isnull(c_tsltz2) order by 1,2;
 
 --++++++++++++++Test case datetimeltz++++++++++++++++++++++++++++++++++++++++++
 update tztest set c_dtltz2=null where c_dtltz2 in (datetimeltz'2000-10-3 12:00:00 AM +9:00');
-select c_dtltz1,c_dtltz2,IFNULL(c_dtltz2,c_dtltz1) from tztest where id =1;
-select c_dtltz1,c_dtltz2,NVL(c_dtltz2,c_dtltz1) from tztest where  id =1;
-select c_dtltz1,c_dtltz2,NVL2(c_dtltz2,c_dtltz2,c_dtltz1) from tztest where id =1;
-select c_dtltz1,c_dtltz2 from tztest where isnull(c_dtltz2);
+select c_dtltz1,c_dtltz2,IFNULL(c_dtltz2,c_dtltz1) from tztest where id =1 order by 1,2;
+select c_dtltz1,c_dtltz2,NVL(c_dtltz2,c_dtltz1) from tztest where  id =1 order by 1,2;
+select c_dtltz1,c_dtltz2,NVL2(c_dtltz2,c_dtltz2,c_dtltz1) from tztest where id =1 order by 1,2;
+select c_dtltz1,c_dtltz2 from tztest where isnull(c_dtltz2) order by 1,2;
 
 
 drop table tztest;
