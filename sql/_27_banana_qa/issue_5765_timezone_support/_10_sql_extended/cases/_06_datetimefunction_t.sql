@@ -25,7 +25,7 @@ insert into tztest select 4,null,addtime(c_tsltz1,time'0:03:10'),addtime(c_dtltz
   addtime(c_tltz1,time'0:02:01'),addtime(c_tltz2,time'0:02:01'),addtime(c_ttz1,time'0:02:01'),addtime(c_ttz2,time'0:02:01') from tztest;
 
 --++++++++++++++++++Test Case - timestampltz+++++++++++++++++++++++++++++++++++++++++++++
-select c_tltz1,addtime(c_tltz1, time'12:59:1') from tztest where c_tltz1=datetimetz'2015-9-17 12:02:02 AM +9:00'; 
+select c_tltz1,addtime(c_tltz1, time'12:59:1') from tztest where c_tltz1=datetimetz'2015-9-17 12:02:02 AM +9:00' order by 1,2; 
 --CUBRIDSUS-17532
 --select c_tltz1,addtime(c_tltz1, '12:59:1') from tztest where c_tltz1=datetimetz'2015-9-17 12:02:02 AM +9:00'; 
 select c_tltz1,addtime(c_tltz1, time'23:59:1') from tztest where c_tltz1=datetimetz'2015-9-17 12:00:02 AM +9:00' order by 1,2;
@@ -33,81 +33,81 @@ select c_tltz1,addtime(c_tltz1, time'23:59:1') from tztest where c_tltz1=datetim
 update tztest set c_tltz1=addtime(c_tltz1,time'12:00:01') where c_tltz1=datetimetz'2015-9-17 12:00:02 AM +9:00';
 select c_tltz1,c_tltz2,addtime(c_tltz1, c_tltz2 ) from tztest where c_tltz1=datetimetz'2015-9-17 12:00:03 PM +9:00' order by 1,2,3;
 
-select c_tltz1,c_dtltz1,addtime(c_tltz1, c_dtltz1 ) from tztest where c_tltz1=datetimetz'2015-9-17 12:02:02 AM +9:00';
-select c_tltz1,c_dtltz1,addtime(c_tltz1, cast(c_dtltz1 as time) ) from tztest where c_tltz1=datetimetz'2015-9-17 12:02:02 AM +9:00';
-select c_tltz1,c_dtltz1,addtime(c_tltz1, cast(c_dtltz1 as timestamp) ) from tztest where c_tltz1=datetimetz'2015-9-17 12:02:02 AM +9:00';
-select c_tltz1,c_dtltz1,addtime(c_tltz1, cast(c_dtltz1 as timestamptz) ) from tztest where c_tltz1=datetimetz'2015-9-17 12:02:02 AM +9:00';
+select c_tltz1,c_dtltz1,addtime(c_tltz1, c_dtltz1 ) from tztest where c_tltz1=datetimetz'2015-9-17 12:02:02 AM +9:00' order by 1,2;
+select c_tltz1,c_dtltz1,addtime(c_tltz1, cast(c_dtltz1 as time) ) from tztest where c_tltz1=datetimetz'2015-9-17 12:02:02 AM +9:00' order by 1,2;
+select c_tltz1,c_dtltz1,addtime(c_tltz1, cast(c_dtltz1 as timestamp) ) from tztest where c_tltz1=datetimetz'2015-9-17 12:02:02 AM +9:00' order by 1,2;
+select c_tltz1,c_dtltz1,addtime(c_tltz1, cast(c_dtltz1 as timestamptz) ) from tztest where c_tltz1=datetimetz'2015-9-17 12:02:02 AM +9:00' order by 1,2;
 --CUBRIDSUS-17532
 --select c_tltz1,c_dtltz1,addtime(c_tltz1, cast(c_dtltz1 as string) ) from tztest where c_tltz1=datetimetz'2015-9-17 12:02:02 AM +9:00';
  
 update tztest set c_tltz1='8:00:00 PM +9:00' where c_tltz1=datetimetz'2015-9-17 12:02:06 AM +9:00';
-select c_tltz1,extract (HOUR FROM c_tltz1 ) from tztest where c_tltz1=datetimetz'2015-9-17 12:02:02 AM +9:00';
-select c_tltz1,extract (HOUR FROM c_tltz1 ) from tztest where c_tltz1=datetimetz'2015-9-17 8:00:00 PM +9:00';
-select c_tltz1,HOUR(c_tltz1 ) from tztest where c_tltz1=datetimetz'2015-9-17 12:02:02 AM +9:00';
-select c_tltz1,HOUR(c_tltz1 ) from tztest where c_tltz1=datetimetz'2015-9-17 8:00:00 PM +9:00';
+select c_tltz1,extract (HOUR FROM c_tltz1 ) from tztest where c_tltz1=datetimetz'2015-9-17 12:02:02 AM +9:00' order by 1,2;
+select c_tltz1,extract (HOUR FROM c_tltz1 ) from tztest where c_tltz1=datetimetz'2015-9-17 8:00:00 PM +9:00' order by 1,2;
+select c_tltz1,HOUR(c_tltz1 ) from tztest where c_tltz1=datetimetz'2015-9-17 12:02:02 AM +9:00' order by 1,2;
+select c_tltz1,HOUR(c_tltz1 ) from tztest where c_tltz1=datetimetz'2015-9-17 8:00:00 PM +9:00' order by 1,2;
 
 update tztest set c_tltz1=null where  c_tltz1=datetimetz'2015-9-17 12:00:03 PM +9:00';
-select c_tltz1,HOUR( c_tltz1 ) from tztest where  c_tltz1 is null;
+select c_tltz1,HOUR( c_tltz1 ) from tztest where  c_tltz1 is null order by 1,2;
 
-select c_tltz1,MINUTE(c_tltz1 ) from tztest where c_tltz1=datetimetz'2015-9-17 12:02:02 AM +9:00';
-select c_tltz1,MINUTE(c_tltz1 ) from tztest where c_tltz1 is null;
+select c_tltz1,MINUTE(c_tltz1 ) from tztest where c_tltz1=datetimetz'2015-9-17 12:02:02 AM +9:00' order by 1,2;
+select c_tltz1,MINUTE(c_tltz1 ) from tztest where c_tltz1 is null order by 1,2;
 
-select c_tltz1,second(c_tltz1 ) from tztest where c_tltz1=datetimetz'2015-9-17 12:02:02 AM +9:00';
-select c_tltz1,second(c_tltz1 ) from tztest where c_tltz1 is null;
+select c_tltz1,second(c_tltz1 ) from tztest where c_tltz1=datetimetz'2015-9-17 12:02:02 AM +9:00' order by 1,2;
+select c_tltz1,second(c_tltz1 ) from tztest where c_tltz1 is null order by 1,2;
 
-select c_tltz1,time_to_sec(c_tltz1 ) from tztest where c_tltz1=datetimetz'2015-9-17 12:02:02 AM +9:00';
-select c_tltz1,time_to_sec(c_tltz1 ) from tztest where c_tltz1=datetimetz'2015-9-17 8:00:00 PM +9:00';
-select c_tltz1,time_to_sec(c_tltz1 ) from tztest where c_tltz1 is null;
+select c_tltz1,time_to_sec(c_tltz1 ) from tztest where c_tltz1=datetimetz'2015-9-17 12:02:02 AM +9:00' order by 1,2;
+select c_tltz1,time_to_sec(c_tltz1 ) from tztest where c_tltz1=datetimetz'2015-9-17 8:00:00 PM +9:00' order by 1,2;
+select c_tltz1,time_to_sec(c_tltz1 ) from tztest where c_tltz1 is null order by 1,2;
 
-select c_tltz1,TIMEDIFF(addtime(c_tltz1,time'1:00:00'),c_tltz1) from tztest where c_tltz1=datetimetz'2015-9-17 12:02:02 AM +9:00';
-select c_tltz1,TIMEDIFF(c_tltz1,c_tltz1 ) from tztest where c_tltz1=datetimetz'2015-9-17 12:02:02 AM +9:00';
-select c_tltz1,TIMEDIFF(c_tltz1,c_tltz1) from tztest where c_tltz1 is null;
+select c_tltz1,TIMEDIFF(addtime(c_tltz1,time'1:00:00'),c_tltz1) from tztest where c_tltz1=datetimetz'2015-9-17 12:02:02 AM +9:00' order by 1,2;
+select c_tltz1,TIMEDIFF(c_tltz1,c_tltz1 ) from tztest where c_tltz1=datetimetz'2015-9-17 12:02:02 AM +9:00' order by 1,2;
+select c_tltz1,TIMEDIFF(c_tltz1,c_tltz1) from tztest where c_tltz1 is null order by 1,2;
 
-select c_tltz1,timestamp('2009-12-31',c_tltz1) from tztest where id=4 and SECOND(c_tltz1)=13;
-select c_tsltz1,c_tltz1,timestamp(c_tsltz1, c_tltz1) from tztest where c_tltz1=datetimetz'2015-9-17 12:02:02 AM +9:00';
-select c_tltz1,timestamp(c_tsltz1, c_tltz1) from tztest where c_tltz1 is null;
+select c_tltz1,timestamp('2009-12-31',c_tltz1) from tztest where id=4 and SECOND(c_tltz1)=13 order by 1,2;
+select c_tsltz1,c_tltz1,timestamp(c_tsltz1, c_tltz1) from tztest where c_tltz1=datetimetz'2015-9-17 12:02:02 AM +9:00' order by 1,2;
+select c_tltz1,timestamp(c_tsltz1, c_tltz1) from tztest where c_tltz1 is null order by 1,2;
 
 --+++++++++Test Case - timetz++++++++++++++++++++++++++++++++++++++++
-select c_ttz1,addtime(c_ttz1, time'12:59:1') from tztest where c_ttz1=datetimetz'2015-9-17 12:02:02 AM +9:00'; 
+select c_ttz1,addtime(c_ttz1, time'12:59:1') from tztest where c_ttz1=datetimetz'2015-9-17 12:02:02 AM +9:00' order by 1,2; 
 --CUBRIDSUS-17532
 --select c_ttz1,addtime(c_ttz1, '12:59:1') from tztest where c_ttz1=datetimetz'2015-9-17 12:02:02 AM +9:00'; 
-select c_ttz1,addtime(c_ttz1, time'23:59:1') from tztest where c_ttz1=datetimetz'2015-9-17 12:00:02 AM +9:00';
+select c_ttz1,addtime(c_ttz1, time'23:59:1') from tztest where c_ttz1=datetimetz'2015-9-17 12:00:02 AM +9:00' order by 1,2;
 
 update tztest set c_ttz1=addtime(c_ttz1,time'12:00:01') where c_ttz1=datetimetz'2015-9-17 12:00:02 AM +9:00';
 select c_ttz1,c_ttz2,addtime(c_ttz1, c_ttz2 ) from tztest where c_ttz1=datetimetz'2015-9-17 12:00:03 PM +9:00' order by 1,2,3;
 
-select c_ttz1,c_dtltz1,addtime(c_ttz1, c_dtltz1 ) from tztest where c_ttz1=datetimetz'2015-9-17 12:02:02 AM +9:00';
-select c_ttz1,c_dtltz1,addtime(c_ttz1, cast(c_dtltz1 as time) ) from tztest where c_ttz1=datetimetz'2015-9-17 12:02:02 AM +9:00';
-select c_ttz1,c_dtltz1,addtime(c_ttz1, cast(c_dtltz1 as timestamp) ) from tztest where c_ttz1=datetimetz'2015-9-17 12:02:02 AM +9:00';
-select c_ttz1,c_dtltz1,addtime(c_ttz1, cast(c_dtltz1 as timestamptz) ) from tztest where c_ttz1=datetimetz'2015-9-17 12:02:02 AM +9:00';
+select c_ttz1,c_dtltz1,addtime(c_ttz1, c_dtltz1 ) from tztest where c_ttz1=datetimetz'2015-9-17 12:02:02 AM +9:00' order by 1,2;
+select c_ttz1,c_dtltz1,addtime(c_ttz1, cast(c_dtltz1 as time) ) from tztest where c_ttz1=datetimetz'2015-9-17 12:02:02 AM +9:00' order by 1,2;
+select c_ttz1,c_dtltz1,addtime(c_ttz1, cast(c_dtltz1 as timestamp) ) from tztest where c_ttz1=datetimetz'2015-9-17 12:02:02 AM +9:00' order by 1,2;
+select c_ttz1,c_dtltz1,addtime(c_ttz1, cast(c_dtltz1 as timestamptz) ) from tztest where c_ttz1=datetimetz'2015-9-17 12:02:02 AM +9:00' order by 1,2;
 --CUBRIDSUS-17532
 --select c_ttz1,c_dtltz1,addtime(c_ttz1, cast(c_dtltz1 as string) ) from tztest where c_ttz1=datetimetz'2015-9-17 12:02:02 AM +9:00';
  
 update tztest set c_ttz1='8:00:00 PM +9:00' where c_ttz1=datetimetz'2015-9-17 12:02:06 AM +9:00';
-select c_ttz1,extract (HOUR FROM c_ttz1 ) from tztest where c_ttz1=datetimetz'2015-9-17 12:02:02 AM +9:00';
-select c_ttz1,extract (HOUR FROM c_ttz1 ) from tztest where c_ttz1=datetimetz'2015-9-17 8:00:00 PM +9:00';
-select c_ttz1,HOUR(c_ttz1 ) from tztest where c_ttz1=datetimetz'2015-9-17 12:02:02 AM +9:00';
-select c_ttz1,HOUR(c_ttz1 ) from tztest where c_ttz1=datetimetz'2015-9-17 8:00:00 PM +9:00';
+select c_ttz1,extract (HOUR FROM c_ttz1 ) from tztest where c_ttz1=datetimetz'2015-9-17 12:02:02 AM +9:00' order by 1,2;
+select c_ttz1,extract (HOUR FROM c_ttz1 ) from tztest where c_ttz1=datetimetz'2015-9-17 8:00:00 PM +9:00' order by 1,2;
+select c_ttz1,HOUR(c_ttz1 ) from tztest where c_ttz1=datetimetz'2015-9-17 12:02:02 AM +9:00' order by 1,2;
+select c_ttz1,HOUR(c_ttz1 ) from tztest where c_ttz1=datetimetz'2015-9-17 8:00:00 PM +9:00' order by 1,2;
 
 update tztest set c_ttz1=null where  c_ttz1=datetimetz'2015-9-17 12:00:03 PM +9:00';
-select c_ttz1,HOUR( c_ttz1 ) from tztest where  c_ttz1 is null;
+select c_ttz1,HOUR( c_ttz1 ) from tztest where  c_ttz1 is null order by 1,2;
 
-select c_ttz1,MINUTE(c_ttz1 ) from tztest where c_ttz1=datetimetz'2015-9-17 12:02:02 AM +9:00';
-select c_ttz1,MINUTE(c_ttz1 ) from tztest where c_ttz1 is null;
+select c_ttz1,MINUTE(c_ttz1 ) from tztest where c_ttz1=datetimetz'2015-9-17 12:02:02 AM +9:00' order by 1,2;
+select c_ttz1,MINUTE(c_ttz1 ) from tztest where c_ttz1 is null order by 1,2;
 
-select c_ttz1,second(c_ttz1 ) from tztest where c_ttz1=datetimetz'2015-9-17 12:02:02 AM +9:00';
-select c_ttz1,second(c_ttz1 ) from tztest where c_ttz1 is null;
+select c_ttz1,second(c_ttz1 ) from tztest where c_ttz1=datetimetz'2015-9-17 12:02:02 AM +9:00' order by 1,2;
+select c_ttz1,second(c_ttz1 ) from tztest where c_ttz1 is null order by 1,2;
 
-select c_ttz1,time_to_sec(c_ttz1 ) from tztest where c_ttz1=datetimetz'2015-9-17 12:02:02 AM +9:00';
-select c_ttz1,time_to_sec(c_ttz1 ) from tztest where c_ttz1=datetimetz'2015-9-17 8:00:00 PM +9:00';
-select c_ttz1,time_to_sec(c_ttz1 ) from tztest where c_tltz1 is null;
+select c_ttz1,time_to_sec(c_ttz1 ) from tztest where c_ttz1=datetimetz'2015-9-17 12:02:02 AM +9:00' order by 1,2;
+select c_ttz1,time_to_sec(c_ttz1 ) from tztest where c_ttz1=datetimetz'2015-9-17 8:00:00 PM +9:00' order by 1,2;
+select c_ttz1,time_to_sec(c_ttz1 ) from tztest where c_tltz1 is null order by 1,2;
 
-select c_ttz1,TIMEDIFF(addtime(c_ttz1,time'1:00:00'),c_ttz1) from tztest where c_ttz1=datetimetz'2015-9-17 12:02:02 AM +9:00';
-select c_ttz1,TIMEDIFF(c_ttz1,c_ttz1 ) from tztest where c_ttz1=datetimetz'2015-9-17 12:02:02 AM +9:00';
-select c_ttz1,TIMEDIFF(c_ttz1,c_ttz1) from tztest where c_ttz1 is null;
+select c_ttz1,TIMEDIFF(addtime(c_ttz1,time'1:00:00'),c_ttz1) from tztest where c_ttz1=datetimetz'2015-9-17 12:02:02 AM +9:00' order by 1,2;
+select c_ttz1,TIMEDIFF(c_ttz1,c_ttz1 ) from tztest where c_ttz1=datetimetz'2015-9-17 12:02:02 AM +9:00' order by 1,2;
+select c_ttz1,TIMEDIFF(c_ttz1,c_ttz1) from tztest where c_ttz1 is null order by 1,2;
 
-select c_ttz1,timestamp('2009-12-31',c_ttz1) from tztest where id=4 and SECOND(c_ttz1)=13;
-select c_tsltz1,c_ttz1,timestamp(c_tsltz1, c_ttz1) from tztest where c_ttz1=datetimetz'2015-9-17 12:02:02 AM +9:00';
-select c_ttz1,timestamp(c_tsltz1, c_ttz1) from tztest where c_ttz1 is null;
+select c_ttz1,timestamp('2009-12-31',c_ttz1) from tztest where id=4 and SECOND(c_ttz1)=13 order by 1,2;
+select c_tsltz1,c_ttz1,timestamp(c_tsltz1, c_ttz1) from tztest where c_ttz1=datetimetz'2015-9-17 12:02:02 AM +9:00' order by 1,2;
+select c_ttz1,timestamp(c_tsltz1, c_ttz1) from tztest where c_ttz1 is null order by 1,2;
 
 drop table tztest;

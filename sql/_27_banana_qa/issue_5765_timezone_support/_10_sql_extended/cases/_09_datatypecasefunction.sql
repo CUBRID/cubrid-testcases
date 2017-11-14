@@ -21,56 +21,56 @@ insert into tztest select 3,null,addtime(c_tsltz1,time'0:02:01'),addtime(c_tsltz
 ,addtime(c_dtltz1,time'0:02:01'),addtime(c_dtltz2,time'0:01:00') from tztest;
 
 --+++++++++++Test case timestampltz++++++++++++++++++++++++++++++
-select CAST( c_tsltz1 AS INT ) from tztest where id=1;
-select CAST( c_tsltz1 AS SMALLINT ) from tztest where id=1;
-select CAST( c_tsltz1 AS BIGiNT ) from tztest where id=1;
-select c_tsltz1,CAST( c_tsltz1 AS CHAR(35) ) from tztest where id=1;
-select c_tsltz1,CAST( c_tsltz1 AS VARCHAR ) from tztest where id=1;
-select c_tsltz1,CAST( c_tsltz1 AS TIME ) from tztest where id=1;
-select c_tsltz1,CAST( c_tsltz1 AS TIMESTAMP ) from tztest where id=1;
-select c_tsltz1,CAST( c_tsltz1 AS TIMESTAMPTZ ) from tztest where id=1;
-select c_tsltz1,CAST( c_tsltz1 AS TIMESTAMPLTZ ) from tztest where id=1;
-select c_tsltz1,CAST( c_tsltz1 AS DATE ) from tztest where id=1;
-select c_tsltz1,CAST( c_tsltz1 AS DATETIME ) from tztest where id=1;
-select c_tsltz1,CAST( c_tsltz1 AS DATETIMETZ ) from tztest where id=1;
-select c_tsltz1,CAST( c_tsltz1 AS DATETIMELTZ ) from tztest where id=1;
+select CAST( c_tsltz1 AS INT ) from tztest where id=1 order by 1,2;
+select CAST( c_tsltz1 AS SMALLINT ) from tztest where id=1 order by 1,2;
+select CAST( c_tsltz1 AS BIGiNT ) from tztest where id=1 order by 1,2;
+select c_tsltz1,CAST( c_tsltz1 AS CHAR(35) ) from tztest where id=1 order by 1,2;
+select c_tsltz1,CAST( c_tsltz1 AS VARCHAR ) from tztest where id=1 order by 1,2;
+select c_tsltz1,CAST( c_tsltz1 AS TIME ) from tztest where id=1 order by 1,2;
+select c_tsltz1,CAST( c_tsltz1 AS TIMESTAMP ) from tztest where id=1 order by 1,2;
+select c_tsltz1,CAST( c_tsltz1 AS TIMESTAMPTZ ) from tztest where id=1 order by 1,2;
+select c_tsltz1,CAST( c_tsltz1 AS TIMESTAMPLTZ ) from tztest where id=1 order by 1,2;
+select c_tsltz1,CAST( c_tsltz1 AS DATE ) from tztest where id=1 order by 1,2;
+select c_tsltz1,CAST( c_tsltz1 AS DATETIME ) from tztest where id=1 order by 1,2;
+select c_tsltz1,CAST( c_tsltz1 AS DATETIMETZ ) from tztest where id=1 order by 1,2;
+select c_tsltz1,CAST( c_tsltz1 AS DATETIMELTZ ) from tztest where id=1 order by 1,2;
 
-select c_tsltz1,date_format(c_tsltz1,'%W %M %Y') from tztest where id=2;
-select c_tsltz1,date_format(c_tsltz1,'%D %y %a %d %m %b %j') from tztest where id=2;
+select c_tsltz1,date_format(c_tsltz1,'%W %M %Y') from tztest where id=2 order by 1,2;
+select c_tsltz1,date_format(c_tsltz1,'%D %y %a %d %m %b %j') from tztest where id=2 order by 1,2;
 
-select c_tsltz1,time_format(c_tsltz1,'%H %h %i %s %f') from tztest where id=2;
-select c_tsltz1,time_format(c_tsltz1,'%p')from tztest where id=2;
+select c_tsltz1,time_format(c_tsltz1,'%H %h %i %s %f') from tztest where id=2 order by 1,2;
+select c_tsltz1,time_format(c_tsltz1,'%p')from tztest where id=2 order by 1,2;
 
-select c_tsltz1,to_char(c_tsltz1) from tztest where id=2;
-select c_tsltz1,to_char(c_tsltz1,'DD, DY , MON, YYYY') from tztest where id=2;
-select c_tsltz1,to_char(c_tsltz1,'YYYY-MM-DD-DAY') from tztest where id=2;
-select c_tsltz1,to_char(c_tsltz1,'Day Month yyyy') from tztest where id=2;
+select c_tsltz1,to_char(c_tsltz1) from tztest where id=2 order by 1,2;
+select c_tsltz1,to_char(c_tsltz1,'DD, DY , MON, YYYY') from tztest where id=2 order by 1,2;
+select c_tsltz1,to_char(c_tsltz1,'YYYY-MM-DD-DAY') from tztest where id=2 order by 1,2;
+select c_tsltz1,to_char(c_tsltz1,'Day Month yyyy') from tztest where id=2 order by 1,2;
 
 --+++++++++++Test case datetimeltz++++++++++++++++++++++++++++++
 select CAST( c_dtltz1 AS INT ) from tztest where id=1;
 select CAST( c_dtltz1 AS SMALLINT ) from tztest where id=1;
 select CAST( c_dtltz1 AS BIGiNT ) from tztest where id=1;
-select c_dtltz1,CAST( c_dtltz1 AS CHAR(40) ) from tztest where id=1;
-select c_dtltz1,CAST( c_dtltz1 AS VARCHAR ) from tztest where id=1;
-select c_dtltz1,CAST( c_dtltz1 AS TIME ) from tztest where id=1;
-select c_dtltz1,CAST( c_dtltz1 AS TIMESTAMP ) from tztest where id=1;
-select c_dtltz1,CAST( c_dtltz1 AS TIMESTAMPTZ ) from tztest where id=1;
-select c_dtltz1,CAST( c_dtltz1 AS TIMESTAMPLTZ ) from tztest where id=1;
-select c_dtltz1,CAST( c_dtltz1 AS DATE ) from tztest where id=1;
-select c_dtltz1,CAST( c_dtltz1 AS DATETIME ) from tztest where id=1;
-select c_dtltz1,CAST( c_dtltz1 AS DATETIMETZ ) from tztest where id=1;
-select c_dtltz1,CAST( c_dtltz1 AS DATETIMELTZ ) from tztest where id=1;
+select c_dtltz1,CAST( c_dtltz1 AS CHAR(40) ) from tztest where id=1 order by 1,2;
+select c_dtltz1,CAST( c_dtltz1 AS VARCHAR ) from tztest where id=1 order by 1,2;
+select c_dtltz1,CAST( c_dtltz1 AS TIME ) from tztest where id=1 order by 1,2;
+select c_dtltz1,CAST( c_dtltz1 AS TIMESTAMP ) from tztest where id=1 order by 1,2;
+select c_dtltz1,CAST( c_dtltz1 AS TIMESTAMPTZ ) from tztest where id=1 order by 1,2;
+select c_dtltz1,CAST( c_dtltz1 AS TIMESTAMPLTZ ) from tztest where id=1 order by 1,2;
+select c_dtltz1,CAST( c_dtltz1 AS DATE ) from tztest where id=1 order by 1,2;
+select c_dtltz1,CAST( c_dtltz1 AS DATETIME ) from tztest where id=1 order by 1,2;
+select c_dtltz1,CAST( c_dtltz1 AS DATETIMETZ ) from tztest where id=1 order by 1,2;
+select c_dtltz1,CAST( c_dtltz1 AS DATETIMELTZ ) from tztest where id=1 order by 1,2;
 
-select c_dtltz1,date_format(c_dtltz1,'%W %M %Y') from tztest where id=2;
-select c_dtltz1,date_format(c_dtltz1,'%D %y %a %d %m %b %j') from tztest where id=2;
+select c_dtltz1,date_format(c_dtltz1,'%W %M %Y') from tztest where id=2 order by 1,2;
+select c_dtltz1,date_format(c_dtltz1,'%D %y %a %d %m %b %j') from tztest where id=2 order by 1,2;
 
-select c_dtltz1,time_format(c_dtltz1,'%H %h %i %s %f') from tztest where id=2;
-select c_dtltz1,time_format(c_dtltz1,'%p')from tztest where id=2;
+select c_dtltz1,time_format(c_dtltz1,'%H %h %i %s %f') from tztest where id=2 order by 1,2;
+select c_dtltz1,time_format(c_dtltz1,'%p')from tztest where id=2 order by 1,2;
 
-select c_dtltz1,to_char(c_dtltz1) from tztest where id=2;
-select c_dtltz1,to_char(c_dtltz1,'DD, DY , MON, YYYY') from tztest where id=2;
-select c_dtltz1,to_char(c_dtltz1,'YYYY-MM-DD-DAY') from tztest where id=2;
-select c_dtltz1,to_char(c_dtltz1,'Day Month yyyy') from tztest where id=2;
+select c_dtltz1,to_char(c_dtltz1) from tztest where id=2 order by 1,2;
+select c_dtltz1,to_char(c_dtltz1,'DD, DY , MON, YYYY') from tztest where id=2 order by 1,2;
+select c_dtltz1,to_char(c_dtltz1,'YYYY-MM-DD-DAY') from tztest where id=2 order by 1,2;
+select c_dtltz1,to_char(c_dtltz1,'Day Month yyyy') from tztest where id=2 order by 1,2;
 
 
 drop table tztest;
