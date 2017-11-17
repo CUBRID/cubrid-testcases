@@ -40,9 +40,9 @@ MC: wait until C1 ready;
 
 /* test case */
 C1: update t1 set col='ab' where id=1;
-C1: select * from t1 where id=1;
+C1: select * from t1 where id=1 order by 1,2;
 MC: wait until C1 ready;
-C2: select * from t1 where id=1;
+C2: select * from t1 where id=1 order by 1,2;
 MC: wait until C2 ready;
 C1: select * from t1 order by 1,2;
 MC: wait until C1 ready;
