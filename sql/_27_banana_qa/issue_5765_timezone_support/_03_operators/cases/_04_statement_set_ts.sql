@@ -38,8 +38,7 @@ select id,to_char(ts,'YYYY-MM-DD HH24:MI:SS TZR TZD') from (select id, ts from t
 select id,to_char(ts,'YYYY-MM-DD HH24:MI:SS TZR TZD') from (select id, tstz as ts from (select id, tstz,to_char(tstz) from t2 order by 1,3   desc ) union select id, ts from t1 order by 1, 2) order by 1,2;
 --test: union, tsltz+tstz
 select id,to_char(ts,'YYYY-MM-DD HH24:MI:SS TZR TZD') from (select id, tsltz as ts from t1 union all select id, tstz as ts from t2 order by 1, 2) order by 1,2;
-select id,to_char(ts,'YYYY-MM-DD HH24:MI:SS TZR TZD') from (select id, tstz as ts from (select id, tstz,to_char(tstz) from t2 order by 1,3   
-desc) union select id, tsltz as ts from t1 order by 1, 2) order by 1,2;
+select id,to_char(ts,'YYYY-MM-DD HH24:MI:SS TZR TZD') from (select id, tstz as ts from (select id, tstz,to_char(tstz) from t2 order by 1,3 desc) union select id, tsltz as ts from t1 order by 1, 2) order by 1,2;
 --test: union, ts+tsltz
 select id,to_char(ts,'YYYY-MM-DD HH24:MI:SS TZR TZD') from (select id, ts from t1 union all select id, tsltz as ts from t1 where id=1 order by 1, 2) order by 1,2;
 select id,to_char(ts,'YYYY-MM-DD HH24:MI:SS TZR TZD') from (select id, tsltz as ts from t1 union select id, ts from t1 where id<5 order by 1, 2) order by 1,2;
@@ -57,8 +56,7 @@ select id,to_char(ts,'YYYY-MM-DD HH24:MI:SS TZR TZD') from (select id, tsltz as 
 --test: intersect, ts+tstz
 select id,to_char(ts,'YYYY-MM-DD HH24:MI:SS TZR TZD') from (select id, ts from t1 where id<10 intersect select id, tstz as ts from t2 order by 1, 2) order by 1,2;
 --test: intersect, tsltz+tstz
-select id,to_char(ts,'YYYY-MM-DD HH24:MI:SS TZR TZD') from (select id, tstz as ts from (select id, tstz,to_char(tstz) from t2 order by 1,3   
-desc) intersect select id, tsltz as ts from t1 order by 1, 2) order by 1,2;
+select id,to_char(ts,'YYYY-MM-DD HH24:MI:SS TZR TZD') from (select id, tstz as ts from (select id, tstz,to_char(tstz) from t2 order by 1,3 desc) intersect select id, tsltz as ts from t1 order by 1, 2) order by 1,2;
 --test: intersect, tsltz+ts
 select id,to_char(ts,'YYYY-MM-DD HH24:MI:SS TZR TZD') from (select id, ts from t1 intersect select id, tsltz as ts from t1 order by 1, 2) order by 1,2;
 
