@@ -27,13 +27,15 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C2: SELECT tb1.* FROM (select sleep(1)) x,tb1 WHERE id>0 AND col NOT LIKE 'aa%' order by 1,2;
-MC: sleep 1;
 
 C1: DELETE FROM tb1 WHERE id=2;
+MC: wait until C1 ready;
+
+C2: SELECT tb1.* FROM tb1 WHERE id>0 AND col NOT LIKE 'aa%' order by 1,2;
+MC: wait until C2 ready;
+
 C1: commit;
 MC: wait until C1 ready;
-MC: wait until C2 ready;
 
 C1: SELECT * FROM tb1 WHERE id>0 order by 1,2;
 C1: commit work;
