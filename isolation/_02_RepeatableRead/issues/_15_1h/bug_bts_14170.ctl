@@ -47,7 +47,7 @@ MC: wait until C1 ready;
 C2: delete from t1 where title = 'abcd';
 MC: wait until C2 ready;
 C1: commit;
-C2: select * from t1;
+C2: select * from t1 order by 1;
 C2: commit;
 
 DROP TABLE IF EXISTS t1;
@@ -68,7 +68,7 @@ MC: wait until C1 ready;
 C2: update t1 set title = 'abc' where title = 'abcd';
 MC: wait until C2 ready;
 C1: commit;
-C2: select * from t1;
+C2: select * from t1 order by 1;
 C2: commit;
 
 /* test point 2: read committed */
@@ -99,7 +99,7 @@ C2: delete from t1 where title = 'abcd';
 MC: wait until C2 blocked;
 C1: commit;
 MC: wait until C2 ready;
-C2: select * from t1;
+C2: select * from t1 order by 1;
 C2: commit;
 
 
