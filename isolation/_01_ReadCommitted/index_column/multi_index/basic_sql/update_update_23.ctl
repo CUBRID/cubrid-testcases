@@ -37,17 +37,19 @@ MC: wait until C1 ready;
 
 /* C1 update, C2 update*/
 C1: update t1 set col='ijk' where id<4;
-C2: update t1 set col='aaa' where id<5 and col like 'ij%';
 MC: wait until C1 ready;
+C2: update t1 set col='aaa' where id<5 and col like 'ij%';
 MC: wait until C2 ready;
 C1: select * from t1 order by 1,2;
 MC: wait until C1 ready;
 C2: select * from t1 order by 1,2;
 MC: wait until C2 ready;
 C1: commit;
-C2: commit;
-C3: select * from t1 order by 1,2;
 MC: wait until C1 ready;
+C2: commit;
+MC: wait until C2 ready;
+C3: select * from t1 order by 1,2;
+MC: wait until C3 ready;
 
 C1: quit;
 C2: quit;

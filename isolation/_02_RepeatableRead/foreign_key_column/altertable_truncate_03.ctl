@@ -35,8 +35,8 @@ MC: wait until C2 blocked;
 C1: rollback;
 MC: wait until C2 ready;
 C2: commit;
-C2: SELECT * FROM t_primary ORDER BY id;
-C2: SELECT * FROM t_foreign ORDER BY id;
+C2: SELECT * FROM t_primary ORDER BY id,col;
+C2: SELECT * FROM t_foreign ORDER BY id,col;
 C2: commit;
 
 /* test case */
@@ -47,8 +47,8 @@ MC: wait until C2 blocked;
 C1: commit;
 MC: wait until C2 ready;
 C2: commit;
-C2: SELECT * FROM t_primary ORDER BY id;
-C2: SELECT * FROM t_foreign ORDER BY id;
+C2: SELECT * FROM t_primary ORDER BY id,col;
+C2: SELECT * FROM t_foreign ORDER BY id,col;
 C2: desc t_foreign;
 C2: commit;
 
@@ -65,8 +65,8 @@ C1: commit;
 C2: commit;
 MC: wait until C1 ready;
 MC: wait until C2 ready;
-C2: SELECT * FROM t_primary ORDER BY id;
-C2: SELECT * FROM t_foreign ORDER BY id;
+C2: SELECT * FROM t_primary ORDER BY id,col;
+C2: SELECT * FROM t_foreign ORDER BY id,col;
 C2: commit;
 
 C2: quit;

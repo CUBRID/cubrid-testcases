@@ -42,10 +42,10 @@ C2: commit;
 MC: wait until C2 ready;
 
 C1: commit;
-C1: SELECT * FROM hi order by id;
+C1: SELECT * FROM hi order by id,col;
 MC: wait until C1 ready;
 
-C2: SELECT * FROM hi order by id;
+C2: SELECT * FROM hi order by id,col;
 MC: wait until C2 ready;
 
 C2: commit;

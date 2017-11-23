@@ -55,12 +55,13 @@ MC: wait until C2 blocked;
 C1: SELECT * FROM t1 order by 1,2;
 C1: SELECT * FROM t2 order by 1,2;
 C1: rollback;
+MC: wait until C1 ready;
 /* expect: 8 rows deleted message should generated once C2 ready, 
    C2 select - t1 id = 4,5,6,7 are deleted, t2 id = 4,5,6,7 are deleted */
-MC: wait until C2 ready;
 C2: SELECT * FROM t1 order by 1,2;
 C2: SELECT * FROM t2 order by 1,2;
 C2: commit;
+MC: wait until C2 ready;
 /* expect: the instances of t1, t2 id = 4,5,6,7 are deleted */
 C3: select * from t1 order by 1,2;
 C3: select * from t2 order by 1,2;

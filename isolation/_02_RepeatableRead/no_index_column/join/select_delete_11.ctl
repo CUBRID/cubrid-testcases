@@ -34,7 +34,7 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C1: SELECT * FROM tb1 a CROSS JOIN tb2 b WHERE a.id <= 2 and b.id < 5 ;
+C1: SELECT * FROM tb1 a CROSS JOIN tb2 b WHERE a.id <= 2 and b.id < 5 order by 1,2,3,4;
 MC: wait until C1 ready;
 
 C2: DELETE a,b FROM tb1 a CROSS JOIN tb2 b WHERE a.id>5 and b.id > 5;

@@ -42,7 +42,7 @@ C1: insert into t(col) select col from t order by id;
 C1: commit;
 MC: wait until C1 ready;
 /* expected one row selected */
-C1: select * from t where col='c';
+C1: select * from t where col='c' order by 1;
 MC: wait until C1 ready;
 
 C2: commit;          

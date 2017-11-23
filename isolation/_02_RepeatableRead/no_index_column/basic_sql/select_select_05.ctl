@@ -29,11 +29,11 @@ C1: insert into person values ('Alicia Florrick',40,'female'); insert into perso
 C1: commit work;
 
 /* test case */
-C1: select * from person where name='Diane Lockhart';
+C1: select * from person where name='Diane Lockhart' order by 1,2;
 MC: wait until C1 ready;
-C2: select * from person where name='Peter Florrick';
+C2: select * from person where name='Peter Florrick'order by 1,2;
 MC: wait until C2 ready;
-C3: select * from person where name='Cary Agos';
+C3: select * from person where name='Cary Agos' order by 1,2,3;
 MC: wait until C3 ready;
 C1: commit;
 C2: commit;
@@ -57,9 +57,9 @@ MC: wait until C3 ready;
 
 C1: select * from person where name like '%Florrick' order by 1,2,3;
 MC: wait until C1 ready;
-C2: select * from person where name='Peter Florrick';
+C2: select * from person where name='Peter Florrick' order by 1,2,3;
 MC: wait until C2 ready;
-C3: select * from person where name='Alicia Florrick';
+C3: select * from person where name='Alicia Florrick'order by 1,2,3;
 MC: wait until C3 ready;
 C1: commit;
 C2: commit;

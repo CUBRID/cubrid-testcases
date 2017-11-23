@@ -37,8 +37,8 @@ MC: wait until C1 ready;
 
 /* C1 update, C2 update*/
 C1: update t1 set col='ijk' where id<4;
-C2: update t1 set id=id+1 where id<5 and col like 'ij%';
 MC: wait until C1 ready;
+C2: update t1 set id=id+1 where id<5 and col like 'ij%';
 MC: wait until C2 ready;
 C1: select * from t1 order by 1,2;
 MC: wait until C1 ready;

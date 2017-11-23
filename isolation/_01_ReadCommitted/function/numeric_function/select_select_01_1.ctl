@@ -40,10 +40,10 @@ C1: COMMIT WORK;
 MC: wait until C1 ready;
 
 /* test case */
-C1: SELECT * FROM t1 WHERE CONV(col,16,2) = '1111'; 
+C1: SELECT * FROM t1 WHERE CONV(col,16,2) = '1111' order by 1; 
 MC: wait until C1 ready;
 
-C2: SELECT * FROM t1 WHERE CONV(col,16,2) = '1010'; 
+C2: SELECT * FROM t1 WHERE CONV(col,16,2) = '1010' order by 1; 
 /* expect: no transactions need to wait, assume C1 finished before C2 */
 MC: wait until C2 ready;
 
