@@ -20,8 +20,8 @@ insert INTO t1 (col1, col2, col3, col4, col5) values (n'nchar02', n'nchar02', 'c
 SELECT t1 into xx from t1 where id=1;
 insert into t2 values ({xx},{'aaa'},{'vvv'});
 
-select * FROM t1;
-SELECT * FROM t2;
+select * FROM t1 order by 1;
+SELECT * FROM t2 order by 1;
 
 drop t1;
 drop t2;

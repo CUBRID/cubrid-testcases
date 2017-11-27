@@ -6,7 +6,7 @@ create table t1(id int primary key not null auto_increment,e enum('a', 'b', 'c',
 insert into t1(e) values (1), ('b'), (3), ('xyz');
 insert into t1(e) values (1), ('b'), (null), (null);
 
-select * from t1 order by 2 nulls first;
+select * from t1 order by 2 nulls first, 1;
 select group_concat(e order by e asc) from t1 order by 1 nulls first;
 select max(e) from t1 order by 1 nulls first;
 select min(e) from t1 order by 1 nulls first;
@@ -66,7 +66,7 @@ select atan(e), atan(e, e) from t1 order by 1 nulls first, 2;
 select atan2(e, e) from t1 order by 1 nulls first;
 select ceil(e) from t1 order by 1 nulls first;
 select conv(e, 10, e) from t1 order by 1 nulls first;
-select cos(e) from t1 order by 1 nulls first;
+select to_char(cos(e), '9.999999') from t1 order by 1 nulls first;
 select substr(to_char(cot(e)),1,15) from t1 order by 1 nulls first;
 --select cot(e) from t1 order by 1 nulls first;
 select degrees(e) from t1 order by 1 nulls first;
@@ -117,7 +117,7 @@ create table t1(id int primary key not null auto_increment,e enum('a', 'b', 'c',
 insert into t1(e) values (1), ('b'), (3), ('xyz');
 insert into t1(e) values (1), ('b'), (null), (null);
 
-select * from t1 order by 2 nulls last;
+select * from t1 order by 2 nulls last,1;
 select group_concat(e order by e asc) from t1 order by 1 nulls last;
 select max(e) from t1 order by 1 nulls last;
 select min(e) from t1 order by 1 nulls last;
@@ -177,7 +177,7 @@ select atan(e), atan(e, e) from t1 order by 1 nulls last, 2;
 select atan2(e, e) from t1 order by 1 nulls last;
 select ceil(e) from t1 order by 1 nulls last;
 select conv(e, 10, e) from t1 order by 1 nulls last;
-select cos(e) from t1 order by 1 nulls last;
+select to_char(cos(e), '9.999999') from t1 order by 1 nulls last;
 select substr(to_char(cot(e)),1,15) from t1 order by 1 nulls last;
 --select cot(e) from t1 order by 1 nulls last;
 select degrees(e) from t1 order by 1 nulls last;

@@ -16,14 +16,14 @@ select (select a from xoo order by b for orderby_num() = 1) as c1,
         a
 from xoo order by 1,2,3;
 
-select (select (select a+10 from xoo where rownum = 1 using index none)
+select (select (select a+10 from (select * from xoo order by a) where rownum = 1 using index none)
         from xoo order by b for orderby_num() = 1) as c1,
         a
 from xoo order by 1,2;
 
-select (select (select a+10 from xoo where rownum = 1 using index none)
+select (select (select a+10 from (select * from xoo order by a) where rownum = 1 using index none)
         from xoo order by b for orderby_num() = 1) as c1,
-       (select (select a+10 from xoo where rownum = 1 using index none)
+       (select (select a+10 from (select * from xoo order by a) where rownum = 1 using index none)
         from xoo order by b for orderby_num() = 1) as c2,
         a
 from xoo order by 1,2,3;

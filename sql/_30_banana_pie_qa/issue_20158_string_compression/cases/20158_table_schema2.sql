@@ -35,9 +35,9 @@ select * from a_parent a,b_child b where a.id=b.parent_id order by 1,2,3;
 select * from a_parent a,b_child b where a.id=b.parent_id group by a.id having a.id>'aa' using index idx_a order by 1;  
 
 --- (1). hierarchical query
-select tt.id,tt.parent_id from b_child tt connect by prior tt.id=tt.parent_id using index idx_b order by tt.id desc limit 1;
+select tt.id,tt.parent_id from b_child tt connect by prior tt.id=tt.parent_id using index idx_b order by tt.id desc, tt.parent_id limit 1;
 
-select tt.id,tt.name from a_parent tt start with tt.name='aaa' connect by prior tt.name=tt.id order by tt.name;
+select tt.id,tt.name from a_parent tt start with tt.name='aaa' connect by prior tt.name=tt.id order by tt.name, tt.id;
 
 --- (2). join
 select * from a_parent t1 inner join b_child t2 on t1.id=t2.parent_id using index idx_a order by t2.parent_id desc limit 1;

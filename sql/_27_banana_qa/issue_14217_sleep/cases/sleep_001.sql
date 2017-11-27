@@ -3,7 +3,7 @@ drop table if exists t1;
 create table t1 (a float);
 insert into t1 values(0.1),(0.2),(0.3);
 
-select a, sleep(a) from t1;
+select a, sleep(a) from t1 order by 1;
 select sleep('abc');
 select sleep(0.0);
 select sleep(-0.2);

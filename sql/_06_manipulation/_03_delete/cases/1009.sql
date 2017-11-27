@@ -14,6 +14,6 @@ insert into t1 values(1002, date'09/10/2008', 'char1','varchar101',TIME'16:08:33
 insert into t1 values(1003, date'09/10/2008', 'char1','varchar101',TIME'16:08:33 pm',TIMESTAMP '8:15:00 PM 01/31/1994');
 
 delete from t1 where col1 = 1001;
-select * from t1;
+select * from t1 order by col1;
 
 drop class t1;

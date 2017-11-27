@@ -24,19 +24,19 @@ insert into func_03 values ( '', 0, 0, 0, 0, 0,0, 0, '', null, null, null,B'', N
 insert into func_03(stringtest) values ( null);
 insert into dummy values (1);
 
-select doublepretest from func_03	 order by 1;
+select doublepretest from func_03 order by 1;
 select cast(doublepretest as string) from func_03 order by 1;
-select cast(doublepretest as varchar(10)) from func_03	 order by 1;
-select cast(doublepretest as varchar(20)) from func_03	 order by 1;
-select cast(doublepretest as int) from func_03;	
-select cast(doublepretest as numeric(38,10)) from func_03;	
-select cast(doublepretest as float) from func_03;	
-select cast(doublepretest as double) from func_03;	
-select cast(doublepretest as monetary) from func_03;	
-select cast(doublepretest as nchar(20)) from func_03;	
-select cast(doublepretest as nchar varying(20)) from func_03;	
-select cast(set{doublepretest} as set of numeric(38,10)) from func_03	 order by 1;
-select cast(list{doublepretest} as list of numeric(38)) from func_03;	
+select cast(doublepretest as varchar(10)) from func_03 order by 1;
+select cast(doublepretest as varchar(20)) from func_03 order by 1;
+select cast(doublepretest as int) from func_03 order by 1;	
+select cast(doublepretest as numeric(38,10)) from func_03 order by 1;	
+select cast(doublepretest as float) from func_03 order by 1;	
+select cast(doublepretest as double) from func_03 order by 1;	
+select cast(doublepretest as monetary) from func_03 order by 1;	
+select cast(doublepretest as nchar(20)) from func_03 order by 1;	
+select cast(doublepretest as nchar varying(20)) from func_03 order by 1;	
+select cast(set{doublepretest} as set of numeric(38,10)) from func_03 order by 1;
+select cast(list{doublepretest} as list of numeric(38)) from func_03 order by 1;	
 select cast(multiset{doublepretest} as multiset of numeric(38,10)) from func_03 order by 1;
 
 drop class func_03;

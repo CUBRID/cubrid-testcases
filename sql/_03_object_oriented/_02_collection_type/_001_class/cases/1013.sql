@@ -24,8 +24,8 @@ insert into t3 values ({10001,10001,insert into t1 values(101,'Jerry'),
                         );
 
 select * from t1 order by 1,2;
-select c1, c2 from t3;
-select * from t2;
+select c1, c2 from t3 order by 1,2;
+select * from t2 order by 1,2;
 drop class t1;
 drop class t2;
 drop class t3;

@@ -14,9 +14,9 @@ insert into sub_t1 values('Star', 22, 'f');
 insert into sub_t1 values('Jerry', 21, 'f');
 
 delete from all t1 where name = 'Jerry';
-select * from t1;
+select * from t1 order by 1;
 
-select * from sub_t1;
+select * from sub_t1 order by 1;
 
 drop class t1;
 drop class sub_t1;

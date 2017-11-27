@@ -29,10 +29,11 @@ select typeof(@a);
 select @a:=@tmp%2;
 select typeof(@a);
 
+drop table if exists t1;
 create table t1 (s1 string collate utf8_en_ci);
 insert into t1 values ('A'),('a');
 
-select @v + s1, collation (@v + s1) from t1;
+select @v + s1, collation (@v + s1) from t1 order by 1;
 drop variable @v,@v1,@tmp,@a;
 drop t1;
 

@@ -19,6 +19,7 @@ select disk_size(:a.s1),:a.s1;
 create index idx_t on t(s1,s2) where disk_size(s2) > 10;
 
 drop t;
+drop variable a;
 
 
 -- disk_size with operation +,-,*,/,>,<...

@@ -4,10 +4,10 @@
 autocommit off;
 drop table if exists tz_test, character_types;
 
-create table tz_test (id int auto_increment, ts timestamp, tsltz timestamp with local time zone, tstz timestamp with time zone);
+create table tz_test (id int auto_increment(1,1), ts timestamp, tsltz timestamp with local time zone, tstz timestamp with time zone);
 set timezone '+10:00';
 
-create table character_types(id int auto_increment, a char(40), b varchar(40), c string, d enum('a', 'b', 'c'), e enum('08:00:00 PM 12/01/2020', '12:00:01 PM 01/02/2019 +08:00', '08:00:00 PM 12/01/2020 +09:00', '08:00:00 PM 12/01/2020 Asia/Tokyo'));
+create table character_types(id int auto_increment(1,1), a char(40), b varchar(40), c string, d enum('a', 'b', 'c'), e enum('08:00:00 PM 12/01/2020', '12:00:01 PM 01/02/2019 +08:00', '08:00:00 PM 12/01/2020 +09:00', '08:00:00 PM 12/01/2020 Asia/Tokyo'));
 insert into character_types(a, b, c, d, e) values('aaa', 'bbb', 'ccc', 3, 2);
 insert into character_types(a, b, c, d, e) values('2020-12-1 20:00:00', '2020-12-1 20:00:00', '2020-12-1 20:00:00', 3, 1);
 insert into character_types(a, b, c, d, e) values('2020-12-1 20:00:00 +9:00', '2020-12-1 20:00:00 +9:00', '2020-12-1 20:00:00 +9:00', 2, 3);
@@ -36,19 +36,19 @@ rollback;
 insert into tz_test(ts) values('a');
 insert into tz_test(tsltz) values('bb');
 insert into tz_test(tstz) values('ccc');
-insert into tz_test(ts) select d from character_types; 
-insert into tz_test(tsltz) select d from character_types; 
-insert into tz_test(tstz) select d from character_types; 
+insert into tz_test(ts) select d from character_types order by id; 
+insert into tz_test(tsltz) select d from character_types order by id; 
+insert into tz_test(tstz) select d from character_types order by id; 
 
 --test: implicit conversion from character string types to ts types
-insert into tz_test(ts, tsltz, tstz) select a, a, a from character_types;
-insert into tz_test(ts, tsltz, tstz) select a, a, a from character_types where id > 1;
-insert into tz_test(ts, tsltz, tstz) select b, b, b from character_types;
-insert into tz_test(ts, tsltz, tstz) select b, b, b from character_types where id > 1;
-insert into tz_test(ts, tsltz, tstz) select c, c, c from character_types;
-insert into tz_test(ts, tsltz, tstz) select c, c, c from character_types where id > 1;
-insert into tz_test(ts, tsltz, tstz) select e, e, e from character_types;
-insert into tz_test(ts, tsltz, tstz) select e, e, e from character_types where id > 1;
+insert into tz_test(ts, tsltz, tstz) select a, a, a from character_types order by id;
+insert into tz_test(ts, tsltz, tstz) select a, a, a from character_types where id > 1 order by id;
+insert into tz_test(ts, tsltz, tstz) select b, b, b from character_types order by id;
+insert into tz_test(ts, tsltz, tstz) select b, b, b from character_types where id > 1 order by id;
+insert into tz_test(ts, tsltz, tstz) select c, c, c from character_types order by id;
+insert into tz_test(ts, tsltz, tstz) select c, c, c from character_types where id > 1 order by id;
+insert into tz_test(ts, tsltz, tstz) select e, e, e from character_types order by id;
+insert into tz_test(ts, tsltz, tstz) select e, e, e from character_types where id > 1 order by id;
 select * from tz_test order by id;
 
 

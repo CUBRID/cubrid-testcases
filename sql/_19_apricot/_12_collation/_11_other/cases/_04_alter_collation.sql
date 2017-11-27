@@ -48,10 +48,10 @@ insert into t1 values ('AbC1');
 
 create index i_t1_s1 on t1(s1);
 
-select * from t1 where s1 > 'a' order by 1;
+select upper(s1) from t1 where s1 > 'a' order by 1;
 
 alter table t1 change s1 s1 string collate utf8_en_cs;
 
-select * from t1 where s1 > 'a' order by 1;
+select upper(s1) from t1 where s1 > 'a' order by 1;
 
 drop table t1;
