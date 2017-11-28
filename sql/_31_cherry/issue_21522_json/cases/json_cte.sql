@@ -190,7 +190,8 @@ WITH RECURSIVE c AS (SELECT *, 0 as lv, name as path, json_extract(description, 
 
 drop table if exists customer_area_node;
 
-drop table t;
+drop table if exists t;
+drop table if exists t3;
 drop VARIABLE @js;
 
 
