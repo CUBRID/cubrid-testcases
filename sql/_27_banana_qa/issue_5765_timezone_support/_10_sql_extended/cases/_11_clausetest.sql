@@ -21,15 +21,15 @@ insert into tztest values(6,'abcd',99,timestampltz'1992-1-4 12:00:00 AM +9:00',d
      );
 
 --+++++++++++++++++Test case - timestampltz++++++++++++++++
-select c_tsltz1,count(*) from tztest where c_tsltz1 > timestampltz'1990-1-1 12:00:00 AM +9:00' group by year(c_tsltz1) order by c_tsltz1;
+select year(c_tsltz1),count(*) from tztest where c_tsltz1 > timestampltz'1990-1-1 12:00:00 AM +9:00' group by year(c_tsltz1) order by c_tsltz1;
 update tztest set c_varchar='updated' where exists (select * from tztest as B where tztest.id = B.id and tztest.c_tsltz1 = adddate(B.c_tsltz1, interval 1 DAY) );
-select * from tztest where c_varchar='updated';
-select A.id, A.c_tsltz1, max(A.c_float) from tztest as A, tztest as B where A.c_tsltz1 <= B.c_tsltz1 and A.id=B.id group by A.id having count( * ) <=3; 
+select * from tztest where c_varchar='updated' order by 1;
+select A.id, A.c_tsltz1, max(A.c_float) from tztest as A, tztest as B where A.c_tsltz1 <= B.c_tsltz1 and A.id=B.id group by A.id having count( * ) <=3 order by 1; 
 
 --+++++++++++++++++Test case - datetimeltz+++++++++++++++++
 select c_dtltz1,count(*) from tztest where c_dtltz1 > datetimeltz'1990-1-1 12:00:00 AM +9:00' group by year(c_dtltz1) order by c_dtltz1;
 update tztest set c_varchar='updated1' where exists (select * from tztest as B where tztest.id = B.id and tztest.c_dtltz1 = adddate(B.c_dtltz1,interval 1 DAY) );
-select A.id, A.c_dtltz1, max(A.c_float) from tztest as A, tztest as B where A.c_dtltz1 <= B.c_dtltz1 and A.id=B.id group by A.id having count( * ) <=3;
+select A.id, A.c_dtltz1, max(A.c_float) from tztest as A, tztest as B where A.c_dtltz1 <= B.c_dtltz1 and A.id=B.id group by A.id having count( * ) <=3 order by 1;
 
 drop table tztest;
 --Test case timestampltz
@@ -55,7 +55,7 @@ AND NOT EXISTS
 (SELECT * FROM t1 AS T5 WHERE T5.start_date BETWEEN T3.start_date AND T3.end_date
 AND T5.end_date BETWEEN T4.start_date AND T4.end_date))
 GROUP BY T1.start_date
-HAVING t1.start_date = MIN(t2.start_date);
+HAVING t1.start_date = MIN(t2.start_date) order by 1;
 
 drop table t1;
 -- Test case - datetimeltz
@@ -82,6 +82,6 @@ AND NOT EXISTS
 (SELECT * FROM t1 AS T5  WHERE T5.start_date BETWEEN T3.start_date AND T3.end_date
 AND T5.end_date BETWEEN T4.start_date AND T4.end_date))
 GROUP BY T1.start_date
-HAVING t1.start_date = MIN(t2.start_date);
+HAVING t1.start_date = MIN(t2.start_date) order by 1;
 
 drop table t1;

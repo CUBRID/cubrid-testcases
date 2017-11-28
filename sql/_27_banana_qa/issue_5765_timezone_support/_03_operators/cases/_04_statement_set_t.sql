@@ -33,10 +33,10 @@ insert into t2 values(6, '2015-9-17 08:30:00 +9:00');
 
 set timezone '+9:00';
 --test: union, t+dttz
-select id, t from t1 union all select id, dttz as t from t2 order by 1, 2;
-select id, dttz as t from t2 union select id, t from t1 order by 1, 2;
+select id, t, to_char(t) from t1 union all select id, dttz, to_char(dttz) from t2 order by 1, 2, 3;
+select id, dttz as t from (select id,dttz,to_char(dttz) from t2 order by 1,3 desc) union select id, t from t1 order by 1, 2;
 --test: union, dtltz+dttz
-select id, dtltz as t from t1 union all select id, dttz as t from t2 order by 1, 2;
+select id, dtltz as t, to_char(dtltz) from t1 union all select id, dttz as t , to_char(dttz) from t2 order by 1, 2, 3;
 --select id, dttz as t from t2 union select id, dtltz as t from t1 order by 1, 2;
 --test: union, t+dtltz
 select id, t from t1 union all select id, dtltz as t from t1 where id=1 order by 1, 2;

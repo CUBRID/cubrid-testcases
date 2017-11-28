@@ -55,7 +55,8 @@ select length('\abcbbb\b\dddd\\\r\s\ooop\neilwkfdlfa;asl;kdfj;alskd');
 select '\abcbbb\b\dddd\\\r\s\ooop\neilwkfdlfa;asl;kdfj;alskd';
 
 
-set system parameters 'no_backslash_escapes=no';
+set system parameters 'no_backslash_escapes=default';
+set system parameters 'ansi_quotes=default';
 
 
 commit;

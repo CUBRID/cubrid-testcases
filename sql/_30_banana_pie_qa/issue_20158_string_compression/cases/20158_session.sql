@@ -21,7 +21,7 @@ select c,length(c),disk_size(c);
 select @b:=s1, @a := @b+s2 from t1 group by @a having @b>'a' order by 1,2 limit 1;
 
 drop table t1;
-
+drop variable a,b,c;
 
 set @a=repeat('a',300);
 

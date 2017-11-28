@@ -25,18 +25,21 @@ a    clob_to_char(t1.b)    clob_to_char(t2.b)
 3     c     c     
 
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: sscan
-               class: t? node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t? node[?]
-               sargs: term[?]
-               cost:  ? card ?
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: t? node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: t? node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.a,  clob_to_char(t?.b),  clob_to_char(t?.b) from t? t?, t? t? where  clob_to_char(t?.b)= clob_to_char(t?.b)
+select t?.a,  clob_to_char(t?.b),  clob_to_char(t?.b) from t? t?, t? t? where  clob_to_char(t?.b)= clob_to_char(t?.b) order by ?
 ===================================================
 a    clob_to_char(t1.b)    clob_to_char(t2.b)    
 1     a     a     
@@ -50,18 +53,21 @@ sscan
 Query stmt:
 (select t?.a, t?.b from t? t?)
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: sscan
-               class: t? node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t? node[?]
-               sargs: term[?]
-               cost:  ? card ?
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: t? node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: t? node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.a,  clob_to_char(t?.b),  clob_to_char(t?.b) from (select t?.a, t?.b from t? t?) t? (a, b), t? t? where  clob_to_char(t?.b)= clob_to_char(t?.b)
+select t?.a,  clob_to_char(t?.b),  clob_to_char(t?.b) from (select t?.a, t?.b from t? t?) t? (a, b), t? t? where  clob_to_char(t?.b)= clob_to_char(t?.b) order by ?
 ===================================================
 0
 ===================================================

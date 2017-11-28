@@ -62,7 +62,7 @@ select atan(e), atan(e, e) from t1 order by 1, 2;
 select atan2(e, e) from t1 order by 1;
 select ceil(e) from t1 order by 1;
 select conv(e, 10, e) from t1 order by 1;
-select cos(e) from t1 order by 1;
+select to_char(cos(e), '9.999999') from t1 order by 1;
 select substr(to_char(cot(e)),1,15) from t1 order by 1;
 --select cot(e) from t1 order by 1;
 select degrees(e) from t1 order by 1;

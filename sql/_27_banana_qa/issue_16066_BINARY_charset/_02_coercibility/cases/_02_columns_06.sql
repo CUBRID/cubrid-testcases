@@ -47,5 +47,6 @@ insert into t2 values(_utf8'안녕하세요');
 create table t3 as select * from t1 union select * from t2;
 select charset(col) from t3;
 set names iso88591;
+drop table t1,t2,t3;
 commit;
 --+ holdcas off;

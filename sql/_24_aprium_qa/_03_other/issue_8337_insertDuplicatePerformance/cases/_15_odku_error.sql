@@ -41,11 +41,11 @@ insert into t(j,i,k,l,m,n) select * from t1 on duplicate key update t.j=t1.i + 1
 
 insert into t(j,i,k,l,m,n) select * from t1 on duplicate key update t.i= s1.next_value,t.j= s1.next_value,t.k= default ,t.l= default ,t.m= default,t.n= default;
 
-select * from t order by i,k;
+select * from t order by i,k,j,l,m,n;
 
 insert into t(j,i,k,l,m,n) select * from t1 on duplicate key update t.i= s1.next_value,t.j= s1.next_value,t.k= default ,t.l= default ,t.m= default,t.n= default;
 
-select * from t order by i,k;
+select * from t order by i,k,j,l,m,n;
 drop table if exists  tt, t,t1,t2,t3;
 drop serial s1;
 

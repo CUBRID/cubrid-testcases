@@ -18,7 +18,7 @@ insert into func_08 values ( func_08_s.next_value, 'test');
 insert into func_08 values ( func_08_s.next_value, 'test');
 insert into func_08 values ( func_08_s.next_value, 'test');
 
-select rownum, a, b from func_08 where mod(rownum,'1') = 0  order by a;
+select rownum, a, b from (select * from func_08 order by 1,2) where mod(rownum,'1') = 0  order by a;
 
 drop class func_08;
 drop serial func_08_s;

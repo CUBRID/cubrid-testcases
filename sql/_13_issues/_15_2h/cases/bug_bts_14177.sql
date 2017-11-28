@@ -7,9 +7,9 @@ insert into t1 values(1);
 insert into t2 values(1);
 insert into t2 values(2);
 
-select * from (select i1+1 from t1) t1;
+select * from (select i1+1 from t1) t1 order by 1;
 
-select * from (select i1+1 from t1) t1 natural join (select i1+1 from t2) t2;
+select * from (select i1+1 from t1) t1 natural join (select i1+1 from t2) t2 order by 1,2;
 
 drop table t1;
 drop table t2;
