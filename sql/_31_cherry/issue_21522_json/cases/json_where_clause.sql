@@ -17,3 +17,4 @@ select json_insert(json_extract(t1.name, '/FinanceProductResults/0'), '/ProductR
 
 
 drop table if exists t;
+drop table if exists t1;
