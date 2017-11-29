@@ -18,5 +18,6 @@ with  t as (select c from t2 where c >= 4)
   select t1.a,t1.b from t1,t
     where t1.a=t.c and
           t.c in (with  t as (select * from t1 where t1.a<5)
-                    select t2.c from t2,t where t2.c=t.a);
+                    select t2.c from t2,t where t2.c=t.a) 
+order by a,b;
 drop table if exists t1,t2,t3;

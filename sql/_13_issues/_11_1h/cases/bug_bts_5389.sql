@@ -8,6 +8,6 @@ insert into foo values (4,2);
 select (select count(c) from foo f where f.p=f1.c) a, c,p
 from foo f1
 start with c=1
-connect by prior c=p;
+connect by prior c=p order by 1,2,3;
 
 drop table foo;
