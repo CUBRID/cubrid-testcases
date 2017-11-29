@@ -25,9 +25,9 @@ show create table t;
 drop table if exists t;
 create table t ( i int , j char(10));
 insert into t values (1, 'a'),(2,'b'),(3,'{"a":3}');
-select json_object(j,i) from t;
-select json_object(i,j) from t;
-select json_array(i,j,j) from t;
+select json_object(j,i),i from t order by 1,2;
+select json_object(i,j),i from t order by 1,2;
+select json_array(i,j,j),i from t order by 1,2;
 drop table t;
 
 drop table if exists t1;
