@@ -15,7 +15,7 @@
 ===================================================
 0
 ===================================================
-id    score    
+min(id)    min(score)    
 22     93.0     
 
 Query plan:
@@ -26,10 +26,10 @@ temp(order by)
                               cost:  ? card ?
                  sort:  
                  cost:  ? card ?
-    sort:  ? desc
+    sort:  ? desc, ? asc
     cost:  ? card ?
 Query stmt:
-select student.id, student.score from student student group by student.s_class having (student.score>= ?:? ) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+select min(student.id), min(student.score), student.score, student.id from student student group by student.s_class having (student.score>= ?:? ) order by ? desc , ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 ===================================================
 id    score    
 10     90.0     
@@ -38,12 +38,15 @@ id    score
 11     95.0     
 
 Query plan:
-iscan
-    class: student node[?]
-    index: i_s_? term[?] AND term[?] (multi_range_opt)
+temp(order by)
+    subplan: iscan
+                 class: student node[?]
+                 index: i_s_? term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select student.id, student.score from student student where ((student.s_class= ?:? ) or (student.s_class= ?:? )) and (student.score>= ?:? ) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+select student.id, student.score from student student where ((student.s_class= ?:? ) or (student.s_class= ?:? )) and (student.score>= ?:? ) order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 ===================================================
 id    score    
 5     98.0     
@@ -52,12 +55,15 @@ id    score
 4     93.0     
 
 Query plan:
-iscan
-    class: student node[?]
-    index: i_s_? term[?] AND term[?] (multi_range_opt) (desc_index)
+temp(order by)
+    subplan: iscan
+                 class: student node[?]
+                 index: i_s_? term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
     cost:  ? card ?
 Query stmt:
-select student.id, student.score from student student where ((student.s_class= ?:? ) or (student.s_class= ?:? )) and (student.score>= ?:? ) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+select student.id, student.score from student student where ((student.s_class= ?:? ) or (student.s_class= ?:? )) and (student.score>= ?:? ) order by ? desc , ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 ===================================================
 id    score    
 5     98.0     
@@ -66,12 +72,15 @@ id    score
 3     90.5     
 
 Query plan:
-iscan
-    class: student node[?]
-    index: i_s_? term[?] AND term[?] (multi_range_opt) (desc_index)
+temp(order by)
+    subplan: iscan
+                 class: student node[?]
+                 index: i_s_? term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
     cost:  ? card ?
 Query stmt:
-select student.id, student.score from student student where ((student.s_class= ?:? ) or (student.s_class= ?:? )) and (student.score>= ?:? ) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+select student.id, student.score from student student where ((student.s_class= ?:? ) or (student.s_class= ?:? )) and (student.score>= ?:? ) order by ? desc , ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 ===================================================
 id    score    
 3     90.5     
@@ -80,12 +89,15 @@ id    score
 5     98.0     
 
 Query plan:
-iscan
-    class: student node[?]
-    index: i_s_? term[?] AND term[?] (multi_range_opt)
+temp(order by)
+    subplan: iscan
+                 class: student node[?]
+                 index: i_s_? term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select student.id, student.score from student student where ((student.s_class= ?:? ) or (student.s_class= ?:? )) and (student.score>= ?:? ) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+select student.id, student.score from student student where ((student.s_class= ?:? ) or (student.s_class= ?:? )) and (student.score>= ?:? ) order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 ===================================================
 id    score    
 10     90.0     
@@ -94,12 +106,15 @@ id    score
 4     93.0     
 
 Query plan:
-iscan
-    class: student node[?]
-    index: i_s_? term[?] AND term[?] (multi_range_opt)
+temp(order by)
+    subplan: iscan
+                 class: student node[?]
+                 index: i_s_? term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select student.id, student.score from student student where ((student.s_class= ?:? ) or (student.s_class= ?:? ) or (student.s_class= ?:? ) or (student.s_class= ?:? )) and (student.score>= ?:? ) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+select student.id, student.score from student student where ((student.s_class= ?:? ) or (student.s_class= ?:? ) or (student.s_class= ?:? ) or (student.s_class= ?:? )) and (student.score>= ?:? ) order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 ===================================================
 id    score    
 10     90.0     
@@ -113,10 +128,10 @@ temp(order by)
                  class: student node[?]
                  sargs: term[?]
                  cost:  ? card ?
-    sort:  ? asc
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select student.id, student.score from student student where (student.score>= ?:? ) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+select student.id, student.score from student student where (student.score>= ?:? ) order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 ===================================================
 0
 ===================================================
