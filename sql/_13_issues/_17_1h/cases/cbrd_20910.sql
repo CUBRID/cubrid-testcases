@@ -30,7 +30,7 @@ select col1,row_number() over(partition by col1,col2 order by col2) as r_num fro
 
 select left(col2,col1) from t1 where col1>100 and col2>'aa' order by 1;
 
-select col1,if(col2='aaaa','ok','nok') from t1;
+select col1,if(col2='aaaa','ok','nok') from t1 order by col1;
 
 create index idx_t1 on t1(col1,col2);
 

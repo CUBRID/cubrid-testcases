@@ -7,13 +7,13 @@ insert into student(s_class,score) values('3',91),('3',81),('3',71),('3',61),('3
 insert into student(s_class,score) values('4',93),('4',93),('4',93),('4',93),('4',93),('4',93),('4',93);
 create index i_s_23 on student(s_class,score);
 update statistics on student;
-select /*+ recompile */ id,score from student group by s_class having score>=90 order by score desc limit 0,1;
-select /*+ recompile */ id,score from student where s_class in ('1','2') and score>=90 order by score limit 0,4;
-select /*+ recompile */ id,score from student where s_class in ('1','2') and score>=90 order by score desc limit 0,4;
-select /*+ recompile */ id,score from student where s_class in ('1','3') and score>=90 order by score desc limit 0,4;
-select /*+ recompile */ id,score from student where s_class in ('1','3') and score>=90 order by score limit 0,4;
-select /*+ recompile */ id,score from student where s_class in ('1','2','3','4') and score>=90 order by score limit 0,4;
-select /*+ recompile */ id,score from student where score>=90 order by score limit 0,4;
+select /*+ recompile */ min(id),min(score) from student group by s_class having score>=90 order by score desc,id limit 0,1;
+select /*+ recompile */ id,score from student where s_class in ('1','2') and score>=90 order by score,id limit 0,4;
+select /*+ recompile */ id,score from student where s_class in ('1','2') and score>=90 order by score desc,id limit 0,4;
+select /*+ recompile */ id,score from student where s_class in ('1','3') and score>=90 order by score desc,id limit 0,4;
+select /*+ recompile */ id,score from student where s_class in ('1','3') and score>=90 order by score,id limit 0,4;
+select /*+ recompile */ id,score from student where s_class in ('1','2','3','4') and score>=90 order by score,id limit 0,4;
+select /*+ recompile */ id,score from student where score>=90 order by score,id limit 0,4;
 drop student;
 
 drop if exists tt;

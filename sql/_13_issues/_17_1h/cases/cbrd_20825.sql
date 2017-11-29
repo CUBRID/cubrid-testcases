@@ -67,17 +67,17 @@ insert into t1 values (2);
 
 insert into t1 values (3);
 
-select * from t1 order by 1+2 desc;
+select * from t1 order by 1+2 desc, 1 asc;
 
 WITH cte_R1no0RdlI AS
 (
-select a from t1 order by 1+2 desc
+select a from t1 order by 1+2 desc, 1 asc
 )
 select * from cte_R1no0RdlI order by 1;
 
 WITH cte_R1no0RdlI AS
 (
-select a from t1 order by 'a'||'b' desc
+select a from t1 order by 'a'||'b' desc, a asc
 )
 select * from cte_R1no0RdlI order by 1;
 
