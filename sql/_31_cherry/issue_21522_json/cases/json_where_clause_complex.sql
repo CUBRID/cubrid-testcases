@@ -6,14 +6,15 @@ select * from t where b = json_object('a','b');
 select replace((json_merge(json_array(c), '["d", "e"]'), '["name", "c"]'), '[[', '[') from t;
 
 drop table if exists t6;
-create table t6(name json);
-insert into t6 select json_object('name', 'stuff', 'value', 'third option');
-insert into t6 select json_object('name', 'stuff', 'value', 'awesome stuff');
-insert into t6 select json_object('name', 'stuff', 'value', 'way cooler stuff');
-select * from t6 where cast(json_extract(name, '/name') as varchar) ='stuff' order by json_extract(name, '/value') asc;
-select * from t6 where cast(json_extract(name, '/name') as varchar) ='stuff' order by json_extract(name, '/value') desc;
-select * from t6 where cast(json_extract(name, '/name') as varchar) ='stuff' order by cast(json_extract(name, '/value') as varchar) asc;
-select * from t6 where cast(json_extract(name, '/name') as varchar) ='stuff' order by cast(json_extract(name, '/value') as varchar) desc;
+create table t6(i int , name json);
+insert into t6 select 1, json_object('name', 'stuff', 'value', 'third option');
+insert into t6 select 2, json_object('name', 'stuff', 'value', 'awesome stuff');
+insert into t6 select 3, json_object('name', 'stuff', 'value', 'way cooler stuff');
+--CBRD-21697 order by json object
+select * from t6 where cast(json_extract(name, '/name') as varchar) ='stuff' order by i,json_extract(name, '/value') asc;
+select * from t6 where cast(json_extract(name, '/name') as varchar) ='stuff' order by i desc,json_extract(name, '/value') desc;
+select * from t6 where cast(json_extract(name, '/name') as varchar) ='stuff' order by i,cast(json_extract(name, '/value') as varchar) asc;
+select * from t6 where cast(json_extract(name, '/name') as varchar) ='stuff' order by i desc,cast(json_extract(name, '/value') as varchar) desc;
 
 drop table if exists t;
 create table t(id int primary key auto_increment, name json, kname json default json_object('key', 'name'));
