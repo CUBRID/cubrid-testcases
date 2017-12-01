@@ -29,7 +29,7 @@ select * from c1 order by 1,2;
 with c1 as (    
 	select t1.i as m ,t2.i as n from t t1,t t2
 	union all
-	select rownum,n+1 from c1 where n<10 order by 1,2
+	select row_number() over(order by m,n),n+1 from c1 where n<10 order by 1,2
 )
 select * from c1 order by 1,2;                     
 drop if exists t;
