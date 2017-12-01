@@ -216,7 +216,7 @@ INSERT INTO student VALUES
 with recursive cte as (
 select  1 a,'1' b,1.0 c,1 d,1 e
 union all
-SELECT subjects_id, name, score,  PERCENT_RANK() OVER(PARTITION BY subjects_id order by subjects_id) v_samp,e+1
+SELECT subjects_id, name, score,  PERCENT_RANK() OVER(PARTITION BY subjects_id order by subjects_id,name) v_samp,e+1
 FROM cte ,student
 where e <4)
 select * from cte
@@ -234,7 +234,7 @@ INSERT INTO student VALUES
 with recursive cte as (
 select  1 a,'1' b,1.0 c,1 d,1 e
 union all
-SELECT subjects_id, name, score,  RANK() OVER(PARTITION BY subjects_id order by subjects_id) v_samp,e+1
+SELECT subjects_id, name, score,  RANK() OVER(PARTITION BY subjects_id order by subjects_id,name) v_samp,e+1
 FROM cte ,student
 where e <4)
 select * from cte
@@ -251,7 +251,7 @@ INSERT INTO student VALUES
 with recursive cte as (
 select  1 a,'1' b,1.0 c,1 d,1 e
 union all
-SELECT subjects_id, name, score,  ROW_NUMBER() OVER(PARTITION BY subjects_id order by subjects_id) v_samp,e+1
+SELECT subjects_id, name, score,  ROW_NUMBER() OVER(PARTITION BY subjects_id order by subjects_id, name) v_samp,e+1
 FROM cte ,student
 where e <4)
 select * from cte
