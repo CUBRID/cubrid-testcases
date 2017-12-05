@@ -11,9 +11,9 @@ create view v3 as (select json_extract(name, '') from t6);
 create view v2 as (select json_extract('{"a":"b"}', '') from t6);  
 create view v1 as (select json_extract(name, '') as c from t6);
 
-select * from t6;
-select * from v1;
-select * from v2;
+select * from t6 order by 1;
+select * from v1 order by 1;
+select * from v2 order by 1;
 select * from v3;
 
 drop table if exists voucher;
