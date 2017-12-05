@@ -1,20 +1,20 @@
 drop table if exists t6;
-create table t6(name json);
-insert into t6 select json_object('name', 'stuff', 'value', 'third option');
-insert into t6 select json_object('name', 'stuff', 'value', 'awesome stuff');
-insert into t6 select json_object('name', 'stuff', 'value', 'way cooler stuff');
+create table t6(name json,i int);
+insert into t6 select json_object('name', 'stuff', 'value', 'third option'),1;
+insert into t6 select json_object('name', 'stuff', 'value', 'awesome stuff'),2;
+insert into t6 select json_object('name', 'stuff', 'value', 'way cooler stuff'),3;
 
 drop view if exists v1;
 drop view if exists v2;
 drop view if exists v3;
-create view v3 as (select json_extract(name, '') from t6);
-create view v2 as (select json_extract('{"a":"b"}', '') from t6);  
-create view v1 as (select json_extract(name, '') as c from t6);
+create view v3 as (select json_extract(name, ''),i from t6);
+create view v2 as (select json_extract('{"a":"b"}', ''),i from t6);  
+create view v1 as (select json_extract(name, '') as c,i from t6);
 
-select * from t6 order by 1;
-select * from v1 order by 1;
-select * from v2 order by 1;
-select * from v3;
+select * from t6 order by 2 desc;
+select * from v1 order by 2 desc;
+select * from v2 order by 2 desc;
+select * from v3 order by 2 desc;
 
 drop table if exists voucher;
 CREATE TABLE `voucher` (
