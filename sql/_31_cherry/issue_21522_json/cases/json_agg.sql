@@ -1,5 +1,5 @@
 drop table if exists t1;
-drop table if exists t1;
+drop table if exists t2;
 create table t1(i int, b json);
 create table t2(i int, b json);
 insert into t1 values(1, json_object('name', 'sam', 'sale', '10000')); 
