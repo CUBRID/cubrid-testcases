@@ -1,0 +1,17 @@
+drop table if exists colorTab;
+create table colorTab(color varchar, constrain json); 
+insert into colorTab values('black', '{"name": "black","rgb": [0,0,0],"hex": "#000000"}');
+insert into colorTab values('orange red', '{ "name": "orange red","rgb": [255,69,0],"hex": "#FF4500"}');
+insert into colorTab values('orange red', '{"name": "orange red", "rgb": [255,69,0],"hex": "#FF4500"}');
+insert into colorTab values('dark orange', '{"name": "dark orange","rgb": [255,140,0],"hex": "#FF8C00"}');
+select color, CASE cast(json_extract(constrain, '/name') as varchar) when color then json_merge(json_extract(constrain, '/rgb'), json_extract(constrain, '/hex')) else json_array('255,255,255', '#AAAAA') end  from colorTab order by json_extract(constrain, '/name') desc;
+insert into colorTab values('RED', '{"name":"PINK", "rgb":"123,55,44", "hex":"#xxxxxx"}');
+select color, CASE cast(json_extract(constrain, '/name') as varchar) when color then json_merge(json_extract(constrain, '/rgb'), json_extract(constrain, '/hex')) else json_array('255,255,255', '#AAAAA') end  from colorTab order by json_extract(constrain, '/name');
+with cte(color, property) as (select color, CASE cast(json_extract(constrain, '/name') as varchar) when color then json_merge(json_extract(constrain, '/rgb'), json_extract(constrain, '/hex')) else json_array('255,255,255', '#AAAAA') end  from colorTab order by json_extract(constrain, '/name')) select * from cte order by json_extract(property, '/1') ;
+with cte(color, property) as (select color, CASE cast(json_extract(constrain, '/name') as varchar) when color then json_merge(json_extract(constrain, '/rgb'), json_extract(constrain, '/hex')) else json_array('255,255,255', '#AAAAA') end  from colorTab order by json_extract(constrain, '/name')) select  json_extract(property, '/1')  from cte; 
+with cte(color, property) as (select color, CASE cast(json_extract(constrain, '/name') as varchar) when color then json_merge(json_extract(constrain, '/rgb'), json_extract(constrain, '/hex')) else json_array('255,255,255', '#AAAAA') end  from colorTab order by json_extract(constrain, '/name')) select  json_extract(property, '/3') as c  from cte order by c desc;
+select color, json_extract(constrain, '/hex'), json_extract(constrain, '/rgb') from colorTab where UPPER(json_extract(constrain, '/name')) like '%ORANGE%' order by json_extract(constrain, '/name');
+select json_extract(constrain, '/rgb/0') RED, json_extract(constrain, '/rgb/1') GREEN, json_extract(constrain, '/rgb/1') BLUE from colorTab order by RED desc, GREEN desc, BLUE desc;
+select json_extract(constrain, '/rgb/0') RED, json_extract(constrain, '/rgb/1') GREEN, json_extract(constrain, '/rgb/1') BLUE from colorTab order by RED, GREEN, BLUE;
+select json_extract(constrain, '/rgb/0') RED, json_extract(constrain, '/rgb/1') GREEN, json_extract(constrain, '/rgb/1') BLUE from colorTab order by json_extract(constrain, '/rgb/0') desc, json_extract(constrain, '/rgb/1') desc, json_extract(constrain, '/rgb/1') desc;
+drop table if exists colorTab;

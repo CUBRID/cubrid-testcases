@@ -42,6 +42,34 @@ select position(sys_time in json_array(TO_CHAR(sys_time)));
 select position(sys_time in TO_CHAR(sys_time));
 select json_array('05:41:22 PM');
 
+drop table if exists orders;
+CREATE TABLE orders (ID int NOT NULL PRIMARY KEY auto_increment,info json NOT NULL);
+INSERT INTO orders (info)
+VALUES
+ (
+ '{ "customer": "John Doe", "items": {"product": "Beer","qty": 6}}'
+ );
+ INSERT INTO orders (info)
+VALUES
+ (
+ '{ "customer": "Lily Bush", "items": {"product": "Diaper","qty": 24}}'
+ ),
+ (
+ '{ "customer": "Josh William", "items": {"product": "Toy Car","qty": 1}}'
+ ),
+ (
+ '{ "customer": "Mary Clark", "items": {"product": "Toy Train","qty": 2}}'
+ );
+select json_extract(info,'/customer') as customer from orders order by customer ;
+select json_extract(info,'/items/product') as product from orders order by product ;
+select json_extract(info,'/customer') as customer from orders where cast(json_extract(info, '/items/product')as varchar) ='Diaper';
+select json_extract(info,'/customer') as customer from orders where cast(json_extract(info, '/items/product')as string) ='Diaper';
+select json_extract(info,'/customer') as customer from orders where cast(json_extract(info, '/items/product') as char(6)) ='Diaper';
+select json_extract(info,'/customer') as customer, json_extract(info,'/items/product') as product from orders where json_extract(info,'/items/qty')=2;
+select json_extract(info,'/customer') as customer, json_extract(info,'/items/product') as product from orders order by cast(json_extract(info,'/items/qty')as varchar(1));
+select min(cast(json_extract(info, '/items/qty') as integer)), max(cast(json_extract(info, '/items/qty') as integer)), sum(cast(json_extract(info, '/items/qty')as integer)), avg(cast(json_extract(info, '/items/qty')as integer)) from orders order by 1, 2, 3, 4;
+drop table if exists orders;
+
 drop view if exists v_1;
 drop table users;
 drop table t;
