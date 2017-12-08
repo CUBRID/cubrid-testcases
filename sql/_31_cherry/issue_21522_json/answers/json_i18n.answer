@@ -20,15 +20,17 @@ null
 json_extract(_utf8'{"bar": "baz", "balance": 7.77, "active":false}', _utf8'/active')= cast(false as json)    
 null     
 
+===================================================
 json_extract(_utf8'{"bar": "baz", "balance": 7.77, "active":false}' collate utf8_en_ci, _utf8'/active')    
 false     
 
+===================================================
 json_extract(_utf8'{"bar": "baz", "balance": 7.77, "active":"false"}' collate utf8_en_ci, _utf8'/active')= json_extract(json_object(_utf8'name', _utf8'false' collate utf8_en_ci), _utf8'/name')    
 1     
 
 ===================================================
 json_extract(_utf8'{"bar": "baz", "balance": 7.77, "active":"false"}' collate utf8_en_ci, _utf8'/active')= json_extract(json_object(_utf8'name', _utf8'FALSE' collate utf8_en_ci), _utf8'/name')    
-null     
+0     
 
 ===================================================
 0

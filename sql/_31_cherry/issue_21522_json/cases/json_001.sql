@@ -19,7 +19,7 @@ insert into T1(a) values ('12.12f');
 insert into T1(a) values ('["a":"b"]');
 insert into T1(a) values ('{"a":"b","c"}');
 
-select id, a, json_type(a) from t1 order by 3,2,1;
+select a, json_type(a), id from t1 order by 1,2,3;
 select * from t1 where a=123 order by 2,1;
 select * from t1 where a='123' order by 2,1;
 select * from t1 where a="123" order by 2,1;
