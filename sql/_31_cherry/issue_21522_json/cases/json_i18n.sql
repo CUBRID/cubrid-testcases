@@ -4,8 +4,8 @@ SELECT json_merge('{"bar": "baz", "balance": 7.77, "active":false}', json_extrac
 
 SELECT json_insert('{"bar": "baz", "balance": 7.77, "active":false}','/status', json_extract('{"bar": "baz", "balance": 7.77, "active":false}', '/active'));
 select json_extract('{"bar": "baz", "balance": 7.77, "active":false}', '/active') = FALSE;
-select json_extract('{"bar": "baz", "balance": 7.77, "active":false}', '/active') = cast(FALSE as json)
-select json_extract('{"bar": "baz", "balance": 7.77, "active":false}' collate utf8_en_ci, '/active')
+select json_extract('{"bar": "baz", "balance": 7.77, "active":false}', '/active') = cast(FALSE as json);
+select json_extract('{"bar": "baz", "balance": 7.77, "active":false}' collate utf8_en_ci, '/active');
 select json_extract('{"bar": "baz", "balance": 7.77, "active":"false"}' collate utf8_en_ci, '/active') = json_extract(json_object('name', 'false' collate utf8_en_ci), '/name');
 select json_extract('{"bar": "baz", "balance": 7.77, "active":"false"}' collate utf8_en_ci, '/active') = json_extract(json_object('name', 'FALSE' collate utf8_en_ci), '/name');
 drop table if exists t10;

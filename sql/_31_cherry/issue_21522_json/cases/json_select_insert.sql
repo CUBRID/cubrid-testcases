@@ -24,7 +24,7 @@ insert into players(player_and_games) select player_and_games from players a;
 insert into players select rownum*2, player_and_games from players a; 
 insert into players(player_and_games) select player_and_games from players a where json_extract(player_and_games, '/games_played/Puzzler/time') =7;
 select * from players order by id;
-insert into players(player_and_games) select json_array(json_extract(player_and_games, '/games_played/Battlefield/level'), json_extract(player_and_games, '/name')) from players a where json_extract(player_and_games, '/games_played/Puzzler/time') >0
+insert into players(player_and_games) select json_array(json_extract(player_and_games, '/games_played/Battlefield/level'), json_extract(player_and_games, '/name')) from players a where json_extract(player_and_games, '/games_played/Puzzler/time') >0;
 insert into players(player_and_games) select json_array(json_extract(player_and_games, '/games_played/Battlefield/level'), json_extract(player_and_games, '/name')) from players a where json_extract(player_and_games, '/games_played/Puzzler/time') =7;
 select * from players order by id desc, json_extract(player_and_games, '/id') asc; 
 

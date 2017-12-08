@@ -17,8 +17,7 @@ VALUES
 update users set preferences=json_insert(preferences, '/layout/^', '"www.baidu.com"') where id=5;
 update users set preferences=json_insert(preferences, '/layout/^', '"wwwww.baidu.com"') where id=5;
 
--- block by CBRD-21691, the query commented out will be openned after fixing issue
---select GREATEST(json_extract(json_array(1, 2, 123), '/0'), json_extract(json_array(1, 2, 123), '/2'));
+select GREATEST(json_extract(json_array(1, 2, 123), '/0'), json_extract(json_array(1, 2, 123), '/2'));
 
 drop table if exists t;
 drop view if exists v_1;
