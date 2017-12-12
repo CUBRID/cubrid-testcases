@@ -25,7 +25,7 @@ create table t(a int, b json, c json);
 insert into t values(1, json_object('a','b'), '["c", "d"]');
 insert into t values(2, json_object('a','b'), '["a"]');
 create view v_1 as select b, c, json_merge(b, c) as d from t;
-select json_object('key', t.a, 'title', json_extract(t.c, '/0')) from t join v_1 on 1=1 group by t.b;
+select json_object('key', min(cast (t.a as string)), 'title', json_extract(max(cast(t.c as string)), '/0')) from t join v_1 on 1=1 group by t.b;
 with cte as (select a,b, json_extract(b, '/a') as val from t) select max(a) as max_id, val from cte group by val;
 
 select distinct b from v_1;  
