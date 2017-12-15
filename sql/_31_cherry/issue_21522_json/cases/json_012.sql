@@ -9,7 +9,7 @@ insert into t1(a,b) values ('"\a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y
 select * from t1 order by id;
 set system parameters 'no_backslash_escapes=no';
 insert into t1(a,b) select json_object(b,b),b from t1;
-insert into t1(a,b) select json_array(b,b),b from t1;
+insert into t1(a,b) select json_array(b,b),b from t1 order by b desc;
 select * from t1 order by id;
 drop table if exists t1;
 
