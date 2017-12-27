@@ -10,6 +10,10 @@ insert into t1 values (7, 'true');
 insert into t1 values (8, 'false');
 insert into t1 values (9, 'TRUE');
 insert into t1 values (10, 'FALSE');
--- CBRD-21731 ( order by j,i)
+insert into t1 values (11, 1);
+insert into t1 values (11, 0);
+insert into t1 values (11, 2);
+
 select i,j,json_type(j) from t1 order by i,j;
+select i,j,json_type(j) from t1 order by j,i;
 drop table if exists t1;
