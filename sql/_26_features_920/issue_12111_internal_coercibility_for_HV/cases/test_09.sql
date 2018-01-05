@@ -1,6 +1,6 @@
 create table t1(a clob);
 insert into t1 values (char_to_clob('A')), (char_to_clob('a'));
-prepare stmt from 'select clob_to_char(a) from t1 where clob_to_char(a) = cast(? as varchar(10) collate iso88591_en_ci) ';
+prepare stmt from 'select clob_to_char(a),hex(clob_to_char(a)) from t1 where clob_to_char(a) = cast(? as varchar(10) collate iso88591_en_ci) order by 1,2';
 set names iso88591 collate iso88591_en_ci;
 execute stmt using 'a';
 deallocate prepare stmt;

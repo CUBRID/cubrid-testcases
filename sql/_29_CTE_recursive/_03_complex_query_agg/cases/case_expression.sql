@@ -11,7 +11,8 @@ SELECT a,
             WHEN a in (with cte(a) as(select * from case_tbl where a=2) select * from cte) THEN 'two'
             ELSE 'other'
        END
-FROM case_tbl;
+FROM case_tbl
+order by 1,2;
 
 --case operation with a simple when clause
 SELECT a,
@@ -19,7 +20,8 @@ SELECT a,
               WHEN (with cte(a) as(select * from case_tbl where a=2) select * from cte) THEN 'two'
               ELSE 'other'
        END
-FROM case_tbl;
+FROM case_tbl
+order by 1,2;
 
 --an error occurs when result types are not convertible
 SELECT a,
@@ -27,7 +29,8 @@ SELECT a,
               WHEN (with cte(a) as(select * from case_tbl where a=2) select * from cte) THEN 'two'
               ELSE 1.2345
        END
-FROM case_tbl;
+FROM case_tbl
+order by 1,2;
 
 --result types are converted to a single type containing all of significant figures
 SELECT a,
@@ -35,5 +38,6 @@ SELECT a,
               WHEN (with cte(a) as(select * from case_tbl where a=2) select * from cte) THEN 1.2345
               ELSE 1.234567890
        END
-FROM case_tbl;
+FROM case_tbl
+order by 1,2;
 drop table case_tbl;
