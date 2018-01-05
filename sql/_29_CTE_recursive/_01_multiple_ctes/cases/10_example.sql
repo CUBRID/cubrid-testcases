@@ -54,5 +54,5 @@ SELECT
   (SELECT FirstName + ' ' + LastName FROM Employees 
     WHERE EmployeeID = cteReports.MgrID) AS Manager
 FROM cteReports 
-ORDER BY EmpLevel, MgrID;
+ORDER BY EmpLevel, MgrID, FullName;
 DROP TABLE if exists Employees;

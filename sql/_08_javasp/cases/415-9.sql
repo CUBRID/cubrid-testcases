@@ -12,16 +12,16 @@ call jdbc2('insert into xoo values(10)');
 call jdbc3_c('insert into xoo values(20)');
 call jdbc3_r('insert into xoo values(30)');
 call jdbc3_autocommiton('insert into xoo values(40)');
-call jdbc1('select * from xoo');
-select * from xoo;
+call jdbc1('select * from xoo order by id');
+select * from xoo order by id;
 
 call jdbc1('call jdbc2(''create class yoo (a string)'')');
 call jdbc2('insert into yoo values(''abbbb'')');
 call jdbc3_c('insert into yoo values(''abcd'')');
 call jdbc3_r('insert into yoo values(''1234'')');
 call jdbc3_autocommiton('insert into yoo values(''dfdfbcd1234'')');
-call jdbc1('select * from yoo');
-select * from yoo;
+call jdbc1('select * from yoo order by a');
+select * from yoo order by a;
 
 create class zoo ( id string);
 insert into zoo values('dfdf');
@@ -29,8 +29,8 @@ insert into zoo values('abcd');
 insert into zoo values('1234');
 insert into zoo values('dfdfdf');
 
-select * from zoo;
-call jdbc1('select * from zoo');
+select * from zoo order by id;
+call jdbc1('select * from zoo order by id');
 
 
 
@@ -46,8 +46,8 @@ insert into xoo values('abcd');
 insert into xoo values('1234');
 insert into xoo values('dfdfdf');
 
-call jdbc1('select * from xoo');
-select * from xoo;
+call jdbc1('select * from xoo order by id');
+select * from xoo order by id;
 
 drop xoo;
 drop FUNCTION jdbc1;

@@ -251,7 +251,7 @@ select f1 as an_alias from t1 group by an_alias order by 1;
 select f1 as an_alias from t1 group by 20 - an_alias order by 1;
 
 select 100 as an_alias from t1 group by 20 -  an_alias order by 1;
-select f1, 100 as an_alias from t1 group by 20 - an_alias order by 1;
+select 100 as an_alias from t1 group by 20 - an_alias order by 1;
 
 select (f1 = 100) as an_alias from t1 group by 20 - an_alias order by 1;
 select (f1 + 100) as an_alias from t1 group by 20 - an_alias order by 1;

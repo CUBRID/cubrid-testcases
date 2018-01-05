@@ -29,7 +29,7 @@ insert into tb_emp values (2, 'e2', 2);
 insert into tb_emp values (1, 'e1', 1);
 alter table tb_emp drop foreign key fk_tb_emp_group_id;
 insert into tb_emp values (3, 'e3', 3);
-select * from tb_emp;
+select * from tb_emp order by 1,2,3;
 drop table tb_emp;
 drop table tb_group;
 

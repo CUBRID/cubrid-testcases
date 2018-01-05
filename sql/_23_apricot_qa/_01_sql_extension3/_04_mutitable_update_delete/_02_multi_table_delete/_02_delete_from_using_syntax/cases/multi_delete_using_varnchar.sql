@@ -12,7 +12,7 @@ insert into md_char2 values(n'cubridcubrid', 666.6666), (n'mysqlmysql', 44444.44
 
 
 select * from md_char1 order by 1;
-select * from md_char2 order by 1;
+select * from md_char2 order by 1,2;
 
 
 --TEST: error, false join condition
@@ -22,19 +22,19 @@ delete from m1, m2 using md_char1 m1, md_char2 m2 where m1.col2=m2.id2;
 --TEST: without table aliases, 1 row deleted in eache table
 delete from md_char1, md_char2 using md_char1, md_char2 where md_char1.col2=md_char2.col1 and char_length(md_char1.col1) > 5 and md_char1.id1=md_char2.id2;
 select * from md_char1 order by 1;
-select * from md_char2 order by 1;
+select * from md_char2 order by 1,2;
 
 
 --TEST: with table aliases, 2 rows deleted
 delete from m2 using md_char1 m1, md_char2 m2 where m1.col2=m2.col1 and round(m2.id2) in (1234, 5555, 5657, 667);
 select if (count(*) = 5, 'ok', 'nok') from md_char1;
-select * from md_char2 order by 1;
+select * from md_char2 order by 1,2;
 
 
 --TEST: inner join, 3 rows deleted
 delete from m2 using md_char2 as m2 inner join (select id1, trim(substr(col2, 1, 6)) as col2 from md_char1 where left(col2, 3) = n'abc') m1 on left(m1.col2, 3)=left(m2.col1, 3);
 select if (count(*) = 5, 'ok', 'nok') from md_char1;
-select * from md_char2 order by 1;
+select * from md_char2 order by 1,2;
 
 
 --TEST: left outer join, delete and select from the same table

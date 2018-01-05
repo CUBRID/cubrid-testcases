@@ -5,6 +5,6 @@ insert into t1 values(null, 'aaa');
 insert into t1 values(null, 'aaa');
 insert into t1 values(null, 'aaa');
 
-select c1+100, c1-100, c1*100, c1/100 from t1;
+select c1+100, c1-100, c1*100, c1/100 from t1 order by 1,2,3,4;
 
 drop class t1;

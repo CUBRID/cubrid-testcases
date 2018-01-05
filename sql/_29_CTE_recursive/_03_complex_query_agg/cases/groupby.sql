@@ -28,14 +28,14 @@ insert into foo values(1,TIMESTAMPTZ'2008-12-31 23:00:00 UTC');
 with recursive cte(f1,f2) as (
      select * from foo group by a1
      union all
-     select f1+1,f2+1 from cte group by f1 having  f1 <10
+     select f1+1,f2+1 from cte group by f1 having  f1 <10 order by 1,2
 ) select * from cte order by 1,2 ;
 
 
 with recursive cte(f1,f2) as (
      select * from foo group by a1
      union all
-     select f1+1,add_months(f2,1) from cte group by f1 having  f1 <10
+     select f1+1,add_months(f2,1) from cte group by f1 having  f1 <10 order by 1,2
 ) select * from cte order by 1,2 ;
 
 drop foo, foo1, foo2;
