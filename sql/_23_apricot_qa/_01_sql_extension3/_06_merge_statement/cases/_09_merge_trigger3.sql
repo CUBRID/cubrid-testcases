@@ -69,7 +69,7 @@ when not matched then
 insert
 values(s.col1, s.col2, s.col3, s.col4);
 --TEST: check merge result
-select * from target order by 1;
+select * from target order by 1,2,3,4;
 --TEST: check trigger action table
 select if (count(*) = 12, 'ok', 'nok') from trigger_actions;
 
@@ -110,7 +110,7 @@ when not matched then
 insert
 values(s.col1, s.col2, s.col3, s.col4);
 --TEST: check merge result
-select * from target order by 1;
+select * from target order by 1,2,3,4;
 --TEST: check trigger action table
 select if (count(*) = 0, 'ok', 'nok') from trigger_actions;
 
@@ -136,7 +136,7 @@ insert
 values(s.col1, s.col2, s.col3, s.col4);
 --TEST: check merge result
 select if(count(*)=6, 'ok', 'nok') from target;
-select * from target order by 1;
+select * from target order by 1,2,3,4;
 
 
 rollback;

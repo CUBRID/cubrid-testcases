@@ -40,7 +40,7 @@ select new.col1, new.col2, ntile(10) over() b_num from (select * from ntile_num 
 select new.col1, new.col2, ntile(20) over() b_num from (select * from ntile_num order by 1,2,3,4,5,6,7) new order by 1, 2, 3;
 select new.col1, new.col2, ntile(30) over() b_num from (select * from ntile_num order by 1,2,3,4,5,6,7) new order by 1, 2, 3;
 --TEST: over(), with where clause
-select col1, col2, ntile(5) over() b_num from ntile_num where col1 > 20000 order by 1, 2, 3;
+select col1, col2, ntile(5) over(order by col1, col2) b_num from ntile_num where col1 > 20000 order by 1, 2, 3;
 select new.col6, new.col1, new.col2, new.col5, ntile(2) over() b_num from (select * from ntile_num order by 1,2,3,4,5,6,7) new where length(new.col3)=8 and round(new.col5)=111 order by 1;
 select new.col1, new.col2, new.col3, new.col4, new.col5, new.col6, new.col7, ntile(10) over() b_num from (select * from ntile_num order by 1,2,3,4,5,6,7) new where trunc(new.col5)=111 order by 1, 2, 3, 4;
 select *, ntile(20) over() b_num from (select * from ntile_num order by 1, 2, 3, 4, 5, 6);

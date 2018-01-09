@@ -43,23 +43,23 @@ insert into c_in_clause(col2, col3, col4, col5) values(505, 'cubrid', '1990-10-1
 
 
 --TEST: error, use analytic functions in group by clause
-select col1, col2 from c_in_clause group by count(col1) over();
-select col2, col3, count(col2) over() from c_in_clause group by count(col3) over(partition by col2);
-select col1, col2, count(col2) over(order by col1) cnt from c_in_clause group by cnt;
-select col1, col2, col3 from c_in_clause group by count(*) over(partition by col1 order by col2);
+select col1, col2 from (select * from c_in_clause order by col1) group by count(col1) over();
+select col2, col3, count(col2) over() from (select * from c_in_clause order by col1) group by count(col3) over(partition by col2);
+select col1, col2, count(col2) over(order by col1) cnt from (select * from c_in_clause order by col1) group by cnt;
+select col1, col2, col3 from (select * from c_in_clause order by col1) group by count(*) over(partition by col1 order by col2);
 
 
 --TEST: error, use analytic functions in having clause
-select col3, count(col3) from c_in_clause group by col3 having count(col3) over(partition by col3) > 3;
-select col4, count(col4) over(partition by col4) cnt from c_in_clause group by col4 having cnt > 3;
+select col3, count(col3) from (select * from c_in_clause order by col1) group by col3 having count(col3) over(partition by col3) > 3;
+select col4, count(col4) over(partition by col4) cnt from (select * from c_in_clause order by col1) group by col4 having cnt > 3;
 
 
 --TEST: use analytic functions in order by clause
-select col1, count(col1) over(order by col1) from c_in_clause order by count(col1) over(order by col1) desc;
+select col1, count(col1) over(order by col1) from (select * from c_in_clause order by col1) order by count(col1) over(order by col1) desc;
 --TEST: use more than one analytic function in the same query, in the select list and in ORDER BY clause of a query
-select col1, col2, count(col2) over(partition by col1 order by col2) cnt from c_in_clause group by cnt ,col1;
-select col1, col2, count(col2) over(order by col1), col4 from c_in_clause order by count(distinct col3) over(partition by col2 order by col1);
-select col1, col2, count(*) over(order by col1, col2), col3 from c_in_clause group by col2 order by count(distinct col2) over();
+select col1, col2, count(col2) over(partition by col1 order by col2) cnt from (select * from c_in_clause order by col1) group by cnt ,col1;
+select col1, col2, count(col2) over(order by col1), col4 from (select * from c_in_clause order by col1) order by count(distinct col3) over(partition by col2 order by col1);
+select col1, col2, count(*) over(order by col1, col2), col3 from (select * from c_in_clause order by col1) group by col2 order by count(distinct col2) over();
 
 
 

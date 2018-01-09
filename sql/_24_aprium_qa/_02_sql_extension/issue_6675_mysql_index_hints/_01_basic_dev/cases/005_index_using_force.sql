@@ -14,28 +14,28 @@ insert into t_basic005 values (2, 3, 2), (2, 2, 3), (2, 1, 1);
 commit;
 update statistics on t_basic005;
 
-select /*+ recompile */ i1 from t_basic005 where i1 < 4;
-select /*+ recompile */ * from t_basic005 where i1 < 4;
+select /*+ recompile */ i1 from t_basic005 where i1 < 4 order by 1;
+select /*+ recompile */ * from t_basic005 where i1 < 4 order by 1,2,3;
 
-select /*+ recompile */ i1 from t_basic005 where i1 < 4 using index basic005_idx_one(+);
-select /*+ recompile */ i1 from t_basic005 where i1 < 4 using index basic005_idx_one_two(+);
-select /*+ recompile */ i1 from t_basic005 where i1 < 4 using index basic005_idx_one_three(+);
-select /*+ recompile */ i1 from t_basic005 where i1 < 4 using index basic005_idx_all(+);
+select /*+ recompile */ i1 from t_basic005 where i1 < 4 using index basic005_idx_one(+) order by 1;
+select /*+ recompile */ i1 from t_basic005 where i1 < 4 using index basic005_idx_one_two(+) order by 1;
+select /*+ recompile */ i1 from t_basic005 where i1 < 4 using index basic005_idx_one_three(+) order by 1;
+select /*+ recompile */ i1 from t_basic005 where i1 < 4 using index basic005_idx_all(+) order by 1;
 
-select /*+ recompile */ i1 from t_basic005 where i1 < 4 using index basic005_idx_two(+);
-select /*+ recompile */ i1 from t_basic005 where i1 < 4 using index basic005_idx_two_three(+);
+select /*+ recompile */ i1 from t_basic005 where i1 < 4 using index basic005_idx_two(+) order by 1;
+select /*+ recompile */ i1 from t_basic005 where i1 < 4 using index basic005_idx_two_three(+) order by 1;
 
 
-select /*+ recompile */ i1 from t_basic005 where i1 < 4 using index basic005_idx_one(+), basic005_idx_two(+);
-select /*+ recompile */ i1 from t_basic005 where i1 < 4 using index basic005_idx_one(+), basic005_idx_one_two(+);
-select /*+ recompile */ i1 from t_basic005 where i1 < 4 using index basic005_idx_one(+), basic005_idx_one_three(+);
-select /*+ recompile */ i1 from t_basic005 where i1 < 4 using index basic005_idx_one(+), basic005_idx_all(+);
-select /*+ recompile */ i1 from t_basic005 where i1 < 4 using index basic005_idx_one(+), basic005_idx_two_three(+);
+select /*+ recompile */ i1 from t_basic005 where i1 < 4 using index basic005_idx_one(+), basic005_idx_two(+) order by 1;
+select /*+ recompile */ i1 from t_basic005 where i1 < 4 using index basic005_idx_one(+), basic005_idx_one_two(+) order by 1;
+select /*+ recompile */ i1 from t_basic005 where i1 < 4 using index basic005_idx_one(+), basic005_idx_one_three(+) order by 1;
+select /*+ recompile */ i1 from t_basic005 where i1 < 4 using index basic005_idx_one(+), basic005_idx_all(+) order by 1;
+select /*+ recompile */ i1 from t_basic005 where i1 < 4 using index basic005_idx_one(+), basic005_idx_two_three(+) order by 1;
 
-select /*+ recompile */ i1 from t_basic005 where i1<4 using index basic005_idx_one, basic005_idx_one_two(+);
-select /*+ recompile */ i1 from t_basic005 where i1<4 using index basic005_idx_one_two, basic005_idx_one_three(+);
-select /*+ recompile */ i1 from t_basic005 where i1<4 using index basic005_idx_one_three(+), basic005_idx_one_two;
-select /*+ recompile */ i1 from t_basic005 where i1<4 using index basic005_idx_one_two, basic005_idx_all(+);
+select /*+ recompile */ i1 from t_basic005 where i1<4 using index basic005_idx_one, basic005_idx_one_two(+) order by 1;
+select /*+ recompile */ i1 from t_basic005 where i1<4 using index basic005_idx_one_two, basic005_idx_one_three(+) order by 1;
+select /*+ recompile */ i1 from t_basic005 where i1<4 using index basic005_idx_one_three(+), basic005_idx_one_two order by 1;
+select /*+ recompile */ i1 from t_basic005 where i1<4 using index basic005_idx_one_two, basic005_idx_all(+) order by 1;
 
 drop index basic005_idx_one on t_basic005;
 drop index basic005_idx_two on t_basic005;

@@ -125,8 +125,8 @@ select col1, col2, count(distinct col3) over(order by col1, col2 partition by co
 --TEST: additional
 select col1, col2, count(col5) over(partition by 3 order by 2, 1) from count_numeric;
 --!!!!!!!!!!!!!!CUBRID BUG: CUBRIDSUS-8647!!!!!!!!!!!!!!!!!
-select col1, col3, col5, count(col7) over(order by -3) from count_numeric;
-select col1, col3, col5, count(col7) over(partition by -2 order by 3) from count_numeric;
+select col1, col3, col5, count(col7) over(order by -3) from count_numeric order by 1,2,3,4
+select col1, col3, col5, count(col7) over(partition by -2 order by 3) from count_numeric order by 1,2,3,4;
 
 drop table count_numeric; 
 

@@ -5,7 +5,7 @@ insert into tst values (2, timestamp'2011-02-02 12:34:56');
 insert into tst values (3, timestamp'2011-03-03 12:34:56');
 insert into tst values (4, timestamp'2011-04-04 12:34:56');
 
-select * from tst;
+select * from tst order by 1,2;
 
 update tst set ts = default where i > 2;
 
@@ -24,7 +24,7 @@ insert into tst values (2, timestamp'2011-02-02 12:34:56', 12);
 insert into tst values (3, timestamp'2011-03-03 12:34:56', 13);
 insert into tst values (4, timestamp'2011-04-04 12:34:56', 14);
 
-select * from tst;
+select * from tst order by 1,2;
 
 update tst set ts = default, dc = default where i > 2;
 

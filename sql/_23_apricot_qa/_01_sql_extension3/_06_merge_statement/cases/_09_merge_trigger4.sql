@@ -62,7 +62,7 @@ when not matched then
 insert
 values(s.col1, s.col2, s.col3, s.col4);
 --TEST: check merge result
-select * from target order by 1;
+select * from target order by 1,2,3,4;
 --TEST: check trigger action table
 select if (count(*) = 3, 'ok', 'nok') from source where col2='aft_upd';
 select if (count(*) = 3, 'ok', 'nok') from source where col2='bef_ins';
