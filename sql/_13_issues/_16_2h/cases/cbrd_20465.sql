@@ -51,7 +51,7 @@ CREATE TABLE a_tbl(A INT  /* comment */ AUTO_INCREMENT(3,10) /* comment */ PRIMA
 
 INSERT INTO a_tbl VALUES (NULL),(NULL),(NULL);
 
-SELECT * FROM a_tbl;
+SELECT * FROM a_tbl order by a;
 
 TRUNCATE 
 /************************************************
