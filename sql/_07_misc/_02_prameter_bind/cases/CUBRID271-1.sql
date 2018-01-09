@@ -27,11 +27,11 @@ select a,b from xoo where  a = ? * ? order by 1,2;
 
 -- R1.1 bug issues
 $int, $1, $int, $1, $int, $1, $int, $1, $int, $1;
-select a,b from xoo where  (? + ? * ? - ? + 1 / ? ) ;
-select a,b from xoo where  (1 + 1 * 1 - 1 + 1 / 1 );
+select a,b from xoo where  (? + ? * ? - ? + 1 / ? ) order by 1,2;
+select a,b from xoo where  (1 + 1 * 1 - 1 + 1 / 1 ) order by 1,2;
 
 $int, $1, $int, $1, $int, $1, $int, $1, $int, $1;
-select a,b from xoo where  (? + ? * ? - ? + 1 / ? ) < 5;
+select a,b from xoo where  (? + ? * ? - ? + 1 / ? ) < 5 order by 1,2;
 select a,b from xoo where  (1 + 1 * 1 - 1 + 1 / 1 ) < 5 order by 1,2;
 
 drop xoo;
