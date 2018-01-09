@@ -5,7 +5,7 @@ insert into tst values (2, date'2011-02-02');
 insert into tst values (3, date'2011-03-03');
 insert into tst values (4, date'2011-04-04');
 
-select * from tst;
+select * from tst order by 1,2;
 
 update tst set d = default where i > 2;
 
@@ -24,7 +24,7 @@ insert into tst values (2, date'2011-02-02', 12);
 insert into tst values (3, date'2011-03-03', 13);
 insert into tst values (4, date'2011-04-04', 14);
 
-select * from tst;
+select * from tst order by 1,2;
 
 update tst set d = default, dc = default where i > 2;
 

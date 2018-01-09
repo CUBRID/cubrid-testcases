@@ -13,7 +13,7 @@ create table range_test(id int not null ,
 	insert into range_test values(3,'08:00:00','2005-12-01','2005-12-01 09:00:00');
 
 
-select * from range_test;	
+select * from range_test order by 1;	
 
 
 drop table range_test;

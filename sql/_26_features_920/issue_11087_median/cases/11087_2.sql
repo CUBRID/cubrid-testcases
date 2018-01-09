@@ -41,8 +41,8 @@ select avg(c2), median(c1) from median_2 order by 1;
 select avg(cast(c2 as double)), median(c1) from median_2 order by 1;
 select a, avg(c2) over(partition by a), median(c1) over(partition by a) from median_2 order by 1;
 select a, avg(cast(c2 as double)) over(partition by a), median(c1) over(partition by a) from median_2 order by 1;
-select a, avg(c2) over(partition by a), median(c1) over(partition by a) from median_2 group by a order by 1;
-select a, avg(all c2) over(partition by a), median(distinct c1) over(partition by a) from median_2 group by a order by 1;
-select a, avg(distinct c2) over(partition by a), median(c1) over(partition by a) from median_2 group by a order by 1;
+select a, avg(c2) over(partition by a), median(max(c1)) over(partition by a) from median_2 group by a order by 1;
+select a, avg(all c2) over(partition by a), median(max(distinct c1)) over(partition by a) from median_2 group by a order by 1;
+select a, avg(distinct c2) over(partition by a), median(max(c1)) over(partition by a) from median_2 group by a order by 1;
 
 drop table if exists median_2;

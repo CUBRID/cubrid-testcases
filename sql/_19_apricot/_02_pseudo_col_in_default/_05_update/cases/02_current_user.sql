@@ -8,7 +8,7 @@ insert into tst values (3, 'user_string3');
 
 insert into tst values (4, 'user_string4');
 
-select * from tst;
+select * from tst order by 1,2;
 
 update tst set s = default where i > 2;
 
@@ -30,7 +30,7 @@ insert into tst values (3, 'user_string3', 13);
 
 insert into tst values (4, 'user_string4', 14);
 
-select * from tst;
+select * from tst order by 1,2;
 
 update tst set s = default, d = default where i > 2;
 

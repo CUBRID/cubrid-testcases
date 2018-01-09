@@ -14,25 +14,25 @@ insert into t_basic004 values (2, 3, 2), (2, 2, 3), (2, 1, 1);
 commit;
 update statistics on t_basic004;
 
-select i1 from t_basic004 where i1 < 4;
-select * from t_basic004 where i1 < 4;
+select i1 from t_basic004 where i1 < 4 order by 1;
+select * from t_basic004 where i1 < 4 order by 1,2,3;
 
-select i1 from t_basic004 where i1 < 4 using index basic004_idx_one;
-select i1 from t_basic004 where i1 < 4 using index basic004_idx_one_two;
-select i1 from t_basic004 where i1 < 4 using index basic004_idx_one_three;
-select i1 from t_basic004 where i1 < 4 using index basic004_idx_all;
+select i1 from t_basic004 where i1 < 4 using index basic004_idx_one order by 1;
+select i1 from t_basic004 where i1 < 4 using index basic004_idx_one_two order by 1;
+select i1 from t_basic004 where i1 < 4 using index basic004_idx_one_three order by 1;
+select i1 from t_basic004 where i1 < 4 using index basic004_idx_all order by 1;
 
-select i1 from t_basic004 where i1 < 4 using index basic004_idx_two;
-select i1 from t_basic004 where i1 < 4 using index basic004_idx_two_three;
+select i1 from t_basic004 where i1 < 4 using index basic004_idx_two order by 1;
+select i1 from t_basic004 where i1 < 4 using index basic004_idx_two_three order by 1;
 
 
-select i1 from t_basic004 where i1 < 4 using index basic004_idx_one, basic004_idx_two;
-select i1 from t_basic004 where i1 < 4 using index basic004_idx_one, basic004_idx_one_two;
-select i1 from t_basic004 where i1 < 4 using index basic004_idx_one, basic004_idx_one_three;
-select i1 from t_basic004 where i1 < 4 using index basic004_idx_one, basic004_idx_all;
-select i1 from t_basic004 where i1 < 4 using index basic004_idx_one, basic004_idx_two_three;
+select i1 from t_basic004 where i1 < 4 using index basic004_idx_one, basic004_idx_two order by 1;
+select i1 from t_basic004 where i1 < 4 using index basic004_idx_one, basic004_idx_one_two order by 1;
+select i1 from t_basic004 where i1 < 4 using index basic004_idx_one, basic004_idx_one_three order by 1;
+select i1 from t_basic004 where i1 < 4 using index basic004_idx_one, basic004_idx_all order by 1;
+select i1 from t_basic004 where i1 < 4 using index basic004_idx_one, basic004_idx_two_three order by 1;
 
-select i1 from t_basic004 where i1 < 4 using index none;
+select i1 from t_basic004 where i1 < 4 using index none order by 1;
 
 
 drop index basic004_idx_one on t_basic004;

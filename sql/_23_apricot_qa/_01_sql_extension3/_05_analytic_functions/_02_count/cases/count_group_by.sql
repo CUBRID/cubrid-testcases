@@ -43,41 +43,41 @@ insert into c_groupby(col2, col3, col4, col5) values(505, 'cubrid', '1990-10-10'
 
 
 --TEST: over() clause + group by
-select col1, count(col1) over() cnt from c_groupby group by col1;
-select col2, count(col2) over() cnt from c_groupby group by col2;
-select col1, col2, count(col2) over() cnt from c_groupby group by col1;
-select col1, col2, count(*) over() cnt, col3 from c_groupby group by col2;
-select col1, col2, count(col1) over() cnt from c_groupby group by col1, col2;
+select col1, count(col1) over() cnt from (select * from c_groupby order by col1) group by col1;
+select col2, count(col2) over() cnt from (select * from c_groupby order by col1) group by col2;
+select col1, col2, count(col2) over() cnt from (select * from c_groupby order by col1) group by col1;
+select col1, col2, count(*) over() cnt, col3 from (select * from c_groupby order by col1) group by col2;
+select col1, col2, count(col1) over() cnt from (select * from c_groupby order by col1) group by col1, col2;
 
 
 --TEST: over(partition by) clause + group by
-select col3, count(col3) over(partition by col3) cnt from c_groupby group by col3;
-select col4, count(col4) over(partition by col4) cnt from c_groupby group by col4;
-select col3, col4, count(col3) over(partition by col4) cnt from c_groupby group by col4;
-select col3, col4, count(col3) over(partition by col3) cnt from c_groupby group by col3, col4;
-select col3, col4, clob_to_char(col5), count(*) over(partition by col4) cnt from c_groupby group by col3, col4;
+select col3, count(col3) over(partition by col3) cnt from (select * from c_groupby order by col1) group by col3;
+select col4, count(col4) over(partition by col4) cnt from (select * from c_groupby order by col1) group by col4;
+select col3, col4, count(col3) over(partition by col4) cnt from (select * from c_groupby order by col1) group by col4;
+select col3, col4, count(col3) over(partition by col3) cnt from (select * from c_groupby order by col1) group by col3, col4;
+select col3, col4, clob_to_char(col5), count(*) over(partition by col4) cnt from (select * from c_groupby order by col1) group by col3, col4;
 
 
 --TEST: over(order by) clause + group by
-select col1, count(col1) over(order by col1) cnt from c_groupby group by col1;
-select col2, count(col2) over(order by col2) cnt from c_groupby group by col2;
-select col1, col2, count(col2) over(order by col1) cnt from c_groupby group by col1;
-select col1, col2, count(*) over(order by col1, col2) cnt, col3 from c_groupby group by col2;
-select col1, col2, count(col1) over(order by col2) cnt from c_groupby group by col1, col2;
+select col1, count(col1) over(order by col1) cnt from (select * from c_groupby order by col1) group by col1;
+select col2, count(col2) over(order by col2) cnt from (select * from c_groupby order by col1) group by col2;
+select col1, col2, count(col2) over(order by col1) cnt from (select * from c_groupby order by col1) group by col1;
+select col1, col2, count(*) over(order by col1, col2) cnt, col3 from (select * from c_groupby order by col1) group by col2;
+select col1, col2, count(col1) over(order by col2) cnt from (select * from c_groupby order by col1) group by col1, col2;
 
 
 --TEST: over(partition by.. order by ..) clause + group by
-select col3, count(col3) over(partition by col3 order by col3) cnt from c_groupby group by col3;
-select col4, count(col4) over(partition by col4 order by col4) cnt from c_groupby group by col4;
-select col3, col4, count(col3) over(partition by col4 order by col3) cnt from c_groupby group by col4;
-select col3, col4, count(col3) over(partition by col3 order by col4) cnt from c_groupby group by col3, col4;
-select col3, col4, clob_to_char(col5), count(*) over(partition by col4 order by col3) cnt from c_groupby group by col3, col4;
+select col3, count(col3) over(partition by col3 order by col3) cnt from (select * from c_groupby order by col1) group by col3;
+select col4, count(col4) over(partition by col4 order by col4) cnt from (select * from c_groupby order by col1) group by col4;
+select col3, col4, count(col3) over(partition by col4 order by col3) cnt from (select * from c_groupby order by col1) group by col4;
+select col3, col4, count(col3) over(partition by col3 order by col4) cnt from (select * from c_groupby order by col1) group by col3, col4;
+select col3, col4, clob_to_char(col5), count(*) over(partition by col4 order by col3) cnt from (select * from c_groupby order by col1) group by col3, col4;
 
 
 --TEST: over(partition by.. order by ..) clause + group by ... having ...
-select col1, count(col1) over(partition by col1 order by col1) cnt from c_groupby group by col1 having col1 > 500;
-select col4, count(col4) over(partition by col4 order by col4) cnt from c_groupby group by col4 having right(clob_to_char(col5), 4) =  '.com';
-select col1, col2, col3, col4, clob_to_char(col5), count(*) over(partition by col3 order by col1) cnt from c_groupby group by col1, col2, col3, col4 having col2 in ('cubrid', 'mysql') and right(clob_to_char(col5), 12) = '@domainname.com';
+select col1, count(col1) over(partition by col1 order by col1) cnt from (select * from c_groupby order by col1) group by col1 having col1 > 500;
+select col4, count(col4) over(partition by col4 order by col4) cnt from (select * from c_groupby order by col1) group by col4 having right(clob_to_char(col5), 4) =  '.com';
+select col1, col2, col3, col4, clob_to_char(col5), count(*) over(partition by col3 order by col1) cnt from (select * from c_groupby order by col1) group by col1, col2, col3, col4 having col2 in ('cubrid', 'mysql') and right(clob_to_char(col5), 12) = '@domainname.com';
  
 
 

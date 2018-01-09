@@ -27,8 +27,8 @@ create view v1 as select * from t1 order by a;
 insert into v1 select a+1, b+1, c+1 from v1 order by b limit 1;
 insert into v1 select a+b, b-a, c+b from v1 order by a limit 2;
 
-insert into v1 select a, b, c from v1 order by a+b+c limit 2;
-insert into v1 select a, b, c from v1 group by a+b+c;
+insert into v1 select a, b, c from v1 order by a+b+c,a limit 2;
+insert into v1 select max(a), max(b), max(c) from v1 group by a+b+c;
 
 select * from v1 order by a,b,c;
 drop table t1;
