@@ -1,3 +1,4 @@
+drop table if exists t1,t2;
 create table t1(a varchar(100) charset utf8 collate utf8_bin, b int);
 create table t2(a varchar(100) charset utf8 collate utf8_bin, b int);
 insert into t1 values ('A', 1);
