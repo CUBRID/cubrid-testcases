@@ -31,7 +31,7 @@ select t1.insert, t1.key, t2.into, t2.limit from "join" t1 left outer join "like
 select t1.insert, t1.key, t2.into, t2.limit from "join" t1 right outer join "like" t2 on t1.insert=t2.into where t2.limit < 'cc' order by t2.into;
 
 --test: with subquery
-select t1.insert, t1.key, (select t2.limit from "like" t2 where t2.into=t1.insert) as limit from "join" t1;
-select t1.insert, t1.key, (select t2.limit from "like" t2 where t2.into=t1.insert) as aaa from "join" t1;
+select t1.insert, t1.key, (select t2.limit from "like" t2 where t2.into=t1.insert) as limit from "join" t1 order by t1.insert;
+select t1.insert, t1.key, (select t2.limit from "like" t2 where t2.into=t1.insert) as aaa from "join" t1 order by t1.insert;
 
 drop table "join", "like";

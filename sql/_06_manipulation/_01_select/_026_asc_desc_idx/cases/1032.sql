@@ -76,7 +76,7 @@ insert into xoo values(6, '8','8');
 insert into xoo values(8, '9','3');
 insert into xoo values(8, '9','2');
 
-select xoo.a, xoo.b, xoo.c from xoo xoo where (xoo.b>'3') and xoo.a=1 order by 2;
+select xoo.a, xoo.b, xoo.c from xoo xoo where (xoo.b>'3') and xoo.a=1 order by 1,2,3;
 
 
 create class yoo ( a int, b char(5), c varchar(5));
