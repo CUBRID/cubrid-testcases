@@ -67,9 +67,10 @@ MC: wait until C1 ready;
 C2: DELETE FROM tb1 WHERE id BETWEEN 100300 AND 100310;
 MC: wait until C2 ready;
 
-C6: SELECT col,AVG(id),sleep(1) FROM tb1 WHERE id BETWEEN 100001 AND 190000 GROUP BY col ORDER BY col;
 C3: DELETE FROM tb1 WHERE id BETWEEN 100100 AND 100150; 
 MC: wait until C3 ready;
+C6: SELECT col,AVG(id) FROM tb1 WHERE id BETWEEN 100001 AND 190000 GROUP BY col ORDER BY col;
+MC: wait until C6 ready;
 
 C2: commit work;
 MC: wait until C2 ready;
