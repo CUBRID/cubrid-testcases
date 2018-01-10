@@ -56,7 +56,7 @@ select  't13', i, j, clob_to_char(str1) as str1, k from t13 order by 2;
 select 't2', i, l from t2 order by 2;
 select 't21', i, l, m from t21 order by 2;
 select 't22', i, l, clob_to_char(str22) as str22 from t22 order by 2;
-select 't_tr', t_tr.* from t_tr order by 1, 2;
+select 't_tr', t_tr.* from t_tr order by 1, 2, 3;
 
 update all t1 inner join t2 on abs(t1.i)=abs(t2.i) set t1.i=t1.i + 1000, t2.i=t2.i + 1000 where abs(t1.i)=6;
 select 't', i from t order by 2;
@@ -67,7 +67,7 @@ select  't13', i, j, clob_to_char(str1) as str1, k from t13 order by 2;
 select 't2', i, l from t2 order by 2;
 select 't21', i, l, m from t21 order by 2;
 select 't22', i, l, clob_to_char(str22) as str22 from t22 order by 2;
-select 't_tr', t_tr.* from t_tr order by 1, 2;
+select 't_tr', t_tr.* from t_tr order by 1, 2, 3;
 
 update t1 inner join all t2 on abs(t1.i)=abs(t2.i) set t1.i=t1.i + 10000, t2.i=t2.i + 10000 where abs(t1.i)=10;
 select 't', i from t order by 2;
@@ -78,7 +78,7 @@ select  't13', i, j, clob_to_char(str1) as str1, k from t13 order by 2;
 select 't2', i, l from t2 order by 2;
 select 't21', i, l, m from t21 order by 2;
 select 't22', i, l, clob_to_char(str22) as str22 from t22 order by 2;
-select 't_tr', t_tr.* from t_tr order by 1, 2;
+select 't_tr', t_tr.* from t_tr order by 1, 2, 3;
 
 update all t1 inner join all t2 on abs(t1.i)=abs(t2.i) set t1.i=t1.i-20000, t2.i=t2.i-20000 where abs(t1.i)=7;
 select 't', i from t order by 2;
@@ -89,7 +89,7 @@ select  't13', i, j, clob_to_char(str1) as str1, k from t13 order by 2;
 select 't2', i, l from t2 order by 2;
 select 't21', i, l, m from t21 order by 2;
 select 't22', i, l, clob_to_char(str22) as str22 from t22 order by 2;
-select 't_tr', t_tr.* from t_tr order by 1, 2;
+select 't_tr', t_tr.* from t_tr order by 1, 2, 3;
 
 update all t inner join all x on abs(t.i)=abs(x.i) inner join all y on abs(x.i)=abs(y.i) set t.i=t.i-30000, x.i=x.i-30000, y.i=y.i-30000 where abs(t.i)=5;
 select 't', i from t order by 2;
