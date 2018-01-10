@@ -22,6 +22,7 @@ select json_contains('[2, 1]', '[1, 0, 2]');
 select json_contains('[2, 0, 3, 1]', '[1, 2]');
 select json_contains('{"b":[1,2], "a":1}', '{"a":1, "b":2}');
 select json_contains('{"a":1}', '{}');
+select json_contains('["a",1]','[]');
 select json_contains('[1, {"a":1}]', '{}');
 select json_contains('[1, {"a":1}]', '{"a":1}');
 select json_contains('[{"abc":"def", "def":"abc"}]', '["foo","bar"]');
