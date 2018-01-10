@@ -44,6 +44,8 @@ MC: wait until C2 blocked;
 
 C1: show tables;
 C1: commit;
+MC: wait until C1 ready;
+MC: wait until C2 ready;
 /*
 MC: sleep 100;
 MC: sleep 100;*/
@@ -52,7 +54,6 @@ C1: show tables;
 MC: sleep 100;
 */
 MC: wait until C1 ready;
-MC: wait until C2 ready;
 
 /*
 MC: sleep 100;
