@@ -20,16 +20,15 @@ min(id)    min(score)
 
 Query plan:
 temp(order by)
-    subplan: temp(group by)
-                 subplan: sscan
-                              class: student node[?]
-                              cost:  ? card ?
-                 sort:  
+    subplan: iscan
+                 class: student node[?]
+                 index: i_s_? term[?]
                  cost:  ? card ?
     sort:  ? desc, ? asc
     cost:  ? card ?
 Query stmt:
-select min(student.id), min(student.score), student.score, student.id from student student group by student.s_class having (student.score>= ?:? ) order by ? desc , ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+select min(student.id), min(student.score), student.score, student.id from student student where (student.s_class>= ?:? ) group by student.s_class order by ? desc , ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip GROUP BY */
 ===================================================
 id    score    
 10     90.0     
