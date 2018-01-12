@@ -40,7 +40,7 @@ insert into test values(7788, 'SCOTT',  'ANALYST',7566, date'04/19/1987',3000.00
 insert into test values(7744, 'TURNER ',  'SALESMAN ',7698, date'09/08/1981',1500.00,null,10);
 
 select deptno, avg(ss), groupby_num() as num
-from (select * from test order by deptno)
+from (select * from test order by deptno,ss,testno)
 where  inst_num() < 5
 group by deptno order by 1;
 drop class test;
