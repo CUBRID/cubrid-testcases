@@ -29,10 +29,11 @@ MC: wait until C1 ready;
 
 /* test case */
 C1: DELETE FROM tb1 WHERE id=3 AND col='xyz';
+MC: wait until C1 ready;
 C2: DELETE FROM tb1 WHERE id=3 AND col='fun';
+MC: wait until C2 ready;
 C1: commit;
 MC: wait until C1 ready;
-MC: wait until C2 ready;
 
 C1: SELECT * FROM tb1 WHERE id >0 ORDER BY id; 
 MC: wait until C1 ready;
