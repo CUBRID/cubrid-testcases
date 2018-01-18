@@ -47,12 +47,15 @@ n    n2    n3    s
 0     1     1     abcdefghijklmnopqrstuvwxyz     
 
 Query plan:
-sscan
-    class: foo node[?]
-    sargs: term[?]
+temp(order by)
+    subplan: sscan
+                 class: foo node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select foo.n, foo.n?, foo.n?, foo.s from foo foo where ((foo.n?= ?:? ) or (foo.n?= ?:? )) using index foo.idx?
+select foo.n, foo.n?, foo.n?, foo.s from foo foo where ((foo.n?= ?:? ) or (foo.n?= ?:? )) using index foo.idx? order by ?, ?
 ===================================================
 n    n2    n3    s    
 0     0     0     abcdefghijklmnopqrstuvwxyz     

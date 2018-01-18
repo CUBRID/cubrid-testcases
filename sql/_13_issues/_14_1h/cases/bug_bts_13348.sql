@@ -17,7 +17,7 @@ update statistics on all classes;
 --@queryplan
 select /*+ RECOMPILE */ * from foo where n2 in (0, 1) order by 1,2;
 --@queryplan
-select /*+ RECOMPILE */ * from foo where n2 in (0, 1) using index idx1;
+select /*+ RECOMPILE */ * from foo where n2 in (0, 1) using index idx1 order by 1,2;
 --@queryplan
 select /*+ RECOMPILE NO_INDEX_SS */ * from foo where n2 in (0, 1) order by 1,2;
 --@queryplan
