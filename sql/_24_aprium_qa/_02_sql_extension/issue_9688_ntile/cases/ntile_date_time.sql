@@ -36,7 +36,7 @@ create view ntile_dt as select * from ntile_dt_ori order by 1,2,3,4;
 --TEST: OVER() clause
 select new.col1, new.col2, ntile(5) over() b_num from (select * from ntile_dt order by 1,2,3,4) new order by 1, 2,3;
 --TEST: with where clause
-select col3, col4, ntile(10) over() b_num from ntile_dt where col1 > '2000-12-12' order by 1;
+select col3, col4, ntile(10) over() b_num from (select * from ntile_dt order by 1,2,3,4) where col1 > '2000-12-12' order by 1;
 --TEST: syntax error
 select col1, col3, col4, ntile(1) over b_num from ntile_dt;
 select col1, col3, col2, ntile(20) over(1) b_num from ntile_dt;

@@ -48,11 +48,11 @@ select col1, col2, width_bucket(col1, 1, 30, 5) b_num from wb_gl group by col1, 
 select col2, width_bucket(col2, 500, 506, 5) b_num from wb_gl where col1 > 10 group by col2 order by 1;
 select col1, col3, col2, width_bucket(col2, 500, 506, 5) b_num from wb_gl where col1 > 10 group by col3 order by 1;
 select clob_to_char(new.col5), new.col4, width_bucket(new.col4, '1990-01-01', '2000-12-31', 10) b_num from ( select * from wb_gl order by 1,2,3,4 ) new  group by new.col4 order by 1, 2;
-select clob_to_char(col5), col4, width_bucket(col4, '1990-01-01', '2000-12-31', 10) b_num from wb_gl group by clob_to_char(col5) order by 1, 2;
+select clob_to_char(col5), col4, width_bucket(col4, '1990-01-01', '2000-12-31', 10) b_num from ( select * from wb_gl order by 1,2,3,4 ) group by clob_to_char(col5) order by 1, 2;
 
 
 --TEST: group by ... having ...
-select col2, col1, width_bucket(col1, -10, 50, 40) b_num from wb_gl group by col1 having col2 > 500;
+select col2, col1, width_bucket(col1, -10, 50, 40) b_num from ( select * from wb_gl order by 1,2,3,4 ) group by col1 having col2 > 500;
 select new.col3, new.col4, clob_to_char(new.col5), width_bucket(new.col4, '1990-01-01', '2000-12-31', 30) b_num from ( select * from wb_gl order by 1,2,3,4 ) new group by new.col3, new.col4 having new.col4 < '1995-12-31' order by new.col3, 2, 3, 4;
 
 

@@ -14,25 +14,25 @@ insert into t52 values (2, 3, 2), (2, 2, 3), (2, 1, 1);
 commit;
 update statistics on t52;
 
-select /*+ recompile */ i1 from t52 where i1 < 4;
-select /*+ recompile */ * from t52 where i1 < 4;
+select /*+ recompile */ i1 from t52 where i1 < 4 order by 1;
+select /*+ recompile */ * from t52 where i1 < 4 order by 1,2,3;
 
-select /*+ recompile */ i1 from t52 ignore index (t52_idx_one) where i1 < 4 using index t52_idx_two;
-select /*+ recompile */ i1 from t52 ignore index (t52_idx_one) where i1 < 4 using index t52_idx_one_two;
-select /*+ recompile */ i1 from t52 ignore index (t52_idx_one) where i1 < 4 using index t52_idx_two_three;
-select /*+ recompile */ i1 from t52 ignore index (t52_idx_one) where i1 < 4 using index t52_idx_one_three;
-select /*+ recompile */ i1 from t52 ignore index (t52_idx_one) where i1 < 4 using index t52_idx_all;
+select /*+ recompile */ i1 from t52 ignore index (t52_idx_one) where i1 < 4 using index t52_idx_two order by 1;
+select /*+ recompile */ i1 from t52 ignore index (t52_idx_one) where i1 < 4 using index t52_idx_one_two order by 1;
+select /*+ recompile */ i1 from t52 ignore index (t52_idx_one) where i1 < 4 using index t52_idx_two_three order by 1;
+select /*+ recompile */ i1 from t52 ignore index (t52_idx_one) where i1 < 4 using index t52_idx_one_three order by 1;
+select /*+ recompile */ i1 from t52 ignore index (t52_idx_one) where i1 < 4 using index t52_idx_all order by 1;
 
-select /*+ recompile */ i1 from t52 ignore index (t52_idx_one) where i1 < 4 using index t52_idx_two, t52_idx_one_two;
-select /*+ recompile */ i1 from t52 ignore index (t52_idx_one) where i1 < 4 using index t52_idx_two, t52_idx_two_three;
-select /*+ recompile */ i1 from t52 ignore index (t52_idx_one) where i1 < 4 using index t52_idx_two, t52_idx_one_three;
-select /*+ recompile */ i1 from t52 ignore index (t52_idx_one) where i1 < 4 using index t52_idx_two, t52_idx_all;
-select /*+ recompile */ i1 from t52 ignore index (t52_idx_one) where i1 < 4 using index t52_idx_one_two, t52_idx_two_three;
-select /*+ recompile */ i1 from t52 ignore index (t52_idx_one) where i1 < 4 using index t52_idx_one_two, t52_idx_one_three;
-select /*+ recompile */ i1 from t52 ignore index (t52_idx_one) where i1 < 4 using index t52_idx_one_two, t52_idx_all;
-select /*+ recompile */ i1 from t52 ignore index (t52_idx_one) where i1 < 4 using index t52_idx_two_three, t52_idx_one_three;
-select /*+ recompile */ i1 from t52 ignore index (t52_idx_one) where i1 < 4 using index t52_idx_two_three, t52_idx_all;
-select /*+ recompile */ i1 from t52 ignore index (t52_idx_one) where i1 < 4 using index t52_idx_one_three, t52_idx_all;
+select /*+ recompile */ i1 from t52 ignore index (t52_idx_one) where i1 < 4 using index t52_idx_two, t52_idx_one_two order by 1;
+select /*+ recompile */ i1 from t52 ignore index (t52_idx_one) where i1 < 4 using index t52_idx_two, t52_idx_two_three order by 1;
+select /*+ recompile */ i1 from t52 ignore index (t52_idx_one) where i1 < 4 using index t52_idx_two, t52_idx_one_three order by 1;
+select /*+ recompile */ i1 from t52 ignore index (t52_idx_one) where i1 < 4 using index t52_idx_two, t52_idx_all order by 1;
+select /*+ recompile */ i1 from t52 ignore index (t52_idx_one) where i1 < 4 using index t52_idx_one_two, t52_idx_two_three order by 1;
+select /*+ recompile */ i1 from t52 ignore index (t52_idx_one) where i1 < 4 using index t52_idx_one_two, t52_idx_one_three order by 1;
+select /*+ recompile */ i1 from t52 ignore index (t52_idx_one) where i1 < 4 using index t52_idx_one_two, t52_idx_all order by 1;
+select /*+ recompile */ i1 from t52 ignore index (t52_idx_one) where i1 < 4 using index t52_idx_two_three, t52_idx_one_three order by 1;
+select /*+ recompile */ i1 from t52 ignore index (t52_idx_one) where i1 < 4 using index t52_idx_two_three, t52_idx_all order by 1;
+select /*+ recompile */ i1 from t52 ignore index (t52_idx_one) where i1 < 4 using index t52_idx_one_three, t52_idx_all order by 1;
 
 
 drop index t52_idx_one on t52;

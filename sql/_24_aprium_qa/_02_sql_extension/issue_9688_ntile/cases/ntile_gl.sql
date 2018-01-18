@@ -51,7 +51,7 @@ select ntile(10) over(partition by col1 order by col5, col4) from ntile_gl group
 
 
 --TEST: having clause
-select ntile(5) over() b_num from ntile_gl group by col2 having col1 < 22 order by 1;
+select ntile(5) over() b_num from (select * from ntile_gl order by 1,2,3,4,5) group by col2 having col1 < 22 order by 1;
 select ntile(6) over(order by col2) from ntile_gl where col1 > 10 group by col2 having col3='mysql' order by 1;
 select ntile(4) over(partition by col3) from ntile_gl group by col3, col4 having year(col4) > 1991 order by 1;
 select ntile(10) over(partition by new.col1 order by new.col5, new.col4) from (select * from ntile_gl order by 1,2,3,4,5) new group by new.col4 having new.col1 > 3 order by 1;
