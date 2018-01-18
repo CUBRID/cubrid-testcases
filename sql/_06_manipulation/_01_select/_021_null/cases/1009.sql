@@ -6,7 +6,7 @@ insert into t1 values(null, 'aaa');
 insert into t1 values(null, 'aaa');
 
 
-select greatest(c1) from t1;
-select least(c1) from t1;
+select greatest(c1) from t1 order by 1 desc;
+select least(c1) from t1 order by 1 desc;
 
 drop class t1;
