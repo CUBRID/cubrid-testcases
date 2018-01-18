@@ -35,9 +35,9 @@ insert into lag_coll values({11, 12}, {'a'}, {12, 10000000, 234234234234}, {date
 --TEST: no alias
 select  new.col1, new.col2, lag(new.col1) over() next_v from (select * from lag_coll order by 1,2,3,4 ) new ;
 --TEST: with alias
-select  col2, col3, lag(col3, 2, {1, 1, 1}) over(order by col3) next_v from lag_coll order by 1;
+select  col2, col3, lag(col3, 2, {1, 1, 1}) over(order by col3) next_v from (select * from lag_coll order by 1,2,3,4 ) order by 1;
 --TEST: with where clause
-select  col3, col4, lag(col4, 3, {'2012-12-12 12:12:12'}) over() next_v from lag_coll where col1 > {1, 2, 3} order by 1;
+select  col3, col4, lag(col4, 3, {'2012-12-12 12:12:12'}) over() next_v from (select * from lag_coll order by 1,2,3,4 ) where col1 > {1, 2, 3} order by 1;
 
 
 

@@ -14,7 +14,7 @@ insert into md_int2 values(3);
 insert into md_int2 values(4);
 
 
-select * from md_int1 m1 left outer join md_int2 m2 on m1.id1=m2.id2;
+select * from md_int1 m1 left outer join md_int2 m2 on m1.id1=m2.id2 order by 1,2;
 
 delete m1, m2 from md_int1 m1 left outer join md_int2 m2 on m1.id1=m2.id2;
 
