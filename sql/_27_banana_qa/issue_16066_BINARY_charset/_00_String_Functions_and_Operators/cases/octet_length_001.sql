@@ -20,7 +20,7 @@ INSERT INTO octet_length_tbl VALUES('a', 'a', 'a', B'010101010');
 INSERT INTO octet_length_tbl VALUES(NULL, '你', '你', B'010101010');
 INSERT INTO octet_length_tbl VALUES(' ', ' 큐', ' 큐', B'010101010');
 
-SELECT OCTET_LENGTH(char_1), OCTET_LENGTH(char_2), OCTET_LENGTH(varchar_1), OCTET_LENGTH(bit_var_1) FROM octet_length_tbl;
+SELECT OCTET_LENGTH(char_1), OCTET_LENGTH(char_2), OCTET_LENGTH(varchar_1), OCTET_LENGTH(bit_var_1) FROM octet_length_tbl order by 1,2,3,4;
 drop octet_length_tbl;
 
 
