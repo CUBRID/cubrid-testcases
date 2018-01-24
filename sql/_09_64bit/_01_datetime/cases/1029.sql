@@ -9,6 +9,6 @@ select * from test_class where datetime_col >= datetime_col1 order by 1;
 select * from test_class where datetime_col < datetime_col1 order by 1;
 select * from test_class where datetime_col <= datetime_col1 order by 1;
 select * from test_class where datetime_col = datetime_col1 order by 1;
-select * from test_class where datetime_col <> datetime_col1 order by 1;
+select * from test_class where datetime_col <> datetime_col1 order by 1,2,3,4,5;
 
 drop class test_class;
