@@ -38,12 +38,11 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C1: update t1 set col='aa' where sleep(5)=0 and col='abc';
-MC: sleep 2;
 C2: update t1 set col='bb' where id=5 and col='abc';
-C2: select * from t1 order by 1,2;
 MC: wait until C2 ready;
+C1: update t1 set col='aa' where col='abc';
 MC: wait until C1 blocked;
+C2: select * from t1 order by 1,2;
 
 C2: commit;
 MC: wait until C2 ready;
