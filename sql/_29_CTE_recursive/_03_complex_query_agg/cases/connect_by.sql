@@ -34,7 +34,7 @@ FROM tree )
 ,cte as (SELECT id, mgrid, name
 FROM tree ) select level from cte t
 CONNECT BY PRIOR t.id=t.mgrid
-ORDER BY t.id;
+ORDER BY level;
 
 with cte as (SELECT id, mgrid, name
 FROM tree

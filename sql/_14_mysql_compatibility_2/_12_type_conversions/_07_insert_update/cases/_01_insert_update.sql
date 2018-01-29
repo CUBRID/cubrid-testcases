@@ -409,7 +409,7 @@ replace into datetime_table set dt = '2009-09-09 11:11:11.111 am';
 
 replace into datetime_table set ts = '2009-09-09 11:11:11 am';
 
-select * from datetime_table order by 1;
+select * from datetime_table order by 1,2 nulls last,3 nulls last,4;
 
 drop table datetime_table;
 
