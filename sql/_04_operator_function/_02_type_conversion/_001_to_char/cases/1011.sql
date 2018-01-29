@@ -9,10 +9,10 @@ insert into func_04 values( '12:00:00 pm 01/01/1980', '01/01/1980', '12:00:00 pm
 insert into func_04 values( '12:00:00 am 01/01/1980', '12/31/1980', '12:00:00 am');
 insert into func_04 values( null , null, null);
 
-select a,to_char(a,'CC YYYY YY Q MM MONTH MON DD DAY DY D AM PM A.M. P.M. HH HH12 HH24 MI SS') from  func_04 order by 1	;
-select a,to_char(a,'cc yyyy yy q mm month mon dd day dy d am pm a.m. p.m. hh hh12 hh24 mi ss') from  func_04 order by 1	;
-select b,to_char(b,'CC YYYY YY Q MM MONTH MON DD DAY DY D') from  func_04 order by 1	;
-select b,to_char(b,'cc yyyy yy q mm month mon dd day dy d') from  func_04 order by 1;
+select a,to_char(a,'CC YYYY YY Q MM MONTH MON DD DAY DY D AM PM A.M. P.M. HH HH12 HH24 MI SS') from  func_04 order by 1,2;
+select a,to_char(a,'cc yyyy yy q mm month mon dd day dy d am pm a.m. p.m. hh hh12 hh24 mi ss') from  func_04 order by 1,2;
+select b,to_char(b,'CC YYYY YY Q MM MONTH MON DD DAY DY D') from  func_04 order by 1,2;
+select b,to_char(b,'cc yyyy yy q mm month mon dd day dy d') from  func_04 order by 1,2;
 
 
 drop class func_04;
