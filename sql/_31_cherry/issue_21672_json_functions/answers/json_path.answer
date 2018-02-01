@@ -1,0 +1,176 @@
+===================================================
+0
+===================================================
+0
+===================================================
+json_contains(@j, @j2, '$.a')    
+1     
+
+===================================================
+json_contains(@j, @j2, '$.b')    
+0     
+
+===================================================
+0
+===================================================
+json_contains(@j, @j2, '$.a')    
+0     
+
+===================================================
+json_contains(@j, @j2, '$.c')    
+1     
+
+===================================================
+json_extract('[10, 20, [30, 40]]', '$[0]')    
+10     
+
+===================================================
+json_extract('[10, 20, [30, 40]]', '$[1]')    
+20     
+
+===================================================
+json_extract('[10, 20, [30, 40]]', '$[2]')    
+[30,40]     
+
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+c    json_extract(c, '$.id')    i    
+{"id":"2","name":"banana"}     "2"     2     
+{"id":"3","name":"candy"}     "3"     3     
+{"id":"4","name":"donkey"}     "4"     4     
+
+===================================================
+0
+===================================================
+1
+===================================================
+c    json_extract(c, '$.id')    i    n    
+{"id":"2","name":"banana"}     "2"     2     null     
+{"id":"3","name":"candy"}     "3"     3     null     
+{"id":"4","name":"donkey"}     "4"     4     1     
+
+===================================================
+1
+===================================================
+c    json_extract(c, '$.id')    i    n    
+{"id":"2","name":"banana"}     "2"     2     null     
+{"id":"3","name":"candy"}     "3"     3     null     
+
+===================================================
+Error:-494
+===================================================
+2
+===================================================
+Error:-493
+===================================================
+json_extract(c, '$[4]')    
+null     
+null     
+null     
+44     
+[22,44,66]     
+
+===================================================
+Error:-1200
+===================================================
+i    c    n    
+33     [3,10,5,17,44]     null     
+30     [3,10,5,17,[22,44,66]]     null     
+
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+Error:-1200
+===================================================
+0
+===================================================
+0
+===================================================
+json_get_all_paths(@j)    
+["$.\"store\".\"book\"[0].\"category\"","$.\"store\".\"book\"[0].\"author\"","$.\"store\".\"book\"[0].\"title\"","$.\"store\".\"book\"[0].\"price\"","$.\"store\".\"book\"[0]","$.\"store\".\"book\"[1].\"category\"","$.\"store\".\"book\"[1].\"author\"","$.\"store\".\"book\"[1].\"title\"","$.\"store\".\"book\"[1].\"price\"","$.\"store\".\"book\"[1]","$.\"store\".\"book\"[2].\"category\"","$.\"store\".\"book\"[2].\"author\"","$.\"store\".\"book\"[2].\"title\"","$.\"store\".\"book\"[2].\"isbn\"","$.\"store\".\"book\"[2].\"price\"","$.\"store\".\"book\"[2]","$.\"store\".\"book\"[3].\"category\"","$.\"store\".\"book\"[3].\"author\"","$.\"store\".\"book\"[3].\"title\"","$.\"store\".\"book\"[3].\"isbn\"","$.\"store\".\"book\"[3].\"price\"","$.\"store\".\"book\"[3]","$.\"store\".\"book\"","$.\"store\".\"bicycle\".\"color\"","$.\"store\".\"bicycle\".\"price\"","$.\"store\".\"bicycle\"","$.\"store\"","$"]     
+
+===================================================
+Error:-1200
+===================================================
+json_extract(@j, '/store/book/0/category')    
+"reference"     
+
+===================================================
+json_extract(@j, '$.store.book[0]')    
+{"category":"reference","author":"Nigel Rees","title":"Sayings of the Century","price":8.95}     
+
+===================================================
+json_extract(@j, '/store/book/0')    
+{"category":"reference","author":"Nigel Rees","title":"Sayings of the Century","price":8.95}     
+
+===================================================
+json_extract(@j, '/store/book/0/')    
+null     
+
+===================================================
+json_extract(@j, '$.store.book')    
+[{"category":"reference","author":"Nigel Rees","title":"Sayings of the Century","price":8.95},{"category":"fiction","author":"Evelyn Waugh","title":"Sword of Honour","price":12.99},{"category":"fiction","author":"Herman Melville","title":"Moby Dick","isbn":"0-553-21311-3","price":8.99},{"category":"fiction","author":"J. R. R. Tolkien","title":"The Lord of the Rings","isbn":"0-395-19395-8","price":22.99}]     
+
+===================================================
+json_extract(@j, '/store/book')    
+[{"category":"reference","author":"Nigel Rees","title":"Sayings of the Century","price":8.95},{"category":"fiction","author":"Evelyn Waugh","title":"Sword of Honour","price":12.99},{"category":"fiction","author":"Herman Melville","title":"Moby Dick","isbn":"0-553-21311-3","price":8.99},{"category":"fiction","author":"J. R. R. Tolkien","title":"The Lord of the Rings","isbn":"0-395-19395-8","price":22.99}]     
+
+===================================================
+json_extract(@j, '$.store')    
+{"book":[{"category":"reference","author":"Nigel Rees","title":"Sayings of the Century","price":8.95},{"category":"fiction","author":"Evelyn Waugh","title":"Sword of Honour","price":12.99},{"category":"fiction","author":"Herman Melville","title":"Moby Dick","isbn":"0-553-21311-3","price":8.99},{"category":"fiction","author":"J. R. R. Tolkien","title":"The Lord of the Rings","isbn":"0-395-19395-8","price":22.99}],"bicycle":{"color":"red","price":19.95}}     
+
+===================================================
+json_extract(@j, '/store')    
+{"book":[{"category":"reference","author":"Nigel Rees","title":"Sayings of the Century","price":8.95},{"category":"fiction","author":"Evelyn Waugh","title":"Sword of Honour","price":12.99},{"category":"fiction","author":"Herman Melville","title":"Moby Dick","isbn":"0-553-21311-3","price":8.99},{"category":"fiction","author":"J. R. R. Tolkien","title":"The Lord of the Rings","isbn":"0-395-19395-8","price":22.99}],"bicycle":{"color":"red","price":19.95}}     
+
+===================================================
+json_extract(@j, '$')    
+{"store":{"book":[{"category":"reference","author":"Nigel Rees","title":"Sayings of the Century","price":8.95},{"category":"fiction","author":"Evelyn Waugh","title":"Sword of Honour","price":12.99},{"category":"fiction","author":"Herman Melville","title":"Moby Dick","isbn":"0-553-21311-3","price":8.99},{"category":"fiction","author":"J. R. R. Tolkien","title":"The Lord of the Rings","isbn":"0-395-19395-8","price":22.99}],"bicycle":{"color":"red","price":19.95}}}     
+
+===================================================
+json_extract(@j, '/')    
+null     
+
+===================================================
+Error:-1200
+===================================================
+json_extract(@j, '/*')    
+null     
+
+===================================================
+json_extract(@j, '//')    
+null     
+
+===================================================
+json_extract(@j, '')    
+{"store":{"book":[{"category":"reference","author":"Nigel Rees","title":"Sayings of the Century","price":8.95},{"category":"fiction","author":"Evelyn Waugh","title":"Sword of Honour","price":12.99},{"category":"fiction","author":"Herman Melville","title":"Moby Dick","isbn":"0-553-21311-3","price":8.99},{"category":"fiction","author":"J. R. R. Tolkien","title":"The Lord of the Rings","isbn":"0-395-19395-8","price":22.99}],"bicycle":{"color":"red","price":19.95}}}     
+
+===================================================
+Error:-1200
+===================================================
+Error:-1200
+===================================================
+Error:-1200
+===================================================
+0
