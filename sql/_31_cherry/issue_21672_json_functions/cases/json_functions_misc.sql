@@ -21,7 +21,7 @@ select json_set(a, '$.title', json_replace(b, '$.title[0]', json_extract(a, '/ti
 select json_set('{"111": "ccc"}', '$.111', '1');
 select json_set('{"111": "ccc"}', '$."111"', '1');
 select json_set('{"111": "ccc"}', '$.111', '1', '$."111"', '1');
-with recursive cte(m,a) as (select 1 m, json_merge(json_set('{"111": "ccc"}', '$."111"', '1'), b) from t1 union all select 1, json_array_append(a, '$.title', '1111') from t1 union all select m+1, a from cte where m<2) select * from cte  order by 1;
+with recursive cte(m,a) as (select 1 m, json_merge(json_set('{"111": "ccc"}', '$."111"', '1'), b) from t1 union all select 1, json_array_append(a, '$.title', '1111') from t1 union all select m+1, a from cte where m<2) select * from cte  order by 1, 2;
 with recursive cte(m,a) as (select 1 m, json_merge(json_set('{"111": "ccc"}', '$."111"', '1'), b) from t1 union all select 1, json_array_append(a, '$.title', '1111') from t1 union all select m+1, a from cte where m<2) select json_replace(cte.a, '$.title', t1.a) from cte, t1 where json_extract(cte.a, '$."111"') is not null  order by 1;
 with recursive cte(m,a) as (select 1 m, json_merge(json_set('{"111": "ccc"}', '$."111"', '1'), b) from t1 union all select 1, json_array_append(a, '$.title', '1111') from t1 union all select m+1, a from cte where json_depth(JSON_GET_ALL_PATHS(a))<2) select json_replace(cte.a, '$.title', t1.a) from cte, t1  order by 1;
 with recursive cte(m,a) as (select 1 m, json_merge(json_set('{"111": "ccc"}', '$."111"', '1'), b) from t1 union all select 1, json_array_append(a, '$.title', '1111') from t1 union all select m+1, a from cte where json_depth(JSON_GET_ALL_PATHS(a))<2) select JSON_GET_ALL_PATHS(json_replace(cte.a, '$.title', t1.a)) from cte, t1 group by 1 order by 1;
