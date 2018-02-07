@@ -9,6 +9,7 @@ select json_remove(json_merge(name, de), '/1', '/a', '/0') from t10;
 select json_remove(json_remove(json_merge(name, de), '/1', '/0'), '/0') from t10;
 select json_remove(json_remove(json_merge(name, de), '/1'), '/0/bar') from t10;
 select json_remove(json_remove(json_merge(name, de), _iso88591'/1'), _iso88591'/bar') from t10;  
+select json_remove(json_remove(json_merge(name, de), _iso88591'/1'), _iso88591'/0/bar') from t10; 
 select json_remove(json_remove(json_merge(name, de), '/1'), '/0/'||json_extract(json_object('a', 'bar'), '/a')) from t10;
 drop table if exists t10;
 drop table if exists t;

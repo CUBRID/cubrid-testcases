@@ -16,6 +16,9 @@ select json_extract(json_get_all_paths(json_object('a','b','c',1,'d',json_array(
 set @j = '["a", ["b", "c"], "d"]';
 -- CBRD-21872
 -- select json_keys(json_array_append(@j, '/1', '1','/0', '2', '/2', '4','/2/0', '5'));
+select json_array_append(@j, '/1', '1','/0', '2', '/2', '3','/', '4');
+select json_array_append(@j, '/1', '1','/0', '2', '/2', '3','', '4');
+select json_array_append(@j, '/1', '1','/0', '2', '/2', '3','$', '4'); 
 select json_array_append(@j, '/1', '1');
 select json_array_append(@j, '/0', '2');
 select json_array_append(@j, '/1/0', '3');
@@ -31,15 +34,13 @@ select json_array_append(@j, '/0', '{"key":[9,8,"a"]}', '/0/1/key', '"x"');
 set @j = null;
 select json_array_append(@j, '/1', '1');
 select json_array_append(@j, '/', null); 
--- CBRD-21878
--- select json_array_append(@j, '/1', '1','/0', '2', '/2', '3','/', '4');
-select json_array_append(@j, '/1', '1','/0', '2', '/2', '3','$', '4'); 
 
 SET @j = '{"a": 1, "b": [2, 3], "c": 4}';
+select json_array_append(@j, '/', '"z"');
+select json_array_append(@j, '', '"z"'); 
+select json_array_append(@j, '$', '"z"'); 
 select json_array_append(@j, '/b', '"x"');
 select json_array_append(@j, '/c', '"y"');
--- CBRD-21878
--- select json_array_append(@j, '/', '"z"');
 select json_array_append(@j, '/b', '"x"','/b', '"x"');
 select json_array_append(@j, '/b', '"x"','/b/2','"y"'); 
 
@@ -56,12 +57,12 @@ select json_replace(@j, '/1/b', '[1,2,3]', '/2', '2');
 select json_replace(@j, '/1/b', '[1,2,3]', '/1/b/1', '"a"');
 
 set @j = '{ "a": 1, "b": [2, 3]}';
----CBRD-21874
----select json_replace(@j, '/a', '10', '/c', '[true, false]');
----CBRD-21874
----SELECT json_replace(@j, '$.a', '10', '$.c', '[true, false]');
----CBRD-21874
----select json_remove(@j, '/2', '/1/b/1', '/1/b/1');
+--error
+select json_replace(@j, '/a', '10', '/c', '[true, false]');
+--error
+SELECT json_replace(@j, '$.a', '10', '$.c', '[true, false]');
+--error
+select json_remove(@j, '/2', '/1/b/1', '/1/b/1');
 
 drop table if exists json_test;
 create table json_test(id int, emp json);  
