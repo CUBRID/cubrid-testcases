@@ -65,6 +65,6 @@ deallocate prepare st;
 drop VARIABLE @j;
 drop VARIABLE @js;
 
-drop table if exists t1
+drop table if exists t1;
 
 
