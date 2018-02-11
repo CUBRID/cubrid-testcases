@@ -4,8 +4,10 @@ select json_array_append('["a", ["b", "c"], "d"]', '$[0]', '2');
 
 --error
 select json_contains('[1]', '[1]', '$', '$[0]');
+--error
 select json_contains('', '', '$');
-select json_contains('null', 'null', '$');  ---------------diff
+--result is different with MySQL
+select json_contains('null', 'null', '$');  
 select json_contains('"10"', '"10"', '$');
 select json_contains('"10"', '10', '$');
 select json_contains('10.1', '10', '$');
