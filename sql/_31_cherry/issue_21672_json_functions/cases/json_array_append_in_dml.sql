@@ -39,7 +39,6 @@ select * from t10;
 select json_merge(json_array_append(name, '$[0]', '1'), json_array_append(de, '$[1]', '22')) from t10;
 replace into t10 values(2, (select json_array_append(name, '$[0]', '1') from t10), json_array_append(@j, '$.url', '2') ); 
 select * from t10 order by id;
---crash
---select json_array_append(name, '$[1]', json_array_append(de, '$[1]', '2')) from t10;
+select json_array_append(name, '$[1]', json_array_append(de, '$[1]', '2')) from t10;
 drop VARIABLE @j;
 drop table if exists t10;
