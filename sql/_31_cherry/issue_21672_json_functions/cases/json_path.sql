@@ -9,7 +9,6 @@ SELECT JSON_CONTAINS(@j, @j2, '$.c');
 SELECT JSON_EXTRACT('[10, 20, [30, 40]]', '$[0]');
 SELECT JSON_EXTRACT('[10, 20, [30, 40]]', '$[1]');
 SELECT JSON_EXTRACT('[10, 20, [30, 40]]', '$[2]');
--- CBRD-21875
 SELECT JSON_EXTRACT('[10, 20, [30, 40]]', '$[2][1]');
 -- error
 SELECT JSON_EXTRACT('[10, 20, [30, 40]]', '$[1]', '$[0]');
@@ -33,8 +32,8 @@ SELECT c, c->"$.id", id FROM t WHERE c->"$.id" > 1 ORDER BY c->"$.name";
 
 INSERT INTO t(i,c) VALUES (33, '[3,10,5,17,44]'), (30, '[3,10,5,17,[22,44,66]]');
 --CBRD-21876
-SELECT JSON_EXTRACT(c, '$[4][1]') FROM t ORDER 1;
-SELECT JSON_EXTRACT(c, '$[4]') FROM t ORDER BY 1;
+--SELECT c ,JSON_KEYS(JSON_EXTRACT(c, '$[4][1]')) FROM t ORDER by 2,1;
+SELECT c, JSON_EXTRACT(c, '$[4]') FROM t ORDER BY 2,1;
 SELECT * FROM t WHERE JSON_EXTRACT(c, '$[4][1]') is not null order by 1;
 SELECT * FROM t WHERE JSON_EXTRACT(c, '$[0]')= 3 order by c;
 --error
@@ -83,7 +82,6 @@ set @j='{ "store": {
 --CBRD-21876	
 --select json_keys(@j);
 select json_get_all_paths(@j);
--- CBRD-21875
 select json_extract (@j, '$.store.book[0].category');
 select json_extract (@j, '/store/book/0/category');
 select json_extract (@j, '$.store.book[0]');
