@@ -54,10 +54,9 @@ insert into t1 values(@j);
 SELECT JSON_ARRAY_APPEND(@j, '$', @j);
 select json_array_append(@j, '$', '3');    
 select json_array_append(@j, '/', '3');
---CBRD-21873 issue will block all statements which contain function in the third parameter
---select json_array_append(@j, '$[2]',  json_array('c', 'd'));
---select json_array_append(name, '$' json_merge(@js, @j)) from t1;
---select json_array_append(name, '$[1]', name) from t1;
+select json_array_append(@j, '$[2]',  json_array('c', 'd'));
+select json_array_append(name, '$' json_merge(@js, @j)) from t1;
+select json_array_append(name, '$[1]', name) from t1;
 prepare st from 'SELECT JSON_ARRAY_APPEND(@j, ''$'', ?)';
 execute st using @j;
 
