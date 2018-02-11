@@ -383,8 +383,8 @@ drop table alltypes;
 create table t1(s2 char(10));
 insert into t1 values(NULL);
 insert into t1 values('AA');
-select concat_ws('x','1',s2) from t1;
-select concat_ws('x',s2,'1') from t1;
-select concat_ws('x','1',s2,'1') from t1;
+select concat_ws('x','1',s2) from t1 order by 1;
+select concat_ws('x',s2,'1') from t1 order by 1;
+select concat_ws('x','1',s2,'1') from t1 order by 1;
 drop table t1;
 
