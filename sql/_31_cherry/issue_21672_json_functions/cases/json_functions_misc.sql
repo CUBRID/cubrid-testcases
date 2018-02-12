@@ -23,6 +23,25 @@ SELECT json_array_append(@j, '$[0]', JSON_SET(JSON_ARRAY(1,2,3,4,5),'$[7]','999'
 
 drop VARIABLE @j;
 
+drop table if exists foo_table;
+CREATE TABLE IF NOT EXISTS foo_table (id int primary key auto_increment, foo_ids json);
+INSERT INTO foo_table (foo_ids) values(NULL);
+update foo_table set foo_ids=(if(json_type(foo_ids) is null, '{"key":"cubrid"}', foo_ids), '$', cast('{"id":"432"}' as json), '$', cast('{"id":"433"}' as json));
+update foo_table set foo_ids=json_array_append(if(json_type(foo_ids) is null, '{"key":"cubrid"}', foo_ids), '$', cast('{"id":"432"}' as json), '$', cast('{"id":"433"}' as json));
+select * from foo_table;
+update foo_table set foo_ids=json_array_append(foo_ids, '$', json_set(foo_ids, '$', '{"host": "b"}'));
+drop view if exists v1;
+create view v1 as select json_array_append(foo_ids, '$[1]', json_set(foo_ids, '$[2]', json_array(id))) as foo_ids_alise from foo_table; 
+select * from v1;
+update foo_table set foo_ids=(select foo_ids_alise from v1);
+select * from v1;
+update foo_table set foo_ids=(select json_replace(foo_ids_alise, '$[2]', '{"key":"cubrid"}') from v1); 
+select * from v1;
+drop table if exists foo_table;
+drop view if exists v1;
+
+
+
 drop table if exists t1;
 CREATE TABLE t1 (a JSON NOT NULL, b JSON, id int);
 insert into t1 values('{"title": "hello"}', '{"title":["hello",{"type":"object","properties":{"title":{"type":"string"}}}]}', 1);
