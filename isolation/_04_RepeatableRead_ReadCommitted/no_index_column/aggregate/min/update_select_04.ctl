@@ -41,7 +41,7 @@ C1: select min(id) from t1;
 MC: wait until C1 ready;
 
 C2: select min(id) from t1;
-MC: wait until C1 ready;
+MC: wait until C2 ready;
 
 C1: commit;
 MC: wait until C1 ready;
