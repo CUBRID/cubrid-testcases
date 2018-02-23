@@ -1,3 +1,4 @@
+drop table  if exists t1;
 create table t1 reuse_oid;
 ALTER CLASS [t1] ADD ATTRIBUTE
        [eid] integer AUTO_INCREMENT(1, 1) NOT NULL,
