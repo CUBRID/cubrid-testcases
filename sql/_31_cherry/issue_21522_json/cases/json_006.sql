@@ -13,7 +13,10 @@ select json_array('1', '"text"', 'false', 'null');
 select json_array(1, '"text"', false, null);  
 
 select json_insert('["a", {"b": [1, 2]}, [3, 4]]', '/1-', '"x"');
+select json_insert('["a", {"b": [1, 2]}, [3, 4]]', '/1/b/-', '"x"');
 select json_insert('["a", {"b": [1, 2]}, [3, 4]]', '/2/', '"x"');
+select json_insert('["a", {"b": [1, 2]}, [3, 4]]', '/2/-', '"x"');
+select json_insert('["a", {"b": [1, 2]}, [3, 4]]', '/2', '"x"');
 select json_insert('["a", {"b": [1, 2]}, [3, 4]]', '/3', '"x"');
 select json_insert('["a", {"b": [1, 2]}, [3, 4]]', '/4', '"x"');
 select json_insert('["a", {"b": [1, 2]}, [3, 4]]', '/1/b/0/', '"x"');
