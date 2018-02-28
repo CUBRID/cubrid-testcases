@@ -50,6 +50,7 @@ select json_set(b, cast(json_extract(json_get_all_paths(b), '$[0]') as string), 
 select json_array_append(b, cast(json_extract(json_get_all_paths(b), '$[0]') as string), '1') from t1;
 select json_set(a, '$.title', json_replace(b, '$.title[0]', json_extract(a, '/title'))) from t1;
 select json_set(a, '$.title', json_replace(b, '$.title[0]', json_extract(a, '/title')), '$[1000000000000000000000]', '2222222222222222222222222222222222222222222222222222222222222222222') from t1;
+select json_set(a, '$.title', json_replace(b, '$.title[0]', json_extract(a, '/title')), '$.title', '222222222222222222222222222222222222222222222222222222222222222222') from t1;
 select json_set('{"111": "ccc"}', '$.111', '1');
 select json_set('{"111": "ccc"}', '$."111"', '1');
 select json_set('{"111": "ccc"}', '$.111', '1', '$."111"', '1');

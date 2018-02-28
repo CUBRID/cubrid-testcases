@@ -21762,6 +21762,7 @@ insert into t1(a) values (@a);
 insert into t1(a) values (json_extract(@a, '/2/friends'));
 insert into t1(a) values (json_extract(@a, '/3/name'));
 create table t2 ( id int, a json, b json, c json) as select id, a, json_extract(a, '/2') b,  json_insert(a, '/0/_id', a) c  from t1;
+create table t2 ( id int, a json, b json, c json) as select id, a, json_extract(a, '/2') b,  json_insert(a, '/3/tags/-', a) c  from t1 where json_extract(a, '/3/tags') is not null;
 select id, length(a), length(json_extract(a, '/2')),  length(json_insert(a, '/0/_id', a) ) from t1 order by 3,4,2,1 desc;
 select id, length(json_object(cast (id as string), a)), length(json_array(id, a,json_depth(a),json_length(a))) from t1 order by 3,2,1;
 select id , length(a), length(b), length(c) from t2 order by id desc;

@@ -132,8 +132,10 @@ json_set(a, '$.title', json_replace(b, '$.title[0]',  json_extract(a, '/title'))
 {"title":{"title":["hello",{"type":"object","properties":{"title":{"type":"string"}}}]}}     
 
 ===================================================
-json_set(a, '$.title', json_replace(b, '$.title[0]',  json_extract(a, '/title')), '$[1000000000000000000000]', '2222222222222222222222222222222222222222222222222222222222222222222')    
-{"title":{"title":["hello",{"type":"object","properties":{"title":{"type":"string"}}}]},"1000000000000000000000":2.2222222222222218e66}     
+Error:-1203
+===================================================
+json_set(a, '$.title', json_replace(b, '$.title[0]',  json_extract(a, '/title')), '$.title', '222222222222222222222222222222222222222222222222222222222222222222')    
+{"title":2.2222222222222219e65}     
 
 ===================================================
 Error:-494
@@ -171,9 +173,7 @@ json_get_all_paths(json_replace(cte.a, '$.title', t1.a))
 ["$.\"title\".\"title\"","$.\"title\"","$"]     
 
 ===================================================
-json_extract('1', '$[0]')    json_set('1', '$[0]', json_object('name', 'cube'))    json_set(null, '$[0]', json_object('name', 'cube'))    
-null     [{"name":"cube"}]     null     
-
+Error:-494
 ===================================================
 0
 ===================================================

@@ -54,9 +54,8 @@ select json_keys('{"a":{"c":1, "d":2}, "b":2}');
 select json_keys('{"a":{"c":1, "d":2}, "b":2}', '$.a');
 select json_keys('{"a":{"c":1, "d":2}, "b":2}', '$.b');
 select json_keys('foo');
--- CBRD-21889
--- select json_keys('{"a":{"c":1, "d":2}, "b":2, "c":1, "a":3, "b":1, "c":2}');
--- select json_keys('{"c1": "value 1", "c1": "value 2"}');
+select json_keys('{"a":{"c":1, "d":2}, "b":2, "c":1, "a":3, "b":1, "c":2}');
+select json_keys('{"c1": "value 1", "c1": "value 2"}');
 select json_keys('[{"c1": "value 1"}, {"c1": "value 2"}]');
 
 --error
@@ -64,8 +63,7 @@ select json_length( '[ 1, [ 2, 3, 4 ], 5 ]', '$[2]' );
 
 SELECT JSON_SET('{}', '$.age', '87');
 
---CBRD-21887,CBRD-21890
---select json_set('{"a":12}', '$[0]', '100');  
+select json_set('{"a":12}', '$[0]', '100');  
 select json_set('{"a":12}', '$[0].a', '100'); 
 select json_set('{"a":12}', '$[0][0].a', '100');
 select json_set('{"a":12}', '$[0][1].a', '100');
@@ -99,8 +97,7 @@ select json_replace('1', '/', '4');
 select json_replace('1', '', '4');    
 select json_replace('1', '/0', '4');   
 
---CBRD-21887
---select json_set('1', '$[1]', '4');  
+select json_set('1', '$[1]', '4');  
 select json_replace('1', '$[1]', '4');  
 SELECT json_insert('[]', '$[0][0]', '100');
 SELECT json_insert('1', '$[0][0]', '100');
@@ -129,9 +126,9 @@ insert into t1 values
     ('{"a":1,"b":2,"c":3}','$.b',0),
       ('{"a":1,"b":2,"c":3}','$.c',0);
 select j, p, json_remove(j, p) from t1;
--- SELECT JSON_KEYS(j) FROM t1 ORDER BY 1;
--- SELECT JSON_KEYS(p) FROM t1 ORDER BY 1;
--- SELECT JSON_KEYS(i) FROM t1 ORDER BY 1;
+SELECT JSON_KEYS(j) FROM t1 ORDER BY 1;
+SELECT JSON_KEYS(p) FROM t1 ORDER BY 1;
+SELECT JSON_KEYS(i) FROM t1 ORDER BY 1;
 SELECT JSON_valid(i), json_type(i),json_get_all_paths(cast (i as json)),json_keys(cast (i as json)) FROM t1 ;
 drop table if exists t1;
 
@@ -156,8 +153,7 @@ SELECT JSON_OBJECT('foo', 'bar`bar');
 set @str = '{"\u00e4\u00f6":"yes"}';
 set @path = '$."\u00e4\u00f6"';
 select @str, json_get_all_paths(@str);
---CBRD-21876
---select @str, json_keys(@str);
+select @str, json_keys(@str);
 select @str, @path, JSON_EXTRACT(@str, JSON_EXTRACT(json_get_all_paths(@str), '/0'));
 select @str, @path, JSON_EXTRACT(@str, JSON_EXTRACT(json_get_all_paths(@str), '/1'));
 
@@ -165,8 +161,7 @@ set @str = '{"\u00e4":"yes"}';
 set @path = '$."\u00e4"';
 select @str, @path, JSON_EXTRACT(@str, @path);
 select @str, json_get_all_paths(@str);
---CBRD-21876
---select @str, json_keys(@str);
+select @str, json_keys(@str);
 
 
 SELECT JSON_ARRAY('1. ě 2. š 3. č 4. ř 5. ž 6. ý 7. á 8. í 9. é 10. ů 11. ú') AS json_data;

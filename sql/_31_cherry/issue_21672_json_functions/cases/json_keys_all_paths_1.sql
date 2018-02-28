@@ -1,4 +1,5 @@
 select json_set('"x"', '/0', '"a"');
+select json_set('"x"', '$', '"a"');
 select json_keys('{"a": 1, "b": {"c": 30}}');
 select json_type(json_keys('{"a": 1, "b": {"c": 30}}'));
 select json_keys('{"a": 1, "b": {"c": 30}}', '$.b.c'),json_keys('{"a": 1, "b": {"c": 30}}', '$.b');
