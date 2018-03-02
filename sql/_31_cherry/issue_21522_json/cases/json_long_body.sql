@@ -21756,6 +21756,7 @@ set @a='[
     "favoriteFruit": "strawberry"
   }
 ]';
+
 drop table if exists t1,t2;
 create table t1 (id int AUTO_INCREMENT primary key, a json);
 insert into t1(a) values (@a);
@@ -21766,5 +21767,10 @@ create table t2 ( id int, a json, b json, c json) as select id, a, json_extract(
 select id, length(a), length(json_extract(a, '/2')),  length(json_insert(a, '/0/_id', a) ) from t1 order by 3,4,2,1 desc;
 select id, length(json_object(cast (id as string), a)), length(json_array(id, a,json_depth(a),json_length(a))) from t1 order by 3,2,1;
 select id , length(a), length(b), length(c) from t2 order by id desc;
+select json_keys(@a), json_keys(@a, '$[1]');
+select json_keys(a), json_keys(a, '/0') from t1 where id < 3;
+select json_keys(@a,'$[0]') = json_keys(a,'$[0]') from t1 where id = 1;
+select json_length(json_get_all_paths(@a));
+select json_length(json_get_all_paths(a)) from t1;
 drop table if exists t1,t2;
 drop VARIABLE @a;
