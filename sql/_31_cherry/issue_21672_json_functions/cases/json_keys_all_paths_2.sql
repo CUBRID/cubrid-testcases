@@ -9,11 +9,10 @@ select * from usera where cast( json_extract(conn_t , '/time') as datetime) > ca
 alter table usera add result varchar(15);
 update usera set result=json_extract(conn_t,'/result');
 select * from usera order by 1,2;
--- CBRD-21880
--- select id, json_keys(conn_t) from usera order by 1,2;
+select unique json_keys(conn_t) from usera;
 select id, json_get_all_paths(conn_t) from usera order by 1,2;
--- CBRD-21880
--- select id, json_keys(result), json_get_all_path(conn_t) from usera order by 1,2,3;
+select id, json_keys(result) from usera order by 1,2;
+select id, json_get_all_paths(name) from usera order by 1,2;
 drop table if exists usera;
 
 drop table if exists t1;
@@ -27,8 +26,7 @@ insert into t1 values(6, '{"k1": "value", "k2": [10, 20]}');
 -- error
 insert into t1 values(7, '[1, 2,');
 select * from t1 order by 1;
--- CBRD-21880
--- select id, json_keys(jdoc) from t1 order by 1;
+select id, json_keys(jdoc) from t1 order by 1;
 select id, json_get_all_paths(jdoc) from t1 order by 1;
 drop table if exists t1;
 

@@ -15,8 +15,7 @@ json_depth(json_get_all_paths(json_object('a','b','c',1,'d',json_array('1','a'))
 select json_extract(json_get_all_paths(json_object('a','b','c',1,'d',json_array('1','a'))),'$[0]');
 
 set @j = '["a", ["b", "c"], "d"]';
--- CBRD-21872
--- select json_keys(json_array_append(@j, '/1', '1','/0', '2', '/2', '4','/2/0', '5'));
+select json_keys(json_array_append(@j, '/1', '1','/0', '2', '/2', '4','/2/0', '5'));
 select json_array_append(@j, '/1', '1','/0', '2', '/2', '3','/', '4');
 select json_array_append(@j, '/1', '1','/0', '2', '/2', '3','', '4');
 select json_array_append(@j, '/1', '1','/0', '2', '/2', '3','$', '4'); 
@@ -80,10 +79,9 @@ insert into json_test values (1,'{
     {"fName": "rr","lName": "rrr","songs": "gg@aaa.aa"}, 
     {"fName": "yy","lName": "yyy","songs": "pp@aaa.aa"}]}
 ');
--- CBRD-21880
--- select json_keys(emp) from json_test;
--- CBRD-21880
--- select json_keys(emp,'/authors') from json_test;
+select json_keys(emp) from json_test;
+select json_keys(emp,'/authors') from json_test;
+select json_keys(emp,'$.authors[1]') from json_test;
 select json_get_all_paths(emp) from json_test;
 
 select json_extract(authors,'/lName') name, authors,json_get_all_paths(authors) from (  
@@ -93,14 +91,13 @@ select json_extract(authors,'/lName') name, authors,json_get_all_paths(authors) 
   union all  
   select id,json_extract(emp,'/authors/2') authors from json_test  
 ) as t1 order by name desc;
--- CBRD-21880
--- select json_extract(authors,'/lName') name, authors,json_keys(authors)  from (  
---   select id,json_extract(emp,'/authors/0') authors from json_test  
---   union all  
---   select id,json_extract(emp,'/authors/1') authors from json_test  
---   union all  
---   select id,json_extract(emp,'/authors/2') authors from json_test  
--- ) as t1 order by name desc;
+select json_extract(authors,'/lName') name, authors,json_keys(authors)  from (  
+   select id,json_extract(emp,'/authors/0') authors from json_test  
+   union all  
+   select id,json_extract(emp,'/authors/1') authors from json_test  
+   union all  
+   select id,json_extract(emp,'/authors/2') authors from json_test  
+) as t1 order by name desc;
 
 select  
   json_extract(authors,'/fName') fName,  

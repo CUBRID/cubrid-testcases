@@ -43,6 +43,10 @@ json_extract(json_get_all_paths(json_object('a', 'b', 'c', 1, 'd', json_array('1
 ===================================================
 0
 ===================================================
+json_keys(json_array_append(@j, '/1', '1', '/0', '2', '/2', '4', '/2/0', '5'))    
+null     
+
+===================================================
 Error:-1202
 ===================================================
 json_array_append(@j, '/1', '1', '/0', '2', '/2', '3', '', '4')    
@@ -177,6 +181,18 @@ Error:-1202
 ===================================================
 1
 ===================================================
+json_keys(emp)    
+["programmers","authors","musicians"]     
+
+===================================================
+json_keys(emp, '/authors')    
+null     
+
+===================================================
+json_keys(emp, '$.authors[1]')    
+["fName","lName","works"]     
+
+===================================================
 json_get_all_paths(emp)    
 ["$.\"programmers\"[0].\"fName\"","$.\"programmers\"[0].\"lName\"","$.\"programmers\"[0].\"email\"","$.\"programmers\"[0]","$.\"programmers\"[1].\"fName\"","$.\"programmers\"[1].\"lName\"","$.\"programmers\"[1].\"email\"","$.\"programmers\"[1]","$.\"programmers\"[2].\"fName\"","$.\"programmers\"[2].\"lName\"","$.\"programmers\"[2].\"email\"","$.\"programmers\"[2]","$.\"programmers\"","$.\"authors\"[0].\"fName\"","$.\"authors\"[0].\"lName\"","$.\"authors\"[0].\"works\"","$.\"authors\"[0]","$.\"authors\"[1].\"fName\"","$.\"authors\"[1].\"lName\"","$.\"authors\"[1].\"works\"","$.\"authors\"[1]","$.\"authors\"[2].\"fName\"","$.\"authors\"[2].\"lName\"","$.\"authors\"[2].\"works\"","$.\"authors\"[2]","$.\"authors\"","$.\"musicians\"[0].\"fName\"","$.\"musicians\"[0].\"lName\"","$.\"musicians\"[0].\"songs\"","$.\"musicians\"[0]","$.\"musicians\"[1].\"fName\"","$.\"musicians\"[1].\"lName\"","$.\"musicians\"[1].\"songs\"","$.\"musicians\"[1]","$.\"musicians\"","$"]     
 
@@ -185,6 +201,12 @@ name    authors    json_get_all_paths(authors)
 "sss"     {"fName":"ss","lName":"sss","works":"ccc@aaa.aa"}     ["$.\"fName\"","$.\"lName\"","$.\"works\"","$"]     
 "ggg"     {"fName":"gg","lName":"ggg","works":"fff@aaa.aa"}     ["$.\"fName\"","$.\"lName\"","$.\"works\"","$"]     
 "fff"     {"fName":"ff","lName":"fff","works":"sss@aaa.aa"}     ["$.\"fName\"","$.\"lName\"","$.\"works\"","$"]     
+
+===================================================
+name    authors    json_keys(authors)    
+"sss"     {"fName":"ss","lName":"sss","works":"ccc@aaa.aa"}     ["fName","lName","works"]     
+"ggg"     {"fName":"gg","lName":"ggg","works":"fff@aaa.aa"}     ["fName","lName","works"]     
+"fff"     {"fName":"ff","lName":"fff","works":"sss@aaa.aa"}     ["fName","lName","works"]     
 
 ===================================================
 fName    lName    works    
