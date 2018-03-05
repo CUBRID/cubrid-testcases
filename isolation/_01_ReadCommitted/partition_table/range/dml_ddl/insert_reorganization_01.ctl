@@ -34,7 +34,7 @@ MC: wait until C2 ready;
 C2: commit;
 
 /* expected (1,abc)(1,ab) */
-C2: select * from t__p__p1_1 order by 1;
+C2: select * from t__p__p1_1 order by 1,2 desc;
 /* expected (3,abc) */
 C2: select * from t__p__p1_2 order by 1;
 /* expected (12,abc) */

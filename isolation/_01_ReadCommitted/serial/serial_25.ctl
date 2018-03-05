@@ -28,7 +28,7 @@ MC: wait until C1 ready;
 
 /* test case */
 C1: UPDATE tt1 SET id=s1.NEXT_VALUE WHERE id=101;
-C1: UPDATE tt1 SET id=s1.NEXT_VALUE WHERE id=102;
+C1: UPDATE tt1 SET id=s1.NEXT_VALUE, col=col WHERE id=102 order by id, col;
 MC: wait until C1 ready;
 C2: INSERT INTO tt1 VALUES(s1.NEXT_VALUE,'Square');
 MC: wait until C2 ready;
