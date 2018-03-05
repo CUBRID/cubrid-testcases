@@ -21768,9 +21768,9 @@ select id, length(a), length(json_extract(a, '/2')),  length(json_insert(a, '/0/
 select id, length(json_object(cast (id as string), a)), length(json_array(id, a,json_depth(a),json_length(a))) from t1 order by 3,2,1;
 select id , length(a), length(b), length(c) from t2 order by id desc;
 select json_keys(@a), json_keys(@a, '$[1]');
-select json_keys(a), json_keys(a, '/0') from t1 where id < 3;
+select id, json_keys(a), json_keys(a, '/0') from t1 where id < 3 order by 1;
 select json_keys(@a,'$[0]') = json_keys(a,'$[0]') from t1 where id = 1;
 select json_length(json_get_all_paths(@a));
-select json_length(json_get_all_paths(a)) from t1;
+select id, json_length(json_get_all_paths(a)) from t1 order by 1;
 drop table if exists t1,t2;
 drop VARIABLE @a;
