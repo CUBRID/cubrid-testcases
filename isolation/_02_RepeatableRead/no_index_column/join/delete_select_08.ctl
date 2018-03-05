@@ -36,13 +36,13 @@ MC: wait until C1 ready;
 /* test case */
 C1: DELETE a,b FROM tb1 a RIGHT JOIN tb2 b ON a.id = b.id WHERE b.id > 4;
 MC: wait until C1 ready;
-C2: SELECT * FROM tb1 a RIGHT JOIN tb2 b ON a.id = b.id WHERE a.id <= 2 or b.col = 'yzab' ;
+C2: SELECT * FROM tb1 a RIGHT JOIN tb2 b ON a.id = b.id WHERE a.id <= 2 or b.col = 'yzab' order by a.id, b.id;
 MC: wait until C2 ready;
 C1: commit;
 MC: wait until C1 ready;
-C2: SELECT * FROM tb1 a RIGHT JOIN tb2 b ON a.id = b.id WHERE a.id <= 2 or b.col = 'yzab' ;
+C2: SELECT * FROM tb1 a RIGHT JOIN tb2 b ON a.id = b.id WHERE a.id <= 2 or b.col = 'yzab' order by a.id, b.id;
 C2: commit;
-C2: SELECT * FROM tb1 a RIGHT JOIN tb2 b ON a.id = b.id WHERE a.id <= 2 or b.col = 'yzab' ;
+C2: SELECT * FROM tb1 a RIGHT JOIN tb2 b ON a.id = b.id WHERE a.id <= 2 or b.col = 'yzab' order by a.id, b.id;
 C2: commit;
 C1: quit;
 C2: quit;

@@ -42,10 +42,10 @@ C1: COMMIT WORK;
 MC: wait until C1 ready;
 
 /* test case */
-C1: SELECT * FROM t1 WHERE ABS(id) = 2; 
+C1: SELECT * FROM t1 WHERE ABS(id) = 2 order by 1 desc; 
 MC: wait until C1 ready;
 
-C2: SELECT * FROM t1 WHERE ABS(id) = 4; 
+C2: SELECT * FROM t1 WHERE ABS(id) = 4 order by 1 desc; 
 /* expect: no transactions need to wait, assume C1 finished before C2 */
 MC: wait until C2 ready;
 /* expect: C1 select - id = 2,-2 are selected */
