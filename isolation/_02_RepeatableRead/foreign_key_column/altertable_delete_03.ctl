@@ -47,11 +47,11 @@ C2: ALTER TABLE t_foreign ADD COLUMN age_1 INT;
 MC: wait until C2 blocked;
 C1: commit;
 MC: wait until C2 ready;
-C2: SELECT * FROM t_primary ORDER BY id;
-C2: SELECT * FROM t_foreign ORDER BY id;
+C2: SELECT * FROM t_primary ORDER BY id,col;
+C2: SELECT * FROM t_foreign ORDER BY id,col;
 C2: commit;
-C2: SELECT * FROM t_primary ORDER BY id;
-C2: SELECT * FROM t_foreign ORDER BY id;
+C2: SELECT * FROM t_primary ORDER BY id,col;
+C2: SELECT * FROM t_foreign ORDER BY id,col;
 C2: commit;
 
 C2: quit;
