@@ -17,6 +17,14 @@ set @mm='{"name": "json?????",
 
 select json_replace(@s, '/v1.0', @mm);
 select json_replace(@s, '$.v1.0', @mm); 
+select json_extract(@s, '$.v2.0');
+select json_extract(@s, '$."v2.0"');
+set @v='{
+"ver.name":"hello word",
+"v1.cc":"cccccc"
+}';
+select json_extract(@v, '$.ver.name');
+select json_extract(@v, '$."ver.name"');
 select json_replace((select json_replace(@s, '/v1.0', @mm) as result), '/v1.0/null', @s);
 select json_replace((select json_replace(@s, '$.v1.0', @mm) as result), '$.v1.0/null', @s);
 select json_replace((select json_replace(@s, '/v1.0', @mm) as result), '/v1.0/name', @s);    
@@ -50,6 +58,7 @@ select json_replace(name, '$', '{"url":"www.cubrid.com"}') from t;
 drop table if exists t;
 drop VARIABLE @ss;
 drop VARIABLE @s;
+drop VARIABLE @v;
 drop VARIABLE @mm;
 
 
