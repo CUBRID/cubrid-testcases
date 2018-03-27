@@ -58,22 +58,31 @@ MC: wait until C5 ready;
 
 /* test case */
 C1: DELETE FROM tb1 WHERE id BETWEEN 10003 AND 10005;
-C5: DELETE FROM tb1 WHERE id BETWEEN 10010 AND 10020 AND (select sleep(1))=0;
-MC: sleep 1;
+MC: wait until C1 ready;
+C5: DELETE FROM tb1 WHERE id BETWEEN 10010 AND 10020;
+MC: wait until C5 ready;
 C1: commit work;
+MC: wait until C1 ready;
 C2: DELETE FROM tb1 WHERE id BETWEEN 10300 AND 10310;
+MC: wait until C2 ready;
 
-C6: SELECT DISTINCT col,sleep(3) FROM tb1 WHERE id BETWEEN 10001 AND 15000 GROUP BY col ORDER BY col;
 C3: DELETE FROM tb1 WHERE id BETWEEN 10100 AND 10150; 
-C2: commit work;
-C3: commit work;
-C4: DELETE FROM tb1 WHERE id BETWEEN 10200 AND 10210 and (select sleep(1))=0;
-MC: sleep 6;
+MC: wait until C3 ready;
+C6: SELECT DISTINCT col FROM tb1 WHERE id BETWEEN 10001 AND 15000 GROUP BY col ORDER BY col;
 MC: wait until C6 ready;
+C2: commit work;
+MC: wait until C2 ready;
+C3: commit work;
+MC: wait until C3 ready;
+C4: DELETE FROM tb1 WHERE id BETWEEN 10200 AND 10210;
 C4: commit;
+MC: wait until C4 ready;
 C5: commit;
+MC: wait until C5 ready;
 C6: SELECT DISTINCT col FROM tb1 WHERE id BETWEEN 10001 AND 15000 GROUP BY col ORDER BY col;
 C6: commit;
+MC: wait until C6 ready;
+
 C6: quit;
 C5: quit;
 C4: quit;

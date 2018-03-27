@@ -29,7 +29,7 @@ MC: wait until C1 ready;
 
 /* test case */
 C1: insert into t select 1,'abc' from db_class a,db_class b,db_class c where rownum<=10000;
-MC: sleep 1;
+MC: wait until C1 ready;
 C2: update t set id=11 where id=1;
 MC: wait until C2 ready;
 /*MC: wait until C2 ready;*/
