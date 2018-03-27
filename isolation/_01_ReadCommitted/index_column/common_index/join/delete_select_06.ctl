@@ -39,7 +39,7 @@ MC: wait until C1 ready;
 C1: DELETE a,b FROM tb1 a LEFT JOIN tb2 b ON a.id = b.id WHERE a.id < 4;
 MC: wait until C1 ready;
 
-C2: SELECT * FROM tb1 a LEFT JOIN tb2 b ON a.id = b.id WHERE a.id = 2 or b.col = 'yzab' ;
+C2: SELECT * FROM tb1 a LEFT JOIN tb2 b ON a.id = b.id WHERE a.id = 2 or b.col = 'yzab' order by 1,2,3,4;
 /* expect: no transactions need to wait */
 MC: wait until C2 ready;
 /* expect: C1 - tb1 id = 1,2,3 is deleted, tb2 id = 1,3 is deleted */
