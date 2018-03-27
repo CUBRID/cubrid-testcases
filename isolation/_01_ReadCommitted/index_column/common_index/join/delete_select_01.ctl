@@ -37,16 +37,17 @@ C1: commit work;
 /* test case */
 C1: DELETE a,b FROM tb1 a INNER JOIN tb2 b ON a.id = b.id WHERE a.id = 1;
 MC: wait until C1 ready;
-C2: select * from ( SELECT a.id as aid,a.col as acol,b.id as bid,b.col as bcol FROM tb1 a INNER JOIN tb2 b ON a.id = b.id WHERE a.id = 2 or b.id = 3) t order by 1,2;
+C2: select * from ( SELECT a.id as aid,a.col as acol,b.id as bid,b.col as bcol FROM tb1 a INNER JOIN tb2 b ON a.id = b.id WHERE a.id = 2 or b.id = 3) t order by 1,2,3,4;
 MC: wait until C2 ready;
 /* expect: C1 - tb1 id = 1 is deleted, tb2 id = 1 is deleted */
 C1: SELECT * FROM tb1 order by 1,2;
 C1: SELECT * FROM tb2 order by 1,2;
 MC: wait until C1 ready;
-C2: SELECT * FROM tb1 a INNER JOIN tb2 b ON a.id = b.id WHERE a.id = 2 or b.id = 3;
+C2: SELECT * FROM tb1 a INNER JOIN tb2 b ON a.id = b.id WHERE a.id = 2 or b.id = 3 order by 1,2,3,4;
 C2: commit;
 /* expect: C2 - tb1 id = 1 is deleted, tb2 id = 1 is deleted */
-C2: SELECT * FROM tb1 a INNER JOIN tb2 b ON a.id = b.id WHERE a.id = 2 or b.id = 3;
+C2: SELECT * FROM tb1 a INNER JOIN tb2 b ON a.id = b.id WHERE a.id = 2 or b.id = 3 order by 1,2,3,4;
+MC: wait until C2 ready;
 
 C1: quit;
 C2: quit;

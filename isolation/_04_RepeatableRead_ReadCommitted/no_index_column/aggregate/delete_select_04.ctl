@@ -43,7 +43,7 @@ MC: wait until C2 ready;
 C3: SELECT MIN(id),MAX(id) FROM tb1;
 MC: wait until C3 ready;
 C1: commit;
-MC: wait until C2 ready;
+MC: wait until C1 ready;
 /* expected  (3, 199996)*/
 C3: SELECT MIN(id),MAX(id) FROM tb1;
 MC: wait until C3 ready;
@@ -51,7 +51,9 @@ C2: commit;
 MC: wait until C2 ready;
 C3: SELECT MIN(id),MAX(id) FROM tb1;
 C3: commit;
+MC: wait until C3 ready;
 
 C2: quit;
 C1: quit;
+C3: quit;
 

@@ -56,12 +56,14 @@ MC: wait until C2 ready;
 C1: SELECT * FROM t1 order by 1,2;
 C1: commit;
 /* expect: 1 row (id=6) deleted message should generated once C2 ready, C2 select - id = 6 is deleted, but id = 2 is still existed */
-MC: wait until C2 ready;
+MC: wait until C1 ready;
 C2: SELECT * FROM t1 order by 1,2;
 C2: commit;
+MC: wait until C2 ready;
 /* expect: the instances of id = 2,6 are deleted */
 C3: select * from t1 order by 1,2;
 C3: commit;
+MC: wait until C3 ready;
 
 C1: quit;
 C2: quit;
