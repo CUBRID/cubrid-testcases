@@ -36,11 +36,12 @@ MC: wait until C1 ready;
 C1: update t1 set id=7 where id=6;
 MC: wait until C1 ready;
 C1: select * from t1 order by 1,2;
+MC: wait until C1 ready;
 C2: select * from t1 order by 1,2;
-MC: wait until C1 ready;
+MC: wait until C2 ready;
 C1: commit;
-C2: commit;
 MC: wait until C1 ready;
+C2: commit;
 MC: wait until C2 ready;
 
 C1: quit;

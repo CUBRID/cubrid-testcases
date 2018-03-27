@@ -51,7 +51,7 @@ C2: DELETE FROM t1 WHERE id = 0 or col = 'abcd';
 /* expect: no transactions need to wait */
 MC: wait until C2 ready;
 /* expect: C1 select - id = 4,5 are updated */
-C1: SELECT * FROM t1 order by 1,2;
+C1: SELECT * FROM t1 order by 1,2,3;
 MC: wait until C1 ready;
 /* expect: C2 select - no instance is deleted */
 C2: SELECT * FROM t1 order by 1,2;
