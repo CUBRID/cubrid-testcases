@@ -26,7 +26,7 @@ C1: INSERT INTO tb1 VALUES(501, 'Stephan', 1, 300); INSERT INTO tb1 VALUES(501, 
 C1: rename table tb1 as tb2;
 C1: CREATE TABLE tb1 as select * from tb2 order by id, name, mont, amount;
 
-C1: CREATE INDEX idx_id on tb1(id);
+C1: CREATE INDEX idx_id on tb1(id asc);
 C1: commit work;
 MC: wait until C1 ready;
 
@@ -34,15 +34,15 @@ MC: wait until C1 ready;
 C1: DELETE FROM tb1 WHERE id =501 limit 4;
 MC: wait until C1 ready;
 
-C2: SELECT * FROM tb1 ORDER BY id DESC, name ASC,3,4; 
+C2: SELECT count(*) FROM tb1; 
 MC: wait until C2 ready;
 
 C1: commit work;
 MC: wait until C1 ready;
 
-C2: SELECT * FROM tb1 ORDER BY id DESC, name ASC,3,4;
+C2: SELECT count(*) FROM tb1; 
 C2: commit work;
-C2: SELECT * FROM tb1 ORDER BY id DESC, name ASC,3,4;
+C2: SELECT count(*) FROM tb1; 
 C2: commit;
 MC: wait until C2 ready;
 
