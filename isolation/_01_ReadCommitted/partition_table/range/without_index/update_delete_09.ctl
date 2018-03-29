@@ -36,11 +36,15 @@ MC: wait until C1 ready;
 C2: DELETE FROM t WHERE id=11;
 MC: wait until C2 ready;
 C1: commit;
+MC: wait until C1 ready;
 /* expect delete 1 row */
 C2: commit;
+MC: wait until C2 ready;
 /* expect (11,'abc') */
 C2: SELECT * FROM t order by 1,2;
 C2: commit;
+MC: wait until C2 ready;
 
 C1: quit;
 C2: quit;
+

@@ -57,10 +57,12 @@ C1: commit;
 /* expect: 1 rows (id=7)deleted message , C1 select - id = 7 is deleted, id = 1 is unchanged */
 C2: SELECT * FROM t1 ORDER BY 1,2;
 C2: commit;
+MC: wait until C2 ready;
 /* expect: the instances of id = 7 is deleted, id = 1 is updated */
 C3: select * from t1 ORDER BY 1,2;
-
 C3: commit;
+MC: wait until C3 ready;
+
 C1: quit;
 C2: quit;
 C3: quit;
