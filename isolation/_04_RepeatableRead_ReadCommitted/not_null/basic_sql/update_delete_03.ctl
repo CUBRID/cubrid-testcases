@@ -56,7 +56,7 @@ MC: wait until C2 ready;
 C1: SELECT * FROM t1 order by 1,2;
 C1: commit;
 /* expect: C2 finished execution after C1 commit, no instance deleted message, C2 select - id = 3(C1) is updated */
-MC: wait until C2 ready;
+MC: wait until C1 ready;
 C2: SELECT * FROM t1 order by 1,2;
 C2: commit;
 MC: wait until C2 ready;
