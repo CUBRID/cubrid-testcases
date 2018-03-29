@@ -20,8 +20,10 @@ MC: wait until C1 ready;
 /* test case */
 C1: update t1 set id1 = 2 where id1 = 1;
 MC: wait until C1 ready;
-C2: select * from t1;
-MC: wait until C2 ready; --expact retun 1 row, value is 1.
+
+/* expact C2 return 1 row, value is 1. */
+C2: select length(id1), substring(id1, 0, 10) from t1;
+MC: wait until C2 ready; 
 
 C1: commit;
 MC: wait until C1 ready;
