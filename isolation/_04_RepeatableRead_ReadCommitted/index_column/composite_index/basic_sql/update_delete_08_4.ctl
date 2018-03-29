@@ -57,13 +57,15 @@ MC: wait until C2 blocked;
 C1: SELECT * FROM t1 order by 1,2;
 C1: commit;
 /* expect: 2 rows (id = 1,3)deleted message should be generated once C2 ready, C2 select - id = 1,3 are deleted */
-MC: wait until C2 ready;
+MC: wait until C1 ready;
 C2: SELECT * FROM t1 order by 1,2;
 C2: commit;
+MC: wait until C2 ready;
 /* expect: id = 1,3 are deleted, id = 2,4 are updated */
 C3: select * from t1 order by 1,2;
-
 C3: commit;
+MC: wait until C3 ready;
+
 C1: quit;
 C2: quit;
 C3: quit;

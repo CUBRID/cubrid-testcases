@@ -46,7 +46,8 @@ C1: COMMIT WORK;
 MC: wait until C1 ready;
 
 /* test case */
-C1: DELETE FROM t1 WHERE (tag BETWEEN 'D' AND 'F') and 0 = (select sleep(6)); 
+C1: DELETE FROM t1 WHERE (tag BETWEEN 'D' AND 'F');
+MC: wait until C1 ready; 
 C2: UPDATE t1 SET tag = 'F' WHERE id IN (2,7);
 /* expect: no transactions need to wait */
 MC: wait until C2 ready;
@@ -54,12 +55,14 @@ MC: wait until C2 ready;
 C2: SELECT * FROM t1 order by 1,2;
 C2: rollback;
 /* expect: C1 finished execution after C2 commit, 3 rows (id=4,5,6)deleted message, C1 select - id = 4,5,6 are deleted */
-MC: wait until C1 ready;
+MC: wait until C2 ready;
 C1: SELECT * FROM t1 order by 1,2;
 C1: commit;
+MC: wait until C1 ready;
 /* expect: the instances of id = 4,5,6 are deleted */
 C3: select * from t1 order by 1,2;
 C3: commit;
+MC: wait until C3 ready;
 
 C2: commit;
 C1: quit;
