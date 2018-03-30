@@ -47,7 +47,8 @@ C1: COMMIT WORK;
 MC: wait until C1 ready;
 
 /* test case */
-C1: DELETE FROM t1 WHERE (id >= 1 and id <= 3) and 0 = (select sleep(2)); 
+C1: DELETE FROM t1 WHERE id >= 1 and id <= 3; 
+MC: wait until C1 ready;
 C2: UPDATE t1 SET id = 2 WHERE id IN (4,6);
 /* expect: no transactions need to wait */
 MC: wait until C2 ready;
@@ -55,9 +56,10 @@ MC: wait until C2 ready;
 C2: SELECT * FROM t1 order by 1,2;
 C2: commit;
 /* expect: C1 finished execution after C2 commit, 3 rows (id=1,2,3)deleted message, C1 select - id = 1,2,3 are deleted */
-MC: wait until C1 ready;
+MC: wait until C2 ready;
 C1: SELECT * FROM t1 order by 1,2;
 C1: commit;
+MC: wait until C1 ready;
 /* expect: the instances of id = 5,6 are updated, id = 1,2,3 are deleted */
 C3: select * from t1 order by 1,2;
 C3: commit;
