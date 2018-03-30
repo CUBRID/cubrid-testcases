@@ -118,7 +118,7 @@ C1: select count(*) from t;
 C1: commit;
 MC: wait until C1 ready;
 C2: insert into t values(1,1);
-MC: wait until C5 ready;
+MC: wait until C2 ready;
 /* expected 100 */
 C6: select count(*) from t where col=1;
 MC: wait until C6 ready;
