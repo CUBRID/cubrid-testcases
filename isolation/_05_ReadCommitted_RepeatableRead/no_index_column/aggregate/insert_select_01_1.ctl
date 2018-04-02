@@ -36,13 +36,15 @@ MC: wait until C1 ready;
 
 /* test case */
 C1: update t set id=col-1 where mod(id,2)=0;
+MC: wait until C2 ready;
 C2: insert into t select t1.* from (select t.* from t order by id) t1 where mod(id,3)=0;
+MC: wait until C3 ready;
 C3: select sum(id) from t group by col order by 1;
+MC: wait until C3 ready;
 C1: commit;
 MC: wait until C1 ready;
 c2: commit;
 MC: wait until C2 ready;
-MC: wait until C3 ready;
 C3: select sum(id) from t group by col order by 1;
 C3: commit work;
 C3: select sum(id) from t group by col order by 1;
