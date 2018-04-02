@@ -57,9 +57,11 @@ MC: wait until C1 ready;
 /* expect: C2 select - id = 1,7 are updated */
 C2: SELECT * FROM t1 ORDER BY 1,2;
 C2: commit;
+MC: wait until C2 ready;
 /* expect: C1 select - only id = 2 is deleted, id = 1,7 are not updated */
 C1: SELECT * FROM t1 ORDER BY 1,2;
 C1: commit;
+MC: wait until C1 ready;
 /* expect: the instances of id = 2 is deleted, id = 1,7 are updated */
 C3: select * from t1 ORDER BY 1,2;
 
