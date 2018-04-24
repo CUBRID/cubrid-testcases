@@ -47,7 +47,7 @@ MC: wait until C1 ready;
 C1: update t1 set col='aa' where id<4 and col='abc';
 MC: wait until C1 ready;
 
-C2: update t1 set col='bb' where id>1 and id<5 and col like 'ab%';
+C2: update t1 set col='bb' where id>1 and id<4 and col like 'ab%';
 MC: wait until C2 blocked;
 
 C3: update t1 set col='cc' where col like 'ab%'; 
