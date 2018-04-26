@@ -31,7 +31,7 @@ UPDATE t1 SET col4='bbb' WHERE col4='ccc';
 
 DELETE  FROM t1 WHERE col4='bbb';
 
-SELECT * FROM t1 USING INDEX t1_index order by 1;
+SELECT * FROM t1 USING INDEX t1_index order by 1,2,3,4,5,6,7,8,9,10,11,12,13,14;
 
 drop index "t1_index" on t1;
 

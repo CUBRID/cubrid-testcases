@@ -11,7 +11,7 @@ INSERT INTO Çç_Ğğ_İı_Öö_Şş_Üü VALUES ('Öö_Şş_Üü');
 INSERT INTO Çç_Ğğ_İı_Öö_Şş_Üü VALUES (null);
 
 --test
-SELECT Öö, DEFAULT(Öö) FROM Çç_Ğğ_İı_Öö_Şş_Üü;
+SELECT Öö, DEFAULT(Öö) FROM Çç_Ğğ_İı_Öö_Şş_Üü order by 1, 2;
 
 --test 
 drop table Çç_Ğğ_İı_Öö_Şş_Üü;

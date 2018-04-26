@@ -16,7 +16,7 @@ create vclass vStudent(
 )
 as select * from Student;
 
-select * from vStudent;
+select * from vStudent order by 1,2,3;
 
 select * from db_vclass
 where vclass_name = 'vstudent'

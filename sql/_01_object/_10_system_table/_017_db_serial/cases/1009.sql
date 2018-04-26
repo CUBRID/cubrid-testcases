@@ -18,7 +18,7 @@ select * from test_class;
 
 select *
 from   db_serial
-where  name = 'test_serial';
+where  name = 'test_serial' order by 1;
 
 
 drop class test_class;

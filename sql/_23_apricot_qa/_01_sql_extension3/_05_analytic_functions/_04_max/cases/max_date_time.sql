@@ -41,7 +41,7 @@ select col2, col3, max(all col4) over() maximum from max_date_time order by 1, 2
 select col3, col4, max(col3) over() maximum from max_date_time where col1 > '2000-12-12' order by col3, col4;
 --TEST: datetime, distinct
 select col4, col1, max(distinct col2) over() maximum from max_date_time order by 1, 2;
-select col5, max(col5) over() maximum from max_date_time;
+select col5, max(col5) over() maximum from max_date_time order by 1,2;
 --TEST: syntax error
 select col1, col3, col4, max(col5) over maximum from max_date_time;
 select col1, col3, col2, max(col5) over(1) maximum from max_date_time;

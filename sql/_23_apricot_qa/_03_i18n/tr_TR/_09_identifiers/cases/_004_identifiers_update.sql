@@ -15,7 +15,7 @@ create trigger tr_Çç_Ğğ_İı_Öö_Şş_Üü before insert on  Çç_Ğğ_İı
 --test update
 insert into Çç_Ğğ_İı_Öö_Şş_Üü values('hello',2);
 --test select
-select * from Çç_Ğğ_İı_Öö_Şş_Üü;
+select * from Çç_Ğğ_İı_Öö_Şş_Üü order by s1 desc;
 --test 
 drop trigger tr_Çç_Ğğ_İı_Öö_Şş_Üü;
 --test 
