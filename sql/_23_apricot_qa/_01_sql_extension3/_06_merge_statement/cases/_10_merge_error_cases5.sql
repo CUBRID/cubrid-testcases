@@ -39,7 +39,7 @@ values((t2.id-3), t2.name)
 where t2.id < 10;
 
 --TEST: check update result
-select * from t1;
+select * from t1 order by 1,2;
 select if(count(*)=0, 'ok', 'nok') from t1 where name in ('George', 'Laura');
 select if(count(*)=0, 'ok', 'nok') from trigger_actions;
 
@@ -61,7 +61,7 @@ values(t2.id, t2.name)
 where t2.id < 10;
 
 --TEST: check update result
-select * from t1;
+select * from t1 order by 1,2;
 select if(count(*)=0, 'ok', 'nok') from t1 where name in ('George', 'Laura');
 select if(count(*)=0, 'ok', 'nok') from trigger_actions;
 
@@ -125,7 +125,7 @@ insert
 values(t2.id, t2.name);
 
 --TEST: check update result
-select * from t1;
+select * from t1 order by 1,2;
 select if(count(*)=0, 'ok', 'nok') from t1 where name=null;
 select if(count(*)=5, 'ok', 'nok') from t1;
 select if(count(*)=0, 'ok', 'nok') from trigger_actions;
@@ -147,7 +147,7 @@ insert
 values(t2.id, null);
 
 --TEST: check update result
-select * from t1;
+select * from t1 order by 1,2;
 select if(count(*)=0, 'ok', 'nok') from t1 where name='updated';
 select if(count(*)=5, 'ok', 'nok') from t1;
 select if(count(*)=0, 'ok', 'nok') from trigger_actions;

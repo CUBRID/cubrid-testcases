@@ -27,7 +27,7 @@ UPDATE t1 SET col14=B'0011' WHERE col1=3;
 
 DELETE  FROM t1 WHERE col1=2;
 
-SELECT * FROM t1 order by 1;
+SELECT * FROM t1 order by 1,2,3,4,5,6,7,8,9,10,11,12,13,14;
 
 create reverse index t1_index on t1(col14);
 

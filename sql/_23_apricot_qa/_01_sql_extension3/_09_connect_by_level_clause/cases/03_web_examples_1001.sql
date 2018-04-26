@@ -33,6 +33,7 @@ insert into test_connect_by values (null, 18);
 select lpad(' ',2*(level-1)) || to_char(child) s
 from test_connect_by
 start with parent is null
-connect by prior child = parent;
+connect by prior child = parent
+order by s;
 
 drop table if exists test_connect_by;

@@ -79,11 +79,11 @@ INSERT INTO t(col2, col3, col4) VALUES(UPPER('q'), UPPER('q'), CONCAT(' ', UPPER
 INSERT INTO t(col2, col3, col4) VALUES(UPPER('x'), UPPER('x'), CONCAT(' ', UPPER('x')));
 INSERT INTO t(col2, col3, col4) VALUES(UPPER('w'), UPPER('w'), CONCAT(' ', UPPER('w')));
 --test
-SELECT * from t order by col2;
+SELECT * from t order by col2, col1;
 --test
-SELECT * from t order by col3 DESC;
+SELECT * from t order by col3 DESC, col1;
 --test
-SELECT * from t order by col4;
+SELECT * from t order by col4, col1;
 
 DROP TABLE t;
 set names iso88591;

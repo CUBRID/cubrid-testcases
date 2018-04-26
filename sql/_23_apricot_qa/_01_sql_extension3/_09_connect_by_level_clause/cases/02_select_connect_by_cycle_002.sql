@@ -27,13 +27,15 @@ INSERT INTO o_l VALUES ('K', 'M', 'refers');
 SELECT connect_by_root o_n, level, o_n,TYPE,   l_o
 FROM "o_l"
 connect BY nocycle o_n = prior l_o
-START WITH o_n = 'A';
+START WITH o_n = 'A'
+order by 1,2,3,4,5;
 
 
 SELECT connect_by_root o_n, level, TYPE, o_n, l_o
 FROM "o_l"
 connect BY o_n = prior l_o
-START WITH o_n = 'A';
+START WITH o_n = 'A'
+order by 1,2,3,4,5;
 
 
 DROP TABLE IF EXISTS o_l;

@@ -82,9 +82,9 @@ INSERT INTO t(col2) VALUES(UPPER('呵'));
 INSERT INTO t(col2) VALUES(UPPER('锕'));
 INSERT INTO t(col2) VALUES(UPPER('翶'));
 --test
-SELECT * from t order by col2;
+SELECT * from t order by col2, col1;
 --test
-SELECT * from t order by col2 desc;
+SELECT * from t order by col2 desc, col1;
 
 DROP TABLE t;
 set names iso88591;

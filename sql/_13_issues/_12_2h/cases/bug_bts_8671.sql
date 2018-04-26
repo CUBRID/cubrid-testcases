@@ -10,6 +10,6 @@ insert into foo1 values ( 53, '10:37:00 PM  ');
 insert into foo1 values ( 54, '10:37:00 PPM');
 
 ---see result
-SELECT * FROM foo1;
+SELECT * FROM foo1 order by 1,2;
 drop foo1;
 
