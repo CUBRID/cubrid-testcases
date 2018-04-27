@@ -7,7 +7,7 @@ insert into t1 select rownum,null from db_class limit 1;
 
 --check:
 select * from t1;
-desc t1
+desc t1;
 
 --test
 drop table t1;
@@ -18,7 +18,7 @@ insert into t1 select rownum,null from db_class limit 1;
 
 --check:
 select * from t1;
-desc t1
+desc t1;
 
 --test
 drop table t1;
@@ -28,7 +28,7 @@ insert into t1 select rownum,null from db_class limit 1;
 
 --check:
 select * from t1;
-desc t1
+desc t1;
 
 --test
 drop table t1;
