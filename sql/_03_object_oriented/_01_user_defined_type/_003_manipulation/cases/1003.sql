@@ -34,7 +34,7 @@ insert into DML_0003 values (3,'test2', {1,'test2'},3);
 insert into DML_0003 values (4,'test1', {2,'test1'},4);
 insert into DML_0003 values (5,'test2', {2,'test2'},5);
 
-select *, ref_col.int_col from DML_0002;
+select *, ref_col.int_col from DML_0002 order by 1;
 
 drop class DML_0001;
 drop class DML_0002;

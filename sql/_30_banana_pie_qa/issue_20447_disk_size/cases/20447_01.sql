@@ -33,15 +33,15 @@ insert into t1 values('',-1,'',n'',n'');
 
 insert into t1 values(repeat('a',300),0,repeat('a',300),repeat(n'a',300),repeat(n'a',300));
 
-select disk_size(s1),disk_size(i1),disk_size(s2),disk_size(s3),disk_size(s4) from t1;
+select disk_size(s1),disk_size(i1),disk_size(s2),disk_size(s3),disk_size(s4) from t1 order by 1;
 
-select disk_size(s1)+20 from t1;
+select disk_size(s1)+20 from t1 order by 1;
 
-select disk_size(s1)-20 from t1;
+select disk_size(s1)-20 from t1 order by 1;
 
-select disk_size(s1)*20 from t1;
+select disk_size(s1)*20 from t1 order by 1;
 
-select disk_size(s1)/20 from t1;
+select disk_size(s1)/20 from t1 order by 1;
 
 select s1 from t1 where disk_size(s1) > 24 order by s1;
 

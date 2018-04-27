@@ -74,13 +74,13 @@ INSERT INTO t(col2) VALUES(UPPER('○'));
 INSERT INTO t(col2) VALUES(UPPER('韓'));
 INSERT INTO t(col2) VALUES(UPPER('帀'));
 --test
-SELECT * from t  where col2 between UPPER('Ǘ') and 'ü' order by col2;
+SELECT * from t  where col2 between UPPER('Ǘ') and 'ü' order by col2 ,col1;
 --test
-SELECT * from t  where col2 between UPPER('n') and 'Ü' order by col2 desc;
+SELECT * from t  where col2 between UPPER('n') and 'Ü' order by col2 desc, col1;
 --test
-SELECT * from t  where col2 between UPPER('語') and '帀' order by col2 limit 3;
+SELECT * from t  where col2 between UPPER('語') and '帀' order by col2 ,col1 limit 3;
 --test
-SELECT * from t  where col2 between UPPER('ē') and '帀' order by col2 desc limit 2;
+SELECT * from t  where col2 between UPPER('ē') and '帀' order by col2 desc, col1 limit 2;
 DROP TABLE t;
 set names iso88591;
 commit;

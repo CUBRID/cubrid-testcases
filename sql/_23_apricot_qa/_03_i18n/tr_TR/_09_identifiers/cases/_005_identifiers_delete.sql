@@ -15,7 +15,7 @@ create trigger tr_Çç_Ğğ_İı_Öö_Şş_Üü before insert on Çç_Ğğ_İı_
 --test insert
 insert into Çç_Ğğ_İı_Öö_Şş_Üü values('Çç_Ğğ_İı_Öö_Şş_Üü',2);
 --test select
-select * from Çç_Ğğ_İı_Öö_Şş_Üü;
+select * from Çç_Ğğ_İı_Öö_Şş_Üü order by 2;
 --test delete
 delete from Çç_Ğğ_İı_Öö_Şş_Üü where i_Çç_Ğğ_İı_Öö_Şş_Üü=0;
 --test select
