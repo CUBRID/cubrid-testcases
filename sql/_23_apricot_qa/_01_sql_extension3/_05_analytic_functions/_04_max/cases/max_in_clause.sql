@@ -60,7 +60,7 @@ select col1, max(col1) over(order by col1) from max_in_clause order by max(col2)
 --TEST: use more than one analytic function in the same query, in the select list and in ORDER BY clause of a query
 select col1, col2, max(col2) over(partition by col1 order by col2) maximum from max_in_clause group by maximum ,col1;
 select col1, col2, max(col3) over(order by col1), col4 from max_in_clause order by max(distinct col1) over(partition by col2 order by col1);
-select col1, col2, max(col6) over(order by col1, col2), col3 from max_in_clause group by col2 order by max(distinct col2) over();
+select min(col1), col2, max(col6) over(order by col1, col2) from max_in_clause group by col2 order by max(distinct col2) over() ;
 
 
 
