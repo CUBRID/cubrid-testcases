@@ -5,7 +5,7 @@ PARTITION BY LIST (a) (
     PARTITION a1 VALUES IN ('A')
 );
 insert into t1 values ('a'), ('A');
-select * from t1 order by 1;
+select a, hex(a) from t1 order by 2,1;
 drop table t1;
 
 
@@ -15,7 +15,7 @@ PARTITION BY LIST (a) (
 );
 insert into t1 values ('A');
 insert into t1 values ('a');
-select * from t1 order by 1;
+select a, hex(a) from t1 order by 2,1;
 drop table t1;
 
 
@@ -25,7 +25,7 @@ PARTITION BY LIST (a) (
 );
 insert into t1 values ('A');
 insert into t1 values ('a');
-select * from t1 order by 1;
+select a, hex(a) from t1 order by 2,1;
 drop table t1;
 
 
@@ -35,7 +35,7 @@ PARTITION BY LIST (a) (
 );
 insert into t1 values ('A');
 insert into t1 values ('a');
-select * from t1 order by 1;
+select a, hex(a) from t1 order by 2,1;
 drop table t1;
 
 
@@ -45,7 +45,7 @@ PARTITION BY LIST (a) (
 );
 insert into t1 values ('A');
 insert into t1 values ('a');
-select * from t1 order by 1;
+select a, hex(a) from t1 order by 2,1;
 drop table t1;
  
 
@@ -55,7 +55,7 @@ PARTITION BY LIST (a) (
 );
 insert into t1 values ('A');
 insert into t1 values ('a');
-select * from t1 order by 1;
+select a, hex(a) from t1 order by 2,1;
 drop table t1;
 
 
@@ -65,7 +65,7 @@ PARTITION BY LIST (a) (
 );
 insert into t1 values ('A');
 insert into t1 values ('a');
-select * from t1 order by 1;
+select a, hex(a) from t1 order by 2,1;
 drop table t1;
 
  
@@ -75,7 +75,7 @@ PARTITION BY LIST (a) (
 );
 insert into t1 values ('A');
 insert into t1 values ('a');
-select * from t1 order by 1;
+select a, hex(a) from t1 order by 2,1;
 drop table t1;
  
 
@@ -86,7 +86,7 @@ PARTITION BY LIST (a) (
 );
 insert into t1 values ('A');
 insert into t1 values ('a');
-select * from t1 order by 1;
+select a, hex(a) from t1 order by 2,1;
 drop table t1;
 
  
@@ -96,7 +96,7 @@ PARTITION BY LIST (a) (
 );
 insert into t1 values ('A');
 insert into t1 values ('a');
-select * from t1 order by 1;
+select a, hex(a) from t1 order by 2,1;
 drop table t1;
 
 
@@ -107,7 +107,7 @@ PARTITION BY LIST (a) (
 );
 insert into t1 values ('A');
 insert into t1 values ('a');
-select * from t1 order by 1;
+select a, hex(a) from t1 order by 2,1;
 drop table t1;
 
  
@@ -117,7 +117,7 @@ PARTITION BY LIST (a) (
 );
 insert into t1 values ('A');
 insert into t1 values ('a');
-select * from t1 order by 1;
+select a, hex(a) from t1 order by 2,1;
 drop table t1;
 
  
@@ -128,7 +128,7 @@ PARTITION BY LIST (a) (
 );
 insert into t1 values ('A');
 insert into t1 values ('a');
-select * from t1 order by 1;
+select a, hex(a) from t1 order by 2,1;
 drop table t1;
 
 
@@ -138,7 +138,7 @@ PARTITION BY LIST (a) (
 );
 insert into t1 values ('A');
 insert into t1 values ('a');
-select * from t1 order by 1;
+select a, hex(a) from t1 order by 2,1;
 drop table t1;
 
 
@@ -148,7 +148,7 @@ PARTITION BY LIST (a) (
 );
 insert into t1 values ('A');
 insert into t1 values ('a');
-select * from t1 order by 1;
+select a, hex(a) from t1 order by 2,1;
 drop table t1;
 
 
@@ -158,7 +158,7 @@ PARTITION BY LIST (a) (
 );
 insert into t1 values ('A');
 insert into t1 values ('a');
-select * from t1 order by 1;
+select a, hex(a) from t1 order by 2,1;
 drop table t1;
 
 
@@ -168,7 +168,7 @@ PARTITION BY LIST (a) (
 );
 insert into t1 values ('A');
 insert into t1 values ('a');
-select * from t1 order by 1;
+select a, hex(a) from t1 order by 2,1;
 drop table t1;
 
 
@@ -179,7 +179,7 @@ PARTITION BY LIST (a) (
 );
 insert into t1 values ('A');
 insert into t1 values ('a');
-select * from t1 order by 1;
+select a, hex(a) from t1 order by 2,1;
 drop table t1;
 
 
@@ -190,7 +190,7 @@ PARTITION BY LIST (a) (
 );
 insert into t1 values ('A');
 insert into t1 values ('a');
-select * from t1 order by 1;
+select a, hex(a) from t1 order by 2,1;
 drop table t1;
 
 
@@ -200,7 +200,7 @@ PARTITION BY LIST (a) (
 );
 insert into t1 values ('A');
 insert into t1 values ('a');
-select * from t1 order by 1;
+select a, hex(a) from t1 order by 2,1;
 drop table t1;
 
 
@@ -211,7 +211,7 @@ PARTITION BY LIST (a) (
 );
 insert into t1 values ('A');
 insert into t1 values ('a');
-select * from t1 order by 1;
+select a, hex(a) from t1 order by 2,1;
 drop table t1;
 
 
@@ -222,7 +222,7 @@ PARTITION BY LIST (a) (
 );
 insert into t1 values ('A');
 insert into t1 values ('a');
-select * from t1 order by 1;
+select a, hex(a) from t1 order by 2,1;
 drop table t1;
 
 
@@ -233,7 +233,7 @@ PARTITION BY LIST (a) (
 );
 insert into t1 values ('A');
 insert into t1 values ('a');
-select * from t1 order by 1;
+select a, hex(a) from t1 order by 2,1;
 drop table t1;
 
 
@@ -244,7 +244,7 @@ PARTITION BY LIST (a) (
 );
 insert into t1 values ('A');
 insert into t1 values ('a');
-select * from t1 order by 1;
+select a, hex(a) from t1 order by 2,1;
 drop table t1;
 
 set names iso88591;

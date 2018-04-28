@@ -31,7 +31,7 @@ insert into t values('Ab', 'aB');
 
 
 --compare with s1
-prepare st2 from 'select s1, find_in_set(s1, ?+?) from t order by 1, 2';
+prepare st2 from 'select s1, find_in_set(s1, ?+?), hex(s1) from t order by 1, 2, 3';
 execute st2 using 'a', 'b';
 set names utf8 collate utf8_en_ci;
 execute st2 using 'A', 'B';
