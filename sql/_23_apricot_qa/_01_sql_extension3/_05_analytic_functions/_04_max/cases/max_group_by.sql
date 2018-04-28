@@ -41,6 +41,9 @@ insert into max_groupby(col2, col3, col4, col5, col6) values(505, 'mysql', '1990
 insert into max_groupby(col2, col3, col4, col5, col6) values(505, 'cubrid', '1995-10-10', null, 191.33);
 insert into max_groupby(col2, col3, col4, col5, col6) values(505, 'cubrid', '1990-10-10', 'zello@domainname.com', 5435.22);
 
+create table max_groupby_order as select * from max_groupby order by 1;
+rename table max_groupby to max_groupby_old;
+rename table max_groupby_order to max_groupby;
 
 
 --TEST: over() clause + group by
@@ -85,5 +88,6 @@ select col1, col2, col3, col4, clob_to_char(col5), max(col6) over(partition by c
 
 delete from max_groupby;
 drop table max_groupby;
+drop table max_groupby_old;
 
 

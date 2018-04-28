@@ -52,7 +52,7 @@ select col7, col3, col5, max(distinct col7) over() maximum from max_constraints 
 --TEST: no matched rows
 select col1, col2, col3, col4, col5, col6, col7, max(unique col7) over() maximum from max_constraints where trunc(col6)=111 order by 1, 2, 3, 4, 5, 6;
 --TEST: syntax error
-select *, max(col1) over() maximum from max_constraints;
+select *, max(col1) over() maximum from max_constraints order by 1, 2, 3, 4, 5, 6, 7, 8;
 select col1, col3, col5, max(col2) over maximum from max_constraints;
 select col1, col3, col5, max(col3) over(1) maximum from max_constraints;
 
