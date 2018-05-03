@@ -16,13 +16,13 @@ insert into t(a)  values ('test1');
 
 insert into t(a)  values ('test2');
 
-select * from t;
+select * from t order by 1;
 
 insert into t  values ('test1') on duplicate key update a = 'hello1';
 
 insert into v  values ('test2') on duplicate key update a = 'hello2';
 
-select * from t;
+select * from t order by 1;
 
 drop v;
 

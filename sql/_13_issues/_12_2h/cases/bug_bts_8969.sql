@@ -16,12 +16,12 @@ insert into foo values({1, 5, 3}, {'b', 'b'});
 
 select a, b from foo order by 1, 2;
 
-select a, b, row_number() over() rn from foo order by 1, 2;
-select a, b, row_number() over(order by a, b) rn from foo order by 1, 2;
-select a, b, row_number() over(partition by a) rn from foo order by 1, 2;
-select a, b, row_number() over(partition by b) rn from foo order by 1, 2;
-select a, b, row_number() over(partition by a, b order by 2) rn from foo order by 1, 2;
-select a, b, row_number() over(partition by b order by 1, 2) rn from foo order by 1, 2;
+select a, b, row_number() over() rn from foo order by 1,2,3;
+select a, b, row_number() over(order by a, b) rn from foo order by 1,2,3;
+select a, b, row_number() over(partition by a) rn from foo order by 1,2,3;
+select a, b, row_number() over(partition by b) rn from foo order by 1,2,3;
+select a, b, row_number() over(partition by a, b order by 2) rn from foo order by 1,2,3;
+select a, b, row_number() over(partition by b order by 1, 2) rn from foo order by 1,2,3;
 
 
 drop table foo;

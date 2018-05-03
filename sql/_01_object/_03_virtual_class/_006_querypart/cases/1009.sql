@@ -16,7 +16,7 @@ create vclass vxoo1 (
 ) as select * from vxoo;
 
 
-select * from vxoo;
+select * from vxoo order by 1,2;
 drop vclass vxoo;
 drop vclass vxoo1;
 
@@ -29,7 +29,7 @@ create vclass vxoo1 (
 	title varchar(100)
 ) as select * from vxoo;
 
-select * from vxoo;
+select * from vxoo order by 1,2;
 drop vclass vxoo;
 drop vclass vxoo1;
 
