@@ -127,7 +127,7 @@ var_samp (v)     over (partition by k1) as A5,
 var_pop (v)      over (partition by k2, k1) as A6,
 min (v)          over (partition by k3, k2, k1) as A7,
 max (v)          over (partition by k3, k2, k1, k4) as A8,
-lead (v)         over (order by k1) as A9
+lead (v)         over (order by k1,v) as A9
 from t
 difference
 select /*+ recompile */
@@ -139,7 +139,7 @@ var_samp (v)     over (partition by k1+5) as A5,
 var_pop (v)      over (partition by k2+8, k1+8) as A6,
 min (v)          over (partition by k3+6, k2+6, k1+6) as A7,
 max (v)          over (partition by k3+7, k2+7, k1+7, k4+7) as A8,
-lead (v)         over (order by k1+1) as A9
+lead (v)         over (order by k1+1,v) as A9
 from t;
 
 select /*+ recompile */
