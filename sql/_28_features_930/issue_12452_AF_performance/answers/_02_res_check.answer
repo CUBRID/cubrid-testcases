@@ -235,24 +235,25 @@ sscan
     cost:  ? card ?
 Analytic functions:
     run[?]: sort with key (? asc nulls first, ? asc nulls first, ? asc nulls first, ? asc nulls first)
-           func[?]: var_pop partition by (? asc nulls first, ? asc nulls first) order by ()
-           func[?]: lead partition by () order by (? asc nulls first)
-           func[?]: var_samp partition by (? asc nulls first) order by ()
            func[?]: stddev_pop partition by () order by (? asc nulls first, ? asc nulls first, ? asc nulls first, ? asc nulls first)
-           func[?]: max partition by (? asc nulls first, ? asc nulls first, ? asc nulls first, ? asc nulls first) order by ()
+           func[?]: var_pop partition by (? asc nulls first, ? asc nulls first) order by ()
            func[?]: avg partition by () order by (? asc nulls first, ? asc nulls first)
-           func[?]: sum partition by () order by (? asc nulls first)
+           func[?]: max partition by (? asc nulls first, ? asc nulls first, ? asc nulls first, ? asc nulls first) order by ()
            func[?]: min partition by (? asc nulls first, ? asc nulls first, ? asc nulls first) order by ()
            func[?]: stddev_samp partition by () order by (? asc nulls first, ? asc nulls first, ? asc nulls first)
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: lead partition by () order by (? asc nulls first, ? asc nulls first)
+           func[?]: var_samp partition by (? asc nulls first) order by ()
+           func[?]: sum partition by () order by (? asc nulls first)
 Query stmt:
-select sum(t.v) over (order by ?), avg(t.v) over (order by ?, ?), stddev_samp(t.v) over (order by ?, ?, ?), stddev_pop(t.v) over (order by ?, ?, ?, ?), var_samp(t.v) over (partition by ?), var_pop(t.v) over (partition by ?, ?), min(t.v) over (partition by ?, ?, ?), max(t.v) over (partition by ?, ?, ?, ?), lead(t.v, ?, null) over (order by ?) from t t
+select sum(t.v) over (order by ?), avg(t.v) over (order by ?, ?), stddev_samp(t.v) over (order by ?, ?, ?), stddev_pop(t.v) over (order by ?, ?, ?, ?), var_samp(t.v) over (partition by ?), var_pop(t.v) over (partition by ?, ?), min(t.v) over (partition by ?, ?, ?), max(t.v) over (partition by ?, ?, ?, ?), lead(t.v, ?, null) over (order by ?, ?) from t t
 Query plan:
 sscan
     class: t node[?]
     cost:  ? card ?
 Analytic functions:
-    run[?]: sort with key (? asc nulls first)
-           func[?]: lead partition by () order by (? asc nulls first)
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: lead partition by () order by (? asc nulls first, ? asc nulls first)
     run[?]: sort with key (? asc nulls first, ? asc nulls first, ? asc nulls first, ? asc nulls first)
            func[?]: max partition by (? asc nulls first, ? asc nulls first, ? asc nulls first, ? asc nulls first) order by ()
     run[?]: sort with key (? asc nulls first, ? asc nulls first, ? asc nulls first)
@@ -270,7 +271,7 @@ Analytic functions:
     run[?]: sort with key (? asc nulls first)
            func[?]: sum partition by () order by (? asc nulls first)
 Query stmt:
-select sum(t.v) over (order by ?), avg(t.v) over (order by ?, ?), stddev_samp(t.v) over (order by ?, ?, ?), stddev_pop(t.v) over (order by ?, ?, ?, ?), var_samp(t.v) over (partition by ?), var_pop(t.v) over (partition by ?, ?), min(t.v) over (partition by ?, ?, ?), max(t.v) over (partition by ?, ?, ?, ?), lead(t.v, ?, null) over (order by ?) from t t
+select sum(t.v) over (order by ?), avg(t.v) over (order by ?, ?), stddev_samp(t.v) over (order by ?, ?, ?), stddev_pop(t.v) over (order by ?, ?, ?, ?), var_samp(t.v) over (partition by ?), var_pop(t.v) over (partition by ?, ?), min(t.v) over (partition by ?, ?, ?), max(t.v) over (partition by ?, ?, ?, ?), lead(t.v, ?, null) over (order by ?, ?) from t t
 ===================================================
 A1    A2    A3    A4    A5    A6    A7    A8    A9    
 
