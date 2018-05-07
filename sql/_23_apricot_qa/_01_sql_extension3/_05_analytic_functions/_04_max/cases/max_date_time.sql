@@ -68,7 +68,7 @@ select col2, col3, max(all col5) over(order by col2, col3 asc) maximum from max_
 --TEST: order by more than 2 column names
 select col1, col2, col3, col4, max(col3) over(order by col1, col2 desc, col3, col4 asc) maximum from max_date_time;
 --TEST: order by columns not selected
-select col3, max(distinct col2) over(order by col4 desc, col2, col1 asc) maximum from max_date_time;
+select col3, max(distinct col2) over(order by col4 desc, col2, col1 asc) maximum from (select * from max_date_time order by 1,2,3,4,5);
 --TEST: order by 1 position
 select col4, max(unique col1) over(order by 1) maximum from max_date_time;
 --TEST: order by 3 positions
