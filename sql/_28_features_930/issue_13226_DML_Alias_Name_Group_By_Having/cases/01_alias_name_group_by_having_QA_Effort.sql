@@ -31,15 +31,15 @@ select a, ifnull(b,3) b from t1 order by b;
 select a, ifnull(b,3) b from t1 group by b order by 1,2;
 select a, ifnull(b,3) b from t1 group by b order by b;
 
-select a, ifnull(b,3) as b, count(*) from t1 group by ifnull(b,2) order by 1,2,3;
+select a, max(ifnull(b,3)) as b, count(*) from t1 group by ifnull(b,2) order by 1,2,3;
 select a, ifnull(b,3) as b, count(*) from t1 group by ifnull(b,3) order by 1,2,3;
 
-select a, ifnull(b,3) as b, count(*) from t1 group by ifnull(b,a) order by 1,2,3;
-select a, ifnull(b,3) as b, count(*) from t1 group by ifnull(a,b) order by 1,2,3;
+select a, max(ifnull(b,3)) as b, count(*) from t1 group by ifnull(b,a) order by 1,2,3;
+select a, max(ifnull(b,3)) as b, count(*) from t1 group by ifnull(a,b) order by 1,2,3;
 
-select a, b, count(*) from t1  group by if(b is null, 2, b) order by b;
-select a, b, count(*) from t1  group by if(b is null, 2, b) order by b nulls first;
-select a, b, count(*) from t1  group by if(b is null, 2, b) order by b nulls last;
+select a, max(b), count(*) from t1  group by if(b is null, 2, b) order by b;
+select a, max(b), count(*) from t1  group by if(b is null, 2, b) order by b nulls first;
+select a, max(b), count(*) from t1  group by if(b is null, 2, b) order by b nulls last;
 select a, b  from t1  order by b nulls last;
 select a, ifnull(b,1) as b  from t1  order by b nulls last , a;
 select a, ifnull(b,null) as b  from t1  order by b nulls last;
