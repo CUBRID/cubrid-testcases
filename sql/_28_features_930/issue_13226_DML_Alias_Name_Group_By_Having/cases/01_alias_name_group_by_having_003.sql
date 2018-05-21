@@ -304,18 +304,18 @@ SELECT b FROM t1 where b is null GROUP BY b order by 1,2;
 
 select txx.b b from t1 tx join t1 txx group by b order by 1,2;
 select tx.a b, txx.b b from t1 tx join t1 txx group by b order by 1,2;
-SELECT a b, b ,count(*) FROM t1 where b is null GROUP BY b order by 1,2;
-SELECT a b, ifnull(b,10) b ,count(*) FROM t1 where b is null GROUP BY b order by 1,2;
-SELECT a b, b , b , a, count(*) FROM t1 where b is null GROUP BY b order by 1,2;
+SELECT min(a) b, b ,count(*) FROM t1 where b is null GROUP BY b order by 1,2;
+SELECT min(a) b, ifnull(b,10) b ,count(*) FROM t1 where b is null GROUP BY b order by 1,2;
+SELECT min(a) b, b , b , min(a) a, count(*) FROM t1 where b is null GROUP BY b order by 1,2;
 SELECT a b, b , b , a, count(*) FROM t1 where b is null GROUP BY a,b order by 1,2;
 SELECT a b, b ,count(*) FROM t1 where b is null GROUP BY a,b order by 1,2;
 
 SELECT a b, b ,count(*) FROM t1 where b=null GROUP BY b order by 1,2;
 SELECT a b, b ,count(*) FROM t1 where b=1 GROUP BY b order by 1,2;
-SELECT a b, b ,count(*) FROM t1 GROUP BY b order by 1,2;
-SELECT a b, b ,count(*) FROM t1 GROUP BY b + 0 order by 1,2;
+SELECT min(a) b, b ,count(*) FROM t1 GROUP BY b order by 1,2;
+SELECT min(a) b, b ,count(*) FROM t1 GROUP BY b + 0 order by 1,2;
 
-SELECT ifnull(a,10) b, b ,count(*) FROM t1 GROUP BY b order by 1,2;
+SELECT ifnull(min(a),10) b, b ,count(*) FROM t1 GROUP BY b order by 1,2;
 
 SELECT ifnull(a,10) b, b ,count(*) FROM t1 GROUP BY a,b order by 1,2;
 
