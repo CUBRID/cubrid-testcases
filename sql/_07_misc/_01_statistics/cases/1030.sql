@@ -7,5 +7,6 @@ call login('test_user') on class db_user;
 update statistics on all classes;
 
 call login('dba') on class db_user;
+update statistics on all classes;
 call drop_user('test_user') on class db_user;
 --+ holdcas off;
