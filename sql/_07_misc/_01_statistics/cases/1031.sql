@@ -8,6 +8,13 @@ call login('test_user') on class db_user;
 update statistics on t1;
 
 call login('dba') on class db_user;
+update statistics on t1;
+grant alter on t1 to test_user;
+
+call login('test_user') on class db_user;
+update statistics on t1;
+
+call login('dba') on class db_user;
 drop class t1;
 call drop_user('test_user') on class db_user;
 --+ holdcas off;
