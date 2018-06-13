@@ -43,7 +43,6 @@ select to_timestamp_tz('EDT-12:34:22 (pm) America/New_York', 'TZD-HH:MI:SS (AM) 
 
 
 --test: datetime
-select to_timestamp_tz('1999 Tuesday -10', 'YYYY DAY TZH');
 select to_timestamp_tz('23-10-4 11:33:10 PM +4:30', 'YY-MM-DD HH:MI:SS PM TZH:TZM');
 select to_timestamp_tz('December 3, 1971 11:33:10 PM 33', 'MONTH DD, YYYY HH:MI:SS PM TZM');
 select to_timestamp_tz('12 January, 2037 11:33:10 am Asia/Shanghai', 'DD MONTH, YYYY HH:MI:SS AM TZR');
