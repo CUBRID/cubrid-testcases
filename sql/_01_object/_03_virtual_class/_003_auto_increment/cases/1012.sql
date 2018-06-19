@@ -17,7 +17,7 @@ create vclass vxoo (
 	title varchar(100)
 ) as select * from xoo;
 
-select * from vxoo;
+select * from vxoo order by 1;
 
 drop vclass vxoo;
 drop class xoo;
