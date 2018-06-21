@@ -19,6 +19,7 @@ update users set preferences=json_insert(preferences, '/layout/^', '"wwwww.baidu
 update users set preferences=json_insert(json_merge(preferences, '{"website":["www.cubrid.com"]}'), '/website/', '"www.baidu.com"') where id=5;
 update users set preferences=json_insert(json_merge(preferences, '{"website":["www.cubrid.com"]}'), '/website/-', '"wwwww.baidu.com"') where id=3;
 update users set preferences=json_insert(json_merge(preferences, '{"website":["www.cubrid.com"]}'), '$.website', '"wwwww.baidu.com"') where id=2;
+select * from users order by id;
 
 select GREATEST(json_extract(json_array(1, 2, 123), '/0'), json_extract(json_array(1, 2, 123), '/2'));
 
