@@ -100,12 +100,12 @@ select colj from test_class union select cast(col17 as json)  from test_class or
 insert into test_class(col1,col2,col3,col7) values ('"1"', '"1"', N'"1"', 100);
 insert into test_class(col1,col2,col3,col7) values ('2', '2', N'2', 101);
 
-select col7, colj from test_class union select col7, col1 from test_class where col7=100;
-select col7, colj from test_class union select col7, col2 from test_class where col7=100;
-select col7, colj from test_class union select col7, col3 from test_class where col7=100;
-select col7, colj from test_class union select col7, col1 from test_class where col7=101;
-select col7, colj from test_class union select col7, col2 from test_class where col7=101;
-select col7, colj from test_class union select col7, col3 from test_class where col7=101;
+select col7, colj from test_class union select col7, col1 from test_class where col7=100 order by 1,2;
+select col7, colj from test_class union select col7, col2 from test_class where col7=100 order by 1,2;
+select col7, colj from test_class union select col7, col3 from test_class where col7=100 order by 1,2;
+select col7, colj from test_class union select col7, col1 from test_class where col7=101 order by 1,2;
+select col7, colj from test_class union select col7, col2 from test_class where col7=101 order by 1,2;
+select col7, colj from test_class union select col7, col3 from test_class where col7=101 order by 1,2;
 
 drop table if exists test_class;
 
