@@ -33,9 +33,10 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C2: select * from t order by id;
 C1: insert into t values(2,'abc');
 MC: wait until C1 ready;
+C2: select * from t order by id;
+MC: wait until C2 ready;
 C1: commit work;
 MC: wait until C1 ready;
 
