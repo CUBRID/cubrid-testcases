@@ -49,7 +49,9 @@ C3: update t1 set id=6 where id>3;
 MC: wait until C3 ready;
 
 C1: commit;
+MC: wait until C1 ready;
 C3: commit;
+MC: wait until C3 ready;
 MC: wait until C2 ready;
 
 C2: commit;
