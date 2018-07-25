@@ -40,7 +40,6 @@ C1: insert into t(s) select s||id from t;
 C1: insert into t(s) select s||id from t;
 C1: insert into t(s) select s||id from t;
 C1: insert into t(s) select s||id from t;
-C1: insert into t(s) select s||id from t;
 MC: wait until C1 ready;
 C1: insert into t(s) select s||id from t;
 C1: COMMIT;
