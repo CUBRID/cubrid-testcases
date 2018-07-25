@@ -35,7 +35,7 @@ C6: set transaction isolation level read committed;
 /* preparation */
 C1: DROP TABLE IF EXISTS tb1;
 C1: CREATE TABLE tb1(id INT PRIMARY KEY,col VARCHAR(10));
-C1: INSERT INTO tb1 SELECT rownum,rownum%10 FROM db_class a,db_class b,db_class c,db_class d where rownum <= 100000;
+C1: INSERT INTO tb1 SELECT rownum,rownum%10 FROM db_class a,db_class b,db_class c,db_class d where rownum <= 50000;
 C1: commit;
 MC: sleep 10;
 MC: wait until C1 ready;
