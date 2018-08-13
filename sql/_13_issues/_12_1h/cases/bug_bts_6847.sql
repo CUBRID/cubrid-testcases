@@ -8,22 +8,22 @@ insert into foo values(9,7,6,6,5);
 insert into foo values(10,20,30,40,50);
 
 --abey the syntax
-prepare st from 'select a, case  when a=? then ? end from foo;';
+prepare st from 'select a, case  when a=? then ? end from foo order by 1;';
 execute st using  1,2;
 
-prepare st from 'select a, case c  when ? then ? else ? end from foo;';
+prepare st from 'select a, case c  when ? then ? else ? end from foo order by 1;';
 execute st using  1,2,3;
 
-prepare st from 'select a, case  when (b>5 and c>8 or d<? and a in (select a from foo))  then ? else ?  end from foo;';
+prepare st from 'select a, case  when (b>5 and c>8 or d<? and a in (select a from foo))  then ? else ?  end from foo order by 1;';
 execute st using  1,2,3;
 
-prepare st from 'select a, case  when (a>5 and b>8 or c<9 and exists (select * from foo))  then ? else ?  end from foo;';
+prepare st from 'select a, case  when (a>5 and b>8 or c<9 and exists (select * from foo))  then ? else ?  end from foo order by 1;';
 execute st using  1,2;
 
-prepare st from 'select a, case  when (b>5 and c>8 or d<9 and e between ? and ?)  then ? else ?  end from foo;';
+prepare st from 'select a, case  when (b>5 and c>8 or d<9 and e between ? and ?)  then ? else ?  end from foo order by 1;';
 execute st using  1,2,3,4;
 
-prepare st from 'select  case when a=? then NULL else ? end from foo;';
+prepare st from 'select  case when a=? then NULL else ? end from foo order by 1;';
 execute st using  1,2;
 
 
@@ -39,13 +39,13 @@ execute st using  1,2,3,4,5;
 
 
 --NULL VALUE
-prepare st from 'select a, case  when NULL then ? else ? end from foo;';
+prepare st from 'select a, case  when NULL then ? else ? end from foo order by 1;';
 execute st using  1,2;
 
-prepare st from 'select a, case  when ? then NULL else ? end from foo;';
+prepare st from 'select a, case  when ? then NULL else ? end from foo order by 1;';
 execute st using  1,2;
 
-prepare st from 'select a, case  when ? then ? else NULL end from foo;';
+prepare st from 'select a, case  when ? then ? else NULL end from foo order by 1;';
 execute st using  1,2;
 
 
