@@ -42,7 +42,7 @@ execute s4 using 'c',1;
 execute s4 using 3, 2;
 deallocate prepare s4;
 
-prepare s5 from 'select a,sum(?+?) from t1 group by c';
+prepare s5 from 'select min(a),sum(?+?) from t1 group by c';
 execute s5 using 1,4;
 execute s5 using 'b','c';
 deallocate prepare s5;
@@ -54,17 +54,4 @@ execute s6 using 4, 'b';
 deallocate prepare s6
 drop variable @v1;
 drop table t1;
-
-
-
-
-
-
-
-
-
-
-
-
-
 

@@ -49,7 +49,7 @@ select t.i, u.i from t partition (p0) t right join u on t.i = u.i - 6 order by u
 
 select t.i, u.i from u right join t partition (p0) on t.i = u.i - 6 order by u.i;
 
-select t.i, u.i from u left join t partition (p0) t on t.i = u.i - 6 order by t.i;
+select t.i, u.i from u left join t partition (p0) t on t.i = u.i - 6 order by u.i;
 
 select t.i, u.i from u, t partition (p0) t where t.i = u.i - 6 order by t.i;
 
