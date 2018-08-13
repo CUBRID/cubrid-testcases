@@ -9,22 +9,22 @@ insert into t1 values(5,1);
 insert into t1 values(6,1);
 
 select a,b from t1 order by 1,2;
-select a,b as bx from t1 group by b order by b,1;
-select a,b as bx from t1 group by bx order by bx,1;
-select a,b as bx from t1 group by bx order by b,1;
-select a,b as bx from t1 group by b order by bx,1;
-select a,b as b from t1 group by b order by b,1;
+select min(a),b as bx from t1 group by b order by b,1;
+select min(a),b as bx from t1 group by bx order by bx,1;
+select min(a),b as bx from t1 group by bx order by b,1;
+select min(a),b as bx from t1 group by b order by bx,1;
+select min(a),b as b from t1 group by b order by b,1;
 
-select a,b as bx from t1 where b = 1 group by b order by b,1;
+select min(a),b as bx from t1 where b = 1 group by b order by b,1;
 
 -error
-select a,b as bx from t1 where bx = 1 group by b order by b,1;
+select min(a),b as bx from t1 where bx = 1 group by b order by b,1;
 
-select a,b as bx from t1 group by b order by bx,1;
-select a,b as bx from t1 group by bx order by bx,1;
-select a,b as bx from t1 group by bx order by b,1;
-select a,b as bx from t1 group by b order by bx,1;
-select a,b as b from t1 group by b order by b,1;
+select min(a),b as bx from t1 group by b order by bx,1;
+select min(a),b as bx from t1 group by bx order by bx,1;
+select min(a),b as bx from t1 group by bx order by b,1;
+select min(a),b as bx from t1 group by b order by bx,1;
+select min(a),b as b from t1 group by b order by b,1;
 
 drop table if exists t1;
 
