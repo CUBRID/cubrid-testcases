@@ -38,6 +38,6 @@ insert into test values(7839, 'KING',  'PRESIDENT',NULL, date'11/17/1981',5000.0
 insert into test values(7788, 'SCOTT',  'ANALYST',7566, date'04/19/1987',3000.00,null,20);
 insert into test values(null, 'TURNER ',  'SALESMAN ',7698, date'09/08/1981',1500.00,null,10);
 
-select * from test where testno not in (null);
-select * from test where testno is not null;
+select * from test where testno not in (null) order by 1,2;
+select * from test where testno is not null order by 1,2;
 drop class test;

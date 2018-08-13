@@ -15,7 +15,7 @@ insert into t2 values(101, 'DB');
 insert into t2 values(102, 'SA');
 insert into t2 values(103, 'RD');
 
-select * from t1 where dept_id not in( select t2.id from t2 where dept_name = 'DB') ;
+select * from t1 where dept_id not in( select t2.id from t2 where dept_name = 'DB') order by id;
 
 drop class t1;
 drop class t2;
