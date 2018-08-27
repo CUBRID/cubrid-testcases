@@ -40,7 +40,7 @@ CREATE TABLE list_tbl2  like list_tbl;
 
 insert into list_tbl2 select * from list_tbl limit 4 order by 1;
 
-SELECT *,count(*) as b FROM list_tbl where 2 > 1  group by col_1 order by b ;
+SELECT *,count(*) as b FROM list_tbl where 2 > 1  group by col_1 order by b ,col_1;
 
 SELECT col_1 as b ,count(col_1), col_1 as col_b FROM list_tbl where 2 > 1  group by col_1 order by col_1 desc;
 
@@ -69,7 +69,7 @@ SELECT *,count(*) as b FROM t1 group by t1.a order by b ;
 
 SELECT *,count(*) as b FROM t1 group by t1.a+10000-t1.a+t1.a-10000 order by b ;
 --error
-SELECT *,count(*) as b FROM t1 where 2 > 1  group by t1 order by b ;
+SELECT *,count(*) as b FROM t1 where 2 > 1  group by t1 order by b, a;
 
 SELECT a as b ,count(a), a as t1 FROM t1 where 2 > 1  group by a order by b desc;
 
@@ -87,7 +87,7 @@ CREATE TABLE t2( a decimal auto_increment);
 INSERT INTO t2 VALUES (null);
 INSERT INTO t2 VALUES (default);
 
-SELECT t1.*,count(*) as b FROM t1,t2  where t1.a=t2.a group by t1.a order by b ;
+SELECT t1.*,count(*) as b FROM t1,t2  where t1.a=t2.a group by t1.a order by b, t1.* ;
 SELECT t1.*,count(*) as b FROM t1,t2  where t1.a=t2.a group by t1.a+t2.a  order by t1.* desc ;
 
 drop table if exists t1,t2;
