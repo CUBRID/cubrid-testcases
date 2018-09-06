@@ -328,12 +328,12 @@ drop table if exists t2;
 drop table if exists t1;
 CREATE TABLE t1 (a INT, b INT);
 INSERT INTO t1 VALUES (null,1),(null,1),(1,null),(2,null);
-SELECT a b, b ,count(*) FROM t1 GROUP BY b order by 1,2;
-SELECT a b, b ,count(*) FROM t1 GROUP BY b + 0 order by 1,2;
+SELECT min(a) b, b ,count(*) FROM t1 GROUP BY b order by 1,2;
+SELECT min(a) b, b ,count(*) FROM t1 GROUP BY b + 0 order by 1,2;
 
 select * from t1 order by 1,2;
-SELECT ifnull(a,10) b, b ,count(*) FROM t1 GROUP BY b order by 1,2;
-SELECT ifnull(a,10) b, b ,count(*) FROM t1 GROUP BY b +0 order by 1,2;
+SELECT ifnull(min(a),10) b, b ,count(*) FROM t1 GROUP BY b order by 1,2;
+SELECT ifnull(min(a),10) b, b ,count(*) FROM t1 GROUP BY b +0 order by 1,2;
 SELECT ifnull(a,10) b, b ,count(*) FROM t1 GROUP BY a,b order by 1,2;
 
 drop table if exists t1;
