@@ -4,7 +4,7 @@ WITH RECURSIVE cte AS
   UNION ALL
   SELECT n + 1, CONCAT(str, str) FROM cte WHERE n < 3
 )
-SELECT * FROM cte;
+SELECT * FROM cte order by 1,2;
 
 WITH RECURSIVE cte AS
 (
@@ -12,5 +12,5 @@ WITH RECURSIVE cte AS
   UNION ALL
   SELECT n + 1, CONCAT(str, str) FROM cte WHERE n < 3
 )
-SELECT * FROM cte;
+SELECT * FROM cte order by 1,2;
 
