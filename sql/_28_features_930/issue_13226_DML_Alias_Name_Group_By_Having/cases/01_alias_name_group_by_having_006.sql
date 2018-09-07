@@ -281,16 +281,16 @@ CREATE TABLE t1 (a INT, b INT);
 
 INSERT INTO t1 VALUES (1,9), (2, 8), (3, 7),(null,1),(null,1),(1,null),(2,null);
 select ifnull(txx.b,7) bxx, a from t1 tx join t1 txx on tx.a=txx.a group by a having ifnull(bxx,5) order by 1,2;
-select ifnull(txx.b,7) bxx, tx.a from t1 tx join t1 txx on tx.a=txx.a group by tx.a order by 1,2;
+select ifnull(max(txx.b),7) bxx, tx.a from t1 tx join t1 txx on tx.a=txx.a group by tx.a order by 1,2;
 
 select ifnull(txx.b,7) bxx from t1 tx join t1 txx on tx.a=txx.a order by 1;
-select ifnull(txx.b,7) bxx from t1 tx join t1 txx on tx.a=txx.a group by 0=0 order by 1;
+select ifnull(max(txx.b),7) bxx from t1 tx join t1 txx on tx.a=txx.a group by 0=0 order by 1;
 
 
 select txx.b b from t1 tx join t1 txx on tx.a=txx.a group by b;
 
 select ifnull(txx.b,7) bxx from t1 tx join t1 txx on tx.a=txx.a group by bxx order by 1;
-select ifnull(txx.b,7) bxx from t1 tx join t1 txx on tx.a=txx.a group by 1=0 order by 1;
+select ifnull(max(txx.b),7) bxx from t1 tx join t1 txx on tx.a=txx.a group by 1=0 order by 1;
 select ifnull(txx.b,7) bxx from t1 tx join t1 txx on tx.a=txx.a group by ifnull(bxx,5) order by 1;
 select txx.b b from t1 tx join t1 txx on tx.a=txx.a group by 1 order by 1;
 
