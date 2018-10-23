@@ -1,0 +1,107 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+phones    
+[{"type":"Office","number":"909-555-7307"},{"type":"Mobile","number":"415-555-1234"}]     
+
+===================================================
+id    phone_type    phone_num    
+1     Office     909-555-7307     
+2     Mobile     415-555-1234     
+
+===================================================
+requestor    has_zip    
+Alexis Bull     1     
+
+===================================================
+requestor    
+Alexis Bull     
+
+===================================================
+outer_value_0    outer_value_1    outer_value_2    
+1     2     ["a","b"]     
+
+===================================================
+outer_value_0    outer_value_1    nested_value_0    nested_value_1    
+1     2     a     b     
+
+===================================================
+outer_value_0    outer_value_1    nested_value_0    nested_value_1    
+100     200     300     400     
+
+===================================================
+requestor    phone_type    phone_num    
+Alexis Bull     Office     909-555-7307     
+Alexis Bull     Mobile     415-555-1234     
+
+===================================================
+id    name    json_pretty(po_document)    
+1     example     {
+  "POINT": 1600,
+  "Reference": "ABULL-20140421",
+  "Requestor": "Alexis Bull",
+  "User": "ABULL",
+  "CostCenter": "A50",
+  "ShippingInstructions": {
+    "name": "Alexis Bull",
+    "Address": {
+      "street": "200 Sporting Green",
+      "city": "South San Francisco",
+      "state": "CA",
+      "zipCode": 99236,
+      "country": "United States of America"
+    },
+    "Phone": [
+      {
+        "type": "Office",
+        "number": "909-555-7307"
+      },
+      {
+        "type": "Mobile",
+        "number": "415-555-1234"
+      }
+    ]
+  },
+  "Special Instructions": NULL,
+  "AllowPartialShipment": true,
+  "LineItems": [
+    {
+      "ItemINT": 1,
+      "Part": {
+        "Description": "One Magic Christmas",
+        "UnitPrice": 19.950000,
+        "UPCCode": 13131092899
+      },
+      "Quantity": 9.000000
+    },
+    {
+      "ItemINT": 2,
+      "Part": {
+        "Description": "Lethal Weapon",
+        "UnitPrice": 19.950000,
+        "UPCCode": 85391628927
+      },
+      "Quantity": 5.000000
+    }
+  ]
+}     
+
+===================================================
+json_pretty( json_extract( json_extract(po_document, '$.ShippingInstructions'), '$.Phone'))    
+[
+  {
+    "type": "Office",
+    "number": "909-555-7307"
+  },
+  {
+    "type": "Mobile",
+    "number": "415-555-1234"
+  }
+]     
+
+===================================================
+0
