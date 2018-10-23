@@ -11,6 +11,6 @@ columns (
 id for ordinality,        
 b bigint path '$',        
 c json path '$'           
-))as t2 where a=b and b=c;
+))as t2 where a=b and b=c order by 1,2,3,4;
 
 drop table if exists t1;
