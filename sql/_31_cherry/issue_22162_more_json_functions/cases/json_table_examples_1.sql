@@ -57,7 +57,7 @@ FROM
             NESTED PATH '$.b[*]' COLUMNS (b INT PATH '$')
            )
    ) AS jt
-WHERE b IS NOT NULL order by 1;
+WHERE b IS NOT NULL order by 1,2;
 
 SELECT *
 FROM
@@ -68,7 +68,7 @@ FROM
         NESTED PATH '$.b[*]' COLUMNS (b1 INT PATH '$'),
         NESTED PATH '$.b[*]' COLUMNS (b2 INT PATH '$')
     )
-) AS jt order by 1;
+) AS jt order by 1,2,3;
 
 SELECT *
 FROM
@@ -86,6 +86,6 @@ FROM
         NESTED PATH '$.l[*]' COLUMNS (lpath varchar(10) PATH '$')
         )
     )
-) as jt order by 1;
+) as jt order by 1,2,3,4,5;
 
 	

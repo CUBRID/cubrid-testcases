@@ -58,7 +58,7 @@ JSON_TABLE(po_document, '$.ShippingInstructions.Phone[*]'
 COLUMNS (id FOR ORDINALITY,
          phone_type VARCHAR(10) PATH '$.type',
          phone_num VARCHAR(20) PATH '$.number'))
-AS jt;
+AS jt order by 1;
 
 SELECT requestor, has_zip 
 FROM j_purchaseorder, 
@@ -107,7 +107,7 @@ COLUMNS
    NESTED PATH '$.ShippingInstructions.Phone[*]' 
      COLUMNS (phone_type VARCHAR(32) PATH '$.type', 
               phone_num VARCHAR(20) PATH '$.number'))) 
-AS jt;
+AS jt order by 1,2 desc;
  
 
 -- CBRD-22414
