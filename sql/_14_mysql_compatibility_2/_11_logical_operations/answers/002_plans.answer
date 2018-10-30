@@ -77,7 +77,7 @@ sscan
     sargs: term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select  if(sum(t.i)-sum(t.j)<>?, 'nok', 'ok') from t t where t.i<>? and t.j<>?
+select  if(sum(t.i)-sum(t.j)<>?,  cast('nok' as varchar),  cast('ok' as varchar)) from t t where t.i<>? and t.j<>?
 ===================================================
 i    j    k    l    
 null     1     1     9     
