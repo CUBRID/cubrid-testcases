@@ -21,7 +21,7 @@ sscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select  if((oper.t<>? and oper.t<>?)=?, 'ok', 'nok') from oper oper where oper.t is not null 
+select  if((oper.t<>? and oper.t<>?)=?,  cast('ok' as varchar),  cast('nok' as varchar)) from oper oper where oper.t is not null 
 ===================================================
 if((t<>0 or 9999999<>0)=1, 'ok', 'nok')    
 ok     
@@ -39,7 +39,7 @@ sscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select  if(?<>?=?, 'ok', 'nok') from oper oper where oper.t is not null 
+select  if(?<>?=?,  cast('ok' as varchar),  cast('nok' as varchar)) from oper oper where oper.t is not null 
 ===================================================
 if((t<>0 or false)=1, 'ok', 'nok')    
 ok     
@@ -57,7 +57,7 @@ sscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select  if(oper.t<>?=?, 'ok', 'nok') from oper oper where oper.t is not null 
+select  if(oper.t<>?=?,  cast('ok' as varchar),  cast('nok' as varchar)) from oper oper where oper.t is not null 
 ===================================================
 if((t&null) is null , 'ok', 'nok')    
 ok     
@@ -76,7 +76,7 @@ sscan
     class: oper node[?]
     cost:  ? card ?
 Query stmt:
-select  if(null is null , 'ok', 'nok') from oper oper
+select  if(null is null ,  cast('ok' as varchar),  cast('nok' as varchar)) from oper oper
 ===================================================
 if((t<>0 xor 1<>0)=0, 'ok', 'nok')    
 ok     
@@ -87,7 +87,7 @@ sscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select  if((oper.t<>? xor ?<>?)=?, 'ok', 'nok') from oper oper where oper.t= ?:? 
+select  if((oper.t<>? xor ?<>?)=?,  cast('ok' as varchar),  cast('nok' as varchar)) from oper oper where oper.t= ?:? 
 ===================================================
 if((t<>0 xor 0<>0)=1, 'ok', 'nok')    
 ok     
@@ -105,7 +105,7 @@ sscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select  if((oper.t<>? xor ?<>?)=?, 'ok', 'nok') from oper oper where oper.t is not null 
+select  if((oper.t<>? xor ?<>?)=?,  cast('ok' as varchar),  cast('nok' as varchar)) from oper oper where oper.t is not null 
 ===================================================
 if(( not t<>0)=0, 'ok', 'nok')    
 ok     
@@ -123,7 +123,7 @@ sscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select  if(( not oper.t<>?)=?, 'ok', 'nok') from oper oper where oper.t is not null 
+select  if(( not oper.t<>?)=?,  cast('ok' as varchar),  cast('nok' as varchar)) from oper oper where oper.t is not null 
 ===================================================
 0
 ===================================================
