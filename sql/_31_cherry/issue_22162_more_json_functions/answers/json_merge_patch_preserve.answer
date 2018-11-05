@@ -1,0 +1,51 @@
+===================================================
+json_merge_patch('{"Name":"Jone"}', '{"Age":39}')    json_merge('{"Name":"Jone"}', '{"Age":39}')    
+{"Name":"Jone","Age":39}     {"Name":"Jone","Age":39}     
+
+===================================================
+json_merge_patch('{"Name":"Alen"}', '{"Name":"Mark"}')    json_merge('{"Name":"Alen"}', '{"Name":"Mark"}')    
+{"Name":"Mark"}     {"Name":["Alen","Mark"]}     
+
+===================================================
+json_merge_patch('{"Name":"Alen","Age":10}', '{"Name":"Mark"}')    json_merge('{"Name":"Alen","Age":10}', '{"Name":"Mark"}')    
+{"Name":"Mark","Age":10}     {"Name":["Alen","Mark"],"Age":10}     
+
+===================================================
+json_merge_patch('{"Name":"Alen"}', '{"Name":"Mark","Age":10}')    json_merge('{"Name":"Alen"}', '{"Name":"Mark","Age":10}')    
+{"Name":"Mark","Age":10}     {"Name":["Alen","Mark"],"Age":10}     
+
+===================================================
+json_merge_patch('{"Name":"Mark"}', '{"Age":40}', '{"Job":"CEO"}')    json_merge('{"Name":"Mark"}', '{"Age":40}', '{"Job":"CEO"}')    
+{"Name":"Mark","Age":40,"Job":"CEO"}     {"Name":"Mark","Age":40,"Job":"CEO"}     
+
+===================================================
+json_merge_patch('{"Alphabet":["a","b"]}', '{"Alphabet":["c"]}')    
+{"Alphabet":["c"]}     
+
+===================================================
+json_merge('{"Alphabet":["a","b"]}', '{"Alphabet":["c"]}')    
+{"Alphabet":["a","b",["c"]]}     
+
+===================================================
+json_merge_patch('{"Alphabet":["a","b"]}', '{"Alphabet":["c"]}')    json_merge('{"Alphabet":["a","b"]}', '{"Alphabet":["c"]}')    
+{"Alphabet":["c"]}     {"Alphabet":["a","b",["c"]]}     
+
+===================================================
+0
+===================================================
+0
+===================================================
+json_merge_patch(@jd1, @jd2)    
+{"Alphabet":{"A":"a","B":["b","c"],"C":3,"D":["d","e"]}}     
+
+===================================================
+json_merge(@jd1, @jd2)    
+{"Alphabet":[{"A":"a","B":["b","c"]},{"C":3,"D":["d","e"]}]}     
+
+===================================================
+0
+===================================================
+json_merge_patch('{"A":["a","b"]}', '{"B":["c"]}')    
+{"A":["a","b"],"B":["c"]}     
+{"A":["a","b"],"B":["c"]}     
+
