@@ -1,0 +1,236 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+2
+===================================================
+id    a    b    
+5     5     444     
+6     5     333     
+4     4     4444     
+3     3     3333     
+2     2     22222     
+1     1     111111     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_ab term[?] (desc_index)
+    filtr: term[?]
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (tb.b>= ?:?  and tb.b<= ?:? ) order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+id    a    b    
+6     5     333     
+4     4     4444     
+3     3     3333     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_ab keylimit ?, ? term[?] (desc_index forced)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (tb.b>= ?:?  and tb.b<= ?:? ) using index tb.i_tb_ab keylimit  ?:? , ?:? 
+===================================================
+id    a    b    
+4     4     4444     
+5     5     444     
+3     3     3333     
+6     5     333     
+2     2     22222     
+1     1     111111     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_ba term[?] (desc_index)
+    filtr: term[?]
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (tb.b>= ?:?  and tb.b<= ?:? ) order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+id    a    b    
+4     4     4444     
+5     5     444     
+3     3     3333     
+6     5     333     
+2     2     22222     
+1     1     111111     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_ba term[?] (desc_index forced)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (tb.b>= ?:?  and tb.b<= ?:? ) using index tb.i_tb_ba
+===================================================
+id    a    b    
+5     5     444     
+3     3     3333     
+6     5     333     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_ba keylimit ?, ? term[?] (desc_index forced)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tb.id, tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (tb.b>= ?:?  and tb.b<= ?:? ) using index tb.i_tb_ba keylimit  ?:? , ?:? 
+===================================================
+id    a    b    
+5     5     444     
+6     5     333     
+3     3     3333     
+2     2     22222     
+1     1     111111     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_ab term[?] (desc_index)
+    filtr: term[?]
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (tb.b>= ?:?  and tb.b<= ?:? ) order by ? desc , ? desc 
+/* ---> skip ORDER BY */
+===================================================
+id    a    b    
+6     5     333     
+5     5     444     
+3     3     3333     
+2     2     22222     
+1     1     111111     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: tb node[?]
+                 index: i_tb_ab term[?]
+                 filtr: term[?]
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (tb.b>= ?:?  and tb.b<= ?:? ) order by ? desc , ?
+===================================================
+id    a    b    
+6     5     333     
+5     5     444     
+3     3     3333     
+2     2     22222     
+1     1     111111     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: tb node[?]
+                 index: i_tb_ab term[?]
+                 filtr: term[?]
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (tb.b>= ?:?  and tb.b<= ?:? ) order by ? desc , ?
+===================================================
+id    a    b    
+1     1     111111     
+2     2     22222     
+3     3     3333     
+5     5     444     
+6     5     333     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: tb node[?]
+                 index: i_tb_ab term[?]
+                 filtr: term[?]
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (tb.b>= ?:?  and tb.b<= ?:? ) order by ?, ? desc 
+===================================================
+id    a    b    
+1     1     111111     
+2     2     22222     
+3     3     3333     
+6     5     333     
+5     5     444     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_ab term[?]
+    filtr: term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (tb.b>= ?:?  and tb.b<= ?:? ) order by ?, ?
+/* ---> skip ORDER BY */
+===================================================
+id    a    b    
+1     1     111111     
+2     2     22222     
+3     3     3333     
+6     5     333     
+5     5     444     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_ab term[?]
+    filtr: term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (tb.b>= ?:?  and tb.b<= ?:? ) order by ?, ?
+/* ---> skip ORDER BY */
+===================================================
+id    a    b    
+6     5     333     
+3     3     3333     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_ab term[?] (desc_index)
+    filtr: term[?]
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (tb.b>= ?:?  and tb.b< ?:? ) order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
