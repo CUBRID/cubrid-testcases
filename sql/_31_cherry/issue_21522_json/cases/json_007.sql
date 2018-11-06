@@ -61,6 +61,7 @@ select json_extract( '[1]', '/0' );
 select json_extract( '[1]', '.' );
 
 SELECT json_insert('[]', '/0', '100');   
+SELECT json_insert('[]', '/0', 100);   
 SELECT json_insert('1', '/0/0/', '100');
 SELECT json_insert('1', '/1', '100');    
 

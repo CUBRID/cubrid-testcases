@@ -14,6 +14,7 @@ select json_contains('[123,"aaa",{"a":[1,2,3]}]', 123,'/0');
 select json_contains(json_merge(a,b,c,'789'), '789', '/3'), i from tbl order by 1,2; 
 select json_contains(json_merge(a,b,c,'789'), '2', '/2/a'), i from tbl order by 1,2;
 select json_contains(json_merge(a,b,c,'789',json_type(222)), '2', '/2/a'), i from tbl order by 1,2;
+select json_insert(json_insert(json_array('a', 'b'), '/3','a'),'/4','1');
 select json_insert(json_insert(json_array('a', 'b'), '/3','"a"'),'/4','"1"');
 
 

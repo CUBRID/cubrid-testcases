@@ -1,5 +1,6 @@
 select json_set('"x"', '/0', '"a"');
 select json_set('"x"', '$', '"a"');
+select json_set('"x"', '$', 'a');
 select json_keys('{"a": 1, "b": {"c": 30}}');
 select json_type(json_keys('{"a": 1, "b": {"c": 30}}'));
 select json_keys('{"a": 1, "b": {"c": 30}}', '$.b.c'),json_keys('{"a": 1, "b": {"c": 30}}', '$.b');
@@ -31,6 +32,7 @@ select json_array_append(@j, '/1', '1','/0', '2', '/2', '{"aaa":"12344"}');
 select json_array_append(@j, '/1', '1','/0', '2', '/2', '3','/', '4');
 select json_array_append(@j, '/1', null);
 select json_array_append(@j, '/0', '{"key":[9,8,"a"]}', '/0/1/key', '"x"');
+select json_array_append(@j, '/0', cast('{"key":[9,8,"a"]}' as json), '/0/1/key', 'x');
 set @j = null;
 select json_array_append(@j, '/1', '1');
 select json_array_append(@j, '/', null); 
@@ -55,6 +57,7 @@ select json_replace(@j, '/1/b/0', '1', '/2/1', '2');
 select json_replace(@j, '/1/b/0', '1', '/2', '2');
 select json_replace(@j, '/1/b', '[1,2,3]', '/2', '2');
 select json_replace(@j, '/1/b', '[1,2,3]', '/1/b/1', '"a"');
+select json_replace(@j, '/1/b', cast('[1,2,3]' as json), '/1/b/1', 'a');
 
 set @j = '{ "a": 1, "b": [2, 3]}';
 --error
