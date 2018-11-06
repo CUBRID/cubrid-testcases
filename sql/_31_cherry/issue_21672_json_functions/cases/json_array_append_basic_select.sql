@@ -44,20 +44,20 @@ set @js='{ "store": {
     }
   }
 }';
-select JSON_ARRAY_APPEND(@js, '$.store.book[1].author','1');
-select json_merge(json_array_append(@js, '$.store', @js), @j);
+select JSON_ARRAY_APPEND(@js, '$.store.book[1].author',1);
+select json_merge(json_array_append(@js, '$.store', cast(@js as json)), cast(@j as json));
 select json_array_append(json_array(name,  @j), '$[0]', $[1]) from t10;  
 
 drop table if exists t1;
 create table t1(name json);
-insert into t1 values(@j);
-SELECT JSON_ARRAY_APPEND(@j, '$', @j);
-select json_array_append(@j, '$', '3');    
+insert into t1 values(cast(@j as json));
+SELECT JSON_ARRAY_APPEND(@j, '$', cast(@j as json));
+select json_array_append(@j, '$', 3);    
 select json_array_append(@j, '/', '3');
 select json_array_append(@j, '$[2]',  json_array('c', 'd'));
 select json_array_append(name, '$' json_merge(@js, @j)) from t1;
 select json_array_append(name, '$[1]', name) from t1;
-prepare st from 'SELECT JSON_ARRAY_APPEND(@j, ''$'', ?)';
+prepare st from 'SELECT JSON_ARRAY_APPEND(@j, ''$'', cast(? as json))';
 execute st using @j;
 
 deallocate prepare st;	
