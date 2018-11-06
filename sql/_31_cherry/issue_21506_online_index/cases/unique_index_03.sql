@@ -30,7 +30,6 @@ alter table t_par PARTITION BY RANGE (c_datetime)  (PARTITION before_2000 VALUES
 
 create unique index inx on t_par(c_datetime) with online;
 
--- After CBRD-22427 fix,verify the query. Now the return value is null
 select * from t_par where c_datetime > datetime '12:00:00.001 AM 01/01/2000' order by c_short;
 
 select * from t_par where c_datetime > datetime '00:00:00 AM 01/01/2000' order by c_short;
