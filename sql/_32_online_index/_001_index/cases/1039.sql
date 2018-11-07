@@ -1,6 +1,6 @@
 -- create class on all type and create index on bit type and insert/update/delete/select data
 
-
+drop if exists t1;
 create class t1(
 col1 int, 
 col2 string, 
@@ -34,6 +34,3 @@ DELETE  FROM t1 WHERE col1=2;
 SELECT * FROM t1 USING INDEX t1_index order by 1,2,3,4,5,6,7,8,9,10,11,12,13,14;
 
 drop class t1;
-rollback;
-rollback;
-rollback;

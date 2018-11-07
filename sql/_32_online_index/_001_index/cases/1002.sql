@@ -1,6 +1,6 @@
 --alter class attribute and create index
 
-
+drop if exists ddl_0001;
 CREATE CLASS ddl_0001(
    col1       smallint,
    col2       smallint,
@@ -15,10 +15,4 @@ CREATE CLASS ddl_0001(
 alter class ddl_0001 drop constraint "u_ddl_0001_col6" ;
 alter class ddl_0001 add unique u_idx(col1,col2,col3) with online ;
 create index idx_col1 on ddl_0001(col1) ;
-
-
-
-
 drop class ddl_0001;
-rollback;
-rollback;

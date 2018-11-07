@@ -1,6 +1,6 @@
 -- [er]create class on all type and insert/update/delete/select data and create index on MULTISET type
 
-
+drop if exists t1;
 create class t1(
 col1 int, 
 col2 string, 
@@ -34,6 +34,3 @@ create index t1_index on t1(col12) with online;
 SELECT * FROM db_index WHERE class_name='t1' order by 1,2;
 
 drop class t1;
-rollback;
-rollback;
-rollback;
