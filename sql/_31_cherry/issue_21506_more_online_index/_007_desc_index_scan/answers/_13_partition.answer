@@ -1,0 +1,160 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+host_year    
+1996     
+1988     
+1988     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: participant? node[?]
+                 index: i_p?_hy term[?] (covers)
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select participant?.host_year from participant? participant? where (participant?.host_year< ?:? ) and (rownum< ?:? ) order by ? desc 
+===================================================
+host_year    
+1996     
+1988     
+1988     
+
+Query plan:
+iscan
+    class: participant? node[?]
+    index: i_p?_hy term[?] (covers) (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ participant?.host_year from participant? participant? where (participant?.host_year< ?:? ) and (rownum< ?:? ) using index participant?.i_p?_hy
+===================================================
+host_year    
+2004     
+2000     
+1996     
+1988     
+1988     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: participant? node[?]
+                 index: i_p?_hy term[?] (covers)
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select participant?.host_year from participant? participant? where (participant?.host_year>= ?:?  and participant?.host_year<= ?:? ) and (rownum< ?:? ) order by ? desc 
+===================================================
+host_year    
+1996     
+1988     
+1988     
+2004     
+2000     
+
+Query plan:
+iscan
+    class: participant? node[?]
+    index: i_p?_hy term[?] (covers) (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ participant?.host_year from participant? participant? where (participant?.host_year>= ?:?  and participant?.host_year<= ?:? ) and (rownum< ?:? ) using index participant?.i_p?_hy
+===================================================
+0
+===================================================
+nation    
+RUS     
+NZL     
+KOR     
+JPN     
+CAN     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: participant? node[?]
+                 index: i_p?_nation term[?] (covers)
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select participant?.nation from participant? participant? where (participant?.nation>= ?:? ) and (rownum< ?:? ) order by ? desc 
+===================================================
+nation    
+NZL     
+KOR     
+CAN     
+RUS     
+JPN     
+
+Query plan:
+iscan
+    class: participant? node[?]
+    index: i_p?_nation term[?] (covers) (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ participant?.nation from participant? participant? where (participant?.nation>= ?:? ) and (rownum< ?:? ) using index participant?.i_p?_nation
+===================================================
+nation    
+RUS     
+NZL     
+KOR     
+JPN     
+CAN     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: participant? node[?]
+                 index: i_p?_nation term[?] (covers)
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select participant?.nation from participant? participant? where (participant?.nation>= ?:? ) and (rownum< ?:? ) order by ? desc 
+===================================================
+nation    
+NZL     
+KOR     
+CAN     
+RUS     
+JPN     
+
+Query plan:
+iscan
+    class: participant? node[?]
+    index: i_p?_nation term[?] (covers) (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ participant?.nation from participant? participant? where (participant?.nation>= ?:? ) and (rownum< ?:? ) using index participant?.i_p?_nation
+===================================================
+0
+===================================================
+0
+===================================================
+0
