@@ -21,7 +21,7 @@ JSON_MERGE_PRESERVE('{"Name":"Mark"}','{"Age":40}','{"Job":"CEO"}');
 
 SELECT JSON_MERGE_PATCH   ('{"Alphabet":["a","b"]}','{"Alphabet":["c"]}');
 -- CBRD-22478
-SELECT JSON_MERGE_PRESERVE('{"Alphabet":["a","b"]}','{"Alphabet":["c"]}'); 
+-- SELECT JSON_MERGE_PRESERVE('{"Alphabet":["a","b"]}','{"Alphabet":["c"]}'); 
 
 SELECT 
 JSON_MERGE_PATCH   ('{"Alphabet":["a","b"]}','{"Alphabet":["c"]}'),
@@ -31,7 +31,7 @@ set @jd1 = '{ "Alphabet": { "A": "a", "B": ["b", "c"] } }';
 set @jd2 = '{ "Alphabet": { "C": 3,   "D": ["d", "e"] } }';
 SELECT JSON_MERGE_PATCH(@jd1,@jd2); 
 -- CBRD-22478
-SELECT JSON_MERGE_PRESERVE(@jd1,@jd2); 
+-- SELECT JSON_MERGE_PRESERVE(@jd1,@jd2); 
 drop variable @jd1,@jd2;
 
 
