@@ -42,7 +42,7 @@ SELECT a->>'$[3]', a->>'$[4][1]' FROM tj10 where a->'$[4][1]' IS NOT NULL ORDER 
 
 --' will be added in the integer (CBRD-22541)
 select json_extract(a,'$[3]'),json_extract(a,'$[4][1]') FROM tj10 ORDER BY 1,2; ; 
-select json_unquote(json_extract(a,'$[3]')), json_unquote(json_extract(a,'$[4][1]')) FROM tj10 ORDER BY 1,2; ; 
+select json_unquote(json_extract(a,'$[3]')), json_unquote(json_extract(a,'$[4][1]')) FROM tj10 ORDER BY 1,2; 
  
 
 drop t1;
