@@ -10,22 +10,22 @@ insert into t1(c) values(json_object('id','106','name', '["eee1","eee2"]'));
 insert into t1(c) values(json_object('id','107','name', json_object('name', 'fff1', 'name_old', 'fff2')));
 
 --basic test
-SELECT id, c->'$.id', c->'$.name' from t1 where id<10 order by 1,2;
-SELECT id, c->'/id', c->'/name' from t1 where id<10 order by 1,2;
+SELECT id, c->'$.id', c->'$.name' from t1 where id<10 order by 1,2,3;
+SELECT id, c->'/id', c->'/name' from t1 where id<10 order by 1,2,3;
 
 --test depth>1
-SELECT id, c->'$.id', c->'$.name[0]' from t1 where id<10 order by 1,2;
-SELECT id, c->'$.id', c->'$.name.name' from t1 where id<10 order by 1,2;
-SELECT id, c->'$.id', c->'/name/name' from t1 where id<10 order by 1,2;
+SELECT id, c->'$.id', c->'$.name[0]' from t1 where id<10 order by 1,2,3;
+SELECT id, c->'$.id', c->'$.name.name' from t1 where id<10 order by 1,2,3;
+SELECT id, c->'$.id', c->'/name/name' from t1 where id<10 order by 1,2,3;
 
---use path in where condition
-SELECT id, c->'$.id', c->'$.name' from t1 where c->'$.id'>101 order by 1,2;
+--use path in where condition, order by
+SELECT id, c->'$.id', c->'$.name' from t1 where c->'$.id'>101 order by 1,2,3;
 SELECT id, c->'$.id', c->'$.name' from t1 where json_extract(c, '$.id') >101 order by c->'$.name';
 
 --type conversion (CBRD-22536)
-select id, c->'$.id', c->'$.name' from t1 where c->'$.id'> 102;
-select id, c->'$.id', c->'$.name.name' from t1 where c->'$.id'='107';
-select id, c->'$.id', c->'$.name' from t1 where c->'$.name'='aaa';
+select id, c->'$.id', c->'$.name' from t1 where c->'$.id'> 102 order by 1,2;
+select id, c->'$.id', c->'$.name.name' from t1 where c->'$.id'='107' order by 1,2;
+select id, c->'$.id', c->'$.name' from t1 where c->'$.name'='aaa' order by 1,2;
 
 --error test
 SELECT id, c->'$.id', c->'$.name'->'$.name' from t1 where id<10 order by 1,2;
@@ -46,14 +46,14 @@ select * from t1 order by id;
 drop if exists tj10;
 CREATE TABLE tj10 (a JSON, b INT);
 INSERT INTO tj10 VALUES ('[3,10,5,17,44]', 33), ('[3,10,5,17,[22,44,66]]', 0);
-SELECT a->'$[4]' FROM tj10;  
-SELECT * FROM tj10 WHERE a->'$[0]' = 3;  
-SELECT a, a->'$[4][2]', b FROM tj10 WHERE a->'$[4][1]' IS NOT NULL;
-SELECT a, a->'$[0]', b FROM tj10 WHERE a->'$[4][1]' IS NULL;
-SELECT JSON_EXTRACT(a, '$[4][1]') FROM tj10;
+SELECT a->'$[4]' FROM tj10 order by a->'$[4]';  
+SELECT * FROM tj10 WHERE a->'$[0]' = 3 order by b; 
+SELECT a, a->'$[4][2]', b FROM tj10 WHERE a->'$[4][1]' IS NOT NULL order by 1,2,3;
+SELECT a, a->'$[0]', b FROM tj10 WHERE a->'$[4][1]' IS NULL order by 1,2,3;
+SELECT JSON_EXTRACT(a, '$[4][1]') FROM tj10 order by 1;
 
 --error test [2] is recognized as alias here, not array index
-SELECT a, a[2], b FROM tj10 WHERE a->'$[4][1]' IS not NULL;
+SELECT a, a[2], b FROM tj10 WHERE a->'$[4][1]' IS not NULL order by 1,2,3;
 
 drop t1;
 drop tj10;
