@@ -47,3 +47,4 @@ columns ( date3 varchar(20) path '$.date1' )) as jt
 where str_to_date(date3,'%Y-%m-%d') < date2 and str_to_date(date1,'%Y-%m-%d') = date2;
 
 
+drop table if exists tt1, tt2;

@@ -16,7 +16,7 @@ select bit_count(d) from t1 order by 1;
 
 select bit_count(n) from t1 order by 1;
 -- should fail
-select bit_count(s) from t1;
+select bit_count(s) from t1 order by 1;
 
 select bit_count(2);
 
