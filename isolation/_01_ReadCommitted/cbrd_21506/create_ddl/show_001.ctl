@@ -53,8 +53,11 @@ MC: wait until C4 ready;
 
 MC: wait until C2 ready;
 C2: commit;
-
 MC: wait until C2 ready;
+
+C4: show index from t1;
+C4: commit;
+MC: wait until C4 ready;
 
 /* verification */
 C1: select sum(set{b}) into :s from t1 ignore index (i) where a > -999 order by 1;
