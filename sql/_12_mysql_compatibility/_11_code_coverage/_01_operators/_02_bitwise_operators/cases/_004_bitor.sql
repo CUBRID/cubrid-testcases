@@ -12,11 +12,11 @@ select i1 | i1 from t1 order by 1;
 select sh | sh from t1 order by 1;
 select b | b from t1 order by 1;
 -- should fail
-select d | d from t1;
+select d | d from t1 order by 1;
 -- should fail
-select n | n from t1;
+select n | n from t1 order by 1;
 -- should fail
-select s | s from t1;
+select s | s from t1 order by 1;
 
 select 1 | 2;
 
