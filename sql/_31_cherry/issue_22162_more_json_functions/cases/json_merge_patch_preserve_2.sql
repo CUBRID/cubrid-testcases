@@ -23,6 +23,7 @@ SET @x = '{ "a": 1, "b": 2 }',
 SELECT  JSON_MERGE_PRESERVE(@x, @y, @z), JSON_MERGE_PATCH(@x, @y, @z);
 
 --NULL test
+--CBRD-22555
 SELECT JSON_MERGE_PRESERVE(NULL, '[true, false]');
 SELECT JSON_MERGE_PATCH(NULL, '[true, false]');
 
