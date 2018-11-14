@@ -48,7 +48,7 @@ C1: update t1 set col='aa' where id<4;
 MC: wait until C1 ready;
 C2: update t1 set col='bb' where id>1 and col like 'ab%';
 MC: wait until C2 blocked;
-C3: update t1 set col='cc' where id<5 and id>1 and col like 'ab%'; 
+C3: update t1 set col='cc' where id<4 and id>1 and col like 'ab%'; 
 MC: wait until C3 blocked;
 C1: commit;
 MC: wait until C1 ready;
