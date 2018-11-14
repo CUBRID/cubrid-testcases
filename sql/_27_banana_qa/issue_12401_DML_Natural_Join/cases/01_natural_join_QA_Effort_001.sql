@@ -392,14 +392,14 @@ insert into t1 values(:t02, 2);
 insert into t2 values(:t01, 3);
 insert into t2 values(:t03, 4);
 
-select * from t1 natural join t2 order by 1,2,3,4;
-select * from t1 natural left join t2 order by 1,2,3,4;
-select * from t1 natural right join t2 order by 1,2,3,4;
+select * from t1 natural join t2 order by 2,3,4;
+select * from t1 natural left join t2 order by 2,3,4;
+select * from t1 natural right join t2 order by 2,3,4;
 
-select * from t1 natural join (select * from t2) order by 1,2,3,4;
-select * from t1 natural join (select a, b2 as b1 from t2) order by 1,2,3,4;
-select * from t1 natural left join (select * from t2) order by 1,2,3,4;
-select * from t1 natural right join (select * from t2) order by 1,2,3,4;
+select * from t1 natural join (select * from t2) order by 2,3,4;
+select * from t1 natural join (select a, b2 as b1 from t2) order by 2,3,4;
+select * from t1 natural left join (select * from t2) order by 2,3,4;
+select * from t1 natural right join (select * from t2) order by 2,3,4;
 
 drop table if exists t0;
 drop table if exists t1;
