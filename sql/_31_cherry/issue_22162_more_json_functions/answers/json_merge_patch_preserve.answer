@@ -19,12 +19,8 @@ json_merge_patch('{"Name":"Mark"}', '{"Age":40}', '{"Job":"CEO"}')    json_merge
 {"Name":"Mark","Age":40,"Job":"CEO"}     {"Name":"Mark","Age":40,"Job":"CEO"}     
 
 ===================================================
-json_merge_patch('{"Alphabet":["a","b"]}', '{"Alphabet":["c"]}')    
-{"Alphabet":["c"]}     
-
-===================================================
 json_merge_patch('{"Alphabet":["a","b"]}', '{"Alphabet":["c"]}')    json_merge('{"Alphabet":["a","b"]}', '{"Alphabet":["c"]}')    
-{"Alphabet":["c"]}     {"Alphabet":["a","b",["c"]]}     
+{"Alphabet":["c"]}     {"Alphabet":["a","b","c"]}     
 
 ===================================================
 0
@@ -32,6 +28,10 @@ json_merge_patch('{"Alphabet":["a","b"]}', '{"Alphabet":["c"]}')    json_merge('
 0
 ===================================================
 json_merge_patch(@jd1, @jd2)    
+{"Alphabet":{"A":"a","B":["b","c"],"C":3,"D":["d","e"]}}     
+
+===================================================
+json_merge(@jd1, @jd2)    
 {"Alphabet":{"A":"a","B":["b","c"],"C":3,"D":["d","e"]}}     
 
 ===================================================
