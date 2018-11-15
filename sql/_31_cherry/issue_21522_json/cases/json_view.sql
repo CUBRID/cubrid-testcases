@@ -9,6 +9,14 @@ drop view if exists v2;
 drop view if exists v3;
 create view v3 as (select json_extract(name, ''),i from t6);
 create view v2 as (select json_extract('{"a":"b"}', ''),i from t6);  
+--CBRD-22559 won't fix
+create view v2 as (select json_extract('{"a":"b"}', '/a'),i from t6);  
+create view v2 as (select json_extract('{"a":"b"}', '/a') as a, i from t6);  
+select * from v2 order by a,i;
+drop view if exists v2;
+create view v2 as (select json_extract('{"a":"b"}', '') as a, i from t6); 
+--CBRD-22486 (open) 
+select * from v2 order by a,i;
 create view v1 as (select json_extract(name, '') as c,i from t6);
 
 select * from t6 order by 2 desc;
