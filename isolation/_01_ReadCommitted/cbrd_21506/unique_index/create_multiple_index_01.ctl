@@ -40,18 +40,10 @@ MC: wait until C3 unblocked;
 
 /* C2 C3 starts scan and will demote to IX. */
 
-/* C2 should be blocked to promote to SCH_M */
-MC: wait until C2 blocked;
-MC: wait until C3 blocked;
-
-MC: wait until C2 ready;
 C2: commit;
-
 MC: wait until C2 ready;
 
-MC: wait until C3 ready;
 C3: commit;
-
 MC: wait until C3 ready;
 
 /* verification */
