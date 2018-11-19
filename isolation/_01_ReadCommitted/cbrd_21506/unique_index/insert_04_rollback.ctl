@@ -35,10 +35,10 @@ MC: wait until C1 ready;
 C2: create unique index i on t1(b,c) with online;
 MC: wait until C2 blocked;
 
-C3: insert into t1 set a=b+1,b=1,c=b;
+C3: insert into t1 set a=20,b=1,c=b;
 MC: wait until C3 blocked;
 
-C4: insert into t1 set a=b+1,b=1,c=b;
+C4: insert into t1 set a=20,b=1,c=b;
 MC: wait until C4 blocked;
 
 C1: commit;
