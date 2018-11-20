@@ -1,5 +1,5 @@
 
---CBRD-22500 JSON_LENGTH is undefined or given wrong number of parameter.
+--CBRD-22500 JSON_LENGTH support the path argument.
 SET @jv = '{  
     "Person": {    
        "Name": "Homer", 
@@ -10,9 +10,21 @@ SET @jv = '{
  
 SELECT JSON_LENGTH(@jv) ;
 SELECT JSON_LENGTH(@jv, '$') ;
+-- String '' is a valid JSON pointer, equivalent to '$' JSON SQL PATH.
 SELECT JSON_LENGTH(@jv, '') ;
 SELECT JSON_LENGTH(json_extract(@jv, '$.Person')) ;
 SELECT JSON_LENGTH(@jv, '$.Person') ;
+SELECT JSON_LENGTH(@jv, '$.Person.Name');
+SELECT JSON_LENGTH(@jv, '$.Person.Hobbies');
+SELECT JSON_LENGTH(@jv, '/Person');
+SELECT JSON_LENGTH(@jv, '/Person/Name');
+SELECT JSON_LENGTH(@jv, '/Person/Hobbies/0');
+
+SET @jv = '';
+SELECT JSON_LENGTH(@jv);
+SELECT JSON_LENGTH(@jv, '$.Person');
+SELECT JSON_LENGTH(@jv, '$.Person.Name');
+SELECT JSON_LENGTH(@jv, '$.Person.Hobbies');
 
 drop variable @jv;
 
@@ -62,11 +74,23 @@ select json_length('{"a": 1, "b": {"c": 30}}', '-' );
 select json_length('{"a": 1, "b": {"c": 30}}', '$.*' );
 select json_length('["a", 1, "b", {"c": 30}]', '$[*]' );
 select json_length('{"a": 1, "b": {"c": 30}}', NULL );
+
+SELECT JSON_LENGTH('{"a": 1, "b": {"c": 30}}', '$');
+SELECT JSON_LENGTH('{"a": 1, "b": {"c": 30}}', '/');
+SELECT JSON_LENGTH('{"a": 1, "b": {"c": 30}}', '$', '$');
+SELECT JSON_LENGTH('{"a": 1, "b": {"c": 30}}', '');
 select json_length('{"a": NULL, "b": {"c": 30}}', '$.a' );
 select json_length('{"a": null, "b": {"c": 30}}', '$.a' );
 
 select json_length(null, '$.a' );
 select json_length(NULL, '$.a' );
 select json_length(@j, '$' );
-
+SELECT JSON_LENGTH( NULL, NULL );
+SELECT JSON_LENGTH('[]');
+SELECT JSON_LENGTH('', '');
+SELECT JSON_LENGTH('', '$');
+SELECT JSON_LENGTH('{"Name": "Homer"}');
+SELECT JSON_LENGTH('{"Name": "Homer", "Stupid": true}');
+SELECT JSON_LENGTH('[1, 2, 3]');
+SELECT JSON_LENGTH('[1, 2, [3, 4]]');
 
