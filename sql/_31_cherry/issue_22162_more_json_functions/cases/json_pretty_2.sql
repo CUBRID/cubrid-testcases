@@ -38,5 +38,6 @@ insert into t1(c) values(@j);
 select id, c from t1 where id<100 order by 1,2;
 SELECT id, JSON_PRETTY(c) from t1 where id>0 order by 1,2;
 
+drop variable @j;
 drop t1;
 
