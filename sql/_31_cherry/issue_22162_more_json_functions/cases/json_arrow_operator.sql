@@ -8,6 +8,7 @@ insert into t1(c) values(@j);
 insert into t1(c) values(json_object('id','105','name', json_array('ddd1','ddd2')));
 insert into t1(c) values(json_object('id','106','name', '["eee1","eee2"]'));
 insert into t1(c) values(json_object('id','107','name', json_object('name', 'fff1', 'name_old', 'fff2')));
+drop variable @j;
 
 --basic test
 SELECT id, c->'$.id', c->'$.name' from t1 where id<10 order by 1,2,3;
