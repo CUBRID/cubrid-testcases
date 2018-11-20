@@ -2,14 +2,32 @@
 date    
 null     
 
+Query plan:
+sscan
+    class: jt node[?]
+    cost:  ? card ?
+Query stmt:
+select jt.[date] from (json_table ('{"date":""}', '$' columns (date datetime PATH '$.date' NULL ON ERROR NULL ON EMPTY )) as jt)
 ===================================================
 date    
 null     
 
+Query plan:
+sscan
+    class: jt node[?]
+    cost:  ? card ?
+Query stmt:
+select jt.[date] from (json_table ('{"date":""}', '$' columns (date date PATH '$.date' NULL ON ERROR NULL ON EMPTY )) as jt)
 ===================================================
 date    
      
 
+Query plan:
+sscan
+    class: jt node[?]
+    cost:  ? card ?
+Query stmt:
+select jt.[date] from (json_table ('{"date":""}', '$' columns (date varchar(?) PATH '$.date' NULL ON ERROR NULL ON EMPTY )) as jt)
 ===================================================
 0
 ===================================================
@@ -21,10 +39,39 @@ phones
 "Office"     
 "Mobile"     
 
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  table(?) -> jt node[?]
+                 outer: sscan
+                            class: tbl? node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: jt node[?]
+                            sargs: table(?) -> jt node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select jt.phones from tbl? tbl?, (json_table (tbl?.jdoc, '$.Phone' columns (phones json PATH '$.type' NULL ON ERROR NULL ON EMPTY )) as jt) order by ? desc 
 ===================================================
 phones    
 [{"type":"Office","number":"909-555-7307"},{"type":"Mobile","number":"415-555-1234"}]     
 
+Query plan:
+nl-join (inner join)
+    edge:  table(?) -> jt node[?]
+    outer: sscan
+               class: tbl? node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: jt node[?]
+               sargs: table(?) -> jt node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select jt.phones from tbl? tbl?, (json_table (tbl?.jdoc, '$' columns (phones json PATH '$.Phone' NULL ON ERROR NULL ON EMPTY )) as jt)
 ===================================================
 0
 ===================================================
@@ -34,12 +81,52 @@ id    i    j    id1    name    id2    phone_type    phone_num
 111     222     {"a":"b"}     1     "b"     1     Office     909-555-7307     
 111     222     {"a":"b"}     1     "b"     2     Mobile     415-555-1234     
 
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: nl-join (inner join)
+                            edge:  table(?) -> jt? node[?]
+                            outer: sscan
+                                       class: tbl? node[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: jt? node[?]
+                                       sargs: table(?) -> jt? node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: temp
+                            order: UNORDERED
+                            subplan: nl-join (inner join)
+                                         edge:  table(?) -> jt node[?]
+                                         outer: sscan
+                                                    class: tbl? node[?]
+                                                    cost:  ? card ?
+                                         inner: sscan
+                                                    class: jt node[?]
+                                                    sargs: table(?) -> jt node[?]
+                                                    cost:  ? card ?
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tbl?.id, tbl?.i, tbl?.j, jt.id?, jt.[name], jt?.id?, jt?.phone_type, jt?.phone_num from tbl? tbl?, tbl? tbl?, (json_table (tbl?.j, '$' columns (id? FOR ORDINALITY, name json PATH '$.a' NULL ON ERROR NULL ON EMPTY )) as jt), (json_table (tbl?.jdoc, '$.Phone' columns (id? FOR ORDINALITY, phone_type varchar(?) PATH '$.type' NULL ON ERROR NULL ON EMPTY, phone_num varchar(?) PATH '$.number' NULL ON ERROR NULL ON EMPTY )) as jt?) order by ?
 ===================================================
 rowid    AddressType    AdrressCode    AdreessDetail    AddressZipCode    
 1     1     Code 1     aaaa     100010     
 2     2     Code 2     bbbb     200020     
 3     5     Code 1     xxxx     500050     
 
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: Address node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select Address.rowid, Address.AddressType, Address.AdrressCode, Address.AdreessDetail, Address.AddressZipCode from (json_table ('[{"AddressType":?, "AdrressCode":"Code ?", "AdreessDetail":"aaaa", "AddressZipCode":"?"},
 ===================================================
 rowid    AddressType    AdrressCode    AdreessDetail    AddressZipCode    
 1     1     Code 1     aaaa     100010     
@@ -49,21 +136,60 @@ rowid    AddressType    AdrressCode    AdreessDetail    AddressZipCode
 3     5     Code 1     xxxx     500050     
 3     5     Code 1     xxxx     500050     
 
+Query plan:
+sscan
+    class: Address node[?]
+    cost:  ? card ?
+Query stmt:
+select Address.rowid, Address.AddressType, Address.AdrressCode, Address.AdreessDetail, Address.AddressZipCode from (json_table ('[{"AddressType":?, "AdrressCode":"Code ?", "AdreessDetail":"aaaa", "AddressZipCode":"?"},
+Query plan:
+sscan
+    class: Address node[?]
+    cost:  ? card ?
+Query stmt:
+select Address.rowid, Address.AddressType, Address.AdrressCode, Address.AdreessDetail, Address.AddressZipCode from (json_table ('[{"AddressType":?, "AdrressCode":"Code ?", "AdreessDetail":"aaaa", "AddressZipCode":"?"},
 ===================================================
 0
 ===================================================
 id    jdoc    
 111     {"name":"Alexis Bull","Address":{"street":"200 Sporting Green","city":"South San Francisco","state":"CA","zipCode":99236,"country":"United States of America"},"Phone":[{"type":"Office","number":"909-555-7307"},{"type":"Mobile","number":"415-555-1234"}]}     
 
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tbl? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tbl?.id, tbl?.jdoc from tbl? tbl? order by ?
 ===================================================
 i    j    
 222     {"a":"b"}     
 
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tbl? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tbl?.i, tbl?.j from tbl? tbl? order by ?
 ===================================================
 rowid    addresstype    adrresscode    adreessdetail    addresszipcode    
 1     1     Code 1     aaaa     100010     
 2     2     Code 2     bbbb     200020     
 3     5     Code 1     xxxx     500050     
 
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tbl? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tbl?.rowid, tbl?.addresstype, tbl?.adrresscode, tbl?.adreessdetail, tbl?.addresszipcode from tbl? tbl? order by ?
 ===================================================
 0
