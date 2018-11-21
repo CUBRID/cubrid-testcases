@@ -103,3 +103,23 @@ SELECT JSON_OBJECTAGG(c, i) FROM (select * from t order by i ) as t;
 SELECT JSON_OBJECTAGG(c, i) FROM (select * from t order by i desc) as t;
 drop table if exists t;
 
+-- http://jira.cubrid.org/browse/CBRD-22577
+drop table if exists t1;
+CREATE TABLE t1 (i int auto_increment, a BIGINT);
+insert into t1(a) values (2147483649);
+insert into t1(a) values (12345678901234);
+insert into t1(a) values (2147483649.9);
+insert into t1(a) values (-12345678901234.7);
+select * from t1 order by 1;
+select json_objectagg(a,a) from t1 order by 1;
+select json_arrayagg(a) from t1 order by 1;
+select i, json_object(a,a), json_array(a,a,a,a,a) from t1 order by 1;
+
+-- http://jira.cubrid.org/browse/CBRD-22557
+drop table if exists t1;
+create table t1 (a numeric(38,0));
+insert into t1 values (1), (2);
+select a, typeof(a), JSON_OBJECTAGG('name', a), JSON_ArrayAgg(a) from t1 group by a order by 1;
+select json_object(a,a),json_array(a,a) from t1 group by a order by 1;      
+drop table if exists t1;
+
