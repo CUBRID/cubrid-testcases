@@ -51,16 +51,16 @@ show create table tt2;
 select * from tt1 order by 1;
 select * from tt2;
 
-select * from tt1, tt2, json_table( '[{"date1":"2018-10-18"}, {"date1":"2018-10-17"}]', '$[*]'
+select /*+ recompile orderd */ * from tt1, tt2, json_table( '[{"date1":"2018-10-18"}, {"date1":"2018-10-17"}]', '$[*]'
     columns ( date3 varchar(20) path '$.date1' )) as jt
 where str_to_date(date3,'%Y-%m-%d') < date2 and str_to_date(date1,'%Y-%m-%d') = date2
 order by 1,2,3;
 
-select count(*) from tt1, tt2, json_table( '[{"date1":"2018-10-18"}, {"date1":"2018-10-17"}]', '$[*]' 
+select /*+ recompile orderd */ count(*) from tt1, tt2, json_table( '[{"date1":"2018-10-18"}, {"date1":"2018-10-17"}]', '$[*]' 
     columns ( date3 varchar(20) path '$.date1' )) as jt
 where str_to_date(date3,'%Y-%m-%d') < date2 and str_to_date(date1,'%Y-%m-%d') = date2;
 
-select count(1), date3 from tt1, tt2, json_table( '[{"date1":"2018-10-18"}, {"date1":"2018-10-17"}]', '$[*]'
+select /*+ recompile orderd */ count(1), date3 from tt1, tt2, json_table( '[{"date1":"2018-10-18"}, {"date1":"2018-10-17"}]', '$[*]'
     columns ( date3 varchar(20) path '$.date1' )) as jt
 group by date3 order by 2;
 
