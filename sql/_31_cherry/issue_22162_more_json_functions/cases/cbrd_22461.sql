@@ -18,8 +18,8 @@ insert into aa select a+(select count(*) from aa), 1 from aa;
 insert into bb select * from aa;
 insert into cc select a, 1 from aa where a <= 5;
 update statistics on all classes;
-select /*+ recompile orderd */ bb.* from aa inner join bb on bb.a = aa.a inner join cc on cc.a = aa.a and cc.b=1 where bb.a in (1,2) order by bb.b,bb.a;
-select /*+ recompile orderd */ bb.* from aa inner join bb on bb.a = aa.a and bb.a in (1,2) inner join cc on cc.a = aa.a and cc.b=1 order by bb.b,bb.a;
+select /*+ recompile */ bb.* from aa inner join bb on bb.a = aa.a inner join cc on cc.a = aa.a and cc.b=1 where bb.a in (1,2) order by bb.b,bb.a;
+select /*+ recompile */ bb.* from aa inner join bb on bb.a = aa.a and bb.a in (1,2) inner join cc on cc.a = aa.a and cc.b=1 order by bb.b,bb.a;
 drop table if exists aa;
 drop table if exists bb;
 drop table if exists cc;
@@ -42,7 +42,7 @@ insert into tt1 values (select jt.* from json_table('{"date1":"2018-10-18"}', '$
 columns (date1 varchar(50) path '$.date1' DEFAULT  '"2018-00-00"'  ON ERROR default '2018-99-99'  ON EMPTY
 )) as jt );
 
-select /*+ recompile orderd */ count(*) from tt1, tt2, json_table( '[{"date1":"2018-10-18"}, {"date1":"2018-10-17"}]', '$[*]'
+select /*+ recompile ordered */ count(*) from tt1, tt2, json_table( '[{"date1":"2018-10-18"}, {"date1":"2018-10-17"}]', '$[*]'
 columns ( date3 varchar(20) path '$.date1' )) as jt
 where str_to_date(date3,'%Y-%m-%d') < date2 and str_to_date(date1,'%Y-%m-%d') = date2;
 
