@@ -119,7 +119,7 @@ nl-join (inner join)
     outer: nl-join (inner join)
                edge:  term[?]
                outer: sscan
-                          class: jt node[?]
+                          class: tt? node[?]
                           cost:  ? card ?
                inner: sscan
                           class: tt? node[?]
@@ -127,11 +127,11 @@ nl-join (inner join)
                           cost:  ? card ?
                cost:  ? card ?
     inner: sscan
-               class: tt? node[?]
+               class: jt node[?]
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from tt? tt?, tt? tt?, (json_table ('[{"date?":"?-?-?"}, {"date?":"?-?-?"}]', '$' columns (date? varchar(?) PATH '$.date?' NULL ON ERROR NULL ON EMPTY )) as jt) where (tt?.date?> str_to_date(jt.date?, '%Y-%m-%d')) and tt?.date?= str_to_date(tt?.date?, '%Y-%m-%d')
+select /*+ ORDERED */ count(*) from tt? tt?, tt? tt?, (json_table ('[{"date?":"?-?-?"}, {"date?":"?-?-?"}]', '$' columns (date? varchar(?) PATH '$.date?' NULL ON ERROR NULL ON EMPTY )) as jt) where (tt?.date?> str_to_date(jt.date?, '%Y-%m-%d')) and tt?.date?= str_to_date(tt?.date?, '%Y-%m-%d')
 ===================================================
 0
