@@ -73,9 +73,9 @@ SELECT * FROM
  ) WHERE num=5
 )select * from cte;
 
-select * from foo1;
-select * from foo2;
-select * from foo3;
+select * from foo1 order by 1,2,3;
+select * from foo2 order by 1,2,3;
+select * from foo3 order by 1,2,3;
 
 
 --delete
@@ -108,9 +108,9 @@ SELECT * FROM
 )delete foo3 from foo3,cte where foo3.num=cte.num
 and  foo3.next_title not in (select title from cte);
 
-select * from foo1;
-select * from foo2;
-select * from foo3;
+select * from foo1 order by 1,2,3;
+select * from foo2 order by 1,2,3;
+select * from foo3 order by 1,2,3;
 
 with cte as
 (select * from t1) delete from foo1 where exists (select count(name) from cte);
@@ -176,9 +176,9 @@ SELECT * FROM
  ) WHERE num=5;
 
 
-select * from foo1;
-select * from foo2;
-select * from foo3;
+select * from foo1 order by 1,2,3;
+select * from foo2 order by 1,2,3;
+select * from foo3 order by 1,2,3;
 
 --update
 with cte as
@@ -215,6 +215,8 @@ set foo3.num=foo3.num+100
 where foo3.num=cte.num
 and  foo3.next_title not in (select title from cte);
 
-select * from foo1;
-select * from foo2;
-select * from foo3;
+select * from foo1 order by 1,2,3;
+select * from foo2 order by 1,2,3;
+select * from foo3 order by 1,2,3;
+
+drop table if exists foo1,foo2,foo3,t2;

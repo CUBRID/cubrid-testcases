@@ -39,7 +39,7 @@ with cte as
 ) SELECT groupid, itemno, NTH_VALUE(itemno, 2) IGNORE NULLS OVER(PARTITION BY groupid ORDER BY itemno NULLS FIRST) AS ret_val
 FROM cte;
 
-select * from foo;
+select * from foo order by 1,2,3;
 
 
 --update
@@ -54,7 +54,7 @@ with cte as
 ) SELECT NTH_VALUE(itemno, 2) IGNORE NULLS OVER(PARTITION BY groupid ORDER BY itemno NULLS FIRST) AS ret_val
 FROM cte );
 
-select * from foo;
+select * from foo order by 1,2,3;
 
 --delete
 with cte as
@@ -68,7 +68,7 @@ with cte as
 ) SELECT NTH_VALUE(itemno, 2) IGNORE NULLS OVER(PARTITION BY groupid ORDER BY itemno NULLS FIRST) AS ret_val
 FROM cte );
 
-select * from foo;
+select * from foo order by 1,2,3;
 
 
 with cte as
@@ -82,7 +82,7 @@ FROM test_tbl
 ) 
 delete foo from foo inner join cte on foo.groupid=cte.groupid and foo.itemno=cte.itemno+100 inner join cte2 on foo.groupid=cte2.groupid and foo.itemno=cte2.itemno and foo.ret_val<=cte2.ret_val;
 
-select * from foo;
+select * from foo order by 1,2,3;
 
 --replace
 replace into foo
@@ -102,6 +102,7 @@ FROM cte;
 
 with cte as
 (
- select * from foo where ret_val is not null
-)select * from cte;
+ select * from foo where ret_val is not null order by 1,2,3
+)select * from cte order by 1,2,3;
 
+drop table if exists foo,test_tbl;

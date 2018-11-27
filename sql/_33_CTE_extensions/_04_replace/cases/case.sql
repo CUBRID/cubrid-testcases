@@ -50,7 +50,7 @@ FROM case_tbl
 )select * from cte;
 
 
-select * from foo;
+select * from foo order by 1,2;
 
 --update
 with cte1(a,case_v) as
@@ -74,7 +74,7 @@ FROM case_tbl
 select * from cte2
 );
 
-select * from foo;
+select * from foo order by 1,2;
 
 
 --delete
@@ -97,7 +97,7 @@ SELECT a,
 FROM case_tbl
 ) delete foo,case_tbl from cte1 inner join foo on foo.case_v=cte1.case_v inner join case_tbl on foo.a=case_tbl.a;
 
-select * from foo;
+select * from foo order by 1,2;
 select * from case_tbl;
 
 with cte1(a,case_v) as
@@ -120,4 +120,7 @@ FROM case_tbl
 ) delete from foo where case_v in (select case_v from cte1)
 or case_v in (select case_v from cte2);
 
-select * from foo;
+select * from foo order by 1,2;
+
+
+drop table if exists case_tbl,foo;

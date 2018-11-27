@@ -65,10 +65,10 @@ with cte as
  SELECT * FROM tbl WHERE name BETWEEN 'A' AND 'E'
 )select * from cte;
 
-select * from foo1;
-select * from foo2;
-select * from foo3;
-select * from foo4;
+select * from foo1 order by 1,2,3,4;
+select * from foo2 order by 1,2,3,4;
+select * from foo3 order by 1,2,3,4;
+select * from foo4 order by 1,2,3,4;
 
 --delete
 with cte as
@@ -98,10 +98,10 @@ with cte as
  SELECT * FROM tbl WHERE name BETWEEN 'A' AND 'E'
 ) delete from foo4 where not exists (select * from cte);
 
-select * from foo1;
-select * from foo2;
-select * from foo3;
-select * from foo4;
+select * from foo1 order by 1,2,3,4;
+select * from foo2 order by 1,2,3,4;
+select * from foo3 order by 1,2,3,4;
+select * from foo4 order by 1,2,3,4;
 
 
 --replace
@@ -129,10 +129,10 @@ with cte as
  SELECT * FROM tbl WHERE name BETWEEN 'A' AND 'E'
 )select * from cte;
 
-select * from foo1;
-select * from foo2;
-select * from foo3;
-select * from foo4;
+select * from foo1 order by 1,2,3,4;
+select * from foo2 order by 1,2,3,4;
+select * from foo3 order by 1,2,3,4;
+select * from foo4 order by 1,2,3,4;
 
 --update
 with cte as
@@ -162,8 +162,9 @@ with cte as
  SELECT * FROM tbl WHERE name BETWEEN 'A' AND 'E'
 ) update foo4 set id=id+100 where not exists (select * from cte);
 
-select * from foo1;
-select * from foo2;
-select * from foo3;
-select * from foo4;
+select * from foo1 order by 1,2,3,4;
+select * from foo2 order by 1,2,3,4;
+select * from foo3 order by 1,2,3,4;
+select * from foo4 order by 1,2,3,4;
 
+drop table if exists tbl,foo1,foo2,foo3,foo4;

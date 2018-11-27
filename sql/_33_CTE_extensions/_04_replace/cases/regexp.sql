@@ -20,7 +20,7 @@ with cte as
 select /*+ recompile */ * from testt where (select (not 'aaa' regexp 'a{6,}')) order by 2
 ) select *from cte;
 
-select * from foo;
+select * from foo order by 1,2,3,4;
 
 create table foo2 as
 with cte as
@@ -34,22 +34,22 @@ with cte as
 select /*+ recompile */ * from testt where (select 1) order by 2
 ) delete from foo,foo2 using foo,foo2,cte where foo.v=foo2.v and foo2.f=cte.f;
 
-select * from foo2;
-select * from foo;
+select * from foo2 order by 1,2,3,4;
+select * from foo order by 1,2,3,4;
 
 insert into foo
 with cte as
 (
 select /*+ recompile */ * from testt where (select ('aaa' like 'bbb')) order by 2
 )select *from cte;
-select * from foo;
+select * from foo order by 1,2,3,4;
 
 replace into foo2
 with cte as
 (
 select /*+ recompile */ * from testt where (select ('aaa' like 'aaa')) order by 2
 )select *from cte;
-select * from foo2;
+select * from foo2 order by 1,2,3,4;
 
 replace into foo2
 with cte as
@@ -57,6 +57,6 @@ with cte as
 select /*+ recompile */ * from testt where (select ('aaa' not like 'aaa')) order by 2
 )select *from cte;
 
-select * from foo2;
+select * from foo2 order by 1,2,3,4;
 
-drop testt;
+drop table if exists foo,foo2, testt;

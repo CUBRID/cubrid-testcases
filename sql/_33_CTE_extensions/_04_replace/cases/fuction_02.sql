@@ -6,9 +6,14 @@ create table foo as
 with cte(c) as
 (
 select group_concat(e order by e asc) from t1
+) select * from cte;
+
+with cte(c) as
+(
+select group_concat(e order by e asc) from t1
 )delete from foo where c>(select cast(c as varchar) from cte) limit 1 ;
 
-select * from foo;
+select * from foo order by 1;
 
  
 with cte(c) as
@@ -24,20 +29,19 @@ select min(e) from t1 order by 1
 )delete from foo where c>(select cast(c as varchar) from cte) limit 1 ;
 
 
-insert  into foo 
 with cte(c) as
 (
 select sum(e) from t1 order by 1
 )delete from foo where c>(select cast(c as varchar) from cte) limit 1 ;
 
-select * from foo;
+select * from foo  order by 1;
 
 with cte(c) as
 (
 select avg(e) from t1 order by 1
 ) delete from foo where c>(select cast(c as varchar) from cte) ;
 
-select * from foo;
+select * from foo  order by 1;
 
 
 with cte(c) as
@@ -416,34 +420,9 @@ with cte(c) as
 select format(e, e) from t1 order by 1
 )delete from foo where c>(select cast(c as varchar) from cte) limit 1 ;
 
-
-
-with cte(c,d) as
-(
-select greatest(e, e, e, 2), greatest(e, e, e, 'x') from t1 order by 1, 2
-)select c from cte ;
-
-
-
-with cte(c) as
-(
-select greatest(e, e, e, cast(e as int)) from t1 order by 1
-)delete from foo where c>(select cast(c as varchar) from cte) limit 1 ;
-
 with cte(c) as
 (
 select hex(e) from t1 order by 1
-)delete from foo where c>(select cast(c as varchar) from cte) limit 1 ;
-
-with cte(c,d) as
-(
-select least(e, e, e, 2), least(e, e, e, 'x') from t1 order by 1, 2
-)select c from cte ;
-
-
-with cte(c) as
-(
-select least(e, e, e, cast(e as int)) from t1 order by 1
 )delete from foo where c>(select cast(c as varchar) from cte) limit 1 ;
 
 with cte(c) as
@@ -535,15 +514,6 @@ with cte(c) as
 select decode(e, e, e, 2) from t1 order by 1
 )delete from foo where c>(select cast(c as varchar) from cte) limit 1 ;
 
-with cte(c,d) as
-(
-    select e, case e when 1 then 10 when 2 then e when 3 then e else e end from t1 order by 1, 2
-)select d from cte ;
-
-with cte(c,d) as
-(
-    select e, case when cast(e as int)=1 then 10 when  cast(e as int)=2 then e when  cast(e as int)=3 then e else e end from t1 order by 1, 2
-) select d from cte ;
 
 
 with cte(c,d) as
@@ -584,4 +554,4 @@ with cte(c,d,f) as
 select e, md5(e), md5(cast(e as varchar)) from t1 order by 1, 2, 3
 )select f from cte ;
 
---drop table t1,foo;
+drop table if exists t1,foo;

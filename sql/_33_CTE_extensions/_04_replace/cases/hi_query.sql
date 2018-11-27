@@ -40,7 +40,7 @@ FROM cte
 START WITH mgrid IS NULL
 CONNECT BY prior id=mgrid
 ORDER BY id;
-select * from foo;
+select * from foo  order by 1,2,3;
 
 
 replace into foo
@@ -57,9 +57,9 @@ FROM cte
 START WITH mgrid IS NULL
 CONNECT BY prior id=mgrid
 ORDER BY id;
-select * from foo;
+select * from foo  order by 1,2,3;
 
-select * from foo;
+select * from foo  order by 1,2,3;
 
 
 
@@ -74,7 +74,7 @@ START WITH mgrid IS NULL
 CONNECT BY prior id=mgrid
 ORDER BY id);
 
-select * from foo;
+select * from foo  order by 1,2,3;
 
 
 
@@ -92,7 +92,7 @@ START WITH mgrid IS NULL
 CONNECT BY prior id=mgrid
 ORDER BY id;
 
-select * from foo;
+select * from foo  order by 1,2,3;
 
 with cte as
 (
@@ -103,7 +103,7 @@ FROM cte
 START WITH mgrid IS NULL
 CONNECT BY prior id=mgrid
 ORDER BY id);
-select * from foo;
+select * from foo  order by 1,2,3;
 
 
 replace into foo
@@ -120,7 +120,7 @@ START WITH mgrid IS NULL
 CONNECT BY prior id=mgrid
 ORDER BY id;
 
-select * from foo;
+select * from foo  order by 1,2,3;
 
 with cte as
 (
@@ -131,7 +131,7 @@ FROM cte
 START WITH mgrid IS NULL
 CONNECT BY prior id=mgrid
 ORDER BY id);
-select * from foo;
+select * from foo  order by 1,2,3;
 
 
 replace into foo
@@ -148,7 +148,7 @@ START WITH mgrid IS NULL
 CONNECT BY prior id=mgrid
 ORDER BY id;
 
-select * from foo;
+select * from foo  order by 1,2,3;
 
 with cte as
 (
@@ -159,4 +159,6 @@ FROM cte
 START WITH mgrid IS NULL
 CONNECT BY prior id=mgrid
 ORDER BY id);
-select * from foo;
+select * from foo  order by 1,2,3;
+
+drop table if exists foo,tree;

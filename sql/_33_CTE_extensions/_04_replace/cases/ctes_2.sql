@@ -7,7 +7,7 @@ insert into t
 with 
 mycte as
 (
- select max(i),avg(j)+min(k),4 from t
+ select max(i),avg(j),min(k),4 from t
 ),
 cte2 as
 (

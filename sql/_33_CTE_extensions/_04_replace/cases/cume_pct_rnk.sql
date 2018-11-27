@@ -84,10 +84,10 @@ with cte as
   select * from test_tbl
 ) SELECT PERCENT_RANK() OVER (ORDER BY val) AS pct_rnk FROM cte;
 
-select cast(cume as numeric(4,2)) from foo1;
-select cast(pct_rnk as numeric(4,2)) from foo2;
-select cast(cume as numeric(4,2)) from foo3;
-select cast(pct_rnk as numeric(4,2)) from foo4;
+select cast(cume as numeric(4,2)) from foo1 order by 1;
+select cast(pct_rnk as numeric(4,2)) from foo2 order by 1;
+select cast(cume as numeric(4,2)) from foo3 order by 1;
+select cast(pct_rnk as numeric(4,2)) from foo4 order by 1;
 
 --update
 with cte as
@@ -127,10 +127,10 @@ with cte as
   select * from test_tbl
 ) SELECT PERCENT_RANK() OVER (ORDER BY val) AS pct_rnk FROM cte);
 
-select *  from foo1;
-select *  from foo2;
-select *  from foo3;
-select *  from foo4;
+select *  from foo1 order by 1;
+select *  from foo2 order by 1;
+select *  from foo3 order by 1;
+select *  from foo4 order by 1;
 
 
 --replace
@@ -183,10 +183,10 @@ with cte as
   select * from test_tbl
 ) SELECT PERCENT_RANK() OVER (ORDER BY val) AS pct_rnk FROM cte;
 
-select cast(cume as numeric(4,2)) from foo1;
-select cast(pct_rnk as numeric(4,2)) from foo2;
-select cast(cume as numeric(4,2)) from foo3;
-select cast(pct_rnk as numeric(4,2)) from foo4;
+select cast(cume as numeric(4,2)) from foo1 order by 1;
+select cast(pct_rnk as numeric(4,2)) from foo2 order by 1;
+select cast(cume as numeric(4,2)) from foo3 order by 1;
+select cast(pct_rnk as numeric(4,2)) from foo4 order by 1;
 
 --delete
 with cte as
@@ -225,7 +225,9 @@ with cte as
   select * from test_tbl
 ) SELECT PERCENT_RANK() OVER (ORDER BY val) AS pct_rnk FROM cte);
 
-select *  from foo1;
-select *  from foo2;
-select *  from foo3;
-select *  from foo4;
+select *  from foo1 order by 1;
+select *  from foo2 order by 1;
+select *  from foo3 order by 1;
+select *  from foo4 order by 1;
+
+drop table if exists  foo1,foo2,foo3,foo4,test_tbl;

@@ -27,7 +27,7 @@ UNION ALL
 SELECT  *
 FROM    cte1 order by 1;
 
-
+select * from xoo order by 1;
 
 insert into xoo
 WITH Numbers AS
@@ -41,6 +41,9 @@ WITH Numbers AS
 SELECT n
 FROM Numbers order by n;
 
+
+select * from xoo order by 1;
+
 insert into xoo
 WITH recursive Numbers AS
 (
@@ -53,6 +56,19 @@ WITH recursive Numbers AS
 SELECT n
 FROM Numbers order by 1;
 
+select * from xoo order by 1;
+
+WITH recursive Numbers AS
+(
+    SELECT 1 as n
+    UNION ALL
+    SELECT n + 1
+    FROM Numbers
+    WHERE n+1 <= 10
+) update xoo set id=2*id where id in (
+SELECT n
+FROM Numbers order by 1);
+select * from xoo order by 1;
 
 WITH recursive Numbers AS
 (
@@ -65,5 +81,6 @@ WITH recursive Numbers AS
 SELECT n
 FROM Numbers order by 1);
 
+select * from xoo order by 1;
 
-
+drop table if exists xoo,t;

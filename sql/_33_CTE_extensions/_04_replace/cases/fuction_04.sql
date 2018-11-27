@@ -23,17 +23,6 @@ INSERT INTO scores VALUES
        (19, 65, 95, 'D'),
        (20, 65, 95, 'D');
 
-create table foo as
-with cte as
-(
-SELECT PERCENTILE_DISC(0.5)
-WITHIN GROUP(ORDER BY math) AS pcont
-FROM scores
-) select * from cte;
-
-select * from foo;
-
-drop table if exists foo;
 create table foo (i double);
 
 insert into foo
@@ -44,7 +33,7 @@ WITHIN GROUP(ORDER BY math) AS pcont
 FROM scores
 ) select * from cte;
 
-select * from foo;
+select * from foo  order by 1;
 
 
 with cte as
@@ -53,7 +42,7 @@ SELECT PERCENTILE_DISC(0.5)
 WITHIN GROUP(ORDER BY math) AS pcont
 FROM scores
 ) delete from foo where i in (select * from cte);
-select * from foo;
+select * from foo  order by 1;
 
 replace into foo
 with cte as
@@ -63,7 +52,7 @@ WITHIN GROUP(ORDER BY math) AS pcont
 FROM scores
 ) select * from cte;
 
-select * from foo;
+select * from foo  order by 1;
 
 
 with cte as
@@ -72,7 +61,7 @@ SELECT PERCENTILE_DISC(0.5)
 WITHIN GROUP(ORDER BY math) AS pcont
 FROM scores
 ) update foo set i=70 where i in (select * from cte);
-select * from foo;
+select * from foo  order by 1;
 
 
 
@@ -85,7 +74,7 @@ OVER (PARTITION BY [class]) AS pcont
 FROM scores
 ) select pcont from cte;
 
-select * from foo;
+select * from foo  order by 1;
 
 
 
@@ -96,7 +85,7 @@ WITHIN GROUP(ORDER BY math)
 OVER (PARTITION BY [class]) AS pcont
 FROM scores
 ) delete from foo where i in (select pcont from cte);
-select * from foo;
+select * from foo  order by 1;
 
 
 with cte as
@@ -106,7 +95,7 @@ WITHIN GROUP(ORDER BY math)
 OVER (PARTITION BY [class]) AS pcont
 FROM scores
 ) update foo set i=20 where i not in (select pcont from cte);
-select * from foo;
+select * from foo  order by 1;
 
 insert into foo
 with cte as
@@ -117,4 +106,6 @@ OVER (PARTITION BY [class]) AS pcont
 FROM scores
 ) select pcont from cte;
 
-select * from foo;
+select * from foo  order by 1;
+
+drop table if exists foo,scores;

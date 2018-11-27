@@ -49,5 +49,7 @@ FROM    cte2
 UNION ALL
 SELECT  *
 FROM    cte1 order by 1;
-select distinct id from t;
+select distinct id from t order by id;
 select id,count(id) from t group by id order by id;
+
+drop table if exists t;

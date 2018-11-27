@@ -73,8 +73,8 @@ with cte as
 SELECT col1, MEDIAN(col2) OVER (PARTITION BY col1) as mdn
 FROM cte;
 
-select * from foo1;
-select * from foo2;
+select * from foo1 order by 1,2;
+select * from foo2 order by 1,2;
 
 
 --delete
@@ -103,8 +103,8 @@ with cte as
 --SELECT col1,MEDIAN(col2) OVER (PARTITION BY col1) as mdn
 --FROM cte);
 
-select * from foo1;
-select * from foo2;
+select * from foo1 order by 1,2;
+select * from foo2 order by 1,2;
 
 
 --replace
@@ -138,8 +138,8 @@ with cte as
 SELECT col1, MEDIAN(col2) OVER (PARTITION BY col1) as mdn
 FROM cte;
 
-select * from foo1;
-select * from foo2;
+select * from foo1 order by 1,2;
+select * from foo2 order by 1,2;
 
 --update
 with cte as
@@ -167,5 +167,7 @@ with cte as
 --SELECT col1, MEDIAN(col2) OVER (PARTITION BY col1) as mdn
 --FROM cte);
 
-select * from foo1;
-select * from foo2;
+select * from foo1 order by 1,2;
+select * from foo2 order by 1,2;
+
+drop table if exists foo1,foo2,tbl;

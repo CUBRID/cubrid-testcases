@@ -26,7 +26,7 @@ union all
 select cast(i as varchar) as var_i from to_datetime
 union all
 select cast(i as varchar) as var_i from to_timestamp;
-select * from foo;
+select * from foo  order by 1;
 
 
 insert into foo
@@ -53,7 +53,7 @@ union all
 select cast(i as varchar) from to_datetime
 union all
 select cast(i as varchar) from to_timestamp;
-select * from foo;
+select * from foo  order by 1;
 
 with to_date as
 (
@@ -81,7 +81,7 @@ union all
 select cast(i as varchar) from to_timestamp
 );
 
-select * from foo;
+select * from foo  order by 1;
 
 
 
@@ -109,7 +109,7 @@ union all
 select cast(i as varchar) from to_datetime
 union all
 select cast(i as varchar) from to_timestamp;
-select * from foo;
+select * from foo  order by 1;
 
 alter table foo add column j int;
 with to_date as
@@ -138,7 +138,7 @@ union all
 select cast(i as varchar) from to_timestamp
 );
 
-select * from foo;
+select * from foo  order by 1;
 
 
 with to_date as
@@ -167,7 +167,7 @@ union all
 select cast(i as varchar) from to_timestamp
 );
 
-select * from foo;
+select * from foo  order by 1;
 
 
 drop table if exists t,foo;
@@ -254,6 +254,7 @@ to_timestamp as
 )
  select * from to_timestamp;
 
-select * from foo;
+select * from foo  order by 1;
 
 
+drop table if exists foo,t;

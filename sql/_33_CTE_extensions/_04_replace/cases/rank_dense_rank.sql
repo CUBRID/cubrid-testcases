@@ -45,8 +45,8 @@ with cte as
   select * from test_tbl
 ) SELECT DENSE_RANK() OVER (ORDER BY val) AS dense_rnk FROM cte;
 
-select cast(rk as numeric(4,2)) from foo3;
-select cast(dense_rnk as numeric(4,2)) from foo4;
+select cast(rk as numeric(4,2)) from foo3 order by 1;
+select cast(dense_rnk as numeric(4,2)) from foo4 order by 1;
 
 --update
 with cte as
@@ -68,8 +68,8 @@ with cte as
   select * from test_tbl
 ) SELECT DENSE_RANK() OVER (ORDER BY val) AS dense_rnk FROM cte);
 
-select *  from foo3;
-select *  from foo4;
+select *  from foo3 order by 1;
+select *  from foo4 order by 1;
 
 
 --replace
@@ -98,8 +98,8 @@ with cte as
   select * from test_tbl
 ) SELECT DENSE_RANK() OVER (ORDER BY val) AS dense_rnk FROM cte;
 
-select cast(rk as numeric(4,2)) from foo3;
-select cast(dense_rnk as numeric(4,2)) from foo4;
+select cast(rk as numeric(4,2)) from foo3 order by 1;
+select cast(dense_rnk as numeric(4,2)) from foo4 order by 1;
 
 --delete
 with cte as
@@ -120,5 +120,7 @@ with cte as
   select * from test_tbl
 ) SELECT DENSE_RANK() OVER (ORDER BY val) AS dense_rnk FROM cte);
 
-select *  from foo3;
-select *  from foo4;
+select *  from foo3 order by 1;
+select *  from foo4 order by 1;
+
+drop table if exists foo3,foo4,test_tbl;

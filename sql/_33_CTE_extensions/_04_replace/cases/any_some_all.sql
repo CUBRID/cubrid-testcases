@@ -70,10 +70,10 @@ with cte as
   WHERE dept_name = 'devel'))
 )select * from cte;
 
-select * from foo1;
-select * from foo2;
-select * from foo3;
-select * from foo4;
+select * from foo1 order by 1,2,3,4;
+select * from foo2  order by 1,2,3,4;
+select * from foo3  order by 1,2,3,4;
+select * from foo4  order by 1,2,3,4;
 
 --delete
 with cte as
@@ -105,10 +105,10 @@ with cte as
   WHERE dept_name = 'devel'))
 )delete foo4 from foo4,cte where foo4.id=cte.id and foo4.name=cte.name and foo4.dept_name=cte.dept_name and foo4.salary=cte.salary;
 
-select * from foo1;
-select * from foo2;
-select * from foo3;
-select * from foo4;
+select * from foo1  order by 1,2,3,4;
+select * from foo2  order by 1,2,3,4;
+select * from foo3   order by 1,2,3,4;
+select * from foo4  order by 1,2,3,4;
 
 
 --replace
@@ -139,10 +139,10 @@ with cte as
   WHERE dept_name = 'devel'))
 )select * from cte;
 
-select * from foo1;
-select * from foo2;
-select * from foo3;
-select * from foo4;
+select * from foo1  order by 1,2,3,4;
+select * from foo2  order by 1,2,3,4;
+select * from foo3  order by 1,2,3,4;
+select * from foo4  order by 1,2,3,4;
 
 --update
 with cte as
@@ -174,7 +174,9 @@ with cte as
   WHERE dept_name = 'devel'))
 )update foo4,cte  set foo4.id=foo4.id+100 where foo4.id=cte.id and foo4.name=cte.name and foo4.dept_name=cte.dept_name and foo4.salary=cte.salary;
 
-select * from foo1;
-select * from foo2;
-select * from foo3;
-select * from foo4;
+select * from foo1  order by 1,2,3,4;
+select * from foo2  order by 1,2,3,4;
+select * from foo3  order by 1,2,3,4;
+select * from foo4  order by 1,2,3,4;
+
+drop table if exists tbl,foo1,foo2,foo3,foo4;

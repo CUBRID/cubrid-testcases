@@ -66,8 +66,8 @@ with cte as
  select * from t2
 ) SELECT name, score, NTILE(5) OVER (ORDER BY score DESC) grade FROM cte ORDER BY name;
 
-select * from foo1;
-select * from foo2;
+select * from foo1 order by 1,2,3;
+select * from foo2 order by 1,2,3;
 
 --update
 with cte as
@@ -80,8 +80,8 @@ with cte as
  SELECT name, score, NTILE(5) OVER (ORDER BY score DESC) grade FROM t2 ORDER BY name
 ) update foo2,cte set foo2.name=foo2.name||'upd' where foo2.name=cte.name and foo2.score=cte.score and foo2.grade=cte.grade;
 
-select * from foo1;
-select * from foo2;
+select * from foo1 order by 1,2,3;
+select * from foo2 order by 1,2,3;
 
 
 --delete
@@ -95,8 +95,8 @@ with cte as
  SELECT name, score, NTILE(5) OVER (ORDER BY score DESC) grade FROM t2 ORDER BY name
 ) delete foo2 from  foo2,cte where foo2.score=cte.score and foo2.grade=cte.grade;
 
-select * from foo1;
-select * from foo2;
+select * from foo1 order by 1,2,3;
+select * from foo2 order by 1,2,3;
 
 --replace
 replace into foo1
@@ -123,5 +123,7 @@ with cte as
  select * from t2
 ) SELECT name, score, NTILE(5) OVER (ORDER BY score DESC) grade FROM cte ORDER BY name;
 
-select * from foo1;
-select * from foo2;
+select * from foo1 order by 1,2,3;
+select * from foo2 order by 1,2,3;
+
+drop table if exists foo1,foo2,t2;
