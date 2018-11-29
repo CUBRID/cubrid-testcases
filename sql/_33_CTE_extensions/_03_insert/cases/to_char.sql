@@ -50,7 +50,7 @@ with mycte as
 ) delete from tbl where b in (
  SELECT TO_CHAR(b, ' MM/DD/YYYY') FROM mycte);
 
-select * from tbl order by 1,2,3,4,5
+select * from tbl order by 1,2,3,4,5;
 
 
 INSERT INTO tbl VALUES(1,'10:00:00', '2000-10-1', '2000-10-1 10:00:00:35', '2000-10-1 10:00:00:358');
