@@ -100,4 +100,4 @@ with cte as
 ) select * from cte;
 select * from foo order by 1;
 
-drop table if exists foo;
+drop table if exists foo,t;

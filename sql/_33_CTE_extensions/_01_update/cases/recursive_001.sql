@@ -40,4 +40,4 @@ and
  or a in (select a from mycte);
 
 
-drop table case_tbl;
+drop table if exists case_tbl,xoo;

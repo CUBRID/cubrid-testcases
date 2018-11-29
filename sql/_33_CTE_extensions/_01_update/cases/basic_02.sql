@@ -16,7 +16,7 @@ WITH recursive regional_sales AS (
        )
 update sales set order_amt=order_amt-(SELECT avg(total_sales) FROM regional_sales);
 
-select * from sales;
+select * from sales order by 1,2,3;
 delete from sales;
 
 insert into sales select * from xoo;
@@ -29,7 +29,7 @@ WITH recursive regional_sales AS (
                )
 update sales set order_amt=order_amt-(SELECT total_sales FROM regional_sales where region=sales.region);
 
-select * from sales;
+select * from sales order by 1,2,3;
 delete from sales;
 
 
@@ -42,7 +42,7 @@ WITH recursive regional_sales AS (
               region
 )
 update sales,regional_sales set order_amt=order_amt-total_sales where sales.region = regional_sales.region;
-select * from sales;
+select * from sales order by 1,2,3;
 delete from sales;
 
 
@@ -59,7 +59,7 @@ update sales set order_amt=order_amt+28
 where region in (select region from regional_sales where avg_sales >sales.order_amt);
 
 
-select * from sales;
+select * from sales order by 1,2,3;
 delete from sales;
 
 
@@ -75,7 +75,7 @@ WITH recursive regional_sales AS (
 update sales set order_amt=order_amt+28
 where region=some(select region from regional_sales where avg_sales >sales.order_amt);
 
-select * from sales;
+select * from sales order by 1,2,3;
 delete from sales;
 
 
@@ -90,7 +90,7 @@ WITH recursive regional_sales AS (
 update sales set order_amt=order_amt+28
 where region=any(select region from regional_sales where avg_sales >sales.order_amt);
 
-select * from sales;
+select * from sales order by 1,2,3;
 delete from sales;
 
 insert into sales select * from xoo;
@@ -104,8 +104,8 @@ WITH recursive regional_sales AS (
 update sales set order_amt=order_amt+28
 where region=all(select region from regional_sales where avg_sales >sales.order_amt);
 
-select * from sales;
+select * from sales order by 1,2,3;
 delete from sales;
 
 
-drop if exists sales;
+drop if exists sales,xoo;

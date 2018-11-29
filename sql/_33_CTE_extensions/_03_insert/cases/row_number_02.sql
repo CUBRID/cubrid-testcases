@@ -28,7 +28,7 @@ SELECT t.*
      , ROW_NUMBER() OVER (PARTITION BY id2) AS n
   FROM cte1 AS t;
 
-select * from foo;
+select * from foo order by 1,2,3;
 
 replace into foo
 WITH cte1 AS (
@@ -41,7 +41,7 @@ SELECT t.*
      , ROW_NUMBER() OVER (PARTITION BY id2) AS n
   FROM cte1 as t) select * from cte2
 ;
-select * from foo;
+select * from foo order by 1,2,3;
 
 WITH cte1 AS (
        SELECT t.*
@@ -55,7 +55,7 @@ SELECT t.*
 SELECT ROW_NUMBER() OVER (PARTITION BY id2) AS n
   FROM cte1 )
 ;
-select * from foo;
+select * from foo order by 1,2,3;
 
 WITH cte1 AS (
        SELECT t.*
@@ -69,5 +69,6 @@ SELECT t.*
 SELECT ROW_NUMBER() OVER (PARTITION BY id2) AS n
   FROM cte1 )
 ;
-select * from foo;
+select * from foo order by 1,2,3;
 
+drop table if exists foo,test1;

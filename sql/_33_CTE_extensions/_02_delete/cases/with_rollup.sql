@@ -18,13 +18,22 @@ INSERT INTO sales_tbl2 VALUES
 (null, 'George' , 1, 450), (201, 'George' , 2, 250), (201, 'Laura'  , 1, 100), (201, 'Laura'  , 2, 500);
 
 -- selecting rows grouped by dept_no
+create table foo as
+with cte(a,b) as
+(
 SELECT dept_no, avg(sales_amount)
 FROM sales_tbl
-GROUP BY dept_no;
+GROUP BY dept_no
+) select * from cte;
 
+insert into foo 
+with cte as
+(
 SELECT dept_no, avg(sales_amount)
 FROM sales_tbl
-GROUP BY dept_no with rollup;
+GROUP BY dept_no with rollup
+)select * from cte;
+select * from foo order by 1,2;
 
 with mycte as
 (
@@ -32,9 +41,10 @@ with mycte as
 FROM sales_tbl
 GROUP BY dept_no with rollup
 having dept_no <400 order by 1,2
-) select * from mycte;
+) delete foo where exists (select * from mycte);
 
-
+select * from foo order by 1,2;
+insert into foo(b) 
 with mycte as
 (
  SELECT avg(sales_amount)
@@ -43,7 +53,8 @@ GROUP BY dept_no with rollup
 having dept_no <400 order by 1
 ) select * from mycte;
 
-
+select * from foo order by 1,2;
+insert into foo(b)
 with mycte as
 (
  SELECT count(distinct name) as X
@@ -53,6 +64,7 @@ GROUP BY dept_no with rollup
 having dept_no <400 order by 1
 ) select * from mycte;
 
+select * from foo order by 1,2;
 
 with mycte as
 (
@@ -62,4 +74,8 @@ where outr.sales_amount in (select INNR.sales_amount AS Y FROM sales_tbl2 AS INN
 and outr.dept_no <400 and outr.name <> 'a'
 GROUP BY dept_no with rollup
 having dept_no <400 order by 1
-) select * from mycte;
+) update foo set a=-1 where exists( select * from mycte);
+
+select * from foo order by 1,2;
+
+drop if exists foo,sales_tbl,sales_tbl2;

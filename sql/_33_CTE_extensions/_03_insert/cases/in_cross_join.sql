@@ -13,7 +13,7 @@ with cte1 as
 ,cte2 as
 (SELECT /*+ RECOMPILE*/ *FROM t2) select * from cte1 NATURAL JOIN cte2 where a1=a2 order by 1,2,3,4;
 
-select * from foo;
+select * from foo order by 1,2,3,4;
 
 
 
@@ -23,7 +23,7 @@ with cte1 as
 (SELECT /*+ RECOMPILE*/ * FROM t1)
 ,cte2 as
 (SELECT /*+ RECOMPILE*/ *FROM t2) select * from cte1 INNER JOIN cte2 on a1=a2 order by 1,2,3,4;
-select * from foo;
+select * from foo order by 1,2,3,4;
 
 
 drop table foo;
@@ -32,21 +32,21 @@ with cte1 as
 (SELECT /*+ RECOMPILE*/ * FROM t1)
 ,cte2 as
 (SELECT /*+ RECOMPILE*/ *FROM t2) select * from cte1 NATURAL LEFT JOIN  cte2 order by 1,2,3,4;
-select * from foo;
+select * from foo order by 1,2,3,4;
 
 replace into foo
 with cte1 as
 (SELECT /*+ RECOMPILE*/ * FROM t1)
 ,cte2 as
 (SELECT /*+ RECOMPILE*/ *FROM t2) select * from cte1 NATURAL RIGHT JOIN  cte2 order by 1,2,3,4;
-select * from foo;
+select * from foo order by 1,2,3,4;
 
 replace into foo
 with cte1 as
 (SELECT /*+ RECOMPILE*/ * FROM t1)
 ,cte2 as
 (SELECT /*+ RECOMPILE*/ *FROM t2) select * from cte1 LEFT JOIN cte2 on a1=a2 order by 1,2,3,4;
-select * from foo;
+select * from foo order by 1,2,3,4;
 
 
 drop table foo;
@@ -55,14 +55,13 @@ with cte1 as
 (SELECT /*+ RECOMPILE*/ * FROM t1)
 ,cte2 as
 (SELECT /*+ RECOMPILE*/ *FROM t2) select * from cte1 RIGHT JOIN  cte2 on a1=a2 order by 1,2,3,4;
-select * from foo;
+select * from foo order by 1,2,3,4;
 
 insert into foo 
 with cte1 as
 (SELECT /*+ RECOMPILE*/ * FROM t1)
 ,cte2 as
 (SELECT /*+ RECOMPILE*/ *FROM t2) select * from cte1 CROSS JOIN  cte2 order by 1,2,3,4;
-select * from foo;
-drop if exists t1,t2;
-~                                                                                                                                            
-Type  :quit<Enter>  to exit Vim                                                                                            1,1           All
+select * from foo order by 1,2,3,4;
+
+drop if exists t1,t2,foo;

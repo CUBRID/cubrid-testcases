@@ -170,4 +170,4 @@ with cte as
 select * from foo1 order by 1,2;
 select * from foo2 order by 1,2;
 
-drop table if exists foo1,foo2,tbl;
+drop  if exists foo1,foo2,tbl,v1,v2;

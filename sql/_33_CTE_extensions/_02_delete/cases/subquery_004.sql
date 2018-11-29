@@ -13,7 +13,7 @@ create table xx as
        FROM   sales
        GROUP  BY region
        ) select * from regional_sales;
-select * from xx;
+select * from xx order by 1,2;
 
 WITH recursive regional_sales AS (
        SELECT region,NVL(SUM(order_amt),0) AS total_sales
@@ -22,7 +22,8 @@ WITH recursive regional_sales AS (
        )
 delete sales FROM sales,regional_sales
 WHERE total_sales > (SELECT median(total_sales) AS one_third_sales FROM regional_sales) and sales.region=regional_sales.region;
- 
+select * from sales order by 1,2,3;
+
 
 update sales set order_amt=order_amt+10 where region in (
 WITH recursive regional_sales AS (
@@ -40,4 +41,4 @@ WITH recursive regional_sales AS (
        ) delete from sales where order_amt <> (select median(max_sales) from regional_sales);
 
 select * from sales order by 1,2,3;    
-drop if exists sales;
+drop if exists sales,xx;

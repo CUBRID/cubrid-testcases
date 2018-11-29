@@ -1,9 +1,3 @@
-WITH mycte(a) AS
-(
-select TIME '03:30:30 pm' + cast(1 as SHORT) from db_root
-)
-delete from t where i <=(select count(a) from mycte);
-
 drop table if exists t;
 create table t(i int);
 insert into t(i) values(1),(2),(3);
@@ -12,15 +6,17 @@ WITH mycte(a) AS
 select TIME '03:30:30 pm' + cast(1 as SHORT) from db_root
 )
 delete from t where i <=(select count(*) from mycte);
+select * from t order by 1;
 
 drop table if exists t;
 create table t(i int);
 insert into t(i) values(1),(2),(3);
-WITH cte_z3uZpFTlA AS
+WITH cte AS
 (
 select TIME '03:30:30 pm' + cast(1 as SHORT) from db_root
 )
-delete from t where i <=(select count(*) from cte_z3uZpFTlA);
+delete from t where i <=(select count(*) from cte);
+select * from t order by 1;
 
 
 drop table if exists foo,bar;
@@ -42,6 +38,7 @@ WITH mycte(a,b,c,d) AS
 select /*+ RECOMPILE USE_MERGE */ * from foo right outer join bar on foo.i = bar.i order by 1,2
 )
 delete from t where i <=(select count(*) from mycte);
+select * from t order by 1;
 
 WITH mycte(a,b,c,d) AS
 (
@@ -49,7 +46,7 @@ select /*+ RECOMPILE USE_NL */ * from foo right outer join bar on foo.i = bar.i 
 )
 delete from t where i <=(select count(*) from mycte);
 
-drop table foo;
+select * from t order by 1;
 
-drop table bar;
+drop table if exists foo,bar;
 

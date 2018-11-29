@@ -1,5 +1,3 @@
-
-
 drop table if exists t,xoo;
 create table t(i int);
 insert into t(i) values(1),(2),(3);
@@ -11,6 +9,7 @@ WITH mycte AS
 select * from xoo where a = cast(7 as monetary)
 )
 delete from t where i <=(select count(*) from mycte);
+select * from t order by 1;
 
 drop table if exists t,xoo;
 create table t(i int);
@@ -22,6 +21,7 @@ WITH mycte AS
 select * from xoo where a = 7
 )
 delete from t where i <=(select count(*) from mycte);
+select * from t order by 1;
 
 drop table if exists t,xoo;
 create table t(i int);
@@ -33,7 +33,7 @@ WITH mycte AS
 select * from xoo where a = cast(7 as monetary)
 )
 delete from t where i <=(select count(*) from mycte);
-
+select * from t order by 1;
 
 drop table if exists t,xoo;
 create table t(i int);
@@ -45,8 +45,7 @@ WITH mycte AS
 select * from xoo where a = cast(3 as bit)
 )
 delete from t where i <=(select count(*) from mycte);
-
-
+select * from t order by 1;
 
 drop table if exists t,xoo;
 create table t(i int);
@@ -58,7 +57,7 @@ WITH mycte AS
 select * from xoo where a = cast(2 as nchar)
 )
 delete from t where i <=(select count(*) from mycte);
-
+select * from t order by 1;
 
 drop table if exists t,xoo;
 create table t(i int);
@@ -70,8 +69,8 @@ WITH mycte AS
 select * from xoo where a = cast(3 as bit)
 )
 delete from t where i <=(select count(*) from mycte);
+select * from t order by 1;
 
-;au off
 drop table if exists t,xoo;
 create table t(i int);
 insert into t(i) values(1),(2),(3);
@@ -82,7 +81,7 @@ WITH mycte AS
 select * from xoo where a = cast(3 as bit)
 )
 delete from t where i <=(select count(*) from mycte);
-;au on
+select * from t order by 1;
 
 drop table if exists t,xoo;
 create table t(i int);
@@ -94,7 +93,7 @@ WITH mycte AS
 select * from xoo where a = 3
 )
 delete from t where i <=(select count(*) from mycte);
-
+select * from t order by 1;
 
 drop table if exists t,xoo;
 create table t(i int);
@@ -105,15 +104,18 @@ WITH mycte AS
 select * from xoo where a = time'01:01:02'
 )
 delete from t where i <=(select count(*) from mycte);
+select * from t order by 1;
 
-drop table if exists t,xoo;
+drop table if exists t;
 create table t(i int);
 insert into t(i) values(1),(2),(3);
+--CBRD-22529
 WITH mycte AS
 (
 select round(15.456,1) from db_root
 )
 delete from t where i <=(select count(*) from mycte);
+select * from t order by 1;
 
 
 drop table if exists t1,t2,t;
@@ -136,11 +138,16 @@ WITH mycte(a,b) AS
 select * from v1 left outer join v2 on v1.a=v2.a order by v1.a
 )
 delete from t where i <=(select count(*) from mycte);
+select * from t order by 1;
 
-delete v1,v2 from v1 left outer join v2 on v1.a=v2.a;
+with cte as
+(
+    select 1
+)delete v1,v2 from v1 left outer join v2 on v1.a=v2.a;
+
 
 drop view v1, v2;
 
-drop table t1,t2;
+drop table if exists t1,t2,t,xoo;
 
 

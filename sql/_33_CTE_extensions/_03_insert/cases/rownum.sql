@@ -12,7 +12,7 @@ with cte as
  select j from t where i=1 order by 1 
 ) select * from cte  where rownum<2;
 
-select * from foo;
+select * from foo order by 1;
 
 insert into foo
 with cte as
@@ -20,7 +20,7 @@ with cte as
  select j from t where i=1 order by 1
 ) select * from cte  where rownum<2;
 
-select * from foo;
+select * from foo order by 1;
 
 replace into foo
 with cte as
@@ -28,7 +28,7 @@ with cte as
  select j from t where i=1 order by 1
 ) select * from cte  where rownum<2;
 
-select * from foo;
+select * from foo order by 1;
 
 with cte as
 (
@@ -38,7 +38,7 @@ cte2 as (
 select * from cte  where rownum<2
 ) delete from foo where j in (select * from cte2);
 
-select * from foo;
+select * from foo order by 1;
 
 replace into foo
 with cte as
@@ -51,7 +51,7 @@ select * from cte  where rownum<2
 union all
 select * from cte2;
 
-select * from foo;
+select * from foo order by 1;
 
 
 with cte as
@@ -64,4 +64,6 @@ select * from cte  where rownum<2
 select j from cte2
 );
 
-select * from foo;
+select * from foo order by 1;
+
+drop table if exists foo,t;

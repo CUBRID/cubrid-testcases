@@ -23,7 +23,7 @@ with cte as
  union all
  select median(i) as a,median(i) as other_i from t
 ) select a,other_i from v,t,cte where other_i between v.i and t.i;
-select * from foo;
+select * from foo order by 1,2;
 
 
 
@@ -37,7 +37,7 @@ with cte as
  union all
  select median(i) as a,median(i) as other_i from t
 ) delete from foo;
-select * from foo;
+select * from foo order by 1,2;
 
 replace into foo
 with cte as
@@ -50,4 +50,7 @@ with cte as
  union all
  select median(i) as a,median(i) as other_i from t
 ) select a,other_i from v,t,cte where other_i between v.i and t.i;
-select * from foo;
+select * from foo order by 1,2;
+
+
+drop if exists foo,t,v;

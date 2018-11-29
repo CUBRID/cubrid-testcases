@@ -14,14 +14,14 @@ with cte as
  select groupby_NUM(), j from t group by i having groupby_NUM() between 1 and 5
 ) select * from cte  where rownum<4;
 
-select * from foo;
+select * from foo order by 1,2;
 
 insert into foo
 with cte as
 (
  select groupby_NUM(), j from t group by i having groupby_NUM() between 1 and 2
 ) select * from cte  where rownum<4;
-select * from foo;
+select * from foo order by 1,2;
 
 
 replace  into foo
@@ -29,7 +29,7 @@ with cte as
 (
  select groupby_NUM(), j from t group by i having groupby_NUM() between 2 and 3
 ) select * from cte  where rownum<4;
-select * from foo;
+select * from foo order by 1,2;
 
 
 with cte as
@@ -37,7 +37,7 @@ with cte as
  select groupby_NUM(), j from t group by i having groupby_NUM() between 2 and 3
 ) delete from foo where j not in (select j  from cte);
 
-select * from foo;
+select * from foo order by 1,2;
 
 
 with cte as
@@ -45,4 +45,6 @@ with cte as
  select groupby_NUM(), j from t group by i having groupby_NUM() between 2 and 3
 ) update foo set j=-1 where j>any(select j  from cte);
 
-select * from foo;
+select * from foo order by 1,2;
+
+drop table if exists foo,t;

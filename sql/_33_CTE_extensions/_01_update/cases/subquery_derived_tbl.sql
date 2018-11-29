@@ -23,7 +23,7 @@ select sum(n) as a from
  select j from cte2 where i=1
 ) as t(n);
 
-select * from yoo;
+select * from yoo order by 1;
 
 
 with cte1 as
@@ -40,7 +40,7 @@ delete from yoo where a  in (select sum(n) from
  union all
  select j from cte2 where i=1
 ) as t(n) );
-select * from yoo;
+select * from yoo order by 1;
 
 insert into yoo
 with cte1 as
@@ -74,7 +74,7 @@ select sum(n) as a from
  select j from cte2 where i=1
 ) as t(n);
 
-select * from yoo;
+select * from yoo order by 1;
 
 with cte1 as
 (
@@ -91,7 +91,7 @@ update yoo set a=a-20 where a=(select sum(n) as a from
  select j from cte2 where i=1
 ) as t(n));
 
-select * from yoo;
+select * from yoo order by 1;
 
 with cte1 as
 (
@@ -108,4 +108,6 @@ update yoo set a=a+20 where a<(select sum(n) as a from
  select j from cte2 where i=1
 ) as t(n));
 
-select * from yoo;
+select * from yoo order by 1;
+
+drop if exists yoo,t1,t2;

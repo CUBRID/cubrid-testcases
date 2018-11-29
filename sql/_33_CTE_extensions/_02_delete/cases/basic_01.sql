@@ -1,5 +1,3 @@
-
-
 drop table if exists t,xoo;
 create table t(i int);
 insert into t(i) values(1),(2),(3);
@@ -11,6 +9,7 @@ WITH mycte AS
 select * from xoo where a = cast(7 as monetary)
 )
 delete from t where i <=(select count(*) from mycte);
+select * from t order by 1;
 
 drop table if exists t,xoo;
 create table t(i int);
@@ -22,6 +21,7 @@ WITH mycte AS
 select * from xoo where a = 7
 )
 delete from t where i <=(select count(*) from mycte);
+select * from t order by 1;
 
 drop table if exists t,xoo;
 create table t(i int);
@@ -33,6 +33,7 @@ WITH mycte AS
 select * from xoo where a = cast(7 as monetary)
 )
 delete from t where i <=(select count(*) from mycte);
+select * from t order by 1;
 
 
 drop table if exists t,xoo;
@@ -45,6 +46,7 @@ WITH mycte AS
 select * from xoo where a = cast(3 as bit)
 )
 delete from t where i <=(select count(*) from mycte);
+select * from t order by 1;
 
 
 
@@ -58,6 +60,7 @@ WITH mycte AS
 select * from xoo where a = cast(2 as nchar)
 )
 delete from t where i <=(select count(*) from mycte);
+select * from t order by 1;
 
 
 drop table if exists t,xoo;
@@ -70,8 +73,8 @@ WITH mycte AS
 select * from xoo where a = cast(3 as bit)
 )
 delete from t where i <=(select count(*) from mycte);
+select * from t order by 1;
 
-;au off
 drop table if exists t,xoo;
 create table t(i int);
 insert into t(i) values(1),(2),(3);
@@ -82,7 +85,7 @@ WITH mycte AS
 select * from xoo where a = cast(3 as bit)
 )
 delete from t where i <=(select count(*) from mycte);
-;au on
+select * from t order by 1;
 
 drop table if exists t,xoo;
 create table t(i int);
@@ -94,6 +97,7 @@ WITH mycte AS
 select * from xoo where a = 3
 )
 delete from t where i <=(select count(*) from mycte);
+select * from t order by 1;
 
 
 drop table if exists t,xoo;
@@ -105,13 +109,17 @@ WITH mycte AS
 select * from xoo where a = time'01:01:02'
 )
 delete from t where i <=(select count(*) from mycte);
+select * from t order by 1;
 
 drop table if exists t,xoo;
 create table t(i int);
 insert into t(i) values(1),(2),(3);
+--CBRD-22529
 WITH mycte AS
 (
 select round(15.456,1) from db_root
 )
 delete from t where i <=(select count(*) from mycte);
+select * from t order by 1;
 
+drop table if exists t,xoo;

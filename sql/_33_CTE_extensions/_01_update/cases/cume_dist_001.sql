@@ -10,9 +10,9 @@ INSERT INTO sales_mon_tbl VALUES
     (2001, 1, 1010), (2001, 2, 700), (2001, 3, 600), (2001, 4, 900),
     (2002, 1, 980), (2002, 2, 750), (2002, 3, 730), (2002, 4, 980);
 
-    drop table if exists t1;
-    create table t1(a bigint,b int,c bigint,d int,e int,f int,g bigint,h bigint,i bigint)
-    insert into t1(a) values(1); 
+drop table if exists t1;
+create table t1(a bigint,b int,c bigint,d int,e int,f int,g bigint,h bigint,i bigint)
+insert into t1(a) values(1); 
 
 with cte1(a,b,c,d,e,f,g,h,i) as
 (
@@ -33,7 +33,7 @@ f=(select f from cte1 limit 1),
 g=(select g from cte1 limit 1), 
 h=(select h from cte1 limit 1),
 i=(select i from cte1 limit 1);
-select * from t1;
+select * from t1 order by 1;
 
 
 
@@ -187,9 +187,9 @@ MEDIAN(math) OVER (PARTITION BY grade) mdn_math,
 MIN(math) OVER (PARTITION BY grade) mn_math,
 NTILE(5) OVER (ORDER BY grade, math DESC,id) grade
 FROM scores order by id
-) update v2 set id=12 where id=2;  
+) update v1 set id=12 where id=2;  
 
-drop table if exists scores;
+drop if exists scores,sales_mon_tbl,a,v1,t1;
 
 
 --+ holdcas off;

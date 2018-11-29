@@ -1,4 +1,4 @@
-drop if exists #Vehicles;
+drop if exists #Vehicles,t1,t2;
 CREATE TABLE #Vehicles
 (
     VehicleID     VARCHAR(5)
@@ -10,7 +10,6 @@ CREATE TABLE #Vehicles
 INSERT INTO #Vehicles
 VALUES ('12211', 'TRUCK', 'BKK'),('12212', 'CAR', 'BKK'),('12213', 'TRUCK', 'CNX')
     ,('12214', 'CAR', 'CNX'),('12215', 'TRUCK', 'HDY'),('12216', 'CAR', 'HDY');
-drop if exists t1,t2;
 create table t1(i int auto_increment);
 create table t2(VehicleID VARCHAR(5), VehicleType  VARCHAR(5), Location VARCHAR(3),rn int);
 create trigger insert_t1 

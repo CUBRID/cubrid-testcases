@@ -16,14 +16,14 @@ WITH outer_subquery AS (
      SELECT a FROM t1
      )
 delete FROM t1;
-select * from t1 order by 1;
+select * from t1 order by 1,2;
 
 insert into t1
 WITH outer_subquery AS (
      SELECT c,'fff' FROM t2
      )
 SELECT c,'fff' FROM t2 order by 1,2;
-select * from t1 order by 1;
+select * from t1 order by 1,2;
 
 
 replace into t1
@@ -31,7 +31,7 @@ WITH outer_subquery AS (
      SELECT c,'fff' FROM t2
      )
 SELECT c,'fff' FROM t2 order by 1,2;
-select * from t1 order by 1;
+select * from t1 order by 1,2;
 
 WITH outer_subquery AS (
      SELECT c,'fff' FROM t2

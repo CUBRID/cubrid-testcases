@@ -27,15 +27,22 @@ select * from t__p__before_2000
 union all
 select * from cte1 on duplicate key update i=i+10;
 
-select * from foo;
+select * from foo order by 1;
 
 
 
 with cte as
 (
 select * from t where i >2000
-) delete from foo where i in (select i from t);
-select * from foo;
+) delete from foo where i in (select * from cte);
+select * from foo order by 1;
+
+
+with cte as
+(
+select * from t where i >2000
+) delete from foo where i in (select i from cte);
+select * from foo order by 1;
 
 insert into  foo
 with cte as
@@ -49,25 +56,34 @@ select * from t__p__before_2000
 union all
 select * from cte1 on duplicate key update i=i+10;
 
-select * from foo;
-
+select * from foo order by 1;
 
 with cte as
 (
 select * from t where i >2000
-) delete from foo where i in (select i from t);
-select * from foo;
+) delete from foo where i in (select * from cte);
+select * from foo order by 1;
+
+with cte as
+(
+select * from t where i >2000
+) delete from foo where i in (select i from cte);
+select * from foo order by 1;
 
 insert into  foo
 with cte as
 (
- select * from t__p__before_4000
+ select * from foo
+ union all 
+ select * from t
 ),
 cte1 as
 (
 select * from t__p__before_2000
 )select * from cte
-union all
-select * from cte1 on duplicate key update i=(select i-10 from cte);
+difference
+select * from cte1 on duplicate key update i=i-20;
 
-select * from foo;
+select * from foo order by 1;
+
+drop table if exists foo,t;

@@ -1,46 +1,42 @@
-
-drop table if exists t1,t_d_1,t_d_2;
+drop table if exists t1,t_d_1,t_d_2,c,bb;
 create table t_d_1(i int);
 create table t_d_2(i int);
 create table t1 (a int, b int);
 insert into t1 values(1,2),(3,4);
 
 insert into t_d_1
-WITH cte_4AujmP314 AS
+WITH cte AS
 (
 select count(distinct a) from t1 group by a with rollup
-) select * from cte_4AujmP314; 
+) select * from cte; 
 
 insert into t_d_2
-WITH cte_4AujmP314 AS
+WITH cte AS
 (
 select count(distinct a) from t1 group by a with rollup
-) select * from cte_4AujmP314;
+) select * from cte;
 
 
 replace into t_d_1
-WITH cte_4AujmP314 AS
+WITH cte AS
 (
 select count(distinct a) from t1 group by a with rollup
-) select * from cte_4AujmP314;
+) select * from cte;
 
 replace into t_d_2
-WITH cte_4AujmP314 AS
+WITH cte AS
 (
 select count(distinct a) from t1 group by a with rollup
-) select * from cte_4AujmP314;
+) select * from cte;
 
+select * from t_d_1 order by 1;
+select * from t_d_2 order by 1;
 
-
-WITH cte_4AujmP314 AS
+WITH cte AS
 (
 select count(distinct b) from t1 group by a with rollup
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i <=(select count(*) from cte_4AujmP314);
-
-
-
-drop table t1;
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i <=(select count(*) from cte);
 
 create table c(
 col_varchar_10_key character varying(10),
@@ -80,7 +76,7 @@ with mycte as
 SELECT  COUNT(DISTINCT OUTR.col_int ) AS X FROM c AS OUTR
 WHERE OUTR.col_varchar_1024_key IN ( SELECT  INNR.col_varchar_10 AS Y FROM bb AS INNR WHERE INNR.col_int IS NULL  )
 AND OUTR.col_int_key > 5 AND OUTR.col_varchar_10_key <> 'l'
-) select * from mycte;
+) select * from mycte order by 1;
 
 insert into t_d_1 select rownum from db_root connect by level<=5;
 insert into t_d_2 select rownum from db_root connect by level<=5;
@@ -90,7 +86,9 @@ SELECT  COUNT(DISTINCT OUTR.col_int ) AS X FROM c AS OUTR
 WHERE OUTR.col_varchar_1024_key IN ( SELECT  INNR.col_varchar_10 AS Y FROM bb AS INNR WHERE INNR.col_int IS NULL  )
 AND OUTR.col_int_key > 5 AND OUTR.col_varchar_10_key <> 'l'
 ) delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i <=(select X from mycte);
+select * from t_d_1 order by 1;
 
+--CBRD-20849
 with mycte as
 (
  SELECT  COUNT(DISTINCT OUTR.col_int ) AS X FROM c AS OUTR
@@ -98,9 +96,9 @@ WHERE OUTR.col_varchar_1024_key IN ( SELECT  INNR.col_varchar_10 AS Y FROM bb AS
 AND OUTR.col_int_key > 5 AND OUTR.col_varchar_10_key <> 'l'
 GROUP BY OUTR.col_int WITH ROLLUP
 HAVING X <= 8 ORDER BY OUTR.col_int , OUTR.pk
-) select * from mycte;
+) select * from mycte order by 1;
 
-
+--CBRD-20849
 with mycte as
 (
  SELECT  COUNT(DISTINCT OUTR.col_int ) AS X FROM c AS OUTR
@@ -109,6 +107,7 @@ AND OUTR.col_int_key > 5 AND OUTR.col_varchar_10_key <> 'l'
 GROUP BY OUTR.col_int WITH ROLLUP
 HAVING X <= 8 ORDER BY OUTR.col_int , OUTR.pk
 ) update t_d_2 set i=2 where i=1;
+select * from t_d_2 order by 1;
 
 with mycte as
 (
@@ -118,20 +117,17 @@ AND OUTR.col_int_key > 5 AND OUTR.col_varchar_10_key <> 'l'
 GROUP BY OUTR.col_int WITH ROLLUP
 ) update t_d_2 set i=2 where i=1;
 
+select * from t_d_2 order by 1;
 
-WITH cte_RKEbuiPR9 AS
+--CBRD-20849
+WITH cte AS
 (
 SELECT  COUNT(DISTINCT OUTR.col_int ) AS X FROM c AS OUTR 
 WHERE OUTR.col_varchar_1024_key IN ( SELECT  INNR.col_varchar_10 AS Y FROM bb AS INNR WHERE INNR.col_int IS NULL  ) 
 AND OUTR.col_int_key > 5 AND OUTR.col_varchar_10_key <> 'l' 
 GROUP BY OUTR.col_int WITH ROLLUP 
 HAVING X <= 8 ORDER BY OUTR.col_int , OUTR.pk
-)delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i <=(select count(*) from cte_RKEbuiPR9);
+)delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i <=(select count(*) from cte);
+select * from t_d_1 order by 1;
 
-
-
---drop table c;
-
---drop table bb;
-
-
+drop table if exists t1,c,bb,t_d_1,t_d_2;

@@ -35,3 +35,4 @@ FROM tbl
 describe foo1;
 describe foo2;
 
+drop table if exists scores,foo;

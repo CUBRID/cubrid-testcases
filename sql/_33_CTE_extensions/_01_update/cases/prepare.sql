@@ -18,11 +18,11 @@ prepare st2 from
 select val from testval order by dept desc limit 1';
 
 execute st2 using '2', '2', 10;
-select * from foo;
+select * from foo order by 1;
 drop table foo;
 
 execute st2 using 2, 2, 10;
-select * from foo;
+select * from foo order by 1;
 
 drop table if exists foo;
 prepare st3 from
@@ -39,3 +39,5 @@ execute st2 using '2', '2', 10;
 deallocate prepare st;
 deallocate prepare st2;
 deallocate prepare st3;
+
+drop table if exists foo;

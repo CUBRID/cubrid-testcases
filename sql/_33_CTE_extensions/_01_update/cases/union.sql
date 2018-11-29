@@ -9,14 +9,15 @@ WITH recursive
     cte2 as (SELECT * from t where i>2)
 select * from cte1 union select * from cte2  order by 1;
 
-select * from t;
+select * from t order by 1;
 
 WITH recursive
     cte1 as (SELECT i from t where i<2),
     cte2 as (SELECT i from t where i>2)
 delete from t where i=some(select i from cte1 union select i from cte2);
-select * from t;
+select * from t order by 1;
 
+--CBRD-22395
 WITH recursive
     cte1 as (SELECT * from t where i<2),
     cte2 as (SELECT * from t where i>2)
@@ -25,6 +26,7 @@ delete from t where i=some(select * from cte1 union select * from cte2);
 insert into t values(1);
 insert into t values(3);
 
+--CBRD-22395
 WITH recursive
     cte1 as (SELECT * from t where i<2),
     cte2 as (SELECT * from t where i>2)
@@ -34,7 +36,7 @@ WITH recursive
     cte1 as (SELECT * from t where i<2),
     cte2 as (SELECT * from t where i>2)
 delete from t where i=some(select i from cte1);
-select * from t;
+select * from t order by 1;
 
 insert into t values(1);
 insert into t values(3);
@@ -42,7 +44,7 @@ WITH recursive
     cte1 as (SELECT i from t where i<2),
     cte2 as (SELECT i from t where i>2)
 delete from t where i=some(select i from cte1 union all select i from cte2);
-select * from t;
+select * from t order by 1;
 
 drop table if exists t,t1,t2;
 create table t1(i int);
@@ -137,4 +139,4 @@ cte2 as
 )
 delete from t1 where i in (select i from cte1 difference select i from cte2);
 
-
+drop if exists t,t1,t2;

@@ -7,6 +7,7 @@ INSERT INTO test_tbl VALUES(1,2);
 INSERT INTO test_tbl VALUES(1,5);
 INSERT INTO test_tbl VALUES(2,null);
 INSERT INTO test_tbl VALUES(2,7);
+
 create table foo1 as
 with cte as
 (
@@ -21,8 +22,8 @@ SELECT groupid, itemno, FIRST_VALUE(itemno) IGNORE NULLS OVER(PARTITION BY group
 FROM test_tbl
 ) select * from cte;
 
-select * from foo1;
-select * from foo2;
+select * from foo1 order by 1,2,3;
+select * from foo2 order by 1,2,3;
 
 
 --insert 
@@ -42,8 +43,9 @@ SELECT groupid, itemno, FIRST_VALUE(itemno) OVER(PARTITION BY groupid ORDER BY i
 FROM cte1
  ) as x( groupid, itemno,ret_val),(SELECT groupid, itemno, FIRST_VALUE(itemno) IGNORE NULLS OVER(PARTITION BY groupid ORDER BY itemno) AS ret
 FROM cte2 ) as y( groupid, itemno,ret_val)
-where foo1.groupid=x.groupid and x.groupid=y.groupid
-select * from foo1;
+where foo1.groupid=x.groupid and x.groupid=y.groupid;
+
+select * from foo1 order by 1 desc,2 desc,3 desc limit 10 ;
 
 
 --replace
@@ -66,7 +68,7 @@ FROM cte1
 FROM cte2 ) as y( groupid, itemno,ret_val)
 where foo1.groupid=x.groupid and x.groupid=y.groupid
 );
-select * from foo1;
+select * from foo1 order by 1 desc,2 desc,3 desc limit 10 ;
 
-
+drop if exists foo1,foo2,test_tbl;
 

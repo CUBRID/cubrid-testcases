@@ -5,7 +5,7 @@ insert into t(i) values(1),(5);
 
 create table foo as
 with cte as
-(select * from v)
+(select * from t)
 select * from cte;
 
 
@@ -20,7 +20,7 @@ with cte as
  union all
  select median(i) as a,median(i) as other_i from t
 ) select a,other_i from t,cte where other_i >= t.i;
-select * from foo;
+select * from foo order by 1,2;
 
 
 
@@ -35,7 +35,7 @@ with cte as
  select median(i) as a,median(i) as other_i from t
 ) delete foo from foo, t,cte where other_i >= t.i;
 
-select * from foo;
+select * from foo order by 1,2;
 
 
 
@@ -50,4 +50,6 @@ with cte as
  union all
  select median(i) as a,median(i) as other_i from t
 ) select a,other_i from t,cte where other_i >= t.i;
-select * from foo;
+select * from foo order by 1,2;
+
+drop table if exists foo,t;

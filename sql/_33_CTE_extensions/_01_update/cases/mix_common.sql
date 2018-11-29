@@ -13,7 +13,7 @@ SELECT *
 FROM cte ;
 
 
-select * from yoo;
+select * from yoo order by 1,2,3,4;
 
 WITH cte(a,b,c,d) as (select empId , fname , sname , bossId
 FROM t WHERE sname = 'o'
@@ -22,7 +22,7 @@ select e.empId , e.fname , e.sname , e.bossid
 FROM t e inner JOIN cte r ON e.bossId= r.a)
 update yoo set a=a+10 where c in (select c from cte);
 
-select * from yoo;
+select * from yoo order by 1,2,3,4;
 
 WITH cte(a,b,c,d) as (select empId , fname , sname , bossId
 FROM t WHERE sname = 'o'
@@ -31,16 +31,17 @@ select e.empId , e.fname , e.sname , e.bossid
 FROM t e inner JOIN cte r ON e.bossId= r.a)
 delete from yoo where c in (select c from cte) ;
 
-select * from yoo;
+select * from yoo order by 1,2,3,4;
 
 
-WITH cte(a,b,c,d) as (select empId , fname , sname , bossId
-FROM t WHERE sname = 'o'
-UNION all
-select e.empId , e.fname , e.sname , e.bossid
-FROM t e inner JOIN cte r ON e.bossId= r.a)
-delete from yoo where c in (select c from cte) select * from cte;
+WITH cte(a,b,c,d) as (
+    select empId , fname , sname , bossId
+    FROM t WHERE sname = 'o'
+     UNION all
+    select e.empId , e.fname , e.sname , e.bossid
+    FROM t e inner JOIN cte r ON e.bossId= r.a
+)delete from yoo where c in (select c from cte);
 
-
+drop table if exists yoo,t;
 
 

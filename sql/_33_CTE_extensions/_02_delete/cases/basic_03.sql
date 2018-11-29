@@ -33,5 +33,28 @@ where i>( select avg_i from avg_i where avg_i.id=t1.id )
 and j< ( select avg_j from avg_j where avg_j.id=t1.id )
 and k< ( select avg_k from avg_k where avg_k.id=t1.id );
 
-select * from t1 where i=8 or i=9;
+select * from t1 where i=8 or i=9 order by 1,2,3,4;
 
+drop table if exists t1;
+
+
+drop table if exists t;
+create table t(i int);
+insert into t(i) values(1),(2),(3);
+with cte1 as
+(select 1),
+cte2 as
+(select 2)
+delete from t where i in (select * from cte1 union all select * from cte2);
+
+drop table if exists t,xoo;
+create table t(i int);
+insert into t(i) values(1),(2),(3);
+create table xoo ( a bit(1000));
+WITH cte AS
+(
+select * from xoo where a = 0
+)
+delete from t where i <=(select count(*) from cte);
+
+drop table if exists t,xoo;

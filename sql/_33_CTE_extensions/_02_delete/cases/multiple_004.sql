@@ -27,6 +27,8 @@ cte4 as
 )
 delete from foo where i in (select i from cte4) and j in (select j from cte3) and k>=(select avg_of_total from cte1);
 
-select * from foo;
+select * from foo order by 1,2,3;
+
+drop table if exists t,foo
 
 

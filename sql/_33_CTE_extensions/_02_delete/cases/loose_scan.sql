@@ -1,300 +1,138 @@
--- create tables
-drop table if exists t_d_1,t_d_2;
+drop table if exists t_d_1,t_d_2,t;
 create table t_d_1(i int);
-insert into t_d_1 select rownum*2 from db_root connect by level<=100;
+insert into t_d_1 select rownum*2 from db_root connect by level<=10;
 create table t_d_2(i int);
-insert into t_d_2 select rownum*3 from db_root connect by level<=100;
-
-
-drop table if exists t;
+insert into t_d_2 select rownum*3 from db_root connect by level<=10;
 
 create table t(id int primary key auto_increment, a int, b int, c int, d int);
-
-insert into t (a,b,c,d) select mod(rownum,10), mod(rownum,10), mod(rownum,10), rownum from db_class x1, db_class x2, db_class x3 limit 15000;
-
+insert into t (a,b,c,d) select mod(rownum,10), mod(rownum,10), mod(rownum,10), rownum from db_class x1, db_class x2 limit 50;
 insert into t (a,b,c,d) values (null, null, 888, null);
 
--- null keys
 insert into t (a,b,c,d) values (null, null, null, null);
-
 insert into t (a,b,c,d) values (0, null, null, null);
-
 insert into t (a,b,c,d) values (1, null, null, null);
-
 insert into t (a,b,c,d) values (2, null, null, null);
-
-insert into t (a,b,c,d) values (3, null, null, null);
-
-insert into t (a,b,c,d) values (4, null, null, null);
-
-insert into t (a,b,c,d) values (5, null, null, null);
-
-insert into t (a,b,c,d) values (6, null, null, null);
-
-insert into t (a,b,c,d) values (7, null, null, null);
-
-insert into t (a,b,c,d) values (8, null, null, null);
-
 insert into t (a,b,c,d) values (9, null, null, null);
-
 insert into t (a,b,c,d) values (0, 0, null, null);
-
 insert into t (a,b,c,d) values (1, 1, null, null);
-
 insert into t (a,b,c,d) values (2, 2, null, null);
-
-insert into t (a,b,c,d) values (3, 3, null, null);
-
-insert into t (a,b,c,d) values (4, 4, null, null);
-
-insert into t (a,b,c,d) values (5, 5, null, null);
-
-insert into t (a,b,c,d) values (6, 6, null, null);
-
-insert into t (a,b,c,d) values (7, 7, null, null);
-
 insert into t (a,b,c,d) values (8, 8, null, null);
-
 insert into t (a,b,c,d) values (9, 9, null, null);
-
 insert into t (a,b,c,d) values (0, 0, 0, null);
-
 insert into t (a,b,c,d) values (1, 1, 1, null);
-
 insert into t (a,b,c,d) values (2, 2, 2, null);
-
-insert into t (a,b,c,d) values (3, 3, 3, null);
-
 insert into t (a,b,c,d) values (4, 4, 4, null);
-
-insert into t (a,b,c,d) values (5, 5, 5, null);
-
-insert into t (a,b,c,d) values (6, 6, 6, null);
-
-insert into t (a,b,c,d) values (7, 7, 7, null);
-
-insert into t (a,b,c,d) values (8, 8, 8, null);
-
 insert into t (a,b,c,d) values (9, 9, 9, null);
 
 -- min keys
 insert into t (a,b,c,d) values (-2147483648, -2147483648, -2147483648, -2147483648);
-
 insert into t (a,b,c,d) values (0, -2147483648, -2147483648, -2147483648);
-
 insert into t (a,b,c,d) values (1, -2147483648, -2147483648, -2147483648);
-
 insert into t (a,b,c,d) values (2, -2147483648, -2147483648, -2147483648);
-
 insert into t (a,b,c,d) values (3, -2147483648, -2147483648, -2147483648);
-
-insert into t (a,b,c,d) values (4, -2147483648, -2147483648, -2147483648);
-
-insert into t (a,b,c,d) values (5, -2147483648, -2147483648, -2147483648);
-
-insert into t (a,b,c,d) values (6, -2147483648, -2147483648, -2147483648);
-
-insert into t (a,b,c,d) values (7, -2147483648, -2147483648, -2147483648);
-
-insert into t (a,b,c,d) values (8, -2147483648, -2147483648, -2147483648);
-
-insert into t (a,b,c,d) values (9, -2147483648, -2147483648, -2147483648);
-
-insert into t (a,b,c,d) values (0, 0, -2147483648, -2147483648);
-
 insert into t (a,b,c,d) values (1, 1, -2147483648, -2147483648);
-
 insert into t (a,b,c,d) values (2, 2, -2147483648, -2147483648);
-
 insert into t (a,b,c,d) values (3, 3, -2147483648, -2147483648);
-
 insert into t (a,b,c,d) values (4, 4, -2147483648, -2147483648);
-
-insert into t (a,b,c,d) values (5, 5, -2147483648, -2147483648);
-
-insert into t (a,b,c,d) values (6, 6, -2147483648, -2147483648);
-
-insert into t (a,b,c,d) values (7, 7, -2147483648, -2147483648);
-
-insert into t (a,b,c,d) values (8, 8, -2147483648, -2147483648);
-
-insert into t (a,b,c,d) values (9, 9, -2147483648, -2147483648);
-
 insert into t (a,b,c,d) values (0, 0, 0, -2147483648);
-
 insert into t (a,b,c,d) values (1, 1, 1, -2147483648);
-
 insert into t (a,b,c,d) values (2, 2, 2, -2147483648);
-
-insert into t (a,b,c,d) values (3, 3, 3, -2147483648);
-
-insert into t (a,b,c,d) values (4, 4, 4, -2147483648);
-
-insert into t (a,b,c,d) values (5, 5, 5, -2147483648);
-
-insert into t (a,b,c,d) values (6, 6, 6, -2147483648);
-
-insert into t (a,b,c,d) values (7, 7, 7, -2147483648);
-
-insert into t (a,b,c,d) values (8, 8, 8, -2147483648);
-
-insert into t (a,b,c,d) values (9, 9, 9, -2147483648);
 
 -- max keys
 insert into t (a,b,c,d) values (2147483647, 2147483647, 2147483647, 2147483647);
-
 insert into t (a,b,c,d) values (0, 2147483647, 2147483647, 2147483647);
-
 insert into t (a,b,c,d) values (1, 2147483647, 2147483647, 2147483647);
-
 insert into t (a,b,c,d) values (2, 2147483647, 2147483647, 2147483647);
-
-insert into t (a,b,c,d) values (3, 2147483647, 2147483647, 2147483647);
-
-insert into t (a,b,c,d) values (4, 2147483647, 2147483647, 2147483647);
-
-insert into t (a,b,c,d) values (5, 2147483647, 2147483647, 2147483647);
-
-insert into t (a,b,c,d) values (6, 2147483647, 2147483647, 2147483647);
-
 insert into t (a,b,c,d) values (7, 2147483647, 2147483647, 2147483647);
-
-insert into t (a,b,c,d) values (8, 2147483647, 2147483647, 2147483647);
-
-insert into t (a,b,c,d) values (9, 2147483647, 2147483647, 2147483647);
-
-insert into t (a,b,c,d) values (0, 0, 2147483647, 2147483647);
-
 insert into t (a,b,c,d) values (1, 1, 2147483647, 2147483647);
-
 insert into t (a,b,c,d) values (2, 2, 2147483647, 2147483647);
-
 insert into t (a,b,c,d) values (3, 3, 2147483647, 2147483647);
-
-insert into t (a,b,c,d) values (4, 4, 2147483647, 2147483647);
-
-insert into t (a,b,c,d) values (5, 5, 2147483647, 2147483647);
-
-insert into t (a,b,c,d) values (6, 6, 2147483647, 2147483647);
-
-insert into t (a,b,c,d) values (7, 7, 2147483647, 2147483647);
-
-insert into t (a,b,c,d) values (8, 8, 2147483647, 2147483647);
-
-insert into t (a,b,c,d) values (9, 9, 2147483647, 2147483647);
-
-insert into t (a,b,c,d) values (0, 0, 0, 2147483647);
-
 insert into t (a,b,c,d) values (1, 1, 1, 2147483647);
-
 insert into t (a,b,c,d) values (2, 2, 2, 2147483647);
-
-insert into t (a,b,c,d) values (3, 3, 3, 2147483647);
-
-insert into t (a,b,c,d) values (4, 4, 4, 2147483647);
-
-insert into t (a,b,c,d) values (5, 5, 5, 2147483647);
-
-insert into t (a,b,c,d) values (6, 6, 6, 2147483647);
-
-insert into t (a,b,c,d) values (7, 7, 7, 2147483647);
-
 insert into t (a,b,c,d) values (8, 8, 8, 2147483647);
-
 insert into t (a,b,c,d) values (9, 9, 9, 2147483647);
 
--- all possibilities
 create index i_t_all on t(a asc, b asc, c asc, d asc);
 
-;au off
-WITH cte_fnrZF2Xrn AS
+autocommit off;
+WITH cte AS
 (
 select /*+ recompile index_ls */ a from t where a=4 group by a
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_fnrZF2Xrn);
-select * from t_d_1;
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte);
 rollback;
 
 
-WITH cte_s46ywdmiu AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a from t where a=4 group by a desc
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_s46ywdmiu);
-select * from t_d_1;
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte);
 rollback;
 
 
-WITH cte_gRnuOqrAC AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 group by a, b
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_gRnuOqrAC);
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte);
 
-select * from t_d_1;
 rollback;
 
 
-WITH cte_fLcntxuU3 AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 group by a desc, b desc
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_fLcntxuU3);
-select * from t_d_1 where i<=20 order by 1;
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte);
 rollback;
 
-WITH cte_a1lfeKECr AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 group by a desc, b
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_a1lfeKECr);
-select * from t_d_1 where i<=20 order by 1;
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte);
 rollback;
 
 
 
-WITH cte_g3VzRAl0Z AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 group by a, b desc
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_g3VzRAl0Z);
-select * from t_d_1 where i<=20 order by 1;
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte);
 rollback;
 
-WITH cte_JSghVGPRG AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 and b=4 group by a, b
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_JSghVGPRG);
-select * from t_d_1 where i<=20 order by 1;
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select max(a) from cte);
 rollback;
 
 
 
-WITH cte_hC2XcO3XH AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 and b=4 group by a desc, b desc
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_hC2XcO3XH);
-select * from t_d_1 where i<=20 order by 1;
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select min(a) from cte);
 rollback;
 
 
-WITH cte_RtTOPQDLG AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 and b=4 group by a desc, b
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_RtTOPQDLG);
-select * from t_d_1 where i<=20 order by 1;
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select median(a) from cte);
 rollback;
 
 
-WITH cte_qOxW521Dr AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 and b=4 group by a, b desc
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_qOxW521Dr);
-select * from t_d_1 where i<=20 order by 1;
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select avg(a) from cte);
 rollback;
 
 
@@ -302,97 +140,87 @@ alter table t drop index i_t_all;
 
 create index i_t_all on t(a asc, b asc, c asc, d desc);
 
-WITH cte_LtSBb5Tx1 AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a from t where a=4 group by a
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_LtSBb5Tx1);
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select sum(a) from cte);
 
-select * from t_d_1 where i<=20 order by 1;
 rollback;
 
-WITH cte_eJWLICUdw AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a from t where a=4 group by a desc
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_eJWLICUdw);
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select max(a) from cte);
 
-select * from t_d_1 where i<=20 order by 1;
 rollback;
 
 
-WITH cte_PmdQawXeU AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 group by a, b
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_PmdQawXeU);
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select max(n) from (select max(b) as n from cte group by a) x);
 
-select * from t_d_1 where i<=20 order by 1;
 rollback;
 
-WITH cte_8huqw4ZFH AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 group by a desc, b desc
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_8huqw4ZFH);
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select min(n) from (select max(b) as n from cte group by a) x);
 
-select * from t_d_1 where i<=20 order by 1;
 rollback;
 
 
-WITH cte_cdoQcYrkK AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 group by a desc, b
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_cdoQcYrkK);
-select * from t_d_1 where i<=20 order by 1;
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select median(n) from (select max(b) as n from cte group by a)x);
 rollback;
 
 
-WITH cte_IArpoWBHv AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 group by a, b desc
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_IArpoWBHv);
-select * from t_d_1 where i<=20 order by 1;
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select sum(n) from (select max(b) as n from cte group by a)x);
 rollback;
 
 
-WITH cte_VNhv7qQa9 AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 and b=4 group by a, b
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_VNhv7qQa9);
-select * from t_d_1;
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select avg(n) from (select max(b) as n from cte group by a) x);
 rollback;
 
 
-WITH cte_wlFaEOoi7 AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 and b=4 group by a desc, b desc
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_wlFaEOoi7);
-select * from t_d_1;
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select max(n) from (select min(b) as n from cte group by a) x);
 rollback;
 
 
 
-WITH cte_PoplCnjyu AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 and b=4 group by a desc, b
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_PoplCnjyu);
-select * from t_d_1;
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select min(n) from (select min(b) as n from cte group by a) x);
 rollback;
 
 
 
-WITH cte_J5LJx8aio AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 and b=4 group by a, b desc
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_J5LJx8aio);
-select * from t_d_1;
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select median(n) from (select min(b) as n from cte group by a) x);
 rollback;
 
 
@@ -401,94 +229,84 @@ alter table t drop index i_t_all;
 
 create index i_t_all on t(a asc, b asc, c desc, d asc);
 
-WITH cte_I0OMKmtuu AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a from t where a=4 group by a
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_I0OMKmtuu);
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select sum(n) from (select min(a) as n from cte group by a) x);
 
-select * from t_d_1;
 rollback;
 
-WITH cte_tY0A4xyAC AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a from t where a=4 group by a desc
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_tY0A4xyAC);
-select * from t_d_1;
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select avg(n) from (select min(a) as n from cte group by a) x);
 rollback;
 
 
-WITH cte_JnKoekUwi AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 group by a, b
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_JnKoekUwi);
-select * from t_d_1;
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select max(n) from (select median(b) as n from cte group by a) x);
 rollback;
 
 
-WITH cte_fcYX2vlrM AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 group by a desc, b desc
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_fcYX2vlrM);
-select * from t_d_1;
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select min(n) from (select median(b) as n from cte group by a) x);
 rollback;
 
 
-WITH cte_WqxIEkTde AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 group by a desc, b
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_WqxIEkTde);
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select median(n) from (select median(b) as n from cte group by a) x);
 
-select * from t_d_1;
 rollback;
 
 
-WITH cte_QZmnWehCk AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 group by a, b desc
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_QZmnWehCk);
-select * from t_d_1;
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select avg(n) from (select median(b) as n from cte group by a) x);
 rollback;
 
 
-WITH cte_QNK3BDyGX AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 and b=4 group by a, b
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_QNK3BDyGX);
-select * from t_d_1;
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select sum(n) from (select median(b) as n from cte group by a) x);
 rollback;
 
 
-WITH cte_dijYRDxJI AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 and b=4 group by a desc, b desc
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_dijYRDxJI);
-select * from t_d_1;
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select avg(n) from (select median(b) as n from cte group by a) x);
 rollback;
 
 
-WITH cte_bxnmFu5MM AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 and b=4 group by a desc, b
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_bxnmFu5MM);
-select * from t_d_1;
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select max(n) from (select avg(b) as n from cte group by a) x);
 rollback;
 
 
-WITH cte_ayelGOLZ1 AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 and b=4 group by a, b desc
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_ayelGOLZ1);
-select * from t_d_1;
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select min(n) from (select avg(b) as n from cte group by a) x);
 rollback;
 
 
@@ -496,70 +314,64 @@ alter table t drop index i_t_all;
 
 create index i_t_all on t(a asc, b asc, c desc, d desc);
 
-WITH cte_6E0oM9ScF AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a from t where a=4 group by a
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_6E0oM9ScF);
-select * from t_d_1;
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select median(n) from (select avg(a) as n from cte group by a) x);
 rollback;
 
 
-WITH cte_9dyoGyhL2 AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a from t where a=4 group by a desc
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_9dyoGyhL2);
-select * from t_d_1;
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select avg(n) from (select avg(a) as n from cte group by a) x);
 rollback;
 
 
-WITH cte_j8ZOeL6g5 AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 group by a, b
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_j8ZOeL6g5);
-select * from t_d_1;
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select sum(n) from (select avg(b) as n from cte group by a) x);
 rollback;
 
 
-WITH cte_eMpryijPV AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 group by a desc, b desc
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_eMpryijPV);
-select * from t_d_1;
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select max(n) from (select sum(b) as n from cte group by a) x);
 rollback;
 
 
-WITH cte_bq6Nfc2bY AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 group by a desc, b
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_bq6Nfc2bY);
-select * from t_d_1;
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select min(n) from (select sum(b) as n from cte group by a) x);
 rollback;
 
 
-WITH cte_BqdGxMLG7 AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 group by a, b desc
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_BqdGxMLG7);
-select * from t_d_1;
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select median(n) from (select sum(b) as n from cte group by a) x);
 rollback;
 
-WITH cte_zxIK7JwYP AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 and b=4 group by a, b
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_zxIK7JwYP);
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select avg(n) from (select sum(b) as n from cte group by a) x);
 
-WITH cte_KzFsUQ8eb AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 and b=4 group by a desc, b desc
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_KzFsUQ8eb);
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select sum(n) from (select sum(b) as n from cte group by a) x);
 
 WITH cte_UWx3iihf7 AS
 (
@@ -887,27 +699,27 @@ select /*+ recompile index_ls */ a, b from t where a=4 and b=4 group by a desc, 
 )
 delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_wz8WSkc80);
 
-WITH cte_jsWnBPD63 AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 and b=4 group by a, b desc
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_jsWnBPD63);
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i in (select a from cte);
 
 alter table t drop index i_t_all;
 
 create index i_t_all on t(a desc, b asc, c asc, d desc);
 
-WITH cte_Xoxq2x941 AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a from t where a=4 group by a
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_Xoxq2x941);
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(a) from cte);
 
-WITH cte_5fQSP3A0a AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a from t where a=4 group by a desc
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_5fQSP3A0a);
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte);
 
 WITH cte_rNWfbD05k AS
 (
@@ -1020,7 +832,6 @@ WITH cte_k4ugVZMCW AS
 select /*+ recompile index_ls */ a, b from t where a=4 and b=4 group by a, b desc
 )
 delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_k4ugVZMCW);
-select * from t_d_1 where i<=20 order by 1;
 rollback;
 
 
@@ -1033,7 +844,6 @@ WITH cte_TPDyrzaCq AS
 select /*+ recompile index_ls */ a from t where a=4 group by a
 )
 delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_TPDyrzaCq);
-select * from t_d_1 where i<=20 order by 1;
 rollback;
 
 
@@ -1042,7 +852,6 @@ WITH cte_Ffr2sOm8w AS
 select /*+ recompile index_ls */ a from t where a=4 group by a desc
 )
 delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_Ffr2sOm8w);
-select * from t_d_1 where i<=20 order by 1;
 rollback;
 
 
@@ -1051,7 +860,6 @@ WITH cte_svRECvxHE AS
 select /*+ recompile index_ls */ a, b from t where a=4 group by a, b
 )
 delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_svRECvxHE);
-select * from t_d_1 where i<=20 order by 1;
 rollback;
 
 
@@ -1224,7 +1032,6 @@ WITH cte_Mkzreps6u AS
 select /*+ recompile index_ls */ a, b from t where a=4 and b=4 group by a, b desc
 )
 delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_Mkzreps6u);
-select * from t_d_1 where i<=20 order by 1;
 rollback;
 
 
@@ -1237,7 +1044,6 @@ WITH cte_q1l54Yaga AS
 select /*+ recompile index_ls */ a from t where a=4 group by a
 )
 delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_q1l54Yaga);
-select * from t_d_1 where i<=20 order by 1;
 rollback;
 
 
@@ -1247,7 +1053,6 @@ WITH cte_qjDKfAgs3 AS
 select /*+ recompile index_ls */ a from t where a=4 group by a desc
 )
 delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_qjDKfAgs3);
-select * from t_d_1 where i<=20 order by 1;
 rollback;
 
 
@@ -1257,7 +1062,6 @@ WITH cte_jpGnscBjU AS
 select /*+ recompile index_ls */ a, b from t where a=4 group by a, b
 )
 delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_jpGnscBjU);
-select * from t_d_1 where i<=20 order by 1;
 rollback;
 
 
@@ -1267,7 +1071,6 @@ WITH cte_2e9i9tDCZ AS
 select /*+ recompile index_ls */ a, b from t where a=4 group by a desc, b desc
 )
 delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_2e9i9tDCZ);
-select * from t_d_1 where i<=20 order by 1;
 rollback;
 
 
@@ -1277,7 +1080,6 @@ WITH cte_K6cOFEbKu AS
 select /*+ recompile index_ls */ a, b from t where a=4 group by a desc, b
 )
 delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_K6cOFEbKu);
-select * from t_d_1 where i<=20 order by 1;
 rollback;
 
 
@@ -1287,7 +1089,6 @@ WITH cte_YG826b0Cw AS
 select /*+ recompile index_ls */ a, b from t where a=4 group by a, b desc
 )
 delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_YG826b0Cw);
-select * from t_d_1 where i<=20 order by 1;
 rollback;
 
 
@@ -1296,7 +1097,6 @@ WITH cte_o2K6usKKE AS
 select /*+ recompile index_ls */ a, b from t where a=4 and b=4 group by a, b
 )
 delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_o2K6usKKE);
-select * from t_d_1 where i<=20 order by 1;
 rollback;
 
 
@@ -1311,7 +1111,6 @@ WITH cte_S0t8og3fl AS
 select /*+ recompile index_ls */ a, b from t where a=4 and b=4 group by a desc, b
 )
 delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_S0t8og3fl);
-select * from t_d_1 where i<=20 order by 1;
 rollback;
 
 WITH cte_aaC7mXSqs AS
@@ -1319,7 +1118,6 @@ WITH cte_aaC7mXSqs AS
 select /*+ recompile index_ls */ a, b from t where a=4 and b=4 group by a, b desc
 )
 delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_aaC7mXSqs);
-select * from t_d_1 where i<=20 order by 1;
 rollback;
 
 alter table t drop index i_t_all;
@@ -1331,7 +1129,6 @@ WITH cte_vwbiZrmO5 AS
 select /*+ recompile index_ls */ a from t where a=4 group by a
 )
 delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_vwbiZrmO5);
-select * from t_d_1 where i<=20 order by 1;
 rollback;
 
 WITH cte_0ZXByfjUY AS
@@ -1339,7 +1136,6 @@ WITH cte_0ZXByfjUY AS
 select /*+ recompile index_ls */ a from t where a=4 group by a desc
 )
 delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_0ZXByfjUY);
-select * from t_d_1 where i<=20 order by 1;
 rollback;
 
 WITH cte_HU0z89D8V AS
@@ -1347,7 +1143,6 @@ WITH cte_HU0z89D8V AS
 select /*+ recompile index_ls */ a, b from t where a=4 group by a, b
 )
 delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_HU0z89D8V);
-select * from t_d_1 where i<=20 order by 1;
 rollback;
 
 WITH cte_52ymYOzsx AS
@@ -1356,76 +1151,58 @@ select /*+ recompile index_ls */ a, b from t where a=4 group by a desc, b desc
 )
 delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_52ymYOzsx);
 
-select * from t_d_1 where i<=20 order by 1;
 rollback;
 
 
-WITH cte_ZaIVvWAks AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 group by a desc, b
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_ZaIVvWAks);
-select * from t_d_1 where i<=20 order by 1;
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte);
 rollback;
 
 
-WITH cte_7RE4vnfSP AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 group by a, b desc
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_7RE4vnfSP);
-select * from t_d_1 where i<=20 order by 1;
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(b) from cte group by a);
 rollback;
 
 
-WITH cte_zlQNR47iS AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 and b=4 group by a, b
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_zlQNR47iS);
-select * from t_d_1 where i<=20 order by 1;
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=any(select count(b) from cte group by a );
 rollback;
 
-
-
-
-WITH cte_oQTQhSuEI AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 and b=4 group by a desc, b desc
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_oQTQhSuEI);
-select * from t_d_1 where i<=20 order by 1;
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(distinct a) from cte);
 rollback;
 
-
-
-
-
-WITH cte_nebYcDSjP AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 and b=4 group by a desc, b
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_nebYcDSjP);
-select * from t_d_1 where i<=20 order by 1;
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(distinct b) from cte);
 rollback;
 
-
-
-WITH cte_RCIfzhkTL AS
+WITH cte AS
 (
 select /*+ recompile index_ls */ a, b from t where a=4 and b=4 group by a, b desc
 )
-delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(*) from cte_RCIfzhkTL);
-select * from t_d_1 where i<=20 order by 1;
+delete t_d_1 from t_d_1,t_d_2 where t_d_1.i=t_d_2.i and t_d_1.i >=(select count(a) from cte);
 rollback;
-
 
 alter table t drop index i_t_all;
 commit;
-;au on
+autocommit on;
 
--- cleanup
-drop table t;
+drop table if exists t,t_d_1,t_d_2;
 
 
 

@@ -11,10 +11,9 @@ WITH mycte(a,b,c,d) AS
 select * from bar, foo where bar.i in(foo.i, foo.j, foo.k) using index bar.pk_bar_i(+)
 )
 delete from t where i <=(select count(*) from mycte);
+select * from t order by 1;
 
-drop foo;
-drop bar;
-
+drop table if exists foo,aaa,bar;
 create table aaa(a integer);
 insert into aaa values(1);
 create index idx1 on aaa(a);
@@ -23,4 +22,5 @@ WITH mycte AS
 select rownum, a from aaa where a in(1,1,1) using index idx1(+)
 )
 delete from t where i <=(select count(*) from mycte);
-drop aaa;
+select * from t order by 1;
+drop table if exists foo,aaa,bar;

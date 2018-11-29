@@ -135,4 +135,4 @@ SELECT count(*) FROM A WHERE col_int_key != 3 AND pk BETWEEN 1 AND 1 + 3 AND col
 SELECT count(*) FROM A WHERE col_int_key != 3 AND pk BETWEEN 1 AND 1 + 3 AND col_int_key BETWEEN 1 AND 1 + 7;
 
 select * from b order by 1;
-drop table if exists A;
+drop if exists A,b,a,v1;

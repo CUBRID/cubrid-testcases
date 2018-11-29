@@ -26,7 +26,7 @@ overten( ProductID, CategoryID, ProductName, UnitPrice) AS
    FROM p
    WHERE UnitPrice > 10.0
 )
-select * from total,p where p.CategoryID=total.CategoryID and p.ProductID in (select ProductID from overten)
+select * from total,p where p.CategoryID=total.CategoryID and p.ProductID in (select ProductID from overten);
 
 
 
@@ -49,7 +49,7 @@ overten( ProductID, CategoryID, ProductName, UnitPrice) AS
    FROM p
    WHERE UnitPrice > 10.0
 )
-delete p from total,p where p.CategoryID=total.CategoryID and p.ProductID in (select ProductID from overten)
+delete p from total,p where p.CategoryID=total.CategoryID and p.ProductID in (select ProductID from overten);
 
 select * from p order by 1;
 

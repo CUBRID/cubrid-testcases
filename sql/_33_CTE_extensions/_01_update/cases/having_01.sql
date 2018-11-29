@@ -25,7 +25,7 @@ group by s_class having s_class>=3 order by score desc,id limit 0,1
 update student,mycte set student.score=student.score-mycte.min_score
 where student.s_class=mycte.s_class;
 
-select s_class,cast(score as numeric(3,1)) from student;
+select s_class,cast(score as numeric(3,1)) from student order by 1,2;
 
 
 drop if exists student;
@@ -55,4 +55,6 @@ group by s_class having s_class>=3 order by score desc,id limit 0,2
 update student,mycte set student.score=student.score-mycte.min_score
 where student.s_class=mycte.s_class;
 
-select s_class,cast(score as numeric(3,1)) from student;
+select s_class,cast(score as numeric(3,1)) from student order by 1,2;
+
+drop table if exists student;

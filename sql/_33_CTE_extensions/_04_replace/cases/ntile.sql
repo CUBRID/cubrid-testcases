@@ -126,4 +126,4 @@ with cte as
 select * from foo1 order by 1,2,3;
 select * from foo2 order by 1,2,3;
 
-drop table if exists foo1,foo2,t2;
+drop table if exists foo1,foo2,t2,t1;

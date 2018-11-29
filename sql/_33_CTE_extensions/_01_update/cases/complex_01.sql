@@ -30,7 +30,7 @@ where c in
 (
  WITH n_s AS (SELECT a FROM t1) select * from n_s
 );
-select * from t2;
+select * from t2 order by 1,2;
 
 with mycte as
 (
@@ -41,7 +41,7 @@ where c in
 (
  select * from (WITH n_s AS (SELECT a FROM t1) select * from n_s order by 1 desc limit 0,2) as x
 );
-select * from t2 order by 1;
+select * from t2 order by 1,2;
 
 
 with mycte as
@@ -53,7 +53,7 @@ where c in
 (
  select * from (with n_s AS (SELECT a FROM t1) select n_s.a from n_s,mycte where n_s.a=mycte.a) as x
 );
-select * from t2 order by 1;
+select * from t2 order by 1,2;
 
 with mycte as
 (
@@ -64,7 +64,7 @@ where c not in
 (
  select * from (with n_s AS (SELECT a FROM t1) select n_s.a from n_s,mycte where n_s.a=mycte.a) as x
 );
-select * from t2 order by 1;
+select * from t2 order by 1,2;
 
 with mycte as
 (
@@ -76,8 +76,8 @@ c not in
 (
  select * from (with n_s AS (SELECT a FROM t1) select n_s.a from n_s,mycte where n_s.a=mycte.a) as x
 );
-select * from t2 order by 1;
-select * from t1 order by 1;
+select * from t2 order by 1,2;
+select * from t1 order by 1,2;
 
 with mycte as
 (
@@ -89,8 +89,8 @@ c in
 (
  select * from (with n_s AS (SELECT a FROM t1) select n_s.a from n_s,mycte where n_s.a=mycte.a) as x
 );
-select * from t2 order by 1;
-select * from t1 order by 1;
+select * from t2 order by 1,2;
+select * from t1 order by 1,2;
 
 
 

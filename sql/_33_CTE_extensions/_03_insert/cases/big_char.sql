@@ -66,8 +66,6 @@ ORDER BY path;
 select count(*) from foo;
 
 
-
-
 WITH RECURSIVE cte (l, container_id, container_name, container_id_snr, path)
 AS (
   SELECT 1 AS l, container_id, container_name, container_id_snr, CAST(container.container_name AS CHAR(4000)) AS path
@@ -122,4 +120,6 @@ SELECT 1 AS l, container_id, container_name, container_id_snr, CAST(container.co
 ) select container_name from cte2
 
 );
-select l from foo;
+select l from foo order by 1;
+
+drop table if exists `container`;

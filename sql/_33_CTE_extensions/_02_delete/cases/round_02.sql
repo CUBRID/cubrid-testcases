@@ -21,6 +21,7 @@ insert into range_test values(10,16,'16');
 drop table if exists t;
 create table t(i int);
 insert into t(i) values(1),(2),(3);
+--CBRD-22529
 WITH mycte AS
 (
 select * from range_test where test_int = round(11.57) order by 1
@@ -31,6 +32,8 @@ delete from t where i <=(select id from mycte);
 drop table if exists t;
 create table t(i int);
 insert into t(i) values(1),(2),(3);
+
+--CBRD-22529
 WITH mycte AS
 (
 select * from range_test where test_int = round(11.57) order by 1
@@ -81,3 +84,6 @@ WITH mycte AS
 (
 select * from range_test where test_int = round(11.57) order by 1
 ) select id from mycte;
+
+
+drop table if exists range_test,t;

@@ -33,5 +33,7 @@ where i>( select avg_i from avg_i where avg_i.id=t1.id )
 and j< ( select avg_j from avg_j where avg_j.id=t1.id )
 and k< ( select avg_k from avg_k where avg_k.id=t1.id );
 
-select * from t1 where i=8 or i=9;
+select * from t1 where i=8 or i=9 order by 1,2,3,4;
+
+drop table if exists t1;
 

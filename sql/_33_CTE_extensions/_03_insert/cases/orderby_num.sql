@@ -12,7 +12,7 @@ with cte as
  select ORDERBY_NUM(), j from t order by 2 for ORDERBY_NUM() between 3 and 5
 ) select * from cte  where rownum<2;
 
-select * from foo;
+select * from foo order by 1,2;
 
 insert into foo
 with cte as
@@ -20,7 +20,7 @@ with cte as
  select ORDERBY_NUM(), j from t order by 2 for ORDERBY_NUM() between 1 and 5
 ) select * from cte  where rownum<2;
 
-select * from foo;
+select * from foo order by 1,2;
 
 
 replace  into foo
@@ -28,7 +28,7 @@ with cte as
 (
  select ORDERBY_NUM(), j from t order by 2 for ORDERBY_NUM() between 2 and 5
 ) select * from cte  where rownum<2;
-select * from foo;
+select * from foo order by 1,2;
 
 with cte as
 (
@@ -38,7 +38,7 @@ cte2 as (
 select * from cte  where rownum<2
 ) delete from foo where j in (select j  from cte2);
 
-select * from foo;
+select * from foo order by 1,2;
 
 
 
@@ -52,4 +52,6 @@ select * from cte  where rownum<2
 select j from cte2
 );
 
-select * from foo;
+select * from foo order by 1,2;
+
+drop table if exists foo,t;

@@ -6,9 +6,9 @@ with mycte(i) as
 SELECT DAYOFYEAR('0001-01-01')
 ) select * from mycte;
 
-select * from t;
+select * from t order by 1;
 
-create view v1 as select * from t;
+create view v1 as select * from t order by 1;
 
 insert into t
 with mycte as
@@ -65,3 +65,4 @@ with mycte as
 ) delete from  t where  i=(select count(*) from mycte);
 select * from t order by 1;
 
+drop if exists t,v1;
