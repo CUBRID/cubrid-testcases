@@ -1,14 +1,17 @@
 SELECT JSON_MERGE_PRESERVE('[1, 2]', '[true, false]');
 SELECT JSON_MERGE_PATCH('[1, 2]', '[true, false]');
 
-SELECT JSON_MERGE_PRESERVE('[1, 2]', '[5, 6]', '[3, 4]');
-SELECT JSON_MERGE_PATCH('[1, 2]', '[5, 6]', '[3, 4]');
+SELECT JSON_MERGE_PRESERVE('[1, 2]', '[5, 6, 7]', '[3, 4]');
+SELECT JSON_MERGE_PATCH('[1, 2]', '[5, 6, 7]', '[3, 4]');
 
 SELECT JSON_MERGE_PRESERVE('{"name": "x"}', '{"id": 47}');
 SELECT JSON_MERGE_PATCH('{"name": "x"}', '{"id": 47}');
 
 SELECT JSON_MERGE_PRESERVE('{"name": "x"}', '{"id": 47}', '{"age": 20}');
 SELECT JSON_MERGE_PATCH('{"name": "x"}', '{"id": 47}', '{"age": 20}');
+
+SELECT JSON_MERGE_PRESERVE('{"name": "x", "id": 37}', '{"id": 47, "age": 30}', '{"age": 20, "name": "y"}');
+SELECT JSON_MERGE_PATCH('{"name": "x", "id": 37}', '{"id": 47, "age": 30}', '{"age": 20, "name": "y"}'); 
 
 SELECT JSON_MERGE_PRESERVE('1', 'true');
 SELECT JSON_MERGE_PATCH('1', 'true');
