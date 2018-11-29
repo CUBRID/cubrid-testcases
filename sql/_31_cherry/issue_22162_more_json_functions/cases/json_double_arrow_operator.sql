@@ -36,12 +36,12 @@ drop if exists tj10;
 CREATE TABLE tj10 (a JSON, b INT);
 INSERT INTO tj10 VALUES ('[3,10,5,"x",44]', 33),('[3,10,5,17,[22,"y",66]]', 0);
 SELECT a->'$[3]', a->'$[4][1]' FROM tj10 ORDER BY 1,2;
---the type of a->>'$[3]' is character(CBRD-22541)
+--the data type of a->>'$[3]' is character(CBRD-22541)
 SELECT a->>'$[3]', a->>'$[4][1]' FROM tj10 ORDER BY 1,2;
 SELECT a->>'$[3]', a->>'$[4][1]' FROM tj10 where a->'$[4][1]' IS NOT NULL ORDER BY 1,2; 
 
 select json_extract(a,'$[3]'),json_extract(a,'$[4][1]') FROM tj10 ORDER BY 1,2; ; 
---the type of json_unquote result is character(CBRD-22541)
+--the data type of json_unquote result is character(CBRD-22541)
 select json_unquote(json_extract(a,'$[3]')), json_unquote(json_extract(a,'$[4][1]')) FROM tj10 ORDER BY 1,2; 
  
 
