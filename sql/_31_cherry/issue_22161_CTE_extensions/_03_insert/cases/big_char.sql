@@ -122,4 +122,4 @@ SELECT 1 AS l, container_id, container_name, container_id_snr, CAST(container.co
 );
 select l from foo order by 1;
 
-drop table if exists `container`;
+drop table if exists `container`,foo;

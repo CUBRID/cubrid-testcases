@@ -88,4 +88,4 @@ select a.test_int, b.test_int from hash_test a, hash_test b where a.test_int =1.
 ) update foo set b=-1 where a= some(select a from cte);
 select * from foo order by 1,2;
 
-drop table if exists foo,hash_test;
+drop table if exists foo,hash_test,t;

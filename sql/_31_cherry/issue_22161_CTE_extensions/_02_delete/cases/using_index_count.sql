@@ -23,4 +23,4 @@ select rownum, a from aaa where a in(1,1,1) using index idx1(+)
 )
 delete from t where i <=(select count(*) from mycte);
 select * from t order by 1;
-drop table if exists foo,aaa,bar;
+drop table if exists t,foo,aaa,bar;

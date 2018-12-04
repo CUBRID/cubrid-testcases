@@ -48,5 +48,5 @@ delete from t where i <=(select count(*) from mycte);
 
 select * from t order by 1;
 
-drop table if exists foo,bar;
+drop table if exists t,foo,bar;
 

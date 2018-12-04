@@ -29,6 +29,6 @@ delete from foo where i in (select i from cte4) and j in (select j from cte3) an
 
 select * from foo order by 1,2,3;
 
-drop table if exists t,foo
+drop table if exists t,foo;
 
 
