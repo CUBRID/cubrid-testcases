@@ -21,6 +21,7 @@ select json_extract(json_array(1, 2, 123), '/0') > json_extract(json_array(1, 2,
 
 select json_insert(json_object('a', json_array('b', 'c')), '/a/-', 'd');
 select json_insert(json_object('a', json_array('b', 'c')), '/a/', 'd', '/d', json_object('aaa', '123'), '/c', 123, '/b', 345, '/a/', '0');
+select json_insert(json_object('a', json_array('b', 'c')), '/a', 'd', '/d', json_object('aaa', '123'), '/c', 123, '/b', 345, '/a', '0');
 
 select json_remove(json_array('a', 'b', 'c','d','e'), '/1', '/3');
 select json_remove(json_insert(json_object('a', json_array('b', 'c')), '/a/', '"d"', '/d', json_object('aaa', '123'), '/c', '123', '/b', '345', '/a/', '0'), '/c','/d/aaa','/a/0');

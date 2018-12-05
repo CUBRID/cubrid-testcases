@@ -17,6 +17,8 @@ VALUES
 update users set preferences=json_insert(preferences, '/layout/^', '"www.baidu.com"') where id=5;
 update users set preferences=json_insert(preferences, '/layout/^', '"wwwww.baidu.com"') where id=5;
 update users set preferences=json_insert(json_merge(preferences, '{"website":["www.cubrid.com"]}'), '/website/', '"www.baidu.com"') where id=5;
+update users set preferences=json_insert(json_merge(preferences, '{"website":["www.cubrid.com"]}'), '/website', '"www.baidu.com"') where id=5;
+update users set preferences=json_set(json_merge(preferences, '{"website":{"":"www.cubrid.com"}}'), '/website/', '"www.baidu.com"') where id=4;
 update users set preferences=json_insert(json_merge(preferences, '{"website":["www.cubrid.com"]}'), '/website/-', '"wwwww.baidu.com"') where id=3;
 update users set preferences=json_insert(json_merge(preferences, '{"website":["www.cubrid.com"]}'), '$.website', '"wwwww.baidu.com"') where id=2;
 select * from users order by id;
