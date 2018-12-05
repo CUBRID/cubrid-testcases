@@ -104,4 +104,4 @@ with cte1 as
 ,cte2 as
 (SELECT /*+ RECOMPILE*/ *FROM t2) select * from cte1 CROSS JOIN  cte2 order by 1,2,3,4;
 select * from foo order by 1,2,3,4;
-drop if exists t1,t2;
+drop if exists t1,t2,foo;

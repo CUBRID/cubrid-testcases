@@ -226,4 +226,4 @@ cte3(col1,col2,col3,col4,col5,col6,col7,col8) as (
     select * from cte2 x right join o_4 y on x.col1 = y.i)
 update t set col1=col1-10,col2=col2-9 where col1 is null and col2 is null ;
 
-drop if exists o_1,o_2,o_3,o_4,o_5,yoo;
+drop if exists o_1,o_2,o_3,o_4,o_5,yoo,t;
