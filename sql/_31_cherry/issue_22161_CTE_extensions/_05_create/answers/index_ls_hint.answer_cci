@@ -1,0 +1,157 @@
+===================================================
+0
+===================================================
+0
+===================================================
+40
+===================================================
+0
+===================================================
+1000
+===================================================
+0
+===================================================
+0
+===================================================
+a    min_b    i    
+1     1     991     
+2     2     992     
+3     3     993     
+4     4     994     
+5     5     995     
+6     6     996     
+7     7     997     
+8     8     998     
+9     9     999     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx_t?_abc term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t?.a, min(t?.b), t?.c from t? t? where (t?.a> ?:? ) group by t?.a
+/* ---> skip GROUP BY */
+Query plan:
+sscan
+    simple CTE:cte node[?]
+    cost:  ? card ?
+Query stmt:
+with cte(a, min_b, i) as (select /*+ INDEX_LS */ t?.a, min(t?.b), t?.c from t? t? where (t?.a> ?:? ) group by t?.a)select cte.a, cte.min_b, cte.i from  cte
+===================================================
+0
+===================================================
+a    min_b    i    
+1     1     991     
+2     2     992     
+3     3     993     
+4     4     994     
+5     5     995     
+6     6     996     
+7     7     997     
+8     8     998     
+9     9     999     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: foo node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select foo.a, foo.min_b, foo.i from foo foo order by ?, ?, ?
+===================================================
+a    min_b    i    
+1     1     991     
+2     2     992     
+3     3     993     
+4     4     994     
+5     5     995     
+6     6     996     
+7     7     997     
+8     8     998     
+9     9     999     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: foo__p__p? node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select foo__p__p?.a, foo__p__p?.min_b, foo__p__p?.i from foo__p__p? foo__p__p? order by ?, ?, ?
+===================================================
+1
+===================================================
+a    min_b    i    
+1     1     991     
+2     2     992     
+3     3     993     
+4     4     994     
+5     5     995     
+6     6     996     
+7     7     997     
+8     8     998     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: foo node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select foo.a, foo.min_b, foo.i from foo foo order by ?, ?, ?
+===================================================
+1
+===================================================
+a    min_b    i    
+1     1     991     
+2     2     992     
+3     3     993     
+4     4     994     
+5     5     -5     
+6     6     996     
+7     7     997     
+8     8     998     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: foo node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select foo.a, foo.min_b, foo.i from foo foo order by ?, ?, ?
+===================================================
+1
+===================================================
+1
+===================================================
+a    min_b    i    
+1     1     991     
+1     1     991     
+1     1     991     
+2     2     992     
+3     3     993     
+4     4     994     
+5     5     -5     
+6     6     996     
+7     7     997     
+8     8     998     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: foo node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select foo.a, foo.min_b, foo.i from foo foo order by ?, ?, ?
+===================================================
+0
