@@ -25,11 +25,11 @@ INSERT INTO test_ro(ch, vc, str) VALUES('q', 'ț', CONCAT('Ț', 'z'));
 
 
 --test
-SELECT vc, CHAR_LENGTH (vc), LOWER(vc), CHAR_LENGTH(LOWER(vc)), UPPER(vc), CHAR_LENGTH(UPPER(vc)) FROM test_ro  order by 1,2,3,4,5,6;
+SELECT vc, CHAR_LENGTH (vc), LOWER(vc), CHAR_LENGTH(LOWER(vc)), UPPER(vc), CHAR_LENGTH(UPPER(vc)),id,hex(vc) FROM test_ro  order by 1,2,3,4,5,6,id;
 --test
-SELECT ch, CHAR_LENGTH (ch), LOWER(ch), CHAR_LENGTH(LOWER(ch)), UPPER(ch), CHAR_LENGTH(UPPER(ch)) FROM test_ro  order by 1,2,3,4,5,6;
+SELECT ch, CHAR_LENGTH (ch), LOWER(ch), CHAR_LENGTH(LOWER(ch)), UPPER(ch), CHAR_LENGTH(UPPER(ch)),id,hex(ch) FROM test_ro  order by 1,2,3,4,5,6,id;
 --test
-SELECT str, CHAR_LENGTH (str), LOWER(str), CHAR_LENGTH(LOWER(str)), UPPER(str), CHAR_LENGTH(UPPER(str)) FROM test_ro  order by 1,2,3,4,5,6;
+SELECT str, CHAR_LENGTH (str), LOWER(str), CHAR_LENGTH(LOWER(str)), UPPER(str), CHAR_LENGTH(UPPER(str)),id,hex(str) FROM test_ro  order by 1,2,3,4,5,6,id;
 
 DROP TABLE test_ro;
 
