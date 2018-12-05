@@ -8,7 +8,7 @@ with mycte as
  SELECT STR_TO_DATE(k, '%Y-%m-%d %h:%i:%s %p %TZR %TZD') as mm from t
 ) update t set j=(select mm from mycte);
 
-select * from t;
+select * from t order by 1,2;
 
 
 with mycte as
@@ -16,8 +16,8 @@ with mycte as
  SELECT STR_TO_DATE(k, '%Y-%m-%d %h:%i:%s %p %TZR %TZD') as mm from t
 ) update v1 set j=(select mm from mycte);
 
-select * from t;
-select * from v1;
+select * from t order by 1,2;
+select * from v1 order by 1,2;
 
 create  table t2 as select * from t;
 insert into t2 values(current_datetime,'2001-10-11 02:03:04 AM Europe/Bucharest EEST');
@@ -32,7 +32,6 @@ with mycte as
 (
  SELECT STR_TO_DATE(k, '%Y-%m-%d %h:%i:%s %p %TZR %TZD') as mm from t
 ) update t2,mycte set  t2.j=(select k from t) where t2.k=mm;
-select * from t2;
 
-
+select * from t2 order by 1,2;
 drop if exists t,t2,v1;

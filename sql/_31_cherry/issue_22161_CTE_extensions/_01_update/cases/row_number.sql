@@ -46,7 +46,7 @@ from t2 a
         on b.id = a.id
        and b.d  = a.d
 order by a.rn, a.d, a.id, b.rn, b.id, b.d);
-select * from x order by 1;
+select * from x order by 1,2,3;
 
 
 with t2( id, d, rn )
