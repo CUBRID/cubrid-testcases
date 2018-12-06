@@ -15,7 +15,7 @@ with cte1(a,b) as
     select col2,count(col3) from t group by col2
 )   update t inner join cte1 on col2=a set col5=b;
 
-select col1,col2,col3,col5 from t where col4 is not null;
+select col1,col2,col3,col5 from t where col4 is not null order by 1;
 drop table if exists t;
 
 
