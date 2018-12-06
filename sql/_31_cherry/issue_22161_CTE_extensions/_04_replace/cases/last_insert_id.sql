@@ -5,7 +5,7 @@ insert into t values(1),(3);
 create table foo as
 select * from t order by 1;
 
-alter table foo change column i i int primary key auto_increment;
+alter table foo change column i i int primary key auto_increment(1,10);
 insert into foo
 with cte as
 (
