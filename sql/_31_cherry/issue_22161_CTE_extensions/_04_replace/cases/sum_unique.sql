@@ -21,5 +21,5 @@ replace into t with mycte as
 (
  select sum(i),sum(j),sum(k),4 from t
 ) select * from mycte;
-select * from t order by l;
+select * from t order by l,i;
 drop table if exists t;

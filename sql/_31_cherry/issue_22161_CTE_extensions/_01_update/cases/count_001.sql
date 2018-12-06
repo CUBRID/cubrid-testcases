@@ -24,7 +24,7 @@ with cte1(a,b) as
 
 
 select col1,col2,col3,col5 from t  order by 1,2;
-select col1,col2,col3,col5 from t where col4 is not null;
+select col1,col2,col3,col5 from t where col4 is not null order by 1,2;
 drop table if exists t;
 
 create table t(col1 int primary key,col2 varchar(50),col3 double,
@@ -54,7 +54,7 @@ with cte1(a,b) as
 
 set optimization level 513;
 select /*+ recompile */col1,col2,col3,col5 from t where col1<11 order by 1,2;
-select /*+ recompile */ * from v1 where col1<11;
+select /*+ recompile */ * from v1 where col1<11 order by 1,2;
 
 drop table if exists t;
 drop view v1;
@@ -87,7 +87,7 @@ with cte1(a,b) as
 
 
 select col1,col2,col3,col5 from t  order by 1,2;
-select /*+ recompile */ * from v1 where col1<11;
+select /*+ recompile */ * from v1 where col1<11 order by 1,2;
 
 drop table if exists t;
 drop view v1;
