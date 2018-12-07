@@ -3,7 +3,6 @@ select cast (1 as int) union select cast('x' as varchar) order by 1;
 --err
 select cast ('x' as varchar) union select cast(1 as int) order by 1;
 
---err
 select 'a'  union select json_object('a', '1') order by 1;
 --err
 select 1  union select json_object('a', '1') order by 1;
@@ -99,6 +98,17 @@ select colj from test_class union select cast(col17 as json)  from test_class or
 
 insert into test_class(col1,col2,col3,col7) values ('"1"', '"1"', N'"1"', 100);
 insert into test_class(col1,col2,col3,col7) values ('2', '2', N'2', 101);
+
+select col7, colj from test_class union select col7, col1 from test_class where col7=100 order by 1,2;
+select col7, colj from test_class union select col7, col2 from test_class where col7=100 order by 1,2;
+select col7, colj from test_class union select col7, col3 from test_class where col7=100 order by 1,2;
+select col7, colj from test_class union select col7, col1 from test_class where col7=101 order by 1,2;
+select col7, colj from test_class union select col7, col2 from test_class where col7=101 order by 1,2;
+select col7, colj from test_class union select col7, col3 from test_class where col7=101 order by 1,2;
+
+alter table test_class change column col1 col1 char(50);   
+alter table test_class change column col2 col2 varchar(100);
+alter table test_class change column col3 col3 nchar(50);
 
 select col7, colj from test_class union select col7, col1 from test_class where col7=100 order by 1,2;
 select col7, colj from test_class union select col7, col2 from test_class where col7=100 order by 1,2;
