@@ -23,9 +23,11 @@ insert into t values (3, '{"id":"3","name":"candy"}');
 insert into t values (4, '{"id":"4","name":"donkey"}');
 SELECT c, JSON_EXTRACT(c, '$.id'), i FROM t WHERE JSON_EXTRACT(c, '$.id') > 1 ORDER BY JSON_EXTRACT(c, '$.name');
 ALTER TABLE t ADD COLUMN n INT;
-UPDATE t SET n=1 WHERE JSON_EXTRACT(c, '$.id') = '"4"';
+UPDATE t SET n=1 WHERE JSON_EXTRACT(c, '$.id') = '"4"'
+UPDATE t SET n=1 WHERE JSON_EXTRACT(c, '$.id') = '4';
 SELECT c, JSON_EXTRACT(c, '$.id'), i, n FROM t WHERE JSON_EXTRACT(c, '$.id') > 1  ORDER BY JSON_EXTRACT(c, '$.name');
-DELETE FROM t WHERE JSON_EXTRACT(c, '$.id') = '"4"';
+DELETE FROM t WHERE JSON_EXTRACT(c, '$.id') = '"4"'
+DELETE FROM t WHERE JSON_EXTRACT(c, '$.id') = '4';
 SELECT c, JSON_EXTRACT(c, '$.id'), i, n FROM t WHERE JSON_EXTRACT(c, '$.id') > 1  ORDER BY JSON_EXTRACT(c, '$.name');
 --error
 SELECT c, c->"$.id", id FROM t WHERE c->"$.id" > 1 ORDER BY c->"$.name";
