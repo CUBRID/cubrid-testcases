@@ -1,0 +1,57 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+index_name    is_unique    is_reverse    class_name    key_count    is_primary_key    is_foreign_key    filter_expression    have_function    comment    status    
+fk_deptno     NO     NO     t1     1     NO     YES     null     NO     null     NORMAL INDEX     
+i_online_empno     YES     NO     t1     1     NO     NO     null     NO     null     NORMAL INDEX     
+pk_t1_empno     YES     NO     t1     1     YES     NO     null     NO     null     NORMAL INDEX     
+
+===================================================
+empno    ename    job    deptno    
+7369     SMITH     CLERK     20     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_online_empno term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.empno, t?.ename, t?.[job], t?.deptno from t? t? where (t?.EMPNO> ?:? ) using index t?.i_online_empno(+)
+===================================================
+empno    ename    job    deptno    
+7369     SMITH     CLERK     20     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: pk_t?_empno term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.empno, t?.ename, t?.[job], t?.deptno from t? t? where (t?.EMPNO> ?:? ) using index t?.pk_t?_empno(+)
+===================================================
+empno    ename    job    deptno    
+7369     SMITH     CLERK     20     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: pk_t?_empno term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.empno, t?.ename, t?.[job], t?.deptno from t? t? where (t?.EMPNO> ?:? )
+===================================================
+0
+===================================================
+0
