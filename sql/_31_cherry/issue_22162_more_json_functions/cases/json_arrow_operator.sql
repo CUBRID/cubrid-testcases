@@ -27,6 +27,8 @@ SELECT id, c->'$.id', c->'$.name' from t1 where json_extract(c, '$.id') >101 ord
 select id, c->'$.id', c->'$.name' from t1 where c->'$.id'> 102 order by 1,2;
 select id, c->'$.id', c->'$.name.name' from t1 where c->'$.id'='107' order by 1,2;
 select id, c->'$.id', c->'$.name' from t1 where c->'$.name'='aaa' order by 1,2;
+select id, c->'$.id', c->'$.name' from t1 where c->'$.name'='"aaa"' order by 1,2;
+select id, c->'$.id', c->'$.name' from t1 where c->'$.name'="aaa" order by 1,2;
 
 --error test
 SELECT id, c->'$.id', c->'$.name'->'$.name' from t1 where id<10 order by 1,2;
