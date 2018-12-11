@@ -16,7 +16,7 @@ with cte1 as
 )   update t,cte1 set t.col5='price high' where t.col2=cte1.col2 and t.col3>cte1.avg_col3;
 
 select col1,col2,col3,col5 from t  order by 1,2;
-select col1,col2,col3,col5 from t where col4 is not null;
+select col1,col2,col3,col5 from t where col4 is not null order by 1,2;
 drop table if exists t;
 
 
@@ -48,7 +48,7 @@ with cte1 as
 )   select avg(avg_col3) from cte1;
 
 select col1,col2,col3,col5 from t  order by 1,2;
-select col1,col2,col3,col5 from v1 where col4 is not null;
+select col1,col2,col3,col5 from v1 where col4 is not null order by 1,2;
 drop table if exists t;
 drop view v1;
 
