@@ -184,9 +184,9 @@ sscan
     class: j_purchaseorder node[?]
     cost:  ? card ?
 Query stmt:
-select j_purchaseorder.id, j_purchaseorder.[name],  json_pretty(j_purchaseorder.po_document) from j_purchaseorder j_purchaseorder
+select j_purchaseorder.id, j_purchaseorder.[name], json_pretty(j_purchaseorder.po_document) from j_purchaseorder j_purchaseorder
 ===================================================
-json_pretty( json_extract( json_extract(po_document, '$.ShippingInstructions'), '$.Phone'))    
+json_pretty(json_extract(json_extract(po_document, '$.ShippingInstructions'), '$.Phone'))    
 [
   {
     "type": "Office",
@@ -203,6 +203,6 @@ sscan
     class: j_purchaseorder node[?]
     cost:  ? card ?
 Query stmt:
-select  json_pretty( json_extract( json_extract(j_purchaseorder.po_document, '$.ShippingInstructions'), '$.Phone')) from j_purchaseorder j_purchaseorder
+select json_pretty(json_extract(json_extract(j_purchaseorder.po_document, '$.ShippingInstructions'), '$.Phone')) from j_purchaseorder j_purchaseorder
 ===================================================
 0

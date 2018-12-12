@@ -116,25 +116,25 @@ foo_ids_alise
 ===================================================
 1
 ===================================================
-json_replace(b,  cast( json_extract(json_get_all_paths(b), '$[0]') as varchar), '1')    
+json_replace(b,  cast(json_extract(json_get_all_paths(b), '$[0]') as varchar), '1')    
 {"title":["1",{"type":"object","properties":{"title":{"type":"string"}}}]}     
 
 ===================================================
-json_set(b,  cast( json_extract(json_get_all_paths(b), '$[0]') as varchar), '1')    
+json_set(b,  cast(json_extract(json_get_all_paths(b), '$[0]') as varchar), '1')    
 {"title":["1",{"type":"object","properties":{"title":{"type":"string"}}}]}     
 
 ===================================================
-json_array_append(b,  cast( json_extract(json_get_all_paths(b), '$[0]') as varchar), '1')    
+json_array_append(b,  cast(json_extract(json_get_all_paths(b), '$[0]') as varchar), '1')    
 {"title":[["hello","1"],{"type":"object","properties":{"title":{"type":"string"}}}]}     
 
 ===================================================
-json_set(a, '$.title', json_replace(b, '$.title[0]',  json_extract(a, '/title')))    
+json_set(a, '$.title', json_replace(b, '$.title[0]', json_extract(a, '/title')))    
 {"title":{"title":["hello",{"type":"object","properties":{"title":{"type":"string"}}}]}}     
 
 ===================================================
 Error:-1203
 ===================================================
-json_set(a, '$.title', json_replace(b, '$.title[0]',  json_extract(a, '/title')), '$.title', '222222222222222222222222222222222222222222222222222222222222222222')    
+json_set(a, '$.title', json_replace(b, '$.title[0]', json_extract(a, '/title')), '$.title', '222222222222222222222222222222222222222222222222222222222222222222')    
 {"title":"222222222222222222222222222222222222222222222222222222222222222222"}     
 
 ===================================================

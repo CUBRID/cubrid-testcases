@@ -4,7 +4,8 @@ select json_length('123');
 
 select json_depth(json_array('a', json_array('b', json_object('a', 'b'))));
 select json_depth(json_array('a')), json_depth('["a"]');
-select json_depth(1),json_depth(json_array('a')), json_depth(json_object('a','b'));  
+select json_depth(1);
+select json_depth(json_array('a')), json_depth(json_object('a','b'));  
 
 select json_type('123');
 select json_type('123.32');

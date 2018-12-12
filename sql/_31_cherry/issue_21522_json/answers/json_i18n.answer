@@ -5,11 +5,11 @@ json_valid(_utf8'{"bar": "baz", "balance": 7.77, "active":false}')
 1     
 
 ===================================================
-json_merge(_utf8'{"bar": "baz", "balance": 7.77, "active":false}',  json_extract(_utf8'{"bar": "baz", "balance": 7.77, "active":false}', _utf8'/active'))    
+json_merge(_utf8'{"bar": "baz", "balance": 7.77, "active":false}', json_extract(_utf8'{"bar": "baz", "balance": 7.77, "active":false}', _utf8'/active'))    
 [{"bar":"baz","balance":7.77,"active":false},false]     
 
 ===================================================
-json_insert(_utf8'{"bar": "baz", "balance": 7.77, "active":false}', _utf8'/status',  json_extract(_utf8'{"bar": "baz", "balance": 7.77, "active":false}', _utf8'/active'))    
+json_insert(_utf8'{"bar": "baz", "balance": 7.77, "active":false}', _utf8'/status', json_extract(_utf8'{"bar": "baz", "balance": 7.77, "active":false}', _utf8'/active'))    
 {"bar":"baz","balance":7.77,"active":false,"status":false}     
 
 ===================================================
@@ -25,11 +25,11 @@ json_extract(_utf8'{"bar": "baz", "balance": 7.77, "active":false}' collate utf8
 false     
 
 ===================================================
-json_extract(_utf8'{"bar": "baz", "balance": 7.77, "active":"false"}' collate utf8_en_ci, _utf8'/active')= json_extract(json_object(_utf8'name', _utf8'false' collate utf8_en_ci), _utf8'/name')    
+json_extract(_utf8'{"bar": "baz", "balance": 7.77, "active":"false"}' collate utf8_en_ci, _utf8'/active')=json_extract(json_object(_utf8'name', _utf8'false' collate utf8_en_ci), _utf8'/name')    
 1     
 
 ===================================================
-json_extract(_utf8'{"bar": "baz", "balance": 7.77, "active":"false"}' collate utf8_en_ci, _utf8'/active')= json_extract(json_object(_utf8'name', _utf8'FALSE' collate utf8_en_ci), _utf8'/name')    
+json_extract(_utf8'{"bar": "baz", "balance": 7.77, "active":"false"}' collate utf8_en_ci, _utf8'/active')=json_extract(json_object(_utf8'name', _utf8'FALSE' collate utf8_en_ci), _utf8'/name')    
 0     
 
 ===================================================
