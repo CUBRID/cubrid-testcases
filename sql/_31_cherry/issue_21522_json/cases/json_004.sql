@@ -10,7 +10,9 @@ select json_contains(json_merge(a,b,c),json_merge(a,c)), i from tbl order by 1,2
 select json_contains(json_merge(a,b,c),c,'/1'), i from tbl order by 1,2;
 select json_contains(json_merge(a,b,c),'"456"','/1'), i from tbl order by 1,2;
 select json_contains(json_merge(a,b,c),456,'/0'), i from tbl order by 1,2; 
+select json_contains(json_merge(a,b,c),'456','/0'), i from tbl order by 1,2; 
 select json_contains('[123,"aaa",{"a":[1,2,3]}]', 123,'/0');
+select json_contains('[123,"aaa",{"a":[1,2,3]}]', '123','/0');
 select json_contains(json_merge(a,b,c,'789'), '789', '/3'), i from tbl order by 1,2; 
 select json_contains(json_merge(a,b,c,'789'), '2', '/2/a'), i from tbl order by 1,2;
 select json_contains(json_merge(a,b,c,'789',json_type(222)), '2', '/2/a'), i from tbl order by 1,2;

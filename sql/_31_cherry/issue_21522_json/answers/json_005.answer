@@ -19,8 +19,10 @@ json_depth(json_array('a'))    json_depth('["a"]')
 2     2     
 
 ===================================================
-json_depth(1)    json_depth(json_array('a'))    json_depth(json_object('a', 'b'))    
-1     2     2     
+Error:-494
+===================================================
+json_depth(json_array('a'))    json_depth(json_object('a', 'b'))    
+2     2     
 
 ===================================================
 json_type('123')    
@@ -55,11 +57,11 @@ json_extract(json_array('a', json_array('b', json_object('a', 'b'))), '/1/2/a')
 null     
 
 ===================================================
-json_extract(json_array(1, 2, 123), '/0')< json_extract(json_array(1, 2, 123), '/2')    
+json_extract(json_array(1, 2, 123), '/0')<json_extract(json_array(1, 2, 123), '/2')    
 1     
 
 ===================================================
-json_extract(json_array(1, 2, 123), '/0')> json_extract(json_array(1, 2, 123), '/2')    
+json_extract(json_array(1, 2, 123), '/0')>json_extract(json_array(1, 2, 123), '/2')    
 0     
 
 ===================================================
@@ -85,7 +87,7 @@ Error:-494
 ===================================================
 1
 ===================================================
-concat(a,  repeat(b, 10), b, b,  json_extract(b, '/a'))    
+concat(a,  repeat(b, 10), b, b, json_extract(b, '/a'))    
 a         {"a":"b"}{"a":"b"}{"a":"b"}{"a":"b"}{"a":"b"}{"a":"b"}{"a":"b"}{"a":"b"}{"a":"b"}{"a":"b"}{"a":"b"}{"a":"b"}b     
 
 ===================================================

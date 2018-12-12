@@ -129,7 +129,12 @@ select j, p, json_remove(j, p) from t1;
 SELECT JSON_KEYS(j) FROM t1 ORDER BY 1;
 SELECT JSON_KEYS(p) FROM t1 ORDER BY 1;
 SELECT JSON_KEYS(i) FROM t1 ORDER BY 1;
-SELECT JSON_valid(i), json_type(i),json_get_all_paths(cast (i as json)),json_keys(cast (i as json)) FROM t1 ;
+SELECT JSON_valid(i) FROM t1 ;
+SELECT JSON_valid(i) FROM t1 ;
+SELECT json_type(cast(i as json)) FROM t1 ;
+SELECT json_type(cast(i as json)) FROM t1 ;
+SELECT json_get_all_paths(cast (i as json)) FROM t1 ;
+SELECT json_keys(cast (i as json)) FROM t1 ;
 drop table if exists t1;
 
 SELECT JSON_EXTRACT( '{"foo":"bar"}', '$[*].*' );

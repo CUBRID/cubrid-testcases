@@ -11,7 +11,7 @@ json_array_append('["a", ["b", "c"], "d"]', '$[0]', '2')
 [["a","2"],["b","c"],"d"]     
 
 ===================================================
-Error:-494
+Error:-493
 ===================================================
 Error:-494
 ===================================================
@@ -301,10 +301,40 @@ Error:-1197
 ===================================================
 Error:-494
 ===================================================
-json_valid(i)    json_type(i)    json_get_all_paths( cast(i as json))    json_keys( cast(i as json))    
-1     INTEGER     ["$"]     null     
-1     INTEGER     ["$"]     null     
-1     INTEGER     ["$"]     null     
+json_valid(i)    
+1     
+1     
+1     
+
+===================================================
+json_valid(i)    
+1     
+1     
+1     
+
+===================================================
+json_type( cast(i as json))    
+INTEGER     
+INTEGER     
+INTEGER     
+
+===================================================
+json_type( cast(i as json))    
+INTEGER     
+INTEGER     
+INTEGER     
+
+===================================================
+json_get_all_paths( cast(i as json))    
+["$"]     
+["$"]     
+["$"]     
+
+===================================================
+json_keys( cast(i as json))    
+null     
+null     
+null     
 
 ===================================================
 0
@@ -347,7 +377,7 @@ json_extract('{"foo": "\"bar\" foobar foo invalid "}', '$.foo')
 "\"bar\" foobar foo invalid "     
 
 ===================================================
-cast( json_extract('{"foo": "\"bar\" foobar foo invalid "}', '$.foo') as varchar)    
+cast(json_extract('{"foo": "\"bar\" foobar foo invalid "}', '$.foo') as varchar)    
 "bar" foobar foo invalid      
 
 ===================================================
@@ -371,11 +401,11 @@ json_object('foo', 'bar`bar')
 {"\u00e4\u00f6":"yes"}     ["Ã¤Ã¶"]     
 
 ===================================================
-@str    @path    json_extract(@str,  json_extract(json_get_all_paths(@str), '/0'))    
+@str    @path    json_extract(@str, json_extract(json_get_all_paths(@str), '/0'))    
 {"\u00e4\u00f6":"yes"}     $."\u00e4\u00f6"     "yes"     
 
 ===================================================
-@str    @path    json_extract(@str,  json_extract(json_get_all_paths(@str), '/1'))    
+@str    @path    json_extract(@str, json_extract(json_get_all_paths(@str), '/1'))    
 {"\u00e4\u00f6":"yes"}     $."\u00e4\u00f6"     {"Ã¤Ã¶":"yes"}     
 
 ===================================================
