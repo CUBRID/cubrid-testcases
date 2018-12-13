@@ -1,4 +1,4 @@
-drop table if exists t1;
+drop table if exists t1,foo1,foo2;
 create table t1(a int)
 PARTITION BY RANGE (a)
 (PARTITION before_10 VALUES LESS THAN (10),
