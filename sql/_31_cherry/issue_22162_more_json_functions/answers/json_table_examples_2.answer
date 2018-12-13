@@ -41,7 +41,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select jt.id, jt.phone_type, jt.phone_num from j_purchaseorder j_purchaseorder, (json_table (j_purchaseorder.po_document, '$.ShippingInstructions.Phone' columns (id FOR ORDINALITY, phone_type varchar(?) PATH '$.type' NULL ON ERROR NULL ON EMPTY, phone_num varchar(?) PATH '$.number' NULL ON ERROR NULL ON EMPTY )) as jt) order by ?
+select jt.id, jt.phone_type, jt.phone_num from j_purchaseorder j_purchaseorder, (json_table (j_purchaseorder.po_document, '$.ShippingInstructions.Phone[*]' columns (id FOR ORDINALITY, phone_type varchar(?) PATH '$.type' NULL ON ERROR NULL ON EMPTY, phone_num varchar(?) PATH '$.number' NULL ON ERROR NULL ON EMPTY )) as jt) order by ?
 ===================================================
 requestor    has_zip    
 Alexis Bull     1     
@@ -126,7 +126,7 @@ temp(order by)
     sort:  ? asc, ? desc
     cost:  ? card ?
 Query stmt:
-select jt.requestor, jt.phone_type, jt.phone_num from j_purchaseorder j_purchaseorder, (json_table (j_purchaseorder.po_document, '$' columns (requestor varchar(?) PATH '$.Requestor' NULL ON ERROR NULL ON EMPTY, nested path '$.ShippingInstructions.Phone' columns (phone_type varchar(?) PATH '$.type' NULL ON ERROR NULL ON EMPTY, phone_num varchar(?) PATH '$.number' NULL ON ERROR NULL ON EMPTY ) )) as jt) order by ?, ? desc 
+select jt.requestor, jt.phone_type, jt.phone_num from j_purchaseorder j_purchaseorder, (json_table (j_purchaseorder.po_document, '$' columns (requestor varchar(?) PATH '$.Requestor' NULL ON ERROR NULL ON EMPTY, nested path '$.ShippingInstructions.Phone[*]' columns (phone_type varchar(?) PATH '$.type' NULL ON ERROR NULL ON EMPTY, phone_num varchar(?) PATH '$.number' NULL ON ERROR NULL ON EMPTY ) )) as jt) order by ?, ? desc 
 ===================================================
 id    name    json_pretty(po_document)    
 1     example     {
