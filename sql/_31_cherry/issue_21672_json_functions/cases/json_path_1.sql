@@ -46,7 +46,7 @@ select json_remove(@j, '$[2]');
 set @j = '{"a": 1, "b": [2, 3]}';
 select json_remove(@j, '$.b');
 select json_remove(@j, '$.a');
-
+--CBRD-22651 #2
 select json_object();
 select json_object("ki", 1, "mi", "ya");
 
@@ -71,6 +71,7 @@ select json_set('{"a":12}', '$[0][1].a', '100');
 select json_extract( '[1]', '$[0][0]' );
 select json_extract( '[1]', '$[1][0]' );
 select json_extract( '[1]', '$**[0]' );
+--CBRD-22651 #4
 select json_extract( '[1]', '$**[0][0]' );
 
 select json_extract('1', '$');

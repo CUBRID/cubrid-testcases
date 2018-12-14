@@ -63,7 +63,11 @@ SELECT JSON_SEARCH('abc', 'one', 'abc');
 SELECT JSON_SEARCH('"abc"', 'one', 'abc');
 --CBRD-22485
 SELECT JSON_SEARCH('"abc"', 'one', 'abc', '.');
+-- CBRD-22651, CBRD-22488
 SELECT JSON_SEARCH('"abc"', 'one', 'abc', '','$[1]');
+SELECT JSON_SEARCH('["abc","abc"]', 'one', 'abc', '','$[1]');
+SELECT JSON_SEARCH('["abc","abc"]', 'one', 'abc', null,'$[1]');
+SELECT JSON_SEARCH('["abc","abc"]', 'one', 'abc', NULL,'$[1]');
 
 SET @j = '["abc", [{"k": "10"}, "def"], {"x":"abc"}, {"y":"bcd"}]';
 SELECT JSON_SEARCH(@j, 'one', 'abc');

@@ -41,7 +41,9 @@ json_extract('[10, 20, [30, 40]]', '$[1]', '$[0]')
 [20,10]     
 
 ===================================================
-Error:-494
+json_extract('[10, 20, [30, 40]]', '$[2][*]')    
+[30,40]     
+
 ===================================================
 0
 ===================================================
@@ -115,7 +117,13 @@ Error:-494
 ===================================================
 Error:-494
 ===================================================
-Error:-1200
+json_extract(c, '$[*]')    
+null     
+null     
+null     
+[3,10,5,17,44]     
+[3,10,5,17,[22,44,66]]     
+
 ===================================================
 0
 ===================================================
@@ -173,7 +181,9 @@ json_extract(@j, '/')
 null     
 
 ===================================================
-Error:-1200
+json_extract(@j, '$.*')    
+[{"book":[{"category":"reference","author":"Nigel Rees","title":"Sayings of the Century","price":8.95},{"category":"fiction","author":"Evelyn Waugh","title":"Sword of Honour","price":12.99},{"category":"fiction","author":"Herman Melville","title":"Moby Dick","isbn":"0-553-21311-3","price":8.99},{"category":"fiction","author":"J. R. R. Tolkien","title":"The Lord of the Rings","isbn":"0-395-19395-8","price":22.99}],"bicycle":{"color":"red","price":19.95}}]     
+
 ===================================================
 json_extract(@j, '/*')    
 null     
@@ -187,7 +197,9 @@ json_extract(@j, '')
 {"store":{"book":[{"category":"reference","author":"Nigel Rees","title":"Sayings of the Century","price":8.95},{"category":"fiction","author":"Evelyn Waugh","title":"Sword of Honour","price":12.99},{"category":"fiction","author":"Herman Melville","title":"Moby Dick","isbn":"0-553-21311-3","price":8.99},{"category":"fiction","author":"J. R. R. Tolkien","title":"The Lord of the Rings","isbn":"0-395-19395-8","price":22.99}],"bicycle":{"color":"red","price":19.95}}}     
 
 ===================================================
-Error:-1200
+json_extract(@j, '$.store.book[*].author')    
+["Nigel Rees","Evelyn Waugh","Herman Melville","J. R. R. Tolkien"]     
+
 ===================================================
 Error:-1200
 ===================================================
