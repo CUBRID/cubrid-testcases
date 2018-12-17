@@ -37,14 +37,14 @@ select * , j_tbl.col1, j_tbl.col2, json_array_append(j_tbl.col1, '$' ,j_tbl.col2
 from json_table('{"a":[1,2]}', '$' columns(
    col1 varchar(10) path '$.a' , 
    nested path '$.a[*]' columns ( col2 int path '$' )
-)) as j_tbl, t 
+)) as j_tbl, (select * from t order by 1) 
 where i > 0 and rownum >= 4 and rownum <= 8;
 -- Execute above query again, cub_server will crash.
 select * , j_tbl.col1, j_tbl.col2, json_array_append(j_tbl.col1, '$' ,j_tbl.col2 ) 
 from json_table('{"a":[1,2]}', '$' columns(
    col1 varchar(10) path '$.a' , 
    nested path '$.a[*]' columns ( col2 int path '$' )
-)) as j_tbl, t 
+)) as j_tbl, (select * from t order by 1) 
 where i > 0 and rownum >= 4 and rownum <= 8;
 drop table if exists t;
 
