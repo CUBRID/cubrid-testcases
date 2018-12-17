@@ -1,0 +1,59 @@
+===================================================
+0
+===================================================
+0
+1
+===================================================
+1
+===================================================
+0
+===================================================
+Error:-494
+===================================================
+i    
+1     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select distinct t.i from t t where (t.i> ?:? ) order by ?
+===================================================
+0
+===================================================
+i    
+1     
+
+Query plan:
+temp(distinct)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_i term[?] (covers)
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select distinct t.i from t t where (t.i> ?:? ) using index t.i_t_i(+) order by ?
+===================================================
+i    
+1     
+
+Query plan:
+temp(distinct)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_i term[?] (covers)
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select distinct t.i from t t where (t.i> ?:? ) order by ?
+===================================================
+0
