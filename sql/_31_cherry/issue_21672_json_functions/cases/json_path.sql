@@ -10,9 +10,11 @@ SELECT JSON_EXTRACT('[10, 20, [30, 40]]', '$[0]');
 SELECT JSON_EXTRACT('[10, 20, [30, 40]]', '$[1]');
 SELECT JSON_EXTRACT('[10, 20, [30, 40]]', '$[2]');
 SELECT JSON_EXTRACT('[10, 20, [30, 40]]', '$[2][1]');
--- CBRD-22531
+-- CBRD-22531,CBRD-22648
 SELECT JSON_EXTRACT('[10, 20, [30, 40]]', '$[1]', '$[0]');
--- CBRD-22540, CBRD-22556 implement JSON_EXTRACT using wildcards
+-- CBRD-22648
+select json_extract('[10, 20]', '$[1]', '$[0]')=json_extract('[10, 20]', '$[0]', '$[1]')
+-- CBRD-22540
 SELECT JSON_EXTRACT('[10, 20, [30, 40]]', '$[2][*]');
 
 drop table if exists t;
