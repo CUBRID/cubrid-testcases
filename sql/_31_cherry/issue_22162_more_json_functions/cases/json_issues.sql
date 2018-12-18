@@ -97,7 +97,7 @@ INSERT INTO t VALUES ('key', 3);
 INSERT INTO t VALUES ('key', 5);
 INSERT INTO t VALUES ('key', 4);
 SELECT c, i FROM t order by 1,2;
-SELECT JSON_OBJECTAGG(c, i) FROM t;
+SELECT JSON_OBJECTAGG(c, i) FROM (SELECT c, i FROM t order by 1,2);
 
 SELECT JSON_OBJECTAGG(c, i) FROM (select * from t order by i ) as t;
 SELECT JSON_OBJECTAGG(c, i) FROM (select * from t order by i desc) as t;
@@ -111,8 +111,8 @@ insert into t1(a) values (12345678901234);
 insert into t1(a) values (2147483649.9);
 insert into t1(a) values (-12345678901234.7);
 select * from t1 order by 1;
-select json_objectagg(a,a) from t1 order by 1;
-select json_arrayagg(a) from t1 order by 1;
+select json_objectagg(a,a) from (select * from t1 order by 1) order by 1;
+select json_arrayagg(a) from (select * from t1 order by 1) order by 1;
 select i, json_object(a,a), json_array(a,a,a,a,a) from t1 order by 1;
 
 -- http://jira.cubrid.org/browse/CBRD-22557
