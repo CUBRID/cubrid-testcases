@@ -17,7 +17,7 @@ INSERT INTO a_tbl VALUES (1,'111-1111'), (2,'222-2222'), (3, '333-3333');
 INSERT INTO b_tbl VALUES (1,'George'),(2,'Laura'), (3,'Max');
 
 --@queryplan
-SELECT a.id, b.id, a.phone, b.name FROM a_tbl a, b_tbl b WHERE a.id = b.id order by 1;
+SELECT a.id, b.id, a.phone, b.name FROM a_tbl a, b_tbl b WHERE a.id = b.id using index b.pk_id order by 1;
 
 show index from a_tbl;
 show index from b_tbl;
@@ -27,7 +27,7 @@ alter index pk_id on b_tbl invisible;
 alter index fk_id on b_tbl invisible; 
 
 --@queryplan
-SELECT a.id, b.id, a.phone, b.name FROM a_tbl a, b_tbl b WHERE a.id = b.id order by 1;
+SELECT a.id, b.id, a.phone, b.name FROM a_tbl a, b_tbl b WHERE a.id = b.id using index b.pk_id order by 1;
 
 drop table if exists b_tbl, a_tbl ;
 
