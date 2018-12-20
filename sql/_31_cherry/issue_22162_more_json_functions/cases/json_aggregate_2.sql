@@ -11,30 +11,30 @@ INSERT INTO t1(skey, grp, val) VALUES
  ('key1', 'g1', 'v1'),
  ('key2', 'g1', 'v2'),
  ('key3', 'g2', 'v3');
-SELECT JSON_ARRAYAGG(skey) AS "Keys" FROM t1;
-SELECT grp, JSON_ARRAYAGG(skey) AS keys_grouped FROM t1  GROUP BY grp order by 1;
-SELECT JSON_OBJECTAGG(skey, val) AS key_val FROM t1;
-SELECT grp, JSON_OBJECTAGG(skey, val) AS key_val_grouped FROM t1 GROUP BY grp order by 1;
+SELECT JSON_ARRAYAGG(skey) AS "Keys" FROM (select * from t1 order by skey);
+SELECT grp, JSON_ARRAYAGG(skey) AS keys_grouped FROM (select * from t1 order by skey) GROUP BY grp order by 1;
+SELECT JSON_OBJECTAGG(skey, val) AS key_val FROM (select * from t1 order by skey);
+SELECT grp, JSON_OBJECTAGG(skey, val) AS key_val_grouped FROM (select * from t1 order by skey) GROUP BY grp order by 1;
 DROP TABLE IF EXISTS t1;
 
 drop table if exists too;
 create table too ( id int , name varchar(10));   
 insert into too values ( 1, 'a'), (1, 'b'), (2, 'aa'), (3, 'aaa'), (3, 'bbb'), (3, 'ccc');
-select id, json_object('key', json_arrayagg(name)) as j from too group by id order by j;
+select id, json_object('key', json_arrayagg(name)) as j from (select * from too order by id,name) group by id order by j;
 
 -- http://jira.cubrid.org/browse/CBRD-22598
--- select id, json_object('key', json_arrayagg(name)) as j from too group by id order by j->'$.key';
+-- select id, json_object('key', json_arrayagg(name)) as j from (select * from too order by id,name) group by id order by j->'$.key';
 -- select id as i from too  order by id+id;
 
 -- http://jira.cubrid.org/browse/CBRD-22599
-select t.j->'$.key' from (select id, json_object('key', json_arrayagg(name)) as j from too group by id ) as t order by 1;
-select json_extract(t.j,'$.key') from(select id, json_object('key', json_arrayagg(name)) as j from too group by id ) as t order by 1;
+select t.j->'$.key' from (select id, json_object('key', json_arrayagg(name)) as j from (select * from too order by id,name desc) group by id ) as t order by 1;
+select json_extract(t.j,'$.key') from(select id, json_object('key', json_arrayagg(name)) as j from (select * from too order by id,name desc) group by id ) as t order by 1;
 
-select t.j->>'$.key' from (select id, json_object('key', json_arrayagg(name)) as j from too group by id ) as t order by 1;
-select t.j->>'$.key[0]' from (select id, json_object('key', json_arrayagg(name)) as j from too group by id ) as t order by 1;
-select json_quote(t.j->'$.key[0]') from (select id, json_object('key', json_arrayagg(name)) as j from too group by id ) as t order by 1;
-select json_unquote(t.j->'$.key[0]') from (select id, json_object('key', json_arrayagg(name)) as j from too group by id ) as t order by 1;
-select * from (select id, json_object('key', json_arrayagg(name)) as j from too group by id ) as t where t.j->>'$.key[0]' like '%b%' order by 1;
+select t.j->>'$.key' from (select id, json_object('key', json_arrayagg(name)) as j from (select * from too order by id,name desc) group by id ) as t order by 1;
+select t.j->>'$.key[0]' from (select id, json_object('key', json_arrayagg(name)) as j from (select * from too order by id,name desc) group by id ) as t order by 1;
+select json_quote(t.j->'$.key[0]') from (select id, json_object('key', json_arrayagg(name)) as j from (select * from too order by id,name desc) group by id ) as t order by 1;
+select json_unquote(t.j->'$.key[0]') from (select id, json_object('key', json_arrayagg(name)) as j from (select * from too order by id,name desc) group by id ) as t order by 1;
+select * from (select id, json_object('key', json_arrayagg(name)) as j from (select * from too order by id,name desc) group by id ) as t where t.j->>'$.key[0]' like '%b%' order by 1;
 
 -- http://jira.cubrid.org/browse/CBRD-22599
 --select id as i from too  order by i+i;
