@@ -172,7 +172,7 @@ select * from foo  order by 1;
 
 drop table if exists t,foo;
 create table t(i varchar(100) unique,j int);
-insert into t values(110420091035.359,1),(420,2),(91015,3);
+insert into t values(110420091035.359,1),(050420,2),(91015,3);
 
 create table foo as select * from t;
 insert into foo(i)
