@@ -27,7 +27,7 @@ alter index pk_id on b_tbl invisible;
 alter index fk_id on b_tbl invisible; 
 
 --@queryplan
-SELECT a.id, b.id, a.phone, b.name FROM a_tbl a, b_tbl b WHERE a.id = b.id using index b.pk_id order by 1;
+SELECT /*+ RECOMPILE ORDERED */a.id, b.id, a.phone, b.name FROM a_tbl a, b_tbl b WHERE a.id = b.id using index b.pk_id order by 1;
 
 drop table if exists b_tbl, a_tbl ;
 
