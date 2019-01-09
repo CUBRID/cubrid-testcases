@@ -34,7 +34,7 @@ MC: wait until C1 ready;
 C2: create unique index i on t1(b) with online;
 MC: wait until C2 blocked;
 
-C3: select * from t1;
+C3: select * from t1 order by 1;
 MC: wait until C3 blocked;
 
 C4: select * from t1 force index (i) where b > -999 order by 1;
