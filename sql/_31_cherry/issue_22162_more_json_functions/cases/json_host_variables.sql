@@ -121,20 +121,20 @@ execute st using 2,@jo;
 insert into t values (1,'1');
 insert into t values (3,1);
 insert into t values (2,'"A"');
-select * from t order by i;
+select * from t order by i,j desc;
 
 prepare st from 'SELECT JSON_ARRAYAGG(?) from t group by i+? order by i';
 execute st using 'a',1;
-SELECT JSON_ARRAYAGG(j) from t group by i;
-SELECT JSON_objectAGG(j) from t group by i;
-SELECT JSON_arrayAGG(i,j) from t group by i+1 order by i;
+SELECT JSON_ARRAYAGG(j) from (select * from t order by 1,2) group by i;
+SELECT JSON_objectAGG(j) from (select * from t order by 1,2) group by i;
+SELECT JSON_arrayAGG(i,j) from (select * from t order by 1,2) group by i+1 order by i;
 --CBRD-22609
 SELECT JSON_OBJECTAGG(i,j) from t group by i+1 order by i;
-prepare st from 'SELECT JSON_OBJECTAGG(i,j) from t group by i order by i';
+prepare st from 'SELECT JSON_OBJECTAGG(i,j) from (select i,j from t order by i,j) group by i order by i';
 execute st using '1';
-prepare st from 'SELECT JSON_OBJECTAGG(?,j) from t group by i order by 1';
+prepare st from 'SELECT JSON_OBJECTAGG(?,j) from (select * from t order by 1,2) group by i order by 1';
 execute st using 'a';
-prepare st from 'SELECT JSON_OBJECTAGG(?,j) from t group by i+? order by 1';
+prepare st from 'SELECT JSON_OBJECTAGG(?,j) from (select * from t order by 1,2) group by i+? order by 1';
 execute st using 'a',1;
 
 prepare st from 'SELECT  i,j from t where i >= json_extract(j, ?)';
