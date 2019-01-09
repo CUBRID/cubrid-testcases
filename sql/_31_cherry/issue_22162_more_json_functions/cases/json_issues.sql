@@ -90,7 +90,7 @@ INSERT INTO t VALUES ('key', 3);
 INSERT INTO t VALUES ('key', 4);
 INSERT INTO t VALUES ('key', 5);
 SELECT c, i FROM t order by 1,2;
-SELECT JSON_OBJECTAGG(c, i) FROM t;
+SELECT JSON_OBJECTAGG(c, i) FROM (SELECT c, i FROM t order by 1,2);
 
 DELETE FROM t;
 INSERT INTO t VALUES ('key', 3);

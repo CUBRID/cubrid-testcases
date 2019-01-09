@@ -76,7 +76,7 @@ create table t1( json_col string );
 insert into t1 values
 ('{ "a": "foobar" }'),
 ('{ "a": "foobar", "b": "focus", "c": [ "arm", "foot", "shoulder" ] }');
-select json_search( json_col, 'all', 'foot' ) from t1;
+select json_search( json_col, 'all', 'foot' ) from t1 order by 1;
 drop table t1;
 
 
@@ -93,7 +93,7 @@ insert into t1 values ('"abc"','"abc"');
 insert into t1 values ('abc','abc');
 insert into t1 values ('abc',null);
 insert into t1 values ('"abc"','""');
-select s, d, json_unquote(d) from t1 order by 1;
+select s, d, json_unquote(d) from t1 order by 1,2 desc,3 desc;
 
 drop table if exists t1;
 drop variable @str, @path, @j;
