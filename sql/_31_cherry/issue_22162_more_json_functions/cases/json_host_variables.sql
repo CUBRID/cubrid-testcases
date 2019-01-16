@@ -129,7 +129,7 @@ SELECT JSON_ARRAYAGG(j) from (select * from t order by 1,2) group by i;
 SELECT JSON_objectAGG(j) from (select * from t order by 1,2) group by i;
 SELECT JSON_arrayAGG(i,j) from (select * from t order by 1,2) group by i+1 order by i;
 --CBRD-22609
-SELECT JSON_OBJECTAGG(i,j) from t group by i+1 order by i;
+SELECT JSON_OBJECTAGG(i,j) from (select * from t order by 1 desc,2 desc) group by i+1 order by i;
 prepare st from 'SELECT JSON_OBJECTAGG(i,j) from (select i,j from t order by i,j) group by i order by i';
 execute st using '1';
 prepare st from 'SELECT JSON_OBJECTAGG(?,j) from (select * from t order by 1,2) group by i order by 1';
