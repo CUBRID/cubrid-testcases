@@ -11,9 +11,9 @@ insert into t values (3, 5);
 insert into t values (4, 1);
 
 --test: cub_server crashed for below
-select 'hello', a , b from t group by b order by a,b DESC limit 5;
+select 'hello', min(a) a, b from t group by b order by a,b DESC limit 5;
 
-select 'hello', a , b from t group by a order by a,b DESC limit 5;
+select 'hello', a , min(b) b from t group by a order by a,b DESC limit 5;
 
 select sum(b) from t group by b order by a,b DESC limit 5;
 
