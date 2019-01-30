@@ -60,5 +60,5 @@ with cte1(a,b) as
 
 
 select col1,col2,col3,col5 from t  order by 1,2;
-select col1,col2,col3,col5 from t where col4 is not null;
+select col1,col2,col3,col5 from t where col4 is not null order by 1,2,3,4;
 drop table if exists t,foo;

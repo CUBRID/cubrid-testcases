@@ -187,7 +187,14 @@ create trigger insert_trigger before insert on t if new.a in (select a from t) e
 insert into t(a) values(2);
 select * from t order by 1;
 insert into t(a) values(1);
-select * from t order by 1;
+select if(b is not null,'ok','nok') from t ;
+select if(c is not null,'ok','nok') from t ;
+select if(d is not null,'ok','nok') from t ;
+select if(e is not null,'ok','nok') from t ;
+select if(f is not null,'ok','nok') from t ;
+select if(g is not null,'ok','nok') from t ;
+select if(h is not null,'ok','nok') from t ;
+select if(i is not null,'ok','nok') from t ;
 drop trigger insert_trigger;
 
 
