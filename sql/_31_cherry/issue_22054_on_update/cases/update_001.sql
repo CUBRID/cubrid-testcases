@@ -141,9 +141,9 @@ insert into t2(a,f_a,b) values (4,2,'E 4');
 insert into t2(a,f_a,b) values (5,2,'E 5');
 insert into t3(a) values(1);
 
-select * from t1;
-select * from t2;
-select * from t3;
+select * from t1 order by 1,2;
+select * from t2 order by 1,2,3;
+select * from t3 order by 1;
 
 update t1 set a=4 where a=2;
 
