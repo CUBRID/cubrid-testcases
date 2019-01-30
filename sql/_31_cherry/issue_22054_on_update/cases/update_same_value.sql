@@ -19,7 +19,7 @@ drop table if exists  t,t2;
  select * from t order by 1;
  select * from t2 order by 1;
  update t set a=a+1;
- select * from t order by 1;
+ select if(current_timestamp-b>=0 and current_timestamp-b<10,'ok','nok') from t;
  update t2 set a=1;
  select * from t2 order by 1;
 
@@ -31,7 +31,7 @@ drop table if exists  t,t2;
  select * from t order by 1;
  select * from t2 order by 1;
  update t set a=a+1;
- select * from t order by 1;
+ select if(current_timestamp-b>=0 and current_timestamp-b<10,'ok','nok') from t;
  update t2 set a=1;
  select * from t2 order by 1;
 
@@ -43,7 +43,7 @@ drop table if exists  t,t2;
  select * from t order by 1;
  select * from t2 order by 1;
  update t set a=a+1;
- select * from t order by 1;
+ select if(current_timestamp-b>=0 and current_timestamp-b<10,'ok','nok') from t;
  update t2 set a=1;
  select * from t2 order by 1;
 
