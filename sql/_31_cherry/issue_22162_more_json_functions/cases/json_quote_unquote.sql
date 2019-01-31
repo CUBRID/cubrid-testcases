@@ -42,7 +42,7 @@ SET @jv = '"Homer \\t Simpson"';
 SELECT @jv , JSON_UNQUOTE(@jv);
  
 SET SYSTEM PARAMETERS 'no_backslash_escapes=yes';
-drop variable @jv1,@jv2 ;
+drop variable @jv1,@jv2,@jv ;
 
 -- https://dev.mysql.com/doc/refman/8.0/en/json-creation-functions.html#function_json-quote
 SELECT JSON_QUOTE('null'), JSON_QUOTE('"null"');

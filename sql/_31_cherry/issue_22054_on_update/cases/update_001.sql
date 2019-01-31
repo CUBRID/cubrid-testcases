@@ -156,6 +156,7 @@ update t2 set b='Emp 5a' where a=5;
 select if(current_timestamp-c>=0 and current_timestamp-c<10,'ok','nok') from t2 where a=5;
 select if(current_timestamp-b>=0 and current_timestamp-b<10,'ok','nok') from t3;
 
+drop variable @a;
 drop table if exists t2,t1,t3,test,p;
 
 

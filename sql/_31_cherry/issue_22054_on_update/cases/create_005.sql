@@ -44,6 +44,7 @@ select if(@a-cte_FklWcrEYJ >=0 and @a-cte_FklWcrEYJ<10,'ok','nok') from xoo wher
 
 select * from db_attribute where class_name = 'xoo' order by 1;
 
+drop variable @a;
 drop class xoo;
 
 
