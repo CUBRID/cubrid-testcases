@@ -71,4 +71,4 @@ SELECT JSON_MERGE_PATCH('{"name": "x"}', );
 SELECT JSON_MERGE_PRESERVE('{"name": "x"}', '{"id": 47: 57}');
 SELECT JSON_MERGE_PATCH('{"name": "x"}', '{"id": 47: 57}');
 
-
+drop VARIABLE @x,@y,@z;

@@ -103,4 +103,4 @@ select json_extract (@j, '$.store.book[*].author') ;
 select json_extract (@j, '$.store..price');
 select json_extract (@j, '$..book[0,1]');
 
-drop VARIABLE @j;
+drop VARIABLE @j,@j2;

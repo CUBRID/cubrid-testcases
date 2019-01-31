@@ -13,3 +13,4 @@ SET @doc = '{"a": 1, "b": 2, "c": [3, 4, 5]}';
 SELECT JSON_CONTAINS_PATH(@doc, 'all', '$.c[0]') ; 
 SELECT JSON_CONTAINS_PATH(@doc, 'all', '$.c[3]') ; 
 
+drop VARIABLE @doc;

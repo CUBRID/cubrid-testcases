@@ -60,6 +60,6 @@ drop table if exists t;
 drop VARIABLE @ss;
 drop VARIABLE @s;
 drop VARIABLE @v;
-drop VARIABLE @mm;
+drop VARIABLE @mm,@j;
 
 

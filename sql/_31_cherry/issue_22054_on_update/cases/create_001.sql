@@ -91,4 +91,5 @@ edit_time timestamp on update now() default current_datetime
 );
 desc t;
 show create table t;
+drop variable @x;
 drop if exists t,t1;

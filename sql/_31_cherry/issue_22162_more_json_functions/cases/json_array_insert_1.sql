@@ -133,4 +133,6 @@ select json_array_insert(@j, '/c', '"y"');
 select json_array_insert(@j, '/b', '"x"','/b', '"x"');
 select json_array_insert(@j, '/b', '"x"','/b/2','"y"');
 
+drop VARIABLE @j;
+
 

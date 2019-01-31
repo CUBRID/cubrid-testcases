@@ -165,6 +165,7 @@ select a,if(f is not null,'ok','nok') from t order by 1;
 select a,if(g is not null,'ok','nok') from t order by 1;
 select a,if(h is not null,'ok','nok') from t order by 1;
 select a,if(i is not null,'ok','nok') from t order by 1;
+drop variable @a;
 drop table if exists t;
 
 
