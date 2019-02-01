@@ -132,7 +132,7 @@ json_set(a, '$.title', json_replace(b, '$.title[0]', json_extract(a, '/title')))
 {"title":{"title":["hello",{"type":"object","properties":{"title":{"type":"string"}}}]}}     
 
 ===================================================
-Error:-1203
+Error:-1200
 ===================================================
 json_set(a, '$.title', json_replace(b, '$.title[0]', json_extract(a, '/title')), '$.title', '222222222222222222222222222222222222222222222222222222222222222222')    
 {"title":"222222222222222222222222222222222222222222222222222222222222222222"}     
@@ -173,7 +173,9 @@ json_get_all_paths(json_replace(cte.a, '$.title', t1.a))
 ["$.\"title\".\"title\"","$.\"title\"","$"]     
 
 ===================================================
-Error:-494
+json_extract('1', '$[0]')    json_set('1', '$[0]', json_object('name', 'cube'))    json_set(null, '$[0]', json_object('name', 'cube'))    
+null     {"name":"cube"}     null     
+
 ===================================================
 0
 ===================================================

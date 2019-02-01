@@ -123,8 +123,9 @@ select json_array_insert(@j, '/', null);
 
 SET @j = '{"a": 1, "b": [2, 3], "c": 4}';
 --CBRD-22663
---select json_array_insert('{"a": 1}', '$.d', 'z');
---select json_array_insert(@j, '/', '"z"');
+select json_array_insert('{"a": 1}', '$.d', 'z');
+select json_array_insert('{"a": 1}', '$.""', 'z');
+select json_array_insert(@j, '/', '"z"');
 select json_array_insert(@j, '', '"z"');
 select json_array_insert(@j, '/a', '"z"');
 select json_array_insert(@j, '$', '"z"');
