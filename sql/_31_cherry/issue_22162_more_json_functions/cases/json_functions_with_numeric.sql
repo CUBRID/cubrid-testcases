@@ -7,16 +7,13 @@ select json_length(1);
 select json_length('1');
 
 select json_array_append(1, '$[0]', 2); 
---CBRD-22623
---select json_array_append('1', '$[0]', 2); 
+select json_array_append('1', '$[0]', 2); 
 
 select json_array_insert(1, '$[0]', 2); 
---CBRD-22623
---select json_array_insert('1', '$[0]', 2); 
+select json_array_insert('1', '$[0]', 2); 
 
 select json_insert(1, '$[0]', 2); 
---CBRD-22623
---select json_insert('1', '$[0]', 2); 
+select json_insert('1', '$[0]', 2); 
 
 select json_merge(1,2); 
 select json_merge('1',2); 
@@ -32,21 +29,18 @@ select json_merge_patch(1,2);
 select json_merge_patch('1','2'); 
 
 select json_remove(1, '$[0]'); 
---CBRD-22623
+--CBRD-22725(diff with MySQL , not fixed)
 --select json_remove('1', '$[0]'); 
 select json_remove(1, '$'); 
---CBRD-22651
---select json_remove('1', '$'); 
+select json_remove('1', '$'); 
 
 select json_replace(1, '$[0]', 2); 
---CBRD-22623
---select json_replace('1', '$[0]', 2); 
+select json_replace('1', '$[0]', 2); 
 select json_replace(1, '$', 2);
 select json_replace('1', '$', 2);
 
 select json_set(1, '$[0]', 2); 
---CBRD-22623
---select json_set('1', '$[0]', 2); 
+select json_set('1', '$[0]', 2); 
 select json_set(1, '$', 2);
 select json_set('1', '$', 2);
 
