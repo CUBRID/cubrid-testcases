@@ -60,6 +60,7 @@ set @a=1;
 select subdate(col1,INTERVAL @a:=@a+1 MINUTE) from t1 order by c_int;
 set @a=1;
 select subdate(col1,INTERVAL @a:=@a+1 MINUTE) from t1;
+drop variable @a;
 
 drop table t1;
 

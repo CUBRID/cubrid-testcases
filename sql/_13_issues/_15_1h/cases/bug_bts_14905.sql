@@ -34,5 +34,6 @@ insert into t select * from t where b=5 and b=min(b) on duplicate key update a =
 delete from ntile_gl where col1 = max(col2);
 
 SET OPTIMIZATION LEVEL 1;
+drop variable @v1;
 drop table if exists t;
 drop table if exists ntile_gl;

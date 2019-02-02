@@ -79,7 +79,7 @@ create view v (col) as select @a from db_root;
 
 drop view v;
 
-drop variable @a;
+drop variable @a,@b,@c;
 
 --prepared statements
 prepare s from 'select @a:=?+? from db_root'

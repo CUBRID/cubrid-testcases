@@ -60,4 +60,5 @@ execute stmt using @a,@b,@c,@d;
 prepare stmt from 'select * from t where j>=1 limit ?,?';
 execute stmt using @a,@d;
 deallocate prepare stmt;
+drop variable @a,@b,@c,@d;
 drop if exists t;

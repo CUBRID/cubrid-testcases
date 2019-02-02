@@ -27,5 +27,6 @@ select to_char(cast('06:04:56.144 PM 02/23/2017' as datetime),type_char) from t;
 
 drop table t;
 
+drop variable @a;
 
 --+ holdcas off;

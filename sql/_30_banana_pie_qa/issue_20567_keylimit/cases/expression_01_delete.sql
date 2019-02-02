@@ -50,3 +50,4 @@ delete from t where job='unkown' using index idx_t_job keylimit @a,3;
 delete from t where job='unkown' using index idx_t_job keylimit nvl(null,0),3 ;
 delete from t where job='unkown' using index idx_t_job keylimit nvl(null,1),3 ;
 drop if exists t;
+drop variable @a;

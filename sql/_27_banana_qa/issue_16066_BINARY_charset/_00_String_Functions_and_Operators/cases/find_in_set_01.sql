@@ -42,6 +42,7 @@ drop prepare st1;
 drop prepare st2;
 drop prepare st3;
 
+drop variable @a;
 drop table t1;
 
 set names iso88591;

@@ -80,6 +80,7 @@ select addtime(timestampltz'2005-4-30 23:59:59',time'1:00:00');
 
 set timezone 'Asia/Seoul';
 
+drop variable @a;
 
 
 

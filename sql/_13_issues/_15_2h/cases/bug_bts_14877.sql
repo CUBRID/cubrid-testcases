@@ -7,4 +7,5 @@ insert into t values (4, 'd', 0.4, NULL, NULL, NULL);
 set @a = 0;
 --@queryplan
 select /*+ recompile */ b, (select @a := @a + a from t union select @a := @a + a from t order by 1 desc limit 1) from t tt;
+drop variable @a;
 drop table t;

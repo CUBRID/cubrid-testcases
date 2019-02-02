@@ -143,6 +143,7 @@ select str_to_date(@a,'%Y-%m-%d %H:%i:%s');
 select str_to_date(@a,'%Y-%m-%d %H:%i:%s %TZR');
 select str_to_date(@a,'%Y-%m-%d %H:%i:%s %TZR %TZD');
 select str_to_date(to_char(j,'YYYY-MM-DD HH24:MI:SS TZR'),'%Y-%m-%d %H:%i:%s %TZR %TZD') from t;
+drop variable @a;
 drop if exists t;
 set timezone 'default';
 
