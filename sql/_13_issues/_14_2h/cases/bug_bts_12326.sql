@@ -298,6 +298,7 @@ SELECT * FROM ((SELECT @v1 as a ) DIFFERENCE (SELECT * FROM t1 WHERE 'test' = 't
 
 prepare prepare_stmt FROM 'SELECT a FROM ((SELECT ? as a)) DIFFERENCE (select * from t1 where 0=1)';
 execute prepare_stmt using 30;
+drop variable @v1;
 
 drop table if exists t1;
 drop table if exists t2;

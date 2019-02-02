@@ -107,3 +107,4 @@ update t set i=-1 where i in (select * from cte13);
 select * from t order by 1;
 
 drop table if exists t,tbl,t1,t_replace,t_update,t_d_1;
+drop variable @a;

@@ -94,5 +94,6 @@ select @a,disk_size(@a);
 
 select @a,disk_size(cast(@a as char(100)));
 
+drop variable @a;
 
 --+ holdcas off;

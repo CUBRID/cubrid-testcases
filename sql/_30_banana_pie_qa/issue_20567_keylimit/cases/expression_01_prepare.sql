@@ -73,3 +73,4 @@ prepare stmt from 'select * from t where job=? using index idx_t_job keylimit nv
 execute stmt using 'unkown',1,3;
 deallocate prepare stmt;
 drop if exists t;
+drop variable @a;

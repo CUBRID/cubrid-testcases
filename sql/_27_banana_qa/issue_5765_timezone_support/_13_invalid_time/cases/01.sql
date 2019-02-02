@@ -87,7 +87,7 @@ select to_datetime_tz(addtime(@a,time'1:00:00'));
 select addtime(datetimeltz'2005-4-30 23:59:59',time'1:00:00');
 
 set timezone 'Asia/Seoul';
-
+drop variable @a;
 
 
 

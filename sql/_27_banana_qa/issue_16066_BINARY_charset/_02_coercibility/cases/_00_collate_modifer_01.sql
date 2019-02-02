@@ -31,6 +31,7 @@ select charset((select col1 from t where col2 collate utf8_es_cs='abc'));
 set @a='a';
 select coercibility(cast(@a as string collate binary));
 
+drop variable @a;
 drop t;
 set names iso88591;
 
