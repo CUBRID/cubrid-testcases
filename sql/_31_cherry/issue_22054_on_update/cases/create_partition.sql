@@ -104,8 +104,8 @@ partition p2 values in (2,11)
 show columns from t__p__p1;
 show columns from t__p__p2;
 insert into t(a) values(1),(10);
-select * from t__p__p1;
-select * from t__p__p2;
+select * from t__p__p1 order by 1;
+select * from t__p__p2 order by 1;
 update t set a=a+1;
 select if(d is not null,'ok','nok') from t__p__p2;
 select if(e is not null,'ok','nok') from t__p__p2;
@@ -135,8 +135,8 @@ partition p2 values in (2,11)
 show columns from t__p__p1;
 show columns from t__p__p2;
 insert into t(a) values(1),(10);
-select * from t__p__p1;
-select * from t__p__p2;
+select * from t__p__p1 order by 1;
+select * from t__p__p2 order by 1;
 update t set a=a+1;
 set @d=current_timestamp,@f=to_timestamp_tz(current_timestamp);
 
@@ -411,8 +411,8 @@ partition p2 values in (2,11)
 show columns from t__p__p1;
 show columns from t__p__p2;
 insert into t(a) values(1),(10);
-select * from t__p__p1;
-select * from t__p__p2;;
+select * from t__p__p1 order by 1;
+select * from t__p__p2 order by 1;
 show  columns from t;
 update t set a=a+1;
 select sleep(2);
