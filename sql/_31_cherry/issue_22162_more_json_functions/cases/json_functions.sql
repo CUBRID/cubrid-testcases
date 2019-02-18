@@ -84,8 +84,8 @@ SET @str = 'bar', @path = '$';
 SELECT json_search('{"foo":"bar"}', 'all' , @str, '%', @path);
 
 select json_unquote('"abc"');
---http://jira.cubrid.org/browse/CBRD-22545 (open)
---select json_unquote('abc');
+--http://jira.cubrid.org/browse/CBRD-22545 (by design)
+select json_unquote('abc');
 
 drop table if exists t1;
 create table t1( s varchar(10), d json );
