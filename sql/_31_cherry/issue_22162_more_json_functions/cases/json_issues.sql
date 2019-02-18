@@ -123,3 +123,6 @@ select a, typeof(a), JSON_OBJECTAGG('name', a), JSON_ArrayAgg(a) from t1 group b
 select json_object(a,a),json_array(a,a) from t1 group by a order by 1;      
 drop table if exists t1;
 
+-- http://jira.cubrid.org/browse/CBRD-22636
+SELECT CAST('["a": 1]' AS JSON);
+
