@@ -126,3 +126,42 @@ drop table if exists t1;
 -- http://jira.cubrid.org/browse/CBRD-22636
 SELECT CAST('["a": 1]' AS JSON);
 
+-- http://jira.cubrid.org/browse/CBRD-22674
+drop table if exists t1;
+create table t1 (id int , name char(20));
+insert into t1 values (1, 'Jone');
+select json_array_insert('[]', '$[0]', name) from t1;
+drop table if exists t1;
+
+-- http://jira.cubrid.org/browse/CBRD-22678
+SET @j = '{"hello": "great"}';
+SELECT JSON_SEARCH(@j, 'one', 'great'), if(JSON_SEARCH(@j, 'one', 'great') = '$.hello', 'OK', 'NOK');
+SET @j = '{"hello world": "great"}';
+SELECT JSON_SEARCH(@j, 'one', 'great'), if(JSON_SEARCH(@j, 'one', 'great') = '$."hello world"', 'OK', 'NOK');
+drop variable @j;
+
+-- http://jira.cubrid.org/browse/CBRD-22689
+select id, if(typeof(id)='integer', 'OK', 'NOK: ' || typeof(id)) from json_table ('[1,2,3,4]', '$' COLUMNS (id int path '$[99999]' DEFAULT '-11' ON EMPTY)) as t1;
+select if(typeof(id)='integer', 'OK', 'NOK: ' || typeof(id)), id from json_table ('[1,2,3,4]', '$' COLUMNS (id int path '$[99999]' DEFAULT '-11' ON EMPTY)) as t1;
+
+-- http://jira.cubrid.org/browse/CBRD-22697
+drop table if exists t1;
+create table t1(a json);
+insert into t1 values ('{"name": null}');
+select a from t1;
+select json_pretty(a) from t1;
+update t1 set a=json_pretty(a);
+select * from t1;
+drop table if exists t1;
+
+set @js='{"first?name": "Jone"}';
+select json_valid(@js);
+-- http://jira.cubrid.org/browse/CBRD-22704
+select json_search(@js, 'all', 'Jone');
+select json_search(@js, 'one', 'Jone');
+-- http://jira.cubrid.org/browse/CBRD-22708
+select JSON_CONTAINS_PATH(@js, 'all', json_search(@js, 'one', 'Jone') );
+select JSON_CONTAINS_PATH(@js, 'one', json_search(@js, 'one', 'Jone') );
+drop variable @js;
+
+

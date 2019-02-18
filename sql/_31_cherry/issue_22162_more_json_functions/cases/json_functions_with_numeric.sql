@@ -29,8 +29,9 @@ select json_merge_patch(1,2);
 select json_merge_patch('1','2'); 
 
 select json_remove(1, '$[0]'); 
---CBRD-22725(diff with MySQL , not fixed)
---select json_remove('1', '$[0]'); 
+--CBRD-22725(diff with MySQL , following one query will return error, it's by design.)
+select json_remove('1', '$[0]'); 
+select json_remove('[1]', '$[0]');
 select json_remove(1, '$'); 
 select json_remove('1', '$'); 
 
@@ -69,8 +70,9 @@ select * from json_table('1', '$' columns( col varchar(20) path '$')) as jt;
 
 
 -- json value is expected.
---CBRD-22651
---select json_quote(1); 
+
+-- CBRD-22651 case 7, by design, json_quote requires string as arg and integers can be cast to strings.
+select json_quote(1); 
 select json_quote('1'); 
 
 select json_unquote(1); 
