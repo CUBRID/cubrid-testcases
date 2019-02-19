@@ -71,7 +71,7 @@ select json_set('{"a":12}', '$[0][1].a', '100');
 select json_extract( '[1]', '$[0][0]' );
 select json_extract( '[1]', '$[1][0]' );
 select json_extract( '[1]', '$**[0]' );
---CBRD-22651 #4
+--CBRD-22651 #4, by design. We don't autowrap for json functions without side-effects.
 select json_extract( '[1]', '$**[0][0]' );
 
 select json_extract('1', '$');

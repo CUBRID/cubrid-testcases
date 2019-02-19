@@ -30,6 +30,10 @@ select * from json_table ('{"{":"}"}', ' ' COLUMNS (id string path ' ')) as t;
 select * from json_table ('{"}":"}"}', ' ' COLUMNS (id string path '$."}"')) as t;
 
 --CBRD-22712
---select * from json_table ('{"{":"}"}', ' ' COLUMNS (id string path '$."{"')) as t;
---select * from json_table ('{"{ : }":"{ : }"}', '' COLUMNS (id string path '$."{ : }"')) as t;
+set @js='{"first{name": "Jone"}';
+select json_valid(@js);
+select json_extract(@js, '$."first{name"');
+drop variable @js;
+select * from json_table ('{"{":"}"}', ' ' COLUMNS (id string path '$."{"')) as t;
+select * from json_table ('{"{ : }":"{ : }"}', '' COLUMNS (id string path '$."{ : }"')) as t;
 
