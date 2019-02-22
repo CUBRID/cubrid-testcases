@@ -133,10 +133,8 @@ set @jarr1     = '["e","f"]';
 set @scalar  = '1';
 -- ends with index, parent does not exist : error
 select @jobj, JSON_ARRAY_INSERT(@jobj, '$.a.d[0]', '999');
--- ends with index, parent is object, Name does exist, index==0 : wrap in array, insert value at 0
+-- ends with index, parent is object, Name does exist, index==0 : wrap in array, insert value at 0 and object at index 1
 select @jobj1, JSON_ARRAY_INSERT(@jobj1, '$.d[0]', '999');
--- ends with index, parent is object, Name does exist, index==0 : wrap in array, insert object at index 1
---------- D9: ????
 select @jobj1, JSON_ARRAY_INSERT(@jobj1, '$.d[0]', '{"g":9}');  
 -- ends with index, parent is object, Name does exist, index>0 : insert nulls followed by val on index
 select @jobj1, JSON_ARRAY_INSERT(@jobj1, '$.d[3]', '999');  
@@ -144,10 +142,8 @@ select @jobj1, JSON_ARRAY_INSERT(@jobj1, '$.d[3]', '999');
 select @jarr1, JSON_ARRAY_INSERT(@jarr1, '$[1]', '999');
 -- ends with index, parent is array, index>last:  insert nulls followed by val on index
 select @jarr1, JSON_ARRAY_INSERT(@jarr1, '$[3]', '999'); 
--- ends with index, parent is scalar ,index==0 : wrap in array, insert value at 0 
+-- ends with index, parent is scalar ,index==0 : wrap in array, insert value at 0 and scalar at index 1 
 select @scalar, JSON_ARRAY_INSERT(@scalar, '$[0]', '999');
--- ends with index, parent is scalar ,index==0 : wrap in array, insert scalar at index 1
---------- F9: ????
 select @scalar, JSON_ARRAY_INSERT(@scalar, '$[0]', 888);
 -- ends with index, parent is scalar ,index>0 :  insert nulls followed by val on index
 select @scalar, JSON_ARRAY_INSERT(@scalar, '$[2]', '999');  
