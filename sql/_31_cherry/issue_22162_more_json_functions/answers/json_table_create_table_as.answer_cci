@@ -7,7 +7,7 @@ sscan
     class: jt node[?]
     cost:  ? card ?
 Query stmt:
-select jt.date? from (json_table ('{"date?":"?-?-?"}', '$' columns (date? varchar(?) PATH '$.date' DEFAULT '"?-?-?"' ON ERROR DEFAULT '"?-?-?"' ON EMPTY )) as jt)
+select jt.date? from (json_table ('{"date?":"?-?-?"}', '$' columns (date? varchar(?) PATH '$."date"' DEFAULT '"?-?-?"' ON ERROR DEFAULT '"?-?-?"' ON EMPTY )) as jt)
 ===================================================
 date1    
 "2018-99-99"     
@@ -17,7 +17,7 @@ sscan
     class: jt node[?]
     cost:  ? card ?
 Query stmt:
-select jt.date? from (json_table ('{"date?":"?-?-?"}', '$' columns (date? varchar(?) PATH '$.date' DEFAULT '"?-?-?"' ON ERROR DEFAULT '"?-?-?"' ON EMPTY )) as jt)
+select jt.date? from (json_table ('{"date?":"?-?-?"}', '$' columns (date? varchar(?) PATH '$."date"' DEFAULT '"?-?-?"' ON ERROR DEFAULT '"?-?-?"' ON EMPTY )) as jt)
 ===================================================
 Error:-493
 ===================================================
@@ -106,7 +106,7 @@ temp(order by)
     sort:  ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ tt?.date?, tt?.date?, jt.date? from tt? tt?, tt? tt?, (json_table ('[{"date?":"?-?-?"}, {"date?":"?-?-?"}]', '$[*]' columns (date? varchar(?) PATH '$.date?' NULL ON ERROR NULL ON EMPTY )) as jt) where (tt?.date?> str_to_date(jt.date?, '%Y-%m-%d')) and tt?.date?= str_to_date(tt?.date?, '%Y-%m-%d') order by ?, ?, ?
+select /*+ ORDERED */ tt?.date?, tt?.date?, jt.date? from tt? tt?, tt? tt?, (json_table ('[{"date?":"?-?-?"}, {"date?":"?-?-?"}]', '$[*]' columns (date? varchar(?) PATH '$."date?"' NULL ON ERROR NULL ON EMPTY )) as jt) where (tt?.date?> str_to_date(jt.date?, '%Y-%m-%d')) and tt?.date?= str_to_date(tt?.date?, '%Y-%m-%d') order by ?, ?, ?
 ===================================================
 count(*)    
 2     
@@ -130,7 +130,7 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ count(*) from tt? tt?, tt? tt?, (json_table ('[{"date?":"?-?-?"}, {"date?":"?-?-?"}]', '$[*]' columns (date? varchar(?) PATH '$.date?' NULL ON ERROR NULL ON EMPTY )) as jt) where (tt?.date?> str_to_date(jt.date?, '%Y-%m-%d')) and tt?.date?= str_to_date(tt?.date?, '%Y-%m-%d')
+select /*+ ORDERED */ count(*) from tt? tt?, tt? tt?, (json_table ('[{"date?":"?-?-?"}, {"date?":"?-?-?"}]', '$[*]' columns (date? varchar(?) PATH '$."date?"' NULL ON ERROR NULL ON EMPTY )) as jt) where (tt?.date?> str_to_date(jt.date?, '%Y-%m-%d')) and tt?.date?= str_to_date(tt?.date?, '%Y-%m-%d')
 ===================================================
 count(1)    date3    
 3     2018-10-17     
@@ -154,6 +154,6 @@ temp(group by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ count(*), jt.date? from tt? tt?, tt? tt?, (json_table ('[{"date?":"?-?-?"}, {"date?":"?-?-?"}]', '$[*]' columns (date? varchar(?) PATH '$.date?' NULL ON ERROR NULL ON EMPTY )) as jt) group by jt.date?
+select /*+ ORDERED */ count(*), jt.date? from tt? tt?, tt? tt?, (json_table ('[{"date?":"?-?-?"}, {"date?":"?-?-?"}]', '$[*]' columns (date? varchar(?) PATH '$."date?"' NULL ON ERROR NULL ON EMPTY )) as jt) group by jt.date?
 ===================================================
 0
