@@ -80,7 +80,6 @@ select @jobj, JSON_REPLACE(@jobj, '$.aa.c', '999');
 -- ends with name, parent is object, Name does exist : replace value
 select @jobj, JSON_REPLACE(@jobj, '$.a.c', '999');
 -- ends with name, parent is object, Name does NOT exist : NO_OP
---------- D6: ????
 select @jobj, JSON_REPLACE(@jobj, '$.a.club', '999');  
 select JSON_REPLACE('{"a":{"b":1}}', '$.a.c', '999');
 -- ends with name, parent is array : error
@@ -96,18 +95,15 @@ set @scalar  = '1';
 select @jobj, JSON_REPLACE(@jobj, '$.a.d[0]', '999');
 -- ends with index, parent is object, Name does exist, index==0 : Replace parent object with value 
 select @jobj1, JSON_REPLACE(@jobj1, '$.d[0]', '999');
--- ends with index, parent is object, Name does exist, index>0 : wrap in an array insert nulls followed by val on index
---------- D7: ????
+-- ends with index, parent is object, Name does exist, index>0 : NO_OP
 select @jobj1, JSON_REPLACE(@jobj1, '$.d[3]', '999'); 
 -- ends with index, parent is array, index<=last: replace the pointed val
 select @jarr1, JSON_REPLACE(@jarr1, '$[1]', '999');
 -- ends with index, parent is array, index>last:  NO_OP
---------- E7: ????
 select @jarr1, JSON_REPLACE(@jarr1, '$[3]', '999'); 
 -- ends with index, parent is scalar ,index==0 : Replace parent object with value
 select @scalar, JSON_REPLACE(@scalar, '$[0]', '999');
--- ends with index, parent is scalar ,index>0 : wrap in an array and insert nulls followed by val on index
---------- F7: ????
+-- ends with index, parent is scalar ,index>0 : NO_OP
 select @scalar, JSON_REPLACE(@scalar, '$[2]', '999');  
 
 
