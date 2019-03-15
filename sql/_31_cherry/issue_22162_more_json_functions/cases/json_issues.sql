@@ -144,6 +144,9 @@ drop variable @j;
 select id, if(typeof(id)='integer', 'OK', 'NOK: ' || typeof(id)) from json_table ('[1,2,3,4]', '$' COLUMNS (id int path '$[99999]' DEFAULT '-11' ON EMPTY)) as t1;
 select if(typeof(id)='integer', 'OK', 'NOK: ' || typeof(id)), id from json_table ('[1,2,3,4]', '$' COLUMNS (id int path '$[99999]' DEFAULT '-11' ON EMPTY)) as t1;
 
+select id, if(typeof(id)='integer', 'OK', 'NOK: ' || typeof(id)) from json_table ('[1,2,3,4]', '$' COLUMNS (id int path '$[65536]' DEFAULT '-11' ON EMPTY)) as t1;
+select if(typeof(id)='integer', 'OK', 'NOK: ' || typeof(id)), id from json_table ('[1,2,3,4]', '$' COLUMNS (id int path '$[65536]' DEFAULT '-11' ON EMPTY)) as t1;
+
 -- http://jira.cubrid.org/browse/CBRD-22697
 drop table if exists t1;
 create table t1(a json);
