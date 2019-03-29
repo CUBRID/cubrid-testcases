@@ -16,4 +16,4 @@ insert into DML_0001 values (5,'test2', {2,'test2'});
 select * from DML_0001 where int_col in (select @a:=int_col from DML_0001 order by 1 limit 1);
 
 drop DML_0001;
-
+drop variable @a;
