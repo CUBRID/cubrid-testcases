@@ -48,5 +48,5 @@ execute st using @b,@b;
 
 deallocate prepare st;
 
-drop variable @a,@b;
+drop variable @a,@b,@c;
 --+ holdcas off;

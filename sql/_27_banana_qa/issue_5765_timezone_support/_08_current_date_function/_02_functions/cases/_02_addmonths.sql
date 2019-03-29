@@ -198,7 +198,7 @@ select if(month(@x1)-month(@x2)=expect_value, 'ok', concat('nok, ',month(@x1)-mo
     WHEN @x1 <= TIMESTAMP(@x1_year||'-'||@x1_month||'-1 2:00') THEN 1
     ELSE 0 END expect_value
 ) t;
-drop variable @x1,@x2,@x_cur;
+drop variable @x1,@x2,@x_cur,@x1_year,@x1_month;
 
 set timezone 'Asia/Seoul';
 
