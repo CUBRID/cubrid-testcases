@@ -20,15 +20,15 @@ insert into t1 values(2, 2, 'bbb');
 insert into t1 values(3, 3, 'ccc');
 insert into t1 values(4, 4, 'ddd');
 
-select * from (select *, 'hello' from t1) t;
-select a, b from (select *, 'hello' from t1);
+select * from (select *, 'hello' from t1) t order by 1;
+select a, b from (select *, 'hello' from t1) order by 1;
 --error, duplicate column a
-select * from (select *, a, b, 'hello' from t1) t;
-select * from (select *, a as aa, b as bb, 'hello' as cc from t1) t;
+select * from (select *, a, b, 'hello' from t1) t order by 1;
+select * from (select *, a as aa, b as bb, 'hello' as cc from t1) t order by 1;
 --error
-select * from (select a, *, 'hello' from t1) t;
+select * from (select a, *, 'hello' from t1) t order by 1;
 --error
-select * from (select a, b as bb, 'hello', * from t1) t;
+select * from (select a, b as bb, 'hello', * from t1) t order by 1;
 
 
 drop table t1;
