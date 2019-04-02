@@ -8,27 +8,27 @@ insert into t1 values(2, '문자', '문자', '문자', 'Ï');
 insert into t1 values(3, '문', '문', '문', 'ÀÏ');
 
 set names binary;
-select * from t1 where id=1 and col_binary = '문자열' AND col_euckr='문자열';
-select * from t1 where col_binary > '문' AND col_binary< cast(_utf8'문자열' as string charset euckr);
-select * from t1 where col_binary > '문' AND col_binary< '문자열';
+select * from t1 where id=1 and col_binary = '문자열' AND col_euckr='문자열' order by 1;
+select * from t1 where col_binary > '문' AND col_binary< cast(_utf8'문자열' as string charset euckr) order by 1;
+select * from t1 where col_binary > '문' AND col_binary< '문자열' order by 1;
 
-select * from t1 where col_binary <> '문' ;
-select * from t1 where col_binary != '문' ;
+select * from t1 where col_binary <> '문'  order by 1;
+select * from t1 where col_binary != '문'  order by 1;
 
-select * from t1 where col_binary <> col_euckr ;
-select * from t1 where col_binary != col_euckr ;
-select * from t1 where col_binary > col_euckr ;
-select * from t1 where col_binary < col_euckr ;
-select * from t1 where col_binary = col_euckr ;
+select * from t1 where col_binary <> col_euckr  order by 1;
+select * from t1 where col_binary != col_euckr  order by 1;
+select * from t1 where col_binary > col_euckr  order by 1;
+select * from t1 where col_binary < col_euckr  order by 1;
+select * from t1 where col_binary = col_euckr  order by 1;
 
-select * from t1 where col_binary <> col_utf8 ;
-select * from t1 where col_binary != col_utf8 ;
-select * from t1 where col_binary >col_utf8 ;
-select * from t1 where col_binary < col_utf8 ;
-select * from t1 where col_binary = col_utf8 ;
+select * from t1 where col_binary <> col_utf8  order by 1;
+select * from t1 where col_binary != col_utf8  order by 1;
+select * from t1 where col_binary >col_utf8  order by 1;
+select * from t1 where col_binary < col_utf8  order by 1;
+select * from t1 where col_binary = col_utf8  order by 1;
 
-select * from t1 where col_binary <> col_iso ;
-select * from t1 where col_binary != col_iso ;
+select * from t1 where col_binary <> col_iso  order by 1;
+select * from t1 where col_binary != col_iso  order by 1;
 
 drop table t1;
 
