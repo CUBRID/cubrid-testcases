@@ -5,7 +5,7 @@ select (not NULL regexp '^[XuyY1@]$'), (not NULL rlike '[^Xu-yY1@]+$'), (not 'W'
 
 select ('ab' regexp 'ab{3,2}');
 select ('aabbb' rlike 'ab{2,2}$');
-select ('aabbb' rlike 'ab{2,255}$');
-select ('aabbb' rlike 'ab{2,256}$');
+select ('aabbb' rlike 'ab{0,49995}$');
+select ('aabbb' rlike 'ab{0,49996}$');
 select ('aabbb' rlike 'ab{0,3}$');
 select ('aabbb' rlike 'ab{-1,3}$');
