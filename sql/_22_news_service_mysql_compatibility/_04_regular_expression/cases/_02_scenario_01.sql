@@ -25,7 +25,7 @@ select id, d, t, f||'' f, s, m, b from part01 where  s regexp '^[b]|[a]+$' order
 select id, d, t, f||'' f, s, m, b from part01 where s regexp '[[.tab.]]' and s not rlike '[[.tilde.]]';
 select id, d, t, f||'' f, s, m, b from part01 where cast(f as varchar(10)) regexp '^[0-9]+.[0-9]+$' or cast(f as varchar(10)) rlike '^[0-9]+$' order by 1,2,3,4,5,6,7;
 select id, d, t, f||'' f, s, m, b from part01 where s rlike '^[[:alnum:]]+$' or s not rlike '[[:alpha:]]' order by 1,2,3,4,5,6,7;
-select id, d, t, f||'' f, s, m, b from part01 where s regexp '[[:<:]][a-z]{5,6}[[:>:]]' order by 2,1,3,4,5,7,6;
+select id, d, t, f||'' f, s, m, b from part01 where s regexp '\b[a-z]{5,6}\b' order by 2,1,3,4,5,7,6;
 select id, d, t, f||'' f, s, m, b from part01 where s regexp binary '^[A-Z]{2,6}' order by 1 desc,2 desc,3 desc,4 desc,5 desc,6 desc,7 desc; 
 select id, d, t, f||'' f, s, m, b from part01 where s regexp '^[A-Z]{2,6}' order by 1,2,3,4,5,6,7; 
 

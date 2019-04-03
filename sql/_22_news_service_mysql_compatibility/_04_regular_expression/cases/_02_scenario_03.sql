@@ -18,7 +18,7 @@ insert into t2 values(532,'[[:alnum:]]');
 insert into t2 values(481,'[[.tab.]]$');
 insert into t2 values(376,'^[^a-z0-9].*[0-9]$');
 insert into t2 values(257,'[0-9|A-Z]+$');
-insert into t2 values(255,'[[:<:]]Word[[:>:]]');
+insert into t2 values(255,'\bWord\b');
 insert into t2 values(82,'(abc)+');
 
 select * from t1 f,t2 d where f.code regexp d.code order by 1,2,3,4;

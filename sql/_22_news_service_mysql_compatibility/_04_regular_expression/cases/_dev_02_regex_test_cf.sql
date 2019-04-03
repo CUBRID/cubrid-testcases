@@ -20,4 +20,4 @@ select ('abcbabababc' rlike '^[abc]+$'), ('a' rlike '^[abc]+$'), ('abcdbcbcbabc'
 select ('abcxacbxax' rlike '^[a-cx]+$'), ('xxaba' rlike '^[a-cx]+$'), ('dabcx' rlike '^[a-cx]+$');
 select ('xyz' rlike '^[^a-w]*$'), ('xyz123!@#' rlike '^[^a-w]*$'), ('wxyz' rlike '^[^a-w]*$');
 select ('~' rlike '^[[.tilde.]]$'), ('a' rlike '^[[.tilde.]]$');
-select ('a fox is cute' rlike '[[:<:]]fox[[:>:]]'), ('a foxx is cute' rlike '[[:<:]]fox[[:>:]]');
+select ('a fox is cute' rlike '\bfox\b'), ('a foxx is cute' rlike '\bfox\b');
