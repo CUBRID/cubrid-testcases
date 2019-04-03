@@ -281,24 +281,27 @@ select t.id from t t where (t.id> ?:? ) and (inst_num()> ?:?  and inst_num()<= ?
 4
 ===================================================
 i    j    k    i    j    
+2     0     3     2     3     
 2     0     3     2     5     
 2     1     3     2     3     
 2     1     3     2     5     
-2     0     3     2     3     
 
 Query plan:
-nl-join (cross join)
-    outer: iscan
-               class: t? node[?]
-               index: idx term[?] AND term[?] (covers) (multi_range_opt)
-               cost:  ? card ?
-    inner: sscan
-               class: t? node[?]
-               sargs: term[?]
-               cost:  ? card ?
-    sort:  ? asc, ? asc
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: iscan
+                            class: t? node[?]
+                            index: idx term[?] AND term[?] (covers)
+                            cost:  ? card ?
+                 inner: sscan
+                            class: t? node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ t?.i, t?.j, t?.k, t?.i, t?.j from t? t?, t? t? where ((t?.j= ?:? ) or (t?.j= ?:? ) or (t?.j= ?:? ) or (t?.j= ?:? )) and t?.i= ?:?  and t?.i= ?:?  and t?.i=t?.i order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+select /*+ ORDERED */ t?.i, t?.j, t?.k, t?.i, t?.j from t? t?, t? t? where ((t?.j= ?:? ) or (t?.j= ?:? ) or (t?.j= ?:? ) or (t?.j= ?:? )) and t?.i= ?:?  and t?.i= ?:?  and t?.i=t?.i order by ?, ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 ===================================================
 0

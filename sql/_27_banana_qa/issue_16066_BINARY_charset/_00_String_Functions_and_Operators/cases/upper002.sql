@@ -14,7 +14,7 @@ insert into t1 values('abc', 'abc', 'abc', 'abc');
 insert into t1 values('ABC', 'ABC', 'ABC', 'ABC');
 
 
-SELECT UPPER(col_binary) , UPPER(col_euckr),UPPER(col_utf8),UPPER(col_iso)   from t1;
+SELECT UPPER(col_binary) , UPPER(col_euckr),UPPER(col_utf8),UPPER(col_iso)   from t1 order by 1 desc;
 
 
 drop table t1;

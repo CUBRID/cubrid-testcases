@@ -56,20 +56,20 @@ insert into round_timestamp values(timestamp'11/05/1987 10:24:06', '1987-11-05 1
 
 
 --TEST: pass timestamp format string argument, select directly
-select round(col1, 'yyyy'), round(col2, 'yyyy') from round_timestamp;
-select round(col1, 'yy'), round(col2, 'yy') from round_timestamp;
-select round(col1, 'q'), round(col2, 'q') from round_timestamp;
-select round(col1, 'mm'), round(col2, 'mm') from round_timestamp;
-select round(col1, 'month'), round(col2, 'month') from round_timestamp;
-select round(col1, 'mon'), round(col2, 'mon') from round_timestamp;
-select round(col1, 'dd'), round(col2, 'dd') from round_timestamp;
-select round(col1, 'day'), round(col2, 'day') from round_timestamp;
-select round(col1, 'dy'), round(col2, 'dy') from round_timestamp;
-select round(col1, 'd'), round(col2, 'd') from round_timestamp;
-select round(col1, 'hh'), round(col2, 'hh') from round_timestamp;
-select round(col1, 'hh12'), round(col2, 'hh24') from round_timestamp;
-select round(col1, 'mi'), round(col2, 'mi') from round_timestamp;
-select round(col1, 'ss'), round(col2, 'ss') from round_timestamp;
-select round(col1, 'ff'), round(col2, 'ff') from round_timestamp;
+select round(col1, 'yyyy'), round(col2, 'yyyy') from round_timestamp order by 1 desc;
+select round(col1, 'yy'), round(col2, 'yy') from round_timestamp order by 1 desc;
+select round(col1, 'q'), round(col2, 'q') from round_timestamp order by 1 desc;
+select round(col1, 'mm'), round(col2, 'mm') from round_timestamp order by 1 desc;
+select round(col1, 'month'), round(col2, 'month') from round_timestamp order by 1 desc;
+select round(col1, 'mon'), round(col2, 'mon') from round_timestamp order by 1 desc;
+select round(col1, 'dd'), round(col2, 'dd') from round_timestamp order by 1 desc;
+select round(col1, 'day'), round(col2, 'day') from round_timestamp order by 1 desc;
+select round(col1, 'dy'), round(col2, 'dy') from round_timestamp order by 1 desc;
+select round(col1, 'd'), round(col2, 'd') from round_timestamp order by 1 desc;
+select round(col1, 'hh'), round(col2, 'hh') from round_timestamp order by 1 desc;
+select round(col1, 'hh12'), round(col2, 'hh24') from round_timestamp order by 1 desc;
+select round(col1, 'mi'), round(col2, 'mi') from round_timestamp order by 1 desc;
+select round(col1, 'ss'), round(col2, 'ss') from round_timestamp order by 1 desc;
+select round(col1, 'ff'), round(col2, 'ff') from round_timestamp order by 1 desc;
 
 drop table round_timestamp;

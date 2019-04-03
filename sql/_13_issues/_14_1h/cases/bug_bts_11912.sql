@@ -63,7 +63,7 @@ create table t2(i int,j int);
 create index idx on t1(i,j,k);
 insert into t1 values (2,1,3),(6,2,5),(4,3,5),(2,0,3);
 insert into t2 values (2,3),(2,5), (5,5),(6,6);
-select /*+ recompile ordered */ * from t1,t2 where t1.i = t2.i and t1.i=2 and t1.j in (0,1,2,3) order by k limit 0,5;
+select /*+ recompile ordered */ * from t1,t2 where t1.i = t2.i and t1.i=2 and t1.j in (0,1,2,3) order by 1,2,3,4,5 limit 0,5;
 drop t1,t2;
 
 
