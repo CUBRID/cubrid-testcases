@@ -7,5 +7,5 @@ select ('ab' regexp 'ab{3,2}');
 select ('aabbb' rlike 'ab{2,2}$');
 select ('aabbb' rlike 'ab{0,49995}$');
 select ('aabbb' rlike 'ab{0,49996}$');
-select ('aabbb' rlike 'ab{0,3}$');
 select ('aabbb' rlike 'ab{-1,3}$');
+select ('aabbb' rlike 'ab{0,3}$');
