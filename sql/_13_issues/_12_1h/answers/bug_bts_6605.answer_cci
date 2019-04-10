@@ -2187,7 +2187,7 @@ d     16
 ===================================================
 0
 ===================================================
-b    (select (select @a := @a+a from (select * from t order by a desc ) order by a desc  limit 1) from t where tt.b=b)    
+b    (select (select @a := @a+a from (select * from t order by a desc ) order by a desc  limit 1) from (select * from t order by a desc ) where tt.b=b)    
 a     4     
 b     8     
 c     12     
@@ -2196,7 +2196,7 @@ d     16
 ===================================================
 0
 ===================================================
-b    (select @a := @a+a from (select * from t order by a) where b=tt.b union select null from t where a>100) order by 1 desc    
+b    (select @a := @a+a from (select * from t order by a) where b=tt.b union select null from (select * from t order by a) where a>100) order by 1 desc    
 a     1     
 b     3     
 c     6     

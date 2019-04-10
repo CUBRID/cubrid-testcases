@@ -86,19 +86,19 @@ select /*+ recompile */ @a := @a + 1 from t order by a desc limit 2;
 
 -- rewrite (subselect, diff correlation)
 set @a = 0;
-select /*+ recompile */ b, (select @a := @a + a from (select * from t order by a) where b = tt.b order by a desc) from t tt order by 1,2;
+select /*+ recompile */ b, (select @a := @a + a from (select * from t order by a) where b = tt.b order by a desc) from (select * from t order by a) tt order by 1,2;
 
 -- rewrite (subselect, same correlation)
 set @a = 0;
-select /*+ recompile */ b, (select @a := @a + a from (select * from t order by a desc) order by a desc limit 1) from t tt order by 1,2; 
+select /*+ recompile */ b, (select @a := @a + a from (select * from t order by a desc) order by a desc limit 1) from (select * from t order by a) tt order by 1,2; 
 
 -- rewrite (subselect, same correlation, second level)
 set @a = 0;
-select /*+ recompile */ b, (select (select @a := @a + a from (select * from t order by a desc) order by a desc limit 1) from t where tt.b = b) from t tt order by 1,2;
+select /*+ recompile */ b, (select (select @a := @a + a from (select * from t order by a desc) order by a desc limit 1) from (select * from t order by a desc) where tt.b = b) from (select * from t order by a) tt order by 1,2;
 
 -- no rewrite (union, diff correlation)
 set @a = 0;
-select /*+ recompile */ b, (select @a := @a + a from (select * from t order by a) where b = tt.b union select NULL from t where a > 100 order by 1 desc) from t tt order by 1,2;
+select /*+ recompile */ b, (select @a := @a + a from (select * from t order by a) where b = tt.b union select NULL from (select * from t order by a) where a > 100 order by 1 desc) from (select * from t order by a) tt order by 1,2;
 
 -- no rewrite (union, same correlation)
 set @a = 0;
@@ -122,7 +122,7 @@ select /*+ recompile */ t1.a, x.a, @a := @a + 1 from (select * from t order by a
 
 -- rewrite (two subqueries, same corr level)
 set @a = 0;
-select /*+ recompile */ b, (select @a := @a + a from (select * from t order by a desc) order by a desc limit 1), (select @a := @a + a from (select * from t order by a desc) order by a desc limit 1) from t tt order by 1,2;
+select /*+ recompile */ b, (select @a := @a + a from (select * from t order by a desc) order by a desc limit 1), (select @a := @a + a from (select * from t order by a desc) order by a desc limit 1) from (select * from t order by a) tt order by 1,2;
 
 -- rewrite (group by)
 create table u (a int, b int);
