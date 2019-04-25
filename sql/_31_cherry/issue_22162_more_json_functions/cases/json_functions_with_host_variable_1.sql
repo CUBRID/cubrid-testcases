@@ -172,7 +172,7 @@ execute st using @jobj;
 select @jarr;
 execute st using @jarr;
 --CBRD-22672
---execute st using @int1;
+execute st using @int1;
 execute st using @str1;
 execute st using @b1_true;
 execute st using @b2_false;
