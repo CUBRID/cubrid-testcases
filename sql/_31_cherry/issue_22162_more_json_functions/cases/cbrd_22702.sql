@@ -4,7 +4,7 @@ drop view if exists v1;
 SELECT a FROM JSON_TABLE('{"a": [1,2,3]}', '$' COLUMNS (
      NESTED PATH '$.a[*]' COLUMNS (a INT PATH '$')
   )
-) as t;
+) as t order by a;
 
 create view v1 as 
   SELECT a FROM JSON_TABLE('{"a": [1,2,3]}', '$' COLUMNS (
@@ -13,7 +13,7 @@ create view v1 as
   ) as t;
 
 --test: expect to be good. actually failed.
-select * from v1;
+select * from v1 order by a;
 
 show create view v1;
 
