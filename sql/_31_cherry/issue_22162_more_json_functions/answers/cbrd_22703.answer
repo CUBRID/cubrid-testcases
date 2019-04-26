@@ -1,0 +1,21 @@
+===================================================
+0
+===================================================
+c1    c2    
+"Mike"     [1,2,3]     
+
+===================================================
+c1    
+"Mike"     
+[1,2,3]     
+
+===================================================
+if(benchmark(1000, (select * from (json_table (@js, '$.students' columns (c1 json PATH '$' NULL ON ERROR NULL ON EMPTY )) as t) limit 1))>0, 'ok', 'nok')    
+ok     
+
+===================================================
+if(benchmark(1000, (select * from (json_table (@js, '$.students.*' columns (c1 json PATH '$' NULL ON ERROR NULL ON EMPTY )) as t) limit 1))>0, 'ok', 'nok')    
+ok     
+
+===================================================
+0
