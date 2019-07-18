@@ -47,6 +47,7 @@ create trigger insert_trigger after rollback execute update t set a=3;
 commit;
 rollback;
 commit;
+--[CBRD-22720]cci does not support triggering after rollback . Add cci answers
 select if(current_timestamp-d>=0 and current_timestamp-d<10,'ok','nok') from t;
 select if(to_timestamp_tz(current_timestamp)-f>=0 and to_timestamp_tz(current_timestamp)-f<10,'ok','nok') from t;
 select if(b is not null,'ok','nok') from t;
