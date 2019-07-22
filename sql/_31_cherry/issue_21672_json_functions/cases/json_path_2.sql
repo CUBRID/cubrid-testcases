@@ -27,6 +27,7 @@ insert into t1(c) values(json_object('id','106','name', '["eee1","eee2"]'));
 insert into t1(c) values(json_object('id','107','name', json_object('name', 'fff1', 'name_old', 'fff2')));
 insert into t1(c) values(json_object('id','108','name', json_object('name', json_array('ggg1','ggg2'), 'name_old', 'ggg3')));
 insert into t1(c) values(json_object('id','109','name', json_array('hhh1', json_array('hhh2','hhh3'), 'hhh4', 'hhh5')));
+drop variable @j;
 
 --basic test
 select id, json_extract(c, '$.id', '$.name') from t1 order by 1,2;
