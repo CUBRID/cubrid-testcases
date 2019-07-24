@@ -2,7 +2,7 @@
 SELECT JSON_EXTRACT('[10, 20, [30, 40]]', '$[1]');
 SELECT JSON_EXTRACT('[10, 20, [30, 40]]', '$[1]', '$[0]');
 set @j1='{"id":"109","name":["hhh1", ["hhh2","hhh3"], "hhh4", "hhh5"], "name_old":"hhh6"}';
-set @j2='$.id'
+set @j2='$.id';
 set @j3='$.name[0]';
 set @j4='$.name[1][1]';
 set @j5='$.name_old';
