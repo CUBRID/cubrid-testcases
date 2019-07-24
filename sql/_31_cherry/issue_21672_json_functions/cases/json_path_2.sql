@@ -10,6 +10,10 @@ SELECT JSON_EXTRACT(@j1, '$.id', '$.name[0]', '$.name[1][1]', '$.name_old');
 SELECT JSON_EXTRACT(@j1, @j2, @j3, @j4, @j5);
 drop variable @j1,@j2,@j3,@j4,@j5;
 
+--CBRD-23072 
+SELECT json_extract('{"name_old":"hhh6"}', '$."name_old"');
+SELECT json_extract('{"name_old":"hhh6"}', '$.name_old');
+
 --CBRD-22540 wildcard test
 SELECT JSON_EXTRACT('[10, 20, [30, 40]]', '$[2][*]');
 
