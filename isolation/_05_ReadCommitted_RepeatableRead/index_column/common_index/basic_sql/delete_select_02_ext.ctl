@@ -33,7 +33,7 @@ C2: insert into tb1 values(10,'run');
 MC: wait until C2 ready;
 C1: commit;
 C1: SELECT COUNT(*) FROM tb1;
-MC: wait until C2 ready;
+MC: wait until C1 ready;
 C2: SELECT COUNT(*) FROM tb1;
 C2: select * from tb1 where id in ('2','9','10');
 C2: drop INDEX idx_col on tb1;
