@@ -1,0 +1,125 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+a    a    
+2     4     
+2     3     
+1     4     
+1     3     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: iscan
+                            class: ta node[?]
+                            index: i_ta_a term[?] (covers)
+                            cost:  ? card ?
+                 inner: iscan
+                            class: tb node[?]
+                            index: i_tb_a term[?] (covers)
+                            cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select ta.a, tb.a from ta ta, tb tb where (ta.a>= ?:?  and ta.a<= ?:? ) and (tb.a>= ?:?  and tb.a<= ?:? ) order by ? desc , ? desc  for orderby_num()<= ?:? 
+===================================================
+a    a    
+2     4     
+2     3     
+2     2     
+2     1     
+1     4     
+1     3     
+1     2     
+1     1     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: iscan
+                            class: ta node[?]
+                            index: i_ta_a term[?] (covers)
+                            cost:  ? card ?
+                 inner: sscan
+                            class: tb node[?]
+                            cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select ta.a, tb.a from ta ta, tb tb where (ta.a>= ?:?  and ta.a<= ?:? ) order by ? desc , ? desc 
+===================================================
+a    a    
+2     2     
+1     1     
+
+Query plan:
+idx-join (left outer join)
+    outer: iscan
+               class: ta node[?]
+               index: i_ta_a term[?] (desc_index)
+               cost:  ? card ?
+    inner: iscan
+               class: tb node[?]
+               index: pk_tb_id term[?]
+               cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select ta.a, tb.a from ta ta left outer join tb tb on ta.id=tb.id where (ta.a>= ?:?  and ta.a<= ?:? ) order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+a    
+2     
+1     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+(select tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ))
+Query plan:
+iscan
+    class: ta node[?]
+    index: i_ta_a term[?] (covers) (desc_index)
+    sargs: term[?]
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select ta.a from ta ta where (ta.a>= ?:?  and ta.a<= ?:? ) and  exists (select tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? )) order by ? desc  for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+0
+===================================================
+0
