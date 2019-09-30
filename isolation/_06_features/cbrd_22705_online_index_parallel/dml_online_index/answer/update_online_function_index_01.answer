@@ -1,0 +1,41 @@
+| 3 rows affected
+| 6 rows affected
+| 1 row affected
+| 1 row affected
+| =================   Q U E R Y   R E S U L T S   =================
+| 
+| 
+|    't2'    1    'fk_t2_stu_id'    1    'stu_id'    'A'    4    NULL    NULL    'YES'    'BTREE'    NULL    NULL    'YES'  
+|    't2'    1    'idx_t2_3'    1    NULL    'A'    4    NULL    NULL    'YES'    'BTREE'    ' sqrt( cast([t2].[stu_id] as double))'    NULL    'YES'  
+| 2 rows selected
+| Join graph segments (f indicates final):
+| seg[0]: [0]
+| seg[1]: class_id[0] (f)
+| seg[2]: class_name[0] (f)
+| seg[3]: stu_id[0] (f)
+| seg[4]:  sqrt( cast([t2].[stu_id] as double))[0]
+| Join graph nodes:
+| node[0]: t2 t2(6/1) (sargs 0) (loc 0)
+| Join graph terms:
+| term[0]:  sqrt( cast(t2.stu_id as double))>2 (sel 0.1) (rank 2) (sarg term) (not-join eligible) (indexable  sqrt( cast([t2].[stu_id] as double))[0]) (loc 0)
+| 
+| Query plan:
+| 
+| temp(order by)
+|     subplan: iscan
+|                  class: t2 node[0]
+|                  index: idx_t2_3 term[0]
+|                  cost:  1 card 1
+|     sort:  1 desc
+|     cost:  7 card 1
+| 
+| Query stmt:
+| 
+| select t2.class_id, t2.class_name, t2.stu_id from t2 t2 where  sqrt( cast(t2.stu_id as double))>2 order by 1 desc 
+| 
+| =================   Q U E R Y   R E S U L T S   =================
+| 
+| 
+|    3    'history'    16  
+|    1    'math'    8  
+| 2 rows selected
