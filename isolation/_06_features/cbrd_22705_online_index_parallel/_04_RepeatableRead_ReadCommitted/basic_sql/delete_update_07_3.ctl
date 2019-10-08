@@ -48,7 +48,7 @@ MC: wait until C2 ready;
 
 C3: show index from t1;
 C3: SELECT /*+ recompile */ * FROM t1 where id>0 and col>'A' using index idx1(+);
-C3: SELECT /*+ recompile */ * FROM t1 where id>0 and col>'A' using index none;
+C3: SELECT /*+ recompile */ * FROM t1 where id>0 and col>'A' using index none order by id ;
 C3: commit;
 
 C1: quit;
