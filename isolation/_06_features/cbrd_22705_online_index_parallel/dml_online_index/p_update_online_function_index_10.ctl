@@ -37,7 +37,7 @@ C2: show indexes from t2;
 C2: commit;
 MC: wait until C2 ready;
 
-C1: select /*+ recompile */ * from t2 where to_datetime(col2)>='1998-01-01 12:00:00' using index idx_t2_3(+) ;
+C1: select /*+ recompile */ * from t2 where to_datetime(col2)>='1998-01-01 12:00:00' using index idx_t2_3(+) order by 1 desc,3 ;
 C1: commit work;
 
 C2: quit;
