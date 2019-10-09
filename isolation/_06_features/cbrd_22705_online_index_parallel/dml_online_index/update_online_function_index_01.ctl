@@ -7,6 +7,7 @@ C2: set transaction lock timeout INFINITE;
 C2: set transaction isolation level read committed;
 
 
+
 /* preparation */
 C1: drop table if exists t2;
 C1: drop table if exists t1;
@@ -29,8 +30,7 @@ MC: wait until C2 ready;
 C2: show indexes from t2;
 C2: commit;
 MC: wait until C2 ready;
-C1: set optimization level 513;
-C1: select /*+ recompile */ * from t2 where sqrt(stu_id)>2 order by 1 desc ;
+C1: select /*+ recompile */ * from t2 where sqrt(stu_id)>2 using index idx_t2_3(+) order by 1 desc ;
 C1: commit work;
 MC: wait until C1 ready;
 C2: commit;

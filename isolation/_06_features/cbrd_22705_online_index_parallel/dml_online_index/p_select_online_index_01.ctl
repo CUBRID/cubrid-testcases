@@ -43,7 +43,7 @@ MC: wait until C2 ready;
 
 C1: show indexes from t;
 C1: select /*+ recompile */id,trim(col),col1,col2,col3,col4,col5,col6,col7 from t where id >0 and col!='a' and col1 is not null using index idx1(+) ;
-C1: select /*+ recompile */ id,trim(col),col1,col2,col3,col4,col5,col6,col7 from t where id >0 and col!='a' and col1 is not null using index none ;
+C1: select /*+ recompile */ id,trim(col),col1,col2,col3,col4,col5,col6,col7 from t where id >0 and col!='a' and col1 is not null using index none order by 1 ;
 C1: drop table t;
 C1: commit work;
 
