@@ -20,6 +20,8 @@ MC: wait until C1 ready;
 C2: insert into t select rownum+100,rownum from db_root connect by level<=100;
 MC: wait until C2 blocked;
 C1: commit;
+MC: wait until C2 ready;
+
 C1: update statistics on t;
 C1: show indexes from t;
 MC: wait until C1 ready;

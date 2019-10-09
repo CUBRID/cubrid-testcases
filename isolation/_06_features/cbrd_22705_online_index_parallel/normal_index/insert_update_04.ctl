@@ -1,8 +1,3 @@
-/*
-CBRD-23322
-*/
-
-
 /* 
 Test Case: insert & update
 The table has duplicate data and create index,

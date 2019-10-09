@@ -48,6 +48,7 @@ MC: wait until C2 blocked;
 
 C3: commit;
 MC: wait until C3 ready;
+MC: wait until C4 ready;
 
 C4: commit;
 MC: wait until C4 ready;
@@ -58,7 +59,7 @@ MC: wait until C2 ready;
 
 C1: update statistics on t;
 C1: show index from t;
-C1: select * from t where id<0 order by 1 desc;
+C1: select /*+ recompile */* from t where a<'1' and b<'1b'  using index idx1(+);
 
 C1: drop table t;
 C1: commit;
