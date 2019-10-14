@@ -24,7 +24,7 @@ select /*+ recompile */ host_year from participant2 where host_year between 1 an
 --TEST
 select /*+ recompile use_desc_idx */ host_year from participant2 where host_year between 1 and 3000 and rownum<100 using index i_p2_hy;
 
-create index i_p2_nation on participant2(nation) parallel 2;
+create index i_p2_nation on participant2(nation) with online parallel 2;
 --TEST
 select /*+ recompile */ nation from participant2 where nation  >= 'A' and rownum<100 order by nation desc;
 --TEST
