@@ -1,0 +1,105 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+a    b    c    d    
+1     null     null     null     
+1     1.1     AAAAA     AAAAA     
+1     1.1     AAAAA     AABBB     
+2     2.1     BBBBB     BBBBB     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_abcd (covers)
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d from t t group by t.a, t.b, t.c, t.d
+/* ---> skip GROUP BY */
+0
+===================================================
+0
+a    b    c    d    
+2     2.1     BBBBB     BBBBB     
+1     1.1     AAAAA     AABBB     
+1     1.1     AAAAA     AAAAA     
+1     null     null     null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_abcd (covers) (desc_index)
+    sort:  ? desc, ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d from t t group by t.a desc , t.b desc , t.c desc , t.d desc 
+/* ---> skip GROUP BY */
+0
+===================================================
+0
+a    b    c    d    
+2     2.1     BBBBB     BBBBB     
+1     1.1     AAAAA     AABBB     
+1     1.1     AAAAA     AAAAA     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_abcd (covers) (desc_index)
+    sort:  ? desc, ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d from t t group by t.a desc , t.b desc , t.c desc , t.d desc  having groupby_num()<=?
+/* ---> skip GROUP BY */
+0
+===================================================
+0
+a    b    c    d    count(*)    
+1     1.1     AAAAA     AAAAA     2     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_abcd (covers) (desc_index)
+    sort:  ? desc, ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, count(*) from t t group by t.a desc , t.b desc , t.c desc , t.d desc  having count(*)>?
+/* ---> skip GROUP BY */
+0
+===================================================
+0
+a    b    c    d    count(*)    
+1     1.1     AAAAA     AAAAA     2     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_abcd (covers) (desc_index)
+    sort:  ? desc, ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, count(*) from t t group by t.a desc , t.b desc , t.c desc , t.d desc  having count(*)> ?:? 
+/* ---> skip GROUP BY */
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
