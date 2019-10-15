@@ -31,6 +31,6 @@ UPDATE t1 SET col9='17:08:10' WHERE col1=3;
 
 DELETE  FROM t1 WHERE col1=2;
 
-SELECT * FROM t1 USING INDEX t1_index order by 1;
+SELECT * FROM t1 USING INDEX t1_index order by 1,9;
 
 drop class t1;
