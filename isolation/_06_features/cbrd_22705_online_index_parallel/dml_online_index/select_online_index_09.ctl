@@ -42,7 +42,7 @@ C2: commit;
 MC: wait until C2 ready;
 
 C1: show indexes from t;
-C1: select id,trim(col) from t where TO_BASE64(col)!='a' using index idx1(+);
+C1: select id,trim(col) from t where TO_BASE64(col)!='a' using index idx1(+) order by 1,2;
 
 C1: drop table t;
 C1: commit work;
