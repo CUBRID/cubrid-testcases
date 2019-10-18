@@ -5,3 +5,5 @@ create index idx2 on t(nvl(a,b)) invisible;
 show index from t;
 commit;
 update t set a = null;
+select * from t; 
+drop table t;
