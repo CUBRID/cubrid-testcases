@@ -33,9 +33,9 @@ select /*+ recompile */ i, enum_col from t where i = 2 and enum_col < 'Wednesday
 
 select /*+ recompile */ enum_col from t where enum_col between 'Tuesday' and 'Saturday';
 
-select /*+ recompile */ i, enum_col from t where enum_col = 3 and str_col < 'x';
+select /*+ recompile */ i, enum_col from t where enum_col = 3 and str_col < 'x' order by enum_col,str_col,i;
 
-select /*+ recompile */ i, enum_col from t where enum_col = 'Wednesday' and str_col < 'x';
+select /*+ recompile */ i, enum_col from t where enum_col = 'Wednesday' and str_col < 'x' order by enum_col,str_col,i;
 
 select /*+ recompile */ enum_col from t where enum_col < 10;
 

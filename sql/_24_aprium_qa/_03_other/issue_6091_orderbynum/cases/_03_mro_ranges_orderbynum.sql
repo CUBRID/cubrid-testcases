@@ -100,7 +100,7 @@ drop index idx_a_b_cd_d_ed on t;
 create index idx_a_b_cd_d on t (a, b, c desc, d);
 select /*+ recompile */ * from t
 	where a in (1,3) and b = 1
-	order by c desc, d for orderby_num() <= 10 or orderby_num() <= 5;
+	order by c desc, d,e for orderby_num() <= 10 or orderby_num() <= 5;
 -- data filter:
 select /*+ recompile */ * from t
 	where a in (1,3) and b = 1 and e = 1
