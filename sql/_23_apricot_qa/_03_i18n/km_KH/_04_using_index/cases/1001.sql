@@ -33,7 +33,7 @@ where
    (name between 'ហឡកឯ' and 'ហឡ៏ខ')
    or (name between 'ហឡកឮ' and 'ហឡ៏ខ')
    or (name > 'ហឡ才' and name < 'ហឡ៏ខ')
-order by 2;
+order by 2,1;
 
 
 
