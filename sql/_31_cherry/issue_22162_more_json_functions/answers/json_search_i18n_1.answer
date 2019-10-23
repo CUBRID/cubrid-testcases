@@ -1,0 +1,246 @@
+===================================================
+0
+===================================================
+0
+===================================================
+json_search(@jdoc, _utf8'one' collate utf8_en_cs, _utf8'c' collate utf8_en_cs)    
+"$.B[1]"     
+
+===================================================
+0
+===================================================
+json_search(@jdoc, _utf8'one' collate utf8_en_cs, _utf8'a' collate utf8_en_cs)    
+"$.A"     
+
+===================================================
+json_search(_utf8'{"Name": "Bart", "Age": 10}' collate utf8_en_cs, _utf8'one' collate utf8_en_cs, _utf8'Bart' collate utf8_en_cs)    
+"$.Name"     
+
+===================================================
+0
+===================================================
+json_search(@doc, _utf8'one' collate utf8_en_cs, _utf8'Mischief' collate utf8_en_cs)    
+"$.Hobbies[1]"     
+
+===================================================
+json_search(@doc, _utf8'one' collate utf8_en_cs, _utf8'Homer' collate utf8_en_cs)    
+null     
+
+===================================================
+json_search(@doc, _utf8'one' collate utf8_en_cs, _utf8'Skate%' collate utf8_en_cs)    
+"$.Hobbies[0]"     
+
+===================================================
+json_search(@doc, _utf8'one' collate utf8_en_cs, _utf8'Skate_' collate utf8_en_cs)    
+null     
+
+===================================================
+json_search(@doc, _utf8'one' collate utf8_en_cs, _utf8'Bar_' collate utf8_en_cs)    
+"$.Name"     
+
+===================================================
+0
+===================================================
+json_search(@doc, _utf8'one' collate utf8_en_cs, _utf8'Bart' collate utf8_en_cs)    
+"$.Name"     
+
+===================================================
+json_search(@doc, _utf8'all' collate utf8_en_cs, _utf8'Bart' collate utf8_en_cs)    
+["$.Name","$.Friends[0]"]     
+
+===================================================
+0
+===================================================
+json_search(@doc, _utf8'all' collate utf8_en_cs, _utf8'pass%word' collate utf8_en_cs)    
+["$.pwd1","$.pwd2"]     
+
+===================================================
+json_search(@doc, _utf8'all' collate utf8_en_cs, _utf8'pass\%word' collate utf8_en_cs)    
+null     
+
+===================================================
+json_search(@doc, _utf8'all' collate utf8_en_cs, _utf8'pass\%word' collate utf8_en_cs, _utf8'\' collate utf8_en_cs)    
+"$.pwd1"     
+
+===================================================
+json_search(@doc, _utf8'one' collate utf8_en_cs, _utf8'bart_simpson' collate utf8_en_cs)    
+"$.userid"     
+
+===================================================
+json_search(@doc, _utf8'all' collate utf8_en_cs, _utf8'bart\_simpson' collate utf8_en_cs)    
+null     
+
+===================================================
+json_search(@doc, _utf8'all' collate utf8_en_cs, _utf8'bart\_simpson' collate utf8_en_cs, _utf8'\' collate utf8_en_cs)    
+"$.userid"     
+
+===================================================
+0
+===================================================
+json_search(@jv, _utf8'all' collate utf8_en_cs, _utf8'Bart' collate utf8_en_cs, null, _utf8'$.Person.Friends' collate utf8_en_cs)    
+"$.Person.Friends[0]"     
+
+===================================================
+json_search(@jv, _utf8'all' collate utf8_en_cs, _utf8'Bart' collate utf8_en_cs)    
+["$.Person.Name","$.Person.Friends[0]"]     
+
+===================================================
+json_search(@jv, _utf8'one' collate utf8_en_cs, _utf8'Bart' collate utf8_en_cs)    
+"$.Person.Name"     
+
+===================================================
+json_search(_utf8'{}' collate utf8_en_cs, _utf8'all' collate utf8_en_cs, _utf8'Bart' collate utf8_en_cs)    
+null     
+
+===================================================
+0
+===================================================
+json_search(@j, _utf8'all' collate utf8_en_cs, _utf8'ab-' collate utf8_en_cs, _utf8'-' collate utf8_en_cs, _utf8'$' collate utf8_en_cs)    
+null     
+
+===================================================
+0
+===================================================
+Error:-1070
+===================================================
+json_search(null, _utf8'all' collate utf8_en_cs, _utf8'10' collate utf8_en_cs)    
+null     
+
+===================================================
+json_search(@j, null, _utf8'10' collate utf8_en_cs)    
+null     
+
+===================================================
+json_search(@j, _utf8'all' collate utf8_en_cs, null)    
+null     
+
+===================================================
+json_search(@j, _utf8'all' collate utf8_en_cs, 10)    
+null     
+
+===================================================
+json_search(@j, _utf8'ALL' collate utf8_en_cs, _utf8'10' collate utf8_en_cs)    
+null     
+
+===================================================
+json_search(@j, _utf8'ONE' collate utf8_en_cs, _utf8'10' collate utf8_en_cs)    
+null     
+
+===================================================
+Error:-623
+===================================================
+json_search(@j, _utf8'all' collate utf8_en_cs, _utf8'abc' collate utf8_en_cs, null, _utf8'$.k' collate utf8_en_cs)    
+null     
+
+===================================================
+json_search(@j, _utf8'all' collate utf8_en_cs, _utf8'abcdef' collate utf8_en_cs)    
+null     
+
+===================================================
+Error:-494
+===================================================
+json_search(_utf8'"abc"' collate utf8_en_cs, _utf8'one' collate utf8_en_cs, _utf8'abc' collate utf8_en_cs)    
+"$"     
+
+===================================================
+json_search(_utf8'"abc"' collate utf8_en_cs, _utf8'one' collate utf8_en_cs, _utf8'abc' collate utf8_en_cs, _utf8'.' collate utf8_en_cs)    
+"$"     
+
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+json_search(_utf8'["abc","abc"]' collate utf8_en_cs, _utf8'one' collate utf8_en_cs, _utf8'abc' collate utf8_en_cs, null, _utf8'$[1]' collate utf8_en_cs)    
+"$[1]"     
+
+===================================================
+json_search(_utf8'["abc","abc"]' collate utf8_en_cs, _utf8'one' collate utf8_en_cs, _utf8'abc' collate utf8_en_cs, null, _utf8'$[1]' collate utf8_en_cs)    
+"$[1]"     
+
+===================================================
+0
+===================================================
+json_search(@j, _utf8'one' collate utf8_en_cs, _utf8'abc' collate utf8_en_cs)    
+"$[0]"     
+
+===================================================
+json_search(@j, _utf8'one' collate utf8_en_cs, _utf8'abc' collate utf8_en_cs)    
+"$[0]"     
+
+===================================================
+json_search(@j, _utf8'all' collate utf8_en_cs, _utf8'abc' collate utf8_en_cs)    
+["$[0]","$[2].x"]     
+
+===================================================
+json_search(@j, _utf8'all' collate utf8_en_cs, _utf8'ghi' collate utf8_en_cs)    
+null     
+
+===================================================
+json_search(@j, _utf8'all' collate utf8_en_cs, _utf8'10' collate utf8_en_cs)    
+"$[1][0].k"     
+
+===================================================
+json_search(@j, _utf8'all' collate utf8_en_cs, _utf8'10' collate utf8_en_cs, null, _utf8'$' collate utf8_en_cs)    
+"$[1][0].k"     
+
+===================================================
+json_search(@j, _utf8'all' collate utf8_en_cs, _utf8'10' collate utf8_en_cs, null, _utf8'$[1]' collate utf8_en_cs)    
+"$[1][0].k"     
+
+===================================================
+json_search(@j, _utf8'all' collate utf8_en_cs, _utf8'10' collate utf8_en_cs, null, _utf8'$[1][0]' collate utf8_en_cs)    
+"$[1][0].k"     
+
+===================================================
+json_search(@j, _utf8'all' collate utf8_en_cs, _utf8'abc' collate utf8_en_cs, null, _utf8'$[2]' collate utf8_en_cs)    
+"$[2].x"     
+
+===================================================
+json_search(@j, _utf8'all' collate utf8_en_cs, _utf8'%a%' collate utf8_en_cs)    
+["$[0]","$[2].x"]     
+
+===================================================
+json_search(@j, _utf8'all' collate utf8_en_cs, _utf8'%b%' collate utf8_en_cs)    
+["$[0]","$[2].x","$[3].y"]     
+
+===================================================
+json_search(@j, _utf8'all' collate utf8_en_cs, _utf8'%b%' collate utf8_en_cs, null, _utf8'$[0]' collate utf8_en_cs)    
+"$[0]"     
+
+===================================================
+json_search(@j, _utf8'all' collate utf8_en_cs, _utf8'%b%' collate utf8_en_cs, null, _utf8'$[2]' collate utf8_en_cs)    
+"$[2].x"     
+
+===================================================
+json_search(@j, _utf8'all' collate utf8_en_cs, _utf8'%b%' collate utf8_en_cs, null, _utf8'$[1]' collate utf8_en_cs)    
+null     
+
+===================================================
+json_search(@j, _utf8'all' collate utf8_en_cs, _utf8'%b%' collate utf8_en_cs, null, _utf8'$[3]' collate utf8_en_cs)    
+"$[3].y"     
+
+===================================================
+Error:-623
+===================================================
+json_search(@j, _utf8'all' collate utf8_en_cs, _utf8'10' collate utf8_en_cs, null, _utf8'$[*]' collate utf8_en_cs)    
+"$[1][0].k"     
+
+===================================================
+json_search(@j, _utf8'all' collate utf8_en_cs, _utf8'10' collate utf8_en_cs, null, _utf8'$**.k' collate utf8_en_cs)    
+"$[1][0].k"     
+
+===================================================
+json_search(@j, _utf8'all' collate utf8_en_cs, _utf8'10' collate utf8_en_cs, null, _utf8'$[*][0].k' collate utf8_en_cs)    
+"$[1][0].k"     
+
+===================================================
+json_search(@j, _utf8'all' collate utf8_en_cs, _utf8'%b%' collate utf8_en_cs, null, _utf8'$' collate utf8_en_cs)    
+["$[0]","$[2].x","$[3].y"]     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0

@@ -1,0 +1,49 @@
+===================================================
+0
+===================================================
+json_merge_patch(_utf8'{"Name":"Jone"}' collate utf8_en_cs, _utf8'{"Age":39}' collate utf8_en_cs)    json_merge(_utf8'{"Name":"Jone"}' collate utf8_en_cs, _utf8'{"Age":39}' collate utf8_en_cs)    
+{"Name":"Jone","Age":39}     {"Name":"Jone","Age":39}     
+
+===================================================
+json_merge_patch(_utf8'{"Name":"Alen"}' collate utf8_en_cs, _utf8'{"Name":"Mark"}' collate utf8_en_cs)    json_merge(_utf8'{"Name":"Alen"}' collate utf8_en_cs, _utf8'{"Name":"Mark"}' collate utf8_en_cs)    
+{"Name":"Mark"}     {"Name":["Alen","Mark"]}     
+
+===================================================
+json_merge_patch(_utf8'{"Name":"Alen","Age":10}' collate utf8_en_cs, _utf8'{"Name":"Mark"}' collate utf8_en_cs)    json_merge(_utf8'{"Name":"Alen","Age":10}' collate utf8_en_cs, _utf8'{"Name":"Mark"}' collate utf8_en_cs)    
+{"Name":"Mark","Age":10}     {"Name":["Alen","Mark"],"Age":10}     
+
+===================================================
+json_merge_patch(_utf8'{"Name":"Alen"}' collate utf8_en_cs, _utf8'{"Name":"Mark","Age":10}' collate utf8_en_cs)    json_merge(_utf8'{"Name":"Alen"}' collate utf8_en_cs, _utf8'{"Name":"Mark","Age":10}' collate utf8_en_cs)    
+{"Name":"Mark","Age":10}     {"Name":["Alen","Mark"],"Age":10}     
+
+===================================================
+json_merge_patch(_utf8'{"Name":"Mark"}' collate utf8_en_cs, _utf8'{"Age":40}' collate utf8_en_cs, _utf8'{"Job":"CEO"}' collate utf8_en_cs)    json_merge(_utf8'{"Name":"Mark"}' collate utf8_en_cs, _utf8'{"Age":40}' collate utf8_en_cs, _utf8'{"Job":"CEO"}' collate utf8_en_cs)    
+{"Name":"Mark","Age":40,"Job":"CEO"}     {"Name":"Mark","Age":40,"Job":"CEO"}     
+
+===================================================
+json_merge_patch(_utf8'{"Alphabet":["a","b"]}' collate utf8_en_cs, _utf8'{"Alphabet":["c"]}' collate utf8_en_cs)    json_merge(_utf8'{"Alphabet":["a","b"]}' collate utf8_en_cs, _utf8'{"Alphabet":["c"]}' collate utf8_en_cs)    
+{"Alphabet":["c"]}     {"Alphabet":["a","b","c"]}     
+
+===================================================
+0
+===================================================
+0
+===================================================
+json_merge_patch(@jd1, @jd2)    
+{"Alphabet":{"A":"a","B":["b","c"],"C":3,"D":["d","e"]}}     
+
+===================================================
+json_merge(@jd1, @jd2)    
+{"Alphabet":{"A":"a","B":["b","c"],"C":3,"D":["d","e"]}}     
+
+===================================================
+0
+===================================================
+json_merge_patch(_utf8'{"A":["a","b"]}' collate utf8_en_cs, _utf8'{"B":["c"]}' collate utf8_en_cs)    
+{"A":["a","b"],"B":["c"]}     
+{"A":["a","b"],"B":["c"]}     
+
+===================================================
+0
+===================================================
+0

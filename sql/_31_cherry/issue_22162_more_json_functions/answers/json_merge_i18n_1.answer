@@ -1,0 +1,125 @@
+===================================================
+0
+===================================================
+Error:-493
+===================================================
+Error:-494
+===================================================
+json_merge_patch(_utf8'"string"' collate utf8_en_cs, _utf8'123' collate utf8_en_cs)    
+123     
+
+===================================================
+json_merge_patch(_utf8'"string"' collate utf8_en_cs,  cast(123 as json))    
+123     
+
+===================================================
+json_merge_patch(_utf8'[1, 2]' collate utf8_en_cs, _utf8'[true, false]' collate utf8_en_cs)    
+[true,false]     
+
+===================================================
+json_merge_patch(_utf8'{"1": 2}' collate utf8_en_cs, _utf8'{"true": false}' collate utf8_en_cs)    
+{"1":2,"true":false}     
+
+===================================================
+json_merge_patch(_utf8'{"1": 2}' collate utf8_en_cs, _utf8'{"true": false}' collate utf8_en_cs, _utf8'{"3": 4}' collate utf8_en_cs)    
+{"1":2,"true":false,"3":4}     
+
+===================================================
+json_merge_patch(null, json_object(_utf8'foo' collate utf8_en_cs, 1))    
+null     
+
+===================================================
+Error:-494
+===================================================
+json_merge_patch(_utf8'"a"' collate utf8_en_cs, _utf8'"b"' collate utf8_en_cs)    
+"b"     
+
+===================================================
+json_merge_patch(_utf8'{"a":"b"}' collate utf8_en_cs, _utf8'{"c":"d"}' collate utf8_en_cs)    
+{"a":"b","c":"d"}     
+
+===================================================
+json_merge_patch(_utf8'[1, 2]' collate utf8_en_cs, _utf8'{"id": 47}' collate utf8_en_cs)    
+{"id":47}     
+
+===================================================
+json_merge_patch(_utf8'{"a":"b"}' collate utf8_en_cs, _utf8'{"a":"c"}' collate utf8_en_cs)    
+{"a":"c"}     
+
+===================================================
+json_merge_patch(_utf8'{"a":{"x":"b"}}' collate utf8_en_cs, _utf8'{"a":"c"}' collate utf8_en_cs)    
+{"a":"c"}     
+
+===================================================
+json_merge_patch(_utf8'{"a":{"u":12, "x":"b"}}' collate utf8_en_cs, _utf8'{"a":{"x":"c"}}' collate utf8_en_cs)    
+{"a":{"u":12,"x":"c"}}     
+
+===================================================
+json_merge_patch(_utf8'{"a":{"u":12, "x":"b", "r":1}}' collate utf8_en_cs, _utf8'{"a":{"x":"c", "r":2}}' collate utf8_en_cs)    
+{"a":{"u":12,"x":"c","r":2}}     
+
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+i    a    b    c    
+1     123     "aaa"     {"a":[1,2,3]}     
+2     456     "bbb"     ["t",1,2,3,4]     
+
+===================================================
+json_merge_patch(a, b, c)    i    
+["t",1,2,3,4]     2     
+{"a":[1,2,3]}     1     
+
+===================================================
+json_contains(json_merge_patch(a, b, c), a)    i    
+0     1     
+0     2     
+
+===================================================
+json_contains(json_merge_patch(a, b, c), json_merge_patch(a, b))    i    
+0     1     
+0     2     
+
+===================================================
+json_contains(json_merge_patch(a, b, c), json_merge_patch(a, c))    i    
+1     1     
+1     2     
+
+===================================================
+json_contains(json_merge_patch(a, b, c), c, _utf8'/1' collate utf8_en_cs)    i    
+null     1     
+0     2     
+
+===================================================
+json_contains(json_merge_patch(a, b, c), _utf8'"456"' collate utf8_en_cs, _utf8'/1' collate utf8_en_cs)    i    
+null     1     
+0     2     
+
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+json_contains(json_merge_patch(a, b, c, _utf8'789' collate utf8_en_cs), _utf8'789' collate utf8_en_cs, _utf8'/3' collate utf8_en_cs)    i    
+null     1     
+null     2     
+
+===================================================
+json_contains(json_merge_patch(a, b, c, _utf8'789' collate utf8_en_cs), _utf8'2' collate utf8_en_cs, _utf8'/2/a' collate utf8_en_cs)    i    
+null     1     
+null     2     
+
+===================================================
+Error:-494
+===================================================
+0
+===================================================
+0
+===================================================
+0
