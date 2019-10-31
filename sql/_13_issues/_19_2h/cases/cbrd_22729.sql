@@ -1,0 +1,10 @@
+drop if exists t;
+CREATE TABLE t(a INT, b INT , c INT , d INT);
+INSERT INTO t VALUES(1, 11, 111, 1111);
+INSERT INTO t VALUES(2, 22, 222, 2222);
+INSERT INTO t VALUES(3, 33, 333, 3333);
+set @a=(select sum(ax) from (select benchmark (1000000, json_object (a,b,c,d)) as ax from t));
+set @b=(select sum(benchmark (1000000, json_object (a,b,c,d))) from t);
+select if(abs(@a-@b)<5, 'OK', 'NOK');
+drop variable @a,@b;
+drop if exists t;
