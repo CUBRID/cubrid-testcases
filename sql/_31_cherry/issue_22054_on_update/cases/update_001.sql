@@ -85,7 +85,7 @@ set @a=(select `last_update` from film_actor limit 1);
 update actor set actor_id=300 where actor_id=2;
 select if(current_timestamp-`last_update`>=0 and current_timestamp-`last_update`<10,'ok','nok') from actor where actor_id=300;
 --CUBRID error: foreign table `actor_id` has been set null,but `last_update` can not update automatically
-select if(`last_update`-to_timestamp(@a)=0,'ok','nok') from film_actor;
+select if(`last_update`-to_timestamp(@a)<10,'ok','nok') from film_actor;
 
 drop table if exists `film_actor`,`actor`;
  CREATE TABLE `actor` (
@@ -118,7 +118,7 @@ update actor set actor_id=300 where actor_id=1;
 select if(current_timestamp-`last_update`>=0 and current_timestamp-`last_update`<10,'ok','nok') from actor where actor_id=300;
 
 --CUBRID error: foreign table `actor_id` has been set null,but `last_update` can not update automatically
-select if(`last_update`-to_timestamp(@a)=0,'ok','nok') from film_actor;
+select if(`last_update`-to_timestamp(@a)<10,'ok','nok') from film_actor;
 drop table if exists `film_actor`,`actor`;
 
 
