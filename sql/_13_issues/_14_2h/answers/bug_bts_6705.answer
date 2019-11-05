@@ -63,7 +63,7 @@ idx-join (inner join)
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-select x.a, x.b, y.a, y.b from x x, y y where x.a=y.a and (x.a> ?:? ) order by ? desc 
+select /*+ ORDERED */ x.a, x.b, y.a, y.b from x x, y y where x.a=y.a and (x.a> ?:? ) order by ? desc 
 /* ---> skip ORDER BY */
 ===================================================
 0

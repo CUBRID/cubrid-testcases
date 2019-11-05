@@ -24,6 +24,6 @@ insert into y values (8, 1);
 insert into y values (11, 1);
 
 --@queryplan
-select /*+ recompile */ * from x, y where x.a = y.a and x.a > 5 order by x.a desc;
+select /*+ recompile ORDERED */ * from x, y where x.a = y.a and x.a > 5 order by x.a desc;
 drop table if exists x;
 drop table if exists y;
