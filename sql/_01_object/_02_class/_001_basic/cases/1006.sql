@@ -12,7 +12,7 @@ insert into DML_0001 values (3,'test2', {1,'test2'});
 insert into DML_0001 values (4,'test1', {2,'test1'});
 insert into DML_0001 values (5,'test2', {2,'test2'});
 
-select * from DML_0001;
+select * from DML_0001 order by 1;
 
 create class DML_0002 under  DML_0001
 ( 	int_col1 integer);
