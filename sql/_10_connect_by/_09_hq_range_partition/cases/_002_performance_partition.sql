@@ -27,21 +27,21 @@ insert into leafs values('E');
 
 insert into range_test
         select 5+inst_num(),t.id,t.text+l.text
-                from range_test t,leafs l;
+                from range_test t,(select * from leafs order by text) l;
 
 insert into range_test
         select 30+inst_num(),t.id,t.text+l.text
-                from range_test t,leafs l
+                from range_test t,(select * from leafs order by text) l
                 where length(t.text)=2;
 
 insert into range_test
         select 155+inst_num(),t.id,t.text+l.text
-                from range_test t,leafs l
+                from range_test t,(select * from leafs order by text) l
                 where length(t.text)=3;
 
 insert into range_test
         select 780+inst_num(),t.id,t.text+l.text
-                from range_test t,leafs l
+                from range_test t,(select * from leafs order by text) l
                 where length(t.text)=4;
 
 drop table leafs;
