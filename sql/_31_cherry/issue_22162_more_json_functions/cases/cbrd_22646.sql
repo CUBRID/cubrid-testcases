@@ -6,7 +6,7 @@ drop table if exists a;
 create table a (i int ,j json);
 insert into a values (1, 1); 
 insert into a values (2, '1');
-select * from a;
+select * from a order by 1,2;
 drop table if exists a;
 
 
