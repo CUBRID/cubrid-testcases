@@ -426,24 +426,27 @@ select t.a, t.b, t.c, t.d, t.e from t t where ((t.a= ?:? ) or (t.a= ?:? )) and t
 0
 ===================================================
 a    b    c    d    e    
-1     1     2     1     3     
-3     1     2     1     2     
-3     1     2     1     1     
-1     1     2     1     2     
 1     1     2     1     1     
+1     1     2     1     2     
+1     1     2     1     3     
+3     1     2     1     1     
+3     1     2     1     2     
 
 Query plan:
-iscan
-    class: t node[?]
-    index: idx_a_b_cd_d term[?] AND term[?] (multi_range_opt)
-    sort:  ? asc, ? desc, ? asc
+temp(order by)
+    subplan: iscan
+                 class: t node[?]
+                 index: idx_a_b_cd_d term[?] AND term[?]
+                 sort:  ? asc, ? desc, ? asc
+                 cost:  ? card ?
+    sort:  ? desc, ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.a, t.b, t.c, t.d, t.e from t t where ((t.a= ?:? ) or (t.a= ?:? )) and t.b= ?:?  order by ? desc , ? for orderby_num()<= ?:? 
+select t.a, t.b, t.c, t.d, t.e from t t where ((t.a= ?:? ) or (t.a= ?:? )) and t.b= ?:?  order by ? desc , ?, ?, ? for orderby_num()<= ?:? 
 ===================================================
 a    b    c    d    e    
-3     1     2     1     1     
 1     1     2     1     1     
+3     1     2     1     1     
 1     1     2     2     1     
 3     1     2     2     1     
 1     1     1     1     1     
@@ -456,10 +459,10 @@ temp(order by)
                  sargs: term[?]
                  sort:  ? asc, ? desc, ? asc
                  cost:  ? card ?
-    sort:  ? desc, ? asc
+    sort:  ? desc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.a, t.b, t.c, t.d, t.e from t t where ((t.a= ?:? ) or (t.a= ?:? )) and t.e= ?:?  and t.b= ?:?  order by ? desc , ? for orderby_num()<= ?:? 
+select t.a, t.b, t.c, t.d, t.e from t t where ((t.a= ?:? ) or (t.a= ?:? )) and t.e= ?:?  and t.b= ?:?  order by ? desc , ?, ? for orderby_num()<= ?:? 
 ===================================================
 0
 ===================================================
