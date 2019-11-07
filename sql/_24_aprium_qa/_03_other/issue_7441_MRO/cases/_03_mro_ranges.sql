@@ -110,11 +110,11 @@ drop index idx_a_b_cd_d_ed on t;
 create index idx_a_b_cd_d on t (a, b, c desc, d);
 select /*+ recompile */ * from t
 	where a in (1,3) and b = 1
-	order by c desc, d limit 5;
+	order by c desc, d, a, e limit 5;
 -- data filter:
 select /*+ recompile */ * from t
 	where a in (1,3) and b = 1 and e = 1
-	order by c desc, d limit 5;
+	order by c desc, d, a limit 5;
 
 drop t;
 
