@@ -19,7 +19,7 @@ execute stmt using 3, 'a';
 execute stmt using 4, 'b';
 execute stmt using 5, 'c';
 deallocate prepare stmt;
-prepare stmt from 'select * from t1 where cast(a as varchar collate utf8_en_cs) > ?';
+prepare stmt from 'select * from t1 where cast(a as varchar collate utf8_en_cs) > ? order by 1,2';
 set names utf8 collate utf8_en_cs;
 execute stmt using 'a';
 execute stmt using 'A';
