@@ -28,18 +28,18 @@ drop table if exists cc;
 drop table if exists tt1, tt2;
 create table tt1 as select jt.* from
 json_table( '{"date1":"2018-10-18"}', '$' columns (
-date1 varchar(50) path '$.date' DEFAULT  '1111-11-11'  ON ERROR default '1000-01-01'  ON EMPTY
+date1 varchar(50) path '$.date' default '1000-01-01'  ON EMPTY DEFAULT  '1111-11-11'  ON ERROR 
 )) as jt;
 create table tt2 as select str_to_date(jt.date1, '%Y-%m-%d') as date2 from
 json_table( '{"date1":"2018-10-18"}', '$'  columns (
-date1 varchar(50) path '$.date1' DEFAULT  '1112-12-12'  ON ERROR default '2000-01-01'  ON EMPTY
+date1 varchar(50) path '$.date1' default '2000-01-01'  ON EMPTY DEFAULT  '1112-12-12'  ON ERROR
 )) as jt;
 
 insert into tt1 values (select jt.* from json_table('{"date1":"2018-10-18"}', '$'
-columns (date1 json path '$.date1' DEFAULT  '"2018-00-00"'  ON ERROR default '"2018-99-99"'  ON EMPTY
+columns (date1 json path '$.date1' default '"2018-99-99"'  ON EMPTY DEFAULT  '"2018-00-00"'  ON ERROR
 )) as jt );
 insert into tt1 values (select jt.* from json_table('{"date1":"2018-10-18"}', '$'
-columns (date1 varchar(50) path '$.date1' DEFAULT  '"2018-00-00"'  ON ERROR default '2018-99-99'  ON EMPTY
+columns (date1 varchar(50) path '$.date1' default '2018-99-99'  ON EMPTY DEFAULT  '"2018-00-00"'  ON ERROR
 )) as jt );
 
 select /*+ recompile ordered */ count(*) from tt1, tt2, json_table( '[{"date1":"2018-10-18"}, {"date1":"2018-10-17"}]', '$[*]'

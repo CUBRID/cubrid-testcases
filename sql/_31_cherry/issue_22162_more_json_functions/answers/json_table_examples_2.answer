@@ -20,7 +20,7 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select jt.phones from j_purchaseorder j_purchaseorder, (json_table (j_purchaseorder.po_document, '$."ShippingInstructions"' columns (phones json PATH '$."Phone"' NULL ON ERROR NULL ON EMPTY )) as jt)
+select jt.phones from j_purchaseorder j_purchaseorder, (json_table (j_purchaseorder.po_document, '$."ShippingInstructions"' columns (phones json PATH '$."Phone"' NULL ON EMPTY NULL ON ERROR )) as jt)
 ===================================================
 id    phone_type    phone_num    
 1     Office     909-555-7307     
@@ -41,7 +41,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select jt.id, jt.phone_type, jt.phone_num from j_purchaseorder j_purchaseorder, (json_table (j_purchaseorder.po_document, '$."ShippingInstructions"."Phone"[*]' columns (id FOR ORDINALITY, phone_type varchar(?) PATH '$."type"' NULL ON ERROR NULL ON EMPTY, phone_num varchar(?) PATH '$."number"' NULL ON ERROR NULL ON EMPTY )) as jt) order by ?
+select jt.id, jt.phone_type, jt.phone_num from j_purchaseorder j_purchaseorder, (json_table (j_purchaseorder.po_document, '$."ShippingInstructions"."Phone"[*]' columns (id FOR ORDINALITY, phone_type varchar(?) PATH '$."type"' NULL ON EMPTY NULL ON ERROR, phone_num varchar(?) PATH '$."number"' NULL ON EMPTY NULL ON ERROR )) as jt) order by ?
 ===================================================
 requestor    has_zip    
 Alexis Bull     1     
@@ -58,7 +58,7 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select jt.requestor, jt.has_zip from j_purchaseorder j_purchaseorder, (json_table (j_purchaseorder.po_document, '$' columns (requestor varchar(?) PATH '$."Requestor"' NULL ON ERROR NULL ON EMPTY, has_zip varchar(?) EXISTS PATH '$."ShippingInstructions"."Address"."zipCode"' )) as jt)
+select jt.requestor, jt.has_zip from j_purchaseorder j_purchaseorder, (json_table (j_purchaseorder.po_document, '$' columns (requestor varchar(?) PATH '$."Requestor"' NULL ON EMPTY NULL ON ERROR, has_zip varchar(?) EXISTS PATH '$."ShippingInstructions"."Address"."zipCode"' )) as jt)
 ===================================================
 requestor    
 Alexis Bull     
@@ -75,7 +75,7 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select jt.requestor from j_purchaseorder j_purchaseorder, (json_table (j_purchaseorder.po_document, '$' columns (requestor varchar(?) PATH '$."Requestor"' NULL ON ERROR NULL ON EMPTY, has_zip integer EXISTS PATH '$."ShippingInstructions"."Address"."zipCode"' )) as jt) where jt.has_zip= ?:? 
+select jt.requestor from j_purchaseorder j_purchaseorder, (json_table (j_purchaseorder.po_document, '$' columns (requestor varchar(?) PATH '$."Requestor"' NULL ON EMPTY NULL ON ERROR, has_zip integer EXISTS PATH '$."ShippingInstructions"."Address"."zipCode"' )) as jt) where jt.has_zip= ?:? 
 ===================================================
 outer_value_0    outer_value_1    outer_value_2    
 1     2     ["a","b"]     
@@ -85,7 +85,7 @@ sscan
     class: jt node[?]
     cost:  ? card ?
 Query stmt:
-select jt.outer_value_?, jt.outer_value_?, jt.outer_value_? from (json_table ('[?,?,["a","b"]]', '$' columns (outer_value_? integer PATH '$[?]' NULL ON ERROR NULL ON EMPTY, outer_value_? integer PATH '$[?]' NULL ON ERROR NULL ON EMPTY, outer_value_? varchar(?) PATH '$[?]' NULL ON ERROR NULL ON EMPTY )) as jt)
+select jt.outer_value_?, jt.outer_value_?, jt.outer_value_? from (json_table ('[?,?,["a","b"]]', '$' columns (outer_value_? integer PATH '$[?]' NULL ON EMPTY NULL ON ERROR, outer_value_? integer PATH '$[?]' NULL ON EMPTY NULL ON ERROR, outer_value_? varchar(?) PATH '$[?]' NULL ON EMPTY NULL ON ERROR )) as jt)
 ===================================================
 outer_value_0    outer_value_1    nested_value_0    nested_value_1    
 1     2     a     b     
@@ -95,7 +95,7 @@ sscan
     class: jt node[?]
     cost:  ? card ?
 Query stmt:
-select jt.outer_value_?, jt.outer_value_?, jt.nested_value_?, jt.nested_value_? from (json_table ('[?,?,["a","b"]]', '$' columns (outer_value_? integer PATH '$[?]' NULL ON ERROR NULL ON EMPTY, outer_value_? integer PATH '$[?]' NULL ON ERROR NULL ON EMPTY, nested path '$[?]' columns (nested_value_? varchar(?) PATH '$[?]' NULL ON ERROR NULL ON EMPTY, nested_value_? varchar(?) PATH '$[?]' NULL ON ERROR NULL ON EMPTY ) )) as jt)
+select jt.outer_value_?, jt.outer_value_?, jt.nested_value_?, jt.nested_value_? from (json_table ('[?,?,["a","b"]]', '$' columns (outer_value_? integer PATH '$[?]' NULL ON EMPTY NULL ON ERROR, outer_value_? integer PATH '$[?]' NULL ON EMPTY NULL ON ERROR, nested path '$[?]' columns (nested_value_? varchar(?) PATH '$[?]' NULL ON EMPTY NULL ON ERROR, nested_value_? varchar(?) PATH '$[?]' NULL ON EMPTY NULL ON ERROR ) )) as jt)
 ===================================================
 outer_value_0    outer_value_1    nested_value_0    nested_value_1    
 100     200     300     400     
@@ -105,7 +105,7 @@ sscan
     class: jt node[?]
     cost:  ? card ?
 Query stmt:
-select jt.outer_value_?, jt.outer_value_?, jt.nested_value_?, jt.nested_value_? from (json_table ('{"a":?, "b":?, "c":{"d":?, "e":?}}', '$' columns (outer_value_? integer PATH '$."a"' NULL ON ERROR NULL ON EMPTY, outer_value_? integer PATH '$."b"' NULL ON ERROR NULL ON EMPTY, nested path '$."c"' columns (nested_value_? integer PATH '$."d"' NULL ON ERROR NULL ON EMPTY, nested_value_? integer PATH '$."e"' NULL ON ERROR NULL ON EMPTY ) )) as jt)
+select jt.outer_value_?, jt.outer_value_?, jt.nested_value_?, jt.nested_value_? from (json_table ('{"a":?, "b":?, "c":{"d":?, "e":?}}', '$' columns (outer_value_? integer PATH '$."a"' NULL ON EMPTY NULL ON ERROR, outer_value_? integer PATH '$."b"' NULL ON EMPTY NULL ON ERROR, nested path '$."c"' columns (nested_value_? integer PATH '$."d"' NULL ON EMPTY NULL ON ERROR, nested_value_? integer PATH '$."e"' NULL ON EMPTY NULL ON ERROR ) )) as jt)
 ===================================================
 requestor    phone_type    phone_num    
 Alexis Bull     Office     909-555-7307     
@@ -126,7 +126,7 @@ temp(order by)
     sort:  ? asc, ? desc
     cost:  ? card ?
 Query stmt:
-select jt.requestor, jt.phone_type, jt.phone_num from j_purchaseorder j_purchaseorder, (json_table (j_purchaseorder.po_document, '$' columns (requestor varchar(?) PATH '$."Requestor"' NULL ON ERROR NULL ON EMPTY, nested path '$."ShippingInstructions"."Phone"[*]' columns (phone_type varchar(?) PATH '$."type"' NULL ON ERROR NULL ON EMPTY, phone_num varchar(?) PATH '$."number"' NULL ON ERROR NULL ON EMPTY ) )) as jt) order by ?, ? desc 
+select jt.requestor, jt.phone_type, jt.phone_num from j_purchaseorder j_purchaseorder, (json_table (j_purchaseorder.po_document, '$' columns (requestor varchar(?) PATH '$."Requestor"' NULL ON EMPTY NULL ON ERROR, nested path '$."ShippingInstructions"."Phone"[*]' columns (phone_type varchar(?) PATH '$."type"' NULL ON EMPTY NULL ON ERROR, phone_num varchar(?) PATH '$."number"' NULL ON EMPTY NULL ON ERROR ) )) as jt) order by ?, ? desc 
 ===================================================
 id    name    json_pretty(po_document)    
 1     example     {

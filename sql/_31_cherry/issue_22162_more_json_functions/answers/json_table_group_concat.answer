@@ -39,7 +39,7 @@ temp(order by)
     sort:  ? asc, ? desc, ? asc, ? asc, ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select foo.i, foo.j, v?.i, v?.j, (v?.i+v?.j), jt.a, jt.b from foo foo, foo v?, (json_table ('[ {"a": ?, "b": [?,?]}, {"a": ?, "b": [?,?]}, {"a":?}]', '$[*]' columns (a integer PATH '$."a"' NULL ON ERROR NULL ON EMPTY, nested path '$."b"[*]' columns (b integer PATH '$' NULL ON ERROR NULL ON EMPTY ) )) as jt) order by ?, ? desc , ?, ?, ?, ?, ? for orderby_num()<= ?:? 
+select foo.i, foo.j, v?.i, v?.j, (v?.i+v?.j), jt.a, jt.b from foo foo, foo v?, (json_table ('[ {"a": ?, "b": [?,?]}, {"a": ?, "b": [?,?]}, {"a":?}]', '$[*]' columns (a integer PATH '$."a"' NULL ON EMPTY NULL ON ERROR, nested path '$."b"[*]' columns (b integer PATH '$' NULL ON EMPTY NULL ON ERROR ) )) as jt) order by ?, ? desc , ?, ?, ?, ?, ? for orderby_num()<= ?:? 
 ===================================================
 count(foo.i)    group_concat(distinct jt.a)    b    
 9     3     null     
@@ -66,7 +66,7 @@ temp(group by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select count(foo.i), group_concat(distinct jt.a), jt.b from foo foo, foo v?, (json_table ('[ {"a": ?, "b": [?,?]}, {"a": ?, "b": [?,?]}, {"a":?}]', '$[*]' columns (a integer PATH '$."a"' NULL ON ERROR NULL ON EMPTY, nested path '$."b"[*]' columns (b integer PATH '$' NULL ON ERROR NULL ON EMPTY ) )) as jt) group by jt.b
+select count(foo.i), group_concat(distinct jt.a), jt.b from foo foo, foo v?, (json_table ('[ {"a": ?, "b": [?,?]}, {"a": ?, "b": [?,?]}, {"a":?}]', '$[*]' columns (a integer PATH '$."a"' NULL ON EMPTY NULL ON ERROR, nested path '$."b"[*]' columns (b integer PATH '$' NULL ON EMPTY NULL ON ERROR ) )) as jt) group by jt.b
 ===================================================
 Error:-494
 ===================================================
@@ -95,7 +95,7 @@ temp(group by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select count(v?.j), group_concat(distinct (v?.i+v?.j)), jt.b from foo foo, foo v?, (json_table ('[ {"a": ?, "b": [?,?]}, {"a": ?, "b": [?,?]}, {"a":?}]', '$[*]' columns (a integer PATH '$."a"' NULL ON ERROR NULL ON EMPTY, nested path '$."b"[*]' columns (b integer PATH '$' NULL ON ERROR NULL ON EMPTY ) )) as jt) group by jt.b
+select count(v?.j), group_concat(distinct (v?.i+v?.j)), jt.b from foo foo, foo v?, (json_table ('[ {"a": ?, "b": [?,?]}, {"a": ?, "b": [?,?]}, {"a":?}]', '$[*]' columns (a integer PATH '$."a"' NULL ON EMPTY NULL ON ERROR, nested path '$."b"[*]' columns (b integer PATH '$' NULL ON EMPTY NULL ON ERROR ) )) as jt) group by jt.b
 ===================================================
 i    j    i    j    k    a    b    
 1     1     1     1     2     1     11     
@@ -134,7 +134,7 @@ temp(order by)
     sort:  ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select foo.i, foo.j, v?.i, v?.j, (v?.i+v?.j), jt.a, jt.b from foo foo, foo v?, (json_table ('[ {"a": ?, "b": [?,?]}, {"a": ?, "b": [?,?]}, {"a":?}]', '$[*]' columns (a integer PATH '$."a"' NULL ON ERROR NULL ON EMPTY, nested path '$."b"[*]' columns (b integer PATH '$' NULL ON ERROR NULL ON EMPTY ) )) as jt) where (jt.a=foo.i) order by ?, ?, ?, ?, ?, ?, ?
+select foo.i, foo.j, v?.i, v?.j, (v?.i+v?.j), jt.a, jt.b from foo foo, foo v?, (json_table ('[ {"a": ?, "b": [?,?]}, {"a": ?, "b": [?,?]}, {"a":?}]', '$[*]' columns (a integer PATH '$."a"' NULL ON EMPTY NULL ON ERROR, nested path '$."b"[*]' columns (b integer PATH '$' NULL ON EMPTY NULL ON ERROR ) )) as jt) where (jt.a=foo.i) order by ?, ?, ?, ?, ?, ?, ?
 ===================================================
 i    j    
 1     1     
@@ -175,7 +175,7 @@ sscan
     class: jt node[?]
     cost:  ? card ?
 Query stmt:
-select jt.a, jt.b from (json_table ('[ {"a": ?, "b": [?,?]}, {"a": ?, "b": [?,?]}, {"a":?}]', '$[*]' columns (a integer PATH '$."a"' NULL ON ERROR NULL ON EMPTY, nested path '$."b"[*]' columns (b integer PATH '$' NULL ON ERROR NULL ON EMPTY ) )) as jt)
+select jt.a, jt.b from (json_table ('[ {"a": ?, "b": [?,?]}, {"a": ?, "b": [?,?]}, {"a":?}]', '$[*]' columns (a integer PATH '$."a"' NULL ON EMPTY NULL ON ERROR, nested path '$."b"[*]' columns (b integer PATH '$' NULL ON EMPTY NULL ON ERROR ) )) as jt)
 ===================================================
 0
 ===================================================

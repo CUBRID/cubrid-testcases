@@ -1,11 +1,20 @@
 -- CBRD-22405  memory leak
 select jt.* from json_table( '{"date1":"2018-10-18"}', '$' columns (
-    date1 varchar(50) path '$.date' DEFAULT '"0000-00-00"' ON ERROR default '"9999-99-99"'  ON EMPTY 
+    date1 varchar(50) path '$.date' default '"9999-99-99"'  ON EMPTY DEFAULT '"0000-00-00"' ON ERROR 
 )) as jt;
 
 -- CBRD-22406 expected to get "2018-99-99"
 select jt.* from json_table( '{"date1":"2018-10-18"}', '$' columns (
-    date1 varchar(50) path '$.date' DEFAULT '"2018-00-00"' ON ERROR default '"2018-99-99"'  ON EMPTY 
+    date1 varchar(50) path '$.date' default '"2018-99-99"'  ON EMPTY DEFAULT '"2018-00-00"' ON ERROR
+)) as jt;
+
+-- CBRD-23556 different order of "ON EMPTY" and "ON ERROR" clause.
+select jt.* from json_table( '{"date1":"2018-10-18"}', '$' columns (
+    date1 varchar(50) path '$.date' DEFAULT '"0000-00-00"' ON ERROR default '"9999-99-99"'  ON EMPTY
+)) as jt;
+
+select jt.* from json_table( '{"date1":"2018-10-18"}', '$' columns (
+    date1 varchar(50) path '$.date' DEFAULT '"2018-00-00"' ON ERROR default '"2018-99-99"'  ON EMPTY
 )) as jt;
 
 --expect error
@@ -18,32 +27,32 @@ drop table if exists tt1, tt2;
 --CBRD-22412
 create table tt1 as select jt.* from 
 json_table( '{"date1":"2018-10-18"}', '$' columns (
-    date1 varchar(50) path '$.date' DEFAULT  '1111-11-11'  ON ERROR default '1000-01-01'  ON EMPTY 
+    date1 varchar(50) path '$.date' default '1000-01-01' ON EMPTY DEFAULT  '1111-11-11' ON ERROR
 )) as jt;
 
 --expect error 
 create table tt2 as select jt.* from 
 json_table( '{"date1":"2018-10-18"}', '$'  columns (
-    date1 date path '$.date' DEFAULT  '"2018-00-00"'  ON ERROR default '"2018-99-99"'  ON EMPTY 
+    date1 date path '$.date' default '"2018-99-99"'  ON EMPTY DEFAULT  '"2018-00-00"'  ON ERROR
 )) as jt;
 
 --expect error
 create table tt2 as select str_to_date(jt.date1, '%Y-%m-%d') from 
 json_table( '{"date1":"2018-10-18"}', '$'  columns (
-    date1 varchar(50) path '$.date' DEFAULT  '2018-00-00'  ON ERROR default '2018-99-99'  ON EMPTY 
+    date1 varchar(50) path '$.date' default '2018-99-99'  ON EMPTY DEFAULT '2018-00-00'  ON ERROR
 )) as jt;
 
 create table tt2 as select str_to_date(jt.date1, '%Y-%m-%d') as date2 from 
 json_table( '{"date1":"2018-10-18"}', '$'  columns (
-    date1 varchar(50) path '$.date1' DEFAULT  '1112-12-12'  ON ERROR default '2000-01-01'  ON EMPTY 
+    date1 varchar(50) path '$.date1' default '2000-01-01'  ON EMPTY DEFAULT '1112-12-12' ON ERROR 
 )) as jt;
 
 insert into tt1 values (select jt.* from json_table('{"date1":"2018-10-18"}', '$'
-    columns (date1 json path '$.date1' DEFAULT  '"2018-00-00"'  ON ERROR default '"2018-99-99"'  ON EMPTY 
+    columns (date1 json path '$.date1' default '"2018-99-99"'  ON EMPTY DEFAULT  '"2018-00-00"'  ON ERROR
 )) as jt );
 
 insert into tt1 values (select jt.* from json_table('{"date1":"2018-10-18"}', '$'
-    columns (date1 varchar(50) path '$.date1' DEFAULT  '"2018-00-00"'  ON ERROR default '2018-99-99'  ON EMPTY 
+    columns (date1 varchar(50) path '$.date1' default '2018-99-99'  ON EMPTY DEFAULT  '"2018-00-00"'  ON ERROR
 )) as jt );
 
 show create table tt1;
