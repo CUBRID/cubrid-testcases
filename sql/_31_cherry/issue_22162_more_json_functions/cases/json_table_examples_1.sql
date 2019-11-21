@@ -8,7 +8,7 @@ FROM
     '$[*]'
     COLUMNS(
       rowid FOR ORDINALITY,
-      ac VARCHAR(100) PATH '$.a' DEFAULT '999' ON ERROR DEFAULT '111' ON EMPTY,
+      ac VARCHAR(100) PATH '$.a' DEFAULT '111' ON EMPTY DEFAULT '999' ON ERROR,
       aj JSON PATH '$.a' DEFAULT '{"x": 333}' ON EMPTY,
       bx INT EXISTS PATH '$.b'
     )

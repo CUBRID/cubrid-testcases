@@ -36,12 +36,44 @@ execute s using @jdoc;
 drop table if exists t;
 create table t as SELECT * FROM JSON_TABLE( @jdoc, '$[*]' COLUMNS(
     rowid FOR ORDINALITY,
+    AddressType INT PATH '$.AddressType' DEFAULT '111' ON EMPTY DEFAULT '999' ON ERROR,
+    AdrressCode VARCHAR(50) PATH '$.AdrressCode' DEFAULT 'Code XXX' ON EMPTY DEFAULT 'Code 999' ON ERROR,
+    AdreessDetail VARCHAR(100) PATH '$.AdreessDetail',
+    AddressZipCode CHAR(6) PATH '$.AddressZipCode'
+)) AS Address;
+
+--CBRD-23556
+create table t as SELECT * FROM JSON_TABLE( @jdoc, '$[*]' COLUMNS(
+    rowid FOR ORDINALITY,
     AddressType INT PATH '$.AddressType' DEFAULT '999' ON ERROR DEFAULT '111' ON EMPTY,
     AdrressCode VARCHAR(50) PATH '$.AdrressCode' DEFAULT 'Code 999' ON ERROR DEFAULT 'Code XXX' ON EMPTY,
     AdreessDetail VARCHAR(100) PATH '$.AdreessDetail',
     AddressZipCode CHAR(6) PATH '$.AddressZipCode'
 )) AS Address;
 
+SELECT * FROM JSON_TABLE ('{"a":1}', '$' 
+COLUMNS ( 
+col1 INT PATH '$.a', 
+col2 INT PATH '$.b', 
+col3 INT PATH '$.c' DEFAULT '0' ON EMPTY DEFAULT '1' ON ERROR)) as jt;
+
+SELECT * FROM JSON_TABLE ('{"a":1}', '$' 
+COLUMNS ( 
+col1 INT PATH '$.a', 
+col2 INT PATH '$.b', 
+col3 INT PATH '$.c' DEFAULT '0' ON ERROR DEFAULT '1' ON EMPTY)) as jt;
+
+SELECT * FROM JSON_TABLE ('{"a":1}', '$' 
+COLUMNS ( 
+col1 INT PATH '$.a', 
+col2 INT PATH '$.b', 
+col3 INT PATH '$.c' DEFAULT '0' ON EMPTY DEFAULT '1' ON ERROR DEFAULT '2' ON EMPTY)) as jt;
+
+SELECT * FROM JSON_TABLE ('{"a":1}', '$' 
+COLUMNS ( 
+col1 INT PATH '$.a', 
+col2 INT PATH '$.b', 
+col3 INT PATH '$.c' DEFAULT '0' ON ERROR DEFAULT '1' ON EMPTY DEFAULT '2' ON ERROR)) as jt;
 drop variable @jdoc;
 drop table if exists t;
 

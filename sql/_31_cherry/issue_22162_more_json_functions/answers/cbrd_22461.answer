@@ -132,6 +132,6 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ count(*) from tt? tt?, tt? tt?, (json_table ('[{"date?":"?-?-?"}, {"date?":"?-?-?"}]', '$[*]' columns (date? varchar(?) PATH '$."date?"' NULL ON ERROR NULL ON EMPTY )) as jt) where (tt?.date?> str_to_date(jt.date?, '%Y-%m-%d')) and tt?.date?= str_to_date(tt?.date?, '%Y-%m-%d')
+select /*+ ORDERED */ count(*) from tt? tt?, tt? tt?, (json_table ('[{"date?":"?-?-?"}, {"date?":"?-?-?"}]', '$[*]' columns (date? varchar(?) PATH '$."date?"' NULL ON EMPTY NULL ON ERROR )) as jt) where (tt?.date?> str_to_date(jt.date?, '%Y-%m-%d')) and tt?.date?= str_to_date(tt?.date?, '%Y-%m-%d')
 ===================================================
 0

@@ -10,11 +10,11 @@ c1
 [1,2,3]     
 
 ===================================================
-if(benchmark(1000, (select * from (json_table (@js, '$.students' columns (c1 json PATH '$' NULL ON ERROR NULL ON EMPTY )) as t) limit 1))>0, 'ok', 'nok')    
+if(benchmark(1000, (select * from (json_table (@js, '$.students' columns (c1 json PATH '$' NULL ON EMPTY NULL ON ERROR )) as t) limit 1))>0, 'ok', 'nok')    
 ok     
 
 ===================================================
-if(benchmark(1000, (select * from (json_table (@js, '$.students.*' columns (c1 json PATH '$' NULL ON ERROR NULL ON EMPTY )) as t) limit 1))>0, 'ok', 'nok')    
+if(benchmark(1000, (select * from (json_table (@js, '$.students.*' columns (c1 json PATH '$' NULL ON EMPTY NULL ON ERROR )) as t) limit 1))>0, 'ok', 'nok')    
 ok     
 
 ===================================================

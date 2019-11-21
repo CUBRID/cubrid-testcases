@@ -2,18 +2,18 @@
 select jt.* from json_table( '[{"A":1},{"B":2}]' , '$[*]' 
     columns(
         col1 json path '$',
-        col2 int path '$.A' DEFAULT '999' ON ERROR DEFAULT '111' ON EMPTY,
-        col3 int path '$.b' DEFAULT '999' ON ERROR DEFAULT '111' ON EMPTY,
-        col4 int path '$.B' DEFAULT '999' ON ERROR DEFAULT '111' ON EMPTY
+        col2 int path '$.A' DEFAULT '111' ON EMPTY DEFAULT '999' ON ERROR,
+        col3 int path '$.b' DEFAULT '111' ON EMPTY DEFAULT '999' ON ERROR,
+        col4 int path '$.B' DEFAULT '111' ON EMPTY DEFAULT '999' ON ERROR
     )
 ) as jt;  
 
 select jt.* from json_table( '[{"A":1},{"B":2}]' , '$[*]' 
     columns(
         col1 json path '$',
-        col2 int path '$.A' DEFAULT '999' ON ERROR DEFAULT '111' ON EMPTY,
-        col3 int path '$.b' DEFAULT '999' ON ERROR DEFAULT '111' ON EMPTY,
-        col4 int path '$.B' DEFAULT '999' ON ERROR DEFAULT '111' ON EMPTY
+        col2 int path '$.A' DEFAULT '111' ON EMPTY DEFAULT '999' ON ERROR,
+        col3 int path '$.b' DEFAULT '111' ON EMPTY DEFAULT '999' ON ERROR,
+        col4 int path '$.B' DEFAULT '111' ON EMPTY DEFAULT '999' ON ERROR
     )
 ) as jt order by 1 desc;  
 
@@ -24,7 +24,7 @@ FROM
     '$[*]'
     COLUMNS(
       rowid FOR ORDINALITY,
-      ac VARCHAR(100) PATH '$.a' DEFAULT '999' ON ERROR DEFAULT '111' ON EMPTY,
+      ac VARCHAR(100) PATH '$.a' DEFAULT '111' ON EMPTY DEFAULT '999' ON ERROR,
       aj JSON PATH '$.a' DEFAULT '{"x": 333}' ON EMPTY,
       bx INT EXISTS PATH '$.b'
     )
@@ -37,7 +37,7 @@ FROM
     '$[*]'
     COLUMNS(
       rowid FOR ORDINALITY,
-      ac VARCHAR(100) PATH '$.a' DEFAULT '999' ON ERROR DEFAULT '111' ON EMPTY,
+      ac VARCHAR(100) PATH '$.a' DEFAULT '111' ON EMPTY DEFAULT '999' ON ERROR,
       aj JSON PATH '$.a' DEFAULT '{"x": 333}' ON EMPTY,
       bx INT EXISTS PATH '$.b'
     )
@@ -143,3 +143,49 @@ FROM
         )
     )
 ) as jt order by 1 desc , 2,3, 4, 5 desc;
+
+--CBRD-23556 different order of "ON EMPTY" and "ON ERROR" clause.
+select jt.* from json_table( '[{"A":1},{"B":2}]' , '$[*]'
+    columns(
+        col1 json path '$',
+        col2 int path '$.A' DEFAULT '999' ON ERROR DEFAULT '111' ON EMPTY,
+        col3 int path '$.b' DEFAULT '999' ON ERROR DEFAULT '111' ON EMPTY,
+        col4 int path '$.B' DEFAULT '999' ON ERROR DEFAULT '111' ON EMPTY
+    )
+) as jt;
+
+select jt.* from json_table( '[{"A":1},{"B":2}]' , '$[*]'
+    columns(
+        col1 json path '$',
+        col2 int path '$.A' DEFAULT '999' ON ERROR DEFAULT '111' ON EMPTY,
+        col3 int path '$.b' DEFAULT '999' ON ERROR DEFAULT '111' ON EMPTY,
+        col4 int path '$.B' DEFAULT '999' ON ERROR DEFAULT '111' ON EMPTY
+    )
+) as jt order by 1 desc;
+
+SELECT *
+FROM
+  JSON_TABLE(
+    '[{"a":"3"},{"a":2},{"b":1},{"a":0},{"a":[1,2]}]',
+    '$[*]'
+    COLUMNS(
+      rowid FOR ORDINALITY,
+      ac VARCHAR(100) PATH '$.a' DEFAULT '999' ON ERROR DEFAULT '111' ON EMPTY,
+      aj JSON PATH '$.a' DEFAULT '{"x": 333}' ON EMPTY,
+      bx INT EXISTS PATH '$.b'
+    )
+  ) AS tt order by 1;
+
+SELECT *
+FROM
+  JSON_TABLE(
+    '[{"a":"3"},{"a":2},{"b":1},{"a":0},{"a":[1,2]}]',
+    '$[*]'
+    COLUMNS(
+      rowid FOR ORDINALITY,
+      ac VARCHAR(100) PATH '$.a' DEFAULT '999' ON ERROR DEFAULT '111' ON EMPTY,
+      aj JSON PATH '$.a' DEFAULT '{"x": 333}' ON EMPTY,
+      bx INT EXISTS PATH '$.b'
+    )
+  ) AS tt order by 1 desc;
+
