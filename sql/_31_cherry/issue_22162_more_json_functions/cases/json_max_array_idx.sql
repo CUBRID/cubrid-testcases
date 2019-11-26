@@ -1,3 +1,4 @@
+--+ holdcas on;
 set @a='{"title":"hello"}';
 select json_set(@a,  '$."title"[10000000000]', 'world') ;
 select json_insert(@a,  '$."title"[10000000000]', 'world') ;
@@ -47,3 +48,5 @@ SET SYSTEM PARAMETERS 'json_max_array_idx = -1024';
 SET SYSTEM PARAMETERS 'json_max_array_idx = 65536';
 drop variable @a;
 
+
+--+ holdcas off;

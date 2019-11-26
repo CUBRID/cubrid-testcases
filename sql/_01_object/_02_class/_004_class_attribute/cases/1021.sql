@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- [er]create class attribute using default and null constraints
 
 create class picture
@@ -22,3 +23,4 @@ class attribute (meal_type string null default 'a' )
  DROP picture;
  
  DROP meal;
+--+ holdcas off;

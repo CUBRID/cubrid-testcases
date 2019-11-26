@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop table if exists t;
 create table t(a int, b json, c json);
 insert into t values(1, json_object('a','b'), '["c", "d"]');
@@ -62,3 +63,5 @@ with recursive cte(m,a) as (select 1 m, json_merge(json_set('{"111": "ccc"}', '$
 select json_extract('1', '$[0]'), json_set('1', '$[0]', json_object('name', 'cube')), json_set(NULL, '$[0]', json_object('name', 'cube'));
 drop table if exists t1;
 drop table if exists t;
+
+--+ holdcas off;

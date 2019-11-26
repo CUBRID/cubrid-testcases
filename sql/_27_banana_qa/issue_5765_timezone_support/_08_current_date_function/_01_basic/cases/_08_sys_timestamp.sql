@@ -1,3 +1,4 @@
+--+ holdcas on;
 --test current timestamp doesn't change as the session time zone setting
 set timezone '+02:30';
 set @x1=(select sys_timestamp);
@@ -23,3 +24,5 @@ drop table if exists t;
 set timezone 'Asia/Seoul';
 
 
+
+--+ holdcas off;

@@ -1,3 +1,4 @@
+--+ holdcas on;
 
 SELECT 
 JSON_MERGE_PATCH   ('{"Name":"Jone"}','{"Age":39}'),
@@ -35,3 +36,5 @@ SELECT JSON_MERGE_PATCH   ('{"A":["a","b"]}','{"B":["c"]}')
 UNION ALL
 SELECT JSON_MERGE_PRESERVE('{"A":["a","b"]}','{"B":["c"]}');
 
+
+--+ holdcas off;

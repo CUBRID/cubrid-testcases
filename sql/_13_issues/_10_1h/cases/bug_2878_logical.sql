@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- and
 select 29 & 15 into :expected;
 
@@ -50,3 +51,5 @@ deallocate prepare s;
 select case when (:expected = :result) then 'YES' else 'NO' end as case5;
 
 drop table tbla1;
+
+--+ holdcas off;

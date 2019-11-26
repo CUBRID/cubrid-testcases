@@ -1,3 +1,4 @@
+--+ holdcas on;
 
 --CBRD-22486 
 SELECT JSON_SEARCH('"abc"', 'one', 'abc', '','');
@@ -35,3 +36,5 @@ SELECT JSON_SEARCH(@j, 'onee', 'abc');
 
 drop variable @j;
 
+
+--+ holdcas off;

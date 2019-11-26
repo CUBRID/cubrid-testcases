@@ -1,3 +1,4 @@
+--+ holdcas on;
 --datetime, object 
 
 create class person_info(id int auto_increment, name char(20), onboard_time datetime);
@@ -23,3 +24,5 @@ select proj_name, manager.onboard_time from project_info;
 drop class project_info;
 drop class person_info;
 
+
+--+ holdcas off;

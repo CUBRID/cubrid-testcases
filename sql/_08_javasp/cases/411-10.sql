@@ -1,3 +1,4 @@
+--+ holdcas on;
 autocommit off;
 
 CREATE  Procedure  ptestint9(i in out string) as language java name 'SpTest5.ptestint2(int[]) ';
@@ -270,3 +271,5 @@ rollback;
 
 autocommit on;
 
+
+--+ holdcas off;

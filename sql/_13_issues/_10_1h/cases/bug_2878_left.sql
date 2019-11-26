@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- 1
 prepare s from 'select LEFT (?, ?) into :result';
 execute s using 'abcdef', 2;
@@ -47,3 +48,5 @@ evaluate null into :expected;
 select case when :expected <=> :result then 'YES' else 'NO' end as case6;
 
 
+
+--+ holdcas off;

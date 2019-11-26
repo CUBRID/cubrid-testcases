@@ -6,3 +6,5 @@ select 'hello', b1, b1.a, b1.b, b2, b2.a, b2.b
 from big b1, big b2
 where b1 in {o1,o2} and b2 in {o1,o2}
 order by  b1.a, b1.b, b2, b2.a, b2.b;
+
+--+ holdcas off;

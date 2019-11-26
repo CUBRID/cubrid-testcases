@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- key word test
 drop table if exists median;
 create table median(id int, median int);
@@ -16,3 +17,5 @@ set @median=1;
 select @median;
 drop variable @median;
 drop table if exists median;
+
+--+ holdcas off;

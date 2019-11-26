@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- --no-auto-commit
 --delete from x;
 --drop x;
@@ -32,3 +33,5 @@ delete from x;
 drop x;
 commit;
 autocommit on;
+
+--+ holdcas off;

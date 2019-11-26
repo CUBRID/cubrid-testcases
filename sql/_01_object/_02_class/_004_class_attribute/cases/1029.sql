@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- [er]create class attribute using default and unique constraints
 
 create class picture
@@ -22,3 +23,4 @@ class attribute (meal_type string default 'a' unique)
  DROP picture;
  
  DROP meal;
+--+ holdcas off;

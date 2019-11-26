@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop table if exists t;
 drop table if exists foo;
 
@@ -56,3 +57,5 @@ insert into foo(col22) values(var);
 
 drop table foo;
 drop table t;
+
+--+ holdcas off;

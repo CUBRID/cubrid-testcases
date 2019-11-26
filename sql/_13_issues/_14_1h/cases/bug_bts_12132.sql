@@ -1,3 +1,4 @@
+--+ holdcas on;
 --[I18N] In database with euckr charset, error occurs when comparing two session variables while one of them is assigned value with host variable.
 
 
@@ -28,3 +29,5 @@ deallocate prepare s;
 drop variable result, expected;
 
 set names iso88591;
+
+--+ holdcas off;

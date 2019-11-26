@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- 1
 prepare s from 'select MID (?, ?, ?) into :result'
 execute s using 'Quadratically', 5, 6
@@ -62,3 +63,5 @@ deallocate prepare s;
 evaluate null into :expected;
 select case when :expected <=> :result then 'YES' else 'NO' end as case8;
 
+
+--+ holdcas off;

@@ -1,3 +1,4 @@
+--+ holdcas on;
 select json_array_append('["a", "b"]', '$', 'false');
 select json_array_append('{"k1":1, "k2":["a", "b"]}', '$.k2', '2');
 select json_array_append('["a", ["b", "c"], "d"]', '$[0]', '2');
@@ -178,3 +179,5 @@ select JSON_VALID(0x36f0c8dccd83c5eac156da);
 SELECT JSON_VALID('{"id": 1, "name": "Monty"}') AS json_valid;
 SELECT JSON_CONTAINS('{"A": 0, "B": {"C": 1}, "D": 2}', '2', '$.A') AS json_contains;
 drop VARIABLE @j, @str, @path;
+
+--+ holdcas off;

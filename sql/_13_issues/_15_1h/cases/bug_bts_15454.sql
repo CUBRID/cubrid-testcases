@@ -1,3 +1,4 @@
+--+ holdcas on;
 get optimization cost 'nl-join' into :default_iscan;
 drop class if exists B,A,dummy;
 create class B (bn int);
@@ -96,3 +97,5 @@ select b.aa.i from b where b.aa = :var;
 
 drop table if exists a,b,dummy;
 set optimization cost 'nl-join' :default_iscan;
+
+--+ holdcas off;

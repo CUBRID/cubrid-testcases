@@ -1,3 +1,4 @@
+--+ holdcas on;
 set @ja='[1,2, {"a":1}]';
 set @jo='{"a":1, "b":[1,2,3], "c":["a","b","c"]}';
 prepare st from 'SELECT JSON_ARRAY(?, ?, ?)';
@@ -156,3 +157,5 @@ execute st using 1,1;
 drop table if exists t;
 drop variable @j, @jo,@ja,@k,@v,@p,@oa;
 drop prepare st;
+
+--+ holdcas off;

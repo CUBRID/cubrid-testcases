@@ -1,3 +1,4 @@
+--+ holdcas on;
 --delete data from condition clause with all and only keyword
 
 create class DML_0001
@@ -61,3 +62,5 @@ drop class DML_0002;
 drop class DML_0003;
 drop class DML_0004;
 drop variable a,b,c,d,e ;
+
+--+ holdcas off;

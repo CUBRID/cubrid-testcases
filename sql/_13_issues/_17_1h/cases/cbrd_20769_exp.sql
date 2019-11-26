@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- RHS
 drop table if exists foo;
 create table foo (i int primary key, s string);
@@ -106,3 +107,5 @@ drop table if exists t2;
 drop table if exists tbl;
 drop table if exists foo;
 DEALLOCATE VARIABLE  @a, @b;
+
+--+ holdcas off;

@@ -1,3 +1,4 @@
+--+ holdcas on;
 --Test select with variable 
 create class t1(id integer, name varchar(20), birthday date, dept_id integer);
 create class t2(id integer, dept_name varchar(20));
@@ -20,3 +21,5 @@ where  dept_id = :arg_id order by id, name;
 
 drop class t1;
 drop class t2;
+
+--+ holdcas off;

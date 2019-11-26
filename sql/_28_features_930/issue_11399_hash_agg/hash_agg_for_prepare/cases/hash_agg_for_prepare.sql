@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop table if exists t1;
 create table t1(a int, b double, c char(10));
 insert into t1 values(1,777,'cc');
@@ -55,3 +56,5 @@ deallocate prepare s6
 drop variable @v1;
 drop table t1;
 
+
+--+ holdcas off;

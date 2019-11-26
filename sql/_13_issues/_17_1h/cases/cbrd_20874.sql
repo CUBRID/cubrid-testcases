@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop table if exists DML_0001;
 drop table if exists DML_0002;
 drop table if exists DML_0003;
@@ -70,3 +71,5 @@ drop table if exists DML_0002;
 drop table if exists DML_0003;
 
 
+
+--+ holdcas off;

@@ -1,3 +1,4 @@
+--+ holdcas on;
 --use varialbles and parameters as enum values
 
 
@@ -17,3 +18,5 @@ CREATE TABLE tb (
 );
 
 drop variable @yellow;
+
+--+ holdcas off;

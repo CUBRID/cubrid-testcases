@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- This testcase use modified Oracle samples. See below for the license:
 -- Copyright (c) 2015 Oracle
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -61,3 +62,5 @@ select avg(ss) into :arg_avgsal
 
 
 drop class TEST;
+
+--+ holdcas off;

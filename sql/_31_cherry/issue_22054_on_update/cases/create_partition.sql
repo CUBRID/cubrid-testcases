@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop if exists t;
 create table t(
 a int,
@@ -428,3 +429,5 @@ drop variable @d,@f;
 
 
 
+
+--+ holdcas off;

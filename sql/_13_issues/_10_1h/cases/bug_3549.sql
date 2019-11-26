@@ -1,3 +1,4 @@
+--+ holdcas on;
 prepare s from 'select power(?, ?) into :result'
 execute s using 2, 3;
 
@@ -40,3 +41,5 @@ evaluate power(NULL, NULL) into :expected;
 
 select case when :expected <=> :result then 'YES' else 'NO' end as case6;
 drop prepare s;
+
+--+ holdcas off;

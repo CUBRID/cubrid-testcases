@@ -1,3 +1,4 @@
+--+ holdcas on;
 --the test point need 'autocommit off' environment
 
 autocommit off;
@@ -32,3 +33,5 @@ insert into tree2 (a, id, parentid) values (1, null, null);
 drop table if exists tb1,foo,tree2;
 commit;
 autocommit on;
+
+--+ holdcas off;

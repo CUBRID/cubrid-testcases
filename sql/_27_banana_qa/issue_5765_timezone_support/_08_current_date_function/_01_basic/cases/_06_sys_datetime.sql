@@ -1,3 +1,4 @@
+--+ holdcas on;
 --test sys datetime can change as the datebase time zone setting
 --but not change as the session time zone setting
 set timezone '+02:30';
@@ -27,3 +28,5 @@ drop table if exists t;
 set timezone 'Asia/Seoul';
 
 
+
+--+ holdcas off;

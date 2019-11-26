@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop table if exists s;
 create table s(a int);
 insert into s values (1), (2), (3), (4), (5), (6), (7), (8), (9), (0);
@@ -33,3 +34,5 @@ select if (benchmark(1000,(select count(*)  from t1 where a->'$.students.name.ni
 drop table if exists t1,s;
 drop variable @js;
 
+
+--+ holdcas off;

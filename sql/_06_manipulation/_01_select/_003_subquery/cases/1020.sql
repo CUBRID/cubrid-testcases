@@ -1,3 +1,4 @@
+--+ holdcas on;
 --test the in keyword using a subquery which used a variable
 
 drop table if exists DML_0001;
@@ -17,3 +18,5 @@ select * from DML_0001 where int_col in (select @a:=int_col from DML_0001 order 
 
 drop DML_0001;
 drop variable @a;
+
+--+ holdcas off;

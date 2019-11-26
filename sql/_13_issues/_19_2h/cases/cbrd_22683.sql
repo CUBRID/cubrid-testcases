@@ -1,3 +1,4 @@
+--+ holdcas on;
 set @a = 1;
 
 SELECT 
@@ -11,3 +12,5 @@ SELECT
 ;
 
 drop variable @a;
+
+--+ holdcas off;

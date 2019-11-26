@@ -1,3 +1,4 @@
+--+ holdcas on;
 --insert with subquery
 
 drop table if exists t2, t1;
@@ -53,3 +54,5 @@ select * from t2 order by 1, 2, 3;
 drop t2, t1;
 
 
+
+--+ holdcas off;

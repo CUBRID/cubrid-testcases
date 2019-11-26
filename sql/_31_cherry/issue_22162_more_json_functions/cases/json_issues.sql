@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- http://jira.cubrid.org/browse/CBRD-22510
 SELECT * from JSON_TABLE('[{"x": 2, "y": 8 }]', '$[0]' COLUMNS (x int PATH '$.x', y int PATH '$.y')) as t1 limit 1;
 SELECT * from JSON_TABLE('[{"x": 2, "y": 8 }]', '$[0]' COLUMNS (x int PATH '$.x', y int PATH '$.y')) as t1 limit 1;
@@ -168,3 +169,5 @@ select JSON_CONTAINS_PATH(@js, 'one', json_search(@js, 'one', 'Jone') );
 drop variable @js;
 
 
+
+--+ holdcas off;

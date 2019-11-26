@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- [er]create a class with udt to set and insert data to this calss using a attribute to be defined
 
 create class t1(
@@ -31,3 +32,4 @@ SELECT * FROM t2;
 
 drop t1;
 drop t2;
+--+ holdcas off;

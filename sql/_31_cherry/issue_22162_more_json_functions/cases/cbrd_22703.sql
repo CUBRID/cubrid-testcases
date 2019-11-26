@@ -1,3 +1,4 @@
+--+ holdcas on;
 set @js='{
    "students":
       {
@@ -41,3 +42,5 @@ select if(benchmark(1000,(
 )>0, 'ok','nok');
 
 drop variable @js;
+
+--+ holdcas off;

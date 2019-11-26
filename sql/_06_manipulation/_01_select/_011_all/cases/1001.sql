@@ -1,3 +1,4 @@
+--+ holdcas on;
 --test Only, All , all except keyword using some select statements
 create class DML_0001
 ( 	int_col int not null,
@@ -71,3 +72,5 @@ drop class DML_0003;
 drop class DML_0004;
 drop class DML_0005;
 drop variable a,b,c,d,e ;
+
+--+ holdcas off;

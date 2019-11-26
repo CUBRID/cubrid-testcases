@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop if exists t;
 create table t(
 a int primary key,
@@ -36,3 +37,5 @@ select if(cast(@d as timestamp)-cast(@c as timestamp)=0 && cast(@b as timestamp)
 select if( c is not null,'ok','nok' ) from t where a=4;   
 drop variable @a,@b,@c,@d;
 drop if exists t;
+
+--+ holdcas off;

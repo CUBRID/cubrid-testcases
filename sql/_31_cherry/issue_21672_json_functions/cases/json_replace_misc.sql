@@ -1,3 +1,4 @@
+--+ holdcas on;
 SET @j = '{ "a": 1, "b": [2, 3]}';
 SELECT JSON_REPLACE(@j, '$.a', '10', '$.c', '[true, false]');
 SELECT JSON_REPLACE(@j, '$.a', 10);
@@ -63,3 +64,5 @@ drop VARIABLE @v;
 drop VARIABLE @mm,@j;
 
 
+
+--+ holdcas off;

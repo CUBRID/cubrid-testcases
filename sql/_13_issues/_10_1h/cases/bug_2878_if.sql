@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- 1
 select IF (0 = 0, 'y', 'n') into :expected;
 
@@ -61,3 +62,5 @@ deallocate prepare s;
 
 select case when (:expected <=> :result) then 'YES' else 'NO' end as result;
 
+
+--+ holdcas off;

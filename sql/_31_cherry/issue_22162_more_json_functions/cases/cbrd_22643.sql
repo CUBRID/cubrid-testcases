@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop table if exists json_arrayagg;
 create table json_arrayagg (
  json_array varchar,
@@ -121,3 +122,5 @@ drop variable @jdoc;
 
 
 
+
+--+ holdcas off;

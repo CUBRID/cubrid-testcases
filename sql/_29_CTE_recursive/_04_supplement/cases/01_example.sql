@@ -1,3 +1,4 @@
+--+ holdcas on;
 set @x=1;
 with recursive cte as 
 (
@@ -23,3 +24,5 @@ select @y as a union all select a-1 from cte where a>0
 select * from cte order by 1  limit 10;  
 drop variable @x;
 drop variable @y;
+
+--+ holdcas off;

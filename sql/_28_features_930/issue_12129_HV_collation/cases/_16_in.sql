@@ -1,3 +1,4 @@
+--+ holdcas on;
 set names iso88591;
 
 drop table if exists t;
@@ -87,3 +88,5 @@ deallocate prepare st3;
 drop table t;
 
 set names iso88591;
+
+--+ holdcas off;

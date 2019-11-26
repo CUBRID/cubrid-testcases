@@ -1,3 +1,4 @@
+--+ holdcas on;
 
 --CBRD-22469
 SELECT JSON_ARRAY_INSERT('[1, 2, 3]', '$[1]', '4');
@@ -63,3 +64,5 @@ select json_object('a', 'b');
 select json_extract(json_array_insert('[true]', '$[0]', '{"a":"b"}'), '$[0]');
 
 
+
+--+ holdcas off;

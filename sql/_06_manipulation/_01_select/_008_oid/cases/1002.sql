@@ -1,3 +1,4 @@
+--+ holdcas on;
 --insert data with oid
 create class tb2(
 	id int primary key,
@@ -24,3 +25,5 @@ select * from tb1 order by 1,2;
 drop class tb1;
 drop class tb2;
 
+
+--+ holdcas off;

@@ -1,3 +1,4 @@
+--+ holdcas on;
 set @jdoc='{"A":"a", "B":["b","c"]}';
 select json_search(@jdoc, 'one', 'c');
 
@@ -97,3 +98,5 @@ SELECT JSON_SEARCH(@j, 'all', '%b%', NULL, '$');
 
 drop variable @jv, @doc, @j, @jdoc;
 
+
+--+ holdcas off;

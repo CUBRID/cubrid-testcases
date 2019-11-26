@@ -1,3 +1,4 @@
+--+ holdcas on;
 --
 drop table if exists t;
 create table t(i int) partition by range(i) (partition p0 values less than (10), partition p1 values less than (100));
@@ -326,3 +327,5 @@ UPDATE OBJECT :my_obj SET i = 33;
 insert into t partition (p0) values (3) on duplicate key update i =  OBJECT :my_obj ;
 
 drop table if exists t;
+
+--+ holdcas off;

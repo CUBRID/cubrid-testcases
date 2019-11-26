@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop table if exists usera;
 create table usera(id int primary key, name varchar(20) , conn_t json);
 insert into usera values(1 ,'lily','{"time":"2015-01-01 13:00:00","ip":"192.168.1.1","result":"fail"}');
@@ -104,3 +105,5 @@ select json_object('a',1,'b',2) < json_object('b',2,'a',1);
 select json_object('a',1,'b',2) = json_object('b',2,'a',1);
 select json_object('a',1,'b',2) = json_object('a',1,'b',2);
 drop VARIABLE @j;
+
+--+ holdcas off;

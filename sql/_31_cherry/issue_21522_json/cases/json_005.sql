@@ -1,3 +1,4 @@
+--+ holdcas on;
 select json_length(json_array('a', 'b', 'c', json_object('a', 'b')));
 select json_length(json_object('a', 'b', 'c', 'd'));
 select json_length('123');
@@ -36,3 +37,5 @@ select json_object('a', cast(@a as varchar), a, cast ( b as varchar) ) from t1;
 drop table if exists t1;
 deallocate variable @a;
 
+
+--+ holdcas off;

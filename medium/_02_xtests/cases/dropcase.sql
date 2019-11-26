@@ -1,3 +1,4 @@
+--+ holdcas on;
 autocommit off;
 create class iCaSe (sTr string);
 alter iCaSE add attribute ixi int;
@@ -10,3 +11,5 @@ alter icase drop attribute STR;
 alter ICASE drop attribute IXI;
 rollback work;
 rollback;
+
+--+ holdcas off;

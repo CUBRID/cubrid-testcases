@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop table if exists t1;
 drop table if exists t2;
 create table t1(i int, b json);
@@ -21,3 +22,5 @@ select (select sum(json_extract(b, '/sale')) from t1 group by json_extract(b, '/
 drop VARIABLE @js;
 drop table t1;
 drop table t2;
+
+--+ holdcas off;

@@ -1,3 +1,4 @@
+--+ holdcas on;
 autocommit off;
 create class other_node (a char(20));
 insert into other_node values('aaaaaaaaaaaaaaaaaaaa') into :other_obj
@@ -74,3 +75,5 @@ alter class node4 drop attribute d;
 select node4 into :node4_obj from node4 where a = '1015';
 select :node4_obj.a from class node4;
 rollback;
+
+--+ holdcas off;

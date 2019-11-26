@@ -1,3 +1,4 @@
+--+ holdcas on;
 --[er]test a select statement which hasn't any table names
 
 create class DML_0001 
@@ -13,3 +14,4 @@ select int_col into a from where int_col = 1;
 
 
 drop class DML_0001;
+--+ holdcas off;

@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- <<
 select 1 << 2 into :expected;
 
@@ -16,3 +17,5 @@ deallocate prepare s;
 
 select case when (:expected = :result) then 'YES' else 'NO' end as result;
 
+
+--+ holdcas off;
