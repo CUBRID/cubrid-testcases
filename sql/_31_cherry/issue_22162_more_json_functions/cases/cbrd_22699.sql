@@ -1,3 +1,4 @@
+--+ holdcas on;
 set @js='{
    "students":[
       {
@@ -134,3 +135,5 @@ execute st using @js;
 
 drop variable @js;
 
+
+--+ holdcas off;

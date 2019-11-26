@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- [er] create class attribute using auto_increment constraints
 
 create class picture
@@ -22,3 +23,4 @@ class attribute (meal_type int auto_increment)
  DROP picture;
  
  DROP meal;
+--+ holdcas off;

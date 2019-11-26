@@ -1,3 +1,4 @@
+--+ holdcas on;
 --[er]test EXCEPT keyword using {} operator and the keyword 'EXCEPT'
 create class DML_0001
 ( 	int_col int not null,
@@ -58,3 +59,5 @@ drop table dml_0003;
 drop table dml_0004;
 drop table dml_0005;
 drop variable a,b,c,d,e ;
+
+--+ holdcas off;

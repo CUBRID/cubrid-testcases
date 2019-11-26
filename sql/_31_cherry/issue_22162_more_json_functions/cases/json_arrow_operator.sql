@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop if exists t1;
 create table t1(id int auto_increment primary key, c json);
 insert into t1(c) values('{"id": "101", "name": "aaa"}');
@@ -61,3 +62,5 @@ SELECT a, a[2], b FROM tj10 WHERE a->'$[4][1]' IS not NULL order by 1,2,3;
 drop t1;
 drop tj10;
 
+
+--+ holdcas off;

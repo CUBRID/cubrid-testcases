@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop table if exists t;
 CREATE TABLE t (
   `id` INT NOT NULL AUTO_INCREMENT,
@@ -51,3 +52,5 @@ select if(ts - to_timestamp(@a)=0,'ok','nok') from t;
 drop table t;
 drop variable @a;
 
+
+--+ holdcas off;

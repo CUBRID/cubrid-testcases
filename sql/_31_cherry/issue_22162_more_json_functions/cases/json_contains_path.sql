@@ -1,3 +1,4 @@
+--+ holdcas on;
 --https://database.guide/json_contains_path-examples-in-mysql/
 
 --http://jira.cubrid.org/browse/CBRD-22452
@@ -14,3 +15,5 @@ SELECT JSON_CONTAINS_PATH(@doc, 'all', '$.c[0]') ;
 SELECT JSON_CONTAINS_PATH(@doc, 'all', '$.c[3]') ; 
 
 drop VARIABLE @doc;
+
+--+ holdcas off;

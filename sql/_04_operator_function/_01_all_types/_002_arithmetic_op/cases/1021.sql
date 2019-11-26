@@ -1,3 +1,4 @@
+--+ holdcas on;
 --[er]test union keywords with only table name
 create class DML_0001
 ( 	int_col int not null,
@@ -45,3 +46,5 @@ drop variable e;
 drop table dml_0001;
 drop table dml_0002;
 drop table dml_0003;
+
+--+ holdcas off;

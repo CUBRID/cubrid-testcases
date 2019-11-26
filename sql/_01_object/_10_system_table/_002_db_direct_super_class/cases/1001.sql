@@ -1,3 +1,4 @@
+--+ holdcas on;
 --test interpreter variable many select queries and into clause.
 create class DML_0001
 ( 	int_col int not null,
@@ -33,3 +34,5 @@ insert into DML_0002 values (1, 'test1', {a,b}, c , {c});
 drop class DML_0001;
 drop class DML_0002, DML_0003;
 drop variable a;
+
+--+ holdcas off;

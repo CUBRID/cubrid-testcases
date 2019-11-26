@@ -1,3 +1,4 @@
+--+ holdcas on;
 autocommit off;
 call login('dba','') on class db_user;
 create class foo ( a int );
@@ -19,3 +20,5 @@ call login('public','') on class db_user;
 call login('dba','') on class db_user;
 commit;
 rollback;
+
+--+ holdcas off;

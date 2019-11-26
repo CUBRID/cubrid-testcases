@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- 1
 prepare s from 'select char_length (?) into :result'
 execute s using 'abc'
@@ -30,3 +31,5 @@ deallocate prepare s;
 evaluate 3 into :expected;
 select case when (:expected = :result) then 'YES' else 'NO' end as result;
 
+
+--+ holdcas off;

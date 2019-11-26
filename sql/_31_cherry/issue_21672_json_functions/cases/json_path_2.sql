@@ -1,3 +1,4 @@
+--+ holdcas on;
 --test for CBRD-22531(use multi path as parameters)
 SELECT JSON_EXTRACT('[10, 20, [30, 40]]', '$[1]');
 SELECT JSON_EXTRACT('[10, 20, [30, 40]]', '$[1]', '$[0]');
@@ -47,3 +48,5 @@ SELECT id, json_extract(c, c->'$.name'->'$.name') from t1 where id<10 order by 1
 
 drop t1;
 
+
+--+ holdcas off;

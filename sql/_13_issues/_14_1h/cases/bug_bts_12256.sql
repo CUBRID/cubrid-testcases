@@ -1,3 +1,4 @@
+--+ holdcas on;
 --[I18N] 'Session variable cannot have a different collation than system collation' error occurs when assigning a numeric session variable to another session variable. 
 
 
@@ -21,3 +22,5 @@ select @b;
 
 drop variable @tmp, @a, @b;
 set names iso88591;
+
+--+ holdcas off;

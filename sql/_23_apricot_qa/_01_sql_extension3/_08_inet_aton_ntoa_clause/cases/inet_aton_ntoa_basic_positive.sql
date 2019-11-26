@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop table if exists test;
 
 create table test (a BIGINT UNIQUE PRIMARY KEY, b varchar(20));
@@ -58,3 +59,5 @@ drop table if exists t1;
 SET OPTIMIZATION LEVEL 1;
 drop variable @v1,@v2;
 
+
+--+ holdcas off;

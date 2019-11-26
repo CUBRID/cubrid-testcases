@@ -1,3 +1,4 @@
+--+ holdcas on;
 set timezone 'Asia/Seoul';
 --Test case 1 - datetime 
 drop table if exists t1;
@@ -85,3 +86,5 @@ select col1,adddate(col1,INTERVAL @a:=@a+1 MINUTE) from t1;
 --clear table
 drop variable @a;
 drop table t1;
+
+--+ holdcas off;

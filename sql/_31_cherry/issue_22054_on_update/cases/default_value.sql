@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop table if exists t;
 create table t(a int , b date default current_datetime on update current_datetime);
 insert into  t(a) values(1);  
@@ -56,3 +57,5 @@ update t set a=default;
 select if(b is not null,'ok','nok') from t;
 drop table t;
 drop variable @a;
+
+--+ holdcas off;

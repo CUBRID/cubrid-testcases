@@ -1,3 +1,4 @@
+--+ holdcas on;
 autocommit off;
 
 
@@ -113,3 +114,5 @@ rollback;
 
 autocommit on;
 
+
+--+ holdcas off;

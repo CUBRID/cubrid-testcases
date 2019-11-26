@@ -1,3 +1,4 @@
+--+ holdcas on;
 
 create table t1(id int, a enum('A', 'B') collate utf8_en_cs);
 insert into t1 values (1, 1);
@@ -52,3 +53,5 @@ deallocate prepare stmt;
 
 drop variable @v1;
 set names iso88591;
+
+--+ holdcas off;

@@ -1,3 +1,4 @@
+--+ holdcas on;
 prepare s from 'select rand (?) into :result' 
 execute s using 123
 deallocate prepare s;
@@ -22,3 +23,5 @@ deallocate prepare s;
 evaluate substr(to_char(drandom(123)), 0, 10) into :expected;
 select case when :expected = :result then 'YES' else 'NO' end as case4;
 
+
+--+ holdcas off;

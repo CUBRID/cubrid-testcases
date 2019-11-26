@@ -1,3 +1,4 @@
+--+ holdcas on;
 --[I18N] Error occurs when comparing the column of system table with session variable.
 
 set names utf8;
@@ -21,3 +22,5 @@ select * from _db_collation where coll_name=@v;
 drop variable @v;
 set names iso88591;
 
+
+--+ holdcas off;

@@ -1,3 +1,4 @@
+--+ holdcas on;
 autocommit off;
 create class atype (code integer, description char varying);
 insert into atype (code,description) values (1,'Valid') into :valid_value ;
@@ -55,3 +56,5 @@ and x0 = :yy1
  AND
   ti0.wwidget = :yy1 AND a0.ttype = :value1;
 rollback;
+
+--+ holdcas off;

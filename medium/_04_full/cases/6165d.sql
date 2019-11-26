@@ -1,3 +1,4 @@
+--+ holdcas on;
 autocommit off;
 --set optimization: level 257
 select big into :o1 from big where a = 1000;
@@ -14,3 +15,5 @@ select 'hi', b1, b1.b, b1.me.a, b1.me.me.b, b1.me.me.me.a,
 from big b1, big b2
 where b1 in {o1,o2} and b2 in {o1,o2} order by 1,2,3,4,5;
 rollback;
+
+--+ holdcas off;

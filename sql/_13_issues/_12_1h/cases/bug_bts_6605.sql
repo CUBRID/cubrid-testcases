@@ -1,3 +1,4 @@
+--+ holdcas on;
  
 drop table if exists t1;
 create table t1 (a int, b int);
@@ -153,3 +154,5 @@ select /*+ recompile */ a, u_a from t order by a;
 drop variable @a,@b,@tmp;
 drop t, u;
 
+
+--+ holdcas off;

@@ -1,3 +1,4 @@
+--+ holdcas on;
 --test Between, interpreter variable keywords using some select satements
 
 create class DML_0001 
@@ -21,3 +22,5 @@ select int_col from DML_0001 where var_col between cast(int_col as char) and cas
 
 drop class DML_0001;
 drop variable a, b;
+
+--+ holdcas off;

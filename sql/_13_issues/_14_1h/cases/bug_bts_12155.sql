@@ -1,3 +1,4 @@
+--+ holdcas on;
 --[I18N] Host variable and session variable have the same coercibility level and different collation, but they can be compared.
 
 set names iso88591;
@@ -44,3 +45,5 @@ deallocate prepare stmt;
 drop variable @v1;
 
 set names iso88591;
+
+--+ holdcas off;

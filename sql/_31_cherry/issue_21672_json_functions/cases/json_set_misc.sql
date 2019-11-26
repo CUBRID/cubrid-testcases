@@ -1,3 +1,4 @@
+--+ holdcas on;
 SET @j = '{ "a": 1, "b": [2, 3]}';
 SELECT JSON_SET(@j, '$.a', '10', '$.c', '[true, false]');
 SELECT JSON_SET(@j, '$.a', json_array(@j), '$.c', json_array('true, false'));  
@@ -40,3 +41,5 @@ drop table if exists t;
 drop table if exists t10;
 drop VARIABLE @j;
  
+
+--+ holdcas off;

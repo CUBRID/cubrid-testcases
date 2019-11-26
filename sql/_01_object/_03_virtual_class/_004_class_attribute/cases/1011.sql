@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- create vclass attribute using default constraints
 
 create class picture
@@ -21,3 +22,5 @@ class attribute (meal_type string default 'a')
  DROP picture;
  
  DROP meal;
+
+--+ holdcas off;

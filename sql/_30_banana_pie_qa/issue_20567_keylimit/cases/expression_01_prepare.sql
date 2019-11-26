@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop if exists t;
 create table t(i int primary key, name varchar(20),job varchar(20));
 insert into t values(1,'Jone','teacher');
@@ -74,3 +75,5 @@ execute stmt using 'unkown',1,3;
 deallocate prepare stmt;
 drop if exists t;
 drop variable @a;
+
+--+ holdcas off;

@@ -1,3 +1,4 @@
+--+ holdcas on;
 
 select json_array_append('[             ]', '$', '"aue"');
 SELECT JSON_MERGE('[1]', '[]');
@@ -97,3 +98,5 @@ select s, d, json_unquote(d) from t1 order by 1,2 desc,3 desc;
 
 drop table if exists t1;
 drop variable @str, @path, @j;
+
+--+ holdcas off;

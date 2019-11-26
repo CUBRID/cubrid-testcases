@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- Examples from https://dev.mysql.com/doc/refman/8.0/en/json-table-functions.html#function_json-table
 
 --CBRD-22415, by design
@@ -89,3 +90,5 @@ FROM
 ) as jt order by 1,2,3,4,5;
 
 	
+
+--+ holdcas off;

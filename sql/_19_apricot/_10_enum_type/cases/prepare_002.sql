@@ -1,3 +1,4 @@
+--+ holdcas on;
 --use host vars in expressions
 create table t1(e1 enum ('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'), e2 enum('02/23/2012', '12/21/2012'), e3 enum('11:12:09', '13:13:13'), e4 enum('123', '9876', '-34'));
 insert into t1 values(2, 1, 1, 2), (5, 2, 1, 1), (6, 2, 2, 3), (1, 1, 1, 2), (7, 1, 2, 3), (4, 2, 2, 2), (3, 1, 1, 1);
@@ -21,3 +22,4 @@ drop variable @v1;
 drop prepare x;
 
 drop table t1;
+--+ holdcas off;

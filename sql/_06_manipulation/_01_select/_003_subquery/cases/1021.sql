@@ -1,3 +1,4 @@
+--+ holdcas on;
 --[er]test the in keyword with invalid use of keyword 'set'
 create class DML_0001 (
 int_col integer,
@@ -16,3 +17,5 @@ select * from DML_0001 where int_col in (select int_col into set :a from DML_000
 
 
 drop class DML_0001;
+
+--+ holdcas off;

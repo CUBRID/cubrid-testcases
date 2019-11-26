@@ -1,3 +1,4 @@
+--+ holdcas on;
 autocommit off;
 
 CREATE  function   testresult(q string)  return string as language java name 'jdbc_cubrid415.testresult(java.lang.String) return java.lang.String ';
@@ -56,3 +57,5 @@ rollback;
 
 autocommit on;
 
+
+--+ holdcas off;

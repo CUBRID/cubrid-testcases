@@ -1,3 +1,4 @@
+--+ holdcas on;
 --special input
 SELECT JSON_PRETTY('{}');
 SELECT JSON_PRETTY(NULL);
@@ -41,3 +42,5 @@ SELECT id, JSON_PRETTY(c) from t1 where id>0 order by 1,2;
 drop variable @j;
 drop t1;
 
+
+--+ holdcas off;

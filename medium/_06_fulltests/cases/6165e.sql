@@ -1,3 +1,4 @@
+--+ holdcas on;
 autocommit off;
 --set optimization: level 257
 select big into :o1 from big where a = 1000;
@@ -6,3 +7,5 @@ update class big set kind = :o1;
 evaluate class big into :c;
 select kind, kind.a, kind.b from class big x where x = :c;
 rollback;
+
+--+ holdcas off;

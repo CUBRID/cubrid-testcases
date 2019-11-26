@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- https://database.guide/json_quote-how-to-escape-characters-in-strings-used-as-json-values-in-mysql/
 
 SELECT JSON_ARRAY('Hot', 'Warm', 'Cold') ; 
@@ -56,3 +57,5 @@ SET SYSTEM PARAMETERS 'no_backslash_escapes=yes';
 drop variable @j ;
 
 
+
+--+ holdcas off;

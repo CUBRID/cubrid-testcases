@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- create vclass with select clause having Outer join,between and etc keyword
 
 create class dml_super (
@@ -199,3 +200,5 @@ drop vclass dml_v_join_5;
 
 drop vclass dml_v_inherit_1;
 drop vclass dml_v_inherit_2;
+
+--+ holdcas off;

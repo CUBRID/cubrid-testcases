@@ -1,3 +1,4 @@
+--+ holdcas on;
 --bigint, object
 create class person_info(id int auto_increment, name char(20), score bigint);
 insert into person_info(name, score) values('John', 1000);
@@ -21,3 +22,5 @@ select proj_name, manager.score from project_info;
 
 drop class project_info;
 drop class person_info;
+
+--+ holdcas off;

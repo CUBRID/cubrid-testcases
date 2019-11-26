@@ -1,3 +1,4 @@
+--+ holdcas on;
 select * from json_table ('[1]', '$[0]' COLUMNS (id string path '')) as t;
 select * from json_table ('[1]', '$[0]' COLUMNS (id string path ' ')) as t;
 select * from json_table ('[1]', '$[0]' COLUMNS (id string path '$')) as t;
@@ -37,3 +38,5 @@ drop variable @js;
 select * from json_table ('{"{":"}"}', ' ' COLUMNS (id string path '$."{"')) as t;
 select * from json_table ('{"{ : }":"{ : }"}', '' COLUMNS (id string path '$."{ : }"')) as t;
 
+
+--+ holdcas off;

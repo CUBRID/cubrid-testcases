@@ -1,3 +1,4 @@
+--+ holdcas on;
 --this case was added for code coverage.
 
 
@@ -973,3 +974,5 @@ drop table test1;
 drop table test2;
 drop table test3;
 drop table test4; 
+
+--+ holdcas off;

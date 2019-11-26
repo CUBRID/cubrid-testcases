@@ -1,3 +1,4 @@
+--+ holdcas on;
 set names iso88591;
 
 set names utf8;
@@ -49,3 +50,5 @@ drop t1;
 set names iso88591;
 
 
+
+--+ holdcas off;

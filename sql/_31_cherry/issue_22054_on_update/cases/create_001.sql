@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop if exists t1;
 CREATE TABLE t1 ( 
 ts TIMESTAMP DEFAULT '2018-7-25' ON UPDATE CURRENT_TIMESTAMP,
@@ -93,3 +94,5 @@ desc t;
 show create table t;
 drop variable @x;
 drop if exists t,t1;
+
+--+ holdcas off;

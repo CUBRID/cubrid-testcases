@@ -1,3 +1,4 @@
+--+ holdcas on;
 set timezone 'Asia/Seoul';
 --Test timestamp and adddate
 drop table if exists t1;
@@ -64,3 +65,5 @@ drop variable @a;
 
 drop table t1;
 
+
+--+ holdcas off;

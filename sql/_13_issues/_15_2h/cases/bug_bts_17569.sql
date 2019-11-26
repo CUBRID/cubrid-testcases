@@ -1,3 +1,4 @@
+--+ holdcas on;
 set timezone '+08:00';
 drop table if exists t;
 create table t(i int auto_increment,j varchar);
@@ -148,3 +149,5 @@ drop if exists t;
 set timezone 'default';
 
 
+
+--+ holdcas off;

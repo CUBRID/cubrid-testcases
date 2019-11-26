@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop view if exists jtv;
 create view jtv as select jt.* from
 json_table( '{"date1":"2018-10-18"}', '$'  columns (
@@ -77,3 +78,5 @@ col3 INT PATH '$.c' DEFAULT '0' ON ERROR DEFAULT '1' ON EMPTY DEFAULT '2' ON ERR
 drop variable @jdoc;
 drop table if exists t;
 
+
+--+ holdcas off;

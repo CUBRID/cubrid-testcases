@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop table if exists t;
 CREATE TABLE t (id INT AUTO_INCREMENT PRIMARY KEY , c CHAR(1) UNIQUE);
 INSERT INTO t(c) VALUES('a');
@@ -72,3 +73,5 @@ insert into tbl (color) select 'blue' from tbl on duplicate key update color='ye
 drop variable @a;
 drop table if exists tbl;
 
+
+--+ holdcas off;

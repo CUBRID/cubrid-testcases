@@ -1,3 +1,4 @@
+--+ holdcas on;
 set @j = '["a", ["b", "c"], "d"]';
 select json_remove(@j, '/0');
 select json_remove(@j, '/1');
@@ -72,3 +73,5 @@ select JSON_VALID(0x36f0c8dccd83c5eac156da);
 select cast('{a:1}' as text);
 select cast('{a:1}' as json);
 select cast('{"a":1}' as json);  
+
+--+ holdcas off;

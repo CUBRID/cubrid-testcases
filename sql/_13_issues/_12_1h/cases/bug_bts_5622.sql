@@ -1,3 +1,4 @@
+--+ holdcas on;
 create table t(i int auto_increment) partition by hash(i) partitions 3;
 insert into t(i) values (NULL), (NULL), (NULL), (NULL), (NULL), (NULL), (NULL), (NULL);
 select * from t__p__p0 order by i;
@@ -30,3 +31,4 @@ drop temp;
 
 
  
+--+ holdcas off;

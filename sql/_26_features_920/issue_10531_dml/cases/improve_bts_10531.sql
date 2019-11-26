@@ -1,3 +1,4 @@
+--+ holdcas on;
 --improve_bts_10531.sql
 
 --Come from the developer's test case.
@@ -197,3 +198,5 @@ DEALLOCATE PREPARE st_1;
 
 drop variable @v1,@v2,@v3,@v4,@v5,@v6,@v7,@v8,@v9,@v10;
 DROP TABLE IF EXISTS T_FIRST_LAST_NTH;
+
+--+ holdcas off;

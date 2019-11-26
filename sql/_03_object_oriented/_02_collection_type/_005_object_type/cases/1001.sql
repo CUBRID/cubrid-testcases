@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- create a class with udt to set and insert data to this calss.
 
 create class t1(
@@ -25,3 +26,4 @@ SELECT * FROM t2;
 
 drop t1;
 drop t2;
+--+ holdcas off;

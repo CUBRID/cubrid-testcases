@@ -1,3 +1,4 @@
+--+ holdcas on;
 evaluate '05/26/2010' into :str_date;
 evaluate '11:11:11 AM' into :str_time;
 evaluate '11:11:11 AM 05/26/2010' into :str_timestamp;
@@ -66,3 +67,5 @@ deallocate prepare s;
 evaluate '05/26/2010' into :expected;
 select case when :expected = :result then 'YES' else 'NO' end as case8;
 
+
+--+ holdcas off;

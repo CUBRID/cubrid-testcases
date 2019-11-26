@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop table if exists t1;
 drop table if exists t2;
 CREATE TABLE t1 (a int);
@@ -302,3 +303,5 @@ drop variable @v1;
 
 drop table if exists t1;
 drop table if exists t2;
+
+--+ holdcas off;

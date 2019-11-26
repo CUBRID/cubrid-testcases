@@ -1,3 +1,4 @@
+--+ holdcas on;
 SET @jv = '{  
     "Person": {    
        "Name": "Homer", 
@@ -47,3 +48,5 @@ SELECT i, c->>'$[4][2]' FROM t where i >4 order by i;
 
 drop table if exists t;
 
+
+--+ holdcas off;

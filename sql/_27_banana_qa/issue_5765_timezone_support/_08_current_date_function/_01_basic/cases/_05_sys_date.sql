@@ -1,3 +1,4 @@
+--+ holdcas on;
 --test sys date doesn't change as the session time zone setting
 set timezone '-12:00';
 set @v1=(select sys_date);
@@ -26,3 +27,5 @@ insert into t select datediff(sys_date,current_date());
 drop table if exists t;
 
 set timezone 'Asia/Seoul';
+
+--+ holdcas off;

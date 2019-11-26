@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- string
 -- 1
 prepare s from 'select FIELD (?, ?, ?, ?) into :result' 
@@ -123,3 +124,5 @@ deallocate prepare s;
 evaluate 3 into :expected;
 select case when (:expected = :result) then 'YES' else 'NO' end as result;
 
+
+--+ holdcas off;

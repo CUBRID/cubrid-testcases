@@ -1,3 +1,4 @@
+--+ holdcas on;
 --'Indian/Antananarivo' has problem
 --sql/_27_banana_qa/issue_5765_timezone_support/_09_timezone_rules/cases/africa.sql has reflected this error 
 
@@ -91,3 +92,5 @@ drop variable @a;
 
 
 
+
+--+ holdcas off;

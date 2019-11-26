@@ -1,3 +1,4 @@
+--+ holdcas on;
 select json_set('"x"', '/0', '"a"');
 select json_set('"x"', '$', '"a"');
 select json_set('"x"', '$', 'a');
@@ -114,3 +115,5 @@ update json_test set emp = json_remove(emp,'/authors');
 select * from json_test; 
 drop table if exists json_test;
 drop VARIABLE @j;
+
+--+ holdcas off;

@@ -1,3 +1,4 @@
+--+ holdcas on;
 --[er]test variable assignment with invalid use of 'as' keyword
 create class DML_0001
 ( 	int_col int not null,
@@ -26,3 +27,5 @@ select int_col into a as b  from DML_0001 where int_col = 1;
 drop class DML_0001;
 drop class DML_0002;
 drop class DML_0003;
+
+--+ holdcas off;

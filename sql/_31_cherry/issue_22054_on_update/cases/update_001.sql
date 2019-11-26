@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop if exists u01;
 create table u01
 (id int primary key, 
@@ -161,3 +162,5 @@ drop table if exists t2,t1,t3,test,p;
 
 
 
+
+--+ holdcas off;

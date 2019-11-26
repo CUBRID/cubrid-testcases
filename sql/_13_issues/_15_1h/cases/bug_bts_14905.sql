@@ -1,3 +1,4 @@
+--+ holdcas on;
 SET OPTIMIZATION LEVEL 513;
 set  system parameters 'dont_reuse_heap_file=no';
  
@@ -37,3 +38,5 @@ SET OPTIMIZATION LEVEL 1;
 drop variable @v1;
 drop table if exists t;
 drop table if exists ntile_gl;
+
+--+ holdcas off;

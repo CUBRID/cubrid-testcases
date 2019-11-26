@@ -1,3 +1,4 @@
+--+ holdcas on;
 
 drop if exists t;
 create table t(
@@ -311,3 +312,5 @@ show  columns from v;
 
 drop view if exists v;
 drop if exists t1,t;
+
+--+ holdcas off;

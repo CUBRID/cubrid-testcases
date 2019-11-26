@@ -1,3 +1,4 @@
+--+ holdcas on;
 SET @j = '{"a": 1, "b": 2, "c": {"d": 4}}';
 SET @j2 = '1';
 SELECT JSON_CONTAINS(@j, @j2, '$.a');
@@ -104,3 +105,5 @@ select json_extract (@j, '$.store..price');
 select json_extract (@j, '$..book[0,1]');
 
 drop VARIABLE @j,@j2;
+
+--+ holdcas off;

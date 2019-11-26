@@ -1,3 +1,4 @@
+--+ holdcas on;
 --test sys time doesn't change as the session time zone setting
 set timezone '+02:30';
 set @x2=(select sys_time);
@@ -30,3 +31,5 @@ set timezone 'Asia/Seoul';
 
 
 
+
+--+ holdcas off;

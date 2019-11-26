@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- create class attribute using null constraints
 
 create class picture
@@ -22,3 +23,4 @@ class attribute (meal_type string null)
  DROP picture;
  
  DROP meal;
+--+ holdcas off;

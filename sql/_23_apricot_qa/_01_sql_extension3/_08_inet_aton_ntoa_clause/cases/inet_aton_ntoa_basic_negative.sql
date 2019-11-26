@@ -1,3 +1,4 @@
+--+ holdcas on;
 --inet_aton_ntoa_basic_negative.sql
 
 select inet_aton('8.9.10.11.12');
@@ -25,3 +26,5 @@ create index invalid_index on test(inet_aton(b));
 drop table if exists test;
 
 
+
+--+ holdcas off;

@@ -1,3 +1,4 @@
+--+ holdcas on;
 autocommit off;
 
 -- SET ����
@@ -116,3 +117,5 @@ drop procedure testset7;
 rollback;
 autocommit on;
 
+
+--+ holdcas off;
