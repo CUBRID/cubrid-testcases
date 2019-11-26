@@ -1,5 +1,4 @@
 --+ holdcas on;
---+ holdcas on;
 --set optimization: level 257
 select big into :o1 from big where a = 1000;
 select big into :o2 from big where a = 10000;
