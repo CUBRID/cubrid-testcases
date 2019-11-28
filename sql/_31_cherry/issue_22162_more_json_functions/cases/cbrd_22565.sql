@@ -1,5 +1,9 @@
-drop table if exists tree;
-CREATE TABLE tree(ID INT, MgrID INT, Name VARCHAR(32),sort int);
+drop view if exists tree;
+drop table if exists tree1;
+
+CREATE TABLE tree1(ID INT, MgrID INT, Name VARCHAR(32),sort int);
+
+create view tree as select * from tree1 order by 1, 2, 3, 4;
 
 INSERT INTO tree VALUES (1,0,'Kim',1);
 INSERT INTO tree VALUES (2,0,'Moy',1);
@@ -29,4 +33,5 @@ select id,mgrid from tree connect by prior id=mgrid ORDER SIBLINGS BY sort,id;
 select  json_arrayagg(id) from tree connect by prior id=mgrid ORDER SIBLINGS BY sort,id;
 select  json_arrayagg(mgrid) from tree connect by prior id=mgrid ORDER SIBLINGS BY sort,id;
 
-drop table if exists tree;
+drop view if exists tree;
+drop table if exists tree1;
