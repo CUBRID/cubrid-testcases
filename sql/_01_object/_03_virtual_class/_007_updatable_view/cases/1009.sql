@@ -1,5 +1,7 @@
 -- [er] vclass is unupdatable if select using DIFFERENCE
 
+drop class if exists c1;
+drop vclass if exists v1;
 
 create class c1 ( id int, id_key int, id_s string );
 
