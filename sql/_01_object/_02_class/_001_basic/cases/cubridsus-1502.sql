@@ -102,176 +102,181 @@ ALTER CLASS that08 ADD ATTRIBUTE
 ALTER CLASS that08 ADD ATTRIBUTE
        CONSTRAINT "that08_pk" UNIQUE(uewdh_test, bwk_that, qz_that, uzs_that, uewdh, aq_that, fv_that, aolq_that, njmfiev_that);
        
+SELECT *
+FROM (
+	SELECT uzs_that, bkw_that
+	FROM that07
+	WHERE 1 = (
+			SELECT CASE 
+					WHEN e_o_that = '3' THEN 1
+					ELSE 0
+				END
+			FROM that03
+			WHERE uewdh_test = '2009'
+				AND bwk_that = '1'
+				AND qz_that = '1'
+				AND uewdh = '1'
+				AND aq_that = 3
+				AND fv_that = '007010101'
+				AND aolq_that = '0008'
+		)
+		AND (uewdh_test, bwk_that, qz_that, uewdh, aq_that, fv_that, aolq_that, njmfiev_that) IN (
+			SELECT uewdh_test, bwk_that, qz_that, uewdh, aq_that
+				, fv_that, aolq_that, njmfiev_that
+			FROM that03
+			WHERE uewdh_test = '2009'
+				AND bwk_that = '1'
+				AND qz_that = '1'
+				AND uewdh = '1'
+				AND aq_that = 3
+				AND fv_that = '007010101'
+				AND aolq_that = '0008'
+				AND njmfiev_that = 2
+		)
+		AND vwuwv_that = 'N'
+	UNION ALL
+	SELECT uzs_that, bkw_that
+	FROM that07
+	WHERE (uewdh_test, bwk_that, qz_that, uzs_that, uewdh, aq_that, fv_that, aolq_that, njmfiev_that) IN (
+		SELECT uewdh_test, bwk_that, qz_that, uzs_that, uewdh
+			, aq_that, fv_that, aolq_that, njmfiev_that
+		FROM that08
+		WHERE 1 = (
+				SELECT CASE 
+						WHEN e_o_that = '2' THEN 1
+						ELSE 0
+					END
+				FROM that03
+				WHERE uewdh_test = '2009'
+					AND bwk_that = '1'
+					AND qz_that = '1'
+					AND uewdh = '1'
+					AND aq_that = 3
+					AND fv_that = '007010101'
+					AND aolq_that = '0008'
+			)
+			AND (uewdh_test, bwk_that, qz_that, uewdh, aq_that, fv_that, aolq_that, njmfiev_that) IN (
+				SELECT uewdh_test, bwk_that, qz_that, uewdh, aq_that
+					, fv_that, aolq_that, njmfiev_that
+				FROM that03
+				WHERE uewdh_test = '2009'
+					AND bwk_that = '1'
+					AND qz_that = '1'
+					AND uewdh = '1'
+					AND aq_that = 3
+					AND fv_that = '007010101'
+					AND aolq_that = '0008'
+					AND njmfiev_that = 2
+			)
+			AND vwuwv_that = 'N'
+			AND uzs_that = '06'
+	)
+) a
+WHERE bkw_that <> '0685'
+	AND uzs_that = '06';
 
+SELECT uzs_that
+FROM that07
+WHERE (uewdh_test, bwk_that, uzs_that) IN (
+		SELECT uewdh_test, bwk_that, uzs_that
+		FROM that08
+	)
+	AND uzs_that = '06';
 
-select * from (
+SELECT x.uzs_that
+FROM that07 x, (
+		SELECT DISTINCT uewdh_test, bwk_that, uzs_that
+		FROM that08
+	) y
+WHERE (x.uewdh_test, x.bwk_that, x.uzs_that) = (y.uewdh_test, y.bwk_that, y.uzs_that)
+	AND x.uzs_that = '06';
 
+SELECT *
+FROM (
+	SELECT uzs_that, bkw_that
+	FROM that07
+	WHERE 1 = (
+			SELECT CASE 
+					WHEN e_o_that = '3' THEN 1
+					ELSE 0
+				END
+			FROM that03
+			WHERE uewdh_test = '2009'
+				AND bwk_that = '1'
+				AND qz_that = '1'
+				AND uewdh = '1'
+				AND aq_that = 3
+				AND fv_that = '007010101'
+				AND aolq_that = '0008'
+		)
+		AND uewdh_test IN (
+			SELECT uewdh_test
+			FROM that03
+			WHERE uewdh_test = '2009'
+				AND bwk_that = '1'
+				AND qz_that = '1'
+				AND uewdh = '1'
+				AND aq_that = 3
+				AND fv_that = '007010101'
+				AND aolq_that = '0008'
+				AND njmfiev_that = 2
+		)
+		AND vwuwv_that = 'N'
+	UNION ALL
+	SELECT uzs_that, bkw_that
+	FROM that07
+	WHERE uewdh_test IN (
+		SELECT uewdh_test
+		FROM that08
+		WHERE 1 = (
+				SELECT CASE 
+						WHEN e_o_that = '2' THEN 1
+						ELSE 0
+					END
+				FROM that03
+				WHERE uewdh_test = '2009'
+					AND bwk_that = '1'
+					AND qz_that = '1'
+					AND uewdh = '1'
+					AND aq_that = 3
+					AND fv_that = '007010101'
+					AND aolq_that = '0008'
+			)
+			AND uewdh_test IN (
+				SELECT uewdh_test
+				FROM that03
+				WHERE uewdh_test = '2009'
+					AND bwk_that = '1'
+					AND qz_that = '1'
+					AND uewdh = '1'
+					AND aq_that = 3
+					AND fv_that = '007010101'
+					AND aolq_that = '0008'
+					AND njmfiev_that = 2
+			)
+			AND vwuwv_that = 'N'
+			AND uzs_that = '06'
+	)
+) a
+WHERE bkw_that <> '0685'
+	AND uzs_that = '06';
 
-                 select uzs_that,bkw_that from that07
-
-                 where 1 = (
-                       select CASE WHEN e_o_that = '3' THEN  1
-                        ELSE 0
-                        END
-                        from that03
-                        where  uewdh_test = '2009'
-                        and bwk_that = '1'
-          and qz_that ='1'
-          and uewdh = '1'
-                        and aq_that= 3
-                        and fv_that ='007010101'
-              and aolq_that  ='0008' )
-
-                      AND ( uewdh_test,bwk_that,qz_that,uewdh,aq_that,fv_that, aolq_that,njmfiev_that ) IN (
-                          SELECT uewdh_test,bwk_that,qz_that,uewdh,aq_that,fv_that, aolq_that,njmfiev_that
-                          from that03
-                                    where  uewdh_test = '2009'
-                                    and bwk_that = '1'
-                      and qz_that ='1'
-                          and uewdh = '1'
-                                    and aq_that= 3
-                                    and fv_that ='007010101'
-                           and aolq_that  ='0008'
-                                    and njmfiev_that = 2
-                          )
-
-       --where 1=1
-                  and vwuwv_that  = 'N'
-
-                  union all
-
-                  select uzs_that,bkw_that from that07
-
-                  where (uewdh_test,bwk_that,qz_that,uzs_that,uewdh,aq_that,fv_that,
-                      aolq_that, njmfiev_that) in (
-        select uewdh_test,bwk_that,qz_that,uzs_that,uewdh,aq_that,fv_that,
-                      aolq_that, njmfiev_that from that08
-                  where 1 = (
-                       select CASE WHEN e_o_that = '2' THEN  1
-                        ELSE 0
-                        END
-                        from that03
-                        where  uewdh_test = '2009'
-                        and bwk_that = '1'
-          and qz_that ='1'
-          and uewdh = '1'
-                        and aq_that= 3
-                        and fv_that ='007010101'
-              and aolq_that  ='0008'
-                )
-              AND ( uewdh_test,bwk_that,qz_that,uewdh,aq_that,fv_that, aolq_that,njmfiev_that )
-              IN (SELECT uewdh_test,bwk_that,qz_that,uewdh,aq_that,fv_that, aolq_that,njmfiev_that
-           from that03
-                     where  uewdh_test = '2009'
-                     and bwk_that = '1'
-       and qz_that ='1'
-       and uewdh = '1'
-                     and aq_that= 3
-                     and fv_that ='007010101'
-           and aolq_that  ='0008'
-                     and njmfiev_that = 2
-                  )
-
---where 1=1
-                   and vwuwv_that  = 'N'
-         and uzs_that = '06'
-              )
-           ) a  WHERE
-                 bkw_that <> '0685' and  uzs_that = '06';
+SELECT uzs_that
+FROM that07
+WHERE uewdh_test IN (
+		SELECT uewdh_test
+		FROM that08
+	)
+	AND uzs_that = '06';
                  
-select uzs_that
-from that07
-where (uewdh_test, bwk_that, uzs_that) in (select uewdh_test, bwk_that, uzs_that
-                                          from that08)
-  and uzs_that = '06';
+SELECT x.uzs_that
+FROM that07 x, (
+		SELECT DISTINCT uewdh_test, bwk_that, uzs_that
+		FROM that08
+	) y
+WHERE (x.uewdh_test, x.bwk_that, x.uzs_that) = (y.uewdh_test, y.bwk_that, y.uzs_that)
+	AND x.uzs_that = '06';
 
-select x.uzs_that
-from that07 x,
-     (select distinct uewdh_test, bwk_that, uzs_that from that08) y
-where (x.uewdh_test, x.bwk_that, x.uzs_that) = (y.uewdh_test, y.bwk_that, y.uzs_that)
-  and x.uzs_that = '06';
-
-select * from (
-
-
-                 select uzs_that,bkw_that from that07
-
-                 where 1 = (
-                       select CASE WHEN e_o_that = '3' THEN  1
-                        ELSE 0
-                        END
-                        from that03
-                        where  uewdh_test = '2009'
-                        and bwk_that = '1'
-          and qz_that ='1'
-          and uewdh = '1'
-                        and aq_that= 3
-                        and fv_that ='007010101'
-              and aolq_that  ='0008' )
-
-                      AND  uewdh_test IN (
-                          SELECT uewdh_test from that03
-                                    where  uewdh_test = '2009'
-                                    and bwk_that = '1'
-                      and qz_that ='1'
-                          and uewdh = '1'
-                                    and aq_that= 3
-                                    and fv_that ='007010101'
-                           and aolq_that  ='0008'
-                                    and njmfiev_that = 2
-                          )
-
-       --where 1=1
-                  and vwuwv_that  = 'N'
-
-                  union all
-
-                  select uzs_that,bkw_that from that07
-
-                  where uewdh_test in (select uewdh_test from that08
-                  where 1 = (
-                       select CASE WHEN e_o_that = '2' THEN  1
-                        ELSE 0
-                        END
-                        from that03
-                        where  uewdh_test = '2009'
-                        and bwk_that = '1'
-          and qz_that ='1'
-          and uewdh = '1'
-                        and aq_that= 3
-                        and fv_that ='007010101'
-              and aolq_that  ='0008'
-                )
-              AND  uewdh_test
-              IN (SELECT uewdh_test from that03
-                     where  uewdh_test = '2009'
-                     and bwk_that = '1'
-       and qz_that ='1'
-       and uewdh = '1'
-                     and aq_that= 3
-                     and fv_that ='007010101'
-           and aolq_that  ='0008'
-                     and njmfiev_that = 2
-                  )
-
---where 1=1
-                   and vwuwv_that  = 'N'
-         and uzs_that = '06'
-              )
-           ) a  WHERE
-                 bkw_that <> '0685' and  uzs_that = '06';
-                 
-select uzs_that
-from that07
-where uewdh_test in (select uewdh_test from that08)
-  and uzs_that = '06';
-
-select x.uzs_that
-from that07 x,
-     (select distinct uewdh_test, bwk_that, uzs_that from that08) y
-where (x.uewdh_test, x.bwk_that, x.uzs_that) = (y.uewdh_test, y.bwk_that, y.uzs_that)
-  and x.uzs_that = '06';
-                 
 drop CLASS that03;
 drop CLASS that07;
 drop CLASS that08;
