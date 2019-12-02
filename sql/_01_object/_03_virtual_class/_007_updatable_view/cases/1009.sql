@@ -13,8 +13,7 @@ insert into c1 values( 5, null, 'test5');
 
 insert into c1 values( 5, 5, 'test5');
 
-create vclass v1 as 
-                   select id  as a from c1 where id >3 DIFFERENCE select id  as a from c1 where id <3;
+create vclass v1 as select id  as a from c1 where id >3 DIFFERENCE select id  as a from c1 where id <3;
 
 
 select v1 from v1;
