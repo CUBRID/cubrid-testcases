@@ -14,15 +14,26 @@ INSERT INTO tree VALUES (6,2,'Foster',2);
 INSERT INTO tree VALUES (7,6,'Brown',1);
 
 --test: system error for below query:
-select  json_objectagg(id,mgrid) from tree connect by prior id=mgrid ORDER SIBLINGS BY sort,id;
+select * from json_table(
+    (select  json_objectagg(id,id||':'||mgrid) from tree connect by prior id=mgrid ORDER SIBLINGS BY sort,id),
+    '$.*' COLUMNS (a VARCHAR(100) PATH '$')
+) as t1 order by 1;
 
 select id,mgrid from tree connect by prior id=mgrid ORDER SIBLINGS BY sort,id;
 
 --expected error
 select  json_arrayagg(id,mgrid) from tree connect by prior id=mgrid ORDER SIBLINGS BY sort,id;
 
-select  json_arrayagg(id) from tree connect by prior id=mgrid ORDER SIBLINGS BY sort,id;
-select  json_arrayagg(mgrid) from tree connect by prior id=mgrid ORDER SIBLINGS BY sort,id;
+select * from json_table(
+    (select  json_arrayagg(id) from tree connect by prior id=mgrid ORDER SIBLINGS BY sort,id),
+    '$[*]' COLUMNS (a VARCHAR(100) PATH '$')
+) as t1 order by 1;
+
+select * from json_table(
+    (select  json_arrayagg(mgrid) from tree connect by prior id=mgrid ORDER SIBLINGS BY sort,id),
+    '$[*]' COLUMNS (a VARCHAR(100) PATH '$')
+) as t1 order by 1;
+
 
 INSERT INTO tree VALUES (NULL,NULL,'null', null);
 
@@ -30,8 +41,16 @@ INSERT INTO tree VALUES (NULL,NULL,'null', null);
 select  json_objectagg(id,mgrid) from tree connect by prior id=mgrid ORDER SIBLINGS BY sort,id;
 
 select id,mgrid from tree connect by prior id=mgrid ORDER SIBLINGS BY sort,id;
-select  json_arrayagg(id) from tree connect by prior id=mgrid ORDER SIBLINGS BY sort,id;
-select  json_arrayagg(mgrid) from tree connect by prior id=mgrid ORDER SIBLINGS BY sort,id;
+
+select * from json_table(
+    (select  json_arrayagg(id) from tree connect by prior id=mgrid ORDER SIBLINGS BY sort,id),
+    '$[*]' COLUMNS (a VARCHAR(100) PATH '$')
+) as t1 order by 1;
+
+select * from json_table(
+    (select  json_arrayagg(mgrid) from tree connect by prior id=mgrid ORDER SIBLINGS BY sort,id),
+    '$[*]' COLUMNS (a VARCHAR(100) PATH '$')
+) as t1 order by 1;
 
 drop view if exists tree;
 drop table if exists tree1;
