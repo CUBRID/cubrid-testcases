@@ -24,21 +24,40 @@ insert into t1 values('2012-03-14', 'kkll', 'mmnn', 16000 );
 insert into t1 values('2012-03-15', 'kkll', 'mmnn', 17000 );
 insert into t1 values('2012-03-16', 'kkll', 'mmnn', 18000 );
 
-
-select dt, case when to_char(dt, 'YYYY-MM-DD')  is null  and dept is not null  and username is not null  then  dept ||'('|| username || ')'||' oopp'  
-                  when to_char(dt, 'YYYY-MM-DD')  is null and dept is not null  and username is null   then  dept ||' oopp' 
-                  when to_char(dt, 'YYYY-MM-DD')  is null and dept is null  and username is null   then 'rr ss' 
-                  ELSE  to_char(dt, 'YYYY-MM-DD') END AS [ttuu],  
-         case when to_char(dt, 'YYYY-MM-DD')  is null  then ''
-                  ELSE dept END AS [vv], 
-         case when to_char(dt, 'YYYY-MM-DD')  is null  then ''
-                  ELSE username END AS [ww], 
-         to_char( sum_amt, '9,999,999') AS [xxyy]
-from (    
-      select  dt, dept, username, sum(amt) AS sum_amt
-      from t1 AS B 
-      group by dept, username, dt with rollup
-     ) AS X(dt, dept, username, sum_amt)
-where dt is not null;
+SELECT dt,      
+    CASE
+    WHEN to_char(dt, 'YYYY-MM-DD') is null
+        AND dept is NOT null
+        AND username is NOT NULL THEN
+    dept ||'('|| username || ')'||' oopp'
+    WHEN to_char(dt, 'YYYY-MM-DD') is null
+        AND dept is NOT null
+        AND username is NULL THEN
+    dept ||' oopp'
+    WHEN to_char(dt, 'YYYY-MM-DD') is null
+        AND dept is null
+        AND username is NULL THEN
+    'rr ss'
+    ELSE to_char(dt, 'YYYY-MM-DD')
+    END AS [ttuu],
+    CASE
+    WHEN to_char(dt, 'YYYY-MM-DD') is NULL THEN
+    ''
+    ELSE dept
+    END AS [vv],
+    CASE
+    WHEN to_char(dt, 'YYYY-MM-DD') is NULL THEN
+    ''
+    ELSE username
+    END AS [ww], to_char( sum_amt, '9,999,999') AS [xxyy]
+FROM 
+    (SELECT dt,
+         dept,
+         username,
+         sum(amt) AS sum_amt
+    FROM t1 AS B
+    GROUP BY  dept, username, dt
+    WITH rollup ) AS X(dt, dept, username, sum_amt)
+WHERE dt is NOT null;
 
 drop table if exists t1;
