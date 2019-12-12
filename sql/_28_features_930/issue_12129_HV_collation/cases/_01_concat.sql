@@ -1,3 +1,4 @@
+--+ holdcas on;
 set names iso88591;
 prepare s from 'select concat (?,?), collation (concat (?,?))';
 execute s using _utf8'a',_utf8'b', _utf8'a',_utf8'b';
@@ -28,3 +29,5 @@ select :r, collation (:r);
 
 drop variable r;
 set names iso88591;
+
+--+ holdcas off;

@@ -44,10 +44,10 @@ C1: COMMIT WORK;
 MC: wait until C1 ready;
 
 /* test case */
-C1: SELECT * FROM t1 WHERE id = 1 or id = 2 FOR UPDATE;
+C1: SELECT * FROM t1 WHERE id = 1 or id = 2 order by 1,2 FOR UPDATE;
 MC: wait until C1 ready;
 
-C2: SELECT * FROM t1 WHERE id = 1 or id = 3 FOR UPDATE;
+C2: SELECT * FROM t1 WHERE id = 1 or id = 3 order by 1,2 FOR UPDATE;
 /* expect: C2 needs to wait */
 MC: wait until C2 blocked;
 C1: UPDATE t1 SET id = 7 WHERE id = 1 or id = 2;

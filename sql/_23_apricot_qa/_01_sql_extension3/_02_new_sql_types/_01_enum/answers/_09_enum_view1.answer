@@ -1,0 +1,43 @@
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+col1     INTEGER     YES          null          
+col2     ENUM('aaa', 'bbb', 'ccc')     YES          null          
+col3     ENUM('ddd', 'eee', 'fff')     YES          null          
+col4     ENUM('abc')     YES          null          
+col5     ENUM('111', '222', '333')     YES          null          
+col6     ENUM('a', 'b', 'c', 'd', 'e', 'f')     YES          'c'          
+
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
+cview1     1     i     1     col6     A     0     null     null     YES     BTREE     null     null     YES     
+cview1     0     pk_cview1_col2     1     col2     A     0     null     null     NO     BTREE     null     null     YES     
+cview1     0     u_cview1_col3     1     col3     A     0     null     null     YES     BTREE     null     null     YES     
+cview1     0     u_cview1_col5     1     col5     A     0     null     null     NO     BTREE     null     null     YES     
+
+===================================================
+1
+===================================================
+Error:-670
+===================================================
+col1    col2    col3    col4    col5    col6    
+1     aaa     eee     abc     333     d     
+3     ccc     ddd     abc     111     e     
+
+===================================================
+col1    col2    col3    col4    col5    col6    
+1     aaa     eee     abc     333     d     
+2     bbb     fff     abc     222     f     
+3     ccc     ddd     abc     111     e     
+
+===================================================
+0
+===================================================
+0

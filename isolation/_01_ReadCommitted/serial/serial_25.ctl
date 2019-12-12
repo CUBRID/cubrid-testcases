@@ -28,14 +28,14 @@ MC: wait until C1 ready;
 
 /* test case */
 C1: UPDATE tt1 SET id=s1.NEXT_VALUE WHERE id=101;
-C1: UPDATE tt1 SET id=s1.NEXT_VALUE WHERE id=102;
+C1: UPDATE tt1 SET id=s1.NEXT_VALUE, col=col WHERE id=102 order by id, col;
 MC: wait until C1 ready;
 C2: INSERT INTO tt1 VALUES(s1.NEXT_VALUE,'Square');
 MC: wait until C2 ready;
 C1: commit work;
+C2: SELECT SERIAL_CURRENT_VALUE(s1);
+C1: SELECT SERIAL_CURRENT_VALUE(s1);
 C2: commit work;
-C2: SELECT * FROM tt1 ORDER BY id;
-C1: SELECT * FROM tt1 ORDER BY id;
 C1: DROP SERIAL s1;
 C1: commit;
 C2: quit;

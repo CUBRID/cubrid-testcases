@@ -1,0 +1,174 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+i    
+2     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: u node[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: row_number partition by () order by (? asc nulls first)
+Query stmt:
+(select distinct row_number() over (order by ?) from u u)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i from t t where t.i> any (select distinct row_number() over (order by ?) from u u) order by ?
+===================================================
+i    
+2     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: u node[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: row_number partition by () order by (? asc nulls first)
+Query stmt:
+(select distinct row_number() over (order by ?) from u u)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i from t t where  cast(t.i as integer)> any (select distinct row_number() over (order by ?) from u u) order by ?
+===================================================
+i    
+2     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: u node[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: min partition by (? asc nulls first) order by ()
+Query stmt:
+(select distinct min(u.i) over (partition by ?) from u u)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i from t t where t.i>= all (select distinct min(u.i) over (partition by ?) from u u) order by ?
+===================================================
+i    
+1     
+2     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: u node[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: max partition by () order by (? asc nulls first)
+Query stmt:
+(select distinct max(u.i) over (order by ?)-? from u u)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i from t t where  cast(t.i as integer)> all (select distinct max(u.i) over (order by ?)-? from u u) order by ?
+===================================================
+i    
+2     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: u node[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: avg partition by () order by (? asc nulls first)
+Query stmt:
+(select distinct avg(u.i) over (order by ?) from u u)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i from t t where t.i> any (select distinct avg(u.i) over (order by ?) from u u) order by ?
+===================================================
+i    
+1     
+2     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: u node[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: sum partition by (? asc nulls first) order by ()
+Query stmt:
+(select distinct sum(u.i) over (partition by ?) from u u)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i from t t where  cast(t.i as integer)<= any (select distinct sum(u.i) over (partition by ?) from u u) order by ?
+===================================================
+0
+===================================================
+0

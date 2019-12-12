@@ -1,8 +1,8 @@
 SELECT COS(PI()) from db_root;
 
-SELECT COS(2) from db_root;
+SELECT to_char(cos(2), '9.999999') from db_root;
 
-SELECT COS('1') from db_root;
+SELECT to_char(cos('1'), '9.999999') from db_root;
 
 SELECT COS('a') from db_root;
 

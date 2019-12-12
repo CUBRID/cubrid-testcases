@@ -7,13 +7,13 @@ insert into student(s_class,score) values('3',91),('3',81),('3',71),('3',61),('3
 insert into student(s_class,score) values('4',93),('4',93),('4',93),('4',93),('4',93),('4',93),('4',93);
 create index i_s_23 on student(s_class,score);
 update statistics on student;
-select /*+ recompile */ id,score from student group by s_class having score>=90 order by score desc limit 0,1;
-select /*+ recompile */ id,score from student where s_class in ('1','2') and score>=90 order by score limit 0,4;
-select /*+ recompile */ id,score from student where s_class in ('1','2') and score>=90 order by score desc limit 0,4;
-select /*+ recompile */ id,score from student where s_class in ('1','3') and score>=90 order by score desc limit 0,4;
-select /*+ recompile */ id,score from student where s_class in ('1','3') and score>=90 order by score limit 0,4;
-select /*+ recompile */ id,score from student where s_class in ('1','2','3','4') and score>=90 order by score limit 0,4;
-select /*+ recompile */ id,score from student where score>=90 order by score limit 0,4;
+select /*+ recompile */ min(id),min(score) from student group by s_class having s_class>=3 order by score desc,id limit 0,1;
+select /*+ recompile */ id,score from student where s_class in ('1','2') and score>=90 order by score,id limit 0,4;
+select /*+ recompile */ id,score from student where s_class in ('1','2') and score>=90 order by score desc,id limit 0,4;
+select /*+ recompile */ id,score from student where s_class in ('1','3') and score>=90 order by score desc,id limit 0,4;
+select /*+ recompile */ id,score from student where s_class in ('1','3') and score>=90 order by score,id limit 0,4;
+select /*+ recompile */ id,score from student where s_class in ('1','2','3','4') and score>=90 order by score,id limit 0,4;
+select /*+ recompile */ id,score from student where score>=90 order by score,id limit 0,4;
 drop student;
 
 drop if exists tt;
@@ -63,7 +63,7 @@ create table t2(i int,j int);
 create index idx on t1(i,j,k);
 insert into t1 values (2,1,3),(6,2,5),(4,3,5),(2,0,3);
 insert into t2 values (2,3),(2,5), (5,5),(6,6);
-select /*+ recompile ordered */ * from t1,t2 where t1.i = t2.i and t1.i=2 and t1.j in (0,1,2,3) order by k limit 0,5;
+select /*+ recompile ordered */ * from t1,t2 where t1.i = t2.i and t1.i=2 and t1.j in (0,1,2,3) order by 1,2,3,4,5 limit 0,5;
 drop t1,t2;
 
 

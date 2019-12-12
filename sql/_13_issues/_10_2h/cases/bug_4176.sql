@@ -8,6 +8,7 @@ insert into foo values('AFAC000022', 'AFAC000002','Y');
 select id,parent_id,use_yn
 from foo
 start with id='AFAC000002'
-connect by nocycle prior id=parent_id;
+connect by nocycle prior id=parent_id
+order by 1,2,3;
 
 drop table foo;

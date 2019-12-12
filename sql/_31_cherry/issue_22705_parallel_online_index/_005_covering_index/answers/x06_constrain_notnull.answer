@@ -1,0 +1,44 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+a    b    
+
+Query plan:
+sscan
+    class: tb node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tb.a, tb.b from tb tb where tb.a is null 
+===================================================
+a    b    
+
+Query plan:
+sscan
+    class: tb node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tb.a, tb.b from tb tb where (tb.b is null  or tb.b is not null )
+===================================================
+b    
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_b term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select tb.b from tb tb where (tb.b> ?:? )
+===================================================
+0
+===================================================
+0
+===================================================
+0

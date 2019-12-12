@@ -1,0 +1,346 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
+i1    
+1     
+1     
+1     
+2     
+2     
+2     
+
+Query plan:
+iscan
+    class: t_basic? node[?]
+    index: basic?_idx_one term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t_basic?.i? from t_basic? t_basic? where (t_basic?.i?< ?:? ) order by ?
+/* ---> skip ORDER BY */
+===================================================
+i1    i2    i3    
+1     1     1     
+1     2     3     
+1     3     2     
+2     1     1     
+2     2     3     
+2     3     2     
+
+Query plan:
+iscan
+    class: t_basic? node[?]
+    index: basic?_idx_all term[?] (covers)
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t_basic?.i?, t_basic?.i?, t_basic?.i? from t_basic? t_basic? where (t_basic?.i?< ?:? ) order by ?, ?, ?
+/* ---> skip ORDER BY */
+===================================================
+i1    
+1     
+1     
+1     
+2     
+2     
+2     
+
+Query plan:
+iscan
+    class: t_basic? node[?]
+    index: basic?_idx_one term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t_basic?.i? from t_basic? t_basic? where (t_basic?.i?< ?:? ) using index t_basic?.basic?_idx_one(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+i1    
+1     
+1     
+1     
+2     
+2     
+2     
+
+Query plan:
+iscan
+    class: t_basic? node[?]
+    index: basic?_idx_one_two term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t_basic?.i? from t_basic? t_basic? where (t_basic?.i?< ?:? ) using index t_basic?.basic?_idx_one_two(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+i1    
+1     
+1     
+1     
+2     
+2     
+2     
+
+Query plan:
+iscan
+    class: t_basic? node[?]
+    index: basic?_idx_one_three term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t_basic?.i? from t_basic? t_basic? where (t_basic?.i?< ?:? ) using index t_basic?.basic?_idx_one_three(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+i1    
+1     
+1     
+1     
+2     
+2     
+2     
+
+Query plan:
+iscan
+    class: t_basic? node[?]
+    index: basic?_idx_all term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t_basic?.i? from t_basic? t_basic? where (t_basic?.i?< ?:? ) using index t_basic?.basic?_idx_all(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+i1    
+1     
+1     
+1     
+2     
+2     
+2     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t_basic? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t_basic?.i? from t_basic? t_basic? where (t_basic?.i?< ?:? ) using index t_basic?.basic?_idx_two(+) order by ?
+===================================================
+i1    
+1     
+1     
+1     
+2     
+2     
+2     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t_basic? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t_basic?.i? from t_basic? t_basic? where (t_basic?.i?< ?:? ) using index t_basic?.basic?_idx_two_three(+) order by ?
+===================================================
+i1    
+1     
+1     
+1     
+2     
+2     
+2     
+
+Query plan:
+iscan
+    class: t_basic? node[?]
+    index: basic?_idx_one term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t_basic?.i? from t_basic? t_basic? where (t_basic?.i?< ?:? ) using index t_basic?.basic?_idx_one(+), t_basic?.basic?_idx_two(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+i1    
+1     
+1     
+1     
+2     
+2     
+2     
+
+Query plan:
+iscan
+    class: t_basic? node[?]
+    index: basic?_idx_one term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t_basic?.i? from t_basic? t_basic? where (t_basic?.i?< ?:? ) using index t_basic?.basic?_idx_one(+), t_basic?.basic?_idx_one_two(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+i1    
+1     
+1     
+1     
+2     
+2     
+2     
+
+Query plan:
+iscan
+    class: t_basic? node[?]
+    index: basic?_idx_one term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t_basic?.i? from t_basic? t_basic? where (t_basic?.i?< ?:? ) using index t_basic?.basic?_idx_one(+), t_basic?.basic?_idx_one_three(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+i1    
+1     
+1     
+1     
+2     
+2     
+2     
+
+Query plan:
+iscan
+    class: t_basic? node[?]
+    index: basic?_idx_one term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t_basic?.i? from t_basic? t_basic? where (t_basic?.i?< ?:? ) using index t_basic?.basic?_idx_all(+), t_basic?.basic?_idx_one(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+i1    
+1     
+1     
+1     
+2     
+2     
+2     
+
+Query plan:
+iscan
+    class: t_basic? node[?]
+    index: basic?_idx_one term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t_basic?.i? from t_basic? t_basic? where (t_basic?.i?< ?:? ) using index t_basic?.basic?_idx_one(+), t_basic?.basic?_idx_two_three(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+i1    
+1     
+1     
+1     
+2     
+2     
+2     
+
+Query plan:
+iscan
+    class: t_basic? node[?]
+    index: basic?_idx_one term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t_basic?.i? from t_basic? t_basic? where (t_basic?.i?< ?:? ) using index t_basic?.basic?_idx_one_two(+), t_basic?.basic?_idx_one order by ?
+/* ---> skip ORDER BY */
+===================================================
+i1    
+1     
+1     
+1     
+2     
+2     
+2     
+
+Query plan:
+iscan
+    class: t_basic? node[?]
+    index: basic?_idx_one_three term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t_basic?.i? from t_basic? t_basic? where (t_basic?.i?< ?:? ) using index t_basic?.basic?_idx_one_three(+), t_basic?.basic?_idx_one_two order by ?
+/* ---> skip ORDER BY */
+===================================================
+i1    
+1     
+1     
+1     
+2     
+2     
+2     
+
+Query plan:
+iscan
+    class: t_basic? node[?]
+    index: basic?_idx_one_three term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t_basic?.i? from t_basic? t_basic? where (t_basic?.i?< ?:? ) using index t_basic?.basic?_idx_one_three(+), t_basic?.basic?_idx_one_two order by ?
+/* ---> skip ORDER BY */
+===================================================
+i1    
+1     
+1     
+1     
+2     
+2     
+2     
+
+Query plan:
+iscan
+    class: t_basic? node[?]
+    index: basic?_idx_one_two term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t_basic?.i? from t_basic? t_basic? where (t_basic?.i?< ?:? ) using index t_basic?.basic?_idx_all(+), t_basic?.basic?_idx_one_two order by ?
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

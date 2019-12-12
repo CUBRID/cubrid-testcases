@@ -1,0 +1,137 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+1
+===================================================
+2
+===================================================
+4
+===================================================
+8
+===================================================
+16
+===================================================
+32
+===================================================
+64
+===================================================
+128
+===================================================
+256
+===================================================
+512
+===================================================
+5
+===================================================
+0
+===================================================
+a    b    
+1     1     
+2     1     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: idx-join (inner join)
+                            outer: iscan
+                                       class: bb node[?]
+                                       index: pk_bb_a term[?]
+                                       cost:  ? card ?
+                            inner: iscan
+                                       class: aa node[?]
+                                       index: pk_aa_a term[?] (covers)
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: iscan
+                            class: cc node[?]
+                            index: pk_cc_a term[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select bb.a, bb.b from aa aa, bb bb, cc cc where ((bb.a= ?:? ) or (bb.a= ?:? )) and bb.a=aa.a and cc.a=aa.a and cc.b= ?:?  order by ?, ?
+===================================================
+a    b    
+1     1     
+2     1     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: idx-join (inner join)
+                            outer: iscan
+                                       class: bb node[?]
+                                       index: pk_bb_a term[?]
+                                       cost:  ? card ?
+                            inner: iscan
+                                       class: aa node[?]
+                                       index: pk_aa_a term[?] (covers)
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: iscan
+                            class: cc node[?]
+                            index: pk_cc_a term[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select bb.a, bb.b from aa aa, bb bb, cc cc where bb.a=aa.a and ((bb.a= ?:? ) or (bb.a= ?:? )) and cc.a=aa.a and cc.b= ?:?  order by ?, ?
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+count(*)    
+2     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: tt? node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: tt? node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: jt node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ count(*) from tt? tt?, tt? tt?, (json_table ('[{"date?":"?-?-?"}, {"date?":"?-?-?"}]', '$[*]' columns (date? varchar(?) PATH '$."date?"' NULL ON EMPTY NULL ON ERROR )) as jt) where (tt?.date?> str_to_date(jt.date?, '%Y-%m-%d')) and tt?.date?= str_to_date(tt?.date?, '%Y-%m-%d')
+===================================================
+0

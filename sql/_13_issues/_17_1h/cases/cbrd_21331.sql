@@ -25,10 +25,10 @@ alter table t3 add s8 varchar;
 -- null
 alter table t3 alter column s8 set default 'cccc';
 
-select i1,s1,s2,s3,s4,if(s5 is not null,'ok','nok'),s6,if(s7 is not null,'ok','nok'),s8 from t3;
+select i1,s1,s2,s3,s4,if(s5 is not null,'ok','nok'),s6,if(s7 is not null,'ok','nok'),s8 from t3 order by 1;
 
 insert into t3(i1) values(4);
 
-select i1,s1,s2,s3,s4,if(s5 is not null,'ok','nok'),s6,if(s7 is not null,'ok','nok'),s8 from t3;
+select i1,s1,s2,s3,s4,if(s5 is not null,'ok','nok'),s6,if(s7 is not null,'ok','nok'),s8 from t3 order by 1;
 
 drop t3;

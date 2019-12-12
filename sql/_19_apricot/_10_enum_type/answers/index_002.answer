@@ -1,0 +1,265 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+2
+===================================================
+4
+===================================================
+8
+===================================================
+16
+===================================================
+32
+===================================================
+64
+===================================================
+64
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+e    
+Monday     
+Monday     
+Monday     
+Monday     
+Monday     
+Monday     
+Monday     
+Monday     
+Monday     
+
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.e from t t where  cast(t.e as integer)<?
+===================================================
+i    e    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_e term[?] (covers)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.i, t.e from t t where  cast(t.e as integer)<? and t.i= ?:? 
+===================================================
+i    e    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_e term[?] (covers)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.i, t.e from t t where  cast(t.e as varchar)<'Wednesday' and t.i= ?:? 
+===================================================
+e    
+
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.e from t t where  cast(t.e as varchar) between 'Tuesday' and 'Saturday'
+===================================================
+i    e    
+2     Wednesday     
+9     Wednesday     
+16     Wednesday     
+23     Wednesday     
+30     Wednesday     
+37     Wednesday     
+44     Wednesday     
+51     Wednesday     
+58     Wednesday     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_e_s term[?] AND term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.e, t.s from t t where (t.s< ?:? ) and t.e= ?:?  order by ?, ?
+===================================================
+i    e    
+2     Wednesday     
+9     Wednesday     
+16     Wednesday     
+23     Wednesday     
+30     Wednesday     
+37     Wednesday     
+44     Wednesday     
+51     Wednesday     
+58     Wednesday     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_e_s term[?] AND term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.e, t.s from t t where (t.s< ?:? ) and t.e= ?:?  order by ?, ?
+===================================================
+e    
+Tuesday     
+Wednesday     
+Thursday     
+Friday     
+Saturday     
+Sunday     
+Monday     
+Tuesday     
+Wednesday     
+Thursday     
+Friday     
+Saturday     
+Sunday     
+Monday     
+Tuesday     
+Wednesday     
+Thursday     
+Friday     
+Saturday     
+Sunday     
+Monday     
+Tuesday     
+Wednesday     
+Thursday     
+Friday     
+Saturday     
+Sunday     
+Monday     
+Tuesday     
+Wednesday     
+Thursday     
+Friday     
+Saturday     
+Sunday     
+Monday     
+Tuesday     
+Wednesday     
+Thursday     
+Friday     
+Saturday     
+Sunday     
+Monday     
+Tuesday     
+Wednesday     
+Thursday     
+Friday     
+Saturday     
+Sunday     
+Monday     
+Tuesday     
+Wednesday     
+Thursday     
+Friday     
+Saturday     
+Sunday     
+Monday     
+Tuesday     
+Wednesday     
+Thursday     
+Friday     
+Saturday     
+Sunday     
+Monday     
+Tuesday     
+
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.e from t t where  cast(t.e as integer)<?
+===================================================
+e    
+Tuesday     
+Tuesday     
+Tuesday     
+Tuesday     
+Tuesday     
+Tuesday     
+Tuesday     
+Tuesday     
+Tuesday     
+Tuesday     
+Thursday     
+Thursday     
+Thursday     
+Thursday     
+Thursday     
+Thursday     
+Thursday     
+Thursday     
+Thursday     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_e term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.e from t t where ((t.e= ?:? ) or (t.e= ?:? )) order by ?
+/* ---> skip ORDER BY */
+===================================================
+i    e    s    
+1     Tuesday     Tuesday     
+2     Wednesday     Wednesday     
+3     Thursday     Thursday     
+4     Friday     Friday     
+5     Saturday     Saturday     
+6     Sunday     Sunday     
+7     Monday     Monday     
+8     Tuesday     Tuesday     
+9     Wednesday     Wednesday     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_e_s term[?] (covers)
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.e, t.s from t t where (t.i< ?:? ) order by ?, ?, ?
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+0
+===================================================
+0

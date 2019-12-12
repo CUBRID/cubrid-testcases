@@ -1,0 +1,159 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+i    j    k    l    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx 
+    filtr: term[?] AND term[?]
+    sargs: term[?]
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.k, t.l from t t where (t.k> ?:? ) and t.s<>'x' and t.j= ?:?  order by ?
+/* ---> skip ORDER BY */
+===================================================
+i    j    k    l    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx (covers)
+    filtr: term[?] AND term[?]
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.k, t.l from t t where (t.k> ?:? ) and t.j= ?:?  order by ?
+/* ---> skip ORDER BY */
+===================================================
+i    j    k    l    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx  (desc_index)
+    filtr: term[?] AND term[?]
+    sargs: term[?]
+    sort:  ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.k, t.l from t t where (t.k> ?:? ) and t.s<>'x' and t.j= ?:?  order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+i    j    k    l    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx  (desc_index)
+    filtr: term[?] AND term[?]
+    sargs: term[?]
+    sort:  ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.k, t.l from t t where (t.k> ?:? ) and t.s<>'x' and t.j= ?:?  order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+i    j    k    l    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx  (desc_index)
+    filtr: term[?] AND term[?]
+    sargs: term[?]
+    sort:  ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.k, t.l from t t where (t.k> ?:? ) and t.s<>'x' and t.j= ?:?  order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+i    j    k    l    
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?] AND term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.k, t.l from t t where (t.k> ?:? ) and t.s<>'x' and t.j= ?:?  order by ? desc , ?
+===================================================
+i    j    k    l    
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?] AND term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.k, t.l from t t where (t.k> ?:? ) and t.s<>'x' and t.j= ?:?  order by ? desc , ?
+===================================================
+i    j    k    l    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx  (desc_index)
+    filtr: term[?] AND term[?]
+    sargs: term[?]
+    sort:  ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.k, t.l from t t where (t.k> ?:? ) and t.s<>'x' and t.j= ?:?  order by ? desc , ? desc 
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+0
+===================================================
+0

@@ -1,0 +1,56 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+firstname    lastname    age    gender    
+yin     jian ye     31     M     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: first_name_lower term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.firstname, t?.lastname, t?.age, t?.gender from t? t? where  lower(t?.FirstName)='yin'
+===================================================
+0
+===================================================
+Error:-493
+===================================================
+0
+===================================================
+firstname    lastname    age    gender    
+yin     jian ye     31     M     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: first_name_lower term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.firstname, t?.lastname, t?.age, t?.gender from t? t? where  lower(t?.FirstName)='yin'
+===================================================
+firstname    lastname    age    gender    
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.firstname, t?.lastname, t?.age, t?.gender from t? t? where  upper(t?.FirstName)='yin'
+===================================================
+Error:-272
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

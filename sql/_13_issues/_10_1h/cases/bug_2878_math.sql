@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- 1
 prepare s from 'select ACOS (?) into :result'
 execute s using 1 
@@ -189,3 +190,5 @@ select case when (:expected = :result) then 'YES' else 'NO' end as case21;
 --evaluate TRUNCATE(1.223, 1) into :expected;
 --select case when (:expected = :result) then 'YES' else 'NO' end as case23;
 --*/
+
+--+ holdcas off;

@@ -47,20 +47,26 @@ MC: wait until C1 ready;
 /* test case */
 C1: UPDATE t1 SET col = 'abcd' WHERE id > 3;
 MC: wait until C1 ready;
+
 C2: DELETE FROM t1 WHERE col = 'mno' or col = 'pqr' or id = 4;
 /* expect: C2 needs to wait once C1 completed */
 MC: wait until C2 blocked;
+
 /* expect: C1 select - id = 4,5,6,7 are updated */
 C1: SELECT * FROM t1 order by 1,2;
 C1: commit;
+MC: wait until C1 ready;
+
 /* expect: 1 row (id=4)deleted message should generated once C2 ready, C2 select - id = 4 is deleted */
-MC: wait until C2 ready;
 C2: SELECT * FROM t1 order by 1,2;
 C2: commit;
+MC: wait until C2 ready;
+
 /* expect: the instances of id = 5,6,7 are updated, id = 4 is deleted */
 C3: select * from t1 order by 1,2;
-
 C3: commit;
+MC: wait until C3 ready;
+
 C1: quit;
 C2: quit;
 C3: quit;

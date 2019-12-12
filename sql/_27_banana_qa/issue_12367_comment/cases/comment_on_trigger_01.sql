@@ -8,8 +8,8 @@ select trigger_name, comment from db_trig;
 
 insert into t2 values(1,'22'),(2,'cc');
 update t2 set id=5 where name='cc';
-select * from t2;
-select * from t3;
+select * from t2 order by 1,2;
+select * from t3 order by 1,2;
 
 alter trigger trg_t2 comment'this is a testing for trigger comment alter';
 select name, comment from db_trigger;

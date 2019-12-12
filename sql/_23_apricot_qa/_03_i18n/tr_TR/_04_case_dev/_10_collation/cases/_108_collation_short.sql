@@ -1,0 +1,47 @@
+--+ holdcas on;
+set names utf8;
+CREATE TABLE coll_test (id INTEGER, s VARCHAR(10)  collate utf8_tr_cs);
+
+INSERT INTO coll_test (id, s) values (0, 'xh');
+INSERT INTO coll_test (id, s) values (31, 'xi̇');
+INSERT INTO coll_test (id, s) values (26, 'Xĭ');
+INSERT INTO coll_test (id, s) values (21, 'xí');
+INSERT INTO coll_test (id, s) values (16, 'XĪ');
+INSERT INTO coll_test (id, s) values (11, 'xÎ');
+INSERT INTO coll_test (id, s) values (6, 'XÍ');
+INSERT INTO coll_test (id, s) values (1, 'xı');
+INSERT INTO coll_test (id, s) values (32, 'Xi̇');
+INSERT INTO coll_test (id, s) values (27, 'xî');
+INSERT INTO coll_test (id, s) values (22, 'Xí');
+INSERT INTO coll_test (id, s) values (17, 'xi');
+INSERT INTO coll_test (id, s) values (12, 'XÎ');
+INSERT INTO coll_test (id, s) values (7, 'xÌ');
+INSERT INTO coll_test (id, s) values (2, 'xI');
+INSERT INTO coll_test (id, s) values (33, 'xī');
+INSERT INTO coll_test (id, s) values (28, 'Xî');
+INSERT INTO coll_test (id, s) values (23, 'xì');
+INSERT INTO coll_test (id, s) values (18, 'xİ');
+INSERT INTO coll_test (id, s) values (13, 'xÏ');
+INSERT INTO coll_test (id, s) values (8, 'XÌ');
+INSERT INTO coll_test (id, s) values (3, 'Xı');
+INSERT INTO coll_test (id, s) values (34, 'Xī');
+INSERT INTO coll_test (id, s) values (29, 'xï');
+INSERT INTO coll_test (id, s) values (24, 'Xì');
+INSERT INTO coll_test (id, s) values (19, 'Xi');
+INSERT INTO coll_test (id, s) values (14, 'XÏ');
+INSERT INTO coll_test (id, s) values (9, 'xĬ');
+INSERT INTO coll_test (id, s) values (4, 'XI');
+INSERT INTO coll_test (id, s) values (35, 'xj');
+INSERT INTO coll_test (id, s) values (30, 'Xï');
+INSERT INTO coll_test (id, s) values (25, 'xĭ');
+INSERT INTO coll_test (id, s) values (20, 'Xİ');
+INSERT INTO coll_test (id, s) values (15, 'xĪ');
+INSERT INTO coll_test (id, s) values (10, 'XĬ');
+INSERT INTO coll_test (id, s) values (5, 'xÍ');
+
+SELECT id, s FROM coll_test ORDER BY s;
+
+DROP TABLE coll_test;
+set names iso88591;
+commit;
+--+ holdcas off;

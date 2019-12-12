@@ -1,0 +1,121 @@
+===================================================
+0
+===================================================
+0
+===================================================
+10
+===================================================
+10
+===================================================
+20
+===================================================
+0
+===================================================
+0
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
+tpr     1     idx_tpr     1     i     A     40     null     null     YES     BTREE     null     null     YES     
+
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
+tpr__p__p_10     1     idx_tpr     1     i     A     10     null     null     YES     BTREE     null     null     YES     
+
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
+tpr__p__p_20     1     idx_tpr     1     i     A     10     null     null     YES     BTREE     null     null     YES     
+
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
+tpr__p__p_30     1     idx_tpr     1     i     A     10     null     null     YES     BTREE     null     null     YES     
+
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
+tpr__p__p_100     1     idx_tpr     1     i     A     10     null     null     YES     BTREE     null     null     YES     
+
+===================================================
+i    
+36     
+37     
+38     
+39     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: tpr node[?]
+                 index: idx_tpr term[?] (covers)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tpr.i from tpr tpr where (tpr.i> ?:? ) order by ?
+===================================================
+i    
+6     
+7     
+8     
+9     
+
+Query plan:
+iscan
+    class: tpr__p__p_? node[?]
+    index: idx_tpr term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tpr__p__p_?.i from tpr__p__p_? tpr__p__p_? where (tpr__p__p_?.i> ?:? ) order by ?
+/* ---> skip ORDER BY */
+===================================================
+i    
+16     
+17     
+18     
+19     
+
+Query plan:
+iscan
+    class: tpr__p__p_? node[?]
+    index: idx_tpr term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tpr__p__p_?.i from tpr__p__p_? tpr__p__p_? where (tpr__p__p_?.i> ?:? ) order by ?
+/* ---> skip ORDER BY */
+===================================================
+i    
+26     
+27     
+28     
+29     
+
+Query plan:
+iscan
+    class: tpr__p__p_? node[?]
+    index: idx_tpr term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tpr__p__p_?.i from tpr__p__p_? tpr__p__p_? where (tpr__p__p_?.i> ?:? ) order by ?
+/* ---> skip ORDER BY */
+===================================================
+i    
+36     
+37     
+38     
+39     
+
+Query plan:
+iscan
+    class: tpr__p__p_? node[?]
+    index: idx_tpr term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tpr__p__p_?.i from tpr__p__p_? tpr__p__p_? where (tpr__p__p_?.i> ?:? ) order by ?
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+0
+===================================================
+0

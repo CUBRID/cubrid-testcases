@@ -1,0 +1,223 @@
+===================================================
+0
+===================================================
+0
+===================================================
+12
+===================================================
+id    textlabel    description    
+2     a_0     the font designer has decided what the height, width, and depth of the character are     
+
+Query plan:
+iscan
+    class: part node[?]
+    index: idx_part term[?]
+    cost:  ? card ?
+Query stmt:
+select part.id, part.textlabel, part.description from part part where (part.id> ?:? ) using index part.idx_part(+)
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: part node[?]
+    index: idx_part term[?]
+    cost:  ? card ?
+Query stmt:
+select part.id, part.textlabel, part.description from part part where (part.id> ?:? ) using index part.idx_part(+)
+Query plan:
+sscan
+    class: part node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select part.id, part.textlabel, part.description from part part where (part.textlabel like '%$_%' escape '$' or part.textlabel like  ?:?  or part.textlabel like  ?:?  or part.textlabel like  ?:? )
+===================================================
+0
+===================================================
+id    textlabel    description    
+2     a_0     the font designer has decided what the height, width, and depth of the character are     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: orig_part node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select orig_part.id, orig_part.textlabel, orig_part.description from orig_part orig_part order by ?
+===================================================
+0
+===================================================
+4
+===================================================
+id    textlabel    description    
+2     a_0     the font designer has decided what the height, width, and depth of the character are     
+
+Query plan:
+iscan
+    class: part node[?]
+    index: idx_part term[?]
+    cost:  ? card ?
+Query stmt:
+select part.id, part.textlabel, part.description from part part where (part.id> ?:? ) using index part.idx_part(+)
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: part node[?]
+    index: idx_part term[?]
+    cost:  ? card ?
+Query stmt:
+select part.id, part.textlabel, part.description from part part where (part.id> ?:? ) using index part.idx_part(+)
+Query plan:
+sscan
+    class: part node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select part.id, part.textlabel, part.description from part part where (part.textlabel like '%$_%' escape '$' or part.textlabel like  ?:?  or part.textlabel like  ?:?  or part.textlabel like  ?:? )
+===================================================
+Error:-493
+===================================================
+4
+===================================================
+id    textlabel    description    
+2     a_0     the font designer has decided what the height, width, and depth of the character are     
+5     a_1     null     
+
+Query plan:
+iscan
+    class: part node[?]
+    index: idx_part term[?]
+    cost:  ? card ?
+Query stmt:
+select part.id, part.textlabel, part.description from part part where (part.id> ?:? ) using index part.idx_part(+)
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: part node[?]
+    index: idx_part term[?]
+    cost:  ? card ?
+Query stmt:
+select part.id, part.textlabel, part.description from part part where (part.id> ?:? ) using index part.idx_part(+)
+Query plan:
+sscan
+    class: part node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select part.id, part.textlabel, part.description from part part where (part.textlabel like '%$_%' escape '$' or part.textlabel like  ?:?  or part.textlabel like  ?:?  or part.textlabel like  ?:? )
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+id    textlabel    description    
+1     a0_     from tex's viewpoint, a single character from a font is a box;     
+2     a_0     the font designer has decided what the height, width, and depth of the character are     
+5     a_1     null     
+
+Query plan:
+iscan
+    class: part node[?]
+    index: idx_part term[?]
+    cost:  ? card ?
+Query stmt:
+select part.id, part.textlabel, part.description from part part where (part.id> ?:? ) using index part.idx_part(+)
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: part node[?]
+    index: idx_part term[?]
+    cost:  ? card ?
+Query stmt:
+select part.id, part.textlabel, part.description from part part where (part.id> ?:? ) using index part.idx_part(+)
+Query plan:
+sscan
+    class: part node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select part.id, part.textlabel, part.description from part part where (part.textlabel like '%$_%' escape '$' or part.textlabel like  ?:?  or part.textlabel like  ?:?  or part.textlabel like  ?:? )
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+id    textlabel    description    
+1     a0_     from tex's viewpoint, a single character from a font is a box;     
+5     a_1     null     
+
+Query plan:
+iscan
+    class: part node[?]
+    index: idx_part term[?]
+    cost:  ? card ?
+Query stmt:
+select part.id, part.textlabel, part.description from part part where (part.id> ?:? ) using index part.idx_part(+)
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: part node[?]
+    index: idx_part term[?]
+    cost:  ? card ?
+Query stmt:
+select part.id, part.textlabel, part.description from part part where (part.id> ?:? ) using index part.idx_part(+)
+Query plan:
+sscan
+    class: part node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select part.id, part.textlabel, part.description from part part where (part.textlabel like '%$_%' escape '$' or part.textlabel like  ?:?  or part.textlabel like  ?:?  or part.textlabel like  ?:? )
+===================================================
+8
+===================================================
+id    textlabel    description    
+1     a0_     from tex's viewpoint, a single character from a font is a box;     
+3     a__     null     
+5     a_1     null     
+
+Query plan:
+iscan
+    class: part node[?]
+    index: idx_part term[?]
+    cost:  ? card ?
+Query stmt:
+select part.id, part.textlabel, part.description from part part where (part.id> ?:? ) using index part.idx_part(+)
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: part node[?]
+    index: idx_part term[?]
+    cost:  ? card ?
+Query stmt:
+select part.id, part.textlabel, part.description from part part where (part.id> ?:? ) using index part.idx_part(+)
+Query plan:
+sscan
+    class: part node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select part.id, part.textlabel, part.description from part part where (part.textlabel like '%$_%' escape '$' or part.textlabel like  ?:?  or part.textlabel like  ?:?  or part.textlabel like  ?:? )
+===================================================
+0

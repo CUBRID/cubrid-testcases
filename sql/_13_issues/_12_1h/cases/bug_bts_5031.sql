@@ -1,0 +1,10 @@
+create table a (class_of object, class_name varchar(200));
+create table c (class_name varchar(200), i int);
+create index i_c_class_name on c (class_name);
+set optimization level 513;
+commit;
+select c.class_name from a a, c c where a.class_of=c and c.class_name=a.class_name;
+--select /*+ ORDERED USE_IDX */ c.class_name from a a, c c where (a.class_of=c and c.class_name=a.class_name);
+--select /*+ recompile */ c.class_name from a a, c c where (a.class_of=c and c.class_name=a.class_name);
+drop a;
+drop c;

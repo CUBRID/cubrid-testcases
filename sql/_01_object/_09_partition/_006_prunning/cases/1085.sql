@@ -1,0 +1,57 @@
+--create range partition table with string data type and three partitions,create table,insert data to tables,update the range partition table with where complex clause
+
+create table range_test(id int not null  ,
+				test_char char(50),
+				test_varchar varchar(2000),
+				test_bit bit(16),
+				test_varbit bit varying(20),
+				test_nchar nchar(50),
+				test_nvarchar nchar varying(2000),
+				test_string string,
+				test_datetime timestamp,primary key(id,test_string))
+	PARTITION BY RANGE (test_string) (
+	PARTITION p0 VALUES LESS THAN ('dddddddddd'),
+	PARTITION p1 VALUES LESS THAN ('gggggggggg'),
+	PARTITION p2 VALUES LESS THAN ('kkkkkkkkkk')
+	);
+
+	insert into range_test values(1,'aaa','aaa',B'1',B'1011',N'aaa',N'aaa','aaaaaaaaaa','2007-01-01 09:00:00');
+	insert into range_test values(2,'bbb','bbb',B'10',B'1100',N'bbb',N'bbb','bbbbbbbbbb','2007-01-01 09:00:00');
+	insert into range_test values(3,'ccc','ccc',B'11',B'1101',N'ccc',N'ccc','cccccccccc','2007-01-01 09:00:00');
+	insert into range_test values(4,'ddd','ddd',B'100',B'1110',N'ddd',N'ddd','dddddddddd','2007-01-01 09:00:00');
+	insert into range_test values(5,'eee','eee',B'101',B'1111',N'eee',N'eee','eeeeeeeeee','2007-01-01 09:00:00');
+	insert into range_test values(6,'fff','fff',B'101',B'1111',N'fff',N'fff','ffffffffff','2007-01-01 09:00:00');
+	insert into range_test values(7,'hhh','hhh',B'101',B'1111',N'hhh',N'hhh','hhhhhhhhhh','2007-01-01 09:00:00');
+	insert into range_test values(8,'iii','iii',B'101',B'1111',N'iii',N'iii','iiiiiiiiii','2007-01-01 09:00:00');
+	insert into range_test values(10,null,null,null,null,null,null,null,'2007-01-01 09:00:00');
+create table range_test2(id int not null primary key ,
+				test_char char(50),
+				test_varchar varchar(2000),
+				test_bit bit(16),
+				test_varbit bit varying(20),
+				test_nchar nchar(50),
+				test_nvarchar nchar varying(2000),
+				test_string string,
+				test_datetime timestamp);
+
+	insert into range_test2 values(1,'aaa','aaa',B'1',B'1011',N'aaa',N'aaa','aaaaaaaaaa','2007-01-01 09:00:00');
+	insert into range_test2 values(2,'bbb','bbb',B'10',B'1100',N'bbb',N'bbb','bbbbbbbbbb','2007-01-01 09:00:00');
+	insert into range_test2 values(3,'ccc','ccc',B'11',B'1101',N'ccc',N'ccc','cccccccccc','2007-01-01 09:00:00');
+	insert into range_test2 values(4,'ddd','ddd',B'100',B'1110',N'ddd',N'ddd','dddddddddd','2007-01-01 09:00:00');
+	insert into range_test2 values(5,'eee','eee',B'101',B'1111',N'eee',N'eee','eeeeeeeeee','2007-01-01 09:00:00');
+	insert into range_test2 values(6,'fff','fff',B'101',B'1111',N'fff',N'fff','ffffffffff','2007-01-01 09:00:00');
+	insert into range_test2 values(7,'hhh','hhh',B'101',B'1111',N'hhh',N'hhh','hhhhhhhhhh','2007-01-01 09:00:00');
+	insert into range_test2 values(8,'iii','iii',B'101',B'1111',N'iii',N'iii','iiiiiiiiii','2007-01-01 09:00:00');
+	insert into range_test2 values(9,'kkk','kkk',B'101',B'1111',N'kkk',N'kkk','kkkkkkkkkk','2007-01-01 09:00:00');
+	insert into range_test2 values(10,null,null,null,null,null,null,null,'2007-01-01 09:00:00');
+update range_test set test_string = (select test_string from range_test2 where  id = 8) where test_string = 'aaaaaaaaaa';
+
+update range_test set test_string = (select test_string from range_test2 where  id = 9) where test_string = 'bbbbbbbbbb';
+
+select * from range_test order by id;
+select * from range_test__p__p0 order by id;
+select * from range_test__p__p1 order by id;
+select * from range_test__p__p2 order by id;
+
+drop table range_test;
+drop table range_test2;

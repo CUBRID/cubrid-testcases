@@ -1,3 +1,4 @@
+--+ holdcas on;
 autocommit off;
 create class ore_sample
 (
@@ -30,3 +31,5 @@ select set(select x from ore_sample x) into :temp_set from ore_sample y where y.
 select b{o}.x_coord, b{o}.y_coord, b{o}.sample 
 from table(temp_set) as t(b), ore_sample o;       
 rollback;
+
+--+ holdcas off;

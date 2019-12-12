@@ -42,7 +42,7 @@ create table t1 (s1 string collate utf8_en_ci);
 insert into t1 values ('A'),('a');
 
 
-prepare s from 'select least (? , s1 , ?), collation (least (? , s1 , ?)) from t1';
+prepare s from 'select least (? , s1 , ?), collation (least (? , s1 , ?)) from t1 order by 1,2';
 execute s using 'b', 1, 'b', 1;
 
 execute s using 'b', NULL, 'b', NULL;

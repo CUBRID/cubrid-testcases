@@ -1,0 +1,92 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+10000
+===================================================
+10000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+i    j    k    l    
+null     1     1     1     
+8     1     1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx term[?] (index skip scan) (desc_index)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where t.j= ?:?  order by ?
+/* ---> skip ORDER BY */
+===================================================
+i    j    k    l    
+null     1     1     1     
+8     1     1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx term[?] (index skip scan) (desc_index)
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where t.j= any {?} order by ?
+/* ---> skip ORDER BY */
+===================================================
+i    j    k    l    
+null     1     1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx term[?] (index skip scan) (desc_index)
+    filtr: term[?]
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where t.j= any {?} and t.i is null  order by ?
+/* ---> skip ORDER BY */
+===================================================
+i    j    k    l    
+8     1     1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx term[?] (index skip scan) (desc_index)
+    filtr: term[?]
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where t.j= any {?} and t.i is not null  order by ?
+/* ---> skip ORDER BY */
+===================================================
+i    j    k    l    
+null     1     1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx term[?] (index skip scan)
+    filtr: term[?]
+    sort:  ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where t.j= any {?} and t.i is null  order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+0
+===================================================
+0

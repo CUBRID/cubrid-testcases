@@ -13,11 +13,11 @@ insert into t2 values(188999,598.1, $133.3, 12223);
 insert into t2 values(199999,698.1, $122.3, 12223);
 insert into t2 values(110999,798.1, $14.3, 12223);
 
-prepare x1 from 'select max(i), sum(b), avg(c) from t2 group by d';
+prepare x1 from 'select max(i), sum(b), avg(c) from t2 group by d order by 1,2,3';
 execute x1;
 deallocate prepare x1;
 
-prepare x2 from 'select max(i), sum(b), avg(c) from t2 group by d having avg(c)>?';
+prepare x2 from 'select max(i), sum(b), avg(c) from t2 group by d having avg(c)>? order by 1,2,3';
 execute x2 using 15;
 execute x2 using $100;
 execute x2 using '99.99f'
@@ -38,15 +38,15 @@ insert into t3 values(1999222, '2013-9-9', 'prepare', 1);
 insert into t3 values(1222, '2013-4-9', 'prepar statement', 1);
 insert into t3 values(11222, '2013-9-9', 'prepare', 1);
 
-prepare b1 from 'select id, max(b) from t3 group by d';
+prepare b1 from 'select max(id), max(b) from t3 group by d order by 1,2';
 execute b1;
 
-prepare b2 from 'select id, max(b)-min(b) from t3 group by c, d having min(d)>?';
+prepare b2 from 'select max(id), max(b)-min(b) from t3 group by c, d having min(d)>? order by 1,2';
 execute b2 using 1;
 execute b2 using 'yes';
 execute b2 using 'no';
 
-prepare b3 from 'select id, avg(id), max(b) from (select id, b, c, d from t3 where b>?) group by d';
+prepare b3 from 'select max(id), avg(id), max(b) from (select id, b, c, d from t3 where b>?) group by d order by 1,2,3';
 execute b3 using '2010-2-1';
 execute b3 using '0001-1-1';
 
@@ -67,21 +67,21 @@ insert into t4 values(10086,{'a6b','dfffffffffffffffff', '261'}, {'11999','2013-
 insert into t4 values(10110,{'abf','dfffffffffffffffff', '291'}, {'11999','2013-1-1','fff'}, {'fb','cd'}, {'7'});
 insert into t4 values(10110,{'ab','dfffffffffffffffff', '2112'}, {'11999','2013-1-1','fff'}, {'fb','cd'}, {'a'});
 
-prepare s4 from 'select id, max(id) from t4 group by a ASC;';
+prepare s4 from 'select min(id), max(id) from t4 group by a ASC;';
 execute s4;
 execute s4 using 1;
 
-prepare s5 from 'select id, max(?) from t4 group by b;';
+prepare s5 from 'select min(id), max(?) from t4 group by b;';
 execute s5 using 1;
 
 
-prepare s6 from 'select id, sum(a) from t4 where (select sum(a) from t4) is not null group by b having count(b)>?';
+prepare s6 from 'select min(id), sum(a) from t4 where (select sum(a) from t4) is not null group by b having count(b)>?';
 execute s6 using 1;
 
-prepare s6 from 'select id, sum(a) from t4 where (select sum(a) from t4) is not null group by c having count(b)>?';
+prepare s6 from 'select min(id), sum(a) from t4 where (select sum(a) from t4) is not null group by c having count(b)>?';
 execute s6 using 1;
 
-prepare s6 from 'select id, sum(a) from t4 where (select sum(a) from t4) is not null group by d having count(b)>?';
+prepare s6 from 'select min(id), sum(a) from t4 where (select sum(a) from t4) is not null group by d having count(b)>?';
 execute s6 using 1;
 
 deallocate prepare s4;

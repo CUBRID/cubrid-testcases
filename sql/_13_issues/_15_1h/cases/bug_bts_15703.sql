@@ -1,0 +1,15 @@
+AUtocommit off;
+drop table if exists t;
+CREATE TABLE t (name VARCHAR(40));
+INSERT INTO t(name) VALUES ('abc');
+SAVEPOINT SP1;
+INSERT INTO t(name) VALUES ('tom');
+SELECT * from t order by name;
+SAVEPOINT SP2;
+RENAME TABLE t AS sportsman;
+SELECT * FROM sportsman order by name;
+ROLLBACK WORK TO SP2;
+DELETE FROM t;
+drop table t;
+commit;
+AUtocommit on;

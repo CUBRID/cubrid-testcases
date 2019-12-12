@@ -1,0 +1,1810 @@
+===================================================
+0
+===================================================
+0
+===================================================
+15000
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+a    
+null     
+-2147483648     
+0     
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+2147483647     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t group by t.a
+===================================================
+a    
+2147483647     
+9     
+8     
+7     
+6     
+5     
+4     
+3     
+2     
+1     
+0     
+-2147483648     
+null     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t group by t.a desc 
+===================================================
+a    
+null     
+0     
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where (t.c> ?:? ) group by t.a
+/* ---> skip GROUP BY */
+===================================================
+a    
+2147483647     
+9     
+8     
+7     
+6     
+5     
+4     
+3     
+2     
+1     
+0     
+null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers) (loose index scan on prefix ?) (desc_index)
+    filtr: term[?]
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where (t.c> ?:? ) group by t.a desc 
+/* ---> skip GROUP BY */
+===================================================
+0
+===================================================
+0
+===================================================
+a    
+null     
+-2147483648     
+0     
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+2147483647     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t group by t.a
+===================================================
+a    
+2147483647     
+9     
+8     
+7     
+6     
+5     
+4     
+3     
+2     
+1     
+0     
+-2147483648     
+null     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t group by t.a desc 
+===================================================
+a    
+null     
+0     
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where (t.c> ?:? ) group by t.a
+/* ---> skip GROUP BY */
+===================================================
+a    
+2147483647     
+9     
+8     
+7     
+6     
+5     
+4     
+3     
+2     
+1     
+0     
+null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers) (loose index scan on prefix ?) (desc_index)
+    filtr: term[?]
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where (t.c> ?:? ) group by t.a desc 
+/* ---> skip GROUP BY */
+===================================================
+0
+===================================================
+0
+===================================================
+a    
+null     
+-2147483648     
+0     
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+2147483647     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t group by t.a
+===================================================
+a    
+2147483647     
+9     
+8     
+7     
+6     
+5     
+4     
+3     
+2     
+1     
+0     
+-2147483648     
+null     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t group by t.a desc 
+===================================================
+a    
+null     
+0     
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where (t.c> ?:? ) group by t.a
+/* ---> skip GROUP BY */
+===================================================
+a    
+2147483647     
+9     
+8     
+7     
+6     
+5     
+4     
+3     
+2     
+1     
+0     
+null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers) (loose index scan on prefix ?) (desc_index)
+    filtr: term[?]
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where (t.c> ?:? ) group by t.a desc 
+/* ---> skip GROUP BY */
+===================================================
+0
+===================================================
+0
+===================================================
+a    
+null     
+-2147483648     
+0     
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+2147483647     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t group by t.a
+===================================================
+a    
+2147483647     
+9     
+8     
+7     
+6     
+5     
+4     
+3     
+2     
+1     
+0     
+-2147483648     
+null     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t group by t.a desc 
+===================================================
+a    
+null     
+0     
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where (t.c> ?:? ) group by t.a
+/* ---> skip GROUP BY */
+===================================================
+a    
+2147483647     
+9     
+8     
+7     
+6     
+5     
+4     
+3     
+2     
+1     
+0     
+null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers) (loose index scan on prefix ?) (desc_index)
+    filtr: term[?]
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where (t.c> ?:? ) group by t.a desc 
+/* ---> skip GROUP BY */
+===================================================
+0
+===================================================
+0
+===================================================
+a    
+null     
+-2147483648     
+0     
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+2147483647     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t group by t.a
+===================================================
+a    
+2147483647     
+9     
+8     
+7     
+6     
+5     
+4     
+3     
+2     
+1     
+0     
+-2147483648     
+null     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t group by t.a desc 
+===================================================
+a    
+null     
+0     
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where (t.c> ?:? ) group by t.a
+/* ---> skip GROUP BY */
+===================================================
+a    
+2147483647     
+9     
+8     
+7     
+6     
+5     
+4     
+3     
+2     
+1     
+0     
+null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers) (loose index scan on prefix ?) (desc_index)
+    filtr: term[?]
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where (t.c> ?:? ) group by t.a desc 
+/* ---> skip GROUP BY */
+===================================================
+0
+===================================================
+0
+===================================================
+a    
+null     
+0     
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where (t.c> ?:? ) group by t.a
+/* ---> skip GROUP BY */
+===================================================
+a    
+2147483647     
+9     
+8     
+7     
+6     
+5     
+4     
+3     
+2     
+1     
+0     
+null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers) (loose index scan on prefix ?) (desc_index)
+    filtr: term[?]
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where (t.c> ?:? ) group by t.a desc 
+/* ---> skip GROUP BY */
+===================================================
+0
+===================================================
+0
+===================================================
+a    
+null     
+-2147483648     
+0     
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+2147483647     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t group by t.a
+===================================================
+a    
+2147483647     
+9     
+8     
+7     
+6     
+5     
+4     
+3     
+2     
+1     
+0     
+-2147483648     
+null     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t group by t.a desc 
+===================================================
+a    
+null     
+0     
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where (t.c> ?:? ) group by t.a
+/* ---> skip GROUP BY */
+===================================================
+a    
+2147483647     
+9     
+8     
+7     
+6     
+5     
+4     
+3     
+2     
+1     
+0     
+null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers) (loose index scan on prefix ?) (desc_index)
+    filtr: term[?]
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where (t.c> ?:? ) group by t.a desc 
+/* ---> skip GROUP BY */
+===================================================
+0
+===================================================
+0
+===================================================
+a    
+null     
+-2147483648     
+0     
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+2147483647     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t group by t.a
+===================================================
+a    
+2147483647     
+9     
+8     
+7     
+6     
+5     
+4     
+3     
+2     
+1     
+0     
+-2147483648     
+null     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t group by t.a desc 
+===================================================
+a    
+null     
+0     
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where (t.c> ?:? ) group by t.a
+/* ---> skip GROUP BY */
+===================================================
+a    
+2147483647     
+9     
+8     
+7     
+6     
+5     
+4     
+3     
+2     
+1     
+0     
+null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers) (loose index scan on prefix ?) (desc_index)
+    filtr: term[?]
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where (t.c> ?:? ) group by t.a desc 
+/* ---> skip GROUP BY */
+===================================================
+0
+===================================================
+0
+===================================================
+a    
+null     
+-2147483648     
+0     
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+2147483647     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t group by t.a
+===================================================
+a    
+2147483647     
+9     
+8     
+7     
+6     
+5     
+4     
+3     
+2     
+1     
+0     
+-2147483648     
+null     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t group by t.a desc 
+===================================================
+a    
+null     
+0     
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers) (loose index scan on prefix ?) (desc_index)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where (t.c> ?:? ) group by t.a
+/* ---> skip GROUP BY */
+===================================================
+a    
+2147483647     
+9     
+8     
+7     
+6     
+5     
+4     
+3     
+2     
+1     
+0     
+null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where (t.c> ?:? ) group by t.a desc 
+/* ---> skip GROUP BY */
+===================================================
+0
+===================================================
+0
+===================================================
+a    
+null     
+-2147483648     
+0     
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+2147483647     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t group by t.a
+===================================================
+a    
+2147483647     
+9     
+8     
+7     
+6     
+5     
+4     
+3     
+2     
+1     
+0     
+-2147483648     
+null     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t group by t.a desc 
+===================================================
+a    
+null     
+0     
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers) (loose index scan on prefix ?) (desc_index)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where (t.c> ?:? ) group by t.a
+/* ---> skip GROUP BY */
+===================================================
+a    
+2147483647     
+9     
+8     
+7     
+6     
+5     
+4     
+3     
+2     
+1     
+0     
+null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where (t.c> ?:? ) group by t.a desc 
+/* ---> skip GROUP BY */
+===================================================
+0
+===================================================
+0
+===================================================
+a    
+null     
+-2147483648     
+0     
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+2147483647     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t group by t.a
+===================================================
+a    
+2147483647     
+9     
+8     
+7     
+6     
+5     
+4     
+3     
+2     
+1     
+0     
+-2147483648     
+null     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t group by t.a desc 
+===================================================
+a    
+null     
+0     
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers) (loose index scan on prefix ?) (desc_index)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where (t.c> ?:? ) group by t.a
+/* ---> skip GROUP BY */
+===================================================
+a    
+2147483647     
+9     
+8     
+7     
+6     
+5     
+4     
+3     
+2     
+1     
+0     
+null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where (t.c> ?:? ) group by t.a desc 
+/* ---> skip GROUP BY */
+===================================================
+0
+===================================================
+0
+===================================================
+a    
+null     
+-2147483648     
+0     
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+2147483647     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t group by t.a
+===================================================
+a    
+2147483647     
+9     
+8     
+7     
+6     
+5     
+4     
+3     
+2     
+1     
+0     
+-2147483648     
+null     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t group by t.a desc 
+===================================================
+a    
+null     
+0     
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers) (loose index scan on prefix ?) (desc_index)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where (t.c> ?:? ) group by t.a
+/* ---> skip GROUP BY */
+===================================================
+a    
+2147483647     
+9     
+8     
+7     
+6     
+5     
+4     
+3     
+2     
+1     
+0     
+null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where (t.c> ?:? ) group by t.a desc 
+/* ---> skip GROUP BY */
+===================================================
+0
+===================================================
+0
+===================================================
+a    
+null     
+-2147483648     
+0     
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+2147483647     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t group by t.a
+===================================================
+a    
+2147483647     
+9     
+8     
+7     
+6     
+5     
+4     
+3     
+2     
+1     
+0     
+-2147483648     
+null     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t group by t.a desc 
+===================================================
+a    
+null     
+0     
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers) (loose index scan on prefix ?) (desc_index)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where (t.c> ?:? ) group by t.a
+/* ---> skip GROUP BY */
+===================================================
+a    
+2147483647     
+9     
+8     
+7     
+6     
+5     
+4     
+3     
+2     
+1     
+0     
+null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where (t.c> ?:? ) group by t.a desc 
+/* ---> skip GROUP BY */
+===================================================
+0
+===================================================
+0
+===================================================
+a    
+null     
+-2147483648     
+0     
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+2147483647     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t group by t.a
+===================================================
+a    
+2147483647     
+9     
+8     
+7     
+6     
+5     
+4     
+3     
+2     
+1     
+0     
+-2147483648     
+null     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t group by t.a desc 
+===================================================
+a    
+null     
+0     
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers) (loose index scan on prefix ?) (desc_index)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where (t.c> ?:? ) group by t.a
+/* ---> skip GROUP BY */
+===================================================
+a    
+2147483647     
+9     
+8     
+7     
+6     
+5     
+4     
+3     
+2     
+1     
+0     
+null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where (t.c> ?:? ) group by t.a desc 
+/* ---> skip GROUP BY */
+===================================================
+0
+===================================================
+0
+===================================================
+a    
+null     
+-2147483648     
+0     
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+2147483647     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t group by t.a
+===================================================
+a    
+2147483647     
+9     
+8     
+7     
+6     
+5     
+4     
+3     
+2     
+1     
+0     
+-2147483648     
+null     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t group by t.a desc 
+===================================================
+a    
+null     
+0     
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers) (loose index scan on prefix ?) (desc_index)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where (t.c> ?:? ) group by t.a
+/* ---> skip GROUP BY */
+===================================================
+a    
+2147483647     
+9     
+8     
+7     
+6     
+5     
+4     
+3     
+2     
+1     
+0     
+null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where (t.c> ?:? ) group by t.a desc 
+/* ---> skip GROUP BY */
+===================================================
+0
+===================================================
+0
+===================================================
+a    
+null     
+-2147483648     
+0     
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+2147483647     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t group by t.a
+===================================================
+a    
+2147483647     
+9     
+8     
+7     
+6     
+5     
+4     
+3     
+2     
+1     
+0     
+-2147483648     
+null     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t group by t.a desc 
+===================================================
+a    
+null     
+0     
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+2147483647     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers) (loose index scan on prefix ?) (desc_index)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where (t.c> ?:? ) group by t.a
+/* ---> skip GROUP BY */
+===================================================
+a    
+2147483647     
+9     
+8     
+7     
+6     
+5     
+4     
+3     
+2     
+1     
+0     
+null     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a from t t where (t.c> ?:? ) group by t.a desc 
+/* ---> skip GROUP BY */
+===================================================
+0
+===================================================
+0

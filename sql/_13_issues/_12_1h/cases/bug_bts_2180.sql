@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop if exists tbl;
 
 create table tbl (id int) partition by range (id + 1) (partition p0 values less than (2), partition p1 values less than MAXVALUE);
@@ -40,3 +41,5 @@ update object :x set d = '2011-12-19';
 select * from tbl;
 
 drop tbl;
+
+--+ holdcas off;

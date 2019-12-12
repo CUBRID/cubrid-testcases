@@ -44,7 +44,9 @@ C2: update t1 set id=id+1, col='aa' where id>2;
 MC: wait until C2 ready;
 /* C1 and C2 can see its own update result, but they cannot see each other's update result */
 C1: select * from t1 order by 1;
+MC: wait until C1 ready;
 C2: select * from t1 order by 1;
+MC: wait until C2 ready;
 C1: commit;
 C2: commit;
 MC: wait until C1 ready;

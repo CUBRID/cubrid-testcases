@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop if exists t;
 create table t(i int primary key, name varchar(20),job varchar(20));
 insert into t values(1,'Jone','teacher');
@@ -60,4 +61,7 @@ execute stmt using @a,@b,@c,@d;
 prepare stmt from 'select * from t where j>=1 limit ?,?';
 execute stmt using @a,@d;
 deallocate prepare stmt;
+drop variable @a,@b,@c,@d;
 drop if exists t;
+
+--+ holdcas off;

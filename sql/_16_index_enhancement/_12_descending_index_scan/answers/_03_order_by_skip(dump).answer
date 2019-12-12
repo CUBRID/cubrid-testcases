@@ -1,0 +1,294 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+i    s    
+43661     ahxiimzlkp     
+37423     anvmqwvfki     
+43283     bcwcbgnooe     
+16952     cjkdzpffjr     
+16723     doabpxfxao     
+64212     dxmdupkwef     
+11401     ekcghxplze     
+36776     flpwqwoovn     
+76824     fmiqkmsmsy     
+23611     gjsgpnxnzc     
+44909     gosgbyntqs     
+85806     gxuucmvmiu     
+15554     ilzeohauuw     
+25433     jcmlcyhpdd     
+57482     jjqmukznup     
+45574     lolrvuuhll     
+62966     msvzsilzgx     
+93338     pfynsypncd     
+52273     plxsqbbhze     
+8212     rursvfqtyi     
+19085     rwhgyzmyzt     
+44900     sbcbbuqrbo     
+14801     tcbrmlymlk     
+23443     ujoxmccxfd     
+48651     ujyeibscxd     
+99890     vpgjmaqmvz     
+216     vrtbcsbmro     
+42102     vwilsraiyf     
+88311     xrjgzcdmrn     
+41552     xvvfjksbrn     
+5276     zwzonymcmk     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_s term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.s from t t where (t.s>= ?:? ) order by ?
+/* ---> skip ORDER BY */
+===================================================
+i    s    
+5276     zwzonymcmk     
+41552     xvvfjksbrn     
+88311     xrjgzcdmrn     
+42102     vwilsraiyf     
+216     vrtbcsbmro     
+99890     vpgjmaqmvz     
+48651     ujyeibscxd     
+23443     ujoxmccxfd     
+14801     tcbrmlymlk     
+44900     sbcbbuqrbo     
+19085     rwhgyzmyzt     
+8212     rursvfqtyi     
+52273     plxsqbbhze     
+93338     pfynsypncd     
+62966     msvzsilzgx     
+45574     lolrvuuhll     
+57482     jjqmukznup     
+25433     jcmlcyhpdd     
+15554     ilzeohauuw     
+85806     gxuucmvmiu     
+44909     gosgbyntqs     
+23611     gjsgpnxnzc     
+76824     fmiqkmsmsy     
+36776     flpwqwoovn     
+11401     ekcghxplze     
+64212     dxmdupkwef     
+16723     doabpxfxao     
+16952     cjkdzpffjr     
+43283     bcwcbgnooe     
+37423     anvmqwvfki     
+43661     ahxiimzlkp     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_s term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ t.i, t.s from t t where (t.s>= ?:? ) order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+j    i    s    
+16064     44900     sbcbbuqrbo     
+19018     52273     plxsqbbhze     
+29553     57482     jjqmukznup     
+63586     85806     gxuucmvmiu     
+63586     43283     bcwcbgnooe     
+63586     36776     flpwqwoovn     
+63586     25433     jcmlcyhpdd     
+63586     23443     ujoxmccxfd     
+63586     19085     rwhgyzmyzt     
+63586     14801     tcbrmlymlk     
+75146     216     vrtbcsbmro     
+78845     99890     vpgjmaqmvz     
+136071     5276     zwzonymcmk     
+171728     42102     vwilsraiyf     
+188293     44909     gosgbyntqs     
+192651     76824     fmiqkmsmsy     
+212976     64212     dxmdupkwef     
+250708     15554     ilzeohauuw     
+259436     41552     xvvfjksbrn     
+281140     23611     gjsgpnxnzc     
+282446     37423     anvmqwvfki     
+291137     93338     pfynsypncd     
+295190     45574     lolrvuuhll     
+319384     11401     ekcghxplze     
+338159     88311     xrjgzcdmrn     
+338159     62966     msvzsilzgx     
+338159     48651     ujyeibscxd     
+338159     43661     ahxiimzlkp     
+338159     16952     cjkdzpffjr     
+338159     16723     doabpxfxao     
+338159     8212     rursvfqtyi     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_j_d_i term[?] (desc_index)
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.j, t.i, t.s from t t where (t.j> ?:? ) order by ?, ? desc 
+/* ---> skip ORDER BY */
+===================================================
+j    i    s    
+338159     8212     rursvfqtyi     
+338159     16723     doabpxfxao     
+338159     16952     cjkdzpffjr     
+338159     43661     ahxiimzlkp     
+338159     48651     ujyeibscxd     
+338159     62966     msvzsilzgx     
+338159     88311     xrjgzcdmrn     
+319384     11401     ekcghxplze     
+295190     45574     lolrvuuhll     
+291137     93338     pfynsypncd     
+282446     37423     anvmqwvfki     
+281140     23611     gjsgpnxnzc     
+259436     41552     xvvfjksbrn     
+250708     15554     ilzeohauuw     
+212976     64212     dxmdupkwef     
+192651     76824     fmiqkmsmsy     
+188293     44909     gosgbyntqs     
+171728     42102     vwilsraiyf     
+136071     5276     zwzonymcmk     
+78845     99890     vpgjmaqmvz     
+75146     216     vrtbcsbmro     
+63586     14801     tcbrmlymlk     
+63586     19085     rwhgyzmyzt     
+63586     23443     ujoxmccxfd     
+63586     25433     jcmlcyhpdd     
+63586     36776     flpwqwoovn     
+63586     43283     bcwcbgnooe     
+63586     85806     gxuucmvmiu     
+29553     57482     jjqmukznup     
+19018     52273     plxsqbbhze     
+16064     44900     sbcbbuqrbo     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_j_d_i term[?]
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.j, t.i, t.s from t t where (t.j> ?:? ) order by ? desc , ?
+/* ---> skip ORDER BY */
+===================================================
+i    j    k    s    
+99890     78845     95971     vpgjmaqmvz     
+93338     291137     47180     pfynsypncd     
+88311     338159     128173     xrjgzcdmrn     
+85806     63586     250793     gxuucmvmiu     
+76824     192651     45471     fmiqkmsmsy     
+64212     212976     382446     dxmdupkwef     
+62966     338159     269519     msvzsilzgx     
+57482     29553     384228     jjqmukznup     
+52273     19018     46752     plxsqbbhze     
+48651     338159     286169     ujyeibscxd     
+45574     295190     126562     lolrvuuhll     
+44909     188293     40136     gosgbyntqs     
+44900     16064     207373     sbcbbuqrbo     
+43661     338159     142370     ahxiimzlkp     
+43283     63586     333422     bcwcbgnooe     
+42102     171728     243688     vwilsraiyf     
+41552     259436     101513     xvvfjksbrn     
+37423     282446     121203     anvmqwvfki     
+36776     63586     148962     flpwqwoovn     
+25433     63586     76965     jcmlcyhpdd     
+23611     281140     261645     gjsgpnxnzc     
+23443     63586     312268     ujoxmccxfd     
+19085     63586     342553     rwhgyzmyzt     
+16952     338159     220959     cjkdzpffjr     
+16723     338159     244201     doabpxfxao     
+15554     250708     395874     ilzeohauuw     
+14801     63586     253540     tcbrmlymlk     
+11401     319384     225244     ekcghxplze     
+8212     338159     317504     rursvfqtyi     
+5276     136071     219641     zwzonymcmk     
+216     75146     347631     vrtbcsbmro     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i term[?] (desc_index forced)
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ t.i, t.j, t.k, t.s from t t where (t.i> ?:? )
+===================================================
+0
+===================================================
+0
+0

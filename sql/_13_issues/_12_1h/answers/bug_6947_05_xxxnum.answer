@@ -1,0 +1,334 @@
+===================================================
+0
+===================================================
+0
+===================================================
+4
+===================================================
+2
+===================================================
+0
+===================================================
+i    
+1     
+1     
+2     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: v node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select v.i from t v where (inst_num()<= ?:? ) order by ?
+===================================================
+i    j    
+1     2     
+1     2     
+1     3     
+1     3     
+2     2     
+2     3     
+
+Query plan:
+sscan
+    class: v node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select v.i from t v where (inst_num()<= ?:? ))
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: v node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: u node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select v.i, u.j from (select v.i from t v where (inst_num()<= ?:? )) v (i), u u order by ?, ?
+===================================================
+j    i    
+2     1     
+2     1     
+3     1     
+3     1     
+2     2     
+3     2     
+
+Query plan:
+sscan
+    class: v node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select v.i from t v where (inst_num()<= ?:? ))
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: u node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: v node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select u.j, v.i from u u, (select v.i from t v where (inst_num()<= ?:? )) v (i) order by ?, ?
+===================================================
+0
+===================================================
+0
+===================================================
+inum    i    
+1     1     
+2     1     
+3     2     
+4     2     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: v node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select (inst_num()), v.i from t v order by ?
+===================================================
+inum    i    j    
+1     1     2     
+2     1     2     
+1     1     3     
+2     1     3     
+3     2     2     
+4     2     2     
+3     2     3     
+4     2     3     
+
+Query plan:
+sscan
+    class: v node[?]
+    cost:  ? card ?
+Query stmt:
+(select (inst_num()), v.i from t v)
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: v node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: u node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select v.inum, v.i, u.j from (select (inst_num()), v.i from t v) v (inum, i), u u order by ?, ?
+===================================================
+j    inum    i    
+2     1     1     
+2     2     1     
+3     1     1     
+3     2     1     
+2     3     2     
+2     4     2     
+3     3     2     
+3     4     2     
+
+Query plan:
+sscan
+    class: v node[?]
+    cost:  ? card ?
+Query stmt:
+(select (inst_num()), v.i from t v)
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: u node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: v node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select u.j, v.inum, v.i from u u, (select (inst_num()), v.i from t v) v (inum, i) order by ?, ?
+===================================================
+0
+===================================================
+0
+===================================================
+i    
+1     
+1     
+2     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: v node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select v.i from t v where (rownum<= ?:? ) order by ?
+===================================================
+i    j    
+1     2     
+1     2     
+1     3     
+1     3     
+2     2     
+2     3     
+
+Query plan:
+sscan
+    class: v node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select v.i from t v where (rownum<= ?:? ))
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: v node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: u node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select v.i, u.j from (select v.i from t v where (rownum<= ?:? )) v (i), u u order by ?, ?
+===================================================
+j    i    
+2     1     
+2     1     
+3     1     
+3     1     
+2     2     
+3     2     
+
+Query plan:
+sscan
+    class: v node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select v.i from t v where (rownum<= ?:? ))
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: u node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: v node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select u.j, v.i from u u, (select v.i from t v where (rownum<= ?:? )) v (i) order by ?, ?
+===================================================
+0
+===================================================
+0
+===================================================
+rnum    i    
+1     1     
+2     1     
+3     2     
+4     2     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: v node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select (rownum), v.i from t v order by ?
+===================================================
+rnum    i    j    
+1     1     2     
+2     1     2     
+1     1     3     
+2     1     3     
+3     2     2     
+4     2     2     
+3     2     3     
+4     2     3     
+
+Query plan:
+sscan
+    class: v node[?]
+    cost:  ? card ?
+Query stmt:
+(select (rownum), v.i from t v)
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: v node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: u node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select v.rnum, v.i, u.j from (select (rownum), v.i from t v) v (rnum, i), u u order by ?, ?
+===================================================
+j    rnum    i    
+2     1     1     
+2     2     1     
+3     1     1     
+3     2     1     
+2     3     2     
+2     4     2     
+3     3     2     
+3     4     2     
+
+Query plan:
+sscan
+    class: v node[?]
+    cost:  ? card ?
+Query stmt:
+(select (rownum), v.i from t v)
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: u node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: v node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select u.j, v.rnum, v.i from u u, (select (rownum), v.i from t v) v (rnum, i) order by ?, ?
+===================================================
+0
+===================================================
+0

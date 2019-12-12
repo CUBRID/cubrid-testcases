@@ -1,0 +1,272 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+a    b    c    d    
+1     1.1     AAAAA     AAAAA     
+2     2.1     BBBBB     BBBBB     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_abcd term[?] (covers)
+    filtr: term[?]
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d from t t where (t.a> ?:? ) and (t.b> ?:? ) group by t.a, t.b, t.c, t.d
+/* ---> skip GROUP BY */
+===================================================
+a    d    
+1     AAAAA     
+2     BBBBB     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_abcd term[?] (covers)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.d from t t where (t.a> ?:? ) and (t.b> ?:? ) group by t.a, t.b, t.c, t.d
+/* ---> skip GROUP BY */
+===================================================
+a    
+1     
+2     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_abcd term[?] (covers)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a from t t where (t.a> ?:? ) and (t.b> ?:? ) group by t.a, t.b, t.c, t.d
+/* ---> skip GROUP BY */
+===================================================
+a    b    c    d    
+1     1.1     AAAAA     AAAAA     
+2     2.1     BBBBB     BBBBB     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_abcd term[?] (covers)
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d from t t where (t.a> ?:? ) group by t.a, t.b, t.c, t.d
+/* ---> skip GROUP BY */
+===================================================
+a    b    c    d    count(*)    
+1     1.1     AAAAA     AAAAA     2     
+2     2.1     BBBBB     BBBBB     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_abcd term[?] (covers)
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, count(*) from t t where (t.a> ?:? ) group by t.a, t.b, t.c, t.d
+/* ---> skip GROUP BY */
+===================================================
+a    b    c    d    count(*)    
+1     1.1     AAAAA     AAAAA     2     
+2     2.1     BBBBB     BBBBB     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_abcd term[?] (covers)
+    sargs: term[?]
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, count(*) from t t where (t.a> ?:? ) and (rownum< ?:? ) group by t.a, t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    c    d    count(*)    
+1     1.1     AAAAA     AAAAA     2     
+2     2.1     BBBBB     BBBBB     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_abcd term[?] (covers)
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, count(*) from t t where (t.a> ?:? ) group by t.a, t.b
+/* ---> skip GROUP BY */
+===================================================
+Error:-493
+===================================================
+a    b    count(*)    
+1     1.1     2     
+2     2.1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_abcd term[?] (covers)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, count(*) from t t where (t.a> ?:? ) group by t.a, t.b using index t.i_t_abcd
+/* ---> skip GROUP BY */
+===================================================
+a    b    count(*)    
+1     1.1     2     
+2     2.1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_abcd term[?] (covers)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, count(*) from t t where (t.a> ?:? ) group by t.a, t.b using index t.i_t_abcd
+/* ---> skip GROUP BY */
+===================================================
+a    b    count(*)    
+1     1.1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_abcd keylimit ? term[?] (covers)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, count(*) from t t where (t.a> ?:? ) group by t.a, t.b using index t.i_t_abcd keylimit  ?:? 
+/* ---> skip GROUP BY */
+===================================================
+a    b    count(*)    
+1     1.1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_abcd keylimit ?, ? term[?] (covers)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, count(*) from t t where (t.a> ?:? ) group by t.a, t.b using index t.i_t_abcd keylimit  ?:? , ?:? 
+/* ---> skip GROUP BY */
+===================================================
+a    b    count(*)    
+1     1.1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_abcd keylimit ?, ? term[?] (covers)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, count(*) from t t where (t.a> ?:? ) group by t.a, t.b using index t.i_t_abcd keylimit  ?:? , ?:? 
+/* ---> skip GROUP BY */
+===================================================
+a    b    count(*)    
+1     1.1     2     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_abcd keylimit ? term[?] (covers)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, count(*) from t t where (t.a> ?:? ) group by t.a, t.b using index t.i_t_abcd keylimit  ?:? 
+/* ---> skip GROUP BY */
+===================================================
+a    b    count(*)    
+1     1.1     2     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_abcd term[?] (covers)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, count(*) from t t where (t.a> ?:? ) group by t.a, t.b having groupby_num()<=?
+/* ---> skip GROUP BY */
+===================================================
+a    b    count(*)    
+1     1.1     2     
+2     2.1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_abcd term[?] (covers)
+    sargs: term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, count(*) from t t where (t.a> ?:? ) and (rownum< ?:? ) group by t.a, t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    count(*)    
+1     1.1     2     
+2     2.1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_abcd term[?] (covers)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, count(*) from t t where (t.a> ?:? ) group by t.a, t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    count(*)    max(e)    min(e)    
+1     1.1     2     1     -1     
+2     2.1     1     2     2     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_abcd term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, count(*), max(t.e), min(t.e) from t t where (t.a> ?:? ) group by t.a, t.b
+/* ---> skip GROUP BY */
+===================================================
+a    b    count(*)    max(e)    min(e)    
+1     1.1     2     1     -1     
+2     2.1     1     2     2     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_abcd term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, count(*), max(t.e), min(t.e) from t t where (t.a> ?:? ) group by t.a
+/* ---> skip GROUP BY */
+===================================================
+0
+===================================================
+0
+===================================================
+0

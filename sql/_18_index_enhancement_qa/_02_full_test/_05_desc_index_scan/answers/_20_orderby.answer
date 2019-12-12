@@ -1,0 +1,85 @@
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+2
+===================================================
+2
+===================================================
+id    a    b    
+3     3     3     
+2     2     2     
+1     1     1     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a, tb.b from tb tb where (tb.a> ?:? ) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+id    a    b    
+5     5     4     
+6     5     3     
+4     4     4     
+3     3     3     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a, tb.b from tb tb where (tb.a> ?:? ) order by ? desc  for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+id    a    b    
+5     5     4     
+6     5     3     
+4     4     4     
+3     3     3     
+2     2     2     
+1     1     1     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a, tb.b from tb tb where (tb.a> ?:? ) order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+id    a    b    
+1     1     1     
+2     2     2     
+3     3     3     
+4     4     4     
+5     5     4     
+6     5     3     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_a term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tb.id, tb.a, tb.b from tb tb where (tb.a> ?:? ) order by ?
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+0
+===================================================
+0

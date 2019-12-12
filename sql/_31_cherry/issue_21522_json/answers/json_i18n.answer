@@ -1,0 +1,66 @@
+===================================================
+0
+===================================================
+json_valid(_utf8'{"bar": "baz", "balance": 7.77, "active":false}')    
+1     
+
+===================================================
+json_merge(_utf8'{"bar": "baz", "balance": 7.77, "active":false}', json_extract(_utf8'{"bar": "baz", "balance": 7.77, "active":false}', _utf8'/active'))    
+[{"bar":"baz","balance":7.77,"active":false},false]     
+
+===================================================
+json_insert(_utf8'{"bar": "baz", "balance": 7.77, "active":false}', _utf8'/status', json_extract(_utf8'{"bar": "baz", "balance": 7.77, "active":false}', _utf8'/active'))    
+{"bar":"baz","balance":7.77,"active":false,"status":false}     
+
+===================================================
+json_extract(_utf8'{"bar": "baz", "balance": 7.77, "active":false}', _utf8'/active')=false    
+0     
+
+===================================================
+json_extract(_utf8'{"bar": "baz", "balance": 7.77, "active":false}', _utf8'/active')= cast(false as json)    
+0     
+
+===================================================
+json_extract(_utf8'{"bar": "baz", "balance": 7.77, "active":false}' collate utf8_en_ci, _utf8'/active')    
+false     
+
+===================================================
+json_extract(_utf8'{"bar": "baz", "balance": 7.77, "active":"false"}' collate utf8_en_ci, _utf8'/active')=json_extract(json_object(_utf8'name', _utf8'false' collate utf8_en_ci), _utf8'/name')    
+1     
+
+===================================================
+json_extract(_utf8'{"bar": "baz", "balance": 7.77, "active":"false"}' collate utf8_en_ci, _utf8'/active')=json_extract(json_object(_utf8'name', _utf8'FALSE' collate utf8_en_ci), _utf8'/name')    
+0     
+
+===================================================
+0
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+t10     CREATE TABLE [t10] ([id] INTEGER AUTO_INCREMENT (1, 1) NOT NULL, [name] CHARACTER VARYING(1073741823) COLLATE utf8_en_ci, [de] JSON DEFAULT json '["{\"bar\": \"baz\", \"balance\": 7.77, \"active\":\"false\"}"]',  CONSTRAINT [pk_t10_id] PRIMARY KEY  ([id])) COLLATE iso88591_bin     
+
+===================================================
+1
+===================================================
+id    name    de    
+1     {"bar": "baz", "balance": 7.77, "active":"false"}     ["{\"bar\": \"baz\", \"balance\": 7.77, \"active\":\"false\"}"]     
+
+===================================================
+json_merge(name, de)    
+[{"bar":"baz","balance":7.77,"active":"false"},"{\"bar\": \"baz\", \"balance\": 7.77, \"active\":\"false\"}"]     
+
+===================================================
+json_depth(json_merge(name, de))    
+3     
+
+===================================================
+json_length(json_merge(name, de))    
+2     
+
+===================================================
+Error:-1202
+===================================================
+0
+===================================================
+0

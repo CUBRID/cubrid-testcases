@@ -34,7 +34,7 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C1: SELECT * FROM tb1 a RIGHT JOIN tb2 b ON a.id = b.id WHERE a.id <= 2 or a.col = 'mno';  -- scan full table
+C1: SELECT * FROM tb1 a RIGHT JOIN tb2 b ON a.id = b.id WHERE a.id <= 2 or a.col = 'mno' order by a.id, b.id;  -- scan full table
 MC: wait until C1 ready;
 C2: DELETE a,b FROM tb1 a RIGHT JOIN tb2 b ON a.id = b.id WHERE b.id > 4;
 MC: wait until C2 ready;

@@ -36,7 +36,7 @@ MC: wait until C1 ready;
 /* test case */
 C1: DELETE a,b FROM tb1 a CROSS JOIN tb2 b WHERE a.id=5 and b.col='abc';
 MC: wait until C1 ready;
-C2: SELECT * FROM tb1 a CROSS JOIN tb2 b WHERE a.id >4 and b.id <6 order by a.id;
+C2: SELECT * FROM tb1 a CROSS JOIN tb2 b WHERE a.id >4 and b.id <6 order by a.id,b.id;
 /* expect: no transactions need to wait */
 MC: wait until C2 ready;
 /* expect: C1 - tb1 id = 5 is deleted, tb2 id = 4 is deleted */

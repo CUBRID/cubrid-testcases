@@ -20,8 +20,8 @@ insert into bar values (3, 'z');
 insert into bar values (4, 'w');
 
 --set optimization level 513;
-select /*+ RECOMPILE USE_MERGE */ * from foo right outer join bar on foo.i = bar.i order by 1;
-select /*+ RECOMPILE USE_NL */ * from foo right outer join bar on foo.i = bar.i order by 1;
+select /*+ RECOMPILE USE_MERGE */ * from foo right outer join bar on foo.i = bar.i order by 1,2;
+select /*+ RECOMPILE USE_NL */ * from foo right outer join bar on foo.i = bar.i order by 1,2;
 
 drop table foo;
 drop table bar;

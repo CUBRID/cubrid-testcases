@@ -1,3 +1,4 @@
+--+ holdcas on;
 autocommit off;
 create class x (xint int, xstr string, class cint int)
 	method ambiguous(int, int) int
@@ -754,3 +755,5 @@ select concat_str(diff_xy, vdiff_str, '**ADDED TO DIFFERENCE**') from diff_xy;
 select concat_str(inter_xy, vinter_str, '**ADDED TO INTERSECT**')
         from inter_xy;
 rollback;
+
+--+ holdcas off;

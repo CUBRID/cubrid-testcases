@@ -25,9 +25,9 @@ select insert(repeat('test',100),1,200,s1) from t1 order by 1;
 
 select translate(s1,'cde','12345') from t1 order by 1;
 
-select SUBSTRING_INDEX(s1,80,100) from t1 where s1 like '%ab%'; 
+select SUBSTRING_INDEX(s1,80,100) from t1 where s1 like '%ab%' order by 1; 
 
-select SUBSTRING_INDEX(s1,'nf','50') from t1 where s1 like '%nf%'; 
+select SUBSTRING_INDEX(s1,'nf','50') from t1 where s1 like '%nf%' order by 1; 
 
 insert into t1 values(repeat('a',300));
 

@@ -1,3 +1,4 @@
+--+ holdcas on;
 SELECT IF('1', 'T', 'F');
 
 prepare x from 'select if(?, ''T'', ''F'')'
@@ -16,3 +17,5 @@ prepare a from 'select right(?, ?)'
 execute a using 'abc', :x
 drop prepare a;;
 
+
+--+ holdcas off;

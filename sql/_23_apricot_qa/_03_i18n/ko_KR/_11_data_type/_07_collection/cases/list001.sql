@@ -1,0 +1,10 @@
+--+ holdcas on;
+set names utf8;
+CREATE TABLE list_tbl  ( col_1 list(char(2)  collate utf8_ko_cs_uca, VARCHAR(1)  collate utf8_ko_cs_uca,int));
+INSERT INTO list_tbl  VALUES ({1,2,3,3,'','터','터','퉁','퉁', '특','퉁특'});
+SELECT * FROM list_tbl  order by 1;
+SELECT CAST(col_1 AS SET), CAST(col_1 AS multiset) FROM list_tbl  order by 1;
+drop table list_tbl ;
+set names iso88591;
+commit;
+--+ holdcas off;

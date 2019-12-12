@@ -1,0 +1,169 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+5
+===================================================
+5
+===================================================
+5
+===================================================
+5
+===================================================
+5
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+i1    i2    i3    
+4     3     43     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_? term[?] AND term[?] (covers) (multi_range_opt)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i?, t.i?, t.i? from t t where t.i?= ?:?  and t.i?= ?:?  order by ? for orderby_num()< ?:? 
+===================================================
+i1    i2    i3    
+4     0     40     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_? term[?] AND term[?] AND term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.i?, t.i?, t.i? from t t where ((t.i?= ?:? ) or (t.i?= ?:? ) or (t.i?= ?:? )) and t.i?= ?:?  and t.i?= ?:?  and (inst_num())< ?:? 
+===================================================
+i1    i2    i3    
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_? term[?] AND term[?] (covers)
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i?, t.i?, t.i? from t t where ((t.i?= ?:? ) or (t.i?= ?:? )) and t.i?= ?:?  order by ? for orderby_num()> ?:? 
+===================================================
+i1    i2    i3    
+3     2     32     
+4     2     42     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_? term[?] (covers)
+                 filtr: term[?]
+                 sort:  ? asc, ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i?, t.i?, t.i? from t t where ((t.i?= ?:? ) or (t.i?= ?:? )) and ((t.i?= ?:? ) or (t.i?= ?:? )) order by ? for orderby_num()< ?:? 
+===================================================
+i1    i2    i3    
+null     0     null     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i?, t.i?, t.i? from t t where t.i? is null  and t.i?= ?:?  order by ? for orderby_num()< ?:? 
+===================================================
+i1    i2    i3    
+0     0     0     
+1     0     10     
+2     0     20     
+3     0     30     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i?, t.i?, t.i? from t t where t.i? is not null  and t.i?= ?:?  order by ? for orderby_num()< ?:? 
+===================================================
+i1    i2    i3    
+1     0     10     
+2     0     20     
+3     0     30     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_? term[?] (covers)
+                 filtr: term[?]
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i?, t.i?, t.i? from t t where (t.i?>= ?:?  and t.i?<= ?:? ) and t.i?= ?:?  order by ? for orderby_num()< ?:? 
+===================================================
+i1    i2    i3    
+0     0     0     
+0     1     1     
+0     2     2     
+0     3     3     
+0     4     4     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_? term[?] (covers) (multi_range_opt)
+    filtr: term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i?, t.i?, t.i? from t t where ((t.i?= ?:? ) or (t.i?= ?:? ) or (t.i?= ?:? ) or (t.i?= ?:? ) or (t.i?= ?:? ) or (t.i?= ?:? )) and t.i?= ?:?  order by ? for orderby_num()< ?:? 
+===================================================
+i1    i2    i3    
+null     0     null     
+0     0     0     
+0     1     1     
+0     2     2     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i?, t.i?, t.i? from t t order by ? for orderby_num()< ?:? 
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

@@ -31,7 +31,7 @@ UPDATE t1 SET col9='17:08:10' WHERE col1=3;
 
 DELETE  FROM t1 WHERE col1=2;
 
-SELECT * FROM t1 USING INDEX t1_index order by 1;
+SELECT * FROM t1 USING INDEX t1_index order by 1,2,3,4,5,6,7,8,9,10,11,12,13,14;
 
 drop Unique index "t1_index" on t1;
 
@@ -45,7 +45,7 @@ UPDATE t1 SET col1=2 WHERE col1=3;
 
 DELETE  FROM t1 WHERE col1=2;
 
-SELECT * FROM t1  order by 1;
+SELECT * FROM t1  order by 1,2,3,4,5,6,7,8,9,10,11,12,13,14;
 
 drop class t1;
 rollback;

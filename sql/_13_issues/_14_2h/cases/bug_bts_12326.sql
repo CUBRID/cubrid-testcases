@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop table if exists t1;
 drop table if exists t2;
 CREATE TABLE t1 (a int);
@@ -101,9 +102,9 @@ SELECT * FROM ((SELECT * FROM t1 WHERE 'test' = 'test1') DIFFERENCE (SELECT * FR
 ---- 2 count
 SELECT * FROM ((SELECT * FROM t2 ) DIFFERENCE (SELECT * FROM t1));
 ---- 4 count
-SELECT * FROM (SELECT * FROM t2 DIFFERENCE (SELECT * FROM t1 WHERE 'test' = 'test1'));
+SELECT * FROM (SELECT * FROM t2 DIFFERENCE (SELECT * FROM t1 WHERE 'test' = 'test1')) ORDER BY 1;
 ---- 4 count
-SELECT * FROM ((SELECT * FROM t2) DIFFERENCE (SELECT * FROM t1 WHERE 'test' = 'test1'));
+SELECT * FROM ((SELECT * FROM t2) DIFFERENCE (SELECT * FROM t1 WHERE 'test' = 'test1')) ORDER BY 1;
 ---- 0 count
 SELECT * FROM ((SELECT * FROM t2 WHERE 'test' = 'test1') DIFFERENCE ((SELECT * FROM t1 WHERE 'test' = 'test1')));
 ---- 0 count
@@ -298,6 +299,9 @@ SELECT * FROM ((SELECT @v1 as a ) DIFFERENCE (SELECT * FROM t1 WHERE 'test' = 't
 
 prepare prepare_stmt FROM 'SELECT a FROM ((SELECT ? as a)) DIFFERENCE (select * from t1 where 0=1)';
 execute prepare_stmt using 30;
+drop variable @v1;
 
 drop table if exists t1;
 drop table if exists t2;
+
+--+ holdcas off;

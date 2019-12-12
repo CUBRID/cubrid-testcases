@@ -1,3 +1,4 @@
+--+ holdcas on;
 set system parameters 'dont_reuse_heap_file=yes';
 
 create table t1 (a int, b int, c int);
@@ -13,3 +14,5 @@ drop table t1;
 
 set system parameters 'dont_reuse_heap_file=no';
 
+
+--+ holdcas off;

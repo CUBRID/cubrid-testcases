@@ -1,3 +1,4 @@
+--+ holdcas on;
 autocommit off;
 create class X (xstr string);
 create class Y as subclass of X (ystr string);
@@ -15,3 +16,5 @@ select x, x.xstr from S, table(xs) as t(x) order by 2;
 select x, x.xstr from table(:xs) as t(x)  order by 2;
 
 rollback;
+
+--+ holdcas off;

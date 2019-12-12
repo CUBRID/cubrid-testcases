@@ -32,7 +32,7 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C1: SELECT *,sleep(1) FROM tb1 a LEFT JOIN tb2 b ON a.id = b.id WHERE a.id = 2 or b.col = 'yzab' ;
+C1: SELECT *,sleep(1) FROM tb1 a LEFT JOIN tb2 b ON a.id = b.id WHERE a.id = 2 or b.col = 'yzab' order by 1,2,3,4;
 MC: wait until C1 ready;
 C2: DELETE a,b FROM tb1 a LEFT JOIN tb2 b ON a.id = b.id WHERE a.id > 4;
 /* expect: no transactions need to wait */

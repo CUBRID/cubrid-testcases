@@ -1,0 +1,149 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+3
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+5
+===================================================
+5
+===================================================
+5
+===================================================
+5
+===================================================
+5
+===================================================
+i2    i3    i    
+3458901122.0     44.0     3458901122     
+3458901122.0     44.0     3458901122     
+3458901122.0     44.0     3458901122     
+3458901122.0     43.0     3458901122     
+3458901122.0     43.0     3458901122     
+3458901122.0     43.0     3458901122     
+3458901122.0     42.0     3458901122     
+3458901122.0     42.0     3458901122     
+3458901122.0     42.0     3458901122     
+3458901122.0     41.0     3458901122     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: t node[?]
+                            index: idx? term[?] (covers)
+                            cost:  ? card ?
+                 inner: iscan
+                            class: u node[?]
+                            index: i_u_i_j term[?] (covers)
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i?, t.i?, u.i, t.i?+t.i?+ cast(t.i? as numeric) from t t, u u where ((t.i?= ?:? ) or (t.i?= ?:? ) or (t.i?= ?:? )) and t.i?=u.i order by ? desc , ? for orderby_num()<= ?:? 
+===================================================
+i2    i3    i    
+3.0     13.0     3     
+3.0     13.0     3     
+3.0     13.0     3     
+3.0     33.0     3     
+3.0     33.0     3     
+3.0     33.0     3     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: t node[?]
+                            index: idx? term[?] (covers)
+                            cost:  ? card ?
+                 inner: iscan
+                            class: u node[?]
+                            index: i_u_i_j term[?] (covers)
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i?, t.i?, u.i, t.i?+t.i?+ cast(t.i? as numeric) from t t, u u where ((t.i?= ?:? ) or (t.i?= ?:? )) and t.i?=u.i order by ?, ? for orderby_num()<= ?:? 
+===================================================
+i2    i3    i    
+3.0     13.0     3     
+3.0     13.0     3     
+3.0     13.0     3     
+3.0     33.0     3     
+3.0     33.0     3     
+3.0     33.0     3     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: t node[?]
+                            index: idx? term[?] (covers)
+                            cost:  ? card ?
+                 inner: iscan
+                            class: u node[?]
+                            index: i_u_i_j term[?] (covers)
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i?, t.i?, u.i from t t, u u where ((t.i?= ?:? ) or (t.i?= ?:? )) and t.i?=u.i order by ?, ?, ? for orderby_num()<= ?:? 
+===================================================
+i2    i3    i    
+3.0     33.0     3     
+3.0     33.0     3     
+3.0     33.0     3     
+3.0     13.0     3     
+3.0     13.0     3     
+3.0     13.0     3     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: t node[?]
+                            index: idx? term[?] (covers)
+                            cost:  ? card ?
+                 inner: iscan
+                            class: u node[?]
+                            index: i_u_i_j term[?] (covers)
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i?, t.i?, u.i from t t, u u where ((t.i?= ?:? ) or (t.i?= ?:? )) and t.i?=u.i order by ?, ? desc , ? for orderby_num()<= ?:? 
+===================================================
+0
+===================================================
+i2    i3    i    
+3.0     33.0     3     
+3.0     33.0     3     
+3.0     33.0     3     
+3.0     13.0     3     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0

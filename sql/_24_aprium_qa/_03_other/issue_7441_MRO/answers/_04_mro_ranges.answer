@@ -1,0 +1,133 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+72
+===================================================
+0
+===================================================
+0
+===================================================
+a    b    c    d    e    
+11     2                                                                                                                                                                                                            2     2.0     11     
+11     11                                                                                                                                                                                                           2     2.0     11     
+11     11                                                                                                                                                                                                           2     2.0     3     
+11     2                                                                                                                                                                                                            2     2.0     3     
+11     11                                                                                                                                                                                                           2     2.0     2     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t node[?]
+                 index: idx_a_b_cd_d_ed term[?] (covers)
+                 filtr: term[?]
+                 sort:  ? asc, ? asc, ? desc, ? asc, ? desc
+                 cost:  ? card ?
+    sort:  ? desc, ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where ((t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? )) and t.b<> cast(? as char(-?)) order by ? desc , ?, ? desc  for orderby_num()<= ?:? 
+===================================================
+a    b    c    d    e    
+11     2                                                                                                                                                                                                            2     2.0     11     
+11     11                                                                                                                                                                                                           2     2.0     11     
+11     11                                                                                                                                                                                                           2     2.0     3     
+11     2                                                                                                                                                                                                            2     2.0     3     
+11     11                                                                                                                                                                                                           2     2.0     2     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t node[?]
+                 index: idx_a_b_cd_d_ed term[?] (covers)
+                 filtr: term[?]
+                 sort:  ? asc, ? asc, ? desc, ? asc, ? desc
+                 cost:  ? card ?
+    sort:  ? desc, ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where ((t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? ) or (t.a= ?:? )) and t.b<> cast(? as char(-?)) order by ? desc , ?, ? desc  for orderby_num()<= ?:? 
+===================================================
+a    b    c    d    e    
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+a    b    c    d    e    
+3     11                                                                                                                                                                                                           2     2.0     11     
+3     11                                                                                                                                                                                                           2     2.0     3     
+3     11                                                                                                                                                                                                           2     2.0     2     
+3     11                                                                                                                                                                                                           2     11.0     11     
+3     11                                                                                                                                                                                                           2     11.0     3     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx_a_b_cd_d_ed term[?] AND term[?] (covers) (multi_range_opt)
+    sort:  ? asc, ? desc, ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where ((t.a= ?:? ) or (t.a= ?:? )) and t.b= ?:?  order by ? desc , ? for orderby_num()<= ?:? 
+===================================================
+a    b    c    d    e    
+2     11                                                                                                                                                                                                           2     2.0     2     
+2     2                                                                                                                                                                                                            2     2.0     11     
+2     2                                                                                                                                                                                                            2     2.0     3     
+2     2                                                                                                                                                                                                            2     2.0     2     
+2     11                                                                                                                                                                                                           2     2.0     3     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where t.a not in multiset{?, ?} and t.b<> cast(? as char(-?)) order by ? desc , ? for orderby_num()<= ?:? 
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+a    b    c    d    e    
+11     11                                                                                                                                                                                                           2     2.0     2     
+2     11                                                                                                                                                                                                           2     2.0     11     
+2     11                                                                                                                                                                                                           2     2.0     3     
+2     11                                                                                                                                                                                                           2     2.0     2     
+11     11                                                                                                                                                                                                           2     2.0     3     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c, t.d, t.e from t t where t.a not in multiset{?, ?, ?, ?, ?, ?} and t.b= ?:?  order by ? desc , ? for orderby_num()<= ?:? 
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

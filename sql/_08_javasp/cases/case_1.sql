@@ -1,3 +1,4 @@
+--+ holdcas on;
 autocommit off;
 
 CREATE  FUNCTION test_int1(i number) RETURN number
@@ -33,3 +34,5 @@ rollback;
 
 autocommit on;
 
+
+--+ holdcas off;

@@ -36,7 +36,7 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C1: SELECT *,sleep(1) FROM tb1 a INNER JOIN tb2 b ON a.id = b.id WHERE a.id = 2 or b.id = 3;
+C1: SELECT *,sleep(1) FROM tb1 a INNER JOIN tb2 b ON a.id = b.id WHERE a.id = 2 or b.id = 3 order by 1;
 MC: wait until C1 ready;
 C2: DELETE a,b FROM tb1 a INNER JOIN tb2 b ON a.id = b.id WHERE a.id = 1;
 /* expect: no tansactions need to wait */
@@ -49,10 +49,10 @@ MC: wait until C2 ready;
 C1: select * from tb1 order by id;
 C1: select * from tb2 order by id;
 MC: wait until C1 ready;
-C1: SELECT *,sleep(1) FROM tb1 a INNER JOIN tb2 b ON a.id = b.id WHERE a.id = 2 or b.id = 3;
+C1: SELECT *,sleep(1) FROM tb1 a INNER JOIN tb2 b ON a.id = b.id WHERE a.id = 2 or b.id = 3 order by 1;
 C2: commit;
 MC: wait until C2 ready;
-C1: SELECT * FROM tb1 a INNER JOIN tb2 b ON a.id = b.id WHERE a.id = 2 or b.id = 3;
+C1: SELECT * FROM tb1 a INNER JOIN tb2 b ON a.id = b.id WHERE a.id = 2 or b.id = 3 order by 1;
 C1: commit;
 C1: quit;
 C2: quit;

@@ -15,7 +15,7 @@ insert into sub_t1 values('K', 21, 'f');
 
 
 update sub_t1 set (name, age)=('Jerry', 28);
-select * from sub_t1;
+select * from sub_t1 order by 1,2,3;
 
 drop class t1;
 drop class sub_t1;

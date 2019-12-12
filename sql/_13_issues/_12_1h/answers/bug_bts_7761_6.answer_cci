@@ -23,24 +23,24 @@ Error:-272
 ===================================================
 0
 ===================================================
-Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    
-t     1     i_t_3j     1     null     A     0     null     null     YES     BTREE      mod([t].[i], 2)     null     
-t     1     i_t_ai     1     null     A     0     null     null     YES     BTREE      abs([t].[i])     null     
-t     1     i_t_i     1     i     A     0     null     null     YES     BTREE     null     null     
-t     1     i_t_ijk     1     i     A     0     null     null     YES     BTREE     null     null     
-t     1     i_t_ijk     2     j     A     0     null     null     YES     BTREE     null     null     
-t     1     i_t_ijk     3     null     A     0     null     null     YES     BTREE      abs([t].[k])     null     
-t     1     i_t_j     1     j     A     0     null     null     YES     BTREE     null     null     
-t     1     i_t_jia     1     i     A     0     null     null     YES     BTREE     null     null     
-t     1     i_t_jia     2     null     A     0     null     null     YES     BTREE      abs([t].[j])     null     
-t     1     idx4     1     i     A     0     null     null     YES     BTREE     null     null     
-t     1     idx4     2     null     A     0     null     null     YES     BTREE      mod([t].[j], 2)     null     
-t     1     idx5     1     i     A     0     null     null     YES     BTREE     null     null     
-t     1     idx5     2     j     A     0     null     null     YES     BTREE     null     null     
-t     1     idx5     3     null     A     0     null     null     YES     BTREE      mod([t].[k], 2)     null     
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
+t     1     i_t_3j     1     null     A     0     null     null     YES     BTREE      mod([t].[i], 2)     null     YES     
+t     1     i_t_ai     1     null     A     0     null     null     YES     BTREE      abs([t].[i])     null     YES     
+t     1     i_t_i     1     i     A     0     null     null     YES     BTREE     null     null     YES     
+t     1     i_t_ijk     1     i     A     0     null     null     YES     BTREE     null     null     YES     
+t     1     i_t_ijk     2     j     A     0     null     null     YES     BTREE     null     null     YES     
+t     1     i_t_ijk     3     null     A     0     null     null     YES     BTREE      abs([t].[k])     null     YES     
+t     1     i_t_j     1     j     A     0     null     null     YES     BTREE     null     null     YES     
+t     1     i_t_jia     1     i     A     0     null     null     YES     BTREE     null     null     YES     
+t     1     i_t_jia     2     null     A     0     null     null     YES     BTREE      abs([t].[j])     null     YES     
+t     1     idx4     1     i     A     0     null     null     YES     BTREE     null     null     YES     
+t     1     idx4     2     null     A     0     null     null     YES     BTREE      mod([t].[j], 2)     null     YES     
+t     1     idx5     1     i     A     0     null     null     YES     BTREE     null     null     YES     
+t     1     idx5     2     j     A     0     null     null     YES     BTREE     null     null     YES     
+t     1     idx5     3     null     A     0     null     null     YES     BTREE      mod([t].[k], 2)     null     YES     
 
 Query stmt:
-show index from  t t
+show index from t t
 ===================================================
 5
 ===================================================
@@ -65,12 +65,15 @@ i    j    k
 100     100     5     
 
 Query plan:
-iscan
-    class: t node[?]
-    index: i_t_ai term[?]
+temp(order by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_ai term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.i, t.j, t.k from t t where  abs(t.i)>?
+select t.i, t.j, t.k from t t where  abs(t.i)>? order by ?, ?, ?
 ===================================================
 i    j    k    
 10     2     2     
@@ -79,12 +82,15 @@ i    j    k
 10     5     5     
 
 Query plan:
-iscan
-    class: t node[?]
-    index: i_t_jia term[?] AND term[?]
+temp(order by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_jia term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.i, t.j, t.k from t t where  abs(t.j)>? and t.i= ?:? 
+select t.i, t.j, t.k from t t where  abs(t.j)>? and t.i= ?:?  order by ?, ?
 ===================================================
 i    j    k    
 100     100     2     
@@ -93,12 +99,15 @@ i    j    k
 100     100     5     
 
 Query plan:
-iscan
-    class: t node[?]
-    index: i_t_ijk term[?] AND term[?] AND term[?]
+temp(order by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_ijk term[?] AND term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t.i, t.j, t.k from t t where  abs(t.k)>? and t.j= ?:?  and t.i= ?:? 
+select t.i, t.j, t.k from t t where  abs(t.k)>? and t.j= ?:?  and t.i= ?:?  order by ?
 ===================================================
 i    j    k    
 1     1     1     
@@ -106,12 +115,15 @@ i    j    k
 5     5     5     
 
 Query plan:
-iscan
-    class: t node[?]
-    index: i_t_?j term[?]
+temp(order by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_?j term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.i, t.j, t.k from t t where  mod(t.i, ?)>?
+select t.i, t.j, t.k from t t where  mod(t.i, ?)>? order by ?, ?, ?
 ===================================================
 i    j    k    
 10     1     1     
@@ -119,12 +131,15 @@ i    j    k
 10     5     5     
 
 Query plan:
-iscan
-    class: t node[?]
-    index: idx? term[?] AND term[?]
+temp(order by)
+    subplan: iscan
+                 class: t node[?]
+                 index: idx? term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.i, t.j, t.k from t t where  mod(t.j, ?)>? and t.i= ?:? 
+select t.i, t.j, t.k from t t where  mod(t.j, ?)>? and t.i= ?:?  order by ?, ?
 ===================================================
 i    j    k    
 100     100     1     
@@ -132,12 +147,15 @@ i    j    k
 100     100     5     
 
 Query plan:
-iscan
-    class: t node[?]
-    index: idx? term[?] AND term[?] AND term[?]
+temp(order by)
+    subplan: iscan
+                 class: t node[?]
+                 index: idx? term[?] AND term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t.i, t.j, t.k from t t where  mod(t.k, ?)>? and t.j= ?:?  and t.i= ?:? 
+select t.i, t.j, t.k from t t where  mod(t.k, ?)>? and t.j= ?:?  and t.i= ?:?  order by ?
 ===================================================
 i    j    k    
 100     100     1     
@@ -147,12 +165,16 @@ i    j    k
 100     100     5     
 
 Query plan:
-iscan
-    class: t node[?]
-    index: i_t_i term[?]
+temp(order by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_i term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.i, t.j, t.k from t t where (t.i> ?:? ) using index t.i_t_i(+)
+select t.i, t.j, t.k from t t where (t.i> ?:? ) using index t.i_t_i(+) order by ?, ?, ?
 ===================================================
 i    j    k    
 1     1     1     
@@ -172,33 +194,36 @@ i    j    k
 100     100     5     
 
 Query plan:
-sscan
-    class: t node[?]
-    sargs: term[?]
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.i, t.j, t.k from t t where (t.j> ?:? ) using index t.i_t_jia(+)
+select t.i, t.j, t.k from t t where (t.j> ?:? ) using index t.i_t_jia(+) order by ?, ?, ?
 ===================================================
 0
 ===================================================
-Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    
-t2     1     i_t_3j     1     null     A     0     null     null     YES     BTREE      mod([t2].[i], 2)     null     
-t2     1     i_t_ai     1     null     A     0     null     null     YES     BTREE      abs([t2].[i])     null     
-t2     1     i_t_i     1     i     A     0     null     null     YES     BTREE     null     null     
-t2     1     i_t_ijk     1     i     A     0     null     null     YES     BTREE     null     null     
-t2     1     i_t_ijk     2     j     A     0     null     null     YES     BTREE     null     null     
-t2     1     i_t_ijk     3     null     A     0     null     null     YES     BTREE      abs([t2].[k])     null     
-t2     1     i_t_j     1     j     A     0     null     null     YES     BTREE     null     null     
-t2     1     i_t_jia     1     i     A     0     null     null     YES     BTREE     null     null     
-t2     1     i_t_jia     2     null     A     0     null     null     YES     BTREE      abs([t2].[j])     null     
-t2     1     idx4     1     i     A     0     null     null     YES     BTREE     null     null     
-t2     1     idx4     2     null     A     0     null     null     YES     BTREE      mod([t2].[j], 2)     null     
-t2     1     idx5     1     i     A     0     null     null     YES     BTREE     null     null     
-t2     1     idx5     2     j     A     0     null     null     YES     BTREE     null     null     
-t2     1     idx5     3     null     A     0     null     null     YES     BTREE      mod([t2].[k], 2)     null     
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
+t2     1     i_t_3j     1     null     A     0     null     null     YES     BTREE      mod([t2].[i], 2)     null     YES     
+t2     1     i_t_ai     1     null     A     0     null     null     YES     BTREE      abs([t2].[i])     null     YES     
+t2     1     i_t_i     1     i     A     0     null     null     YES     BTREE     null     null     YES     
+t2     1     i_t_ijk     1     i     A     0     null     null     YES     BTREE     null     null     YES     
+t2     1     i_t_ijk     2     j     A     0     null     null     YES     BTREE     null     null     YES     
+t2     1     i_t_ijk     3     null     A     0     null     null     YES     BTREE      abs([t2].[k])     null     YES     
+t2     1     i_t_j     1     j     A     0     null     null     YES     BTREE     null     null     YES     
+t2     1     i_t_jia     1     i     A     0     null     null     YES     BTREE     null     null     YES     
+t2     1     i_t_jia     2     null     A     0     null     null     YES     BTREE      abs([t2].[j])     null     YES     
+t2     1     idx4     1     i     A     0     null     null     YES     BTREE     null     null     YES     
+t2     1     idx4     2     null     A     0     null     null     YES     BTREE      mod([t2].[j], 2)     null     YES     
+t2     1     idx5     1     i     A     0     null     null     YES     BTREE     null     null     YES     
+t2     1     idx5     2     j     A     0     null     null     YES     BTREE     null     null     YES     
+t2     1     idx5     3     null     A     0     null     null     YES     BTREE      mod([t2].[k], 2)     null     YES     
 
 Query stmt:
-show index from  t? t?
+show index from t? t?
 ===================================================
 15
 ===================================================
@@ -219,12 +244,15 @@ i    j    k
 100     100     5     
 
 Query plan:
-iscan
-    class: t? node[?]
-    index: i_t_ai term[?]
+temp(order by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t_ai term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t?.i, t?.j, t?.k from t? t? where  abs(t?.i)>?
+select t?.i, t?.j, t?.k from t? t? where  abs(t?.i)>? order by ?, ?, ?
 ===================================================
 i    j    k    
 10     2     2     
@@ -233,12 +261,15 @@ i    j    k
 10     5     5     
 
 Query plan:
-iscan
-    class: t? node[?]
-    index: i_t_jia term[?] AND term[?]
+temp(order by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t_jia term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t?.i, t?.j, t?.k from t? t? where  abs(t?.j)>? and t?.i= ?:? 
+select t?.i, t?.j, t?.k from t? t? where  abs(t?.j)>? and t?.i= ?:?  order by ?, ?
 ===================================================
 i    j    k    
 100     100     2     
@@ -247,13 +278,16 @@ i    j    k
 100     100     5     
 
 Query plan:
-iscan
-    class: t? node[?]
-    index: i_t_i term[?]
-    sargs: term[?] AND term[?]
+temp(order by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t_i term[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t?.i, t?.j, t?.k from t? t? where ?=? and  abs(t?.k)>? and t?.i= ?:? 
+select t?.i, t?.j, t?.k from t? t? where ?=? and  abs(t?.k)>? and t?.i= ?:?  order by ?, ?
 ===================================================
 i    j    k    
 1     1     1     
@@ -261,12 +295,15 @@ i    j    k
 5     5     5     
 
 Query plan:
-iscan
-    class: t? node[?]
-    index: i_t_?j term[?]
+temp(order by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t_?j term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t?.i, t?.j, t?.k from t? t? where  mod(t?.i, ?)>?
+select t?.i, t?.j, t?.k from t? t? where  mod(t?.i, ?)>? order by ?, ?, ?
 ===================================================
 i    j    k    
 10     1     1     
@@ -274,12 +311,15 @@ i    j    k
 10     5     5     
 
 Query plan:
-iscan
-    class: t? node[?]
-    index: idx? term[?] AND term[?]
+temp(order by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: idx? term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t?.i, t?.j, t?.k from t? t? where  mod(t?.j, ?)>? and t?.i= ?:? 
+select t?.i, t?.j, t?.k from t? t? where  mod(t?.j, ?)>? and t?.i= ?:?  order by ?, ?
 ===================================================
 i    j    k    
 100     100     1     
@@ -287,12 +327,15 @@ i    j    k
 100     100     5     
 
 Query plan:
-iscan
-    class: t? node[?]
-    index: idx? term[?] AND term[?] AND term[?]
+temp(order by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: idx? term[?] AND term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.i, t?.j, t?.k from t? t? where  mod(t?.k, ?)>? and t?.j= ?:?  and t?.i= ?:? 
+select t?.i, t?.j, t?.k from t? t? where  mod(t?.k, ?)>? and t?.j= ?:?  and t?.i= ?:?  order by ?
 ===================================================
 i    j    k    
 100     100     1     
@@ -302,12 +345,16 @@ i    j    k
 100     100     5     
 
 Query plan:
-iscan
-    class: t? node[?]
-    index: i_t_i term[?]
+temp(order by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t_i term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t?.i, t?.j, t?.k from t? t? where (t?.i> ?:? ) using index t?.i_t_i(+)
+select t?.i, t?.j, t?.k from t? t? where (t?.i> ?:? ) using index t?.i_t_i(+) order by ?, ?, ?
 ===================================================
 i    j    k    
 1     1     1     
@@ -327,12 +374,15 @@ i    j    k
 100     100     5     
 
 Query plan:
-sscan
-    class: t? node[?]
-    sargs: term[?]
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t?.i, t?.j, t?.k from t? t? where (t?.j> ?:? ) using index t?.i_t_jia(+)
+select t?.i, t?.j, t?.k from t? t? where (t?.j> ?:? ) using index t?.i_t_jia(+) order by ?, ?, ?
 ===================================================
 0
 ===================================================

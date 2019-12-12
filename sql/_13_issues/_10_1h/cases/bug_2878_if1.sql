@@ -1,3 +1,4 @@
+--+ holdcas on;
 evaluate 'y' into :a;
 evaluate 'n' into :b;
 
@@ -30,4 +31,6 @@ execute s using 0, 0, 'y', 'n'
 deallocate prepare s;
 
 select case when (:expected = :result) then 'YES' else 'NO' end as result;
+drop variable a,b,expected,result;
 
+--+ holdcas off;

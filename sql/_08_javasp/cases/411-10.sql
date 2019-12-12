@@ -1,3 +1,4 @@
+--+ holdcas on;
 autocommit off;
 
 CREATE  Procedure  ptestint9(i in out string) as language java name 'SpTest5.ptestint2(int[]) ';
@@ -38,7 +39,6 @@ call pteststring0(?,?,?,?,?) ;
 drop procedure pteststring0;
 
 
-
 CREATE  Procedure  ptestint3(a in out int, b in out int, c in out int, d in out int, e in out int)
 as language java name 'SpTest5.ptestint3(int[]) ';
 
@@ -61,6 +61,7 @@ $integer,$10,$integer,$20,$integer,$30,$integer,$40,$integer,$50;
 call ptestint4(?,?,?,?,?) ;
 
 drop procedure pteststring2;
+drop variable a,b,c,d,e;
 
 CREATE  Procedure  pteststring2(i in out string) as language java name 'SpTest5.pteststring2(java.lang.String[]) ';
 
@@ -270,3 +271,5 @@ rollback;
 
 autocommit on;
 
+
+--+ holdcas off;

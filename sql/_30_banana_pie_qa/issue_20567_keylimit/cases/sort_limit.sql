@@ -18,5 +18,5 @@ SELECT /*+ RECOMPILE */ * FROM u, t WHERE u.i = t.i AND u.j > 10 ORDER BY u.j LI
 SELECT /*+ RECOMPILE */ * FROM u, t WHERE u.i = t.i AND u.j > 10 ORDER BY u.j LIMIT 2-2,5;
 SELECT /*+ RECOMPILE */ * FROM u, t WHERE u.i = t.i AND u.j > 10 ORDER BY u.j LIMIT 2-1,5*1;
 SELECT /*+ RECOMPILE */ * FROM u, t WHERE u.i = t.i AND u.j > 10 ORDER BY u.j LIMIT 2-1,10/2;
-SELECT /*+ RECOMPILE */ * FROM u, t WHERE u.i = t.i AND u.j > 10 using index i_u_j keyLIMIT 2-1,10/2;
+SELECT /*+ RECOMPILE */ * FROM u, t WHERE u.i = t.i AND u.j > 10 using index i_u_j keyLIMIT 2-1,10/2 order by u.j;
 drop if exists u,t;

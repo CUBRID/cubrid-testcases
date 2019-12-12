@@ -34,8 +34,8 @@ select i from t2 where i>2 and i <6 union all select i from t2 where i>7 order b
 --error
 select i from t2 where i>2 order by i union all select i from t2 where i>7 union all select i from t2 where i<3;
 
-select i from t2 where i>2 limit 3 difference select i from t2 where i>7;
-select i from t2 where i>2 limit 2 difference select i from t2 where i>7 limit 3;
+(select i from t2 where i>2 order by i limit 3) difference select i from t2 where i>7;
+(select i from t2 where i>2 order by i limit 2) difference select i from t2 where i>7 limit 3;
 (select i from t2 where i>2 order by i limit 5) difference select i from t2 where i>7 limit 3;
 (select i from t2 where i>2 order by i limit 6) difference select i from t2 where i>7 limit 3 union all select i from t2 where i > 6 order by i desc;
 

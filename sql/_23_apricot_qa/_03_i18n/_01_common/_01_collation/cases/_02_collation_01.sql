@@ -1,0 +1,30 @@
+drop table if exists t;
+set names utf8;
+create table t(v1 string collate utf8_bin,v2 string collate utf8_de_exp);
+insert into t values('a','a'),('ae','ae'),('æ','æ'),('af','af');
+select * from t order by 1;
+select * from t order by 2;
+insert into t values('ae','æ'),('æ','ae');
+select v1,count(*) from t group by 1 order by 1;
+select v2,count(*) from t group by 1 order by 1;
+delete from t;
+
+insert into t values('AE','AE'),('ä','ä'),('AG','AG');
+select * from t order by 1;
+select * from t order by 2;
+select * from t order by 2 desc;
+
+alter table t add column v3 string collate utf8_de_exp;
+update t set v3='ä' where v2='AE';
+update t set v3='AE' where v2='ä';
+select * from t where v2>v3 order by 1,2,3;
+insert into t values('Ä','Ä','ä');
+insert into t values('Ä','ä','Ä');
+select * from t order by 3;
+select * from t where v2>v3 order by 1,2,3;
+insert into t(v3) values('AE'),('A'),('Ä');
+select * from t where v1 is null order by v3;
+select * from t where v1 is null order by v3 desc;
+select substring(v3,1,1) as v3,count(*) from t group by substring(v3,1,1);
+drop t;
+set names iso88591;

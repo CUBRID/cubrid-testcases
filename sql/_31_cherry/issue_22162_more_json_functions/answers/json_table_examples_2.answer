@@ -1,0 +1,208 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+phones    
+[{"type":"Office","number":"909-555-7307"},{"type":"Mobile","number":"415-555-1234"}]     
+
+Query plan:
+nl-join (inner join)
+    edge:  table(?) -> jt node[?]
+    outer: sscan
+               class: j_purchaseorder node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: jt node[?]
+               sargs: table(?) -> jt node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select jt.phones from j_purchaseorder j_purchaseorder, (json_table (j_purchaseorder.po_document, '$."ShippingInstructions"' columns (phones json PATH '$."Phone"' NULL ON EMPTY NULL ON ERROR )) as jt)
+===================================================
+id    phone_type    phone_num    
+1     Office     909-555-7307     
+2     Mobile     415-555-1234     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  table(?) -> jt node[?]
+                 outer: sscan
+                            class: j_purchaseorder node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: jt node[?]
+                            sargs: table(?) -> jt node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select jt.id, jt.phone_type, jt.phone_num from j_purchaseorder j_purchaseorder, (json_table (j_purchaseorder.po_document, '$."ShippingInstructions"."Phone"[*]' columns (id FOR ORDINALITY, phone_type varchar(?) PATH '$."type"' NULL ON EMPTY NULL ON ERROR, phone_num varchar(?) PATH '$."number"' NULL ON EMPTY NULL ON ERROR )) as jt) order by ?
+===================================================
+requestor    has_zip    
+Alexis Bull     1     
+
+Query plan:
+nl-join (inner join)
+    edge:  table(?) -> jt node[?]
+    outer: sscan
+               class: j_purchaseorder node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: jt node[?]
+               sargs: table(?) -> jt node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select jt.requestor, jt.has_zip from j_purchaseorder j_purchaseorder, (json_table (j_purchaseorder.po_document, '$' columns (requestor varchar(?) PATH '$."Requestor"' NULL ON EMPTY NULL ON ERROR, has_zip varchar(?) EXISTS PATH '$."ShippingInstructions"."Address"."zipCode"' )) as jt)
+===================================================
+requestor    
+Alexis Bull     
+
+Query plan:
+nl-join (inner join)
+    edge:  table(?) -> jt node[?]
+    outer: sscan
+               class: j_purchaseorder node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: jt node[?]
+               sargs: table(?) -> jt node[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select jt.requestor from j_purchaseorder j_purchaseorder, (json_table (j_purchaseorder.po_document, '$' columns (requestor varchar(?) PATH '$."Requestor"' NULL ON EMPTY NULL ON ERROR, has_zip integer EXISTS PATH '$."ShippingInstructions"."Address"."zipCode"' )) as jt) where jt.has_zip= ?:? 
+===================================================
+outer_value_0    outer_value_1    outer_value_2    
+1     2     ["a","b"]     
+
+Query plan:
+sscan
+    class: jt node[?]
+    cost:  ? card ?
+Query stmt:
+select jt.outer_value_?, jt.outer_value_?, jt.outer_value_? from (json_table ('[?,?,["a","b"]]', '$' columns (outer_value_? integer PATH '$[?]' NULL ON EMPTY NULL ON ERROR, outer_value_? integer PATH '$[?]' NULL ON EMPTY NULL ON ERROR, outer_value_? varchar(?) PATH '$[?]' NULL ON EMPTY NULL ON ERROR )) as jt)
+===================================================
+outer_value_0    outer_value_1    nested_value_0    nested_value_1    
+1     2     a     b     
+
+Query plan:
+sscan
+    class: jt node[?]
+    cost:  ? card ?
+Query stmt:
+select jt.outer_value_?, jt.outer_value_?, jt.nested_value_?, jt.nested_value_? from (json_table ('[?,?,["a","b"]]', '$' columns (outer_value_? integer PATH '$[?]' NULL ON EMPTY NULL ON ERROR, outer_value_? integer PATH '$[?]' NULL ON EMPTY NULL ON ERROR, nested path '$[?]' columns (nested_value_? varchar(?) PATH '$[?]' NULL ON EMPTY NULL ON ERROR, nested_value_? varchar(?) PATH '$[?]' NULL ON EMPTY NULL ON ERROR ) )) as jt)
+===================================================
+outer_value_0    outer_value_1    nested_value_0    nested_value_1    
+100     200     300     400     
+
+Query plan:
+sscan
+    class: jt node[?]
+    cost:  ? card ?
+Query stmt:
+select jt.outer_value_?, jt.outer_value_?, jt.nested_value_?, jt.nested_value_? from (json_table ('{"a":?, "b":?, "c":{"d":?, "e":?}}', '$' columns (outer_value_? integer PATH '$."a"' NULL ON EMPTY NULL ON ERROR, outer_value_? integer PATH '$."b"' NULL ON EMPTY NULL ON ERROR, nested path '$."c"' columns (nested_value_? integer PATH '$."d"' NULL ON EMPTY NULL ON ERROR, nested_value_? integer PATH '$."e"' NULL ON EMPTY NULL ON ERROR ) )) as jt)
+===================================================
+requestor    phone_type    phone_num    
+Alexis Bull     Office     909-555-7307     
+Alexis Bull     Mobile     415-555-1234     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  table(?) -> jt node[?]
+                 outer: sscan
+                            class: j_purchaseorder node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: jt node[?]
+                            sargs: table(?) -> jt node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select jt.requestor, jt.phone_type, jt.phone_num from j_purchaseorder j_purchaseorder, (json_table (j_purchaseorder.po_document, '$' columns (requestor varchar(?) PATH '$."Requestor"' NULL ON EMPTY NULL ON ERROR, nested path '$."ShippingInstructions"."Phone"[*]' columns (phone_type varchar(?) PATH '$."type"' NULL ON EMPTY NULL ON ERROR, phone_num varchar(?) PATH '$."number"' NULL ON EMPTY NULL ON ERROR ) )) as jt) order by ?, ? desc 
+===================================================
+id    name    json_pretty(po_document)    
+1     example     {
+  "POINT": 1600,
+  "Reference": "ABULL-20140421",
+  "Requestor": "Alexis Bull",
+  "User": "ABULL",
+  "CostCenter": "A50",
+  "ShippingInstructions": {
+    "name": "Alexis Bull",
+    "Address": {
+      "street": "200 Sporting Green",
+      "city": "South San Francisco",
+      "state": "CA",
+      "zipCode": 99236,
+      "country": "United States of America"
+    },
+    "Phone": [
+      {
+        "type": "Office",
+        "number": "909-555-7307"
+      },
+      {
+        "type": "Mobile",
+        "number": "415-555-1234"
+      }
+    ]
+  },
+  "Special Instructions": null,
+  "AllowPartialShipment": true,
+  "LineItems": [
+    {
+      "ItemINT": 1,
+      "Part": {
+        "Description": "One Magic Christmas",
+        "UnitPrice": 19.950000,
+        "UPCCode": 13131092899
+      },
+      "Quantity": 9.000000
+    },
+    {
+      "ItemINT": 2,
+      "Part": {
+        "Description": "Lethal Weapon",
+        "UnitPrice": 19.950000,
+        "UPCCode": 85391628927
+      },
+      "Quantity": 5.000000
+    }
+  ]
+}     
+
+Query plan:
+sscan
+    class: j_purchaseorder node[?]
+    cost:  ? card ?
+Query stmt:
+select j_purchaseorder.id, j_purchaseorder.[name], json_pretty(j_purchaseorder.po_document) from j_purchaseorder j_purchaseorder
+===================================================
+json_pretty(json_extract(json_extract(po_document, '$.ShippingInstructions'), '$.Phone'))    
+[
+  {
+    "type": "Office",
+    "number": "909-555-7307"
+  },
+  {
+    "type": "Mobile",
+    "number": "415-555-1234"
+  }
+]     
+
+Query plan:
+sscan
+    class: j_purchaseorder node[?]
+    cost:  ? card ?
+Query stmt:
+select json_pretty(json_extract(json_extract(j_purchaseorder.po_document, '$.ShippingInstructions'), '$.Phone')) from j_purchaseorder j_purchaseorder
+===================================================
+0

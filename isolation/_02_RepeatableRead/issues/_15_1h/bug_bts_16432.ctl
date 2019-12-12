@@ -52,7 +52,7 @@ C1: SELECT DECR(read_count), t1.* FROM t1 WHERE read_count = 5;
 MC: wait until C1 ready;
 /* expect: C2 no need to wait for C1 */
 C2: UPDATE t1 set read_count = 6 WHERE id = 2;
-C2: SELECT * FROM t1;
+C2: SELECT * FROM t1 order by 1;
 MC: wait until C2 ready;
 /* expect: id = 1,2 read_count = 4,4 should be displayed */
 C1: SELECT * FROM t1 order by 1;

@@ -12,7 +12,7 @@ insert into t1 values (1), (2), (3), (4), (5);
 insert into t3 values (6), (7), (8), (9), (10);
 insert into t4 values (7), (8), (9), (10), (11);
 
-update t1 set t1.i=t1.i + 1 where t1.i > 3;
+update t1 set t1.i=t1.i + 1 where t1.i > 3 order by t1.i;
 select * from t1 order by 1;
 select * from t3 order by 1;
 select * from t4 order by 1;

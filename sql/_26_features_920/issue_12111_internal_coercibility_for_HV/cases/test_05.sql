@@ -1,3 +1,4 @@
+--+ holdcas on;
 
 create table t1(id int, a enum('A', 'B') collate utf8_en_cs);
 insert into t1 values (1, 1);
@@ -19,7 +20,7 @@ execute stmt using 3, 'a';
 execute stmt using 4, 'b';
 execute stmt using 5, 'c';
 deallocate prepare stmt;
-prepare stmt from 'select * from t1 where cast(a as varchar collate utf8_en_cs) > ?';
+prepare stmt from 'select * from t1 where cast(a as varchar collate utf8_en_cs) > ? order by 1,2';
 set names utf8 collate utf8_en_cs;
 execute stmt using 'a';
 execute stmt using 'A';
@@ -52,3 +53,5 @@ deallocate prepare stmt;
 
 drop variable @v1;
 set names iso88591;
+
+--+ holdcas off;

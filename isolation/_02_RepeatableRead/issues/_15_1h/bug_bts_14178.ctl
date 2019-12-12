@@ -58,9 +58,11 @@ C2: set transaction lock timeout INFINITE;
 C2: set transaction isolation level read committed;
 
 /* preparation */
-DROP TABLE IF EXISTS t1;
+DROP TABLE IF EXISTS t1,t2;
 CREATE TABLE t1(id INT, title VARCHAR(10));
 INSERT INTO t1 VALUES(1,'abc'),(2,'def'),(3,'ghi');
+rename table t1 as t2;
+create table t1 as select * from t2 order by id;
 COMMIT WORK;
 MC: wait until C1 ready;
 
@@ -74,10 +76,10 @@ C1: commit;
 C1: UPDATE t1 SET title = 'abcd' WHERE ROWNUM < 2;
 MC: wait until C1 ready;
 /* expect:  C2 doesn't need to wait for C1 */
-C2: select * from t1 order by 1,2;
+C2: select title from t1 where title = 'abcd';
 MC: wait until C2 ready;
 C1: commit;
-C2: select * from t1 order by 1,2;
+C2: select title from t1 where title = 'abcd';
 C2: commit;
 
 C1: quit;

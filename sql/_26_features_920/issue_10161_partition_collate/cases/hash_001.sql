@@ -5,7 +5,7 @@ INSERT INTO t2(code) VALUES ('a');
 INSERT INTO t2(code) VALUES ('AA'); 
 INSERT INTO t2(code) VALUES ('aa'); 
 
-select * from t2 order by 1;
+select code, hex(code) from t2 order by 1,2;
 
 drop table t2;
 

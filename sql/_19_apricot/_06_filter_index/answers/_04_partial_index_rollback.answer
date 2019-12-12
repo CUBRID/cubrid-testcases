@@ -1,0 +1,1108 @@
+===================================================
+0
+===================================================
+8
+===================================================
+0
+===================================================
+0
+===================================================
+id    textlabel    description    
+10     aab     the textbook     
+11     xab     book description     
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+15     xab     xab     
+16     aff     syntax description     
+17     afg     operators list     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t order by ?
+===================================================
+id    textlabel    description    
+10     aab     the textbook     
+11     xab     book description     
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_id term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id< ?:? )
+===================================================
+1
+===================================================
+id    textlabel    description    
+10     aab     the textbook     
+11     xab     book description     
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_id term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id< ?:? )
+===================================================
+2
+===================================================
+id    textlabel    description    
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_id term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id< ?:? )
+===================================================
+0
+===================================================
+2
+===================================================
+id    textlabel    description    
+6     aff     syntax description     
+7     afg     operators list     
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_id term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id< ?:? )
+===================================================
+0
+===================================================
+1
+===================================================
+id    textlabel    description    
+6     aff     syntax description     
+7     afg     operators list     
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_id term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id< ?:? )
+===================================================
+0
+===================================================
+3
+===================================================
+id    textlabel    description    
+6     aff     syntax description     
+7     afg     operators list     
+12     xxy     book chapters     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_id term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id< ?:? )
+===================================================
+0
+===================================================
+0
+===================================================
+id    textlabel    description    
+
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+)
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+)
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t
+===================================================
+0
+===================================================
+id    textlabel    description    
+6     aff     syntax description     
+7     afg     operators list     
+12     xxy     book chapters     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_id term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id< ?:? )
+===================================================
+0
+===================================================
+id    textlabel    description    
+6     aff     syntax description     
+7     afg     operators list     
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_id term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id< ?:? )
+===================================================
+0
+===================================================
+id    textlabel    description    
+6     aff     syntax description     
+7     afg     operators list     
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_id term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id< ?:? )
+===================================================
+0
+===================================================
+id    textlabel    description    
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_id term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id< ?:? )
+===================================================
+0
+===================================================
+id    textlabel    description    
+10     aab     the textbook     
+11     xab     book description     
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_id term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id< ?:? )
+===================================================
+id    textlabel    description    
+10     aab     the textbook     
+11     xab     book description     
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+15     xab     xab     
+16     aff     syntax description     
+17     afg     operators list     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t order by ?
+===================================================
+id    textlabel    description    
+10     aab     the textbook     
+11     xab     book description     
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_id term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id< ?:? )
+===================================================
+1
+===================================================
+id    textlabel    description    
+10     aab     the textbook     
+11     xab     book description     
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_id term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id< ?:? )
+===================================================
+2
+===================================================
+id    textlabel    description    
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_id term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id< ?:? )
+===================================================
+0
+===================================================
+2
+===================================================
+id    textlabel    description    
+6     aff     syntax description     
+7     afg     operators list     
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_id term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id< ?:? )
+===================================================
+0
+===================================================
+1
+===================================================
+id    textlabel    description    
+6     aff     syntax description     
+7     afg     operators list     
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_id term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id< ?:? )
+===================================================
+0
+===================================================
+3
+===================================================
+id    textlabel    description    
+6     aff     syntax description     
+7     afg     operators list     
+12     xxy     book chapters     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_id term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id< ?:? )
+===================================================
+0
+===================================================
+0
+===================================================
+id    textlabel    description    
+
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+)
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+)
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t
+===================================================
+0
+===================================================
+id    textlabel    description    
+10     aab     the textbook     
+11     xab     book description     
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+)
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+)
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t
+===================================================
+id    textlabel    description    
+10     aab     the textbook     
+11     xab     book description     
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+15     xab     xab     
+16     aff     syntax description     
+17     afg     operators list     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t order by ?
+===================================================
+id    textlabel    description    
+10     aab     the textbook     
+11     xab     book description     
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_id term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id< ?:? )
+===================================================
+1
+===================================================
+id    textlabel    description    
+10     aab     the textbook     
+11     xab     book description     
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_id term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id< ?:? )
+===================================================
+2
+===================================================
+id    textlabel    description    
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_id term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id< ?:? )
+===================================================
+0
+===================================================
+2
+===================================================
+id    textlabel    description    
+6     aff     syntax description     
+7     afg     operators list     
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_id term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id< ?:? )
+===================================================
+0
+===================================================
+1
+===================================================
+id    textlabel    description    
+6     aff     syntax description     
+7     afg     operators list     
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_id term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id< ?:? )
+===================================================
+0
+===================================================
+3
+===================================================
+id    textlabel    description    
+6     aff     syntax description     
+7     afg     operators list     
+12     xxy     book chapters     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_id term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id< ?:? )
+===================================================
+0
+===================================================
+0
+===================================================
+id    textlabel    description    
+
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+)
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+)
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t
+===================================================
+0
+===================================================
+id    textlabel    description    
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+)
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+)
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t
+===================================================
+0
+===================================================
+id    textlabel    description    
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+)
+===================================================
+id    textlabel    description    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_id_text term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t where (t.id> ?:? ) using index t.i_t_id_text(+)
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.textlabel, t.description from t t
+===================================================
+0
+===================================================
+0

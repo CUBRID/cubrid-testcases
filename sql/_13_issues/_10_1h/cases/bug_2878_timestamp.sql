@@ -1,3 +1,4 @@
+--+ holdcas on;
 evaluate '05/26/2010' into :str_date;
 evaluate '11:11:11 AM 05/26/2010' into :str_timestamp;
 evaluate '11:01:11.123 AM 05/26/2010' into :str_datetime;
@@ -152,3 +153,5 @@ deallocate prepare s;
 
 select timestamp (:dt_datetime, :time_interval) into :expected;
 select case when :expected = :result then 'YES' else 'NO' end as case18;
+
+--+ holdcas off;

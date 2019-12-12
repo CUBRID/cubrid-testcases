@@ -1,0 +1,129 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+10000
+===================================================
+a    b    c    
+1     1     1              
+2     2     2              
+3     3     3              
+4     4     4              
+5     5     5              
+
+Query plan:
+iscan
+    class: t node[?]
+    index: ri_t_a_b_c_d term[?] (covers) (desc_index)
+    filtr: term[?]
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c from t t where (t.a>= ?:?  and t.a<= ?:? ) and t.a+?<=? order by ? for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+a    b    c    
+6     6     6              
+7     7     7              
+8     8     8              
+9     9     9              
+10     10     10             
+
+Query plan:
+iscan
+    class: t node[?]
+    index: ri_t_a_b_c_d term[?] (covers) (desc_index)
+    filtr: term[?]
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c from t t where (t.a>= ?:?  and t.a<= ?:? ) and t.a+?>? order by ? for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+a    b    c    
+1     1     1              
+2     2     2              
+3     3     3              
+4     4     4              
+5     5     5              
+6     6     6              
+7     7     7              
+8     8     8              
+9     9     9              
+10     10     10             
+
+Query plan:
+iscan
+    class: t node[?]
+    index: ri_t_a_b_c_d term[?] (covers) (desc_index)
+    filtr: term[?]
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c from t t where (t.a>= ?:?  and t.a<= ?:? ) and t.a+?>? order by ? for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+a    b    c    
+1     1     1              
+
+Query plan:
+iscan
+    class: t node[?]
+    index: ri_t_a_b_c_d term[?] (covers) (desc_index)
+    filtr: term[?]
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c from t t where (t.a>= ?:?  and t.a<= ?:? ) and t.a+?>? order by ? for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+a    b    c    
+1     1     1              
+
+Query plan:
+iscan
+    class: t node[?]
+    index: ri_t_a_b_c_d term[?] (covers) (desc_index)
+    filtr: term[?]
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c from t t where (t.a>= ?:?  and t.a<= ?:? ) and t.a+?>? order by ? for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+a    b    c    
+2     2     2              
+
+Query plan:
+iscan
+    class: t node[?]
+    index: ri_t_a_b_c_d term[?] (covers) (desc_index)
+    filtr: term[?]
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c from t t where (t.a>= ?:?  and t.a<= ?:? ) and t.a+?>? order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+a    b    c    
+5000     5000     5000           
+5001     5001     5001           
+
+Query plan:
+iscan
+    class: t node[?]
+    index: ri_t_a_b_c_d term[?] (covers) (desc_index)
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c from t t where (t.a>= ?:?  and t.a<= ?:? ) order by ? for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+0
+===================================================
+0

@@ -1,0 +1,43 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+b    (select @a := @a+a from t union select @a := @a+a from t) order by 1 desc  limit 1    
+a     20     
+b     20     
+c     20     
+d     20     
+
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select @a := @a+t.a from t t
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select @a := @a+t.a from t t
+Query plan:
+sscan
+    class: tt node[?]
+    cost:  ? card ?
+Query stmt:
+select tt.b, (select @a := @a+t.a from t t union select @a := @a+t.a from t t) order by ? desc  for orderby_num()<= ?:?  from t tt
+===================================================
+0
+===================================================
+0

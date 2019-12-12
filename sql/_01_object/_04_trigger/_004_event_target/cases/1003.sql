@@ -1,0 +1,11 @@
+--Create trigger on target class attribute
+
+
+CREATE CLASS DCL1(col1 integer);	
+CREATE TRIGGER DCL1	
+BEFORE UPDATE ON DCL1(col1)	
+EXECUTE REJECT;	
+	
+
+DROP TRIGGER DCL1;
+DROP CLASS DCL1;	

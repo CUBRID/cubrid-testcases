@@ -9,7 +9,7 @@ insert into t2 values(1002, arg_t1);
 drop variable art_t1;
 insert into t2 values(1003, arg_t1);
 
-select * from t2;
+select * from t2 order by 1,2;
 
 
 drop class t1;

@@ -1,0 +1,131 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+5
+===================================================
+5
+===================================================
+5
+===================================================
+5
+===================================================
+5
+===================================================
+i1    i2    i3    
+0     0                        0     
+0     1                        1     
+0     2                        2     
+0     3                        3     
+0     4                        4     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_? keylimit ? term[?] (covers)
+                 filtr: term[?]
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i?, t.i?, t.i? from t t where  cast(t.i? as double) in multiset{?, ?, ?, ?, ?, ?} and t.i?= ?:?  using index t.i_t_? keylimit  ?:?  order by ?
+===================================================
+i1    i2    i3    
+0     4                        4     
+0     3                        3     
+0     2                        2     
+0     1                        1     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_? keylimit ? term[?] (covers)
+                 filtr: term[?]
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.i?, t.i?, t.i? from t t where t.i?<> cast(? as char(-?)) and t.i?= ?:?  using index t.i_t_? keylimit  ?:?  order by ? desc 
+===================================================
+i1    i2    i3    
+1     44                       14     
+1     33                       13     
+1     22                       12     
+1     11                       11     
+1     00                       10     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_? keylimit ? term[?] (covers) (desc_index)
+    filtr: term[?]
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t.i?, t.i?, t.i? from t t where t.i?<> cast(? as char(-?)) and t.i?= ?:?  using index t.i_t_? keylimit  ?:?  order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+i1    i2    i3    
+1     00                       10     
+1     11                       11     
+1     22                       12     
+1     33                       13     
+1     44                       14     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_? keylimit ? term[?] (covers)
+    filtr: term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i?, t.i?, t.i? from t t where t.i?<> cast(? as char(-?)) and t.i?= ?:?  using index t.i_t_? keylimit  ?:?  order by ?
+/* ---> skip ORDER BY */
+===================================================
+i1    i2    i3    
+0     0                        0     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_? keylimit ? term[?] (covers)
+                 filtr: term[?]
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i?, t.i?, t.i? from t t where  cast(t.i? as double) in multiset{?, ?, ?, ?, ?, ?} and t.i?= ?:?  using index t.i_t_? keylimit  ?:?  order by ? for orderby_num()<= ?:? 
+===================================================
+i1    i2    i3    
+0     0                        0     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_? keylimit ? term[?] AND term[?] (covers) (multi_range_opt)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i?, t.i?, t.i? from t t where ((t.i?= ?:? ) or (t.i?= ?:? ) or (t.i?= ?:? ) or (t.i?= ?:? ) or (t.i?= ?:? ) or (t.i?= ?:? )) and t.i?= ?:?  using index t.i_t_? keylimit  ?:?  order by ? for orderby_num()<= ?:? 
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

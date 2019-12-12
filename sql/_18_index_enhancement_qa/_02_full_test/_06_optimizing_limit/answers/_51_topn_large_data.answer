@@ -1,0 +1,174 @@
+===================================================
+0
+===================================================
+0
+===================================================
+10000
+===================================================
+10000
+===================================================
+0
+===================================================
+0
+===================================================
+max(a)    min(a)    sum( cast(a as bigint))    
+5000     1     25005000     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: x node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select x.a from x x order by ? for orderby_num()<= ?:? )
+Query plan:
+sscan
+    class: x? node[?]
+    cost:  ? card ?
+Query stmt:
+select max(x?.a), min(x?.a), sum( cast(x?.a as bigint)) from (select x.a from x x order by ? for orderby_num()<= ?:? ) x? (a)
+===================================================
+max(a)    min(a)    sum( cast(a as bigint))    
+10000     5001     75005000     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: x node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+(select x.a from x x order by ? desc  for orderby_num()<= ?:? )
+Query plan:
+sscan
+    class: x? node[?]
+    cost:  ? card ?
+Query stmt:
+select max(x?.a), min(x?.a), sum( cast(x?.a as bigint)) from (select x.a from x x order by ? desc  for orderby_num()<= ?:? ) x? (a)
+===================================================
+max(a)    min(a)    sum( cast(a as bigint))    
+10000     1     50005000     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: x node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select distinct x.a from x x order by ? for orderby_num()<= ?:? )
+Query plan:
+sscan
+    class: x? node[?]
+    cost:  ? card ?
+Query stmt:
+select max(x?.a), min(x?.a), sum( cast(x?.a as bigint)) from (select distinct x.a from x x order by ? for orderby_num()<= ?:? ) x? (a)
+===================================================
+max(a)    min(a)    sum( cast(a as bigint))    
+10000     1     50005000     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: x node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+(select distinct x.a from x x order by ? desc  for orderby_num()<= ?:? )
+Query plan:
+sscan
+    class: x? node[?]
+    cost:  ? card ?
+Query stmt:
+select max(x?.a), min(x?.a), sum( cast(x?.a as bigint)) from (select distinct x.a from x x order by ? desc  for orderby_num()<= ?:? ) x? (a)
+===================================================
+0
+===================================================
+max(a)    min(a)    sum( cast(a as bigint))    
+5000     1     25005000     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: x node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select x.a from x x order by ? for orderby_num()<= ?:? )
+Query plan:
+sscan
+    class: x? node[?]
+    cost:  ? card ?
+Query stmt:
+select max(x?.a), min(x?.a), sum( cast(x?.a as bigint)) from (select x.a from x x order by ? for orderby_num()<= ?:? ) x? (a)
+===================================================
+max(a)    min(a)    sum( cast(a as bigint))    
+10000     5001     75005000     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: x node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+(select x.a from x x order by ? desc  for orderby_num()<= ?:? )
+Query plan:
+sscan
+    class: x? node[?]
+    cost:  ? card ?
+Query stmt:
+select max(x?.a), min(x?.a), sum( cast(x?.a as bigint)) from (select x.a from x x order by ? desc  for orderby_num()<= ?:? ) x? (a)
+===================================================
+max(a)    min(a)    sum( cast(a as bigint))    
+10000     1     50005000     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: x node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select distinct x.a from x x order by ? for orderby_num()<= ?:? )
+Query plan:
+sscan
+    class: x? node[?]
+    cost:  ? card ?
+Query stmt:
+select max(x?.a), min(x?.a), sum( cast(x?.a as bigint)) from (select distinct x.a from x x order by ? for orderby_num()<= ?:? ) x? (a)
+===================================================
+max(a)    min(a)    sum( cast(a as bigint))    
+10000     1     50005000     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: x node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+(select distinct x.a from x x order by ? desc  for orderby_num()<= ?:? )
+Query plan:
+sscan
+    class: x? node[?]
+    cost:  ? card ?
+Query stmt:
+select max(x?.a), min(x?.a), sum( cast(x?.a as bigint)) from (select distinct x.a from x x order by ? desc  for orderby_num()<= ?:? ) x? (a)
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

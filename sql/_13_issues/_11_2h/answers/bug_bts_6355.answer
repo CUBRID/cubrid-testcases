@@ -1,0 +1,603 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+id    v    
+1     value 1     
+2     value 2     
+
+Query plan:
+iscan
+    class: ta node[?]
+    index: ta_id keylimit ?, ? term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select ta.id, ta.v from ta ta where (ta.id> ?:? ) using index ta.ta_id keylimit  ?:? , ?:?  order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    v    
+1     value 1     
+2     value 2     
+
+Query plan:
+iscan
+    class: ta node[?]
+    index: ta_id keylimit ?, ? term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select ta.id, ta.v from ta ta where (ta.id> ?:? ) using index ta.ta_id(+) keylimit  ?:? , ?:?  order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    v    
+1     value 1     
+2     value 2     
+3     value 3     
+
+Query plan:
+iscan
+    class: ta node[?]
+    index: ta_id term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select ta.id, ta.v from ta ta where (ta.id> ?:? ) using index ta.ta_id(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    v    
+1     value 1     
+2     value 2     
+3     value 3     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: ta node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select ta.id, ta.v from ta ta where (ta.id> ?:? ) using index ta.ta_id(-) order by ?
+===================================================
+id    v    
+1     value 1     
+2     value 2     
+
+Query plan:
+iscan
+    class: ta node[?]
+    index: ta_id keylimit ?, ? term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select ta.id, ta.v from ta ta where (ta.id> ?:? ) using index ta.ta_id(+) keylimit  ?:? , ?:?  order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    v    
+1     value 1     
+2     value 2     
+3     value 3     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: ta node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select ta.id, ta.v from ta ta where (ta.id> ?:? ) using index ta.ta_id(-) order by ?
+===================================================
+id    v    
+1     value 1     
+2     value 2     
+3     value 3     
+
+Query plan:
+iscan
+    class: ta node[?]
+    index: ta_id term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select ta.id, ta.v from ta ta where (ta.id> ?:? ) using index ta.ta_id(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    v    
+1     value 1     
+2     value 2     
+3     value 3     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: ta node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select ta.id, ta.v from ta ta where (ta.id> ?:? ) using index ta.ta_id(-) order by ?
+===================================================
+id    v    
+1     value 1     
+2     value 2     
+
+Query plan:
+iscan
+    class: ta node[?]
+    index: ta_id keylimit ?, ? term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select ta.id, ta.v from ta ta where (ta.id> ?:? ) using index ta.ta_id(+) keylimit  ?:? , ?:?  order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    v    
+1     value 1     
+2     value 2     
+3     value 3     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: ta node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select ta.id, ta.v from ta ta where (ta.id> ?:? ) using index ta.ta_id(-) order by ?
+===================================================
+id    v    
+1     value 1     
+2     value 2     
+
+Query plan:
+iscan
+    class: ta node[?]
+    index: ta_id keylimit ?, ? term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select ta.id, ta.v from ta ta where (ta.id> ?:? ) using index ta.ta_id keylimit  ?:? , ?:?  order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    v    
+1     value 1     
+2     value 2     
+
+Query plan:
+iscan
+    class: ta node[?]
+    index: ta_id keylimit ?, ? term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select ta.id, ta.v from ta ta where (ta.id> ?:? ) using index ta.ta_id(+) keylimit  ?:? , ?:?  order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    v    
+1     value 1     
+2     value 2     
+3     value 3     
+
+Query plan:
+iscan
+    class: ta node[?]
+    index: ta_id term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select ta.id, ta.v from ta ta where (ta.id> ?:? ) using index ta.ta_id(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    v    
+1     value 1     
+2     value 2     
+3     value 3     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: ta node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select ta.id, ta.v from ta ta where (ta.id> ?:? ) using index ta.ta_id(-) order by ?
+===================================================
+id    v    
+1     value 1     
+2     value 2     
+
+Query plan:
+iscan
+    class: ta node[?]
+    index: ta_id keylimit ?, ? term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select ta.id, ta.v from ta ta where (ta.id> ?:? ) using index ta.ta_id(+) keylimit  ?:? , ?:?  order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    v    
+1     value 1     
+2     value 2     
+3     value 3     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: ta node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select ta.id, ta.v from ta ta where (ta.id> ?:? ) using index ta.ta_id(-) order by ?
+===================================================
+id    v    id    v    
+1     value 1 occ 1     1     value 1     
+1     value 1 occ 2     1     value 1     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: tb node[?]
+                            index: tb_id keylimit ?, ? term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: ta node[?]
+                            index: ta_id term[?]
+                            filtr: term[?]
+                            cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ tb.id, tb.v, ta.id, ta.v from tb tb inner join ta ta on ta.id=tb.id where (ta.id> ?:? ) and (tb.id> ?:? ) using index tb.tb_id(+) keylimit  ?:? , ?:?  order by ?
+===================================================
+id    v    id    v    
+1     value 1 occ 1     1     value 1     
+1     value 1 occ 2     1     value 1     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: tb node[?]
+                            index: tb_id keylimit ?, ? term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: ta node[?]
+                            index: ta_id term[?]
+                            filtr: term[?]
+                            cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ tb.id, tb.v, ta.id, ta.v from tb tb inner join ta ta on ta.id=tb.id where (ta.id> ?:? ) and (tb.id> ?:? ) using index tb.tb_id(+) keylimit  ?:? , ?:?  order by ?
+===================================================
+id    v    id    v    
+1     value 1 occ 1     1     value 1     
+1     value 1 occ 2     1     value 1     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: tb node[?]
+                            index: tb_id keylimit ?, ? term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: ta node[?]
+                            index: ta_id term[?]
+                            filtr: term[?]
+                            cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ tb.id, tb.v, ta.id, ta.v from tb tb inner join ta ta on ta.id=tb.id where (ta.id> ?:? ) and (tb.id> ?:? ) using index tb.tb_id(+) keylimit  ?:? , ?:?  order by ?
+===================================================
+id    v    id    v    
+1     value 1 occ 1     1     value 1     
+1     value 1 occ 2     1     value 1     
+1     value 1 occ 3     1     value 1     
+1     value 3 occ 1     1     value 1     
+2     value 2 occ 1     2     value 2     
+2     value 2 occ 1     2     value 2     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: tb node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: ta node[?]
+                            index: ta_id term[?]
+                            filtr: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ tb.id, tb.v, ta.id, ta.v from tb tb inner join ta ta on ta.id=tb.id where (ta.id> ?:? ) and (tb.id> ?:? ) using index tb.tb_id(-) order by ?
+===================================================
+id    v    id    v    
+1     value 1 occ 1     1     value 1     
+1     value 1 occ 2     1     value 1     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: tb node[?]
+                            index: tb_id keylimit ?, ? term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: ta node[?]
+                            index: ta_id term[?]
+                            filtr: term[?]
+                            cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ tb.id, tb.v, ta.id, ta.v from tb tb inner join ta ta on ta.id=tb.id where (ta.id> ?:? ) and (tb.id> ?:? ) using index tb.tb_id(+) keylimit  ?:? , ?:?  order by ?
+===================================================
+id    v    id    v    
+1     value 1 occ 1     1     value 1     
+1     value 1 occ 2     1     value 1     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: tb node[?]
+                            index: tb_id keylimit ?, ? term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: ta node[?]
+                            index: ta_id term[?]
+                            filtr: term[?]
+                            cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ tb.id, tb.v, ta.id, ta.v from tb tb inner join ta ta on ta.id=tb.id where (ta.id> ?:? ) and (tb.id> ?:? ) using index tb.tb_id(+) keylimit  ?:? , ?:?  order by ?
+===================================================
+id    v    id    v    
+1     value 1 occ 1     1     value 1     
+1     value 1 occ 2     1     value 1     
+1     value 1 occ 3     1     value 1     
+1     value 3 occ 1     1     value 1     
+2     value 2 occ 1     2     value 2     
+2     value 2 occ 1     2     value 2     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: tb node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: ta node[?]
+                            index: ta_id term[?]
+                            filtr: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ tb.id, tb.v, ta.id, ta.v from tb tb inner join ta ta on ta.id=tb.id where (ta.id> ?:? ) and (tb.id> ?:? ) using index tb.tb_id(-) order by ?
+===================================================
+id    v    id    v    
+1     value 1 occ 1     1     value 1     
+1     value 1 occ 2     1     value 1     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: tb node[?]
+                            index: tb_id keylimit ?, ? term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: ta node[?]
+                            index: ta_id term[?]
+                            filtr: term[?]
+                            cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ tb.id, tb.v, ta.id, ta.v from tb tb inner join ta ta on ta.id=tb.id where (ta.id> ?:? ) and (tb.id> ?:? ) using index tb.tb_id(+) keylimit  ?:? , ?:?  order by ?
+===================================================
+id    v    id    v    
+1     value 1 occ 1     1     value 1     
+1     value 1 occ 2     1     value 1     
+1     value 1 occ 3     1     value 1     
+1     value 3 occ 1     1     value 1     
+2     value 2 occ 1     2     value 2     
+2     value 2 occ 1     2     value 2     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: tb node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: ta node[?]
+                            index: ta_id term[?]
+                            filtr: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ tb.id, tb.v, ta.id, ta.v from tb tb inner join ta ta on ta.id=tb.id where (ta.id> ?:? ) and (tb.id> ?:? ) using index tb.tb_id(-) order by ?
+===================================================
+id    v    id    v    
+1     value 1 occ 1     1     value 1     
+1     value 1 occ 2     1     value 1     
+1     value 1 occ 3     1     value 1     
+1     value 3 occ 1     1     value 1     
+2     value 2 occ 1     2     value 2     
+2     value 2 occ 1     2     value 2     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: tb node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: ta node[?]
+                            index: ta_id term[?]
+                            filtr: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ tb.id, tb.v, ta.id, ta.v from tb tb inner join ta ta on ta.id=tb.id where (ta.id> ?:? ) and (tb.id> ?:? ) using index tb.tb_id(-) order by ?
+===================================================
+id    v    
+1     value 1     
+2     value 2     
+3     value 3     
+
+Query plan:
+sscan
+    class: ta node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select ta.id, ta.v from ta ta where (ta.id> ?:? ) using index ta.ta_id(-))
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: x node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select x.id, x.v from (select ta.id, ta.v from ta ta where (ta.id> ?:? ) using index ta.ta_id(-)) x (id, v) order by ?
+===================================================
+id    v    
+1     value 1     
+2     value 2     
+3     value 3     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: ta node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select ta.id, ta.v from ta ta where (ta.id> ?:? ) using index ta.ta_id(-) order by ?
+===================================================
+id    v    
+1     value 1     
+2     value 2     
+
+Query plan:
+iscan
+    class: ta node[?]
+    index: ta_id keylimit ?, ? term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select ta.id, ta.v from ta ta where (ta.id> ?:? ) using index ta.ta_id(+) keylimit  ?:? , ?:?  order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    v    
+1     value 1     
+2     value 2     
+
+Query plan:
+iscan
+    class: ta node[?]
+    index: ta_id keylimit ?, ? term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select ta.id, ta.v from ta ta where (ta.id> ?:? ) using index ta.ta_id(+) keylimit  ?:? , ?:?  order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    v    
+1     value 1     
+2     value 2     
+3     value 3     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: ta node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select ta.id, ta.v from ta ta where (ta.id> ?:? ) using index ta.ta_id(-) order by ?
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

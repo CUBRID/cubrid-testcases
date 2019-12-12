@@ -2,7 +2,7 @@ drop table if exists s1;
 drop table if exists t1;
 
 create table s1 (a int);
-insert into s1 select rownum a from db_class x1, db_class x2, db_class x3, db_class x4, db_class x5 limit 1000000;
+insert into s1 select rownum a from db_class x1, db_class x2, db_class x3, db_class x4 limit 100000;
 
 create table t1(a int, b int, c int, d int);
 insert into t1 (a,b,c,d) select mod(a,10), mod(a,1000), a, a from s1;
@@ -40,7 +40,7 @@ drop table if exists t1;
 drop table if exists c1;
 
 create table s1 (a int);
-insert into s1 select rownum a from db_class x1, db_class x2, db_class x3, db_class x4, db_class x5 limit 1000000;
+insert into s1 select rownum a from db_class x1, db_class x2, db_class x3, db_class x4 limit 100000;
 
 create table t1(a int, b int, c int, d int);
 insert into t1 (a,b,c,d) select mod(a,10), mod(a,1000), a, a from s1;

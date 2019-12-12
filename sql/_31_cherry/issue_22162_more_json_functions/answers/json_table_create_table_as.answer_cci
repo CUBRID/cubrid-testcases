@@ -1,0 +1,163 @@
+===================================================
+date1    
+"9999-99-99"     
+
+Query plan:
+sscan
+    class: jt node[?]
+    cost:  ? card ?
+Query stmt:
+select jt.date? from (json_table ('{"date?":"?-?-?"}', '$' columns (date? varchar(?) PATH '$."date"' DEFAULT '"?-?-?"' ON EMPTY DEFAULT '"?-?-?"' ON ERROR )) as jt)
+===================================================
+date1    
+"2018-99-99"     
+
+Query plan:
+sscan
+    class: jt node[?]
+    cost:  ? card ?
+Query stmt:
+select jt.date? from (json_table ('{"date?":"?-?-?"}', '$' columns (date? varchar(?) PATH '$."date"' DEFAULT '"?-?-?"' ON EMPTY DEFAULT '"?-?-?"' ON ERROR )) as jt)
+===================================================
+Error:-493
+===================================================
+Error:-493
+===================================================
+Error:-493
+===================================================
+0
+===================================================
+0
+===================================================
+Error:-181
+===================================================
+Error:-176
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+TABLE    CREATE TABLE    
+tt1     CREATE TABLE [tt1] ([date1] CHARACTER VARYING(50)) COLLATE iso88591_bin     
+
+Query plan:
+sscan
+    class: db_root node[?]
+    cost:  ? card ?
+Query stmt:
+select 'tt?', 'CREATE TABLE [tt?] ([date?] CHARACTER VARYING(?)) COLLATE iso?_bin' from db_root db_root
+===================================================
+TABLE    CREATE TABLE    
+tt2     CREATE TABLE [tt2] ([date2] DATE) COLLATE iso88591_bin     
+
+Query plan:
+sscan
+    class: db_root node[?]
+    cost:  ? card ?
+Query stmt:
+select 'tt?', 'CREATE TABLE [tt?] ([date?] DATE) COLLATE iso?_bin' from db_root db_root
+===================================================
+date1    
+1000-01-01     
+2018-10-18     
+2018-10-18     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tt? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tt?.date? from tt? tt? order by ?
+===================================================
+date2    
+2018-10-18     
+
+Query plan:
+sscan
+    class: tt? node[?]
+    cost:  ? card ?
+Query stmt:
+select tt?.date? from tt? tt?
+===================================================
+date1    date2    date3    
+2018-10-18     2018-10-18     2018-10-17     
+2018-10-18     2018-10-18     2018-10-17     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: nl-join (inner join)
+                            edge:  term[?]
+                            outer: sscan
+                                       class: tt? node[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: tt? node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: jt node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ tt?.date?, tt?.date?, jt.date? from tt? tt?, tt? tt?, (json_table ('[{"date?":"?-?-?"}, {"date?":"?-?-?"}]', '$[*]' columns (date? varchar(?) PATH '$."date?"' NULL ON EMPTY NULL ON ERROR )) as jt) where (tt?.date?> str_to_date(jt.date?, '%Y-%m-%d')) and tt?.date?= str_to_date(tt?.date?, '%Y-%m-%d') order by ?, ?, ?
+===================================================
+count(*)    
+2     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: tt? node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: tt? node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: jt node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ count(*) from tt? tt?, tt? tt?, (json_table ('[{"date?":"?-?-?"}, {"date?":"?-?-?"}]', '$[*]' columns (date? varchar(?) PATH '$."date?"' NULL ON EMPTY NULL ON ERROR )) as jt) where (tt?.date?> str_to_date(jt.date?, '%Y-%m-%d')) and tt?.date?= str_to_date(tt?.date?, '%Y-%m-%d')
+===================================================
+count(1)    date3    
+3     2018-10-17     
+3     2018-10-18     
+
+Query plan:
+temp(group by)
+    subplan: nl-join (cross join)
+                 outer: nl-join (cross join)
+                            outer: sscan
+                                       class: tt? node[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: tt? node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: jt node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ count(*), jt.date? from tt? tt?, tt? tt?, (json_table ('[{"date?":"?-?-?"}, {"date?":"?-?-?"}]', '$[*]' columns (date? varchar(?) PATH '$."date?"' NULL ON EMPTY NULL ON ERROR )) as jt) group by jt.date?
+===================================================
+0

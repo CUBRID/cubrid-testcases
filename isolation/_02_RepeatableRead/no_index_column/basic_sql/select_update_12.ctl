@@ -43,30 +43,30 @@ MC: wait until C1 ready;
 /* test case 1, C2 rollback*/
 C1: select * from t1 order by 1,2;
 C1: commit;
+MC: wait until C1 ready;
 C2: update t1 set col='aaa' where id=1;
 C2: commit;
 MC: wait until C2 ready;
 C1: select * from t1 order by 1,2;
+MC: wait until C1 ready;
 C4: update t1 set col='bbb' where id=2;
 MC: wait until C4 ready;	
 C3: select * from t1 order by 1,2;
-MC: wait until C1 ready;
-MC: wait until C2 ready;
 MC: wait until C3 ready;
 
 C4: rollback;
 MC: wait until C4 ready;
 C1: select * from t1 order by 1,2;
-C2: select * from t1 order by 1,2;
-C3: select * from t1 order by 1,2;
-C4: select * from t1 order by 1,2;
 C1: commit;
-C2: commit;
-C3: commit;
-C4: commit;
 MC: wait until C1 ready;
+C2: select * from t1 order by 1,2;
+C2: commit;
 MC: wait until C2 ready;
+C3: select * from t1 order by 1,2;
+C3: commit;
 MC: wait until C3 ready;
+C4: select * from t1 order by 1,2;
+C4: commit;
 MC: wait until C4 ready;
 
 C1: quit;

@@ -1,0 +1,76 @@
+
+drop if exists s;
+create table s(i CHARACTER(2) NOT NULL ,j INTEGER NOT NULL,s NUMERIC(6,2));
+insert into s values('11',2,66.00);
+insert into s values('11',2,66.00);
+insert into s values('08',2,49.00);
+insert into s values('07',2,68.00);
+insert into s values('06',2,68.00);
+insert into s values('05',2,68.00);
+insert into s values('05',2,49.00);
+select * from s;
+select sum(s) from s group by i,j;
+select i,j, sum(s) from s group by i;
+drop table s;
+
+create table s(i CHARACTER(2) NOT NULL ,j INTEGER NOT NULL,s NUMERIC(6,2));
+insert s values('01',1,11.11);
+insert s values('01',1,11.11);
+insert s values('02',1,21.11);
+insert s values('03',1,21.11);
+select sum(s) from s group by i;
+drop table s;
+create table s(i CHARACTER(2) NOT NULL ,j INTEGER NOT NULL,s NUMERIC(6,2));
+insert s values('01',1,11.11);
+insert s values('01',1,11.11);
+insert s values('01',1,11.11);
+insert s values('02',1,21.11);
+insert s values('03',1,21.11);
+select sum(s) from s group by i;
+drop table s;
+create table s(i CHARACTER(2) NOT NULL ,j INTEGER NOT NULL,s NUMERIC(8,2));
+insert s values('01',1,11.11);
+insert s values('01',1,11.11);
+insert s values('01',1,11.11);
+insert s values('02',1,21.11);
+insert s values('03',1,21.11);
+select sum(s) from s group by i;
+drop table s;
+
+create table s(i int NOT NULL ,j INTEGER NOT NULL,s NUMERIC(4,2));
+insert s values('01',1,11.11);
+insert s values('01',1,11.11);
+insert s values('01',1,11.11);
+insert s values('02',1,21.11);
+insert s values('03',1,21.11);
+select sum(s) from s group by i;
+drop table s;
+
+create table s(i int NOT NULL ,j INTEGER NOT NULL,s NUMERIC(4,2));
+insert s values('01',2,11.1);
+insert s values('01',1,21.2);
+insert s values('01',1,11.3);
+insert s values('02',1,21.11);
+insert s values('03',1,21.11);
+select sum(s) from s group by i;
+drop table s;
+
+create table s(i int NOT NULL ,j INTEGER NOT NULL,s NUMERIC(7,1));
+insert s values('01',2,1.1);
+insert s values('01',1,21.2);
+insert s values('01',1,111.3);
+insert s values('02',1,21.11);
+insert s values('03',1,21.11);
+select sum(s) from s group by i;
+drop table s;
+
+create table s(t numeric(7,6));
+insert into s values (1.345);
+insert into s values(9.23);
+select sum(t) from s;
+drop s;
+create table s(t double);
+insert into s values (1.345);
+insert into s values(5.23);
+select sum(t) from s;
+drop s;

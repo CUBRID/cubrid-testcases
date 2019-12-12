@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- 1
 prepare s from 'select LOCATE (?, ?) into :result';
 execute s using 'bar', 'foobarbar';
@@ -70,3 +71,5 @@ deallocate prepare s;
 evaluate null into :expected;
 select case when :expected <=> :result then 'YES' else 'NO' end as case9;
 
+
+--+ holdcas off;

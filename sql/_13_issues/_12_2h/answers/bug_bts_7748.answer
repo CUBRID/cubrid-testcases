@@ -1,0 +1,29 @@
+===================================================
+0
+===================================================
+nid    npid    aid    aa    ndhan    nkmv    nhmv    nnmv    nqmv    ozm    eid    edt    vjid    vjdt    
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: that_twlsh node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct that_twlsh.nid from that_twlsh that_twlsh where that_twlsh.ozm= ?:?  start with that_twlsh.nid= ?:?  connect by nocycle  prior that_twlsh.nid=that_twlsh.npid)
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: that_twlsh node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: av? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select that_twlsh.nid, that_twlsh.npid, that_twlsh.aid, that_twlsh.aa, that_twlsh.ndhan, that_twlsh.nkmv, that_twlsh.nhmv, that_twlsh.nnmv, that_twlsh.nqmv, that_twlsh.ozm, that_twlsh.eid, that_twlsh.edt, that_twlsh.vjid, that_twlsh.vjdt from that_twlsh that_twlsh, (select distinct that_twlsh.nid from that_twlsh that_twlsh where that_twlsh.ozm= ?:?  start with that_twlsh.nid= ?:?  connect by nocycle  prior that_twlsh.nid=that_twlsh.npid) av? (av_?) where that_twlsh.nid=av?.av_?
+===================================================
+0

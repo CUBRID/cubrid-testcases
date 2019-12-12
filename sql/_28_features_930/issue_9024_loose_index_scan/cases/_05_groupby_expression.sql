@@ -1,3 +1,4 @@
+--+ holdcas on;
 create table t1(id int primary key auto_increment, a varchar(2) collate iso88591_en_cs, b varchar(2) collate iso88591_en_ci, c int, d int, e int, f int, g int, h int);
 insert into t1 (a,b,c,d,e,f,g,h) select if(mod(rownum,2)=0, 'X', 'x'), if(mod(rownum,2)=0, 'Y', 'y'),mod(rownum,10),mod(rownum,10),mod(rownum,10),mod(rownum,10),mod(rownum,10), rownum from db_class x1, db_class x2 limit 1000;
 insert into t1 (a,b,c,d,e,f,g,h) values (null, null, null, null, null, null, null, null);
@@ -65,3 +66,5 @@ select /*+ recompile INDEX_LS */ max(b),a from t1 w where c>0 group by c;
 drop variable @v1;
 
 drop table t1;
+
+--+ holdcas off;

@@ -30,8 +30,8 @@ MC: wait until C1 ready;
 /* test case */
 C1: DELETE FROM tb1 USE INDEX (idx) WHERE ABS(col)=12.3 AND (select sleep(2))=0;
 MC: wait until C1 ready;
-C2: SELECT * FROM tb1 WHERE id <4;
-C2: SELECT * FROM tb1 USE INDEX (idx) WHERE ABS(col)=12.3;
+C2: SELECT * FROM tb1 WHERE id <4 order by 1;
+C2: SELECT * FROM tb1 USE INDEX (idx) WHERE ABS(col)=12.3 order by 1;
 MC: wait until C2 ready;
 C1: commit;
 MC: wait until C1 ready;

@@ -1,0 +1,135 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+10000
+===================================================
+10000
+===================================================
+10000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+i    j    k    l    
+null     1     1     1     
+10     1     1     1     
+11     1     1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx term[?] (index skip scan)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where t.j= ?:?  order by ?
+/* ---> skip ORDER BY */
+===================================================
+Error:-493
+===================================================
+0
+===================================================
+i    j    k    l    
+null     1     1     1     
+10     1     1     1     
+11     1     1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx term[?] (index skip scan)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where t.j= ?:?  order by ?
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+0
+===================================================
+i    j    k    l    
+null     1     1     1     
+10     1     1     1     
+11     1     1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx term[?] (index skip scan)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where t.j= ?:?  order by ?
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+0
+===================================================
+i    j    k    l    
+null     1     1     1     
+10     1     1     1     
+11     1     1     1     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.k, t.l from t t where t.k= ?:?  order by ?
+===================================================
+Error:-493
+===================================================
+0
+===================================================
+i    j    k    l    
+null     1     1     1     
+10     1     1     1     
+11     1     1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx term[?] (index skip scan)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where t.j= ?:?  using index t.idx order by ?
+/* ---> skip ORDER BY */
+===================================================
+Error:-493
+===================================================
+0
+===================================================
+i    j    k    l    
+null     1     1     1     
+10     1     1     1     
+11     1     1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx term[?] (index skip scan)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where t.j= ?:?  using index t.idx order by ?
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+0
+===================================================
+0

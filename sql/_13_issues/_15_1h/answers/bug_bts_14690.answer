@@ -1,0 +1,43 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+i    i    
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: y node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: x node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ y.i, x.i from y y inner join x x where y.i=x.i
+===================================================
+0
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: y node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: x node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ x,class x,y,class y,y.i as [x.i],x.i as [y.i] from y y inner join x x on y.i=x.i
+===================================================
+0

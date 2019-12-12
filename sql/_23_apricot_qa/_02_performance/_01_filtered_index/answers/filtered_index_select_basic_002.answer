@@ -1,0 +1,146 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+topicid    postdate    closeddate    
+2     2010-01-03     2010-01-04     
+
+Query plan:
+sscan
+    class: blogtopic node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select blogtopic.topicid, blogtopic.postdate, blogtopic.closeddate from blogtopic blogtopic where (blogtopic.topicId> ?:? )
+===================================================
+topicid    postdate    closeddate    
+2     2010-01-03     2010-01-04     
+
+Query plan:
+iscan
+    class: blogtopic node[?]
+    index: my_filter_index? term[?]
+    cost:  ? card ?
+Query stmt:
+select blogtopic.topicid, blogtopic.postdate, blogtopic.closeddate from blogtopic blogtopic where (blogtopic.topicId> ?:? ) using index blogtopic.my_filter_index?(+)
+===================================================
+topicid    postdate    closeddate    
+
+Query plan:
+iscan
+    class: blogtopic node[?]
+    index: my_filter_index? term[?]
+    cost:  ? card ?
+Query stmt:
+select blogtopic.topicid, blogtopic.postdate, blogtopic.closeddate from blogtopic blogtopic where blogtopic.topicId= ?:?  using index blogtopic.my_filter_index?(+)
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+topicid    postdate    closeddate    
+
+Query plan:
+iscan
+    class: blogtopic node[?]
+    index: my_filter_index? 
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select blogtopic.topicid, blogtopic.postdate, blogtopic.closeddate from blogtopic blogtopic where (blogtopic.postDate> ?:? ) using index blogtopic.my_filter_index?(+)
+===================================================
+topicid    postdate    closeddate    
+
+Query plan:
+iscan
+    class: blogtopic node[?]
+    index: my_filter_index? 
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select blogtopic.topicid, blogtopic.postdate, blogtopic.closeddate from blogtopic blogtopic where blogtopic.closedDate is null  using index blogtopic.my_filter_index?(+)
+===================================================
+topicid    postdate    closeddate    
+
+Query plan:
+iscan
+    class: blogtopic node[?]
+    index: my_filter_index? 
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select blogtopic.topicid, blogtopic.postdate, blogtopic.closeddate from blogtopic blogtopic where ((blogtopic.postDate> ?:? ) or blogtopic.closedDate is null ) using index blogtopic.my_filter_index?(+)
+===================================================
+topicid    postdate    closeddate    
+
+Query plan:
+iscan
+    class: blogtopic node[?]
+    index: my_filter_index? 
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select blogtopic.topicid, blogtopic.postdate, blogtopic.closeddate from blogtopic blogtopic where (blogtopic.postDate> ?:? ) and blogtopic.closedDate is null  using index blogtopic.my_filter_index?(+)
+===================================================
+topicid    postdate    closeddate    
+
+Query plan:
+iscan
+    class: blogtopic node[?]
+    index: my_filter_index? term[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select blogtopic.topicid, blogtopic.postdate, blogtopic.closeddate from blogtopic blogtopic where (blogtopic.postDate> ?:? ) and blogtopic.closedDate is null  and blogtopic.topicId= ?:?  using index blogtopic.my_filter_index?(+)
+===================================================
+topicid    postdate    closeddate    
+
+Query plan:
+iscan
+    class: blogtopic node[?]
+    index: my_filter_index? term[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select blogtopic.topicid, blogtopic.postdate, blogtopic.closeddate from blogtopic blogtopic where (blogtopic.postDate> ?:? ) and blogtopic.closedDate is null  and (blogtopic.topicId> ?:? ) using index blogtopic.my_filter_index?(+)
+===================================================
+topicid    postdate    closeddate    
+
+Query plan:
+iscan
+    class: blogtopic node[?]
+    index: my_filter_index? term[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select blogtopic.topicid, blogtopic.postdate, blogtopic.closeddate from blogtopic blogtopic where (blogtopic.topicId> ?:? ) and (blogtopic.postDate> ?:? ) and blogtopic.closedDate is null  using index blogtopic.my_filter_index?(+)
+===================================================
+topicid    postdate    closeddate    
+
+Query plan:
+iscan
+    class: blogtopic node[?]
+    index: my_filter_index? 
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select blogtopic.topicid, blogtopic.postdate, blogtopic.closeddate from blogtopic blogtopic where ((blogtopic.topicId> ?:? ) or (blogtopic.postDate> ?:? )) and ((blogtopic.topicId> ?:? ) or blogtopic.closedDate is null ) using index blogtopic.my_filter_index?(+)
+===================================================
+0
+===================================================
+0
+===================================================
+0

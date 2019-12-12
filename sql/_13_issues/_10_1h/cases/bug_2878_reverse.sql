@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- 1
 prepare s from 'select REVERSE (?) into :result'
 execute s using 'abc'
@@ -21,3 +22,5 @@ deallocate prepare s;
 
 evaluate null into :expected;
 select case when (:expected <=> :result) then 'YES' else 'NO' end as result;
+
+--+ holdcas off;

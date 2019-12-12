@@ -15,46 +15,46 @@ insert into foo select 0, n2+512, n3+512, s from foo;
 create index idx1 on foo (n, n2, n3);
 update statistics on all classes;
 --@queryplan
-select /*+ RECOMPILE */ * from foo where n2 in (0, 1);
+select /*+ RECOMPILE */ * from foo where n2 in (0, 1) order by 1,2;
 --@queryplan
-select /*+ RECOMPILE */ * from foo where n2 in (0, 1) using index idx1;
+select /*+ RECOMPILE */ * from foo where n2 in (0, 1) using index idx1 order by 1,2;
 --@queryplan
-select /*+ RECOMPILE NO_INDEX_SS */ * from foo where n2 in (0, 1);
+select /*+ RECOMPILE NO_INDEX_SS */ * from foo where n2 in (0, 1) order by 1,2;
 --@queryplan
-select /*+ RECOMPILE INDEX_SS */ * from foo where n2 in (0, 1) using index idx1; -- Q4: do index skip scan
+select /*+ RECOMPILE INDEX_SS */ * from foo where n2 in (0, 1) using index idx1 order by 1,2; -- Q4: do index skip scan
 --@queryplan
-select /*+ RECOMPILE NO_INDEX_SS INDEX_SS */ * from foo where n2 in (0, 1) using index idx1;
+select /*+ RECOMPILE NO_INDEX_SS INDEX_SS */ * from foo where n2 in (0, 1) using index idx1 order by 1,2;
 --@queryplan
-select /*+ RECOMPILE INDEX_SS NO_INDEX_SS */ * from foo where n2 in (0, 1) using index idx1;
+select /*+ RECOMPILE INDEX_SS NO_INDEX_SS */ * from foo where n2 in (0, 1) using index idx1 order by 1,2;
 
 --@queryplan
-select /*+ RECOMPILE NO_INDEX_SS */ n,n2 from foo where n=0 and n2 in (0, 1);
+select /*+ RECOMPILE NO_INDEX_SS */ n,n2 from foo where n=0 and n2 in (0, 1) order by 1,2;
 
 create view v1 as select /*+ RECOMPILE INDEX_SS */ * from foo where n2 in (0, 1) using index idx1;
 --@queryplan
-select /*+ recompile index_ss */ * from v1;
+select /*+ recompile index_ss */ * from v1 order by 1,2;
 --@queryplan
-select /*+ recompile no_index_ss */ * from v1;
+select /*+ recompile no_index_ss */ * from v1 order by 1,2;
 drop view v1;
 
 create view v1 as select /*+ RECOMPILE NO_INDEX_SS */ * from foo where n2 in (0, 1) using index idx1;
 --@queryplan
-select /*+ recompile index_ss */ * from v1;
+select /*+ recompile index_ss */ * from v1 order by 1,2;
 --@queryplan
-select /*+ recompile no_index_ss */ * from v1;
+select /*+ recompile no_index_ss */ * from v1 order by 1,2;
 drop view v1;
 
 create view v1 as select * from foo where n2 in (0, 1) using index idx1;
 --@queryplan
-select /*+ recompile index_ss */ * from v1;
+select /*+ recompile index_ss */ * from v1 order by 1,2;
 --@queryplan
-select /*+ recompile no_index_ss */ * from v1;
+select /*+ recompile no_index_ss */ * from v1 order by 1,2;
 drop view v1;
 
 $int,$0,$int,$1
-select /*+ RECOMPILE INDEX_SS */ * from foo where n2 in (?+1,?+1);
+select /*+ RECOMPILE INDEX_SS */ * from foo where n2 in (?+1,?+1) order by 1,2;
 
-prepare stmt from 'select /*+ RECOMPILE INDEX_SS */ * from foo where n2 in (?+1,?+1)';
+prepare stmt from 'select /*+ RECOMPILE INDEX_SS */ * from foo where n2 in (?+1,?+1) order by 1,2';
 execute stmt using 0,1;
 execute stmt using 1,2;
 deallocate prepare stmt;

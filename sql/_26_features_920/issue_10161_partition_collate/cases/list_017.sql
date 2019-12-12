@@ -19,7 +19,7 @@ insert into t1 values ('ü', 8);
 insert into t1 values ('Ü', 9);
 
 select * from t1 order by 1, 2;
-select distinct a from t1 order by 1;
+select a, hex(a) from (select distinct a from (select * from t1 order by b)) order by 2;
 drop table t1;
 
 
@@ -44,7 +44,7 @@ insert into t1 values ('ü', 8);
 insert into t1 values ('Ü', 9);
 
 select * from t1 order by 1, 2;
-select distinct a from t1 order by 1;
+select a, hex(a) from (select distinct a from (select * from t1 order by b)) order by 2;
 
 drop table t1;
 

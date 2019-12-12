@@ -10,18 +10,18 @@ insert into t1 values(chr(0),chr(0),chr(0),chr(0));
 
 
 
-SELECT * FROM t1 where col_binary REGEXP '문';
-SELECT * FROM t1 where col_euckr REGEXP cast( _utf8'문' as string charset euckr);
-SELECT * FROM t1 where col_utf8  REGEXP '문';
-SELECT * FROM t1 where col_iso  REGEXP cast( _utf8'À'  as string charset iso88591) ;
-SELECT * FROM t1 where col_binary REGEXP 'chr(0)';
+SELECT * FROM t1 where col_binary REGEXP '문' order by 1,2,3,4;
+SELECT * FROM t1 where col_euckr REGEXP cast( _utf8'문' as string charset euckr) order by 1,2,3,4;
+SELECT * FROM t1 where col_utf8  REGEXP '문' order by 1,2,3,4;
+SELECT * FROM t1 where col_iso  REGEXP cast( _utf8'À'  as string charset iso88591)  order by 1,2,3,4;
+SELECT * FROM t1 where col_binary REGEXP 'chr(0)' order by 1,2,3,4;
 
 
 
-SELECT * FROM t1 where col_binary REGEXP BINARY '문';
-SELECT * FROM t1 where col_euckr REGEXP BINARY cast( _utf8'문' as string charset euckr);
-SELECT * FROM t1 where col_utf8  REGEXP  BINARY '문';
-SELECT * FROM t1 where col_iso  REGEXP BINARY cast( _utf8'À'  as string charset iso88591) ;
+SELECT * FROM t1 where col_binary REGEXP BINARY '문' order by 1,2,3,4;
+SELECT * FROM t1 where col_euckr REGEXP BINARY cast( _utf8'문' as string charset euckr) order by 1,2,3,4;
+SELECT * FROM t1 where col_utf8  REGEXP  BINARY '문' order by 1,2,3,4;
+SELECT * FROM t1 where col_iso  REGEXP BINARY cast( _utf8'À'  as string charset iso88591)  order by 1,2,3,4;
 
 
 drop table t1;

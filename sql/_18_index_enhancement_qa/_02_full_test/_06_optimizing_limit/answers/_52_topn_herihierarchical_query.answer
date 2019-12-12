@@ -1,0 +1,90 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+id    mgrid    
+1     null     
+2     null     
+3     1     
+4     1     
+5     2     
+6     2     
+7     6     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tree node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tree.id, tree.mgrid from tree tree start with (tree.id>= ?:? ) and tree.mgrid is null  connect by  prior tree.id=tree.mgrid order by ?
+===================================================
+0
+===================================================
+id    mgrid    
+1     null     
+2     null     
+3     1     
+4     1     
+5     2     
+6     2     
+7     6     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: tree node[?]
+                 index: i_tree_id_mgrid term[?] (covers)
+                 filtr: term[?]
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tree.id, tree.mgrid from tree tree start with (tree.id>= ?:? ) and tree.mgrid is null  connect by  prior tree.id=tree.mgrid order by ?
+===================================================
+id    mgrid    
+1     null     
+2     null     
+3     1     
+4     1     
+5     2     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: tree node[?]
+                 index: i_tree_id_mgrid term[?] (covers)
+                 filtr: term[?]
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tree.id, tree.mgrid from tree tree start with (tree.id>= ?:? ) and tree.mgrid is null  connect by  prior tree.id=tree.mgrid order by ? for orderby_num()<= ?:? 
+===================================================
+0
+===================================================
+0
+===================================================
+0

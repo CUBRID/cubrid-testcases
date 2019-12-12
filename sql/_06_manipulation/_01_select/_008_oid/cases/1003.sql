@@ -1,3 +1,4 @@
+--+ holdcas on;
 --get oid with select  sql
 
 create class t1(x char(1), y char(2));
@@ -15,3 +16,5 @@ drop class t1;
 drop class t2;
 
 
+
+--+ holdcas off;

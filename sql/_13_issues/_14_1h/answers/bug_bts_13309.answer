@@ -1,0 +1,169 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+a    b    c    d    e    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_abc term[?] (index skip scan)
+    filtr: term[?]
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.a, t.b, t.c, t.d, t.e from t t where t.a is not null  and (t.b> ?:? ) order by ?
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+0
+===================================================
+1000
+===================================================
+0
+===================================================
+i    
+1000     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select t.i from t t where t.i= ?:? 
+===================================================
+0
+===================================================
+0
+===================================================
+1000
+===================================================
+0
+===================================================
+i    j    
+2     56     
+
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t t where t.j= ?:? 
+===================================================
+i    j    
+2     56     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx term[?] (covers) (index skip scan)
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where t.j= ?:? 
+===================================================
+0
+===================================================
+i    j    
+
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t t where t.j= ?:? 
+===================================================
+i    j    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx term[?] (covers) (index skip scan)
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where t.j= ?:? 
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+i    j    
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j from t t where (t.j< ?:? ) order by ? for orderby_num()<= ?:? 
+===================================================
+i    j    
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t node[?]
+                 index: idx term[?] (covers) (index skip scan)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where (t.j< ?:? ) order by ? for orderby_num()<= ?:? 
+===================================================
+1000
+===================================================
+0
+===================================================
+i    j    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t node[?]
+                 index: idx term[?] (covers) (index skip scan)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t.i, t.j from t t where (t.j< ?:? ) order by ? for orderby_num()<= ?:? 
+===================================================
+i    j    
+
+Query plan:
+iscan
+    class: t__p__p? node[?]
+    index: idx term[?] (covers) (index skip scan)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ t__p__p?.i, t__p__p?.j from t__p__p? t__p__p? where (t__p__p?.j< ?:? ) order by ? for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+0

@@ -1,0 +1,126 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+0
+i    j    s    rownum    
+1     9     one     1     
+2     8     two     2     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.s, rownum from t t where (t.i> ?:? ) and (rownum<= ?:? )
+0
+===================================================
+0
+i    j    s    rownum    
+9     1     nine     1     
+8     2     eight     2     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i term[?] (desc_index)
+    sargs: term[?]
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.s, rownum from t t where (t.i> ?:? ) and (rownum<= ?:? ) order by ? desc 
+/* ---> skip ORDER BY */
+0
+===================================================
+i    j    s    rownum    
+9     1     nine     1     
+8     2     eight     2     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i term[?] (desc_index)
+    sargs: term[?]
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.s, rownum from t t where (t.i> ?:? ) and (rownum<= ?:? ) order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+1    
+1     
+1     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select ?, t.i from t t where (t.i> ?:? ) and (rownum<= ?:? ) using index none order by ? desc 
+===================================================
+i    j    s    rownum    
+7     3     seven     3     
+6     4     six     4     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i keylimit ?, ? term[?] (desc_index)
+    sargs: term[?]
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.s, rownum from t t where (t.i> ?:? ) and (rownum<= ?:? ) using index t.i_t_i keylimit  ?:? , ?:?  order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+i    j    s    rownum    
+3     7     three     3     
+4     6     four     4     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i keylimit ?, ? term[?]
+    sargs: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.s, rownum from t t where (t.i> ?:? ) and (rownum<= ?:? ) using index t.i_t_i keylimit  ?:? , ?:?  order by ?
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

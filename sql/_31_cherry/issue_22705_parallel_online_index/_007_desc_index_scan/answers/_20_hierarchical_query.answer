@@ -1,0 +1,90 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+id    mgrid    
+1     null     
+2     null     
+3     1     
+4     1     
+5     2     
+6     2     
+7     6     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: tree node[?]
+                 index: i_tree_id_mgrid term[?] (covers)
+                 filtr: term[?]
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tree.id, tree.mgrid from tree tree start with (tree.id>= ?:? ) and tree.mgrid is null  connect by  prior tree.id=tree.mgrid order by ?
+===================================================
+id    mgrid    
+7     6     
+6     2     
+5     2     
+4     1     
+3     1     
+2     null     
+1     null     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: tree node[?]
+                 index: i_tree_id_mgrid term[?] (covers)
+                 filtr: term[?]
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tree.id, tree.mgrid from tree tree start with (tree.id>= ?:? ) and tree.mgrid is null  connect by  prior tree.id=tree.mgrid order by ? desc 
+===================================================
+id    mgrid    
+2     null     
+5     2     
+6     2     
+7     6     
+1     null     
+3     1     
+4     1     
+
+Query plan:
+iscan
+    class: tree node[?]
+    index: i_tree_id_mgrid term[?] (covers) (desc_index forced)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ tree.id, tree.mgrid from tree tree start with (tree.id>= ?:? ) and tree.mgrid is null  connect by  prior tree.id=tree.mgrid
+===================================================
+0
+===================================================
+0
+===================================================
+0

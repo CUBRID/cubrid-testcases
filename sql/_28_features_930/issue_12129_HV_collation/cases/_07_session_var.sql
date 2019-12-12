@@ -1,3 +1,4 @@
+--+ holdcas on;
 set names iso88591;
 
 set names utf8;
@@ -42,10 +43,12 @@ select typeof(@a);
 create table t1 (s1 string collate utf8_en_ci);
 insert into t1 values ('A'),('a');
 
-select @v + s1, collation (@v + s1) from t1;
+select @v + s1, collation (@v + s1), hex(s1) from t1 order by 1,2,3;
 drop variable @v,@v1,@tmp,@a;
 drop t1;
 
 set names iso88591;
 
 
+
+--+ holdcas off;

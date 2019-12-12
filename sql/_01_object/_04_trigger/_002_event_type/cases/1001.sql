@@ -1,0 +1,11 @@
+--[er]Create trigger to reject data that is selected 
+
+
+CREATE CLASS DCL1;	
+CREATE TRIGGER DCL1	
+BEFORE SELECT ON DCL1	
+EXECUTE REJECT;	
+	
+
+DROP CLASS DCL1;	
+DROP TRIGGER DCL1;

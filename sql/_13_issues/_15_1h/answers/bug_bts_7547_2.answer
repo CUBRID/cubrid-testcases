@@ -1,0 +1,130 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+svc_no    s_n    d_t    DB_NO    d_n    P_DB_NO    P_d_n    DB_ALAS    i_n    c_p    ch_n    c_n    t_h_n    u_i    d_u_i    IN_YN    IN_CD    
+
+Query plan:
+iscan
+    class: test_b node[?]
+    index: ipk_test_b 
+    sargs: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select test_b.P_DB_NO, count(*) from test_b test_b where test_b.b_u_t= ?:?  group by test_b.P_DB_NO)
+/* ---> skip GROUP BY */
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: idx-join (inner join)
+                            outer: idx-join (inner join)
+                                       outer: idx-join (inner join)
+                                                  outer: nl-join (cross join)
+                                                             outer: iscan
+                                                                        class: service node[?]
+                                                                        index: ipk_test_s term[?]
+                                                                        sargs: term[?]
+                                                                        cost:  ? card ?
+                                                             inner: iscan
+                                                                        class: logicaldb node[?]
+                                                                        index: ink?_test_d term[?]
+                                                                        cost:  ? card ?
+                                                             cost:  ? card ?
+                                                  inner: iscan
+                                                             class: physicaldb node[?]
+                                                             index: idx?_test_p_d term[?]
+                                                             sargs: term[?]
+                                                             cost:  ? card ?
+                                                  cost:  ? card ?
+                                       inner: iscan
+                                                  class: test_h node[?]
+                                                  index: ipk_test_h term[?]
+                                                  sargs: term[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: iscan
+                                       class: dbuser node[?]
+                                       index: pk_test_d_u_p_db_no_d_u_i term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: bfa node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 after: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ service.svc_no, service.s_n, service.d_t, logicaldb.DB_NO, logicaldb.d_n, physicaldb.P_DB_NO, physicaldb.P_d_n, physicaldb.DB_ALAS, physicaldb.i_n, physicaldb.c_p, physicaldb.ch_n, test_h.c_n, test_h.t_h_n,  if(physicaldb.s_v is null  or physicaldb.s_v='', test_h.u_i, physicaldb.s_v), dbuser.d_u_i, dbuser.IN_YN, dbuser.IN_CD from test_s service inner join test_d logicaldb on service.svc_no=logicaldb.svc_no and logicaldb.svc_no= ?:?  inner join test_p_d physicaldb on logicaldb.DB_NO=physicaldb.DB_NO inner join test_h test_h on physicaldb.c_n=test_h.c_n inner join test_d_u dbuser on physicaldb.p_DB_NO=dbuser.p_DB_NO left outer join (select test_b.P_DB_NO, count(*) from test_b test_b where test_b.b_u_t= ?:?  group by test_b.P_DB_NO) bfa (P_DB_NO, brokerCount) on physicaldb.P_DB_NO=bfa.P_DB_NO where decode(service.d_t, 'CUBRI', bfa.brokerCount, ?) is not null  and  upper(test_h.t_h_n) like '%'|| upper('mdb?.kin')||'%' and service.svc_no= ?:?  and physicaldb.d_a_u= ?:?  and service.u_s= ?:?  order by ?, ?, ?, ?, ?, ?
+===================================================
+0

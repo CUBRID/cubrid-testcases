@@ -23,8 +23,6 @@ insert into t1(s1) select s1 from t1;
 insert into t1(s1) select s1 from t1;
 insert into t1(s1) select s1 from t1;
 insert into t1(s1) select s1 from t1;
-insert into t1(s1) select s1 from t1;
-insert into t1(s1) select s1 from t1;
 
 
 create index i_t1_s1_i1 on t1 (s1,i1);

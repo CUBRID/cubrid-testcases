@@ -12,20 +12,20 @@ insert into xoo values(3,13);
 insert into xoo values(4,14);
 insert into xoo values(5,15);
 
-select  test1(x) bb from xoo where test1(xoo.x) < 100;
-select  test1(x) bb from (select test1(y) x from xoo ) xx where test1(xx.x) < 100;
-select  test1(x) bb from (select test1(y) x from xoo ) xx where test1(xx.x) < test1(100);
-select  test1(x) bb from (select test1(y) x from xoo ) xx where test1(xx.x) = test1(xx.x);
-select  test1(x) bb from (select test1(y) x from xoo ) xx where test1(xx.x) = test1(xx.x) ;
-select  test1(xx.x) bb from xoo xx where xx.x = test1(xx.y) - 11 ;
+select  test1(x) bb from xoo where test1(xoo.x) < 100 order by bb;
+select  test1(x) bb from (select test1(y) x from xoo ) xx where test1(xx.x) < 100 order by bb;
+select  test1(x) bb from (select test1(y) x from xoo ) xx where test1(xx.x) < test1(100) order by bb;
+select  test1(x) bb from (select test1(y) x from xoo ) xx where test1(xx.x) = test1(xx.x) order by bb;
+select  test1(x) bb from (select test1(y) x from xoo ) xx where test1(xx.x) = test1(xx.x) order by bb;
+select  test1(xx.x) bb from xoo xx where xx.x = test1(xx.y) - 11 order by bb;
 
 update xoo set x = test1(x) -1 where y = test1(y) -1;
 update xoo set x = test1(x);
 update xoo set y = test1(x) - 1 - x + test1(y);
 update xoo a set y = test1(x) + ( select test1(b.x) from xoo b where a.x = b.x) ;
 
-select x from xoo;
-select y from xoo;
+select x from xoo order by x;
+select y from xoo order by y;
 
 update xoo set test1(x) = 10;
 update (select x from xoo) a set a.x = 1;
@@ -33,7 +33,7 @@ update (select x from xoo) a set a.x = 1;
 delete from xoo where  test1(x) > 100;
 delete from xoo where  100  < test1(x);
 delete from xoo where test1(x + 10) < 100;
-select x from xoo;
+select x from xoo order by x;
 
 drop function test1;
 drop function test3;

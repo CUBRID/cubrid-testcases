@@ -25,11 +25,11 @@ C1: create index idx1 on t1(id);
 C1: create index idx2 on t1(col);
 C1: commit;
 
-C1: select * from t1 where id>1;
-C1: select * from t1 where col='def';
+C1: select * from t1 where id>1 order by 1;
+C1: select * from t1 where col='def' order by 1;
 MC: wait until C1 ready;
-C2: select * from t1 where col='def';
-C2: select * from t1 where id between 2 and 4;
+C2: select * from t1 where col='def' order by 1;
+C2: select * from t1 where id between 2 and 4 order by 1;
 MC: wait until C2 ready;
 C1: commit;
 C2: commit;

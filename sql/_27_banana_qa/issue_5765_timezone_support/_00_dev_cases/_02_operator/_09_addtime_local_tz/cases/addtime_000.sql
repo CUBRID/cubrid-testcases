@@ -1,5 +1,5 @@
 
-
+set timezone '+9:00';
 
 --TEST: pass no arguments
 select addtime();
@@ -12,3 +12,6 @@ select addtime('2010-01-04', 4, 5);
 
 --TEST: pass null
 select addtime(null);
+
+set timezone 'Asia/Seoul';
+

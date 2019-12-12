@@ -9,7 +9,7 @@ insert into func_04 values ( 127,10000,987654321.123456789,987654321.123,9876543
 insert into func_04 values (-127,-10000,-987654321.123456789,-987654321.123, -987654321.987,-987654321.123);
 
 
-select a, to_char(a, 'c') from func_04	;
-select a, to_char(a, 's') from func_04;
+select a, to_char(a, 'c') from func_04 order by 1,2;
+select a, to_char(a, 's') from func_04 order by 1,2;
 
 drop class func_04;

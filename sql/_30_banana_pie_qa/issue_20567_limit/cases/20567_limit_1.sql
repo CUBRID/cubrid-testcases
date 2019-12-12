@@ -58,6 +58,7 @@ set @a=-14632475938453979136;
 execute s using @a, @a;
 
 drop table if exists t1;
+drop variable @a;
 
 --+ holdcas off;
 

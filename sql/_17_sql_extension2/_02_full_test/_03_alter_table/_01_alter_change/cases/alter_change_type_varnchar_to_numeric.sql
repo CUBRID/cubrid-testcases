@@ -3,18 +3,18 @@
 --change the type of a numeric column to numeric
 
 create table coo(
-        col1 nchar(10),
-        col2 nchar(10),
-	col3 nchar(10),
-	col4 nchar(10),
-	col5 nchar(10),
-	col6 nchar(10),
-	col7 nchar(10),
-	col8 nchar(10),
-	col9 nchar(10),
-	col10 nchar(10),
-	col11 nchar(10),
-	col12 nchar(10)
+        col1 nchar varying(10),
+        col2 nchar varying(10),
+	col3 nchar varying(10),
+	col4 nchar varying(10),
+	col5 nchar varying(10),
+	col6 nchar varying(10),
+	col7 nchar varying(10),
+	col8 nchar varying(10),
+	col9 nchar varying(10),
+	col10 nchar varying(10),
+	col11 nchar varying(10),
+	col12 nchar varying(10)
 );
 
 insert into coo

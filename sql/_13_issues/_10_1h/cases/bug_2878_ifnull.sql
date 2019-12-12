@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- ifnull
 
 -- 1
@@ -40,3 +41,5 @@ deallocate prepare s;
 evaluate '0' into :expected;
 select case when (:result = :expected) then 'YES' else 'NO' end as result;
 
+
+--+ holdcas off;

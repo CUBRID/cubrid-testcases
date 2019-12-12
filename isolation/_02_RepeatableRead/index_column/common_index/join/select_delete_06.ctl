@@ -35,7 +35,7 @@ C1: INSERT INTO tb2 VALUES(1,'stu'),(12,'vwx'),(3,'yzab'),(4,'abc'),(5,'def'),(6
 C1: commit work;
 
 /* rollback */
-C1: SELECT *,sleep(1) FROM tb1 a LEFT JOIN tb2 b ON a.id = b.id WHERE a.id = 2 or b.col = 'yzab' ;
+C1: SELECT *,sleep(1) FROM tb1 a LEFT JOIN tb2 b ON a.id = b.id WHERE a.id = 2 or b.col = 'yzab' order by 1;
 C2: DELETE a,b FROM tb1 a LEFT JOIN tb2 b ON a.id = b.id WHERE a.id < 4;
 /* expect: no transactions need to wait */
 MC: wait until C2 ready;
@@ -43,13 +43,13 @@ MC: wait until C2 ready;
 C2: select * from tb1 order by id;
 C2: select * from tb2 order by id;
 MC: wait until C2 ready;
-C1: SELECT *,sleep(1) FROM tb1 a LEFT JOIN tb2 b ON a.id = b.id WHERE a.id = 2 or b.col = 'yzab' ;
+C1: SELECT *,sleep(1) FROM tb1 a LEFT JOIN tb2 b ON a.id = b.id WHERE a.id = 2 or b.col = 'yzab' order by 1;
 C2: rollback;
 MC: sleep 2;
 MC: wait until C1 ready;
 
 /* commit */
-C1: SELECT *,sleep(1) FROM tb1 a LEFT JOIN tb2 b ON a.id = b.id WHERE a.id = 2 or b.col = 'yzab' ;
+C1: SELECT *,sleep(1) FROM tb1 a LEFT JOIN tb2 b ON a.id = b.id WHERE a.id = 2 or b.col = 'yzab' order by 1;
 C2: DELETE a,b FROM tb1 a LEFT JOIN tb2 b ON a.id = b.id WHERE a.id < 4;
 /* expect: no transactions need to wait */
 MC: wait until C2 ready;
@@ -57,7 +57,7 @@ MC: wait until C2 ready;
 C2: select * from tb1 order by id;
 C2: select * from tb2 order by id;
 MC: wait until C2 ready;
-C1: SELECT *,sleep(1) FROM tb1 a LEFT JOIN tb2 b ON a.id = b.id WHERE a.id = 2 or b.col = 'yzab' ;
+C1: SELECT *,sleep(1) FROM tb1 a LEFT JOIN tb2 b ON a.id = b.id WHERE a.id = 2 or b.col = 'yzab' order by 1;
 C2: commit;
 
 C1: commit;

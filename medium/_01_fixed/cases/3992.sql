@@ -1,3 +1,4 @@
+--+ holdcas on;
 autocommit off;
 create class baz (c int);
 insert into baz values (16) into :p0;
@@ -25,3 +26,5 @@ select 'ok' from x
 	where a <> (select :a from class db_user);
 drop baz, foo, x, bar;
 rollback;
+
+--+ holdcas off;

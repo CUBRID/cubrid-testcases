@@ -21,7 +21,7 @@ create vclass vxoo (
 	a char(10), b char(10), c char(10)
 ) as select * from tbl;
 
-select * from vxoo;
+select * from vxoo order by 1;
 
 drop vclass vxoo;
 drop trigger inst_tr;

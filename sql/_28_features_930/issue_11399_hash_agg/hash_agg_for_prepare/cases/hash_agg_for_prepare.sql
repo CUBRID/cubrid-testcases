@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop table if exists t1;
 create table t1(a int, b double, c char(10));
 insert into t1 values(1,777,'cc');
@@ -42,7 +43,7 @@ execute s4 using 'c',1;
 execute s4 using 3, 2;
 deallocate prepare s4;
 
-prepare s5 from 'select a,sum(?+?) from t1 group by c';
+prepare s5 from 'select min(a),sum(?+?) from t1 group by c';
 execute s5 using 1,4;
 execute s5 using 'b','c';
 deallocate prepare s5;
@@ -56,15 +57,4 @@ drop variable @v1;
 drop table t1;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+--+ holdcas off;

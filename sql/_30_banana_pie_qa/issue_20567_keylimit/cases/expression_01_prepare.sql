@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop if exists t;
 create table t(i int primary key, name varchar(20),job varchar(20));
 insert into t values(1,'Jone','teacher');
@@ -73,3 +74,6 @@ prepare stmt from 'select * from t where job=? using index idx_t_job keylimit nv
 execute stmt using 'unkown',1,3;
 deallocate prepare stmt;
 drop if exists t;
+drop variable @a;
+
+--+ holdcas off;

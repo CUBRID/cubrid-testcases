@@ -1,16 +1,16 @@
 --+ holdcas on;
 --alter_table_change_type_strict
---change the type of a nchar() column to monetary
+--change the type of a nchar varying() column to monetary
 
 create class coo(
-        col1 nchar(50),
-        col2 nchar(50),
-        col3 nchar(50),
-        col4 nchar(50),
-	col5 nchar(50),
-	col6 nchar(50),
-	col7 nchar(50),
-	col8 nchar(100)
+        col1 nchar varying(50),
+        col2 nchar varying(50),
+        col3 nchar varying(50),
+        col4 nchar varying(50),
+	col5 nchar varying(50),
+	col6 nchar varying(50),
+	col7 nchar varying(50),
+	col8 nchar varying(100)
 );
 
 insert into coo
@@ -21,39 +21,39 @@ show columns in coo;
 select * from coo order by 1;
 
 
---nchar() -> monetary, number format -> number, no loss of data
+--nchar varying() -> monetary, number format -> number, no loss of data
 alter table coo change col1 col1 monetary;
 select col1 from coo order by 1;
 
---nchar() -> monetary, number format -> number, nchar() = max(monetary)
+--nchar varying() -> monetary, number format -> number, nchar varying() = max(monetary)
 set system parameters 'alter_table_change_type_strict=yes';
 alter table coo change col2 col2 monetary;
 set system parameters 'alter_table_change_type_strict=no';
 alter table coo change col2 col2 monetary;
 select col2 from coo order by 1;
 
---nchar() -> monetary, number format -> number, nchar() > max(monetary)
+--nchar varying() -> monetary, number format -> number, nchar varying() > max(monetary)
 set system parameters 'alter_table_change_type_strict=yes';
 alter table coo change col3 col3 monetary;
 set system parameters 'alter_table_change_type_strict=no';
 alter table coo change col3 col3 monetary;
 select col3 from coo order by 1;
 
---nchar() -> monetary, number format -> number, nchar() = min(monetary)
+--nchar varying() -> monetary, number format -> number, nchar varying() = min(monetary)
 set system parameters 'alter_table_change_type_strict=yes';
 alter table coo change col4 col4 monetary;
 set system parameters 'alter_table_change_type_strict=no';
 alter table coo change col4 col4 monetary;
 select col4 from coo order by 1;
 
---nchar() -> monetary, number format -> number, nchar() < min(monetary)
+--nchar varying() -> monetary, number format -> number, nchar varying() < min(monetary)
 set system parameters 'alter_table_change_type_strict=yes';
 alter table coo change col5 col5 monetary;
 set system parameters 'alter_table_change_type_strict=no';
 alter table coo change col5 col5 monetary;
 select col5 from coo order by 1;
 
---nchar() -> monetary, number format -> number, loss of data
+--nchar varying() -> monetary, number format -> number, loss of data
 set system parameters 'alter_table_change_type_strict=yes';
 alter table coo change col6 col6 monetary;
 set system parameters 'alter_table_change_type_strict=no';
@@ -61,7 +61,7 @@ alter table coo change col6 col6 monetary;
 select col6 from coo order by 1;
 
 
---nchar() -> monetary, string -> number, no loss of data
+--nchar varying() -> monetary, string -> number, no loss of data
 set system parameters 'alter_table_change_type_strict=yes';
 alter table coo change col7 col7 monetary;
 set system parameters 'alter_table_change_type_strict=no';
@@ -69,7 +69,7 @@ alter table coo change col7 col7 monetary;
 select col7 from coo order by 1;
 
 
---nchar() -> monetary, long string -> number, loss of data
+--nchar varying() -> monetary, long string -> number, loss of data
 set system parameters 'alter_table_change_type_strict=yes';
 alter table coo change col8 col8 monetary;
 set system parameters 'alter_table_change_type_strict=no';

@@ -112,24 +112,25 @@ C1: insert into t select * from t where col between 3 and 5;
 MC: wait until C1 ready;
 /* expect insert 3 rows */
 C5: insert into t select * from t where id between 2 and 4;
-MC: sleep 5;
-MC: wait until C1 ready;
-MC: wait until C2 ready;
+MC: wait until C5 ready;
 /* expect 100000+300 */
 C1: select count(*) from t;
 C1: commit;
+MC: wait until C1 ready;
 C2: insert into t values(1,1);
-
+MC: wait until C2 ready;
 /* expected 100 */
 C6: select count(*) from t where col=1;
 MC: wait until C6 ready;
 C3: insert into t values(2,1);
 MC: wait until C3 ready;
 C2: commit;
+MC: wait until C2 ready;
 C3: commit;
+MC: wait until C3 ready;
 /* expect insert 2 rows */
 C4: insert into t select * from t where id=1;
-MC: wait until C6 ready;
+MC: wait until C4 ready;
 C4: commit;
 C5: commit;
 MC: wait until C4 ready;
@@ -137,4 +138,7 @@ MC: wait until C5 ready;
 
 C2: quit;
 C1: quit;
-
+C3: quit;
+C4: quit;
+C5: quit;
+C6: quit;

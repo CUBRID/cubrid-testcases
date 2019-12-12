@@ -1,0 +1,34 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+a    b    
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_all term[?] (covers)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select tb.a, tb.b from tb tb where (tb.a> ?:? ) and tb.b is not null  using index tb.i_tb_all(+)
+===================================================
+0
+===================================================
+a    b    
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_all term[?] (covers)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select tb.a, tb.b from tb tb where (tb.a> ?:? ) and tb.b is not null  using index tb.i_tb_all(+)
+===================================================
+0

@@ -1,0 +1,140 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+i    j    s    rownum    
+8     2     eight     2     
+7     3     seven     3     
+6     4     six     4     
+5     5     five     5     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i keylimit ?, ? term[?] (desc_index)
+    sargs: term[?]
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.s, rownum from t t where (t.i> ?:? ) and (rownum>= ?:?  and rownum<= ?:? ) using index t.i_t_i keylimit  ?:? , ?:?  order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+i    j    s    rownum    
+8     2     eight     2     
+7     3     seven     3     
+6     4     six     4     
+5     5     five     5     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i keylimit ?, ? term[?] (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ t.i, t.j, t.s, rownum from t t where (t.i> ?:? ) and (rownum>= ?:?  and rownum<= ?:? ) using index t.i_t_i keylimit  ?:? , ?:? 
+===================================================
+i    j    s    rownum    
+8     2     eight     2     
+7     3     seven     3     
+6     4     six     4     
+5     5     five     5     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i term[?] (desc_index)
+    sargs: term[?]
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.s, rownum from t t where (t.i> ?:? ) and (rownum>= ?:?  and rownum<= ?:? ) using index t.i_t_i order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+i    j    s    rownum    
+8     2     eight     2     
+7     3     seven     3     
+6     4     six     4     
+5     5     five     5     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i term[?] (desc_index forced)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ t.i, t.j, t.s, rownum from t t where (t.i> ?:? ) and (rownum>= ?:?  and rownum<= ?:? ) using index t.i_t_i
+===================================================
+i    j    s    
+7     3     seven     
+6     4     six     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i keylimit ?, ? term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.s from t t where (t.i> ?:? ) using index t.i_t_i keylimit  ?:? , ?:?  order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+i    j    s    
+7     3     seven     
+6     4     six     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i keylimit ?, ? term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.s from t t where (t.i> ?:? ) using index t.i_t_i keylimit  ?:? , ?:?  order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+i    j    s    
+7     3     seven     
+6     4     six     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i keylimit ?, ? term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.s from t t where (t.i> ?:? ) using index t.i_t_i keylimit  ?:? , ?:?  order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

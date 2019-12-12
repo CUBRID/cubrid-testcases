@@ -1,3 +1,4 @@
+--+ holdcas on;
 --test current date can change as the time zone setting
 set timezone '-12:00';
 set @x1=(select current_date);
@@ -24,3 +25,5 @@ drop variable @x1,@x2;
 set timezone 'Asia/Seoul';
 
 
+
+--+ holdcas off;

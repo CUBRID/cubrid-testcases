@@ -47,8 +47,8 @@ MC: wait until C2 ready;
 C1: commit;
 MC: wait until C1 ready;
 C2: select sum(id),sum(col) from t where mod(id,2)=0 using index idx(+);
-MC: wait until C2 ready;
 C2: commit;
+MC: wait until C2 ready;
 /* should see C2 commit */
 C1: select sum(id),sum(col) from t where mod(id,2)=0 using index idx(+);
 MC: wait until C1 ready;

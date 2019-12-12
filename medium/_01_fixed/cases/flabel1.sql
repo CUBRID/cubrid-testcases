@@ -1,3 +1,4 @@
+--+ holdcas on;
 autocommit off;
 create class c(i string);
 insert into c values('humpty dumpty');
@@ -12,3 +13,5 @@ select * from c;
 select i, me from c;
 rollback work;
 rollback;
+
+--+ holdcas off;

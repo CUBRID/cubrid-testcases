@@ -1,0 +1,95 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+12
+===================================================
+a    nulls last    
+1     null     
+2     null     
+2     cd     
+3     ab     
+4     null     
+5     ab     
+6     null     
+7     abcd     
+8     null     
+9     abcd     
+10     null     
+11     null     
+
+Query plan:
+temp(order by)
+    subplan: temp(group by)
+                 subplan: sscan
+                              class: t node[?]
+                              cost:  ? card ?
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.[nulls last] from t t group by t.[nulls last], t.a order by ?, ?
+===================================================
+a    nulls last    
+1     null     
+2     null     
+2     cd     
+3     ab     
+4     null     
+5     ab     
+6     null     
+7     abcd     
+8     null     
+9     abcd     
+10     null     
+11     null     
+
+Query plan:
+temp(order by)
+    subplan: temp(group by)
+                 subplan: sscan
+                              class: t node[?]
+                              cost:  ? card ?
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.[nulls last] from t t group by t.[nulls last], t.a order by ?, ? nulls first 
+===================================================
+a    nulls last    
+1     null     
+2     cd     
+2     null     
+3     ab     
+4     null     
+5     ab     
+6     null     
+7     abcd     
+8     null     
+9     abcd     
+10     null     
+11     null     
+
+Query plan:
+temp(order by)
+    subplan: temp(group by)
+                 subplan: sscan
+                              class: t node[?]
+                              cost:  ? card ?
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.[nulls last] from t t group by t.[nulls last], t.a order by ?, ? nulls last 
+===================================================
+0
+===================================================
+0
+===================================================
+0

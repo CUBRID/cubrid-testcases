@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- TRUE
 prepare s from 'select count(*) into :result from db_root where ?'
 execute s using true
@@ -118,3 +119,5 @@ execute s using 0, 1, 0, 0
 deallocate prepare s;
 select count(*) into :expected from db_root where 0 = 1 or 0 = 0;
 select case when :expected = :result then 'YES' else 'NO' end as case19;
+
+--+ holdcas off;

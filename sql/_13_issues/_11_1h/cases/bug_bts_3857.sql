@@ -1,3 +1,4 @@
+DROP CLASS IF EXISTS X,Y;
 CREATE TABLE x (col SET OF INT);
 CREATE TABLE y (col SET OF INT);
 INSERT INTO x VALUES({0,1,2});
@@ -9,9 +10,9 @@ INSERT INTO y VALUES({0,1,2});
 INSERT INTO y VALUES({3,4,5});
 INSERT INTO y VALUES({6,7,8});
 
-select col from x where col not in (select col from y);
+select col from x where col not in (select col from y) order by col;
 
-select col from x where col in (select col from y);
+select col from x where col in (select col from y) order by col;
 
 DROP CLASS X,Y;
 
@@ -34,7 +35,7 @@ select * from DML_0001 where set_col in (select set_col from DML_0001) order by 
 select * from DML_0001 where int_col in (select int_col from DML_0001) order by 1,2,3;
 select * from DML_0001 where set_col in (select set_col from DML_0001) order by 1,2,3;
 
-
+drop class if exists t1;
 create class t1 (c1 set int, c2 varchar(20));
 
 insert into t1 values({101,102}, 'aaa');
@@ -49,12 +50,12 @@ insert into t1 values({105,106}, 'eee');
 
 insert into t1 values({107,108}, 'eee');
 
-select * from t1 where c1 < some(select c1 from t1 where c2='eee');
+select * from t1 where c1 < some(select c1 from t1 where c2='eee') order by 1,2;
 
-select * from t1 where c1 = some(select c1 from t1 where c2='eee');
+select * from t1 where c1 = some(select c1 from t1 where c2='eee') order by 1,2;
 
-select * from t1 where c1 > some(select c1 from t1 where c2='eee');
+select * from t1 where c1 > some(select c1 from t1 where c2='eee') order by 1,2;
 
-select * from t1 where c1 <> some(select c1 from t1 where c2='eee');
+select * from t1 where c1 <> some(select c1 from t1 where c2='eee') order by 1,2;
 
 DROP CLASS DML_0001,t1;

@@ -1,3 +1,4 @@
+--+ holdcas on;
 --the test point need 'autocommit off' environment
 
 autocommit off;
@@ -8,6 +9,7 @@ create class tb1(
 );
 insert into tb1 (id, address) values(1, 'beijing');
 select tb1 into oid1 from tb1 where id = 1;
+drop variable oid1;
 drop class tb1;
 commit;
 
@@ -22,6 +24,7 @@ create class tb1(
 );
 insert into tb1 (id, address) values(1, 'beijing');
 select tb1 into a from tb1 where id = 1;
+drop variable a;
 drop class tb1;
 commit;
 
@@ -30,3 +33,5 @@ insert into tree2 (a, id, parentid) values (1, null, null);
 drop table if exists tb1,foo,tree2;
 commit;
 autocommit on;
+
+--+ holdcas off;

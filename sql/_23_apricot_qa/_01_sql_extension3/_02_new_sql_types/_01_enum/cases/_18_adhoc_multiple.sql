@@ -1,3 +1,4 @@
+--+ holdcas on;
 
 CREATE TABLE t1(a enum('Y', 'N'));
 insert into t1 values ('Y'), ('N'), (1), (2);
@@ -351,9 +352,9 @@ insert into t1(b) values (1.6);
 insert into t1(b) values (1.9);
 insert into t1(b) values (2.0);
 update t1 set a=b;
-select * from t1 order by 1;
+select * from t1 order by 1,2;
 update t1 set a=b+1;
-select * from t1 order by 1;
+select * from t1 order by 1,2;
 drop table t1;
 
 
@@ -460,3 +461,5 @@ select * from t1 where a=@v1;
 drop variable @a1,@v1;
 drop table t1;
 
+
+--+ holdcas off;

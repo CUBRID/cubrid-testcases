@@ -1,0 +1,14 @@
+--+ holdcas on;
+set names utf8;
+create table t;
+alter table t add column s1 string charset utf8 collate utf8_en_cs;
+alter table t add column s2 string  collate utf8_tr_cs;
+show full columns from t;
+insert into t values('d','a');
+insert into t values('d','b');
+insert into t values('d','c');
+select * from t where s1> any(select s2 from t);
+drop table t;
+set names iso88591;
+commit;
+--+ holdcas off;

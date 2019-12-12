@@ -1,3 +1,4 @@
+--+ holdcas on;
 prepare s from 'select lpad (?, ?) into :result'
 execute s using 'aa', 10
 deallocate prepare s;
@@ -70,3 +71,5 @@ deallocate prepare s;
 evaluate rpad('1', 10, '0') into :expected;
 select case when :expected = :result then 'YES' else 'NO' end as case12;
 
+
+--+ holdcas off;

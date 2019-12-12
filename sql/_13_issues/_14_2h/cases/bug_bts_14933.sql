@@ -1,0 +1,10 @@
+drop table if exists t;
+create table t(a int PRIMARY KEY);
+insert into t values(1), (2), (3);
+alter table t add column c1 smallint not null;
+alter table t add column c2 double primary key;
+alter table t add column c3 char(10) unique;
+alter table t add column c4 bit(10) unique not null;
+alter table t drop primary key;
+select 'db_attribute' TABLE_NAME, db_attribute.* from db_attribute where class_name='t' order by 1,2,3,4,5,6,7,8,9,10,11,12,13;
+drop table t;

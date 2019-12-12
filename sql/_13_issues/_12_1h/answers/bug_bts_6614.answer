@@ -1,0 +1,1051 @@
+===================================================
+0
+===================================================
+0
+===================================================
+8
+===================================================
+0
+===================================================
+0
+===================================================
+col1    col2    col3    
+10     aab     the textbook     
+11     xab     book col3     
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+15     xab     xab     
+16     aff     syntax col3     
+17     afg     operators list     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t order by ?
+===================================================
+col1    col2    col3    
+10     aab     the textbook     
+11     xab     book col3     
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+col1    col2    col3    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?< ?:? )
+===================================================
+1
+===================================================
+col1    col2    col3    
+10     aab     the textbook     
+11     xab     book col3     
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+col1    col2    col3    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?< ?:? )
+===================================================
+2
+===================================================
+col1    col2    col3    
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+col1    col2    col3    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?< ?:? )
+===================================================
+0
+===================================================
+2
+===================================================
+col1    col2    col3    
+6     aff     syntax col3     
+7     afg     operators list     
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+col1    col2    col3    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?< ?:? )
+===================================================
+0
+===================================================
+1
+===================================================
+col1    col2    col3    
+6     aff     syntax col3     
+7     afg     operators list     
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+col1    col2    col3    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?< ?:? )
+===================================================
+0
+===================================================
+3
+===================================================
+col1    col2    col3    
+6     aff     syntax col3     
+7     afg     operators list     
+12     xxy     book chapters     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+col1    col2    col3    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?< ?:? )
+===================================================
+0
+===================================================
+0
+===================================================
+col1    col2    col3    
+
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t
+===================================================
+col1    col2    col3    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+)
+===================================================
+col1    col2    col3    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+)
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t
+===================================================
+0
+===================================================
+Error:-493
+===================================================
+col1    col2    col3    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?< ?:? )
+===================================================
+0
+===================================================
+col1    col2    col3    
+6     aff     syntax col3     
+7     afg     operators list     
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+col1    col2    col3    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?< ?:? )
+===================================================
+0
+===================================================
+Error:-493
+===================================================
+col1    col2    col3    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?< ?:? )
+===================================================
+0
+===================================================
+Error:-493
+===================================================
+col1    col2    col3    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?< ?:? )
+===================================================
+0
+===================================================
+col1    col2    col3    
+10     aab     the textbook     
+11     xab     book col3     
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+col1    col2    col3    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?< ?:? )
+===================================================
+col1    col2    col3    
+10     aab     the textbook     
+11     xab     book col3     
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+15     xab     xab     
+16     aff     syntax col3     
+17     afg     operators list     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t order by ?
+===================================================
+col1    col2    col3    
+10     aab     the textbook     
+11     xab     book col3     
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+col1    col2    col3    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?< ?:? )
+===================================================
+1
+===================================================
+col1    col2    col3    
+10     aab     the textbook     
+11     xab     book col3     
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+col1    col2    col3    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?< ?:? )
+===================================================
+2
+===================================================
+col1    col2    col3    
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+col1    col2    col3    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?< ?:? )
+===================================================
+0
+===================================================
+2
+===================================================
+col1    col2    col3    
+6     aff     syntax col3     
+7     afg     operators list     
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+col1    col2    col3    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?< ?:? )
+===================================================
+0
+===================================================
+1
+===================================================
+col1    col2    col3    
+6     aff     syntax col3     
+7     afg     operators list     
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+col1    col2    col3    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?< ?:? )
+===================================================
+0
+===================================================
+3
+===================================================
+col1    col2    col3    
+6     aff     syntax col3     
+7     afg     operators list     
+12     xxy     book chapters     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+col1    col2    col3    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?< ?:? )
+===================================================
+0
+===================================================
+0
+===================================================
+col1    col2    col3    
+
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t
+===================================================
+col1    col2    col3    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+)
+===================================================
+col1    col2    col3    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+)
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t
+===================================================
+0
+===================================================
+col1    col2    col3    
+10     aab     the textbook     
+11     xab     book col3     
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+)
+===================================================
+col1    col2    col3    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+)
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t
+===================================================
+Error:-493
+===================================================
+col1    col2    col3    
+10     aab     the textbook     
+11     xab     book col3     
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+col1    col2    col3    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?< ?:? )
+===================================================
+1
+===================================================
+col1    col2    col3    
+10     aab     the textbook     
+11     xab     book col3     
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+col1    col2    col3    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?< ?:? )
+===================================================
+2
+===================================================
+col1    col2    col3    
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+col1    col2    col3    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?< ?:? )
+===================================================
+0
+===================================================
+2
+===================================================
+col1    col2    col3    
+6     aff     syntax col3     
+7     afg     operators list     
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+col1    col2    col3    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?< ?:? )
+===================================================
+0
+===================================================
+1
+===================================================
+col1    col2    col3    
+6     aff     syntax col3     
+7     afg     operators list     
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+col1    col2    col3    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?< ?:? )
+===================================================
+0
+===================================================
+3
+===================================================
+col1    col2    col3    
+6     aff     syntax col3     
+7     afg     operators list     
+12     xxy     book chapters     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+col1    col2    col3    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+)
+Query plan:
+iscan
+    class: t node[?]
+    index: u_t_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?< ?:? )
+===================================================
+0
+===================================================
+0
+===================================================
+col1    col2    col3    
+
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t
+===================================================
+col1    col2    col3    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+)
+===================================================
+col1    col2    col3    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+)
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t
+===================================================
+0
+===================================================
+col1    col2    col3    
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+)
+===================================================
+col1    col2    col3    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+)
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t
+===================================================
+0
+===================================================
+col1    col2    col3    
+12     xxy     book chapters     
+13     xa0     author names     
+14     xa1     xa1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+)
+===================================================
+col1    col2    col3    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_col?_col? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t where (t.col?> ?:? ) using index t.i_t_col?_col?(+)
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.col?, t.col?, t.col? from t t
+===================================================
+0
+===================================================
+0

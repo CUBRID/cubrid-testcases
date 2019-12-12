@@ -10,10 +10,10 @@ No Lock for non unique index
 insert a lot of the same value
 
 NUM_CLIENTS = 4
-C1: insert 100000 rows, values(1);
-C2: insert 100000 rows, values(1);
-C3: insert 100000 rows, values(2);
-C4: insert 100000 rows, values(3);
+C1: insert 10000 rows, values(1);
+C2: insert 10000 rows, values(1);
+C3: insert 10000 rows, values(2);
+C4: insert 10000 rows, values(3);
 */
 
 MC: setup NUM_CLIENTS = 4;
@@ -38,18 +38,14 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C1: insert into t select 1,'abc' from db_class a,db_class b,db_class c,db_class d where rownum <= 100000;
+C1: insert into t select 1,'abc' from db_class a,db_class b,db_class c,db_class d where rownum <= 10000;
 MC: wait until C1 ready;
-C2: insert into t select 1,'abc' from db_class a,db_class b,db_class c,db_class d where rownum <= 100000;
+C2: insert into t select 1,'abc' from db_class a,db_class b,db_class c,db_class d where rownum <= 10000;
 MC: wait until C2 ready;
-C3: insert into t select 2,'abc' from db_class a,db_class b,db_class c,db_class d where rownum <= 100000;
+C3: insert into t select 2,'abc' from db_class a,db_class b,db_class c,db_class d where rownum <= 10000;
 MC: wait until C3 ready;
-C4: insert into t select 3,'abc' from db_class a,db_class b,db_class c,db_class d where rownum <= 100000;
+C4: insert into t select 3,'abc' from db_class a,db_class b,db_class c,db_class d where rownum <= 10000;
 MC: wait until C4 ready;
-/*MC: wait until C1 ready;
-MC: wait until C2 ready;
-MC: wait until C3 ready;
-MC: wait until C4 ready;*/
 C1: commit;
 MC: wait until C1 ready;
 C2: commit;
@@ -58,17 +54,12 @@ C3: commit;
 MC: wait until C3 ready;
 C4: commit;
 MC: wait until C4 ready;
-/*MC: wait until C1 ready;
-MC: wait until C2 ready;
-MC: wait until C3 ready;
-MC: wait until C4 ready;*/
 
-/* expected (1,200000)(2,100000)(3,100000) */
-C2: select id, count(id) from t group by id;
+/* expected (1,20000)(2,10000)(3,10000) */
+C2: select id, count(id) from t group by id order by id;
 C2: commit;
 MC: wait until C2 ready;
 
-C3: commit;
 C2: quit;
 C1: quit;
 C3: quit;

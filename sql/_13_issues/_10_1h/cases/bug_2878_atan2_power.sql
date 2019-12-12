@@ -1,3 +1,4 @@
+--+ holdcas on;
 evaluate NULL into :expected;
 
 select atan(null, 2) into :result;
@@ -27,3 +28,5 @@ select case when :expected <=> :result then 'YES' else 'NO' end as case8;
 select power(null, null);
 select case when :expected <=> :result then 'YES' else 'NO' end as case9;
 
+
+--+ holdcas off;

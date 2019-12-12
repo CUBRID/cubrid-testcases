@@ -1,3 +1,4 @@
+--+ holdcas on;
 create table t1(id int, a varchar collate utf8_en_cs, b varchar collate utf8_en_ci);
 insert into t1 values (1, 'Y', 'Y');
 insert into t1 values (2, 'y', 'y');
@@ -110,3 +111,5 @@ deallocate prepare stmt;
 drop variable @v1;
 
 set names iso88591;
+
+--+ holdcas off;

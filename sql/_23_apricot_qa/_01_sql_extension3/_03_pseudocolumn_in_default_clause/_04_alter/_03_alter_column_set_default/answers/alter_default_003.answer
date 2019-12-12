@@ -1,0 +1,116 @@
+===================================================
+0
+===================================================
+1
+===================================================
+if(col1 is null  and col3 is null  and col4=timestamp '2012-12-12 12:12:12', 'ok', 'nok')    
+ok     
+
+===================================================
+0
+===================================================
+Error:-788
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     BIGINT     NO     PRI     null     auto_increment     
+col1     TIMESTAMP     YES          SYS_TIMESTAMP          
+col2     TIMESTAMP     NO          null          
+col3     TIMESTAMP     YES     UNI     null          
+col4     TIMESTAMP     YES          12:12:12 PM 12/12/2012          
+
+===================================================
+1
+===================================================
+if(( CURRENT_TIMESTAMP -col1)<=100, 'ok', 'nok')    
+ok     
+
+===================================================
+0
+===================================================
+Error:-788
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     BIGINT     NO     PRI     null     auto_increment     
+col1     TIMESTAMP     YES          SYS_TIMESTAMP          
+col2     TIMESTAMP     NO          SYS_TIMESTAMP          
+col3     TIMESTAMP     YES     UNI     null          
+col4     TIMESTAMP     YES          12:12:12 PM 12/12/2012          
+
+===================================================
+1
+===================================================
+if(( CURRENT_TIMESTAMP -col2)<=100, 'ok', 'nok')    
+ok     
+
+===================================================
+0
+===================================================
+Error:-788
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     BIGINT     NO     PRI     null     auto_increment     
+col1     TIMESTAMP     YES          SYS_TIMESTAMP          
+col2     TIMESTAMP     NO          SYS_TIMESTAMP          
+col3     TIMESTAMP     YES     UNI     SYS_TIMESTAMP          
+col4     TIMESTAMP     YES          12:12:12 PM 12/12/2012          
+
+===================================================
+1
+===================================================
+if(( CURRENT_TIMESTAMP -col3)<=100 and col1=col2 and col2=col3, 'ok', 'nok')    
+ok     
+
+===================================================
+0
+===================================================
+Error:-788
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     BIGINT     NO     PRI     null     auto_increment     
+col1     TIMESTAMP     YES          SYS_TIMESTAMP          
+col2     TIMESTAMP     NO          SYS_TIMESTAMP          
+col3     TIMESTAMP     YES     UNI     SYS_TIMESTAMP          
+col4     TIMESTAMP     YES          SYS_TIMESTAMP          
+
+===================================================
+1
+===================================================
+if(( CURRENT_TIMESTAMP -col4)<=100 and col1=col2 and col2=col4 and col3='1975-10-01 12:12:12', 'ok', 'nok')    
+ok     
+
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     BIGINT     NO     PRI     null     auto_increment     
+col1     TIMESTAMP     YES          SYS_TIMESTAMP          
+col2     TIMESTAMP     NO          SYS_TIMESTAMP          
+col3     TIMESTAMP     YES     UNI     SYS_TIMESTAMP          
+col4     TIMESTAMP     YES          09:09:09 AM 09/09/1999          
+
+===================================================
+1
+===================================================
+if(col4='1999-09-09 9:9:9' and ( CURRENT_TIMESTAMP -col2)<=100 and col1=col2, 'ok', 'nok')    
+ok     
+
+===================================================
+0
+===================================================
+Error:-788
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     BIGINT     NO     PRI     null     auto_increment     
+col1     TIMESTAMP     YES          SYS_TIMESTAMP          
+col2     TIMESTAMP     NO          SYS_TIMESTAMP          
+col3     TIMESTAMP     YES     UNI     SYS_TIMESTAMP          
+col4     TIMESTAMP     YES          SYS_TIMESTAMP          
+
+===================================================
+1
+===================================================
+if(( CURRENT_TIMESTAMP -col4)<=100 and col1=col2 and col2=col4 and col3='1988-08-08 12:12:12', 'ok', 'nok')    
+ok     
+
+===================================================
+0

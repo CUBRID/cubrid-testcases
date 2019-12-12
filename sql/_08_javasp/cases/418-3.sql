@@ -1,3 +1,4 @@
+--+ holdcas on;
 autocommit off;
 
 CREATE  FUNCTION typetestint( i monetary ) RETURN monetary as language java name 'SpTest7.typetestint(int) return int';
@@ -227,3 +228,5 @@ rollback;
 
 autocommit on;
 
+
+--+ holdcas off;
