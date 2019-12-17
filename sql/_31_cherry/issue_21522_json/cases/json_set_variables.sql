@@ -1,3 +1,4 @@
+--+ holdcas on;
 set @js :='{"a":"0.5", "b":"0.75"}';
 SELECT JSON_EXTRACT(@js, '/b') - JSON_EXTRACT(@js, '/a') AS val;
 select typeof(@js), json_type(@js);
@@ -289,3 +290,5 @@ select json_extract(@j, /1/friends/);
 drop VARIABLE @js;
 drop VARIABLE @j;
 drop table if exists t1;
+
+--+ holdcas off;

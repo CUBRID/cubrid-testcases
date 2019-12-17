@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- 1
 prepare s from 'select bit_and (?) into :result'
 execute s using 1
@@ -38,3 +39,5 @@ deallocate prepare s;
 select bit_count(a+1) into :expected from (select 1) t(a);
 select case when (:expected = :result) then 'YES' else 'NO' end as result;
 
+
+--+ holdcas off;

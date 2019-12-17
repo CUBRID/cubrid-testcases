@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop if exists p1,p7,p2;
 create table p7 (a int primary key, b int,cte_VIF5zDGc9 timestamp on update current_timestamp);
 
@@ -48,3 +49,5 @@ drop variable @a;
 drop class xoo;
 
 
+
+--+ holdcas off;

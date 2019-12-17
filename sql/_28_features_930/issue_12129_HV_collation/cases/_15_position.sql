@@ -1,3 +1,4 @@
+--+ holdcas on;
 set names iso88591;
 
 --compare with constant
@@ -89,3 +90,5 @@ deallocate prepare st3;
 drop table t;
 
 set names iso88591;
+
+--+ holdcas off;

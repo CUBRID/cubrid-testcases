@@ -1,3 +1,4 @@
+--+ holdcas on;
 autocommit off;
 
 --  OID ����
@@ -108,3 +109,5 @@ rollback;
 
 autocommit on;
 
+
+--+ holdcas off;

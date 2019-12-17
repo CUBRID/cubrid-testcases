@@ -1,3 +1,4 @@
+--+ holdcas on;
 autocommit off;
 select x into p1 from product_c x where product_code = 6
 select self(p1) from product_c y where product_code <4
@@ -9,3 +10,5 @@ select x into p2 from product_c x where product_code = 3
 evaluate {p1, p2} to p3
 select p, p.product_code from table(p3) as t(p)
 rollback;
+
+--+ holdcas off;

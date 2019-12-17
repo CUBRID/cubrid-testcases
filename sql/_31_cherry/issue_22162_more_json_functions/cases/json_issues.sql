@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- http://jira.cubrid.org/browse/CBRD-22510
 SELECT * from JSON_TABLE('[{"x": 2, "y": 8 }]', '$[0]' COLUMNS (x int PATH '$.x', y int PATH '$.y')) as t1 limit 1;
 SELECT * from JSON_TABLE('[{"x": 2, "y": 8 }]', '$[0]' COLUMNS (x int PATH '$.x', y int PATH '$.y')) as t1 limit 1;
@@ -81,7 +82,7 @@ drop table if exists t1;
 select jt.a, default(jt.a) from json_table('{"a":[1,2 ]}', '$' columns( a char(10) path '$.a')) as jt;
 select jt.a, default(jt.a) from json_table('{"a":[1,2 ]}', '$' columns( a json path '$.a')) as jt;
 select jt.a, default(jt.a) from json_table('{"a":[1,2 ]}', '$' columns( a json path '$.a'  default '"000"' on error)) as jt;
-select jt.a, default(jt.a) from json_table('{"a":[1,2 ]}', '$' columns( a json path '$.a'  default '"000"' on error default '111' on empty)) as jt;
+select jt.a, default(jt.a) from json_table('{"a":[1,2 ]}', '$' columns( a json path '$.a' default '111' on empty default '"000"' on error)) as jt;
 
 -- http://jira.cubrid.org/browse/CBRD-22506
 drop table if exists t;
@@ -168,3 +169,5 @@ select JSON_CONTAINS_PATH(@js, 'one', json_search(@js, 'one', 'Jone') );
 drop variable @js;
 
 
+
+--+ holdcas off;

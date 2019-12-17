@@ -1,3 +1,4 @@
+--+ holdcas on;
 --insert with object
 
 create table t1(a int auto_increment, b char(10) default 'abc');
@@ -35,3 +36,5 @@ select b.b.a.a from t4 order by 1;
 
 
 drop table t1, t2, t3, t4;
+
+--+ holdcas off;

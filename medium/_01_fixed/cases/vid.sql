@@ -1,3 +1,4 @@
+--+ holdcas on;
 autocommit off;
 select p.ssn,q.ssn from faculty p, faculty1 q where p = q order by 1,2;-- 2 rows
 select p.ssn,q.ssn  from faculty p, faculty1 q where q = p order by 1,2;-- test symmetry 
@@ -12,3 +13,5 @@ select p.ssn,q.ssn from faculty p, faculty q where p = q  order by 1,2;
 select f into p7 from faculty f where ssn = 7 order by 1;
 select f from faculty f where f = p7 order by 1;
 rollback;
+
+--+ holdcas off;

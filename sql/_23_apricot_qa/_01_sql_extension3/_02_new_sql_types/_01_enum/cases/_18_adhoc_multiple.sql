@@ -1,3 +1,4 @@
+--+ holdcas on;
 
 CREATE TABLE t1(a enum('Y', 'N'));
 insert into t1 values ('Y'), ('N'), (1), (2);
@@ -460,3 +461,5 @@ select * from t1 where a=@v1;
 drop variable @a1,@v1;
 drop table t1;
 
+
+--+ holdcas off;

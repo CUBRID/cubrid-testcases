@@ -1,3 +1,4 @@
+--+ holdcas on;
 autocommit off;
 
 create table t1(id int primary key auto_increment, a int, b int, c int, d int, e int, f int, g int, h int);
@@ -43,3 +44,4 @@ SELECT /*+ recompile index_ls */ a,MAX(b) FROM t1 WHERE h>0 GROUP BY b desc;
 drop variable @v1;
 drop table t1;
 autocommit on;
+--+ holdcas off;

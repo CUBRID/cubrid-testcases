@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- negetive cases
 drop table if exists x;
 create table x(a int, b int);
@@ -54,3 +55,5 @@ select @ma;
 select median(@ma);
 
 drop variable @ma;
+
+--+ holdcas off;

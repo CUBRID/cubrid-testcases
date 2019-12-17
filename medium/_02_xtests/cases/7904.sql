@@ -1,3 +1,4 @@
+--+ holdcas on;
 autocommit off;
 create class mark1 (mark char(1));
 create class mark2 (mark char(1));
@@ -15,3 +16,5 @@ delete from mark1 where mark = 'A';
 select mark into :p1 from mark3 where dummy = 'Z';
 select :p1 from class db_user;
 rollback;
+
+--+ holdcas off;

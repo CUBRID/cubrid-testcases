@@ -31,9 +31,9 @@ CREATE TABLE tbl2(a INT, b INT,c timestamp on update current_timestamp);
 INSERT INTO tbl1(a,b) VALUES (5,5),(4,4),(3,3),(2,2),(1,1);
 INSERT INTO tbl2(a,b) VALUES (6,6),(4,4),(3,3),(2,2),(1,1);
 CREATE or replace VIEW vw AS SELECT tbl2.* FROM tbl2 inner JOIN tbl1 ON tbl2.a=tbl1.a WHERE tbl2.a<=3;
-select * from vw;
+select * from vw order by 1 desc;
 UPDATE vw SET a=1000;
-select * from vw;
+select * from vw order by 1;
 select * from tbl1 order by 1 desc;
 select if(current_timestamp-c>=0 and current_timestamp-c<10,'ok','nok') from tbl2 where a=1000;
 

@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- test  complex select with 'like','order by' keywords and superseteq operator
 
 create class DML_0001( 	
@@ -44,3 +45,5 @@ drop DML_0001;
 drop DML_0002;
 drop DML_0003;
 drop variable a,b,c,d,e ;
+
+--+ holdcas off;

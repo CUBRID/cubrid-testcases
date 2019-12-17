@@ -1,3 +1,4 @@
+--+ holdcas on;
 --TODO: db should use en_US.utf8
 
 set names iso88591;
@@ -7,3 +8,5 @@ deallocate prepare s;
 
 
 
+
+--+ holdcas off;

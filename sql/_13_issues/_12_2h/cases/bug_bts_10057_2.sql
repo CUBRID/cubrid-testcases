@@ -1,3 +1,4 @@
+--+ holdcas on;
 set names utf8;
 drop table if exists t;
 
@@ -34,3 +35,5 @@ drop variable @a;
 drop t;
 
 set names iso88591;
+
+--+ holdcas off;

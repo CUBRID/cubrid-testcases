@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop table if exists t1;
 
 create table t1(id int);
@@ -23,3 +24,5 @@ select sum(set{id}) into :i from t1 force index (idx1) where id > -999 order by 
 select if (:s = :i, 'OK', 'NOK');
 
 drop t1;
+
+--+ holdcas off;

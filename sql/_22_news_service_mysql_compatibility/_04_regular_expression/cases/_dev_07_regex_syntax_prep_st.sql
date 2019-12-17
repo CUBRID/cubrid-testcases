@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- regular expression syntax tests (prepared statements)
 set @decoy = 'a';
 set @intg = 123;
@@ -154,3 +155,5 @@ execute rlike_st using 'the foxx is not an animal', @word_fox;
 DROP VARIABLE @word_fox;
 deallocate prepare rlike_st;
 
+
+--+ holdcas off;

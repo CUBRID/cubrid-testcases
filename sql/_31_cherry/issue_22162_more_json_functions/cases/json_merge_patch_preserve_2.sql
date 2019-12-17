@@ -1,3 +1,4 @@
+--+ holdcas on;
 SELECT JSON_MERGE_PRESERVE('[1, 2]', '[true, false]');
 SELECT JSON_MERGE_PATCH('[1, 2]', '[true, false]');
 
@@ -72,3 +73,5 @@ SELECT JSON_MERGE_PRESERVE('{"name": "x"}', '{"id": 47: 57}');
 SELECT JSON_MERGE_PATCH('{"name": "x"}', '{"id": 47: 57}');
 
 drop VARIABLE @x,@y,@z;
+
+--+ holdcas off;

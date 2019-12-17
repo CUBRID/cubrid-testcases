@@ -12,7 +12,7 @@ insert into 찾기 values (3,'test2', {1,'test2'});
 insert into 찾기 values (4,'test1', {2,'test1'});
 insert into 찾기 values (5,'test2', {2,'test2'});
 
-select * from 찾기;
+select * from 찾기 order by 1;
 
 
 

@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- 1
 prepare s from 'select UCASE (?) into :result'
 execute s using 'aaa'
@@ -29,3 +30,5 @@ deallocate prepare s;
 
 evaluate null into :expected;
 select case when (:expected <=> :result) then 'YES' else 'NO' end as case4;
+
+--+ holdcas off;

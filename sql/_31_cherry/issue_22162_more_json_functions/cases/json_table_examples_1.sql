@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- Examples from https://dev.mysql.com/doc/refman/8.0/en/json-table-functions.html#function_json-table
 
 --CBRD-22415, by design
@@ -8,7 +9,7 @@ FROM
     '$[*]'
     COLUMNS(
       rowid FOR ORDINALITY,
-      ac VARCHAR(100) PATH '$.a' DEFAULT '999' ON ERROR DEFAULT '111' ON EMPTY,
+      ac VARCHAR(100) PATH '$.a' DEFAULT '111' ON EMPTY DEFAULT '999' ON ERROR,
       aj JSON PATH '$.a' DEFAULT '{"x": 333}' ON EMPTY,
       bx INT EXISTS PATH '$.b'
     )
@@ -89,3 +90,5 @@ FROM
 ) as jt order by 1,2,3,4,5;
 
 	
+
+--+ holdcas off;

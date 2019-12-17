@@ -36,13 +36,14 @@ C4: set transaction isolation level read committed;
 C1: drop table if exists t1;
 C1: create table t1(id int, col varchar(10));
 C1: insert into t1 values(1,'abc');insert into t1 values(2,'def');insert into t1 values(3,'abc');insert into t1 values(4,'ijk');insert into t1 values(6,'gh');insert into t1 values(5,'abc');
+C1: create index idx1 on t1(id asc); 
 C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
 C1: update t1 set col='aa' where id<4;
 MC: wait until C1 ready;
-C2: update t1 set col='bb' where col='abc';
+C2: update t1 set col='bb' where id > 0 and col='abc';
 MC: wait until C2 blocked;
 
 C3: update t1 set id=6 where id>3; 

@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- http://jira.cubrid.org/browse/CBRD-22623
 
 -------------------------------- JSON_INSERT      (json_doc, path, val[, path, val] ...) -------------------------------- 
@@ -199,3 +200,5 @@ drop variable @jobj, @jarr, @jarr1, @jobj1,  @scalar;
 
 
 
+
+--+ holdcas off;

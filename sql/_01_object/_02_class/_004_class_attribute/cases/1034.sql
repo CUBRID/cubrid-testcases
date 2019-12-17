@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- create class attribute same name as instance attribute
 
 create class picture
@@ -22,3 +23,4 @@ class attribute (menu string)
  DROP picture;
  
  DROP meal;
+--+ holdcas off;

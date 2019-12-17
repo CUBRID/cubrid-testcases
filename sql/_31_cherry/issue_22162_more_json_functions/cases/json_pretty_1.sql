@@ -1,3 +1,4 @@
+--+ holdcas on;
 
 SET @jv = '{"a": 1, "b": 2, "c": 3}';
 SELECT JSON_PRETTY(@jv) ;
@@ -53,3 +54,5 @@ SELECT JSON_PRETTY('["a",1,{"key1":
 	  "valueY"]},"j", "2"   ]') as a;
 	  
 drop variable @jv;
+
+--+ holdcas off;

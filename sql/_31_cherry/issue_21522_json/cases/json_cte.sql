@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop table if exists t;
 create table t(a int, b json, c json);
 insert into t values(1, json_object('a','b'), '["c", "d"]');
@@ -195,3 +196,5 @@ drop table if exists t3;
 drop VARIABLE @js;
 
 
+
+--+ holdcas off;

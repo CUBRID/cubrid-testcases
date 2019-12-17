@@ -1,3 +1,4 @@
+--+ holdcas on;
 CREATE TABLE tree2 (a int, text VARCHAR(32));
 alter class tree2 add attribute id tree2;
 alter class tree2 add attribute parentid tree2;
@@ -42,3 +43,5 @@ select id, parentid, sys_connect_by_path(text,'/')
 	order by id;
 
 drop tree;
+
+--+ holdcas off;

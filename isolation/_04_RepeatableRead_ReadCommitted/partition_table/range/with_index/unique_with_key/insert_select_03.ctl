@@ -21,28 +21,28 @@ C2: set transaction isolation level read committed;
 
 /* preparation */
 C1: drop table if exists t;
-C1: create table t(id int,col varchar(10),col1 varchar(10)) partition by range(id)(partition p1 values less than (50000),partition p2 values less than (100000));
-C1: insert into t select rownum,'a','b' from db_class a,db_class b,db_class c,db_class d where rownum <= 40000;
-C1: insert into t select rownum+50000,'a','b' from db_class a,db_class b,db_class c,db_class d where rownum <= 40000;
+C1: create table t(id int,col varchar(10),col1 varchar(10)) partition by range(id)(partition p1 values less than (5000),partition p2 values less than (10000));
+C1: insert into t select rownum,'a','b' from db_class a,db_class b,db_class c,db_class d where rownum <= 4000;
+C1: insert into t select rownum+5000,'a','b' from db_class a,db_class b,db_class c,db_class d where rownum <= 4000;
 C1: create unique index idx on t(id,col);
 C1: commit work;
 MC: wait until C1 ready;
 
 /* prepare unvacuummed data */
-C1: update t set id=id+1 where id<50000;
-C2: update t set id=id+1 where id>=50000;
+C1: update t set id=id+1 where id<5000;
+C2: update t set id=id+1 where id>=5000;
 MC: wait until C1 ready;
 MC: wait until C2 ready;
 C1: commit;
 C2: commit;
-C1: update t set id=id+1 where id<50000;
-C2: update t set id=id+1 where id>=50000;
+C1: update t set id=id+1 where id<5000;
+C2: update t set id=id+1 where id>=5000;
 MC: wait until C1 ready;
 MC: wait until C2 ready;
 C1: commit;
 C2: commit;
-C1: update t set id=id+1 where id<50000;
-C2: update t set id=id+1 where id>=50000;
+C1: update t set id=id+1 where id<5000;
+C2: update t set id=id+1 where id>=5000;
 MC: wait until C1 ready;
 MC: wait until C2 ready;
 C1: commit;
@@ -54,9 +54,9 @@ MC: wait until C1 ready;
 /* expected 4 */
 C2: select min(id) from t where id>0;
 /* expected 4 */
-C2: select min(id) from t where id<50000;
+C2: select min(id) from t where id<5000;
 /* expected 50004 */
-C2: select min(id) from t where id>50000;
+C2: select min(id) from t where id>5000;
 MC: wait until C2 ready;
 C1: commit;
 MC: wait until C1 ready;

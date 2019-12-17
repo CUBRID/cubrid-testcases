@@ -98,12 +98,16 @@ i    e
 58     Wednesday     
 
 Query plan:
-iscan
-    class: t node[?]
-    index: i_t_e_s term[?] AND term[?]
+temp(order by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_e_s term[?] AND term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.i, t.e from t t where (t.s< ?:? ) and t.e= ?:? 
+select t.i, t.e, t.s from t t where (t.s< ?:? ) and t.e= ?:?  order by ?, ?
 ===================================================
 i    e    
 2     Wednesday     
@@ -117,12 +121,16 @@ i    e
 58     Wednesday     
 
 Query plan:
-iscan
-    class: t node[?]
-    index: i_t_e_s term[?] AND term[?]
+temp(order by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_e_s term[?] AND term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.i, t.e from t t where (t.s< ?:? ) and t.e= ?:? 
+select t.i, t.e, t.s from t t where (t.s< ?:? ) and t.e= ?:?  order by ?, ?
 ===================================================
 e    
 Tuesday     

@@ -7,7 +7,7 @@ sscan
     class: jt node[?]
     cost:  ? card ?
 Query stmt:
-select jt.[date] from (json_table ('{"date":""}', '$' columns (date datetime PATH '$."date"' NULL ON ERROR NULL ON EMPTY )) as jt)
+select jt.[date] from (json_table ('{"date":""}', '$' columns (date datetime PATH '$."date"' NULL ON EMPTY NULL ON ERROR )) as jt)
 ===================================================
 date    
 null     
@@ -17,7 +17,7 @@ sscan
     class: jt node[?]
     cost:  ? card ?
 Query stmt:
-select jt.[date] from (json_table ('{"date":""}', '$' columns (date date PATH '$."date"' NULL ON ERROR NULL ON EMPTY )) as jt)
+select jt.[date] from (json_table ('{"date":""}', '$' columns (date date PATH '$."date"' NULL ON EMPTY NULL ON ERROR )) as jt)
 ===================================================
 date    
      
@@ -27,7 +27,7 @@ sscan
     class: jt node[?]
     cost:  ? card ?
 Query stmt:
-select jt.[date] from (json_table ('{"date":""}', '$' columns (date varchar(?) PATH '$."date"' NULL ON ERROR NULL ON EMPTY )) as jt)
+select jt.[date] from (json_table ('{"date":""}', '$' columns (date varchar(?) PATH '$."date"' NULL ON EMPTY NULL ON ERROR )) as jt)
 ===================================================
 0
 ===================================================
@@ -54,7 +54,7 @@ temp(order by)
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-select jt.phones from tbl? tbl?, (json_table (tbl?.jdoc, '$."Phone"[*]' columns (phones json PATH '$."type"' NULL ON ERROR NULL ON EMPTY )) as jt) order by ? desc 
+select jt.phones from tbl? tbl?, (json_table (tbl?.jdoc, '$."Phone"[*]' columns (phones json PATH '$."type"' NULL ON EMPTY NULL ON ERROR )) as jt) order by ? desc 
 ===================================================
 phones    
 [{"type":"Office","number":"909-555-7307"},{"type":"Mobile","number":"415-555-1234"}]     
@@ -71,7 +71,7 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select jt.phones from tbl? tbl?, (json_table (tbl?.jdoc, '$' columns (phones json PATH '$."Phone"' NULL ON ERROR NULL ON EMPTY )) as jt)
+select jt.phones from tbl? tbl?, (json_table (tbl?.jdoc, '$' columns (phones json PATH '$."Phone"' NULL ON EMPTY NULL ON ERROR )) as jt)
 ===================================================
 0
 ===================================================
@@ -111,7 +111,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select tbl?.id, tbl?.i, tbl?.j, jt.id?, jt.[name], jt?.id?, jt?.phone_type, jt?.phone_num from tbl? tbl?, tbl? tbl?, (json_table (tbl?.j, '$' columns (id? FOR ORDINALITY, name json PATH '$."a"' NULL ON ERROR NULL ON EMPTY )) as jt), (json_table (tbl?.jdoc, '$."Phone"[*]' columns (id? FOR ORDINALITY, phone_type varchar(?) PATH '$."type"' NULL ON ERROR NULL ON EMPTY, phone_num varchar(?) PATH '$."number"' NULL ON ERROR NULL ON EMPTY )) as jt?) order by ?
+select tbl?.id, tbl?.i, tbl?.j, jt.id?, jt.[name], jt?.id?, jt?.phone_type, jt?.phone_num from tbl? tbl?, tbl? tbl?, (json_table (tbl?.j, '$' columns (id? FOR ORDINALITY, name json PATH '$."a"' NULL ON EMPTY NULL ON ERROR )) as jt), (json_table (tbl?.jdoc, '$."Phone"[*]' columns (id? FOR ORDINALITY, phone_type varchar(?) PATH '$."type"' NULL ON EMPTY NULL ON ERROR, phone_num varchar(?) PATH '$."number"' NULL ON EMPTY NULL ON ERROR )) as jt?) order by ?
 ===================================================
 rowid    AddressType    AdrressCode    AdreessDetail    AddressZipCode    
 1     1     Code 1     aaaa     100010     

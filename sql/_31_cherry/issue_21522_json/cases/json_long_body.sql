@@ -1,3 +1,4 @@
+--+ holdcas on;
 set @a='[
   {
     "_id": "5a2a60caf582d0d0a708e0f9",
@@ -21774,3 +21775,5 @@ select json_length(json_get_all_paths(@a));
 select id, json_length(json_get_all_paths(a)) from t1 order by 1;
 drop table if exists t1,t2;
 drop VARIABLE @a;
+
+--+ holdcas off;

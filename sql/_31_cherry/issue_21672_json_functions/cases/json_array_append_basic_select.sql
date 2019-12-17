@@ -1,3 +1,4 @@
+--+ holdcas on;
 select json_array_append(null, '/', 1);
 select json_array_append(null, '/', '1');
 select json_array_append(null, '/',  NULL);
@@ -67,3 +68,5 @@ drop VARIABLE @js;
 drop table if exists t1;
 
 
+
+--+ holdcas off;

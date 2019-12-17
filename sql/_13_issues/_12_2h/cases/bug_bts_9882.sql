@@ -1,3 +1,4 @@
+--+ holdcas on;
 show collation abc;
 show collation show;
 show collation 1;
@@ -11,3 +12,5 @@ show collation @a;
 prepare st from 'show collation 1';
 drop variable @a;
 set names iso88591;
+
+--+ holdcas off;

@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop table if exists z2;
 create table z2 (a int, b int);
 
@@ -85,3 +86,5 @@ drop variable @v2;
 drop variable @v3;
 
 drop table z2;
+
+--+ holdcas off;

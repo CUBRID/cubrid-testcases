@@ -1,3 +1,4 @@
+--+ holdcas on;
 autocommit off;
 select *
   from shipment_c s
@@ -345,3 +346,5 @@ select i into f from vc;
 select f, :f from vc where :f = 7;
 rollback work;
 rollback;
+
+--+ holdcas off;

@@ -1,3 +1,4 @@
+--+ holdcas on;
 select * from json_table('{"a":1}', '$' columns (v int path '$.a')) as jt;
 select * from json_table('{"a":1}', '$' columns (v int path '$.a')) jt;
 
@@ -96,3 +97,5 @@ order by name;
 
 Drop table if exists t1;
 drop variable @j;
+
+--+ holdcas off;

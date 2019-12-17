@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop table if exists t;
 
 create table t(a int);
@@ -9,3 +10,5 @@ select var;
 select var;
 
 drop table if exists t;
+
+--+ holdcas off;

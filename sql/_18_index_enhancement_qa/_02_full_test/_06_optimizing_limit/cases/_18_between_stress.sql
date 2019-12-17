@@ -18,6 +18,7 @@ select /*+ recompile */ a,b,c from t where a between 1 and 10 and a+105>105 orde
 
 select /*+ recompile */ a,b,c from t where a between 1 and 10 and a+105>105 order by a asc limit 1,1;
 
+--@queryplan
 select /*+ recompile */ a,b,c from t 
 where a between 1 and 10000
 and a between 2 and 9999

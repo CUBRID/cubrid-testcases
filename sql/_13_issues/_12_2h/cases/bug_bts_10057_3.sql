@@ -1,3 +1,4 @@
+--+ holdcas on;
 set names utf8;
 create table t(i int,s string collate utf8_ko_cs);
 insert into t values(1,'年'),(2,'끽');
@@ -93,3 +94,5 @@ execute st using 'A';
 set names iso88591 collate iso88591_bin;
 
 drop variable @a;
+
+--+ holdcas off;

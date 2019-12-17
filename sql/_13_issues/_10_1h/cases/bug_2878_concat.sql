@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- 1
 prepare s from 'select CONCAT (?, ?, ?) into :result'
 execute s using 'aaa', 'bbb', 'ccc'
@@ -30,3 +31,5 @@ deallocate prepare s;
 evaluate '123,456,789' into :expected;
 select case when (:expected = :result) then 'YES' else 'NO' end as result;
 
+
+--+ holdcas off;

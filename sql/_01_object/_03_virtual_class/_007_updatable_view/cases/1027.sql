@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- vclass is unupdatable if select using path expression
 
 create class c1 ( id int, id_key int, id_s string );
@@ -30,3 +31,5 @@ select v1 from v1;
 drop variable a;
 drop class c1,c2;
 drop vclass v1;
+
+--+ holdcas off;

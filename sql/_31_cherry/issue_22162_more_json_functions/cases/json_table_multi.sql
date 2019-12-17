@@ -51,8 +51,8 @@ FROM JSON_TABLE(
     {"AddressType":5, "AdrressCode":"Code 1", "AdreessDetail":"xxxx", "AddressZipCode":"500050"}]',
  '$[*]' COLUMNS(
  rowid FOR ORDINALITY,
- AddressType INT PATH '$.AddressType' DEFAULT '999' ON ERROR DEFAULT '111' ON EMPTY,
- AdrressCode VARCHAR(50) PATH '$.AdrressCode' DEFAULT 'Code 999' ON ERROR DEFAULT 'Code XXX' ON EMPTY,
+ AddressType INT PATH '$.AddressType' DEFAULT '111' ON EMPTY DEFAULT '999' ON ERROR,
+ AdrressCode VARCHAR(50) PATH '$.AdrressCode' DEFAULT 'Code XXX' ON EMPTY DEFAULT 'Code 999' ON ERROR,
  AdreessDetail VARCHAR(100) PATH '$.AdreessDetail',
  AddressZipCode CHAR(6) PATH '$.AddressZipCode'
 )) AS Address order by rowid;
@@ -64,8 +64,8 @@ FROM JSON_TABLE(
     {"AddressType":5, "AdrressCode":"Code 1", "AdreessDetail":"xxxx", "AddressZipCode":"500050"}]',
  '$[*]' COLUMNS(
  rowid FOR ORDINALITY,
- AddressType INT PATH '$.AddressType' DEFAULT '999' ON ERROR DEFAULT '111' ON EMPTY,
- AdrressCode VARCHAR(50) PATH '$.AdrressCode' DEFAULT 'Code 999' ON ERROR DEFAULT 'Code XXX' ON EMPTY,
+ AddressType INT PATH '$.AddressType' DEFAULT '111' ON EMPTY DEFAULT '999' ON ERROR,
+ AdrressCode VARCHAR(50) PATH '$.AdrressCode' DEFAULT 'Code XXX' ON EMPTY DEFAULT 'Code 999' ON ERROR,
  AdreessDetail VARCHAR(100) PATH '$.AdreessDetail',
  AddressZipCode CHAR(6) PATH '$.AddressZipCode'
 )) AS Address
@@ -77,8 +77,8 @@ FROM JSON_TABLE(
     {"AddressType":5, "AdrressCode":"Code 1", "AdreessDetail":"xxxx", "AddressZipCode":"500050"}]',
  '$[*]' COLUMNS(
  rowid FOR ORDINALITY,
- AddressType INT PATH '$.AddressType' DEFAULT '999' ON ERROR DEFAULT '111' ON EMPTY,
- AdrressCode VARCHAR(50) PATH '$.AdrressCode' DEFAULT 'Code 999' ON ERROR DEFAULT 'Code XXX' ON EMPTY,
+ AddressType INT PATH '$.AddressType' DEFAULT '111' ON EMPTY DEFAULT '999' ON ERROR,
+ AdrressCode VARCHAR(50) PATH '$.AdrressCode' DEFAULT 'Code XXX' ON EMPTY DEFAULT 'Code 999' ON ERROR,
  AdreessDetail VARCHAR(100) PATH '$.AdreessDetail',
  AddressZipCode CHAR(6) PATH '$.AddressZipCode'
 )) AS Address order by rowid;
@@ -90,8 +90,8 @@ SELECT Address.* FROM JSON_TABLE(
     {"AddressType":5, "AdrressCode":"Code 1", "AdreessDetail":"xxxx", "AddressZipCode":"500050"}]',
  '$[*]' COLUMNS(
  rowid FOR ORDINALITY,
- AddressType INT PATH '$.AddressType' DEFAULT '999' ON ERROR DEFAULT '111' ON EMPTY,
- AdrressCode VARCHAR(50) PATH '$.AdrressCode' DEFAULT 'Code 999' ON ERROR DEFAULT 'Code XXX' ON EMPTY,
+ AddressType INT PATH '$.AddressType' DEFAULT '111' ON EMPTY DEFAULT '999' ON ERROR,
+ AdrressCode VARCHAR(50) PATH '$.AdrressCode' DEFAULT 'Code XXX' ON EMPTY DEFAULT 'Code 999' ON ERROR,
  AdreessDetail VARCHAR(100) PATH '$.AdreessDetail',
  AddressZipCode CHAR(6) PATH '$.AddressZipCode'
 )) AS Address;

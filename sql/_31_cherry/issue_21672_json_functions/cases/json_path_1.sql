@@ -1,3 +1,4 @@
+--+ holdcas on;
 select json_array_append('["a", "b"]', '$', 'false');
 select json_array_append('{"k1":1, "k2":["a", "b"]}', '$.k2', '2');
 select json_array_append('["a", ["b", "c"], "d"]', '$[0]', '2');
@@ -170,11 +171,13 @@ select @str, json_get_all_paths(@str);
 select @str, json_keys(@str);
 
 
-SELECT JSON_ARRAY('1. ě 2. š 3. č 4. ř 5. ž 6. ý 7. á 8. í 9. é 10. ů 11. ú') AS json_data;
-SELECT JSON_OBJECT('user','Jožko Mrkvičká') as json_data;
+SELECT JSON_ARRAY(_utf8'1. ě 2. š 3. č 4. ř 5. ž 6. ý 7. á 8. í 9. é 10. ů 11. ú') AS json_data;
+SELECT JSON_OBJECT('user',_utf8'Jožko Mrkvičká') as json_data;
 
 select JSON_VALID(0x36f0c8dccd83c5eac156da);
 
 SELECT JSON_VALID('{"id": 1, "name": "Monty"}') AS json_valid;
 SELECT JSON_CONTAINS('{"A": 0, "B": {"C": 1}, "D": 2}', '2', '$.A') AS json_contains;
 drop VARIABLE @j, @str, @path;
+
+--+ holdcas off;

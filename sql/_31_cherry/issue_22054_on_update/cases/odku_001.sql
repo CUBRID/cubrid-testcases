@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop if exists t;
 create table t(
 a int,
@@ -171,3 +172,5 @@ drop table if exists t;
 
 
 
+
+--+ holdcas off;

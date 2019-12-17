@@ -1,3 +1,4 @@
+--+ holdcas on;
 prepare s from 'select trim (?) into :result'
 execute s using '  aa  '
 deallocate prepare s;
@@ -28,3 +29,5 @@ deallocate prepare s;
 evaluate trim ('9' from '99123499') into :expected;
 select case when :expected = :result then 'YES' else 'NO' end as case5;
 
+
+--+ holdcas off;

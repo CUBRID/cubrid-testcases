@@ -1,3 +1,4 @@
+--+ holdcas on;
 --TEST: [I18N] CHARSET function doesn't support user-defined variables
 
 
@@ -16,3 +17,5 @@ select coercibility(@v1);
 select coercibility(@v2);
 select coercibility(concat(@v1, @v2));
 drop variable @v1,@v2;
+
+--+ holdcas off;

@@ -1,3 +1,4 @@
+--+ holdcas on;
 --test udt using varchar type
 create class t1(
 	id int auto_increment primary key,
@@ -21,3 +22,4 @@ SELECT * FROM t2;
 
 drop t1;
 drop t2;
+--+ holdcas off;

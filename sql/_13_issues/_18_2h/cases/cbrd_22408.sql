@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop table if exists t_d_1;
 create table t_d_1(i int);
 insert into t_d_1 select rownum from db_root connect by level<=100;
@@ -108,3 +109,5 @@ select * from t order by 1;
 
 drop table if exists t,tbl,t1,t_replace,t_update,t_d_1;
 drop variable @a;
+
+--+ holdcas off;

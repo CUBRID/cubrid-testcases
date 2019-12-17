@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop if exists t;
 create table t(i int primary key, name varchar(20),job varchar(20));
 insert into t values(1,'Jone','teacher');
@@ -51,3 +52,5 @@ delete from t where job='unkown' using index idx_t_job keylimit nvl(null,0),3 ;
 delete from t where job='unkown' using index idx_t_job keylimit nvl(null,1),3 ;
 drop if exists t;
 drop variable @a;
+
+--+ holdcas off;

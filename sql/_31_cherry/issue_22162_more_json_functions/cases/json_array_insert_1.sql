@@ -1,3 +1,4 @@
+--+ holdcas on;
 select json_array_insert(null, '/', 1);
 select json_array_insert(null, '/', '1');
 select json_array_insert(null, '/',  NULL);
@@ -137,3 +138,5 @@ select json_array_insert(@j, '/b', '"x"','/b/2','"y"');
 drop VARIABLE @j;
 
 
+
+--+ holdcas off;

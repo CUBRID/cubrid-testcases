@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop table if exists t1;
 CREATE TABLE t1 (a int , b int );
 insert into t1 values (1,1);
@@ -20,3 +21,5 @@ do @b := (select a+b from t1 );
 select @b;
 drop variable @a,@b;
 drop table t1;
+
+--+ holdcas off;

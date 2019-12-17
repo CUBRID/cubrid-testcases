@@ -91,7 +91,7 @@ cte2 as (
        SELECT t.*
        , INST_NUM()  AS n
        FROM cte1 as t order by 1
-) update foo set id=id+10 where INST_NUM()<=3 ;
+) update foo set id=id+10 where INST_NUM()<=3 and id2 < 9;
 select * from foo order by 1,2,3;
 
 

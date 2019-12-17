@@ -1,3 +1,4 @@
+--+ holdcas on;
 set @b='%Y-%m-%d %H:%i:%s'; 
 select str_to_date('2015-1-1 13:00:00',@b);
 select str_to_date(timestamp'2015-1-1 13:00:00',@b);
@@ -50,3 +51,5 @@ drop variable @b;
 drop if exists t;
 set timezone 'default';
 
+
+--+ holdcas off;

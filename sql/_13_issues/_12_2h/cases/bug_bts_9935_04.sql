@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop table if exists t;
 CREATE TABLE t(i INT , j INT ,unique(i,j)) PARTITION BY RANGE(i) (PARTITION p0 VALUES LESS THAN(10), PARTITION p1 VALUES LESS THAN(100));
 --insert tuple (1, 10) in partition p0 and tuple (50, 11) in partition p1
@@ -37,3 +38,5 @@ UPDATE OBJECT :my_obj SET i = 3;
 UPDATE OBJECT :my_obj SET i = 33;
 drop table if exists t;
 
+
+--+ holdcas off;

@@ -1,3 +1,4 @@
+--+ holdcas on;
 set @jdoc      = '{"name":"Lily", "age":12, "hobbies":["Reading","Watching movies","Play tennis"]}';
 set @jobj      = '{"hobbies":["drawing"], "grade":5}';
 set @jarr      = '["flower arrangement","swimming"]';
@@ -119,3 +120,5 @@ execute st using @jdoc, @jobj, @jobj, @jarr, @n1_NULL;
 drop prepare st;
 drop variable @jdoc, @jobj, @jarr, @int1, @int2, @str1, @b1_true, @b2_false, @b3_TRUE, @b3_False;
 drop variable @str_a,@path_root,@path_0,@path_1, @n1_null, @n1_NULL, @empty_str;
+
+--+ holdcas off;

@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop table if exists `posts`;
 CREATE TABLE `posts` (
   `id` int  NOT NULL AUTO_INCREMENT,
@@ -56,3 +57,5 @@ drop variable @yp0,@yp1,@yp2,@yp3,@yp4,@yp5,@yp6,@yp7,@yp8,@yp9;
 drop variable @yp10,@yp11,@yp12,@yp13,@yp14,@yp15,@yp16,@yp17,@yp18,@yp19;
 drop variable @y;
 drop table if exists `posts`;
+
+--+ holdcas off;

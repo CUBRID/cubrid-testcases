@@ -1,3 +1,4 @@
+--+ holdcas on;
 --[er]test interpreter variable with setting mutil value into a variable
 create class DML_0001
 ( 	int_col int not null,
@@ -25,3 +26,5 @@ select DML_0001 into a from DML_0001 where int_col > 1;
 drop class DML_0001;
 drop class DML_0002;
 drop class DML_0003;
+
+--+ holdcas off;

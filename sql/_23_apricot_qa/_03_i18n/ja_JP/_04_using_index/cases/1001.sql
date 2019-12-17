@@ -33,7 +33,7 @@ where
    (name between 'Qdぁ=' and 'Qd発は')
    or (name between 'Qdぁ1' and 'Qd発は')
    or (name > 'Qd語' and name < 'Qd発は')
-using index i_test_jp_name(+) order by 2;
+using index i_test_jp_name(+) order by 2,1;
 
 
 

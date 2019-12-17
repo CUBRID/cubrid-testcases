@@ -12,13 +12,13 @@ WITH recursive o_s AS (
 SELECT c FROM t2
 )
 SELECT *
-FROM   o_s, (WITH n_s AS (SELECT a FROM t1) select * from n_s) x order by 1;
+FROM   o_s, (WITH n_s AS (SELECT a FROM t1) select * from n_s) x order by 1,2;
 
 WITH recursive o_s AS (
 SELECT c FROM t2
 )
 SELECT *
-FROM   o_s y, (WITH n_s AS (SELECT a FROM t1) select * from n_s) x where y.c=x.a  order by 1;
+FROM   o_s y, (WITH n_s AS (SELECT a FROM t1) select * from n_s) x where y.c=x.a  order by 1,2;
 
 
 with mycte as

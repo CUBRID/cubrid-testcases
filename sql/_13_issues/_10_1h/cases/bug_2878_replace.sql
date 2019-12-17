@@ -1,3 +1,4 @@
+--+ holdcas on;
 prepare s from 'select replace (?, ?) into :result'
 execute s using 'abc', 'b'
 deallocate prepare s;
@@ -28,3 +29,5 @@ deallocate prepare s;
 evaluate replace ('abc', 'b', NULL) into :expected;
 select case when :expected <=> :result then 'YES' else 'NO' end as case5;
 
+
+--+ holdcas off;

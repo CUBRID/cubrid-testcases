@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop table if exists t1;
 
 create table t1(id int);
@@ -35,3 +36,5 @@ select if (:s2 = :i2, 'OK', 'NOK');
 
 
 drop t2;
+
+--+ holdcas off;

@@ -1,3 +1,4 @@
+--+ holdcas on;
 set names iso88591;
 
 prepare st1 from 'select /*+ recompile */ decode(?, ''a'', ?)';
@@ -82,3 +83,5 @@ deallocate prepare st4;
 drop table t;
 
 set names iso88591;
+
+--+ holdcas off;

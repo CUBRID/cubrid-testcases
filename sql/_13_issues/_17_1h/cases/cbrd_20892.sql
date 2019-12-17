@@ -1,3 +1,4 @@
+--+ holdcas on;
 drop table if exists t1;
 create table t1(a int, b int, c int, d int);
 insert into t1 select rownum%5, rownum%10, rownum, rownum from db_class x1, db_class x2, db_class x3 limit 50000;
@@ -22,3 +23,5 @@ SELECT * FROM cte;
 
 drop variable @v;
 drop table if exists t1;
+
+--+ holdcas off;

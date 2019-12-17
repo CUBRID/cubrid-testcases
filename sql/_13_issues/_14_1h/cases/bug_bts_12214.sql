@@ -1,3 +1,4 @@
+--+ holdcas on;
 --[i18n] Queries containing named variables are cached without charset or collate modifiers
 
 
@@ -49,3 +50,5 @@ drop view v;
 
 set names iso88591;
 
+
+--+ holdcas off;

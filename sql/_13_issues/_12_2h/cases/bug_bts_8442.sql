@@ -1,3 +1,4 @@
+--+ holdcas on;
 set @v1=0;
 create table z1 (a int, b int);
 insert into z1 values (1,1);
@@ -9,3 +10,5 @@ select a,b,ROW_NUMBER() over(PARTITION BY a ORDER BY b) c11 from z1 order by a, 
 select a,b,ROW_NUMBER() over(PARTITION BY a+@v1 ORDER BY b) c11 from z1 order by a, b;
 drop variable @v1;
 drop table z1;
+
+--+ holdcas off;

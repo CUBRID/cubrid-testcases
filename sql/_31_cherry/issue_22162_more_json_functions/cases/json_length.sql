@@ -1,3 +1,4 @@
+--+ holdcas on;
 
 --CBRD-22500 JSON_LENGTH support the path argument.
 SET @jv = '{  
@@ -94,3 +95,5 @@ SELECT JSON_LENGTH('{"Name": "Homer", "Stupid": true}');
 SELECT JSON_LENGTH('[1, 2, 3]');
 SELECT JSON_LENGTH('[1, 2, [3, 4]]');
 
+
+--+ holdcas off;
