@@ -51,7 +51,7 @@ MC: wait until C1 ready;
 C2: DELETE FROM t1 WHERE (description IS NULL or col = 'abcd') and 0 = (select sleep(4));
 /* expect: no transactions need to wait */
 /* expect: C1 select - id = 2,3,7 are updated */
-C1: SELECT * FROM t1 order by 1,2;
+C1: SELECT * FROM t1 where 0 = (select sleep(1)) order by 1,2;
 C1: commit;
 /* expect: C2 finished execution after C1 commit, 2 rows (id=5,6)deleted message, C2 select - id = 5,6 are deleted */
 MC: wait until C1 ready;
