@@ -144,7 +144,7 @@ execute rlike_st using '1', @tilde;
 execute rlike_st using '!', @tilde;
 DROP VARIABLE @tilde;
 
-set @word_fox = '[[:<:]]fox[[:>:]]';
+set @word_fox = '\bfox\b';
 execute rlike_st using 'I have a fox', @word_fox;
 execute rlike_st using 'fox has a human', @word_fox;
 execute rlike_st using 'any human and fox can live peacefully', @word_fox;
