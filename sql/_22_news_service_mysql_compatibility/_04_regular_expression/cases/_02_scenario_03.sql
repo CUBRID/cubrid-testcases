@@ -15,7 +15,6 @@ insert into t1 values(532,'~\t');
 
 create table t2(id INTEGER primary key NOT NULL, code  CHARACTER VARYING(30));
 insert into t2 values(532,'[[:alnum:]]');
-insert into t2 values(481,'[[.tab.]]$');
 insert into t2 values(376,'^[^a-z0-9].*[0-9]$');
 insert into t2 values(257,'[0-9|A-Z]+$');
 insert into t2 values(255,'\bWord\b');
