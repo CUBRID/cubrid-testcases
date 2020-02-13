@@ -60,23 +60,23 @@ INSERT INTO athlete VALUES
 
 SELECT 
 REGEXP_REPLACE (name, '[a-d]', '#'), REGEXP_REPLACE (name, '[e-z]', '@') 
-FROM athlete LIMIT 5;
+FROM athlete ORDER BY 1 LIMIT 5;
 
-SELECT REGEXP_REPLACE (name, '[a-d]', '#', 6, 0, 'i') from athlete LIMIT 5;
+SELECT REGEXP_REPLACE (name, '[a-d]', '#', 6, 0, 'i') from athlete ORDER BY 1 LIMIT 5;
 
 SELECT name FROM athlete 
-WHERE LENGTH (REGEXP_REPLACE (name, '\s', '')) < 5;
+WHERE LENGTH (REGEXP_REPLACE (name, '\s', '')) < 5 ORDER BY 1;
 
 WITH V_TEST AS (SELECT 'hello@cubrid.com' EMAIL)
-SELECT REGEXP_REPLACE(EMAIL, 'hello', 'cub') AS "id" FROM V_TEST;
+SELECT REGEXP_REPLACE(EMAIL, 'hello', 'cub') AS "id" FROM V_TEST ORDER BY 1;
 
-CREATE TABLE new_athlete ( encrypted_name VARCHAR ) AS SELECT REGEXP_REPLACE (name, '[a|e|i|o|u]', '#') AS encrypted_name from athlete LIMIT 10;
-SELECT * from new_athlete;
+CREATE TABLE new_athlete ( encrypted_name VARCHAR ) AS SELECT REGEXP_REPLACE (name, '[a|e|i|o|u]', '#') AS encrypted_name from athlete ORDER BY 1 LIMIT 10;
+SELECT * from new_athlete ORDER BY 1;
 DROP TABLE new_athlete;
 
 CREATE TABLE new_athlete (encrypted_name VARCHAR);
-INSERT INTO new_athlete SELECT REGEXP_REPLACE (name, '[a|e|i|o|u]', '#') AS encrypted_name from athlete LIMIT 10;
-SELECT * from new_athlete;
+INSERT INTO new_athlete SELECT REGEXP_REPLACE (name, '[a|e|i|o|u]', '#') AS encrypted_name from athlete ORDER BY 1 LIMIT 10;
+SELECT * from new_athlete ORDER BY 1;
 DROP TABLE new_athlete;
 
 DROP TABLE athlete;
