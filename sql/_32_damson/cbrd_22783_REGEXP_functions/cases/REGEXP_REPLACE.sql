@@ -38,6 +38,7 @@ SELECT REGEXP_REPLACE ('TechOnTheNet', 'a|e|i|o|u', '#', 1, 2, 'ia');
 SELECT REGEXP_REPLACE ('TechOnTheNet', 'a|e|i|o|u', '#', 1, 2, NULL);
 
 --functional test
+DROP TABLE IF EXISTS athlete;
 CREATE TABLE athlete (
 code INT AUTO_INCREMENT PRIMARY KEY
 , name VARCHAR(40) NOT NULL
@@ -73,13 +74,14 @@ WHERE LENGTH (REGEXP_REPLACE (name, '\s', '')) < 5 ORDER BY 1;
 WITH V_TEST AS (SELECT 'hello@cubrid.com' EMAIL)
 SELECT REGEXP_REPLACE(EMAIL, 'hello', 'cub') AS "id" FROM V_TEST ORDER BY 1;
 
+DROP TABLE IF EXISTS new_athlete;
 CREATE TABLE new_athlete ( encrypted_name VARCHAR ) AS SELECT REGEXP_REPLACE (name, '[a|e|i|o|u]', '#') AS encrypted_name from athlete ORDER BY 1;
 SELECT * from new_athlete ORDER BY 1;
-DROP TABLE new_athlete;
+DROP TABLE IF EXISTS new_athlete;
 
 CREATE TABLE new_athlete (encrypted_name VARCHAR);
 INSERT INTO new_athlete SELECT REGEXP_REPLACE (name, '[a|e|i|o|u]', '#') AS encrypted_name from athlete ORDER BY 1;
 SELECT * from new_athlete ORDER BY 1;
 
-DROP TABLE new_athlete;
-DROP TABLE athlete;
+DROP TABLE IF EXISTS new_athlete;
+DROP TABLE IF EXISTS athlete;
