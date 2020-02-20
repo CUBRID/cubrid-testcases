@@ -64,6 +64,8 @@ FROM athlete ORDER BY 1 LIMIT 5;
 
 SELECT REGEXP_REPLACE (name, '[a-d]', '#', 6, 0, 'i') from athlete ORDER BY 1 LIMIT 5;
 
+SELECT REGEXP_REPLACE (name, '[a-d]', '#', 6, 0, 'c') from athlete ORDER BY 1 LIMIT 5;
+
 SELECT name FROM athlete 
 WHERE LENGTH (REGEXP_REPLACE (name, '\s', '')) < 5 ORDER BY 1;
 
