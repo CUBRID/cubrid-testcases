@@ -10,28 +10,30 @@ c    d    max(b)    max(c)
 
 Query plan:
 temp(group by)
-    subplan: sscan
+    subplan: iscan
                  class: t? node[?]
-                 sargs: term[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?] AND term[?]
                  cost:  ? card ?
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_LS */ t?.c, t?.d, max(t?.b), max(t?.c) from t? t? where {t?.c, t?.d}={?, ?} group by t?.c, t?.d
+select /*+ INDEX_LS */ t?.c, t?.d, max(t?.b), max(t?.c) from t? t? where t?.d= ?:?  and t?.c= ?:?  group by t?.c, t?.d
 ===================================================
 c    d    max(b)    max(c)    
 2     2     2     2     
 
 Query plan:
 temp(group by)
-    subplan: sscan
+    subplan: iscan
                  class: t? node[?]
-                 sargs: term[?]
+                 index: i_t?_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?] AND term[?]
                  cost:  ? card ?
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_LS */ t?.c, t?.d, max(t?.b), max(t?.c) from t? t? where t?.c=? and t?.d=?<>? group by t?.c, t?.d
+select /*+ INDEX_LS */ t?.c, t?.d, max(t?.b), max(t?.c) from t? t? where t?.d= ?:?  and t?.c= ?:?  group by t?.c, t?.d
 ===================================================
 c    d    max(b)    max(c)    
 2     2     2     2     
