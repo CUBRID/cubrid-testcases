@@ -50,7 +50,7 @@ select /*+ recompile DESC_IDX */ * from (
 union all 
 (select /*+ recompile NO_DESC_IDX */ * from x where a>0 using index pk_x_a keylimit 0,5 order by a asc for orderby_num() between 1 and 3)) t;
 
-select /*+ recompile DESC_IDX */ ((select /*+ recompile NO_DESC_IDX */ * from y where y.a>1 order by y.a desc limit 1) = (select /*+ recompile NO_DESC_IDX */ * from y where y.a>1 order by y.a desc limit 1)) as co from db_root limit 1;
+select /*+ recompile DESC_IDX */ ((select /*+ recompile NO_DESC_IDX */ a,b from y where y.a>1 order by y.a desc limit 1) = (select /*+ recompile NO_DESC_IDX */ a,b from y where y.a>1 order by y.a desc limit 1)) as co from db_root limit 1;
 
 select /*+ recompile ordered NO_DESC_IDX */ * from x left join y  on x.a=y.a where y.a>1 order by y.a desc;
 

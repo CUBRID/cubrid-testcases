@@ -53,17 +53,12 @@ sscan
 Query stmt:
 (select sum(foo?.a) from foo? foo?)
 Query plan:
-idx-join (inner join)
-    outer: sscan
-               class: av? node[?]
-               cost:  ? card ?
-    inner: iscan
-               class: foo node[?]
-               index: pk_foo_a term[?]
-               cost:  ? card ?
+iscan
+    class: foo node[?]
+    index: pk_foo_a term[?]
     cost:  ? card ?
 Query stmt:
-select foo.a, foo.b from foo foo, (select sum(foo?.a) from foo? foo?) av? (av_?) where foo.a=av?.av_? connect by  prior foo.a=foo.b
+select foo.a, foo.b from foo foo start with foo.a=(select sum(foo?.a) from foo? foo?) connect by  prior foo.a=foo.b
 ===================================================
 a    b    
 1     2     

@@ -50,20 +50,14 @@ Query stmt:
 (select max( cast(t?.i? as numeric)+?.?) from t? t?)
 Query plan:
 temp(order by)
-    subplan: nl-join (inner join)
-                 edge:  term[?]
-                 outer: sscan
-                            class: t? node[?]
-                            cost:  ? card ?
-                 inner: sscan
-                            class: av? node[?]
-                            sargs: term[?]
-                            cost:  ? card ?
+    subplan: iscan
+                 class: t? node[?]
+                 index: i_t?_i? term[?]
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ t?.i?, t?.i? from t? t?, (select max( cast(t?.i? as numeric)+?.?) from t? t?) av? (av_?) where t?.i?=av?.av_? order by ?
+select /*+ ORDERED */ t?.i?, t?.i? from t? t? where t?.i?=(select max( cast(t?.i? as numeric)+?.?) from t? t?) order by ?
 ===================================================
 0
 i1    i2    
@@ -121,7 +115,7 @@ nl-join (inner join)
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select ? from t? t?, table(set{t?.i?}) t (i) where (t?.i?=t.i+?)
+select ? from t? t?, table(set{t?.i?}) t (i) where t?.i?=t.i+?
 ===================================================
 0
 1    
@@ -177,20 +171,14 @@ Query stmt:
 (select max( cast(t?.i? as numeric)+?.?) from t? t?)
 Query plan:
 temp(order by)
-    subplan: nl-join (inner join)
-                 edge:  term[?]
-                 outer: sscan
-                            class: t? node[?]
-                            cost:  ? card ?
-                 inner: sscan
-                            class: av? node[?]
-                            sargs: term[?]
-                            cost:  ? card ?
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ t?.i?, t?.i? from t? t?, (select max( cast(t?.i? as numeric)+?.?) from t? t?) av? (av_?) where t?.i?=av?.av_? order by ?
+select /*+ ORDERED */ t?.i?, t?.i? from t? t? where t?.i?=(select max( cast(t?.i? as numeric)+?.?) from t? t?) order by ?
 ===================================================
 0
 i1    i2    
@@ -249,7 +237,7 @@ nl-join (inner join)
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select ? from t? t?, table(set{t?.i?}) t (i) where (t?.i?=t.i+?)
+select ? from t? t?, table(set{t?.i?}) t (i) where t?.i?=t.i+?
 ===================================================
 0
 1    
