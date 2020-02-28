@@ -39,49 +39,44 @@ SELECT REGEXP_REPLACE ('TechOnTheNet', 'a|e|i|o|u', '#', 1, 2, NULL);
 
 --functional test
 DROP TABLE IF EXISTS athlete;
-CREATE TABLE athlete (
-code INT AUTO_INCREMENT PRIMARY KEY
-, name VARCHAR(40) NOT NULL
-, gender CHAR(1)
-, nation_code CHAR(3)
-, event VARCHAR(30)
-);
+DROP TABLE IF EXISTS pattern;
 
-INSERT INTO athlete VALUES 
-(10998, 'Fernandez Jaime', 'M', 'AUS', 'Rowing')
-,(10997, 'Fernandez Isabel', 'W', 'ESP', 'Judo')
-,(10996, 'Fernandez Gigi', 'W', 'USA', 'Tennis')
-,(10993, 'Feri Attila', 'M', 'HUN', 'Weightlifting')
-,(10992, 'Felisiak Robert', 'M', 'GER', 'Fencing')
-,(10991, 'Feklistova Maria', 'W', 'RUS', 'Shooting')
-,(10990, 'Fei Alessandro', 'M', 'ITA', 'Volleyball')
-,(12163, 'Li Ge', 'M', 'CHN', 'Gymnastics')
-,(14912, 'Kelly', 'W', 'BRA', 'Football')
-,(14873, 'Jo Sh', 'M', 'KOR', 'Boxing');
+CREATE TABLE athlete (id INT PRIMARY KEY, name VARCHAR(40) NOT NULL);
+INSERT INTO athlete VALUES (10998, 'Fernandez Jaime');
+INSERT INTO athlete VALUES (10997, 'Fernandez Isabel');
+INSERT INTO athlete VALUES (10996, 'Fernandez Gigi');
+INSERT INTO athlete VALUES (10993, 'Feri Attila');
+INSERT INTO athlete VALUES (10992, 'Felisiak Robert');
+INSERT INTO athlete VALUES (10991, 'Feklistova Maria');
+INSERT INTO athlete VALUES (10990, 'Fei Alessandro');
+INSERT INTO athlete VALUES (12163, 'Li Ge');
+INSERT INTO athlete VALUES (14912, 'Kelly');
+INSERT INTO athlete VALUES (14873, 'Jo Sh');
 SELECT * FROM athlete ORDER BY 1;
 
-SELECT 
-REGEXP_REPLACE (name, '[a-e]', '#'), REGEXP_REPLACE (name, '[f-z]', '@') 
-FROM athlete ORDER BY 1;
+create table pattern(id int primary key, code varchar(40) not null);
+insert into pattern values(15000, '[a-e]');
+insert into pattern values(15001, '[f-z]');
+insert into pattern values(15002, 'a|e|i|o|u');
+select * from pattern order by 1;
 
+SELECT REGEXP_REPLACE (name, '[a-e]', '#'), REGEXP_REPLACE (name, '[f-z]', '@') FROM athlete ORDER BY 1;
 SELECT REGEXP_REPLACE (name, '[a-e]', '#', 3, 0, 'i') from athlete ORDER BY 1;
-
 SELECT REGEXP_REPLACE (name, '[a-e]', '#', 3, 0, 'c') from athlete ORDER BY 1;
+SELECT name FROM athlete WHERE LENGTH (REGEXP_REPLACE (name, '\s', '')) < 5 ORDER BY 1;
+select athlete.id, REGEXP_REPLACE(athlete.name, pattern.code, '#') from athlete, pattern order by 1;
 
-SELECT name FROM athlete 
-WHERE LENGTH (REGEXP_REPLACE (name, '\s', '')) < 5 ORDER BY 1;
-
-WITH V_TEST AS (SELECT 'hello@cubrid.com' EMAIL)
-SELECT REGEXP_REPLACE(EMAIL, 'hello', 'cub') AS "id" FROM V_TEST ORDER BY 1;
+WITH V_TEST AS (SELECT 'hello@cubrid.com' EMAIL)SELECT REGEXP_REPLACE(EMAIL, 'hello', 'cub') AS "id" FROM V_TEST ORDER BY 1;
 
 DROP TABLE IF EXISTS new_athlete;
 CREATE TABLE new_athlete ( encrypted_name VARCHAR ) AS SELECT REGEXP_REPLACE (name, '[a|e|i|o|u]', '#') AS encrypted_name from athlete ORDER BY 1;
 SELECT * from new_athlete ORDER BY 1;
-DROP TABLE IF EXISTS new_athlete;
 
+DROP TABLE IF EXISTS new_athlete;
 CREATE TABLE new_athlete (encrypted_name VARCHAR);
 INSERT INTO new_athlete SELECT REGEXP_REPLACE (name, '[a|e|i|o|u]', '#') AS encrypted_name from athlete ORDER BY 1;
 SELECT * from new_athlete ORDER BY 1;
 
 DROP TABLE IF EXISTS new_athlete;
+DROP TABLE IF EXISTS pattern;
 DROP TABLE IF EXISTS athlete;
