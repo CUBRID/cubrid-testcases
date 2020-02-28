@@ -54,17 +54,16 @@ INSERT INTO athlete VALUES (14912, 'Kelly');
 INSERT INTO athlete VALUES (14873, 'Jo Sh');
 SELECT * FROM athlete ORDER BY 1;
 
-create table pattern(id int primary key, code varchar(40) not null);
-insert into pattern values(15000, '[a-e]');
-insert into pattern values(15001, '[f-z]');
-insert into pattern values(15002, 'a|e|i|o|u');
+create table pattern(id int primary key, code varchar(40) not null, pos int, occ int, match_type varchar);
+insert into pattern values(15000, '[a-e]', 3, 0, 'c');
+insert into pattern values(15001, '[a-e]', 3, 0, 'i');
 select * from pattern order by 1;
 
 SELECT REGEXP_REPLACE (name, '[a-e]', '#'), REGEXP_REPLACE (name, '[f-z]', '@') FROM athlete ORDER BY 1;
 SELECT REGEXP_REPLACE (name, '[a-e]', '#', 3, 0, 'i') from athlete ORDER BY 1;
 SELECT REGEXP_REPLACE (name, '[a-e]', '#', 3, 0, 'c') from athlete ORDER BY 1;
+select athlete.id, REGEXP_REPLACE(athlete.name, pattern.code, '#', pattern.pos, pattern.occ, pattern.match_type) from athlete, pattern order by 1;
 SELECT name FROM athlete WHERE LENGTH (REGEXP_REPLACE (name, '\s', '')) < 5 ORDER BY 1;
-select athlete.id, REGEXP_REPLACE(athlete.name, pattern.code, '#') from athlete, pattern order by 1;
 
 WITH V_TEST AS (SELECT 'hello@cubrid.com' EMAIL)SELECT REGEXP_REPLACE(EMAIL, 'hello', 'cub') AS "id" FROM V_TEST ORDER BY 1;
 
