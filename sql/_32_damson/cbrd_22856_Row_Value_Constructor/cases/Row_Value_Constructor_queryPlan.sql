@@ -40,7 +40,7 @@ select /*+ recompile */ * from rvc_tmp2 where (col2,col1,lower(col4)) in ((3,3,3
 select /*+ recompile  INDEX_SS */ * from rvc_tmp2 where col2 = 1 and col3 = 1;
 select /*+ recompile  INDEX_SS */ * from rvc_tmp2 where (col2,col3) = (1,1);
 select /*+ recompile  INDEX_SS */ * from rvc_tmp2 where (col2,col3) in ((1,1));
-select /*+ recompile  INDEX_SS */ * from rvc_tmp2 where (col2,col3) in ((1,1));
+select /*+ recompile  INDEX_SS */ * from rvc_tmp2 where (col2,col3) in ((1,1),(2,3),(3,4));
 
 -- test end
 drop table rvc_tmp2;
