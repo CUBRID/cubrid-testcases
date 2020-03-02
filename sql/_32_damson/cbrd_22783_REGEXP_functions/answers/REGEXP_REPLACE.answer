@@ -166,9 +166,15 @@ id    name
 ===================================================
 1
 ===================================================
+1
+===================================================
+1
+===================================================
 id    code    pos    occ    match_type    
-15000     [a-e]     3     0     c     
-15001     [a-e]     3     0     i     
+15000     [a-e]     3     2     c     
+15001     [f-z]     3     2     c     
+15002     \s     2     2     c     
+15003     a|e|i|o|u     3     2     c     
 
 ===================================================
 regexp_replace(name, '[a-e]', '#')    regexp_replace(name, '[f-z]', '@')    
@@ -210,32 +216,181 @@ Kelly
 Li G#     
 
 ===================================================
-id    regexp_replace(athlete.name, pattern.code, '#', pattern.pos, pattern.occ, pattern.match_type)    
-10990     Fei Al#ss#n#ro     
-10990     Fei #l#ss#n#ro     
-10991     Feklistov# M#ri#     
-10991     Feklistov# M#ri#     
-10992     Felisi#k Ro##rt     
-10992     Felisi#k Ro##rt     
-10993     Feri Attil#     
-10993     Feri #ttil#     
-10996     Fern#n##z Gigi     
-10996     Fern#n##z Gigi     
-10997     Fern#n##z Is###l     
-10997     Fern#n##z Is###l     
-10998     Fern#n##z J#im#     
-10998     Fern#n##z J#im#     
-12163     Li G#     
-12163     Li G#     
-14873     Jo Sh     
-14873     Jo Sh     
-14912     Kelly     
-14912     Kelly     
-
-===================================================
 name    
 Jo Sh     
 Li Ge     
+
+===================================================
+regexp_replace(athlete.name, p1.code, '#')    code    
+F#i #l#ss#n#ro     [a-e]     
+#e# A#e##a#d##     [f-z]     
+Fei#Alessandro     \s     
+F## #l#ss#ndr#     a|e|i|o|u     
+F#klistov# M#ri#     [a-e]     
+#e#######a #a##a     [f-z]     
+Feklistova#Maria     \s     
+F#kl#st#v# M#r##     a|e|i|o|u     
+F#lisi#k Ro##rt     [a-e]     
+#e####a# ##be##     [f-z]     
+Felisiak#Robert     \s     
+F#l#s##k R#b#rt     a|e|i|o|u     
+F#ri #ttil#     [a-e]     
+#e## A####a     [f-z]     
+Feri#Attila     \s     
+F#r# #tt#l#     a|e|i|o|u     
+F#rn#n##z Gigi     [a-e]     
+#e##a#de# ####     [f-z]     
+Fernandez#Gigi     \s     
+F#rn#nd#z G#g#     a|e|i|o|u     
+F#rn#n##z Is###l     [a-e]     
+#e##a#de# ##abe#     [f-z]     
+Fernandez#Isabel     \s     
+F#rn#nd#z #s#b#l     a|e|i|o|u     
+F#rn#n##z J#im#     [a-e]     
+#e##a#de# #a##e     [f-z]     
+Fernandez#Jaime     \s     
+F#rn#nd#z J##m#     a|e|i|o|u     
+Li G#     [a-e]     
+## #e     [f-z]     
+Li#Ge     \s     
+L# G#     a|e|i|o|u     
+Jo Sh     [a-e]     
+## ##     [f-z]     
+Jo#Sh     \s     
+J# Sh     a|e|i|o|u     
+K#lly     [a-e]     
+#e###     [f-z]     
+Kelly     \s     
+K#lly     a|e|i|o|u     
+
+===================================================
+regexp_replace(athlete.name, p1.code, '#', p1.pos)    code    pos    
+Fei #l#ss#n#ro     [a-e]     3     
+Fe# A#e##a#d##     [f-z]     3     
+Fei#Alessandro     \s     2     
+Fe# #l#ss#ndr#     a|e|i|o|u     3     
+Feklistov# M#ri#     [a-e]     3     
+Fe#######a #a##a     [f-z]     3     
+Feklistova#Maria     \s     2     
+Fekl#st#v# M#r##     a|e|i|o|u     3     
+Felisi#k Ro##rt     [a-e]     3     
+Fe####a# ##be##     [f-z]     3     
+Felisiak#Robert     \s     2     
+Fel#s##k R#b#rt     a|e|i|o|u     3     
+Feri #ttil#     [a-e]     3     
+Fe## A####a     [f-z]     3     
+Feri#Attila     \s     2     
+Fer# #tt#l#     a|e|i|o|u     3     
+Fern#n##z Gigi     [a-e]     3     
+Fe##a#de# ####     [f-z]     3     
+Fernandez#Gigi     \s     2     
+Fern#nd#z G#g#     a|e|i|o|u     3     
+Fern#n##z Is###l     [a-e]     3     
+Fe##a#de# ##abe#     [f-z]     3     
+Fernandez#Isabel     \s     2     
+Fern#nd#z #s#b#l     a|e|i|o|u     3     
+Fern#n##z J#im#     [a-e]     3     
+Fe##a#de# #a##e     [f-z]     3     
+Fernandez#Jaime     \s     2     
+Fern#nd#z J##m#     a|e|i|o|u     3     
+Li G#     [a-e]     3     
+Li #e     [f-z]     3     
+Li#Ge     \s     2     
+Li G#     a|e|i|o|u     3     
+Jo Sh     [a-e]     3     
+Jo ##     [f-z]     3     
+Jo#Sh     \s     2     
+Jo Sh     a|e|i|o|u     3     
+Kelly     [a-e]     3     
+Ke###     [f-z]     3     
+Kelly     \s     2     
+Kelly     a|e|i|o|u     3     
+
+===================================================
+regexp_replace(athlete.name, p1.code, '#', p1.pos, p1.occ)    code    pos    occ    
+Fei Al#ssandro     [a-e]     3     2     
+Fei A#essandro     [f-z]     3     2     
+Fei Alessandro     \s     2     2     
+Fei #lessandro     a|e|i|o|u     3     2     
+Feklistova M#ria     [a-e]     3     2     
+Fek#istova Maria     [f-z]     3     2     
+Feklistova Maria     \s     2     2     
+Feklist#va Maria     a|e|i|o|u     3     2     
+Felisiak Ro#ert     [a-e]     3     2     
+Fel#siak Robert     [f-z]     3     2     
+Felisiak Robert     \s     2     2     
+Felis#ak Robert     a|e|i|o|u     3     2     
+Feri Attil#     [a-e]     3     2     
+Fer# Attila     [f-z]     3     2     
+Feri Attila     \s     2     2     
+Feri #ttila     a|e|i|o|u     3     2     
+Fernan#ez Gigi     [a-e]     3     2     
+Fer#andez Gigi     [f-z]     3     2     
+Fernandez Gigi     \s     2     2     
+Fernand#z Gigi     a|e|i|o|u     3     2     
+Fernan#ez Isabel     [a-e]     3     2     
+Fer#andez Isabel     [f-z]     3     2     
+Fernandez Isabel     \s     2     2     
+Fernand#z Isabel     a|e|i|o|u     3     2     
+Fernan#ez Jaime     [a-e]     3     2     
+Fer#andez Jaime     [f-z]     3     2     
+Fernandez Jaime     \s     2     2     
+Fernand#z Jaime     a|e|i|o|u     3     2     
+Li Ge     [a-e]     3     2     
+Li Ge     [f-z]     3     2     
+Li Ge     \s     2     2     
+Li Ge     a|e|i|o|u     3     2     
+Jo Sh     [a-e]     3     2     
+Jo S#     [f-z]     3     2     
+Jo Sh     \s     2     2     
+Jo Sh     a|e|i|o|u     3     2     
+Kelly     [a-e]     3     2     
+Kel#y     [f-z]     3     2     
+Kelly     \s     2     2     
+Kelly     a|e|i|o|u     3     2     
+
+===================================================
+regexp_replace(athlete.name, p1.code, '#', p1.pos, p1.occ, p1.match_type)    code    pos    occ    match_type    
+Fernan#ez Jaime     [a-e]     3     2     c     
+Fer#andez Jaime     [f-z]     3     2     c     
+Fernandez Jaime     \s     2     2     c     
+Fernand#z Jaime     a|e|i|o|u     3     2     c     
+Fernan#ez Isabel     [a-e]     3     2     c     
+Fer#andez Isabel     [f-z]     3     2     c     
+Fernandez Isabel     \s     2     2     c     
+Fernand#z Isabel     a|e|i|o|u     3     2     c     
+Fernan#ez Gigi     [a-e]     3     2     c     
+Fer#andez Gigi     [f-z]     3     2     c     
+Fernandez Gigi     \s     2     2     c     
+Fernand#z Gigi     a|e|i|o|u     3     2     c     
+Feri Attila     [a-e]     3     2     c     
+Fer# Attila     [f-z]     3     2     c     
+Feri Attila     \s     2     2     c     
+Feri Att#la     a|e|i|o|u     3     2     c     
+Felisiak Ro#ert     [a-e]     3     2     c     
+Fel#siak Robert     [f-z]     3     2     c     
+Felisiak Robert     \s     2     2     c     
+Felis#ak Robert     a|e|i|o|u     3     2     c     
+Feklistova M#ria     [a-e]     3     2     c     
+Fek#istova Maria     [f-z]     3     2     c     
+Feklistova Maria     \s     2     2     c     
+Feklist#va Maria     a|e|i|o|u     3     2     c     
+Fei Aless#ndro     [a-e]     3     2     c     
+Fei A#essandro     [f-z]     3     2     c     
+Fei Alessandro     \s     2     2     c     
+Fei Al#ssandro     a|e|i|o|u     3     2     c     
+Li Ge     [a-e]     3     2     c     
+Li Ge     [f-z]     3     2     c     
+Li Ge     \s     2     2     c     
+Li Ge     a|e|i|o|u     3     2     c     
+Kelly     [a-e]     3     2     c     
+Kel#y     [f-z]     3     2     c     
+Kelly     \s     2     2     c     
+Kelly     a|e|i|o|u     3     2     c     
+Jo Sh     [a-e]     3     2     c     
+Jo Sh     [f-z]     3     2     c     
+Jo Sh     \s     2     2     c     
+Jo Sh     a|e|i|o|u     3     2     c     
 
 ===================================================
 id    

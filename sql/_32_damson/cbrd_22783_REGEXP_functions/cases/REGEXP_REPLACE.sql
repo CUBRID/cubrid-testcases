@@ -39,7 +39,7 @@ SELECT REGEXP_REPLACE ('TechOnTheNet', 'a|e|i|o|u', '#', 1, 2, NULL);
 
 --functional test
 DROP TABLE IF EXISTS athlete;
-DROP TABLE IF EXISTS pattern;
+DROP TABLE IF EXISTS p1;
 
 CREATE TABLE athlete (id INT PRIMARY KEY, name VARCHAR(40) NOT NULL);
 INSERT INTO athlete VALUES (10998, 'Fernandez Jaime');
@@ -54,16 +54,23 @@ INSERT INTO athlete VALUES (14912, 'Kelly');
 INSERT INTO athlete VALUES (14873, 'Jo Sh');
 SELECT * FROM athlete ORDER BY 1;
 
-create table pattern(id int primary key, code varchar(40) not null, pos int, occ int, match_type varchar);
-insert into pattern values(15000, '[a-e]', 3, 0, 'c');
-insert into pattern values(15001, '[a-e]', 3, 0, 'i');
-select * from pattern order by 1;
+create table p1(id int primary key, code varchar(40) not null, pos int, occ int, match_type varchar);
+insert into p1 values(15000, '[a-e]', 3, 2, 'c');
+insert into p1 values(15001, '[f-z]', 3, 2, 'c');
+insert into p1 values(15002, '\s', 2, 2, 'c');
+insert into p1 values(15003, 'a|e|i|o|u', 3, 2, 'c');
+select * from p1 order by 1;
 
 SELECT REGEXP_REPLACE (name, '[a-e]', '#'), REGEXP_REPLACE (name, '[f-z]', '@') FROM athlete ORDER BY 1;
 SELECT REGEXP_REPLACE (name, '[a-e]', '#', 3, 0, 'i') from athlete ORDER BY 1;
 SELECT REGEXP_REPLACE (name, '[a-e]', '#', 3, 0, 'c') from athlete ORDER BY 1;
-select athlete.id, REGEXP_REPLACE(athlete.name, pattern.code, '#', pattern.pos, pattern.occ, pattern.match_type) from athlete, pattern order by 1;
 SELECT name FROM athlete WHERE LENGTH (REGEXP_REPLACE (name, '\s', '')) < 5 ORDER BY 1;
+
+--reference from external table
+select REGEXP_REPLACE(athlete.name, p1.code, '#'), p1.code from athlete, p1 order by athlete.id;
+select REGEXP_REPLACE(athlete.name, p1.code, '#', p1.pos), p1.code, p1.pos from athlete, p1 order by athlete.id;
+select REGEXP_REPLACE(athlete.name, p1.code, '#', p1.pos, p1.occ), p1.code, p1.pos, p1.occ from athlete, p1 order by athlete.id;
+select REGEXP_REPLACE(athlete.name, p1.code, '#', p1.pos, p1.occ, p1.match_type), p1.code, p1.pos, p1.occ, p1.match_type from athlete, p1 order by athlete;
 
 WITH V_TEST AS (SELECT 'hello@cubrid.com' EMAIL)SELECT REGEXP_REPLACE(EMAIL, 'hello', 'cub') AS "id" FROM V_TEST ORDER BY 1;
 
@@ -77,5 +84,5 @@ INSERT INTO new_athlete SELECT REGEXP_REPLACE (name, '[a|e|i|o|u]', '#') AS encr
 SELECT * from new_athlete ORDER BY 1;
 
 DROP TABLE IF EXISTS new_athlete;
-DROP TABLE IF EXISTS pattern;
+DROP TABLE IF EXISTS p1;
 DROP TABLE IF EXISTS athlete;
