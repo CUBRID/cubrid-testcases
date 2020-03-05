@@ -86,6 +86,147 @@ ip_1    ip_2    ip_3    ip_4
 2     10     1     140     
 
 ===================================================
+bit_length(regexp_substr('Samseong-ro 86-gil, Gangnam-gu, Seoul', '\w+\-GU', 1, 1, 'i'))    
+80     
+
+===================================================
+id    domain    
+hello     cubrid.com     
+
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+id    
+demo@google.net     
+dummy@cubrid.net     
+hello@cubrid.com     
+sample@google.com     
+test@cubrid.org     
+
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+num    code    pos    occ    match_type    
+1     [[:alpha:]]+     1     1     c     
+2     [^@]+     1     1     c     
+3     [^@]+     1     2     c     
+4     [^.]+     1     2     c     
+
+===================================================
+regexp_substr(email.id, p1.code)    code    
+hello     [[:alpha:]]+     
+test     [[:alpha:]]+     
+dummy     [[:alpha:]]+     
+sample     [[:alpha:]]+     
+demo     [[:alpha:]]+     
+hello     [^@]+     
+test     [^@]+     
+dummy     [^@]+     
+sample     [^@]+     
+demo     [^@]+     
+hello     [^@]+     
+test     [^@]+     
+dummy     [^@]+     
+sample     [^@]+     
+demo     [^@]+     
+hello@cubrid     [^.]+     
+test@cubrid     [^.]+     
+dummy@cubrid     [^.]+     
+sample@google     [^.]+     
+demo@google     [^.]+     
+
+===================================================
+regexp_substr(email.id, p1.code, p1.pos)    code    pos    
+hello     [[:alpha:]]+     1     
+test     [[:alpha:]]+     1     
+dummy     [[:alpha:]]+     1     
+sample     [[:alpha:]]+     1     
+demo     [[:alpha:]]+     1     
+hello     [^@]+     1     
+test     [^@]+     1     
+dummy     [^@]+     1     
+sample     [^@]+     1     
+demo     [^@]+     1     
+hello     [^@]+     1     
+test     [^@]+     1     
+dummy     [^@]+     1     
+sample     [^@]+     1     
+demo     [^@]+     1     
+hello@cubrid     [^.]+     1     
+test@cubrid     [^.]+     1     
+dummy@cubrid     [^.]+     1     
+sample@google     [^.]+     1     
+demo@google     [^.]+     1     
+
+===================================================
+regexp_substr(email.id, p1.code, p1.pos, p1.occ)    code    pos    occ    
+hello     [[:alpha:]]+     1     1     
+test     [[:alpha:]]+     1     1     
+dummy     [[:alpha:]]+     1     1     
+sample     [[:alpha:]]+     1     1     
+demo     [[:alpha:]]+     1     1     
+hello     [^@]+     1     1     
+test     [^@]+     1     1     
+dummy     [^@]+     1     1     
+sample     [^@]+     1     1     
+demo     [^@]+     1     1     
+cubrid.com     [^@]+     1     2     
+cubrid.org     [^@]+     1     2     
+cubrid.net     [^@]+     1     2     
+google.com     [^@]+     1     2     
+google.net     [^@]+     1     2     
+com     [^.]+     1     2     
+org     [^.]+     1     2     
+net     [^.]+     1     2     
+com     [^.]+     1     2     
+net     [^.]+     1     2     
+
+===================================================
+regexp_substr(email.id, p1.code, p1.pos, p1.occ, p1.match_type)    code    pos    occ    match_type    
+hello     [[:alpha:]]+     1     1     c     
+test     [[:alpha:]]+     1     1     c     
+dummy     [[:alpha:]]+     1     1     c     
+sample     [[:alpha:]]+     1     1     c     
+demo     [[:alpha:]]+     1     1     c     
+hello     [^@]+     1     1     c     
+test     [^@]+     1     1     c     
+dummy     [^@]+     1     1     c     
+sample     [^@]+     1     1     c     
+demo     [^@]+     1     1     c     
+cubrid.com     [^@]+     1     2     c     
+cubrid.org     [^@]+     1     2     c     
+cubrid.net     [^@]+     1     2     c     
+google.com     [^@]+     1     2     c     
+google.net     [^@]+     1     2     c     
+com     [^.]+     1     2     c     
+org     [^.]+     1     2     c     
+net     [^.]+     1     2     c     
+com     [^.]+     1     2     c     
+net     [^.]+     1     2     c     
+
+===================================================
 0
 ===================================================
 0
@@ -106,21 +247,15 @@ ip_1    ip_2    ip_3    ip_4
 ===================================================
 1
 ===================================================
-1
-===================================================
-1
-===================================================
-id    name    
-10990     Fei Alessandro     
-10991     Feklistova Maria     
-10992     Felisiak Robert     
-10993     Feri Attila     
-10996     Fernandez Gigi     
-10997     Fernandez Isabel     
-10998     Fernandez Jaime     
-12163     Li Ge     
-14873     Jo Sh     
-14912     Kelly     
+name    
+Fei Alessandro     
+Feklistova Maria     
+Felisiak Robert     
+Feri Attila     
+Fernandez Jaime     
+Jo Sh     
+Kelly     
+Li Ge     
 
 ===================================================
 first_name    
@@ -133,6 +268,8 @@ Jo
 Kelly     
 Li     
 
+===================================================
+0
 ===================================================
 0
 ===================================================
@@ -166,10 +303,8 @@ Li
 ===================================================
 0
 ===================================================
-bit_length(regexp_substr('Samseong-ro 86-gil, Gangnam-gu, Seoul', '\w+\-GU', 1, 1, 'i'))    
-80     
-
+0
 ===================================================
-id    domain    
-hello     cubrid.com     
-
+0
+===================================================
+0
