@@ -16,5 +16,6 @@ SELECT REGEXP_REPLACE(_euckr'가나다라' collate euckr_bin, _utf8' [가-나]{4
 SELECT REGEXP_REPLACE(_euckr'가나다라', _utf8' [가-나]{4}', _utf8'다른 문자셋');
 
 SET NAMES utf8; 
+SELECT REGEXP_REPLACE('Kłak Aleksander', '[[:alpha:]]+','#', 1, 1);
 SELECT REGEXP_REPLACE(_euckr'가나다라', _utf8' [가-나]{4}', _utf8'다른 문자셋');
 SELECT REGEXP_REPLACE('가나다라' COLLATE utf8_ko_cs,  _utf8' [த]' COLLATE utf8_tr_cs, 'INVALID');
