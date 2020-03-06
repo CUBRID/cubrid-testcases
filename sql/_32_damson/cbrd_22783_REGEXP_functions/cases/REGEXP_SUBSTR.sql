@@ -28,7 +28,6 @@ SELECT REGEXP_SUBSTR('Samseong-ro 86-gil, Gangnam-gu, Seoul', '\w+\-GU', 1, 1, '
 SELECT REGEXP_SUBSTR('Samseong-ro 86-gil, Gangnam-gu, Seoul', '\w+\-GU', 1, 1, NULL);
 
 --functional test
---;lin on
 SELECT REGEXP_SUBSTR(ip, '[^.]+', 1, 1) ip_1
 , REGEXP_SUBSTR(ip, '[^.]+', 1, 2) ip_2
 , REGEXP_SUBSTR(ip, '[^.]+', 1, 3) ip_3
