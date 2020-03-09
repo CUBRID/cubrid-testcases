@@ -6,3 +6,6 @@ SELECT REGEXP_SUBSTR('11억 8112만 5400원', '\d+[[:alpha:]]', 3, 1);
 SELECT REGEXP_SUBSTR('Kłak Aleksander', '[[:alpha:]]+', 1, 1);
 SELECT REGEXP_SUBSTR(_euckr'가나다라' COLLATE euckr_bin, _utf8' [가-나]{4}' COLLATE utf8_ko_cs);
 SELECT REGEXP_SUBSTR('가나다라' COLLATE utf8_ko_cs,  _utf8' [த]' COLLATE utf8_tr_cs);
+
+SET NAMES iso88591;
+SELECT REGEXP_SUBSTR('Kłak Aleksander', '[[:alpha:]]+', 1, 1);
