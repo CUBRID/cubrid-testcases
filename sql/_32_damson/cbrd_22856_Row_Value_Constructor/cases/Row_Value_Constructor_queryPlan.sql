@@ -17,7 +17,7 @@ select /*+ recompile */ * from rvc_tmp2 where (col1,col2) IN ((2,4),(1,2)) and (
 select /*+ recompile */ * from rvc_tmp2 where (col1,col2) IN ((2,4),(1,2)) and (col1,col2) in ((3,4),(2,3));
 select /*+ recompile */ * from rvc_tmp2 where (col1,col4) IN ((1,2),(2,2)) and col2 > 1;
 select /*+ recompile */ * from rvc_tmp2 where (col1,col3) IN ((2,4),(1,3)) and (col4,col5) in ((4,5),(2,3));
-select /*+ recompile */ * from rvc_tmp2 where (col1,col2) in (select 1,2 from rvc_tmp2);
+select /*+ recompile ordered */ * from rvc_tmp2 where (col1,col2) in (select 1,2 from rvc_tmp2);
 select /*+ recompile */ * from rvc_tmp2 where (col1,col2) in (select 1,col2 from rvc_tmp2 WHERE col1 = 1);
 select /*+ recompile */ * from rvc_tmp2 where col1 = 1 and col2 =1 and (col3,col4,col5) in ((1,1,1),(2,2,2));
 select /*+ recompile ordered */ b.* from rvc_tmp2 a, rvc_tmp2 b where a.col1 = b.col1 and (a.col1,a.col2) IN ((1,2),(2,2)) and (b.col2,b.col3) in ((2,3),(1,1));
