@@ -58,7 +58,7 @@ insert into p1 values (001, '[[:alpha:]]+', 1, 1, 'c');
 insert into p1 values (002, '[^@]+', 1, 1, 'c');
 insert into p1 values (003, '[^@]+', 1, 2, 'c');
 insert into p1 values (004, '[^.]+', 1, 2, 'c');
-select * from p1;
+select * from p1 order by 1;
 
 SELECT REGEXP_SUBSTR(email.id, p1.code), p1.code FROM email, p1 ORDER BY p1.num;
 SELECT REGEXP_SUBSTR(email.id, p1.code, p1.pos), p1.code, p1.pos FROM email, p1 ORDER BY p1.num;
@@ -80,12 +80,12 @@ SELECT * FROM athlete ORDER BY 1;
 SELECT DISTINCT REGEXP_SUBSTR(name, '[[:alpha:]]+', 1, 1) AS first_name FROM athlete ORDER BY 1;
 DROP TABLE IF EXISTS first_name_store;
 CREATE TABLE first_name_store (first_name VARCHAR) AS SELECT DISTINCT REGEXP_SUBSTR(name, '[[:alpha:]]+', 1, 1) AS first_name FROM athlete;
-SELECT * FROM first_name_store;
+SELECT * FROM first_name_store order by 1;
 
 DROP TABLE IF EXISTS first_name_store;
 CREATE TABLE first_name_store ( first_name VARCHAR );
 INSERT INTO first_name_store SELECT DISTINCT REGEXP_SUBSTR(name, '[[:alpha:]]+', 1, 1) AS first_name from athlete;
-SELECT * FROM first_name_store;
+SELECT * FROM first_name_store order by 1;
 
 DROP TABLE IF EXISTS first_name_store;
 DROP TABLE IF EXISTS athlete;

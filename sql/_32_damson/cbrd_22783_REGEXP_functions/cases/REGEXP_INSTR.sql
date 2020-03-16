@@ -54,7 +54,7 @@ insert into p1 values(001, '[a-e]', 3, 2, 1, 'c');
 insert into p1 values(002, '[f-z]', 3, 2, 1, 'c');
 insert into p1 values(003, '\s', 2, 2, 1, 'c');
 insert into p1 values(004, 'a|e|i|o|u', 3, 2, 1, 'c');
-select * from p1;
+select * from p1 order by 1;
 
 DROP TABLE IF EXISTS athlete;
 CREATE TABLE athlete (name VARCHAR(40) NOT NULL);
