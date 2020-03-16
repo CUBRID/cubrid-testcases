@@ -137,7 +137,7 @@ nl-join (cross join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select rvc_tmp?.col?, rvc_tmp?.col?, rvc_tmp?.col?, rvc_tmp?.col?, rvc_tmp?.col? from rvc_tmp? rvc_tmp?, (select distinct ?, ? from rvc_tmp? rvc_tmp?) av? (av_?, av_?) where rvc_tmp?.col?= ?:?  and rvc_tmp?.col?= ?:?  and rvc_tmp?.col?=av?.av_? and rvc_tmp?.col?=av?.av_?
+select /*+ ORDERED */ rvc_tmp?.col?, rvc_tmp?.col?, rvc_tmp?.col?, rvc_tmp?.col?, rvc_tmp?.col? from rvc_tmp? rvc_tmp?, (select distinct ?, ? from rvc_tmp? rvc_tmp?) av? (av_?, av_?) where rvc_tmp?.col?=? and rvc_tmp?.col?=? and rvc_tmp?.col?=av?.av_? and rvc_tmp?.col?=av?.av_?
 ===================================================
 col1    col2    col3    col4    col5    
 1     1     1     1     1     
@@ -164,7 +164,7 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select rvc_tmp?.col?, rvc_tmp?.col?, rvc_tmp?.col?, rvc_tmp?.col?, rvc_tmp?.col? from rvc_tmp? rvc_tmp?, (select distinct ?, rvc_tmp?.col? from rvc_tmp? rvc_tmp? where rvc_tmp?.col?= ?:? ) av? (av_?, av_?) where rvc_tmp?.col?=av?.av_? and rvc_tmp?.col?= ?:?  and rvc_tmp?.col?=av?.av_?
+select rvc_tmp?.col?, rvc_tmp?.col?, rvc_tmp?.col?, rvc_tmp?.col?, rvc_tmp?.col? from rvc_tmp? rvc_tmp?, (select distinct ?, rvc_tmp?.col? from rvc_tmp? rvc_tmp? where rvc_tmp?.col?= ?:? ) av? (av_?, av_?) where rvc_tmp?.col?=av?.av_? and rvc_tmp?.col?=? and rvc_tmp?.col?=av?.av_?
 ===================================================
 col1    col2    col3    col4    col5    
 1     1     1     1     1     
