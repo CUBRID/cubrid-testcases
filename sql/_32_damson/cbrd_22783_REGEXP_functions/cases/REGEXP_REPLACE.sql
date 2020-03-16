@@ -70,7 +70,7 @@ SELECT name FROM athlete WHERE LENGTH (REGEXP_REPLACE (name, '\s', '')) < 5 ORDE
 select REGEXP_REPLACE(athlete.name, p1.code, '#'), p1.code from athlete, p1 order by athlete.id;
 select REGEXP_REPLACE(athlete.name, p1.code, '#', p1.pos), p1.code, p1.pos from athlete, p1 order by athlete.id;
 select REGEXP_REPLACE(athlete.name, p1.code, '#', p1.pos, p1.occ), p1.code, p1.pos, p1.occ from athlete, p1 order by athlete.id;
-select REGEXP_REPLACE(athlete.name, p1.code, '#', p1.pos, p1.occ, p1.match_type), p1.code, p1.pos, p1.occ, p1.match_type from athlete, p1 order by athlete;
+select REGEXP_REPLACE(athlete.name, p1.code, '#', p1.pos, p1.occ, p1.match_type), p1.code, p1.pos, p1.occ, p1.match_type from athlete, p1 order by athlete.id;
 
 WITH V_TEST AS (SELECT 'hello@cubrid.com' EMAIL)SELECT REGEXP_REPLACE(EMAIL, 'hello', 'cub') AS "id" FROM V_TEST ORDER BY 1;
 
