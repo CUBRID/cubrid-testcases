@@ -1,4 +1,4 @@
-CREATE OR REPLACE VIEW [too_much_long_view] AS SELECT
+CREATE OR REPLACE VIEW [too_much_long_view] AS SELECT 
 class_name as a,
 class_name as b,
 class_name as c,
