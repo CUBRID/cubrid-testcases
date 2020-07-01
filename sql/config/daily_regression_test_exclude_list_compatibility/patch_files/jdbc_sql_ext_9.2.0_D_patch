@@ -1939,3 +1939,74 @@ Index: _27_banana_qa/issue_11089_percentile_disc/_01_aggregate_function/answers/
  27     505.0     updated                  1990-10-10 11:23:34.123     40     
  28     505.0     updated                  1995-10-10 11:23:34.123     null     
 
+Index: _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/rpad_002.answer
+===================================================================
+--- _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/rpad_002.answer	2020-06-29 17:10:26.316919670 +0900
++++ _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/rpad_002.answer	2020-06-30 15:39:11.084804785 +0900
+@@ -14,45 +14,45 @@
+ 0
+ ===================================================
+ rpad(col_binary, 3, _binary'?')    hex( rpad(col_euckr, 3, _binary'?'))    rpad(col_utf8, 3, _binary'?')    rpad(col_iso, 3, _binary'?')    
+-43 55 42      435542     CUB     ÀÀÏ     
+-E4 BD A0      8FB0DFFBBFE4B2     你好我     ÀÀÏ     
+-ED 81 90      C5A5BAEAB8AE     큐브리     ÀÀÏ     
++CUB     435542     CUB     ���     
++你     8FB0DFFBBFE4B2     你好我     ���     
++큐     C5A5BAEAB8AE     큐브리     ���     
+ 
+ ===================================================
+ rpad(col_binary, 4, _binary'?')    hex( rpad(col_euckr, 4, _binary'?'))    rpad(col_utf8, 4, _binary'?')    rpad(col_iso, 4, _binary'?')    
+-43 55 42 52      43554252     CUBR     ÀÀÏ?     
+-E4 BD A0 E5      8FB0DFFBBFE4B2FBBF     你好我好     ÀÀÏ?     
+-ED 81 90 EB      C5A5BAEAB8AEB5E5     큐브리드     ÀÀÏ?     
++CUBR     43554252     CUBR     ���?     
++你�     8FB0DFFBBFE4B2FBBF     你好我好     ���?     
++큐�     C5A5BAEAB8AEB5E5     큐브리드     ���?     
+ 
+ ===================================================
+ rpad(col_binary, 30, _binary'?')    hex( rpad(col_euckr, 30, _binary'?'))    rpad(col_utf8, 30, _binary'?')    rpad(col_iso, 30, _binary'?')    
+-43 55 42 52 49 44 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F      4355425249443F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F     CUBRID????????????????????????     ÀÀÏ???????????????????????????     
+-E4 BD A0 E5 A5 BD E6 88 91 E5 A5 BD E5 A4 A7 E5 AE B6 E5 A5 BD 3F 3F 3F 3F 3F 3F 3F 3F 3F      8FB0DFFBBFE4B2FBBFD3DECAABFBBF3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F     你好我好大家好???????????????????????     ÀÀÏ???????????????????????????     
+-ED 81 90 EB B8 8C EB A6 AC EB 93 9C 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F      C5A5BAEAB8AEB5E53F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F     큐브리드??????????????????????????     ÀÀÏ???????????????????????????     
++CUBRID????????????????????????     4355425249443F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F     CUBRID????????????????????????     ���???????????????????????????     
++你好我好大家好?????????     8FB0DFFBBFE4B2FBBFD3DECAABFBBF3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F     你好我好大家好???????????????????????     ���???????????????????????????     
++큐브리드??????????????????     C5A5BAEAB8AEB5E53F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F     큐브리드??????????????????????????     ���???????????????????????????     
+ 
+ ===================================================
+ rpad(col_binary, 30)    hex( rpad(col_euckr, 30))    rpad(col_utf8, 30)    rpad(col_iso, 30)    
+-43 55 42 52 49 44 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00      435542524944202020202020202020202020202020202020202020202020     CUBRID                             ÀÀÏ                                
+-E4 BD A0 E5 A5 BD E6 88 91 E5 A5 BD E5 A4 A7 E5 AE B6 E5 A5 BD 00 00 00 00 00 00 00 00 00      8FB0DFFBBFE4B2FBBFD3DECAABFBBF2020202020202020202020202020202020202020202020     你好我好大家好                            ÀÀÏ                                
+-ED 81 90 EB B8 8C EB A6 AC EB 93 9C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00      C5A5BAEAB8AEB5E52020202020202020202020202020202020202020202020202020     큐브리드                               ÀÀÏ                                
++CUBRID                             435542524944202020202020202020202020202020202020202020202020     CUBRID                             ���                                
++你好我好大家好              8FB0DFFBBFE4B2FBBFD3DECAABFBBF2020202020202020202020202020202020202020202020     你好我好大家好                            ���                                
++큐브리드                       C5A5BAEAB8AEB5E52020202020202020202020202020202020202020202020202020     큐브리드                               ���                                
+ 
+ ===================================================
+ rpad(col_binary, 20, _binary'a')    hex( rpad(col_euckr, 20, _binary'드'))    rpad(col_utf8, 20, _binary'好')    rpad(col_iso, 20, _binary'Ï')    
+-43 55 42 52 49 44 61 61 61 61 61 61 61 61 61 61 61 61 61 61      435542524944EB933FEB933FEB933FEB933FEB933FEB933FEB933F     CUBRID好好好好好好好好好好好好好好     ÀÀÏÃÃÃÃÃÃÃÃÃ     
+-E4 BD A0 E5 A5 BD E6 88 91 E5 A5 BD E5 A4 A7 E5 AE B6 E5 A5      8FB0DFFBBFE4B2FBBFD3DECAABFBBFEB933FEB933FEB933FEB933FEB933FEB933FEB93     你好我好大家好好好好好好好好好好好好好好     ÀÀÏÃÃÃÃÃÃÃÃÃ     
+-ED 81 90 EB B8 8C EB A6 AC EB 93 9C 61 61 61 61 61 61 61 61      C5A5BAEAB8AEB5E5EB933FEB933FEB933FEB933FEB933FEB933FEB933FEB933F     큐브리드好好好好好好好好好好好好好好好好     ÀÀÏÃÃÃÃÃÃÃÃÃ     
++CUBRIDaaaaaaaaaaaaaa     435542524944EB933FEB933FEB933FEB933FEB933FEB933FEB933F     CUBRID好好好好好好好好好好好好好好     ���ÏÏÏÏÏÏÏÏ�     
++你好我好大家�     8FB0DFFBBFE4B2FBBFD3DECAABFBBFEB933FEB933FEB933FEB933FEB933FEB933FEB93     你好我好大家好好好好好好好好好好好好好好     ���ÏÏÏÏÏÏÏÏ�     
++큐브리드aaaaaaaa     C5A5BAEAB8AEB5E5EB933FEB933FEB933FEB933FEB933FEB933FEB933FEB933F     큐브리드好好好好好好好好好好好好好好好好     ���ÏÏÏÏÏÏÏÏ�     
+ 
+ ===================================================
+ rpad(col_binary, 3, _binary'?')    char_length( rpad(col_binary, 3, _binary'?'))    hex( rpad(col_euckr, 3, _binary'?'))    char_length( rpad(col_euckr, 3, _binary'?'))    
+-43 55 42      3     435542     3     
+-E4 BD A0      3     8FB0DFFBBFE4B2     3     
+-ED 81 90      3     C5A5BAEAB8AE     3     
++CUB     3     435542     3     
++你     3     8FB0DFFBBFE4B2     3     
++큐     3     C5A5BAEAB8AE     3     
+ 
+ ===================================================
+ rpad(col_utf8, 3, _binary'?')    char_length( rpad(col_utf8, 3, _binary'?'))    rpad(col_iso, 3, _binary'?')    char_length( rpad(col_iso, 3, _binary'?'))    
+-CUB     3     ÀÀÏ     3     
+-你好我     3     ÀÀÏ     3     
+-큐브리     3     ÀÀÏ     3     
++CUB     3     ���     3     
++你好我     3     ���     3     
++큐브리     3     ���     3     
+ 
+ ===================================================
+ 0
