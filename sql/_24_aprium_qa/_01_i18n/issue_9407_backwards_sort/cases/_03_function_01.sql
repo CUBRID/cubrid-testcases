@@ -10,7 +10,7 @@ insert into t(v) values
 ,('CAuoîê')
 ,('caùôIe')
 ,('cäùoiE')
-,('Càüôîé')
+,('Càüôîe')
 ,('CäUOîe')
 ,('çäüôIê')
 ,('çàuoie')
