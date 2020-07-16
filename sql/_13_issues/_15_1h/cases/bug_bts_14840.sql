@@ -7,7 +7,7 @@ select count(*) from t;
 drop table t;
 
 drop table if exists t1;
-create table t1 (id int auto_increment primary key,name char(20));
+create table t1 (id int auto_increment primary key,name char(30));
 insert into t1 values(4000,'afsddddddddddddddddddddddddd');
 insert into t1(id,name) select rownum,rownum||'asdfffffffffffffffafds' from db_class a,db_class b,db_class c limit 4001;
 insert into t1(id,name) select rownum,rownum||'asdfffffffffffffffafds' from db_class a,db_class b,db_class c limit 3998;
