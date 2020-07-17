@@ -34,7 +34,7 @@ C1: commit work;
 C1: DROP TABLE tb1;
 C1: CREATE TABLE tb1(id int, name char(4));
 MC: wait until C1 ready;
-C2: INSERT INTO tb1 VALUES(2,'abcdef');
+C2: INSERT INTO tb1 VALUES(2,'abcd');
 MC: sleep 1;
 MC: wait until C2 blocked;
 C1: commit work;

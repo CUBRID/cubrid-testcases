@@ -46,7 +46,7 @@ C1: COMMIT WORK;
 MC: wait until C1 ready;
 
 /* test case */
-C1: UPDATE t1 SET title = 'unknown_book' WHERE POW(read_count,2) > 8 ; 
+C1: UPDATE t1 SET title = 'unknown_bo' WHERE POW(read_count,2) > 8 ; 
 MC: wait until C1 ready;
 
 C2: DELETE FROM t1 WHERE POW(read_count,2) <= 1; 
