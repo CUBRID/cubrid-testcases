@@ -34,7 +34,7 @@ C1: commit work;
 C1: DROP TABLE tb1;
 MC: wait until C1 ready;
 C1: CREATE TABLE tb1(id bigint, name char(4));
-C1: INSERT INTO tb1 VALUES(5,'a'),(1,'tea'),(7,'scanindex');
+C1: INSERT INTO tb1 VALUES(5,'a'),(1,'tea'),(7,'scan');
 C1: select * from tb1 where id>1 order by 1,2;
 C2: DELETE FROM tb1 WHERE id > 1;
 MC: wait until C1 ready;

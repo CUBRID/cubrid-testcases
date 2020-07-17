@@ -49,7 +49,7 @@ MC: wait until C1 ready;
 C1: DELETE FROM t1 WHERE MOD(id,2) = 0; 
 MC: wait until C1 ready;
 
-C2: UPDATE t1 SET title = 'unknown_book' WHERE MOD(id,2) = 1; 
+C2: UPDATE t1 SET title = 'unknown_bo' WHERE MOD(id,2) = 1; 
 /* expect: no transactions need to wait*/
 MC: wait until C2 ready;
 /* expect: C1 select - id = 2,4,6 are deleted */

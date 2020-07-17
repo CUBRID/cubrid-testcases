@@ -47,7 +47,7 @@ C1: COMMIT WORK;
 MC: wait until C1 ready;
 
 /* test case */
-C1: UPDATE t1 SET title = 'unknown_book' WHERE FLOOR(price) = 31; 
+C1: UPDATE t1 SET title = 'unknown_bo' WHERE FLOOR(price) = 31; 
 MC: wait until C1 ready;
 C2: DELETE FROM t1 WHERE FLOOR(price) = 30 or id = 3; 
 /* expect: C2 needs to wait once C1 completed */
