@@ -17,15 +17,17 @@ drop table if exists album;
 drop table if exists track;
 CREATE TABLE album(
   id CHAR(10),
-  title VARCHAR(10) collate binary,
-  song VARCHAR(10) collate euckr_bin
+  title VARCHAR(30) collate binary,
+  song VARCHAR(20) collate euckr_bin
 );
 CREATE TABLE track(
   album CHAR(10),  
-  title VARCHAR(10) collate binary,
+  title VARCHAR(30) collate binary,
   dsk VARCHAR(10) collate utf8_bin,
-  song VARCHAR(10) collate euckr_bin
+  song VARCHAR(20) collate euckr_bin
 );
+--insert into album values('1','문자열문자열문자열','열문자열');
+--insert into track values('1','문자열문자열문자열','ÀÏÀÏÀÏÀÏ', '열문자열');
 insert into album values('1','문자열문자열문자열','열문자열');
 insert into track values('1','문자열문자열문자열','ÀÏÀÏÀÏÀÏ', '열문자열');
 

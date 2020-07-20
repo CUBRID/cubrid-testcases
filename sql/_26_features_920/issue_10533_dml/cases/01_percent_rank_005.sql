@@ -2,29 +2,29 @@
 drop view test;
 create view test(score int,score1 char(2)) as 
 (
-    select NULL,'aaab'
+    select NULL,'aa'
     UNION ALL
-    select NULL,'aabb'
+    select NULL,'aa'
     UNION ALL
     select NULL,NULL
     UNION ALL
-    select NULL,'aaac'
+    select NULL,'aa'
     UNION ALL
-    select 10,'aadb'
+    select 10,'aa'
     UNION ALL
-    select 40,'aaeb'
+    select 40,'aa'
     UNION ALL
-    select 40,'aadc'
+    select 40,'aa'
     UNION ALL
-    select 40,'aadc'
+    select 40,'aa'
     UNION ALL
-    select 50,'aaec'
+    select 50,'aa'
     UNION ALL
-    select 50,'aadb'
+    select 50,'aa'
     UNION ALL
-    select 60,'aaeb'
+    select 60,'aa'
     UNION ALL
-    select 90,'aadc' 
+    select 90,'aa' 
 );
 
 

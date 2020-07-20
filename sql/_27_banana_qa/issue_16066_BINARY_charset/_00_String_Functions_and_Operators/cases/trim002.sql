@@ -3,7 +3,7 @@
 
 set names utf8;
 drop table if exists t1;
-create table t1 (id int,col_binary varchar(10) collate binary, col_euckr varchar(10) collate euckr_bin, col_utf8 varchar(10) collate utf8_bin, col_iso varchar(10) collate iso88591_bin);
+create table t1 (id int,col_binary varchar(20) collate binary, col_euckr varchar(20) collate euckr_bin, col_utf8 varchar(20) collate utf8_bin, col_iso varchar(20) collate iso88591_bin);
 insert into t1 values(1,'     문자열      ', '     문자열    ', '    문자열    ', '    ÀÏ   ');
 insert into t1 values(2,cast( _utf8'문자열' as string charset euckr), '문자열', '문자열', 'ÀÏ');
 insert into t1 values(3,cast( _utf8'ÀÏ' as string charset iso88591), '문자열', '문자열', 'ÀÏ');

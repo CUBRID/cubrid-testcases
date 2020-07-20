@@ -29,7 +29,7 @@ insert into dummy values (1);
 
 select cast(varchartest as double) from func_03 order by 1;	
 select cast(varchartest as monetary) from func_03 order by 1;
-select cast(varchartest as char(8)) from func_03 order by 1;	
+select cast(varchartest as char(20)) from func_03 order by 1;	
 select cast(varchartest as bit(80)) from func_03 order by 1;
 
 drop class func_03;
