@@ -5,7 +5,7 @@ create table count_index(
 	id smallint primary key auto_increment,
 	col1 char(20),
 	col2 varchar(100), 
-	col3 nchar(10),
+	col3 nchar(20),
 	col4 nchar varying,
 	col5 string
 );

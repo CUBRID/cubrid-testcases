@@ -4,7 +4,7 @@
 create table dense_rank_index(
 	col1 char(20),
 	col2 varchar(100), 
-	col3 nchar(10),
+	col3 nchar(20),
 	col4 nchar varying,
 	col5 string
 );

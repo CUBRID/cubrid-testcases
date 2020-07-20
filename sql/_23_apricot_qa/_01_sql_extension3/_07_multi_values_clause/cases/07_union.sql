@@ -40,15 +40,15 @@ values(timestamp '12:30:56 05/21/2012' + 3661) union all select 154885965;
 values(timestamp '12:30:56 05/21/2012' + 3661) union all select datetime '23:32:43 09/23/2013';
 
 values(B'01010111') union all values(X'ab');
-values(B'01010111') union all values(cast('ab' as bit(7)));
+values(B'01010111') union all values(cast('ab' as bit(11)));
 values (cast(b'010101111' as bit varying(12))) union all values(X'abcd');
 values(B'01') union all values(3);
 values(B'01') union all values(cast(3 as bit(2)));
 
 
 values('abc' 'def') union all values('abc''def');
-values('abcdef') union all values(cast('1234567890' as char(5)));
-values('abcded') union all values(cast('1234567890' as varchar(7)));
+values('abcdef') union all values(cast('1234567890' as char(11)));
+values('abcded') union all values(cast('1234567890' as varchar(11)));
 values(length(cast('1234' as char(5)))) union all values(length(cast('1234' as varchar(7))));
 
 --prepare and execute

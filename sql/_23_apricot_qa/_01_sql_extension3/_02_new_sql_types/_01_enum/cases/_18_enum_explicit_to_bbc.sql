@@ -24,7 +24,7 @@ select blob_to_bit(cast(b as blob)) from conv order by 1;
 select clob_to_char(cast(b as clob)) from conv order by 1;
 
 --TEST: convert enum to numeric type
-select cast(d as bit(10)) from conv order by 1;
+select cast(d as bit(16)) from conv order by 1;
 select cast(d as bit varying) from conv order by 1;
 select blob_to_bit(cast(d as blob)) from conv order by 1;
 select clob_to_char(cast(d as clob)) from conv order by 1;
