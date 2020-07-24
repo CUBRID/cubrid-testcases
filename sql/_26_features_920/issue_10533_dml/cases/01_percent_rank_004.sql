@@ -1,5 +1,5 @@
 --01_percent_rank_004.sql
-drop view test;
+drop view if exists test;
 create view test(score int,score1 char(20)) as 
 (
     select NULL,'ab'

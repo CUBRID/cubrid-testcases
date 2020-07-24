@@ -4,8 +4,8 @@
 
 drop table if exists t;
 create table t ( i int , j varchar(10));
---Insert 15 rows. 
-insert into t select rownum, a.class_name from db_class a , db_class b limit 10*100;       
+--Insert 748 rows. 
+insert into t select * from (select rownum, a.class_name from _db_class a , _db_class b where length(a.class_name)<=10 limit 10*100);
 
 
 --Statement 1

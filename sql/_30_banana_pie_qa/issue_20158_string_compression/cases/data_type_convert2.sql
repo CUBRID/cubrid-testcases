@@ -1,6 +1,7 @@
 --+ holdcas on;
 
---- add alter_table_change_type_strict=yes and test data type convert
+--- add 'ALLOW_TRUNCATED_STRING=yes', 'alter_table_change_type_strict=yes' and test data type convert
+set system parameters 'ALLOW_TRUNCATED_STRING=yes';
 set system parameters 'alter_table_change_type_strict=yes';
 
 drop table if exists t1;
@@ -71,5 +72,6 @@ alter table t2 modify s1 varchar;
 drop table t2;
 
 set system parameters 'alter_table_change_type_strict=no';
+set system parameters 'ALLOW_TRUNCATED_STRING=no';
 
 --+ holdcas off;

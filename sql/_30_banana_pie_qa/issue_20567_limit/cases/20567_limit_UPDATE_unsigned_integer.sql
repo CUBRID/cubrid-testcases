@@ -5,7 +5,7 @@
 drop table if exists t;
 create table t ( i int , j varchar(10));
 --Insert 15 rows. 
-insert into t select rownum, class_name from _db_class limit 2*2*2*2-2/2;       
+insert into t select rownum, class_name from _db_class where length(class_name)<=10 limit 2*2*2*2-2/2;       
 select * from t order by 1;
 
 

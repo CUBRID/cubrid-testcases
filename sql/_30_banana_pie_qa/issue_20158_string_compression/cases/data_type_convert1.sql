@@ -6,7 +6,7 @@ create table t1(i1 int,s1 string,s2 varchar(200),s3 char(300));
 
 insert into t1 values(1,'abc','abc','abc');
 
-insert into t1 values(2,repeat('a',300),repeat('b',300),repeat('c',300));
+insert into t1 values(2,repeat('a',300),repeat('b',200),repeat('c',300));
 
 --- alter table,change column type(char and varchar convert)
 select * from t1 order by 1;
@@ -29,11 +29,11 @@ select * from t1 order by 1;
 
 select i1,disk_size(s1),disk_size(s2),disk_size(s3) from t1 order by 1;
 
-alter table t1 change s1 s11 varchar(1);
+alter table t1 change s1 s11 varchar(1000);
 
-alter table t1 modify s2 varchar(1);
+alter table t1 modify s2 varchar(300);
 
-alter table t1 modify s3 char(1);
+alter table t1 modify s3 char(300);
 
 select * from t1 order by 1;
 
@@ -48,7 +48,7 @@ create table t1_n(i1 int,s1 nchar varying,s2 nchar(300));
 
 insert into t1_n values(1,N'a',N'b');
 
-insert into t1_n values(2,repeat(N'a',300),repeat(N'a',300));
+insert into t1_n values(2,N'a',repeat(N'a',300));
 
 alter table t1_n change s1 s1_1 nchar(300);
 
@@ -78,15 +78,15 @@ create index idx_4 on t2(i1,s1,s2,s3);
 
 insert into t2 values(1,'abc','abc','abc');
 
-insert into t2 values(2,repeat('a',300),repeat('b',300),repeat('c',300));
+insert into t2 values(2,repeat('a',300),repeat('b',200),repeat('c',300));
 
-insert into t2 values(3,repeat('a',300),repeat('b',300),repeat('c',300));
+insert into t2 values(3,repeat('a',300),repeat('b',200),repeat('c',300));
 
-alter table t2 change s1 s1 char(100);
+alter table t2 change s1 s1 char(300);
 
 alter table t2 change s2 s2 string;
 
-alter table t2 modify s3 varchar(200);
+alter table t2 modify s3 varchar(300);
 
 select * from t2 order by 1;
 
@@ -97,7 +97,7 @@ drop t2;
 --- cast
 drop table if exists t3;
 
-create table t3(s1 string,s2 char(1000));
+create table t3(s1 string,s2 char(3000));
 
 insert into t3 values('abc','def');
 

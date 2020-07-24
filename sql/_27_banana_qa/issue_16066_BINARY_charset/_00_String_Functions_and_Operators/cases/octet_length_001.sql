@@ -30,7 +30,7 @@ drop table if exists t1;
 create table t1 (id int, col_binary varchar(20) collate binary, col_euckr varchar(20) collate euckr_bin, col_utf8 varchar(20) collate utf8_bin, col_iso varchar(20) collate iso88591_bin);
 insert into t1 values(1, 'CUBRID', 'CUBRID', 'CUBRID', 'CUBRID');
 insert into t1 values(2, '你我他', '你我他', '你我他', '你我他');
-insert into t1 values(3, '큐브리�','큐브리드', '큐브리드', '큐브리드');
+insert into t1 values(3, '큐브리드','큐브리드', '큐브리드', '큐브리드');
 insert into t1 values(4, 'ÀÏ', 'ÀÏ','ÀÏ', 'ÀÏ');
 
 set names binary;

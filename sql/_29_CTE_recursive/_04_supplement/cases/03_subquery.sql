@@ -19,10 +19,15 @@ insert into sales values ('0001','000001','1','2017-01-20',500);
 insert into sales values ('0003','000003','3','2017-01-20',800);
 insert into sales values ('0012','000012','12','2017-01-20',700);
 
-insert into stores values ('0001','clothes','road 1','shanghai','00','430060');
-insert into stores values ('0002','food','road 2','wuhan','00','430061');
-insert into stores values ('0003','book','road 3','yunnan','01','430062');
-insert into stores values ('0012','pen','road 12','guangzhou','00','430064');
+--insert into stores values ('0001','clothes','road 1','shanghai','00','430060');
+--insert into stores values ('0002','food','road 2','wuhan','00','430061');
+--insert into stores values ('0003','book','road 3','yunnan','01','430062');
+--insert into stores values ('0012','pen','road 12','guangzhou','00','430064');
+insert into stores values ('0001','clothes','road 1','shanghai','00','43006');
+insert into stores values ('0002','food','road 2','wuhan','00','43006');
+insert into stores values ('0003','book','road 3','yunnan','01','43006');
+insert into stores values ('0012','pen','road 12','guangzhou','00','43006');
+
 
 WITH
   sum_sales      AS

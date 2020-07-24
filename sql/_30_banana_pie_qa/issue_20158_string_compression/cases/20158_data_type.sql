@@ -7,9 +7,9 @@ create table var_t(s1 varchar,s2 varchar(200));
 
 insert into var_t values('a','b');
 
-insert into var_t values(repeat('a',200),repeat('b',300));
+insert into var_t values(repeat('a',200),repeat('b',200));
 
-insert into var_t values(repeat('a',300),repeat('b',300));
+insert into var_t values(repeat('a',300),repeat('b',200));
 
 create index idx_1 on var_t(s1,s2);
 
@@ -49,7 +49,7 @@ insert into var_t values(2,repeat('a',254),repeat('b',254),repeat('c',254));
 
 insert into var_t values(3,repeat('a',255),repeat('b',255),repeat('c',255));
 
-insert into var_t values(4,repeat('a',500),repeat('b',500),repeat('c',500));
+insert into var_t values(4,repeat('a',500),repeat('b',500),repeat('c',300));
 
 create index idx_var_t on var_t(i1,s1,s2);
 
@@ -111,7 +111,7 @@ insert into set_t values({'a'},{'b'});
 
 insert into set_t values({repeat('a',100)},{repeat('b',100)});
 
-insert into set_t values({repeat('a',500)},{repeat('b',500)});
+insert into set_t values({repeat('a',300)},{repeat('b',500)});
 
 select disk_size(s1),disk_size(s2),s1,s2 from set_t order by 1,2;
 
@@ -129,7 +129,7 @@ insert into multset_t values({'a'},{'b'});
 
 insert into multset_t values({repeat('a',100)},{repeat('b',100)});
 
-insert into multset_t values({repeat('a',500)},{repeat('b',500)});
+insert into multset_t values({repeat('a',300)},{repeat('b',500)});
 
 select disk_size(s1),disk_size(s2),s1,s2 from multset_t order by 1,2;
 
@@ -145,7 +145,7 @@ insert into list_t values({'a'},{'b'});
 
 insert into list_t values({repeat('a',100)},{repeat('b',100)});
 
-insert into list_t values({repeat('a',500)},{repeat('b',500)});
+insert into list_t values({repeat('a',300)},{repeat('b',500)});
 
 select disk_size(s1),disk_size(s2),s1,s2 from list_t order by 1,2;
 
