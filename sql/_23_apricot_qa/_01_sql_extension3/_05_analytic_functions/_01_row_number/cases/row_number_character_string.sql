@@ -4,31 +4,31 @@
 create table rownum_string(
 	col1 char(30),
 	col2 varchar(100), 
-	col3 nchar(20),
+	col3 nchar(10),
 	col4 nchar varying,
 	col5 string
 );
 
 
-insert into rownum_string values('aaaaa', 'This is a dog.', n'1990-1-1 11:11:11', n'cubrid', 'character');
-insert into rownum_string values('aaaaa', 'This is a cat.', n'1991-1-1 11:11:11', n'cubrid', 'character');
-insert into rownum_string values('aaaaa', 'This is a dog.', n'1992-1-1 11:11:11', n'cubrid', 'character');
-insert into rownum_string values('aaaaa', 'This is a cat.', n'1993-1-1 11:11:11', n'mysql', 'character');
-insert into rownum_string values('aaaaa', 'This is a dog.', n'1994-1-1 11:11:11', n'mysql', 'character');
-insert into rownum_string values('eeeee', 'This is a cat.', n'1995-1-1 11:11:11', n'mysql', 'character');
-insert into rownum_string values('eeeee', 'This is a dog.', n'1996-1-1 11:11:11', n'mysql', 'character');
-insert into rownum_string values('eeeee', 'This is a dog.', n'1997-1-1 11:11:11', n'mysql', 'character');
-insert into rownum_string values('eeeee', 'This is a rabbit.', n'1998-1-1 11:11:11', n'mysql', 'character');
-insert into rownum_string values('ccccc', 'This is a dog.', n'1999-1-1 11:11:11', n'mysql', 'character');
-insert into rownum_string values('ccccc', 'This is a dog.', n'2000-1-1 11:11:11', n'cubrid', 'string');
-insert into rownum_string values('ccccc', 'This is a rabbit.', n'2001-1-1 11:11:11', n'cubrid', 'string');
-insert into rownum_string values('zzzzz', 'This is a dog.', n'2002-1-1 11:11:11', n'cubrid', 'string');
-insert into rownum_string values('bbbbb', 'This is a dog.', n'2003-1-1 11:11:11', n'cubrid', 'string');
-insert into rownum_string values('bbbbb', 'This is a cat.', n'2004-1-1 11:11:11', n'oracle', 'string');
-insert into rownum_string values('bbbbb', 'This is a dog.', n'2005-1-1 11:11:11', n'oracle', 'string');
-insert into rownum_string values('bbbbb', 'This is a dog.', n'2006-1-1 11:11:11', n'oracle', 'string');
-insert into rownum_string values('bbbbb', 'This is a rabbit.', n'2007-1-1 11:11:11', n'oracle', 'string');
-insert into rownum_string values('bbbbb', 'This is a dog.', n'2008-1-1 11:11:11', n'cubrid', 'string');
+insert into rownum_string values('aaaaa', 'This is a dog.', n'1990-1-1', n'cubrid', 'character');
+insert into rownum_string values('aaaaa', 'This is a cat.', n'1991-1-1', n'cubrid', 'character');
+insert into rownum_string values('aaaaa', 'This is a dog.', n'1992-1-1', n'cubrid', 'character');
+insert into rownum_string values('aaaaa', 'This is a cat.', n'1993-1-1', n'mysql', 'character');
+insert into rownum_string values('aaaaa', 'This is a dog.', n'1994-1-1', n'mysql', 'character');
+insert into rownum_string values('eeeee', 'This is a cat.', n'1995-1-1', n'mysql', 'character');
+insert into rownum_string values('eeeee', 'This is a dog.', n'1996-1-l', n'mysql', 'character');
+insert into rownum_string values('eeeee', 'This is a dog.', n'1997-1-1', n'mysql', 'character');
+insert into rownum_string values('eeeee', 'This is a rabbit.', n'1998-1-1', n'mysql', 'character');
+insert into rownum_string values('ccccc', 'This is a dog.', n'1999-1-1', n'mysql', 'character');
+insert into rownum_string values('ccccc', 'This is a dog.', n'2000-1-1', n'cubrid', 'string');
+insert into rownum_string values('ccccc', 'This is a rabbit.', n'2001-1-1', n'cubrid', 'string');
+insert into rownum_string values('zzzzz', 'This is a dog.', n'2002-1-1', n'cubrid', 'string');
+insert into rownum_string values('bbbbb', 'This is a dog.', n'2003-1-1', n'cubrid', 'string');
+insert into rownum_string values('bbbbb', 'This is a cat.', n'2004-1-1', n'oracle', 'string');
+insert into rownum_string values('bbbbb', 'This is a dog.', n'2005-1-1', n'oracle', 'string');
+insert into rownum_string values('bbbbb', 'This is a dog.', n'2006-1-1', n'oracle', 'string');
+insert into rownum_string values('bbbbb', 'This is a rabbit.', n'2007-1-1', n'oracle', 'string');
+insert into rownum_string values('bbbbb', 'This is a dog.', n'2008-1-1', n'cubrid', 'string');
 insert into rownum_string values('bbbbb', 'This is a dog.', n'2009-1-1 11:11:11', n'cubrid', 'string');
 
 

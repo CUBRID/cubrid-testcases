@@ -5,7 +5,7 @@ create table count_index(
 	id smallint primary key auto_increment,
 	col1 char(20),
 	col2 varchar(100), 
-	col3 nchar(20),
+	col3 nchar(10),
 	col4 nchar varying,
 	col5 string
 );
@@ -16,22 +16,22 @@ create reverse index col5_idx on count_index(col5);
 create index col2_col3_idx on count_index(col2, col3);
 
 
-insert into count_index values(null, 'aaaaa', 'This is a dog.', n'1990-1-1 11:11:11', n'cubrid', 'character');
-insert into count_index values(null, 'aaaaa', 'This is a cat.', n'1991-1-1 11:11:11', n'cubrid', 'character');
-insert into count_index values(null, 'aaaaa', 'This is a dog.', n'1992-1-1 11:11:11', n'cubrid', 'character');
-insert into count_index values(null, 'aaaaa', 'This is a cat.', n'1993-1-1 11:11:11', n'mysql', 'character');
-insert into count_index values(null, 'aaaaa', 'This is a dog.', n'1994-1-1 11:11:11', n'mysql', 'character');
-insert into count_index values(null, 'eeeee', 'This is a cat.', n'1995-1-1 11:11:11', n'mysql', 'character');
-insert into count_index values(null, 'eeeee', 'This is a dog.', n'1996-1-1 11:11:11', n'mysql', 'character');
-insert into count_index values(null, 'eeeee', 'This is a dog.', n'1997-1-1 11:11:11', n'mysql', 'character');
-insert into count_index values(null, 'eeeee', 'This is a rabbit.', n'1998-1-1 11:11:11', n'mysql', 'character');
-insert into count_index values(null, 'ccccc', 'This is a dog.', n'1999-1-1 11:11:11', n'mysql', 'character');
-insert into count_index values(null, 'ccccc', 'This is a dog.', n'2000-1-1 11:11:11', n'cubrid', 'string');
-insert into count_index values(null, 'ccccc', 'This is a rabbit.', n'2001-1-1 11:11:11', n'cubrid', 'string');
-insert into count_index values(null, 'zzzzz', 'This is a dog.', n'2002-1-1 11:11:11', n'cubrid', 'string');
-insert into count_index values(null, 'bbbbb', 'This is a dog.', n'2003-1-1 11:11:11', n'cubrid', 'string');
-insert into count_index values(null, 'bbbbb', 'This is a cat.', n'2004-1-1 11:11:11', n'oracle', 'string');
-insert into count_index values(null, 'bbbbb', 'This is a dog.', n'2005-1-1 11:11:11', n'oracle', 'string');
+insert into count_index values(null, 'aaaaa', 'This is a dog.', n'1990-1-1', n'cubrid', 'character');
+insert into count_index values(null, 'aaaaa', 'This is a cat.', n'1991-1-1', n'cubrid', 'character');
+insert into count_index values(null, 'aaaaa', 'This is a dog.', n'1992-1-1', n'cubrid', 'character');
+insert into count_index values(null, 'aaaaa', 'This is a cat.', n'1993-1-1', n'mysql', 'character');
+insert into count_index values(null, 'aaaaa', 'This is a dog.', n'1994-1-1', n'mysql', 'character');
+insert into count_index values(null, 'eeeee', 'This is a cat.', n'1995-1-1', n'mysql', 'character');
+insert into count_index values(null, 'eeeee', 'This is a dog.', n'1996-1-1', n'mysql', 'character');
+insert into count_index values(null, 'eeeee', 'This is a dog.', n'1997-1-1', n'mysql', 'character');
+insert into count_index values(null, 'eeeee', 'This is a rabbit.', n'1998-1-1', n'mysql', 'character');
+insert into count_index values(null, 'ccccc', 'This is a dog.', n'1999-1-1', n'mysql', 'character');
+insert into count_index values(null, 'ccccc', 'This is a dog.', n'2000-1-1', n'cubrid', 'string');
+insert into count_index values(null, 'ccccc', 'This is a rabbit.', n'2001-1-1', n'cubrid', 'string');
+insert into count_index values(null, 'zzzzz', 'This is a dog.', n'2002-1-1', n'cubrid', 'string');
+insert into count_index values(null, 'bbbbb', 'This is a dog.', n'2003-1-1', n'cubrid', 'string');
+insert into count_index values(null, 'bbbbb', 'This is a cat.', n'2004-1-1', n'oracle', 'string');
+insert into count_index values(null, 'bbbbb', 'This is a dog.', n'2005-1-1', n'oracle', 'string');
 insert into count_index values(null, 'bbbbb', 'This is a dog.', n'2006-1-1 11:11:11', n'oracle', 'string');
 insert into count_index values(null, 'bbbbb', 'This is a rabbit.', n'2007-1-1 11:11:11', n'oracle', 'string');
 insert into count_index values(null, 'bbbbb', 'This is a dog.', n'2008-1-1 11:11:11', n'cubrid', 'string');
