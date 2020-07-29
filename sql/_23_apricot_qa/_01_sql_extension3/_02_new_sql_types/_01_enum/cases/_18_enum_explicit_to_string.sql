@@ -32,7 +32,7 @@ select cast(d as nchar varying) from conv order by 1;
 select cast(d as string) from conv order by 1;
 
 --TEST: convert enum to numeric type
-select cast(f as char(23)) from conv order by 1;
+select cast(f as char(20)) from conv order by 1;
 select cast(f as varchar) from conv order by 1;
 select cast(f as nchar(10)) from conv order by 1;
 select cast(f as nchar varying) from conv order by 1;

@@ -4,7 +4,7 @@
 
  INSERT INTO MyTable VALUES ('10');
 
- ALTER TABLE MyTable MODIFY COLUMN MyEnum varchar(5);
+ ALTER TABLE MyTable MODIFY COLUMN MyEnum varchar(1);
 
 drop table mytable;
 
@@ -51,7 +51,7 @@ select b ,count(*) from t1 group by b order by 1 ;
 
 select b ,count(*) from t1 group by b order by cast( b as varchar) limit 2;
 
-select b ,count(*),sum(b)from t1 group by b order by cast( b as char(10)) limit 65535;
+select b ,count(*),sum(b)from t1 group by b order by cast( b as char) limit 65535;
 
 select b ,count(*),sum(b)from t1 group by b order by cast( b as string) limit 65535;
 
