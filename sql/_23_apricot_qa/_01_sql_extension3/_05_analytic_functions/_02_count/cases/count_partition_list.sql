@@ -30,7 +30,7 @@ insert into count_p_list values('ccccc', 'This is a rabbit.', n'2001-1-1 1', n'c
 insert into count_p_list values('zzzzz', 'This is a dog.', n'2002-1-1 1', n'cubrid', 'string');
 insert into count_p_list values('bbbbb', 'This is a dog.', n'2003-1-1 1', n'cubrid', 'string');
 insert into count_p_list values('bbbbb', 'This is a cat.', n'2004-1-1 1', n'oracle', 'string');
-insert into count_p_list values('bbbbb', 'This is a dog.', n'2005-1-1', n'oracle', 'string');
+insert into count_p_list values('bbbbb', 'This is a dog.', n'2005-1-1 1', n'oracle', 'string');
 insert into count_p_list values('bbbbb', 'This is a dog.', n'2006-1-1 1', n'oracle', 'string');
 insert into count_p_list values('bbbbb', 'This is a rabbit.', n'2007-1-1 1', n'oracle', 'string');
 insert into count_p_list values('bbbbb', 'This is a dog.', n'2008-1-1 1', n'cubrid', 'string');
