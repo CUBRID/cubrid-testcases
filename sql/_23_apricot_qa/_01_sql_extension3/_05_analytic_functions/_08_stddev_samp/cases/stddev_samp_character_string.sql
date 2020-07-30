@@ -4,33 +4,33 @@
 create table stddev_samp_string(
 	col1 char(20),
 	col2 varchar(100), 
-	col3 nchar(20),
+	col3 nchar(10),
 	col4 nchar varying,
 	col5 string,
 	col6 int
 );
 
 
-insert into stddev_samp_string values('aaaaa', 'This is a dog.', n'1990-1-1 11:11:11', n'1234', 'character', 1234);
-insert into stddev_samp_string values('aaaaa', 'This is a cat.', n'1991-1-1 11:11:11', n'22222', 'character', 2345) ;
-insert into stddev_samp_string values('aaaaa', 'This is a dog.', n'1992-1-1 11:11:11', n'87', 'character', 1111);
-insert into stddev_samp_string values('aaaaa', 'This is a cat.', n'1993-1-1 11:11:11', n'888', 'character', 9999);
-insert into stddev_samp_string values('aaaaa', 'This is a dog.', n'1994-1-1 11:11:11', n'999', 'character', 2345);
-insert into stddev_samp_string values('eeeee', 'This is a cat.', n'1995-1-1 11:11:11', n'1222', 'character', 5678);
-insert into stddev_samp_string values('eeeee', 'This is a dog.', n'1996-1-1 11:11:11', n'1234', 'character', 2345);
-insert into stddev_samp_string values('eeeee', 'This is a dog.', n'1997-1-1 11:11:11', n'563', 'character', 1111);
-insert into stddev_samp_string values('eeeee', 'This is a rabbit.', n'1998-1-1 11:11:11', n'111', 'character', 9999);
-insert into stddev_samp_string values('ccccc', 'This is a dog.', n'1999-1-1 11:11:11', n'777', 'character', 5676);
-insert into stddev_samp_string values('ccccc', 'This is a dog.', n'2000-1-1 11:11:11', n'9898', 'string', 5678);
-insert into stddev_samp_string values('ccccc', 'This is a rabbit.', n'2001-1-1 11:11:11', n'1234', 'string', 2345);
-insert into stddev_samp_string values('zzzzz', 'This is a dog.', n'2002-1-1 11:11:11', n'111', 'string', 1111);
-insert into stddev_samp_string values('bbbbb', 'This is a dog.', n'2003-1-1 11:11:11', n'87', 'string', 9999);
-insert into stddev_samp_string values('bbbbb', 'This is a cat.', n'2004-1-1 11:11:11', n'12356', 'string', 3333);
-insert into stddev_samp_string values('bbbbb', 'This is a dog.', n'2005-1-1 11:11:11', n'3232', 'string', 1234);
-insert into stddev_samp_string values('bbbbb', 'This is a dog.', n'2006-1-1 11:11:11', n'22222', 'string', 9999);
-insert into stddev_samp_string values('bbbbb', 'This is a rabbit.', n'2007-1-1 11:11:11', n'999', 'string', 2345);
-insert into stddev_samp_string values('bbbbb', 'This is a dog.', n'2008-1-1 11:11:11', n'87', 'string', 3456);
-insert into stddev_samp_string values('bbbbb', 'This is a dog.', n'2009-1-1 11:11:11', n'111', 'string', 1818);
+insert into stddev_samp_string values('aaaaa', 'This is a dog.', n'1990-1-1 1', n'1234', 'character', 1234);
+insert into stddev_samp_string values('aaaaa', 'This is a cat.', n'1991-1-1 1', n'22222', 'character', 2345) ;
+insert into stddev_samp_string values('aaaaa', 'This is a dog.', n'1992-1-1 1', n'87', 'character', 1111);
+insert into stddev_samp_string values('aaaaa', 'This is a cat.', n'1993-1-1 1', n'888', 'character', 9999);
+insert into stddev_samp_string values('aaaaa', 'This is a dog.', n'1994-1-1 1', n'999', 'character', 2345);
+insert into stddev_samp_string values('eeeee', 'This is a cat.', n'1995-1-1 1', n'1222', 'character', 5678);
+insert into stddev_samp_string values('eeeee', 'This is a dog.', n'1996-1-1 1', n'1234', 'character', 2345);
+insert into stddev_samp_string values('eeeee', 'This is a dog.', n'1997-1-1 1', n'563', 'character', 1111);
+insert into stddev_samp_string values('eeeee', 'This is a rabbit.', n'1998-1-1 1', n'111', 'character', 9999);
+insert into stddev_samp_string values('ccccc', 'This is a dog.', n'1999-1-1 1', n'777', 'character', 5676);
+insert into stddev_samp_string values('ccccc', 'This is a dog.', n'2000-1-1 1', n'9898', 'string', 5678);
+insert into stddev_samp_string values('ccccc', 'This is a rabbit.', n'2001-1-1 1', n'1234', 'string', 2345);
+insert into stddev_samp_string values('zzzzz', 'This is a dog.', n'2002-1-1 1', n'111', 'string', 1111);
+insert into stddev_samp_string values('bbbbb', 'This is a dog.', n'2003-1-1 1', n'87', 'string', 9999);
+insert into stddev_samp_string values('bbbbb', 'This is a cat.', n'2004-1-1 1', n'12356', 'string', 3333);
+insert into stddev_samp_string values('bbbbb', 'This is a dog.', n'2005-1-1 1', n'3232', 'string', 1234);
+insert into stddev_samp_string values('bbbbb', 'This is a dog.', n'2006-1-1 1', n'22222', 'string', 9999);
+insert into stddev_samp_string values('bbbbb', 'This is a rabbit.', n'2007-1-1 1', n'999', 'string', 2345);
+insert into stddev_samp_string values('bbbbb', 'This is a dog.', n'2008-1-1 1', n'87', 'string', 3456);
+insert into stddev_samp_string values('bbbbb', 'This is a dog.', n'2009-1-1 1', n'111', 'string', 1818);
 
 
 --TEST: OVER() clause

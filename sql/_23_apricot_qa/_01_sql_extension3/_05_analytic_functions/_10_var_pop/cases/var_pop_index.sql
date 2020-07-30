@@ -4,7 +4,7 @@
 create table var_pop_index(
 	col1 char(20),
 	col2 varchar(100), 
-	col3 nchar(20),
+	col3 nchar(10),
 	col4 nchar varying,
 	col5 string,
 	col6 bigint
@@ -16,26 +16,26 @@ create reverse index col5_idx on var_pop_index(col5);
 create index col2_col3_idx on var_pop_index(col2, col3);
 
 
-insert into var_pop_index values('aaaaa', 'This is a dog.', n'1990-1-1 11:11:11', n'cubrid', 'character', 111111);
-insert into var_pop_index values('aaaaa', 'This is a cat.', n'1991-1-1 11:11:11', n'cubrid', 'character', 222222);
-insert into var_pop_index values('aaaaa', 'This is a dog.', n'1992-1-1 11:11:11', n'cubrid', 'character', null);
-insert into var_pop_index values('aaaaa', 'This is a cat.', n'1993-1-1 11:11:11', n'mysql', 'character', 444444);
-insert into var_pop_index values('aaaaa', 'This is a dog.', n'1994-1-1 11:11:11', n'mysql', 'character', 333333);
-insert into var_pop_index values('eeeee', 'This is a cat.', n'1995-1-1 11:11:11', n'mysql', 'character', 666666);
-insert into var_pop_index values('eeeee', 'This is a dog.', n'1996-1-1 11:11:11', n'mysql', 'character', 888888);
-insert into var_pop_index values('eeeee', 'This is a dog.', n'1997-1-1 11:11:11', n'mysql', 'character', 99999);
-insert into var_pop_index values('eeeee', 'This is a rabbit.', n'1998-1-1 11:11:11', n'mysql', 'character', 454545);
-insert into var_pop_index values('ccccc', 'This is a dog.', n'1999-1-1 11:11:11', n'mysql', 'character', 656565);
-insert into var_pop_index values('ccccc', 'This is a dog.', n'2000-1-1 11:11:11', n'cubrid', 'string', 777777);
-insert into var_pop_index values('ccccc', 'This is a rabbit.', n'2001-1-1 11:11:11', n'cubrid', 'string', 111111);
-insert into var_pop_index values('zzzzz', 'This is a dog.', n'2002-1-1 11:11:11', n'cubrid', 'string', null);
-insert into var_pop_index values('bbbbb', 'This is a dog.', n'2003-1-1 11:11:11', n'cubrid', 'string', 898989);
-insert into var_pop_index values('bbbbb', 'This is a cat.', n'2004-1-1 11:11:11', n'oracle', 'string', 344444);
-insert into var_pop_index values('bbbbb', 'This is a dog.', n'2005-1-1 11:11:11', n'oracle', 'string', 333333);
-insert into var_pop_index values('bbbbb', 'This is a dog.', n'2006-1-1 11:11:11', n'oracle', 'string', 777777);
-insert into var_pop_index values('bbbbb', 'This is a rabbit.', n'2007-1-1 11:11:11', n'oracle', 'string', 888888);
-insert into var_pop_index values('bbbbb', 'This is a dog.', n'2008-1-1 11:11:11', n'cubrid', 'string', 999999);
-insert into var_pop_index values('bbbbb', 'This is a dog.', n'2009-1-1 11:11:11', n'cubrid', 'string', 234343);
+insert into var_pop_index values('aaaaa', 'This is a dog.', n'1990-1-1 1', n'cubrid', 'character', 111111);
+insert into var_pop_index values('aaaaa', 'This is a cat.', n'1991-1-1 1', n'cubrid', 'character', 222222);
+insert into var_pop_index values('aaaaa', 'This is a dog.', n'1992-1-1 1', n'cubrid', 'character', null);
+insert into var_pop_index values('aaaaa', 'This is a cat.', n'1993-1-1 1', n'mysql', 'character', 444444);
+insert into var_pop_index values('aaaaa', 'This is a dog.', n'1994-1-1 1', n'mysql', 'character', 333333);
+insert into var_pop_index values('eeeee', 'This is a cat.', n'1995-1-1 1', n'mysql', 'character', 666666);
+insert into var_pop_index values('eeeee', 'This is a dog.', n'1996-1-1 1', n'mysql', 'character', 888888);
+insert into var_pop_index values('eeeee', 'This is a dog.', n'1997-1-1 1', n'mysql', 'character', 99999);
+insert into var_pop_index values('eeeee', 'This is a rabbit.', n'1998-1-1 1', n'mysql', 'character', 454545);
+insert into var_pop_index values('ccccc', 'This is a dog.', n'1999-1-1 1', n'mysql', 'character', 656565);
+insert into var_pop_index values('ccccc', 'This is a dog.', n'2000-1-1 1', n'cubrid', 'string', 777777);
+insert into var_pop_index values('ccccc', 'This is a rabbit.', n'2001-1-1 1', n'cubrid', 'string', 111111);
+insert into var_pop_index values('zzzzz', 'This is a dog.', n'2002-1-1 1', n'cubrid', 'string', null);
+insert into var_pop_index values('bbbbb', 'This is a dog.', n'2003-1-1 1', n'cubrid', 'string', 898989);
+insert into var_pop_index values('bbbbb', 'This is a cat.', n'2004-1-1 1', n'oracle', 'string', 344444);
+insert into var_pop_index values('bbbbb', 'This is a dog.', n'2005-1-1 1', n'oracle', 'string', 333333);
+insert into var_pop_index values('bbbbb', 'This is a dog.', n'2006-1-1 1', n'oracle', 'string', 777777);
+insert into var_pop_index values('bbbbb', 'This is a rabbit.', n'2007-1-1 1', n'oracle', 'string', 888888);
+insert into var_pop_index values('bbbbb', 'This is a dog.', n'2008-1-1 1', n'cubrid', 'string', 999999);
+insert into var_pop_index values('bbbbb', 'This is a dog.', n'2009-1-1 1', n'cubrid', 'string', 234343);
 
 
 --TEST: OVER() clause
