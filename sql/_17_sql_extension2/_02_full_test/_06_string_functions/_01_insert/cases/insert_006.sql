@@ -3,7 +3,7 @@
 
 create table soo(
 	col1 bit(20),
-	col2 bit varying(20),
+	col2 bit varying(30),
 	col3 set,
 	col4 multiset,
 	col5 list,
