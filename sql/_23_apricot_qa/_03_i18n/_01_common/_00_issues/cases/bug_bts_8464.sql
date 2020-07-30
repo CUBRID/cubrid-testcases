@@ -25,7 +25,8 @@ create table t(v1 varchar(10) collate utf8_bin,v2 char(10) collate utf8_bin);
 insert into t values('天','年'),('年','天');
 create reverse index ri on t(v1,v2);
 alter table t change v1 v1 varchar(3) collate utf8_ko_cs_uca;
-alter table t change v2 v2 varchar(3) collate utf8_ko_cs_uca;
+alter table t change v2 v2 varchar(10) collate utf8_ko_cs_uca;
+
 select * from t order by 1;
 select /*+ recompile*/ * from t where v1>='天' order by 1;
 select /*+ recompile*/ * from t where v1<='天' order by 1;

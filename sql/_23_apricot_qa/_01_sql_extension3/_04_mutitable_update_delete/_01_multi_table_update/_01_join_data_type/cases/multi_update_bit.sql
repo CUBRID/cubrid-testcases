@@ -8,7 +8,7 @@ insert into md_bit1 values(1, 'aaa', B'1010'), (2, 'bbb', B'1101'), (3, 'ccc', B
 insert into md_bit1 values(7, 'ggg', B'101'), (8, 'hhh', B'110'), (9, 'iii', B'111'), (10, 'jjj', B'10111'), (11, 'kkk', B'11001'), (12, 'lll', B'10001');
 
 
-create table md_bit2(id2 smallint, col1 bigint, col2 bit(20) primary key);
+create table md_bit2(id2 smallint, col1 bigint, col2 bit(24) primary key);
 insert into md_bit2 values(2, 5, B'1'), (4, 10, B'11'), (6, 13, B'1101'), (8, 22, B'10111'), (10, 45, B'10001'), (12, 57, B'10101');
 
 

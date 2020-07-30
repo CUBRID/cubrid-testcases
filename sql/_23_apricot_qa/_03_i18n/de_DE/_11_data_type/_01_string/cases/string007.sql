@@ -1,6 +1,7 @@
 --+ holdcas on;
 set names utf8;
-create table t( a char(1) collate utf8_de_exp,   b varchar(1) collate utf8_de_exp,  c nchar(1) collate utf8_de_exp,  d NCHAR VARYING(1) collate utf8_de_exp,  e string collate utf8_de_exp);
+drop table if exists t;
+create table t( a char(2) collate utf8_de_exp,   b varchar(2) collate utf8_de_exp,  c nchar(2) collate utf8_de_exp,  d NCHAR VARYING(2) collate utf8_de_exp,  e string collate utf8_de_exp);
 
 insert into t values ( 'a',  'a',  N'a',  N'a',  'a' );
 insert into t values ( upper('a'),  upper('a'),  upper(N'a'),  upper(N'a'),  upper('a'));
