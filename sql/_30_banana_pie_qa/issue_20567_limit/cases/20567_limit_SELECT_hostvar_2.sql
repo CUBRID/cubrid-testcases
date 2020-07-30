@@ -5,7 +5,7 @@
 drop table if exists t;
 create table t ( i int , j varchar(10));
 --Insert 15 rows
-prepare stmt from 'insert into t select rownum-2 , class_name from _db_class where length(class_name) <=10 limit ?, ?*?*?*2-?/2'; 
+prepare stmt from 'insert into t select rownum-2 , substring(class_name,0,10) from _db_class where class_name limit ?, ?*?*?*2-?/2'; 
 SET @a=2;
 execute stmt using @a, @a, @a, @a, @a;
 select * from t order by 1;

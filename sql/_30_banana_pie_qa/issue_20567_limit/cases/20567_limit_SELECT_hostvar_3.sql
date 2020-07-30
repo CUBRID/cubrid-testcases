@@ -4,7 +4,7 @@
 
 drop table if exists t;
 create table t ( i int , j varchar(10));
-prepare stmt from 'insert into t select rownum-2, class_name from _db_class where length(class_name)<=10 limit ?*?*?*?-?/? OFFSET ?';     
+prepare stmt from 'insert into t select rownum-2, substring(class_name,0,10) from _db_class where class_name limit ?*?*?*?-?/? OFFSET ?';     
 execute stmt using   2 , 2 , 2 , 2 , 2 , 2 , 2;
 select * from t order by 1;
 

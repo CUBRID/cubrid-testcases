@@ -1,7 +1,6 @@
 --+ holdcas on;
 
---- add 'ALLOW_TRUNCATED_STRING=yes', 'alter_table_change_type_strict=yes' and test data type convert
-set system parameters 'ALLOW_TRUNCATED_STRING=yes';
+--- add 'alter_table_change_type_strict=yes' and test data type convert
 set system parameters 'alter_table_change_type_strict=yes';
 
 drop table if exists t1;
@@ -10,7 +9,7 @@ create table t1(i1 int,s1 string,s2 varchar(200),s3 char(300));
 
 insert into t1 values(1,'abc','abc','abc');
 
-insert into t1 values(2,repeat('a',300),repeat('b',300),repeat('c',300));
+insert into t1 values(2,repeat('a',300),repeat('b',200),repeat('c',300));
 
 select * from t1 order by 1;
 
@@ -32,7 +31,7 @@ select * from t1 order by 1;
 
 select i1,disk_size(s1),disk_size(s2),disk_size(s3) from t1 order by 1;
 
-insert into t1 values(3,repeat('a',500),repeat('b',500),repeat('c',500));
+insert into t1 values(3,repeat('a',300),repeat('b',300),repeat('c',300));
 
 select * from t1 order by 1;
 
@@ -72,6 +71,5 @@ alter table t2 modify s1 varchar;
 drop table t2;
 
 set system parameters 'alter_table_change_type_strict=no';
-set system parameters 'ALLOW_TRUNCATED_STRING=no';
 
 --+ holdcas off;

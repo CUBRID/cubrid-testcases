@@ -5,7 +5,7 @@
 drop table if exists t;
 create table t ( i int , j varchar(10));
 --Insert 748 rows. 
-insert into t select * from (select rownum, a.class_name from _db_class a , _db_class b where length(a.class_name)<=10 limit 10*100);
+insert into t select * from (select rownum, substring(a.class_name,0,10) from _db_class a , _db_class b where a.class_name limit 10*100);
 
 
 --Statement 1

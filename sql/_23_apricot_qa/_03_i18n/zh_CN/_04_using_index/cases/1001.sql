@@ -1,8 +1,9 @@
 --+ holdcas on;
 set names utf8;
+drop table if exists test_cn;
 CREATE TABLE test_cn ( 
   id     int    NOT NULL, 
-  name      VARCHAR(20) collate utf8_gen);
+  name      VARCHAR(50) collate utf8_gen);
   
 insert into test_cn values (1,'菠菜萝卜红薯土豆番茄');
 insert into test_cn values (2,'菠菜萝卜红薯土豆西红柿'); 
