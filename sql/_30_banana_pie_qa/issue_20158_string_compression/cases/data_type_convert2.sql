@@ -31,7 +31,7 @@ select * from t1 order by 1;
 
 select i1,disk_size(s1),disk_size(s2),disk_size(s3) from t1 order by 1;
 
-insert into t1 values(3,repeat('a',300),repeat('b',300),repeat('c',300));
+insert into t1 values(3,repeat('a',300),repeat('b',500),repeat('c',300));
 
 select * from t1 order by 1;
 
