@@ -22,13 +22,13 @@ drop table t1;
 
 
 -- fixed char
-create table t1 (i1 int , s1 char(10) collate binary, a int);
+create table t1 (i1 int , s1 char(3) collate binary, a int);
 insert into t1 values (1, '好',1);
-insert into t1 values (2, '好人',1);
+insert into t1 values (2, '好',1);
 insert into t1 values (3, '好',1);
 insert into t1 values (4, '好',1);
 insert into t1 values (5, '好',1);
-insert into t1 values (6, '好人人',1);
+insert into t1 values (6, '好',1);
 --test
 set system parameters 'group_concat_max_len=5';
 
