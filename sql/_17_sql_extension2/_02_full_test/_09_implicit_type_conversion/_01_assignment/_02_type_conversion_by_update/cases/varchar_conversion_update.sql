@@ -86,7 +86,7 @@ update varchar_conversion set col11 = cast('12342.9380' as char varying);
 select col5, col6, col7, col8, col9, col10, col11 from varchar_conversion;
 
 --[ok]bit
-update varchar_conversion set col12 = cast('0b1010111' as char varying);
+update varchar_conversion set col12 = cast('0b10101' as char varying);
 --[ok]varbit
 update varchar_conversion set col13 = cast(B'1010111' as char varying);
 select col12, col13 from varchar_conversion;
