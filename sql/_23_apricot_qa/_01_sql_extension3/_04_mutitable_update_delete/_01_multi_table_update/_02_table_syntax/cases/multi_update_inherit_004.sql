@@ -40,7 +40,7 @@ update md_bit1 as m1 inner join md_bit2 as m2 on m1.col1=m2.id2 set m2.col3='upd
 
 --TEST: left outer join, one table with an alias and the other without
 --TEST: update and select from the same table
-update all md_bit1 m1 left outer join md_bit2 m2 on m1.col3=m2.col3 set m2.col2=m2.col2+B'101', m1.col3='updated2' where m1.id2 < (select count(concat(m1.col1, m2.col1)) from md_bit1 m1 inner join md_bit2 m2 on m1.id2=m2.id2);
+update all md_bit1 m1 left outer join md_bit2 m2 on m1.col3=m2.col3 set m2.col2=m2.col2, m1.col3='updated2' where m1.id2 < (select count(concat(m1.col1, m2.col1)) from md_bit1 m1 inner join md_bit2 m2 on m1.id2=m2.id2);
 --TEST: check the result
 select case when count(*)=2 then 'ok' else 'nok' end from md_bit1 where col3='updated2';
 select case when count(*)=2 then 'ok' else 'nok' end from md_bit2 where col3='updated2';
