@@ -31,8 +31,6 @@ insert into t1 values(5, 1, 'aaa');
 
 select a, b, c, row_number() over (order by a), row_number() over (order by b) from t1 limit 2;
 select a, b, c, row_number() over (order by a), row_number() over (order by b) from t1 limit 2;
-select a, b, c, row_number() over (order by a), row_number() over (order by b) from t1 order by a limit 2;
-select a, b, c, row_number() over (order by a), row_number() over (order by b) from t1 order by a limit 2;
 select a, b, c, row_number() over (order by a), row_number() over (order by b) from t1 where inst_num() > 1 and inst_num() < 4;
 select a, b, c, row_number() over (order by a), row_number() over (order by b) from t1 where inst_num() > 1 and inst_num() < 4;
 select a, b, c, row_number() over (order by a), row_number() over (order by b) from t1 where inst_num() mod 2 = 1;
