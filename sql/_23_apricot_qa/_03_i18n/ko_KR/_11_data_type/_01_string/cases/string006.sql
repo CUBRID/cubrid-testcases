@@ -1,6 +1,6 @@
 --+ holdcas on;
 set names utf8;
-create table t( a char(2) collate binary,   b varchar(2) collate binary,  c nchar(2) collate binary,  d NCHAR VARYING(2) collate binary,  e string collate utf8_ko_cs_uca);
+create table t( a char(6) collate binary,   b varchar(6) collate binary,  c nchar(6) collate binary,  d NCHAR VARYING(6) collate binary,  e string collate utf8_ko_cs_uca);
 
 insert into t values ( 'a',  'a',  N'a',  N'a',  'a' );
 insert into t values ( upper('a'),  upper('a'),  upper(N'a'),  upper(N'a'),  upper('a'));

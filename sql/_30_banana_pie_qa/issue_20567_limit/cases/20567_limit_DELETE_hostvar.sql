@@ -4,8 +4,8 @@
 
 drop table if exists t;
 create table t ( i int , j varchar(10));
---Insert 15 rows. 
-prepare stmt from 'insert into t select rownum, a.class_name from _db_class a , _db_class b limit ?*? ';
+--insert 1000 rows.
+prepare stmt from 'insert into t select * from (select rownum, substring(a.class_name,0,10) from _db_class a , _db_class b where a.class_name limit ?*?);';
 execute stmt using 10,100 ;
 
 --Statement 1

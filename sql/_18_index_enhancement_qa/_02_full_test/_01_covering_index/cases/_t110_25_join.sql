@@ -1,6 +1,6 @@
 --+ holdcas on;
 set system parameters 'dont_reuse_heap_file=yes';
-create table tb(a int,b char(1), c varchar(1), d date);
+create table tb(a int,b char(1), c varchar(6), d date);
 create index i_tb_a on tb(a);
 create index i_tb_ab on tb(a,b);
 create index i_tb_abc on tb(a,b,c);

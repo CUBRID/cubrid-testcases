@@ -1,4 +1,4 @@
-create table part01(id int,d date,t time,f float,s varchar(10),m monetary,b bit) partition by hash(s) partitions 4;
+create table part01(id int,d date,t time,f float,s varchar(12),m monetary,b bit) partition by hash(s) partitions 4;
 
 insert into part01 values(1002,'2010-01-01','01:00:00',-0.8,'abc',$3.55,B'1');
 insert into part01 values(1005,'2011-08-30','01:04:00',0.5,'xxg',$3.55,B'0');

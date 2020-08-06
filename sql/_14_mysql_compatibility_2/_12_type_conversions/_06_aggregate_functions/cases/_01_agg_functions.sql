@@ -13,7 +13,7 @@ char_col char(255),
 varchar_col varchar(255),
 nchar_col nchar(255),
 varnchar_col nchar varying(255),
-bit_col bit(8),
+bit_col bit(32),
 varbit_col bit varying (255)
 
 );

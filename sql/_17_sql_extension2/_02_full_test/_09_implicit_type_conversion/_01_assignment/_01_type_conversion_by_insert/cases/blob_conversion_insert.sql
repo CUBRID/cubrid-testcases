@@ -14,7 +14,7 @@ create table blob_conversion(
 	col9 int,
 	col10 short,
 	col11 monetary,
-	col12 bit,
+	col12 bit(8),
 	col13 bit varying,
 	col14 char(20),
 	col15 varchar(20),

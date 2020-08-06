@@ -7,8 +7,8 @@ create table t (i int, s varchar(10) collate utf8_ja_exp);
 -- do not match contractions accross boundary: 'ぁゝ' is a constractions in utf8_ja_exp collation
 insert into t values (1,'ぁゝ ,ぁゝ');
 insert into t values (2,' ぁゝ,ぁゝ,ぁゝ ');
-insert into t values (3,' ぁゝ,ぁゝ,ゝ,ぁゝ ');
-insert into t values (4,' ぁゝ,ぁゝ,ゝゝ,ぁゝゝ ');
+insert into t values (3,' ぁゝ,ぁゝ,ゝ,ぁ');
+insert into t values (4,' ぁゝ,ぁゝ,ゝゝ,');
 insert into t values (5,'ぁ ,ぁ');
 insert into t values (5,'ゝぁ ,ぁ');
 

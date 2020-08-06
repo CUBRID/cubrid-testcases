@@ -96,8 +96,8 @@ drop table if exists t2;
 create table t1 ( a int, b char); 
 create table t2 ( b int, a char);
 
-insert into t1 values(1,'aa');
-insert into t2 values(1,'aa');
+insert into t1 values(1,'a');
+insert into t2 values(1,'a');
 
 select /*+ RECOMPILE*/ * from (select * from t1 order by 1,2) t1 join (select * from t2 order by 1,2) t2 on t1.a=t2.b;
 select /*+ RECOMPILE*/ * from (select * from t1 order by 1,2) t1 join (select * from t2 order by 1,2) t2 on t1.b =t2.a;
@@ -114,8 +114,8 @@ drop table if exists t2;
 create table t1 ( a int, b char); 
 create table t2 ( a int, b char);
 
-insert into t1 values(1,'aa');
-insert into t2 values(1,'aa');
+insert into t1 values(1,'a');
+insert into t2 values(1,'a');
 
 select /*+ RECOMPILE*/ * from (select * from t1 order by 1,2) t1 natural join (select * from t2 order by 1,2) t2;
 select /*+ RECOMPILE*/ * from (select * from t1 order by 1,2) t1 natural left join (select * from t2 order by 1,2) t2;
@@ -221,7 +221,7 @@ drop table if exists t2;
 create table t1 ( a bit(2)); 
 create table t2 ( a bit(20));
 
-insert into t1 values(b'111');
+insert into t1 values(b'11');
 insert into t2 values(b'111111');
 
 select /*+ RECOMPILE*/ * from (select * from t1 order by 1) t1 join (select * from t2 order by 1) t2 ;
@@ -237,7 +237,7 @@ drop table if exists t2;
 create table t1 ( a bit(2)); 
 create table t2 ( a bit(20));
 
-insert into t1 values(b'111');
+insert into t1 values(b'11');
 insert into t2 values(b'111');
 
 select /*+ RECOMPILE*/ * from (select * from t1 order by 1) t1 join (select * from t2 order by 1) t2 ;

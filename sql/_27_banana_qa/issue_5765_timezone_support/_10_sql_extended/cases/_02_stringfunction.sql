@@ -52,7 +52,7 @@ select c_dtltz1,ELT(id,c_tsltz1,c_tsltz2,c_dtltz1,c_dtltz2) from tztest where id
 select FIELD('12:01:31 AM 10/05/2000 Asia/Seoul KST',c_tsltz1,c_tsltz2,c_dtltz1,c_dtltz2) from tztest where c_tsltz2='12:01:31 AM 10/05/2000 Asia/Seoul' order by 1;
 select FIELD('12:01:31 AM 10/05/2000 Asia/Seoul KST',c_tsltz1,c_tsltz2,c_dtltz1,c_dtltz2) from tztest where c_tsltz2='12:01:30 AM 10/05/2000 Asia/Seoul' order by 1;
 
-update tztest set c_varchar=repeat(c_tsltz1||c_dtltz1,500) where c_tsltz2 in (select max(c_tsltz2) from tztest);
+update tztest set c_varchar=repeat(c_tsltz1||c_dtltz1,100) where c_tsltz2 in (select max(c_tsltz2) from tztest);
 select length(c_varchar) from tztest where c_tsltz2 in (select max(c_tsltz2) from tztest) order by 1;
 
 select REPLACE(REPLACE('starttime:XX,endtime:YY','XX',c_tsltz1),'YY',c_tsltz2) from tztest where id=4 and day(c_tsltz1)=5 order by 1;
@@ -72,7 +72,7 @@ select concat(UCASE(c_dtltz1),' ', LCASE(c_dtltz2)) from tztest where id =3 and 
 
 select FIELD('12:01:31.000 AM 10/05/2000 Asia/Seoul KST',c_dtltz1,c_dtltz2,c_dtltz1,c_dtltz2) from tztest where c_dtltz2='12:01:31 AM 10/05/2000 Asia/Seoul' order by 1;
 
-update tztest set c_varchar=repeat(c_dtltz1||c_dtltz1,500)  where c_dtltz2 in (select max(c_dtltz2) from tztest);
+update tztest set c_varchar=repeat(c_dtltz1||c_dtltz1,100)  where c_dtltz2 in (select max(c_dtltz2) from tztest);
 select length(c_varchar) from tztest where c_dtltz2 in (select max(c_dtltz2) from tztest) order by 1;
 
 select REPLACE(REPLACE('starttime:XX,endtime:YY','XX',c_tsltz1),'YY',c_tsltz2) from tztest where id=4 and minute(c_tsltz1)=3 and day(c_tsltz1)=5 order by 1;

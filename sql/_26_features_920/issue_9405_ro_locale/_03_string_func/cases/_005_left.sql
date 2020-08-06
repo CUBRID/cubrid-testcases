@@ -4,7 +4,7 @@ CREATE TABLE test_ro (
   id     int    NOT NULL, 
   name      VARCHAR(20) collate utf8_ro_cs);
   
-insert into test_ro values (1, 'Încântat de cunoștință');
+insert into test_ro values (1, 'Încântat de cunoștin');
 insert into test_ro values (2, 'Bună dimineața');
 
 --test

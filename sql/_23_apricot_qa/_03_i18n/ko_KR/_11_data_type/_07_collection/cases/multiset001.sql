@@ -1,6 +1,7 @@
 --+ holdcas on;
 set names utf8;
-CREATE TABLE multiset_tbl ( col_1 multiset(int, VARCHAR(1)  collate utf8_ko_cs_uca));
+drop table if exists multiset_tbl;
+CREATE TABLE multiset_tbl ( col_1 multiset(int, VARCHAR(5)  collate utf8_ko_cs_uca));
 INSERT INTO multiset_tbl VALUES ({3,3,3,2,2,1,0,'','통터','통터','퉁','퉁', '특'});
 SELECT * FROM multiset_tbl order by 1;
 SELECT CAST(col_1 AS SET), CAST(col_1 AS LIST) FROM multiset_tbl order by 1;

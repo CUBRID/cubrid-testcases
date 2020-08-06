@@ -1,8 +1,9 @@
 --+ holdcas on;
 set names utf8;
+drop table if exists t;
 CREATE TABLE t(
 col1 INT NOT NULL AUTO_INCREMENT, 
-col2 CHAR collate utf8_km_exp DEFAULT NULL 
+col2 CHAR(5) collate utf8_km_exp DEFAULT NULL 
 );
 
 INSERT INTO t(col2) VALUES('ក');
