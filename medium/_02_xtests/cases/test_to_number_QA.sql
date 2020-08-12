@@ -1,9 +1,9 @@
 autocommit off;
-create table dual
+create table tb
 (
 	dummy varchar(1)
 );
-insert into dual (dummy) values ('X');
+insert into tb (dummy) values ('X');
 create table test_to_number (
 	type_char char(30),
 	type_varchar varchar(30),
@@ -16,9 +16,9 @@ create table test_to_number (
 	type_double double
 );
 /*		Minus					*/
-select to_number('-1234','9999') from dual;
+select to_number('-1234','9999') from tb;
 /*		Currency				*/
-select to_number('$1234','c9999') from dual;
+select to_number('$1234','c9999') from tb;
 /*		No decimal number			*/
 insert into test_to_number (type_char,type_varchar)  values ('1234','1234');
 select to_number('1234','9999') from test_to_number;
@@ -114,131 +114,131 @@ select to_number(type_varchar,'9.9999eeee') from test_to_number;
 select to_number(type_varchar,'99.999eeee') from test_to_number;
 delete from test_to_number where type_char='-1.234e+02' and type_varchar='-1.234e+02';
 /*		Normal test			*/
-select to_number('1234','9999') from dual;
-select to_number('1234','99999') from dual;
-select to_number('1234','9999.9') from dual;
-select to_number('1234','99999.9') from dual;
-select to_number('1234','0000.0') from dual;
-select to_number('1234','00000.0') from dual;
+select to_number('1234','9999') from tb;
+select to_number('1234','99999') from tb;
+select to_number('1234','9999.9') from tb;
+select to_number('1234','99999.9') from tb;
+select to_number('1234','0000.0') from tb;
+select to_number('1234','00000.0') from tb;
 /*		Minus	test		*/
-select to_number('-1234','9999') from dual;
-select to_number('-1234','99999') from dual;
-select to_number('-1234','9999.9') from dual;
-select to_number('-1234','99999.9') from dual;
-select to_number('-1234','0000.0') from dual;
-select to_number('-1234','00000.0') from dual;
+select to_number('-1234','9999') from tb;
+select to_number('-1234','99999') from tb;
+select to_number('-1234','9999.9') from tb;
+select to_number('-1234','99999.9') from tb;
+select to_number('-1234','0000.0') from tb;
+select to_number('-1234','00000.0') from tb;
 /*		Decimal number test	*/
-select to_number('123.45','999.99') from dual;
-select to_number('123.45','9999.99') from dual;
-select to_number('123.45','000.00') from dual;
-select to_number('123.45','0000.00') from dual;
+select to_number('123.45','999.99') from tb;
+select to_number('123.45','9999.99') from tb;
+select to_number('123.45','000.00') from tb;
+select to_number('123.45','0000.00') from tb;
 /*		Decimal & minus number test	*/
-select to_number('-123.45','999.99') from dual;
-select to_number('-123.45','9999.99') from dual;
-select to_number('-123.45','000.00') from dual;
-select to_number('-123.45','0000.00') from dual;
+select to_number('-123.45','999.99') from tb;
+select to_number('-123.45','9999.99') from tb;
+select to_number('-123.45','000.00') from tb;
+select to_number('-123.45','0000.00') from tb;
 /*		Scientific 	notation		*/
-select to_number('1.234e+02','9.999eeee') from dual;
-select to_number('-1.234e+02','9.999eeee') from dual;
-select to_number('1.234e-02','9.999eeee') from dual;
-select to_number('-1.234e-02','9.999eeee') from dual;
-select to_number('1.234e+20','9.999eeee') from dual;
-select to_number('-1.234e+20','9.999eeee') from dual;
-select to_number('1.234e-20','9.999eeee') from dual;
-select to_number('-1.234e-20','9.999eeee') from dual;
+select to_number('1.234e+02','9.999eeee') from tb;
+select to_number('-1.234e+02','9.999eeee') from tb;
+select to_number('1.234e-02','9.999eeee') from tb;
+select to_number('-1.234e-02','9.999eeee') from tb;
+select to_number('1.234e+20','9.999eeee') from tb;
+select to_number('-1.234e+20','9.999eeee') from tb;
+select to_number('1.234e-20','9.999eeee') from tb;
+select to_number('-1.234e-20','9.999eeee') from tb;
 /*		Currency		*/
-select to_number('$1234','c9999') from dual;
-select to_number('$1234','c99999') from dual;
-select to_number('$1234','c9999.9') from dual;
-select to_number('$1234','c99999.9') from dual;
-select to_number('$1234','c0000.0') from dual;
-select to_number('$1234','c00000.0') from dual;
+select to_number('$1234','c9999') from tb;
+select to_number('$1234','c99999') from tb;
+select to_number('$1234','c9999.9') from tb;
+select to_number('$1234','c99999.9') from tb;
+select to_number('$1234','c0000.0') from tb;
+select to_number('$1234','c00000.0') from tb;
 /* 		Currency & minus		*/
-select to_number('$-1234','c9999') from dual;
-select to_number('$-1234','c99999') from dual;
-select to_number('$-1234','c9999.9') from dual;
-select to_number('$-1234','c99999.9') from dual;
-select to_number('$-1234','c0000.0') from dual;
-select to_number('$-1234','c00000.0') from dual;
+select to_number('$-1234','c9999') from tb;
+select to_number('$-1234','c99999') from tb;
+select to_number('$-1234','c9999.9') from tb;
+select to_number('$-1234','c99999.9') from tb;
+select to_number('$-1234','c0000.0') from tb;
+select to_number('$-1234','c00000.0') from tb;
 /*		Currency & Decimal & no sign		*/
-select to_number('$123.45','c999.99') from dual;
-select to_number('$123.45','c9999.99') from dual;
-select to_number('$123.45','c000.00') from dual;
-select to_number('$123.45','c0000.00') from dual;
+select to_number('$123.45','c999.99') from tb;
+select to_number('$123.45','c9999.99') from tb;
+select to_number('$123.45','c000.00') from tb;
+select to_number('$123.45','c0000.00') from tb;
 /*		Currency & minus sign & Decimal		*/
-select to_number('$-123.45','c999.99') from dual;
-select to_number('$-123.45','c9999.99') from dual;
-select to_number('$-123.45','c000.00') from dual;
-select to_number('$-123.45','c0000.00') from dual;
+select to_number('$-123.45','c999.99') from tb;
+select to_number('$-123.45','c9999.99') from tb;
+select to_number('$-123.45','c000.00') from tb;
+select to_number('$-123.45','c0000.00') from tb;
 /*		Currency & scientific & sign	*/
-select to_number('$1.234e+02','c9.999eeee') from dual;
-select to_number('$-1.234e+02','c9.999eeee') from dual;
-select to_number('$1.234e-02','c9.999eeee') from dual;
-select to_number('$-1.234e-02','c9.999eeee') from dual;
-select to_number('$1.234e+20','c9.999eeee') from dual;
-select to_number('$-1.234e+20','c9.999eeee') from dual;
-select to_number('$1.234e-20','c9.999eeee') from dual;
-select to_number('$-1.234e-20','c9.999eeee') from dual;
+select to_number('$1.234e+02','c9.999eeee') from tb;
+select to_number('$-1.234e+02','c9.999eeee') from tb;
+select to_number('$1.234e-02','c9.999eeee') from tb;
+select to_number('$-1.234e-02','c9.999eeee') from tb;
+select to_number('$1.234e+20','c9.999eeee') from tb;
+select to_number('$-1.234e+20','c9.999eeee') from tb;
+select to_number('$1.234e-20','c9.999eeee') from tb;
+select to_number('$-1.234e-20','c9.999eeee') from tb;
 /*		Currncy	& no sign			*/
-select to_number('$1234','c9999') from dual;
-select to_number('$1234','c99999') from dual;
-select to_number('$1234','c9999.9') from dual;
-select to_number('$1234','c99999.9') from dual;
-select to_number('$1234','c0000.0') from dual;
-select to_number('$1234','c00000.0') from dual;
+select to_number('$1234','c9999') from tb;
+select to_number('$1234','c99999') from tb;
+select to_number('$1234','c9999.9') from tb;
+select to_number('$1234','c99999.9') from tb;
+select to_number('$1234','c0000.0') from tb;
+select to_number('$1234','c00000.0') from tb;
 /*		Currency & minus sign		*/
-select to_number('$-1234','c9999') from dual;
-select to_number('$-1234','c99999') from dual;
-select to_number('$-1234','c9999.9') from dual;
-select to_number('$-1234','c99999.9') from dual;
-select to_number('$-1234','c0000.0') from dual;
-select to_number('$-1234','c00000.0') from dual;
+select to_number('$-1234','c9999') from tb;
+select to_number('$-1234','c99999') from tb;
+select to_number('$-1234','c9999.9') from tb;
+select to_number('$-1234','c99999.9') from tb;
+select to_number('$-1234','c0000.0') from tb;
+select to_number('$-1234','c00000.0') from tb;
 /*		Currency & Decimal			*/
-select to_number('$123.45','c999.99') from dual;
-select to_number('$123.45','c9999.99') from dual;
-select to_number('$123.45','c000.00') from dual;
-select to_number('$123.45','c0000.00') from dual;
+select to_number('$123.45','c999.99') from tb;
+select to_number('$123.45','c9999.99') from tb;
+select to_number('$123.45','c000.00') from tb;
+select to_number('$123.45','c0000.00') from tb;
 /*		Currency & minus sign		*/
-select to_number('$-123.45','c999.99') from dual;
-select to_number('$-123.45','c9999.99') from dual;
-select to_number('$-123.45','c000.00') from dual;
-select to_number('$-123.45','c0000.00') from dual;
+select to_number('$-123.45','c999.99') from tb;
+select to_number('$-123.45','c9999.99') from tb;
+select to_number('$-123.45','c000.00') from tb;
+select to_number('$-123.45','c0000.00') from tb;
 /*		Currency & sign	& scienfic	*/
-select to_number('$1.234e+02','c9.999eeee') from dual;
-select to_number('$-1.234e+02','c9.999eeee') from dual;
-select to_number('$1.234e-02','c9.999eeee') from dual;
-select to_number('$-1.234e-02','c9.999eeee') from dual;
-select to_number('$1.234e+20','c9.999eeee') from dual;
-select to_number('$-1.234e+20','c9.999eeee') from dual;
-select to_number('$1.234e-20','c9.999eeee') from dual;
-select to_number('$-1.234e-20','c9.999eeee') from dual;
+select to_number('$1.234e+02','c9.999eeee') from tb;
+select to_number('$-1.234e+02','c9.999eeee') from tb;
+select to_number('$1.234e-02','c9.999eeee') from tb;
+select to_number('$-1.234e-02','c9.999eeee') from tb;
+select to_number('$1.234e+20','c9.999eeee') from tb;
+select to_number('$-1.234e+20','c9.999eeee') from tb;
+select to_number('$1.234e-20','c9.999eeee') from tb;
+select to_number('$-1.234e-20','c9.999eeee') from tb;
 /*		Plus & minus sign				*/
-select to_number('+1234','s9999') from dual;
-select to_number('+1234','s99999') from dual;
-select to_number('+1234','s9999.9') from dual;
-select to_number('+1234','s99999.9') from dual;
-select to_number('+1234','s0000.0') from dual;
-select to_number('+1234','s00000.0') from dual;
-select to_number('+123.45','s999.99') from dual;
-select to_number('+123.45','s9999.99') from dual;
-select to_number('+123.45','s000.00') from dual;
-select to_number('+123.45','s0000.00') from dual;
-select to_number('-1.234e+02','s9.999eeee') from dual;
-select to_number('-1.234e-02','s9.999eeee') from dual;
-select to_number('-1.234e+20','s9.999eeee') from dual;
-select to_number('-1.234e-20','s9.999eeee') from dual;
-select to_number('+1.234e+02','s9.999eeee') from dual;
-select to_number('+1.234e-02','s9.999eeee') from dual;
-select to_number('+1.234e+20','s9.999eeee') from dual;
-select to_number('+1.234e-20','s9.999eeee') from dual;
-select to_number('1.234e-13','9.999eeee') from dual;
-select to_number('1.234e-14','9.999eeee') from dual;
-select to_number('1.234e-15','9.999eeee') from dual;
-select to_number('1.234e-16','9.999eeee') from dual;
+select to_number('+1234','s9999') from tb;
+select to_number('+1234','s99999') from tb;
+select to_number('+1234','s9999.9') from tb;
+select to_number('+1234','s99999.9') from tb;
+select to_number('+1234','s0000.0') from tb;
+select to_number('+1234','s00000.0') from tb;
+select to_number('+123.45','s999.99') from tb;
+select to_number('+123.45','s9999.99') from tb;
+select to_number('+123.45','s000.00') from tb;
+select to_number('+123.45','s0000.00') from tb;
+select to_number('-1.234e+02','s9.999eeee') from tb;
+select to_number('-1.234e-02','s9.999eeee') from tb;
+select to_number('-1.234e+20','s9.999eeee') from tb;
+select to_number('-1.234e-20','s9.999eeee') from tb;
+select to_number('+1.234e+02','s9.999eeee') from tb;
+select to_number('+1.234e-02','s9.999eeee') from tb;
+select to_number('+1.234e+20','s9.999eeee') from tb;
+select to_number('+1.234e-20','s9.999eeee') from tb;
+select to_number('1.234e-13','9.999eeee') from tb;
+select to_number('1.234e-14','9.999eeee') from tb;
+select to_number('1.234e-15','9.999eeee') from tb;
+select to_number('1.234e-16','9.999eeee') from tb;
 /*		sign	&	currency		*/
-select to_number('+$1.234e+02','sc9.999eeee') from dual;
-select to_number('+$1.234e+02dummy ','sc9.999eeee"dummy"  ') from dual;
-select to_number('dummy +$1.234e+02','"dummy" sc9.999eeee') from dual;
+select to_number('+$1.234e+02','sc9.999eeee') from tb;
+select to_number('+$1.234e+02dummy ','sc9.999eeee"dummy"  ') from tb;
+select to_number('dummy +$1.234e+02','"dummy" sc9.999eeee') from tb;
 /*		Text				*/
 insert into test_to_number (type_char,type_varchar,type_nchar,type_nchar_varying)  values ('dummy +$1.234e+02','dummy +$1.234e+02',N'dummy +$1.234e+02',N'dummy +$1.234e+02');
 select to_number('dummy +$1.234e+02','"dummy" sc9.999eeee') from test_to_number;
@@ -255,13 +255,13 @@ select to_number(type_varchar,'9999.9') from test_to_number;
 select to_number(type_nchar,'99999.9') from test_to_number;
 select to_number(type_nchar_varying,'0000.0') from test_to_number;
 delete from test_to_number where type_integer=1;
-select to_number('00.0','999.99') from dual;
-select to_number('.0','999.99') from dual;
-select to_number('.0e+10','999.99eeee') from dual;
-select to_number('.0','999.99eeee') from dual;
-select to_number('.0e+','999.99eeee') from dual;
-select to_number('.0e-','999.99eeee') from dual;
-select to_number('100.00','999.99') from dual;
-drop table dual;
+select to_number('00.0','999.99') from tb;
+select to_number('.0','999.99') from tb;
+select to_number('.0e+10','999.99eeee') from tb;
+select to_number('.0','999.99eeee') from tb;
+select to_number('.0e+','999.99eeee') from tb;
+select to_number('.0e-','999.99eeee') from tb;
+select to_number('100.00','999.99') from tb;
+drop table tb;
 drop table test_to_number;
 rollback;

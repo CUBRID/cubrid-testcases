@@ -1,37 +1,37 @@
 --+ holdcas on;
 autocommit off;
-create table dual
+create table tb
 (
  dummy varchar(1)
  );
-insert into dual values ('X');
-			select to_char(1234) from dual;
-			select to_char(+1234) from dual;
-			select to_char(-1234) from dual;
-			select to_char(1234e+02) from dual;
-			select to_char(+1234e+02) from dual;
-			select to_char(-1234e+02) from dual;
-			select to_char(1234e-02) from dual;
-			select to_char(+1234e-02) from dual;
-			select to_char(-1234e-02) from dual;
-			select to_char(1.234) from dual;
-			select to_char(+1.234) from dual;
-			select to_char(-1.234) from dual;
-			select to_char(1.234e+02) from dual;
-			select to_char(+1.234e+02) from dual;
-			select to_char(-1.234e+02) from dual;
-			select to_char(1.234e-02) from dual;
-			select to_char(+1.234e-02) from dual;
-			select to_char(-1.234e-02) from dual;
-			select to_char(12.34e+02) from dual;
-			select to_char(+12.34e+02) from dual;
-			select to_char(-12.34e+02) from dual;
-			select to_char(12.34e-02) from dual;
-			select to_char(+12.34e-02) from dual;
-			select to_char(-12.34e-02) from dual;
-			select to_char(.234) from dual;
-			select to_char(+.234) from dual;
-			select to_char(-.234) from dual;
+insert into tb values ('X');
+			select to_char(1234) from tb;
+			select to_char(+1234) from tb;
+			select to_char(-1234) from tb;
+			select to_char(1234e+02) from tb;
+			select to_char(+1234e+02) from tb;
+			select to_char(-1234e+02) from tb;
+			select to_char(1234e-02) from tb;
+			select to_char(+1234e-02) from tb;
+			select to_char(-1234e-02) from tb;
+			select to_char(1.234) from tb;
+			select to_char(+1.234) from tb;
+			select to_char(-1.234) from tb;
+			select to_char(1.234e+02) from tb;
+			select to_char(+1.234e+02) from tb;
+			select to_char(-1.234e+02) from tb;
+			select to_char(1.234e-02) from tb;
+			select to_char(+1.234e-02) from tb;
+			select to_char(-1.234e-02) from tb;
+			select to_char(12.34e+02) from tb;
+			select to_char(+12.34e+02) from tb;
+			select to_char(-12.34e+02) from tb;
+			select to_char(12.34e-02) from tb;
+			select to_char(+12.34e-02) from tb;
+			select to_char(-12.34e-02) from tb;
+			select to_char(.234) from tb;
+			select to_char(+.234) from tb;
+			select to_char(-.234) from tb;
 create table test_to_char(
 	n1 numeric(10,5),
 	n2 numeric(10,5),
@@ -170,28 +170,28 @@ insert into test_to_char_f (c1,c2,c3,c4,c5,c6,c7,c8,c9,c10)
 		'+to_char(n3,c9+'eeee '+c10 +'eeee') from test_to_char_f,test_to_char; 
 			select cast(n3 as varchar)+'	'+c9+c4+'eeee '+c10+c8+'eeee '+c9+c8+'eeee '+c10+c4+'eeee
 		'+to_char(n3,c9+c4+'eeee '+c10+c8+'eeee '+c9+c8+'eeee '+c10+c4+'eeee ') from test_to_char_f,test_to_char; --	9-4,10-8,9-8,10-4
-			select to_char(1.234,' ') from dual;
-			select to_char(-1.234,' ') from dual;
-			select to_char(1.234,'.') from dual;
-			select to_char(-1.234,'.') from dual;
-			select to_char(1.234,'s') from dual;
-			select to_char(-1.234,'s') from dual;
-			select to_char(1.234,'c') from dual;
-			select to_char(-1.234,'c') from dual;
-			select to_char(1.234,'sc') from dual;
-			select to_char(-1.234,'sc') from dual;
-			select to_char(1.234,'"text"') from dual;
+			select to_char(1.234,' ') from tb;
+			select to_char(-1.234,' ') from tb;
+			select to_char(1.234,'.') from tb;
+			select to_char(-1.234,'.') from tb;
+			select to_char(1.234,'s') from tb;
+			select to_char(-1.234,'s') from tb;
+			select to_char(1.234,'c') from tb;
+			select to_char(-1.234,'c') from tb;
+			select to_char(1.234,'sc') from tb;
+			select to_char(-1.234,'sc') from tb;
+			select to_char(1.234,'"text"') from tb;
                         set names utf8;
-			select to_char(1234,'"최공훈" 0000 "ebebe"') from dual;
-			select to_char(1234,'"최공훈" 0.99eeee "ebebe"') from dual;
-			select to_char(1234,'999"최공훈"999   0.99eeee "ebebe"') from dual;
-			select to_char(1234,'"최공훈""ebebe" sc00000 ') from dual;
-			select to_char(1234,'"최공훈" "ebebe" 009999.99') from dual;
-			select to_char(9999.9,'"최공훈" 0000 "ebebe"') from dual;
-			select to_char(9999.9,'"최공훈" 0.99eeee "ebebe"') from dual;
-			select to_char(9999.9,'999"최공훈"999   0.99eeee "ebebe"') from dual;
-			select to_char(9999.9,'"최공훈""ebebe" sc00000 ') from dual;
-			select to_char(9999.9,'"최공훈" "ebebe" 009999.99') from dual;
+			select to_char(1234,'"최공훈" 0000 "ebebe"') from tb;
+			select to_char(1234,'"최공훈" 0.99eeee "ebebe"') from tb;
+			select to_char(1234,'999"최공훈"999   0.99eeee "ebebe"') from tb;
+			select to_char(1234,'"최공훈""ebebe" sc00000 ') from tb;
+			select to_char(1234,'"최공훈" "ebebe" 009999.99') from tb;
+			select to_char(9999.9,'"최공훈" 0000 "ebebe"') from tb;
+			select to_char(9999.9,'"최공훈" 0.99eeee "ebebe"') from tb;
+			select to_char(9999.9,'999"최공훈"999   0.99eeee "ebebe"') from tb;
+			select to_char(9999.9,'"최공훈""ebebe" sc00000 ') from tb;
+			select to_char(9999.9,'"최공훈" "ebebe" 009999.99') from tb;
 			
 create table test_to_char_table(
     n1 numeric(10,5),

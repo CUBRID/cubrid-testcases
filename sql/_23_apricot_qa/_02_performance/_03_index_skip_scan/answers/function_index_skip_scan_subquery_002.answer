@@ -365,10 +365,10 @@ i    j    k    l
 
 Query plan:
 sscan
-    class: db_root node[?]
+    class: dual node[?]
     cost:  ? card ?
 Query stmt:
-(select t.i from db_root db_root)
+(select t.i from dual dual)
 Query plan:
 iscan
     class: t node[?]
@@ -377,7 +377,7 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where  exists (select t.i from db_root db_root) and t.j= ?:? 
+select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where  exists (select t.i from dual dual) and t.j= ?:? 
 ===================================================
 i    j    k    l    
 1     199     50     50     
@@ -543,10 +543,10 @@ i    j    k    l
 
 Query plan:
 sscan
-    class: db_root node[?]
+    class: dual node[?]
     cost:  ? card ?
 Query stmt:
-(select t.l from db_root db_root)
+(select t.l from dual dual)
 Query plan:
 iscan
     class: t node[?]
@@ -555,7 +555,7 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where  exists (select t.l from db_root db_root) and t.j= ?:? 
+select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where  exists (select t.l from dual dual) and t.j= ?:? 
 ===================================================
 i    j    k    l    
 1     199     50     50     
