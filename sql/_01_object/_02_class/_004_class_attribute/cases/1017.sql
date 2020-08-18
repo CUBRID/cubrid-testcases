@@ -1,5 +1,6 @@
 --+ holdcas on;
 -- [er] create class attribute using shared constraints
+set system parameters 'create_table_reuseoid=no';
 
 create class picture
 (caption set string,
@@ -23,4 +24,6 @@ class attribute (meal_type string shared 'as')
  DROP picture;
  
  DROP meal;
+
+set system parameters 'create_table_reuseoid=yes';
 --+ holdcas off;

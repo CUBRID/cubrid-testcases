@@ -1,4 +1,5 @@
 -- [er]create vclass attribute using default and null constraints
+set system parameters 'create_table_reuseoid=no';
 
 create class picture
 (caption set string,
@@ -19,3 +20,5 @@ class attribute (meal_type string null default 'a' )
  DROP picture;
  
  DROP meal;
+
+set system parameters 'create_table_reuseoid=yes';

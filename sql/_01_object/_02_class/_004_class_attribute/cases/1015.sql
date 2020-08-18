@@ -1,5 +1,6 @@
 --+ holdcas on;
 -- create class attribute using null constraints
+set system parameters 'create_table_reuseoid=no';
 
 create class picture
 (caption set string,
@@ -23,4 +24,6 @@ class attribute (meal_type string null)
  DROP picture;
  
  DROP meal;
+
+set system parameters 'create_table_reuseoid=yes';
 --+ holdcas off;

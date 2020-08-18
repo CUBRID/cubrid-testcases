@@ -1,5 +1,6 @@
 --+ holdcas on;
 -- create vclass attribute using default constraints
+set system parameters 'create_table_reuseoid=no';
 
 create class picture
 (caption set string,
@@ -23,4 +24,5 @@ class attribute (meal_type string default 'a')
  
  DROP meal;
 
+set system parameters 'create_table_reuseoid=yes';
 --+ holdcas off;

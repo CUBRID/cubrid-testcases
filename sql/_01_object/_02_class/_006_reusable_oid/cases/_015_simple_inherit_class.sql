@@ -1,3 +1,5 @@
+set system parameters 'create_table_reuseoid=no';
+
 create table foo(id int) REUSE_OID;
 
 create table goo under foo (x int);
@@ -20,4 +22,4 @@ drop koo;
 drop ooo;
 drop poo;
 
-
+set system parameters 'create_table_reuseoid=yes';
