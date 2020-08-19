@@ -1,5 +1,6 @@
 --+ holdcas on;
 -- create vclass with select clause having Outer join,between and etc keyword
+set system parameters 'create_table_reuseoid=no';
 
 create class dml_super (
 int_col int,
@@ -201,4 +202,5 @@ drop vclass dml_v_join_5;
 drop vclass dml_v_inherit_1;
 drop vclass dml_v_inherit_2;
 
+set system parameters 'create_table_reuseoid=yes';
 --+ holdcas off;
