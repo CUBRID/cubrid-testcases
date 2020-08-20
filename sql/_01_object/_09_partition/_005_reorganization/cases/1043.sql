@@ -1,4 +1,5 @@
 -- insert data  whith create range partition table on a char field and add a attribute and a partition and then query data 
+set system parameters 'create_table_reuseoid=no';
 
 create table range_test(id int, name varchar(255)) partition by range (id)(
 partition p0 values less than (3),
@@ -24,3 +25,5 @@ update range_test set id = id + 2;
 select range_test, range_test.* from range_test order by 2;
 
 drop table range_test;
+
+set system parameters 'create_table_reuseoid=yes';

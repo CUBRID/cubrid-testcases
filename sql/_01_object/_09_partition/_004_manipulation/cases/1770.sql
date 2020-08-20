@@ -1,4 +1,5 @@
 -- insert and query data which table to reference to the table of create range partition with int field having boundary values and maxvalue
+set system parameters 'create_table_reuseoid=no';
 
 create table ident (id int, 
 name char(10), 
@@ -27,3 +28,5 @@ select person.id from test2 order by 1;
 
 drop table ident;
 drop table test2;
+
+set system parameters 'create_table_reuseoid=yes';
