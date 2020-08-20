@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --TEST: [Merge Statement] In autocommit off mode, invalid value can be inserted into the target after 'check option exception' error occurred.
 
 
@@ -29,3 +30,4 @@ drop table t1, t2;
 commit;
 
 autocommit on;
+set system parameters 'create_table_reuseoid=yes';

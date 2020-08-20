@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 --delete from x;
 --drop x;
@@ -17,3 +18,4 @@ delete from x;
 drop x;
 commit;
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';

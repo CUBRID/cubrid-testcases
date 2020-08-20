@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 -- CASE 1
 get optimization cost 'iscan' into :default_iscan;
 DROP TABLE IF EXISTS t1;
@@ -66,3 +67,4 @@ INSERT INTO foo values (class foo);
 DELETE from foo WHERE class foo = a;
 drop foo;
 set optimization cost 'iscan' :default_iscan;
+set system parameters 'create_table_reuseoid=yes';

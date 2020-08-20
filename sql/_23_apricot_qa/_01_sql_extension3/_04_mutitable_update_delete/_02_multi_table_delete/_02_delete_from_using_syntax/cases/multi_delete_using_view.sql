@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --delete from 2 views
 
 
@@ -61,3 +62,4 @@ drop view md_v1, md_v2;
 
 
 
+set system parameters 'create_table_reuseoid=yes';

@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --
 create table t1(e1 enum('Yes', 'No', 'Cancel'), e2 enum ('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'));
 insert into t1 values(1, 1), (3, 2), (1, 3), (3, 7), (2, 6), (3, 4), (2, 5);
@@ -36,3 +37,4 @@ drop view v3;
 drop view v4;
 drop view v5;
 drop table t1;
+set system parameters 'create_table_reuseoid=yes';

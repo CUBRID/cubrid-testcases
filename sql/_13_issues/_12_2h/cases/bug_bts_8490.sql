@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 drop table if exists t1;
 
 create table t1(i int, j int);
@@ -35,3 +36,4 @@ select * from v1 order by 1, 2;
 
 drop view v1;
 drop table t1;
+set system parameters 'create_table_reuseoid=yes';

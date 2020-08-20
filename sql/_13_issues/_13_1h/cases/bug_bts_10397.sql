@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --TEST: Execute "INSERT INTO t1 SELECT 1,j" and throw system error (ERROR: System error (generate attr) in ../../src/parser/xasl_generation.c (line: 9891))
 
 
@@ -27,3 +28,4 @@ insert into t values (1, select count (*) from (select i xi, j xj from t) as x w
 insert into s values (insert into t values (1, attr.i));
 
 drop s,t;
+set system parameters 'create_table_reuseoid=yes';

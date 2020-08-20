@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 drop if exists tbl;
 
@@ -43,3 +44,4 @@ select * from tbl;
 drop tbl;
 
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';

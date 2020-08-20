@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 set system parameters 'dont_reuse_heap_file=yes';
 
 create table t1(a int , b int);
@@ -246,3 +247,4 @@ drop table t3;
 
 set system parameters 'dont_reuse_heap_file=no';
 
+set system parameters 'create_table_reuseoid=yes';

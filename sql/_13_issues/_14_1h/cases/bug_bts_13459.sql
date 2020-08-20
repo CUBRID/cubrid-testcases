@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 drop table if exists t;
 drop table if exists foo;
@@ -59,3 +60,4 @@ drop table foo;
 drop table t;
 
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';

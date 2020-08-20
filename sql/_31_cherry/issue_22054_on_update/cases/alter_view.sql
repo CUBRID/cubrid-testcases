@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 
 drop if exists t;
@@ -314,3 +315,4 @@ drop view if exists v;
 drop if exists t1,t;
 
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';

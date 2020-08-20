@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --bind parameter in where clause ( oid reference )
 
 create class xoo ( a int);
@@ -18,3 +19,4 @@ $varchar , $10;
 select a from yoo where b.a = ? + 10;
 
 drop xoo, yoo;
+set system parameters 'create_table_reuseoid=yes';

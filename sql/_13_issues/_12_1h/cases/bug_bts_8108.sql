@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --TEST: [Multi-table Update] result is not correct when update a table and a view.
 
 
@@ -64,3 +65,4 @@ select * from v1 order by 1, 2;
 
 drop view v1;
 drop table t1;
+set system parameters 'create_table_reuseoid=yes';

@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 set system parameters 'dont_reuse_heap_file=yes';
 
@@ -69,3 +70,4 @@ drop v;
 commit;
 set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';

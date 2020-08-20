@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 autocommit off;
 drop if exists bar,foo; 
 
@@ -45,3 +46,4 @@ drop table bar,foo;
 commit;
 
 autocommit on;
+set system parameters 'create_table_reuseoid=yes';

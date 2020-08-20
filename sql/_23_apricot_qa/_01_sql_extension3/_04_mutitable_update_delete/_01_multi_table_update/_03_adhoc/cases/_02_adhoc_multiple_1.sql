@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 set system parameters 'dont_reuse_heap_file=yes';
 
 
@@ -198,3 +199,4 @@ drop table t1;
 drop table t2;
 
 set system parameters 'dont_reuse_heap_file=no';
+set system parameters 'create_table_reuseoid=yes';

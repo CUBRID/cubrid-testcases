@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --TEST:  [ErrorEnhance] Error message is not clear when creating a view with invalid column name.
 
 create table aa(a int);
@@ -42,3 +43,4 @@ drop view v2;
 drop view v3;
 
 
+set system parameters 'create_table_reuseoid=yes';

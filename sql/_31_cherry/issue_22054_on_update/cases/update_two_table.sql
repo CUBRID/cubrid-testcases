@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 drop table if exists a,b;
 CREATE TABLE a(id INT PRIMARY KEY, charge DOUBLE,c timestamp on update current_timestamp);
 CREATE TABLE b(rate_id INT, rate DOUBLE);
@@ -57,3 +58,4 @@ select if(current_timestamp-c>=0 and current_timestamp-c<10,'ok','nok') from tbl
 select if(current_timestamp-c>=0 and current_timestamp-c<10,'ok','nok') from tbl2 where a=8;
 drop if exists tbl2,tbl1;
 drop if exists a,b,vw;
+set system parameters 'create_table_reuseoid=yes';

@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 create table tbl (c varchar (22) not null);
 create index i_tbl_c   on tbl (c);
@@ -64,3 +65,4 @@ drop table reff;
 drop table tbl;
 commit;
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';

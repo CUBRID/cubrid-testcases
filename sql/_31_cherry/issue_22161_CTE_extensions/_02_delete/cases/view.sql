@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 drop table if exists t,xoo;
 create table t(i int);
 insert into t(i) values(1),(2),(3);
@@ -151,3 +152,4 @@ drop view v1, v2;
 drop table if exists t1,t2,t,xoo;
 
 
+set system parameters 'create_table_reuseoid=yes';

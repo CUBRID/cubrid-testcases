@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --test TIMESTAMP(L)TZ columns, with view
 
 autocommit off;
@@ -65,3 +66,4 @@ commit;
 autocommit on;
 
  
+set system parameters 'create_table_reuseoid=yes';

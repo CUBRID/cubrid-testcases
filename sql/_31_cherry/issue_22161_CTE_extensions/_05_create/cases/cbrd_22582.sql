@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 drop table if exists t,foo;
 create table t(a int);
 insert into t select rownum from db_root connect by level<=10;
@@ -39,3 +40,4 @@ select count(t.*) as cmt from t
 select count(*) as cnt from cte;
 select * from foo order by 1;
 drop table if exists t,foo;
+set system parameters 'create_table_reuseoid=yes';

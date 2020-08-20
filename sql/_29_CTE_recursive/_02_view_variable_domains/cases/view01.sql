@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 autocommit off;
 drop table if exists foo;
 drop view if exists fff;
@@ -17,3 +18,4 @@ drop foo;
 drop fff;
 commit;
 autocommit on;
+set system parameters 'create_table_reuseoid=yes';

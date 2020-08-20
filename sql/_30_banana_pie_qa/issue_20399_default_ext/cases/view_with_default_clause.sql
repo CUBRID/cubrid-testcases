@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 drop  table if exists t1;
 --error since the length is too short
 create table t1(i int primary key, k varchar(10) default to_char(SYSTIMESTAMP, 'HH24:MI:SS YYYY-MM-DD'));
@@ -29,3 +30,4 @@ drop view v1;
 drop view v2;
 drop table t1;
 drop table t2;
+set system parameters 'create_table_reuseoid=yes';

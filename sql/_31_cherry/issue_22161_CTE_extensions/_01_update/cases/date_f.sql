@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 drop table if exists t;
 drop view if exists v1;
 create table t as
@@ -76,3 +77,4 @@ with mycte as
 select * from t order by 1;
 
 drop if exists t,v1;
+set system parameters 'create_table_reuseoid=yes';

@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 create table t(i int);
 insert into t values (1), (2), (3), (4), (5), (6), (7), (8), (9), (10), (11), (12), (13), (14), (15), (16), (17), (18), (19), (20);
 
@@ -66,3 +67,4 @@ drop view v18;
 drop view v19;
 drop view v20;
 drop class t;
+set system parameters 'create_table_reuseoid=yes';

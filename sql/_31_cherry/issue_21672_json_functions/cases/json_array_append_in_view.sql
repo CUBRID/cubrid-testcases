@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 drop table if exists t1;
 drop view if exists v1;
 create table t1 (a json NOT NULL, b json, id int );
@@ -16,3 +17,4 @@ drop view if exists v2;
 drop view if exists v1;
 drop table if exists t1;
 
+set system parameters 'create_table_reuseoid=yes';

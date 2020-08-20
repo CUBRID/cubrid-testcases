@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 drop if exists t;
 create table t(
 a int,
@@ -281,3 +282,4 @@ select if(f is not null && g is not null && h is not null && i is not null,'ok',
 select if(b is not null && c is not null && d is not null && e is not null,'ok','nok') from v;
 select if(f is not null && g is not null && h is not null && i is not null,'ok','nok') from v;
 drop if exists v,t1,t,t2,t3;
+set system parameters 'create_table_reuseoid=yes';

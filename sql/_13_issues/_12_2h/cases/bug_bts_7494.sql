@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --TEST: [Merge Statement] WITH CHECK OPTION condition is not checked when merging into a view.
 
 autocommit on;
@@ -38,3 +39,4 @@ drop view v;
 drop table t1, t2;
 
 
+set system parameters 'create_table_reuseoid=yes';

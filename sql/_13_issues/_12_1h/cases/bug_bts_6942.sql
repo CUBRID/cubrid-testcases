@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --TEST: Accessing deleted object error occurs when trying to update a view.
 
 
@@ -24,3 +25,4 @@ select if(count(*)=1, 'ok', 'nok') from foo order by 1;
 
 drop view v;
 drop table foo;
+set system parameters 'create_table_reuseoid=yes';

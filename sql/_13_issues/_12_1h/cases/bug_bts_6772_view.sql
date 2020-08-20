@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 create table t (a int default 222);
 create table u (a int default 222, b int default 223);
 create table x (a int default 222, b int default 223, c int);
@@ -42,3 +43,4 @@ drop t;
 drop u;
 drop x;
 drop y;
+set system parameters 'create_table_reuseoid=yes';

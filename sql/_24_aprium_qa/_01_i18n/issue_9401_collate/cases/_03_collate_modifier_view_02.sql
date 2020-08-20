@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 set names utf8;
 
@@ -39,3 +40,4 @@ drop v;
 set names iso88591;
 commit;
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';

@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 drop view if exists tree;
 drop table if exists tree1;
 
@@ -54,3 +55,4 @@ select * from json_table(
 
 drop view if exists tree;
 drop table if exists tree1;
+set system parameters 'create_table_reuseoid=yes';

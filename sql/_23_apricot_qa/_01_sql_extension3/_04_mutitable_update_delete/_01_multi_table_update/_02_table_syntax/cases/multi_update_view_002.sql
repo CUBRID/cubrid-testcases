@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --join updatable and non-updatable VIEWs in the table-specification and attempt to update them
 
 
@@ -69,3 +70,4 @@ drop table md_datetime1, md_datetime2;
 
 
 
+set system parameters 'create_table_reuseoid=yes';

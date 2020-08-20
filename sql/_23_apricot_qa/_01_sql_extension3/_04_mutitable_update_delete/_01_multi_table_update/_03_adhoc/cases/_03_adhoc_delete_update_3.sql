@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 
 drop table if exists aoo,boo;
 create table aoo(a int, b bigint primary key );
@@ -132,3 +133,4 @@ drop table t1,t2;
 
 
 
+set system parameters 'create_table_reuseoid=yes';

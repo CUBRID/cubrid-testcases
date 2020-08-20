@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 drop table if exists sales_mon_tbl;
 CREATE TABLE sales_mon_tbl (
@@ -193,3 +194,4 @@ drop if exists scores,sales_mon_tbl,a,v1,t1;
 
 
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';

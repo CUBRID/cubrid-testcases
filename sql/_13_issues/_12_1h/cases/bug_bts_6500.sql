@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --Throw "ERROR: System error (generate xasl) in ../../src/parser/xasl_generation.c (line: 14687)" when delete a view from multiple objects.
 
 autocommit off;
@@ -82,3 +83,4 @@ drop view v1, v2, v3, v4;
 commit;
 
 autocommit on;
+set system parameters 'create_table_reuseoid=yes';

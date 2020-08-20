@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 drop table if exists A;
 CREATE TABLE A(col_int int,pk int primary key,col_int_key int);
 CREATE INDEX idx_a_col_int_key ON a (col_int_key) with online;
@@ -136,3 +137,4 @@ SELECT count(*) FROM A WHERE col_int_key != 3 AND pk BETWEEN 1 AND 1 + 3 AND col
 
 select * from b order by 1;
 drop if exists A,b,a,v1;
+set system parameters 'create_table_reuseoid=yes';

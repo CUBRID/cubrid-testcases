@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 drop table if exists pay,costs,test;
 create class test (id int PRIMARY KEY, a int);
@@ -375,3 +376,4 @@ DROP TABLE IF EXISTS t1;
 
 --+ holdcas off;
 commit;
+set system parameters 'create_table_reuseoid=yes';

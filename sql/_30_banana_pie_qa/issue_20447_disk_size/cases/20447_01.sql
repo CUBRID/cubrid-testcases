@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 
 drop table if exists t;
@@ -97,3 +98,4 @@ select @a,disk_size(cast(@a as char(100)));
 drop variable @a;
 
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';

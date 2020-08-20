@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 
 drop table if exists t1;
@@ -50,3 +51,4 @@ deallocate prepare st;
 
 drop variable @a,@b,@c;
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';

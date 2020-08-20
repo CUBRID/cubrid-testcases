@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 ---- ALTER TABLE ...  CHANGE COLUMN  , type change : class object to another class object
 -- constraints : no constraints
@@ -116,3 +117,4 @@ commit;
 
 set system parameters 'error_log_level=syntax';
 set system parameters 'error_log_warning=no';
+set system parameters 'create_table_reuseoid=yes';

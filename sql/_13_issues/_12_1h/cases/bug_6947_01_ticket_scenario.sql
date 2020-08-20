@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 create table t1(a int);
 insert into t1 values(1), (2), (3);
 
@@ -12,3 +13,4 @@ drop view v1, v2;
 drop table t1,t2;
 
 
+set system parameters 'create_table_reuseoid=yes';
