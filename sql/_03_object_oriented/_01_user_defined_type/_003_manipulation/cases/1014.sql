@@ -1,4 +1,6 @@
 --test insert, select, update, delete with 3 depth
+set system parameters 'create_table_reuseoid=no';
+
 create class tb3(
      col1 int
 );
@@ -27,3 +29,5 @@ delete from tb1 where col2.col2.col1 =2;
 drop class tb1;
 drop class tb2;
 drop class tb3;
+
+set system parameters 'create_table_reuseoid=yes';

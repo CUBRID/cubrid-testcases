@@ -1,4 +1,6 @@
 --Insert into class with collection type by variable
+set system parameters 'create_table_reuseoid=no';
+
 create class t1 (c1 set of int, c2 multiset varchar(10));
 create class t2 (c1 int, c2 t1);
 insert into t2 values(1001, (insert into t1 
@@ -14,3 +16,4 @@ select * from t2 order by 1,2;
 drop class t1;
 drop class t2;
 
+set system parameters 'create_table_reuseoid=yes';

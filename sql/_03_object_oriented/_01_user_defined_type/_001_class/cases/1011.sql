@@ -1,4 +1,5 @@
 --test alter using to alter method(instance, class) name
+set system parameters 'create_table_reuseoid=no';
 
 create class tb2(
 	col1 char(8)
@@ -34,3 +35,4 @@ alter class tb2 rename method get_2000 as get_3000;
 drop class tb2;
 drop class tb1;
 
+set system parameters 'create_table_reuseoid=yes';

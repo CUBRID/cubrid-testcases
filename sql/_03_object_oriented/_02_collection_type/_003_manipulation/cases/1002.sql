@@ -1,4 +1,5 @@
 -- it tests a insert data into superclass and subclass syntax with type set
+set system parameters 'create_table_reuseoid=no';
 
 create class DML_SUPER (
 	int_col int not null,
@@ -28,3 +29,5 @@ select * from all DML_SUPER order by 1,2,3;
 drop class DML_SUPER;
 drop class DML_0001;
 drop class DML_0002;
+
+set system parameters 'create_table_reuseoid=yes';

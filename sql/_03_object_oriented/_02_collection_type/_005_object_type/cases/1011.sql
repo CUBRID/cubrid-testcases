@@ -1,5 +1,7 @@
 --+ holdcas on;
 --test udt using nchar, nchar varying type
+set system parameters 'create_table_reuseoid=no';
+
 create class t1(
 	id int auto_increment primary key,
 	col1 nchar(10),
@@ -24,4 +26,5 @@ SELECT * FROM t2 order by 1;
 drop t1;
 drop t2;
 
+set system parameters 'create_table_reuseoid=yes';
 --+ holdcas off;

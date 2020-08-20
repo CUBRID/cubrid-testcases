@@ -1,5 +1,7 @@
 --+ holdcas on;
 --[er]* operator and other columns in a select list.
+set system parameters 'create_table_reuseoid=no';
+
 create class DML_0001
 ( 	int_col int not null,
 var_col varchar(20),
@@ -42,4 +44,5 @@ drop class DML_0002;
 drop class DML_0003;
 drop variable a,b,c,d,e ;
 
+set system parameters 'create_table_reuseoid=yes';
 --+ holdcas off;

@@ -1,5 +1,6 @@
 --+ holdcas on;
 -- create a class with udt to set and insert data to this calss.
+set system parameters 'create_table_reuseoid=no';
 
 create class t1(
 id int not null,
@@ -26,4 +27,6 @@ SELECT * FROM t2;
 
 drop t1;
 drop t2;
+
+set system parameters 'create_table_reuseoid=yes';
 --+ holdcas off;
