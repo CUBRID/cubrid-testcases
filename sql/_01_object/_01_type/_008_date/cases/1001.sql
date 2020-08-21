@@ -1,5 +1,5 @@
 --create classes,create a vclass,create a vclass based on a created class and inherited from another created class, create a vclass use gropu by function  
-
+set  system parameters 'create_table_reuseoid=no';
 
 CREATE CLASS ddl_0001 (
 	int_col int,
@@ -60,3 +60,5 @@ drop class ddl_0004;
 drop class ddl_0003;
 drop class ddl_0002;
 drop class ddl_0001;
+
+set  system parameters 'create_table_reuseoid=yes';

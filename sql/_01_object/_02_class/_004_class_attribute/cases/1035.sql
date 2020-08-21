@@ -1,5 +1,6 @@
 --+ holdcas on;
 -- create class attribute same name as instance attribute and same type
+set system parameters 'create_table_reuseoid=no';
 
 create class picture
 (caption set string,
@@ -24,4 +25,5 @@ class attribute (menu string)
  
  DROP meal;
 
+set system parameters 'create_table_reuseoid=yes';
 --+ holdcas off;
