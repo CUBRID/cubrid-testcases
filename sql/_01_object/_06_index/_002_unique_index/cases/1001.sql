@@ -1,3 +1,5 @@
+set system parameters 'create_table_reuseoid=no';
+
 -- create class,create trigger based on this class,drop this trigger, drop this class
 
 CREATE CLASS ddl_0001
@@ -20,3 +22,5 @@ DROP CLASS ddl_0001;
 rollback;
 rollback;
 rollback;
+
+set system parameters 'create_table_reuseoid=yes';

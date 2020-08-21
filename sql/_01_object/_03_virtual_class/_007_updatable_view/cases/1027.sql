@@ -1,5 +1,6 @@
 --+ holdcas on;
 -- vclass is unupdatable if select using path expression
+set system parameters 'create_table_reuseoid=no';
 
 create class c1 ( id int, id_key int, id_s string );
 
@@ -32,4 +33,5 @@ drop variable a;
 drop class c1,c2;
 drop vclass v1;
 
+set system parameters 'create_table_reuseoid=yes';
 --+ holdcas off;

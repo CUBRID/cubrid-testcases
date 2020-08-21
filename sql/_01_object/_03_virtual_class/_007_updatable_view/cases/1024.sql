@@ -1,4 +1,5 @@
 -- vclass is unupdatable if select using operation - on column
+set system parameters 'create_table_reuseoid=no';
 
 create class c1 ( id int, id_key int, id_s string );
 
@@ -21,3 +22,5 @@ select v1 from v1;
 
 drop class c1;
 drop vclass v1;
+
+set system parameters 'create_table_reuseoid=yes';

@@ -1,4 +1,5 @@
 -- [er] create class,create vclass based on the created class,select data from the no updatable vclass,then reprot error,'Only updatable vclasses are allowed to select VIDs'
+set system parameters 'create_table_reuseoid=no';
 
 create class view_test1 ( id int, id_key int, id_s string );
 create class view_test2 ( id int, id_key int, id_s string );
@@ -29,3 +30,5 @@ drop class view_test1;
 drop class view_test2;
 drop vclass updatable_view_test;
 drop vclass non_updatable_view_test;
+
+set system parameters 'create_table_reuseoid=yes';
