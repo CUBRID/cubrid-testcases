@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --create classes,create vclass with LEFT OUTER JOIN ,RIGHT OUTER JOIN  and use  inheritance relationship
 
 
@@ -82,3 +83,4 @@ drop class ddl_0004;
 drop class ddl_0003;
 drop class ddl_0002;
 drop class ddl_0001;
+set system parameters 'create_table_reuseoid=yes';

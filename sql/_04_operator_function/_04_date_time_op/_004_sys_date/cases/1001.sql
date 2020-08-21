@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 -- tests a insert data into class syntax using function of '05/26/2008' 
 
 create class xoo ( a int, c date );
@@ -16,3 +17,4 @@ select a,b, d from zoo;
 drop xoo;
 drop yoo;
 drop zoo;
+set system parameters 'create_table_reuseoid=yes';

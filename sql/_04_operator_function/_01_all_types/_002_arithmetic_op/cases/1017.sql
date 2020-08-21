@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --test union,difference, intersection keyword using some select statements.
 --+ holdcas on;
 create class DML_0001
@@ -56,3 +57,4 @@ drop class DML_0002;
 drop class DML_0003;
 commit;
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';

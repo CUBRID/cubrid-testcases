@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 --[er]test union keyword using 3 tables.
 --it tests union keyword using 3 tables and 2 subquery.
@@ -48,3 +49,4 @@ drop table dml_0001;
 drop table dml_0002;
 drop table dml_0003;
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';
