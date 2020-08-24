@@ -1,5 +1,6 @@
 --+ holdcas on;
 --[er]test revoke privileges of select using domain type(user defined) and values of set 
+set system parameters 'create_table_reuseoid=no';
 
 call login('dba','') on class db_user;
 create user db1;
@@ -34,4 +35,6 @@ drop table b;
 drop table aa;
 drop user db1;
 drop user db2;
+
+set system parameters 'create_table_reuseoid=yes';
 --+ holdcas off;

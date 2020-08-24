@@ -1,4 +1,5 @@
 --test alter using to alter file path of method 
+set system parameters 'create_table_reuseoid=no';
 
 create class tb2(
 	col1 char(8)
@@ -16,3 +17,4 @@ alter class tb2 rename file '$HOME/method_test/myyang' as '$HOME/method_test/myy
 drop class tb2;
 drop class tb1;
 
+set system parameters 'create_table_reuseoid=yes';

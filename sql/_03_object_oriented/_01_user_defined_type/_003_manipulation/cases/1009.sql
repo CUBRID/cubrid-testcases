@@ -1,4 +1,5 @@
 -- it tests a nested insert data into superclass and subclass syntax
+set system parameters 'create_table_reuseoid=no';
 
 create class DML_SUPER (
 	int_col int not null,
@@ -48,3 +49,5 @@ drop class DML_SUPER;
 drop class DML_0001;
 drop class DML_0002;
 drop variable a, a1, a2, b, b1, b2;
+
+set system parameters 'create_table_reuseoid=yes';

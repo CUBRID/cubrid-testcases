@@ -1,4 +1,5 @@
 --test update using two class 
+set system parameters 'create_table_reuseoid=no';
 
 create class tb2(
 	col1 int
@@ -21,3 +22,5 @@ update tb1 set col1=4,col2=(select tb2 from tb2 where col1=2) where col1=1;
 
 drop class tb1;
 drop class tb2;
+
+set system parameters 'create_table_reuseoid=yes';

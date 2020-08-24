@@ -1,5 +1,6 @@
 --+ holdcas on;
 --delete data from condition clause with all and only keyword
+set system parameters 'create_table_reuseoid=no';
 
 create class DML_0001
 ( 	int_col int not null,
@@ -63,4 +64,5 @@ drop class DML_0003;
 drop class DML_0004;
 drop variable a,b,c,d,e ;
 
+set system parameters 'create_table_reuseoid=yes';
 --+ holdcas off;

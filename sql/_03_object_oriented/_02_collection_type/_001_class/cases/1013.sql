@@ -1,5 +1,7 @@
 --Create a class which domain_list is a combination of data type and user-defined class
 --+ holdcas on;
+set system parameters 'create_table_reuseoid=no';
+
 create class t1(c1 int, c2 char(10));
 create class t2(c1 char(10), c2 t1);
 
@@ -30,4 +32,6 @@ drop class t1;
 drop class t2;
 drop class t3;
 commit;
+
+set system parameters 'create_table_reuseoid=yes';
 --+ holdcas off;
