@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 
 drop if exists t;
 create table t(
@@ -268,3 +269,4 @@ drop view v;
 drop table t;
 
 
+set system parameters 'create_table_reuseoid=yes';

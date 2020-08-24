@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 -- This testcase use modified Oracle samples. See below for the license:
 -- Copyright (c) 2015 Oracle
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -96,3 +97,4 @@ drop bonuses;
 drop emp;
 drop v_bonuses;
 drop v_emp;
+set system parameters 'create_table_reuseoid=yes';

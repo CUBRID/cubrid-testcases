@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --merge into a view with 'WITH CHECK OPTION'
 
 
@@ -145,3 +146,4 @@ autocommit on;
 
 
 
+set system parameters 'create_table_reuseoid=yes';

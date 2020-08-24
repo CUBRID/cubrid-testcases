@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 drop table if exists t;
 CREATE TABLE t(i INT , j INT ,unique(i,j)) PARTITION BY RANGE(i) (PARTITION p0 VALUES LESS THAN(10), PARTITION p1 VALUES LESS THAN(100));
@@ -40,3 +41,4 @@ drop table if exists t;
 
 
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';

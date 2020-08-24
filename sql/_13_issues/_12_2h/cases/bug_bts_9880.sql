@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 drop if exists t;
 
 create table t (s char(10), i int);
@@ -69,3 +70,4 @@ select distinct t1.charset_name from db_collation t1, db_collation t2;
 select distinct t1.charset_name from db_collation t1, db_collation t2 order by t1.charset_name;
 
 select count(*) from db_collation t1, db_collation t2 order by t2.coll_id;
+set system parameters 'create_table_reuseoid=yes';

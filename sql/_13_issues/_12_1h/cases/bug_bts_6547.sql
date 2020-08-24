@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --delete tablename
 create table bug_6547(id int);
 insert into bug_6547 values(1);
@@ -40,3 +41,4 @@ delete from bug_6547;
 
 drop vbug_6547;
 drop bug_6547;
+set system parameters 'create_table_reuseoid=yes';

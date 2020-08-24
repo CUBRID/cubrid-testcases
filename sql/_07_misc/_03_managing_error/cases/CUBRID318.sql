@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --buf fix for BTS 318 issue
 
 create table xoo ( a int, b string);
@@ -12,3 +13,4 @@ select a, b from xoo where xoo = xoo;
 select a, b from xoo where 1=1;
 
 drop xoo;
+set system parameters 'create_table_reuseoid=yes';

@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 drop if exists t;
 create table t(i time);
 insert into t values('22:23:00');
@@ -27,3 +28,4 @@ select * from t order by 1,2;
 drop if exists t,v1;
 
 
+set system parameters 'create_table_reuseoid=yes';

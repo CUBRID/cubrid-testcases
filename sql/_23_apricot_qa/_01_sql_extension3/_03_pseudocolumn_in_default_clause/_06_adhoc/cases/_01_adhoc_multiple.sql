@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 drop table if exists ordby_nulls;
 create table t1 (b char(10), c int);
@@ -625,3 +626,4 @@ show tables;
 drop variable @a;
 
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';

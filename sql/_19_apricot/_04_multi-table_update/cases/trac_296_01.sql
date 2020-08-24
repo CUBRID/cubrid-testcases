@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --CLIENT
 create table t1(i int);
 create view v1 as select * from t1 where i < 5 with check option;
@@ -35,3 +36,4 @@ drop view v1;
 drop table t1;
 drop view v2;
 drop table t2;
+set system parameters 'create_table_reuseoid=yes';

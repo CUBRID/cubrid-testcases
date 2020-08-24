@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 create class DML_0001
 ( int_col integer,
@@ -77,3 +78,4 @@ select /*+ recompile */ sum(i), z.j.i from z group by 2 order by 2;
 drop table y,z;
 commit;
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';

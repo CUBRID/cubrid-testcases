@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 --datetimetz, object 
 
@@ -26,3 +27,4 @@ drop class person_info;
 
 
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';

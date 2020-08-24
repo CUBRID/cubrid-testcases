@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --TEST: 'Accessing deleted object error' occurs when creating a trigger with delete action on 'before update' event.
 
 autocommit off;
@@ -164,3 +165,4 @@ drop table t15;
 rollback;
 
 autocommit on;
+set system parameters 'create_table_reuseoid=yes';

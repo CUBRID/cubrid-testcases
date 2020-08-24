@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --merge into a view
 
 
@@ -162,3 +163,4 @@ autocommit on;
 
 
 
+set system parameters 'create_table_reuseoid=yes';

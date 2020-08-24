@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 set trigger trace off;
 
 create table foo (id int);
@@ -23,3 +24,4 @@ select * from (select b.f.id from zoo) A;
 drop table foo;
 drop table bar;
 drop table zoo;
+set system parameters 'create_table_reuseoid=yes';

@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --TEST: [Merge Statement] Check option error is not checked when merging into a view.
 
 
@@ -25,3 +26,4 @@ select * from t1 order by 1;
 
 drop view v;
 drop table t1, t2;
+set system parameters 'create_table_reuseoid=yes';

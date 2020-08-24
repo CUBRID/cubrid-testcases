@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --TEST: [Multi-table Delete] No error returns when table name is not unique in multi-table delete statement.
 
 
@@ -49,3 +50,4 @@ delete from x, y, x using v x, w y;
 drop view v, w;
 drop table t, u;
 
+set system parameters 'create_table_reuseoid=yes';

@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 drop table if exists tt, t,t1,t2,a;
 create table t(i bigint, j SMALLINT, k NUMERIC(5,0),l FLOAT,m date,n varchar(200) ) partition by hash(i) partitions 5 ;
 create unique index u_t_i on t(i);
@@ -93,3 +94,4 @@ drop view u;
 drop table a;
 drop table b;
 drop table t;
+set system parameters 'create_table_reuseoid=yes';

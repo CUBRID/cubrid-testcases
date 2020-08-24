@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 autocommit off;
 create class temp1 (at1 int);
 create class temp2 (at1 temp1);
@@ -16,3 +17,4 @@ drop class temp1;
 drop class temp2;
 drop class xxx;
 drop class zzz;
+set system parameters 'create_table_reuseoid=yes';

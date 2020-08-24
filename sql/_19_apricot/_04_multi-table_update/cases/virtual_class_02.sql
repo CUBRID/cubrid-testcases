@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --CLIENT
 create table t1(i int);
 insert into t1 values (1), (2), (3), (4), (5);
@@ -40,3 +41,4 @@ drop view v3;
 drop table t1;
 drop table t2;
 drop table t3;
+set system parameters 'create_table_reuseoid=yes';

@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 drop table if exists t1;
 create table t1(id int primary key, name varchar(20));
 drop f,dp;
@@ -131,3 +132,4 @@ drop   z2__p__p0         ;
 drop   z2__p__p1    ;
 
 set system parameters 'dont_reuse_heap_file=no';
+set system parameters 'create_table_reuseoid=yes';

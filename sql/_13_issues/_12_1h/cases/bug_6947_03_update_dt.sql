@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 autocommit off;
 set system parameters 'dont_reuse_heap_file = yes';
 
@@ -143,3 +144,4 @@ commit;
 set system parameters 'dont_reuse_heap_file = no';
 commit;
 autocommit on;
+set system parameters 'create_table_reuseoid=yes';

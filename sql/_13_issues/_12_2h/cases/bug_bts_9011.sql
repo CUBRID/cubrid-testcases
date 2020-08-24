@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 create table tpr(i int) partition by list (i)(
 	partition p6 values in (1,2,3,4,5),
 	partition p10 values in (6,7,8,9,10),
@@ -82,3 +83,4 @@ update vv set i=i+1;
 
 drop tt;
 drop vv;
+set system parameters 'create_table_reuseoid=yes';

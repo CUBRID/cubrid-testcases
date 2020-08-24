@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 drop table if exists a, b, c, t;
 
 create table t(i int, j int, k int);
@@ -80,3 +81,4 @@ drop view u;
 drop table a;
 drop table b;
 drop table t;
+set system parameters 'create_table_reuseoid=yes';

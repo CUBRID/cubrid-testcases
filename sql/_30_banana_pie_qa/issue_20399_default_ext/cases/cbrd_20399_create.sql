@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 -- 1. check the existing default clause is ok
 drop table if exists t1;
 drop table if exists t1_a;
@@ -99,3 +100,4 @@ drop table t2_t;
 
 
 
+set system parameters 'create_table_reuseoid=yes';

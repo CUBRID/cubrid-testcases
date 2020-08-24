@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --Test optimizing on class with oid object
 create class t1(c1 int);
 
@@ -8,3 +9,4 @@ update statistics on t1;
 
 drop class t1;
 drop class t2;
+set system parameters 'create_table_reuseoid=yes';

@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --TEST: [Merge Statement] 'Check option exception' error occurs when merging into a view though there is no check option conflict.
 
 drop table if exists t1, t2;
@@ -24,3 +25,4 @@ select * from t1 order by 1, 2;
 
 drop view v;
 drop table t1, t2;
+set system parameters 'create_table_reuseoid=yes';

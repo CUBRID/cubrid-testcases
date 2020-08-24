@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 -- bug CBRD-21304
 drop table if exists t;
 
@@ -57,3 +58,4 @@ drop v3;
 
 drop t3;
 
+set system parameters 'create_table_reuseoid=yes';

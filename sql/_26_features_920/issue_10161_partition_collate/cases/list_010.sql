@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 set names utf8;
 
 CREATE TABLE t1 (a VARCHAR(10) default 'A', b varchar(10) ) collate utf8_en_cs
@@ -29,3 +30,4 @@ drop table t1;
 
 set names iso88591;
 
+set system parameters 'create_table_reuseoid=yes';

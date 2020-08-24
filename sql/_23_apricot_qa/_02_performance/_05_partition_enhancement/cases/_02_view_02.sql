@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 drop table if exists tpr;
 drop table if exists tpr__p__p20;
 drop table if exists tpr__P__p6;
@@ -33,3 +34,4 @@ drop tpr__p__p20;
 drop v1;
 drop v2;
 drop tpr__p__p6;
+set system parameters 'create_table_reuseoid=yes';

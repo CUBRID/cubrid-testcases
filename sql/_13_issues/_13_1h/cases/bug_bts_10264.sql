@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 drop if exists s1; 
 
 CREATE TABLE s1(i int, j int) PARTITION BY RANGE(i) (
@@ -99,3 +100,4 @@ drop if exists s1;
 
 
 
+set system parameters 'create_table_reuseoid=yes';

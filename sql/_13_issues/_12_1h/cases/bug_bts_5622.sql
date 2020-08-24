@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 create table t(i int auto_increment) partition by hash(i) partitions 3;
 insert into t(i) values (NULL), (NULL), (NULL), (NULL), (NULL), (NULL), (NULL), (NULL);
@@ -32,3 +33,4 @@ drop temp;
 
  
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';

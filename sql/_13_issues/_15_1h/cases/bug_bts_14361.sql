@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 --the test point need 'autocommit off' environment
 
@@ -35,3 +36,4 @@ commit;
 autocommit on;
 
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';

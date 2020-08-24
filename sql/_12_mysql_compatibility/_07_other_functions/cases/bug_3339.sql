@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 -- CUBRIDSUS_BUG 3339
 autocommit off;
 CREATE TABLE tbl_3 (id int);
@@ -49,3 +50,4 @@ DROP TABLE tbl_3;
 COMMIT;
 
 autocommit on;
+set system parameters 'create_table_reuseoid=yes';

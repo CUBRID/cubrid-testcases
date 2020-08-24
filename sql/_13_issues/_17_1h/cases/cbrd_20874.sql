@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 drop table if exists DML_0001;
 drop table if exists DML_0002;
@@ -73,3 +74,4 @@ drop table if exists DML_0003;
 
 
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';

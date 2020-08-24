@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 --bigint, object
 create class person_info(id int auto_increment, name char(20), score bigint);
@@ -24,3 +25,4 @@ drop class project_info;
 drop class person_info;
 
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';

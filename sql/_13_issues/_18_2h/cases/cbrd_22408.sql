@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 drop table if exists t_d_1;
 create table t_d_1(i int);
@@ -111,3 +112,4 @@ drop table if exists t,tbl,t1,t_replace,t_update,t_d_1;
 drop variable @a;
 
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';

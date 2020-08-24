@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 drop table if exists t1;
 drop view if exists v1;
 
@@ -29,3 +30,4 @@ select * from t1 order by b desc, a asc;
 drop table if exists t1;
 drop view if exists v1;
 
+set system parameters 'create_table_reuseoid=yes';

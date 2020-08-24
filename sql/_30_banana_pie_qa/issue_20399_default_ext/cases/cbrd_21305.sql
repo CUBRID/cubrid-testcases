@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 -- bug CBRD-21305
 
 drop table if exists t; 
@@ -27,3 +28,4 @@ select * from t order by 1;
 drop v;
 
 drop t;
+set system parameters 'create_table_reuseoid=yes';

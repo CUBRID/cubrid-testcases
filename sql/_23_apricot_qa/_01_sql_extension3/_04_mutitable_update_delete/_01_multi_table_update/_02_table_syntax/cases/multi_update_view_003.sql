@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --update views with check option
 
 
@@ -37,3 +38,4 @@ select if(count(*)=1, 'ok', 'nok') from v2 where b=8;
 drop table if exists t1, t2;
 drop view v1, v2;
 
+set system parameters 'create_table_reuseoid=yes';

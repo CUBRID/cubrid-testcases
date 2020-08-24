@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 drop table if exists t,t2;
 create table t(j datetimetz,k varchar(50));
 insert into t(k) values('2001-10-11 02:03:04 AM Europe/Bucharest EEST');
@@ -35,3 +36,4 @@ with mycte as
 
 select * from t2 order by 1,2;
 drop if exists t,t2,v1;
+set system parameters 'create_table_reuseoid=yes';
