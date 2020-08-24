@@ -1,4 +1,5 @@
 --Create class with DEFAULT attribute and retrieve attribute type from db_attribue
+set system parameters 'create_table_reuseoid=no';
 
 create class test_class(col1 integer);
 insert into test_class values(999) into :arg1;
@@ -14,3 +15,5 @@ where  class_name = 'test_class2' and attr_type = 'INSTANCE';
 
 drop class test_class;
 drop class test_class2;
+
+set system parameters 'create_table_reuseoid=yes';
