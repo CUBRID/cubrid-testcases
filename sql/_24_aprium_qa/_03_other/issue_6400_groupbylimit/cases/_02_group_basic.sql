@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 drop table if exists t;
 
 create table t (i numeric(10,1), j double,k date,l varchar(200),m char(200),n bigint);
@@ -93,4 +94,4 @@ SELECT t1.*,count(*) as b FROM t1,t2  where t1.a=t2.a group by t1.a+t2.a  order 
 drop table if exists t1,t2;
 
 
-
+set system parameters 'create_table_reuseoid=yes';

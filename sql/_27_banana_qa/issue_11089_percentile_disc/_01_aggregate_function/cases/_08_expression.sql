@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --TEST: pass expresstions to the params
 
 drop table if exists p_disc;
@@ -69,7 +70,4 @@ select col5, percentile_disc(0.6) within group (order by decr(col1)) p_disc from
 
 drop view p_disc_v;
 drop table p_disc;
-
-
-
-
+set system parameters 'create_table_reuseoid=yes';

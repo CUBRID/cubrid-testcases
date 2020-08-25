@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 drop if exists x,y,z,x_y_z;
 CREATE CLASS x(a INT PRIMARY KEY, b INT);
 insert into x values(1,1);
@@ -62,3 +63,4 @@ select * from x,z where x.a=z.b
 select * from x_y_z inner join cte on x_y_z.d=cte.f1 order by 1;
 
 drop if exists x,y,z,x_y_z;
+set system parameters 'create_table_reuseoid=yes';
