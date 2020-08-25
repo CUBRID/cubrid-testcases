@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 -- create class,create a class with an boject,select data using DECR(attribue)
 
 create class yoo ( a int, b int);
@@ -13,3 +14,4 @@ select b, DECR(b) from xoo where a = 1100;
 select b, DECR(b) from xoo where a = 1100;
 
 drop xoo, yoo;
+set system parameters 'create_table_reuseoid=yes';

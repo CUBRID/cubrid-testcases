@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 -- create a class,create a class with an object,insert data to the two tables,select data using the incr function
 
 create class yoo ( a int, b int);
@@ -23,3 +24,4 @@ select incr(b), incr(d.a) from xoo where a = 100;
 select incr(b), incr(d.a) from xoo where a = 100;
 
 drop xoo, yoo;
+set system parameters 'create_table_reuseoid=yes';

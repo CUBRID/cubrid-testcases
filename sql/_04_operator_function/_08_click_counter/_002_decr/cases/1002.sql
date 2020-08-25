@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 -- create class,create a class with an object attribute,insert data to this class,create index on classes,select data from these class,select data from class with format DECR(object.attribute)
 
 create class yoo ( a int, b int);
@@ -25,3 +26,4 @@ select * from yoo order by 1,2;
 
 drop xoo;
 drop yoo;
+set system parameters 'create_table_reuseoid=yes';
