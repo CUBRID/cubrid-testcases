@@ -1,4 +1,4 @@
-
+set system parameters 'create_table_reuseoid=no';
 drop table if exists x,y,z,s,r;
 CREATE table x(a INT PRIMARY KEY, b INT);
 insert into x values(1,1);
@@ -199,3 +199,4 @@ select * from x,z where x.a=z.b
 )
 select count(cte.*) from s inner join cte on s.d=cte.f1;
 drop table if exists x,y,z,s,r;
+set system parameters 'create_table_reuseoid=yes';
