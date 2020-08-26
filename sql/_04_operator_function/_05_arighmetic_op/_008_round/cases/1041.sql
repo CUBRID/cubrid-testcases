@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --create classes ,create vclasses with 'between and' keyword and use inheritance relationship
 
 CREATE CLASS ddl_0001 (
@@ -61,3 +62,4 @@ drop class ddl_0004;
 drop class ddl_0003;
 drop class ddl_0002;
 drop class ddl_0001;
+set system parameters 'create_table_reuseoid=yes';

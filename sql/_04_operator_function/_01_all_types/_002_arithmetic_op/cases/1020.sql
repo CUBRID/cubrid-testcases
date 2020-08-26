@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 --[er]test union keywords with two select statements with different selected coloum
 create class DML_0001
@@ -49,3 +50,4 @@ drop table dml_0003;
 
 
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';

@@ -1,6 +1,7 @@
 set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 --bigint, object
+
 create class person_info(id int auto_increment, name char(20), score bigint);
 insert into person_info(name, score) values('John', 1000);
 insert into person_info(name, score) values('Rose', 2000);

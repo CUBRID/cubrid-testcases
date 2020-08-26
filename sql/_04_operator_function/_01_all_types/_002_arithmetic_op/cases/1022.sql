@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 --[er]test the union all keyword with 2 tables whose number of columns are unmatched.
 create class DML_0001
@@ -49,3 +50,4 @@ drop table dml_0002;
 drop table dml_0003;
 
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';
