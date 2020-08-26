@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 -- create class,insert data,create class,insert data,select clause with  decr(object.attribute) function
 
 create class xoo ( a int, b int);
@@ -15,3 +16,4 @@ select * from xoo order by 1;
 select * from yoo order by 1;
 
 drop xoo, yoo;
+set system parameters 'create_table_reuseoid=no';

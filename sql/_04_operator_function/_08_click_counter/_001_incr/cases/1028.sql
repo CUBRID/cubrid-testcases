@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 -- create a class,create a class with an object attribute,insert data to the latter class,create index on classes,select data using format  'incr(obj.attr)' and 'incr(attr)' 
 
 create class yoo ( a int, b int);
@@ -23,3 +24,4 @@ select d.b , incr(d.b) from xoo  where a = 100;
 select * from yoo order by 1,2;
 
 drop xoo, yoo;
+set system parameters 'create_table_reuseoid=yes';
