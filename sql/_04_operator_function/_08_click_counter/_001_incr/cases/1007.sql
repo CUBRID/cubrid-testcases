@@ -1,4 +1,3 @@
-set system parameters 'create_table_reuseoid=no';
 -- create class,insert data,select clause with incr function with int data type parameter for testing,create class,insert data,select clause with incr function with smallint data type parameter for testing
 
 create class poo ( a int);
@@ -15,4 +14,3 @@ select incr(a) from poo;
 select a from poo;
 
 drop poo;
-set system parameters 'create_table_reuseoid=yes';
