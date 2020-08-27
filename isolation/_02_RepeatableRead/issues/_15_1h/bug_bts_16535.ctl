@@ -13,8 +13,8 @@ C2: set transaction lock timeout INFINITE;
 C2: set transaction isolation level repeatable read;
 
 /*test point */
-C1: CREATE table t1(a int);
-C1: CREATE TABLE t2(a int, obj t1);
+C1: CREATE table t1(a int) DONT_REUSE_OID;
+C1: CREATE TABLE t2(a int, obj t1) DONT_REUSE_OID;
 C1: INSERT INTO t1 VALUES (0);
 C1: INSERT INTO t2 VALUES (0, NULL);
 C1: UPDATE t2 SET obj = (SELECT t1 FROM t1 WHERE t1.a = t2.a);

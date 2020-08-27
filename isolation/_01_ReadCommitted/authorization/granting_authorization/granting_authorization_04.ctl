@@ -42,7 +42,7 @@ C1: CREATE USER design MEMBERS brown;
 C1: COMMIT;
 MC: wait until C1 ready;
 
-C1: CREATE TABLE t1 (id INT primary key);
+C1: CREATE TABLE t1 (id INT primary key) DONT_REUSE_OID;
 C1: GRANT ALL PRIVILEGES ON t1 TO company;
 C1: insert into t1 values (1),(2),(3),(4),(5),(6),(7);
 C1: CREATE VIEW t1_view AS SELECT t1.id FROM t1 WHERE id>5;
