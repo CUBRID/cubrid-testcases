@@ -27,7 +27,7 @@ C3: set transaction isolation level repeatable read;
 
 /* preparation */
 C1: drop table if exists t;
-C1: create table t(id bigint,col varchar(10));
+C1: create table t(id bigint,col varchar(10)) DONT_REUSE_OID;
 C1: insert into t select rownum,rownum%10 from db_class a,db_class b,db_class c,db_class d limit 100000;
 C1: commit;
 C1: update t set col=col-1;

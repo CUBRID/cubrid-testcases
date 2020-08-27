@@ -12,9 +12,9 @@ C3: set transaction isolation level read committed;
 /* preparation */
 C1: drop table if exists t2;
 C1: drop table if exists t1;
-C1: create table t1(id int primary key, col1 varchar(30));
+C1: create table t1(id int primary key, col1 varchar(30)) DONT_REUSE_OID;
 C1: insert into t1 values(1,'james'),(2,'mikey'),(3,'lucy');
-C1: create table t2(id bigint primary key ,col1 varchar(10),col2 int, constraint foreign key(col2) references t1(id));
+C1: create table t2(id bigint primary key ,col1 varchar(10),col2 int, constraint foreign key(col2) references t1(id)) DONT_REUSE_OID;
 C1: insert into t2 select rownum,rownum,1 from db_root connect by level<=10;
 C1: insert into t2 select rownum+20,rownum+20,2 from db_root connect by level<=10;
 C1: insert into t2 select rownum+40,rownum+40,3 from db_root connect by level<=10;
