@@ -8,8 +8,8 @@ create class coo(
         col3 numeric(10, 3)
 );
 
-insert numerico coo
- values(7382.234, -1234523456, -2112354.321);
+insert into coo
+values(7382.234, -1234523456, -2112354.321);
 
 
 show columns in coo;
