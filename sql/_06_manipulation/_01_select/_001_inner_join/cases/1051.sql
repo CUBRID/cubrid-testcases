@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 -- [er] tests a Insert data into two class syntax using select with domain and set type,but select have syntax in the domain type,then report semantic error
 
 create class DML_0001( 	
@@ -27,3 +28,4 @@ insert into DML_0002 values ((select int_col+100 from DML_0001 where int_col = 4
 
 drop class DML_0001;
 drop class DML_0002;
+set system parameters 'create_table_reuseoid=yes';

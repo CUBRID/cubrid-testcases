@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --Test insert  on class with object domain
 
 create class t1(name varchar(20), age integer);
@@ -14,3 +15,4 @@ select empno, attr.name, attr.age from emp order by 1,2;
 
 drop class emp;
 drop class t1;
+set system parameters 'create_table_reuseoid=yes';

@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --Test update with interpreter variable
 create class t1 (col1 integer, col2 set varchar(10));
 insert into t1 values( 101, {'xxx','yyy','zzzz','null'});
@@ -19,3 +20,4 @@ select * from t1
 where  col1 = 110;
 
 drop class t1;
+set system parameters 'create_table_reuseoid=yes';

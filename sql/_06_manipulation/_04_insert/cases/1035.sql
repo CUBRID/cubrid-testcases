@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --Test insert data with object domain
 create class t1(c1 integer, c2 char(1));
 create class t2(c1 integer, c2 t1);
@@ -17,3 +18,4 @@ select c1,c2.c1,c2.c2 from t2 order by 1;
 
 drop class t1;
 drop class t2;
+set system parameters 'create_table_reuseoid=yes';

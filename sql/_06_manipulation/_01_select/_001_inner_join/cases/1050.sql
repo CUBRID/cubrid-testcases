@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 -- [er]tests a Insert data into two class syntax using select with domain and set type,but the number of attributes aren't equal in domain type,then report syntax error
 
 
@@ -25,3 +26,4 @@ insert into DML_0002 (int_col, ref_col) ((select int_col+100 from DML_0001 where
 
 drop class DML_0001;
 drop class DML_0002;
+set system parameters 'create_table_reuseoid=yes';

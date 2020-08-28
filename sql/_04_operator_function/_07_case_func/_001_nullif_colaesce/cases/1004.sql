@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 --Test retrieve data using case function with rownum
 
@@ -13,3 +14,4 @@ select nullif(db_user, (select db_root from db_root)) from db_user order by 1;
 select nullif(db_user, (select db_user from db_user where rownum = 1)) from db_user order by 1;
 
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';

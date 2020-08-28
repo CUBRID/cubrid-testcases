@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --Test nested insert 
 
 create class person2(name varchar(20), age integer , gender char(1));
@@ -13,3 +14,4 @@ select * from employees order by 1;
 select * from person2 order by 1;
 drop class person2;
 drop class employees;
+set system parameters 'create_table_reuseoid=yes';
