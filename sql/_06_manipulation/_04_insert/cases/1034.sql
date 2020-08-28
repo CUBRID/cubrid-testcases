@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --Test insert with a variable 
 create class t1 (col1 integer, col2 varchar(20));
 insert into t1 values( 101, 'xxx');
@@ -17,3 +18,4 @@ insert into t1 values(t01.col1, t01.col2);
 
 select * from t1 order by 1,2;
 drop class t1;
+set system parameters 'create_table_reuseoid=yes';

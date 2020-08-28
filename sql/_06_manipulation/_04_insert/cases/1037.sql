@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --[er]Test insert using dropped variable
 create class t1(c1 integer, c2 char(1));
 create class t2(c1 integer, c2 t1);
@@ -22,4 +23,4 @@ insert into t2 values(5, t01);
 
 drop class t1;
 drop class t2;
-
+set system parameters 'create_table_reuseoid=yes';

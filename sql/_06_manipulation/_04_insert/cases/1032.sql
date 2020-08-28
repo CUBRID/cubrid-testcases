@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --Test nested insert with list partition
 
 create class person(name varchar(20), age integer , gender char(1));
@@ -17,3 +18,4 @@ insert into substation values ('Line 1', 1031, (insert into person values ('xxx'
 
 drop class substation;
 drop class person;
+set system parameters 'create_table_reuseoid=yes';
