@@ -33,9 +33,9 @@ C2: set transaction isolation level read committed;
 C1: DROP TABLE IF EXISTS t1;
 C1: DROP TABLE IF EXISTS t2;
 C1: DROP VIEW IF EXISTS t1_view;
-C1: CREATE TABLE t1(id int primary key, phone varchar(10)) partition by hash (id) partitions 2;
+C1: CREATE TABLE t1(id int primary key, phone varchar(10)) DONT_REUSE_OID partition by hash (id) partitions 2;
 C1: INSERT INTO t1 VALUES(1,'111-1111'), (2,'222-2222'), (3, '333-3333'), (4, NULL), (5, NULL);
-C1: CREATE TABLE t2(id int primary key, address varchar(10)) partition by range (id) (partition p0 values less than (3), partition p1 values less than (100));
+C1: CREATE TABLE t2(id int primary key, address varchar(10)) DONT_REUSE_OID partition by range (id) (partition p0 values less than (3), partition p1 values less than (100));
 C1: INSERT INTO t2 VALUES(1,'stu'),(2,'vwx'),(3,'yzab'),(4,'abc'),(5,'def'),(6,'jkl'),(7,'mno'),(8,'pqr');
 C1: commit;
 

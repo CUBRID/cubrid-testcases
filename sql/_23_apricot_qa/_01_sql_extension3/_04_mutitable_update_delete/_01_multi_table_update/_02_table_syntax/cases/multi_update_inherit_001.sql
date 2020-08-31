@@ -2,7 +2,7 @@
 
 
 
-create table md_bit1(id1 smallint primary key, col1 char(20), col2 bit(20));
+create table md_bit1(id1 smallint primary key, col1 char(20), col2 bit(24));
 insert into md_bit1 values(1, 'aaa', B'1010'), (2, 'bbb', B'1101'), (3, 'ccc', B'1011'), (4, 'ddd', B'1110'), (5, 'eee', B'10010'), (6, 'fff', B'10101');
 insert into md_bit1 values(7, 'ggg', B'101'), (8, 'hhh', B'110'), (9, 'iii', B'111'), (10, 'jjj', B'10111'), (11, 'kkk', B'11001'), (12, 'lll', B'10001');
 

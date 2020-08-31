@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --create view with check option on the table with enum columns
 
 
@@ -35,3 +36,4 @@ select * from vt order by 1;
 
 drop table vt;
 drop view cview;
+set system parameters 'create_table_reuseoid=yes';

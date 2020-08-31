@@ -1,4 +1,5 @@
 -- [er]it tests a insert data into superclass and subclass with type set,but the number of attribute don't match,then report semantic error
+set system parameters 'create_table_reuseoid=no';
 
 create class DML_SUPER (
 	int_col int not null,
@@ -30,3 +31,5 @@ select * from all DML_SUPER order by 1,2;
 drop class DML_SUPER;
 drop class DML_0001;
 drop class DML_0002;
+
+set system parameters 'create_table_reuseoid=yes';

@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 create class a (i int primary key);
 insert into a values (1);
 insert into a values (2);
@@ -25,3 +26,4 @@ select i  from c order by i;
 drop table c;
 drop table b;
 drop table a;
+set system parameters 'create_table_reuseoid=yes';

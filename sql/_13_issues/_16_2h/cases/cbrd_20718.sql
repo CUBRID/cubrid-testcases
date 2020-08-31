@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 drop table if exists test_xasl;
 drop table if exists test_xasl_addition_tb;
 
@@ -29,3 +30,4 @@ values('0000002', 't_xasl2',
 drop table if exists test_xasl;
 drop table if exists test_xasl_addition_tb;
 
+set system parameters 'create_table_reuseoid=yes';

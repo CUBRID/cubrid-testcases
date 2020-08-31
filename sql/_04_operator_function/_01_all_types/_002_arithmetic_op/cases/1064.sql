@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --[er]test (+) operator  using object field plus(+) object field in select clause
 
 create class func_02_01 ( a int );
@@ -8,3 +9,4 @@ select a + a from func_02_02 order by 1;
 
 drop class func_02_01;
 drop class func_02_02;
+set system parameters 'create_table_reuseoid=yes';

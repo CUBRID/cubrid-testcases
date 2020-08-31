@@ -86,7 +86,7 @@ update varnchar_conversion set col11 = cast(n'12342.9380' as nchar varying);
 select col5, col6, col7, col8, col9, col10, col11 from varnchar_conversion;
 
 --[ok]bit
-update varnchar_conversion set col12 = cast(n'0b1010111' as nchar varying);
+update varnchar_conversion set col12 = cast(n'0b10101' as nchar varying);
 --[ok]varbit
 update varnchar_conversion set col13 = cast(n'0b1010111' as nchar varying);
 select col12, col13 from varnchar_conversion;

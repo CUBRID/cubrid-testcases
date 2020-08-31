@@ -1,5 +1,6 @@
 --+ holdcas on;
 --[er]test path expression using all keyword and two tables.
+set system parameters 'create_table_reuseoid=no';
 
 create class DML_0001
 ( 	int_col int not null,
@@ -44,4 +45,5 @@ drop class DML_0002;
 drop class DML_0003;
 drop variable a,b,c,d,e ;
 
+set system parameters 'create_table_reuseoid=yes';
 --+ holdcas off;

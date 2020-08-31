@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 drop table if exists t1;
 create table t1(a int , b int, index i (a));
 create view v1 as select * from t1;
@@ -25,3 +26,4 @@ select * from t1 order by 1, 2;
 
 drop table if exists t1;
 drop view v1;
+set system parameters 'create_table_reuseoid=yes';

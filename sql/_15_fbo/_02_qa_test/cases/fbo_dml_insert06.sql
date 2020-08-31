@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --test insert with two tables and a sub insert statement
 create class insert6_tb2(
         col2_1 int,
@@ -21,3 +22,4 @@ delete from insert6_tb2;
 delete from insert6_tb1;
 drop class insert6_tb2;
 drop class insert6_tb1;
+set system parameters 'create_table_reuseoid=yes';

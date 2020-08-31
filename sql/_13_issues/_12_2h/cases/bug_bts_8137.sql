@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 drop table if exists t1;
 drop table if exists t2;
 
@@ -67,3 +68,4 @@ select * from t2 order by 1, 2;
 drop view v2;
 drop table t1;
 drop table t2;
+set system parameters 'create_table_reuseoid=yes';

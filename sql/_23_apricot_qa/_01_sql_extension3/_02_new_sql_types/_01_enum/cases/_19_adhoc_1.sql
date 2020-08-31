@@ -164,24 +164,18 @@ alter table t2 add column b int;
 alter table t2 partition by hash(b) partitions 2;      
 drop table t1;
 drop table t2;
-
-
 drop table if exists t1;
+
 CREATE TABLE t1(a enum('&nbsp', '&nbsp;') ,b int, INDEX i_index(a desc));
 INSERT INTO t1 VALUES ('&nbsp',1);
 select * from t1 order by 1;
 drop table t1;
 
-
-
-
 drop table if exists t1;
 CREATE TABLE t1(a enum('&nbsp', '&nbsp;') ,b enum('&nbsp', '&nbsp;'), primary key(a ,b desc),INDEX i_t_ab(a desc,b ASC));
-
 INSERT INTO t1 VALUES ('&nbsp','&nbsp');
 
 CREATE TABLE t(a varchar(10),b varchar(10)) REPLACE AS SELECT * FROM t1;
-
 
 select * from t1;
 drop table t, t1;

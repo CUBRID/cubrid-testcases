@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 drop class if exists Z, W;
 
 create class Z (zs string);
@@ -16,3 +17,4 @@ insert into W values (insert into z values('aaa'));
 select /*+ RECOMPILE */ * from W where wz.zs is null;  
 
 drop class if exists Z, W;
+set system parameters 'create_table_reuseoid=yes';

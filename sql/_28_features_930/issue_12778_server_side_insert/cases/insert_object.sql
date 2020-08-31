@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 --insert with object
 
@@ -38,3 +39,4 @@ select b.b.a.a from t4 order by 1;
 drop table t1, t2, t3, t4;
 
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';

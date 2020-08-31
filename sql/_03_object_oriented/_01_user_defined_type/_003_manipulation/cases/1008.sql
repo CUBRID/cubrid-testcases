@@ -1,5 +1,5 @@
 --[er]Test user defined domain type using incompatible data type 
-
+set system parameters 'create_table_reuseoid=no';
 
 create class x1 ( i int);
 create class x2 ( i int);
@@ -15,3 +15,5 @@ delete from x3 where j =  ( select x2 from x2 where rownum = 1);
 drop x1;
 drop x2;
 drop x3;
+
+set system parameters 'create_table_reuseoid=yes';

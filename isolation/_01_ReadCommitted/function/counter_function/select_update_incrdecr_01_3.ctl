@@ -53,7 +53,7 @@ MC: wait until C1 ready;
 C1: SELECT title, INCR(read_count) FROM t1 WHERE id = 3 USING INDEX idx_id_read(+); 
 MC: wait until C1 ready;
 
-C2: UPDATE t1 SET title = 'unknown_book' WHERE title IN ('book4','book5') USING INDEX idx_title_id(+);
+C2: UPDATE t1 SET title = 'unknown_bo' WHERE title IN ('book4','book5') USING INDEX idx_title_id(+);
 /* expect: no transactions need to wait */
 MC: wait until C2 ready;
 

@@ -1,10 +1,10 @@
 drop table if exists t1;
 create table t1(a int, b date, c nchar, d enum('red','yellow','blue','green'));
 insert into t1 values(1,'2013-1-2',n'h',1);
-insert into t1 values(1,'2013-1-2',n'hello',1);
-insert into t1 values(2,'2013-12-2',n'Welcome',2);
-insert into t1 values(2,'2013-10-12',n'welcome',2); 
-insert into t1 values(2,'2013-10-12',n'welcome',3);
+insert into t1 values(1,'2013-1-2',n'h',1);
+insert into t1 values(2,'2013-12-2',n'W',2);
+insert into t1 values(2,'2013-10-12',n'w',2); 
+insert into t1 values(2,'2013-10-12',n'w',3);
 
 select a, max(b) from t1 group by d order by 1,2;
 select a, max(b) - min(b) from t1 group by c, d order by 1,2;

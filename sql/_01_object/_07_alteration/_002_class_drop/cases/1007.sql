@@ -1,3 +1,5 @@
+set system parameters 'create_table_reuseoid=no';
+
 -- create classes,alter these classes,drop these classes
 
 CREATE CLASS ddl_0001;
@@ -19,3 +21,5 @@ DROP ddl_0002;
 DROP ddl_0003;
 DROP ddl_0004;
 DROP ddl_0005;
+
+set system parameters 'create_table_reuseoid=yes';

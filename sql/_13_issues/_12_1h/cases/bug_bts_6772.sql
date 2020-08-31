@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 -- bts 6772
 -- default value inheritance for views
 create table t (a int default 222);
@@ -52,3 +53,4 @@ insert into v values default;
 drop v;
 
 drop t,u;
+set system parameters 'create_table_reuseoid=yes';

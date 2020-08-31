@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 autocommit off;
 
@@ -111,3 +112,4 @@ autocommit on;
 
 
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';

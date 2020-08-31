@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --insert with object domain
 
 create class insert11_t1(name varchar(20), age integer,c clob, b blob);
@@ -27,3 +28,4 @@ delete from insert11_company;
 drop class insert11_emp;
 drop class insert11_t1;
 drop insert11_company;
+set system parameters 'create_table_reuseoid=yes';

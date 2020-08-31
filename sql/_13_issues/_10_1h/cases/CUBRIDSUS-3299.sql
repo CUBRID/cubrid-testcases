@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 create or replace view vx (a) as select 'aaa' from db_root;
 select if(attr_name = 'a', 'OK', 'NOK') from db_attribute where class_name='vx';
 select if(data_type = 'STRING', 'OK', 'NOK') from db_attribute where class_name='vx';
@@ -71,3 +72,4 @@ create view vx (a tbl1) as select tbl1 from tbl1 union all select tbl2 from tbl2
 drop table tbl1;
 drop table tbl2;
 drop vx;
+set system parameters 'create_table_reuseoid=yes';

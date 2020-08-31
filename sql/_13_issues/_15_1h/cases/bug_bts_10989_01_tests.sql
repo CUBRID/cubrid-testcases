@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 -- setup
 autocommit off;
 
@@ -112,3 +113,4 @@ commit;
 autocommit on;
 commit;
 
+set system parameters 'create_table_reuseoid=yes';

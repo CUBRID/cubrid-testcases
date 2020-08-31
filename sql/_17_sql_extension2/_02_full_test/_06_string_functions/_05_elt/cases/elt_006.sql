@@ -3,14 +3,14 @@
 
 create table soo(
 	col1 bit(20),
-	col2 bit varying(20),
+	col2 bit varying(30),
 	col3 set,
 	col4 multiset,
 	col5 list,
 	col6 blob,
 	col7 clob,
 	col8 bit(20),
-	col9 bit varying(20),
+	col9 bit varying(30),
 	col10 set,
 	col11 multiset,
 	col12 list,

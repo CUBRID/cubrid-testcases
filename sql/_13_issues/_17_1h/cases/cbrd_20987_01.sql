@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 drop table if exists t;
 drop view if exists v;
 create table t(a int);
@@ -72,3 +73,4 @@ select min(x.a) from (with cte as (select * from v)select * from cte) x;
 
 drop table if exists t;
 drop view if exists v;
+set system parameters 'create_table_reuseoid=yes';

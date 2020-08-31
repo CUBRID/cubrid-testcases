@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 -- [er]insert clause using decr(n),reports error,decr(n) can be used at top select statement only
 
 create class yoo ( a int, b int);
@@ -19,3 +20,4 @@ insert into xoo select a,decr(b) , c, d from xoo where a = 500;
 
 drop xoo;
 drop yoo;
+set system parameters 'create_table_reuseoid=yes';

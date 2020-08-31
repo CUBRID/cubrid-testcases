@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 create table t (e enum ('Yes', 'No', 'Cancel'));
 insert into t values(1);
 insert into t values(2);
@@ -44,3 +45,4 @@ select * from v order by 1;
 drop view v;
 
 drop table t;
+set system parameters 'create_table_reuseoid=yes';

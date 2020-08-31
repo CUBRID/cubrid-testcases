@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 drop if exists participant2;
 CREATE TABLE participant2 ( host_year INT, nation CHAR(3), gold INT, silver INT, bronze INT)
@@ -28,3 +29,4 @@ select * from db_partition;
 select * from _db_partition;
 
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';

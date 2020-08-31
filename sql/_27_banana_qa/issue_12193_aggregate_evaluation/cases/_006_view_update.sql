@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --test aggregate functions in subqueries of update statement in a view
 
 autocommit off;
@@ -62,3 +63,4 @@ drop table t1, t2;
 
 commit;
 autocommit on;
+set system parameters 'create_table_reuseoid=yes';

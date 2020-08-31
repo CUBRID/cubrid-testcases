@@ -1,4 +1,6 @@
 -- create class having attribute whose type is user defined type(udt) and then drop them
+set system parameters 'create_table_reuseoid=no';
+
 CREATE TABLE StateCity(State CHAR(20), City CHAR(20));
 CREATE TABLE Company  (Name CHAR(20), Location StateCity, Budget FLOAT);
 CREATE TABLE Activity (Name CHAR(20), NumPlayers INTEGER);
@@ -8,3 +10,5 @@ DROP CLASS Employee;
 drop CLASS Activity;
 drop CLASS Company;
 drop CLASS StateCity;
+
+set system parameters 'create_table_reuseoid=yes';

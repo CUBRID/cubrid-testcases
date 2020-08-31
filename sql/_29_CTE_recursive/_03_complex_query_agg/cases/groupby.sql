@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 autocommit off;
 drop if exists foo,foo1,foo2;
     create class foo(a1 int);
@@ -41,3 +42,4 @@ with recursive cte(f1,f2) as (
 drop foo, foo1, foo2;
 rollback;
 autocommit on;
+set system parameters 'create_table_reuseoid=yes';

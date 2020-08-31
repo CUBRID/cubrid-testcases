@@ -9,7 +9,7 @@ SELECT RIGHT(null , 3);
 
 set names utf8;
 drop table if exists t;
-create table t (col_binary varchar(20) collate binary, col_euckr varchar(20) collate euckr_bin, col_utf8 varchar(20) collate utf8_bin, col_iso varchar(20) collate iso88591_bin);
+create table t (col_binary varchar(30) collate binary, col_euckr varchar(30) collate euckr_bin, col_utf8 varchar(30) collate utf8_bin, col_iso varchar(30) collate iso88591_bin);
 insert into t values('큐브리드', '큐브리드', '큐브리드', 'ÀÀÏÏ');
 insert into t values('你好我好大家好', '你好我好大家好', '你好我好大家好', 'ÀÀÏÏ');
 insert into t values('CUBRID', 'CUBRID', 'CUBRID', 'ÀÀÏÏ');

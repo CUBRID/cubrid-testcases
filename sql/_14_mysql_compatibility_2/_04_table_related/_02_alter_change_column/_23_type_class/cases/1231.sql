@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 ---- ALTER TABLE ...  CHANGE COLUMN  , type change : one class object to another class object
 -- constraints : no constraints
 -- ordering : no order defined
@@ -71,3 +72,4 @@ drop c3;
 drop c2;
 drop c1;
 drop b;
+set system parameters 'create_table_reuseoid=yes';

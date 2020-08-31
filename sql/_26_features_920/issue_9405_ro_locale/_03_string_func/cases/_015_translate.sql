@@ -6,7 +6,7 @@ CREATE TABLE test_ro (
 insert into test_ro values (1,'abc123 ÎțiÂBC');
 insert into test_ro values (2,'abc123ÂBCÎțiÂBC'); 
 insert into test_ro values (3,'*rsșț?ABC*ÂBC#123');
-insert into test_ro values (4,'*rsșț?ABC*ÂBC#123&rsșț');
+insert into test_ro values (4,'*rsșț?ABC*ÂBC#123&rs');
 insert into test_ro values (5,null);
 
 --test

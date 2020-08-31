@@ -1,4 +1,5 @@
 --create list partition table with char data type and alter the separated attribute then add another partition 
+set system parameters 'create_table_reuseoid=no';
 
 create table list_test(id int, name varchar(255)) partition by list (id)(
 partition p0 values in (1,2,3),
@@ -24,3 +25,5 @@ update list_test set id = id + 3;
 select list_test, list_test.* from list_test order by 2;
 
 drop table list_test;
+
+set system parameters 'create_table_reuseoid=yes';

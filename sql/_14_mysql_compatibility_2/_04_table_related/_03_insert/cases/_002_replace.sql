@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 create table was_success(id int auto_increment, bef_ins int default 0, aft_ins int default 0, bef_upd int default 0, aft_upd int default 0, bef_del int default 0, aft_del int default 0);
 
@@ -342,3 +343,4 @@ drop table a;
 drop table was_success;
 
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';

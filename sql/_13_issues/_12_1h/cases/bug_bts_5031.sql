@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 create table a (class_of object, class_name varchar(200));
 create table c (class_name varchar(200), i int);
 create index i_c_class_name on c (class_name);
@@ -8,3 +9,4 @@ select c.class_name from a a, c c where a.class_of=c and c.class_name=a.class_na
 --select /*+ recompile */ c.class_name from a a, c c where (a.class_of=c and c.class_name=a.class_name);
 drop a;
 drop c;
+set system parameters 'create_table_reuseoid=yes';

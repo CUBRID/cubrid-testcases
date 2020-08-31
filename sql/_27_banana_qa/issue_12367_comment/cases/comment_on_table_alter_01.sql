@@ -18,7 +18,7 @@ select class_name, comment from _db_class where class_name='alt_comment_tbl';
 
 drop table if exists alter_column_comment;
 create table alter_column_comment(id int primary key, name char(6));
-insert into alter_column_comment values(1,'commen'),(2,'table'),(3,'column'),(4,'function');
+insert into alter_column_comment values(1,'commen'),(2,'table'),(3,'column'),(4,'functi');
 alter table alter_column_comment modify column id int comment'new comments for column id';
 alter table alter_column_comment modify column name char(7) comment'add new comment for column name';
 alter table alter_column_comment add column c date comment'current date print';

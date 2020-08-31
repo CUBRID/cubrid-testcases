@@ -6,11 +6,11 @@ select * from foo order by 1;
 
 alter table foo change a aa int auto_increment;
 alter table foo auto_increment = 200;
-alter table foo modify b char(10) default 'kkk';
+alter table foo modify b char(20) default 'kkk';
 insert into foo(c) values(12);
 select * from foo order by 1;
 
-alter table foo change b bb char(10) not null;
+alter table foo change b bb char(20) not null;
 alter table foo modify c monetary;
 alter table foo change c cc bigint auto_increment;
 insert into foo(bb) values('ddd');

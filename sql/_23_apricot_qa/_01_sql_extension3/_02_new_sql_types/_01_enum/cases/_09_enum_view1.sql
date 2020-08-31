@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --create view on the table with enum columns
 
 
@@ -35,3 +36,4 @@ select * from cview1 order by 1;
 
 drop table cview1;
 drop view cview2;
+set system parameters 'create_table_reuseoid=yes';

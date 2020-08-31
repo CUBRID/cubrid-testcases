@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 get optimization cost 'nl-join' into :default_iscan;
 drop class if exists B,A,dummy;
@@ -99,3 +100,4 @@ drop table if exists a,b,dummy;
 set optimization cost 'nl-join' :default_iscan;
 
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';

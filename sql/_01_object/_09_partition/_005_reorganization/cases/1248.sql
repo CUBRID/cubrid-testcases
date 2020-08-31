@@ -1,4 +1,5 @@
 --alert empty class add attributes and change to range partition with int field having boundary values
+set system parameters 'create_table_reuseoid=no';
 
 create class aa1; 
 create class bb1; 
@@ -19,3 +20,5 @@ PARTITION p1 VALUES LESS THAN (100)
 
 drop class bb1;
 drop class aa1;
+
+set system parameters 'create_table_reuseoid=yes';

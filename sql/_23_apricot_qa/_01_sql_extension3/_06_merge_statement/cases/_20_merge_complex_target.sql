@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --normal case: merge into source table using source subquery, merge condition
 
 
@@ -173,3 +174,4 @@ autocommit on;
 
 
 
+set system parameters 'create_table_reuseoid=yes';

@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 drop table if exists t1;
 drop table if exists t2;
 drop table if exists t3;
@@ -429,3 +430,4 @@ select * from t1 natural right join (select * from t2) order by 1,2,3,4;
 
 drop table if exists t1;
 drop table if exists t2;
+set system parameters 'create_table_reuseoid=yes';

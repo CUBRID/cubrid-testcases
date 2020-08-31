@@ -1,6 +1,7 @@
 --+ holdcas on;
 
 set names utf8;
+drop class if exists t1;
 create class t1(
 col1 string collate binary, 
 col2 char(10) collate utf8_ja_exp , 

@@ -1,6 +1,7 @@
 --+ holdcas on;
 --[er]test class as colum type using OID(grant and revoke)
 --create user1 and user2,create class xoo by user1,grant privilege of select to user2,create class zoo by user2 using class as colum type,into data to  class zoo using OID,revoke privilege of select from user2 by user1,create poo by user2,retrieve zoo with variable :o,then report semantic error
+set system parameters 'create_table_reuseoid=no';
 
 call login('dba','') on class db_user;
 create user user1;
@@ -36,8 +37,11 @@ select * from poo order by 1;
 
 
 call login('dba','') on class db_user;
-drop xoo, zoo, poo;
+drop xoo;
+drop zoo;
+drop poo;
 drop user user1;
 drop user user2;
 
+set system parameters 'create_table_reuseoid=yes';
 --+ holdcas off;

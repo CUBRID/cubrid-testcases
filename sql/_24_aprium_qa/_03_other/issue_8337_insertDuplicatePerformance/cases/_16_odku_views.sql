@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 drop table if exists t,a,b;
 
 create table t(i int, j int, k int) ;
@@ -169,3 +170,4 @@ select /*+ recompile */ * from t where i1=0 and i2 in ('0','1','2','3','4','5') 
 select /*+ NO_MULTI_RANGE_OPT */ * from t where i1=0 and i2 in ('0','1','2','3','4','5') using index i_t_123 keylimit 10 order by i3,i2 desc for orderby_num()<=10;
 
 drop table t;
+set system parameters 'create_table_reuseoid=yes';

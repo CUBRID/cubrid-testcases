@@ -1,4 +1,5 @@
 -- [er]tests a insert data into two class using select with domain and set type,but element value don't match within the domain of the set,then report error
+set system parameters 'create_table_reuseoid=no';
 
 create class DML_0001
 ( 	int_col int not null,
@@ -27,3 +28,5 @@ insert into DML_0002 values ((select int_col+100 from DML_0001 where int_col = 4
 
 drop class DML_0001;
 drop class DML_0002;
+
+set system parameters 'create_table_reuseoid=yes';

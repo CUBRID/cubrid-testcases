@@ -1,4 +1,5 @@
 -- [er]create range partition table with int field having boundary values and create view using 2nd partition
+set system parameters 'create_table_reuseoid=no';
 
 create class t1 ( 
 col1 int not null , 
@@ -28,3 +29,5 @@ insert into xp ( col1, col2, col3, col4) values(1,0,0,1);
 
 drop class t1;
 drop vclass xp;
+
+set system parameters 'create_table_reuseoid=yes';

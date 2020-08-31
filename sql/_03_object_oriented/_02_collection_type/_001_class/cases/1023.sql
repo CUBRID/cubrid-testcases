@@ -1,4 +1,6 @@
 --Insert into class with collecting type by nested insert
+set system parameters 'create_table_reuseoid=no';
+
 create class t1(c1 int, c2 char(10));
 create class t2(c1 char(10), c2 t1);
 
@@ -18,3 +20,5 @@ select * from t2;
 drop class t1;
 drop class t2;
 drop class t3;
+
+set system parameters 'create_table_reuseoid=yes';

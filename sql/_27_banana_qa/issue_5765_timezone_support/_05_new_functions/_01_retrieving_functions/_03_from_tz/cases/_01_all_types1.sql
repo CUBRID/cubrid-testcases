@@ -35,7 +35,7 @@ create table all_types(
 	c_clob clob,
 	c_set set(int),
 	c_multiset multiset(string),
-	c_list list(varchar(10))
+	c_list list(varchar(11))
 );
 	
 

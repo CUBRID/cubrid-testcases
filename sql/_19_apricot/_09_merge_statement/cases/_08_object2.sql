@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 set system parameters 'dont_reuse_heap_file=yes';
 create class imployees08 (imp08_id int);
@@ -56,3 +57,4 @@ drop aonuses08;
 set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';

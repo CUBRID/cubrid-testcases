@@ -1,5 +1,5 @@
 drop table if exists t,s;
-create table t(a int ,name varchar(2));
+create table t(a int ,name varchar(4));
 create table s(a int  ,score double);
 insert into t values(1,'bert');
 insert into t values(2,'cole');

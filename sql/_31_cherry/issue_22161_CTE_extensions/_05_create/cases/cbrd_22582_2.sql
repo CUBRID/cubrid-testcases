@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 drop class if exists Z, W,foo;
 
 create class Z (zs string);
@@ -29,3 +30,4 @@ select /*+ RECOMPILE */ *  from W where wz.zs is null
 select count(*) from cte;
 
 drop class if exists Z, W,foo;
+set system parameters 'create_table_reuseoid=yes';

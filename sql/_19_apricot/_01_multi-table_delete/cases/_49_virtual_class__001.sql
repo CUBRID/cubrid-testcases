@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --CLIENT
 create class c(i int);
 
@@ -24,3 +25,4 @@ select * from v2 order by 1;
 drop class c;
 drop vclass v1;
 drop vclass v2;
+set system parameters 'create_table_reuseoid=yes';

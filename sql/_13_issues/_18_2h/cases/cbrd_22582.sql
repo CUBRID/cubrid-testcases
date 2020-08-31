@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 drop table if exists foo,foo1;
 create table foo (i int) 
 partition by range(i) 
@@ -101,3 +102,4 @@ with tmp as (select * from t1)select count(tmp.*) from tmp;
 with tmp as (select count(x.*) from (select * from foo) x) select *from tmp;
 
 drop if exists t1,foo;
+set system parameters 'create_table_reuseoid=yes';

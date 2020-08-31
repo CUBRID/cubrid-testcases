@@ -1,5 +1,7 @@
 --+ holdcas on;
 --[er]test variable assignment with invalid use of 'into' keyword
+set system parameters 'create_table_reuseoid=no';
+
 create class DML_0001
 ( 	int_col int not null,
 var_col varchar(20),
@@ -27,4 +29,5 @@ drop class DML_0001;
 drop class DML_0002;
 drop class DML_0003;
 
+set system parameters 'create_table_reuseoid=yes';
 --+ holdcas off;

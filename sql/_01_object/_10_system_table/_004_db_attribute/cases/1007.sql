@@ -1,4 +1,5 @@
 --Test db_attribute by creating class with default object attribute 
+set system parameters 'create_table_reuseoid=no';
 
 create class test_ob_class (col1 varchar(10),col2 date);
 insert into test_ob_class values('nhnchina',to_date('20080427','yyyymmdd')) into :arg1;
@@ -16,4 +17,4 @@ drop class test_ob_class;
 drop class test_class;
 
 
-
+set system parameters 'create_table_reuseoid=yes';

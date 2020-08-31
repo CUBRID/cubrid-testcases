@@ -1,6 +1,6 @@
 drop table if exists t1;
 
-create table t1(a int, b date, c nchar, d enum('red','yellow','blue','green'));
+create table t1(a int, b date, c nchar(10), d enum('red','yellow','blue','green'));
 
 insert into t1 values(1,'2013-1-2',n'h',1);
 

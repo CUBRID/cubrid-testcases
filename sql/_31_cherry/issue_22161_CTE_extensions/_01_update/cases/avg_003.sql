@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 drop table if exists t;
 create table t(col1 int primary key,col2 varchar(50),col3 double,col4 timestamp default '2000-10-1 10:00:00' on update current_timestamp,col5 char(20));
 insert into t values(1,'A',10.0,null,null);
@@ -79,3 +80,4 @@ drop view v1;
 
 
 
+set system parameters 'create_table_reuseoid=yes';

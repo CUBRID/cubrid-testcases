@@ -1,4 +1,5 @@
 --Test db_attribute's attribute domain_class_name
+set system parameters 'create_table_reuseoid=no';
 
 create class test_ob_class (col1 integer, col2 varchar(10));
 
@@ -18,3 +19,5 @@ from   db_attribute
 where  class_name = 'test_class' order by 1,2;
 
 drop class test_class;
+
+set system parameters 'create_table_reuseoid=yes';

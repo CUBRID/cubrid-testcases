@@ -48,7 +48,7 @@ MC: wait until C1 ready;
 /* test case */
 C1: SELECT title, INCR(read_count) FROM t1 WHERE title LIKE 'book25'; 
 MC: wait until C1 ready;
-C2: UPDATE t1 SET title = 'unknown_book', read_count = 0 WHERE read_count BETWEEN 3 AND 5;
+C2: UPDATE t1 SET title = 'unknown_bo', read_count = 0 WHERE read_count BETWEEN 3 AND 5;
 /* expect: C2 needs to wait once C1 completed */
 MC: wait until C2 ready;
 /* expect: C1 select - id = 2 is updated */

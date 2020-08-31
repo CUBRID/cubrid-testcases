@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --TEST: [Multi-table Update] Updating an updatable view failed when it joins with a non-updatable view.
 
 
@@ -23,3 +24,4 @@ select * from v2 order by 1, 2;
 drop view v1, v2;
 drop table t1, t2;
 
+set system parameters 'create_table_reuseoid=yes';

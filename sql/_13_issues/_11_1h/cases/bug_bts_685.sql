@@ -1,4 +1,4 @@
-create table foo(a int auto_increment, b char(20), c smallint default 22)auto_increment=100;
+create table foo(a int auto_increment, b char(5), c smallint default 22)auto_increment=100;
 
 insert into foo(b) values('aaa');
 insert into foo(b) values('bbb');

@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 drop table if exists t,foo;
 drop view if exists v1;
 create table foo (i varchar);
@@ -113,3 +114,4 @@ or i= (select i from mycte2);
 select * from t order by 1;
 drop  if exists t,v1,foo;
 
+set system parameters 'create_table_reuseoid=yes';

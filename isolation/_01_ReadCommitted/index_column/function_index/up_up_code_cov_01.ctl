@@ -51,7 +51,7 @@ MC: wait until C1 ready;
 C1: commit;
 MC: wait until C1 ready;
 
-C2: update t set s = s||id||repeat('cubrid',130) where id>0;   
+C2: update t set s = s||id||repeat('cubrid',74) where id>0;   
 C2: commit;
 MC: wait until C2 ready;
 

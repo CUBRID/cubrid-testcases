@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 create table t (a int default 1, dt datetime);
 
 create view v (x int default 3, vdt datetime default now()) as
@@ -7,3 +8,4 @@ select if (year(vdt) = year(now()), 'ok', 'not ok') from v;
 
 drop v;
 drop t;
+set system parameters 'create_table_reuseoid=yes';

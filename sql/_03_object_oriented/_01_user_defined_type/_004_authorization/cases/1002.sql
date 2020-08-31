@@ -1,5 +1,6 @@
 --+ holdcas on;
 -- [er]create class with udt and select data using other user
+set system parameters 'create_table_reuseoid=no';
 
 call login ('dba','') on CLASS db_user;
 create USER user1;
@@ -19,4 +20,5 @@ drop CLASS StateCity;
 
 DROP USER user1;
 
+set system parameters 'create_table_reuseoid=yes';
 --+ holdcas off;

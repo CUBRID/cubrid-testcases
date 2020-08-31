@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --get statistics '#objects' of _db_class;
 --get statistics '#pagess' of _db_class;
 --get statistics '#attributes' of _db_class;
@@ -314,3 +315,4 @@ set system parameters 'dont_reuse_heap_file=no';
 commit;
 autocommit on;
 
+set system parameters 'create_table_reuseoid=yes';

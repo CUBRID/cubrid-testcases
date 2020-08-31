@@ -1,3 +1,5 @@
+set system parameters 'create_table_reuseoid=no';
+
 -- create class,create trigger based on this class,drop this trigger, drop this class
 
 CREATE CLASS ddl_0001
@@ -17,3 +19,5 @@ CREATE TRIGGER ddl_0002
 
 DROP TRIGGER ddl_0002;
 DROP CLASS ddl_0001;
+
+set system parameters 'create_table_reuseoid=yes';

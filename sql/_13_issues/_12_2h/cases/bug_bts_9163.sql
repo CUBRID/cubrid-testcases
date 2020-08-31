@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --TEST: [Merge Statement] delete_clause does not work when merging in to a view.
 
 
@@ -143,3 +144,4 @@ select * from t1 order by 1;
 
 drop table t1, t2;
 drop view vv;
+set system parameters 'create_table_reuseoid=yes';

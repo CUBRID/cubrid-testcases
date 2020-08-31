@@ -1,3 +1,5 @@
+set system parameters 'create_table_reuseoid=no';
+
 --create table ddl_0001,create an unique index on ddl_0001(aa_no, num);create another table ddl_0002,create two triggers bofore update on ddl_0001(aa_no),create two triggers after update on ddl_0001(aa_no)
 
 CREATE CLASS ddl_0001
@@ -41,3 +43,5 @@ drop trigger ddl_0002_03;
 drop trigger ddl_0002_04;
 drop class ddl_0001;
 drop class ddl_0002;
+
+set system parameters 'create_table_reuseoid=yes';

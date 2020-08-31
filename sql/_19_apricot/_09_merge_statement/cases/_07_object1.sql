@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 -- This testcase use modified Oracle samples. See below for the license:
 -- Copyright (c) 2015 Oracle
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -68,3 +69,4 @@ select attr.emp_id,bonus from bonuses order by 1;
 drop emp;
 drop employees;
 drop bonuses;
+set system parameters 'create_table_reuseoid=yes';
