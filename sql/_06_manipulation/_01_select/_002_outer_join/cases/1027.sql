@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 -- select data from vclass and with left outer join keyword
 --+ holdcas on;
 create class dml_super (
@@ -207,3 +208,4 @@ drop class dml_0001 ;
 drop class dml_super ;
 commit;
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';

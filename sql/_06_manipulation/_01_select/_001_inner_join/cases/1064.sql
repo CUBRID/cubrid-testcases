@@ -1,4 +1,3 @@
-set system parameters 'create_table_reuseoid=no';
 --Test join between partiton
 create class dept (
     deptno integer not null, 
@@ -45,4 +44,3 @@ on     e.deptname  = d.loc;
 
 drop class dept;
 drop class t1;
-set system parameters 'create_table_reuseoid=yes';

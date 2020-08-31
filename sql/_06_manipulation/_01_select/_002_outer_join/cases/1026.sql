@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 -- [er]tests complex select with incorrect path expression
 
 create class DML_0001( 	
@@ -28,3 +29,4 @@ order by 1,2,3,4;
 drop class DML_0001;
 drop class DML_0002;
 drop class DML_0003;
+set system parameters 'create_table_reuseoid=yes';
