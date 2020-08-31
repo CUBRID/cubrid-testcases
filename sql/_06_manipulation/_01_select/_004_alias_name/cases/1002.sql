@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --[er]test alias using class name instead of alias
 
 create class DML_0001( 
@@ -16,3 +17,4 @@ select a.int_col, DML_0002.var_col, a.ref_col.int_col from DML_0002 as a order b
 
 drop class DML_0002;
 drop class DML_0001;
+set system parameters 'create_table_reuseoid=yes';

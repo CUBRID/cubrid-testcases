@@ -1,4 +1,3 @@
-set system parameters 'create_table_reuseoid=no';
 -- tests complex select with 32 indexes.
 
 create class xoo ( ABS int, AUDIT int, AUTHORIZATION int, CEIL int, CHAR_LENGTH int, CHR int, DECODE int, DECRYPT int, ENCRYPT int, FLOOR int, GE_INF int, GE_LE int, GE_LT int, GREATEST int, GROUPBY_NUM int, GT_INF int, GT_LE int, GT_LT int, INCREMENT int, INF_LE int, INF_LT int, INSTR int, INSTRB int, INST_NUM int, LAST_DAY int, LEAST int, LENGTH int, LENGTHB int, LPAD int, LTRIM int, MAXVALUE int, MINVALUE int, MONTHS_BETWEEN int, "NOCYCLE" int, NOMAXVALUE int, NOMINVALUE int, NVL int, NVL2 int, ORDERBY_NUM int, POWER int, ROUND int, RPAD int, RTRIM int, SERIAL int, SIGN int, START int, STDDEV int, SUBSTR int, SUBSTRB int, SWITCH int, SYSTEM int, TO_CHAR int, TO_DATE int, TO_NUMBER int, TO_TIME int, TO_TIMESTAMP int, TRUNC int, VARIANCE int); 
@@ -93,4 +92,3 @@ select * from zoo where ABS = '3' using index ridx3;
 drop xoo;
 drop yoo;
 drop zoo;
-set system parameters 'create_table_reuseoid=yes';
