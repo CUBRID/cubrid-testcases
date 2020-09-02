@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 --test Only, All , all except keyword using some select statements
 create class DML_0001
@@ -74,3 +75,4 @@ drop class DML_0005;
 drop variable a,b,c,d,e ;
 
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';

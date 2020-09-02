@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 -- [er] tests complex select with  invalid joins.
 
 create class DML_0001( 	
@@ -30,3 +31,4 @@ order by 1,2,3;
 drop DML_0001;
 drop DML_0002;
 drop DML_0003;
+set system parameters 'create_table_reuseoid=yes';

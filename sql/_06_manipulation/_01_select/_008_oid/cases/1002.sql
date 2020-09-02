@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 --insert data with oid
 create class tb2(
@@ -27,3 +28,4 @@ drop class tb2;
 
 
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';

@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --Test update on class with object domain
 
 create class t1(name varchar(20), age integer);
@@ -14,4 +15,4 @@ update emp set empno = 1003 where attr.name='zzz';
 
 drop class emp;
 drop class t1;
-
+set system parameters 'create_table_reuseoid=yes';

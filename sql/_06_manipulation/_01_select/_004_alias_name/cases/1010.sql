@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --[er]test class name, alias using incorrect use of '*' 
 
 create class DML_0001( 
@@ -16,3 +17,4 @@ select *, ref_col.int_col from DML_0002 order by 1;
 
 drop class DML_0002;
 drop class DML_0001;
+set system parameters 'create_table_reuseoid=yes';

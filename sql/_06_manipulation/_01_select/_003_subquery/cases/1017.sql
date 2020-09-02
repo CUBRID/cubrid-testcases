@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 --test update query using generic(int, varchar) type variables
 
@@ -57,3 +58,4 @@ drop class DML_0003;
 drop variable a,b,c,d,e ;
 
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';

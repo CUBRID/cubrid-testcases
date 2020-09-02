@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 -- [er]tests complex select with special collections 
 
@@ -42,3 +43,4 @@ drop user user1;
 drop user user2;
 
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';

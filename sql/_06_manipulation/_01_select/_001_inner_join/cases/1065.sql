@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 -- This testcase use modified Oracle samples. See below for the license:
 -- Copyright (c) 2015 Oracle
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -61,3 +62,4 @@ select ename, job, dname from t2 inner join dept on dept.deptno=t2.deptno  order
 DROP CLASS T1;
 DROP CLASS DEPT;
 DROP CLASS t2;
+set system parameters 'create_table_reuseoid=yes';

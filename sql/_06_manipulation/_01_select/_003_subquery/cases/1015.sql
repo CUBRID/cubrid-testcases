@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --test update using result of select query or a arithmetic expression
 --+ holdcas on;
 
@@ -54,3 +55,4 @@ drop class DML_0003;
 drop variable a,b,c,d,e ;
 
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';

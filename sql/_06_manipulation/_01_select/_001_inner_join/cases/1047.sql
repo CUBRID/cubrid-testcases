@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 -- [er]tests complex select with  unmatched types.
 
 create class DML_0001( 	
@@ -29,3 +30,4 @@ order by 1,2,3,4;
 drop DML_0001;
 drop DML_0002;
 drop DML_0003;
+set system parameters 'create_table_reuseoid=yes';

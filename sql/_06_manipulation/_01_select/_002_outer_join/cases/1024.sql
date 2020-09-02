@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 --test   complex select with some select statements which include many joins.
 
@@ -73,3 +74,4 @@ drop class DML_0003;
 drop variable a,b,c,d,e ;
 
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';

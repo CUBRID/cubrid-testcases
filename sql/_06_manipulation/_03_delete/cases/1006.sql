@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --[er]test delete two tables 
 create class tb2(
 	col1 int,
@@ -18,3 +19,4 @@ delete from tb1,tb2 where tb1.col1 = tb2.col1;
 
 drop class tb2;
 drop class tb1;
+set system parameters 'create_table_reuseoid=yes';
