@@ -1,3 +1,4 @@
+set system parameters 'create_table_reuseoid=no';
 --+ holdcas on;
 --get oid with select  sql
 
@@ -18,3 +19,4 @@ drop class t2;
 
 
 --+ holdcas off;
+set system parameters 'create_table_reuseoid=yes';
