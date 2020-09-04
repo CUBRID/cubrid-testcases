@@ -1,4 +1,7 @@
 drop if exists setA,setB;
+
+set system parameters 'create_table_reuseoid=no';
+
 create class setA
 (i	integer unique,
  set1   set(setA),
@@ -52,3 +55,5 @@ from setA where i = 10 ) select * from cte) to a11;
 select * from setA order by 1 limit 9 ;
 select * from setB order by 1 limit 9 ;
 drop if exists setA,setB; 
+
+set system parameters 'create_table_reuseoid=yes';
