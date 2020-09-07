@@ -12,7 +12,7 @@ foo     1     i2     1     b     A     0     null     null     YES     BTREE    
 
 ===================================================
 TABLE    CREATE TABLE    
-foo     CREATE TABLE [foo] ([a] INTEGER, [b] INTEGER,  INDEX [i2] ([b]) INVISIBLE) COLLATE iso88591_bin     
+foo     CREATE TABLE [foo] ([a] INTEGER, [b] INTEGER,  INDEX [i2] ([b]) INVISIBLE) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -30,7 +30,7 @@ foo     1     i2     1     b     A     0     null     null     YES     BTREE    
 
 ===================================================
 TABLE    CREATE TABLE    
-foo     CREATE TABLE [foo] ([a] INTEGER, [b] INTEGER,  INDEX [i2] ([b]),  INDEX [i1] ([a]) INVISIBLE) COLLATE iso88591_bin     
+foo     CREATE TABLE [foo] ([a] INTEGER, [b] INTEGER,  INDEX [i2] ([b]),  INDEX [i1] ([a]) INVISIBLE) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -82,7 +82,7 @@ t1     1     k_idx     1     k     A     0     null     null     YES     BTREE  
 
 ===================================================
 TABLE    CREATE TABLE    
-t1     CREATE TABLE [t1] ([i] INTEGER, [j] INTEGER, [k] INTEGER,  INDEX [i_idx] ([i]) INVISIBLE,  INDEX [j_idx] ([j]) INVISIBLE,  INDEX [k_idx] ([k]) INVISIBLE) COLLATE iso88591_bin     
+t1     CREATE TABLE [t1] ([i] INTEGER, [j] INTEGER, [k] INTEGER,  INDEX [i_idx] ([i]) INVISIBLE,  INDEX [j_idx] ([j]) INVISIBLE,  INDEX [k_idx] ([k]) INVISIBLE) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -105,7 +105,7 @@ t2     0     j_idx     1     j     A     0     null     null     NO     BTREE   
 
 ===================================================
 TABLE    CREATE TABLE    
-t2     CREATE TABLE [t2] ([i] INTEGER NOT NULL, [j] INTEGER NOT NULL,  CONSTRAINT [j_idx] UNIQUE KEY  ([j])) COLLATE iso88591_bin     
+t2     CREATE TABLE [t2] ([i] INTEGER NOT NULL, [j] INTEGER NOT NULL,  CONSTRAINT [j_idx] UNIQUE KEY  ([j])) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -123,7 +123,7 @@ t2     0     pk_t2_i     1     i     A     0     null     null     NO     BTREE 
 
 ===================================================
 TABLE    CREATE TABLE    
-t2     CREATE TABLE [t2] ([i] INTEGER NOT NULL, [j] INTEGER NOT NULL,  CONSTRAINT [pk_t2_i] PRIMARY KEY  ([i]),  CONSTRAINT [j_idx] UNIQUE KEY  ([j])) COLLATE iso88591_bin     
+t2     CREATE TABLE [t2] ([i] INTEGER NOT NULL, [j] INTEGER NOT NULL,  CONSTRAINT [pk_t2_i] PRIMARY KEY  ([i]),  CONSTRAINT [j_idx] UNIQUE KEY  ([j])) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 index_name    class_name    status    
@@ -145,7 +145,7 @@ t1     0     pk_t1_id     1     id     A     0     null     null     NO     BTRE
 
 ===================================================
 TABLE    CREATE TABLE    
-t1     CREATE TABLE [t1] ([id] INTEGER NOT NULL, [tid] INTEGER,  CONSTRAINT [pk_t1_id] PRIMARY KEY  ([id]),  CONSTRAINT [idx_tid] UNIQUE KEY  ([tid]) INVISIBLE) COLLATE iso88591_bin     
+t1     CREATE TABLE [t1] ([id] INTEGER NOT NULL, [tid] INTEGER,  CONSTRAINT [pk_t1_id] PRIMARY KEY  ([id]),  CONSTRAINT [idx_tid] UNIQUE KEY  ([tid]) INVISIBLE) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
