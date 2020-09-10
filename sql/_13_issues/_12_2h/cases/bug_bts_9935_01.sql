@@ -1,5 +1,7 @@
 --+ holdcas on;
 --
+set system parameters 'create_table_reuseoid=no';
+
 drop table if exists t;
 create table t(i int) partition by range(i) (partition p0 values less than (10), partition p1 values less than (100));
 
