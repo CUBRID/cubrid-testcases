@@ -330,4 +330,5 @@ insert into t partition (p0) values (3) on duplicate key update i =  OBJECT :my_
 
 drop table if exists t;
 
+set system parameters 'create_table_reuseoid=yes';
 --+ holdcas off;
