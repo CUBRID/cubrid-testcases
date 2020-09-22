@@ -6,7 +6,7 @@
 0
 ===================================================
 TABLE    CREATE TABLE    
-t1     CREATE TABLE [t1] ([short_col] SMALLINT DEFAULT 1, [int_col] INTEGER DEFAULT 2, [bigint_col] BIGINT DEFAULT 3, [numeric_col] NUMERIC(10,5) DEFAULT 123.45000, [float_col] FLOAT DEFAULT 6.200000, [double_col] DOUBLE DEFAULT 5.74000000000000, [monetary_col] MONETARY DEFAULT \USD340282346600000016151267322115014000640.00, [date_col] DATE DEFAULT date '01/01/2012', [time_col] TIME DEFAULT time '01:03:03 PM', [timestamp_col] TIMESTAMP DEFAULT timestamp '12:00:00 AM 10/31/2008', [datetime_col] DATETIME DEFAULT datetime '11:59:10.000 PM 12/31/2000', [bit_col] BIT(4) DEFAULT X'a', [bitvary_col] BIT VARYING(1073741823) DEFAULT X'8', [char_col] CHARACTER(100) DEFAULT 'cubrid_char                                                                                         ', [varchar_col] CHARACTER VARYING(150) DEFAULT 'cubrid_varchar', [nchar_col] NATIONAL CHARACTER(200) DEFAULT N'cubrid_nchar                                                                                                                                                                                            ', [nvarchar_col] NATIONAL CHARACTER VARYING(200) DEFAULT N'cubrid_nvarchar', [blob_col] BLOB, [clob_col] CLOB, [share_col] INTEGER SHARED 2) COLLATE iso88591_bin     
+t1     CREATE TABLE [t1] ([short_col] SMALLINT DEFAULT 1, [int_col] INTEGER DEFAULT 2, [bigint_col] BIGINT DEFAULT 3, [numeric_col] NUMERIC(10,5) DEFAULT 123.45000, [float_col] FLOAT DEFAULT 6.200000, [double_col] DOUBLE DEFAULT 5.74000000000000, [monetary_col] MONETARY DEFAULT \USD340282346600000016151267322115014000640.00, [date_col] DATE DEFAULT date '01/01/2012', [time_col] TIME DEFAULT time '01:03:03 PM', [timestamp_col] TIMESTAMP DEFAULT timestamp '12:00:00 AM 10/31/2008', [datetime_col] DATETIME DEFAULT datetime '11:59:10.000 PM 12/31/2000', [bit_col] BIT(4) DEFAULT X'a', [bitvary_col] BIT VARYING(1073741823) DEFAULT X'8', [char_col] CHARACTER(100) DEFAULT 'cubrid_char                                                                                         ', [varchar_col] CHARACTER VARYING(150) DEFAULT 'cubrid_varchar', [nchar_col] NATIONAL CHARACTER(200) DEFAULT N'cubrid_nchar                                                                                                                                                                                            ', [nvarchar_col] NATIONAL CHARACTER VARYING(200) DEFAULT N'cubrid_nvarchar', [blob_col] BLOB, [clob_col] CLOB, [share_col] INTEGER SHARED 2) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -14,7 +14,7 @@ t1     CREATE TABLE [t1] ([short_col] SMALLINT DEFAULT 1, [int_col] INTEGER DEFA
 0
 ===================================================
 TABLE    CREATE TABLE    
-CALL     CREATE TABLE [call] ([time] INTEGER, [varying] INTEGER SHARED 2) COLLATE iso88591_bin     
+CALL     CREATE TABLE [call] ([time] INTEGER, [varying] INTEGER SHARED 2) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -26,7 +26,7 @@ CALL     CREATE TABLE [call] ([time] INTEGER, [varying] INTEGER SHARED 2) COLLAT
 0
 ===================================================
 TABLE    CREATE TABLE    
-t2_a     CREATE TABLE [t2_a] ([id] INTEGER DEFAULT 0 NOT NULL, [phone] CHARACTER VARYING(10),  CONSTRAINT [pk_t2_a_id] PRIMARY KEY  ([id])) COLLATE iso88591_bin     
+t2_a     CREATE TABLE [t2_a] ([id] INTEGER DEFAULT 0 NOT NULL, [phone] CHARACTER VARYING(10),  CONSTRAINT [pk_t2_a_id] PRIMARY KEY  ([id])) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -34,7 +34,7 @@ t2_a     CREATE TABLE [t2_a] ([id] INTEGER DEFAULT 0 NOT NULL, [phone] CHARACTER
 0
 ===================================================
 TABLE    CREATE TABLE    
-t2_b     CREATE TABLE [t2_b] ([host_year] INTEGER NOT NULL, [event_code] INTEGER NOT NULL, [athlete_code] INTEGER NOT NULL, [medal] CHARACTER(1) NOT NULL, [score] CHARACTER VARYING(20), [unit] CHARACTER VARYING(5),  CONSTRAINT [pk_t2_b_host_year_event_code_athlete_code_medal] PRIMARY KEY  ([host_year], [event_code], [athlete_code], [medal])) COLLATE iso88591_bin     
+t2_b     CREATE TABLE [t2_b] ([host_year] INTEGER NOT NULL, [event_code] INTEGER NOT NULL, [athlete_code] INTEGER NOT NULL, [medal] CHARACTER(1) NOT NULL, [score] CHARACTER VARYING(20), [unit] CHARACTER VARYING(5),  CONSTRAINT [pk_t2_b_host_year_event_code_athlete_code_medal] PRIMARY KEY  ([host_year], [event_code], [athlete_code], [medal])) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -42,7 +42,7 @@ t2_b     CREATE TABLE [t2_b] ([host_year] INTEGER NOT NULL, [event_code] INTEGER
 0
 ===================================================
 TABLE    CREATE TABLE    
-t2_b_keyword     CREATE TABLE [t2_b_keyword] ([date] INTEGER NOT NULL, [create] INTEGER NOT NULL,  CONSTRAINT [null] PRIMARY KEY  ([date], [create])) COLLATE iso88591_bin     
+t2_b_keyword     CREATE TABLE [t2_b_keyword] ([date] INTEGER NOT NULL, [create] INTEGER NOT NULL,  CONSTRAINT [null] PRIMARY KEY  ([date], [create])) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -50,7 +50,7 @@ t2_b_keyword     CREATE TABLE [t2_b_keyword] ([date] INTEGER NOT NULL, [create] 
 0
 ===================================================
 TABLE    CREATE TABLE    
-t2_c     CREATE TABLE [t2_c] ([id] INTEGER, [phone] CHARACTER VARYING(1073741823),  CONSTRAINT [u_t2_c_id] UNIQUE KEY  ([id])) COLLATE iso88591_bin     
+t2_c     CREATE TABLE [t2_c] ([id] INTEGER, [phone] CHARACTER VARYING(1073741823),  CONSTRAINT [u_t2_c_id] UNIQUE KEY  ([id])) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -58,7 +58,7 @@ t2_c     CREATE TABLE [t2_c] ([id] INTEGER, [phone] CHARACTER VARYING(1073741823
 0
 ===================================================
 TABLE    CREATE TABLE    
-t2_c_keyword     CREATE TABLE [t2_c_keyword] ([references] INTEGER, [restrict] CHARACTER VARYING(1073741823),  CONSTRAINT [constraint] UNIQUE KEY  ([references])) COLLATE iso88591_bin     
+t2_c_keyword     CREATE TABLE [t2_c_keyword] ([references] INTEGER, [restrict] CHARACTER VARYING(1073741823),  CONSTRAINT [constraint] UNIQUE KEY  ([references])) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -66,7 +66,7 @@ t2_c_keyword     CREATE TABLE [t2_c_keyword] ([references] INTEGER, [restrict] C
 0
 ===================================================
 TABLE    CREATE TABLE    
-t2_d     CREATE TABLE [t2_d] ([id] INTEGER NOT NULL, [name] CHARACTER VARYING(10) NOT NULL,  CONSTRAINT [pk_id] PRIMARY KEY  ([id]),  CONSTRAINT [fk_id] FOREIGN KEY  ([id]) REFERENCES [t2_d] ([id]) ON DELETE CASCADE ON UPDATE RESTRICT) COLLATE iso88591_bin     
+t2_d     CREATE TABLE [t2_d] ([id] INTEGER NOT NULL, [name] CHARACTER VARYING(10) NOT NULL,  CONSTRAINT [pk_id] PRIMARY KEY  ([id]),  CONSTRAINT [fk_id] FOREIGN KEY  ([id]) REFERENCES [t2_d] ([id]) ON DELETE CASCADE ON UPDATE RESTRICT) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -74,7 +74,7 @@ t2_d     CREATE TABLE [t2_d] ([id] INTEGER NOT NULL, [name] CHARACTER VARYING(10
 0
 ===================================================
 TABLE    CREATE TABLE    
-t2_d_keyword     CREATE TABLE [t2_d_keyword] ([not] INTEGER NOT NULL, [null] CHARACTER VARYING(10) NOT NULL,  CONSTRAINT [key] PRIMARY KEY  ([not]),  CONSTRAINT [delete] FOREIGN KEY  ([not]) REFERENCES [t2_d_keyword] ([not]) ON DELETE CASCADE ON UPDATE RESTRICT) COLLATE iso88591_bin     
+t2_d_keyword     CREATE TABLE [t2_d_keyword] ([not] INTEGER NOT NULL, [null] CHARACTER VARYING(10) NOT NULL,  CONSTRAINT [key] PRIMARY KEY  ([not]),  CONSTRAINT [delete] FOREIGN KEY  ([not]) REFERENCES [t2_d_keyword] ([not]) ON DELETE CASCADE ON UPDATE RESTRICT) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -82,7 +82,7 @@ t2_d_keyword     CREATE TABLE [t2_d_keyword] ([not] INTEGER NOT NULL, [null] CHA
 0
 ===================================================
 TABLE    CREATE TABLE    
-t2_e     CREATE TABLE [t2_e] ([id] INTEGER, [phone] CHARACTER VARYING(1073741823),  INDEX [idx] ([id] DESC, [phone])) COLLATE iso88591_bin     
+t2_e     CREATE TABLE [t2_e] ([id] INTEGER, [phone] CHARACTER VARYING(1073741823),  INDEX [idx] ([id] DESC, [phone])) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -90,7 +90,7 @@ t2_e     CREATE TABLE [t2_e] ([id] INTEGER, [phone] CHARACTER VARYING(1073741823
 0
 ===================================================
 TABLE    CREATE TABLE    
-t2_e_keyword     CREATE TABLE [t2_e_keyword] ([unique] INTEGER, [on] CHARACTER VARYING(1073741823),  INDEX [index] ([unique] DESC, [on])) COLLATE iso88591_bin     
+t2_e_keyword     CREATE TABLE [t2_e_keyword] ([unique] INTEGER, [on] CHARACTER VARYING(1073741823),  INDEX [index] ([unique] DESC, [on])) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -102,7 +102,7 @@ t2_e_keyword     CREATE TABLE [t2_e_keyword] ([unique] INTEGER, [on] CHARACTER V
 0
 ===================================================
 TABLE    CREATE TABLE    
-t2_f_keyword     CREATE TABLE [t2_f_keyword] ([delete] INTEGER, [foreign] INTEGER,  CONSTRAINT [index] UNIQUE KEY  ([foreign] DESC),  INDEX [create] ([delete] DESC)) COLLATE iso88591_bin     
+t2_f_keyword     CREATE TABLE [t2_f_keyword] ([delete] INTEGER, [foreign] INTEGER,  CONSTRAINT [index] UNIQUE KEY  ([foreign] DESC),  INDEX [create] ([delete] DESC)) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -110,7 +110,7 @@ t2_f_keyword     CREATE TABLE [t2_f_keyword] ([delete] INTEGER, [foreign] INTEGE
 0
 ===================================================
 TABLE    CREATE TABLE    
-t3     CREATE TABLE [t3] ([i] INTEGER SHARED 20) COLLATE iso88591_bin     
+t3     CREATE TABLE [t3] ([i] INTEGER SHARED 20) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -118,7 +118,7 @@ t3     CREATE TABLE [t3] ([i] INTEGER SHARED 20) COLLATE iso88591_bin
 0
 ===================================================
 TABLE    CREATE TABLE    
-t3_keyword     CREATE TABLE [t3_keyword] ([attribute] INTEGER SHARED 30) COLLATE iso88591_bin     
+t3_keyword     CREATE TABLE [t3_keyword] ([attribute] INTEGER SHARED 30) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -126,7 +126,7 @@ t3_keyword     CREATE TABLE [t3_keyword] ([attribute] INTEGER SHARED 30) COLLATE
 0
 ===================================================
 TABLE    CREATE TABLE    
-t4     CREATE TABLE [t4] ([dummy_column] SET OF INTEGER, [num] INTEGER, [name] CHARACTER VARYING(1073741823)) COLLATE iso88591_bin METHOD [get_2000]() INTEGER FUNCTION [TEST_getInt], [get_success]() CHARACTER VARYING(1073741823) FUNCTION [TEST_getString],  CLASS [get_null]() CHARACTER VARYING(1073741823) FUNCTION [TEST_getNull],  CLASS [get_int](INTEGER) INTEGER FUNCTION [TEST_int_input],  CLASS [get_string](CHARACTER VARYING(1073741823)) CHARACTER VARYING(1073741823) FUNCTION [TEST_string_input],  CLASS [get_string2](CHARACTER VARYING(1073741823), CHARACTER VARYING(1073741823)) CHARACTER VARYING(1073741823) FUNCTION [TEST_string_input2] FILE '$HOME/method_test/myyang'     
+t4     CREATE TABLE [t4] ([dummy_column] SET OF INTEGER, [num] INTEGER, [name] CHARACTER VARYING(1073741823)) REUSE_OID, COLLATE iso88591_bin METHOD [get_2000]() INTEGER FUNCTION [TEST_getInt], [get_success]() CHARACTER VARYING(1073741823) FUNCTION [TEST_getString],  CLASS [get_null]() CHARACTER VARYING(1073741823) FUNCTION [TEST_getNull],  CLASS [get_int](INTEGER) INTEGER FUNCTION [TEST_int_input],  CLASS [get_string](CHARACTER VARYING(1073741823)) CHARACTER VARYING(1073741823) FUNCTION [TEST_string_input],  CLASS [get_string2](CHARACTER VARYING(1073741823), CHARACTER VARYING(1073741823)) CHARACTER VARYING(1073741823) FUNCTION [TEST_string_input2] FILE '$HOME/method_test/myyang'     
 
 ===================================================
 0
@@ -134,7 +134,7 @@ t4     CREATE TABLE [t4] ([dummy_column] SET OF INTEGER, [num] INTEGER, [name] C
 0
 ===================================================
 TABLE    CREATE TABLE    
-t4_keyword     CREATE TABLE [t4_keyword] ([set] SET OF INTEGER, [class] INTEGER, [name] CHARACTER VARYING(1073741823)) COLLATE iso88591_bin METHOD [function]() INTEGER FUNCTION [METHOD],  CLASS [file](CHARACTER VARYING(1073741823), CHARACTER VARYING(1073741823)) CHARACTER VARYING(1073741823) FUNCTION [string] FILE '$HOME/method_test/myyang'     
+t4_keyword     CREATE TABLE [t4_keyword] ([set] SET OF INTEGER, [class] INTEGER, [name] CHARACTER VARYING(1073741823)) REUSE_OID, COLLATE iso88591_bin METHOD [function]() INTEGER FUNCTION [METHOD],  CLASS [file](CHARACTER VARYING(1073741823), CHARACTER VARYING(1073741823)) CHARACTER VARYING(1073741823) FUNCTION [string] FILE '$HOME/method_test/myyang'     
 
 ===================================================
 0
@@ -154,7 +154,7 @@ t5     CREATE TABLE [t5] ([a] INTEGER NOT NULL,  CONSTRAINT [pk_t5_a] PRIMARY KE
 0
 ===================================================
 TABLE    CREATE TABLE    
-t5_b     CREATE TABLE [t5_b] ([a] INTEGER AUTO_INCREMENT (2, 1)) COLLATE iso88591_bin     
+t5_b     CREATE TABLE [t5_b] ([a] INTEGER AUTO_INCREMENT (2, 1)) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -168,7 +168,7 @@ t5_b     CREATE TABLE [t5_b] ([a] INTEGER AUTO_INCREMENT (2, 1)) COLLATE iso8859
 0
 ===================================================
 TABLE    CREATE TABLE    
-t6_class_attr_sub     CREATE TABLE [t6_class_attr_sub] UNDER [t6_class_attr] CLASS ATTRIBUTE ([c4] INTEGER, [c5] INTEGER) COLLATE iso88591_bin     
+t6_class_attr_sub     CREATE TABLE [t6_class_attr_sub] UNDER [t6_class_attr] CLASS ATTRIBUTE ([c4] INTEGER, [c5] INTEGER) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -176,27 +176,7 @@ t6_class_attr_sub     CREATE TABLE [t6_class_attr_sub] UNDER [t6_class_attr] CLA
 0
 ===================================================
 TABLE    CREATE TABLE    
-t6_class_attr_sub2     CREATE TABLE [t6_class_attr_sub2] UNDER [t6_class_attr] COLLATE iso88591_bin     
-
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-TABLE    CREATE TABLE    
-t6_method_file_sub     CREATE TABLE [t6_method_file_sub] UNDER [t6_method_file] ([name2] CHARACTER VARYING(1073741823)) COLLATE iso88591_bin METHOD [mymethod21]() INTEGER FUNCTION [func21],  CLASS [classmethod21](CHARACTER VARYING(1073741823), CHARACTER VARYING(1073741823)) CHARACTER VARYING(1073741823) FUNCTION [func22] FILE '$HOME/method_test/myyang2'     
-
-===================================================
-0
-===================================================
-0
-===================================================
-TABLE    CREATE TABLE    
-t6_method_file_sub2     CREATE TABLE [t6_method_file_sub2] UNDER [t6_method_file] COLLATE iso88591_bin     
+t6_class_attr_sub2     CREATE TABLE [t6_class_attr_sub2] UNDER [t6_class_attr] REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -208,7 +188,27 @@ t6_method_file_sub2     CREATE TABLE [t6_method_file_sub2] UNDER [t6_method_file
 0
 ===================================================
 TABLE    CREATE TABLE    
-t6_table_keyword     CREATE TABLE [t6_table_keyword] UNDER [varchar] ([col] CHARACTER VARYING(100)) COLLATE iso88591_bin     
+t6_method_file_sub     CREATE TABLE [t6_method_file_sub] UNDER [t6_method_file] ([name2] CHARACTER VARYING(1073741823)) REUSE_OID, COLLATE iso88591_bin METHOD [mymethod21]() INTEGER FUNCTION [func21],  CLASS [classmethod21](CHARACTER VARYING(1073741823), CHARACTER VARYING(1073741823)) CHARACTER VARYING(1073741823) FUNCTION [func22] FILE '$HOME/method_test/myyang2'     
+
+===================================================
+0
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+t6_method_file_sub2     CREATE TABLE [t6_method_file_sub2] UNDER [t6_method_file] REUSE_OID, COLLATE iso88591_bin     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+t6_table_keyword     CREATE TABLE [t6_table_keyword] UNDER [varchar] ([col] CHARACTER VARYING(100)) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -222,7 +222,7 @@ t6_table_keyword     CREATE TABLE [t6_table_keyword] UNDER [varchar] ([col] CHAR
 0
 ===================================================
 TABLE    CREATE TABLE    
-t7_list     CREATE TABLE [t7_list] ([id] INTEGER NOT NULL, [test_char] CHARACTER(50), [test_varchar] CHARACTER VARYING(2000) NOT NULL, [test_bit] BIT(16), [test_varbit] BIT VARYING(20), [test_nchar] NATIONAL CHARACTER(50), [test_nvarchar] NATIONAL CHARACTER VARYING(2000), [test_string] CHARACTER VARYING(1073741823), [test_datetime] TIMESTAMP,  CONSTRAINT [pk_t7_list_id_test_varchar] PRIMARY KEY  ([id], [test_varchar])) COLLATE iso88591_bin PARTITION BY LIST ([test_varchar])  (PARTITION [p0] VALUES IN ('aaa', 'bbb', 'ddd'), PARTITION [p1] VALUES IN ('fff', 'ggg', 'hhh'), PARTITION [p2] VALUES IN ('kkk', 'lll', 'mmm'))     
+t7_list     CREATE TABLE [t7_list] ([id] INTEGER NOT NULL, [test_char] CHARACTER(50), [test_varchar] CHARACTER VARYING(2000) NOT NULL, [test_bit] BIT(16), [test_varbit] BIT VARYING(20), [test_nchar] NATIONAL CHARACTER(50), [test_nvarchar] NATIONAL CHARACTER VARYING(2000), [test_string] CHARACTER VARYING(1073741823), [test_datetime] TIMESTAMP,  CONSTRAINT [pk_t7_list_id_test_varchar] PRIMARY KEY  ([id], [test_varchar])) REUSE_OID, COLLATE iso88591_bin PARTITION BY LIST ([test_varchar])  (PARTITION [p0] VALUES IN ('aaa', 'bbb', 'ddd'), PARTITION [p1] VALUES IN ('fff', 'ggg', 'hhh'), PARTITION [p2] VALUES IN ('kkk', 'lll', 'mmm'))     
 
 ===================================================
 0
@@ -230,7 +230,7 @@ t7_list     CREATE TABLE [t7_list] ([id] INTEGER NOT NULL, [test_char] CHARACTER
 0
 ===================================================
 TABLE    CREATE TABLE    
-t7_range     CREATE TABLE [t7_range] ([store_id] CHARACTER VARYING(1073741823)) COLLATE iso88591_bin PARTITION BY RANGE ( to_date([store_id]))  (PARTITION [p0] VALUES LESS THAN (date '01/01/1999'), PARTITION [p1] VALUES LESS THAN (date '01/01/2003'), PARTITION [p2] VALUES LESS THAN MAXVALUE)     
+t7_range     CREATE TABLE [t7_range] ([store_id] CHARACTER VARYING(1073741823)) REUSE_OID, COLLATE iso88591_bin PARTITION BY RANGE ( to_date([store_id]))  (PARTITION [p0] VALUES LESS THAN (date '01/01/1999'), PARTITION [p1] VALUES LESS THAN (date '01/01/2003'), PARTITION [p2] VALUES LESS THAN MAXVALUE)     
 
 ===================================================
 0
@@ -238,7 +238,7 @@ t7_range     CREATE TABLE [t7_range] ([store_id] CHARACTER VARYING(1073741823)) 
 0
 ===================================================
 TABLE    CREATE TABLE    
-t7_hash     CREATE TABLE [t7_hash] ([id] INTEGER NOT NULL, [test_int] INTEGER NOT NULL, [test_smallint] SMALLINT, [test_numeric] NUMERIC(38,10), [test_float] FLOAT, [test_real] FLOAT, [test_double] DOUBLE, [test_monetary] MONETARY, [test_datetime] TIMESTAMP,  CONSTRAINT [pk_t7_hash_id_test_int] PRIMARY KEY  ([id], [test_int])) COLLATE iso88591_bin PARTITION BY HASH ([test_int]) PARTITIONS 2     
+t7_hash     CREATE TABLE [t7_hash] ([id] INTEGER NOT NULL, [test_int] INTEGER NOT NULL, [test_smallint] SMALLINT, [test_numeric] NUMERIC(38,10), [test_float] FLOAT, [test_real] FLOAT, [test_double] DOUBLE, [test_monetary] MONETARY, [test_datetime] TIMESTAMP,  CONSTRAINT [pk_t7_hash_id_test_int] PRIMARY KEY  ([id], [test_int])) REUSE_OID, COLLATE iso88591_bin PARTITION BY HASH ([test_int]) PARTITIONS 2     
 
 ===================================================
 0
@@ -246,7 +246,7 @@ t7_hash     CREATE TABLE [t7_hash] ([id] INTEGER NOT NULL, [test_int] INTEGER NO
 0
 ===================================================
 TABLE    CREATE TABLE    
-t7_keyword     CREATE TABLE [t7_keyword] ([show] CHARACTER VARYING(1073741823)) COLLATE iso88591_bin PARTITION BY RANGE ( to_date([show]))  (PARTITION [monetary] VALUES LESS THAN (date '01/01/1999'), PARTITION [numeric] VALUES LESS THAN (date '01/01/2003'), PARTITION [values] VALUES LESS THAN MAXVALUE)     
+t7_keyword     CREATE TABLE [t7_keyword] ([show] CHARACTER VARYING(1073741823)) REUSE_OID, COLLATE iso88591_bin PARTITION BY RANGE ( to_date([show]))  (PARTITION [monetary] VALUES LESS THAN (date '01/01/1999'), PARTITION [numeric] VALUES LESS THAN (date '01/01/2003'), PARTITION [values] VALUES LESS THAN MAXVALUE)     
 
 ===================================================
 0
@@ -260,7 +260,7 @@ t7_keyword     CREATE TABLE [t7_keyword] ([show] CHARACTER VARYING(1073741823)) 
 0
 ===================================================
 TABLE    CREATE TABLE    
-t8_02     CREATE TABLE [t8_02] UNDER [t8_01] COLLATE iso88591_bin     
+t8_02     CREATE TABLE [t8_02] UNDER [t8_01] REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -274,13 +274,13 @@ t8_02     CREATE TABLE [t8_02] UNDER [t8_01] COLLATE iso88591_bin
 0
 ===================================================
 TABLE    CREATE TABLE    
-t8_02     CREATE TABLE [t8_02] UNDER [t8_01] ([col4] INTEGER, [col5] CHARACTER VARYING(100) NOT NULL,  CONSTRAINT [u_t8_02_col4] UNIQUE KEY  ([col4])) COLLATE iso88591_bin     
+t8_02     CREATE TABLE [t8_02] UNDER [t8_01] ([col4] INTEGER, [col5] CHARACTER VARYING(100) NOT NULL,  CONSTRAINT [u_t8_02_col4] UNIQUE KEY  ([col4])) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
 ===================================================
 TABLE    CREATE TABLE    
-t8_03     CREATE TABLE [t8_03] UNDER [t8_02], [t8_01] COLLATE iso88591_bin INHERIT [col1] of [t8_01] as [col1_modify_1], [col2] of [t8_02], [col2] of [t8_01] as [col2_modify_2], [col3] of [t8_02], [col3] of [t8_01] as [col3_modify_3]     
+t8_03     CREATE TABLE [t8_03] UNDER [t8_02], [t8_01] REUSE_OID, COLLATE iso88591_bin INHERIT [col1] of [t8_01] as [col1_modify_1], [col2] of [t8_02], [col2] of [t8_01] as [col2_modify_2], [col3] of [t8_02], [col3] of [t8_01] as [col3_modify_3]     
 
 ===================================================
 0
@@ -290,7 +290,7 @@ t8_03     CREATE TABLE [t8_03] UNDER [t8_02], [t8_01] COLLATE iso88591_bin INHER
 0
 ===================================================
 TABLE    CREATE TABLE    
-t8_keyword     CREATE TABLE [t8_keyword] UNDER [class], [table] COLLATE iso88591_bin INHERIT [int] of [class], [varchar] of [class] as [view], [double] of [class] as [trigger]     
+t8_keyword     CREATE TABLE [t8_keyword] UNDER [class], [table] REUSE_OID, COLLATE iso88591_bin INHERIT [int] of [class], [varchar] of [class] as [view], [double] of [class] as [trigger]     
 
 ===================================================
 0
@@ -314,13 +314,13 @@ t8_keyword     CREATE TABLE [t8_keyword] UNDER [class], [table] COLLATE iso88591
 0
 ===================================================
 TABLE    CREATE TABLE    
-t9_like     CREATE TABLE [t9_like] ([id] INTEGER DEFAULT 0 NOT NULL, [phone] CHARACTER VARYING(10),  CONSTRAINT [pk_t9_like_id] PRIMARY KEY  ([id])) COLLATE iso88591_bin     
+t9_like     CREATE TABLE [t9_like] ([id] INTEGER DEFAULT 0 NOT NULL, [phone] CHARACTER VARYING(10),  CONSTRAINT [pk_t9_like_id] PRIMARY KEY  ([id])) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
 ===================================================
 TABLE    CREATE TABLE    
-t9_as     CREATE TABLE [t9_as] ([id] INTEGER DEFAULT 0 NOT NULL, [phone] CHARACTER VARYING(10)) COLLATE iso88591_bin     
+t9_as     CREATE TABLE [t9_as] ([id] INTEGER DEFAULT 0 NOT NULL, [phone] CHARACTER VARYING(10)) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -328,13 +328,13 @@ t9_as     CREATE TABLE [t9_as] ([id] INTEGER DEFAULT 0 NOT NULL, [phone] CHARACT
 0
 ===================================================
 TABLE    CREATE TABLE    
-t9_keyword1     CREATE TABLE [t9_keyword1] ([int] INTEGER DEFAULT 0 NOT NULL, [varchar] CHARACTER VARYING(10),  CONSTRAINT [pk_t9_keyword1_int] PRIMARY KEY  ([int])) COLLATE iso88591_bin     
+t9_keyword1     CREATE TABLE [t9_keyword1] ([int] INTEGER DEFAULT 0 NOT NULL, [varchar] CHARACTER VARYING(10),  CONSTRAINT [pk_t9_keyword1_int] PRIMARY KEY  ([int])) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
 ===================================================
 TABLE    CREATE TABLE    
-t9_keyword2     CREATE TABLE [t9_keyword2] ([int] INTEGER DEFAULT 0 NOT NULL, [varchar] CHARACTER VARYING(10)) COLLATE iso88591_bin     
+t9_keyword2     CREATE TABLE [t9_keyword2] ([int] INTEGER DEFAULT 0 NOT NULL, [varchar] CHARACTER VARYING(10)) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -390,7 +390,7 @@ null
 0
 ===================================================
 TABLE    CREATE TABLE    
-filter_t     CREATE TABLE [filter_t] ([a] INTEGER,  INDEX [index_filter] ([a]) WHERE filter_t.a>10) COLLATE iso88591_bin     
+filter_t     CREATE TABLE [filter_t] ([a] INTEGER,  INDEX [index_filter] ([a]) WHERE filter_t.a>10) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -400,7 +400,7 @@ filter_t     CREATE TABLE [filter_t] ([a] INTEGER,  INDEX [index_filter] ([a]) W
 0
 ===================================================
 TABLE    CREATE TABLE    
-CREATE     CREATE TABLE [create] ([int] INTEGER,  INDEX [filter_create_a] ([int]) WHERE [CREATE].[INT]>10) COLLATE iso88591_bin     
+CREATE     CREATE TABLE [create] ([int] INTEGER,  INDEX [filter_create_a] ([int]) WHERE [CREATE].[INT]>10) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -410,7 +410,7 @@ CREATE     CREATE TABLE [create] ([int] INTEGER,  INDEX [filter_create_a] ([int]
 0
 ===================================================
 TABLE    CREATE TABLE    
-filter_b     CREATE TABLE [filter_b] ([col] CHARACTER(10),  INDEX [filter_b_idx] ([col]) WHERE  lower(filter_b.col)>_iso88591'a' collate iso88591_bin) COLLATE iso88591_bin     
+filter_b     CREATE TABLE [filter_b] ([col] CHARACTER(10),  INDEX [filter_b_idx] ([col]) WHERE  lower(filter_b.col)>_iso88591'a' collate iso88591_bin) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -424,7 +424,7 @@ filter_b     CREATE TABLE [filter_b] ([col] CHARACTER(10),  INDEX [filter_b_idx]
 0
 ===================================================
 TABLE    CREATE TABLE    
-func_t     CREATE TABLE [func_t] ([col] INTEGER,  INDEX [index_func] ( mod([func_t].[col], 3))) COLLATE iso88591_bin     
+func_t     CREATE TABLE [func_t] ([col] INTEGER,  INDEX [index_func] ( mod([func_t].[col], 3))) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -434,7 +434,7 @@ func_t     CREATE TABLE [func_t] ([col] INTEGER,  INDEX [index_func] ( mod([func
 0
 ===================================================
 TABLE    CREATE TABLE    
-ALTER     CREATE TABLE [alter] ([int] INTEGER,  INDEX [index_alter] ( mod([ALTER].[INT], 3))) COLLATE iso88591_bin     
+ALTER     CREATE TABLE [alter] ([int] INTEGER,  INDEX [index_alter] ( mod([ALTER].[INT], 3))) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -446,7 +446,7 @@ ALTER     CREATE TABLE [alter] ([int] INTEGER,  INDEX [index_alter] ( mod([ALTER
 0
 ===================================================
 TABLE    CREATE TABLE    
-i18n_t     CREATE TABLE [i18n_t] ([a] CHARACTER VARYING(1073741823) COLLATE utf8_bin) COLLATE iso88591_bin     
+i18n_t     CREATE TABLE [i18n_t] ([a] CHARACTER VARYING(1073741823) COLLATE utf8_bin) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
