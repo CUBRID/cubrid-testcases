@@ -1,5 +1,5 @@
 ===================================================
-class_name    cast(c.owner.name as varchar(255))    case c.class_type when 0 then 'CLASS' when 1 then 'VCLASS' when 2 then 'PROXY' else 'UNKNOW' end    case when  mod(c.is_system_class, 2)=1 then 'YES' else 'NO' end    case when c.sub_classes is null  then 'NO' else nvl((select 'YES' from _db_partition p where p.class_of=c and p.pname is null ), 'NO') end    
+class_name    cast(c.owner.name as varchar(255) collate iso88591_bin_ts)    case c.class_type when 0 then 'CLASS' when 1 then 'VCLASS' when 2 then 'PROXY' else 'UNKNOW' end    case when  mod(c.is_system_class, 2)=1 then 'YES' else 'NO' end    case when c.sub_classes is null  then 'NO' else nvl((select 'YES' from _db_partition p where p.class_of=c and p.pname is null ), 'NO') end    
 _db_attribute     DBA     CLASS     YES     NO     
 _db_auth     DBA     CLASS     YES     NO     
 _db_charset     DBA     CLASS     YES     NO     
