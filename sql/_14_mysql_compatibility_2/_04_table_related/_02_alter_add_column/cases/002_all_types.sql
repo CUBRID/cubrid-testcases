@@ -1,4 +1,5 @@
 --+ holdcas on;
+set system parameters 'create_table_reuseoid = no';
 set system parameters 'add_column_update_hard_default = yes';
 
 create table t (k string);
@@ -113,4 +114,5 @@ select count(*) from t where b2 is null;
 drop t;
 
 commit;
+set system parameters 'create_table_reuseoid = yes';
 --+ holdcas off;
