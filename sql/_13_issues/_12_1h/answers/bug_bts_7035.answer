@@ -14,7 +14,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select count(t.a) from t t where  lower(t.a)>'mbt'
+select count(t.a) from t t where  lower(t.a)>'mbt' collate iso?_bin_ts
 ===================================================
 count(a)    
 3     
@@ -25,7 +25,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select count(x.a) from t x where  lower(x.a)>'mbt'
+select count(x.a) from t x where  lower(x.a)>'mbt' collate iso?_bin_ts
 ===================================================
 0
 ===================================================
@@ -38,13 +38,13 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-(select count(v.a) from t v where ( lower(v.a)>'mbt'))
+(select count(v.a) from t v where ( lower(v.a)>'mbt' collate iso?_bin_ts))
 Query plan:
 sscan
     class: v node[?]
     cost:  ? card ?
 Query stmt:
-select v.num from (select count(v.a) from t v where ( lower(v.a)>'mbt')) v (num)
+select v.num from (select count(v.a) from t v where ( lower(v.a)>'mbt' collate iso?_bin_ts)) v (num)
 ===================================================
 0
 ===================================================

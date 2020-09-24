@@ -77,7 +77,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.a,  cast(t?.a as varchar) from t? t? where (t?.a> ?:? ) order by ?
+select t?.a,  cast(t?.a as varchar collate iso?_bin_ts) from t? t? where (t?.a> ?:? ) order by ?
 ===================================================
 cast(a as smallint)    
 
@@ -127,7 +127,7 @@ Query stmt:
 select  cast(t?.a as numeric) from t? t? where (t?.a> ?:? ) order by ?
 /* ---> skip ORDER BY */
 ===================================================
-cast(a as varchar)    
+cast(a as varchar collate iso88591_bin_ts)    
 
 Query plan:
 temp(order by)
@@ -138,19 +138,21 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select  cast(t?.a as varchar) from t? t? where (t?.a> ?:? ) order by ?
+select  cast(t?.a as varchar collate iso?_bin_ts) from t? t? where (t?.a> ?:? ) order by ?
 ===================================================
 b    
 
 Query plan:
-iscan
-    class: t? node[?]
-    index: t?_b term[?] (covers)
+temp(order by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: t?_b term[?] (covers)
+                 sort:  ? asc
+                 cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.b from t? t? where (t?.b> ?:? ) order by ?
-/* ---> skip ORDER BY */
+select t?.b,  cast(t?.b as char(?)) from t? t? where (t?.b> ?:? ) order by ?
 ===================================================
 b    
 
@@ -169,14 +171,15 @@ select t?.b,  cast(t?.b as numeric) from t? t? where (t?.b> ?:? ) order by ?
 cast(b as char(1))    
 
 Query plan:
-iscan
-    class: t? node[?]
-    index: t?_b term[?] (covers)
+temp(order by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: t?_b term[?] (covers)
+                 cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 select  cast(t?.b as char(?)) from t? t? where (t?.b> ?:? ) order by ?
-/* ---> skip ORDER BY */
 ===================================================
 cast(b as numeric)    
 
@@ -269,15 +272,15 @@ select  cast(t?.c as time) from t? t? where (t?.c> ?:? ) order by ?
 cast(s as char(10))    
 
 Query plan:
-iscan
-    class: t_i node[?]
-    index: t_i_s (covers)
-    filtr: term[?]
+temp(order by)
+    subplan: sscan
+                 class: t_i node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 select  cast(t_i.s as char(?)) from t_i t_i where  cast(t_i.s as char(?))>'a' order by ?
-/* ---> skip ORDER BY */
 ===================================================
 cast(s as varchar collate utf8_en_ci)    
 

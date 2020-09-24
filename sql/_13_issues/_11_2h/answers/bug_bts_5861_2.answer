@@ -98,7 +98,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select u.id, u.val, u.[text] from u u where (u.id< ?:? ) and  right(u.[text], ?)<'zz' using index u.[_u_id], u.[_u_r_text]
+select u.id, u.val, u.[text] from u u where (u.id< ?:? ) and  right(u.[text], ?)<'zz' collate iso?_bin_ts using index u.[_u_id], u.[_u_r_text]
 ===================================================
 id    val    text    
 1     1000     1000 text     
@@ -113,7 +113,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select u.id, u.val, u.[text] from u u where (u.id< ?:? ) and  right(u.[text], ?)<'zz' using index u.[_u_id], u.[_u_r_text]
+select u.id, u.val, u.[text] from u u where (u.id< ?:? ) and  right(u.[text], ?)<'zz' collate iso?_bin_ts using index u.[_u_id], u.[_u_r_text]
 ===================================================
 id    val    text    
 1     1000     1000 text     
@@ -128,7 +128,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select u.id, u.val, u.[text] from u u where (u.id< ?:? ) and  right(u.[text], ?)<'zz' using index u.[_u_id](+), u.[_u_r_text]
+select u.id, u.val, u.[text] from u u where (u.id< ?:? ) and  right(u.[text], ?)<'zz' collate iso?_bin_ts using index u.[_u_id](+), u.[_u_r_text]
 ===================================================
 id    val    text    
 1     1000     1000 text     
@@ -143,7 +143,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select u.id, u.val, u.[text] from u u where (u.id< ?:? ) and  right(u.[text], ?)<'zz' using index u.[_u_id](+), u.[_u_r_text]
+select u.id, u.val, u.[text] from u u where (u.id< ?:? ) and  right(u.[text], ?)<'zz' collate iso?_bin_ts using index u.[_u_id](+), u.[_u_r_text]
 ===================================================
 id    val    fk    id    val    text    
 1     100     1     1     1000     1000 text     
@@ -200,7 +200,7 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select t.id, t.val, t.fk, u.id, u.val, u.[text] from t t, u u where  right(u.[text], ?)<'zz' and t.fk=u.id using index u.[_u_id](+)
+select t.id, t.val, t.fk, u.id, u.val, u.[text] from t t, u u where  right(u.[text], ?)<'zz' collate iso?_bin_ts and t.fk=u.id using index u.[_u_id](+)
 ===================================================
 id    val    fk    id    val    text    
 1     100     1     1     1000     1000 text     
@@ -221,7 +221,7 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select t.id, t.val, t.fk, u.id, u.val, u.[text] from t t, u u where  right(u.[text], ?)<'zz' and t.fk=u.id using index u.[_u_id](+)
+select t.id, t.val, t.fk, u.id, u.val, u.[text] from t t, u u where  right(u.[text], ?)<'zz' collate iso?_bin_ts and t.fk=u.id using index u.[_u_id](+)
 ===================================================
 id    val    fk    id    val    text    
 1     100     1     1     1000     1000 text     
@@ -244,7 +244,7 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select t.id, t.val, t.fk, u.id, u.val, u.[text] from t t, u u where  right(u.[text], ?)<'zz' and (u.id< ?:? ) and t.fk=u.id using index t.[_t_val](+), u.[_u_id]
+select t.id, t.val, t.fk, u.id, u.val, u.[text] from t t, u u where  right(u.[text], ?)<'zz' collate iso?_bin_ts and (u.id< ?:? ) and t.fk=u.id using index t.[_t_val](+), u.[_u_id]
 ===================================================
 id    val    fk    id    val    text    
 1     100     1     1     1000     1000 text     
@@ -267,7 +267,7 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select t.id, t.val, t.fk, u.id, u.val, u.[text] from t t, u u where  right(u.[text], ?)<'zz' and (u.id< ?:? ) and t.fk=u.id using index t.[_t_val](+), u.[_u_id]
+select t.id, t.val, t.fk, u.id, u.val, u.[text] from t t, u u where  right(u.[text], ?)<'zz' collate iso?_bin_ts and (u.id< ?:? ) and t.fk=u.id using index t.[_t_val](+), u.[_u_id]
 ===================================================
 id    val    fk    id    val    text    
 1     100     1     1     1000     1000 text     
@@ -282,7 +282,7 @@ sscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select u.id, u.val, u.[text] from u u where  right(u.[text], ?)<'zz' using index u.[_u_id](+))
+(select u.id, u.val, u.[text] from u u where  right(u.[text], ?)<'zz' collate iso?_bin_ts using index u.[_u_id](+))
 Query plan:
 nl-join (inner join)
     edge:  term[?]
@@ -296,7 +296,7 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select t.id, t.val, t.fk, x.id, x.val, x.[text] from t t, (select u.id, u.val, u.[text] from u u where  right(u.[text], ?)<'zz' using index u.[_u_id](+)) x (id, val, [text]) where (t.id< ?:? ) and t.fk=x.id using index t.[_t_val](+)
+select t.id, t.val, t.fk, x.id, x.val, x.[text] from t t, (select u.id, u.val, u.[text] from u u where  right(u.[text], ?)<'zz' collate iso?_bin_ts using index u.[_u_id](+)) x (id, val, [text]) where (t.id< ?:? ) and t.fk=x.id using index t.[_t_val](+)
 ===================================================
 id    val    fk    id    val    text    
 1     100     1     1     1000     1000 text     
@@ -311,7 +311,7 @@ sscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select u.id, u.val, u.[text] from u u where  right(u.[text], ?)<'zz' using index u.[_u_id](+))
+(select u.id, u.val, u.[text] from u u where  right(u.[text], ?)<'zz' collate iso?_bin_ts using index u.[_u_id](+))
 Query plan:
 nl-join (inner join)
     edge:  term[?]
@@ -325,7 +325,7 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select t.id, t.val, t.fk, x.id, x.val, x.[text] from t t, (select u.id, u.val, u.[text] from u u where  right(u.[text], ?)<'zz' using index u.[_u_id](+)) x (id, val, [text]) where (t.id< ?:? ) and t.fk=x.id using index t.[_t_val](+)
+select t.id, t.val, t.fk, x.id, x.val, x.[text] from t t, (select u.id, u.val, u.[text] from u u where  right(u.[text], ?)<'zz' collate iso?_bin_ts using index u.[_u_id](+)) x (id, val, [text]) where (t.id< ?:? ) and t.fk=x.id using index t.[_t_val](+)
 ===================================================
 0
 ===================================================

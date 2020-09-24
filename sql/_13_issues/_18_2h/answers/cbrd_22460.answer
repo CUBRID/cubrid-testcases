@@ -12,7 +12,7 @@
 Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
 t     1     idx1     1     null     A     0     null     null     YES     BTREE      ifnull([t].[a], [t].[b])     null     YES     
 t     1     idx2     1     null     A     0     null     null     YES     BTREE     nvl([t].[a], [t].[b])     null     YES     
-t     1     idx3     1     null     A     0     null     null     YES     BTREE     nvl2([t].[a], [t].[b], _iso88591'a is null' collate iso88591_bin)     null     YES     
+t     1     idx3     1     null     A     0     null     null     YES     BTREE     nvl2([t].[a], [t].[b], _iso88591'a is null' collate iso88591_bin_ts)     null     YES     
 
 ===================================================
 0
@@ -30,7 +30,7 @@ t     1     idx3     1     null     A     0     null     null     YES     BTREE 
 Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
 t     1     idx1     1     null     A     3     null     null     YES     BTREE      ifnull([t].[a], [t].[b])     null     YES     
 t     1     idx2     1     null     A     3     null     null     YES     BTREE     nvl([t].[a], [t].[b])     null     YES     
-t     1     idx3     1     null     A     2     null     null     YES     BTREE     nvl2([t].[a], [t].[b], _iso88591'a is null' collate iso88591_bin)     null     YES     
+t     1     idx3     1     null     A     2     null     null     YES     BTREE     nvl2([t].[a], [t].[b], _iso88591'a is null' collate iso88591_bin_ts)     null     YES     
 
 ===================================================
 0
@@ -201,7 +201,7 @@ Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    C
 t     1     i_t_dtcol     1     null     A     0     null     null     YES     BTREE      timediff([t].[datetime_col], datetime '2010-01-01 12:34:56')     null     YES     
 t     1     i_t_mi     1     null     A     0     null     null     YES     BTREE      mod([t].[int_col], 2)     null     YES     
 t     1     i_t_pf     1     null     A     0     null     null     YES     BTREE      power( cast([t].[float_col] as double),  cast(3.0 as double))     null     YES     
-t     1     i_t_rpcol     1     null     A     0     null     null     YES     BTREE      replace([t].[string_col], _iso88591'b' collate iso88591_bin, _iso88591'c' collate iso88591_bin)     null     YES     
+t     1     i_t_rpcol     1     null     A     0     null     null     YES     BTREE      replace([t].[string_col], _iso88591'b' collate iso88591_bin_ts, _iso88591'c' collate iso88591_bin_ts)     null     YES     
 t     1     i_t_td2col     1     null     A     0     null     null     YES     BTREE      timediff([t].[time_col], time '12:00:00')     null     YES     
 t     1     i_t_tdcol     1     null     A     0     null     null     YES     BTREE      timediff([t].[datetime_col],  cast(timestamp '2010-01-01 12:34:56' as datetime))     null     YES     
 
