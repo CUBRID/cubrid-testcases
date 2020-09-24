@@ -653,11 +653,11 @@ if( instr(timestamp '2010-01-01 12:00:00 am', date '1987-11-16', 1)= instr('2010
 ok     
 
 ===================================================
-if( instr(date '2010-01-01', B'101010', 1)= instr('2010-01-01',  cast(B'101010' as varchar), 1), 'ok', 'nok')    
+if( instr(date '2010-01-01', B'101010', 1)= instr('2010-01-01',  cast(B'101010' as varchar collate iso88591_bin_ts), 1), 'ok', 'nok')    
 ok     
 
 ===================================================
-if( instr(B'10101010', timestamp '2010-01-01 12:00:00 am', 1)= instr( cast(B'10101010' as varchar), '2010-01-01 12:00:00 am', 1), 'ok', 'nok')    
+if( instr(B'10101010', timestamp '2010-01-01 12:00:00 am', 1)= instr( cast(B'10101010' as varchar collate iso88591_bin_ts), '2010-01-01 12:00:00 am', 1), 'ok', 'nok')    
 ok     
 
 ===================================================

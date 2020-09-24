@@ -653,11 +653,11 @@ if( strcmp(timestamp '2010-01-01 12:00:00 am', date '1987-11-16')= strcmp('2010-
 ok     
 
 ===================================================
-if( strcmp(date '2010-01-01', B'101010')= strcmp('2010-01-01',  cast(B'101010' as varchar)), 'ok', 'nok')    
+if( strcmp(date '2010-01-01', B'101010')= strcmp('2010-01-01',  cast(B'101010' as varchar collate iso88591_bin_ts)), 'ok', 'nok')    
 ok     
 
 ===================================================
-if( strcmp(B'10101010',  timestamp('2010-01-01 12:00:00 am', 0))= strcmp( cast(B'10101010' as varchar), '2010-01-01 12:00:00 am'), 'ok', 'nok')    
+if( strcmp(B'10101010',  timestamp('2010-01-01 12:00:00 am', 0))= strcmp( cast(B'10101010' as varchar collate iso88591_bin_ts), '2010-01-01 12:00:00 am'), 'ok', 'nok')    
 ok     
 
 ===================================================

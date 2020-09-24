@@ -66,7 +66,7 @@ Value1
 10.4234     
 
 ===================================================
-elt(10, 'fdsa',  CURRENT_TIMESTAMP ,  CURRENT_USER ,  cast(12342.0432 as float), 342.0432e10, date '2010-02-03',  cast('asdfa' as varchar(10)),  cast('VAlue342' as char(20)), 1, 210.2342,  CURRENT_DATE )    
+elt(10, 'fdsa',  CURRENT_TIMESTAMP ,  CURRENT_USER ,  cast(12342.0432 as float), 342.0432e10, date '2010-02-03',  cast('asdfa' as varchar(10) collate iso88591_bin_ts),  cast('VAlue342' as char(20)), 1, 210.2342,  CURRENT_DATE )    
 210.2342     
 
 ===================================================
@@ -215,11 +215,11 @@ if(elt(3,  cast(123 as smallint),  cast(1234 as integer),  cast(12345 as bigint)
 ok     
 
 ===================================================
-if(elt(4,  cast(123 as smallint),  cast(1234 as integer),  cast(12345 as bigint),  cast(1.1 as float),  cast(11.11 as double),  cast(111.11 as monetary),  cast(1111.111 as numeric(10,3)))= cast(1.1f as varchar), 'ok', 'nok')    
+if(elt(4,  cast(123 as smallint),  cast(1234 as integer),  cast(12345 as bigint),  cast(1.1 as float),  cast(11.11 as double),  cast(111.11 as monetary),  cast(1111.111 as numeric(10,3)))= cast(1.1f as varchar collate iso88591_bin_ts), 'ok', 'nok')    
 ok     
 
 ===================================================
-if(elt(5,  cast(123 as smallint),  cast(1234 as integer),  cast(12345 as bigint),  cast(1.1 as float),  cast(11.11 as double),  cast(111.11 as monetary),  cast(1111.111 as numeric(10,3)))= cast(11e11 as varchar), 'ok', 'nok')    
+if(elt(5,  cast(123 as smallint),  cast(1234 as integer),  cast(12345 as bigint),  cast(1.1 as float),  cast(11.11 as double),  cast(111.11 as monetary),  cast(1111.111 as numeric(10,3)))= cast(11e11 as varchar collate iso88591_bin_ts), 'ok', 'nok')    
 nok     
 
 ===================================================
@@ -251,11 +251,11 @@ if(elt(3, s, i, bi, f, d, m, n)='3', 'ok', 'nok')
 ok     
 
 ===================================================
-if(elt(4, s, i, bi, f, d, m, n)= cast(f as varchar), 'ok', 'nok')    
+if(elt(4, s, i, bi, f, d, m, n)= cast(f as varchar collate iso88591_bin_ts), 'ok', 'nok')    
 ok     
 
 ===================================================
-if(elt(5, s, i, bi, f, d, m, n)= cast(d as varchar), 'ok', 'nok')    
+if(elt(5, s, i, bi, f, d, m, n)= cast(d as varchar collate iso88591_bin_ts), 'ok', 'nok')    
 ok     
 
 ===================================================
@@ -337,11 +337,11 @@ if(elt( ?:0 ,  ?:1 ,  ?:2 )= ?:3 , 'ok', 'nok')
 ok     
 
 ===================================================
-if(elt( ?:0 ,  ?:1 ,  ?:2 )= cast( ?:3  as varchar), 'ok', 'nok')    
+if(elt( ?:0 ,  ?:1 ,  ?:2 )= cast( ?:3  as varchar collate iso88591_bin_ts), 'ok', 'nok')    
 ok     
 
 ===================================================
-if(elt( ?:0 ,  ?:1 ,  ?:2 )= cast( ?:3  as varchar), 'ok', 'nok')    
+if(elt( ?:0 ,  ?:1 ,  ?:2 )= cast( ?:3  as varchar collate iso88591_bin_ts), 'ok', 'nok')    
 ok     
 
 ===================================================

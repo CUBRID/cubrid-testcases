@@ -655,11 +655,11 @@ if( concat(timestamp '2010-01-01 12:00:00 am', date '1987-11-16')= concat('12:00
 ok     
 
 ===================================================
-if( concat(date '2010-01-01', B'101010')= concat('01/01/2010',  cast(B'101010' as varchar)), 'ok', 'nok')    
+if( concat(date '2010-01-01', B'101010')= concat('01/01/2010',  cast(B'101010' as varchar collate iso88591_bin_ts)), 'ok', 'nok')    
 ok     
 
 ===================================================
-if( concat(B'10101010',  timestamp('2010-01-01 12:00:00 am', 0))= concat( cast(B'10101010' as varchar), '12:00:00.000 AM 01/01/2010'), 'ok', 'nok')    
+if( concat(B'10101010',  timestamp('2010-01-01 12:00:00 am', 0))= concat( cast(B'10101010' as varchar collate iso88591_bin_ts), '12:00:00.000 AM 01/01/2010'), 'ok', 'nok')    
 ok     
 
 ===================================================

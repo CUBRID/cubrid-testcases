@@ -653,11 +653,11 @@ if(substring_index(timestamp '2010-01-01 12:00:00 am', date '1987-11-16', 1)=sub
 ok     
 
 ===================================================
-if(substring_index(date '2010-01-01', B'101010', 1)=substring_index('01/01/2010',  cast(B'101010' as varchar), 1), 'ok', 'nok')    
+if(substring_index(date '2010-01-01', B'101010', 1)=substring_index('01/01/2010',  cast(B'101010' as varchar collate iso88591_bin_ts), 1), 'ok', 'nok')    
 ok     
 
 ===================================================
-if(substring_index(B'10101010', timestamp '2010-01-01 12:00:00 am', 1)=substring_index( cast(B'10101010' as varchar),  cast(timestamp '2010-01-01 12:00:00 am' as varchar), 1), 'ok', 'nok')    
+if(substring_index(B'10101010', timestamp '2010-01-01 12:00:00 am', 1)=substring_index( cast(B'10101010' as varchar collate iso88591_bin_ts),  cast(timestamp '2010-01-01 12:00:00 am' as varchar collate iso88591_bin_ts), 1), 'ok', 'nok')    
 ok     
 
 ===================================================

@@ -35,7 +35,7 @@ insert('Quadratic', 3, 100, 'What')
 QuWhat     
 
 ===================================================
-if(insert( cast('abcdefghijk' as varchar(32)), 5, 3, 'XXX')='abcdXXXhijk', 'ok', 'nok')    
+if(insert( cast('abcdefghijk' as varchar(32) collate iso88591_bin_ts), 5, 3, 'XXX')='abcdXXXhijk', 'ok', 'nok')    
 ok     
 
 ===================================================
@@ -43,7 +43,7 @@ if(insert( cast('abcdefghijk' as char(32)), 5, 3, 'XXX')='abcdXXXhijk', 'ok', 'n
 ok     
 
 ===================================================
-if(insert( cast(N'abcdefghijk' as nchar varying(32)), 5, 3, N'XXX')=N'abcdXXXhijk', 'ok', 'nok')    
+if(insert( cast(N'abcdefghijk' as nchar varying(32) collate iso88591_bin_ts), 5, 3, N'XXX')=N'abcdXXXhijk', 'ok', 'nok')    
 ok     
 
 ===================================================
@@ -59,7 +59,7 @@ if(insert(c, 2, 3, c)=insert( cast('abcde' as char(32)), 2, 3,  cast('abcde' as 
 ok     
 
 ===================================================
-if(insert(vc, 2, 3, vc)=insert( cast('ABCDE' as varchar(32)), 2, 3,  cast('ABCDE' as varchar(32))), 'ok', 'nok')    
+if(insert(vc, 2, 3, vc)=insert( cast('ABCDE' as varchar(32) collate iso88591_bin_ts), 2, 3,  cast('ABCDE' as varchar(32) collate iso88591_bin_ts)), 'ok', 'nok')    
 ok     
 
 ===================================================
@@ -67,7 +67,7 @@ if(insert(nc, 2, 3, nc)=insert( cast(N'vwxyz' as nchar(32)), 2, 3,  cast(N'vwxyz
 ok     
 
 ===================================================
-if(insert(vnc, 2, 3, vnc)=insert( cast(N'VWXYZ' as nchar varying(32)), 2, 3,  cast(N'VWXYZ' as nchar varying(32))), 'ok', 'nok')    
+if(insert(vnc, 2, 3, vnc)=insert( cast(N'VWXYZ' as nchar varying(32) collate iso88591_bin_ts), 2, 3,  cast(N'VWXYZ' as nchar varying(32) collate iso88591_bin_ts)), 'ok', 'nok')    
 ok     
 
 ===================================================
