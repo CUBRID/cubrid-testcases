@@ -41,15 +41,15 @@ replace(_binary'你好我好大家好', _binary'好')
 E4 BD A0 E6 88 91 E5 A4 A7 E5 AE B6      
 
 ===================================================
-coercibility(_binary'abcdefg')    coercibility( cast(_utf8'abc' as varchar collate euckr_bin))    coercibility(_utf8'abc')    coercibility( cast(_utf8'def' as varchar))    
+coercibility(_binary'abcdefg')    coercibility( cast(_utf8'abc' as varchar collate euckr_bin_ts))    coercibility(_utf8'abc')    coercibility( cast(_utf8'def' as varchar collate iso88591_bin_ts))    
 9     6     10     6     
 
 ===================================================
-replace(_binary'abcdefg',  cast(_utf8'abc' as varchar collate euckr_bin),  cast(_utf8'def' as varchar collate euckr_bin))    
+replace(_binary'abcdefg',  cast(_utf8'abc' as varchar collate euckr_bin_ts),  cast(_utf8'def' as varchar collate euckr_bin_ts))    
 defdefg     
 
 ===================================================
-replace(_binary'abcdefg',  cast(_utf8'abc' as varchar),  cast(_utf8'def' as varchar))    
+replace(_binary'abcdefg',  cast(_utf8'abc' as varchar collate iso88591_bin_ts),  cast(_utf8'def' as varchar collate iso88591_bin_ts))    
 defdefg     
 
 ===================================================
@@ -101,11 +101,11 @@ id    replace(col_binary, col_euckr, col_binary+col_euckr)    replace(col_binary
 4     C3 80 C3 80 C3 8F      C3 80 C3 80 C3 8F C3 80 C3 80 C3 8F      C3 80 C3 80 C3 8F      
 
 ===================================================
-id    replace(col_binary,  cast(_utf8'큐브' as varchar collate euckr_bin),  cast(_utf8'다이아' as varchar collate euckr_bin))    replace(col_euckr,  cast(_utf8'큐브' as varchar collate euckr_bin),  cast(_utf8'다이아' as varchar collate euckr_bin))    replace(col_utf8, _binary'큐브', _binary'다이아')    replace(col_iso,  cast(_utf8'큐브' as varchar collate euckr_bin),  cast(_utf8'다이아' as varchar collate euckr_bin))    
+id    replace(col_binary,  cast(_utf8'큐브' as varchar collate euckr_bin_ts),  cast(_utf8'다이아' as varchar collate euckr_bin_ts))    replace(col_euckr,  cast(_utf8'큐브' as varchar collate euckr_bin_ts),  cast(_utf8'다이아' as varchar collate euckr_bin_ts))    replace(col_utf8, _binary'큐브', _binary'다이아')    replace(col_iso,  cast(_utf8'큐브' as varchar collate euckr_bin_ts),  cast(_utf8'다이아' as varchar collate euckr_bin_ts))    
 1     ED 81 90 EB B8 8C EB A6 AC EB 93 9C      다이아리드     다이아리드     ??????     
 
 ===================================================
-id    replace(col_binary,  cast(_utf8'好' as varchar collate euckr_bin),  cast(_utf8'开心' as varchar collate euckr_bin))    hex( replace(col_euckr,  cast(_utf8'好' as varchar collate euckr_bin),  cast(_utf8'开心' as varchar collate euckr_bin)))    replace(col_utf8, _binary'好', _binary'开心')    replace(col_iso,  cast(_utf8'好' as varchar collate euckr_bin),  cast(_utf8'开心' as varchar collate euckr_bin))    
+id    replace(col_binary,  cast(_utf8'好' as varchar collate euckr_bin_ts),  cast(_utf8'开心' as varchar collate euckr_bin_ts))    hex( replace(col_euckr,  cast(_utf8'好' as varchar collate euckr_bin_ts),  cast(_utf8'开心' as varchar collate euckr_bin_ts)))    replace(col_utf8, _binary'好', _binary'开心')    replace(col_iso,  cast(_utf8'好' as varchar collate euckr_bin_ts),  cast(_utf8'开心' as varchar collate euckr_bin_ts))    
 2     E4 BD A0 E5 A5 BD E6 88 91 E5 A5 BD E5 A4 A7 E5 AE B6 E5 A5 BD      8FB0DF3FE3FDE4B23FE3FDD3DECAAB3FE3FD     你开心我开心大家开心     ??????????????     
 
 ===================================================

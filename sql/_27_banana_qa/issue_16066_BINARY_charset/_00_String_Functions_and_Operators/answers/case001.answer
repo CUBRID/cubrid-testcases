@@ -18,21 +18,21 @@ a    case when a=1 then _binary'字符.串1' when a=2 then _binary'12345가나�
 null     C3 96 C3 B6 5F C5 9E C5 9F 5F C3 9C C3 BC 32 C3 96 C3 B6 5F C5 9E C5 9F 5F C3 9C C3 BC 32 C3 96 C3 B6 5F C5 9E C5 9F 5F C3 9C C3 BC 32      
 
 ===================================================
-a    case when a=1 then  hex(_binary'字符.串1') when a=2 then  cast(_utf8'12345가나다라마가나다라마' as varchar collate euckr_bin) else  cast(_utf8'가나다라마가나다라마' as varchar collate euckr_bin) end    
+a    case when a=1 then  hex(_binary'字符.串1') when a=2 then  cast(_utf8'12345가나다라마가나다라마' as varchar collate euckr_bin_ts) else  cast(_utf8'가나다라마가나다라마' as varchar collate euckr_bin_ts) end    
 1     E5AD97E7ACA62EE4B8B231     
 2     12345가나다라마가나다라마     
 3     가나다라마가나다라마     
 null     가나다라마가나다라마     
 
 ===================================================
-a    case when a=1 then  cast(_utf8'1다라마' as varchar collate euckr_bin) when a=2 then  cast(_utf8'2라마가나다라마' as varchar collate euckr_bin) else  cast(_utf8'3가나다라마가나다라마' as varchar collate euckr_bin) end    
+a    case when a=1 then  cast(_utf8'1다라마' as varchar collate euckr_bin_ts) when a=2 then  cast(_utf8'2라마가나다라마' as varchar collate euckr_bin_ts) else  cast(_utf8'3가나다라마가나다라마' as varchar collate euckr_bin_ts) end    
 1     1다라마     
 2     2라마가나다라마     
 3     3가나다라마가나다라마     
 null     3가나다라마가나다라마     
 
 ===================================================
-a    case when a=1 then _binary'字符.串1' when a=2 then  cast(_utf8'Öö_Şş_Üü2Öö_Şş_Üü2Öö_Şş_Üü2' as varchar) else  cast(_utf8'Öö_Şş_Üü2Öö_Şş_Üü2Öö_Şş_Üü2' as varchar) end    
+a    case when a=1 then _binary'字符.串1' when a=2 then  cast(_utf8'Öö_Şş_Üü2Öö_Şş_Üü2Öö_Şş_Üü2' as varchar collate iso88591_bin_ts) else  cast(_utf8'Öö_Şş_Üü2Öö_Şş_Üü2Öö_Şş_Üü2' as varchar collate iso88591_bin_ts) end    
 1     å­ç¬¦.ä¸²1     
 2     Öö_??_Üü2Öö_??_Üü2Öö_??_Üü2     
 3     Öö_??_Üü2Öö_??_Üü2Öö_??_Üü2     
