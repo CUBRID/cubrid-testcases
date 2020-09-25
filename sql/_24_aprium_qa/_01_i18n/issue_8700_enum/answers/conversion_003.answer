@@ -21,7 +21,7 @@ e3     ENUM('clob1', 'clob2', 'clob3')     utf8_en_cs     YES          null     
 ===================================================
 3
 ===================================================
-s1    s2    cast(s3 as varchar)    
+s1    s2    cast(s3 as varchar collate iso88591_bin_ts)    
 char1     string1     clob1     
 char2     string2     clob2     
 char3     string3     clob3     
@@ -85,14 +85,14 @@ a
 ===================================================
 0
 ===================================================
-cast( cast(_utf8'a' as enum('a', 'b', 'c') collate utf8_bin) as varchar)    
+cast( cast(_utf8'a' as enum('a', 'b', 'c') collate utf8_bin) as varchar collate iso88591_bin_ts)    
 a     
 
 ===================================================
 0
 ===================================================
 Field    Type    Collation    Null    Key    Default    Extra    Comment    
-a     VARCHAR(1073741823)     iso88591_bin     YES          null          null     
+a     VARCHAR(1073741823)     iso88591_bin_ts     YES          null          null     
 
 ===================================================
 a    
