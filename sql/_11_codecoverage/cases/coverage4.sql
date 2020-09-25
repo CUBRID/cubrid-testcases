@@ -146,7 +146,7 @@ ALTER TABLE nation3 COALESCE PARTITION 2;
 -- CREATE TABLE WITH LIST PARTITIONS
 CREATE TABLE athlete2( NAME VARCHAR(40), event VARCHAR(30) ) 
 PARTITION BY LIST (event) ( 
-PARTITION event1 VALUES IN ('Swimming', 'Athletics ' ), 
+PARTITION event1 VALUES IN ('Swimming', 'Athletics' ), 
 PARTITION event2 VALUES IN ('Judo', 'Taekwondo','Boxing'), 
 PARTITION event3 VALUES IN ('Football', 'Basketball', 'Baseball', NULL) 
 ); 
