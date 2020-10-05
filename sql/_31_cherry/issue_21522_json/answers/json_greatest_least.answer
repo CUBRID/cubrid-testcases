@@ -27,12 +27,12 @@ least( cast(json_extract(a, '/addtime') as datetime))
 ===================================================
 3
 ===================================================
-least( cast(json_extract(a, '/addtime') as varchar))    
+least( cast(json_extract(a, '/addtime') as varchar collate iso88591_bin_ts))    
 03:05:32 PM     
 03:05:32.952 PM 12/12/2017     
 
 ===================================================
-greatest( cast(json_extract(a, '/addtime') as varchar))    
+greatest( cast(json_extract(a, '/addtime') as varchar collate iso88591_bin_ts))    
 03:05:32 PM     
 03:05:32.952 PM 12/12/2017     
 
@@ -49,39 +49,39 @@ greatest( cast(json_extract(a, '/addtime') as varchar))
 ===================================================
 Error:-494
 ===================================================
-greatest( cast(json_extract(a, '/addtime') as varchar))    
+greatest( cast(json_extract(a, '/addtime') as varchar collate iso88591_bin_ts))    
 03:25:47 PM     
 03:25:47.161 PM 12/12/2017      
 
 ===================================================
 Error:-181
 ===================================================
-greatest( cast(json_extract(a, '/addtime') as varchar),  cast(b as varchar))    
+greatest( cast(json_extract(a, '/addtime') as varchar collate iso88591_bin_ts),  cast(b as varchar collate iso88591_bin_ts))    
 03:25:47 PM     
 03:25:47.161 PM 12/12/2017      
 
 ===================================================
-least( cast(json_extract(a, '/addtime') as varchar),  cast(b as varchar))    
+least( cast(json_extract(a, '/addtime') as varchar collate iso88591_bin_ts),  cast(b as varchar collate iso88591_bin_ts))    
 02:25:47.000 PM 11/12/2017     
 03:25:47.161 PM 11/12/2017     
 
 ===================================================
-greatest('10:44:34.874 AM 12/12/2017',  cast(json_extract(a, '/add') as varchar))    
+greatest('10:44:34.874 AM 12/12/2017',  cast(json_extract(a, '/add') as varchar collate iso88591_bin_ts))    
 null     
 null     
 
 ===================================================
-least('10:44:34.874 AM 12/12/2017',  cast(json_extract(a, '/add') as varchar))    
+least('10:44:34.874 AM 12/12/2017',  cast(json_extract(a, '/add') as varchar collate iso88591_bin_ts))    
 null     
 null     
 
 ===================================================
-greatest('10:44:34.874 AM 12/12/2017',  cast(json_extract('{"addby":"cubrid"}', '/addby') as varchar))    
+greatest('10:44:34.874 AM 12/12/2017',  cast(json_extract('{"addby":"cubrid"}', '/addby') as varchar collate iso88591_bin_ts))    
 cubrid     
 cubrid     
 
 ===================================================
-least('10:44:34.874 AM 12/12/2017',  cast(json_extract('{"addby":"cubrid"}', '/addby') as varchar))    
+least('10:44:34.874 AM 12/12/2017',  cast(json_extract('{"addby":"cubrid"}', '/addby') as varchar collate iso88591_bin_ts))    
 10:44:34.874 AM 12/12/2017     
 10:44:34.874 AM 12/12/2017     
 

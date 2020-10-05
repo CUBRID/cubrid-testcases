@@ -14,7 +14,7 @@
 c+'z'    
  az     
 a z     
-a z     
+a  z     
 
 Query plan:
 iscan
@@ -22,7 +22,7 @@ iscan
     index: i_tbl_c term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select tbl.c+ cast('z' as varchar) from tbl tbl where (tbl.c> ?:? )
+select tbl.c+ cast('z' as varchar collate iso?_bin_ts) from tbl tbl where (tbl.c> ?:? )
 ===================================================
 c+'z'    
  az     
@@ -37,7 +37,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select tbl.c+ cast('z' as varchar), tbl.c from tbl tbl order by ?
+select tbl.c+ cast('z' as varchar collate iso?_bin_ts), tbl.c from tbl tbl order by ?
 ===================================================
 0
 ===================================================
