@@ -151,7 +151,7 @@ iscan
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t.c, t.vc from t t where t.c=t.vc order by ?
+select t.c, t.vc from t t where t.c= cast(t.vc as varchar(?)) order by ?
 /* ---> skip ORDER BY */
 ===================================================
 0
@@ -264,7 +264,7 @@ iscan
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t.c, t.vc from t t where t.c=t.vc order by ?
+select t.c, t.vc from t t where t.c= cast(t.vc as nchar varying(?)) order by ?
 /* ---> skip ORDER BY */
 ===================================================
 Error:-494
