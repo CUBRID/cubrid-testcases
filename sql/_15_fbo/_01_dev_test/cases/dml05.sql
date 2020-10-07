@@ -17,7 +17,7 @@ select id+8, cast(b as clob), b, cast(d as blob), d from x;
 select id, clob_to_char(a), b, blob_to_bit(c), d from x order by id;
 
 select count(*) from x where a = '0f0f';
-select count(*) from x where cast(a as string) = '0f0f';
+select count(*) from x where cast(a as string) = '0f0f      ';
 select count(*) from x where c = x'0f0f';
 select count(*) from x where cast(c as bit varying) = X'0f0f0000000000000000';
 
