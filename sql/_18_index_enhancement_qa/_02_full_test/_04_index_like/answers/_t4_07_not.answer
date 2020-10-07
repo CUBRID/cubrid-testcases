@@ -45,7 +45,7 @@ sscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.id, t?.v, t?.c, t?.s from t? t? where t?.v not like 'dbms%'
+select t?.id, t?.v, t?.c, t?.s from t? t? where t?.v not like 'dbms%' collate iso?_bin_ts
 ===================================================
 id    v    c    s    
 4     aaa     aaa                      aaa     
@@ -61,7 +61,7 @@ sscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.id, t?.v, t?.c, t?.s from t? t? where t?.s not like 'dbms%'
+select t?.id, t?.v, t?.c, t?.s from t? t? where t?.s not like 'dbms%' collate iso?_bin_ts
 ===================================================
 id    v    c    s    
 4     aaa     aaa                      aaa     
@@ -87,7 +87,7 @@ sscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.id, t?.v, t?.c, t?.s from t? t? where  cast(? as varchar)||t?.v not like '?%'
+select t?.id, t?.v, t?.c, t?.s from t? t? where  cast(? as varchar collate iso?_bin_ts)||t?.v not like '?%' collate iso?_bin_ts
 ===================================================
 id    v    c    s    
 
@@ -107,7 +107,7 @@ sscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.id, t?.v, t?.c, t?.s from t? t? where  cast(? as varchar)||t?.s not like '?%'
+select t?.id, t?.v, t?.c, t?.s from t? t? where  cast(? as varchar collate iso?_bin_ts)||t?.s not like '?%' collate iso?_bin_ts
 ===================================================
 id    v    c    s    
 1     dbms qa1 part     dbms qa1 part            dbms qa1 part     
@@ -126,7 +126,7 @@ sscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.id, t?.v, t?.c, t?.s from t? t? where  cast(? as varchar)||t?.s not like 'db%'
+select t?.id, t?.v, t?.c, t?.s from t? t? where  cast(? as varchar collate iso?_bin_ts)||t?.s not like 'db%' collate iso?_bin_ts
 ===================================================
 0
 ===================================================

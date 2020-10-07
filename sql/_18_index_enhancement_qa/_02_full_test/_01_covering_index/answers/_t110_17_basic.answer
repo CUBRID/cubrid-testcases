@@ -26,7 +26,7 @@ sscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select count( cast(t?.age as varchar)||t?.user_name) from t? t? where (rownum= ?:? )
+select count( cast(t?.age as varchar collate iso?_bin_ts)||t?.user_name) from t? t? where (rownum= ?:? )
 ===================================================
 count(user_id||age||user_name)    
 1     
@@ -37,7 +37,7 @@ sscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select count( cast(t?.user_id as varchar)|| cast(t?.age as varchar)||t?.user_name) from t? t? where (rownum= ?:? )
+select count( cast( cast(t?.user_id as varchar)|| cast(t?.age as varchar) as varchar collate iso?_bin_ts)||t?.user_name) from t? t? where (rownum= ?:? )
 ===================================================
 count(a.age||a.user_name)    col1    
 4     1     
@@ -61,7 +61,7 @@ sscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select count( cast(a.age as varchar)||a.user_name), (select count(b.age) from t? b where (rownum= ?:? )) from t? a where  exists (select c.user_id from t? c)
+select count( cast(a.age as varchar collate iso?_bin_ts)||a.user_name), (select count(b.age) from t? b where (rownum= ?:? )) from t? a where  exists (select c.user_id from t? c)
 ===================================================
 count(a.user_id)    
 4     

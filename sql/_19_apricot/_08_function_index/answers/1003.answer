@@ -38,7 +38,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)>'?' order by ?
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)>'?' collate iso?_bin_ts order by ?
 ===================================================
 i1    i2    d1    d2    s    
 33     33     33.0     33.0     33333     
@@ -49,7 +49,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)='?'
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)='?' collate iso?_bin_ts
 ===================================================
 i1    i2    d1    d2    s    
 33     33     33.0     33.0     33333     
@@ -61,7 +61,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)<'?' and  left(t?.s, ?)>'?'
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)<'?' collate iso?_bin_ts and  left(t?.s, ?)>'?' collate iso?_bin_ts
 ===================================================
 i1    i2    d1    d2    s    
 33     33     33.0     33.0     33333     
@@ -104,7 +104,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)>'?' order by ?
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)>'?' collate iso?_bin_ts order by ?
 ===================================================
 i1    i2    d1    d2    s    
 33     33     33.0     33.0     33333     
@@ -115,7 +115,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)='?'
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)='?' collate iso?_bin_ts
 ===================================================
 i1    i2    d1    d2    s    
 33     33     33.0     33.0     33333     
@@ -127,7 +127,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)<'?' and  left(t?.s, ?)>'?'
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)<'?' collate iso?_bin_ts and  left(t?.s, ?)>'?' collate iso?_bin_ts
 ===================================================
 i1    i2    d1    d2    s    
 33     33     33.0     33.0     33333     
@@ -183,7 +183,7 @@ iscan
     index: idx term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)>'?' and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)>'?' collate iso?_bin_ts and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 
@@ -194,7 +194,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)>'?' and  left(t?.s, ?)<'?' and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)>'?' collate iso?_bin_ts and  left(t?.s, ?)<'?' collate iso?_bin_ts and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 44     33     44.0     44.0     33333     
@@ -248,7 +248,7 @@ iscan
     index: idx term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)>'?' and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)>'?' collate iso?_bin_ts and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 
@@ -259,7 +259,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)>'?' and  left(t?.s, ?)<'?' and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)>'?' collate iso?_bin_ts and  left(t?.s, ?)<'?' collate iso?_bin_ts and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 44     33     44.0     44.0     33333     

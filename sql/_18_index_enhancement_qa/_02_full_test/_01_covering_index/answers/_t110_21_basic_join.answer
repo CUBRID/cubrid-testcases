@@ -44,7 +44,7 @@ nl-join (cross join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count( cast(t?.a as varchar)|| cast(t?.b as varchar)||t?.c|| cast(t?.b as varchar)||t?.c) from t? t?, t? t?
+select count( cast( cast( cast( cast(t?.a as varchar)|| cast(t?.b as varchar) as varchar collate iso?_bin_ts)||t?.c as varchar)|| cast(t?.b as varchar) as varchar collate iso?_bin_ts)||t?.c) from t? t?, t? t?
 ===================================================
 count(t1.a||t1.b||t1.c||t2.d||t2.a||t2.b||t2.c||t2.d)    
 4     
@@ -59,7 +59,7 @@ nl-join (cross join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count( cast(t?.a as varchar)|| cast(t?.b as varchar)||t?.c|| cast(t?.d as varchar)|| cast(t?.a as varchar)|| cast(t?.b as varchar)||t?.c|| cast(t?.d as varchar)) from t? t?, t? t?
+select count( cast( cast( cast( cast(t?.a as varchar)|| cast(t?.b as varchar) as varchar collate iso?_bin_ts)||t?.c|| cast(t?.d as varchar collate iso?_bin_ts)|| cast(t?.a as varchar collate iso?_bin_ts) as varchar)|| cast(t?.b as varchar) as varchar collate iso?_bin_ts)||t?.c|| cast(t?.d as varchar collate iso?_bin_ts)) from t? t?, t? t?
 ===================================================
 count(t1.a||t2.a)    
 4     
@@ -192,7 +192,7 @@ nl-join (cross join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(t?.c|| cast(t?.d as varchar)) from t? t?, t? t? where t?.a is not null  and t?.b is not null  and t?.a is not null  and t?.b is not null 
+select count(t?.c|| cast(t?.d as varchar collate iso?_bin_ts)) from t? t?, t? t? where t?.a is not null  and t?.b is not null  and t?.a is not null  and t?.b is not null 
 ===================================================
 count(t1.a)    
 4     

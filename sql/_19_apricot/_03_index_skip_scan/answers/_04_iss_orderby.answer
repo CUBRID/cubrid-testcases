@@ -231,7 +231,7 @@ iscan
     sort:  ? asc, ? desc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where t.s<>'x' and t.j= ?:?  order by ?, ? desc  for orderby_num()<= ?:? 
+select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where t.s<>'x' collate iso?_bin_ts and t.j= ?:?  order by ?, ? desc  for orderby_num()<= ?:? 
 /* ---> skip ORDER BY */
 ===================================================
 i    j    k    l    
@@ -257,7 +257,7 @@ temp(order by)
     sort:  ? asc, ? desc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where t.s<>'x' and t.j= ?:?  order by ?, ? desc  for orderby_num()<= ?:? 
+select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where t.s<>'x' collate iso?_bin_ts and t.j= ?:?  order by ?, ? desc  for orderby_num()<= ?:? 
 ===================================================
 i    j    k    l    
 2     2     737     111335     
@@ -279,7 +279,7 @@ iscan
     sort:  ? desc, ? asc, ? desc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where t.s<>'x' and t.j= ?:?  order by ? desc  for orderby_num()<= ?:? 
+select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where t.s<>'x' collate iso?_bin_ts and t.j= ?:?  order by ? desc  for orderby_num()<= ?:? 
 /* ---> skip ORDER BY */
 ===================================================
 i    j    k    l    
@@ -302,7 +302,7 @@ iscan
     sort:  ? desc, ? asc, ? desc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where t.s<>'x' and t.j= ?:?  order by ? desc , ? for orderby_num()<= ?:? 
+select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where t.s<>'x' collate iso?_bin_ts and t.j= ?:?  order by ? desc , ? for orderby_num()<= ?:? 
 /* ---> skip ORDER BY */
 ===================================================
 i    j    k    l    
@@ -326,7 +326,7 @@ iscan
     sort:  ? asc, ? desc, ? desc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where (t.j> ?:? ) and t.i<>? and t.s<>'x' order by ?, ? desc , ? desc , ? for orderby_num()<= ?:? 
+select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where (t.j> ?:? ) and t.i<>? and t.s<>'x' collate iso?_bin_ts order by ?, ? desc , ? desc , ? for orderby_num()<= ?:? 
 /* ---> skip ORDER BY */
 ===================================================
 i    j    k    l    
@@ -350,7 +350,7 @@ iscan
     sort:  ? asc, ? desc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where t.i<>? and t.s<>'x' and t.j= ?:?  order by ?, ? desc , ? for orderby_num()<= ?:? 
+select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where t.i<>? and t.s<>'x' collate iso?_bin_ts and t.j= ?:?  order by ?, ? desc , ? for orderby_num()<= ?:? 
 /* ---> skip ORDER BY */
 ===================================================
 i    j    k    l    
@@ -377,7 +377,7 @@ temp(order by)
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where (t.j> ?:? ) and t.i<>? and t.s<>'x' order by ?, ? for orderby_num()<= ?:? 
+select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where (t.j> ?:? ) and t.i<>? and t.s<>'x' collate iso?_bin_ts order by ?, ? for orderby_num()<= ?:? 
 ===================================================
 i    j    k    l    
 1     10     4961     1761     
@@ -400,7 +400,7 @@ iscan
     sort:  ? asc, ? desc, ? desc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where (t.j> ?:? ) and t.i<>? and t.s<>'x' order by ?, ? desc  for orderby_num()<= ?:? 
+select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where (t.j> ?:? ) and t.i<>? and t.s<>'x' collate iso?_bin_ts order by ?, ? desc  for orderby_num()<= ?:? 
 /* ---> skip ORDER BY */
 ===================================================
 i    j    k    l    
@@ -427,7 +427,7 @@ temp(order by)
     sort:  ? asc, ? desc, ? desc, ? desc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where (t.j> ?:? ) and t.i<>? and t.s<>'x' order by ?, ? desc , ? desc , ? desc  for orderby_num()<= ?:? 
+select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where (t.j> ?:? ) and t.i<>? and t.s<>'x' collate iso?_bin_ts order by ?, ? desc , ? desc , ? desc  for orderby_num()<= ?:? 
 ===================================================
 i    j    k    l    
 1     3     312     111956     
@@ -453,7 +453,7 @@ temp(order by)
     sort:  ? asc, ? asc, ? asc, ? desc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where (t.j> ?:? ) and t.i<>? and t.s<>'x' order by ?, ?, ?, ? desc  for orderby_num()<= ?:? 
+select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where (t.j> ?:? ) and t.i<>? and t.s<>'x' collate iso?_bin_ts order by ?, ?, ?, ? desc  for orderby_num()<= ?:? 
 ===================================================
 k    
 4832     
@@ -475,7 +475,7 @@ iscan
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.k, t.i from t t where (t.j> ?:? ) and t.s<>'x' order by ? for orderby_num()<= ?:? 
+select /*+ INDEX_SS */ t.k, t.i from t t where (t.j> ?:? ) and t.s<>'x' collate iso?_bin_ts order by ? for orderby_num()<= ?:? 
 /* ---> skip ORDER BY */
 ===================================================
 k    
@@ -499,7 +499,7 @@ iscan
     sort:  ? asc, ? desc, ? desc
     cost:  ? card ?
 Query stmt:
-select t.k, t.i, t.j from t t where (t.k> ?:? ) and t.s<>'x' order by ?, ? desc  for orderby_num()<= ?:? 
+select t.k, t.i, t.j from t t where (t.k> ?:? ) and t.s<>'x' collate iso?_bin_ts order by ?, ? desc  for orderby_num()<= ?:? 
 /* ---> skip ORDER BY */
 ===================================================
 k    
@@ -513,7 +513,7 @@ temp(order by)
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-select t.k, t.j from t t where t.s<>'x' and t.k= ?:?  order by ? desc  for orderby_num()<= ?:? 
+select t.k, t.j from t t where t.s<>'x' collate iso?_bin_ts and t.k= ?:?  order by ? desc  for orderby_num()<= ?:? 
 ===================================================
 0
 ===================================================
