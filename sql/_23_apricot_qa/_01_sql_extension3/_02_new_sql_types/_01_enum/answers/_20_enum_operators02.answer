@@ -142,7 +142,7 @@ temp(order by)
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ t?.id, t?.col?, t?.col?, t?.id, t?.col?, t?.col? from oper? t?, oper? t? where t?.col?= cast( cast(t?.col? as varchar) as double) and (t?.id< ?:? ) order by ?, ?
+select /*+ ORDERED */ t?.id, t?.col?, t?.col?, t?.id, t?.col?, t?.col? from oper? t?, oper? t? where t?.col?= cast( cast(t?.col? as varchar collate iso?_bin_ts) as double) and (t?.id< ?:? ) order by ?, ?
 ===================================================
 id    col2    col3    id    col2    col3    
 1     cubrid     12:12:12     1     mysql     10:11:12     
@@ -179,7 +179,7 @@ temp(order by)
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ t?.id, t?.col?, t?.col?, t?.id, t?.col?, t?.col? from oper? t?, oper? t? where (t?.col?> cast(t?.col? as varchar)) order by ?, ?
+select /*+ ORDERED */ t?.id, t?.col?, t?.col?, t?.id, t?.col?, t?.col? from oper? t?, oper? t? where  cast(t?.col? as varchar)< cast(t?.col? as varchar(?)) order by ?, ?
 ===================================================
 id    col2    col3    id    col2    col3    
 1     cubrid     12:12:12     2     cubrid     11:12:13     
@@ -222,7 +222,7 @@ temp(order by)
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ t?.id, t?.col?, t?.col?, t?.id, t?.col?, t?.col? from oper? t? inner join oper? t? on (t?.col?<= cast(t?.col? as varchar)) order by ?, ?
+select /*+ ORDERED */ t?.id, t?.col?, t?.col?, t?.id, t?.col?, t?.col? from oper? t? inner join oper? t? on  cast(t?.col? as varchar)>= cast(t?.col? as varchar(?)) order by ?, ?
 ===================================================
 id    col2    col3    id    col2    col3    
 1     cubrid     12:12:12     2     cubrid     11:12:13     
@@ -252,7 +252,7 @@ temp(order by)
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ t?.id, t?.col?, t?.col?, t?.id, t?.col?, t?.col? from oper? t?, oper? t? where t?.col?= cast(t?.col? as varchar) order by ?, ?
+select /*+ ORDERED */ t?.id, t?.col?, t?.col?, t?.id, t?.col?, t?.col? from oper? t?, oper? t? where  cast(t?.col? as varchar)= cast(t?.col? as varchar(?)) order by ?, ?
 ===================================================
 id    col3    col4    id    col3    col4    
 1     12:12:12     2000-10-10     1     10:11:12     1554-09-08     
