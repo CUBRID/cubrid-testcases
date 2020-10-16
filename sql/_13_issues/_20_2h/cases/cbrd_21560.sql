@@ -29,4 +29,7 @@ select trunc(datetime'2012-12-26 12:10:10', 'default');
 select trunc(datetime'2012-12-26 12:10:10');
 select round(34567.34567, 'default'), round(34567.34567, 0);
 select round(34567.94567, 'default'), round(34567.94567, 0);
+select round(34567.34567), round(34567.34567);
 select trunc(34567.34567, 'default'), trunc(34567.34567, 0);
+select trunc(34567.94567, 'default'), round(34567.94567, 0);
+select trunc(34567.34567), trunc(34567.34567);
