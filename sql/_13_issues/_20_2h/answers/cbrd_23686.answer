@@ -1,0 +1,62 @@
+===================================================
+0
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+count(1)    
+1136384     
+
+Query plan:
+sscan
+    class: tmp? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? ))
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: cub? term[?] AND term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? )) a (col?, col?, col?, col?, col?, col?), tmp? b where a.col?=b.col? and a.col?=b.col?
+===================================================
+count(1)    
+1136384     
+
+Query plan:
+sscan
+    class: tmp? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? ))
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: cub? term[?] AND term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? )) a (col?, col?, col?, col?, col?, col?), tmp? b where a.col?=b.col? and a.col?=b.col? using index b.cub?
+===================================================
+0
