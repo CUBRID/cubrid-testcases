@@ -30,11 +30,31 @@ idx-join (inner join)
                cost:  ? card ?
     inner: iscan
                class: b node[?]
-               index: cub? term[?] AND term[?] (covers)
+               index: cubbb term[?] AND term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
 select count(*) from (select tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? )) a (col?, col?, col?, col?, col?, col?), tmp? b where a.col?=b.col? and a.col?=b.col?
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
 ===================================================
 count(1)    
 1136384     
@@ -53,10 +73,164 @@ idx-join (inner join)
                cost:  ? card ?
     inner: iscan
                class: b node[?]
-               index: cub? term[?] AND term[?] (covers)
+               index: indexa term[?] AND term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from (select tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? )) a (col?, col?, col?, col?, col?, col?), tmp? b where a.col?=b.col? and a.col?=b.col? using index b.cub?
+select count(*) from (select tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? )) a (col?, col?, col?, col?, col?, col?), tmp? b where a.col?=b.col? and a.col?=b.col?
+===================================================
+0
+===================================================
+count(1)    
+1136384     
+
+Query plan:
+sscan
+    class: tmp? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? ))
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: indexb term[?] AND term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? )) a (col?, col?, col?, col?, col?, col?), tmp? b where a.col?=b.col? and a.col?=b.col?
+===================================================
+0
+===================================================
+count(1)    
+1136384     
+
+Query plan:
+sscan
+    class: tmp? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? ))
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: indexc term[?] AND term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? )) a (col?, col?, col?, col?, col?, col?), tmp? b where a.col?=b.col? and a.col?=b.col?
+===================================================
+0
+===================================================
+count(1)    
+1136384     
+
+Query plan:
+sscan
+    class: tmp? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? ))
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: indexd term[?] AND term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? )) a (col?, col?, col?, col?, col?, col?), tmp? b where a.col?=b.col? and a.col?=b.col?
+===================================================
+0
+===================================================
+count(1)    
+1136384     
+
+Query plan:
+sscan
+    class: tmp? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? ))
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: indexe term[?] AND term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? )) a (col?, col?, col?, col?, col?, col?), tmp? b where a.col?=b.col? and a.col?=b.col?
+===================================================
+0
+===================================================
+count(1)    
+1136384     
+
+Query plan:
+sscan
+    class: tmp? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? ))
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: indexf term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? )) a (col?, col?, col?, col?, col?, col?), tmp? b where a.col?=b.col? and a.col?=b.col?
+===================================================
+0
+===================================================
+count(1)    
+1136384     
+
+Query plan:
+sscan
+    class: tmp? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? ))
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: indexg term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? )) a (col?, col?, col?, col?, col?, col?), tmp? b where a.col?=b.col? and a.col?=b.col?
 ===================================================
 0
