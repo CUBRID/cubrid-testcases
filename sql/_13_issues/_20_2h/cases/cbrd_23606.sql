@@ -6,7 +6,9 @@ title VARCHAR(10),
 i_test VARCHAR(20)
 );
 
-MERGE INTO test_1 t1 USING ( SELECT '1' AS i, '12345678901234567890' AS title,
+INSERT INTO test_1 (i, title, i_test) values (1, 1, 1);
+
+MERGE INTO test_1 t1 USING ( SELECT '2' AS i, '12345678901234567890' AS title,
 '12345678901234567890123456789012345678901234567890' AS i_test FROM db_root ) t2 ON t1.i = t2.i
 WHEN MATCHED THEN UPDATE SET
 t1.title = t2.title, t1.i_test = t2.i_test
