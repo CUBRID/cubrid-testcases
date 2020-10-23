@@ -10,8 +10,18 @@ insert into test2 (a) values (20);
 set optimization level 513;
 
 select /*+ RECOMPILE */ * from test1 limit 1 union all select * from test2 limit 1;
+select /*+ RECOMPILE */ * from test1 limit 1 union all select * from test2 limit 1;
+select /*+ RECOMPILE */ * from test1 limit 1 intersection all select * from test2 limit 1;
 select /*+ RECOMPILE */ * from test1 limit 1 intersection all select * from test2 limit 1;
 select /*+ RECOMPILE */ * from test1 limit 1 difference all select * from test2 limit 1;
+select /*+ RECOMPILE */ * from test1 limit 1 difference all select * from test2 limit 1;
+
+select /*+ RECOMPILE */ * from test1 limit 1 union select * from test2 limit 1;
+select /*+ RECOMPILE */ * from test1 limit 1 union select * from test2 limit 1;
+select /*+ RECOMPILE */ * from test1 limit 1 intersection select * from test2 limit 1;
+select /*+ RECOMPILE */ * from test1 limit 1 intersection select * from test2 limit 1;
+select /*+ RECOMPILE */ * from test1 limit 1 difference select * from test2 limit 1;
+select /*+ RECOMPILE */ * from test1 limit 1 difference select * from test2 limit 1;
 
 drop table test1;
 drop table test2;
