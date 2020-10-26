@@ -10,7 +10,7 @@ insert into target values(1, 'aaa');
 insert into target values(2, 'bbb');
 insert into target values(3, 'eee');
 
-create table source(a int, b char(10));
+create table source(a int, b char(3));
 insert into source values(11, 'aaa');
 insert into source values(22, 'bbb');
 insert into source values(33, 'ccc');

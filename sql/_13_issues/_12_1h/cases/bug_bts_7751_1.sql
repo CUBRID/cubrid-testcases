@@ -1,4 +1,4 @@
-create table foo(a varchar, b char(10));
+create table foo(a varchar, b char(3));
 insert into foo values('aaa', 'aaa');
 
 select cast(a as enum('aaa')) from foo;

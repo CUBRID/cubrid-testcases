@@ -2,9 +2,9 @@
 
 
 create table foo(
-	a char(20) default USER, 
+	a char(3) default USER, 
 	b varchar(20) default USER,
-	c char(20) default CURRENT_USER,
+	c char(3) default CURRENT_USER,
 	d varchar default CURRENT_USER
 );
 
