@@ -1,4 +1,4 @@
---+ holdcas on;
+-+ holdcas on;
 set  system parameters 'dont_reuse_heap_file=yes';
 create table t1(
   a char(1200) not null, 
@@ -50,7 +50,7 @@ drop index i_t1_a_3 on t1;
 --test create index failed
 create index i_t1_a_4 on t1(a) where a in ('1234567890', '00000000');
 drop index i_t1_a_4 on t1;
---test create index failed
+--test create index successfully, because of cbrd-23731 (modified the MAX_FILTER_PREDICATE_STRING_LENGTH is 128 -> 255)
 create index i_t1_a_5 on t1(a) where a = any {'00000000','00000002', '11111111'};
 drop index i_t1_a_5 on t1;
 --test create index failed
@@ -73,7 +73,7 @@ drop index i_t1_b_3 on t1;
 --test create index failed
 create index i_t1_b_4 on t1(a) where b in ('1234567890', '00000000');
 drop index i_t1_b_4 on t1;
---test create index failed
+--test create index successfully, because of cbrd-23731 (modified the MAX_FILTER_PREDICATE_STRING_LENGTH is 128 -> 255)
 create index i_t1_b_5 on t1(a) where b = any {'00000000','00000002', '11111111'};
 drop index i_t1_b_5 on t1;
 --test create index failed

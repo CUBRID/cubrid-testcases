@@ -35,13 +35,16 @@ select * from t2 partition (p5) order by id2;
 
 --TEST: with where clause
 select * from t1 partition (p1) t1, t2 partition (p1) t2 where t1.col2=t2.col1 and t1.id1 > 11111.11111 order by 1, 2;
+select * from t1 partition (p1) t1, t2 partition (p1) t2 where rtrim(t1.col2)=t2.col1 and t1.id1 > 11111.11111 order by 1, 2;
 select * from t1 partition (p2) t1, t2 partition (p2) t2 where t1.col2=t2.col1 and t2.col1=any(select t2.col1 from t1 partition (p1), t2 partition (p2)) order by 1, t2.id2;
+select * from t1 partition (p2) t1, t2 partition (p2) t2 where rtrim(t1.col2)=t2.col1 and t2.col1=any(select t2.col1 from t1 partition (p1), t2 partition (p2)) order by 1, t2.id2;
 select * from t1 partition (p1) t1 right outer join t2 partition (p3) t2 on t1.id1=t2.id2 where t1.col2 in (select col1 from t2 partition (p1)) order by 1, 2;
 
 
 --TEST: with group by
 select * from t2 partition (p3), t2 partition (p1) where (t2 partition (p3)).col2=(t2 partition (p1)).col1 group by (t2 partition (p3)).col1 order by 1, 2;
 select * from t1 partition (p1) a left outer join t2 partition (p1) b on a.col2=b.col1 group by b.col1 order by 1, 2;
+select * from t1 partition (p1) a left outer join t2 partition (p1) b on rtrim(a.col2)=b.col1 group by b.col1 order by 1, 2;
 
 
 --TEST: limit
