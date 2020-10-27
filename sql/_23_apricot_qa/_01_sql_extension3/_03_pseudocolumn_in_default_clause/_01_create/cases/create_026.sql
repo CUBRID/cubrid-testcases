@@ -30,7 +30,7 @@ drop table if exists a24;
 
 
 --TEST: char(n)
-create table c26(col char(20) default CURRENT_USER);
+create table c26(col char(3) default CURRENT_USER);
 insert into c26 values default;	
 insert into c26 values default;
 insert into c26 values default;

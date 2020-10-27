@@ -2,7 +2,7 @@
 
 
 
-create table i03(id int auto_increment, col1 string default USER, col2 char(50) default CURRENT_USER);
+create table i03(id int auto_increment, col1 string default USER, col2 char(3) default CURRENT_USER);
 
 --TEST: insert ... values statement
 
