@@ -46,7 +46,7 @@ rollback;
 -- ######################### CASE 2 ############################### --
 
 --create another table
-create table t3(a int, b char(20));
+create table t3(a int, b varchar(20));
 insert into t3 values(1, 'aaa'), (2, 'bbb'), (5, 'George'), (8, 'ccc');
 
 create table trigger_actions(id smallint auto_increment, info varchar);

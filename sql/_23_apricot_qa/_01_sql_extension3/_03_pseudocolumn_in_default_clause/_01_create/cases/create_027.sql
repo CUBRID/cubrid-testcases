@@ -35,7 +35,7 @@ drop table if exists a27;
 drop table if exists c27;
 
 
-create table c27(col1 date primary key not null default SYSDATE, col2 datetime default SYSDATETIME unique, col3 string default USER unique not null, col4 char(20) unique default CURRENT_USER not null);
+create table c27(col1 date primary key not null default SYSDATE, col2 datetime default SYSDATETIME unique, col3 string default USER unique not null, col4 varchar(20) unique default CURRENT_USER not null);
 insert into c27 values default;
 create table a27 as select col1, col2, col4 from c27;
 select SYSDATE>=col1, SYSDATETIME>=col2, col4=USER from a27 order by 1;
