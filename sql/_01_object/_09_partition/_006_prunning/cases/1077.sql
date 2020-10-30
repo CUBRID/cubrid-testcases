@@ -1,6 +1,6 @@
 --create range partition table with char data type,insert data to this table and select data in where clause with function replace,translate,trim and to_char
 
-create class range_char (id int, test_char char(10))
+create class range_char (id int, test_char char(2))
 partition by range(test_char) (
 partition p0 values less than ('00'),
 partition p1 values less than ('11'),
