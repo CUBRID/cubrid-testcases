@@ -343,28 +343,28 @@ Query stmt:
 select /*+ NO_MULTI_RANGE_OPT */ t.a, t.b, t.c, t.d, t.e, s.a, s.b from t t, s s where ((t.a= ?:? ) or (t.a= ?:? )) and s.a=t.a and t.b= ?:?  order by ? desc , ? for orderby_num() between  ?:?  and  ?:? 
 ===================================================
 a    b    c    d    e    sa    sb    ua    ub    
-1     1     2     1     2.0     3     1     1     1     
-1     1     2     1     3.0     3     1     1     1     
-1     1     2     1     1.0     3     1     1     1     
-1     1     2     1     2.0     2     1     1     1     
-1     1     2     1     3.0     1     1     1     1     
 1     1     2     1     3.0     2     1     1     1     
-1     1     2     1     1.0     1     1     1     1     
-1     1     2     1     1.0     2     1     1     1     
-1     1     2     1     2.0     1     1     1     1     
+3     1     2     1     3.0     1     1     1     1     
+1     1     2     1     3.0     1     1     1     1     
+1     1     2     1     2.0     2     1     1     1     
 3     1     2     1     1.0     1     1     1     1     
+3     1     2     1     2.0     1     1     1     1     
+1     1     2     1     1.0     1     1     1     1     
+1     1     2     1     2.0     1     1     1     1     
+1     1     2     1     1.0     2     1     1     1     
+3     1     2     1     1.0     2     1     1     1     
 
 Query plan:
 temp(order by)
     subplan: nl-join (cross join)
                  outer: nl-join (cross join)
-                            outer: iscan
-                                       class: t node[?]
-                                       index: idx_a_b_cd_d term[?] AND term[?]
-                                       cost:  ? card ?
-                            inner: sscan
+                            outer: sscan
                                        class: s node[?]
                                        sargs: term[?]
+                                       cost:  ? card ?
+                            inner: iscan
+                                       class: t node[?]
+                                       index: idx_a_b_cd_d term[?] AND term[?]
                                        cost:  ? card ?
                             cost:  ? card ?
                  inner: iscan
@@ -383,22 +383,20 @@ a    b    c    d    e    sa    sb    ua    ub
 Query plan:
 temp(order by)
     subplan: nl-join (inner join)
-                 edge:  term[?]
-                 outer: nl-join (inner join)
-                            edge:  term[?]
+                 edge:  term[?] AND term[?]
+                 outer: nl-join (cross join)
                             outer: iscan
+                                       class: u node[?]
+                                       index: idx_u_a term[?]
+                                       cost:  ? card ?
+                            inner: iscan
                                        class: t node[?]
                                        index: idx_a_b_cd_d term[?] AND term[?]
                                        cost:  ? card ?
-                            inner: sscan
-                                       class: s node[?]
-                                       sargs: term[?]
-                                       cost:  ? card ?
                             cost:  ? card ?
-                 inner: iscan
-                            class: u node[?]
-                            index: idx_u_a term[?]
-                            sargs: term[?]
+                 inner: sscan
+                            class: s node[?]
+                            sargs: term[?] AND term[?]
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? desc, ? asc
@@ -423,15 +421,14 @@ a    b    c    d    e    sa    sb    ua    ub
 Query plan:
 temp(order by)
     subplan: idx-join (inner join)
-                 outer: nl-join (inner join)
-                            edge:  term[?]
-                            outer: iscan
+                 outer: idx-join (inner join)
+                            outer: sscan
+                                       class: s node[?]
+                                       cost:  ? card ?
+                            inner: iscan
                                        class: t node[?]
                                        index: idx_a_b_cd_d term[?] AND term[?]
-                                       cost:  ? card ?
-                            inner: sscan
-                                       class: s node[?]
-                                       sargs: term[?]
+                                       filtr: term[?]
                                        cost:  ? card ?
                             cost:  ? card ?
                  inner: iscan
@@ -447,16 +444,16 @@ Query stmt:
 select t.a, t.b, t.c, t.d, t.e, s.a, s.b, u.a, u.b from t t, s s, u u where t.a=s.a and t.d=u.a and s.b=u.b and ((t.a= ?:? ) or (t.a= ?:? )) and t.b= ?:?  order by ? desc , ? for orderby_num()<= ?:? 
 ===================================================
 a    b    c    d    e    sa    sb    ua    ub    
+3     1     2     1     2.0     2     1     1     1     
 1     1     2     1     2.0     2     1     1     1     
 3     1     2     1     3.0     3     1     1     1     
 1     1     2     1     1.0     1     1     1     1     
 3     1     2     1     1.0     1     1     1     1     
 1     1     2     1     3.0     3     1     1     1     
-3     1     2     1     2.0     2     1     1     1     
-1     1     2     2     3.0     3     1     1     1     
-1     1     2     2     1.0     1     1     1     1     
+3     1     2     2     2.0     2     1     1     1     
 1     1     2     2     2.0     2     1     1     1     
 3     1     2     2     1.0     1     1     1     1     
+1     1     2     2     1.0     1     1     1     1     
 
 Query plan:
 temp(order by)
@@ -464,12 +461,12 @@ temp(order by)
                  edge:  term[?]
                  outer: nl-join (inner join)
                             edge:  term[?]
-                            outer: iscan
+                            outer: sscan
+                                       class: s node[?]
+                                       cost:  ? card ?
+                            inner: iscan
                                        class: t node[?]
                                        index: idx_a_b_cd_d term[?] AND term[?]
-                                       cost:  ? card ?
-                            inner: sscan
-                                       class: s node[?]
                                        sargs: term[?]
                                        cost:  ? card ?
                             cost:  ? card ?
