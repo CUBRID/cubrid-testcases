@@ -447,14 +447,15 @@ a    b    c
 
 Query plan:
 temp(group by)
-    subplan: idx-join (inner join)
-                 outer: iscan
-                            class: t node[?]
-                            index: i_t_d term[?] (covers)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: t? node[?]
                             cost:  ? card ?
                  inner: iscan
-                            class: t? node[?]
-                            index: i_t?_a term[?]
+                            class: t node[?]
+                            index: i_t_d term[?] (covers)
+                            filtr: term[?]
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc
@@ -470,14 +471,15 @@ a    b    c    count(*)    avg(t.a)
 Query plan:
 temp(distinct)
     subplan: temp(group by)
-                 subplan: idx-join (inner join)
-                              outer: iscan
-                                         class: t node[?]
-                                         index: i_t_d term[?] (covers)
+                 subplan: nl-join (inner join)
+                              edge:  term[?]
+                              outer: sscan
+                                         class: t? node[?]
                                          cost:  ? card ?
                               inner: iscan
-                                         class: t? node[?]
-                                         index: i_t?_a term[?]
+                                         class: t node[?]
+                                         index: i_t_d term[?] (covers)
+                                         filtr: term[?]
                                          cost:  ? card ?
                               cost:  ? card ?
                  sort:  ? asc
@@ -493,14 +495,15 @@ a    b    c    count(*)    avg(t.a)
 
 Query plan:
 temp(group by)
-    subplan: idx-join (inner join)
-                 outer: iscan
-                            class: t node[?]
-                            index: i_t_d term[?] (covers)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: t? node[?]
                             cost:  ? card ?
                  inner: iscan
-                            class: t? node[?]
-                            index: i_t?_a term[?]
+                            class: t node[?]
+                            index: i_t_d term[?] (covers)
+                            filtr: term[?]
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc
@@ -516,14 +519,15 @@ a    b    c    count(*)
 Query plan:
 temp(distinct)
     subplan: temp(group by)
-                 subplan: idx-join (inner join)
-                              outer: iscan
-                                         class: t node[?]
-                                         index: i_t_d term[?] (covers)
+                 subplan: nl-join (inner join)
+                              edge:  term[?]
+                              outer: sscan
+                                         class: t? node[?]
                                          cost:  ? card ?
                               inner: iscan
-                                         class: t? node[?]
-                                         index: i_t?_a term[?]
+                                         class: t node[?]
+                                         index: i_t_d term[?] (covers)
+                                         filtr: term[?]
                                          cost:  ? card ?
                               cost:  ? card ?
                  sort:  ? asc
