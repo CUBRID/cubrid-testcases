@@ -58,7 +58,7 @@ select s?.a, s?.b from t? s? where  upper(s?.a)='A'
 3
 ===================================================
 a    b    a    b    
-b     b     b              B              
+b     b     b     B     
 
 Query plan:
 nl-join (inner join)
@@ -76,7 +76,7 @@ Query stmt:
 select /*+ ORDERED */ t?.a, t?.b, t?.a, t?.b from t? t?, t? t? where t?.a=t?.a and  upper(t?.a)='B'
 ===================================================
 a    b    a    b    
-b     b     b              B              
+b     b     b     B     
 
 Query plan:
 nl-join (inner join)
@@ -94,7 +94,7 @@ Query stmt:
 select /*+ ORDERED */ a.a, a.b, b.a, b.b from t? a, t? b where a.a=b.a and  upper(a.a)='B'
 ===================================================
 a    b    a    b    
-a     a     a              A              
+a     a     a     A     
 
 Query plan:
 nl-join (inner join)
@@ -112,7 +112,7 @@ Query stmt:
 select /*+ ORDERED */ a.a, a.b, b.a, b.b from t? a, t? b where a.a=b.a and  lower(b.b)='a'
 ===================================================
 a    b    a    b    
-a     a     a              A              
+a     a     a     A     
 
 Query plan:
 nl-join (inner join)
@@ -130,7 +130,7 @@ Query stmt:
 select /*+ ORDERED */ a.a, a.b, b.a, b.b from t? a, t? b where a.a=b.a and  lower(b.b) in multiset{'a', 'c'}
 ===================================================
 a    b    a    b    
-a     a     a              A              
+a     a     a     A     
 
 Query plan:
 nl-join (inner join)

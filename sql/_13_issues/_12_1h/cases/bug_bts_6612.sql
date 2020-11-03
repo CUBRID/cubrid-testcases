@@ -4,7 +4,7 @@
 create table foo(a int primary key auto_increment, b timestamp default SYSTIMESTAMP, c timestamp default UNIX_TIMESTAMP());
 
 
-create table aoo(id short auto_increment, a timestamp default CURRENT_TIMESTAMP, b date default SYSDATE, c datetime default SYSDATETIME, d char(10) default USER);
+create table aoo(id short auto_increment, a timestamp default CURRENT_TIMESTAMP, b date default SYSDATE, c datetime default SYSDATETIME, d char(3) default USER);
 
 create trigger trig1 after insert on foo execute insert into aoo default;
 create trigger trig2 before update on foo execute insert into aoo(id) values(2);

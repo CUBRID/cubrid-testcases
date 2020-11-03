@@ -16,7 +16,7 @@ select /*+ recompile */ * from t1 where upper(t1.a)='A';
 select /*+ recompile */ * from t1 s1 where upper(a)='A';
 select /*+ recompile */ * from t1 s1 where upper(s1.a)='A';
 
-create table t2(a char(10), b char(10));
+create table t2(a char, b char);
 create index i2 on t2(lower(b));
 insert into t2 values('a', 'A'), ('b', 'B'), ('c', 'C');
 

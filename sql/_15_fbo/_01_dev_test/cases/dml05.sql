@@ -3,7 +3,7 @@
 --drop x;
 
 -- several blob/clob columns  at a class
-create class x (id int primary key, a clob, b char(10), c blob, d bit(80));
+create class x (id int primary key, a clob, b char(4), c blob, d bit(80));
 insert into x(id,a,b,c,d) values (1, NULL, '0f0f', NULL, x'0f0f');
 insert into x(id,a,b,c,d) values (2, NULL, '', NULL, x'');
 insert into x(id,a,b,c,d) values (3, NULL, NULL, NULL, NULL);

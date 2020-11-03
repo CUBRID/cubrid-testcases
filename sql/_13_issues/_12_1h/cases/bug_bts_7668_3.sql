@@ -3,7 +3,7 @@
 --+ holdcas on;
 set system parameters 'alter_table_change_type_strict=yes';
 
-create table t1(si smallint, i int, bi bigint, n numeric, f float, d double, m monetary, t time, da date, dt datetime, ts timestamp, c char(10), v varchar(10), nc nchar(10), vnc nchar varying(10));
+create table t1(si smallint, i int, bi bigint, n numeric, f float, d double, m monetary, t time, da date, dt datetime, ts timestamp, c char, v varchar(10), nc nchar(10), vnc nchar varying(10));
 insert into t1 values (1, 1, 1, 1, 1, 1, 1, time'10:00:00', date '12/21/2012', datetime '10:00:00 AM 12/21/2012', timestamp '10:00:00 AM 12/21/2012', 'a', 'a', N'a', N'a');
 insert into t1 values (2, 2, 2, 2, 2, 2, 2, time'12:00:00', date '12/22/2012', datetime '12:00:00 PM 12/22/2012', timestamp '12:00:00 PM 12/22/2012', 'b', 'b', N'b', N'b');
 insert into t1 values (3, 3, 3, 3, 3, 3, 3, time'03:00:00', date '12/23/2012', datetime '01:00:00 PM 12/23/2012', timestamp '01:00:00 PM 12/23/2012', 'c', 'c', N'c', N'c');
