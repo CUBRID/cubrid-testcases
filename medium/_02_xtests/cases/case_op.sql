@@ -77,7 +77,7 @@ create class y (b_y	bit(4),
 		str_y	varchar(20),
 		tt_y	time);
 create class z (m_z	monetary,
-		str_z	char(10));
+		str_z	char(3));
 insert into x values (B'1111', 10, {'aaa',10,B'1111',time '11:12:13'},
 		      'aaa', time '11:12:13');
 insert into x (i_x) values (11);
