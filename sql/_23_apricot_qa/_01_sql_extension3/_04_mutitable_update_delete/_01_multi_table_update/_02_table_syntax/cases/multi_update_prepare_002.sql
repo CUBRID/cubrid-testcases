@@ -2,7 +2,7 @@
 
 
 
-create table md_set1(col1 set(date, int), col2 char(20));
+create table md_set1(col1 set(date, int), col2 varchar(20));
 
 --insert with prepare statement
 prepare stmt from 'insert into md_set1 values(?, ?)'

@@ -2,7 +2,7 @@
 
 
 
-create table md_list1(col1 list(date, int), col2 char(20));
+create table md_list1(col1 list(date, int), col2 varchar(20));
 insert into md_list1 values({date'1999-01-01', 1, 2}, 'aaa'), ({date'2000-01-01', 1, 2}, 'bbb'), ({date'2001-01-01', 1, 2}, 'ccc'), ({'2002-01-01', 1, 2}, 'ddd'), ({'2003-01-01', 1, 2}, 'eee'), ({'2004-01-01', 1, 2}, 'fff');
 insert into md_list1 values({date'2005-12-12', 1, 2}, 'ggg'), ({'2006-12-12', 1, 2}, 'hhh'), ({'2007-12-12', 1, 2}, 'iii'), ({'2008-12-12', 1, 2}, 'jjj'), ({'2009-12-12', 1, 2}, 'kkk'), ({date'2010-12-12', 1, 2}, 'lll');
 

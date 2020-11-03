@@ -7,7 +7,7 @@ create table md_varchar1(id1 numeric(10, 5), col1 timestamp not null default CUR
 insert into md_varchar1 values(11111.11111, '2011-09-01 12:12:12', 'cubrid'), (22222.22222, '2011-09-01 12:12:13', 'mysql'), (33333.33333, '2011-09-01 12:12:14', 'abc'), (44444.44444, '2011-09-01 12:12:15', 'cubridcubrid'), (55555.55555, '2011-09-01 12:12:16', 'mysqlmysql'), (66666.66666, '2011-09-01 12:12:17', 'abcabc');
 
 
-create table md_varchar2(col1 char(10), id2 numeric(10, 5), index i(id2 desc, col1));
+create table md_varchar2(col1 varchar(10), id2 numeric(10, 5), index i(id2 desc, col1));
 insert into md_varchar2 values('cubrid', 1234.12345), ('abcabc', 3456.34555), ('a', 55555.55555), ('abcabc', 444.12345), ('aa', 5555.1234), ('mysql', 22222.22222);
 insert into md_varchar2 values('cubridcubr', 666.6666), ('mysqlmysql', 44444.44444), ('aaaa', 5656.56565), ('abcabcabc', 66666.66666), ('hello', 77.88777), ('hellohello', 90000.909);
 
