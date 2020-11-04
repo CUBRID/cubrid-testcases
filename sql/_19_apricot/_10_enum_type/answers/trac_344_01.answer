@@ -464,14 +464,13 @@ i    e1    i    s
 
 Query plan:
 temp(order by)
-    subplan: nl-join (inner join)
-                 edge:  term[?]
+    subplan: idx-join (inner join)
                  outer: sscan
                             class: t? node[?]
                             cost:  ? card ?
-                 inner: sscan
+                 inner: iscan
                             class: t? node[?]
-                            sargs: term[?]
+                            index: idx? term[?]
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc, ? asc, ? asc, ? asc
@@ -509,14 +508,13 @@ i    e1    i    s
 
 Query plan:
 temp(order by)
-    subplan: nl-join (inner join)
-                 edge:  term[?]
+    subplan: idx-join (inner join)
                  outer: sscan
                             class: t? node[?]
                             cost:  ? card ?
-                 inner: sscan
+                 inner: iscan
                             class: t? node[?]
-                            sargs: term[?]
+                            index: idx? term[?]
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc, ? asc, ? asc, ? asc
