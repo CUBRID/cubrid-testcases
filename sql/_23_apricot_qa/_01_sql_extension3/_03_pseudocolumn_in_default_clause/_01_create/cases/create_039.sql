@@ -3,7 +3,7 @@
 --trigger action: insert into 2 tables.
 
 
-create table aaa(col1 int primary key auto_increment, col2 char(20) default USER);
+create table aaa(col1 int primary key auto_increment, col2 char(3) default USER);
 create table aaa_actions(col1 int primary key auto_increment, col2 varchar default CURRENT_USER);
 
 --create trigger

@@ -2,7 +2,7 @@
 
 
 
-create table md_multiset1(col1 multiset(date, int), col2 char(20));
+create table md_multiset1(col1 multiset(date, int), col2 varchar(20));
 insert into md_multiset1 values({1, 2, date'1888-11-11', date'1999-01-01', 1, 2}, 'aaa'), ({1, 2, date'1888-11-11', 1, date'2000-01-01', 2}, 'bbb'), ({1, 2, date'1888-11-11', 1, 2, date'2001-01-01'}, 'ccc'), ({1, 2, date'1888-11-11', 1, '2002-01-01', 2}, 'ddd'), ({1, 2, date'1888-11-11', '2003-01-01', 1, 2}, 'eee'), ({1, 2, date'1888-11-11', 1, 2, '2004-01-01'}, 'fff');
 insert into md_multiset1 values({1, 2, date'1888-11-11', date'2005-12-12', 2, 1}, 'ggg'), ({1, 2, date'1888-11-11', 2, '2006-12-12', 1}, 'hhh'), ({1, 2, date'1888-11-11', 2, 1, '2007-12-12'}, 'iii'), ({1, 2, date'1888-11-11', 1, '2008-12-12', 2}, 'jjj'), ({1, 2, date'1888-11-11', '2009-12-12', 1, 2}, 'kkk'), ({1, 2, date'1888-11-11', 1, 2, date'2010-12-12'}, 'lll');
 

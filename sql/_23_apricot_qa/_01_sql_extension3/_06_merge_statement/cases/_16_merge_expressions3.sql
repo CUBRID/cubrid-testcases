@@ -26,7 +26,7 @@ create table source(
         col2 varchar not null,
         col3 datetime default SYS_DATETIME,
         col4 bit varying(20),
-	col5 char(10)
+	col5 varchar(10)
 );
 
 

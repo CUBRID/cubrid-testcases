@@ -6,7 +6,7 @@ create table md_char1(id1 numeric(10, 5), col1 timestamp not null default CURREN
 insert into md_char1 values(11111.11111, '2011-09-01 12:12:12', n'cubrid'), (22222.22222, '2011-09-01 12:12:13', n'mysql'), (33333.33333, '2011-09-01 12:12:14', n'abc'), (44444.44444, '2011-09-01 12:12:15', n'cubridcubrid'), (55555.55555, '2011-09-01 12:12:16', n'mysqlmysql'), (66666.66666, '2011-09-01 12:12:17', n'abcabc');
 
 
-create table md_char2(col1 nchar(1024), id2 numeric(10, 5), index i(id2 desc, col1));
+create table md_char2(col1 nchar varying(1024), id2 numeric(10, 5), index i(id2 desc, col1));
 insert into md_char2 values(n'cubrid', 1234.12345), (n'abcabc', 3456.34555), (n'a', 55555.55555), (n'abcabc', 444.12345), (n'aa', 5555.1234), (n'mysql', 22222.22222);
 insert into md_char2 values(n'cubridcubrid', 666.6666), (n'mysqlmysql', 44444.44444), (n'aaaa', 5656.56565), (n'abcabcabc', 66666.66666), (n'hello', 77.88777), (n'hellohello', 90000.909);
 

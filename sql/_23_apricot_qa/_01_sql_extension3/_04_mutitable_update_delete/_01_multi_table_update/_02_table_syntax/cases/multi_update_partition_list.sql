@@ -2,7 +2,7 @@
 
 
 
-create table md_char1(id1 numeric(10, 5), col1 timestamp not null default CURRENT_TIMESTAMP, col2 char(50) primary key)
+create table md_char1(id1 numeric(10, 5), col1 timestamp not null default CURRENT_TIMESTAMP, col2 varchar(50) primary key)
 partition by list(col2) (
 partition p1 values in ('cubrid', 'mysql', 'abc'),
 partition p2 values in ('cubridcubrid', 'mysqlmysql', 'abcabc')

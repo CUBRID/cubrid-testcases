@@ -25,7 +25,7 @@ insert into iconv(t) values(datetime'10:10:10.999 1999-12-12');
 
 
 --TEST: insert string value into enum column
-insert into iconv(t) values(cast('10:11:12' as char(10)));
+insert into iconv(t) values(cast('10:11:12' as char(8)));
 insert into iconv(t) values(cast('10/12/2009' as varchar));
 insert into iconv(t) values(cast('10:10:10 1999-12-12' as string));
 

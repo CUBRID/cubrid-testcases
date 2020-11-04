@@ -32,7 +32,7 @@ select * from iconv order by 1;
 
 
 --TEST: insert string value into enum column
-update iconv set t=cast('10:11:12' as char(10));
+update iconv set t=cast('10:11:12' as char(8));
 select * from iconv order by 1;
 update iconv set t=cast('10/12/2009' as varchar);
 select * from iconv order by 1;

@@ -69,7 +69,7 @@ rollback;
 
 
 --TEST: select from 2 tables as the source table.
-create table t1(a int, b char(10));
+create table t1(a int, b varchar(10));
 create table t2(a int, b varchar);
 
 insert into t1 values(100, 'updated');

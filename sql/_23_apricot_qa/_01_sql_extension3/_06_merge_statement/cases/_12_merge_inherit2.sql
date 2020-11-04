@@ -53,7 +53,7 @@ rollback;
 
 
 --TEST: merge into the sub class using another table
-create table tt(id smallint primary key, col1 char(20));
+create table tt(id smallint primary key, col1 varchar(20));
 insert into tt values(1, 'inserted'), (2, 'updated'), (3, 'inserted'), (4, 'updated'), (5, 'inserted'), (6, 'updated');
 insert into tt values(7, 'inserted'), (8, 'updated'), (9, 'inserted'), (10, 'updated'), (11, 'inserted'), (12, 'updated');
 

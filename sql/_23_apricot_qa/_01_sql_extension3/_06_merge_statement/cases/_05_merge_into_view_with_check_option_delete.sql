@@ -31,7 +31,7 @@ create view target_view as select * from target where edate < '2007-07-01' with 
 --source table
 create table source_tbl(
         name char(20),
-        id char(10), 
+        id varchar(10), 
         edate date,
         email varchar
 );

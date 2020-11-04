@@ -8,7 +8,7 @@ autocommit off;
 --target table
 create table target(
 	name char(20), 
-	id char(10), 
+	id varchar(10), 
 	edate date, 
 	email varchar
 );

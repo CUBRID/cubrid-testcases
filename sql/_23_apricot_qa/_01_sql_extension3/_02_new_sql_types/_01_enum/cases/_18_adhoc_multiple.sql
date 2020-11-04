@@ -206,7 +206,7 @@ drop table t1;
 
 
 CREATE TABLE t1(a enum ('AA', 'A A', 'A  A', 'A   A', ''));
-insert into t1 values ('   ');
+insert into t1 values ('');
 select a, a+0 from t1 order by 1, 2;
 drop table t1;
 

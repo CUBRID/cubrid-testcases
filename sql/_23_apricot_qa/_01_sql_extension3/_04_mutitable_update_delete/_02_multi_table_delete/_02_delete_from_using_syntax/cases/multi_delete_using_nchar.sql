@@ -2,7 +2,7 @@
 
 
 
-create table md_char1(id1 numeric(10, 5), col1 timestamp not null default CURRENT_TIMESTAMP, col2 nchar(50) primary key);
+create table md_char1(id1 numeric(10, 5), col1 timestamp not null default CURRENT_TIMESTAMP, col2 nchar varying(50) primary key);
 insert into md_char1 values(11111.11111, '2011-09-01 12:12:12', n'cubrid'), (22222.22222, '2011-09-01 12:12:13', n'mysql'), (33333.33333, '2011-09-01 12:12:14', n'abc'), (44444.44444, '2011-09-01 12:12:15', n'cubridcubrid'), (55555.55555, '2011-09-01 12:12:16', n'mysqlmysql'), (66666.66666, '2011-09-01 12:12:17', n'abcabc');
 
 
