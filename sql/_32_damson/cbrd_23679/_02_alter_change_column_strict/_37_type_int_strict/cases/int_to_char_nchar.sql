@@ -87,9 +87,9 @@ insert into t1 values (2147483648);
 select * from t1 order by 1;
 show columns in t1;
 
--- should fail
+-- should be ok
 alter table t1 change i1 s1 char(5);
--- should fail
+-- should be ok
 insert into t1 values ('a12345');
 
 select * from t1  order by 1;
@@ -175,9 +175,9 @@ insert into t1 values (2147483648);
 select * from t1 order by 1;
 show columns in t1;
 
--- should not fail
+-- should be ok
 alter table t1 change i1 s1 nchar(5);
--- should fail
+-- should be ok
 insert into t1 values (n'a12345');
 
 select * from t1  order by 1;

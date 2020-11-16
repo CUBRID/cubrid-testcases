@@ -66,9 +66,9 @@ insert into t1 values (2147483648);
 select * from t1 order by 1;
 show columns in t1;
 
--- should fail
+-- should be ok
 alter table t1 change i1 s1 char(5);
--- should fail
+-- should be ok
 insert into t1 values ('a12345');
 
 select length(s1) from t1 order by 1;
@@ -92,9 +92,9 @@ insert into t1 values (2147483648);
 select * from t1 order by 1;
 show columns in t1;
 
--- should fail
+-- should be ok
 alter table t1 change i1 s1 char(5);
--- should fail
+-- should be ok
 insert into t1 values ('a12345');
 
 select * from t1  order by 1;
@@ -149,7 +149,7 @@ show columns in t1;
 drop table t1;
 
 
--------------- INT 3 : to CHAR , not enough precision, values out of range
+-------------- INT 3 : to NCHAR , not enough precision, values out of range
 create table t1 (i1 int);
 insert into t1 values (1),(-2147483648),(2147483647);
 
@@ -159,9 +159,9 @@ insert into t1 values (2147483648);
 select * from t1 order by 1;
 show columns in t1;
 
--- should fail
+-- should be ok
 alter table t1 change i1 s1 nchar(5);
--- should fail
+-- should be ok
 insert into t1 values (n'a12345');
 
 select length(s1) from t1 order by 1;
@@ -174,7 +174,7 @@ show columns in t1;
 drop table t1;
 
 
--------------- INT 4 : to CHAR , not enough precision, values in range
+-------------- INT 4 : to NCHAR , not enough precision, values in range
 create table t1 (i1 int);
 insert into t1 values (1),(-1232),(3422);
 
@@ -184,9 +184,9 @@ insert into t1 values (2147483648);
 select * from t1 order by 1;
 show columns in t1;
 
--- should not fail
+-- should be ok
 alter table t1 change i1 s1 nchar(5);
--- should fail
+-- should be ok
 insert into t1 values (n'a12345');
 
 select * from t1  order by 1;

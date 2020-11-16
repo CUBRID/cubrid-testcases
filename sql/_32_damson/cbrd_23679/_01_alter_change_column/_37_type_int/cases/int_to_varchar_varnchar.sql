@@ -30,7 +30,7 @@ show columns in t1;
 
 drop table t1;
 
--------------- INT 2 : to CHAR , enough precision, unique
+-------------- INT 2 : to VARCHAR , enough precision, unique
 create table t1 (i1 int unique);
 insert into t1 values (1),(-2147483648),(2147483647);
 
@@ -56,7 +56,7 @@ show columns in t1;
 drop table t1;
 
 
--------------- INT 3 : to CHAR , not enough precision
+-------------- INT 3 : to VARCHAR , not enough precision
 create table t1 (i1 int);
 insert into t1 values (1),(-2147483648),(2147483647);
 
@@ -66,9 +66,9 @@ insert into t1 values (2147483648);
 select * from t1 order by 1;
 show columns in t1;
 
--- should fail
+-- should be ok
 alter table t1 change i1 s1 varchar(10);
--- should fail
+-- should be ok
 insert into t1 values ('a12345');
 
 select * from t1  order by 1;
@@ -154,9 +154,9 @@ insert into t1 values (2147483648);
 select * from t1 order by 1;
 show columns in t1;
 
--- should fail
+-- should be ok
 alter table t1 change i1 s1 nchar varying(10);
--- should fail
+-- should be ok
 insert into t1 values (n'12345');
 
 select * from t1  order by 1;

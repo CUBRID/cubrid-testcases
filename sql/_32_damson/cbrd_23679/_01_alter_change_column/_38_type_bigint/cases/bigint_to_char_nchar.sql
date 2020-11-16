@@ -66,9 +66,9 @@ insert into t1 values (9223372036854775808);
 select * from t1 order by 1;
 show columns in t1;
 
--- should fail
+-- should be ok
 alter table t1 change b1 s1 char(19);
--- should fail
+-- should be ok
 insert into t1 values ('a12345');
 
 select * from t1  order by 1;
@@ -126,7 +126,7 @@ show columns in t1;
 drop table t1;
 
 
--------------- BIGINT 3 : to CHAR , not enough precision
+-------------- BIGINT 3 : to NCHAR , not enough precision
 create table t1 (b1 bigint);
 insert into t1 values (1),(-9223372036854775808),(9223372036854775807);
 
@@ -136,9 +136,9 @@ insert into t1 values (9223372036854775808);
 select * from t1 order by 1;
 show columns in t1;
 
--- should fail
+-- should be ok
 alter table t1 change b1 s1 nchar(19);
--- should fail
+-- should be ok
 insert into t1 values (n'a12345');
 
 select * from t1  order by 1;

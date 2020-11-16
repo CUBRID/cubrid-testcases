@@ -47,14 +47,14 @@ insert into t1 values (99.123);
 select * from t1 order by 1;
 show columns in t1;
 
--- should fail
+-- should be ok
 alter table t1 change n1 c1 char(5) unique;
 -- should fail (still numeric)
 insert into t1 values (-32768);
 -- should fail (unique constr)
 insert into t1 values (12.00);
 
--- should fail
+-- should be ok
 insert into t1 values ('abc');
 
 select * from t1  order by 1;
@@ -100,14 +100,14 @@ insert into t1 values (99.123);
 select * from t1 order by 1;
 show columns in t1;
 
--- should fail
+-- should be ok
 alter table t1 change n1 c1 nchar(5) unique;
--- should fail (still numeric)
+-- should be ok
 insert into t1 values (n'-32768');
 -- should fail (unique constr)
 insert into t1 values (n'12.00');
 
--- should fail
+-- should be ok
 insert into t1 values (n'abc');
 
 select * from t1  order by 1;

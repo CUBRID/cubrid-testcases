@@ -46,7 +46,7 @@ insert into t1 values (n'123'),(n'1234567890'),(n'abc');
 select s1, length(s1) from t1 order by 1; 
 show columns in t1;
 
--- should fail
+-- should be ok
 alter table t1 change s1 s1 nchar(9);
 select s1, length(s1) from t1 order by 1;
 show columns in t1;

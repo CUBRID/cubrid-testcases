@@ -60,7 +60,7 @@ insert into t1 values ('123'),('1234567890'),('abc');
 select s1, length(s1) from t1 order by 1; 
 show columns in t1;
 
--- should fail 
+-- should be ok 
 alter table t1 change s1 s1 char(9);
 select s1, length(s1) from t1 order by 1;
 show columns in t1;

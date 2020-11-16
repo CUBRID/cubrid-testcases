@@ -65,9 +65,9 @@ insert into t1 values (32768);
 select * from t1 order by 1;
 show columns in t1;
 
--- should fail
+-- should be ok
 alter table t1 change sh1 s1 varchar(5);
--- should fail
+-- should be ok
 insert into t1 values ('12345');
 
 select * from t1  order by 1;

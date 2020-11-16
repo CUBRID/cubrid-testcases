@@ -68,7 +68,7 @@ show columns in t1;
 
  
 alter table t1 change f1 s1 varchar(4);
--- should be ok 
+-- should fail 
 insert into t1 values (1.123e1);
  
 insert into t1 values ('abcdef');
@@ -135,7 +135,7 @@ show columns in t1;
 
 
 alter table t1 change f1 s1 nchar varying(4);
--- should be ok 
+-- should fail 
 insert into t1 values (1.123e1);
 
 

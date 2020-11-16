@@ -66,9 +66,9 @@ insert into t1 values (32768);
 select * from t1 order by 1;
 show columns in t1;
 
--- should fail
+-- should be ok
 alter table t1 change sh1 s1 char(5);
--- should fail
+-- should be ok
 insert into t1 values ('12345');
 
 select * from t1  order by 1;
@@ -126,7 +126,7 @@ show columns in t1;
 drop table t1;
 
 
--------------- SHORT 3 : to CHAR , not enough precision
+-------------- SHORT 3 : to NCHAR , not enough precision
 create table t1 (sh1 short);
 insert into t1 values (1),(-32768),(32767);
 
@@ -136,9 +136,9 @@ insert into t1 values (32768);
 select * from t1 order by 1;
 show columns in t1;
 
--- should fail
+-- should be ok
 alter table t1 change sh1 s1 nchar(5);
--- should fail
+-- should be ok
 insert into t1 values (n'12345');
 
 select * from t1  order by 1;
