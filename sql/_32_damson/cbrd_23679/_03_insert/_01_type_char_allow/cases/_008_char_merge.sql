@@ -1,4 +1,4 @@
-set system parameters 'allow_truncated_string=';
+set system parameters 'allow_truncated_string=yes';
 
 ---------- MERGE INTO ... USING ... ON
 ---------- WHEN MATCHED THEN UPDATE SET ...

@@ -1,4 +1,4 @@
-set system parameters 'allow_truncated_string=';
+set system parameters 'allow_truncated_string=yes';
 
 ---------- INSERT INTO ... SET ... ON DUPLICATE KEY UPDATE
 ---------- INSERT INTO ... SELECT ... ON DUPLICATE KEY UPDATE

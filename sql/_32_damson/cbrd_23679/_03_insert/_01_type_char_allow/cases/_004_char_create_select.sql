@@ -1,4 +1,4 @@
-set system parameters 'allow_truncated_string=';
+set system parameters 'allow_truncated_string=yes';
 
 ---------- CREATE ... AS SELECT ...
 drop table if exists t1;
