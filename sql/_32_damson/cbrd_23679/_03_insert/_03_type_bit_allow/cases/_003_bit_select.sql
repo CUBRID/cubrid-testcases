@@ -4,7 +4,7 @@ set system parameters 'allow_truncated_string=yes';
 drop table if exists t1;
 create table t1 (col1 int, col2 bit(10));
 insert into t1 values (1, b'1111111111');
-insert into t1 values (2, x'3ff');
+insert into t1 values (2, x'ff');
 show columns from t1;
 select * from t1;
 

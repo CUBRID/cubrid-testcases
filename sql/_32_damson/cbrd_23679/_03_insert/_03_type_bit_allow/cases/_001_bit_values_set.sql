@@ -12,7 +12,7 @@ select * from t1 order by 1;
 
 -- precision = value : OK
 insert into t1 values (3, b'1111111111');
-insert into t1 set col1=4, col2= x'3ff';
+insert into t1 set col1=4, col2= x'ff';
 select * from t1 order by 1;
 
 -- precision < value :truncated string

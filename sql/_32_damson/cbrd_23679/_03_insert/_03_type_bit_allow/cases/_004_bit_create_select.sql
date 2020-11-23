@@ -3,7 +3,7 @@ set system parameters 'allow_truncated_string=yes';
 
 drop table if exists t1;
 create table t1 (col1 int, col2 bit(10));
-insert into t1 values(1, b'1010101010'), (2, x'2ab');
+insert into t1 values(1, b'1010101010'), (2, x'ab');
 show columns from t1;
 select * from t1 order by 1;
 
