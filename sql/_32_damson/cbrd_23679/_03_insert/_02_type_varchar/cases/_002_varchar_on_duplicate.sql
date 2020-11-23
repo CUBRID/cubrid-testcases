@@ -26,7 +26,7 @@ select * from t1 order by 1;
 insert into t2 select * from t1 where col1=2 on duplicate key update col2='abcde';
 select * from t2 order by 1;
 
--- precision < value :truncated string
+-- precision < value :data overflow
 insert into t1 set col1=3, col2= 'abcde12' on duplicate key update col1=3, col2 = 'abcde12';
 select * from t1 order by 1;
 insert into t2 select * from t1 where col1=3 on duplicate key update col2='abcde12';

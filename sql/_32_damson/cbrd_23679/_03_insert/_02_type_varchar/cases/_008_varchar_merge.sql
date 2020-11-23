@@ -26,7 +26,7 @@ when matched then update set t1.col2 = s1.col2
 when not matched then insert values (s1.col1, s1.col2);
 select * from t1 order by 1;
 
--- precision < value : truncated string
+-- precision < value : data overflow
 drop table if exists s1;
 create table s1 (col1 int, col2 varchar(7));
 insert into s1 values (3, 'abcde12');

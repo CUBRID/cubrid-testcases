@@ -22,7 +22,7 @@ replace into t2 values (1, null), (2, null);
 replace into t2 select * from t1;
 select * from t2 order by 1;
 
--- precision < value :truncated string
+-- precision < value :data overflow
 drop table if exists t2;
 create table t2 (col1 int not null primary key, col2 char(3));
 replace into t2 values (1, null), (2, null);

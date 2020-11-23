@@ -18,7 +18,7 @@ replace into t1 values (1, 'abcde');
 replace into t1 set col1=2, col2='12345';
 select * from t1 order by 1;
 
--- precision < value :truncated string
+-- precision < value :data overflow
 replace into t1 values (1, 'abcde12');
 replace into t1 set col1=2, col2='12345ab';
 select * from t1 order by 1;
