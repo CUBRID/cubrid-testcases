@@ -23,7 +23,7 @@ create table s1 (col1 int, col2 bit(10));
 insert into s1 values (2, b'1010111110');
 merge into t1 using s1 on t1.col1 = s1.col1
 when matched then update set t1.col2 = s1.col2
-ween not matched then insert values (s1.col1, s1.col2);
+when not matched then insert values (s1.col1, s1.col2);
 select * from t1 order by 1;
 
 -- precision < value :truncated string
