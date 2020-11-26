@@ -6,7 +6,7 @@ set system parameters 'allow_truncated_string=no';
 drop table if exists t2;
 drop table if exists t1;
 
-create table t2 (parent_id int, code bit(20));
+create table t2 (parent_id int, code bit(16));
 insert into t2 values (1, b'11');
 insert into t2 values (1, b'1111');
 insert into t2 values (2, b'101010');
