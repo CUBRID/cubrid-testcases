@@ -16,7 +16,7 @@ update t1 set col2 = b'1010111110' where col1 = 1;
 select * from t1 order by 1;
 
 -- precision < value :truncated string
-update t1 set col2 = '101011111010' where col1 = 1;
+update t1 set col2 = b'101011111010' where col1 = 1;
 select * from t1 order by 1;
 
 drop table t1;
