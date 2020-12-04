@@ -1,4 +1,4 @@
--+ holdcas on;
+--+ holdcas on;
 set  system parameters 'dont_reuse_heap_file=yes';
 create table t1(
   a char(1200) not null, 
