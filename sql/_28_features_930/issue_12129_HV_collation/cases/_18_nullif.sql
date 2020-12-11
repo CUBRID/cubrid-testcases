@@ -15,7 +15,7 @@ execute st1 using 'a', _euckr'A';
 
 
 drop table if exists t;
-create table t(s1 char(10) collate utf8_en_ci, s2 enum('a', 'A', 'b', 'B') collate iso88591_en_cs);
+create table t(s1 varchar(10) collate utf8_en_ci, s2 enum('a', 'A', 'b', 'B') collate iso88591_en_cs);
 insert into t values('a', 1);
 insert into t values('A', 'B');
 
