@@ -22,13 +22,6 @@ select t.a from t t where t.a like  ?:?
 a    
       
 
-Query plan:
-sscan
-    class: t node[?]
-    sargs: term[?] AND term[?]
-    cost:  ? card ?
-Query stmt:
-select t.a from t t where t.a like  ?:?  and (t.a>= like_match_lower_bound( ?:? ) and t.a< like_match_upper_bound( ?:? ))
 0
 ===================================================
 0
@@ -48,14 +41,6 @@ select t.a from t t where t.a like  ?:?
 a    
       
 
-Query plan:
-iscan
-    class: t node[?]
-    index: i_t_a term[?] (covers)
-    filtr: term[?]
-    cost:  ? card ?
-Query stmt:
-select t.a from t t where t.a like  ?:?  and (t.a>= like_match_lower_bound( ?:? ) and t.a< like_match_upper_bound( ?:? ))
 0
 ===================================================
 0
