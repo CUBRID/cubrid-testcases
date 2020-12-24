@@ -1,5 +1,10 @@
 -- check for query plan 
-set optimization level 513;
-select sysdate;
-select rownum;
+set trace on;
 
+select /*+ recompile */ current_user;
+show trace;
+
+select /*+ recompile */ rownum;
+show trace;
+
+set trace off;

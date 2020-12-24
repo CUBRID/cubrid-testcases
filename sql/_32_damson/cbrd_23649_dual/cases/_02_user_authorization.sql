@@ -1,3 +1,5 @@
+select current_user;
+
 ---- ok
 select * from dual;
 
