@@ -7,6 +7,8 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 7
 ===================================================
 8
@@ -26,15 +28,24 @@ id    mgrid    name
 7     6     Brown     
 7     6     Brown     
 
-Query plan:
-temp(order by)
-    subplan: sscan
-                 class: tree node[?]
-                 cost:  ? card ?
-    sort:  ? asc
-    cost:  ? card ?
-Query stmt:
-select tree.id, tree.mgrid, tree.[name] from tree tree connect by  prior tree.id=tree.mgrid order by ?
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (tree)
+
+  rewritten query: select tree.id, tree.mgrid, tree.[name] from tree tree connect by  prior tree.id=tree.mgrid order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+      SCAN (table: tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
 ===================================================
 id    mgrid    name    
 1     null     Kim     
@@ -51,15 +62,24 @@ id    mgrid    name
 7     6     Brown     
 7     6     Brown     
 
-Query plan:
-temp(order by)
-    subplan: sscan
-                 class: tree node[?]
-                 cost:  ? card ?
-    sort:  ? asc
-    cost:  ? card ?
-Query stmt:
-select tree.id, tree.mgrid, tree.[name] from tree tree connect by tree.mgrid= prior tree.id order by ?
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (tree)
+
+  rewritten query: select tree.id, tree.mgrid, tree.[name] from tree tree connect by tree.mgrid= prior tree.id order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+      SCAN (table: tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
 ===================================================
 id    name    job    level    
 1     Kim     Partner     1     
@@ -70,22 +90,27 @@ id    name    job    level
 6     Foster     Sales Exec.     2     
 7     Brown     Assistant     3     
 
-Query plan:
-temp(order by)
-    subplan: nl-join (inner join)
-                 edge:  term[?]
-                 outer: sscan
-                            class: t node[?]
-                            cost:  ? card ?
-                 inner: sscan
-                            class: t? node[?]
-                            sargs: term[?]
-                            cost:  ? card ?
-                 cost:  ? card ?
-    sort:  ? asc
-    cost:  ? card ?
-Query stmt:
-select t.id, t.[name], t?.[job], level from tree t inner join tree? t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id=t.mgrid order by ?
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (t)
+      TABLE SCAN (t?)
+
+  rewritten query: select t.id, t.[name], t?.[job], level from tree t inner join tree? t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id=t.mgrid order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+      SCAN (hash temp buildtime : ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
 ===================================================
 id    name    job    level    
 1     Kim     Partner     1     
@@ -96,22 +121,27 @@ id    name    job    level
 6     Foster     Sales Exec.     2     
 7     Brown     Assistant     3     
 
-Query plan:
-temp(order by)
-    subplan: nl-join (inner join)
-                 edge:  term[?]
-                 outer: sscan
-                            class: t node[?]
-                            cost:  ? card ?
-                 inner: sscan
-                            class: t? node[?]
-                            sargs: term[?]
-                            cost:  ? card ?
-                 cost:  ? card ?
-    sort:  ? asc
-    cost:  ? card ?
-Query stmt:
-select t.id, t.[name], t?.[job], level from tree t inner join tree? t? on t.id=t?.treeid start with t.mgrid is null  connect by t.mgrid= prior t.id order by ?
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (t)
+      TABLE SCAN (t?)
+
+  rewritten query: select t.id, t.[name], t?.[job], level from tree t inner join tree? t? on t.id=t?.treeid start with t.mgrid is null  connect by t.mgrid= prior t.id order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+      SCAN (hash temp buildtime : ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
 ===================================================
 id    name    job    level    
 1     Kim     Partner     1     
@@ -119,37 +149,49 @@ id    name    job    level
 6     Foster     Sales Exec.     2     
 2     Moy     Partner     1     
 
-Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: sscan
-               class: t node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t? node[?]
-               sargs: term[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select t.id, t.[name], t?.[job], level from tree t inner join tree? t? on t.id=t?.treeid start with t.mgrid is null  connect by t.mgrid= prior (t.id+t.id)
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (t)
+    TABLE SCAN (t?)
+
+  rewritten query: select t.id, t.[name], t?.[job], level from tree t inner join tree? t? on t.id=t?.treeid start with t.mgrid is null  connect by t.mgrid= prior (t.id+t.id)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+      SCAN (hash temp buildtime : ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
 ===================================================
 id    name    job    level    
 1     Kim     Partner     1     
 2     Moy     Partner     1     
 
-Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: sscan
-               class: t node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t? node[?]
-               sargs: term[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select t.id, t.[name], t?.[job], level from tree t inner join tree? t? on t.id=t?.treeid start with t.mgrid is null  connect by t.mgrid= prior t.id+t.id
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (t)
+    TABLE SCAN (t?)
+
+  rewritten query: select t.id, t.[name], t?.[job], level from tree t inner join tree? t? on t.id=t?.treeid start with t.mgrid is null  connect by t.mgrid= prior t.id+t.id
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
 ===================================================
 id    name    job    level    
 1     Kim     Partner     1     
@@ -159,19 +201,25 @@ id    name    job    level
 5     Verma     Sales Exec.     2     
 6     Foster     Sales Exec.     2     
 
-Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: sscan
-               class: t node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t? node[?]
-               sargs: term[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select t.id, t.[name], t?.[job], level from tree t inner join tree? t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id=t.mgrid and  prior t?.[job]= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (t)
+    TABLE SCAN (t?)
+
+  rewritten query: select t.id, t.[name], t?.[job], level from tree t inner join tree? t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id=t.mgrid and  prior t?.[job]= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+      SCAN (hash temp buildtime : ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
 ===================================================
 id    name    job    level    
 1     Kim     Partner     1     
@@ -182,19 +230,25 @@ id    name    job    level
 6     Foster     Sales Exec.     2     
 7     Brown     Assistant     3     
 
-Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: sscan
-               class: t node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t? node[?]
-               sargs: term[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select t.id, t.[name], t?.[job], level from tree t inner join tree? t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id=t.mgrid
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (t)
+    TABLE SCAN (t?)
+
+  rewritten query: select t.id, t.[name], t?.[job], level from tree t inner join tree? t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id=t.mgrid
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+      SCAN (hash temp buildtime : ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
 ===================================================
 id    name    job    level    
 1     Kim     Partner     1     
@@ -205,19 +259,25 @@ id    name    job    level
 6     Foster     Sales Exec.     2     
 7     Brown     Assistant     3     
 
-Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: sscan
-               class: t node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t? node[?]
-               sargs: term[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select t.id, t.[name], t?.[job], level from tree t inner join tree? t? on t.id=t?.treeid start with t.mgrid is null  connect by t.mgrid= prior nvl(t.id, t.id+t.id)
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (t)
+    TABLE SCAN (t?)
+
+  rewritten query: select t.id, t.[name], t?.[job], level from tree t inner join tree? t? on t.id=t?.treeid start with t.mgrid is null  connect by t.mgrid= prior nvl(t.id, t.id+t.id)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+      SCAN (hash temp buildtime : ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
 ===================================================
 id    name    job    level    
 1     Kim     Partner     1     
@@ -232,19 +292,25 @@ id    name    job    level
 6     Foster     Sales Exec.     2     
 7     Brown     Assistant     3     
 
-Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: sscan
-               class: t node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t? node[?]
-               sargs: term[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select t.id, t.[name], t?.[job], level from tree t inner join tree? t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior nvl(t.id, t.id+t.id)=decode(t.mgrid, null, t?.id-?, t.mgrid)
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (t)
+    TABLE SCAN (t?)
+
+  rewritten query: select t.id, t.[name], t?.[job], level from tree t inner join tree? t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior nvl(t.id, t.id+t.id)=decode(t.mgrid, null, t?.id-?, t.mgrid)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+      SCAN (hash temp buildtime : ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
 ===================================================
 1
 ===================================================
@@ -258,19 +324,25 @@ id    name    job    level
 7     Brown     Assistant     3     
 8     park     null     3     
 
-Query plan:
-nl-join (left outer join)
-    edge:  term[?]
-    outer: sscan
-               class: t node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t? node[?]
-               sargs: term[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select t.id, t.[name], t?.[job], level from tree t left outer join tree? t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id=t.mgrid
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    TABLE SCAN (t)
+    TABLE SCAN (t?)
+
+  rewritten query: select t.id, t.[name], t?.[job], level from tree t left outer join tree? t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id=t.mgrid
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+      SCAN (hash temp buildtime : ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
 ===================================================
 id    name    job    level    
 1     Kim     Partner     1     
@@ -282,19 +354,25 @@ id    name    job    level
 7     Brown     Assistant     3     
 8     park     null     3     
 
-Query plan:
-nl-join (left outer join)
-    edge:  term[?]
-    outer: sscan
-               class: t node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t? node[?]
-               sargs: term[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select t.id, t.[name], t?.[job], level from tree t left outer join tree? t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id=t.mgrid
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    TABLE SCAN (t)
+    TABLE SCAN (t?)
+
+  rewritten query: select t.id, t.[name], t?.[job], level from tree t left outer join tree? t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id=t.mgrid
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+      SCAN (hash temp buildtime : ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
 ===================================================
 0
 ===================================================
@@ -317,26 +395,42 @@ id    name    job    level
 6     Foster     Sales Exec.     2     
 7     Brown     Assistant     3     
 
-Query plan:
-temp(order by)
-    subplan: nl-join (inner join)
-                 edge:  term[?]
-                 outer: sscan
-                            class: t node[?]
-                            cost:  ? card ?
-                 inner: sscan
-                            class: t? node[?]
-                            sargs: term[?]
-                            cost:  ? card ?
-                 cost:  ? card ?
-    sort:  ? asc
-    cost:  ? card ?
-Query stmt:
-select t.id, t.[name], t?.[job], level from tree t inner join tree? t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id= cast(t.mgrid as double) order by ?
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (t)
+      TABLE SCAN (t?)
+
+  rewritten query: select t.id, t.[name], t?.[job], level from tree t inner join tree? t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id= cast(t.mgrid as double) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+      SCAN (hash temp buildtime : ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
 ===================================================
 1
 ===================================================
 Error:-181
+===================================================
+trace    
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
 ===================================================
 0
 ===================================================
@@ -353,22 +447,27 @@ id    name    job    level
 6     Foster     Sales Exec.     2     
 7     Brown     Assistant     3     
 
-Query plan:
-temp(order by)
-    subplan: nl-join (inner join)
-                 edge:  term[?]
-                 outer: sscan
-                            class: t node[?]
-                            cost:  ? card ?
-                 inner: sscan
-                            class: t? node[?]
-                            sargs: term[?]
-                            cost:  ? card ?
-                 cost:  ? card ?
-    sort:  ? asc
-    cost:  ? card ?
-Query stmt:
-select t.id, t.[name], t?.[job], level from tree t inner join tree? t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id=t.mgrid order by ?
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (t)
+      TABLE SCAN (t?)
+
+  rewritten query: select t.id, t.[name], t?.[job], level from tree t inner join tree? t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id=t.mgrid order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+      SCAN (hash temp buildtime : ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
 ===================================================
 0
 ===================================================
@@ -385,22 +484,27 @@ id    name    job    level
 6.0     Foster     Sales Exec.     2     
 7.0     Brown     Assistant     3     
 
-Query plan:
-temp(order by)
-    subplan: nl-join (inner join)
-                 edge:  term[?]
-                 outer: sscan
-                            class: t node[?]
-                            cost:  ? card ?
-                 inner: sscan
-                            class: t? node[?]
-                            sargs: term[?]
-                            cost:  ? card ?
-                 cost:  ? card ?
-    sort:  ? asc
-    cost:  ? card ?
-Query stmt:
-select t.id, t.[name], t?.[job], level from tree t inner join tree? t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id=t.mgrid order by ?
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (t)
+      TABLE SCAN (t?)
+
+  rewritten query: select t.id, t.[name], t?.[job], level from tree t inner join tree? t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id=t.mgrid order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+      SCAN (hash temp buildtime : ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
 ===================================================
 0
 ===================================================
@@ -425,19 +529,25 @@ select t.id, t.[name], t?.[job], level from tree t inner join tree? t? on t.id=t
 count(*)    
 7     
 
-Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: sscan
-               class: t node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t? node[?]
-               sargs: term[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select count(*) from tree? t inner join tree? t? on t.id=t?.treeid start with t.mgrid is null  and t.gubun= ?:?  connect by  prior t.id=t.mgrid and t.gubun= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (t)
+    TABLE SCAN (t?)
+
+  rewritten query: select count(*) from tree? t inner join tree? t? on t.id=t?.treeid start with t.mgrid is null  and t.gubun= ?:?  connect by  prior t.id=t.mgrid and t.gubun= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
 ===================================================
 0
 ===================================================
@@ -448,36 +558,48 @@ select count(*) from tree? t inner join tree? t? on t.id=t?.treeid start with t.
 count(*)    
 7     
 
-Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: sscan
-               class: t node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t? node[?]
-               sargs: term[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select count(*) from tree? t inner join tree? t? on t.id=t?.treeid start with t.mgrid is null  and t.gubun= ?:?  connect by  prior t.id=t.mgrid and t.gubun= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (t)
+    TABLE SCAN (t?)
+
+  rewritten query: select count(*) from tree? t inner join tree? t? on t.id=t?.treeid start with t.mgrid is null  and t.gubun= ?:?  connect by  prior t.id=t.mgrid and t.gubun= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+      SCAN (hash temp buildtime : ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
 ===================================================
 count(*)    
 7     
 
-Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: sscan
-               class: t node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t? node[?]
-               sargs: term[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select /*+ NO_HASH_LIST_SCAN */ count(*) from tree? t inner join tree? t? on t.id=t?.treeid start with t.mgrid is null  and t.gubun= ?:?  connect by  prior t.id=t.mgrid and t.gubun= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (t)
+    TABLE SCAN (t?)
+
+  rewritten query: select /*+ NO_HASH_LIST_SCAN */ count(*) from tree? t inner join tree? t? on t.id=t?.treeid start with t.mgrid is null  and t.gubun= ?:?  connect by  prior t.id=t.mgrid and t.gubun= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
 ===================================================
 0
 ===================================================
@@ -488,36 +610,48 @@ select /*+ NO_HASH_LIST_SCAN */ count(*) from tree? t inner join tree? t? on t.i
 count(*)    
 7000     
 
-Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: sscan
-               class: t node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t? node[?]
-               sargs: term[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select count(*) from tree? t inner join tree? t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id=t.mgrid and t.gubun= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (t)
+    TABLE SCAN (t?)
+
+  rewritten query: select count(*) from tree? t inner join tree? t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id=t.mgrid and t.gubun= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+      SCAN (hash temp buildtime : ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
 ===================================================
 count(*)    
 7000     
 
-Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: sscan
-               class: t node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t? node[?]
-               sargs: term[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select /*+ NO_HASH_LIST_SCAN */ count(*) from tree? t inner join tree? t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id=t.mgrid and t.gubun= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (t)
+    TABLE SCAN (t?)
+
+  rewritten query: select /*+ NO_HASH_LIST_SCAN */ count(*) from tree? t inner join tree? t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id=t.mgrid and t.gubun= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
 ===================================================
 0
 ===================================================
