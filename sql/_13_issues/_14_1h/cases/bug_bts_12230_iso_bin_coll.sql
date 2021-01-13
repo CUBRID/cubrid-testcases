@@ -41,7 +41,7 @@ select INDEX_PREFIX (_euckr'10369          ', cast ('1037' as CHAR (10) charset 
 
 select INDEX_PREFIX (cast ('10369' as CHAR(10) charset euckr), '1037       ' , 'a');
 
-select INDEX_PREFIX (cast ('1037' as CHAR (10) charset euckr), _euckr'10369          ', 'd');
+select INDEX_PREFIX (cast ('1037' as CHAR (10) charset euckr), cast(_euckr'10369          ' as char(15) charset euckr), 'd');
 
 select INDEX_PREFIX (_euckr'1037        ' , cast('10369' as CHAR(10) charset euckr), 'd');
 
