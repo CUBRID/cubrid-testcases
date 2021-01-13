@@ -7,7 +7,7 @@ create table d(id int) reuse_oid reuseoid;
 create table d(id int) dont_reuse_oid dont_reuse_oid;
 create table d(id int) reuse_oid dont_reuse_oid;
 create table d(id int) dont_reuse_oid reuse_oid;
-select class_name, is_reuse_oid_class  from db_class where is_system_class = 'NO';
+select class_name, is_reuse_oid_class  from db_class where is_system_class = 'NO' order by class_name;
 show create table a;
 show create table b;
 show create table c;
