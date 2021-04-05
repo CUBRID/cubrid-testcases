@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 create table tb (a int not null, b int);
 create index i_tb_all on tb(a,b) where b is not null;
 create index i_tb_b on tb(b) where a is not null;
@@ -19,6 +18,5 @@ drop table tb;
 
 
 
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

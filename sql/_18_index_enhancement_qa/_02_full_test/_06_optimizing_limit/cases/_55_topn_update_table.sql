@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table x (a int,b timestamp);
 insert into x select rownum, '12:01:'||rownum||' 02/19/2010' from db_class a, db_class b limit 59;
 insert into x select rownum+59, '12:01:01 02/19/2012' from db_class a, db_class b,db_class c limit 10000;
@@ -18,6 +17,5 @@ set system parameters 'use_orderby_sort_limit=y';
 
 drop table x;
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

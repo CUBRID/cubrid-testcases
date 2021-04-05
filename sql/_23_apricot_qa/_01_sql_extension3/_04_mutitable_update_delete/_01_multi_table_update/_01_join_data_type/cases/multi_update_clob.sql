@@ -1,6 +1,5 @@
 --update 2 tables with clob type column for join condition, with composed index
 autocommit off;
-set system parameters 'dont_reuse_heap_file=yes';
 drop table if exists md_clob1;
 drop table if exists md_clob2;
 
@@ -54,7 +53,6 @@ delete m1, m2 from md_clob1 m1, md_clob2 m2;
 
 drop table md_clob1, md_clob2;
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 
 

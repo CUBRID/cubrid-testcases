@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 set system parameters 'compat_mode=mysql';
 create table tb (id int primary key, a int, b varchar(10));
 insert into tb values (4,4, '4'), (1,1,'1');
@@ -33,6 +32,5 @@ select /*+ recompile */ * from tb where a between 1 and 16 order by a desc;
 drop table tb;
 
 set system parameters 'compat_mode=cubrid';
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

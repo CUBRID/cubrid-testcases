@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table cov_t1 (id1 int, id2 varchar(30), id3 int);
 insert into cov_t1 values (5,'mnpqrt',55);
 insert into cov_t1 values (10,'abcd',100);
@@ -23,6 +22,5 @@ select /*+ recompile */ id2 from cov_t1 where id1 < 100 and id2 > 'abc' order by
 
 drop table cov_t1;
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

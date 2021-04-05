@@ -1,6 +1,5 @@
 --+ holdcas on;
 
-set  system parameters 'dont_reuse_heap_file=yes';
 create table t (i int, j int, s varchar(100));
 
 insert into t values (1,9,'one');
@@ -24,7 +23,6 @@ select /*+ recompile */ t.*  from t where i>0  using index i_t_i keylimit 2,10 o
 
 
 drop table t;
-set  system parameters 'dont_reuse_heap_file=no';
 
 commit;
 

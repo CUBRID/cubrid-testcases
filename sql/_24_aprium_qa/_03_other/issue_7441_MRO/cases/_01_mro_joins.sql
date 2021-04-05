@@ -2,7 +2,6 @@
 
 --+ holdcas on;
 
-set system parameters 'dont_reuse_heap_file=yes';
 drop table if exists t,s,u;
 
 create table t (a int, b int, c int, d int, e int);
@@ -98,6 +97,5 @@ select /*+ recompile */ t.*, s.a as sa, s.b as sb, u.a as ua, u.b as ub from t,s
 
 drop s,t,u;
 
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

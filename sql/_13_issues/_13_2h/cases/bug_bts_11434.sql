@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 drop table if exists t;
 create table t (a int, "nulls last" varchar);
@@ -31,6 +30,5 @@ select * from t group by 2,1 order by 1,2 nulls last ;
 
 drop table if exists t;
 
-set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;
 commit;

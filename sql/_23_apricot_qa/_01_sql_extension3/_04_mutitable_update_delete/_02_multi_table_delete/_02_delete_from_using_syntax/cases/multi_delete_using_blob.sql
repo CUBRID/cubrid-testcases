@@ -1,7 +1,6 @@
 --TEST: delete from 2 tables with blob type column for join condition
 
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table md_blob1(id1 smallint primary key, col1 char(20), col2 blob);
 insert into md_blob1 values(1, 'aaa', bit_to_blob(B'1010')), (2, 'bbb', bit_to_blob(B'1101')), (3, 'ccc', bit_to_blob(B'1011')), (4, 'ddd', bit_to_blob(B'1110')), (5, 'eee', bit_to_blob(B'10010')), (6, 'fff', bit_to_blob(B'10101'));
@@ -60,7 +59,6 @@ delete from m1, m2 using md_blob1 m1, md_blob2 m2;
 
 
 drop table md_blob1, md_blob2;
-set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;
 
 

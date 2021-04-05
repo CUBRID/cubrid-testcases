@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 set system parameters 'compat_mode=mysql';
 
@@ -17,7 +16,6 @@ drop table tb;
 
 set system parameters 'compat_mode=cubrid';
 
-set system parameters 'dont_reuse_heap_file=no';
 
 
 commit;

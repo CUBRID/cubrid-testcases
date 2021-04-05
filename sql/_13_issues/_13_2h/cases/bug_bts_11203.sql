@@ -1,6 +1,5 @@
 --+ holdcas on;
 
-set system parameters 'dont_reuse_heap_file=yes';
 
 drop table if exists t;
 create table t (i int, j int, k int, l int);
@@ -9,7 +8,6 @@ select * from t where i in (select k from t order by k desc limit 1) order by l;
 
 drop table if exists t;
 
-set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;
 commit;
 

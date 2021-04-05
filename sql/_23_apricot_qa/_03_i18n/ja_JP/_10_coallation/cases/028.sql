@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 set names utf8;
 CREATE TABLE coll_test_JP (id INTEGER, s VARCHAR(10) collate utf8_ja_exp );
 
@@ -4157,6 +4156,5 @@ SELECT id, s FROM coll_test_JP ORDER BY s,id;
 
 DROP TABLE coll_test_JP;
 set names iso88591;
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

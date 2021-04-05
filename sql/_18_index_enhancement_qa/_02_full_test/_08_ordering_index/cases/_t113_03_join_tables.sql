@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table t(a int, b int, c int, d int,e int);
 
 create index i_t_abc on t(a,b,c);
@@ -27,6 +26,5 @@ select /*+ USE_IDX i_s_abc ORDERED */ t.*,s.* from t,s where t.a=s.a and t.a>-1 
 drop table t;
 drop table s;
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 -- create and populate tables
 create table tj (id int, val string);
@@ -33,5 +32,4 @@ drop table tk;
 
 commit;
 
-set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;

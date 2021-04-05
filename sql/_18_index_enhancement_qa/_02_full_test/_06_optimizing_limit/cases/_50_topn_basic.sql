@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table x (a int,b varchar(10));
 insert into x select rownum,rownum||'' from db_class a, db_class b, db_class c limit 10000;
 
@@ -19,6 +18,5 @@ set system parameters 'use_orderby_sort_limit=n';
 drop table x;
 
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

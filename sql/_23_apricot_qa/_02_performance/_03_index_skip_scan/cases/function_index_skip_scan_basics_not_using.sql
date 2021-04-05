@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 create table t (i int not null, j int, k int, l int, s string);
 INSERT INTO t values (1,6,565,1346,'J');
 INSERT INTO t values (2,8,3717,1294,'B');
@@ -50,6 +49,5 @@ select /*+ recompile */ count(*) from t where l > 1800 and s <> 'x' ;
 --test
 select /*+ recompile */ * from t where l > 1800 and s <> 'x' ;
 drop table t;
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

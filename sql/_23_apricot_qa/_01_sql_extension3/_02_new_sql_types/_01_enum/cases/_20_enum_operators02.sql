@@ -2,7 +2,6 @@
 
 
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table oper1(
 	id bigint unique auto_increment, 
@@ -80,7 +79,6 @@ select /*+ RECOMPILE ordered */ t1.id, t1.col5, t1.col1, t2.id, t2.col5, t2.col1
 
 drop table oper1, oper2;
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 
 --+ holdcas off;

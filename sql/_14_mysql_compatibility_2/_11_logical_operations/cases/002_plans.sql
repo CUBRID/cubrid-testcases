@@ -1,6 +1,5 @@
 --+ holdcas on;
 -- tests that the query plans and the cache keys work as expected
-set  system parameters 'dont_reuse_heap_file=yes';
 create table t (i int, j int, k int, l int);
 insert into t values
 (0,0,0,0),
@@ -53,6 +52,5 @@ select * from t where not (not (not (not ( !i)))) order by l;
 
 
 drop table t;
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

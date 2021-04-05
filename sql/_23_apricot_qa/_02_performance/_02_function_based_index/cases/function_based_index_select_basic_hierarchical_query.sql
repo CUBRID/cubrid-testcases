@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 CREATE TABLE tree(ID double, MgrID double, Name VARCHAR(32), BirthYear INT);
  
 INSERT INTO tree VALUES (1,NULL,'Kim', 1963);
@@ -25,6 +24,5 @@ SELECT /*+ recompile */ id, mgrid FROM tree  where log10(id)>0 START WITH id>0 a
 SELECT /*+ recompile */ id, mgrid FROM tree  where id>0 START WITH id>0 and log10(mgrid) IS NULL CONNECT BY prior id=mgrid ;
 drop table tree;
 
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

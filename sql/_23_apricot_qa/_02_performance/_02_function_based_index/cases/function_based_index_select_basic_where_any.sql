@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 create table tb (a double );
 insert into tb values (1);
 insert into tb values (2);
@@ -13,6 +12,5 @@ select /*+ recompile */ a from tb where log10(a)=all{0,1,2};
 
 drop table tb;
 
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

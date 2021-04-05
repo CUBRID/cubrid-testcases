@@ -1,5 +1,4 @@
 autocommit off;
-set system parameters 'dont_reuse_heap_file=yes';
 drop table if exists x;
 create table x (a int primary key, b int);
 insert into x values (1, 1);
@@ -99,7 +98,6 @@ select /*+ recompile no_desc_idx */ * from t3 where a>'a' order by a desc;
 select /*+ recompile */ * from t3 where a>'2' order by a desc;
 drop table t3;
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 autocommit on;
 

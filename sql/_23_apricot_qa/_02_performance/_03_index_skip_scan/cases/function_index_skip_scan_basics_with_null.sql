@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 create table t (i int, j int, k int, l int, s string);
 
 INSERT INTO t values (1,6,565,1346,'J');
@@ -1079,6 +1078,5 @@ select /*+ recompile  */ i,j,k,l from t where j is not null and l = 1001 order b
 
 
 drop table t;
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

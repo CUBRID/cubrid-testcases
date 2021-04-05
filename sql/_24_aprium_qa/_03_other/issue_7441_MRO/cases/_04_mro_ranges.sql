@@ -2,7 +2,6 @@
 
 --+ holdcas on;
 
-set system parameters 'dont_reuse_heap_file=yes';
 drop table if exists t,s,u;
 
 create table t (a bigint, b char(200), c varchar(2000), d double, e int);
@@ -63,6 +62,5 @@ drop index idx_a_b_c_d_e on t;
 
 drop t;
 
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

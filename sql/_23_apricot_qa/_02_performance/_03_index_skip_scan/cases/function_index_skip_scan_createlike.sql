@@ -12,7 +12,6 @@ insert into a (i) select NULL from a;
 insert into a (i) select NULL from a;
 insert into a (i) select NULL from a;
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 insert into a (i) select NULL from a;
 insert into a (i) select NULL from a;
 
@@ -84,6 +83,5 @@ select /*+ recompile INDEX_SS */ i, j from t2 where k = 3 order by i, j;
 drop table t;
 drop table t2;
 drop table a;
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

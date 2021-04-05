@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 create table a (i int auto_increment);
 insert into a (i) values(NULL);
 insert into a (i) select NULL from a;
@@ -38,7 +37,6 @@ select /*+ recompile INDEX_SS */ i, j from t where j = '2' using index idx(+) or
 select /*+ recompile INDEX_SS */ i, j from t where j = '2' order by i;
 drop table t;
 drop table a;
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;
 

@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 create table t (id int primary key, a varchar(10), b varchar(10), c datetime);
 
 create reverse index idx on t(lower(a));
@@ -21,6 +20,5 @@ select /*+ recompile */ c, count(*) from t where lower(a)>'0' group by c desc ha
 drop table t;
 
 
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

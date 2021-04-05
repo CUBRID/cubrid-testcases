@@ -1,6 +1,5 @@
 --+ holdcas on;
 SET OPTIMIZATION LEVEL 513;
-set  system parameters 'dont_reuse_heap_file=no';
  
 drop table if exists ntile_gl;
 create table ntile_gl(

@@ -1,5 +1,4 @@
 --create index on enum column
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table idx(
 	col1 enum('a', 'b', 'c', 'd', 'e'),
@@ -35,4 +34,3 @@ select * from idx where col2 < 'e' and col4 > '1' order by 1;
 
 drop table idx;
 
-set system parameters 'dont_reuse_heap_file=no';

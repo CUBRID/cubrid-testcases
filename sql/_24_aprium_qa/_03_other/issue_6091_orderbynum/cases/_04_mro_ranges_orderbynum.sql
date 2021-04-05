@@ -1,7 +1,6 @@
 -- check the index and plan compare when multi range optimization is eligible
 --+ holdcas on;
 
-set system parameters 'dont_reuse_heap_file=yes';
 
 drop table if exists t;
 create table t (a int, b int, c int, d int, e int);
@@ -46,6 +45,5 @@ drop index idx_a_b_c_d_e on t;
 
 drop t;
 
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

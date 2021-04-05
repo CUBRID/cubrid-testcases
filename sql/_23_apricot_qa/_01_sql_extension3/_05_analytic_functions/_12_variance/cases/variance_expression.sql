@@ -1,6 +1,5 @@
 --using single/multiple expressions in partition by and order by clause
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table variance_expression(
 	col1 int auto_increment primary key,
@@ -79,6 +78,5 @@ select col3, col4, clob_to_char(col5), variance(unique col1) over(partition by c
 
 delete from variance_expression;
 drop table variance_expression;
-set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;
 

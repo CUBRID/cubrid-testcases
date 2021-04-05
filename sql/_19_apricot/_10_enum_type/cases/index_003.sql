@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table t(i int auto_increment, e enum ('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'), s varchar(255));
 
@@ -42,6 +41,5 @@ select /*+ recompile */ t.e from t, u where t.i = u.i and t.s = 'Monday' order b
 drop table u;
 
 drop table t;
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

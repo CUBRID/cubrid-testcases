@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 create table a (i int auto_increment);
 insert into a (i) values(NULL);
 insert into a (i) select NULL from a;
@@ -55,6 +54,5 @@ drop table t;
 drop table a;
 commit;
 
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

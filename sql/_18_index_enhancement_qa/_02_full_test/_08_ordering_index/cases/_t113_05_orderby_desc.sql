@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table t(a int, b int, c int, d int,e int);
 
 create index i_t_abc on t(a desc,b desc,c desc);
@@ -38,6 +37,5 @@ select /*+ recompile */ * from t where a>0 order by a||a desc;
 
 drop table t;
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

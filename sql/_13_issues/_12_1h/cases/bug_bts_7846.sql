@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 drop table if exists t;
 create table t(i int primary key, e enum ('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'));
@@ -62,6 +61,5 @@ select /*+ recompile */ e from t where e in ('Tuesday', 'Thursday') order by 1;
 select i, e, s from t where i < 10 order by i, e, s;
 drop t;
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

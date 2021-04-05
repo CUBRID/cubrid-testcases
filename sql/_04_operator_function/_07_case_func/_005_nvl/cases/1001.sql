@@ -1,7 +1,6 @@
 --Test retrieve data using case function 
 
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create class dual ( id int);
 insert into dual values(1);
 select decode(1, 1, dual) from dual order by 1;
@@ -68,5 +67,4 @@ select nvl2((select dual from dual), dual, null) from dual order by 1;
 select nvl2((select dual from dual), null, dual) from dual order by 1;
 
 drop dual;
-set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;

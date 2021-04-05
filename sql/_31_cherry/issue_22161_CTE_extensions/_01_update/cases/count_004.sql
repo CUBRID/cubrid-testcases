@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 drop table if exists t1;
 create table t1(  a char(1200),   b varchar(1200),  c nchar(1200),  d NCHAR VARYING(1200),  
     e BIT(1200),  f BIT VARYING(1200),  
@@ -117,6 +116,5 @@ j=(select col3 from cte1),k=(select col4 from cte1),l=(select col5 from cte1) wh
 select * from t1 where g=5;
 
 drop table if exists t1;
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 -- create a table to be used for tests --
 create table t(id integer, textlabel varchar(255), description varchar(4096));
 insert into t(id, textlabel, description)
@@ -157,7 +156,6 @@ select /*+ recompile */  * from t where descr = textlabel difference select /*+ 
 
 drop table t;
 
-set  system parameters 'dont_reuse_heap_file=no';
 set system parameters 'alter_table_change_type_strict=no';
 commit;
 --+ holdcas off;

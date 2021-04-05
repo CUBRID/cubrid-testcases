@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 create table tx(
   col_a               INTEGER NOT NULL,
   col_b             NUMERIC(19,0),
@@ -56,6 +55,5 @@ limit 30;
 drop table tx;
 
 drop table ty;
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

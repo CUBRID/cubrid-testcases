@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table t (i1 int, i2 int, i3 int);
 
@@ -85,7 +84,6 @@ set system parameters 'xasl_debug_dump=no';
 
 drop table t;
 
-set system parameters 'dont_reuse_heap_file=no';
 
 commit;
 

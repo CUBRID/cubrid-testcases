@@ -1,6 +1,5 @@
 --+ holdcas on;
 
-set  system parameters 'dont_reuse_heap_file=yes';
 create table ta (id int primary key, a int);
 insert into ta values (4,4);
 insert into ta values (1,1);
@@ -21,7 +20,6 @@ select /*+ recompile */ ta.a,tb.a from ta,tb where ta.a between 1 and 2 and tb.a
 
 drop table ta;
 drop table tb;
-set  system parameters 'dont_reuse_heap_file=no';
 
 commit;
 

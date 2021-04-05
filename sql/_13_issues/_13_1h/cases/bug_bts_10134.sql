@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 drop table if exists t ,s;
 create table t (i int, j int);
@@ -171,6 +170,5 @@ merge /*+ recompile use_update_idx(i_s_i) use_insert_idx(i_t_i) */
 drop table t,s;
 
 commit;
-set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;
 

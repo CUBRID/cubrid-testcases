@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 drop table if exists t;
 drop table if exists u;
@@ -45,6 +44,5 @@ select /*+ recompile */ t.enum_col from t, u where t.i = u.i and t.str_col = 'Mo
 drop table u;
 
 drop table t;
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

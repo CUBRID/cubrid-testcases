@@ -1,6 +1,5 @@
 --TEST: test with a table with a superclass 
 --+holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table max_super(
 	col1 bit(20),
 	col2 bit varying
@@ -106,7 +105,6 @@ select col1, col2, max(unique colb_to_char(col4)) over(order by col1, col2 parti
 delete from max_super;
 drop table max_super;
 drop table max_bbc; 
-set system parameters 'dont_reuse_heap_file=no';
 --+holdcas off;
 
 

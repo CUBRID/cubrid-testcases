@@ -1,5 +1,4 @@
 autocommit off;
-set  system parameters 'dont_reuse_heap_file=yes';
 create table t( col1 integer unique,	col2  varchar(255),col3	  varchar(4096));
 insert into t(col1, col2, col3)
     values
@@ -204,6 +203,5 @@ select /*+ recompile */ * from t where col1 > -1 using index i_t_col1_col2(+) di
 
 drop table t;
 commit;
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 autocommit on;

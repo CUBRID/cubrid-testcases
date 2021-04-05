@@ -1,6 +1,5 @@
 --+ holdcas on;
 
-set system parameters 'dont_reuse_heap_file=yes';
 
 drop table if exists b, t;
 

@@ -1,6 +1,5 @@
 --+ holdcas on;
 
-set  system parameters 'dont_reuse_heap_file=yes';
 create table t1 (id int, v varchar(20), c char(20), s string);
 create index i_t1_all on t1(v desc);
 
@@ -25,7 +24,6 @@ select /*+ recompile use_desc_idx */ * from tb where a>0 order by a desc;
 
 
 drop table tb;
-set  system parameters 'dont_reuse_heap_file=no';
 
 commit;
 

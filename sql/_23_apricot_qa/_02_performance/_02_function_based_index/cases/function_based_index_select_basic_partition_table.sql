@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 
 create table t( i int, a varchar(10))
 PARTITION BY RANGE (i)
@@ -56,7 +55,6 @@ drop table t;
 
 drop table s;
 
-set  system parameters 'dont_reuse_heap_file=no';
 
 commit;
 

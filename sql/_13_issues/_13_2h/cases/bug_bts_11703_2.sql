@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 drop table if exists t; 
 
@@ -39,5 +38,4 @@ select /*+ recompile, use_merge */ t.i from t left join u on t.i = u.i order by 
 drop t;
 drop u;
 
-set system parameters 'dont_reuse_heap_file=no';
 

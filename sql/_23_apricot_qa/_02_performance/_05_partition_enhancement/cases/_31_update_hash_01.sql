@@ -1,4 +1,3 @@
-set system parameters 'dont_reuse_heap_file=yes';
 drop if exists temp;
 drop if exists t;
 
@@ -46,4 +45,3 @@ select count(*) from t where d='2012-5-6' group by d;
 
 drop t;
 drop temp;
-set system parameters 'dont_reuse_heap_file=no';

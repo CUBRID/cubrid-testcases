@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table t (a int primary key, b varchar(10), c char(10), d timestamp);
 
 create reverse index ri_t_a_b_c_d on t(a,b,c,d);
@@ -5024,6 +5023,5 @@ order by a asc limit 2;
 
 drop table t;
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

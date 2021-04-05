@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table t (i int, j int);
 
@@ -15,7 +14,6 @@ select * from t connect by prior j = i;
 select * from t start with i = 1 connect by prior j = i;
 
 select * from t connect by prior j = i start with i = 1;
-set system parameters 'dont_reuse_heap_file=no';
 drop table t;
 commit;
 --+ holdcas off;

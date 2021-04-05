@@ -1,5 +1,4 @@
 autocommit off;
-set  system parameters 'dont_reuse_heap_file=yes';
 create table d1 (id int, id2 varchar(30), id3 int);
 create table d2 (id int, id2 varchar(30), id3 int);
 create table d3 (id int, id2 varchar(30), id3 int);
@@ -4108,6 +4107,5 @@ drop class t7;
 drop class d1;
 drop class d2;
 drop class d3;
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 autocommit on;

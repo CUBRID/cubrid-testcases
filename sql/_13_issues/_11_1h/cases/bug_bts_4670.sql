@@ -1,6 +1,5 @@
 --+ holdcas on;
 
-set system parameters 'dont_reuse_heap_file=yes';
 create table dummy1 (i int);
 create table dummy2 (i int);
 create table dummy3 (i int);
@@ -61,7 +60,6 @@ drop table dummy3;
 drop table dummy4;
 drop table dummy5;
 
-set system parameters 'dont_reuse_heap_file=no';
 
 commit;
 

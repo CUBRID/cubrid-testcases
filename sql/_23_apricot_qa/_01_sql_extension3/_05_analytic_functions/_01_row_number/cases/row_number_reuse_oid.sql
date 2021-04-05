@@ -1,7 +1,6 @@
 --TEST: test with bit strings and blob/clob data types and normal syntax
 
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table rownum_bbc(
 	col1 bit(20),
 	col2 bit varying, 
@@ -109,7 +108,6 @@ delete from rownum_bbc;
 
 drop table rownum_bbc; 
 
-set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;
 
 

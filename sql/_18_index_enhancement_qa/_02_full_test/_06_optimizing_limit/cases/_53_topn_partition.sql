@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 CREATE TABLE t (host_year INT, nation CHAR(3), gold INT, silver INT, bronze INT)
 PARTITION BY RANGE (host_year)
 (PARTITION before_2000 VALUES LESS THAN (2000),
@@ -28,6 +27,5 @@ set system parameters 'xasl_debug_dump=no';
 drop table t;
 
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

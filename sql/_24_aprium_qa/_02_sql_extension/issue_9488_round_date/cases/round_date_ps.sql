@@ -1,6 +1,5 @@
 --test with prepared statements
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table round_ps(
 	id int primary key auto_increment,
@@ -55,5 +54,4 @@ deallocate prepare st;
 drop table round_ps;
 
 commit;
-set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;

@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table t(a int, b string);
 insert into t select 0, '0' from db_class w, db_class x, db_class y, db_class z limit 10000;
 insert into t select 1, '1' from db_class w, db_class x, db_class y, db_class z limit 10000;
@@ -7,6 +6,5 @@ create index idx on t(a,b);
 update statistics on all classes;
 select/*+ recompile  INDEX_SS */ count(*) from t where b='0';
 drop table t;
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

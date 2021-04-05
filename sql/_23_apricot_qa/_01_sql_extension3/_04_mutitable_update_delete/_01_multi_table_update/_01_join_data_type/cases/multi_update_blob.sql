@@ -1,6 +1,5 @@
 --update 2 tables with blob type column for join condition
 --+holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 drop table if exists md_blob1;
 drop table if exists md_blob2;
 
@@ -56,7 +55,6 @@ select id2, col1, blob_to_bit(col2) from md_blob2 order by 1;
 delete m1, m2 from md_blob1 m1, md_blob2 m2;
 
 drop table md_blob1, md_blob2;
-set system parameters 'dont_reuse_heap_file=no';
 --+holdcas off;
 
 

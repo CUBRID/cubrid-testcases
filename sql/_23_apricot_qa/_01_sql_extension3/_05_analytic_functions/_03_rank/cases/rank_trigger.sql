@@ -1,6 +1,5 @@
 --TEST: test with tables with triggers 
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table rank_trigger(
 	col1 bit(20),
@@ -127,7 +126,6 @@ drop trigger bef_ins;
 drop table rank_trigger; 
 drop table rank_action;
 
-set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;
 
 

@@ -1,6 +1,5 @@
 --TEST: [Analytic Functions] Error occurs when analytic functions are used in ANY expression within a where clause
 
-set system parameters 'dont_reuse_heap_file=yes';
 
 drop table if exists t;
 drop table if exists u;
@@ -27,4 +26,3 @@ select /*+ recompile */ * from t where cast(i as int) <= some(select sum(i) over
 drop table t, u;
 
 
-set system parameters 'dont_reuse_heap_file = no';

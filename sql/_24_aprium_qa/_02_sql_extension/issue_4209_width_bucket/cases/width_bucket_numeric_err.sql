@@ -1,6 +1,5 @@
 --TEST: error and special cases with numeric types 
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table wb_num_err(
 	col1 int not null,
@@ -91,7 +90,6 @@ select col2, width_bucket(col2, 200, 800, null) wb from wb_num_err;
 drop table wb_num_err; 
 
 commit;
-set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;
 
 

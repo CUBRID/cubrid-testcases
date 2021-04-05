@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 CREATE TABLE t1 (
    a  INT NOT NULL,
    b  VARCHAR(40) NOT NULL,
@@ -30,6 +29,5 @@ update t1 set a=seq_t1_a.nextval where a>0 and c is not null using index idx_t1_
 select /*+ RECOMPILE */ * from t1 order by a,b,c;
 drop table t1;
 drop serial seq_t1_a;
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

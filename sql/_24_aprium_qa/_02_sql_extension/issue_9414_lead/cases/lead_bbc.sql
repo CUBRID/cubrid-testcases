@@ -1,6 +1,5 @@
 --TEST: test with bit strings and blob/clob data types and normal syntax
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table lead_bbc(
 	col1 bit(20),
@@ -106,7 +105,6 @@ select col1, col2, lead(col1) over(order by col1, col2 partition by col2) from l
 delete from lead_bbc;
 
 drop table lead_bbc; 
-set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;
 
 

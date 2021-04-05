@@ -1,6 +1,5 @@
 --TEST: Appropriate index cannot be selected when using ignore index(idx). (BY DESIGN)	
 
-set system parameters 'dont_reuse_heap_file=yes';
 
 drop table if exists ui;
 
@@ -34,4 +33,3 @@ drop table ui;
 
 
 
-set system parameters 'dont_reuse_heap_file=no';

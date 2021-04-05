@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table x (a int);
 create table y (a int);
 
@@ -37,6 +36,5 @@ drop table x;
 drop table y;
 
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table t (id int primary key, a char(10), b varchar(10), c datetime);
 
 create reverse index ri_t_a_b_c on t(a,b,c);
@@ -20,6 +19,5 @@ select /*+ recompile */ c, count(*) from t where a>'0' group by c desc having co
 
 drop table t;
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

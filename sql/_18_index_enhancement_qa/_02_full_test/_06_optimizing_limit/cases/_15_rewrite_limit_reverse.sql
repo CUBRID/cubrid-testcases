@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table t (id int primary key, a varchar(10));
 insert into t values (1,'11');
 insert into t values (2,'22');
@@ -38,6 +37,5 @@ drop table t;
 
 
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

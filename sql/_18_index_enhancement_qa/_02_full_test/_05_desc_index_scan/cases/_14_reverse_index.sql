@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table tb (id int primary key, a int, b varchar(10));
 insert into tb values (4,4,'4444'), (1,1,'111111');
 create index i_tb_ba on tb(b,a);
@@ -17,6 +16,5 @@ select /*+ recompile use_desc_idx */ * from tb where b > '1' using index i_tb_ba
 select /*+ recompile use_desc_idx  */ * from tb where b > '1' using index ir_tb_ba;
 
 drop table tb;
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

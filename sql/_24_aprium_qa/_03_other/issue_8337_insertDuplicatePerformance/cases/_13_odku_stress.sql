@@ -1,4 +1,3 @@
-set system parameters 'dont_reuse_heap_file=yes';
 drop table if exists a, b, c, t,tt;
 create table t(i int, j int, k int primary key);
 create unique index u_t_i on t(i);
@@ -53,4 +52,3 @@ insert into t select rownum from db_class a,db_class b ,db_class c limit 100  on
 select count(*) from t where i> 100;
 
 drop table t;
-set  system parameters 'dont_reuse_heap_file=no';

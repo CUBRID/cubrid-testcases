@@ -3,7 +3,6 @@
 drop table if exists u,t;
 --+ holdcas on;
 
-set system parameters 'dont_reuse_heap_file=yes';
 create table u (i bigint, j bigint) partition by hash(i) partitions 3;
 insert into u values (3458901122 ,3458901122), (3458901122 ,3458901122), (3458901122 ,3);
 insert into u values (-3458901122,1), (-3458901122,2), (-3458901122,3);
@@ -36,6 +35,5 @@ EXECUTE st USING 4;
 
 drop u,t;
 
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

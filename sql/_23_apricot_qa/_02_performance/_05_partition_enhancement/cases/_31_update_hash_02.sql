@@ -1,4 +1,3 @@
-set system parameters 'dont_reuse_heap_file=yes';
 drop table if exists t;
 drop table if exists temp;
 
@@ -42,4 +41,3 @@ select d,count(*) from t__p__p18 where d <> '2012-5-6' group by d order by 1;
 drop t;
 drop temp;
 
-set system parameters 'dont_reuse_heap_file=no';

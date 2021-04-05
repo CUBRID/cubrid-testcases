@@ -1,7 +1,6 @@
 
 --+ holdcas on;
 
-set system parameters 'dont_reuse_heap_file=yes';
 drop table if exists t;
 create table t (a int, b int);
 create index i_t_a_b on t(a,b);
@@ -239,6 +238,5 @@ select /*+ recompile */ distinct * from t
 
 drop table if exists t,s,u;
 
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

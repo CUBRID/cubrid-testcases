@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 drop table if exists t;
 create table t(i int auto_increment, enum_col enum ('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday') collate utf8_en_cs, str_col varchar(255) collate utf8_en_cs);
@@ -44,6 +43,5 @@ select /*+ recompile */ enum_col from t where enum_col in ('Tuesday', 'Thursday'
 select i, enum_col, str_col from t where i < 10 order by i, enum_col, str_col;
 
 drop table t;
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

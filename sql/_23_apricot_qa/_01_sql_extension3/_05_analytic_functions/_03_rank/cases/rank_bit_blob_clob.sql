@@ -1,6 +1,5 @@
 --TEST: test with bit strings and blob/clob data types and normal syntax
 --+holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 
 create table rank_bbc(
@@ -103,7 +102,6 @@ select col1, col2, rank() over(order by col1, col2 partition by col2) from rank_
 
 delete from rank_bbc;
 drop table rank_bbc; 
-set system parameters 'dont_reuse_heap_file=no';
 --+holdcas off;
 
 

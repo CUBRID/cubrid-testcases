@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 CREATE TABLE blogtopic (topicId INTEGER not null, postDate DATE, closedDate DATE);
 insert into blogtopic value(1,DATE '2010-01-01',DATE '2010-01-02');
 CREATE INDEX my_filter_index ON blogtopic (topicId) WHERE closedDate IS NULL;
@@ -75,6 +74,5 @@ alter index idx_tdesc on t(description) where char_length(description) * rand() 
 drop table t;
 
 	
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

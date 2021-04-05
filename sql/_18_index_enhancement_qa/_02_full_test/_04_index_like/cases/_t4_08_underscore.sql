@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table t1 (id int, v varchar(20), c char(20), s string);
 create index i_t1_all on t1(v,c,s);
 create index i_t1_v on t1(v);
@@ -27,6 +26,5 @@ select /*+ recompile */ * from t1 where v like '____%';
 
 
 
-drop table t1;set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

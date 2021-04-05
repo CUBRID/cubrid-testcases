@@ -1,4 +1,3 @@
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table t (i int, j int);
 
@@ -38,4 +37,3 @@ select /*+ recompile, use_merge */ u.i from u left join t on t.i = u.i where u.j
 drop table u;
 drop table t;
 
-set system parameters 'dont_reuse_heap_file=no';

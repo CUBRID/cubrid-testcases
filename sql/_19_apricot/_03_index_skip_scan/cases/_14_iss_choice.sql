@@ -1,5 +1,4 @@
 --create a table with a large number of incremental values
-set system parameters 'dont_reuse_heap_file=yes';
 create table a (i int auto_increment);
 insert into a (i) values(NULL);
 insert into a (i) select NULL from a;
@@ -105,4 +104,3 @@ drop table t;
 
 drop table b;
 drop table a;
-set system parameters 'dont_reuse_heap_file=no';

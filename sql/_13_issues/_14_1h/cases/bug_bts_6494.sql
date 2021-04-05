@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 drop table if exists fjj;
 drop table if exists lwe;
@@ -240,5 +239,4 @@ SELECT /*+ recompile */ count (*) FROM fjj a LEFT JOIN lwe b ON b.aiid = a.fvid 
 drop table fjj;
 drop table lwe;
 set system parameters 'optimizer_enable_merge_join=no';
-set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;

@@ -1,6 +1,5 @@
 --
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table t1(i int, e1 enum ('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', '01/01/2012'));
 insert into t1 values (1, 1), (3, 3), (2, 'Monday'), (6, 'Friday'), (7, 7), (4, 4), (5, 5), (8, 8);
@@ -173,6 +172,5 @@ execute x using 'M', date'01/01/2012';
 drop prepare x;
 
 drop table t1;
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

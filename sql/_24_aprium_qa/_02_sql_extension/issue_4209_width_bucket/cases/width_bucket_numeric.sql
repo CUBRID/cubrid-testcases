@@ -1,6 +1,5 @@
 --TEST: test with columns with numeric 
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table wb_numeric(
 	col1 int not null,
@@ -64,7 +63,6 @@ select col3, col4, width_bucket(col3, col3-10000000, col3+100000, 10) wb from wb
 drop table wb_numeric; 
 
 commit;
-set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;
 
 

@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 
 create table t (id int primary key auto_increment, a varchar(50), b int);
 create serial s start with 1 INCREMENT by 1;
@@ -1016,6 +1015,5 @@ select /*+ recompile */ a,b from t where a in (
 ) using index i_t_a_b_d(+) order by b desc limit 3000;
 
 drop table t;
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

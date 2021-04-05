@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 CREATE TABLE tree(ID INT, MgrID INT, Name VARCHAR(32), BirthYear INT);
 
 INSERT INTO tree VALUES (NULL,NULL,'null', null);
@@ -21,6 +20,5 @@ SELECT /*+ recompile use_desc_idx */ id, mgrid FROM tree  START WITH  id>=0 and 
 
 drop table tree;
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

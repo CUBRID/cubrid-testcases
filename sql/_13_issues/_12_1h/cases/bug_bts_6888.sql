@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table pt1(i int);
 create table pt2(i int) partition by hash(i) partitions 4;
@@ -67,7 +66,6 @@ drop table a1;
 drop table a;
 drop table b;
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;
 

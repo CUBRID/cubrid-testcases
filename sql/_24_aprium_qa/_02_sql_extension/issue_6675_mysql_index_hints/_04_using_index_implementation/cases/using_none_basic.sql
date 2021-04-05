@@ -1,6 +1,5 @@
 --normal cases with USING INDEX NONE clause
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 
 create table ui(i1 int primary key, i2 float, i3 varchar(1073741823), i4 date);
@@ -55,5 +54,4 @@ drop table ui;
 commit;
 
 
-set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;

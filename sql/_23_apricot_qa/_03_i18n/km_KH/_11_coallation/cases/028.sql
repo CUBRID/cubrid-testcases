@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 set names utf8;
 CREATE TABLE coll_test (id INTEGER, s varchar(10) collate utf8_km_exp);
 
@@ -443,6 +442,5 @@ SELECT id, s FROM coll_test ORDER BY s;
 
 DROP TABLE coll_test;
 set names iso88591;
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

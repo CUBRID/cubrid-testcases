@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 create table tb(a double,b char(1), c varchar(1), d date);
 create index i_tb_a on tb(log10(a));
 insert into tb values (1,'Y', 'Monday', DATE('2010-10-27'));
@@ -26,6 +25,5 @@ select /*+ recompile */ x.a,y.a from tb x,tb y where x.a=log10(y.a) and (x.a>1) 
 drop table tb;
 
 
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

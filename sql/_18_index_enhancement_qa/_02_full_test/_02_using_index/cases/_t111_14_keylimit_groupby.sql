@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 CREATE TABLE t1 (
    a  INT NOT NULL,
    b  VARCHAR(40) NOT NULL,
@@ -24,6 +23,5 @@ select /*+ RECOMPILE */ a from t1 where a>0 group by a asc having groupby_num()<
 
 drop table t1;
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

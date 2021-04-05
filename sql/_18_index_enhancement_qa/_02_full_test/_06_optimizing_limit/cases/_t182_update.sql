@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table t (a int, b varchar(10), c char(10), d timestamp);
 
 create index i_t_a_b_c_d  on t(a,b,c,d);
@@ -32,6 +31,5 @@ set system parameters 'xasl_debug_dump=no';
 drop table t;
 
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

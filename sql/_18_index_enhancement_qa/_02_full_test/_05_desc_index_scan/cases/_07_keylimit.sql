@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table tb (id int primary key, a int);
 insert into tb values (4,4);
 insert into tb values (1,1);
@@ -24,6 +23,5 @@ select /*+ recompile use_desc_idx */ * from tb where a between 1 and 3 using ind
 
 drop table tb;
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

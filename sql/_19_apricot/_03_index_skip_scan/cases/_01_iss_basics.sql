@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table t (i int not null, j int, k int, l int, s string);
 
 INSERT INTO t values (1,6,565,1346,'J'), (2,8,3717,1294,'B'), (2,7,203,1700,'D'), (1,10,3498,1189,'B'), (0,10,2503,1070,'D'), (1,2,4231,1944,'A'), (2,7,3472,1230,'D'), (1,5,2480,1340,'C'), (1,1,4089,1992,'D'), (2,8,1625,1046,'H');
@@ -168,5 +167,4 @@ select * from (select /*+ recompile INDEX_SS */ i,j,k,l from t where j is not nu
 
 drop table t;
 commit;
-set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;

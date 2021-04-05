@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 set names utf8;
 create table t (col1 varchar(10) collate utf8_km_exp DEFAULT NULL, col2 varchar(10) collate utf8_km_exp); 
 INSERT INTO t  VALUES('ក', UPPER(' ', 'ក'));
@@ -44,7 +43,6 @@ select /*+ recompile */* from t using index none order by col1 desc;
 
 drop t;
 set names iso88591;
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;
 

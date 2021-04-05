@@ -1,6 +1,5 @@
 --+ holdcas on;
 -- more complex test for ORDER BY skipping (with plan dump)
-set  system parameters 'dont_reuse_heap_file=yes';
 CREATE TABLE t (i int not null, j int, k int, s string);
 
 CREATE INDEX i_t_i_d_j_d ON t(i desc, j desc);
@@ -45,5 +44,4 @@ SELECT * FROM t WHERE k = 0 and j > 0 ORDER BY j desc;
 SELECT * FROM t WHERE i > 0 AND j = 63586 ORDER BY i desc, j, k, s;
 
 DROP TABLE t;
-set  system parameters 'dont_reuse_heap_file=no';commit;
 --+ holdcas off;

@@ -1,4 +1,3 @@
-set system parameters 'dont_reuse_heap_file=yes';
 
 drop table if exists t1,t2;
 
@@ -56,4 +55,3 @@ select /*+ recompile */ * from t1 , t2 where t1.i=t2.i and t1.j=t2.j;
 drop table t2;
 drop table t1;
 
-set system parameters 'dont_reuse_heap_file=no';

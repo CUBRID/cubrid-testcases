@@ -1,7 +1,6 @@
 --TEST: [Multi-table Update] The update result is incorrect when joining a table with itself.
 
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 create table t1(a int);
 insert into t1 values(1), (2), (3), (4);
 
@@ -33,7 +32,6 @@ select * from t1;
 --select * from t1;
 
 drop table t1;
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;
 

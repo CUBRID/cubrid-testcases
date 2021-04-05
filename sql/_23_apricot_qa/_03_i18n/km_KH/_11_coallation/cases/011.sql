@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 set names utf8;
 create class t1(
 col1 string collate binary, 
@@ -30,7 +29,6 @@ SELECT /*+ recompile */col4 FROM t1 order by col4;
 
 drop class t1;
 set names iso88591;
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;
 

@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table ai (i integer auto_increment);
 insert into ai values(null);
@@ -38,6 +37,5 @@ select /*+ recompile */ e2, e3 from t order by e2, e3;
 select /*+ recompile */ * from t order by e1, e2, e3, e4;
 
 drop table t;
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

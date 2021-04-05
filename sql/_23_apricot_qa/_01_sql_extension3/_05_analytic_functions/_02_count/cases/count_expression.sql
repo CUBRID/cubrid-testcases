@@ -1,6 +1,5 @@
 --using single/multiple expressions in partition by and order by clause
 --+holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table c_expression(
 	col1 int auto_increment primary key,
@@ -79,7 +78,6 @@ select col3, col4, clob_to_char(col5), count(*) over(partition by col1-col2, col
 
 delete from c_expression;
 drop table c_expression;
-set system parameters 'dont_reuse_heap_file=no';
 --+holdcas off;
 
 

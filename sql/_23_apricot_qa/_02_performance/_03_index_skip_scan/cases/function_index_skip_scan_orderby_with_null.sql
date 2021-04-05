@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 create table t (i int, j int, k int, l int, s string);
 
 INSERT INTO t values (1,6,565,1346,'J');
@@ -1050,7 +1049,5 @@ select /*+ recompile INDEX_SS */ k from t where k=2 and s <> 'x' order by j desc
 
 
 drop table t;
-set  system parameters 'dont_reuse_heap_file=no';
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

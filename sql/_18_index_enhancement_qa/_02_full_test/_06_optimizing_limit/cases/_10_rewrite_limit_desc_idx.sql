@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table t (i int, j int, s varchar(100));
 
 insert into t values (1,9,'one');
@@ -34,6 +33,5 @@ set system parameters 'xasl_debug_dump=no';
 
 drop table t;
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

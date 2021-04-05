@@ -1,6 +1,5 @@
 --+ holdcas on;
 --1. Create the following table and indexes.
-set  system parameters 'dont_reuse_heap_file=yes';
 create table x (a int primary key, b int, c int, d int);
 
 insert into x select rownum, rownum/100+1, rownum/100+1, rownum%100 from db_class c1,db_class c2, db_class c3  limit 20000;
@@ -24,6 +23,5 @@ update statistics on x with fullscan;
 select /*+ recompile */ * from x where a = 1 and d = 1;
 
 drop table x;
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;
