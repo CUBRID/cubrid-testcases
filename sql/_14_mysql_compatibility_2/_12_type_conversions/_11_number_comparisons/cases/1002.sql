@@ -162,4 +162,5 @@ select * from t where i = '2' order by i;
 select * from t where i between 1 and 4 order by i;
 select * from t where i in (1, 2, 3) order by i;
 drop table t;
+commit;
 --+ holdcas off;

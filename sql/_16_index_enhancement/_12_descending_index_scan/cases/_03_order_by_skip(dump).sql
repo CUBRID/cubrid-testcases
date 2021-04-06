@@ -48,4 +48,5 @@ SELECT j, i, s FROM t WHERE j > 0 ORDER BY j DESC, i;
 SELECT /*+ use_desc_idx */ * FROM t WHERE i > 0;
 
 DROP TABLE t;
+commit;
 --+ holdcas off;

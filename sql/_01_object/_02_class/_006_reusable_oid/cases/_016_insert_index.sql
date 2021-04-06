@@ -86,4 +86,5 @@ insert into foo select a+100, b+100 from foo order by a+10;
 select /*+ USE_IDX */ * from foo where a > 0 order by 1;
 
 drop table foo;
+commit;
 --+ holdcas off;

@@ -22,4 +22,5 @@ using index i_foo_a_b_c_d_d_d
 order by c desc, d desc limit 1;
 
 drop table foo;
+commit;
 --+ holdcas off;

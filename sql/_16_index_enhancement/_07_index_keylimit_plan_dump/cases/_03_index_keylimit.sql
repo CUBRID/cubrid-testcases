@@ -4057,4 +4057,5 @@ drop table tab2;
 drop table tab3;
 drop table test_table;
 drop table t1;
+commit;
 --+ holdcas off;

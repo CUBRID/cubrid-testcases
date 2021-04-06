@@ -124,4 +124,5 @@ from foo
 where i < 0 and i > 10
 
 drop foo;
+commit;
 --+ holdcas off;

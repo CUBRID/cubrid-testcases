@@ -44,4 +44,5 @@ SELECT * FROM t WHERE k = 0 and j > 0 ORDER BY j desc;
 SELECT * FROM t WHERE i > 0 AND j = 63586 ORDER BY i desc, j, k, s;
 
 DROP TABLE t;
+commit;
 --+ holdcas off;

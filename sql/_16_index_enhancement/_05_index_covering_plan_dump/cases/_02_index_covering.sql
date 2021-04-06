@@ -44,4 +44,5 @@ drop table tbl;
 drop table d1;
 drop table d2;
 drop table d3;
+commit;
 --+ holdcas off;

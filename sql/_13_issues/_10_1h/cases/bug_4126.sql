@@ -72,4 +72,5 @@ insert into z values(14,14,14,14);
 update statistics on z;
 select /*+ recompile */ * from z where a = 5 and b = 5;
 drop table z;
+commit;
 --+ holdcas off;
