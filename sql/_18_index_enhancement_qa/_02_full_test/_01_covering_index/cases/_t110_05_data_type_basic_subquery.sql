@@ -89,5 +89,6 @@ select /*+ RECOMPILE */ count(b),10 from t1 where exists (select t1.a) ;
 --TEST: should use i_t1_a2a
 select /*+ RECOMPILE */ count(length(a)),10 from t1 where exists (select t1.a) ;
 
+drop table t1;
 commit;
 --+ holdcas off;

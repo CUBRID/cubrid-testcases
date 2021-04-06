@@ -17,5 +17,6 @@ SELECT /*+ RECOMPILE */ a,b FROM t1 WHERE a>0 ORDER BY a LIMIT 5;
 --TEST: rownum rewrite could not be adopt, but require TOP N sorting
 SELECT /*+ RECOMPILE */ a,b FROM t1 WHERE b=1 ORDER BY a LIMIT 5;
 
+drop table t1;
 commit;
 --+ holdcas off;

@@ -17,6 +17,6 @@ select * from (select /*+ recompile */ * from t where i1 > 0 order by i1 desc fo
 --TEST
 select * from (select /*+ recompile */ * from t where i1 > 0 order by i1, i2, i3 desc for orderby_num() between 3 and 10) t order by 1,2,3;
 
-
+drop table t;
 commit;
 --+ holdcas off;

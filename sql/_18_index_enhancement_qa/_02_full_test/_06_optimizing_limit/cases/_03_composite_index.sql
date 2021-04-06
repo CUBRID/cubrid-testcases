@@ -15,5 +15,6 @@ select /*+ recompile */ * from t where i1 between 1 and 3 and i3 between '00' an
 --TEST
 select /*+ recompile */ * from t where i1 between 1 and 3 and i2 between 2 and 4 and i3 between '00' and '44' limit 6;
 
+drop table t;
 commit;
 --+ holdcas off;

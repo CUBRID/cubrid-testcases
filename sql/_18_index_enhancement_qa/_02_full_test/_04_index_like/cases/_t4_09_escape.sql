@@ -17,5 +17,6 @@ insert into t1 values (9, null, null, null);
 
 select /*+ recompile */ * from t1 where v like '\%%' escape '\';
 
+drop table t1;
 commit;
 --+ holdcas off;

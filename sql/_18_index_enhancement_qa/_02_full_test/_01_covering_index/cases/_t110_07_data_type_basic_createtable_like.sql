@@ -52,5 +52,6 @@ select /*+ RECOMPILE */ g from t2 where g > -1;
 select /*+ RECOMPILE */ q from t2 where q > TIMESTAMP '2010-10-31 01:15:50';
 
 drop table t1;
+drop table t2;
 commit;
 --+ holdcas off;

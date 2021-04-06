@@ -10,5 +10,6 @@ SELECT /*+ RECOMPILE */ a,b FROM t1 WHERE b LIKE '%testing 3' order by a;
 
 SELECT /*+ RECOMPILE */ a,b FROM t1 WHERE b LIKE '%test%' order by a;
 
+DROP TABLE t1; 
 commit;
 --+ holdcas off;

@@ -25,6 +25,6 @@ select /*+ recompile */ * from t1 where v like '__%';
 select /*+ recompile */ * from t1 where v like '____%';
 
 
-
+drop table t1;
 commit;
 --+ holdcas off;

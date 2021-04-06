@@ -124,6 +124,6 @@ PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a from t1'
 --TEST
 execute stmt1
 DEALLOCATE PREPARE stmt1;
-
+drop table t1;
 commit;
 --+ holdcas off;

@@ -58,5 +58,6 @@ select /*+ recompile */ b,c,d from t where b=1 and c>1 and d>0 order by c;
 --should use i_t_bdc
 select /*+ recompile */ b,c,d from t where b=1 and c>1 and d>0 order by d;
 
+drop table t;
 commit;
 --+ holdcas off;
