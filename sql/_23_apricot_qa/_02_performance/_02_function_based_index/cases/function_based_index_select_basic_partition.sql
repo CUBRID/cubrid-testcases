@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 create table t1(  a char(1200),   b varchar(1200),  c nchar(1200),  d NCHAR VARYING(1200),  e BIT(1200),  f BIT VARYING(1200),  g int unique,  h SMALLINT,  i BIGINT,  j NUMERIC,  k FLOAT,  l DOUBLE,  m MONETARY,  n DATE,  o TIME,  p TIMESTAMP,  q DATETIME, primary key(g))
 PARTITION BY RANGE (g)
 (PARTITION before_10 VALUES LESS THAN (10),
@@ -36,6 +35,5 @@ select /*+ recompile */ * from t1 where log10(l)>0 order by 1 ;
 
 drop table t1;
 
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

@@ -1,6 +1,5 @@
 --TEST: test with bit strings and blob/clob data types and normal syntax
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table max_bbc(
 	col1 bit(20),
@@ -103,7 +102,6 @@ select col1, col2, max(distinct col5) over(order by col1, col2 partition by col2
 
 delete from max_bbc;
 drop table max_bbc; 
-set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;
 
 

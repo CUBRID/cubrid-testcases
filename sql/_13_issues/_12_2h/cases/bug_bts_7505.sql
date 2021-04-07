@@ -1,5 +1,4 @@
 --TEST:  [index skip scan] ISS depends on selected columns
-set system parameters 'dont_reuse_heap_file = yes';
 
 drop table if exists t1;
 
@@ -35,4 +34,3 @@ select /*+ recompile INDEX_SS */ a,b,c	 from t1 where b=10 order by a,c limit 1;
 
 drop table t1;
 
-set system parameters 'dont_reuse_heap_file = no';

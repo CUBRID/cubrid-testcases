@@ -1,6 +1,5 @@
 --combination with group by ... having clause
 --+holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table stddev_samp_groupby(
 	col1 int auto_increment primary key,
@@ -86,6 +85,5 @@ select col1, col2, col3, col4, clob_to_char(col5), stddev_samp(col6) over(partit
 
 delete from stddev_samp_groupby;
 drop table stddev_samp_groupby;
-set system parameters 'dont_reuse_heap_file=no';
 --+holdcas off;
 

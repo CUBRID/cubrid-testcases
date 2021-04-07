@@ -1,4 +1,3 @@
-set system parameters 'dont_reuse_heap_file=yes';
 drop if exists t;
 create table t (i int not null, j int, k int, l int, s string);
 INSERT INTO t values (2,3,3876,1770,'H'), (0,9,982,1919,'J'), (2,3,4282,1453,'I'), (0,7,197,1679,'B'), (0,9,134,1909,'E'), (1,1,908,1293,'A'), (2,2,3772,1586,'F'), (1,6,111,1862,'D'), (0,6,2694,1908,'F'), (2,4,1238,1457,'G');
@@ -50,4 +49,3 @@ select * from t;
 drop table t;
 commit;
 drop if exists t;
-set system parameters 'dont_reuse_heap_file=no';

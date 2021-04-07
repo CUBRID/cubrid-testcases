@@ -1,4 +1,3 @@
-set system parameters 'dont_reuse_heap_file=yes';
 drop table if exists sinfo;
 drop table if exists sscore;
 drop table if exists scourse;
@@ -133,5 +132,4 @@ b.v, f.*, b.*
 from bar b join foo f on f.i=b.i and f.j=b.i and f.k=b.k;
 
 drop foo,bar;
-set system parameters 'dont_reuse_heap_file=no';
 

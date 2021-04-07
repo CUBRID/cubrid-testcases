@@ -1,6 +1,5 @@
 --TEST: test with a table with a superclass 
 --+holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table avg_super(
 	col1 bit(20),
@@ -107,7 +106,6 @@ select col1, col2, avg(distinctrow col5) over(order by col1, col2 partition by c
 delete from avg_bbc;
 drop table avg_super;
 drop table avg_bbc; 
-set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;
 
 

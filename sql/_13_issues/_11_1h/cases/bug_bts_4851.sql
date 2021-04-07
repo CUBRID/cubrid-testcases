@@ -1,6 +1,5 @@
 --+ holdcas on;
 
-set  system parameters 'dont_reuse_heap_file=yes';
 create table t (i1 int, i2 int, i3 int);
 create index i_t_123 on t(i1, i2, i3);
 insert into t values (0, 0, 00), (0, 1, 01), (0, 2, 02), (0, 3, 03), (0, 4, 04);
@@ -17,7 +16,6 @@ select /*+ recompile */ * from t where i1=0 and i2 in (0,1,2,3,4,5) using index 
 
 
 drop table t;
-set  system parameters 'dont_reuse_heap_file=no';
 
 commit;
 

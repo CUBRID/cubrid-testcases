@@ -1,6 +1,5 @@
 -- set state
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 -- create tables
 create table ta (id int, v string);
@@ -73,6 +72,5 @@ drop table ta;
 drop table tb;
 
 -- restore state
-set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;
 commit;

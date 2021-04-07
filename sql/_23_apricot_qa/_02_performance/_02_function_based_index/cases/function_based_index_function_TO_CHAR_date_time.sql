@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 create table t1(a char(1200),   b varchar(1200),  c nchar(1200),  d NCHAR VARYING(1200),  e BIT(1200),  f BIT VARYING(1200),  g int,  h SMALLINT,  i BIGINT,  j NUMERIC,  k FLOAT,  l DOUBLE,  m MONETARY,  n DATE,  o TIME,  p TIMESTAMP,  q DATETIME);
 
 insert into t1 values (
@@ -67,6 +66,5 @@ create index i_t1_a2a on t1(to_char(q,'HH24:MI, DD, MONTH, YYYY'));
 --TEST: should use index i_t1_a2a
 select /*+ RECOMPILE */* from t1 where to_char(q,'HH24:MI, DD, MONTH, YYYY')) <='04:50:11:000 pm, 2010-02-04-THURSDAY ' ;
 drop table t1;
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

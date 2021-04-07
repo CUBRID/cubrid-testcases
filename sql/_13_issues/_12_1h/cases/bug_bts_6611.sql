@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 CREATE TABLE bugs
 (
@@ -62,7 +61,6 @@ SELECT * FROM bugs
 SET OPTIMIZATION LEVEL 1;
 
 --+ holdcas off;
-set system parameters 'dont_reuse_heap_file=no';
 drop bugs;
 drop index open_bugs on bugs;
 commit;

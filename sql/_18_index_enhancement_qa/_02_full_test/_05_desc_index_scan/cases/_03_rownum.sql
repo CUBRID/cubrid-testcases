@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table tb (id int primary key, a INT, b VARCHAR(10));
 insert into tb values (1,1,'1');
 insert into tb values (2,2,'2');
@@ -52,6 +51,5 @@ select /*+ recompile use_desc_idx */ * from tb where b between '4' and '4' and r
 select /*+ recompile use_desc_idx */ * from tb where b between '4' and '4' and rownum between 1 and 3 using index i_tb_b;
 
 drop table tb;
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

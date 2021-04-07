@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table t (i1 int, i2 int, i3 varchar(10));
 insert into t values (null, null, null);
 insert into t values (0, 0, '00'), (0, 1, '01'), (0, 2, '02'), (0, 3, '03'), (0, 4, '04');
@@ -18,7 +17,6 @@ select * from (select /*+ recompile */ * from t where i1 > 0 order by i1 desc fo
 --TEST
 select * from (select /*+ recompile */ * from t where i1 > 0 order by i1, i2, i3 desc for orderby_num() between 3 and 10) t order by 1,2,3;
 
-
-drop table t;set system parameters 'dont_reuse_heap_file=no';
+drop table t;
 commit;
 --+ holdcas off;

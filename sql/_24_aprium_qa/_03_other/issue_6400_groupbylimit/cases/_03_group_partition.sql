@@ -1,4 +1,3 @@
-set system parameters 'dont_reuse_heap_file=yes';
 
 drop table if exists t;
 
@@ -30,4 +29,3 @@ select /*+ recompile */ i,j,k,l,m,n,avg(n) from t where n > 10 and n < 110 group
 
 drop table t;
 
-set  system parameters 'dont_reuse_heap_file=no';

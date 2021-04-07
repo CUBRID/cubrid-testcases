@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 drop if exists t,s; 
 
@@ -67,5 +66,4 @@ select * from s order by 1;
 drop table t,s;
 drop v;
 commit;
-set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;

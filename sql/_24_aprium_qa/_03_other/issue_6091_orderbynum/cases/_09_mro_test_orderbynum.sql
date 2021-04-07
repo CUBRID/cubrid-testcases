@@ -1,6 +1,5 @@
 --+ holdcas on;
 
-set  system parameters 'dont_reuse_heap_file=yes';
 
 drop table if exists t,s,u;
 
@@ -74,7 +73,6 @@ select * from a_tbl order by id for ORDERBY_NUM() >1000 and  ORDERBY_NUM() < 10;
 --select min(a.id) from a_tbl a order by id for ORDERBY_NUM() >1000 and  ORDERBY_NUM() < 10;
 
 drop b_tbl,a_tbl;
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;
 

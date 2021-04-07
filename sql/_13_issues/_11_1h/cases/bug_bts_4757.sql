@@ -1,6 +1,5 @@
 --+ holdcas on;
 
-set  system parameters 'dont_reuse_heap_file=yes';
 create table tb (id int primary key, a INT);
 insert into tb values (1,1);
 insert into tb values (2,2);
@@ -19,7 +18,6 @@ select /*+ recompile USE_DESC_IDX */ * from tb where a between 2 and 4;
 
 
 drop table tb;
-set  system parameters 'dont_reuse_heap_file=no';
 
 commit;
 

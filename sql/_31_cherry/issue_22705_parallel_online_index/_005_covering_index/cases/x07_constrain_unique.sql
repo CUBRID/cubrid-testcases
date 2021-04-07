@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table tb (a int unique, b int);
 create index i_tb_all on tb(a,b) with online parallel 3;
 create index i_tb_b on tb(b) with online parallel 3;
@@ -16,6 +15,5 @@ select /*+ recompile */ b from tb where b >0;
 
 drop table tb;
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

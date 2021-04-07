@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 create table t1 (i1 int, i2 int, date_col date);
 
 create index idx on t1 (year(date_col));
@@ -94,6 +93,5 @@ drop index idx on t1;
 drop table t1;
 
 
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

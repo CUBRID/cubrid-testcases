@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 CREATE TABLE t1 (
    a  INT NOT NULL,
    b  VARCHAR(40) NOT NULL,
@@ -27,6 +26,5 @@ select /*+ RECOMPILE */ a,b,c from t2 order by a,b,c;
 
 drop table t1;
 drop table t2;
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

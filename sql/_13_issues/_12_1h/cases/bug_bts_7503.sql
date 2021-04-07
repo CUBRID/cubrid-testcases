@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table t1 (a int, b int, c int);
 insert into t1 select rownum%2, rownum,rownum from db_class a, db_class b, db_class c, db_class d limit 100000;
@@ -12,7 +11,6 @@ select /*+ recompile INDEX_SS */ * from t1 where b=@x;
 drop variable @x;
 drop table t1;
 
-set system parameters 'dont_reuse_heap_file=no';
 
 
 --+ holdcas off;

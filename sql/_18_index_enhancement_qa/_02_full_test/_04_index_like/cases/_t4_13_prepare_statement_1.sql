@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table t (a varchar(10));
 
 create index i_t_a on t(a);
@@ -14,6 +13,5 @@ deallocate prepare stmt;
 
 drop table t;
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

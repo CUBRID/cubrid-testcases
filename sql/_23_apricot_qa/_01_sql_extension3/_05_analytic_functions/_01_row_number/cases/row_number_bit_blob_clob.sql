@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 --TEST: test with bit strings and blob/clob data types and normal syntax
 
@@ -110,7 +109,6 @@ select col1, col2, row_number() over(order by col1, col2 partition by col2) from
 delete from rownum_bbc;
 
 drop table rownum_bbc; 
-set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;
 
 

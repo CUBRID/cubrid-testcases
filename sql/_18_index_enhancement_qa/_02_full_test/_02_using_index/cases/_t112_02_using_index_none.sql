@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table t1(col1 int, col2 varchar(100), col3 DATE, col4 MONETARY, col5 float, col6 char(1));
 create table t2(col1 int, col2 varchar(100), col3 DATE, col4 MONETARY, col5 float, col6 char(1));
 
@@ -79,6 +78,5 @@ delete from t2 where col1=7 using index t2.none, t2.idx_t2_col1;
 drop table t1,t2;
 
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

@@ -1,6 +1,5 @@
 --TEST: [Function Based Index] Function based index cannot be used when the IN expression contains a subquery
 
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table t(a char(10));
 create index i1 on t(upper(a));
@@ -24,4 +23,3 @@ select /*+ recompile */ * from t where upper(a) >= all(select upper(a) from t wh
 
 
 drop table t;
-set system parameters 'dont_reuse_heap_file = no';

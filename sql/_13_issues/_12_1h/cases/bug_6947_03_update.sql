@@ -1,5 +1,4 @@
 autocommit off;
-set system parameters 'dont_reuse_heap_file = yes';
 
 -- create and populate tables
 create table t (i int, j int);
@@ -140,6 +139,5 @@ drop view vt, vu, vv;
 drop table t, u, v;
 commit;
 
-set system parameters 'dont_reuse_heap_file = no';
 commit;
 autocommit on;

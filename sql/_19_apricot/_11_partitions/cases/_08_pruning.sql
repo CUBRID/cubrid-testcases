@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table a (i int auto_increment);
 
@@ -165,7 +164,6 @@ insert into t values(7);
 
 drop table t;
 
-set system parameters 'dont_reuse_heap_file=no';
 
 commit;
 --+ holdcas off;

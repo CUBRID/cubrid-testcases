@@ -1,6 +1,5 @@
 --
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table t1(i int, e1 enum ('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'));
 insert into t1 values (1, 1), (3, 3), (2, 'Monday'), (6, 'Friday'), (7, 7), (4, 4), (5, 5);
@@ -33,6 +32,5 @@ select /*+ recompile */ e1 from t1 where not e1 in (select s from t2 where t2.s 
 
 drop table t1;
 drop table t2;
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table a (i int auto_increment primary key);
 
@@ -210,6 +209,5 @@ drop table t__p__p3600;
 
 drop table a;
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

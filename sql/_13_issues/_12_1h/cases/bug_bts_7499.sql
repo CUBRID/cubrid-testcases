@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table foo (id int not null, treeid int, age int, text char(8192));
 
@@ -17,7 +16,6 @@ set optimization level 513;
 
 select /*+ RECOMPILE */ id, age from foo where id > 0;
 
-set system parameters 'dont_reuse_heap_file=no';
 set optimization level 1;
 drop foo;
 commit;

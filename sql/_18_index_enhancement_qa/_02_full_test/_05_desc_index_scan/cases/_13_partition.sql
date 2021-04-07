@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 
 CREATE TABLE participant2 (host_year INT, nation CHAR(3), gold INT, silver INT, bronze INT)
@@ -36,6 +35,5 @@ select /*+ recompile use_desc_idx */ nation from participant2 where nation>='A' 
 
 
 drop table participant2;
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

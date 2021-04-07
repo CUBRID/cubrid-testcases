@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 CREATE TABLE t1 (
    a  INT NOT NULL,
    b  VARCHAR(40) NOT NULL,
@@ -45,6 +44,5 @@ delete from t1 where a>0 and c='085' using index idx_t1_ac kEyLiMiT 2,4 limit 1,
 select /*+ RECOMPILE */ a,b,c from t1 order by 1,2,3;
 
 drop table t1;
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

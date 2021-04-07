@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 create table t1 (i int, d double);
 --Test
 create index idx on t1 (sqrt(d));
@@ -44,6 +43,5 @@ select /*+ recompile */ * from t1 where i < 20 using index idx2(+);
 
 drop table t1;
 
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

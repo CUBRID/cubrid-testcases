@@ -1,4 +1,3 @@
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table t1(a int , b int);
 create table t2(a int , b int);
@@ -244,5 +243,4 @@ drop table t3;
 
 
 
-set system parameters 'dont_reuse_heap_file=no';
 

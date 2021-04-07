@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table t(a int, b varchar(10) not null, c char(10) not null);
 
 insert into t values (1, 'AA', 'AA1');
@@ -43,6 +42,5 @@ deallocate prepare stmt;
 
 drop table t;
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

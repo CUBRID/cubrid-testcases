@@ -2,7 +2,6 @@
 
 --+ holdcas on;
 
-set system parameters 'dont_reuse_heap_file=yes';
 drop table if exists t;
 create table t (i1 varchar(20), i2 char(20), i3 varchar(20));
 create index i_t_123 on t(i1, i2, i3);
@@ -25,10 +24,8 @@ select /*+ recompile */ * from t where i1=0 and i2 in (0,1,2,3,4,5) using index 
 select /*+ recompile */ * from t where i1=0 and i2 in ('0','1','2','3','4','5') using index i_t_123 keylimit 1 order by i3 for orderby_num()<=3;
 
 drop table t;
-set  system parameters 'dont_reuse_heap_file=no';
 
 commit;
 
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

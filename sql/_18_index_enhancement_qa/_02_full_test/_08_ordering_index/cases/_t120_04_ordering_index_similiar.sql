@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 CREATE TABLE tree(ID INT, MgrID INT, Name VARCHAR(32), BirthYear INT);
  
 INSERT INTO tree VALUES (1,NULL,'Kim', 1963);
@@ -59,6 +58,6 @@ select /*+ recompile */ b,c,d from t where b=1 and c>1 and d>0 order by c;
 --should use i_t_bdc
 select /*+ recompile */ b,c,d from t where b=1 and c>1 and d>0 order by d;
 
-drop table t;set system parameters 'dont_reuse_heap_file=no';
+drop table t;
 commit;
 --+ holdcas off;

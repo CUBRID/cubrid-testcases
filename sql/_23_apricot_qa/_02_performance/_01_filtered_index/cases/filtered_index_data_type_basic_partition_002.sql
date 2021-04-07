@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 /* test for partial indexes on partitioned tables */
 create table part
     (
@@ -115,6 +114,5 @@ select /*+ recompile */ * from part
     where textlabel like '%$_%' escape '$' or textlabel like '%3%' or textlabel like '%-%' or textlabel like '%~%';
 drop table part;
 
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

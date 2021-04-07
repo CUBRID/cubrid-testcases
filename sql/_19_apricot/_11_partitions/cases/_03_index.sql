@@ -1,6 +1,5 @@
 --
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table tpr(i int)
 partition by range (i)(
@@ -27,7 +26,6 @@ select /*+ recompile */ * from tpr__p__p_10 where i > 5 order by 1;
 select /*+ recompile */ * from tpr__p__p_20 where i > 15 order by 1;
 select /*+ recompile */ * from tpr__p__p_30 where i > 25 order by 1;
 select /*+ recompile */ * from tpr__p__p_100 where i > 35 order by 1;
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;
 drop table tpr;

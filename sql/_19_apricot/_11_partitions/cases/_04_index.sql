@@ -1,6 +1,5 @@
 --
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table tph(i int)
 partition by hash (i)
@@ -38,6 +37,5 @@ select /*+ recompile */ * from tph__p__p8 where i > 0 order by 1;
 select /*+ recompile */ * from tph__p__p9 where i > 0 order by 1;
 
 drop table tph;
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

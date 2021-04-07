@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table t1(col1 int, col2 varchar(100), col3 DATE, col4 MONETARY, col5 float, col6 char(1));
 create table t2(col1 int, col2 varchar(100), col3 DATE, col4 MONETARY, col5 float, col6 char(1));
 
@@ -44,6 +43,5 @@ select /*+ RECOMPILE */ t1.col1,t2.col6 from t1,t2 where t1.col1>0 and t2.col6 i
 
 
 drop table t1,t2;
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

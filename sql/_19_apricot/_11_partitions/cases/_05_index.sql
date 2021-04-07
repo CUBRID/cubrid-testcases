@@ -1,6 +1,5 @@
 --
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table tpl(i int)
 partition by list (i)(
@@ -26,6 +25,5 @@ select /*+ recompile */ * from tpl__p__mul_3 where i > 0 order by 1;
 select /*+ recompile */ * from tpl__p__pow_4 where i > 0 order by 1;
 
 drop table tpl;
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 
 create table tbl1(a int, b int, c int, d int);
 create index idx1 on tbl1(a, b);
@@ -1016,7 +1015,6 @@ drop tbl1;
 
 commit;
 
-set  system parameters 'dont_reuse_heap_file=no';
 
 
 commit;

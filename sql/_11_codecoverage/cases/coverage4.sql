@@ -9,7 +9,6 @@
 --set optimization level off;
 
 autocommit off;
-set system parameters 'dont_reuse_heap_file=yes';
 get optimization cost 'iscan' into :default_iscan;
 
 get optimization level into :l;
@@ -310,7 +309,6 @@ drop aaa;
 set optimization cost 'iscan' :default_iscan;
 get optimization cost 'iscan' into :xxx;
 select :xxx;
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 autocommit on;
 

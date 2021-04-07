@@ -1,6 +1,5 @@
 -- setup
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 -- create tables
 create table ai (j int, k int, l int, s int);
@@ -65,6 +64,5 @@ select /*+ recompile INDEX_SS */ i, j, k, l from a where j > 1023 and k > 1023 o
 
 -- cleanup
 drop table ai, a;
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

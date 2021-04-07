@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 drop if exists t,s; 
 
@@ -152,6 +151,5 @@ select * from tt order by 1;
 drop table if exists t,s,tt; 
 
 commit;
-set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;
 

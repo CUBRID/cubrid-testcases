@@ -1,6 +1,5 @@
 
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 --combination with group by ... having clause
 
 
@@ -88,5 +87,4 @@ select col1, col2, col3, col4, clob_to_char(col5), dense_rank() over(partition b
 delete from drank_groupby;
 drop table drank_groupby;
 
-set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;

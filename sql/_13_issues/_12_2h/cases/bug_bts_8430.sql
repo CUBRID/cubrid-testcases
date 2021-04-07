@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 --case 1
 create table a (i int primary key, j int);
 insert into a values(1,1);
@@ -27,7 +26,6 @@ SET OPTIMIZATION LEVEL 1;
 drop trigger t1;
 drop t1;
 drop t2;
-set  system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;
 commit;
 

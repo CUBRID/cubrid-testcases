@@ -1,7 +1,6 @@
 -- tests for CUBRIDSUS-4719
 --+ holdcas on;
 
-set  system parameters 'dont_reuse_heap_file=yes';
 -- VARCHAR
 create table t (a varchar(10));
 
@@ -54,7 +53,6 @@ execute stmt using '123456789';
 
 drop prepare stmt;
 drop t2;
-set  system parameters 'dont_reuse_heap_file=no';
 
 commit;
 

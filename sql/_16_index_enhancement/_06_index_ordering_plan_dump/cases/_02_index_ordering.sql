@@ -1,5 +1,4 @@
 autocommit off;
-set  system parameters 'dont_reuse_heap_file=yes';
 create table t1(id int not null, treeid int, age int, text varchar(32));
 
 insert into t1 values(3,1,0, 'BAA'), 
@@ -4044,6 +4043,5 @@ drop table t1;
 drop table t2;
 drop table test_table;
 drop table test_table2;
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 autocommit on;

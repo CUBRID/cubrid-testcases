@@ -1,6 +1,5 @@
 --TEST:  [FilteredIndex] Actual data in filtered index is not consistent with filtered constains
 
-set system parameters 'dont_reuse_heap_file = yes';
 
 
 CREATE TABLE t1 (a INT, b int, c int);
@@ -29,5 +28,4 @@ select /*+ recompile */ * from t1 using index i_t1_a(+) order by 1, 2;
 
 drop table t1;
 
-set system parameters 'dont_reuse_heap_file = no';
 

@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 CREATE TABLE participant2 (host_year INT, nation CHAR(3), gold INT, silver INT, bronze INT)
 PARTITION BY RANGE (host_year)
@@ -59,6 +58,5 @@ select /*+ recompile */ count(*) from participant2 ignore index (i1) left join t
 drop table participant2;
 drop table t;
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

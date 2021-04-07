@@ -1,6 +1,5 @@
 --+ holdcas on;
 
-set system parameters 'dont_reuse_heap_file=yes';
 create table testt (i1 int , d1 double);
 
 create index idx on testt (sqrt(d1));
@@ -87,6 +86,5 @@ SHOW INDEXES FROM testt;
 drop table testt;
 
 
-set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;
 

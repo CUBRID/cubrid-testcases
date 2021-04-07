@@ -1,4 +1,3 @@
-set system parameters 'dont_reuse_heap_file=yes';
 drop table if exists aaa;
 drop table if exists bbb;
 drop table if exists ccc;
@@ -42,4 +41,3 @@ drop table if exists bbb;
 drop table if exists ccc;
 drop table if exists ddd;
 drop table if exists eee;
-set system parameters 'dont_reuse_heap_file=no';

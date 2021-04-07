@@ -1,5 +1,4 @@
 --+holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 drop if exists t;
 create table t(col1 int auto_increment,col2 clob);
 insert into t(col2) values('cubrid'),('mysql'),('oracle'),('kingbase'),('informix'),('db2');
@@ -48,5 +47,4 @@ select col1,blob_to_bit(col2) ,row_number() over(partition by col1,blob_to_bit(c
 select row_number from (select col1,blob_to_bit(col2) ,row_number() over(partition by blob_to_bit(col2)) row_number from t) order by 1;
 select row_number from (select col1,blob_to_bit(col2) ,row_number() over(partition by blob_to_bit(col2),col1) row_number from t) order by 1;
 drop t;
-set system parameters 'dont_reuse_heap_file=no';
 --+holdcas off;

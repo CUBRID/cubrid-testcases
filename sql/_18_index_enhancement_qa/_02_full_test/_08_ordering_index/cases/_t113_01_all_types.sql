@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table t(col_smallint         SMALLINT DEFAULT 123 NOT NULL,
      col_integer          INTEGER DEFAULT 1234 NOT NULL,
      col_bigint           BIGINT DEFAULT 12345 NOT NULL,
@@ -72,6 +71,5 @@ select /*+ recompile */ *  from t where  col_bit is not null order by col_bit;
 select /*+ recompile */ *  from t where  col_varbit is not null order by col_varbit;
 drop table t;
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

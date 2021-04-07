@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table t (id int, a varchar(20));
 create index i_t_all on t(id,a);
 
@@ -30,6 +29,5 @@ drop table t;
 
 
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

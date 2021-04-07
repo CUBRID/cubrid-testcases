@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table t (i1 int, i2 int, i3 varchar(10));
 insert into t values (null, null, null);
 insert into t values (0, 0, '00'), (0, 1, '01'), (0, 2, '02'), (0, 3, '03'), (0, 4, '04');
@@ -45,6 +44,5 @@ select /*+ recompile */ * from t where i1 between 1 and 3 and rownum%2=0 limit 8
 set system parameters 'xasl_debug_dump=no';
 
 drop table t;
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

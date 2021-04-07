@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 CREATE TABLE blogtopic (topicId INTEGER, postDate DATE, closedDate DATE);
 insert into blogtopic value(1,DATE '2010-01-01',DATE '2010-01-02');
 --test create index successfully
@@ -22,6 +21,5 @@ CREATE INDEX my_filter_index2 ON blogtopic (topicId asc) WHERE LENGTH(topicId)>0
 --test create index successfully 
 CREATE INDEX my_filter_index2 ON blogtopic (topicId desc) WHERE LENGTH(topicId)>0;
 drop table blogtopic;
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

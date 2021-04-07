@@ -1,6 +1,5 @@
 --TEST: test with bit strings and blob/clob data types and normal syntax
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table var_samp_bbc(
 	col1 bit(20),
@@ -102,7 +101,6 @@ select col1, col2, var_samp(distinct col5) over(order by col1, col2 partition by
 delete from var_samp_bbc;
 drop table var_samp_bbc; 
 
-set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;
 
 

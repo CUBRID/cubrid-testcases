@@ -1,5 +1,4 @@
 autocommit off;
-set system parameters 'dont_reuse_heap_file=yes';
 create table foo (a int, b int);
 create table bar (a int, b int);
 create index i_bar_a on bar (a);
@@ -86,6 +85,5 @@ drop table bar;
 
 rollback;
 set optimization level 1;
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 autocommit on;

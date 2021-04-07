@@ -1,6 +1,5 @@
 --TEST: test with bit strings and blob/clob data types and normal syntax
 --+holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table lag_bbc(
 	col1 bit(20),
@@ -106,7 +105,6 @@ select col1, col2, lag(col1) over(order by col1, col2 partition by col2) from la
 delete from lag_bbc;
 
 drop table lag_bbc; 
-set system parameters 'dont_reuse_heap_file=no';
 --+holdcas off;
 
 

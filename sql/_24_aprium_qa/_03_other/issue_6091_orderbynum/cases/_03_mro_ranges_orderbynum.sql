@@ -1,7 +1,6 @@
 -- check multiple range optimization with more than one column on a sigle table
 --+ holdcas on;
 
-set system parameters 'dont_reuse_heap_file=yes';
 
 drop table if exists t;
 create table t (a int, b int, c int, d int, e int);
@@ -108,6 +107,5 @@ select /*+ recompile */ * from t
 
 drop t;
 
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

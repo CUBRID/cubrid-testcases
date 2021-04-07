@@ -1,6 +1,5 @@
 --logical and comparison operators with enum type column and constant values
 
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table oper(id bigint unique auto_increment, t enum('100', '123.45678', 'cubrid', '12:12:12', '2000-10-10', '1998-10-10 12:12:12', '12:12:12 10/10/1998', '18') default 3);
 
@@ -65,5 +64,4 @@ select /*+ RECOMPILE */ * from oper where t != X'17' and t < 'aaa' order by 1;
 
 drop table oper;
 
-set system parameters 'dont_reuse_heap_file=no';
 

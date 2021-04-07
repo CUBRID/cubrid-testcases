@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file = yes';
 
 -- create and populate tables
 create table t (i int, j int);
@@ -80,6 +79,5 @@ drop table t, u, v;
 
 commit;
 
-set system parameters 'dont_reuse_heap_file = no';
 commit;
 --+ holdcas off;

@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 create table t (i integer);
 insert into t values(1);
 insert into t values(2);
@@ -163,5 +162,5 @@ select * from t where i = '2' order by i;
 select * from t where i between 1 and 4 order by i;
 select * from t where i in (1, 2, 3) order by i;
 drop table t;
-set  system parameters 'dont_reuse_heap_file=no';commit;
+commit;
 --+ holdcas off;

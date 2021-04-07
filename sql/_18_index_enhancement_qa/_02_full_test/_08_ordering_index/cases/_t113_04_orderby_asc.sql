@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table t(a int, b int, c int, d int,e int);
 
 create index i_t_abc on t(a,b,c);
@@ -40,6 +39,5 @@ drop table t;
 
 
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

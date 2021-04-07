@@ -1,6 +1,5 @@
 --+ holdcas on;
 
-set  system parameters 'dont_reuse_heap_file=yes';
 create table t (a int, b int, c int, d int, e int);
 create index i_t_abcd on t(a,b,c,d);
 
@@ -15,7 +14,6 @@ select /*+ recompile */ a,b,c,d,count(*) from t where a=1 and b=1 group  by c,d;
 select /*+ recompile */ a,b,c,d,count(*) from t where a=1 and c=1 group  by b,d;
 
 drop table t;
-set  system parameters 'dont_reuse_heap_file=no';
 
 commit;
 

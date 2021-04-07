@@ -1,6 +1,5 @@
 --+ holdcas on;
 --1. PK should be selected if both scanning PK and scanning a non-PK index have the same cost.
-set  system parameters 'dont_reuse_heap_file=yes';
 create table y (a int, b int, c int);
 create index i_y on y (a, c);
 alter table y add primary key (a, b);
@@ -73,5 +72,5 @@ insert into z values(14,14,14,14);
 update statistics on z;
 select /*+ recompile */ * from z where a = 5 and b = 5;
 drop table z;
-set  system parameters 'dont_reuse_heap_file=no';commit;
+commit;
 --+ holdcas off;

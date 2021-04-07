@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 CREATE TABLE tx (col1 int, col2 int, col3 int,col4 int);
 CREATE TABLE ty (col1 int, col2 int, col3 int,col4 int);
 
@@ -25,6 +24,5 @@ SELECT /*+ RECOMPILE */ tx.*,ty.* FROM tx,ty WHERE tx.col1<=10 AND tx.col1=ty.co
 
 DROP TABLE tx,ty;
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

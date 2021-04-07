@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table a(i int, s varchar(255));
 create table b(i int, s varchar(255));
@@ -63,5 +62,4 @@ drop table a;
 drop table b;
 drop table c;
 
-set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;

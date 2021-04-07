@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 --create a table with a large number of incremental values
 create table a (i int auto_increment);
 insert into a (i) values(NULL);
@@ -108,6 +107,5 @@ drop table t;
 
 drop table b;
 drop table a;
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

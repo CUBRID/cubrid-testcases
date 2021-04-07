@@ -1,6 +1,5 @@
 --TEST: test with tables with triggers
 --+holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table stddev_samp_trigger(
 	col1 bit(20),
@@ -125,7 +124,6 @@ select id, str, substr(to_char(stddev_samp(id) over(partition by str order by id
 delete from stddev_samp_trigger;
 drop trigger aft_ins;
 drop table stddev_samp_trigger, stddev_samp_action; 
-set system parameters 'dont_reuse_heap_file=no';
 --+holdcas off;
 
 

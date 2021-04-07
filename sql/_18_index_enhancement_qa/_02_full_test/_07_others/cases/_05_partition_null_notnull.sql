@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table t1(a int)
 PARTITION BY RANGE (a)
 (PARTITION before_10 VALUES LESS THAN (10),
@@ -19,6 +18,5 @@ select /*+ recompile */ * from t1 where a is null or a is not null order by a as
 
 drop table t1;
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

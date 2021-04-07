@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table t (i1 int, i2 int, i3 int);
 insert into t values (null, null, null);
 insert into t values (0, 0, 00), (0, 1, 01), (0, 2, 02), (0, 3, 03), (0, 4, 04);
@@ -69,6 +68,5 @@ select * from (select /*+ recompile */ * from t where i2+1 between 1 and 2 limit
 set system parameters 'xasl_debug_dump=no';
 
 drop table t;
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

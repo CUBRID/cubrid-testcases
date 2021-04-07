@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table t (a int, b int,c int, d int);
 insert into t values (1,1,1,1);
 insert into t values (2,2,2,2);
@@ -11,6 +10,5 @@ select /*+ recompile */ * from t where a>0 and b=2 order by a,c;
 update /*+ recompile */t set d=1 where a>0 and b=2 order by a,c;
 
 drop table t;
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

@@ -1,6 +1,5 @@
 --+ holdcas on;
 
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table t(id int, val int, fk int);
 create table u(id int, val int, text string);
@@ -73,7 +72,6 @@ where
 drop table t;
 drop table u;
 
-set system parameters 'dont_reuse_heap_file=no';
 
 commit;
 

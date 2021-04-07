@@ -1,7 +1,6 @@
 -- covering index - ascending index
 --+ holdcas on;
 
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table t1 (i1 int, i2 int, i3 int);
 
@@ -171,7 +170,6 @@ select /*+ recompile */ posts.title, posts.category, posts.entry_date from	posts
 drop table users;
 drop table posts;
 
-set system parameters 'dont_reuse_heap_file=no';
 
 commit;
 --+ holdcas off;

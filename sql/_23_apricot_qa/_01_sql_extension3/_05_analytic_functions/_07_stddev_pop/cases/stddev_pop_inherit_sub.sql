@@ -1,6 +1,5 @@
 --TEST: test with a table with a superclass 
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table stddev_pop_super(
 	col1 bit(20),
 	col2 bit varying
@@ -106,7 +105,6 @@ select col1, col2, stddev_pop(distinctrow col5) over(order by col1, col2 partiti
 delete from stddev_pop_bbc;
 drop table stddev_pop_super;
 drop table stddev_pop_bbc; 
-set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;
 
 

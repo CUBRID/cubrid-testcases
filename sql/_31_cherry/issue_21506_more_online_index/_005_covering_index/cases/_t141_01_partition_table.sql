@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table t( i int, a varchar(10))
 PARTITION BY RANGE (i)
 (PARTITION before_10 VALUES LESS THAN (10),
@@ -31,6 +30,5 @@ select /*+ recompile ordered */ t.a,s.a  from t,s where t.a=s.a and t.a>'t-1' or
 drop table t;
 drop table s;
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

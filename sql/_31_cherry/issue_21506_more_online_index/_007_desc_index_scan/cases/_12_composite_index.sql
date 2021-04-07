@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 set system parameters 'compat_mode=mysql';
 
 create table tb (id int primary key, a int, b varchar(10));
@@ -38,6 +37,5 @@ select /*+ recompile */ * from tb where a between 1 and 5 and b like '3%' order 
 drop table tb;
 
 set system parameters 'compat_mode=cubrid';
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 --use analytic function in order by/group by/having clause
 
@@ -69,5 +68,4 @@ select col1, col2, dense_rank() over(order by col1, col2), col3 from drank_in_cl
 delete from drank_in_clause;
 drop table drank_in_clause;
 
-set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;

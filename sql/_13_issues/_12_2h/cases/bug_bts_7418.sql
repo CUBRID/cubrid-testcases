@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 drop table if exists t1;
 create table t1 (a int, b string, c datetime);
 create index t1_a on t1 (a);
@@ -42,5 +41,4 @@ select /*+ recompile */ cast (s as string collate 'utf8_en_ci') from t_i where c
 drop table t1;
 drop table t_i;
 commit;
-set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;

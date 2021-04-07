@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file = yes';
 
 drop if exists t,t3,u,v;
 create table t3(i int);
@@ -166,7 +165,6 @@ drop table if exists t3,t, u, v;
 
 commit;
 
-set system parameters 'dont_reuse_heap_file = no';
 
 commit;
 

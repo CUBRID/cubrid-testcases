@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table t (id int);
 insert into t select rownum from db_class a,db_class b,db_class c limit 10000;
 
@@ -16,6 +15,5 @@ set system parameters 'use_orderby_sort_limit=n';
 drop view v;
 drop table t;
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

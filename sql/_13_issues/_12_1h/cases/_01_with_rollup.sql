@@ -1,6 +1,5 @@
 -- set up table
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table t (i int, c char(10), j int);
 insert into t values (1, 'a', 1);
@@ -44,7 +43,6 @@ select i, c, count(j) from t group by i, c with rollup having groupby_num() < 2 
 
 -- cleanup
 drop t;
-set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;
 commit;
 

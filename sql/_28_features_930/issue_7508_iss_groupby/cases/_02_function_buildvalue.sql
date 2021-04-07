@@ -1,5 +1,4 @@
 -- setup
-set system parameters 'dont_reuse_heap_file=yes';
 drop table if exists t;
 
 -- scenario
@@ -200,4 +199,3 @@ select /*+ recompile index_ss */  count(*)        from t where k2 > -1  using in
 
 -- cleanup
 drop t;
-set system parameters 'dont_reuse_heap_file=no';

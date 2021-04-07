@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table t (a int, b varchar(10) not null, c char(10), d timestamp);
 
 create index i_t_b_c_d on t(b,c,d);
@@ -12,6 +11,5 @@ update t set c='1' where c='1' order by b,d;
 
 drop table t;
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

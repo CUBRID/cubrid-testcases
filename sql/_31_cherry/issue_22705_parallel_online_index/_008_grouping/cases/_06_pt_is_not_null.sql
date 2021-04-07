@@ -1,4 +1,3 @@
-set system parameters 'dont_reuse_heap_file=yes';
 create table t (a int, b float, c char(5), d varchar(10), e int);
 create index i_t_abcd on t(a,b,c,d) with online parallel 16;
 
@@ -34,5 +33,4 @@ deallocate prepare stmt;
 
 drop table t;
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;

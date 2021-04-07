@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create class imployees08 (imp08_id int);
 create class aonuses08 (attr imployees08, bonus int);
 create class imp08 (attr imployees08, salary int);
@@ -53,6 +52,5 @@ select attr.imp08_id,bonus from aonuses08 order by 1;
 drop imp08;
 drop imployees08;
 drop aonuses08;
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table t1 (a int,b int,c int);
 create index i_ab on t1(a,b);
 create index i_a on t1(a);
@@ -12,6 +11,5 @@ select /*+ recompile */ count(a) from t1 where a>0;
 select /*+ recompile */ count(a) from t1 where a is not null and a>0;
 drop table t1;
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

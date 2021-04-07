@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 -- create a table to be used for tests --
 create table t(id integer, textlabel varchar(255), description varchar(4096));
 create unique index idx1 on t(id);
@@ -231,6 +230,5 @@ rename table t to table_t;
 show indexes from table_t;
 drop table table_t;
 
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

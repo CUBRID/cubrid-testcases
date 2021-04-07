@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table t(i int primary key, j int);
 
 create table u(i int primary key, j int, k int, foreign key fk_u_t(j) references t(i));
@@ -23,5 +22,4 @@ drop table v;
 drop table u;
 drop table t;
 
-set system parameters 'dont_reuse_heap_file=no';
 

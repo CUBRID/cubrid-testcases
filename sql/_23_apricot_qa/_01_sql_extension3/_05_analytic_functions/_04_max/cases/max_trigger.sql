@@ -1,6 +1,5 @@
 --TEST: test with tables with triggers
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table max_trigger(
 	col1 bit(20),
@@ -128,7 +127,6 @@ select id, str, max(str) over(partition by id order by id) from max_action order
 delete from max_trigger;
 drop trigger aft_ins;
 drop table max_trigger, max_action; 
-set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;
 
 

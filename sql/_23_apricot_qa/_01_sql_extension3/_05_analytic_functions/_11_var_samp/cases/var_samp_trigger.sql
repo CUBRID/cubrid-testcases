@@ -1,5 +1,4 @@
 --TEST: test with tables with triggers
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table var_samp_trigger(
 	col1 bit(20),
@@ -125,7 +124,6 @@ delete from var_samp_trigger;
 drop trigger aft_ins;
 drop table var_samp_trigger, var_samp_action; 
 
-set system parameters 'dont_reuse_heap_file=no';
 
 
 

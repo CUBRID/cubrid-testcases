@@ -1,6 +1,5 @@
 --TEST: test with reuse_oid tables 
 --+holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table dense_rank_bbc(
 	col1 bit(20),
@@ -100,7 +99,6 @@ select col1, col2, dense_rank() over(order by col1, col2 partition by col2) from
 
 
 drop table dense_rank_bbc; 
-set system parameters 'dont_reuse_heap_file=no';
 --+holdcas off;
 
 

@@ -1,6 +1,5 @@
 --using single/multiple expressions in partition by and order by clause
 --+holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table stddev_samp_expression(
 	col1 int auto_increment primary key,
@@ -79,6 +78,5 @@ select col3, col4, clob_to_char(col5), substr(to_char(stddev_samp(unique col1) o
 
 delete from stddev_samp_expression;
 drop table stddev_samp_expression;
-set system parameters 'dont_reuse_heap_file=no';
 --+holdcas off;
 

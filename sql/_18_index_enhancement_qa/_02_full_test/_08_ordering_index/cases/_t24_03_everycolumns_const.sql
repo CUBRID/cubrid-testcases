@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table t(
      col_smallint         SMALLINT NOT NULL,
      col_integer          INTEGER,
@@ -53,6 +52,5 @@ select /*+ recompile */ * from t where col_char_9='' order by col_smallint,col_i
 
 drop table t;
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

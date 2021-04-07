@@ -2,7 +2,6 @@
 
 --+ holdcas on;
 
-set system parameters 'dont_reuse_heap_file=yes';
 create table t (a int, b int, c int, d int, e int);
 
 insert into t select * from
@@ -118,6 +117,5 @@ select /*+ recompile */ * from t
 
 drop t;
 
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

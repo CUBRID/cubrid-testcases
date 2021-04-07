@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 create table t1(a int,b varchar(1000), c varchar(1000), d date);
 create table t2(a int,b varchar(1000), c varchar(1000), d date);
 create table t3(a int,b varchar(1000), c varchar(1000), d date);
@@ -88,6 +87,5 @@ select count(t1.d||t2.d||t3.d||t4.d||t5.d||t6.d||t7.d||t8.d||t9.d||t10.d)
 
 drop table t1,t2,t3,t4,t5,t6,t7,t8,t9,t10;
 
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

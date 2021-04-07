@@ -1,5 +1,4 @@
 --using single/multiple expressions in partition by and order by clause
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table avg_expression(
 	col1 int auto_increment primary key,
@@ -79,4 +78,3 @@ select col3, col4, clob_to_char(col5), avg(unique col1) over(partition by col1-c
 delete from avg_expression;
 drop table avg_expression;
 
-set system parameters 'dont_reuse_heap_file=no';

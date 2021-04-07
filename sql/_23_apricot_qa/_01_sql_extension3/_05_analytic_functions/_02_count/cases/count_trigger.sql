@@ -1,6 +1,5 @@
 --TEST: test with tables with triggers
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table count_trigger(
 	col1 bit(20),
@@ -125,7 +124,6 @@ delete from count_trigger;
 drop trigger aft_ins;
 drop table count_trigger, count_action; 
 
-set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;
 
 

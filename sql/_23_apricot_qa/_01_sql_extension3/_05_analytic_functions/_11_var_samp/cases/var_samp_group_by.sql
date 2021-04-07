@@ -1,6 +1,5 @@
 --combination with group by ... having clause
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table var_samp_groupby(
 	col1 int auto_increment primary key,
 	col2 smallint,
@@ -86,6 +85,5 @@ select col1, col2, col3, col4, clob_to_char(col5), var_samp(col6) over(partition
 delete from var_samp_groupby;
 drop table var_samp_groupby;
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

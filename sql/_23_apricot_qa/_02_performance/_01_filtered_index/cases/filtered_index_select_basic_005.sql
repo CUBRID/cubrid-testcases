@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 create table t1(a int,b char(1000), c varchar(1000), d date);
 insert into t1 values (1,'Y', 'Monday', DATE('2010-10-27'));
 insert into t1 values (2,'N', 'Friday', DATE('2010-10-28'));
@@ -25,6 +24,5 @@ drop table t1;
 
 
 
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

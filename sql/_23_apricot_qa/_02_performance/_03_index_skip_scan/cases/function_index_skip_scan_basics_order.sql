@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 create table t (i int not null, j int, k int, l int, s string);
 INSERT INTO t values (1,6,565,1346,'J');
 INSERT INTO t values (2,8,3717,1294,'B');
@@ -44,6 +43,5 @@ select /*+ recompile */ i,j,k,l from t where j = 10 and k > 4000 and s <> 'x'  o
 select /*+ recompile */ i,j,k,l from t where j = 10 and k > 4000 and s <> 'x'  order by i desc, k desc;
 
 drop table t;
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

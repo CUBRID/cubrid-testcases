@@ -1,6 +1,5 @@
 --using single/multiple expressions in partition by and order by clause
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table drank_expression(
 	col1 int auto_increment primary key,
@@ -78,5 +77,4 @@ select col3, col4, clob_to_char(col5), dense_rank() over(partition by col1-col2,
 
 delete from drank_expression;
 drop table drank_expression;
-set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off; 

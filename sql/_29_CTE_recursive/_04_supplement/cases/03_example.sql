@@ -1,4 +1,3 @@
-set system parameters 'dont_reuse_heap_file=yes';
 drop if exists t;
 create table t (i int not null, j int, k int, l int, s string);
 INSERT INTO t values (0,3,4225,1291,'H'), (0,4,893,1280,'K'), (1,10,1403,1978,'G'), (2,3,3096,1001,'H'), (2,7,4390,1459,'G'), (2,2,1190,1594,'B'), (1,10,4560,1291,'J'), (1,3,616,1419,'B'), (1,6,1026,1724,'C'), (0,9,1152,1644,'E');
@@ -201,4 +200,3 @@ select * from cte_vpBtw1O1e,cte_IB1YDM4bs,cte_XFluxeWjy order by 1 limit 10;
 
 drop table t;
 commit;
-set system parameters 'dont_reuse_heap_file=no';

@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 create table t(a int AUTO_INCREMENT,b int, c int AUTO_INCREMENT);
 create index i_t_a_b on t(a,b);
 create index i_t_a_b_c on t(a,b,c) where b>0;
@@ -19,6 +18,5 @@ update statistics on all classes;
 select /*+ RECOMPILE */ count(*) from t where a>0 and b>0 using index i_t_a_b(+),i_t_a_b_c(+);
 drop table t; 
 
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

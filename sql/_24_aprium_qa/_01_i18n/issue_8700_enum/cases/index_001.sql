@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 drop table if exists ai;
 drop table if exists t;
@@ -40,6 +39,5 @@ select /*+ recompile */ e2, e3 from t order by e2, e3;
 select /*+ recompile */ * from t order by e1, e2, e3, e4;
 
 drop table t;
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

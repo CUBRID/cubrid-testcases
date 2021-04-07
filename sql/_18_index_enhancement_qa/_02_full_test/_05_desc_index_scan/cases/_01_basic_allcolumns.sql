@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table tb (id int primary key, a SHORT);
 insert into tb values (1,1);
 insert into tb values (2,2);
@@ -263,6 +262,5 @@ select /*+ recompile */ * from tb where a between N'01' and N'11' order by a des
 --TEST:
 select /*+ recompile use_desc_idx */ * from tb where a between N'01' and N'11' using index i_tb_a limit 1,3;
 drop table tb;
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

@@ -1,6 +1,5 @@
 --+ holdcas on;
 
-set  system parameters 'dont_reuse_heap_file=yes';
 create table x (a int, b int, c int, d int, e int, f int);
 insert into x values (1,1,1,1,1,1);
 insert into x values (10,10,10,10,10,10);
@@ -14,7 +13,6 @@ select /*+ recompile */ b,d, count(*) from x where a=10 and c=10 group by b,d;
 select /*+ recompile */ b,d,f, count(*) from x where a=10 and c=10 and e=10 group by b,d,f;
 
 drop table x;
-set  system parameters 'dont_reuse_heap_file=no';
 
 commit;
 

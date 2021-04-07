@@ -1,6 +1,5 @@
 --+ holdcas on;
 
-set system parameters 'dont_reuse_heap_file=yes';
 set system parameters 'sort_limit_max_count=5';
 
 create table t (i int primary key);
@@ -39,6 +38,5 @@ execute x using 2, 7;
 drop table u;
 drop table t;
 
-set system parameters 'dont_reuse_heap_file=no';
 set system parameters 'sort_limit_max_count=1000';
 --+ holdcas off;

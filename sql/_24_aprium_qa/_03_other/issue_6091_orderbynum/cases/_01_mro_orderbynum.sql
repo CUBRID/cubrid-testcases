@@ -2,7 +2,6 @@
 -- check multi range optimization with various order by for and limit clause
 --+ holdcas on;
 
-set system parameters 'dont_reuse_heap_file=yes';
 
 drop if exists t,s;
 
@@ -49,6 +48,5 @@ select /*+ recompile */ * from t,s
 
 drop t,s;
 
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;
