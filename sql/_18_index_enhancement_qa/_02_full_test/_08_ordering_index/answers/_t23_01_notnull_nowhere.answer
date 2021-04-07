@@ -1,49 +1,49 @@
 ===================================================
-Error:-494
+0
 ===================================================
-Error:-494
+1
 ===================================================
-Error:-494
+1
 ===================================================
-Error:-494
+1
 ===================================================
-Error:-494
+1
 ===================================================
 0
 ===================================================
 0
 ===================================================
-a    b    c    d    e    
-1     1     1     1     1     
-2     1     1     1     1     
-3     2     2     2     2     
-4     3     3     3     3     
+a    b    c    
+1     AA     AA             
+2     AB     AB             
+3     AC     AC             
+4     BB     BB             
 
 Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t node[?]
-                 cost:  ? card ?
+iscan
+    class: t node[?]
+    index: i_t_a 
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t.a, t.b, t.c, t.d, t.e from t t order by ?
+select t.a, t.b, t.c from t t order by ?
+/* ---> skip ORDER BY */
 ===================================================
-a    b    c    d    e    
-1     1     1     1     1     
-2     1     1     1     1     
-3     2     2     2     2     
-4     3     3     3     3     
+a    b    c    
+1     AA     AA             
+2     AB     AB             
+3     AC     AC             
+4     BB     BB             
 
 Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t node[?]
-                 cost:  ? card ?
+iscan
+    class: t node[?]
+    index: i_t_ab 
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.a, t.b, t.c, t.d, t.e from t t order by ?, ?
+select t.a, t.b, t.c from t t order by ?, ?
+/* ---> skip ORDER BY */
 ===================================================
 0
 ===================================================

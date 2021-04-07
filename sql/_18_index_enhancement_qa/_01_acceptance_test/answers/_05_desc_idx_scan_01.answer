@@ -1,13 +1,53 @@
 ===================================================
-Error:-494
+0
 ===================================================
 20
 ===================================================
 0
 ===================================================
-Error:-494
+a    d    
+15     record-15     
+14     record-14     
+13     record-13     
+12     record-12     
+11     record-11     
+10     record-10     
+9     record-9     
+8     record-8     
+7     record-7     
+6     record-6     
+5     record-5     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx_t?_a term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.d from t? t? where (t?.a>= ?:?  and t?.a<= ?:? ) order by ? desc 
+/* ---> skip ORDER BY */
 ===================================================
-Error:-494
+a    d    
+15     record-15     
+14     record-14     
+13     record-13     
+12     record-12     
+11     record-11     
+10     record-10     
+9     record-9     
+8     record-8     
+7     record-7     
+6     record-6     
+5     record-5     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx_t?_a term[?] (desc_index forced)
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ t?.a, t?.d from t? t? where (t?.a>= ?:?  and t?.a<= ?:? ) using index t?.idx_t?_a
 ===================================================
 0
 ===================================================
