@@ -56,5 +56,6 @@ select sum(a*b*c*d*e) from xoo3 group by a, b, c, d;
 select sum(a+b+c), e from xoo3 group by b, c, d;
 
 drop class xoo3;
-set  system parameters 'dont_reuse_heap_file=no';commit;
+set  system parameters 'dont_reuse_heap_file=no';
+commit;
 --+ holdcas off;

@@ -126,6 +126,7 @@ PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a from t1'
 execute stmt1
 DEALLOCATE PREPARE stmt1;
 
-drop table t1;set system parameters 'dont_reuse_heap_file=no';
+drop table t1;
+set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

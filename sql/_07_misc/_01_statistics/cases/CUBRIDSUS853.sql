@@ -125,5 +125,6 @@ from foo
 where i < 0 and i > 10
 
 drop foo;
-set  system parameters 'dont_reuse_heap_file=no';commit;
+set  system parameters 'dont_reuse_heap_file=no';
+commit;
 --+ holdcas off;

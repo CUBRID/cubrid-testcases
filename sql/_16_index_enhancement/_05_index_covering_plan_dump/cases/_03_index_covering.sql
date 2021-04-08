@@ -56,5 +56,6 @@ drop table tbl;
 drop table d1;
 drop table d2;
 drop table d3;
-set  system parameters 'dont_reuse_heap_file=no';commit;
+set  system parameters 'dont_reuse_heap_file=no';
+commit;
 --+ holdcas off;

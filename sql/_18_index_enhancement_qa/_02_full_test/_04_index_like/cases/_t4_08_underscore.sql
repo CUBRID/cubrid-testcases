@@ -27,6 +27,7 @@ select /*+ recompile */ * from t1 where v like '____%';
 
 
 
-drop table t1;set system parameters 'dont_reuse_heap_file=no';
+drop table t1;
+set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;
