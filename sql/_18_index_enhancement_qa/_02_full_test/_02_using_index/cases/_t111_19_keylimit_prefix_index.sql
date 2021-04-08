@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table t1(a varchar(10) );
 insert into t1 values ('AAA');
 insert into t1 values ('BBA');
@@ -14,6 +13,5 @@ select /*+ recompile */ * from t1 where a in ('AAA','BBB') using index i_t1_pr k
 drop table t1;
 
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

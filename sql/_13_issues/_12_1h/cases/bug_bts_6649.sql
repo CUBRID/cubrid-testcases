@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table foo (a int, c int);
 create index foo_a on foo (a);
 
@@ -30,7 +29,6 @@ select /*+ ordered */ count(*) from foo f, bar b where f.a > 0 and f.a = b.a and
 
 drop table foo;
 drop table bar;
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;
 

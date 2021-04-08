@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 create table foo (a int, b int, c int, d int);
 create index i_foo_a_b_c_d_d_d on foo (a, b, c desc, d desc);
 
@@ -23,6 +22,5 @@ using index i_foo_a_b_c_d_d_d
 order by c desc, d desc limit 1;
 
 drop table foo;
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

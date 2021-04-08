@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 create table tab1(id int, num int);
 create table tab2(id int);
 create table tab3(text varchar(80));
@@ -4058,6 +4057,5 @@ drop table tab2;
 drop table tab3;
 drop table test_table;
 drop table t1;
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

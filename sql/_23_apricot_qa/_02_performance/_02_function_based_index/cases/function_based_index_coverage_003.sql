@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 create table t1 (i int, d double);
 --Test
 create index idx on t1 (sqrt(d));
@@ -19,6 +18,5 @@ alter table t1 drop index idx2;
 SHOW INDEXES FROM t1;
 
 drop table t1;
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 create table a (i int auto_increment);
 insert into a (i) values(NULL);
 insert into a (i) select NULL from a;
@@ -82,6 +81,5 @@ select /*+ recompile INDEX_SS */ i, j from t2 where k = 3 order by i, j;
 drop table t;
 drop table t2;
 drop table a;
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

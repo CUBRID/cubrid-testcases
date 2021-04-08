@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 CREATE TABLE t1 ( a INT, b INT);
 
 INSERT INTO t1 VALUES (11, 1);
@@ -19,6 +18,5 @@ SELECT /*+ RECOMPILE */ a,b FROM t1 WHERE a>0 ORDER BY a LIMIT 5;
 SELECT /*+ RECOMPILE */ a,b FROM t1 WHERE b=1 ORDER BY a LIMIT 5;
 
 DROP TABLE t1;
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

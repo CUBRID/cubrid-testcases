@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table t1(a int,b char(1000), c varchar(1000), d date);
 create table t2(a int,b char(1000), c varchar(1000), d date);
 
@@ -57,6 +56,5 @@ select /*+ RECOMPILE */ count(t1.a) from t1,t2 where t1.d is not null and t2.c i
 
 
 drop table t1,t2;
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

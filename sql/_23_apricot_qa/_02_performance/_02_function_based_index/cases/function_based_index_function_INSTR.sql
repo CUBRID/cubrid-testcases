@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 create table t1(  a char(1200),   b varchar(1200),  c nchar(1200),  d NCHAR VARYING(1200),  e BIT(1200),  f BIT VARYING(1200),  g int,  h SMALLINT,  i BIGINT,  j NUMERIC,  k FLOAT,  l DOUBLE,  m MONETARY,  n DATE,  o TIME,  p TIMESTAMP,  q DATETIME);
 
 INSERT into t1 values (
@@ -48,6 +47,5 @@ create index i_t1_a2j on t1(INSTR(p,1,d));
 create index i_t1_a2i on t1(INSTR(g,k,i));
 
 drop table t1;
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

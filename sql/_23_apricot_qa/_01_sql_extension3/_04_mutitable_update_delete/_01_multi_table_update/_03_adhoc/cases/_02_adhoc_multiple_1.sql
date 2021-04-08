@@ -1,4 +1,3 @@
-set system parameters 'dont_reuse_heap_file=yes';
 
 
 create table t1(a int, b int, c int);
@@ -197,4 +196,3 @@ select * from t1 order by 1,2;
 drop table t1;
 drop table t2;
 
-set system parameters 'dont_reuse_heap_file=no';

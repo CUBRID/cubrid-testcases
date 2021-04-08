@@ -1,6 +1,5 @@
 --TEST: [Function Based Index] Function Based Index will not be used when a table has an alias name in query.
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 create table t1 (a varchar(10), b varchar(10));
 create index i1 on t1 (upper(a));
@@ -31,6 +30,5 @@ select /*+ recompile */ * from t1 order by 1;
 
 drop table t1, t2;
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

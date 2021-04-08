@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 create table t1(  a char(1200),   b varchar(1200),  c nchar(1200),  d NCHAR VARYING(1200),  e BIT(1200),  f BIT VARYING(1200),  g int,  h SMALLINT,  i BIGINT,  j NUMERIC,  k FLOAT,  l DOUBLE,  m MONETARY,  n DATE,  o TIME,  p TIMESTAMP,  q DATETIME);
 
 insert into t1 values (
@@ -97,6 +96,5 @@ select /*+ RECOMPILE */ count(a) from t1  where a>'0'  using index i_t1_a2a(+),i
 drop table t1;
 
 
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

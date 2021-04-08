@@ -1,6 +1,5 @@
 --TEST: [Function Based Index] Function Based Index doesn't work well when rename the table
 
-set system parameters 'dont_reuse_heap_file = yes';
 
 
 create table t1 (a varchar(10), b varchar(10));
@@ -27,4 +26,3 @@ select /*+ recompile */ * from b where upper(ddd)='A';
 drop table b;
 
 
-set system parameters 'dont_reuse_heap_file = no';

@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes'; 
 drop table if exists t1,t2;
 CREATE TABLE t1 (a INT, b CHAR(3), c INT);
 CREATE TABLE t2 (a INT, b CHAR(3), c INT);
@@ -96,6 +95,5 @@ select /*+ recompile */ * from (t1,t2,t3,t4,t1,t2,t3,t4) s where c=1 using index
 select /*+ recompile */ * from (t1,t2,t3,t4,t1,t2,t3,t4) s using index i_t1_a_c,i_t2_a_c;
 
 drop table  t1,t2,t3,t4;
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table t1(
   a char(1200), 
   b varchar(1200),
@@ -210,5 +209,4 @@ drop index idx on t1;
 
 drop table t1;
 commit;
-set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;

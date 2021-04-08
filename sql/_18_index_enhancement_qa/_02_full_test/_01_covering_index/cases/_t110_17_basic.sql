@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table t1(user_id int primary key, age int, user_name varchar(1073741823));
 create index idx_t1_all on t1(user_id, age,user_name);
 create index idx_t1_age_name on t1(age, user_name);
@@ -28,6 +27,5 @@ select /*+ RECOMPILE ORDERED */ count(a.user_id) from t1 a, t1 b where a.age>0 a
 
 
 drop table t1;
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

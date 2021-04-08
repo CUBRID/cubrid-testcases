@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 create table t1(  a char(1200),   b varchar(1200),  c nchar(1200),  d NCHAR VARYING(1200),  e BIT(1200),  f BIT VARYING(1200),  g int,  h SMALLINT,  i BIGINT,  j NUMERIC,  k FLOAT,  l DOUBLE,  m MONETARY,  n DATE,  o TIME,  p TIMESTAMP,  q DATETIME);
 
 insert into t1 values (
@@ -145,6 +144,5 @@ select /*+ RECOMPILE */ * from v_t1_a2a;
 drop view v_t1_a2q,v_t1_a2p,v_t1_a2o,v_t1_a2n,v_t1_a2m,v_t1_a2l,v_t1_a2k,v_t1_a2j,v_t1_a2i,v_t1_a2h,v_t1_a2g,v_t1_a2f,v_t1_a2e,v_t1_a2d,v_t1_a2c,v_t1_a2b,v_t1_a2a;
 drop table t1;
 
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

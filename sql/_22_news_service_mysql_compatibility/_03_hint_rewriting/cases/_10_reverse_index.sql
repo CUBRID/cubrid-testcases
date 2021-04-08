@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 create table t1 (a int, b int, c int, d int);
 create reverse index i1_a on t1(a);
 create reverse index i1_ab on t1(a,b);
@@ -65,6 +64,5 @@ drop table t1;
 drop table t2;
 drop table t3;
 drop table t4;
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

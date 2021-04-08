@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 CREATE TABLE t1 (
    a  INT NOT NULL,
    b  VARCHAR(40) NOT NULL,
@@ -26,6 +25,5 @@ select /*+ RECOMPILE */ a,c from t1 using index idx_t1_ac(+) keylimit 2,4 order 
 select /*+ RECOMPILE */ c,count(*) from t1 where a>0 and c is not null group by c having GROUPBY_NUM() between 2 and 100 using index idx_t1_ac keylimit 5,7;
 
 drop table t1;
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 --Test
 create table t3(id1 integer, index idx1(id1 ASC) where id1 > 1);
 
@@ -30,6 +29,5 @@ SHOW INDEXES FROM const_tbl3;
 drop table const_tbl3;
 drop table t3;
 drop table t4;
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

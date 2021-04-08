@@ -1,6 +1,5 @@
 --TEST: [index skip scan] Consider to use ISS in UPDATE and DELETE statement
 
-set system parameters 'dont_reuse_heap_file = yes';
 
 drop table if exists t1;
 
@@ -23,4 +22,3 @@ select /*+ recompile */ count(*) from t1;
 
 drop table t1;
 
-set system parameters 'dont_reuse_heap_file = no';

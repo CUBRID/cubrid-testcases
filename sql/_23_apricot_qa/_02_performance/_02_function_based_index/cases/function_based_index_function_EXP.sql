@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 create table t1(  a char(1200),   b varchar(1200),  c nchar(1200),  d NCHAR VARYING(1200),  e BIT(1200),  f BIT VARYING(1200),  g int,  h SMALLINT,  i BIGINT,  j NUMERIC,  k FLOAT,  l DOUBLE,  m MONETARY,  n DATE,  o TIME,  p TIMESTAMP,  q DATETIME);
 
 insert into t1 values (
@@ -76,6 +75,5 @@ create index i_t1_a2a1 on t1(EXP(pi()/3));
 create index i_t1_a2a2 on t1(EXP(h/3));
 
 drop table t1;
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;
