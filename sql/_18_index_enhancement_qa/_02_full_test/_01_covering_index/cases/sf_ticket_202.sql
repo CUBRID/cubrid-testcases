@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table t1(a int,b int,c int);
 create index i_a on t1(a);
 create index i_ab on t1(a,b);
@@ -8,6 +7,5 @@ insert into t1 select rownum, rownum,rownum from db_class x1, db_class x2,db_cla
 select /*+ recompile */ count(a) from t1 where a is not null;
 drop table t1;
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

@@ -1,6 +1,5 @@
 --+ holdcas on;
 -- misc tests for query plan dump & order by combined with group by
-set  system parameters 'dont_reuse_heap_file=yes';
 create class xoo ( a int not null, b char(5), c varchar(5));
 
 create index i_ab on xoo(a, b);
@@ -56,5 +55,5 @@ select sum(a*b*c*d*e) from xoo3 group by a, b, c, d;
 select sum(a+b+c), e from xoo3 group by b, c, d;
 
 drop class xoo3;
-set  system parameters 'dont_reuse_heap_file=no';commit;
+commit;
 --+ holdcas off;

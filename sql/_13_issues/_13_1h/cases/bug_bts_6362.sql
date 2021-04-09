@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 drop table if exists t1;
 
@@ -21,7 +20,6 @@ select /*+ recompile */ * from t1 ignore index (i1_abc) where a>0 and b>0 and c>
 
 drop table t1;
 
-set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;
 commit;
 

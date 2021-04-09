@@ -1,6 +1,5 @@
 --+ holdcas on;
 
-set  system parameters 'dont_reuse_heap_file=yes';
 create table t1 (id int, v varchar(20));
 create index i_t1_v on t1(v);
 
@@ -21,7 +20,6 @@ select /*+ recompile */ * from t1 where v like 'dbms qa1%' or (v like 'dbms qa2%
 select /*+ recompile */ * from t1 where v like 'dbms qa1%' or (v like 'dbms qa2%' and id>3) using index i_t1_v keylimit 0,4;
 
 drop table t1;
-set  system parameters 'dont_reuse_heap_file=no';
 
 commit;
 

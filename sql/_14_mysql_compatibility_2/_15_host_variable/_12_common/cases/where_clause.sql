@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 -- index
 create table t1 (i1 int,i2 int);
 insert into t1 values(3,-1);
@@ -73,6 +72,5 @@ execute st using 2.0;
 
 drop prepare st;
 drop table t1;
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

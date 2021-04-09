@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 --SF-TICKET-250
 
 CREATE TABLE t1 (
@@ -26,6 +25,5 @@ select /*+ RECOMPILE */ a,groupby_num() from t1 where a>0  group by a desc;
 
 drop table t1;
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table t2(a integer not null, b integer, c integer, d varchar(256));
 
 insert into t2 values 
@@ -61,6 +60,5 @@ select /*+ recompile */ a,c from t2 where b=8 order by a desc ,c desc
 
 drop table t2;
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

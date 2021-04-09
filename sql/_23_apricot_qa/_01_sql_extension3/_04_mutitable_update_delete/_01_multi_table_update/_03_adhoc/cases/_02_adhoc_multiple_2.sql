@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 
 
 create table t1(a int, b int);
@@ -229,6 +228,5 @@ drop table t1;
 drop table t2;
 drop view v2;
 
-set system parameters 'dont_reuse_heap_file=no';
 
 --+ holdcas off;

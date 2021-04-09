@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 CREATE TABLE t1 (
    a  INT NOT NULL,
    b  VARCHAR(40) NOT NULL,
@@ -26,6 +25,5 @@ update t1 set a=a+10 where a>0 and c='086' using index idx_t1_ac kEyLiMiT 2,4;
 select /*+ RECOMPILE */ a,b,c from t1 order by a,b,c;
 
 drop table t1;
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

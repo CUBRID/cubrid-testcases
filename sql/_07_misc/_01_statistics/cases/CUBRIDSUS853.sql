@@ -1,6 +1,5 @@
 --+ holdcas on;
 --full scan problem
-set  system parameters 'dont_reuse_heap_file=yes';
 create table foo (
 c char(10), v varchar(10), s string, nc nchar(10), vnc nchar varying(10),
 b bit(10), vb bit varying(10),
@@ -125,5 +124,5 @@ from foo
 where i < 0 and i > 10
 
 drop foo;
-set  system parameters 'dont_reuse_heap_file=no';commit;
+commit;
 --+ holdcas off;

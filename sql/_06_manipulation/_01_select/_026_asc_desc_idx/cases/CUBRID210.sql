@@ -1,6 +1,5 @@
 --+ holdcas on;
 --order by skip error
-set  system parameters 'dont_reuse_heap_file=yes';
 
 create class xoo ( a int, b int);
 create index idx1 on xoo(a asc, b desc);
@@ -40,7 +39,6 @@ where a > 1  order by a asc, b desc ;
 
 
 drop xoo;
-set  system parameters 'dont_reuse_heap_file=no';
 
 commit;
 --+ holdcas off;

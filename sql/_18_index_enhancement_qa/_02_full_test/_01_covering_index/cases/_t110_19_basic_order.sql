@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table t1(
   a char(1200), 
   b varchar(1200),
@@ -100,6 +99,5 @@ select /*+ RECOMPILE */a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q from t1
   order by a asc,b asc,c asc,d asc,e asc,f asc,g asc,h asc,i asc,j asc,k asc,l asc,m asc,n asc,o asc,p asc,q asc;
 
 drop table t1;
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

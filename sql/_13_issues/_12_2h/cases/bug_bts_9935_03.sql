@@ -1,5 +1,4 @@
 --+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 
 --
 drop table if exists t,t1;
@@ -329,6 +328,5 @@ select /*+ recompile ORDERED*/ t.*, s.a as sa, s.b as sb, u.a as ua, u.b as ub f
 
 drop table if exists s,t,u;
 
-set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

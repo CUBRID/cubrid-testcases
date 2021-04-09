@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table t1(col1 int, col2 varchar(100), col3 DATE, col4 MONETARY, col5 float, col6 char(1));
 
 create index idx_t1_col1 on t1(col1);
@@ -27,6 +26,5 @@ select /*+ RECOMPILE */ col4 from t1 where col4 >=0 using index t1."NoNE";
 select /*+ RECOMPILE */ col6 from t1 where col6 >='' using index t1."NoNE index";
 
 drop table t1;
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

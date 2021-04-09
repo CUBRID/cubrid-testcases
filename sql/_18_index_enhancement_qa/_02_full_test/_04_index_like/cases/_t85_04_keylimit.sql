@@ -1,5 +1,4 @@
 --+ holdcas on;
-set system parameters 'dont_reuse_heap_file=yes';
 create table tbl (c varchar (22) not null);
 create index i_tbl_c  on tbl (c);
 insert tbl values ('%');
@@ -60,6 +59,5 @@ drop table tbl;
 
 
 
-set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;
