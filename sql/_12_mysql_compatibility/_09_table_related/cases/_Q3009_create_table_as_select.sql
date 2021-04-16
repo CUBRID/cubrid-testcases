@@ -248,9 +248,9 @@ select count(*) from t2;
 drop table t2;
 
 -- not bug
-create table t2 as select 1;
+create table t2 as select 1 as a;
 insert into t2 values (3), (2);
-select `1` from t2 order by `1` asc;
+select a from t2 order by a asc;
 drop table t2;
 
 --bug
