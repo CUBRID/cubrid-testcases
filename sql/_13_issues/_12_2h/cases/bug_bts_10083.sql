@@ -19,7 +19,7 @@ create table t(a varchar(255) collate iso88591_bin) reuse_oid, collate utf8_en_c
 show create table t;
 drop table t;
 
-create table t(i int auto_increment, a varchar(255) collate iso88591_bin) reuse_oid, collate utf8_en_cs, auto_increment = 10 partition by hash(a) partitions 3 as select rownum, cast(rownum as varchar(255)) from db_class;
+create table t(i int auto_increment, a varchar(255) collate iso88591_bin) reuse_oid, collate utf8_en_cs, auto_increment = 10 partition by hash(a) partitions 3 as select rownum as [rownum], cast(rownum as varchar(255)) as [ cast(rownum as varchar(255))] from db_class;
 show create table t;
 drop table t;
 
@@ -35,11 +35,11 @@ create table t(a varchar(255) collate iso88591_bin) reuse_oid, collate utf8_en_c
 show create table t;
 drop table t;
 
-create table t(i int auto_increment, a varchar(255) collate iso88591_bin) reuse_oid, collate utf8_en_cs, auto_increment = 10 partition by hash(a) partitions 3 as select rownum, cast(rownum as varchar(255)) from db_class;
+create table t(i int auto_increment, a varchar(255) collate iso88591_bin) reuse_oid, collate utf8_en_cs, auto_increment = 10 partition by hash(a) partitions 3 as select rownum as [rownum], cast(rownum as varchar(255)) as [ cast(rownum as varchar(255))] from db_class;
 show create table t;
 drop table t;
 
-create table t(i int auto_increment(1,2), a varchar(255) collate iso88591_bin) reuse_oid, collate utf8_en_cs  partition by hash(a) partitions 3 as select rownum, cast(rownum as varchar(255)) from db_class;
+create table t(i int auto_increment(1,2), a varchar(255) collate iso88591_bin) reuse_oid, collate utf8_en_cs  partition by hash(a) partitions 3 as select rownum as [rownum], cast(rownum as varchar(255)) as [ cast(rownum as varchar(255))] from db_class;
 show create table t;
 drop table t;
 
