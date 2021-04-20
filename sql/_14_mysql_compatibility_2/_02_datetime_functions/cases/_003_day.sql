@@ -65,7 +65,7 @@ select * from day_tests;
 
 drop table day_tests;
 
-create view day_view(v) as select day('2010-01-02') as [ day('2010-01-02')] from db_root;
+create view day_view(v) as select day('2010-01-02') from db_root;
 
 select * from day_view;
 
