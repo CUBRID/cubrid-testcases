@@ -12,13 +12,13 @@ partition by range(i)
 (
 select count(t.*) from t
 )
-select count(*) from cte;
+select count(*) as [count(*)] from cte;
 
 WITH cte AS
 (
 select count(t.*) from t
 )
-select count(*) from cte;
+select count(*) as [count(*)] from cte;
 describe foo;
 
 drop table foo;
@@ -27,7 +27,7 @@ WITH cte AS
 (
 select count(t.*) from t
 )
-select count(*) from cte;
+select count(*) as [count(*)] from cte;
 select * from foo order by 1;
 
 

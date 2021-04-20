@@ -13,21 +13,21 @@ create table foo (i int) partition by range(i) (partition p1 values less  than(1
 (
 select /*+ RECOMPILE */ *  from W where wz.zs is null
 )
-select count(*) from cte;
+select count(*) as [count(*)] from cte;
 
 drop table foo;
 create table foo  as WITH cte AS
 (
 select /*+ RECOMPILE */ *  from W where wz.zs is null
 )
-select count(*) from cte;
+select count(*) as [count(*)] from cte;
 
 drop table foo;
 create table foo(i int)  as WITH cte AS
 (
 select /*+ RECOMPILE */ *  from W where wz.zs is null
 )
-select count(*) from cte;
+select count(*) as [count(*)] from cte;
 
 drop class if exists Z, W,foo;
 set system parameters 'create_table_reuseoid=yes';

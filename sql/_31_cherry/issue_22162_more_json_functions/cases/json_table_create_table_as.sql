@@ -37,7 +37,7 @@ json_table( '{"date1":"2018-10-18"}', '$'  columns (
 )) as jt;
 
 --expect error
-create table tt2 as select str_to_date(jt.date1, '%Y-%m-%d') from 
+create table tt2 as select str_to_date(jt.date1, '%Y-%m-%d') as [str_to_date(jt.date1, '%Y-%m-%d')]from 
 json_table( '{"date1":"2018-10-18"}', '$'  columns (
     date1 varchar(50) path '$.date' default '2018-99-99'  ON EMPTY DEFAULT '2018-00-00'  ON ERROR
 )) as jt;

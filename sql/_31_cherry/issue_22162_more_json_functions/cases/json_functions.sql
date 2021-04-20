@@ -7,7 +7,7 @@ SELECT JSON_MERGE_PATCH('[1]', '[]');
 select json_quote('"string"');
 
 drop table if exists t1;
-create table t1 as select json_quote('foo');
+create table t1 as select json_quote('foo') as [json_quote('foo')];
 select * from t1;
 show create table t1;
 drop table t1;

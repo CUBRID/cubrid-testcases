@@ -1,6 +1,6 @@
 -- 1001 records: one above the tipping point
-create table mille as select 0 from table({0,1,2,3,4,5,6,7,8,9}) t1, table({0,1,2,3,4,5,6,7,8,9}) t2, table({0,1,2,3,4,5,6,7,8,9}) t3;
-insert into mille select 0 from db_root;
+create table mille as select 0 as [0] from table({0,1,2,3,4,5,6,7,8,9}) t1, table({0,1,2,3,4,5,6,7,8,9}) t2, table({0,1,2,3,4,5,6,7,8,9}) t3;
+insert into mille select 0 as [0] from db_root;
 create table firstcol (i string, ord int);
 insert into firstcol values ('aaaa', 4), ('bbbb', 2), ('cccc', 1), ('dddd', 5), ('eeee', 3);
 
