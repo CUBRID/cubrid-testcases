@@ -63,7 +63,7 @@ drop table t;
 
 drop table dayofyear_tests;
 
-create table dayofyear_tests as select dayofyear('2010-01-02');
+create table dayofyear_tests as select dayofyear('2010-01-02') as [ dayofyear('2010-01-02')];
 
 SELECT * FROM db_attribute where class_name='dayofyear_tests';
 
@@ -207,7 +207,7 @@ drop table t;
 
 drop table dayofyear_tests;
 
-create table dayofyear_tests as select dayofyear('2010-01-02');
+create table dayofyear_tests as select dayofyear('2010-01-02') as [ dayofyear('2010-01-02')];
 
 SELECT * FROM db_attribute where class_name='dayofyear_tests';
 

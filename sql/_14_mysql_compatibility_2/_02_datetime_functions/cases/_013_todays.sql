@@ -64,7 +64,7 @@ create table t (col varchar(255)) partition by list (to_days(col)) (PARTITION P0
 
 drop table t;
 
-create table to_days_tests as select to_days('2010-01-02');
+create table to_days_tests as select to_days('2010-01-02') as [ to_days('2010-01-02')];
 
 SELECT * FROM db_attribute where class_name='to_days_tests';
 
@@ -198,7 +198,7 @@ create table t (col varchar(255)) partition by list (to_days(col)) (PARTITION P0
 
 drop table t;
 
-create table to_days_tests as select to_days('2010-01-02');
+create table to_days_tests as select to_days('2010-01-02') as [ to_days('2010-01-02')];
 
 SELECT * FROM db_attribute where class_name='to_days_tests';
 

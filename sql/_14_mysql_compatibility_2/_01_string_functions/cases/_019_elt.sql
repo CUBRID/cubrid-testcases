@@ -19,7 +19,7 @@ SELECT ELT(1, 'SQL-99', 'SQL-3');
 SELECT ELT(2, 'SQL-99', 'SQL-3');
 
 -- return type
-CREATE TABLE EltTable AS SELECT ELT(2, 234.23421f, 432.0123432e43);
+CREATE TABLE EltTable AS SELECT ELT(2, 234.23421f, 432.0123432e43) as [elt(2, 234.23421f, 432.0123432e43)];
 SELECT class_name, attr_name, data_type FROM db_attribute WHERE class_name='elttable';
 DROP TABLE EltTable;
 

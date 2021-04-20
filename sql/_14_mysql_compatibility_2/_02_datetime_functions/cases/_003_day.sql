@@ -57,7 +57,7 @@ create table t (col varchar(255)) partition by list (day(col)) (PARTITION P0 VAL
 
 drop table t;
 
-create table day_tests as select day('2010-01-02');
+create table day_tests as select day('2010-01-02') as [ day('2010-01-02')];
 
 SELECT * FROM db_attribute where class_name='day_tests';
 
@@ -65,7 +65,7 @@ select * from day_tests;
 
 drop table day_tests;
 
-create view day_view(v) as select day('2010-01-02') from db_root;
+create view day_view(v) as select day('2010-01-02') as [ day('2010-01-02')] from db_root;
 
 select * from day_view;
 
@@ -178,7 +178,7 @@ create table t (col varchar(255)) partition by list (day(col)) (PARTITION P0 VAL
 
 drop table t;
 
-create table day_tests as select day('2010-01-02');
+create table day_tests as select day('2010-01-02') as [ day('2010-01-02')];
 
 SELECT * FROM db_attribute where class_name='day_tests';
 

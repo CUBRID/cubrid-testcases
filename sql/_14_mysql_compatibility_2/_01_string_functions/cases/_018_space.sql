@@ -33,7 +33,7 @@ WHERE
     class_name='spacetbl';
 
 -- Check max varchar precision returned from run-time expressions arguments --
-CREATE TABLE SpaceTbl2 AS SELECT SPACE(LENGTH(Sp)) FROM SpaceTbl;
+CREATE TABLE SpaceTbl2 AS SELECT SPACE(LENGTH(Sp)) as [ space( char_length(sp))] FROM SpaceTbl;
 SELECT
 	attr_name,
 	class_name,

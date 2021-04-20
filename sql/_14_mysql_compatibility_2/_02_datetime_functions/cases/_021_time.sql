@@ -54,7 +54,7 @@ create table t (col varchar(255)) partition by list (time(col)) (PARTITION P0 VA
 drop table t;
 
 
-create table time_tests as select time('10:11:12');
+create table time_tests as select time('10:11:12') as [ time('10:11:12')];
 
 SELECT * FROM db_attribute where class_name='time_tests';
 
@@ -165,7 +165,7 @@ create table t (col varchar(255)) partition by list (time(col)) (PARTITION P0 VA
 drop table t;
 
 
-create table time_tests as select time('10:11:12');
+create table time_tests as select time('10:11:12') as [ time('10:11:12')];
 
 SELECT * FROM db_attribute where class_name='time_tests';
 

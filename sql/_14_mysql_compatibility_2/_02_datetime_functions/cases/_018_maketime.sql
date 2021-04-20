@@ -43,7 +43,7 @@ select * from maketime_tests where time_col = maketime(12,10,9) order by smallin
 
 drop table maketime_tests;
 
-create table maketime_tests as select maketime(12,10,9);
+create table maketime_tests as select maketime(12,10,9) as [ maketime(12, 10, 9)];
 
 SELECT * FROM db_attribute where class_name='maketime_tests';
 

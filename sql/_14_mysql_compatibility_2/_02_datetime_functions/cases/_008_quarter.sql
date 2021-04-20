@@ -79,7 +79,7 @@ create table t (col varchar(255)) partition by list (quarter(col)) (PARTITION P0
 
 drop table t;
 
-create table quarter_tests as select quarter('2010-01-02');
+create table quarter_tests as select quarter('2010-01-02') as [ quarter('2010-01-02')];
 
 SELECT * FROM db_attribute where class_name='quarter_tests';
 
@@ -225,7 +225,7 @@ create table t (col varchar(255)) partition by list (quarter(col)) (PARTITION P0
 
 drop table t;
 
-create table quarter_tests as select quarter('2010-01-02');
+create table quarter_tests as select quarter('2010-01-02') as [ quarter('2010-01-02')];
 
 SELECT * FROM db_attribute where class_name='quarter_tests';
 
