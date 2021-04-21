@@ -12,7 +12,7 @@ partition p2 values less  than(2000)
 (
 select /*+ select_btree_node_info(idx1) */ bt_node_type,bt_node_key_count,bt_node_first_key,bt_node_last_key from t1
 )
-select count(*) from cte;
+select count(*) as [count(*)]from cte;
 select * from foo order by 1,2;
 
 drop table foo;
@@ -28,7 +28,7 @@ as WITH cte AS
 (
 select /*+ select_key_info(idx1) */ key_slotid,key_key,key_oid_count,key_first_oid,key_overflow_key,key_overflow_oids from t1
 )
-select count(*) from cte;
+select count(*) as [count(*)] from cte;
 select * from foo order by 1,2;
 
 drop table foo;

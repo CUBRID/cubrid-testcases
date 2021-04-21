@@ -26,19 +26,19 @@ insert into src values ( 'google3',NULL,n'google3',n'www.google3.com');
 
 select attr_name,data_type,prec from db_attribute where attr_name like '%name%' and class_name='src' order by 1;
 
-create table dst1 as select repeat(name1,2) from src;
+create table dst1 as select repeat(name1,2) as [ repeat(name1, 2)] from src;
 
 select attr_name,data_type,prec from db_attribute where attr_name like '%repeat%' and class_name='dst1';
 
-create table dst2 as select repeat(name2,2) from src;
+create table dst2 as select repeat(name2,2) as [ repeat(name2, 2)] from src;
 
 select attr_name,data_type,prec from db_attribute where attr_name like '%repeat%' and class_name='dst2';
 
-create table dst3 as select repeat(name3,2) from src;
+create table dst3 as select repeat(name3,2) as [ repeat(name3, 2)] from src;
 
 select attr_name,data_type,prec from db_attribute where attr_name like '%repeat%' and class_name='dst3';
 
-create table dst4 as select repeat(name4,2) from src;
+create table dst4 as select repeat(name4,2) as [ repeat(name4, 2)] from src;
 
 select attr_name,data_type,prec from db_attribute where attr_name like '%repeat%' and class_name='dst4';
 

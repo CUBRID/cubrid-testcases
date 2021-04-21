@@ -9,7 +9,7 @@ SELECT if(abs(utctime-SYS_TIME) <= 86400, 'ok','nok') FROM v1;
 
 DROP VIEW v1;
 
-CREATE TABLE t1 as select UTC_TIME() from db_root;
+CREATE TABLE t1 as select UTC_TIME() as [ utc_time() ] from db_root;
 
 SELECT * FROM db_attribute where class_name='t1';
 

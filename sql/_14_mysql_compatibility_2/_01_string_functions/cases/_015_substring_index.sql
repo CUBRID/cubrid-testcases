@@ -30,19 +30,19 @@ insert into src values ( 'google3',NULL,n'google3',n'www.google3.com');
 
 select attr_name,data_type,prec from db_attribute where attr_name like '%name%' and class_name='src' order by attr_name,data_type,prec;
 
-create table dst1 as select substring_index(name1,'g',2) from src;
+create table dst1 as select substring_index(name1,'g',2) as [substring_index(name1,'g',2)] from src;
 
 select data_type,prec from db_attribute where attr_name like '%substring_index%' and class_name='dst1';
 
-create table dst2 as select substring_index(name2,'g',2) from src;
+create table dst2 as select substring_index(name2,'g',2) as [substring_index(name2,'g',2)] from src;
 
 select data_type,prec from db_attribute where attr_name like '%substring_index%' and class_name='dst2';
 
-create table dst3 as select substring_index(name3,n'g',2) from src;
+create table dst3 as select substring_index(name3,n'g',2) as [substring_index(name3,n'g',2)] from src;
 
 select data_type,prec from db_attribute where attr_name like '%substring_index%' and class_name='dst3';
 
-create table dst4 as select substring_index(name4,n'g',2) from src;
+create table dst4 as select substring_index(name4,n'g',2) as [substring_index(name4,n'g',2)] from src;
 
 select data_type,prec from db_attribute where attr_name like '%substring_index%' and class_name='dst4';
 

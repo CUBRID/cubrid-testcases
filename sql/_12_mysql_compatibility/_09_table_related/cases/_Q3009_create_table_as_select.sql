@@ -248,23 +248,23 @@ select count(*) from t2;
 drop table t2;
 
 -- not bug
-create table t2 as select 1;
+create table t2 as select 1 as `1`;
 insert into t2 values (3), (2);
 select `1` from t2 order by `1` asc;
 drop table t2;
 
 --bug
-create table t2 as select 'as';
+create table t2 as select 'as' as ['as'];
 select * from t2;
 drop table t2;
 
 --bug
-create table t2 as select '';
+create table t2 as select '' as [''];
 select * from t2;
 drop table t2;
 
 --bug
-create table t2 as select '+';
+create table t2 as select '+' as ['+'];
 select * from t2;
 drop table t2;
 
@@ -276,7 +276,7 @@ select 'this bug needs be confirmed manually' from db_root;
 
 --bug
 select 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' from db_root;
-create table t2 as select 'table';
+create table t2 as select 'table' as ['table'];
 select * from t2;
 drop table t2;
 

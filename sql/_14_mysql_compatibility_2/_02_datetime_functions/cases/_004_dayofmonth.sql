@@ -57,7 +57,7 @@ create table t (col varchar(255)) partition by list (dayofmonth(col)) (PARTITION
 drop table t;
 
 
-create table dayofmonth_tests as select dayofmonth('2010-01-02');
+create table dayofmonth_tests as select dayofmonth('2010-01-02') as [ dayofmonth('2010-01-02')];
 
 SELECT * FROM db_attribute where class_name='dayofmonth_tests';
 
@@ -171,7 +171,7 @@ create table t (col varchar(255)) partition by list (dayofmonth(col)) (PARTITION
 drop table t;
 
 
-create table dayofmonth_tests as select dayofmonth('2010-01-02');
+create table dayofmonth_tests as select dayofmonth('2010-01-02') as [ dayofmonth('2010-01-02')];
 
 SELECT * FROM db_attribute where class_name='dayofmonth_tests';
 

@@ -70,7 +70,7 @@ create table t (col varchar(255)) partition by list (weekday(col)) (PARTITION P0
 
 drop table t;
 
-create table weekday_tests as select weekday('2010-01-02');
+create table weekday_tests as select weekday('2010-01-02') as [ weekday('2010-01-02')];
 
 SELECT * FROM db_attribute where class_name='weekday_tests';
 
@@ -222,7 +222,7 @@ create table t (col varchar(255)) partition by list (weekday(col)) (PARTITION P0
 
 drop table t;
 
-create table weekday_tests as select weekday('2010-01-02');
+create table weekday_tests as select weekday('2010-01-02') as [ weekday('2010-01-02')];
 
 SELECT * FROM db_attribute where class_name='weekday_tests';
 

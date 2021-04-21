@@ -92,14 +92,14 @@ insert into t1 values(1);
 
 create table foo(i int) partition by range(i) (partition p1 values less  than(100),partition p2 values less  than(2000))  as WITH cte AS
 (
-select count(x.*) from (select * from t1)x
+select count(x.*) as [count(x)] from (select * from t1)x
 )
-select count(*) from cte;
+select count(*) as [count(*)] from cte;
 
 --CBRD-22582,disable count(tmp.*)
 with tmp as (select * from t1)select count(tmp.*) from tmp;
 
-with tmp as (select count(x.*) from (select * from foo) x) select *from tmp;
+with tmp as (select count(x.*) as [count(x)] from (select * from foo) x) select *from tmp;
 
 drop if exists t1,foo;
 set system parameters 'create_table_reuseoid=yes';

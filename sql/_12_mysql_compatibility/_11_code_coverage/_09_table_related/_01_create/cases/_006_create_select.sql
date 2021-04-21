@@ -6,7 +6,7 @@ select * from tbl order by a,b,c;
 
 create table tbl2 (a int, b int, c int shared) as select (a*0), b, c from tbl;
 
-create table tbl2 (a int, b int, c int) as select (a*0), b, c from tbl;
+create table tbl2 (a int, b int, c int) as select (a*0) as [(a*0)], b, c from tbl;
 
 select * from tbl2  order by 1,2,3;
 

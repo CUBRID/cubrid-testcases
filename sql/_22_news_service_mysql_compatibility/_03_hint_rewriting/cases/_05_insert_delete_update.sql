@@ -11,7 +11,7 @@ update t1 use index (i_t1_a_b_c, i_t1_a_b, i_t1_a) set b=now() where a>'A' and i
 
 delete from t1 use index (i_t1_a_b_c, i_t1_a_b, i_t1_a) where a>'A';
 
-create table t2 as select id+10000, a,b,c from t1 use index(i_t1_a_b_c) where a>'A' limit 1,10;
+create table t2 as select id+10000 as [id+10000], a,b,c from t1 use index(i_t1_a_b_c) where a>'A' limit 1,10;
 
 create table t3 as select * from t1 use index(i_t1_a_b) where a>'A' limit 10000000, 10000000;
 
