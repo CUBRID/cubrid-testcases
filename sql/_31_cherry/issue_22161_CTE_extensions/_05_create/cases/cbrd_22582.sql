@@ -18,7 +18,7 @@ WITH cte AS
 (
 select count(t.*) from t
 )
-select count(*) as [count(*)] from cte;
+select count(*) from cte;
 describe foo;
 
 drop table foo;
