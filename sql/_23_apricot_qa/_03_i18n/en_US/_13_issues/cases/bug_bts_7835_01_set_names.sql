@@ -1,16 +1,16 @@
 -- set names is a client setting, requires the entire SQL file to be execute in a single process
 --+ holdcas on;
 set names iso88591;
-create table t1 as select 'iso_bin';
+create table t1 as select 'iso_bin' as ['iso_bin'];
 
 set names utf8;
-create table t2 as select 'utf8_bin';
+create table t2 as select 'utf8_bin' as [_utf8'utf8_bin'];
 
 set names iso88591 collate iso88591_en_ci;
-create table t3 as select 'iso_en_ci';
+create table t3 as select 'iso_en_ci' as ['iso_en_ci' collate iso88591_en_ci];
 
 set names utf8 collate utf8_en_ci;
-create table t4 as select 'utf8_en_ci';
+create table t4 as select 'utf8_en_ci' as [_utf8'utf8_en_ci' collate utf8_en_ci];
 
 show full columns in t1;
 show full columns in t2;

@@ -144,7 +144,7 @@ INSERT INTO te
 COMMIT;
 
 
-create table dummy as select 1,2 from te, TABLE({1,2,3,4,5,6,7,8,9,10,11,12,13}) as t;
+create table dummy as select 1 as [1],2 as [2] from te, TABLE({1,2,3,4,5,6,7,8,9,10,11,12,13}) as t;
 drop table dummy;
 
 

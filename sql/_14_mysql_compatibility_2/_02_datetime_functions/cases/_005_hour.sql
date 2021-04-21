@@ -54,7 +54,7 @@ create table t (col varchar(255)) partition by list (hour(col)) (PARTITION P0 VA
 
 drop table t;
 
-create table hour_tests as select hour('2010-01-02');
+create table hour_tests as select hour('2010-01-02') as [ hour('2010-01-02')];
 
 SELECT * FROM db_attribute where class_name='hour_tests';
 
@@ -168,7 +168,7 @@ create table t (col varchar(255)) partition by list (hour(col)) (PARTITION P0 VA
 
 drop table t;
 
-create table hour_tests as select hour('2010-01-02 19:22:23');
+create table hour_tests as select hour('2010-01-02 19:22:23') as [ hour('2010-01-02 19:22:23')];
 
 SELECT * FROM db_attribute where class_name='hour_tests';
 

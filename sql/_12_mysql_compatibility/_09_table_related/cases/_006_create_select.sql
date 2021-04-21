@@ -56,7 +56,7 @@ create table tbl1(name char(20) default 'abracadabra') partition by hash(id) par
 select * from tbl1 order by 1,2;
 
 
-create table tbl2(name char(20) default 'abracadabra') partition by hash([id+2]) partitions 4 as select id+2 from tbl;
+create table tbl2(name char(20) default 'abracadabra') partition by hash([id+2]) partitions 4 as select id+2 as [id+2] from tbl;
 select * from tbl2 order by 1,2;
 
 

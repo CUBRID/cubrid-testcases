@@ -53,7 +53,7 @@ drop table month_tests;
 create table t (col varchar(255)) partition by list (month(col)) (PARTITION P0 VALUES IN (2010, 2011));
 drop table t;
 
-create table month_tests as select month('2010-01-02');
+create table month_tests as select month('2010-01-02') as [ month('2010-01-02')];
 
 SELECT * FROM db_attribute where class_name='month_tests';
 
@@ -172,7 +172,7 @@ drop table month_tests;
 create table t (col varchar(255)) partition by list (month(col)) (PARTITION P0 VALUES IN (2010, 2011));
 drop table t;
 
-create table month_tests as select month('2010-01-02');
+create table month_tests as select month('2010-01-02') as [ month('2010-01-02')];
 
 SELECT * FROM db_attribute where class_name='month_tests';
 

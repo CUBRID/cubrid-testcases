@@ -16,11 +16,11 @@ insert into t1 values (10,'def', '+');
 select b, count(b), sum(a) from t1 group by b;
 select b,c, count(*), sum(a) from t1 group by b, c order by b desc,c asc;
 
-create table t2 as select b,c, count(*), sum(a) from t1 group by b, c order by b desc,c asc;
+create table t2 as select b,c, count(*) as [count(*)], sum(a) as [sum(a)] from t1 group by b, c order by b desc,c asc;
 select * from t2 order by b desc, c asc;
 drop table t2;
 
-create table t3 as select b,c, count(*), sum(a) from t1 group by b desc , c asc;
+create table t3 as select b,c, count(*) as [count(*)], sum(a) as [sum(a)] from t1 group by b desc , c asc;
 select * from t3 order by b desc, c asc;
 drop table t3;
 

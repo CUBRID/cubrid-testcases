@@ -9,7 +9,7 @@ SELECT if(abs(utcdate-SYS_DATE) <= 1, 'ok','nok') FROM v1;
 
 DROP VIEW v1;
 
-CREATE TABLE t1 as select UTC_DATE() from db_root;
+CREATE TABLE t1 as select UTC_DATE() as [ utc_date() ] from db_root;
 
 SELECT * FROM db_attribute where class_name='t1';
 

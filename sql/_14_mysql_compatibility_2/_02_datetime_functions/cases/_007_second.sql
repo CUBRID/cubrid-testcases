@@ -54,7 +54,7 @@ drop table t;
 
 drop table second_tests;
 
-create table second_tests as select second('2010-01-02 11:12:13');
+create table second_tests as select second('2010-01-02 11:12:13') as [ second('2010-01-02 11:12:13')];
 
 SELECT * FROM db_attribute where class_name='second_tests';
 
@@ -166,7 +166,7 @@ drop table t;
 
 drop table second_tests;
 
-create table second_tests as select second('2010-01-02 11:12:13');
+create table second_tests as select second('2010-01-02 11:12:13') as [ second('2010-01-02 11:12:13')];
 
 SELECT * FROM db_attribute where class_name='second_tests';
 

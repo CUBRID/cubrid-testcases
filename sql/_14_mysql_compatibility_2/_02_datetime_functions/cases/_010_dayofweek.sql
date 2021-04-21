@@ -70,7 +70,7 @@ create table t (col varchar(255)) partition by list (dayofweek(col)) (PARTITION 
 
 drop table t;
 
-create table dayofweek_tests as select dayofweek('2010-01-02');
+create table dayofweek_tests as select dayofweek('2010-01-02') as [ dayofweek('2010-01-02')];
 
 SELECT * FROM db_attribute where class_name='dayofweek_tests';
 
@@ -223,7 +223,7 @@ create table t (col varchar(255)) partition by list (dayofweek(col)) (PARTITION 
 
 drop table t;
 
-create table dayofweek_tests as select dayofweek('2010-01-02');
+create table dayofweek_tests as select dayofweek('2010-01-02') as [ dayofweek('2010-01-02')];
 
 SELECT * FROM db_attribute where class_name='dayofweek_tests';
 
