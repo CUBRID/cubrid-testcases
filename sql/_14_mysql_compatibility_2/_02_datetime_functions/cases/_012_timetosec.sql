@@ -62,7 +62,7 @@ drop table t;
 
 drop table time_to_sec_tests;
 
-create table time_to_sec_tests as select time_to_sec('14:32:11');
+create table time_to_sec_tests as select time_to_sec('14:32:11') as [ time_to_sec('14:32:11')];
 
 SELECT * FROM db_attribute where class_name='time_to_sec_tests';
 
@@ -188,7 +188,7 @@ drop table t;
 
 drop table time_to_sec_tests;
 
-create table time_to_sec_tests as select time_to_sec('14:32:11');
+create table time_to_sec_tests as select time_to_sec('14:32:11') as [ time_to_sec('14:32:11')];
 
 SELECT * FROM db_attribute where class_name='time_to_sec_tests';
 

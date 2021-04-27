@@ -25,19 +25,19 @@ insert into src values ( 'google3',NULL,n'google3',n'www.google3.com');
 
 select attr_name,data_type,prec from db_attribute where attr_name like '%name%' and class_name='src' order by 1;
 
-create table dst1 as select insert(name1,1,2,'xx') from src;
+create table dst1 as select insert(name1,1,2,'xx') as [insert(name1,1,2,'xx')] from src;
 
 select data_type,prec from db_attribute where attr_name like '%insert%' and class_name='dst1';
 
-create table dst2 as select insert(name2,1,2,'xx') from src;
+create table dst2 as select insert(name2,1,2,'xx') as [insert(name2,1,2,'xx')] from src;
 
 select data_type,prec from db_attribute where attr_name like '%insert%' and class_name='dst2';
 
-create table dst3 as select insert(name3,1,2,n'xx') from src;
+create table dst3 as select insert(name3,1,2,n'xx') as [insert(name3,1,2,n'xx')] from src;
 
 select data_type,prec from db_attribute where attr_name like '%insert%' and class_name='dst3';
 
-create table dst4 as select insert(name4,1,2,n'xx') from src;
+create table dst4 as select insert(name4,1,2,n'xx') as [insert(name4,1,2,n'xx')] from src;
 
 select data_type,prec from db_attribute where attr_name like '%insert%' and class_name='dst4';
 

@@ -52,7 +52,7 @@ select * from from_days_tests where smallint_col = from_days('2010-01-02')+10 or
 
 drop table from_days_tests;
 
-create table from_days_tests as select from_days('77777');
+create table from_days_tests as select from_days('77777') as [ from_days('77777')];
 
 SELECT * FROM db_attribute where class_name='from_days_tests';
 
@@ -157,7 +157,7 @@ select * from from_days_tests where smallint_col = from_days('2010-01-02')+10 or
 
 drop table from_days_tests;
 
-create table from_days_tests as select from_days('77777');
+create table from_days_tests as select from_days('77777') as [ from_days('77777')];
 
 SELECT * FROM db_attribute where class_name='from_days_tests';
 

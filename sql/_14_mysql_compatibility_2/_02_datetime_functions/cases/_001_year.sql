@@ -63,7 +63,7 @@ create table t (col varchar(255)) partition by list (year(col)) (PARTITION P0 VA
 
 drop table t;
 
-create table year_tests as select year('2010-01-02');
+create table year_tests as select year('2010-01-02') as [ year('2010-01-02')];
 
 SELECT * FROM db_attribute where class_name='year_tests';
 
@@ -192,7 +192,7 @@ create table t (col varchar(255)) partition by list (year(col)) (PARTITION P0 VA
 
 drop table t;
 
-create table year_tests as select year('2010-01-02');
+create table year_tests as select year('2010-01-02') as [ year('2010-01-02')];
 
 SELECT * FROM db_attribute where class_name='year_tests';
 

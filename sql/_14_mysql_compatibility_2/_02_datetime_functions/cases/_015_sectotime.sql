@@ -53,7 +53,7 @@ select * from sec_to_time_tests where smallint_col = sec_to_time('2010-01-02')+1
 
 drop table sec_to_time_tests;
 
-create table sec_to_time_tests as select sec_to_time('2010-01-02');
+create table sec_to_time_tests as select sec_to_time('2010-01-02') as [ sec_to_time('2010-01-02')];
 
 SELECT * FROM db_attribute where class_name='sec_to_time_tests';
 
@@ -176,7 +176,7 @@ select * from sec_to_time_tests where smallint_col = sec_to_time('2010-01-02')+1
 
 drop table sec_to_time_tests;
 
-create table sec_to_time_tests as select sec_to_time('2010-01-02');
+create table sec_to_time_tests as select sec_to_time('2010-01-02') as [ sec_to_time('2010-01-02')];
 
 SELECT * FROM db_attribute where class_name='sec_to_time_tests';
 

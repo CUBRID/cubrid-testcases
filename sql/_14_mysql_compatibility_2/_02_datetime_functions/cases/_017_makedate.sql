@@ -49,7 +49,7 @@ select * from makedate_tests where date_col = makedate('2019-01-02',365) order b
 
 drop table makedate_tests;
 
-create table makedate_tests as select makedate('2010',123);
+create table makedate_tests as select makedate('2010',123) as [ makedate('2010', 123)];
 
 SELECT * FROM db_attribute where class_name='makedate_tests';
 
@@ -178,7 +178,7 @@ select * from makedate_tests where date_col = makedate('2019-01-02',365) order b
 
 drop table makedate_tests;
 
-create table makedate_tests as select makedate('2010',123);
+create table makedate_tests as select makedate('2010',123) as [ makedate('2010', 123)];
 
 SELECT * FROM db_attribute where class_name='makedate_tests';
 

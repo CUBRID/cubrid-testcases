@@ -57,7 +57,7 @@ create table t (col varchar(255)) partition by list (day(col)) (PARTITION P0 VAL
 
 drop table t;
 
-create table day_tests as select day('2010-01-02');
+create table day_tests as select day('2010-01-02') as [ day('2010-01-02')];
 
 SELECT * FROM db_attribute where class_name='day_tests';
 
@@ -178,7 +178,7 @@ create table t (col varchar(255)) partition by list (day(col)) (PARTITION P0 VAL
 
 drop table t;
 
-create table day_tests as select day('2010-01-02');
+create table day_tests as select day('2010-01-02') as [ day('2010-01-02')];
 
 SELECT * FROM db_attribute where class_name='day_tests';
 
