@@ -167,15 +167,15 @@ count(*)
 0     
 
 Query plan:
-idx-join (inner join)
-    outer: nl-join (left outer join)
-               edge:  term[?]
-               outer: sscan
-                          class: c node[?]
-                          cost:  ? card ?
-               inner: temp
-                          order: UNORDERED
-                          subplan: nl-join (left outer join)
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: c node[?]
+               cost:  ? card ?
+    inner: temp
+               order: UNORDERED
+               subplan: idx-join (inner join)
+                            outer: nl-join (left outer join)
                                        edge:  term[?]
                                        outer: sscan
                                                   class: a node[?]
@@ -185,11 +185,11 @@ idx-join (inner join)
                                                   sargs: term[?]
                                                   cost:  ? card ?
                                        cost:  ? card ?
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: iscan
-               class: d node[?]
-               index: idx? term[?] (covers)
+                            inner: iscan
+                                       class: d node[?]
+                                       index: idx? term[?] (covers)
+                                       cost:  ? card ?
+                            cost:  ? card ?
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
