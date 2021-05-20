@@ -6,7 +6,7 @@ create table t2 as
   WITH RECURSIVE cte AS ( 
     SELECT id, title FROM t1
     UNION ALL 
-    SELECT id + 1, 'test title' FROM cte where id<10
+    SELECT id + 1 as [id], 'test title' as [title]FROM cte where id<10
   ) SELECT  * FROM cte;
   
 WITH RECURSIVE cte AS (

@@ -2,7 +2,7 @@ drop table if exists foo;
 create table foo as
 with cte as
 (
- SELECT TO_DATE('2008-12-25', 'YYYY-MM-DD')
+ SELECT TO_DATE('2008-12-25', 'YYYY-MM-DD') as [ts]
 ) select * from (select * from cte) as x(ts);
 select * from foo;
 
