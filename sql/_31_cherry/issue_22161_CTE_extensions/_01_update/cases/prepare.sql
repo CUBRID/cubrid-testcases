@@ -1,6 +1,6 @@
 
 drop table if exists foo;
-prepare st from 'create table foo as with cte as (select 1 x union all select x + ? from cte where x < 10) select *from cte';
+prepare st from 'create table foo as with cte as (select 1 as [x] union all select x + ? as [x] from cte where x < 10) select *from cte';
 execute st using 2;
 drop table foo;
 

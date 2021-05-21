@@ -9,7 +9,7 @@ drop table if exists foo;
 create table foo as
 with cte as
 (
- select ORDERBY_NUM(), j from t order by 2 for ORDERBY_NUM() between 3 and 5
+ select ORDERBY_NUM() as [orderby_num()], j from t order by 2 for ORDERBY_NUM() between 3 and 5
 ) select * from cte  where rownum<2;
 
 select * from foo order by 1,2;

@@ -11,7 +11,7 @@ drop table if exists foo;
 create table foo as
 with cte as
 (
- select groupby_NUM(), j from t group by i having groupby_NUM() between 1 and 5
+ select groupby_NUM() as [groupby_num()], j from t group by i having groupby_NUM() between 1 and 5
 ) select * from cte  where rownum<4;
 
 select * from foo order by 1,2;

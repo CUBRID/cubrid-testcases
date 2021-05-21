@@ -4,7 +4,7 @@ insert into t(i) values('12,345.67');
 create table foo as
 with cte as
 (
-    select TO_NUMBER(i,'99,999.999') from t 
+    select TO_NUMBER(i,'99,999.999') as [ts] from t 
 ) select * from (select * from cte) as x(ts);
 select * from foo order by 1;
 describe foo;

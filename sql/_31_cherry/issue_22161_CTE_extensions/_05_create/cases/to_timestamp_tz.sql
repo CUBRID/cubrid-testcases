@@ -2,7 +2,7 @@ drop table if exists foo;
 create table foo as
 with cte as
 (
- SELECT TO_TIMESTAMP_TZ('13:10:30 Asia/Seoul 12/25/2008', 'HH24:MI:SS TZR MM/DD/YYYY')
+ SELECT TO_TIMESTAMP_TZ('13:10:30 Asia/Seoul 12/25/2008', 'HH24:MI:SS TZR MM/DD/YYYY') as [ts]
 ) select * from (select * from cte) as x(tstz);
 select * from foo order by 1;
 

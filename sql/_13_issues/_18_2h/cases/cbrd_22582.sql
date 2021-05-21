@@ -16,7 +16,7 @@ partition p2 values less  than(2000)
 )  as 
 WITH cte AS 
 (
-select 1
+select 1 as [1]
 )
 select count(*) as cnt from cte;
 

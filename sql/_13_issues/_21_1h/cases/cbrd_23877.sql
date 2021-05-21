@@ -39,6 +39,7 @@ desc t3;
 create table t3 as select sum(a) as [sum(a)], max(b) as [max(b)], count(*) as [count(*)] from src;
 desc t3;
 
+--should fail
 create table t4 as with cte as 
 (
 select (a*0), b from src

@@ -14,14 +14,14 @@ drop table foo;
 select cast(NULL as numeric(38,10));
 create table foo as WITH cte AS 
 (
-select cast(cast('' as char(10)) as numeric(38,10))
+select cast(cast('' as char(10)) as numeric(38,10)) as [ cast( cast('' as char(10)) as numeric(38,10))]
 )
 select * from cte;
 describe foo;
 drop table foo;
 create table foo as WITH cte AS
 (
-select cast(NULL as numeric(38,10))
+select cast(NULL as numeric(38,10)) as [ cast(null as numeric(38,10))]
 )
 select * from cte;
 describe foo;
@@ -74,7 +74,7 @@ describe foo;
 drop table if exists foo;
 create table foo as WITH cte AS
 (
-select REPEAT( c_time, c_int ) from t1
+select REPEAT( c_time, c_int ) as [repeat( cast(t1.c_time as varchar), t1.c_int)] from t1
 )
 select * from cte;
 select * from foo order by 1;

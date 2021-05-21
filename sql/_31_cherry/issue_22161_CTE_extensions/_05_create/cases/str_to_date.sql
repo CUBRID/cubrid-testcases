@@ -2,7 +2,7 @@ drop table if exists foo;
 create table foo as
 with cte as
 (
-  SELECT STR_TO_DATE('09:30:17 20140307XEESTXEurope/Bucharest','%h:%i:%s %Y%d%mX%TZD4X%TZR')
+  SELECT STR_TO_DATE('09:30:17 20140307XEESTXEurope/Bucharest','%h:%i:%s %Y%d%mX%TZD4X%TZR') as [ts]
 ) select * from (select * from cte) as x(ts);
 select * from foo order by 1;
 

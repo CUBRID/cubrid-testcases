@@ -10,7 +10,7 @@ partition by range(i)
  partition p2 values less  than(2000)
 )  as WITH cte AS
 (
-select count(t.*) from t
+select count(t.*) as [count(*)] from t
 )
 select count(*) as [count(*)] from cte;
 
@@ -25,7 +25,7 @@ drop table foo;
 create table foo  as
 WITH cte AS
 (
-select count(t.*) from t
+select count(t.*) as [count(*)] from t
 )
 select count(*) as [count(*)] from cte;
 select * from foo order by 1;

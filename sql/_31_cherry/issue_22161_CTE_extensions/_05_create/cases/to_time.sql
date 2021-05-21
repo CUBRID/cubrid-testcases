@@ -3,7 +3,7 @@ drop table if exists foo;
 create table foo as
 with cte as
 (
-  SELECT TO_TIME ('13:10:30')
+  SELECT TO_TIME ('13:10:30') as [ts]
 ) select * from (select * from cte) as x(ts);
 select * from foo order by 1;
 
