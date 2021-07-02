@@ -90,20 +90,20 @@ show trace;
 
 set trace off;
 create table t1 (a int, b int, c int);
-insert into t1 select rownum,rownum,rownum from db_class a, db_class b, db_class c, db_class d limit 100000;
+insert into t1 select rownum,rownum,rownum from db_class a, db_class b, db_class c, db_class d limit 150000;
 
 -- memory limit, sql hint, trace info
 set trace on;
 select /*+ ordered */ count(*) from (select * from t1 limit 1) a, (select * from t1 limit 50000) b where a.a = b.a and a.b = b.b and a.c = b.c;
 show trace;
-select /*+ ordered */ count(*) from (select * from t1 limit 1) a, (select * from t1 limit 100000) b where a.a = b.a and a.b = b.b and a.c = b.c;
+select /*+ ordered */ count(*) from (select * from t1 limit 1) a, (select * from t1 limit 150000) b where a.a = b.a and a.b = b.b and a.c = b.c;
 show trace;
 -- change max_hash_list_scan_size
 set system parameters 'max_hash_list_scan_size=10M';
-select /*+ ordered */ count(*) from (select * from t1 limit 1) a, (select * from t1 limit 100000) b where a.a = b.a and a.b = b.b and a.c = b.c;
+select /*+ ordered */ count(*) from (select * from t1 limit 1) a, (select * from t1 limit 150000) b where a.a = b.a and a.b = b.b and a.c = b.c;
 show trace;
-set system parameters 'max_hash_list_scan_size=4M';
-select /*+ ordered */ count(*) from (select * from t1 limit 1) a, (select * from t1 limit 100000) b where a.a = b.a and a.b = b.b and a.c = b.c;
+set system parameters 'max_hash_list_scan_size=8M';
+select /*+ ordered */ count(*) from (select * from t1 limit 1) a, (select * from t1 limit 150000) b where a.a = b.a and a.b = b.b and a.c = b.c;
 show trace;
 select /*+ ordered no_hash_list_scan */ count(*) from (select * from t1 limit 1) a, (select * from t1 limit 50000) b where a.a = b.a and a.b = b.b and a.c = b.c;
 show trace;
