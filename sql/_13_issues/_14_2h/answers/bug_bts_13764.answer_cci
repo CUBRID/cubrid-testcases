@@ -230,7 +230,7 @@ temp(group by)
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select foo.a, foo.b, count(foo.c) from foo foo group by foo.a, foo.b having foo.a=foo.b+count(foo.c)
+select foo.a, foo.b, count(foo.c) from foo foo group by foo.a, foo.b having foo.a= cast(foo.b as bigint)+count(foo.c)
 ===================================================
 0
 ===================================================
@@ -494,7 +494,7 @@ temp(group by)
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select foo.a, foo.b, count(foo.c) from foo foo group by foo.a, foo.b having foo.a=foo.b+count(foo.c)
+select foo.a, foo.b, count(foo.c) from foo foo group by foo.a, foo.b having foo.a= cast(foo.b as bigint)+count(foo.c)
 ===================================================
 0
 ===================================================
