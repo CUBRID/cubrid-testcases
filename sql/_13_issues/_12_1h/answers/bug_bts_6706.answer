@@ -365,28 +365,46 @@ co
 1     
 
 Query plan:
-iscan
-    class: y node[?]
-    index: pk_y_a term[?]
-    sargs: term[?]
+temp(order by)
+    subplan: iscan
+                 class: y node[?]
+                 index: pk_y_a term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? desc
     cost:  ? card ?
 Query stmt:
-(select /*+ NO_DESC_IDX */ {y.a, y.b} from y y where (y.a> ?:? ) and (inst_num()<= ?:? ))
+(select /*+ NO_DESC_IDX */ y.a, y.b from y y where (y.a> ?:? ) order by ? desc  for orderby_num()<= ?:? )
 Query plan:
-iscan
-    class: y node[?]
-    index: pk_y_a term[?]
-    sargs: term[?]
+sscan
+    class: av? node[?]
     cost:  ? card ?
 Query stmt:
-(select /*+ NO_DESC_IDX */ {y.a, y.b} from y y where (y.a> ?:? ) and (inst_num()<= ?:? ))
+(select {av?.av_?, av?.av_?} from (select /*+ NO_DESC_IDX */ y.a, y.b from y y where (y.a> ?:? ) order by ? desc  for orderby_num()<= ?:? ) av? (av_?, av_?))
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: y node[?]
+                 index: pk_y_a term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+(select /*+ NO_DESC_IDX */ y.a, y.b from y y where (y.a> ?:? ) order by ? desc  for orderby_num()<= ?:? )
+Query plan:
+sscan
+    class: av? node[?]
+    cost:  ? card ?
+Query stmt:
+(select {av?.av_?, av?.av_?} from (select /*+ NO_DESC_IDX */ y.a, y.b from y y where (y.a> ?:? ) order by ? desc  for orderby_num()<= ?:? ) av? (av_?, av_?))
 Query plan:
 sscan
     class: db_root node[?]
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select ((select /*+ NO_DESC_IDX */ {y.a, y.b} from y y where (y.a> ?:? ) and (inst_num()<= ?:? ))=(select /*+ NO_DESC_IDX */ {y.a, y.b} from y y where (y.a> ?:? ) and (inst_num()<= ?:? ))) from db_root db_root where (inst_num()<= ?:? )
+select ((select {av?.av_?, av?.av_?} from (select /*+ NO_DESC_IDX */ y.a, y.b from y y where (y.a> ?:? ) order by ? desc  for orderby_num()<= ?:? ) av? (av_?, av_?))=(select {av?.av_?, av?.av_?} from (select /*+ NO_DESC_IDX */ y.a, y.b from y y where (y.a> ?:? ) order by ? desc  for orderby_num()<= ?:? ) av? (av_?, av_?))) from db_root db_root where (inst_num()<= ?:? )
 ===================================================
 a    b    a    b    
 8     1     8     1     
