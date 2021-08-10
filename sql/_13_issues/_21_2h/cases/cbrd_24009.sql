@@ -18,4 +18,3 @@ INSERT INTO v1 SELECT * FROM v1 LIMIT 0;
 drop table if exists tmp;
 drop view if exists tmp_view;
 drop view if exists v1;
-
