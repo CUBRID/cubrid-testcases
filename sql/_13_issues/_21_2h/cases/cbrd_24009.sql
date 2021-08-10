@@ -5,7 +5,6 @@ drop view if exists tmp_view;
 create or replace view tmp_view as select * from (select 1 from tmp where col1 = 2);
 select count(*) from tmp_view;
 
-drop view if exists tmp_view;
 create or replace view tmp_view as select * from (select 1 from tmp where col1 in ('1','2'));
 select count(*) from tmp_view;
 
