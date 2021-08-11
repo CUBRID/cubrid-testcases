@@ -11,7 +11,7 @@ select * from t11 order by 1;
 select * from t12 order by 1;
 select * from t13 order by 1;
 delete from t1 where id=2;
-truncate table t1;
+truncate t1 cascade;
 alter table t11 drop constraint fk_t11_id;
 alter table t12 drop constraint fk_12;
 alter table t13 drop constraint fk_13;

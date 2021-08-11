@@ -97,9 +97,9 @@ NATURAL LEFT JOIN d
 NATURAL LEFT JOIN c
 WHERE a.uid = 123;
 
-truncate table a;
-truncate table b;
-truncate table c;
+truncate table a cascade;
+truncate table b cascade;
+truncate table c cascade;
 truncate table d;
 
 SELECT *, 'a' AS name FROM a; 
