@@ -1,3 +1,6 @@
+drop table if exists parent;
+drop table if exists child;
+drop table if exists obj_parent;
 ;auto off
 -- (1) normal
 create table parent (a int primary key);

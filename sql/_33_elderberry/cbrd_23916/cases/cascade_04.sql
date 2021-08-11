@@ -1,3 +1,6 @@
+drop table if exists c;
+drop table if exists b;
+drop table if exists a;
 create table a (a int primary key);
 
 create table b (a int, b int primary key, constraint foreign key (a) references a(a) on delete cascade)

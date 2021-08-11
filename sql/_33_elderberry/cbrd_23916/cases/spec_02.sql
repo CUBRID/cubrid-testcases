@@ -1,3 +1,5 @@
+drop table if exists parent;
+drop table if exists child;
 create table parent (a int primary key);
 create table child (a int, b int, foreign key (a) references parent(a));
 insert into parent values(3);

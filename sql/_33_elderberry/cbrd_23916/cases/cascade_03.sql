@@ -1,3 +1,6 @@
+drop table if exists a cascade constraints;
+drop table if exists b cascade constraints;
+drop table if exists c cascade constraints;
 create table a (a int primary key, c int NULL);
 create table b (a int NULL, b int primary key, foreign key (a) references a(a) on delete CASCADE);
 create table c (c int primary key, b int NULL, foreign key (b) references b(b) on delete CASCADE);

@@ -1,3 +1,4 @@
+drop table if exists tbl;
 create table tbl (a int);
 insert into tbl values(3);
 truncate tbl;

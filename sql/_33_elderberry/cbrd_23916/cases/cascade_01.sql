@@ -1,3 +1,10 @@
+drop table if exists grand_child1;
+drop table if exists grand_child2;
+drop table if exists grand_child3;
+drop table if exists grand_child4;
+drop table if exists child1;
+drop table if exists child2;
+drop table if exists parent;
 create table parent (a int primary key);
 create table child1 (a int, b int primary key, foreign key (a) references parent(a) on delete CASCADE);
 create table child2 (a int, b int primary key, foreign key (a) references parent(a) on delete CASCADE);

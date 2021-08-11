@@ -1,3 +1,6 @@
+drop table if exists parent;
+drop table if exists child; 
+drop table if exists obj_parent;
 -- (1) normal
 create table parent (a int primary key);
 create table child (a int foreign key references parent(a) on delete CASCADE);
