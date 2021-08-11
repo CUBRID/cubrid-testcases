@@ -5,7 +5,7 @@ alter table fk add constraint foreign key (id) references pk(id) on delete restr
 insert into pk values (1);
 insert into fk values (1), (1), (1);
 
-truncate pk; 
+truncate pk cascade; 
 drop table fk;
 drop table pk;
 
@@ -16,7 +16,7 @@ alter table fk add constraint foreign key (id) references pk(id) on delete no ac
 insert into pk values (1);
 insert into fk values (1), (1), (1);
 
-truncate pk; 
+truncate pk cascade; 
 drop table fk;
 drop table pk;
 
@@ -27,7 +27,7 @@ alter table fk add constraint foreign key (id) references pk(id) on delete casca
 insert into pk values (1);
 insert into fk values (1), (1), (1);
 
-truncate pk;
+truncate pk cascade;
 
 select count(*) from pk; 
 select count(*) from fk; 
@@ -41,7 +41,7 @@ alter table fk add constraint foreign key (id) references pk(id) on delete set n
 insert into pk values (1);
 insert into fk values (1), (1), (1);
 
-truncate pk;
+truncate pk cascade;
 
 select count(*) from pk; 
 select * from fk; 
@@ -111,7 +111,7 @@ select count(*) from y;
 delete from y;
 
 insert into x values (1), (1), (1), (1), (1);
-truncate pk;
+truncate pk cascade;
 select count(*) from y; 
 
 insert into pk values (1);

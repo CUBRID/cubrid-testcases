@@ -47,7 +47,7 @@ update tz_test set c0=datetimetz'2009-03-30 04:30:00.012 -1:00' where id=1;
 
 
 --test: truncate statement
-truncate table tz_test;
+truncate table tz_test cascade;
 select if(count(*)=0, 'ok', 'nok') from tz_test;
 select if(count(*)=0, 'ok', 'nok') from fk;
 
