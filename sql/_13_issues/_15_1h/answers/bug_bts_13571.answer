@@ -10,41 +10,39 @@
 i    k    i    k    i    k    i    k    i    k    
 
 Query plan:
-nl-join (left outer join)
+nl-join (inner join)
     edge:  term[?]
-    outer: sscan
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: nl-join (inner join)
+                          edge:  term[?]
+                          outer: nl-join (inner join)
+                                     edge:  term[?]
+                                     outer: sscan
+                                                class: p node[?]
+                                                cost:  ? card ?
+                                     inner: sscan
+                                                class: q node[?]
+                                                sargs: term[?]
+                                                cost:  ? card ?
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: r node[?]
+                                     sargs: term[?] AND term[?]
+                                     cost:  ? card ?
+                          sargs: term[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: s node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
                class: t node[?]
+               sargs: term[?]
                cost:  ? card ?
-    inner: temp
-               order: UNORDERED
-               subplan: nl-join (inner join)
-                            edge:  term[?]
-                            outer: nl-join (inner join)
-                                       edge:  term[?]
-                                       outer: nl-join (inner join)
-                                                  edge:  term[?]
-                                                  outer: sscan
-                                                             class: p node[?]
-                                                             cost:  ? card ?
-                                                  inner: sscan
-                                                             class: q node[?]
-                                                             sargs: term[?]
-                                                             cost:  ? card ?
-                                                  cost:  ? card ?
-                                       inner: sscan
-                                                  class: r node[?]
-                                                  sargs: term[?]
-                                                  cost:  ? card ?
-                                       cost:  ? card ?
-                            inner: sscan
-                                       class: s node[?]
-                                       sargs: term[?]
-                                       cost:  ? card ?
-                            cost:  ? card ?
-               cost:  ? card ?
-    after: term[?]
     cost:  ? card ?
 Query stmt:
-select p.i, p.k, q.i, q.k, r.i, r.k, s.i, s.k, t.i, t.k from foo p inner join foo q on p.i=q.i inner join foo r on q.i=r.i inner join foo s on r.i=s.i right outer join foo t on s.i=t.i where r.k=p.k+q.k
+select p.i, p.k, q.i, q.k, r.i, r.k, s.i, s.k, t.i, t.k from foo p, foo q, foo r, foo s, foo t where r.k=p.k+q.k and p.i=q.i and q.i=r.i and r.i=s.i and s.i=t.i
 ===================================================
 0
