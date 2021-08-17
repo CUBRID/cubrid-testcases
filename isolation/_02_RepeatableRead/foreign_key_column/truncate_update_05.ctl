@@ -31,7 +31,7 @@ C1: commit work;
 /* test case */
 C1: UPDATE t_foreign SET id=2 WHERE id=1;
 MC: wait until C1 ready;
-C2: TRUNCATE TABLE t_primary;
+C2: TRUNCATE TABLE t_primary CASCADE;
 MC: wait until C2 blocked;
 C1: rollback;
 MC: wait until C1 ready;
@@ -49,7 +49,7 @@ MC: wait until C2 ready;
 /* test case */
 C1: UPDATE t_foreign SET id=1 WHERE id=2;
 MC: wait until C1 ready;
-C2: TRUNCATE TABLE t_primary;
+C2: TRUNCATE TABLE t_primary CASCADE;
 MC: wait until C2 blocked;
 C1: commit;
 MC: wait until C1 ready;
