@@ -35,7 +35,7 @@ C1: commit work;
 /* test case */
 C1: UPDATE tb1 SET grade=grade+10 WHERE grade < 20;
 MC: wait until C1 ready;
-C2: TRUNCATE TABLE tb1 CASCADE;
+C2: TRUNCATE TABLE tb1;
 MC: wait until C2 blocked;
 C1: commit work;
 
