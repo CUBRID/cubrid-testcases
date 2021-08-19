@@ -1,15 +1,15 @@
 /*
-Test Case: truncate & insert
+Test Case: truncate & delete
 Priority: 1
 Reference case:
 Author: Lily
 
 Test Point:
-B reference A, truncate A, insert B, B is blocked.
+B reference A, truncate A, delete B, B is blocked.
 
 NUM_CLIENTS = 2
 C1: truncate table referenced table; 
-C2: insert into reference table;
+C2: delete from reference table;
 C1: commit;
 C2: commit;
 */
@@ -32,31 +32,15 @@ C1: commit work;
 /* test case */
 C1: TRUNCATE TABLE t_primary CASCADE;
 MC: wait until C1 ready;
-C2: INSERT INTO t_foreign VALUES(1,'dance');
-MC: wait until C2 blocked;
-C1: commit;
-MC: wait until C2 ready;
-C2: alter table t_foreign add CONSTRAINT pk_abc primary key(id,col);
-C2: SELECT * FROM t_primary ORDER BY id;
-C2: SELECT * FROM t_foreign ORDER BY id;
-C2: show index from t_foreign;
-C2: commit;
-C2: INSERT INTO t_primary VALUES(1,'a'),(2,'b');
-C2: INSERT INTO t_foreign VALUES(1,'do'),(2,'test'),(1,'make'),(2,'spell');
-C2: commit;
-C1: SELECT * FROM t_primary ORDER BY id;
-C1: SELECT * FROM t_foreign ORDER BY id;
-C1: commit;
-
-C1: TRUNCATE TABLE t_primary CASCADE;
-MC: wait until C1 ready;
-C2: insert into t_foreign values(1,'do');
+C2: DELETE FROM t_foreign WHERE id=2;
 MC: wait until C2 blocked;
 C1: commit;
 MC: wait until C1 ready;
+C2: SELECT * FROM t_primary ORDER BY id,col;
+C2: SELECT * FROM t_foreign ORDER BY id,col;
 C2: commit;
-C2: SELECT * FROM t_primary ORDER BY id;
-C2: SELECT * FROM t_foreign ORDER BY id;
+C2: SELECT * FROM t_primary ORDER BY id,col;
+C2: SELECT * FROM t_foreign ORDER BY id,col;
 C2: commit;
 
 C2: quit;
