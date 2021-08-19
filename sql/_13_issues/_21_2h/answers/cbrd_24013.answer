@@ -1,0 +1,43 @@
+===================================================
+0
+===================================================
+0
+===================================================
+5
+===================================================
+0
+===================================================
+col1    col2    col3    col4    
+4     DEF     5     6     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+(select t?.col?, t?.col?, t?.col? from t? t? where ((t?.col?= ?:? ) or (t?.col?= ?:? )) order by ? desc  for orderby_num()<= ?:? )
+Query plan:
+sscan
+    class: av? node[?]
+    cost:  ? card ?
+Query stmt:
+(select av?.av_?, av?.av_? from (select t?.col?, t?.col?, t?.col? from t? t? where ((t?.col?= ?:? ) or (t?.col?= ?:? )) order by ? desc  for orderby_num()<= ?:? ) av? (av_?, av_?, ha_?))
+Query plan:
+nl-join (inner join)
+    edge:  term[?] AND term[?]
+    outer: sscan
+               class: t? node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: av? node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select t?.col?, t?.col?, t?.col?, t?.col? from t? t?, (select av?.av_?, av?.av_? from (select t?.col?, t?.col?, t?.col? from t? t? where ((t?.col?= ?:? ) or (t?.col?= ?:? )) order by ? desc  for orderby_num()<= ?:? ) av? (av_?, av_?, ha_?)) av? (av_?, av_?) where t?.col?=av?.av_? and t?.col?=av?.av_?
+===================================================
+0
