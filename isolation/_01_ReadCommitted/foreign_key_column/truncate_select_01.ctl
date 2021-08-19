@@ -33,10 +33,10 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C1: TRUNCATE TABLE t_primary;
+C1: TRUNCATE TABLE t_primary CASCADE;
 MC: wait until C1 ready;
 C2: SELECT * FROM t_foreign order by 1,2;
-MC: wait until C2 ready;
+MC: wait until C2 blocked;
 C1: commit;
 C2: SELECT * FROM t_primary ORDER BY id;
 C2: SELECT * FROM t_foreign ORDER BY id;
