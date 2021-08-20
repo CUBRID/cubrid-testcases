@@ -5,32 +5,30 @@
 ===================================================
 5
 ===================================================
-0
-===================================================
-col1    col2    col3    col4    
+cola    colb    colc    cold    
 4     DEF     5     6     
 
 Query plan:
 temp(order by)
     subplan: sscan
-                 class: t? node[?]
+                 class: t node[?]
                  sargs: term[?]
                  cost:  ? card ?
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-(select t?.col?, t?.col?, t?.col? from t? t? where ((t?.col?= ?:? ) or (t?.col?= ?:? )) order by ? desc  for orderby_num()<= ?:? )
+(select t.cola, t.colb, t.cold from t t where ((t.cola= ?:? ) or (t.cola= ?:? )) order by ? desc  for orderby_num()<= ?:? )
 Query plan:
 sscan
     class: av? node[?]
     cost:  ? card ?
 Query stmt:
-(select av?.av_?, av?.av_? from (select t?.col?, t?.col?, t?.col? from t? t? where ((t?.col?= ?:? ) or (t?.col?= ?:? )) order by ? desc  for orderby_num()<= ?:? ) av? (av_?, av_?, ha_?))
+(select av?.av_?, av?.av_? from (select t.cola, t.colb, t.cold from t t where ((t.cola= ?:? ) or (t.cola= ?:? )) order by ? desc  for orderby_num()<= ?:? ) av? (av_?, av_?, ha_?))
 Query plan:
 nl-join (inner join)
     edge:  term[?] AND term[?]
     outer: sscan
-               class: t? node[?]
+               class: t node[?]
                cost:  ? card ?
     inner: sscan
                class: av? node[?]
@@ -38,6 +36,54 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select t?.col?, t?.col?, t?.col?, t?.col? from t? t?, (select av?.av_?, av?.av_? from (select t?.col?, t?.col?, t?.col? from t? t? where ((t?.col?= ?:? ) or (t?.col?= ?:? )) order by ? desc  for orderby_num()<= ?:? ) av? (av_?, av_?, ha_?)) av? (av_?, av_?) where t?.col?=av?.av_? and t?.col?=av?.av_?
+select t.cola, t.colb, t.colc, t.cold from t t, (select av?.av_?, av?.av_? from (select t.cola, t.colb, t.cold from t t where ((t.cola= ?:? ) or (t.cola= ?:? )) order by ? desc  for orderby_num()<= ?:? ) av? (av_?, av_?, ha_?)) av? (av_?, av_?) where t.cola=av?.av_? and t.colb=av?.av_?
+===================================================
+cola    (select colb from t where cola=a.cola order by cold desc  limit 1)    
+4     DEF     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+(select t.colb, t.cold from t t where t.cola=a.cola order by ? desc  for orderby_num()<= ?:? )
+Query plan:
+sscan
+    class: d? node[?]
+    cost:  ? card ?
+Query stmt:
+(select d?.colb from (select t.colb, t.cold from t t where t.cola=a.cola order by ? desc  for orderby_num()<= ?:? ) d? (colb, cold))
+Query plan:
+sscan
+    class: a node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select a.cola, (select d?.colb from (select t.colb, t.cold from t t where t.cola=a.cola order by ? desc  for orderby_num()<= ?:? ) d? (colb, cold)) from t a where a.cola= ?:? 
+===================================================
+colb    
+DEF     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+(select t.colb, t.cold from t t where ((t.cola= ?:? ) or (t.cola= ?:? )) order by ? desc  for orderby_num()<= ?:? )
+Query plan:
+sscan
+    class: __t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select [__t?].colb from (select t.colb, t.cold from t t where ((t.cola= ?:? ) or (t.cola= ?:? )) order by ? desc  for orderby_num()<= ?:? ) [__t?] (colb, ha_?) where [__t?].colb= ?:? 
 ===================================================
 0
