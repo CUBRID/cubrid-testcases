@@ -57,7 +57,7 @@ C1: INSERT INTO t_primary VALUES(1,'a'),(2,'b');
 C1: INSERT INTO t_foreign VALUES(1,'do'),(2,'test'),(1,'make'),(2,'spell');
 C1: commit work;
 /* test case 3 */
-C1: TRUNCATE TABLE t_foreign CASCADE;
+C1: TRUNCATE TABLE t_foreign;
 MC: wait until C1 ready;
 C2: ALTER TABLE t_primary ADD COLUMN age_1 INT;
 MC: wait until C1 ready;
