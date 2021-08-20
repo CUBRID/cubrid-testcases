@@ -26,7 +26,8 @@ C2: set transaction isolation level repeatable read;
 
 /* preparation */
 C1: DROP TABLE IF EXISTS tb1;
-C1: CREATE TABLE tb1(id INT AUTO_INCREMENT PRIMARY KEY,col VARCHAR(10),grade INT);
+C1: CREATE TABLE tb1(id INT AUTO_INCREMENT PRIMARY KEY,col VARCHAR(10),grade INT) DONT_REUSE_OID;
+C1: CREATE TABLE obj_ref(obj1 tb1);
 C1: INSERT INTO tb1 VALUES(NULL,'abc', 15);
 C1: INSERT INTO tb1 VALUES(NULL,'def', 34);
 C1: commit work;
@@ -34,7 +35,7 @@ C1: commit work;
 /* test case */
 C1: UPDATE tb1 SET grade=grade+10 WHERE grade < 20;
 MC: wait until C1 ready;
-C2: TRUNCATE TABLE tb1 CASCADE;
+C2: TRUNCATE TABLE tb1;
 MC: wait until C2 blocked;
 C1: commit work;
 
