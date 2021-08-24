@@ -167,32 +167,30 @@ count(*)
 0     
 
 Query plan:
-nl-join (left outer join)
-    edge:  term[?]
-    outer: sscan
-               class: c node[?]
+idx-join (inner join)
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: nl-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: a node[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: b node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: c node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
                cost:  ? card ?
-    inner: temp
-               order: UNORDERED
-               subplan: idx-join (inner join)
-                            outer: nl-join (left outer join)
-                                       edge:  term[?]
-                                       outer: sscan
-                                                  class: a node[?]
-                                                  cost:  ? card ?
-                                       inner: sscan
-                                                  class: b node[?]
-                                                  sargs: term[?]
-                                                  cost:  ? card ?
-                                       cost:  ? card ?
-                            inner: iscan
-                                       class: d node[?]
-                                       index: idx? term[?] (covers)
-                                       cost:  ? card ?
-                            cost:  ? card ?
+    inner: iscan
+               class: d node[?]
+               index: idx? term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from fjj a left outer join fjj b on a.i=b.i right outer join fjj c on b.i=c.i, fjj d where a.k=d.k
+select count(*) from fjj a, fjj b, fjj c, fjj d where a.k=d.k and a.i=b.i and b.i=c.i
 ===================================================
 0
