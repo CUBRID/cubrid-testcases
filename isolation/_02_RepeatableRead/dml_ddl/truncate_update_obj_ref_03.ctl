@@ -26,6 +26,7 @@ C2: set transaction isolation level repeatable read;
 
 /* preparation */
 C1: DROP TABLE IF EXISTS tb1;
+C1: DROP TABLE IF EXISTS obj_ref;
 C1: CREATE TABLE tb1(id INT AUTO_INCREMENT PRIMARY KEY,col VARCHAR(10),grade INT) DONT_REUSE_OID;
 C1: CREATE TABLE obj_ref(obj1 tb1);
 C1: INSERT INTO tb1 VALUES(NULL,'abc', 15);
