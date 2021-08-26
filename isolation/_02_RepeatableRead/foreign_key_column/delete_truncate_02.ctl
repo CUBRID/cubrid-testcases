@@ -47,7 +47,7 @@ C1: commit;
 
 C1: DELETE FROM t_foreign WHERE id=1;
 MC: wait until C1 ready;
-C2: TRUNCATE TABLE t_primary;
+C2: TRUNCATE TABLE t_primary CASCADE;
 MC: wait until C2 blocked;
 C1: commit;
 MC: wait until C2 ready;
