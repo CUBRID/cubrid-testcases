@@ -55,7 +55,7 @@ alter table fk add constraint foreign key (id) references pk(id);
 insert into pk values (1);
 insert into fk values (1), (1), (1);
 
-truncate pk; 
+truncate pk cascade; 
 
 create table pk2 (id int primary key);
 create table fk2 (id int);
@@ -63,7 +63,7 @@ alter table fk2 add constraint foreign key (id) references pk2(id) on delete cas
 insert into pk2 values (1);
 insert into fk2 values (1), (1), (1);
 
-truncate pk2;
+truncate pk2 cascade;
 
 select count(*) from pk2; 
 select count(*) from fk2; 
@@ -74,7 +74,7 @@ alter table fk3 add constraint foreign key (id) references pk3(id) on delete set
 insert into pk3 values (1);
 insert into fk3 values (1), (1), (1);
 
-truncate pk3;
+truncate pk3 cascade;
 
 select count(*) from pk3; 
 select * from fk3; 
