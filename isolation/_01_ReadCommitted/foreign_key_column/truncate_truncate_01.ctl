@@ -30,7 +30,7 @@ C1: INSERT INTO t_foreign VALUES(1,'do'),(2,'test'),(1,'make'),(2,'spell');
 C1: commit work;
 
 /* test case */
-C1: TRUNCATE TABLE t_primary;
+C1: TRUNCATE TABLE t_primary CASCADE;
 MC: wait until C1 ready;
 
 C2: TRUNCATE TABLE t_foreign;

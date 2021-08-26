@@ -34,7 +34,7 @@ C1: commit work;
 /* test case */
 C1: UPDATE t_foreign SET id=2 WHERE id=1;
 MC: wait until C1 ready;
-C2: TRUNCATE TABLE t_primary;
+C2: TRUNCATE TABLE t_primary CASCADE;
 MC: sleep 1;
 MC: wait until C2 blocked;
 C1: SELECT * FROM t_foreign ORDER BY 1,2;

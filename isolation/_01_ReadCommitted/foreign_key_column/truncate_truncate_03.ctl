@@ -33,7 +33,7 @@ MC: wait until C1 ready;
 /* test case */
 C1: TRUNCATE TABLE t_foreign;
 MC: wait until C1 ready;
-C2: TRUNCATE TABLE t_primary;
+C2: TRUNCATE TABLE t_primary CASCADE;
 MC: sleep 1;
 MC: wait until C2 blocked;
 C1: SELECT * FROM t_primary ORDER BY id;
