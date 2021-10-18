@@ -33,7 +33,7 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C1: TRUNCATE TABLE t_primary;
+C1: TRUNCATE TABLE t_primary CASCADE;
 MC: wait until C1 ready;
 C2: UPDATE t_foreign SET id=2 WHERE id=1;
 MC: wait until C2 blocked;

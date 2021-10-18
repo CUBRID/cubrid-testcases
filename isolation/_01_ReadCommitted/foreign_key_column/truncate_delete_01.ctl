@@ -30,7 +30,7 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C1: TRUNCATE TABLE t_primary;
+C1: TRUNCATE TABLE t_primary CASCADE;
 MC: wait until C1 ready;
 C2: DELETE FROM t_foreign WHERE id=2;
 MC: sleep 1;
