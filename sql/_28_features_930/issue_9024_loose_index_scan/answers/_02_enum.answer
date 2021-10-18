@@ -313,19 +313,19 @@ sscan
     class: v? node[?]
     cost:  ? card ?
 Query stmt:
-(select max(v?.a), max(v?.b), max(v?.c), max(v?.d), max(v?.e), max(v?.f), max(v?.g) from t? v? having max(v?.g)>?)
+(select max(v?.a), max(v?.b), max(v?.c), max(v?.d), max(v?.e), max(v?.f), max(v?.g) from t? v? having (max(v?.g)>?))
 Query plan:
 sscan
     class: v? node[?]
     cost:  ? card ?
 Query stmt:
-select v?.a, v?.b, v?.c, v?.d, v?.e, v?.f, v?.g from (select max(v?.a), max(v?.b), max(v?.c), max(v?.d), max(v?.e), max(v?.f), max(v?.g) from t? v? having max(v?.g)>?) v? (a, b, c, d, e, f, g)
+select v?.a, v?.b, v?.c, v?.d, v?.e, v?.f, v?.g from (select max(v?.a), max(v?.b), max(v?.c), max(v?.d), max(v?.e), max(v?.f), max(v?.g) from t? v? having (max(v?.g)>?)) v? (a, b, c, d, e, f, g)
 Query plan:
 sscan
     class: v? node[?]
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_LS */ v?.a, v?.b, v?.c, v?.d, v?.e, v?.f, v?.g from (select v?.a, v?.b, v?.c, v?.d, v?.e, v?.f, v?.g from (select distinct v?.a, v?.b, v?.c, v?.d, v?.e, v?.f, v?.g from t? v? where (v?.g> ?:? )) v? (a, b, c, d, e, f, g) union all select v?.a, v?.b, v?.c, v?.d, v?.e, v?.f, v?.g from (select max(v?.a), max(v?.b), max(v?.c), max(v?.d), max(v?.e), max(v?.f), max(v?.g) from t? v? having max(v?.g)>?) v? (a, b, c, d, e, f, g)) v? (a, b, c, d, e, f, g)
+select /*+ INDEX_LS */ v?.a, v?.b, v?.c, v?.d, v?.e, v?.f, v?.g from (select v?.a, v?.b, v?.c, v?.d, v?.e, v?.f, v?.g from (select distinct v?.a, v?.b, v?.c, v?.d, v?.e, v?.f, v?.g from t? v? where (v?.g> ?:? )) v? (a, b, c, d, e, f, g) union all select v?.a, v?.b, v?.c, v?.d, v?.e, v?.f, v?.g from (select max(v?.a), max(v?.b), max(v?.c), max(v?.d), max(v?.e), max(v?.f), max(v?.g) from t? v? having (max(v?.g)>?)) v? (a, b, c, d, e, f, g)) v? (a, b, c, d, e, f, g)
 ===================================================
 max(a)    min(b)    
 I     1     
@@ -350,19 +350,19 @@ sscan
     class: v? node[?]
     cost:  ? card ?
 Query stmt:
-(select max(v?.a), max(v?.b), max(v?.g), max(v?.c), max(v?.d), max(v?.e), max(v?.f) from t? v? having max(v?.g)>?)
+(select max(v?.a), max(v?.b), max(v?.g), max(v?.c), max(v?.d), max(v?.e), max(v?.f) from t? v? having (max(v?.g)>?))
 Query plan:
 sscan
     class: v? node[?]
     cost:  ? card ?
 Query stmt:
-select v?.a, v?.b, v?.g, v?.c, v?.d, v?.e, v?.f from (select max(v?.a), max(v?.b), max(v?.g), max(v?.c), max(v?.d), max(v?.e), max(v?.f) from t? v? having max(v?.g)>?) v? (a, b, g, c, d, e, f)
+select v?.a, v?.b, v?.g, v?.c, v?.d, v?.e, v?.f from (select max(v?.a), max(v?.b), max(v?.g), max(v?.c), max(v?.d), max(v?.e), max(v?.f) from t? v? having (max(v?.g)>?)) v? (a, b, g, c, d, e, f)
 Query plan:
 sscan
     class: v? node[?]
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_LS */ max(v?.a), min(v?.b) from (select v?.a, v?.b, v?.g, v?.c, v?.d, v?.e, v?.f from (select distinct v?.a, v?.b, v?.g, v?.c, v?.d, v?.e, v?.f from t? v? where (v?.g> ?:? )) v? (a, b, g, c, d, e, f) union all select v?.a, v?.b, v?.g, v?.c, v?.d, v?.e, v?.f from (select max(v?.a), max(v?.b), max(v?.g), max(v?.c), max(v?.d), max(v?.e), max(v?.f) from t? v? having max(v?.g)>?) v? (a, b, g, c, d, e, f)) v? (a, b, g, c, d, e, f)
+select /*+ INDEX_LS */ max(v?.a), min(v?.b) from (select v?.a, v?.b, v?.g, v?.c, v?.d, v?.e, v?.f from (select distinct v?.a, v?.b, v?.g, v?.c, v?.d, v?.e, v?.f from t? v? where (v?.g> ?:? )) v? (a, b, g, c, d, e, f) union all select v?.a, v?.b, v?.g, v?.c, v?.d, v?.e, v?.f from (select max(v?.a), max(v?.b), max(v?.g), max(v?.c), max(v?.d), max(v?.e), max(v?.f) from t? v? having (max(v?.g)>?)) v? (a, b, g, c, d, e, f)) v? (a, b, g, c, d, e, f)
 ===================================================
 max(c)    
 null     
@@ -396,13 +396,13 @@ sscan
     class: v? node[?]
     cost:  ? card ?
 Query stmt:
-(select max(v?.c), max(v?.g), max(v?.a), max(v?.b), max(v?.d), max(v?.e), max(v?.f) from t? v? having max(v?.g)>?)
+(select max(v?.c), max(v?.g), max(v?.a), max(v?.b), max(v?.d), max(v?.e), max(v?.f) from t? v? having (max(v?.g)>?))
 Query plan:
 sscan
     class: v? node[?]
     cost:  ? card ?
 Query stmt:
-select v?.c, v?.g, v?.a, v?.b, v?.d, v?.e, v?.f from (select max(v?.c), max(v?.g), max(v?.a), max(v?.b), max(v?.d), max(v?.e), max(v?.f) from t? v? having max(v?.g)>?) v? (c, g, a, b, d, e, f)
+select v?.c, v?.g, v?.a, v?.b, v?.d, v?.e, v?.f from (select max(v?.c), max(v?.g), max(v?.a), max(v?.b), max(v?.d), max(v?.e), max(v?.f) from t? v? having (max(v?.g)>?)) v? (c, g, a, b, d, e, f)
 Query plan:
 temp(group by)
     subplan: sscan
@@ -411,7 +411,7 @@ temp(group by)
     sort:  
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_LS */ max(v?.c) from (select v?.c, v?.g, v?.a, v?.b, v?.d, v?.e, v?.f from (select distinct v?.c, v?.g, v?.a, v?.b, v?.d, v?.e, v?.f from t? v? where (v?.g> ?:? )) v? (c, g, a, b, d, e, f) union all select v?.c, v?.g, v?.a, v?.b, v?.d, v?.e, v?.f from (select max(v?.c), max(v?.g), max(v?.a), max(v?.b), max(v?.d), max(v?.e), max(v?.f) from t? v? having max(v?.g)>?) v? (c, g, a, b, d, e, f)) v? (c, g, a, b, d, e, f) group by v?.a, v?.b
+select /*+ INDEX_LS */ max(v?.c) from (select v?.c, v?.g, v?.a, v?.b, v?.d, v?.e, v?.f from (select distinct v?.c, v?.g, v?.a, v?.b, v?.d, v?.e, v?.f from t? v? where (v?.g> ?:? )) v? (c, g, a, b, d, e, f) union all select v?.c, v?.g, v?.a, v?.b, v?.d, v?.e, v?.f from (select max(v?.c), max(v?.g), max(v?.a), max(v?.b), max(v?.d), max(v?.e), max(v?.f) from t? v? having (max(v?.g)>?)) v? (c, g, a, b, d, e, f)) v? (c, g, a, b, d, e, f) group by v?.a, v?.b
 ===================================================
 0
 ===================================================
