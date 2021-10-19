@@ -57,7 +57,7 @@ C1: CREATE INDEX idx_all on tb_a(id desc,col desc) with online parallel 3;
 MC: wait until C1 blocked;
 C2: commit;
 MC: wait until C1 ready;
-C1: SELECT * FROM db_index where class_name like 'tb_%' order by 1,2;
+C1: SELECT * FROM db_index where class_name like 'tb_%' order by 1;
 C1: select count(*) from tb_a;
 C1: select count(*) from tb_b;
 C1: commit;
