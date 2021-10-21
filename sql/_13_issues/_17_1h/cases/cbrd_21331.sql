@@ -15,7 +15,7 @@ alter table t3 add s4 varchar default to_char(123.4567,'99999.999');
 -- filled with current time
 alter table t3 add s5 varchar default to_char(systimestamp,'HH:MI:SS AM MM/DD/YYYY');
 
-alter table t3 add s6 varchar default to_char('06:07:44 PM 05/09/2017','HH:MI:SS AM MM/DD/YYYY');
+alter table t3 add s6 varchar default '06:07:44 PM 05/09/2017';
 
 -- filled with current time
 alter table t3 add s7 datetime not null default sysdatetime;  

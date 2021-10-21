@@ -7,7 +7,7 @@ create table t1(s1 varchar(2) default to_char(sysdate,'MM-DD-YYYY'));
 
 create table t1(i1 int,s1 char(3) default 'aaaaaaaaa');
 
-create table t1(i1 int,s1 char(3) default to_char('2017-05-09','YYYY-MM-DD'));
+create table t1(i1 int,s1 char(3) default to_char(to_date('2017-05-09','YYYY-MM-DD'),'YYYY-MM-DD'));
 
 create table t1(s1 char(3) default to_char(1.234567,'99.999'));
 
@@ -35,7 +35,7 @@ create table t1(s1 varchar default to_char(sysdate,'MM-DD-YYYY'));
 
 alter table t1 modify s1 char(3) default to_char(sysdate,'MM-DD-YYYY');
 
-alter table t1 change s1 s1 char(3) default to_char('2017-05-09','MM-DD-YYYY'); 
+alter table t1 change s1 s1 char(3) default '2017-05-09'; 
 
 alter table t1 modify s1 char(3) default to_char(1.234567,'99.999'); 
 
@@ -61,7 +61,7 @@ alter table t1 alter column s1 set default 'bbbbbbbbbb';
 
 alter table t1 alter column s1 set default to_char(1.234567,'99.999');
 
-alter table t1 alter column s1 set default to_char('2017-05-09','MM-DD-YYYY');
+alter table t1 alter column s1 set default '2017-05-09';
 
 alter table t1 alter column s1 set default user;
 
@@ -77,7 +77,7 @@ drop table if exists t2_2;
 
 drop table if exists t2_3;
 
-create table t2_1(i1 int,s1 varchar default to_char(repeat('a',1000),'MM-DD-YYYY'));
+create table t2_1(i1 int,s1 varchar default repeat('a',1000));
 
 -- bug CBRD-21263
 create table t2_2(i1 int,s1 varchar default to_char(sysdate,repeat('MM-DD-YYYY',1000)));
@@ -91,7 +91,7 @@ insert into t2_2(s2) values(to_char(systimestamp,concat('MM-DD-YYYY','HH:MM:SS')
 
 select if(s1=s2,'ok','nok') from t2_2;
 
-create table t2_3(i1 int,s1 varchar default to_char(repeat(sysdate,1000),'MM-DD-YYYY')); 
+create table t2_3(i1 int,s1 varchar default repeat(sysdate,1000)); 
 
 drop t2_1;
 
@@ -114,7 +114,7 @@ alter table t3 add s3 varchar default to_char(123.4567,'99999.999');
 -- filled with current time
 alter table t3 add s4 varchar default to_char(systimestamp,'HH:MI:SS AM MM/DD/YYYY');
 
-alter table t3 add s5 varchar default to_char('06:07:44 PM 05/09/2017','HH:MI:SS AM MM/DD/YYYY');
+alter table t3 add s5 varchar default '06:07:44 PM 05/09/2017';
 
 -- isnull(s4) is 0
 select i1,s2,s3,isnull(s4),s5 from t3 order by 1; 
@@ -180,7 +180,7 @@ select if(s1=s2,'ok','nok') from t1;
 drop t1;
 
 drop table if exists t1;
-create table t1(i1 int,s1 timestamp default to_char('03:56:46 PM 05/10/2017', 'HH:MI:SS AM MM/DD/YYYY'));  
+create table t1(i1 int,s1 timestamp default '03:56:46 PM 05/10/2017');  
 
 insert into t1(i1) values(1);
 

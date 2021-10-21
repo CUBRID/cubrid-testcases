@@ -68,7 +68,7 @@ create table t22 (cc char(50) default to_char(systimestamp, 'HH:MI:SS AM MM/DD/Y
 insert into t22 values (default, to_char(systimestamp, 'HH:MI:SS AM MM/DD/YYYY TZR'));
 insert into t22 values (default(cc), to_char(systimestamp, 'HH:MI:SS AM MM/DD/YYYY TZR'));
 
-with cte(a, b, c1_answer, c2_answer) as (select c, default(c), c_answer, to_char(systime, 'HH') as hour_answer from tt union all select cc, to_char('09:30:17 20140307XEESTXEurope/Bucharest','%h:%i:%s %Y%d%mX%TZD4X%TZR'), answer as cc_answer, to_char('09:30:17 20140307XEESTXEurope/Bucharest','%h:%i:%s %Y%d%mX%TZD4X%TZR') from t22 ) select a=c1_answer, b=c2_answer  from cte;
+with cte(a, b, c1_answer, c2_answer) as (select c, default(c), c_answer, to_char(systime, 'HH') as hour_answer from tt union all select cc, '09:30:17 20140307XEESTXEurope/Bucharest', answer as cc_answer,'09:30:17 20140307XEESTXEurope/Bucharest' from t22 ) select a=c1_answer, b=c2_answer  from cte;
 
 drop table if exists tt;
 
