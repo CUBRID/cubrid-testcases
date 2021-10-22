@@ -4,7 +4,7 @@ create class t1(c1 int, c2 set varchar(10));
 insert into t1 values (1, {'abc'});
 select * from t1 order by 1,2;
 
-alter t1 add column c3 varchar(100) default to_char(time('02:11:12'), 'HH24:MI:SS');
+alter t1 add column c3 varchar(100) default to_char(to_time('02:11:12'), 'HH24:MI:SS');
 insert into t1(c1, c2) values(2, {'cba'});
 select * from t1 order by 1,2;
 show create table t1;
@@ -61,7 +61,7 @@ set names iso88591;
 
 drop table if exists t1;
 create class t1(c1 int, c2 set varchar(10));
-alter table t1 add column c5 varchar(10) default to_char(SESSIONTIMEZONE(), 'HH24:MI:SS DD/MM/YYYY TZR');
+alter table t1 add column c5 varchar(10) default SESSIONTIMEZONE();
 show create table t1;
 alter t1 drop column c5;
 

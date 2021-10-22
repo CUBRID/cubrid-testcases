@@ -5,7 +5,7 @@ insert into t1 values (1, {'abc'});
 select * from t1;
 
 alter t1 add column c9 varchar(100);
-alter t1 add column c3 varchar(100) default to_char(time('02:11:12'), 'HH24:MI:SS');
+alter t1 add column c3 varchar(100) default to_char(to_time('02:11:12'), 'HH24:MI:SS');
 insert into t1(c1, c2) values(2, {'cba'});
 select * from t1 order by c1;
 

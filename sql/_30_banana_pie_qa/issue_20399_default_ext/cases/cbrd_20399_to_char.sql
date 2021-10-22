@@ -21,10 +21,10 @@ create table t1(s1 varchar default (select to_char(sysdate,'YYYY-MM-DD')),s2 var
 -- (2). test NAME,it should be failed.
 drop table if exists t1;
 
-create table t1(d1 DATE,s2 varchar default to_char(d1,'MM-DD-YYYY'));
+create table t1(d1 DATE,s2 varchar default d1);
 
 -- (3). constant literal,it is ok.
-create table t1(s1 varchar default to_char('05-05-2017','MM/DD/YYYY'));
+create table t1(s1 varchar default '05-05-2017');
 
 select attr_name,default_value from db_attribute where class_name='t1';
 
