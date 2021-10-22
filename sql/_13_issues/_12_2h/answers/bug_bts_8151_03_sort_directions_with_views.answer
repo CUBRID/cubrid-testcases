@@ -30,7 +30,6 @@ Query plan:
 temp(order by)
     subplan: sscan
                  class: t node[?]
-                 sargs: term[?]
                  cost:  ? card ?
     sort:  ? asc, ? asc
     cost:  ? card ?
@@ -38,7 +37,14 @@ Analytic functions:
     run[?]: sort with key (? asc nulls first, ? asc nulls first)
            func[?]: avg partition by (? asc nulls first) order by (? asc nulls first)
 Query stmt:
-select t.i, t.j, t.k, avg(t.k) over (partition by ? order by ?) from x t where (inst_num()<= ?:? ) order by ?, ?
+(select t.i, t.j, t.k, avg(t.k) over (partition by ? order by ?) from x t order by ?, ?)
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.k, t.a from (select t.i, t.j, t.k, avg(t.k) over (partition by ? order by ?) from x t order by ?, ?) t (i, j, k, a) where (inst_num()<= ?:? )
 ===================================================
 0
 ===================================================
@@ -57,7 +63,6 @@ Query plan:
 temp(order by)
     subplan: sscan
                  class: t node[?]
-                 sargs: term[?]
                  cost:  ? card ?
     sort:  ? asc, ? asc
     cost:  ? card ?
@@ -65,7 +70,14 @@ Analytic functions:
     run[?]: sort with key (? asc nulls first, ? asc nulls first)
            func[?]: avg partition by (? asc nulls first) order by (? asc nulls first)
 Query stmt:
-select t.i, t.j, t.k, avg(t.k) over (partition by ? order by ?) from x t where (inst_num()<= ?:? ) order by ?, ?
+(select t.i, t.j, t.k, avg(t.k) over (partition by ? order by ?) from x t order by ?, ?)
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.i, t.j, t.k, t.a from (select t.i, t.j, t.k, avg(t.k) over (partition by ? order by ?) from x t order by ?, ?) t (i, j, k, a) where (inst_num()<= ?:? )
 ===================================================
 0
 ===================================================
@@ -84,7 +96,6 @@ Query plan:
 temp(order by)
     subplan: sscan
                  class: t node[?]
-                 sargs: term[?]
                  cost:  ? card ?
     sort:  ? asc, ? asc
     cost:  ? card ?
@@ -92,7 +103,14 @@ Analytic functions:
     run[?]: sort with key (? asc nulls first, ? asc nulls first)
            func[?]: avg partition by (? asc nulls first) order by (? asc nulls first)
 Query stmt:
-select t.i, t.k, avg(t.k) over (partition by ? order by ?) from x t where (inst_num()<= ?:? ) order by ?, ?
+(select t.i, t.k, avg(t.k) over (partition by ? order by ?) from x t order by ?, ?)
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.i, t.k, t.a from (select t.i, t.k, avg(t.k) over (partition by ? order by ?) from x t order by ?, ?) t (i, k, a) where (inst_num()<= ?:? )
 ===================================================
 0
 ===================================================
@@ -111,7 +129,6 @@ Query plan:
 temp(order by)
     subplan: sscan
                  class: t node[?]
-                 sargs: term[?]
                  cost:  ? card ?
     sort:  ? asc, ? asc
     cost:  ? card ?
@@ -119,7 +136,14 @@ Analytic functions:
     run[?]: sort with key (? asc nulls first, ? asc nulls first)
            func[?]: avg partition by (? asc nulls first) order by (? asc nulls first)
 Query stmt:
-select t.i, t.k, avg(t.k) over (partition by ? order by ?) from x t where (inst_num()<= ?:? ) order by ?, ?
+(select t.i, t.k, avg(t.k) over (partition by ? order by ?) from x t order by ?, ?)
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.i, t.k, t.a from (select t.i, t.k, avg(t.k) over (partition by ? order by ?) from x t order by ?, ?) t (i, k, a) where (inst_num()<= ?:? )
 ===================================================
 0
 ===================================================
@@ -138,7 +162,6 @@ Query plan:
 temp(order by)
     subplan: sscan
                  class: t node[?]
-                 sargs: term[?]
                  cost:  ? card ?
     sort:  ? asc, ? asc
     cost:  ? card ?
@@ -146,7 +169,14 @@ Analytic functions:
     run[?]: sort with key (? asc nulls first, ? asc nulls first)
            func[?]: avg partition by (? asc nulls first) order by (? asc nulls first)
 Query stmt:
-select t.j, t.k, avg(t.k) over (partition by ? order by ?) from x t where (inst_num()<= ?:? ) order by ?, ?
+(select t.j, t.k, avg(t.k) over (partition by ? order by ?) from x t order by ?, ?)
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.j, t.k, t.a from (select t.j, t.k, avg(t.k) over (partition by ? order by ?) from x t order by ?, ?) t (j, k, a) where (inst_num()<= ?:? )
 ===================================================
 0
 ===================================================
@@ -165,7 +195,6 @@ Query plan:
 temp(order by)
     subplan: sscan
                  class: t node[?]
-                 sargs: term[?]
                  cost:  ? card ?
     sort:  ? asc, ? asc
     cost:  ? card ?
@@ -173,7 +202,14 @@ Analytic functions:
     run[?]: sort with key (? asc nulls first, ? asc nulls first)
            func[?]: avg partition by (? asc nulls first) order by (? asc nulls first)
 Query stmt:
-select t.j, t.k, avg(t.k) over (partition by ? order by ?) from x t where (inst_num()<= ?:? ) order by ?, ?
+(select t.j, t.k, avg(t.k) over (partition by ? order by ?) from x t order by ?, ?)
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.j, t.k, t.a from (select t.j, t.k, avg(t.k) over (partition by ? order by ?) from x t order by ?, ?) t (j, k, a) where (inst_num()<= ?:? )
 ===================================================
 0
 ===================================================
@@ -192,7 +228,6 @@ Query plan:
 temp(order by)
     subplan: sscan
                  class: t node[?]
-                 sargs: term[?]
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
@@ -200,7 +235,14 @@ Analytic functions:
     run[?]: sort with key (? asc nulls first, ? asc nulls first)
            func[?]: avg partition by (? asc nulls first) order by (? asc nulls first)
 Query stmt:
-select avg(t.k) over (partition by ? order by ?) from x t where (inst_num()<= ?:? ) order by ?
+(select avg(t.k) over (partition by ? order by ?) from x t order by ?)
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.a from (select avg(t.k) over (partition by ? order by ?) from x t order by ?) t (a) where (inst_num()<= ?:? )
 ===================================================
 0
 ===================================================
@@ -219,7 +261,6 @@ Query plan:
 temp(order by)
     subplan: sscan
                  class: t node[?]
-                 sargs: term[?]
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
@@ -227,7 +268,14 @@ Analytic functions:
     run[?]: sort with key (? asc nulls first, ? asc nulls first)
            func[?]: avg partition by (? asc nulls first) order by (? asc nulls first)
 Query stmt:
-select avg(t.k) over (partition by ? order by ?) from x t where (inst_num()<= ?:? ) order by ?
+(select avg(t.k) over (partition by ? order by ?) from x t order by ?)
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.a from (select avg(t.k) over (partition by ? order by ?) from x t order by ?) t (a) where (inst_num()<= ?:? )
 ===================================================
 0
 ===================================================
@@ -252,7 +300,6 @@ Query plan:
 temp(order by)
     subplan: sscan
                  class: t node[?]
-                 sargs: term[?]
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
@@ -260,7 +307,14 @@ Analytic functions:
     run[?]: sort with key (? desc nulls last)
            func[?]: avg partition by (? desc nulls last) order by ()
 Query stmt:
-select avg(t.k) over (partition by ? desc ) from x t where (inst_num()<= ?:? ) order by ?
+(select avg(t.k) over (partition by ? desc ) from x t order by ?)
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.a from (select avg(t.k) over (partition by ? desc ) from x t order by ?) t (a) where (inst_num()<= ?:? )
 ===================================================
 0
 ===================================================
@@ -279,7 +333,6 @@ Query plan:
 temp(order by)
     subplan: sscan
                  class: t node[?]
-                 sargs: term[?]
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
@@ -287,7 +340,14 @@ Analytic functions:
     run[?]: sort with key (? asc nulls first)
            func[?]: avg partition by (? asc nulls first) order by ()
 Query stmt:
-select avg(t.k) over (partition by ?) from x t where (inst_num()<= ?:? ) order by ?
+(select avg(t.k) over (partition by ?) from x t order by ?)
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.a from (select avg(t.k) over (partition by ?) from x t order by ?) t (a) where (inst_num()<= ?:? )
 ===================================================
 0
 ===================================================
@@ -306,7 +366,6 @@ Query plan:
 temp(order by)
     subplan: sscan
                  class: t node[?]
-                 sargs: term[?]
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
@@ -314,7 +373,14 @@ Analytic functions:
     run[?]: sort with key (? asc nulls first, ? desc nulls last)
            func[?]: avg partition by (? asc nulls first, ? desc nulls last) order by ()
 Query stmt:
-select avg(t.k) over (partition by ?, ? desc ) from x t where (inst_num()<= ?:? ) order by ?
+(select avg(t.k) over (partition by ?, ? desc ) from x t order by ?)
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.a from (select avg(t.k) over (partition by ?, ? desc ) from x t order by ?) t (a) where (inst_num()<= ?:? )
 ===================================================
 0
 ===================================================
@@ -333,7 +399,6 @@ Query plan:
 temp(order by)
     subplan: sscan
                  class: t node[?]
-                 sargs: term[?]
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
@@ -341,7 +406,14 @@ Analytic functions:
     run[?]: sort with key (? asc nulls first)
            func[?]: avg partition by (? asc nulls first) order by ()
 Query stmt:
-select avg(t.k) over (partition by ?) from x t where (inst_num()<= ?:? ) order by ?
+(select avg(t.k) over (partition by ?) from x t order by ?)
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.a from (select avg(t.k) over (partition by ?) from x t order by ?) t (a) where (inst_num()<= ?:? )
 ===================================================
 0
 ===================================================
