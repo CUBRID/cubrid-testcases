@@ -1,0 +1,328 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1000
+===================================================
+1000
+===================================================
+0
+===================================================
+count(*)    
+10     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: tab_b node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select tab_b.col_a, max(tab_b.col_b) from tab_b tab_b where tab_b.col_a= ?:?  group by tab_b.col_a)
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tab_a a, (select tab_b.col_a, max(tab_b.col_b) from tab_b tab_b where tab_b.col_a= ?:?  group by tab_b.col_a) b (col_a, col_b) where a.col_a= ?:?  and a.col_a=b.col_a
+===================================================
+0
+===================================================
+count(*)    
+10     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: b node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select b.col_a, max(b.col_b) from tab_b b where b.col_a= ?:?  group by b.col_a)
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tab_a a, (select b.col_a, max(b.col_b) from tab_b b where b.col_a= ?:?  group by b.col_a) b (col_a, col_b) where a.col_a= ?:?  and a.col_a=b.col_a
+===================================================
+count(*)    
+10     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: tab_b node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select tab_b.col_a, max(tab_b.col_b) from tab_b tab_b group by tab_b.col_a)
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    after: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tab_a a left outer join (select tab_b.col_a, max(tab_b.col_b) from tab_b tab_b group by tab_b.col_a) b (col_a, col_b) on a.col_a=b.col_a where  cast(nvl(b.col_a, ?) as double)=?
+===================================================
+0
+===================================================
+count(*)    
+10     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: b node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select b.col_a, max(b.col_b) from tab_b b group by b.col_a)
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    after: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tab_a a left outer join (select b.col_a, max(b.col_b) from tab_b b group by b.col_a) b (col_a, col_b) on a.col_a=b.col_a where  cast(nvl(b.col_a, ?) as double)=?
+===================================================
+count(*)    
+10     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: tab_b node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select tab_b.col_a, max(tab_b.col_b) from tab_b tab_b where  cast(nvl(tab_b.col_a, ?) as double)=? group by tab_b.col_a)
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tab_a a, (select tab_b.col_a, max(tab_b.col_b) from tab_b tab_b where  cast(nvl(tab_b.col_a, ?) as double)=? group by tab_b.col_a) b (col_a, col_b) where a.col_a=b.col_a
+===================================================
+0
+===================================================
+count(*)    
+10     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: b node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select b.col_a, max(b.col_b) from tab_b b where  cast(nvl(b.col_a, ?) as double)=? group by b.col_a)
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tab_a a, (select b.col_a, max(b.col_b) from tab_b b where  cast(nvl(b.col_a, ?) as double)=? group by b.col_a) b (col_a, col_b) where a.col_a=b.col_a
+===================================================
+count(*)    
+100     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: tab_b node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select tab_b.col_a, tab_b.col_b from tab_b tab_b group by tab_b.col_a)
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: c node[?]
+               cost:  ? card ?
+    inner: temp
+               order: UNORDERED
+               subplan: nl-join (inner join)
+                            edge:  term[?]
+                            outer: sscan
+                                       class: a node[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+               cost:  ? card ?
+    after: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select tab_b.col_a, tab_b.col_b from tab_b tab_b group by tab_b.col_a) a (col_a, col_b) inner join tab_a b on a.col_a=b.col_a right outer join tab_a c on b.col_a=c.col_a where  cast(nvl(a.col_a, ?) as double)=?
+===================================================
+0
+===================================================
+count(*)    
+100     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: a node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select a.col_a, a.col_b from tab_b a group by a.col_a)
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: c node[?]
+               cost:  ? card ?
+    inner: temp
+               order: UNORDERED
+               subplan: nl-join (inner join)
+                            edge:  term[?]
+                            outer: sscan
+                                       class: a node[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+               cost:  ? card ?
+    after: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select a.col_a, a.col_b from tab_b a group by a.col_a) a (col_a, col_b) inner join tab_a b on a.col_a=b.col_a right outer join tab_a c on b.col_a=c.col_a where  cast(nvl(a.col_a, ?) as double)=?
+===================================================
+count(*)    
+100     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: tab_b node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select tab_b.col_a, tab_b.col_b from tab_b tab_b where  cast(nvl(tab_b.col_a, ?) as double)=? group by tab_b.col_a)
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: temp
+               order: UNORDERED
+               subplan: nl-join (left outer join)
+                            edge:  term[?]
+                            outer: sscan
+                                       class: c node[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select tab_b.col_a, tab_b.col_b from tab_b tab_b where  cast(nvl(tab_b.col_a, ?) as double)=? group by tab_b.col_a) a (col_a, col_b), tab_a b right outer join tab_a c on b.col_a=c.col_a where a.col_a=c.col_a
+===================================================
+0
+===================================================
+count(*)    
+100     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: a node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select a.col_a, a.col_b from tab_b a where  cast(nvl(a.col_a, ?) as double)=? group by a.col_a)
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select a.col_a, a.col_b from tab_b a where  cast(nvl(a.col_a, ?) as double)=? group by a.col_a) a (col_a, col_b), tab_a b, tab_a c where a.col_a=b.col_a and b.col_a=c.col_a
+===================================================
+0
+===================================================
+0
