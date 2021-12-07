@@ -1,6 +1,5 @@
 drop table if exists subquery_big;
 create table subquery_big (col_a int, col_b int, col_c int);
-set optimization level 513;
 
 select /*+ recompile */ count(*) 
 	from (select col_b, avg(col_c) 

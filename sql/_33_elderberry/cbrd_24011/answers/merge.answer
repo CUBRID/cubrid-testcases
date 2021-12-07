@@ -11,11 +11,42 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
+count(*)    
+10     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: tab_b node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select tab_b.col_a, count(*) from tab_b tab_b group by tab_b.col_a)
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: d node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: a node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tab_a a, (select tab_b.col_a, count(*) from tab_b tab_b group by tab_b.col_a) d (col_a, cnt) where a.col_a=d.col_a and d.col_a= ?:?  connect by  cast( prior a.col_a as double)= cast(a.col_a as double)+ cast(? as double)
+===================================================
 1
 ===================================================
 0
 ===================================================
 1
+===================================================
+0
+===================================================
+0
 ===================================================
 0
 ===================================================

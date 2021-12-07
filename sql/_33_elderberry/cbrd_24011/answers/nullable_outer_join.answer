@@ -11,14 +11,16 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 count(*)    
 10     
 
 Query plan:
 temp(group by)
-    subplan: sscan
+    subplan: iscan
                  class: tab_b node[?]
-                 sargs: term[?]
+                 index: idx term[?] (covers)
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
@@ -27,11 +29,11 @@ Query stmt:
 Query plan:
 nl-join (cross join)
     outer: sscan
-               class: a node[?]
-               sargs: term[?]
-               cost:  ? card ?
-    inner: sscan
                class: b node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: a node[?]
+               index: idx term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -44,9 +46,9 @@ count(*)
 
 Query plan:
 temp(group by)
-    subplan: sscan
+    subplan: iscan
                  class: b node[?]
-                 sargs: term[?]
+                 index: idx term[?] (covers)
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
@@ -55,11 +57,11 @@ Query stmt:
 Query plan:
 nl-join (cross join)
     outer: sscan
-               class: a node[?]
-               sargs: term[?]
-               cost:  ? card ?
-    inner: sscan
                class: b node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: a node[?]
+               index: idx term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -125,24 +127,23 @@ count(*)
 10     
 
 Query plan:
-temp(group by)
-    subplan: sscan
-                 class: tab_b node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
+iscan
+    class: tab_b node[?]
+    index: idx (covers)
+    filtr: term[?]
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 (select tab_b.col_a, max(tab_b.col_b) from tab_b tab_b where  cast(nvl(tab_b.col_a, ?) as double)=? group by tab_b.col_a)
+/* ---> skip GROUP BY */
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
+idx-join (inner join)
     outer: sscan
-               class: a node[?]
-               cost:  ? card ?
-    inner: sscan
                class: b node[?]
-               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: a node[?]
+               index: idx term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -154,24 +155,23 @@ count(*)
 10     
 
 Query plan:
-temp(group by)
-    subplan: sscan
-                 class: b node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
+iscan
+    class: b node[?]
+    index: idx (covers)
+    filtr: term[?]
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 (select b.col_a, max(b.col_b) from tab_b b where  cast(nvl(b.col_a, ?) as double)=? group by b.col_a)
+/* ---> skip GROUP BY */
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
+idx-join (inner join)
     outer: sscan
-               class: a node[?]
-               cost:  ? card ?
-    inner: sscan
                class: b node[?]
-               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: a node[?]
+               index: idx term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -197,14 +197,13 @@ nl-join (left outer join)
                cost:  ? card ?
     inner: temp
                order: UNORDERED
-               subplan: nl-join (inner join)
-                            edge:  term[?]
+               subplan: idx-join (inner join)
                             outer: sscan
                                        class: a node[?]
                                        cost:  ? card ?
-                            inner: sscan
+                            inner: iscan
                                        class: b node[?]
-                                       sargs: term[?]
+                                       index: idx term[?] (covers)
                                        cost:  ? card ?
                             cost:  ? card ?
                cost:  ? card ?
@@ -235,14 +234,13 @@ nl-join (left outer join)
                cost:  ? card ?
     inner: temp
                order: UNORDERED
-               subplan: nl-join (inner join)
-                            edge:  term[?]
+               subplan: idx-join (inner join)
                             outer: sscan
                                        class: a node[?]
                                        cost:  ? card ?
-                            inner: sscan
+                            inner: iscan
                                        class: b node[?]
-                                       sargs: term[?]
+                                       index: idx term[?] (covers)
                                        cost:  ? card ?
                             cost:  ? card ?
                cost:  ? card ?
@@ -255,15 +253,15 @@ count(*)
 100     
 
 Query plan:
-temp(group by)
-    subplan: sscan
-                 class: tab_b node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
-    sort:  ? asc
+iscan
+    class: tab_b node[?]
+    index: idx (covers)
+    filtr: term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 (select tab_b.col_a, tab_b.col_b from tab_b tab_b where  cast(nvl(tab_b.col_a, ?) as double)=? group by tab_b.col_a)
+/* ---> skip GROUP BY */
 Query plan:
 nl-join (cross join)
     outer: sscan
@@ -271,14 +269,13 @@ nl-join (cross join)
                cost:  ? card ?
     inner: temp
                order: UNORDERED
-               subplan: nl-join (left outer join)
-                            edge:  term[?]
+               subplan: idx-join (left outer join)
                             outer: sscan
                                        class: c node[?]
                                        cost:  ? card ?
-                            inner: sscan
+                            inner: iscan
                                        class: b node[?]
-                                       sargs: term[?]
+                                       index: idx term[?] (covers)
                                        cost:  ? card ?
                             cost:  ? card ?
                cost:  ? card ?
@@ -293,35 +290,37 @@ count(*)
 100     
 
 Query plan:
-temp(group by)
-    subplan: sscan
-                 class: a node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
-    sort:  ? asc
+iscan
+    class: a node[?]
+    index: idx (covers)
+    filtr: term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 (select a.col_a, a.col_b from tab_b a where  cast(nvl(a.col_a, ?) as double)=? group by a.col_a)
+/* ---> skip GROUP BY */
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: nl-join (inner join)
-               edge:  term[?]
+idx-join (inner join)
+    outer: idx-join (inner join)
                outer: sscan
                           class: a node[?]
                           cost:  ? card ?
-               inner: sscan
+               inner: iscan
                           class: b node[?]
-                          sargs: term[?]
+                          index: idx term[?] (covers)
                           cost:  ? card ?
                cost:  ? card ?
-    inner: sscan
+    inner: iscan
                class: c node[?]
-               sargs: term[?]
+               index: idx term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
 select count(*) from (select a.col_a, a.col_b from tab_b a where  cast(nvl(a.col_a, ?) as double)=? group by a.col_a) a (col_a, col_b), tab_a b, tab_a c where a.col_a=b.col_a and b.col_a=c.col_a
+===================================================
+0
+===================================================
+0
 ===================================================
 0
 ===================================================

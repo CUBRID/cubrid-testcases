@@ -6,8 +6,6 @@ insert into tab_b select to_char(rownum mod 100) col_a, to_char(rownum) col_b fr
 create index idx on tab_a(col_a,col_b);
 create index idx on tab_b(col_a,col_b);
 
-set optimization level 513;
-
 select /*+ recompile */ count(*)
   from tab_a a
       , ( select col_a,count(*) cnt from tab_b group by col_a ) d

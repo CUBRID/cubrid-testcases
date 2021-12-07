@@ -11,14 +11,16 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 count(*)    
 10     
 
 Query plan:
 temp(group by)
-    subplan: sscan
+    subplan: iscan
                  class: tab_b node[?]
-                 sargs: term[?]
+                 index: idx term[?] (covers)
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
@@ -27,11 +29,11 @@ Query stmt:
 Query plan:
 nl-join (cross join)
     outer: sscan
-               class: a node[?]
-               sargs: term[?]
-               cost:  ? card ?
-    inner: sscan
                class: b node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: a node[?]
+               index: idx term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -52,14 +54,13 @@ temp(group by)
 Query stmt:
 (select b.col_a, max(b.col_b) from tab_b b group by b.col_a having max(b.col_b)= cast(? as varchar))
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
+idx-join (inner join)
     outer: sscan
-               class: a node[?]
-               cost:  ? card ?
-    inner: sscan
                class: b node[?]
-               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: a node[?]
+               index: idx term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -120,6 +121,10 @@ nl-join (left outer join)
     cost:  ? card ?
 Query stmt:
 select count(*) from tab_a a left outer join (select b.col_a, max(b.col_b) from tab_b b group by b.col_a) b (col_a, col_b) on a.col_a=b.col_a and b.col_a= ?:?  and a.col_a= ?:? 
+===================================================
+0
+===================================================
+0
 ===================================================
 0
 ===================================================
