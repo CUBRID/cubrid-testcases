@@ -14,7 +14,7 @@ where a.col_a = b.col_a
 create or replace view v_a as select col_a, rownum col_b from tab_b group by col_a;
 select /*+ recompile */ count(*)
 from tab_a a
-      ,v1 b
+      ,v_a b
 where a.col_a = b.col_a
   and b.col_a = 2;
 select /*+ recompile */ count(*)
