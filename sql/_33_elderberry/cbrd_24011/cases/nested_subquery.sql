@@ -31,7 +31,5 @@ where a.col_a = d.col_a
   and d.col_a = 1;
 
 drop view v_a;
-drop index idx on tab_a;
-drop index idx on tab_b;
 drop table if exists tab_a, tab_b;
 

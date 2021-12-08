@@ -16,8 +16,5 @@ select count(*)
 	 where a.col_a = b.col_a
   	    and a.col_a = 1;
 
-drop index idx on tab_a;
-drop index idx on tab_b;
 drop table if exists tab_a, tab_b;
-
 

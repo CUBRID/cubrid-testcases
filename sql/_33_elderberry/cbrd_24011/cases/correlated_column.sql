@@ -52,7 +52,5 @@ where not exists (select 1 from (select col_a, col_b from (select col_a, col_b f
                       		 ) b where a.col_a = b.col_a
 	          );
 drop view v_a;
-drop index idx on tab_a;
-drop index idx on tab_b;
 drop table if exists tab_a, tab_b;
 

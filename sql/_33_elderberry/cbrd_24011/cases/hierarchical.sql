@@ -20,7 +20,5 @@ select /*+ recompile */ count(*)
     and d.col_a = 1
   connect by prior a.col_a = a.col_a+1000;
 
-drop index idx on tab_a;
-drop index idx on tab_b;
 drop table if exists tab_a, tab_b;
 

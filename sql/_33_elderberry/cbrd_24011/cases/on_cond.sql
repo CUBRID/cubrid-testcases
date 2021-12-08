@@ -24,7 +24,5 @@ select /*+ recompile */ count(*)
 from tab_a a left join v_a b on a.col_a = b.col_a and b.col_a = 2;
 
 drop view v_a;
-drop index idx on tab_a;
-drop index idx on tab_b;
 drop table if exists tab_a, tab_b;
 
