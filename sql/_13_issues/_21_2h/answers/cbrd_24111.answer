@@ -1,0 +1,63 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+11
+===================================================
+5
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+5     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: bb node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select a.a from tb? a, tb? bb where (a.a=bb.a))
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: b node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: bb node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select b.a from tb? b, tb? bb where (b.a=bb.a))
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select a.a from tb? a, tb? bb where (a.a=bb.a)) a (a), (select b.a from tb? b, tb? bb where (b.a=bb.a)) b (a) where (@newincr := @newincr+?)<=?
+===================================================
+0
+===================================================
+0
