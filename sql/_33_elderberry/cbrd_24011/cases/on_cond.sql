@@ -13,7 +13,7 @@ from tab_a a inner join
 create or replace view v_a as select col_a, max(col_b) col_b from tab_b group by col_a;
 
 select /*+ recompile */ count(*)
-from tab_a a inner join v_a b on a.col_a = b.col_a and b.col_b = 2;
+from tab_a a inner join v_a b on a.col_a = b.col_a and b.col_a = 2;
 select /*+ recompile */ count(*)
 from tab_a a left join
       (select col_a, max(col_b) col_b from tab_b group by col_a) b on a.col_a = b.col_a and b.col_a = 2;

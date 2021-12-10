@@ -14,6 +14,60 @@
 0
 ===================================================
 count(*)    
+0     
+
+Query plan:
+iscan
+    class: tab_b node[?]
+    index: idx (covers)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select tab_b.col_a, max(tab_b.col_b) from tab_b tab_b where  cast(nvl(tab_b.col_a, ?) as double)=? group by tab_b.col_a having max(tab_b.col_b)= cast(? as varchar))
+/* ---> skip GROUP BY */
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: b node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: a node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tab_a a, (select tab_b.col_a, max(tab_b.col_b) from tab_b tab_b where  cast(nvl(tab_b.col_a, ?) as double)=? group by tab_b.col_a having max(tab_b.col_b)= cast(? as varchar)) b (col_a, col_b) where a.col_a=b.col_a
+===================================================
+0
+===================================================
+count(*)    
+10     
+
+Query plan:
+iscan
+    class: b node[?]
+    index: idx (covers)
+    filtr: term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+(select b.col_a, b.col_b from tab_b b where  cast(nvl(b.col_a, ?) as double)=? group by b.col_a)
+/* ---> skip GROUP BY */
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: b node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: a node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tab_a a, (select b.col_a, b.col_b from tab_b b where  cast(nvl(b.col_a, ?) as double)=? group by b.col_a) b (col_a, col_b) where a.col_a=b.col_a
+===================================================
+count(*)    
 10     
 
 Query plan:

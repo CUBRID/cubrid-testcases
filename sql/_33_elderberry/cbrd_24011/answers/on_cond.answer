@@ -42,19 +42,20 @@ select count(*) from tab_a a, (select tab_b.col_a, max(tab_b.col_b) from tab_b t
 0
 ===================================================
 count(*)    
-0     
+10     
 
 Query plan:
 temp(group by)
-    subplan: sscan
+    subplan: iscan
                  class: b node[?]
+                 index: idx term[?] (covers)
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select b.col_a, max(b.col_b) from tab_b b group by b.col_a having max(b.col_b)= cast(? as varchar))
+(select b.col_a, max(b.col_b) from tab_b b where b.col_a= ?:?  group by b.col_a)
 Query plan:
-idx-join (inner join)
+nl-join (cross join)
     outer: sscan
                class: b node[?]
                cost:  ? card ?
@@ -64,7 +65,7 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from tab_a a, (select b.col_a, max(b.col_b) from tab_b b group by b.col_a having max(b.col_b)= cast(? as varchar)) b (col_a, col_b) where a.col_a=b.col_a
+select count(*) from tab_a a, (select b.col_a, max(b.col_b) from tab_b b where b.col_a= ?:?  group by b.col_a) b (col_a, col_b) where a.col_a= ?:?  and a.col_a=b.col_a
 ===================================================
 count(*)    
 1000     

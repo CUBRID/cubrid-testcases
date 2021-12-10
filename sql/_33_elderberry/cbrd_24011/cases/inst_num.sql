@@ -40,6 +40,12 @@ from tab_a a
 where a.col_a = b.col_a
   and b.col_a = 1;
 
+select /*+ recompile */ count(*)
+from tab_a a
+      ,(select col_a from tab_b group by col_a union all select col_a from tab_b limit 10) b
+where a.col_a = b.col_a
+  and b.col_a = 1;
+
 drop view v_a;
 drop table if exists tab_a, tab_b;
 

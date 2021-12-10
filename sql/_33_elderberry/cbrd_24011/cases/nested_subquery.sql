@@ -7,6 +7,25 @@ create index idx on tab_a(col_a,col_b);
 create index idx on tab_b(col_a,col_b);
 
 select /*+ recompile */ count(*)
+  from tab_a a
+        ,(select col_a, cnt from (
+  	      select col_a,count(*) cnt from tab_b group by col_a
+  	      union
+       	      select col_a,count(*) from tab_b group by col_a
+              union
+              select col_a,count(*) from tab_b group by col_a)) b
+ 	 where a.col_a = b.col_a
+    	 and b.col_a = 1;
+
+create or replace view v_a as select col_a, count(*) cnt from tab_b group by col_a;
+
+select /*+ recompile */ count(*)
+from tab_a a
+     ,v_a b
+where a.col_a = b.col_a
+     and b.col_a = 1;
+
+select /*+ recompile */ count(*)
 from tab_a a
       , (select col_a, cnt from (
           select col_a, cnt from (
@@ -16,6 +35,13 @@ from tab_a a
         ) ) d
 where a.col_a = d.col_a
   and d.col_a = 1;
+
+select /*+ recompile */ count(*)
+  from tab_a a
+      , v_a d
+  where a.col_a = d.col_a
+    and d.col_a = 1
+  connect by prior a.col_a = a.col_a+1000;
 
 create or replace view v_a as select col_a, cnt from (
           select col_a, cnt from (

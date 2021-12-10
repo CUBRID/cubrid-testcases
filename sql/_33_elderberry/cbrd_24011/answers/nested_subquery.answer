@@ -25,6 +25,86 @@ temp(group by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
+select tab_b.col_a, count(*) from tab_b tab_b where tab_b.col_a= ?:?  group by tab_b.col_a
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: tab_b node[?]
+                 index: idx term[?] (covers)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tab_b.col_a, count(*) from tab_b tab_b where tab_b.col_a= ?:?  group by tab_b.col_a
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: tab_b node[?]
+                 index: idx term[?] (covers)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tab_b.col_a, count(*) from tab_b tab_b where tab_b.col_a= ?:?  group by tab_b.col_a
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+(select [__t?].col_a, [__t?].cnt from ((select tab_b.col_a, count(*) as [cnt] from tab_b tab_b where tab_b.col_a= ?:?  group by tab_b.col_a union select tab_b.col_a, count(*) from tab_b tab_b where tab_b.col_a= ?:?  group by tab_b.col_a) union select tab_b.col_a, count(*) from tab_b tab_b where tab_b.col_a= ?:?  group by tab_b.col_a) [__t?] (col_a, cnt))
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: b node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: a node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tab_a a, (select [__t?].col_a, [__t?].cnt from ((select tab_b.col_a, count(*) as [cnt] from tab_b tab_b where tab_b.col_a= ?:?  group by tab_b.col_a union select tab_b.col_a, count(*) from tab_b tab_b where tab_b.col_a= ?:?  group by tab_b.col_a) union select tab_b.col_a, count(*) from tab_b tab_b where tab_b.col_a= ?:?  group by tab_b.col_a) [__t?] (col_a, cnt)) b (col_a, cnt) where a.col_a= ?:?  and a.col_a=b.col_a
+===================================================
+0
+===================================================
+count(*)    
+10     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: b node[?]
+                 index: idx term[?] (covers)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select b.col_a, count(*) from tab_b b where b.col_a= ?:?  group by b.col_a)
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: b node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: a node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tab_a a, (select b.col_a, count(*) from tab_b b where b.col_a= ?:?  group by b.col_a) b (col_a, cnt) where a.col_a= ?:?  and a.col_a=b.col_a
+===================================================
+count(*)    
+10     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: tab_b node[?]
+                 index: idx term[?] (covers)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
 (select tab_b.col_a, count(*) from tab_b tab_b where tab_b.col_a= ?:?  group by tab_b.col_a)
 Query plan:
 sscan
@@ -56,6 +136,31 @@ nl-join (cross join)
     cost:  ? card ?
 Query stmt:
 select count(*) from tab_a a, (select [__t?].col_a, [__t?].cnt from (select [__t?].col_a, [__t?].cnt from (select [__t?].col_a, [__t?].cnt from (select tab_b.col_a, count(*) as [cnt] from tab_b tab_b where tab_b.col_a= ?:?  group by tab_b.col_a) [__t?] (col_a, cnt)) [__t?] (col_a, cnt)) [__t?] (col_a, cnt)) d (col_a, cnt) where a.col_a= ?:?  and a.col_a=d.col_a
+===================================================
+count(*)    
+10     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: d node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select d.col_a, count(*) from tab_b d group by d.col_a)
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: d node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: a node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tab_a a, (select d.col_a, count(*) from tab_b d group by d.col_a) d (col_a, cnt) where a.col_a=d.col_a and d.col_a= ?:?  connect by  cast( prior a.col_a as double)= cast(a.col_a as double)+ cast(? as double)
 ===================================================
 0
 ===================================================

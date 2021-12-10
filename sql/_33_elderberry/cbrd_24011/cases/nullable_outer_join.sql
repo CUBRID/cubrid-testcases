@@ -7,6 +7,21 @@ create index idx on tab_a(col_a,col_b);
 create index idx on tab_b(col_a,col_b);
 
 select /*+ recompile */ count(*)
+  from tab_a a
+        ,(select col_a, max(col_b) col_b from tab_b group by col_a) b
+  where a.col_a = b.col_a (+)
+    and b.col_b = 1
+    and nvl(b.col_a,0) = 1;
+
+create or replace view v_a as select col_a, col_b from tab_b group by col_a;
+
+select /*+ recompile */ count(*)
+from tab_a a
+      ,v_a b
+where a.col_a = b.col_a
+  and nvl(b.col_a,0) = 1;
+
+select /*+ recompile */ count(*)
 from tab_a a left join
       (select col_a, max(col_b) col_b from tab_b group by col_a) b on a.col_a = b.col_a 
 where b.col_a = 2;

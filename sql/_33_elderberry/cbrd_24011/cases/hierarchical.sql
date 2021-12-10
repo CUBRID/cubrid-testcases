@@ -20,5 +20,6 @@ select /*+ recompile */ count(*)
     and d.col_a = 1
   connect by prior a.col_a = a.col_a+1000;
 
+drop view v_a;
 drop table if exists tab_a, tab_b;
 
