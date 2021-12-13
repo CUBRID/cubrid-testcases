@@ -42,7 +42,7 @@ select count(*) from tab_a a, (select tab_b.col_a, max(tab_b.col_b) from tab_b t
 0
 ===================================================
 count(*)    
-10     
+0     
 
 Query plan:
 iscan
@@ -52,7 +52,7 @@ iscan
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-(select b.col_a, b.col_b from tab_b b where  cast(nvl(b.col_a, ?) as double)=? group by b.col_a)
+(select b.col_a, b.col_b from tab_b b where  cast(nvl(b.col_a, ?) as double)=? group by b.col_a having b.col_b= ?:? )
 /* ---> skip GROUP BY */
 Query plan:
 idx-join (inner join)
@@ -65,7 +65,7 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from tab_a a, (select b.col_a, b.col_b from tab_b b where  cast(nvl(b.col_a, ?) as double)=? group by b.col_a) b (col_a, col_b) where a.col_a=b.col_a
+select count(*) from tab_a a, (select b.col_a, b.col_b from tab_b b where  cast(nvl(b.col_a, ?) as double)=? group by b.col_a having b.col_b= ?:? ) b (col_a, col_b) where a.col_a=b.col_a
 ===================================================
 count(*)    
 10     
