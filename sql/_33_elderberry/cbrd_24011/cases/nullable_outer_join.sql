@@ -13,7 +13,7 @@ select /*+ recompile */ count(*)
     and b.col_b = 1
     and nvl(b.col_a,0) = 1;
 
-create or replace view v_a as select col_a, col_b from tab_b group by col_a;
+create or replace view v_a as select col_a, max(col_b) col_b from tab_b group by col_a;
 
 select /*+ recompile */ count(*)
   from tab_a a
