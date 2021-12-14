@@ -20,13 +20,13 @@ select @a, json_length(json_set(@a, '$."title"[1025]', 'a'), '$.title');
 
 drop table if exists t;
 create table t as select 1 a from db_class;         
-insert into t  select a from t;
-insert into t  select a from t;
-insert into t  select a from t;
-insert into t  select a from t;
+insert into t  select a from t limit 45;
+insert into t  select a from t limit 90;
+insert into t  select a from t limit 180;
+insert into t  select a from t limit 360;
 select count(*), json_length(json_arrayagg(a)) from t;
 
-insert into t  select a from t;
+insert into t  select a from t limit 720;
 select count(*), json_length(json_arrayagg(a)) from t;
 select json_set(json_arrayagg(a) , '$[1400]', '9999') from t;
 drop table if exists t;

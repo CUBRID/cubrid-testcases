@@ -46,7 +46,7 @@ CREATE TABLE `report_column` (
   `report_table_id` bigint NOT NULL,
   PRIMARY KEY (`REPORT_COLUMN_ID`)
 )
-insert into report_column select null,rownum,rownum,rownum,rownum,rownum from db_class;
+insert into report_column select null,rownum,rownum,rownum,rownum,rownum from db_class limit 46;
 update report_column rc set rc.report_table_id = coalesce((select id from report_table rt where left(rc.column_name, length(rt.alias)) = rt.alias), 0);
 drop table `report_table`,`report_column`;
 
