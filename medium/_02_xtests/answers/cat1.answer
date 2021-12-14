@@ -19,6 +19,7 @@ _db_meth_sig     DBA     CLASS     YES     NONE     NO     NO     iso88591_bin  
 _db_method     DBA     CLASS     YES     NONE     NO     NO     iso88591_bin     null     
 _db_partition     DBA     CLASS     YES     NONE     NO     NO     iso88591_bin     null     
 _db_query_spec     DBA     CLASS     YES     NONE     NO     NO     iso88591_bin     null     
+_db_server     DBA     CLASS     YES     NONE     NO     NO     iso88591_bin     null     
 _db_stored_procedure     DBA     CLASS     YES     NONE     NO     NO     iso88591_bin     null     
 _db_stored_procedure_args     DBA     CLASS     YES     NONE     NO     NO     iso88591_bin     null     
 db_attr_setdomain_elm     DBA     VCLASS     YES     NONE     NO     NO     iso88591_bin     null     
@@ -41,6 +42,7 @@ db_partition     DBA     VCLASS     YES     NONE     NO     NO     iso88591_bin 
 db_password     DBA     CLASS     YES     NONE     NO     NO     iso88591_bin     null     
 db_root     DBA     CLASS     YES     NONE     NO     NO     iso88591_bin     null     
 db_serial     DBA     CLASS     YES     NONE     NO     NO     iso88591_bin     null     
+db_server     DBA     VCLASS     YES     NONE     NO     NO     iso88591_bin     null     
 db_stored_procedure     DBA     VCLASS     YES     NONE     NO     NO     iso88591_bin     null     
 db_stored_procedure_args     DBA     VCLASS     YES     NONE     NO     NO     iso88591_bin     null     
 db_trig     DBA     VCLASS     YES     NONE     NO     NO     iso88591_bin     null     
@@ -55,8 +57,8 @@ dual     DBA     CLASS     YES     NONE     NO     NO     iso88591_bin     null
 0
 ===================================================
 class_name    owner_name    class_type    is_system_class    tde_algorithm    partitioned    is_reuse_oid_class    collation    comment    
-bar01     DBA     CLASS     NO     NONE     NO     NO     iso88591_bin     null     
-foo01     DBA     CLASS     NO     NONE     NO     NO     iso88591_bin     null     
+bar01     DBA     CLASS     NO     NONE     NO     YES     iso88591_bin     null     
+foo01     DBA     CLASS     NO     NONE     NO     YES     iso88591_bin     null     
 
 ===================================================
 attr_name    attr_type    
@@ -66,7 +68,7 @@ bc     INSTANCE
 bd     INSTANCE     
 
 ===================================================
-0
+Error:-494
 ===================================================
 0
 ===================================================
@@ -77,11 +79,9 @@ bb     CLASS
 bb     INSTANCE     
 bc     INSTANCE     
 bd     INSTANCE     
-be     SHARED     
 
 ===================================================
 index_name    is_unique    is_reverse    class_name    key_count    is_primary_key    is_foreign_key    filter_expression    have_function    comment    status    
-u_bar01_ba     YES     NO     bar01     1     NO     NO     null     NO     null     NORMAL INDEX     
 
 ===================================================
 0
@@ -137,10 +137,11 @@ vclass_def
 select [bar01].[bb] from [bar01] [bar01]     
 
 ===================================================
-0
+Error:-494
 ===================================================
 attr_name    attr_type    
 ba     CLASS     
+ba     INSTANCE     
 bb     CLASS     
 bb     INSTANCE     
 bc     INSTANCE     
