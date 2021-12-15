@@ -9,6 +9,5 @@ create view v1 as select aa.a from tb1 aa, tb2 bb where aa.a = bb.a;
 set @newincr=0; 
 select count(*) from v1 a, v1 b where (@newincr:=@newincr+1) <= 5;
 
-DROP variable @newincr;
 DROP TABLE IF EXISTS tb1, tb2;
 DROP view IF EXISTS v1;
