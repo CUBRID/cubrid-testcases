@@ -1,15 +1,15 @@
 drop table if exists foo;
 create table foo (id int primary key, name string);
-insert into foo select rownum, lpad('a', 3*16*1024, 'a') from db_class;
+insert into foo select rownum, lpad('a', 3*16*1024, 'a') from db_class limit 45;
 update foo set name='a' where id % 2 = 1;
 select name, id from foo where id > 0 group by id;
 drop table  foo;
 create table foo (id int primary key, name string);
-insert into foo select rownum, 'a' from db_class;
+insert into foo select rownum, 'a' from db_class limit 45;
 select name, id from foo where id > 0 group by id;
 drop table  foo;
 create table foo (id int primary key, name string);
-insert into foo select rownum, lpad('a', 107374, 'b') from db_class;
+insert into foo select rownum, lpad('a', 107374, 'b') from db_class limit 45;
 update foo set name='a' where id % 2 = 1;
 select name, id from foo where id > 0 group by id;
 drop table  foo;
