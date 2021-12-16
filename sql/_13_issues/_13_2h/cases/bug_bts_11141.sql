@@ -4,8 +4,8 @@ create table t (i int, j int);
 
 create table u(i int, j int);
 
-insert into t select rownum, rownum from _db_class;
-insert into u select rownum, rownum from _db_class;
+insert into t select rownum, rownum from _db_class limit 46;
+insert into u select rownum, rownum from _db_class limit 46;
 
 update statistics on all classes;
 
@@ -23,8 +23,8 @@ create table t (i int primary key, j int);
 
 create table u(i int, j int, foreign key fk_u_t_i(i) references t(i));
 
-insert into t select rownum, rownum from _db_class;
-insert into u select rownum, rownum from _db_class;
+insert into t select rownum, rownum from _db_class limit 46;
+insert into u select rownum, rownum from _db_class limit 46;
 
 update statistics on all classes;
 

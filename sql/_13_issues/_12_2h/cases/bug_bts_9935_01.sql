@@ -272,8 +272,8 @@ drop table if exists u;
 create table t (i integer, j int) partition by range (i)  (partition p0 values less than (10), partition p1 values less than (100));
 create table u (i integer);
 
-insert into t select rownum, rownum from _db_class;
-insert into u select rownum from _db_class;
+insert into t select rownum, rownum from _db_class limit 48;
+insert into u select rownum from _db_class limit 48;
 
 merge into t partition (p0) p0
 using u
