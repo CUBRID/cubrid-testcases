@@ -1,0 +1,126 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1000
+===================================================
+1000
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+0     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tab_b node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select tab_b.col_a, tab_b.col_b from tab_b tab_b order by ? for orderby_num()<= ?:? )
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: a node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tab_a a, (select tab_b.col_a, tab_b.col_b from tab_b tab_b order by ? for orderby_num()<= ?:? ) b (col_a, col_b) where a.col_a= ?:?  and b.col_a= ?:?  and a.col_a=b.col_a
+===================================================
+0
+===================================================
+count(*)    
+0     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: b node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select b.col_b, b.col_a from tab_b b order by ? for orderby_num()<= ?:? )
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: a node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tab_a a, (select b.col_b, b.col_a from tab_b b order by ? for orderby_num()<= ?:? ) b (col_b, col_a) where a.col_a=b.col_b and b.col_a= ?:? 
+===================================================
+count(*)    
+0     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: tab_b node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select tab_b.col_a, tab_b.col_b from tab_b tab_b group by tab_b.col_a having groupby_num()<=?)
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: a node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tab_a a, (select tab_b.col_a, tab_b.col_b from tab_b tab_b group by tab_b.col_a having groupby_num()<=?) b (col_a, col_b) where a.col_a= ?:?  and b.col_a= ?:?  and a.col_a=b.col_a
+===================================================
+0
+===================================================
+count(*)    
+0     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: b node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select b.col_a, b.col_b from tab_b b group by b.col_a having groupby_num()<=?)
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: a node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tab_a a, (select b.col_a, b.col_b from tab_b b group by b.col_a having groupby_num()<=?) b (col_a, col_b) where a.col_a= ?:?  and b.col_a= ?:?  and a.col_a=b.col_a
+===================================================
+0
+===================================================
+0
