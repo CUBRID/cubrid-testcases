@@ -1,0 +1,76 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1000
+===================================================
+1000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+1000     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: b node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select b.col_a, test() from tab_b b group by b.col_a)
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: a node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tab_a a, (select b.col_a, test() from tab_b b group by b.col_a) b (col_a, col_b) where a.col_a=b.col_a and b.col_b=?
+===================================================
+0
+===================================================
+count(*)    
+1000     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: b node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select b.col_a, test() from tab_b b group by b.col_a)
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: a node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tab_a a, (select b.col_a, test() from tab_b b group by b.col_a) b (col_a, col_b) where a.col_a=b.col_a and b.col_b=?
+===================================================
+0
+===================================================
+0
+===================================================
+0
