@@ -77,7 +77,7 @@ select nvl2(time'00:00:00', '00:00:00', '00:00:01');
 
 
 
-create table t1 (c_dt datetime, c_ts timestamp, c_d date, c_t time)
+create table t1 (c_dt datetime, c_ts timestamp, c_d date, c_t time);
 insert into t1 values(null, null, null, null);
 
 select nvl2(c_dt, datetime'01/03/2000', datetime'01/02/2000') from t1;

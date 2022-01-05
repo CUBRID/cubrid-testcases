@@ -3,7 +3,7 @@
 create table hash_test(id int not null ,	
 			   test_time time,
 			   test_date date,
-			   test_timestamp timestamp,primary key(id,test_time))
+			   test_timestamp timestamp,primary key(id,test_time));
 	insert into hash_test values(1,'08:10:01','2006-01-01','2006-01-01 08:10:01');
 	insert into hash_test values(2,'08:20:02','2006-01-11','2006-01-11 08:20:02');
 	insert into hash_test values(3,'09:10:03','2006-02-01','2006-02-01 09:10:03');
