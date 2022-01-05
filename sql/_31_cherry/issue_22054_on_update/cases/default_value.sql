@@ -1,6 +1,6 @@
 --+ holdcas on;
 drop table if exists t;
-create table t(a int , b date default current_datetime on update current_datetime);
+create table t(a int , b  timestamp default '2018-09-19 15:00:00' on update current_timestamp);
 insert into  t(a) values(1);  
 select if(b is not null,'ok','nok') from t;
 update t set a=1;
