@@ -117,8 +117,8 @@ ok
 ===================================================
 Field    Type    Null    Key    Default    Extra    
 id     BIGINT     NO     PRI     null     auto_increment     
-col1     DATETIME     YES          null          
-col2     DATETIME     YES          11:11:11.111 PM 11/11/2011          
+col1     DATETIME     YES          SYS_DATETIME          
+col2     DATETIME     NO          11:11:11.111 PM 11/11/2011          
 col3     DATETIME     YES          SYS_DATETIME          
 col4     DATETIME     YES          SYS_DATETIME          
 
@@ -126,7 +126,7 @@ col4     DATETIME     YES          SYS_DATETIME
 1
 ===================================================
 if(col1 is null  and col2='2011-11-11 11:11:11.111 PM' and ( SYS_DATETIME -col3)<=1000 and col3=col4, 'ok', 'nok')    
-ok     
+nok     
 
 ===================================================
 0
