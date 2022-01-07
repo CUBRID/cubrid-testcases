@@ -26,7 +26,7 @@ C2: set transaction isolation level repeatable read;
 C1: drop table if exists t;
 C1: create table t(id int ,col int);
 C1: create unique index idx on t(id);
-C1: insert into t select rownum,rownum%100 from db_class a,db_class b where rownum <= 3000;
+C1: insert into t select rownum,rownum%100 from db_class a,db_class b where rownum <= 676;
 C1: create index idx_col on t(col);
 C1: commit work;
 MC: wait until C1 ready;
