@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS [tbl];
+
 CREATE TABLE [tbl] (
   part_id CHARACTER VARYING (1073741823),
   INDEX idx (NVL(part_id, NULL)),
@@ -8,3 +10,4 @@ SELECT * FROM tbl
 WHERE NVL(part_id, null) in ( SELECT '1') ;
 
 DROP TABLE [tbl];
+
