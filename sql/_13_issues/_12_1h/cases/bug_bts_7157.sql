@@ -8,7 +8,7 @@ prepare st1 from 'select c1 from xoo where ((c1 > ? and c1 < ?) or (c1 > ? and c
 execute st1 using 1,5,7,9,4,10;
 
 create table t1(a int primary key);
-insert into t1(a) values(1),(2),(3),(4),(5),(6),(7),(8),(9),(10)
+insert into t1(a) values(1),(2),(3),(4),(5),(6),(7),(8),(9),(10);
 
 prepare st from 'select * from t1 where a>? or a<?';
 execute st using 1,2;
