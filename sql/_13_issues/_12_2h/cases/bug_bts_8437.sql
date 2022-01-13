@@ -8,7 +8,7 @@ SELECT ADDDATE('1991-01-01 00:00:00', '10000000000');
 SELECT ADDDATE('1991-01-01 00:00:00', '10000000000'),ADDDATE('1991-01-01 00:00:00', '10000000000');
 SELECT ADDDATE('1991-01-01 00:00:00', '10000000000'),ADDDATE('1991-01-01 00:00:00', '10000000000');
 
-drop table if exists t1
+drop table if exists t1;
 create table t1(id int primary key, col1 datetime default SYSDATETIME unique, col2 datetime default SYSDATETIME not null, col3 datetime default SYSDATETIME, col4 datetime default SYSDATETIME);
 
 insert into t1 values(1, datetime'12/12/2000 12:12:12.123', '12/12/2000 12:12:12.123', '12/12/2000 12:12:12.123', '12/12/2000 12:12:12.123');

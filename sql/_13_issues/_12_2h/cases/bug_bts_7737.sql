@@ -1,5 +1,5 @@
 --+ holdcas on;
-drop table if exists t
+drop table if exists t;
 set names utf8;
 create table t(s string collate utf8_de_exp);
 create index i_t_s on t(s(2));
