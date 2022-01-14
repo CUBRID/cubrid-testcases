@@ -4,7 +4,7 @@ drop table if exists cc;
 create table aa(a int primary key, b int);
 create table bb(a int primary key, b int);
 create table cc(a int primary key, b int);
-insert into aa values(1,1)
+insert into aa values(1,1);
 insert into aa select a+(select count(*) from aa), 1 from aa;
 insert into aa select a+(select count(*) from aa), 1 from aa;
 insert into aa select a+(select count(*) from aa), 1 from aa;

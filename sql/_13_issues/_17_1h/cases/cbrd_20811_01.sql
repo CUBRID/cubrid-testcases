@@ -1,5 +1,5 @@
 drop if exists t; 
-CREATE TABLE t (ID INT PRIMARY KEY, ParentID INT NULL, Description VARCHAR(100))
+CREATE TABLE t (ID INT PRIMARY KEY, ParentID INT NULL, Description VARCHAR(100));
 INSERT INTO t (ID, ParentID, Description) VALUES
 (1, NULL, 'Parent'),(2, 1, 'Child'), (3, 2, 'SubChild');
 
