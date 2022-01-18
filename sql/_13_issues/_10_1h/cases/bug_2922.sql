@@ -23,12 +23,12 @@ drop table tbl, tbl1, tbl2;
 -----------------------------
 create table tbl (a int);
 -- return error
-prepare stmt1 from 'create table tbl1 as select ? as a from tbl'
-execute stmt1 using null
+prepare stmt1 from 'create table tbl1 as select ? as a from tbl';
+execute stmt1 using null;
 DEALLOCATE PREPARE stmt1;
 -- success
-prepare stmt1 from 'create table tbl1 as select ? as a from tbl'
-execute stmt1 using 1
+prepare stmt1 from 'create table tbl1 as select ? as a from tbl';
+execute stmt1 using 1;
 DEALLOCATE PREPARE stmt1;
 drop tbl, tbl1;
 
@@ -58,14 +58,14 @@ select * from v1;
 drop view v1;
 
 -- error
-prepare stmt1 from 'create view v1 (n) as select ? from db_root'
-execute stmt1 using 1
+prepare stmt1 from 'create view v1 (n) as select ? from db_root';
+execute stmt1 using 1;
 DEALLOCATE PREPARE stmt1;
 
-prepare stmt1 from 'create view v1 (n int) as select ? from db_root'
-execute stmt1 using 1
+prepare stmt1 from 'create view v1 (n int) as select ? from db_root';
+execute stmt1 using 1;
 DEALLOCATE PREPARE stmt1;
 
-prepare stmt1 from 'create view v1 as select ? as n from db_root'
-execute stmt1 using 1
+prepare stmt1 from 'create view v1 as select ? as n from db_root';
+execute stmt1 using 1;
 DEALLOCATE PREPARE stmt1;

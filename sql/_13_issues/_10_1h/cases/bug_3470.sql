@@ -36,7 +36,7 @@ select power(cast(2 as numeric(10,5)), cast(-1 as float));
 select power(cast(2 as numeric(10,5)), cast(-1 as double));
 select power(cast(2 as numeric(10,5)), cast(-1 as monetary));
 select power(cast(2 as numeric(10,5)), cast('-1' as varchar(10)));
-select power(cast(2 as numeric(10,5)), cast(n'-1' as nchar varying(10)))
+select power(cast(2 as numeric(10,5)), cast(n'-1' as nchar varying(10)));
 
 select power(cast(2 as float), cast(-1 as short));
 select power(cast(2 as float), cast(-1 as int));
