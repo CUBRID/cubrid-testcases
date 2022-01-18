@@ -24,32 +24,32 @@ create index i_t_j  on t(j);
 create index i_t_k on t(k);
 create index i_t_l  on t(l);
 
-select count(*) from t where 1;
-select count(*) from t where 0;
-select count(*) from t where NULL;
+select count(*) from t where 1<>0;
+select count(*) from t where 0<>0;
+select count(*) from t where NULL<>0;
 
-select * from t where i and l=4;
-select /*+ USE_IDX i_t_i */ * from t where not i and l=4;
+select * from t where i<>0 and l=4;
+select /*+ USE_IDX i_t_i */ * from t where not i<>0 and l=4;
 
-select if(sum(i)-sum(j),'nok', 'ok') from t where i and j;
-select * from t where (l > 7) and ((i and j) or (j and k)) order by l;
+select if(sum(i)-sum(j)<>0,'nok', 'ok') from t where i<>0 and j<>0;
+select * from t where (l > 7) and ((i<>0 and j<>0) or (j<>0 and k<>0)) order by l;
 
-select * from t where (i or j) in (select k from t order by k desc limit 1) order by l;
+select * from t where (i<>0 or j<>0) in (select k from t order by k desc limit 1) order by l;
 
-select i, j, (i and j), l mod 2, (not (l mod 2))
+select i, j, (i<>0 and j<>0), l mod 2, (not (l mod 2)<>0)
 from t
-where (i or j) in
-	(	select l from t where not (l mod 2) and i < 13
+where (i<>0 or j<>0) in
+	(	select l from t where not (l mod 2)<>0 and i < 13
 		union
-		select l from t where ((l mod 2) = (i and j))
+		select l from t where ((l mod 2) = (i<>0 and j<>0))
 	)
 order by l;
 
 
-select (i and j and k),((i and j) or k), case when i and j and k then 1 when (i and j) or k then 2 else 3 end from t order by l;
+select (i<>0 and j<>0 and k<>0),((i<>0 and j<>0) or k<>0), case when i<>0 and j<>0 and k<>0 then 1 when (i<>0 and j<>0) or k<>0 then 2 else 3 end from t order by l;
 
 
-select * from t where not (not (not (not ( !i)))) order by l;
+select * from t where not (not (not (not ( !i<>0)))) order by l;
 
 
 drop table t;

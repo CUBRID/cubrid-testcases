@@ -28,24 +28,24 @@ execute st using  1,2;
 
 
 --nest case in when,then, else
-prepare st from 'select  case when case when ? then ? else ? end then NULL else ? end from foo;';
+prepare st from 'select  case when case when ?:0<>0 then ?:1 else ?:2 end<>0 then NULL else ?:3 end from foo;';
 execute st using  1,2,3,4;
 
-prepare st from 'select  case when ? then case when ? then ? else ? end else ? end from foo;';
+prepare st from 'select  case when ?:0<>0 then case when ?:1<>0 then ?:2 else ?:3 end else ?:4 end from foo;';
 execute st using  1,2,3,4,5;
 
-prepare st from 'select  case when ? then ? else case when ? then ? else ? end end from foo;';
+prepare st from 'select  case when ?:0<>0 then ?:1 else case when ?:2<>0 then ?:3 else ?:4 end end from foo;';
 execute st using  1,2,3,4,5;
 
 
 --NULL VALUE
-prepare st from 'select a, case  when NULL then ? else ? end from foo order by 1;';
+prepare st from 'select a, case  when NULL<>0 then ?:0 else ?:1 end from foo order by 1;';
 execute st using  1,2;
 
-prepare st from 'select a, case  when ? then NULL else ? end from foo order by 1;';
+prepare st from 'select a, case  when ?:0<>0 then NULL else ?:1 end from foo order by 1;';
 execute st using  1,2;
 
-prepare st from 'select a, case  when ? then ? else NULL end from foo order by 1;';
+prepare st from 'select a, case  when ?:0<>0 then ?:1 else NULL end from foo order by 1;';
 execute st using  1,2;
 
 
