@@ -17,22 +17,22 @@ insert into t values
 (null, null, null, 14);
 
 
-select i,count(*) from t group by i having not i;
-select i, (count(*)=3) from t group by i having i and j;
+select i,count(*) from t group by i having not i<>0;
+select i, (count(*)=3) from t group by i having i<>0 and j<>0;
 
-select count(*) as join_none from t t1 join t t2 on 0;
-select count(*) as join_full from t t1 join t t2 on 1;
-select count(*) from t t1 join t t2 on t1.i;
-select count(*) from t t1 join t t2 on t1.i and t2.j;
+select count(*) as join_none from t t1 join t t2 on 0<>0;
+select count(*) as join_full from t t1 join t t2 on 1<>0;
+select count(*) from t t1 join t t2 on t1.i<>0;
+select count(*) from t t1 join t t2 on t1.i<>0 and t2.j<>0;
 
 
 create table u(x int, y int);
 insert into u values (1,99), (0,22);
-select i,x from t inner join u on (not t.i)+1=(not (not u.x));
+select i,x from t inner join u on (not t.i<>0)+1=(not (not u.x<>0));
 drop table u;
 
 
-select l,prior l from t start with not l connect by (prior l+1 = l) order by l;
+select l,prior l from t start with not l<>0 connect by (prior l+1 = l) order by l;
 
 
 

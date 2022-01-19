@@ -138,7 +138,7 @@ values(t1.a, t1.b,t1.c);
 
 merge into t2
 using t1
-on ((t1.a=t2.a) || (t1.a!=t2.a))
+on ((t1.a=t2.a)<>0 || (t1.a!=t2.a))<>0
 when matched then
 update
 set t2.b=-1

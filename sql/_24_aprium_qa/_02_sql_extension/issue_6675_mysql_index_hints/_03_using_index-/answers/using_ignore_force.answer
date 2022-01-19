@@ -180,20 +180,7 @@ temp(order by)
 Query stmt:
 select ui.i?, ui.i?, ui.i?, ui.i? from ui ui where (ui.i?< ?:? ) using index ui.idx_i?_i?_i?(-), ui.idx_i?_i?(+), ui.idx_i?_i?(+) order by ?
 ===================================================
-i1    i2    i3    i4    
-8     100.0     aaa     1998-01-01     
-3     18.0     bbb     1996-01-01     
-
-Query plan:
-iscan
-    class: ui node[?]
-    index: idx_i?_i?  (desc_index)
-    filtr: term[?] AND term[?]
-    sort:  ? desc, ? desc
-    cost:  ? card ?
-Query stmt:
-select ui.i?, ui.i?, ui.i?, ui.i? from ui ui where (ui.i?< ?:? ) and ui.i?<> cast(? as varchar) using index ui.idx_i?(-), ui.idx_i?_i?_i?(-), ui.idx_i?(+), ui.idx_i?_i?(+) order by ? desc 
-/* ---> skip ORDER BY */
+Error:-493
 ===================================================
 i1    i2    i3    i4    
 7     null     aaa     1995-01-01     

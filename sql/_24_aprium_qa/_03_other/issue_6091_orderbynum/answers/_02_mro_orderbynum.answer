@@ -222,23 +222,7 @@ iscan
 Query stmt:
 select t.a, t.b, t.c from t t where ((t.a= ?:? ) or (t.a= ?:? )) order by ?, ? desc  for orderby_num() between  ?:?  and  ?:? 
 ===================================================
-a    b    c    
-1     1.0     1     
-3     2.0     1     
-3     3.0     3     
-1     3.0     1     
-
-Query plan:
-temp(order by)
-    subplan: iscan
-                 class: t node[?]
-                 index: t_a_b_cd term[?] (covers)
-                 sort:  ? asc, ? asc, ? desc
-                 cost:  ? card ?
-    sort:  ? asc, ? desc
-    cost:  ? card ?
-Query stmt:
-select t.a, t.b, t.c from t t where ((t.a= ?:? ) or (t.a= ?:? )) order by ?, ? desc  for orderby_num() between  ?:?  and  ?:? 
+Error:-493
 ===================================================
 a    b    c    
 1     1.0     1     

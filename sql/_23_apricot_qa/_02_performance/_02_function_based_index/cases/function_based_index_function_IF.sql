@@ -29,17 +29,17 @@ create index i_t1_a2q on t1(IF(a is null,'a',a));
 --TEST Create failed 
 create index i_t1_a2q on t1(IF(a = '','a',a));
 --TEST Create failed 
-create index i_t1_a2q on t1(IF(a,a,'a'));
+create index i_t1_a2q on t1(IF(a<>0,a,'a'));
 --TEST: should use index i_t1_a2q
-select /*+ RECOMPILE */* from t1 where IF(a,a,'a')='a' ;
+select /*+ RECOMPILE */* from t1 where IF(a<>0,a,'a')='a' ;
 --TEST Create successfully 
-create index i_t1_a2p on t1(IF(a,b,c));
+create index i_t1_a2p on t1(IF(a<>0,b<>0,c<>0));
 --TEST: should use both index i_t1_a2p and i_t1_a2q
-select /*+ RECOMPILE */* from t1 where IF(a,b,c)='b' ;
+select /*+ RECOMPILE */* from t1 where IF(a<>0,b<>0,c<>0)='b' ;
 --TEST Create successfully 
-create index i_t1_a2k on t1(IF(g,h,i));
+create index i_t1_a2k on t1(IF(g<>0,h<>0,i<>0));
 --TEST: should use index i_t1_a2k
-select /*+ RECOMPILE */* from t1 where IF(g,h,i)=i ;
+select /*+ RECOMPILE */* from t1 where IF(g<>0,h,i)=i ;
 
 drop table t1;
 set  system parameters 'dont_reuse_heap_file=no';

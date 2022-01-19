@@ -5,59 +5,11 @@
 ===================================================
 10
 ===================================================
-if((t<>0 and t<>0)=1, 'ok', 'nok')    
-ok     
-ok     
-ok     
-ok     
-ok     
-ok     
-ok     
-ok     
-
-Query plan:
-sscan
-    class: oper node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select  if((oper.t<>? and oper.t<>?)=?,  cast('ok' as varchar),  cast('nok' as varchar)) from oper oper where oper.t is not null 
+Error:-493
 ===================================================
-if((t<>0 or 9999999<>0)=1, 'ok', 'nok')    
-ok     
-ok     
-ok     
-ok     
-ok     
-ok     
-ok     
-ok     
-
-Query plan:
-sscan
-    class: oper node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select  if(?<>?=?,  cast('ok' as varchar),  cast('nok' as varchar)) from oper oper where oper.t is not null 
+Error:-493
 ===================================================
-if((t<>0 or false)=1, 'ok', 'nok')    
-ok     
-ok     
-ok     
-ok     
-ok     
-ok     
-ok     
-ok     
-
-Query plan:
-sscan
-    class: oper node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select  if(oper.t<>?=?,  cast('ok' as varchar),  cast('nok' as varchar)) from oper oper where oper.t is not null 
+Error:-493
 ===================================================
 if((t&null) is null , 'ok', 'nok')    
 ok     
@@ -78,52 +30,11 @@ sscan
 Query stmt:
 select  if(null is null ,  cast('ok' as varchar),  cast('nok' as varchar)) from oper oper
 ===================================================
-if((t<>0 xor 1<>0)=0, 'ok', 'nok')    
-ok     
-
-Query plan:
-sscan
-    class: oper node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select  if((oper.t<>? xor ?<>?)=?,  cast('ok' as varchar),  cast('nok' as varchar)) from oper oper where oper.t= ?:? 
+Error:-493
 ===================================================
-if((t<>0 xor 0<>0)=1, 'ok', 'nok')    
-ok     
-ok     
-ok     
-ok     
-ok     
-ok     
-ok     
-ok     
-
-Query plan:
-sscan
-    class: oper node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select  if((oper.t<>? xor ?<>?)=?,  cast('ok' as varchar),  cast('nok' as varchar)) from oper oper where oper.t is not null 
+Error:-493
 ===================================================
-if(( not t<>0)=0, 'ok', 'nok')    
-ok     
-ok     
-ok     
-ok     
-ok     
-ok     
-ok     
-ok     
-
-Query plan:
-sscan
-    class: oper node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select  if(( not oper.t<>?)=?,  cast('ok' as varchar),  cast('nok' as varchar)) from oper oper where oper.t is not null 
+Error:-493
 ===================================================
 0
 ===================================================

@@ -43,7 +43,7 @@ deallocate prepare stmt;
 --deallocate prepare stmt;
 
 set names iso88591;
-prepare stmt from 'select IF(?, ?, ?)';
+prepare stmt from 'select IF(?:0<>0, ?, ?)';
 execute stmt using '1', 'OK', 'NOK';
 execute stmt using '0', 'NOK', 'OK';
 deallocate prepare stmt;
