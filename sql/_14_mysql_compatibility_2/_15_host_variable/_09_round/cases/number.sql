@@ -10,10 +10,10 @@ select round(i1,2) from t1;
 --prepare st from 'select round(d1,?) from t1'
 --execute st using 2;
 
-prepare st from 'select round(n1,?) from t1'
+prepare st from 'select round(n1,?) from t1';
 execute st using 2.2;
 
-prepare st from 'select round(?,i1) from t1'
+prepare st from 'select round(?,i1) from t1';
 execute st using 2.1234567;
 
 --prepare st from 'select round(?,d1) from t1'
@@ -37,16 +37,16 @@ select round(4.1234e0,2.0);
 
 
 -- 2 HV
-prepare st from 'select round(?,?)'
+prepare st from 'select round(?,?)';
 execute st using 4,1;
 
-prepare st from 'select round(?,?)'
+prepare st from 'select round(?,?)';
 execute st using 4.12,1;
 
-prepare st from 'select round(?,?)'
+prepare st from 'select round(?,?)';
 execute st using 4.12,1e0;
 
-prepare st from 'select round(?,?)'
+prepare st from 'select round(?,?)';
 execute st using 4,1.0e0;
 
 --prepare st from 'select round(?,?)'
@@ -57,13 +57,13 @@ execute st using 4,1.0e0;
 --prepare st from 'select round(?,4.1)'
 --execute st using 4.001123e0;
 
-prepare st from 'select round(?,4.1e0)'
+prepare st from 'select round(?,4.1e0)';
 execute st using 4.001123;
 
-prepare st from 'select round(4.01234,?)'
+prepare st from 'select round(4.01234,?)';
 execute st using 4;
 
-prepare st from 'select round(4.01234,?)'
+prepare st from 'select round(4.01234,?)';
 execute st using 4.001123e0;
 
 

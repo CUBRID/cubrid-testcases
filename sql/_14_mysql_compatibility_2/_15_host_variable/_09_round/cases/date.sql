@@ -15,8 +15,8 @@ select round(date'2001-10-10',1);
 
 select round(1.123,date'2001-10-10');
 
-prepare st from 'select round(?,?)'
+prepare st from 'select round(?,?)';
 execute st using date'2001-10-11',1;
 
-prepare st from 'select round(?,?)'
+prepare st from 'select round(?,?)';
 execute st using 1.123,time'10:11:12';

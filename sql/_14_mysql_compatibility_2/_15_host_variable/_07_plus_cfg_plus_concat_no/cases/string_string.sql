@@ -13,53 +13,53 @@ truncate table t1;
 insert into t1 values ('2001-10-11','10:11:12');
 insert into t1 values ('1','2');
 
-prepare st from 'select s1 + ? from t1'
+prepare st from 'select s1 + ? from t1';
 execute st using '2001-10-11';
 
-prepare st from 'select ? + s2 from t1'
+prepare st from 'select ? + s2 from t1';
 execute st using '2';
 
-prepare st from 'select ? + s2 from t1'
+prepare st from 'select ? + s2 from t1';
 execute st using NULL;
 
 drop table t1;
 
 
 -- 2HV
-prepare st from 'select ? + ?'
+prepare st from 'select ? + ?';
 execute st using '2001-10-11','2001-10-11';
 
 
-prepare st from 'select ? + ?'
+prepare st from 'select ? + ?';
 execute st using n'2001-10-11','2001-10-11';
 
-prepare st from 'select ? + ?'
+prepare st from 'select ? + ?';
 execute st using '10','2001-10-11';
 
-prepare st from 'select ? + ?'
+prepare st from 'select ? + ?';
 execute st using '10',NULL;
 
-prepare st from 'select ? + ?'
+prepare st from 'select ? + ?';
 execute st using NULL,NULL;
 
 
 -- 1 HV
-prepare st from 'select ? + ''asd'''
+prepare st from 'select ? + ''asd''';
 execute st using '2001-10-11';
 
-prepare st from 'select ? + ''asd'''
+prepare st from 'select ? + ''asd''';
 execute st using '2001-10-11';
 
-prepare st from 'select ''1'' + ?'
+prepare st from 'select ''1'' + ?';
 execute st using '2';
 
-prepare st from 'select ''1'' + ?'
+prepare st from 'select ''1'' + ?';
 execute st using n'2';
 
-prepare st from 'select ''1'' + ?'
+prepare st from 'select ''1'' + ?';
 execute st using NULL;
 
-prepare st from 'select NULL + ?'
+prepare st from 'select NULL + ?';
 execute st using '2';
 
 drop prepare st;
