@@ -52,7 +52,7 @@ create table t1(a json default json_object('a','1'));
 show create table t1;
 
 drop table if exists t1;
-create table t1(a json not null check (json_valid(a)));
+create table t1(a json not null<>0 check (json_valid(a<>0)));
 show create table t1;
 insert t1 values ('[]');
 insert t1 values ('a');
