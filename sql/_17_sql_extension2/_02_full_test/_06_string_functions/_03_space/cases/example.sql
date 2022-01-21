@@ -60,7 +60,7 @@ select if(length(space(1073741823)) = 1073741823, 'ok', 'nok');
 
 --4. Test host variables
 -- success
-prepare s from 'select if(length(space(?)) = ?, ''ok'', ''nok'')'
+prepare s from 'select if(length(space(?)) = ?, ''ok'', ''nok'')';
 execute s using 12345, 12345;
 execute s using 12345.5, 12346;
 execute s using 12345.5f, 12346;
@@ -70,7 +70,7 @@ execute s using 12345.4f, 12345;
 execute s using 12345.4e0, 12345;
 
 -- failure
-prepare s from 'select space(?)'
+prepare s from 'select space(?)';
 execute s using b'1';
 execute s using 0b1;
 execute s using date'2010-09-02';

@@ -20,8 +20,8 @@ insert into t1 values (10, null, null, null);
 
 select /*+ recompile */ * from t1 where v like 'dbms qa%' order by v desc;
 
-prepare stmt from 'select /*+ recompile */ * from t1 where v like ?||''%'' order by v desc;'
-execute stmt using 'dbms qa'
+prepare stmt from 'select /*+ recompile */ * from t1 where v like ?||''%'' order by v desc;';
+execute stmt using 'dbms qa';
 deallocate prepare stmt;
 
 drop table t1;

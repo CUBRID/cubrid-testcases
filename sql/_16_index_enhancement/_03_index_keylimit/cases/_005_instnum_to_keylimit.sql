@@ -47,10 +47,10 @@ select * from t where i > 0 and rownum <= 8 and rownum >= 4;
 select * from t where i > 0 and  8 > rownum;
 select * from t where i > 0 and  8 >= rownum and 3 < rownum;
 
-prepare st from 'select * from t where i>0 and rownum>? and rownum<? and rownum>? and rownum<?' execute st using 1,8,2,7 deallocate prepare st;
+prepare st from 'select * from t where i>0 and rownum>? and rownum<? and rownum>? and rownum<?'; execute st using 1,8,2,7; deallocate prepare st;
 select * from t where i>0 and rownum > 2 and rownum < 7;
 
-prepare st from 'select * from t where i>0 and rownum between ? and ? and rownum<? and rownum>? and rownum<?' execute st using 2,9,6,3,7 deallocate prepare st;
+prepare st from 'select * from t where i>0 and rownum between ? and ? and rownum<? and rownum>? and rownum<?'; execute st using 2,9,6,3,7; deallocate prepare st;
 select * from t where i>0 and rownum > 3 and rownum < 6;
 
 drop table t;

@@ -42,89 +42,89 @@ create index i_t1_a2a on t1(q);
 
 delete from t1;
 
-PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a from t1'
+PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a from t1';
 --TEST: result should be null
-execute stmt1
+execute stmt1;
 DEALLOCATE PREPARE stmt1;
 
-PREPARE stmt1 FROM 'select /*+ RECOMPILE */ b from t1'
+PREPARE stmt1 FROM 'select /*+ RECOMPILE */ b from t1';
 --TEST: result should be null
-execute stmt1
+execute stmt1;
 DEALLOCATE PREPARE stmt1;
 
-PREPARE stmt1 FROM 'select /*+ RECOMPILE */ c from t1'
+PREPARE stmt1 FROM 'select /*+ RECOMPILE */ c from t1';
 --TEST: result should be null
-execute stmt1
+execute stmt1;
 DEALLOCATE PREPARE stmt1;
 
-PREPARE stmt1 FROM 'select /*+ RECOMPILE */ d from t1'
+PREPARE stmt1 FROM 'select /*+ RECOMPILE */ d from t1';
 --TEST: result should be null
-execute stmt1
+execute stmt1;
 DEALLOCATE PREPARE stmt1;
 
-PREPARE stmt1 FROM 'select /*+ RECOMPILE */ e from t1'
+PREPARE stmt1 FROM 'select /*+ RECOMPILE */ e from t1';
 --TEST: result should be null
-execute stmt1
+execute stmt1;
 DEALLOCATE PREPARE stmt1;
 
-PREPARE stmt1 FROM 'select /*+ RECOMPILE */ f from t1'
+PREPARE stmt1 FROM 'select /*+ RECOMPILE */ f from t1';
 --TEST: result should be null
-execute stmt1
+execute stmt1;
 DEALLOCATE PREPARE stmt1;
 
-PREPARE stmt1 FROM 'select /*+ RECOMPILE */ g from t1'
+PREPARE stmt1 FROM 'select /*+ RECOMPILE */ g from t1';
 --TEST: result should be null
-execute stmt1
+execute stmt1;
 DEALLOCATE PREPARE stmt1;
 
-PREPARE stmt1 FROM 'select /*+ RECOMPILE */ h from t1'
+PREPARE stmt1 FROM 'select /*+ RECOMPILE */ h from t1';
 --TEST: result should be null
-execute stmt1
+execute stmt1;
 DEALLOCATE PREPARE stmt1;
 
-PREPARE stmt1 FROM 'select /*+ RECOMPILE */ i from t1'
+PREPARE stmt1 FROM 'select /*+ RECOMPILE */ i from t1';
 --TEST: result should be null
-execute stmt1
+execute stmt1;
 DEALLOCATE PREPARE stmt1;
 
-PREPARE stmt1 FROM 'select /*+ RECOMPILE */ j from t1'
+PREPARE stmt1 FROM 'select /*+ RECOMPILE */ j from t1';
 --TEST: result should be null
-execute stmt1
+execute stmt1;
 DEALLOCATE PREPARE stmt1;
 
-PREPARE stmt1 FROM 'select /*+ RECOMPILE */ k from t1'
+PREPARE stmt1 FROM 'select /*+ RECOMPILE */ k from t1';
 --TEST: result should be null
-execute stmt1
+execute stmt1;
 DEALLOCATE PREPARE stmt1;
 
-PREPARE stmt1 FROM 'select /*+ RECOMPILE */ l from t1'
+PREPARE stmt1 FROM 'select /*+ RECOMPILE */ l from t1';
 --TEST: result should be null
-execute stmt1
+execute stmt1;
 DEALLOCATE PREPARE stmt1;
 
-PREPARE stmt1 FROM 'select /*+ RECOMPILE */ m from t1'
+PREPARE stmt1 FROM 'select /*+ RECOMPILE */ m from t1';
 --TEST: result should be null
-execute stmt1
+execute stmt1;
 DEALLOCATE PREPARE stmt1;
 
-PREPARE stmt1 FROM 'select /*+ RECOMPILE */ n from t1'
+PREPARE stmt1 FROM 'select /*+ RECOMPILE */ n from t1';
 --TEST: result should be null
-execute stmt1
+execute stmt1;
 DEALLOCATE PREPARE stmt1;
 
-PREPARE stmt1 FROM 'select /*+ RECOMPILE */ o from t1'
+PREPARE stmt1 FROM 'select /*+ RECOMPILE */ o from t1';
 --TEST: result should be null
-execute stmt1
+execute stmt1;
 DEALLOCATE PREPARE stmt1;
 
-PREPARE stmt1 FROM 'select /*+ RECOMPILE */ p from t1'
+PREPARE stmt1 FROM 'select /*+ RECOMPILE */ p from t1';
 --TEST: result should be null
-execute stmt1
+execute stmt1;
 DEALLOCATE PREPARE stmt1;
 
-PREPARE stmt1 FROM 'select /*+ RECOMPILE */ q from t1'
+PREPARE stmt1 FROM 'select /*+ RECOMPILE */ q from t1';
 --TEST: result should be null
-execute stmt1
+execute stmt1;
 DEALLOCATE PREPARE stmt1;
 
 drop table t1;set system parameters 'dont_reuse_heap_file=no';

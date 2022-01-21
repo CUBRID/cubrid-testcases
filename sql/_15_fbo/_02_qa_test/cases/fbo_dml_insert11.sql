@@ -22,7 +22,7 @@ select name, age, clob_to_char(c), blob_to_bit(b) from insert11_t1 order by name
 select insert11_empno, attr.name, attr.age, clob_to_char(attr.c), blob_to_bit(attr.b), clob_to_char(c), blob_to_bit(b) from insert11_emp order by 1,6;
 select id, attr.insert11_empno, attr.attr.name, clob_to_char(attr.attr.c),blob_to_bit(attr.b), blob_to_bit(image) from insert11_company order by id;
 
-delete from insert11_emp
+delete from insert11_emp;
 delete from insert11_t1;
 delete from insert11_company;
 drop class insert11_emp;

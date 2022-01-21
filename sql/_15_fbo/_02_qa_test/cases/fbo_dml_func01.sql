@@ -10,5 +10,5 @@ select nr ,reverse(b) from r30_fun_t1 order by nr;
 select nr ,reverse(clob_to_char(c)) from r30_fun_t1 order by nr;
 select nr ,reverse(blob_to_bit(b)) from r30_fun_t1 order by nr;
 
-delete from r30_fun_t1
+delete from r30_fun_t1;
 drop r30_fun_t1;

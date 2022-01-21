@@ -41,89 +41,89 @@ create index i_t1_a2b on t1(a,b);
 create index i_t1_a2a on t1(a);
 
 
-PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q from t1'
+PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q from t1';
 --TEST
-execute stmt1
+execute stmt1;
 DEALLOCATE PREPARE stmt1;
 
-PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p from t1'
+PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p from t1';
 --TEST
-execute stmt1
+execute stmt1;
 DEALLOCATE PREPARE stmt1;
 
-PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a,b,c,d,e,f,g,h,i,j,k,l,m,n,o from t1'
+PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a,b,c,d,e,f,g,h,i,j,k,l,m,n,o from t1';
 --TEST
-execute stmt1
+execute stmt1;
 DEALLOCATE PREPARE stmt1;
 
-PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a,b,c,d,e,f,g,h,i,j,k,l,m,n from t1'
+PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a,b,c,d,e,f,g,h,i,j,k,l,m,n from t1';
 --TEST
-execute stmt1
+execute stmt1;
 DEALLOCATE PREPARE stmt1;
 
-PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a,b,c,d,e,f,g,h,i,j,k,l,m from t1'
+PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a,b,c,d,e,f,g,h,i,j,k,l,m from t1';
 --TEST
-execute stmt1
+execute stmt1;
 DEALLOCATE PREPARE stmt1;
 
-PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a,b,c,d,e,f,g,h,i,j,k,l from t1'
+PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a,b,c,d,e,f,g,h,i,j,k,l from t1';
 --TEST
-execute stmt1
+execute stmt1;
 DEALLOCATE PREPARE stmt1;
 
-PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a,b,c,d,e,f,g,h,i,j,k from t1'
+PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a,b,c,d,e,f,g,h,i,j,k from t1';
 --TEST
-execute stmt1
+execute stmt1;
 DEALLOCATE PREPARE stmt1;
 
-PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a,b,c,d,e,f,g,h,i,j from t1'
+PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a,b,c,d,e,f,g,h,i,j from t1';
 --TEST
-execute stmt1
+execute stmt1;
 DEALLOCATE PREPARE stmt1;
 
-PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a,b,c,d,e,f,g,h,i from t1'
+PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a,b,c,d,e,f,g,h,i from t1';
 --TEST
-execute stmt1
+execute stmt1;
 DEALLOCATE PREPARE stmt1;
 
-PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a,b,c,d,e,f,g,h from t1'
+PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a,b,c,d,e,f,g,h from t1';
 --TEST
-execute stmt1
+execute stmt1;
 DEALLOCATE PREPARE stmt1;
 
-PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a,b,c,d,e,f,g from t1'
+PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a,b,c,d,e,f,g from t1';
 --TEST
-execute stmt1
+execute stmt1;
 DEALLOCATE PREPARE stmt1;
 
-PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a,b,c,d,e,f from t1'
+PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a,b,c,d,e,f from t1';
 --TEST
-execute stmt1
+execute stmt1;
 DEALLOCATE PREPARE stmt1;
 
-PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a,b,c,d,e from t1'
+PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a,b,c,d,e from t1';
 --TEST
-execute stmt1
+execute stmt1;
 DEALLOCATE PREPARE stmt1;
 
-PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a,b,c,d from t1'
+PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a,b,c,d from t1';
 --TEST
-execute stmt1
+execute stmt1;
 DEALLOCATE PREPARE stmt1;
 
-PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a,b,c from t1'
+PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a,b,c from t1';
 --TEST
-execute stmt1
+execute stmt1;
 DEALLOCATE PREPARE stmt1;
 
-PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a,b from t1'
+PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a,b from t1';
 --TEST
-execute stmt1
+execute stmt1;
 DEALLOCATE PREPARE stmt1;
 
-PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a from t1'
+PREPARE stmt1 FROM 'select /*+ RECOMPILE */ a from t1';
 --TEST
-execute stmt1
+execute stmt1;
 DEALLOCATE PREPARE stmt1;
 
 drop table t1;set system parameters 'dont_reuse_heap_file=no';
