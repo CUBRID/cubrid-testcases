@@ -3,7 +3,7 @@ create table t1(i1 integer, b bigint, sh short, f float, d double,d1 date,n nume
 insert into t1 values (1, 1230, 1, 1.2, 1.3,date'2010-10-10',2);
 
 -- should fail
-select if(i1,i1,b) from t1;
+select if(i1<>0,i1,b) from t1;
 
 select if(1<2,d1,b) from t1;
 

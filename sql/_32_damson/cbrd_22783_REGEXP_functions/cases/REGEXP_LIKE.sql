@@ -43,15 +43,15 @@ SELECT REGEXP_LIKE (name, '[[:alpha:]]+') FROM athlete order by 1;
 SELECT REGEXP_LIKE(athlete.name, p1.code), p1.code FROM athlete, p1 ORDER BY p1.num;
 SELECT REGEXP_LIKE(athlete.name, p1.code, p1.match_type), p1.code, p1.match_type FROM athlete, p1 ORDER BY p1.num;
 
-SELECT name FROM athlete WHERE REGEXP_LIKE(name, '^F[[:alpha:]]+ A.+') order by 1;
+SELECT name FROM athlete WHERE REGEXP_LIKE(name, '^F[[:alpha:]]+ A.+')<>0 order by 1;
 
 DROP TABLE IF EXISTS many_word_name;
-CREATE TABLE many_word_name ( name VARCHAR ) AS SELECT name FROM athlete WHERE REGEXP_LIKE(name, '^F[[:alpha:]]+ A.+');
+CREATE TABLE many_word_name ( name VARCHAR ) AS SELECT name FROM athlete WHERE REGEXP_LIKE(name, '^F[[:alpha:]]+ A.+')<>0;
 SELECT * FROM many_word_name order by 1;
 
 DROP TABLE IF EXISTS many_word_name;
 CREATE TABLE many_word_name ( name VARCHAR ); 
-INSERT INTO many_word_name SELECT name FROM athlete WHERE REGEXP_LIKE(name, '^F[[:alpha:]]+ A.+');
+INSERT INTO many_word_name SELECT name FROM athlete WHERE REGEXP_LIKE(name, '^F[[:alpha:]]+ A.+')<>0;
 SELECT * FROM many_word_name order by 1;
 
 DROP TABLE IF EXISTS many_word_name;

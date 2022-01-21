@@ -1,10 +1,10 @@
 select 1 && 1 from db_root;
-select 1 from db_root where 1 && 1;
+select 1 from db_root where 1<>0 && 1<>0;
 select 1 from db_root where true && true;
 select 1 from db_root where true && false;
 select 1 from db_root where false && true;
 select 1 from db_root where false && false;
-select 1 from db_root where 1 && true;
+select 1 from db_root where 1<>0 && true;
 select 1 from db_root where 1=1 && 2=2 && 3=3;
 select 1 from db_root where 1=1 && 2=2 && 3=2;
 select 1 from db_root where 1 = (select 1 from db_root where true && false);

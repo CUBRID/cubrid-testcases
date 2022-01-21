@@ -12,7 +12,7 @@ select 1 from db_root where ! not 'a'=0;
 select 1 from db_root where not ! 1234567890123456=0;
 
 select 1 ! 1 from db_root;
-select 1 from db_root where 1=1 and not 1;
+select 1 from db_root where 1=1 and not 1<>0;
 select 1 from db_root where true and  ! true;
 select 1 from db_root where ! true and false;
 select 1 from db_root where not false OR true;

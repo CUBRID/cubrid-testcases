@@ -1,10 +1,10 @@
 select 1 XOR 1 from db_root;
-select 1 from db_root where 1 XOR 1;
+select 1 from db_root where 1<>0 XOR 1<>0;
 select 1 from db_root where true XOR true;
 select 1 from db_root where true XOR false;
 select 1 from db_root where false XOR true;
 select 1 from db_root where false XOR false;
-select 1 from db_root where 1 XOR true;
+select 1 from db_root where 1<>0 XOR true;
 select 1 from db_root where 1=1 XOR 2=2 XOR 3=3;
 select 1 from db_root where 1=1 XOR 2=2 XOR 3=2;
 select 1 from db_root where 1 = (select 1 from db_root where true XOR false);
