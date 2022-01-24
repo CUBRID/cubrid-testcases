@@ -224,9 +224,31 @@ a    c
 3     5     
 2     4     
 
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a_b_c (covers) (desc_index)
+    filtr: term[?]
+    sort:  ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.c, t?.b from t? t? where (t?.b> ?:? ) order by ? desc , ? desc , ? desc 
+/* ---> skip ORDER BY */
+===================================================
 a    c    
 5     7     
 
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a_b_c (covers) (desc_index)
+    filtr: term[?]
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.c from t? t? where t?.b= ?:?  order by ? desc , ? desc 
+/* ---> skip ORDER BY */
+===================================================
 0
 ===================================================
 0

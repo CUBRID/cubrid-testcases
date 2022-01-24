@@ -15,20 +15,20 @@ select rpad (cast (s1 as string collate utf8_en_ci),4,'c') from t2 order by 1;
 
 
 -- late binding
-prepare s from 'select rpad(s1 , ?, ?) from t1 order by 1'
+prepare s from 'select rpad(s1 , ?, ?) from t1 order by 1';
 execute s using 4,'c';
 
-prepare s from 'select rpad(? , ?, s1) from t1 order by 1'
+prepare s from 'select rpad(? , ?, s1) from t1 order by 1';
 execute s using 'c',4;
 
-prepare s from 'select rpad(s1 + ?,?,?) from t1 order by 1'
+prepare s from 'select rpad(s1 + ?,?,?) from t1 order by 1';
 execute s using 'A','4','c';
 
-prepare s from 'select rpad(s1 + ?,?,?) from t2 order by 1'
+prepare s from 'select rpad(s1 + ?,?,?) from t2 order by 1';
 execute s using 'A',4,'c';
 
 
-prepare s from 'select rpad(cast ((s1 + ?) as string collate utf8_en_ci),?, ?) from t2 order by 1'
+prepare s from 'select rpad(cast ((s1 + ?) as string collate utf8_en_ci),?, ?) from t2 order by 1';
 execute s using 'A',4,'c';
 
 

@@ -15,7 +15,7 @@ select to_char (d1,'DD MONTH YYYY Day','tr_TR') from t1 order by 1;
 select to_char (d1,f_iso,'tr_TR') from t1,tf order by 1;
 select to_char (d1,f_utf8,'tr_TR') from t1,tf order by 1;
 
-prepare s from 'select to_char (d1,?,''en_US'') from t1 order by 1'
+prepare s from 'select to_char (d1,?,''en_US'') from t1 order by 1';
 execute s using 'DD MONTH YYYY';
 
 drop prepare s;

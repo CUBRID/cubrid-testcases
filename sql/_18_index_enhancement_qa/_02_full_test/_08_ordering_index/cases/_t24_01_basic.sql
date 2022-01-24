@@ -17,7 +17,7 @@ select /*+ recompile */ * from t where b='AA' order by c,a;
 select /*+ recompile */ * from t where b='AA' order by c,a,b;
 
 --should support ordering index
-select /*+ recompile */ * from t where b='AA' order by b,c,a
+select /*+ recompile */ * from t where b='AA' order by b,c,a;
 
 --should support ordering index
 select /*+ recompile */ * from t where b='AA' order by c;

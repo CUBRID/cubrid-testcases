@@ -16,13 +16,13 @@ select /*+ RECOMPILE */ s1,coalesce(s1,'AA') from t2 order by 2,1;
 select /*+ RECOMPILE */ s1,coalesce(s1,'AA') from t3 order by 2,1;
 
 
-prepare s from 'select /*+ RECOMPILE */ s1,coalesce(s1,?) from t1 order by 2,1'
+prepare s from 'select /*+ RECOMPILE */ s1,coalesce(s1,?) from t1 order by 2,1';
 execute s using 'AA';
 
-prepare s from 'select /*+ RECOMPILE */ s1,coalesce(s1,?) from t2 order by 2,1'
+prepare s from 'select /*+ RECOMPILE */ s1,coalesce(s1,?) from t2 order by 2,1';
 execute s using 'AA';
 
-prepare s from 'select /*+ RECOMPILE */ s1,coalesce(s1,?) from t3 order by 2,1'
+prepare s from 'select /*+ RECOMPILE */ s1,coalesce(s1,?) from t3 order by 2,1';
 execute s using 'AA';
 
 
@@ -33,13 +33,13 @@ select /*+ RECOMPILE */ * from t2 where 'aa' > coalesce(s1,'0')  order by 1;
 select /*+ RECOMPILE */ * from t3 where 'aa' > coalesce(s1,'0')  order by 1;
 
 
-prepare s from 'select * from t1 where ? > coalesce(s1,?)  order by 1'
+prepare s from 'select * from t1 where ? > coalesce(s1,?)  order by 1';
 execute s using 'aa','0';
 
-prepare s from 'select * from t2 where ? > coalesce(s1,?)  order by 1'
+prepare s from 'select * from t2 where ? > coalesce(s1,?)  order by 1';
 execute s using 'aa','0';
 
-prepare s from 'select * from t3 where ? > coalesce(s1,?)  order by 1'
+prepare s from 'select * from t3 where ? > coalesce(s1,?)  order by 1';
 execute s using 'aa','0';
 
 drop prepare s;

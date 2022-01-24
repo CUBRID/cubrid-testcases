@@ -15,7 +15,7 @@ select s1,strcmp (cast (s1 as string collate utf8_en_ci),'ab') from t2 order by 
 
 
 -- late binding
-prepare s from 'select s1, strcmp(s1 ,?) from t1 order by 1'
+prepare s from 'select s1, strcmp(s1 ,?) from t1 order by 1';
 execute s using 'ab';
 
 
@@ -23,7 +23,7 @@ select t1.s1,t2.s1, strcmp(t1.s1, t2.s1) from t1,t2 order by 1,2;
 
 select t1.s1,t2.s1,strcmp(t1.s1, cast (t2.s1 as string collate utf8_en_ci)) from t1,t2 order by 1,2;
 
-prepare s from 'select strcmp(?, ?)'
+prepare s from 'select strcmp(?, ?)';
 execute s using 'ab','Ab';
 
 

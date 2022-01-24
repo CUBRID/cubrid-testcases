@@ -53,10 +53,10 @@ select /*+ recompile */ a,b from t2 where b=8 order by b,a;
 select /*+ recompile */ a,b,c from t2 where b>0 order by a,b,c;
 
 --should use index i_t2_a_b_c
-select /*+ recompile */ a,c from t2 where b>0 order by a desc ,b desc ,c desc
+select /*+ recompile */ a,c from t2 where b>0 order by a desc ,b desc ,c desc;
 
 --should use index i_t2_a_b_c
-select /*+ recompile */ a,c from t2 where b=8 order by a desc ,c desc
+select /*+ recompile */ a,c from t2 where b=8 order by a desc ,c desc;
 
 
 drop table t2;

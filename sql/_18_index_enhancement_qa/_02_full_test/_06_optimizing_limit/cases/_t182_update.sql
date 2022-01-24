@@ -19,10 +19,10 @@ select /*+ recompile */ a,b,c from t where a>1 and rownum=1;
 update t set b = a%100||'' where a>10000 and rownum=10000;
 update t set b = a%100||'' where a<=10000 and rownum=10000;
 
-prepare  stmt from 'update /*+ recompile */ t set b = ''XX'' where a<10000 and rownum=?'
-execute stmt using 5000
-execute stmt using 4999
-execute stmt using 5001
+prepare  stmt from 'update /*+ recompile */ t set b = ''XX'' where a<10000 and rownum=?';
+execute stmt using 5000;
+execute stmt using 4999;
+execute stmt using 5001;
 deallocate prepare stmt;
 
 select /*+ recompile INDEX_SS */ count(*) from t where b='XX';

@@ -9,10 +9,10 @@ insert into t2 values ('Ab'),( 'aa');
 select least (s1,'a') from t1 order by 1;
 select least (s1,'a') from t2 order by 1;
 
-prepare s from 'select least (s1,?) from t1 order by 1'
+prepare s from 'select least (s1,?) from t1 order by 1';
 execute s using 'a';
 
-prepare s from 'select least (s1,?) from t2 order by 1'
+prepare s from 'select least (s1,?) from t2 order by 1';
 execute s using 'a';
 
 select t1.s1,t2.s1,least (t1.s1,t2.s1) from t1,t2 order by 1,2,3;

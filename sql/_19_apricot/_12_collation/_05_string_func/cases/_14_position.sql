@@ -16,10 +16,10 @@ select position (cast (s1 as string collate utf8_en_ci) in 'xAbcAa') from t2 ord
 
 
 -- late binding
-prepare s from 'select position(s1 in ?) from t1 order by 1'
+prepare s from 'select position(s1 in ?) from t1 order by 1';
 execute s using 'xAbcAa';
 
-prepare s from 'select position(s1 in ?) from t2 order by 1'
+prepare s from 'select position(s1 in ?) from t2 order by 1';
 execute s using 'xAbcAa';
 
 
