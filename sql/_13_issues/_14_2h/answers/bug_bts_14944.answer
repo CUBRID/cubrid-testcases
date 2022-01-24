@@ -37,7 +37,7 @@ stu     CREATE TABLE [stu] ([id] INTEGER COMMENT 'change world', [addr] CHARACTE
 Field    Type    Collation    Null    Key    Default    Extra    Comment    
 id     INTEGER     null     YES          null          change world     
 addr     VARCHAR(200)     iso88591_bin     YES          null          null     
-phone     VARCHAR(2000)     iso88591_bin     YES          null          ggggggggggggg     
+phone     VARCHAR(2000)     iso88591_bin     YES                    ggggggggggggg     
 
 ===================================================
 0
@@ -45,17 +45,17 @@ phone     VARCHAR(2000)     iso88591_bin     YES          null          gggggggg
 Field    Type    Collation    Null    Key    Default    Extra    Comment    
 id     INTEGER     null     YES          null          aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa     
 addr     VARCHAR(200)     iso88591_bin     YES          null          null     
-phone     VARCHAR(2000)     iso88591_bin     YES          null          ggggggggggggg     
+phone     VARCHAR(2000)     iso88591_bin     YES                    ggggggggggggg     
 
 ===================================================
 TABLE    CREATE TABLE    
-stu     CREATE TABLE [stu] ([id] INTEGER COMMENT 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', [addr] CHARACTER VARYING(200), [phone] CHARACTER VARYING(2000) COMMENT 'ggggggggggggg') REUSE_OID, COLLATE iso88591_bin COMMENT='this table store the student information'     
+stu     CREATE TABLE [stu] ([id] INTEGER COMMENT 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', [addr] CHARACTER VARYING(200), [phone] CHARACTER VARYING(2000) DEFAULT 1860000000 COMMENT 'ggggggggggggg') REUSE_OID, COLLATE iso88591_bin COMMENT='this table store the student information'     
 
 ===================================================
 attr_name    class_name    attr_type    def_order    from_class_name    from_attr_name    data_type    prec    scale    charset    collation    domain_class_name    default_value    is_nullable    comment    
 addr     stu     INSTANCE     1     null     null     STRING     200     0     iso88591     iso88591_bin     null     null     YES     null     
 id     stu     INSTANCE     0     null     null     INTEGER     10     0     Not applicable     Not applicable     null     null     YES     aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa     
-phone     stu     INSTANCE     2     null     null     STRING     2000     0     iso88591     iso88591_bin     null     null     YES     ggggggggggggg     
+phone     stu     INSTANCE     2     null     null     STRING     2000     0     iso88591     iso88591_bin     null     1860000000     YES     ggggggggggggg     
 
 ===================================================
 0
@@ -105,21 +105,21 @@ i     INTEGER     null     YES          null     auto_increment     sky
 0
 ===================================================
 TABLE    CREATE TABLE    
-g     CREATE TABLE [g] ([i] INTEGER NOT NULL COMMENT 'sea',  CONSTRAINT [pk_g_i] PRIMARY KEY  ([i])) REUSE_OID, COLLATE iso88591_bin COMMENT='gary'     
+g     CREATE TABLE [g] ([i] INTEGER AUTO_INCREMENT (1, 1) NOT NULL COMMENT 'sea',  CONSTRAINT [pk_g_i] PRIMARY KEY  ([i])) REUSE_OID, COLLATE iso88591_bin COMMENT='gary'     
 
 ===================================================
 Field    Type    Collation    Null    Key    Default    Extra    Comment    
-i     INTEGER     null     NO     PRI     null          sea     
-
-===================================================
-0
-===================================================
-Field    Type    Collation    Null    Key    Default    Extra    Comment    
-i     CHAR(5000)     iso88591_bin     NO     PRI     null          go with the wind     
+i     INTEGER     null     NO     PRI     null     auto_increment     sea     
 
 ===================================================
 0
 ===================================================
+Field    Type    Collation    Null    Key    Default    Extra    Comment    
+i     CHAR(5000)     iso88591_bin     NO     PRI     null     auto_increment     go with the wind     
+
+===================================================
+0
+===================================================
 0
 ===================================================
 0
@@ -127,7 +127,7 @@ i     CHAR(5000)     iso88591_bin     NO     PRI     null          go with the w
 0
 ===================================================
 Field    Type    Collation    Null    Key    Default    Extra    Comment    
-i     CHAR(5000)     iso88591_bin     NO     PRI     null          go with the wind     
+i     CHAR(5000)     iso88591_bin     NO     PRI     null     auto_increment     go with the wind     
 col_short     SHORT     null     YES          null           ï¿½ï¿½Ã£ï¿½china     
 col_smallint     SHORT     null     YES          null           ï¿½ï¿½Ô¨ï¿½ï¿½     
 col_bigint     BIGINT     null     YES          null          BAT     
@@ -140,21 +140,21 @@ col     NUMERIC(8,2)     null     YES          null          the meaning of life
 ===================================================
 0
 Field    Type    Collation    Null    Key    Default    Extra    Comment    
-i     CHAR(5000)     iso88591_bin     NO     PRI     null          go with the wind     
+i     CHAR(5000)     iso88591_bin     NO     PRI     null     auto_increment     go with the wind     
 col_short     SHORT     null     YES          null           ï¿½ï¿½Ã£ï¿½china     
 
 ===================================================
 Error:-239
 ===================================================
 Field    Type    Collation    Null    Key    Default    Extra    Comment    
-i     CHAR(5000)     iso88591_bin     NO     PRI     null          go with the wind     
+i     CHAR(5000)     iso88591_bin     NO     PRI     null     auto_increment     go with the wind     
 col_short     SHORT     null     YES          null           ï¿½ï¿½Ã£ï¿½china     
 
 ===================================================
 0
 ===================================================
 Field    Type    Collation    Null    Key    Default    Extra    Comment    
-i     CHAR(5000)     iso88591_bin     NO     PRI     null          go with the wind     
+i     CHAR(5000)     iso88591_bin     NO     PRI     null     auto_increment     go with the wind     
 col_short     BIGINT     null     YES          null          ï¿½ï¿½Ñ§Ö®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½     
 
 ===================================================
@@ -176,7 +176,7 @@ number     NUMERIC(8,2)     null     NO          null          null
 Field    Type    Collation    Null    Key    Default    Extra    Comment    
 id     INTEGER     null     NO     PRI     null     auto_increment     id     
 module     VARCHAR(15)     iso88591_bin     NO          null          null     
-type     CHAR(500)     iso88591_bin     YES          null          `go with the wind`     
+type     CHAR(500)     iso88591_bin     NO          null          `go with the wind`     
 number     NUMERIC(8,2)     null     NO          null          null     
 
 ===================================================
@@ -184,11 +184,11 @@ attr_name    class_name    attr_type    def_order    from_class_name    from_att
 id     hg_pay_exchange     INSTANCE     0     null     null     INTEGER     10     0     Not applicable     Not applicable     null     null     NO     id     
 module     hg_pay_exchange     INSTANCE     1     null     null     STRING     15     0     iso88591     iso88591_bin     null     null     NO     null     
 number     hg_pay_exchange     INSTANCE     3     null     null     NUMERIC     8     2     Not applicable     Not applicable     null     null     NO     null     
-type     hg_pay_exchange     INSTANCE     2     null     null     CHAR     500     0     iso88591     iso88591_bin     null     null     YES     `go with the wind`     
+type     hg_pay_exchange     INSTANCE     2     null     null     CHAR     500     0     iso88591     iso88591_bin     null     null     NO     `go with the wind`     
 
 ===================================================
 TABLE    CREATE TABLE    
-hg_pay_exchange     CREATE TABLE [hg_pay_exchange] ([id] INTEGER AUTO_INCREMENT (1, 1) NOT NULL COMMENT 'id', [module] CHARACTER VARYING(15) NOT NULL, [type] CHARACTER(500) COMMENT '`go with the wind`', [number] NUMERIC(8,2) NOT NULL,  CONSTRAINT [pk_hg_pay_exchange_id] PRIMARY KEY  ([id])) REUSE_OID, COLLATE iso88591_bin     
+hg_pay_exchange     CREATE TABLE [hg_pay_exchange] ([id] INTEGER AUTO_INCREMENT (1, 1) NOT NULL COMMENT 'id', [module] CHARACTER VARYING(15) NOT NULL, [type] CHARACTER(500) NOT NULL COMMENT '`go with the wind`', [number] NUMERIC(8,2) NOT NULL,  CONSTRAINT [pk_hg_pay_exchange_id] PRIMARY KEY  ([id])) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
