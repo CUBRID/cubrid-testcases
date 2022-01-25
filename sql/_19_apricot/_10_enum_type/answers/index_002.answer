@@ -46,15 +46,45 @@ Monday
 Monday     
 Monday     
 
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.e from t t where  cast(t.e as integer)<?
 ===================================================
 i    e    
 
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_e term[?] (covers)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.i, t.e from t t where  cast(t.e as integer)<? and t.i= ?:? 
 ===================================================
 i    e    
 
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_e term[?] (covers)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.i, t.e from t t where  cast(t.e as varchar)< cast('Wednesday' as varchar) and t.i= ?:? 
 ===================================================
 e    
 
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.e from t t where  cast(t.e as varchar) between 'Tuesday' and 'Saturday'
 ===================================================
 i    e    
 2     Wednesday     
@@ -67,6 +97,17 @@ i    e
 51     Wednesday     
 58     Wednesday     
 
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_e_s term[?] AND term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.e, t.s from t t where (t.s< ?:? ) and t.e= ?:?  order by ?, ?
 ===================================================
 i    e    
 2     Wednesday     
@@ -79,6 +120,17 @@ i    e
 51     Wednesday     
 58     Wednesday     
 
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_e_s term[?] AND term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.e, t.s from t t where (t.s< ?:? ) and t.e= ?:?  order by ?, ?
 ===================================================
 e    
 Tuesday     
@@ -146,6 +198,13 @@ Sunday
 Monday     
 Tuesday     
 
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.e from t t where  cast(t.e as integer)<?
 ===================================================
 e    
 Tuesday     
@@ -168,6 +227,15 @@ Thursday
 Thursday     
 Thursday     
 
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_e term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.e from t t where ((t.e= ?:? ) or (t.e= ?:? )) order by ?
+/* ---> skip ORDER BY */
 ===================================================
 i    e    s    
 1     Tuesday     Tuesday     
@@ -180,6 +248,15 @@ i    e    s
 8     Tuesday     Tuesday     
 9     Wednesday     Wednesday     
 
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_i_e_s term[?] (covers)
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.e, t.s from t t where (t.i< ?:? ) order by ?, ?, ?
+/* ---> skip ORDER BY */
 ===================================================
 0
 ===================================================

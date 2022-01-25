@@ -9,17 +9,47 @@
 a    b    c    
 SQL     1     10.0     
 
+Query plan:
+iscan
+    class: t node[?]
+    index: idx? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c from t t where  lower(t.a)> cast('?' as varchar)
 ===================================================
 a    b    c    
 SQL     1     10.0     
 
+Query plan:
+iscan
+    class: t node[?]
+    index: idx? term[?]
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c from t t where  log?(t.c)=?
 ===================================================
 a    b    c    
 SQL     1     10.0     
 
+Query plan:
+iscan
+    class: t node[?]
+    index: idx? term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c from t t where  lower(t.a)> cast('?' as varchar) and  log?(t.c)=?
 ===================================================
 a    b    c    
 SQL     1     10.0     
 
+Query plan:
+iscan
+    class: t node[?]
+    index: idx? term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c from t t where  log?(t.c)=? and  lower(t.a)> cast('?' as varchar)
 ===================================================
 0

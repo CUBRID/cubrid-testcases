@@ -10,18 +10,46 @@
 a    b    
 a     a     
 
+Query plan:
+iscan
+    class: t? node[?]
+    index: i? term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.b from t? t? where  upper(t?.a)='A'
 ===================================================
 a    b    
 a     a     
 
+Query plan:
+iscan
+    class: t? node[?]
+    index: i? term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.b from t? t? where  upper(t?.a)='A'
 ===================================================
 a    b    
 a     a     
 
+Query plan:
+iscan
+    class: s? node[?]
+    index: i? term[?]
+    cost:  ? card ?
+Query stmt:
+select s?.a, s?.b from t? s? where  upper(s?.a)='A'
 ===================================================
 a    b    
 a     a     
 
+Query plan:
+iscan
+    class: s? node[?]
+    index: i? term[?]
+    cost:  ? card ?
+Query stmt:
+select s?.a, s?.b from t? s? where  upper(s?.a)='A'
 ===================================================
 0
 ===================================================
@@ -32,27 +60,107 @@ a     a
 a    b    a    b    
 b     b     b     B     
 
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: iscan
+               class: t? node[?]
+               index: i? term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ t?.a, t?.b, t?.a, t?.b from t? t?, t? t? where t?.a=t?.a and  upper(t?.a)='B'
 ===================================================
 a    b    a    b    
 b     b     b     B     
 
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: iscan
+               class: a node[?]
+               index: i? term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ a.a, a.b, b.a, b.b from t? a, t? b where a.a=b.a and  upper(a.a)='B'
 ===================================================
 a    b    a    b    
 a     a     a     A     
 
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: i? term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ a.a, a.b, b.a, b.b from t? a, t? b where a.a=b.a and  lower(b.b)='a'
 ===================================================
 a    b    a    b    
 a     a     a     A     
 
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: i? term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ a.a, a.b, b.a, b.b from t? a, t? b where a.a=b.a and  lower(b.b) in multiset{'a', 'c'}
 ===================================================
 a    b    a    b    
 a     a     a     A     
 
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: iscan
+               class: a node[?]
+               index: i? term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: i? term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ a.a, a.b, b.a, b.b from t? a, t? b where a.a=b.a and  lower(b.b) in multiset{'a', 'c'} and  upper(a.a)< cast('b' as varchar)
 ===================================================
 a    b    
 a     a     
 b     b     
 
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.b from t? t? order by ?
 ===================================================
 0
 ===================================================
