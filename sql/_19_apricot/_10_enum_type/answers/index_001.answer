@@ -89,15 +89,6 @@ i    e1    e2    e3    e4
 63     b     Yes     Sunday     t     
 64     a     No     Monday     x     
 
-Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t node[?]
-                 cost:  ? card ?
-    sort:  ? asc, ? asc, ? asc, ? asc, ? asc
-    cost:  ? card ?
-Query stmt:
-select t.i, t.e?, t.e?, t.e?, t.e? from t t order by ?, ?, ?, ?, ?
 ===================================================
 0
 ===================================================
@@ -153,13 +144,6 @@ i    e1    e2    e3    e4
 62     a     Cancel     Saturday     z     
 64     a     No     Monday     x     
 
-Query plan:
-sscan
-    class: t node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select t.i, t.e?, t.e?, t.e?, t.e? from t t where  cast(t.e? as integer)<?
 ===================================================
 i    e1    e2    e3    e4    
 1     b     No     Monday     y     
@@ -206,13 +190,6 @@ i    e1    e2    e3    e4
 63     b     Yes     Sunday     t     
 64     a     No     Monday     x     
 
-Query plan:
-sscan
-    class: t node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select t.i, t.e?, t.e?, t.e?, t.e? from t t where  cast(t.e? as integer)<?
 ===================================================
 i    e1    e2    e3    e4    
 1     b     No     Monday     y     
@@ -271,13 +248,6 @@ i    e1    e2    e3    e4
 63     b     Yes     Sunday     t     
 64     a     No     Monday     x     
 
-Query plan:
-sscan
-    class: t node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select t.i, t.e?, t.e?, t.e?, t.e? from t t where  cast(t.e? as varchar)>'Friday'
 ===================================================
 i    e1    e2    e3    e4    
 1     b     No     Monday     y     
@@ -345,13 +315,6 @@ i    e1    e2    e3    e4
 63     b     Yes     Sunday     t     
 64     a     No     Monday     x     
 
-Query plan:
-sscan
-    class: t node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select t.i, t.e?, t.e?, t.e?, t.e? from t t where  cast(t.e? as integer)<?
 ===================================================
 e2    e3    
 Yes     Sunday     
@@ -419,15 +382,6 @@ Cancel     Saturday
 Cancel     Saturday     
 Cancel     Saturday     
 
-Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t node[?]
-                 cost:  ? card ?
-    sort:  ? asc, ? asc
-    cost:  ? card ?
-Query stmt:
-select t.e?, t.e? from t t order by ?, ?
 ===================================================
 i    e1    e2    e3    e4    
 42     a     Yes     Sunday     z     
@@ -495,15 +449,6 @@ i    e1    e2    e3    e4
 47     b     Cancel     Friday     t     
 41     b     Cancel     Saturday     y     
 
-Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t node[?]
-                 cost:  ? card ?
-    sort:  ? asc, ? asc, ? asc, ? asc
-    cost:  ? card ?
-Query stmt:
-select t.i, t.e?, t.e?, t.e?, t.e? from t t order by ?, ?, ?, ?
 ===================================================
 0
 ===================================================

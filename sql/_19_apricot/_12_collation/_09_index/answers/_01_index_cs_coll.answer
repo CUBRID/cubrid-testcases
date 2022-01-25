@@ -65,15 +65,6 @@ aaa1
 aac     
 aac1     
 
-Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t_i node[?]
-                 cost:  ? card ?
-    sort:  ? asc collate utf?_en_cs
-    cost:  ? card ?
-Query stmt:
-select t_i.s? from t_i t_i order by ?
 ===================================================
 s1    
 aa1     
@@ -86,15 +77,6 @@ aaa1
 aac     
 aac1     
 
-Query plan:
-iscan
-    class: t_i node[?]
-    index: i_t_i_s? term[?] (covers)
-    sort:  ? asc collate utf?_en_cs
-    cost:  ? card ?
-Query stmt:
-select t_i.s? from t_i t_i where (t_i.s?> ?:? ) order by ?
-/* ---> skip ORDER BY */
 ===================================================
 s1    
 aa1     
@@ -107,15 +89,6 @@ aaa1
 aac     
 aac1     
 
-Query plan:
-iscan
-    class: t_i node[?]
-    index: i_t_i_s? term[?] (covers)
-    sort:  ? asc collate utf?_en_cs
-    cost:  ? card ?
-Query stmt:
-select t_i.s? from t_i t_i where (t_i.s?> cast('aa' as varchar collate utf?_en_cs)) order by ?
-/* ---> skip ORDER BY */
 ===================================================
 s1    
 aa     
@@ -129,15 +102,6 @@ aaa1
 aac     
 aac1     
 
-Query plan:
-iscan
-    class: t_i node[?]
-    index: i_t_i_s? term[?] (covers)
-    sort:  ? asc collate utf?_en_cs
-    cost:  ? card ?
-Query stmt:
-select t_i.s? from t_i t_i where (t_i.s?> ?:? ) order by ?
-/* ---> skip ORDER BY */
 ===================================================
 s1    
 Ab     
@@ -161,16 +125,6 @@ aaa1
 aac     
 aac1     
 
-Query plan:
-iscan
-    class: t_i node[?]
-    index: i_t_i_s? 
-    sargs: term[?]
-    sort:  ? asc collate utf?_en_cs
-    cost:  ? card ?
-Query stmt:
-select t_i.s? from t_i t_i where  cast(t_i.s? as varchar collate utf?_en_ci)> cast('a' as char(-?) collate utf?_en_ci) order by ?
-/* ---> skip ORDER BY */
 ===================================================
 c1    
 Ab     
@@ -194,24 +148,5 @@ aaa1
 aac     
 aac1     
 
-Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t_i node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
-    sort:  ? asc collate utf?_en_ci
-    cost:  ? card ?
-Query stmt:
-(select  cast(t_i.s? as varchar collate utf?_en_ci) from t_i t_i where  cast(t_i.s? as varchar collate utf?_en_ci)> cast('a' as char(-?) collate utf?_en_ci) order by ?)
-Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t node[?]
-                 cost:  ? card ?
-    sort:  ? asc collate utf?_en_cs
-    cost:  ? card ?
-Query stmt:
-select t.c?, t.c? collate utf?_en_cs from (select  cast(t_i.s? as varchar collate utf?_en_ci) as [c?] from t_i t_i where  cast(t_i.s? as varchar collate utf?_en_ci)> cast('a' as char(-?) collate utf?_en_ci) order by ?) t (c?) order by ?
 ===================================================
 0

@@ -42,24 +42,10 @@ id    v    c    s
 8                                          
 9                                            
 
-Query plan:
-sscan
-    class: t? node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select t?.id, t?.v, t?.c, t?.s from t? t? where  cast('a' as varchar)||t?.v like 'a%'
 ===================================================
 id    v    c    s    
 4     aaa     aaa                      aaa     
 
-Query plan:
-sscan
-    class: t? node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select t?.id, t?.v, t?.c, t?.s from t? t? where  cast('a' as varchar)||t?.v like 'aaaa%'
 ===================================================
 id    v    c    s    
 1     dbms qa1 part     dbms qa1 part            dbms qa1 part     
@@ -72,35 +58,14 @@ id    v    c    s
 8                                          
 9                                            
 
-Query plan:
-sscan
-    class: t? node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select t?.id, t?.v, t?.c, t?.s from t? t? where ' '||t?.v like ' %'
 ===================================================
 id    v    c    s    
 4     aaa     aaa                      aaa     
 
-Query plan:
-sscan
-    class: t? node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select t?.id, t?.v, t?.c, t?.s from t? t? where  cast(t?.c as varchar)||t?.v like 'a%'
 ===================================================
 id    v    c    s    
 4     aaa     aaa                      aaa     
 
-Query plan:
-sscan
-    class: t? node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select t?.id, t?.v, t?.c, t?.s from t? t? where t?.s|| cast(t?.c as varchar)||t?.v like 'a%'
 ===================================================
 id    v    c    s    
 1     dbms qa1 part     dbms qa1 part            dbms qa1 part     
@@ -113,13 +78,6 @@ id    v    c    s
 8                                          
 9                                            
 
-Query plan:
-sscan
-    class: t? node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select t?.id, t?.v, t?.c, t?.s from t? t? where  cast(? as varchar)||t?.v like '?%'
 ===================================================
 0
 ===================================================
