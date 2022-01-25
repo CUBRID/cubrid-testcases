@@ -16,14 +16,14 @@ iscan
     index: i_t?_a?a term[?]
     cost:  ? card ?
 Query stmt:
-(select t?.a from t? t? where  lower(t?.b)>'?')
+(select t?.a from t? t? where  lower(t?.b)> cast('?' as varchar))
 Query plan:
 sscan
     class: t? node[?]
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select count( char_length(t?.a)), ? from t? t? where  exists (select t?.a from t? t? where  lower(t?.b)>'?')
+select count( char_length(t?.a)), ? from t? t? where  exists (select t?.a from t? t? where  lower(t?.b)> cast('?' as varchar))
 ===================================================
 count( char_length(a))    10    
 1     10     
@@ -42,7 +42,7 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-select count( char_length(t?.a)), ? from t? t? where  exists (select t?.a from dual dual) and  lower(t?.b)>'?'
+select count( char_length(t?.a)), ? from t? t? where  exists (select t?.a from dual dual) and  lower(t?.b)> cast('?' as varchar)
 ===================================================
 count( char_length(a))    10    
 1     10     
@@ -60,7 +60,7 @@ sscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-select count( char_length(t?.a)), ? from t? t? where ( exists (select t?.a from dual dual) or  lower(t?.b)>'?')
+select count( char_length(t?.a)), ? from t? t? where ( exists (select t?.a from dual dual) or  lower(t?.b)> cast('?' as varchar))
 ===================================================
 0
 ===================================================

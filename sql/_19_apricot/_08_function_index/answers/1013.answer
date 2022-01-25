@@ -35,7 +35,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)>'ccc'
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)> cast('ccc' as varchar)
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.0     3.0     ccc        
@@ -58,7 +58,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)<'ddd' and  rtrim(t?.s)>'bbb'
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)< cast('ddd' as varchar) and  rtrim(t?.s)> cast('bbb' as varchar)
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.0     3.0     ccc        
@@ -98,7 +98,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)>'ccc'
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)> cast('ccc' as varchar)
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.0     3.0     ccc        
@@ -121,7 +121,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)<'ddd' and  rtrim(t?.s)>'bbb'
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)< cast('ddd' as varchar) and  rtrim(t?.s)> cast('bbb' as varchar)
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.0     3.0     ccc        
@@ -181,7 +181,7 @@ iscan
     index: idx term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)>'eee' and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)> cast('eee' as varchar) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 6     3     6.0     6.0     fff        
@@ -194,7 +194,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)>'eee' and  rtrim(t?.s)<'hhh' and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)> cast('eee' as varchar) and  rtrim(t?.s)< cast('hhh' as varchar) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.0     3.0     ccc        
@@ -250,7 +250,7 @@ iscan
     index: idx term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)>'eee' and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)> cast('eee' as varchar) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 6     3     6.0     6.0     fff        
@@ -263,7 +263,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)>'eee' and  rtrim(t?.s)<'hhh' and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)> cast('eee' as varchar) and  rtrim(t?.s)< cast('hhh' as varchar) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.0     3.0     ccc        
