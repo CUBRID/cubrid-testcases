@@ -31,36 +31,14 @@ i1    i2    d1    d2    s
 88     88     88.0     88.0     88888     
 99     99     99.0     99.0     99999     
 
-Query plan:
-iscan
-    class: t? node[?]
-    index: idx term[?]
-    cost:  ? card ?
-Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)>'?'
 ===================================================
 i1    i2    d1    d2    s    
 33     33     33.0     33.0     33333     
 
-Query plan:
-iscan
-    class: t? node[?]
-    index: idx term[?]
-    cost:  ? card ?
-Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)='?'
 ===================================================
 i1    i2    d1    d2    s    
 33     33     33.0     33.0     33333     
 
-Query plan:
-iscan
-    class: t? node[?]
-    index: idx term[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)<'?' and  left(t?.s, ?)>'?'
 ===================================================
 i1    i2    d1    d2    s    
 33     33     33.0     33.0     33333     
@@ -71,13 +49,6 @@ i1    i2    d1    d2    s
 88     88     88.0     88.0     88888     
 99     99     99.0     99.0     99999     
 
-Query plan:
-sscan
-    class: t? node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where (t?.s> ?:? )
 ===================================================
 0
 ===================================================
@@ -91,36 +62,14 @@ i1    i2    d1    d2    s
 88     88     88.0     88.0     88888     
 99     99     99.0     99.0     99999     
 
-Query plan:
-iscan
-    class: t? node[?]
-    index: idx term[?]
-    cost:  ? card ?
-Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)>'?'
 ===================================================
 i1    i2    d1    d2    s    
 33     33     33.0     33.0     33333     
 
-Query plan:
-iscan
-    class: t? node[?]
-    index: idx term[?]
-    cost:  ? card ?
-Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)='?'
 ===================================================
 i1    i2    d1    d2    s    
 33     33     33.0     33.0     33333     
 
-Query plan:
-iscan
-    class: t? node[?]
-    index: idx term[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)<'?' and  left(t?.s, ?)>'?'
 ===================================================
 i1    i2    d1    d2    s    
 33     33     33.0     33.0     33333     
@@ -131,13 +80,6 @@ i1    i2    d1    d2    s
 88     88     88.0     88.0     88888     
 99     99     99.0     99.0     99999     
 
-Query plan:
-sscan
-    class: t? node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where (t?.s> ?:? )
 ===================================================
 0
 ===================================================
@@ -167,24 +109,9 @@ select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where (t?.s> ?:? )
 ===================================================
 i1    i2    d1    d2    s    
 
-Query plan:
-iscan
-    class: t? node[?]
-    index: idx term[?] AND term[?]
-    cost:  ? card ?
-Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)>'?' and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 
-Query plan:
-iscan
-    class: t? node[?]
-    index: idx term[?] AND term[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)>'?' and  left(t?.s, ?)<'?' and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 44     33     44.0     44.0     33333     
@@ -194,14 +121,6 @@ i1    i2    d1    d2    s
 88     33     88.0     88.0     33333     
 99     33     99.0     99.0     33333     
 
-Query plan:
-iscan
-    class: t? node[?]
-    index: idx term[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where (t?.i?> ?:? ) and (t?.i?> ?:? )
 ===================================================
 i1    i2    d1    d2    s    
 44     33     44.0     44.0     33333     
@@ -211,13 +130,6 @@ i1    i2    d1    d2    s
 88     33     88.0     88.0     33333     
 99     33     99.0     99.0     33333     
 
-Query plan:
-sscan
-    class: t? node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where (t?.i?> ?:? )
 ===================================================
 0
 ===================================================
@@ -225,24 +137,9 @@ select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where (t?.i?> ?:? )
 ===================================================
 i1    i2    d1    d2    s    
 
-Query plan:
-iscan
-    class: t? node[?]
-    index: idx term[?] AND term[?]
-    cost:  ? card ?
-Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)>'?' and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 
-Query plan:
-iscan
-    class: t? node[?]
-    index: idx term[?] AND term[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)>'?' and  left(t?.s, ?)<'?' and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 44     33     44.0     44.0     33333     
@@ -252,14 +149,6 @@ i1    i2    d1    d2    s
 88     33     88.0     88.0     33333     
 99     33     99.0     99.0     33333     
 
-Query plan:
-iscan
-    class: t? node[?]
-    index: idx term[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where (t?.i?> ?:? ) and (t?.i?> ?:? )
 ===================================================
 i1    i2    d1    d2    s    
 44     33     44.0     44.0     33333     
@@ -269,13 +158,6 @@ i1    i2    d1    d2    s
 88     33     88.0     88.0     33333     
 99     33     99.0     99.0     33333     
 
-Query plan:
-sscan
-    class: t? node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where (t?.i?> ?:? )
 ===================================================
 0
 ===================================================

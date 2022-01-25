@@ -244,13 +244,13 @@ Query Plan:
   SORT (group by)
     TABLE SCAN (b)
 
-  rewritten query: (select max(b.a), max(b.b), b.c from tmp_hls b group by b.c having max(b.b)>'cubrid')
+  rewritten query: (select max(b.a), max(b.b), b.c from tmp_hls b group by b.c having (max(b.b)> cast('cubrid' as varchar)))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, (select max(b.a), max(b.b), b.c from tmp_hls b group by b.c having max(b.b)>'cubrid') b (a, b, c) where a.c=b.c and (a.a> ?:? )
+  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, (select max(b.a), max(b.b), b.c from tmp_hls b group by b.c having (max(b.b)> cast('cubrid' as varchar))) b (a, b, c) where a.c=b.c and (a.a> ?:? )
 
 
 Trace Statistics:
@@ -537,11 +537,6 @@ Trace Statistics:
 
 ===================================================
 col1    col2    col3    col1    col2    col3    
-1     1     1         1     1     1         
-2     2     2         2     2     2         
-3     3     3         3     3     3         
-4     4     4         4     4     4         
-5     5     5         5     5     5         
 
 ===================================================
 trace    
@@ -585,12 +580,6 @@ Trace Statistics:
 
 ===================================================
 col1    col2    col3    col1    col2    col3    
-1     1     1         1     1     1         
-2     2     2         2     2     2         
-3     3     3         3     3     3         
-4     4     4         4     4     4         
-5     5     5         5     5     5         
-park     1     park      park     1     park      
 
 ===================================================
 trace    
