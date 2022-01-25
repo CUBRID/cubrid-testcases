@@ -15,13 +15,6 @@ a
 2200     
 7001     
 
-Query plan:
-iscan
-    class: foo node[?]
-    index: idx_foo_trunc term[?]
-    cost:  ? card ?
-Query stmt:
-select foo.a from foo foo where  trunc(foo.a, -?)>?
 ===================================================
 0
 ===================================================
@@ -40,13 +33,6 @@ a
 5         
 11        
 
-Query plan:
-iscan
-    class: foo node[?]
-    index: idx_foo_abs term[?]
-    cost:  ? card ?
-Query stmt:
-select foo.a from foo foo where  abs(- cast(foo.a as double))>?
 ===================================================
 0
 ===================================================
@@ -65,13 +51,6 @@ foo     1     idx_foo_translate     1     null     A     2     null     null    
 original    translated    
 abcabc     dbcdbc     
 
-Query plan:
-iscan
-    class: foo node[?]
-    index: idx_foo_translate term[?]
-    cost:  ? card ?
-Query stmt:
-select foo.str,  translate(foo.str, foo.c?, foo.c?) from foo foo where  translate(foo.str, foo.c?, foo.c?) in multiset{'dbcdbc', 'smthsmth'}
 ===================================================
 0
 ===================================================
@@ -93,12 +72,5 @@ a    b    c
 ccc     aaa     bbb     
 aaa     bbb     ccc     
 
-Query plan:
-iscan
-    class: foo node[?]
-    index: idx_foo_elt term[?]
-    cost:  ? card ?
-Query stmt:
-select foo.a, foo.b, foo.c from foo foo where elt(?, foo.a, foo.b, foo.c)>'aaa'
 ===================================================
 0
