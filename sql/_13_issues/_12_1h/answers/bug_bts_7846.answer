@@ -11,6 +11,13 @@
 ===================================================
 i    e    
 
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.i, t.e from t t where  cast(t.e as varchar) between 'Tuesday' and 'Wednesday'
 ===================================================
 0
 ===================================================
@@ -22,6 +29,13 @@ i    e
 ===================================================
 i    e    
 
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.i, t.e from t t where  cast(t.e as varchar) between 'Tuesday' and 'Wednesday'
 ===================================================
 0
 ===================================================
@@ -35,6 +49,13 @@ i    e
 ===================================================
 i    e    
 
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.i, t.e from t t where  cast(t.e as varchar) between 'Tuesday' and 'Wednesday'
 ===================================================
 0
 ===================================================
@@ -83,16 +104,52 @@ e
 11     
 11     
 
+Query plan:
+iscan
+    class: t node[?]
+    index: t_? (covers)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.e from t t where  cast(t.e as integer)<? order by ?
+/* ---> skip ORDER BY */
 ===================================================
 i    e    
 
+Query plan:
+iscan
+    class: t node[?]
+    index: t_? term[?] (covers)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.i, t.e from t t where  cast(t.e as integer)<? and t.i= ?:? 
 ===================================================
 i    e    
 2     33     
 
+Query plan:
+iscan
+    class: t node[?]
+    index: t_? term[?] (covers)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.i, t.e from t t where  cast(t.e as varchar)< cast('Wednesday' as varchar) and t.i= ?:? 
 ===================================================
 e    
 
+Query plan:
+iscan
+    class: t node[?]
+    index: t_? (covers)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.e from t t where  cast(t.e as varchar) between 'Tuesday' and 'Saturday' order by ?
+/* ---> skip ORDER BY */
 ===================================================
 i    e    
 2     33     
@@ -105,9 +162,29 @@ i    e
 51     33     
 58     33     
 
+Query plan:
+iscan
+    class: t node[?]
+    index: t_? term[?]
+    sargs: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.e from t t where (t.s< ?:? ) and t.e= ?:?  order by ?
+/* ---> skip ORDER BY */
 ===================================================
 i    e    
 
+Query plan:
+iscan
+    class: t node[?]
+    index: t_? term[?]
+    sargs: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.e from t t where (t.s< ?:? ) and t.e='Wednesday' order by ?
+/* ---> skip ORDER BY */
 ===================================================
 e    
 11     
@@ -175,9 +252,28 @@ e
 77     
 77     
 
+Query plan:
+iscan
+    class: t node[?]
+    index: t_? (covers)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.e from t t where  cast(t.e as integer)<? order by ?
+/* ---> skip ORDER BY */
 ===================================================
 e    
 
+Query plan:
+iscan
+    class: t node[?]
+    index: t_? term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.e from t t where ((t.e='Tuesday') or (t.e='Thursday')) order by ?
+/* ---> skip ORDER BY */
 ===================================================
 i    e    s    
 1     22     22     
@@ -190,6 +286,15 @@ i    e    s
 8     22     22     
 9     33     33     
 
+Query plan:
+iscan
+    class: t node[?]
+    index: t_? term[?] (covers)
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.i, t.e, t.s from t t where (t.i< ?:? ) order by ?, ?, ?
+/* ---> skip ORDER BY */
 ===================================================
 0
 ===================================================
