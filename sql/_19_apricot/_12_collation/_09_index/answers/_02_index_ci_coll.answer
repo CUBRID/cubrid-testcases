@@ -228,7 +228,7 @@ iscan
     sort:  ? asc collate utf?_en_ci
     cost:  ? card ?
 Query stmt:
-(select t_i.s? from t_i t_i where  cast(t_i.s? as varchar collate utf?_en_cs)> cast('a' as char(-?) collate utf?_en_cs) order by ?)
+(select t_i.s? from t_i t_i where  cast(t_i.s? as varchar collate utf?_en_cs)> cast('a' as varchar collate utf?_en_cs) order by ?)
 /* ---> skip ORDER BY */
 Query plan:
 temp(order by)
@@ -238,7 +238,7 @@ temp(order by)
     sort:  ? asc collate utf?_en_cs
     cost:  ? card ?
 Query stmt:
-select [__t?].s?, [__t?].s? collate utf?_en_cs from (select t_i.s? from t_i t_i where  cast(t_i.s? as varchar collate utf?_en_cs)> cast('a' as char(-?) collate utf?_en_cs) order by ?) [__t?] (s?) order by ?
+select [__t?].s?, [__t?].s? collate utf?_en_cs from (select t_i.s? from t_i t_i where  cast(t_i.s? as varchar collate utf?_en_cs)> cast('a' as varchar collate utf?_en_cs) order by ?) [__t?] (s?) order by ?
 ===================================================
 s1    
 aa     
@@ -261,7 +261,7 @@ temp(order by)
     sort:  ? asc collate utf?_en_cs
     cost:  ? card ?
 Query stmt:
-select t_i.s?, t_i.s? collate utf?_en_cs from t_i t_i where  cast(t_i.s? as varchar collate utf?_en_cs)> cast('a' as char(-?) collate utf?_en_cs) using index none order by ?
+select t_i.s?, t_i.s? collate utf?_en_cs from t_i t_i where  cast(t_i.s? as varchar collate utf?_en_cs)> cast('a' as varchar collate utf?_en_cs) using index none order by ?
 ===================================================
 cast(s1 as varchar collate utf8_en_cs)    
 Ab     
@@ -316,6 +316,6 @@ temp(order by)
     sort:  ? asc collate utf?_en_cs
     cost:  ? card ?
 Query stmt:
-select  cast(t_i.s? as varchar collate utf?_en_cs) from t_i t_i where  cast(t_i.s? as varchar collate utf?_en_cs)> cast('a' as char(-?) collate utf?_en_cs) order by ?
+select  cast(t_i.s? as varchar collate utf?_en_cs) from t_i t_i where  cast(t_i.s? as varchar collate utf?_en_cs)> cast('a' as varchar collate utf?_en_cs) order by ?
 ===================================================
 0

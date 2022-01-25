@@ -31,7 +31,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
     SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (hash temp, build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
         SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -64,7 +64,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
     SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (hash temp, build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
         SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -99,7 +99,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
     SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (hash temp, build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
         SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -135,8 +135,8 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
     SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (hash temp, build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        SCAN (hash temp, build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
         SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -164,7 +164,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
     SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (hash temp, build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
         SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -192,7 +192,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
     SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (hash temp, build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
         SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -222,7 +222,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
     SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (hash temp, build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
         SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -244,19 +244,19 @@ Query Plan:
   SORT (group by)
     TABLE SCAN (b)
 
-  rewritten query: (select max(b.a), max(b.b), b.c from tmp_hls b group by b.c having max(b.b)>'cubrid')
+  rewritten query: (select max(b.a), max(b.b), b.c from tmp_hls b group by b.c having (max(b.b)> cast('cubrid' as varchar)))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, (select max(b.a), max(b.b), b.c from tmp_hls b group by b.c having max(b.b)>'cubrid') b (a, b, c) where a.c=b.c and (a.a> ?:? )
+  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, (select max(b.a), max(b.b), b.c from tmp_hls b group by b.c having (max(b.b)> cast('cubrid' as varchar))) b (a, b, c) where a.c=b.c and (a.a> ?:? )
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
     SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (hash temp, build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
         SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -286,7 +286,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
     SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (hash temp, build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
         SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -316,7 +316,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
     SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (hash temp, build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
         SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -344,7 +344,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
     SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (hash temp, build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
         SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -376,7 +376,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
     SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (hash temp, build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
         SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -409,7 +409,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
     SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (hash temp, build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
         SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -448,8 +448,8 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
     SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (hash temp, build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        SCAN (hash temp, build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
         SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -488,8 +488,8 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
     SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (hash temp, build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        SCAN (hash temp, build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
         SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -529,7 +529,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
     SCAN (table: tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (hash temp, build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
         SCAN (table: tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -537,11 +537,6 @@ Trace Statistics:
 
 ===================================================
 col1    col2    col3    col1    col2    col3    
-1     1     1         1     1     1         
-2     2     2         2     2     2         
-3     3     3         3     3     3         
-4     4     4         4     4     4         
-5     5     5         5     5     5         
 
 ===================================================
 trace    
@@ -561,7 +556,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
     SCAN (table: tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (hash temp, build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
         SCAN (table: tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -577,7 +572,7 @@ trace
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
     SCAN (table: tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (hash temp, build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
         SCAN (table: tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -585,12 +580,6 @@ Trace Statistics:
 
 ===================================================
 col1    col2    col3    col1    col2    col3    
-1     1     1         1     1     1         
-2     2     2         2     2     2         
-3     3     3         3     3     3         
-4     4     4         4     4     4         
-5     5     5         5     5     5         
-park     1     park      park     1     park      
 
 ===================================================
 trace    
@@ -598,7 +587,7 @@ trace
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
     SCAN (table: tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (hash temp, build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
         SCAN (table: tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -640,7 +629,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
     SCAN (table: tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (hash temp, build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
         SCAN (table: tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -672,7 +661,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
     SCAN (table: tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (hash temp, build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
         SCAN (table: tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -711,7 +700,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
     SCAN (table: tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (hash temp, build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
         SCAN (table: tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -744,7 +733,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
     SCAN (table: tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (hash temp, build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
         SCAN (table: tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -782,7 +771,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (hash temp, build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
         SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -827,8 +816,8 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (hash temp, build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        SCAN (hash temp, build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
         SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -868,7 +857,7 @@ Trace Statistics:
 ===================================================
 0
 ===================================================
-100000
+150000
 ===================================================
 0
 ===================================================
@@ -897,7 +886,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (hash temp, build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
         SCAN (table: t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -931,7 +920,7 @@ trace
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (hash temp, build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
         SCAN (table: t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)

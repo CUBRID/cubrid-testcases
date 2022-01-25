@@ -24,13 +24,13 @@ iscan
     index: i_t?_a?a term[?]
     cost:  ? card ?
 Query stmt:
-(select count( char_length(t?.a)), t?.a from t? t? where  lower(t?.b)>'?')
+(select count( char_length(t?.a)), t?.a from t? t? where  lower(t?.b)> cast('?' as varchar))
 Query plan:
 sscan
     class: t? node[?]
     cost:  ? card ?
 Query stmt:
-select a_?, ?, (select count(a_?) from dual dual) from (select count( char_length(t?.a)), t?.a from t? t? where  lower(t?.b)>'?') t? (a_?, a_?)
+select a_?, ?, (select count(a_?) from dual dual) from (select count( char_length(t?.a)), t?.a from t? t? where  lower(t?.b)> cast('?' as varchar)) t? (a_?, a_?)
 ===================================================
 count( char_length(a))    10    (select count( lower(b)))    
 1     10     1     
@@ -47,13 +47,13 @@ iscan
     index: i_t?_a?a term[?]
     cost:  ? card ?
 Query stmt:
-(select count( char_length(t?.a)), t?.b from t? t? where  lower(t?.b)>'?')
+(select count( char_length(t?.a)), t?.b from t? t? where  lower(t?.b)> cast('?' as varchar))
 Query plan:
 sscan
     class: t? node[?]
     cost:  ? card ?
 Query stmt:
-select a_?, ?, (select count( lower(a_?)) from dual dual) from (select count( char_length(t?.a)), t?.b from t? t? where  lower(t?.b)>'?') t? (a_?, a_?)
+select a_?, ?, (select count( lower(a_?)) from dual dual) from (select count( char_length(t?.a)), t?.b from t? t? where  lower(t?.b)> cast('?' as varchar)) t? (a_?, a_?)
 ===================================================
 count( char_length( lower(b)))    10    (select count( lower(b)))    
 1     10     1     
@@ -70,13 +70,13 @@ iscan
     index: i_t?_a?a term[?]
     cost:  ? card ?
 Query stmt:
-(select count( char_length( lower(t?.b))), t?.b from t? t? where  lower(t?.b)>'?')
+(select count( char_length( lower(t?.b))), t?.b from t? t? where  lower(t?.b)> cast('?' as varchar))
 Query plan:
 sscan
     class: t? node[?]
     cost:  ? card ?
 Query stmt:
-select a_?, ?, (select count( lower(a_?)) from dual dual) from (select count( char_length( lower(t?.b))), t?.b from t? t? where  lower(t?.b)>'?') t? (a_?, a_?)
+select a_?, ?, (select count( lower(a_?)) from dual dual) from (select count( char_length( lower(t?.b))), t?.b from t? t? where  lower(t?.b)> cast('?' as varchar)) t? (a_?, a_?)
 ===================================================
 count( char_length( lower(b)))    10    (select count( lower(b)))    
 1     10     1     
