@@ -4,35 +4,35 @@
 
 create table md_time1(id1 bigint, col1 time not null, primary key(id1, col1 asc));
 
-prepare stmt from 'insert into md_time1 values(?, ?)'
-execute stmt using 1000000, '12:12:12' 
-execute stmt using 2000000, '12:12:13'
-execute stmt using 3000000, '12:12:14'
-execute stmt using 4000000, '12:12:15'
-execute stmt using 5000000, '12:12:16'
-execute stmt using 6000000, '12:12:17'
-execute stmt using 7000000, '12:12:15'
-execute stmt using 3000000, '12:12:18'
-execute stmt using 5000000, '12:12:12'
+prepare stmt from 'insert into md_time1 values(?, ?)';
+execute stmt using 1000000, '12:12:12';
+execute stmt using 2000000, '12:12:13';
+execute stmt using 3000000, '12:12:14';
+execute stmt using 4000000, '12:12:15';
+execute stmt using 5000000, '12:12:16';
+execute stmt using 6000000, '12:12:17';
+execute stmt using 7000000, '12:12:15';
+execute stmt using 3000000, '12:12:18';
+execute stmt using 5000000, '12:12:12';
 deallocate prepare stmt;
 
 
 create table md_time2(col1 varchar(1024), id2 bigint primary key, col2 time);
 
-prepare stmt from 'insert into md_time2 values(?, ?, ?)'
-execute stmt using 'cubrid', 1111111, '11:11:11'
-execute stmt using 'abc', 2222222, '12:12:12'
-execute stmt using 'a', 5000000, '12:12:15'
-execute stmt using 'abcabc', 4444444, '10:10:10'
-execute stmt using 'aa', 5555555, '12:12:13'
-execute stmt using 'mysql', 2000000, '12:12:13'
-execute stmt using 'cubridcubrid', 6666666, '13:13:13'
-execute stmt using 'mysqlmysql', 4000000, '12:12:16'
-execute stmt using 'aaaa', 565656565, '12:12:12'
-execute stmt using 'abcabcabc', 6000000, '12:12:16'
-execute stmt using 'hello', 7788777, '14:14:14'
-execute stmt using 'hellohello', 90000909, '12:12:17'
-deallocate prepare stmt
+prepare stmt from 'insert into md_time2 values(?, ?, ?)';
+execute stmt using 'cubrid', 1111111, '11:11:11';
+execute stmt using 'abc', 2222222, '12:12:12';
+execute stmt using 'a', 5000000, '12:12:15';
+execute stmt using 'abcabc', 4444444, '10:10:10';
+execute stmt using 'aa', 5555555, '12:12:13';
+execute stmt using 'mysql', 2000000, '12:12:13';
+execute stmt using 'cubridcubrid', 6666666, '13:13:13';
+execute stmt using 'mysqlmysql', 4000000, '12:12:16';
+execute stmt using 'aaaa', 565656565, '12:12:12';
+execute stmt using 'abcabcabc', 6000000, '12:12:16';
+execute stmt using 'hello', 7788777, '14:14:14';
+execute stmt using 'hellohello', 90000909, '12:12:17';
+deallocate prepare stmt;
 
 select * from md_time1 order by 1;
 select * from md_time2 order by 1;

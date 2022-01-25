@@ -172,7 +172,7 @@ insert into emp values (203,300);
 merge into bonuses using emp on bonuses.emp_id = emp.emp_id when matched then update set bonuses.bonus=bonuses.bonus+emp.salary*0.1 where emp.salary<600;
 select count(*) from bonuses order by 1;
 select count(*) from emp order by 1;
-delete a,b from bonuses  a ,emp b  where a.emp_id=b.emp_id
+delete a,b from bonuses  a ,emp b  where a.emp_id=b.emp_id;
 delete bonuses from emp  bonuses; 
 drop table bonuses,emp;
 

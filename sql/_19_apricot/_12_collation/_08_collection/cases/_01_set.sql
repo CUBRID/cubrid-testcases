@@ -24,16 +24,16 @@ select * from ts where s2 subseteq {'aad','Ab'} order by 1;
 
 select * from ts where s subseteq {'aad','Ab'} order by 1;
 
-prepare s from 'select * from ts where s subseteq ? order by 1'
+prepare s from 'select * from ts where s subseteq ? order by 1';
 execute s using {'aad','Ab'};
 
-prepare s from 'select * from ts where s2 subseteq ? order by 1'
+prepare s from 'select * from ts where s2 subseteq ? order by 1';
 execute s using {'aad','Ab'};
 
-prepare s from 'select * from ts where ? superseteq s2 order by 1'
+prepare s from 'select * from ts where ? superseteq s2 order by 1';
 execute s using {'aad','Ab'};
 
-prepare s from 'select * from ts where ? subseteq s2 order by 1'
+prepare s from 'select * from ts where ? subseteq s2 order by 1';
 execute s using {'Ab'};
 
 

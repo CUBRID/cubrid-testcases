@@ -18,7 +18,7 @@ drop table if exists test;
 
 create table test (a BIGINT UNIQUE PRIMARY KEY, b varchar(20));
 insert test values(inet_aton('1.2.3.4'),'1.2.3.4');
-select inet_ntoa(select a from test where a<6);
+select inet_ntoa('select a from test where a<6');
 create index ntoa_abs on test(inet_ntoa(abs(a)));
 create index dummy on test(inet_ntoa(a + 1));
 create index invalid_index on test(inet_aton(b));
