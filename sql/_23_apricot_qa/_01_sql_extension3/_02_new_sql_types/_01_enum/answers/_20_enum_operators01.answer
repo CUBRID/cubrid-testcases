@@ -15,6 +15,13 @@ ok
 ok     
 ok     
 
+Query plan:
+sscan
+    class: oper node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select  if((oper.t<>? and oper.t<>?)=?,  cast('ok' as varchar),  cast('nok' as varchar)) from oper oper where oper.t is not null 
 ===================================================
 if((t<>0 or 9999999<>0)=1, 'ok', 'nok')    
 ok     
@@ -26,6 +33,13 @@ ok
 ok     
 ok     
 
+Query plan:
+sscan
+    class: oper node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select  if(?<>?=?,  cast('ok' as varchar),  cast('nok' as varchar)) from oper oper where oper.t is not null 
 ===================================================
 if((t<>0 or false)=1, 'ok', 'nok')    
 ok     
@@ -37,6 +51,13 @@ ok
 ok     
 ok     
 
+Query plan:
+sscan
+    class: oper node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select  if(oper.t<>?=?,  cast('ok' as varchar),  cast('nok' as varchar)) from oper oper where oper.t is not null 
 ===================================================
 if((t&null) is null , 'ok', 'nok')    
 ok     
@@ -50,10 +71,23 @@ ok
 ok     
 ok     
 
+Query plan:
+sscan
+    class: oper node[?]
+    cost:  ? card ?
+Query stmt:
+select  if(null is null ,  cast('ok' as varchar),  cast('nok' as varchar)) from oper oper
 ===================================================
 if((t<>0 xor 1<>0)=0, 'ok', 'nok')    
 ok     
 
+Query plan:
+sscan
+    class: oper node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select  if((oper.t<>? xor ?<>?)=?,  cast('ok' as varchar),  cast('nok' as varchar)) from oper oper where oper.t= ?:? 
 ===================================================
 if((t<>0 xor 0<>0)=1, 'ok', 'nok')    
 ok     
@@ -65,6 +99,13 @@ ok
 ok     
 ok     
 
+Query plan:
+sscan
+    class: oper node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select  if((oper.t<>? xor ?<>?)=?,  cast('ok' as varchar),  cast('nok' as varchar)) from oper oper where oper.t is not null 
 ===================================================
 if(( not t<>0)=0, 'ok', 'nok')    
 ok     
@@ -76,6 +117,13 @@ ok
 ok     
 ok     
 
+Query plan:
+sscan
+    class: oper node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select  if(( not oper.t<>?)=?,  cast('ok' as varchar),  cast('nok' as varchar)) from oper oper where oper.t is not null 
 ===================================================
 0
 ===================================================
@@ -83,6 +131,16 @@ id    t
 1     100     
 2     123.45678     
 
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: oper node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select oper.id, oper.t from oper oper where  cast(oper.t as integer)<? order by ?
 ===================================================
 id    t    
 5     2000-10-10     
@@ -90,9 +148,29 @@ id    t
 7     12:12:12 10/10/1998     
 8     18     
 
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: oper node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select oper.id, oper.t from oper oper where  cast(oper.t as numeric(?,?))>?.? order by ?
 ===================================================
 id    t    
 
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: oper node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select oper.id, oper.t from oper oper where  cast(oper.t as varchar)<= cast('?' as varchar) and  cast(oper.t as numeric(?,?))>=?.? order by ?
 ===================================================
 id    t    
 1     100     
@@ -103,6 +181,16 @@ id    t
 7     12:12:12 10/10/1998     
 8     18     
 
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: oper node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select oper.id, oper.t from oper oper where oper.t<>'?-?-?' and  cast(oper.t as integer)<? order by ?
 ===================================================
 id    t    
 5     2000-10-10     
@@ -110,16 +198,47 @@ id    t
 7     12:12:12 10/10/1998     
 8     18     
 
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: oper node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select oper.id, oper.t from oper oper where  cast(oper.t as numeric(?,?))> floor(?.?) order by ?
 ===================================================
 id    t    
 3     cubrid     
 
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: oper node[?]
+                 index: i term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select oper.id, oper.t from oper oper where oper.t= ?:?  order by ?
 ===================================================
 id    t    
 3     cubrid     
 5     2000-10-10     
 7     12:12:12 10/10/1998     
 
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: oper node[?]
+                 index: i term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select oper.id, oper.t from oper oper where ((oper.t= ?:? ) or (oper.t= ?:? ) or (oper.t= ?:? ) or (oper.t=?)) order by ?
 ===================================================
 id    t    
 1     100     
@@ -127,23 +246,74 @@ id    t
 4     12:12:12     
 8     18     
 
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: oper node[?]
+                 index: i term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select oper.id, oper.t from oper oper where ((oper.t= ?:? ) or (oper.t= ?:? ) or (oper.t= ?:? ) or (oper.t= ?:? )) order by ?
 ===================================================
 id    t    
 
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: oper node[?]
+                 index: i term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select oper.id, oper.t from oper oper where oper.t=? order by ?
 ===================================================
 id    t    
 9     null     
 10     null     
 
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: oper node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select oper.id, oper.t from oper oper where oper.t is null  order by ?
 ===================================================
 id    t    
 2     123.45678     
 3     cubrid     
 
+Query plan:
+iscan
+    class: oper node[?]
+    index: u_oper_id term[?]
+    sargs: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select oper.id, oper.t from oper oper where oper.t<>'?' and (oper.id< ?:? ) order by ?
+/* ---> skip ORDER BY */
 ===================================================
 id    t    
 3     cubrid     
 
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: oper node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select oper.id, oper.t from oper oper where  cast(oper.t as varchar)> cast('?' as varchar) and  cast(oper.t as varchar)< cast('ddddd' as varchar) order by ?
 ===================================================
 id    t    
 1     100     
@@ -152,23 +322,75 @@ id    t
 7     12:12:12 10/10/1998     
 8     18     
 
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: oper node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select oper.id, oper.t from oper oper where  cast(oper.t as varchar)<= cast('?' as varchar) order by ?
 ===================================================
 id    t    
 2     123.45678     
 
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: oper node[?]
+                 index: i term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select oper.id, oper.t from oper oper where oper.t= ?:?  order by ?
 ===================================================
 id    t    
 3     cubrid     
 
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: oper node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select oper.id, oper.t from oper oper where  left( cast(oper.t as varchar), ?)= left('cub?', ?) order by ?
 ===================================================
 id    t    
 1     100     
 3     cubrid     
 8     18     
 
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: oper node[?]
+                 index: i term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select oper.id, oper.t from oper oper where ((oper.t='a') or (oper.t='b') or (oper.t= ?:? ) or (oper.t='?') or (oper.t= ?:? ) or (oper.t= ?:? ) or (oper.t='c')) order by ?
 ===================================================
 id    t    
 
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: oper node[?]
+                 index: i term[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select oper.id, oper.t from oper oper where  cast(('abc') as varchar)> cast('?' as varchar) and oper.t='abc' order by ?
 ===================================================
 Error:-181
 ===================================================
@@ -177,6 +399,16 @@ id    t
 6     1998-10-10 12:12:12     
 7     12:12:12 10/10/1998     
 
+Query plan:
+iscan
+    class: oper node[?]
+    index: u_oper_id term[?]
+    sargs: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select oper.id, oper.t from oper oper where  cast(oper.t as date)<=date '?-?-?' and (oper.id> ?:?  and oper.id< ?:? ) order by ?
+/* ---> skip ORDER BY */
 ===================================================
 id    t    
 1     100     
@@ -188,12 +420,43 @@ id    t
 7     12:12:12 10/10/1998     
 8     18     
 
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: oper node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select oper.id, oper.t from oper oper where oper.t<>datetime '?:?:? ?/?/?' order by ?
 ===================================================
 id    t    
 
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: oper node[?]
+                 index: i term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select oper.id, oper.t from oper oper where oper.t=timestamp '?-?-? ?:?:?' order by ?
 ===================================================
 id    t    
 
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: oper node[?]
+                 index: i term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select oper.id, oper.t from oper oper where ((oper.t=time '?:?:?') or (oper.t=date '?-?-?') or (oper.t=timestamp '?-?-? ?:?:?') or (oper.t=datetime '?:?:? ?/?/?')) order by ?
 ===================================================
 Error:-494
 ===================================================
@@ -202,11 +465,32 @@ Error:-494
 id    t    
 8     18     
 
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: oper node[?]
+                 index: i term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select oper.id, oper.t from oper oper where oper.t= ?:?  order by ?
 ===================================================
 id    t    
 1     100     
 8     18     
 
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: oper node[?]
+                 index: i term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select oper.id, oper.t from oper oper where ((oper.t= ?:? ) or (oper.t= ?:? )) order by ?
 ===================================================
 Error:-181
 ===================================================
@@ -219,6 +503,16 @@ id    t
 7     12:12:12 10/10/1998     
 8     18     
 
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: oper node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select oper.id, oper.t from oper oper where oper.t<>X'?' and  cast(oper.t as varchar)< cast('aaa' as varchar) order by ?
 ===================================================
 0
 ===================================================

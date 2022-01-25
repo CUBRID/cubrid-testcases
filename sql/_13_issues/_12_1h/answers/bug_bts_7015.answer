@@ -24,10 +24,24 @@ t2     1     i_t1_a2b     1     b     A     0     null     null     YES     BTRE
 count(*)    
 1     
 
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a?a term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from t? t? where  lower(t?.a)> cast('?' as varchar)
 ===================================================
 count(*)    
 1     
 
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a?b term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select count(*) from t? t? where (t?.b> ?:? ) using index t?.i_t?_a?b(+)
 ===================================================
 0
 ===================================================
@@ -46,10 +60,24 @@ count(*)
 count(*)    
 1     
 
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a?a term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from t? t? where  lower(t?.a)> cast('?' as varchar)
 ===================================================
 count(*)    
 1     
 
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a?a term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from t? t? where  lower(t?.a)> cast('?' as varchar)
 ===================================================
 0
 ===================================================

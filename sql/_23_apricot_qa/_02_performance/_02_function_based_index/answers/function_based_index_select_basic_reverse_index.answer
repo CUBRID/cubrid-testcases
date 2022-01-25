@@ -21,6 +21,13 @@ a    b    c
 1     1     2011-03-18 00:00:00.0     
 1     1     2011-03-19 00:00:00.0     
 
+Query plan:
+iscan
+    class: t node[?]
+    index: idx term[?]
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, t.c from t t where  lower(t.a)> cast('?' as varchar)
 ===================================================
 b    c    
 2     2011-03-18 00:00:00.0     
@@ -28,16 +35,43 @@ b    c
 1     2011-03-18 00:00:00.0     
 1     2011-03-19 00:00:00.0     
 
+Query plan:
+iscan
+    class: t node[?]
+    index: idx term[?]
+    cost:  ? card ?
+Query stmt:
+select t.b, t.c from t t where  lower(t.a)> cast('?' as varchar)
 ===================================================
 c    count(*)    
 2011-03-18 00:00:00.0     2     
 2011-03-19 00:00:00.0     2     
 
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: idx term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.c, count(*) from t t where  lower(t.a)> cast('?' as varchar) group by t.c having count(*)>?
 ===================================================
 c    count(*)    
 2011-03-19 00:00:00.0     2     
 2011-03-18 00:00:00.0     2     
 
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: idx term[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.c, count(*) from t t where  lower(t.a)> cast('?' as varchar) group by t.c desc  having count(*)>?
 ===================================================
 0
 ===================================================

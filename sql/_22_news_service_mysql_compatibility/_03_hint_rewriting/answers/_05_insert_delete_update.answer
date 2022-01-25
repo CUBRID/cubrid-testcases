@@ -30,10 +30,24 @@ Error:-494
 sum(id)    
 null     
 
+Query plan:
+iscan
+    class: v? node[?]
+    index: i_t?_a term[?]
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select sum(v?.id) from t? v? where (v?.a||'?'< cast('AZ-?' as varchar)) and (v?.a> ?:? ) using index v?.i_t?_a
 ===================================================
 sum(id)    
 null     
 
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Query stmt:
+select sum(t?.id) from t? t? using index t?.i_t?_a
 ===================================================
 0
 ===================================================
@@ -42,6 +56,14 @@ null
 sum(id)    
 null     
 
+Query plan:
+iscan
+    class: as v? node[?]
+    index: i_t?_a term[?]
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select sum([as v?].id) from t? [as v?] where ([as v?].a||'?'< cast('AZ-?' as varchar)) and ([as v?].a> ?:? ) using index [as v?].i_t?_a
 ===================================================
 0
 ===================================================
