@@ -31,45 +31,36 @@ i1    i2    d1    d2    s
 8     8     8.0     8.0     hhh        
 9     9     9.0     9.0     iii        
 
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)> cast('ccc' as varchar)
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.0     3.0     ccc        
 
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)='ccc'
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.0     3.0     ccc        
 
-===================================================
-i1    i2    d1    d2    s    
-3     3     3.0     3.0     ccc        
-4     4     4.0     4.0     ddd        
-5     5     4.0     5.0     eee        
-6     6     6.0     6.0     fff        
-7     7     7.0     7.0     ggg        
-8     8     8.0     8.0     hhh        
-9     9     9.0     9.0     iii        
-
-===================================================
-0
-===================================================
-0
-===================================================
-i1    i2    d1    d2    s    
-4     4     4.0     4.0     ddd        
-5     5     4.0     5.0     eee        
-6     6     6.0     6.0     fff        
-7     7     7.0     7.0     ggg        
-8     8     8.0     8.0     hhh        
-9     9     9.0     9.0     iii        
-
-===================================================
-i1    i2    d1    d2    s    
-3     3     3.0     3.0     ccc        
-
-===================================================
-i1    i2    d1    d2    s    
-3     3     3.0     3.0     ccc        
-
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)< cast('ddd' as varchar) and  rtrim(t?.s)> cast('bbb' as varchar)
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.0     3.0     ccc        
@@ -80,6 +71,73 @@ i1    i2    d1    d2    s
 8     8     8.0     8.0     hhh        
 9     9     9.0     9.0     iii        
 
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where (t?.s> ?:? )
+===================================================
+0
+===================================================
+0
+===================================================
+i1    i2    d1    d2    s    
+4     4     4.0     4.0     ddd        
+5     5     4.0     5.0     eee        
+6     6     6.0     6.0     fff        
+7     7     7.0     7.0     ggg        
+8     8     8.0     8.0     hhh        
+9     9     9.0     9.0     iii        
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)> cast('ccc' as varchar)
+===================================================
+i1    i2    d1    d2    s    
+3     3     3.0     3.0     ccc        
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)='ccc'
+===================================================
+i1    i2    d1    d2    s    
+3     3     3.0     3.0     ccc        
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)< cast('ddd' as varchar) and  rtrim(t?.s)> cast('bbb' as varchar)
+===================================================
+i1    i2    d1    d2    s    
+3     3     3.0     3.0     ccc        
+4     4     4.0     4.0     ddd        
+5     5     4.0     5.0     eee        
+6     6     6.0     6.0     fff        
+7     7     7.0     7.0     ggg        
+8     8     8.0     8.0     hhh        
+9     9     9.0     9.0     iii        
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where (t?.s> ?:? )
 ===================================================
 0
 ===================================================
@@ -113,11 +171,26 @@ i1    i2    d1    d2    s
 8     3     8.0     8.0     hhh        
 9     3     9.0     9.0     iii        
 
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)> cast('eee' as varchar) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 6     3     6.0     6.0     fff        
 7     3     7.0     7.0     ggg        
 
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx term[?] AND term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)> cast('eee' as varchar) and  rtrim(t?.s)< cast('hhh' as varchar) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.0     3.0     ccc        
@@ -128,6 +201,14 @@ i1    i2    d1    d2    s
 8     3     8.0     8.0     hhh        
 9     3     9.0     9.0     iii        
 
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where (t?.i?> ?:? ) and (t?.s> ?:? )
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.0     3.0     ccc        
@@ -138,6 +219,13 @@ i1    i2    d1    d2    s
 8     3     8.0     8.0     hhh        
 9     3     9.0     9.0     iii        
 
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where (t?.s> ?:? )
 ===================================================
 0
 ===================================================
@@ -149,11 +237,26 @@ i1    i2    d1    d2    s
 8     3     8.0     8.0     hhh        
 9     3     9.0     9.0     iii        
 
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)> cast('eee' as varchar) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 6     3     6.0     6.0     fff        
 7     3     7.0     7.0     ggg        
 
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx term[?] AND term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)> cast('eee' as varchar) and  rtrim(t?.s)< cast('hhh' as varchar) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.0     3.0     ccc        
@@ -164,6 +267,14 @@ i1    i2    d1    d2    s
 8     3     8.0     8.0     hhh        
 9     3     9.0     9.0     iii        
 
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where (t?.i?> ?:? ) and (t?.s> ?:? )
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.0     3.0     ccc        
@@ -174,6 +285,13 @@ i1    i2    d1    d2    s
 8     3     8.0     8.0     hhh        
 9     3     9.0     9.0     iii        
 
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where (t?.s> ?:? )
 ===================================================
 0
 ===================================================

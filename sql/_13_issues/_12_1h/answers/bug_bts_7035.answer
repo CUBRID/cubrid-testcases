@@ -8,16 +8,43 @@
 count(a)    
 3     
 
+Query plan:
+iscan
+    class: t node[?]
+    index: idx term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t.a) from t t where  lower(t.a)> cast('mbt' as varchar)
 ===================================================
 count(a)    
 3     
 
+Query plan:
+iscan
+    class: x node[?]
+    index: idx term[?]
+    cost:  ? card ?
+Query stmt:
+select count(x.a) from t x where  lower(x.a)> cast('mbt' as varchar)
 ===================================================
 0
 ===================================================
 num    
 3     
 
+Query plan:
+iscan
+    class: v node[?]
+    index: idx term[?]
+    cost:  ? card ?
+Query stmt:
+(select count(v.a) from t v where ( lower(v.a)> cast('mbt' as varchar)))
+Query plan:
+sscan
+    class: v node[?]
+    cost:  ? card ?
+Query stmt:
+select v.num from (select count(v.a) from t v where ( lower(v.a)> cast('mbt' as varchar))) v (num)
 ===================================================
 0
 ===================================================

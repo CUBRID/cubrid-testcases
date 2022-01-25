@@ -32,50 +32,199 @@
 count(t1.a||t1.b||t1.c||t2.b||t2.c)    
 4     
 
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: t? node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count( cast(t?.a as varchar)||t?.b||t?.c||t?.b||t?.c) from t? t?, t? t?
 ===================================================
 count(t1.a||t1.b||t1.c||t2.d||t2.a||t2.b||t2.c||t2.d)    
 4     
 
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: t? node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count( cast(t?.a as varchar)||t?.b||t?.c|| cast(t?.d as varchar)|| cast(t?.a as varchar)||t?.b||t?.c|| cast(t?.d as varchar)) from t? t?, t? t?
 ===================================================
 count(t1.a||t2.a)    
 4     
 
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: t? node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count( cast(t?.a as varchar)|| cast(t?.a as varchar)) from t? t?, t? t?
 ===================================================
 count(t1.a)    
 4     
 
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: t? node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t? node[?]
+               index: idx_t?_a term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(t?.a) from t? t?, t? t? where  log?(t?.a)>?
 ===================================================
 count(t1.a)    
 4     
 
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: t? node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t? node[?]
+               index: idx_t?_a term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(t?.a) from t? t?, t? t? where  log?(t?.a)>? and  lower(t?.b)> cast('A' as varchar)
 ===================================================
 count(t1.a)    
 0     
 
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: t? node[?]
+               index: idx_t?_a term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t? node[?]
+               index: idx_t?_a term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(t?.a) from t? t?, t? t? where  log?(t?.a)>? and  lower(t?.b)> cast('A' as varchar) and  log?(t?.a)>? and  lower(t?.b)> cast('A' as varchar)
 ===================================================
 count(t1.a)    
 4     
 
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: t? node[?]
+               sargs: term[?] AND term[?] AND term[?] AND term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(t?.a) from t? t?, t? t? where  log?(t?.a) is not null  and  lower(t?.b) is not null  and  lower(t?.c) is not null  and  day(t?.d) is not null 
 ===================================================
 count(t1.a)    
 4     
 
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: t? node[?]
+               sargs: term[?] AND term[?] AND term[?] AND term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               sargs: term[?] AND term[?] AND term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(t?.a) from t? t?, t? t? where  log?(t?.a) is not null  and  lower(t?.b) is not null  and  lower(t?.c) is not null  and  day(t?.d) is not null  and  log?(t?.a) is not null  and  lower(t?.b) is not null  and  lower(t?.c) is not null  and  day(t?.d) is not null 
 ===================================================
 count( lower(t1.c))    
 4     
 
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: t? node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count( lower(t?.c)) from t? t?, t? t? where  log?(t?.a) is not null  and  lower(t?.b) is not null 
 ===================================================
 count( lower(t1.c)|| day(t2.d))    
 4     
 
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: t? node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count( lower(t?.c)|| cast( day(t?.d) as varchar)) from t? t?, t? t? where  log?(t?.a) is not null  and  lower(t?.b) is not null  and  log?(t?.a) is not null  and  lower(t?.b) is not null 
 ===================================================
 count(t1.a)    
 4     
 
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: t? node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(t?.a) from t? t?, t? t? where  day(t?.d) is not null  and  lower(t?.c) is not null  and  day(t?.d) is not null  and  log?(t?.a) is not null 
 ===================================================
 count(t1.a)    
 4     
 
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: t? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(t?.a) from t? t?, t? t? where  day(t?.d) is not null  and  lower(t?.c) is not null  and  lower(t?.b) is not null 
 ===================================================
 0
 ===================================================

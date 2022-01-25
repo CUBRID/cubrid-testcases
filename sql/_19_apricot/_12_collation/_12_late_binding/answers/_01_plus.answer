@@ -15,16 +15,43 @@ s1+'AA'
 aaAA     
 AbAA     
 
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc collate utf?_en_ci
+    cost:  ? card ?
+Query stmt:
+select t?.s?+ cast('AA' as varchar collate utf?_en_ci) from t? t? order by ?
 ===================================================
 s1+'AA'    
 aa        AA     
 Ab        AA     
 
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc collate utf?_en_ci
+    cost:  ? card ?
+Query stmt:
+select t?.s?+ cast('AA' as char(-?) collate utf?_en_ci) from t? t? order by ?
 ===================================================
 s1+'AA'    
 Ab  AA     
 aa  AA     
 
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc collate iso?_en_cs
+    cost:  ? card ?
+Query stmt:
+select t?.s?+'AA' collate iso?_en_cs from t? t? order by ?
 ===================================================
 0
 s1+ ?:0    
@@ -46,13 +73,43 @@ aa  AA
 ===================================================
 s1    
 
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc collate utf?_en_ci
+    cost:  ? card ?
+Query stmt:
+select t?.s? from t? t? where  cast('aa' as varchar collate utf?_en_ci)>t?.s?+ cast('?' as varchar collate utf?_en_ci) order by ?
 ===================================================
 s1    
 
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc collate utf?_en_ci
+    cost:  ? card ?
+Query stmt:
+select t?.s? from t? t? where  cast('aa' as varchar collate utf?_en_ci)>t?.s?+ cast('?' as char(-?) collate utf?_en_ci) order by ?
 ===================================================
 s1    
 Ab       
 
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc collate iso?_en_cs
+    cost:  ? card ?
+Query stmt:
+select t?.s? from t? t? where  cast('aa' as varchar collate iso?_en_cs)>t?.s?+'?' collate iso?_en_cs order by ?
 ===================================================
 0
 s1    

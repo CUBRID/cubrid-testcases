@@ -13,11 +13,28 @@ a
 b     
 a     
 
+Query plan:
+sscan
+    class: foo node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select foo.a from foo foo where  cast(foo.a as varchar)< cast('c' as varchar)
 ===================================================
 a    
 a     
 b     
 
+Query plan:
+iscan
+    class: foo node[?]
+    index: i (covers)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select foo.a from foo foo where  cast(foo.a as varchar)< cast('c' as varchar) order by ?
+/* ---> skip ORDER BY */
 ===================================================
 0
 ===================================================

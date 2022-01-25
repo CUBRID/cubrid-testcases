@@ -23,6 +23,13 @@ c
 8              
 9              
 
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_c term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select t.c from t t where (t.c>= ?:?  and t.c<= ?:? )
 ===================================================
 c    
 1              
@@ -39,6 +46,13 @@ c
 7              
 8              
 
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_c term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select t.c from t t where (t.c>= ?:?  and t.c<= ?:? )
 ===================================================
 vc    
 1     
@@ -56,6 +70,13 @@ vc
 8     
 9     
 
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_vc term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select t.vc from t t where (t.vc>= ?:?  and t.vc<= ?:? )
 ===================================================
 vc    
 1     
@@ -73,6 +94,13 @@ vc
 8     
 9     
 
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_vc term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select t.vc from t t where (t.vc>= ?:?  and t.vc<= ?:? )
 ===================================================
 c    
 1              
@@ -89,9 +117,26 @@ c
 7              
 8              
 
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_c term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select t.c from t t where (t.c>= cast(? as varchar(?)) and t.c<= cast(? as varchar(?)))
 ===================================================
 c    vc    
 
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_c 
+    sargs: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.c, t.vc from t t where t.c=t.vc order by ?
+/* ---> skip ORDER BY */
 ===================================================
 0
 ===================================================
@@ -119,6 +164,13 @@ c
 8              
 9              
 
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_c term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select t.c from t t where (t.c>= ?:?  and t.c<= ?:? )
 ===================================================
 Error:-494
 ===================================================
@@ -140,6 +192,13 @@ vc
 8     
 9     
 
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_vc term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select t.vc from t t where (t.vc>= ?:?  and t.vc<= ?:? )
 ===================================================
 c    
 1              
@@ -156,9 +215,26 @@ c
 7              
 8              
 
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_c term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select t.c from t t where (t.c>= cast(? as nchar varying(?)) and t.c<= cast(? as nchar varying(?)))
 ===================================================
 c    vc    
 
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_c 
+    sargs: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.c, t.vc from t t where t.c=t.vc order by ?
+/* ---> skip ORDER BY */
 ===================================================
 Error:-494
 ===================================================
