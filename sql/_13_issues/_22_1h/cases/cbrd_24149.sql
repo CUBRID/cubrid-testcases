@@ -225,7 +225,6 @@ insert into t1 (
 );
 
 
--- data is not searched
 drop table if exists t2;
 create table t2 (code char(10));
 create index idx on t2(code desc);
@@ -238,6 +237,8 @@ insert into t2 (
 );
 
 select /*+ USE_DESC_IDX */ * from t2 where code = '00297 ' using index idx;
+
+-- this query is not searched to data before CBRD-24149 is fixed
 select /*+ USE_DESC_IDX */ * from t2 where code = '00297 ' using index none;
 
 -- index_prfix
