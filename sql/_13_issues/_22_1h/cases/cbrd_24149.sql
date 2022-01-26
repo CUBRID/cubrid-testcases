@@ -57,7 +57,7 @@ select /*+ recompile */ char_col, decode(char_col,'a',1,'a  b',2,'ab',3,4) from 
 prepare c_stmt from 'select char_col as "prepare_c" from tbl1 where char_col = ?';
 execute c_stmt using 'a';
 execute c_stmt using 'a     ';
-drop prepare char_stmt;
+drop prepare c_stmt;
 
 
 -- varchar to char
@@ -208,7 +208,7 @@ select /*+ recompile */ var_col from tbl1 where var_col > 'a' and var_col > 'a '
 
 
 
--- create index error
+-- create index desc
 drop table if exists t1;
 
 create table t1 (code char(90));
@@ -225,8 +225,6 @@ insert into t1 (
 );
 
 
--- index prefix error
-
 -- data is not searched
 drop table if exists t2;
 create table t2 (code char(10));
@@ -242,7 +240,7 @@ insert into t2 (
 select /*+ USE_DESC_IDX */ * from t2 where code = '00297 ' using index idx;
 select /*+ USE_DESC_IDX */ * from t2 where code = '00297 ' using index none;
 
---prefix is not prefer
+-- index_prfix
 select INDEX_PREFIX (cast('10369111' as varchar(20) charset utf8) , cast('103691' as varCHAR(20) charset utf8), 'd');
 
 select INDEX_PREFIX (cast('10369   ' as varchar(20) charset utf8) , cast('10369 ' as varCHAR(20) charset utf8), 'd');
