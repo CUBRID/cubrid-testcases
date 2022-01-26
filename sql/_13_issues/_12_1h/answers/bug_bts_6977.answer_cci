@@ -77,7 +77,7 @@ iscan
     index: idx_foo_translate term[?]
     cost:  ? card ?
 Query stmt:
-select foo.str,  translate(foo.str, foo.c?, foo.c?) from foo foo where  translate(foo.str, foo.c?, foo.c?) in multiset{'dbcdbc', 'smthsmth'}
+select foo.str,  translate(foo.str, foo.c?, foo.c?) from foo foo where  translate(foo.str, foo.c?, foo.c?) in set{'dbcdbc', 'smthsmth'}
 ===================================================
 0
 ===================================================
@@ -107,6 +107,6 @@ iscan
     index: idx_foo_elt term[?]
     cost:  ? card ?
 Query stmt:
-select foo.a, foo.b, foo.c from foo foo where elt(?, foo.a, foo.b, foo.c)>'aaa'
+select foo.a, foo.b, foo.c from foo foo where elt(?, foo.a, foo.b, foo.c)> cast('aaa' as varchar)
 ===================================================
 0
