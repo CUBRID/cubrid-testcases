@@ -10,7 +10,7 @@ select to_char (m1, '9.999999EEEE') from t1 order by m1;
 select to_char (m1, '9.999999EEEE') m1, left(cast(m1 as string), 18)  from t1 order by 2;
 
 drop table t1;
-CREATE TABLE t (m1 monetary default \JPY1, m1_1 monetary default \JPY-1, m100 monetary default $100, m100_1 monetary default $-100)
+CREATE TABLE t (m1 monetary default \JPY1, m1_1 monetary default \JPY-1, m100 monetary default $100, m100_1 monetary default $-100);
 insert into t(m1)values(\JPY 10);
 insert into t(m1_1)values(\JPY 10);
 insert into t(m100)values(\JPY 10);

@@ -14,7 +14,7 @@ execute s using 'b';
 
 set @v1='c';
 execute s using @v1;
-execute s using 1299.2
+execute s using 1299.2;
 deallocate prepare s;
 
 
@@ -52,7 +52,7 @@ prepare s6 from 'select a,sum(b) from (select a, b, ? from t1 where a>3 order by
 execute s6 using 3, 1;
 execute s6 using 4, 2;
 execute s6 using 4, 'b';
-deallocate prepare s6
+deallocate prepare s6;
 drop variable @v1;
 drop table t1;
 

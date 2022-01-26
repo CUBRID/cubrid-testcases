@@ -19,7 +19,7 @@ SELECT sha1(CAST(1000 AS NCHAR VARYING));
 SELECT sha1('SQL-99 Complete. Really!');
 
 -- check host variables support --
-PREPARE st FROM 'SELECT sha1(?)'
+PREPARE st FROM 'SELECT sha1(?)';
 EXECUTE st USING 'SQL-99 Complete. Really!';
 
 create class coo(

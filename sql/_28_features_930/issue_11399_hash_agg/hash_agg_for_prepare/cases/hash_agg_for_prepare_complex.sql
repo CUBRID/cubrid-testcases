@@ -20,7 +20,7 @@ deallocate prepare x1;
 prepare x2 from 'select max(i), sum(b), avg(c) from t2 group by d having avg(c)>? order by 1,2,3';
 execute x2 using 15;
 execute x2 using $100;
-execute x2 using '99.99f'
+execute x2 using '99.99f';
 deallocate prepare x2;
 
 drop table t2;

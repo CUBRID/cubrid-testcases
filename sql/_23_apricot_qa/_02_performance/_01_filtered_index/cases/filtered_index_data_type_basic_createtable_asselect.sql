@@ -74,7 +74,7 @@ drop table t2;
 --TEST: should use index
 create table t2 (index i_t2_a_b_c_d_e_f_g_h_i_j_k_l_m_n_o_p_q(a,b,c,d,e,f,g,h,i,j,k,l) where a>'0') as select * from t1  where a>'0' using index i_t1_a2a(+),i_t1_a2b(+),i_t1_a2c(+),i_t1_a2d(+),i_t1_a2e(+),i_t1_a2f(+),i_t1_a2g(+),i_t1_a2h(+),i_t1_a2i(+),i_t1_a2j(+),i_t1_a2k(+),i_t1_a2l(+),i_t1_a2m(+),i_t1_a2n(+),i_t1_a2o(+),i_t1_a2p(+),i_t1_a2q(+);
 --TEST: should use index
-select /*+ RECOMPILE */ a,b,c,d,e,f,g,h,i,j,k,l from t2  where a>'0' using index i_t2_a_b_c_d_e_f_g_h_i_j_k_l_m_n_o_p_q
+select /*+ RECOMPILE */ a,b,c,d,e,f,g,h,i,j,k,l from t2  where a>'0' using index i_t2_a_b_c_d_e_f_g_h_i_j_k_l_m_n_o_p_q;
 drop table t2;
 
 --TEST: should use index

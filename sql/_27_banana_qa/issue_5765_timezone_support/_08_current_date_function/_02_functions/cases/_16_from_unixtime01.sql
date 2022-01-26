@@ -10,7 +10,7 @@ set timezone 'Asia/Shanghai';
 select from_unixtime(3600);
 
 
-set timezone 'America/New_York'
+set timezone 'America/New_York';
 select from_unixtime(3600);
 set timezone 'Asia/Seoul';
 --+ holdcas off;

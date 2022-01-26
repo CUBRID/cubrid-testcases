@@ -17,23 +17,23 @@ select left (cast (s1 as string collate utf8_ko_cs_uca),2) from t2 order by 1;
 
 
 -- late binding
-prepare s from 'select left(? , ?)'
+prepare s from 'select left(? , ?)';
 execute s using 'Abcde',2;
 DEALLOCATE PREPARE s;
 
-prepare s from 'select left(s1 , ?) from t1 order by 1'
+prepare s from 'select left(s1 , ?) from t1 order by 1';
 execute s using 2;
 DEALLOCATE PREPARE s;
 
-prepare s from 'select left(s1 + ?,?) from t1 order by 1'
+prepare s from 'select left(s1 + ?,?) from t1 order by 1';
 execute s using '٤','2';
 DEALLOCATE PREPARE s;
 
-prepare s from 'select left(s1 + ?,?) from t2 order by 1'
+prepare s from 'select left(s1 + ?,?) from t2 order by 1';
 execute s using '٤',2;
 DEALLOCATE PREPARE s;
 
-prepare s from 'select left(cast ((s1 + ?) as string collate utf8_ko_cs_uca),?) from t2 order by 1'
+prepare s from 'select left(cast ((s1 + ?) as string collate utf8_ko_cs_uca),?) from t2 order by 1';
 execute s using '٤',2;
 DEALLOCATE PREPARE s;
 

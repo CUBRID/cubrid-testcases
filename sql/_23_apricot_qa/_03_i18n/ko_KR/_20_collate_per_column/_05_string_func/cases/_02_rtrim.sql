@@ -17,19 +17,19 @@ select rtrim (cast (s1 as string collate utf8_ko_cs_uca),'각') from t2 order by
 
 
 -- late binding
-prepare s from 'select rtrim(s1 ,?) from t1 order by 1'
+prepare s from 'select rtrim(s1 ,?) from t1 order by 1';
 execute s using '각';
 DEALLOCATE PREPARE s;
 
-prepare s from 'select rtrim(s1 + ?,?) from t1 order by 1'
+prepare s from 'select rtrim(s1 + ?,?) from t1 order by 1';
 execute s using '가','각';
 DEALLOCATE PREPARE s;
 
-prepare s from 'select rtrim(s1 + ?,?) from t2 order by 1'
+prepare s from 'select rtrim(s1 + ?,?) from t2 order by 1';
 execute s using '가','각';
 DEALLOCATE PREPARE s;
 
-prepare s from 'select rtrim(cast ((s1 + ?) as string collate utf8_ko_cs_uca),?) from t2 order by 1'
+prepare s from 'select rtrim(cast ((s1 + ?) as string collate utf8_ko_cs_uca),?) from t2 order by 1';
 execute s using '가','각';
 DEALLOCATE PREPARE s;
 

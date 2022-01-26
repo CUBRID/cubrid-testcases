@@ -42,7 +42,7 @@ SELECT sha2(CAST(1000 AS NCHAR VARYING), 256);
 SELECT sha2('SQL-99 Complete. Really!', 512);
 
 -- check host variables support --
-PREPARE st FROM 'SELECT sha2(?, ?)'
+PREPARE st FROM 'SELECT sha2(?, ?)';
 EXECUTE st USING 'SQL-99 Complete. Really!', 512;
 
 create table coo(
