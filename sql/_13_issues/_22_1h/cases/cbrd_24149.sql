@@ -209,7 +209,7 @@ select /*+ recompile */ var_col from tbl1 where var_col > 'a' and var_col > 'a '
 
 
 -- create index error
-drop if exists table t1;
+drop table if exists t1;
 
 create table t1 (code char(90));
 create index idx on t1(code desc);
@@ -228,7 +228,7 @@ insert into t1 (
 -- index prefix error
 
 -- data is not searched
-drop if exists table t2;
+drop table if exists t2;
 create table t2 (code char(10));
 create index idx on t2(code desc);
 
