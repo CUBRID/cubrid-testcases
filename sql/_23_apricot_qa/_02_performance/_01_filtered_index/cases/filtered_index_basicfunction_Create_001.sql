@@ -32,8 +32,8 @@ CREATE INDEX my_filter_index ON blogtopic (topicId,postDate,closedDate) WHERE po
 
 CREATE INDEX my_filter_index1 ON blogtopic (topicId,postDate,closedDate);
 Drop INDEX my_filter_index on blogtopic;
-CREATE INDEX my_filter_index ON blogtopic (topicId,postDate,closedDate) WHERE topicId;
-select /*+ recompile */* from blogtopic WHERE topicId using index my_filter_index(+);
+CREATE INDEX my_filter_index ON blogtopic (topicId,postDate,closedDate) WHERE topicId<>0;
+select /*+ recompile */* from blogtopic WHERE topicId<>0 using index my_filter_index(+);
 
 drop table blogtopic;
 

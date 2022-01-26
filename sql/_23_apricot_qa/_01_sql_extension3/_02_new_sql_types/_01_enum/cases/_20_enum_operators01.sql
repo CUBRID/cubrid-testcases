@@ -7,13 +7,13 @@ create table oper(id bigint unique auto_increment, t enum('100', '123.45678', 'c
 insert into oper(t) values(1), (2), (default), (4), (5), (6), (7), (8), (null), (null);
 
 --TEST: enum type with logical operators
-select if ((t&&t)=1, 'ok', 'nok') from oper where t is not null;
-select if((t or 9999999)=1, 'ok', 'nok') from oper where t is not null;
-select if((t or false)=1, 'ok', 'nok') from oper where t is not null;
+select if ((t<>0 && t<>0)=1, 'ok', 'nok') from oper where t is not null;
+select if((t<>0 or 9999999<>0)=1, 'ok', 'nok') from oper where t is not null;
+select if((t<>0 or false)=1, 'ok', 'nok') from oper where t is not null;
 select if((t & null) is null, 'ok', 'nok') from oper;
-select if((t xor 1)=0, 'ok', 'nok') from oper where t='100'; 
-select if((t xor 0)=1, 'ok', 'nok') from oper where t is not null;
-select if((!t)=0, 'ok', 'nok') from oper where t is not null;
+select if((t<>0 xor 1<>0)=0, 'ok', 'nok') from oper where t='100'; 
+select if((t<>0 xor 0<>0)=1, 'ok', 'nok') from oper where t is not null;
+select if((!t<>0)=0, 'ok', 'nok') from oper where t is not null;
 
 
 --create index

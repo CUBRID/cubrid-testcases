@@ -15,7 +15,7 @@ execute stmt using 'A', 'B', 'C', 'D', 'E', 'F-OK';
 execute stmt using 'A', 'B', 'C', 'D', 'E', 'E-OK';
 deallocate prepare stmt;
 
-prepare stmt from 'select IF(?:0<>0, ?, ?)';
+prepare stmt from 'select IF(?<>0, ?, ?)';
 execute stmt using '1', 'OK', 'NOK';
 execute stmt using '0', 'NOK', 'OK';
 deallocate prepare stmt;

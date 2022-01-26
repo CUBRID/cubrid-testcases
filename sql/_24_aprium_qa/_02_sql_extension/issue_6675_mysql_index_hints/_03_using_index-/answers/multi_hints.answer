@@ -185,7 +185,27 @@ temp(order by)
 Query stmt:
 select ui.i?, ui.i?, ui.i?, ui.i? from ui ui where (ui.i?< ?:? ) using index ui.idx_i?_i?(-), ui.idx_i?_i?_i?(-), ui.idx_i?_i? order by ?
 ===================================================
-Error:-493
+i1    i2    i3    i4    
+8     100.0     aaa     1998-01-01     
+3     18.0     bbb     1996-01-01     
+4     10.0     ccc     1994-01-01     
+1     8.0     ccc     1999-01-01     
+6     3.3     ccc     1999-01-01     
+7     null     aaa     1995-01-01     
+2     null     bbb     1991-01-01     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: ui node[?]
+                 index: idx_i?_i?_i? term[?]
+                 filtr: term[?]
+                 sort:  ? asc, ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select ui.i?, ui.i?, ui.i?, ui.i? from ui ui where (ui.i?< ?:? ) and ui.i?<> cast(? as varchar) using index ui.idx_i?(-), ui.idx_i?(-), ui.idx_i?_i?(-), ui.idx_i?_i?(-), ui.idx_i?_i?_i?(+) order by ? desc 
 ===================================================
 i1    i2    i3    i4    
 7     null     aaa     1995-01-01     

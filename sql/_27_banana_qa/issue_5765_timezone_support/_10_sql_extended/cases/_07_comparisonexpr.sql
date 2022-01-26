@@ -21,14 +21,14 @@ select c_tsltz1 from tztest where c_tsltz1 between '12:12:00 AM 01/01/2015 Asia/
 select c_tsltz1 from tztest where c_tsltz1 in ('12:10:00 AM 01/01/2015 Asia/Seoul','02:30:30 PM 01/02/2015 Asia/Seoul') order by 1;
 
 update tztest set c_tsltz2 = null where c_tsltz2=timestampltz'2000-10-2 12:00:00 AM +9:00';
-select c_tsltz1,c_tsltz2 from tztest where ISNULL(c_tsltz2);
+select c_tsltz1,c_tsltz2 from tztest where ISNULL(c_tsltz2)<>0;
 
 --++++++++++++++Test case datetimeltz++++++++++++++++++++++++++++++++++++++++++
 select c_dtltz1 from tztest where c_dtltz1 between '12:12:00 AM 02/01/2015 Asia/Seoul' and '02:30:30 PM 02/02/2015 Asia/Seoul';
 select c_dtltz1 from tztest where c_dtltz1 in ('12:10:00 AM 02/01/2015 Asia/Seoul','02:30:30 PM 02/02/2015 Asia/Seoul') order by 1;
 
 update tztest set c_dtltz2 = null where c_dtltz2=timestampltz'2000-10-2 12:00:00 AM +9:00';
-select c_dtltz1,c_dtltz2 from tztest where ISNULL(c_dtltz2);
+select c_dtltz1,c_dtltz2 from tztest where ISNULL(c_dtltz2)<>0;
 
 
 
