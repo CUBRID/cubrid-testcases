@@ -7,7 +7,7 @@ insert into t10(id) values(2);
 select * from t10 order by id;
 update t10 set name = default(de) where id =2;
 select * from t10 order by id;
-delete from t10 where exists (select json_array_append(name, '$.balance', '{"a":"c"}') from t10)  
+delete from t10 where exists (select json_array_append(name, '$.balance', '{"a":"c"}') from t10);
 select * from t10;
 set @j='
 {

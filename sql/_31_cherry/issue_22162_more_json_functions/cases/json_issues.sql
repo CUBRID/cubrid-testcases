@@ -54,7 +54,7 @@ drop table if exists t;
 create table t(i int, j int) partition by hash(i) partitions 4;
 insert into t values(1,  1);
 select incr(i), jt.a from json_table( '{"a":[1,2]}', '$' columns( a varchar(10) path '$.a' )) as jt, t;
-select incr(i), jt.a from json_table( '{"a":[1,2]}', '$' columns( a varchar(10) path '$.a' )) as jt, t
+select incr(i), jt.a from json_table( '{"a":[1,2]}', '$' columns( a varchar(10) path '$.a' )) as jt, t;
 select incr(i), jt.a from json_table( '{"a":[1,2]}', '$' columns( a varchar(10) path '$.a' )) as jt, t;
 drop table if exists t;
 
@@ -64,7 +64,7 @@ insert into t1 values(1,  1);
 create table t2(i int, j int) partition by hash(i) partitions 4;
 insert into t2 values(1,  1);
 select incr(t1.i), incr(t2.i) from t1, t2;
-select incr(t1.i), incr(t2.i) from t1, t2
+select incr(t1.i), incr(t2.i) from t1, t2;
 select incr(t1.i), incr(t2.i) from t1, t2;
 drop table if exists t1, t2;
 

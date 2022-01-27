@@ -403,7 +403,7 @@ f timestampltz on update localtime,
 g timestamptz on update localtime,
 h datetimeltz on update localtime,
 i datetimetz on update localtime
-)
+);
 alter table t partition by list(a)
 (
 partition p1 values in (1,10),

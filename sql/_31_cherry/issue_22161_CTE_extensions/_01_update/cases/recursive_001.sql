@@ -14,7 +14,7 @@ where a between
 and 
 (with  recursive cte(a) as( select 1 union all select a+1 from cte where a<10) select * from cte order by 1 desc limit 1) order by 1
 ;
-select * from xoo order by 1 limit 10
+select * from xoo order by 1 limit 10;
 
 
 with mycte as

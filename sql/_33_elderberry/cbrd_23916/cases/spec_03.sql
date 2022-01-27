@@ -44,7 +44,7 @@ select count(*) from parent;
 select count(*) from child;
 drop child;
 drop parent;
-drop obj_parent
+drop obj_parent;
 
 -- (4) partitioning case 1
 create table parent (a int primary key) partition by hash(a) partitions 2;

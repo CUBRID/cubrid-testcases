@@ -2,12 +2,12 @@
 set system parameters 'compat_mode=mysql';
 
 --case s001
-PREPARE stmt from 'create table s1 (id int auto_increment primary key, a1 CHAR(2000),b2 VARCHAR(2000),c3 NCHAR(2000),d4 NCHAR VARYING(2000),e5 BIT(2000),f6 BIT VARYING(2000),g7 NUMERIC,h8 DECIMAL,i9 INTEGER ,j10 SMALLINT,k11 MONETARY,l12 FLOAT,m13 REAL,n14 DOUBLE PRECISION,o15 DATE,p16 TIME,q17 TIMESTAMP)'
-EXECUTE stmt
+PREPARE stmt from 'create table s1 (id int auto_increment primary key, a1 CHAR(2000),b2 VARCHAR(2000),c3 NCHAR(2000),d4 NCHAR VARYING(2000),e5 BIT(2000),f6 BIT VARYING(2000),g7 NUMERIC,h8 DECIMAL,i9 INTEGER ,j10 SMALLINT,k11 MONETARY,l12 FLOAT,m13 REAL,n14 DOUBLE PRECISION,o15 DATE,p16 TIME,q17 TIMESTAMP)';
+EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
-PREPARE stmt from 'insert into s1(a1,b2,c3,d4,e5,f6,g7,h8,i9,j10,k11,l12,m13,n14,o15,p16,q17) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
-EXECUTE stmt USING null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null
-EXECUTE stmt USING null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null
+PREPARE stmt from 'insert into s1(a1,b2,c3,d4,e5,f6,g7,h8,i9,j10,k11,l12,m13,n14,o15,p16,q17) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+EXECUTE stmt USING null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null;
+EXECUTE stmt USING null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null;
 EXECUTE stmt USING 
 	'qwertyuiop[]asdfghjkl\\''zxcvbnm,./`1234567890-=\\~!@#$%^&*()_+|QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>?		two tab',
 	'qwertyuiop[]asdfghjkl\\''zxcvbnm,./`1234567890-=\\~!@#$%^&*()_+|QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>?		two tab',
@@ -25,10 +25,10 @@ EXECUTE stmt USING
 	2341234123.3212,
 	DATE '5/11/2010', 
 	TIME '16:08:33 pm',
-	TIMESTAMP '01/31/1994 8:15:00 pm'
+	TIMESTAMP '01/31/1994 8:15:00 pm';
 DEALLOCATE PREPARE stmt;
-PREPARE stmt from 'update s1 set a1=''a1'' where a1 is null'
-EXECUTE stmt
+PREPARE stmt from 'update s1 set a1=''a1'' where a1 is null';
+EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
 
 --case s002

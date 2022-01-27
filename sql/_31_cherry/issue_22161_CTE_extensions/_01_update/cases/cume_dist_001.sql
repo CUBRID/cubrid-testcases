@@ -12,7 +12,7 @@ INSERT INTO sales_mon_tbl VALUES
     (2002, 1, 980), (2002, 2, 750), (2002, 3, 730), (2002, 4, 980);
 
 drop table if exists t1;
-create table t1(a bigint,b int,c bigint,d int,e int,f int,g bigint,h bigint,i bigint)
+create table t1(a bigint,b int,c bigint,d int,e int,f int,g bigint,h bigint,i bigint);
 insert into t1(a) values(1); 
 
 with cte1(a,b,c,d,e,f,g,h,i) as
