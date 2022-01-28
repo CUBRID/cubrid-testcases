@@ -243,7 +243,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.e?, t?.i from t? t? where  cast(t?.e? as varchar)>'S' order by ?
+select t?.e?, t?.i from t? t? where  cast(t?.e? as varchar)> cast('S' as varchar) order by ?
 ===================================================
 e1    
 Monday     
@@ -259,7 +259,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.e?, t?.i from t? t? where  cast(t?.e? as varchar)<'S' order by ?
+select t?.e?, t?.i from t? t? where  cast(t?.e? as varchar)< cast('S' as varchar) order by ?
 ===================================================
 e1    
 Sunday     
@@ -277,7 +277,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.e?, t?.i from t? t? where  cast(t?.e? as varchar)>='S' order by ?
+select t?.e?, t?.i from t? t? where  cast(t?.e? as varchar)>= cast('S' as varchar) order by ?
 ===================================================
 e1    
 Monday     
@@ -293,7 +293,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.e?, t?.i from t? t? where  cast(t?.e? as varchar)<='S' order by ?
+select t?.e?, t?.i from t? t? where  cast(t?.e? as varchar)<= cast('S' as varchar) order by ?
 ===================================================
 e1    
 Wednesday     
@@ -307,7 +307,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.e?, t?.i from t? t? where  cast(t?.e? as varchar)>'Tuesday' order by ?
+select t?.e?, t?.i from t? t? where  cast(t?.e? as varchar)> cast('Tuesday' as varchar) order by ?
 ===================================================
 e1    
 Sunday     
@@ -326,7 +326,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.e?, t?.i from t? t? where  cast(t?.e? as varchar)<'Tuesday' order by ?
+select t?.e?, t?.i from t? t? where  cast(t?.e? as varchar)< cast('Tuesday' as varchar) order by ?
 ===================================================
 e1    
 Tuesday     
@@ -341,7 +341,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.e?, t?.i from t? t? where  cast(t?.e? as varchar)>='Tuesday' order by ?
+select t?.e?, t?.i from t? t? where  cast(t?.e? as varchar)>= cast('Tuesday' as varchar) order by ?
 ===================================================
 e1    
 Sunday     
@@ -361,7 +361,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.e?, t?.i from t? t? where  cast(t?.e? as varchar)<='Tuesday' order by ?
+select t?.e?, t?.i from t? t? where  cast(t?.e? as varchar)<= cast('Tuesday' as varchar) order by ?
 ===================================================
 e1    
 Sunday     
@@ -509,7 +509,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.e?, t?.i from t? t? where  cast(t?.e? as varchar)< any {'M', 'Thursday', 'Sunday', 'J'} order by ?
+select t?.e?, t?.i from t? t? where  cast(t?.e? as varchar)< any set{'J', 'M', 'Sunday', 'Thursday'} order by ?
 ===================================================
 e1    
 Sunday     
@@ -528,7 +528,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.e?, t?.i from t? t? where  cast(t?.e? as varchar)> any {'M', 'Thursday', 'Sunday', 'J'} order by ?
+select t?.e?, t?.i from t? t? where  cast(t?.e? as varchar)> any set{'J', 'M', 'Sunday', 'Thursday'} order by ?
 ===================================================
 e1    
 Sunday     
@@ -547,7 +547,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.e?, t?.i from t? t? where  cast(t?.e? as varchar)<= any {'M', 'Thursday', 'Sunday', 'J'} order by ?
+select t?.e?, t?.i from t? t? where  cast(t?.e? as varchar)<= any set{'J', 'M', 'Sunday', 'Thursday'} order by ?
 ===================================================
 e1    
 Sunday     
@@ -566,7 +566,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.e?, t?.i from t? t? where  cast(t?.e? as varchar)>= any {'M', 'Thursday', 'Sunday', 'J'} order by ?
+select t?.e?, t?.i from t? t? where  cast(t?.e? as varchar)>= any set{'J', 'M', 'Sunday', 'Thursday'} order by ?
 ===================================================
 e1    
 Friday     
@@ -581,7 +581,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.e?, t?.i from t? t? where  cast(t?.e? as varchar)< all {'M', 'Thursday', 'Sunday', 'J'} order by ?
+select t?.e?, t?.i from t? t? where  cast(t?.e? as varchar)< all set{'J', 'M', 'Sunday', 'Thursday'} order by ?
 ===================================================
 e1    
 Tuesday     
@@ -596,7 +596,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.e?, t?.i from t? t? where  cast(t?.e? as varchar)> all {'M', 'Thursday', 'Sunday', 'J'} order by ?
+select t?.e?, t?.i from t? t? where  cast(t?.e? as varchar)> all set{'J', 'M', 'Sunday', 'Thursday'} order by ?
 ===================================================
 e1    
 Friday     
@@ -611,7 +611,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.e?, t?.i from t? t? where  cast(t?.e? as varchar)<= all {'M', 'Thursday', 'Sunday', 'J'} order by ?
+select t?.e?, t?.i from t? t? where  cast(t?.e? as varchar)<= all set{'J', 'M', 'Sunday', 'Thursday'} order by ?
 ===================================================
 e1    
 Tuesday     
@@ -627,7 +627,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.e?, t?.i from t? t? where  cast(t?.e? as varchar)>= all {'M', 'Thursday', 'Sunday', 'J'} order by ?
+select t?.e?, t?.i from t? t? where  cast(t?.e? as varchar)>= all set{'J', 'M', 'Sunday', 'Thursday'} order by ?
 ===================================================
 0
 ===================================================
@@ -1435,7 +1435,19 @@ Error:-181
 ===================================================
 0
 ===================================================
-Error:-181
+i    e1    
+8     01/01/2012     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.i, t?.e? from t? t? where  cast(t?.e? as varchar)< all { cast('T' as varchar(?)),  ?:? ,  cast('Sunday' as varchar(?)),  ?:? } order by ?
 ===================================================
 i    e1    
 6     Friday     
@@ -1450,15 +1462,38 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.i, t?.e? from t? t? where  cast(t?.e? as varchar)< all {'T',  ?:? , 'Sunday',  ?:? } order by ?
+select t?.i, t?.e? from t? t? where  cast(t?.e? as varchar)< all { cast('T' as varchar(?)),  ?:? ,  cast('Sunday' as varchar(?)),  ?:? } order by ?
 ===================================================
-Error:-181
+i    e1    
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.i, t?.e? from t? t? where  cast(t?.e? as varchar)< all { cast('T' as varchar(?)),  ?:? ,  cast('Sunday' as varchar(?)),  ?:? } order by ?
 ===================================================
 0
 ===================================================
 0
 ===================================================
-Error:-181
+i    e1    
+8     01/01/2012     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.i, t?.e? from t? t? where  cast(t?.e? as varchar)<= all { cast('T' as varchar(?)),  ?:? ,  cast('Sunday' as varchar(?)),  ?:? } order by ?
 ===================================================
 i    e1    
 6     Friday     
@@ -1473,15 +1508,41 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.i, t?.e? from t? t? where  cast(t?.e? as varchar)<= all {'T',  ?:? , 'Sunday',  ?:? } order by ?
+select t?.i, t?.e? from t? t? where  cast(t?.e? as varchar)<= all { cast('T' as varchar(?)),  ?:? ,  cast('Sunday' as varchar(?)),  ?:? } order by ?
 ===================================================
-Error:-181
+i    e1    
+8     01/01/2012     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.i, t?.e? from t? t? where  cast(t?.e? as varchar)<= all { cast('T' as varchar(?)),  ?:? ,  cast('Sunday' as varchar(?)),  ?:? } order by ?
 ===================================================
 0
 ===================================================
 0
 ===================================================
-Error:-181
+i    e1    
+3     Tuesday     
+4     Wednesday     
+5     Thursday     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.i, t?.e? from t? t? where  cast(t?.e? as varchar)> all { cast('T' as varchar(?)),  ?:? ,  cast('Sunday' as varchar(?)),  ?:? } order by ?
 ===================================================
 i    e1    
 
@@ -1494,15 +1555,43 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.i, t?.e? from t? t? where  cast(t?.e? as varchar)> all {'T',  ?:? , 'Sunday',  ?:? } order by ?
+select t?.i, t?.e? from t? t? where  cast(t?.e? as varchar)> all { cast('T' as varchar(?)),  ?:? ,  cast('Sunday' as varchar(?)),  ?:? } order by ?
 ===================================================
-Error:-181
+i    e1    
+3     Tuesday     
+4     Wednesday     
+5     Thursday     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.i, t?.e? from t? t? where  cast(t?.e? as varchar)> all { cast('T' as varchar(?)),  ?:? ,  cast('Sunday' as varchar(?)),  ?:? } order by ?
 ===================================================
 0
 ===================================================
 0
 ===================================================
-Error:-181
+i    e1    
+3     Tuesday     
+4     Wednesday     
+5     Thursday     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.i, t?.e? from t? t? where  cast(t?.e? as varchar)>= all { cast('T' as varchar(?)),  ?:? ,  cast('Sunday' as varchar(?)),  ?:? } order by ?
 ===================================================
 i    e1    
 4     Wednesday     
@@ -1516,15 +1605,45 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.i, t?.e? from t? t? where  cast(t?.e? as varchar)>= all {'T',  ?:? , 'Sunday',  ?:? } order by ?
+select t?.i, t?.e? from t? t? where  cast(t?.e? as varchar)>= all { cast('T' as varchar(?)),  ?:? ,  cast('Sunday' as varchar(?)),  ?:? } order by ?
 ===================================================
-Error:-181
+i    e1    
+3     Tuesday     
+4     Wednesday     
+5     Thursday     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.i, t?.e? from t? t? where  cast(t?.e? as varchar)>= all { cast('T' as varchar(?)),  ?:? ,  cast('Sunday' as varchar(?)),  ?:? } order by ?
 ===================================================
 0
 ===================================================
 0
 ===================================================
-Error:-181
+i    e1    
+1     Sunday     
+2     Monday     
+6     Friday     
+7     Saturday     
+8     01/01/2012     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.i, t?.e? from t? t? where  cast(t?.e? as varchar)< any { cast('T' as varchar(?)),  ?:? ,  cast('Sunday' as varchar(?)),  ?:? } order by ?
 ===================================================
 i    e1    
 1     Sunday     
@@ -1544,15 +1663,47 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.i, t?.e? from t? t? where  cast(t?.e? as varchar)< any {'T',  ?:? , 'Sunday',  ?:? } order by ?
+select t?.i, t?.e? from t? t? where  cast(t?.e? as varchar)< any { cast('T' as varchar(?)),  ?:? ,  cast('Sunday' as varchar(?)),  ?:? } order by ?
 ===================================================
-Error:-181
+i    e1    
+1     Sunday     
+2     Monday     
+6     Friday     
+7     Saturday     
+8     01/01/2012     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.i, t?.e? from t? t? where  cast(t?.e? as varchar)< any { cast('T' as varchar(?)),  ?:? ,  cast('Sunday' as varchar(?)),  ?:? } order by ?
 ===================================================
 0
 ===================================================
 0
 ===================================================
-Error:-181
+i    e1    
+1     Sunday     
+2     Monday     
+6     Friday     
+7     Saturday     
+8     01/01/2012     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.i, t?.e? from t? t? where  cast(t?.e? as varchar)<= any { cast('T' as varchar(?)),  ?:? ,  cast('Sunday' as varchar(?)),  ?:? } order by ?
 ===================================================
 i    e1    
 1     Sunday     
@@ -1573,15 +1724,49 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.i, t?.e? from t? t? where  cast(t?.e? as varchar)<= any {'T',  ?:? , 'Sunday',  ?:? } order by ?
+select t?.i, t?.e? from t? t? where  cast(t?.e? as varchar)<= any { cast('T' as varchar(?)),  ?:? ,  cast('Sunday' as varchar(?)),  ?:? } order by ?
 ===================================================
-Error:-181
+i    e1    
+1     Sunday     
+2     Monday     
+6     Friday     
+7     Saturday     
+8     01/01/2012     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.i, t?.e? from t? t? where  cast(t?.e? as varchar)<= any { cast('T' as varchar(?)),  ?:? ,  cast('Sunday' as varchar(?)),  ?:? } order by ?
 ===================================================
 0
 ===================================================
 0
 ===================================================
-Error:-181
+i    e1    
+1     Sunday     
+2     Monday     
+3     Tuesday     
+4     Wednesday     
+5     Thursday     
+6     Friday     
+7     Saturday     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.i, t?.e? from t? t? where  cast(t?.e? as varchar)> any { cast('T' as varchar(?)),  ?:? ,  cast('Sunday' as varchar(?)),  ?:? } order by ?
 ===================================================
 i    e1    
 1     Sunday     
@@ -1600,15 +1785,51 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.i, t?.e? from t? t? where  cast(t?.e? as varchar)> any {'T',  ?:? , 'Sunday',  ?:? } order by ?
+select t?.i, t?.e? from t? t? where  cast(t?.e? as varchar)> any { cast('T' as varchar(?)),  ?:? ,  cast('Sunday' as varchar(?)),  ?:? } order by ?
 ===================================================
-Error:-181
+i    e1    
+1     Sunday     
+2     Monday     
+3     Tuesday     
+4     Wednesday     
+5     Thursday     
+6     Friday     
+7     Saturday     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.i, t?.e? from t? t? where  cast(t?.e? as varchar)> any { cast('T' as varchar(?)),  ?:? ,  cast('Sunday' as varchar(?)),  ?:? } order by ?
 ===================================================
 0
 ===================================================
 0
 ===================================================
-Error:-181
+i    e1    
+1     Sunday     
+2     Monday     
+3     Tuesday     
+4     Wednesday     
+5     Thursday     
+6     Friday     
+7     Saturday     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.i, t?.e? from t? t? where  cast(t?.e? as varchar)>= any { cast('T' as varchar(?)),  ?:? ,  cast('Sunday' as varchar(?)),  ?:? } order by ?
 ===================================================
 i    e1    
 1     Sunday     
@@ -1627,9 +1848,28 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.i, t?.e? from t? t? where  cast(t?.e? as varchar)>= any {'T',  ?:? , 'Sunday',  ?:? } order by ?
+select t?.i, t?.e? from t? t? where  cast(t?.e? as varchar)>= any { cast('T' as varchar(?)),  ?:? ,  cast('Sunday' as varchar(?)),  ?:? } order by ?
 ===================================================
-Error:-181
+i    e1    
+1     Sunday     
+2     Monday     
+3     Tuesday     
+4     Wednesday     
+5     Thursday     
+6     Friday     
+7     Saturday     
+8     01/01/2012     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.i, t?.e? from t? t? where  cast(t?.e? as varchar)>= any { cast('T' as varchar(?)),  ?:? ,  cast('Sunday' as varchar(?)),  ?:? } order by ?
 ===================================================
 0
 ===================================================
