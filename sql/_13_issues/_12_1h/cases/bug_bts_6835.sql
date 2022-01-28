@@ -59,5 +59,5 @@ drop t;
 
 create table t (a int, b int);
 -- should give an error
-create index idx_invalid on t(if(a<>0,b<>0,-b<>0));
+create index idx_invalid on t(if(a<>0,b,-b));
 drop t;
