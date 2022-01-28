@@ -40,7 +40,7 @@ create table t1(
 	a16 TIME,
 	a17 TIMESTAMP
 );
-PREPARE stmt from 'insert into t1 set a1=?,a2=?,a3=?,a4=?,a5=?,a6=?,a7=?,a8=?,a9=?,a10=?,a11=?,a12=?,a13=?,a14=?,a15=?,a16=?,a17=?'
+PREPARE stmt from 'insert into t1 set a1=?,a2=?,a3=?,a4=?,a5=?,a6=?,a7=?,a8=?,a9=?,a10=?,a11=?,a12=?,a13=?,a14=?,a15=?,a16=?,a17=?';
 EXECUTE stmt USING 
 'qwertyuiop[]asdfghjkl\\''zxcvbnm,./`1234567890-=\\~!@#$%^&*()_+|QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>?		two tab',
 'qwertyuiop[]asdfghjkl\\''zxcvbnm,./`1234567890-=\\~!@#$%^&*()_+|QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>?		two tab',
@@ -58,7 +58,7 @@ B'111111111111111111111111111111111111111111111111111111111111111111111111111111
 2341234123.3212,
 DATE '5/11/2010', 
 TIME '16:08:33 pm',
-TIMESTAMP '01/31/1994 8:15:00 pm'
+TIMESTAMP '01/31/1994 8:15:00 pm';
 DEALLOCATE PREPARE STMT;
 insert into t1 set a1=null, a2=null, a3=null, a4=null, a5=null, a6=null, a7=null, a8=null, a9=null, a10=null, a11=null, a12=null, a13=null, a14=null, a15=null, a16=null, a17=null;
 select count(*) from t1 ;

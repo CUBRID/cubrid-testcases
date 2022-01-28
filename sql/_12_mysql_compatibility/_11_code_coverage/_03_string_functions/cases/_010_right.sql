@@ -24,10 +24,10 @@ select right(n'1231',2);
 
 select right(b'101101',2);
 
-prepare st from 'select right(?,?)'
+prepare st from 'select right(?,?)';
 execute st using n'1',2;
 
-prepare st from 'select right(?,?)'
+prepare st from 'select right(?,?)';
 execute st using '12311',date'2000-10-10';
 
 select right(NULL);
