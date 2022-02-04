@@ -16,39 +16,47 @@
 0
 ===================================================
 count(*)    
-0     
+5     
 
 Query plan:
-nl-join (cross join)
-    outer: nl-join (inner join)
-               edge:  term[?]
-               outer: sscan
-                          class: a node[?]
-                          cost:  ? card ?
-               inner: sscan
-                          class: bb node[?]
-                          sargs: term[?] AND term[?]
-                          cost:  ? card ?
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: bb node[?]
                sargs: term[?]
                cost:  ? card ?
-    inner: temp
-               order: UNORDERED
-               subplan: nl-join (inner join)
-                            edge:  term[?]
-                            outer: sscan
-                                       class: b node[?]
-                                       cost:  ? card ?
-                            inner: sscan
-                                       class: bb_? node[?]
-                                       sargs: term[?] AND term[?]
-                                       cost:  ? card ?
-                            sargs: term[?]
-                            cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select a.a from tb? a, tb? bb where (a.a=bb.a))
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: b node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: bb node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select b.a from tb? b, tb? bb where (b.a=bb.a))
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
                cost:  ? card ?
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select count(*) from tb? a, tb? bb, tb? b, tb? bb_? where ((@newincr := @newincr+?)<=?) and (a.a=bb.a) and (b.a=bb_?.a)
+select count(*) from (select a.a from tb? a, tb? bb where (a.a=bb.a)) a (a), (select b.a from tb? b, tb? bb where (b.a=bb.a)) b (a) where (@newincr := @newincr+?)<=?
 ===================================================
 0
 ===================================================
