@@ -33,20 +33,11 @@ select t?.i?, t?.i? from t? t? where t?.i?= cast(t?.i? as numeric)+?.? order by 
 /* ---> skip ORDER BY */
 ===================================================
 0
+===================================================
 i1    i2    
 30     -1     
 30     -1     
 
-Query plan:
-iscan
-    class: t? node[?]
-    index: i_t?_i? 
-    sargs: term[?]
-    sort:  ? asc
-    cost:  ? card ?
-Query stmt:
-select t?.i?, t?.i? from t? t? where t?.i?=t?.i?+ ?:?  order by ?
-/* ---> skip ORDER BY */
 ===================================================
 i1    i2    
 30     -1     
@@ -70,26 +61,11 @@ Query stmt:
 select /*+ ORDERED */ t?.i?, t?.i? from t? t? where t?.i?=(select max( cast(t?.i? as numeric)+?.?) from t? t?) order by ?
 ===================================================
 0
+===================================================
 i1    i2    
 30     -1     
 30     -1     
 
-Query plan:
-sscan
-    class: t? node[?]
-    cost:  ? card ?
-Query stmt:
-(select max(t?.i?+ ?:? ) from t? t?)
-Query plan:
-temp(order by)
-    subplan: iscan
-                 class: t? node[?]
-                 index: i_t?_i? term[?]
-                 cost:  ? card ?
-    sort:  ? asc
-    cost:  ? card ?
-Query stmt:
-select t?.i?, t?.i? from t? t? where t?.i?=(select max(t?.i?+ ?:? ) from t? t?) order by ?
 ===================================================
 i1    i2    
 1     -1     
@@ -119,32 +95,12 @@ select t?.i?, t?.i? from t? t? where ((t?.i?=(select max( cast(t?.i? as numeric)
 /* ---> skip ORDER BY */
 ===================================================
 0
+===================================================
 i1    i2    
 1     -1     
 30     -1     
 30     -1     
 
-Query plan:
-sscan
-    class: t? node[?]
-    cost:  ? card ?
-Query stmt:
-(select max(t?.i?+ ?:? ) from t? t?)
-Query plan:
-sscan
-    class: t? node[?]
-    cost:  ? card ?
-Query stmt:
-(select min(t?.i?+ ?:? ) from t? t?)
-Query plan:
-iscan
-    class: t? node[?]
-    index: i_t?_i? term[?]
-    sort:  ? asc
-    cost:  ? card ?
-Query stmt:
-select t?.i?, t?.i? from t? t? where ((t?.i?=(select max(t?.i?+ ?:? ) from t? t?)) or (t?.i?=(select min(t?.i?+ ?:? ) from t? t?))) order by ?
-/* ---> skip ORDER BY */
 ===================================================
 1    
 1     
@@ -165,23 +121,10 @@ Query stmt:
 select ? from t? t?, table(set{t?.i?}) t (i) where t?.i?=t.i+?
 ===================================================
 0
+===================================================
 1    
 1     
 
-Query plan:
-nl-join (inner join)
-    edge:  table(?) -> t node[?]
-    outer: sscan
-               class: t? node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t node[?]
-               sargs: table(?) -> t node[?] AND term[?]
-               cost:  ? card ?
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select ? from t? t?, table(set{t?.i?}) t (i) where t?.i?=t.i+ ?:? 
 ===================================================
 0
 ===================================================
@@ -215,20 +158,11 @@ Query stmt:
 select t?.i?, t?.i? from t? t? where t?.i?= cast(t?.i? as numeric)+?.? order by ?
 ===================================================
 0
+===================================================
 i1    i2    
 30     -1     
 30     -1     
 
-Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t? node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
-    sort:  ? asc
-    cost:  ? card ?
-Query stmt:
-select t?.i?, t?.i? from t? t? where t?.i?=t?.i?+ ?:?  order by ?
 ===================================================
 i1    i2    
 30     -1     
@@ -252,26 +186,11 @@ Query stmt:
 select /*+ ORDERED */ t?.i?, t?.i? from t? t? where t?.i?=(select max( cast(t?.i? as numeric)+?.?) from t? t?) order by ?
 ===================================================
 0
+===================================================
 i1    i2    
 30     -1     
 30     -1     
 
-Query plan:
-sscan
-    class: t? node[?]
-    cost:  ? card ?
-Query stmt:
-(select max(t?.i?+ ?:? ) from t? t?)
-Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t? node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
-    sort:  ? asc
-    cost:  ? card ?
-Query stmt:
-select t?.i?, t?.i? from t? t? where t?.i?=(select max(t?.i?+ ?:? ) from t? t?) order by ?
 ===================================================
 i1    i2    
 1     -1     
@@ -302,33 +221,12 @@ Query stmt:
 select t?.i?, t?.i? from t? t? where ((t?.i?=(select max( cast(t?.i? as numeric)+?.?) from t? t?)) or (t?.i?=(select min( cast(t?.i? as numeric)+?.?) from t? t?))) order by ?
 ===================================================
 0
+===================================================
 i1    i2    
 1     -1     
 30     -1     
 30     -1     
 
-Query plan:
-sscan
-    class: t? node[?]
-    cost:  ? card ?
-Query stmt:
-(select max(t?.i?+ ?:? ) from t? t?)
-Query plan:
-sscan
-    class: t? node[?]
-    cost:  ? card ?
-Query stmt:
-(select min(t?.i?+ ?:? ) from t? t?)
-Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t? node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
-    sort:  ? asc
-    cost:  ? card ?
-Query stmt:
-select t?.i?, t?.i? from t? t? where ((t?.i?=(select max(t?.i?+ ?:? ) from t? t?)) or (t?.i?=(select min(t?.i?+ ?:? ) from t? t?))) order by ?
 ===================================================
 1    
 1     
@@ -349,23 +247,10 @@ Query stmt:
 select ? from t? t?, table(set{t?.i?}) t (i) where t?.i?=t.i+?
 ===================================================
 0
+===================================================
 1    
 1     
 
-Query plan:
-nl-join (inner join)
-    edge:  table(?) -> t node[?]
-    outer: sscan
-               class: t? node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t node[?]
-               sargs: table(?) -> t node[?] AND term[?]
-               cost:  ? card ?
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select ? from t? t?, table(set{t?.i?}) t (i) where t?.i?=t.i+ ?:? 
 ===================================================
 0
 ===================================================
