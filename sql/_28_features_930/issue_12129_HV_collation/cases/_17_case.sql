@@ -30,7 +30,7 @@ insert into t values('A', 'B');
 insert into t values(null, null);
 
 --compare with s1
-prepare st3 from 'select s1, case when isnull(ifnull(s1, ?)) then ? else ? end from t order by 1, 2';
+prepare st3 from 'select s1, case when isnull(ifnull(s1, ?))<>0 then ? else ? end from t order by 1, 2';
 execute st3 using 'a', 'Y', 'N';
 set names iso88591 collate iso88591_en_ci;
 execute st3 using null, 'Y', 'N';
@@ -41,7 +41,7 @@ execute st3 using null, _iso88591'Y', 'N';
 execute st3 using 'A', _euckr'Y', _euckr'N';
 
 --compare with s2
-prepare st4 from 'select s2, case when isnull(ifnull(s2, ?)) then ? else ? end from t order by 1, 2';
+prepare st4 from 'select s2, case when isnull(ifnull(s2, ?))<>0 then ? else ? end from t order by 1, 2';
 execute st4 using 'a', 'Y', 'N';
 set names iso88591 collate iso88591_en_ci;
 execute st4 using 'A', 'Y', 'N';

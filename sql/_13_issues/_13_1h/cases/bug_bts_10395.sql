@@ -52,7 +52,7 @@ execute s using 1, 2,3;
 drop table if exists t1;
 create table t1 (a bigint,b int,c varchar(2000),d char(200),e numeric(10,0),f CHARACTER VARYING(100));
 insert into t1 select rownum,rownum,rownum,rownum,rownum,rownum from db_class limit 10;
-prepare s from 'select a from t1 where a between ? and ? and 1';
+prepare s from 'select a from t1 where a between ? and ? and 1<>0';
 execute s using 1, 2;
 execute s using 1, 2;
 execute s using 100, 200;

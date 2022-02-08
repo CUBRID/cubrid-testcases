@@ -187,7 +187,7 @@ select * from test order by 1,2;
 drop table if exists test;
 create table test (id int primary key, name char(20));
 insert into test values(1,'name1'),(2,'name2'),(3,'name3'),(4,'name4');
-select * from test inner join (values(1),(2)) as t(id) on 1 order by 1,2;
+select * from test inner join (values(1),(2)) as t(id) on 1<>0 order by 1,2;
 
 select * from test inner join (values(1),(2)) as t(id) on t.id=test.id order by 1,2;
 
@@ -301,33 +301,33 @@ INSERT INTO t2 VALUES (18,5,'y','y');
 
 SELECT t1 .`col_int_key`  
 from (select * from t1 order by 1,2) t1  
-  JOIN (( select table2.`pk`,table2.`col_int_key`,table2.`col_varchar_key` from t2 table2  join (select * from t2 order by 1,2) table3  ON table3 .`pk` )t )  WHERE t .`col_int_key`  >= t1 .`pk`  
+  JOIN (( select table2.`pk`,table2.`col_int_key`,table2.`col_varchar_key` from t2 table2  join (select * from t2 order by 1,2) table3  ON table3 .`pk`<>0 )t )  WHERE t .`col_int_key`  >= t1 .`pk`  
   AND t .`col_varchar_key`  > t1 .`col_varchar_nokey`   
  order by 1;
 
-select table2.`pk`,table2.`col_int_key`,table2.`col_varchar_key` from t2 table2  join (select * from t2 order by 1,2) table3  ON table3 .`pk` order by 1,2,3;
+select table2.`pk`,table2.`col_int_key`,table2.`col_varchar_key` from t2 table2  join (select * from t2 order by 1,2) table3  ON table3 .`pk`<>0 order by 1,2,3;
 
 SELECT t1 .`col_int_key`  
 from (select * from t1 order by 1,2) t1  
-  JOIN (( select table2.`pk`,table2.`col_int_key`,table2.`col_varchar_key` from t2 table2  join (select * from t2 order by 1,2) table3  ON table3 .`pk` )t )  ON t .`col_int_key`  >= t1 .`pk`  
+  JOIN (( select table2.`pk`,table2.`col_int_key`,table2.`col_varchar_key` from t2 table2  join (select * from t2 order by 1,2) table3  ON table3 .`pk`<>0 )t )  ON t .`col_int_key`  >= t1 .`pk`  
   AND t .`col_varchar_key`  < t1 .`col_varchar_nokey`   
  order by 1;
 
 SELECT t1 .`col_int_key`  
 from (select * from t1 order by 1,2) t1  
-  JOIN (( select table2.`pk`,table2.`col_int_key`,table2.`col_varchar_key` from t2 table2  join (select * from t2 order by 1,2) table3  ON table3 .`pk` )t )  ON t .`col_int_key`  >= t1 .`pk`  
+  JOIN (( select table2.`pk`,table2.`col_int_key`,table2.`col_varchar_key` from t2 table2  join (select * from t2 order by 1,2) table3  ON table3 .`pk`<>0 )t )  ON t .`col_int_key`  >= t1 .`pk`  
   AND t .`col_varchar_key`  = t1 .`col_varchar_nokey`   
  order by 1;
 
 SELECT t1 .`col_int_key`  
 from (select * from t1 order by 1,2) t1  
-  JOIN (( select table2.`pk`,table2.`col_int_key`,table2.`col_varchar_key` from t2 table2  join (select * from t2 order by 1,2) table3  ON table3 .`pk` )t )  ON t .`col_int_key`  >= t1 .`pk`  
+  JOIN (( select table2.`pk`,table2.`col_int_key`,table2.`col_varchar_key` from t2 table2  join (select * from t2 order by 1,2) table3  ON table3 .`pk`<>0 )t )  ON t .`col_int_key`  >= t1 .`pk`  
   AND t .`col_varchar_key`  > t1 .`col_varchar_nokey`   
  order by 1;
 
 SELECT table2 .`col_int_key`  
 from (select * from t1 order by 1,2) t1  
-  JOIN ( t2 table2  join (select * from t2 order by 1,2) table3  ON table3 .`pk`  )  ON table3 .`col_int_key`  >= table2 .`pk`  
+  JOIN ( t2 table2  join (select * from t2 order by 1,2) table3  ON table3 .`pk`<>0  )  ON table3 .`col_int_key`<>0  >= table2 .`pk`  
   AND table3 .`col_varchar_key`  = table2 .`col_varchar_nokey`   
  order by 1;
 

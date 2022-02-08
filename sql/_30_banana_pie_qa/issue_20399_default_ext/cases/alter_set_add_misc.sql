@@ -27,7 +27,7 @@ drop table if exists xoo;
 create class xoo ( id int primary key default to_char(sysdate, 'MM'), dd date default sysdate, title varchar(100));
 insert into xoo value default;
 alter table xoo modify title varchar default to_char(systimestamp, 'HH:MI:SS AM MM/DD/YYYY');
-select if(id=to_char(dd,'MM'),'OK','NOK'),title, if(@xx :=id,'OK','NOK') from xoo;
+select if(id=to_char(dd,'MM'),'OK','NOK'),title, if((@xx :=id)<>0,'OK','NOK') from xoo;
 prepare xx from 'update xoo set title=default(title) where id =?'; 
 execute xx using @xx;
 prepare xx from 'update xoo set title=default(title)||? where id =?';

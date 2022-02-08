@@ -5,7 +5,7 @@
 drop table if exists t;
 create table t ( i int , j varchar(10));
 --insert 1000 rows.
-prepare stmt from 'insert into t select * from (select rownum, substring(a.class_name,0,10) from _db_class a , _db_class b where a.class_name limit ?*?);';
+prepare stmt from 'insert into t select * from (select rownum, substring(a.class_name,0,10) from _db_class a , _db_class b where a.class_name<>0 limit ?*?);';
 execute stmt using 10,100 ;
 
 --Statement 1

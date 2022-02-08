@@ -116,8 +116,8 @@ select * from t1;
 drop table if exists t1;
 create table t1(a double not null);
 insert into t1 values (2),(1);
-select 1 from t1 where json_extract(a,'$','$[81]');
-select 1 from t1 where json_extract(a,'$[81]');
+select 1 from t1 where json_extract(a,'$','$[81]')<>0;
+select 1 from t1 where json_extract(a,'$[81]')<>0;
 select json_extract(a,'$'),json_extract(a,'$[81]'), json_type(a) from t1 order by 1;
 
 

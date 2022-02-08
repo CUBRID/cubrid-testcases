@@ -94,25 +94,25 @@ CREATE VIEW al_cr_all AS
         from ( 
                 select 'class' as type,cl.ca_class_name as type_name,ac.* 
                 from al_ca_class ac 
-                join ca_class cl on (cl.id_ca_class) 
+                join ca_class cl on (cl.id_ca_class<>0) 
     union all 
        ( select 'type' as type,cl.ca_class_name||case when cl.ca_class_name = 
 ct.ca_type_name then '' else ' ~ '||ct.ca_type_name end as 
 type_name,ac.* 
                 from al_ca_type ac 
-                join ca_type ct on (ct.id_ca_type) 
-                join ca_class cl on (cl.id_ca_class) )
+                join ca_type ct on (ct.id_ca_type<>0) 
+                join ca_class cl on (cl.id_ca_class<>0) )
     union all 
          (       select 'category' as type,cl.ca_class_name|| 
                 case when cl.ca_class_name = ct.ca_type_name 
                 then '' else ' ~ '||ct.ca_type_name end||' ~ '
                 as type_name,ac.* 
                 from al_ca_category ac 
-                join ca_type ct on ( ct.id_ca_type) 
-                join ca_class cl on (cl.id_ca_class) 
+                join ca_type ct on ( ct.id_ca_type<>0) 
+                join ca_class cl on (cl.id_ca_class<>0) 
         )
         ) 
-    as c join al_cr ac on ( ac.id_al_cr); 
+    as c join al_cr ac on ( ac.id_al_cr<>0); 
 
 create view al_to_category as 
         select ac.*, cl.ca_class_name, ct.ca_type_name, cc.ca_cat_name, 
@@ -123,20 +123,20 @@ create view al_to_category as
     end as ca_name 
     from al_cr_all ac 
     left join ca_class cl on ( 
-                (ac.type = 'class' and cl.id_ca_class=ac.id_ca_class)        
+                ((ac.type = 'class')<>0 and (cl.id_ca_class=ac.id_ca_class)<>0)        
         ) 
     join ca_type ct on ( 
-                (ac.type = 'class' and  ct.id_ca_class=cl.id_ca_class)                
+                ((ac.type = 'class')<>0 and (ct.id_ca_class=cl.id_ca_class)<>0)                
         ) 
     join ca_category cc on ( 
-                (ac.type = 'category' and cc.id_ca_category=ac.id_ca_class)                 
+                ((ac.type = 'category')<>0 and (cc.id_ca_category=ac.id_ca_class)<>0)                 
         ); 
 
 select 
 first_value(max(p.id_price)) over () as id_price1 
 ,ac.ca_name 
         from al_to_category ac 
-        join price p on (p.id_price=ac.id_al_cr) 
+        join price p on ((p.id_price=ac.id_al_cr)<>0) 
         group by ac.ca_name; 
 
 
