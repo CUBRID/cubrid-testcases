@@ -40,7 +40,6 @@ Query stmt:
 select t.id,  char_length(t.a), t.a from t t where (t.a>= ?:?  and t.a< ?:? )
 ===================================================
 0
-===================================================
 id    char_length(a)    a    
 2     1          
 3     2          
@@ -52,7 +51,6 @@ sscan
     cost:  ? card ?
 Query stmt:
 select t.id,  char_length(t.a), t.a from t t where t.a like  concat( chr( ?:?  using iso?), '%') and (t.a>= like_match_lower_bound( concat( chr( ?:?  using iso?), '%')) and t.a< like_match_upper_bound( concat( chr( ?:?  using iso?), '%')))
-===================================================
 0
 ===================================================
 0
@@ -95,9 +93,7 @@ sscan
     cost:  ? card ?
 Query stmt:
 select t.id,  char_length(t.a), t.a from t t where (t.a>= ?:?  and t.a< ?:? )
-===================================================
 0
-===================================================
 id    char_length(a)    a    
 2     1          
 3     2     a     
@@ -106,11 +102,10 @@ id    char_length(a)    a
 Query plan:
 sscan
     class: t node[?]
-    sargs: term[?] AND term[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t.id,  char_length(t.a), t.a from t t where t.a like  concat( chr( ?:?  using iso?), '%') and (t.a>= like_match_lower_bound( concat( chr( ?:?  using iso?), '%')) and t.a< like_match_upper_bound( concat( chr( ?:?  using iso?), '%')))
-===================================================
+select t.id,  char_length(t.a), t.a from t t where (t.a>= ?:?  and t.a< ?:? )
 0
 ===================================================
 0
