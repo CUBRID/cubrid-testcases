@@ -57,6 +57,7 @@ Query stmt:
 select t?.s?, nvl?(t?.s?, t?.s?, 'AA' collate iso?_en_cs) from t? t? order by ?, ?
 ===================================================
 0
+===================================================
 s1    nvl2(s1, s1,  ?:0 )    
 null     AA     
 aa     aa     
@@ -73,6 +74,7 @@ Query stmt:
 select t?.s?, nvl?(t?.s?, t?.s?,  ?:? ) from t? t? order by ?, ?
 ===================================================
 0
+===================================================
 s1    nvl2(s1, s1,  ?:0 )    
 null     AA     
 aa             aa             
@@ -89,6 +91,7 @@ Query stmt:
 select t?.s?, nvl?(t?.s?, t?.s?,  ?:? ) from t? t? order by ?, ?
 ===================================================
 0
+===================================================
 s1    nvl2(s1, s1,  ?:0 )    
 null     AA     
 Ab       Ab       
@@ -116,7 +119,7 @@ temp(order by)
     sort:  ? asc collate utf?_en_ci
     cost:  ? card ?
 Query stmt:
-select t?.s? from t? t? where  cast('aa' as char(-?) collate utf?_en_ci)>nvl?(t?.s?, t?.s?,  cast('?' as char(-?) collate utf?_en_ci)) order by ?
+select t?.s? from t? t? where  cast('aa' as varchar collate utf?_en_ci)>nvl?(t?.s?, t?.s?,  cast('?' as char(-?) collate utf?_en_ci)) order by ?
 ===================================================
 s1    
 null     
@@ -148,6 +151,7 @@ Query stmt:
 select t?.s? from t? t? where 'aa' collate iso?_en_cs>nvl?(t?.s?, t?.s?, '?' collate iso?_en_cs) order by ?
 ===================================================
 0
+===================================================
 s1    
 null     
 
@@ -163,6 +167,7 @@ Query stmt:
 select t?.s? from t? t? where  ?:? >nvl?(t?.s?, t?.s?,  ?:? ) order by ?
 ===================================================
 0
+===================================================
 s1    
 null     
 
@@ -178,6 +183,7 @@ Query stmt:
 select t?.s? from t? t? where  ?:? >nvl?(t?.s?, t?.s?,  ?:? ) order by ?
 ===================================================
 0
+===================================================
 s1    
 null     
 Ab       
