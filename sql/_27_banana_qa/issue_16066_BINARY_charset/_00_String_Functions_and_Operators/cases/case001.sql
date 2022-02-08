@@ -55,8 +55,8 @@ order by a NULLS LAST;
 
 
 SELECT a,
-       CASE WHEN 1 THEN '字符.串1'
-            WHEN 2 THEN cast( _utf8'12345가나다라마가나다라마' as string charset euckr)
+       CASE WHEN 1<>0 THEN '字符.串1'
+            WHEN 2<>0 THEN cast( _utf8'12345가나다라마가나다라마' as string charset euckr)
             ELSE cast( _utf8'Öö_Şş_Üü2Öö_Şş_Üü2Öö_Şş_Üü2' as string charset iso88591)
        END
 FROM case_tbl

@@ -41,6 +41,6 @@ insert into T1 values(7744, 'TURNER ',  'SALESMAN ',7698, date'09/08/1981',1500.
 
 select empno, ename, job from T1 
 where S1 > 1800
-order by S1 for orderby_num();
+order by S1 for orderby_num() <> 0;
 
 drop class T1;

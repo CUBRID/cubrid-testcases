@@ -7,7 +7,7 @@ insert into tb values('ok1');
 insert into tb values('ok2');
 insert into tb values('ok3');
 
-select * from tb where greatest('ok4', col1) ;
+select * from tb where greatest('ok4', col1)<>0 ;
 
 drop class tb;
 

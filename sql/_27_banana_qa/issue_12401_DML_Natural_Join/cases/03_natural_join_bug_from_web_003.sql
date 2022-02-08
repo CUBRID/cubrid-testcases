@@ -226,7 +226,7 @@ mv.id as `always`,
 mv.id  as `only_cast`
 FROM MY_TABLE mv
     INNER JOIN MY_SECOND_TABLE mst
-        ON 1 order by 1,2,3;
+        ON 1<>0 order by 1,2,3;
 
 
 SELECT

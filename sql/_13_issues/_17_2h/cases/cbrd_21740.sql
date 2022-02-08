@@ -8,7 +8,7 @@ create index i5 on t1(a) where a>0 and json_valid(b)=1;
 drop index i3 on t1;
 create index i6 on t1(a) where a>0 and b is not null;
 drop index i6 on t1;
-create index i7 on t1(a asc) where a>a+1 and concat(b,b);
+create index i7 on t1(a asc) where a>a+1 and concat(b,b)<>0;
 
 drop table if exists t1;
 create table t1 (a int, b string);

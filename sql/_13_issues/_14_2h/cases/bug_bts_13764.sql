@@ -17,7 +17,7 @@ select /*+ recompile */ a, b, count(c) from foo group by a, b having a=b+1;
 select /*+ recompile */ a, b, count(c) from foo group by a, b having a=b+c;
 select /*+ recompile */ a, b, count(c) from foo group by a having a between a and b;
 select /*+ recompile */ a, b, count(c) from foo group by a, b having a between a and b;
-select /*+ recompile */ a, b, count(c) from foo group by a having count(a);
+select /*+ recompile */ a, b, count(c) from foo group by a having count(a)<>0;
 
  insert into foo values (1, 1, 2);
 select /*+ recompile */ a, b, count(c) from foo group by a, b having a=b;
@@ -50,7 +50,7 @@ select /*+ recompile */ a, b, count(c) from foo group by a, b having a=b+1;
 select /*+ recompile */ a, b, count(c) from foo group by a, b having a=b+c;
 select /*+ recompile */ a, b, count(c) from foo group by a having a between a and b;
 select /*+ recompile */ a, b, count(c) from foo group by a, b having a between a and b;
-select /*+ recompile */ a, b, count(c) from foo group by a having count(a);
+select /*+ recompile */ a, b, count(c) from foo group by a having count(a)<>0;
 select /*+ recompile */ a, b, count(c) from foo group by a, b+1 having b+1>1;
 
  insert into foo values (1, 1, 2);
@@ -84,7 +84,7 @@ select /*+ recompile */ a, b, count(c) from foo group by a, b having a=b+1;
 select /*+ recompile */ a, b, count(c) from foo group by a, b having a=b+c;
 select /*+ recompile */ a, b, count(c) from foo group by a having a between a and b;
 select /*+ recompile */ a, b, count(c) from foo group by a, b having a between a and b;
-select /*+ recompile */ a, b, count(c) from foo group by a having count(a);
+select /*+ recompile */ a, b, count(c) from foo group by a having count(a)<>0;
 select /*+ recompile */ a, b, count(c) from foo group by a, b+1 having b+1>1;
 select /*+ recompile */ a, b, count(c) from foo group by a, b+1 having b+1>1;
 drop  table foo;
@@ -111,7 +111,7 @@ select /*+ recompile */ a, b, count(c) from foo group by a, b having a=b+1;
 select /*+ recompile */ a, b, count(c) from foo group by a, b having a=b+c;
 select /*+ recompile */ a, b, count(c) from foo group by a having a between a and b;
 select /*+ recompile */ a, b, count(c) from foo group by a, b having a between a and b;
-select /*+ recompile */ a, b, count(c) from foo group by a having count(a);
+select /*+ recompile */ a, b, count(c) from foo group by a having count(a)<>0;
 select /*+ recompile */ a, b, count(c) from foo group by a, b+1 having b+1>1;
 select /*+ recompile */ a, b, count(c) from foo group by a, b+1 having b+1>1;
 drop  table foo;
@@ -198,9 +198,9 @@ insert into t values
 (1, 1, null, 13),
 (null, null, null, 14);
 select /*+ recompile */ i, count(*) from t group by i ;
-select /*+ recompile */ i, count(*) from t group by i having i and j;
+select /*+ recompile */ i, count(*) from t group by i having i<>0 and j<>0;
 select /*+ recompile */ i, (count(*)=3) from t group by i ;
-select /*+ recompile */ i, (count(*)=3) from t group by i having i and j;
+select /*+ recompile */ i, (count(*)=3) from t group by i having i<>0 and j<>0;
  select /*+ recompile */ i, j,count(*) from t group by i ;
 drop t;
 CREATE TABLE t (

@@ -40,8 +40,8 @@ INSERT INTO `lnmp` (category, tags) VALUES (JSON_OBJECT('id', 2, 'name', 'php.ne
 SELECT * FROM lnmp order by 1;
 SELECT * FROM lnmp WHERE category = CAST('{"id": 1, "name": "lnmp.cn"}' as JSON);
 SELECT * FROM lnmp WHERE category = '{"id": 1, "name": "lnmp.cn"}';
-SELECT * FROM lnmp WHERE JSON_CONTAINS(category, '1', '$.id');
-SELECT * FROM lnmp WHERE JSON_CONTAINS(tags, '2');
+SELECT * FROM lnmp WHERE JSON_CONTAINS(category, '1', '$.id')<>0;
+SELECT * FROM lnmp WHERE JSON_CONTAINS(tags, '2')<>0;
 UPDATE lnmp SET tags = '[1, 3, 4]' WHERE id = 1;
 select if(current_timestamp -b >=0 and current_timestamp -b<10,'ok','nok') from lnmp where id=1;
 drop table if exists lnmp;
