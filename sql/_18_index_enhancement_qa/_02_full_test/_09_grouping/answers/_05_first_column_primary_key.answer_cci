@@ -16,7 +16,6 @@
 1
 ===================================================
 0
-===================================================
 a    b    c    d    
 1     1.1     AAAAA     AAAAA     
 2     1.1     AAAAA     AAAAA     
@@ -33,11 +32,9 @@ iscan
 Query stmt:
 select t.a, t.b, t.c, t.d from t t group by t.a, t.b, t.c, t.d
 /* ---> skip GROUP BY */
-===================================================
 0
 ===================================================
 0
-===================================================
 a    b    c    d    
 5     2.1     BBBBB     BBBBB     
 4     null     null     null     
@@ -54,11 +51,9 @@ iscan
 Query stmt:
 select t.a, t.b, t.c, t.d from t t group by t.a desc , t.b desc , t.c desc , t.d desc 
 /* ---> skip GROUP BY */
-===================================================
 0
 ===================================================
 0
-===================================================
 a    b    c    d    
 5     2.1     BBBBB     BBBBB     
 4     null     null     null     
@@ -73,11 +68,9 @@ iscan
 Query stmt:
 select t.a, t.b, t.c, t.d from t t group by t.a desc , t.b desc , t.c desc , t.d desc  having groupby_num()<=?
 /* ---> skip GROUP BY */
-===================================================
 0
 ===================================================
 0
-===================================================
 a    b    c    d    count(*)    
 
 Query plan:
@@ -89,11 +82,9 @@ iscan
 Query stmt:
 select t.a, t.b, t.c, t.d, count(*) from t t group by t.a desc , t.b desc , t.c desc , t.d desc  having count(*)>?
 /* ---> skip GROUP BY */
-===================================================
 0
 ===================================================
 0
-===================================================
 a    b    c    d    count(*)    
 5     2.1     BBBBB     BBBBB     1     
 4     null     null     null     1     
@@ -108,11 +99,9 @@ iscan
 Query stmt:
 select t.a, t.b, t.c, t.d, count(*) from t t group by t.a desc , t.b desc , t.c desc , t.d desc  having groupby_num()<? and count(*)=?
 /* ---> skip GROUP BY */
-===================================================
 0
 ===================================================
 0
-===================================================
 a    b    c    d    count(*)    
 
 Query plan:
@@ -124,7 +113,6 @@ iscan
 Query stmt:
 select t.a, t.b, t.c, t.d, count(*) from t t group by t.a desc , t.b desc , t.c desc , t.d desc  having count(*)> ?:? 
 /* ---> skip GROUP BY */
-===================================================
 0
 ===================================================
 0
