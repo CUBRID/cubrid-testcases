@@ -59,7 +59,6 @@ iscan
 Query stmt:
 select t.a, t.b, t.c from t t where t.b= ?:?  order by ?, ?
 /* ---> skip ORDER BY */
-===================================================
 a    b    c    
 1     AA     AA1            
 2     AA     AA2            
@@ -72,7 +71,7 @@ iscan
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.a, t.b, t.c from t t where t.b= ?:?  order by ?
+select t.a, t.b, t.c from t t where t.b= ?:?  order by ?, ?
 /* ---> skip ORDER BY */
 ===================================================
 a    b    c    
