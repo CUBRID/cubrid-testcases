@@ -14,7 +14,7 @@ CREATE INDEX my_filter_index ON blogtopic (topicId) WHERE topicId>any (select to
 drop index my_filter_index ON blogtopic (topicId);
 CREATE INDEX my_filter_index ON blogtopic (topicId) WHERE topicId>some (select topicId from blogtopic);
 drop index my_filter_index ON blogtopic (topicId);
-CREATE INDEX my_filter_index ON blogtopic (topicId) WHERE not(select topicId from blogtopic);
+CREATE INDEX my_filter_index ON blogtopic (topicId) WHERE not(select topicId from blogtopic)<>0;
 drop index my_filter_index ON blogtopic (topicId);
 CREATE INDEX my_filter_index ON blogtopic (topicId) WHERE topicId !=1;
 drop index my_filter_index ON blogtopic (topicId);

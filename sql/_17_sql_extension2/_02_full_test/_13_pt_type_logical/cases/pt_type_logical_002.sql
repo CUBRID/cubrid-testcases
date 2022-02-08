@@ -8,32 +8,32 @@ insert into pt_type_test values(8983, 3234.5565, -1123222, -58934.2342);
 
 
 --and operator
-select (col1 and col2) from pt_type_test order by 1;
-select (col1 and col3) from pt_type_test where (col3 and col4) = 1 order by 1;
-select (col2 and true) from pt_type_test order by 1;
-select (col3 and null) from pt_type_test where (col4 or 0) = 0 order by 1;
-select (col4 and 0), (col2 and 1) from pt_type_test where not col3 = 0 order by 1;
+select (col1<>0 and col2<>0) from pt_type_test order by 1;
+select (col1<>0 and col3<>0) from pt_type_test where (col3<>0 and col4<>0) = 1 order by 1;
+select (col2<>0 and true) from pt_type_test order by 1;
+select (col3<>0 and null<>0) from pt_type_test where (col4<>0 or 0<>0) = 0 order by 1;
+select (col4<>0 and 0<>0), (col2<>0 and 1<>0) from pt_type_test where not col3 = 0 order by 1;
 
 
 --or operator
-select (col1 or col4) from pt_type_test order by 1;
-select (col2 or 0) from pt_type_test order by 1;
-select (col3 or col4) from pt_type_test where (col1 xor col4) = 1 order by 1;
-select (col1 or true), (col2 or false) from pt_type_test where (col3 and col4) = 1 order by 1;
+select (col1<>0 or col4<>0) from pt_type_test order by 1;
+select (col2<>0 or 0<>0) from pt_type_test order by 1;
+select (col3<>0 or col4<>0) from pt_type_test where (col1<>0 xor col4<>0) = 1 order by 1;
+select (col1<>0 or true), (col2<>0 or false) from pt_type_test where (col3<>0 and col4<>0) = 1 order by 1;
 
 
 --xor operator
-select (col1 xor col2) from pt_type_test order by 1;
-select (col1 xor 1) from pt_type_test where col1 xor col4 = 1 order by 1;
-select (col3 xor 0) from pt_type_test order by 1;
-select (col4 xor true) from pt_type_test where not col3 = 0 order by 1;
-select (col1 xor col2 xor col3 xor col4) from pt_type_test order by 1;
-select (col1 xor col2 xor col3 xor col4 xor null) from pt_type_test order by 1;
+select (col1<>0 xor col2<>0) from pt_type_test order by 1;
+select (col1<>0 xor 1<>0) from pt_type_test where col1<>0 xor (col4 = 1)<>0 order by 1;
+select (col3<>0 xor 0<>0) from pt_type_test order by 1;
+select (col4<>0 xor true) from pt_type_test where not col3 = 0 order by 1;
+select (col1<>0 xor col2<>0 xor col3<>0 xor col4<>0) from pt_type_test order by 1;
+select (col1<>0 xor col2<>0 xor col3<>0 xor col4<>0 xor null<>0) from pt_type_test order by 1;
 
 
 --not operator
-select (not col1), (not col2) from pt_type_test order by 1;
-select (not col3), (not col4) from pt_type_test where col1 xor col2 = 1 order by 1;
+select (not col1<>0), (not col2<>0) from pt_type_test order by 1;
+select (not col3<>0), (not col4<>0) from pt_type_test where col1<>0 xor (col2 = 1)<>0 order by 1;
 
 
 drop table pt_type_test;

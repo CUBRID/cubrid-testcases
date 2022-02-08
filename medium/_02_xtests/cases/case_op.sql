@@ -41,7 +41,7 @@ select 	case {'1'}
 	     when {1} then {1} end 
 	end 
 from class db_user order by 1,2;
-select case when null then 1 end from class db_user order by 1,2;
+select case when null<>0 then 1 end from class db_user order by 1,2;
 select 	case 
 	when 'a'>'b' then 'a' 
 	else 'b' end 

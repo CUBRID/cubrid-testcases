@@ -30,9 +30,9 @@ select * from v1 order by 2;
 
 select * from v1 where (a like 'A%') collate iso88591_en_ci order by 2; 
 
-select * from v1 where (a='aa' and 0) order by 2; 
+select * from v1 where (a='aa' and 0<>0) order by 2; 
 
-select * from v1 where (a='aa' and 1) order by 2; 
+select * from v1 where (a='aa' and 1<>0) order by 2; 
 
 drop v1;
 

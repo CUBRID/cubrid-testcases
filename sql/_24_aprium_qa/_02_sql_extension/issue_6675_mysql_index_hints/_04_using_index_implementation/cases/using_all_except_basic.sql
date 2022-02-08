@@ -42,7 +42,7 @@ select /*+ recompile */ * from ui where i2 < 10 USING INDEX ALL EXCEPT idx_i2, i
 --TEST: i3
 select /*+ recompile */ * from ui where i3 < 'ddd' USING INDEX ALL EXCEPT idx_i3;
 select /*+ recompile */ * from ui where i3 < 'ddd' and i3 is not null USING INDEX ALL EXCEPT idx_i3_i4_i2;
-select /*+ recompile */ * from ui where i3 < 'ddd' and i3 USING INDEX ALL EXCEPT idx_i3, idx_i3_i4_i2 order by i2 desc;
+select /*+ recompile */ * from ui where i3 < 'ddd' and i3<>0 USING INDEX ALL EXCEPT idx_i3, idx_i3_i4_i2 order by i2 desc;
 
 --TEST: i4
 select /*+ recompile */ * from ui where to_date(i4) < '1995-12-31' USING INDEX ALL EXCEPT idx_i4 order by i1;
