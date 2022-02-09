@@ -17,9 +17,9 @@ select * from v1;
 
 set  system parameters 'pipes_as_concat=n';
 
-select * from t1 where  !a || a!=1 && a>5 order by a limit (1+2-3)*4+1/1;
+select * from t1 where  !a<>0 || a!=1 && a>5 order by a limit (1+2-3)*4+1/1;
 
-alter view v1 as select * from t1 where  !a || a!=1 && a>5  order by a limit (1+2-3)*4+1/1;
+alter view v1 as select * from t1 where  !a<>0 || a!=1 && a>5  order by a limit (1+2-3)*4+1/1;
 select * from v1;
 
 set  system parameters 'pipes_as_concat=y';

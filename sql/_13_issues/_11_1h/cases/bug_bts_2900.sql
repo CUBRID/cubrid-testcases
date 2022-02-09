@@ -1,7 +1,7 @@
 --+ holdcas on;
-SELECT IF('1', 'T', 'F');
+SELECT IF('1'<>0, 'T', 'F');
 
-prepare x from 'select if(?, ''T'', ''F'')';
+prepare x from 'select if(?<>0, ''T'', ''F'')';
 execute x using '1';
 drop prepare x;
 

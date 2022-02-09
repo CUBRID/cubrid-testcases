@@ -32,7 +32,7 @@ select /*+ recompile */ * from t where a in (1,3) order by b, c desc for ORDERBY
 select /*+ recompile */ * from t where a in (1,3) order by b, c desc for ORDERBY_NUM() BETWEEN 100 AND 101;
 select /*+ recompile */ * from t where a in (1,3) order by b, c desc for ORDERBY_NUM() BETWEEN -100 AND 10;
 select /*+ recompile */ * from t where a in (1,3) order by b, c desc for ORDERBY_NUM() BETWEEN -100+100 AND -100+100 ;
-select /*+ recompile */ * from t where a in (1,3) order by b ,c desc for ORDERBY_NUM() BETWEEN -100+100 AND -100+1000 and 10;
+select /*+ recompile */ * from t where a in (1,3) order by b ,c desc for ORDERBY_NUM() BETWEEN -100+100 AND -100+1000 and 10<>0;
 
 select /*+ recompile */ * from t where a in (1,3) order by b ,c desc for ORDERBY_NUM() BETWEEN -100+100 AND -100+1000;
 

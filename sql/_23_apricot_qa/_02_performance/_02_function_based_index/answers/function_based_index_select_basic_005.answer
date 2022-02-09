@@ -37,7 +37,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)>'?'
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)> cast('?' as varchar)
 ===================================================
 i1    i2    d1    d2    s    
 33     33     33.0     33.0     33333     
@@ -60,7 +60,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)<'?' and  left(t?.s, ?)>'?'
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)< cast('?' as varchar) and  left(t?.s, ?)> cast('?' as varchar)
 ===================================================
 i1    i2    d1    d2    s    
 33     33     33.0     33.0     33333     
@@ -97,7 +97,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)>'?'
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)> cast('?' as varchar)
 ===================================================
 i1    i2    d1    d2    s    
 33     33     33.0     33.0     33333     
@@ -120,7 +120,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)<'?' and  left(t?.s, ?)>'?'
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)< cast('?' as varchar) and  left(t?.s, ?)> cast('?' as varchar)
 ===================================================
 i1    i2    d1    d2    s    
 33     33     33.0     33.0     33333     
@@ -173,7 +173,7 @@ iscan
     index: idx term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)>'?' and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)> cast('?' as varchar) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 
@@ -184,7 +184,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)>'?' and  left(t?.s, ?)<'?' and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)> cast('?' as varchar) and  left(t?.s, ?)< cast('?' as varchar) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 44     33     44.0     44.0     33333     
@@ -231,7 +231,7 @@ iscan
     index: idx term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)>'?' and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)> cast('?' as varchar) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 
@@ -242,7 +242,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)>'?' and  left(t?.s, ?)<'?' and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)> cast('?' as varchar) and  left(t?.s, ?)< cast('?' as varchar) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 44     33     44.0     44.0     33333     

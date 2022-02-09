@@ -19,6 +19,6 @@ select bin(trunc(88820394029342+234923798293482093842038423, 0));
 --TEST: expressions
 select bin(12*976), if(bin(12*976) = '10110111000000', 'ok', 'nok');
 select bin(bin(99999/34)), if(bin(bin(99999/34)) = '1011110001010000110001000011100111101', 'ok', 'nok');
-select bin((12 or 456)), if(bin((12 or 456)) = '1', 'ok', 'nok');
-select bin((392394234 and 392394234)), if(bin((392394234 and 392394234)) = '1', 'ok', 'nok');
+select bin((12<>0 or 456<>0)), if(bin((12<>0 or 456<>0)) = '1', 'ok', 'nok');
+select bin((392394234<>0 and 392394234<>0)), if(bin((392394234<>0 and 392394234<>0)) = '1', 'ok', 'nok');
 

@@ -117,8 +117,8 @@ ok
 ===================================================
 Field    Type    Null    Key    Default    Extra    
 id     BIGINT     NO     PRI     null     auto_increment     
-col1     TIMESTAMP     YES          null          
-col2     TIMESTAMP     YES          11:11:11 PM 11/11/2011          
+col1     TIMESTAMP     YES          CURRENT_TIMESTAMP          
+col2     TIMESTAMP     NO          11:11:11 PM 11/11/2011          
 col3     TIMESTAMP     YES          SYS_TIMESTAMP          
 col4     TIMESTAMP     YES          CURRENT_TIMESTAMP          
 
@@ -126,7 +126,7 @@ col4     TIMESTAMP     YES          CURRENT_TIMESTAMP
 1
 ===================================================
 if(col1 is null  and col2='2011-11-11 11:11:11 PM' and ( CURRENT_TIMESTAMP -col3)<=1 and col3=col4, 'ok', 'nok')    
-ok     
+nok     
 
 ===================================================
 0

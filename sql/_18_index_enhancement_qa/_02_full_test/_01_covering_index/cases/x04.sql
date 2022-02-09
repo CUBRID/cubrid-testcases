@@ -4,7 +4,7 @@ insert into t1 values (null, null, null);
 insert into t1 values (1, 1, 1);
 
 --TEST: should be error alert
-select /*+ recompile */c2,c3 from t1 where c2;
+select /*+ recompile */c2,c3 from t1 where c2<>0;
 
 
 --TEST:

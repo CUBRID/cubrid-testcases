@@ -19,7 +19,7 @@ sscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select foo.a from foo foo where  cast(foo.a as varchar)<'c'
+select foo.a from foo foo where  cast(foo.a as varchar)< cast('c' as varchar)
 ===================================================
 a    
 a     
@@ -33,7 +33,7 @@ iscan
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select foo.a from foo foo where  cast(foo.a as varchar)<'c' order by ?
+select foo.a from foo foo where  cast(foo.a as varchar)< cast('c' as varchar) order by ?
 /* ---> skip ORDER BY */
 ===================================================
 0

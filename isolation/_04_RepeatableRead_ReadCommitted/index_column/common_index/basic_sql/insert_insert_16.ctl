@@ -34,7 +34,7 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C1: insert into t(id,col) select rownum,'a' from db_class a,db_class b,db_class c;
+C1: insert into t(id,col) select rownum,'a' from db_class a,db_class b,db_class c limit 17576;
 MC: wait until C1 ready;
 
 C2: insert into t values(2,'b');

@@ -280,7 +280,7 @@ drop table if exists t1;
 CREATE TABLE t1 (a INT, b INT);
 
 INSERT INTO t1 VALUES (1,9), (2, 8), (3, 7),(null,1),(null,1),(1,null),(2,null);
-select ifnull(txx.b,7) bxx, a from t1 tx join t1 txx on tx.a=txx.a group by a having ifnull(bxx,5) order by 1,2;
+select ifnull(txx.b,7)<>0 bxx, a from t1 tx join t1 txx on tx.a=txx.a group by a having ifnull(bxx,5)<>0 order by 1,2;
 select ifnull(max(txx.b),7) bxx, tx.a from t1 tx join t1 txx on tx.a=txx.a group by tx.a order by 1,2;
 
 select ifnull(txx.b,7) bxx from t1 tx join t1 txx on tx.a=txx.a order by 1;

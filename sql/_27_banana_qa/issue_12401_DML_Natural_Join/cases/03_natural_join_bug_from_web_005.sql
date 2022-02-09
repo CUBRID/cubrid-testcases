@@ -150,27 +150,27 @@ INSERT INTO `C` VALUES (20,2,'d');
 
 SELECT table1.pk, table2.col_int_key, table1.col_int_key, table2.pk 
 FROM C table1  RIGHT  JOIN C table2  ON table2 .`col_int_key`  = table1 .`col_int_key`
-WHERE table2 .`pk` order by 1,2,3,4;
+WHERE table2 .`pk`<>0 order by 1,2,3,4;
 
 SELECT table1.pk, table2.col_int_key, table1.col_int_key, table2.pk 
 FROM C table1  LEFT  JOIN C table2  ON table2 .`col_int_key`  = table1 .`col_int_key`
-WHERE table2 .`pk` order by 1,2,3,4;
+WHERE table2 .`pk`<>0 order by 1,2,3,4;
 
 SELECT table1.pk, table2.col_int_key, table1.col_int_key, table2.pk 
 FROM C table1  JOIN C table2  ON table2 .`col_int_key`  = table1 .`col_int_key`
-WHERE table2 .`pk` order by 1,2,3,4;
+WHERE table2 .`pk`<>0 order by 1,2,3,4;
 
 SELECT table1.pk, table2.col_int_key, table1.col_int_key, table2.pk 
 FROM C table1  NATURAL RIGHT  JOIN C table2 
-WHERE table2 .`pk` order by 1,2,3,4;
+WHERE table2 .`pk`<>0 order by 1,2,3,4;
 
 SELECT table1.pk, table2.col_int_key, table1.col_int_key, table2.pk 
 FROM C table1  NATURAL LEFT  JOIN C table2
-WHERE table2 .`pk` order by 1,2,3,4;
+WHERE table2 .`pk`<>0 order by 1,2,3,4;
 
 SELECT table1.pk, table2.col_int_key, table1.col_int_key, table2.pk 
 FROM C table1  NATURAL JOIN C table2 
-WHERE table2 .`pk` order by 1,2,3,4;
+WHERE table2 .`pk`<>0 order by 1,2,3,4;
 
 
 drop table C;

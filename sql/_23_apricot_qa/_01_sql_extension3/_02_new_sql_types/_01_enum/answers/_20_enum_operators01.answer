@@ -170,7 +170,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select oper.id, oper.t from oper oper where  cast(oper.t as varchar)<='?' and  cast(oper.t as numeric(?,?))>=?.? order by ?
+select oper.id, oper.t from oper oper where  cast(oper.t as varchar)<= cast('?' as varchar) and  cast(oper.t as numeric(?,?))>=?.? order by ?
 ===================================================
 id    t    
 1     100     
@@ -313,7 +313,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select oper.id, oper.t from oper oper where  cast(oper.t as varchar)>'?' and  cast(oper.t as varchar)<'ddddd' order by ?
+select oper.id, oper.t from oper oper where  cast(oper.t as varchar)> cast('?' as varchar) and  cast(oper.t as varchar)< cast('ddddd' as varchar) order by ?
 ===================================================
 id    t    
 1     100     
@@ -331,7 +331,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select oper.id, oper.t from oper oper where  cast(oper.t as varchar)<='?' order by ?
+select oper.id, oper.t from oper oper where  cast(oper.t as varchar)<= cast('?' as varchar) order by ?
 ===================================================
 id    t    
 2     123.45678     
@@ -390,7 +390,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select oper.id, oper.t from oper oper where  cast(('abc') as varchar)>'?' and oper.t='abc' order by ?
+select oper.id, oper.t from oper oper where  cast(('abc') as varchar)> cast('?' as varchar) and oper.t='abc' order by ?
 ===================================================
 Error:-181
 ===================================================
@@ -512,7 +512,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select oper.id, oper.t from oper oper where oper.t<>X'?' and  cast(oper.t as varchar)<'aaa' order by ?
+select oper.id, oper.t from oper oper where oper.t<>X'?' and  cast(oper.t as varchar)< cast('aaa' as varchar) order by ?
 ===================================================
 0
 ===================================================

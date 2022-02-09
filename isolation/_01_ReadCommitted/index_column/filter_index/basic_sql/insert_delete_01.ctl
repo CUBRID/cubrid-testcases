@@ -35,7 +35,7 @@ C3: set transaction isolation level read committed;
 C1: drop table if exists t;
 C1: create table t(id int,col int);
 C1: set @newincr=0;
-C1: insert into t select (@newincr:=@newincr+1),(@newincr)%100 from db_class a,db_class b limit 1500;
+C1: insert into t select (@newincr:=@newincr+1),(@newincr)%100 from db_class a,db_class b limit 676;
 C1: create index idx on t(col) where col=1;
 C1: commit work;
 MC: wait until C1 ready;

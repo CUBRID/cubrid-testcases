@@ -38,16 +38,16 @@ insert into tztest select 6,null,addtime(c_tsltz1,time'2:04:10'),addtime(c_tsltz
 
 --+++++++++++++++++++++++Test Case - timestampltz++++++++++++++++++++++++++++++++++++++++
 --Logical Operators
-select (c_tsltz1 and c_tsltz2) from tztest where id =1 and c_tsltz2 in ('12:00:00 AM 10/02/2000 Asia/Seoul');
-select (c_tsltz1 or c_tsltz2) from tztest where id =1 and c_tsltz2 in ('12:00:00 AM 10/02/2000 Asia/Seoul');
-select (c_tsltz1 xor c_tsltz2) from tztest where id =1 and c_tsltz2 in ('12:00:00 AM 10/02/2000 Asia/Seoul');
-select (not c_tsltz2) from tztest where id =1 and c_tsltz2 in ('12:00:00 AM 10/02/2000 Asia/Seoul');
+select (c_tsltz1<>0 and c_tsltz2<>0) from tztest where id =1 and c_tsltz2 in ('12:00:00 AM 10/02/2000 Asia/Seoul');
+select (c_tsltz1<>0 or c_tsltz2<>0) from tztest where id =1 and c_tsltz2 in ('12:00:00 AM 10/02/2000 Asia/Seoul');
+select (c_tsltz1<>0 xor c_tsltz2<>0) from tztest where id =1 and c_tsltz2 in ('12:00:00 AM 10/02/2000 Asia/Seoul');
+select (not c_tsltz2<>0) from tztest where id =1 and c_tsltz2 in ('12:00:00 AM 10/02/2000 Asia/Seoul');
 
 update tztest set c_tsltz2=null where c_tsltz1='12:00:00 AM 01/01/1990';
-select (c_tsltz1 and c_tsltz2) from tztest where id =1 and c_tsltz1 in ('12:00:00 AM 01/01/1990');
-select (c_tsltz1 or c_tsltz2) from tztest where id =1 and c_tsltz1 in ('12:00:00 AM 01/01/1990');
-select (c_tsltz1 xor c_tsltz2) from tztest where id =1 and c_tsltz1 in ('12:00:00 AM 01/01/1990');
-select (not c_tsltz2) from tztest where id =1 and c_tsltz1 in ('12:00:00 AM 01/01/1990');
+select (c_tsltz1<>0 and c_tsltz2<>0) from tztest where id =1 and c_tsltz1 in ('12:00:00 AM 01/01/1990');
+select (c_tsltz1<>0 or c_tsltz2<>0) from tztest where id =1 and c_tsltz1 in ('12:00:00 AM 01/01/1990');
+select (c_tsltz1<>0 xor c_tsltz2<>0) from tztest where id =1 and c_tsltz1 in ('12:00:00 AM 01/01/1990');
+select (not c_tsltz2<>0) from tztest where id =1 and c_tsltz1 in ('12:00:00 AM 01/01/1990');
 
 --Comparison Operators
 select c_tsltz1, c_tsltz2 from tztest where c_tsltz1 >='12:00:00 AM 01/05/1990 +9:00' and c_tsltz1 <'12:00:00 PM 01/05/1990 +9:00'
@@ -71,16 +71,16 @@ select extract(year from c_tsltz1)||extract(month from c_tsltz1)||' '||extract(y
 
 --++++++++++++++++++++++++++++Test Case - datetimeltz++++++++++++++++++++++++++++
 --Logical Operators
-select (c_dtltz1 and c_dtltz2) from tztest where id =1 and c_dtltz2 in ('12:00:00 AM 10/02/2000 Asia/Seoul');
-select (c_dtltz1 or c_dtltz2) from tztest where id =1 and c_dtltz2 in ('12:00:00 AM 10/02/2000 Asia/Seoul');
-select (c_dtltz1 xor c_dtltz2) from tztest where id =1 and c_dtltz2 in ('12:00:00 AM 10/02/2000 Asia/Seoul');
-select (not c_dtltz2) from tztest where id =1 and c_dtltz2 in ('12:00:00 AM 10/02/2000 Asia/Seoul');
+select (c_dtltz1<>0 and c_dtltz2<>0) from tztest where id =1 and c_dtltz2 in ('12:00:00 AM 10/02/2000 Asia/Seoul');
+select (c_dtltz1<>0 or c_dtltz2<>0) from tztest where id =1 and c_dtltz2 in ('12:00:00 AM 10/02/2000 Asia/Seoul');
+select (c_dtltz1<>0 xor c_dtltz2<>0) from tztest where id =1 and c_dtltz2 in ('12:00:00 AM 10/02/2000 Asia/Seoul');
+select (not c_dtltz2<>0) from tztest where id =1 and c_dtltz2 in ('12:00:00 AM 10/02/2000 Asia/Seoul');
 
 update tztest set c_dtltz2=null where c_dtltz1='12:00:00 AM 01/01/1990';
-select (c_dtltz1 and c_dtltz2) from tztest where id =1 and c_dtltz1 in ('12:00:00 AM 01/01/1990');
-select (c_dtltz1 or c_dtltz2) from tztest where id =1 and c_dtltz1 in ('12:00:00 AM 01/01/1990');
-select (c_dtltz1 xor c_dtltz2) from tztest where id =1 and c_dtltz1 in ('12:00:00 AM 01/01/1990');
-select (not c_dtltz2) from tztest where id =1 and c_dtltz1 in ('12:00:00 AM 01/01/1990');
+select (c_dtltz1<>0 and c_dtltz2<>0) from tztest where id =1 and c_dtltz1 in ('12:00:00 AM 01/01/1990');
+select (c_dtltz1<>0 or c_dtltz2<>0) from tztest where id =1 and c_dtltz1 in ('12:00:00 AM 01/01/1990');
+select (c_dtltz1<>0 xor c_dtltz2<>0) from tztest where id =1 and c_dtltz1 in ('12:00:00 AM 01/01/1990');
+select (not c_dtltz2<>0) from tztest where id =1 and c_dtltz1 in ('12:00:00 AM 01/01/1990');
 
 --Comparison Operators
 select c_dtltz1, c_dtltz2 from tztest where c_dtltz1 >='12:00:00 AM 01/05/1990 +9:00' and c_dtltz1 <'12:00:00 PM 01/05/1990 +9:00'
