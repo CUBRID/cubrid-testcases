@@ -91,7 +91,7 @@ create table t2 as (select * from t1);
 DROP TABLE if exists t1,t2;
 CREATE TABLE t1 (id INT NOT NULL);
 INSERT INTO t1 VALUES (1),(1);
-create table if not exists t2 AS (select * from (select * from t1 union select * from t1 ) tt);
+create table if not exists t2; (select * from (select * from t1 union select * from t1 ) tt);
 desc t2;
 
 DROP TABLE if exists t1,t2;
@@ -111,7 +111,7 @@ select * from t2 order by 1;
 DROP TABLE if exists t1,t2;
 CREATE TABLE t1 (id INT NOT NULL);
 INSERT INTO t1 VALUES (1),(1);
-CREATE TABLE IF NOT EXISTS t2 AS SELECT * FROM t1;
+CREATE TABLE IF NOT EXISTS t2; SELECT * FROM t1;
 
 DROP TABLE if exists t1,t2;
 
@@ -123,8 +123,8 @@ CREATE TABLE IF NOT EXISTS t1; SELECT * FROM t1;
 DROP TABLE if exists t1,t2;
 
 DROP TABLE IF EXISTS ttt;
-CREATE TABLE IF NOT EXISTS ttt AS SELECT 0 AS n;
-CREATE TABLE IF NOT EXISTS ttt AS SELECT 0 AS n;
+CREATE TABLE IF NOT EXISTS ttt; SELECT 0 AS n;
+CREATE TABLE IF NOT EXISTS ttt; SELECT 0 AS n;
 SELECT COUNT(*) FROM ttt;
 
 DROP TABLE IF EXISTS ttt;

@@ -59,9 +59,7 @@ select 1 as n1,1 as n2
 union all select 2*n1,n2+1 from cte1 where n2<=30
 )select n1 from cte1
 );
-with cte2 as (select sum(i) from t ) select * from cte2; 
-select * from cte2; 
-select * from cte2;
+with cte2 as (select sum(i) from t ) select * from cte2 select * from cte2 select * from cte2;
 with cte2 as (select i from t ) select * from cte2 order by 1 desc  limit 1;
 with cte2 as (select sum(i) from t ) select * from cte2;
 with cte2 as (select sum(i) from t )

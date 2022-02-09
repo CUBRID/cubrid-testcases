@@ -52,8 +52,7 @@ select * from a,b where a.id=b.id and a.name=b.name order by 1,2;
 
 select count(*) from a natural join b;
 
-select * from a minus order by 1,2;
-select * from b order by 1,2;
+select * from a  minus  order by 1,2; select * from b order by 1,2;
 
 drop table a;
 drop table b;
