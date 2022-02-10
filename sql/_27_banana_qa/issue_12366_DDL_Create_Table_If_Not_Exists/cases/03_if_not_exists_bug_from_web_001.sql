@@ -75,9 +75,9 @@ DROP TABLE if exists t1,t2;
 CREATE TABLE t1 (id INT NOT NULL);
 INSERT INTO t1 VALUES (1),(1);
 create table t2 (i int);
-create table if not exists t2; (select * from t1);
-create table if not exists t2 as (select * from t1);
-create table if not exists t2; (select * from (select * from t1 union select * from t1 ) tt);
+create table if not exists t2 AS (select * from t1);
+create table if not exists t2 AS (select * from t1);
+create table if not exists t2 AS (select * from (select * from t1 union select * from t1 ) tt);
 
 DROP TABLE if exists t1,t2;
 CREATE TABLE t1 (id INT NOT NULL);
