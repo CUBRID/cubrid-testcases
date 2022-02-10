@@ -8,7 +8,7 @@ insert into derived_table values(4,'manuo','bmw in China!');
 select * from (select id,name,description from derived_table) derived_alias;
 select * from (select id,name,description from (select * from derived_table where id >1 order by id) subquery_table where id>3) derived_alias where id=4;
 select * from (select 1) a;
---this sql will return two values as missing 'from'
+--this sql will return an error as missing 'from'
 select 1 (select * from (select 2) b);
 select 1 from (select * from (select 2) b) c;
 
