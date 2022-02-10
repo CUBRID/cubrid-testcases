@@ -18,7 +18,7 @@ execute s using true, false;
 deallocate prepare s;
 
 prepare s from 'select 1 from db_root where ?<>0 and ?<>0';
-execute s using false, true
+execute s using false, true;
 deallocate prepare s;
 
 prepare s from 'select 1 from db_root where ?<>0 and ?<>0';
