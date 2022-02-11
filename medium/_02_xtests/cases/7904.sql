@@ -11,7 +11,7 @@ create vclass mark3 (
 	dummy char(0)) as
 select mark, 'Z' from mark1 union all
 select mark, 'Y' from mark2;
-select mark from mark3 where dummy = 'Z' order by 1
+select mark from mark3 where dummy = 'Z' order by 1;
 delete from mark1 where mark = 'A';
 select mark into :p1 from mark3 where dummy = 'Z';
 select :p1 from class db_user;

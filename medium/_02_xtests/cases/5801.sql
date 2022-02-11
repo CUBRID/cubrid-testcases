@@ -26,5 +26,5 @@ update numeric_class -- update 3
 set flotval =
 cast (intval as float) / 8 
 where testNumber = 1;
-select intval / 8, flotval from numeric_class where testNumber = 1
+select intval / 8, flotval from numeric_class where testNumber = 1;
 rollback;
