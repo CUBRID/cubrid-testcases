@@ -30,7 +30,7 @@ create class cc_employee as subclass of cc_person
    emp_time time,
    tax monetary);
 select distinct name from cc_employee order by 1 ASC, name ASC;
-rollback work
+rollback work;
 create class cccc (a int default 7, b int);
 insert into cccc (b) values(77);
 select a,b from cccc;

@@ -1,6 +1,6 @@
 autocommit off;
 create class cc 
-class attribute(ca int default 10) 
+class attribute(ca int default 10);
 (a int, b int shared 123, class cb int default 20);
 insert into cc values( 99, 123 )
 select class cc.ca, b from cc;

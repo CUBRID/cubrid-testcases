@@ -17,7 +17,7 @@ where dept_no in
   select location, avg(price), max(price), min(price)
     from all inventory_v i
     group by location
-    having location < 'mars'
+    having location < 'mars';
 create class x (a int);
 select sum(a) from x;
 
