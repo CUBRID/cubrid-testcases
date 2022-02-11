@@ -15,21 +15,16 @@ a    b    c
 0     10     10     
 
 Query plan:
-iscan
-    class: t? node[?]
-    index: i_t? term[?] (index skip scan)
-    cost:  ? card ?
-Query stmt:
-(select /*+ INDEX_SS */ t?.a, t?.b, t?.c from t? t? where t?.b= ?:? )
-Query plan:
 temp(order by)
-    subplan: sscan
+    subplan: iscan
                  class: __t? node[?]
+                 index: i_t? term[?] (index skip scan)
+                 sort:  ? asc
                  cost:  ? card ?
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select [__t?].a, [__t?].b, [__t?].c from (select /*+ INDEX_SS */ t?.a, t?.b, t?.c from t? t? where t?.b= ?:? ) [__t?] (a, b, c) order by ?, ? for orderby_num()<= ?:? 
+select /*+ INDEX_SS */ [__t?].a, [__t?].b, [__t?].c from t? [__t?] where ([__t?].b= ?:? ) order by ?, ? for orderby_num()<= ?:? 
 ===================================================
 a    
 0     

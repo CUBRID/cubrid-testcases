@@ -148,17 +148,11 @@ count(*)
 
 Query plan:
 iscan
-    class: t node[?]
+    class: tt node[?]
     index: t_i_j term[?] (covers) (index skip scan)
     cost:  ? card ?
 Query stmt:
-(select /*+ INDEX_SS */ t.i, t.j from t t where (t.j>= ?:?  and t.j<= ?:? ) using index t.t_i_j)
-Query plan:
-sscan
-    class: tt node[?]
-    cost:  ? card ?
-Query stmt:
-select count(*) from (select /*+ INDEX_SS */ t.i, t.j from t t where (t.j>= ?:?  and t.j<= ?:? ) using index t.t_i_j) tt (i, j)
+select /*+ INDEX_SS */ count(*) from t tt where (tt.j>= ?:?  and tt.j<= ?:? ) using index tt.t_i_j
 ===================================================
 0
 ===================================================

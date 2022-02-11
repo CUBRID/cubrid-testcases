@@ -518,21 +518,15 @@ id    v
 3     value 3     
 
 Query plan:
-sscan
-    class: ta node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-(select ta.id, ta.v from ta ta where (ta.id> ?:? ) using index ta.ta_id(-))
-Query plan:
 temp(order by)
     subplan: sscan
                  class: x node[?]
+                 sargs: term[?]
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select x.id, x.v from (select ta.id, ta.v from ta ta where (ta.id> ?:? ) using index ta.ta_id(-)) x (id, v) order by ?
+select x.id, x.v from ta x where (x.id> ?:? ) using index x.ta_id(-) order by ?
 ===================================================
 id    v    
 1     value 1     
