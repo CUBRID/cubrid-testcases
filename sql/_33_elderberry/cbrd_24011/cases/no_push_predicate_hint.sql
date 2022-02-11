@@ -8,7 +8,7 @@ create index idx on tab_b(col_a,col_b);
 
 select /*+ recompile no_push_pred */ count(*)
 from tab_a a
-	, (select col_a, cnt from (
+	, (select /*+ NO_MERGE */ col_a, cnt from (
           	select col_a, cnt from (
             		select col_a, cnt from (
                 		select col_a,count(*) cnt from tab_b group by col_a
@@ -20,7 +20,7 @@ where a.col_a = d.col_a  and d.col_a = 1;
 
 select /*+ recompile */ count(*)
 from tab_a a
-	, (select col_a, cnt from (
+	, (select /*+ NO_MERGE */ col_a, cnt from (
           	select col_a, cnt from (
             		 select /*+ no_push_pred */ col_a, cnt from (
                 		select col_a,count(*) cnt from tab_b group by col_a            

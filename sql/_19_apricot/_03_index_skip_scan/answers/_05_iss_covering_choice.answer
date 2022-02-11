@@ -25,14 +25,14 @@ iscan
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select /*+ INDEX_SS */ t.k, t.i from t t where ((t.j>= ?:?  and t.j<= ?:? ) or (t.j>= ?:?  and t.j<= ?:? )) order by ?)
+(select /*+ INDEX_SS NO_MERGE */ t.k, t.i from t t where ((t.j>= ?:?  and t.j<= ?:? ) or (t.j>= ?:?  and t.j<= ?:? )) order by ?)
 /* ---> skip ORDER BY */
 Query plan:
 sscan
     class: tbl node[?]
     cost:  ? card ?
 Query stmt:
-select count(*) from (select /*+ INDEX_SS */ t.k, t.i from t t where ((t.j>= ?:?  and t.j<= ?:? ) or (t.j>= ?:?  and t.j<= ?:? )) order by ?) tbl (k, ha_?)
+select count(*) from (select /*+ INDEX_SS NO_MERGE */ t.k, t.i from t t where ((t.j>= ?:?  and t.j<= ?:? ) or (t.j>= ?:?  and t.j<= ?:? )) order by ?) tbl (k, ha_?)
 ===================================================
 5
 ===================================================
@@ -52,14 +52,14 @@ iscan
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select /*+ INDEX_SS */ t.k, t.i from t t where ((t.j>= ?:?  and t.j<= ?:? ) or (t.j>= ?:?  and t.j<= ?:? )) order by ?)
+(select /*+ INDEX_SS NO_MERGE */ t.k, t.i from t t where ((t.j>= ?:?  and t.j<= ?:? ) or (t.j>= ?:?  and t.j<= ?:? )) order by ?)
 /* ---> skip ORDER BY */
 Query plan:
 sscan
     class: tbl node[?]
     cost:  ? card ?
 Query stmt:
-select count(*) from (select /*+ INDEX_SS */ t.k, t.i from t t where ((t.j>= ?:?  and t.j<= ?:? ) or (t.j>= ?:?  and t.j<= ?:? )) order by ?) tbl (k, ha_?)
+select count(*) from (select /*+ INDEX_SS NO_MERGE */ t.k, t.i from t t where ((t.j>= ?:?  and t.j<= ?:? ) or (t.j>= ?:?  and t.j<= ?:? )) order by ?) tbl (k, ha_?)
 ===================================================
 0
 ===================================================

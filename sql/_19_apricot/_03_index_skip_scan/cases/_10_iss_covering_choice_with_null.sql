@@ -11,7 +11,7 @@ create index idx on t(i,j,k);
 update statistics on all classes;
 
 -- index skip scan, because we are above the tipping point (ratio is 21)
-select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS */ k from t where j between 105 and 106 or j between 445 and 446 order by i) tbl;
+select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ k from t where j between 105 and 106 or j between 445 and 446 order by i) tbl;
 
 -- make ratio 20, to drop below tipping point for ISS versus covering activation
 delete from t where j % (select count(*) from mille) = 0;
@@ -23,7 +23,7 @@ update statistics on all classes;
 commit;
 
 -- this time, no iss, just covering (ratio fell to 1000)
-select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS */ k from t where j between 105 and 106 or j between 445 and 446 order by i) tbl;
+select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ k from t where j between 105 and 106 or j between 445 and 446 order by i) tbl;
 
 drop table mille;
 drop table firstcol;

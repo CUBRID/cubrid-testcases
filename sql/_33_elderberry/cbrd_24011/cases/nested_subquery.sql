@@ -8,7 +8,7 @@ create index idx on tab_b(col_a,col_b);
 
 select /*+ recompile */ count(*)
   from tab_a a
-        ,(select col_a, cnt from (
+        ,(select /*+ NO_MERGE */ col_a, cnt from (
   	      select col_a,count(*) cnt from tab_b group by col_a
   	      union
        	      select col_a,count(*) from tab_b group by col_a
@@ -30,12 +30,12 @@ from tab_a a
 where a.col_a = b.col_a
      and b.col_a = 1;
 
-select /*+ recompile */ count(*)
+select /*+ recompile NO_MERGE */ count(*)
 from tab_a a
-      , (select col_a, cnt from (
-          select col_a, cnt from (
-            select col_a, cnt from (
-                select col_a,count(*) cnt from tab_b group by col_a
+      , (select /*+ NO_MERGE */ col_a, cnt from (
+          select /*+ NO_MERGE */ col_a, cnt from (
+            select /*+ NO_MERGE */ col_a, cnt from (
+                select /*+ NO_MERGE */ col_a,count(*) cnt from tab_b group by col_a
         ) )
         ) ) d
 where a.col_a = d.col_a

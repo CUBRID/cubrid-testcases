@@ -3460,13 +3460,13 @@ iscan
     index: idx term[?] (covers) (index skip scan)
     cost:  ? card ?
 Query stmt:
-(select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where ((t.j< ?:? ) or (t.j> ?:? )))
+(select /*+ INDEX_SS NO_MERGE */ t.i, t.j, t.k, t.l from t t where ((t.j< ?:? ) or (t.j> ?:? )))
 Query plan:
 sscan
     class: tt node[?]
     cost:  ? card ?
 Query stmt:
-select count(*) from (select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where ((t.j< ?:? ) or (t.j> ?:? ))) tt (i, j, k, l)
+select count(*) from (select /*+ INDEX_SS NO_MERGE */ t.i, t.j, t.k, t.l from t t where ((t.j< ?:? ) or (t.j> ?:? ))) tt (i, j, k, l)
 ===================================================
 i    j    k    l    
 

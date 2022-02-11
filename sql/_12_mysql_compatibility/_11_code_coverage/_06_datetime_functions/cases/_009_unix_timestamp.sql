@@ -19,7 +19,7 @@ select 1 from (select UNIX_TIMESTAMP('2007-11-30 10:30:1922')) x;
 select 1 from (select UNIX_TIMESTAMP(column_char_9) from test_table where column_integer = 333) x;
 select 1 from (select UNIX_TIMESTAMP(column_datetime) from test_table where column_integer = 1) x;
 select 1 from (select UNIX_TIMESTAMP(column_date) from test_table where column_integer = 1) x;
-select 1 from (select UNIX_TIMESTAMP(column_time) from test_table where column_integer = 1) x;
+select 1 from (select /*+ NO_MERGE */ UNIX_TIMESTAMP(column_time) from test_table where column_integer = 1) x;
 select 1 from (select UNIX_TIMESTAMP(column_timestamp) from test_table where column_integer = 1) x;
 select 1 from (select UNIX_TIMESTAMP('05:55:31 PM 02/03/2000') from test_table where column_integer = 1) x;
 select 1 from (select UNIX_TIMESTAMP('99999-12-31 23:59:59.99999999999999999999')) x;
