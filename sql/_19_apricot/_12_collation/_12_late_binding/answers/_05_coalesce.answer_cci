@@ -57,6 +57,7 @@ Query stmt:
 select t?.s?, coalesce(t?.s?, 'AA' collate iso?_en_cs) from t? t? order by ?, ?
 ===================================================
 0
+===================================================
 s1    coalesce(s1,  ?:0 )    
 null     AA     
 aa     aa     
@@ -73,6 +74,7 @@ Query stmt:
 select t?.s?, coalesce(t?.s?,  ?:? ) from t? t? order by ?, ?
 ===================================================
 0
+===================================================
 s1    coalesce(s1,  ?:0 )    
 null     AA     
 aa             aa             
@@ -89,6 +91,7 @@ Query stmt:
 select t?.s?, coalesce(t?.s?,  ?:? ) from t? t? order by ?, ?
 ===================================================
 0
+===================================================
 s1    coalesce(s1,  ?:0 )    
 null     AA     
 Ab       Ab       
@@ -148,50 +151,23 @@ Query stmt:
 select t?.s? from t? t? where 'aa' collate iso?_en_cs>coalesce(t?.s?, '?' collate iso?_en_cs) order by ?
 ===================================================
 0
+===================================================
 s1    
 null     
 
-Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t? node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
-    sort:  ? asc collate utf?_en_ci
-    cost:  ? card ?
-Query stmt:
-select t?.s? from t? t? where  ?:? >coalesce(t?.s?,  ?:? ) order by ?
 ===================================================
 0
+===================================================
 s1    
 null     
 
-Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t? node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
-    sort:  ? asc collate utf?_en_ci
-    cost:  ? card ?
-Query stmt:
-select t?.s? from t? t? where  ?:? >coalesce(t?.s?,  ?:? ) order by ?
 ===================================================
 0
+===================================================
 s1    
 null     
 Ab       
 
-Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t? node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
-    sort:  ? asc collate iso?_en_cs
-    cost:  ? card ?
-Query stmt:
-select t?.s? from t? t? where  ?:? >coalesce(t?.s?,  ?:? ) order by ?
 ===================================================
 0
 ===================================================
