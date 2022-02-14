@@ -9,7 +9,7 @@ TIMEZONES int,
 
 create index DBTIMEZONE               on t_colname (DBTIMEZONE);                
 create index NONE              on t_colname (NONE);
-create index SESSIONTIMEZONE         on t_colname (SESSION_TIMEZONE);
+create index SESSIONTIMEZONE         on t_colname (SESSIONTIMEZONE);
 create index TIMEZONES             on t_colname (TIMEZONES);
 
 insert into t_colname values (1, 2, 3, 4);
@@ -30,10 +30,10 @@ insert into NONE select NONE from t_colname;
 select NONE from NONE; 
 drop table NONE;
 
-create table SESSIONTIMEZONE (SESSION_TIMEZONE int);  
-create index SESSIONTIMEZONE on SESSION_TIMEZONE (SESSION_TIMEZONE);
-insert into SESSIONTIMEZONE select SESSION_TIMEZONE from t_colname; 
-select SESSIONTIMEZONE from SESSION_TIMEZONE; 
+create table SESSIONTIMEZONE (SESSIONTIMEZONE int);  
+create index SESSIONTIMEZONE on SESSIONTIMEZONE (SESSIONTIMEZONE);
+insert into SESSIONTIMEZONE select SESSIONTIMEZONE from t_colname; 
+select SESSIONTIMEZONE from SESSIONTIMEZONE; 
 drop table SESSIONTIMEZONE;
 
 create table TIMEZONES (TIMEZONES int);  
