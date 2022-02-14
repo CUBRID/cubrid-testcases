@@ -42,9 +42,9 @@ where a.col_a = d.col_a
   and d.col_a = 1;
 
 create or replace view v_a as select col_a, cnt from (
-          select col_a, cnt from (
-            select col_a, cnt from (
-                select col_a,count(*) cnt from tab_b group by col_a
+          select /*+ NO_MERGE */ col_a, cnt from (
+            select /*+ NO_MERGE */ col_a, cnt from (
+                select /*+ NO_MERGE */ col_a,count(*) cnt from tab_b group by col_a
         ) )
         );
 

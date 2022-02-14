@@ -40,8 +40,8 @@ select /*+ recompile ordered */ * from tj x force  index (tk_id) inner join tk o
 select /*+ recompile ordered */ * from tj x ignore index (tk_id) inner join tk on x.id = tk.id order by x.id;
 
 -- subquery tests
-select /*+ recompile ordered  */ * from (select a.val as av, b.val as bv from tj a use index (tj_id) inner join tj b use index (tj_id) on a.id = b.id) sq order by av, bv;
-select /*+ recompile ordered */ * from (select x.id as id, tk.val as val from tj x use index (tj_id) inner join tk on x.id = tk.id) sq order by sq.id;
+select /*+ recompile ordered  */ * from (select /*+ NO_MERGE */ a.val as av, b.val as bv from tj a use index (tj_id) inner join tj b use index (tj_id) on a.id = b.id) sq order by av, bv;
+select /*+ recompile ordered */ * from (select /*+ NO_MERGE */ x.id as id, tk.val as val from tj x use index (tj_id) inner join tk on x.id = tk.id) sq order by sq.id;
 select /*+ recompile ordered */ * from (select tj.id as id, tk.val as val from tj use index (tk_id) inner join tk on tj.id = tk.id) sq order by sq.id;
 
 -- drop tables

@@ -306,7 +306,7 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(select a.val, b.val from tj a, tj b where a.id=b.id using index a.tj_id, b.tj_id)
+(select /*+ NO_MERGE */ a.val, b.val from tj a, tj b where a.id=b.id using index a.tj_id, b.tj_id)
 Query plan:
 temp(order by)
     subplan: sscan
@@ -315,7 +315,7 @@ temp(order by)
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ sq.av, sq.bv from (select a.val as [av], b.val as [bv] from tj a, tj b where a.id=b.id using index a.tj_id, b.tj_id) sq (av, bv) order by ?, ?
+select /*+ ORDERED */ sq.av, sq.bv from (select /*+ NO_MERGE */ a.val as [av], b.val as [bv] from tj a, tj b where a.id=b.id using index a.tj_id, b.tj_id) sq (av, bv) order by ?, ?
 ===================================================
 id    val    
 1     value b1     
@@ -333,7 +333,7 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(select x.id, tk.val from tj x, tk tk where x.id=tk.id using index x.tj_id)
+(select /*+ NO_MERGE */ x.id, tk.val from tj x, tk tk where x.id=tk.id using index x.tj_id)
 Query plan:
 temp(order by)
     subplan: sscan
@@ -342,7 +342,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ sq.id, sq.val from (select x.id as [id], tk.val as [val] from tj x, tk tk where x.id=tk.id using index x.tj_id) sq (id, val) order by ?
+select /*+ ORDERED */ sq.id, sq.val from (select /*+ NO_MERGE */ x.id as [id], tk.val as [val] from tj x, tk tk where x.id=tk.id using index x.tj_id) sq (id, val) order by ?
 ===================================================
 Error:-494
 ===================================================

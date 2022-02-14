@@ -71,7 +71,7 @@ create trigger aft_del_t after delete on t execute insert into tr_action(execute
 
 insert into t select rownum as a, rownum as b, rownum as c from _db_class limit 5 on duplicate key update i = a + 100, j = b + 100, k = c + 100;
 
-insert into t select a, b, c from (select rownum as a, rownum as b, rownum as c from _db_class limit 5) x(a,b,c)
+insert into t select a, b, c from (select /*+ NO_MERGE */ rownum as a, rownum as b, rownum as c from _db_class limit 5) x(a,b,c)
 	on duplicate key update i = x.a + 100, j = x.b + 100, k = x.c + 100;
 
 select * from tr_action order by id;
