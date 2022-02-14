@@ -2,7 +2,7 @@ autocommit off;
 select name from db_user
 union
 select name from db_user
-order by 1 ,2
+order by 1 ,2;
 select name from db_user
 union
 select name from db_user
