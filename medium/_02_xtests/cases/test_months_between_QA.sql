@@ -5,7 +5,7 @@ create table tb (
 insert into tb values ('X');
 create table test_months_between (
 	type_numeric numeric(10,5)
-)
+);
 insert into test_months_between (type_numeric) values (months_between(date '12/1/1999', date '11/1/1999'));
 select type_numeric ,months_between(date '12/1/1999', date '11/1/1999') from test_months_between;
 select months_between(date '1/1/1', date '12/1/9999') from tb;

@@ -1,7 +1,7 @@
 autocommit off;
 select name, set(select room.size_in_sq_ft
 		 from table(rooms) as t(room))
-from resort
+from resort;
 /*
 Yields
   name                  set((select room.size_in_sq_ft from table(rooms)  t (room)))

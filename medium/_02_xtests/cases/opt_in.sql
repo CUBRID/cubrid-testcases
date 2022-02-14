@@ -7,7 +7,7 @@ create index i_y_a on y(a);
 create view yv as 
 select * from y
 where a in {2, 2};
-select * from yv
+select * from yv;
 select * from y
 where a in {2, 2};
 rollback;

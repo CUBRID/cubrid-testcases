@@ -5,7 +5,7 @@ create table test_lpad(
 			lpad_1_1_e varchar(50) charset utf8,
 			lpad_1_6 varchar(50) charset utf8
 );
-insert into test_lpad (lpad_1_1_k,lpad_1_1_e,lpad_1_6) values ('얼렐레','ebebe ',' ')
+insert into test_lpad (lpad_1_1_k,lpad_1_1_e,lpad_1_6) values ('얼렐레','ebebe ',' ');
 			select lpad('얼렐레',-1) from test_lpad;
 			select lpad('ebebe ',-1) from test_lpad;
 			select lpad(lpad_1_1_k,-1) from test_lpad;
