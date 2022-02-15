@@ -3,19 +3,19 @@ insert into tmp_hls values('cub','cubrid',1),('ora','oracle',2),('post','postgre
 
 -- General test case
 set trace on;
-select /*+ ordered */ a.* from tmp_hls a, (select * from tmp_hls b where b.c >=1) b where a.a = b.a and a.b = b.b and a.c = b.c;
+select /*+ ordered */ a.* from tmp_hls a, (select /*+ NO_MERGE */ * from tmp_hls b where b.c >=1) b where a.a = b.a and a.b = b.b and a.c = b.c;
 show trace;
-select /*+ ordered */ a.* from tmp_hls a, (select * from tmp_hls b where b.c >=1) b where b.a = a.a and a.c = b.c and b.b = a.b;
+select /*+ ordered */ a.* from tmp_hls a, (select /*+ NO_MERGE */ * from tmp_hls b where b.c >=1) b where b.a = a.a and a.c = b.c and b.b = a.b;
 show trace;
-select /*+ ordered */ a.* from tmp_hls a, (select * from tmp_hls b where b.c >=1) b where b.c = a.c; 
+select /*+ ordered */ a.* from tmp_hls a, (select /*+ NO_MERGE */ * from tmp_hls b where b.c >=1) b where b.c = a.c; 
 show trace;
-select /*+ ordered */ a.* from tmp_hls a, (select * from tmp_hls b where b.c >=3) b, (select * from tmp_hls b where b.c >=3) c where a.a = b.a and b.b = a.b and b.a = c.a; 
+select /*+ ordered */ a.* from tmp_hls a, (select /*+ NO_MERGE */ * from tmp_hls b where b.c >=3) b, (select * from tmp_hls b where b.c >=3) c where a.a = b.a and b.b = a.b and b.a = c.a; 
 show trace;
 
 -- with other predicate
-select /*+ ordered */ * from tmp_hls a, (select * from tmp_hls b where b.c >=1) b where a.c = b.c and a.b > b.b;
+select /*+ ordered */ * from tmp_hls a, (select /*+ NO_MERGE */ * from tmp_hls b where b.c >=1) b where a.c = b.c and a.b > b.b;
 show trace;
-select /*+ ordered */ * from tmp_hls a, (select * from tmp_hls b where b.c >=1) b where a.c = b.c and a.c + b.c = 4;
+select /*+ ordered */ * from tmp_hls a, (select /*+ NO_MERGE */ * from tmp_hls b where b.c >=1) b where a.c = b.c and a.c + b.c = 4;
 show trace;
 select /*+ ordered */ * from tmp_hls a, (select max(a) a,max(b) b, c from tmp_hls b group by c) b where a.c = b.c and a.c + b.c = 2;
 show trace;
@@ -23,13 +23,13 @@ select /*+ ordered */ * from tmp_hls a, (select max(a) a,max(b) b, c from tmp_hl
 show trace;
 
 -- predicate with function
-select /*+ ordered */ * from tmp_hls a, (select * from tmp_hls b where b.c >=1) b where substr(a.b,1,3) = b.a;
+select /*+ ordered */ * from tmp_hls a, (select /*+ NO_MERGE */ * from tmp_hls b where b.c >=1) b where substr(a.b,1,3) = b.a;
 show trace;
-select /*+ ordered */ * from tmp_hls a, (select * from tmp_hls b where b.c >=1) b where substr(a.b,1,3) = decode(b.a,'post','pos',b.a);
+select /*+ ordered */ * from tmp_hls a, (select /*+ NO_MERGE */  * from tmp_hls b where b.c >=1) b where substr(a.b,1,3) = decode(b.a,'post','pos',b.a);
 show trace;
-select /*+ ordered */ * from tmp_hls a, (select * from tmp_hls b where b.c >=1) b where b.a || 'rid' = decode(a.a,'cub','cubrid','post','postgre',a.a);
+select /*+ ordered */ * from tmp_hls a, (select /*+ NO_MERGE */ * from tmp_hls b where b.c >=1) b where b.a || 'rid' = decode(a.a,'cub','cubrid','post','postgre',a.a);
 show trace;
-select /*+ ordered */ * from tmp_hls a, (select * from tmp_hls b where b.c >=1) b where b.b = decode(a.a,'cub','cubrid','post','bad',a.b);
+select /*+ ordered */ * from tmp_hls a, (select /*+ NO_MERGE */ * from tmp_hls b where b.c >=1) b where b.b = decode(a.a,'cub','cubrid','post','bad',a.b);
 show trace;
 
 -- outer join
@@ -47,15 +47,15 @@ insert into tmp_hls_type values('1',1,'1'),('2',2,'2'),('3',3,'3'),('4',4,'4'),(
 
 -- different type
 set trace on;
-select /*+ ordered */ * from tmp_hls_type a, (select * from tmp_hls_type where col2 >= 1) b where a.col1 = b.col2 and a.col2 = b.col1 and a.col3 = b.col3;
+select /*+ ordered */ * from tmp_hls_type a, (select /*+ NO_MERGE */ * from tmp_hls_type where col2 >= 1) b where a.col1 = b.col2 and a.col2 = b.col1 and a.col3 = b.col3;
 show trace;
-select /*+ ordered */ * from tmp_hls_type a, (select * from tmp_hls_type where col2 >= 1) b where a.col1 = b.col3 and a.col3 = b.col1 and a.col2 = b.col2;
+select /*+ ordered */ * from tmp_hls_type a, (select /*+ NO_MERGE */ * from tmp_hls_type where col2 >= 1) b where a.col1 = b.col3 and a.col3 = b.col1 and a.col2 = b.col2;
 show trace;
 
 insert into tmp_hls_type values('park',1,'park');
-select /*+ ordered */ * from tmp_hls_type a, (select * from tmp_hls_type where col2 >= 1) b where a.col1 = b.col2 and a.col2 = b.col1 and a.col3 = b.col3;
+select /*+ ordered */ * from tmp_hls_type a, (select /*+ NO_MERGE */ * from tmp_hls_type where col2 >= 1) b where a.col1 = b.col2 and a.col2 = b.col1 and a.col3 = b.col3;
 show trace;
-select /*+ ordered */ * from tmp_hls_type a, (select * from tmp_hls_type where col2 >= 1) b where a.col1 = b.col3 and a.col3 = b.col1 and a.col2 = b.col2;
+select /*+ ordered */ * from tmp_hls_type a, (select /*+ NO_MERGE */ * from tmp_hls_type where col2 >= 1) b where a.col1 = b.col3 and a.col3 = b.col1 and a.col2 = b.col2;
 show trace;
 
 set trace off;
@@ -64,24 +64,24 @@ create table tmp_hls_type(col1 numeric(20,10), col2 int, col3 double, col4 float
 insert into tmp_hls_type values(1,1,1,1),(2,2,2,2),(3,3,3,3),(4,4,4,4),(5,5,5,5),(1,2,3,4);
 
 set trace on;
-select /*+ ordered */ a.* from tmp_hls_type a, (select * from tmp_hls_type where col2 >= 1) b where a.col1 = b.col2 and a.col2 = b.col3 and a.col3 = b.col4;
+select /*+ ordered */ a.* from tmp_hls_type a, (select /*+ NO_MERGE */ * from tmp_hls_type where col2 >= 1) b where a.col1 = b.col2 and a.col2 = b.col3 and a.col3 = b.col4;
 show trace;
-select /*+ ordered */ a.* from tmp_hls_type a, (select * from tmp_hls_type where col2 >= 1) b where a.col2 = b.col1 and a.col3 = b.col2 and a.col4 = b.col3;
+select /*+ ordered */ a.* from tmp_hls_type a, (select /*+ NO_MERGE */ * from tmp_hls_type where col2 >= 1) b where a.col2 = b.col1 and a.col3 = b.col2 and a.col4 = b.col3;
 show trace;
 
 set trace off;
 insert into tmp_hls_type values(1.1,1,1.1,1.1);
 
 set trace on;
-select /*+ ordered */ a.* from tmp_hls_type a, (select * from tmp_hls_type where col2 >= 1) b where a.col1 = b.col3 and a.col3 = b.col1;
+select /*+ ordered */ a.* from tmp_hls_type a, (select /*+ NO_MERGE */ * from tmp_hls_type where col2 >= 1) b where a.col1 = b.col3 and a.col3 = b.col1;
 show trace;
-select /*+ ordered */ a.* from tmp_hls_type a, (select * from tmp_hls_type where col2 >= 1) b where a.col1 = b.col4 and a.col4 = b.col1;
+select /*+ ordered */ a.* from tmp_hls_type a, (select /*+ NO_MERGE */ * from tmp_hls_type where col2 >= 1) b where a.col1 = b.col4 and a.col4 = b.col1;
 show trace;
 
 -- in operation
-select /*+ ordered */ aa.* from (select * from tmp_hls b where b.c >=1) aa where (aa.a,aa.b,aa.c) in (select a,b,c from tmp_hls);
+select /*+ ordered */ aa.* from (select /*+ NO_MERGE */ * from tmp_hls b where b.c >=1) aa where (aa.a,aa.b,aa.c) in (select a,b,c from tmp_hls);
 show trace;
-select /*+ ordered */ aa.* from (select * from tmp_hls b where b.c >=1) aa where (aa.a,aa.b) in (select a,b from tmp_hls) and aa.c in (select c from tmp_hls);
+select /*+ ordered */ aa.* from (select /*+ NO_MERGE */ * from tmp_hls b where b.c >=1) aa where (aa.a,aa.b) in (select a,b from tmp_hls) and aa.c in (select c from tmp_hls);
 show trace;
 
 -- correlated subquery

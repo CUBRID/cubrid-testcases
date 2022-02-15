@@ -30,7 +30,7 @@ select /*+ recompile NO_DESC_IDX */ * from x where a > 5 order by a desc;
 select /*+ recompile */ * from x, y where x.a = y.a and x.a > 5 order by x.a desc;
 select /*+ recompile NO_DESC_IDX */ * from x, y where x.a = y.a and x.a > 5 order by x.a desc;
 
-select /*+ recompile no_desc_idx */ x.* from x, (select /*+ recompile desc_idx */ * from x where a<3 order by a desc) y where x.a > 5 order by x.a desc;
+select /*+ recompile no_desc_idx */ x.* from x, (select /*+ recompile desc_idx NO_MERGE */ * from x where a<3 order by a desc) y where x.a > 5 order by x.a desc;
 
 select /*+ recompile NO_DESC_IDX  */ * from x force index (pk_x_a) where a > 5 order by a desc;
 

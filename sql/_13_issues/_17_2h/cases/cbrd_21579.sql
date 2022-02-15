@@ -11,7 +11,7 @@ SELECT
  RANK() OVER(PARTITION BY s_name ORDER BY OTHER_AMT DESC) AS OTHER_RANK_DESC
 FROM
  (
-   SELECT 
+   SELECT /*+ NO_MERGE */ 
    S_NAME, '1' AS my_amt, '1' AS other_amt
    FROM code
  ) A;
@@ -34,7 +34,7 @@ SELECT
  RANK() OVER(PARTITION BY s_name ORDER BY OTHER_AMT DESC) AS OTHER_RANK_DESC
 FROM
  (
-   SELECT 
+   SELECT /*+ NO_MERGE */ 
   S_NAME, '1' AS my_amt, '1' AS other_amt
    FROM code
  ) A order by 1,2,3;

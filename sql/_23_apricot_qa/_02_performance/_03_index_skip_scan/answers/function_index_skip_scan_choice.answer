@@ -31,14 +31,14 @@ iscan
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select /*+ INDEX_SS */ t.k, t.i from t t where ((t.j>= ?:?  and t.j<= ?:? ) or (t.j>= ?:?  and t.j<= ?:? )) order by ?)
+(select /*+ INDEX_SS NO_MERGE */ t.k, t.i from t t where ((t.j>= ?:?  and t.j<= ?:? ) or (t.j>= ?:?  and t.j<= ?:? )) order by ?)
 /* ---> skip ORDER BY */
 Query plan:
 sscan
     class: tbl node[?]
     cost:  ? card ?
 Query stmt:
-select count(*) from (select /*+ INDEX_SS */ t.k, t.i from t t where ((t.j>= ?:?  and t.j<= ?:? ) or (t.j>= ?:?  and t.j<= ?:? )) order by ?) tbl (k, ha_?)
+select count(*) from (select /*+ INDEX_SS NO_MERGE */ t.k, t.i from t t where ((t.j>= ?:?  and t.j<= ?:? ) or (t.j>= ?:?  and t.j<= ?:? )) order by ?) tbl (k, ha_?)
 ===================================================
 count(*)    
 4     
@@ -50,14 +50,14 @@ iscan
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select /*+ INDEX_SS */ t.i from t t where ((t.j>= ?:?  and t.j<= ?:? ) or (t.j>= ?:?  and t.j<= ?:? )) order by ?)
+(select /*+ INDEX_SS NO_MERGE */ t.i from t t where ((t.j>= ?:?  and t.j<= ?:? ) or (t.j>= ?:?  and t.j<= ?:? )) order by ?)
 /* ---> skip ORDER BY */
 Query plan:
 sscan
     class: tbl node[?]
     cost:  ? card ?
 Query stmt:
-select count(*) from (select /*+ INDEX_SS */ t.i from t t where ((t.j>= ?:?  and t.j<= ?:? ) or (t.j>= ?:?  and t.j<= ?:? )) order by ?) tbl (i)
+select count(*) from (select /*+ INDEX_SS NO_MERGE */ t.i from t t where ((t.j>= ?:?  and t.j<= ?:? ) or (t.j>= ?:?  and t.j<= ?:? )) order by ?) tbl (i)
 ===================================================
 count(*)    
 4     
@@ -69,14 +69,14 @@ iscan
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select /*+ INDEX_SS */ t.i from t t where ((t.j>= ?:?  and t.j<= ?:? ) or (t.j>= ?:?  and t.j<= ?:? )) using index t.idx? order by ?)
+(select /*+ INDEX_SS NO_MERGE */ t.i from t t where ((t.j>= ?:?  and t.j<= ?:? ) or (t.j>= ?:?  and t.j<= ?:? )) using index t.idx? order by ?)
 /* ---> skip ORDER BY */
 Query plan:
 sscan
     class: tbl node[?]
     cost:  ? card ?
 Query stmt:
-select count(*) from (select /*+ INDEX_SS */ t.i from t t where ((t.j>= ?:?  and t.j<= ?:? ) or (t.j>= ?:?  and t.j<= ?:? )) using index t.idx? order by ?) tbl (i)
+select count(*) from (select /*+ INDEX_SS NO_MERGE */ t.i from t t where ((t.j>= ?:?  and t.j<= ?:? ) or (t.j>= ?:?  and t.j<= ?:? )) using index t.idx? order by ?) tbl (i)
 ===================================================
 count(*)    
 4     
@@ -88,14 +88,14 @@ iscan
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select /*+ INDEX_SS */ t.k, t.i from t t where ((t.j>= ?:?  and t.j<= ?:? ) or (t.j>= ?:?  and t.j<= ?:? )) using index t.idx? order by ?)
+(select /*+ INDEX_SS NO_MERGE */ t.k, t.i from t t where ((t.j>= ?:?  and t.j<= ?:? ) or (t.j>= ?:?  and t.j<= ?:? )) using index t.idx? order by ?)
 /* ---> skip ORDER BY */
 Query plan:
 sscan
     class: tbl node[?]
     cost:  ? card ?
 Query stmt:
-select count(*) from (select /*+ INDEX_SS */ t.k, t.i from t t where ((t.j>= ?:?  and t.j<= ?:? ) or (t.j>= ?:?  and t.j<= ?:? )) using index t.idx? order by ?) tbl (k, ha_?)
+select count(*) from (select /*+ INDEX_SS NO_MERGE */ t.k, t.i from t t where ((t.j>= ?:?  and t.j<= ?:? ) or (t.j>= ?:?  and t.j<= ?:? )) using index t.idx? order by ?) tbl (k, ha_?)
 ===================================================
 count(*)    
 4     
@@ -107,14 +107,14 @@ iscan
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select /*+ INDEX_SS */ t.i from t t where ((t.j>= ?:?  and t.j<= ?:? ) or (t.j>= ?:?  and t.j<= ?:? )) using index t.idx?, t.idx? order by ?)
+(select /*+ INDEX_SS NO_MERGE */ t.i from t t where ((t.j>= ?:?  and t.j<= ?:? ) or (t.j>= ?:?  and t.j<= ?:? )) using index t.idx?, t.idx? order by ?)
 /* ---> skip ORDER BY */
 Query plan:
 sscan
     class: tbl node[?]
     cost:  ? card ?
 Query stmt:
-select count(*) from (select /*+ INDEX_SS */ t.i from t t where ((t.j>= ?:?  and t.j<= ?:? ) or (t.j>= ?:?  and t.j<= ?:? )) using index t.idx?, t.idx? order by ?) tbl (i)
+select count(*) from (select /*+ INDEX_SS NO_MERGE */ t.i from t t where ((t.j>= ?:?  and t.j<= ?:? ) or (t.j>= ?:?  and t.j<= ?:? )) using index t.idx?, t.idx? order by ?) tbl (i)
 ===================================================
 count(*)    
 4     
@@ -126,14 +126,14 @@ iscan
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select /*+ INDEX_SS */ t.i from t t where ((t.j>= ?:?  and t.j<= ?:? ) or (t.j>= ?:?  and t.j<= ?:? )) using index t.idx?(+), t.idx? order by ?)
+(select /*+ INDEX_SS NO_MERGE */ t.i from t t where ((t.j>= ?:?  and t.j<= ?:? ) or (t.j>= ?:?  and t.j<= ?:? )) using index t.idx?(+), t.idx? order by ?)
 /* ---> skip ORDER BY */
 Query plan:
 sscan
     class: tbl node[?]
     cost:  ? card ?
 Query stmt:
-select count(*) from (select /*+ INDEX_SS */ t.i from t t where ((t.j>= ?:?  and t.j<= ?:? ) or (t.j>= ?:?  and t.j<= ?:? )) using index t.idx?(+), t.idx? order by ?) tbl (i)
+select count(*) from (select /*+ INDEX_SS NO_MERGE */ t.i from t t where ((t.j>= ?:?  and t.j<= ?:? ) or (t.j>= ?:?  and t.j<= ?:? )) using index t.idx?(+), t.idx? order by ?) tbl (i)
 ===================================================
 5
 ===================================================
@@ -151,14 +151,14 @@ iscan
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select /*+ INDEX_SS */ t.k, t.i from t t where ((t.j>= ?:?  and t.j<= ?:? ) or (t.j>= ?:?  and t.j<= ?:? )) order by ?)
+(select /*+ INDEX_SS NO_MERGE */ t.k, t.i from t t where ((t.j>= ?:?  and t.j<= ?:? ) or (t.j>= ?:?  and t.j<= ?:? )) order by ?)
 /* ---> skip ORDER BY */
 Query plan:
 sscan
     class: tbl node[?]
     cost:  ? card ?
 Query stmt:
-select count(*) from (select /*+ INDEX_SS */ t.k, t.i from t t where ((t.j>= ?:?  and t.j<= ?:? ) or (t.j>= ?:?  and t.j<= ?:? )) order by ?) tbl (k, ha_?)
+select count(*) from (select /*+ INDEX_SS NO_MERGE */ t.k, t.i from t t where ((t.j>= ?:?  and t.j<= ?:? ) or (t.j>= ?:?  and t.j<= ?:? )) order by ?) tbl (k, ha_?)
 ===================================================
 0
 ===================================================

@@ -46,7 +46,7 @@ desc v;
 insert into v values default;
 drop v;
 
-create view v as select * from (select c from u where c > 0) as drv where drv.c < 10;
+create view v as select * from (select /*+ NO_MERGE */ c from u where c > 0) as drv where drv.c < 10;
 desc v;
 -- not authorized
 insert into v values default;
