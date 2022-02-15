@@ -24,10 +24,10 @@ select date_format (t1.s1, tf.f_iso) from t1,tf order by 1;
 select date_format (t1.s1, tf.f_utf8) from t1,tf order by 1;
 
 -- late binding
-prepare s from 'select date_format(s1, ?) from t1 order by 1'
+prepare s from 'select date_format(s1, ?) from t1 order by 1';
 execute s using '%a';
 
-prepare s from 'select date_format(s1, ?) from t2 order by 1'
+prepare s from 'select date_format(s1, ?) from t2 order by 1';
 execute s using '%a';
 
 

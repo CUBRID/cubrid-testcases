@@ -39,26 +39,26 @@ insert into t3 values (5,'test2', {2,'test2'},5);
 
 select int_col+1.0 from t1 union all select int_col+1.0 from t2 union all select int_col+1.0 from t3 order by 1;
 
-prepare st from 'select int_col+? from t1 union all select int_col+? from t2 union all select int_col+? from t3 order by 1'
+prepare st from 'select int_col+? from t1 union all select int_col+? from t2 union all select int_col+? from t3 order by 1';
 execute st using 1.0,1.0,1.0;
 
-prepare st from 'select int_col+1.0 from t1 union all select int_col+? from t2 union all select int_col+? from t3 order by 1'
+prepare st from 'select int_col+1.0 from t1 union all select int_col+? from t2 union all select int_col+? from t3 order by 1';
 execute st using 1.0,1.0;
 
 
 
 select int_col-1e0 from t1 intersection select int_col+1.0 from t2 order by 1;
 
-prepare st from 'select int_col-? from t1 intersection select int_col+? from t2 order by 1'
+prepare st from 'select int_col-? from t1 intersection select int_col+? from t2 order by 1';
 execute st using 1e0,1.0;
 
-prepare st from 'select int_col-? from t1 intersection select int_col+1.0 from t2 order by 1'
+prepare st from 'select int_col-? from t1 intersection select int_col+1.0 from t2 order by 1';
 execute st using 1e0;
 
 
 select 1+int_col from t1 difference all select '1' + int_col from t2 union all select '1'- int_col from t3  order by 1;
 
-prepare st from 'select 1+int_col from t1 difference all select ? + int_col from t2 union all select ? - int_col from t3  order by 1'
+prepare st from 'select 1+int_col from t1 difference all select ? + int_col from t2 union all select ? - int_col from t3  order by 1';
 execute st using '1',1.0;
 
 drop class t1;

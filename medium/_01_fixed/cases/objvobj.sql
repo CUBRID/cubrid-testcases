@@ -14,6 +14,6 @@ insert into vev2 values (NULL);
 select ev2_ref1, ev2_ref1.ev1_int from vev2; 
 insert into vev1 (ev1_int) values (0) to x;
 update vev2 set ev2_ref1=x;
-insert into vev2 values(x)
+insert into vev2 values(x);
 select ev2_ref1, ev2_ref1.ev1_int from vev2;
 rollback;

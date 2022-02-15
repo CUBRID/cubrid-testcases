@@ -1,5 +1,5 @@
 autocommit off;
-  create class setA(a sequence int, b sequence string, c sequence)
+  create class setA(a sequence int, b sequence string, c sequence);
   insert into setA values({1,2}, {'hi'}, {});
   
   select a+b from setA;

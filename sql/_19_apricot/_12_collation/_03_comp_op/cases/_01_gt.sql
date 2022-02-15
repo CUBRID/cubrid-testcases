@@ -8,19 +8,19 @@ insert into t2 values ('Ab'),( 'aa');
 
 select * from t1 where s1 > 'AA'  order by 1;
 
-prepare s from 'select * from t1 where s1 > ?  order by 1'
+prepare s from 'select * from t1 where s1 > ?  order by 1';
 execute s using 'AA';
 
-prepare s from 'select * from t1 where s1 > ? + ?  order by 1'
+prepare s from 'select * from t1 where s1 > ? + ?  order by 1';
 execute s using 'AA','0';
 
 
 select * from t2 where s1 > 'AA' order by 1;
 
-prepare s from 'select * from t2 where s1 > ?  order by 1'
+prepare s from 'select * from t2 where s1 > ?  order by 1';
 execute s using 'AA';
 
-prepare s from 'select * from t2 where s1 > ? + ?  order by 1'
+prepare s from 'select * from t2 where s1 > ? + ?  order by 1';
 execute s using 'AA','0';
 
 select s1 from t1 where cast (s1 as string collate utf8_en_ci) > 'AA' order by 1;

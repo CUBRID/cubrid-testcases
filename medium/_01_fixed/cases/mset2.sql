@@ -1,5 +1,5 @@
 autocommit off;
-  create class setA(a multiset int, b multiset string, c multiset)
+  create class setA(a multiset int, b multiset string, c multiset);
   insert into setA values({1,2}, {'hi'}, {});
   
   select a+b from setA;

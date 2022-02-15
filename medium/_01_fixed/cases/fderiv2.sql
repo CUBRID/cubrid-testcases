@@ -7,7 +7,7 @@ select * from table((select a from foo)) as t(g);
 select * from table((select a from bar)) as t(g);
 select * from table((select a from foo)) as t(g) where g <=4;
 select * from table((select a from bar)) as t(g) where g >'d';
-rollback work
+rollback work;
 create class int_set_class
 (set_of_num set(int));
 insert into int_set_class values( { 5,3,2,4,1});

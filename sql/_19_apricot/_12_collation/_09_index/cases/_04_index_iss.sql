@@ -3,7 +3,7 @@ create table t1 (s1 varchar(255) collate 'utf8_en_ci', i1 int auto_increment);
 insert into t1(s1) values ('aaA');
 insert into t1(s1) values ('aAa');
 insert into t1(s1) values ('aaA');
-insert into t1(s1) values ('abAa')
+insert into t1(s1) values ('abAa');
 insert into t1(s1) values ('AbaA');
 insert into t1(s1) values ('AbAa');
 insert into t1(s1) values ('aaA');

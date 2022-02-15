@@ -8,5 +8,5 @@ insert into foo values('5');
 select to_number(f) from foo;
 select to_number(f) from foo order by 1;
 select to_number(f) from foo order by 1 desc;
-rollback
+rollback;
 rollback;

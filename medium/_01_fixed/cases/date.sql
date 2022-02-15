@@ -10,8 +10,8 @@ rollback work;
 insert into dated_inventory_c 
 (product, quantity, location, shipment_pending, expiry_date)
 values (NULL, 5, 'marseilles', NULL, DATE '1/1/1993');
-select max(expiry_date) from dated_inventory_c
-select min(expiry_date) from dated_inventory_c
+select max(expiry_date) from dated_inventory_c;
+select min(expiry_date) from dated_inventory_c;
 select * from dated_inventory_v d 
 where expiry_date >= DATE ' 6/ 6/1992'
 and   expiry_date <= DATE ' 2/ 2/1993'

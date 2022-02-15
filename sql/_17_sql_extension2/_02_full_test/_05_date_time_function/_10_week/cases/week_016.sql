@@ -18,7 +18,7 @@ select week(date'aa-bb-cc');
 
 --2. [error] exceptional argument of timestamp type
 --select week(timestamp'23:00:00 11/001');
-select if(week(timestamp'23:00:00 11/001')=week(timestamp(concat('23:00:00 11/001/',year(sysdate)))),'ok','nok')
+select if(week(timestamp'23:00:00 11/001')=week(timestamp(concat('23:00:00 11/001/',year(sysdate)))),'ok','nok');
 
 select week(timestamp'04:14:07 1/0019/2011');
 

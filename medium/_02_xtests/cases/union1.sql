@@ -4,5 +4,5 @@ create view inventory_v3
 select * from inventory_c
 union all
 select * from inventory_c2;
-select * from inventory_v3
+select * from inventory_v3;
 rollback;

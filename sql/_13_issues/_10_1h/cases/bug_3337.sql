@@ -20,7 +20,7 @@ insert into ta3(a) values(2);
 select /*RECOMPILE */ ta3.a,
 (select ta1.b from ta1 where ta1.a = ta3.a order by ta1.c for orderby_num() = 1) col1,
 (select count( * ) from ta2 where ta2.a = ta3.a) col2
-from ta3
+from ta3;
 
 drop table ta1;
 drop table ta2;

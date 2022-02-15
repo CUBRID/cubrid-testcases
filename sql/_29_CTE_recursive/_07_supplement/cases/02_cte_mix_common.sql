@@ -26,7 +26,7 @@ UNION all
 select e.empId , e.fname , e.sname , e.bossid
 FROM t e inner JOIN cte r ON ( e.bossId= r.a))
 SELECT c,b
-FROM cte insert into t values (1,'f','a',1) ;
+FROM cte; insert into t values (1,'f','a',1) ;
 
 WITH cte(a,b,c,d) as (select empId , fname , sname , bossId
 FROM t WHERE sname = 'o'
@@ -34,7 +34,7 @@ UNION all
 select e.empId , e.fname , e.sname , e.bossid
 FROM t e inner JOIN cte r ON ( e.bossId= r.a))
 SELECT c,b
-FROM cte SELECT c,b
+FROM cte; SELECT c,b
 FROM cte ;
 
 WITH cte(a,b,c,d) as (select empId , fname , sname , bossId
@@ -43,6 +43,6 @@ UNION all
 select e.empId , e.fname , e.sname , e.bossid
 FROM t e inner JOIN cte r ON ( e.bossId= r.a))
 SELECT c,b
-FROM cte SELECT *
+FROM cte; SELECT *
 FROM t order by 1 desc;
 drop if exists t;

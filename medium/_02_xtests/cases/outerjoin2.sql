@@ -85,39 +85,39 @@ order by o2.i ;
 select *
 from o1 t1 left outer join o2 t2 on t1.i = t2.i
 left outer join o1 t3 on t1.i = t3.i			/* (t1 L t2) L t3 */
-order by t1.i
+order by t1.i;
 select *
 from o1 t1 left outer join o2 t2 on t1.i = t2.i
 left outer join o1 t3 on t1.i = t3.j			/* (t1 L t2) L t3 */
-order by t1.i
+order by t1.i;
 select *
 from o1 t1 left outer join o2 t2 on t1.i = t2.i
 left outer join o1 t3 on t1.i = t3.i and t1.j = t3.j	/* (t1 L t3) L t2 */
-order by t1.i
+order by t1.i;
 select *
 from o1 t1 left outer join o2 t2 on t1.i = t2.i and t1.j = t2.j
 left outer join o1 t3 on t1.i = t3.i and t1.j = t3.j	/* (t1 L t2) L t3 */
-order by t1.i
+order by t1.i;
 select *
 from o1 t1 left outer join o2 t2 on t1.i = t2.i and t1.j*2 = t2.j
 left outer join o1 t3 on t1.i = t3.i and t1.j = t3.j	/* (t1 L t2) L t3 */
-order by t1.i
+order by t1.i;
 select *
 from o1 t1 left outer join o2 t2 on t1.i = t2.i
 left outer join o1 t3 on t2.i = t3.i and t2.j = t3.j	/* (t1 L t2) L t3 */
-order by t1.i
+order by t1.i;
 select *
 from o1 t1 left outer join o2 t2 on t1.i = t2.i and t1.j = t2.j
 left outer join o1 t3 on t2.i = t3.i and t2.j = t3.j	/* (t1 L t2) L t3 */
-order by t1.i
+order by t1.i;
 select *
 from o1 t1 left outer join o2 t2 on t1.i = t2.i and t1.j*2 = t2.j
 left outer join o1 t3 on t2.i = t3.i and t2.j = t3.j	/* (t1 L t2) L t3 */
-order by t1.i
+order by t1.i;
 select *
 from o1 t1 left outer join o2 t2 on t1.i = t2.i
 left outer join o1 t3 on t1.i = t3.i and t2.j = t3.j	/* (t1 L t2) L t3 */
-order by t1.i
+order by t1.i;
 select *
 from o1 t1 right outer join o2 t2 on t1.i = t2.i
 right outer join o1 t3 on t1.i = t3.i;			/* (t1 R t2) R t3 */
@@ -127,7 +127,7 @@ right outer join o1 t3 on t1.i = t3.i and t1.j = t3.j;	/* t3 L (t1 R t2) */
 select *
 from o1 t1 right outer join o2 t2 on t1.i = t2.i
 right outer join o1 t3 on t2.i = t3.i and t2.j = t3.j	/* t3 L (t1 R t2) */
-order by t3.i, t3.j
+order by t3.i, t3.j;
 select *
 from o1 t1 right outer join o2 t2 on t1.i = t2.i and t1.j*2 = t2.j
 right outer join o1 t3 on t1.i = t3.i;			/* (t2 L t1) R t3 */
@@ -137,7 +137,7 @@ right outer join o1 t3 on t1.i = t3.i and t1.j = t3.j;	/* t3 L (t2 L t1) */
 select *
 from o1 t1 right outer join o2 t2 on t1.i = t2.i and t1.j*2 = t2.j
 right outer join o1 t3 on t2.i = t3.i and t2.j = t3.j	/* t3 L (t2 L t1) */
-order by t3.i, t3.j
+order by t3.i, t3.j;
 select *
 from o1 t1 left outer join o2 t2 on t1.i = t2.i
 right outer join o1 t3 on t1.i = t3.i;			/* (t1 L t2) R t3 */
@@ -170,26 +170,26 @@ select *
 from o1 t1 left outer join o2 t2 on t1.i = t2.i
 left outer join o1 t3 on t1.i = t3.i and t1.j = t3.j
 left outer join o2 t4 on t1.i = t4.i 			-- ((t1 L t3) L t4) L t2
-order by t1.i
+order by t1.i;
 select *
 from o1 t1 left outer join o2 t2 on t1.i = t2.i
 left outer join o1 t3 on t1.i = t3.i and t1.j = t3.j
 left outer join o2 t4 on t1.i = t4.i and t1.j = t4.j	-- ((t1 L t3) L t4) L t2
-order by t1.i
+order by t1.i;
 select *
 from o1 t1 left outer join o2 t2 on t1.i = t2.i
 left outer join o1 t3 on t2.i = t3.i and t2.j = t3.j
 left outer join o2 t4 on t3.i = t4.i and t3.j = t4.j	-- ((t1 L t2) L t3) L t4
-order by t1.i
+order by t1.i;
 select *
 from o1 t1 left outer join o2 t2 on t1.i = t2.i
 left outer join o1 t3 on t2.i = t3.i and t2.j = t3.j
 left outer join o2 t4 on t1.i = t4.i and t1.j = t4.j	-- ((t1 L t2) L t3) L t4
-order by t1.i
+order by t1.i;
 select *
 from o1 t1 right outer join o2 t2 on t1.i = t2.i
 right outer join o1 t3 on t1.i = t3.i and t1.j = t3.j
-right outer join o2 t4 on t1.i = t4.i 			-- t3 L (t1 R t2) R t4
+right outer join o2 t4 on t1.i = t4.i; 			-- t3 L (t1 R t2) R t4
 select *
 from o1 t1 right outer join o2 t2 on t1.i = t2.i
 right outer join o1 t3 on t1.i = t3.i and t1.j = t3.j
@@ -203,6 +203,6 @@ select *
 from o1 t1 right outer join o2 t2 on t1.i = t2.i
 right outer join o1 t3 on t2.i = t3.i and t2.j = t3.j
 right outer join o2 t4 on t1.i = t4.i and t1.j = t4.j	-- t4 L (t3 L (t1 R t2))
-order by t4.i
+order by t4.i;
 rollback work;
 rollback;

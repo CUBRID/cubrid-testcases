@@ -57,10 +57,10 @@ select locate(NULL,NULL,NULL);
 select locate('1','2','1');
 
 -- should fail
-prepare st from 'select locate(?,?,?)'
+prepare st from 'select locate(?,?,?)';
 execute st using '1','2','1';
 
-prepare st from 'select locate(?,?,?)'
+prepare st from 'select locate(?,?,?)';
 execute st using '1','2',1;
 
 drop prepare st;

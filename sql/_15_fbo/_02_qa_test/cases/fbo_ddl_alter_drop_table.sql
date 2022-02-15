@@ -14,7 +14,7 @@ create table rn2_t (a int, b clob, c string);
 insert into rn2_t values(2, char_to_clob('test.....'), 'what are you doing');
 rename table rn2_t as rn2_t1;
 select a, clob_to_char(b), c from rn2_t1;
-delete from rn2_t1
+delete from rn2_t1;
 drop rn2_t1;
 
 --change name of table with blob&clob column
@@ -141,7 +141,7 @@ select * from db_attribute where class_name='acd2_t' order by attr_name;
 alter table acd2_t drop column new1, new2;
 select * from db_attribute where class_name='acd2_t' order by attr_name;
 
-delete from acd2_t
+delete from acd2_t;
 drop table acd2_t;
 
 --4. add/change/drop constraints to blob/clob column

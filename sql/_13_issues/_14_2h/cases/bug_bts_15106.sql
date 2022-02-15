@@ -166,7 +166,7 @@ show create table foo;
  (partition p0 values less than (3));
  insert into foo(b) values('2010-05-05 12:34:56');
  alter table foo add partition (partition p1 values less than (5));
- insert into foo(b) values('2010-11-05 12:34:56')
+ insert into foo(b) values('2010-11-05 12:34:56');
  select * from foo order by 1;
  drop table if exists foo;
  create table foo(a date,b timestamp,c datetime) partition by range(quarter(c))

@@ -36,25 +36,25 @@ select case when ifnull(cast(NULL as datetime), '0') = '0'then 'OK' else 'NOK' e
 select case when ifnull(cast(NULL as timestamp), '0') = '0'then 'OK' else 'NOK' end;
 
 
-prepare stmt1 from 'select ifnull(?, 1)'
-execute stmt1 using date'2010-01-01'
-execute stmt1 using time'09:30:30'
-execute stmt1 using datetime'2010-01-01 09:30:30.001'
-execute stmt1 using timestamp'2010-01-01 09:30:30'
+prepare stmt1 from 'select ifnull(?, 1)';
+execute stmt1 using date'2010-01-01';
+execute stmt1 using time'09:30:30';
+execute stmt1 using datetime'2010-01-01 09:30:30.001';
+execute stmt1 using timestamp'2010-01-01 09:30:30';
 deallocate prepare stmt1;
 
-prepare stmt1 from 'select ifnull(?, ?)'
-execute stmt1 using date'2010-01-01', 1
-execute stmt1 using time'09:30:30', 1
-execute stmt1 using datetime'2010-01-01 09:30:30.001', 1
-execute stmt1 using timestamp'2010-01-01 09:30:30', 1
+prepare stmt1 from 'select ifnull(?, ?)';
+execute stmt1 using date'2010-01-01', 1;
+execute stmt1 using time'09:30:30', 1;
+execute stmt1 using datetime'2010-01-01 09:30:30.001', 1;
+execute stmt1 using timestamp'2010-01-01 09:30:30', 1;
 deallocate prepare stmt1;
 
-prepare stmt1 from 'select ifnull(?, ?)'
-execute stmt1 using date'2010-01-01', 'a'
-execute stmt1 using time'09:30:30', 'a'
-execute stmt1 using datetime'2010-01-01 09:30:30.001', 'a'
-execute stmt1 using timestamp'2010-01-01 09:30:30', 'a'
+prepare stmt1 from 'select ifnull(?, ?)';
+execute stmt1 using date'2010-01-01', 'a';
+execute stmt1 using time'09:30:30', 'a';
+execute stmt1 using datetime'2010-01-01 09:30:30.001', 'a';
+execute stmt1 using timestamp'2010-01-01 09:30:30', 'a';
 deallocate prepare stmt1;
 
 
@@ -93,11 +93,11 @@ select case when ifnull(null, null) is null then 'OK' else 'NOK' end;
 select case when ifnull(null, cast(0 as integer)) = cast(0 as integer) then 'OK' else 'NOK' end;
 select case when ifnull('a', null) = 'a' then 'OK' else 'NOK' end;
 
-prepare stmt1 from 'select case when ifnull(null, ?) = ? then ''OK'' else ''NOK'' end'
-execute stmt1 using date'2010-01-01', date'2010-01-01'
-execute stmt1 using time'09:30:30', time'09:30:30'
-execute stmt1 using datetime'2010-01-01 09:30:30.001', datetime'2010-01-01 09:30:30.001'
-execute stmt1 using timestamp'2010-01-01 09:30:30', timestamp'2010-01-01 09:30:30'
+prepare stmt1 from 'select case when ifnull(null, ?) = ? then ''OK'' else ''NOK'' end';
+execute stmt1 using date'2010-01-01', date'2010-01-01';
+execute stmt1 using time'09:30:30', time'09:30:30';
+execute stmt1 using datetime'2010-01-01 09:30:30.001', datetime'2010-01-01 09:30:30.001';
+execute stmt1 using timestamp'2010-01-01 09:30:30', timestamp'2010-01-01 09:30:30';
 deallocate prepare stmt1;
 
 select case when ifnull('a', cast(1 as bigint)) = 'a' then 'OK' else 'NOK' end;

@@ -21,17 +21,17 @@ select (floor('asd'));
 
 select (floor(n'asd'));
 
-prepare st from 'select floor(?)'
+prepare st from 'select floor(?)';
 execute st using '2001-10-11';
 
-prepare st from 'select floor(?)'
+prepare st from 'select floor(?)';
 execute st using '2001';
 
-prepare st from 'select floor(?)'
+prepare st from 'select floor(?)';
 execute st using '2.0011e1';
 
-prepare st from 'select floor(?)'
+prepare st from 'select floor(?)';
 execute st using '2001.12';
 
-prepare st from 'select floor(?)'
+prepare st from 'select floor(?)';
 execute st using 'asd';

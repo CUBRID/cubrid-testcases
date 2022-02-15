@@ -5,7 +5,7 @@ create table t1 (i1 enum('a','b') collate utf8_en_ci, d1 double);
 insert into t1 values(1, 1),(2,2);
 select * from t1 order by 1;
 
-prepare st from 'select group_concat(i1+? order by 1) , collation (group_concat(i1+? order by 1)) from t1 group by d1'
+prepare st from 'select group_concat(i1+? order by 1) , collation (group_concat(i1+? order by 1)) from t1 group by d1';
 execute st using 2.2, 2.2;
 
 execute st using 'x','x';

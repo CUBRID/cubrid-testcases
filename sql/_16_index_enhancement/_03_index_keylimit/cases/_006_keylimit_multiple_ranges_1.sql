@@ -22,8 +22,8 @@ select /*+ recompile */ t1.*, concat_ws('.',i1,i2) from t1 where i1 in (1,3) and
 select /*+ recompile */ t1.*, concat_ws('.',i1,i2) from t1 where i1 in (1,3) and concat_ws('.',i1,i2) between '1.2' and '3.4' order by i2 desc limit 5;
 
 -- limit with host variables, more complex upper limit
-prepare stmt from 'select /*+ recompile */ * from t1 where i1 in (1,3) and i2 < 4 order by i2 desc limit ?' execute stmt using 3 execute stmt using 5 deallocate prepare stmt;
-prepare stmt from 'select /*+ recompile */ * from t1 where i1 in (1,3) and i2 < 4 order by i2 desc for orderby_num()<? and orderby_num()<? and orderby_num()<?' execute stmt using 6,8,4 execute stmt using 7,3,5 execute stmt using 5,6,7 deallocate prepare stmt;
+prepare stmt from 'select /*+ recompile */ * from t1 where i1 in (1,3) and i2 < 4 order by i2 desc limit ?'; execute stmt using 3; execute stmt using 5; deallocate prepare stmt;
+prepare stmt from 'select /*+ recompile */ * from t1 where i1 in (1,3) and i2 < 4 order by i2 desc for orderby_num()<? and orderby_num()<? and orderby_num()<?'; execute stmt using 6,8,4; execute stmt using 7,3,5; execute stmt using 5,6,7; deallocate prepare stmt;
 
 -- key filter predicate on i2 and i3
 select /*+ recompile */ t1.*, i3 div 10 from t1 where i1 in (1,2,3) and i2 < 4 and i3 div 10 > 1 order by i2 desc limit 5;

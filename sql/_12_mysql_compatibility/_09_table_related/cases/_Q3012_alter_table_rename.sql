@@ -63,7 +63,7 @@ drop table tb_group_new;
 create table t1 (a int);
 create table t2 (a int);
 alter table t1 rename to t1_new;
-alter table t2 rename to t2_new
+alter table t2 rename to t2_new;
 drop table t1;
 drop table t2;
 drop table t1_new;

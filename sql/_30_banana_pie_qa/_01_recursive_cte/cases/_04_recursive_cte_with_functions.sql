@@ -39,7 +39,7 @@ WITH RECURSIVE my_cte AS
 SELECT * FROM my_cte order by n;
 
 drop table if exists numbers;
-CREATE TABLE numbers
+CREATE TABLE numbers;
   WITH RECURSIVE my_cte(n) AS
   (
     SELECT 1

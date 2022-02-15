@@ -4,7 +4,7 @@ create table tb (
 	dummy varchar(1)
 ) charset euckr;
 insert into tb values ('X');
-SELECT REPLACE('JACK and JUE','','BL')  FROM tb 
+SELECT REPLACE('JACK and JUE','','BL')  FROM tb;
 SELECT REPLACE(NULL,NULL,NULL)  FROM tb;
 SELECT REPLACE('최공훈이  ','최','최c') FROM tb;
 create table test_replace (
@@ -20,9 +20,9 @@ SELECT REPLACE('최최공훈이','최공')  FROM tb;
 SELECT REPLACE('Choikonghun','kon')  FROM tb;	
 SELECT REPLACE('Choikonghun','kong','qwer')  FROM tb;  
 SELECT REPLACE('최공훈 멋쟁','공훈','창민')  FROM tb; 
-SELECT REPLACE('JACK and JUE',NULL,'BL')  FROM tb 
-SELECT REPLACE('JACK and JUE',NULL,'')  FROM tb 
-SELECT REPLACE('JACK and JUE',NULL,NULL)  FROM tb 
+SELECT REPLACE('JACK and JUE',NULL,'BL')  FROM tb;
+SELECT REPLACE('JACK and JUE',NULL,'')  FROM tb;
+SELECT REPLACE('JACK and JUE',NULL,NULL)  FROM tb; 
 SELECT REPLACE('',NULL,NULL)  FROM tb;
 SELECT REPLACE('',NULL,'')  FROM tb;
 SELECT REPLACE('최최공훈이 ','이 ','최')  FROM tb;

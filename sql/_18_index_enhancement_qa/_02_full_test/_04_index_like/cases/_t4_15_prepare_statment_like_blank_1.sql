@@ -10,8 +10,8 @@ insert into t values (' ');
 --result is good
 select /*+ recompile */ a from t where a like ' ';
 --result is good
-prepare stmt from 'select /*+ recompile */ a from t where a like ?'
-execute stmt using ' '
+prepare stmt from 'select /*+ recompile */ a from t where a like ?';
+execute stmt using ' ';
 deallocate prepare stmt;
 
 --covering index
@@ -20,8 +20,8 @@ create index i_t_a on t(a);
 --result is good
 select /*+ recompile */ a from t where a like ' ';
 --result is not correct
-prepare stmt from 'select /*+ recompile */ a from t where a like ?'
-execute stmt using ' '
+prepare stmt from 'select /*+ recompile */ a from t where a like ?';
+execute stmt using ' ';
 deallocate prepare stmt;
 
 drop table t;

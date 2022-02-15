@@ -2,7 +2,7 @@ set system parameters 'create_table_reuseoid=no';
 autocommit off;
 create class temp1 (at1 int);
 create class temp2 (at1 temp1);
-drop class temp1
+drop class temp1;
 select * from temp2;
 rollback;
 

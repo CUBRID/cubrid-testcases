@@ -1,7 +1,7 @@
 --Africa
   select timestamptz'2015-10-9 13:08:00 Africa/Abidjan';    
   select timestamptz'2015-10-9 13:08:00 Africa/Accra';      
-  select timestamptz'2015-10-9 13:08:00 Africa/Addis_Ababa'
+  select timestamptz'2015-10-9 13:08:00 Africa/Addis_Ababa';
   select timestamptz'2015-10-9 13:08:00 Africa/Algiers';    
   select timestamptz'2015-10-9 13:08:00 Africa/Asmara';     
   select timestamptz'2015-10-9 13:08:00 Africa/Asmera';     
@@ -10,21 +10,21 @@
   select timestamptz'2015-10-9 13:08:00 Africa/Banjul';     
   select timestamptz'2015-10-9 13:08:00 Africa/Bissau';     
   select timestamptz'2015-10-9 13:08:00 Africa/Blantyre';   
-  select timestamptz'2015-10-9 13:08:00 Africa/Brazzaville'
+  select timestamptz'2015-10-9 13:08:00 Africa/Brazzaville';
   select timestamptz'2015-10-9 13:08:00 Africa/Bujumbura';  
   select timestamptz'2015-10-9 13:08:00 Africa/Cairo';      
   select timestamptz'2015-10-9 13:08:00 Africa/Casablanca'; 
   select timestamptz'2015-10-9 13:08:00 Africa/Ceuta';      
   select timestamptz'2015-10-9 13:08:00 Africa/Conakry';    
   select timestamptz'2015-10-9 13:08:00 Africa/Dakar';      
-  select timestamptz'2015-10-9 13:08:00 Africa/Dar_es_Salaam'
+  select timestamptz'2015-10-9 13:08:00 Africa/Dar_es_Salaam';
   select timestamptz'2015-10-9 13:08:00 Africa/Djibouti';   
   select timestamptz'2015-10-9 13:08:00 Africa/Douala';     
   select timestamptz'2015-10-9 13:08:00 Africa/El_Aaiun';   
   select timestamptz'2015-10-9 13:08:00 Africa/Freetown';   
   select timestamptz'2015-10-9 13:08:00 Africa/Gaborone';   
   select timestamptz'2015-10-9 13:08:00 Africa/Harare';     
-  select timestamptz'2015-10-9 13:08:00 Africa/Johannesburg'
+  select timestamptz'2015-10-9 13:08:00 Africa/Johannesburg';
   select timestamptz'2015-10-9 13:08:00 Africa/Juba';       
   select timestamptz'2015-10-9 13:08:00 Africa/Kampala';    
   select timestamptz'2015-10-9 13:08:00 Africa/Khartoum';   
@@ -46,7 +46,7 @@
   select timestamptz'2015-10-9 13:08:00 Africa/Ndjamena';   
   select timestamptz'2015-10-9 13:08:00 Africa/Niamey';     
   select timestamptz'2015-10-9 13:08:00 Africa/Nouakchott'; 
-  select timestamptz'2015-10-9 13:08:00 Africa/Ouagadougou'
+  select timestamptz'2015-10-9 13:08:00 Africa/Ouagadougou';
   select timestamptz'2015-10-9 13:08:00 Africa/Porto-Novo'; 
   select timestamptz'2015-10-9 13:08:00 Africa/Sao_Tome';   
   select timestamptz'2015-10-9 13:08:00 Africa/Timbuktu';   
@@ -55,7 +55,7 @@
   select timestamptz'2015-10-9 13:08:00 Africa/Windhoek';   
   select timestamptz'1977-4-30 00:59:59 Africa/Abidjan';    
   select timestamptz'1977-4-30 00:59:59 Africa/Accra';      
-  select timestamptz'1977-4-30 00:59:59 Africa/Addis_Ababa'
+  select timestamptz'1977-4-30 00:59:59 Africa/Addis_Ababa';
   select timestamptz'1977-4-30 00:59:59 Africa/Algiers';    
   select timestamptz'1977-4-30 00:59:59 Africa/Asmara';     
   select timestamptz'1977-4-30 00:59:59 Africa/Asmera';     
@@ -64,21 +64,21 @@
   select timestamptz'1977-4-30 00:59:59 Africa/Banjul';     
   select timestamptz'1977-4-30 00:59:59 Africa/Bissau';     
   select timestamptz'1977-4-30 00:59:59 Africa/Blantyre';   
-  select timestamptz'1977-4-30 00:59:59 Africa/Brazzaville'
+  select timestamptz'1977-4-30 00:59:59 Africa/Brazzaville';
   select timestamptz'1977-4-30 00:59:59 Africa/Bujumbura';  
   select timestamptz'1977-4-30 00:59:59 Africa/Cairo';      
   select timestamptz'1977-4-30 00:59:59 Africa/Casablanca'; 
   select timestamptz'1977-4-30 00:59:59 Africa/Ceuta';      
   select timestamptz'1977-4-30 00:59:59 Africa/Conakry';    
   select timestamptz'1977-4-30 00:59:59 Africa/Dakar';      
-  select timestamptz'1977-4-30 00:59:59 Africa/Dar_es_Salaam'
+  select timestamptz'1977-4-30 00:59:59 Africa/Dar_es_Salaam';
   select timestamptz'1977-4-30 00:59:59 Africa/Djibouti';   
   select timestamptz'1977-4-30 00:59:59 Africa/Douala';     
   select timestamptz'1977-4-30 00:59:59 Africa/El_Aaiun';   
   select timestamptz'1977-4-30 00:59:59 Africa/Freetown';   
   select timestamptz'1977-4-30 00:59:59 Africa/Gaborone';   
   select timestamptz'1977-4-30 00:59:59 Africa/Harare';     
-  select timestamptz'1977-4-30 00:59:59 Africa/Johannesburg'
+  select timestamptz'1977-4-30 00:59:59 Africa/Johannesburg';
   select timestamptz'1977-4-30 00:59:59 Africa/Juba';       
   select timestamptz'1977-4-30 00:59:59 Africa/Kampala';    
   select timestamptz'1977-4-30 00:59:59 Africa/Khartoum';   
@@ -100,7 +100,7 @@
   select timestamptz'1977-4-30 00:59:59 Africa/Ndjamena';   
   select timestamptz'1977-4-30 00:59:59 Africa/Niamey';     
   select timestamptz'1977-4-30 00:59:59 Africa/Nouakchott'; 
-  select timestamptz'1977-4-30 00:59:59 Africa/Ouagadougou'
+  select timestamptz'1977-4-30 00:59:59 Africa/Ouagadougou';
   select timestamptz'1977-4-30 00:59:59 Africa/Porto-Novo'; 
   select timestamptz'1977-4-30 00:59:59 Africa/Sao_Tome';   
   select timestamptz'1977-4-30 00:59:59 Africa/Timbuktu';   
@@ -217,7 +217,7 @@
   select timestamptz'2015-10-9 13:08:00 Asia/Thimbu';       
   select timestamptz'2015-10-9 13:08:00 Asia/Thimphu';      
   select timestamptz'2015-10-9 13:08:00 Asia/Tokyo';        
-  select timestamptz'2015-10-9 13:08:00 Asia/Ujung_Pandang'
+  select timestamptz'2015-10-9 13:08:00 Asia/Ujung_Pandang';
   select timestamptz'2015-10-9 13:08:00 Asia/Ulaanbaatar';  
   select timestamptz'2015-10-9 13:08:00 Asia/Ulan_Bator';   
   select timestamptz'2015-10-9 13:08:00 Asia/Urumqi';       
@@ -308,7 +308,7 @@
   select timestamptz'1977-4-30 00:59:59 Asia/Thimbu';       
   select timestamptz'1977-4-30 00:59:59 Asia/Thimphu';      
   select timestamptz'1977-4-30 00:59:59 Asia/Tokyo';        
-  select timestamptz'1977-4-30 00:59:59 Asia/Ujung_Pandang'
+  select timestamptz'1977-4-30 00:59:59 Asia/Ujung_Pandang';
   select timestamptz'1977-4-30 00:59:59 Asia/Ulaanbaatar';  
   select timestamptz'1977-4-30 00:59:59 Asia/Ulan_Bator';   
   select timestamptz'1977-4-30 00:59:59 Asia/Urumqi';       

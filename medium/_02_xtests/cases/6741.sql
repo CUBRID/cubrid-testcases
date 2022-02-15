@@ -19,5 +19,5 @@ select c.n
  where a.n = b.n;
 select a.n + b.n
   from (select n,d from x) as a(n,d),
-       (select n,d from x) as b(n,d)
+       (select n,d from x) as b(n,d);
 rollback;

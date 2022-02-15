@@ -23,22 +23,22 @@ truncate table t1;
 -- columns with HV
 insert into t1 values ('10',n'10',3);
 
-prepare st from 'select ? + i2 from t1'
+prepare st from 'select ? + i2 from t1';
 execute st using '2001';
 
-prepare st from 'select ? + i2 from t1'
+prepare st from 'select ? + i2 from t1';
 execute st using NULL;
 
-prepare st from 'select ? + i2 from t1'
+prepare st from 'select ? + i2 from t1';
 execute st using n'2001';
 
-prepare st from 'select s1 + ? from t1'
+prepare st from 'select s1 + ? from t1';
 execute st using 0.123123e1;
 
-prepare st from 'select ? + sn1 from t1'
+prepare st from 'select ? + sn1 from t1';
 execute st using 1.2;
 
-prepare st from 'select s1 + ? from t1'
+prepare st from 'select s1 + ? from t1';
 execute st using NULL;
 
 drop table t1;
@@ -58,48 +58,48 @@ select 2123456789 + NULL;
 
 
 -- 2 HV
-prepare st from 'select ? + ?'
+prepare st from 'select ? + ?';
 execute st using '2001-10-11',4;
 
-prepare st from 'select ? + ?'
+prepare st from 'select ? + ?';
 execute st using 4,'2001-10-11';
 
-prepare st from 'select ? + ?'
+prepare st from 'select ? + ?';
 execute st using 4,'abc';
 
-prepare st from 'select ? + ?'
+prepare st from 'select ? + ?';
 execute st using 'abc',4;
 
-prepare st from 'select ? + ?'
+prepare st from 'select ? + ?';
 execute st using 4,'123';
 
-prepare st from 'select ? + ?'
+prepare st from 'select ? + ?';
 execute st using 4,NULL;
 
 -- 1 HV
-prepare st from 'select ? + 4'
+prepare st from 'select ? + 4';
 execute st using '2001';
 
-prepare st from 'select 4.321 + ?'
+prepare st from 'select 4.321 + ?';
 execute st using '2001';
 
-prepare st from 'select ? + ''2001'''
+prepare st from 'select ? + ''2001''';
 execute st using 4;
 
-prepare st from 'select ''2001'' + ?'
+prepare st from 'select ''2001'' + ?';
 execute st using 0.123123e1;
 
-prepare st from 'select ? + 4'
+prepare st from 'select ? + 4';
 execute st using n'2001';
 
-prepare st from 'select n''2001'' + ?'
+prepare st from 'select n''2001'' + ?';
 execute st using 0.123123e1;
 
-prepare st from 'select n''2001-10-11'' + ?'
+prepare st from 'select n''2001-10-11'' + ?';
 execute st using 0.123123e1;
 
 -- overflow
-prepare st from 'select ? + ?'
+prepare st from 'select ? + ?';
 execute st using '222123456789',213456789;
 
 drop prepare st;

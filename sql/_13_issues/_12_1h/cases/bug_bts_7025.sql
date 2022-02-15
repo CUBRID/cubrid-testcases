@@ -1,4 +1,4 @@
-CREATE TABLE t(a double, b double)
+CREATE TABLE t(a double, b double);
 INSERT INTO t VALUES (1,NULL);
 
 INSERT INTO t VALUES (2,NULL);

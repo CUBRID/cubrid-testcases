@@ -55,6 +55,6 @@ select if(count(*)=0, 'ok', 'nok') from t1 where name='inserted';
 select if(count(*)=0, 'ok', 'nok') from trigger_actions;
 
 
-drop trigger trigg1
+drop trigger trigg1;
 drop table trigger_actions;
 drop table t1, t2;

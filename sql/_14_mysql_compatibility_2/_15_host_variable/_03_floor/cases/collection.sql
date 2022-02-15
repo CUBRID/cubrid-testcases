@@ -1,5 +1,5 @@
 --- collection
-prepare st from 'select floor(?)'
+prepare st from 'select floor(?)';
 execute st using {12,12.2};
 
 create table t1 (s1 set(int, double));

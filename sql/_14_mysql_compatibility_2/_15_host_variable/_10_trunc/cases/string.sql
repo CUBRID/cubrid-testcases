@@ -25,24 +25,24 @@ select trunc('asd',1);
 select trunc(1.523,n'1');
 
 -- 2HV
-prepare st from 'select trunc(?,?)'
+prepare st from 'select trunc(?,?)';
 execute st using '2.1234e0',3;
 
-prepare st from 'select trunc(?,?)'
+prepare st from 'select trunc(?,?)';
 execute st using '1.123','2';
 
-prepare st from 'select trunc(?,?)'
+prepare st from 'select trunc(?,?)';
 execute st using 'asd',2;
 
 -- 1HV
-prepare st from 'select trunc(?,1)'
+prepare st from 'select trunc(?,1)';
 execute st using '2001-10-11';
 
-prepare st from 'select trunc(?,1)'
+prepare st from 'select trunc(?,1)';
 execute st using '1.1234';
 
-prepare st from 'select trunc(1.123,?)'
+prepare st from 'select trunc(1.123,?)';
 execute st using '2001-10-11';
 
-prepare st from 'select trunc(1.123,?)'
+prepare st from 'select trunc(1.123,?)';
 execute st using '1';

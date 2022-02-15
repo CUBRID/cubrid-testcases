@@ -68,15 +68,17 @@ sscan
     cost:  ? card ?
 Query stmt:
 select stddev(foo.i), stddev(foo.sm), stddev(foo.n), stddev(foo.f), stddev(foo.d), stddev(foo.m) from foo foo
+===================================================
 min(c)    min(v)    min(s)    min(nc)    min(vnc)    min(b)    min(vb)    min(i)    min(sm)    min(n)    min(f)    min(d)    min(m)    min(da)    min(ti)    min(ts)    
 null     null     null     null     null     null     null     null     null     null     null     null     null     null     null     null     
 
 Query plan:
 sscan
     class: foo node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select stddev(foo.i), stddev(foo.sm), stddev(foo.n), stddev(foo.f), stddev(foo.d), stddev(foo.m) from foo foo
+select min(foo.c), min(foo.v), min(foo.s), min(foo.nc), min(foo.vnc), min(foo.b), min(foo.vb), min(foo.i), min(foo.sm), min(foo.n), min(foo.f), min(foo.d), min(foo.m), min(foo.da), min(foo.ti), min(foo.ts) from foo foo where ? <> ?
 ===================================================
 max(c)    max(v)    max(s)    max(nc)    max(vnc)    max(b)    max(vb)    max(i)    max(sm)    max(n)    max(f)    max(d)    max(m)    max(da)    max(ti)    max(ts)    
 null     null     null     null     null     null     null     null     null     null     null     null     null     null     null     null     
@@ -125,6 +127,14 @@ select variance(foo.i), variance(foo.sm), variance(foo.n), variance(foo.f), vari
 stddev(i)    stddev(sm)    stddev(n)    stddev(f)    stddev(d)    stddev(m)    
 null     null     null     null     null     null     
 
+Query plan:
+sscan
+    class: foo node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select stddev(foo.i), stddev(foo.sm), stddev(foo.n), stddev(foo.f), stddev(foo.d), stddev(foo.m) from foo foo where ? <> ?
+===================================================
 0
 ===================================================
 0

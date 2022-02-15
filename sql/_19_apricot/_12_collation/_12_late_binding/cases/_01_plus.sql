@@ -16,13 +16,13 @@ select /*+ RECOMPILE */ s1 + 'AA' from t2 order by 1;
 select /*+ RECOMPILE */ s1 + 'AA' from t3 order by 1;
 
 -- HV
-prepare s from 'select /*+ RECOMPILE */ s1 + ? from t1 order by 1'
+prepare s from 'select /*+ RECOMPILE */ s1 + ? from t1 order by 1';
 execute s using 'AA';
 
-prepare s from 'select /*+ RECOMPILE */  s1 + ? from t2 order by 1'
+prepare s from 'select /*+ RECOMPILE */  s1 + ? from t2 order by 1';
 execute s using 'AA';
 
-prepare s from 'select /*+ RECOMPILE */  s1 + ? from t3 order by 1'
+prepare s from 'select /*+ RECOMPILE */  s1 + ? from t3 order by 1';
 execute s using 'AA';
 
 
@@ -35,13 +35,13 @@ select /*+ RECOMPILE */ * from t2 where 'aa' > s1 + '0'  order by 1;
 select /*+ RECOMPILE */ * from t3 where 'aa' > s1 + '0'  order by 1;
 
 -- HV
-prepare s from 'select /*+ RECOMPILE */ * from t1 where ? > s1 + ?  order by 1'
+prepare s from 'select /*+ RECOMPILE */ * from t1 where ? > s1 + ?  order by 1';
 execute s using 'aa','0';
 
-prepare s from 'select /*+ RECOMPILE */ * from t2 where ? > s1 + ?  order by 1'
+prepare s from 'select /*+ RECOMPILE */ * from t2 where ? > s1 + ?  order by 1';
 execute s using 'aa','0';
 
-prepare s from 'select /*+ RECOMPILE */ * from t3 where ? > s1 + ?  order by 1'
+prepare s from 'select /*+ RECOMPILE */ * from t3 where ? > s1 + ?  order by 1';
 execute s using 'aa','0';
 
 drop prepare s;

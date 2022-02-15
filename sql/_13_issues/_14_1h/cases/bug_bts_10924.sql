@@ -25,7 +25,7 @@ drop table if exists that_21;
 drop table if exists that_22;
 drop table if exists that_23;
 drop table if exists that_24;
-drop table if exists that_25
+drop table if exists that_25;
 drop table if exists that_26;
 drop table if exists that_27;
 drop table if exists that_28;
@@ -776,7 +776,7 @@ drop table if exists that_21;
 drop table if exists that_22;
 drop table if exists that_23;
 drop table if exists that_24;
-drop table if exists that_25
+drop table if exists that_25;
 drop table if exists that_26;
 drop table if exists that_27;
 drop table if exists that_28;

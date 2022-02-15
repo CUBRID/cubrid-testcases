@@ -16,10 +16,10 @@ select s1,i from t2 where s1 like 'a%' order by 1,2;
 
 select s1,i from t2 where s1 like 'A%' order by 1,2;
 
-prepare s from 'select s1,i from t1 where s1 like ? order by 1,2'
+prepare s from 'select s1,i from t1 where s1 like ? order by 1,2';
 execute s using 'A%';
 
-prepare s from 'select s1,i from t1 where s1 like ? order by 1,2'
+prepare s from 'select s1,i from t1 where s1 like ? order by 1,2';
 execute s using 'a%';
 
 select 1 from db_root where cast ('AA' as string collate utf8_en_ci) like 'a%';

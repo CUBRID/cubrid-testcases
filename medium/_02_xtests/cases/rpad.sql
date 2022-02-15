@@ -5,7 +5,7 @@ create table test_rpad(
 			rpad_1_1_e varchar(50) charset utf8,
 			rpad_1_6 varchar(50) charset utf8
 );
-insert into test_rpad (rpad_1_1_k,rpad_1_1_e,rpad_1_6) values ('얼렐레','ebebe ',' ')
+insert into test_rpad (rpad_1_1_k,rpad_1_1_e,rpad_1_6) values ('얼렐레','ebebe ',' ');
 			select rpad('얼렐레',-1) from test_rpad;
 			select rpad('ebebe ',-1) from test_rpad;
 			select rpad(rpad_1_1_k,-1) from test_rpad;

@@ -1,5 +1,5 @@
 autocommit off;
-select {1,2}-{2,3} from class faculty1
+select {1,2}-{2,3} from class faculty1;
 create class foo (bar set of int);
 /* This ought to work */
 insert into foo values ({10}+{20});
@@ -26,7 +26,7 @@ create class foo (dates set of date);
 rollback work;
 create class y (a int, sa sequence (int));
 insert into y(a,sa) values
- (select count(*) from y, { (select count(*) from y) } )
+ (select count(*) from y, { (select count(*) from y) } );
 select * from y;
 rollback work;
 create class x (a string);
@@ -55,7 +55,7 @@ insert into y values ('y0', x0, null);
 insert into y values ('y1', x0, x1);
 select y0.s, y1.s, set(select w.i from w where w.i > y0.a.i)
 from y y0, y y1
-where y0.a.i = y1.a.i
+where y0.a.i = y1.a.i;
 
 rollback work;
 create class x (a int, sx set of x);

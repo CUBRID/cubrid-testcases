@@ -26,22 +26,22 @@ select upper (cast (s1 as string collate utf8_en_cs)) from t2 order by 1;
 
 
 -- late binding
-prepare s from 'select lower(s1 + ?) from t1 order by 1'
+prepare s from 'select lower(s1 + ?) from t1 order by 1';
 execute s using 'A';
 
-prepare s from 'select lower(s1 + ?) from t2 order by 1'
-execute s using 'A';
-
-
-prepare s from 'select lower(cast ((s1 + ?) as string collate utf8_tr_cs)) from t2 order by 1'
+prepare s from 'select lower(s1 + ?) from t2 order by 1';
 execute s using 'A';
 
 
-
-prepare s from 'select ? + upper(s1) from t1 order by 1'
+prepare s from 'select lower(cast ((s1 + ?) as string collate utf8_tr_cs)) from t2 order by 1';
 execute s using 'A';
 
-prepare s from 'select ? + upper(s1) from t2 order by 1'
+
+
+prepare s from 'select ? + upper(s1) from t1 order by 1';
+execute s using 'A';
+
+prepare s from 'select ? + upper(s1) from t2 order by 1';
 execute s using 'A';
 
 

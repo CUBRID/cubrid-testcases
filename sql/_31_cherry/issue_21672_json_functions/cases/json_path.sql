@@ -14,7 +14,7 @@ SELECT JSON_EXTRACT('[10, 20, [30, 40]]', '$[2][1]');
 -- CBRD-22531,CBRD-22648
 SELECT JSON_EXTRACT('[10, 20, [30, 40]]', '$[1]', '$[0]');
 -- CBRD-22648
-select json_extract('[10, 20]', '$[1]', '$[0]')=json_extract('[10, 20]', '$[0]', '$[1]')
+select json_extract('[10, 20]', '$[1]', '$[0]')=json_extract('[10, 20]', '$[0]', '$[1]');
 -- CBRD-22540
 SELECT JSON_EXTRACT('[10, 20, [30, 40]]', '$[2][*]');
 
@@ -26,10 +26,10 @@ insert into t values (3, '{"id":"3","name":"candy"}');
 insert into t values (4, '{"id":"4","name":"donkey"}');
 SELECT c, JSON_EXTRACT(c, '$.id'), i FROM t WHERE JSON_EXTRACT(c, '$.id') > 1 ORDER BY JSON_EXTRACT(c, '$.name');
 ALTER TABLE t ADD COLUMN n INT;
-UPDATE t SET n=1 WHERE JSON_EXTRACT(c, '$.id') = '"4"'
+UPDATE t SET n=1 WHERE JSON_EXTRACT(c, '$.id') = '"4"';
 UPDATE t SET n=1 WHERE JSON_EXTRACT(c, '$.id') = '4';
 SELECT c, JSON_EXTRACT(c, '$.id'), i, n FROM t WHERE JSON_EXTRACT(c, '$.id') > 1  ORDER BY JSON_EXTRACT(c, '$.name');
-DELETE FROM t WHERE JSON_EXTRACT(c, '$.id') = '"4"'
+DELETE FROM t WHERE JSON_EXTRACT(c, '$.id') = '"4"';
 DELETE FROM t WHERE JSON_EXTRACT(c, '$.id') = '4';
 SELECT c, JSON_EXTRACT(c, '$.id'), i, n FROM t WHERE JSON_EXTRACT(c, '$.id') > 1  ORDER BY JSON_EXTRACT(c, '$.name');
 --error

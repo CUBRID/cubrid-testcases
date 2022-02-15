@@ -8,8 +8,8 @@ insert into t values ('1234567890');
 
 select /*+ recompile */ a from t where a like '1234567890ABCDEF%';
 
-prepare stmt from 'select /*+ recompile */ a from t where a like ?+''%'''
-execute stmt using '1234567890ABCDEF'
+prepare stmt from 'select /*+ recompile */ a from t where a like ?+''%''';
+execute stmt using '1234567890ABCDEF';
 deallocate prepare stmt;
 
 drop table t;

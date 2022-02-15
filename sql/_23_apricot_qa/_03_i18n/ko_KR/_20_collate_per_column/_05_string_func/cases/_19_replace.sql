@@ -14,15 +14,15 @@ select replace (s1,'가','伽') from t2 order by 1;
 
 
 -- late binding
-prepare s from 'select replace(s1 ,?,?) from t1 order by 1'
+prepare s from 'select replace(s1 ,?,?) from t1 order by 1';
 execute s using '가','伽';
 DEALLOCATE PREPARE s;
 
-prepare s from 'select replace(?, s1 , ?) from t1 order by 1'
+prepare s from 'select replace(?, s1 , ?) from t1 order by 1';
 execute s using 'aab伽a가bb','XX';
 DEALLOCATE PREPARE s;
 
-prepare s from 'select replace(?, s1 , ?) from t2 order by 1'
+prepare s from 'select replace(?, s1 , ?) from t2 order by 1';
 execute s using 'aab가a伽bb','XX';
 DEALLOCATE PREPARE s;
 

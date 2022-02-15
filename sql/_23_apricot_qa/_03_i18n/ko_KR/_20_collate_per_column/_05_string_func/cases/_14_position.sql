@@ -18,11 +18,11 @@ select position (cast (s1 as string collate utf8_ko_cs_uca) in '가伽伽가') f
 
 
 -- late binding
-prepare s from 'select position(s1 in ?) from t1 order by 1'
+prepare s from 'select position(s1 in ?) from t1 order by 1';
 execute s using '가伽伽가';
 DEALLOCATE PREPARE s;
 
-prepare s from 'select position(s1 in ?) from t2 order by 1'
+prepare s from 'select position(s1 in ?) from t2 order by 1';
 execute s using '가伽伽가';
 DEALLOCATE PREPARE s;
 

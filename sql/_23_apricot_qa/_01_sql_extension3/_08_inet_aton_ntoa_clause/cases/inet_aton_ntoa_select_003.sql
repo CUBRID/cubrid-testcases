@@ -42,14 +42,14 @@ select inet_aton('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 
 --bug
 drop table if exists t;
-create table t select inet_aton('127.0.0.1') as i;
+create table t; select inet_aton('127.0.0.1') as i;
 drop table if exists t;
 
 
 select inet_aton('127.0.0.1');
 
 drop table if exists t;
-create table t select 1 as i;
+create table t; select 1 as i;
 insert into [t] values();
 select count(*) from t;
 select * from t;
@@ -57,7 +57,7 @@ drop table if exists t;
 
 
 drop table if exists t;
-create table t select 1 as i;
+create table t; select 1 as i;
 insert into t values();
 select * from t;
 drop table if exists t;
@@ -65,12 +65,12 @@ drop table if exists t;
 drop table if exists t,t1;
 create table t1 (i int);
 insert t1 values(1);
-create table t select * from t1;
+create table t; select * from t1;
 select * from t;
 drop table if exists t,t1;
 
 drop table if exists t;
-create table t select 1 as i;
+create table t; select 1 as i;
 insert into [t] values(select (values(1)));
 select count(*) from t;
 select * from t;

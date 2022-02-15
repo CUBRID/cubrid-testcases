@@ -1,5 +1,5 @@
 --+ holdcas on;
-drop table if exists t
+drop table if exists t;
 
 create table t(a int);
 insert into t values(1),(10),(11);

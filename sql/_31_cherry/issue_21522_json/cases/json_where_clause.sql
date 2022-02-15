@@ -11,7 +11,7 @@ select * from t1 join t where json_extract(t.b, '/a') is not null and json_extra
 select * from t1 join t where json_extract(t.b, '/a') =json_extract(json_object('id', 'b'), '/id'); 
 select * from t join t1 on json_extract(t.b, '/a') !=json_extract(json_object('id', 'b'), '/id');
 select json_merge(json_extract(t1.name, '/FinanceProductResults/0'), t.c) from t join t1 on json_extract(t.b, '/a') = json_extract(json_object('id', 'b'), '/id');
-select json_array(json_extract(t1.name, '/FinanceProductResults/0'), t.c) from t join t1 on json_extract(t.b, '/a') = json_extract(json_object('id', 'b'), '/id')
+select json_array(json_extract(t1.name, '/FinanceProductResults/0'), t.c) from t join t1 on json_extract(t.b, '/a') = json_extract(json_object('id', 'b'), '/id');
 select json_insert(json_extract(t1.name, '/FinanceProductResults/0'), '/ProductResults/-', t.c) from t join t1 on json_extract(t.b, '/a') = json_extract(json_object('id', 'b'), '/id');
 select json_insert(json_extract(t1.name, '/FinanceProductResults/0'), '/ProductResults/1/-', t.c) from t join t1 on json_extract(t.b, '/a') = json_extract(json_object('id', 'b'), '/id') where json_type(json_extract(json_insert( json_extract(t1.name, '/FinanceProductResults/0'), '/ProductResults/-', t.c), '/ProductResults')) = 'JSON_ARRAY';
 

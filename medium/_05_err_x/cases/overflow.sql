@@ -1,3 +1,3 @@
 autocommit off;
-select ssn from faculty1
+select ssn from faculty1;
 rollback;

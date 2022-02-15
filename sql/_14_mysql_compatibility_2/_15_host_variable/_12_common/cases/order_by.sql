@@ -9,28 +9,28 @@ select * from t1 order by 1,2;
 
 select i1+3 from t1 order by 1;
 
-prepare st from 'select i1+? from t1 order by 1'
+prepare st from 'select i1+? from t1 order by 1';
 execute st using 3;
 
 
 select i1+3.2 from t1 order by 1;
 
-prepare st from 'select i1+? from t1 order by 1'
+prepare st from 'select i1+? from t1 order by 1';
 execute st using 3.2;
 
 
-prepare st from 'select ? - d1 from t1 order by 1'
+prepare st from 'select ? - d1 from t1 order by 1';
 execute st using 3;
 
-prepare st from 'select ? - d1 from t1 order by 1'
+prepare st from 'select ? - d1 from t1 order by 1';
 execute st using 3.0;
 
-prepare st from 'select ? - d1 from t1 order by ?'
+prepare st from 'select ? - d1 from t1 order by ?';
 execute st using 3.0,1;
 
 select i1,d1 from t1 order by i1 + 3.3;
 
-prepare st from 'select i1,d1 from t1 order by i1 + ?'
+prepare st from 'select i1,d1 from t1 order by i1 + ?';
 execute st using 3.3;
 
 drop table t1;
@@ -50,16 +50,16 @@ select * from t1 order by 1,2;
 
 select i1+3.2 from t1 order by 1;
 
-prepare st from 'select i1+? from t1 order by 1'
+prepare st from 'select i1+? from t1 order by 1';
 execute st using 3.2;
 
 
-prepare st from 'select ? - d1 from t1 order by 1'
+prepare st from 'select ? - d1 from t1 order by 1';
 execute st using 3.0;
 
 select i1,d1 from t1 order by i1 + 3.3;
 
-prepare st from 'select i1,d1 from t1 order by i1 + ?'
+prepare st from 'select i1,d1 from t1 order by i1 + ?';
 execute st using 3.3;
 
 drop table t1;
@@ -76,16 +76,16 @@ select * from t1 order by 1,2;
 
 select i1+3.2 from t1 order by 1;
 
-prepare st from 'select i1+? from t1 order by 1'
+prepare st from 'select i1+? from t1 order by 1';
 execute st using 3.2;
 
 
-prepare st from 'select ? - d1 from t1 order by 1'
+prepare st from 'select ? - d1 from t1 order by 1';
 execute st using 3.0;
 
 select i1,d1 from t1 order by i1 + 3.3;
 
-prepare st from 'select i1,d1 from t1 order by i1 + ?'
+prepare st from 'select i1,d1 from t1 order by i1 + ?';
 execute st using 3.3;
 
 drop table t1;
