@@ -46,7 +46,7 @@ C1: COMMIT WORK;
 MC: wait until C1 ready;
 
 /* test case */
-C1: DELETE FROM t1 WHERE (tag = 'X' or id = 7) and (select sleep(3)=0);
+C1: DELETE FROM t1 WHERE (tag = 'X' or id = 7) and (select sleep(3)=0)<>0;
 MC: sleep 1;
  
 C2: UPDATE t1 SET tag = 'X' WHERE tag IN ('A','B','C') ;

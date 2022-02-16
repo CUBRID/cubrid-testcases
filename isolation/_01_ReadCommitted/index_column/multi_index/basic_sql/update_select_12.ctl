@@ -34,7 +34,7 @@ MC: wait until C1 ready;
 C1: update t1 set col='aaa' where id=5 and col='opq';
 MC: wait until C1 ready;
 
-C2: select * from t1 where id>0 and col not like 'cc' and (select sleep(10)=0) order by id,2;
+C2: select * from t1 where id>0 and col not like 'cc' and (select sleep(10)=0)<>0 order by id,2;
 MC: sleep 2;
 C1: commit;
 MC: wait until C1 ready;
