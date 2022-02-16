@@ -47,7 +47,7 @@ set trace on;
 
 WITH cte_6I00nizhY AS
 (
-select a, max(b) from (select * from t1 order by 1,2,3,4) group by d
+select d, max(b) from (select * from t1 order by 1,2,3,4) group by d
 )
 select * from cte_6I00nizhY order by 1, 2;
 
@@ -55,7 +55,7 @@ show trace;
 
 WITH cte_6I00nizhY AS
 (
-select a, max(b) from (select * from t1 order by 1,2,3,4) group by d
+select d, max(b) from (select * from t1 order by 1,2,3,4) group by d
 )
 select count(*) from cte_6I00nizhY;
 
@@ -63,7 +63,7 @@ show trace;
 
 WITH cte_6I00nizhY AS
 (
-select a, max(b) from (select * from t1 order by 1,2,3,4) group by d
+select d, max(b) from (select * from t1 order by 1,2,3,4) group by d
 )
 , cte_1110 as (select count(*) from cte_6I00nizhY) select * from cte_1110;
 
