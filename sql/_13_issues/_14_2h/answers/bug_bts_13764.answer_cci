@@ -1260,87 +1260,22 @@ select t?.i, t?.k from t? t? group by t?.j
 ===================================================
 i    k    
 1     1     
-1     1     
-1     1     
-
-Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t? node[?]
-                 cost:  ? card ?
-    sort:  ? asc, ? asc, ? asc
-    cost:  ? card ?
-Query stmt:
-(select t?.i, t?.j, t?.k from t? t? order by ?, ?, ?)
-Query plan:
-temp(group by)
-    subplan: sscan
-                 class: newt node[?]
-                 cost:  ? card ?
-    sort:  
-    cost:  ? card ?
-Query stmt:
-select newt.i, newt.k from (select t?.i, t?.j, t?.k from t? t? order by ?, ?, ?) newt (i, j, k) group by newt.j
-===================================================
-i    k    
-
-Query plan:
-temp(group by)
-    subplan: sscan
-                 class: t? node[?]
-                 cost:  ? card ?
-    sort:  
-    cost:  ? card ?
-Query stmt:
-select t?.i, t?.k from t? t? group by t?.j having t?.i= ?:? 
-===================================================
-i    k    
-1     1     
-1     1     
-1     1     
-
-Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t? node[?]
-                 cost:  ? card ?
-    sort:  ? asc, ? asc, ? asc
-    cost:  ? card ?
-Query stmt:
-(select t?.i, t?.j, t?.k from t? t? order by ?, ?, ?)
-Query plan:
-temp(group by)
-    subplan: sscan
-                 class: newt node[?]
-                 cost:  ? card ?
-    sort:  
-    cost:  ? card ?
-Query stmt:
-select newt.i, newt.k from (select t?.i, t?.j, t?.k from t? t? order by ?, ?, ?) newt (i, j, k) group by newt.j having newt.i= ?:? 
-===================================================
-i    k    
+2     2     
 3     3     
+4     4     
 5     5     
+6     6     
 7     7     
 
 Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t? node[?]
-                 cost:  ? card ?
-    sort:  ? desc, ? asc, ? asc
-    cost:  ? card ?
-Query stmt:
-(select t?.i, t?.j, t?.k from t? t? order by ? desc , ?, ?)
-Query plan:
 temp(group by)
     subplan: sscan
                  class: newt node[?]
                  cost:  ? card ?
-    sort:  
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select newt.i, newt.k from (select t?.i, t?.j, t?.k from t? t? order by ? desc , ?, ?) newt (i, j, k) group by newt.j
+select newt.i, newt.k from t? newt group by newt.i, newt.k
 ===================================================
 i    k    
 
@@ -1355,25 +1290,63 @@ Query stmt:
 select t?.i, t?.k from t? t? group by t?.j having t?.i= ?:? 
 ===================================================
 i    k    
+1     1     
 
 Query plan:
-temp(order by)
+temp(group by)
     subplan: sscan
-                 class: t? node[?]
+                 class: newt node[?]
+                 sargs: term[?]
                  cost:  ? card ?
-    sort:  ? desc, ? asc, ? asc
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-(select t?.i, t?.j, t?.k from t? t? order by ? desc , ?, ?)
+select newt.i, newt.k from t? newt where newt.i= ?:?  group by newt.i, newt.k
+===================================================
+i    k    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+
 Query plan:
 temp(group by)
     subplan: sscan
                  class: newt node[?]
                  cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select newt.i, newt.k from t? newt group by newt.i, newt.k
+===================================================
+i    k    
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 cost:  ? card ?
     sort:  
     cost:  ? card ?
 Query stmt:
-select newt.i, newt.k from (select t?.i, t?.j, t?.k from t? t? order by ? desc , ?, ?) newt (i, j, k) group by newt.j having newt.i= ?:? 
+select t?.i, t?.k from t? t? group by t?.j having t?.i= ?:? 
+===================================================
+i    k    
+1     1     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: newt node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select newt.i, newt.k from t? newt where newt.i= ?:?  group by newt.i, newt.k
 ===================================================
 0
 ===================================================
