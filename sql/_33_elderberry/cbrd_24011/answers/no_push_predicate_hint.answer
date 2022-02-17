@@ -30,19 +30,19 @@ sscan
     class: aa node[?]
     cost:  ? card ?
 Query stmt:
-(select aa.col_a, aa.cnt from (select tab_b.col_a, count(*) as [cnt] from tab_b tab_b group by tab_b.col_a having (count(*)>=?)) aa (col_a, cnt))
+(select /*+ NO_MERGE */ aa.col_a, aa.cnt from (select tab_b.col_a, count(*) as [cnt] from tab_b tab_b group by tab_b.col_a having (count(*)>=?)) aa (col_a, cnt))
 Query plan:
 sscan
     class: bb node[?]
     cost:  ? card ?
 Query stmt:
-(select bb.col_a, bb.cnt from (select aa.col_a, aa.cnt from (select tab_b.col_a, count(*) as [cnt] from tab_b tab_b group by tab_b.col_a having (count(*)>=?)) aa (col_a, cnt)) bb (col_a, cnt))
+(select /*+ NO_MERGE */ bb.col_a, bb.cnt from (select /*+ NO_MERGE */ aa.col_a, aa.cnt from (select tab_b.col_a, count(*) as [cnt] from tab_b tab_b group by tab_b.col_a having (count(*)>=?)) aa (col_a, cnt)) bb (col_a, cnt))
 Query plan:
 sscan
     class: cc node[?]
     cost:  ? card ?
 Query stmt:
-(select cc.col_a, cc.cnt from (select bb.col_a, bb.cnt from (select aa.col_a, aa.cnt from (select tab_b.col_a, count(*) as [cnt] from tab_b tab_b group by tab_b.col_a having (count(*)>=?)) aa (col_a, cnt)) bb (col_a, cnt)) cc (col_a, cnt))
+(select /*+ NO_MERGE */ cc.col_a, cc.cnt from (select /*+ NO_MERGE */ bb.col_a, bb.cnt from (select /*+ NO_MERGE */ aa.col_a, aa.cnt from (select tab_b.col_a, count(*) as [cnt] from tab_b tab_b group by tab_b.col_a having (count(*)>=?)) aa (col_a, cnt)) bb (col_a, cnt)) cc (col_a, cnt))
 Query plan:
 nl-join (cross join)
     outer: sscan
@@ -55,7 +55,7 @@ nl-join (cross join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ NO_PUSH_PRED */ count(*) from tab_a a, (select cc.col_a, cc.cnt from (select bb.col_a, bb.cnt from (select aa.col_a, aa.cnt from (select tab_b.col_a, count(*) as [cnt] from tab_b tab_b group by tab_b.col_a having (count(*)>=?)) aa (col_a, cnt)) bb (col_a, cnt)) cc (col_a, cnt)) d (col_a, cnt) where a.col_a= ?:?  and d.col_a= ?:?  and a.col_a=d.col_a
+select /*+ NO_PUSH_PRED */ count(*) from tab_a a, (select /*+ NO_MERGE */ cc.col_a, cc.cnt from (select /*+ NO_MERGE */ bb.col_a, bb.cnt from (select /*+ NO_MERGE */ aa.col_a, aa.cnt from (select tab_b.col_a, count(*) as [cnt] from tab_b tab_b group by tab_b.col_a having (count(*)>=?)) aa (col_a, cnt)) bb (col_a, cnt)) cc (col_a, cnt)) d (col_a, cnt) where a.col_a= ?:?  and d.col_a= ?:?  and a.col_a=d.col_a
 ===================================================
 count(*)    
 10     
@@ -75,19 +75,19 @@ sscan
     sargs: term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-(select /*+ NO_PUSH_PRED */ aa.col_a, aa.cnt from (select tab_b.col_a, count(*) as [cnt] from tab_b tab_b group by tab_b.col_a) aa (col_a, cnt) where (aa.cnt>= ?:? ) and aa.col_a= ?:? )
+(select /*+ NO_PUSH_PRED NO_MERGE */ aa.col_a, aa.cnt from (select tab_b.col_a, count(*) as [cnt] from tab_b tab_b group by tab_b.col_a) aa (col_a, cnt) where (aa.cnt>= ?:? ) and aa.col_a= ?:? )
 Query plan:
 sscan
     class: bb node[?]
     cost:  ? card ?
 Query stmt:
-(select bb.col_a, bb.cnt from (select /*+ NO_PUSH_PRED */ aa.col_a, aa.cnt from (select tab_b.col_a, count(*) as [cnt] from tab_b tab_b group by tab_b.col_a) aa (col_a, cnt) where (aa.cnt>= ?:? ) and aa.col_a= ?:? ) bb (col_a, cnt))
+(select /*+ NO_MERGE */ bb.col_a, bb.cnt from (select /*+ NO_PUSH_PRED NO_MERGE */ aa.col_a, aa.cnt from (select tab_b.col_a, count(*) as [cnt] from tab_b tab_b group by tab_b.col_a) aa (col_a, cnt) where (aa.cnt>= ?:? ) and aa.col_a= ?:? ) bb (col_a, cnt))
 Query plan:
 sscan
     class: cc node[?]
     cost:  ? card ?
 Query stmt:
-(select cc.col_a, cc.cnt from (select bb.col_a, bb.cnt from (select /*+ NO_PUSH_PRED */ aa.col_a, aa.cnt from (select tab_b.col_a, count(*) as [cnt] from tab_b tab_b group by tab_b.col_a) aa (col_a, cnt) where (aa.cnt>= ?:? ) and aa.col_a= ?:? ) bb (col_a, cnt)) cc (col_a, cnt))
+(select /*+ NO_MERGE */ cc.col_a, cc.cnt from (select /*+ NO_MERGE */ bb.col_a, bb.cnt from (select /*+ NO_PUSH_PRED NO_MERGE */ aa.col_a, aa.cnt from (select tab_b.col_a, count(*) as [cnt] from tab_b tab_b group by tab_b.col_a) aa (col_a, cnt) where (aa.cnt>= ?:? ) and aa.col_a= ?:? ) bb (col_a, cnt)) cc (col_a, cnt))
 Query plan:
 nl-join (cross join)
     outer: sscan
@@ -99,6 +99,6 @@ nl-join (cross join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from tab_a a, (select cc.col_a, cc.cnt from (select bb.col_a, bb.cnt from (select /*+ NO_PUSH_PRED */ aa.col_a, aa.cnt from (select tab_b.col_a, count(*) as [cnt] from tab_b tab_b group by tab_b.col_a) aa (col_a, cnt) where (aa.cnt>= ?:? ) and aa.col_a= ?:? ) bb (col_a, cnt)) cc (col_a, cnt)) d (col_a, cnt) where a.col_a= ?:?  and a.col_a=d.col_a
+select count(*) from tab_a a, (select /*+ NO_MERGE */ cc.col_a, cc.cnt from (select /*+ NO_MERGE */ bb.col_a, bb.cnt from (select /*+ NO_PUSH_PRED NO_MERGE */ aa.col_a, aa.cnt from (select tab_b.col_a, count(*) as [cnt] from tab_b tab_b group by tab_b.col_a) aa (col_a, cnt) where (aa.cnt>= ?:? ) and aa.col_a= ?:? ) bb (col_a, cnt)) cc (col_a, cnt)) d (col_a, cnt) where a.col_a= ?:?  and a.col_a=d.col_a
 ===================================================
 0

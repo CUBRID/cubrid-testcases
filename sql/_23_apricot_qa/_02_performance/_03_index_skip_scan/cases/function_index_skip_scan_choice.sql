@@ -14,17 +14,17 @@ update statistics on all classes;
 commit;
 
 -- index skip scan idx1, because we are above the tipping point (ratio is 21)
-select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS */ k from t where j between 105 and 106 or j between 445 and 446 order by i) tbl;
+select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ k from t where j between 105 and 106 or j between 445 and 446 order by i) tbl;
 --idx2
-select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS */ i from t where j between 105 and 106 or j between 445 and 446 order by i) tbl;
+select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ i from t where j between 105 and 106 or j between 445 and 446 order by i) tbl;
 --idx1
-select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS */ i from t where j between 105 and 106 or j between 445 and 446 using index idx1 order by i) tbl;
+select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ i from t where j between 105 and 106 or j between 445 and 446 using index idx1 order by i) tbl;
 --idx2
-select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS */ k from t where j between 105 and 106 or j between 445 and 446 using index idx2 order by i) tbl;
+select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ k from t where j between 105 and 106 or j between 445 and 446 using index idx2 order by i) tbl;
 --idx2
-select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS */ i from t where j between 105 and 106 or j between 445 and 446 using index idx1,idx2 order by i) tbl;
+select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ i from t where j between 105 and 106 or j between 445 and 446 using index idx1,idx2 order by i) tbl;
 --idx1
-select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS */ i from t where j between 105 and 106 or j between 445 and 446 using index idx1(+),idx2 order by i) tbl;
+select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ i from t where j between 105 and 106 or j between 445 and 446 using index idx1(+),idx2 order by i) tbl;
 
 
 -- make ratio 20, to drop below tipping point for ISS versus covering activation
@@ -34,7 +34,7 @@ update statistics on all classes;
 commit;
 
 --Test idx2
-select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS */ k from t where j between 105 and 106 or j between 445 and 446 order by i) tbl;
+select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ k from t where j between 105 and 106 or j between 445 and 446 order by i) tbl;
 
 drop table mille;
 drop table firstcol;

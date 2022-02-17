@@ -3478,13 +3478,13 @@ iscan
     index: idx term[?] (covers) (index skip scan)
     cost:  ? card ?
 Query stmt:
-(select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where ((t.j< ?:? ) or (t.j> ?:? )))
+(select /*+ INDEX_SS NO_MERGE */ t.i, t.j, t.k, t.l from t t where ((t.j< ?:? ) or (t.j> ?:? )))
 Query plan:
 sscan
     class: tt node[?]
     cost:  ? card ?
 Query stmt:
-select count(*) from (select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where ((t.j< ?:? ) or (t.j> ?:? ))) tt (i, j, k, l)
+select count(*) from (select /*+ INDEX_SS NO_MERGE */ t.i, t.j, t.k, t.l from t t where ((t.j< ?:? ) or (t.j> ?:? ))) tt (i, j, k, l)
 ===================================================
 i    j    k    l    
 
@@ -3577,7 +3577,7 @@ sscan
     sargs: term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-(select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where t.j is not null  and t.l= ?:? )
+(select /*+ INDEX_SS NO_MERGE */ t.i, t.j, t.k, t.l from t t where t.j is not null  and t.l= ?:? )
 Query plan:
 temp(order by)
     subplan: sscan
@@ -3586,7 +3586,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select [__t?].i, [__t?].j, [__t?].k, [__t?].l from (select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where t.j is not null  and t.l= ?:? ) [__t?] (i, j, k, l) order by ?
+select [__t?].i, [__t?].j, [__t?].k, [__t?].l from (select /*+ INDEX_SS NO_MERGE */ t.i, t.j, t.k, t.l from t t where t.j is not null  and t.l= ?:? ) [__t?] (i, j, k, l) order by ?
 ===================================================
 0
 ===================================================

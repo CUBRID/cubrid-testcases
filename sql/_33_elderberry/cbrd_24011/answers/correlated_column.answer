@@ -135,17 +135,11 @@ Query stmt:
 /* ---> skip GROUP BY */
 Query plan:
 sscan
-    class: __t? node[?]
+    class: b node[?]
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select [__t?].col_a, [__t?].col_b from (select tab_a.col_a, max(tab_a.col_b) as [col_b] from tab_a tab_a where (tab_a.col_a> ?:? ) group by tab_a.col_a) [__t?] (col_a, col_b) where [__t?].col_a=a.col_a)
-Query plan:
-sscan
-    class: b node[?]
-    cost:  ? card ?
-Query stmt:
-(select ? from (select [__t?].col_a, [__t?].col_b from (select tab_a.col_a, max(tab_a.col_b) as [col_b] from tab_a tab_a where (tab_a.col_a> ?:? ) group by tab_a.col_a) [__t?] (col_a, col_b) where [__t?].col_a=a.col_a) b (col_a, col_b))
+(select ? from (select tab_a.col_a, max(tab_a.col_b) as [col_b] from tab_a tab_a where (tab_a.col_a> ?:? ) group by tab_a.col_a) b (col_a, col_b) where (b.col_a=a.col_a))
 Query plan:
 sscan
     class: a node[?]
@@ -153,7 +147,7 @@ sscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-select count(*) from tab_a a where  not  exists (select ? from (select [__t?].col_a, [__t?].col_b from (select tab_a.col_a, max(tab_a.col_b) as [col_b] from tab_a tab_a where (tab_a.col_a> ?:? ) group by tab_a.col_a) [__t?] (col_a, col_b) where [__t?].col_a=a.col_a) b (col_a, col_b))
+select count(*) from tab_a a where  not  exists (select ? from (select tab_a.col_a, max(tab_a.col_b) as [col_b] from tab_a tab_a where (tab_a.col_a> ?:? ) group by tab_a.col_a) b (col_a, col_b) where (b.col_a=a.col_a))
 ===================================================
 count(*)    
 1000     
@@ -169,17 +163,11 @@ Query stmt:
 /* ---> skip GROUP BY */
 Query plan:
 sscan
-    class: __t? node[?]
+    class: b node[?]
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select [__t?].col_a, [__t?].col_b from (select tab_a.col_a, max(tab_a.col_b) as [col_b] from tab_a tab_a where (tab_a.col_a> ?:? ) group by tab_a.col_a) [__t?] (col_a, col_b) where [__t?].col_b=a.col_a)
-Query plan:
-sscan
-    class: b node[?]
-    cost:  ? card ?
-Query stmt:
-(select ? from (select [__t?].col_a, [__t?].col_b from (select tab_a.col_a, max(tab_a.col_b) as [col_b] from tab_a tab_a where (tab_a.col_a> ?:? ) group by tab_a.col_a) [__t?] (col_a, col_b) where [__t?].col_b=a.col_a) b (col_a, col_b))
+(select ? from (select tab_a.col_a, max(tab_a.col_b) as [col_b] from tab_a tab_a where (tab_a.col_a> ?:? ) group by tab_a.col_a) b (col_a, col_b) where (b.col_b=a.col_a))
 Query plan:
 sscan
     class: a node[?]
@@ -187,31 +175,19 @@ sscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-select count(*) from tab_a a where  not  exists (select ? from (select [__t?].col_a, [__t?].col_b from (select tab_a.col_a, max(tab_a.col_b) as [col_b] from tab_a tab_a where (tab_a.col_a> ?:? ) group by tab_a.col_a) [__t?] (col_a, col_b) where [__t?].col_b=a.col_a) b (col_a, col_b))
+select count(*) from tab_a a where  not  exists (select ? from (select tab_a.col_a, max(tab_a.col_b) as [col_b] from tab_a tab_a where (tab_a.col_a> ?:? ) group by tab_a.col_a) b (col_a, col_b) where (b.col_b=a.col_a))
 ===================================================
 count(*)    
 140     
 
 Query plan:
 iscan
-    class: tab_a node[?]
+    class: b node[?]
     index: idx term[?] (covers)
     filtr: term[?]
     cost:  ? card ?
 Query stmt:
-(select tab_a.col_a, tab_a.col_b from tab_a tab_a where (tab_a.col_a> ?:? ) and tab_a.col_a=a.col_a)
-Query plan:
-sscan
-    class: __t? node[?]
-    cost:  ? card ?
-Query stmt:
-(select [__t?].col_a, [__t?].col_b from (select tab_a.col_a, tab_a.col_b from tab_a tab_a where (tab_a.col_a> ?:? ) and tab_a.col_a=a.col_a) [__t?] (col_a, col_b))
-Query plan:
-sscan
-    class: b node[?]
-    cost:  ? card ?
-Query stmt:
-(select ? from (select [__t?].col_a, [__t?].col_b from (select tab_a.col_a, tab_a.col_b from tab_a tab_a where (tab_a.col_a> ?:? ) and tab_a.col_a=a.col_a) [__t?] (col_a, col_b)) b (col_a, col_b))
+(select ? from tab_a b where (b.col_a=a.col_a) and (b.col_a> ?:? ))
 Query plan:
 sscan
     class: a node[?]
@@ -219,31 +195,19 @@ sscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-select count(*) from tab_a a where  not  exists (select ? from (select [__t?].col_a, [__t?].col_b from (select tab_a.col_a, tab_a.col_b from tab_a tab_a where (tab_a.col_a> ?:? ) and tab_a.col_a=a.col_a) [__t?] (col_a, col_b)) b (col_a, col_b))
+select count(*) from tab_a a where  not  exists (select ? from tab_a b where (b.col_a=a.col_a) and (b.col_a> ?:? ))
 ===================================================
 count(*)    
 140     
 
 Query plan:
 iscan
-    class: a node[?]
+    class: b node[?]
     index: idx term[?] (covers)
     filtr: term[?]
     cost:  ? card ?
 Query stmt:
-(select a.col_a, a.col_b from tab_a a where (a.col_a> ?:? ) and a.col_a=a.col_a)
-Query plan:
-sscan
-    class: __t? node[?]
-    cost:  ? card ?
-Query stmt:
-(select [__t?].col_a, [__t?].col_b from (select a.col_a, a.col_b from tab_a a where (a.col_a> ?:? ) and a.col_a=a.col_a) [__t?] (col_a, col_b))
-Query plan:
-sscan
-    class: b node[?]
-    cost:  ? card ?
-Query stmt:
-(select ? from (select [__t?].col_a, [__t?].col_b from (select a.col_a, a.col_b from tab_a a where (a.col_a> ?:? ) and a.col_a=a.col_a) [__t?] (col_a, col_b)) b (col_a, col_b))
+(select ? from tab_a b where (b.col_a=a.col_a) and (b.col_a> ?:? ))
 Query plan:
 sscan
     class: a node[?]
@@ -251,7 +215,7 @@ sscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-select count(*) from tab_a a where  not  exists (select ? from (select [__t?].col_a, [__t?].col_b from (select a.col_a, a.col_b from tab_a a where (a.col_a> ?:? ) and a.col_a=a.col_a) [__t?] (col_a, col_b)) b (col_a, col_b))
+select count(*) from tab_a a where  not  exists (select ? from tab_a b where (b.col_a=a.col_a) and (b.col_a> ?:? ))
 ===================================================
 0
 ===================================================

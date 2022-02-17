@@ -49,34 +49,14 @@ count(foo.i)    group_concat(distinct jt.a)    b
 9     2     222     
 
 Query plan:
-temp(group by)
-    subplan: nl-join (cross join)
-                 outer: nl-join (cross join)
-                            outer: sscan
-                                       class: foo node[?]
-                                       cost:  ? card ?
-                            inner: sscan
-                                       class: v? node[?]
-                                       cost:  ? card ?
-                            cost:  ? card ?
-                 inner: sscan
-                            class: jt node[?]
-                            cost:  ? card ?
+temp(order by)
+    subplan: sscan
+                 class: v? node[?]
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select count(foo.i), group_concat(distinct jt.a), jt.b from foo foo, foo v?, (json_table ('[ {"a": ?, "b": [?,?]}, {"a": ?, "b": [?,?]}, {"a":?}]', '$[*]' columns (a integer PATH '$."a"' NULL ON EMPTY NULL ON ERROR, nested path '$."b"[*]' columns (b integer PATH '$' NULL ON EMPTY NULL ON ERROR ) )) as jt) group by jt.b
-===================================================
-Error:-494
-===================================================
-count(v1.j)    group_concat(distinct k)    b    
-9     2,4,6     null     
-9     2,4,6     11     
-9     2,4,6     22     
-9     2,4,6     111     
-9     2,4,6     222     
-
+(select v?.i, v?.j, (v?.i+v?.j) from foo v? order by ?)
 Query plan:
 temp(group by)
     subplan: nl-join (cross join)
@@ -95,7 +75,45 @@ temp(group by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select count(v?.j), group_concat(distinct (v?.i+v?.j)), jt.b from foo foo, foo v?, (json_table ('[ {"a": ?, "b": [?,?]}, {"a": ?, "b": [?,?]}, {"a":?}]', '$[*]' columns (a integer PATH '$."a"' NULL ON EMPTY NULL ON ERROR, nested path '$."b"[*]' columns (b integer PATH '$' NULL ON EMPTY NULL ON ERROR ) )) as jt) group by jt.b
+select count(foo.i), group_concat(distinct jt.a), jt.b from foo foo, (select v?.i, v?.j, (v?.i+v?.j) from foo v? order by ?) v? (i, j, k), (json_table ('[ {"a": ?, "b": [?,?]}, {"a": ?, "b": [?,?]}, {"a":?}]', '$[*]' columns (a integer PATH '$."a"' NULL ON EMPTY NULL ON ERROR, nested path '$."b"[*]' columns (b integer PATH '$' NULL ON EMPTY NULL ON ERROR ) )) as jt) group by jt.b
+===================================================
+Error:-494
+===================================================
+count(v1.j)    group_concat(distinct k)    b    
+9     2,4,6     null     
+9     2,4,6     11     
+9     2,4,6     22     
+9     2,4,6     111     
+9     2,4,6     222     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: v? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select v?.j, (v?.i+v?.j), v?.i from foo v? order by ?)
+Query plan:
+temp(group by)
+    subplan: nl-join (cross join)
+                 outer: nl-join (cross join)
+                            outer: sscan
+                                       class: foo node[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: v? node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: jt node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select count(v?.j), group_concat(distinct v?.k), jt.b from foo foo, (select v?.j, (v?.i+v?.j), v?.i from foo v? order by ?) v? (j, k, i), (json_table ('[ {"a": ?, "b": [?,?]}, {"a": ?, "b": [?,?]}, {"a":?}]', '$[*]' columns (a integer PATH '$."a"' NULL ON EMPTY NULL ON ERROR, nested path '$."b"[*]' columns (b integer PATH '$' NULL ON EMPTY NULL ON ERROR ) )) as jt) group by jt.b
 ===================================================
 i    j    i    j    k    a    b    
 1     1     1     1     2     1     11     

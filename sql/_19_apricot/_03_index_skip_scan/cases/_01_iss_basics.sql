@@ -151,7 +151,7 @@ select /*+ recompile INDEX_SS */ i,j,k,l from t where (j = 2 or j = 3) and l bet
 select /*+ recompile INDEX_SS */ i,j,k,l from t where (j = 2 or j = 3);
 
 -- this one has a bigger selectivity and thus yields a sscan (!)
-select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS */ i,j,k,l from t where (j < 2 or j > 3)) tt;
+select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ i,j,k,l from t where (j < 2 or j > 3)) tt;
 
 select /*+ recompile INDEX_SS */ i,j,k,l from t where i is not null and j = 2 and k = 1001;
 select /*+ recompile INDEX_SS */ i,j,k,l from t where j = 2 and k = 1001 and (l = 3 or l > 5);
@@ -163,7 +163,7 @@ select /*+ recompile INDEX_SS */ i,j,k,l from t where j = 9 and k = 4861 using i
 select /*+ recompile INDEX_SS */ i,j,k,l from t where i = 5;
 select /*+ recompile INDEX_SS */ i,j,k,l from t where i > 2;
 select /*+ recompile INDEX_SS */ i,j,k,l from t where j <> 2 order by i,j,k,l limit 10;
-select * from (select /*+ recompile INDEX_SS */ i,j,k,l from t where j is not null and l = 1001 ) order by 1;
+select * from (select /*+ recompile INDEX_SS NO_MERGE */ i,j,k,l from t where j is not null and l = 1001 ) order by 1;
 
 
 drop table t;
