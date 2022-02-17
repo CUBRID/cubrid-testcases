@@ -9,7 +9,7 @@ select /*+ ordered */ a.* from tmp_hls a, (select /*+ NO_MERGE */ * from tmp_hls
 show trace;
 select /*+ ordered */ a.* from tmp_hls a, (select /*+ NO_MERGE */ * from tmp_hls b where b.c >=1) b where b.c = a.c; 
 show trace;
-select /*+ ordered */ a.* from tmp_hls a, (select /*+ NO_MERGE */ * from tmp_hls b where b.c >=3) b, (select * from tmp_hls b where b.c >=3) c where a.a = b.a and b.b = a.b and b.a = c.a; 
+select /*+ ordered */ a.* from tmp_hls a, (select /*+ NO_MERGE */ * from tmp_hls b where b.c >=3) b, (select /*+ NO_MERGE */ * from tmp_hls b where b.c >=3) c where a.a = b.a and b.b = a.b and b.a = c.a; 
 show trace;
 
 -- with other predicate
