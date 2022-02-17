@@ -23,7 +23,7 @@ MC: wait until C1 ready;
 C2: create index idx1 on t(id desc,col desc) with online parallel 2;
 MC: wait until C2 blocked;
 
-C1: delete from t where col=1 and  (select sleep(5)=0);
+C1: delete from t where col=1 and  (select sleep(5)=0)<>0;
 MC: wait until C1 ready;
 C1: commit;
 

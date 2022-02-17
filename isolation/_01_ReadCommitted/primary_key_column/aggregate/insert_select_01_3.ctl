@@ -39,7 +39,7 @@ C1: commit;
 MC: wait until C1 ready;
 
 /* test case */
-C1: update t set id=id+10 where id%2=0 and (select sleep(10)=0);
+C1: update t set id=id+10 where id%2=0 and (select sleep(10)=0)<>0;
 /*MC: wait until C1 ready;*/
 MC: sleep 1;
 

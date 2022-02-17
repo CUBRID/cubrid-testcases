@@ -66,7 +66,7 @@ MC: wait until C2 ready;
 C3: commit work;
 MC: wait until C3 ready;
 
-C4: DELETE FROM tb1 WHERE id BETWEEN 200 AND 210 and (select sleep(1)=0);
+C4: DELETE FROM tb1 WHERE id BETWEEN 200 AND 210 and (select sleep(1)=0)<>0;
 MC: wait until C4 ready;
 
 C4: commit;

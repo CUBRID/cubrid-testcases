@@ -35,7 +35,7 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C1: delete from t where (select sleep(2)=0);
+C1: delete from t where (select sleep(2)=0)<>0;
 MC: sleep 1;
 
 C2: insert into t values(2,'aa'); 

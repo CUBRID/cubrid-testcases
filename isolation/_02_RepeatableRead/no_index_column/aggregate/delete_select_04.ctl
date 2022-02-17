@@ -34,7 +34,7 @@ MC: wait until C1 ready;
 C1: UPDATE tb1 SET id=id+10000 WHERE id%2=0;
 MC: wait until C1 ready;
 
-C2: DELETE FROM tb1 WHERE id=1 or id=19998 and (select sleep(5)=0);
+C2: DELETE FROM tb1 WHERE id=1 or id=19998 and (select sleep(5)=0)<>0;
 /* expected (0,9999) */ 
 MC: wait until C2 ready;
 

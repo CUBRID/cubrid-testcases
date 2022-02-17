@@ -65,7 +65,7 @@ MC: wait until C1 ready;
 C1: insert into t select id+1000,col from t where id between 3 and 5;
 MC: wait until C1 ready;
 
-C5: insert into t select id+1010,col from t where id between 2 and 4 and (select sleep(4)=0);
+C5: insert into t select id+1010,col from t where id between 2 and 4 and (select sleep(4)=0)<>0;
 C1: commit;
 MC: wait until C1 ready;
 
@@ -86,7 +86,7 @@ MC: wait until C2 ready;
 C3: commit;
 MC: wait until C3 ready;
 
-C4: insert into t select id+1020,col from t where (id between 4 and 5) and (select sleep(2)=0);
+C4: insert into t select id+1020,col from t where (id between 4 and 5) and (select sleep(2)=0)<>0;
 MC: wait until C4 ready;
 
 C4: commit;

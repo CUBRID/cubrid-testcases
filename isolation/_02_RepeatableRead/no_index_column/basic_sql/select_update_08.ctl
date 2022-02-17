@@ -29,7 +29,7 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C1: select t1.* from t1 where (select sleep(1)=0) order by id,col;
+C1: select t1.* from t1 where (select sleep(1)=0)<>0 order by id,col;
 MC: sleep 2;
 C2: update t1 set id=7 where id=6;
 MC: wait until C2 ready;
