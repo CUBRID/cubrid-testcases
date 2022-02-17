@@ -15,41 +15,29 @@ g
 20     
 
 Query plan:
-iscan
-    class: t? node[?]
-    index: i_t?_a?g term[?]
-    cost:  ? card ?
-Query stmt:
-(select t?.g from t? t? where  log?(t?.l)>?)
-Query plan:
 temp(order by)
-    subplan: sscan
+    subplan: iscan
                  class: t node[?]
+                 index: i_t?_a?g term[?]
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t.g from (select t?.g from t? t? where  log?(t?.l)>?) t (g) order by ?
+select t.g from t? t where ( log?(t.l)>?) order by ?
 ===================================================
 g    
 20     
 
 Query plan:
-iscan
-    class: t? node[?]
-    index: i_t?_a?g term[?]
-    cost:  ? card ?
-Query stmt:
-(select t?.g from t? t? where  log?(t?.l)>?)
-Query plan:
 temp(order by)
-    subplan: sscan
+    subplan: iscan
                  class: t node[?]
+                 index: i_t?_a?g term[?]
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t.g from (select t?.g from t? t? where  log?(t?.l)>?) t (g) order by ?
+select t.g from t? t where ( log?(t.l)>?) order by ?
 ===================================================
 0
 ===================================================

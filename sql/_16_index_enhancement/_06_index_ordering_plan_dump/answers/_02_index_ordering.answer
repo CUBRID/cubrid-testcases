@@ -1190,14 +1190,14 @@ iscan
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-(select test_table.col_smallint, test_table.col_integer, test_table.col_bigint, test_table.col_float, test_table.col_double, test_table.col_monetary, test_table.col_numeric_?_?, test_table.col_char_?, test_table.col_varchar_?, test_table.col_string, test_table.col_nchar_?, test_table.col_varnchar_?, test_table.col_date, test_table.col_time, test_table.col_timestamp, test_table.col_datetime, test_table.col_bit, test_table.col_varbit, test_table.col_set, test_table.col_set_int, test_table.col_seq, test_table.col_multiset from test_table test_table where (test_table.col_timestamp> ?:? ) order by ?)
+(select /*+ NO_MERGE */ test_table.col_smallint, test_table.col_integer, test_table.col_bigint, test_table.col_float, test_table.col_double, test_table.col_monetary, test_table.col_numeric_?_?, test_table.col_char_?, test_table.col_varchar_?, test_table.col_string, test_table.col_nchar_?, test_table.col_varnchar_?, test_table.col_date, test_table.col_time, test_table.col_timestamp, test_table.col_datetime, test_table.col_bit, test_table.col_varbit, test_table.col_set, test_table.col_set_int, test_table.col_seq, test_table.col_multiset from test_table test_table where (test_table.col_timestamp> ?:? ) order by ?)
 /* ---> skip ORDER BY */
 Query plan:
 sscan
     class: t node[?]
     cost:  ? card ?
 Query stmt:
-select t.col_timestamp, t.col_datetime from (select test_table.col_smallint, test_table.col_integer, test_table.col_bigint, test_table.col_float, test_table.col_double, test_table.col_monetary, test_table.col_numeric_?_?, test_table.col_char_?, test_table.col_varchar_?, test_table.col_string, test_table.col_nchar_?, test_table.col_varnchar_?, test_table.col_date, test_table.col_time, test_table.col_timestamp, test_table.col_datetime, test_table.col_bit, test_table.col_varbit, test_table.col_set, test_table.col_set_int, test_table.col_seq, test_table.col_multiset from test_table test_table where (test_table.col_timestamp> ?:? ) order by ?) t (col_smallint, col_integer, col_bigint, col_float, col_double, col_monetary, col_numeric_?_?, col_char_?, col_varchar_?, col_string, col_nchar_?, col_varnchar_?, col_date, col_time, col_timestamp, col_datetime, col_bit, col_varbit, col_set, col_set_int, col_seq, col_multiset)
+select t.col_timestamp, t.col_datetime from (select /*+ NO_MERGE */ test_table.col_smallint, test_table.col_integer, test_table.col_bigint, test_table.col_float, test_table.col_double, test_table.col_monetary, test_table.col_numeric_?_?, test_table.col_char_?, test_table.col_varchar_?, test_table.col_string, test_table.col_nchar_?, test_table.col_varnchar_?, test_table.col_date, test_table.col_time, test_table.col_timestamp, test_table.col_datetime, test_table.col_bit, test_table.col_varbit, test_table.col_set, test_table.col_set_int, test_table.col_seq, test_table.col_multiset from test_table test_table where (test_table.col_timestamp> ?:? ) order by ?) t (col_smallint, col_integer, col_bigint, col_float, col_double, col_monetary, col_numeric_?_?, col_char_?, col_varchar_?, col_string, col_nchar_?, col_varnchar_?, col_date, col_time, col_timestamp, col_datetime, col_bit, col_varbit, col_set, col_set_int, col_seq, col_multiset)
 ===================================================
 col_timestamp    col_datetime    
 2008-05-03 18:59:12.0     2010-05-03 18:59:12.203     
@@ -1209,14 +1209,14 @@ iscan
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select test_table.col_smallint, test_table.col_integer, test_table.col_bigint, test_table.col_float, test_table.col_double, test_table.col_monetary, test_table.col_numeric_?_?, test_table.col_char_?, test_table.col_varchar_?, test_table.col_string, test_table.col_nchar_?, test_table.col_varnchar_?, test_table.col_date, test_table.col_time, test_table.col_timestamp, test_table.col_datetime, test_table.col_bit, test_table.col_varbit, test_table.col_set, test_table.col_set_int, test_table.col_seq, test_table.col_multiset from test_table test_table where test_table.col_timestamp= ?:?  order by ?)
+(select /*+ NO_MERGE */ test_table.col_smallint, test_table.col_integer, test_table.col_bigint, test_table.col_float, test_table.col_double, test_table.col_monetary, test_table.col_numeric_?_?, test_table.col_char_?, test_table.col_varchar_?, test_table.col_string, test_table.col_nchar_?, test_table.col_varnchar_?, test_table.col_date, test_table.col_time, test_table.col_timestamp, test_table.col_datetime, test_table.col_bit, test_table.col_varbit, test_table.col_set, test_table.col_set_int, test_table.col_seq, test_table.col_multiset from test_table test_table where test_table.col_timestamp= ?:?  order by ?)
 /* ---> skip ORDER BY */
 Query plan:
 sscan
     class: t node[?]
     cost:  ? card ?
 Query stmt:
-select t.col_timestamp, t.col_datetime from (select test_table.col_smallint, test_table.col_integer, test_table.col_bigint, test_table.col_float, test_table.col_double, test_table.col_monetary, test_table.col_numeric_?_?, test_table.col_char_?, test_table.col_varchar_?, test_table.col_string, test_table.col_nchar_?, test_table.col_varnchar_?, test_table.col_date, test_table.col_time, test_table.col_timestamp, test_table.col_datetime, test_table.col_bit, test_table.col_varbit, test_table.col_set, test_table.col_set_int, test_table.col_seq, test_table.col_multiset from test_table test_table where test_table.col_timestamp= ?:?  order by ?) t (col_smallint, col_integer, col_bigint, col_float, col_double, col_monetary, col_numeric_?_?, col_char_?, col_varchar_?, col_string, col_nchar_?, col_varnchar_?, col_date, col_time, col_timestamp, col_datetime, col_bit, col_varbit, col_set, col_set_int, col_seq, col_multiset)
+select t.col_timestamp, t.col_datetime from (select /*+ NO_MERGE */ test_table.col_smallint, test_table.col_integer, test_table.col_bigint, test_table.col_float, test_table.col_double, test_table.col_monetary, test_table.col_numeric_?_?, test_table.col_char_?, test_table.col_varchar_?, test_table.col_string, test_table.col_nchar_?, test_table.col_varnchar_?, test_table.col_date, test_table.col_time, test_table.col_timestamp, test_table.col_datetime, test_table.col_bit, test_table.col_varbit, test_table.col_set, test_table.col_set_int, test_table.col_seq, test_table.col_multiset from test_table test_table where test_table.col_timestamp= ?:?  order by ?) t (col_smallint, col_integer, col_bigint, col_float, col_double, col_monetary, col_numeric_?_?, col_char_?, col_varchar_?, col_string, col_nchar_?, col_varnchar_?, col_date, col_time, col_timestamp, col_datetime, col_bit, col_varbit, col_set, col_set_int, col_seq, col_multiset)
 ===================================================
 col_timestamp    
 2006-05-03 18:59:12.0     
@@ -1270,14 +1270,14 @@ iscan
     sort:  ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-(select test_table.col_smallint, test_table.col_integer, test_table.col_bigint, test_table.col_float, test_table.col_double, test_table.col_monetary, test_table.col_numeric_?_?, test_table.col_char_?, test_table.col_varchar_?, test_table.col_string, test_table.col_nchar_?, test_table.col_varnchar_?, test_table.col_date, test_table.col_time, test_table.col_timestamp, test_table.col_datetime, test_table.col_bit, test_table.col_varbit, test_table.col_set, test_table.col_set_int, test_table.col_seq, test_table.col_multiset from test_table test_table where test_table.col_string like  ?:?  order by ?, ?, ?)
+(select /*+ NO_MERGE */ test_table.col_smallint, test_table.col_integer, test_table.col_bigint, test_table.col_float, test_table.col_double, test_table.col_monetary, test_table.col_numeric_?_?, test_table.col_char_?, test_table.col_varchar_?, test_table.col_string, test_table.col_nchar_?, test_table.col_varnchar_?, test_table.col_date, test_table.col_time, test_table.col_timestamp, test_table.col_datetime, test_table.col_bit, test_table.col_varbit, test_table.col_set, test_table.col_set_int, test_table.col_seq, test_table.col_multiset from test_table test_table where test_table.col_string like  ?:?  order by ?, ?, ?)
 /* ---> skip ORDER BY */
 Query plan:
 sscan
     class: t node[?]
     cost:  ? card ?
 Query stmt:
-select t.col_smallint, t.col_float, t.col_string from (select test_table.col_smallint, test_table.col_integer, test_table.col_bigint, test_table.col_float, test_table.col_double, test_table.col_monetary, test_table.col_numeric_?_?, test_table.col_char_?, test_table.col_varchar_?, test_table.col_string, test_table.col_nchar_?, test_table.col_varnchar_?, test_table.col_date, test_table.col_time, test_table.col_timestamp, test_table.col_datetime, test_table.col_bit, test_table.col_varbit, test_table.col_set, test_table.col_set_int, test_table.col_seq, test_table.col_multiset from test_table test_table where test_table.col_string like  ?:?  order by ?, ?, ?) t (col_smallint, col_integer, col_bigint, col_float, col_double, col_monetary, col_numeric_?_?, col_char_?, col_varchar_?, col_string, col_nchar_?, col_varnchar_?, col_date, col_time, col_timestamp, col_datetime, col_bit, col_varbit, col_set, col_set_int, col_seq, col_multiset)
+select t.col_smallint, t.col_float, t.col_string from (select /*+ NO_MERGE */ test_table.col_smallint, test_table.col_integer, test_table.col_bigint, test_table.col_float, test_table.col_double, test_table.col_monetary, test_table.col_numeric_?_?, test_table.col_char_?, test_table.col_varchar_?, test_table.col_string, test_table.col_nchar_?, test_table.col_varnchar_?, test_table.col_date, test_table.col_time, test_table.col_timestamp, test_table.col_datetime, test_table.col_bit, test_table.col_varbit, test_table.col_set, test_table.col_set_int, test_table.col_seq, test_table.col_multiset from test_table test_table where test_table.col_string like  ?:?  order by ?, ?, ?) t (col_smallint, col_integer, col_bigint, col_float, col_double, col_monetary, col_numeric_?_?, col_char_?, col_varchar_?, col_string, col_nchar_?, col_varnchar_?, col_date, col_time, col_timestamp, col_datetime, col_bit, col_varbit, col_set, col_set_int, col_seq, col_multiset)
 ===================================================
 col_smallint    col_float    col_string    
 1     1.234     abcdefghijklmn     
@@ -1312,14 +1312,14 @@ iscan
     sort:  ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-(select test_table.col_smallint, test_table.col_integer, test_table.col_bigint, test_table.col_float, test_table.col_double, test_table.col_monetary, test_table.col_numeric_?_?, test_table.col_char_?, test_table.col_varchar_?, test_table.col_string, test_table.col_nchar_?, test_table.col_varnchar_?, test_table.col_date, test_table.col_time, test_table.col_timestamp, test_table.col_datetime, test_table.col_bit, test_table.col_varbit, test_table.col_set, test_table.col_set_int, test_table.col_seq, test_table.col_multiset from test_table test_table where test_table.col_varchar_? like  ?:?  order by ?, ?)
+(select /*+ NO_MERGE */ test_table.col_smallint, test_table.col_integer, test_table.col_bigint, test_table.col_float, test_table.col_double, test_table.col_monetary, test_table.col_numeric_?_?, test_table.col_char_?, test_table.col_varchar_?, test_table.col_string, test_table.col_nchar_?, test_table.col_varnchar_?, test_table.col_date, test_table.col_time, test_table.col_timestamp, test_table.col_datetime, test_table.col_bit, test_table.col_varbit, test_table.col_set, test_table.col_set_int, test_table.col_seq, test_table.col_multiset from test_table test_table where test_table.col_varchar_? like  ?:?  order by ?, ?)
 /* ---> skip ORDER BY */
 Query plan:
 sscan
     class: t node[?]
     cost:  ? card ?
 Query stmt:
-select t.col_smallint, t.col_float, t.col_string from (select test_table.col_smallint, test_table.col_integer, test_table.col_bigint, test_table.col_float, test_table.col_double, test_table.col_monetary, test_table.col_numeric_?_?, test_table.col_char_?, test_table.col_varchar_?, test_table.col_string, test_table.col_nchar_?, test_table.col_varnchar_?, test_table.col_date, test_table.col_time, test_table.col_timestamp, test_table.col_datetime, test_table.col_bit, test_table.col_varbit, test_table.col_set, test_table.col_set_int, test_table.col_seq, test_table.col_multiset from test_table test_table where test_table.col_varchar_? like  ?:?  order by ?, ?) t (col_smallint, col_integer, col_bigint, col_float, col_double, col_monetary, col_numeric_?_?, col_char_?, col_varchar_?, col_string, col_nchar_?, col_varnchar_?, col_date, col_time, col_timestamp, col_datetime, col_bit, col_varbit, col_set, col_set_int, col_seq, col_multiset)
+select t.col_smallint, t.col_float, t.col_string from (select /*+ NO_MERGE */ test_table.col_smallint, test_table.col_integer, test_table.col_bigint, test_table.col_float, test_table.col_double, test_table.col_monetary, test_table.col_numeric_?_?, test_table.col_char_?, test_table.col_varchar_?, test_table.col_string, test_table.col_nchar_?, test_table.col_varnchar_?, test_table.col_date, test_table.col_time, test_table.col_timestamp, test_table.col_datetime, test_table.col_bit, test_table.col_varbit, test_table.col_set, test_table.col_set_int, test_table.col_seq, test_table.col_multiset from test_table test_table where test_table.col_varchar_? like  ?:?  order by ?, ?) t (col_smallint, col_integer, col_bigint, col_float, col_double, col_monetary, col_numeric_?_?, col_char_?, col_varchar_?, col_string, col_nchar_?, col_varnchar_?, col_date, col_time, col_timestamp, col_datetime, col_bit, col_varbit, col_set, col_set_int, col_seq, col_multiset)
 ===================================================
 column_integer    
 1     
@@ -1393,14 +1393,14 @@ iscan
     sort:  ? asc, ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-(select test_table?.column_integer, test_table?.column_smallint, test_table?.column_numeric_?_?, test_table?.column_char_?, test_table?.column_varchar_?, test_table?.column_date, test_table?.column_bit, test_table?.column_time, test_table?.column_timestamp, test_table?.column_datetime from test_table? test_table? where (test_table?.column_smallint<=test_table?.column_integer*?) and (test_table?.column_varchar_?> ?:? ) order by ?, ?, ?, ?)
+(select /*+ NO_MERGE */ test_table?.column_integer, test_table?.column_smallint, test_table?.column_numeric_?_?, test_table?.column_char_?, test_table?.column_varchar_?, test_table?.column_date, test_table?.column_bit, test_table?.column_time, test_table?.column_timestamp, test_table?.column_datetime from test_table? test_table? where (test_table?.column_smallint<=test_table?.column_integer*?) and (test_table?.column_varchar_?> ?:? ) order by ?, ?, ?, ?)
 /* ---> skip ORDER BY */
 Query plan:
 sscan
     class: t node[?]
     cost:  ? card ?
 Query stmt:
-select t.column_varchar_?, t.column_bit, t.column_datetime, t.column_smallint from (select test_table?.column_integer, test_table?.column_smallint, test_table?.column_numeric_?_?, test_table?.column_char_?, test_table?.column_varchar_?, test_table?.column_date, test_table?.column_bit, test_table?.column_time, test_table?.column_timestamp, test_table?.column_datetime from test_table? test_table? where (test_table?.column_smallint<=test_table?.column_integer*?) and (test_table?.column_varchar_?> ?:? ) order by ?, ?, ?, ?) t (column_integer, column_smallint, column_numeric_?_?, column_char_?, column_varchar_?, column_date, column_bit, column_time, column_timestamp, column_datetime)
+select t.column_varchar_?, t.column_bit, t.column_datetime, t.column_smallint from (select /*+ NO_MERGE */ test_table?.column_integer, test_table?.column_smallint, test_table?.column_numeric_?_?, test_table?.column_char_?, test_table?.column_varchar_?, test_table?.column_date, test_table?.column_bit, test_table?.column_time, test_table?.column_timestamp, test_table?.column_datetime from test_table? test_table? where (test_table?.column_smallint<=test_table?.column_integer*?) and (test_table?.column_varchar_?> ?:? ) order by ?, ?, ?, ?) t (column_integer, column_smallint, column_numeric_?_?, column_char_?, column_varchar_?, column_date, column_bit, column_time, column_timestamp, column_datetime)
 ===================================================
 0
 ===================================================

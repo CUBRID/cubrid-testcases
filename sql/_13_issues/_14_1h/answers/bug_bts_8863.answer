@@ -47,12 +47,6 @@ a    clob_to_char(t1.b)    clob_to_char(t2.b)
 3     c     c     
 
 Query plan:
-sscan
-    class: t? node[?]
-    cost:  ? card ?
-Query stmt:
-(select t?.a, t?.b from t? t?)
-Query plan:
 temp(order by)
     subplan: nl-join (inner join)
                  edge:  term[?]
@@ -67,7 +61,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.a,  clob_to_char(t?.b),  clob_to_char(t?.b) from (select t?.a, t?.b from t? t?) t? (a, b), t? t? where  clob_to_char(t?.b)= clob_to_char(t?.b) order by ?
+select t?.a,  clob_to_char(t?.b),  clob_to_char(t?.b) from t? t?, t? t? where ( clob_to_char(t?.b)= clob_to_char(t?.b)) order by ?
 ===================================================
 0
 ===================================================

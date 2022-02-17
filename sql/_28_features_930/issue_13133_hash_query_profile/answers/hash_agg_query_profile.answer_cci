@@ -45,34 +45,24 @@
 ===================================================
 0
 ===================================================
-a    max(b)    
-1     2013-01-02     
-2     2013-12-02     
-1     2013-10-12     
+d    max(b)    
+red     2013-01-02     
+yellow     2013-12-02     
+blue     2013-10-12     
 
 ===================================================
 trace    
 
 Query Plan:
-  SORT (order by)
-    TABLE SCAN (t?)
-
-  rewritten query: (select t?.a, t?.b, t?.c, t?.d from t? t? order by ?, ?, ?, ?)
-
   SORT (group by)
     TABLE SCAN (__t?)
 
-  rewritten query: select [__t?].a, max([__t?].b) from (select t?.a, t?.b, t?.c, t?.d from t? t? order by ?, ?, ?, ?) [__t?] (a, b, c, d) group by [__t?].d
-
+  rewritten query: select [__t?].d, max([__t?].b) from t? [__t?] group by [__t?].d
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
-    SUBQUERY (uncorrelated)
-      SELECT (time: ?, fetch: ?, ioread: ?)
-        SCAN (table: t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
@@ -86,32 +76,22 @@ avg(a)    max(b)
 ===================================================
 trace    
 {
-  "Query Plan": [
-    {
-      "SORT (order by)": {
-        "TABLE SCAN": {
-          "table": "t?"
-        }
-      },
-      "rewritten query": "(select t?.a, t?.b, t?.c, t?.d from t? t? order by ?, ?, ?, ?)"
+  "Query Plan": {
+    "SORT (group by)": {
+      "TABLE SCAN": {
+        "table": "__t?"
+      }
     },
-    {
-      "SORT (group by)": {
-        "TABLE SCAN": {
-          "table": "__t?"
-        }
-      },
-      "rewritten query": "select avg([__t?].a), max([__t?].b) from (select t?.a, t?.b, t?.c, t?.d from t? t? order by ?, ?, ?, ?) [__t?] (a, b, c, d) group by [__t?].d"
-    }
-  ],
+    "rewritten query": "select avg([__t?].a), max([__t?].b) from t? [__t?] group by [__t?].d"
+  },
   "Trace Statistics": {
     "SELECT": {
       "time": ?,
       "fetch": ?,
       "ioread": ?,
       "SCAN": {
-        "access": "temp",
-        "temp": {
+        "access": "table (t?)",
+        "heap": {
           "time": ?,
           "fetch": ?,
           "ioread": ?,
@@ -126,69 +106,28 @@ trace
         "page": ?,
         "ioread": ?,
         "rows": ?
-      },
-      "SUBQUERY (uncorrelated)": {
-        "SELECT": {
-          "time": ?,
-          "fetch": ?,
-          "ioread": ?,
-          "SCAN": {
-            "access": "table (t?)",
-            "heap": {
-              "time": ?,
-              "fetch": ?,
-              "ioread": ?,
-              "readrows": ?,
-              "rows": ?
-            }
-          },
-          "ORDERBY": {
-            "time": ?,
-            "sort": true,
-            "page": ?,
-            "ioread": ?
-          }
-        }
       }
     }
   }
 }     
 
 ===================================================
-a    max(b)    
-1     2013-01-02     
-2     2013-12-02     
-1     2013-10-12     
+d    max(b)    
+red     2013-01-02     
+yellow     2013-12-02     
+blue     2013-10-12     
 
 ===================================================
 trace    
 {
-  "Query Plan": [
-    {
-      "SORT (order by)": {
-        "TABLE SCAN": {
-          "table": "t?"
-        }
-      },
-      "rewritten query": "(select t?.a, t?.b, t?.d from t? t? order by ?, ?, ?)"
-    },
-    {
-      "SORT (group by)": {
-        "TABLE SCAN": {
-          "table": "__t?"
-        }
-      },
-      "rewritten query": "select [__t?].a, max([__t?].b) from (select t?.a, t?.b, t?.d from t? t? order by ?, ?, ?) [__t?] (a, b, d) group by [__t?].d"
-    }
-  ],
   "Trace Statistics": {
     "SELECT": {
       "time": ?,
       "fetch": ?,
       "ioread": ?,
       "SCAN": {
-        "access": "temp",
-        "temp": {
+        "access": "table (t?)",
+        "heap": {
           "time": ?,
           "fetch": ?,
           "ioread": ?,
@@ -203,69 +142,36 @@ trace
         "page": ?,
         "ioread": ?,
         "rows": ?
-      },
-      "SUBQUERY (uncorrelated)": {
-        "SELECT": {
-          "time": ?,
-          "fetch": ?,
-          "ioread": ?,
-          "SCAN": {
-            "access": "table (t?)",
-            "heap": {
-              "time": ?,
-              "fetch": ?,
-              "ioread": ?,
-              "readrows": ?,
-              "rows": ?
-            }
-          },
-          "ORDERBY": {
-            "time": ?,
-            "sort": true,
-            "page": ?,
-            "ioread": ?
-          }
-        }
       }
     }
   }
 }     
 
 ===================================================
-a    avg(a)    
-1     1.0     
-1     173.316398501     
-2     2.0     
+d    avg(a)    
+red     1.0     
+yellow     2.0     
+blue     314.279027722     
 
 ===================================================
 trace    
 {
-  "Query Plan": [
-    {
-      "SORT (order by)": {
-        "TABLE SCAN": {
-          "table": "t?"
-        }
-      },
-      "rewritten query": "(select t?.a, t?.b, t?.d from t? t? order by ?, ?, ?)"
+  "Query Plan": {
+    "SORT (group by)": {
+      "TABLE SCAN": {
+        "table": "__t?"
+      }
     },
-    {
-      "SORT (group by)": {
-        "TABLE SCAN": {
-          "table": "__t?"
-        }
-      },
-      "rewritten query": "select [__t?].a, avg([__t?].a) from (select t?.a, t?.b, t?.d from t? t? order by ?, ?, ?) [__t?] (a, b, d) group by [__t?].b"
-    }
-  ],
+    "rewritten query": "select [__t?].d, avg([__t?].a) from t? [__t?] group by [__t?].d"
+  },
   "Trace Statistics": {
     "SELECT": {
       "time": ?,
       "fetch": ?,
       "ioread": ?,
       "SCAN": {
-        "access": "temp",
-        "temp": {
+        "access": "table (t?)",
+        "heap": {
           "time": ?,
           "fetch": ?,
           "ioread": ?,
@@ -280,70 +186,36 @@ trace
         "page": ?,
         "ioread": ?,
         "rows": ?
-      },
-      "SUBQUERY (uncorrelated)": {
-        "SELECT": {
-          "time": ?,
-          "fetch": ?,
-          "ioread": ?,
-          "SCAN": {
-            "access": "table (t?)",
-            "heap": {
-              "time": ?,
-              "fetch": ?,
-              "ioread": ?,
-              "readrows": ?,
-              "rows": ?
-            }
-          },
-          "ORDERBY": {
-            "time": ?,
-            "sort": true,
-            "page": ?,
-            "ioread": ?
-          }
-        }
       }
     }
   }
 }     
 
 ===================================================
-a    min(b)    
-1     2013-01-02     
-2     2013-10-12     
-1     2013-10-12     
-2     2013-12-02     
+d    min(b)    
+red     2013-01-02     
+yellow     2013-10-12     
+blue     2013-10-12     
 
 ===================================================
 trace    
 {
-  "Query Plan": [
-    {
-      "SORT (order by)": {
-        "TABLE SCAN": {
-          "table": "t?"
-        }
-      },
-      "rewritten query": "(select t?.a, t?.b, t?.c, t?.d from t? t? order by ?, ?, ?, ?)"
+  "Query Plan": {
+    "SORT (group by)": {
+      "TABLE SCAN": {
+        "table": "__t?"
+      }
     },
-    {
-      "SORT (group by)": {
-        "TABLE SCAN": {
-          "table": "__t?"
-        }
-      },
-      "rewritten query": "select [__t?].a, min([__t?].b) from (select t?.a, t?.b, t?.c, t?.d from t? t? order by ?, ?, ?, ?) [__t?] (a, b, c, d) group by [__t?].b, [__t?].c, [__t?].d"
-    }
-  ],
+    "rewritten query": "select [__t?].d, min([__t?].b) from t? [__t?] group by [__t?].d"
+  },
   "Trace Statistics": {
     "SELECT": {
       "time": ?,
       "fetch": ?,
       "ioread": ?,
       "SCAN": {
-        "access": "temp",
-        "temp": {
+        "access": "table (t?)",
+        "heap": {
           "time": ?,
           "fetch": ?,
           "ioread": ?,
@@ -358,29 +230,6 @@ trace
         "page": ?,
         "ioread": ?,
         "rows": ?
-      },
-      "SUBQUERY (uncorrelated)": {
-        "SELECT": {
-          "time": ?,
-          "fetch": ?,
-          "ioread": ?,
-          "SCAN": {
-            "access": "table (t?)",
-            "heap": {
-              "time": ?,
-              "fetch": ?,
-              "ioread": ?,
-              "readrows": ?,
-              "rows": ?
-            }
-          },
-          "ORDERBY": {
-            "time": ?,
-            "sort": true,
-            "page": ?,
-            "ioread": ?
-          }
-        }
       }
     }
   }

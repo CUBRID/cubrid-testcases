@@ -118,11 +118,11 @@ INSERT INTO #sorttest values(2);
 
 SELECT test
 FROM (select * from #sorttest order by 1)
-ORDER BY CASE WHEN test IS NULL THEN 1 ELSE 0 END asc;
+ORDER BY CASE WHEN test IS NULL THEN 1 ELSE 0 END asc, test;
 
 SELECT test
 FROM (select * from #sorttest order by 1)
-ORDER BY CASE WHEN test IS NULL THEN 1 ELSE 0 END nulls last;
+ORDER BY CASE WHEN test IS NULL THEN 1 ELSE 0 END nulls last, test;
 
 --bug
 --SELECT test
@@ -132,11 +132,11 @@ ORDER BY CASE WHEN test IS NULL THEN 1 ELSE 0 END nulls last;
 
 SELECT test
 FROM (select * from #sorttest order by 1)
-ORDER BY CASE WHEN test IS NULL THEN 1 ELSE 0 END desc;
+ORDER BY CASE WHEN test IS NULL THEN 1 ELSE 0 END desc, test;
 
 SELECT test
 FROM (select * from #sorttest order by 1)
-ORDER BY CASE WHEN test IS NULL THEN 1 ELSE 0 END desc nulls first;
+ORDER BY CASE WHEN test IS NULL THEN 1 ELSE 0 END desc nulls first, test;
 
 --bug
 --SELECT test

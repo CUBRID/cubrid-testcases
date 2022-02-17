@@ -463,34 +463,22 @@ count(*)
 
 Query plan:
 iscan
-    class: t node[?]
-    index: idx term[?] (index skip scan)
-    cost:  ? card ?
-Query stmt:
-(select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where (t.j>= ?:?  and t.j<= ?:? ))
-Query plan:
-sscan
     class: tt node[?]
+    index: idx term[?] (covers) (index skip scan)
     cost:  ? card ?
 Query stmt:
-select count(*) from (select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where (t.j>= ?:?  and t.j<= ?:? )) tt (i, j, k, l)
+select /*+ INDEX_SS */ count(*) from t tt where (tt.j>= ?:?  and tt.j<= ?:? )
 ===================================================
 count(*)    
 8000     
 
 Query plan:
 iscan
-    class: t node[?]
-    index: idx term[?] (index skip scan)
-    cost:  ? card ?
-Query stmt:
-(select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where (t.j>= ?:?  and t.j<= ?:? ))
-Query plan:
-sscan
     class: tt node[?]
+    index: idx term[?] (covers) (index skip scan)
     cost:  ? card ?
 Query stmt:
-select count(*) from (select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where (t.j>= ?:?  and t.j<= ?:? )) tt (i, j, k, l)
+select /*+ INDEX_SS */ count(*) from t tt where (tt.j>= ?:?  and tt.j<= ?:? )
 ===================================================
 i    j    k    l    (select /*+ INDEX_SS */ count(*) from t where j between 101 and 199)    
 0     2     1     1     8000     
@@ -21120,18 +21108,12 @@ count(*)
 
 Query plan:
 iscan
-    class: t node[?]
-    index: idx term[?] (index skip scan)
+    class: tt node[?]
+    index: idx term[?] (covers) (index skip scan)
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where (t.j>= ?:?  and t.j<= ?:? ) and (inst_num()<= ?:? ))
-Query plan:
-sscan
-    class: tt node[?]
-    cost:  ? card ?
-Query stmt:
-select count(*) from (select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where (t.j>= ?:?  and t.j<= ?:? ) and (inst_num()<= ?:? )) tt (i, j, k, l)
+select /*+ INDEX_SS */ count(*) from t tt where (tt.j>= ?:?  and tt.j<= ?:? ) and (inst_num()<= ?:? )
 ===================================================
 0
 ===================================================
@@ -21162,17 +21144,11 @@ count(*)
 
 Query plan:
 iscan
-    class: t node[?]
-    index: idx term[?] (index skip scan)
-    cost:  ? card ?
-Query stmt:
-(select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where (t.j>= ?:?  and t.j<= ?:? ))
-Query plan:
-sscan
     class: tt node[?]
+    index: idx term[?] (covers) (index skip scan)
     cost:  ? card ?
 Query stmt:
-select count(*) from (select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where (t.j>= ?:?  and t.j<= ?:? )) tt (i, j, k, l)
+select /*+ INDEX_SS */ count(*) from t tt where (tt.j>= ?:?  and tt.j<= ?:? )
 ===================================================
 0
 ===================================================
@@ -21193,17 +21169,11 @@ count(*)
 
 Query plan:
 iscan
-    class: t node[?]
-    index: idx term[?] (index skip scan)
-    cost:  ? card ?
-Query stmt:
-(select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where (t.j>= ?:?  and t.j<= ?:? ))
-Query plan:
-sscan
     class: tt node[?]
+    index: idx term[?] (covers) (index skip scan)
     cost:  ? card ?
 Query stmt:
-select count(*) from (select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where (t.j>= ?:?  and t.j<= ?:? )) tt (i, j, k, l)
+select /*+ INDEX_SS */ count(*) from t tt where (tt.j>= ?:?  and tt.j<= ?:? )
 ===================================================
 0
 ===================================================

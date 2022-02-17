@@ -169,13 +169,13 @@ insert into t1 values(1,'b',1);
 insert into t1 values(1,'c',1);
  insert into t1 values(7,'c',7);
  select i,k from t1 group by j;
- select newt.i,newt.k from (select * from t1 order by 1,2,3 ) newt group by newt.j; 
+ select newt.i,newt.k from (select * from t1 order by 1,2,3 ) newt group by newt.i,newt.k; 
  select i,k from t1 group by j having i=1; 
-select newt.i,newt.k from (select * from t1 order by 1,2,3 )  newt group by newt.j having newt.i=1; 
+select newt.i,newt.k from (select * from t1 order by 1,2,3 )  newt group by newt.i,newt.k having newt.i=1; 
 
- select newt.i,newt.k from (select * from t1 order by 1 desc,2 ,3 ) newt group by newt.j; 
+ select newt.i,newt.k from (select * from t1 order by 1 desc,2 ,3 ) newt group by newt.i,newt.k; 
  select i,k from t1 group by j having i=1; 
-select newt.i,newt.k from (select * from t1 order by 1 desc,2,3 )  newt group by newt.j having newt.i=1; 
+select newt.i,newt.k from (select * from t1 order by 1 desc,2,3 )  newt group by newt.i,newt.k having newt.i=1; 
 
 drop table if exists t;
 

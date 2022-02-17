@@ -19,13 +19,13 @@ trace
 Query Plan:
   TABLE SCAN (b)
 
-  rewritten query: (select b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c from tmp_hls a, (select b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) b (a, b, c) where a.a=b.a and a.b=b.b and a.c=b.c
+  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c from tmp_hls a, (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) b (a, b, c) where a.a=b.a and a.b=b.b and a.c=b.c
 
 
 Trace Statistics:
@@ -52,13 +52,13 @@ trace
 Query Plan:
   TABLE SCAN (b)
 
-  rewritten query: (select b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c from tmp_hls a, (select b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) b (a, b, c) where b.a=a.a and a.c=b.c and b.b=a.b
+  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c from tmp_hls a, (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) b (a, b, c) where b.a=a.a and a.c=b.c and b.b=a.b
 
 
 Trace Statistics:
@@ -87,13 +87,13 @@ trace
 Query Plan:
   TABLE SCAN (b)
 
-  rewritten query: (select b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c from tmp_hls a, (select b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) b (a, b, c) where b.c=a.c
+  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c from tmp_hls a, (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) b (a, b, c) where b.c=a.c
 
 
 Trace Statistics:
@@ -117,11 +117,11 @@ trace
 Query Plan:
   TABLE SCAN (b)
 
-  rewritten query: (select b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
 
   TABLE SCAN (b)
 
-  rewritten query: (select b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
 
   NESTED LOOPS (inner join)
     NESTED LOOPS (inner join)
@@ -129,7 +129,7 @@ Query Plan:
       TABLE SCAN (b)
     TABLE SCAN (c)
 
-  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c from tmp_hls a, (select b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) b (a, b, c), (select b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) c (a, b, c) where a.a=b.a and b.b=a.b and b.a=c.a
+  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c from tmp_hls a, (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) b (a, b, c), (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) c (a, b, c) where a.a=b.a and b.b=a.b and b.a=c.a
 
 
 Trace Statistics:
@@ -152,13 +152,13 @@ trace
 Query Plan:
   TABLE SCAN (b)
 
-  rewritten query: (select b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, (select b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) b (a, b, c) where a.c=b.c and (a.b>b.b)
+  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) b (a, b, c) where a.c=b.c and (a.b>b.b)
 
 
 Trace Statistics:
@@ -180,13 +180,13 @@ trace
 Query Plan:
   TABLE SCAN (b)
 
-  rewritten query: (select b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, (select b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) b (a, b, c) where a.c=b.c and a.c+b.c=?
+  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) b (a, b, c) where a.c=b.c and a.c+b.c=?
 
 
 Trace Statistics:
@@ -274,13 +274,13 @@ trace
 Query Plan:
   TABLE SCAN (b)
 
-  rewritten query: (select b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, (select b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) b (a, b, c) where b.a= substr(a.b, ?, ?)
+  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) b (a, b, c) where b.a= substr(a.b, ?, ?)
 
 
 Trace Statistics:
@@ -304,13 +304,13 @@ trace
 Query Plan:
   TABLE SCAN (b)
 
-  rewritten query: (select b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, (select b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) b (a, b, c) where  substr(a.b, ?, ?)=decode(b.a, 'post',  cast('pos' as varchar), b.a)
+  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) b (a, b, c) where  substr(a.b, ?, ?)=decode(b.a, 'post',  cast('pos' as varchar), b.a)
 
 
 Trace Statistics:
@@ -332,13 +332,13 @@ trace
 Query Plan:
   TABLE SCAN (b)
 
-  rewritten query: (select b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, (select b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) b (a, b, c) where b.a|| cast('rid' as varchar)=decode(a.a, 'cub',  cast('cubrid' as varchar), 'post',  cast('postgre' as varchar), a.a)
+  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) b (a, b, c) where b.a|| cast('rid' as varchar)=decode(a.a, 'cub',  cast('cubrid' as varchar), 'post',  cast('postgre' as varchar), a.a)
 
 
 Trace Statistics:
@@ -364,13 +364,13 @@ trace
 Query Plan:
   TABLE SCAN (b)
 
-  rewritten query: (select b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, (select b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) b (a, b, c) where b.b=decode(a.a, 'cub',  cast('cubrid' as varchar), 'post',  cast('bad' as varchar), a.b)
+  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) b (a, b, c) where b.b=decode(a.a, 'cub',  cast('cubrid' as varchar), 'post',  cast('bad' as varchar), a.b)
 
 
 Trace Statistics:
@@ -517,13 +517,13 @@ trace
 Query Plan:
   TABLE SCAN (tmp_hls_type)
 
-  rewritten query: (select tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col? from tmp_hls_type tmp_hls_type where (tmp_hls_type.col?>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col? from tmp_hls_type tmp_hls_type where (tmp_hls_type.col?>= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.col?, a.col?, a.col?, b.col?, b.col?, b.col? from tmp_hls_type a, (select tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col? from tmp_hls_type tmp_hls_type where (tmp_hls_type.col?>= ?:? )) b (col?, col?, col?) where b.col?= cast(a.col? as double) and a.col?= cast(b.col? as double) and a.col?=b.col?
+  rewritten query: select /*+ ORDERED */ a.col?, a.col?, a.col?, b.col?, b.col?, b.col? from tmp_hls_type a, (select /*+ NO_MERGE */ tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col? from tmp_hls_type tmp_hls_type where (tmp_hls_type.col?>= ?:? )) b (col?, col?, col?) where b.col?= cast(a.col? as double) and a.col?= cast(b.col? as double) and a.col?=b.col?
 
 
 Trace Statistics:
@@ -544,13 +544,13 @@ trace
 Query Plan:
   TABLE SCAN (tmp_hls_type)
 
-  rewritten query: (select tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col? from tmp_hls_type tmp_hls_type where (tmp_hls_type.col?>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col? from tmp_hls_type tmp_hls_type where (tmp_hls_type.col?>= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.col?, a.col?, a.col?, b.col?, b.col?, b.col? from tmp_hls_type a, (select tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col? from tmp_hls_type tmp_hls_type where (tmp_hls_type.col?>= ?:? )) b (col?, col?, col?) where a.col?=b.col? and a.col?=b.col? and a.col?=b.col?
+  rewritten query: select /*+ ORDERED */ a.col?, a.col?, a.col?, b.col?, b.col?, b.col? from tmp_hls_type a, (select /*+ NO_MERGE */ tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col? from tmp_hls_type tmp_hls_type where (tmp_hls_type.col?>= ?:? )) b (col?, col?, col?) where a.col?=b.col? and a.col?=b.col? and a.col?=b.col?
 
 
 Trace Statistics:
@@ -617,13 +617,13 @@ trace
 Query Plan:
   TABLE SCAN (tmp_hls_type)
 
-  rewritten query: (select tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col? from tmp_hls_type tmp_hls_type where (tmp_hls_type.col?>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col? from tmp_hls_type tmp_hls_type where (tmp_hls_type.col?>= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.col?, a.col?, a.col?, a.col? from tmp_hls_type a, (select tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col? from tmp_hls_type tmp_hls_type where (tmp_hls_type.col?>= ?:? )) b (col?, col?, col?, col?) where a.col?=b.col? and a.col?=b.col? and a.col?=b.col?
+  rewritten query: select /*+ ORDERED */ a.col?, a.col?, a.col?, a.col? from tmp_hls_type a, (select /*+ NO_MERGE */ tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col? from tmp_hls_type tmp_hls_type where (tmp_hls_type.col?>= ?:? )) b (col?, col?, col?, col?) where a.col?=b.col? and a.col?=b.col? and a.col?=b.col?
 
 
 Trace Statistics:
@@ -649,13 +649,13 @@ trace
 Query Plan:
   TABLE SCAN (tmp_hls_type)
 
-  rewritten query: (select tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col? from tmp_hls_type tmp_hls_type where (tmp_hls_type.col?>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col? from tmp_hls_type tmp_hls_type where (tmp_hls_type.col?>= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.col?, a.col?, a.col?, a.col? from tmp_hls_type a, (select tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col? from tmp_hls_type tmp_hls_type where (tmp_hls_type.col?>= ?:? )) b (col?, col?, col?, col?) where a.col?=b.col? and a.col?=b.col? and a.col?=b.col?
+  rewritten query: select /*+ ORDERED */ a.col?, a.col?, a.col?, a.col? from tmp_hls_type a, (select /*+ NO_MERGE */ tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col? from tmp_hls_type tmp_hls_type where (tmp_hls_type.col?>= ?:? )) b (col?, col?, col?, col?) where a.col?=b.col? and a.col?=b.col? and a.col?=b.col?
 
 
 Trace Statistics:
@@ -688,13 +688,13 @@ trace
 Query Plan:
   TABLE SCAN (tmp_hls_type)
 
-  rewritten query: (select tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col? from tmp_hls_type tmp_hls_type where (tmp_hls_type.col?>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col? from tmp_hls_type tmp_hls_type where (tmp_hls_type.col?>= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.col?, a.col?, a.col?, a.col? from tmp_hls_type a, (select tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col? from tmp_hls_type tmp_hls_type where (tmp_hls_type.col?>= ?:? )) b (col?, col?, col?, col?) where a.col?=b.col? and a.col?=b.col?
+  rewritten query: select /*+ ORDERED */ a.col?, a.col?, a.col?, a.col? from tmp_hls_type a, (select /*+ NO_MERGE */ tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col? from tmp_hls_type tmp_hls_type where (tmp_hls_type.col?>= ?:? )) b (col?, col?, col?, col?) where a.col?=b.col? and a.col?=b.col?
 
 
 Trace Statistics:
@@ -721,13 +721,13 @@ trace
 Query Plan:
   TABLE SCAN (tmp_hls_type)
 
-  rewritten query: (select tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col? from tmp_hls_type tmp_hls_type where (tmp_hls_type.col?>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col? from tmp_hls_type tmp_hls_type where (tmp_hls_type.col?>= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.col?, a.col?, a.col?, a.col? from tmp_hls_type a, (select tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col? from tmp_hls_type tmp_hls_type where (tmp_hls_type.col?>= ?:? )) b (col?, col?, col?, col?) where a.col?=b.col? and a.col?=b.col?
+  rewritten query: select /*+ ORDERED */ a.col?, a.col?, a.col?, a.col? from tmp_hls_type a, (select /*+ NO_MERGE */ tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col? from tmp_hls_type tmp_hls_type where (tmp_hls_type.col?>= ?:? )) b (col?, col?, col?, col?) where a.col?=b.col? and a.col?=b.col?
 
 
 Trace Statistics:
@@ -754,7 +754,7 @@ trace
 Query Plan:
   TABLE SCAN (b)
 
-  rewritten query: (select b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
 
   SORT (distinct)
     TABLE SCAN (tmp_hls)
@@ -765,7 +765,7 @@ Query Plan:
     TABLE SCAN (aa)
     TABLE SCAN (av?)
 
-  rewritten query: select /*+ ORDERED */ aa.a, aa.b, aa.c from (select b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) aa (a, b, c), (select distinct tmp_hls.a, tmp_hls.b, tmp_hls.c from tmp_hls tmp_hls) av? (av_?, av_?, av_?) where aa.a=av?.av_? and aa.b=av?.av_? and aa.c=av?.av_?
+  rewritten query: select /*+ ORDERED */ aa.a, aa.b, aa.c from (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) aa (a, b, c), (select distinct tmp_hls.a, tmp_hls.b, tmp_hls.c from tmp_hls tmp_hls) av? (av_?, av_?, av_?) where aa.a=av?.av_? and aa.b=av?.av_? and aa.c=av?.av_?
 
 
 Trace Statistics:
@@ -792,7 +792,7 @@ trace
 Query Plan:
   TABLE SCAN (b)
 
-  rewritten query: (select b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
 
   SORT (distinct)
     TABLE SCAN (tmp_hls)
@@ -810,7 +810,7 @@ Query Plan:
       TABLE SCAN (av?)
     TABLE SCAN (av?_?)
 
-  rewritten query: select /*+ ORDERED */ aa.a, aa.b, aa.c from (select b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) aa (a, b, c), (select distinct tmp_hls.a, tmp_hls.b from tmp_hls tmp_hls) av? (av_?, av_?), (select distinct tmp_hls.c from tmp_hls tmp_hls) av?_? (av_?) where aa.a=av?.av_? and aa.b=av?.av_? and aa.c=av?_?.av_?
+  rewritten query: select /*+ ORDERED */ aa.a, aa.b, aa.c from (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) aa (a, b, c), (select distinct tmp_hls.a, tmp_hls.b from tmp_hls tmp_hls) av? (av_?, av_?), (select distinct tmp_hls.c from tmp_hls tmp_hls) av?_? (av_?) where aa.a=av?.av_? and aa.b=av?.av_? and aa.c=av?_?.av_?
 
 
 Trace Statistics:

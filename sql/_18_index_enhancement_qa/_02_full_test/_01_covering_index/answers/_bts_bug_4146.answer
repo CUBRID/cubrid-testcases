@@ -220,20 +220,14 @@ col1    col2    col3
 100     100     100     
 
 Query plan:
-sscan
-    class: t? node[?]
-    cost:  ? card ?
-Query stmt:
-(select t?.col?, t?.col?, t?.col? from t? t?)
-Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t node[?]
-                 cost:  ? card ?
+iscan
+    class: t node[?]
+    index: i_t?_? (covers)
     sort:  ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.col?, t.col?, t.col? from (select t?.col?, t?.col?, t?.col? from t? t?) t (col?, col?, col?) order by ?, ?, ?
+select t.col?, t.col?, t.col? from t? t order by ?, ?, ?
+/* ---> skip ORDER BY */
 ===================================================
 0
 ===================================================

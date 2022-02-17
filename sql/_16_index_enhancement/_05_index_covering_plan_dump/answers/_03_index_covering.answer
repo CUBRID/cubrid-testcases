@@ -411,7 +411,7 @@ iscan
     index: idx_tbl? term[?] (covers)
     cost:  ? card ?
 Query stmt:
-(select t?.id, (select t?.id from tbl? t? where t?.id=t?.id) from tbl? t? where t?.id= ?:? )
+(select /*+ NO_MERGE */ t?.id, (select t?.id from tbl? t? where t?.id=t?.id) from tbl? t? where t?.id= ?:? )
 Query plan:
 temp(order by)
     subplan: nl-join (cross join)
@@ -426,7 +426,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.id from tbl t?, (select t?.id, (select t?.id from tbl? t? where t?.id=t?.id) from tbl? t? where t?.id= ?:? ) t? (id, t?_?) where t?.id is not null  order by ?
+select t?.id from tbl t?, (select /*+ NO_MERGE */ t?.id, (select t?.id from tbl? t? where t?.id=t?.id) from tbl? t? where t?.id= ?:? ) t? (id, t?_?) where t?.id is not null  order by ?
 ===================================================
 id    text    (select t2.id from tbl2 t2 where t1.id=t2.id)    
 1     AAABC     1     
