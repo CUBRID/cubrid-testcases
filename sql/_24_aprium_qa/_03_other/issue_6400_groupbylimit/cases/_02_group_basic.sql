@@ -15,13 +15,13 @@ select /*+ recompile */ i,j,count(*) from t where i > 5 and i < 200 group by i h
 
 select /*+ recompile */ i,j from t where i > 5 and i < 200 group by j having i > 0 limit 10,20;
 
-select /*+ recompile */ newt.i,newt.j,newt.k from (select i,j,k from t order by 1,2,3) newt  where newt.k >=  TO_DATE('12/25/2008') group by newt.k having newt.k <=  TO_DATE('12/25/2008') limit 10 ;
+select /*+ recompile */ newt.i,newt.j,newt.k from (select /*+ NO_MERGE */ i,j,k from t order by 1,2,3) newt  where newt.k >=  TO_DATE('12/25/2008') group by newt.k having newt.k <=  TO_DATE('12/25/2008') limit 10 ;
 
 select /*+ recompile */ i,j,k,l,m,n,count(l) from t where i > 10 and i < 110 group by l having j > 100 limit 2,10;
 
-select /*+ recompile */ newt.i,newt.j,newt.k,newt.l,newt.m,newt.n from (select i,j,k,l,m,n from t order by 1 ,2,3,4,5,6) newt where newt.m > 10 and newt.m < 110 group by newt.m having newt.m > 100 limit 2,10;
+select /*+ recompile */ newt.i,newt.j,newt.k,newt.l,newt.m,newt.n from (select /*+ NO_MERGE */ i,j,k,l,m,n from t order by 1 ,2,3,4,5,6) newt where newt.m > 10 and newt.m < 110 group by newt.m having newt.m > 100 limit 2,10;
 
-select /*+ recompile */ newt.i,newt.j,newt.k,newt.l,newt.m,newt.n,avg(newt.n) from (select i,j,k,l,m,n from t order by 1,2,3,4,5,6 ) newt where newt.n > 10 and newt.n < 110 group by newt.n having newt.n > 100 limit 2,10;
+select /*+ recompile */ newt.i,newt.j,newt.k,newt.l,newt.m,newt.n,avg(newt.n) from (select /*+ NO_MERGE */ i,j,k,l,m,n from t order by 1,2,3,4,5,6 ) newt where newt.n > 10 and newt.n < 110 group by newt.n having newt.n > 100 limit 2,10;
 
 drop table t;
 
