@@ -29,7 +29,7 @@ MC: sleep 5;
 MC: wait until C1 ready;
 
 /* test case */
-C1: DELETE FROM tb1 WHERE id%5=0 and (select sleep(5)=0);
+C1: DELETE FROM tb1 WHERE id%5=0 and (select sleep(5)=0)<>0;
 C2: SELECT MAX(t1.id),MIN(t1.id) FROM tb1 t1 LEFT OUTER JOIN (SELECT MIN(tb1.col) AS col FROM tb1 WHERE id>5 GROUP BY id%10 ) AS t2 ON t1.col=t2.col  GROUP BY t2.col;
 MC: wait until C2 ready;
 C1: commit work;

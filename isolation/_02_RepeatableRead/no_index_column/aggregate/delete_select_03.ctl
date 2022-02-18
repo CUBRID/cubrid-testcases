@@ -30,7 +30,7 @@ C1: commit;
 MC: wait until C1 ready;
 
 /* test case */
-C1: DELETE FROM tb1 WHERE id%5=0 and (select sleep(10)=0);
+C1: DELETE FROM tb1 WHERE id%5=0 and (select sleep(10)=0)<>0;
 MC: sleep 1;
 /* expected 1000 */ 
 C2: SELECT COUNT(tb1.id) FROM (select sleep(5))x, tb1;

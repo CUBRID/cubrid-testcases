@@ -29,7 +29,7 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C2: select * from t1 where id>0 and col not like 'bb%' and (select sleep(6)=0) order by 1,2;
+C2: select * from t1 where id>0 and col not like 'bb%' and (select sleep(6)=0)<>0 order by 1,2;
 MC: sleep 1;
 
 C1: update t1 set col=concat(col,'aa') where id=5;

@@ -28,7 +28,7 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C1: DELETE FROM tb1 WHERE id = 501 AND (select sleep(3)=0);
+C1: DELETE FROM tb1 WHERE id = 501 AND (select sleep(3)=0)<>0;
 MC: sleep 1;
 C2: SELECT * FROM tb1 ORDER BY id DESC, name ASC,3,4; 
 MC: wait until C2 ready;

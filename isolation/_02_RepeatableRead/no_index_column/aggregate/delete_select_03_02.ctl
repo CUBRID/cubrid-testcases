@@ -29,7 +29,7 @@ C1: commit;
 MC: wait until C1 ready;
 
 /* test case */
-C1: DELETE FROM tb1 WHERE id%7=0 and (select sleep(5)=0);
+C1: DELETE FROM tb1 WHERE id%7=0 and (select sleep(5)=0)<>0;
 C2: SELECT COUNT(id)>6 FROM tb1 GROUP BY col;
 MC: wait until C2 ready;
 
