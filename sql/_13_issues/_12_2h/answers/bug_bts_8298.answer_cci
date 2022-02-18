@@ -58,32 +58,26 @@ follow
 Query stmt:
 (select sum(set{au.class_of}) from [_db_auth] au where {[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) and au.auth_type= ?:? )
 Query plan:
-follow
-    edge:  C node[?] owner -> db_user node[?]
-    head:  nl-join (inner join)
-              edge:  term[?]
-              outer: sscan
-                         class: C node[?]
-                         sargs: term[?]
-                         cost:  ? card ?
-              inner: sscan
-                         class: coll node[?]
-                         sargs: term[?]
-                         cost:  ? card ?
-              cost:  ? card ?
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-(select C.class_name from [_db_class] C, [_db_collation] coll where (( cast(case when  mod(C.is_system_class, ?)=? then 'YES' else 'NO' end as varchar(?)))='NO') and (C.collation_id=coll.coll_id) and ( CURRENT_USER ='DBA' or {C.[owner].[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) or {C} subseteq (select sum(set{au.class_of}) from [_db_auth] au where {[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) and au.auth_type= ?:? )))
-Query plan:
 temp(order by)
-    subplan: sscan
-                 class: show_tables node[?]
+    subplan: follow
+                 edge:  show_tables node[?] owner -> db_user node[?]
+                 head:  nl-join (inner join)
+                           edge:  term[?]
+                           outer: sscan
+                                      class: show_tables node[?]
+                                      sargs: term[?]
+                                      cost:  ? card ?
+                           inner: sscan
+                                      class: coll node[?]
+                                      sargs: term[?]
+                                      cost:  ? card ?
+                           cost:  ? card ?
+                 sargs: term[?]
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select show_tables.Tables_in_basic from (select C.class_name from [_db_class] C, [_db_collation] coll where (( cast(case when  mod(C.is_system_class, ?)=? then 'YES' else 'NO' end as varchar(?)))='NO') and (C.collation_id=coll.coll_id) and ( CURRENT_USER ='DBA' or {C.[owner].[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) or {C} subseteq (select sum(set{au.class_of}) from [_db_auth] au where {[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) and au.auth_type= ?:? ))) show_tables (Tables_in_basic) order by ?
+select show_tables.class_name from [_db_class] show_tables, [_db_collation] coll where (( cast(case when  mod(show_tables.is_system_class, ?)=? then 'YES' else 'NO' end as varchar(?)))='NO') and (show_tables.collation_id=coll.coll_id) and ( CURRENT_USER ='DBA' or {show_tables.[owner].[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) or {show_tables} subseteq (select sum(set{au.class_of}) from [_db_auth] au where {[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) and au.auth_type= ?:? )) order by ?
 ===================================================
 host_year    nation    gold    silver    bronze    
 
