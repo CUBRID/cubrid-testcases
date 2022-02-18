@@ -30,10 +30,10 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C1: update t1 set id=7, col='t' where id=5 and col='opq' and (select sleep(2)=0);
+C1: update t1 set id=7, col='t' where id=5 and col='opq' and (select sleep(2)=0)<>0;
 /*MC: wait until C1 ready;*/
 
-C2: select * from t1 where id>0 and col not like 'bb%' and (select sleep(10)=0) order by 1,2;
+C2: select * from t1 where id>0 and col not like 'bb%' and (select sleep(10)=0)<>0 order by 1,2;
 /*MC: sleep 2;*/
 
 C1: commit;

@@ -36,7 +36,7 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C1: delete from t where col=1 and  (select sleep(5)=0);
+C1: delete from t where col=1 and  (select sleep(5)=0)<>0;
 MC: sleep 1;
 C2: delete from t where id=1101; 
 C2: commit work;

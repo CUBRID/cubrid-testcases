@@ -43,7 +43,7 @@ MC: wait until C1 ready;
 C1: DELETE FROM tb1 WHERE id BETWEEN 3 AND 5;
 MC: wait until C1 ready;
 
-C5: DELETE FROM tb1 WHERE id BETWEEN 10 AND 20 AND (select sleep(1)=0);
+C5: DELETE FROM tb1 WHERE id BETWEEN 10 AND 20 AND (select sleep(1)=0)<>0;
 MC: wait until C5 ready;
 
 C1: commit work;
@@ -64,7 +64,7 @@ MC: wait until C2 ready;
 C3: commit work;
 MC: wait until C3 ready;
 
-C4: DELETE FROM tb1 WHERE id BETWEEN 2 AND 3 and (select sleep(1)=0);
+C4: DELETE FROM tb1 WHERE id BETWEEN 2 AND 3 and (select sleep(1)=0)<>0;
 /*MC: sleep 6;*/
 MC: wait until C4 ready;
 

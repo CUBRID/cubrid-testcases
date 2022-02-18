@@ -38,7 +38,7 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C1: update t set col='b' where (select sleep(3)=0);
+C1: update t set col='b' where (select sleep(3)=0)<>0;
 MC: sleep 1;
 C2: insert into t values(4,'abc');
 MC: wait until C2 ready;

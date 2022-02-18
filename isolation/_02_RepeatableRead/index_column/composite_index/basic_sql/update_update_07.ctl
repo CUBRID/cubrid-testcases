@@ -38,7 +38,7 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C1: update t1 set col='aa' where (select sleep(3)=0) and col='abc';
+C1: update t1 set col='aa' where (select sleep(3)=0)<>0 and col='abc';
 MC: sleep 2;
 C2: update t1 set col='bb' where id=5 and col='abc';
 C2: select * from t1 order by 1,2;
