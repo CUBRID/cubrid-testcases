@@ -92,4 +92,40 @@ select (1 xor 0) from t1;
 select (false xor 1) from t1; 
 select (false xor true) from t1;
 select (false xor (1=1)) from t1;
+select (1 is true);
+select (1 is false);
+select (0 is true);
+select (0 is false);
+select (2 is true);
+select (2 is false);
+
+select (1 = true);
+select (true = 1);
+select (1 = false);
+select (false = 1);
+
+select (0 = true);
+select (true = 0);
+select (0 = false);
+select (false = 0);
+
+select (2 = true);
+select (true = 2);
+select (2 = false);
+select (false = 2);
+
+select (1 = null), (0 = null), (null = 1), (null = 0);
+select (1 is null), (0 is null);
+
+select (null = null);
+select (unknown = unknown);
+
+select (unknown = null);
+select (null = unknown);
+
+select (null is null);
+select (unknown is null);
+
+select (null is unknown);
+select (unknown is unknown); 
 drop table t1;
