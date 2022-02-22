@@ -63,7 +63,7 @@ select if(least(3,1,7), 'T', 'F') from t1;
 select if(least(3,1,7) > 2, 'T', 'F') from t1;
 select ((select true from t1) is true) from t1;
 select ((select true from t1) = true) from t1;
-select ((select true from t1) = 1) from t1
+select ((select true from t1) = 1) from t1;
 select ((select null from t1) is null) from t1;
 select ((select null from t1) = null) from t1;
 select if((select 2 from t1), 'T', 'F') from t1; 
