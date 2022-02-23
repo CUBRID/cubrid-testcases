@@ -71,7 +71,11 @@ select /*++ INDEX_LS() RECOMPILE */  /*++ INDEX_LS(tbl_a) */  a as TEST from tbl
 
 select /*++ INDEX_LS() */ a as TEST from tbl_a;   select /*++ INDEX_LS(tbl_a) */ a as TEST from tbl_a;
 
+select /*++ INDEX_LS() */ id as TEST from tbl;   select /*++ INDEX_LS(tbl_a) */ a as TEST from tbl_a;
+
 select /*++ INDEX_LS() RECOMPILE */ aaa as TEST from tbl_a;   select /*++ INDEX_LS(tbl_a) */ aaa as TEST from tbl_a;
+
+select /*++ INDEX_LS() RECOMPILE */ id as TEST from tbl;   select /*++ INDEX_LS(tbl_a) */ aaa as TEST from tbl_a;
 
 select /*++ recompile index_ls use_nl(tbl_a,tbl_b,tbl_c) */ id from tbl;
 

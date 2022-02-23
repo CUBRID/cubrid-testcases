@@ -397,6 +397,36 @@ Query stmt:
 select tbl_a.a from tbl_a tbl_a
 ===================================================
 TEST    
+T     
+X     
+
+Query plan:
+sscan
+    class: tbl node[?]
+    cost:  ? card ?
+Query hints:
+    Input)  INDEX_LS() 
+    Hit)  INDEX_LS( )
+    Input)  INDEX_LS(tbl_a) 
+    Hit)  INDEX_LS([tbl_a])
+Query stmt:
+select tbl.id from tbl tbl
+TEST    
+TA     
+
+Query plan:
+sscan
+    class: tbl node[?]
+    cost:  ? card ?
+Query hints:
+    Input)  INDEX_LS() 
+    Hit)  INDEX_LS( )
+    Input)  INDEX_LS(tbl_a) 
+    Hit)  INDEX_LS([tbl_a])
+Query stmt:
+select tbl.id from tbl tbl
+===================================================
+TEST    
 Y     
 
 Query plan:
@@ -424,6 +454,36 @@ Query hints:
     Hit)  INDEX_LS([tbl_a])
 Query stmt:
 select tbl_a.aaa from tbl_a tbl_a
+===================================================
+TEST    
+T     
+X     
+
+Query plan:
+sscan
+    class: tbl node[?]
+    cost:  ? card ?
+Query hints:
+    Input)  INDEX_LS() RECOMPILE 
+    Hit)  INDEX_LS( ) RECOMPILE 
+    Input)  INDEX_LS(tbl_a) 
+    Hit)  INDEX_LS([tbl_a])
+Query stmt:
+select tbl.id from tbl tbl
+TEST    
+Y     
+
+Query plan:
+sscan
+    class: tbl node[?]
+    cost:  ? card ?
+Query hints:
+    Input)  INDEX_LS() RECOMPILE 
+    Hit)  INDEX_LS( ) RECOMPILE 
+    Input)  INDEX_LS(tbl_a) 
+    Hit)  INDEX_LS([tbl_a])
+Query stmt:
+select tbl.id from tbl tbl
 ===================================================
 id    
 T     
