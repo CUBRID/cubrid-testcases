@@ -69,6 +69,7 @@ select /*++ INDEX_LS() */   /*++ INDEX_LS(tbl_a) */ a as TEST from tbl_a;
 
 select /*++ INDEX_LS() RECOMPILE */  /*++ INDEX_LS(tbl_a) */  a as TEST from tbl_a;
 
+-- need to revise answer sheet after CBRD-24112 issue creation
 select /*++ INDEX_LS() */ a as TEST from tbl_a;   select /*++ INDEX_LS(tbl_a) */ a as TEST from tbl_a;
 
 select /*++ INDEX_LS() */ id as TEST from tbl;   select /*++ INDEX_LS(tbl_a) */ a as TEST from tbl_a;
