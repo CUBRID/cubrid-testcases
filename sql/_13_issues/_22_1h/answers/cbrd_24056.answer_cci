@@ -1,0 +1,508 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+id    
+T     
+X     
+
+Query plan:
+sscan
+    class: tbl node[?]
+    cost:  ? card ?
+Query hints:
+    Input) RECOMPILE 
+    Hit)  RECOMPILE 
+Query stmt:
+select tbl.id from tbl tbl
+===================================================
+id    
+T     
+X     
+
+Query plan:
+sscan
+    class: tbl node[?]
+    cost:  ? card ?
+Query hints:
+    Input)  RECOMPILE() 
+Query stmt:
+select tbl.id from tbl tbl
+===================================================
+id    
+T     
+X     
+
+Query plan:
+sscan
+    class: tbl node[?]
+    cost:  ? card ?
+Query hints:
+    Input) RECOMPILE ORDERED 
+    Hit)  ORDERED  RECOMPILE 
+Query stmt:
+select /*+ ORDERED */ tbl.id from tbl tbl
+===================================================
+id    
+T     
+X     
+
+Query plan:
+sscan
+    class: tbl node[?]
+    cost:  ? card ?
+Query hints:
+    Input)  NO_INDEX_LS  NO_INDEX_SS 
+    Hit)  NO_INDEX_LS  NO_INDEX_SS 
+Query stmt:
+select /*+ NO_INDEX_SS NO_INDEX_LS */ tbl.id from tbl tbl
+===================================================
+id    
+T     
+X     
+
+Query plan:
+sscan
+    class: tbl node[?]
+    cost:  ? card ?
+Query hints:
+    Input)  ORDERED NO_INDEX_SSKIP_UPDATE_NULL 
+    Hit)  ORDERED 
+Query stmt:
+select /*+ ORDERED */ tbl.id from tbl tbl
+===================================================
+id    
+T     
+X     
+
+Query plan:
+sscan
+    class: tbl node[?]
+    cost:  ? card ?
+Query hints:
+    Input)  QUERY_CACHE(T) 
+    Hit)  QUERY_CACHE([T])
+Query stmt:
+select /*+ QUERY_CACHE(T) */ tbl.id from tbl tbl
+===================================================
+id    
+T     
+X     
+
+Query plan:
+sscan
+    class: tbl node[?]
+    cost:  ? card ?
+Query hints:
+    Input)  USE_NL( tbl_a    .     tbl_b  ) 
+    Hit)  USE_NL([tbl_a].[tbl_b])
+Query stmt:
+select tbl.id from tbl tbl
+===================================================
+id    
+T     
+X     
+
+Query plan:
+sscan
+    class: tbl node[?]
+    cost:  ? card ?
+Query hints:
+    Input)  USE_NL("tbl_a.tbl_b") 
+    Hit)  USE_NL([tbl_a.tbl_b])
+Query stmt:
+select tbl.id from tbl tbl
+===================================================
+id    
+T     
+X     
+
+Query plan:
+sscan
+    class: tbl node[?]
+    cost:  ? card ?
+Query hints:
+    Input)  USE_NL( "tbl_a   .   tbl_b" ) 
+    Hit)  USE_NL([tbl_a   .   tbl_b])
+Query stmt:
+select tbl.id from tbl tbl
+===================================================
+id    
+T     
+X     
+
+Query plan:
+sscan
+    class: tbl node[?]
+    cost:  ? card ?
+Query hints:
+    Input)  USE_NL("   tbl_a.tbl_b    ") 
+    Hit)  USE_NL([   tbl_a.tbl_b    ])
+Query stmt:
+select tbl.id from tbl tbl
+===================================================
+id    
+T     
+X     
+
+Query plan:
+sscan
+    class: tbl node[?]
+    cost:  ? card ?
+Query hints:
+    Input)  USE_NL("tbl_a , tbl_b") 
+    Hit)  USE_NL([tbl_a , tbl_b])
+Query stmt:
+select tbl.id from tbl tbl
+===================================================
+id    
+T     
+X     
+
+Query plan:
+sscan
+    class: tbl node[?]
+    cost:  ? card ?
+Query hints:
+    Input)  USE_NL() USE_NL(tbl) 
+    Hit)  USE_NL([tbl])
+Query stmt:
+select /*+ USE_NL(tbl) */ tbl.id from tbl tbl
+===================================================
+id    
+T     
+X     
+
+Query plan:
+sscan
+    class: tbl node[?]
+    cost:  ? card ?
+Query hints:
+    Input)  USE_NL(tbl) USE_NL() 
+    Hit)  USE_NL([tbl])
+Query stmt:
+select /*+ USE_NL(tbl) */ tbl.id from tbl tbl
+===================================================
+id    
+T     
+X     
+
+Query plan:
+sscan
+    class: tbl node[?]
+    cost:  ? card ?
+Query hints:
+    Input)  USE_NL() 
+    Input)  USE_NL(tbl) 
+    Hit)  USE_NL([tbl])
+Query stmt:
+select /*+ USE_NL(tbl) */ tbl.id from tbl tbl
+===================================================
+id    
+T     
+X     
+
+Query plan:
+sscan
+    class: tbl node[?]
+    cost:  ? card ?
+Query hints:
+    Input)  USE_NL(tbl) 
+    Hit)  USE_NL([tbl])
+    Input)  USE_NL() 
+Query stmt:
+select /*+ USE_NL(tbl) */ tbl.id from tbl tbl
+===================================================
+a    aaa    b    c    
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: idx-join (inner join)
+               outer: sscan
+                          class: tbl_c node[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: tbl_a node[?]
+                          index: i_tbl_a term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query hints:
+    Input)  USE_NL(tbl_a) USE_NL(tbl_b) USE_MERGE(tbl_c) 
+    Hit)  USE_MERGE([tbl_c]) USE_NL([tbl_a])
+Query stmt:
+select /*+ USE_NL(tbl_a) USE_MERGE(tbl_c) */ tbl_a.a, tbl_a.aaa, tbl_b.b, tbl_c.c from tbl_a tbl_a, tbl_b tbl_b, tbl_c tbl_c where tbl_a.a=tbl_b.b and tbl_a.a=tbl_c.c
+===================================================
+TEST    
+TA     
+Y     
+
+Query plan:
+sscan
+    class: tbl_a node[?]
+    cost:  ? card ?
+Query hints:
+    Input)  INDEX_LS() 
+    Hit)  INDEX_LS( )
+    Input)  INDEX_LS(tbl_a) 
+    Hit)  INDEX_LS([tbl_a])
+Query stmt:
+select tbl_a.a from tbl_a tbl_a
+Query plan:
+sscan
+    class: tbl_a node[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS(tbl_a) */ tbl_a.aaa from tbl_a tbl_a
+===================================================
+TEST    
+TA     
+Y     
+
+Query plan:
+sscan
+    class: tbl_a node[?]
+    cost:  ? card ?
+Query hints:
+    Input)  INDEX_LS() RECOMPILE 
+    Hit)  INDEX_LS( ) RECOMPILE 
+    Input)  INDEX_LS(tbl_a) 
+    Hit)  INDEX_LS([tbl_a])
+Query stmt:
+select tbl_a.a from tbl_a tbl_a
+Query plan:
+sscan
+    class: tbl_a node[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS(tbl_a) */ tbl_a.aaa from tbl_a tbl_a
+===================================================
+TEST    
+TA     
+
+Query plan:
+sscan
+    class: tbl_a node[?]
+    cost:  ? card ?
+Query hints:
+    Input)  INDEX_LS()
+    Hit)  INDEX_LS( )
+    Input)  INDEX_LS(tbl_a) 
+    Hit)  INDEX_LS([tbl_a])
+Query stmt:
+select /*+ INDEX_LS(tbl_a) */ tbl_a.a from tbl_a tbl_a
+===================================================
+TEST    
+TA     
+
+Query plan:
+sscan
+    class: tbl_a node[?]
+    cost:  ? card ?
+Query hints:
+    Input)  INDEX_LS() RECOMPILE
+    Hit)  INDEX_LS( ) RECOMPILE 
+    Input)  INDEX_LS(tbl_a) 
+    Hit)  INDEX_LS([tbl_a])
+Query stmt:
+select /*+ INDEX_LS(tbl_a) */ tbl_a.a from tbl_a tbl_a
+===================================================
+TEST    
+TA     
+
+Query plan:
+sscan
+    class: tbl_a node[?]
+    cost:  ? card ?
+Query hints:
+    Input)  INDEX_LS() 
+    Hit)  INDEX_LS( )
+    Input)  INDEX_LS(tbl_a) 
+    Hit)  INDEX_LS([tbl_a])
+Query stmt:
+select /*+ INDEX_LS(tbl_a) */ tbl_a.a from tbl_a tbl_a
+===================================================
+TEST    
+TA     
+
+Query plan:
+sscan
+    class: tbl_a node[?]
+    cost:  ? card ?
+Query hints:
+    Input)  INDEX_LS() RECOMPILE 
+    Hit)  INDEX_LS( ) RECOMPILE 
+    Input)  INDEX_LS(tbl_a) 
+    Hit)  INDEX_LS([tbl_a])
+Query stmt:
+select /*+ INDEX_LS(tbl_a) */ tbl_a.a from tbl_a tbl_a
+===================================================
+TEST    
+TA     
+
+Query plan:
+sscan
+    class: tbl_a node[?]
+    cost:  ? card ?
+Query hints:
+    Input)  INDEX_LS() 
+    Hit)  INDEX_LS( )
+    Input)  INDEX_LS(tbl_a) 
+    Hit)  INDEX_LS([tbl_a])
+Query stmt:
+select tbl_a.a from tbl_a tbl_a
+TEST    
+TA     
+
+Query plan:
+sscan
+    class: tbl_a node[?]
+    cost:  ? card ?
+Query hints:
+    Input)  INDEX_LS() 
+    Hit)  INDEX_LS( )
+    Input)  INDEX_LS(tbl_a) 
+    Hit)  INDEX_LS([tbl_a])
+Query stmt:
+select tbl_a.a from tbl_a tbl_a
+===================================================
+TEST    
+T     
+X     
+
+Query plan:
+sscan
+    class: tbl node[?]
+    cost:  ? card ?
+Query hints:
+    Input)  INDEX_LS() 
+    Hit)  INDEX_LS( )
+    Input)  INDEX_LS(tbl_a) 
+    Hit)  INDEX_LS([tbl_a])
+Query stmt:
+select tbl.id from tbl tbl
+TEST    
+TA     
+
+Query plan:
+sscan
+    class: tbl node[?]
+    cost:  ? card ?
+Query hints:
+    Input)  INDEX_LS() 
+    Hit)  INDEX_LS( )
+    Input)  INDEX_LS(tbl_a) 
+    Hit)  INDEX_LS([tbl_a])
+Query stmt:
+select tbl.id from tbl tbl
+===================================================
+TEST    
+Y     
+
+Query plan:
+sscan
+    class: tbl_a node[?]
+    cost:  ? card ?
+Query hints:
+    Input)  INDEX_LS() RECOMPILE 
+    Hit)  INDEX_LS( ) RECOMPILE 
+    Input)  INDEX_LS(tbl_a) 
+    Hit)  INDEX_LS([tbl_a])
+Query stmt:
+select tbl_a.aaa from tbl_a tbl_a
+TEST    
+Y     
+
+Query plan:
+sscan
+    class: tbl_a node[?]
+    cost:  ? card ?
+Query hints:
+    Input)  INDEX_LS() RECOMPILE 
+    Hit)  INDEX_LS( ) RECOMPILE 
+    Input)  INDEX_LS(tbl_a) 
+    Hit)  INDEX_LS([tbl_a])
+Query stmt:
+select tbl_a.aaa from tbl_a tbl_a
+===================================================
+TEST    
+T     
+X     
+
+Query plan:
+sscan
+    class: tbl node[?]
+    cost:  ? card ?
+Query hints:
+    Input)  INDEX_LS() RECOMPILE 
+    Hit)  INDEX_LS( ) RECOMPILE 
+    Input)  INDEX_LS(tbl_a) 
+    Hit)  INDEX_LS([tbl_a])
+Query stmt:
+select tbl.id from tbl tbl
+TEST    
+Y     
+
+Query plan:
+sscan
+    class: tbl node[?]
+    cost:  ? card ?
+Query hints:
+    Input)  INDEX_LS() RECOMPILE 
+    Hit)  INDEX_LS( ) RECOMPILE 
+    Input)  INDEX_LS(tbl_a) 
+    Hit)  INDEX_LS([tbl_a])
+Query stmt:
+select tbl.id from tbl tbl
+===================================================
+id    
+T     
+X     
+
+Query plan:
+sscan
+    class: tbl node[?]
+    cost:  ? card ?
+Query hints:
+    Input)  recompile index_ls use_nl(tbl_a,tbl_b,tbl_c) 
+    Hit)  INDEX_LS  RECOMPILE  USE_NL([tbl_a], [tbl_b], [tbl_c])
+Query stmt:
+select tbl.id from tbl tbl
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
