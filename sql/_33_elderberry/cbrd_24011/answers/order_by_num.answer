@@ -24,7 +24,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select tab_b.col_a, tab_b.col_b from tab_b tab_b order by ? for orderby_num()<= ?:? )
+(select tab_b.col_a from tab_b tab_b order by ? for orderby_num()<= ?:? )
 Query plan:
 nl-join (cross join)
     outer: sscan
@@ -37,7 +37,7 @@ nl-join (cross join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from tab_a a, (select tab_b.col_a, tab_b.col_b from tab_b tab_b order by ? for orderby_num()<= ?:? ) b (col_a, col_b) where a.col_a= ?:?  and b.col_a= ?:?  and a.col_a=b.col_a
+select count(*) from tab_a a, (select tab_b.col_a from tab_b tab_b order by ? for orderby_num()<= ?:? ) b (col_a) where a.col_a= ?:?  and b.col_a= ?:?  and a.col_a=b.col_a
 ===================================================
 0
 ===================================================
@@ -78,7 +78,7 @@ temp(group by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select tab_b.col_a, tab_b.col_b from tab_b tab_b group by tab_b.col_a having groupby_num()<=?)
+(select tab_b.col_a from tab_b tab_b group by tab_b.col_a having groupby_num()<=?)
 Query plan:
 nl-join (cross join)
     outer: sscan
@@ -91,7 +91,7 @@ nl-join (cross join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from tab_a a, (select tab_b.col_a, tab_b.col_b from tab_b tab_b group by tab_b.col_a having groupby_num()<=?) b (col_a, col_b) where a.col_a= ?:?  and b.col_a= ?:?  and a.col_a=b.col_a
+select count(*) from tab_a a, (select tab_b.col_a from tab_b tab_b group by tab_b.col_a having groupby_num()<=?) b (col_a) where a.col_a= ?:?  and b.col_a= ?:?  and a.col_a=b.col_a
 ===================================================
 0
 ===================================================
@@ -106,7 +106,7 @@ temp(group by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select b.col_a, b.col_b from tab_b b group by b.col_a having groupby_num()<=?)
+(select b.col_a from tab_b b group by b.col_a having groupby_num()<=?)
 Query plan:
 nl-join (cross join)
     outer: sscan
@@ -119,7 +119,7 @@ nl-join (cross join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from tab_a a, (select b.col_a, b.col_b from tab_b b group by b.col_a having groupby_num()<=?) b (col_a, col_b) where a.col_a= ?:?  and b.col_a= ?:?  and a.col_a=b.col_a
+select count(*) from tab_a a, (select b.col_a from tab_b b group by b.col_a having groupby_num()<=?) b (col_a) where a.col_a= ?:?  and b.col_a= ?:?  and a.col_a=b.col_a
 ===================================================
 0
 ===================================================

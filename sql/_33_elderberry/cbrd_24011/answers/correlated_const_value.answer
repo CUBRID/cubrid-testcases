@@ -15,7 +15,7 @@ temp(group by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select subquery_big.col_b, avg(subquery_big.col_c) from subquery_big subquery_big where subquery_big.col_b=? group by subquery_big.col_b)
+(select subquery_big.col_b from subquery_big subquery_big where subquery_big.col_b=? group by subquery_big.col_b)
 Query plan:
 temp(group by)
     subplan: sscan
@@ -25,7 +25,7 @@ temp(group by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select subquery_big.col_b, min(subquery_big.col_c), max(subquery_big.col_c) from subquery_big subquery_big where subquery_big.col_b= ?:?  group by subquery_big.col_b)
+(select subquery_big.col_b from subquery_big subquery_big where subquery_big.col_b= ?:?  group by subquery_big.col_b)
 Query plan:
 nl-join (cross join)
     outer: sscan
@@ -36,6 +36,6 @@ nl-join (cross join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from (select subquery_big.col_b, avg(subquery_big.col_c) from subquery_big subquery_big where subquery_big.col_b=? group by subquery_big.col_b) a (col_b, [avg(subquery_big.col_c)]), (select subquery_big.col_b, min(subquery_big.col_c), max(subquery_big.col_c) from subquery_big subquery_big where subquery_big.col_b= ?:?  group by subquery_big.col_b) b (col_b, [min(subquery_big.col_c)], [max(subquery_big.col_c)]) where a.col_b=b.col_b
+select count(*) from (select subquery_big.col_b from subquery_big subquery_big where subquery_big.col_b=? group by subquery_big.col_b) a (col_b), (select subquery_big.col_b from subquery_big subquery_big where subquery_big.col_b= ?:?  group by subquery_big.col_b) b (col_b) where a.col_b=b.col_b
 ===================================================
 0
