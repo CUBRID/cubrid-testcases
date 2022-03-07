@@ -24,7 +24,7 @@ temp(group by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select tab_b.col_a, tab_b.col_b from tab_b tab_b group by tab_b.col_a)
+(select tab_b.col_a from tab_b tab_b group by tab_b.col_a)
 Query plan:
 sscan
     class: tab_a node[?]
@@ -44,7 +44,7 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from tab_a a, (select tab_b.col_a, tab_b.col_b from tab_b tab_b group by tab_b.col_a) b (col_a, col_b) where a.col_a=b.col_a and b.col_a=(select tab_a.col_a from tab_a tab_a where tab_a.col_b= ?:? )
+select count(*) from tab_a a, (select tab_b.col_a from tab_b tab_b group by tab_b.col_a) b (col_a) where a.col_a=b.col_a and b.col_a=(select tab_a.col_a from tab_a tab_a where tab_a.col_b= ?:? )
 ===================================================
 0
 ===================================================
@@ -59,7 +59,7 @@ temp(group by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select b.col_a, b.col_b from tab_b b group by b.col_a)
+(select b.col_a from tab_b b group by b.col_a)
 Query plan:
 sscan
     class: tab_a node[?]
@@ -79,7 +79,7 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from tab_a a, (select b.col_a, b.col_b from tab_b b group by b.col_a) b (col_a, col_b) where a.col_a=b.col_a and b.col_a=(select tab_a.col_a from tab_a tab_a where tab_a.col_b= ?:? )
+select count(*) from tab_a a, (select b.col_a from tab_b b group by b.col_a) b (col_a) where a.col_a=b.col_a and b.col_a=(select tab_a.col_a from tab_a tab_a where tab_a.col_b= ?:? )
 ===================================================
 0
 ===================================================

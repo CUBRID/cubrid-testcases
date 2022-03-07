@@ -312,13 +312,12 @@ Query plan:
 temp(order by)
     subplan: iscan
                  class: v? node[?]
-                 index: i_t?_abc term[?] (index skip scan)
-                 sort:  ? asc, ? asc, ? asc
+                 index: i_t?_abc term[?] (covers) (index skip scan)
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select /*+ INDEX_SS(t?) */ v?.b, v?.id, v?.a, v?.c from t? v? where (v?.b> ?:? ) order by ? for orderby_num()<= ?:? )
+(select /*+ INDEX_SS(t?) */ v?.b from t? v? where (v?.b> ?:? ) order by ? for orderby_num()<= ?:? )
 Query plan:
 temp(order by)
     subplan: nl-join (cross join)
@@ -334,7 +333,7 @@ temp(order by)
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-(select /*+ INDEX_SS(t?) */ t?.id, t?.a, t?.b, t?.c, v?.b from (select /*+ INDEX_SS(t?) */ v?.b, v?.id, v?.a, v?.c from t? v? where (v?.b> ?:? ) order by ? for orderby_num()<= ?:? ) v? (b, id, a, c), t? t? where (v?.b> ?:? ) and (t?.b> ?:? ) order by ?, ? for orderby_num()<= ?:? )
+(select /*+ INDEX_SS(t?) */ t?.id, t?.a, t?.b, t?.c, v?.b from (select /*+ INDEX_SS(t?) */ v?.b from t? v? where (v?.b> ?:? ) order by ? for orderby_num()<= ?:? ) v? (b), t? t? where (v?.b> ?:? ) and (t?.b> ?:? ) order by ?, ? for orderby_num()<= ?:? )
 Query plan:
 temp(order by)
     subplan: nl-join (cross join)
@@ -350,7 +349,7 @@ temp(order by)
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select v?.id, v?.a, v?.b, v?.c, t?.id, t?.a, t?.b, t?.c from (select /*+ INDEX_SS(t?) */ t?.id, t?.a, t?.b, t?.c, v?.b from (select /*+ INDEX_SS(t?) */ v?.b, v?.id, v?.a, v?.c from t? v? where (v?.b> ?:? ) order by ? for orderby_num()<= ?:? ) v? (b, id, a, c), t? t? where (v?.b> ?:? ) and (t?.b> ?:? ) order by ?, ? for orderby_num()<= ?:? ) v? (id, a, b, c), t? t? where (v?.b> ?:? ) and (t?.b> ?:? ) order by ?, ? for orderby_num()<= ?:? 
+select v?.id, v?.a, v?.b, v?.c, t?.id, t?.a, t?.b, t?.c from (select /*+ INDEX_SS(t?) */ t?.id, t?.a, t?.b, t?.c, v?.b from (select /*+ INDEX_SS(t?) */ v?.b from t? v? where (v?.b> ?:? ) order by ? for orderby_num()<= ?:? ) v? (b), t? t? where (v?.b> ?:? ) and (t?.b> ?:? ) order by ?, ? for orderby_num()<= ?:? ) v? (id, a, b, c), t? t? where (v?.b> ?:? ) and (t?.b> ?:? ) order by ?, ? for orderby_num()<= ?:? 
 ===================================================
 id    a    b    c    id    a    b    c    
 
@@ -358,13 +357,12 @@ Query plan:
 temp(order by)
     subplan: iscan
                  class: v? node[?]
-                 index: i_t?_abc term[?] (index skip scan)
-                 sort:  ? asc, ? asc, ? asc
+                 index: i_t?_abc term[?] (covers) (index skip scan)
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select /*+ INDEX_SS(t?) */ v?.b, v?.id, v?.a, v?.c from t? v? where (v?.b> ?:? ) order by ? for orderby_num()<= ?:? )
+(select /*+ INDEX_SS(t?) */ v?.b from t? v? where (v?.b> ?:? ) order by ? for orderby_num()<= ?:? )
 Query plan:
 temp(order by)
     subplan: nl-join (cross join)
@@ -380,7 +378,7 @@ temp(order by)
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-(select /*+ INDEX_SS(t?) */ t?.id, t?.a, t?.b, t?.c, v?.b from (select /*+ INDEX_SS(t?) */ v?.b, v?.id, v?.a, v?.c from t? v? where (v?.b> ?:? ) order by ? for orderby_num()<= ?:? ) v? (b, id, a, c), t? t? where (v?.b> ?:? ) and (t?.b> ?:? ) order by ?, ? for orderby_num()<= ?:? )
+(select /*+ INDEX_SS(t?) */ t?.id, t?.a, t?.b, t?.c, v?.b from (select /*+ INDEX_SS(t?) */ v?.b from t? v? where (v?.b> ?:? ) order by ? for orderby_num()<= ?:? ) v? (b), t? t? where (v?.b> ?:? ) and (t?.b> ?:? ) order by ?, ? for orderby_num()<= ?:? )
 Query plan:
 temp(order by)
     subplan: nl-join (cross join)
@@ -396,7 +394,7 @@ temp(order by)
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ NO_INDEX_SS */ v?.id, v?.a, v?.b, v?.c, t?.id, t?.a, t?.b, t?.c from (select /*+ INDEX_SS(t?) */ t?.id, t?.a, t?.b, t?.c, v?.b from (select /*+ INDEX_SS(t?) */ v?.b, v?.id, v?.a, v?.c from t? v? where (v?.b> ?:? ) order by ? for orderby_num()<= ?:? ) v? (b, id, a, c), t? t? where (v?.b> ?:? ) and (t?.b> ?:? ) order by ?, ? for orderby_num()<= ?:? ) v? (id, a, b, c), t? t? where (v?.b> ?:? ) and (t?.b> ?:? ) order by ?, ? for orderby_num()<= ?:? 
+select /*+ NO_INDEX_SS */ v?.id, v?.a, v?.b, v?.c, t?.id, t?.a, t?.b, t?.c from (select /*+ INDEX_SS(t?) */ t?.id, t?.a, t?.b, t?.c, v?.b from (select /*+ INDEX_SS(t?) */ v?.b from t? v? where (v?.b> ?:? ) order by ? for orderby_num()<= ?:? ) v? (b), t? t? where (v?.b> ?:? ) and (t?.b> ?:? ) order by ?, ? for orderby_num()<= ?:? ) v? (id, a, b, c), t? t? where (v?.b> ?:? ) and (t?.b> ?:? ) order by ?, ? for orderby_num()<= ?:? 
 ===================================================
 id    a    b    c    id    a    b    c    
 
@@ -404,13 +402,12 @@ Query plan:
 temp(order by)
     subplan: iscan
                  class: v? node[?]
-                 index: i_t?_abc term[?] (index skip scan)
-                 sort:  ? asc, ? asc, ? asc
+                 index: i_t?_abc term[?] (covers) (index skip scan)
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select /*+ INDEX_SS(t?) */ v?.b, v?.id, v?.a, v?.c from t? v? where (v?.b> ?:? ) order by ? for orderby_num()<= ?:? )
+(select /*+ INDEX_SS(t?) */ v?.b from t? v? where (v?.b> ?:? ) order by ? for orderby_num()<= ?:? )
 Query plan:
 temp(order by)
     subplan: nl-join (cross join)
@@ -426,7 +423,7 @@ temp(order by)
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-(select /*+ INDEX_SS(t?) */ t?.id, t?.a, t?.b, t?.c, v?.b from (select /*+ INDEX_SS(t?) */ v?.b, v?.id, v?.a, v?.c from t? v? where (v?.b> ?:? ) order by ? for orderby_num()<= ?:? ) v? (b, id, a, c), t? t? where (v?.b> ?:? ) and (t?.b> ?:? ) order by ?, ? for orderby_num()<= ?:? )
+(select /*+ INDEX_SS(t?) */ t?.id, t?.a, t?.b, t?.c, v?.b from (select /*+ INDEX_SS(t?) */ v?.b from t? v? where (v?.b> ?:? ) order by ? for orderby_num()<= ?:? ) v? (b), t? t? where (v?.b> ?:? ) and (t?.b> ?:? ) order by ?, ? for orderby_num()<= ?:? )
 Query plan:
 temp(order by)
     subplan: nl-join (cross join)
@@ -442,7 +439,7 @@ temp(order by)
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select v?.id, v?.a, v?.b, v?.c, t?.id, t?.a, t?.b, t?.c from (select /*+ INDEX_SS(t?) */ t?.id, t?.a, t?.b, t?.c, v?.b from (select /*+ INDEX_SS(t?) */ v?.b, v?.id, v?.a, v?.c from t? v? where (v?.b> ?:? ) order by ? for orderby_num()<= ?:? ) v? (b, id, a, c), t? t? where (v?.b> ?:? ) and (t?.b> ?:? ) order by ?, ? for orderby_num()<= ?:? ) v? (id, a, b, c), t? t? where (v?.b> ?:? ) and (t?.b> ?:? ) order by ?, ? for orderby_num()<= ?:? 
+select v?.id, v?.a, v?.b, v?.c, t?.id, t?.a, t?.b, t?.c from (select /*+ INDEX_SS(t?) */ t?.id, t?.a, t?.b, t?.c, v?.b from (select /*+ INDEX_SS(t?) */ v?.b from t? v? where (v?.b> ?:? ) order by ? for orderby_num()<= ?:? ) v? (b), t? t? where (v?.b> ?:? ) and (t?.b> ?:? ) order by ?, ? for orderby_num()<= ?:? ) v? (id, a, b, c), t? t? where (v?.b> ?:? ) and (t?.b> ?:? ) order by ?, ? for orderby_num()<= ?:? 
 ===================================================
 id    a    b    c    id    a    b    c    
 
@@ -450,13 +447,12 @@ Query plan:
 temp(order by)
     subplan: iscan
                  class: v? node[?]
-                 index: i_t?_abc term[?] (index skip scan)
-                 sort:  ? asc, ? asc, ? asc
+                 index: i_t?_abc term[?] (covers) (index skip scan)
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select /*+ INDEX_SS(t?) */ v?.b, v?.id, v?.a, v?.c from t? v? where (v?.b> ?:? ) order by ? for orderby_num()<= ?:? )
+(select /*+ INDEX_SS(t?) */ v?.b from t? v? where (v?.b> ?:? ) order by ? for orderby_num()<= ?:? )
 Query plan:
 temp(order by)
     subplan: nl-join (cross join)
@@ -472,7 +468,7 @@ temp(order by)
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-(select /*+ INDEX_SS(t?) */ t?.id, t?.a, t?.b, t?.c, v?.b from (select /*+ INDEX_SS(t?) */ v?.b, v?.id, v?.a, v?.c from t? v? where (v?.b> ?:? ) order by ? for orderby_num()<= ?:? ) v? (b, id, a, c), t? t? where (v?.b> ?:? ) and (t?.b> ?:? ) order by ?, ? for orderby_num()<= ?:? )
+(select /*+ INDEX_SS(t?) */ t?.id, t?.a, t?.b, t?.c, v?.b from (select /*+ INDEX_SS(t?) */ v?.b from t? v? where (v?.b> ?:? ) order by ? for orderby_num()<= ?:? ) v? (b), t? t? where (v?.b> ?:? ) and (t?.b> ?:? ) order by ?, ? for orderby_num()<= ?:? )
 Query plan:
 temp(order by)
     subplan: nl-join (cross join)
@@ -488,7 +484,7 @@ temp(order by)
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS(t?) */ v?.id, v?.a, v?.b, v?.c, t?.id, t?.a, t?.b, t?.c from (select /*+ INDEX_SS(t?) */ t?.id, t?.a, t?.b, t?.c, v?.b from (select /*+ INDEX_SS(t?) */ v?.b, v?.id, v?.a, v?.c from t? v? where (v?.b> ?:? ) order by ? for orderby_num()<= ?:? ) v? (b, id, a, c), t? t? where (v?.b> ?:? ) and (t?.b> ?:? ) order by ?, ? for orderby_num()<= ?:? ) v? (id, a, b, c), t? t? where (v?.b> ?:? ) and (t?.b> ?:? ) order by ?, ? for orderby_num()<= ?:? 
+select /*+ INDEX_SS(t?) */ v?.id, v?.a, v?.b, v?.c, t?.id, t?.a, t?.b, t?.c from (select /*+ INDEX_SS(t?) */ t?.id, t?.a, t?.b, t?.c, v?.b from (select /*+ INDEX_SS(t?) */ v?.b from t? v? where (v?.b> ?:? ) order by ? for orderby_num()<= ?:? ) v? (b), t? t? where (v?.b> ?:? ) and (t?.b> ?:? ) order by ?, ? for orderby_num()<= ?:? ) v? (id, a, b, c), t? t? where (v?.b> ?:? ) and (t?.b> ?:? ) order by ?, ? for orderby_num()<= ?:? 
 ===================================================
 0
 ===================================================
