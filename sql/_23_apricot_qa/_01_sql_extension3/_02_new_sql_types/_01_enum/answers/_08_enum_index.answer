@@ -46,7 +46,7 @@ iscan
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select idx.col?, idx.col?, idx.col?, idx.col? from idx idx where  cast(idx.col? as varchar)<'e' order by ?
+select idx.col?, idx.col?, idx.col?, idx.col? from idx idx where  cast(idx.col? as varchar)< cast('e' as varchar) order by ?
 /* ---> skip ORDER BY */
 ===================================================
 col1    col2    col3    col4    
@@ -60,7 +60,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select idx.col?, idx.col?, idx.col?, idx.col? from idx idx where  cast(idx.col? as varchar)>'a' and  cast(idx.col? as varchar)<'c' order by ?
+select idx.col?, idx.col?, idx.col?, idx.col? from idx idx where  cast(idx.col? as varchar)> cast('a' as varchar) and  cast(idx.col? as varchar)< cast('c' as varchar) order by ?
 ===================================================
 col1    col2    col3    col4    
 a     bb     1     33     
@@ -77,7 +77,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select idx.col?, idx.col?, idx.col?, idx.col? from idx idx where  cast(idx.col? as varchar)<'e' and  cast(idx.col? as varchar)>'?' order by ?
+select idx.col?, idx.col?, idx.col?, idx.col? from idx idx where  cast(idx.col? as varchar)< cast('e' as varchar) and  cast(idx.col? as varchar)> cast('?' as varchar) order by ?
 ===================================================
 0
 ===================================================

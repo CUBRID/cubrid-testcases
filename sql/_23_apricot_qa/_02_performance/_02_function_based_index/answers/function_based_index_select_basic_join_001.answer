@@ -105,7 +105,7 @@ nl-join (cross join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(t?.a) from t? t?, t? t? where  log?(t?.a)>? and  lower(t?.b)>'A'
+select count(t?.a) from t? t?, t? t? where  log?(t?.a)>? and  lower(t?.b)> cast('A' as varchar)
 ===================================================
 count(t1.a)    
 0     
@@ -124,7 +124,7 @@ nl-join (cross join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(t?.a) from t? t?, t? t? where  log?(t?.a)>? and  lower(t?.b)>'A' and  log?(t?.a)>? and  lower(t?.b)>'A'
+select count(t?.a) from t? t?, t? t? where  log?(t?.a)>? and  lower(t?.b)> cast('A' as varchar) and  log?(t?.a)>? and  lower(t?.b)> cast('A' as varchar)
 ===================================================
 count(t1.a)    
 4     
