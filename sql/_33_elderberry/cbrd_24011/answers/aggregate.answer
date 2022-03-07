@@ -77,7 +77,7 @@ temp(group by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select tab_b.col_a, max(tab_b.col_b) from tab_b tab_b where tab_b.col_a= ?:?  group by tab_b.col_a)
+(select tab_b.col_a from tab_b tab_b where tab_b.col_a= ?:?  group by tab_b.col_a)
 Query plan:
 nl-join (cross join)
     outer: sscan
@@ -89,7 +89,7 @@ nl-join (cross join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from tab_a a, (select tab_b.col_a, max(tab_b.col_b) from tab_b tab_b where tab_b.col_a= ?:?  group by tab_b.col_a) b (col_a, col_b) where a.col_a= ?:?  and a.col_a=b.col_a
+select count(*) from tab_a a, (select tab_b.col_a from tab_b tab_b where tab_b.col_a= ?:?  group by tab_b.col_a) b (col_a) where a.col_a= ?:?  and a.col_a=b.col_a
 ===================================================
 0
 ===================================================
@@ -105,7 +105,7 @@ temp(group by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select b.col_a, max(b.col_b) from tab_b b where b.col_a= ?:?  group by b.col_a)
+(select b.col_a from tab_b b where b.col_a= ?:?  group by b.col_a)
 Query plan:
 nl-join (cross join)
     outer: sscan
@@ -117,7 +117,7 @@ nl-join (cross join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from tab_a a, (select b.col_a, max(b.col_b) from tab_b b where b.col_a= ?:?  group by b.col_a) b (col_a, col_b) where a.col_a= ?:?  and a.col_a=b.col_a
+select count(*) from tab_a a, (select b.col_a from tab_b b where b.col_a= ?:?  group by b.col_a) b (col_a) where a.col_a= ?:?  and a.col_a=b.col_a
 ===================================================
 0
 ===================================================

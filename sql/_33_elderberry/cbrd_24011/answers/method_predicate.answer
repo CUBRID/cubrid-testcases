@@ -26,7 +26,7 @@ temp(group by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select b.col_a, b.col_b from tab_b b group by b.col_a)
+(select b.col_b, b.col_a from tab_b b group by b.col_a)
 Query plan:
 idx-join (inner join)
     outer: sscan
@@ -39,7 +39,7 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from tab_a a, (select b.col_a, b.col_b from tab_b b group by b.col_a) b (col_a, col_b) where a.col_a=b.col_b and  cast(b.col_a as double)=test()
+select count(*) from tab_a a, (select b.col_b, b.col_a from tab_b b group by b.col_a) b (col_b, col_a) where a.col_a=b.col_b and  cast(b.col_a as double)=test()
 ===================================================
 0
 ===================================================
@@ -54,7 +54,7 @@ temp(group by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select b.col_a, b.col_b from tab_b b group by b.col_a)
+(select b.col_a from tab_b b group by b.col_a)
 Query plan:
 idx-join (inner join)
     outer: sscan
@@ -67,7 +67,7 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from tab_a a, (select b.col_a, b.col_b from tab_b b group by b.col_a) b (col_a, col_b) where a.col_a=b.col_a and  cast(b.col_a as double)=test()
+select count(*) from tab_a a, (select b.col_a from tab_b b group by b.col_a) b (col_a) where a.col_a=b.col_a and  cast(b.col_a as double)=test()
 ===================================================
 0
 ===================================================
