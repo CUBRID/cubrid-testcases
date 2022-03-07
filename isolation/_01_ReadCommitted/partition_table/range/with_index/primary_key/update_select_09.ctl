@@ -32,7 +32,7 @@ MC: wait until C1 ready;
 C1: update t1 set col='aa' where id>10;
 MC: wait until C1 ready;
 
-C2: select * from t1 where id>0 and (select sleep(10)=0) order by 1,2;
+C2: select * from t1 where id>0 and (select sleep(10)=0)<>0 order by 1,2;
 MC: sleep 2;
 C1: commit;
 MC: wait until C1 ready;

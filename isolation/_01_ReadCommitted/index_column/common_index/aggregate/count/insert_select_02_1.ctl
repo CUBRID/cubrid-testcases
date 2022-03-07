@@ -131,7 +131,7 @@ C2: insert into t values(1,'aa');
 MC: wait until C2 ready;
 
 /* expected 10 group */
-C6: select count(id) from t where id between 1 and 9000 and (select sleep(3)=0) ;
+C6: select count(id) from t where id between 1 and 9000 and (select sleep(3)=0)<>0;
 MC: sleep 1;
 C3: insert into t values(1,'cc'); 
 C2: commit;

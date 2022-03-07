@@ -99,7 +99,7 @@ C3: commit;
 MC: wait until C3 ready;
 
 
-C4: DELETE FROM tb1 WHERE id BETWEEN 20 AND 21 and (select sleep(1)=0);
+C4: DELETE FROM tb1 WHERE id BETWEEN 20 AND 21 and (select sleep(1)=0)<>0;
 MC: sleep 4;
 MC: wait until C4 ready;
 

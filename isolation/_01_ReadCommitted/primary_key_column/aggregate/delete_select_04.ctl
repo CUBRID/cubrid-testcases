@@ -36,11 +36,11 @@ C1: commit;
 MC: wait until C1 ready;
 
 /* test case */
-C1: UPDATE tb1 SET id=id+10 WHERE id%2=0 and (select sleep(10)=0);
+C1: UPDATE tb1 SET id=id+10 WHERE id%2=0 and (select sleep(10)=0)<>0;
 /*MC: wait until C1 ready;*/
 MC: sleep 1;
 
-C2: DELETE FROM tb1 WHERE id=1 or id=18 and (select sleep(5)=0);
+C2: DELETE FROM tb1 WHERE id=1 or id=18 and (select sleep(5)=0)<>0;
 MC: sleep 1;
 
 /* expected (0,99999) */ 
