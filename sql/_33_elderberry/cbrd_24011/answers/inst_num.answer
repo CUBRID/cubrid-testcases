@@ -67,7 +67,7 @@ nl-join (cross join)
 Query stmt:
 select count(*) from tab_a a, (select b.col_a from tab_b b where b.col_a= ?:?  group by b.col_a) b (col_a) where a.col_a= ?:?  and a.col_a=b.col_a
 ===================================================
-count(b.col_b)    
+count(*)    
 0     
 
 Query plan:
@@ -76,7 +76,7 @@ sscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select tab_b.col_b, tab_b.col_a from tab_b tab_b where (inst_num()<= ?:? ))
+(select tab_b.col_a from tab_b tab_b where (inst_num()<= ?:? ))
 Query plan:
 nl-join (cross join)
     outer: sscan
@@ -89,7 +89,7 @@ nl-join (cross join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(b.col_b) from tab_a a, (select tab_b.col_b, tab_b.col_a from tab_b tab_b where (inst_num()<= ?:? )) b (col_b, col_a) where a.col_a= ?:?  and b.col_a= ?:?  and a.col_a=b.col_a
+select count(*) from tab_a a, (select tab_b.col_a from tab_b tab_b where (inst_num()<= ?:? )) b (col_a) where a.col_a= ?:?  and b.col_a= ?:?  and a.col_a=b.col_a
 ===================================================
 0
 ===================================================
@@ -117,16 +117,9 @@ nl-join (cross join)
 Query stmt:
 select count(*) from tab_a a, (select b.col_a from tab_b b where (inst_num()<= ?:? )) b (col_a) where a.col_a= ?:?  and b.col_a= ?:?  and a.col_a=b.col_a
 ===================================================
-count(b.col_b)    
+count(*)    
 10     
 
-Query plan:
-sscan
-    class: tab_b node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-(select ? from tab_b tab_b where (inst_num()<= ?:? ))
 Query plan:
 temp(group by)
     subplan: iscan
@@ -136,7 +129,7 @@ temp(group by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select (select ? from tab_b tab_b where (inst_num()<= ?:? )), tab_b.col_a from tab_b tab_b where tab_b.col_a= ?:?  group by tab_b.col_a)
+(select tab_b.col_a from tab_b tab_b where tab_b.col_a= ?:?  group by tab_b.col_a)
 Query plan:
 nl-join (cross join)
     outer: sscan
@@ -148,20 +141,13 @@ nl-join (cross join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(b.col_b) from tab_a a, (select (select ? from tab_b tab_b where (inst_num()<= ?:? )), tab_b.col_a from tab_b tab_b where tab_b.col_a= ?:?  group by tab_b.col_a) b (col_b, col_a) where a.col_a= ?:?  and a.col_a=b.col_a
+select count(*) from tab_a a, (select tab_b.col_a from tab_b tab_b where tab_b.col_a= ?:?  group by tab_b.col_a) b (col_a) where a.col_a= ?:?  and a.col_a=b.col_a
 ===================================================
 0
 ===================================================
-count(b.col_b)    
+count(*)    
 10     
 
-Query plan:
-sscan
-    class: tab_b node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-(select ? from tab_b tab_b where (inst_num()<= ?:? ))
 Query plan:
 temp(group by)
     subplan: iscan
@@ -171,7 +157,7 @@ temp(group by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select (select ? from tab_b tab_b where (inst_num()<= ?:? )), b.col_a from tab_b b where b.col_a= ?:?  group by b.col_a)
+(select b.col_a from tab_b b where b.col_a= ?:?  group by b.col_a)
 Query plan:
 nl-join (cross join)
     outer: sscan
@@ -183,9 +169,46 @@ nl-join (cross join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(b.col_b) from tab_a a, (select (select ? from tab_b tab_b where (inst_num()<= ?:? )), b.col_a from tab_b b where b.col_a= ?:?  group by b.col_a) b (col_b, col_a) where a.col_a= ?:?  and a.col_a=b.col_a
+select count(*) from tab_a a, (select b.col_a from tab_b b where b.col_a= ?:?  group by b.col_a) b (col_a) where a.col_a= ?:?  and a.col_a=b.col_a
 ===================================================
-Error:-494
+count(*)    
+10     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: tab_b node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tab_b.col_a from tab_b tab_b group by tab_b.col_a
+Query plan:
+sscan
+    class: tab_b node[?]
+    cost:  ? card ?
+Query stmt:
+select tab_b.col_a from tab_b tab_b
+Query plan:
+sscan
+    class: d? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select d?.col_a from (select tab_b.col_a from tab_b tab_b group by tab_b.col_a union all select tab_b.col_a from tab_b tab_b) d? (col_a) where (inst_num()<= ?:? ))
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: a node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tab_a a, (select d?.col_a from (select tab_b.col_a from tab_b tab_b group by tab_b.col_a union all select tab_b.col_a from tab_b tab_b) d? (col_a) where (inst_num()<= ?:? )) b (col_a) where a.col_a= ?:?  and b.col_a= ?:?  and a.col_a=b.col_a
 ===================================================
 0
 ===================================================
