@@ -134,7 +134,7 @@ C2: insert into t values(1,'aa');
 MC: wait until C2 ready;
 
 /* expected 10 group */
-C6: select distinct col from (select sleep(2)) x, t where id between 1 and 5000;
+C6: select distinct x.*,col from (select sleep(2)) x, t where id between 1 and 5000;
 MC: sleep 1;
 C3: insert into t values(1,'cc');
 MC: wait until C3 ready;

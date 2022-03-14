@@ -50,7 +50,7 @@ C1: COMMIT WORK;
 MC: wait until C1 ready;
 
 /* test case */
-C1: SELECT title, DECR(read_count) FROM (select sleep(2)) x, t1 WHERE read_count = 1 order by 1; 
+C1: SELECT x.*, title, DECR(read_count) FROM (select sleep(2)) x, t1 WHERE read_count = 1 order by 1; 
 C2: UPDATE t1 SET read_count = 1 WHERE read_count = 0;
 /* expect: no transactions need to wait, assume C2 finished before C1 */
 MC: wait until C2 ready;

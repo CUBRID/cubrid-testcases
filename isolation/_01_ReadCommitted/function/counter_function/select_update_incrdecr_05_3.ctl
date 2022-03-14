@@ -51,7 +51,7 @@ C1: COMMIT WORK;
 MC: wait until C1 ready;
 
 /* test case */
-C1: SELECT title, INCR(read_count) FROM (select sleep(4)) x, t1 WHERE id IN (4) order by 1; 
+C1: SELECT x.*, title, INCR(read_count) FROM (select sleep(4)) x, t1 WHERE id IN (4) order by 1; 
 C2: UPDATE t1 SET id = 4 WHERE read_count IN (1,3);
 /* expect: no transactions need to wait, assume C2 finished before C1 */
 MC: wait until C2 ready;

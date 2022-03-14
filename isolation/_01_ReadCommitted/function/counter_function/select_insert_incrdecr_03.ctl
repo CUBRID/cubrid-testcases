@@ -46,7 +46,7 @@ C1: COMMIT WORK;
 MC: wait until C1 ready;
 
 /* test case */
-C1: SELECT DECR(read_count) FROM (select sleep(3)) x, t1 WHERE id > 6;
+C1: SELECT x.*, DECR(read_count) FROM (select sleep(3)) x, t1 WHERE id > 6;
 C2: INSERT INTO t1 VALUES(8,'book8',4);
 /* expect: no transactions need to wait */
 MC: wait until C2 ready;
