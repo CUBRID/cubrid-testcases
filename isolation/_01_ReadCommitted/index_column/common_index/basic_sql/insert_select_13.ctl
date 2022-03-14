@@ -31,7 +31,7 @@ C1: commit;
 MC: wait until C1 ready;
 
 /* test case */
-C1: select t.* from (select sleep(1)) x, t where id>0 order by id,2;
+C1: select x.*, t.* from (select sleep(1)) x, t where id>0 order by id,2;
 C2: insert into t values(8,'abc');
 MC: wait until C2 ready;
 C2: rollback;

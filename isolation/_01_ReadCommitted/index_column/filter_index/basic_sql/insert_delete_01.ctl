@@ -41,7 +41,7 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C3: select t.* from (select sleep(3)) x, t where id=1 using index idx(+);
+C3: select x.*, t.* from (select sleep(3)) x, t where id=1 using index idx(+);
 C1: delete from t where col=1 and 0 = (select sleep(1));
 C2: insert into t values(1,1);
 MC: wait until C1 ready;

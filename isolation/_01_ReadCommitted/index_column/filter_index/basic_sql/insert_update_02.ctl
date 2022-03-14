@@ -38,7 +38,7 @@ MC: wait until C1 ready;
 
 /* test case */
 /* expected select (1,a)(2,aa)(3,aaa) */
-C1: select t.* from (select sleep(1)) x, t where char_length(col)=id using index idx(+);
+C1: select x.*, t.* from (select sleep(1)) x, t where char_length(col)=id using index idx(+);
 C3: update t set id=id+1 where id=2;
 C3: commit;
 MC: wait until C3 ready;
