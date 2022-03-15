@@ -48,7 +48,7 @@ C1: COMMIT WORK;
 MC: wait until C1 ready;
 
 /* test case */
-C1: SELECT x.*, title, INCR(read_count) FROM (select sleep(4)) x, t1 WHERE read_count = 5 order by 1,2; 
+C1: SELECT title, INCR(read_count) FROM t1 WHERE read_count = 5 and (select sleep(4)=0)<>0 order by 1,2; 
 C2: SELECT title, INCR(read_count) FROM t1 WHERE read_count = 0 order by 1,2;
 /* expect: no transactions need to wait, assume C2 finished before C1 */
 MC: wait until C2 ready;
