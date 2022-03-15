@@ -30,7 +30,7 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C1: insert into t select rownum,rownum ||'a' from (select sleep(5)) x, db_class limit 3;
+C1: insert into t select rownum,rownum ||'a' from db_class where (select sleep(5)=0)<>0 limit 3;
 MC: sleep 1;
 C2: delete from t where col>'1';
 MC: wait until C2 ready;

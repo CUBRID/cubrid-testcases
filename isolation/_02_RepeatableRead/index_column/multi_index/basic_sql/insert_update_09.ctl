@@ -32,7 +32,7 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C1: insert into t select rownum,rownum ||'a'  from (select sleep(5)) x, t where id>0 limit 3;
+C1: insert into t select rownum,rownum ||'a'  from t where id>0 and sleep(5)=0 limit 3;
 MC: sleep 1;
 C2: update t set col=col||'a' where id>0 using index idx;
 MC: wait until C2 ready;

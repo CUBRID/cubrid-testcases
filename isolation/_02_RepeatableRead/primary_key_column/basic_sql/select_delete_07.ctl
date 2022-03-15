@@ -29,7 +29,7 @@ C1: commit work;
 
 MC: wait until C1 ready;
 /* test case */
-C1: SELECT tb1.* FROM (select sleep(2)) x, tb1 WHERE id >2;
+C1: SELECT tb1.* FROM tb1 WHERE id >2 and sleep(2)=0;
 MC: sleep 1;
 C2: INSERT INTO tb1 VALUES(8,'fan');
 C3: DELETE FROM tb1 WHERE id = 7;

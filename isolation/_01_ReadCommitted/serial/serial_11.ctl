@@ -28,7 +28,7 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C1: SELECT SERIAL_CURRENT_VALUE(s1),SERIAL_NEXT_VALUE(s1) FROM (select sleep(1)) x,tt1 ; 
+C1: SELECT x.*,SERIAL_CURRENT_VALUE(s1),SERIAL_NEXT_VALUE(s1) FROM (select sleep(1)) x,tt1 ; 
 C2: INSERT INTO tt1 VALUES(s1.NEXT_VALUE,'Park');
 C2: INSERT INTO tt1 VALUES(s1.NEXT_VALUE,'Museum');
 MC: wait until C1 ready;

@@ -35,7 +35,7 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C3: select t.* from (select sleep(10)) x, t where col=1 using index colx(+) order by 1,2;
+C3: select x.*, t.* from (select sleep(10)) x, t where col=1 using index colx(+) order by 1,2;
 MC: sleep 1;
 C1: delete from t where col=1 and sleep(3)=0 using index colx(+);
 MC: sleep 1;
