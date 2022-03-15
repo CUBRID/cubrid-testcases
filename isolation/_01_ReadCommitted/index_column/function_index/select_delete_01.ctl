@@ -27,7 +27,7 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C1: SELECT x.*, tb1.* FROM (select sleep(2)) x,tb1 USE INDEX (idx) WHERE CHAR_LENGTH(col)=id order by 1,2;
+C1: SELECT tb1.* FROM tb1 USE INDEX (idx) WHERE CHAR_LENGTH(col)=id and (select sleep(2)=0)<>0 order by 1,2;
 C2: DELETE FROM tb1 USE INDEX (idx) WHERE CHAR_LENGTH(col)=id;
 MC: wait until C2 ready;
 MC: wait until C1 ready;

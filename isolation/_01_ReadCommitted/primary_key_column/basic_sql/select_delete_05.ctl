@@ -31,7 +31,7 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C1: SELECT x.*, tb1.* FROM (select sleep(2)) x,tb1 ORDER BY col,id;
+C1: SELECT tb1.* FROM tb1 where (select sleep(2)=0)<>0 ORDER BY col,id;
 MC: sleep 1;
 C2: DELETE FROM tb1 WHERE id = 4;
 C2: commit work;

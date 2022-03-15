@@ -34,7 +34,7 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C1: SELECT x.*, t_foreign.* FROM (select sleep(2)) x, t_foreign order by 1,2;
+C1: SELECT t_foreign.* FROM t_foreign where (select sleep(2)=0)<>0 order by 1,2;
 MC: sleep 1;
 C2: DELETE FROM t_primary WHERE id=1;
 MC: wait until C2 ready;
