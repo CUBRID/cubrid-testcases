@@ -32,7 +32,7 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C1: SELECT tb1.* FROM tb1 WHERE col=1 and sleep(1)=0 USING INDEX idx(+) order by id;
+C1: SELECT tb1.* FROM tb1 WHERE col=1 and (SELECT SLEEP(1)=0)<>0 USING INDEX idx(+) order by id;
 C2: DELETE FROM tb1 WHERE col=1;
 MC: wait until C2 ready;
 MC: wait until C1 ready;

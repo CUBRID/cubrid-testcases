@@ -42,7 +42,7 @@ C1: update t set id=col-1 where id%2=0 and (select sleep(10)=0)<>0;
 /*MC: wait until C1 ready;*/
 MC: sleep 1;
 
-C2: insert into t select t.* from t where id%2=1 and sleep(5)=0;
+C2: insert into t select t.* from t where id%2=1 and (select sleep(5)=0)<>0;
 /*MC: wait until C2 ready;*/
 MC: sleep 1;
 

@@ -29,9 +29,9 @@ C1: commit work;
 
 MC: wait until C1 ready;
 /* test case */
-C1: SELECT tb1.* FROM tb1 WHERE id >2 and sleep(2)=0;
+C1: SELECT tb1.* FROM tb1 WHERE id >2 and (select sleep(2)=0)<>0;
 MC: wait until C1 ready;
-C2: SELECT tb1.* FROM tb1 WHERE id >0 and sleep(2)=0;
+C2: SELECT tb1.* FROM tb1 WHERE id >0 and (select sleep(2)=0)<>0;
 MC: sleep 1;
 C3: DELETE FROM tb1 WHERE id > 4;
 C3: commit;

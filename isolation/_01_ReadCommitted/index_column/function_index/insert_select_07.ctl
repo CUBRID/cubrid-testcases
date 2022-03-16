@@ -31,7 +31,7 @@ MC: wait until C1 ready;
 
 /* test case */
 /* can not see (2,abc) */
-C1: select t.* from t where LENGTH(col)>1 and sleep(1)=0 order by col;
+C1: select t.* from t where LENGTH(col)>1 and (select sleep(1)=0)<>0 order by col;
 C2: insert into t values(2,'abc');
 C2: commit work;
 MC: wait until C2 ready;
