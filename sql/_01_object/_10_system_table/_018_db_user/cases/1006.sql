@@ -16,7 +16,7 @@ drop trigger test_trigger;
 
 
 call login('dba') on class db_user;
-drop class test_class;
+drop class test_user.test_class;
 drop user test_user;
 commit;
 autocommit on;

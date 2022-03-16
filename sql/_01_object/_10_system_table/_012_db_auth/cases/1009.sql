@@ -12,8 +12,8 @@ grant index on test_class to test_user;
 grant index on test_class1 to test_user;
 
 call login ('test_user') on class db_user;
-create index idx_test_class on test_class(col1);
-create index idx_test_class1 on test_class1(col1);
+create index idx_test_class on dba.test_class(col1);
+create index idx_test_class1 on dba.test_class1(col1);
 
 call login('dba') on class db_user;
 select * from test_class;

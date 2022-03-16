@@ -10,8 +10,8 @@ grant insert on test_class to test_user;
 grant insert on test_class1 to test_user;
 
 call login ('test_user') on class db_user;
-insert into test_class values(999, 'nhn');
-insert into test_class1 values(888, 'nhnchina');
+insert into dba.test_class values(999, 'nhn');
+insert into dba.test_class1 values(888, 'nhnchina');
 
 
 call login('dba') on class db_user;
