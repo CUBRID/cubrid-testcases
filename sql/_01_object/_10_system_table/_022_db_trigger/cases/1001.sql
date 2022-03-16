@@ -15,8 +15,8 @@ select owner, name
 from   db_trigger
 where  name = 'test_trigger';
 
-drop trigger test_trigger;
-drop class test_class;
+drop trigger test_user.test_trigger;
+drop class test_user.test_class;
 
 
 call drop_user('test_user') on class db_user;

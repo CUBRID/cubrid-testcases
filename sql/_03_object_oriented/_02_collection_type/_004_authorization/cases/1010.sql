@@ -17,8 +17,8 @@ grant SELECT,INSERT on ddl_0001 to user1;
 
 call login ('user1','') on CLASS db_user;
 
-insert into ddl_0001 values({4,5,6},{'aaa2','bbb2'},null);
-SELECT * FROM ddl_0001 order by 1;
+insert into dba.ddl_0001 values({4,5,6},{'aaa2','bbb2'},null);
+SELECT * FROM dba.ddl_0001 order by 1;
 
 call login ('dba','') on CLASS db_user;
 drop CLASS ddl_0001;

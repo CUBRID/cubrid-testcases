@@ -13,7 +13,7 @@ REVOKE DELETE, SELECT ON DCL1 FROM DCL_USER1;
 
 
 CALL login('DCL_USER1','DCL1') ON CLASS db_user;
-DELETE FROM DCL1 WHERE id=1;
+DELETE FROM dba.DCL1 WHERE id=1;
 
 CALL login('dba','') ON CLASS db_user;
 CALL drop_user('DCL_USER1') ON CLASS db_user;

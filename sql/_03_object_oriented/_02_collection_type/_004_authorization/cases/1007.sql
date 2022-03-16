@@ -15,7 +15,7 @@ grant update  on ddl_0001 to user1;
 
 call login ('user1','') on CLASS db_user;
 
-update ddl_0001 set st={10,20,30};
+update dba.ddl_0001 set st={10,20,30};
 
 
 call login ('dba','') on CLASS db_user;

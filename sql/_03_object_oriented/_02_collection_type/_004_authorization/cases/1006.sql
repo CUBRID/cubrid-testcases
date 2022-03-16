@@ -18,7 +18,7 @@ grant insert  on ddl_0001 to user1;
 
 call login ('user1','') on CLASS db_user;
 
-insert into ddl_0001 values({10,20,30},{'aaa0','bbb0'},null);
+insert into dba.ddl_0001 values({10,20,30},{'aaa0','bbb0'},null);
 
 call login ('dba','') on CLASS db_user;
 drop CLASS ddl_0001;

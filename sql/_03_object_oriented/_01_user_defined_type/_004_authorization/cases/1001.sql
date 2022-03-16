@@ -10,7 +10,7 @@ CREATE TABLE Company  (Name CHAR(20), Location StateCity not null primary KEY, B
 
 
 call login ('user1','') on CLASS db_user;
-insert into company values('name1',insert into statecity values('state1','city1'),1);
+insert into dba.company values('name1',insert into dba.statecity values('state1','city1'),1);
 
 
 call login ('dba','') on CLASS db_user;

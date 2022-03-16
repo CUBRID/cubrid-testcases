@@ -11,7 +11,7 @@ CREATE TABLE Company  (Name CHAR(20), Location StateCity not null primary KEY, B
 insert into company values('name1',insert into statecity values('state1','city1'),1);
 call login ('user1','') on CLASS db_user;
 
-update company set name='name2';
+update dba.company set name='name2';
 
 call login ('dba','') on CLASS db_user;
 drop CLASS Company;
