@@ -35,7 +35,7 @@ MC: wait until C1 ready;
 /* test case */
 C1: update t set id=col-1 where id%2=0 and (select sleep(10)=0)<>0;
 MC: sleep 1;
-C2: insert into t select t.* from (select sleep(5))x, t where id%3=0;
+C2: insert into t select t.* from t where id%3=0 and (select sleep(5)=0)<>0;
 MC: sleep 1;
 C3: select avg(id) from t group by col;
 MC: wait until C3 ready;

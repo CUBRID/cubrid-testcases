@@ -36,7 +36,7 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C1: insert into t(col) select col from t, (select sleep(4)) x order by id,col;
+C1: insert into t(col) select col from t where (select sleep(4)=0)<>0 order by id,col;
 C2: delete from t where id=3;
 MC: wait until C2 ready;
 C2: commit;

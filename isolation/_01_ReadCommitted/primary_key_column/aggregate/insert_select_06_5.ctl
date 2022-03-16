@@ -77,7 +77,7 @@ C2: insert into t values(1,'aa');
 MC: wait until C2 ready;
 
 /* expected 10 group */
-C6: select avg(id) from t, (select sleep(3)) x where id>0;
+C6: select avg(id) from t where id>0 and (select sleep(3)=0)<>0;
 C3: insert into t values(2,'cc');
 MC: wait until C3 ready;
 
