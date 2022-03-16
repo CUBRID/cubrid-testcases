@@ -37,7 +37,7 @@ MC: wait until C1 ready;
 
 /* test case */
 C1: set @newincr=0;
-C1: insert into t select (@newincr:=@newincr+1),'c' from t1, (select sleep(3)) x on duplicate key update id=20;
+C1: insert into t select (@newincr:=@newincr+1),'c' from t1 where (select sleep(3)=0)<>0 on duplicate key update id=20;
 MC: sleep 1;
 C2: insert into t values(3,'a');
 MC: wait until C2 ready;

@@ -32,7 +32,7 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C1: insert into t select t.id+1,t.col||'a' from (select sleep(3)) x, t;
+C1: insert into t select t.id+1,t.col||'a' from t where (select sleep(3)=0)<>0;
 MC: sleep 1; 
 C2: update t set id=id+1 where id=3 using index idx(+);
 C2: commit;

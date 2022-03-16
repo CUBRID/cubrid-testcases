@@ -30,7 +30,7 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C1: SELECT tb1.* FROM (select sleep(1)) x, tb1 ORDER BY dept_id,name;
+C1: SELECT tb1.* FROM tb1 WHERE (SELECT SLEEP(1)=0)<>0 ORDER BY dept_id,name;
 /*MC: wait until C1 ready;*/
 C2: DELETE FROM tb1 WHERE name='Jonh';
 C2: INSERT INTO tb1 VALUES(101,'Kite','M');
