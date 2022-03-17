@@ -42,7 +42,7 @@ select /*+ recompile */ * from ui ignore index(idx_i2_i3, idx_all, idx_i3_i4_i2)
 --TEST: i3
 select /*+ recompile */ * from ui ignore index(idx_i3, idx_i4_i3) where i3 < 'ddd' using index idx_i3(-) order by 1;
 select /*+ recompile */ * from ui ignore index(idx_i2_i3, idx_i4_i3) where i3 < 'ddd' and i3 is not null using index idx_i3_i4_i2(-) order by 1;
-select /*+ recompile */ * from ui ignore index(idx_i3, idx_i2, idx_i2_i3) where i3 < 'ddd' and i3 using index idx_i3(-), idx_i3_i4_i2(-) order by i2 desc;
+select /*+ recompile */ * from ui ignore index(idx_i3, idx_i2, idx_i2_i3) where i3 < 'ddd' and i3<>0 using index idx_i3(-), idx_i3_i4_i2(-) order by i2 desc;
 
 --TEST: i4
 select /*+ recompile */ * from ui ignore index(idx_i4_i3, idx_i4) where to_date(i4) < '1995-12-31' using index idx_i4(-) order by 1 desc;

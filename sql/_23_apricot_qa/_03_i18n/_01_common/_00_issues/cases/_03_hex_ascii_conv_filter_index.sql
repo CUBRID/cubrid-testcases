@@ -16,7 +16,7 @@ select * from t where s < 'z' using index idx(+);
 alter index idx on t (s, c, i) where (hex(s) = '61') or (hex(c) = '61') rebuild;
 select * from t where s < 'z' using index idx(+);
 
-alter index idx on t (s, c, i) where hex(s) rebuild;
+alter index idx on t (s, c, i) where hex(s)<>0 rebuild;
 select * from t where s < 'z' using index idx(+);
 
 alter index idx on t (s, c, i) where hex(s) = rand() rebuild;
@@ -29,7 +29,7 @@ select * from t where s < 'z' using index idx(+);
 alter index idx on t (s, c, i) where (ascii(s) = i) or (ascii(c) = i) rebuild;
 select * from t where s < 'z' using index idx(+);
 
-alter index idx on t (s, c, i) where ascii(s) rebuild;
+alter index idx on t (s, c, i) where ascii(s)<>0 rebuild;
 select * from t where s < 'z' using index idx(+);
 
 alter index idx on t (s, c, i) where ascii(s) = now() rebuild;
@@ -39,7 +39,7 @@ drop index idx on t;
 create index idx on t (s, c, i) where conv(s, 16, 10) = '255';
 select * from t where s < 'z' using index idx(+);
 
-alter index idx on t (s, c, i) where conv(s, 10, 16) rebuild;
+alter index idx on t (s, c, i) where conv(s, 10, 16)<>0 rebuild;
 select * from t where s < 'z' using index idx(+);
 
 alter index idx on t (s, c, i) where ascii(s) = rand() * now() rebuild;

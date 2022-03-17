@@ -4,7 +4,7 @@ set names utf8;
 drop table if exists t;
 create table t(s1 char(10) charset utf8);
 insert into t values('¥'),('￥'),('8'),('9');
-select max(s1 collate utf8_ja_exp),if (((min(s1 collate utf8_ja_exp_cbm)='￥')||(min(s1 collate utf8_ja_exp_cbm)='¥')),'ok','nok') as m from t;  
+select max(s1 collate utf8_ja_exp),if (((min(s1 collate utf8_ja_exp_cbm)='￥')||(min(s1 collate utf8_ja_exp_cbm)='¥'))<>0,'ok','nok') as m from t;  
 drop t;
 
 create table t(s1 char(5) charset utf8,s2 string collate utf8_tr_cs_uca);

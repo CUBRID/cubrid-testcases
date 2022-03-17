@@ -4,35 +4,35 @@ insert into m values (1, null, null, null, null);
 
 
 
-select count(*) from m where a and a;
-select count(*) from m where a and b;
-select count(*) from m where a and c;
-select count(*) from m where a and d;
-select count(*) from m where a and e;
+select count(*) from m where a<>0 and a<>0;
+select count(*) from m where a<>0 and b<>0;
+select count(*) from m where a<>0 and c<>0;
+select count(*) from m where a<>0 and d<>0;
+select count(*) from m where a<>0 and e<>0;
 
-select count(*) from m where b and a;
-select count(*) from m where b and b;
-select count(*) from m where b and c;
-select count(*) from m where b and d;
-select count(*) from m where b and e;
+select count(*) from m where b<>0 and a<>0;
+select count(*) from m where b<>0 and b<>0;
+select count(*) from m where b<>0 and c<>0;
+select count(*) from m where b<>0 and d<>0;
+select count(*) from m where b<>0 and e<>0;
 
-select count(*) from m where c and a;
-select count(*) from m where c and b;
-select count(*) from m where c and c;
-select count(*) from m where c and d;
-select count(*) from m where c and e;
+select count(*) from m where c<>0 and a<>0;
+select count(*) from m where c<>0 and b<>0;
+select count(*) from m where c<>0 and c<>0;
+select count(*) from m where c<>0 and d<>0;
+select count(*) from m where c<>0 and e<>0;
 
-select count(*) from m where d and a;
-select count(*) from m where d and b;
-select count(*) from m where d and c;
-select count(*) from m where d and d;
-select count(*) from m where d and e;
+select count(*) from m where d<>0 and a<>0;
+select count(*) from m where d<>0 and b<>0;
+select count(*) from m where d<>0 and c<>0;
+select count(*) from m where d<>0 and d<>0;
+select count(*) from m where d<>0 and e<>0;
 
-select count(*) from m where e and a;
-select count(*) from m where e and b;
-select count(*) from m where e and c;
-select count(*) from m where e and d;
-select count(*) from m where e and e;
+select count(*) from m where e<>0 and a<>0;
+select count(*) from m where e<>0 and b<>0;
+select count(*) from m where e<>0 and c<>0;
+select count(*) from m where e<>0 and d<>0;
+select count(*) from m where e<>0 and e<>0;
 
 drop table m;
 
@@ -41,7 +41,7 @@ drop table m;
 create table m (i int, s varchar, t varchar);
 insert into m values (1, '1','0'),(1, '1','xxx'), (1,'1','0'), (1,'1',null), (1,'1', '');
 
-select (i and s) from m;
-select (s and t) from m;
+select (i<>0 and s<>0) from m;
+select (s<>0 and t<>0) from m;
 
 drop table m;

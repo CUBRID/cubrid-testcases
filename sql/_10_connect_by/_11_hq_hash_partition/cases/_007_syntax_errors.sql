@@ -20,17 +20,17 @@ select *
 
 select *
         from hash_test
-        connect by id
+        connect by id<>0
         order by id;
 
 select *
         from hash_test
-        connect by prior id
+        connect by prior id<>0
         order by id;
 
 select *
         from hash_test
-        start with parentid
+        start with parentid<>0
         connect by prior id=parentid
         order by id;
 
@@ -42,7 +42,7 @@ select parentid,count(*) "count"
 
 select parentid,count(*) "count"
         from hash_test
-        connect by prior id
+        connect by prior id<>0
         group by parentid
         order by parentid;
 
