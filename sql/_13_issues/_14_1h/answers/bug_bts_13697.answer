@@ -148,12 +148,13 @@ id    a    b    c
 1     1     1     1     
 
 Query plan:
-sscan
+iscan
     class: x? node[?]
-    sargs: term[?] AND term[?] AND term[?]
+    index: i_ac term[?] (index skip scan)
+    sargs: term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select x?.id, x?.a, x?.b, x?.c from t? x? where (x?.b< ?:? ) and (x?.c< ?:? ) and (inst_num()<= ?:? )
+select /*+ INDEX_SS([t?.x?]) */ x?.id, x?.a, x?.b, x?.c from t? x? where (x?.b< ?:? ) and (x?.c< ?:? ) and (inst_num()<= ?:? )
 ===================================================
 id    a    b    c    
 1     1     1     1     
