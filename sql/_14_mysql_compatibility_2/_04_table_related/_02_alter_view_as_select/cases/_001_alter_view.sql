@@ -80,7 +80,7 @@ alter view w as select * from t;
 call login('user1') on class db_user;
 
 -- user1 should still have its rights to select from w
-select * from w order by i asc;
+select * from dba.w order by i asc;
 
 call login('dba') on class db_user;
 drop user user1;

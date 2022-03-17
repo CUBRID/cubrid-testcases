@@ -19,10 +19,10 @@ insert into foo values(5, 'ccc', B'10101', 12);
 insert into foo values(5, 'bbb', B'10101', 12);
 
 
-select index_cardinality('foo', 'pk_foo_a_b', 0);
-select index_cardinality('foo', 'pk_foo_a_b', 1);
-select index_cardinality('foo', 'pk_foo_a_b', 2);
-select index_cardinality('foo', 'pk_foo_a_b', -1);
+select index_cardinality('dba.foo', 'pk_foo_a_b', 0);
+select index_cardinality('dba.foo', 'pk_foo_a_b', 1);
+select index_cardinality('dba.foo', 'pk_foo_a_b', 2);
+select index_cardinality('dba.foo', 'pk_foo_a_b', -1);
 update statistics on foo;
 show index in foo;
 
@@ -31,9 +31,9 @@ alter table foo add constraint primary key(b, a);
 update statistics on foo;
 show index in foo;
 
-select index_cardinality('foo', 'pk_foo_b_a', 0);
-select index_cardinality('foo', 'pk_foo_b_a', 1);
-select index_cardinality('foo', 'pk_foo_b_a', 2);
-select index_cardinality('foo', 'pk_foo_b_a', -1);
+select index_cardinality('dba.foo', 'pk_foo_b_a', 0);
+select index_cardinality('dba.foo', 'pk_foo_b_a', 1);
+select index_cardinality('dba.foo', 'pk_foo_b_a', 2);
+select index_cardinality('dba.foo', 'pk_foo_b_a', -1);
 
 drop table foo;

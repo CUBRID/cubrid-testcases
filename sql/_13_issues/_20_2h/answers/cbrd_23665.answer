@@ -19,22 +19,22 @@ trace
 Query Plan:
   TABLE SCAN (b)
 
-  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c from tmp_hls a, (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) b (a, b, c) where a.a=b.a and a.b=b.b and a.c=b.c
+  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c from [dba.tmp_hls] a, (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) b (a, b, c) where a.a=b.a and a.b=b.b and a.c=b.c
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
-        SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -52,22 +52,22 @@ trace
 Query Plan:
   TABLE SCAN (b)
 
-  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c from tmp_hls a, (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) b (a, b, c) where b.a=a.a and a.c=b.c and b.b=a.b
+  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c from [dba.tmp_hls] a, (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) b (a, b, c) where b.a=a.a and a.c=b.c and b.b=a.b
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
-        SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -87,22 +87,22 @@ trace
 Query Plan:
   TABLE SCAN (b)
 
-  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c from tmp_hls a, (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) b (a, b, c) where b.c=a.c
+  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c from [dba.tmp_hls] a, (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) b (a, b, c) where b.c=a.c
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
-        SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -117,11 +117,11 @@ trace
 Query Plan:
   TABLE SCAN (b)
 
-  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? ))
 
   TABLE SCAN (b)
 
-  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? ))
 
   NESTED LOOPS (inner join)
     NESTED LOOPS (inner join)
@@ -129,17 +129,17 @@ Query Plan:
       TABLE SCAN (b)
     TABLE SCAN (c)
 
-  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c from tmp_hls a, (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) b (a, b, c), (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) c (a, b, c) where a.a=b.a and b.b=a.b and b.a=c.a
+  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c from [dba.tmp_hls] a, (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) b (a, b, c), (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) c (a, b, c) where a.a=b.a and b.b=a.b and b.a=c.a
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
-        SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -152,22 +152,22 @@ trace
 Query Plan:
   TABLE SCAN (b)
 
-  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) b (a, b, c) where a.c=b.c and (a.b>b.b)
+  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from [dba.tmp_hls] a, (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) b (a, b, c) where a.c=b.c and (a.b>b.b)
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
-        SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -180,22 +180,22 @@ trace
 Query Plan:
   TABLE SCAN (b)
 
-  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) b (a, b, c) where a.c=b.c and a.c+b.c=?
+  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from [dba.tmp_hls] a, (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) b (a, b, c) where a.c=b.c and a.c+b.c=?
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
-        SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -210,22 +210,22 @@ Query Plan:
   SORT (group by)
     TABLE SCAN (b)
 
-  rewritten query: (select max(b.a), max(b.b), b.c from tmp_hls b group by b.c)
+  rewritten query: (select max(b.a), max(b.b), b.c from [dba.tmp_hls] b group by b.c)
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, (select max(b.a), max(b.b), b.c from tmp_hls b group by b.c) b (a, b, c) where a.c=b.c and a.c+b.c=?
+  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from [dba.tmp_hls] a, (select max(b.a), max(b.b), b.c from [dba.tmp_hls] b group by b.c) b (a, b, c) where a.c=b.c and a.c+b.c=?
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
-        SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
      
 
@@ -244,22 +244,22 @@ Query Plan:
   SORT (group by)
     TABLE SCAN (b)
 
-  rewritten query: (select max(b.a), max(b.b), b.c from tmp_hls b group by b.c having (max(b.b)> cast('cubrid' as varchar)))
+  rewritten query: (select max(b.a), max(b.b), b.c from [dba.tmp_hls] b group by b.c having (max(b.b)> cast('cubrid' as varchar)))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, (select max(b.a), max(b.b), b.c from tmp_hls b group by b.c having (max(b.b)> cast('cubrid' as varchar))) b (a, b, c) where a.c=b.c and (a.a> ?:? )
+  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from [dba.tmp_hls] a, (select max(b.a), max(b.b), b.c from [dba.tmp_hls] b group by b.c having (max(b.b)> cast('cubrid' as varchar))) b (a, b, c) where a.c=b.c and (a.a> ?:? )
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
-        SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
      
 
@@ -274,22 +274,22 @@ trace
 Query Plan:
   TABLE SCAN (b)
 
-  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) b (a, b, c) where b.a= substr(a.b, ?, ?)
+  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from [dba.tmp_hls] a, (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) b (a, b, c) where b.a= substr(a.b, ?, ?)
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
-        SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -304,22 +304,22 @@ trace
 Query Plan:
   TABLE SCAN (b)
 
-  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) b (a, b, c) where  substr(a.b, ?, ?)=decode(b.a, 'post',  cast('pos' as varchar), b.a)
+  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from [dba.tmp_hls] a, (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) b (a, b, c) where  substr(a.b, ?, ?)=decode(b.a, 'post',  cast('pos' as varchar), b.a)
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
-        SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -332,22 +332,22 @@ trace
 Query Plan:
   TABLE SCAN (b)
 
-  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) b (a, b, c) where b.a|| cast('rid' as varchar)=decode(a.a, 'cub',  cast('cubrid' as varchar), 'post',  cast('postgre' as varchar), a.a)
+  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from [dba.tmp_hls] a, (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) b (a, b, c) where b.a|| cast('rid' as varchar)=decode(a.a, 'cub',  cast('cubrid' as varchar), 'post',  cast('postgre' as varchar), a.a)
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
-        SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -364,22 +364,22 @@ trace
 Query Plan:
   TABLE SCAN (b)
 
-  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) b (a, b, c) where b.b=decode(a.a, 'cub',  cast('cubrid' as varchar), 'post',  cast('bad' as varchar), a.b)
+  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from [dba.tmp_hls] a, (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) b (a, b, c) where b.b=decode(a.a, 'cub',  cast('cubrid' as varchar), 'post',  cast('bad' as varchar), a.b)
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
-        SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -397,22 +397,22 @@ trace
 Query Plan:
   TABLE SCAN (b)
 
-  rewritten query: (select b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
+  rewritten query: (select b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? ))
 
   NESTED LOOPS (left outer join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a left outer join (select b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) b (a, b, c) on a.b=b.b
+  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from [dba.tmp_hls] a left outer join (select b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) b (a, b, c) on a.b=b.b
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
-        SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -430,11 +430,11 @@ trace
 Query Plan:
   TABLE SCAN (b)
 
-  rewritten query: (select b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
+  rewritten query: (select b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? ))
 
   TABLE SCAN (b)
 
-  rewritten query: (select b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
+  rewritten query: (select b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? ))
 
   NESTED LOOPS (left outer join)
     NESTED LOOPS (left outer join)
@@ -442,17 +442,17 @@ Query Plan:
       TABLE SCAN (b)
     TABLE SCAN (c)
 
-  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c, c.a, c.b, c.c from tmp_hls a left outer join (select b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) b (a, b, c) on b.b=a.b and a.a=b.a left outer join (select b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) c (a, b, c) on a.a=c.a
+  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c, c.a, c.b, c.c from [dba.tmp_hls] a left outer join (select b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) b (a, b, c) on b.b=a.b and a.a=b.a left outer join (select b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) c (a, b, c) on a.a=c.a
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
-        SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -470,11 +470,11 @@ trace
 Query Plan:
   TABLE SCAN (b)
 
-  rewritten query: (select b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
+  rewritten query: (select b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? ))
 
   TABLE SCAN (b)
 
-  rewritten query: (select b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
+  rewritten query: (select b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? ))
 
   NESTED LOOPS (left outer join)
     NESTED LOOPS (left outer join)
@@ -482,17 +482,17 @@ Query Plan:
       TABLE SCAN (b)
     TABLE SCAN (c)
 
-  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c, c.a, c.b, c.c from tmp_hls a left outer join (select b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) b (a, b, c) on b.b=a.b and a.a=b.a left outer join (select b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) c (a, b, c) on b.a=c.a
+  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c, c.a, c.b, c.c from [dba.tmp_hls] a left outer join (select b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) b (a, b, c) on b.b=a.b and a.a=b.a left outer join (select b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) c (a, b, c) on b.a=c.a
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
-        SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -515,24 +515,24 @@ col1    col2    col3    col1    col2    col3
 trace    
 
 Query Plan:
-  TABLE SCAN (tmp_hls_type)
+  TABLE SCAN (dba.tmp_hls_type)
 
-  rewritten query: (select /*+ NO_MERGE */ tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col? from tmp_hls_type tmp_hls_type where (tmp_hls_type.col?>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ [dba.tmp_hls_type].col?, [dba.tmp_hls_type].col?, [dba.tmp_hls_type].col? from [dba.tmp_hls_type] [dba.tmp_hls_type] where ([dba.tmp_hls_type].col?>= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.col?, a.col?, a.col?, b.col?, b.col?, b.col? from tmp_hls_type a, (select /*+ NO_MERGE */ tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col? from tmp_hls_type tmp_hls_type where (tmp_hls_type.col?>= ?:? )) b (col?, col?, col?) where b.col?= cast(a.col? as double) and a.col?= cast(b.col? as double) and a.col?=b.col?
+  rewritten query: select /*+ ORDERED */ a.col?, a.col?, a.col?, b.col?, b.col?, b.col? from [dba.tmp_hls_type] a, (select /*+ NO_MERGE */ [dba.tmp_hls_type].col?, [dba.tmp_hls_type].col?, [dba.tmp_hls_type].col? from [dba.tmp_hls_type] [dba.tmp_hls_type] where ([dba.tmp_hls_type].col?>= ?:? )) b (col?, col?, col?) where b.col?= cast(a.col? as double) and a.col?= cast(b.col? as double) and a.col?=b.col?
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
-        SCAN (table: tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -542,24 +542,24 @@ col1    col2    col3    col1    col2    col3
 trace    
 
 Query Plan:
-  TABLE SCAN (tmp_hls_type)
+  TABLE SCAN (dba.tmp_hls_type)
 
-  rewritten query: (select /*+ NO_MERGE */ tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col? from tmp_hls_type tmp_hls_type where (tmp_hls_type.col?>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ [dba.tmp_hls_type].col?, [dba.tmp_hls_type].col?, [dba.tmp_hls_type].col? from [dba.tmp_hls_type] [dba.tmp_hls_type] where ([dba.tmp_hls_type].col?>= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.col?, a.col?, a.col?, b.col?, b.col?, b.col? from tmp_hls_type a, (select /*+ NO_MERGE */ tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col? from tmp_hls_type tmp_hls_type where (tmp_hls_type.col?>= ?:? )) b (col?, col?, col?) where a.col?=b.col? and a.col?=b.col? and a.col?=b.col?
+  rewritten query: select /*+ ORDERED */ a.col?, a.col?, a.col?, b.col?, b.col?, b.col? from [dba.tmp_hls_type] a, (select /*+ NO_MERGE */ [dba.tmp_hls_type].col?, [dba.tmp_hls_type].col?, [dba.tmp_hls_type].col? from [dba.tmp_hls_type] [dba.tmp_hls_type] where ([dba.tmp_hls_type].col?>= ?:? )) b (col?, col?, col?) where a.col?=b.col? and a.col?=b.col? and a.col?=b.col?
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
-        SCAN (table: tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -571,11 +571,11 @@ trace
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
-        SCAN (table: tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -586,11 +586,11 @@ trace
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
-        SCAN (table: tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -615,24 +615,24 @@ col1    col2    col3    col4
 trace    
 
 Query Plan:
-  TABLE SCAN (tmp_hls_type)
+  TABLE SCAN (dba.tmp_hls_type)
 
-  rewritten query: (select /*+ NO_MERGE */ tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col? from tmp_hls_type tmp_hls_type where (tmp_hls_type.col?>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ [dba.tmp_hls_type].col?, [dba.tmp_hls_type].col?, [dba.tmp_hls_type].col?, [dba.tmp_hls_type].col? from [dba.tmp_hls_type] [dba.tmp_hls_type] where ([dba.tmp_hls_type].col?>= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.col?, a.col?, a.col?, a.col? from tmp_hls_type a, (select /*+ NO_MERGE */ tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col? from tmp_hls_type tmp_hls_type where (tmp_hls_type.col?>= ?:? )) b (col?, col?, col?, col?) where a.col?=b.col? and a.col?=b.col? and a.col?=b.col?
+  rewritten query: select /*+ ORDERED */ a.col?, a.col?, a.col?, a.col? from [dba.tmp_hls_type] a, (select /*+ NO_MERGE */ [dba.tmp_hls_type].col?, [dba.tmp_hls_type].col?, [dba.tmp_hls_type].col?, [dba.tmp_hls_type].col? from [dba.tmp_hls_type] [dba.tmp_hls_type] where ([dba.tmp_hls_type].col?>= ?:? )) b (col?, col?, col?, col?) where a.col?=b.col? and a.col?=b.col? and a.col?=b.col?
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
-        SCAN (table: tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -647,24 +647,24 @@ col1    col2    col3    col4
 trace    
 
 Query Plan:
-  TABLE SCAN (tmp_hls_type)
+  TABLE SCAN (dba.tmp_hls_type)
 
-  rewritten query: (select /*+ NO_MERGE */ tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col? from tmp_hls_type tmp_hls_type where (tmp_hls_type.col?>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ [dba.tmp_hls_type].col?, [dba.tmp_hls_type].col?, [dba.tmp_hls_type].col?, [dba.tmp_hls_type].col? from [dba.tmp_hls_type] [dba.tmp_hls_type] where ([dba.tmp_hls_type].col?>= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.col?, a.col?, a.col?, a.col? from tmp_hls_type a, (select /*+ NO_MERGE */ tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col? from tmp_hls_type tmp_hls_type where (tmp_hls_type.col?>= ?:? )) b (col?, col?, col?, col?) where a.col?=b.col? and a.col?=b.col? and a.col?=b.col?
+  rewritten query: select /*+ ORDERED */ a.col?, a.col?, a.col?, a.col? from [dba.tmp_hls_type] a, (select /*+ NO_MERGE */ [dba.tmp_hls_type].col?, [dba.tmp_hls_type].col?, [dba.tmp_hls_type].col?, [dba.tmp_hls_type].col? from [dba.tmp_hls_type] [dba.tmp_hls_type] where ([dba.tmp_hls_type].col?>= ?:? )) b (col?, col?, col?, col?) where a.col?=b.col? and a.col?=b.col? and a.col?=b.col?
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
-        SCAN (table: tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -686,24 +686,24 @@ col1    col2    col3    col4
 trace    
 
 Query Plan:
-  TABLE SCAN (tmp_hls_type)
+  TABLE SCAN (dba.tmp_hls_type)
 
-  rewritten query: (select /*+ NO_MERGE */ tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col? from tmp_hls_type tmp_hls_type where (tmp_hls_type.col?>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ [dba.tmp_hls_type].col?, [dba.tmp_hls_type].col?, [dba.tmp_hls_type].col?, [dba.tmp_hls_type].col? from [dba.tmp_hls_type] [dba.tmp_hls_type] where ([dba.tmp_hls_type].col?>= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.col?, a.col?, a.col?, a.col? from tmp_hls_type a, (select /*+ NO_MERGE */ tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col? from tmp_hls_type tmp_hls_type where (tmp_hls_type.col?>= ?:? )) b (col?, col?, col?, col?) where a.col?=b.col? and a.col?=b.col?
+  rewritten query: select /*+ ORDERED */ a.col?, a.col?, a.col?, a.col? from [dba.tmp_hls_type] a, (select /*+ NO_MERGE */ [dba.tmp_hls_type].col?, [dba.tmp_hls_type].col?, [dba.tmp_hls_type].col?, [dba.tmp_hls_type].col? from [dba.tmp_hls_type] [dba.tmp_hls_type] where ([dba.tmp_hls_type].col?>= ?:? )) b (col?, col?, col?, col?) where a.col?=b.col? and a.col?=b.col?
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
-        SCAN (table: tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -719,24 +719,24 @@ col1    col2    col3    col4
 trace    
 
 Query Plan:
-  TABLE SCAN (tmp_hls_type)
+  TABLE SCAN (dba.tmp_hls_type)
 
-  rewritten query: (select /*+ NO_MERGE */ tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col? from tmp_hls_type tmp_hls_type where (tmp_hls_type.col?>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ [dba.tmp_hls_type].col?, [dba.tmp_hls_type].col?, [dba.tmp_hls_type].col?, [dba.tmp_hls_type].col? from [dba.tmp_hls_type] [dba.tmp_hls_type] where ([dba.tmp_hls_type].col?>= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.col?, a.col?, a.col?, a.col? from tmp_hls_type a, (select /*+ NO_MERGE */ tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col?, tmp_hls_type.col? from tmp_hls_type tmp_hls_type where (tmp_hls_type.col?>= ?:? )) b (col?, col?, col?, col?) where a.col?=b.col? and a.col?=b.col?
+  rewritten query: select /*+ ORDERED */ a.col?, a.col?, a.col?, a.col? from [dba.tmp_hls_type] a, (select /*+ NO_MERGE */ [dba.tmp_hls_type].col?, [dba.tmp_hls_type].col?, [dba.tmp_hls_type].col?, [dba.tmp_hls_type].col? from [dba.tmp_hls_type] [dba.tmp_hls_type] where ([dba.tmp_hls_type].col?>= ?:? )) b (col?, col?, col?, col?) where a.col?=b.col? and a.col?=b.col?
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
-        SCAN (table: tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tmp_hls_type), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -754,18 +754,18 @@ trace
 Query Plan:
   TABLE SCAN (b)
 
-  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? ))
 
   SORT (distinct)
-    TABLE SCAN (tmp_hls)
+    TABLE SCAN (dba.tmp_hls)
 
-  rewritten query: (select distinct tmp_hls.a, tmp_hls.b, tmp_hls.c from tmp_hls tmp_hls)
+  rewritten query: (select distinct [dba.tmp_hls].a, [dba.tmp_hls].b, [dba.tmp_hls].c from [dba.tmp_hls] [dba.tmp_hls])
 
   NESTED LOOPS (inner join)
     TABLE SCAN (aa)
     TABLE SCAN (av?)
 
-  rewritten query: select /*+ ORDERED */ aa.a, aa.b, aa.c from (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) aa (a, b, c), (select distinct tmp_hls.a, tmp_hls.b, tmp_hls.c from tmp_hls tmp_hls) av? (av_?, av_?, av_?) where aa.a=av?.av_? and aa.b=av?.av_? and aa.c=av?.av_?
+  rewritten query: select /*+ ORDERED */ aa.a, aa.b, aa.c from (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) aa (a, b, c), (select distinct [dba.tmp_hls].a, [dba.tmp_hls].b, [dba.tmp_hls].c from [dba.tmp_hls] [dba.tmp_hls]) av? (av_?, av_?, av_?) where aa.a=av?.av_? and aa.b=av?.av_? and aa.c=av?.av_?
 
 
 Trace Statistics:
@@ -774,7 +774,7 @@ Trace Statistics:
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
-        SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -792,17 +792,17 @@ trace
 Query Plan:
   TABLE SCAN (b)
 
-  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? ))
 
   SORT (distinct)
-    TABLE SCAN (tmp_hls)
+    TABLE SCAN (dba.tmp_hls)
 
-  rewritten query: (select distinct tmp_hls.a, tmp_hls.b from tmp_hls tmp_hls)
+  rewritten query: (select distinct [dba.tmp_hls].a, [dba.tmp_hls].b from [dba.tmp_hls] [dba.tmp_hls])
 
   SORT (distinct)
-    TABLE SCAN (tmp_hls)
+    TABLE SCAN (dba.tmp_hls)
 
-  rewritten query: (select distinct tmp_hls.c from tmp_hls tmp_hls)
+  rewritten query: (select distinct [dba.tmp_hls].c from [dba.tmp_hls] [dba.tmp_hls])
 
   NESTED LOOPS (inner join)
     NESTED LOOPS (inner join)
@@ -810,7 +810,7 @@ Query Plan:
       TABLE SCAN (av?)
     TABLE SCAN (av?_?)
 
-  rewritten query: select /*+ ORDERED */ aa.a, aa.b, aa.c from (select /*+ NO_MERGE */ b.a, b.b, b.c from tmp_hls b where (b.c>= ?:? )) aa (a, b, c), (select distinct tmp_hls.a, tmp_hls.b from tmp_hls tmp_hls) av? (av_?, av_?), (select distinct tmp_hls.c from tmp_hls tmp_hls) av?_? (av_?) where aa.a=av?.av_? and aa.b=av?.av_? and aa.c=av?_?.av_?
+  rewritten query: select /*+ ORDERED */ aa.a, aa.b, aa.c from (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) aa (a, b, c), (select distinct [dba.tmp_hls].a, [dba.tmp_hls].b from [dba.tmp_hls] [dba.tmp_hls]) av? (av_?, av_?), (select distinct [dba.tmp_hls].c from [dba.tmp_hls] [dba.tmp_hls]) av?_? (av_?) where aa.a=av?.av_? and aa.b=av?.av_? and aa.c=av?_?.av_?
 
 
 Trace Statistics:
@@ -820,7 +820,7 @@ Trace Statistics:
         SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
-        SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -834,22 +834,22 @@ trace
 Query Plan:
   TABLE SCAN (b)
 
-  rewritten query: (select b.a, b.b, b.c from tmp_hls b where ((b.c>aa.c) or (b.c= ?:? )))
+  rewritten query: (select b.a, b.b, b.c from [dba.tmp_hls] b where ((b.c>aa.c) or (b.c= ?:? )))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (aa)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ aa.a, aa.b, aa.c from tmp_hls aa, (select b.a, b.b, b.c from tmp_hls b where ((b.c>aa.c) or (b.c= ?:? ))) b (a, b, c) where aa.a=b.a and aa.b=b.b and aa.c=b.c
+  rewritten query: select /*+ ORDERED */ aa.a, aa.b, aa.c from [dba.tmp_hls] aa, (select b.a, b.b, b.c from [dba.tmp_hls] b where ((b.c>aa.c) or (b.c= ?:? ))) b (a, b, c) where aa.a=b.a and aa.b=b.b and aa.c=b.c
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (correlated)
       SELECT (time: ?, fetch: ?, ioread: ?)
-        SCAN (table: tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -868,19 +868,19 @@ count(*)
 trace    
 
 Query Plan:
-  TABLE SCAN (t?)
+  TABLE SCAN (dba.t?)
 
-  rewritten query: (select t?.a, t?.b, t?.c from t? t? where (inst_num()<= ?:? ))
+  rewritten query: (select [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? ))
 
-  TABLE SCAN (t?)
+  TABLE SCAN (dba.t?)
 
-  rewritten query: (select t?.a, t?.b, t?.c from t? t? where (inst_num()<= ?:? ))
+  rewritten query: (select [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ count(*) from (select t?.a, t?.b, t?.c from t? t? where (inst_num()<= ?:? )) a (a, b, c), (select t?.a, t?.b, t?.c from t? t? where (inst_num()<= ?:? )) b (a, b, c) where a.a=b.a and a.b=b.b and a.c=b.c
+  rewritten query: select /*+ ORDERED */ count(*) from (select [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? )) a (a, b, c), (select [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? )) b (a, b, c) where a.a=b.a and a.b=b.b and a.c=b.c
 
 
 Trace Statistics:
@@ -889,7 +889,7 @@ Trace Statistics:
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
-        SCAN (table: t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -905,7 +905,7 @@ Trace Statistics:
       SCAN (hash temp(h), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
-        SCAN (table: t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -923,7 +923,7 @@ Trace Statistics:
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
-        SCAN (table: t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -941,7 +941,7 @@ Trace Statistics:
       SCAN (hash temp(h), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
-        SCAN (table: t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -952,19 +952,19 @@ count(*)
 trace    
 
 Query Plan:
-  TABLE SCAN (t?)
+  TABLE SCAN (dba.t?)
 
-  rewritten query: (select t?.a, t?.b, t?.c from t? t? where (inst_num()<= ?:? ))
+  rewritten query: (select [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? ))
 
-  TABLE SCAN (t?)
+  TABLE SCAN (dba.t?)
 
-  rewritten query: (select t?.a, t?.b, t?.c from t? t? where (inst_num()<= ?:? ))
+  rewritten query: (select [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED NO_HASH_LIST_SCAN */ count(*) from (select t?.a, t?.b, t?.c from t? t? where (inst_num()<= ?:? )) a (a, b, c), (select t?.a, t?.b, t?.c from t? t? where (inst_num()<= ?:? )) b (a, b, c) where a.a=b.a and a.b=b.b and a.c=b.c
+  rewritten query: select /*+ ORDERED NO_HASH_LIST_SCAN */ count(*) from (select [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? )) a (a, b, c), (select [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? )) b (a, b, c) where a.a=b.a and a.b=b.b and a.c=b.c
 
 
 Trace Statistics:
@@ -973,7 +973,7 @@ Trace Statistics:
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
-        SCAN (table: t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================

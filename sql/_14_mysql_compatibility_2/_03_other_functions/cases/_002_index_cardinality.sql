@@ -122,20 +122,20 @@ insert into data_tb_3 values (n't1',n'i_t1_i3_i1_i2','2');
 
 -- constants:
 --OK:
-select index_cardinality ('t1','i_t1_i1',0);
-select index_cardinality ('t1','i_t1_i1',0.3);
+select index_cardinality ('dba.t1','i_t1_i1',0);
+select index_cardinality ('dba.t1','i_t1_i1',0.3);
 -- out of range
-select index_cardinality ('t1','i_t1_i1',0.9);
+select index_cardinality ('dba.t1','i_t1_i1',0.9);
 
 -- national not allowed
-select index_cardinality (n't1','i_t1_i1',0);
-select index_cardinality ('t1',n'i_t1_i1',0);
+select index_cardinality (n'dba.t1','i_t1_i1',0);
+select index_cardinality ('dba.t1',n'i_t1_i1',0);
 
 -- invalid arg : arg1 is number
 select index_cardinality (4,'i_t1_i1',-1);
 
 -- out of range
-select index_cardinality ('t1','i_t1_i1',-1);
+select index_cardinality ('dba.t1','i_t1_i1',-1);
 
 
 -- NULL args
@@ -145,27 +145,27 @@ select index_cardinality (NULL,n'i_t1_i1',0);
 
 
 -- HV : TODO
-PREPARE st FROM 'SELECT index_cardinality(?,?,?)';
-EXECUTE st USING 't1', 'i_t1_i1', 0; 
+PREPARE st FROM 'SELECT index_cardinality(?,?,?)'
+EXECUTE st USING 'dba.t1', 'i_t1_i1', 0; 
 
-PREPARE st FROM 'SELECT index_cardinality(?,?,?)';
-EXECUTE st USING 't1', 'i_t1_i1', '0';
+PREPARE st FROM 'SELECT index_cardinality(?,?,?)'
+EXECUTE st USING 'dba.t1', 'i_t1_i1', '0';
 
-PREPARE st FROM 'SELECT index_cardinality(?,?,?)';
+PREPARE st FROM 'SELECT index_cardinality(?,?,?)'
 EXECUTE st USING 1, 'i_t1_i1', '0'; 
 
-PREPARE st FROM 'SELECT index_cardinality(?,?,?)';
+PREPARE st FROM 'SELECT index_cardinality(?,?,?)'
 EXECUTE st USING date'2001-10-01', 'i_t1_i1', '0'; 
 
 -- tables:
-select tbl_name, idx_name, key_pos, index_cardinality (tbl_name, idx_name, key_pos) from data_tb_1 order by 1,2,3;
+select tbl_name, idx_name, key_pos, index_cardinality ('dba.' || tbl_name, idx_name, key_pos) from data_tb_1 order by 1,2,3;
 
-select tbl_name, idx_name, key_pos, index_cardinality (tbl_name, idx_name, key_pos) from data_tb_2 order by 1,2,3;
+select tbl_name, idx_name, key_pos, index_cardinality ('dba.' || tbl_name, idx_name, key_pos) from data_tb_2 order by 1,2,3;
 
-select tbl_name, idx_name, key_pos, index_cardinality (tbl_name, idx_name, key_pos) from data_tb_3 order by 1,2,3;
+select tbl_name, idx_name, key_pos, index_cardinality ('dba.' || tbl_name, idx_name, key_pos) from data_tb_3 order by 1,2,3;
 
 
-select data_tb_1.tbl_name, data_tb_1.idx_name, data_tb_3.key_pos, index_cardinality (data_tb_1.tbl_name, data_tb_1.idx_name, data_tb_3.key_pos) from data_tb_1,data_tb_3 order by 1,2,3;
+select data_tb_1.tbl_name, data_tb_1.idx_name, data_tb_3.key_pos, index_cardinality ('dba.' || data_tb_1.tbl_name, data_tb_1.idx_name, data_tb_3.key_pos) from data_tb_1,data_tb_3 order by 1,2,3;
 
 
 drop table t1;
