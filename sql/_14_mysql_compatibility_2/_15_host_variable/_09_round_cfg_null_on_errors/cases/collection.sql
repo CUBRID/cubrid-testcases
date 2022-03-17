@@ -3,7 +3,7 @@
 
 set system parameters 'return_null_on_function_errors=yes';
 
-prepare st from 'select round(?,?)'
+prepare st from 'select round(?,?)';
 execute st using {12.2},1;
 
 create table t1 (s1 set(double));

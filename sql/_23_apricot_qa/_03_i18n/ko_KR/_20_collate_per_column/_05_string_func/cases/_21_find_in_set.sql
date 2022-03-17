@@ -17,15 +17,15 @@ select s1,find_in_set (s1,'가伽각가,가伽각가') from t2 order by 1;
 
 
 -- late binding
-prepare s from 'select find_in_set(? , ?)'
+prepare s from 'select find_in_set(? , ?)';
 execute s using '伽','伽,가';
 DEALLOCATE PREPARE s;
 
-prepare s from 'select s1, find_in_set(s1 , ?) from t1 order by 1'
+prepare s from 'select s1, find_in_set(s1 , ?) from t1 order by 1';
 execute s using '가伽각가,가伽각가';
 DEALLOCATE PREPARE s;
 
-prepare s from 'select s1, find_in_set(s1 , ?) from t2 order by 1'
+prepare s from 'select s1, find_in_set(s1 , ?) from t2 order by 1';
 execute s using '가伽각가,가伽각가';
 DEALLOCATE PREPARE s;
 

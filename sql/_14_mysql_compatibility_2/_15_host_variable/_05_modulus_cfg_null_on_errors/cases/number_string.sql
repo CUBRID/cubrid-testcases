@@ -25,13 +25,13 @@ select mod (4 , NULL);
 
 
 -- 2 HV
-prepare st from 'select mod (? , ?)'
+prepare st from 'select mod (? , ?)';
 execute st using '2001-10-11',4;
 
-prepare st from 'select mod (? , ?)'
+prepare st from 'select mod (? , ?)';
 execute st using 4,'abc';
 
-prepare st from 'select mod (? , ?)'
+prepare st from 'select mod (? , ?)';
 execute st using 4,NULL;
 
 

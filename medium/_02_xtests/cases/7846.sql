@@ -1451,7 +1451,7 @@ create class dtctv_class02 (
         attr_char       char(25),
         attr_nchar      nchar(25)
 );
-insert into  dtctv_class02 ( data_id ) values ( 0 )
+insert into  dtctv_class02 ( data_id ) values ( 0 );
 insert into  dtctv_class02 values (
         1, 'A', N'A', 'A', N'A');
 create class dtctv_class03 (
@@ -1461,7 +1461,7 @@ create class dtctv_class03 (
         attr_char       char(25),
         attr_nchar      nchar(25)
 );
-insert into  dtctv_class03 ( data_id ) values ( 0 )
+insert into  dtctv_class03 ( data_id ) values ( 0 );
 insert into  dtctv_class03 values (
         1, 'A', N'A', 'A', N'A');
 create class dtctv_class04 (
@@ -1471,7 +1471,7 @@ create class dtctv_class04 (
         attr_char       char(25),
         attr_nchar      nchar(25)
 );
-insert into  dtctv_class04 ( data_id ) values ( 0 )
+insert into  dtctv_class04 ( data_id ) values ( 0 );
 insert into  dtctv_class04 values (
         1, '01/01/1995', N'01/01/1995', '01/01/1995', N'01/01/1995');
 create class dtctv_class05 (
@@ -1481,7 +1481,7 @@ create class dtctv_class05 (
         attr_char       char(25),
         attr_nchar      nchar(25)
 );
-insert into  dtctv_class05 ( data_id ) values ( 0 )
+insert into  dtctv_class05 ( data_id ) values ( 0 );
 insert into  dtctv_class05 values (
         1, '12:00:00 am', N'12:00:00 am', '12:00:00 am', N'12:00:00 am');
 create class dtctv_class06 (
@@ -1491,7 +1491,7 @@ create class dtctv_class06 (
         attr_char       char(25),
         attr_nchar      nchar(25)
 );
-insert into  dtctv_class06 ( data_id ) values ( 0 )
+insert into  dtctv_class06 ( data_id ) values ( 0 );
 insert into  dtctv_class06 values (
         1, '12:00:00 AM 01/01/1995', N'12:00:00 AM 01/01/1995', '12:00:00 AM 01/01/1995', N'12:00:00 AM 01/01/1995');
 create class dtctv_class_b (

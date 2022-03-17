@@ -19,7 +19,7 @@ DELETE FROM image_t WHERE image_id = '이미지-1010';
 SELECT doc_t.doc_id, CLOB_TO_CHAR(content), BLOB_TO_BIT(image) FROM doc_t, image_t WHERE doc_t.doc_id = image_t.doc_id order by 1,2,3;
 SELECT CLOB_TO_CHAR(content), SUBSTRING(CLOB_TO_CHAR(content), 5) FROM doc_t order by 1,2;
 SELECT CLOB_TO_CHAR(content) FROM doc_t WHERE CLOB_TO_CHAR(content) LIKE '%개%' order by 1;
-SELECT CLOB_TO_CHAR(content) FROM doc_t ORDER BY CLOB_TO_CHAR(content)
+SELECT CLOB_TO_CHAR(content) FROM doc_t ORDER BY CLOB_TO_CHAR(content);
 
 SELECT CLOB_TO_CHAR(content) FROM doc_t WHERE content LIKE '이%' order by 1;
 SELECT * FROM doc_t ORDER BY content;

@@ -69,7 +69,7 @@ drop table t;
 
 --4. Test host variables
 -- success
-prepare s from 'select if(repeat(?, ?) = ?, ''ok'', ''nok'')'
+prepare s from 'select if(repeat(?, ?) = ?, ''ok'', ''nok'')';
 execute s using 'cubrid', 3, 'cubridcubridcubrid';
 execute s using '', 3, '';
 execute s using 'a', 1.5, 'aa';
@@ -92,14 +92,14 @@ execute s using timestamp'09:30:30 AM 08/02/2010', '09:30:30 AM 08/02/2010';
 execute s using 0b00010001, '11';
 
 -- failure
-prepare s from 'select repeat(?, ?)'
+prepare s from 'select repeat(?, ?)';
 execute s using 'a', date'2010-09-02';
 execute s using 'a', datetime'2010-09-02 17:30:30';
 execute s using 'a', timestamp'2010-09-02 17:30:30';
 execute s using 'a', time'17:30:30';
 execute s using 'a', 0b00110001;
 -- cannot coerce nchar to varchar
-execute s using n'a', 2
+execute s using n'a', 2;
 
 --5. Test the range of count
 -- return NULL

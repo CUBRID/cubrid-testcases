@@ -29,7 +29,7 @@ start with parentid is null
 connect by id=parentid
 order by a;
 
-drop tree2
+drop tree2;
 
 CREATE TABLE tree(ID INT, ParentID INT, text VARCHAR(32));
 

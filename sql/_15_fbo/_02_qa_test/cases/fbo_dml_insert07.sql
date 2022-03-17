@@ -24,7 +24,7 @@ select a, blob_to_bit(b) from insert7_t1__p__p2 order by a;
 --error
 insert into insert7_t1 (a, b) values(101, bit_to_blob(X'1111'));
 
-delete from insert7_t1
+delete from insert7_t1;
 drop table insert7_t1;
 
 

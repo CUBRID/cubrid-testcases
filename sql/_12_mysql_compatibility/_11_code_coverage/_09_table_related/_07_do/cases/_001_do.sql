@@ -3,7 +3,7 @@ do acos(0.5);
 
 do user();
 
-prepare st from 'do ?'
+prepare st from 'do ?';
 execute st using '2';
 drop prepare st;
 

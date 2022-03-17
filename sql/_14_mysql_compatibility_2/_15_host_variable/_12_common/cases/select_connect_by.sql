@@ -12,17 +12,17 @@ select * from tree order by id;
 
 select * from tree 	connect by prior id=parentid - 1.0 order by id;
 
-prepare st from 'select * from tree connect by prior id=parentid - ? order by id'
+prepare st from 'select * from tree connect by prior id=parentid - ? order by id';
 execute st using 1.0;
 	
 select * from tree start with parentid is null 	connect by prior id=parentid - '1' order by id;
 
-prepare st from 'select * from tree start with parentid is null 	connect by prior id=parentid - ? order by id'
+prepare st from 'select * from tree start with parentid is null 	connect by prior id=parentid - ? order by id';
 execute st using '1';
 
 
 select * from tree start with parentid + 3.0=6 connect by prior id=parentid - '1' order by id;
-prepare st from 'select * from tree start with parentid+?=6 connect by prior id=parentid - ? order by id'
+prepare st from 'select * from tree start with parentid+?=6 connect by prior id=parentid - ? order by id';
 execute st using 3.0,'1';
 
 drop table tree;

@@ -35,7 +35,7 @@ insert into to_days_tests values('2010-01-02','asdf','05/04/2010 12:23:15.123',N
 17:28:31',{'golf', 'handicap', 10}),('2010-01-02','1971-12-22 00:14:11','10/04/2010 12:23:15.123',NULL,12000,139,1111111111,12.25,111.11111111,11.12,1234,'2010-01-02','12:10:09',timestamp('2008-10-11 10:49:51'),'1983-01-02
 17:28:31',{'golf', 'handicap', 10});
 
-select char_col, to_days(char_col) from to_days_tests order by smallint_col
+select char_col, to_days(char_col) from to_days_tests order by smallint_col;
 select varchar_col, to_days(varchar_col) from to_days_tests order by smallint_col;
 select string_col, to_days(string_col) from to_days_tests order by smallint_col;
 select bit_col, to_days(bit_col) from to_days_tests order by smallint_col;
@@ -169,7 +169,7 @@ insert into to_days_tests values('2010-01-02','asdf','05/04/2010 12:23:15.123',N
 17:28:31',{'golf', 'handicap', 10}),('2010-01-02','1971-12-22 00:14:11','10/04/2010 12:23:15.123',NULL,12000,139,1111111111,12.25,111.11111111,11.12,1234,'2010-01-02','12:10:09',timestamp('2008-10-11 10:49:51'),'1983-01-02
 17:28:31',{'golf', 'handicap', 10});
 
-select char_col, to_days(char_col) from to_days_tests order by smallint_col
+select char_col, to_days(char_col) from to_days_tests order by smallint_col;
 select varchar_col, to_days(varchar_col) from to_days_tests order by smallint_col;
 select string_col, to_days(string_col) from to_days_tests order by smallint_col;
 select bit_col, to_days(bit_col) from to_days_tests order by smallint_col;

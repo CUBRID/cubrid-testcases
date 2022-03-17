@@ -8,5 +8,5 @@ insert into foo values('02/05/2000');
 select to_date(f) from foo;
 select to_date(f) from foo order by 1;
 select to_date(f) from foo order by 1 desc;
-;rollback
+rollback;
 rollback;

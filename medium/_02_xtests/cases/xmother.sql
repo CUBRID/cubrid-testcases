@@ -136,7 +136,7 @@ insert into y(yint, ystr) values (40, 'string 40');
 insert into y(yint, ystr) values (50, 'string 50');
 select y_num_in_class(class y), y.yint from y order by 2;
 select y_num_in_class(class y) from class y;
-select y_num_in_class(class y) from y
+select y_num_in_class(class y) from y;
 select y_num_in_class(class y), add_int(y, yint, 5) from y order by 2;
 select add_int(y, yint, y_num_in_class(class y)) from y order by 1;
 select y_num_in_class() on class y from x;

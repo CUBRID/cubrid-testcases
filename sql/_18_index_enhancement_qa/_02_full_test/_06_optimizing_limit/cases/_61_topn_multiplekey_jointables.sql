@@ -31,7 +31,7 @@ select /*+ recompile ORDERED */ t.*, s.* from t,s  where t.i1=s.i1 and s.i1=4 an
 
 select /*+ recompile ORDERED */ t.*, s.* from t,s  where t.i1=s.i1 and t.i1 in (1,3,5) and t.i2=2 using index i_t_all  order by t.i3 desc for orderby_num()<=3;
 
-select /*+ recompile ORDERED */ * from t where i1=0 and i2 in (2,3,4) order by i3 desc limit 5
+select /*+ recompile ORDERED */ * from t where i1=0 and i2 in (2,3,4) order by i3 desc limit 5;
 
 set system parameters 'xasl_debug_dump=no';
 set system parameters 'use_orderby_sort_limit=n';

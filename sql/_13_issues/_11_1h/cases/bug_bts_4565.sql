@@ -11,20 +11,20 @@ prepare stm from 'select 1*?*? from db_root';
 execute stm using '2',3;
 deallocate prepare stm;
 
-prepare stm from 'select ? from db_root'
-execute stm using 2
+prepare stm from 'select ? from db_root';
+execute stm using 2;
 deallocate prepare stm;
 
-prepare stm from 'select ? from db_root'
-execute stm using '2'
+prepare stm from 'select ? from db_root';
+execute stm using '2';
 deallocate prepare stm;
 
-prepare stm from 'select ? from db_root'
-execute stm using 'a'
+prepare stm from 'select ? from db_root';
+execute stm using 'a';
 deallocate prepare stm;
 
-prepare stm from 'select ? from db_root'
-execute stm using null
+prepare stm from 'select ? from db_root';
+execute stm using null;
 deallocate prepare stm;
 
 prepare my_show_tables from 'select class_name, owner_name from db_class where is_system_class != ''YES'' order by class_name';

@@ -267,8 +267,8 @@ drop trigger  dddl_0002_01;
 drop trigger  dddl_0002_02;
 drop trigger  dddl_0002_03;
 drop trigger  dddl_0002_04;
-drop trigger tr10
-drop trigger tr1
+drop trigger tr10;
+drop trigger tr1;
 drop trigger DCL2;
 
 drop hi;

@@ -15,11 +15,11 @@ select s1,i from t1 where s1 like '가%' order by 1;
 select s1,i from t2 where s1 like '가%' order by 1;
 
 
-prepare s from 'select s1,i from t1 where s1 like ? order by 1'
+prepare s from 'select s1,i from t1 where s1 like ? order by 1';
 execute s using '가%';
 DEALLOCATE PREPARE s;
 
-prepare s from 'select s1,i from t2 where s1 like ? order by 1'
+prepare s from 'select s1,i from t2 where s1 like ? order by 1';
 execute s using '가%';
 DEALLOCATE PREPARE s;
 

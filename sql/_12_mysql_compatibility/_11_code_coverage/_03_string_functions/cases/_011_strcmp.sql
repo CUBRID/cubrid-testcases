@@ -36,10 +36,10 @@ select strcmp(b'10101',b'1101');
 
 select strcmp(s2,'0123') from t1 order by s,b,d,s1,s2,i1;
 
-prepare st from 'select strcmp(?,?)'
+prepare st from 'select strcmp(?,?)';
 execute st using n'1',n'3';
 
-prepare st from 'select strcmp(?,?)'
+prepare st from 'select strcmp(?,?)';
 execute st using '123','43';
 drop prepare st;
 

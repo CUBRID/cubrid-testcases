@@ -10,7 +10,7 @@ select count(*)
   from foo x, foo y, foo z
  where x.i = y.i
    and y.i = z.i
-   and x.i < 2
+   and x.i < 2;
 rollback work;
 create class foo (i0 int, i1 int,
 		  j0 int, j1 int,
@@ -25,5 +25,5 @@ select count(*)
   from foo x, foo y, foo z
  where x.i0 = y.i0 and x.i1 = y.i1
    and y.i0 = z.i0 and y.i1 = z.i1
-   and x.i0 < 2
+   and x.i0 < 2;
 rollback;

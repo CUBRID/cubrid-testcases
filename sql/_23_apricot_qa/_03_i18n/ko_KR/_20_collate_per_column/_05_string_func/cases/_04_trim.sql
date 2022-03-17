@@ -17,19 +17,19 @@ select trim ('가' FROM cast (s1 as string collate utf8_ko_cs_uca)) from t2 orde
 
 
 -- late binding
-prepare s from 'select trim(? from s1 ) from t1 order by 1'
+prepare s from 'select trim(? from s1 ) from t1 order by 1';
 execute s using '가';
 DEALLOCATE PREPARE s;
 
-prepare s from 'select trim( ? from s1 + ?) from t1 order by 1'
+prepare s from 'select trim( ? from s1 + ?) from t1 order by 1';
 execute s using '가', '伽';
 DEALLOCATE PREPARE s;
 
-prepare s from 'select trim(? from s1 + ?) from t2 order by 1'
+prepare s from 'select trim(? from s1 + ?) from t2 order by 1';
 execute s using '가','伽';
 DEALLOCATE PREPARE s;
 
-prepare s from 'select trim( ? from cast ((s1 + ?) as string collate utf8_ko_cs_uca)) from t2 order by 1'
+prepare s from 'select trim( ? from cast ((s1 + ?) as string collate utf8_ko_cs_uca)) from t2 order by 1';
 execute s using '가','伽';
 DEALLOCATE PREPARE s;
 

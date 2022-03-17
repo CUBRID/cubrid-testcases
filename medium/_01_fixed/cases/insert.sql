@@ -42,10 +42,10 @@ select shipment_id, product.product_code, quantity, to_location
   from shipment_c s
  where product.product_code = 3 order by 1;
 rollback work;
-insert into inventory_c ( product) values ( insert into product_c ( product_code ) values ( 33 ) )
+insert into inventory_c ( product) values ( insert into product_c ( product_code ) values ( 33 ) );
 insert into inventory_c ( product) values ( select p from product_c p where product_code = 3 );
-insert into inventory_c ( product) values ( ( select p from product_c p where product_code = 3 ) )
-insert into inventory_c ( product) values (( insert into product_c ( product_code ) values ( 33 ) ))
+insert into inventory_c ( product) values ( ( select p from product_c p where product_code = 3 ) );
+insert into inventory_c ( product) values (( insert into product_c ( product_code ) values ( 33 ) ));
 rollback work;
 create class x (a int);
 create class y (b int, xs set_of x);

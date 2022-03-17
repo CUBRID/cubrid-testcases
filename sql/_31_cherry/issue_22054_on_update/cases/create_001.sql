@@ -59,7 +59,7 @@ create table t(
 username varchar(10) unique,
 text varchar(100),
 edit_time datetime on update current_datetime default current_datetime
-)
+);
 desc t;
 show create table t;
 
@@ -69,7 +69,7 @@ drop if exists t;
 username varchar(10) unique,
 text varchar(100),
 edit_time timestamp on update current_datetime default current_timestamp
-)
+);
 desc t;
 show create table t;
 

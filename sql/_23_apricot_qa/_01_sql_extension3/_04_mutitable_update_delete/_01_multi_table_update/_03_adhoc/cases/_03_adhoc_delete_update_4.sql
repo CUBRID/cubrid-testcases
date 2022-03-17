@@ -25,8 +25,8 @@ drop table t1,t2;
 
 
 drop table if exists t1,t2;
-create table t1(a int )
-create table t2(a int ) 
+create table t1(a int );
+create table t2(a int );
 insert into t1 values(1),(2),(3);
 insert into t2 values(1),(2),(3);
 update statistics on t1, t2;

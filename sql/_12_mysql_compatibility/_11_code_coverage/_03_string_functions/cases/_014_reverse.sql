@@ -28,10 +28,10 @@ select reverse(n'123');
 
 select reverse(b'101101');
 
-prepare st from 'select reverse(?)'
+prepare st from 'select reverse(?)';
 execute st using n'123';
 
-prepare st from 'select reverse(?)'
+prepare st from 'select reverse(?)';
 execute st using '123';
 
 select reverse(NULL);

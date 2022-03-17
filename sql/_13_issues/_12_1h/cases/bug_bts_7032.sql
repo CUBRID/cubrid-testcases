@@ -1,4 +1,4 @@
-CREATE TABLE t(a varchar,b int, c double)
+CREATE TABLE t(a varchar,b int, c double);
 INSERT INTO t VALUES ('SQL',1,10);
 create index idx1 on t(lower(a));
 create index idx2 on t(log10(c));

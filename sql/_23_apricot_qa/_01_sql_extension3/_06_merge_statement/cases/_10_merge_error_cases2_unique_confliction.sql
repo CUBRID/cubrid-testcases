@@ -88,7 +88,7 @@ rollback;
 
 
 
-drop trigger trigg1, trigg2, trigg3, trigg4
+drop trigger trigg1, trigg2, trigg3, trigg4;
 drop table t2, t1, trigger_actions1, trigger_actions2;
 
 commit;

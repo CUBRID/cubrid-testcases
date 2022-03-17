@@ -16,24 +16,24 @@ insert into s values (4, 0, 40), (4, 1, 41), (4, 2, 42), (4, 3, 43), (4, 4, 44);
 set system parameters 'xasl_debug_dump=yes';
 set system parameters 'use_orderby_sort_limit=y';
 
-prepare stmt from 'select /*+ recompile */ t.*  from t where t.i1 in (1,3,5) and t.i2=1  and t.i3 BETWEEN 0 AND 23 using index i_t_all order by t.i3 desc limit ?'
-execute stmt using 10
+prepare stmt from 'select /*+ recompile */ t.*  from t where t.i1 in (1,3,5) and t.i2=1  and t.i3 BETWEEN 0 AND 23 using index i_t_all order by t.i3 desc limit ?';
+execute stmt using 10;
 deallocate prepare stmt;
 
-prepare stmt from 'select /*+ recompile */ t.*  from t where t.i1 in (1,3,5) and t.i2=?  and t.i3 BETWEEN 0 AND 23 using index i_t_all order by t.i3 desc limit ?'
-execute stmt using 1, 10
+prepare stmt from 'select /*+ recompile */ t.*  from t where t.i1 in (1,3,5) and t.i2=?  and t.i3 BETWEEN 0 AND 23 using index i_t_all order by t.i3 desc limit ?';
+execute stmt using 1, 10;
 deallocate prepare stmt;
 
-prepare stmt from 'select /*+ recompile */ t.*  from t where t.i1 in (0,1,2) and i2=1-1  and t.i3 BETWEEN 0 AND 23 using index i_t_all order by t.i3 desc limit ?' 
-execute stmt using 10 
+prepare stmt from 'select /*+ recompile */ t.*  from t where t.i1 in (0,1,2) and i2=1-1  and t.i3 BETWEEN 0 AND 23 using index i_t_all order by t.i3 desc limit ?';
+execute stmt using 10;
 deallocate prepare stmt;
 
-prepare stmt from 'select /*+ recompile */ t.*  from t where t.i1 in (0,1,2) and i2=1-1  and t.i3 BETWEEN 0 AND 23 using index i_t_all order by t.i3 desc limit ?' 
-execute stmt using 10 
+prepare stmt from 'select /*+ recompile */ t.*  from t where t.i1 in (0,1,2) and i2=1-1  and t.i3 BETWEEN 0 AND 23 using index i_t_all order by t.i3 desc limit ?';
+execute stmt using 10;
 deallocate prepare stmt;
 
-prepare stmt from 'select /*+ recompile */ * from (select t.*,s.i1 s1, s.i2 s2, s.i3 s3  from t,s where t.i1=s.i1 and t.i1 in (1,3,5) and t.i2=1  and t.i3 BETWEEN 0 AND 23 using index i_t_all order by t.i3 desc limit ?) t order by 1,2,3,4,5,6'
-execute stmt using 10
+prepare stmt from 'select /*+ recompile */ * from (select t.*,s.i1 s1, s.i2 s2, s.i3 s3  from t,s where t.i1=s.i1 and t.i1 in (1,3,5) and t.i2=1  and t.i3 BETWEEN 0 AND 23 using index i_t_all order by t.i3 desc limit ?) t order by 1,2,3,4,5,6';
+execute stmt using 10;
 deallocate prepare stmt;
 
 set system parameters 'xasl_debug_dump=no';

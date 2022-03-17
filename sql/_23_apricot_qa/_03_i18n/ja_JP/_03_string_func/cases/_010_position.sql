@@ -8,7 +8,7 @@ insert into test_jp values (2,'午前');
 insert into test_jp values (3,'午前');
 insert into test_jp values (103,'午前');
 insert into test_jp values (203,'午前');
-insert into test_jp values (303,'午前.西暦')
+insert into test_jp values (303,'午前.西暦');
 insert into test_jp values (403,'午前 紀元');
 insert into test_jp values (4,'紀元');
 insert into test_jp values (104,'ムモ');

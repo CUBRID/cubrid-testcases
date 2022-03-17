@@ -26,7 +26,7 @@ select * from t1 where  fruit > 'apple' and fruit  <= 'strawberry';
 
 select * from t1 where  fruit > '' and fruit  <= '';
 
-prepare st from 'select * from t1 where  fruit > ? and fruit  <= ?;'
+prepare st from 'select * from t1 where  fruit > ? and fruit  <= ?;';
 
 execute st using 'apple','strawberry' ;
 
@@ -34,7 +34,7 @@ execute st using '','' ;
 
 execute st using 'null','NULL' ;
 
-drop table t1
+drop table t1;
 
 set names iso88591;
 

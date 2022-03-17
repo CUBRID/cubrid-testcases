@@ -2,36 +2,36 @@ create table t1 (i1 integer, s1 varchar(10), d1 double, c1 set(int));
 
 insert into t1 values (3,'3.3',3.3,{3});
 
-prepare st from 'select * from t1 where i1=-(?)'
+prepare st from 'select * from t1 where i1=-(?)';
 execute st using -3.3;
 
-prepare st from 'select * from t1 where i1=-(?)'
+prepare st from 'select * from t1 where i1=-(?)';
 execute st using '-3.3';
 
-prepare st from 'select * from t1 where d1=-(?)'
+prepare st from 'select * from t1 where d1=-(?)';
 execute st using -3.3;
 
-prepare st from 'select * from t1 where c1={-(?)}'
+prepare st from 'select * from t1 where c1={-(?)}';
 execute st using -3.3;
 
-prepare st from 'select * from t1 where c1={-(?)}'
+prepare st from 'select * from t1 where c1={-(?)}';
 execute st using -3;
 
-prepare st from 'select * from t1 where -(?) in c1'
+prepare st from 'select * from t1 where -(?) in c1';
 execute st using -3;
 
 drop table t1;
 
 
-prepare st from 'select 1 from db_root where 3=-(?)'
+prepare st from 'select 1 from db_root where 3=-(?)';
 execute st using -3.3;
 
-prepare st from 'select 1 from db_root where 3=-(?)'
+prepare st from 'select 1 from db_root where 3=-(?)';
 execute st using -3;
 
-prepare st from 'select 1 from db_root where ''3''=-(?)'
+prepare st from 'select 1 from db_root where ''3''=-(?)';
 execute st using -3;
 
 -- - (-3.3) = 3.3 != '3'
-prepare st from 'select 1 from db_root where ''3''=-(?)'
+prepare st from 'select 1 from db_root where ''3''=-(?)';
 execute st using -3.3;

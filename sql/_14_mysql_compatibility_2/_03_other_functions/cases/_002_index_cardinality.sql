@@ -145,16 +145,16 @@ select index_cardinality (NULL,n'i_t1_i1',0);
 
 
 -- HV : TODO
-PREPARE st FROM 'SELECT index_cardinality(?,?,?)'
+PREPARE st FROM 'SELECT index_cardinality(?,?,?)';
 EXECUTE st USING 't1', 'i_t1_i1', 0; 
 
-PREPARE st FROM 'SELECT index_cardinality(?,?,?)'
+PREPARE st FROM 'SELECT index_cardinality(?,?,?)';
 EXECUTE st USING 't1', 'i_t1_i1', '0';
 
-PREPARE st FROM 'SELECT index_cardinality(?,?,?)'
+PREPARE st FROM 'SELECT index_cardinality(?,?,?)';
 EXECUTE st USING 1, 'i_t1_i1', '0'; 
 
-PREPARE st FROM 'SELECT index_cardinality(?,?,?)'
+PREPARE st FROM 'SELECT index_cardinality(?,?,?)';
 EXECUTE st USING date'2001-10-01', 'i_t1_i1', '0'; 
 
 -- tables:

@@ -16,8 +16,8 @@ insert into t1 values (7, '', '', '');
 insert into t1 values (8, ' % ', ' % ', ' % ');
 insert into t1 values (9, null, null, null);
 
-prepare stmt from 'select /*+ recompile */ c from t1 where c like ?||''\%'' escape ''\'''
-execute stmt using ''
+prepare stmt from 'select /*+ recompile */ c from t1 where c like ?||''\%'' escape ''\''';
+execute stmt using '';
 deallocate prepare stmt;
 
 drop table t1;

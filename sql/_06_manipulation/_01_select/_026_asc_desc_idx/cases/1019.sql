@@ -20,6 +20,6 @@ create unique index ddl_0001_idx6 on ddl_0001(col1 asc, col2 desc, col3 asc, col
 select * from db_index where class_name='ddl_0001' order by 1,2,3;
 select * from db_index_key where class_name='ddl_0001' order by 1,2,3;
 select * from ddl_0001 where col1 not like '100%' order by 1,2,3;
-delete from ddl_0001 where col1='1008'
+delete from ddl_0001 where col1='1008';
 update ddl_0001 set col1='2050' where col1='1001';
 drop class ddl_0001;

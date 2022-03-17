@@ -11,42 +11,42 @@ select i1*n1 from t1;
 
 --prepared statements
 -- double column 
-prepare st from 'select ? * d1 from t1'
+prepare st from 'select ? * d1 from t1';
 execute st using 8;
 
-prepare st from 'select d1 * ? from t1'
+prepare st from 'select d1 * ? from t1';
 execute st using 2;
 
-prepare st from 'select ? * d1 from t1'
+prepare st from 'select ? * d1 from t1';
 execute st using 8.0e0;
 
-prepare st from 'select d1 * ? from t1'
+prepare st from 'select d1 * ? from t1';
 execute st using 2.0e0;
 
 -- int column 
-prepare st from 'select i1 * ? from t1'
+prepare st from 'select i1 * ? from t1';
 execute st using 1;
 
-prepare st from 'select ? * i1 from t1'
+prepare st from 'select ? * i1 from t1';
 execute st using 4;
 
-prepare st from 'select i1 * ? from t1'
+prepare st from 'select i1 * ? from t1';
 execute st using 0.1e1;
 
-prepare st from 'select ? * i1 from t1'
+prepare st from 'select ? * i1 from t1';
 execute st using 0.4e1;
 
 -- numeric
-prepare st from 'select n1 * ? from t1'
+prepare st from 'select n1 * ? from t1';
 execute st using 1;
 
-prepare st from 'select ? * n1 from t1'
+prepare st from 'select ? * n1 from t1';
 execute st using 4;
 
-prepare st from 'select n1 * ? from t1'
+prepare st from 'select n1 * ? from t1';
 execute st using 1.0;
 
-prepare st from 'select ? * n1 from t1'
+prepare st from 'select ? * n1 from t1';
 execute st using 0.4e1;
 
 
@@ -54,19 +54,19 @@ execute st using 0.4e1;
 truncate table t1;
 insert into t1 values (2.0e130,123456789,1234567.89);
 
-prepare st from 'select n1 * ?  from t1'
+prepare st from 'select n1 * ?  from t1';
 execute st using  12345678901234567890123456789.123456;
 
-prepare st from 'select n1 * ?  from t1'
+prepare st from 'select n1 * ?  from t1';
 execute st using 12345678901234567890.1234567890e0;
 
-prepare st from 'select i1 * ? from t1'
+prepare st from 'select i1 * ? from t1';
 execute st using 123456789;
 
-prepare st from 'select i1 * ? from t1'
+prepare st from 'select i1 * ? from t1';
 execute st using 123456789e0;
 
-prepare st from 'select d1 * ? from t1'
+prepare st from 'select d1 * ? from t1';
 execute st using 2.0e130;
 
 drop table t1;
@@ -84,17 +84,17 @@ select 4 * 0.0;
 
 select 4 * 0;
 
-prepare st from 'select 4 * ?'
+prepare st from 'select 4 * ?';
 execute st using 2;
 
-prepare st from 'select ? * 0.2e1'
+prepare st from 'select ? * 0.2e1';
 execute st using 4;
 
 
-prepare st from 'select ? * ?'
+prepare st from 'select ? * ?';
 execute st using 4,2;
 
-prepare st from 'select ? * ?'
+prepare st from 'select ? * ?';
 execute st using 4,2.0;
 
 

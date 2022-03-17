@@ -28,12 +28,12 @@ create index i_y_q on y (q);
 --set optimization: level 257;
 select X1.a, X1.b 
 from X X1, X X2 
-where X1.a between 5 and 10 and X1.a = X2.a
+where X1.a between 5 and 10 and X1.a = X2.a;
 select X.a, Y.q 
 from X, Y 
-where X.a <= 3 and Y.q <= 203
+where X.a <= 3 and Y.q <= 203;
 select X1.a, X2.b 
 from X X1, X X2 
-where X1.a < 5 and X2.a < 3
+where X1.a < 5 and X2.a < 3;
 rollback work;
 rollback;

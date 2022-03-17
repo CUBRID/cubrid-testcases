@@ -169,14 +169,14 @@ select PERCENT_RANK() over(partition by grade order by pe desc nulls last) as PE
        from scores order by PERCENT; 
 
 
-select cume_dist(100) within group(order by math nulls first) as cume from scores
+select cume_dist(100) within group(order by math nulls first) as cume from scores;
 select cume_dist(100) within group(order by math nulls last) as cume from scores;
 select cume_dist(null) within group(order by math nulls first) as cume from scores;
 select cume_dist(null) within group(order by math nulls last) as cume from scores;
 
-select percent_rank(100) within group(order by math nulls first) as cume from scores
+select percent_rank(100) within group(order by math nulls first) as cume from scores;
 select percent_rank(100) within group(order by math nulls last) as cume from scores;
-select percent_rank(null) within group(order by math nulls first) as cume from scores
+select percent_rank(null) within group(order by math nulls first) as cume from scores;
 select percent_rank(null) within group(order by math nulls last) as cume from scores;
  
 execute st1 using 50, 70, 'A';

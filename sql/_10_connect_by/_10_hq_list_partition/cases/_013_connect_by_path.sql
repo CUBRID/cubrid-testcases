@@ -53,7 +53,7 @@ set system parameters 'compat_mode=cubrid';
 select id, sys_connect_by_path(trim(text),'/') from list_test
 start with parentid is null
 connect by prior to_char(id)=to_char(parentid)
-order by id
+order by id;
 
 drop table list_test;
 

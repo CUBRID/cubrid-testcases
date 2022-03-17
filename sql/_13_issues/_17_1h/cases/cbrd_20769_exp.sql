@@ -3,7 +3,7 @@
 drop table if exists foo;
 create table foo (i int primary key, s string);
 insert into foo values (1, 'aaa');
-prepare s from 'select * from foo where ? in nvl(s, ?);'
+prepare s from 'select * from foo where ? in nvl(s, ?);';
 execute s using 'a', '';
 drop prepare s;
 
@@ -86,11 +86,11 @@ drop table if exists t2;
 create table t2 (a char(10));
 create index i_t2_a on t2(a);
 insert into t2 values ('1234567890');
-prepare stmt from 'select a from t2 where ? like cast ((?+''%'') as char(11))'
+prepare stmt from 'select a from t2 where ? like cast ((?+''%'') as char(11))';
 execute stmt using '', '1234';
 drop prepare stmt;
 
-prepare stmt from 'select a from t2 where ifnull(a, ?) like cast ((?+''%'') as char(11))' 
+prepare stmt from 'select a from t2 where ifnull(a, ?) like cast ((?+''%'') as char(11))'; 
 execute stmt using '', '1234';
 drop prepare stmt;
 

@@ -29,7 +29,7 @@ insert into dayofmonth_tests values('2010-01-02','asdf','05/04/2010 12:23:15.123
 17:28:31',{'golf', 'handicap', 10}),('2010-01-02','1971-12-22 00:14:11','10/04/2010 12:23:15.123',NULL,12000,11,1111111111,12.25,111.11111111,11.12,1234,'2010-01-02','12:10:09',timestamp('2008-10-11 10:49:51'),'1983-01-02
 17:28:31',{'golf', 'handicap', 10});
 
-select char_col, dayofmonth(char_col) from dayofmonth_tests order by smallint_col
+select char_col, dayofmonth(char_col) from dayofmonth_tests order by smallint_col;
 select varchar_col, dayofmonth(varchar_col) from dayofmonth_tests order by smallint_col;
 select string_col, dayofmonth(string_col) from dayofmonth_tests order by smallint_col;
 select bit_col, dayofmonth(bit_col) from dayofmonth_tests order by smallint_col;
@@ -143,7 +143,7 @@ insert into dayofmonth_tests values('2010-01-02','asdf','05/04/2010 12:23:15.123
 17:28:31',{'golf', 'handicap', 10}),('2010-01-02','1971-12-22 00:14:11','10/04/2010 12:23:15.123',NULL,12000,11,1111111111,12.25,111.11111111,11.12,1234,'2010-01-02','12:10:09',timestamp('2008-10-11 10:49:51'),'1983-01-02
 17:28:31',{'golf', 'handicap', 10});
 
-select char_col, dayofmonth(char_col) from dayofmonth_tests order by smallint_col
+select char_col, dayofmonth(char_col) from dayofmonth_tests order by smallint_col;
 select varchar_col, dayofmonth(varchar_col) from dayofmonth_tests order by smallint_col;
 select string_col, dayofmonth(string_col) from dayofmonth_tests order by smallint_col;
 select bit_col, dayofmonth(bit_col) from dayofmonth_tests order by smallint_col;

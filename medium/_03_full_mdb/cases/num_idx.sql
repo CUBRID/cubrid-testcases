@@ -34,7 +34,7 @@ delete from bar where x = 456.78;
 delete from bar where x > 0; -- 118
 select count(*) from bar where x > -12345;
 delete from bar where x = -123.45;
-select count(*) from bar where x > -12345 -- 0
+select count(*) from bar where x > -12345; -- 0
 insert into bar values (123.45);
 insert into bar values (456.78);
 select * from bar where x between 123.44 and 546.79 order by 1;

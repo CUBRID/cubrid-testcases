@@ -29,14 +29,14 @@ select field('x');
 
 select field('x',NULL, NULL);
 
-prepare st from 'select field(?,?,?)'
+prepare st from 'select field(?,?,?)';
 execute st using '1','2','1';
 
 
-prepare st from 'select field(?,?,?)'
+prepare st from 'select field(?,?,?)';
 execute st using NULL,'2','1';
 
-prepare st from 'select field(?,?,?)'
+prepare st from 'select field(?,?,?)';
 execute st using '1',NULL,'1';
 
 -- should fail

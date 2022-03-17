@@ -17,7 +17,7 @@ SELECT * FROM with_trigger;
 
 REPLACE INTO with_trigger VALUES(22);
 
-PREPARE st FROM 'REPLACE INTO with_trigger VALUES(?)'
+PREPARE st FROM 'REPLACE INTO with_trigger VALUES(?)';
 
 EXECUTE st USING 22;
 

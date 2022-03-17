@@ -17,7 +17,7 @@ SELECT MD5(CAST(1024 AS NCHAR VARYING));
 SELECT MD5('SQL-99 Complete. Really!');
 
 -- check host variables support --
-PREPARE st FROM 'SELECT MD5(?)'
+PREPARE st FROM 'SELECT MD5(?)';
 EXECUTE st USING 'SQL-99 Complete. Really!';
 
 CREATE TABLE test (

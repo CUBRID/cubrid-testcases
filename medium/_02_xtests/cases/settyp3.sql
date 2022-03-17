@@ -9,6 +9,6 @@ select * from set_attr;
 update set_attr
 set
 se_object = se_object + {s2},
-se_obj_char = se_obj_char + {'new stuff 3',s2}
+se_obj_char = se_obj_char + {'new stuff 3',s2};
 select * from set_attr;
 rollback;

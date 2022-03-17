@@ -44,12 +44,12 @@ drop class if exists "select";
 CREATE TABLE IF NOT EXISTS `public`.`select` (
     `col` VARCHAR(16) NOT NULL
 );
-desc select
+desc select;
 drop class if exists "select";
 
 DROP TABLE IF EXISTS backupfiles;
 CREATE TABLE IF NOT EXISTS backupfiles (fileName VARCHAR(20), archiveId VARCHAR(500), checkSum VARCHAR(100), glacierVault VARCHAR(100), timeStamps date);
-desc backupfiles
+desc backupfiles;
 INSERT INTO backupfiles VALUES ('$archive_file_name', '$archiveID', '$CURRENTVAULT', '$checkSum', CURDATE());
 select count(*) from backupfiles;
 DROP TABLE IF EXISTS backupfiles;
@@ -57,13 +57,13 @@ DROP TABLE IF EXISTS backupfiles;
 DROP TABLE if exists t1;
 CREATE TABLE t1 (id INT NOT NULL);
 INSERT INTO t1 VALUES (1),(1);
-CREATE TABLE IF NOT EXISTS t1 SELECT * FROM t1 order by 1;
+CREATE TABLE IF NOT EXISTS t1; SELECT * FROM t1 order by 1;
 DROP TABLE if exists t1;
 
 DROP TABLE if exists t1,t2;
 CREATE TABLE t1 (id INT NOT NULL);
 INSERT INTO t1 VALUES (1),(1);
-CREATE TABLE  t2 (SELECT * FROM t1);
+CREATE TABLE t2 AS (SELECT * FROM t1);
 
 DROP TABLE if exists t1;
 CREATE TABLE t1 (id INT NOT NULL);
@@ -75,14 +75,14 @@ DROP TABLE if exists t1,t2;
 CREATE TABLE t1 (id INT NOT NULL);
 INSERT INTO t1 VALUES (1),(1);
 create table t2 (i int);
-create table if not exists t2  (select * from t1);
-create table if not exists t2 as (select * from t1);
-create table if not exists t2 (select * from (select * from t1 union select * from t1 ) tt);
+create table if not exists t2 AS (select * from t1);
+create table if not exists t2 AS (select * from t1);
+create table if not exists t2 AS (select * from (select * from t1 union select * from t1 ) tt);
 
 DROP TABLE if exists t1,t2;
 CREATE TABLE t1 (id INT NOT NULL);
 INSERT INTO t1 VALUES (1),(1);
-create table t2  (select * from t1);
+create table t2 as (select * from t1);
 DROP TABLE if exists t2;
 create table t2 as (select * from t1);
 
@@ -91,13 +91,13 @@ create table t2 as (select * from t1);
 DROP TABLE if exists t1,t2;
 CREATE TABLE t1 (id INT NOT NULL);
 INSERT INTO t1 VALUES (1),(1);
-create table if not exists t2 (select * from (select * from t1 union select * from t1 ) tt);
+create table if not exists t2 AS (select * from (select * from t1 union select * from t1 ) tt);
 desc t2;
 
 DROP TABLE if exists t1,t2;
 CREATE TABLE t1 (id INT NOT NULL);
 INSERT INTO t1 VALUES (1),(1);
-create table t2 (select * from t1);
+create table t2 as (select * from t1);
 desc t2;
 select * from t2 order by 1;
 
@@ -111,26 +111,26 @@ select * from t2 order by 1;
 DROP TABLE if exists t1,t2;
 CREATE TABLE t1 (id INT NOT NULL);
 INSERT INTO t1 VALUES (1),(1);
-CREATE TABLE IF NOT EXISTS t2 SELECT * FROM t1;
+CREATE TABLE IF NOT EXISTS t2 AS SELECT * FROM t1;
 
 DROP TABLE if exists t1,t2;
 
 DROP TABLE if exists t1,t2;
 CREATE TABLE t1 (id INT NOT NULL);
 INSERT INTO t1 VALUES (1),(1);
-CREATE TABLE IF NOT EXISTS t1 SELECT * FROM t1;
+CREATE TABLE IF NOT EXISTS t1; SELECT * FROM t1;
 
 DROP TABLE if exists t1,t2;
 
 DROP TABLE IF EXISTS ttt;
-CREATE TABLE IF NOT EXISTS ttt SELECT 0 AS n;
-CREATE TABLE IF NOT EXISTS ttt SELECT 0 AS n;
+CREATE TABLE IF NOT EXISTS ttt AS SELECT 0 AS n;
+CREATE TABLE IF NOT EXISTS ttt AS SELECT 0 AS n;
 SELECT COUNT(*) FROM ttt;
 
 DROP TABLE IF EXISTS ttt;
 
 DROP TABLE IF EXISTS t;
-CREATE TABLE t SELECT 1;
+CREATE TABLE t as (SELECT 1);
 insert into t values(null);
 
 DROP TABLE IF EXISTS t;

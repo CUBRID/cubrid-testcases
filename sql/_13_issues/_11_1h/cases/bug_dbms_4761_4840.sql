@@ -6,10 +6,10 @@ insert into tb values (4, date'02/18/2011', 4);
 create index idx on tb(a);
 create index idx2 on tb(b);
 
-prepare x from 'select * from tb where a in (1, ?) order by a'
-execute x using 3
-execute x using '2'
-execute x using 5
+prepare x from 'select * from tb where a in (1, ?) order by a';
+execute x using 3;
+execute x using '2';
+execute x using 5;
 drop prepare x;
 
 select * from tb where b in ('02/20/2011', '02/18/2011', '02/17/2011', date'2010-01-01', cast('2011-02-19' as varchar(255)))  order by a;
@@ -19,9 +19,9 @@ select * from tb where a in (1, ?) or b in ('02/18/2011', ?)  order by a;
 $varchar, $2, $varchar, $2011-02-18
 select * from tb where a in (1, ?) or b in ('02/22/2011', ?)  order by a;
 
-prepare x from 'select * from tb where b in (''02/20/2011'', ?) order by a'
-execute x using '02/21/2011'
-execute x using date'02/19/2011'
+prepare x from 'select * from tb where b in (''02/20/2011'', ?) order by a';
+execute x using '02/21/2011';
+execute x using date'02/19/2011';
 drop prepare x;
 
 select * from tb where a in (null, 1, 2) order by a;
@@ -32,12 +32,12 @@ select * from tb where a in (c, null) order by a;
 
 select * from tb where a in (null, null);
 
-prepare x from 'select * from tb where a in (null, 1, ?) order by a'
-execute x using 3
+prepare x from 'select * from tb where a in (null, 1, ?) order by a';
+execute x using 3;
 drop prepare x;
 
-prepare x from 'select * from tb where a in (1, null, ?) order by a'
-execute x using 3
+prepare x from 'select * from tb where a in (1, null, ?) order by a';
+execute x using 3;
 drop prepare x;
 
 drop table tb;

@@ -19,7 +19,7 @@ alter t1 add column c3 varchar(100) default to_char(sysdatetime, 'YYYYMMDD');
 insert into t1(c1, c2) values(2, {'cba'});
 select case when default(c3)=to_char(current_date, 'YYYYMMDD') then 'ok' else 'nok' end from t1;
 select default(c1) from t1; 
-drop t1
+drop t1;
 drop  table if exists t1;
 create table t1(i int primary key, k varchar(10) default to_char(SYSTIMESTAMP, 'HH24:MI:SS YYYY-MM-DD'));
 create table t1(i int primary key, k varchar(100) default to_char(SYSTIMESTAMP, 'HH24:MI:SS YYYY-MM-DD'), h varchar);

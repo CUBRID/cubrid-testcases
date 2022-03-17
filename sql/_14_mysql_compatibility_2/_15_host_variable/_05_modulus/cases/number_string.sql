@@ -16,25 +16,25 @@ truncate table t1;
 -- columns with HV
 insert into t1 values ('4',n'4',2);
 
-prepare st from 'select mod (? , i2) from t1'
+prepare st from 'select mod (? , i2) from t1';
 execute st using '4';
 
-prepare st from 'select mod (? , i2) from t1'
+prepare st from 'select mod (? , i2) from t1';
 execute st using NULL;
 
-prepare st from 'select mod (i2 , ?) from t1'
+prepare st from 'select mod (i2 , ?) from t1';
 execute st using n'1';
 
-prepare st from 'select mod (s1 , ?) from t1'
+prepare st from 'select mod (s1 , ?) from t1';
 execute st using 0.2e1;
 
-prepare st from 'select mod (? , sn1) from t1'
+prepare st from 'select mod (? , sn1) from t1';
 execute st using 9.0;
 
-prepare st from 'select mod (s1 , ?) from t1'
+prepare st from 'select mod (s1 , ?) from t1';
 execute st using NULL;
 
-prepare st from 'select mod (s1 , ?) from t1'
+prepare st from 'select mod (s1 , ?) from t1';
 execute st using 0;
 
 drop table t1;
@@ -50,33 +50,33 @@ select mod (4 , NULL);
 
 
 -- 2 HV
-prepare st from 'select mod (? , ?)'
+prepare st from 'select mod (? , ?)';
 execute st using '2001-10-11',4;
 
-prepare st from 'select mod (? , ?)'
+prepare st from 'select mod (? , ?)';
 execute st using 4,'abc';
 
-prepare st from 'select mod (? , ?)'
+prepare st from 'select mod (? , ?)';
 execute st using 4,'2';
 
-prepare st from 'select mod (? , ?)'
+prepare st from 'select mod (? , ?)';
 execute st using 4,NULL;
 
-prepare st from 'select mod (? , ?)'
+prepare st from 'select mod (? , ?)';
 execute st using 4,2;
 
-prepare st from 'select mod (? , ?)'
+prepare st from 'select mod (? , ?)';
 execute st using 4.0,2;
 
 
 -- 1 HV
-prepare st from 'select mod (4 , ?)'
+prepare st from 'select mod (4 , ?)';
 execute st using '2';
 
-prepare st from 'select mod (4 , ?)'
+prepare st from 'select mod (4 , ?)';
 execute st using 2.0;
 
-prepare st from 'select mod (? , ''2'')'
+prepare st from 'select mod (? , ''2'')';
 execute st using 4;
 
 

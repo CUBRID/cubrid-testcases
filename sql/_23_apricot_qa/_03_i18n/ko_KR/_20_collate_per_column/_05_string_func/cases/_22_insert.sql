@@ -17,35 +17,35 @@ select insert (cast (s1 as string collate utf8_ko_cs_uca),3,1,'x') from t2 order
 
 
 -- late binding
-prepare s from 'select insert(? , ?, ?,?)'
+prepare s from 'select insert(? , ?, ?,?)';
 execute s using '가伽각가',3,3,'x';
 DEALLOCATE PREPARE s;
 
-prepare s from 'select insert(s1 , ?, ?,?) from t1 order by 1'
+prepare s from 'select insert(s1 , ?, ?,?) from t1 order by 1';
 execute s using 3,1,'x';
 DEALLOCATE PREPARE s;
 
-prepare s from 'select insert(s1 , ?, ?,?) from t2 order by 1'
+prepare s from 'select insert(s1 , ?, ?,?) from t2 order by 1';
 execute s using 3,1,'x';
 DEALLOCATE PREPARE s;
 
-prepare s from 'select insert(? , ?, ?,s1) from t1 order by 1'
+prepare s from 'select insert(? , ?, ?,s1) from t1 order by 1';
 execute s using '가伽伽가',1,2;
 DEALLOCATE PREPARE s;
 
-prepare s from 'select insert(? , ?, ?,s1) from t2 order by 1'
+prepare s from 'select insert(? , ?, ?,s1) from t2 order by 1';
 execute s using '가伽伽가',1,2;
 DEALLOCATE PREPARE s;
 
-prepare s from 'select insert(s1 + ?, ?, ?,?) from t1 order by 1'
+prepare s from 'select insert(s1 + ?, ?, ?,?) from t1 order by 1';
 execute s using 'y',3,1,'x';
 DEALLOCATE PREPARE s;
 
-prepare s from 'select insert(s1 + ?, ?, ?,?) from t2 order by 1'
+prepare s from 'select insert(s1 + ?, ?, ?,?) from t2 order by 1';
 execute s using 'y',3,1,'x';
 DEALLOCATE PREPARE s;
 
-prepare s from 'select insert( cast (s1 + ? as string collate utf8_ko_cs_uca), ?, ?,?) from t2 order by 1'
+prepare s from 'select insert( cast (s1 + ? as string collate utf8_ko_cs_uca), ?, ?,?) from t2 order by 1';
 execute s using 'y',3,1,'x';
 DEALLOCATE PREPARE s;
 

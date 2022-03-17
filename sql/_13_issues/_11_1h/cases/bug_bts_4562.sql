@@ -9,8 +9,8 @@ select @a;
 select @a, @a + 1 from db_root;
 
 -- as host variable
-prepare s from 'select ? from db_root'
-execute s using @a
+prepare s from 'select ? from db_root';
+execute s using @a;
 deallocate prepare s;
 
 --undefined session variable
@@ -82,8 +82,8 @@ drop view v;
 drop variable @a,@b,@c;
 
 --prepared statements
-prepare s from 'select @a:=?+? from db_root'
-execute s using 1, 1
+prepare s from 'select @a:=?+? from db_root';
+execute s using 1, 1;
 deallocate prepare s;
 
 select @a from db_root;

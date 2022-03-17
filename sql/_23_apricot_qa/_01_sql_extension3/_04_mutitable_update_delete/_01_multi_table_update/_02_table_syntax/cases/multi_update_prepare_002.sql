@@ -5,33 +5,33 @@
 create table md_set1(col1 set(date, int), col2 varchar(20));
 
 --insert with prepare statement
-prepare stmt from 'insert into md_set1 values(?, ?)'
-execute stmt using {date'1999-01-01', 1, 2}, 'aaa'
-execute stmt using {1, date'2000-01-01', 2}, 'bbb'
-execute stmt using {1, 2, date'2001-01-01'}, 'ccc'
-execute stmt using {1, '2002-01-01', 2}, 'ddd'
-execute stmt using {'2003-01-01', 1, 2}, 'eee'
-execute stmt using {1, 2, '2004-01-01'}, 'fff'
-execute stmt using {date'2005-12-12', 2, 1}, 'ggg'
-execute stmt using {2, '2006-12-12', 1}, 'hhh'
-execute stmt using {2, 1, '2007-12-12'}, 'iii'
-execute stmt using {1, '2008-12-12', 2}, 'jjj'
-execute stmt using {'2009-12-12', 1, 2}, 'kkk'
-execute stmt using {1, 2, date'2010-12-12'}, 'lll'
+prepare stmt from 'insert into md_set1 values(?, ?)';
+execute stmt using {date'1999-01-01', 1, 2}, 'aaa';
+execute stmt using {1, date'2000-01-01', 2}, 'bbb';
+execute stmt using {1, 2, date'2001-01-01'}, 'ccc';
+execute stmt using {1, '2002-01-01', 2}, 'ddd';
+execute stmt using {'2003-01-01', 1, 2}, 'eee';
+execute stmt using {1, 2, '2004-01-01'}, 'fff';
+execute stmt using {date'2005-12-12', 2, 1}, 'ggg';
+execute stmt using {2, '2006-12-12', 1}, 'hhh';
+execute stmt using {2, 1, '2007-12-12'}, 'iii';
+execute stmt using {1, '2008-12-12', 2}, 'jjj';
+execute stmt using {'2009-12-12', 1, 2}, 'kkk';
+execute stmt using {1, 2, date'2010-12-12'}, 'lll';
 deallocate prepare stmt;
 
 
 create table md_set2(id int primary key, col1 smallint, col2 set(int, date), col3 varchar);
 
 --insert with prepare statement
-prepare stmt from 'insert into md_set2 values(?, ?, ?, ?)'
-execute stmt using 2, 5, {1, 2, date'2000-01-01'}, 'cubrid'
-execute stmt using 4, 10, {2, '2000-01-01', 1}, 'mysql'
-execute stmt using 6, 13, {2, 1, '2007-12-12'}, 'abc'
-execute stmt using 8, 22, {'2012-12-12', 2, 1}, 'aaa'
-execute stmt using 10, 45, {1, date'2001-01-01', 2}, 'hello'
-execute stmt using 12, 57, {2, '2010-12-12', 1}, 'sqlite'
-execute stmt using 14, 88, {'1998-01-01', 2, 1}, 'oracle'
+prepare stmt from 'insert into md_set2 values(?, ?, ?, ?)';
+execute stmt using 2, 5, {1, 2, date'2000-01-01'}, 'cubrid';
+execute stmt using 4, 10, {2, '2000-01-01', 1}, 'mysql';
+execute stmt using 6, 13, {2, 1, '2007-12-12'}, 'abc';
+execute stmt using 8, 22, {'2012-12-12', 2, 1}, 'aaa';
+execute stmt using 10, 45, {1, date'2001-01-01', 2}, 'hello';
+execute stmt using 12, 57, {2, '2010-12-12', 1}, 'sqlite';
+execute stmt using 14, 88, {'1998-01-01', 2, 1}, 'oracle';
 deallocate prepare stmt;
 
 

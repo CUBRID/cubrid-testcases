@@ -6,7 +6,7 @@ create table foo as
 select * from t order by 1;
 
 alter table foo change column i i int primary key auto_increment(0,10);
-insert into foo values (null)
+insert into foo values (null);
 insert into foo
 with cte as
 (
