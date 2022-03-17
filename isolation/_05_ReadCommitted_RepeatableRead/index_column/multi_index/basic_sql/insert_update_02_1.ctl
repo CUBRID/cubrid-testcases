@@ -35,7 +35,7 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C1: insert into t select rownum,rownum+70 from (select sleep(5)) x, t where id>0 and rownum<=3;
+C1: insert into t select rownum,rownum+70 from t where id>0 and (select sleep(5)=0)<>0 and rownum<=3;
 MC: sleep 1;
 C2: update t set col=col+1 where chr(col)>'A' and 0=(select sleep (1)) using index idx;
 

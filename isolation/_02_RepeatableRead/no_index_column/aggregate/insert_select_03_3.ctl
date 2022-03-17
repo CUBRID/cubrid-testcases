@@ -36,7 +36,7 @@ MC: wait until C1 ready;
 /* test case */
 C1: update t set id=col-1 where id%2=0;
 MC: wait until C1 ready;
-C2: insert into t select t.* from (select sleep(5)) x, t where id%3=0;
+C2: insert into t select t.* from t where id%3=0 and (select sleep(5)=0)<>0;
 C3: select min(t1.id),max(t1.col) from t t1 left outer join (select min(t.col) as col from t where id>5) as t2 on t1.id=t2.col group by t2.col;
 MC: wait until C3 ready;
 C2: rollback;

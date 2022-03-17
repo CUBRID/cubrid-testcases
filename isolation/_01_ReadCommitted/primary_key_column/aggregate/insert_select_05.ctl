@@ -77,7 +77,7 @@ C2: insert into t values(1,'aa');
 MC: wait until C2 ready;
 
 /* expected 10 group */
-C6: select col,sum(id) from t,(select sleep(5)) x where id between 1 and 9000 group by col order by col;
+C6: select col,sum(id) from t where id between 1 and 9000 and (select sleep(5)=0)<>0 group by col order by col;
 C3: insert into t values(2,'cc');
 MC: wait until C3 ready;
 C2: commit;

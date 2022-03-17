@@ -36,7 +36,7 @@ MC: wait until C1 ready;
 /* test case */
 C1: update t set id=col-1 where id%2=0;
 MC: wait until C1 ready;
-C2: insert into t select t.* from (select sleep(10))x, t where t.id%3=0;
+C2: insert into t select t.* from t where t.id%3=0 and (select sleep(10)=0)<>0;
 MC: sleep 1;
 C3: select sum(id) from t group by col order by 1;
 MC: sleep 1;
