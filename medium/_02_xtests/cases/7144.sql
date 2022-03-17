@@ -1,7 +1,7 @@
 --+ holdcas on;
 autocommit off;
 create class other_node (a char(20));
-insert into other_node values('aaaaaaaaaaaaaaaaaaaa') into :other_obj
+insert into other_node values('aaaaaaaaaaaaaaaaaaaa') into :other_obj;
 create class node1 (
     a character(4) NOT NULL UNIQUE,
     b sequence(other_node),

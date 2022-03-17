@@ -126,10 +126,10 @@ select CAST('0b1111' AS float);
 prepare s from 'values(?),(?),(?)';
 execute s using 1,2,'3';
 
-prepare s from 'select ? union select ? union select ?' 
+prepare s from 'select ? union select ? union select ?';
 execute s using 1,2,'3';
 
-prepare s from 'select ? union select ? union select ?' 
+prepare s from 'select ? union select ? union select ?';
 execute s using 1,2,3;
 
 prepare s from 'values(1+?),(?+2),(?+3)';

@@ -16,7 +16,7 @@ select locate (cast (s1 as string collate utf8_en_ci),'c') from t2 order by 1;
 
 
 -- late binding
-prepare s from 'select locate(s1 ,?) from t1 order by 1'
+prepare s from 'select locate(s1 ,?) from t1 order by 1';
 execute s using 'c';
 
 

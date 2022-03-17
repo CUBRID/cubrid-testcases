@@ -1,5 +1,5 @@
 drop table if exists TEST_T;
-drop table if exists TEST_K
+drop table if exists TEST_K;
 CREATE TABLE TEST_T
 (
   NR        VARCHAR(20),

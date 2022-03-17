@@ -16,12 +16,12 @@ select * from t where col < cast(2 as double);
 
 select * from t where col < '2';
 
-prepare s from 'select * from t where col < ?'
-execute s using '2'
+prepare s from 'select * from t where col < ?';
+execute s using '2';
 deallocate prepare s;
 
-prepare s from 'select * from t where col < ?'
-execute s using 2
+prepare s from 'select * from t where col < ?';
+execute s using 2;
 deallocate prepare s;
 
 select * from t where col < cast(2.1 as numeric (10, 5));
@@ -32,10 +32,10 @@ select * from t where col < cast(2.1 as double);
 
 select * from t where col < '2.1';
 
-prepare s from 'select * from t where col < ?'
+prepare s from 'select * from t where col < ?';
 execute s using '2.1';
 
-prepare s from 'select * from t where col < ?'
+prepare s from 'select * from t where col < ?';
 execute s using 2.1;
 
 drop table t;
@@ -58,12 +58,12 @@ select * from t where col < cast(2 as double);
 
 select * from t where col < '2';
 
-prepare s from 'select * from t where col < ?'
-execute s using '2'
+prepare s from 'select * from t where col < ?';
+execute s using '2';
 deallocate prepare s;
 
-prepare s from 'select * from t where col < ?'
-execute s using 2
+prepare s from 'select * from t where col < ?';
+execute s using 2;
 deallocate prepare s;
 
 select * from t where col < cast(2.1 as numeric (10, 5));
@@ -74,10 +74,10 @@ select * from t where col < cast(2.1 as double);
 
 select * from t where col < '2.1';
 
-prepare s from 'select * from t where col < ?'
+prepare s from 'select * from t where col < ?';
 execute s using '2.1';
 
-prepare s from 'select * from t where col < ?'
+prepare s from 'select * from t where col < ?';
 execute s using 2.1;
 
 drop table t;
@@ -100,12 +100,12 @@ select * from t where col < cast(2 as double);
 
 select * from t where col < '2';
 
-prepare s from 'select * from t where col < ?'
-execute s using '2'
+prepare s from 'select * from t where col < ?';
+execute s using '2';
 deallocate prepare s;
 
-prepare s from 'select * from t where col < ?'
-execute s using 2
+prepare s from 'select * from t where col < ?';
+execute s using 2;
 deallocate prepare s;
 
 select * from t where col < cast(2.1 as numeric (10, 5));
@@ -116,10 +116,10 @@ select * from t where col < cast(2.1 as double);
 
 select * from t where col < '2.1';
 
-prepare s from 'select * from t where col < ?'
+prepare s from 'select * from t where col < ?';
 execute s using '2.1';
 
-prepare s from 'select * from t where col < ?'
+prepare s from 'select * from t where col < ?';
 execute s using 2.1;
 
 drop table t;
@@ -144,12 +144,12 @@ select * from t where col < cast(2 as double);
 
 select * from t where col < '2';
 
-prepare s from 'select * from t where col < ?'
-execute s using '2'
+prepare s from 'select * from t where col < ?';
+execute s using '2';
 deallocate prepare s;
 
-prepare s from 'select * from t where col < ?'
-execute s using 2
+prepare s from 'select * from t where col < ?';
+execute s using 2;
 deallocate prepare s;
 
 select * from t where col < cast(2.1 as numeric (10, 5));
@@ -160,10 +160,10 @@ select * from t where col < cast(2.1 as double);
 
 select * from t where col < '2.1';
 
-prepare s from 'select * from t where col < ?'
+prepare s from 'select * from t where col < ?';
 execute s using '2.1';
 
-prepare s from 'select * from t where col < ?'
+prepare s from 'select * from t where col < ?';
 execute s using 2.1;
 
 drop table t;
@@ -186,12 +186,12 @@ select * from t where col < cast(2 as double);
 
 select * from t where col < '2';
 
-prepare s from 'select * from t where col < ?'
-execute s using '2'
+prepare s from 'select * from t where col < ?';
+execute s using '2';
 deallocate prepare s;
 
-prepare s from 'select * from t where col < ?'
-execute s using 2
+prepare s from 'select * from t where col < ?';
+execute s using 2;
 deallocate prepare s;
 
 select * from t where col < cast(2.1 as numeric (10, 5));
@@ -202,10 +202,10 @@ select * from t where col < cast(2.1 as double);
 
 select * from t where col < '2.1';
 
-prepare s from 'select * from t where col < ?'
+prepare s from 'select * from t where col < ?';
 execute s using '2.1';
 
-prepare s from 'select * from t where col < ?'
+prepare s from 'select * from t where col < ?';
 execute s using 2.1;
 
 drop table t;
@@ -228,12 +228,12 @@ select * from t where col < cast(2 as double);
 
 select * from t where col < '2';
 
-prepare s from 'select * from t where col < ?'
-execute s using '2'
+prepare s from 'select * from t where col < ?';
+execute s using '2';
 deallocate prepare s;
 
-prepare s from 'select * from t where col < ?'
-execute s using 2
+prepare s from 'select * from t where col < ?';
+execute s using 2;
 deallocate prepare s;
 
 select * from t where col < cast(2.1 as numeric (10, 5));
@@ -244,10 +244,10 @@ select * from t where col < cast(2.1 as double);
 
 select * from t where col < '2.1';
 
-prepare s from 'select * from t where col < ?'
+prepare s from 'select * from t where col < ?';
 execute s using '2.1';
 
-prepare s from 'select * from t where col < ?'
+prepare s from 'select * from t where col < ?';
 execute s using 2.1;
 
 drop table t;
@@ -270,12 +270,12 @@ select * from t where col < cast(2 as double);
 
 select * from t where col < '2';
 
-prepare s from 'select * from t where col < ?'
-execute s using '2'
+prepare s from 'select * from t where col < ?';
+execute s using '2';
 deallocate prepare s;
 
-prepare s from 'select * from t where col < ?'
-execute s using 2
+prepare s from 'select * from t where col < ?';
+execute s using 2;
 deallocate prepare s;
 
 select * from t where col < cast(2.1 as numeric (10, 5));
@@ -286,10 +286,10 @@ select * from t where col < cast(2.1 as double);
 
 select * from t where col < '2.1';
 
-prepare s from 'select * from t where col < ?'
+prepare s from 'select * from t where col < ?';
 execute s using '2.1';
 
-prepare s from 'select * from t where col < ?'
+prepare s from 'select * from t where col < ?';
 execute s using 2.1;
 
 drop table t;
@@ -312,13 +312,13 @@ select * from t where col <= date'2010-01-01';
 
 select * from t where col <= timestamp'2010-01-01 13:01:02';
 
-prepare s from 'select * from t where col <= ?'
-execute s using '13:01:02'
-execute s using '13:01:01'
-execute s using '2010-01-01 13:01:02'
-execute s using time'2010-01-01 13:01:02'
-execute s using timestamp'2010-01-01 13:01:02'
-execute s using datetime'2010-01-01 13:01:02'
+prepare s from 'select * from t where col <= ?';
+execute s using '13:01:02';
+execute s using '13:01:01';
+execute s using '2010-01-01 13:01:02';
+execute s using time'2010-01-01 13:01:02';
+execute s using timestamp'2010-01-01 13:01:02';
+execute s using datetime'2010-01-01 13:01:02';
 deallocate prepare s;
 
 drop table t;

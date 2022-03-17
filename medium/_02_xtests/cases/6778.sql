@@ -13,5 +13,5 @@ group by a;
 select a, count(a)
 from foo t
 group by a
-having a = (select count(a) from foo where a = t.a -1)
+having a = (select count(a) from foo where a = t.a -1);
 rollback;

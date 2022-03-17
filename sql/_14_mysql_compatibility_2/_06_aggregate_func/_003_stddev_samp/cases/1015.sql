@@ -2,7 +2,7 @@
 
 create class tb(
 col1 int
-)
+);
 
 insert into tb values(10);
 insert into tb values(20);

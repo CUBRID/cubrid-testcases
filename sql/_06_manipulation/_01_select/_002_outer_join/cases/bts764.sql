@@ -33,7 +33,7 @@ INSERT INTO T3(TEST_TYPE,TEST_DESC) VALUES(1,'Allowed Program/Port Template');
 INSERT INTO T3(TEST_TYPE,TEST_DESC) VALUES(2,'Allowed Inbound IP/Port Template');
 INSERT INTO T3(TEST_TYPE,TEST_DESC) VALUES(3,'Allowed Outgoing IP/Port Template');
 INSERT INTO T3(TEST_TYPE,TEST_DESC) VALUES(4,'Allowed Process Template');
-INSERT INTO T3(TEST_TYPE,TEST_DESC) VALUES(5,'Executable File Extentions Template')
+INSERT INTO T3(TEST_TYPE,TEST_DESC) VALUES(5,'Executable File Extentions Template');
 
 CREATE TABLE T4
 (

@@ -21,5 +21,5 @@ select id, description
 --set optimization: level 257;
 select description
   from xxx x1
- where x1 in {(select x2 from xxx x2 where x2 = x1)}
+ where x1 in {(select x2 from xxx x2 where x2 = x1)};
 rollback;

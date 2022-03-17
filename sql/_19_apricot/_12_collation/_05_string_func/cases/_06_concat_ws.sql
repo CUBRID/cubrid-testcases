@@ -28,7 +28,7 @@ select concat_ws(t1.sep, cast (t1.s1 as string collate utf8_bin), t2.s1) from t1
 select concat_ws(cast (t1.sep as string collate utf8_bin), 't1.s1', t2.s1) from t1,t2 order by 1;
 
 -- late binding
-prepare s from 'select concat_ws(?, s1 ,?) from t1 order by 1'
+prepare s from 'select concat_ws(?, s1 ,?) from t1 order by 1';
 execute s using '+', 'c';
 
 

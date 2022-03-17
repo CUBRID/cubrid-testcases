@@ -1,7 +1,7 @@
 create table test1 (col_set set);
 insert into test1 values({1,22,3});
 insert into test1 values({2,22,3});
-select * from test1 order by col_set
+select * from test1 order by col_set;
 select * from test1 where col_set < col_set;
 select * from test1 where col_set <= col_set;
 select * from test1 where col_set >= col_set;

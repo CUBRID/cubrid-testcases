@@ -42,7 +42,7 @@ alter table g add col  decimal(8,2) comment 'the meaning of life';
 show full columns from g;
 alter table g drop column col;
 alter table g drop col_bigint;
-alter table g drop col_smallint
+alter table g drop col_smallint;
 show full columns from g;
 alter table g modify col_bigint bigint comment '大学之道在明明德';
 show full columns from g;

@@ -10,10 +10,10 @@ select date (s1) from t1 order by 1;
 select date (s1) from t2 order by 1;
 
 -- late binding
-prepare s from 'select s1 + date(?) from t1 order by 1'
+prepare s from 'select s1 + date(?) from t1 order by 1';
 execute s using '2001-11-12';
 
-prepare s from 'select s1 + date(?) from t2 order by 1'
+prepare s from 'select s1 + date(?) from t2 order by 1';
 execute s using '2001-11-12';
 
 

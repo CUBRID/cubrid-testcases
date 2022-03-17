@@ -2532,5 +2532,5 @@ insert into test_to_number_f (c1,c2,c3,c4,c5,c6,c7,c8,c9,c10)
             select to_number('+$1,.23e-03','sc00,.00eeee') from tb;
             select to_number('+$1,.23e-03','sc00,.000eeee') from tb;
 		select to_number('dummy +$1.234e+02','"dummy" sc9.999eeee') from tb;
-rollback
+rollback;
 rollback;

@@ -1,4 +1,4 @@
-create table tree(g1 int,g2 int,g3 int,text varchar(32))
+create table tree(g1 int,g2 int,g3 int,text varchar(32));
 
 insert into tree values(1,1,1,'a');
 insert into tree values(1,1,2,'a');

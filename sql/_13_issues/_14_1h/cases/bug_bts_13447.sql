@@ -28,7 +28,7 @@ create table tb2 (a int auto_increment, grade int);
 create trigger tgr3 deferred insert on tb1 if(grade > 100) execute insert into tb2(grade) values(obj.grade);
 autocommit off; 
 insert into tb1(grade) values(120);
-drop trigger tgr3
+drop trigger tgr3;
 create trigger tgr3 deferred insert on tb1 if(grade > 90) execute insert into tb2(grade) values(obj.grade);
 insert into tb1(grade) values(110);
 select * from tb1;

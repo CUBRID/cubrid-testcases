@@ -37,7 +37,7 @@ select to_datetime_tz(adddate(datetimeltz'1987-5-10 1:30:00 Asia/Seoul',interval
 select to_datetime_tz(addtime(datetimetz'1987-5-10 1:30:00 Asia/Seoul',time'2:30:00'));
 select to_datetime_tz(adddate(datetimetz'1987-5-10 1:30:00 Asia/Seoul',interval '00:30:00' hour_second));
 
- set timezone 'America/New_York'
+ set timezone 'America/New_York';
 
 select to_datetime_tz(addtime(datetimetz'2015-3-8',time'2:30:00'));
 select to_datetime_tz(adddate(datetimetz '2015-3-8',interval '2:30:00' hour_second));

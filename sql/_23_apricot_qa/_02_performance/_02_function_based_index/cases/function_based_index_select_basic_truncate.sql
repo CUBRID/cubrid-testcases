@@ -25,9 +25,9 @@ insert into t1 values (null,null,null,null,null,null,null,null,null,null,null,nu
 create index i_t1_a2q on t1(lower(b));
 truncate table t1;
 
-PREPARE stmt1 FROM 'select /*+ RECOMPILE */ b, length(lower(b)) from t1 where lower(b)>?'
+PREPARE stmt1 FROM 'select /*+ RECOMPILE */ b, length(lower(b)) from t1 where lower(b)>?';
 --TEST
-execute stmt1 using '0'
+execute stmt1 using '0';
 DEALLOCATE PREPARE stmt1;
 
 drop table t1;

@@ -2,7 +2,7 @@
 --+ holdcas on;
 set system parameters 'return_null_on_function_errors=yes';
 
-prepare st from 'select abs(?)'
+prepare st from 'select abs(?)';
 execute st using {12,12.2};
 
 

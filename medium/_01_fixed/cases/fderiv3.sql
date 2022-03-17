@@ -40,14 +40,14 @@ insert into purchase_order values (
 	select sum(item.qty)
 	from purchase_order as po, table(po.ls) as t(item)
 	where po.cust.name = 'Acme'
-	and item.prod.name = 'widget'
+	and item.prod.name = 'widget';
 	select po.po#,
 	       (select sum(item.qty * item.prod.price)
 		from table(po.ls) as t(item))
-	from purchase_order as po
+	from purchase_order as po;
 	select distinct po.cust.name
 	from purchase_order as po, table(po.ls) as t(item)
-	where item.qty > 25 and item.prod.name = 'widget'
+	where item.qty > 25 and item.prod.name = 'widget';
 	select cpo.name, cpo.pos
 	from (select c.name,
 		     set(select po
@@ -55,5 +55,5 @@ insert into purchase_order values (
 			 where po.cust.name = c.name)
 	      from customer as c) as cpo(name, pos)
 	where (select sum(item.qty * item.prod.price)
-	       from table(cpo.pos) as t0(po), table(po.ls) as t1(item)) > $500
+	       from table(cpo.pos) as t0(po), table(po.ls) as t1(item)) > $500;
 rollback;

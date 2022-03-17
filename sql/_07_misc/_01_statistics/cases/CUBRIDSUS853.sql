@@ -1,6 +1,6 @@
 --+ holdcas on;
 --full scan problem
-set  system parameters 'dont_reuse_heap_file=yes';
+set system parameters 'dont_reuse_heap_file=yes';
 create table foo (
 c char(10), v varchar(10), s string, nc nchar(10), vnc nchar varying(10),
 b bit(10), vb bit varying(10),
@@ -77,7 +77,7 @@ select
 stddev(i), stddev(sm), stddev(n), stddev(f), stddev(d), stddev(m)
 from foo
 --where i < 0 and i > 10
-
+;
 
 select
 min(c), min(v), min(s), min(nc), min(vnc),
@@ -122,8 +122,8 @@ where i < 0 and i > 10
 select
 stddev(i), stddev(sm), stddev(n), stddev(f), stddev(d), stddev(m)
 from foo
-where i < 0 and i > 10
+where i < 0 and i > 10;
 
 drop foo;
-set  system parameters 'dont_reuse_heap_file=no';commit;
+set system parameters 'dont_reuse_heap_file=no';commit;
 --+ holdcas off;

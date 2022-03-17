@@ -43,9 +43,9 @@ drop table tb_group;
 
 
 create table t1 (id int primary key, a1 CHAR(2000),b2 VARCHAR(2000),c3 NCHAR(2000),d4 NCHAR VARYING(2000),e5 BIT(2000),f6 BIT VARYING(2000),g7 NUMERIC,h8 DECIMAL,i9 INTEGER ,j10 SMALLINT,k11 MONETARY,l12 FLOAT,m13 REAL,n14 DOUBLE PRECISION,o15 DATE,p16 TIME,q17 TIMESTAMP);
-PREPARE stmt from 'insert into t1(id, a1,b2,c3,d4,e5,f6,g7,h8,i9,j10,k11,l12,m13,n14,o15,p16,q17) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
-EXECUTE STMT USING 1, null, null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null
-EXECUTE STMT USING 2, null, null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null
+PREPARE stmt from 'insert into t1(id, a1,b2,c3,d4,e5,f6,g7,h8,i9,j10,k11,l12,m13,n14,o15,p16,q17) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+EXECUTE STMT USING 1, null, null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null;
+EXECUTE STMT USING 2, null, null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null;
 EXECUTE stmt USING 3,
 'qwertyuiop[]asdfghjkl\\''zxcvbnm,./`1234567890-=\\~!@#$%^&*()_+|QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>?		two tab',
 'qwertyuiop[]asdfghjkl\\''zxcvbnm,./`1234567890-=\\~!@#$%^&*()_+|QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>?		two tab',
@@ -63,13 +63,13 @@ B'111111111111111111111111111111111111111111111111111111111111111111111111111111
 2341234123.3212,
 DATE '5/11/2010', 
 TIME '16:08:33 pm',
-TIMESTAMP '01/31/1994 8:15:00 pm'
+TIMESTAMP '01/31/1994 8:15:00 pm';
 DEALLOCATE PREPARE STMT;
-PREPARE stmt from 'create table t2 like t1'
-EXECUTE stmt
+PREPARE stmt from 'create table t2 like t1';
+EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
-PREPARE stmt from 'insert into t2  select * from t1'
-EXECUTE stmt
+PREPARE stmt from 'insert into t2  select * from t1';
+EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
 select count(*) from t2 left join t1 on
 		t2.id=t1.id and 

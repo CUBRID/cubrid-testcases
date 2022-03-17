@@ -16,24 +16,24 @@
 --  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 --  THE SOFTWARE.
 drop if exists A;
-CREATE TABLE A ( ID int, Name varchar(12), ParentID int)
-Insert into A (ID,Name,ParentID) values(1,'Greg',0)
-Insert into A (ID,Name,ParentID) values(2,'Bill',0)
-Insert into A (ID,Name,ParentID) values(3,'Amy',1)
-Insert into A (ID,Name,ParentID) values(4,'Red',1)
-Insert into A (ID,Name,ParentID) values(5,'Paul',4)
-Insert into A (ID,Name,ParentID) values(6,'Forest',4)
-Insert into A (ID,Name,ParentID) values(7,'Jade',3)
-Insert into A (ID,Name,ParentID) values(8,'Mary',6)
-Insert into A (ID,Name,ParentID) values(9,'Peter',6)
-Insert into A (ID,Name,ParentID) values(10,'Joseph',6)
-Insert into A (ID,Name,ParentID) values(11,'Juan',6)
-Insert into A (ID,Name,ParentID) values(12,'Barbara',2)
-Insert into A (ID,Name,ParentID) values(13,'Sue',2)
-Insert into A (ID,Name,ParentID) values(14,'Steve',13)
-Insert into A (ID,Name,ParentID) values(15,'Norma',14)
-Insert into A (ID,Name,ParentID) values(16,'Monty',14)
-Insert into A (ID,Name,ParentID) values(17,'Quame',14)
+CREATE TABLE A ( ID int, Name varchar(12), ParentID int);
+Insert into A (ID,Name,ParentID) values(1,'Greg',0);
+Insert into A (ID,Name,ParentID) values(2,'Bill',0);
+Insert into A (ID,Name,ParentID) values(3,'Amy',1);
+Insert into A (ID,Name,ParentID) values(4,'Red',1);
+Insert into A (ID,Name,ParentID) values(5,'Paul',4);
+Insert into A (ID,Name,ParentID) values(6,'Forest',4);
+Insert into A (ID,Name,ParentID) values(7,'Jade',3);
+Insert into A (ID,Name,ParentID) values(8,'Mary',6);
+Insert into A (ID,Name,ParentID) values(9,'Peter',6);
+Insert into A (ID,Name,ParentID) values(10,'Joseph',6);
+Insert into A (ID,Name,ParentID) values(11,'Juan',6);
+Insert into A (ID,Name,ParentID) values(12,'Barbara',2);
+Insert into A (ID,Name,ParentID) values(13,'Sue',2);
+Insert into A (ID,Name,ParentID) values(14,'Steve',13);
+Insert into A (ID,Name,ParentID) values(15,'Norma',14);
+Insert into A (ID,Name,ParentID) values(16,'Monty',14);
+Insert into A (ID,Name,ParentID) values(17,'Quame',14);
 select * From A order by 1,2,3;
 WITH recursive DirectReportsOfGreg (ManagerID, EmployeeID, EmployeeName, n)
 AS
@@ -44,7 +44,7 @@ SELECT ParentID,ID, a.Name,  n+1 FROM A
 INNER JOIN DirectReportsOfGreg as b on A.ParentID = b.EmployeeID
 )
 SELECT * FROM DirectReportsOfGreg 
-ORDER BY n, ManagerID, EmployeeID
+ORDER BY n, ManagerID, EmployeeID;
 select * From A order by 1,2,3;
 
 WITH recursive DirectReportsOfGreg (ManagerID, EmployeeID, EmployeeName, n)

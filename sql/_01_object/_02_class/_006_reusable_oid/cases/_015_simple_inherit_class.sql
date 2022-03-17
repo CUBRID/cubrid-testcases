@@ -14,7 +14,7 @@ create table goo under foo ( a int ) reuse_oid;
 
 drop foo, goo;
 
-create table ooo ( a int primary key) reuse_oid
+create table ooo ( a int primary key) reuse_oid;
 create table koo under ooo;
 create table poo ( a koo);
 

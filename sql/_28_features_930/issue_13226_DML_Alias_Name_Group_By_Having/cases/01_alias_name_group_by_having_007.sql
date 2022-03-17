@@ -80,7 +80,7 @@ SELECT a, ifnull(thasnoattributeb,2) AS bxx
         FROM t1 
         GROUP BY a, bxx with rollup order by 1;
 
-SELECT a, ifnull
+SELECT a, ifnull;
 
 SELECT a, b
         FROM t1 

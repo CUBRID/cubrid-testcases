@@ -1,6 +1,6 @@
 --- collection
 
-prepare st from 'select abs(?)'
+prepare st from 'select abs(?)';
 execute st using {12,12.2};
 
 

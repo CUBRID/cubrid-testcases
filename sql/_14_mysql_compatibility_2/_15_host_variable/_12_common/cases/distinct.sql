@@ -7,16 +7,16 @@ insert into t1 values(20,2.5e1);
 
 select * from t1 order by 1,2;
 
-prepare st from 'select distinct(i1+?) from t1 order by 1'
+prepare st from 'select distinct(i1+?) from t1 order by 1';
 execute st using 3;
 
-prepare st from 'select distinct(i1+?) from t1 order by 1'
+prepare st from 'select distinct(i1+?) from t1 order by 1';
 execute st using 3.2;
 
-prepare st from 'select distinct(? - d1) from t1 order by 1'
+prepare st from 'select distinct(? - d1) from t1 order by 1';
 execute st using 3;
 
-prepare st from 'select distinct(? - d1) from t1 order by 1'
+prepare st from 'select distinct(? - d1) from t1 order by 1';
 execute st using 3.2;
 
 drop table t1;
@@ -33,10 +33,10 @@ insert into t1 values(NULL, NULL);
 
 select * from t1 order by 1,2;
 
-prepare st from 'select distinct(i1+?) from t1 order by 1'
+prepare st from 'select distinct(i1+?) from t1 order by 1';
 execute st using 3.2;
 
-prepare st from 'select distinct(? - d1) from t1 order by 1'
+prepare st from 'select distinct(? - d1) from t1 order by 1';
 execute st using 3;
 
 drop table t1;
@@ -50,10 +50,10 @@ insert into t1 values(NULL, NULL);
 
 select * from t1 order by 1,2;
 
-prepare st from 'select distinct(i1+?) from t1 order by 1'
+prepare st from 'select distinct(i1+?) from t1 order by 1';
 execute st using 3.2;
 
-prepare st from 'select distinct(? - d1) from t1 order by 1'
+prepare st from 'select distinct(? - d1) from t1 order by 1';
 execute st using 3;
 
 drop table t1;

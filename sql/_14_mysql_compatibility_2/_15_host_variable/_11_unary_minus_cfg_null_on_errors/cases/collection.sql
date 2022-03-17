@@ -2,7 +2,7 @@
 --- collection
 set system parameters 'return_null_on_function_errors=yes';
 
-prepare st from 'select -(?)'
+prepare st from 'select -(?)';
 execute st using {12,12.2};
 
 

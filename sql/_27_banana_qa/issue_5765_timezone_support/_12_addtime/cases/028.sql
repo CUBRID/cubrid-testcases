@@ -90,7 +90,7 @@ select datetimeltz'1987-5-10 4:30:00 Asia/Seoul';
 select datetimeltz'1987-5-10 02:30:00 Asia/Seoul';
 select datetimeltz'1987-5-10 02:00:00 Asia/Seoul';
 
-set timezone 'America/New_York'
+set timezone 'America/New_York';
 
 select to_datetime_tz(addtime(datetimetz'2015-3-8',time'2:30:00'));
 select    to_datetime_tz(adddate(datetimetz '2015-3-8',interval '2:30:00' hour_second)); 

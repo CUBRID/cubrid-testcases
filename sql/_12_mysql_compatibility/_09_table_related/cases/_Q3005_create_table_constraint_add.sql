@@ -47,7 +47,7 @@ drop table t1;
 
 
 create table t1 (a int);
-insert into t1 values (1),(2)
+insert into t1 values (1),(2);
 alter table t1 add column b int unique key;
 create table t2 (a int,b int);
 insert into t2(a,b) values (3,1), (4,1); 

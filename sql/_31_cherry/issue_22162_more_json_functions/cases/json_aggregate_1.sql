@@ -58,7 +58,7 @@ CREATE TABLE complete_product AS
         JSON_OBJECTAGG(a.name, v.val) as semi_structured_data
  FROM product as p JOIN t_value as v ON p.id=v.prod_id
       JOIN t_attribute as a ON a.id=v.attribute_id
- GROUP BY v.prod_id) 
+ GROUP BY v.prod_id);
 SELECT * FROM complete_product order by 1;
 
 SELECT p.id,

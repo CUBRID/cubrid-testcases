@@ -1,5 +1,5 @@
 autocommit off;
-call login('dba','') on class db_user
+call login('dba','') on class db_user;
 CREATE CLASS tbibrs;
 call change_owner('tbibrs', 'public') on class db_authorizations;
 ALTER CLASS tbibrs ADD ATTRIBUTE

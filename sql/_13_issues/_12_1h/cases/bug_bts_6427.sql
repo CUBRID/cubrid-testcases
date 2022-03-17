@@ -1,4 +1,4 @@
-drop table if exists t
+drop table if exists t;
 create table t(a int, b varchar(100) not null);
 -- you will find for below sql, CUBRID returned incorrect "function index" message.
 create index idx on t(a, b(10));

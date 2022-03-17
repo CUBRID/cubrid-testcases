@@ -81,7 +81,7 @@ create table test_table(col_smallint         SMALLINT DEFAULT 123 NOT NULL,
      col_set              SET OF  DEFAULT {1} NOT NULL,
      col_set_int          SET OF INTEGER DEFAULT {1},
      col_seq              SEQUENCE OF  DEFAULT {1} NOT NULL,
-     col_multiset         MULTISET OF  NATIONAL CHARACTER VARYING(92) DEFAULT {N'1', N'2', N'3333333333333333333333'})
+     col_multiset         MULTISET OF  NATIONAL CHARACTER VARYING(92) DEFAULT {N'1', N'2', N'3333333333333333333333'});
 
 insert into test_table(col_smallint) values (1);
 insert into test_table(col_integer) values (2);

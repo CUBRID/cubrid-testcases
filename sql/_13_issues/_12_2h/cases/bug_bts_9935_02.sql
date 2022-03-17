@@ -92,7 +92,7 @@ delete test partition(OCT) where SETG_DATE in (select SETG_DATE from  test parti
 
 
 select TO_TIMESTAMP('08-Dec-25 13:10:30', 'YY-Mon-DD HH24:MI:SS');
-select TO_TIMESTAMP('08-Dec-25') 
+select TO_TIMESTAMP('08-Dec-25'); 
 select TO_TIMESTAMP('12-aug-25 13:10:30', 'YY-Mon-DD HH24:MI:SS') ;
 select TO_TIMESTAMP('12-Oct-25 13:10:30', 'YY-Mon-DD HH24:MI:SS') ;
 
@@ -199,7 +199,7 @@ insert t2 (fname,lname,region_code,dob) values('oo3','xx3',3,date('1999-06-21'))
 select * from t2 partition(d5) order by 1;
 SELECT * FROM t2 WHERE dob = '1982-06-23';
 SELECT * FROM t2 WHERE dob BETWEEN '1991-02-15' AND '1997-04-25';
-SELECT * FROM t2 WHERE dob >= '1984-06-21' AND dob <= '1999-06-21'
+SELECT * FROM t2 WHERE dob >= '1984-06-21' AND dob <= '1999-06-21';
 
 
 drop table if exists T2;

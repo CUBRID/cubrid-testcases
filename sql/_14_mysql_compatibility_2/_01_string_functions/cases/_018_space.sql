@@ -79,7 +79,7 @@ CREATE TABLE SpaceTbl
  $int,$3, $bigint, $1073741824, $varchar, $1073741824, $char, $10
  SELECT '|' || SPACE(?) || '|', '|' || SPACE(?) || '|', '|' || SPACE(?) || '|', '|' || SPACE(?) || '|';
  $int, $2
- SELECT '|' || SPACE(Big + ?) || '|' FROM SpaceTbl ORDER BY TblId
+ SELECT '|' || SPACE(Big + ?) || '|' FROM SpaceTbl ORDER BY TblId;
  DROP TABLE SpaceTbl;
  
 create table t1(i integer);

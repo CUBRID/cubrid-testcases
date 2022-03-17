@@ -31,12 +31,12 @@ select /*+ recompile */ * from t where a=1 and b='AA' and c='AA1' order by c,b,a
 
 select /*+ recompile */ * from t where a=1 and b='AA' and c='AA1';
 
-prepare stmt from 'select /*+ recompile */ * from t where a=? and b=? order by c,b,a'
-execute stmt using 1,'AA'
+prepare stmt from 'select /*+ recompile */ * from t where a=? and b=? order by c,b,a';
+execute stmt using 1,'AA';
 deallocate prepare stmt;
 
-prepare stmt from 'select /*+ recompile */ * from t where a=? and b=? order by c,b'
-execute stmt using 1,'AA'
+prepare stmt from 'select /*+ recompile */ * from t where a=? and b=? order by c,b';
+execute stmt using 1,'AA';
 deallocate prepare stmt;
 
 

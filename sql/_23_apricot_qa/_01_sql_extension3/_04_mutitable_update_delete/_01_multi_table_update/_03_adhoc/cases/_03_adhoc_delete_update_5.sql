@@ -17,7 +17,7 @@ CREATE TABLE t1 (i INT,j varchar(10));
 CREATE TABLE t2 (i INT,j varchar(11));
 INSERT INTO t1 VALUES (1,2);
 INSERT INTO t2 VALUES (1,2);
-CREATE TABLE t3  (
+CREATE TABLE t3 AS (
 SELECT * FROM t1
 UNION
 SELECT * FROM t2);
@@ -45,7 +45,7 @@ CREATE TABLE `report_column` (
   `ALIAS` varchar(255) DEFAULT NULL,
   `report_table_id` bigint NOT NULL,
   PRIMARY KEY (`REPORT_COLUMN_ID`)
-)
+);
 insert into report_column select null,rownum,rownum,rownum,rownum,rownum from db_class limit 46;
 update report_column rc set rc.report_table_id = coalesce((select id from report_table rt where left(rc.column_name, length(rt.alias)) = rt.alias), 0);
 drop table `report_table`,`report_column`;
@@ -83,7 +83,7 @@ CREATE TABLE `test` (
   `test_name` varchar(45) NOT NULL UNIQUE,
 
   CONSTRAINT `parent_test_test` FOREIGN KEY (`test_id`) REFERENCES `test` (`test_id`)
-) 
+);
 insert into `test` (test_name) values ('test');
 insert into `test` (test_name) values ('test1');
 insert into `test` (test_name) values ('test2');
@@ -93,7 +93,7 @@ CREATE TABLE `test2` (
   `test_name` varchar(45) NOT NULL UNIQUE,
 
   CONSTRAINT `parent_test_test` FOREIGN KEY (`test_id`) REFERENCES `test` (`test_id`)
-) 
+);
 insert into `test2` (test_name) values ('test');
 insert into `test2` (test_name) values ('test1');
 insert into `test2` (test_name) values ('test2');
@@ -102,7 +102,7 @@ CREATE TABLE `test3` (
   `parent_test_id` int(11) default NULL,
   `test_name` varchar(45) NOT NULL UNIQUE,
   CONSTRAINT `parent_test_test` FOREIGN KEY (`test_id`) REFERENCES `test` (`test_id`)
-) 
+);
 insert into `test3` (test_name) values ('test');
 insert into `test3` (test_name) values ('test1');
 insert into `test3` (test_name) values ('test2');

@@ -16,7 +16,7 @@ create index i_foo_x on foo(x);
 select count(*) from foo a, foo b 
 where a.x = 1 and b.y = 10;
 select count(*) from foo a, foo b
-where a.y = 10 and b.x = 1
+where a.y = 10 and b.x = 1;
 select count(*) from foo a, foo b
 where a.x = 1 and b.x = 1;
 --set optimization: level 0;

@@ -62,12 +62,12 @@ select tab1.id from tab1 where id>0 and num>0 using index i_tab1_id_num(+) keyli
 select * from tab2,tab3 where tab2.id>0 and tab3.text<'yz' using index i_tab2_id(+) keylimit 2,4, i_tab3_text(+) keylimit 6,2;
 select * from tab1, tab2 where tab1.id>0 and tab2.id>0 using index i_tab1_id_num(+) keylimit 3, i_tab2_id(+) keylimit 3,2;
 select tab1.id from tab1 where id>0 using index i_tab1_id(+) keylimit 4,5;
-prepare stmt from 'select id from tab1 where id>0 using index i_tab1_id(+) keylimit ?,?' execute stmt using 4,5 drop prepare stmt;
-prepare stmt from 'select tab1.id, tab2.id from tab1,tab2 where tab1.id>0 and tab2.id>0 using index i_tab1_id(+) keylimit ?,?, i_tab2_id(+) keylimit ?' execute stmt using 4,2,3 drop prepare stmt;
-prepare stmt from 'select id from tab1 where id>0 using index i_tab1_id(+) keylimit ?' execute stmt using 'abc' drop prepare stmt;
-prepare stmt from 'select /*+ recompile */ id from tab1 where id>0 using index i_tab1_id(+) keylimit ?' execute stmt using '3' drop prepare stmt;
-prepare stmt from 'select id from tab1 where id>0 using index i_tab1_id(+) keylimit ?, ?' execute stmt using 'abc','def' drop prepare stmt;
-prepare stmt from 'select * from tab2,tab3 where tab2.id>0 and tab3.text<? using index i_tab2_id(+) keylimit ?,?, i_tab3_text(+) keylimit ?,?' execute stmt using 'yz',2,4,6,2 drop prepare stmt;
+prepare stmt from 'select id from tab1 where id>0 using index i_tab1_id(+) keylimit ?,?'; execute stmt using 4,5; drop prepare stmt;
+prepare stmt from 'select tab1.id, tab2.id from tab1,tab2 where tab1.id>0 and tab2.id>0 using index i_tab1_id(+) keylimit ?,?, i_tab2_id(+) keylimit ?'; execute stmt using 4,2,3; drop prepare stmt;
+prepare stmt from 'select id from tab1 where id>0 using index i_tab1_id(+) keylimit ?'; execute stmt using 'abc'; drop prepare stmt;
+prepare stmt from 'select /*+ recompile */ id from tab1 where id>0 using index i_tab1_id(+) keylimit ?'; execute stmt using '3'; drop prepare stmt;
+prepare stmt from 'select id from tab1 where id>0 using index i_tab1_id(+) keylimit ?, ?'; execute stmt using 'abc','def'; drop prepare stmt;
+prepare stmt from 'select * from tab2,tab3 where tab2.id>0 and tab3.text<? using index i_tab2_id(+) keylimit ?,?, i_tab3_text(+) keylimit ?,?'; execute stmt using 'yz',2,4,6,2; drop prepare stmt;
 
 drop table tab1;
 drop table tab2;

@@ -17,23 +17,23 @@ select rpad (cast (s1 as string collate utf8_ko_cs_uca),4,'가') from t2 order b
 
 
 -- late binding
-prepare s from 'select rpad(s1 , ?, ?) from t1 order by 1'
+prepare s from 'select rpad(s1 , ?, ?) from t1 order by 1';
 execute s using 4,'가';
 DEALLOCATE PREPARE s;
 
-prepare s from 'select rpad(? , ?, s1) from t1 order by 1'
+prepare s from 'select rpad(? , ?, s1) from t1 order by 1';
 execute s using '가',4;
 DEALLOCATE PREPARE s;
 
-prepare s from 'select rpad(s1 + ?,?,?) from t1 order by 1'
+prepare s from 'select rpad(s1 + ?,?,?) from t1 order by 1';
 execute s using '伽','4','가';
 DEALLOCATE PREPARE s;
 
-prepare s from 'select rpad(s1 + ?,?,?) from t2 order by 1'
+prepare s from 'select rpad(s1 + ?,?,?) from t2 order by 1';
 execute s using '伽',4,'가';
 DEALLOCATE PREPARE s;
 
-prepare s from 'select rpad(cast ((s1 + ?) as string collate utf8_ko_cs_uca),?, ?) from t2 order by 1'
+prepare s from 'select rpad(cast ((s1 + ?) as string collate utf8_ko_cs_uca),?, ?) from t2 order by 1';
 execute s using '伽',4,'가';
 DEALLOCATE PREPARE s;
 

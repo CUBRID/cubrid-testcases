@@ -16,13 +16,13 @@ create index i_t_i on t(i);
 
 set system parameters 'xasl_debug_dump=yes';
 
-prepare st from 'select /*+ recompile */ t.*,rownum  from t where i>0 and rownum<=?' 
-execute st using 2
+prepare st from 'select /*+ recompile */ t.*,rownum  from t where i>0 and rownum<=?';
+execute st using 2;
 deallocate prepare st;                                                       
 
 --rownum value should be reverse order
-prepare st from 'select /*+ recompile */ t.*,rownum  from t where i>0 and rownum<=? order by i desc' 
-execute st using 2
+prepare st from 'select /*+ recompile */ t.*,rownum  from t where i>0 and rownum<=? order by i desc';
+execute st using 2;
 deallocate prepare st;                                                       
 
 select /*+ recompile */ t.*,rownum  from t where i>0 and rownum<=2 order by i desc;

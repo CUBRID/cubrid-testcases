@@ -270,13 +270,13 @@ INSERT INTO t1 VALUES(1,1,1);
 INSERT INTO t1 VALUES(2,NULL,2); 
 INSERT INTO t1 VALUES(2,2,2); 
 
-prepare st from 'SELECT a, ifnull(b,?) AS bxx FROM t1 GROUP BY a, bxx order by 1,2;'
+prepare st from 'SELECT a, ifnull(b,?) AS bxx FROM t1 GROUP BY a, bxx order by 1,2;';
 execute st using 2;
 
-prepare st from 'SELECT a, ifnull(b,?) AS bxx FROM t1 GROUP BY a, b order by 1,2;'
+prepare st from 'SELECT a, ifnull(b,?) AS bxx FROM t1 GROUP BY a, b order by 1,2;';
 execute st using 2;
 
-prepare st from 'SELECT a, ifnull(b,?) FROM t1 GROUP BY a, b order by 1,2;'
+prepare st from 'SELECT a, ifnull(b,?) FROM t1 GROUP BY a, b order by 1,2;';
 execute st using 2;
 drop table if exists t1;
 ---------------------------------------------------

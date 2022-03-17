@@ -24,24 +24,24 @@ select /*+ recompile */ t.* from t where t.i1 in (1,3,5) and t.i2=1  using index
 
 select /*+ recompile */ t.* from t where t.i1 in (1,3,5) and t.i2=1  using index i_t_all order by t.i3 for orderby_num()<10;
 
-prepare stmt from 'select /*+ recompile */ t.*  from t where t.i1 in (1,3,5) and t.i2=1  using index i_t_all order by t.i3 desc limit ?'
-execute stmt using 10
+prepare stmt from 'select /*+ recompile */ t.*  from t where t.i1 in (1,3,5) and t.i2=1  using index i_t_all order by t.i3 desc limit ?';
+execute stmt using 10;
 deallocate prepare stmt;
 
-prepare stmt from 'select /*+ recompile */ t.*  from t where t.i1 in (1,3,5) and t.i2=?  using index i_t_all order by t.i3 desc limit ?'
-execute stmt using 1, 10
+prepare stmt from 'select /*+ recompile */ t.*  from t where t.i1 in (1,3,5) and t.i2=?  using index i_t_all order by t.i3 desc limit ?';
+execute stmt using 1, 10;
 deallocate prepare stmt;
 
-prepare stmt from 'select /*+ recompile */ t.*  from t where t.i1 in (0,1,2) and i2=1-1  using index i_t_all order by t.i3 desc limit ?' 
-execute stmt using 10 
+prepare stmt from 'select /*+ recompile */ t.*  from t where t.i1 in (0,1,2) and i2=1-1  using index i_t_all order by t.i3 desc limit ?';
+execute stmt using 10;
 deallocate prepare stmt;
 
-prepare stmt from 'select /*+ recompile */ t.*  from t where t.i1 in (0,1,2) and i2=1-1  using index i_t_all order by t.i3 desc limit ?' 
-execute stmt using 10 
+prepare stmt from 'select /*+ recompile */ t.*  from t where t.i1 in (0,1,2) and i2=1-1  using index i_t_all order by t.i3 desc limit ?';
+execute stmt using 10;
 deallocate prepare stmt;
 
-prepare stmt from 'select /*+ recompile */ t.*  from t,s where t.i1=s.i1 and t.i1 in (1,3,5) and t.i2=1  using index i_t_all order by t.i3 desc limit ?'
-execute stmt using 10
+prepare stmt from 'select /*+ recompile */ t.*  from t,s where t.i1=s.i1 and t.i1 in (1,3,5) and t.i2=1  using index i_t_all order by t.i3 desc limit ?';
+execute stmt using 10;
 deallocate prepare stmt;
 
 set system parameters 'xasl_debug_dump=no';

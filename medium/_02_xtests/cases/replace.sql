@@ -14,7 +14,7 @@ create table test_replace(
 			replace_2_3_k varchar(50) charset utf8,
 			replace_2_3_e varchar(50) charset utf8
 );
-insert into test_replace (replace_1_1_k,replace_1_1_e,replace_1_2_1_k,replace_1_2_1_e,replace_1_2_2_k,replace_1_2_2_e,replace_2_1_k,replace_2_1_e,replace_2_2_k,replace_2_2_e,replace_2_3_k,replace_2_3_e) values ('얼렐레','ebebe ','에베베','ebebe','베베베','bebebe','얼레레','abade','얼레레','abcdc','얼렐레렐레','abcdecd')
+insert into test_replace (replace_1_1_k,replace_1_1_e,replace_1_2_1_k,replace_1_2_1_e,replace_1_2_2_k,replace_1_2_2_e,replace_2_1_k,replace_2_1_e,replace_2_2_k,replace_2_2_e,replace_2_3_k,replace_2_3_e) values ('얼렐레','ebebe ','에베베','ebebe','베베베','bebebe','얼레레','abade','얼레레','abcdc','얼렐레렐레','abcdecd');
 			select replace('얼렐레','얼') from test_replace;
 			select replace('abcde','a') from test_replace;
 			select replace(replace_1_1_k,'얼') from test_replace;
