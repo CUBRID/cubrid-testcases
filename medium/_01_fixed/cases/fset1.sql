@@ -1,5 +1,5 @@
 autocommit off;
-select {1,2}-{2,3} from class faculty1;
+select {1,2}-{2,3} from class joe.faculty1;
 create class foo (bar set of int);
 /* This ought to work */
 insert into foo values ({10}+{20});

@@ -1,3 +1,3 @@
 autocommit off;
-select count(*) from unsold_stock_v;
+select count(*) from joe.unsold_stock_v;
 rollback;

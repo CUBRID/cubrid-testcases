@@ -1,3 +1,3 @@
 autocommit off;
-select self.name from school;
+select self.name from joe.school;
 rollback;
