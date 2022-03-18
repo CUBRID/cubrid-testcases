@@ -1,26 +1,26 @@
 --+ holdcas on;
 autocommit off;
 select *
-  from shipment_c s
+  from joe.shipment_c s
  where product.product_code = 3;
    
-insert into shipment_c(shipment_id, product,quantity, to_location)
-values( 4, (select product_c from product_c where product_code = 3),
+insert into joe.shipment_c(shipment_id, product,quantity, to_location)
+values( 4, (select product_c from joe.product_c where product_code = 3),
         25, 'milan');
         
 select *
-  from shipment_c s
+  from joe.shipment_c s
  where product.product_code = 3;
            
 rollback work;
-select * from employees_v;
-insert into employees_v(ssn, name, dept_no, salary)
+select * from joe.employees_v;
+insert into joe.employees_v(ssn, name, dept_no, salary)
 select ssn, name, dept_no, 1000
-  from employee_c;
-select * from employees_v;
-insert into employees_v (ssn, name, dept_no, salary, location)
+  from joe.employee_c;
+select * from joe.employees_v;
+insert into joe.employees_v (ssn, name, dept_no, salary, location)
 values (555555555, 'douglas adams', 5, $50000, 'birmingham');
-select * from employees_v;
+select * from joe.employees_v;
 rollback work;
 /**********************************************************************/
 /*                                                                    */

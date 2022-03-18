@@ -1,7 +1,7 @@
 autocommit off;
 select product_code
-  from inventory_v i
+  from joe.inventory_v i
 intersection
 select product_code
-  from dated_inventory_v d;
+  from joe.dated_inventory_v d;
 rollback;

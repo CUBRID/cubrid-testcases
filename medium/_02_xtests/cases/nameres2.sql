@@ -1,3 +1,3 @@
 autocommit off;
-select name from (accommodations, resort) order by name;
+select name from (public.accommodations, public.resort) order by name;
 rollback;
