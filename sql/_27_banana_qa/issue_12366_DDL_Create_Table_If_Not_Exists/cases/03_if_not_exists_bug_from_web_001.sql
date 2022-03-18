@@ -11,14 +11,14 @@ drop class if exists t12366;
 CREATE TABLE IF NOT EXISTS `public`.`t12366` (
     `col` VARCHAR(16) NOT NULL
 );
-desc t12366;
+desc public.t12366;
 
 
 drop class if exists t12366;
 CREATE TABLE IF NOT EXISTS `public`.`t12366` (
     `col` VARCHAR(16) NOT NULL
 );
-desc t12366;
+desc public.t12366;
 
 drop class if exists t12366;
 CREATE TABLE IF NOT EXISTS `public`.`public`.`t12366` (
@@ -36,7 +36,7 @@ drop class if exists public;
 CREATE TABLE IF NOT EXISTS `public`.`public` (
     `col` VARCHAR(16) NOT NULL
 );
-desc public;
+desc public.public;
 drop class if exists public;
 
 
@@ -49,7 +49,7 @@ drop class if exists "select";
 
 DROP TABLE IF EXISTS backupfiles;
 CREATE TABLE IF NOT EXISTS backupfiles (fileName VARCHAR(20), archiveId VARCHAR(500), checkSum VARCHAR(100), glacierVault VARCHAR(100), timeStamps date);
-desc backupfiles;
+desc dba.backupfiles;
 INSERT INTO backupfiles VALUES ('$archive_file_name', '$archiveID', '$CURRENTVAULT', '$checkSum', CURDATE());
 select count(*) from backupfiles;
 DROP TABLE IF EXISTS backupfiles;
