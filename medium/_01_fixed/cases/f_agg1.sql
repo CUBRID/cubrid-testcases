@@ -1,3 +1,3 @@
 autocommit off;
-select class faculty1, max(ssn) from faculty1;
+select class [joe.faculty1], max(ssn) from joe.faculty1;
 rollback;

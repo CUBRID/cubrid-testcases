@@ -30,9 +30,9 @@ update object :e1 set x = :e1;
 update object :f1 set x = :f1;
 select * from f7234, (all a7234 (except b7234,c7234), d7234) z
 where f7234.x{z}.y > 0;
-select x.country from (accommodations, location) x;
-select accommodations.country from only accommodations, location;
-select name from all accommodations (except hotel) order by name;
-select name from (bed_and_breakfast, motel) order by name;
-select name from all accommodations (except (resort, hotel)) order by name;
+select x.country from (public.accommodations, public.location) x;
+select accommodations.country from only public.accommodations, public.location;
+select name from all public.accommodations (except public.hotel) order by name;
+select name from (public.bed_and_breakfast, public.motel) order by name;
+select name from all public.accommodations (except (public.resort, public.hotel)) order by name;
 rollback;
