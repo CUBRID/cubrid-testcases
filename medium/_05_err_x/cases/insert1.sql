@@ -1,7 +1,7 @@
 autocommit off;
 
-insert into employees_v
+insert into joe.employees_v
 select ssn, name, dept_no
-  from employee_c;
+  from joe.employee_c;
 rollback work;
 rollback;

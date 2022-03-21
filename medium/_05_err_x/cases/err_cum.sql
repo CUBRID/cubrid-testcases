@@ -1,5 +1,5 @@
 autocommit off;
 
-select count(*), name from hotel;
-select avg(cost) , name from hotel;
+select count(*), name from public.hotel;
+select avg(cost) , name from public.hotel;
 rollback;
