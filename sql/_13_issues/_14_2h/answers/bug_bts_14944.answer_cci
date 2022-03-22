@@ -9,7 +9,7 @@ addr     VARCHAR(200)     iso88591_bin     YES          null          null
 
 ===================================================
 TABLE    CREATE TABLE    
-dba.stu     CREATE TABLE [dba.stu] ([id] INTEGER, [addr] CHARACTER VARYING(200)) REUSE_OID, COLLATE iso88591_bin COMMENT='this table store the student information'     
+dba.stu     CREATE TABLE [stu] ([id] INTEGER, [addr] CHARACTER VARYING(200)) REUSE_OID, COLLATE iso88591_bin COMMENT='this table store the student information'     
 
 ===================================================
 0
@@ -29,7 +29,7 @@ phone     BIGINT     null     YES          1860000000          recored the telep
 
 ===================================================
 TABLE    CREATE TABLE    
-dba.stu     CREATE TABLE [dba.stu] ([id] INTEGER COMMENT 'change world', [addr] CHARACTER VARYING(200), [phone] BIGINT DEFAULT 1860000000 COMMENT 'recored the telephone number of students') REUSE_OID, COLLATE iso88591_bin COMMENT='this table store the student information'     
+dba.stu     CREATE TABLE [stu] ([id] INTEGER COMMENT 'change world', [addr] CHARACTER VARYING(200), [phone] BIGINT DEFAULT 1860000000 COMMENT 'recored the telephone number of students') REUSE_OID, COLLATE iso88591_bin COMMENT='this table store the student information'     
 
 ===================================================
 0
@@ -49,7 +49,7 @@ phone     VARCHAR(2000)     iso88591_bin     YES                    gggggggggggg
 
 ===================================================
 TABLE    CREATE TABLE    
-dba.stu     CREATE TABLE [dba.stu] ([id] INTEGER COMMENT 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', [addr] CHARACTER VARYING(200), [phone] CHARACTER VARYING(2000) DEFAULT 1860000000 COMMENT 'ggggggggggggg') REUSE_OID, COLLATE iso88591_bin COMMENT='this table store the student information'     
+dba.stu     CREATE TABLE [stu] ([id] INTEGER COMMENT 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', [addr] CHARACTER VARYING(200), [phone] CHARACTER VARYING(2000) DEFAULT 1860000000 COMMENT 'ggggggggggggg') REUSE_OID, COLLATE iso88591_bin COMMENT='this table store the student information'     
 
 ===================================================
 attr_name    class_name    attr_type    def_order    from_class_name    from_attr_name    data_type    prec    scale    charset    collation    domain_class_name    default_value    is_nullable    comment    
@@ -75,7 +75,7 @@ i     g     INSTANCE     0     null     null     INTEGER     10     0     Not ap
 
 ===================================================
 TABLE    CREATE TABLE    
-dba.g     CREATE TABLE [dba.g] ([i] INTEGER COMMENT 'my idol is Steve Jobs') REUSE_OID, COLLATE iso88591_bin     
+dba.g     CREATE TABLE [g] ([i] INTEGER COMMENT 'my idol is Steve Jobs') REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 attr_name    class_name    attr_type    def_order    from_class_name    from_attr_name    data_type    prec    scale    charset    collation    domain_class_name    default_value    is_nullable    comment    
@@ -83,7 +83,7 @@ i     g     INSTANCE     0     null     null     INTEGER     10     0     Not ap
 
 ===================================================
 TABLE    CREATE TABLE    
-dba.g     CREATE TABLE [dba.g] ([i] INTEGER COMMENT 'my idol is Steve Jobs') REUSE_OID, COLLATE iso88591_bin     
+dba.g     CREATE TABLE [g] ([i] INTEGER COMMENT 'my idol is Steve Jobs') REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 Field    Type    Collation    Null    Key    Default    Extra    Comment    
@@ -95,7 +95,7 @@ i     INTEGER     null     YES          null          my idol is Steve Jobs
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.g     CREATE TABLE [dba.g] ([i] INTEGER AUTO_INCREMENT (1, 1) COMMENT 'sky') REUSE_OID, COLLATE iso88591_bin COMMENT='gary'     
+dba.g     CREATE TABLE [g] ([i] INTEGER AUTO_INCREMENT (1, 1) COMMENT 'sky') REUSE_OID, COLLATE iso88591_bin COMMENT='gary'     
 
 ===================================================
 Field    Type    Collation    Null    Key    Default    Extra    Comment    
@@ -105,7 +105,7 @@ i     INTEGER     null     YES          null     auto_increment     sky
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.g     CREATE TABLE [dba.g] ([i] INTEGER AUTO_INCREMENT (1, 1) NOT NULL COMMENT 'sea',  CONSTRAINT [pk_g_i] PRIMARY KEY  ([i])) REUSE_OID, COLLATE iso88591_bin COMMENT='gary'     
+dba.g     CREATE TABLE [g] ([i] INTEGER AUTO_INCREMENT (1, 1) NOT NULL COMMENT 'sea',  CONSTRAINT [pk_g_i] PRIMARY KEY  ([i])) REUSE_OID, COLLATE iso88591_bin COMMENT='gary'     
 
 ===================================================
 Field    Type    Collation    Null    Key    Default    Extra    Comment    
@@ -189,7 +189,7 @@ type     hg_pay_exchange     INSTANCE     2     null     null     CHAR     500  
 
 ===================================================
 TABLE    CREATE TABLE    
-dba.hg_pay_exchange     CREATE TABLE [dba.hg_pay_exchange] ([id] INTEGER AUTO_INCREMENT (1, 1) NOT NULL COMMENT 'id', [module] CHARACTER VARYING(15) NOT NULL, [type] CHARACTER(500) NOT NULL COMMENT '`go with the wind`', [number] NUMERIC(8,2) NOT NULL,  CONSTRAINT [pk_hg_pay_exchange_id] PRIMARY KEY  ([id])) REUSE_OID, COLLATE iso88591_bin     
+dba.hg_pay_exchange     CREATE TABLE [hg_pay_exchange] ([id] INTEGER AUTO_INCREMENT (1, 1) NOT NULL COMMENT 'id', [module] CHARACTER VARYING(15) NOT NULL, [type] CHARACTER(500) NOT NULL COMMENT '`go with the wind`', [number] NUMERIC(8,2) NOT NULL,  CONSTRAINT [pk_hg_pay_exchange_id] PRIMARY KEY  ([id])) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -217,7 +217,7 @@ id     INTEGER     null     NO     PRI     null     auto_increment     qazwsx
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.t     CREATE TABLE [dba.t] ([i] INTEGER COMMENT 'id', [name] CHARACTER VARYING(50) COMMENT 'name') REUSE_OID, COLLATE iso88591_bin PARTITION BY RANGE ([i])  (PARTITION [p0] VALUES LESS THAN (10), PARTITION [p1] VALUES LESS THAN (100), PARTITION [p2] VALUES LESS THAN MAXVALUE) COMMENT='table has range partitions'     
+dba.t     CREATE TABLE [t] ([i] INTEGER COMMENT 'id', [name] CHARACTER VARYING(50) COMMENT 'name') REUSE_OID, COLLATE iso88591_bin PARTITION BY RANGE ([i])  (PARTITION [p0] VALUES LESS THAN (10), PARTITION [p1] VALUES LESS THAN (100), PARTITION [p2] VALUES LESS THAN MAXVALUE) COMMENT='table has range partitions'     
 
 ===================================================
 attr_name    class_name    attr_type    def_order    from_class_name    from_attr_name    data_type    prec    scale    charset    collation    domain_class_name    default_value    is_nullable    comment    
@@ -241,7 +241,7 @@ dba.t     1     idx     1     i     A     0     null     null     YES     BTREE 
 
 ===================================================
 TABLE    CREATE TABLE    
-dba.t     CREATE TABLE [dba.t] ([i] INTEGER,  INDEX [idx] ([i]) COMMENT 'index') REUSE_OID, COLLATE iso88591_bin COMMENT='table t'     
+dba.t     CREATE TABLE [t] ([i] INTEGER,  INDEX [idx] ([i]) COMMENT 'index') REUSE_OID, COLLATE iso88591_bin COMMENT='table t'     
 
 ===================================================
 0
@@ -259,7 +259,7 @@ view1     select [dba.t].[i] from [dba.t] [dba.t] where [dba.t].[i]<=100 comment
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.t     CREATE TABLE [dba.t] ([i] INTEGER,  INDEX [idx] ([i]) COMMENT 'index') REUSE_OID, COLLATE iso88591_bin COMMENT='table comparision'     
+dba.t     CREATE TABLE [t] ([i] INTEGER,  INDEX [idx] ([i]) COMMENT 'index') REUSE_OID, COLLATE iso88591_bin COMMENT='table comparision'     
 
 ===================================================
 0
@@ -273,7 +273,7 @@ dba.t     1     idx     1     i     A     0     null     null     YES     BTREE 
 
 ===================================================
 TABLE    CREATE TABLE    
-dba.t     CREATE TABLE [dba.t] ([i] INTEGER,  INDEX [idx] ([i]) COMMENT 'index') REUSE_OID, COLLATE iso88591_bin     
+dba.t     CREATE TABLE [t] ([i] INTEGER,  INDEX [idx] ([i]) COMMENT 'index') REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -291,7 +291,7 @@ view1     select [dba.t].[i] from [dba.t] [dba.t] where [dba.t].[i]<=100 comment
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.t     CREATE TABLE [dba.t] ([i] INTEGER,  INDEX [idx] ([i]) COMMENT 'index') REUSE_OID, COLLATE iso88591_bin COMMENT='table comparision'     
+dba.t     CREATE TABLE [t] ([i] INTEGER,  INDEX [idx] ([i]) COMMENT 'index') REUSE_OID, COLLATE iso88591_bin COMMENT='table comparision'     
 
 ===================================================
 attr_name    class_name    attr_type    def_order    from_class_name    from_attr_name    data_type    prec    scale    charset    collation    domain_class_name    default_value    is_nullable    comment    
@@ -311,7 +311,7 @@ Error:-493
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.tt     CREATE TABLE [dba.tt] ([a] INTEGER COMMENT 'col a comment') REUSE_OID, COLLATE iso88591_bin     
+dba.tt     CREATE TABLE [tt] ([a] INTEGER COMMENT 'col a comment') REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 attr_name    class_name    comment    
@@ -325,7 +325,7 @@ a     INTEGER     null     YES          null          col a comment
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.tt     CREATE TABLE [dba.tt] ([a] INTEGER COMMENT 'col a comment', [b] INTEGER COMMENT 'comment for col b') REUSE_OID, COLLATE iso88591_bin     
+dba.tt     CREATE TABLE [tt] ([a] INTEGER COMMENT 'col a comment', [b] INTEGER COMMENT 'comment for col b') REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 attr_name    class_name    comment    
@@ -341,7 +341,7 @@ b     INTEGER     null     YES          null          comment for col b
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.tt     CREATE TABLE [dba.tt] ([a] INTEGER COMMENT 'new comment for col a', [b] INTEGER COMMENT 'comment for col b') REUSE_OID, COLLATE iso88591_bin     
+dba.tt     CREATE TABLE [tt] ([a] INTEGER COMMENT 'new comment for col a', [b] INTEGER COMMENT 'comment for col b') REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 attr_name    class_name    comment    
@@ -357,7 +357,7 @@ b     INTEGER     null     YES          null          comment for col b
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.tt     CREATE TABLE [dba.tt] ([a] INTEGER COMMENT 'new comment for col a', [x] DOUBLE COMMENT 'newest x') REUSE_OID, COLLATE iso88591_bin     
+dba.tt     CREATE TABLE [tt] ([a] INTEGER COMMENT 'new comment for col a', [x] DOUBLE COMMENT 'newest x') REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 attr_name    class_name    comment    
@@ -373,7 +373,7 @@ x     DOUBLE     null     YES          null          newest x
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.tt     CREATE TABLE [dba.tt] ([a] INTEGER COMMENT '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', [x] DOUBLE COMMENT 'newest x') REUSE_OID, COLLATE iso88591_bin     
+dba.tt     CREATE TABLE [tt] ([a] INTEGER COMMENT '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', [x] DOUBLE COMMENT 'newest x') REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 attr_name    class_name    comment    
@@ -389,7 +389,7 @@ x     DOUBLE     null     YES          null          newest x
 Error:-493
 ===================================================
 TABLE    CREATE TABLE    
-dba.tt     CREATE TABLE [dba.tt] ([a] INTEGER COMMENT '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', [x] DOUBLE COMMENT 'newest x') REUSE_OID, COLLATE iso88591_bin     
+dba.tt     CREATE TABLE [tt] ([a] INTEGER COMMENT '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', [x] DOUBLE COMMENT 'newest x') REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 attr_name    class_name    comment    
