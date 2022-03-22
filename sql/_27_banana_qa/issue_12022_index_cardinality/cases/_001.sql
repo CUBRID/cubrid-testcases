@@ -31,20 +31,20 @@ update statistics on all classes with fullscan;
 show index in t;
 
 --test: index_cardinality
-select index_cardinality('t', 'idx', 0);
-select index_cardinality('t', 'idx', 1);
-select index_cardinality('t', 'idx', 2);
-select index_cardinality('t', 'idx', 3);
-select index_cardinality('t', 'idx', 4);
-select index_cardinality('t', 'idx', 5);
-select index_cardinality('t', 'idx', 6);
-select index_cardinality('t', 'idx', 7);
-select index_cardinality('t', 'idx', 8);
-select index_cardinality('t', 'idx', 9);
-select index_cardinality('t', 'idx', 10);
-select index_cardinality('t', 'idx', 11);
-select index_cardinality('t', 'idx', 12);
-select index_cardinality('t', 'idx', 13);
+select index_cardinality('dba.t', 'idx', 0);
+select index_cardinality('dba.t', 'idx', 1);
+select index_cardinality('dba.t', 'idx', 2);
+select index_cardinality('dba.t', 'idx', 3);
+select index_cardinality('dba.t', 'idx', 4);
+select index_cardinality('dba.t', 'idx', 5);
+select index_cardinality('dba.t', 'idx', 6);
+select index_cardinality('dba.t', 'idx', 7);
+select index_cardinality('dba.t', 'idx', 8);
+select index_cardinality('dba.t', 'idx', 9);
+select index_cardinality('dba.t', 'idx', 10);
+select index_cardinality('dba.t', 'idx', 11);
+select index_cardinality('dba.t', 'idx', 12);
+select index_cardinality('dba.t', 'idx', 13);
 
 
 drop table t;
