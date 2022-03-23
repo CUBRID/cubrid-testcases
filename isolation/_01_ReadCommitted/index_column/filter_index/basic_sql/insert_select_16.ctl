@@ -52,7 +52,7 @@ MC: wait until C1 ready;
   C1: 1,1|C2: 1,2|C3:2,2|C4: 2,3|C5, 1,3
 */
 C1: insert into t select * from t;
-C5: insert into t select t.* from (select sleep(4)) x, t where id>0;
+C5: insert into t select t.* from t where id>0 and (select sleep(4)=0)<>0;
 MC: wait until C5 ready;
 C1: commit;
 MC: wait until C1 ready;
@@ -60,14 +60,14 @@ MC: wait until C5 ready;
 C2: insert into t values(-8,'aa');
 MC: wait until C2 ready;
 /* result should be 1,-3,7,1,-3,7 */
-C6: select t.* from (select sleep(1)) x, t where id>0 order by id;
+C6: select t.* from t where id>0 and (select sleep(1)=0)<>0 order by id;
 C3: insert into t values(8,'cc');
 MC: wait until C3 ready;
 C2: commit;
 MC: wait until C2 ready;
 C3: commit;
 MC: wait until C3 ready;
-C4: insert into t select t.* from (select sleep(2)) x, t where id between 0 and 100 using index idx(+);
+C4: insert into t select t.* from t where id between 0 and 100 and (select sleep(2)=0)<>0 using index idx(+);
 C6: commit;
 MC: wait until C6 ready;
 C4: commit;
