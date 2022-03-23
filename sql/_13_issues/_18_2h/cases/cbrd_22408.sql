@@ -43,7 +43,7 @@ select :xx.id from db_root
 )
 select count(*) from cte3;
 
-replace into t_replace select count(*) from (select :xx.id from db_root) cte4;
+replace into t_replace select count(*) from (select /*+ NO_MERGE */ :xx.id from db_root) cte4;
 
 insert into t_replace WITH cte5 AS
 (
@@ -51,7 +51,7 @@ select :xx.id from db_root
 )
 select count(*) from cte5;
 
-insert into t_replace select count(*) from (select :xx.id from db_root) cte6;
+insert into t_replace select count(*) from (select /*+ NO_MERGE */ :xx.id from db_root) cte6;
 
 WITH cte7 AS
 (

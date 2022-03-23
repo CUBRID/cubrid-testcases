@@ -4028,17 +4028,17 @@ select /*+ recompile */ * from t2 where parentid = 3747 order by id;
 select /*+ recompile */ * from t2 where parentid = 3747 order by id desc;
 select /*+ recompile */ * from t2 where parentid % 3 = 0 and parentid > 3500 order by parentid, text;
 
-select /*+ recompile */ t.col_timestamp, t.col_datetime from (select * from test_table where col_timestamp > '06:59:12 PM 05/03/2008' order by col_timestamp) as t;
-select /*+ recompile */ t.col_timestamp, t.col_datetime from (select * from test_table where col_timestamp = '06:59:12 PM 05/03/2008' order by col_datetime) as t;
+select /*+ recompile */ t.col_timestamp, t.col_datetime from (select /*+ NO_MERGE */ * from test_table where col_timestamp > '06:59:12 PM 05/03/2008' order by col_timestamp) as t;
+select /*+ recompile */ t.col_timestamp, t.col_datetime from (select /*+ NO_MERGE */ * from test_table where col_timestamp = '06:59:12 PM 05/03/2008' order by col_datetime) as t;
 select /*+ recompile */ col_timestamp from test_table where cast(date_format(col_timestamp, '%Y') as int) > 2005 order by col_timestamp;
-select /*+ recompile */ t.col_smallint, t.col_float, t.col_string from (select * from test_table where col_string like('%ab%') order by col_smallint, col_float, col_string) as t;
-select /*+ recompile */ t.col_smallint, t.col_float, t.col_string from (select * from test_table where col_varchar_92 like('%ab%') order by col_smallint, col_float) as t;
+select /*+ recompile */ t.col_smallint, t.col_float, t.col_string from (select /*+ NO_MERGE */ * from test_table where col_string like('%ab%') order by col_smallint, col_float, col_string) as t;
+select /*+ recompile */ t.col_smallint, t.col_float, t.col_string from (select /*+ NO_MERGE */ * from test_table where col_varchar_92 like('%ab%') order by col_smallint, col_float) as t;
 
 select /*+ recompile */ column_integer from test_table2 order by column_integer;
 select /*+ recompile */ column_integer from test_table2 order by column_integer desc;
 select /*+ recompile */ column_timestamp from test_table2 where column_timestamp > column_datetime order by column_timestamp;
 select /*+ recompile */ column_integer, column_timestamp from test_table2 where column_integer >= 2 order by column_integer, column_timestamp;
-select /*+ recompile */ t.column_varchar_92, t.column_bit, t.column_datetime, t.column_smallint from (select * from test_table2 where column_integer * 100 >= column_smallint and column_varchar_92 > '' order by column_varchar_92, column_bit, column_datetime, column_smallint) as t;
+select /*+ recompile */ t.column_varchar_92, t.column_bit, t.column_datetime, t.column_smallint from (select /*+ NO_MERGE */ * from test_table2 where column_integer * 100 >= column_smallint and column_varchar_92 > '' order by column_varchar_92, column_bit, column_datetime, column_smallint) as t;
 
 drop table t1;
 drop table t2;

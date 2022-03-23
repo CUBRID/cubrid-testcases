@@ -45,7 +45,7 @@ select /*+ recompile */ t1.id,t1.text from tbl as t1 left join tbl2 as t2 on t1.
 select /*+ recompile */ t1.id,t1.text from tbl as t1 join tbl2 as t2 on t1.id = t2.id where t1.id > 1
 	and t1.text is not null and t2.prefix is not null;
 
-select /*+ recompile */ t1.id from tbl as t1, (select t2.id, (select t3.id from tbl3 as t3 where t3.id = t2.id) from tbl2 as t2 where  t2.id = 1) as t4
+select /*+ recompile */ t1.id from tbl as t1, (select /*+ NO_MERGE */ t2.id, (select t3.id from tbl3 as t3 where t3.id = t2.id) from tbl2 as t2 where  t2.id = 1) as t4
 	where t1.id is not null order by t1.id;
 select /*+ recompile */ t1.id, t1.text, (select t2.id from tbl2 as t2 where t1.id = t2.id) from tbl as t1  where t1.id = 1;
 select /*+ recompile */ t1.id, t1.text from tbl as t1 where t1.id IN ( select t2.id from tbl2 as t2 where t1.id = t2.id)  and t1.id > 1;

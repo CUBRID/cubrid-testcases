@@ -146,7 +146,7 @@ iscan
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-(select x.a, x.b from x x where (x.a< ?:? ) order by ? desc )
+(select /*+ NO_MERGE */ x.a, x.b from x x where (x.a< ?:? ) order by ? desc )
 /* ---> skip ORDER BY */
 Query plan:
 temp(order by)
@@ -163,7 +163,7 @@ temp(order by)
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-select /*+ NO_DESC_IDX */ x.a, x.b from x x, (select x.a, x.b from x x where (x.a< ?:? ) order by ? desc ) y (a, b) where (x.a> ?:? ) order by ? desc 
+select /*+ NO_DESC_IDX */ x.a, x.b from x x, (select /*+ NO_MERGE */ x.a, x.b from x x where (x.a< ?:? ) order by ? desc ) y (a, b) where (x.a> ?:? ) order by ? desc 
 ===================================================
 a    b    
 10     1     

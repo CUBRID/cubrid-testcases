@@ -5294,17 +5294,11 @@ count(*)
 
 Query plan:
 iscan
-    class: t node[?]
+    class: tt node[?]
     index: idx term[?] (covers) (index skip scan)
     cost:  ? card ?
 Query stmt:
-(select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where ((t.j< ?:? ) or (t.j> ?:? )))
-Query plan:
-sscan
-    class: tt node[?]
-    cost:  ? card ?
-Query stmt:
-select count(*) from (select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where ((t.j< ?:? ) or (t.j> ?:? ))) tt (i, j, k, l) order by ?
+select /*+ INDEX_SS */ count(*) from t tt where ((tt.j< ?:?  or tt.j> ?:? )) order by ?
 ===================================================
 i    j    k    l    
 

@@ -196,7 +196,7 @@ iscan
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select tz_test.col?, tz_test.col? from tz_test tz_test where tz_test.col?= ?:?  order by ?)
+(select /*+ NO_MERGE */ tz_test.col?, tz_test.col? from tz_test tz_test where tz_test.col?= ?:?  order by ?)
 /* ---> skip ORDER BY */
 Query plan:
 temp(order by)
@@ -206,7 +206,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t.col?,  to_char(t.col?) from (select tz_test.col?, tz_test.col? from tz_test tz_test where tz_test.col?= ?:?  order by ?) t (col?, col?) order by ?
+select t.col?,  to_char(t.col?) from (select /*+ NO_MERGE */ tz_test.col?, tz_test.col? from tz_test tz_test where tz_test.col?= ?:?  order by ?) t (col?, col?) order by ?
 ===================================================
 id    col1    col2    
 6     2011-05-12 20:12:56.000 Australia/Perth AWST     2011-05-12 10:12:56.000 America/Noronha -02     

@@ -18,13 +18,13 @@ select count (*) from t;
 update statistics on all classes;
 
 -- select EVERYTHING from ranges 1 ans 2
-select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS */ * from t where j between 151 and 199) tt;
+select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 151 and 199) tt;
 -- create table answer as select /*+ recompile */ i,j,k from t where j between 101 and 199;
 -- select count(*) from answer;
 -- drop table answer;
 
 -- select EVERYTHING from ranges 0,3 and 4
-select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS */ * from t where j between 2 and 50) tt;
+select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS  NO_MERGE */ * from t where j between 2 and 50) tt;
 -- create table answer as select /*+ recompile */ i,j,k from t where j between 2 and 100;
 -- select count(*) from answer;
 -- drop table answer;

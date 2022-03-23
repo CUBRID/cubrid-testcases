@@ -41,6 +41,6 @@ INSERT INTO t VALUES (23443,63586,312268,'ujoxmccxfd');
 
 SELECT * FROM (SELECT /*+ use_desc_idx */ s FROM t WHERE s > '') AS temp ORDER BY 1;
 SELECT i FROM (SELECT /*+ use_desc_idx */ i, s FROM t WHERE i > 0) AS temp ORDER BY 1;
-SELECT DISTINCT temp.j FROM (SELECT /*+ use_desc_idx */ * FROM t WHERE j > 0) AS temp;
+SELECT DISTINCT temp.j FROM (SELECT /*+ use_desc_idx NO_MERGE */ * FROM t WHERE j > 0) AS temp;
 
 DROP TABLE t;

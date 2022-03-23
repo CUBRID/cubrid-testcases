@@ -68,7 +68,7 @@ select /*+ recompile */ * from tz_test where col1 < timestampltz'2013-12-10 15:3
 --@queryplan
 select /*+ recompile */ * from tz_test where col1 = col2 order by 1;
 --@queryplan
-select t.col1 a, to_char(t.col2) b from (select /*+ recompile */ col1, col2 from tz_test where col1=timestampltz'1992-07-10 3:00:00 Europe/Bucharest' order by 1, 2) t order by b;
+select t.col1 a, to_char(t.col2) b from (select /*+ recompile NO_MERGE */ col1, col2 from tz_test where col1=timestampltz'1992-07-10 3:00:00 Europe/Bucharest' order by 1, 2) t order by b;
 
 --test: idx4
 --@queryplan

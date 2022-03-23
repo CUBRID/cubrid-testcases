@@ -55,7 +55,7 @@ select /*+ recompile */ * from t force index (_t_val) inner join u use index (_u
 select /*+ recompile */ * 
 from 
 	t inner join 
-	(select * from u where right(text, 2) < 'zz' using index _u_id(+)) x 
+	(select /*+ NO_MERGE */ * from u where right(text, 2) < 'zz' using index _u_id(+)) x 
 		on t.fk = x.id 
 where 
 	t.id < 100 
@@ -65,7 +65,7 @@ using index
 select /*+ recompile */ * 
 from 
 	t force index (_t_val) inner join 
-	(select * from u force index (_u_id) where right(text, 2) < 'zz') x 
+	(select /*+ NO_MERGE */ * from u force index (_u_id) where right(text, 2) < 'zz') x 
 		on t.fk = x.id 
 where 
 	t.id < 100;
