@@ -1,8 +1,8 @@
 autocommit off;
 call login('joe') on class db_user;
-create class joe.xxx (a int);
-insert into joe.xxx values(6);
-create vclass joe.xxx_v (a1 int) as select a from joe.xxx;
+create class xxx (a int);
+insert into xxx values(6);
+create vclass xxx_v (a1 int) as select a from xxx;
 select * from xxx_v;
 grant all on xxx_v to public;
 call login('public') on class db_user;
