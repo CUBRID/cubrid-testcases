@@ -35,7 +35,6 @@ update statistics on t with fullscan;
 show index in t;
 
 --test: index_cardinality
---test: index_cardinality
 select index_cardinality('dba.t', 'fidx1', 0);
 select index_cardinality('dba.t', 'fidx1', 2);
 select index_cardinality('dba.t', 'fidx1', 4);
