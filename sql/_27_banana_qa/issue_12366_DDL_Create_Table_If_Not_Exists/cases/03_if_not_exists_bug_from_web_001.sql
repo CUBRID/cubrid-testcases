@@ -49,7 +49,7 @@ drop class if exists "public"."select";
 
 DROP TABLE IF EXISTS backupfiles;
 CREATE TABLE IF NOT EXISTS backupfiles (fileName VARCHAR(20), archiveId VARCHAR(500), checkSum VARCHAR(100), glacierVault VARCHAR(100), timeStamps date);
-desc dba.backupfiles;
+desc backupfiles;
 INSERT INTO backupfiles VALUES ('$archive_file_name', '$archiveID', '$CURRENTVAULT', '$checkSum', CURDATE());
 select count(*) from backupfiles;
 DROP TABLE IF EXISTS backupfiles;
