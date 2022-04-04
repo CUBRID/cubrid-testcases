@@ -28,7 +28,7 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C1: SELECT b.* FROM (select sleep(2)) x, ( SELECT * FROM tb1 WHERE age=(SELECT MAX(age) FROM tb1) ORDER BY id) b LIMIT 1;
+C1: SELECT b.* FROM ( SELECT * FROM tb1 WHERE age=(SELECT MAX(age) FROM tb1) ORDER BY id) b WHERE (SELECT SLEEP(2)=0)<>0 LIMIT 1;
 MC: sleep 1;
 C2: DELETE FROM tb1 WHERE id>=4;
 C2: commit work;

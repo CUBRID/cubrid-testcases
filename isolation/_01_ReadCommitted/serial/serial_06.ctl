@@ -29,7 +29,7 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C1: SELECT s1.CURRENT_VALUE,s1.NEXT_VALUE FROM (select sleep(2)) x,tt1 ;
+C1: SELECT s1.CURRENT_VALUE,s1.NEXT_VALUE FROM tt1 where (select sleep(2)=0)<>0;
 C2: INSERT INTO tt1 VALUES(s1.NEXT_VALUE,'Park');
 C2: INSERT INTO tt1 VALUES(s1.NEXT_VALUE,'Museum');
 MC: wait until C1 ready;

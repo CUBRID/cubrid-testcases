@@ -32,7 +32,7 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C1: insert into t(col) select col from (select sleep(1)) x, t;
+C1: insert into t(col) select col from t where (select sleep(1)=0)<>0;
 C2: insert into t values(20,'b');
 MC: wait until C2 ready;
 C2: commit;

@@ -33,7 +33,7 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C1: SELECT tb1.* FROM (select sleep(2)) x,tb1 WHERE id>0 ORDER BY id,2;
+C1: SELECT tb1.* FROM tb1 WHERE id>0 and (select sleep(2)=0)<>0 ORDER BY id,2;
 MC: sleep 1;
 C2: DELETE FROM tb1 WHERE id=8;
 MC: wait until C2 ready;

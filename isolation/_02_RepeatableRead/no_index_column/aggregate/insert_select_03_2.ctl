@@ -37,7 +37,7 @@ MC: wait until C1 ready;
 /* test case */
 C1: update t set id=col-1 where id%2=0;
 MC: wait until C1 ready;
-C2: insert into t select t1.* from (select t.* from t order by id) t1, (select sleep(10)) x where id%3=0;
+C2: insert into t select t1.* from (select t.* from t order by id) t1 where id%3=0 and (select sleep(10)=0)<>0;
 C3: select id=(select max(id)>min(id) from t),max(col) from t group by col;
 MC: wait until C3 ready;
 C2: commit;

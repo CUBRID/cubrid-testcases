@@ -38,7 +38,7 @@ MC: wait until C1 ready;
 C1: update t set id=col-1 where id%2=0;
 MC: wait until C1 ready;
 
-C2: insert into t select t1.* from (select t.* from t order by id) t1, (select sleep(10)=0) x where id%3=0;
+C2: insert into t select t1.* from (select t.* from t order by id) t1 where id%3=0 and (select sleep(10)=0)<>0;
 MC: sleep 1;
 C3: select min(id),max(id)!=789 from t group by col;
 MC: wait until C3 ready;

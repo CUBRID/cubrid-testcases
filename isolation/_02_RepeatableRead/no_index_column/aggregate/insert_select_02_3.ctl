@@ -36,7 +36,7 @@ MC: wait until C1 ready;
 /* test case */
 C1: update t set id=col-1 where id%2=0 and (select sleep(12))=0;
 MC: sleep 1;
-C2: insert into t select t.* from (select sleep(8))x, t where id%3=0;
+C2: insert into t select t.* from t where id%3=0 and (select sleep(8)=0)<>0;
 MC: sleep 1;
 C3: select avg(t1.id) from (select sleep(5))x, t t1 left outer join (select sum(t.col) as col from t where id>5) as t2 on t1.id=t2.col group by t2.col;
 MC: sleep 1;
