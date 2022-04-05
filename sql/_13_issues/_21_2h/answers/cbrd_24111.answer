@@ -30,7 +30,7 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(select a.a from tb? a, tb? bb where (a.a=bb.a))
+(select ? from tb? a, tb? bb where (a.a=bb.a))
 Query plan:
 nl-join (inner join)
     edge:  term[?]
@@ -43,7 +43,7 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(select b.a from tb? b, tb? bb where (b.a=bb.a))
+(select ? from tb? b, tb? bb where (b.a=bb.a))
 Query plan:
 nl-join (cross join)
     outer: sscan
@@ -56,7 +56,7 @@ nl-join (cross join)
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select count(*) from (select a.a from tb? a, tb? bb where (a.a=bb.a)) a (a), (select b.a from tb? b, tb? bb where (b.a=bb.a)) b (a) where (@newincr := @newincr+?)<=?
+select count(*) from (select ? from tb? a, tb? bb where (a.a=bb.a)) a (?), (select ? from tb? b, tb? bb where (b.a=bb.a)) b (?) where (@newincr := @newincr+?)<=?
 ===================================================
 0
 ===================================================
