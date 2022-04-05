@@ -31,7 +31,7 @@ C1: commit;
 MC: wait until C1 ready;
 
 /* test case */
-C2: select t.* from t, (select sleep(1)) x order by col;
+C2: select t.* from t where (select sleep(1)=0)<>0 order by col;
 MC: wait until C1 ready;
 C1: insert into t values(2,'abc');
 MC: wait until C2 ready;
