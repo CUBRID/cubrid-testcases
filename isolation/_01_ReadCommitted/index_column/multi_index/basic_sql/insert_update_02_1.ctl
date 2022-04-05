@@ -13,7 +13,7 @@ two index, unique index and chr function index on the same column
 NUM_CLIENTS = 2
 prepare(4,3a)(5,d)(6,e) --(4,3a) overlap
 C1: set @newincr=0;
-C1: insert into t select (@newincr:=@newincr+1),(@newincr)+70 from (select sleep(1)) x, t where chr(col)>='A' limit 3;
+C1: insert into t select (@newincr:=@newincr+1),(@newincr)+70 from t where chr(col)>='A' and (select sleep(1)=0)<>0 limit 3;
 C2: update t set col=col+1 where chr(col)>'A';
 */
 
@@ -36,7 +36,7 @@ MC: wait until C1 ready;
 
 /* test case */
 C1: set @newincr=0;
-C1: insert into t select (@newincr:=@newincr+1),(@newincr)+70 from (select sleep(1)) x, t where chr(col)>='A' limit 3;
+C1: insert into t select (@newincr:=@newincr+1),(@newincr)+70 from t where chr(col)>='A' and (select sleep(1)=0)<>0 limit 3;
 C2: update t set col=col+1 where chr(col)>'A';
 
 /* overlap on 70,violate unique index */
