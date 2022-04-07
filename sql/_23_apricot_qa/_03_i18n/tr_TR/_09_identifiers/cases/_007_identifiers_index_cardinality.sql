@@ -23,13 +23,13 @@ INSERT INTO Çç_Ğğ_İı_Öö_Şş_Üü VALUES (2,3,3,'+Çç_Ğğ_İı','+Çç
 show index in Çç_Ğğ_İı_Öö_Şş_Üü;
 
 --test
-SELECT INDEX_CARDINALITY('Çç_Ğğ_İı_Öö_Şş_Üü','i_Çç_Ğğ_İı_Öö_Şş_Üü_Çç_Öö',0);
+SELECT INDEX_CARDINALITY('dba.Çç_Ğğ_İı_Öö_Şş_Üü','i_Çç_Ğğ_İı_Öö_Şş_Üü_Çç_Öö',0);
 --test
-SELECT INDEX_CARDINALITY('Çç_Ğğ_İı_Öö_Şş_Üü','i_Çç_Ğğ_İı_Öö_Şş_Üü_Çç_Öö',1);
+SELECT INDEX_CARDINALITY('dba.Çç_Ğğ_İı_Öö_Şş_Üü','i_Çç_Ğğ_İı_Öö_Şş_Üü_Çç_Öö',1);
 --test
-SELECT INDEX_CARDINALITY('Çç_Ğğ_İı_Öö_Şş_Üü','i_Çç_Ğğ_İı_Öö_Şş_Üü_Çç_Öö',2);
+SELECT INDEX_CARDINALITY('dba.Çç_Ğğ_İı_Öö_Şş_Üü','i_Çç_Ğğ_İı_Öö_Şş_Üü_Çç_Öö',2);
 --test
-SELECT INDEX_CARDINALITY('Çç_Ğğ_İı_Öö_Şş_Üü23','i_Çç_Ğğ_İı_Öö_Şş_Üü_Çç_Öö',1);
+SELECT INDEX_CARDINALITY('dba.Çç_Ğğ_İı_Öö_Şş_Üü23','i_Çç_Ğğ_İı_Öö_Şş_Üü_Çç_Öö',1);
 --test 
 drop table Çç_Ğğ_İı_Öö_Şş_Üü;
 set names iso88591;
