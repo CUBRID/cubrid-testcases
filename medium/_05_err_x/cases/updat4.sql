@@ -1,3 +1,3 @@
 autocommit off;
-update shipment_c set product.descr = 'junk';
+update joe.shipment_c set product.descr = 'junk';
 rollback;

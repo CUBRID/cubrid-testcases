@@ -1,8 +1,8 @@
 autocommit off;
-delete from employees_v where ssn = 654654645;
-delete from employees_v
+delete from joe.employees_v where ssn = 654654645;
+delete from joe.employees_v
 where location in (select location
-                       from all inventory_v                                   
+                       from all joe.inventory_v                                   
                       where product_code = 1
                          or product_code = 2);
 

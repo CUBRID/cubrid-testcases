@@ -14,19 +14,19 @@ count(*)
 trace    
 
 Query Plan:
-  TABLE SCAN (tbl_hls)
+  TABLE SCAN (dba.tbl_hls)
 
-  rewritten query: (select tbl_hls.a, tbl_hls.b, tbl_hls.c from tbl_hls tbl_hls where (inst_num()> ?:?  and inst_num()<= ?:? ))
+  rewritten query: (select [dba.tbl_hls].a, [dba.tbl_hls].b, [dba.tbl_hls].c from [dba.tbl_hls] [dba.tbl_hls] where (inst_num()> ?:?  and inst_num()<= ?:? ))
 
-  TABLE SCAN (tbl_hls)
+  TABLE SCAN (dba.tbl_hls)
 
-  rewritten query: (select tbl_hls.a, tbl_hls.b, tbl_hls.c from tbl_hls tbl_hls where (inst_num()> ?:?  and inst_num()<= ?:? ))
+  rewritten query: (select [dba.tbl_hls].a, [dba.tbl_hls].b, [dba.tbl_hls].c from [dba.tbl_hls] [dba.tbl_hls] where (inst_num()> ?:?  and inst_num()<= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ count(*) from (select tbl_hls.a, tbl_hls.b, tbl_hls.c from tbl_hls tbl_hls where (inst_num()> ?:?  and inst_num()<= ?:? )) a (a, b, c), (select tbl_hls.a, tbl_hls.b, tbl_hls.c from tbl_hls tbl_hls where (inst_num()> ?:?  and inst_num()<= ?:? )) b (a, b, c) where a.a=b.a and a.b=b.b and a.c=b.c
+  rewritten query: select /*+ ORDERED */ count(*) from (select [dba.tbl_hls].a, [dba.tbl_hls].b, [dba.tbl_hls].c from [dba.tbl_hls] [dba.tbl_hls] where (inst_num()> ?:?  and inst_num()<= ?:? )) a (a, b, c), (select [dba.tbl_hls].a, [dba.tbl_hls].b, [dba.tbl_hls].c from [dba.tbl_hls] [dba.tbl_hls] where (inst_num()> ?:?  and inst_num()<= ?:? )) b (a, b, c) where a.a=b.a and a.b=b.b and a.c=b.c
 
 
 Trace Statistics:
@@ -35,7 +35,7 @@ Trace Statistics:
       SCAN (hash temp(f), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
-        SCAN (table: tbl_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tbl_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================

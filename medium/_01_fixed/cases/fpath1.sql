@@ -1,4 +1,4 @@
 autocommit off;
 select avg(product.price), avg(quantity)
-from inventory_c;
+from joe.inventory_c;
 rollback;

@@ -12,8 +12,8 @@ grant delete on test_class to test_user;
 grant delete on test_class1 to test_user;
 
 call login ('test_user') on class db_user;
-delete from  test_class  where col1=999;
-delete from  test_class1 where col1=888;
+delete from  dba.test_class  where col1=999;
+delete from  dba.test_class1 where col1=888;
 
 call login('dba') on class db_user;
 select grantor_name, grantee_name, 

@@ -7,7 +7,7 @@ insert into t1 values(1);
 grant select on t1 to user1;
 call login('user1') on class db_user;
 
-select * from t1;
+select * from dba.t1;
 
 call login('dba') on class db_user;
 drop class t1;

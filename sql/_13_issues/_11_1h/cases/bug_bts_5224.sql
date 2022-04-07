@@ -9,8 +9,8 @@ insert into t1 values ('dummy','i_t_i');
 create table t2 (s1 varchar(20),s2 varchar(5));
 insert into t2 values ('dummy','i_t_i');
 
-select s2,index_cardinality('t',s2,0) from t1;
-select s2,index_cardinality('t',s2,0) from t2;
+select s2,index_cardinality('dba.t',s2,0) from t1;
+select s2,index_cardinality('dba.t',s2,0) from t2;
 
 drop table t;
 drop table t1;

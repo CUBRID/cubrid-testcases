@@ -12,8 +12,8 @@ grant alter on test_class to test_user;
 grant alter on test_class1 to test_user;
 
 call login ('test_user') on class db_user;
-alter class test_class add column col3 integer;
-drop class test_class1;
+alter class dba.test_class add column col3 integer;
+drop class dba.test_class1;
 
 call login('dba') on class db_user;
 select * from test_class;

@@ -17,7 +17,7 @@ GRANT insert on StateCity to user1;
 
 call login ('user1','') on CLASS db_user;
 
-insert into company values('name2',insert into statecity values('state2','city2'),2);
+insert into dba.company values('name2',insert into dba.statecity values('state2','city2'),2);
 
 call login ('dba','') on CLASS db_user;
 drop CLASS Company;

@@ -1,22 +1,22 @@
 autocommit off;
 select *
-from dated_inventory_c d
+from joe.dated_inventory_c d
 where quantity > 10 
   and expiry_date > DATE '9/1/92';
   create class oo (u timestamp default TIMESTAMP '12/4/1992 10:45', b int);
 insert into oo (b) values (9);
 select * from oo;
 rollback work;
-insert into dated_inventory_c 
+insert into joe.dated_inventory_c 
 (product, quantity, location, shipment_pending, expiry_date)
 values (NULL, 5, 'marseilles', NULL, DATE '1/1/1993');
-select max(expiry_date) from dated_inventory_c;
-select min(expiry_date) from dated_inventory_c;
-select * from dated_inventory_v d 
+select max(expiry_date) from joe.dated_inventory_c;
+select min(expiry_date) from joe.dated_inventory_c;
+select * from joe.dated_inventory_v d 
 where expiry_date >= DATE ' 6/ 6/1992'
 and   expiry_date <= DATE ' 2/ 2/1993'
 order by 1;
-select * from dated_inventory_v d 
+select * from joe.dated_inventory_v d 
 where expiry_date >= DATE '06/06/1992'
 and   expiry_date <= DATE '02/02/1993'
 order by 1;

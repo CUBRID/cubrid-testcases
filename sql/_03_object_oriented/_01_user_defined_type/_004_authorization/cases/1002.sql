@@ -12,7 +12,7 @@ insert into company values('name1',insert into statecity values('state1','city1'
 call login ('user1','') on CLASS db_user;
 
 
-select * from company;
+select * from dba.company;
 
 call login ('dba','') on CLASS db_user;
 drop CLASS Company;

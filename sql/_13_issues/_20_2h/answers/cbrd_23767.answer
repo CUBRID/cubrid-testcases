@@ -36,15 +36,15 @@ a     101     null     1
 trace    
 
 Query Plan:
-  TABLE SCAN (DEP)
+  TABLE SCAN (dba.DEP)
 
-  rewritten query: select DEP.DEPT_NAME, DEP.DEP_CD, DEP.PARENT_CD, level from DEP DEP where (inst_num()<= ?:? ) start with DEP.PARENT_CD is null  connect by  prior DEP.DEP_CD=DEP.PARENT_CD
+  rewritten query: select [dba.DEP].DEPT_NAME, [dba.DEP].DEP_CD, [dba.DEP].PARENT_CD, level from [dba.DEP] [dba.DEP] where (inst_num()<= ?:? ) start with [dba.DEP].PARENT_CD is null  connect by  prior [dba.DEP].DEP_CD=[dba.DEP].PARENT_CD
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: dep), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.dep), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     CONNECTBY (time: ?, fetch: ?, ioread: ?)
-      SCAN (index: dep.cix_dep_parent_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.dep.cix_dep_parent_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 

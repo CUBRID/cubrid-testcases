@@ -1,5 +1,5 @@
 autocommit off;
 
-rename vclass employees_v as db_user;
+rename vclass joe.employees_v as db_user;
 rollback work;
 rollback;

@@ -1,3 +1,3 @@
 autocommit off;
-select * from faculty1, faculty2;
+select * from joe.faculty1, joe.faculty2;
 rollback;

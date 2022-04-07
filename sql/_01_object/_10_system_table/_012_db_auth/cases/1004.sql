@@ -12,8 +12,8 @@ grant select on test_class to test_user;
 grant select on test_class1 to test_user;
 call login('test_user') on class db_user;
 
-select * from test_class;
-select * from test_class1;
+select * from dba.test_class;
+select * from dba.test_class1;
 
 call login('dba') on class db_user;
 select grantor_name, grantee_name, 

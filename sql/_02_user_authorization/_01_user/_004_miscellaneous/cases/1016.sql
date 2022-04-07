@@ -4,7 +4,7 @@
 call login('dba') on class db_user;
 create class t1(a int);
 call change_owner('t1', 'public') on class db_authorizations;
-call get_owner('t1') on  class db_authorizations to arg_owner;
-drop class t1;
+call get_owner('public.t1') on  class db_authorizations to arg_owner;
+drop class public.t1;
 
 --+ holdcas off;

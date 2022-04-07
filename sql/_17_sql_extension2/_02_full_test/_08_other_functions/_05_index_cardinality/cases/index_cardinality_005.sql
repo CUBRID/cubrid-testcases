@@ -32,15 +32,15 @@ insert into coo values(5, 'aaa', 12.12);
 show index in foo;
 show index in coo;
 
-select index_cardinality('foo', 'pk_foo_a_b', 0);
-select index_cardinality('foo', 'pk_foo_a_b', 1);
-select index_cardinality('foo', 'pk_foo_a_b', 2);
-select index_cardinality('foo', 'pk_foo_a_b', -1);
+select index_cardinality('dba.foo', 'pk_foo_a_b', 0);
+select index_cardinality('dba.foo', 'pk_foo_a_b', 1);
+select index_cardinality('dba.foo', 'pk_foo_a_b', 2);
+select index_cardinality('dba.foo', 'pk_foo_a_b', -1);
 
-select index_cardinality('coo', 'pk_a_b', 0);
-select index_cardinality('coo', 'pk_a_b', 1);
-select index_cardinality('coo', 'fk_a_b', 0);
-select index_cardinality('coo', 'fk_a_b', 1);
+select index_cardinality('dba.coo', 'pk_a_b', 0);
+select index_cardinality('dba.coo', 'pk_a_b', 1);
+select index_cardinality('dba.coo', 'fk_a_b', 0);
+select index_cardinality('dba.coo', 'fk_a_b', 1);
 
 drop table coo;
 drop table foo;

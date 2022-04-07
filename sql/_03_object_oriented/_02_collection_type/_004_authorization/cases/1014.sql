@@ -17,11 +17,11 @@ grant insert, delete, update on ddl_0001 to user1;
 
 call login ('user1','') on CLASS db_user;
 
-insert into ddl_0001 (st,qt,mt) values({4,5,6},{'aaa2','bbb2'},null);
+insert into dba.ddl_0001 (st,qt,mt) values({4,5,6},{'aaa2','bbb2'},null);
 
-delete from ddl_0001 where id=1;
-update ddl_0001 set st={2,2,2} where id=2;
-SELECT * FROM ddl_0001;
+delete from dba.ddl_0001 where id=1;
+update dba.ddl_0001 set st={2,2,2} where id=2;
+SELECT * FROM dba.ddl_0001;
 
 call login ('dba','') on CLASS db_user;
 drop CLASS ddl_0001;

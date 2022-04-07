@@ -4,9 +4,9 @@ create class baz (c int);
 insert into baz values (16) into :p0;
 create class bar (b int, c1 baz);
 insert into bar values (1, :p0) into :p2;
-create class foo class attribute (ca1 hotel, b1 bar) (a int, b2 bar);
+create class foo class attribute (ca1 public.hotel, b1 bar) (a int, b2 bar);
 insert into foo values (14, p2);
-update class foo set ca1 = (select hotel from hotel where name = 'Ambiance'),
+update class foo set ca1 = (select hotel from public.hotel where name = 'Ambiance'),
 		     b1 = p2;
 select class foo.ca1.name from foo;
 select foo into :p1 from foo;

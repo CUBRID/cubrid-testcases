@@ -10,9 +10,9 @@ update object :a set me = :a2;
 select z.me{b}.n from c7016 z, c7016_b b order by 1;
 select z.me{b}.n from c7016 z, c7016_bv b order by 1;
 select name, room{suite_only}.size_in_sq_ft
-from hotel, suite suite_only, table(rooms) as t(room) order by 1,2;
+from public.hotel, public.suite suite_only, table(rooms) as t(room) order by 1,2;
 select name, room{all_quarters}.size_in_sq_ft
-from hotel, all quarters all_quarters, table(rooms) as t(room) order by 1,2;
+from public.hotel, all public.quarters all_quarters, table(rooms) as t(room) order by 1,2;
 select name, room{all_quarters}.size_in_sq_ft
-from hotel, quarters all_quarters, table(rooms) as t(room) order by 1,2;
+from public.hotel, public.quarters all_quarters, table(rooms) as t(room) order by 1,2;
 rollback;

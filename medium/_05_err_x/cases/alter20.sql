@@ -1,4 +1,4 @@
 autocommit off;
-rename vclass employees_v as employee_c;
+rename vclass joe.employees_v as joe.employee_c;
 rollback work;
 rollback;

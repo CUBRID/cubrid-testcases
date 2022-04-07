@@ -9,18 +9,18 @@ call login('user1','') on class db_user;
 create class xoo1( a int);
 
 call login('user2','') on class db_user;
-create class xoo2( a int, FOREIGN key(a) references xoo1(a) );
+create class xoo2( a int, FOREIGN key(a) references user1.xoo1(a) );
 
 
-drop xoo1;
-drop xoo2;
+drop user1.xoo1;
+drop user2.xoo2;
 
 drop user user1;
 drop user user2;
 
 call login('dba','') on class db_user;
-drop xoo1;
-drop xoo2;
+drop user1.xoo1;
+drop user2.xoo2;
 
 drop user user1;
 drop user user2;
