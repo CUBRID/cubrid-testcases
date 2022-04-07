@@ -1,5 +1,5 @@
 autocommit off;
-create class employees ( ssn  int);
-create class employees_v under employees;
-alter class employees_v drop attribute ssn;
+create class joe.employees ( ssn  int);
+create class joe.employees_v under joe.employees;
+alter class joe.employees_v drop attribute ssn;
 rollback;

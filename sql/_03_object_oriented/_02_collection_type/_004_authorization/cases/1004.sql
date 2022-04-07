@@ -13,7 +13,7 @@ create class ddl_0001(
 insert into ddl_0001 values({1,2,3},{'aaa','bbb'},null);
 call login ('user1','') on CLASS db_user;
 
-delete FROM ddl_0001;
+delete FROM dba.ddl_0001;
 
 call login ('dba','') on CLASS db_user;
 drop CLASS ddl_0001;

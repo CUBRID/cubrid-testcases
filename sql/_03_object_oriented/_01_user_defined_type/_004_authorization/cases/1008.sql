@@ -16,7 +16,7 @@ grant delete on company to user1;
 
 call login ('user1','') on CLASS db_user;
 
-delete from company;
+delete from dba.company;
 
 
 call login ('dba','') on CLASS db_user;

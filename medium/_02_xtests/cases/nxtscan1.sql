@@ -2,12 +2,12 @@
 
 autocommit off;
 select h
-from all accommodations, (select serving_hours from dinner) as t(h)
+from all public.accommodations, (select serving_hours from public.dinner) as t(h)
 where name = 'Couples';
 select h
-from all accommodations, (select serving_hours from dinner) as t(h)
+from all public.accommodations, (select serving_hours from public.dinner) as t(h)
 where name = 'British Colonial Beach Resort';
 select h
-from all accommodations, (select serving_hours from dinner) as t(h)
+from all public.accommodations, (select serving_hours from public.dinner) as t(h)
 where name = 'Seawind Beach Resort';
 rollback;

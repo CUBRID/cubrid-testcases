@@ -1,4 +1,4 @@
 autocommit off;
-select * from product_c a, product_c b
+select * from joe.product_c a, joe.product_c b
 order by a.product_code, b.product_code;
 rollback;

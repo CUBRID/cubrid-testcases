@@ -1,4 +1,4 @@
 autocommit off;
 select count(product_code)
-from inventory_v;
+from joe.inventory_v;
 rollback;

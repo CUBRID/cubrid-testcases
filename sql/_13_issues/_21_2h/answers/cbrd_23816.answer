@@ -13,19 +13,19 @@ count(*)
 trace    
 
 Query Plan:
-  TABLE SCAN (t?)
+  TABLE SCAN (dba.t?)
 
-  rewritten query: (select t?.a, t?.b, t?.c from t? t? where (inst_num()<= ?:? ))
+  rewritten query: (select [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? ))
 
-  TABLE SCAN (t?)
+  TABLE SCAN (dba.t?)
 
-  rewritten query: (select t?.a, t?.b, t?.c from t? t? where (inst_num()<= ?:? ))
+  rewritten query: (select [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ count(*) from (select t?.a, t?.b, t?.c from t? t? where (inst_num()<= ?:? )) a (a, b, c), (select t?.a, t?.b, t?.c from t? t? where (inst_num()<= ?:? )) b (a, b, c) where a.a=b.a and a.b=b.b and a.c=b.c
+  rewritten query: select /*+ ORDERED */ count(*) from (select [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? )) a (a, b, c), (select [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? )) b (a, b, c) where a.a=b.a and a.b=b.b and a.c=b.c
 
 
 Trace Statistics:
@@ -34,7 +34,7 @@ Trace Statistics:
       SCAN (hash temp(f), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
-        SCAN (table: t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -54,19 +54,19 @@ count(*)
 trace    
 
 Query Plan:
-  TABLE SCAN (t?)
+  TABLE SCAN (dba.t?)
 
-  rewritten query: (select t?.a, t?.b, t?.c from t? t? where (inst_num()<= ?:? ))
+  rewritten query: (select [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? ))
 
-  TABLE SCAN (t?)
+  TABLE SCAN (dba.t?)
 
-  rewritten query: (select t?.a, t?.b, t?.c from t? t? where (inst_num()<= ?:? ))
+  rewritten query: (select [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ count(*) from (select t?.a, t?.b, t?.c from t? t? where (inst_num()<= ?:? )) a (a, b, c), (select t?.a, t?.b, t?.c from t? t? where (inst_num()<= ?:? )) b (a, b, c) where a.a=b.a and a.b=b.b and a.c=b.c
+  rewritten query: select /*+ ORDERED */ count(*) from (select [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? )) a (a, b, c), (select [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? )) b (a, b, c) where a.a=b.a and a.b=b.b and a.c=b.c
 
 
 Trace Statistics:
@@ -75,7 +75,7 @@ Trace Statistics:
       SCAN (hash temp(f), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, ioread: ?)
-        SCAN (table: t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================

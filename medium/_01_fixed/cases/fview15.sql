@@ -5,28 +5,28 @@ function impl_sd_6_1_met
 file 'impl_test_methods.o';
 create vclass priceunion (pr monetary)
 as
-select price from inventory_v 
+select price from joe.inventory_v 
 union
-select price from inventory_v;
+select price from joe.inventory_v;
 select pr from priceunion;
 create vclass priceintersect (pr monetary)
 as
-select price from inventory_v 
+select price from joe.inventory_v 
 intersection
-select price from inventory_v;
+select price from joe.inventory_v;
 select pr from priceintersect;
 create vclass pricedif (pr monetary)
 as
-select price from inventory_v 
+select price from joe.inventory_v 
 difference
-select price from inventory_v;
+select price from joe.inventory_v;
 select pr from pricedif;
 create vclass foo (a integer)
 as
-select na from product_c;
+select na from joe.product_c;
 create vclass foo2 (a smallint)
 as
-select 2 from product_c;
+select 2 from joe.product_c;
 create vclass type_table_rr
 (
   num integer,

@@ -13,9 +13,9 @@ create class ddl_0001(
 insert into ddl_0001 values({1,2,3},{'aaa','bbb'},null);
 call login ('user1','') on CLASS db_user;
 
-update ddl_0001 set st={10,20,30};
+update dba.ddl_0001 set st={10,20,30};
 
-SELECT * from ddl_0001;
+SELECT * from dba.ddl_0001;
 call login ('dba','') on CLASS db_user;
 drop CLASS ddl_0001;
 

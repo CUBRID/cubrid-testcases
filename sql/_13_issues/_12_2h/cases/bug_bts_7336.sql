@@ -11,9 +11,9 @@ CREATE TRIGGER trig_aft_upd AFTER UPDATE ON with_trigger EXECUTE UPDATE with_tri
 create user test_user;
 grant insert, update on with_trigger to test_user;
 call login ('test_user', '') on class db_user;
-INSERT INTO with_trigger VALUES (4, 'DDD', 7);
-INSERT INTO with_trigger VALUES (5, 'EEE', 8) ON DUPLICATE KEY UPDATE c=c+1;
-INSERT INTO with_trigger VALUES (2, 'BEFORE UPDATE', 8) ON DUPLICATE KEY UPDATE c=c+1;
+INSERT INTO dba.with_trigger VALUES (4, 'DDD', 7);
+INSERT INTO dba.with_trigger VALUES (5, 'EEE', 8) ON DUPLICATE KEY UPDATE c=c+1;
+INSERT INTO dba.with_trigger VALUES (2, 'BEFORE UPDATE', 8) ON DUPLICATE KEY UPDATE c=c+1;
 call login('dba', '') on class db_user;
 SELECT * from with_trigger order by 1;
 

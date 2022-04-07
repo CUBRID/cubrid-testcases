@@ -16,7 +16,7 @@ grant SELECT on company to user1;
 
 call login ('user1','') on CLASS db_user;
 
-SELECT * FROM company;
+SELECT * FROM dba.company;
 
 call login ('dba','') on CLASS db_user;
 drop CLASS Company;

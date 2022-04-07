@@ -16,7 +16,7 @@ grant update  on company to user1;
 
 call login ('user1','') on CLASS db_user;
 
-update company set name='name2';
+update dba.company set name='name2';
 
 
 call login ('dba','') on CLASS db_user;

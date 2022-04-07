@@ -1,3 +1,3 @@
 autocommit off;
-drop index idx on employee_c(ssn);
+drop index idx on joe.employee_c(ssn);
 rollback;

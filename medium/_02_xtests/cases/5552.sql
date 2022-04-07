@@ -1,10 +1,10 @@
 autocommit off;
 select count(*)
-  from resort r1
- where (select name from resort r2 where r1.name = r2.name)
-     = (select name from resort r2 where r1.name = r2.name);
+  from public.resort r1
+ where (select name from public.resort r2 where r1.name = r2.name)
+     = (select name from public.resort r2 where r1.name = r2.name);
 select count(*)
-  from resort r1, resort r2
+  from public.resort r1, public.resort r2
  where r1.name < 'ZZZZZ'
    and r1.name = r2.name;
 create class bigun (

@@ -30,14 +30,14 @@ a    min(b)
 trace    
 
 Query Plan:
-  INDEX SCAN (t?.idx_t?_abc) (key range: (t?.a> ?:? ), covered: true, loose: true)
+  INDEX SCAN (dba.t?.idx_t?_abc) (key range: ([dba.t?].a> ?:? ), covered: true, loose: true)
   group by nosort: true
 
-  rewritten query: select /*+ INDEX_LS */ t?.a, min(t?.b) from t? t? where (t?.a> ?:? ) group by t?.a
+  rewritten query: select /*+ INDEX_LS */ [dba.t?].a, min([dba.t?].b) from [dba.t?] [dba.t?] where ([dba.t?].a> ?:? ) group by [dba.t?].a
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (index: t?.idx_t?_abc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, loose: true)
+    SCAN (index: dba.t?.idx_t?_abc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, loose: true)
     GROUPBY (time: ?, hash: false, sort: false, rows: ?)
      
 

@@ -11,7 +11,7 @@ create class ddl_0001(
 );
 
 call login ('user1','') on CLASS db_user;
-insert into ddl_0001 values({1,2,3},{'aaa','bbb'},null);
+insert into dba.ddl_0001 values({1,2,3},{'aaa','bbb'},null);
 
 
 call login ('dba','') on CLASS db_user;
