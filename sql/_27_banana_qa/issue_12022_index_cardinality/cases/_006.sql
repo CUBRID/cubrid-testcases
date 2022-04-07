@@ -35,23 +35,23 @@ update statistics on t with fullscan;
 show index from t;
 
 --test: index_cardinality
-select index_cardinality('t', 'fidx1', 0);
-select index_cardinality('t', 'fidx1', 2);
-select index_cardinality('t', 'fidx1', 4);
-select index_cardinality('t', 'fidx2', 0);
-select index_cardinality('t', 'fidx2', 3);
-select index_cardinality('t', 'fidx2', 5);
-select index_cardinality('t', 'fidx2', 7);
-select index_cardinality('t', 'fidx2', 9);
-select index_cardinality('t', 'fidx3', 1);
-select index_cardinality('t', 'fidx3', 4);
-select index_cardinality('t', 'fidx3', 6);
-select index_cardinality('t', 'fidx3', 9);
-select index_cardinality('t', 'fidx3', 11);
-select index_cardinality('t', 'fidx3', 13);
-select index_cardinality('t', 'fidx3', 14);
-select index_cardinality('t', 'fidx3', 15);
-select index_cardinality('t', 'fidx3', 16);
+select index_cardinality('dba.t', 'fidx1', 0);
+select index_cardinality('dba.t', 'fidx1', 2);
+select index_cardinality('dba.t', 'fidx1', 4);
+select index_cardinality('dba.t', 'fidx2', 0);
+select index_cardinality('dba.t', 'fidx2', 3);
+select index_cardinality('dba.t', 'fidx2', 5);
+select index_cardinality('dba.t', 'fidx2', 7);
+select index_cardinality('dba.t', 'fidx2', 9);
+select index_cardinality('dba.t', 'fidx3', 1);
+select index_cardinality('dba.t', 'fidx3', 4);
+select index_cardinality('dba.t', 'fidx3', 6);
+select index_cardinality('dba.t', 'fidx3', 9);
+select index_cardinality('dba.t', 'fidx3', 11);
+select index_cardinality('dba.t', 'fidx3', 13);
+select index_cardinality('dba.t', 'fidx3', 14);
+select index_cardinality('dba.t', 'fidx3', 15);
+select index_cardinality('dba.t', 'fidx3', 16);
 
 
 drop table t;

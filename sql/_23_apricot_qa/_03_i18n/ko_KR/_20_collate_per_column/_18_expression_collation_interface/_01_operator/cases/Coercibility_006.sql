@@ -37,7 +37,7 @@ select a+substring(user(),0,1) from t where a>'가';
 select a+substring(user(),0,1) from t where a<cast('각' as string collate utf8_gen)+'가'+substring(user(),0,1) order by 1 desc;
 CALL login ('Dba', '') ON CLASS db_user;
 drop user 用户;
-drop table t;
+drop table 각.t;
 drop user 각;
 
 set names iso88591;

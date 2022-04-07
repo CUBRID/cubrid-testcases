@@ -11,41 +11,41 @@ drop class if exists t12366;
 CREATE TABLE IF NOT EXISTS `public`.`t12366` (
     `col` VARCHAR(16) NOT NULL
 );
-desc t12366;
+desc public.t12366;
 
 
-drop class if exists t12366;
+drop class if exists public.t12366;
 CREATE TABLE IF NOT EXISTS `public`.`t12366` (
     `col` VARCHAR(16) NOT NULL
 );
-desc t12366;
+desc public.t12366;
 
-drop class if exists t12366;
+drop class if exists public.t12366;
 CREATE TABLE IF NOT EXISTS `public`.`public`.`t12366` (
     `col` VARCHAR(16) NOT NULL
 );
-desc t12366;
+desc public.public.t12366;
 
-drop class if exists t12366;
+drop class if exists publics.t12366;
 CREATE TABLE IF NOT EXISTS `publics`.`t12366` (
     `col` VARCHAR(16) NOT NULL
 );
-desc t12366;
+desc publics.t12366;
 
-drop class if exists public;
+drop class if exists publics.t12366;
 CREATE TABLE IF NOT EXISTS `public`.`public` (
     `col` VARCHAR(16) NOT NULL
 );
-desc public;
-drop class if exists public;
+desc public.public;
+drop class if exists public.public;
 
 
-drop class if exists "select";
+drop class if exists "public"."select";
 CREATE TABLE IF NOT EXISTS `public`.`select` (
     `col` VARCHAR(16) NOT NULL
 );
 desc select;
-drop class if exists "select";
+drop class if exists "public"."select";
 
 DROP TABLE IF EXISTS backupfiles;
 CREATE TABLE IF NOT EXISTS backupfiles (fileName VARCHAR(20), archiveId VARCHAR(500), checkSum VARCHAR(100), glacierVault VARCHAR(100), timeStamps date);
@@ -156,4 +156,4 @@ INSERT INTO t1 VALUES (1),(1);
 CREATE TEMPORARY TABLE IF NOT EXISTS t2 SELECT * FROM t1;
 
 DROP TABLE if exists t1,t2;
-drop `select`;
+drop `public`.`select`;
