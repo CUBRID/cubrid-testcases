@@ -47,14 +47,14 @@ C1: COMMIT;
 MC: wait until C1 ready;
 
 C1: ALTER TABLE t1 OWNER TO company;
-C1: GRANT DELETE ON t1 TO brown;
+C1: GRANT DELETE ON company.t1 TO brown;
 C1: COMMIT;
 MC: wait until C1 ready;
 C2: login as 'brown';
 C2: show tables;
 C2: COMMIT;
 MC: wait until C2 ready;
-C2: delete from t1 where id=2;
+C2: delete from company.t1 where id=2;
 C2: COMMIT;
 MC: wait until C2 ready;
 C2: login as 'company';
@@ -66,7 +66,7 @@ C2: COMMIT;
 MC: wait until C2 ready;
 
 C1: login as 'dba';
-C1: DROP table t1;
+C1: DROP table company.t1;
 C1: DROP USER jones;
 C1: DROP USER brown;
 C1: DROP USER design;

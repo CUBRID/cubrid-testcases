@@ -59,7 +59,7 @@ C2: COMMIT;
 MC: wait until C2 ready;
 C2: CALL login ('jones', '1234') ON CLASS db_user;
 C2: select name from db_user order by 1;
-C2: select * from t1 order by 1;
+C2: select * from dba.t1 order by 1;
 C2: COMMIT;
 MC: wait until C2 ready;
 
