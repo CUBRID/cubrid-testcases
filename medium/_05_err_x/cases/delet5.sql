@@ -1,6 +1,6 @@
 autocommit off;
 
-delete from inventory_v
+delete from joe.inventory_v
  where descr setneq {'a', 'b'};
 rollback work;
 rollback;

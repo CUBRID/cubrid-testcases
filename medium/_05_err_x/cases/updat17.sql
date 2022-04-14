@@ -1,5 +1,5 @@
 autocommit off;
-update all inventory_v (except employees_v)
+update all joe.inventory_v (except joe.employees_v)
    set descr = 'foo';
 rollback work;
 rollback;

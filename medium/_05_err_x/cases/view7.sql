@@ -1,6 +1,6 @@
 autocommit off;
 call login('dba','') on class db_user;
-create class boo(a int, b int) as select ssn, ssn from faculty2;
+create class boo(a int, b int) as select ssn, ssn from joe.faculty2;
 select * from boo;
 update boo set a=3 where b=9;
 select * from boo;

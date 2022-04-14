@@ -13,9 +13,9 @@ insert into foo(b, c, d) select b, c, d from foo;
 
 select count(*) from foo;
 
-select index_cardinality('foo', 'pk_foo_a', 0);
-select index_cardinality('foo', 'pk_foo_a', 1);
-select index_cardinality('foo', 'pk_foo_a', -1);
+select index_cardinality('dba.foo', 'pk_foo_a', 0);
+select index_cardinality('dba.foo', 'pk_foo_a', 1);
+select index_cardinality('dba.foo', 'pk_foo_a', -1);
 
 
 drop table foo;

@@ -1,5 +1,5 @@
 autocommit off;
-update employees_v
+update joe.employees_v
    set ssn = avg (dept_no);
 rollback work;
 rollback;

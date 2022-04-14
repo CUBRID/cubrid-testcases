@@ -16,7 +16,7 @@ insert into ddl_0001 values({1,2,3},{'aaa','bbb'},null);
 call login ('user1','') on CLASS db_user;
 
 
-select * from ddl_0001;
+select * from dba.ddl_0001;
 
 call login ('dba','') on CLASS db_user;
 drop CLASS ddl_0001;

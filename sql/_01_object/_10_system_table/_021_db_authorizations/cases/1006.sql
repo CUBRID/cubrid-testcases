@@ -13,7 +13,7 @@ insert into test_class values(999,'nhn');
 call login('dba') on class db_user;
 select class_name, owner_name from db_class
 where  class_name = 'test_class';
-drop class test_class;
+drop class test_user2.test_class;
 call drop_user('test_user1') on class db_authorizations;
 call drop_user('test_user2') on class db_authorizations;
 

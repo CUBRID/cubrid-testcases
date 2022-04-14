@@ -177,13 +177,14 @@ b
 
 Query plan:
 temp(distinct)
-    subplan: sscan
+    subplan: iscan
                  class: x? node[?]
-                 sargs: term[?]
+                 index: i_abc (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
                  cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select distinct x?.b from t? x? where (x?.b< ?:? ) for orderby_num()<= ?:? 
+select /*+ INDEX_LS([t?.x?]) */ distinct x?.b from t? x? where (x?.b< ?:? ) for orderby_num()<= ?:? 
 ===================================================
 b    
 1     

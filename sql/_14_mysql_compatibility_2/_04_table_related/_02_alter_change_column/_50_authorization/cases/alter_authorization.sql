@@ -21,7 +21,7 @@ call login('user1','a') on class db_user;
 
 
 -- should fail
-alter table t1 change sh1 i1 int;
+alter table dba.t1 change sh1 i1 int;
 
 call login('dba','') on class db_user;
 
@@ -46,7 +46,7 @@ grant alter to user1 on t1;
 call login('user1','a') on class db_user;
 
 
-alter table t1 change sh1 i1 int;
+alter table dba.t1 change sh1 i1 int;
 
 call login('dba','') on class db_user;
 

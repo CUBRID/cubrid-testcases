@@ -6,6 +6,6 @@ create vclass xxx_v (a1 int) as select a from xxx;
 select * from xxx_v;
 grant all on xxx_v to public;
 call login('public') on class db_user;
-select * from xxx_v;
+select * from joe.xxx_v;
 call login('dba', '') on class db_user;
 rollback;

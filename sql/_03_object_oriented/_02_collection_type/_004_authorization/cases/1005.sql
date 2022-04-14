@@ -18,7 +18,7 @@ grant SELECT on ddl_0001 to user1;
 
 call login ('user1','') on CLASS db_user;
 
-SELECT * FROM ddl_0001;
+SELECT * FROM dba.ddl_0001;
 
 call login ('dba','') on CLASS db_user;
 drop CLASS ddl_0001;

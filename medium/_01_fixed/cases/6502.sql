@@ -1,3 +1,3 @@
 autocommit off;
-delete from all accommodations;
+delete from all public.accommodations;
 rollback;

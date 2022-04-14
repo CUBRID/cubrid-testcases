@@ -24,25 +24,25 @@ create index i_foo_a_b_c_d on foo(a, b, c, d);
 select count(*) from foo;
 show index in foo;
 
-select index_cardinality('foo', 'i_foo_a', 0);
-select index_cardinality('foo', 'i_foo_b', 0);
-select index_cardinality('foo', 'i_foo_c', 0);
-select index_cardinality('foo', 'i_foo_d', 0);
+select index_cardinality('dba.foo', 'i_foo_a', 0);
+select index_cardinality('dba.foo', 'i_foo_b', 0);
+select index_cardinality('dba.foo', 'i_foo_c', 0);
+select index_cardinality('dba.foo', 'i_foo_d', 0);
 
-select index_cardinality('foo', 'i_foo_a_b', 0);
-select index_cardinality('foo', 'i_foo_a_b', 1);
-select index_cardinality('foo', 'i_foo_b_c', 0);
-select index_cardinality('foo', 'i_foo_b_c', 1);
-select index_cardinality('foo', 'i_foo_c_d', 0);
-select index_cardinality('foo', 'i_foo_c_d', 1);
+select index_cardinality('dba.foo', 'i_foo_a_b', 0);
+select index_cardinality('dba.foo', 'i_foo_a_b', 1);
+select index_cardinality('dba.foo', 'i_foo_b_c', 0);
+select index_cardinality('dba.foo', 'i_foo_b_c', 1);
+select index_cardinality('dba.foo', 'i_foo_c_d', 0);
+select index_cardinality('dba.foo', 'i_foo_c_d', 1);
 
-select index_cardinality('foo', 'i_foo_a_b_c', 0);
-select index_cardinality('foo', 'i_foo_a_b_c', 1);
-select index_cardinality('foo', 'i_foo_a_b_c', 2);
+select index_cardinality('dba.foo', 'i_foo_a_b_c', 0);
+select index_cardinality('dba.foo', 'i_foo_a_b_c', 1);
+select index_cardinality('dba.foo', 'i_foo_a_b_c', 2);
 
-select index_cardinality('foo', 'i_foo_a_b_c_d', 0);
-select index_cardinality('foo', 'i_foo_a_b_c_d', 1);
-select index_cardinality('foo', 'i_foo_a_b_c_d', 2);
-select index_cardinality('foo', 'i_foo_a_b_c_d', 3);
+select index_cardinality('dba.foo', 'i_foo_a_b_c_d', 0);
+select index_cardinality('dba.foo', 'i_foo_a_b_c_d', 1);
+select index_cardinality('dba.foo', 'i_foo_a_b_c_d', 2);
+select index_cardinality('dba.foo', 'i_foo_a_b_c_d', 3);
 
 drop table foo;

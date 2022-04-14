@@ -14,8 +14,8 @@ call login('user1', '') on class db_user;
 
 call login('user2', '') on class db_user;
 
-   create table zoo ( id int, x xoo);
-   insert into zoo values(2, (select xoo from xoo));
+   create table zoo ( id int, x user1.xoo);
+   insert into zoo values(2, (select xoo from user1.xoo));
 
 call login('user1', '') on class db_user;
 
@@ -36,9 +36,9 @@ call login('user2', '') on class db_user;
 
 call login('dba', '') on class db_user;
 
-drop xoo;
-drop poo;
-drop zoo;
+drop user1.xoo;
+drop user2.poo;
+drop user2.zoo;
 drop user user1;
 drop user user2;
 

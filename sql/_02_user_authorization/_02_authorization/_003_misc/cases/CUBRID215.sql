@@ -16,13 +16,13 @@ execute update object obj set a = a+100;
 
 call login('user1','') on class db_user;
 
-select * from xoo;
-select ser1.next_value from db_root;
-insert into xoo values(10, 10);
-select * from xoo where a > 0 using index idx1(+);
-select * from xoo where b > 0 using index idx2(+);
-select /*+ USE_IDX */ x.a from xoo x, xoo y where x.a = y.a order by 1 desc;
-select /*+ USE_IDX */ x.a from xoo x, xoo y where x.a = y.a order by 1 asc;
+select * from dba.xoo;
+select dba.ser1.next_value from db_root;
+insert into dba.xoo values(10, 10);
+select * from dba.xoo where a > 0 using index idx1(+);
+select * from dba.xoo where b > 0 using index idx2(+);
+select /*+ USE_IDX */ x.a from dba.xoo x, dba.xoo y where x.a = y.a order by 1 desc;
+select /*+ USE_IDX */ x.a from dba.xoo x, dba.xoo y where x.a = y.a order by 1 asc;
 
 call login('dba','') on class db_user;
 drop user user1;

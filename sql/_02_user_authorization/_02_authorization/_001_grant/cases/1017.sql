@@ -14,7 +14,7 @@ CALL add_user('DCL_USER1','DCL1') ON CLASS db_user;
 
 GRANT UPDATE, SELECT ON ALL DCL1 (EXCEPT DCL2) TO DCL_USER1;
 CALL login('DCL_USER1','DCL1') ON CLASS db_user;
-UPDATE DCL2 SET id=2 WHERE id=1;
+UPDATE dba.DCL2 SET id=2 WHERE id=1;
 
 
 CALL login('dba','') ON CLASS db_user;

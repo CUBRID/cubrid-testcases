@@ -2,7 +2,7 @@ autocommit off;
 call login('dba','') on class db_user;
 CREATE CLASS tbibrs;
 call change_owner('tbibrs', 'public') on class db_authorizations;
-ALTER CLASS tbibrs ADD ATTRIBUTE
+ALTER CLASS public.tbibrs ADD ATTRIBUTE
        ibrs_yymm string,
        ibrs_sevcd string,
        ibrs_sevid string,
@@ -12,5 +12,5 @@ ALTER CLASS tbibrs ADD ATTRIBUTE
        ibrs_subcd string,
        ibrs_qty integer,
        ibrs_amt integer;
-drop tbibrs;
+drop public.tbibrs;
 rollback WORK;

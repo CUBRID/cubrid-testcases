@@ -12,8 +12,8 @@ grant update on test_class to test_user;
 grant update on test_class1 to test_user;
 
 call login ('test_user') on class db_user;
-update test_class set col2='nhnchina' where col1=999;
-update test_class1 set col2='nhnkorea' where col1=888;
+update dba.test_class set col2='nhnchina' where col1=999;
+update dba.test_class1 set col2='nhnkorea' where col1=888;
 
 call login('dba') on class db_user;
 select grantor_name, grantee_name, 

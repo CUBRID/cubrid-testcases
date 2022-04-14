@@ -1,5 +1,5 @@
 autocommit off;
-delete from inventory_v
+delete from joe.inventory_v
  where product_code = $1000;
 rollback work;
 rollback;

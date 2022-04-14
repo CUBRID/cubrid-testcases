@@ -11,11 +11,11 @@ call add_user('test_user1') on class db_user;
 grant select on test_class to test_user with grant option;
 
 call login('test_user') on class db_user;
-select * from test_class order by 1 desc;
-grant select on test_class to test_user1;
+select * from dba.test_class order by 1 desc;
+grant select on dba.test_class to test_user1;
 
 call login('test_user1') on class db_user;
-select * from test_class order by 1 desc;
+select * from dba.test_class order by 1 desc;
 call login('dba') on class db_user;
 
 --Cannot query any record

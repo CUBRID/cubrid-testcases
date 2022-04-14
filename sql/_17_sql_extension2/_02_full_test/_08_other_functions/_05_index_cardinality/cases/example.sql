@@ -14,10 +14,10 @@ insert into t1 values (1,1,1,'abc','abc','abc');
 insert into t1 values (2,2,2,'zabc','zabc','zabc');
 insert into t1 values (2,3,3,'+abc','+abc','+abc');
 
-select index_cardinality('t1','i_t1_i1_s1',0);
-select index_cardinality('t1','i_t1_i1_s1',1);
-select index_cardinality('t1','i_t1_i1_s1',2);
-select index_cardinality('t123','i_t1_i1_s1',1);
+select index_cardinality('dba.t1','i_t1_i1_s1',0);
+select index_cardinality('dba.t1','i_t1_i1_s1',1);
+select index_cardinality('dba.t1','i_t1_i1_s1',2);
+select index_cardinality('dba.t123','i_t1_i1_s1',1);
 
 drop table t1;
 
