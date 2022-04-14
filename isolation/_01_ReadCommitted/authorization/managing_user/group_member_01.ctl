@@ -62,7 +62,7 @@ MC: wait until C2 ready;
 C1: login as 'dba';
 C1: DROP USER brown;
 C1: DROP USER jones;
-C1: DROP table t1;
+C1: DROP table jones.t1;
 C1: DROP USER jones;
 C1: DROP USER engineering;
 C1: DROP USER company;
