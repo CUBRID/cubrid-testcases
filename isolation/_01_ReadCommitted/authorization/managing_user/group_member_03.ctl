@@ -69,9 +69,9 @@ C2: COMMIT;
 MC: wait until C2 ready;
 
 C1: login as 'dba';
-C1: DROP table t1;
-C1: DROP table t2;
-C1: DROP table t3;
+C1: DROP table company.t1;
+C1: DROP table engineering.t2;
+C1: DROP table engineering.t3;
 C1: DROP USER jones;
 C1: DROP USER brown;
 C1: DROP USER engineering;

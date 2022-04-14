@@ -51,14 +51,14 @@ C2: login as 'design';
 C2: set transaction lock timeout INFINITE;
 C2: set transaction isolation level read committed;
 MC: wait until C2 ready;
-C2: delete from t1 where id=2;
+C2: delete from dba.t1 where id=2;
 C2: COMMIT;
 MC: wait until C2 ready;
-C1: REVOKE SELECT ON t1 FROM design;
+C1: REVOKE SELECT ON dba.t1 FROM design;
 C1: COMMIT;
 MC: wait until C1 ready;
-C2: delete from t1 where id=2;
-C2: select * from t1 order by 1;
+C2: delete from dba.t1 where id=2;
+C2: select * from dba.t1 order by 1;
 C2: COMMIT;
 MC: wait until C2 ready;
 

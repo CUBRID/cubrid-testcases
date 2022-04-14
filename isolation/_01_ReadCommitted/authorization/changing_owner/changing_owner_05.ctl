@@ -67,13 +67,13 @@ C1: GRANT ALL PRIVILEGES ON t1 TO company;
 C1: COMMIT;
 MC: wait until C1 ready;
 C2: update t1_view set id=10 where id=6;
-C2: select * from t1 order by 1;
+C2: select * from dba.t1 order by 1;
 C2: COMMIT;
 MC: wait until C2 ready;
 
 C1: login as 'dba';
 C1: DROP table t1;
-C1: DROP VIEW  t1_view;
+C1: DROP VIEW company.t1_view;
 C1: DROP USER jones;
 C1: DROP USER brown;
 C1: DROP USER design;
