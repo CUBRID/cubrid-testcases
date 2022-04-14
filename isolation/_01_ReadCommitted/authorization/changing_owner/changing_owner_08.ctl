@@ -56,14 +56,14 @@ MC: wait until C1 ready;
 C2: login as 'brown';
 C2: set transaction lock timeout INFINITE;
 C2: set transaction isolation level read committed;
-C2: insert into t2 VALUES(6, 'fff');
-C2: SELECT * FROM t2 order by 1,2;
+C2: insert into dba.t2 VALUES(6, 'fff');
+C2: SELECT * FROM dba.t2 order by 1,2;
 C2: commit;
 MC: wait until C2 ready;
 C1: REVOKE SELECT ON t1 FROM brown;
 C1: commit;
 MC: wait until C1 ready;
-C2: SELECT * FROM t1 order by 1;
+C2: SELECT * FROM dba.t1 order by 1;
 C2: commit;
 MC: wait until C2 ready;
 

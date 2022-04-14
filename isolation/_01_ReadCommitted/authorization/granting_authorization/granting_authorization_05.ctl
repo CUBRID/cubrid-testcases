@@ -49,20 +49,20 @@ C1: COMMIT;
 MC: wait until C1 ready;
 
 C1: login as 'company';
-C1: TRUNCATE table t1;
-C1: select * from t1 order by 1;
+C1: TRUNCATE table dba.t1;
+C1: select * from dba.t1 order by 1;
 MC: wait until C1 ready;
 C1: COMMIT;
 MC: wait until C1 ready;
 C2: login as 'design';
-C2: TRUNCATE table t1;
-C2: select * from t1 order by 1;
+C2: TRUNCATE table dba.t1;
+C2: select * from dba.t1 order by 1;
 MC: wait until C2 ready;
 C1: COMMIT;
 MC: wait until C1 ready;
 C2: COMMIT;
 MC: wait until C2 ready;
-C2: select * from t1 order by 1;
+C2: select * from dba.t1 order by 1;
 C2: COMMIT;
 MC: wait until C2 ready;
 

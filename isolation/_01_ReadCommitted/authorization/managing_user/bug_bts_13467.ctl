@@ -24,12 +24,12 @@ MC: wait until C1 ready;
 C2: login as 'aa';
 MC: wait until C2 ready;
 
-C1: REVOKE SELECT ON t1, v1 FROM aa; 
+C1: REVOKE SELECT ON dba.t1, dba.v1 FROM aa; 
 C1: COMMIT;
 MC: wait until C1 ready;
 
-C2: select * from (select 'OK' from v1 where b is NULL);
-C2: select * from (select 'OK' from v1 where b is NULL);
+C2: select * from (select 'OK' from dba.v1 where b is NULL);
+C2: select * from (select 'OK' from dba.v1 where b is NULL);
 MC: wait until C2 ready;
 
 C1: quit;

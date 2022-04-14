@@ -51,18 +51,18 @@ MC: wait until C1 ready;
 C1: login as 'brown';
 C1: set transaction lock timeout INFINITE;
 C1: set transaction isolation level read committed;
-C1: GRANT SELECT ON t1_view TO company;
-C1: select * from t1 order by 1;
-C1: select * from t1_view order by 1;
-C1: update t1_view set id=9 where id=7;
-C1: select * from t1_view order by 1;
+C1: GRANT SELECT ON dba.t1_view TO company;
+C1: select * from dba.t1 order by 1;
+C1: select * from dba.t1_view order by 1;
+C1: update dba.t1_view set id=9 where id=7;
+C1: select * from dba.t1_view order by 1;
 C1: COMMIT;
 MC: wait until C1 ready;
 
 C2: login as 'company';
 C2: set transaction lock timeout INFINITE;
 C2: set transaction isolation level read committed;
-C2: select * from t1_view order by 1;
+C2: select * from dba.t1_view order by 1;
 C2: COMMIT;
 MC: wait until C2 ready;
 
@@ -80,7 +80,7 @@ MC: wait until C1 ready;
 C2: login as 'company';
 C2: set transaction lock timeout INFINITE;
 C2: set transaction isolation level read committed;
-C2: select * from t1_view order by 1;
+C2: select * from dba.t1_view order by 1;
 C2: COMMIT;
 MC: wait until C2 ready;
 

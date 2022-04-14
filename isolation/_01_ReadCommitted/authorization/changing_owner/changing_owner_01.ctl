@@ -52,15 +52,15 @@ C1: ALTER TABLE t1 OWNER TO public;
 C1: COMMIT;
 MC: wait until C1 ready;
 C2: login as 'company';
-C2: TRUNCATE table t1;
+C2: TRUNCATE table public.t1;
 C2: COMMIT;
 MC: wait until C2 ready;
-C2: select * from t1 order by 1;
+C2: select * from public.t1 order by 1;
 C2: COMMIT;
 MC: wait until C2 ready;
 
 C1: login as 'dba';
-C1: DROP table t1;
+C1: DROP table public.t1;
 C1: DROP USER jones;
 C1: DROP USER brown;
 C1: DROP USER design;
