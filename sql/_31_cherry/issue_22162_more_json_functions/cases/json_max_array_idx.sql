@@ -7,8 +7,8 @@ select json_array_insert(@a,  '$."title"[10000000000]', 'world') ;
 -- default: json_max_array_idx = 64*1024 
 select @a, 
 json_length(json_set(@a, '$."title"[65535]', 'world'), '$.title') as length, 
-json_extract(json_set(@a, '$."title"[65535]', 'world'), '$.title[65535]') as "title[65535]", 
-json_extract(json_set(@a, '$."title"[65535]', 'world'), '$.title[65534]') as "title[65534]"; 
+json_extract(json_set(@a, '$."title"[65535]', 'world'), '$.title[65535]') as "title_65535", 
+json_extract(json_set(@a, '$."title"[65535]', 'world'), '$.title[65534]') as "title_65534"; 
 select @a, json_length(json_set(@a, '$."title"[65537]', 'world'), '$.title');
 
 -- lower: json_max_array_idx = 1024
