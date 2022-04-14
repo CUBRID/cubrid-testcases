@@ -10,15 +10,15 @@
 0
 ===================================================
 Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
-t     0     idx1     1     id     A     0     null     null     YES     BTREE     null     null     YES     
-t     1     idx2     1     textlabel     A     0     null     null     YES     BTREE     null     null     YES     
-t     1     idx2     2     description     A     0     null     null     YES     BTREE     null     null     YES     
+dba.t     0     idx1     1     id     A     0     null     null     YES     BTREE     null     null     YES     
+dba.t     1     idx2     1     textlabel     A     0     null     null     YES     BTREE     null     null     YES     
+dba.t     1     idx2     2     description     A     0     null     null     YES     BTREE     null     null     YES     
 
 ===================================================
 Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
-other_t     0     idx1     1     id     A     0     null     null     YES     BTREE     null     null     YES     
-other_t     1     idx2     1     textlabel     A     0     null     null     YES     BTREE     null     null     YES     
-other_t     1     idx2     2     description     A     0     null     null     YES     BTREE     null     null     YES     
+dba.other_t     0     idx1     1     id     A     0     null     null     YES     BTREE     null     null     YES     
+dba.other_t     1     idx2     1     textlabel     A     0     null     null     YES     BTREE     null     null     YES     
+dba.other_t     1     idx2     2     description     A     0     null     null     YES     BTREE     null     null     YES     
 
 ===================================================
 8
@@ -26,9 +26,9 @@ other_t     1     idx2     2     description     A     0     null     null     Y
 0
 ===================================================
 Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
-the_other_t     0     idx1     1     id     A     0     null     null     YES     BTREE     null     null     YES     
-the_other_t     1     idx2     1     textlabel     A     0     null     null     YES     BTREE     null     null     YES     
-the_other_t     1     idx2     2     description     A     0     null     null     YES     BTREE     null     null     YES     
+dba.the_other_t     0     idx1     1     id     A     0     null     null     YES     BTREE     null     null     YES     
+dba.the_other_t     1     idx2     1     textlabel     A     0     null     null     YES     BTREE     null     null     YES     
+dba.the_other_t     1     idx2     2     description     A     0     null     null     YES     BTREE     null     null     YES     
 
 ===================================================
 Error:-493
@@ -59,10 +59,10 @@ Error:-493
 ===================================================
 index_name    class_name    key_count    filter_expression    
 idx1     t     1     null     
-idx2     t     2     least(t.id, 1000)> char_length(t.textlabel)     
-idx3     t     1      char_length(t.textlabel)>3     
-idx_tdesc     t     1     t.description<t.textlabel     
-idx_tdescr     t     1     t.description>t.textlabel     
+idx2     t     2     least([dba.t].id, 1000)> char_length([dba.t].textlabel)     
+idx3     t     1      char_length([dba.t].textlabel)>3     
+idx_tdesc     t     1     [dba.t].description<[dba.t].textlabel     
+idx_tdescr     t     1     [dba.t].description>[dba.t].textlabel     
 
 ===================================================
 0
@@ -272,9 +272,9 @@ Error:-493
 0
 ===================================================
 Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
-othert     0     idx1     1     id     A     0     null     null     YES     BTREE     null     null     YES     
-othert     1     idx2     1     textlabel     A     0     null     null     YES     BTREE     null     null     YES     
-othert     1     idx2     2     description     A     0     null     null     YES     BTREE     null     null     YES     
+dba.othert     0     idx1     1     id     A     0     null     null     YES     BTREE     null     null     YES     
+dba.othert     1     idx2     1     textlabel     A     0     null     null     YES     BTREE     null     null     YES     
+dba.othert     1     idx2     2     description     A     0     null     null     YES     BTREE     null     null     YES     
 
 ===================================================
 0
@@ -282,9 +282,9 @@ othert     1     idx2     2     description     A     0     null     null     YE
 0
 ===================================================
 Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
-theothert     0     idx1     1     id     A     0     null     null     YES     BTREE     null     null     YES     
-theothert     1     idx2     1     textlabel     A     0     null     null     YES     BTREE     null     null     YES     
-theothert     1     idx2     2     description     A     0     null     null     YES     BTREE     null     null     YES     
+dba.theothert     0     idx1     1     id     A     0     null     null     YES     BTREE     null     null     YES     
+dba.theothert     1     idx2     1     textlabel     A     0     null     null     YES     BTREE     null     null     YES     
+dba.theothert     1     idx2     2     description     A     0     null     null     YES     BTREE     null     null     YES     
 
 ===================================================
 0
@@ -292,10 +292,10 @@ theothert     1     idx2     2     description     A     0     null     null    
 0
 ===================================================
 Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
-table_t     0     idx1     1     id     A     8     null     null     YES     BTREE     null     null     YES     
-table_t     1     idx2     1     textlabel     A     8     null     null     YES     BTREE     null     null     YES     
-table_t     1     idx2     2     description     A     8     null     null     YES     BTREE     null     null     YES     
-table_t     1     idx3     1     textlabel     A     0     null     null     YES     BTREE     null     null     YES     
+dba.table_t     0     idx1     1     id     A     8     null     null     YES     BTREE     null     null     YES     
+dba.table_t     1     idx2     1     textlabel     A     8     null     null     YES     BTREE     null     null     YES     
+dba.table_t     1     idx2     2     description     A     8     null     null     YES     BTREE     null     null     YES     
+dba.table_t     1     idx3     1     textlabel     A     0     null     null     YES     BTREE     null     null     YES     
 
 ===================================================
 0

@@ -23,17 +23,17 @@ insert into foo values (1,1,1,1,1,1,1,1,1,1,1,1,1,14,14);
 insert into foo values (1,1,1,1,1,1,1,1,1,1,1,1,1,1,15);
 
 --test: show index statement
-select index_cardinality('foo', 'idx1', 7);
-select index_cardinality('foo', 'idx1', 8);
+select index_cardinality('dba.foo', 'idx1', 7);
+select index_cardinality('dba.foo', 'idx1', 8);
 update statistics on foo;
-select index_cardinality('foo', 'idx1', 7);
-select index_cardinality('foo', 'idx1', 8);
-select index_cardinality('foo', 'idx1', 9);
-select index_cardinality('foo', 'idx1', 10);
-select index_cardinality('foo', 'idx1', 11);
-select index_cardinality('foo', 'idx1', 12);
-select index_cardinality('foo', 'idx1', 13);
-select index_cardinality('foo', 'idx1', 14);
+select index_cardinality('dba.foo', 'idx1', 7);
+select index_cardinality('dba.foo', 'idx1', 8);
+select index_cardinality('dba.foo', 'idx1', 9);
+select index_cardinality('dba.foo', 'idx1', 10);
+select index_cardinality('dba.foo', 'idx1', 11);
+select index_cardinality('dba.foo', 'idx1', 12);
+select index_cardinality('dba.foo', 'idx1', 13);
+select index_cardinality('dba.foo', 'idx1', 14);
 
 drop table foo;
 

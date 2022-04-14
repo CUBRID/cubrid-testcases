@@ -18,7 +18,7 @@ Error:-494
 Error:-493
 ===================================================
 TABLE    CREATE TABLE    
-index_comment     CREATE TABLE [index_comment] ([id] INTEGER NOT NULL, [name] CHARACTER(10),  CONSTRAINT [pk_index_comment_id] PRIMARY KEY  ([id]),  INDEX [i_t_comment] ([id] DESC) COMMENT 'basic index comments with desc',  INDEX [i_t_id_name] ([id], [name]) COMMENT 'basic mix index comment for table',  INDEX [i_t_name] ( trim(both  from [index_comment].[name])) COMMENT 'add function index for table') REUSE_OID, COLLATE iso88591_bin     
+dba.index_comment     CREATE TABLE [index_comment] ([id] INTEGER NOT NULL, [name] CHARACTER(10),  CONSTRAINT [pk_index_comment_id] PRIMARY KEY  ([id]),  INDEX [i_t_comment] ([id] DESC) COMMENT 'basic index comments with desc',  INDEX [i_t_id_name] ([id], [name]) COMMENT 'basic mix index comment for table',  INDEX [i_t_name] ( trim(both  from [dba.index_comment].[name])) COMMENT 'add function index for table') REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 index_name    class_name    comment    
@@ -29,11 +29,11 @@ i_t_name     index_comment     add function index for table
 
 ===================================================
 Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
-index_comment     1     i_t_comment     1     id     D     0     null     null     NO     BTREE     null     basic index comments with desc     YES     
-index_comment     1     i_t_id_name     1     id     A     0     null     null     NO     BTREE     null     basic mix index comment for table     YES     
-index_comment     1     i_t_id_name     2     name     A     0     null     null     YES     BTREE     null     basic mix index comment for table     YES     
-index_comment     1     i_t_name     1     null     A     0     null     null     YES     BTREE      trim(both  from [index_comment].[name])     add function index for table     YES     
-index_comment     0     pk_index_comment_id     1     id     A     0     null     null     NO     BTREE     null     null     YES     
+dba.index_comment     1     i_t_comment     1     id     D     0     null     null     NO     BTREE     null     basic index comments with desc     YES     
+dba.index_comment     1     i_t_id_name     1     id     A     0     null     null     NO     BTREE     null     basic mix index comment for table     YES     
+dba.index_comment     1     i_t_id_name     2     name     A     0     null     null     YES     BTREE     null     basic mix index comment for table     YES     
+dba.index_comment     1     i_t_name     1     null     A     0     null     null     YES     BTREE      trim(both  from [dba.index_comment].[name])     add function index for table     YES     
+dba.index_comment     0     pk_index_comment_id     1     id     A     0     null     null     NO     BTREE     null     null     YES     
 
 ===================================================
 0
@@ -49,7 +49,7 @@ Error:-273
 0
 ===================================================
 TABLE    CREATE TABLE    
-index_comment     CREATE TABLE [index_comment] ([id] INTEGER NOT NULL, [name] CHARACTER(10),  CONSTRAINT [pk_index_comment_id] PRIMARY KEY  ([id]),  CONSTRAINT [i_t_id] UNIQUE KEY  ([id]) COMMENT 'this is a comment for unique index',  INDEX [i_t_id_name] ([id], [name]) COMMENT 'basic mix index comment for table',  INDEX [i_r_t_id] ([id] DESC) COMMENT 'this is a comment for reverse index') REUSE_OID, COLLATE iso88591_bin     
+dba.index_comment     CREATE TABLE [index_comment] ([id] INTEGER NOT NULL, [name] CHARACTER(10),  CONSTRAINT [pk_index_comment_id] PRIMARY KEY  ([id]),  CONSTRAINT [i_t_id] UNIQUE KEY  ([id]) COMMENT 'this is a comment for unique index',  INDEX [i_t_id_name] ([id], [name]) COMMENT 'basic mix index comment for table',  INDEX [i_r_t_id] ([id] DESC) COMMENT 'this is a comment for reverse index') REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 index_name    class_name    comment    
@@ -60,11 +60,11 @@ i_r_t_id     index_comment     this is a comment for reverse index
 
 ===================================================
 Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
-index_comment     1     i_r_t_id     1     id     D     0     null     null     NO     BTREE     null     this is a comment for reverse index     YES     
-index_comment     0     i_t_id     1     id     A     0     null     null     NO     BTREE     null     this is a comment for unique index     YES     
-index_comment     1     i_t_id_name     1     id     A     0     null     null     NO     BTREE     null     basic mix index comment for table     YES     
-index_comment     1     i_t_id_name     2     name     A     0     null     null     YES     BTREE     null     basic mix index comment for table     YES     
-index_comment     0     pk_index_comment_id     1     id     A     0     null     null     NO     BTREE     null     null     YES     
+dba.index_comment     1     i_r_t_id     1     id     D     0     null     null     NO     BTREE     null     this is a comment for reverse index     YES     
+dba.index_comment     0     i_t_id     1     id     A     0     null     null     NO     BTREE     null     this is a comment for unique index     YES     
+dba.index_comment     1     i_t_id_name     1     id     A     0     null     null     NO     BTREE     null     basic mix index comment for table     YES     
+dba.index_comment     1     i_t_id_name     2     name     A     0     null     null     YES     BTREE     null     basic mix index comment for table     YES     
+dba.index_comment     0     pk_index_comment_id     1     id     A     0     null     null     NO     BTREE     null     null     YES     
 
 ===================================================
 0

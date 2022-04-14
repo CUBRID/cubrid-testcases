@@ -8,8 +8,8 @@
 0
 ===================================================
 Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
-foo     1     idx_foo_weekday_a     1     null     A     0     null     null     YES     BTREE      weekday( cast([foo].[a] as varchar))     null     NO     
-foo     1     idx_foo_weekday_b     1     null     A     0     null     null     YES     BTREE      weekday([foo].[b])     null     NO     
+dba.foo     1     idx_foo_weekday_a     1     null     A     0     null     null     YES     BTREE      weekday( cast([dba.foo].[a] as varchar))     null     NO     
+dba.foo     1     idx_foo_weekday_b     1     null     A     0     null     null     YES     BTREE      weekday([dba.foo].[b])     null     NO     
 
 ===================================================
 1
@@ -56,7 +56,7 @@ select foo.a, foo.b from foo foo where  weekday(foo.b)>=? order by ?
 0
 ===================================================
 Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
-foo     1     idx_foo_weekday_a     1     null     A     5     null     null     YES     BTREE      weekday( cast([foo].[a] as varchar))     null     NO     
+dba.foo     1     idx_foo_weekday_a     1     null     A     5     null     null     YES     BTREE      weekday( cast([dba.foo].[a] as varchar))     null     NO     
 
 ===================================================
 Error:-176
@@ -76,7 +76,7 @@ Error:-176
 0
 ===================================================
 Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
-foo     1     idx_foo_trunc     1     null     A     0     null     null     YES     BTREE      trunc([foo].[a], -1)     null     YES     
+dba.foo     1     idx_foo_trunc     1     null     A     0     null     null     YES     BTREE      trunc([dba.foo].[a], -1)     null     YES     
 
 ===================================================
 6
@@ -124,7 +124,7 @@ select foo.a from foo foo where  trunc(foo.a, -?)>? order by ?
 0
 ===================================================
 Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
-foo     1     idx_foo_abs     1     null     A     0     null     null     YES     BTREE      abs(- cast([foo].[a] as double))     null     YES     
+dba.foo     1     idx_foo_abs     1     null     A     0     null     null     YES     BTREE      abs(- cast([dba.foo].[a] as double))     null     YES     
 
 ===================================================
 3
@@ -138,7 +138,7 @@ a
 0
 ===================================================
 Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
-foo     1     idx_foo_abs     1     null     A     3     null     null     YES     BTREE      abs(- cast([foo].[a] as double))     null     NO     
+dba.foo     1     idx_foo_abs     1     null     A     3     null     null     YES     BTREE      abs(- cast([dba.foo].[a] as double))     null     NO     
 
 ===================================================
 a    
@@ -168,7 +168,7 @@ select foo.a from foo foo where  abs(- cast(foo.a as double))>? order by ?
 0
 ===================================================
 Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
-foo     1     idx_foo_translate     1     null     A     2     null     null     YES     BTREE      translate([foo].[str], [foo].[c1], [foo].[c2])     null     YES     
+dba.foo     1     idx_foo_translate     1     null     A     2     null     null     YES     BTREE      translate([dba.foo].[str], [dba.foo].[c1], [dba.foo].[c2])     null     YES     
 
 ===================================================
 original    translated    
@@ -185,7 +185,7 @@ select foo.str,  translate(foo.str, foo.c?, foo.c?) from foo foo where  translat
 0
 ===================================================
 Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
-foo     1     idx_foo_translate     1     null     A     2     null     null     YES     BTREE      translate([foo].[str], [foo].[c1], [foo].[c2])     null     NO     
+dba.foo     1     idx_foo_translate     1     null     A     2     null     null     YES     BTREE      translate([dba.foo].[str], [dba.foo].[c1], [dba.foo].[c2])     null     NO     
 
 ===================================================
 original    translated    
@@ -212,7 +212,7 @@ select foo.str,  translate(foo.str, foo.c?, foo.c?) from foo foo where  translat
 0
 ===================================================
 Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
-foo     1     idx_foo_elt     1     null     A     3     null     null     YES     BTREE     elt(3, [foo].[a], [foo].[b], [foo].[c])     null     NO     
+dba.foo     1     idx_foo_elt     1     null     A     3     null     null     YES     BTREE     elt(3, [dba.foo].[a], [dba.foo].[b], [dba.foo].[c])     null     NO     
 
 ===================================================
 a    b    c    
@@ -259,24 +259,24 @@ a    b    c    d    e    f    g    h    i    j    k    l    m    n    o    p    
 Error:-493
 ===================================================
 Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
-t1     1     i_t1_a2d     1     null     A     1     null     null     YES     BTREE      date( cast([t1].[n] as varchar))     null     NO     
-t1     1     i_t1_a2q     1     a     A     1     null     null     YES     BTREE     null     null     NO     
-t1     1     i_t1_a2q     2     b     A     1     null     null     YES     BTREE     null     null     NO     
-t1     1     i_t1_a2q     3     c     A     1     null     null     YES     BTREE     null     null     NO     
-t1     1     i_t1_a2q     4     d     A     1     null     null     YES     BTREE     null     null     NO     
-t1     1     i_t1_a2q     5     e     A     1     null     null     YES     BTREE     null     null     NO     
-t1     1     i_t1_a2q     6     f     A     1     null     null     YES     BTREE     null     null     NO     
-t1     1     i_t1_a2q     7     g     A     1     null     null     YES     BTREE     null     null     NO     
-t1     1     i_t1_a2q     8     h     A     1     null     null     YES     BTREE     null     null     NO     
-t1     1     i_t1_a2q     9     i     A     1     null     null     YES     BTREE     null     null     NO     
-t1     1     i_t1_a2q     10     j     A     1     null     null     YES     BTREE     null     null     NO     
-t1     1     i_t1_a2q     11     k     A     1     null     null     YES     BTREE     null     null     NO     
-t1     1     i_t1_a2q     12     l     A     1     null     null     YES     BTREE     null     null     NO     
-t1     1     i_t1_a2q     13     m     A     1     null     null     YES     BTREE     null     null     NO     
-t1     1     i_t1_a2q     14     n     A     1     null     null     YES     BTREE     null     null     NO     
-t1     1     i_t1_a2q     15     o     A     1     null     null     YES     BTREE     null     null     NO     
-t1     1     i_t1_a2q     16     p     A     1     null     null     YES     BTREE     null     null     NO     
-t1     1     i_t1_a2q     17     q     A     1     null     null     YES     BTREE     null     null     NO     
+dba.t1     1     i_t1_a2d     1     null     A     1     null     null     YES     BTREE      date( cast([dba.t1].[n] as varchar))     null     NO     
+dba.t1     1     i_t1_a2q     1     a     A     1     null     null     YES     BTREE     null     null     NO     
+dba.t1     1     i_t1_a2q     2     b     A     1     null     null     YES     BTREE     null     null     NO     
+dba.t1     1     i_t1_a2q     3     c     A     1     null     null     YES     BTREE     null     null     NO     
+dba.t1     1     i_t1_a2q     4     d     A     1     null     null     YES     BTREE     null     null     NO     
+dba.t1     1     i_t1_a2q     5     e     A     1     null     null     YES     BTREE     null     null     NO     
+dba.t1     1     i_t1_a2q     6     f     A     1     null     null     YES     BTREE     null     null     NO     
+dba.t1     1     i_t1_a2q     7     g     A     1     null     null     YES     BTREE     null     null     NO     
+dba.t1     1     i_t1_a2q     8     h     A     1     null     null     YES     BTREE     null     null     NO     
+dba.t1     1     i_t1_a2q     9     i     A     1     null     null     YES     BTREE     null     null     NO     
+dba.t1     1     i_t1_a2q     10     j     A     1     null     null     YES     BTREE     null     null     NO     
+dba.t1     1     i_t1_a2q     11     k     A     1     null     null     YES     BTREE     null     null     NO     
+dba.t1     1     i_t1_a2q     12     l     A     1     null     null     YES     BTREE     null     null     NO     
+dba.t1     1     i_t1_a2q     13     m     A     1     null     null     YES     BTREE     null     null     NO     
+dba.t1     1     i_t1_a2q     14     n     A     1     null     null     YES     BTREE     null     null     NO     
+dba.t1     1     i_t1_a2q     15     o     A     1     null     null     YES     BTREE     null     null     NO     
+dba.t1     1     i_t1_a2q     16     p     A     1     null     null     YES     BTREE     null     null     NO     
+dba.t1     1     i_t1_a2q     17     q     A     1     null     null     YES     BTREE     null     null     NO     
 
 ===================================================
 Error:-272
@@ -284,40 +284,40 @@ Error:-272
 0
 ===================================================
 Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
-t1     1     i_t1_a2d     1     null     A     1     null     null     YES     BTREE      date( cast([t1].[n] as varchar))     null     NO     
-t1     1     i_t1_a2p     1     a     A     1     null     null     YES     BTREE     null     null     YES     
-t1     1     i_t1_a2p     2     b     A     1     null     null     YES     BTREE     null     null     YES     
-t1     1     i_t1_a2p     3     c     A     1     null     null     YES     BTREE     null     null     YES     
-t1     1     i_t1_a2p     4     d     A     1     null     null     YES     BTREE     null     null     YES     
-t1     1     i_t1_a2p     5     e     A     1     null     null     YES     BTREE     null     null     YES     
-t1     1     i_t1_a2p     6     f     A     1     null     null     YES     BTREE     null     null     YES     
-t1     1     i_t1_a2p     7     g     A     1     null     null     YES     BTREE     null     null     YES     
-t1     1     i_t1_a2p     8     h     A     1     null     null     YES     BTREE     null     null     YES     
-t1     1     i_t1_a2p     9     i     A     1     null     null     YES     BTREE     null     null     YES     
-t1     1     i_t1_a2p     10     j     A     1     null     null     YES     BTREE     null     null     YES     
-t1     1     i_t1_a2p     11     k     A     1     null     null     YES     BTREE     null     null     YES     
-t1     1     i_t1_a2p     12     l     A     1     null     null     YES     BTREE     null     null     YES     
-t1     1     i_t1_a2p     13     m     A     1     null     null     YES     BTREE     null     null     YES     
-t1     1     i_t1_a2p     14     n     A     1     null     null     YES     BTREE     null     null     YES     
-t1     1     i_t1_a2p     15     o     A     1     null     null     YES     BTREE     null     null     YES     
-t1     1     i_t1_a2p     16     p     A     1     null     null     YES     BTREE     null     null     YES     
-t1     1     i_t1_a2q     1     a     A     1     null     null     YES     BTREE     null     null     NO     
-t1     1     i_t1_a2q     2     b     A     1     null     null     YES     BTREE     null     null     NO     
-t1     1     i_t1_a2q     3     c     A     1     null     null     YES     BTREE     null     null     NO     
-t1     1     i_t1_a2q     4     d     A     1     null     null     YES     BTREE     null     null     NO     
-t1     1     i_t1_a2q     5     e     A     1     null     null     YES     BTREE     null     null     NO     
-t1     1     i_t1_a2q     6     f     A     1     null     null     YES     BTREE     null     null     NO     
-t1     1     i_t1_a2q     7     g     A     1     null     null     YES     BTREE     null     null     NO     
-t1     1     i_t1_a2q     8     h     A     1     null     null     YES     BTREE     null     null     NO     
-t1     1     i_t1_a2q     9     i     A     1     null     null     YES     BTREE     null     null     NO     
-t1     1     i_t1_a2q     10     j     A     1     null     null     YES     BTREE     null     null     NO     
-t1     1     i_t1_a2q     11     k     A     1     null     null     YES     BTREE     null     null     NO     
-t1     1     i_t1_a2q     12     l     A     1     null     null     YES     BTREE     null     null     NO     
-t1     1     i_t1_a2q     13     m     A     1     null     null     YES     BTREE     null     null     NO     
-t1     1     i_t1_a2q     14     n     A     1     null     null     YES     BTREE     null     null     NO     
-t1     1     i_t1_a2q     15     o     A     1     null     null     YES     BTREE     null     null     NO     
-t1     1     i_t1_a2q     16     p     A     1     null     null     YES     BTREE     null     null     NO     
-t1     1     i_t1_a2q     17     q     A     1     null     null     YES     BTREE     null     null     NO     
+dba.t1     1     i_t1_a2d     1     null     A     1     null     null     YES     BTREE      date( cast([dba.t1].[n] as varchar))     null     NO     
+dba.t1     1     i_t1_a2p     1     a     A     1     null     null     YES     BTREE     null     null     YES     
+dba.t1     1     i_t1_a2p     2     b     A     1     null     null     YES     BTREE     null     null     YES     
+dba.t1     1     i_t1_a2p     3     c     A     1     null     null     YES     BTREE     null     null     YES     
+dba.t1     1     i_t1_a2p     4     d     A     1     null     null     YES     BTREE     null     null     YES     
+dba.t1     1     i_t1_a2p     5     e     A     1     null     null     YES     BTREE     null     null     YES     
+dba.t1     1     i_t1_a2p     6     f     A     1     null     null     YES     BTREE     null     null     YES     
+dba.t1     1     i_t1_a2p     7     g     A     1     null     null     YES     BTREE     null     null     YES     
+dba.t1     1     i_t1_a2p     8     h     A     1     null     null     YES     BTREE     null     null     YES     
+dba.t1     1     i_t1_a2p     9     i     A     1     null     null     YES     BTREE     null     null     YES     
+dba.t1     1     i_t1_a2p     10     j     A     1     null     null     YES     BTREE     null     null     YES     
+dba.t1     1     i_t1_a2p     11     k     A     1     null     null     YES     BTREE     null     null     YES     
+dba.t1     1     i_t1_a2p     12     l     A     1     null     null     YES     BTREE     null     null     YES     
+dba.t1     1     i_t1_a2p     13     m     A     1     null     null     YES     BTREE     null     null     YES     
+dba.t1     1     i_t1_a2p     14     n     A     1     null     null     YES     BTREE     null     null     YES     
+dba.t1     1     i_t1_a2p     15     o     A     1     null     null     YES     BTREE     null     null     YES     
+dba.t1     1     i_t1_a2p     16     p     A     1     null     null     YES     BTREE     null     null     YES     
+dba.t1     1     i_t1_a2q     1     a     A     1     null     null     YES     BTREE     null     null     NO     
+dba.t1     1     i_t1_a2q     2     b     A     1     null     null     YES     BTREE     null     null     NO     
+dba.t1     1     i_t1_a2q     3     c     A     1     null     null     YES     BTREE     null     null     NO     
+dba.t1     1     i_t1_a2q     4     d     A     1     null     null     YES     BTREE     null     null     NO     
+dba.t1     1     i_t1_a2q     5     e     A     1     null     null     YES     BTREE     null     null     NO     
+dba.t1     1     i_t1_a2q     6     f     A     1     null     null     YES     BTREE     null     null     NO     
+dba.t1     1     i_t1_a2q     7     g     A     1     null     null     YES     BTREE     null     null     NO     
+dba.t1     1     i_t1_a2q     8     h     A     1     null     null     YES     BTREE     null     null     NO     
+dba.t1     1     i_t1_a2q     9     i     A     1     null     null     YES     BTREE     null     null     NO     
+dba.t1     1     i_t1_a2q     10     j     A     1     null     null     YES     BTREE     null     null     NO     
+dba.t1     1     i_t1_a2q     11     k     A     1     null     null     YES     BTREE     null     null     NO     
+dba.t1     1     i_t1_a2q     12     l     A     1     null     null     YES     BTREE     null     null     NO     
+dba.t1     1     i_t1_a2q     13     m     A     1     null     null     YES     BTREE     null     null     NO     
+dba.t1     1     i_t1_a2q     14     n     A     1     null     null     YES     BTREE     null     null     NO     
+dba.t1     1     i_t1_a2q     15     o     A     1     null     null     YES     BTREE     null     null     NO     
+dba.t1     1     i_t1_a2q     16     p     A     1     null     null     YES     BTREE     null     null     NO     
+dba.t1     1     i_t1_a2q     17     q     A     1     null     null     YES     BTREE     null     null     NO     
 
 ===================================================
 0
