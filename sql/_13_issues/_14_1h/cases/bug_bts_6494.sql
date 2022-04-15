@@ -217,24 +217,24 @@ update statistics on lwe with fullscan;
 set optimization level 513;
 
 --@queryplan
-SELECT /*+ recompile */ count (*) FROM fjj a LEFT JOIN lwe b ON b.aiid = a.fvid AND b.wmj = 40045 AND b.atid = a.fatid WHERE a.mid = 'TEST1000001' AND b.aiid is null;
+SELECT /*+ recompile */ count (b.aiid) FROM fjj a LEFT JOIN lwe b ON b.aiid = a.fvid AND b.wmj = 40045 AND b.atid = a.fatid WHERE a.mid = 'TEST1000001' AND b.aiid is null;
 
 --@queryplan
-SELECT /*+ recompile */ count (*) FROM fjj a LEFT JOIN lwe b ON b.aiid = a.fvid   AND b.wmj = 40045 AND b.atid = a.fatid WHERE  a.mid = 'TEST1000001';
+SELECT /*+ recompile */ count (b.aiid) FROM fjj a LEFT JOIN lwe b ON b.aiid = a.fvid   AND b.wmj = 40045 AND b.atid = a.fatid WHERE  a.mid = 'TEST1000001';
 
 --@queryplan
-SELECT /*+ recompile */ count (*) FROM fjj a LEFT JOIN lwe b ON b.aiid = a.fvid   AND b.wmj = 40045 AND b.atid = a.fatid;
+SELECT /*+ recompile */ count (b.aiid) FROM fjj a LEFT JOIN lwe b ON b.aiid = a.fvid   AND b.wmj = 40045 AND b.atid = a.fatid;
 
 set system parameters 'optimizer_enable_merge_join=yes';
 
 --@queryplan
-SELECT /*+ recompile */count (*) FROM fjj a LEFT JOIN lwe b ON b.aiid = a.fvid AND b.wmj = 40045 AND b.atid = a.fatid WHERE a.mid = 'TEST1000001' AND b.aiid is null;
+SELECT /*+ recompile */count (b.aiid) FROM fjj a LEFT JOIN lwe b ON b.aiid = a.fvid AND b.wmj = 40045 AND b.atid = a.fatid WHERE a.mid = 'TEST1000001' AND b.aiid is null;
 
 --@queryplan
-SELECT /*+ recompile */ count (*) FROM fjj a LEFT JOIN lwe b ON b.aiid = a.fvid   AND b.wmj = 40045 AND b.atid = a.fatid WHERE a.mid='TEST1000001';
+SELECT /*+ recompile */ count (b.aiid) FROM fjj a LEFT JOIN lwe b ON b.aiid = a.fvid   AND b.wmj = 40045 AND b.atid = a.fatid WHERE a.mid='TEST1000001';
 
 --@queryplan
-SELECT /*+ recompile */ count (*) FROM fjj a LEFT JOIN lwe b ON b.aiid = a.fvid   AND b.wmj = 40045 AND b.atid = a.fatid;
+SELECT /*+ recompile */ count (b.aiid) FROM fjj a LEFT JOIN lwe b ON b.aiid = a.fvid   AND b.wmj = 40045 AND b.atid = a.fatid;
 
 
 drop table fjj;
