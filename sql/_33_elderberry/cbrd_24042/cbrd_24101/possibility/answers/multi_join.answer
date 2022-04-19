@@ -1,0 +1,102 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+3
+===================================================
+col_a    col_b    col_a    col_b    col_a    col_b    col_a    col_b    col_a    col_b    
+2     2     2     2     2     2     2     2     2     2     
+3     3     3     3     3     3     3     3     3     3     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: nl-join (inner join)
+                          edge:  term[?]
+                          outer: nl-join (inner join)
+                                     edge:  term[?]
+                                     outer: sscan
+                                                class: a node[?]
+                                                sargs: term[?]
+                                                cost:  ? card ?
+                                     inner: sscan
+                                                class: b node[?]
+                                                sargs: term[?] AND term[?]
+                                                cost:  ? card ?
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: c node[?]
+                                     sargs: term[?] AND term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: d node[?]
+                          sargs: term[?] AND term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: e node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.col_a, a.col_b, b.col_a, b.col_b, c.col_a, c.col_b, d.col_a, d.col_b, e.col_a, e.col_b from t_a a, t_b b, t_b c, t_b d, t_b e where (a.col_a=b.col_a) and b.col_a=c.col_a and c.col_a=d.col_a and d.col_a=e.col_a and (a.col_a> ?:?  and a.col_a< ?:? ) and (b.col_a> ?:? ) and (c.col_a> ?:? ) and (d.col_a> ?:? ) and (e.col_a> ?:? )
+===================================================
+col_a    col_b    col_a    col_b    col_a    col_b    col_a    col_b    col_a    col_b    
+2     2     2     2     2     2     2     2     2     2     
+3     3     3     3     3     3     3     3     3     3     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t_b node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t_b.col_a, max(t_b.col_b) from t_b t_b where (t_b.col_a> ?:? ) group by t_b.col_a)
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: nl-join (inner join)
+                          edge:  term[?]
+                          outer: nl-join (inner join)
+                                     edge:  term[?]
+                                     outer: sscan
+                                                class: a node[?]
+                                                sargs: term[?]
+                                                cost:  ? card ?
+                                     inner: sscan
+                                                class: b node[?]
+                                                sargs: term[?] AND term[?]
+                                                cost:  ? card ?
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: c node[?]
+                                     sargs: term[?] AND term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: d node[?]
+                          sargs: term[?] AND term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: e node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.col_a, a.col_b, b.col_a, b.col_b, c.col_a, c.col_b, d.col_a, d.col_b, e.col_a, e.col_b from t_a a, t_b b, t_b c, t_b d, (select t_b.col_a, max(t_b.col_b) from t_b t_b where (t_b.col_a> ?:? ) group by t_b.col_a) e (col_a, col_b) where (a.col_a=b.col_a) and b.col_a=c.col_a and c.col_a=d.col_a and d.col_a=e.col_a and (a.col_a> ?:?  and a.col_a< ?:? ) and (b.col_a> ?:? ) and (c.col_a> ?:? ) and (d.col_a> ?:? )
+===================================================
+0
