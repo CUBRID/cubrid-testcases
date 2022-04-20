@@ -1,0 +1,60 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+10
+===================================================
+10
+===================================================
+0
+===================================================
+col_a    
+1     
+
+Query plan:
+sscan
+    class: t_b node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select t_b.col_b from t_b t_b where (inst_num()<= ?:? ))
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select a.col_a from t_a a, t_b b where (select t_b.col_b from t_b t_b where (inst_num()<= ?:? ))=? and (b.col_a= ?:? ) and (a.col_a= ?:? ) and (a.col_a=b.col_a)
+===================================================
+0
+===================================================
+col_a    
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: a node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+(select a.col_a, a.col_b from t_a a order by ?, ? for orderby_num()<= ?:? )
+Query plan:
+sscan
+    class: a node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select a.col_a from (select a.col_a, a.col_b from t_a a order by ?, ? for orderby_num()<= ?:? ) a (col_a, col_b) where a.col_b= ?:? 
+===================================================
+0
