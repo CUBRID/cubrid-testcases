@@ -31,3 +31,4 @@ select * from DBTIMEZONE;
 drop view DBTIMEZONE;
 
 drop table TIMEZONES;
+drop table tx;
