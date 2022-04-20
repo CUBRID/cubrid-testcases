@@ -1,0 +1,69 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+col_a    
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select a.col_a, a.col_b from t_a a, t_b b where (a.col_a=b.col_a) and a.col_a= ?:?  connect by a.col_a= prior a.col_b)
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.col_a from (select a.col_a, a.col_b from t_a a, t_b b where (a.col_a=b.col_a) and a.col_a= ?:?  connect by a.col_a= prior a.col_b) a (col_a, col_b), t_b b where b.col_b= ?:?  and a.col_a=b.col_b
+===================================================
+0
+===================================================
+col_a    
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select a.col_a, a.col_b from t_a a, t_b b where (a.col_a=b.col_a))
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: b node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.col_a from t_b b, (select a.col_a, a.col_b from t_a a, t_b b where (a.col_a=b.col_a)) a (col_a, col_b) where a.col_a=b.col_a and b.col_b= ?:?  connect by a.col_a= prior a.col_b
+===================================================
+0
