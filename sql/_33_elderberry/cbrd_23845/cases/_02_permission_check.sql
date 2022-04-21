@@ -15,7 +15,6 @@ drop synonym if exists s1;
 create table t1 (c1 int);
 create synonym s1 for t1;
 
---drop user u1;
 create user u1 groups dba;
 call login ('u1') on class db_user;
 drop table if exists t1;
@@ -24,7 +23,6 @@ create table t1 (c1 int);
 create synonym s1 for t1;
 
 call login ('dba') on class db_user;
---drop user u2;
 create user u2 groups u1;
 call login ('u2') on class db_user;
 drop table if exists t1;
@@ -33,7 +31,6 @@ create table t1 (c1 int);
 create synonym s1 for t1;
 
 call login ('dba') on class db_user;
---drop user u3;
 create user u3;
 call login ('u3') on class db_user;
 drop table if exists t1;
@@ -42,7 +39,6 @@ create table t1 (c1 int);
 create synonym s1 for t1;
 
 call login ('dba') on class db_user;
---drop user u4;
 create user u4 groups u3;
 call login ('u4') on class db_user;
 drop table if exists t1;
@@ -51,7 +47,6 @@ create table t1 (c1 int);
 create synonym s1 for t1;
 
 call login ('dba') on class db_user;
---drop user u5;
 create user u5;
 call login ('u5') on class db_user;
 drop table if exists t1;
