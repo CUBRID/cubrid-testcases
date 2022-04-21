@@ -84,14 +84,19 @@ temp(distinct)
                  cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(select distinct a.col_a from t_a a, t_b b where (a.col_a=b.col_a) and a.col_a=aa.col_a and (a.col_a> ?:?  and a.col_a< ?:? ) and (b.col_a> ?:? ))
+(select distinct a.col_a from t_a a, t_b b where (a.col_a=b.col_a) and a.col_a<>? and (a.col_a> ?:?  and a.col_a< ?:? ) and (b.col_a> ?:? ))
 Query plan:
-sscan
-    class: aa node[?]
-    sargs: term[?]
-    subqs: ?
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: aa node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: av? node[?]
+               sargs: term[?]
+               cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select aa.col_a from t_a aa where aa.col_a in (select distinct a.col_a from t_a a, t_b b where (a.col_a=b.col_a) and a.col_a=aa.col_a and (a.col_a> ?:?  and a.col_a< ?:? ) and (b.col_a> ?:? ))
+select aa.col_a from t_a aa, (select distinct a.col_a from t_a a, t_b b where (a.col_a=b.col_a) and a.col_a<>? and (a.col_a> ?:?  and a.col_a< ?:? ) and (b.col_a> ?:? )) av? (av_?) where aa.col_a=av?.av_?
 ===================================================
 0

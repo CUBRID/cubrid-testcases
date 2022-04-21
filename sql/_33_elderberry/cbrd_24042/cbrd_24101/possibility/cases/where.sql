@@ -64,5 +64,5 @@ WHERE  aa.col_a IN (SELECT /*+ recompile */ a.col_a
                             FROM   t_b
                             WHERE  col_a > 1) b
                      WHERE  a.col_a = b.col_a
-                     AND a.col_a = aa.col_a);
+                     AND a.col_a<>0);
 DROP TABLE t_a, t_b;
