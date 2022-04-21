@@ -1,0 +1,120 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+30     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: __t? node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx_b term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ta [__t?], tb b where ([__t?].c_a=b.c_a)
+===================================================
+max(ca)    
+30     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: __t? node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx_b term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select max([__t?].c_a) from ta [__t?], tb b where ([__t?].c_a=b.c_a)
+===================================================
+group_concat(cb)    
+1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30     
+
+Query plan:
+iscan
+    class: tc node[?]
+    index: pk_tc_c_a term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+(select 'unnecessary' from tc tc where tc.c_a=a.c_a)
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: b node[?]
+                            index: idx_b term[?] (covers)
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+(select b.c_b, a.c_a, (select 'unnecessary' from tc tc where tc.c_a=a.c_a) from ta a, tb b where a.c_a=b.c_a order by ?, ?, ?)
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select group_concat([__t?].cb) from (select b.c_b as [cb], a.c_a as [ca], (select 'unnecessary' from tc tc where tc.c_a=a.c_a) as [unnecessary?] from ta a, tb b where a.c_a=b.c_a order by ?, ?, ?) [__t?] (cb, ca, unnecessary?)
+===================================================
+max(ca)    
+3     
+
+Query plan:
+iscan
+    class: tc node[?]
+    index: pk_tc_c_a term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+(select 'unnecessary' from tc tc where tc.c_a=a.c_a)
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: b node[?]
+                            index: idx_b term[?] (covers)
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+(select a.c_a, b.c_b, (select 'unnecessary' from tc tc where tc.c_a=a.c_a) from ta a, tb b where a.c_a=b.c_a order by ?, ?, ? for orderby_num()<= ?:? )
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select max([__t?].ca) from (select a.c_a as [ca], b.c_b as [cb], (select 'unnecessary' from tc tc where tc.c_a=a.c_a) as [unnecessary?] from ta a, tb b where a.c_a=b.c_a order by ?, ?, ? for orderby_num()<= ?:? ) [__t?] (ca, cb, unnecessary?)
+===================================================
+0
