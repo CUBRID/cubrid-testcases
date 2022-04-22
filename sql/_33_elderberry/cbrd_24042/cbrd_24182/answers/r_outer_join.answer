@@ -1,0 +1,92 @@
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
+count(1)    
+1     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: a node[?]
+               index: idx term[?] AND term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t a right outer join t b on a.c_b=b.c_b and a.c_a=b.c_a where b.c_c= ?:? 
+===================================================
+count(*)    
+1     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?] AND term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t a inner join t b on a.c_a=b.c_b and a.c_a=b.c_a where a.c_c= ?:? 
+===================================================
+count(*)    
+1     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?] AND term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t a, t b where a.c_a=b.c_a and a.c_a=b.c_b and a.c_c= ?:? 
+===================================================
+count(*)    
+3     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: idx-join (left outer join)
+               outer: idx-join (inner join)
+                          outer: sscan
+                                     class: a node[?]
+                                     cost:  ? card ?
+                          inner: iscan
+                                     class: b node[?]
+                                     index: idx term[?] AND term[?] (covers)
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: iscan
+                          class: c node[?]
+                          index: idx term[?] AND term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: d node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t a left outer join t c on a.c_b=c.c_b and a.c_a=c.c_a, t d, t b where a.c_a=b.c_a and a.c_a=b.c_b and d.c_c=nvl(c.c_c, ?)
+===================================================
+0

@@ -1,0 +1,31 @@
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
+count(a.c_a)    
+1     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(a.c_a) from t a left outer join t b on a.c_c=b.c_c and b.c_c= ?:?  and a.c_a=b.c_a where a.c_c= ?:? 
+===================================================
+0
