@@ -1,0 +1,87 @@
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+1     
+
+Query plan:
+sscan
+    class: a node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from t a where a.c_c= ?:? 
+===================================================
+count(*)    
+1     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from t a left outer join t b on a.c_c=b.c_c and b.c_c= ?:?  and a.c_a=b.c_a where a.c_c= ?:? 
+===================================================
+count(b.c_b)    
+1     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?] AND term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(b.c_b) from t a left outer join t b on a.c_b=b.c_b and a.c_a=b.c_a where a.c_c= ?:? 
+===================================================
+count(c.c_b)    
+1     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: c node[?]
+               index: idx term[?] AND term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(c.c_b) from t a left outer join t c on a.c_b=c.c_b and a.c_a=c.c_a where a.c_c= ?:? 
+===================================================
+count(*)    
+1     
+
+Query plan:
+sscan
+    class: a node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from t a where a.c_c= ?:? 
+===================================================
+0
