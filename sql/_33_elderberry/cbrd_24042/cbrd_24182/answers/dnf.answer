@@ -1,0 +1,41 @@
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
+c_a    c_b    c_c    
+1     1     1     
+
+Query plan:
+sscan
+    class: a node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select a.c_a, a.c_b, a.c_c from t a where a.c_c= ?:? 
+===================================================
+count(*)    
+0     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: a node[?]
+               index: idx_a term[?] AND term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?] AND term[?] (covers)
+               filtr: term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t a, t b where ((a.c_a= ?:? ) or (a.c_a= ?:? ) or (a.c_a= ?:? ) or (a.c_a= ?:? )) and (((a.c_a= ?:? ) or (a.c_a= ?:? ) or (a.c_a= ?:? ) or (a.c_a= ?:? )) or (b.c_a= ?:? )) and (((a.c_a= ?:? ) or (a.c_a= ?:? ) or (a.c_a= ?:? )) or (b.c_a= ?:? )) and (((a.c_a= ?:? ) or (a.c_a= ?:? ) or (a.c_a= ?:? )) or ((b.c_a= ?:? ) or (b.c_a= ?:? ))) and (((a.c_a= ?:? ) or (a.c_a= ?:? ) or (a.c_a= ?:? )) or (b.c_a= ?:? )) and (((a.c_a= ?:? ) or (a.c_a= ?:? ) or (a.c_a= ?:? )) or ((b.c_a= ?:? ) or (b.c_a= ?:? ))) and (((a.c_a= ?:? ) or (a.c_a= ?:? )) or ((b.c_a= ?:? ) or (b.c_a= ?:? ))) and (((a.c_a= ?:? ) or (a.c_a= ?:? )) or ((b.c_a= ?:? ) or (b.c_a= ?:? ) or (b.c_a= ?:? ))) and (((a.c_a= ?:? ) or (a.c_a= ?:? ) or (a.c_a= ?:? )) or (b.c_a= ?:? )) and (((a.c_a= ?:? ) or (a.c_a= ?:? ) or (a.c_a= ?:? )) or ((b.c_a= ?:? ) or (b.c_a= ?:? ))) and (((a.c_a= ?:? ) or (a.c_a= ?:? )) or ((b.c_a= ?:? ) or (b.c_a= ?:? ))) and (((a.c_a= ?:? ) or (a.c_a= ?:? )) or ((b.c_a= ?:? ) or (b.c_a= ?:? ) or (b.c_a= ?:? ))) and (((a.c_a= ?:? ) or (a.c_a= ?:? )) or ((b.c_a= ?:? ) or (b.c_a= ?:? ))) and (((a.c_a= ?:? ) or (a.c_a= ?:? )) or ((b.c_a= ?:? ) or (b.c_a= ?:? ) or (b.c_a= ?:? ))) and ((a.c_a= ?:? ) or ((b.c_a= ?:? ) or (b.c_a= ?:? ) or (b.c_a= ?:? ))) and ((a.c_a= ?:? ) or ((b.c_a= ?:? ) or (b.c_a= ?:? ) or (b.c_a= ?:? ) or (b.c_a= ?:? ))) and ((b.c_a= ?:? ) or ((a.c_a= ?:? ) or (a.c_a= ?:? ) or (a.c_a= ?:? ) or (a.c_a= ?:? ))) and ((b.c_a= ?:? ) or ((a.c_a= ?:? ) or (a.c_a= ?:? ) or (a.c_a= ?:? ))) and (((b.c_a= ?:? ) or (b.c_a= ?:? )) or ((a.c_a= ?:? ) or (a.c_a= ?:? ) or (a.c_a= ?:? ))) and (((b.c_a= ?:? ) or (b.c_a= ?:? )) or ((a.c_a= ?:? ) or (a.c_a= ?:? ))) and (((b.c_a= ?:? ) or (b.c_a= ?:? )) or ((a.c_a= ?:? ) or (a.c_a= ?:? ) or (a.c_a= ?:? ))) and (((b.c_a= ?:? ) or (b.c_a= ?:? )) or ((a.c_a= ?:? ) or (a.c_a= ?:? ))) and (((b.c_a= ?:? ) or (b.c_a= ?:? ) or (b.c_a= ?:? )) or ((a.c_a= ?:? ) or (a.c_a= ?:? ))) and (((b.c_a= ?:? ) or (b.c_a= ?:? ) or (b.c_a= ?:? )) or (a.c_a= ?:? )) and (((b.c_a= ?:? ) or (b.c_a= ?:? )) or ((a.c_a= ?:? ) or (a.c_a= ?:? ) or (a.c_a= ?:? ))) and (((b.c_a= ?:? ) or (b.c_a= ?:? )) or ((a.c_a= ?:? ) or (a.c_a= ?:? ))) and (((b.c_a= ?:? ) or (b.c_a= ?:? ) or (b.c_a= ?:? )) or ((a.c_a= ?:? ) or (a.c_a= ?:? ))) and (((b.c_a= ?:? ) or (b.c_a= ?:? ) or (b.c_a= ?:? )) or (a.c_a= ?:? )) and (((b.c_a= ?:? ) or (b.c_a= ?:? ) or (b.c_a= ?:? )) or ((a.c_a= ?:? ) or (a.c_a= ?:? ))) and (((b.c_a= ?:? ) or (b.c_a= ?:? ) or (b.c_a= ?:? )) or (a.c_a= ?:? )) and (((b.c_a= ?:? ) or (b.c_a= ?:? ) or (b.c_a= ?:? ) or (b.c_a= ?:? )) or (a.c_a= ?:? )) and ((b.c_a= ?:? ) or (b.c_a= ?:? ) or (b.c_a= ?:? ) or (b.c_a= ?:? )) and a.c_a=b.c_a and a.c_b=b.c_b and a.c_c= ?:? 
+===================================================
+0
