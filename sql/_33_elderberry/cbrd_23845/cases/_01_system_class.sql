@@ -4,20 +4,6 @@
  *
  */
 
-
-/*
- * check system class
- *   - SELECT * FROM _db_class
- *   - SELECT * FROM db_class
- *   - ;SChema
- *   - show create table
- *   - show create view
- *   - show columns
- *   - show index
- *   - SELECT
- *
- */
-
 SELECT class_of, unique_name, class_name, owner.name FROM _db_class WHERE class_name LIKE '%db_synonym%';
 SELECT * FROM db_class WHERE class_name LIKE '%db_synonym%';
 DESCRIBE _db_synonym;
