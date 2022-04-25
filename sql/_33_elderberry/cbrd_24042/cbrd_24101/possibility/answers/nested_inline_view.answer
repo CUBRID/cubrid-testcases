@@ -1,0 +1,50 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+3
+===================================================
+col_a    col_b    col_a    col_b    
+2     2     2     2     
+3     3     3     3     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.col_a, a.col_b, b.col_a, b.col_b from t_a a, t_b b where (a.col_a=b.col_a) and (a.col_a> ?:?  and a.col_a< ?:? ) and (b.col_a> ?:? )
+===================================================
+col_a    col_b    col_a    col_b    
+2     2     2     2     
+3     3     3     3     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.col_a, a.col_b, b.col_a, b.col_b from t_a a, t_b b where (a.col_a=b.col_a) and (a.col_a> ?:?  and a.col_a< ?:? ) and (b.col_a> ?:? )
+===================================================
+0

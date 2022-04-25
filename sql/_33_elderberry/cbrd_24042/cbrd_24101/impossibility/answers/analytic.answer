@@ -1,0 +1,43 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+3
+===================================================
+col_a    
+1     
+2     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t_b node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+(select t_b.col_a, t_b.col_b from t_b t_b where (t_b.col_a> ?:? ) order by ? desc )
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: count partition by () order by (? asc nulls first)
+Query stmt:
+select count(*) over (order by ?) from t_a a, (select t_b.col_a, t_b.col_b from t_b t_b where (t_b.col_a> ?:? ) order by ? desc ) b (col_a, col_b) where a.col_a=b.col_a
+===================================================
+0
