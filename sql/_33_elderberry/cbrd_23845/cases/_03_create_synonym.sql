@@ -113,6 +113,7 @@ drop synonym s1;
 drop private synonym s2;
 drop synonym u1.s1;
 drop private synonym u1.s2;
+drop user u1;
 
 -- already exist
 drop synonym if exists s1;
