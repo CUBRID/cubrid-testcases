@@ -1,0 +1,103 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+col_a    
+5     
+4     
+3     
+2     
+1     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: v node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select v.col_a, v.col_b from t v order by ?, ?
+===================================================
+col_a    
+1     
+2     
+3     
+4     
+5     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: v node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select v.col_a from t v order by ?
+===================================================
+col_a    col_b    
+5     1     
+4     2     
+3     3     
+2     4     
+1     5     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: v node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select v.col_a, v.col_b from t v order by ?, ?
+===================================================
+col_a    
+1     
+2     
+3     
+4     
+5     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: v node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select distinct v.col_a from t v order by ?
+===================================================
+col_b    col_a    
+1     5     
+2     4     
+3     3     
+4     2     
+5     1     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: v node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select distinct v.col_b, v.col_a from t v order by ?, ?
+===================================================
+0

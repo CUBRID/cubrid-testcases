@@ -1,0 +1,69 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+col_a    col_b    
+
+Query plan:
+sscan
+    class: t_? node[?]
+    cost:  ? card ?
+Query stmt:
+(select a.col_a, a.col_b from table({?}) t_? (c_?))
+Query plan:
+nl-join (cselect join)
+    edge:  table(?) -> t_? node[?]
+    outer: sscan
+               class: t_? node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t_? node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_a, a.col_b from table({?}) t_? (c_?)) t_? (c_?, c_?), (Sp_int(t_?.c_?)) t_? (c_?))
+Query plan:
+nl-join (inner join)
+    edge:  table(?) -> t_? node[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: t_? node[?]
+               sargs: table(?) -> t_? node[?]
+               cost:  ? card ?
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+(select a.col_a, t_?.c_? from t_a a, t_b b, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_a, a.col_b from table({?}) t_? (c_?)) t_? (c_?, c_?), (Sp_int(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where (a.col_a=b.col_a))
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.col_a, a.col_b from (select a.col_a, t_?.c_? from t_a a, t_b b, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_a, a.col_b from table({?}) t_? (c_?)) t_? (c_?, c_?), (Sp_int(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where (a.col_a=b.col_a)) a (col_a, col_b), t_b b where a.col_a=b.col_a and b.col_b=?
+===================================================
+0
+===================================================
+0

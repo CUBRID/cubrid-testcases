@@ -1,0 +1,33 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+col_a    
+
+Query plan:
+sscan
+    class: a node[?]
+    cost:  ? card ?
+Query stmt:
+(values (? as [col_a], ? as [col_b]),(?, ?))
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.col_a from t_b b, (values (? as [col_a], ? as [col_b]),(?, ?)) a (col_a, col_b) where a.col_a=b.col_a and b.col_b= ?:? 
+===================================================
+0

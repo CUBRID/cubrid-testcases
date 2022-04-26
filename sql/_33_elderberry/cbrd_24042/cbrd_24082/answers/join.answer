@@ -1,0 +1,32 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+col_a    
+
+Query plan:
+nl-join (cross join)
+    outer: nl-join (cross join)
+               outer: sscan
+                          class: a node[?]
+                          sargs: term[?] AND term[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b_? node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.col_a from t_a a, t_b b_?, t_b b where (b.col_a= ?:? ) and a.col_a= ?:?  and (b_?.col_b= ?:? ) and a.col_b= ?:?  and (a.col_b=b_?.col_b) and (a.col_a=b.col_a)
+===================================================
+0
