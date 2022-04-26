@@ -1,0 +1,42 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+col_a    
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select a.col_a, b.col_a from t_a a, t_b b where (a.col_a=b.col_a) order by ? for orderby_num()<= ?:? )
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.col_a from (select a.col_a, b.col_a from t_a a, t_b b where (a.col_a=b.col_a) order by ? for orderby_num()<= ?:? ) a (col_a), t_b b where a.col_a=b.col_a and b.col_b= ?:? 
+===================================================
+0
