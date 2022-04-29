@@ -26,18 +26,18 @@ select * from t2;
 select * from t2__p__less_than_10;
 select * from t2__p__less_than_20;
 select * from t2__p__maxvalue;
-select class_of.class_name, pname, ptype, pexpr, pvalues, comment from _db_partition;
+select class_of.class_name, pname, ptype, pexpr, pvalues, comment from _db_partition order by 1;
 alter table t2 reorganize partition maxvalue into (
     partition less_than_30 values less than (30),
     partition maxvalue values less than maxvalue
 );
-select class_of.class_name, pname, ptype, pexpr, pvalues, comment from _db_partition;
+select class_of.class_name, pname, ptype, pexpr, pvalues, comment from _db_partition order by 1;
 
 create table t3 (c1 int);
 rename table t2 to t3;
-select class_of.class_name, pname, ptype, pexpr, pvalues, comment from _db_partition;
+select class_of.class_name, pname, ptype, pexpr, pvalues, comment from _db_partition order by 1;
 rename table t2 to t4;
-select class_of.class_name, pname, ptype, pexpr, pvalues, comment from _db_partition;
+select class_of.class_name, pname, ptype, pexpr, pvalues, comment from _db_partition order by 1;
 drop table if exists t4;
 drop table if exists t3;
 drop table if exists t2;
@@ -68,9 +68,9 @@ select * from t2__p__p0;
 select * from t2__p__p1;
 select * from t2__p__p2;
 select * from t2__p__p3;
-select class_of.class_name, pname, ptype, pexpr, pvalues, comment from _db_partition;
+select class_of.class_name, pname, ptype, pexpr, pvalues, comment from _db_partition order by 1;
 alter table t2 add partition partitions 4;
-select class_of.class_name, pname, ptype, pexpr, pvalues, comment from _db_partition;
+select class_of.class_name, pname, ptype, pexpr, pvalues, comment from _db_partition order by 1;
 select * from t2;
 select * from t2__p__p0;
 select * from t2__p__p1;
@@ -83,9 +83,9 @@ select * from t2__p__p7;
 
 create table t3 (c1 int);
 rename table t2 to t3;
-select class_of.class_name, pname, ptype, pexpr, pvalues, comment from _db_partition;
+select class_of.class_name, pname, ptype, pexpr, pvalues, comment from _db_partition order by 1;
 rename table t2 to t4;
-select class_of.class_name, pname, ptype, pexpr, pvalues, comment from _db_partition;
+select class_of.class_name, pname, ptype, pexpr, pvalues, comment from _db_partition order by 1;
 
 drop table if exists t4;
 drop table if exists t3;
@@ -127,18 +127,18 @@ select * from t2__p__value_abc;
 select * from t2__p__value_def;
 select * from t2__p__value_ghi;
 select * from t2__p__value_empty_or_null;
-select class_of.class_name, pname, ptype, pexpr, pvalues, comment from _db_partition;
+select class_of.class_name, pname, ptype, pexpr, pvalues, comment from _db_partition order by 1;
 alter table t2 reorganize partition value_empty_or_null into (
     partition value_z values in ('z'),
     partition value_empty_or_null values in ('', null)
 );
-select class_of.class_name, pname, ptype, pexpr, pvalues, comment from _db_partition;
+select class_of.class_name, pname, ptype, pexpr, pvalues, comment from _db_partition order by 1;
 
 create table t3 (c1 int);
 rename table t2 to t3;
-select class_of.class_name, pname, ptype, pexpr, pvalues, comment from _db_partition;
+select class_of.class_name, pname, ptype, pexpr, pvalues, comment from _db_partition order by 1;
 rename table t2 to t4;
-select class_of.class_name, pname, ptype, pexpr, pvalues, comment from _db_partition;
+select class_of.class_name, pname, ptype, pexpr, pvalues, comment from _db_partition order by 1;
 
 drop table if exists t4;
 drop table if exists t3;
@@ -155,15 +155,15 @@ create table [t1 from from t1] ([c1 from 1c] int primary key, c2 varchar)
     partition less_than_20 values less than (20),
     partition less_than_99 values less than (99)
 );
-select class_of.class_name, pname, ptype, pexpr, pvalues, comment from _db_partition;
+select class_of.class_name, pname, ptype, pexpr, pvalues, comment from _db_partition order by 1;
 rename table [t1 from from t1] to [t2 from t2];
-select class_of.class_name, pname, ptype, pexpr, pvalues, comment from _db_partition;
+select class_of.class_name, pname, ptype, pexpr, pvalues, comment from _db_partition order by 1;
 alter table [t2 from t2]
     reorganize partition less_than_99 into (
     partition less_than_30 values less than (30),
     partition less_than_99 values less than (99)
 );
-select class_of.class_name, pname, ptype, pexpr, pvalues, comment from _db_partition;
+select class_of.class_name, pname, ptype, pexpr, pvalues, comment from _db_partition order by 1;
 
 drop table if exists [t2 from t2];
 drop table if exists [t1 from from t1];
