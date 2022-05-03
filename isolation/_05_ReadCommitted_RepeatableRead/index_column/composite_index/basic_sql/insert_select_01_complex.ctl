@@ -89,7 +89,7 @@ MC: wait until C3 ready;
 C4: update t set id=id-1 where mod(id,5)=3;
 MC: wait until C4 ready;
 C5: update t set id=id-1 where mod(id,5)=4;
-MC: wait until C4 ready;
+MC: wait until C5 ready;
 C1: commit;
 C2: commit;
 C3: commit;
