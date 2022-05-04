@@ -15,17 +15,17 @@ insert into t1 values (11, 'b');
 insert into t1 values (21, 'c');
 insert into t1 values (91, 'z');
 
-select class_name from _db_class where is_system_class % 8 = 0;
-select * from t1;
+select class_name from _db_class where is_system_class % 8 = 0 order by 1;
+select * from t1 order by 1;
 select * from t1__p__less_than_10;
 select * from t1__p__less_than_20;
-select * from t1__p__maxvalue;
+select * from t1__p__maxvalue order by 1;
 
 rename table t1 to t2;
-select * from t2;
+select * from t2 order by 1;
 select * from t2__p__less_than_10;
 select * from t2__p__less_than_20;
-select * from t2__p__maxvalue;
+select * from t2__p__maxvalue order by 1;
 select class_of.class_name, pname, ptype, pexpr, pvalues, comment from _db_partition order by 1;
 alter table t2 reorganize partition maxvalue into (
     partition less_than_30 values less than (30),
@@ -55,29 +55,29 @@ insert into t1 values (51, 'f');
 insert into t1 values (61, 'g');
 insert into t1 values (71, 'h');
 
-select class_name from _db_class where is_system_class % 8 = 0;
-select * from t1;
+select class_name from _db_class where is_system_class % 8 = 0 order by 1;
+select * from t1 order by 1;
 select * from t1__p__p0;
-select * from t1__p__p1;
+select * from t1__p__p1 order by 1;
 select * from t1__p__p2;
-select * from t1__p__p3;
+select * from t1__p__p3 order by 1;
 
 rename table t1 to t2;
-select * from t2;
+select * from t2 order by 1;
 select * from t2__p__p0;
-select * from t2__p__p1;
+select * from t2__p__p1 order by 1;
 select * from t2__p__p2;
-select * from t2__p__p3;
+select * from t2__p__p3 order by 1;
 select class_of.class_name, pname, ptype, pexpr, pvalues, comment from _db_partition order by 1;
 alter table t2 add partition partitions 4;
 select class_of.class_name, pname, ptype, pexpr, pvalues, comment from _db_partition order by 1;
-select * from t2;
+select * from t2 order by 1;
 select * from t2__p__p0;
 select * from t2__p__p1;
 select * from t2__p__p2;
-select * from t2__p__p3;
+select * from t2__p__p3 order by 1;
 select * from t2__p__p4;
-select * from t2__p__p5;
+select * from t2__p__p5 order by 1;
 select * from t2__p__p6;
 select * from t2__p__p7;
 
@@ -114,19 +114,19 @@ insert into t1 values (81, 'h');
 insert into t1 values (91, 'i');
 insert into t1 values (99, 'z');
 
-select class_name from _db_class where is_system_class % 8 = 0;
-select * from t1;
-select * from t1__p__value_abc;
-select * from t1__p__value_def;
-select * from t1__p__value_ghi;
-select * from t1__p__value_empty_or_null;
+select class_name from _db_class where is_system_class % 8 = 0 order by 1;
+select * from t1 order by 1;
+select * from t1__p__value_abc order by 1;
+select * from t1__p__value_def order by 1;
+select * from t1__p__value_ghi order by 1;
+select * from t1__p__value_empty_or_null order by 1;
 
 rename table t1 to t2;
-select * from t2;
-select * from t2__p__value_abc;
-select * from t2__p__value_def;
-select * from t2__p__value_ghi;
-select * from t2__p__value_empty_or_null;
+select * from t2 order by 1;
+select * from t2__p__value_abc order by 1;
+select * from t2__p__value_def order by 1;
+select * from t2__p__value_ghi order by 1;
+select * from t2__p__value_empty_or_null order by 1;
 select class_of.class_name, pname, ptype, pexpr, pvalues, comment from _db_partition order by 1;
 alter table t2 reorganize partition value_empty_or_null into (
     partition value_z values in ('z'),
