@@ -1,0 +1,102 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+3
+===================================================
+col_a    
+2     
+3     
+
+Query plan:
+temp(distinct)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: a node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct a.col_a from t_a a, t_b b where (a.col_a=b.col_a) and a.col_a=aa.col_a and (a.col_a> ?:?  and a.col_a< ?:? ) and (b.col_a> ?:? ))
+Query plan:
+sscan
+    class: aa node[?]
+    sargs: term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+select aa.col_a from t_a aa where aa.col_a in (select distinct a.col_a from t_a a, t_b b where (a.col_a=b.col_a) and a.col_a=aa.col_a and (a.col_a> ?:?  and a.col_a< ?:? ) and (b.col_a> ?:? ))
+===================================================
+col_a    
+2     
+3     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select a.col_a from t_a a, t_b b where (a.col_a=b.col_a) and a.col_a=aa.col_a and (a.col_a> ?:?  and a.col_a< ?:? ) and (b.col_a> ?:? ))
+Query plan:
+sscan
+    class: aa node[?]
+    sargs: term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+select aa.col_a from t_a aa where  exists (select a.col_a from t_a a, t_b b where (a.col_a=b.col_a) and a.col_a=aa.col_a and (a.col_a> ?:?  and a.col_a< ?:? ) and (b.col_a> ?:? ))
+===================================================
+col_a    
+2     
+3     
+
+Query plan:
+temp(distinct)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: a node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct a.col_a from t_a a, t_b b where (a.col_a=b.col_a) and a.col_a<>? and (a.col_a> ?:?  and a.col_a< ?:? ) and (b.col_a> ?:? ))
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: aa node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: av? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select aa.col_a from t_a aa, (select distinct a.col_a from t_a a, t_b b where (a.col_a=b.col_a) and a.col_a<>? and (a.col_a> ?:?  and a.col_a< ?:? ) and (b.col_a> ?:? )) av? (av_?) where aa.col_a=av?.av_?
+===================================================
+0

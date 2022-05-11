@@ -1,0 +1,35 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+3
+===================================================
+col_a    
+1     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+(select ? from dual dual)
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: a node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select a.col_a from t_a a, (select ? from dual dual) b (col_a) where (inst_num()<= ?:? ) and (a.col_a=?) and (a.col_a=b.col_a)
+===================================================
+0

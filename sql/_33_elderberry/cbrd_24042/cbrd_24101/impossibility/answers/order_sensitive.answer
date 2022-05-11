@@ -1,0 +1,100 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+3
+===================================================
+col_a    
+2,3     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t_b node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+(select t_b.col_a, t_b.col_b from t_b t_b where (t_b.col_a> ?:? ) order by ? desc )
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select group_concat(a.col_a) from t_a a, (select t_b.col_a, t_b.col_b from t_b t_b where (t_b.col_a> ?:? ) order by ? desc ) b (col_a, col_b) where a.col_a=b.col_a
+===================================================
+cume    
+0.5     
+
+Query plan:
+sscan
+    class: t_a node[?]
+    cost:  ? card ?
+Query stmt:
+select cume_dist(?) within group(order by t_a.col_a, t_a.col_b) from t_a t_a
+===================================================
+pct_rnk    
+1.0     
+
+Query plan:
+sscan
+    class: t_a node[?]
+    cost:  ? card ?
+Query stmt:
+select percent_rank(?) within group(order by t_a.col_a) from t_a t_a
+===================================================
+pcont    
+2.0     
+
+Query plan:
+sscan
+    class: t_b node[?]
+    cost:  ? card ?
+Query stmt:
+select percentile_cont( cast(?.? as double)) within group (order by t_b.col_b) from t_b t_b
+===================================================
+pdisc    
+2     
+
+Query plan:
+sscan
+    class: t_b node[?]
+    cost:  ? card ?
+Query stmt:
+select percentile_disc( cast(?.? as double)) within group (order by t_b.col_a) from t_b t_b
+===================================================
+json_object()    
+{}     
+{}     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select json '{}', b.col_b from t_a a, t_b b where (a.col_a=b.col_a) and (b.col_a> ?:? ) order by ? desc 
+===================================================
+0

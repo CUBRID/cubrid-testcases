@@ -1,0 +1,39 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+3
+===================================================
+col_a    
+1     
+
+Query plan:
+sscan
+    class: t_b node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select t_b.col_a from t_b t_b where (t_b.col_a>a.col_a-?))
+Query plan:
+nl-join (inner join)
+    edge:  table(?) -> b node[?]
+    outer: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: table(?) -> b node[?] AND term[?]
+               cost:  ? card ?
+    sargs: term[?] AND term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+select a.col_a from t_a a, (select t_b.col_a from t_b t_b where (t_b.col_a>a.col_a-?)) b (col_a) where (a.col_a=b.col_a) and (inst_num()<= ?:? )
+===================================================
+0
