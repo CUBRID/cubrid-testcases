@@ -1,3 +1,5 @@
+drop table if exists t1;
+
 call login ('dba') on class db_user;
 create user u1;
 create table _db_class;
