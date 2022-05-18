@@ -56,4 +56,5 @@ SELECT /*+ recompile */ a.col_a
 FROM   v a
 WHERE  a.col_b = 5;  
 
+DROP VIEW v;
 DROP TABLE t_a, t_b;
