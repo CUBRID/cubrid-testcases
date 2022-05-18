@@ -43,7 +43,7 @@ insert into t1 values ('t1 of u31 (member of u3)', 1);
 create synonym s1 for t1;
 
 call login ('dba') on class db_user;
-select class_name, owner_name from db_class where is_system_class = upper ('NO');
+select class_name, owner_name from db_class where is_system_class = upper ('NO') order by owner_name;
 select * from _db_synonym order by 1;
 
 call login ('u1') on class db_user;
