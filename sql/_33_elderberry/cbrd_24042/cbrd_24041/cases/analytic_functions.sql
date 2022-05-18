@@ -47,4 +47,5 @@ FROM   tab_a a,
        v1 b
 WHERE  a.col_a = b.col_a
        AND b.col_b = 1; 
+DROP VIEW v1;
 DROP TABLE tab_a, tab_b;
