@@ -27,20 +27,27 @@ C1: commit;
 C2: commit;
 C1: DROP SYNONYM s3_1;
 C1: SELECT * FROM s3_1;
+MC: wait until C1 ready;
 C2: SELECT * FROM s3_1;
 MC: wait until C2 blocked;
 C1: commit;
+MC: wait until C1 ready;
 C2: commit;
+
 C1: RENAME SYNONYM s3_2 to s3_1;
 C1: SELECT * FROM s3_1;
+MC: wait until C1 ready;
 C2: SELECT * FROM s3_1;
 MC: wait until C2 blocked;
 C1: commit;
+MC: wait until C1 ready;
 C2: commit;
+
 C1: DROP SYNONYM IF EXISTS s3_1;
 C1: DROP SYNONYM IF EXISTS s3_2;
 C1: DROP TABLE IF EXISTS t3_1;
 C1: DROP TABLE IF EXISTS t3_2;
 C1: commit;
+
 C1: quit;
 C2: quit;

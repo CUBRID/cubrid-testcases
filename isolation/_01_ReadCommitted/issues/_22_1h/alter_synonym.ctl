@@ -26,13 +26,17 @@ C1: commit;
 C2: commit;
 C1: ALTER SYNONYM s2 FOR t2_2;
 C1: SELECT * FROM s2;
+MC: wait until C1 ready;
 C2: SELECT * FROM s2;
 MC: wait until C2 blocked;
 C1: commit;
+MC: wait until C1 ready;
 C2: commit;
+
 C1: DROP SYNONYM IF EXISTS s2;
 C1: DROP TABLE IF EXISTS t2_1;
 C1: DROP TABLE IF EXISTS t2_2;
 C1: commit;
+
 C1: quit;
 C2: quit;

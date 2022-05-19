@@ -26,10 +26,13 @@ C1: commit;
 C2: commit;
 C1: CREATE OR REPLACE SYNONYM s1 FOR t1_2;
 C1: SELECT * FROM s1;
+MC: wait until C1 ready;
 C2: SELECT * FROM s1;
 MC: wait until C2 blocked;
 C1: commit;
+MC: wait until C1 ready;
 C2: commit;
+
 C1: DROP SYNONYM IF EXISTS s1;
 C1: DROP TABLE IF EXISTS t1_1;
 C1: DROP TABLE IF EXISTS t1_2;
