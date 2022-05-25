@@ -26,5 +26,6 @@ SELECT /*+ recompile */ a.col_a
 FROM   v a,
        t_b b
 WHERE  a.col_a = b.col_a
-       AND a.col_b = 2; 
+       AND a.col_b = 2;
+DROP VIEW v; 
 DROP TABLE t_a, t_b;
