@@ -43,4 +43,5 @@ FROM   t_b b,
 WHERE  a.col_a = b.col_a
        AND b.col_b = 2
 CONNECT BY a.col_a = PRIOR a.col_b;  
+DROP VIEW v;
 DROP TABLE t_a, t_b;
