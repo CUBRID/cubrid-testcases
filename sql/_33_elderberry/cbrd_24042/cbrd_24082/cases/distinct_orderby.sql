@@ -47,5 +47,6 @@ SELECT /*+ recompile */ DISTINCT col_a
 FROM   v; 
 SELECT /*+ recompile */ DISTINCT col_b,
                                  col_a
-FROM   v; 
+FROM   v;
+DROP VIEW v; 
 DROP TABLE t; 
