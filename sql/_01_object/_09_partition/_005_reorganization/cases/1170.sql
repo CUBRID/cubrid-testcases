@@ -30,7 +30,7 @@ PARTITIONS 1024;
 
 ALTER TABLE hash_test ADD PARTITION PARTITIONS 1;
 
-select * from db_partition order by 1,2;
+select * from db_partition order by 3,4;
 
 select count(*) from hash_test order by 1;
 
