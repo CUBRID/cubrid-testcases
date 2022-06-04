@@ -16,6 +16,6 @@ ALTER TABLE range_test add partition (
 	PARTITION p5 VALUES LESS THAN ('2006-07-01 10:00:00'),
 	PARTITION p6 VALUES LESS THAN ('2006-08-01 11:00:00')
 );
-select * from db_partition order by 1,2;
+select * from db_partition order by 3,4;
 
 drop class range_test;

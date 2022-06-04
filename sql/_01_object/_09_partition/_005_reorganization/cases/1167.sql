@@ -19,7 +19,7 @@ insert into hash_test values (8,22,'hhh','hhh','2000-03-02 09:00:00');
 insert into hash_test values (9,23,'iii','iii','2000-03-03 09:00:00');
 insert into hash_test values (10,31,'jjj','jjj','2000-04-01 09:00:00');
 
-select * from db_partition order by 1,2;
+select * from db_partition order by 3,4;
 select * from hash_test__p__p0 order by 1,2;
 select * from hash_test__p__p1 order by 1,2;
 select * from hash_test__p__p2 order by 1,2;
@@ -27,7 +27,7 @@ select * from hash_test__p__p3 order by 1,2;
 
 ALTER TABLE hash_test ADD PARTITION PARTITIONS 4;
 
-select * from db_partition order by 1,2;
+select * from db_partition order by 3,4;
 
 select * from hash_test order by 1,2;
 select * from hash_test__p__p0 order by 1,2;

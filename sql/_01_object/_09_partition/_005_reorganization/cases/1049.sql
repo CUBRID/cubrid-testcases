@@ -25,7 +25,7 @@ insert into range_test values (10,31,'jjj','jjj','2000-04-01 09:00:00');
 ALTER TABLE range_test add partition (
 partition p8 values less than maxvalue
 );
-select * from db_partition order by 1,2 ;
+select * from db_partition order by 3,4 ;
 insert into range_test values (11,41,'zzz','zzz','2000-05-01 09:00:00');
 select * from range_test order by 1,2;
 select * from range_test__p__p0 order by 1,2;

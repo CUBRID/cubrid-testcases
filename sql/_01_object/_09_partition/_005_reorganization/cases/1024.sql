@@ -16,6 +16,6 @@ partition p4 values less than (100),
 partition p5 values less than (200),
 partition p6 values less than (300)
 );
-select * from db_partition order by 1,2;
+select * from db_partition order by 3,4;
 
 drop class range_test;

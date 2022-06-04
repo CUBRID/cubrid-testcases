@@ -15,6 +15,6 @@ PARTITION BY RANGE (test_int) (
 ALTER TABLE range_test add partition (
 partition p3 values less than (50)
 );
-select * from db_partition order by 1,2;
+select * from db_partition order by 3,4;
 
 drop class range_test;
