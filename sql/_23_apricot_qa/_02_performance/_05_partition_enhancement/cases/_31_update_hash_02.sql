@@ -13,7 +13,7 @@ insert into t select * from t;
 insert into t select * from t;
 insert into t select * from t;
 
-select * from db_partition where class_name='t' order by 2;
+select * from db_partition where class_name='t' order by 3;
 select * from db_class where class_name='t';
 
 select d,add_months(d,3),count(*) from t__p__p0 where d <> '2012-5-6' group by d;
@@ -32,7 +32,7 @@ select count(*) from t where add_months(d,3)='2012-5-6';
 select count(*) from t where d=add_months('2012-5-6',13);
 
 alter table t coalesce partition 4;
-select * from db_partition where class_name='t' order by 2;
+select * from db_partition where class_name='t' order by 3;
 
 select d,count(*) from t__p__p0 where d <> '2012-5-6' group by d order by 1;
 select d,count(*) from t__p__p2 where d <> '2012-5-6' group by d order by 1;

@@ -42,21 +42,21 @@ insert into t select v||cast(rand(90)%2000 as varchar) from t;
 
 insert into t select * from t;
 
-select * from db_partition where class_name='t' order by 2;
+select * from db_partition where class_name='t' order by 3;
 select * from db_class where class_name='t';
 
 select count(distinct v) from t__p__p14;
 select count(distinct v) from t__p__p15;
 
 alter table t reorganize partition p14,p15 into (partition p145 values less than('q'));
-select * from db_partition where class_name='t' order by 2;
+select * from db_partition where class_name='t' order by 3;
 select * from db_class where class_name='t';
 
 select count(distinct v) from t__p__p14;
 select count(distinct v) from t__p__p15;
 
 alter table t reorganize partition p145 into (partition p14 values less than('oz'),partition p15 values less than('q'));
-select * from db_partition where class_name='t' order by 2;
+select * from db_partition where class_name='t' order by 3;
 select * from db_class where class_name='t';
 
 select count(distinct v) from t__p__p14;
@@ -64,14 +64,14 @@ select count(distinct v) from t__p__p15;
 
 alter table t add column i int;
 update t set i=position('h' in v);
-select * from db_partition where class_name='t' order by 2;
+select * from db_partition where class_name='t' order by 3;
 select * from db_class where class_name='t';
 
 select count(distinct v) from t__p__p14;
 select count(distinct v) from t__p__p15;
 
 alter table t promote partition p14,p15;
-select * from db_partition where class_name='t' order by 2;
+select * from db_partition where class_name='t' order by 3;
 select * from db_class where class_name='t';
 
 select count(distinct v) from t__p__p14;
