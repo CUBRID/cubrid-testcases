@@ -28,7 +28,7 @@ ALTER TABLE range_test REORGANIZE PARTITION p2 INTO (
 PARTITION p3 VALUES LESS THAN (25),
 PARTITION p4 VALUES LESS THAN (30));
 
-select * from db_partition order by 1,2;
+select * from db_partition order by 3,4;
 select * from range_test order by 1,2;
 select * from range_test__p__p0 order by 1,2;
 select * from range_test__p__p1 order by 1,2;

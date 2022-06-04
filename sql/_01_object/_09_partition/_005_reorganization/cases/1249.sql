@@ -17,6 +17,6 @@ partition p5 values less than ('rrr'),
 partition p6 values less than ('uuu')
 );
 
-select * from db_partition order by 2;
+select * from db_partition order by 3;
 
 drop class range_test;

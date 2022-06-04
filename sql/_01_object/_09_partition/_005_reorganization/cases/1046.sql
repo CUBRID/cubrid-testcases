@@ -35,7 +35,7 @@ insert into range_test values (13,51,'ppp','ppp','2000-05-02 09:00:00');
 insert into range_test values (14,52,'qqq','qqq','2000-05-02 09:00:00');
 insert into range_test values (15,61,'rrr','rrr','2000-05-02 09:00:00');
 insert into range_test values (16,62,'ttt','ttt','2000-05-02 09:00:00');
-select * from db_partition order by 1,2;
+select * from db_partition order by 3,4;
 select * from range_test order by 1,2;
 
 select * from range_test__p__p0 order by 1,2;

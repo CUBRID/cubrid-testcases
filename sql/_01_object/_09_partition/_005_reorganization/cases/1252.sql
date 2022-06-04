@@ -14,6 +14,6 @@ PARTITION BY RANGE (test_char) (
 ALTER TABLE range_test add partition (
 partition p8 values less than maxvalue
 );
-select * from db_partition order by 1,2;
+select * from db_partition order by 3,4;
 
 drop class range_test;

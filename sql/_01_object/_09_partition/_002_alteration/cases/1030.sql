@@ -7,8 +7,8 @@ partition p1 values less than ('gg'),
 partition p2 values less than ('zz'),
 partition p3 values less than MAXVALUE
 );
-select * from db_partition order by 1,2;
+select * from db_partition order by 3,4;
 rename class range_test as range;
-select * from db_partition order by 1,2;
+select * from db_partition order by 3,4;
 
 drop class range;
