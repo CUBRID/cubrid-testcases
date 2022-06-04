@@ -16,6 +16,6 @@ ALTER TABLE range_test add partition (
 partition p2 values less than ('mmm')
 );
 
-select * from db_partition order by 1,2;
+select * from db_partition order by 3,4;
 
 drop class range_test;

@@ -17,6 +17,6 @@ partition p4 values less than ('ppp'),
 partition p5 values less than ('rrr'),
 partition p6 values less than ('uuu')
 ); 
-select * from db_partition order by 1,2;
+select * from db_partition order by 3,4;
 
 drop class range_test;

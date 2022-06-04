@@ -15,6 +15,6 @@ PARTITION BY RANGE (test_varchar) (
 ALTER TABLE range_test add partition (
 partition p7 values less than ('bbb')
 );
-select * from db_partition order by 1,2;
+select * from db_partition order by 3,4;
 
 drop class range_test;
