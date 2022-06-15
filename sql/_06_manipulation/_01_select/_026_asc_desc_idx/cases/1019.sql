@@ -18,7 +18,7 @@ create unique index ddl_0001_idx4 on ddl_0001(col1 asc, col2 desc, col3 asc);
 create unique index ddl_0001_idx5 on ddl_0001(col1 asc,col2 desc, col3 desc, col4 asc);
 create unique index ddl_0001_idx6 on ddl_0001(col1 asc, col2 desc, col3 asc, col4 desc, col5 asc);
 select * from db_index where class_name='ddl_0001' order by 1,2,3;
-select * from db_index_key where class_name='ddl_0001' order by 1,2,3;
+select * from db_index_key where class_name='ddl_0001' order by index_name,class_name,key_attr_name;
 select * from ddl_0001 where col1 not like '100%' order by 1,2,3;
 delete from ddl_0001 where col1='1008';
 update ddl_0001 set col1='2050' where col1='1001';
