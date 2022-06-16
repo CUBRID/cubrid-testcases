@@ -19,7 +19,7 @@ insert into range_test (test_int) values(15);
 
 select index_name, is_unique, is_reverse, class_name, key_count
 from   db_index
-where  class_name in ( 'range_test', 'range_test__p__p0');
+where  class_name in ( 'range_test', 'range_test__p__p0') order by class_name;
 
 
 

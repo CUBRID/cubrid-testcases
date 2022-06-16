@@ -6,5 +6,5 @@ create reverse index ddl_0001_index on ddl_0001(col1);
 
 select index_name, is_unique, is_reverse, class_name, key_count
 from   db_index
-where  class_name = 'ddl_0001';
+where  class_name = 'ddl_0001' order by index_name;
 drop class ddl_0001;
