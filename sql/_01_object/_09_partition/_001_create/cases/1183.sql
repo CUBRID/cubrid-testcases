@@ -10,7 +10,7 @@ partition p2 values in  ('2007-01-01 11:00:00','2007-01-01 11:10:00','2007-01-01
 
 
 
-select * from db_partition where class_name like '%za%' order by 2,3;
+select * from db_partition where class_name like '%za%' order by partition_name;
 
 
 drop class za;

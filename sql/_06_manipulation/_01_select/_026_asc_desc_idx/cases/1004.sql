@@ -21,7 +21,7 @@ create index ddl_0001_idx8 on ddl_0001(col1 desc, col2 asc, col4 desc);
 create index ddl_0001_idx9 on ddl_0001(col3 desc ,col5 asc, col5 desc);
 create index ddl_0001_idx10 on ddl_0001(col2 asc, col4 desc, col1 desc);
 select * from db_index where class_name='ddl_0001' order by 1,2,3;
-select * from db_index_key where class_name='ddl_0001' order by 1,2,3;
+select * from db_index_key where class_name='ddl_0001' order by index_name,class_name,key_attr_name;
 select * from ddl_0001 where col1 < 1.005 order by 1,2,3;
 update ddl_0001 set col2 = 1010;
 delete from ddl_0001;
