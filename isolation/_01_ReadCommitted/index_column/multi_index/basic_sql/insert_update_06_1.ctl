@@ -13,7 +13,7 @@ two index, unique index and non unique index
 NUM_CLIENTS = 2
 prepare (4,3a)(5,d)(6,e) --4,3a overlap
 C1: set @newincr=0;
-C1: insert into t select (@newincr:=@newincr+1),concat((@newincr),'a') from (select sleep(1)) x, t where id>0 limit 3;
+C1: insert into t select (@newincr:=@newincr+1),concat((@newincr),'a') from t where id>0 and (select sleep(1)=0)<>0 limit 3;
 C2: update t set id=concat(id,'a') where id>0 using index idx;
 */
 
