@@ -25,7 +25,7 @@ select * from b_view order by a;
 
 alter view b_view add query select * from a_tbl where a_tbl.id in (1,3,5) comment'new''s comment for view';
 show create view b_view;
-select * from db_vclass where vclass_name='b_view' order by 1,2;
+select * from db_vclass where vclass_name='b_view' order by vclass_name,vclass_def;
 
 DROP VIEW IF EXISTS b_view;
 DROP TABLE IF EXISTS a_tbl;

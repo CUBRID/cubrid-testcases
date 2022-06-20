@@ -10,7 +10,7 @@ partition p2 values less than MAXVALUE);
 
 
 
-select * from db_partition where class_name like '%za%' order by 2;
+select * from db_partition where class_name like '%za%' order by partition_name;
 
 
 drop class za;

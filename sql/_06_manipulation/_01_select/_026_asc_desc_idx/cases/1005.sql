@@ -19,7 +19,7 @@ create index ddl_0001_idx8 on ddl_0001(col4 desc, col1 asc, col3 desc);
 create index ddl_0001_idx9 on ddl_0001(col1 asc, col5 desc, col4 asc);
 create index ddl_0001_idx10 on ddl_0001(col3 desc, col2 asc, col1 desc);
 select * from db_index where class_name='ddl_0001' order by 1,2,3;
-select * from db_index_key where class_name='ddl_0001' order by 1,2,3;
+select * from db_index_key where class_name='ddl_0001' order by index_name,class_name,key_attr_name;
 select * from ddl_0001 where col1 = '08/08/2008' order by 1,2,3;
 update ddl_0001 set col1 = sysdate;
 delete from ddl_0001;

@@ -41,7 +41,7 @@ insert into t select t,NULL,cast(t+5 as varchar) from t;
 
 
 
-select * from db_partition where class_name='t' order by 2;
+select * from db_partition where class_name='t' order by partition_name;
 select * from db_class where class_name='t';
 
 select t,count(*) from t__p__p16 group by t order by 1;
@@ -53,7 +53,7 @@ create unique index ui on t(t,id,v);
 create reverse index ri1 on t(last_day(t));
 create reverse index ri2 on t__p__p16(last_day(t));
 
-select * from db_partition where class_name='t' order by 2;
+select * from db_partition where class_name='t' order by partition_name;
 select * from db_class where class_name='t' or class_name like 't__p__p%' order by 1;
 
 update statistics on all classes;
