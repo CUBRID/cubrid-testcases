@@ -9,11 +9,11 @@ insert into u select rownum, rownum from _db_class limit 46;
 
 update statistics on all classes;
 
-select /*+ recompile, no_sort_limit */ u.i from u left join t on t.i = u.i where u.j > 5 order by u.j limit 5;
+select /*+ recompile, no_sort_limit */ u.i, t.i from u left join t on t.i = u.i where u.j > 5 order by u.j limit 5;
 
-select /*+ recompile, use_nl */ u.i from u left join t on t.i = u.i where u.j > 5 order by u.j limit 5;
+select /*+ recompile, use_nl */ u.i, t.i from u left join t on t.i = u.i where u.j > 5 order by u.j limit 5;
 
-select /*+ recompile, use_merge */ u.i from u left join t on t.i = u.i where u.j > 5 order by u.j limit 5;
+select /*+ recompile, use_merge */ u.i, t.i from u left join t on t.i = u.i where u.j > 5 order by u.j limit 5;
 
 drop table t;
 
@@ -28,11 +28,11 @@ insert into u select rownum, rownum from _db_class limit 46;
 
 update statistics on all classes;
 
-select /*+ recompile, no_sort_limit */ u.i from u left join t on t.i = u.i where u.j > 5 order by u.j limit 5;
+select /*+ recompile, no_sort_limit */ u.i, t.i from u left join t on t.i = u.i where u.j > 5 order by u.j limit 5;
 
-select /*+ recompile, use_nl */ u.i from u left join t on t.i = u.i where u.j > 5 order by u.j limit 5;
+select /*+ recompile, use_nl */ u.i, t.i from u left join t on t.i = u.i where u.j > 5 order by u.j limit 5;
 
-select /*+ recompile, use_merge */ u.i from u left join t on t.i = u.i where u.j > 5 order by u.j limit 5;
+select /*+ recompile, use_merge */ u.i, t.i from u left join t on t.i = u.i where u.j > 5 order by u.j limit 5;
 
 
 drop table u;

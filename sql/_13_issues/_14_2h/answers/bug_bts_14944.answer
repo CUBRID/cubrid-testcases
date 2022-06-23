@@ -52,10 +52,10 @@ TABLE    CREATE TABLE
 dba.stu     CREATE TABLE [stu] ([id] INTEGER COMMENT 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', [addr] CHARACTER VARYING(200), [phone] CHARACTER VARYING(2000) DEFAULT 1860000000 COMMENT 'ggggggggggggg') REUSE_OID, COLLATE iso88591_bin COMMENT='this table store the student information'     
 
 ===================================================
-attr_name    class_name    attr_type    def_order    from_class_name    from_attr_name    data_type    prec    scale    charset    collation    domain_class_name    default_value    is_nullable    comment    
-addr     stu     INSTANCE     1     null     null     STRING     200     0     iso88591     iso88591_bin     null     null     YES     null     
-id     stu     INSTANCE     0     null     null     INTEGER     10     0     Not applicable     Not applicable     null     null     YES     aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa     
-phone     stu     INSTANCE     2     null     null     STRING     2000     0     iso88591     iso88591_bin     null     1860000000     YES     ggggggggggggg     
+attr_name    class_name    owner_name    attr_type    def_order    from_class_name    from_owner_name    from_attr_name    data_type    prec    scale    charset    collation    domain_class_name    domain_owner_name    default_value    is_nullable    comment    
+addr     stu     DBA     INSTANCE     1     null     null     null     STRING     200     0     iso88591     iso88591_bin     null     null     null     YES     null     
+id     stu     DBA     INSTANCE     0     null     null     null     INTEGER     10     0     Not applicable     Not applicable     null     null     null     YES     aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa     
+phone     stu     DBA     INSTANCE     2     null     null     null     STRING     2000     0     iso88591     iso88591_bin     null     null     1860000000     YES     ggggggggggggg     
 
 ===================================================
 0
@@ -70,16 +70,16 @@ i     ENUM('red', 'blue')     iso88591_bin     YES          null          asdddf
 ===================================================
 0
 ===================================================
-attr_name    class_name    attr_type    def_order    from_class_name    from_attr_name    data_type    prec    scale    charset    collation    domain_class_name    default_value    is_nullable    comment    
-i     g     INSTANCE     0     null     null     INTEGER     10     0     Not applicable     Not applicable     null     null     YES     my idol is Steve Jobs     
+attr_name    class_name    owner_name    attr_type    def_order    from_class_name    from_owner_name    from_attr_name    data_type    prec    scale    charset    collation    domain_class_name    domain_owner_name    default_value    is_nullable    comment    
+i     g     DBA     INSTANCE     0     null     null     null     INTEGER     10     0     Not applicable     Not applicable     null     null     null     YES     my idol is Steve Jobs     
 
 ===================================================
 TABLE    CREATE TABLE    
 dba.g     CREATE TABLE [g] ([i] INTEGER COMMENT 'my idol is Steve Jobs') REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
-attr_name    class_name    attr_type    def_order    from_class_name    from_attr_name    data_type    prec    scale    charset    collation    domain_class_name    default_value    is_nullable    comment    
-i     g     INSTANCE     0     null     null     INTEGER     10     0     Not applicable     Not applicable     null     null     YES     my idol is Steve Jobs     
+attr_name    class_name    owner_name    attr_type    def_order    from_class_name    from_owner_name    from_attr_name    data_type    prec    scale    charset    collation    domain_class_name    domain_owner_name    default_value    is_nullable    comment    
+i     g     DBA     INSTANCE     0     null     null     null     INTEGER     10     0     Not applicable     Not applicable     null     null     null     YES     my idol is Steve Jobs     
 
 ===================================================
 TABLE    CREATE TABLE    
@@ -181,11 +181,11 @@ type     CHAR(500)     iso88591_bin     NO          null          `go with the w
 number     NUMERIC(8,2)     null     NO          null          null     
 
 ===================================================
-attr_name    class_name    attr_type    def_order    from_class_name    from_attr_name    data_type    prec    scale    charset    collation    domain_class_name    default_value    is_nullable    comment    
-id     hg_pay_exchange     INSTANCE     0     null     null     INTEGER     10     0     Not applicable     Not applicable     null     null     NO     id     
-module     hg_pay_exchange     INSTANCE     1     null     null     STRING     15     0     iso88591     iso88591_bin     null     null     NO     null     
-number     hg_pay_exchange     INSTANCE     3     null     null     NUMERIC     8     2     Not applicable     Not applicable     null     null     NO     null     
-type     hg_pay_exchange     INSTANCE     2     null     null     CHAR     500     0     iso88591     iso88591_bin     null     null     NO     `go with the wind`     
+attr_name    class_name    owner_name    attr_type    def_order    from_class_name    from_owner_name    from_attr_name    data_type    prec    scale    charset    collation    domain_class_name    domain_owner_name    default_value    is_nullable    comment    
+id     hg_pay_exchange     DBA     INSTANCE     0     null     null     null     INTEGER     10     0     Not applicable     Not applicable     null     null     null     NO     id     
+module     hg_pay_exchange     DBA     INSTANCE     1     null     null     null     STRING     15     0     iso88591     iso88591_bin     null     null     null     NO     null     
+number     hg_pay_exchange     DBA     INSTANCE     3     null     null     null     NUMERIC     8     2     Not applicable     Not applicable     null     null     null     NO     null     
+type     hg_pay_exchange     DBA     INSTANCE     2     null     null     null     CHAR     500     0     iso88591     iso88591_bin     null     null     null     NO     `go with the wind`     
 
 ===================================================
 TABLE    CREATE TABLE    
@@ -220,9 +220,9 @@ TABLE    CREATE TABLE
 dba.t     CREATE TABLE [t] ([i] INTEGER COMMENT 'id', [name] CHARACTER VARYING(50) COMMENT 'name') REUSE_OID, COLLATE iso88591_bin PARTITION BY RANGE ([i])  (PARTITION [p0] VALUES LESS THAN (10), PARTITION [p1] VALUES LESS THAN (100), PARTITION [p2] VALUES LESS THAN MAXVALUE) COMMENT='table has range partitions'     
 
 ===================================================
-attr_name    class_name    attr_type    def_order    from_class_name    from_attr_name    data_type    prec    scale    charset    collation    domain_class_name    default_value    is_nullable    comment    
-i     t     INSTANCE     0     null     null     INTEGER     10     0     Not applicable     Not applicable     null     null     YES     id     
-name     t     INSTANCE     1     null     null     STRING     50     0     iso88591     iso88591_bin     null     null     YES     name     
+attr_name    class_name    owner_name    attr_type    def_order    from_class_name    from_owner_name    from_attr_name    data_type    prec    scale    charset    collation    domain_class_name    domain_owner_name    default_value    is_nullable    comment    
+i     t     DBA     INSTANCE     0     null     null     null     INTEGER     10     0     Not applicable     Not applicable     null     null     null     YES     id     
+name     t     DBA     INSTANCE     1     null     null     null     STRING     50     0     iso88591     iso88591_bin     null     null     null     YES     name     
 
 ===================================================
 Field    Type    Collation    Null    Key    Default    Extra    Comment    
@@ -294,12 +294,12 @@ TABLE    CREATE TABLE
 dba.t     CREATE TABLE [t] ([i] INTEGER,  INDEX [idx] ([i]) COMMENT 'index') REUSE_OID, COLLATE iso88591_bin COMMENT='table comparision'     
 
 ===================================================
-attr_name    class_name    attr_type    def_order    from_class_name    from_attr_name    data_type    prec    scale    charset    collation    domain_class_name    default_value    is_nullable    comment    
-i     view1     INSTANCE     0     null     null     INTEGER     10     0     Not applicable     Not applicable     null     null     YES     null     
+attr_name    class_name    owner_name    attr_type    def_order    from_class_name    from_owner_name    from_attr_name    data_type    prec    scale    charset    collation    domain_class_name    domain_owner_name    default_value    is_nullable    comment    
+i     view1     DBA     INSTANCE     0     null     null     null     INTEGER     10     0     Not applicable     Not applicable     null     null     null     YES     null     
 
 ===================================================
-attr_name    class_name    attr_type    def_order    from_class_name    from_attr_name    data_type    prec    scale    charset    collation    domain_class_name    default_value    is_nullable    comment    
-i     t     INSTANCE     0     null     null     INTEGER     10     0     Not applicable     Not applicable     null     null     YES     null     
+attr_name    class_name    owner_name    attr_type    def_order    from_class_name    from_owner_name    from_attr_name    data_type    prec    scale    charset    collation    domain_class_name    domain_owner_name    default_value    is_nullable    comment    
+i     t     DBA     INSTANCE     0     null     null     null     INTEGER     10     0     Not applicable     Not applicable     null     null     null     YES     null     
 
 ===================================================
 0

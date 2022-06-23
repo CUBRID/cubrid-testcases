@@ -25,7 +25,7 @@ partition p8 values less than maxvalue
 );
 insert into range_test values (11,50,'kkk','kkk','2006-05-01 11:00:00');
 insert into range_test values (12,42,'lll','lll','2006-05-02 09:00:00');
-select * from db_partition order by 1,2;
+select * from db_partition order by 3,4;
 
 select * from range_test order by 1,2;
 

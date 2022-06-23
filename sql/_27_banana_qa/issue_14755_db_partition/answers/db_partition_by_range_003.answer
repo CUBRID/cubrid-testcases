@@ -11,9 +11,9 @@ _db_partition,     participant2__p__before_1992     _db_class     before_1992   
 _db_partition,     participant2__p__before_2000     _db_class     before_2000     1     null     1992,2000,     null     
 
 ===================================================
-class_name    partition_name    partition_class_name    partition_type    partition_expr    partition_values    comment    
-participant2     before_1992     participant2__p__before_1992     RANGE     [host_year]     null,1992,     null     
-participant2     before_2000     participant2__p__before_2000     RANGE     [host_year]     1992,2000,     null     
+class_name    owner_name    partition_name    partition_class_name    partition_type    partition_expr    partition_values    comment    
+participant2     DBA     before_1992     participant2__p__before_1992     RANGE     [host_year]     null,1992,     null     
+participant2     DBA     before_2000     participant2__p__before_2000     RANGE     [host_year]     1992,2000,     null     
 
 ===================================================
 count(*)    
@@ -37,10 +37,10 @@ _db_partition,     participant2__p__before_1992     _db_class     before_1992   
 _db_partition,     participant2__p__before_2000     _db_class     before_2000     1     null     1992,2000,     null     
 
 ===================================================
-class_name    partition_name    partition_class_name    partition_type    partition_expr    partition_values    comment    
-participant2     before_1988     participant2__p__before_1988     RANGE     [host_year]     null,1988,     null     
-participant2     before_1992     participant2__p__before_1992     RANGE     [host_year]     1988,1992,     null     
-participant2     before_2000     participant2__p__before_2000     RANGE     [host_year]     1992,2000,     null     
+class_name    owner_name    partition_name    partition_class_name    partition_type    partition_expr    partition_values    comment    
+participant2     DBA     before_1988     participant2__p__before_1988     RANGE     [host_year]     null,1988,     null     
+participant2     DBA     before_1992     participant2__p__before_1992     RANGE     [host_year]     1988,1992,     null     
+participant2     DBA     before_2000     participant2__p__before_2000     RANGE     [host_year]     1992,2000,     null     
 
 ===================================================
 5
@@ -69,9 +69,9 @@ _db_partition,     participant2__p__before_1988     _db_class     before_1988   
 _db_partition,     participant2__p__before_2000     _db_class     before_2000     1     null     1988,2000,     null     
 
 ===================================================
-class_name    partition_name    partition_class_name    partition_type    partition_expr    partition_values    comment    
-participant2     before_1988     participant2__p__before_1988     RANGE     [host_year]     null,1988,     null     
-participant2     before_2000     participant2__p__before_2000     RANGE     [host_year]     1988,2000,     null     
+class_name    owner_name    partition_name    partition_class_name    partition_type    partition_expr    partition_values    comment    
+participant2     DBA     before_1988     participant2__p__before_1988     RANGE     [host_year]     null,1988,     null     
+participant2     DBA     before_2000     participant2__p__before_2000     RANGE     [host_year]     1988,2000,     null     
 
 ===================================================
 count(*)    
@@ -91,8 +91,8 @@ _db_partition,     participant2     _db_class     null     1     SELECT [host_ye
 _db_partition,     participant2__p__before_1988     _db_class     before_1988     1     null     null,1988,     null     
 
 ===================================================
-class_name    partition_name    partition_class_name    partition_type    partition_expr    partition_values    comment    
-participant2     before_1988     participant2__p__before_1988     RANGE     [host_year]     null,1988,     null     
+class_name    owner_name    partition_name    partition_class_name    partition_type    partition_expr    partition_values    comment    
+participant2     DBA     before_1988     participant2__p__before_1988     RANGE     [host_year]     null,1988,     null     
 
 ===================================================
 Error:-891
@@ -106,10 +106,10 @@ _db_partition,     participant2__p__before_1996     _db_class     before_1996   
 _db_partition,     participant2__p__last_one     _db_class     last_one     1     null     1996,null,     null     
 
 ===================================================
-class_name    partition_name    partition_class_name    partition_type    partition_expr    partition_values    comment    
-participant2     before_1988     participant2__p__before_1988     RANGE     [host_year]     null,1988,     null     
-participant2     before_1996     participant2__p__before_1996     RANGE     [host_year]     1988,1996,     null     
-participant2     last_one     participant2__p__last_one     RANGE     [host_year]     1996,null,     null     
+class_name    owner_name    partition_name    partition_class_name    partition_type    partition_expr    partition_values    comment    
+participant2     DBA     before_1988     participant2__p__before_1988     RANGE     [host_year]     null,1988,     null     
+participant2     DBA     before_1996     participant2__p__before_1996     RANGE     [host_year]     1988,1996,     null     
+participant2     DBA     last_one     participant2__p__last_one     RANGE     [host_year]     1996,null,     null     
 
 ===================================================
 13
@@ -133,27 +133,27 @@ count(*)
 0
 ===================================================
 class_of.partition    class_of.class_name    class_of    pname    ptype    pexpr    pvalues    comment    
-_db_partition,     participant     _db_class     null     1     SELECT [host_year] FROM [dba.participant2]     null     null     
+_db_partition,     participant     _db_class     null     1     SELECT [host_year] FROM [dba.participant]     null     null     
 _db_partition,     participant__p__before_1988     _db_class     before_1988     1     null     null,1988,     null     
 _db_partition,     participant__p__before_1996     _db_class     before_1996     1     null     1988,1996,     null     
 _db_partition,     participant__p__last_one     _db_class     last_one     1     null     1996,null,     null     
 
 ===================================================
-class_name    partition_name    partition_class_name    partition_type    partition_expr    partition_values    comment    
-participant     before_1988     participant__p__before_1988     RANGE     [host_year]     null,1988,     null     
-participant     before_1996     participant__p__before_1996     RANGE     [host_year]     1988,1996,     null     
-participant     last_one     participant__p__last_one     RANGE     [host_year]     1996,null,     null     
+class_name    owner_name    partition_name    partition_class_name    partition_type    partition_expr    partition_values    comment    
+participant     DBA     before_1988     participant__p__before_1988     RANGE     [host_year]     null,1988,     null     
+participant     DBA     before_1996     participant__p__before_1996     RANGE     [host_year]     1988,1996,     null     
+participant     DBA     last_one     participant__p__last_one     RANGE     [host_year]     1996,null,     null     
 
 ===================================================
 0
 ===================================================
 class_of.partition    class_of.class_name    class_of    pname    ptype    pexpr    pvalues    comment    
-_db_partition,     participant     _db_class     null     1     SELECT [host_year] FROM [dba.participant2]     null     null     
+_db_partition,     participant     _db_class     null     1     SELECT [host_year] FROM [dba.participant]     null     null     
 _db_partition,     participant__p__before_1996     _db_class     before_1996     1     null     null,1996,     null     
 
 ===================================================
-class_name    partition_name    partition_class_name    partition_type    partition_expr    partition_values    comment    
-participant     before_1996     participant__p__before_1996     RANGE     [host_year]     null,1996,     null     
+class_name    owner_name    partition_name    partition_class_name    partition_type    partition_expr    partition_values    comment    
+participant     DBA     before_1996     participant__p__before_1996     RANGE     [host_year]     null,1996,     null     
 
 ===================================================
 count(*)    
@@ -179,7 +179,7 @@ count(*)
 class_of.partition    class_of.class_name    class_of    pname    ptype    pexpr    pvalues    comment    
 
 ===================================================
-class_name    partition_name    partition_class_name    partition_type    partition_expr    partition_values    comment    
+class_name    owner_name    partition_name    partition_class_name    partition_type    partition_expr    partition_values    comment    
 
 ===================================================
 count(*)    

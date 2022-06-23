@@ -1,0 +1,71 @@
+===================================================
+class_of    unique_name    class_name    owner.name    
+null     db_synonym     db_synonym     DBA     
+null     _db_synonym     _db_synonym     DBA     
+
+===================================================
+class_name    owner_name    class_type    is_system_class    tde_algorithm    partitioned    is_reuse_oid_class    collation    comment    
+db_synonym     DBA     VCLASS     YES     NONE     NO     NO     iso88591_bin     null     
+_db_synonym     DBA     CLASS     YES     NONE     NO     NO     iso88591_bin     null     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+unique_name     VARCHAR(255)     NO     PRI     null          
+name     VARCHAR(255)     NO     MUL     null          
+owner     OBJECT     NO          null          
+is_public     INTEGER     NO          0          
+target_unique_name     VARCHAR(255)     NO          null          
+target_name     VARCHAR(255)     NO          null          
+target_owner     OBJECT     NO          null          
+comment     VARCHAR(2048)     YES          null          
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+synonym_name     VARCHAR(255)     YES          null          
+synonym_owner_name     VARCHAR(255)     YES          null          
+is_public_synonym     VARCHAR(3)     YES          null          
+target_name     VARCHAR(255)     YES          null          
+target_owner_name     VARCHAR(255)     YES          null          
+comment     VARCHAR(2048)     YES          null          
+
+===================================================
+TABLE    CREATE TABLE    
+_db_synonym     CREATE TABLE [_db_synonym] ([unique_name] CHARACTER VARYING(255) NOT NULL, [name] CHARACTER VARYING(255) NOT NULL, [owner] [db_user] NOT NULL, [is_public] INTEGER DEFAULT 0 NOT NULL, [target_unique_name] CHARACTER VARYING(255) NOT NULL, [target_name] CHARACTER VARYING(255) NOT NULL, [target_owner] [db_user] NOT NULL, [comment] CHARACTER VARYING(2048),  CONSTRAINT [pk__db_synonym_unique_name] PRIMARY KEY  ([unique_name]),  INDEX [i__db_synonym_name_owner_is_public] ([name], [owner], [is_public])) DONT_REUSE_OID, COLLATE iso88591_bin     
+
+===================================================
+View    Create View    
+db_synonym     SELECT [s].[name] AS [synonym_name], CAST ([s].[owner].[name] AS VARCHAR(255)) AS [synonym_owner_name], CASE WHEN [s].[is_public] = 1 THEN 'YES' ELSE 'NO' END AS [is_public_synonym], [s].[target_name] AS [target_name], CAST ([s].[target_owner].[name] AS VARCHAR(255)) AS [target_owner_name], [s].[comment] AS [comment] FROM [_db_synonym] [s] WHERE CURRENT_USER = 'DBA' OR [s].[is_public] = 1 OR ( [s].[is_public] = 0 AND {[s].[owner].[name]} SUBSETEQ ( SELECT SET {CURRENT_USER} + COALESCE (SUM (SET {[t].[g].[name]}), SET {}) FROM [db_user] [u], TABLE([groups]) AS [t]([g]) WHERE [u].[name] = CURRENT_USER ) )      
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+unique_name     VARCHAR(255)     NO     PRI     null          
+name     VARCHAR(255)     NO     MUL     null          
+owner     OBJECT     NO          null          
+is_public     INTEGER     NO          0          
+target_unique_name     VARCHAR(255)     NO          null          
+target_name     VARCHAR(255)     NO          null          
+target_owner     OBJECT     NO          null          
+comment     VARCHAR(2048)     YES          null          
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+synonym_name     VARCHAR(255)     YES          null          
+synonym_owner_name     VARCHAR(255)     YES          null          
+is_public_synonym     VARCHAR(3)     YES          null          
+target_name     VARCHAR(255)     YES          null          
+target_owner_name     VARCHAR(255)     YES          null          
+comment     VARCHAR(2048)     YES          null          
+
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
+_db_synonym     1     i__db_synonym_name_owner_is_public     1     name     A     0     null     null     NO     BTREE     null     null     YES     
+_db_synonym     1     i__db_synonym_name_owner_is_public     2     owner     A     0     null     null     NO     BTREE     null     null     YES     
+_db_synonym     1     i__db_synonym_name_owner_is_public     3     is_public     A     0     null     null     NO     BTREE     null     null     YES     
+_db_synonym     0     pk__db_synonym_unique_name     1     unique_name     A     0     null     null     NO     BTREE     null     null     YES     
+
+===================================================
+unique_name    name    owner    is_public    target_unique_name    target_name    target_owner    comment    
+
+===================================================
+synonym_name    synonym_owner_name    is_public_synonym    target_name    target_owner_name    comment    
+

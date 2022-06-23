@@ -43,5 +43,5 @@ FROM   t_a a,
        v_a b
 WHERE  a.col_a = b.col_a
        AND b.col_b = 1; 
- 
+DROP VIEW v_a; 
 DROP TABLE t_a, t_b;

@@ -22,6 +22,7 @@ _db_query_spec     DBA     CLASS     YES     NONE     NO     NO     iso88591_bin
 _db_server     DBA     CLASS     YES     NONE     NO     NO     iso88591_bin     null     
 _db_stored_procedure     DBA     CLASS     YES     NONE     NO     NO     iso88591_bin     null     
 _db_stored_procedure_args     DBA     CLASS     YES     NONE     NO     NO     iso88591_bin     null     
+_db_synonym     DBA     CLASS     YES     NONE     NO     NO     iso88591_bin     null     
 db_attr_setdomain_elm     DBA     VCLASS     YES     NONE     NO     NO     iso88591_bin     null     
 db_attribute     DBA     VCLASS     YES     NONE     NO     NO     iso88591_bin     null     
 db_auth     DBA     VCLASS     YES     NONE     NO     NO     iso88591_bin     null     
@@ -45,6 +46,7 @@ db_serial     DBA     CLASS     YES     NONE     NO     NO     iso88591_bin     
 db_server     DBA     VCLASS     YES     NONE     NO     NO     iso88591_bin     null     
 db_stored_procedure     DBA     VCLASS     YES     NONE     NO     NO     iso88591_bin     null     
 db_stored_procedure_args     DBA     VCLASS     YES     NONE     NO     NO     iso88591_bin     null     
+db_synonym     DBA     VCLASS     YES     NONE     NO     NO     iso88591_bin     null     
 db_trig     DBA     VCLASS     YES     NONE     NO     NO     iso88591_bin     null     
 db_trigger     DBA     CLASS     YES     NONE     NO     NO     iso88591_bin     null     
 db_user     DBA     CLASS     YES     NONE     NO     NO     iso88591_bin     null     
@@ -82,8 +84,8 @@ bd     INSTANCE
 be     SHARED     
 
 ===================================================
-index_name    is_unique    is_reverse    class_name    key_count    is_primary_key    is_foreign_key    filter_expression    have_function    comment    status    
-u_bar01_ba     YES     NO     bar01     1     NO     NO     null     NO     null     NORMAL INDEX     
+index_name    is_unique    is_reverse    class_name    owner_name    key_count    is_primary_key    is_foreign_key    filter_expression    have_function    comment    status    
+u_bar01_ba     YES     NO     bar01     DBA     1     NO     NO     null     NO     null     NORMAL INDEX     
 
 ===================================================
 0
@@ -120,11 +122,11 @@ foo01
 ===================================================
 0
 ===================================================
-meth_name    class_name    meth_type    index_of    data_type    prec    scale    code_set    domain_class_name    
-m_ba     bar01     CLASS     0     OBJECT     0     0     0     bar01     
-m_ba     bar01     CLASS     1     INTEGER     10     0     0     null     
-m_ba     bar01     INSTANCE     1     CHAR     10     0     3     null     
-m_bb     bar01     INSTANCE     1     FLOAT     7     0     0     null     
+meth_name    class_name    owner_name    meth_type    index_of    data_type    prec    scale    code_set    domain_class_name    domain_owner_name    
+m_ba     bar01     DBA     CLASS     0     OBJECT     0     0     0     bar01     DBA     
+m_ba     bar01     DBA     CLASS     1     INTEGER     10     0     0     null     null     
+m_ba     bar01     DBA     INSTANCE     1     CHAR     10     0     3     null     null     
+m_bb     bar01     DBA     INSTANCE     1     FLOAT     7     0     0     null     null     
 
 ===================================================
 0
@@ -149,7 +151,7 @@ bc     INSTANCE
 bd     INSTANCE     
 
 ===================================================
-index_name    is_unique    is_reverse    class_name    key_count    is_primary_key    is_foreign_key    filter_expression    have_function    comment    status    
+index_name    is_unique    is_reverse    class_name    owner_name    key_count    is_primary_key    is_foreign_key    filter_expression    have_function    comment    status    
 
 ===================================================
 0

@@ -6,7 +6,7 @@ store_id string
 PARTITION BY HASH(to_time(store_id)) 
 PARTITIONS 4; 
 
-select * from db_partition where class_name like '%za%' order by 2;
+select * from db_partition where class_name like '%za%' order by partition_name;
 
 
 drop class za;

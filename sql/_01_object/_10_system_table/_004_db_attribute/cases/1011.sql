@@ -8,6 +8,6 @@ insert into xoo(title) values ('ccc');
 select * from xoo order by 1;
 select *
 from db_attribute
-where class_name = 'xoo' order by 4;
+where class_name = 'xoo' order by def_order;
 
 drop class xoo;

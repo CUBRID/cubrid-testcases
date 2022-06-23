@@ -25,7 +25,7 @@ partition p3 values less than ('2006-05-01 11:00:00')
 );
 insert into range_test values (11,50,'kkk','kkk','2000-05-01 11:00:00');
 
-select * from db_partition order by 1,2;
+select * from db_partition order by 3,4;
 select * from range_test order by 1,2;
 
 select * from range_test__p__p0 order by 1,2;

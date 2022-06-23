@@ -44,7 +44,7 @@ alter table t reorganize partition p101 into (partition p101 values in ('02/28/1
 insert into t values('02/28/2004 12:00:00 AM',NULL);
 update t set t = '12:00:00 AM 02/28/2008' where t = '12:00:00 AM 02/28/2004';
 
-select * from db_partition where class_name='t' order by 2;
+select * from db_partition where class_name='t' order by 3;
 select * from db_class where class_name='t' or class_name like 't__p__p%' order by 1;
 
 select distinct t from t__p__p101 order by 1 ;

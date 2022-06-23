@@ -58,7 +58,7 @@ id_61, id_62, id_63, id_64, id_65)
 );
 
 select * from db_index_key
-where class_name in ('album','track') order by 3, 2,1;
+where class_name in ('album','track') order by key_attr_name,class_name,index_name;
 
 select * from db_index where class_name in ('album', 'track') order by 1;
 
