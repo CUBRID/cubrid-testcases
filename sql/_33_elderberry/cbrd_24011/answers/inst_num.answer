@@ -182,21 +182,20 @@ temp(group by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select tab_b.col_a from tab_b tab_b group by tab_b.col_a having groupby_num()<= ?:? 
+select tab_b.col_a from tab_b tab_b group by tab_b.col_a
 Query plan:
 sscan
     class: tab_b node[?]
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select tab_b.col_a from tab_b tab_b where inst_num()<=?
+select tab_b.col_a from tab_b tab_b
 Query plan:
 sscan
     class: d? node[?]
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select d?.col_a from (select tab_b.col_a from tab_b tab_b group by tab_b.col_a having groupby_num()<= ?:?  union all select tab_b.col_a from tab_b tab_b where inst_num()<=?) d? (col_a) where (inst_num()<= ?:? ))
+(select d?.col_a from (select tab_b.col_a from tab_b tab_b group by tab_b.col_a union all select tab_b.col_a from tab_b tab_b) d? (col_a) where (inst_num()<= ?:? ))
 Query plan:
 nl-join (cross join)
     outer: sscan
@@ -209,7 +208,7 @@ nl-join (cross join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from tab_a a, (select d?.col_a from (select tab_b.col_a from tab_b tab_b group by tab_b.col_a having groupby_num()<= ?:?  union all select tab_b.col_a from tab_b tab_b where inst_num()<=?) d? (col_a) where (inst_num()<= ?:? )) b (col_a) where a.col_a= ?:?  and b.col_a= ?:?  and a.col_a=b.col_a
+select count(*) from tab_a a, (select d?.col_a from (select tab_b.col_a from tab_b tab_b group by tab_b.col_a union all select tab_b.col_a from tab_b tab_b) d? (col_a) where (inst_num()<= ?:? )) b (col_a) where a.col_a= ?:?  and b.col_a= ?:?  and a.col_a=b.col_a
 ===================================================
 0
 ===================================================
