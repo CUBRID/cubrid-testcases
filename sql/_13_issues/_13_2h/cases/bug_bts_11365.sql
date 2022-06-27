@@ -5,7 +5,7 @@ set system parameters 'sort_limit_max_count=5';
 
 create table t (i int primary key);
 
-create table u(i int, j int, foreign key fk_u_t(i) references t(i));
+create table u(i int not null, j int, foreign key fk_u_t(i) references t(i));
 
 insert into t select rownum from _db_class a, _db_class b limit 2000;
 
@@ -22,7 +22,7 @@ drop table t;
 
 create table t (i int primary key);
 
-create table u(i int, j int, foreign key fk_u_t(i) references t(i));
+create table u(i int not null, j int, foreign key fk_u_t(i) references t(i));
 
 insert into t select rownum from _db_class a, _db_class b limit 2000;
 
