@@ -2,7 +2,7 @@
 set system parameters 'dont_reuse_heap_file=yes';
 create table t(i int primary key, j int);
 
-create table u(i int primary key, j int, k int, foreign key fk_u_t(j) references t(i));
+create table u(i int primary key, j int not null, k int, foreign key fk_u_t(j) references t(i));
 
 insert into t select rownum, rownum from _db_class a, _db_class b limit 1500;
 
