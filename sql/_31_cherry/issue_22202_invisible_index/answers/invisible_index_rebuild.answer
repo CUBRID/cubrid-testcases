@@ -90,7 +90,16 @@ sscan
 Query stmt:
 select tb.a, tb.b from tb tb where (tb.a> ?:? ) and tb.b is not null 
 ===================================================
-Error:-494
+a    b    
+1     1     
+
+Query plan:
+sscan
+    class: tb node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select tb.a, tb.b from tb tb where (tb.a> ?:? ) and tb.b is not null 
 ===================================================
 0
 ===================================================
@@ -105,7 +114,16 @@ sscan
 Query stmt:
 select tb.a, tb.b from tb tb where (tb.a> ?:? ) and tb.b is not null 
 ===================================================
-Error:-494
+a    b    
+1     1     
+
+Query plan:
+sscan
+    class: tb node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select tb.a, tb.b from tb tb where (tb.a> ?:? ) and tb.b is not null 
 ===================================================
 0
 ===================================================
@@ -120,7 +138,16 @@ sscan
 Query stmt:
 select tb.a, tb.b from tb tb where (tb.a> ?:? ) and tb.b is not null 
 ===================================================
-Error:-494
+a    b    
+1     1     
+
+Query plan:
+sscan
+    class: tb node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select tb.a, tb.b from tb tb where (tb.a> ?:? ) and tb.b is not null 
 ===================================================
 0
 ===================================================
@@ -172,7 +199,15 @@ Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    C
 dba.t1     1     first_name_lower     1     null     A     1     null     null     YES     BTREE      lower([dba.t1].[FirstName])     null     NO     
 
 ===================================================
-Error:-494
+firstname    lastname    age    gender    
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.firstname, t?.lastname, t?.age, t?.gender from t? t? where  lower(t?.FirstName)='yin'
 ===================================================
 firstname    lastname    age    gender    
 

@@ -26,17 +26,16 @@ select test?.a from test? test? where (inst_num()<= ?:? )
 Query plan:
 sscan
     class: test? node[?]
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select test?.a from test? test? where inst_num()<=?
+select test?.a from test? test?
 Query plan:
 sscan
     class: d? node[?]
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select d?.a from (select test?.a from test? test? where (inst_num()<= ?:? ) union all select test?.a from test? test? where inst_num()<=?) d? (a) where (inst_num()<= ?:? )
+select d?.a from (select test?.a from test? test? where (inst_num()<= ?:? ) union all select test?.a from test? test?) d? (a) where (inst_num()<= ?:? )
 ===================================================
 a    
 10     
@@ -51,17 +50,16 @@ select test?.a from test? test? where (inst_num()<= ?:? )
 Query plan:
 sscan
     class: test? node[?]
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select test?.a from test? test? where inst_num()<=?
+select test?.a from test? test?
 Query plan:
 sscan
     class: d? node[?]
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select d?.a from (select test?.a from test? test? where (inst_num()<= ?:? ) union all select test?.a from test? test? where inst_num()<=?) d? (a) where (inst_num()<= ?:? )
+select d?.a from (select test?.a from test? test? where (inst_num()<= ?:? ) union all select test?.a from test? test?) d? (a) where (inst_num()<= ?:? )
 ===================================================
 a    
 
