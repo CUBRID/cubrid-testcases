@@ -7,29 +7,191 @@ Error:-494
 ===================================================
 12
 ===================================================
-Error:-494
+id    textlabel    description    
+1     a00     from tex's viewpoint, a single character from a font is a box;     
+2     a_0     the font designer has decided what the height, width, and depth of the character are     
+3     a11     tex uses these dimensions to paste boxes together     
+14     ea0      you needn't bother to learn these measurements yourself     
+15     ea3     the character shape need not fit inside the boundaries of its box.     
+16     ea4     for example, some characters that are used to build up larger math symbols     
+21     m..     slanted letters frequently extend a little to the right of the box     
+22     m.-     a number is specified for each character, telling roughly how far that character extends...     
+23     m--     (printers generally prefer white space to black space.)     
+100     xk~     plain tex has an output routine that takes care of ordinary jobs.     
+101     xy~     this format is suitable for preprints of technical papers, ...     
+110     xx~     in fact, \nopagenumbers is a special case of a much more general mechanism     
+
+Query plan:
+iscan
+    class: part node[?]
+    index: u_part_id term[?]
+    cost:  ? card ?
+Query stmt:
+select part.id, part.textlabel, part.description from part part where (part.id> ?:? )
 ===================================================
-Error:-494
+id    textlabel    description    
+1     a00     from tex's viewpoint, a single character from a font is a box;     
+3     a11     tex uses these dimensions to paste boxes together     
+14     ea0      you needn't bother to learn these measurements yourself     
+16     ea4     for example, some characters that are used to build up larger math symbols     
+21     m..     slanted letters frequently extend a little to the right of the box     
+
+Query plan:
+iscan
+    class: part node[?]
+    index: u_part_id term[?]
+    cost:  ? card ?
+Query stmt:
+select part.id, part.textlabel, part.description from part part where (part.id> ?:? )
+Query plan:
+sscan
+    class: part node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select part.id, part.textlabel, part.description from part part where (part.textlabel like '%$_%' escape '$' or part.textlabel like  ?:?  or part.textlabel like  ?:?  or part.textlabel like  ?:? )
 ===================================================
-Error:-494
+0
 ===================================================
-Error:-493
+id    textlabel    description    
+1     a00     from tex's viewpoint, a single character from a font is a box;     
+2     a_0     the font designer has decided what the height, width, and depth of the character are     
+3     a11     tex uses these dimensions to paste boxes together     
+14     ea0      you needn't bother to learn these measurements yourself     
+15     ea3     the character shape need not fit inside the boundaries of its box.     
+16     ea4     for example, some characters that are used to build up larger math symbols     
+21     m..     slanted letters frequently extend a little to the right of the box     
+22     m.-     a number is specified for each character, telling roughly how far that character extends...     
+23     m--     (printers generally prefer white space to black space.)     
+100     xk~     plain tex has an output routine that takes care of ordinary jobs.     
+101     xy~     this format is suitable for preprints of technical papers, ...     
+110     xx~     in fact, \nopagenumbers is a special case of a much more general mechanism     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: orig_part node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select orig_part.id, orig_part.textlabel, orig_part.description from orig_part orig_part order by ?
 ===================================================
-Error:-494
+0
 ===================================================
 4
 ===================================================
-Error:-494
+id    textlabel    description    
+1     a00     from tex's viewpoint, a single character from a font is a box;     
+2     a_0     the font designer has decided what the height, width, and depth of the character are     
+3     a11     tex uses these dimensions to paste boxes together     
+4     a12     null     
+13     ea2     null     
+14     ea0      you needn't bother to learn these measurements yourself     
+15     ea3     the character shape need not fit inside the boundaries of its box.     
+16     ea4     for example, some characters that are used to build up larger math symbols     
+20     m       null     
+21     m..     slanted letters frequently extend a little to the right of the box     
+22     m.-     a number is specified for each character, telling roughly how far that character extends...     
+23     m--     (printers generally prefer white space to black space.)     
+100     xk~     plain tex has an output routine that takes care of ordinary jobs.     
+101     xy~     this format is suitable for preprints of technical papers, ...     
+102     ***     null     
+110     xx~     in fact, \nopagenumbers is a special case of a much more general mechanism     
+
+Query plan:
+iscan
+    class: part node[?]
+    index: u_part_id term[?]
+    cost:  ? card ?
+Query stmt:
+select part.id, part.textlabel, part.description from part part where (part.id> ?:? )
 ===================================================
-Error:-494
+id    textlabel    description    
+1     a00     from tex's viewpoint, a single character from a font is a box;     
+3     a11     tex uses these dimensions to paste boxes together     
+4     a12     null     
+13     ea2     null     
+14     ea0      you needn't bother to learn these measurements yourself     
+16     ea4     for example, some characters that are used to build up larger math symbols     
+20     m       null     
+21     m..     slanted letters frequently extend a little to the right of the box     
+102     ***     null     
+
+Query plan:
+iscan
+    class: part node[?]
+    index: u_part_id term[?]
+    cost:  ? card ?
+Query stmt:
+select part.id, part.textlabel, part.description from part part where (part.id> ?:? )
+Query plan:
+sscan
+    class: part node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select part.id, part.textlabel, part.description from part part where (part.textlabel like '%$_%' escape '$' or part.textlabel like  ?:?  or part.textlabel like  ?:?  or part.textlabel like  ?:? )
 ===================================================
 Error:-493
 ===================================================
 4
 ===================================================
-Error:-494
+id    textlabel    description    
+1     a00     from tex's viewpoint, a single character from a font is a box;     
+2     a_0     the font designer has decided what the height, width, and depth of the character are     
+3     a11     tex uses these dimensions to paste boxes together     
+4     a12     null     
+5     a_1     null     
+12     e33     null     
+13     ea2     null     
+14     ea0      you needn't bother to learn these measurements yourself     
+15     ea3     the character shape need not fit inside the boundaries of its box.     
+16     ea4     for example, some characters that are used to build up larger math symbols     
+20     m       null     
+21     m..     slanted letters frequently extend a little to the right of the box     
+22     m.-     a number is specified for each character, telling roughly how far that character extends...     
+23     m--     (printers generally prefer white space to black space.)     
+24     m-.     null     
+100     xk~     plain tex has an output routine that takes care of ordinary jobs.     
+101     xy~     this format is suitable for preprints of technical papers, ...     
+102     ***     null     
+110     xx~     in fact, \nopagenumbers is a special case of a much more general mechanism     
+111     xz~     null     
+
+Query plan:
+iscan
+    class: part node[?]
+    index: u_part_id term[?]
+    cost:  ? card ?
+Query stmt:
+select part.id, part.textlabel, part.description from part part where (part.id> ?:? )
 ===================================================
-Error:-494
+id    textlabel    description    
+1     a00     from tex's viewpoint, a single character from a font is a box;     
+3     a11     tex uses these dimensions to paste boxes together     
+4     a12     null     
+13     ea2     null     
+14     ea0      you needn't bother to learn these measurements yourself     
+16     ea4     for example, some characters that are used to build up larger math symbols     
+20     m       null     
+21     m..     slanted letters frequently extend a little to the right of the box     
+102     ***     null     
+
+Query plan:
+iscan
+    class: part node[?]
+    index: u_part_id term[?]
+    cost:  ? card ?
+Query stmt:
+select part.id, part.textlabel, part.description from part part where (part.id> ?:? )
+Query plan:
+sscan
+    class: part node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select part.id, part.textlabel, part.description from part part where (part.textlabel like '%$_%' escape '$' or part.textlabel like  ?:?  or part.textlabel like  ?:?  or part.textlabel like  ?:? )
 ===================================================
 1
 ===================================================
@@ -39,9 +201,58 @@ Error:-494
 ===================================================
 1
 ===================================================
-Error:-494
+id    textlabel    description    
+1     a0_     from tex's viewpoint, a single character from a font is a box;     
+2     a_0     the font designer has decided what the height, width, and depth of the character are     
+3     a11     tex uses these dimensions to paste boxes together     
+4     a12     null     
+5     a_1     null     
+12     e33     null     
+13     ea2     null     
+14     3a0      you needn't bother to learn these measurements yourself     
+15     ea3     the character shape need not fit inside the boundaries of its box.     
+16     ea4     for example, some characters that are used to build up larger math symbols     
+20     ..m     null     
+21     m..     slanted letters frequently extend a little to the right of the box     
+22     m.-     a number is specified for each character, telling roughly how far that character extends...     
+23     m--     (printers generally prefer white space to black space.)     
+24     m-.     null     
+100     xk~     plain tex has an output routine that takes care of ordinary jobs.     
+101     xy~     this format is suitable for preprints of technical papers, ...     
+102     **~     null     
+110     xx~     in fact, \nopagenumbers is a special case of a much more general mechanism     
+111     xz~     null     
+
+Query plan:
+iscan
+    class: part node[?]
+    index: u_part_id term[?]
+    cost:  ? card ?
+Query stmt:
+select part.id, part.textlabel, part.description from part part where (part.id> ?:? )
 ===================================================
-Error:-494
+id    textlabel    description    
+3     a11     tex uses these dimensions to paste boxes together     
+4     a12     null     
+13     ea2     null     
+16     ea4     for example, some characters that are used to build up larger math symbols     
+20     ..m     null     
+21     m..     slanted letters frequently extend a little to the right of the box     
+
+Query plan:
+iscan
+    class: part node[?]
+    index: u_part_id term[?]
+    cost:  ? card ?
+Query stmt:
+select part.id, part.textlabel, part.description from part part where (part.id> ?:? )
+Query plan:
+sscan
+    class: part node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select part.id, part.textlabel, part.description from part part where (part.textlabel like '%$_%' escape '$' or part.textlabel like  ?:?  or part.textlabel like  ?:?  or part.textlabel like  ?:? )
 ===================================================
 1
 ===================================================
@@ -51,15 +262,117 @@ Error:-494
 ===================================================
 1
 ===================================================
-Error:-494
+id    textlabel    description    
+1     a0_     from tex's viewpoint, a single character from a font is a box;     
+2     a99     the font designer has decided what the height, width, and depth of the character are     
+3     a11     tex uses these dimensions to paste boxes together     
+4     a12     null     
+5     a_1     null     
+12     e33     null     
+13     ea2     null     
+14     3a0      you needn't bother to learn these measurements yourself     
+15     eaa     the character shape need not fit inside the boundaries of its box.     
+16     ea4     for example, some characters that are used to build up larger math symbols     
+20     ..m     null     
+21     m..     slanted letters frequently extend a little to the right of the box     
+22     m.-     a number is specified for each character, telling roughly how far that character extends...     
+23     ...     (printers generally prefer white space to black space.)     
+24     m-.     null     
+100     xk~     plain tex has an output routine that takes care of ordinary jobs.     
+101     xy~     this format is suitable for preprints of technical papers, ...     
+102     **~     null     
+110     xxx     in fact, \nopagenumbers is a special case of a much more general mechanism     
+111     xz~     null     
+
+Query plan:
+iscan
+    class: part node[?]
+    index: u_part_id term[?]
+    cost:  ? card ?
+Query stmt:
+select part.id, part.textlabel, part.description from part part where (part.id> ?:? )
 ===================================================
-Error:-494
+id    textlabel    description    
+2     a99     the font designer has decided what the height, width, and depth of the character are     
+3     a11     tex uses these dimensions to paste boxes together     
+4     a12     null     
+13     ea2     null     
+15     eaa     the character shape need not fit inside the boundaries of its box.     
+16     ea4     for example, some characters that are used to build up larger math symbols     
+20     ..m     null     
+21     m..     slanted letters frequently extend a little to the right of the box     
+23     ...     (printers generally prefer white space to black space.)     
+110     xxx     in fact, \nopagenumbers is a special case of a much more general mechanism     
+
+Query plan:
+iscan
+    class: part node[?]
+    index: u_part_id term[?]
+    cost:  ? card ?
+Query stmt:
+select part.id, part.textlabel, part.description from part part where (part.id> ?:? )
+Query plan:
+sscan
+    class: part node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select part.id, part.textlabel, part.description from part part where (part.textlabel like '%$_%' escape '$' or part.textlabel like  ?:?  or part.textlabel like  ?:?  or part.textlabel like  ?:? )
 ===================================================
 8
 ===================================================
-Error:-494
+id    textlabel    description    
+1     a0_     from tex's viewpoint, a single character from a font is a box;     
+2     a99     the font designer has decided what the height, width, and depth of the character are     
+3     a__     null     
+4     a12     null     
+5     a_1     null     
+12     e33     null     
+13     ea2     null     
+14     3a0      you needn't bother to learn these measurements yourself     
+15     eaa     the character shape need not fit inside the boundaries of its box.     
+16     3e3     null     
+20     ..m     null     
+21     -m-     null     
+22     m.-     a number is specified for each character, telling roughly how far that character extends...     
+23     ...     (printers generally prefer white space to black space.)     
+24     m-.     null     
+100     xk~     plain tex has an output routine that takes care of ordinary jobs.     
+101     xy~     this format is suitable for preprints of technical papers, ...     
+102     **~     null     
+110     ~xx     null     
+111     xz~     null     
+
+Query plan:
+iscan
+    class: part node[?]
+    index: u_part_id term[?]
+    cost:  ? card ?
+Query stmt:
+select part.id, part.textlabel, part.description from part part where (part.id> ?:? )
 ===================================================
-Error:-494
+id    textlabel    description    
+2     a99     the font designer has decided what the height, width, and depth of the character are     
+4     a12     null     
+13     ea2     null     
+15     eaa     the character shape need not fit inside the boundaries of its box.     
+20     ..m     null     
+23     ...     (printers generally prefer white space to black space.)     
+
+Query plan:
+iscan
+    class: part node[?]
+    index: u_part_id term[?]
+    cost:  ? card ?
+Query stmt:
+select part.id, part.textlabel, part.description from part part where (part.id> ?:? )
+Query plan:
+sscan
+    class: part node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select part.id, part.textlabel, part.description from part part where (part.textlabel like '%$_%' escape '$' or part.textlabel like  ?:?  or part.textlabel like  ?:?  or part.textlabel like  ?:? )
 ===================================================
 0
 ===================================================

@@ -29,9 +29,33 @@ iscan
 Query stmt:
 select tb.a, tb.b from tb tb where (tb.a> ?:? )
 ===================================================
-Error:-494
+a    b    
+1     1     
+2     2     
+3     3     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_all (covers)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select tb.a, tb.b from tb tb where tb.a is not null  using index tb.i_tb_all(+)
 ===================================================
-Error:-494
+a    b    
+1     1     
+2     2     
+3     3     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_all (covers)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select tb.a, tb.b from tb tb where (tb.b is null  or tb.b is not null ) using index tb.i_tb_all(+)
 ===================================================
 a    b    
 1     1     
@@ -47,9 +71,29 @@ iscan
 Query stmt:
 select tb.a, tb.b from tb tb where tb.b is not null  using index tb.i_tb_all(+)
 ===================================================
-Error:-494
+b    
+null     
+
+Query plan:
+sscan
+    class: tb node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tb.b from tb tb where tb.b is null 
 ===================================================
-Error:-494
+b    
+1     
+2     
+3     
+
+Query plan:
+sscan
+    class: tb node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tb.b from tb tb where (tb.b> ?:? )
 ===================================================
 0
 ===================================================

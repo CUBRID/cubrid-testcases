@@ -79,7 +79,18 @@ Query stmt:
 select t?.a, t?.b, t?.c, t?.d from t? t? where (t?.a> ?:? ) using index t?.i?_abcd order by ? desc  for orderby_num() between  ?:?  and  ?:? 
 /* ---> skip ORDER BY */
 ===================================================
-Error:-494
+a    b    c    d    
+3     3     3     3     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i?_abcd term[?] (covers)
+    sort:  ? desc, ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.b, t?.c, t?.d from t? t? where (t?.a> ?:? ) using index t?.i?_abcd order by ? desc  for orderby_num() between  ?:?  and  ?:? 
+/* ---> skip ORDER BY */
 ===================================================
 a    b    c    d    
 3     3     3     3     
@@ -123,13 +134,191 @@ temp(order by)
 Query stmt:
 select t?.a, t?.b, t?.c, t?.d from t? t? where (t?.b> ?:? ) using index t?.i?_ab order by ? desc 
 ===================================================
-Error:-494
+a    b    c    d    a    b    c    d    a    b    c    d    a    b    c    d    
+3     3     3     3     1     1     1     1     1     1     1     1     1     1     1     1     
+3     3     3     3     1     1     1     1     1     1     1     1     2     2     2     2     
+3     3     3     3     1     1     1     1     1     1     1     1     3     3     3     3     
+3     3     3     3     1     1     1     1     2     2     2     2     1     1     1     1     
+3     3     3     3     1     1     1     1     2     2     2     2     2     2     2     2     
+3     3     3     3     1     1     1     1     2     2     2     2     3     3     3     3     
+3     3     3     3     1     1     1     1     3     3     3     3     1     1     1     1     
+3     3     3     3     1     1     1     1     3     3     3     3     2     2     2     2     
+3     3     3     3     1     1     1     1     3     3     3     3     3     3     3     3     
+3     3     3     3     2     2     2     2     1     1     1     1     1     1     1     1     
+3     3     3     3     2     2     2     2     1     1     1     1     2     2     2     2     
+3     3     3     3     2     2     2     2     1     1     1     1     3     3     3     3     
+3     3     3     3     2     2     2     2     2     2     2     2     1     1     1     1     
+3     3     3     3     2     2     2     2     2     2     2     2     2     2     2     2     
+3     3     3     3     2     2     2     2     2     2     2     2     3     3     3     3     
+3     3     3     3     2     2     2     2     3     3     3     3     1     1     1     1     
+3     3     3     3     2     2     2     2     3     3     3     3     2     2     2     2     
+3     3     3     3     2     2     2     2     3     3     3     3     3     3     3     3     
+3     3     3     3     3     3     3     3     1     1     1     1     1     1     1     1     
+3     3     3     3     3     3     3     3     1     1     1     1     2     2     2     2     
+3     3     3     3     3     3     3     3     1     1     1     1     3     3     3     3     
+3     3     3     3     3     3     3     3     2     2     2     2     1     1     1     1     
+3     3     3     3     3     3     3     3     2     2     2     2     2     2     2     2     
+3     3     3     3     3     3     3     3     2     2     2     2     3     3     3     3     
+3     3     3     3     3     3     3     3     3     3     3     3     1     1     1     1     
+3     3     3     3     3     3     3     3     3     3     3     3     2     2     2     2     
+3     3     3     3     3     3     3     3     3     3     3     3     3     3     3     3     
+2     2     2     2     1     1     1     1     1     1     1     1     1     1     1     1     
+2     2     2     2     1     1     1     1     1     1     1     1     2     2     2     2     
+2     2     2     2     1     1     1     1     1     1     1     1     3     3     3     3     
+2     2     2     2     1     1     1     1     2     2     2     2     1     1     1     1     
+2     2     2     2     1     1     1     1     2     2     2     2     2     2     2     2     
+2     2     2     2     1     1     1     1     2     2     2     2     3     3     3     3     
+2     2     2     2     1     1     1     1     3     3     3     3     1     1     1     1     
+2     2     2     2     1     1     1     1     3     3     3     3     2     2     2     2     
+2     2     2     2     1     1     1     1     3     3     3     3     3     3     3     3     
+2     2     2     2     2     2     2     2     1     1     1     1     1     1     1     1     
+2     2     2     2     2     2     2     2     1     1     1     1     2     2     2     2     
+2     2     2     2     2     2     2     2     1     1     1     1     3     3     3     3     
+2     2     2     2     2     2     2     2     2     2     2     2     1     1     1     1     
+2     2     2     2     2     2     2     2     2     2     2     2     2     2     2     2     
+2     2     2     2     2     2     2     2     2     2     2     2     3     3     3     3     
+2     2     2     2     2     2     2     2     3     3     3     3     1     1     1     1     
+2     2     2     2     2     2     2     2     3     3     3     3     2     2     2     2     
+2     2     2     2     2     2     2     2     3     3     3     3     3     3     3     3     
+2     2     2     2     3     3     3     3     1     1     1     1     1     1     1     1     
+2     2     2     2     3     3     3     3     1     1     1     1     2     2     2     2     
+2     2     2     2     3     3     3     3     1     1     1     1     3     3     3     3     
+2     2     2     2     3     3     3     3     2     2     2     2     1     1     1     1     
+2     2     2     2     3     3     3     3     2     2     2     2     2     2     2     2     
+2     2     2     2     3     3     3     3     2     2     2     2     3     3     3     3     
+2     2     2     2     3     3     3     3     3     3     3     3     1     1     1     1     
+2     2     2     2     3     3     3     3     3     3     3     3     2     2     2     2     
+2     2     2     2     3     3     3     3     3     3     3     3     3     3     3     3     
+1     1     1     1     1     1     1     1     1     1     1     1     1     1     1     1     
+1     1     1     1     1     1     1     1     1     1     1     1     2     2     2     2     
+1     1     1     1     1     1     1     1     1     1     1     1     3     3     3     3     
+1     1     1     1     1     1     1     1     2     2     2     2     1     1     1     1     
+1     1     1     1     1     1     1     1     2     2     2     2     2     2     2     2     
+1     1     1     1     1     1     1     1     2     2     2     2     3     3     3     3     
+1     1     1     1     1     1     1     1     3     3     3     3     1     1     1     1     
+1     1     1     1     1     1     1     1     3     3     3     3     2     2     2     2     
+1     1     1     1     1     1     1     1     3     3     3     3     3     3     3     3     
+1     1     1     1     2     2     2     2     1     1     1     1     1     1     1     1     
+1     1     1     1     2     2     2     2     1     1     1     1     2     2     2     2     
+1     1     1     1     2     2     2     2     1     1     1     1     3     3     3     3     
+1     1     1     1     2     2     2     2     2     2     2     2     1     1     1     1     
+1     1     1     1     2     2     2     2     2     2     2     2     2     2     2     2     
+1     1     1     1     2     2     2     2     2     2     2     2     3     3     3     3     
+1     1     1     1     2     2     2     2     3     3     3     3     1     1     1     1     
+1     1     1     1     2     2     2     2     3     3     3     3     2     2     2     2     
+1     1     1     1     2     2     2     2     3     3     3     3     3     3     3     3     
+1     1     1     1     3     3     3     3     1     1     1     1     1     1     1     1     
+1     1     1     1     3     3     3     3     1     1     1     1     2     2     2     2     
+1     1     1     1     3     3     3     3     1     1     1     1     3     3     3     3     
+1     1     1     1     3     3     3     3     2     2     2     2     1     1     1     1     
+1     1     1     1     3     3     3     3     2     2     2     2     2     2     2     2     
+1     1     1     1     3     3     3     3     2     2     2     2     3     3     3     3     
+1     1     1     1     3     3     3     3     3     3     3     3     1     1     1     1     
+1     1     1     1     3     3     3     3     3     3     3     3     2     2     2     2     
+1     1     1     1     3     3     3     3     3     3     3     3     3     3     3     3     
+
+Query plan:
+nl-join (cross join)
+    outer: nl-join (cross join)
+               outer: nl-join (cross join)
+                          outer: iscan
+                                     class: t? node[?]
+                                     index: i?_abcd term[?] (covers)
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: t? node[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: t? node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               cost:  ? card ?
+    sort:  ? desc, ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.b, t?.c, t?.d, t?.a, t?.b, t?.c, t?.d, t?.a, t?.b, t?.c, t?.d, t?.a, t?.b, t?.c, t?.d from t? t?, t? t?, t? t?, t? t? where (t?.a> ?:? ) using index t?.i?_a, t?.i?_ab, t?.i?_abc, t?.i?_abcd order by ? desc 
+/* ---> skip ORDER BY */
 ===================================================
-Error:-494
+sum(t1.a)    
+162     
+
+Query plan:
+nl-join (cross join)
+    outer: nl-join (cross join)
+               outer: nl-join (cross join)
+                          outer: iscan
+                                     class: t? node[?]
+                                     index: i?_a term[?] (covers)
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: t? node[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: t? node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select sum(t?.a) from t? t?, t? t?, t? t?, t? t? where (t?.a> ?:? ) using index t?.i?_a(+), t?.i?_ab(+), t?.i?_abc(+), t?.i?_abcd(+)
 ===================================================
-Error:-494
+sum(t1.a)    
+162     
+
+Query plan:
+nl-join (cross join)
+    outer: nl-join (cross join)
+               outer: nl-join (cross join)
+                          outer: iscan
+                                     class: t? node[?]
+                                     index: i?_a term[?] (covers)
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: t? node[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: t? node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select sum(t?.a) from t? t?, t? t?, t? t?, t? t? where (t?.a> ?:? ) using index t?.i?_a(-), t?.i?_ab(-), t?.i?_abc(-), t?.i?_abcd(-)
 ===================================================
-Error:-494
+sum(t1.a)    
+162     
+
+Query plan:
+nl-join (cross join)
+    outer: nl-join (cross join)
+               outer: nl-join (cross join)
+                          outer: iscan
+                                     class: t? node[?]
+                                     index: i?_a term[?] (covers)
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: t? node[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: t? node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select sum(t?.a) from t? t?, t? t?, t? t?, t? t? where (t?.a> ?:? ) using index t?.i?_a(-), t?.i?_ab(-), t?.i?_abc(-), t?.i?_abcd(-)
 ===================================================
 sum(t1.a)    
 162     

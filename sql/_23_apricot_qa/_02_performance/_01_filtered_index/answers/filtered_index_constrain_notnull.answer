@@ -17,15 +17,71 @@ Error:-494
 ===================================================
 1
 ===================================================
-Error:-494
+a    b    
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_all (covers)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select tb.a, tb.b from tb tb where tb.a is null  using index tb.i_tb_all(+)
 ===================================================
-Error:-494
+a    b    
+1     1     
+2     2     
+3     3     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_all (covers)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select tb.a, tb.b from tb tb where (tb.b is null  or tb.b is not null ) using index tb.i_tb_all(+)
 ===================================================
-Error:-494
+b    
+1     
+2     
+3     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_all (covers)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select tb.b from tb tb where (tb.b> ?:? ) using index tb.i_tb_all(+)
 ===================================================
-Error:-494
+b    
+1     
+2     
+3     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_all (covers)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select tb.b from tb tb where tb.a is not null  using index tb.i_tb_all(+)
 ===================================================
-Error:-494
+b    
+1     
+2     
+3     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_all term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select tb.b from tb tb where (tb.a> ?:? ) using index tb.i_tb_all(+)
 ===================================================
 0
 ===================================================

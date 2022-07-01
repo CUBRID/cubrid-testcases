@@ -11,6 +11,21 @@
 ===================================================
 0
 ===================================================
-Error:-494
+a    b    c    d    a    b    c    d    
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: t? node[?]
+               index: i?_a term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t? node[?]
+               index: i?_a term[?]
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.b, t?.c, t?.d, t?.a, t?.b, t?.c, t?.d from t? t?, t? t? where (t?.a> ?:? ) and (t?.a> ?:? ) and t?.a=t?.a using index t?.i?_a(+)
 ===================================================
 0
