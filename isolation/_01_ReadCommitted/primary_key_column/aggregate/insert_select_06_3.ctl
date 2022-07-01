@@ -74,7 +74,7 @@ C1: commit;
 C2: insert into t values(1,'aa');
 
 /* expected 10 group */
-C6: select min(t.id) from t, (select sleep(3)) x where id between 1 and 900;
+C6: select min(t.id) from t where id between 1 and 900 and (select sleep(3)=0)<>0;
 MC: wait until C6 ready;
 C3: insert into t values(2,'cc');
 C2: commit;
