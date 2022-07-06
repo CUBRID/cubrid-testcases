@@ -1,0 +1,741 @@
+===================================================
+0
+===================================================
+0
+===================================================
+13
+===================================================
+rn    
+3     
+4     
+
+Query plan:
+sscan
+    class: __t? node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select (rownum) from t [__t?] where ((rownum)>= ?:?  and (rownum)< ?:? ) and ([__t?].ca= ?:? )
+===================================================
+0
+===================================================
+rn    
+3     
+4     
+
+Query plan:
+sscan
+    class: __t? node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select (rownum) from t [__t?] where ((rownum)>= ?:?  and (rownum)< ?:? ) and ([__t?].ca= ?:? )
+===================================================
+rn    
+3     
+4     
+
+Query plan:
+sscan
+    class: __t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select (rownum) from t [__t?] where ((rownum)>= ?:?  and (rownum)< ?:? )
+===================================================
+0
+===================================================
+rn    
+5     
+6     
+7     
+8     
+9     
+
+Query plan:
+sscan
+    class: v node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select (rownum) from t v where ((rownum)>= ?:?  and (rownum)< ?:? )
+===================================================
+rn    ca    max(t.cb)    
+1     1     1     
+2     2     2     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t.ca, max(t.cb) from t t group by t.ca)
+Query plan:
+sscan
+    class: __t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select (rownum), [__t?].ca, [__t?].[max(t.cb)] from (select t.ca, max(t.cb) from t t group by t.ca) [__t?] (ca, [max(t.cb)]) where ((rownum)>= ?:?  and (rownum)< ?:? )
+===================================================
+0
+===================================================
+rn    ca    cb    
+1     1     1     
+2     2     2     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: a node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select a.ca, max(a.cb) from t a group by a.ca)
+Query plan:
+sscan
+    class: __t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select (rownum), [__t?].ca, [__t?].cb from (select a.ca, max(a.cb) from t a group by a.ca) [__t?] (ca, cb) where ((rownum)>= ?:?  and (rownum)< ?:? )
+===================================================
+rn    ca    cb    
+7     2     2     
+8     2     2     
+9     2     2     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select (orderby_num()), [__t?].ca, [__t?].cb from t [__t?] order by ? desc  for (orderby_num())< ?:?  and (orderby_num())>= ?:? 
+===================================================
+0
+===================================================
+rn    ca    cb    
+7     2     2     
+8     2     2     
+9     2     2     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select (orderby_num()), [__t?].ca, [__t?].cb from t [__t?] order by ? desc  for (orderby_num())< ?:?  and (orderby_num())>= ?:? 
+===================================================
+rn    ca    cb    
+7     2     2     
+8     2     2     
+9     2     2     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+(select t.ca, t.cb from t t order by ? desc )
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: a node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select (rownum), a.ca, a.cb from (select t.ca, t.cb from t t order by ? desc ) a (ca, cb) where (rownum< ?:? ) order by ?)
+Query plan:
+sscan
+    class: __t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select [__t?].rn, [__t?].ca, [__t?].cb from (select (rownum) as [rn], a.ca, a.cb from (select t.ca, t.cb from t t order by ? desc ) a (ca, cb) where (rownum< ?:? ) order by ?) [__t?] (rn, ca, cb) where ([__t?].rn>= ?:? )
+===================================================
+0
+===================================================
+rn    ca    cb    
+7     2     2     
+8     2     2     
+9     2     2     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: a node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+(select a.ca, a.cb from t a order by ? desc )
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: a node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select (rownum), a.ca, a.cb from (select a.ca, a.cb from t a order by ? desc ) a (ca, cb) where (rownum< ?:? ) order by ?)
+Query plan:
+sscan
+    class: __t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select [__t?].rn, [__t?].ca, [__t?].cb from (select (rownum) as [rn], a.ca, a.cb from (select a.ca, a.cb from t a order by ? desc ) a (ca, cb) where (rownum< ?:? ) order by ?) [__t?] (rn, ca, cb) where ([__t?].rn>= ?:? )
+===================================================
+rn    ca    cb    
+7     2     2     
+8     2     2     
+9     2     2     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: a node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+(select (orderby_num()), a.ca, a.cb from t a order by ? desc  for (orderby_num())< ?:? )
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select [__t?].rn, [__t?].ca, [__t?].cb from (select (orderby_num()), a.ca, a.cb from t a order by ? desc  for (orderby_num())< ?:? ) [__t?] (rn, ca, cb) where ([__t?].rn>= ?:? ) order by ?
+===================================================
+0
+===================================================
+rn    ca    cb    
+7     2     2     
+8     2     2     
+9     2     2     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: a node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+(select (orderby_num()), a.ca, a.cb from t a order by ? desc  for (orderby_num())< ?:? )
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select [__t?].rn, [__t?].ca, [__t?].cb from (select (orderby_num()), a.ca, a.cb from t a order by ? desc  for (orderby_num())< ?:? ) [__t?] (rn, ca, cb) where ([__t?].rn>= ?:? ) order by ?
+===================================================
+rn    ca    cb    
+7     2     2     
+8     2     2     
+9     2     2     
+
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.ca, t.cb from t t
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.ca, t.cb from t t
+Query plan:
+sscan
+    class: __t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select (rownum), [__t?].ca, [__t?].cb from (select t.ca, t.cb from t t union all select t.ca, t.cb from t t) [__t?] (ca, cb) where ((rownum)>= ?:?  and (rownum)< ?:? )
+===================================================
+rn    ca    cb    
+7     2     2     
+8     2     2     
+9     2     2     
+
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.ca, t.cb from t t
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.ca, t.cb from t t
+Query plan:
+sscan
+    class: __t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select (rownum), [__t?].ca, [__t?].cb from ((select t.ca, t.cb from t t union all select t.ca, t.cb from t t) order by ? desc ) [__t?] (ca, cb) where ((rownum)>= ?:?  and (rownum)< ?:? )
+===================================================
+rn    ca    cb    
+7     2     2     
+8     2     2     
+9     2     2     
+
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.ca, t.cb from t t
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.ca, t.cb from t t
+Query plan:
+sscan
+    class: a node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select (rownum), a.ca, a.cb from ((select t.ca, t.cb from t t union all select t.ca, t.cb from t t) order by ? desc ) a (ca, cb) where (rownum< ?:? ))
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select [__t?].rn, [__t?].ca, [__t?].cb from (select (rownum) as [rn], a.ca, a.cb from ((select t.ca, t.cb from t t union all select t.ca, t.cb from t t) order by ? desc ) a (ca, cb) where (rownum< ?:? )) [__t?] (rn, ca, cb) where ([__t?].rn>= ?:? ) order by ?
+===================================================
+rn    ca    cb    
+7     2     2     
+8     2     2     
+9     2     2     
+
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.ca, t.cb from t t
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.ca, t.cb from t t
+Query plan:
+sscan
+    class: __t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select (rownum), [__t?].ca, [__t?].cb from ((select t.ca, t.cb from t t union all select t.ca, t.cb from t t) order by ? desc ) [__t?] (ca, cb) where ((rownum)>= ?:?  and (rownum)< ?:? )
+===================================================
+ca    cb    
+2     2     
+2     2     
+3     3     
+1     1     
+1     1     
+1     1     
+2     2     
+2     2     
+2     2     
+2     2     
+
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.ca, t.cb from t t where inst_num()<=?+?
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.ca, t.cb from t t where inst_num()<=?+?
+Query plan:
+sscan
+    class: d? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select d?.ca, d?.cb from (select t.ca, t.cb from t t where inst_num()<=?+? union all select t.ca, t.cb from t t where inst_num()<=?+?) d? (ca, cb) where (inst_num()> ?:?  and inst_num()<= ?:? )
+===================================================
+0
+===================================================
+0
+===================================================
+1000
+===================================================
+ca    cb    cc    
+1     0     10     
+1     0     11     
+1     0     12     
+1     0     13     
+1     0     14     
+1     0     15     
+1     0     16     
+1     0     17     
+1     0     18     
+1     0     19     
+
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select t.ca, t.cb, t.cc from t t where (t.ca= ?:? ) and inst_num()<= ?:? 
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select t.ca, t.cb, t.cc from t t where (t.cb= ?:? ) and inst_num()<= ?:? 
+Query plan:
+sscan
+    class: d? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select d?.ca, d?.cb, d?.cc from (select t.ca, t.cb, t.cc from t t where (t.ca= ?:? ) and inst_num()<= ?:?  union all select t.ca, t.cb, t.cc from t t where (t.cb= ?:? ) and inst_num()<= ?:? ) d? (ca, cb, cc) where (inst_num()<= ?:? )
+===================================================
+ca    cb    cc    
+1     0     10     
+1     0     11     
+1     0     12     
+1     0     13     
+1     0     14     
+1     0     15     
+1     0     16     
+1     0     17     
+1     0     18     
+1     0     19     
+
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.ca, t.cb, t.cc from t t where t.ca= ?:? 
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.ca, t.cb, t.cc from t t where t.cb= ?:? 
+===================================================
+ca    cb    cc    
+1     0     10     
+1     0     11     
+1     0     12     
+1     0     13     
+1     0     14     
+1     0     15     
+1     0     16     
+1     0     17     
+1     0     18     
+1     0     19     
+
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.ca, t.cb, t.cc from t t where t.ca= ?:? 
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.ca, t.cb, t.cc from t t where t.cb= ?:? 
+Query plan:
+sscan
+    class: d? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select d?.ca, d?.cb, d?.cc from (select t.ca, t.cb, t.cc from t t where t.ca= ?:?  union select t.ca, t.cb, t.cc from t t where t.cb= ?:? ) d? (ca, cb, cc) where (inst_num()<= ?:? )
+===================================================
+ca    cb    cc    
+1     0     18     
+1     0     19     
+30     3     308     
+30     3     309     
+31     3     310     
+31     3     311     
+31     3     312     
+31     3     313     
+31     3     314     
+31     3     315     
+
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select t.ca, t.cb, t.cc from t t where (rownum>= ?:? ) and t.ca= ?:? 
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select t.ca, t.cb, t.cc from t t where (rownum>= ?:? ) and t.cb= ?:? 
+Query plan:
+sscan
+    class: d? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select d?.ca, d?.cb, d?.cc from (select t.ca, t.cb, t.cc from t t where (rownum>= ?:? ) and t.ca= ?:?  union all select t.ca, t.cb, t.cc from t t where (rownum>= ?:? ) and t.cb= ?:? ) d? (ca, cb, cc) where (inst_num()<= ?:? )
+===================================================
+ca    cb    cc    
+1     0     10     
+1     0     11     
+1     0     12     
+1     0     13     
+1     0     14     
+1     0     15     
+1     0     16     
+1     0     17     
+1     0     18     
+1     0     19     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.ca, t.cb, t.cc from t t where t.ca= ?:?  group by t.ca, t.cb, t.cc having groupby_num()<= ?:? 
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.ca, t.cb, t.cc from t t where t.cb= ?:?  group by t.ca, t.cb, t.cc having groupby_num()<= ?:? 
+Query plan:
+sscan
+    class: d? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select d?.ca, d?.cb, d?.cc from (select t.ca, t.cb, t.cc from t t where t.ca= ?:?  group by t.ca, t.cb, t.cc having groupby_num()<= ?:?  union all select t.ca, t.cb, t.cc from t t where t.cb= ?:?  group by t.ca, t.cb, t.cc having groupby_num()<= ?:? ) d? (ca, cb, cc) where (inst_num()<= ?:? )
+===================================================
+ca    count(cb)    max(cc)    
+1     10     19     
+30     3     300     
+30     3     301     
+30     3     302     
+30     3     303     
+30     3     304     
+30     3     305     
+30     3     306     
+30     3     307     
+30     3     308     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.ca, count(t.cb), max(t.cc) from t t where t.ca= ?:?  group by t.ca having groupby_num()<= ?:? 
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select t.ca,  cast(t.cb as bigint), t.cc from t t where (t.cb= ?:? ) and inst_num()<= ?:? 
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select t.ca,  cast(t.cb as bigint), t.cc from t t where (rownum> ?:? ) and t.cb= ?:? 
+Query plan:
+sscan
+    class: d? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select d?.ca, d?.a_?, d?.a_? from ((select t.ca, count(t.cb), max(t.cc) from t t where t.ca= ?:?  group by t.ca having groupby_num()<= ?:?  union all select t.ca,  cast(t.cb as bigint) as [cb], t.cc from t t where (t.cb= ?:? ) and inst_num()<= ?:? ) union all select t.ca,  cast(t.cb as bigint) as [cb], t.cc from t t where (rownum> ?:? ) and t.cb= ?:? ) d? (ca, a_?, a_?) where (inst_num()<= ?:? )
+===================================================
+ca    count(cb)    max(cc)    
+1     10     19     
+20     2     200     
+20     2     201     
+20     2     202     
+20     2     203     
+20     2     204     
+20     2     205     
+20     2     206     
+20     2     207     
+20     2     208     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.ca, count(t.cb), max(t.cc) from t t where t.ca= ?:?  group by t.ca
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.ca,  cast(t.cb as bigint), t.cc from t t where t.cb= ?:? 
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.ca,  cast(t.cb as bigint), t.cc from t t where t.cb= ?:? 
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.ca,  cast(t.cb as bigint), t.cc from t t where t.cb= ?:? 
+Query plan:
+sscan
+    class: d? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select d?.ca, d?.a_?, d?.a_? from (((select t.ca, count(t.cb), max(t.cc) from t t where t.ca= ?:?  group by t.ca union all select t.ca,  cast(t.cb as bigint) as [cb], t.cc from t t where t.cb= ?:? ) union select t.ca,  cast(t.cb as bigint) as [cb], t.cc from t t where t.cb= ?:? ) union all select t.ca,  cast(t.cb as bigint) as [cb], t.cc from t t where t.cb= ?:? ) d? (ca, a_?, a_?) where (inst_num()<= ?:? )
+===================================================
+ca    cb    cc    
+1     0     10     
+1     0     11     
+1     0     12     
+1     0     13     
+1     0     14     
+1     0     15     
+1     0     16     
+1     0     17     
+1     0     18     
+1     0     19     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select distinct t.ca, t.cb, t.cc from t t where t.ca= ?:?  for orderby_num()<= ?:? 
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select t.ca, t.cb, t.cc from t t where (t.cb= ?:? ) and inst_num()<= ?:? 
+Query plan:
+sscan
+    class: d? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select d?.ca, d?.cb, d?.cc from (select distinct t.ca, t.cb, t.cc from t t where t.ca= ?:?  for orderby_num()<= ?:?  union all select t.ca, t.cb, t.cc from t t where (t.cb= ?:? ) and inst_num()<= ?:? ) d? (ca, cb, cc) where (inst_num()<= ?:? )
+===================================================
+ca    cb    cc    
+1     0     10     
+1     0     11     
+1     0     12     
+1     0     13     
+1     0     14     
+1     0     15     
+1     0     16     
+1     0     17     
+1     0     18     
+1     0     19     
+
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_PUSH_PRED */ t.ca, t.cb, t.cc from t t where t.ca= ?:? 
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.ca, t.cb, t.cc from t t where t.cb= ?:? 
+Query plan:
+sscan
+    class: d? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select d?.ca, d?.cb, d?.cc from (select /*+ NO_PUSH_PRED */ t.ca, t.cb, t.cc from t t where t.ca= ?:?  union all select t.ca, t.cb, t.cc from t t where t.cb= ?:? ) d? (ca, cb, cc) where (inst_num()<= ?:? )
+===================================================
+0
