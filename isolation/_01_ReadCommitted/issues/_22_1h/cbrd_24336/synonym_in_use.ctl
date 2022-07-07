@@ -63,6 +63,7 @@ C2: DROP TABLE t5_1;
 MC: wait until C2 blocked;
 MC: wait until C2 ready;
 C1: commit;
+C2: commit;
 
 C1: DROP SYNONYM IF EXISTS s5_1;
 C1: DROP SYNONYM IF EXISTS s5_2;
