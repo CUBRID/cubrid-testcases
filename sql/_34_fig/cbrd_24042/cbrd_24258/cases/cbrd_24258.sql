@@ -191,4 +191,5 @@ select /*+ recompile no_push_pred */ ca, cb, cc from t where ca = 1
 union all
 select ca, cb, cc from t where cb = 3
 limit 10;
+drop view v;
 drop table t;
