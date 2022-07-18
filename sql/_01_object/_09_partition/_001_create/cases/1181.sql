@@ -8,7 +8,7 @@ partition p0 values less than ('1999-01-01 09:00:00'),
 partition p1 values less than ('2003-01-01 09:00:00'),
 partition p2 values less than MAXVALUE);
 
-select * from db_partition where class_name like '%za%' order by 2;
+select * from db_partition where class_name like '%za%' order by partition_name;
 
 
 drop class za;

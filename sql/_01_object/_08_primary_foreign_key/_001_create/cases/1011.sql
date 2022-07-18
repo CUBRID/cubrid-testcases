@@ -59,7 +59,7 @@ CREATE TABLE track(
 );
 
 select * from db_index_key
-where class_name in ('album','track') order by 2,1,4;
+where class_name in ('album','track') order by class_name,index_name,key_order;
 
 select * from db_index where class_name in ('album', 'track') order by 1;
 

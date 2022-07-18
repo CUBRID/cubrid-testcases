@@ -14,7 +14,7 @@ CREATE CLASS ddl_0001(
 );
 select index_name, is_unique, is_reverse, class_name, key_count
 from   db_index
-where  class_name = 'ddl_0001';
+where  class_name = 'ddl_0001' order by index_name;
 
 alter class ddl_0001 drop constraint "u_ddl_0001_col6" ;
 alter class ddl_0001 add unique u_ddl_0001_col1_col2_col3(col1,col2,col3) ;
@@ -22,7 +22,7 @@ create unique index u_ddl_0001_col1 on ddl_0001(col1) ;
 
 select index_name, is_unique, is_reverse, class_name, key_count
 from   db_index
-where  class_name = 'ddl_0001';
+where  class_name = 'ddl_0001' order by index_name;
 
 
 drop class ddl_0001;

@@ -21,6 +21,6 @@ insert into test_class values ('Line 4', 4005, 'Kumjung');
 insert into test_class values ('Line 5', 5001, 'Kangdong');
 
 select * from db_index
-where class_name in  ('test_class', 'test_class__p__p0');
+where class_name in  ('test_class', 'test_class__p__p0') order by class_name;
 
 drop class test_class;
