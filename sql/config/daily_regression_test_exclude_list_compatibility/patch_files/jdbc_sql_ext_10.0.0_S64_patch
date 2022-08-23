@@ -1938,3 +1938,171 @@ Index: _27_banana_qa/issue_11089_percentile_disc/_01_aggregate_function/answers/
  26     505.0     updated                  1996-10-10 11:23:34.123     f0     
  27     505.0     updated                  1990-10-10 11:23:34.123     40     
  28     505.0     updated                  1995-10-10 11:23:34.123     null     
+Index: _24_aprium_qa/_01_i18n/issue_9406_somefixes_n_optimizations/answers/_02_string_literal_01.answer
+===================================================================
+--- _24_aprium_qa/_01_i18n/issue_9406_somefixes_n_optimizations/answers/_02_string_literal_01.answer	2022-08-17 19:27:44.024817054 +0900
++++ _24_aprium_qa/_01_i18n/issue_9406_somefixes_n_optimizations/answers/_02_string_literal_01.answer	2022-08-17 19:29:06.965631153 +0900
+@@ -154,7 +154,7 @@
+ Error:-494
+ ===================================================
+ cast('ß' as varchar collate euckr_bin)    
+-��     
++�お?     
+ 
+ ===================================================
+ Error:-493
+@@ -162,7 +162,7 @@
+ 0
+ ===================================================
+ cast('ß' as varchar collate euckr_bin)    
+-��     
++�お?     
+ 
+ ===================================================
+ 'ß' collate euckr_bin    
+Index: _27_banana_qa/issue_16066_BINARY_charset/_01_Comparison_Expression/answers/is_null_001.answer
+===================================================================
+--- _27_banana_qa/issue_16066_BINARY_charset/_01_Comparison_Expression/answers/is_null_001.answer	2022-08-17 19:27:44.028817045 +0900
++++ _27_banana_qa/issue_16066_BINARY_charset/_01_Comparison_Expression/answers/is_null_001.answer	2022-08-17 19:29:07.353630283 +0900
+@@ -29,18 +29,18 @@
+ id    col_binary    col_euckr    col_utf8    col_iso    
+ 2     43 55 42 52 49 44      CUBRID     CUBRID     CUBRID     
+ 3     ED 81 90 EB B8 8C EB A6 AC EB 93 9C      큐브리드     큐브리드     ????     
+-4     E4 BD A0 E5 A5 BD E6 88 91 E5 A5 BD E5 A4 A7 E5 AE B6 E5 A5 BD      �筮요끔왓唆��     你好我好大家好     ???????     
+-5     C3 80 C3 80 C3 8F      ��あ��     ÀÀÏ     ÀÀÏ     
+-6     E4 BD A0 E6 88 91 E4 BB 96      �色끈�     你我他     ???     
++4     E4 BD A0 E5 A5 BD E6 88 91 E5 A5 BD E5 A4 A7 E5 AE B6 E5 A5 BD      �견好我好大家好     你好我好大家好     ???????     
++5     C3 80 C3 80 C3 8F      �あ�あ�ち     ÀÀÏ     ÀÀÏ     
++6     E4 BD A0 E6 88 91 E4 BB 96      �견我他     你我他     ???     
+ 
+ ===================================================
+ id    col_binary    col_euckr    col_utf8    col_iso    
+ 1     null     null     null     null     
+ 2     43 55 42 52 49 44      CUBRID     CUBRID     CUBRID     
+ 3     ED 81 90 EB B8 8C EB A6 AC EB 93 9C      큐브리드     큐브리드     ????     
+-4     E4 BD A0 E5 A5 BD E6 88 91 E5 A5 BD E5 A4 A7 E5 AE B6 E5 A5 BD      �筮요끔왓唆��     你好我好大家好     ???????     
+-5     C3 80 C3 80 C3 8F      ��あ��     ÀÀÏ     ÀÀÏ     
+-6     E4 BD A0 E6 88 91 E4 BB 96      �色끈�     你我他     ???     
++4     E4 BD A0 E5 A5 BD E6 88 91 E5 A5 BD E5 A4 A7 E5 AE B6 E5 A5 BD      �견好我好大家好     你好我好大家好     ???????     
++5     C3 80 C3 80 C3 8F      �あ�あ�ち     ÀÀÏ     ÀÀÏ     
++6     E4 BD A0 E6 88 91 E4 BB 96      �견我他     你我他     ???     
+ 
+ ===================================================
+ 0
+Index: _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/case001.answer
+===================================================================
+--- _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/case001.answer	2022-08-17 19:27:44.032817036 +0900
++++ _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/case001.answer	2022-08-17 19:29:07.030631007 +0900
+@@ -19,7 +19,7 @@
+ 
+ ===================================================
+ a    case when a=1 then _binary'字符.串1' when a=2 then  cast(_utf8'12345가나다라마가나다라마' as varchar collate euckr_bin) else  cast(_utf8'가나다라마가나다라마' as varchar collate euckr_bin) end    
+-1     耶?寧�訝�     
++1     耶?寧�.訝�1     
+ 2     12345가나다라마가나다라마     
+ 3     가나다라마가나다라마     
+ null     가나다라마가나다라마     
+Index: _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/mid_001.answer
+===================================================================
+--- _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/mid_001.answer	2022-08-17 19:27:44.036817027 +0900
++++ _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/mid_001.answer	2022-08-17 19:29:07.123630799 +0900
+@@ -67,14 +67,14 @@
+ 1     81 90      브리     브리     ??     
+ 2     BD A0      好我     好我     ??     
+ 3     55 42      UB     UB     UB     
+-4     80 C3      ��ち     ÀÏ     ÀÏ     
++4     80 C3      �あ�ち     ÀÏ     ÀÏ     
+ 
+ ===================================================
+ id    mid(col_binary, -2, 3)    mid(col_euckr, -2, 3)    mid(col_utf8, -2, 3)    mid(col_iso, -2, 3)    
+ 1     93 9C      리드     리드     ??     
+ 2     A5 BD      家好     家好     ??     
+ 3     49 44      ID     ID     ID     
+-4     C3 8F      ��ち     ÀÏ     ÀÏ     
++4     C3 8F      �あ�ち     ÀÏ     ÀÏ     
+ 
+ ===================================================
+ 0
+Index: _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/right_001.answer
+===================================================================
+--- _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/right_001.answer	2022-08-17 19:27:44.040817018 +0900
++++ _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/right_001.answer	2022-08-17 19:29:07.179630673 +0900
+@@ -44,7 +44,7 @@
+ right(col_binary, 10)    right(col_euckr, 10)    right(col_utf8, 10)    right(col_iso, 10)    
+ 43 55 42 52 49 44      CUBRID     CUBRID     ÀÀÏÏ     
+ 90 EB B8 8C EB A6 AC EB 93 9C      큐브리드     큐브리드     ÀÀÏÏ     
+-A5 BD E5 A4 A7 E5 AE B6 E5 A5      �筮요끔왓唆��     你好我好大家好     ÀÀÏÏ     
++A5 BD E5 A4 A7 E5 AE B6 E5 A5      �견好我好大家好     你好我好大家好     ÀÀÏÏ     
+ 
+ ===================================================
+ right(col_binary, null)    right(col_euckr, null)    right(col_utf8, null)    right(col_iso, null)    
+Index: _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/rpad_002.answer
+===================================================================
+--- _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/rpad_002.answer	2022-08-17 19:27:44.044817009 +0900
++++ _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/rpad_002.answer	2022-08-17 19:29:07.232630555 +0900
+@@ -15,37 +15,37 @@
+ ===================================================
+ rpad(col_binary, 3, _binary'?')    rpad(col_euckr, 3, _binary'?')    rpad(col_utf8, 3, _binary'?')    rpad(col_iso, 3, _binary'?')    
+ 43 55 42      CUB     CUB     ÀÀÏ     
+-E4 BD A0      �筮요�     你好我     ÀÀÏ     
++E4 BD A0      �견好我     你好我     ÀÀÏ     
+ ED 81 90      큐브리     큐브리     ÀÀÏ     
+ 
+ ===================================================
+ rpad(col_binary, 4, _binary'?')    rpad(col_euckr, 4, _binary'?')    rpad(col_utf8, 4, _binary'?')    rpad(col_iso, 4, _binary'?')    
+ 43 55 42 52      CUBR     CUBR     ÀÀÏ?     
+-E4 BD A0 E5      �筮요끔�     你好我好     ÀÀÏ?     
++E4 BD A0 E5      �견好我好     你好我好     ÀÀÏ?     
+ ED 81 90 EB      큐브리드     큐브리드     ÀÀÏ?     
+ 
+ ===================================================
+ rpad(col_binary, 30, _binary'?')    rpad(col_euckr, 30, _binary'?')    rpad(col_utf8, 30, _binary'?')    rpad(col_iso, 30, _binary'?')    
+ 43 55 42 52 49 44 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F      CUBRID????????????????????????     CUBRID????????????????????????     ÀÀÏ???????????????????????????     
+-E4 BD A0 E5 A5 BD E6 88 91 E5 A5 BD E5 A4 A7 E5 AE B6 E5 A5 BD 3F 3F 3F 3F 3F 3F 3F 3F 3F      �筮요끔왓唆��??????????????????????     你好我好大家好???????????????????????     ÀÀÏ???????????????????????????     
++E4 BD A0 E5 A5 BD E6 88 91 E5 A5 BD E5 A4 A7 E5 AE B6 E5 A5 BD 3F 3F 3F 3F 3F 3F 3F 3F 3F      �견好我好大家好???????????????????????     你好我好大家好???????????????????????     ÀÀÏ???????????????????????????     
+ ED 81 90 EB B8 8C EB A6 AC EB 93 9C 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F 3F      큐브리드??????????????????????????     큐브리드??????????????????????????     ÀÀÏ???????????????????????????     
+ 
+ ===================================================
+ rpad(col_binary, 30)    rpad(col_euckr, 30)    rpad(col_utf8, 30)    rpad(col_iso, 30)    
+ 43 55 42 52 49 44 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00      CUBRID　　　　　　　　　　　　　　　　　　　　　　　　     CUBRID                             ÀÀÏ                                
+-E4 BD A0 E5 A5 BD E6 88 91 E5 A5 BD E5 A4 A7 E5 AE B6 E5 A5 BD 00 00 00 00 00 00 00 00 00      �筮요끔왓唆�에　　　　　　　　　　　　　　　　　　　　　　�     你好我好大家好                            ÀÀÏ                                
++E4 BD A0 E5 A5 BD E6 88 91 E5 A5 BD E5 A4 A7 E5 AE B6 E5 A5 BD 00 00 00 00 00 00 00 00 00      �견好我好大家好　　　　　　　　　　　　　　　　　　　　　　　     你好我好大家好                            ÀÀÏ                                
+ ED 81 90 EB B8 8C EB A6 AC EB 93 9C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00      큐브리드　　　　　　　　　　　　　　　　　　　　　　　　　　     큐브리드                               ÀÀÏ                                
+ 
+ ===================================================
+ rpad(col_binary, 20, _binary'a')    rpad(col_euckr, 20, _binary'드')    rpad(col_utf8, 20, _binary'好')    rpad(col_iso, 20, _binary'Ï')    
+ 43 55 42 52 49 44 61 61 61 61 61 61 61 61 61 61 61 61 61 61      CUBRID�?�?�?�?�?�?�?     CUBRID好好好好好好好好好好好好好好     ÀÀÏÃÃÃÃÃÃÃÃÃ     
+-E4 BD A0 E5 A5 BD E6 88 91 E5 A5 BD E5 A4 A7 E5 AE B6 E5 A5      �筮요끔왓唆�용��?�?�?�?�?�     你好我好大家好好好好好好好好好好好好好好     ÀÀÏÃÃÃÃÃÃÃÃÃ     
++E4 BD A0 E5 A5 BD E6 88 91 E5 A5 BD E5 A4 A7 E5 AE B6 E5 A5      �견好我好大家好�?�?�?�?�?�?�     你好我好大家好好好好好好好好好好好好好好     ÀÀÏÃÃÃÃÃÃÃÃÃ     
+ ED 81 90 EB B8 8C EB A6 AC EB 93 9C 61 61 61 61 61 61 61 61      큐브리드�?�?�?�?�?�?�?�?     큐브리드好好好好好好好好好好好好好好好好     ÀÀÏÃÃÃÃÃÃÃÃÃ     
+ 
+ ===================================================
+ rpad(col_binary, 3, _binary'?')    char_length( rpad(col_binary, 3, _binary'?'))    rpad(col_euckr, 3, _binary'?')    char_length( rpad(col_euckr, 3, _binary'?'))    
+ 43 55 42      3     CUB     3     
+-E4 BD A0      3     �筮요�     3     
++E4 BD A0      3     �견好我     3     
+ ED 81 90      3     큐브리     3     
+ 
+ ===================================================
+Index: _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/rtrim_002.answer
+===================================================================
+--- _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/rtrim_002.answer	2022-08-17 19:27:44.048817000 +0900
++++ _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/rtrim_002.answer	2022-08-17 19:29:07.303630395 +0900
+@@ -34,7 +34,7 @@
+ 2     E7 A9 BA E7 A9 BA E6 A0 BC E6 A0 BC      空空格格     空空格格     ????     
+ 3     20 20 20 20 20 30 31 31 31 30 31 20 20 20 20 20           011101               011101               011101          
+ 4     20 20 EC 8A A4 ED 8E 98 EC 9D B4 EC 8A A4 20 EB B0 94        스페이스 바       스페이스 바       ???? ?     
+-5     C3 80 C3 80 C3 80 C3 82 C3 82      ÀÀÀÂÂ     ��あ��い��     ÀÀÀÂÂ     
++5     C3 80 C3 80 C3 80 C3 82 C3 82      ÀÀÀÂÂ     �あ�あ�あ�い�い     ÀÀÀÂÂ     
+ 
+ ===================================================
+ id    rtrim(col_binary)    rtrim(col_utf8)    rtrim(col_euckr)    rtrim(col_iso)    
+@@ -68,7 +68,7 @@
+ 
+ ===================================================
+ id    rtrim(col_binary, _binary'Â')    rtrim(col_utf8, _binary'Â')    rtrim(col_euckr, _binary'Â')    rtrim(col_iso, _binary'Â')    rtrim(col_iso,  cast(_utf8'Â' as varchar))    
+-5     C3 80 C3 80 C3 80      ÀÀÀ     ��あ��い��     ÀÀÀÂÂ     ÀÀÀ     
++5     C3 80 C3 80 C3 80      ÀÀÀ     �あ�あ�あ�い�い     ÀÀÀÂÂ     ÀÀÀ     
+ 
+ ===================================================
+ 0
