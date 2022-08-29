@@ -38,7 +38,113 @@ create user u5;
 create user u6;
 
 
+drop table if exists u0.t1;
+drop view if exists u0.v1;
+drop table if exists u0.t2_r;
+drop table if exists u0.t2_h;
+drop table if exists u0.t2_l;
+drop table if exists u0.t3_d;
+drop table if exists u0.t3_s;
+drop table if exists u0.t3;
+drop table if exists u0.t4;
+drop table if exists u0.t5;
+drop table if exists u0.t5_c;
 
+drop table if exists u1.t1;
+drop view if exists u1.v1;
+drop table if exists u1.t2_r;
+drop table if exists u1.t2_h;
+drop table if exists u1.t2_l;
+drop table if exists u1.t3_d;
+drop table if exists u1.t3_s;
+drop table if exists u1.t3;
+drop table if exists u1.t4;
+drop table if exists u1.t5;
+drop table if exists u1.t5_c;
+
+drop table if exists u1_1.t1;
+drop view if exists u1_1.v1;
+drop table if exists u1_1.t2_r;
+drop table if exists u1_1.t2_h;
+drop table if exists u1_1.t2_l;
+drop table if exists u1_1.t3_d;
+drop table if exists u1_1.t3_s;
+drop table if exists u1_1.t3;
+drop table if exists u1_1.t4;
+drop table if exists u1_1.t5;
+drop table if exists u1_1.t5_c;
+
+drop table if exists u2.t1;
+drop view if exists u2.v1;
+drop table if exists u2.t2_r;
+drop table if exists u2.t2_h;
+drop table if exists u2.t2_l;
+drop table if exists u2.t3_d;
+drop table if exists u2.t3_s;
+drop table if exists u2.t3;
+drop table if exists u2.t4;
+drop table if exists u2.t5;
+drop table if exists u2.t5_c;
+
+drop table if exists u2_1.t1;
+drop view if exists u2_1.v1;
+drop table if exists u2_1.t2_r;
+drop table if exists u2_1.t2_h;
+drop table if exists u2_1.t2_l;
+drop table if exists u2_1.t3_d;
+drop table if exists u2_1.t3_s;
+drop table if exists u2_1.t3;
+drop table if exists u2_1.t4;
+drop table if exists u2_1.t5;
+drop table if exists u2_1.t5_c;
+
+drop table if exists u3.t1;
+drop view if exists u3.v1;
+drop table if exists u3.t2_r;
+drop table if exists u3.t2_h;
+drop table if exists u3.t2_l;
+drop table if exists u3.t3_d;
+drop table if exists u3.t3_s;
+drop table if exists u3.t3;
+drop table if exists u3.t4;
+drop table if exists u3.t5;
+drop table if exists u3.t5_c;
+
+drop table if exists u3_1.t1;
+drop view if exists u3_1.v1;
+drop table if exists u3_1.t2_r;
+drop table if exists u3_1.t2_h;
+drop table if exists u3_1.t2_l;
+drop table if exists u3_1.t3_d;
+drop table if exists u3_1.t3_s;
+drop table if exists u3_1.t3;
+drop table if exists u3_1.t4;
+drop table if exists u3_1.t5;
+drop table if exists u3_1.t5_c;
+
+drop table if exists u4.t1;
+drop view if exists u4.v1;
+drop table if exists u4.t2_r;
+drop table if exists u4.t2_h;
+drop table if exists u4.t2_l;
+drop table if exists u4.t3_d;
+drop table if exists u4.t3_s;
+drop table if exists u4.t3;
+drop table if exists u4.t4;
+drop table if exists u4.t5;
+drop table if exists u4.t5_c;
+
+drop synonym if exists u5.t1;
+drop synonym if exists u5.v1;
+drop synonym if exists u5.t2_r;
+drop synonym if exists u5.t2_h;
+drop synonym if exists u5.t2_l;
+drop synonym if exists u5.t3;
+drop synonym if exists u5.t4;
+drop synonym if exists u5.t5;
+drop synonym if exists u5.t5_c;
+
+ 
 
 call login ('u0') on class db_user;
 create table t1 class attribute (a1 int) (c1 int, c2 varchar(255) collate euckr_bin) comment 'u0 {dba} > t1';
@@ -387,7 +493,6 @@ grant select on t5_c to u6;
 
 
 call login ('u6') on class db_user;
-/* None. */
 
 
 
@@ -625,3 +730,140 @@ select * from db_server order by owner, link_name;
 call login ('dba') on class db_user;
 select * from db_charset;
 select * from db_collation;
+
+
+
+
+drop table u0.t1;
+drop view u0.v1;
+drop table u0.t2_r;
+drop table u0.t2_h;
+drop table u0.t2_l;
+drop table u0.t3_d;
+drop table u0.t3_s;
+drop table u0.t3;
+drop table u0.t4;
+drop table u0.t5;
+drop table u0.t5_c;
+drop function j0;
+drop server u0.s1;
+
+drop table u1.t1;
+drop view u1.v1;
+drop table u1.t2_r;
+drop table u1.t2_h;
+drop table u1.t2_l;
+drop table u1.t3_d;
+drop table u1.t3_s;
+drop table u1.t3;
+drop table u1.t4;
+drop table u1.t5;
+drop table u1.t5_c;
+drop function j1;
+drop server u1.s1;
+
+drop table u1_1.t1;
+drop view u1_1.v1;
+drop table u1_1.t2_r;
+drop table u1_1.t2_h;
+drop table u1_1.t2_l;
+drop table u1_1.t3_d;
+drop table u1_1.t3_s;
+drop table u1_1.t3;
+drop table u1_1.t4;
+drop table u1_1.t5;
+drop table u1_1.t5_c;
+drop function j1_1;
+drop server u1_1.s1;
+
+drop table u2.t1;
+drop view u2.v1;
+drop table u2.t2_r;
+drop table u2.t2_h;
+drop table u2.t2_l;
+drop table u2.t3_d;
+drop table u2.t3_s;
+drop table u2.t3;
+drop table u2.t4;
+drop table u2.t5;
+drop table u2.t5_c;
+drop function j2;
+drop server u2.s1;
+
+drop table u2_1.t1;
+drop view u2_1.v1;
+drop table u2_1.t2_r;
+drop table u2_1.t2_h;
+drop table u2_1.t2_l;
+drop table u2_1.t3_d;
+drop table u2_1.t3_s;
+drop table u2_1.t3;
+drop table u2_1.t4;
+drop table u2_1.t5;
+drop table u2_1.t5_c;
+drop function j2_1;
+drop server u2_1.s1;
+
+drop table u3.t1;
+drop view u3.v1;
+drop table u3.t2_r;
+drop table u3.t2_h;
+drop table u3.t2_l;
+drop table u3.t3_d;
+drop table u3.t3_s;
+drop table u3.t3;
+drop table u3.t4;
+drop table u3.t5;
+drop table u3.t5_c;
+drop function j3;
+drop server u3.s1;
+
+drop table u3_1.t1;
+drop view u3_1.v1;
+drop table u3_1.t2_r;
+drop table u3_1.t2_h;
+drop table u3_1.t2_l;
+drop table u3_1.t3_d;
+drop table u3_1.t3_s;
+drop table u3_1.t3;
+drop table u3_1.t4;
+drop table u3_1.t5;
+drop table u3_1.t5_c;
+drop function j3_1;
+drop server u3_1.s1;
+
+drop table u4.t1;
+drop view u4.v1;
+drop table u4.t2_r;
+drop table u4.t2_h;
+drop table u4.t2_l;
+drop table u4.t3_d;
+drop table u4.t3_s;
+drop table u4.t3;
+drop table u4.t4;
+drop table u4.t5;
+drop table u4.t5_c;
+drop function j4;
+drop server u4.s1;
+
+drop synonym u5.t1;
+drop synonym u5.v1;
+drop synonym u5.t2_r;
+drop synonym u5.t2_h;
+drop synonym u5.t2_l;
+drop synonym u5.t3;
+drop synonym u5.t4;
+drop synonym u5.t5;
+drop synonym u5.t5_c;
+
+
+drop user u0;
+drop user u1;
+drop user u1_1;
+drop user u2;
+drop user u2_1;
+drop user u3;
+drop user u3_1;
+drop user u4;
+drop user u5;
+drop user u6;
