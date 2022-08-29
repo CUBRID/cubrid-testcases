@@ -1,3 +1,9 @@
+/*
+This test case verify the CBRD-24422.
+A core dump file occurred when a foreign key was created with its own column in the partition table.
+After merged CBRD-24422, the error message has been changed to be displayed.
+*/
+
 -- drop table t2, t1.
 drop table if exists t2;
 drop table if exists t1;
