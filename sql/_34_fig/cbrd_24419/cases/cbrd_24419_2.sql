@@ -18,10 +18,10 @@
  *   - db_partition
  *   - db_stored_procedure
  *   - db_stored_procedure_args
+ *   - db_collation
+ *   - db_charset
  *   - db_server
  *   - db_synonym
- *   - skip checking db_charset, db_collation doesnt have owner_name attribute.
- *
  */
 set system parameters 'create_table_reuseoid=no';
 
@@ -481,6 +481,9 @@ select * from db_server order by owner, link_name;
 
 
 call login ('dba') on class db_user;
+select * from db_charset;
+select * from db_collation;
+
 drop table u1.t1;
 drop view u1.v1;
 drop table u1.t2_r;
