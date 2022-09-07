@@ -70,7 +70,7 @@ create index i1 on t4 (c1, c2) comment 'u0 {dba} > t4 > i1 (index)' invisible;
 create index i2 on t4 (c2) where c2 = 0 comment 'u0 {dba} > t4 > i2 (filter)';
 create index i3 on t4 (replace (c3, ' ', '')) comment 'u0 {dba} > t4 > i3 (function)';
 create table t5 (c1 int unique, c2 int) comment 'u0 {dba} > t5';
-create table t5_c (c1 int unique, c2 int) comment 'u0 {dba} > t5_c (copy )';
+create table t5_c (c1 int unique, c2 int) comment 'u0 {dba} > t5_c (copy)';
 create trigger r_i after insert on t5 execute insert into t5_c values (obj.c1, obj.c2) comment 'u0 {dba} > r_i (insert)';
 create trigger r_u after update on t5 (c2) execute update t5_c set c2 = obj.c2 where c1 = obj.c1 comment 'u0 {dba} > r_u (update)';
 create trigger r_d before delete on t5 execute reject comment 'u0 {dba} > r_d (delete)';
