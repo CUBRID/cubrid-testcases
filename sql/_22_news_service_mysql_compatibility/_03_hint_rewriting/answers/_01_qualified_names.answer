@@ -278,17 +278,131 @@ temp(order by)
 Query stmt:
 select /*+ ORDERED */ x.id, x.val, tk.id, tk.val from tj x inner join tk tk on x.id=tk.id using index x.tj_id(-) order by ?
 ===================================================
-Error:-494
+id    val    id    val    
+1     value a1     1     value b1     
+2     value a2     2     value b2     
+3     value a3     3     value b3     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: tj node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: tk node[?]
+                            index: tk_id term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ tj.id, tj.val, tk.id, tk.val from tj tj inner join tk tk on tj.id=tk.id order by ?
 ===================================================
-Error:-494
+id    val    id    val    
+1     value a1     1     value b1     
+2     value a2     2     value b2     
+3     value a3     3     value b3     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: tj node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: tk node[?]
+                            index: tk_id term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ tj.id, tj.val, tk.id, tk.val from tj tj inner join tk tk on tj.id=tk.id order by ?
 ===================================================
-Error:-494
+id    val    id    val    
+1     value a1     1     value b1     
+2     value a2     2     value b2     
+3     value a3     3     value b3     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: tj node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: tk node[?]
+                            index: tk_id term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ tj.id, tj.val, tk.id, tk.val from tj tj inner join tk tk on tj.id=tk.id order by ?
 ===================================================
-Error:-494
+id    val    id    val    
+1     value a1     1     value b1     
+2     value a2     2     value b2     
+3     value a3     3     value b3     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: x node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: tk node[?]
+                            index: tk_id term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ x.id, x.val, tk.id, tk.val from tj x inner join tk tk on x.id=tk.id order by ?
 ===================================================
-Error:-494
+id    val    id    val    
+1     value a1     1     value b1     
+2     value a2     2     value b2     
+3     value a3     3     value b3     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: x node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: tk node[?]
+                            index: tk_id term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ x.id, x.val, tk.id, tk.val from tj x inner join tk tk on x.id=tk.id order by ?
 ===================================================
-Error:-494
+id    val    id    val    
+1     value a1     1     value b1     
+2     value a2     2     value b2     
+3     value a3     3     value b3     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: x node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: tk node[?]
+                            index: tk_id term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ x.id, x.val, tk.id, tk.val from tj x inner join tk tk on x.id=tk.id order by ?
 ===================================================
 av    bv    
 value a1     value a1     
@@ -344,7 +458,26 @@ temp(order by)
 Query stmt:
 select /*+ ORDERED */ sq.id, sq.val from (select /*+ NO_MERGE */ x.id as [id], tk.val as [val] from tj x, tk tk where x.id=tk.id using index x.tj_id) sq (id, val) order by ?
 ===================================================
-Error:-494
+id    val    
+1     value b1     
+2     value b2     
+3     value b3     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: sq node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: tk node[?]
+                            index: tk_id term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ sq.id, tk.val from tj sq inner join tk tk on sq.id=tk.id order by ?
 ===================================================
 0
 ===================================================

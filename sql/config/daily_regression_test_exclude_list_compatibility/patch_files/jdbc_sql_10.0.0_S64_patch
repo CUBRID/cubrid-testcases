@@ -404,3 +404,135 @@ Index: _27_banana_qa/issue_5765_timezone_support/_00_dev_cases/_02_operator/_06_
  80     
  
  ===================================================
+Index: _08_javasp/answers/418-4.answer
+===================================================================
+--- _08_javasp/answers/418-4.answer     2022-07-07 16:38:34.785301485 +0900
++++ _08_javasp/answers/418-4.answer     2022-07-07 16:45:34.459740497 +0900
+@@ -61,15 +61,12 @@
+ 1000     
+ 
+ ===================================================
+-    
+-xoo | true |  || 1000 || 10     
+-
++Error:-889
+ ===================================================
+-testoid2(xoo)    
+-
++Error:-889
+ ===================================================
+ count(*)    
+-0     
++1     
+ 
+ ===================================================
+ 0
+Index: _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/insert_01.answer
+===================================================================
+--- _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/insert_01.answer	2022-08-17 19:14:28.372618327 +0900
++++ _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/insert_01.answer	2022-08-17 19:15:48.186433909 +0900
+@@ -6,7 +6,7 @@
+ 
+ ===================================================
+ insert(_euckr'다운로드' collate euckr_bin, 2, 2, _binary'라라')    
+-��쇰??濡��     
++��쇰??濡���     
+ 
+ ===================================================
+ Error:-494
+Index: _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/octet_length_001.answer
+===================================================================
+--- _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/octet_length_001.answer	2022-08-17 19:14:28.376618318 +0900
++++ _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/octet_length_001.answer	2022-08-17 19:15:48.284433683 +0900
+@@ -79,9 +79,9 @@
+ ===================================================
+ id    col_binary    col_euckr    col_utf8    col_iso    
+ 1     43 55 42 52 49 44      CUBRID     CUBRID     CUBRID     
+-2     E4 BD A0 E6 88 91 E4 BB 96      �色끈�     你我他     ???     
++2     E4 BD A0 E6 88 91 E4 BB 96      �견我他     你我他     ???     
+ 3     ED 81 90 EB B8 8C EB A6 AC EB      큐브리드     큐브리드     ????     
+-4     C3 80 C3 8F      ��ち     ÀÏ     ÀÏ     
++4     C3 80 C3 8F      �あ�ち     ÀÏ     ÀÏ     
+ 
+ ===================================================
+ id    octet_length(col_binary)    octet_length(col_euckr)    octet_length(col_utf8)    octet_length(col_iso)    
+Index: _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/repeat_001.answer
+===================================================================
+--- _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/repeat_001.answer	2022-08-17 19:14:28.380618308 +0900
++++ _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/repeat_001.answer	2022-08-17 19:15:48.550433068 +0900
+@@ -64,13 +64,13 @@
+ id    col_binary    col_euckr    col_utf8    col_iso    
+ 1     E4 B8 AD E5 9B BD      中?     中国     ??     
+ 2     C7 D1 B1 B9      한국     한국     ÀÏ     
+-3     C0 CF      ��ち     ÀÏ     ÀÏ     
++3     C0 CF      �あ�ち     ÀÏ     ÀÏ     
+ 
+ ===================================================
+ id    col_binary    repeat(col_binary, 3)    repeat(col_euckr, 3)    repeat(col_utf8, 3)    repeat(col_iso, 3)    
+ 1     E4 B8 AD E5 9B BD      E4 B8 AD E5 9B BD E4 B8 AD E5 9B BD E4 B8 AD E5 9B BD      中?中?中?     中国中国中国     ??????     
+ 2     C7 D1 B1 B9      C7 D1 B1 B9 C7 D1 B1 B9 C7 D1 B1 B9      한국한국한국     한국한국한국     ÀÏÀÏÀÏ     
+-3     C0 CF      C0 CF C0 CF C0 CF      ��ち��ち��ち     ÀÏÀÏÀÏ     ÀÏÀÏÀÏ     
++3     C0 CF      C0 CF C0 CF C0 CF      �あ�ち�あ�ち�あ�ち     ÀÏÀÏÀÏ     ÀÏÀÏÀÏ     
+ 
+ ===================================================
+ 0
+Index: _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/replace_001.answer
+===================================================================
+--- _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/replace_001.answer	2022-08-17 19:14:28.384618299 +0900
++++ _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/replace_001.answer	2022-08-17 19:15:48.651432835 +0900
+@@ -106,7 +106,7 @@
+ 
+ ===================================================
+ id    replace(col_binary,  cast(_utf8'好' as varchar collate euckr_bin),  cast(_utf8'开心' as varchar collate euckr_bin))    replace(col_euckr,  cast(_utf8'好' as varchar collate euckr_bin),  cast(_utf8'开心' as varchar collate euckr_bin))    replace(col_utf8, _binary'好', _binary'开心')    replace(col_iso,  cast(_utf8'好' as varchar collate euckr_bin),  cast(_utf8'开心' as varchar collate euckr_bin))    
+-2     E4 BD A0 E5 A5 BD E6 88 91 E5 A5 BD E5 A4 A7 E5 AE B6 E5 A5 BD      ��心我?心大家?心     你开心我开心大家开心     ??????????????     
++2     E4 BD A0 E5 A5 BD E6 88 91 E5 A5 BD E5 A4 A7 E5 AE B6 E5 A5 BD      �견?心我?心大家?心     你开心我开心大家开心     ??????????????     
+ 
+ ===================================================
+ 1
+Index: _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/reverse_001.answer
+===================================================================
+--- _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/reverse_001.answer	2022-08-17 19:14:28.388618290 +0900
++++ _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/reverse_001.answer	2022-08-17 19:15:48.707432705 +0900
+@@ -56,14 +56,14 @@
+ id    col_binary    col_euckr    col_utf8    col_iso    
+ 1     EB AC B8 EC 9E 90 EC 97 B4      문자열     문자열     ???     
+ 2     E4 B8 AD E5 9B BD      中?     中国     ??     
+-3     C3 80 C3 8F      ��ち     ÀÏ     ÀÏ     
++3     C3 80 C3 8F      �あ�ち     ÀÏ     ÀÏ     
+ 4     43 55 42 52 49 44      CUBRID     CUBRID     CUBRID     
+ 
+ ===================================================
+ id    reverse(col_binary)    reverse(col_euckr)    reverse(col_utf8)    reverse(col_iso)    
+ 1     B4 97 EC 90 9E EC B8 AC EB      열자문     열자문     ???     
+ 2     BD 9B E5 AD B8 E4      ?中     国中     ??     
+-3     8F C3 80 C3      ��あ     ÏÀ     ÏÀ     
++3     8F C3 80 C3      �ち�あ     ÏÀ     ÏÀ     
+ 4     44 49 52 42 55 43      DIRBUC     DIRBUC     DIRBUC     
+ 
+ ===================================================
+Index: _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/rtrim_001.answer
+===================================================================
+--- _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/rtrim_001.answer	2022-08-17 19:14:28.392618281 +0900
++++ _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/rtrim_001.answer	2022-08-17 19:15:48.769432562 +0900
+@@ -78,7 +78,7 @@
+ 
+ ===================================================
+ rtrim(_binary'  스페이스 바',  cast(_utf8'바' as varchar collate euckr_bin))    
+-  �ㅽ??�댁?�諛?     
++  �ㅽ??�댁?� 諛?     
+ 
+ ===================================================
+ rtrim( cast(_utf8'     011101     ' as varchar collate euckr_bin), _binary'01     ')    
+Index: _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/translate001.answer
+===================================================================
+--- _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/translate001.answer	2022-08-17 19:14:28.396618271 +0900
++++ _27_banana_qa/issue_16066_BINARY_charset/_00_String_Functions_and_Operators/answers/translate001.answer	2022-08-17 19:15:48.803432484 +0900
+@@ -30,7 +30,7 @@
+ 
+ ===================================================
+ translate(_binary'문자열 2',  cast(_utf8'문자' as varchar collate euckr_bin), _utf8'字符串2')    
+-臾몄??��2     
++臾몄??�� 2     
+ 
+ ===================================================
+ translate(_binary'Öö_Şş_Üü2',  cast(_utf8'문자열 2' as varchar collate euckr_bin), _utf8'字符串2')    
