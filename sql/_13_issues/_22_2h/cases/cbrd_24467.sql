@@ -16,6 +16,6 @@ execute stmt using 100,10;
 show trace;
 set trace off;
 
-deallocate prepare stmt;
+drop prepare stmt;
 drop table if exists tbl;
 
