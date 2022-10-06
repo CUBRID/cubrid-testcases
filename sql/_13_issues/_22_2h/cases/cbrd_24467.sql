@@ -1,6 +1,6 @@
 drop table if exists tbl;
 create table tbl (cola int, colb int);
-insert into tbl select rownum, rownum from db_class a, db_class b, db_class c, db_class d limit 100000;
+insert into tbl select rownum, rownum from db_class a, db_class b, db_class c, db_class d limit 110;
 create index idx on tbl(cola);
 set trace on;
 
