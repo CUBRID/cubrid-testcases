@@ -1,4 +1,4 @@
---test cases
+--test cases (Except for correlated subquery cases, all other query plans are correct)
 -- create table
 drop table if exists tbl;
 create table tbl(cola int, colb int);
