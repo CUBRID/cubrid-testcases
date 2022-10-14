@@ -1,0 +1,149 @@
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1    
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select ? from tbl tbl where tbl.cola= cast(FN_JOIN_TEST(?) as double)
+===================================================
+1    
+
+Query plan:
+sscan
+    class: t_? node[?]
+    cost:  ? card ?
+Query stmt:
+(select tbl.cola, tbl.colb from table({?}) t_? (c_?))
+Query plan:
+nl-join (cselect join)
+    edge:  table(?) -> t_? node[?]
+    outer: sscan
+               class: t_? node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t_? node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select t_?.c_?, t_?.c_?, t_?.c_? from (select tbl.cola, tbl.colb from table({?}) t_? (c_?)) t_? (c_?, c_?), (FN_JOIN_TEST(t_?.c_?)) t_? (c_?))
+Query plan:
+nl-join (inner join)
+    edge:  table(?) -> t_? node[?]
+    outer: sscan
+               class: tbl node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t_? node[?]
+               sargs: table(?) -> t_? node[?] AND term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+select ? from tbl tbl, (select t_?.c_?, t_?.c_?, t_?.c_? from (select tbl.cola, tbl.colb from table({?}) t_? (c_?)) t_? (c_?, c_?), (FN_JOIN_TEST(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where tbl.cola= cast(t_?.c_? as double)
+===================================================
+cola    
+
+Query plan:
+iscan
+    class: a node[?]
+    index: idx term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+(select ? from tbl a where a.cola= cast(t_?.c_? as double))
+Query plan:
+sscan
+    class: t_? node[?]
+    cost:  ? card ?
+Query stmt:
+(select b.cola from table({?}) t_? (c_?))
+Query plan:
+nl-join (cselect join)
+    edge:  table(?) -> t_? node[?]
+    outer: sscan
+               class: t_? node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t_? node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select t_?.c_?, t_?.c_? from (select b.cola from table({?}) t_? (c_?)) t_? (c_?), (FN_JOIN_TEST(t_?.c_?)) t_? (c_?))
+Query plan:
+nl-join (inner join)
+    edge:  table(?) -> t_? node[?]
+    outer: sscan
+               class: b node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t_? node[?]
+               sargs: table(?) -> t_? node[?]
+               cost:  ? card ?
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+select (select ? from tbl a where a.cola= cast(t_?.c_? as double)) from tbl b, (select t_?.c_?, t_?.c_? from (select b.cola from table({?}) t_? (c_?)) t_? (c_?), (FN_JOIN_TEST(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?)
+===================================================
+FN_JOIN_TEST(b.colb)    
+
+Query plan:
+sscan
+    class: t_? node[?]
+    cost:  ? card ?
+Query stmt:
+(select b.colb from table({?}) t_? (c_?))
+Query plan:
+nl-join (cselect join)
+    edge:  table(?) -> t_? node[?]
+    outer: sscan
+               class: t_? node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t_? node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select t_?.c_?, t_?.c_? from (select b.colb from table({?}) t_? (c_?)) t_? (c_?), (FN_JOIN_TEST(t_?.c_?)) t_? (c_?))
+Query plan:
+nl-join (inner join)
+    edge:  table(?) -> t_? node[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: iscan
+                          class: a node[?]
+                          index: idx term[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: t_? node[?]
+               sargs: table(?) -> t_? node[?]
+               cost:  ? card ?
+    subqs: ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ t_?.c_?, a.cola from tbl a, tbl b, (select t_?.c_?, t_?.c_? from (select b.colb from table({?}) t_? (c_?)) t_? (c_?), (FN_JOIN_TEST(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?) where (a.cola>?) and a.colb=b.colb order by ? for orderby_num()<=?
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+0
