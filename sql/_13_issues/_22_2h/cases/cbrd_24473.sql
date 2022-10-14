@@ -35,3 +35,6 @@ limit 1 ;
 
 drop table if exists tbl;
 drop function FN_JOIN_TEST;
+
+-- restore optimization level
+set optimization level 1;
