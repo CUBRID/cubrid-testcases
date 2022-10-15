@@ -1,5 +1,6 @@
 --test cases (Except for correlated subquery cases, all other query plans are correct)
 -- create table
+
 drop table if exists tbl;
 create table tbl(cola int, colb int);
 insert into tbl values(1,1),(2,2);
@@ -9,6 +10,7 @@ create index idx on tbl(cola);
 create or replace FUNCTION FN_JOIN_TEST(p_code varchar) RETURN VARCHAR
  as language java name 'FN_JOIN_TEST.sp_FN_JOIN_TEST1(java.lang.String)  return java.lang.String';
 
+get optimization level into :opt_level ;
 set optimization level 514;
 
 --general case
@@ -33,8 +35,8 @@ where a.cola > 0
 order by a.cola
 limit 1 ;
 
-drop table if exists tbl;
-drop function FN_JOIN_TEST;
-
 -- restore optimization level
-set optimization level 1;
+set optimization level :opt_level ;
+
+drop function FN_JOIN_TEST;
+drop table if exists tbl;
