@@ -21,7 +21,7 @@ iscan
     index: idx term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select ? from tbl tbl where tbl.cola= cast(FN_JOIN_TEST(?) as double)
+select ? from tbl tbl where tbl.cola= cast(Hello(?) as double)
 ===================================================
 1    
 
@@ -42,7 +42,7 @@ nl-join (cselect join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(select t_?.c_?, t_?.c_?, t_?.c_? from (select tbl.cola, tbl.colb from table({?}) t_? (c_?)) t_? (c_?, c_?), (FN_JOIN_TEST(t_?.c_?)) t_? (c_?))
+(select t_?.c_?, t_?.c_?, t_?.c_? from (select tbl.cola, tbl.colb from table({?}) t_? (c_?)) t_? (c_?, c_?), (Hello(t_?.c_?)) t_? (c_?))
 Query plan:
 nl-join (inner join)
     edge:  table(?) -> t_? node[?]
@@ -57,7 +57,7 @@ nl-join (inner join)
     subqs: ?
     cost:  ? card ?
 Query stmt:
-select ? from tbl tbl, (select t_?.c_?, t_?.c_?, t_?.c_? from (select tbl.cola, tbl.colb from table({?}) t_? (c_?)) t_? (c_?, c_?), (FN_JOIN_TEST(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where tbl.cola= cast(t_?.c_? as double)
+select ? from tbl tbl, (select t_?.c_?, t_?.c_?, t_?.c_? from (select tbl.cola, tbl.colb from table({?}) t_? (c_?)) t_? (c_?, c_?), (Hello(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where tbl.cola= cast(t_?.c_? as double)
 ===================================================
 cola    
 
@@ -85,7 +85,7 @@ nl-join (cselect join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(select t_?.c_?, t_?.c_? from (select b.cola from table({?}) t_? (c_?)) t_? (c_?), (FN_JOIN_TEST(t_?.c_?)) t_? (c_?))
+(select t_?.c_?, t_?.c_? from (select b.cola from table({?}) t_? (c_?)) t_? (c_?), (Hello(t_?.c_?)) t_? (c_?))
 Query plan:
 nl-join (inner join)
     edge:  table(?) -> t_? node[?]
@@ -99,9 +99,9 @@ nl-join (inner join)
     subqs: ?
     cost:  ? card ?
 Query stmt:
-select (select ? from tbl a where a.cola= cast(t_?.c_? as double)) from tbl b, (select t_?.c_?, t_?.c_? from (select b.cola from table({?}) t_? (c_?)) t_? (c_?), (FN_JOIN_TEST(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?)
+select (select ? from tbl a where a.cola= cast(t_?.c_? as double)) from tbl b, (select t_?.c_?, t_?.c_? from (select b.cola from table({?}) t_? (c_?)) t_? (c_?), (Hello(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?)
 ===================================================
-FN_JOIN_TEST(b.colb)    
+Hello(b.colb)    
 
 Query plan:
 sscan
@@ -120,7 +120,7 @@ nl-join (cselect join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(select t_?.c_?, t_?.c_? from (select b.colb from table({?}) t_? (c_?)) t_? (c_?), (FN_JOIN_TEST(t_?.c_?)) t_? (c_?))
+(select t_?.c_?, t_?.c_? from (select b.colb from table({?}) t_? (c_?)) t_? (c_?), (Hello(t_?.c_?)) t_? (c_?))
 Query plan:
 nl-join (inner join)
     edge:  table(?) -> t_? node[?]
@@ -143,7 +143,7 @@ nl-join (inner join)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ t_?.c_?, a.cola from tbl a, tbl b, (select t_?.c_?, t_?.c_? from (select b.colb from table({?}) t_? (c_?)) t_? (c_?), (FN_JOIN_TEST(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?) where (a.cola>?) and a.colb=b.colb order by ? for orderby_num()<=?
+select /*+ ORDERED */ t_?.c_?, a.cola from tbl a, tbl b, (select t_?.c_?, t_?.c_? from (select b.colb from table({?}) t_? (c_?)) t_? (c_?), (Hello(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?) where (a.cola>?) and a.colb=b.colb order by ? for orderby_num()<=?
 /* ---> skip ORDER BY */
 ===================================================
 0
