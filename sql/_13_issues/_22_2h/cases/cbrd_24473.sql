@@ -7,8 +7,8 @@ insert into tbl values(1,1),(2,2);
 create index idx on tbl(cola);
 
 -- create function
-create or replace FUNCTION FN_JOIN_TEST(p_code varchar) RETURN VARCHAR
- as language java name 'FN_JOIN_TEST.sp_FN_JOIN_TEST1(java.lang.String)  return java.lang.String';
+create or replace FUNCTION Hello(p_code varchar) RETURN VARCHAR
+ as language java name 'SpTest.Hello(java.lang.String)  return java.lang.String';
 
 get optimization level into :opt_level ;
 set optimization level 514;
@@ -16,19 +16,19 @@ set optimization level 514;
 --general case
 SELECT 1
 FROM tbl
-WHERE cola = FN_JOIN_TEST(1984);
+WHERE cola = Hello(1984);
 
 --sscan 
 SELECT 1
 FROM tbl
-WHERE cola = FN_JOIN_TEST(colb);
+WHERE cola = Hello(colb);
 
 --correlated subquery case (fixme : must be index scan)
-select (SELECT /*+ oredered */ 1 FROM tbl a WHERE a.cola = FN_JOIN_TEST(b.cola)) cola
+select (SELECT /*+ oredered */ 1 FROM tbl a WHERE a.cola = Hello(b.cola)) cola
  from tbl b;
 
 --order by skip
-SELECT /*+ recompile ordered */ FN_JOIN_TEST(b.colb)
+SELECT /*+ recompile ordered */ Hello(b.colb)
 FROM tbl a, tbl b
 where a.cola > 0
    and a.colb = b.colb
@@ -38,5 +38,5 @@ limit 1 ;
 -- restore optimization level
 set optimization level :opt_level ;
 
-drop function FN_JOIN_TEST;
+drop function Hello;
 drop table if exists tbl;
