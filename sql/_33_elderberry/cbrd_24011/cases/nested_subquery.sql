@@ -6,6 +6,7 @@ insert into tab_b select to_char(rownum mod 100) col_a, to_char(rownum) col_b fr
 create index idx on tab_a(col_a,col_b);
 create index idx on tab_b(col_a,col_b);
 
+update statistics on all classes;
 select /*+ recompile */ count(*)
   from tab_a a
         ,(select /*+ NO_MERGE */ col_a, cnt from (
@@ -24,12 +25,14 @@ create or replace view v_a as select col_a, cnt from (
 	union
 	select col_a,count(*) from tab_b group by col_a);
 
+update statistics on all classes;
 select /*+ recompile */ count(*)
 from tab_a a
      ,v_a b
 where a.col_a = b.col_a
      and b.col_a = 1;
 
+update statistics on all classes;
 select /*+ recompile NO_MERGE */ count(*)
 from tab_a a
       , (select /*+ NO_MERGE */ col_a, cnt from (
@@ -48,6 +51,7 @@ create or replace view v_a as select col_a, cnt from (
         ) )
         );
 
+update statistics on all classes;
 select /*+ recompile */ count(*)
 from tab_a a
       ,v_a d

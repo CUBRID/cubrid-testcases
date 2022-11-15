@@ -6,6 +6,7 @@ insert into tab_b select to_char(rownum mod 100) col_a, to_char(rownum) col_b fr
 create index idx on tab_a(col_a,col_b);
 create index idx on tab_b(col_a,col_b);
 
+update statistics on all classes;
 select /*+ recompile */ count(*)
   from tab_a a
         ,(select col_a, max(col_b) col_b from tab_b group by col_a) b
@@ -15,6 +16,7 @@ select /*+ recompile */ count(*)
 
 create or replace view v_a as select col_a, max(col_b) col_b from tab_b group by col_a;
 
+update statistics on all classes;
 select /*+ recompile */ count(*)
   from tab_a a
       ,v_a b
@@ -22,6 +24,7 @@ select /*+ recompile */ count(*)
     and b.col_b = 1
     and nvl(b.col_a,0) = 1;
 
+update statistics on all classes;
 select /*+ recompile */ count(*)
 from tab_a a left join
       (select col_a, max(col_b) col_b from tab_b group by col_a) b on a.col_a = b.col_a 
@@ -29,10 +32,12 @@ where b.col_a = 2;
 
 create or replace view v_a as select col_a, max(col_b) col_b from tab_b group by col_a;
 
+update statistics on all classes;
 select /*+ recompile */ count(*)
 from tab_a a left join v_a b on a.col_a = b.col_a
 where b.col_a = 2;
 
+update statistics on all classes;
 select /*+ recompile */ count(*)
 from tab_a a left join
       (select col_a, max(col_b) col_b from tab_b group by col_a) b on a.col_a = b.col_a
@@ -40,9 +45,11 @@ where nvl(b.col_a,1) = 2;
 
 create or replace view v_a as select col_a, max(col_b) col_b from tab_b group by col_a;
 
+update statistics on all classes;
 select /*+ recompile */ count(*)
 from tab_a a left join v_a b on a.col_a = b.col_a 
 where nvl(b.col_a,1) = 2;
+update statistics on all classes;
 select /*+ recompile */ count(*)
 from tab_a a
       ,(select col_a, max(col_b) col_b from tab_b group by col_a) b
@@ -51,11 +58,13 @@ where a.col_a = b.col_a
 
 create or replace view v_a as select col_a, max(col_b) col_b from tab_b group by col_a;
 
+update statistics on all classes;
 select /*+ recompile */ count(*)
 from tab_a a
       ,v_a b
 where a.col_a = b.col_a
   and nvl(b.col_a,0) = 1;
+update statistics on all classes;
 select /*+ recompile */ count(*)
 from (select col_a, col_b from tab_b group by col_a) a
        inner join
@@ -66,6 +75,7 @@ where nvl(a.col_a,0) = 1;
 
 create or replace view v_a as select col_a, col_b from tab_b group by col_a;
 
+update statistics on all classes;
 select /*+ recompile */ count(*)
 from v_a a
        inner join
@@ -73,6 +83,7 @@ from v_a a
        right outer join
        tab_a c on b.col_a = c.col_a 
 where nvl(a.col_a,0) = 1;
+update statistics on all classes;
 select /*+ recompile */ count(*)
 from (select col_a, col_b from tab_b group by col_a) a,
        tab_a b 
@@ -83,6 +94,7 @@ where a.col_a = c.col_a
 
 create or replace view v_a as select col_a, col_b from tab_b group by col_a;
 
+update statistics on all classes;
 select /*+ recompile */ count(*)
 from v_a a,
        tab_a b 

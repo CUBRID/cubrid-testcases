@@ -6,6 +6,7 @@ insert into tab_b select to_char(rownum mod 100) col_a, to_char(rownum) col_b fr
 create index idx on tab_a(col_a,col_b);
 create index idx on tab_b(col_a,col_b);
 
+update statistics on all classes;
 select /*+ recompile */ count(*)
   from tab_a a,
 	(select col_a,count(*) from tab_b group by col_a) b
@@ -14,6 +15,7 @@ select /*+ recompile */ count(*)
 
 create or replace view v_a as select col_a,count(*) col_b from tab_b group by col_a;
 
+update statistics on all classes;
 select /*+ recompile */ count(*)
 from tab_a a
       ,v_a b

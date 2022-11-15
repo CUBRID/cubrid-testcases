@@ -21,15 +21,20 @@ insert into t values (2, 0, 20), (2, 1, 21), (2, 2, 22), (2, 3, 23), (2, 4, 24);
 insert into t values (3, 0, 30), (3, 1, 31), (3, 2, 32), (3, 3, 33), (3, 4, 34);
 insert into t values (3458901122, 3458901122, 40), (3458901122, 3458901122, 41), (3458901122, 3458901122, 42), (3458901122, 3458901122, 43), (3458901122, 3458901122, 44);
 
+update statistics on all classes;
 select /*+ recompile */ t.i2,t.i3,u.i from t join u on t.i2 = u.i where t.i1 in (3458901122,1,3) order by t.i2 + i3 + i1 desc,i for orderby_num() <=10;
 
+update statistics on all classes;
 select /*+ recompile */ t.i2,t.i3,u.i from t join u on t.i2 = u.i where t.i1 in (1,3) order by t.i2 + i3 + i1 asc,i for orderby_num() <=10;
 
+update statistics on all classes;
 select /*+ recompile */ t.i2,t.i3,u.i from t join u on t.i2 = u.i where t.i1 in (1,3) order by t.i2 ,i3 ,i for orderby_num() <=100;
 
+update statistics on all classes;
 select /*+ recompile */ t.i2,t.i3,u.i from t join u on t.i2 = u.i where t.i1 in (3,1) order by t.i2 ,i3 desc,i for orderby_num() <=10;
 
 PREPARE st  from
+update statistics on all classes;
 'select /*+ recompile */ t.i2,t.i3,u.i from t join u on t.i2 = u.i where t.i1 in (3,1) order by t.i2 desc ,i3 desc,i for orderby_num() <=?';
 
 EXECUTE st USING 4;  

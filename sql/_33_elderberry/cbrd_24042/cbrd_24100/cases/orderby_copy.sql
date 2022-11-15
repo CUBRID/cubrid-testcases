@@ -38,6 +38,7 @@ AS
   FROM   t_b
   ORDER  BY col_b,
             col_a;
+update statistics on all classes;
 SELECT /*+ recompile */ Count(*)
 FROM   t_a a,
        v_a b

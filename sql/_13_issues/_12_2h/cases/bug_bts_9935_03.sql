@@ -15,9 +15,11 @@ insert into t1__p__p0 values(10,10);
 insert into t1__p__p1 values(15,15);
 
 --sequence scan
+update statistics on all classes;
 select /*+ recompile */ * from t ;
 
 --sequence scan
+update statistics on all classes;
 select /*+ recompile */ * from t partition (p0);
 
 create index t_i on t(i);
@@ -27,21 +29,27 @@ create index t1_i on t(i);
 create index t1_i_j on t(i,j); 
 
 --order by scan
+update statistics on all classes;
 select /*+ recompile */ * from t order by i;
 
 --index scan,iscan
+update statistics on all classes;
 select /*+ recompile */ * from t partition (p0) where i>5;
 
 --MRO
+update statistics on all classes;
 select /*+ recompile */ * from t partition (p0) where i in(5,6) order by j limit 5 ;
 
 --INDEX JOIN
+update statistics on all classes;
 select /*+ recompile */ * from t partition (p0) , t1 partition (p0);
 
 --ORDER BY skip
+update statistics on all classes;
 select /*+ recompile */ t.i ,t.j from t partition (p0),t1 partition (p0) where t.i=t1.i and t.i=5 order by t.i , t.j;
 
 --GROUP BY skip
+update statistics on all classes;
 select /*+ recompile */ * from t partition (p0) where t.i> 4 group by i;
 
 drop table if exists t,t1;
@@ -56,6 +64,7 @@ insert into t (i,j)  select i,rownum from mille;
 create index t_i_j on t(i,j); 
 
 --index skip scan
+update statistics on all classes;
 select /*+ recompile  */  count(*) from (select  /*+ recompile index_ss */ * from t where j between 1 and 2 using index t_i_j) tt;
 
 drop table if exists t,mille;
@@ -73,20 +82,28 @@ insert into t select rownum,rownum, TO_DATE('12/25/2008'),rownum||'',rownum||'',
 
 insert into t select rownum,rownum, TO_DATE('12/25/2009'),rownum||'',rownum||'',rownum from db_class a,db_class b limit 1000;
 
+update statistics on all classes;
 select /*+ recompile */ i,j,count(*) from t where i > 5 and i < 200 group by i having j > 0 limit 10;
 
+update statistics on all classes;
 select /*+ recompile */ i,j,count(*) from t where i > 5 and i < 200 group by i having j > 0 limit 10,10;
 
+update statistics on all classes;
 select /*+ recompile */ i,j,count(*) from t where i is not null group by i having sum(i) > 20 limit 10,10;
 
+update statistics on all classes;
 select /*+ recompile */ i,j from t where i > 5 and i < 200 group by j having i > 0 limit 10,20;
 
+update statistics on all classes;
 select /*+ recompile */ i,j,k from t where k >=  TO_DATE('12/25/2008') group by k having k <=  TO_DATE('12/25/2008') limit 10 ;
 
+update statistics on all classes;
 select /*+ recompile */ i,j,k,l,m,n,count(l) from t where i > 10 and i < 110 group by l having j > 100 limit 2,10;
 
+update statistics on all classes;
 select /*+ recompile */ i,j,k,l,m,n from t where m > 10 and m < 110 group by m having m > 100 limit 2,10;
 
+update statistics on all classes;
 select /*+ recompile */ i,j,k,l,m,n,avg(n) from t where n > 10 and n < 110 group by n having n > 100 limit 2,10;
 
 drop table t;
@@ -143,18 +160,25 @@ create index i_t2_b on t2(b);
 create index i_t2_c on t2(c);
 create index i_t2_d on t2(a,b,c);
 
+update statistics on all classes;
 select /*+ recompile */ t.a,t.b,t2.c from t left join t2 on t.a=t2.a  where t.a>11  group by t.a having t.a>15 limit 1,3 ;
 
+update statistics on all classes;
 select /*+ recompile */ t.a,t.b,t2.c from t right join t2 on t.a=t2.a  where t.a>11  group by t.a having t.a>15 limit 1,3 ;
 
+update statistics on all classes;
 select /*+ recompile */ t.a,t.b,t2.c from t right join t2 on t.a=t2.a  where t.a in (10,11,12,13)  group by t.a having t.a>15 limit 1,3;
 
+update statistics on all classes;
 select /*+ recompile */ t.a,t.b,t2.c from t right join t2 on t.a=t2.a  where t.a in (10,11,12,13)  group by t.a having t.a<15 and t.a>0 limit 1,3;
 
+update statistics on all classes;
 select /*+ recompile */distinct t.a,t.b,t2.c,count(*),avg(t.a) from t right outer join t2 on t.a=t2.a  where t.a in (10,11,12,13) group by t.a having t.a<15 and t.a>0 limit 1,3 ;
 
+update statistics on all classes;
 select /*+ recompile */ t.a,t.b,t2.c,count(*),avg(t.a) from t right outer join t2 on t.a=t2.a  where t.a in (10,11,12,13) group by t.a having t.a<15 and t.a>0 limit 1,3 ;
 
+update statistics on all classes;
 select /*+ recompile */ distinct t.a,t.b,t2.c,count(*) from t right outer join t2 on t.a=t2.a  where t.a in (10,11,12,13) group by t.a having t.a<15 and t.a>0 limit 3 ;
 
 drop table if exists t,t2;
@@ -196,30 +220,43 @@ create index i_t2_b on t2(b);
 create index i_t2_c on t2(c);
 create index i_t2_d on t2(a,b,c);
 
+update statistics on all classes;
 select /*+ recompile */ t.a,t.b,t2.c from t left join t2 on t.a=t2.a  where t.a>11  group by t.a having t.a>15 limit 1,3 ;
 
+update statistics on all classes;
 select /*+ recompile */ t.a,t.b,t2.c from t right join t2 on t.a=t2.a  where t.a>11  group by t.a having t.a>15 limit 1,3 ;
 
+update statistics on all classes;
 select /*+ recompile */ t.a,t.b,t2.c from t right join t2 on t.a=t2.a  where t.a in (10,11,12,13)  group by t.c having t.a>15 limit 1,3;
 
+update statistics on all classes;
 select /*+ recompile */ t.a,t.b,t2.c from t right join t2 on t.a=t2.a  where t.a in (10,11,12,13)  group by t.b having t.a<15 and t.a>0 limit 1,3;
 
+update statistics on all classes;
 select /*+ recompile */ t.a,t.b,t2.c,count(*) from t right outer join t2 on t.a=t2.a  where t.a in (10,11,12,13) group by t.c having t.a<15 and t.a>0 limit 1,3 ;
 
+update statistics on all classes;
 select /*+ recompile */ t.a,t.b,t2.c,count(*) from t right outer join t2 on t.a=t2.a  where t.a in (10,11,12,13) group by t.c having t.a<15 and t.a>0 limit 1000000,1000000;
 
+update statistics on all classes;
 select /*+ recompile */ t.a,t.b,t2.c,count(*) from t right outer join t2 on t.a=t2.a  where t.a in (10,11,12,13) group by t.c having t.a<15 and t.a>0 limit 10000000000000,100000000000000;
 
+update statistics on all classes;
 select /*+ recompile */ distinct t.a,t.b,t2.c,count(*) from t right outer join t2 on t.a=t2.a  where t.a in (10,11,12,13) group by t.c having t.a<15 and t.a>0 limit 10000000000000,100000000000000;
 
+update statistics on all classes;
 select /*+ recompile */ t.a,t.b,t2.c,count(*) from t right outer join t2 on t.a=t2.a  where t.a in (10,11,12,13) group by t.c having t.a<15 and t.a>0 limit 3 ;
 
+update statistics on all classes;
 select /*+ recompile */ t.a,t.b,t2.c,count(*) from t left outer join t2 on t.a=t2.a  where t.a in (10,11,12,13) group by t.c having t.a<15 and t.a>0 limit 3 ;
 
+update statistics on all classes;
 select /*+ recompile */ t.a,t.b,t2.c,count(*) from t inner join t2 on t.a=t2.a  where t.a in (10,11,12,13) group by t.c having t.a<15 and t.a>0  order by 1 limit 3 ;
 
+update statistics on all classes;
 select /*+ recompile */ t.a,t.b,t2.c,count(*) from t inner join t2 on t.a=t2.a  where t.a in (10,11,12,13) group by t.c having t.a<15 and t.a>0 limit 1000 ;
 
+update statistics on all classes;
 select /*+ recompile */ t.a,t.b,t2.c,count(*) from t inner join t2 on t.a=t2.a  where t.a in (10,11,12,13) group by t.c having t.a<15 and t.a>0 order by 1 limit 1000 ;
 
 drop table if exists t,t2;
@@ -252,57 +289,68 @@ create index idx_u_a on u(a);
 
 update statistics on all classes;
 	
+update statistics on all classes;
 select /*+ recompile ordered */ * from s join t
 	on s.a = t.a and s.b = t.b
 	where t.a in (1,2,3,4,5) and t.b != 1 and t.a != 2 and t.d != 2
 	order by t.c desc, t.d limit 10;
 
 	
+update statistics on all classes;
 select /*+ recompile ordered */ * from s join t
 	on s.a = t.a and s.b = t.b
 	where t.a not in (0,2,3,4,5) and t.b != 1 and t.a != 2 and t.d != 2
 	order by t.c desc, t.d limit 10;
 
 	
+update statistics on all classes;
 select /*+ recompile ordered */ * from s  left join t
 	on s.a = t.a and s.b = t.b
 	where t.a not in (0,2,3,4,5) and t.b != 1 and t.a != 2 and t.d != 2
 	order by t.c desc, t.d limit 10;
 
+update statistics on all classes;
 select /*+ recompile ordered USE_MERGE */ * from s  right join t
 	on s.a = t.a and s.b = t.b
 	where t.a not in (0,2,3,4,5) and t.b != 1 and t.a != 2 and t.d != 2
 	order by t.c desc, t.d,t.e limit 10;
 
 
+update statistics on all classes;
 select /*+ recompile ordered */ * from s  inner join t
 	on s.a = t.a and s.b = t.b
 	where t.a not in (0,2,3,4,5) and t.b != 1 and t.a != 2 and t.d != 2
 	order by t.c desc, t.d limit 10;
 
 
+update statistics on all classes;
 select /*+ recompile ordered */ * from t join s
 	on s.b = t.b
 	where t.a in (1,3) and t.b = 1
 	order by t.c desc, d limit 10;
+update statistics on all classes;
 select /*+ recompile ordered */ * from t join s
 	on s.a = t.a
 	where t.a in (1,3) and t.b = 1
 	order by t.c desc, d limit 10;
+update statistics on all classes;
 select /*+ recompile ordered */ * from t join s
 	on s.a = t.b and s.b = t.c
 	where t.a in (1,3) and t.b = 1
 	order by t.c desc, d limit 10;
+update statistics on all classes;
 select /*+ recompile ordered */ * from t join s
 	on s.a = t.e
 	where t.a in (1,3) and t.b = 1
 	order by t.c, t.d desc limit 10;
 
 -- hint NO_MULTI_RANGE_OPT
+update statistics on all classes;
 select /*+ recompile ORDERED*/ * from t join s
 	on s.a = t.a
 	where t.a in (1,3) and t.b = 1
 	order by t.c desc, t.a, s.a, s.b limit 10;
+update statistics on all classes;
 select /*+ recompile NO_MULTI_RANGE_OPT ORDERED */ * from t join s
 	on s.a = t.a
 	where t.a in (1,3) and t.b = 1
@@ -323,6 +371,7 @@ select /*+ USE_NL ORDERED */ t.*, s.a as sa, s.b as sb, u.a as ua, u.b as ub fro
 	order by t.c desc, t.d limit 10;
 
 
+update statistics on all classes;
 select /*+ recompile ORDERED*/ t.*, s.a as sa, s.b as sb, u.a as ua, u.b as ub from t,s,u
 	where t.e = s.a and t.b = u.a and s.b= u.b and t.a in (1,3) and t.b = 1
 	order by t.c desc,t.a, s.a limit 10;
