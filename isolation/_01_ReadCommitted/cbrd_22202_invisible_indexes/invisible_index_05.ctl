@@ -33,6 +33,7 @@ MC: wait until C2 blocked;
 C1: ROLLBACK;
 MC: wait until C1 ready;
 
+C2: update statistics on t1;
 C2: show index from t1;
 MC: wait until C2 ready;
 

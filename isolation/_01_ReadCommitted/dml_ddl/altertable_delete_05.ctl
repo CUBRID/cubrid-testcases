@@ -43,6 +43,7 @@ C1: rollback;
 MC: wait until C2 ready;
 C2: commit work;
 C2: SELECT * FROM tb1 order by 1,2;
+C2: update statistics on tb1;
 C2: show index from tb1;
 C2: commit work;
 

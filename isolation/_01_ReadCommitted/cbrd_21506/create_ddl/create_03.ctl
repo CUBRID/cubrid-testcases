@@ -57,6 +57,7 @@ MC: wait until C4 ready;
 C1: select sum(set{c}) into :s from t1 ignore index (i) where c > 'a' order by 1;
 C1: select sum(set{c}) into :i from t1 force index (i) where c > 'a' order by 1;
 C1: select if (:s = :i, 'OK', 'NOK');
+C1: update statistics on t1;
 C1: show index from t1;
 C1: describe t1;
 MC: wait until C1 ready;

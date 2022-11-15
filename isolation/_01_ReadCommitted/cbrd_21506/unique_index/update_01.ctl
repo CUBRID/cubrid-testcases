@@ -59,6 +59,7 @@ C1: select if (:s = :i, 'OK', 'NOK');
 C1: select sum(set{charge}) into :s2 from a_tbl ignore index (i) where id > -999 order by 1;
 C1: select sum(set{charge}) into :i2 from a_tbl force index (i) where id > -999 order by 1;
 C1: select if (:s2 = :i2, 'OK', 'NOK');
+C1: update statistics on a_tbl;
 C1: show index from a_tbl;
 MC: wait until C1 ready;
 
