@@ -6,10 +6,12 @@ create index i_t1_a2a on t1(lower(a));
 
 create index i_t1_a2b on t1(b) where b > 0;
 
+update statistics on all classes;
 SHOW INDEXES FROM t1;
 
 create table t2 like t1;
 
+update statistics on all classes;
 SHOW INDEXES FROM t2;
 
 insert into t2 select * from t1 where lower(a)>'0';

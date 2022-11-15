@@ -22,6 +22,7 @@ INSERT INTO b_tbl VALUES (1,'George'),(2,'Laura'), (3,'Max');
 --test: drop table on cascade
 DROP a_tbl CASCADE CONSTRAINTS;
 
+update statistics on all classes;
 show index from b_tbl;
 SELECT * FROM b_tbl ORDER BY 1;
 

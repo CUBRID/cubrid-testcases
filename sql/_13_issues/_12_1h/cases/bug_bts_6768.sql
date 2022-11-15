@@ -7,8 +7,10 @@ CREATE INDEX i_bugs_subject  ON bugs(Subject) WHERE Subject is not null;
 CREATE INDEX idx1 ON bugs(ln(bugID));
 CREATE INDEX idx2 ON bugs(ln(Closed));
 CREATE INDEX idx3 ON bugs(ln(bugID),Closed);
+update statistics on all classes;
 show index in bugs;
 ALTER TABLE bugs  DROP COLUMN Closed;
+update statistics on all classes;
 show index in bugs;
 drop table bugs;
 

@@ -4,6 +4,7 @@ drop table if exists foo;
 create table foo (a char(10), b varchar(10));
 create index idx_foo_weekday_a on foo (weekday(a)) invisible;
 create index idx_foo_weekday_b on foo (weekday(b)) invisible;
+update statistics on all classes;
 SHOW INDEXES from foo;
 insert into foo values ('2010-01-01','2011-01-01');
 insert into foo values ('2010-01-02','2011-01-02');
@@ -15,6 +16,7 @@ select * from foo where weekday(a) >= 4 order by a;
 --@queryplan
 select * from foo where weekday(b) >= 4 order by b;
 alter table foo drop column b;
+update statistics on all classes;
 SHOW INDEXES from foo;
 insert into foo values ('abc');
 drop index idx_foo_weekday_a on foo;
@@ -25,6 +27,7 @@ drop table if exists foo;
 
 create table foo (a int);
 create index idx_foo_trunc on foo (TRUNC (a, -1));
+update statistics on all classes;
 SHOW INDEXES from foo;
 insert into foo values (7), (15), (2200), (7001), (178), (4);
 --@queryplan
@@ -36,10 +39,12 @@ drop foo;
 
 create table foo (a char(5));
 create index idx_foo_abs on foo (abs(-a));
+update statistics on all classes;
 SHOW INDEXES from foo;
 insert into foo values ('5'), ('11'), ('-1');
 select /*+ recompile */ * from foo where abs(-a) > 0 order by a;
 alter index idx_foo_abs on foo invisible;
+update statistics on all classes;
 SHOW INDEXES from foo;
 --@queryplan
 select /*+ recompile */ * from foo where abs(-a) > 0 order by a;
@@ -49,10 +54,12 @@ create table foo (str string, c1 char, c2 char);
 insert into foo values ('abcabc','a','d');
 insert into foo values ('xyzxyz','a','x');
 create index idx_foo_translate on foo (translate(str,c1,c2));
+update statistics on all classes;
 SHOW INDEXES from foo;
 --@queryplan
 select /*+ recompile */ str original, translate(str,c1,c2) translated from foo where translate(str,c1,c2) in ('dbcdbc','smthsmth');
 alter index idx_foo_translate on foo invisible;
+update statistics on all classes;
 SHOW INDEXES from foo;
 --@queryplan
 select /*+ recompile */ str original, translate(str,c1,c2) translated from foo where translate(str,c1,c2) in ('dbcdbc','smthsmth');
@@ -64,6 +71,7 @@ insert into foo values ('aaa','bbb','ccc');
 insert into foo values ('bbb','ccc','aaa');
 insert into foo values ('ccc','aaa','bbb');
 create index idx_foo_elt on foo (ELT (3, a, b, c)) invisible;
+update statistics on all classes;
 SHOW INDEXES from foo;
 select /*+ recompile */ * from foo where ELT(3, a, b, c) > 'aaa';
 drop foo;
@@ -102,8 +110,10 @@ create index i_t1_a2d on t1(DATE(n)) invisible;
 select /*+ RECOMPILE */* from t1 where DATE(n)='10/31/2008' ;
 create index i_t1_a2q on t1(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q) invisible;
 create index i_t1_a2p on t1(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p) with online invisible;
+update statistics on all classes;
 show index from t1;
 create index i_t1_a2q on t1(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q);
 create index i_t1_a2p on t1(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p) with online ;
+update statistics on all classes;
 show index from t1;
 drop table if exists t1;

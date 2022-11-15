@@ -17,6 +17,7 @@ CREATE INDEX i2 on t1 (LPAD (a, 10, 'X'));
 CREATE INDEX i3 on t1 (LPAD ('CUBRID', 20, a));
 
 
+update statistics on all classes;
 show index in t1;
 
 

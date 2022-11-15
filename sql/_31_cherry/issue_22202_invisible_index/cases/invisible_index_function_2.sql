@@ -3,6 +3,7 @@ create table t (a string, b string);
 create index idx1 on t(ifnull(a,b)) invisible;
 create index idx2 on t(nvl(a,b)) invisible;
 create index idx3 on t(nvl2(a,b,'a is null')) invisible;
+update statistics on all classes;
 show index from t;
 
 drop table if exists t;
@@ -11,6 +12,7 @@ insert into t values('a','b'),('c',null),(null,'d'),(null,null);
 create index idx1 on t(ifnull(a,b)) invisible;
 create index idx2 on t(nvl(a,b)) invisible;
 create index idx3 on t(nvl2(a,b,'a is null')) invisible;
+update statistics on all classes;
 show index from t;
 
 drop table if exists t1;
@@ -53,6 +55,7 @@ create index idx_2q on t1(month(q)) invisible;
 create index idx5 on t1(month(a)) invisible;
 create index idx6 on t1(second(b)) invisible;
 create index idx7 on t1(hour(a)) invisible;
+update statistics on all classes;
 show index from t1;
 insert into t1 values (null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
 create index i_t1_a2q on t1(MINUTE(a)) invisible;
@@ -63,6 +66,7 @@ create index i_t1_a2m on t1(MINUTE(e)) invisible;
 create index idx_p on t1(MINUTE(p)) invisible;
 create index idx_q on t1(MINUTE(q)) invisible;
 create index idx_o on t1(MINUTE(o)) invisible;
+update statistics on all classes;
 show index from t1;
 
 drop table if exists t;
@@ -74,6 +78,7 @@ create index i_t_dtcol on t (timediff (datetime_col, datetime'2010-01-01 12:34:5
 create index i_t_tdcol on t (timediff (datetime_col, timestamp'2010-01-01 12:34:56')) invisible;
 create index i_t_td2col on t (timediff (time_col, time'12:00:00')) invisible;
 create index i_t_rpcol on t (replace (string_col, 'b', 'c')) invisible;
+update statistics on all classes;
 show index from t;
 
 set names iso88591;
@@ -86,6 +91,7 @@ select (LPAD(a, 10, 'X')) from t1 order by 1;
 select (LPAD('CUBRID', 20, a)) from t1 order by 1;
 CREATE INDEX i1 on t1 (LPAD ('CUBRID', a, 'X')) invisible;
 CREATE INDEX i2 on t1 (LPAD (a, 10, 'X')) invisible;
+update statistics on all classes;
 show index from t1;
 
 drop table if exists t1,foo,t;

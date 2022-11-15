@@ -49,6 +49,7 @@ select * from tz order by a;
 
 --test: add index
 alter table tz add index idx(c_tstz1);
+update statistics on all classes;
 show index in tz;
 
 

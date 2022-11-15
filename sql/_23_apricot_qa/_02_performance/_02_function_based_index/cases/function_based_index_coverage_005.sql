@@ -8,14 +8,17 @@ create index idx2 on t1 (i) where i > 15;
 
 insert into t1 values (4,25), (16,256), (20,400);
 --Test
+update statistics on all classes;
 SHOW INDEXES FROM t1;
 --Test
 alter table t1 change column d newd double;
 
+update statistics on all classes;
 SHOW INDEXES FROM t1;
 --Test
 alter table t1 change column i newi int;
 
+update statistics on all classes;
 SHOW INDEXES FROM t1;
 --Test
 select /*+ recompile */ * from t1 where sqrt(newd) > 5;

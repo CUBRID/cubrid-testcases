@@ -7,7 +7,9 @@ create index idx on t(textlabel, description) where least(id,1000)>char_length(t
 -- should also create a new index with the new table --
 create table other_t like t;
 
+update statistics on all classes;
 show indexes from t;
+update statistics on all classes;
 show indexes from other_t;
 
 -- populate the table with a few rows --
@@ -24,6 +26,7 @@ insert into t(id, textlabel, description)
 
 -- use create table like again, with a populated table --
 create table the_other_t like t;
+update statistics on all classes;
 show indexes from the_other_t;
 
 drop unique index u_idx on t(id);
@@ -161,14 +164,17 @@ drop reverse unique index idx_rev_un on t(id, textlabel);
 -- test automatic index update when a column/table is being changed --
 -- rename table --
 rename table other_t to othert;
+update statistics on all classes;
 show indexes from othert;
 drop table othert;
 
 rename table the_other_t to theothert;
+update statistics on all classes;
 show indexes from theothert;
 drop table theothert;
 
 rename table t to table_t;
+update statistics on all classes;
 show indexes from table_t;
 drop table table_t;
 

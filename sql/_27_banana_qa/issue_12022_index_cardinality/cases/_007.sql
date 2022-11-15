@@ -21,6 +21,7 @@ insert into t values(6, 1, 1, 'b', 1, 1, 'a', '2013-11-11', 1, 1, 'a', '2013-11-
 
 create index idx on t(b14, b6, a2, b3, b4, b5, b12, b11, b8, b10, b1, b2, b13, b7);
 
+update statistics on all classes;
 show index from t;
 
 insert into t values(7, 1, 1, 'c', 1, 1, 'a', '2013-11-11', 1, 1, 'a', '2013-11-11 11:11:11', 1, 1, B'1010', 'a', null);
@@ -37,7 +38,9 @@ insert into t values(16, 1, 1, 'g', 1, 1, 'a', '2013-11-11', 1, 1, 'a', '2013-11
 
 update statistics on t with fullscan;
 
+update statistics on all classes;
 --test: show index
+update statistics on all classes;
 show index in t;
 
 --test: index_cardinality

@@ -8,14 +8,17 @@ create index idx2 on t1 (i) where i > 15;
 
 insert into t1 values (4,25), (16,256), (20,400);
 
+update statistics on all classes;
 SHOW INDEXES FROM t1;
 --Test
 alter table t1 drop index idx;
 
+update statistics on all classes;
 SHOW INDEXES FROM t1;
 --Test
 alter table t1 drop index idx2;
 
+update statistics on all classes;
 SHOW INDEXES FROM t1;
 
 drop table t1;
