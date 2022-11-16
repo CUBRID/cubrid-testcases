@@ -13,67 +13,15 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 1
-Query plan:
-temp(group by)
-    subplan: iscan
-                 class: tab_b node[?]
-                 index: idx term[?] (covers)
-                 cost:  ? card ?
-    sort:  ? asc
-    cost:  ? card ?
-Query stmt:
-(select tab_b.col_a, count(*) from tab_b tab_b where tab_b.col_a= ?:?  group by tab_b.col_a)
-Query plan:
-temp(group by)
-    subplan: idx-join (inner join)
-                 outer: sscan
-                            class: st node[?]
-                            cost:  ? card ?
-                 inner: iscan
-                            class: tt node[?]
-                            index: idx term[?]
-                            filtr: term[?]
-                            sargs: term[?]
-                            cost:  ? card ?
-                 sargs: term[?]
-                 cost:  ? card ?
-    sort:  ? asc
-    cost:  ? card ?
-Query stmt:
-select tt, class tt, st.col_a from tab_a tt, (select tab_b.col_a, count(*) from tab_b tab_b where tab_b.col_a= ?:?  group by tab_b.col_a) st (col_a, col_b) where st.col_b= cast(tt.col_b as double) and ( cast( ?:?  as varchar))= ?:?  and tt.col_a= ?:?  and st.col_a=tt.col_a group by tt
+===================================================
+0
 ===================================================
 0
 ===================================================
 1
-Query plan:
-temp(group by)
-    subplan: iscan
-                 class: st node[?]
-                 index: idx term[?] (covers)
-                 cost:  ? card ?
-    sort:  ? asc
-    cost:  ? card ?
-Query stmt:
-(select st.col_a, count(*) from tab_b st where st.col_a= ?:?  group by st.col_a)
-Query plan:
-temp(group by)
-    subplan: idx-join (inner join)
-                 outer: sscan
-                            class: st node[?]
-                            cost:  ? card ?
-                 inner: iscan
-                            class: tt node[?]
-                            index: idx term[?]
-                            filtr: term[?]
-                            sargs: term[?]
-                            cost:  ? card ?
-                 sargs: term[?]
-                 cost:  ? card ?
-    sort:  ? asc
-    cost:  ? card ?
-Query stmt:
-select tt, class tt, st.col_a from tab_a tt, (select st.col_a, count(*) from tab_b st where st.col_a= ?:?  group by st.col_a) st (col_a, col_b) where st.col_b= cast(tt.col_b as double) and ( cast( ?:?  as varchar))= ?:?  and tt.col_a= ?:?  and st.col_a=tt.col_a group by tt
 ===================================================
 0
 ===================================================

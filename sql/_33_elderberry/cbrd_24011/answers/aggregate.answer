@@ -65,6 +65,8 @@ idx-join (inner join)
 Query stmt:
 select count(*) from tab_a a, (select b.col_a, max(b.col_b) from tab_b b group by b.col_a having max(b.col_b)='?') b (col_a, col_b) where a.col_a=b.col_a
 ===================================================
+0
+===================================================
 count(*)    
 10     
 
@@ -90,6 +92,8 @@ nl-join (cross join)
     cost:  ? card ?
 Query stmt:
 select count(*) from tab_a a, (select tab_b.col_a from tab_b tab_b where tab_b.col_a= ?:?  group by tab_b.col_a) b (col_a) where a.col_a= ?:?  and a.col_a=b.col_a
+===================================================
+0
 ===================================================
 0
 ===================================================
