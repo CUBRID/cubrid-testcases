@@ -16,6 +16,7 @@ C1: insert into t(id,col) select rownum,rownum||'1' from db_root connect by leve
 C1: insert into t(id,col) select rownum,rownum||'9' from db_root connect by level<=10;
 C1: insert into t(id,col) select rownum,rownum||'6' from db_root connect by level<=10;
 C1: insert into t(id,col) select rownum,rownum||'3' from db_root connect by level<=10;
+C1: update statistics on t;
 C1: commit;
 MC: wait until C1 ready;
 
@@ -41,6 +42,7 @@ MC: wait until C3 ready;
 C2: commit;
 MC: wait until C2 ready;
 
+C1: update statistics on t;
 C1: show indexes from t;
 C1: select /*+ recompile */id,trim(col),col1,col2,col3,col4,col5,col6,col7 from t where id >0 and col!='a' and col1 is not null using index idx1(+) ;
 C1: select /*+ recompile */ id,trim(col),col1,col2,col3,col4,col5,col6,col7 from t where id >0 and col!='a' and col1 is not null using index none order by 1 ;
