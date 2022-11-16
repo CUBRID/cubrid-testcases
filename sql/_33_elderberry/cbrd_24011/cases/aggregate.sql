@@ -20,6 +20,7 @@ from tab_a a
 where a.col_a = b.col_a
   and b.col_b = '900';
 
+update statistics on all classes;
 select count(*)
 from tab_a a
       ,(select col_a, max(col_b) col_b from tab_b group by col_a) b
@@ -28,6 +29,7 @@ where a.col_a = b.col_a
 
 create or replace view v_a as select col_a, max(col_b) col_b from tab_b group by col_a;
 
+update statistics on all classes;
 select count(*)
 from tab_a a
       ,v_a b
