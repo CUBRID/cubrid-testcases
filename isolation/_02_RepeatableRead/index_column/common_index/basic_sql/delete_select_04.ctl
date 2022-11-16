@@ -26,7 +26,6 @@ C1: CREATE TABLE tb1( id INT, col VARCHAR(10) );
 C1: INSERT INTO tb1 SELECT rownum,rownum%100 FROM db_class a,db_class b LIMIT 500;
 C1: CREATE INDEX idx_id on tb1(col);
 C1: CREATE INDEX idx_col on tb1(id);
-C1: update statistics on tb1;
 C1: commit work;
 MC: wait until C1 ready;
 
@@ -40,7 +39,7 @@ C1: SELECT * FROM tb1 WHERE col in ('2','3') ORDER BY id;
 C1: commit work;
 
 MC: wait until C2 ready;
-C2: update statistics on tb1 with fullscan;
+C2: update statistics on tb1;
 C2: show index from tb1;
 C2: SELECT * FROM tb1 WHERE col in ('2','3') ORDER BY id;
 C2: commit work;
