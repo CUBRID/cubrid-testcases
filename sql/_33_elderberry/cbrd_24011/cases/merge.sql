@@ -6,16 +6,16 @@ insert into tab_b select to_char(rownum mod 100) col_a, to_char(rownum) col_b fr
 create index idx on tab_a(col_a,col_b);
 create index idx on tab_b(col_a,col_b);
 
---@queryplan
 update statistics on all classes;
+--@queryplan
 merge /*+ recompile */ into tab_a tt using (select col_a, count(*) col_b from tab_b group by col_a) st
   on (st.col_a=tt.col_a and st.col_b=tt.col_b and st.col_a = 10)
 when matched then update set tt.col_a= st.col_a;
 
 create or replace view v_a as select col_a, count(*) col_b from tab_b group by col_a;
 
---@queryplan
 update statistics on all classes;
+--@queryplan
 merge /*+ recompile */ into tab_a tt using v_a st
   on (st.col_a=tt.col_a and st.col_b=tt.col_b and st.col_a = 10)
 when matched then update set tt.col_a= st.col_a;
