@@ -13,7 +13,6 @@ insert into t1 values(3);
 insert into t1 values(4);
 
 update statistics on t1;
-update statistics on all classes;
 show index in t1;
 
 
@@ -30,7 +29,6 @@ insert into t2 values(3);
 insert into t2 values(4);
 
 update statistics on t2;
-update statistics on all classes;
 show index in t2; 
 
 
@@ -47,7 +45,6 @@ insert into t3 values(3);
 insert into t3 values(4);
 
 update statistics on t3;
-update statistics on all classes;
 show index in t3; 
 
 select * from db_index where class_name in ('t1', 't2', 't3') order by class_name;
@@ -55,11 +52,8 @@ select * from db_index where class_name in ('t1', 't2', 't3') order by class_nam
 update statistics on all classes with fullscan;
 update statistics on catalog classes with fullscan;
 
-update statistics on all classes;
 show index in t1;
-update statistics on all classes;
 show index in t2;
-update statistics on all classes;
 show index in t3;
 
 select * from db_index where class_name in ('t1', 't2', 't3') order by class_name;
