@@ -2,9 +2,9 @@
 --+ holdcas on;
 create table tbl_1 (a int, b int);
 create index idxa on tbl_1(a);
+update statistics on all classes;
 
 insert into tbl_1 values (1,2), (2,3), (3,4), (4,5), (5,6);
-update statistics on all classes;
 show index in tbl_1;
 
 
