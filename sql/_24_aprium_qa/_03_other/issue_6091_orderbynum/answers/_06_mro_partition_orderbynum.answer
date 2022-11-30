@@ -29,8 +29,6 @@
 ===================================================
 5
 ===================================================
-0
-===================================================
 i2    i3    i    
 3.0     33.0     3     
 3.0     33.0     3     
@@ -46,12 +44,13 @@ i2    i3    i
 Query plan:
 temp(order by)
     subplan: idx-join (inner join)
-                 outer: sscan
-                            class: u node[?]
+                 outer: iscan
+                            class: t node[?]
+                            index: idx? term[?] (covers)
                             cost:  ? card ?
                  inner: iscan
-                            class: t node[?]
-                            index: idx? term[?] AND term[?]
+                            class: u node[?]
+                            index: i_u_i_j term[?] (covers)
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? desc, ? desc, ? asc
@@ -59,8 +58,6 @@ temp(order by)
 Query stmt:
 select t.i?, t.i?, u.i from t t, u u where ((t.i?= ?:? ) or (t.i?= ?:? )) and t.i?=u.i order by ? desc , ? desc , ? for orderby_num()<= ?:? 
 ===================================================
-0
-===================================================
 i2    i3    i    
 3.0     33.0     3     
 3.0     33.0     3     
@@ -76,12 +73,13 @@ i2    i3    i
 Query plan:
 temp(order by)
     subplan: idx-join (inner join)
-                 outer: sscan
-                            class: u node[?]
+                 outer: iscan
+                            class: t node[?]
+                            index: idx? term[?] (covers)
                             cost:  ? card ?
                  inner: iscan
-                            class: t node[?]
-                            index: idx? term[?] AND term[?]
+                            class: u node[?]
+                            index: i_u_i_j term[?] (covers)
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? desc, ? desc, ? asc
@@ -89,8 +87,6 @@ temp(order by)
 Query stmt:
 select t.i?, t.i?, u.i from t t, u u where ((t.i?= ?:? ) or (t.i?= ?:? )) and t.i?=u.i order by ? desc , ? desc , ? for orderby_num()<= ?:? 
 ===================================================
-0
-===================================================
 i2    i3    i    
 1.0     11.0     1     
 1.0     11.0     1     
@@ -114,12 +110,13 @@ i2    i3    i
 Query plan:
 temp(order by)
     subplan: idx-join (inner join)
-                 outer: sscan
-                            class: u node[?]
+                 outer: iscan
+                            class: t node[?]
+                            index: idx? term[?] (covers)
                             cost:  ? card ?
                  inner: iscan
-                            class: t node[?]
-                            index: idx? term[?] AND term[?]
+                            class: u node[?]
+                            index: i_u_i_j term[?] (covers)
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc, ? asc, ? asc
@@ -127,8 +124,6 @@ temp(order by)
 Query stmt:
 select t.i?, t.i?, u.i from t t, u u where ((t.i?= ?:? ) or (t.i?= ?:? )) and t.i?=u.i order by ?, ?, ? for orderby_num()<= ?:? 
 ===================================================
-0
-===================================================
 i2    i3    i    
 1.0     31.0     1     
 1.0     31.0     1     
@@ -152,20 +147,19 @@ i2    i3    i
 Query plan:
 temp(order by)
     subplan: idx-join (inner join)
-                 outer: sscan
-                            class: u node[?]
+                 outer: iscan
+                            class: t node[?]
+                            index: idx? term[?] (covers)
                             cost:  ? card ?
                  inner: iscan
-                            class: t node[?]
-                            index: idx? term[?] AND term[?]
+                            class: u node[?]
+                            index: i_u_i_j term[?] (covers)
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc, ? desc, ? asc
     cost:  ? card ?
 Query stmt:
 select t.i?, t.i?, u.i from t t, u u where ((t.i?= ?:? ) or (t.i?= ?:? )) and t.i?=u.i order by ?, ? desc , ? for orderby_num()<= ?:? 
-===================================================
-0
 ===================================================
 0
 ===================================================

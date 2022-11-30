@@ -13,8 +13,6 @@
 ===================================================
 0
 ===================================================
-0
-===================================================
 count(*)    
 0     
 
@@ -40,8 +38,6 @@ idx-join (inner join)
     cost:  ? card ?
 Query stmt:
 select count(*) from tab_a a, (select tab_b.col_a, max(tab_b.col_b) from tab_b tab_b where  cast(nvl(tab_b.col_a, ?) as double)=? group by tab_b.col_a having max(tab_b.col_b)= cast(? as varchar)) b (col_a, col_b) where a.col_a=b.col_a
-===================================================
-0
 ===================================================
 0
 ===================================================
@@ -71,8 +67,6 @@ idx-join (inner join)
 Query stmt:
 select count(*) from tab_a a, (select b.col_a, max(b.col_b) from tab_b b where  cast(nvl(b.col_a, ?) as double)=? group by b.col_a having max(b.col_b)= cast(? as varchar)) b (col_a, col_b) where a.col_a=b.col_a
 ===================================================
-0
-===================================================
 count(*)    
 10     
 
@@ -88,18 +82,16 @@ Query stmt:
 (select tab_b.col_a from tab_b tab_b where tab_b.col_a= ?:?  group by tab_b.col_a)
 Query plan:
 nl-join (cross join)
-    outer: sscan
-               class: b node[?]
-               cost:  ? card ?
-    inner: iscan
+    outer: iscan
                class: a node[?]
                index: idx term[?] (covers)
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
 select count(*) from tab_a a, (select tab_b.col_a from tab_b tab_b where tab_b.col_a= ?:?  group by tab_b.col_a) b (col_a) where a.col_a= ?:?  and a.col_a=b.col_a
-===================================================
-0
 ===================================================
 0
 ===================================================
@@ -118,18 +110,16 @@ Query stmt:
 (select b.col_a from tab_b b where b.col_a= ?:?  group by b.col_a)
 Query plan:
 nl-join (cross join)
-    outer: sscan
-               class: b node[?]
-               cost:  ? card ?
-    inner: iscan
+    outer: iscan
                class: a node[?]
                index: idx term[?] (covers)
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
 select count(*) from tab_a a, (select b.col_a from tab_b b where b.col_a= ?:?  group by b.col_a) b (col_a) where a.col_a= ?:?  and a.col_a=b.col_a
-===================================================
-0
 ===================================================
 count(*)    
 10     
@@ -160,8 +150,6 @@ select count(*) from tab_a a left outer join (select tab_b.col_a from tab_b tab_
 ===================================================
 0
 ===================================================
-0
-===================================================
 count(*)    
 10     
 
@@ -188,8 +176,6 @@ nl-join (left outer join)
     cost:  ? card ?
 Query stmt:
 select count(*) from tab_a a left outer join (select b.col_a from tab_b b group by b.col_a) b (col_a) on a.col_a=b.col_a where  cast(nvl(b.col_a, ?) as double)=?
-===================================================
-0
 ===================================================
 count(*)    
 10     
@@ -219,8 +205,6 @@ select count(*) from tab_a a, (select tab_b.col_a from tab_b tab_b where  cast(n
 ===================================================
 0
 ===================================================
-0
-===================================================
 count(*)    
 10     
 
@@ -246,8 +230,6 @@ idx-join (inner join)
     cost:  ? card ?
 Query stmt:
 select count(*) from tab_a a, (select b.col_a from tab_b b where  cast(nvl(b.col_a, ?) as double)=? group by b.col_a) b (col_a) where a.col_a=b.col_a
-===================================================
-0
 ===================================================
 count(*)    
 100     
@@ -286,8 +268,6 @@ select count(*) from (select tab_b.col_a from tab_b tab_b group by tab_b.col_a) 
 ===================================================
 0
 ===================================================
-0
-===================================================
 count(*)    
 100     
 
@@ -323,8 +303,6 @@ nl-join (left outer join)
 Query stmt:
 select count(*) from (select a.col_a from tab_b a group by a.col_a) a (col_a) inner join tab_a b on a.col_a=b.col_a right outer join tab_a c on b.col_a=c.col_a where  cast(nvl(a.col_a, ?) as double)=?
 ===================================================
-0
-===================================================
 count(*)    
 100     
 
@@ -359,8 +337,6 @@ nl-join (cross join)
     cost:  ? card ?
 Query stmt:
 select count(*) from (select tab_b.col_a from tab_b tab_b where  cast(nvl(tab_b.col_a, ?) as double)=? group by tab_b.col_a) a (col_a), tab_a b right outer join tab_a c on b.col_a=c.col_a where a.col_a=c.col_a
-===================================================
-0
 ===================================================
 0
 ===================================================

@@ -13,8 +13,6 @@ Error:-670
 ===================================================
 Error:-272
 ===================================================
-0
-===================================================
 a    
 2     
 
@@ -28,8 +26,6 @@ iscan
 Query stmt:
 select t.a from t t where (t.b> ?:? ) using index t.my_index(+) order by ? desc 
 /* ---> skip ORDER BY */
-===================================================
-0
 ===================================================
 a    
 2     
@@ -45,8 +41,6 @@ Query stmt:
 select t.a from t t where (t.b> ?:? ) using index t.my_index(+) order by ?
 /* ---> skip ORDER BY */
 ===================================================
-0
-===================================================
 a    
 2     
 
@@ -58,8 +52,6 @@ iscan
     cost:  ? card ?
 Query stmt:
 select t.a from t t where (t.b> ?:? ) using index t.my_index(+)
-===================================================
-0
 ===================================================
 a    
 2     
@@ -75,16 +67,13 @@ Query stmt:
 select t.a from t t where (t.b> ?:? ) order by ? desc 
 /* ---> skip ORDER BY */
 ===================================================
-0
-===================================================
 a    
-1     
 2     
 
 Query plan:
 iscan
     class: t node[?]
-    index: u_t_a 
+    index: my_index 
     sargs: term[?]
     sort:  ? asc
     cost:  ? card ?
