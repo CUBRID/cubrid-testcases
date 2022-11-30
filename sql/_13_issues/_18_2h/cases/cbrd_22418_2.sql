@@ -22,6 +22,6 @@ insert into t1 values (null,null,null,null,null,null,null,null,null,null,null,nu
 
 create index i_t1_a2q on t1(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q);
 create index i_t1_a2p on t1(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p) with online;
-update statistics on all classes;
+update statistics on t1;
 show index from t1;
 drop table if exists t1;

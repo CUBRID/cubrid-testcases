@@ -22,7 +22,7 @@ create index i_foo_a_b_c on foo(a, b, c);
 create index i_foo_a_b_c_d on foo(a, b, c, d);
 
 select count(*) from foo;
-update statistics on all classes;
+update statistics on foo;
 show index in foo;
 
 select index_cardinality('dba.foo', 'i_foo_a', 0);

@@ -4,7 +4,7 @@ create table t (a string, b string);
 create index idx1 on t(ifnull(a,b)) with online;
 create index idx2 on t(nvl(a,b)) with online;
 create index idx3 on t(nvl2(a,b,'a is null')) with online;
-update statistics on all classes;
+update statistics on t;
 show index from t;                                                            
 
 
@@ -14,7 +14,7 @@ insert into t values('a','b'),('c',null),(null,'d'),(null,null);
 create index idx1 on t(ifnull(a,b)) with online;
 create index idx2 on t(nvl(a,b)) with online;
 create index idx3 on t(nvl2(a,b,'a is null')) with online;
-update statistics on all classes;
+update statistics on t;
 show index from t;
 
 
@@ -60,7 +60,7 @@ create index idx_2q on t1(month(q)) with online;
 create index idx5 on t1(month(a)) with online;
 create index idx6 on t1(second(b)) with online;
 create index idx7 on t1(hour(a)) with online;
-update statistics on all classes;
+update statistics on t1;
 show index from t1;
 
 
@@ -95,14 +95,14 @@ create index i_t1_a2m on t1(MINUTE(e)) with online;
 create index idx_p on t1(MINUTE(p)) with online;
 create index idx_q on t1(MINUTE(q)) with online;
 create index idx_o on t1(MINUTE(o)) with online;
-update statistics on all classes;
+update statistics on t1;
 show index from t1;
 
 drop table if exists foo;
 create table foo (a char(10), b varchar(10));
 create index idx_foo_weekday_a on foo (weekday(a));
 create index idx_foo_weekday_b on foo (weekday(b)) with online;
-update statistics on all classes;
+update statistics on foo;
 SHOW INDEXES from foo;
 insert into foo values ('2010-01-01','2011-01-01');
 insert into foo values ('2010-01-02','2011-01-02');
@@ -112,7 +112,7 @@ insert into foo values ('2010-01-05','2011-01-05');
 select /*+ recompile */ * from foo where weekday(a) >= 4;
 select /*+ recompile */ * from foo where weekday(b) >= 4;
 alter table foo drop column b;
-update statistics on all classes;
+update statistics on foo;
 SHOW INDEXES from foo;
 insert into foo values ('abc');
 drop index idx_foo_weekday_a on foo;
@@ -129,7 +129,7 @@ create index i_t_dtcol on t (timediff (datetime_col, datetime'2010-01-01 12:34:5
 create index i_t_tdcol on t (timediff (datetime_col, timestamp'2010-01-01 12:34:56')) with online;
 create index i_t_td2col on t (timediff (time_col, time'12:00:00')) with online;
 create index i_t_rpcol on t (replace (string_col, 'b', 'c')) with online;
-update statistics on all classes;
+update statistics on t;
 show index from t;
 
 set names iso88591;
@@ -143,6 +143,6 @@ select (LPAD('CUBRID', 20, a)) from t1 order by 1;
 --test: will fail and throw "No error message available.".
 CREATE INDEX i1 on t1 (LPAD ('CUBRID', a, 'X'));
 CREATE INDEX i2 on t1 (LPAD (a, 10, 'X')) with online;
-update statistics on all classes;
+update statistics on t1;
 show index from t1;
 drop table if exists t1,foo,t;

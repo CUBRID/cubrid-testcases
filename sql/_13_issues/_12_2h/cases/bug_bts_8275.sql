@@ -9,7 +9,7 @@ CREATE  INDEX idx2 on t1(j);
 
 ALTER  INDEX idx1 on t1(j) REBUILD;
 
-update statistics on all classes;
+update statistics on t1;
 show indexes from t1;
 
 drop  table t1 ;
@@ -24,7 +24,7 @@ CREATE  INDEX idx2 on t1(j);
 
 ALTER  INDEX idx1 on t1(j) REBUILD;
 
-update statistics on all classes;
+update statistics on t1;
 show indexes from t1;
 
 drop  table t1 ;
@@ -43,7 +43,7 @@ create  INDEX first_name_lower1 on t1(firstname) WHERE LOWER(FirstName)='yin';
 
 ALTER  INDEX first_name_lower on t1(firstname) WHERE LOWER(FirstName)='yin' REBUILD;
 
-update statistics on all classes;
+update statistics on t1;
 show indexes from t1;
 
 alter  INDEX first_name_lower1 on t1(firstname) REBUILD;
@@ -67,7 +67,7 @@ create  INDEX first_name_lower1 on t1(firstname) WHERE LOWER(FirstName)='yin';
 
 ALTER  INDEX first_name_lower on t1(firstname) WHERE LOWER(FirstName)='yin' REBUILD;
 
-update statistics on all classes;
+update statistics on t1;
 show indexes from t1;
 
 alter  INDEX first_name_lower1 on t1(firstname) REBUILD;

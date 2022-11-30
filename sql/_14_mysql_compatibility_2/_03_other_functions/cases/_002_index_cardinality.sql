@@ -119,10 +119,13 @@ insert into data_tb_3 values (n't1',n'i_t1_i1','0');
 insert into data_tb_3 values (n't1',n'i_t1_i1','1');
 insert into data_tb_3 values (n't1',n'i_t1_i3_i1_i2','2');
 
-
+update statistics on t1;
+update statistics on t2;
+update statistics on data_tb_1;
+update statistics on data_tb_2;
+update statistics on data_tb_3;
 -- constants:
 --OK:
-update statistics on all classes;
 select index_cardinality ('dba.t1','i_t1_i1',0);
 select index_cardinality ('dba.t1','i_t1_i1',0.3);
 -- out of range
@@ -146,7 +149,6 @@ select index_cardinality (NULL,n'i_t1_i1',0);
 
 
 -- HV : TODO
-update statistics on all classes;
 PREPARE st FROM 'SELECT index_cardinality(?,?,?)';
 EXECUTE st USING 'dba.t1', 'i_t1_i1', 0; 
 
