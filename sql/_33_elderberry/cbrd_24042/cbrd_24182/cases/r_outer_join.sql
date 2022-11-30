@@ -14,14 +14,12 @@ CREATE UNIQUE INDEX idx
 CREATE INDEX idx_a
   ON t(c_a, c_c);
 --right outer join?? ==> to_do
-update statistics on all classes;
 SELECT /*+ recompile */ count(1)
 FROM   t a
        right outer join t b
                      ON a.c_a = b.c_a
                     AND a.c_b = b.c_b
 WHERE  b.c_c = 1;
-update statistics on all classes;
 SELECT /*+ recompile */ count(*)
 FROM   t a
        join t b
@@ -31,7 +29,6 @@ FROM   t a
                     ON a.c_a = c.c_a
                    AND b.c_b = c.c_b
 WHERE  a.c_c = 1;
-update statistics on all classes;
 SELECT /*+ recompile */ count(*)
 FROM   t a,
        t b,
@@ -41,7 +38,6 @@ WHERE  a.c_a = b.c_a
        AND a.c_a = c.c_a(+)
        AND a.c_b = c.c_b(+)
        AND a.c_c = 1;
-update statistics on all classes;
 SELECT /*+ recompile */ count(*)
 FROM   t a,
        t b,

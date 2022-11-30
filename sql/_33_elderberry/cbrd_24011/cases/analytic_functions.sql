@@ -6,7 +6,6 @@ insert into tab_b select to_char(rownum mod 100) col_a, to_char(rownum) col_b fr
 create index idx on tab_a(col_a,col_b);
 create index idx on tab_b(col_a,col_b);
 
-update statistics on all classes;
 select /*+ recompile */ count(*)
 from tab_a a
       ,(select col_a, rank() over(partition by col_a order by col_b) col_b from tab_b ) b

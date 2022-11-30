@@ -6,24 +6,20 @@ insert into tab_b select to_char(rownum mod 100) col_a, to_char(rownum) col_b fr
 create index idx on tab_a(col_a,col_b);
 create index idx on tab_b(col_a,col_b);
 
-update statistics on all classes;
 select /*+ recompile */ count(*)
 from tab_a a inner join
       (select col_a, max(col_b) col_b from tab_b group by col_a) b on a.col_a = b.col_a and b.col_a = 2;
 
 create or replace view v_a as select col_a, max(col_b) col_b from tab_b group by col_a;
 
-update statistics on all classes;
 select /*+ recompile */ count(*)
 from tab_a a inner join v_a b on a.col_a = b.col_a and b.col_a = 2;
-update statistics on all classes;
 select /*+ recompile */ count(*)
 from tab_a a left join
       (select col_a, max(col_b) col_b from tab_b group by col_a) b on a.col_a = b.col_a and b.col_a = 2;
 
 create or replace view v_a as select col_a, max(col_b) col_b from tab_b group by col_a;
 
-update statistics on all classes;
 select /*+ recompile */ count(*)
 from tab_a a left join v_a b on a.col_a = b.col_a and b.col_a = 2;
 
