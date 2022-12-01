@@ -5,7 +5,7 @@ create table t1 (i int, d double);
 create index idx on t1 (sqrt(d));
 --Test
 create index idx2 on t1 (i) where i > 15;
-update statistics on all classes;
+update statistics on t1;
 
 insert into t1 values (4,25), (16,256), (20,400);
 --Test
@@ -13,12 +13,12 @@ SHOW INDEXES FROM t1;
 --Test
 alter table t1 change column d newd double;
 
-update statistics on all classes;
+update statistics on t1;
 SHOW INDEXES FROM t1;
 --Test
 alter table t1 change column i newi int;
 
-update statistics on all classes;
+update statistics on t1;
 SHOW INDEXES FROM t1;
 --Test
 select /*+ recompile */ * from t1 where sqrt(newd) > 5;

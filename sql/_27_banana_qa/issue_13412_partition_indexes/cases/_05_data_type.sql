@@ -8,15 +8,10 @@ insert into t1 values('1953-2-24');
 alter table t1 add constraint pk_t1_i primary key(i);
 show tables;
 update statistics on t1 with fullscan;
-update statistics on all classes;
 show index from t1__p__p0;
-update statistics on all classes;
 show index from t1__p__p1;
-update statistics on all classes;
 show index from t1__p__p2;
-update statistics on all classes;
 show index from t1__p__p3;
-update statistics on all classes;
 show index from t1__p__p4;
 alter table t1 add column j time;
 alter table t1 add constraint u_t1_j unique(j);
@@ -27,10 +22,8 @@ alter table t1 add constraint u_t1_j_k unique(j,k);
 alter table t1 add constraint u_t1_j_i_k unique(j,i,k);
 alter table t1 add constraint u_t1_i_k unique(i,k);
  select count(distinct i) from t1__p__p0;
-update statistics on all classes;
  show index from t1__p__p0;
 select count(distinct i) from t1__p__p1;
-update statistics on all classes;
  show index from t1__p__p1;
 drop table t1;
 
@@ -54,42 +47,27 @@ ALTER TABLE members
         PARTITION n1 VALUES LESS THAN (1970)
 );
 show tables;
-update statistics on all classes;
 show index from members__p__p0;
-update statistics on all classes;
 show index from members__p__p1;
-update statistics on all classes;
 show index from members__p__p2;
-update statistics on all classes;
 show index from members__p__n0;
-update statistics on all classes;
 show index from members__p__n1;
 insert into members(dob) values(1954),(1964),(1974),(1984),(1994);
 update statistics on members with fullscan;
 create unique index idx_u_dod on members(dob);
-update statistics on all classes;
 show index from members__p__p0;
-update statistics on all classes;
 show index from members__p__p1;
-update statistics on all classes;
 show index from members__p__p2;
-update statistics on all classes;
 show index from members__p__n0;
-update statistics on all classes;
 show index from members__p__n1;
 ALTER TABLE members REORGANIZE PARTITION n0,n1 INTO (
     PARTITION p0 VALUES LESS THAN (1970)
 );
 update statistics on all classes  with fullscan;
-update statistics on all classes;
 show index from members__p__p0;
-update statistics on all classes;
 show index from members__p__p1;
-update statistics on all classes;
 show index from members__p__p2;
-update statistics on all classes;
 show index from members__p__n0;
-update statistics on all classes;
 show index from members__p__n1;
 drop table members;
 
@@ -115,11 +93,8 @@ insert into tt values(8,8),(10,10),(12,12),(14,14),(16,16);
  create unique index idx5 on tt(id,`data`);
  create unique index idx6 on tt(id,`data` desc);
  update statistics on all classes  with fullscan;
-update statistics on all classes;
 show index from tt__p__p0;
-update statistics on all classes;
 show index from tt__p__p1;
-update statistics on all classes;
 show index from tt__p__p2;
 drop table tt;
 
@@ -137,7 +112,7 @@ PARTITION BY RANGE( YEAR(hired) ) (
   PARTITION p4 VALUES LESS THAN (2005)
 );
 alter table employees drop constraint pk_employees_hired;
-update statistics on all classes;
+update statistics on employees;
 show index from employees;
 alter table employees add  constraint pk_employees_hired primary key(hired);
 alter table employees add  constraint pk_employees_hired_id primary key(id,hired);

@@ -22,20 +22,20 @@ insert into t4 values (30,1), (31,2), (32, 3);
 
 drop table if exists t2 cascade constraints;
 
-update statistics on all classes;
+update statistics on t1;
 show index from t1;
-update statistics on all classes;
+update statistics on t3;
 show index from t3;
-update statistics on all classes;
+update statistics on t4;
 show index from t4;
 select * from t1 order by 1;
 select * from t3 order by 1;
 select * from t4 order by 1;
 
 drop table t3 cascade constraints;
-update statistics on all classes;
+update statistics on t1;
 show index from t1;
-update statistics on all classes;
+update statistics on t4;
 show index from t4;
 select * from t1 order by 1;
 select * from t4 order by 1;

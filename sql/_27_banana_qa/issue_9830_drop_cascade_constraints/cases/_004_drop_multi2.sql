@@ -25,9 +25,9 @@ commit;
 drop table if exists t1, t2;
 drop table if exists t1, t2 cascade constraints;
 
-update statistics on all classes;
+update statistics on t3;
 show index from t3;
-update statistics on all classes;
+update statistics on t4;
 show index from t4;
 select * from t3 order by 1;
 select * from t4 order by 1;
@@ -38,9 +38,9 @@ rollback;
 drop table t3, t2;
 drop table t3, t2 cascade constraints;
 
-update statistics on all classes;
+update statistics on t1;
 show index from t1;
-update statistics on all classes;
+update statistics on t4;
 show index from t4;
 select * from t1 order by 1;
 select * from t4 order by 1;
@@ -51,7 +51,7 @@ rollback;
 drop table t1, t2, t3;
 drop table t1, t2, t3 cascade constraints;
 
-update statistics on all classes;
+update statistics on t4;
 show index from t4;
 select * from t4 order by 1;
 
@@ -60,7 +60,7 @@ rollback;
 drop table t2, t3, t1;
 drop table t2, t3, t1 cascade constraints;
 
-update statistics on all classes;
+update statistics on t4;
 show index from t4;
 select * from t4 order by 1;
 
@@ -69,9 +69,9 @@ rollback;
 drop table t2, t4;
 drop table t2, t4 cascade constraints;
 
-update statistics on all classes;
+update statistics on t1;
 show index from t1;
-update statistics on all classes;
+update statistics on t3;
 show index from t3;
 select * from t1 order by 1;
 select * from t3 order by 1;

@@ -14,6 +14,8 @@ create table t (i1 bigint, i2 decimal(5,1), i3 decimal(5,1)) partition by hash(i
 create index idx1  on t(i1, i2 desc);
 create index idx2 on t(i1, i2 desc, i3);
 
+update statistics on t;
+
 insert into t values (0, 0, 00), (0, 1, 01), (0, 2, 02), (0, 3, 03), (0, 4, 04);
 insert into t values (1, 0, 10), (1, 1, 11), (1, 2, 12), (1, 3, 13), (1, 4, 14);
 insert into t values (2, 0, 20), (2, 1, 21), (2, 2, 22), (2, 3, 23), (2, 4, 24);

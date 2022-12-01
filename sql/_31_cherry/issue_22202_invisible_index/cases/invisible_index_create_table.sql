@@ -8,19 +8,19 @@ INSERT INTO a_tbl VALUES (1,'111-1111'), (2,'222-2222'), (3, '333-3333');
 CREATE index idx1 on a_tbl(id desc) invisible;
 
 show create table a_tbl;
-update statistics on all classes;
+update statistics on a_tbl;
 show index from a_tbl;
 select * from a_tbl order by 1;
 
 CREATE TABLE new_tbl LIKE a_tbl;
 show create table  new_tbl;
-update statistics on all classes;
+update statistics on new_tbl;
 show index from new_tbl;
 select * from new_tbl order by 1;
 
 CREATE TABLE new_tbl_1 as select * from a_tbl using index pk_a_tbl_id;
 show create table new_tbl_1;
-update statistics on all classes;
+update statistics on new_tbl_1;
 show index from new_tbl_1;
 select * from new_tbl_1 order by 1;
 

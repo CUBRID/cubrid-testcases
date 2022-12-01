@@ -8,7 +8,7 @@ create unique index idx_t1_b on t1(a,b,c desc) with online;
 
 create unique index idx_t1_b_1 on t1(a,b,c desc) with online;
 
-update statistics on all classes;
+update statistics on t1;
 show index from t1;
 
 select index_name,status from db_index where class_name = 't1';

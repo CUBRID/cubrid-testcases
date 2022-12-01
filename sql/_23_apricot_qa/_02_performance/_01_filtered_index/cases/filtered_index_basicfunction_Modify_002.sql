@@ -6,16 +6,16 @@ insert into bugs values(10,TIMESTAMP '2010-10-31 01:15:45','yin','test',1,0);
 CREATE INDEX open_bugs ON bugs(bugID) WHERE bugID > 0;
 --TEST: 
 ALTER TABLE bugs CHANGE bugID bugID INTEGER FIRST;
-update statistics on all classes;
+update statistics on bugs;
 SHOW INDEX IN bugs;
 --TEST: 
 ALTER TABLE bugs CHANGE bugID bugID1 VARCHAR(255);
-update statistics on all classes;
+update statistics on bugs;
 SHOW INDEX IN bugs;
 
 --TEST: 
 ALTER TABLE bugs CHANGE bugID1 bugID BIGINT;
-update statistics on all classes;
+update statistics on bugs;
 SHOW INDEX IN bugs;
 
 drop table bugs;
@@ -26,16 +26,16 @@ insert into bugs values(10,TIMESTAMP '2010-10-31 01:15:45','yin','test',1,0);
 CREATE INDEX open_bugs ON bugs(bugID) WHERE Closed = 0;
 --TEST: 
 ALTER TABLE bugs CHANGE bugID bugID INTEGER FIRST;
-update statistics on all classes;
+update statistics on bugs;
 SHOW INDEX IN bugs;
 --TEST: 
 ALTER TABLE bugs CHANGE bugID bugID1 VARCHAR(255);
-update statistics on all classes;
+update statistics on bugs;
 SHOW INDEX IN bugs;
 
 --TEST: 
 ALTER TABLE bugs CHANGE bugID1 bugID BIGINT;
-update statistics on all classes;
+update statistics on bugs;
 SHOW INDEX IN bugs;
 
 drop table bugs;
@@ -46,16 +46,16 @@ insert into bugs values(10,TIMESTAMP '2010-10-31 01:15:45','yin','test',1,0);
 CREATE INDEX open_bugs ON bugs(bugID) WHERE Closed = 0;
 --TEST: 
 ALTER TABLE bugs MODIFY bugID  INTEGER FIRST;
-update statistics on all classes;
+update statistics on bugs;
 SHOW INDEX IN bugs;
 --TEST: 
 ALTER TABLE bugs MODIFY bugID  VARCHAR(255);
-update statistics on all classes;
+update statistics on bugs;
 SHOW INDEX IN bugs;
 
 --TEST: 
 ALTER TABLE bugs MODIFY bugID  BIGINT;
-update statistics on all classes;
+update statistics on bugs;
 SHOW INDEX IN bugs;
 
 drop table bugs;
@@ -65,16 +65,16 @@ insert into bugs values(10,TIMESTAMP '2010-10-31 01:15:45','yin','test',1,0);
 CREATE INDEX open_bugs ON bugs(bugID) WHERE bugID > 0;
 --TEST: 
 ALTER TABLE bugs MODIFY bugID  INTEGER FIRST;
-update statistics on all classes;
+update statistics on bugs;
 SHOW INDEX IN bugs;
 --TEST: 
 ALTER TABLE bugs MODIFY bugID  VARCHAR(255);
-update statistics on all classes;
+update statistics on bugs;
 SHOW INDEX IN bugs;
 
 --TEST: 
 ALTER TABLE bugs MODIFY bugID  BIGINT;
-update statistics on all classes;
+update statistics on bugs;
 SHOW INDEX IN bugs;
 
 drop table bugs;

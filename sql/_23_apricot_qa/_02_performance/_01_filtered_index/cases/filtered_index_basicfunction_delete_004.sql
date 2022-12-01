@@ -6,18 +6,18 @@ insert into bugs values(1,TIMESTAMP '2010-10-31 01:15:45','yin','test',1,0);
 insert into bugs values(1,TIMESTAMP '2010-10-31 01:15:45','yin','test',1,1);
 CREATE INDEX open_bugs ON bugs(bugID) WHERE Closed = 0;
 select * from bugs where bugid>0 using index open_bugs(+);
-update statistics on all classes;
+update statistics on bugs;
 show index from bugs;
 ALTER TABLE bugs  Modify Closed char(10);
 select * from bugs where bugid>0 using index open_bugs(+);
-update statistics on all classes;
+update statistics on bugs;
 show index from bugs;
 savepoint sp1;
 ALTER TABLE bugs  DROP COLUMN bugID;
-update statistics on all classes;
+update statistics on bugs;
 SHOW INDEX IN bugs;
 rollback to savepoint sp1;
-update statistics on all classes;
+update statistics on bugs;
 SHOW INDEX IN bugs;
 
 

@@ -49,7 +49,7 @@ select * from ltz order by a;
 
 --test: add index
 alter table ltz add index idx(c_tsltz1);
-update statistics on all classes;
+update statistics on ltz;
 show index in ltz;
 
 

@@ -20,25 +20,26 @@ drop table foo;
 drop table if exists t;
 create table t(i int comment 'auto_increment');
 create unique index idx1 on t(i) comment 'uuuu';
-update statistics on all classes;
+update statistics on t;
 show index from t;
 alter index idx1 on t(i) invisible;
 alter index idx1 on t invisible;
-update statistics on all classes;
+update statistics on t;
 show index from t;
 alter index idx1 on t isible;
-update statistics on all classes;
+update statistics on t;
 show index from t;
 alter index idx1 on t(i) comment 'aaa' invisible;
 alter index idx1 on t comment 'aaa' invisible;
 alter index idx1 on t invisible comment 'aaa';
-update statistics on all classes;
+update statistics on t;
 show index from t;
 drop table if exists t;
 
 drop table if exists tb;
 create table tb (a int not null , b int);
 create index i_tb_all on tb(a,b) where b IS NULL invisible;
+update statistics on tb;
 insert into tb values (1,1);
 insert into tb values (2,null);
 
@@ -48,18 +49,21 @@ select /*+ recompile */ * from tb where  a>0 and b is not null;
 select /*+ recompile */ * from tb where  a>0 and b is not null using index i_tb_all(+);
 
 alter index i_tb_all on tb invisible;
+update statistics on tb;
 --@queryplan
 select /*+ recompile */ * from tb where  a>0 and b is not null;
 --@queryplan
 select /*+ recompile */ * from tb where  a>0 and b is not null using index i_tb_all(+);
 
 alter index i_tb_all on tb(a,b) where b is not null rebuild;
+update statistics on tb;
 --@queryplan
 select /*+ recompile */ * from tb where  a>0 and b is not null;
 --@queryplan
 select /*+ recompile */ * from tb where  a>0 and b is not null using index i_tb_all(+);
 
 alter index i_tb_all on tb visible;
+update statistics on tb;
 --@queryplan
 select /*+ recompile */ * from tb where  a>0 and b is not null;
 --@queryplan
@@ -72,13 +76,13 @@ drop table if exists t1 ;
 create table t1 (FirstName varchar(20),LastName varchar(20),Age int,gender char (1));
 insert into t1 value('ye', 'jin yi',31,'M');
 CREATE INDEX first_name_lower ON t1 (LOWER(FirstName)) invisible;
-update statistics on all classes;
+update statistics on t1;
 show indexes from t1;
 ALTER  INDEX first_name_lower on t1 REBUILD;
-update statistics on all classes;
+update statistics on t1;
 show indexes from t1;
 ALTER  INDEX first_name_lower on t1(firstname) WHERE LOWER(FirstName)='yin' REBUILD;
-update statistics on all classes;
+update statistics on t1;
 show indexes from t1;
 --@queryplan
 SELECT /*+ recompile */ * FROM t1 WHERE LOWER(FirstName)='yin' using index first_name_lower(+);
