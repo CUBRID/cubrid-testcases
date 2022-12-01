@@ -11,7 +11,7 @@ show index in tbl_1;
 create table tbl_2 (a int);
 insert into tbl_2 values (1), (2), (3);
 create index idxa on tbl_2(a);
-update statistics on all tbl_2;
+update statistics on tbl_2;
 show index in tbl_2;
 
 

@@ -227,7 +227,7 @@ drop table othert;
 
 --Test 
 rename table the_other_t to theothert;
-update statistics on all theothert;
+update statistics on theothert;
 show indexes from theothert;
 drop table theothert;
 

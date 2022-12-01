@@ -5,7 +5,7 @@ describe t;
 describe t__p__p0;
 update statistics on t;
 show indexes from t;
-update statistics t__p__p0;
+update statistics on t__p__p0;
 show indexes from t__p__p0;
 insert into t select NULL from db_class;
 insert into t__p__p0 select NULL from db_class limit 1;

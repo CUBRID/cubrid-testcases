@@ -10,7 +10,7 @@ CREATE INDEX idx3 ON bugs(ln(bugID),Closed);
 update statistics on bugs;
 show index in bugs;
 ALTER TABLE bugs  DROP COLUMN Closed;
-update statistics bugs;
+update statistics on bugs;
 show index in bugs;
 drop table bugs;
 
