@@ -13,6 +13,10 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
+0
+===================================================
 1
 Query plan:
 temp(group by)
@@ -26,15 +30,15 @@ Query stmt:
 (select tab_b.col_a, count(*) from tab_b tab_b where tab_b.col_a= ?:?  group by tab_b.col_a)
 Query plan:
 temp(group by)
-    subplan: nl-join (inner join)
-                 edge:  term[?]
-                 outer: iscan
-                            class: tt node[?]
-                            index: idx term[?] (covers)
-                            cost:  ? card ?
-                 inner: sscan
+    subplan: idx-join (inner join)
+                 outer: sscan
                             class: st node[?]
-                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: tt node[?]
+                            index: idx term[?]
+                            filtr: term[?]
+                            sargs: term[?]
                             cost:  ? card ?
                  sargs: term[?]
                  cost:  ? card ?
@@ -58,15 +62,15 @@ Query stmt:
 (select st.col_a, count(*) from tab_b st where st.col_a= ?:?  group by st.col_a)
 Query plan:
 temp(group by)
-    subplan: nl-join (inner join)
-                 edge:  term[?]
-                 outer: iscan
-                            class: tt node[?]
-                            index: idx term[?] (covers)
-                            cost:  ? card ?
-                 inner: sscan
+    subplan: idx-join (inner join)
+                 outer: sscan
                             class: st node[?]
-                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: tt node[?]
+                            index: idx term[?]
+                            filtr: term[?]
+                            sargs: term[?]
                             cost:  ? card ?
                  sargs: term[?]
                  cost:  ? card ?

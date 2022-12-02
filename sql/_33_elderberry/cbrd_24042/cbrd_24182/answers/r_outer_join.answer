@@ -9,6 +9,8 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 count(1)    
 1     
 
@@ -64,26 +66,26 @@ count(*)
 3     
 
 Query plan:
-idx-join (inner join)
-    outer: nl-join (inner join)
-               edge:  term[?]
-               outer: idx-join (left outer join)
+nl-join (inner join)
+    edge:  term[?]
+    outer: idx-join (left outer join)
+               outer: idx-join (inner join)
                           outer: sscan
                                      class: a node[?]
                                      cost:  ? card ?
                           inner: iscan
-                                     class: c node[?]
-                                     index: idx term[?] AND term[?]
+                                     class: b node[?]
+                                     index: idx term[?] AND term[?] (covers)
                                      cost:  ? card ?
                           cost:  ? card ?
-               inner: sscan
-                          class: d node[?]
-                          sargs: term[?]
+               inner: iscan
+                          class: c node[?]
+                          index: idx term[?] AND term[?]
                           cost:  ? card ?
                cost:  ? card ?
-    inner: iscan
-               class: b node[?]
-               index: idx term[?] AND term[?] (covers)
+    inner: sscan
+               class: d node[?]
+               sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
