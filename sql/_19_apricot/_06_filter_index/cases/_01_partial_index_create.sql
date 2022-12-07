@@ -7,9 +7,7 @@ create index idx on t(textlabel, description) where least(id,1000)>char_length(t
 -- should also create a new index with the new table --
 create table other_t like t;
 
-update statistics on t;
 show indexes from t;
-update statistics on other_t;
 show indexes from other_t;
 
 -- populate the table with a few rows --
@@ -165,16 +163,13 @@ drop reverse unique index idx_rev_un on t(id, textlabel);
 -- rename table --
 rename table other_t to othert;
 update statistics on othert;
-show indexes from othert;
 drop table othert;
 
 rename table the_other_t to theothert;
-update statistics on theothert;
 show indexes from theothert;
 drop table theothert;
 
 rename table t to table_t;
-update statistics on table_t;
 show indexes from table_t;
 drop table table_t;
 

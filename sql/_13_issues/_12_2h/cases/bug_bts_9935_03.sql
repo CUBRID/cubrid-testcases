@@ -5,8 +5,6 @@ set  system parameters 'dont_reuse_heap_file=yes';
 drop table if exists t,t1;
 create table t(i int,j int ) partition by range(i) (partition pa values less than(0),partition p0 values less than (10), partition p1 values less than (100),partition p2 values less than MAXVALUE);
 create table t1(i int,j int ) partition by range(i) (partition pa values less than(0),partition p0 values less than (10), partition p1 values less than (100),partition p2 values less than MAXVALUE);
-update statistics on t;
-update statistics on t1;
 
 insert into t__p__p0 values(5,5);
 insert into t__p__p0 values(10,10);
@@ -15,6 +13,9 @@ insert into t__p__p1 values(15,15);
 insert into t1__p__p0 values(5,5);
 insert into t1__p__p0 values(10,10);
 insert into t1__p__p1 values(15,15);
+
+update statistics on t;
+update statistics on t1;
 
 --sequence scan
 select /*+ recompile */ * from t ;
@@ -58,6 +59,7 @@ create table mille as select 0 as i from table({1,2,3,4,5,6,7,8,9,0}) t1, table(
 insert into t (i,j)  select i,rownum from mille;
 create index t_i_j on t(i,j); 
 update statistics on t;
+update statistics on mile;
 
 --index skip scan
 select /*+ recompile  */  count(*) from (select  /*+ recompile index_ss */ * from t where j between 1 and 2 using index t_i_j) tt;
@@ -72,11 +74,12 @@ create table t (i numeric(10,1), j double,k date,l varchar(200),m char(200),n bi
 create index idx_t_i on t (i);
 
 create index idx_t_j on t (j);
-update statistics on t;
 
 insert into t select rownum,rownum, TO_DATE('12/25/2008'),rownum||'',rownum||'',rownum from db_class a,db_class b limit 1000;
 
 insert into t select rownum,rownum, TO_DATE('12/25/2009'),rownum||'',rownum||'',rownum from db_class a,db_class b limit 1000;
+
+update statistics on t;
 
 select /*+ recompile */ i,j,count(*) from t where i > 5 and i < 200 group by i having j > 0 limit 10;
 
@@ -259,9 +262,7 @@ insert into u values (1,1),(1,3),(3,1),(3,3);
 
 create index idx_u_a on u(a);
 
-update statistics on t;
-update statistics on s;
-update statistics on u;
+update statistics on all classes;
 	
 select /*+ recompile ordered */ * from s join t
 	on s.a = t.a and s.b = t.b

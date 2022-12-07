@@ -39,9 +39,9 @@ drop table if exists t;
 drop table if exists tb;
 create table tb (a int not null , b int);
 create index i_tb_all on tb(a,b) where b IS NULL invisible;
-update statistics on tb;
 insert into tb values (1,1);
 insert into tb values (2,null);
+update statistics on tb;
 
 --@queryplan
 select /*+ recompile */ * from tb where  a>0 and b is not null;

@@ -1,6 +1,5 @@
 create table foo (a int);
 create index idx_foo_trunc on foo (TRUNC (a, -1));
-update statistics on foo;
 SHOW INDEXES from foo;
 
 insert into foo values (7), (15), (2200), (7001), (178), (4);

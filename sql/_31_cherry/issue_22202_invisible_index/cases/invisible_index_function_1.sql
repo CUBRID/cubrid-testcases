@@ -4,13 +4,13 @@ drop table if exists foo;
 create table foo (a char(10), b varchar(10));
 create index idx_foo_weekday_a on foo (weekday(a)) invisible;
 create index idx_foo_weekday_b on foo (weekday(b)) invisible;
-update statistics on foo;
 SHOW INDEXES from foo;
 insert into foo values ('2010-01-01','2011-01-01');
 insert into foo values ('2010-01-02','2011-01-02');
 insert into foo values ('2010-01-03','2011-01-03');
 insert into foo values ('2010-01-04','2011-01-04');
 insert into foo values ('2010-01-05','2011-01-05');
+update statistics on foo;
 --@queryplan
 select * from foo where weekday(a) >= 4 order by a;
 --@queryplan

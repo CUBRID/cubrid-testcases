@@ -3,7 +3,6 @@ create table t (a string, b string);
 create index idx1 on t(ifnull(a,b)) invisible;
 create index idx2 on t(nvl(a,b)) invisible;
 create index idx3 on t(nvl2(a,b,'a is null')) invisible;
-update statistics on t;
 show index from t;
 
 drop table if exists t;

@@ -4,7 +4,6 @@ create table foo (a char(10), b varchar(10));
 create index idx_foo_weekday_a on foo (weekday(a));
 create index idx_foo_weekday_b on foo (weekday(b));
 
-update statistics on foo;
 SHOW INDEXES from foo;
 
 insert into foo values ('2010-01-01','2011-01-01');

@@ -4,7 +4,6 @@ create table t (a string, b string);
 create index idx1 on t(ifnull(a,b)) with online;
 create index idx2 on t(nvl(a,b)) with online;
 create index idx3 on t(nvl2(a,b,'a is null')) with online;
-update statistics on t;
 show index from t;                                                            
 
 
@@ -102,13 +101,13 @@ drop table if exists foo;
 create table foo (a char(10), b varchar(10));
 create index idx_foo_weekday_a on foo (weekday(a));
 create index idx_foo_weekday_b on foo (weekday(b)) with online;
-update statistics on foo;
 SHOW INDEXES from foo;
 insert into foo values ('2010-01-01','2011-01-01');
 insert into foo values ('2010-01-02','2011-01-02');
 insert into foo values ('2010-01-03','2011-01-03');
 insert into foo values ('2010-01-04','2011-01-04');
 insert into foo values ('2010-01-05','2011-01-05');
+update statistics on foo;
 select /*+ recompile */ * from foo where weekday(a) >= 4;
 select /*+ recompile */ * from foo where weekday(b) >= 4;
 alter table foo drop column b;
@@ -129,7 +128,6 @@ create index i_t_dtcol on t (timediff (datetime_col, datetime'2010-01-01 12:34:5
 create index i_t_tdcol on t (timediff (datetime_col, timestamp'2010-01-01 12:34:56')) with online;
 create index i_t_td2col on t (timediff (time_col, time'12:00:00')) with online;
 create index i_t_rpcol on t (replace (string_col, 'b', 'c')) with online;
-update statistics on t;
 show index from t;
 
 set names iso88591;

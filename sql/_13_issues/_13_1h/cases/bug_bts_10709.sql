@@ -2,7 +2,6 @@
 --+ holdcas on;
 create table tbl_1 (a int, b int);
 create index idxa on tbl_1(a);
-update statistics on tbl_1;
 
 insert into tbl_1 values (1,2), (2,3), (3,4), (4,5), (5,6);
 show index in tbl_1;
