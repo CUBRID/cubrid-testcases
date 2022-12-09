@@ -163,13 +163,16 @@ drop reverse unique index idx_rev_un on t(id, textlabel);
 -- rename table --
 rename table other_t to othert;
 update statistics on othert;
+show indexes from othert;
 drop table othert;
 
 rename table the_other_t to theothert;
+update statistics on theothert;
 show indexes from theothert;
 drop table theothert;
 
 rename table t to table_t;
+update statistics on table_t;
 show indexes from table_t;
 drop table table_t;
 

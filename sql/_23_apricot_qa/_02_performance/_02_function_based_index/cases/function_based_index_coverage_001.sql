@@ -4,7 +4,6 @@ create table testt (i1 int , d1 double);
 
 create index idx1 on testt (sqrt(d1));
 
-update statistics on testt;
 SHOW INDEXES FROM testt;
 
 insert into testt values (4,25), (16,256), (20,400);

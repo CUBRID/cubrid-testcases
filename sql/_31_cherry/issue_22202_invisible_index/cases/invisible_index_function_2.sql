@@ -77,7 +77,6 @@ create index i_t_dtcol on t (timediff (datetime_col, datetime'2010-01-01 12:34:5
 create index i_t_tdcol on t (timediff (datetime_col, timestamp'2010-01-01 12:34:56')) invisible;
 create index i_t_td2col on t (timediff (time_col, time'12:00:00')) invisible;
 create index i_t_rpcol on t (replace (string_col, 'b', 'c')) invisible;
-update statistics on t;
 show index from t;
 
 set names iso88591;
@@ -90,7 +89,7 @@ select (LPAD(a, 10, 'X')) from t1 order by 1;
 select (LPAD('CUBRID', 20, a)) from t1 order by 1;
 CREATE INDEX i1 on t1 (LPAD ('CUBRID', a, 'X')) invisible;
 CREATE INDEX i2 on t1 (LPAD (a, 10, 'X')) invisible;
-update statistics on t;
+update statistics on t1;
 show index from t1;
 
 drop table if exists t1,foo,t;

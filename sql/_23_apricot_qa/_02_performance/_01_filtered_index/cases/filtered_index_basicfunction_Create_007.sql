@@ -219,6 +219,7 @@ drop reverse unique index on t(id, textlabel) where id > 12;
 -- test automatic index update when a column/table is being changed --
 -- rename table --
 rename table other_t to othert;
+update statistics on othert;
 show indexes from othert;
 drop table othert;
 
@@ -230,6 +231,7 @@ drop table theothert;
 
 --Test 
 rename table t to table_t;
+update statistics on table_t;
 show indexes from table_t;
 drop table table_t;
 
