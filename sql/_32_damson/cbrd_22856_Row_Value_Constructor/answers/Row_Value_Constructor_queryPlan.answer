@@ -9,6 +9,8 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 col1    col2    col3    col4    col5    
 1     2     3     4     5     
 
@@ -154,15 +156,13 @@ temp(distinct)
 Query stmt:
 (select distinct ?, rvc_tmp?.col? from rvc_tmp? rvc_tmp? where rvc_tmp?.col?= ?:? )
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: iscan
-               class: rvc_tmp? node[?]
-               index: idx term[?]
-               cost:  ? card ?
-    inner: sscan
+idx-join (inner join)
+    outer: sscan
                class: av? node[?]
-               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: rvc_tmp? node[?]
+               index: idx term[?] AND term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
