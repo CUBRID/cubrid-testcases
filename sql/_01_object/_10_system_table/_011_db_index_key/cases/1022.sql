@@ -17,6 +17,6 @@ insert into test_class values ('Line 5', 5001, 'Kangdong');
 select index_name, class_name, key_attr_name, key_order
 from   db_index_key
 where class_name = 'test_class'
-order by key_order;
+order by index_name, key_order;
 
 drop class test_class;

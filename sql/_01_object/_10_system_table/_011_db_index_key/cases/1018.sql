@@ -12,6 +12,7 @@ create class range_test(id int auto_increment not null,
 
 select index_name, class_name, key_attr_name, key_order
 from   db_index_key
-where  class_name = 'range_test';
+where  class_name = 'range_test'
+order by index_name, key_order;
 
 drop class range_test;
