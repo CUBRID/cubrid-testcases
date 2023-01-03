@@ -4,6 +4,7 @@ create unique index u_idx  on ddl_0001(col1,col2);
 
 select index_name, class_name, key_attr_name, key_order
 from   db_index_key
-where  class_name = 'ddl_0001';
+where  class_name = 'ddl_0001'
+order by index_name, key_order;
 
 drop vclass ddl_0001;
