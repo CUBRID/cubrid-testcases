@@ -16,6 +16,7 @@ partition by list (city_area) (
 
 select index_name, class_name, key_attr_name, key_order
 from   db_index_key
-where  class_name = 'test_class';
+where  class_name = 'test_class'
+order by index_name, key_order;
 
 drop class test_class;
