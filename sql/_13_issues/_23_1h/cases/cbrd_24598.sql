@@ -10,8 +10,7 @@ drop table if exists t;
 -- prepare required 
 prepare q from 'select decode (?, '''', c, NULL, c, -1) from table ({1}) as t (c)'; 
 
--- temporary it will occure error.
--- ERROR: Cannot coerce value of domain "character" to domain "double".
+-- success
 execute q using 'A'; 
 
 -- success
