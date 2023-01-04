@@ -5,8 +5,6 @@
 -- Allocated memory on the global heap must be freed on the global heap.
 -- After error fix both query should be executed normaly.
 
-drop table if exists t;
-
 -- prepare required 
 prepare q from 'select decode (?, '''', c, NULL, c, -1) from table ({1}) as t (c)'; 
 
@@ -15,5 +13,8 @@ execute q using 'A';
 
 -- success
 execute q using 1; 
+
+-- error : temporary
+execute q using 'A'; 
 
 drop prepare q;
