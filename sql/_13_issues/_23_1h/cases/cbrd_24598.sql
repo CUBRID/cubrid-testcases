@@ -21,15 +21,14 @@ execute q using 'A';
 -- prepare required 
 prepare p from 'select decode (?, '''', c, NULL, c, ''Z'') from table ({''X''}) as t (c)';
 
--- error : temporary
--- known bug
+-- success
 execute p using 1;
 
--- success
-execute p using 'A';
-
 -- error : temporary
 -- known bug
+execute p using 'A';
+
+-- success
 execute p using 1;
 
 
