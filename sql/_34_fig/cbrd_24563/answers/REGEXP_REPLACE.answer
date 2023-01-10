@@ -1,0 +1,440 @@
+===================================================
+regexp_replace('TechOnTheNet is a great resource', '^(\S*)', 'CheckYourMath')    
+CheckYourMath is a great resource     
+
+===================================================
+Error:-494
+===================================================
+Error:-493
+===================================================
+Error:-493
+===================================================
+regexp_replace('', 'a|e|i|o|u', '#')    
+     
+
+===================================================
+regexp_replace('abc', '', '#')    
+abc     
+
+===================================================
+regexp_replace('abc', 'a|e|i|o|u', '')    
+bc     
+
+===================================================
+regexp_replace('', '', '#')    
+     
+
+===================================================
+regexp_replace('', 'a|e|i|o|u', '')    
+     
+
+===================================================
+regexp_replace('abc', '', '')    
+abc     
+
+===================================================
+regexp_replace('', '', '')    
+     
+
+===================================================
+regexp_replace(null, 'a|e|i|o|u', '#')    
+null     
+
+===================================================
+regexp_replace('abc', null, '#')    
+null     
+
+===================================================
+regexp_replace('abc', 'a|e|i|o|u', null)    
+null     
+
+===================================================
+regexp_replace(null, null, '#')    
+null     
+
+===================================================
+regexp_replace(null, 'a|e|i|o|u', null)    
+null     
+
+===================================================
+regexp_replace('abc', null, null)    
+null     
+
+===================================================
+regexp_replace(null, null, null)    
+null     
+
+===================================================
+regexp_replace('TechOnTheNet', 'a|e|i|o|u', '#', 6)    
+TechOnTh#N#t     
+
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+regexp_replace('TechOnTheNet', 'a|e|i|o|u', '#', 9999)    
+TechOnTheNet     
+
+===================================================
+regexp_replace('TechOnTheNet', 'a|e|i|o|u', '#', null, 2)    
+null     
+
+===================================================
+regexp_replace('TechOnTheNet', 'a|e|i|o|u', '#', 6)    
+TechOnTh#N#t     
+
+===================================================
+Error:-494
+===================================================
+regexp_replace('TechOnTheNet', 'a|e|i|o|u', '#', 2, 0)    
+T#ch#nTh#N#t     
+
+===================================================
+Error:-494
+===================================================
+regexp_replace('TechOnTheNet', 'a|e|i|o|u', '#', 1, 9999)    
+TechOnTheNet     
+
+===================================================
+regexp_replace('TechOnTheNet', 'a|e|i|o|u', '#', 1, null)    
+null     
+
+===================================================
+regexp_replace('TechOnTheNet', 'a|e|i|o|u', '#', 3, 2, 'i')    
+TechOnTh#Net     
+
+===================================================
+regexp_replace('TechOnTheNet', 'a|e|i|o|u', '#', 3, 2, 'c')    
+TechOnTheN#t     
+
+===================================================
+regexp_replace('TechOnTheNet', 'a|e|i|o|u', '#', 1, 0, '')    
+T#ch#nTh#N#t     
+
+===================================================
+Error:-494
+===================================================
+regexp_replace('TechOnTheNet', 'a|e|i|o|u', '#', 1, 2, null)    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+id    name    
+10990     Fei Alessandro     
+10991     Feklistova Maria     
+10992     Felisiak Robert     
+10993     Feri Attila     
+10996     Fernandez Gigi     
+10997     Fernandez Isabel     
+10998     Fernandez Jaime     
+12163     Li Ge     
+14873     Jo Sh     
+14912     Kelly     
+
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+id    code    pos    occ    match_type    
+15000     [a-e]     3     2     c     
+15001     [f-z]     3     2     c     
+15002     \s     2     2     c     
+15003     a|e|i|o|u     3     2     c     
+
+===================================================
+regexp_replace(name, '[a-e]', '#')    regexp_replace(name, '[f-z]', '@')    
+F#i #l#ss#n#ro     @e@ A@e@@a@d@@     
+F#klistov# M#ri#     @e@@@@@@@a @a@@a     
+F#lisi#k Ro##rt     @e@@@@a@ @@be@@     
+F#ri #ttil#     @e@@ A@@@@a     
+F#rn#n##z Gigi     @e@@a@de@ @@@@     
+F#rn#n##z Is###l     @e@@a@de@ @@abe@     
+F#rn#n##z J#im#     @e@@a@de@ @a@@e     
+Jo Sh     @@ @@     
+K#lly     @e@@@     
+Li G#     @@ @e     
+
+===================================================
+regexp_replace(name, '[a-e]', '#', 3, 0, 'i')    
+Fei #l#ss#n#ro     
+Feklistov# M#ri#     
+Felisi#k Ro##rt     
+Feri #ttil#     
+Fern#n##z Gigi     
+Fern#n##z Is###l     
+Fern#n##z J#im#     
+Jo Sh     
+Kelly     
+Li G#     
+
+===================================================
+regexp_replace(name, '[a-e]', '#', 3, 0, 'c')    
+Fei Al#ss#n#ro     
+Feklistov# M#ri#     
+Felisi#k Ro##rt     
+Feri Attil#     
+Fern#n##z Gigi     
+Fern#n##z Is###l     
+Fern#n##z J#im#     
+Jo Sh     
+Kelly     
+Li G#     
+
+===================================================
+name    
+Jo Sh     
+Li Ge     
+
+===================================================
+regexp_replace(athlete.name, p1.code, '#')    code    
+F#i #l#ss#n#ro     [a-e]     
+#e# A#e##a#d##     [f-z]     
+Fei#Alessandro     \s     
+F## #l#ss#ndr#     a|e|i|o|u     
+F#klistov# M#ri#     [a-e]     
+#e#######a #a##a     [f-z]     
+Feklistova#Maria     \s     
+F#kl#st#v# M#r##     a|e|i|o|u     
+F#lisi#k Ro##rt     [a-e]     
+#e####a# ##be##     [f-z]     
+Felisiak#Robert     \s     
+F#l#s##k R#b#rt     a|e|i|o|u     
+F#ri #ttil#     [a-e]     
+#e## A####a     [f-z]     
+Feri#Attila     \s     
+F#r# #tt#l#     a|e|i|o|u     
+F#rn#n##z Gigi     [a-e]     
+#e##a#de# ####     [f-z]     
+Fernandez#Gigi     \s     
+F#rn#nd#z G#g#     a|e|i|o|u     
+F#rn#n##z Is###l     [a-e]     
+#e##a#de# ##abe#     [f-z]     
+Fernandez#Isabel     \s     
+F#rn#nd#z #s#b#l     a|e|i|o|u     
+F#rn#n##z J#im#     [a-e]     
+#e##a#de# #a##e     [f-z]     
+Fernandez#Jaime     \s     
+F#rn#nd#z J##m#     a|e|i|o|u     
+Li G#     [a-e]     
+## #e     [f-z]     
+Li#Ge     \s     
+L# G#     a|e|i|o|u     
+Jo Sh     [a-e]     
+## ##     [f-z]     
+Jo#Sh     \s     
+J# Sh     a|e|i|o|u     
+K#lly     [a-e]     
+#e###     [f-z]     
+Kelly     \s     
+K#lly     a|e|i|o|u     
+
+===================================================
+regexp_replace(athlete.name, p1.code, '#', p1.pos)    code    pos    
+Fei #l#ss#n#ro     [a-e]     3     
+Fe# A#e##a#d##     [f-z]     3     
+Fei#Alessandro     \s     2     
+Fe# #l#ss#ndr#     a|e|i|o|u     3     
+Feklistov# M#ri#     [a-e]     3     
+Fe#######a #a##a     [f-z]     3     
+Feklistova#Maria     \s     2     
+Fekl#st#v# M#r##     a|e|i|o|u     3     
+Felisi#k Ro##rt     [a-e]     3     
+Fe####a# ##be##     [f-z]     3     
+Felisiak#Robert     \s     2     
+Fel#s##k R#b#rt     a|e|i|o|u     3     
+Feri #ttil#     [a-e]     3     
+Fe## A####a     [f-z]     3     
+Feri#Attila     \s     2     
+Fer# #tt#l#     a|e|i|o|u     3     
+Fern#n##z Gigi     [a-e]     3     
+Fe##a#de# ####     [f-z]     3     
+Fernandez#Gigi     \s     2     
+Fern#nd#z G#g#     a|e|i|o|u     3     
+Fern#n##z Is###l     [a-e]     3     
+Fe##a#de# ##abe#     [f-z]     3     
+Fernandez#Isabel     \s     2     
+Fern#nd#z #s#b#l     a|e|i|o|u     3     
+Fern#n##z J#im#     [a-e]     3     
+Fe##a#de# #a##e     [f-z]     3     
+Fernandez#Jaime     \s     2     
+Fern#nd#z J##m#     a|e|i|o|u     3     
+Li G#     [a-e]     3     
+Li #e     [f-z]     3     
+Li#Ge     \s     2     
+Li G#     a|e|i|o|u     3     
+Jo Sh     [a-e]     3     
+Jo ##     [f-z]     3     
+Jo#Sh     \s     2     
+Jo Sh     a|e|i|o|u     3     
+Kelly     [a-e]     3     
+Ke###     [f-z]     3     
+Kelly     \s     2     
+Kelly     a|e|i|o|u     3     
+
+===================================================
+regexp_replace(athlete.name, p1.code, '#', p1.pos, p1.occ)    code    pos    occ    
+Fei Al#ssandro     [a-e]     3     2     
+Fei A#essandro     [f-z]     3     2     
+Fei Alessandro     \s     2     2     
+Fei #lessandro     a|e|i|o|u     3     2     
+Feklistova M#ria     [a-e]     3     2     
+Fek#istova Maria     [f-z]     3     2     
+Feklistova Maria     \s     2     2     
+Feklist#va Maria     a|e|i|o|u     3     2     
+Felisiak Ro#ert     [a-e]     3     2     
+Fel#siak Robert     [f-z]     3     2     
+Felisiak Robert     \s     2     2     
+Felis#ak Robert     a|e|i|o|u     3     2     
+Feri Attil#     [a-e]     3     2     
+Fer# Attila     [f-z]     3     2     
+Feri Attila     \s     2     2     
+Feri #ttila     a|e|i|o|u     3     2     
+Fernan#ez Gigi     [a-e]     3     2     
+Fer#andez Gigi     [f-z]     3     2     
+Fernandez Gigi     \s     2     2     
+Fernand#z Gigi     a|e|i|o|u     3     2     
+Fernan#ez Isabel     [a-e]     3     2     
+Fer#andez Isabel     [f-z]     3     2     
+Fernandez Isabel     \s     2     2     
+Fernand#z Isabel     a|e|i|o|u     3     2     
+Fernan#ez Jaime     [a-e]     3     2     
+Fer#andez Jaime     [f-z]     3     2     
+Fernandez Jaime     \s     2     2     
+Fernand#z Jaime     a|e|i|o|u     3     2     
+Li Ge     [a-e]     3     2     
+Li Ge     [f-z]     3     2     
+Li Ge     \s     2     2     
+Li Ge     a|e|i|o|u     3     2     
+Jo Sh     [a-e]     3     2     
+Jo S#     [f-z]     3     2     
+Jo Sh     \s     2     2     
+Jo Sh     a|e|i|o|u     3     2     
+Kelly     [a-e]     3     2     
+Kel#y     [f-z]     3     2     
+Kelly     \s     2     2     
+Kelly     a|e|i|o|u     3     2     
+
+===================================================
+regexp_replace(athlete.name, p1.code, '#', p1.pos, p1.occ, p1.match_type)    code    pos    occ    match_type    
+Fei Aless#ndro     [a-e]     3     2     c     
+Fei A#essandro     [f-z]     3     2     c     
+Fei Alessandro     \s     2     2     c     
+Fei Al#ssandro     a|e|i|o|u     3     2     c     
+Feklistova M#ria     [a-e]     3     2     c     
+Fek#istova Maria     [f-z]     3     2     c     
+Feklistova Maria     \s     2     2     c     
+Feklist#va Maria     a|e|i|o|u     3     2     c     
+Felisiak Ro#ert     [a-e]     3     2     c     
+Fel#siak Robert     [f-z]     3     2     c     
+Felisiak Robert     \s     2     2     c     
+Felis#ak Robert     a|e|i|o|u     3     2     c     
+Feri Attila     [a-e]     3     2     c     
+Fer# Attila     [f-z]     3     2     c     
+Feri Attila     \s     2     2     c     
+Feri Att#la     a|e|i|o|u     3     2     c     
+Fernan#ez Gigi     [a-e]     3     2     c     
+Fer#andez Gigi     [f-z]     3     2     c     
+Fernandez Gigi     \s     2     2     c     
+Fernand#z Gigi     a|e|i|o|u     3     2     c     
+Fernan#ez Isabel     [a-e]     3     2     c     
+Fer#andez Isabel     [f-z]     3     2     c     
+Fernandez Isabel     \s     2     2     c     
+Fernand#z Isabel     a|e|i|o|u     3     2     c     
+Fernan#ez Jaime     [a-e]     3     2     c     
+Fer#andez Jaime     [f-z]     3     2     c     
+Fernandez Jaime     \s     2     2     c     
+Fernand#z Jaime     a|e|i|o|u     3     2     c     
+Li Ge     [a-e]     3     2     c     
+Li Ge     [f-z]     3     2     c     
+Li Ge     \s     2     2     c     
+Li Ge     a|e|i|o|u     3     2     c     
+Jo Sh     [a-e]     3     2     c     
+Jo Sh     [f-z]     3     2     c     
+Jo Sh     \s     2     2     c     
+Jo Sh     a|e|i|o|u     3     2     c     
+Kelly     [a-e]     3     2     c     
+Kel#y     [f-z]     3     2     c     
+Kelly     \s     2     2     c     
+Kelly     a|e|i|o|u     3     2     c     
+
+===================================================
+id    
+cub@cubrid.com     
+
+===================================================
+0
+===================================================
+0
+===================================================
+encrypted_name    
+F## #l#ss#ndr#     
+F#kl#st#v# M#r##     
+F#l#s##k R#b#rt     
+F#r# #tt#l#     
+F#rn#nd#z #s#b#l     
+F#rn#nd#z G#g#     
+F#rn#nd#z J##m#     
+J# Sh     
+K#lly     
+L# G#     
+
+===================================================
+0
+===================================================
+0
+===================================================
+10
+===================================================
+encrypted_name    
+F## #l#ss#ndr#     
+F#kl#st#v# M#r##     
+F#l#s##k R#b#rt     
+F#r# #tt#l#     
+F#rn#nd#z #s#b#l     
+F#rn#nd#z G#g#     
+F#rn#nd#z J##m#     
+J# Sh     
+K#lly     
+L# G#     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
