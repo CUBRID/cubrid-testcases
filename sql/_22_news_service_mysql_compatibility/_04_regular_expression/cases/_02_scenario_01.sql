@@ -33,3 +33,6 @@ select id, d, t, f||'' f, s, m, b from part01 where s regexp binary '^[A-Z]{2,6}
 select id, d, t, f||'' f, s, m, b from part01 where s regexp '^[A-Z]{2,6}' order by 1,2,3,4,5,6,7; 
 
 drop table part01;
+
+set system parameters 'regexp_engine=default';
+

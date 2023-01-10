@@ -39,3 +39,6 @@ select ('street'  rlike 't(?=s)');
 
 select ('streets' rlike 't(?!s)');
 select ('sports'  rlike 't(?!s)');
+
+set system parameters 'regexp_engine=default';
+

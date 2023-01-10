@@ -17,3 +17,6 @@ select ('__pa wordddd _file' regexp '\bWord{2,3}\b');
 select ('__pa a _file' regexp '\b[^a-z]\b');
 select ('__pa _1 _file' regexp '\b[^_a-z09][0-1]\b');
 select ('__pa 71 _file' regexp '\b[^_a-z09]_[0-1]\b');
+
+set system parameters 'regexp_engine=default';
+

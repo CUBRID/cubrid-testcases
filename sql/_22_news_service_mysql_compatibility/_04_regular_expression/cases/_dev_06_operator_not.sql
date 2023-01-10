@@ -22,3 +22,6 @@ select * from t where c not rlike s;
 select * from t where s not rlike c;
 
 drop table t;
+
+set system parameters 'regexp_engine=default';
+

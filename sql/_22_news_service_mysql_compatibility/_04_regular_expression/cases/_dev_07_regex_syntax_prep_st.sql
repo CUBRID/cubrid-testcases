@@ -160,3 +160,6 @@ deallocate prepare rlike_st;
 
 
 --+ holdcas off;
+
+set system parameters 'regexp_engine=default';
+

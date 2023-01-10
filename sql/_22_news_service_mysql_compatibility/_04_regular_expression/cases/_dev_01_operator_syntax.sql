@@ -10,3 +10,6 @@ select ('abc' rlike binary      'abc'), ('ABC' rlike binary      'abc');
 select ('abc' regexp binary     'abc'), ('ABC' regexp binary     'abc');
 select ('abc' not rlike binary  'abc'), ('ABC' not rlike binary  'abc');
 select ('abc' not regexp binary 'abc'), ('ABC' not regexp binary 'abc');
+
+set system parameters 'regexp_engine=default';
+

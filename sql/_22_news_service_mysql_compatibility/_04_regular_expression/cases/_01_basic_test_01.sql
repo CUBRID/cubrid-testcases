@@ -12,3 +12,6 @@ select ('aabbb' rlike 'ab{0,49995}$');
 select ('aabbb' rlike 'ab{0,49996}$');
 select ('aabbb' rlike 'ab{-1,3}$');
 select ('aabbb' rlike 'ab{0,3}$');
+
+set system parameters 'regexp_engine=default';
+
