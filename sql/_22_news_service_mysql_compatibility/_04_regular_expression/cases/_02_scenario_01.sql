@@ -1,3 +1,6 @@
+-- CBRD-24563 : default regexp library change from cppstd to RE2
+set system parameters 'regexp_engine=cppstd';
+
 create table part01(id int,d date,t time,f float,s varchar(12),m monetary,b bit) partition by hash(s) partitions 4;
 
 insert into part01 values(1002,'2010-01-01','01:00:00',-0.8,'abc',$3.55,B'1');

@@ -1,3 +1,6 @@
+-- CBRD-24563 : default regexp library change from cppstd to RE2
+set system parameters 'regexp_engine=cppstd';
+
 -- NOT tests (constant folding)
 select ('a' rlike 'a'), ('a' not rlike 'a');
 select ('a' rlike binary 'a'), ('a' not rlike binary 'a');

@@ -1,3 +1,6 @@
+-- CBRD-24563 : default regexp library change from cppstd to RE2
+set system parameters 'regexp_engine=cppstd';
+
 -- operator syntax test
 select ('abc' rlike             'abc'), ('ABC' rlike             'abc');
 select ('abc' regexp            'abc'), ('ABC' regexp            'abc');

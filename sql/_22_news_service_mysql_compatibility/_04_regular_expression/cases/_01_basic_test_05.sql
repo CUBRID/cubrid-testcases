@@ -1,3 +1,6 @@
+-- CBRD-24563 : default regexp library change from cppstd to RE2
+set system parameters 'regexp_engine=cppstd';
+
 -- POSIX-style word boundary does not support
 select ('a word file' regexp '[[:<:]]word[[:>:]]');
 
