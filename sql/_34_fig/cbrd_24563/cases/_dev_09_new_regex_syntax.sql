@@ -1,5 +1,5 @@
 -- CBRD-24563 : default regexp library change from cppstd to RE2
-set system parameters 'regexp_engine=cppstd';
+set system parameters 'regexp_engine=re2';
 
 -- backslash escapes a metacharacter
 select ('^' rlike '[\^\]]');

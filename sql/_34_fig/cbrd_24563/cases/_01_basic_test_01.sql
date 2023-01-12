@@ -1,5 +1,5 @@
 -- CBRD-24563 : default regexp library change from cppstd to RE2
-set system parameters 'regexp_engine=cppstd';
+set system parameters 'regexp_engine=re2';
 
 select (not '4@Y' regexp '^[XuyY1@]$'), (not 'vXuy' rlike '[^Xu-yY1@]+$'), (not 'W' rlike '^[^Xu-yY1@]$'), (not 'failabcabcabc' not regexp 'fail.(abc)+$'), (not '3333' not rlike '(33){3,}$'), (not 'xxx' not regexp '^xx?$'), (not 'xxa' not rlike 'x*X?(xX)?$');
 select (not '@ul' regexp '^[XuyY1@]$'), (not 'vAb' rlike '[^Xu-yY1@]+$'), (not 'a' rlike '^[^Xu-yY1@]$'), (not 'FailaABC' not regexp 'fail.(abc)+$'), (not '333433333333' not rlike '(33){2,}$'), (not 'X' not regexp '^xx?$'), (not 'xxa' not rlike 'x*X?(xX)+$');

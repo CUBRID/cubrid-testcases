@@ -1,5 +1,5 @@
 -- CBRD-24563 : default regexp library change from cppstd to RE2
-set system parameters 'regexp_engine=cppstd';
+set system parameters 'regexp_engine=re2';
 
 create table part01(id int,d date,t time,f float,s varchar(12),m monetary,b bit) partition by hash(s) partitions 4;
 
