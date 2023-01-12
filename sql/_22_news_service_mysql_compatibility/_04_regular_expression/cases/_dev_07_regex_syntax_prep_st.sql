@@ -1,3 +1,6 @@
+-- CBRD-24563 : default regexp library change from cppstd to RE2
+set system parameters 'regexp_engine=cppstd';
+
 --+ holdcas on;
 -- regular expression syntax tests (prepared statements)
 set @decoy = 'a';
@@ -157,3 +160,6 @@ deallocate prepare rlike_st;
 
 
 --+ holdcas off;
+
+set system parameters 'regexp_engine=default';
+

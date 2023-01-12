@@ -1,3 +1,6 @@
+-- CBRD-24563 : default regexp library change from cppstd to RE2
+set system parameters 'regexp_engine=cppstd';
+
 --mandatory arguments
 SELECT REGEXP_COUNT('123123123123123', '(12)3', 1, 'i');
 SELECT REGEXP_COUNT();
@@ -64,4 +67,7 @@ SELECT * FROM many_word_name order by 1;
 DROP TABLE IF EXISTS many_word_name;
 DROP TABLE IF EXISTS athlete;
 DROP TABLE IF EXISTS p1;
+
+
+set system parameters 'regexp_engine=default';
 
