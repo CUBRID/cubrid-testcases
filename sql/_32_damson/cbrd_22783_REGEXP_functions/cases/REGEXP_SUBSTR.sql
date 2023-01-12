@@ -1,3 +1,6 @@
+-- CBRD-24563 : default regexp library change from cppstd to RE2
+set system parameters 'regexp_engine=cppstd';
+
 --mandatory argument
 SELECT REGEXP_SUBSTR('Samseong-ro 86-gil, Gangnam-gu, Seoul', ',[^,]+,');
 SELECT REGEXP_SUBSTR();
@@ -91,4 +94,7 @@ DROP TABLE IF EXISTS first_name_store;
 DROP TABLE IF EXISTS athlete;
 DROP TABLE IF EXISTS email;
 DROP TABLE IF EXISTS p1;
+
+
+set system parameters 'regexp_engine=default';
 
