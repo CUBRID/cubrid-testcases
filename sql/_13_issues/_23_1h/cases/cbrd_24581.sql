@@ -3,6 +3,10 @@ Related the CBRD-24581.
 The verification to create the index by composite with IFNULL(), NULLIF(), and NVL() functions on the table.
 */
 
+drop if exists t1, t2, t2;
+drop if exists view_t1, view_t2, view_t3;
+drop if exists part_t1, part_t2, part_t3;
+
 -- IFNULL()
 create table t1( a char(10), b short);
 create index idx_t1 on t1(IFNULL(a,'a'), b);
