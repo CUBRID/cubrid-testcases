@@ -1,3 +1,6 @@
+-- CBRD-24563 : default regexp library change from cppstd to RE2
+set system parameters 'regexp_engine=cppstd';
+
 --mandatory argument
 SELECT REGEXP_REPLACE ('TechOnTheNet is a great resource', '^(\S*)', 'CheckYourMath');
 SELECT REGEXP_REPLACE();
@@ -86,3 +89,6 @@ SELECT * from new_athlete ORDER BY 1;
 DROP TABLE IF EXISTS new_athlete;
 DROP TABLE IF EXISTS p1;
 DROP TABLE IF EXISTS athlete;
+
+set system parameters 'regexp_engine=default';
+

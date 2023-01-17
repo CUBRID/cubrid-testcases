@@ -1,3 +1,6 @@
+-- CBRD-24563 : default regexp library change from cppstd to RE2
+set system parameters 'regexp_engine=cppstd';
+
 -- regular expression tests (constant folding)
 select (null rlike 'a');
 select ('a' rlike null);
@@ -21,3 +24,6 @@ select ('abcxacbxax' rlike '^[a-cx]+$'), ('xxaba' rlike '^[a-cx]+$'), ('dabcx' r
 select ('xyz' rlike '^[^a-w]*$'), ('xyz123!@#' rlike '^[^a-w]*$'), ('wxyz' rlike '^[^a-w]*$');
 select ('~' rlike '^[[.tilde.]]$'), ('a' rlike '^[[.tilde.]]$');
 select ('a fox is cute' rlike '\bfox\b'), ('a foxx is cute' rlike '\bfox\b');
+
+set system parameters 'regexp_engine=default';
+
