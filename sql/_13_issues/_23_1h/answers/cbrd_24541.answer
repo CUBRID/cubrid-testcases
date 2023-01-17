@@ -14,6 +14,21 @@
 a    b    
 1     a              
 
+Query plan:
+iscan
+    class: t? node[?]
+    index: pk_t?_a term[?]
+    cost:  ? card ?
+Query stmt:
+(select t?.b from t? t? where t?.a=t?.a)
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.b from t? t? where  exists (select t?.b from t? t? where t?.a=t?.a)
 ===================================================
 0
 ===================================================
@@ -32,5 +47,21 @@ a    b
 a    b    
 1     a              
 
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx? term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select t?.b from t? t? where (t?.a=t?.a) and (inst_num()<= ?:? ))
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.b from t? t? where  exists (select t?.b from t? t? where (t?.a=t?.a) and (inst_num()<= ?:? ))
 ===================================================
 0
