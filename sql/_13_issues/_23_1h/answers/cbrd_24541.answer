@@ -16,19 +16,19 @@ a    b
 
 Query plan:
 iscan
-    class: t? node[?]
-    index: pk_t?_a term[?]
+    class: tb node[?]
+    index: pk_tb_a term[?]
     cost:  ? card ?
 Query stmt:
-(select t?.b from t? t? where t?.a=t?.a)
+(select tb.b from tb tb where tb.a=ta.a)
 Query plan:
 sscan
-    class: t? node[?]
+    class: ta node[?]
     sargs: term[?]
     subqs: ?
     cost:  ? card ?
 Query stmt:
-select t?.a, t?.b from t? t? where  exists (select t?.b from t? t? where t?.a=t?.a)
+select ta.a, ta.b from ta ta where  exists (select tb.b from tb tb where tb.a=ta.a)
 ===================================================
 0
 ===================================================
@@ -49,19 +49,19 @@ a    b
 
 Query plan:
 iscan
-    class: t? node[?]
+    class: tb node[?]
     index: idx? term[?]
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select t?.b from t? t? where (t?.a=t?.a) and (inst_num()<= ?:? ))
+(select tb.b from tb tb where (tb.a=ta.a) and (inst_num()<= ?:? ))
 Query plan:
 sscan
-    class: t? node[?]
+    class: ta node[?]
     sargs: term[?]
     subqs: ?
     cost:  ? card ?
 Query stmt:
-select t?.a, t?.b from t? t? where  exists (select t?.b from t? t? where (t?.a=t?.a) and (inst_num()<= ?:? ))
+select ta.a, ta.b from ta ta where  exists (select tb.b from tb tb where (tb.a=ta.a) and (inst_num()<= ?:? ))
 ===================================================
 0
