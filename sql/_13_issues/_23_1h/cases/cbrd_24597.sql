@@ -22,8 +22,8 @@ execute s using 1;
 
 
 
--- alter table modify column numeric(10,2) -> numeric(10,3)
-create table t2(a numeric(10,2), b int);
+-- alter table modify column numeric(10,1) -> numeric(10,3)
+create table t2(a numeric(10,1), b int);
 insert into t2 values(1,2);
 prepare s from 'select * from t2 where a <= ?';
 
@@ -56,7 +56,7 @@ execute s using '1';
 execute s using 1;
 
 
--- alter table modify column numeric(10,3) -> numeric(10,2)
+-- alter table modify column numeric(10,3) -> numeric(10,1)
 create table t4(a numeric(10,3), b int);
 insert into t4 values(1,4);
 prepare s from 'select * from t4 where a <= ?';
@@ -65,7 +65,7 @@ create index idx on t4 (a);
 
 drop index idx on t4;
 
-alter table t4 modify column a numeric(10,2);
+alter table t4 modify column a numeric(10,1);
 
 create index idx on t4 (a, b);
 select * from t4 where a <= '1';
