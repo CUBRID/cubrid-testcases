@@ -56,4 +56,38 @@ execute s using '1';
 execute s using 1;
 
 
-drop t1, t2, t3;
+-- alter table modify column numeric(10,3) -> numeric(10,2)
+create table t4(a numeric(10,3), b int);
+insert into t4 values(1,4);
+prepare s from 'select * from t4 where a <= ?';
+
+create index idx on t4 (a);
+
+drop index idx on t4;
+
+alter table t4 modify column a numeric(10,2);
+
+create index idx on t4 (a, b);
+select * from t4 where a <= '1';
+execute s using '1';
+execute s using 1;
+
+
+-- alter table modify column numeric(10,3) -> numeric(10,0)
+create table t5(a numeric(10,3), b int);
+insert into t5 values(1,5);
+prepare s from 'select * from t5 where a <= ?';
+
+create index idx on t5 (a);
+
+drop index idx on t5;
+
+alter table t5 modify column a numeric(10,0);
+
+create index idx on t5 (a, b);
+select * from t5 where a <= '1';
+execute s using '1';
+execute s using 1;
+
+
+drop t1, t2, t3, t4, t5;
