@@ -4,10 +4,10 @@ When using the numeric type & prepare-execute then sometimes the CUBRID has retu
 It could reproduce if set a scale value at over 1 in a numeric type column.
 */
 
-drop if exists t1, t2, t3;
+drop if exists t1, t2, t3, t4, t5;
 
 -- issue's scenario
-create table t1(a numeric(10,3), b int);
+create table t1(a numeric(10,1), b int);
 insert into t1 values(1,1);
 prepare s from 'select * from t1 where a <= ?';
 
