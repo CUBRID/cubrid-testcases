@@ -10,6 +10,11 @@ SELECT REGEXP_LIKE('Kłak Aleksander', '[[:alpha:]]');
 SELECT REGEXP_LIKE(_euckr'가나다라' COLLATE euckr_bin, _utf8' [가-나]' COLLATE utf8_ko_cs);
 SELECT REGEXP_LIKE('가나다라' COLLATE utf8_ko_cs,  _utf8' [த]' COLLATE utf8_tr_cs);
 
+--unicode verification
+SELECT REGEXP_LIKE('가나 가나다라 마바사아 자차카타 파하', '\p{Hangul}+');
+SELECT REGEXP_LIKE('11억 1111', '\p{Hangul}');
+SELECT REGEXP_LIKE('Kłak Aleksander', '\p{Hangul}');
+
 SET NAMES iso88591;
 SELECT REGEXP_LIKE('Kłak Aleksander', '[[:alpha:]]');
 
