@@ -19,8 +19,10 @@ select ('aabbb' rlike 'ab{0,49995}$');
 select ('aabbb' rlike 'ab{-1,3}$');
 
 -- negative case
+-- CUBRID ignore if the value is empty string.
 set system parameters 'regexp_engine=' '';
 set system parameters 'regexp_engine= ';
+
 set system parameters 'regexp_engine=123';
 set system parameters 'regexp_engine=re';
 set system parameters 'regexp_engine=re@';
