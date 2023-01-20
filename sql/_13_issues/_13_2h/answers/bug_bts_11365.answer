@@ -21,21 +21,13 @@ j
 
 Query plan:
 temp(order by)
-    subplan: idx-join (inner join)
-                 outer: temp(sort limit)
-                            subplan: sscan
-                                         class: u node[?]
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 inner: iscan
-                            class: t node[?]
-                            index: pk_t_i term[?] (covers)
-                            cost:  ? card ?
+    subplan: sscan
+                 class: u node[?]
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select u.j from t t, u u where t.i=u.i order by ? for orderby_num()<= ?:? 
+select u.j from u u order by ? for orderby_num()<= ?:? 
 ===================================================
 j    
 1     
@@ -47,19 +39,13 @@ j
 
 Query plan:
 temp(order by)
-    subplan: idx-join (inner join)
-                 outer: sscan
-                            class: t node[?]
-                            cost:  ? card ?
-                 inner: iscan
-                            class: u node[?]
-                            index: fk_u_t term[?]
-                            cost:  ? card ?
+    subplan: sscan
+                 class: u node[?]
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select u.j from t t, u u where t.i=u.i order by ? for orderby_num()<= ?:? 
+select u.j from u u order by ? for orderby_num()<= ?:? 
 ===================================================
 0
 ===================================================
