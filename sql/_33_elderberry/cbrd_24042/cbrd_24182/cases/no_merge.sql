@@ -15,7 +15,7 @@ CREATE INDEX idx_a
   ON t(c_a, c_c);
 -- no_merge
 --SELECT /*+ recompile no_merge */ count(*)
--- CBRD-245252 : hint name changed from 'no_merge' to 'no_eliminate_join'
+-- CBRD-24252 : hint name changed from 'no_merge' to 'no_eliminate_join'
 SELECT /*+ recompile no_eliminate_join */ count(*)
 FROM   t a
        LEFT OUTER JOIN t b
