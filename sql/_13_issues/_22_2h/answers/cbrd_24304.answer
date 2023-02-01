@@ -30,6 +30,40 @@ k
 Query plan:
 temp(order by)
     subplan: idx-join (inner join)
+                 outer: idx-join (inner join)
+                            outer: sscan
+                                       class: v node[?]
+                                       cost:  ? card ?
+                            inner: iscan
+                                       class: u node[?]
+                                       index: fk_u_t term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t node[?]
+                            index: pk_t_i term[?] (covers)
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_ELIMINATE_JOIN */ u.k from u u, t t, v v where u.j=t.i and u.j=v.j order by ? for orderby_num()<= ?:? 
+===================================================
+k    
+1     
+1     
+2     
+2     
+3     
+3     
+4     
+4     
+5     
+5     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
                  outer: sscan
                             class: v node[?]
                             cost:  ? card ?
