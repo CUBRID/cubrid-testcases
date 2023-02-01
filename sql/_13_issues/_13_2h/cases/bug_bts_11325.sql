@@ -16,8 +16,9 @@ update statistics on all classes;
 
 select /*+ recompile */ u.k from u, t, v where u.j = t.i and u.j = v.j order by u.k limit 10;
 
-select /*+ NO_SORT_LIMIT USE_MERGE */ u.k from u, t, v where u.j = t.i and u.j = v.j order by u.k limit 10;
+select /*+ NO_ELIMINATE_JOIN */ u.k from u, t, v where u.j = t.i and u.j = v.j order by u.k limit 10;
 
+select /*+ NO_SORT_LIMIT USE_MERGE */ u.k from u, t, v where u.j = t.i and u.j = v.j order by u.k limit 10;
 
 drop table v;
 drop table u;

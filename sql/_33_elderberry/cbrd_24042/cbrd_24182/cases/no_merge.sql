@@ -20,4 +20,11 @@ FROM   t a
                     ON a.c_a = b.c_a
                        AND a.c_b = b.c_b
 WHERE  a.c_c = 1; 
+-- no_eliminate_join
+SELECT /*+ recompile no_eliminate_join */ count(*)
+FROM   t a
+       LEFT OUTER JOIN t b
+                    ON a.c_a = b.c_a
+                       AND a.c_b = b.c_b
+WHERE  a.c_c = 1; 
 DROP TABLE t;

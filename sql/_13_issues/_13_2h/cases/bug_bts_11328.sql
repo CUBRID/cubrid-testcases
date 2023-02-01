@@ -15,22 +15,27 @@ insert into v select rownum, rownum % 1500 + 1, rownum from _db_class a, _db_cla
 update statistics on all classes;
 
 select /*+ recompile */ u.k from u, t, v where u.j = t.i and u.j = v.j order by u.k limit 10;
+select /*+ NO_ELIMINATE_JOIN */ u.k from u, t, v where u.j = t.i and u.j = v.j order by u.k limit 10;
 
 set system parameters 'sort_limit_max_count=0';
 
 select /*+ recompile */ u.k from u, t, v where u.j = t.i and u.j = v.j order by u.k limit 10;
+select /*+ NO_ELIMINATE_JOIN */ u.k from u, t, v where u.j = t.i and u.j = v.j order by u.k limit 10;
 
 set system parameters 'sort_limit_max_count=11';
 
 select /*+ recompile */ u.k from u, t, v where u.j = t.i and u.j = v.j order by u.k limit 10;
+select /*+ NO_ELIMINATE_JOIN */ u.k from u, t, v where u.j = t.i and u.j = v.j order by u.k limit 10;
 
 set system parameters 'sort_limit_max_count=9';
 
 select /*+ recompile */ u.k from u, t, v where u.j = t.i and u.j = v.j order by u.k limit 10;
+select /*+ NO_ELIMINATE_JOIN */ u.k from u, t, v where u.j = t.i and u.j = v.j order by u.k limit 10;
 
 set system parameters 'sort_limit_max_count=1000';
 
 select /*+ recompile */ u.k from u, t, v where u.j = t.i and u.j = v.j order by u.k limit 10;
+select /*+ NO_ELIMINATE_JOIN */ u.k from u, t, v where u.j = t.i and u.j = v.j order by u.k limit 10;
 
 drop table v;
 drop table u;
