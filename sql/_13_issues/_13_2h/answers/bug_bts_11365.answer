@@ -47,13 +47,19 @@ j
 
 Query plan:
 temp(order by)
-    subplan: sscan
-                 class: u node[?]
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: t node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: u node[?]
+                            index: fk_u_t term[?]
+                            cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select u.j from u u order by ? for orderby_num()<= ?:? 
+select /*+ NO_ELIMINATE_JOIN */ u.j from t t, u u where t.i=u.i order by ? for orderby_num()<= ?:? 
 ===================================================
 0
 ===================================================

@@ -15,7 +15,7 @@ update statistics on all classes;
 
 select /*+ recompile NO_ELIMINATE_JOIN */ u.j from t, u where t.i = u.i order by j limit 4;
 
-select u.j from t, u where t.i = u.i order by j limit 6;
+select /*+ NO_ELIMINATE_JOIN */ u.j from t, u where t.i = u.i order by j limit 6;
 
 drop table u;
 drop table t;
