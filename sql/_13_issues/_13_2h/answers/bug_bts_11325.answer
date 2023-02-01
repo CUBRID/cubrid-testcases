@@ -30,34 +30,6 @@ k
 Query plan:
 temp(order by)
     subplan: idx-join (inner join)
-                 outer: sscan
-                            class: v node[?]
-                            cost:  ? card ?
-                 inner: iscan
-                            class: u node[?]
-                            index: fk_u_t term[?]
-                            cost:  ? card ?
-                 cost:  ? card ?
-    sort:  ? asc
-    cost:  ? card ?
-Query stmt:
-select u.k from u u, v v where u.j=v.j order by ? for orderby_num()<= ?:? 
-===================================================
-k    
-1     
-1     
-2     
-2     
-3     
-3     
-4     
-4     
-5     
-5     
-
-Query plan:
-temp(order by)
-    subplan: idx-join (inner join)
                  outer: temp(sort limit)
                             subplan: idx-join (inner join)
                                          outer: sscan
@@ -99,8 +71,20 @@ temp(order by)
                               edge:  term[?]
                               outer: temp
                                          order: j[?]
-                                         subplan: sscan
-                                                      class: u node[?]
+                                         subplan: m-join (inner join)
+                                                      edge:  term[?]
+                                                      outer: temp
+                                                                 order: j[?]
+                                                                 subplan: sscan
+                                                                              class: u node[?]
+                                                                              cost:  ? card ?
+                                                                 cost:  ? card ?
+                                                      inner: temp
+                                                                 order: i[?]
+                                                                 subplan: sscan
+                                                                              class: t node[?]
+                                                                              cost:  ? card ?
+                                                                 cost:  ? card ?
                                                       cost:  ? card ?
                                          cost:  ? card ?
                               inner: temp
@@ -114,7 +98,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ USE_MERGE NO_SORT_LIMIT */ u.k from u u, v v where u.j=v.j order by ? for orderby_num()<= ?:? 
+select /*+ USE_MERGE NO_SORT_LIMIT NO_ELIMINATE_JOIN */ u.k from u u, t t, v v where u.j=t.i and u.j=v.j order by ? for orderby_num()<= ?:? 
 ===================================================
 0
 ===================================================
