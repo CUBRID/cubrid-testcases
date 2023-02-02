@@ -13,6 +13,34 @@ count(*)
 1     
 
 Query plan:
+sscan
+    class: a node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_MERGE */ count(*) from t a where a.c_c= ?:? 
+===================================================
+count(*)    
+1     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?] AND term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_MERGE NO_ELIMINATE_JOIN */ count(*) from t a left outer join t b on a.c_b=b.c_b and a.c_a=b.c_a where a.c_c= ?:? 
+===================================================
+count(*)    
+1     
+
+Query plan:
 idx-join (left outer join)
     outer: sscan
                class: a node[?]
