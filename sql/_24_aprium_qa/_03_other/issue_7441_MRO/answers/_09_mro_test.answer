@@ -939,6 +939,27 @@ nl-join (left outer join)
 Query stmt:
 (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER )
 Query plan:
+nl-join (left outer join)
+    outer: nl-join (inner join)
+               edge:  table(?) -> t node[?]
+               outer: iscan
+                          class: u node[?]
+                          index: u_db_user_name term[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: t node[?]
+                          sargs: table(?) -> t node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: db_user node[?]
+               sargs: t node[?] g -> db_user node[?]
+               cost:  ? card ?
+    sargs: t node[?] g -> db_user node[?]
+    cost:  ? card ?
+Query stmt:
+(select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER )
+Query plan:
 follow
     edge:  au node[?] grantee -> db_user node[?]
     head:  sscan
@@ -949,6 +970,27 @@ follow
     cost:  ? card ?
 Query stmt:
 (select sum(set{au.class_of}) from [_db_auth] au where {[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) and au.auth_type= ?:? )
+Query plan:
+nl-join (left outer join)
+    outer: nl-join (inner join)
+               edge:  table(?) -> t node[?]
+               outer: iscan
+                          class: u node[?]
+                          index: u_db_user_name term[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: t node[?]
+                          sargs: table(?) -> t node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: db_user node[?]
+               sargs: t node[?] g -> db_user node[?]
+               cost:  ? card ?
+    sargs: t node[?] g -> db_user node[?]
+    cost:  ? card ?
+Query stmt:
+(select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER )
 Query plan:
 nl-join (left outer join)
     outer: nl-join (inner join)
@@ -1039,7 +1081,7 @@ temp(distinct)
                  cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(select distinct rownum from [_db_class] a, [_db_collation] coll, [_db_class] b, [_db_collation] coll_? where (a.collation_id=coll.coll_id) and ( CURRENT_USER ='DBA' or {a.[owner].[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) or {a} subseteq (select sum(set{au.class_of}) from [_db_auth] au where {[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) and au.auth_type= ?:? )) and (b.collation_id=coll_?.coll_id) and ( CURRENT_USER ='DBA' or {b.[owner].[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) or {b} subseteq (select sum(set{au.class_of}) from [_db_auth] au where {[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) and au.auth_type= ?:? )))
+(select distinct rownum from [_db_class] a, [_db_collation] coll, [_db_class] b, [_db_collation] coll_? where (a.collation_id=coll.coll_id) and ({'DBA'} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) or {a.[owner].[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) or {a} subseteq (select sum(set{au.class_of}) from [_db_auth] au where {[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) and au.auth_type= ?:? )) and (b.collation_id=coll_?.coll_id) and ({'DBA'} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) or {b.[owner].[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) or {b} subseteq (select sum(set{au.class_of}) from [_db_auth] au where {[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) and au.auth_type= ?:? )))
 Query plan:
 idx-join (inner join)
     outer: sscan
@@ -1051,7 +1093,7 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select t.a, t.b, t.c, t.d, t.e from t t, (select distinct rownum from [_db_class] a, [_db_collation] coll, [_db_class] b, [_db_collation] coll_? where (a.collation_id=coll.coll_id) and ( CURRENT_USER ='DBA' or {a.[owner].[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) or {a} subseteq (select sum(set{au.class_of}) from [_db_auth] au where {[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) and au.auth_type= ?:? )) and (b.collation_id=coll_?.coll_id) and ( CURRENT_USER ='DBA' or {b.[owner].[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) or {b} subseteq (select sum(set{au.class_of}) from [_db_auth] au where {[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) and au.auth_type= ?:? ))) av? (av_?) where t.a=av?.av_? and t.b= ?:?  order by ? desc , ? for orderby_num()<= ?:? 
+select t.a, t.b, t.c, t.d, t.e from t t, (select distinct rownum from [_db_class] a, [_db_collation] coll, [_db_class] b, [_db_collation] coll_? where (a.collation_id=coll.coll_id) and ({'DBA'} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) or {a.[owner].[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) or {a} subseteq (select sum(set{au.class_of}) from [_db_auth] au where {[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) and au.auth_type= ?:? )) and (b.collation_id=coll_?.coll_id) and ({'DBA'} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) or {b.[owner].[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) or {b} subseteq (select sum(set{au.class_of}) from [_db_auth] au where {[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from db_user u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) and au.auth_type= ?:? ))) av? (av_?) where t.a=av?.av_? and t.b= ?:?  order by ? desc , ? for orderby_num()<= ?:? 
 ===================================================
 0
 ===================================================
