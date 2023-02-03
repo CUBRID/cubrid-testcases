@@ -1,5 +1,6 @@
 --+ holdcas on;
 set  system parameters 'dont_reuse_heap_file=yes';
+drop table if exists t1;
 create table t1 (i int, d double);
 --Test
 create index idx on t1 (sqrt(d));

@@ -59,7 +59,7 @@ create table mille as select 0 as i from table({1,2,3,4,5,6,7,8,9,0}) t1, table(
 insert into t (i,j)  select i,rownum from mille;
 create index t_i_j on t(i,j); 
 update statistics on t;
-update statistics on mile;
+update statistics on mille;
 
 --index skip scan
 select /*+ recompile  */  count(*) from (select  /*+ recompile index_ss */ * from t where j between 1 and 2 using index t_i_j) tt;
