@@ -12,7 +12,6 @@ select /*+ recompile */ * from testt where sqrt(d1) > 5;
 
 drop index on testt (sqrt(d1));
 
-update statistics on testt;
 SHOW INDEXES FROM testt;
 
 
@@ -26,7 +25,6 @@ select /*+ recompile */ * from testt where sqrt(d1) > 5;
 
 drop index on testt (i1, sqrt(d1));
 
-update statistics on testt;
 SHOW INDEXES FROM testt;
 
 
@@ -40,7 +38,6 @@ select /*+ recompile */ * from testt where sqrt(d1) > 5;
 
 drop index on testt (d1, sqrt(d1));
 
-update statistics on testt;
 SHOW INDEXES FROM testt;
 
 
@@ -54,7 +51,6 @@ select /*+ recompile */ * from testt where sqrt(d1) > 5;
 
 drop index  on testt (sqrt(d1), i1);
 
-update statistics on testt;
 SHOW INDEXES FROM testt;
 
 --Test
@@ -67,7 +63,6 @@ select /*+ recompile */ * from testt where sqrt(d1) > 5;
 
 drop index on testt (sqrt(d1), d1);
 
-update statistics on testt;
 SHOW INDEXES FROM testt;
 
 --Test
@@ -80,7 +75,6 @@ select /*+ recompile */ * from testt where sqrt(d1) > 5;
 
 drop index on testt (i1, sqrt(d1), d1);
 
-update statistics on testt;
 SHOW INDEXES FROM testt;
 
 --Test
@@ -93,7 +87,6 @@ select /*+ recompile */ * from testt where sqrt(d1) > 5;
 
 drop index on testt (sqrt(d1), i1, d1);
 
-update statistics on testt;
 SHOW INDEXES FROM testt;
 
 drop table testt;
