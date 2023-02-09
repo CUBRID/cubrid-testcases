@@ -1,0 +1,27 @@
+drop table if exists sales_mon_tbl;
+
+CREATE OR REPLACE FUNCTION test_fc(i int) RETURN int as language java name 'SpTest7.typetestint(int) return int';
+CREATE TABLE sales_mon_tbl (
+    yyyy INT,
+    mm INT,
+    sales_sum INT
+);
+INSERT INTO sales_mon_tbl VALUES
+    (2000, 1, 1000), (2000, 2, 770), (2000, 3, 630), (2000, 4, 890),
+    (2000, 5, 500), (2000, 6, 900), (2000, 7, 1300), (2000, 8, 1800),
+    (2000, 9, 2100), (2000, 10, 1300), (2000, 11, 1500), (2000, 12, 1610),
+    (2001, 1, 1010), (2001, 2, 700), (2001, 3, 600), (2001, 4, 900),
+    (2001, 5, 1200), (2001, 6, 1400), (2001, 7, 1700), (2001, 8, 1110),
+    (2001, 9, 970), (2001, 10, 690), (2001, 11, 710), (2001, 12, 880),
+    (2002, 1, 980), (2002, 2, 750), (2002, 3, 730), (2002, 4, 980),
+    (2002, 5, 1110), (2002, 6, 570), (2002, 7, 1630), (2002, 8, 1890),
+    (2002, 9, 2120), (2002, 10, 970), (2002, 11, 420), (2002, 12, 1300);
+
+SELECT test_fc(yyyy), max(test_fc(sales_sum)), min(test_fc(sales_sum)), avg(test_fc(sales_sum)) FROM sales_mon_tbl GROUP BY test_fc(yyyy);
+
+select count(distinct (test_fc(yyyy))) from sales_mon_tbl;
+select group_concat(test_fc(mm)) from sales_mon_tbl;
+select group_concat(distinct test_fc(mm)) from sales_mon_tbl;
+
+drop function test_fc;
+drop table if exists sales_mon_tbl;
