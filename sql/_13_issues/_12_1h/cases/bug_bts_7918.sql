@@ -36,7 +36,6 @@ alter table t promote partition p0;
 describe t;
 describe t__p__p0;
 update statistics on t;
-update statistics on t__p__p0;
 show indexes from t;
 show indexes from t__p__p0;
 insert into t select NULL from db_class;

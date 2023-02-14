@@ -47,7 +47,6 @@ ALTER TABLE members
         PARTITION n0 VALUES LESS THAN (1960),
         PARTITION n1 VALUES LESS THAN (1970)
 );
-update statistics on members;
 show tables;
 show index from members__p__p0;
 show index from members__p__p1;
@@ -115,7 +114,6 @@ PARTITION BY RANGE( YEAR(hired) ) (
   PARTITION p4 VALUES LESS THAN (2005)
 );
 alter table employees drop constraint pk_employees_hired;
-update statistics on employees;
 show index from employees;
 alter table employees add  constraint pk_employees_hired primary key(hired);
 alter table employees add  constraint pk_employees_hired_id primary key(id,hired);

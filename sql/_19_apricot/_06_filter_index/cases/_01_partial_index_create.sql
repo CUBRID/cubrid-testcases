@@ -162,12 +162,10 @@ drop reverse unique index idx_rev_un on t(id, textlabel);
 -- test automatic index update when a column/table is being changed --
 -- rename table --
 rename table other_t to othert;
-update statistics on othert;
 show indexes from othert;
 drop table othert;
 
 rename table the_other_t to theothert;
-update statistics on theothert;
 show indexes from theothert;
 drop table theothert;
 

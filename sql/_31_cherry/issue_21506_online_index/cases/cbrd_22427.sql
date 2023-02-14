@@ -10,7 +10,6 @@ insert into t values('1970-3-10', 1);
 
 create unique index ui2 on t(i, t) with online;
 
-update statistics on t;
 show index from t;
 
 delete from t where i=1 limit 1;
