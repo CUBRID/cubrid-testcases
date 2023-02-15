@@ -29,6 +29,12 @@ SELECT * FROM of_drones
 UNION ALL SELECT * FROM of_cars ORDER BY 1;
 
 --success
+WITH
+ of_drones AS (SELECT item, 'drones', FC(id) as id FROM products WHERE parent_id = 1),
+ of_cars AS (SELECT item, 'cars', FC(id) as id FROM products WHERE parent_id = 5)
+SELECT * FROM of_drones;
+
+--success
 SELECT item, 'drones', FC(id) as id FROM products WHERE parent_id = 1 UNION ALL SELECT item, 'cars', FC(id) as id FROM products WHERE parent_id = 5 ORDER BY 1;
 
 drop function FC;
