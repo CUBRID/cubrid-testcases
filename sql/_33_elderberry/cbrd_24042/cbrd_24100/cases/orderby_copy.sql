@@ -31,6 +31,10 @@ CREATE INDEX idx
   ON t_a(col_a, col_b); 
 CREATE INDEX idx
   ON t_b(col_a, col_b);
+
+update statistics on t_a;
+update statistics on t_b;
+
 CREATE OR replace VIEW v_a
 AS
   SELECT col_a,

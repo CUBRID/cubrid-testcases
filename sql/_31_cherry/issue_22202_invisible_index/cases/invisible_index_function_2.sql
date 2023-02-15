@@ -11,6 +11,7 @@ insert into t values('a','b'),('c',null),(null,'d'),(null,null);
 create index idx1 on t(ifnull(a,b)) invisible;
 create index idx2 on t(nvl(a,b)) invisible;
 create index idx3 on t(nvl2(a,b,'a is null')) invisible;
+update statistics on t;
 show index from t;
 
 drop table if exists t1;
@@ -53,6 +54,7 @@ create index idx_2q on t1(month(q)) invisible;
 create index idx5 on t1(month(a)) invisible;
 create index idx6 on t1(second(b)) invisible;
 create index idx7 on t1(hour(a)) invisible;
+update statistics on t1;
 show index from t1;
 insert into t1 values (null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
 create index i_t1_a2q on t1(MINUTE(a)) invisible;
@@ -63,6 +65,7 @@ create index i_t1_a2m on t1(MINUTE(e)) invisible;
 create index idx_p on t1(MINUTE(p)) invisible;
 create index idx_q on t1(MINUTE(q)) invisible;
 create index idx_o on t1(MINUTE(o)) invisible;
+update statistics on t1;
 show index from t1;
 
 drop table if exists t;
@@ -86,6 +89,7 @@ select (LPAD(a, 10, 'X')) from t1 order by 1;
 select (LPAD('CUBRID', 20, a)) from t1 order by 1;
 CREATE INDEX i1 on t1 (LPAD ('CUBRID', a, 'X')) invisible;
 CREATE INDEX i2 on t1 (LPAD (a, 10, 'X')) invisible;
+update statistics on t1;
 show index from t1;
 
 drop table if exists t1,foo,t;
@@ -95,15 +99,19 @@ drop table if exists t1;
 create table t1 (FirstName varchar(20),LastName varchar(20),Age int,gender char (1));
 insert into t1 value('yin', 'jian ye',31,'M');
 CREATE INDEX first_name_lower ON t1 (LOWER(FirstName)) with online ;
+update statistics on t1;
 --@queryplan
 SELECT /*+ recompile */ * FROM t1 WHERE LOWER(FirstName)='yin' using index first_name_lower(+);
 ALTER INDEX first_name_lower ON T1 INVISIBLE;
+update statistics on t1;
 --@queryplan
 SELECT /*+ recompile */ * FROM t1 WHERE LOWER(FirstName)='yin' using index first_name_lower(+);
 ALTER  INDEX first_name_lower on t1(firstname) WHERE LOWER(FirstName)='yin' REBUILD;
+update statistics on t1;
 --@queryplan
 SELECT /*+ recompile */ * FROM t1 WHERE LOWER(FirstName)='yin' using index first_name_lower(+);
 ALTER INDEX first_name_lower ON T1 VISIBLE;
+update statistics on t1;
 --@queryplan
 SELECT /*+ recompile */ * FROM t1 WHERE LOWER(FirstName)='yin' using index first_name_lower(+);
 drop table if exists t1;

@@ -12,10 +12,12 @@ SHOW INDEXES FROM t1;
 
 alter index idx on t1 rebuild;
 --Test
+update statistics on t1;
 SHOW INDEXES FROM t1;
 
 alter index idx2 on t1 rebuild;
 --Test
+update statistics on t1;
 SHOW INDEXES FROM t1;
 --Test
 select /*+ recompile */ * from t1 where sqrt(d) > 5;
@@ -30,10 +32,12 @@ select /*+ recompile */ * from t1 where i < 20 using index idx2(+);
 --Test
 alter index idx on t1 rebuild;
 
+update statistics on t1;
 SHOW INDEXES FROM t1;
 --Test
 alter index idx2 on t1 rebuild;
 
+update statistics on t1;
 SHOW INDEXES FROM t1;
 
 insert into t1 values (40, 5);

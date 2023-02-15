@@ -14,6 +14,7 @@ delete from t1 where a=1 limit 1;
 
 create unique index idx_t1_b on t1(b desc) with online;
 
+update statistics on t1 with fullscan;
 show index from t1;
 
 drop t1;
