@@ -7,6 +7,7 @@ CREATE INDEX open_bugs ON bugs(bugID) WHERE Closed = 0;
 --TEST: 
 ALTER TABLE bugs  DROP index open_bugs;
 --TEST: 
+update statistics on bugs;
 SHOW INDEX IN bugs;
 drop table bugs;
 
@@ -18,6 +19,7 @@ CREATE INDEX open_bugs ON bugs(bugID) WHERE Closed = 0;
 --TEST: 
 ALTER TABLE bugs  DROP index open_bugs from bugs(bugID) WHERE Closed = 0;
 --TEST: 
+update statistics on bugs;
 SHOW INDEX IN bugs;
 drop table bugs;
 

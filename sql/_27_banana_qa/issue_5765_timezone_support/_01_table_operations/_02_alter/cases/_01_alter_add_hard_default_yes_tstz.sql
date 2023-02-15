@@ -51,6 +51,7 @@ select * from tz order by a;
 
 --test: add index
 alter table tz add index idx(c_tstz1);
+update statistics on tz;
 show index in tz;
 
 
