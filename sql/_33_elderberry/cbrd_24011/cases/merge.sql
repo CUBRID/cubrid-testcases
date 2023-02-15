@@ -6,6 +6,9 @@ insert into tab_b select to_char(rownum mod 100) col_a, to_char(rownum) col_b fr
 create index idx on tab_a(col_a,col_b);
 create index idx on tab_b(col_a,col_b);
 
+update statistics on tab_a;
+update statistics on tab_b;
+
 --@queryplan
 merge /*+ recompile */ into tab_a tt using (select col_a, count(*) col_b from tab_b group by col_a) st
   on (st.col_a=tt.col_a and st.col_b=tt.col_b and st.col_a = 10)
