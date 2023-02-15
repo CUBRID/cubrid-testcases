@@ -27,6 +27,8 @@ t     1     idx3     1     null     A     0     null     null     YES     BTREE 
 ===================================================
 0
 ===================================================
+0
+===================================================
 Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
 t     1     idx1     1     null     A     3     null     null     YES     BTREE      ifnull([t].[a], [t].[b])     null     NO     
 t     1     idx2     1     null     A     3     null     null     YES     BTREE     nvl([t].[a], [t].[b])     null     NO     
@@ -79,6 +81,8 @@ Error:-787
 ===================================================
 Error:-787
 ===================================================
+0
+===================================================
 Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
 t1     1     i_t1_a2m     1     null     A     1     null     null     YES     BTREE      position( cast([t1].[e] as varchar) in _iso88591'fff' collate iso88591_bin)     null     NO     
 t1     1     idx3     1     null     A     1     null     null     YES     BTREE      to_timestamp_tz( cast([t1].[p] as varchar))     null     NO     
@@ -116,6 +120,8 @@ Error:-272
 Error:-272
 ===================================================
 Error:-272
+===================================================
+0
 ===================================================
 Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
 t1     1     i_t1_a2m     1     null     A     1     null     null     YES     BTREE      position( cast([t1].[e] as varchar) in _iso88591'fff' collate iso88591_bin)     null     NO     
@@ -193,6 +199,8 @@ XXXXXXXX10
 ===================================================
 0
 ===================================================
+0
+===================================================
 Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
 t1     1     i1     1     null     A     1     null     null     YES     BTREE      lpad(_iso88591'CUBRID' collate iso88591_bin, [t1].[a], _iso88591'X' collate iso88591_bin)     null     NO     
 t1     1     i2     1     null     A     2     null     null     YES     BTREE      lpad( cast([t1].[a] as varchar), 10, _iso88591'X' collate iso88591_bin)     null     NO     
@@ -205,6 +213,8 @@ t1     1     i2     1     null     A     2     null     null     YES     BTREE  
 0
 ===================================================
 1
+===================================================
+0
 ===================================================
 0
 ===================================================
@@ -221,11 +231,35 @@ select t?.firstname, t?.lastname, t?.age, t?.gender from t? t? where  lower(t?.F
 ===================================================
 0
 ===================================================
-Error:-494
+0
+===================================================
+firstname    lastname    age    gender    
+yin     jian ye     31     M     
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.firstname, t?.lastname, t?.age, t?.gender from t? t? where  lower(t?.FirstName)='yin'
 ===================================================
 0
 ===================================================
-Error:-494
+0
+===================================================
+firstname    lastname    age    gender    
+yin     jian ye     31     M     
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.firstname, t?.lastname, t?.age, t?.gender from t? t? where  lower(t?.FirstName)='yin'
+===================================================
+0
 ===================================================
 0
 ===================================================

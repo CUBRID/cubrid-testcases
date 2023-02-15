@@ -8,6 +8,7 @@ insert into u values (2,1), (2,2), (2,3);
 insert into u values (3,1), (3,2), (3,3);
 
 create index i_u_i_j on u(i,j);
+update statistics on u;
 
 create table t (i1 bigint, i2 decimal(5,1), i3 decimal(5,1)) partition by hash(i1) partitions 3;
 create index idx1  on t(i1, i2 desc);

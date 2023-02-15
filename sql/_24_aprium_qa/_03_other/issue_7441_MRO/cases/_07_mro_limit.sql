@@ -9,6 +9,7 @@ insert into u values (-3458901122,1), (-3458901122,2), (-3458901122,3);
 insert into u values (3,1), (3,2), (3,3);
 
 create index i_u_i_j on u(i desc ,j desc);
+update statistics on u;
 
 create table t (i1 bigint, i2 decimal(15,1), i3 decimal(15,1)) partition by hash(i1) partitions 3;
 create index idx1  on t(i1 desc , i2 );

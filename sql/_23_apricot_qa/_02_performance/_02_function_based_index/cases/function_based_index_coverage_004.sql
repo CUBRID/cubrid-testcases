@@ -11,10 +11,12 @@ SHOW INDEXES FROM t1;
 
 alter table t1 drop column d;
 --Test
+update statistics on t1;
 SHOW INDEXES FROM t1;
 
 alter table t1 drop column i;
 --Test
+update statistics on t1;
 SHOW INDEXES FROM t1;
 
 drop table t1;

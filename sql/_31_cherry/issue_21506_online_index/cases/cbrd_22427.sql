@@ -18,6 +18,7 @@ insert into t values('1970-3-10', 2);
 
 create unique index ui2 on t(i, t) with online;
 
+update statistics on t;
 show index from t;
 
 select * from t ignore index (ui2) where i > 0 order by 1,2;
