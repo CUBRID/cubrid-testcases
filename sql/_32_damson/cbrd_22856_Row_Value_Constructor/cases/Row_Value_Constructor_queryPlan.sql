@@ -3,6 +3,7 @@ create table rvc_tmp2(col1 int, col2 int, col3 int, col4 int, col5 int);
 insert into rvc_tmp2 values(1,2,3,4,5),(1,1,1,1,1),(2,2,2,2,2),(3,3,3,3,3);
 create index idx on rvc_tmp2(col1,col2,col3,col4);
 create index idx2 on rvc_tmp2(nvl(col1,1),col2,col3,col4);
+update statistics on rvc_tmp2;
 
 -- check for query plan
 set optimization level 513;

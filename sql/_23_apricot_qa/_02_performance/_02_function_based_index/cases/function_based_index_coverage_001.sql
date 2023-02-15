@@ -18,6 +18,7 @@ SHOW INDEXES FROM testt;
 --Test
 create index idx2 on testt (i1, sqrt(d1));
 
+update statistics on testt;
 SHOW INDEXES FROM testt;
 
 select /*+ recompile */ * from testt where sqrt(d1) > 5; 
@@ -30,6 +31,7 @@ SHOW INDEXES FROM testt;
 --Test
 create index idx3 on testt (d1, sqrt(d1));
 
+update statistics on testt;
 SHOW INDEXES FROM testt;
 
 select /*+ recompile */ * from testt where sqrt(d1) > 5; 
@@ -42,6 +44,7 @@ SHOW INDEXES FROM testt;
 --Test
 create index idx4 on testt (sqrt(d1), i1);
 
+update statistics on testt;
 SHOW INDEXES FROM testt;
 
 select /*+ recompile */ * from testt where sqrt(d1) > 5; 
@@ -53,6 +56,7 @@ SHOW INDEXES FROM testt;
 --Test
 create index idx5 on testt (sqrt(d1), d1);
 
+update statistics on testt;
 SHOW INDEXES FROM testt;
 
 select /*+ recompile */ * from testt where sqrt(d1) > 5; 
@@ -64,6 +68,7 @@ SHOW INDEXES FROM testt;
 --Test
 create index idx6 on testt (i1, sqrt (d1), d1);
 
+update statistics on testt;
 SHOW INDEXES FROM testt;
 
 select /*+ recompile */ * from testt where sqrt(d1) > 5; 
@@ -75,6 +80,7 @@ SHOW INDEXES FROM testt;
 --Test
 create index idx7 on testt (sqrt (d1), i1, d1);
 
+update statistics on testt;
 SHOW INDEXES FROM testt;
 
 select /*+ recompile */ * from testt where sqrt(d1) > 5; 
