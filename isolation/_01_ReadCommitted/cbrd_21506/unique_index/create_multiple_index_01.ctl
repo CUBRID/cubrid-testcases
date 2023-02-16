@@ -52,6 +52,7 @@ C1: select sum(set{a}) into :i from t1 force index (i) where a > -999 order by 1
 C1: select sum(set{a}) into :i1 from t1 force index (i1) where a > -999 order by 1;
 C1: select if (:s = :i, 'OK', 'NOK');
 C1: select if (:s = :i1, 'OK', 'NOK');
+C1: update statistics on t1;
 C1: show index from t1;
 MC: wait until C1 ready;
 
