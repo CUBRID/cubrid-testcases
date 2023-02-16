@@ -17,12 +17,16 @@ create index ind2 on participant2(host_year) where host_year > 1990;
 
 show tables;
 
+--@queryplan
 select * from participant2 where log10(gold)>0;
 
+--@queryplan
 select /*+ recompile */ * from participant2__p__before_2008 where log10(gold)>0;
 
+--@queryplan
 select /*+ recompile */ * from participant2__p__before_2008 where host_year > 1990 using index ind2(+);
 
+--@queryplan
 select /*+ recompile */ * from participant2__p__before_2000 where log10(gold)>0;
 
 drop table participant2;
@@ -43,8 +47,10 @@ insert into participant2 values (2004, 2);
 
 insert into participant2 values (2006, 2);
 
+--@queryplan
 select /*+ recompile */ * from participant2__p__before_2008 where log10(gold)>0;
 
+--@queryplan
 select /*+ recompile */ * from participant2__p__before_2008 where host_year > 2004 using index ind2(+);
 
 drop table participant2;
@@ -65,10 +71,13 @@ create index ind on participant2(log10(gold));
 
 create index ind2 on participant2(host_year) where host_year > 2004;
 
+--@queryplan
 select /*+ recompile */ * from participant2__p__before_2008 where log10(gold)>0;
 
+--@queryplan
 select /*+ recompile */ * from participant2__p__before_2008 where host_year > 2004 using index ind2(+);
 
+--@queryplan
 select /*+ recompile */ * from participant2__p__before_2000 where log10(gold)>0;
 
 drop table participant2;
@@ -92,10 +101,13 @@ ALTER TABLE participant2 PARTITION BY RANGE (host_year)
 					( PARTITION before_2000 VALUES LESS THAN (2000),
 					PARTITION before_2008 VALUES LESS THAN (2008) );
 					
+--@queryplan
 select /*+ recompile */ * from participant2__p__before_2008 where log10(gold)>0;
 
+--@queryplan
 select /*+ recompile */ * from participant2__p__before_2008 where host_year > 2004 using index ind2(+);
 
+--@queryplan
 select /*+ recompile */ * from participant2__p__before_2000 where log10(gold)>0;
 
 drop table participant2;
