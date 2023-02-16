@@ -29,6 +29,7 @@ C1: INSERT INTO tb1 VALUES(1,'abc',10);
 C1: INSERT INTO tb1 VALUES(2,'efg',11);
 C1: INSERT INTO tb1 VALUES(3,'hijk',12);
 C1: create unique index idx on tb1(col,grade);
+C1: update statistics on tb1;
 C1: commit work;
 
 /* test case */
