@@ -41,6 +41,7 @@ MC: wait until C2 ready;
 C2: commit work;
 C2: select * from tb1 order by id;
 MC: wait until C2 ready;
+C1: update statistics on tb1;
 C1: show index from tb1;
 C1: commit work;
 C2: commit work;
