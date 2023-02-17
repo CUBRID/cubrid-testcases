@@ -10,10 +10,10 @@ select * from test_tbl;
 CREATE OR REPLACE FUNCTION test_fc2() RETURN int as language java name 'SpTest.testInt10() return int';
 CREATE TABLE test_tbl2(col1 int DEFAULT test_fc2());
 
---javasp function using db connection. success.  ((no actual connection))
-CREATE OR REPLACE FUNCTION test_fc3(test_ip string, test_port string, db_name string, test_user string, test_tbl string) RETURN int as language java name 'SpTest.IssueCount(java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String) return int';
-select test_fc3('test_ip','test_port','db_name','test_user','test_tbl');
-CREATE TABLE test_tbl3(col1 int DEFAULT test_fc3('test_ip','test_port','db_name','test_user','test_tbl'));
+--javasp function using db connection. success.
+CREATE FUNCTION test_fc3(i string) RETURN string as language java name 'jdbc_cubrid415.main1(java.lang.String) return java.lang.String';
+CREATE TABLE test_tbl3(col1 varchar(30) DEFAULT test_fc3('select * from test_tbl'), col2 int);
+insert into test_tbl3(col2) values (1);
 select * from test_tbl3;
 
 drop FUNCTION test_fc;
@@ -22,4 +22,3 @@ drop FUNCTION test_fc3;
 drop table if exists test_tbl;
 drop table if exists test_tbl2;
 drop table if exists test_tbl3;
-
