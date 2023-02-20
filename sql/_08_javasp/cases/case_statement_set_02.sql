@@ -10,7 +10,7 @@ INSERT INTO test_tbl VALUES ('1', 1);
 INSERT INTO test_tbl VALUES ('2', 1);
 
 SELECT test_fc(col1) FROM test_tbl
-UNION ALL SELECT test_fc2(col2) FROM test_tbl; --return integer  1
+UNION ALL SELECT test_fc2(col2) FROM test_tbl;
 
 --The result of a UNION ALL of time and timestamp types. fail.
 --ERROR: 'test_timestamp(timestamp '5/5/2005 1:1:1 am')' is not union compatible with 'test_time(timestamp '5/5/2005 1:1:1 am')'
