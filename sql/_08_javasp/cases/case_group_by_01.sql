@@ -1,4 +1,6 @@
-drop table if exists sales_tbl;
+--This is a test case to test whether javasp functions can be used in group by and having clauses
+
+DROP TABLE IF EXISTS sales_tbl;
 
 CREATE OR REPLACE FUNCTION test_fc(i int) RETURN int as language java name 'SpTest7.typetestint(int) return int';
 CREATE OR REPLACE FUNCTION test_fc2(i string) RETURN string as language java name 'SpTest7.typeteststring(java.lang.String) return java.lang.String';
@@ -44,6 +46,6 @@ FROM sales_tbl
 WHERE sales_amount > 100
 GROUP BY dept_no, name WITH ROLLUP;
 
-drop function test_fc;
-drop function test_fc2;
-drop table if exists sales_tbl;
+DROP FUNCTION test_fc;
+DROP FUNCTION test_fc2;
+DROP TABLE IF EXISTS sales_tbl;

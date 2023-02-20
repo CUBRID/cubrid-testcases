@@ -1,7 +1,9 @@
-drop table if exists products;
+--This is a test case to test whether a javasp function supports CTE
+
+DROP TABLE IF EXISTS products;
 CREATE OR REPLACE FUNCTION FC(i int) RETURN int as language java name 'SpTest7.typetestint(int) return int';
 
-CREATE TABLE products (id INTEGER PRIMARY KEY, parent_id INTEGER, item VARCHAR(100), price INTEGER);
+CREATE TABLE products(id INTEGER PRIMARY KEY, parent_id INTEGER, item VARCHAR(100), price INTEGER);
 INSERT INTO products VALUES (1, -1, 'Drone', 2000);
 INSERT INTO products VALUES (2, 1, 'Blade', 10);
 INSERT INTO products VALUES (3, 1, 'Brushless motor', 20);
@@ -37,5 +39,5 @@ SELECT * FROM of_drones;
 --success
 SELECT item, 'drones', FC(id) as id FROM products WHERE parent_id = 1 UNION ALL SELECT item, 'cars', FC(id) as id FROM products WHERE parent_id = 5 ORDER BY 1;
 
-drop function FC;
-drop table if exists products;
+DROP FUNCTION FC;
+DROP TABLE IF EXISTS products;

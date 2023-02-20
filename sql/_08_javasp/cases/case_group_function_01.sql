@@ -1,4 +1,6 @@
-drop table if exists sales_mon_tbl;
+----This is a test case to test whether javasp functions support max, min, avg, count, and group_concat functions
+
+DROP TABLE IF EXISTS sales_mon_tbl;
 
 CREATE OR REPLACE FUNCTION test_fc(i int) RETURN int as language java name 'SpTest7.typetestint(int) return int';
 CREATE TABLE sales_mon_tbl (
@@ -17,11 +19,11 @@ INSERT INTO sales_mon_tbl VALUES
     (2002, 5, 1110), (2002, 6, 570), (2002, 7, 1630), (2002, 8, 1890),
     (2002, 9, 2120), (2002, 10, 970), (2002, 11, 420), (2002, 12, 1300);
 
-SELECT test_fc(yyyy), max(test_fc(sales_sum)), min(test_fc(sales_sum)), avg(test_fc(sales_sum)) FROM sales_mon_tbl GROUP BY test_fc(yyyy);
+SELECT test_fc(yyyy), MAX(test_fc(sales_sum)), MIN(test_fc(sales_sum)), AVG(test_fc(sales_sum)) FROM sales_mon_tbl GROUP BY test_fc(yyyy);
 
-select count(distinct (test_fc(yyyy))) from sales_mon_tbl;
-select group_concat(test_fc(mm)) from sales_mon_tbl;
-select group_concat(distinct test_fc(mm)) from sales_mon_tbl;
+SELECT COUNT(distinct (test_fc(yyyy))) FROM sales_mon_tbl;
+SELECT GROUP_CONCAT(test_fc(mm)) FROM sales_mon_tbl;
+SELECT GROUP_CONCAT(distinct test_fc(mm)) FROM sales_mon_tbl;
 
-drop function test_fc;
-drop table if exists sales_mon_tbl;
+DROP FUNCTION test_fc;
+DROP TABLE IF EXISTS sales_mon_tbl;
