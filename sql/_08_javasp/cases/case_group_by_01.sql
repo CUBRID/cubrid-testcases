@@ -14,37 +14,25 @@ INSERT INTO sales_tbl VALUES
 (501, 'Stephan', 1, 300), (501, 'Stephan', 2, DEFAULT), (501, 'Chang'  , 1, 150),(501, 'Chang'  , 2, 150),
 (501, 'Sue'    , 1, 150), (501, 'Sue'    , 2, 200);
 
--- selecting and sorting rows with using column alias. fail
+-- selecting and sorting rows with using column alias. success
 SELECT dept_no AS a1, avg(sales_amount) AS a2
 FROM sales_tbl
 WHERE sales_amount > 200 
-GROUP BY test_fc(a1) HAVING test_fc(a2) > 200
-ORDER BY test_fc(a2);
+GROUP BY a1 HAVING a2 > 200
+ORDER BY a2;
 
--- without column alias. success
+-- without column alias. bug (err required (unspecified column))
 SELECT dept_no, avg(sales_amount)
 FROM sales_tbl
 WHERE test_fc(sales_amount) > 200 
 GROUP BY test_fc(dept_no) HAVING test_fc(avg(sales_amount)) > 200
 ORDER BY test_fc(avg(sales_amount));
 
--- selecting rows grouped by dept_no, name with WITH ROLLUP modifier
+-- selecting rows grouped by javasp functions. (err required (unspecified column))
 SELECT dept_no, name, avg(sales_amount)
 FROM sales_tbl
 WHERE sales_amount > 100
-GROUP BY dept_no, test_fc2(name) WITH ROLLUP;
-
--- bug 
-SELECT dept_no AS a1, name AS a2, avg(sales_amount) AS a3
-FROM sales_tbl
-WHERE sales_amount > 100
 GROUP BY test_fc(dept_no), test_fc2(name) WITH ROLLUP;
-
--- expect result
-SELECT dept_no AS a1, name AS a2, avg(sales_amount) AS a3
-FROM sales_tbl
-WHERE sales_amount > 100
-GROUP BY dept_no, name WITH ROLLUP;
 
 DROP FUNCTION test_fc;
 DROP FUNCTION test_fc2;
