@@ -15,7 +15,7 @@ INSERT INTO sales_tbl VALUES
 (501, 'Sue'    , 1, 150), (501, 'Sue'    , 2, 200);
 
 -- selecting and sorting rows with using column alias. success
-SELECT dept_no AS a1, avg(sales_amount) AS a2
+SELECT test_fc(dept_no) AS a1, avg(sales_amount) AS a2
 FROM sales_tbl
 WHERE sales_amount > 200 
 GROUP BY a1 HAVING a2 > 200
