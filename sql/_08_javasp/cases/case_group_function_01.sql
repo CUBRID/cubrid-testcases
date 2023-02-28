@@ -3,6 +3,8 @@
 DROP TABLE IF EXISTS sales_mon_tbl;
 
 CREATE OR REPLACE FUNCTION test_fc(i int) RETURN int as language java name 'SpTest7.typetestint(int) return int';
+CREATE FUNCTION test_fc2(i string) RETURN string as language java name 'jdbc_cubrid415.main1(java.lang.String) return java.lang.String';
+
 CREATE TABLE sales_mon_tbl (
     yyyy INT,
     mm INT,
@@ -25,5 +27,10 @@ SELECT COUNT(test_fc(yyyy)), COUNT(DISTINCT (test_fc(yyyy))) FROM sales_mon_tbl;
 SELECT GROUP_CONCAT(test_fc(mm)) FROM sales_mon_tbl;
 SELECT GROUP_CONCAT(DISTINCT test_fc(mm)) FROM sales_mon_tbl;
 
+SELECT COUNT(test_fc2('select mm from sales_mon_tbl where yyyy='''||2000||''' ')), COUNT(DISTINCT (test_fc2('select mm from sales_mon_tbl where yyyy='''||2000||''' '))) from sales_mon_tbl;
+SELECT GROUP_CONCAT(test_fc2('select mm from sales_mon_tbl where yyyy='''||2000||''' limit 1')) FROM sales_mon_tbl;
+SELECT GROUP_CONCAT(DISTINCT test_fc2('select mm from sales_mon_tbl where yyyy='''||2000||''' limit 1')) FROM sales_mon_tbl;
+
 DROP FUNCTION test_fc;
+DROP FUNCTION test_fc2;
 DROP TABLE IF EXISTS sales_mon_tbl;
