@@ -2,6 +2,7 @@
 
 DROP TABLE IF EXISTS products;
 CREATE OR REPLACE FUNCTION FC(i int) RETURN int as language java name 'SpTest7.typetestint(int) return int';
+CREATE OR REPLACE FUNCTION FC2(i string) RETURN string as language java name 'jdbc_cubrid415.main1(java.lang.String) return java.lang.String';
 
 CREATE TABLE products(id INTEGER PRIMARY KEY, parent_id INTEGER, item VARCHAR(100), price INTEGER);
 INSERT INTO products VALUES (1, -1, 'Drone', 2000);
@@ -27,6 +28,13 @@ UNION ALL SELECT * FROM of_cars ORDER BY 1;
 WITH
  of_drones AS (SELECT item, 'drones', FC(3) as id FROM products WHERE parent_id = 1),
  of_cars AS (SELECT item, 'cars', FC(4) as id FROM products WHERE parent_id = 5)
+SELECT * FROM of_drones
+UNION ALL SELECT * FROM of_cars ORDER BY 1;
+
+--using db connection. success
+WITH
+ of_drones AS (SELECT item, 'drones', FC2('select id from products') as id FROM products WHERE parent_id = 1),
+ of_cars AS (SELECT item, 'cars', FC2('select id from products') as id FROM products WHERE parent_id = 5)
 SELECT * FROM of_drones
 UNION ALL SELECT * FROM of_cars ORDER BY 1;
 
