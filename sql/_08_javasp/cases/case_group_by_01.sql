@@ -21,18 +21,24 @@ WHERE sales_amount > 200
 GROUP BY a1 HAVING a2 > 200
 ORDER BY a2;
 
--- without column alias. bug (err required (unspecified column))
-SELECT dept_no, avg(sales_amount)
+-- without column alias. success(It works normally in csql, but the operation is wrong in CTP)
+SELECT test_fc(dept_no), avg(sales_amount)
 FROM sales_tbl
 WHERE test_fc(sales_amount) > 200 
 GROUP BY test_fc(dept_no) HAVING test_fc(avg(sales_amount)) > 200
 ORDER BY test_fc(avg(sales_amount));
 
--- selecting rows grouped by javasp functions. (err required (unspecified column))
-SELECT dept_no, name, avg(sales_amount)
+-- check WITH ROLLUP using javasp functions. (bug report CBRD-24658)
+SELECT test_fc(dept_no), test_fc2(name), avg(sales_amount)
 FROM sales_tbl
 WHERE sales_amount > 100
 GROUP BY test_fc(dept_no), test_fc2(name) WITH ROLLUP;
+
+-- not using javasp function. (expect result)
+SELECT dept_no, name, avg(sales_amount)
+FROM sales_tbl
+WHERE sales_amount > 100
+GROUP BY dept_no, name WITH ROLLUP;
 
 DROP FUNCTION test_fc;
 DROP FUNCTION test_fc2;
