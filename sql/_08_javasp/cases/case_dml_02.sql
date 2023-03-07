@@ -1,10 +1,10 @@
-;au off
-
 -- create java sp
-CREATE FUNCTION intTest(x int) RETURN int AS LANGUAGE JAVA NAME 'SpTest7.typetestint(int) return int';
+CREATE OR REPLACE FUNCTION intTest(x int) RETURN int AS LANGUAGE JAVA NAME 'SpTest7.typetestint(int) return int';
+
+DROP IF EXISTS bonus, std;
 
 -- create data
-CREATE TABLE bonus (std_id INT, addscore INT);
+CREATE TABLE bonus (std_id INT, addscore NUMERIC(5,2));
 CREATE INDEX i_bonus_std_id ON bonus (std_id);
 
 INSERT INTO bonus VALUES (1,10);
@@ -37,6 +37,9 @@ INSERT INTO std VALUES (12,20);
 INSERT INTO std VALUES (13,45);
 INSERT INTO std VALUES (14,30);
 
+SELECT * FROM bonus;
+SELECT * FROM std;
+
 MERGE INTO bonus t USING (SELECT std_id, intTest(score) score  FROM std WHERE intTest(score) < 40) s
 ON t.std_id = intTest( s.std_id )
 WHEN MATCHED THEN
@@ -44,10 +47,13 @@ UPDATE SET t.addscore = t.addscore + intTest(s.score ) * 0.1
 WHEN NOT MATCHED THEN
 INSERT (t.std_id, t.addscore) VALUES (s.std_id, 10 + intTest(s.score) * 0.1) WHERE intTest(s.score) <= 30;
 
-select distinct(inttest(score)) from std;
+SELECT * FROM bonus;
+
+SELECT distinct(inttest(score)) FROM std;
 -- compare
-select distinct(score) from std;
+SELECT distinct(score) FROM std;
 
-drop bonus, std;
+DROP FUNCTION intTest;
 
-;au on
+DROP bonus, std;
+

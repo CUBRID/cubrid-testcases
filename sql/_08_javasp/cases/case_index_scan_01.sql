@@ -1,35 +1,36 @@
-;au off
+CREATE OR REPLACE FUNCTION intTest(x int) RETURN int AS LANGUAGE JAVA NAME 'SpTest7.typetestint(int) return int';
+CREATE OR REPLACE FUNCTION stringTest(x String) RETURN String AS LANGUAGE JAVA NAME 'SpTest7.typeteststring(java.lang.String) return java.lang.String';
 
-CREATE FUNCTION intTest(x int) RETURN int AS LANGUAGE JAVA NAME 'SpTest7.typetestint(int) return int';
+DROP IF EXISTS tbl;
 
-CREATE TABLE tbl1 (col1 INT, col2 INT);
-CREATE INDEX i_tbl1 ON tbl1 (col1);
+CREATE TABLE tbl (ord INT, col_int INT, col_char char(1));
+CREATE INDEX i_tbl ON tbl (ord);
+CREATE INDEX i_tbl_char ON tbl (col_char);
 
-INSERT INTO tbl1 VALUES (1,10);
-INSERT INTO tbl1 VALUES (2,10);
-INSERT INTO tbl1 VALUES (3,10);
-INSERT INTO tbl1 VALUES (4,10);
-INSERT INTO tbl1 VALUES (5,10);
-INSERT INTO tbl1 VALUES (6,10);
-INSERT INTO tbl1 VALUES (7,10);
-INSERT INTO tbl1 VALUES (8,10);
-INSERT INTO tbl1 VALUES (9,10);
-INSERT INTO tbl1 VALUES (10,10);
+INSERT INTO tbl VALUES (1,10,'a');
+INSERT INTO tbl VALUES (2,10,'b');
+INSERT INTO tbl VALUES (3,10,'c');
+INSERT INTO tbl VALUES (4,10,'d');
+INSERT INTO tbl VALUES (5,10,'e');
+INSERT INTO tbl VALUES (6,10,'f');
+INSERT INTO tbl VALUES (7,10,'g');
+INSERT INTO tbl VALUES (8,10,'h');
+INSERT INTO tbl VALUES (9,10,'i');
+INSERT INTO tbl VALUES (10,10,'j');
 
 -- equal
-select count(*) as "equal" from tbl1 where col1 = (select inttest(5) from dual);
+SELECT count(*) AS "equal" FROM tbl WHERE ord = 5;
+SELECT count(*) AS "equal" FROM tbl WHERE ord = (SELECT inttest(5) FROM dual);
 
 -- in
-select count(*) as "in" from tbl1 where col1 in (select inttest(5) from dual);
-select count(*) as "in" from tbl1 where col1 in (select inttest(col1) from tbl1);
+SELECT count(*) AS "in" FROM tbl WHERE ord IN (SELECT inttest(5) FROM dual);
+SELECT count(*) AS "in" FROM tbl WHERE ord IN (SELECT inttest(ord) FROM tbl);
 
--- like
-select count(*) as "like" from tbl1 where col1 like (select inttest(5) from dual);
-select count(*) as "like" from tbl1 where col1 like (select inttest(col1) from tbl1);
+-- LIKE
+SELECT count(*) AS "like" FROM tbl WHERE col_char LIKE 'a';
+SELECT count(*) AS "like" FROM tbl WHERE col_char LIKE (SELECT stringTest('a') FROM dual);
 
+DROP FUNCTION inttest, stringTest;
 
-drop function inttest, inttest2;
+DROP tbl;
 
-drop tbl1;
-
-;au on

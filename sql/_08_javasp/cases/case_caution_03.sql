@@ -1,6 +1,6 @@
-;au off
+CREATE OR REPLACE FUNCTION intTest(x int) RETURN int AS LANGUAGE JAVA NAME 'SpTest7.typetestint(int) return int';
 
-CREATE FUNCTION intTest(x int) RETURN int AS LANGUAGE JAVA NAME 'SpTest7.typetestint(int) return int';
+DROP IF EXISTS tbl1;
 
 CREATE TABLE tbl1 (col1 INT, col2 INT);
 CREATE INDEX i_tbl1 ON tbl1 (col1);
@@ -16,13 +16,12 @@ INSERT INTO tbl1 VALUES (8,10);
 INSERT INTO tbl1 VALUES (9,10);
 INSERT INTO tbl1 VALUES (10,10);
 
-select col1, col2, intTest(col1) from tbl1 for update;
-select col1, col2, intTest(col1) from tbl1 order by intTest(col1) desc for update;
+SELECT col1, col2, intTest(col1) FROM tbl1 FOR UPDATE;
+SELECT col1, col2, intTest(col1) FROM tbl1 ORDER BY intTest(col1) DESC FOR UPDATE;
 
-select col1, col2, intTest(99) from tbl1 for update;
-select col1, col2, intTest(99) from tbl1 order by intTest(col1) desc for update;
+SELECT col1, col2, intTest(99) FROM tbl1 FOR UPDATE;
+SELECT col1, col2, intTest(99) FROM tbl1 ORDER BY intTest(col1) DESC FOR UPDATE;
 
-drop function intTest;
-drop tbl1;
+DROP FUNCTION intTest;
+DROP tbl1;
 
-;au on
