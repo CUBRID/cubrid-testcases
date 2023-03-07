@@ -1,0 +1,205 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1000
+===================================================
+0
+===================================================
+100
+===================================================
+count(*)    
+100     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl? node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl? node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    during:term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl? tbl? right outer join tbl? tbl? on tbl?.col?=fn_string(?) and tbl?.col?=tbl?.col?
+===================================================
+count(*)    
+1000     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl? node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl? node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    during:term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl? tbl? left outer join tbl? tbl? on tbl?.col?=fn_string(?) and tbl?.col?=tbl?.col?
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl? tbl? right outer join tbl? tbl? on tbl?.col?=tbl?.col? where tbl?.col?=fn_string(?)
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl? tbl? left outer join tbl? tbl? on tbl?.col?=tbl?.col? where tbl?.col?=fn_string(?)
+===================================================
+count(*)    
+1000     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: tbl? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl? node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl? tbl? cross join tbl? tbl? where tbl?.col?=fn_string(?)
+===================================================
+count(*)    
+1000     
+
+Query plan:
+sscan
+    class: t_? node[?]
+    cost:  ? card ?
+Query stmt:
+(select tbl?.col? from table({?}) t_? (c_?))
+Query plan:
+nl-join (cselect join)
+    edge:  table(?) -> t_? node[?]
+    outer: sscan
+               class: t_? node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t_? node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select t_?.c_?, t_?.c_? from (select tbl?.col? from table({?}) t_? (c_?)) t_? (c_?), (fn_string(t_?.c_?)) t_? (c_?))
+Query plan:
+nl-join (cross join)
+    outer: nl-join (inner join)
+               edge:  table(?) -> t_? node[?]
+               outer: sscan
+                          class: tbl? node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: t_? node[?]
+                          sargs: table(?) -> t_? node[?] AND term[?]
+                          cost:  ? card ?
+               subqs: ?
+               cost:  ? card ?
+    inner: sscan
+               class: tbl? node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl? tbl? cross join tbl? tbl?, (select t_?.c_?, t_?.c_? from (select tbl?.col? from table({?}) t_? (c_?)) t_? (c_?), (fn_string(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?) where t_?.c_?=fn_string(?)
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?] AND term[?] AND term[?]
+    outer: sscan
+               class: tbl? node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl? node[?]
+               sargs: term[?] AND term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl? tbl?,  natural tbl? tbl? where tbl?.col?=tbl?.col? and tbl?.col?=tbl?.col? and tbl?.col?=tbl?.col?
+===================================================
+count(*)    
+100     
+
+Query plan:
+sscan
+    class: t_? node[?]
+    cost:  ? card ?
+Query stmt:
+(select tbl?.col? from table({?}) t_? (c_?))
+Query plan:
+nl-join (cselect join)
+    edge:  table(?) -> t_? node[?]
+    outer: sscan
+               class: t_? node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t_? node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select t_?.c_?, t_?.c_? from (select tbl?.col? from table({?}) t_? (c_?)) t_? (c_?), (fn_string(t_?.c_?)) t_? (c_?))
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  table(?) -> t_? node[?]
+               outer: sscan
+                          class: tbl? node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: t_? node[?]
+                          sargs: table(?) -> t_? node[?]
+                          cost:  ? card ?
+               subqs: ?
+               cost:  ? card ?
+    inner: sscan
+               class: tbl? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl? tbl?, tbl? tbl?, (select t_?.c_?, t_?.c_? from (select tbl?.col? from table({?}) t_? (c_?)) t_? (c_?), (fn_string(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?) where tbl?.col?= cast(t_?.c_? as double)
+===================================================
+0
+===================================================
+0
