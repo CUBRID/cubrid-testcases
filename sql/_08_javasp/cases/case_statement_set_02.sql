@@ -25,7 +25,7 @@ SELECT test_time(timestamp'5/5/2005 12:00:00 AM')
 UNION ALL SELECT test_time(time'13:01:01 PM');
 
 --success (date - timestamp)
-SELECT test_date('2023-02-28')
+SELECT test_date(date'2023-02-28')
 UNION ALL SELECT test_timestamp(timestamp'2022-06-30 19:30:13 pm');
 
 --success (timestamp - date)
