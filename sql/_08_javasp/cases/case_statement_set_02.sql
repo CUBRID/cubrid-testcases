@@ -12,9 +12,6 @@ INSERT INTO test_tbl VALUES ('2', 1);
 SELECT test_fc(col1) FROM test_tbl
 UNION ALL SELECT test_fc2(col2) FROM test_tbl;
 
---The result of a UNION ALL of time and timestamp types. fail.
---ERROR: 'test_timestamp(timestamp '5/5/2005 1:1:1 am')' is not union compatible with 'test_time(timestamp '5/5/2005 1:1:1 am')'
-
 CREATE OR REPLACE FUNCTION test_date(d date) RETURN date AS LANGUAGE JAVA NAME 'SpTest.testDate(java.sql.Date) return java.sql.Date';
 CREATE OR REPLACE FUNCTION test_time(d time) RETURN time AS LANGUAGE JAVA NAME 'SpTest.testTime(java.sql.Time) return java.sql.Time';
 CREATE OR REPLACE FUNCTION test_timestamp(d timestamp) RETURN timestamp AS LANGUAGE JAVA NAME 'SpTest.testTimestamp(java.sql.Timestamp) return java.sql.Timestamp';
