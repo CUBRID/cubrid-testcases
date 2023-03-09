@@ -21,7 +21,7 @@ WHERE sales_amount > 200
 GROUP BY a1 HAVING a2 > 200
 ORDER BY a2;
 
--- without column alias. success(It works normally in csql, but the operation is wrong in CTP)
+-- without column alias. (Results are different from csql. It seems to be a bug in the jdbc driver) (bug report CBRD-24692)
 SELECT test_fc(dept_no), avg(sales_amount)
 FROM sales_tbl
 WHERE test_fc(sales_amount) > 200 

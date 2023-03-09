@@ -16,7 +16,7 @@ INSERT INTO products VALUES (8, 5, 'Frame', 4700);
 
 --ERROR: before ' ) as id FROM products WHERE parent_id = 1),
 -- of_cars AS (SELE...'
--- Cannot evaluate '[dba.products].id'.
+-- Cannot evaluate '[dba.products].id'. (bug report CBRD-24658)
 
 WITH
  of_drones AS (SELECT item, 'drones', FC(id) as id FROM products WHERE parent_id = 1),
