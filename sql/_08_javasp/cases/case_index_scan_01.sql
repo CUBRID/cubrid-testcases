@@ -28,6 +28,7 @@ SELECT count(*) AS "in" FROM tbl WHERE ord IN (SELECT inttest(ord) FROM tbl);
 
 -- LIKE
 SELECT count(*) AS "like" FROM tbl WHERE col_char LIKE 'a';
+-- (Related CBRD-24686) can not index-scan the 'JAVASP' function on 'LIKE' clause.
 SELECT count(*) AS "like" FROM tbl WHERE col_char LIKE (SELECT stringTest('a') FROM dual);
 
 DROP FUNCTION inttest, stringTest;
