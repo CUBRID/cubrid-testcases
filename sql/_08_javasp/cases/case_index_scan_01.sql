@@ -19,17 +19,17 @@ INSERT INTO tbl VALUES (9,10,'i');
 INSERT INTO tbl VALUES (10,10,'j');
 
 -- equal
-SELECT count(*) AS "equal" FROM tbl WHERE ord = 5;
 SELECT count(*) AS "equal" FROM tbl WHERE ord = (SELECT inttest(5) FROM dual);
+SELECT count(*) AS "equal" FROM tbl WHERE ord = (SELECT inttest(ord) FROM tbl where ord=5);
 
 -- in
 SELECT count(*) AS "in" FROM tbl WHERE ord IN (SELECT inttest(5) FROM dual);
 SELECT count(*) AS "in" FROM tbl WHERE ord IN (SELECT inttest(ord) FROM tbl);
 
 -- LIKE
-SELECT count(*) AS "like" FROM tbl WHERE col_char LIKE 'a';
--- (Related CBRD-24686) can not index-scan the 'JAVASP' function on 'LIKE' clause.
 SELECT count(*) AS "like" FROM tbl WHERE col_char LIKE (SELECT stringTest('a') FROM dual);
+-- (Related CBRD-24686) can not index-scan the 'JAVASP' function on 'LIKE' clause.
+SELECT count(*) AS "like" FROM tbl WHERE col_char LIKE (SELECT stringTest(col_char) FROM tbl where ord=5);
 
 DROP FUNCTION inttest, stringTest;
 
