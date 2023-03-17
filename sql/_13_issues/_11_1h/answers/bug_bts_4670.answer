@@ -63,12 +63,12 @@ idx-join (inner join)
                cost:  ? card ?
     inner: iscan
                class: dj node[?]
-               index: i_dj_i term[?] (covers) (desc_index forced)
+               index: i_dj_i term[?] (covers)
                cost:  ? card ?
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-select /*+ USE_DESC_IDX */ di.i, dj.i from di di, dj dj where (di.i> ?:? ) and di.i=dj.i order by ? desc  for orderby_num()<= ?:? 
+select di.i, dj.i from di di, dj dj where (di.i> ?:? ) and di.i=dj.i order by ? desc  for orderby_num()<= ?:? 
 /* ---> skip ORDER BY */
 ===================================================
 i    i    x    
