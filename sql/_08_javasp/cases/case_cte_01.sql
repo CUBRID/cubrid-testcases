@@ -48,4 +48,5 @@ SELECT * FROM of_drones;
 SELECT item, 'drones', FC(id) as id FROM products WHERE parent_id = 1 UNION ALL SELECT item, 'cars', FC(id) as id FROM products WHERE parent_id = 5 ORDER BY 1;
 
 DROP FUNCTION FC;
+DROP FUNCTION FC2;
 DROP TABLE IF EXISTS products;
