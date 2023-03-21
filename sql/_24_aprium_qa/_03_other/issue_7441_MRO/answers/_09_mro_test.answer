@@ -701,15 +701,15 @@ Query stmt:
 select /*+ USE_IDX */ s.a, s.b, t.a, t.b, t.c, t.d, t.e from s s, t t where ((t.a= ?:? ) or (t.a= ?:? )) and s.a=t.a+? and s.b= ?:?  and t.b= ?:?  and s.b=t.b order by ? desc , ? for orderby_num()<= ?:? 
 ===================================================
 a    b    a    b    c    d    e    
+2     1     1     1     2     1     2     
 2     1     1     1     2     1     1     
+2     1     1     1     2     1     3     
 2     1     1     1     2     2     3     
-2     1     1     1     2     2     1     
 2     1     1     1     2     2     2     
-2     1     1     1     1     1     3     
+2     1     1     1     2     2     1     
 2     1     1     1     1     1     2     
 2     1     1     1     1     1     1     
-2     1     1     1     1     2     2     
-2     1     1     1     1     2     3     
+2     1     1     1     1     1     3     
 2     1     1     1     1     2     1     
 
 Query plan:
@@ -720,12 +720,12 @@ idx-join (inner join)
                cost:  ? card ?
     inner: iscan
                class: t node[?]
-               index: idx_a_b_cd_d term[?] AND term[?] (multi_range_opt) (desc_index forced)
+               index: idx_a_b_cd_d term[?] AND term[?] (multi_range_opt)
                filtr: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ USE_DESC_IDX */ s.a, s.b, t.a, t.b, t.c, t.d, t.e from s s, t t where ((t.a= ?:? ) or (t.a= ?:? )) and s.a=t.a+? and s.b= ?:?  and t.b= ?:?  and s.b=t.b order by ? desc , ? for orderby_num()<= ?:? 
+select s.a, s.b, t.a, t.b, t.c, t.d, t.e from s s, t t where ((t.a= ?:? ) or (t.a= ?:? )) and s.a=t.a+? and s.b= ?:?  and t.b= ?:?  and s.b=t.b order by ? desc , ? for orderby_num()<= ?:? 
 ===================================================
 a    b    a    b    c    d    e    
 2     1     1     1     2     1     2     
