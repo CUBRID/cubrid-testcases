@@ -14,14 +14,14 @@ INSERT INTO tbl VALUES(7, 'Brown', 'account', NULL);
 
 --test ANY/SOME/ALL
 SELECT * FROM tbl 
-WHERE dept_name = ANY{fn_string('devel'),fn_string('sales')};
+WHERE fn_string(dept_name) = ANY{'devel','sales'};
 
 SELECT * FROM tbl 
-WHERE dept_name = SOME( select fn_string(dept_name) from tbl where id in (1,2) );
+WHERE fn_string(dept_name) = SOME( select fn_string(dept_name) from tbl where fn_string(id) in (1,2) );
 
 SELECT * FROM tbl WHERE (
-  (0.9 * salary) < ALL (SELECT fn_string( salary ) FROM tbl
-  WHERE dept_name = 'devel')
+  (0.9 * fn_string(salary)) < ALL (SELECT fn_string( salary ) FROM tbl
+  WHERE fn_string(dept_name) = 'devel')
 );
 
 

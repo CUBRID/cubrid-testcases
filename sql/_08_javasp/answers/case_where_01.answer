@@ -15,7 +15,7 @@
 ===================================================
 0
 ===================================================
-col1    col2    col3    
+a    b    c    
 1     1     1     
 2     2     2     
 3     3     3     
@@ -27,40 +27,8 @@ col1    col2    col3
 9     9     9     
 10     10     0     
 
-Query plan:
-sscan
-    class: t_? node[?]
-    cost:  ? card ?
-Query stmt:
-(select tbl.col?, tbl.col?, tbl.col? from table({?}) t_? (c_?))
-Query plan:
-nl-join (cselect join)
-    edge:  table(?) -> t_? node[?]
-    outer: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select t_?.c_?, t_?.c_?, t_?.c_?, t_?.c_? from (select tbl.col?, tbl.col?, tbl.col? from table({?}) t_? (c_?)) t_? (c_?, c_?, c_?), (fn_string(t_?.c_?)) t_? (c_?))
-Query plan:
-nl-join (inner join)
-    edge:  table(?) -> t_? node[?]
-    outer: sscan
-               class: tbl node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t_? node[?]
-               sargs: table(?) -> t_? node[?] AND term[?]
-               cost:  ? card ?
-    subqs: ?
-    cost:  ? card ?
-Query stmt:
-select tbl.col?, tbl.col?, tbl.col? from tbl tbl, (select t_?.c_?, t_?.c_?, t_?.c_?, t_?.c_? from (select tbl.col?, tbl.col?, tbl.col? from table({?}) t_? (c_?)) t_? (c_?, c_?, c_?), (fn_string(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?, c_?) where  cast(t_?.c_? as double) between ? and ?
 ===================================================
-col1    col2    col3    
+a    b    c    
 1     1     1     
 2     2     2     
 3     3     3     
@@ -78,9 +46,9 @@ iscan
     index: idx?_tbl term[?]
     cost:  ? card ?
 Query stmt:
-select tbl.col?, tbl.col?, tbl.col? from tbl tbl where (tbl.col?>=fn_int(?) and tbl.col?<=?)
+select tbl.a, tbl.b, tbl.c from tbl tbl where (tbl.a>=fn_int(?) and tbl.a<=?)
 ===================================================
-col1    col2    col3    
+a    b    c    
 1     1     1     
 2     2     2     
 3     3     3     
@@ -98,9 +66,9 @@ iscan
     index: idx?_tbl term[?]
     cost:  ? card ?
 Query stmt:
-select tbl.col?, tbl.col?, tbl.col? from tbl tbl where (tbl.col?>=? and tbl.col?<=fn_int(?))
+select tbl.a, tbl.b, tbl.c from tbl tbl where (tbl.a>=? and tbl.a<=fn_int(?))
 ===================================================
-col1    col2    col3    
+a    b    c    
 1     1     1     
 2     2     2     
 3     3     3     
@@ -118,9 +86,9 @@ iscan
     index: idx?_tbl term[?]
     cost:  ? card ?
 Query stmt:
-select tbl.col?, tbl.col?, tbl.col? from tbl tbl where (tbl.col?>=fn_int(?) and tbl.col?<=fn_int(?))
+select tbl.a, tbl.b, tbl.c from tbl tbl where (tbl.a>=fn_int(?) and tbl.a<=fn_int(?))
 ===================================================
-col1    col2    col3    
+a    b    c    
 1     1     1     
 2     2     2     
 3     3     3     
@@ -132,121 +100,35 @@ col1    col2    col3
 9     9     9     
 10     10     0     
 
-Query plan:
-sscan
-    class: t_? node[?]
-    cost:  ? card ?
-Query stmt:
-(select tbl.col?, tbl.col?, tbl.col? from table({?}) t_? (c_?))
-Query plan:
-nl-join (cselect join)
-    edge:  table(?) -> t_? node[?]
-    outer: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select t_?.c_?, t_?.c_?, t_?.c_?, t_?.c_? from (select tbl.col?, tbl.col?, tbl.col? from table({?}) t_? (c_?)) t_? (c_?, c_?, c_?), (fn_string(t_?.c_?)) t_? (c_?))
-Query plan:
-nl-join (inner join)
-    edge:  table(?) -> t_? node[?]
-    outer: sscan
-               class: tbl node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t_? node[?]
-               sargs: table(?) -> t_? node[?] AND term[?]
-               cost:  ? card ?
-    subqs: ?
-    cost:  ? card ?
-Query stmt:
-select tbl.col?, tbl.col?, tbl.col? from tbl tbl, (select t_?.c_?, t_?.c_?, t_?.c_?, t_?.c_? from (select tbl.col?, tbl.col?, tbl.col? from table({?}) t_? (c_?)) t_? (c_?, c_?, c_?), (fn_string(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?, c_?) where  cast(t_?.c_? as double) between fn_int(?) and fn_int(?)
 ===================================================
 count(*)    
 1000     
 
-Query plan:
-sscan
-    class: db_root node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-(select db_root.[triggers] from db_root db_root where true=fn_int(?))
-Query plan:
-sscan
-    class: tbl node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select count(*) from tbl tbl where  exists (select db_root.[triggers] from db_root db_root where true=fn_int(?))
 ===================================================
 count(*)    
 0     
 
-Query plan:
-sscan
-    class: db_root node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-(select db_root.[triggers] from db_root db_root where true=fn_int(?))
-Query plan:
-sscan
-    class: tbl node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select count(*) from tbl tbl where  exists (select db_root.[triggers] from db_root db_root where true=fn_int(?))
 ===================================================
 count(*)    
 0     
 
-Query plan:
-sscan
-    class: db_root node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-(select db_root.[triggers] from db_root db_root where true=fn_int(?))
-Query plan:
-sscan
-    class: tbl node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select count(*) from tbl tbl where  not  exists (select db_root.[triggers] from db_root db_root where true=fn_int(?))
 ===================================================
 count(*)    
 1000     
 
-Query plan:
-sscan
-    class: db_root node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-(select db_root.[triggers] from db_root db_root where true=fn_int(?))
-Query plan:
-sscan
-    class: tbl node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select count(*) from tbl tbl where  not  exists (select db_root.[triggers] from db_root db_root where true=fn_int(?))
 ===================================================
 0
 ===================================================
-col1    col2    col3    
+a    b    c    
+1     1     1     
+10     10     0     
 
 ===================================================
 0
 ===================================================
 0
 ===================================================
-col1    col2    col3    
+a    b    c    
 1     1     1     
 2     2     2     
 3     3     3     
@@ -263,7 +145,7 @@ col1    col2    col3
 ===================================================
 0
 ===================================================
-col1    col2    col3    
+a    b    c    
 1     1     1     
 2     2     2     
 3     3     3     
@@ -280,7 +162,7 @@ col1    col2    col3
 ===================================================
 0
 ===================================================
-col1    col2    col3    
+a    b    c    
 1     1     1     
 2     2     2     
 3     3     3     
@@ -297,7 +179,18 @@ col1    col2    col3
 ===================================================
 0
 ===================================================
-Error:-181
+a    b    c    
+1     1     1     
+2     2     2     
+3     3     3     
+4     4     4     
+5     5     5     
+6     6     6     
+7     7     7     
+8     8     8     
+9     9     9     
+10     10     0     
+
 ===================================================
 0
 ===================================================
