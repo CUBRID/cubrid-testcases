@@ -12,10 +12,10 @@
 0
 ===================================================
 a    a.p    
-dba.t1     1     
-dba.t1     1     
-dba.t1     2     
-dba.t1     2     
+dba.tbl     1     
+dba.tbl     1     
+dba.tbl     2     
+dba.tbl     2     
 
 ===================================================
 trace    
@@ -23,29 +23,29 @@ trace
 Query Plan:
   TABLE SCAN (d)
 
-  rewritten query: select d, d.col?, d.col? from [dba.t?] d
+  rewritten query: select d, d.x, d.y from [dba.tbl] d
 
   TABLE SCAN (d)
 
-  rewritten query: select d, d.col?, d.col? from [dba.t?] d
+  rewritten query: select d, d.x, d.y from [dba.tbl] d
 
   TABLE SCAN (d)
 
-  rewritten query: (select d from (select d, d.col?, d.col? from [dba.t?] d union all select d, d.col?, d.col? from [dba.t?] d) d (d, p, q))
+  rewritten query: (select d from (select d, d.x, d.y from [dba.tbl] d union all select d, d.x, d.y from [dba.tbl] d) d (d, p, q))
 
-  TABLE SCAN (dba.v_t?)
+  TABLE SCAN (dba.v_tbl)
 
-  rewritten query: select [dba.v_t?].col?, [dba.v_t?] from [dba.t?] [dba.v_t?]
+  rewritten query: select [dba.v_tbl].x, [dba.v_tbl] from [dba.tbl] [dba.v_tbl]
 
-  TABLE SCAN (dba.v_t?)
+  TABLE SCAN (dba.v_tbl)
 
-  rewritten query: select [dba.v_t?].col?, [dba.v_t?] from [dba.t?] [dba.v_t?]
+  rewritten query: select [dba.v_tbl].x, [dba.v_tbl] from [dba.tbl] [dba.v_tbl]
 
   NESTED LOOPS (left outer join)
     TABLE SCAN (t)
-    TABLE SCAN (dba.v_t?)
+    TABLE SCAN (dba.v_tbl)
 
-  rewritten query: select t.a, t.a.p from table(set((select d from (select d, d.col?, d.col? from [dba.t?] d union all select d, d.col?, d.col? from [dba.t?] d) d (d, p, q)))) t (a)
+  rewritten query: select t.a, t.a.p from table(set((select d from (select d, d.x, d.y from [dba.tbl] d union all select d, d.x, d.y from [dba.tbl] d) d (d, p, q)))) t (a)
 
 
 Trace Statistics:
@@ -57,9 +57,9 @@ Trace Statistics:
         SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
           UNION
             SELECT (time: ?, fetch: ?, ioread: ?)
-              SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
             SELECT (time: ?, fetch: ?, ioread: ?)
-              SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
