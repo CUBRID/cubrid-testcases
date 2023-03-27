@@ -2,7 +2,7 @@
 -- Result error of order by limit statement in join query using USE_DESC_IDX hint.
 -- Incorrect results releate to 'skip ORDER BY',
 -- Incorrect results related to MRO (Multi Range Optimization) will be covered in this issue.
--- Core dump in "Additional information" will be covered in a separate issue.
+-- Core dump will be covered in a separate issue.
 
 
 -- Incorrect results releate to 'skip ORDER BY'
