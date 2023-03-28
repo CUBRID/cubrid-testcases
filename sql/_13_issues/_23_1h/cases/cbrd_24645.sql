@@ -17,7 +17,11 @@ select /*+ recompile */ rownum, x from (select x, y from tbl where x > 0 order b
 
 --order by skip
 create index idx on tbl(x);
+select /*+ recompile */ rownum, x, y from tbl where x > 0 order by x;
 select /*+ recompile */ rownum, x from (select x, y from tbl where x > 0 order by x) a;
+-- order by not skiped
+select /*+ recompile */ rownum, x, y from tbl where x > 0 order by 3;
+select /*+ recompile */ rownum, x, y from tbl where x > 0 order by y;
 select /*+ recompile */ rownum, x from (select x, y from tbl where x > 0 order by y) a;
 select /*+ recompile */ rownum, x from (select x, y from tbl where x > 0 order by 2) a;
 
