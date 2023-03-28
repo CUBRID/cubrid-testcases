@@ -77,7 +77,6 @@ COLLATE utf8_bin
 INSERT INTO TB_STATS_DOWNLOAD_UPDATE 
 SELECT ROWNUM, ROWNUM, rownum%10, ROWNUM, rownum%100, ROWNUM, ROWNUM, '20230322', SYSDATE, 'a', ROWNUM, ROWNUM, ROWNUM FROM db_class a, db_class b;
 
-
 INSERT INTO TB_SCHOOL
 SELECT rownum, '02', '02', '02', '02', '02', '02', '02', '02', '02', 'a' FROM db_class a, db_class b;
 
@@ -342,7 +341,7 @@ FROM
 			SUM(NVL("3352", 0)) AS "3352",
 			SUM(NVL("3352_up", 0)) AS "3352_up",
 			SUM(NVL("3353", 0)) AS "3353",			
-                        SUM(NVL("3353_up", 0)) AS "3353_up",
+            SUM(NVL("3353_up", 0)) AS "3353_up",
 			SUM(NVL("3369", 0)) AS "3369",
 			SUM(NVL("3369_up", 0)) AS "3369_up",
 			SUM(NVL("3370", 0)) AS "3370",
@@ -592,7 +591,7 @@ FROM
 			SUM(NVL("3594", 0)) AS "3594",
 			SUM(NVL("3594_up", 0)) AS "3594_up",
 			SUM(NVL("3595", 0)) AS "3595",			
-                        SUM(NVL("3595_up", 0)) AS "3595_up",
+            SUM(NVL("3595_up", 0)) AS "3595_up",
 			SUM(NVL("3596", 0)) AS "3596",
 			SUM(NVL("3596_up", 0)) AS "3596_up",
 			SUM(NVL("3597", 0)) AS "3597",
@@ -710,12 +709,14 @@ FROM
 							NVL(SUM("2617_up"), 0) AS "2617_up",
 							NVL(SUM("2625"), 0) AS "2625",
 							NVL(SUM("2625_up"), 0) AS "2625_up",
-							NVL(SUM("2631"), 0) AS "2631",							NVL(SUM("2631_up"), 0) AS "2631_up",
+							NVL(SUM("2631"), 0) AS "2631",							
+                            NVL(SUM("2631_up"), 0) AS "2631_up",
 							NVL(SUM("2632"), 0) AS "2632",
 							NVL(SUM("2632_up"), 0) AS "2632_up",
 							NVL(SUM("2633"), 0) AS "2633",
 							NVL(SUM("2633_up"), 0) AS "2633_up",
-							NVL(SUM("2634"), 0) AS "2634",							NVL(SUM("2634_up"), 0) AS "2634_up",
+							NVL(SUM("2634"), 0) AS "2634",							
+                            NVL(SUM("2634_up"), 0) AS "2634_up",
 							NVL(SUM("2635"), 0) AS "2635",
 							NVL(SUM("2635_up"), 0) AS "2635_up",
 							NVL(SUM("2638"), 0) AS "2638",
@@ -788,7 +789,8 @@ FROM
 							NVL(SUM("2707_up"), 0) AS "2707_up",
 							NVL(SUM("2708"), 0) AS "2708",
 							NVL(SUM("2708_up"), 0) AS "2708_up",
-							NVL(SUM("2710"), 0) AS "2710",							NVL(SUM("2710_up"), 0) AS "2710_up",
+							NVL(SUM("2710"), 0) AS "2710",							
+                            NVL(SUM("2710_up"), 0) AS "2710_up",
 							NVL(SUM("2711"), 0) AS "2711",
 							NVL(SUM("2711_up"), 0) AS "2711_up",
 							NVL(SUM("2719"), 0) AS "2719",
@@ -1293,7 +1295,8 @@ FROM
 									NVL(SUM("2638_up"), 0) AS "2638_up",
 									NVL(SUM("2639"), 0) AS "2639",
 									NVL(SUM("2639_up"), 0) AS "2639_up",
-									NVL(SUM("2640"), 0) AS "2640",									NVL(SUM("2640_up"), 0) AS "2640_up",
+									NVL(SUM("2640"), 0) AS "2640",									
+                                    NVL(SUM("2640_up"), 0) AS "2640_up",
 									NVL(SUM("2641"), 0) AS "2641",
 									NVL(SUM("2641_up"), 0) AS "2641_up",
 									NVL(SUM("2642"), 0) AS "2642",
