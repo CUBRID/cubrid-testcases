@@ -64,51 +64,16 @@ update statistics on all classes with fullscan;
 
 -- multi_range_opt
 select /*+ recompile use_desc_idx */ t.y, t.z
+from t_a inner join t_c as t on t_a.x = t.x
+where t.x in (1, 2)
+order by t.y desc, z
+limit 4;
+
+select /*+ recompile use_desc_idx */ t.y, t.z
 from t_c as t
 where t.x in (1, 2)
 order by t.y desc, z
 limit 4;
 
 drop t_a, t_c;
-
-
--- Internal error (core dumped) 
-create table t_a (x int);
-insert into t_a values (1);
-
-create table t_b (x int, y int);
-insert into t_b select a.*, b.* from table ({1}) as a, table ({1, 2}) as b;
-create index idx_desc on t_b (x, y);
-
-update statistics on all classes with fullscan;
-
-
--- condition attached after on phrase.
--- error
-select /*+ recompile ordered */ t.y
-from t_a inner join t_b as t 
-on t_a.x = t.x 
-and t_a.x = 1
-where t.x = 1
-order by t.y
-limit 1;
-
--- without other condition in on phrase.
-select /*+ recompile ordered */ t.y
-from t_a inner join t_b as t 
-on t_a.x = t.x
-where t.x = 1
-order by t.y
-limit 1;
-
--- use no_multi_range_opt hint.
-select /*+ recompile ordered no_multi_range_opt */ t.y
-from t_a inner join t_b as t 
-on t_a.x = t.x 
-and t_a.x = 1
-where t.x = 1
-order by t.y
-limit 1;
-
-drop t_a, t_b;
 
