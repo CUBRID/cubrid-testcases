@@ -1,34 +1,228 @@
--- This test case verifies CBRD-24645 issue.
--- Rownum of main query is displayed incorrectly.
--- Caused by order-by of subquery is copied to main query during view merging.
--- 'orderby_num()+1' is not supported yet, 
--- expression having rownum such as 'rownum+1' is restricted from view merging.
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+rownum    x    
+1     1     
+2     2     
+3     3     
 
-drop table if exists tbl;
-create table tbl (x int, y int);
-insert into tbl values(3, 10);
-insert into tbl values(2, 20);
-insert into tbl values(1, 30);
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: a node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select (orderby_num()), a.x from tbl a where (a.x> ?:? ) order by ?
+===================================================
+rownum    x    
+1     3     
+2     2     
+3     1     
 
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: a node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select (orderby_num()), a.x, a.y from tbl a where (a.x> ?:? ) order by ?
+===================================================
+rownum    x    
+1     3     
+2     2     
+3     1     
 
-select /*+ recompile */ rownum, x from (select x, y from tbl where x > 0 order by x) a;
-select /*+ recompile */ rownum, x from (select x, y from tbl where x > 0 order by y) a;
-select /*+ recompile */ rownum, x from (select x, y from tbl where x > 0 order by 2) a;
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: a node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select (orderby_num()), a.x, a.y from tbl a where (a.x> ?:? ) order by ?
+===================================================
+0
+===================================================
+rownum    x    y    
+1     1     30     
+2     2     20     
+3     3     10     
 
---order by skip
-create index idx on tbl(x);
-select /*+ recompile */ rownum, x, y from tbl where x > 0 order by x;
-select /*+ recompile */ rownum, x from (select x, y from tbl where x > 0 order by x) a;
--- order by not skiped
-select /*+ recompile */ rownum, x, y from tbl where x > 0 order by 3;
-select /*+ recompile */ rownum, x, y from tbl where x > 0 order by y;
-select /*+ recompile */ rownum, x from (select x, y from tbl where x > 0 order by y) a;
-select /*+ recompile */ rownum, x from (select x, y from tbl where x > 0 order by 2) a;
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select rownum, tbl.x, tbl.y from tbl tbl where (tbl.x> ?:? ) order by ?
+/* ---> skip ORDER BY */
+===================================================
+rownum    x    
+1     1     
+2     2     
+3     3     
 
---not supported yet in view merging.
-drop index idx on tbl;
-select /*+ recompile */ rownum + 1, x from (select x, y from tbl where x > 0 order by x) a;
-select /*+ recompile */ rownum + 1, x from (select x, y from tbl where x > 0 order by y) a;
-select /*+ recompile */ rownum + 1, x from (select x, y from tbl where x > 0 order by 2) a;
+Query plan:
+iscan
+    class: a node[?]
+    index: idx term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select (orderby_num()), a.x from tbl a where (a.x> ?:? ) order by ?
+/* ---> skip ORDER BY */
+===================================================
+rownum    x    y    
+3     3     10     
+2     2     20     
+1     1     30     
 
-drop table tbl; 
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: tbl node[?]
+                 index: idx term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select rownum, tbl.x, tbl.y from tbl tbl where (tbl.x> ?:? ) order by ?
+===================================================
+rownum    x    y    
+3     3     10     
+2     2     20     
+1     1     30     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: tbl node[?]
+                 index: idx term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select rownum, tbl.x, tbl.y from tbl tbl where (tbl.x> ?:? ) order by ?
+===================================================
+rownum    x    
+1     3     
+2     2     
+3     1     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: a node[?]
+                 index: idx term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select (orderby_num()), a.x, a.y from tbl a where (a.x> ?:? ) order by ?
+===================================================
+rownum    x    
+1     3     
+2     2     
+3     1     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: a node[?]
+                 index: idx term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select (orderby_num()), a.x, a.y from tbl a where (a.x> ?:? ) order by ?
+===================================================
+0
+===================================================
+rownum+1    x    
+2     1     
+3     2     
+4     3     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tbl node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select tbl.x from tbl tbl where (tbl.x> ?:? ) order by ?)
+Query plan:
+sscan
+    class: a node[?]
+    cost:  ? card ?
+Query stmt:
+select rownum+ cast(? as bigint), a.x from (select tbl.x from tbl tbl where (tbl.x> ?:? ) order by ?) a (x)
+===================================================
+rownum+1    x    
+2     3     
+3     2     
+4     1     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tbl node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select tbl.x, tbl.y from tbl tbl where (tbl.x> ?:? ) order by ?)
+Query plan:
+sscan
+    class: a node[?]
+    cost:  ? card ?
+Query stmt:
+select rownum+ cast(? as bigint), a.x from (select tbl.x, tbl.y from tbl tbl where (tbl.x> ?:? ) order by ?) a (x, y)
+===================================================
+rownum+1    x    
+2     3     
+3     2     
+4     1     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tbl node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select tbl.x, tbl.y from tbl tbl where (tbl.x> ?:? ) order by ?)
+Query plan:
+sscan
+    class: a node[?]
+    cost:  ? card ?
+Query stmt:
+select rownum+ cast(? as bigint), a.x from (select tbl.x, tbl.y from tbl tbl where (tbl.x> ?:? ) order by ?) a (x, y)
+===================================================
+0
