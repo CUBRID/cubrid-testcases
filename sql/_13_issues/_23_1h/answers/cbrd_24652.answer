@@ -1,0 +1,70 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+0
+===================================================
+a    a.p    
+dba.tbl     1     
+dba.tbl     1     
+dba.tbl     2     
+dba.tbl     2     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (d)
+
+  rewritten query: select d, d.x, d.y from [dba.tbl] d
+
+  TABLE SCAN (d)
+
+  rewritten query: select d, d.x, d.y from [dba.tbl] d
+
+  TABLE SCAN (d)
+
+  rewritten query: (select d from (select d, d.x, d.y from [dba.tbl] d union all select d, d.x, d.y from [dba.tbl] d) d (d, p, q))
+
+  TABLE SCAN (dba.v_tbl)
+
+  rewritten query: select [dba.v_tbl].x, [dba.v_tbl] from [dba.tbl] [dba.v_tbl]
+
+  TABLE SCAN (dba.v_tbl)
+
+  rewritten query: select [dba.v_tbl].x, [dba.v_tbl] from [dba.tbl] [dba.v_tbl]
+
+  NESTED LOOPS (left outer join)
+    TABLE SCAN (t)
+    TABLE SCAN (dba.v_tbl)
+
+  rewritten query: select t.a, t.a.p from table(set((select d from (select d, d.x, d.y from [dba.tbl] d union all select d, d.x, d.y from [dba.tbl] d) d (d, p, q)))) t (a)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (set time: ?, fetch: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          UNION
+            SELECT (time: ?, fetch: ?, ioread: ?)
+              SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SELECT (time: ?, fetch: ?, ioread: ?)
+              SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
