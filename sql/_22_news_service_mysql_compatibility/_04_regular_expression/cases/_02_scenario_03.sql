@@ -1,3 +1,6 @@
+-- CBRD-24563 : default regexp library change from cppstd to RE2
+set system parameters 'regexp_engine=cppstd';
+
 create table t1(id   INTEGER NOT NULL, code CHARACTER VARYING(22) NOT NULL) partition by hash(id) partitions 3;
 insert into t1 values(82,'SO51700');
 insert into t1 values(281,'\tabcabc\t\t');
@@ -44,3 +47,6 @@ select (s.next_value rlike '^[0-9]$');
 drop serial s;
 drop table t1;
 drop table t2;
+
+set system parameters 'regexp_engine=default';
+

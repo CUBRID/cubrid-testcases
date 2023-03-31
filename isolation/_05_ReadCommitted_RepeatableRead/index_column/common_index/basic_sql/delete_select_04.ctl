@@ -26,6 +26,7 @@ C1: CREATE TABLE tb1( id INT, col VARCHAR(10) );
 C1: INSERT INTO tb1 SELECT rownum,mod(rownum,100) FROM db_class a,db_class b where rownum<=500;
 C1: CREATE INDEX idx_id on tb1(col);
 C1: CREATE INDEX idx_col on tb1(id);
+C1: update statistics on tb1;
 C1: commit work;
 MC: wait until C1 ready;
 

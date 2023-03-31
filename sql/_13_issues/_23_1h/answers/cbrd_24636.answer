@@ -1,0 +1,161 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+0
+===================================================
+y    
+4     
+3     
+2     
+1     
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: t node[?]
+               index: idx_asc term[?] (covers) (desc_index)
+               cost:  ? card ?
+    inner: sscan
+               class: t_a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_DESC_IDX */ t.y from t_a t_a, t_b t where t_a.x= ?:?  and t.x= ?:?  and t_a.x=t.x order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+y    
+4     
+3     
+2     
+1     
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: t node[?]
+               index: idx_desc term[?] (covers)
+               cost:  ? card ?
+    inner: sscan
+               class: t_a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.y from t_a t_a, t_b t where t_a.x= ?:?  and t.x= ?:?  and t_a.x=t.x using index t.idx_desc(+) order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+y    
+4     
+3     
+2     
+1     
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: t node[?]
+               index: idx_desc term[?] (covers)
+               cost:  ? card ?
+    inner: sscan
+               class: t_a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.y from t_a t_a, t_c t where t_a.x= ?:?  and t.x= ?:?  and t_a.x=t.x order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+y    
+4     
+3     
+2     
+1     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: t_a node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t node[?]
+                            index: idx_desc term[?] (covers) (desc_index forced)
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_DESC_IDX */ t.y from t_a t_a inner join t_c t on t_a.x=t.x and t_a.x= ?:?  where t.x= ?:?  order by ? desc 
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+8
+===================================================
+0
+===================================================
+0
+===================================================
+y    z    
+2     1     
+2     2     
+2     3     
+2     4     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: t_a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t node[?]
+               index: idx_desc term[?] (covers) (multi_range_opt)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select t.y, t.z from t_a t_a, t_c t where ((t.x= ?:? ) or (t.x= ?:? )) and t_a.x=t.x order by ? desc , ? for orderby_num()<= ?:? 
+===================================================
+y    z    
+2     1     
+2     2     
+2     3     
+2     4     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx_desc term[?] (covers) (multi_range_opt)
+    cost:  ? card ?
+Query stmt:
+select t.y, t.z from t_c t where ((t.x= ?:? ) or (t.x= ?:? )) order by ? desc , ? for orderby_num()<= ?:? 
+===================================================
+0

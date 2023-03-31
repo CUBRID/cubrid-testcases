@@ -13,6 +13,9 @@ CREATE UNIQUE INDEX idx
   ON t(c_a, c_b);
 CREATE INDEX idx_a
   ON t(c_a, c_c);
+
+update statistics on t;
+
 --right outer join?? ==> to_do
 SELECT /*+ recompile */ count(1)
 FROM   t a

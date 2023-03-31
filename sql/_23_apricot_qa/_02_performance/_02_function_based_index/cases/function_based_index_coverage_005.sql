@@ -12,10 +12,12 @@ SHOW INDEXES FROM t1;
 --Test
 alter table t1 change column d newd double;
 
+update statistics on t1;
 SHOW INDEXES FROM t1;
 --Test
 alter table t1 change column i newi int;
 
+update statistics on t1;
 SHOW INDEXES FROM t1;
 --Test
 select /*+ recompile */ * from t1 where sqrt(newd) > 5;

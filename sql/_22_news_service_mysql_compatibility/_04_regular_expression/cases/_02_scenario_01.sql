@@ -1,3 +1,6 @@
+-- CBRD-24563 : default regexp library change from cppstd to RE2
+set system parameters 'regexp_engine=cppstd';
+
 create table part01(id int,d date,t time,f float,s varchar(12),m monetary,b bit) partition by hash(s) partitions 4;
 
 insert into part01 values(1002,'2010-01-01','01:00:00',-0.8,'abc',$3.55,B'1');
@@ -30,3 +33,6 @@ select id, d, t, f||'' f, s, m, b from part01 where s regexp binary '^[A-Z]{2,6}
 select id, d, t, f||'' f, s, m, b from part01 where s regexp '^[A-Z]{2,6}' order by 1,2,3,4,5,6,7; 
 
 drop table part01;
+
+set system parameters 'regexp_engine=default';
+

@@ -40,6 +40,7 @@ C2: drop INDEX idx_col on tb1;
 MC: wait until C2 blocked;
 C1: commit;
 MC: wait until C2 ready;
+C2: update statistics on tb1;
 C2: show index from tb1;
 C2: update tb1 set id=id+500,col='updated' where id in ('2','9','10');
 C2: commit;

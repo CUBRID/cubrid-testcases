@@ -40,6 +40,7 @@ C1: rollback;
 
 MC: wait until C2 ready;
 C2: commit work;
+C1: update statistics on tb1;
 C1: show index from tb1;
 C2: commit;
 

@@ -1,0 +1,72 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+a    b    
+5     5     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.a, t.b from t t where (t.a> ?:?  and t.a< ?:? ) and (t.b> ?:?  and t.b< ?:? ) group by t.a, t.b
+/* ---> skip GROUP BY */
+===================================================
+b    
+5     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_all (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t.b from t t where (t.b> ?:?  and t.b< ?:? ) group by t.b
+===================================================
+0
+===================================================
+0
+===================================================
+5000
+===================================================
+1
+===================================================
+0
+===================================================
+a    
+9     
+8     
+7     
+6     
+5     
+4     
+3     
+2     
+1     
+null     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_all (covers) (loose index scan on prefix ?) (desc_index)
+    filtr: term[?]
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t?.a from t? t? where (t?.c> ?:? ) group by t?.a desc 
+/* ---> skip GROUP BY */
+===================================================
+0

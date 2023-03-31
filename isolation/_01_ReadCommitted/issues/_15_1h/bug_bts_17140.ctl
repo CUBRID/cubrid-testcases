@@ -39,7 +39,8 @@ C1: commit work;
 MC: wait until C1 ready;
 
 MC: wait until C2 ready;
-C2: SELECT * FROM tb1 order by 1,2; 
+C2: SELECT * FROM tb1 order by 1,2;
+C2: update statistics on tb1;
 C2: show index from tb1;
 C2: commit work;
 MC: wait until C2 ready;
@@ -75,6 +76,7 @@ C1: commit work;
 
 MC: wait until C2 ready;
 C2: SELECT * FROM tb1 order by 1,2; 
+C2: update statistics on tb1;
 C2: show index from tb1;
 C2: commit work;
 MC: wait until C2 ready;

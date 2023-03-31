@@ -36,7 +36,7 @@ MC: wait until C1 ready;
 
 /* test case */
 C1: set @newincr=0;
-C1: insert into t select (@newincr:=@newincr+1),concat((@newincr),'a') from (select sleep(1)) x, t where id>0 limit 3;
+C1: insert into t select (@newincr:=@newincr+1),concat((@newincr),'a') from t where id>0 and (select sleep(1)=0)<>0 limit 3;
 C2: update t set col=concat(col,'a') where id>0;
 MC: wait until C1 blocked;
 MC: wait until C2 ready;

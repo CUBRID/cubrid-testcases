@@ -72,31 +72,39 @@ C1: commit;
 MC: wait until C1 ready;
 
 MC: wait until C2 ready;
+C1: update statistics on t2;
+C2: update statistics on t2;
 C2: show indexes from t2;
 C2: commit;
 
 MC: wait until C3 ready;
+C3: update statistics on t2;
 C3: show indexes from t2;
 C3: commit;
 
 MC: wait until C4 ready;
+C4: update statistics on t2;
 C4: show indexes from t2;
 C4: commit;
 
 MC: wait until C5 ready;
+C5: update statistics on t2;
 C5: show indexes from t2;
 C5: commit;
 
 MC: wait until C6 ready;
+C6: update statistics on t2;
 C6: show indexes from t2;
 C6: commit;
 
 MC: wait until C7 ready;
+C7: update statistics on t2;
 C7: show indexes from t2;
 C7: commit;
 
 
 MC: wait until C8 ready;
+C8: update statistics on t2;
 C8: show indexes from t2;
 C8: commit;
 

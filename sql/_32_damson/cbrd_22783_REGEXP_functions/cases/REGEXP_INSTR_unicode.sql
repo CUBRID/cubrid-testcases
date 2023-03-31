@@ -1,3 +1,6 @@
+-- CBRD-24563 : default regexp library change from cppstd to RE2
+set system parameters 'regexp_engine=cppstd';
+
 --REGEXP_INSTR
 SET NAMES utf8 COLLATE utf8_ko_cs;
 SELECT REGEXP_INSTR('삼성로 86길, 강남구, 서울특별시', ',[^,]+,', 1, 1);
@@ -9,4 +12,7 @@ SELECT REGEXP_INSTR ('가나다라' COLLATE utf8_ko_cs,  _utf8' [த]' COLLATE u
 
 SET NAMES iso88591;
 SELECT REGEXP_INSTR('Kłak Aleksander', '[[:alpha:]]+', 1, 1);
+
+
+set system parameters 'regexp_engine=default';
 
