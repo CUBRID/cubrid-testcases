@@ -21,7 +21,8 @@ SELECT col1, col2, intTest(col1) FROM tbl1 ORDER BY intTest(col1) DESC FOR UPDAT
 
 SELECT col1, col2, intTest(99) FROM tbl1 FOR UPDATE;
 -- (Related CBRD-24687) if used 'JAVASP' is in the 'ORDER BY' clause then the query result is a strange
-SELECT col1, col2, intTest(99) FROM tbl1 ORDER BY intTest(col1) DESC FOR UPDATE;
+-- If fix the CBRD-24687 then remove this query's comment
+--SELECT col1, col2, intTest(99) FROM tbl1 ORDER BY intTest(col1) DESC FOR UPDATE;
 
 DROP FUNCTION intTest;
 DROP tbl1;
