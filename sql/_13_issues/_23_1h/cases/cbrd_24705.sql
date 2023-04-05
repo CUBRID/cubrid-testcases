@@ -1,0 +1,29 @@
+-- This test case verifies CBRD-24705 issue.
+-- When attempting a covered index scan in a connect by query,
+-- encountering 'Execute: Query execution failure'.
+
+DROP TABLE IF EXISTS T1;
+
+CREATE TABLE T1 (P1 INT, C1 INT, C2 VARCHAR);
+CREATE INDEX I1 ON T1 (P1, C1, C2);
+INSERT INTO T1 VALUES (0, 1, 'A');
+INSERT INTO T1 VALUES (1, 2, 'B');
+
+SELECT /*+ RECOMPILE */ C1, C2 AS PATH
+FROM T1
+START WITH P1 = 0
+CONNECT BY PRIOR C1 = P1;
+
+INSERT INTO T1 VALUES (2, 3, 'C');
+SELECT /*+ RECOMPILE */ C1, C2 AS PATH
+FROM T1
+START WITH P1 = 0
+CONNECT BY PRIOR C1 = P1;
+
+SELECT /*+ RECOMPILE NO_COVERING_IDX */ C1, C2 AS PATH
+FROM T1
+START WITH P1 = 0
+CONNECT BY PRIOR C1 = P1;
+
+
+DROP TABLE T1;
