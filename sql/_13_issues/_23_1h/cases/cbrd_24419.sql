@@ -867,3 +867,5 @@ drop user u3_1;
 drop user u4;
 drop user u5;
 drop user u6;
+
+set system parameters 'create_table_reuseoid=yes';
