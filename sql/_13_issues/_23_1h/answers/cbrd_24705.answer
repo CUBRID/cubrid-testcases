@@ -1,0 +1,52 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+x    PATH    
+1     A     
+2     B     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select tbl.x, tbl.y from tbl tbl start with tbl.p= ?:?  connect by  prior tbl.x=tbl.p
+===================================================
+1
+===================================================
+x    PATH    
+1     A     
+2     B     
+3     C     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select tbl.x, tbl.y from tbl tbl start with tbl.p= ?:?  connect by  prior tbl.x=tbl.p
+===================================================
+x    PATH    
+1     A     
+2     B     
+3     C     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_COVERING_IDX */ tbl.x, tbl.y from tbl tbl start with tbl.p= ?:?  connect by  prior tbl.x=tbl.p
+===================================================
+0
