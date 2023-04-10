@@ -54,7 +54,9 @@ select * from t1 order by 1,2;
 
 drop table t1;
 
-
+-- This issue also verifies CBRD-24638.
+-- Column default value problem when altering column type.
+-- Altering default value column is allowed.
 -- loosing 'DEFAULT' -- column is added after table creation
 create table t1 ( i1 integer );
 insert into t1 values (0);

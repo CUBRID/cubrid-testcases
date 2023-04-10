@@ -1,3 +1,7 @@
+-- This issue also verifies CBRD-24638.
+-- Column default value problem when altering column type.
+-- Altering default value column is allowed.
+
 drop table if exists stu;
 create table stu(id int,addr varchar(200)) comment 'this table store the student information';
 show full columns from stu;
