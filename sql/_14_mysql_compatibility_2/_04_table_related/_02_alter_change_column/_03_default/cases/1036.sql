@@ -6,7 +6,9 @@
 -- other :
 
 
-
+-- This issue also verifies CBRD-24638.
+-- Column default value problem when altering column type.
+-- Altering default value column is allowed.
 --  check update of 'DEFAULT' original value    - column is added with alter
 create table t1 ( i1 integer );
 

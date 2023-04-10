@@ -1,5 +1,9 @@
 ---- ALTER TABLE ...  CHANGE COLUMN .., CHANGE COLUMN ..., MODIFY COLUMN ....
 -- same attribute changed
+-- This issue also verifies CBRD-24638.
+-- Column default value problem when altering column type.
+-- Altering default value column is allowed.
+
 
 create table t1 class attribute (c_i int) (i1 integer, i2 integer, i3 integer);
 update t1 set class t1.c_i=3;
