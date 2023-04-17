@@ -1,0 +1,53 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+0
+===================================================
+y    
+1     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: t_a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t node[?]
+               index: idx_desc term[?] (covers) (multi_range_opt)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ t.y from t_a t_a inner join t_b t on t_a.x=t.x and t_a.x= ?:?  where t.x= ?:?  order by ? for orderby_num()<= ?:? 
+===================================================
+y    
+1     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: t_a node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t node[?]
+                            index: idx_desc term[?] (covers)
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_MULTI_RANGE_OPT */ t.y from t_a t_a inner join t_b t on t_a.x=t.x and t_a.x= ?:?  where t.x= ?:?  order by ? for orderby_num()<= ?:? 
+===================================================
+0
