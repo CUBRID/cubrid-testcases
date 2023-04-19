@@ -1,4 +1,4 @@
--- This test case verifies CBRD-24705 issue.
+-- This test case verifies CBRD-24772 issue.
 -- A segfault occurs when using the connect by REGEXP_SUBSTR statement
 
 select 1
