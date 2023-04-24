@@ -66,7 +66,7 @@ dba.t2_c_keyword     CREATE TABLE [t2_c_keyword] ([references] INTEGER, [restric
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.t2_d     CREATE TABLE [t2_d] ([id] INTEGER NOT NULL, [name] CHARACTER VARYING(10) NOT NULL,  CONSTRAINT [pk_id] PRIMARY KEY  ([id]),  CONSTRAINT [fk_id] FOREIGN KEY  ([id]) REFERENCES [dba.t2_d] ([id]) ON DELETE CASCADE ON UPDATE RESTRICT) REUSE_OID, COLLATE iso88591_bin     
+dba.t2_d     CREATE TABLE [t2_d] ([id] INTEGER NOT NULL, [name] CHARACTER VARYING(10) NOT NULL,  CONSTRAINT [pk_id] PRIMARY KEY  ([id]),  CONSTRAINT [fk_id] FOREIGN KEY  ([id]) DEDUPLICATE_KEY OFF REFERENCES [dba.t2_d] ([id]) ON DELETE CASCADE ON UPDATE RESTRICT) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -74,7 +74,7 @@ dba.t2_d     CREATE TABLE [t2_d] ([id] INTEGER NOT NULL, [name] CHARACTER VARYIN
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.t2_d_keyword     CREATE TABLE [t2_d_keyword] ([not] INTEGER NOT NULL, [null] CHARACTER VARYING(10) NOT NULL,  CONSTRAINT [key] PRIMARY KEY  ([not]),  CONSTRAINT [delete] FOREIGN KEY  ([not]) REFERENCES [dba.t2_d_keyword] ([not]) ON DELETE CASCADE ON UPDATE RESTRICT) REUSE_OID, COLLATE iso88591_bin     
+dba.t2_d_keyword     CREATE TABLE [t2_d_keyword] ([not] INTEGER NOT NULL, [null] CHARACTER VARYING(10) NOT NULL,  CONSTRAINT [key] PRIMARY KEY  ([not]),  CONSTRAINT [delete] FOREIGN KEY  ([not]) DEDUPLICATE_KEY OFF REFERENCES [dba.t2_d_keyword] ([not]) ON DELETE CASCADE ON UPDATE RESTRICT) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -82,7 +82,7 @@ dba.t2_d_keyword     CREATE TABLE [t2_d_keyword] ([not] INTEGER NOT NULL, [null]
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.t2_e     CREATE TABLE [t2_e] ([id] INTEGER, [phone] CHARACTER VARYING(1073741823),  INDEX [idx] ([id] DESC, [phone])) REUSE_OID, COLLATE iso88591_bin     
+dba.t2_e     CREATE TABLE [t2_e] ([id] INTEGER, [phone] CHARACTER VARYING(1073741823),  INDEX [idx] ([id] DESC, [phone]) DEDUPLICATE_KEY OFF) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -90,7 +90,7 @@ dba.t2_e     CREATE TABLE [t2_e] ([id] INTEGER, [phone] CHARACTER VARYING(107374
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.t2_e_keyword     CREATE TABLE [t2_e_keyword] ([unique] INTEGER, [on] CHARACTER VARYING(1073741823),  INDEX [index] ([unique] DESC, [on])) REUSE_OID, COLLATE iso88591_bin     
+dba.t2_e_keyword     CREATE TABLE [t2_e_keyword] ([unique] INTEGER, [on] CHARACTER VARYING(1073741823),  INDEX [index] ([unique] DESC, [on]) DEDUPLICATE_KEY OFF) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -102,7 +102,7 @@ dba.t2_e_keyword     CREATE TABLE [t2_e_keyword] ([unique] INTEGER, [on] CHARACT
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.t2_f_keyword     CREATE TABLE [t2_f_keyword] ([delete] INTEGER, [foreign] INTEGER,  CONSTRAINT [index] UNIQUE KEY  ([foreign] DESC),  INDEX [create] ([delete] DESC)) REUSE_OID, COLLATE iso88591_bin     
+dba.t2_f_keyword     CREATE TABLE [t2_f_keyword] ([delete] INTEGER, [foreign] INTEGER,  CONSTRAINT [index] UNIQUE KEY  ([foreign] DESC),  INDEX [create] ([delete] DESC) DEDUPLICATE_KEY OFF) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -390,7 +390,7 @@ null
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.filter_t     CREATE TABLE [filter_t] ([a] INTEGER,  INDEX [index_filter] ([a]) WHERE [dba.filter_t].a>10) REUSE_OID, COLLATE iso88591_bin     
+dba.filter_t     CREATE TABLE [filter_t] ([a] INTEGER,  INDEX [index_filter] ([a]) WHERE [dba.filter_t].a>10 DEDUPLICATE_KEY OFF) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -400,7 +400,7 @@ dba.filter_t     CREATE TABLE [filter_t] ([a] INTEGER,  INDEX [index_filter] ([a
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.CREATE     CREATE TABLE [create] ([int] INTEGER,  INDEX [filter_create_a] ([int]) WHERE [dba.CREATE].[INT]>10) REUSE_OID, COLLATE iso88591_bin     
+dba.CREATE     CREATE TABLE [create] ([int] INTEGER,  INDEX [filter_create_a] ([int]) WHERE [dba.CREATE].[INT]>10 DEDUPLICATE_KEY OFF) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -410,7 +410,7 @@ dba.CREATE     CREATE TABLE [create] ([int] INTEGER,  INDEX [filter_create_a] ([
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.filter_b     CREATE TABLE [filter_b] ([col] CHARACTER(10),  INDEX [filter_b_idx] ([col]) WHERE  lower([dba.filter_b].col)>_iso88591'a' collate iso88591_bin) REUSE_OID, COLLATE iso88591_bin     
+dba.filter_b     CREATE TABLE [filter_b] ([col] CHARACTER(10),  INDEX [filter_b_idx] ([col]) WHERE  lower([dba.filter_b].col)>_iso88591'a' collate iso88591_bin DEDUPLICATE_KEY OFF) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -424,7 +424,7 @@ dba.filter_b     CREATE TABLE [filter_b] ([col] CHARACTER(10),  INDEX [filter_b_
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.func_t     CREATE TABLE [func_t] ([col] INTEGER,  INDEX [index_func] ( mod([dba.func_t].[col], 3))) REUSE_OID, COLLATE iso88591_bin     
+dba.func_t     CREATE TABLE [func_t] ([col] INTEGER,  INDEX [index_func] ( mod([dba.func_t].[col], 3)) DEDUPLICATE_KEY OFF) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -434,7 +434,7 @@ dba.func_t     CREATE TABLE [func_t] ([col] INTEGER,  INDEX [index_func] ( mod([
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.ALTER     CREATE TABLE [alter] ([int] INTEGER,  INDEX [index_alter] ( mod([dba.ALTER].[INT], 3))) REUSE_OID, COLLATE iso88591_bin     
+dba.ALTER     CREATE TABLE [alter] ([int] INTEGER,  INDEX [index_alter] ( mod([dba.ALTER].[INT], 3)) DEDUPLICATE_KEY OFF) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0

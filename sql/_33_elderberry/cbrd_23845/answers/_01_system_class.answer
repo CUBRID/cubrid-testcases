@@ -30,7 +30,7 @@ comment     VARCHAR(2048)     YES          null
 
 ===================================================
 TABLE    CREATE TABLE    
-_db_synonym     CREATE TABLE [_db_synonym] ([unique_name] CHARACTER VARYING(255) NOT NULL, [name] CHARACTER VARYING(255) NOT NULL, [owner] [db_user] NOT NULL, [is_public] INTEGER DEFAULT 0 NOT NULL, [target_unique_name] CHARACTER VARYING(255) NOT NULL, [target_name] CHARACTER VARYING(255) NOT NULL, [target_owner] [db_user] NOT NULL, [comment] CHARACTER VARYING(2048),  CONSTRAINT [pk__db_synonym_unique_name] PRIMARY KEY  ([unique_name]),  INDEX [i__db_synonym_name_owner_is_public] ([name], [owner], [is_public])) DONT_REUSE_OID, COLLATE iso88591_bin     
+_db_synonym     CREATE TABLE [_db_synonym] ([unique_name] CHARACTER VARYING(255) NOT NULL, [name] CHARACTER VARYING(255) NOT NULL, [owner] [db_user] NOT NULL, [is_public] INTEGER DEFAULT 0 NOT NULL, [target_unique_name] CHARACTER VARYING(255) NOT NULL, [target_name] CHARACTER VARYING(255) NOT NULL, [target_owner] [db_user] NOT NULL, [comment] CHARACTER VARYING(2048),  CONSTRAINT [pk__db_synonym_unique_name] PRIMARY KEY  ([unique_name]),  INDEX [i__db_synonym_name_owner_is_public] ([name], [owner], [is_public]) DEDUPLICATE_KEY OFF) DONT_REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 View    Create View    

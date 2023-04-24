@@ -12,7 +12,7 @@ dba.foo     1     i2     1     b     A     0     null     null     YES     BTREE
 
 ===================================================
 TABLE    CREATE TABLE    
-dba.foo     CREATE TABLE [foo] ([a] INTEGER, [b] INTEGER,  INDEX [i2] ([b]) INVISIBLE) REUSE_OID, COLLATE iso88591_bin     
+dba.foo     CREATE TABLE [foo] ([a] INTEGER, [b] INTEGER,  INDEX [i2] ([b]) DEDUPLICATE_KEY OFF INVISIBLE) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -30,7 +30,7 @@ dba.foo     1     i2     1     b     A     0     null     null     YES     BTREE
 
 ===================================================
 TABLE    CREATE TABLE    
-dba.foo     CREATE TABLE [foo] ([a] INTEGER, [b] INTEGER,  INDEX [i2] ([b]),  INDEX [i1] ([a]) INVISIBLE) REUSE_OID, COLLATE iso88591_bin     
+dba.foo     CREATE TABLE [foo] ([a] INTEGER, [b] INTEGER,  INDEX [i2] ([b]) DEDUPLICATE_KEY OFF,  INDEX [i1] ([a]) DEDUPLICATE_KEY OFF INVISIBLE) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -82,7 +82,7 @@ dba.t1     1     k_idx     1     k     A     0     null     null     YES     BTR
 
 ===================================================
 TABLE    CREATE TABLE    
-dba.t1     CREATE TABLE [t1] ([i] INTEGER, [j] INTEGER, [k] INTEGER,  INDEX [i_idx] ([i]) INVISIBLE,  INDEX [j_idx] ([j]) INVISIBLE,  INDEX [k_idx] ([k]) INVISIBLE) REUSE_OID, COLLATE iso88591_bin     
+dba.t1     CREATE TABLE [t1] ([i] INTEGER, [j] INTEGER, [k] INTEGER,  INDEX [i_idx] ([i]) DEDUPLICATE_KEY OFF INVISIBLE,  INDEX [j_idx] ([j]) DEDUPLICATE_KEY OFF INVISIBLE,  INDEX [k_idx] ([k]) DEDUPLICATE_KEY OFF INVISIBLE) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
