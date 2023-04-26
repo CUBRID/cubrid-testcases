@@ -14,11 +14,19 @@ update statistics on tbl;
 
 -- test in
 --@queryplan
+select count(*) from tbl  where a in ( fn_int(1) );
+--@queryplan
+select count(*) from tbl  where a in ( fn_int(1), fn_int(2)  );
+--@queryplan
 select count(*) from tbl  where fn_string(a) in ( 1 );
 --@queryplan
 select count(*) from tbl  where fn_string(a) in ( 1, 2 );
 
 -- test is null, is not null
+select count(*) from tbl  where fn_string(null) is null;
+select count(*) from tbl  where fn_int(1) is null;
+select count(*) from tbl  where fn_string(null) is not null;
+select count(*) from tbl  where fn_int(1) is not null;
 select count(*) from tbl  where fn_string(a) is null;
 select count(*) from tbl  where fn_string(b) is null;
 select count(*) from tbl  where fn_string(a) is not null;
@@ -26,11 +34,21 @@ select count(*) from tbl  where fn_string(b) is not null;
 
 -- test like
 --@queryplan
+select count(*) from tbl  where b like  fn_int(2)||'%';
+select count(*) from tbl  where b like  '%'||fn_int(2)||'%';
+select count(*) from tbl  where b like  '%'||fn_int(2);
+--@queryplan
 select count(*) from tbl  where fn_string(b) like  fn_int(2)||'%';
 select count(*) from tbl  where fn_string(b) like  '%'||fn_int(2)||'%';
 select count(*) from tbl  where fn_string(b) like  '%'||fn_int(2);
 
 
+prepare st from 'select count(*) from tbl  where a in ( fn_int(?) )';
+execute st using 1;
+drop prepare st;
+prepare st from 'select count(*) from tbl  where a in ( fn_int(?), fn_int(?) )';
+execute st using 1, 2;
+drop prepare st;
 prepare st from 'select count(*) from tbl  where fn_string(a) in ( ? )';
 execute st using 1;
 drop prepare st;
@@ -38,6 +56,18 @@ prepare st from 'select count(*) from tbl  where fn_string(a) in ( ?, ? )';
 execute st using 1, 2;
 drop prepare st;
 
+prepare st from 'select count(*) from tbl  where fn_string(?) is null';
+execute st using null;
+drop prepare st;
+prepare st from 'select count(*) from tbl  where fn_int(?) is null';
+execute st using 1;
+drop prepare st;
+prepare st from 'select count(*) from tbl  where fn_string(?) is not null';
+execute st using null;
+drop prepare st;
+prepare st from 'select count(*) from tbl  where fn_int(?) is not null';
+execute st using 1;
+drop prepare st;
 prepare st from 'select count(*) from tbl  where fn_string(a) is null';
 execute st;
 drop prepare st;

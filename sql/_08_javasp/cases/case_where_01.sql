@@ -22,6 +22,11 @@ select * from tbl where a between fn_int(1) and fn_int(10);
 select * from tbl where fn_string(a) between fn_int(1) and fn_int(10);
 
 -- test exists : return true/false
+select * from tbl where fn_string(a) between 1 and 10;
+select * from tbl where a between fn_int(1) and 10;
+select * from tbl where a between 1 and fn_int(10);
+select * from tbl where a between fn_int(1) and fn_int(10);
+select * from tbl where fn_string(a) between fn_int(1) and fn_int(10);
 select /*+ recompile */ count(*) from tbl where exists (select * from tbl where fn_string(a)=1);
 select /*+ recompile */ count(*) from tbl where exists (select * from tbl where fn_string(a)=0);
 select /*+ recompile */ count(*) from tbl where not exists (select * from tbl where fn_string(a)=1);
@@ -39,11 +44,22 @@ drop prepare st;
 prepare st from 'select * from tbl where a between fn_int(?) and fn_int(?)';
 execute st using 1, 10;
 drop prepare st;
--- error : Cannot coerce value of domain "character varying" to domain "double".
 prepare st from 'select * from tbl where fn_string(a) between fn_int(?) and fn_int(?)';
 execute st using 1, 10;
 drop prepare st;
 
+prepare st from 'select count(*) from tbl where exists (select * from db_root where true=fn_int(?))';
+execute st using 1;
+drop prepare st;
+prepare st from 'select count(*) from tbl where exists (select * from db_root where true=fn_int(?))';
+execute st using 0;
+drop prepare st;
+prepare st from 'select count(*) from tbl where not exists (select * from db_root where true=fn_int(?))';
+execute st using 1;
+drop prepare st;
+prepare st from 'select count(*) from tbl where not exists (select * from db_root where true=fn_int(?))';
+execute st using 0;
+drop prepare st;
 prepare st from 'select /*+ recompile */ count(*) from tbl where exists (select * from tbl where fn_string(a)=?)';
 execute st using 1;
 drop prepare st;
