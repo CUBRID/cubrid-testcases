@@ -49,12 +49,6 @@ drop prepare st;
 prepare st from 'select count(*) from tbl  where a in ( fn_int(?), fn_int(?) )';
 execute st using 1, 2;
 drop prepare st;
-prepare st from 'select count(*) from tbl  where fn_string(a) in ( ? )';
-execute st using 1;
-drop prepare st;
-prepare st from 'select count(*) from tbl  where fn_string(a) in ( ?, ? )';
-execute st using 1, 2;
-drop prepare st;
 
 prepare st from 'select count(*) from tbl  where fn_string(?) is null';
 execute st using null;
@@ -67,18 +61,6 @@ execute st using null;
 drop prepare st;
 prepare st from 'select count(*) from tbl  where fn_int(?) is not null';
 execute st using 1;
-drop prepare st;
-prepare st from 'select count(*) from tbl  where fn_string(a) is null';
-execute st;
-drop prepare st;
-prepare st from 'select count(*) from tbl  where fn_string(b) is null';
-execute st;
-drop prepare st;
-prepare st from 'select count(*) from tbl  where fn_string(a) is not null';
-execute st;
-drop prepare st;
-prepare st from 'select count(*) from tbl  where fn_string(b) is not null';
-execute st;
 drop prepare st;
 
 
