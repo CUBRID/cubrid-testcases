@@ -1,0 +1,116 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+count(*)    
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl)
+
+  rewritten query: select count(*) from [dba.tbl] [dba.tbl]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.tbl), (aggregate optimized, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+max(id)    
+999     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl)
+
+  rewritten query: select max([dba.tbl].id) from [dba.tbl] [dba.tbl]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.tbl), (aggregate optimized, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+min(id)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl)
+
+  rewritten query: select min([dba.tbl].id) from [dba.tbl] [dba.tbl]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.tbl), (aggregate optimized, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tbl.pk_tbl_id) (key range: ([dba.tbl].id> ?:? ), covered: true)
+
+  rewritten query: select count(*) from [dba.tbl] [dba.tbl] where ([dba.tbl].id> ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (index: dba.tbl.pk_tbl_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+max(phone)    
+999-999-999     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl)
+
+  rewritten query: select max([dba.tbl].phone) from [dba.tbl] [dba.tbl]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+min(phone)    
+123-456-789     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl)
+
+  rewritten query: select min([dba.tbl].phone) from [dba.tbl] [dba.tbl]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
