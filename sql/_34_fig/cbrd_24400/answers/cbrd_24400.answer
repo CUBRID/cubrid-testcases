@@ -1,0 +1,70 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1500
+===================================================
+2000
+===================================================
+0
+===================================================
+2000
+===================================================
+0
+===================================================
+count(*)    
+3000     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: idx-join (inner join)
+                          outer: idx-join (inner join)
+                                     outer: idx-join (inner join)
+                                                outer: idx-join (inner join)
+                                                           outer: idx-join (inner join)
+                                                                      outer: sscan
+                                                                                 class: v node[?]
+                                                                                 cost:  ? card ?
+                                                                      inner: iscan
+                                                                                 class: u node[?]
+                                                                                 index: fk_u_t term[?] (covers)
+                                                                                 cost:  ? card ?
+                                                                      cost:  ? card ?
+                                                           inner: iscan
+                                                                      class: t node[?]
+                                                                      index: pk_t_i term[?] (covers)
+                                                                      cost:  ? card ?
+                                                           cost:  ? card ?
+                                                inner: iscan
+                                                           class: a node[?]
+                                                           index: pk_t_i term[?] (covers)
+                                                           cost:  ? card ?
+                                                cost:  ? card ?
+                                     inner: iscan
+                                                class: b node[?]
+                                                index: pk_t_i term[?] (covers)
+                                                cost:  ? card ?
+                                     cost:  ? card ?
+                          inner: iscan
+                                     class: c node[?]
+                                     index: pk_t_i term[?] (covers)
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: iscan
+                          class: d node[?]
+                          index: pk_t_i term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: e node[?]
+               index: pk_t_i term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from u u, t t, v v, t a, t b, t c, t d, t e where u.j=t.i and u.j=v.j and t.i=a.i and a.i=b.i and b.i=c.i and c.i=d.i and d.i=e.i
+===================================================
+0
