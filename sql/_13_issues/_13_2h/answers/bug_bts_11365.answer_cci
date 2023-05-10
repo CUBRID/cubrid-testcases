@@ -35,7 +35,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select u.j from t t, u u where t.i=u.i order by ? for orderby_num()<= ?:? 
+select /*+ NO_ELIMINATE_JOIN */ u.j from t t, u u where t.i=u.i order by ? for orderby_num()<= ?:? 
 ===================================================
 j    
 1     
@@ -59,7 +59,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select u.j from t t, u u where t.i=u.i order by ? for orderby_num()<= ?:? 
+select /*+ NO_ELIMINATE_JOIN */ u.j from t t, u u where t.i=u.i order by ? for orderby_num()<= ?:? 
 ===================================================
 0
 ===================================================
@@ -98,7 +98,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select u.j from t t, u u where t.i=u.i order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? + ?:? 
+select /*+ NO_ELIMINATE_JOIN */ u.j from t t, u u where t.i=u.i order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? + ?:? 
 ===================================================
 j    
 3     
@@ -123,7 +123,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select u.j from t t, u u where t.i=u.i order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? + ?:? 
+select /*+ NO_ELIMINATE_JOIN */ u.j from t t, u u where t.i=u.i order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? + ?:? 
 ===================================================
 0
 ===================================================

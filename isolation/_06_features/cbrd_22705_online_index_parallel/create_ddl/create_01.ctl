@@ -16,6 +16,7 @@ C4: set transaction isolation level read committed;
 C1: DROP TABLE IF EXISTS t1;
 C1: create table t1 (a int primary key auto_increment, b int, c char(300));
 C1: insert into t1(b,c) values (1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e'),(6,'f');
+C1: update statistics on t1;
 C1: COMMIT;
 MC: wait until C1 ready;
 
@@ -60,6 +61,7 @@ C1: select sum(set{b}) into :s from t1 ignore index (i) where b > -999 order by 
 C1: select sum(set{b}) into :i from t1 force index (i) where b > -999 order by 1;
 C1: select if (:s = :i, 'OK', 'NOK');
 C1: describe t1;
+C1: update statistics on t1;
 C1: show index from t1;
 MC: wait until C1 ready;
 

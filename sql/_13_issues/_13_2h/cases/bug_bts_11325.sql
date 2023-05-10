@@ -14,10 +14,9 @@ insert into v select rownum, rownum % 1500 + 1, rownum from _db_class a, _db_cla
 
 update statistics on all classes;
 
-select /*+ recompile */ u.k from u, t, v where u.j = t.i and u.j = v.j order by u.k limit 10;
+select /*+ recompile NO_ELIMINATE_JOIN */ u.k from u, t, v where u.j = t.i and u.j = v.j order by u.k limit 10;
 
-select /*+ NO_SORT_LIMIT USE_MERGE */ u.k from u, t, v where u.j = t.i and u.j = v.j order by u.k limit 10;
-
+select /*+ NO_SORT_LIMIT USE_MERGE NO_ELIMINATE_JOIN */ u.k from u, t, v where u.j = t.i and u.j = v.j order by u.k limit 10;
 
 drop table v;
 drop table u;

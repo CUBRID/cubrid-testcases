@@ -1,5 +1,6 @@
 --+ holdcas on;
 set  system parameters 'dont_reuse_heap_file=yes';
+drop table if exists t1;
 create table t1 (i int, d double);
 --Test
 create index idx on t1 (sqrt(d));
@@ -12,10 +13,12 @@ SHOW INDEXES FROM t1;
 --Test
 alter table t1 drop index idx;
 
+update statistics on t1;
 SHOW INDEXES FROM t1;
 --Test
 alter table t1 drop index idx2;
 
+update statistics on t1;
 SHOW INDEXES FROM t1;
 
 drop table t1;

@@ -13,9 +13,9 @@ insert into u select rownum, rownum from _db_class a, _db_class b limit 2000;
 
 update statistics on all classes;
 
-select /*+ recompile */ u.j from t, u where t.i = u.i order by j limit 4;
+select /*+ recompile NO_ELIMINATE_JOIN */ u.j from t, u where t.i = u.i order by j limit 4;
 
-select u.j from t, u where t.i = u.i order by j limit 6;
+select /*+ NO_ELIMINATE_JOIN */ u.j from t, u where t.i = u.i order by j limit 6;
 
 drop table u;
 drop table t;
@@ -30,7 +30,7 @@ insert into u select rownum, rownum from _db_class a, _db_class b limit 2000;
 
 update statistics on all classes;
 
-prepare x from 'select /*+ recompile */ u.j from t, u where t.i = u.i order by j limit ?, ?';
+prepare x from 'select /*+ recompile NO_ELIMINATE_JOIN */ u.j from t, u where t.i = u.i order by j limit ?, ?';
 
 execute x using 0, 3;
 

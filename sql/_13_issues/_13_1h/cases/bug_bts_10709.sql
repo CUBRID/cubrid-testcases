@@ -10,6 +10,7 @@ show index in tbl_1;
 create table tbl_2 (a int);
 insert into tbl_2 values (1), (2), (3);
 create index idxa on tbl_2(a);
+update statistics on tbl_2;
 show index in tbl_2;
 
 
@@ -17,6 +18,7 @@ create table tbl_3 (a int, b int);
 insert into tbl_3 values (1,2), (2,3), (3,4), (4,5), (5,6);
 create index idxa on tbl_3(a);
 create index idxb on tbl_3(b);
+update statistics on tbl_3;
 show index in tbl_3;
 
 drop table tbl_1;

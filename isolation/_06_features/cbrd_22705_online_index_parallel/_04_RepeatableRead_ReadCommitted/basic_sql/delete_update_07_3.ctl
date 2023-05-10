@@ -46,6 +46,7 @@ MC: wait until C3 ready;
 C2: commit;
 MC: wait until C2 ready;
 
+C3: update statistics on t1;
 C3: show index from t1;
 C3: SELECT /*+ recompile */ * FROM t1 where id>0 and col>'A' using index idx1(+);
 C3: SELECT /*+ recompile */ * FROM t1 where id>0 and col>'A' using index none order by id ;

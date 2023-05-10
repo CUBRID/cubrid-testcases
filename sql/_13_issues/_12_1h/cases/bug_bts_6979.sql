@@ -17,6 +17,7 @@ select /*+ recompile */ * from foo where weekday(b) >= 4;
 
 alter table foo drop column b;
 
+update statistics on foo;
 SHOW INDEXES from foo;
 
 insert into foo values ('abc');

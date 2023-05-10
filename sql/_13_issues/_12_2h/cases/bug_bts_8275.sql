@@ -41,6 +41,7 @@ create  INDEX first_name_lower1 on t1(firstname) WHERE LOWER(FirstName)='yin';
 
 ALTER  INDEX first_name_lower on t1(firstname) WHERE LOWER(FirstName)='yin' REBUILD;
 
+update statistics on t1;
 show indexes from t1;
 
 alter  INDEX first_name_lower1 on t1(firstname) REBUILD;
@@ -64,6 +65,7 @@ create  INDEX first_name_lower1 on t1(firstname) WHERE LOWER(FirstName)='yin';
 
 ALTER  INDEX first_name_lower on t1(firstname) WHERE LOWER(FirstName)='yin' REBUILD;
 
+update statistics on t1;
 show indexes from t1;
 
 alter  INDEX first_name_lower1 on t1(firstname) REBUILD;

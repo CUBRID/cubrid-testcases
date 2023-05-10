@@ -1,0 +1,38 @@
+===================================================
+0
+===================================================
+( not '4@Y' regexp '^[XuyY1@]$')    ( not 'vXuy' regexp '[^Xu-yY1@]+$')    ( not 'W' regexp '^[^Xu-yY1@]$')    ( not 'failabcabcabc' not regexp 'fail.(abc)+$')    ( not '3333' not regexp '(33){3,}$')    ( not 'xxx' not regexp '^xx?$')    ( not 'xxa' not regexp 'x*X?(xX)?$')    
+1     1     1     0     0     0     1     
+
+===================================================
+( not '@ul' regexp '^[XuyY1@]$')    ( not 'vAb' regexp '[^Xu-yY1@]+$')    ( not 'a' regexp '^[^Xu-yY1@]$')    ( not 'FailaABC' not regexp 'fail.(abc)+$')    ( not '333433333333' not regexp '(33){2,}$')    ( not 'X' not regexp '^xx?$')    ( not 'xxa' not regexp 'x*X?(xX)+$')    
+1     0     0     1     1     1     0     
+
+===================================================
+( not '@ul' regexp '^([XuyY1@]|ul)$')    ( not 'vAb' regexp '[^Xu-yY1@]|Abv+$')    ( not 'u' regexp '^u|^[^Xu-yY1@]$')    ( not 'FailABC' not regexp 'fail(abc)+|fail.(abc)+$')    ( not '33343' not regexp '33{2,}|(33){2,}$')    ( not 'Xxxxxxxxxx' not regexp '^xxx$|^xx?$')    ( not 'xxa' not regexp '^f+|(xX)+$')    
+1     0     0     1     1     0     0     
+
+===================================================
+( not null regexp '^[XuyY1@]$')    ( not null regexp '[^Xu-yY1@]+$')    ( not 'W' regexp null)    ( not null not regexp 'fail.(abc)+$')    ( not null not regexp '(33){3,}$')    ( not null not regexp '^xx?$')    ( not 'xxa' not regexp null)    
+null     null     null     null     null     null     null     
+
+===================================================
+Error:-494
+===================================================
+('aabbb' regexp 'ab{2,2}$')    
+0     
+
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+('aabbb' regexp 'ab{-1,3}$')    
+0     
+
+===================================================
+('aabbb' regexp 'ab{0,3}$')    
+1     
+
+===================================================
+0

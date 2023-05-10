@@ -1,3 +1,6 @@
+-- CBRD-24563 : default regexp library change from cppstd to RE2
+set system parameters 'regexp_engine=cppstd';
+
 --REGEXP_COUNT
 SET NAMES utf8 COLLATE utf8_ko_cs;
 SELECT REGEXP_COUNT('가나다가나다가나다라', '(가나)다', 1);
@@ -9,4 +12,7 @@ SELECT REGEXP_COUNT('가나다라' COLLATE utf8_ko_cs,  _utf8' [த]' COLLATE ut
 
 SET NAMES iso88591;
 SELECT REGEXP_COUNT('Kłak Aleksander', '[[:alpha:]]+', 1);
+
+
+set system parameters 'regexp_engine=default';
 

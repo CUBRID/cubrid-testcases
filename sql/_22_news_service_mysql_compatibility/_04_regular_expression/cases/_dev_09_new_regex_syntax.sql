@@ -1,3 +1,6 @@
+-- CBRD-24563 : default regexp library change from cppstd to RE2
+set system parameters 'regexp_engine=cppstd';
+
 -- backslash escapes a metacharacter
 select ('^' rlike '[\^\]]');
 select (']' rlike '[\^\]]');
@@ -36,3 +39,6 @@ select ('street'  rlike 't(?=s)');
 
 select ('streets' rlike 't(?!s)');
 select ('sports'  rlike 't(?!s)');
+
+set system parameters 'regexp_engine=default';
+
