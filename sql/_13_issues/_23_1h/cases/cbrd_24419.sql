@@ -170,7 +170,7 @@ create table t3 as subclass of t3_s (c1 int, c3 t3_d, c4 sequence of t3_d) comme
   file '$home/method'
   inherit class m0 of t3_s as m0_s, m1 of t3_s as m1_s, c1 of t3_s as c1_s;
 create table t4 (c1 int primary key, c2 int, c3 varchar(255)) comment 'u0 {dba} > t4';
-create index i1 on t4 (c1, c2) comment 'u0 {dba} > t4 > i1 (index)' invisible;
+create index i1 on t4 (c1, c2) invisible comment 'u0 {dba} > t4 > i1 (index)';
 create index i2 on t4 (c2) where c2 = 0 comment 'u0 {dba} > t4 > i2 (filter)';
 create index i3 on t4 (replace (c3, ' ', '')) comment 'u0 {dba} > t4 > i3 (function)';
 create table t5 (c1 int unique, c2 int) comment 'u0 {dba} > t5';
@@ -209,7 +209,7 @@ create table t3 as subclass of t3_s (c1 int, c3 t3_d, c4 sequence of t3_d) comme
   file '$home/method'
   inherit class m0 of t3_s as m0_s, m1 of t3_s as m1_s, c1 of t3_s as c1_s;
 create table t4 (c1 int primary key, c2 int, c3 varchar(255)) comment 'u1 > t4';
-create index i1 on t4 (c1, c2) comment 'u1 > t4 > i1 (index)' invisible;
+create index i1 on t4 (c1, c2) invisible comment 'u1 > t4 > i1 (index)';
 create index i2 on t4 (c2) where c2 = 0 comment 'u1 > t4 > i2 (filter)';
 create index i3 on t4 (replace (c3, ' ', '')) comment 'u1 > t4 > i3 (function)';
 create table t5 (c1 int unique, c2 int) comment 'u1 > t5';
@@ -248,7 +248,7 @@ create table t3 as subclass of t3_s (c1 int, c3 t3_d, c4 sequence of t3_d) comme
   file '$home/method'
   inherit class m0 of t3_s as m0_s, m1 of t3_s as m1_s, c1 of t3_s as c1_s;
 create table t4 (c1 int primary key, c2 int, c3 varchar(255)) comment 'u1_1 {u1} > t4';
-create index i1 on t4 (c1, c2) comment 'u1_1 {u1} > t4 > i1 (index)' invisible;
+create index i1 on t4 (c1, c2) invisible comment 'u1_1 {u1} > t4 > i1 (index)';
 create index i2 on t4 (c2) where c2 = 0 comment 'u1_1 {u1} > t4 > i2 (filter)';
 create index i3 on t4 (replace (c3, ' ', '')) comment 'u1_1 {u1} > t4 > i3 (function)';
 create table t5 (c1 int unique, c2 int) comment 'u1_1 {u1} > t5';
@@ -287,7 +287,7 @@ create table t3 as subclass of t3_s (c1 int, c3 t3_d, c4 sequence of t3_d) comme
   file '$home/method'
   inherit class m0 of t3_s as m0_s, m1 of t3_s as m1_s, c1 of t3_s as c1_s;
 create table t4 (c1 int primary key, c2 int, c3 varchar(255)) comment 'u2 > t4';
-create index i1 on t4 (c1, c2) comment 'u2 > t4 > i1 (index)' invisible;
+create index i1 on t4 (c1, c2) invisible comment 'u2 > t4 > i1 (index)';
 create index i2 on t4 (c2) where c2 = 0 comment 'u2 > t4 > i2 (filter)';
 create index i3 on t4 (replace (c3, ' ', '')) comment 'u2 > t4 > i3 (function)';
 create table t5 (c1 int unique, c2 int) comment 'u2 > t5';
@@ -326,7 +326,7 @@ create table t3 as subclass of t3_s (c1 int, c3 t3_d, c4 sequence of t3_d) comme
   file '$home/method'
   inherit class m0 of t3_s as m0_s, m1 of t3_s as m1_s, c1 of t3_s as c1_s;
 create table t4 (c1 int primary key, c2 int, c3 varchar(255)) comment 'u2_1 {u2} > t4';
-create index i1 on t4 (c1, c2) comment 'u2_1 {u2} > t4 > i1 (index)' invisible;
+create index i1 on t4 (c1, c2) invisible comment 'u2_1 {u2} > t4 > i1 (index)';
 create index i2 on t4 (c2) where c2 = 0 comment 'u2_1 {u2} > t4 > i2 (filter)';
 create index i3 on t4 (replace (c3, ' ', '')) comment 'u2_1 {u2} > t4 > i3 (function)';
 create table t5 (c1 int unique, c2 int) comment 'u2_1 {u2} > t5';
@@ -365,7 +365,7 @@ create table t3 as subclass of t3_s (c1 int, c3 t3_d, c4 sequence of t3_d) comme
   file '$home/method'
   inherit class m0 of t3_s as m0_s, m1 of t3_s as m1_s, c1 of t3_s as c1_s;
 create table t4 (c1 int primary key, c2 int, c3 varchar(255)) comment 'u3 {u1_1, u2_1} > t4';
-create index i1 on t4 (c1, c2) comment 'u3 {u1_1, u2_1} > t4 > i1 (index)' invisible;
+create index i1 on t4 (c1, c2) invisible comment 'u3 {u1_1, u2_1} > t4 > i1 (index)';
 create index i2 on t4 (c2) where c2 = 0 comment 'u3 {u1_1, u2_1} > t4 > i2 (filter)';
 create index i3 on t4 (replace (c3, ' ', '')) comment 'u3 {u1_1, u2_1} > t4 > i3 (function)';
 create table t5 (c1 int unique, c2 int) comment 'u3 {u1_1, u2_1} > t5';
@@ -404,7 +404,7 @@ create table t3 as subclass of t3_s (c1 int, c3 t3_d, c4 sequence of t3_d) comme
   file '$home/method'
   inherit class m0 of t3_s as m0_s, m1 of t3_s as m1_s, c1 of t3_s as c1_s;
 create table t4 (c1 int primary key, c2 int, c3 varchar(255)) comment 'u3_1 {u3} > t4';
-create index i1 on t4 (c1, c2) comment 'u3_1 {u3} > t4 > i1 (index)' invisible;
+create index i1 on t4 (c1, c2) invisible comment 'u3_1 {u3} > t4 > i1 (index)';
 create index i2 on t4 (c2) where c2 = 0 comment 'u3_1 {u3} > t4 > i2 (filter)';
 create index i3 on t4 (replace (c3, ' ', '')) comment 'u3_1 {u3} > t4 > i3 (function)';
 create table t5 (c1 int unique, c2 int) comment 'u3_1 {u3} > t5';
@@ -443,7 +443,7 @@ create table t3 as subclass of t3_s (c1 int, c3 t3_d, c4 sequence of t3_d) comme
   file '$home/method'
   inherit class m0 of t3_s as m0_s, m1 of t3_s as m1_s, c1 of t3_s as c1_s;
 create table t4 (c1 int primary key, c2 int, c3 varchar(255)) comment 'u4 > t4';
-create index i1 on t4 (c1, c2) comment 'u4 > t4 > i1 (index)' invisible;
+create index i1 on t4 (c1, c2) invisible comment 'u4 > t4 > i1 (index)';
 create index i2 on t4 (c2) where c2 = 0 comment 'u4 > t4 > i2 (filter)';
 create index i3 on t4 (replace (c3, ' ', '')) comment 'u4 > t4 > i3 (function)';
 create table t5 (c1 int unique, c2 int) comment 'u4 > t5';

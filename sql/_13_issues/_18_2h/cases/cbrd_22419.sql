@@ -137,11 +137,11 @@ drop table if exists tbl,tbl2;
 
 CREATE TABLE tbl (a int default 0, b int, c int);
 
-CREATE INDEX i_tbl_b on tbl (b) COMMENT 'index comment for i_tbl_b' with online;
+CREATE INDEX i_tbl_b on tbl (b) with online COMMENT 'index comment for i_tbl_b';
 
 CREATE TABLE tbl2 (a INT, index i_tbl_a (a) COMMENT 'index comment', b INT);
 
-ALTER TABLE tbl2 ADD INDEX i_tbl2_b (b) COMMENT 'index comment b' with online;
+ALTER TABLE tbl2 ADD INDEX i_tbl2_b (b) with online COMMENT 'index comment b';
 
 show index from tbl;
 
