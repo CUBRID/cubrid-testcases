@@ -32,6 +32,22 @@ show indexes from t;
 alter table t add constraint primary key (col_a,col_b);
 show indexes from t;
 
+-- alter table "add column"
+alter table t add column col3 varchar(10) ;
+show indexes from t;
+
+-- alter table "alter column"
+alter table t alter column col3 set default 'qa team' ;
+show indexes from t;
+
+-- alter table "modify"
+alter table t modify col3 varchar(100) ;
+show indexes from t;
+
+-- alter table "drop column"
+alter table t drop column col3 ;
+show indexes from t;
+
 -- update statistics (only update statistics)
 update statistics on t with fullscan;
 --describe t;
