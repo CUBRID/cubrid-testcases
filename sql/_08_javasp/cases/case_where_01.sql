@@ -22,11 +22,10 @@ select * from tbl where a between fn_int(1) and fn_int(10);
 select * from tbl where fn_string(a) between fn_int(1) and fn_int(10);
 
 -- test exists : return true/false
-select * from tbl where fn_string(a) between 1 and 10;
-select * from tbl where a between fn_int(1) and 10;
-select * from tbl where a between 1 and fn_int(10);
-select * from tbl where a between fn_int(1) and fn_int(10);
-select * from tbl where fn_string(a) between fn_int(1) and fn_int(10);
+select count(*) from tbl where exists (select * from dual where true=fn_int(1));
+select count(*) from tbl where exists (select * from dual where true=fn_int(0));
+select count(*) from tbl where not exists (select * from dual where true=fn_int(1));
+select count(*) from tbl where not exists (select * from dual where true=fn_int(0));
 select /*+ recompile */ count(*) from tbl where exists (select * from tbl where fn_string(a)=1);
 select /*+ recompile */ count(*) from tbl where exists (select * from tbl where fn_string(a)=0);
 select /*+ recompile */ count(*) from tbl where not exists (select * from tbl where fn_string(a)=1);

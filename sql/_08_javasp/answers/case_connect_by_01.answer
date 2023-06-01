@@ -23,59 +23,93 @@
 ===================================================
 id    mgrid    name    
 1     null     Kim     
-2     8     Moy     
+2     null     Moy     
 3     1     Jonas     
 4     1     Smith     
-5     2     Verma     
-6     2     Foster     
-7     6     Brown     
-8     7     Brown     
+5     3     Verma     
+6     3     Foster     
+7     2     Brown     
+8     7     Lin     
 
 ===================================================
 id    mgrid    name    
 1     null     Kim     
+2     null     Moy     
 3     1     Jonas     
 4     1     Smith     
+5     3     Verma     
+6     3     Foster     
+7     2     Brown     
+8     7     Lin     
 
 ===================================================
 id    mgrid    name    level    
-3     1     Jonas     2     
-4     1     Smith     2     
 
 ===================================================
 id    mgrid    name    fn_string(connect_by_isleaf)    
 1     null     Kim     null     
+2     null     Moy     null     
 3     1     Jonas     null     
 4     1     Smith     null     
+5     3     Verma     null     
+6     3     Foster     null     
+7     2     Brown     null     
+8     7     Lin     null     
 
+===================================================
+1
 ===================================================
 id    mgrid    name    fn_string(connect_by_iscycle)    
 2     8     Moy     null     
-5     2     Verma     null     
-6     2     Foster     null     
-7     6     Brown     null     
-8     7     Brown     null     
+7     2     Brown     null     
+8     7     Lin     null     
 
+===================================================
+1
 ===================================================
 id    mgrid    name    fn_string( connect_by_root id)    
 1     null     Kim     1     
+2     null     Moy     2     
 3     1     Jonas     1     
 4     1     Smith     1     
+5     3     Verma     1     
+6     3     Foster     1     
+7     2     Brown     2     
+8     7     Lin     2     
 
 ===================================================
 id    mgrid    name    fn_string( prior id)    
 1     null     Kim     null     
+2     null     Moy     null     
 3     1     Jonas     1     
 4     1     Smith     1     
+5     3     Verma     3     
+6     3     Foster     3     
+7     2     Brown     2     
+8     7     Lin     7     
 
 ===================================================
 id    mgrid    name    fn_string( sys_connect_by_path(name, '/'))    
 1     null     Kim     /Kim     
+2     null     Moy     /Moy     
 3     1     Jonas     /Kim/Jonas     
 4     1     Smith     /Kim/Smith     
+5     3     Verma     /Kim/Jonas/Verma     
+6     3     Foster     /Kim/Jonas/Foster     
+7     2     Brown     /Moy/Brown     
+8     7     Lin     /Moy/Brown/Lin     
 
 ===================================================
-Error:-493
+id    mgrid    name    sys_connect_by_path(fn_string(name), '/')    
+1     null     Kim     /Kim     
+2     null     Moy     /Moy     
+3     1     Jonas     /Kim/     
+4     1     Smith     /Kim/     
+5     3     Verma     /Kim//     
+6     3     Foster     /Kim//     
+7     2     Brown     /Moy/     
+8     7     Lin     /Moy//     
+
 ===================================================
 0
 ===================================================
