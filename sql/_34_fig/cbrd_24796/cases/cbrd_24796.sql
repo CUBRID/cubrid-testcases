@@ -11,10 +11,6 @@ create index idx2 on tbl(c2) with online  comment 'visible index';
 create index idx3 on tbl(c3)  invisible  comment 'visible index';
 show index from tbl;
 
-alter index idx2 on tbl comment 'change index comment';
-alter index idx3 on tbl visible;
-show index from tbl;
-
 drop index idx2 on tbl;
 drop index idx3 on tbl;
 
