@@ -21,6 +21,24 @@ SHOW TRACE;
 SELECT MIN(id) FROM tbl;
 SHOW TRACE;
 
+SELECT MIN(id), MAX(id) FROM tbl;
+SHOW TRACE;
+
+SELECT COUNT(id), MAX(id) FROM tbl;
+SHOW TRACE;
+
+SELECT COUNT(id), MIN(id), MAX(id) FROM tbl;
+SHOW TRACE;
+
+SELECT COUNT( * ), MAX(id) FROM tbl;
+SHOW TRACE;
+
+SELECT COUNT( * ), MIN(id) FROM tbl;
+SHOW TRACE;
+
+SELECT COUNT( * ), MIN(id), MAX(id) FROM tbl;
+SHOW TRACE;
+
 -- case 2: for not-optimized-scan
 SELECT COUNT(*) FROM tbl WHERE id > 1;
 SHOW TRACE;
@@ -30,6 +48,7 @@ SHOW TRACE;
 
 SELECT MIN(phone) FROM tbl;
 SHOW TRACE;
+
 
 SET TRACE OFF;
 
