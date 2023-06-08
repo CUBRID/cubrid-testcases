@@ -36,14 +36,17 @@ dba.t1_ai_c1     t1_ai_c1     DBA     t1
 ===================================================
 class_of    unique_name    class_name    owner.name    index_name    func    filter_expression    
 null     dba.t1     t1     DBA     i1_func      abs([dba.t1].[c2])     null     
+null     dba.t1     t1     DBA     i1_func     null     null     
+null     dba.t1     t1     DBA     i2_filter     null     [dba.t1].c3<0     
 null     dba.t1     t1     DBA     i2_filter     null     [dba.t1].c3<0     
 null     dba.t1     t1     DBA     pk_t1_c1     null     null     
 null     dba.t3     t3     DBA     fk_t3_c2     null     null     
+null     dba.t3     t3     DBA     fk_t3_c2     null     null     
 null     dba.t3     t3     DBA     pk_t3_c1     null     null     
 
 ===================================================
 TABLE    CREATE TABLE    
-dba.t3     CREATE TABLE [t3] ([c1] INTEGER NOT NULL, [c2] INTEGER,  CONSTRAINT [pk_t3_c1] PRIMARY KEY  ([c1]),  CONSTRAINT [fk_t3_c2] FOREIGN KEY  ([c2]) DEDUPLICATE_KEY OFF REFERENCES [dba.t1] ([c1]) ON DELETE RESTRICT ON UPDATE RESTRICT) REUSE_OID, COLLATE iso88591_bin     
+dba.t3     CREATE TABLE [t3] ([c1] INTEGER NOT NULL, [c2] INTEGER,  CONSTRAINT [pk_t3_c1] PRIMARY KEY  ([c1]),  CONSTRAINT [fk_t3_c2] FOREIGN KEY  ([c2]) REFERENCES [dba.t1] ([c1]) ON DELETE RESTRICT ON UPDATE RESTRICT) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -61,14 +64,17 @@ dba.t2_ai_c1     t2_ai_c1     DBA     t2
 ===================================================
 class_of    unique_name    class_name    owner.name    index_name    func    filter_expression    
 null     dba.t2     t2     DBA     i1_func      abs([dba.t2].[c2])     null     
+null     dba.t2     t2     DBA     i1_func     null     null     
+null     dba.t2     t2     DBA     i2_filter     null     [dba.t2].c3<0     
 null     dba.t2     t2     DBA     i2_filter     null     [dba.t2].c3<0     
 null     dba.t2     t2     DBA     pk_t1_c1     null     null     
+null     dba.t3     t3     DBA     fk_t3_c2     null     null     
 null     dba.t3     t3     DBA     fk_t3_c2     null     null     
 null     dba.t3     t3     DBA     pk_t3_c1     null     null     
 
 ===================================================
 TABLE    CREATE TABLE    
-dba.t3     CREATE TABLE [t3] ([c1] INTEGER NOT NULL, [c2] INTEGER,  CONSTRAINT [pk_t3_c1] PRIMARY KEY  ([c1]),  CONSTRAINT [fk_t3_c2] FOREIGN KEY  ([c2]) DEDUPLICATE_KEY OFF REFERENCES [dba.t2] ([c1]) ON DELETE RESTRICT ON UPDATE RESTRICT) REUSE_OID, COLLATE iso88591_bin     
+dba.t3     CREATE TABLE [t3] ([c1] INTEGER NOT NULL, [c2] INTEGER,  CONSTRAINT [pk_t3_c1] PRIMARY KEY  ([c1]),  CONSTRAINT [fk_t3_c2] FOREIGN KEY  ([c2]) REFERENCES [dba.t2] ([c1]) ON DELETE RESTRICT ON UPDATE RESTRICT) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 Error:-65
@@ -86,14 +92,17 @@ dba.t2_ai_c1     t2_ai_c1     DBA     t2
 ===================================================
 class_of    unique_name    class_name    owner.name    index_name    func    filter_expression    
 null     dba.t2     t2     DBA     i1_func      abs([dba.t2].[c2])     null     
+null     dba.t2     t2     DBA     i1_func     null     null     
+null     dba.t2     t2     DBA     i2_filter     null     [dba.t2].c3<0     
 null     dba.t2     t2     DBA     i2_filter     null     [dba.t2].c3<0     
 null     dba.t2     t2     DBA     pk_t1_c1     null     null     
+null     dba.t3     t3     DBA     fk_t3_c2     null     null     
 null     dba.t3     t3     DBA     fk_t3_c2     null     null     
 null     dba.t3     t3     DBA     pk_t3_c1     null     null     
 
 ===================================================
 TABLE    CREATE TABLE    
-dba.t3     CREATE TABLE [t3] ([c1] INTEGER NOT NULL, [c2] INTEGER,  CONSTRAINT [pk_t3_c1] PRIMARY KEY  ([c1]),  CONSTRAINT [fk_t3_c2] FOREIGN KEY  ([c2]) DEDUPLICATE_KEY OFF REFERENCES [dba.t2] ([c1]) ON DELETE RESTRICT ON UPDATE RESTRICT) REUSE_OID, COLLATE iso88591_bin     
+dba.t3     CREATE TABLE [t3] ([c1] INTEGER NOT NULL, [c2] INTEGER,  CONSTRAINT [pk_t3_c1] PRIMARY KEY  ([c1]),  CONSTRAINT [fk_t3_c2] FOREIGN KEY  ([c2]) REFERENCES [dba.t2] ([c1]) ON DELETE RESTRICT ON UPDATE RESTRICT) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -111,14 +120,17 @@ u1.t2_ai_c1     t2_ai_c1     U1     t2
 ===================================================
 class_of    unique_name    class_name    owner.name    index_name    func    filter_expression    
 null     dba.t3     t3     DBA     fk_t3_c2     null     null     
+null     dba.t3     t3     DBA     fk_t3_c2     null     null     
 null     dba.t3     t3     DBA     pk_t3_c1     null     null     
 null     u1.t2     t2     U1     i1_func      abs([u1.t2].[c2])     null     
+null     u1.t2     t2     U1     i1_func     null     null     
+null     u1.t2     t2     U1     i2_filter     null     [u1.t2].c3<0     
 null     u1.t2     t2     U1     i2_filter     null     [u1.t2].c3<0     
 null     u1.t2     t2     U1     pk_t1_c1     null     null     
 
 ===================================================
 TABLE    CREATE TABLE    
-dba.t3     CREATE TABLE [t3] ([c1] INTEGER NOT NULL, [c2] INTEGER,  CONSTRAINT [pk_t3_c1] PRIMARY KEY  ([c1]),  CONSTRAINT [fk_t3_c2] FOREIGN KEY  ([c2]) DEDUPLICATE_KEY OFF REFERENCES [u1.t2] ([c1]) ON DELETE RESTRICT ON UPDATE RESTRICT) REUSE_OID, COLLATE iso88591_bin     
+dba.t3     CREATE TABLE [t3] ([c1] INTEGER NOT NULL, [c2] INTEGER,  CONSTRAINT [pk_t3_c1] PRIMARY KEY  ([c1]),  CONSTRAINT [fk_t3_c2] FOREIGN KEY  ([c2]) REFERENCES [u1.t2] ([c1]) ON DELETE RESTRICT ON UPDATE RESTRICT) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 Error:-65
@@ -136,14 +148,17 @@ u1.t2_ai_c1     t2_ai_c1     U1     t2
 ===================================================
 class_of    unique_name    class_name    owner.name    index_name    func    filter_expression    
 null     dba.t3     t3     DBA     fk_t3_c2     null     null     
+null     dba.t3     t3     DBA     fk_t3_c2     null     null     
 null     dba.t3     t3     DBA     pk_t3_c1     null     null     
 null     u1.t2     t2     U1     i1_func      abs([u1.t2].[c2])     null     
+null     u1.t2     t2     U1     i1_func     null     null     
+null     u1.t2     t2     U1     i2_filter     null     [u1.t2].c3<0     
 null     u1.t2     t2     U1     i2_filter     null     [u1.t2].c3<0     
 null     u1.t2     t2     U1     pk_t1_c1     null     null     
 
 ===================================================
 TABLE    CREATE TABLE    
-dba.t3     CREATE TABLE [t3] ([c1] INTEGER NOT NULL, [c2] INTEGER,  CONSTRAINT [pk_t3_c1] PRIMARY KEY  ([c1]),  CONSTRAINT [fk_t3_c2] FOREIGN KEY  ([c2]) DEDUPLICATE_KEY OFF REFERENCES [u1.t2] ([c1]) ON DELETE RESTRICT ON UPDATE RESTRICT) REUSE_OID, COLLATE iso88591_bin     
+dba.t3     CREATE TABLE [t3] ([c1] INTEGER NOT NULL, [c2] INTEGER,  CONSTRAINT [pk_t3_c1] PRIMARY KEY  ([c1]),  CONSTRAINT [fk_t3_c2] FOREIGN KEY  ([c2]) REFERENCES [u1.t2] ([c1]) ON DELETE RESTRICT ON UPDATE RESTRICT) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
