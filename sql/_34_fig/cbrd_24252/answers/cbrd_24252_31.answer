@@ -1,0 +1,75 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+1000
+===================================================
+1000
+===================================================
+1000
+===================================================
+max(c.c1)    max(c.c2)    
+1001     -1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (c)
+      INDEX SCAN (p.pk_t?_parent_c?) (key range: c.parent_c?=p.c?, covered: true)
+
+  rewritten query: select max(c.c?), max(c.c?) from [dba.t?_child] c, [dba.t?_parent] p where c.parent_c?=p.c? and c.c?= ?:?  group by p.c?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.t?_child), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t?_parent.pk_t?_parent_c?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+max(c.c1)    max(c.c2)    
+1001     -1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (c)
+      INDEX SCAN (p.pk_t?_parent_c?) (key range: c.parent_c?=p.c?, covered: true)
+
+  rewritten query: select max(c.c?), max(c.c?) from [dba.t?_child] c, [dba.t?_parent] p where c.parent_c?=p.c? and c.c?= ?:?  group by p.c?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.t?_child), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t?_parent.pk_t?_parent_c?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

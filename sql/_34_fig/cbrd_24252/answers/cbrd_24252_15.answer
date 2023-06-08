@@ -1,0 +1,73 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+1000
+===================================================
+1000
+===================================================
+1000
+===================================================
+c1    c2    
+1     -1     
+1001     -1     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (p)
+    INDEX SCAN (c.fk_t?_child_parent_c?) (key range: c.parent_c?=p.c?)
+
+  rewritten query: select c.c?, c.c? from [dba.t?_parent__p__p?] p, [dba.t?_child] c where c.parent_c?=p.c? and c.c?= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.t?_parent__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t?_child.fk_t?_child_parent_c?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+c1    c2    
+1     -1     
+1001     -1     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (c)
+    INDEX SCAN (p.pk_t?_parent_c?) (key range: c.parent_c?=p.c?, covered: true)
+
+  rewritten query: select c.c?, c.c? from [dba.t?_child] c, [dba.t?_parent__p__p?] p where c.parent_c?=p.c? and c.c?= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.t?_child), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t?_parent__p__p?.pk_t?_parent_c?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
