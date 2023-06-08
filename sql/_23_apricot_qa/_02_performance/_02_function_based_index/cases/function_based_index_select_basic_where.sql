@@ -1,3 +1,5 @@
+set system parameters 'deduplicate_min_keys=0';
+
 --+ holdcas on;
 set  system parameters 'dont_reuse_heap_file=yes';
 create table t1(
@@ -90,3 +92,5 @@ drop table t1;
 set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;
+
+set system parameters 'deduplicate_min_keys=10';

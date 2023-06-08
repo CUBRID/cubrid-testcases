@@ -1,3 +1,5 @@
+set system parameters 'deduplicate_min_keys=0';
+
 DROP TABLE IF EXISTS tmp5;
 
 CREATE TABLE tmp5 (col1 VARCHAR(10), col2 VARCHAR(10), col3 VARCHAR(10), col4 VARCHAR(10), col5 VARCHAR(10), col6 VARCHAR(10));
@@ -80,3 +82,5 @@ AND a.col2 = b.col2;
 
 set optimization level 513;
 DROP TABLE tmp5;
+
+set system parameters 'deduplicate_min_keys=10';

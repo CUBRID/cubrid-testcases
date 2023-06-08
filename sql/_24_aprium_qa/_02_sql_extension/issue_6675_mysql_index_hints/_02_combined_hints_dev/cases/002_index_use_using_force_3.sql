@@ -1,3 +1,5 @@
+set system parameters 'deduplicate_min_keys=0';
+
 --+ holdcas on;
 
 create table t23(i1 integer, i2 integer, i3 integer);
@@ -49,3 +51,5 @@ drop table t23;
 
 commit;
 --+ holdcas off;
+
+set system parameters 'deduplicate_min_keys=10';

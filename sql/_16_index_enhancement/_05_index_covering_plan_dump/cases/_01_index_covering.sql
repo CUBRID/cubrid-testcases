@@ -1,3 +1,5 @@
+set system parameters 'deduplicate_min_keys=0';
+
 autocommit off;
 set  system parameters 'dont_reuse_heap_file=yes';
 create table d1 (id int, id2 varchar(30), id3 int);
@@ -4111,3 +4113,5 @@ drop class d3;
 set  system parameters 'dont_reuse_heap_file=no';
 commit;
 autocommit on;
+
+set system parameters 'deduplicate_min_keys=10';
