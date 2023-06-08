@@ -36,7 +36,7 @@
 ===================================================
 1000
 ===================================================
-c1    c2    
+col_a    col_b    
 1     -1     
 1001     -1     
 2001     -1     
@@ -48,18 +48,18 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     TABLE SCAN (c)
-    INDEX SCAN (p.pk_t?_parent_c?) (key range: c.parent_c?=p.c?)
+    INDEX SCAN (p.pk_t_parent_col_a) (key range: c.parent_col_a=p.col_a)
 
-  rewritten query: select c.c?, c.c? from [dba.t?_child] c, [dba.t?_parent] p where c.parent_c?=p.c? and c.c?= ?:?  and p.super_parent_c? is not null 
+  rewritten query: select c.col_a, c.col_b from [dba.t_child] c, [dba.t_parent] p where c.parent_col_a=p.col_a and c.col_b= ?:?  and p.super_parent_col_a is not null 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: dba.t?_child), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (index: dba.t?_parent.pk_t?_parent_c?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SCAN (table: dba.t_child), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_parent.pk_t_parent_col_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
 ===================================================
-c1    c2    
+col_a    col_b    
 1     -1     
 1001     -1     
 2001     -1     
@@ -71,14 +71,14 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     TABLE SCAN (c)
-    INDEX SCAN (p.pk_t?_parent_c?) (key range: c.parent_c?=p.c?)
+    INDEX SCAN (p.pk_t_parent_col_a) (key range: c.parent_col_a=p.col_a)
 
-  rewritten query: select c.c?, c.c? from [dba.t?_child] c, [dba.t?_parent] p where c.parent_c?=p.c? and c.c?= ?:?  and p.super_parent_c? is not null 
+  rewritten query: select c.col_a, c.col_b from [dba.t_child] c, [dba.t_parent] p where c.parent_col_a=p.col_a and c.col_b= ?:?  and p.super_parent_col_a is not null 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: dba.t?_child), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (index: dba.t?_parent.pk_t?_parent_c?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SCAN (table: dba.t_child), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_parent.pk_t_parent_col_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
 ===================================================

@@ -22,7 +22,7 @@
 ===================================================
 1000
 ===================================================
-c1    c2    
+col_a    col_b    
 1     -1     
 1001     -1     
 
@@ -34,12 +34,12 @@ Query Plan:
     TABLE SCAN (c)
     TABLE SCAN (p)
 
-  rewritten query: select c.c?, c.c? from [dba.t?_child] c, [dba.t?_parent] p where ((c.parent_c?=p.c?) or (c.c?=p.c?)) and c.c?= ?:? 
+  rewritten query: select c.col_a, c.col_b from [dba.t_child] c, [dba.t_parent] p where ((c.parent_col_a=p.col_a) or (c.c?=p.c?)) and c.col_b= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: dba.t?_child), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (table: dba.t?_parent), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.t_child), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_parent), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================

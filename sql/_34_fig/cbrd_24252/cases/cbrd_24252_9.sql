@@ -2,7 +2,7 @@ set trace on;
 
 /* dummy data */
 drop table if exists dummy;
-create table dummy (c1 int);
+create table dummy (col_a int);
 insert into dummy
 select rownum from
 table ({0, 1, 2, 3, 4, 5, 6, 7, 8, 9}),
@@ -12,57 +12,57 @@ table ({0, 1, 2, 3, 4, 5, 6, 7, 8, 9});
 /* ----------------------------------------
  *
  * test case 9
- *   - child c (parent_c1:null)
- *   - parent p (super_parent_c1:not_null) (c:parent_c1->p:c1)
- *   - super parent s (p:super_parent_c1->s:c1)
+ *   - child c (parent_col_a:null)
+ *   - parent p (super_parent_col_a:not_null) (c:parent_col_a->p:col_a)
+ *   - super parent s (p:super_parent_col_a->s:col_a)
  *
  * ---------------------------------------- */
 
-drop table if exists t9_child;
-drop table if exists t9_parent;
-drop table if exists t9_super_parent;
-create table t9_super_parent (c1 int primary key, c2 int);
-create table t9_parent (c1 int primary key auto_increment, c2 int);
-alter table t9_parent add column super_parent_c1 int not null references t9_super_parent (c1); /* not_null */
-create table t9_child (c1 int auto_increment primary key, c2 int);
-alter table t9_child add column parent_c1 int references t9_parent (c1); /* null */
-insert into t9_super_parent select c1, c1 from dummy;
-insert into t9_parent select null, (c1 * -1), c1 from dummy;
-insert into t9_parent select null, (c1 * -1), c1 from dummy;
-insert into t9_child select null, (c1 * -1), c1 from dummy;
-insert into t9_child select null, (c1 * -1), c1 from dummy;
-insert into t9_child select null, (c1 * -1), c1 from dummy;
-insert into t9_child select null, (c1 * -1), c1 from dummy;
-insert into t9_child select null, (c1 * -1), null from dummy limit 1; /* c1:4001 */
-insert into t9_child select null, (c1 * -1), null from dummy limit 1; /* c1:4002 */
+drop table if exists t_child;
+drop table if exists t_parent;
+drop table if exists t_super_parent;
+create table t_super_parent (col_a int primary key, col_b int);
+create table t_parent (col_a int primary key auto_increment, col_b int);
+alter table t_parent add column super_parent_col_a int not null references t_super_parent (col_a); /* not_null */
+create table t_child (col_a int auto_increment primary key, col_b int);
+alter table t_child add column parent_col_a int references t_parent (col_a); /* null */
+insert into t_super_parent select col_a, col_a from dummy;
+insert into t_parent select null, (col_a * -1), col_a from dummy;
+insert into t_parent select null, (col_a * -1), col_a from dummy;
+insert into t_child select null, (col_a * -1), col_a from dummy;
+insert into t_child select null, (col_a * -1), col_a from dummy;
+insert into t_child select null, (col_a * -1), col_a from dummy;
+insert into t_child select null, (col_a * -1), col_a from dummy;
+insert into t_child select null, (col_a * -1), null from dummy limit 1; /* col_a:4001 */
+insert into t_child select null, (col_a * -1), null from dummy limit 1; /* col_a:4002 */
 
 select /*+ recompile */
-    c.c1,
-    c.c2
+    c.col_a,
+    c.col_b
 from
-    t9_child as c
-    inner join t9_parent as p on c.parent_c1 = p.c1
-    inner join t9_super_parent as s on p.super_parent_c1 = s.c1
+    t_child as c
+    inner join t_parent as p on c.parent_col_a = p.col_a
+    inner join t_super_parent as s on p.super_parent_col_a = s.col_a
 where
-    c.c2 = -1;
+    c.col_b = -1;
 show trace;
 
 select /*+ recompile */
-    c.c1,
-    c.c2
+    c.col_a,
+    c.col_b
 from
-    t9_child as c,
-    t9_parent as p,
-    t9_super_parent as s
+    t_child as c,
+    t_parent as p,
+    t_super_parent as s
 where
-    c.parent_c1 = p.c1
-    and p.super_parent_c1 = s.c1
-    and c.c2 = -1;
+    c.parent_col_a = p.col_a
+    and p.super_parent_col_a = s.col_a
+    and c.col_b = -1;
 show trace;
 
-drop table if exists t9_child;
-drop table if exists t9_parent;
-drop table if exists t9_super_parent;
+drop table if exists t_child;
+drop table if exists t_parent;
+drop table if exists t_super_parent;
 
 
 drop table if exists dummy;
