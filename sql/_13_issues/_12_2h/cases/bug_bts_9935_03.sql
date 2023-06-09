@@ -13,6 +13,9 @@ insert into t1__p__p0 values(5,5);
 insert into t1__p__p0 values(10,10);
 insert into t1__p__p1 values(15,15);
 
+update statistics on t;
+update statistics on t1;
+
 --sequence scan
 select /*+ recompile */ * from t ;
 
@@ -24,6 +27,7 @@ create index t_i_j on t(i,j);
 
 create index t1_i on t(i);
 create index t1_i_j on t(i,j); 
+update statistics on t;
 
 --order by scan
 select /*+ recompile */ * from t order by i;
@@ -53,6 +57,8 @@ create table mille as select 0 as i from table({1,2,3,4,5,6,7,8,9,0}) t1, table(
 
 insert into t (i,j)  select i,rownum from mille;
 create index t_i_j on t(i,j); 
+update statistics on t;
+update statistics on mille;
 
 --index skip scan
 select /*+ recompile  */  count(*) from (select  /*+ recompile index_ss */ * from t where j between 1 and 2 using index t_i_j) tt;
@@ -71,6 +77,8 @@ create index idx_t_j on t (j);
 insert into t select rownum,rownum, TO_DATE('12/25/2008'),rownum||'',rownum||'',rownum from db_class a,db_class b limit 1000;
 
 insert into t select rownum,rownum, TO_DATE('12/25/2009'),rownum||'',rownum||'',rownum from db_class a,db_class b limit 1000;
+
+update statistics on t;
 
 select /*+ recompile */ i,j,count(*) from t where i > 5 and i < 200 group by i having j > 0 limit 10;
 
@@ -141,6 +149,8 @@ create index i_t2_a on t2(a);
 create index i_t2_b on t2(b);
 create index i_t2_c on t2(c);
 create index i_t2_d on t2(a,b,c);
+update statistics on t;
+update statistics on t2;
 
 select /*+ recompile */ t.a,t.b,t2.c from t left join t2 on t.a=t2.a  where t.a>11  group by t.a having t.a>15 limit 1,3 ;
 
@@ -194,6 +204,8 @@ create index i_t2_a on t2(a);
 create index i_t2_b on t2(b);
 create index i_t2_c on t2(c);
 create index i_t2_d on t2(a,b,c);
+update statistics on t;
+update statistics on t2;
 
 select /*+ recompile */ t.a,t.b,t2.c from t left join t2 on t.a=t2.a  where t.a>11  group by t.a having t.a>15 limit 1,3 ;
 

@@ -96,13 +96,16 @@ show full columns from t;
 alter table t change i i int  not null comment 'auto increment';
 show full columns from t;
 create unique index idx1 on t(i) comment 'uuuu';
+update statistics on t;
 show index from t;
 alter index idx1 on t(i) comment 'aaa' rebuild;
+update statistics on t;
 show index from t;
 alter table t change i id int;
 show full columns from t;
 alter table t modify id  varchar(100) primary key  comment 'dddd';
 show full columns from t;
+update statistics on t;
 show index from t;
 drop t;
 

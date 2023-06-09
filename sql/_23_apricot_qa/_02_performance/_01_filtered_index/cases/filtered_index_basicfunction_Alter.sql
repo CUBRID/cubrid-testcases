@@ -2,10 +2,13 @@
 CREATE TABLE blogtopic (topicId INTEGER not null, postDate DATE, closedDate DATE);
 insert into blogtopic value(1,DATE '2010-01-01',DATE '2010-01-02');
 CREATE INDEX my_filter_index ON blogtopic (topicId) WHERE closedDate IS NULL;
+update statistics on blogtopic;
 show index in blogtopic;
 alter REVERSE index my_filter_index on blogtopic (topicId) WHERE postDate>'2010-01-01' AND closedDate IS NULL rebuild;
+update statistics on blogtopic;
 show index in blogtopic;
 alter index my_filter_index on blogtopic (topicId) rebuild;
+update statistics on blogtopic;
 show index in blogtopic;
 
 drop index my_filter_index on blogtopic;
@@ -16,12 +19,14 @@ alter UNIQUE index my_filter_index on blogtopic (topicId) WHERE postDate>'2010-0
 alter UNIQUE index my_filter_index on blogtopic (topicId) WHERE postDate>'2010-01-01' or closedDate IS not NULL rebuild;
 
 alter UNIQUE index my_filter_index on blogtopic (topicId,postDate) WHERE postDate>'2010-01-01' and topicId>1 rebuild;
+update statistics on blogtopic;
 show index in blogtopic;
 drop UNIQUE index my_filter_index on blogtopic;
 
 
 CREATE INDEX my_filter_index ON blogtopic (topicId);
 alter index my_filter_index on blogtopic (topicId) WHERE closedDate IS NULL rebuild;
+update statistics on blogtopic;
 show index in blogtopic;
 
 drop table blogtopic;

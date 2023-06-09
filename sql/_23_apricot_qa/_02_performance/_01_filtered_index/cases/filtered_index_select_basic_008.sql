@@ -15,6 +15,7 @@ insert into t(id, textlabel, description)
 --Test use create table like again, with a populated table --
 create index idx on t(id);
 create index idx_t_description on t(description) where description = textlabel;
+update statistics on t;
 show indexes from t;
 
 select /*+ recompile */  * from t where description > '' using index idx_t_description(+);
@@ -122,6 +123,7 @@ select /*+ recompile */  * from t where textlabel > '' difference select /*+ rec
 
 --Test truncate --
 truncate table t;
+update statistics on t;
 show indexes from t;
 --Test
 select /*+ recompile */  * from t where textlabel > '' using index r_t_textlabel(+);

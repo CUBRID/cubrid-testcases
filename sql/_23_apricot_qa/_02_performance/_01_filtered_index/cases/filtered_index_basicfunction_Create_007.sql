@@ -24,6 +24,7 @@ insert into t(id, textlabel, description)
 
 --Test use create table like again, with a populated table --
 create table the_other_t like t;
+update statistics on the_other_t;
 show indexes from the_other_t;
 --Test 
 drop unique index on t(id);
@@ -227,6 +228,7 @@ drop table theothert;
 
 --Test 
 rename table t to table_t;
+update statistics on table_t;
 show indexes from table_t;
 drop table table_t;
 

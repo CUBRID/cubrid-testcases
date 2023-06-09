@@ -5,9 +5,11 @@ insert into bugs values(1,TIMESTAMP '2010-10-31 01:15:45','yin','test',1,0);
 CREATE INDEX open_bugs ON bugs(bugID) WHERE Closed = 0;
 RENAME TABLE bugs AS bugs1;
 --TEST: 
+update statistics on bugs1;
 SHOW INDEX IN bugs1;
 RENAME TABLE bugs1 to bugs;
 --TEST: 
+update statistics on bugs;
 SHOW INDEX IN bugs;
 drop table bugs;
 
@@ -17,9 +19,11 @@ insert into bugs values(1,TIMESTAMP '2010-10-31 01:15:45','yin','test',1,0);
 CREATE INDEX open_bugs ON bugs(bugID) WHERE bugs.Closed = 0;
 RENAME TABLE bugs AS bugs1;
 --TEST: 
+update statistics on bugs1;
 SHOW INDEX IN bugs1;
 RENAME TABLE bugs1 to bugs;
 --TEST: 
+update statistics on bugs;
 SHOW INDEX IN bugs;
 drop table bugs;
 commit;

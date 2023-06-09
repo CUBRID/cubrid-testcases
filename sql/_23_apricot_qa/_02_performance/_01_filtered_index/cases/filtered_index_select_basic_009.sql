@@ -7,6 +7,7 @@ create index my_index on t(a) where b>1;
 insert into t values(2,2);
 --test create index successfully
 create index my_index on t(a desc) where b>1;
+update statistics on t;
 --TEST: Select using index my_index
 SELECT /*+ recompile */ a from t where b>1 using index my_index(+) order by 1 desc;
 --TEST: Select using index my_index
