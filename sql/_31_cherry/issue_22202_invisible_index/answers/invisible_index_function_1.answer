@@ -22,6 +22,8 @@ dba.foo     1     idx_foo_weekday_b     1     null     A     0     null     null
 ===================================================
 1
 ===================================================
+0
+===================================================
 a    b    
 2010-01-01     2011-01-01     
 2010-01-02     2011-01-02     
@@ -52,6 +54,8 @@ temp(order by)
     cost:  ? card ?
 Query stmt:
 select foo.a, foo.b from foo foo where  weekday(foo.b)>=? order by ?
+===================================================
+0
 ===================================================
 0
 ===================================================
@@ -137,6 +141,8 @@ a
 ===================================================
 0
 ===================================================
+0
+===================================================
 Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
 dba.foo     1     idx_foo_abs     1     null     A     3     null     null     YES     BTREE      abs(- cast([dba.foo].[a] as double))     null     NO     
 
@@ -167,6 +173,8 @@ select foo.a from foo foo where  abs(- cast(foo.a as double))>? order by ?
 ===================================================
 0
 ===================================================
+0
+===================================================
 Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
 dba.foo     1     idx_foo_translate     1     null     A     2     null     null     YES     BTREE      translate([dba.foo].[str], [dba.foo].[c1], [dba.foo].[c2])     null     YES     
 
@@ -181,6 +189,8 @@ iscan
     cost:  ? card ?
 Query stmt:
 select foo.str,  translate(foo.str, foo.c?, foo.c?) from foo foo where  translate(foo.str, foo.c?, foo.c?) in set{'dbcdbc', 'smthsmth'}
+===================================================
+0
 ===================================================
 0
 ===================================================
@@ -208,6 +218,8 @@ select foo.str,  translate(foo.str, foo.c?, foo.c?) from foo foo where  translat
 1
 ===================================================
 1
+===================================================
+0
 ===================================================
 0
 ===================================================
@@ -258,6 +270,8 @@ a    b    c    d    e    f    g    h    i    j    k    l    m    n    o    p    
 ===================================================
 Error:-493
 ===================================================
+0
+===================================================
 Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
 dba.t1     1     i_t1_a2d     1     null     A     1     null     null     YES     BTREE      date( cast([dba.t1].[n] as varchar))     null     NO     
 dba.t1     1     i_t1_a2q     1     a     A     1     null     null     YES     BTREE     null     null     NO     
@@ -280,6 +294,8 @@ dba.t1     1     i_t1_a2q     17     q     A     1     null     null     YES    
 
 ===================================================
 Error:-272
+===================================================
+0
 ===================================================
 0
 ===================================================
