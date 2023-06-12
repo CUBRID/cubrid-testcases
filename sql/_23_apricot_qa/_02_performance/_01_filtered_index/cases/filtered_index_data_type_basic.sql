@@ -103,4 +103,4 @@ set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;
 
-set system parameters 'deduplicate_min_keys=10';
+set system parameters 'deduplicate_min_keys=2';
