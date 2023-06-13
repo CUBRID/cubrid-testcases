@@ -22,6 +22,7 @@ create index i_t_i on t(i);
 create index i_t_j  on t(j);
 create index i_t_k on t(k);
 create index i_t_l  on t(l);
+update statistics on t;
 
 select count(*) from t where 1;
 select count(*) from t where 0;
