@@ -18,6 +18,8 @@ INSERT INTO tbl VALUES (8,10,'h');
 INSERT INTO tbl VALUES (9,10,'i');
 INSERT INTO tbl VALUES (10,10,'j');
 
+update statistics on tbl;
+
 -- equal
 SELECT count(*) AS "equal" FROM tbl WHERE ord = (SELECT inttest(5) FROM dual);
 SELECT count(*) AS "equal" FROM tbl WHERE ord = (SELECT inttest(ord) FROM tbl where ord=5);
