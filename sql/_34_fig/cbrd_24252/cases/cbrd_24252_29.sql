@@ -35,6 +35,7 @@ from
 where
     c.parent_col_a = cast(p.col_a as bigint)
     and c.col_b = -1;
+show trace;
 
 
 drop table if exists t_child;
