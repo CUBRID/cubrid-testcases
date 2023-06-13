@@ -13,8 +13,8 @@ table ({0, 1, 2, 3, 4, 5, 6, 7, 8, 9});
  *
  * test case 5
  *   - child c (parent_col_a:not_null)
- *   - parent p1 (c:parent_col_a->p1:col_a)
- *   - parent p2 (p1:col_a->p2:col_a)
+ *   - parent pa (c:parent_col_a->pa:col_a)
+ *   - parent pb (pa:col_a->pb:col_a)
  *
  * ---------------------------------------- */
 
@@ -32,8 +32,8 @@ select /*+ recompile */
     c.col_b
 from
     t_child as c
-    inner join t_parent as p1 on c.parent_col_a = p1.col_a
-    inner join t_parent as p2 on p1.col_a = p2.col_a
+    inner join t_parent as pa on c.parent_col_a = pa.col_a
+    inner join t_parent as pb on pa.col_a = pb.col_a
 where
     c.col_b = -1;
 show trace;
@@ -43,11 +43,11 @@ select /*+ recompile */
     c.col_b
 from
     t_child as c,
-    t_parent as p1,
-    t_parent as p2
+    t_parent as pa,
+    t_parent as pb
 where
-    c.parent_col_a = p1.col_a
-    and p1.col_a = p2.col_a
+    c.parent_col_a = pa.col_a
+    and pa.col_a = pb.col_a
     and c.col_b = -1;
 show trace;
 

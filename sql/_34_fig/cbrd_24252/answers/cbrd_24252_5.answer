@@ -33,10 +33,10 @@ Query Plan:
   NESTED LOOPS (inner join)
     NESTED LOOPS (inner join)
       TABLE SCAN (c)
-      INDEX SCAN (p?.pk_t_parent_col_a) (key range: c.parent_col_a=p?.col_a, covered: true)
-    INDEX SCAN (p?.pk_t_parent_col_a) (key range: p?.col_a=p?.col_a, covered: true)
+      INDEX SCAN (pa.pk_t_parent_col_a) (key range: c.parent_col_a=pa.col_a, covered: true)
+    INDEX SCAN (pb.pk_t_parent_col_a) (key range: pa.col_a=pb.col_a, covered: true)
 
-  rewritten query: select c.col_a, c.col_b from [dba.t_child] c, [dba.t_parent] p?, [dba.t_parent] p? where c.parent_col_a=p?.col_a and p?.col_a=p?.col_a and c.col_b= ?:? 
+  rewritten query: select c.col_a, c.col_b from [dba.t_child] c, [dba.t_parent] pa, [dba.t_parent] pb where c.parent_col_a=pa.col_a and pa.col_a=pb.col_a and c.col_b= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
@@ -57,10 +57,10 @@ Query Plan:
   NESTED LOOPS (inner join)
     NESTED LOOPS (inner join)
       TABLE SCAN (c)
-      INDEX SCAN (p?.pk_t_parent_col_a) (key range: c.parent_col_a=p?.col_a, covered: true)
-    INDEX SCAN (p?.pk_t_parent_col_a) (key range: p?.col_a=p?.col_a, covered: true)
+      INDEX SCAN (pa.pk_t_parent_col_a) (key range: c.parent_col_a=pa.col_a, covered: true)
+    INDEX SCAN (pb.pk_t_parent_col_a) (key range: pa.col_a=pb.col_a, covered: true)
 
-  rewritten query: select c.col_a, c.col_b from [dba.t_child] c, [dba.t_parent] p?, [dba.t_parent] p? where c.parent_col_a=p?.col_a and p?.col_a=p?.col_a and c.col_b= ?:? 
+  rewritten query: select c.col_a, c.col_b from [dba.t_child] c, [dba.t_parent] pa, [dba.t_parent] pb where c.parent_col_a=pa.col_a and pa.col_a=pb.col_a and c.col_b= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
