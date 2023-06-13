@@ -47,8 +47,8 @@ where
     and c.col_b = -1;
 show trace;
 
-drop table if exists t1_child;
-drop table if exists t1_parent;
+drop table if exists t_child;
+drop table if exists t_parent;
 
 
 
