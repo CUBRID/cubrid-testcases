@@ -43,8 +43,8 @@ select /*+ recompile */
     c.col_a,
     c.col_b
 from
-    t_child as c,
-    t_parent as p
+    t_parent as p,
+    t_child as c
 where
     c.parent_col_a = p.col_b /* mixed */
     and c.parent_col_b = p.col_a /* mixed */
