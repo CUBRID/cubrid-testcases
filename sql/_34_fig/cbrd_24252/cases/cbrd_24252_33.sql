@@ -40,8 +40,8 @@ select /*+ recompile no_eliminate_join */
     c.col_a,
     c.col_b
 from
-    t_parent as p,
-    t_child as c
+    t_child as c,
+    t_parent as p
 where
     c.parent_col_a = p.col_a
     and c.col_b = -1;
