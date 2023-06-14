@@ -1,4 +1,4 @@
-set system parameters 'deduplicate_min_keys=0';
+set system parameters 'deduplicate_key_level=0';
 
 --test with multiple index hints
 
@@ -67,4 +67,4 @@ commit;
 set system parameters 'dont_reuse_heap_file=no';
 --+ holdcas off;
 
-set system parameters 'deduplicate_min_keys=2';
+set system parameters 'deduplicate_key_level=32';

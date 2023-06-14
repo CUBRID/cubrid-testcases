@@ -1,4 +1,4 @@
-set system parameters 'deduplicate_min_keys=0';
+set system parameters 'deduplicate_key_level=0';
 
 --+ holdcas on;
 set  system parameters 'dont_reuse_heap_file=yes';
@@ -97,4 +97,4 @@ set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;
 
-set system parameters 'deduplicate_min_keys=2';
+set system parameters 'deduplicate_key_level=32';

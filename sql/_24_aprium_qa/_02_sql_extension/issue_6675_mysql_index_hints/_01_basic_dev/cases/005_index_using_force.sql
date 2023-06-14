@@ -1,4 +1,4 @@
-set system parameters 'deduplicate_min_keys=0';
+set system parameters 'deduplicate_key_level=0';
 
 --+ holdcas on;
 
@@ -50,4 +50,4 @@ drop table t_basic005;
 commit;
 --+ holdcas off;
 
-set system parameters 'deduplicate_min_keys=2';
+set system parameters 'deduplicate_key_level=32';

@@ -1,4 +1,4 @@
-set system parameters 'deduplicate_min_keys=0';
+set system parameters 'deduplicate_key_level=0';
 
 autocommit off;
 set  system parameters 'dont_reuse_heap_file=yes';
@@ -4114,4 +4114,4 @@ set  system parameters 'dont_reuse_heap_file=no';
 commit;
 autocommit on;
 
-set system parameters 'deduplicate_min_keys=2';
+set system parameters 'deduplicate_key_level=32';
