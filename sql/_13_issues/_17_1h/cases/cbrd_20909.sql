@@ -1,3 +1,4 @@
+set system parameters 'deduplicate_key_level=0';
 --+ holdcas on;
 
 drop table if exists t;
@@ -57,3 +58,4 @@ drop table t2;
 
 --+ holdcas off;
 
+set system parameters 'deduplicate_key_level=32';
