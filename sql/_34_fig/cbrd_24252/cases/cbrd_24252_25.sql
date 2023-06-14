@@ -32,6 +32,10 @@ insert into t_childa select null, (col_a * -1), col_a from dummy;
 insert into t_childb select null, (col_a * -1), col_a from dummy;
 insert into t_childb select null, (col_a * -1), col_a from dummy;
 
+update statistics on t_childa with fullscan;
+update statistics on t_childb with fullscan;
+update statistics on t_parent with fullscan;
+
 /* ansi‑style */
 select /*+ recompile */
     ca.col_a,

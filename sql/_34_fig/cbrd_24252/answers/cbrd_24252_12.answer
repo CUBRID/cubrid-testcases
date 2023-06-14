@@ -34,6 +34,12 @@
 ===================================================
 1000
 ===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
 col_a    col_b    
 1     -1     
 1001     -1     
@@ -68,15 +74,15 @@ trace
 
 Query Plan:
   NESTED LOOPS (inner join)
-    TABLE SCAN (c)
-    INDEX SCAN (s.pk_t_super_parent_col_a) (key range: c.parent_col_a=s.col_a, covered: true)
+    TABLE SCAN (s)
+    INDEX SCAN (c.fk_t_child_parent_col_a) (key range: c.parent_col_a=s.col_a)
 
   rewritten query: select c.col_a, c.col_b from [dba.t_child] c, [dba.t_super_parent] s where c.parent_col_a=s.col_a and c.col_b= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: dba.t_child), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (index: dba.t_super_parent.pk_t_super_parent_col_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    SCAN (table: dba.t_super_parent), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_child.fk_t_child_parent_col_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
 ===================================================

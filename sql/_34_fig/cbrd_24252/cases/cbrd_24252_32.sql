@@ -28,6 +28,10 @@ insert into t_child select null, (col_a * -1), col_a from dummy;
 insert into t_child select null, (col_a * -1), col_a from dummy;
 insert into t_other select null, col_a + 10000 from dummy;
 
+update statistics on t_other with fullscan;
+update statistics on t_child with fullscan;
+update statistics on t_parent with fullscan;
+
 /* ansi‑style */
 select /*+ recompile */
     c.col_a,

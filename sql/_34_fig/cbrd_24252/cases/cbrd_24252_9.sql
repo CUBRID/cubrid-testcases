@@ -36,6 +36,11 @@ insert into t_child select null, (col_a * -1), col_a from dummy;
 insert into t_child select null, (col_a * -1), null from dummy limit 1; /* col_a:4001 */
 insert into t_child select null, (col_a * -1), null from dummy limit 1; /* col_a:4002 */
 
+update statistics on t_child with fullscan;
+update statistics on t_parent with fullscan;
+update statistics on t_super_parent with fullscan;
+
+/* ansi‑style */
 select /*+ recompile */
     c.col_a,
     c.col_b

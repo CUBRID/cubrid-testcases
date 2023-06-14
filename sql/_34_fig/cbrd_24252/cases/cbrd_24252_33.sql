@@ -25,6 +25,9 @@ insert into t_parent select col_a, col_a from dummy;
 insert into t_child select null, (col_a * -1), col_a from dummy;
 insert into t_child select null, (col_a * -1), col_a from dummy;
 
+update statistics on t_child with fullscan;
+update statistics on t_parent with fullscan;
+
 /* ansi‑style */
 select /*+ recompile no_eliminate_join */
     c.col_a,
