@@ -58,4 +58,4 @@ drop table t2;
 
 --+ holdcas off;
 
-set system parameters 'deduplicate_key_level=32';
+set system parameters 'deduplicate_key_level=10';

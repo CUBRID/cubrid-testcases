@@ -97,4 +97,4 @@ set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;
 
-set system parameters 'deduplicate_key_level=32';
+set system parameters 'deduplicate_key_level=10';

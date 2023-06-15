@@ -11,4 +11,4 @@ set names iso88591;
 commit;
 --+ holdcas off;
 
-set system parameters 'deduplicate_key_level=32';
+set system parameters 'deduplicate_key_level=10';

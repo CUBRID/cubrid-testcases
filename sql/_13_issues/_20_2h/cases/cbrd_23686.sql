@@ -83,4 +83,4 @@ AND a.col2 = b.col2;
 set optimization level 513;
 DROP TABLE tmp5;
 
-set system parameters 'deduplicate_key_level=32';
+set system parameters 'deduplicate_key_level=10';
