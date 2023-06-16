@@ -1,3 +1,5 @@
+-- Test basic registration of PL/CSQL and server-output CTP hint
+
 --+ server-output on
 create or replace procedure demo_hello() as
 begin
