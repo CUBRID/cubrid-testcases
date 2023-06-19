@@ -51,6 +51,7 @@ C1: select sum(set{k}) into :s from t ignore index (a) where k > 0 order by 1;
 C1: select sum(set{k}) into :i from t force index (a) where k > 0 order by 1;
 C1: select if (:s = :i, 'OK', 'NOK');
 C1: describe t;
+C1: update statistics on t;
 C1: show index from t;
 MC: wait until C1 ready;
 

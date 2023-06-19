@@ -42,6 +42,7 @@ C1: commit work;
 MC: wait until C2 ready;
 C2: commit work;
 MC: wait until C2 ready;
+C2: update statistics on tb1;
 C2: show index from tb1;
 C2: commit work;
 MC: wait until C2 ready;

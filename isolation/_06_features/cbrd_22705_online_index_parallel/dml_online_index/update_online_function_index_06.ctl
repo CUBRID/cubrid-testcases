@@ -31,6 +31,8 @@ C1: commit;
 MC: wait until C1 ready;
 
 MC: wait until C2 ready;
+C1: update statistics on t2;
+C2: update statistics on t2;
 C2: show indexes from t2;
 C2: commit;
 
