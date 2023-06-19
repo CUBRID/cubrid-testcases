@@ -16,6 +16,7 @@ C4: set transaction isolation level read committed;
 C1: drop table if exists t;
 C1: create table t(id bigint unique, a char(10) unique, b varchar(10) unique, c timestamp default current_timestamp, d datetime default current_datetime);
 C1: insert into t(id,a,b) select rownum,rownum||'a',rownum||'b' from db_root connect by level<=100;
+C1: update statistics on t;
 C1: commit;
 MC: wait until C1 ready;
 

@@ -18,6 +18,7 @@ C1: create table t2(id bigint primary key ,col1 varchar(10),col2 int, constraint
 C1: insert into t2 select rownum,rownum,1 from db_root connect by level<=10;
 C1: insert into t2 select rownum+20,rownum+20,2 from db_root connect by level<=10;
 C1: insert into t2 select rownum+40,rownum+40,3 from db_root connect by level<=10;
+C1: update statistics on t1;
 C1: commit;
 MC: wait until C1 ready;
 
@@ -31,10 +32,12 @@ MC: wait until C2 blocked;
 C1: commit;
 MC: wait until C1 ready;
 MC: wait until C2 ready;
+C2: update statistics on t2;
 C2: show indexes from t2;
 C2: commit;
 MC: wait until C2 ready;
 C3: create index idx_t1_col1 on t1(col1) with online parallel 2;
+C3: update statistics on t1;
 C3: show indexes from t1;
 C3: commit;
 MC: wait until C3 ready;
