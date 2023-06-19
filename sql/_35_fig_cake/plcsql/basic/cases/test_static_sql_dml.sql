@@ -7,7 +7,7 @@ begin
     // ex) CREATE TABLE 'table_name' (id INT UNIQUE, name VARCHAR, phone VARCHAR DEFAULT ''000-0000'');
 
     EXECUTE IMMEDIATE 'CREATE TABLE ' || table_name || signature;
-    DBMS_OUTPUT.put_line ('creating ' || table_name || ' table is succeed!');
+    DBMS_OUTPUT.put_line ('creating ' || table_name || ' table is succeeded!');
 end;
 
 CALL test_ddl ('test_tbl', '(id INT UNIQUE, name VARCHAR, phone VARCHAR DEFAULT ''000-0000'')');
@@ -46,7 +46,7 @@ begin
     DBMS_OUTPUT.put_line (temp);
 
     EXECUTE IMMEDIATE temp;
-    DBMS_OUTPUT.put_line(temp || ' is succeed');
+    DBMS_OUTPUT.put_line(temp || ' is succeeded');
 
     INSERT INTO test_tbl SET id=7, phone='777-7777';
 

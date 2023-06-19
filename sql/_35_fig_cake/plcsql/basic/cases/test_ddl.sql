@@ -7,7 +7,7 @@ create or replace procedure test_ddl() as
 begin
     EXECUTE IMMEDIATE 'drop table if exists ' || new_table;
     EXECUTE IMMEDIATE 'CREATE TABLE ' || new_table || ' (id INT UNIQUE, name VARCHAR, phone VARCHAR DEFAULT ''000-0000'');';
-    DBMS_OUTPUT.put_line ('creating ' || new_table || ' table is succeed!');
+    DBMS_OUTPUT.put_line ('creating ' || new_table || ' table is succeeded!');
 end;
 
 CALL test_ddl ();
