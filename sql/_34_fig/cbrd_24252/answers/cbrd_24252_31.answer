@@ -1,0 +1,79 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+1000
+===================================================
+1000
+===================================================
+1000
+===================================================
+0
+===================================================
+0
+===================================================
+max(c.col_a)    max(c.col_b)    
+1001     -1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (p)
+      INDEX SCAN (c.fk_t_child_parent_col_a) (key range: c.parent_col_a=p.col_a)
+
+  rewritten query: select max(c.col_a), max(c.col_b) from [dba.t_child] c, [dba.t_parent] p where c.parent_col_a=p.col_a and c.col_b= ?:?  group by p.col_a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.t_parent), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_child.fk_t_child_parent_col_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+max(c.col_a)    max(c.col_b)    
+1001     -1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (p)
+      INDEX SCAN (c.fk_t_child_parent_col_a) (key range: c.parent_col_a=p.col_a)
+
+  rewritten query: select max(c.col_a), max(c.col_b) from [dba.t_child] c, [dba.t_parent] p where c.parent_col_a=p.col_a and c.col_b= ?:?  group by p.col_a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.t_parent), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_child.fk_t_child_parent_col_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
