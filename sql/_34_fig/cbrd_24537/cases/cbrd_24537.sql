@@ -10,6 +10,8 @@ insert into src values (1), (2), (3);
 
 --@queryplan
 merge /*+ recompile */ into tt using src d on 'a' = 'a'  when not matched then insert values (999, 'abcd') where d.s = 3;
+select * from src;
+select * from tt;
 
 drop table if exists src;
 drop table if exists tt;
