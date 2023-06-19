@@ -16,3 +16,5 @@ CAll demo_global_semantics_serial ();
 DROP SERIAL IF EXISTS demo_pl_serial;
 
 CAll demo_global_semantics_serial ();
+
+DROP FUNCTION demo_global_semantics_serial;

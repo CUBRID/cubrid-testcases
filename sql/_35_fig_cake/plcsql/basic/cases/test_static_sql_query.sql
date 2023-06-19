@@ -146,3 +146,13 @@ when others then
 end;
 
 select test_query_cursor_hostvar ();
+
+DROP TABLE history;
+DROP FUNCTION 
+test_query_cursor_hostvar, 
+test_query_cursor_simple, 
+test_query_cursor_simple_nocond, 
+test_query_single_row, 
+test_query_single_row_const;
+
+DROP PROCEDURE create_history_data;

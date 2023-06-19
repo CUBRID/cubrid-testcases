@@ -126,3 +126,6 @@ CALL test_ddl ('test_tbl', '(
 INSERT INTO test_tbl VALUES (1,'111-1111'), (2,'222-2222'), (3, '333-3333'), (4, NULL), (5, NULL);
 call test_dml_delete ();
 SELECT * FROM test_tbl;
+
+DROP PROCEDURE test_dml_truncate, test_dml_delete, test_dml_insert, test_ddl;
+DROP TABLE test_tbl;

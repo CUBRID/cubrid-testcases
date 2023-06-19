@@ -16,3 +16,5 @@ end;
 
 call demo_hello ();
 select /*+ recompile */ demo_hello ();
+
+DROP PROCEDURE demo_hello;
