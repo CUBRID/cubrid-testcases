@@ -1,0 +1,1 @@
+* basic: Basic tests to perform only the normal operation of the function
