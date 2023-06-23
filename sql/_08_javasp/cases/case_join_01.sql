@@ -11,10 +11,12 @@ insert into tbl_b select rownum, to_char(rownum mod 10) col_a, to_char(rownum mo
 
 
 -- test outer join
+-- CBRD-24720 : result different with using javasp
 select count(*) from tbl_a right outer join tbl_b
 on tbl_a.x = tbl_b.x
 and fn_string(tbl_b.y) = '1';
 
+-- CBRD-24720 : result different with using javasp
 select count(*) from tbl_a left outer join tbl_b
 on tbl_a.x = tbl_b.x
 and fn_string(tbl_a.y) = '1';
@@ -24,6 +26,7 @@ select count(*) from tbl_a right outer join tbl_b
 on tbl_a.x = tbl_b.x
 where fn_string(tbl_b.y) = '1';
 
+-- CBRD-24720 : result different with using javasp
 select count(*) from tbl_a left outer join tbl_b
 on tbl_a.x = tbl_b.x
 where fn_string(tbl_a.y) = '1';

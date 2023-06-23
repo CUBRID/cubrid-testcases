@@ -1,7 +1,7 @@
 -- This is a test case for 'CONNECT BY', 'LEVEL', 'CONNECT_BY_ISLEAF', 'CONNECT_BY_ISCYCLE'
 -- 'CONNECT_BY_ROOT', 'PRIOR', 'SYS_CONNECT_BY_PATH'.
 
-drop table if exists tbl1, tbl2;
+drop table if exists tbl1;
 
 CREATE OR REPLACE FUNCTION fn_string(i string) RETURN string as language java name 'SpTest7.typeteststring(java.lang.String) return java.lang.String';
 CREATE TABLE tbl1(ID INT, MgrID INT, Name VARCHAR(32), BirthYear INT);
