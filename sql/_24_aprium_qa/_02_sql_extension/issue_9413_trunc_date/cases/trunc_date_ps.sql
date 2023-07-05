@@ -13,14 +13,14 @@ insert into trunc_ps(str, dt, ts, dtime) values('aaa', '1990-12-1', '2000-09-01 
 insert into trunc_ps(str, dt, ts, dtime) values('aaa', '1991-12-1', '2001-09-18 12:12:12', '2011-07-01 12:12:12.123');
 insert into trunc_ps(str, dt, ts, dtime) values('aaa', '1992-12-1', '2002-09-01 12:12:12', '2012-07-20 12:12:12.123');
 insert into trunc_ps(str, dt, ts, dtime) values('bbb', '1990-12-31', '2000-09-01 12:12:12', '2010-07-01 12:12:12.123');
-insert into trunc_ps(str, dt, ts, dtime) values('bbb', '1993-12-1', '2003-09-16 12:12:12', '2023-07-01 12:12:12.123');
-insert into trunc_ps(str, dt, ts, dtime) values('bbb', '1994-12-1', '2004-09-01 12:12:12', '2024-07-31 12:12:12.123');
-insert into trunc_ps(str, dt, ts, dtime) values('ccc', '1990-12-1', '2000-09-01 12:12:12', '2027-07-01 12:12:12.123');
-insert into trunc_ps(str, dt, ts, dtime) values('ccc', '1997-12-31', '2007-09-15 12:12:12', '2028-07-01 12:12:12.123');
+insert into trunc_ps(str, dt, ts, dtime) values('bbb', '1993-12-1', '2003-09-16 12:12:12', '2043-07-01 12:12:12.123');
+insert into trunc_ps(str, dt, ts, dtime) values('bbb', '1994-12-1', '2004-09-01 12:12:12', '2044-07-31 12:12:12.123');
+insert into trunc_ps(str, dt, ts, dtime) values('ccc', '1990-12-1', '2000-09-01 12:12:12', '2047-07-01 12:12:12.123');
+insert into trunc_ps(str, dt, ts, dtime) values('ccc', '1997-12-31', '2007-09-15 12:12:12', '2048-07-01 12:12:12.123');
 insert into trunc_ps(str, dt, ts, dtime) values('ccc', '1998-12-1', '2008-09-01 12:12:12', '2010-07-16 12:12:12.123');
 insert into trunc_ps(str, dt, ts, dtime) values('ddd', '1990-12-1', '2000-09-01 12:12:12', '2010-07-01 12:12:12.123');
-insert into trunc_ps(str, dt, ts, dtime) values('ddd', '1999-12-29', '2009-09-01 12:12:12', '2029-07-01 12:12:12.123');
-insert into trunc_ps(str, dt, ts, dtime) values('ddd', '1999-12-1', '2009-09-01 12:12:12', '2029-07-14 12:12:12.123');
+insert into trunc_ps(str, dt, ts, dtime) values('ddd', '1999-12-29', '2009-09-01 12:12:12', '2049-07-01 12:12:12.123');
+insert into trunc_ps(str, dt, ts, dtime) values('ddd', '1999-12-1', '2009-09-01 12:12:12', '2049-07-14 12:12:12.123');
 
 
 prepare st from 'select id, str, dt, trunc(dt) from trunc_ps where trunc(dt) < ? and trunc(ts) > ? order by 1';
