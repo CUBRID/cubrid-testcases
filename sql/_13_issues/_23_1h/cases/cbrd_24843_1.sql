@@ -80,7 +80,7 @@ from
     t_child as c,
     t_parent as p
 where
-    c.p_a = p.a;
+    c.p_a = p.a and c.p_a = p.a;
 show trace;
 
 
