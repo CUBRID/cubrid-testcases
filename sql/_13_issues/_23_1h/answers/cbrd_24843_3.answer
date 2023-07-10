@@ -35,15 +35,15 @@ trace
 
 Query Plan:
   NESTED LOOPS (inner join)
-    INDEX SCAN (c?.fk_t_child_?_p_a) (key range: c?.p_a= ?:? , key filter: c?.p_a is not null )
-    INDEX SCAN (c?.fk_t_child_?_p_a) (key range: c?.p_a= ?:? , key filter: c?.p_a is not null )
+    INDEX SCAN (ca.fk_t_child_a_p_a) (key range: ca.p_a= ?:? , key filter: ca.p_a is not null )
+    INDEX SCAN (cb.fk_t_child_b_p_a) (key range: cb.p_a= ?:? , key filter: cb.p_a is not null )
 
-  rewritten query: select c?.a, c?.b, c?.p_a, c?.a, c?.b, c?.p_a from [dba.t_child_?] c?, [dba.t_child_?] c? where c?.b=c?.b and c?.p_a= ?:?  and c?.p_a= ?:?  and c?.p_a is not null  and c?.p_a is not null 
+  rewritten query: select ca.a, ca.b, ca.p_a, cb.a, cb.b, cb.p_a from [dba.t_child_a] ca, [dba.t_child_b] cb where ca.b=cb.b and cb.p_a= ?:?  and ca.p_a= ?:?  and ca.p_a is not null  and cb.p_a is not null 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (index: dba.t_child_?.fk_t_child_?_p_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-      SCAN (index: dba.t_child_?.fk_t_child_?_p_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SCAN (index: dba.t_child_a.fk_t_child_a_p_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.t_child_b.fk_t_child_b_p_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
 ===================================================
@@ -55,15 +55,15 @@ trace
 
 Query Plan:
   NESTED LOOPS (inner join)
-    INDEX SCAN (c?.fk_t_child_?_p_a) (key range: c?.p_a= ?:? , key filter: c?.p_a is not null )
-    INDEX SCAN (c?.fk_t_child_?_p_a) (key range: c?.p_a= ?:? , key filter: c?.p_a is not null )
+    INDEX SCAN (ca.fk_t_child_a_p_a) (key range: ca.p_a= ?:? , key filter: ca.p_a is not null )
+    INDEX SCAN (cb.fk_t_child_b_p_a) (key range: cb.p_a= ?:? , key filter: cb.p_a is not null )
 
-  rewritten query: select c?.a, c?.b, c?.p_a, c?.a, c?.b, c?.p_a from [dba.t_child_?] c?, [dba.t_child_?] c? where c?.b=c?.b and c?.p_a= ?:?  and c?.p_a= ?:?  and c?.p_a is not null  and c?.p_a is not null 
+  rewritten query: select ca.a, ca.b, ca.p_a, cb.a, cb.b, cb.p_a from [dba.t_child_a] ca, [dba.t_child_b] cb where ca.b=cb.b and cb.p_a= ?:?  and ca.p_a= ?:?  and ca.p_a is not null  and cb.p_a is not null 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (index: dba.t_child_?.fk_t_child_?_p_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-      SCAN (index: dba.t_child_?.fk_t_child_?_p_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SCAN (index: dba.t_child_a.fk_t_child_a_p_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.t_child_b.fk_t_child_b_p_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
 ===================================================
@@ -79,12 +79,12 @@ Query Plan:
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select a.a, a.b, a.p_a, b.a, b.b, b.p_a from [dba.t_child_?] a, [dba.t_child_?] b where (a.a mod ?=?) and (b.a mod ?=?) and a.b=b.b and a.p_a is not null  and b.p_a is not null 
+  rewritten query: select a.a, a.b, a.p_a, b.a, b.b, b.p_a from [dba.t_child_a] a, [dba.t_child_a] b where (a.a mod ?=?) and (b.a mod ?=?) and a.b=b.b and a.p_a is not null  and b.p_a is not null 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: dba.t_child_?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (table: dba.t_child_?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.t_child_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_child_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -100,12 +100,12 @@ Query Plan:
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select a.a, a.b, a.p_a, b.a, b.b, b.p_a from [dba.t_child_?] a, [dba.t_child_?] b where (a.b=b.b) and a.a mod ?=? and b.a mod ?=? and a.p_a is not null  and b.p_a is not null 
+  rewritten query: select a.a, a.b, a.p_a, b.a, b.b, b.p_a from [dba.t_child_a] a, [dba.t_child_a] b where (a.b=b.b) and a.a mod ?=? and b.a mod ?=? and a.p_a is not null  and b.p_a is not null 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: dba.t_child_?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (table: dba.t_child_?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.t_child_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_child_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -121,12 +121,12 @@ Query Plan:
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select a.a, a.b, a.p_a, b.a, b.b, b.p_a from [dba.t_child_?] a, [dba.t_child_?] b where (a.a mod ?=?) and (b.a mod ?=?) and a.b=b.b and a.p_a is not null  and b.p_a is not null 
+  rewritten query: select a.a, a.b, a.p_a, b.a, b.b, b.p_a from [dba.t_child_a] a, [dba.t_child_a] b where (a.a mod ?=?) and (b.a mod ?=?) and a.b=b.b and a.p_a is not null  and b.p_a is not null 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: dba.t_child_?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (table: dba.t_child_?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.t_child_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_child_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -142,12 +142,12 @@ Query Plan:
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select a.a, a.b, a.p_a, b.a, b.b, b.p_a from [dba.t_child_?] a, [dba.t_child_?] b where (a.b=b.b) and a.a mod ?=? and b.a mod ?=? and a.p_a is not null  and b.p_a is not null 
+  rewritten query: select a.a, a.b, a.p_a, b.a, b.b, b.p_a from [dba.t_child_a] a, [dba.t_child_a] b where (a.b=b.b) and a.a mod ?=? and b.a mod ?=? and a.p_a is not null  and b.p_a is not null 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: dba.t_child_?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (table: dba.t_child_?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.t_child_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_child_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -159,15 +159,15 @@ trace
 
 Query Plan:
   NESTED LOOPS (inner join)
-    INDEX SCAN (c.fk_t_child_?_p_a) (key range: c.p_a= ?:? , key filter: c.p_a is not null )
-    INDEX SCAN (p?.pk_t_parent_?_a) (key range: c.p_a=p?.a, key filter: ((p?.a= ?:? ) or (p?.a= ?:? ) or (p?.a= ?:? )), covered: true)
+    INDEX SCAN (c.fk_t_child_a_p_a) (key range: c.p_a= ?:? , key filter: c.p_a is not null )
+    INDEX SCAN (pb.pk_t_parent_a_a) (key range: c.p_a=pb.a, key filter: ((pb.a= ?:? ) or (pb.a= ?:? ) or (pb.a= ?:? )), covered: true)
 
-  rewritten query: select /*+ ORDERED */ c.a, c.b, c.p_a from [dba.t_child_?] c inner join [dba.t_parent_?] p? on c.p_a= ?:?  and c.p_a=p?.a where ((p?.a= ?:? ) or (p?.a= ?:? ) or (p?.a= ?:? )) and c.p_a is not null 
+  rewritten query: select /*+ ORDERED */ c.a, c.b, c.p_a from [dba.t_child_a] c inner join [dba.t_parent_a] pb on c.p_a= ?:?  and c.p_a=pb.a where ((pb.a= ?:? ) or (pb.a= ?:? ) or (pb.a= ?:? )) and c.p_a is not null 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (index: dba.t_child_?.fk_t_child_?_p_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-      SCAN (index: dba.t_parent_?.pk_t_parent_?_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    SCAN (index: dba.t_child_a.fk_t_child_a_p_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.t_parent_a.pk_t_parent_a_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
      
 
 ===================================================
@@ -180,17 +180,17 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     NESTED LOOPS (cross join)
-      INDEX SCAN (c.fk_t_child_?_p_a) (key range: c.p_a= ?:? )
-      INDEX SCAN (p?.pk_t_parent_?_a) (key range: p?.a= ?:? , covered: true)
-    INDEX SCAN (p?.pk_t_parent_?_a) (key range: c.p_a=p?.a, key filter: ((p?.a= ?:? ) or (p?.a= ?:? ) or (p?.a= ?:? )), covered: true)
+      INDEX SCAN (c.fk_t_child_a_p_a) (key range: c.p_a= ?:? )
+      INDEX SCAN (pa.pk_t_parent_a_a) (key range: pa.a= ?:? , covered: true)
+    INDEX SCAN (pb.pk_t_parent_a_a) (key range: c.p_a=pb.a, key filter: ((pb.a= ?:? ) or (pb.a= ?:? ) or (pb.a= ?:? )), covered: true)
 
-  rewritten query: select /*+ ORDERED NO_ELIMINATE_JOIN */ c.a, c.b, c.p_a from [dba.t_child_?] c inner join [dba.t_parent_?] p? on c.p_a=p?.a and c.p_a= ?:?  inner join [dba.t_parent_?] p? on c.p_a=p?.a where ((p?.a= ?:? ) or (p?.a= ?:? ) or (p?.a= ?:? )) and p?.a= ?:? 
+  rewritten query: select /*+ ORDERED NO_ELIMINATE_JOIN */ c.a, c.b, c.p_a from [dba.t_child_a] c inner join [dba.t_parent_a] pa on c.p_a=pa.a and c.p_a= ?:?  inner join [dba.t_parent_a] pb on c.p_a=pb.a where ((pb.a= ?:? ) or (pb.a= ?:? ) or (pb.a= ?:? )) and pa.a= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (index: dba.t_child_?.fk_t_child_?_p_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-      SCAN (index: dba.t_parent_?.pk_t_parent_?_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
-        SCAN (index: dba.t_parent_?.pk_t_parent_?_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    SCAN (index: dba.t_child_a.fk_t_child_a_p_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.t_parent_a.pk_t_parent_a_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.t_parent_a.pk_t_parent_a_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
      
 
 ===================================================
@@ -201,13 +201,13 @@ a    b    p_a
 trace    
 
 Query Plan:
-  INDEX SCAN (c.fk_t_child_?_p_a) (key range: c.p_a= ?:? , key filter: c.p_a is not null )
+  INDEX SCAN (c.fk_t_child_a_p_a) (key range: c.p_a= ?:? , key filter: c.p_a is not null )
 
-  rewritten query: select /*+ ORDERED */ c.a, c.b, c.p_a from [dba.t_child_?] c where c.p_a= ?:?  and c.p_a is not null 
+  rewritten query: select /*+ ORDERED */ c.a, c.b, c.p_a from [dba.t_child_a] c where c.p_a= ?:?  and c.p_a is not null 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (index: dba.t_child_?.fk_t_child_?_p_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SCAN (index: dba.t_child_a.fk_t_child_a_p_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
 ===================================================
@@ -220,17 +220,17 @@ trace
 Query Plan:
   NESTED LOOPS (cross join)
     NESTED LOOPS (cross join)
-      INDEX SCAN (c.fk_t_child_?_p_a) (key range: c.p_a= ?:? )
-      INDEX SCAN (p?.pk_t_parent_?_a) (key range: p?.a= ?:? , covered: true)
-    INDEX SCAN (p?.pk_t_parent_?_a) (key range: p?.a= ?:? , covered: true)
+      INDEX SCAN (c.fk_t_child_a_p_a) (key range: c.p_a= ?:? )
+      INDEX SCAN (pa.pk_t_parent_a_a) (key range: pa.a= ?:? , covered: true)
+    INDEX SCAN (pb.pk_t_parent_a_a) (key range: pb.a= ?:? , covered: true)
 
-  rewritten query: select /*+ ORDERED NO_ELIMINATE_JOIN */ c.a, c.b, c.p_a from [dba.t_child_?] c, [dba.t_parent_?] p?, [dba.t_parent_?] p? where p?.a= ?:?  and c.p_a= ?:?  and p?.a= ?:?  and c.p_a=p?.a and c.p_a=p?.a
+  rewritten query: select /*+ ORDERED NO_ELIMINATE_JOIN */ c.a, c.b, c.p_a from [dba.t_child_a] c, [dba.t_parent_a] pa, [dba.t_parent_a] pb where pb.a= ?:?  and c.p_a= ?:?  and pa.a= ?:?  and c.p_a=pa.a and c.p_a=pb.a
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (index: dba.t_child_?.fk_t_child_?_p_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-      SCAN (index: dba.t_parent_?.pk_t_parent_?_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
-        SCAN (index: dba.t_parent_?.pk_t_parent_?_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    SCAN (index: dba.t_child_a.fk_t_child_a_p_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.t_parent_a.pk_t_parent_a_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.t_parent_a.pk_t_parent_a_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
      
 
 ===================================================
@@ -241,13 +241,13 @@ a    b    p_a
 trace    
 
 Query Plan:
-  INDEX SCAN (t.fk_t_child_?_p_a) (key range: (t.p_a= ?:? ), key filter: t.p_a is not null )
+  INDEX SCAN (t.fk_t_child_a_p_a) (key range: (t.p_a= ?:? ), key filter: t.p_a is not null )
 
-  rewritten query: select t.a, t.b, t.p_a from [dba.t_child_?] t where (t.p_a= ?:? ) and t.p_a is not null 
+  rewritten query: select t.a, t.b, t.p_a from [dba.t_child_a] t where (t.p_a= ?:? ) and t.p_a is not null 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (index: dba.t_child_?.fk_t_child_?_p_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SCAN (index: dba.t_child_a.fk_t_child_a_p_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
 ===================================================
@@ -258,13 +258,13 @@ a    b    p_a
 trace    
 
 Query Plan:
-  INDEX SCAN (t.fk_t_child_?_p_a) (key range: (t.p_a= ?:? ), key filter: t.p_a is not null )
+  INDEX SCAN (t.fk_t_child_a_p_a) (key range: (t.p_a= ?:? ), key filter: t.p_a is not null )
 
-  rewritten query: select t.a, t.b, t.p_a from [dba.t_child_?] t where (t.p_a= ?:? ) and t.p_a is not null 
+  rewritten query: select t.a, t.b, t.p_a from [dba.t_child_a] t where (t.p_a= ?:? ) and t.p_a is not null 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (index: dba.t_child_?.fk_t_child_?_p_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SCAN (index: dba.t_child_a.fk_t_child_a_p_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
 ===================================================
@@ -275,13 +275,13 @@ a    b    p_a
 trace    
 
 Query Plan:
-  INDEX SCAN (t.fk_t_child_?_p_a) (key range: (t.p_a> ?:? ), key filter: t.p_a is not null )
+  INDEX SCAN (t.fk_t_child_a_p_a) (key range: (t.p_a> ?:? ), key filter: t.p_a is not null )
 
-  rewritten query: select t.a, t.b, t.p_a from [dba.t_child_?] t where (t.p_a> ?:? ) and t.p_a is not null 
+  rewritten query: select t.a, t.b, t.p_a from [dba.t_child_a] t where (t.p_a> ?:? ) and t.p_a is not null 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (index: dba.t_child_?.fk_t_child_?_p_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SCAN (index: dba.t_child_a.fk_t_child_a_p_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
 ===================================================
@@ -292,13 +292,13 @@ a    b    p_a
 trace    
 
 Query Plan:
-  INDEX SCAN (t.fk_t_child_?_p_a) (key range: (t.p_a> ?:? ), key filter: t.p_a is not null )
+  INDEX SCAN (t.fk_t_child_a_p_a) (key range: (t.p_a> ?:? ), key filter: t.p_a is not null )
 
-  rewritten query: select t.a, t.b, t.p_a from [dba.t_child_?] t where (t.p_a> ?:? ) and t.p_a is not null 
+  rewritten query: select t.a, t.b, t.p_a from [dba.t_child_a] t where (t.p_a> ?:? ) and t.p_a is not null 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (index: dba.t_child_?.fk_t_child_?_p_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SCAN (index: dba.t_child_a.fk_t_child_a_p_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
 ===================================================
