@@ -333,8 +333,7 @@ where
 show trace;
 
 
-/* 13. 'c.p_a <> 1' -> pt_lambda_node() -> 'p.a <> 1' */
-/*     'c.p_a != 1' -> pt_lambda_node() -> 'p.a != 1' */
+/* 13. 'c.p_a like 1' -> pt_lambda_node() -> 'p.a like 1' */
 /* ansi‑style */
 select /*+ recompile */
     c.*
