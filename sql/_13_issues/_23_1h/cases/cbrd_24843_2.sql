@@ -13,9 +13,9 @@
  * 9. 'p.a in (1, 3, 5, 7, 9)' [x]
  * 10. 'p.a between 2 and 4' [x]
  * 11. 'p.a = (select a from t_parent order by a desc limit 1)' [x]
- * 12. 'c.p_a <> 1' -> pt_lambda_node() -> 'p.a <> 1' [o]
- *     'c.p_a != 1' -> pt_lambda_node() -> 'p.a != 1' [o]
- * 13. 'c.p_a like 1' -> pt_lambda_node() -> 'p.a like 1' [o]
+ * 12. 'p.a <> 1' [x]
+ *     'p.a != 1' [x]
+ * 13. 'p.a like 1' [x]
  * 14. 'p.a = 4' -> pt_lambda_node() -> 'c.p_a = 4' group by c.b [o]
  * 15. 'p.a = 4' -> pt_lambda_node() -> 'c.p_a = 4' group by c.b having count(*) > 2 [o]
  * 16.  count(*) over ( PARTITION BY c.b ORDER BY c.a DESC) AS cnt 
@@ -51,7 +51,7 @@ set trace on;
 /* 1. 'c.p_a = 1' -> pt_lambda_node() -> 'p.a = 1' */
 /* ansi‑style */
 select /*+ recompile */
-    c.*
+    c.* 
 from
     t_parent as p
     inner join t_child as c on c.p_a = p.a and c.p_b = p.b
@@ -290,8 +290,8 @@ where
 show trace;
 
 
-/* 12. 'c.p_a <> 1' -> pt_lambda_node() -> 'p.a <> 1' */
-/*     'c.p_a != 1' -> pt_lambda_node() -> 'p.a != 1' */
+/* 12. 'p.a <> 1' */
+/*     'p.a != 1' */
 /* ansi‑style */
 select /*+ recompile */
     c.*
@@ -299,7 +299,7 @@ from
     t_parent as p
     inner join t_child as c on c.p_a = p.a and c.p_b = p.b
 where
-    c.p_a <> 1;
+    p.a <> 1;
 show trace;
 
 select /*+ recompile */
@@ -309,7 +309,7 @@ from
     t_parent as p
 where
     c.p_a = p.a and c.p_b = p.b
-    and c.p_a <> 1;
+    and p.a <> 1;
 show trace;
 
 /* ansi‑style */
@@ -319,7 +319,7 @@ from
     t_parent as p
     inner join t_child as c on c.p_a = p.a and c.p_b = p.b
 where
-    c.p_a != 1;
+    p.a != 1;
 show trace;
 
 select /*+ recompile */
@@ -329,11 +329,11 @@ from
     t_parent as p
 where
     c.p_a = p.a and c.p_b = p.b
-    and c.p_a != 1;
+    and p.a != 1;
 show trace;
 
 
-/* 13. 'c.p_a like 1' -> pt_lambda_node() -> 'p.a like 1' */
+/* 13. 'p.a like 1' */
 /* ansi‑style */
 select /*+ recompile */
     c.*
@@ -341,7 +341,7 @@ from
     t_parent as p
     inner join t_child as c on c.p_a = p.a and c.p_b = p.b
 where
-    c.p_a like 1;
+    p.a like 1;
 show trace;
 
 select /*+ recompile */
@@ -351,7 +351,7 @@ from
     t_parent as p
 where
     c.p_a = p.a and c.p_b = p.b
-    and c.p_a like 1;
+    and p.a like 1;
 show trace;
 
 

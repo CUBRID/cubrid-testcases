@@ -473,13 +473,16 @@ a    b    p_a    p_b
 trace    
 
 Query Plan:
-  TABLE SCAN (c)
+  NESTED LOOPS (inner join)
+    TABLE SCAN (p)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a=p.akey range: c.p_b=p.b)
 
-  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_child] c where c.p_a<>? and c.p_a is not null  and c.p_b is not null 
+  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_parent] p, [dba.t_child] c where p.a<>? and c.p_a=p.a and c.p_b=p.b
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: dba.t_child), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.t_parent), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_child.fk_t_child_p_a_p_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
 ===================================================
@@ -497,13 +500,16 @@ a    b    p_a    p_b
 trace    
 
 Query Plan:
-  TABLE SCAN (c)
+  NESTED LOOPS (inner join)
+    TABLE SCAN (p)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a=p.akey range: c.p_b=p.b)
 
-  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_child] c where c.p_a<>? and c.p_a is not null  and c.p_b is not null 
+  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_child] c, [dba.t_parent] p where c.p_a=p.a and c.p_b=p.b and p.a<>?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: dba.t_child), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.t_parent), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_child.fk_t_child_p_a_p_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
 ===================================================
@@ -521,13 +527,16 @@ a    b    p_a    p_b
 trace    
 
 Query Plan:
-  TABLE SCAN (c)
+  NESTED LOOPS (inner join)
+    TABLE SCAN (p)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a=p.akey range: c.p_b=p.b)
 
-  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_child] c where c.p_a<>? and c.p_a is not null  and c.p_b is not null 
+  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_parent] p, [dba.t_child] c where p.a<>? and c.p_a=p.a and c.p_b=p.b
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: dba.t_child), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.t_parent), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_child.fk_t_child_p_a_p_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
 ===================================================
@@ -545,13 +554,16 @@ a    b    p_a    p_b
 trace    
 
 Query Plan:
-  TABLE SCAN (c)
+  NESTED LOOPS (inner join)
+    TABLE SCAN (p)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a=p.akey range: c.p_b=p.b)
 
-  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_child] c where c.p_a<>? and c.p_a is not null  and c.p_b is not null 
+  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_child] c, [dba.t_parent] p where c.p_a=p.a and c.p_b=p.b and p.a<>?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: dba.t_child), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.t_parent), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_child.fk_t_child_p_a_p_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
 ===================================================
@@ -562,13 +574,16 @@ a    b    p_a    p_b
 trace    
 
 Query Plan:
-  TABLE SCAN (c)
+  NESTED LOOPS (inner join)
+    TABLE SCAN (p)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a=p.akey range: c.p_b=p.b)
 
-  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_child] c where  cast(c.p_a as varchar) like  cast(? as varchar) and c.p_a is not null  and c.p_b is not null 
+  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_parent] p, [dba.t_child] c where  cast(p.a as varchar) like  cast(? as varchar) and c.p_a=p.a and c.p_b=p.b
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: dba.t_child), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.t_parent), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_child.fk_t_child_p_a_p_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
 ===================================================
@@ -579,13 +594,16 @@ a    b    p_a    p_b
 trace    
 
 Query Plan:
-  TABLE SCAN (c)
+  NESTED LOOPS (inner join)
+    TABLE SCAN (p)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a=p.akey range: c.p_b=p.b)
 
-  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_child] c where  cast(c.p_a as varchar) like  cast(? as varchar) and c.p_a is not null  and c.p_b is not null 
+  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_child] c, [dba.t_parent] p where c.p_a=p.a and c.p_b=p.b and  cast(p.a as varchar) like  cast(? as varchar)
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
-    SCAN (table: dba.t_child), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.t_parent), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_child.fk_t_child_p_a_p_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
 ===================================================
