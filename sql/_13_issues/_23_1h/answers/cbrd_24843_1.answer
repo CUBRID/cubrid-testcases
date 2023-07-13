@@ -162,9 +162,9 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     TABLE SCAN (p)
-    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a=p.a)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a=p.a, key filter: c.p_a=p.a)
 
-  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_child] c, [dba.t_parent] p where c.p_a=p.a
+  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_child] c, [dba.t_parent] p where c.p_a=p.a and c.p_a=p.a
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
