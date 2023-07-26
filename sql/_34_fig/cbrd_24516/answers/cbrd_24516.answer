@@ -1,0 +1,286 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+count(*)    
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl)
+
+  rewritten query: select count(*) from [dba.tbl] [dba.tbl]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.tbl), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_tbl_id)
+     
+
+===================================================
+max(id)    
+999     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl)
+
+  rewritten query: select max([dba.tbl].id) from [dba.tbl] [dba.tbl]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.tbl), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_tbl_id)
+     
+
+===================================================
+min(id)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl)
+
+  rewritten query: select min([dba.tbl].id) from [dba.tbl] [dba.tbl]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.tbl), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_tbl_id)
+     
+
+===================================================
+min(id)    max(id)    
+1     999     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl)
+
+  rewritten query: select min([dba.tbl].id), max([dba.tbl].id) from [dba.tbl] [dba.tbl]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.tbl), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_tbl_id)
+     
+
+===================================================
+min(id)    max(a)    
+1     999     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl)
+
+  rewritten query: select min([dba.tbl].id), max([dba.tbl].a) from [dba.tbl] [dba.tbl]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.tbl), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_tbl_id, idx_mx)
+     
+
+===================================================
+count(id)    max(id)    
+2     999     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl)
+
+  rewritten query: select count([dba.tbl].id), max([dba.tbl].id) from [dba.tbl] [dba.tbl]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_tbl_id)
+     
+
+===================================================
+count(a)    max(b)    
+2     999     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl)
+
+  rewritten query: select count([dba.tbl].a), max([dba.tbl].b) from [dba.tbl] [dba.tbl]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(id)    min(id)    max(id)    
+2     1     999     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl)
+
+  rewritten query: select count([dba.tbl].id), min([dba.tbl].id), max([dba.tbl].id) from [dba.tbl] [dba.tbl]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_tbl_id)
+     
+
+===================================================
+count(a)    min(b)    max(c)    
+2     1     999     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl)
+
+  rewritten query: select count([dba.tbl].a), min([dba.tbl].b), max([dba.tbl].c) from [dba.tbl] [dba.tbl]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    max(id)    
+2     999     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl)
+
+  rewritten query: select count(*), max([dba.tbl].id) from [dba.tbl] [dba.tbl]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.tbl), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_tbl_id)
+     
+
+===================================================
+count(*)    min(id)    
+2     1     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl)
+
+  rewritten query: select count(*), min([dba.tbl].id) from [dba.tbl] [dba.tbl]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.tbl), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_tbl_id)
+     
+
+===================================================
+count(*)    min(id)    max(id)    
+2     1     999     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl)
+
+  rewritten query: select count(*), min([dba.tbl].id), max([dba.tbl].id) from [dba.tbl] [dba.tbl]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.tbl), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_tbl_id)
+     
+
+===================================================
+count(*)    min(a)    max(c)    
+2     1     999     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl)
+
+  rewritten query: select count(*), min([dba.tbl].a), max([dba.tbl].c) from [dba.tbl] [dba.tbl]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_tbl_id, idx_mx)
+     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tbl.pk_tbl_id) (key range: ([dba.tbl].id> ?:? ), covered: true)
+
+  rewritten query: select count(*) from [dba.tbl] [dba.tbl] where ([dba.tbl].id> ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (index: dba.tbl.pk_tbl_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+max(phone)    
+999-999-999     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl)
+
+  rewritten query: select max([dba.tbl].phone) from [dba.tbl] [dba.tbl]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+min(phone)    
+123-456-789     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl)
+
+  rewritten query: select min([dba.tbl].phone) from [dba.tbl] [dba.tbl]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
