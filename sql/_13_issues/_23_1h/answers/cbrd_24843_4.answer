@@ -1,0 +1,858 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+0
+0
+===================================================
+9
+===================================================
+9
+===================================================
+9
+===================================================
+9
+===================================================
+0
+===================================================
+0
+===================================================
+a    b    p_a    p_b    
+20     -200     2     2     
+21     -300     3     3     
+22     -400     4     4     
+23     -500     5     5     
+24     -600     6     6     
+25     -700     7     7     
+26     -800     8     8     
+27     -900     9     9     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (p)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a=p.akey range: c.p_b=p.b)
+
+  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_parent] p, [dba.t_child] c where p.a<>? and c.p_a=p.a and c.p_b=p.b
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.t_parent), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_child.fk_t_child_p_a_p_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+a    b    p_a    p_b    
+20     -200     2     2     
+21     -300     3     3     
+22     -400     4     4     
+23     -500     5     5     
+24     -600     6     6     
+25     -700     7     7     
+26     -800     8     8     
+27     -900     9     9     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (p)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a=p.akey range: c.p_b=p.b)
+
+  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_child] c, [dba.t_parent] p where c.p_a=p.a and c.p_b=p.b and p.a<>?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.t_parent), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_child.fk_t_child_p_a_p_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+a    b    p_a    p_b    
+20     -200     2     2     
+21     -300     3     3     
+22     -400     4     4     
+23     -500     5     5     
+24     -600     6     6     
+25     -700     7     7     
+26     -800     8     8     
+27     -900     9     9     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (p)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a=p.akey range: c.p_b=p.b)
+
+  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_parent] p, [dba.t_child] c where p.a<>? and c.p_a=p.a and c.p_b=p.b
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.t_parent), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_child.fk_t_child_p_a_p_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+a    b    p_a    p_b    
+20     -200     2     2     
+21     -300     3     3     
+22     -400     4     4     
+23     -500     5     5     
+24     -600     6     6     
+25     -700     7     7     
+26     -800     8     8     
+27     -900     9     9     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (p)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a=p.akey range: c.p_b=p.b)
+
+  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_child] c, [dba.t_parent] p where c.p_a=p.a and c.p_b=p.b and p.a<>?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.t_parent), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_child.fk_t_child_p_a_p_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+a    b    p_a    p_b    
+19     -100     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (p)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a=p.akey range: c.p_b=p.b)
+
+  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_parent] p, [dba.t_child] c where  cast(p.a as varchar) like  cast(? as varchar) and c.p_a=p.a and c.p_b=p.b
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.t_parent), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_child.fk_t_child_p_a_p_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+a    b    p_a    p_b    
+19     -100     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (p)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a=p.akey range: c.p_b=p.b)
+
+  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_child] c, [dba.t_parent] p where c.p_a=p.a and c.p_b=p.b and  cast(p.a as varchar) like  cast(? as varchar)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.t_parent), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_child.fk_t_child_p_a_p_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+b    count(*)    min(c.p_a)    max(c.p_b)    
+-400     1     4     4     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a= ?:? , key filter: c.p_a is not null , key filter: c.p_b is not null )
+
+  rewritten query: select c.b, count(*), min(c.p_a), max(c.p_b) from [dba.t_child] c where c.p_a= ?:?  and c.p_b is not null  and c.p_a is not null  group by c.b
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (index: dba.t_child.fk_t_child_p_a_p_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+b    count(*)    min(c.p_a)    max(c.p_b)    
+-400     1     4     4     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a= ?:? , key filter: c.p_a is not null , key filter: c.p_b is not null )
+
+  rewritten query: select c.b, count(*), min(c.p_a), max(c.p_b) from [dba.t_child] c where c.p_a= ?:?  and c.p_b is not null  and c.p_a is not null  group by c.b
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (index: dba.t_child.fk_t_child_p_a_p_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+b    count(*)    min(c.p_a)    max(c.p_b)    
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a= ?:? , key filter: c.p_a is not null , key filter: c.p_b is not null )
+
+  rewritten query: select c.b, count(*), min(c.p_a), max(c.p_b) from [dba.t_child] c where c.p_a= ?:?  and c.p_b is not null  and c.p_a is not null  group by c.b having count(*)>?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (index: dba.t_child.fk_t_child_p_a_p_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+b    count(*)    min(c.p_a)    max(c.p_b)    
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a= ?:? , key filter: c.p_a is not null , key filter: c.p_b is not null )
+
+  rewritten query: select c.b, count(*), min(c.p_a), max(c.p_b) from [dba.t_child] c where c.p_a= ?:?  and c.p_b is not null  and c.p_a is not null  group by c.b having count(*)>?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (index: dba.t_child.fk_t_child_p_a_p_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+a    b    p_a    p_b    cnt    
+27     -900     9     9     1     
+26     -800     8     8     1     
+25     -700     7     7     1     
+24     -600     6     6     1     
+23     -500     5     5     1     
+22     -400     4     4     1     
+21     -300     3     3     1     
+20     -200     2     2     1     
+19     -100     1     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (c)
+
+  rewritten query: select c.a, c.b, c.p_a, c.p_b, count(*) over (partition by ? order by ? desc ) from [dba.t_child] c where c.p_a is not null  and c.p_b is not null 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.t_child), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+a    b    p_a    p_b    cnt    
+27     -900     9     9     1     
+26     -800     8     8     1     
+25     -700     7     7     1     
+24     -600     6     6     1     
+23     -500     5     5     1     
+22     -400     4     4     1     
+21     -300     3     3     1     
+20     -200     2     2     1     
+19     -100     1     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (c)
+
+  rewritten query: select c.a, c.b, c.p_a, c.p_b, count(*) over (partition by ? order by ? desc ) from [dba.t_child] c where c.p_a is not null  and c.p_b is not null 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.t_child), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+a    b    p_a    p_b    cnt    
+19     -100     1     1     1     
+20     -200     2     2     1     
+21     -300     3     3     1     
+22     -400     4     4     1     
+23     -500     5     5     1     
+24     -600     6     6     1     
+25     -700     7     7     1     
+26     -800     8     8     1     
+27     -900     9     9     1     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (p)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a=p.akey range: c.p_b=p.b)
+
+  rewritten query: select c.a, c.b, c.p_a, c.p_b, count(*) over (partition by ? order by ? desc ) from [dba.t_parent] p, [dba.t_child] c where c.p_a=p.a and c.p_b=p.b
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.t_parent), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_child.fk_t_child_p_a_p_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+a    b    p_a    p_b    cnt    
+19     -100     1     1     1     
+20     -200     2     2     1     
+21     -300     3     3     1     
+22     -400     4     4     1     
+23     -500     5     5     1     
+24     -600     6     6     1     
+25     -700     7     7     1     
+26     -800     8     8     1     
+27     -900     9     9     1     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (p)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a=p.akey range: c.p_b=p.b)
+
+  rewritten query: select c.a, c.b, c.p_a, c.p_b, count(*) over (partition by ? order by ? desc ) from [dba.t_child] c, [dba.t_parent] p where c.p_a=p.a and c.p_b=p.b
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.t_parent), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_child.fk_t_child_p_a_p_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+a    b    p_a    p_b    cnt    
+27     -900     9     9     1     
+26     -800     8     8     1     
+25     -700     7     7     1     
+24     -600     6     6     1     
+23     -500     5     5     1     
+22     -400     4     4     1     
+21     -300     3     3     1     
+20     -200     2     2     1     
+19     -100     1     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (p)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a=p.akey range: c.p_b=p.b)
+
+  rewritten query: select c.a, c.b, c.p_a, c.p_b, count(*) over (partition by ? order by ? desc ) from [dba.t_parent] p, [dba.t_child] c where c.p_a=p.a and c.p_b=p.b
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.t_parent), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_child.fk_t_child_p_a_p_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+a    b    p_a    p_b    cnt    
+27     -900     9     9     1     
+26     -800     8     8     1     
+25     -700     7     7     1     
+24     -600     6     6     1     
+23     -500     5     5     1     
+22     -400     4     4     1     
+21     -300     3     3     1     
+20     -200     2     2     1     
+19     -100     1     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (p)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a=p.akey range: c.p_b=p.b)
+
+  rewritten query: select c.a, c.b, c.p_a, c.p_b, count(*) over (partition by ? order by ? desc ) from [dba.t_child] c, [dba.t_parent] p where c.p_a=p.a and c.p_b=p.b
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.t_parent), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_child.fk_t_child_p_a_p_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+a    b    p_a    p_b    
+19     -100     1     1     
+20     -200     2     2     
+21     -300     3     3     
+22     -400     4     4     
+23     -500     5     5     
+24     -600     6     6     
+25     -700     7     7     
+26     -800     8     8     
+27     -900     9     9     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (p)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: p.a=c.p_akey range: p.b=c.p_b, covered: true)
+
+  rewritten query: (select p.a from [dba.t_parent] p, [dba.t_child] c where p.a=c.p_a and p.b=c.p_b)
+
+  TABLE SCAN (c)
+
+  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_child] c where  exists (select p.a from [dba.t_parent] p, [dba.t_child] c where p.a=c.p_a and p.b=c.p_b) and c.p_a is not null  and c.p_b is not null 
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.t_child), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, ioread: ?)
+        SCAN (table: dba.t_parent), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (index: dba.t_child.fk_t_child_p_a_p_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+a    b    p_a    p_b    
+19     -100     1     1     
+20     -200     2     2     
+21     -300     3     3     
+22     -400     4     4     
+23     -500     5     5     
+24     -600     6     6     
+25     -700     7     7     
+26     -800     8     8     
+27     -900     9     9     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (p)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: p.a=c.p_akey range: p.b=c.p_b, covered: true)
+
+  rewritten query: (select p.a from [dba.t_parent] p, [dba.t_child] c where p.a=c.p_a and p.b=c.p_b)
+
+  TABLE SCAN (c)
+
+  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_child] c where  exists (select p.a from [dba.t_parent] p, [dba.t_child] c where p.a=c.p_a and p.b=c.p_b) and c.p_a is not null  and c.p_b is not null 
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.t_child), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, ioread: ?)
+        SCAN (table: dba.t_parent), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (index: dba.t_child.fk_t_child_p_a_p_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+a    b    p_a    p_b    
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (p)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: p.a=c.p_akey range: p.b=c.p_b, covered: true)
+
+  rewritten query: (select p.a from [dba.t_parent] p, [dba.t_child] c where p.a=c.p_a and p.b=c.p_b)
+
+  TABLE SCAN (c)
+
+  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_child] c where  not  exists (select p.a from [dba.t_parent] p, [dba.t_child] c where p.a=c.p_a and p.b=c.p_b) and c.p_a is not null  and c.p_b is not null 
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.t_child), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, ioread: ?)
+        SCAN (table: dba.t_parent), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (index: dba.t_child.fk_t_child_p_a_p_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+a    b    p_a    p_b    
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (p)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: p.a=c.p_akey range: p.b=c.p_b, covered: true)
+
+  rewritten query: (select p.a from [dba.t_parent] p, [dba.t_child] c where p.a=c.p_a and p.b=c.p_b)
+
+  TABLE SCAN (c)
+
+  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_child] c where  not  exists (select p.a from [dba.t_parent] p, [dba.t_child] c where p.a=c.p_a and p.b=c.p_b) and c.p_a is not null  and c.p_b is not null 
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.t_child), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, ioread: ?)
+        SCAN (table: dba.t_parent), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (index: dba.t_child.fk_t_child_p_a_p_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+a    b    p_a    p_b    chk_scala_x    
+19     -100     1     1     19     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (cc.fk_t_child_p_a_p_b) (key range: cc.p_b=p.bkey range: cc.p_a=p.a)
+
+  rewritten query: (select cc.a from [dba.t_child] cc where cc.p_a=p.a and cc.p_b=p.b and (inst_num()<= ?:? ))
+
+  NESTED LOOPS (inner join)
+    INDEX SCAN (p.pk_t_parent_a_b) (key range: p.a= ?:? , covered: true)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_b=p.bkey range: c.p_a= ?:? )
+
+  rewritten query: select c.a, c.b, c.p_a, c.p_b, (select cc.a from [dba.t_child] cc where cc.p_a=p.a and cc.p_b=p.b and (inst_num()<= ?:? )) from [dba.t_parent] p, [dba.t_child] c where c.p_b=p.b and p.a= ?:?  and c.p_a= ?:?  and c.p_a=p.a
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (index: dba.t_parent.pk_t_parent_a_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      SCAN (index: dba.t_child.fk_t_child_p_a_p_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, ioread: ?)
+          SCAN (index: dba.t_child.fk_t_child_p_a_p_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+a    b    p_a    p_b    chk_scala_x    
+19     -100     1     1     19     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (cc.fk_t_child_p_a_p_b) (key range: cc.p_b=p.bkey range: cc.p_a=p.a)
+
+  rewritten query: (select cc.a from [dba.t_child] cc where cc.p_a=p.a and cc.p_b=p.b and (inst_num()<= ?:? ))
+
+  NESTED LOOPS (inner join)
+    INDEX SCAN (p.pk_t_parent_a_b) (key range: p.a= ?:? , covered: true)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_b=p.bkey range: c.p_a= ?:? )
+
+  rewritten query: select c.a, c.b, c.p_a, c.p_b, (select cc.a from [dba.t_child] cc where cc.p_a=p.a and cc.p_b=p.b and (inst_num()<= ?:? )) from [dba.t_child] c, [dba.t_parent] p where c.p_b=p.b and p.a= ?:?  and c.p_a= ?:?  and c.p_a=p.a
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (index: dba.t_parent.pk_t_parent_a_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      SCAN (index: dba.t_child.fk_t_child_p_a_p_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, ioread: ?)
+          SCAN (index: dba.t_child.fk_t_child_p_a_p_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+a    b    p_a    p_b    chk_scala_o    
+19     -100     1     1     null     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (pp)
+    INDEX SCAN (c.pk_t_child_a) (key range: pp.a=c.a)
+
+  rewritten query: (select pp.a from [dba.t_parent] pp, [dba.t_child] c where pp.a=c.a and pp.b=c.b and (inst_num()<= ?:? ))
+
+  INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a= ?:? , key filter: c.p_a is not null , key filter: c.p_b is not null )
+
+  rewritten query: select c.a, c.b, c.p_a, c.p_b, (select pp.a from [dba.t_parent] pp, [dba.t_child] c where pp.a=c.a and pp.b=c.b and (inst_num()<= ?:? )) from [dba.t_child] c where c.p_a= ?:?  and c.p_b is not null  and c.p_a is not null 
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (index: dba.t_child.fk_t_child_p_a_p_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, ioread: ?)
+        SCAN (table: dba.t_parent), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (index: dba.t_child.pk_t_child_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+a    b    p_a    p_b    chk_scala_o    
+19     -100     1     1     null     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (pp)
+    INDEX SCAN (c.pk_t_child_a) (key range: pp.a=c.a)
+
+  rewritten query: (select pp.a from [dba.t_parent] pp, [dba.t_child] c where pp.a=c.a and pp.b=c.b and (inst_num()<= ?:? ))
+
+  INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a= ?:? , key filter: c.p_a is not null , key filter: c.p_b is not null )
+
+  rewritten query: select c.a, c.b, c.p_a, c.p_b, (select pp.a from [dba.t_parent] pp, [dba.t_child] c where pp.a=c.a and pp.b=c.b and (inst_num()<= ?:? )) from [dba.t_child] c where c.p_a= ?:?  and c.p_b is not null  and c.p_a is not null 
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (index: dba.t_child.fk_t_child_p_a_p_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, ioread: ?)
+        SCAN (table: dba.t_parent), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (index: dba.t_child.pk_t_child_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+a    b    p_a    p_b    level    
+19     -100     1     1     1     
+20     -200     2     2     1     
+21     -300     3     3     1     
+22     -400     4     4     1     
+23     -500     5     5     1     
+24     -600     6     6     1     
+25     -700     7     7     1     
+26     -800     8     8     1     
+27     -900     9     9     1     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (c)
+
+  rewritten query: select c.a, c.b, c.p_a, c.p_b, level from  inner join [dba.t_child] c where c.p_a is not null  and c.p_b is not null  connect by  prior c.a=c.b
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.t_child), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+a    b    p_a    p_b    level    
+19     -100     1     1     1     
+20     -200     2     2     1     
+21     -300     3     3     1     
+22     -400     4     4     1     
+23     -500     5     5     1     
+24     -600     6     6     1     
+25     -700     7     7     1     
+26     -800     8     8     1     
+27     -900     9     9     1     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (c)
+
+  rewritten query: select c.a, c.b, c.p_a, c.p_b, level from [dba.t_child] c where c.p_a is not null  and c.p_b is not null  connect by  prior c.a=c.b
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.t_child), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+'ooooo'    a    b    p_a    p_b    
+ooooo     19     -100     1     1     
+xxxxx     26     -800     8     8     
+xxxxx     27     -900     9     9     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a= ?:? , key filter: c.p_a is not null , key filter: c.p_b is not null )
+
+  rewritten query: select 'ooooo', c.a, c.b, c.p_a, c.p_b from [dba.t_child] c where c.p_a= ?:?  and c.p_b is not null  and c.p_a is not null 
+
+  NESTED LOOPS (inner join)
+    INDEX SCAN (p.pk_t_parent_a_b) (key range: (p.a>= ?:? ), covered: true)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a=p.akey range: c.p_b=p.b)
+
+  rewritten query: select 'xxxxx', c.a, c.b, c.p_a, c.p_b from [dba.t_child] c, [dba.t_parent] p where c.p_a=p.a and c.p_b=p.b and (p.a>= ?:? )
+
+  TABLE SCAN (dba.of_ooooo)
+
+  rewritten query: select [dba.of_ooooo].['ooooo'], [dba.of_ooooo].a, [dba.of_ooooo].b, [dba.of_ooooo].p_a, [dba.of_ooooo].p_b from  [dba.of_ooooo]
+
+  TABLE SCAN (dba.of_xxxxx)
+
+  rewritten query: select [dba.of_xxxxx].['xxxxx'], [dba.of_xxxxx].a, [dba.of_xxxxx].b, [dba.of_xxxxx].p_a, [dba.of_xxxxx].p_b from  [dba.of_xxxxx]
+
+
+Trace Statistics:
+  UNION
+    SELECT (time: ?, fetch: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+  ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+a    b    p_a    p_b    
+19     -100     1     1     
+20     -200     2     2     
+21     -300     3     3     
+22     -400     4     4     
+23     -500     5     5     
+24     -600     6     6     
+25     -700     7     7     
+26     -800     8     8     
+27     -900     9     9     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (p)
+      INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a=p.akey range: c.p_b=p.b)
+
+  rewritten query: select c.a, c.b, c.p_a, c.p_b, p.a from [dba.t_parent] p, [dba.t_child] c where c.p_a=p.a and c.p_b=p.b order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.t_parent), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_child.fk_t_child_p_a_p_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+a    b    p_a    p_b    
+19     -100     1     1     
+20     -200     2     2     
+21     -300     3     3     
+22     -400     4     4     
+23     -500     5     5     
+24     -600     6     6     
+25     -700     7     7     
+26     -800     8     8     
+27     -900     9     9     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (p)
+      INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a=p.akey range: c.p_b=p.b)
+
+  rewritten query: select c.a, c.b, c.p_a, c.p_b, p.a from [dba.t_child] c, [dba.t_parent] p where c.p_a=p.a and c.p_b=p.b order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.t_parent), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_child.fk_t_child_p_a_p_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+a    b    p_a    p_b    
+19     -100     1     1     
+20     -200     2     2     
+21     -300     3     3     
+22     -400     4     4     
+23     -500     5     5     
+24     -600     6     6     
+25     -700     7     7     
+26     -800     8     8     
+27     -900     9     9     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (c.pk_t_child_a) ()
+  skip order by: true
+
+  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_child] c where c.p_a is not null  and c.p_b is not null  order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (index: dba.t_child.pk_t_child_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+a    b    p_a    p_b    
+19     -100     1     1     
+20     -200     2     2     
+21     -300     3     3     
+22     -400     4     4     
+23     -500     5     5     
+24     -600     6     6     
+25     -700     7     7     
+26     -800     8     8     
+27     -900     9     9     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (c.pk_t_child_a) ()
+  skip order by: true
+
+  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_child] c where c.p_a is not null  and c.p_b is not null  order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (index: dba.t_child.pk_t_child_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
