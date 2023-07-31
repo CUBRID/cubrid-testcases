@@ -203,7 +203,7 @@ trace
 Query Plan:
   INDEX SCAN (c.fk_t_child_a_p_a) (key range: c.p_a= ?:? , key filter: c.p_a is not null )
 
-  rewritten query: select /*+ ORDERED */ c.a, c.b, c.p_a from [dba.t_child_a] c where c.p_a= ?:?  and c.p_a is not null 
+  rewritten query: select /*+ ORDERED */ c.a, c.b, c.p_a from [dba.t_child_a] c where ? in multiset{?, ?, ?} and c.p_a= ?:?  and c.p_a is not null 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
@@ -224,7 +224,7 @@ Query Plan:
       INDEX SCAN (pa.pk_t_parent_a_a) (key range: pa.a= ?:? , covered: true)
     INDEX SCAN (pb.pk_t_parent_a_a) (key range: pb.a= ?:? , covered: true)
 
-  rewritten query: select /*+ ORDERED NO_ELIMINATE_JOIN */ c.a, c.b, c.p_a from [dba.t_child_a] c, [dba.t_parent_a] pa, [dba.t_parent_a] pb where pb.a= ?:?  and c.p_a= ?:?  and pa.a= ?:?  and c.p_a=pa.a and c.p_a=pb.a
+  rewritten query: select /*+ ORDERED NO_ELIMINATE_JOIN */ c.a, c.b, c.p_a from [dba.t_child_a] c, [dba.t_parent_a] pa, [dba.t_parent_a] pb where ? in multiset{?, ?, ?} and pb.a= ?:?  and c.p_a= ?:?  and pa.a= ?:?  and c.p_a=pa.a and c.p_a=pb.a
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
