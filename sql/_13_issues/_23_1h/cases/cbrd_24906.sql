@@ -1,3 +1,5 @@
+
+
 drop table if exists tbl_a, tbl_b, tbl_c;
 create table tbl_a (col_a int primary key, col_b int, col_c int);
 create table tbl_b (col_a int primary key, col_b int, col_c int);
@@ -5,6 +7,8 @@ create table tbl_c (col_a int primary key, col_b int, col_c int);
 insert into tbl_a select rownum, rownum, rownum from db_class a, db_class b, db_class c limit 1000;
 insert into tbl_b select rownum, rownum, rownum from db_class a, db_class b, db_class c limit 1000;
 insert into tbl_c select rownum, rownum, rownum from db_class a, db_class b, db_class c limit 1000;
+
+update statistics on all classes with fullscan;
 
 set trace on;
 
