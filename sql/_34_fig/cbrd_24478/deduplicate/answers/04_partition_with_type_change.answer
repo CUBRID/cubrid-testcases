@@ -1,0 +1,171 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+100
+===================================================
+0
+===================================================
+index_of.class_of.class_name    index_of.index_name    key_attr_name    key_order    asc_desc    func    index_of.filter_expression    
+tbl     ix_val     val     0     0     null     null     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     INTEGER     NO          null          
+val     VARCHAR(2000)     YES     MUL     null          
+
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     INTEGER     NO          null          
+val     INTEGER     YES     MUL     null          
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     INTEGER     NO          null          
+val     VARCHAR(2000)     YES     MUL     null          
+
+===================================================
+index_of.class_of.class_name    index_of.index_name    key_attr_name    key_order    asc_desc    data_type    
+tbl     ix_val_de02     val     0     0     STRING     
+tbl     ix_val_de02     _dedup_02     1     0     null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+100
+===================================================
+0
+===================================================
+0
+Field    Type    Null    Key    Default    Extra    
+id     INTEGER     NO          null          
+val1     INTEGER     YES     MUL     null          
+val2     INTEGER     YES          null          
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     INTEGER     NO          null          
+val1     VARCHAR(2000)     YES     MUL     null          
+val2     INTEGER     YES          null          
+
+===================================================
+0
+Field    Type    Null    Key    Default    Extra    
+id     INTEGER     NO          null          
+val0     INTEGER     YES     MUL     null          
+val2     INTEGER     YES          null          
+
+===================================================
+index_of.class_of.class_name    index_of.index_name    key_attr_name    key_order    asc_desc    data_type    
+tbl     ix_val_de02     val0     0     0     INTEGER     
+tbl     ix_val_de02     val2     1     0     INTEGER     
+tbl     ix_val_de02     _dedup_02     2     0     null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+100
+===================================================
+0
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+dba.tbl     CREATE TABLE [tbl] ([id] INTEGER NOT NULL, [val] INTEGER,  INDEX [ix_val] ([val]) WHERE [dba.tbl].val< cast('50' as double)) REUSE_OID, COLLATE iso88591_bin     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+dba.tbl     CREATE TABLE [tbl] ([id] INTEGER NOT NULL, [val] CHARACTER VARYING(2000),  INDEX [ix_val_de02] ([val]) WHERE [dba.tbl].val<_iso88591'50' collate iso88591_bin WITH DEDUPLICATE=2) REUSE_OID, COLLATE iso88591_bin     
+
+===================================================
+index_of.class_of.class_name    index_of.index_name    key_attr_name    key_order    asc_desc    data_type    
+tbl     ix_val_de02     val     0     0     STRING     
+tbl     ix_val_de02     _dedup_02     1     0     null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+49
+===================================================
+0
+===================================================
+51
+===================================================
+TABLE    CREATE TABLE    
+dba.tbl     CREATE TABLE [tbl] ([id] INTEGER NOT NULL, [val] CHARACTER VARYING(2000),  INDEX [ix_val_de02] ([val]) WITH DEDUPLICATE=2) REUSE_OID, COLLATE iso88591_bin PARTITION BY RANGE ([id])  (PARTITION [below_50] VALUES LESS THAN (50), PARTITION [over_50] VALUES LESS THAN MAXVALUE)     
+
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+dba.tbl     CREATE TABLE [tbl] ([id] INTEGER NOT NULL, [val] CHARACTER VARYING(2000),  INDEX [ix_val_de02] ([val]) WITH DEDUPLICATE=2) REUSE_OID, COLLATE iso88591_bin PARTITION BY RANGE ([id])  (PARTITION [below_50] VALUES LESS THAN (50), PARTITION [over_50] VALUES LESS THAN MAXVALUE)     
+
+===================================================
+0
+===================================================
+0
+===================================================
+100
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+dba.tbl     CREATE TABLE [tbl] ([id] INTEGER NOT NULL, [val] CHARACTER VARYING(2000), [val2] INTEGER,  INDEX [ix_val_de02] ([val], [val2]) WITH DEDUPLICATE=2) REUSE_OID, COLLATE iso88591_bin PARTITION BY LIST ([val])  (PARTITION [tv_null] VALUES IN (NULL), PARTITION [tv_zero] VALUES IN ('0'), PARTITION [tv_one] VALUES IN ('1'))     
+
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+dba.tbl     CREATE TABLE [tbl] ([id] INTEGER NOT NULL, [val] CHARACTER VARYING(2000), [val2] INTEGER,  INDEX [ix_val_de02] ([val], [val2]) WITH DEDUPLICATE=2) REUSE_OID, COLLATE iso88591_bin PARTITION BY LIST ([val])  (PARTITION [tv_null] VALUES IN (NULL), PARTITION [tv_zero] VALUES IN ('0'), PARTITION [tv_one] VALUES IN ('1'))     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+100
+===================================================
+TABLE    CREATE TABLE    
+dba.tbl     CREATE TABLE [tbl] ([id] INTEGER NOT NULL, [val] CHARACTER VARYING(2000),  INDEX [ix_val_de02] ([val]) WITH DEDUPLICATE=2) REUSE_OID, COLLATE iso88591_bin PARTITION BY HASH ([id]) PARTITIONS 3     
+
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+dba.tbl     CREATE TABLE [tbl] ([id] INTEGER NOT NULL, [val] CHARACTER VARYING(2000),  INDEX [ix_val_de02] ([val]) WITH DEDUPLICATE=2) REUSE_OID, COLLATE iso88591_bin PARTITION BY HASH ([id]) PARTITIONS 3     
+
