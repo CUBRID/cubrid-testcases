@@ -1,0 +1,88 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+a    b    
+1     a              
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: pk_tb_a term[?]
+    cost:  ? card ?
+Query stmt:
+(select tb.b from tb tb where tb.a=ta.a)
+Query plan:
+sscan
+    class: ta node[?]
+    sargs: term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+select ta.a, ta.b from ta ta where  exists (select tb.b from tb tb where tb.a=ta.a)
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+a    b    
+1     a              
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: idx? term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select tb.b from tb tb where (tb.a=ta.a) and (inst_num()<= ?:? ))
+Query plan:
+sscan
+    class: ta node[?]
+    sargs: term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+select ta.a, ta.b from ta ta where  exists (select tb.b from tb tb where (tb.a=ta.a) and (inst_num()<= ?:? ))
+===================================================
+0
+===================================================
+3
+===================================================
+1    
+1     
+1     
+
+Query plan:
+iscan
+    class: tb_stats_login_new node[?]
+    index: i_tb_stats_login_new_servername_whenauth term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select ? from tb_stats_login_new tb_stats_login_new where (inst_num()<= ?:? ) and (tb_stats_login_new.servername= ?:? )
+===================================================
+0
+===================================================
+0
