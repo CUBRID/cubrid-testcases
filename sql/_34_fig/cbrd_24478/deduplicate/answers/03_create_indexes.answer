@@ -5,6 +5,10 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
+0
+===================================================
 index_of.class_of.class_name    index_of.index_name    key_attr_name    key_order    asc_desc    
 t_child     ix_val_pid_de09     val     0     0     
 t_child     ix_val_pid_de09     pid     1     0     
@@ -12,23 +16,24 @@ t_child     ix_val_pid_de09     _dedup_09     2     0
 
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  INDEX [ix_val_pid_de09] ([val], [pid]) WITH DEDUPLICATE=9,  CONSTRAINT [fk_t_child_parent_pid] FOREIGN KEY  ([pid]) WITH DEDUPLICATE=7 REFERENCES [dba.t_parent] ([id]) ON DELETE RESTRICT ON UPDATE RESTRICT) REUSE_OID, COLLATE iso88591_bin     
+dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  INDEX [ix_val_pid_de09] ([val], [pid]) WITH DEDUPLICATE=9) REUSE_OID, COLLATE iso88591_bin     
 
-===================================================
-0
 ===================================================
 0
 ===================================================
 0
 ===================================================
 index_of.class_of.class_name    index_of.index_name    key_attr_name    key_order    asc_desc    
+t_child     ix_val_pid_de09     val     0     0     
+t_child     ix_val_pid_de09     pid     1     0     
+t_child     ix_val_pid_de09     _dedup_09     2     0     
 t_child     ix_val_pid_de10     val     0     1     
 t_child     ix_val_pid_de10     pid     1     0     
 t_child     ix_val_pid_de10     _dedup_10     2     0     
 
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  INDEX [ix_val_pid_de10] ([val] DESC, [pid]) WITH DEDUPLICATE=10,  CONSTRAINT [fk_t_child_parent_pid] FOREIGN KEY  ([pid]) WITH DEDUPLICATE=7 REFERENCES [dba.t_parent] ([id]) ON DELETE RESTRICT ON UPDATE RESTRICT) REUSE_OID, COLLATE iso88591_bin     
+dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  INDEX [ix_val_pid_de09] ([val], [pid]) WITH DEDUPLICATE=9,  INDEX [ix_val_pid_de10] ([val] DESC, [pid]) WITH DEDUPLICATE=10) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -44,7 +49,7 @@ t_child     ix_val_pid_de11     _dedup_11     2     0
 
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  INDEX [ix_val_pid_de11] ([val], [pid] DESC) WITH DEDUPLICATE=11,  CONSTRAINT [fk_t_child_parent_pid] FOREIGN KEY  ([pid]) WITH DEDUPLICATE=7 REFERENCES [dba.t_parent] ([id]) ON DELETE RESTRICT ON UPDATE RESTRICT) REUSE_OID, COLLATE iso88591_bin     
+dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  INDEX [ix_val_pid_de09] ([val], [pid]) WITH DEDUPLICATE=9,  INDEX [ix_val_pid_de11] ([val], [pid] DESC) WITH DEDUPLICATE=11) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -60,7 +65,7 @@ t_child     ix_val_pid_de12     _dedup_12     2     0
 
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  INDEX [ix_val_pid_de12] ([val] DESC, [pid] DESC) WITH DEDUPLICATE=12,  CONSTRAINT [fk_t_child_parent_pid] FOREIGN KEY  ([pid]) WITH DEDUPLICATE=7 REFERENCES [dba.t_parent] ([id]) ON DELETE RESTRICT ON UPDATE RESTRICT) REUSE_OID, COLLATE iso88591_bin     
+dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  INDEX [ix_val_pid_de09] ([val], [pid]) WITH DEDUPLICATE=9,  INDEX [ix_val_pid_de12] ([val] DESC, [pid] DESC) WITH DEDUPLICATE=12) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -78,7 +83,7 @@ t_child     ix_val_pid_de13     _dedup_13     2     0     null
 
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  INDEX [ix_val_pid_de13] (nvl([dba.t_child].[val], _iso88591'' collate iso88591_bin), [pid] DESC),  CONSTRAINT [fk_t_child_parent_pid] FOREIGN KEY  ([pid]) REFERENCES [dba.t_parent] ([id]) ON DELETE RESTRICT ON UPDATE RESTRICT) REUSE_OID, COLLATE iso88591_bin     
+dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  INDEX [ix_val_pid_de09] ([val], [pid]),  INDEX [ix_val_pid_de13] (nvl([dba.t_child].[val], _iso88591'' collate iso88591_bin), [pid] DESC)) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -94,7 +99,7 @@ t_child     ix_val_pid_de14     _dedup_14     2     0     null     [dba.t_child]
 
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  INDEX [ix_val_pid_de14] ([val], [pid]) WHERE [dba.t_child].val=_iso88591'N' collate iso88591_bin,  CONSTRAINT [fk_t_child_parent_pid] FOREIGN KEY  ([pid]) REFERENCES [dba.t_parent] ([id]) ON DELETE RESTRICT ON UPDATE RESTRICT) REUSE_OID, COLLATE iso88591_bin     
+dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  INDEX [ix_val_pid_de09] ([val], [pid]),  INDEX [ix_val_pid_de14] ([val], [pid]) WHERE [dba.t_child].val=_iso88591'N' collate iso88591_bin) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0
@@ -103,10 +108,59 @@ Error:-839
 ===================================================
 0
 ===================================================
-Error:-493
+index_of.class_of.class_name    index_of.index_name    key_attr_name    key_order    asc_desc    func    index_of.filter_expression    
+t_child     ix_val_pid_id_de14     val     0     0     null     [dba.t_child].val=_iso88591'N' collate iso88591_bin     
+t_child     ix_val_pid_id_de14     pid     1     1     null     [dba.t_child].val=_iso88591'N' collate iso88591_bin     
+t_child     ix_val_pid_id_de14     id     2     0     null     [dba.t_child].val=_iso88591'N' collate iso88591_bin     
+
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  INDEX [ix_val_pid_id_de14] ([val], [pid] DESC, [id]) WHERE [dba.t_child].val=_iso88591'N' collate iso88591_bin,  CONSTRAINT [fk_t_child_parent_pid] FOREIGN KEY  ([pid]) REFERENCES [dba.t_parent] ([id]) ON DELETE RESTRICT ON UPDATE RESTRICT) REUSE_OID, COLLATE iso88591_bin     
+dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  INDEX [ix_val_pid_de09] ([val], [pid]),  INDEX [ix_val_pid_id_de14] ([val], [pid] DESC, [id]) WHERE [dba.t_child].val=_iso88591'N' collate iso88591_bin) REUSE_OID, COLLATE iso88591_bin     
 
+===================================================
+0
+===================================================
+117649
+===================================================
+0
+===================================================
+0
+===================================================
+Step    
+DEDUPLICATE=0 INDEX CREATED     
+
+===================================================
+0
+===================================================
+Step    
+DEDUPLICATE=4 INDEX CREATED     
+
+===================================================
+Error:-493
+===================================================
+Step    
+DEDUPLICATE=8 INDEX CREATED     
+
+===================================================
+Error:-709
+===================================================
+index_of.class_of.class_name    index_of.index_name    key_attr_name    key_order    asc_desc    index_of.status    status    
+t_child     ix_val_pid_de09     val     0     0     1     VISIBLE     
+t_child     ix_val_pid_de09     pid     1     0     1     VISIBLE     
+t_child     ix_val_pid_de09     _dedup_09     2     0     1     VISIBLE     
+t_child     ix_val_pid_de00p     val     0     1     1     VISIBLE     
+t_child     ix_val_pid_de00p     pid     1     1     1     VISIBLE     
+t_child     ix_val_pid_de04p     val     0     1     1     VISIBLE     
+t_child     ix_val_pid_de04p     pid     1     1     1     VISIBLE     
+t_child     ix_val_pid_de04p     _dedup_04     2     0     1     VISIBLE     
+
+===================================================
+TABLE    CREATE TABLE    
+dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  INDEX [ix_val_pid_de09] ([val], [pid]),  INDEX [ix_val_pid_de00p] ([val] DESC, [pid] DESC),  INDEX [ix_val_pid_de04p] ([val] DESC, [pid] DESC)) REUSE_OID, COLLATE iso88591_bin     
+
+===================================================
+Error:-709
+===================================================
+0
 ===================================================
 0
