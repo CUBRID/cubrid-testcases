@@ -185,6 +185,14 @@ from
   left outer join (select /*+ no_merge */ bb.col_a, bb.col_b, bb.col_c from tbl_b as bb where bb.col_c = 1 and bb.col_c = 9) b on a.col_a = b.col_a;
 show trace;
 
+select /*+ recompile */
+  count (*)
+from
+  tbl_a as a,
+  (select /*+ no_merge */ bb.col_a, bb.col_b, bb.col_c from tbl_b as bb where bb.col_c = 1 and bb.col_c = 9) b
+where a.col_a = b.col_a (+);
+show trace;
+
 
 -- test case 15 
 select /*+ recompile */
@@ -192,6 +200,15 @@ select /*+ recompile */
 from
   tbl_a as a
   left outer join (select /*+ no_merge */ bb.col_a, bb.col_b, bb.col_c from tbl_b as bb where bb.col_b = 1) b on a.col_a = b.col_a and b.col_b = 9;
+show trace;
+
+select /*+ recompile */
+  count (*)
+from
+  tbl_a as a,
+  (select /*+ no_merge */ bb.col_a, bb.col_b, bb.col_c from tbl_b as bb where bb.col_b = 1) b 
+where a.col_a = b.col_a (+)
+and b.col_b (+) = 9;
 show trace;
 
 
@@ -202,6 +219,16 @@ from
   tbl_a as a
   left outer join (select /*+ no_merge */ bb.col_a, bb.col_b, bb.col_c from tbl_b as bb where bb.col_c = 1 and bb.col_c = 9) as b on a.col_a = b.col_a
   left outer join (select /*+ no_merge */ cc.col_a, cc.col_b, cc.col_c from tbl_c as cc where cc.col_c = 1) as c on b.col_b = c.col_b;
+show trace;
+
+select /*+ recompile */
+  count (*)
+from
+  tbl_a as a,
+  (select /*+ no_merge */ bb.col_a, bb.col_b, bb.col_c from tbl_b as bb where bb.col_c = 1 and bb.col_c = 9) as b,
+  (select /*+ no_merge */ cc.col_a, cc.col_b, cc.col_c from tbl_c as cc where cc.col_c = 1) as c
+where a.col_a = b.col_a (+)
+and b.col_b = c.col_b (+);
 show trace;
 
 
@@ -215,6 +242,18 @@ select /*+ recompile */
 from
   tbl_a as a
   left outer join b as b on a.col_a = b.col_a;
+show trace;
+
+with b as
+  (
+    select /*+ no_merge */ bb.col_a, bb.col_b, bb.col_c from tbl_b as bb where bb.col_c = 1 and bb.col_c = 9
+  )
+select /*+ recompile */
+  count (*)
+from
+  tbl_a as a,
+  b as b
+where a.col_a = b.col_a (+);
 show trace;
 
 
