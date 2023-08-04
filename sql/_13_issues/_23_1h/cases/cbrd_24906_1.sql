@@ -18,7 +18,7 @@ select /*+ recompile */
   count (*)
 from
   (
-    select /*+ no_merge */
+    select /*+ no_merge ordered */
       a.*
     from
       tbl_a as a, tbl_b as b
@@ -34,7 +34,7 @@ select /*+ recompile */
   t.col_a
 from
   (
-    select /*+ no_merge */
+    select /*+ no_merge ordered */
       a.*
     from
       tbl_a as a, tbl_b as b
@@ -51,7 +51,7 @@ select /*+ recompile */
   count (*)
 from
   (
-    select /*+ no_merge */
+    select /*+ no_merge ordered */
       a.*
     from
       tbl_a as a, tbl_b as b
@@ -68,7 +68,7 @@ select /*+ recompile */
   count (*)
 from
   (
-    select /*+ no_merge */
+    select /*+ no_merge ordered */
       a.*
     from
       tbl_a as a, tbl_b as b
@@ -85,7 +85,7 @@ select /*+ recompile */
   count(*)
 from
   (
-    select /*+ no_merge */
+    select /*+ no_merge ordered */
       a.*
     from
       tbl_a as a, tbl_b as b
@@ -100,7 +100,7 @@ show trace;
 -- test case 6
 select /*+ recompile */
   a.col_a,
-  (select /*+ no_merge */ b.col_b from tbl_b as b where b.col_c = 1 and b.col_c = 9 limit 1) as c9
+  (select /*+ no_merge ordered */ b.col_b from tbl_b as b where b.col_c = 1 and b.col_c = 9 limit 1) as c9
 from
   tbl_a as a
 limit 999, 1;
@@ -110,7 +110,7 @@ show trace;
 -- test case 7
 select /*+ recompile */
   a.col_a,
-  (select /*+ no_merge */ b.col_c from tbl_b as b where a.col_a = b.col_a and b.col_c = 1 and b.col_c = 9) as c9
+  (select /*+ no_merge ordered */ b.col_c from tbl_b as b where a.col_a = b.col_a and b.col_c = 1 and b.col_c = 9) as c9
 from
   tbl_a as a
 limit 999, 1;
@@ -123,7 +123,7 @@ select /*+ recompile */
 from
   tbl_a as a
 where
-  exists (select /*+ no_merge */ 1 from tbl_b as b where a.col_a = b.col_a and b.col_c = 1 and b.col_c = 9);
+  exists (select /*+ no_merge ordered */ 1 from tbl_b as b where a.col_a = b.col_a and b.col_c = 1 and b.col_c = 9);
 show trace;
 
 
@@ -133,7 +133,7 @@ select /*+ recompile */
 from
   tbl_a as a
 where
-  exists (select /*+ no_merge */ 1 from tbl_b as b, tbl_c as c where a.col_a = b.col_a and b.col_a = c.col_a and c.col_c = 1 and c.col_c = 9);
+  exists (select /*+ no_merge ordered */ 1 from tbl_b as b, tbl_c as c where a.col_a = b.col_a and b.col_a = c.col_a and c.col_c = 1 and c.col_c = 9);
 show trace;
 
 
@@ -143,7 +143,7 @@ select /*+ recompile */
 from
   tbl_a as a
 where
-  a.col_a in (select /*+ no_merge */ b.col_a from tbl_b as b where b.col_c = 1 and b.col_c = 9);
+  a.col_a in (select /*+ no_merge ordered */ b.col_a from tbl_b as b where b.col_c = 1 and b.col_c = 9);
 show trace;
 
 
@@ -153,7 +153,7 @@ select /*+ recompile */
 from
   tbl_a as a
 where
-  a.col_b in (select /*+ no_merge */ b.col_b from tbl_b as b where a.col_a = b.col_a and b.col_c = 1 and b.col_c = 9);
+  a.col_b in (select /*+ no_merge ordered */ b.col_b from tbl_b as b where a.col_a = b.col_a and b.col_c = 1 and b.col_c = 9);
 show trace;
 
 
@@ -163,7 +163,7 @@ select /*+ recompile */
 from
   tbl_a as a
 where
-  a.col_a in (select /*+ no_merge */ c.col_a from tbl_b as b, tbl_c as c where b.col_a = c.col_a and c.col_c = 1 and c.col_c = 9);
+  a.col_a in (select /*+ no_merge ordered */ c.col_a from tbl_b as b, tbl_c as c where b.col_a = c.col_a and c.col_c = 1 and c.col_c = 9);
 show trace;
 
 
@@ -173,7 +173,7 @@ select /*+ recompile */
 from
   tbl_a as a
 where
-  a.col_a in (select /*+ no_merge */ b.col_b from tbl_b as b where a.col_a = b.col_a and b.col_c = 1 and b.col_c = 9);
+  a.col_a in (select /*+ no_merge ordered */ b.col_b from tbl_b as b where a.col_a = b.col_a and b.col_c = 1 and b.col_c = 9);
 show trace;
 
 
@@ -182,14 +182,14 @@ select /*+ recompile */
   count (*)
 from
   tbl_a as a
-  left outer join (select /*+ no_merge */ bb.col_a, bb.col_b, bb.col_c from tbl_b as bb where bb.col_c = 1 and bb.col_c = 9) b on a.col_a = b.col_a;
+  left outer join (select /*+ no_merge ordered */ bb.col_a, bb.col_b, bb.col_c from tbl_b as bb where bb.col_c = 1 and bb.col_c = 9) b on a.col_a = b.col_a;
 show trace;
 
 select /*+ recompile */
   count (*)
 from
   tbl_a as a,
-  (select /*+ no_merge */ bb.col_a, bb.col_b, bb.col_c from tbl_b as bb where bb.col_c = 1 and bb.col_c = 9) b
+  (select /*+ no_merge ordered */ bb.col_a, bb.col_b, bb.col_c from tbl_b as bb where bb.col_c = 1 and bb.col_c = 9) b
 where a.col_a = b.col_a (+);
 show trace;
 
@@ -199,14 +199,14 @@ select /*+ recompile */
   count (*)
 from
   tbl_a as a
-  left outer join (select /*+ no_merge */ bb.col_a, bb.col_b, bb.col_c from tbl_b as bb where bb.col_b = 1) b on a.col_a = b.col_a and b.col_b = 9;
+  left outer join (select /*+ no_merge ordered */ bb.col_a, bb.col_b, bb.col_c from tbl_b as bb where bb.col_b = 1) b on a.col_a = b.col_a and b.col_b = 9;
 show trace;
 
 select /*+ recompile */
   count (*)
 from
   tbl_a as a,
-  (select /*+ no_merge */ bb.col_a, bb.col_b, bb.col_c from tbl_b as bb where bb.col_b = 1) b 
+  (select /*+ no_merge ordered */ bb.col_a, bb.col_b, bb.col_c from tbl_b as bb where bb.col_b = 1) b 
 where a.col_a = b.col_a (+)
 and b.col_b (+) = 9;
 show trace;
@@ -217,16 +217,16 @@ select /*+ recompile */
   count (*)
 from
   tbl_a as a
-  left outer join (select /*+ no_merge */ bb.col_a, bb.col_b, bb.col_c from tbl_b as bb where bb.col_c = 1 and bb.col_c = 9) as b on a.col_a = b.col_a
-  left outer join (select /*+ no_merge */ cc.col_a, cc.col_b, cc.col_c from tbl_c as cc where cc.col_c = 1) as c on b.col_b = c.col_b;
+  left outer join (select /*+ no_merge ordered */ bb.col_a, bb.col_b, bb.col_c from tbl_b as bb where bb.col_c = 1 and bb.col_c = 9) as b on a.col_a = b.col_a
+  left outer join (select /*+ no_merge ordered */ cc.col_a, cc.col_b, cc.col_c from tbl_c as cc where cc.col_c = 1) as c on b.col_b = c.col_b;
 show trace;
 
 select /*+ recompile */
   count (*)
 from
   tbl_a as a,
-  (select /*+ no_merge */ bb.col_a, bb.col_b, bb.col_c from tbl_b as bb where bb.col_c = 1 and bb.col_c = 9) as b,
-  (select /*+ no_merge */ cc.col_a, cc.col_b, cc.col_c from tbl_c as cc where cc.col_c = 1) as c
+  (select /*+ no_merge ordered */ bb.col_a, bb.col_b, bb.col_c from tbl_b as bb where bb.col_c = 1 and bb.col_c = 9) as b,
+  (select /*+ no_merge ordered */ cc.col_a, cc.col_b, cc.col_c from tbl_c as cc where cc.col_c = 1) as c
 where a.col_a = b.col_a (+)
 and b.col_b = c.col_b (+);
 show trace;
@@ -235,7 +235,7 @@ show trace;
 -- test case 17 
 with b as
   (
-    select /*+ no_merge */ bb.col_a, bb.col_b, bb.col_c from tbl_b as bb where bb.col_c = 1 and bb.col_c = 9
+    select /*+ no_merge ordered */ bb.col_a, bb.col_b, bb.col_c from tbl_b as bb where bb.col_c = 1 and bb.col_c = 9
   )
 select /*+ recompile */
   count (*)
@@ -246,7 +246,7 @@ show trace;
 
 with b as
   (
-    select /*+ no_merge */ bb.col_a, bb.col_b, bb.col_c from tbl_b as bb where bb.col_c = 1 and bb.col_c = 9
+    select /*+ no_merge ordered */ bb.col_a, bb.col_b, bb.col_c from tbl_b as bb where bb.col_c = 1 and bb.col_c = 9
   )
 select /*+ recompile */
   count (*)
@@ -262,9 +262,9 @@ select /*+ recompile */
   count(*)
 from
   (
-    (select /*+ no_merge */ a.col_a, a.col_b, a.col_c from tbl_a as a)
+    (select /*+ no_merge ordered */ a.col_a, a.col_b, a.col_c from tbl_a as a)
     union
-    (select /*+ no_merge */ b.col_a, b.col_b, b.col_c from tbl_b as b where b.col_c = 1 and b.col_c = 9)
+    (select /*+ no_merge ordered */ b.col_a, b.col_b, b.col_c from tbl_b as b where b.col_c = 1 and b.col_c = 9)
   );
 show trace;
 
@@ -274,7 +274,7 @@ select /*+ recompile */
   count (*)
 from
   (
-    select /*+ no_merge */
+    select /*+ no_merge ordered */
       a.col_a, a.col_b, a.col_c
     from
       tbl_a as a, tbl_b as b
@@ -293,7 +293,7 @@ select /*+ recompile */
   count (*)
 from
   (
-    select /*+ no_merge */
+    select /*+ no_merge ordered */
       a.col_a, a.col_b, a.col_c
     from
       tbl_a as a, tbl_b as b
@@ -312,7 +312,7 @@ select /*+ recompile */
   count (*)
 from
   (
-    select /*+ no_merge */
+    select /*+ no_merge ordered */
       a.col_a, a.col_b, max (a.col_c)
     from
       tbl_a as a, tbl_b as b
@@ -331,7 +331,7 @@ select /*+ recompile */
   count (*)
 from
   (
-    select /*+ no_merge */
+    select /*+ no_merge ordered */
       a.col_a, a.col_b, abs (a.col_c)
     from
       tbl_a as a, tbl_b as b
@@ -347,7 +347,7 @@ select /*+ recompile */
   count (*)
 from
   (
-    select /*+ no_merge */
+    select /*+ no_merge ordered */
       a.col_a, a.col_b, a.col_c
     from
       tbl_a as a, tbl_b as b
@@ -366,7 +366,7 @@ select /*+ recompile */
   count(*)
 from
   (
-    select /*+ no_merge */
+    select /*+ no_merge ordered */
       a.col_a, a.col_b, a.col_c
     from
       tbl_a as a, tbl_b as b
