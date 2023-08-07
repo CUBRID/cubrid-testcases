@@ -136,13 +136,13 @@ Step
 DEDUPLICATE=4 INDEX CREATED     
 
 ===================================================
-Error:-493
+0
 ===================================================
 Step    
-DEDUPLICATE=8 INDEX CREATED     
+DEDUPLICATE=8 INDEX CREATED AND ONLINE PARALLE     
 
 ===================================================
-Error:-709
+0
 ===================================================
 index_of.class_of.class_name    index_of.index_name    key_attr_name    key_order    asc_desc    index_of.status    status    
 t_child     ix_val_pid_de09     val     0     0     1     VISIBLE     
@@ -153,13 +153,14 @@ t_child     ix_val_pid_de00p     pid     1     1     1     VISIBLE
 t_child     ix_val_pid_de04p     val     0     1     1     VISIBLE     
 t_child     ix_val_pid_de04p     pid     1     1     1     VISIBLE     
 t_child     ix_val_pid_de04p     _dedup_04     2     0     1     VISIBLE     
+t_child     ix_val_pid_de08p     val     0     0     2     INVISIBLE     
+t_child     ix_val_pid_de08p     pid     1     0     2     INVISIBLE     
+t_child     ix_val_pid_de08p     _dedup_08     2     0     2     INVISIBLE     
 
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  INDEX [ix_val_pid_de09] ([val], [pid]),  INDEX [ix_val_pid_de00p] ([val] DESC, [pid] DESC),  INDEX [ix_val_pid_de04p] ([val] DESC, [pid] DESC)) REUSE_OID, COLLATE iso88591_bin     
+dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  INDEX [ix_val_pid_de09] ([val], [pid]),  INDEX [ix_val_pid_de00p] ([val] DESC, [pid] DESC),  INDEX [ix_val_pid_de04p] ([val] DESC, [pid] DESC),  INDEX [ix_val_pid_de08p] ([val], [pid]) INVISIBLE COMMENT 'invisibled') REUSE_OID, COLLATE iso88591_bin     
 
-===================================================
-Error:-709
 ===================================================
 0
 ===================================================

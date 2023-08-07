@@ -66,12 +66,11 @@ CREATE INDEX [ix_val_pid_de00p] ON [t_child] ([val] DESC, [pid] DESC) WITH ONLIN
 SELECT 'DEDUPLICATE=0 INDEX CREATED' AS Step;
 CREATE INDEX [ix_val_pid_de04p] ON [t_child] ([val] DESC, [pid] DESC) WITH DEDUPLICATE=4, ONLINE PARALLEL 3;
 SELECT 'DEDUPLICATE=4 INDEX CREATED' AS Step;
-CREATE INDEX [ix_val_pid_de08p] ON [t_child] ([val], [pid]) COMMENT 'invisibled' WITH DEDUPLICATE=8, ONLINE PARALLEL 3;
-SELECT 'DEDUPLICATE=8 INDEX CREATED' AS Step;
+CREATE INDEX [ix_val_pid_de08p] ON [t_child] ([val], [pid]) WITH DEDUPLICATE=8, ONLINE PARALLEL 3 COMMENT 'invisibled';
+SELECT 'DEDUPLICATE=8 INDEX CREATED AND ONLINE PARALLE' AS Step;
 ALTER INDEX [ix_val_pid_de08p] ON [t_child] INVISIBLE;
 SELECT index_of.class_of.class_name, index_of.index_name, key_attr_name, key_order, asc_desc, index_of.status, CASE index_of.status WHEN 2 THEN 'INVISIBLE' ELSE 'VISIBLE' END AS status  FROM _db_index_key WHERE index_of.index_name LIKE 'ix_val_pid_de%';
 SHOW CREATE TABLE [t_child];
-ALTER INDEX [ix_val_pid_de08p] ON [t_child] INVISIBLE;
 
 DROP TABLE IF EXISTS [t_child];
 set system parameters 'deduplicate_key_level=-1';

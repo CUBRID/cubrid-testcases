@@ -62,7 +62,7 @@ insert into tbl select rownum, rownum from db_class a, db_class b limit 0,49;
 alter table tbl add partition (partition over_50 VALUES LESS THAN MAXVALUE);
 insert into tbl select rownum, rownum from db_class a, db_class b limit 49,51;
 show create table tbl;
-alter table tbl modify column val varchar(2000);
+alter table tbl modify column val int;
 show create table tbl;
 
 -- list partition with composite index
@@ -71,7 +71,7 @@ create table [tbl] ([id] integer not null, [val] character varying(2000), [val2]
 insert into tbl select rownum, case rownum%3 when 0 then '0' when '1' then '1' else null end, rownum from db_class a, db_class b limit 100;
 create index ix_val_de02 on tbl(val,val2) with deduplicate=2;
 show create table tbl;
-alter table tbl modify column val int;
+alter table tbl modify column val varchar(2000);
 show create table tbl;
 
 -- hash partition

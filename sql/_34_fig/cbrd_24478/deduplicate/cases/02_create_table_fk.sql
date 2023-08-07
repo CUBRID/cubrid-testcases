@@ -31,9 +31,9 @@ DROP TABLE IF EXISTS [t_child];
 CREATE TABLE [t_child] (
 [id] INTEGER NOT NULL PRIMARY KEY,
 [pid] INTEGER NOT NULL,
-[val] CHARACTER VARYING(1) DEFAULT 'N',
-CONSTRAINT [fk_t_child_parent_pid] FOREIGN KEY ([pid]) REFERENCES [dba.t_parent]([id])
+[val] CHARACTER VARYING(1) DEFAULT 'N'
 );
+ALTER TABLE [t_child] ADD CONSTRAINT [fk_t_child_parent_pid] FOREIGN KEY ([pid]) REFERENCES [dba.t_parent]([id]);
 SHOW CREATE TABLE [t_child];
 
 set system parameters 'deduplicate_key_level=3';
@@ -41,9 +41,11 @@ DROP TABLE IF EXISTS [t_child];
 CREATE TABLE [t_child] (
 [id] INTEGER NOT NULL PRIMARY KEY,
 [pid] INTEGER NOT NULL,
-[val] CHARACTER VARYING(1) DEFAULT 'N',
-CONSTRAINT [fk_t_child_parent_pid] FOREIGN KEY ([pid]) WITH DEDUPLICATE=3 REFERENCES [dba.t_parent]([id])
+[val] CHARACTER VARYING(1) DEFAULT 'N'
 );
+ALTER TABLE [t_child] ADD CONSTRAINT [fk_t_child_parent_pid] FOREIGN KEY ([pid]) WITH DEDUPLICATE=3 REFERENCES [dba.t_parent]([id]);
+SHOW CREATE TABLE [t_child];
+ALTER TABLE DROP CONSTRAINT [fk_t_child_parent_pid] FOREIGN KEY ([pid]);
 SHOW CREATE TABLE [t_child];
 
 -- SET WITH DEDUPLICATE OPTION TO HIDE

@@ -45,7 +45,10 @@ SHOW CREATE TABLE [t_parent];
 
 CREATE TABLE [t_parent2] LIKE [t_parent];
 SHOW CREATE TABLE [t_parent2];
+set system parameters 'print_index_detail=y';
+SHOW CREATE TABLE [t_parent2];
 
+set system parameters 'print_index_detail=n';
 set system parameters 'deduplicate_key_level=-1';
 DROP TABLE IF EXISTS [t_parent];
 DROP TABLE IF EXISTS [t_parent2];
