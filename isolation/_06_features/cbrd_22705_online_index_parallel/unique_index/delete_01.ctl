@@ -19,6 +19,7 @@ C3: set transaction isolation level read committed;
 C1: DROP TABLE IF EXISTS a_tbl;
 C1: CREATE TABLE a_tbl(id INT PRIMARY KEY, charge DOUBLE);
 C1: INSERT INTO a_tbl VALUES (1, 100.0), (2, 150.0), (3, 10000.0);
+C1: update statistics on a_tbl;
 C1: COMMIT;
 MC: wait until C1 ready;
 
@@ -56,6 +57,7 @@ MC: wait until C2 ready;
 C1: select sum(set{id}) into :s from a_tbl ignore index (i) where id > -999 order by 1;
 C1: select sum(set{id}) into :i from a_tbl force index (i) where id > -999 order by 1;
 C1: select if (:s = :i, 'OK', 'NOK');
+C1: update statistics on a_tbl;
 C1: show index from a_tbl;
 MC: wait until C1 ready;
 
