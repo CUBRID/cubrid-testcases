@@ -1,0 +1,119 @@
+===================================================
+sum(set{au.class_of})    
+null     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+(select set{ CURRENT_USER } from dual dual)
+Query plan:
+follow
+    edge:  au node[?] grantee -> db_user node[?]
+    head:  sscan
+              class: au node[?]
+              cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select sum(set{au.class_of}) from [_db_auth] au where {au.grantee.[name]} subseteq (select set{ CURRENT_USER } from dual dual)
+===================================================
+sum(set{au.class_of})    
+null     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+(select set{ CURRENT_USER } from dual dual)
+Query plan:
+follow
+    edge:  au node[?] grantee -> db_user node[?]
+    head:  sscan
+              class: au node[?]
+              sargs: term[?]
+              cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select sum(set{au.class_of}) from [_db_auth] au where {au.grantee.[name]} subseteq (select set{ CURRENT_USER } from dual dual) and au.auth_type= ?:? 
+===================================================
+count(*)    
+28     
+
+Query plan:
+follow
+    edge:  c node[?] owner -> db_user node[?]
+    head:  sscan
+              class: c node[?]
+              sargs: term[?]
+              cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from [_db_class] c where c.class_type= ?:?  and c.[owner].[name]= ?:?  using index none
+===================================================
+count(*)    
+1     
+
+Query plan:
+sscan
+    class: c node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from [_db_class] c where nvl(c.class_name, '')='_db_class' and c.class_type= ?:?  using index none
+===================================================
+count(*)    
+28     
+
+Query plan:
+follow
+    edge:  c node[?] owner -> db_user node[?]
+    head:  sscan
+              class: c node[?]
+              sargs: term[?]
+              cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from [_db_class] c where {c.[owner].[name]}={'DBA'} and c.class_type= ?:?  using index none
+===================================================
+count(*)    
+28     
+
+Query plan:
+follow
+    edge:  c node[?] owner -> db_user node[?]
+    head:  sscan
+              class: c node[?]
+              sargs: term[?]
+              cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from [_db_class] c where nvl(c.[owner].[name], '')='DBA' and c.class_type= ?:?  using index none
+===================================================
+count(*)    
+2     
+
+Query plan:
+follow
+    edge:  t node[?] a -> _db_attribute node[?]
+    head:  nl-join (inner join)
+              edge:  table(?) -> t node[?]
+              outer: sscan
+                         class: c node[?]
+                         sargs: term[?]
+                         cost:  ? card ?
+              inner: sscan
+                         class: t node[?]
+                         sargs: table(?) -> t node[?]
+                         cost:  ? card ?
+              cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from [_db_class] c, table(c.inst_attrs) t (a) where nvl(t.a.attr_name, '')='class_name' and c.class_type= ?:?  using index none
