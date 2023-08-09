@@ -1,119 +1,56 @@
 ===================================================
-sum(set{au.class_of})    
-null     
-
-Query plan:
-sscan
-    class: dual node[?]
-    cost:  ? card ?
-Query stmt:
-(select set{ CURRENT_USER } from dual dual)
-Query plan:
-follow
-    edge:  au node[?] grantee -> db_user node[?]
-    head:  sscan
-              class: au node[?]
-              cost:  ? card ?
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select sum(set{au.class_of}) from [_db_auth] au where {au.grantee.[name]} subseteq (select set{ CURRENT_USER } from dual dual)
+0
 ===================================================
-sum(set{au.class_of})    
-null     
-
-Query plan:
-sscan
-    class: dual node[?]
-    cost:  ? card ?
-Query stmt:
-(select set{ CURRENT_USER } from dual dual)
-Query plan:
-follow
-    edge:  au node[?] grantee -> db_user node[?]
-    head:  sscan
-              class: au node[?]
-              sargs: term[?]
-              cost:  ? card ?
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select sum(set{au.class_of}) from [_db_auth] au where {au.grantee.[name]} subseteq (select set{ CURRENT_USER } from dual dual) and au.auth_type= ?:? 
+0
 ===================================================
-count(*)    
-28     
-
-Query plan:
-follow
-    edge:  c node[?] owner -> db_user node[?]
-    head:  sscan
-              class: c node[?]
-              sargs: term[?]
-              cost:  ? card ?
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select count(*) from [_db_class] c where c.class_type= ?:?  and c.[owner].[name]= ?:?  using index none
+5
 ===================================================
-count(*)    
-1     
-
-Query plan:
-sscan
-    class: c node[?]
-    sargs: term[?] AND term[?]
-    cost:  ? card ?
-Query stmt:
-select count(*) from [_db_class] c where nvl(c.class_name, '')='_db_class' and c.class_type= ?:?  using index none
+0
 ===================================================
-count(*)    
-28     
-
-Query plan:
-follow
-    edge:  c node[?] owner -> db_user node[?]
-    head:  sscan
-              class: c node[?]
-              sargs: term[?]
-              cost:  ? card ?
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select count(*) from [_db_class] c where {c.[owner].[name]}={'DBA'} and c.class_type= ?:?  using index none
+5
 ===================================================
-count(*)    
-28     
-
-Query plan:
-follow
-    edge:  c node[?] owner -> db_user node[?]
-    head:  sscan
-              class: c node[?]
-              sargs: term[?]
-              cost:  ? card ?
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select count(*) from [_db_class] c where nvl(c.[owner].[name], '')='DBA' and c.class_type= ?:?  using index none
+5
 ===================================================
-count(*)    
-2     
+0
+===================================================
+1
+===================================================
+1
+===================================================
+id    name    
+1     object_1     
 
-Query plan:
-follow
-    edge:  t node[?] a -> _db_attribute node[?]
-    head:  nl-join (inner join)
-              edge:  table(?) -> t node[?]
-              outer: sscan
-                         class: c node[?]
-                         sargs: term[?]
-                         cost:  ? card ?
-              inner: sscan
-                         class: t node[?]
-                         sargs: table(?) -> t node[?]
-                         cost:  ? card ?
-              cost:  ? card ?
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select count(*) from [_db_class] c, table(c.inst_attrs) t (a) where nvl(t.a.attr_name, '')='class_name' and c.class_type= ?:?  using index none
+===================================================
+id    name    
+2     object_2     
+
+===================================================
+id    name    
+3     object_3     
+
+===================================================
+id    name    
+4     object_4     
+
+===================================================
+target.id    target.name    
+1     object_1     
+
+===================================================
+target.id    target.name    
+2     object_2     
+
+===================================================
+target.id    target.name    
+3     object_3     
+
+===================================================
+target.id    target.name    
+4     object_4     
+
+===================================================
+o.id    o.name    
+5     object_5     
+
+===================================================
+0
