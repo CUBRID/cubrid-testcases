@@ -20,37 +20,127 @@
 id    name    
 1     object_1     
 
+Query plan:
+sscan
+    class: o node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select o.id, o.[name] from object_info o where o.[status]= ?:?  and o.[name]= ?:? 
 ===================================================
 id    name    
 2     object_2     
 
+Query plan:
+sscan
+    class: o node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select o.id, o.[name] from object_info o where nvl(o.[name], '')='object_?' and o.[status]= ?:? 
 ===================================================
 id    name    
 3     object_3     
 
+Query plan:
+sscan
+    class: o node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select o.id, o.[name] from object_info o where {o.[name]}={'object_?'} and o.[status]= ?:? 
 ===================================================
 id    name    
 4     object_4     
 
+Query plan:
+sscan
+    class: o node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select o.id, o.[name] from object_info o where {o.[name]} subseteq multiset{'object_?'} and o.[status]= ?:? 
 ===================================================
 target.id    target.name    
 1     object_1     
 
+Query plan:
+follow
+    edge:  t node[?] target -> object_info node[?]
+    head:  sscan
+              class: t node[?]
+              sargs: term[?]
+              cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.target.id, t.target.[name] from target_info t where t.[status]= ?:?  and t.target.[name]= ?:? 
 ===================================================
 target.id    target.name    
 2     object_2     
 
+Query plan:
+follow
+    edge:  t node[?] target -> object_info node[?]
+    head:  sscan
+              class: t node[?]
+              sargs: term[?]
+              cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.target.id, t.target.[name] from target_info t where nvl(t.target.[name], '')='object_?' and t.[status]= ?:? 
 ===================================================
 target.id    target.name    
 3     object_3     
 
+Query plan:
+follow
+    edge:  t node[?] target -> object_info node[?]
+    head:  sscan
+              class: t node[?]
+              sargs: term[?]
+              cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.target.id, t.target.[name] from target_info t where {t.target.[name]}={'object_?'} and t.[status]= ?:? 
 ===================================================
 target.id    target.name    
 4     object_4     
 
+Query plan:
+follow
+    edge:  t node[?] target -> object_info node[?]
+    head:  sscan
+              class: t node[?]
+              sargs: term[?]
+              cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.target.id, t.target.[name] from target_info t where {t.target.[name]} subseteq multiset{'object_?'} and t.[status]= ?:? 
 ===================================================
 o.id    o.name    
 5     object_5     
 
+Query plan:
+follow
+    edge:  l node[?] o -> object_info node[?]
+    head:  nl-join (inner join)
+              edge:  table(?) -> l node[?]
+              outer: sscan
+                         class: t node[?]
+                         sargs: term[?]
+                         cost:  ? card ?
+              inner: sscan
+                         class: l node[?]
+                         sargs: table(?) -> l node[?]
+                         cost:  ? card ?
+              cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select l.o.id, l.o.[name] from target_list_info t, table(t.target_list) l (o) where nvl(l.o.[name], '')='object_?' and t.[status]= ?:? 
 ===================================================
 0

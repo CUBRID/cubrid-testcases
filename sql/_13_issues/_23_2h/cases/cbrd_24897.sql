@@ -19,32 +19,32 @@ values (1, 0);
 update target_list_info as t set t.target_list = set (select o from object_info as o);
 
 -- No path expressions
-/* expected: o.[name] */
+-- expected: o.[name] 
 select /*+ recompile */ o.id, o.name from object_info as o where o.name = 'object_1' and o.status = 0;
 
-/* expected: nvl(o.[name], '') */
+-- expected: nvl(o.[name], '')
 select /*+ recompile */ o.id, o.name from object_info as o where nvl (o.name, '') = 'object_2' and o.status = 0;
 
-/* expected: {o.[name]} */
+-- expected: {o.[name]} 
 select /*+ recompile */ o.id, o.name from object_info as o where {o.name} = {'object_3'} and o.status = 0;
 
-/* expected: {o.[name]} */
+-- expected: {o.[name]}
 select /*+ recompile */ o.id, o.name from object_info as o where {o.name} subseteq set {'object_4'} and o.status = 0;
 
 -- path expressions
-/* expected: t.target.[name] */
+-- expected: t.target.[name]
 select /*+ recompile */ t.target.id, t.target.name from target_info as t where t.target.name = 'object_1' and t.status = 0;
 
-/* expected: nvl(t.target.[name], '') - AS-IS: nvl([name], '') */
+-- expected: nvl(t.target.[name], '') - AS-IS: nvl([name], '')
 select /*+ recompile */ t.target.id, t.target.name from target_info as t where nvl (t.target.name, '') = 'object_2' and t.status = 0;
 
-/* expected: {t.target.[name]} - AS-IS: {[name]} */
+-- expected: {t.target.[name]} - AS-IS: {[name]}
 select /*+ recompile */ t.target.id, t.target.name from target_info as t where {t.target.name} = {'object_3'} and t.status = 0;
 
-/* expected: {t.target.[name]} - AS-IS: {[name]} */
+-- expected: {t.target.[name]} - AS-IS: {[name]}
 select /*+ recompile */ t.target.id, t.target.name from target_info as t where {t.target.name} subseteq set {'object_4'} and t.status = 0;
 
-/* expected: nvl(l.o.[name], '') - AS-IS: nvl([name], '') */
+-- expected: nvl(l.o.[name], '') - AS-IS: nvl([name], '')
 select /*+ recompile */ l.o.id, l.o.name from target_list_info as t, table (t.target_list) as l (o) where nvl (l.o.name, '') = 'object_5' and t.status = 0;
 
 
