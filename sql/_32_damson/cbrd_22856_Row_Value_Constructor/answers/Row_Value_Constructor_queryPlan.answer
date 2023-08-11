@@ -344,9 +344,10 @@ Query plan:
 iscan
     class: rvc_tmp? node[?]
     index: idx term[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select rvc_tmp?.col?, rvc_tmp?.col?, rvc_tmp?.col?, rvc_tmp?.col?, rvc_tmp?.col? from rvc_tmp? rvc_tmp? where rvc_tmp?.col?= ?:? 
+select rvc_tmp?.col?, rvc_tmp?.col?, rvc_tmp?.col?, rvc_tmp?.col?, rvc_tmp?.col? from rvc_tmp? rvc_tmp? where {?, ?} in multiset{{?, ?}, {?, ?}} and rvc_tmp?.col?= ?:? 
 ===================================================
 col1    col2    col3    col4    col5    
 
@@ -361,9 +362,10 @@ Query plan:
 iscan
     class: rvc_tmp? node[?]
     index: idx term[?] AND term[?] AND term[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select rvc_tmp?.col?, rvc_tmp?.col?, rvc_tmp?.col?, rvc_tmp?.col?, rvc_tmp?.col? from rvc_tmp? rvc_tmp? where rvc_tmp?.col?= ?:?  and rvc_tmp?.col?= ?:?  and rvc_tmp?.col?= ?:? 
+select rvc_tmp?.col?, rvc_tmp?.col?, rvc_tmp?.col?, rvc_tmp?.col?, rvc_tmp?.col? from rvc_tmp? rvc_tmp? where {?, ?, ?} in multiset{{?, ?, ?}, {?, ?, ?}} and rvc_tmp?.col?= ?:?  and rvc_tmp?.col?= ?:?  and rvc_tmp?.col?= ?:? 
 ===================================================
 col1    col2    col3    col4    col5    
 1     1     1     1     1     
