@@ -4,7 +4,7 @@
 
 drop table if exists target_info, target_list_info, object_info;
 
-create table object_info (id int, status int, name varchar) dont_reuse_oid;
+create table object_info (id int, status int, name varchar);
 insert into object_info
 values (1, 0, 'object_1'), (2, 0, 'object_2'), (3, 0, 'object_3'), (4, 0, 'object_4'), (5, 0, 'object_5');
 
