@@ -25,17 +25,17 @@ Query Plan:
     TABLE SCAN (a)
     INDEX SCAN (b.pk_tbl_b_id) (key range: a.id=b.id)
 
-  rewritten query: select a.id, b.com from [dba.tbl_a] a, [dba.tbl_b] b where b.com= ?:?  and b.com= ?:?  and a.id=b.id
+  rewritten query: select a.id, b.com from tbl_a a, tbl_b b where 'cubrid'='tibero' and a.id=b.id and b.com= ?:? 
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     INDEX SCAN (b.pk_tbl_b_id) (key range: a.id=b.id)
 
-  rewritten query: select a.id, b.com from [dba.tbl_a] a, [dba.tbl_b] b where b.com= ?:?  and b.com= ?:?  and a.id=b.id
+  rewritten query: select a.id, b.com from tbl_a a, tbl_b b where 'oracle'='tibero' and a.id=b.id and b.com= ?:? 
 
   TABLE SCAN (t)
 
-  rewritten query: select t.id, t.com from (select a.id, b.com from [dba.tbl_a] a, [dba.tbl_b] b where b.com= ?:?  and b.com= ?:?  and a.id=b.id union all select a.id, b.com from [dba.tbl_a] a, [dba.tbl_b] b where b.com= ?:?  and b.com= ?:?  and a.id=b.id) t (id, com)
+  rewritten query: select t.id, t.com from (select a.id, b.com from tbl_a a, tbl_b b where 'cubrid'='tibero' and a.id=b.id and b.com= ?:?  union all select a.id, b.com from tbl_a a, tbl_b b where 'oracle'='tibero' and a.id=b.id and b.com= ?:? ) t (id, com)
 
 
 Trace Statistics:
@@ -43,11 +43,11 @@ Trace Statistics:
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       UNION
         SELECT (time: ?, fetch: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            SCAN (index: dba.tbl_b.pk_tbl_b_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+          SCAN (table: tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (index: tbl_b.pk_tbl_b_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
         SELECT (time: ?, fetch: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            SCAN (index: dba.tbl_b.pk_tbl_b_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+          SCAN (table: tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (index: tbl_b.pk_tbl_b_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
 ===================================================
@@ -62,17 +62,17 @@ Query Plan:
     TABLE SCAN (a)
     INDEX SCAN (b.pk_tbl_b_id) (key range: a.id=b.id)
 
-  rewritten query: select a.id, b.com from [dba.tbl_a] a, [dba.tbl_b] b where b.com= ?:?  and b.com= ?:?  and a.id=b.id
+  rewritten query: select a.id, b.com from tbl_a a, tbl_b b where 'cubrid'='cubrid' and a.id=b.id and b.com= ?:? 
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     INDEX SCAN (b.pk_tbl_b_id) (key range: a.id=b.id)
 
-  rewritten query: select a.id, b.com from [dba.tbl_a] a, [dba.tbl_b] b where b.com= ?:?  and b.com= ?:?  and a.id=b.id
+  rewritten query: select a.id, b.com from tbl_a a, tbl_b b where 'oracle'='cubrid' and a.id=b.id and b.com= ?:? 
 
   TABLE SCAN (t)
 
-  rewritten query: select t.id, t.com from (select a.id, b.com from [dba.tbl_a] a, [dba.tbl_b] b where b.com= ?:?  and b.com= ?:?  and a.id=b.id union all select a.id, b.com from [dba.tbl_a] a, [dba.tbl_b] b where b.com= ?:?  and b.com= ?:?  and a.id=b.id) t (id, com)
+  rewritten query: select t.id, t.com from (select a.id, b.com from tbl_a a, tbl_b b where 'cubrid'='cubrid' and a.id=b.id and b.com= ?:?  union all select a.id, b.com from tbl_a a, tbl_b b where 'oracle'='cubrid' and a.id=b.id and b.com= ?:? ) t (id, com)
 
 
 Trace Statistics:
@@ -80,11 +80,11 @@ Trace Statistics:
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       UNION
         SELECT (time: ?, fetch: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            SCAN (index: dba.tbl_b.pk_tbl_b_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+          SCAN (table: tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (index: tbl_b.pk_tbl_b_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
         SELECT (time: ?, fetch: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            SCAN (index: dba.tbl_b.pk_tbl_b_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+          SCAN (table: tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (index: tbl_b.pk_tbl_b_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
 ===================================================
