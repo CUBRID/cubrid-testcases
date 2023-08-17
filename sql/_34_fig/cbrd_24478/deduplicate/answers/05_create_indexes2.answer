@@ -1,0 +1,67 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+index_of.class_of.class_name    index_of.index_name    key_attr_name    key_order    asc_desc    func    index_of.filter_expression    
+t_child     ix_val_pid_id_de14     val     0     0     null     [dba.t_child].val=_iso88591'N' collate iso88591_bin     
+t_child     ix_val_pid_id_de14     pid     1     1     null     [dba.t_child].val=_iso88591'N' collate iso88591_bin     
+t_child     ix_val_pid_id_de14     id     2     0     null     [dba.t_child].val=_iso88591'N' collate iso88591_bin     
+
+===================================================
+TABLE    CREATE TABLE    
+dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  INDEX [ix_val_pid_id_de14] ([val], [pid] DESC, [id]) WHERE [dba.t_child].val=_iso88591'N' collate iso88591_bin) REUSE_OID, COLLATE iso88591_bin     
+
+===================================================
+0
+===================================================
+117649
+===================================================
+0
+===================================================
+0
+===================================================
+Step    
+DEDUPLICATE=0 INDEX CREATED     
+
+===================================================
+0
+===================================================
+Step    
+DEDUPLICATE=4 INDEX CREATED     
+
+===================================================
+0
+===================================================
+Step    
+DEDUPLICATE=8 INDEX CREATED AND ONLINE PARALLE     
+
+===================================================
+0
+===================================================
+index_of.class_of.class_name    index_of.index_name    key_attr_name    key_order    asc_desc    index_of.status    status    
+t_child     ix_val_pid_de00p     val     0     1     1     VISIBLE     
+t_child     ix_val_pid_de00p     pid     1     1     1     VISIBLE     
+t_child     ix_val_pid_de04p     val     0     1     1     VISIBLE     
+t_child     ix_val_pid_de04p     pid     1     1     1     VISIBLE     
+t_child     ix_val_pid_de04p     _dedup_04     2     0     1     VISIBLE     
+t_child     ix_val_pid_de08p     val     0     0     2     INVISIBLE     
+t_child     ix_val_pid_de08p     pid     1     0     2     INVISIBLE     
+t_child     ix_val_pid_de08p     _dedup_08     2     0     2     INVISIBLE     
+
+===================================================
+TABLE    CREATE TABLE    
+dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  INDEX [ix_val_pid_de00p] ([val] DESC, [pid] DESC),  INDEX [ix_val_pid_de04p] ([val] DESC, [pid] DESC) WITH DEDUPLICATE=4,  INDEX [ix_val_pid_de08p] ([val], [pid]) WITH DEDUPLICATE=8 INVISIBLE COMMENT 'invisibled') REUSE_OID, COLLATE iso88591_bin     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
