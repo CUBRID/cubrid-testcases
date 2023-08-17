@@ -1,0 +1,91 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+id    com    
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    INDEX SCAN (b.pk_tbl_b_id) (key range: a.id=b.id)
+
+  rewritten query: select a.id, b.com from tbl_a a, tbl_b b where 'cubrid'='tibero' and a.id=b.id and b.com= ?:? 
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    INDEX SCAN (b.pk_tbl_b_id) (key range: a.id=b.id)
+
+  rewritten query: select a.id, b.com from tbl_a a, tbl_b b where 'oracle'='tibero' and a.id=b.id and b.com= ?:? 
+
+  TABLE SCAN (t)
+
+  rewritten query: select t.id, t.com from (select a.id, b.com from tbl_a a, tbl_b b where 'cubrid'='tibero' and a.id=b.id and b.com= ?:?  union all select a.id, b.com from tbl_a a, tbl_b b where 'oracle'='tibero' and a.id=b.id and b.com= ?:? ) t (id, com)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      UNION
+        SELECT (time: ?, fetch: ?, ioread: ?)
+          SCAN (table: tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (index: tbl_b.pk_tbl_b_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        SELECT (time: ?, fetch: ?, ioread: ?)
+          SCAN (table: tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (index: tbl_b.pk_tbl_b_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+id    com    
+1     cubrid     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    INDEX SCAN (b.pk_tbl_b_id) (key range: a.id=b.id)
+
+  rewritten query: select a.id, b.com from tbl_a a, tbl_b b where 'cubrid'='cubrid' and a.id=b.id and b.com= ?:? 
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    INDEX SCAN (b.pk_tbl_b_id) (key range: a.id=b.id)
+
+  rewritten query: select a.id, b.com from tbl_a a, tbl_b b where 'oracle'='cubrid' and a.id=b.id and b.com= ?:? 
+
+  TABLE SCAN (t)
+
+  rewritten query: select t.id, t.com from (select a.id, b.com from tbl_a a, tbl_b b where 'cubrid'='cubrid' and a.id=b.id and b.com= ?:?  union all select a.id, b.com from tbl_a a, tbl_b b where 'oracle'='cubrid' and a.id=b.id and b.com= ?:? ) t (id, com)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      UNION
+        SELECT (time: ?, fetch: ?, ioread: ?)
+          SCAN (table: tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (index: tbl_b.pk_tbl_b_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        SELECT (time: ?, fetch: ?, ioread: ?)
+          SCAN (table: tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (index: tbl_b.pk_tbl_b_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
