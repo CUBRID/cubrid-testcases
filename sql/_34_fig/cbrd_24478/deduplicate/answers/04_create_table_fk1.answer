@@ -1,0 +1,123 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+dba.t_parent     CREATE TABLE [t_parent] ([id] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_parent_id] PRIMARY KEY  ([id]),  INDEX [ix_val_de00] ([val])) REUSE_OID, COLLATE iso88591_bin     
+
+===================================================
+0
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  CONSTRAINT [fk_t_child_parent_pid] FOREIGN KEY  ([pid]) REFERENCES [dba.t_parent] ([id]) ON DELETE RESTRICT ON UPDATE RESTRICT) REUSE_OID, COLLATE iso88591_bin     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  CONSTRAINT [fk_t_child_parent_pid] FOREIGN KEY  ([pid]) WITH DEDUPLICATE=1 REFERENCES [dba.t_parent] ([id]) ON DELETE RESTRICT ON UPDATE RESTRICT) REUSE_OID, COLLATE iso88591_bin     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  CONSTRAINT [fk_t_child_parent_pid] FOREIGN KEY  ([pid]) WITH DEDUPLICATE=3 REFERENCES [dba.t_parent] ([id]) ON DELETE RESTRICT ON UPDATE RESTRICT) REUSE_OID, COLLATE iso88591_bin     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  CONSTRAINT [fk_t_child_parent_pid] FOREIGN KEY  ([pid]) WITH DEDUPLICATE=3 REFERENCES [dba.t_parent] ([id]) ON DELETE RESTRICT ON UPDATE RESTRICT) REUSE_OID, COLLATE iso88591_bin     
+
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id])) REUSE_OID, COLLATE iso88591_bin     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+Error:-272
+===================================================
+TABLE    CREATE TABLE    
+dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  CONSTRAINT [fk_t_child_parent_pid] FOREIGN KEY  ([pid]) WITH DEDUPLICATE=5 REFERENCES [dba.t_parent] ([id]) ON DELETE RESTRICT ON UPDATE RESTRICT) REUSE_OID, COLLATE iso88591_bin     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+Error:-272
+===================================================
+0
+TABLE    CREATE TABLE    
+dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  CONSTRAINT [ux_pid] UNIQUE KEY  ([pid]),  INDEX [mx_id_val_de07] ([id], [val]),  CONSTRAINT [fk_t_child_parent_pid] FOREIGN KEY  ([pid]) REFERENCES [dba.t_parent] ([id]) ON DELETE RESTRICT ON UPDATE RESTRICT) REUSE_OID, COLLATE iso88591_bin     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  INDEX [mx_pid_val_de09] ([pid], [val]) WITH DEDUPLICATE=9,  CONSTRAINT [fk_t_child_parent_pid] FOREIGN KEY  ([pid]) REFERENCES [dba.t_parent] ([id]) ON DELETE RESTRICT ON UPDATE RESTRICT) REUSE_OID, COLLATE iso88591_bin     
+
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+dba.t_child2     CREATE TABLE [t_child2] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child2_id] PRIMARY KEY  ([id]),  INDEX [mx_pid_val_de09] ([pid], [val]) WITH DEDUPLICATE=9,  CONSTRAINT [fk_t_child_parent_pid] FOREIGN KEY  ([pid]) REFERENCES [dba.t_parent] ([id]) ON DELETE RESTRICT ON UPDATE RESTRICT) REUSE_OID, COLLATE iso88591_bin     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0

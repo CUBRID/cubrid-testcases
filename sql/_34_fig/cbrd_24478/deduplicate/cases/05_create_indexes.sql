@@ -10,7 +10,10 @@ CREATE TABLE [t_child] (
 
 set system parameters 'deduplicate_key_level=9';
 ALTER TABLE [t_child] ADD INDEX [ix_val_pid_de09] ([val], [pid]);
-SELECT index_of.class_of.class_name, index_of.index_name, key_attr_name, key_order, asc_desc  FROM _db_index_key WHERE index_of.index_name = 'ix_val_pid_de09';
+CREATE INDEX [ix_cannot_make] ON t_child([id]) WITH DEDUPLICATE=9;
+CREATE UNIQUE INDEX [ux_ign_dedup] ON t_child([pid]) WITH DEDUPLICATE=9;
+CREATE UNIQUE INDEX [ux_ign_dedupc] ON t_child([pid],[val]) WITH DEDUPLICATE=9;
+SELECT index_of.class_of.class_name, index_of.index_name, key_attr_name, key_order, asc_desc  FROM _db_index_key WHERE index_of.index_name in ('ix_val_pid_de09','ix_cannot_make','ux_ign_dedup','ux_ign_dedupc');
 SHOW CREATE TABLE [t_child];
 
 set system parameters 'deduplicate_key_level=10';
@@ -36,6 +39,7 @@ set system parameters 'print_index_detail=n';
 
 set system parameters 'deduplicate_key_level=13';
 CREATE INDEX [ix_val_pid_de13] ON [t_child] (NVL([val],''), [pid] DESC);
+CREATE INDEX [ix_val_pid_de13] ON [t_child] REBUILD;
 SELECT index_of.class_of.class_name, index_of.index_name, key_attr_name, key_order, asc_desc, func FROM _db_index_key WHERE index_of.index_name = 'ix_val_pid_de13';
 SHOW CREATE TABLE [t_child];
 DROP INDEX [ix_val_pid_de13] ON [t_child];
