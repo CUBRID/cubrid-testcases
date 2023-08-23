@@ -39,6 +39,7 @@ C1: SELECT * FROM tb1 WHERE col in ('2','3') ORDER BY id;
 C1: commit work;
 
 MC: wait until C2 ready;
+C2: update statistics on tb1;
 C2: show index from tb1;
 C2: SELECT * FROM tb1 WHERE col in ('2','3') ORDER BY id;
 C2: commit work;
@@ -46,6 +47,7 @@ MC: wait until C1 ready;
 C2: SELECT COUNT(*) FROM tb1;
 C2: commit work;
 MC: wait until C2 ready;
+C1: update statistics on tb1;
 C1: show index from tb1;
 C1: CREATE INDEX idx_col on tb1(id);
 C1: select * from db_index where class_name='tb1';

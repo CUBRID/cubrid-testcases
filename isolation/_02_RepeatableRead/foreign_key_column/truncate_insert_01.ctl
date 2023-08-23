@@ -27,6 +27,7 @@ C1: CREATE TABLE t_primary(id INT PRIMARY KEY,col VARCHAR(10));
 C1: CREATE TABLE t_foreign(id INT,col VARCHAR(10),FOREIGN KEY(id) REFERENCES t_primary(id) ON DELETE CASCADE);
 C1: INSERT INTO t_primary VALUES(1,'a'),(2,'b');
 C1: INSERT INTO t_foreign VALUES(1,'do'),(2,'test'),(1,'make'),(2,'spell');
+C1: update statistics on t_foreign;
 C1: commit work;
 
 /* test case */
@@ -39,6 +40,7 @@ MC: wait until C2 ready;
 C2: alter table t_foreign add CONSTRAINT pk_abc primary key(id,col);
 C2: SELECT * FROM t_primary ORDER BY id;
 C2: SELECT * FROM t_foreign ORDER BY id;
+C2: update statistics on t_foreign;
 C2: show index from t_foreign;
 C2: commit;
 C2: INSERT INTO t_primary VALUES(1,'a'),(2,'b');
