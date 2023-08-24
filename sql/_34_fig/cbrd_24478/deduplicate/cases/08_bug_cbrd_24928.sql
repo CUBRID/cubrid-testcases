@@ -10,5 +10,6 @@ alter table dk_t3 add foreign key fk1(id1, id2) references dk_t1;
 
 show create table dk_t2;
 
+drop table if exists dk_t2, dk_t3, dk_t1;
 set system parameters 'deduplicate_key_level=-1';
 set system parameters 'print_index_detail=n';
