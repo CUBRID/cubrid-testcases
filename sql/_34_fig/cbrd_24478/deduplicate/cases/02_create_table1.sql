@@ -32,8 +32,6 @@ val CHARACTER VARYING(1) DEFAULT 'N',
 INDEX ux_val (val));
 SHOW CREATE TABLE t_parent;
 
-SHOW CREATE TABLE t_parent;
-
 DROP TABLE IF EXISTS t_parent2;
 CREATE TABLE t_parent2 LIKE t_parent;
 SHOW CREATE TABLE t_parent2;
