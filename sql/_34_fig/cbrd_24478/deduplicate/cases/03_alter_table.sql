@@ -1,8 +1,7 @@
 -- SET WITH DEDUPLICATE OPTION TO SHOW 
 set system parameters 'print_index_detail=y';
-set system parameters 'deduplicate_key_level=-1';
-
 set system parameters 'deduplicate_key_level=8';
+
 DROP TABLE IF EXISTS t_parent;
 CREATE TABLE t_parent (
 id INTEGER NOT NULL PRIMARY KEY,

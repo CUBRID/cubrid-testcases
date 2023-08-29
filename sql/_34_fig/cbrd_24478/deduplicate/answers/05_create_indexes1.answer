@@ -15,18 +15,20 @@ Error:-272
 ===================================================
 0
 ===================================================
+0
+===================================================
 index_of.index_name    key_attr_name    key_order    asc_desc    
 pk_t_child_id     id     0     0     
+ux_pid     pid     0     0     
 ix_val_pid_de09     val     0     0     
 ix_val_pid_de09     pid     1     0     
 ix_val_pid_de09     _dedup_09     2     0     
 ix_ign_dedupc     pid     0     0     
 ix_ign_dedupc     val     1     0     
-ix_ign_dedupc     _dedup_09     2     0     
 
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  INDEX [ix_val_pid_de09] ([val], [pid]) WITH DEDUPLICATE=9,  INDEX [ix_ign_dedupc] ([pid], [val]) WITH DEDUPLICATE=9) REUSE_OID, COLLATE iso88591_bin     
+dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  CONSTRAINT [ux_pid] UNIQUE KEY  ([pid]),  INDEX [ix_val_pid_de09] ([val], [pid]) WITH DEDUPLICATE=9,  INDEX [ix_ign_dedupc] ([pid], [val])) REUSE_OID, COLLATE iso88591_bin     
 
 ===================================================
 0

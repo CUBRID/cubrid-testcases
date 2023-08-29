@@ -11,7 +11,8 @@ val CHARACTER VARYING(1) DEFAULT 'N'
 
 set system parameters 'deduplicate_key_level=9';
 ALTER TABLE t_child ADD INDEX ix_val_pid_de09 (val, pid);
-CREATE INDEX ix_cannot_make ON t_child(id) WITH DEDUPLICATE=9; -- Error pk can not with deduplicate
+/* Error pk can not with deduplicate */
+CREATE INDEX ix_cannot_make ON t_child(id) WITH DEDUPLICATE=9;
 CREATE UNIQUE INDEX ux_pid ON t_child(pid); 
 CREATE INDEX ix_ign_dedupc ON t_child(pid,val) WITH DEDUPLICATE=9; 
 SELECT index_of.index_name, key_attr_name, key_order, asc_desc  FROM _db_index_key WHERE index_of.class_of.class_name = 't_child';

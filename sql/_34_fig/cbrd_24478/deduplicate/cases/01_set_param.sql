@@ -1,12 +1,16 @@
 -- System parameters
-set system parameters 'deduplicate_key_level=-2';  -- fail
+/* Fail */
+set system parameters 'deduplicate_key_level=-2';
+set system parameters 'deduplicate_key_level=15';
+/* Success */
 set system parameters 'deduplicate_key_level=-1';
 set system parameters 'deduplicate_key_level=0';
 set system parameters 'deduplicate_key_level=1';
 set system parameters 'deduplicate_key_level=14';
-set system parameters 'deduplicate_key_level=15';
 
-set system parameters 'print_index_detail=haha';  -- fail
+/* Fail */
+set system parameters 'print_index_detail=haha';
+/* Success */
 set system parameters 'print_index_detail=0';
 set system parameters 'print_index_detail=1';
 set system parameters 'print_index_detail=y';

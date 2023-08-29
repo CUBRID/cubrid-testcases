@@ -29,7 +29,7 @@ DROP TABLE IF EXISTS t_parent;
 CREATE TABLE t_parent (
 id INTEGER NOT NULL PRIMARY KEY, 
 val CHARACTER VARYING(1) DEFAULT 'N',  
-UNIQUE INDEX ux_val (val));
+INDEX ux_val (val));
 SHOW CREATE TABLE t_parent;
 
 SHOW CREATE TABLE t_parent;

@@ -19,7 +19,7 @@ DROP INDEX ix_val_pid_id_de14 ON t_child;
 INSERT INTO t_child
 SELECT rownum AS id, (rownum % 3000) + 1 AS pid, CASE WHEN rownum % 3 = 1 THEN 'Y' ELSE 'N' END AS val
 FROM db_class a, db_class b, db_class c
-LIMIT 120000;
+LIMIT 110000;
 
 set system parameters 'deduplicate_key_level=0';
 CREATE INDEX ix_val_pid_de00p ON t_child (val DESC, pid DESC) WITH ONLINE PARALLEL 3;
