@@ -1,90 +1,90 @@
 -- This case verifies CBRD-24926 issue.
--- The problem of performing predicate pushing when the value of the column changes every time
+-- The problem of performing predicate pushing when the value of the column changes every time.
+-- Predicate push down should not be happen.
 
 -- DRANDOM
 -- with no_merge
 select /*+ recompile no_merge*/ 
-        chr (t.c)
+'ok' 
 from (
         select drandom () * 100 as c
         from db_root
-        connect by level <= 10
 ) as t
-where t.c > ascii ('A') and t.c < ascii ('F');
+where t.c=t.c; 
 
 -- without no_merge (for view merge)
 select /*+ recompile */ 
-        chr (t.c)
+'ok' 
 from (
         select drandom () * 100 as c
         from db_root
 ) as t
-where t.c > ascii ('A') and t.c < ascii ('F');
+where t.c=t.c;
 
 -- DRAND
 select /*+ recompile no_merge */ 
-        chr (t.c)
+'ok' 
 from (
         select DRAND () * 100 as c
         from db_root
 ) as t
-where t.c > ascii ('A') and t.c < ascii ('F');
+where t.c=t.c;
 
 select /*+ recompile */ 
-        chr (t.c)
+'ok' 
 from (
         select DRAND () * 100 as c
         from db_root
 ) as t
-where t.c > ascii ('A') and t.c < ascii ('F');
+where t.c=t.c;
 
 -- RANDOM
 select /*+ recompile no_merge */ 
-        chr (t.c)
+'ok' 
 from (
         select RANDOM () as c
         from db_root
 ) as t
-where t.c > ascii ('A') and t.c < ascii ('F');
+where t.c=t.c;
 
 select /*+ recompile */ 
-        chr (t.c)
+'ok' 
 from (
         select RANDOM () as c
         from db_root
 ) as t
-where t.c > ascii ('A') and t.c < ascii ('F');
+where t.c=t.c;
 
 -- RAND
 select /*+ recompile no_merge */ 
-        chr (t.c)
+'ok' 
 from (
         select RAND () as c
         from db_root
 ) as t
-where t.c > ascii ('A') and t.c < ascii ('F');
+where t.c=t.c;
 
 select /*+ recompile */ 
-        chr (t.c)
+'ok' 
 from (
         select RAND () as c
         from db_root
 ) as t
-where t.c > ascii ('A') and t.c < ascii ('F');
+where t.c=t.c;
 
 -- sys_guid
 select /*+ recompile no_merge */ 
-        chr(t.c)
+'ok' 
 from (
         select sys_guid() as c
         from db_root
 ) as t
-where t.c > 'A' and t.c < 'F';
+where t.c=t.c;
 
 select /*+ recompile */ 
-        chr(t.c)
+'ok' 
 from (
         select sys_guid() as c
         from db_root
 ) as t
-where t.c > 'A' and t.c < 'F';
+where t.c=t.c;
