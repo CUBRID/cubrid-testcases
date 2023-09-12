@@ -1,5 +1,5 @@
 -- This is a test case to verify the CBRD-24985 issue.
-
+-- Verify that the rewrite query of the SELECT statement and the UPDATE statement is the same.
 drop table if exists TB_RDRECORD, TB_RDFOLDER, subquery_big;
 
 --create table
