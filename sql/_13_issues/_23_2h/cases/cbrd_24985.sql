@@ -106,11 +106,11 @@ EXECUTE st USING '20160000078754', '0000001';
 EXECUTE st USING '20160000078753', '0000001';
 
 --CBRD-24073 (changed type)
-create table subquery_big (col1 varchar(20), col2 varchar(20), col3 varchar(20));
+create table subquery_big (cola varchar(20), colb varchar(20), colc varchar(20));
 select /*+ recompile */ count(*) from 
-(select col2, avg(col3) from subquery_big group by col2) a,
-(select col2, min(col3), max(col3) from subquery_big where col2=1 group by col2) b
-where a.col2=b.col2;
+(select colb, avg(colc) from subquery_big group by colb) a,
+(select colb, min(colc), max(colc) from subquery_big where colb=1 group by colb) b
+where a.colb=b.colb;
 
 drop prepare st;
 drop table if exists TB_RDRECORD, TB_RDFOLDER, subquery_big;
