@@ -1,0 +1,188 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+rctr_id    fls_id    drc_yn    dflp_cnvr_stts    
+0000001     20160000078754     1          
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: F node[?]
+                 sargs: term[?] AND term[?] AND term[?] AND term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct F.FLS_ID from TB_RDFOLDER F where F.PBRC_PRCS_STTS= ?:?  and F.FLS_ID= ?:?  and F.TRDV_CD= ?:?  and F.RCTR_ID= ?:? )
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: a node[?]
+               sargs: term[?] AND term[?] AND term[?] AND term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: av? node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.rctr_id, a.fls_id, a.drc_yn, a.dflp_cnvr_stts from TB_RDRECORD a, (select distinct F.FLS_ID from TB_RDFOLDER F where F.PBRC_PRCS_STTS= ?:?  and F.FLS_ID= ?:?  and F.TRDV_CD= ?:?  and F.RCTR_ID= ?:? ) av? (av_?) where (a.DFLP_CNVR_STTS is null  or ((a.DFLP_CNVR_STTS= ?:? ) or (a.DFLP_CNVR_STTS= ?:? ))) and a.FLS_ID='?' and a.DRC_YN= ?:?  and a.RCTR_ID= ?:?  and a.FLS_ID=av?.av_?
+===================================================
+rctr_id    fls_id    drc_yn    dflp_cnvr_stts    
+0000001     20160000078753     1          
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: F node[?]
+                 sargs: term[?] AND term[?] AND term[?] AND term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct F.FLS_ID from TB_RDFOLDER F where F.PBRC_PRCS_STTS= ?:?  and F.FLS_ID= ?:?  and F.TRDV_CD= ?:?  and F.RCTR_ID= ?:? )
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: a node[?]
+               sargs: term[?] AND term[?] AND term[?] AND term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: av? node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.rctr_id, a.fls_id, a.drc_yn, a.dflp_cnvr_stts from TB_RDRECORD a, (select distinct F.FLS_ID from TB_RDFOLDER F where F.PBRC_PRCS_STTS= ?:?  and F.FLS_ID= ?:?  and F.TRDV_CD= ?:?  and F.RCTR_ID= ?:? ) av? (av_?) where (a.DFLP_CNVR_STTS is null  or ((a.DFLP_CNVR_STTS= ?:? ) or (a.DFLP_CNVR_STTS= ?:? ))) and a.FLS_ID='?' and a.DRC_YN= ?:?  and a.RCTR_ID= ?:?  and a.FLS_ID=av?.av_?
+===================================================
+1
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: F node[?]
+                 sargs: term[?] AND term[?] AND term[?] AND term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct F.FLS_ID from TB_RDFOLDER F where F.PBRC_PRCS_STTS= ?:?  and F.FLS_ID= ?:?  and F.TRDV_CD= ?:?  and F.RCTR_ID= ?:? )
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: a node[?]
+               sargs: term[?] AND term[?] AND term[?] AND term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: av? node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a,class a, ?:?  as [a.drc_yn] from TB_RDRECORD a, (select distinct F.FLS_ID from TB_RDFOLDER F where F.PBRC_PRCS_STTS= ?:?  and F.FLS_ID= ?:?  and F.TRDV_CD= ?:?  and F.RCTR_ID= ?:? ) av? (av_?) where (a.DFLP_CNVR_STTS is null  or ((a.DFLP_CNVR_STTS= ?:? ) or (a.DFLP_CNVR_STTS= ?:? ))) and a.FLS_ID='?' and a.RCTR_ID= ?:?  and a.DRC_YN= ?:?  and a.FLS_ID=av?.av_?
+===================================================
+1
+===================================================
+0
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: F node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct F.FLS_ID from TB_RDFOLDER F where F.RCTR_ID= ?:?  and F.FLS_ID= ?:? )
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: av? node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a,class a, ?:?  as [a.drc_yn] from TB_RDRECORD a, (select distinct F.FLS_ID from TB_RDFOLDER F where F.RCTR_ID= ?:?  and F.FLS_ID= ?:? ) av? (av_?) where a.FLS_ID=( cast(( ?:? ) as varchar)) and a.FLS_ID=av?.av_?
+===================================================
+1
+===================================================
+1
+===================================================
+0
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: F node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct F.FLS_ID from TB_RDFOLDER F where F.RCTR_ID= ?:?  and F.FLS_ID= ?:? )
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: av? node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.rctr_id, a.fls_id, a.drc_yn, a.dflp_cnvr_stts from TB_RDRECORD a, (select distinct F.FLS_ID from TB_RDFOLDER F where F.RCTR_ID= ?:?  and F.FLS_ID= ?:? ) av? (av_?) where a.FLS_ID=( cast(( ?:? ) as varchar)) and a.FLS_ID=av?.av_?
+===================================================
+rctr_id    fls_id    drc_yn    dflp_cnvr_stts    
+0000001     20160000078754     1          
+
+===================================================
+rctr_id    fls_id    drc_yn    dflp_cnvr_stts    
+0000001     20160000078753     1          
+
+===================================================
+0
+===================================================
+count(*)    
+0     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: subquery_big node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select subquery_big.colb from subquery_big subquery_big where subquery_big.colb='?' group by subquery_big.colb)
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: subquery_big node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select subquery_big.colb from subquery_big subquery_big where subquery_big.colb= ?:?  group by subquery_big.colb)
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select subquery_big.colb from subquery_big subquery_big where subquery_big.colb='?' group by subquery_big.colb) a (colb), (select subquery_big.colb from subquery_big subquery_big where subquery_big.colb= ?:?  group by subquery_big.colb) b (colb) where a.colb=b.colb
+===================================================
+0
+===================================================
+0
