@@ -1,3 +1,9 @@
+/* Description
+
+The CBRD-24876 is fixed the can not index scan when the index column is used in a function.
+
+*/
+
 drop table if exists t1, t2, t3, t4;
 create table t1(col1 int, col2 int );
 create table t2 like t1;
@@ -17,6 +23,7 @@ create index idx on t4(col1, col2);
 set trace on;
 
 -- positive
+-- Need to check 'agl: idx' in SCAN in Trace Statistics
 select /*+ recompile */ 'p_1', min(col1), max(col1) from t1;
 show trace;
 select /*+ recompile */ 'p_2', min(col1), max(col1) from t2;
