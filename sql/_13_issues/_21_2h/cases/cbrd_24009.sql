@@ -10,7 +10,7 @@ select count(*) from tmp_view;
 
 drop table if exists tmp;
 drop view if exists v1;
-create table tmp (col1 int) DONT_REUSE_OID;
+create table tmp (col1 int);
 create or replace view v1 as select * from tmp;
 
 INSERT INTO v1 SELECT * FROM v1 LIMIT 0;
