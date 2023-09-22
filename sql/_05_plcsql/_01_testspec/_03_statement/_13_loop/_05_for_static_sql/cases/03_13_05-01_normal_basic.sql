@@ -1,0 +1,21 @@
+--+ server-message on
+
+-- normal: basic usage of a loop of a static sql
+
+
+create or replace procedure t(i int) as
+begin
+    for r in (select * from db_collation) loop
+        dbms_output.put_line('coll_id=' || r.coll_id);
+        dbms_output.put_line('coll_name=' || r.coll_name);
+        dbms_output.put_line('charset_name=' || r.charset_name);
+    end loop;
+end;
+
+select * from db_stored_procedure where sp_name = 't';
+select * from db_stored_procedure_args where sp_name = 't';
+
+call t(7);
+
+drop procedure t;
+
