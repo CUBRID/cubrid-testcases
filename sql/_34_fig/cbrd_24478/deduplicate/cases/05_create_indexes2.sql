@@ -30,7 +30,7 @@ CREATE INDEX ix_val_pid_de08p ON t_child (val, pid) WITH DEDUPLICATE=8, ONLINE P
 SELECT 'DEDUPLICATE=8 INDEX CREATED AND ONLINE PARALLE' AS Step;
 ALTER INDEX ix_val_pid_de08p ON t_child INVISIBLE;
 SELECT index_of.class_of.class_name, index_of.index_name, key_attr_name, key_order, asc_desc, index_of.status, CASE index_of.status WHEN 2 THEN 'INVISIBLE' ELSE 'VISIBLE' END AS status  FROM _db_index_key WHERE index_of.index_name LIKE 'ix_val_pid_de%'
-ORDER BY index_of.class_of.class_name, index_of.index_name, key_order, index_of.status
+ORDER BY index_of.class_of.class_name, index_of.index_name, key_order, index_of.status;
 SHOW CREATE TABLE t_child;
 
 DROP TABLE IF EXISTS t_child;
