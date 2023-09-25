@@ -11,7 +11,9 @@ val CHARACTER VARYING(1) DEFAULT 'N'
 
 -- CREATING INDEX WITH UNIQUE COLUMN ADD TO NOT HAVING DEDUPLICATE OPTION
 CREATE INDEX ix_val_pid_id_de14 ON t_child (val, pid DESC, id) WHERE val = 'N';
-SELECT index_of.class_of.class_name, index_of.index_name, key_attr_name, key_order, asc_desc, func, index_of.filter_expression FROM _db_index_key WHERE index_of.index_name = 'ix_val_pid_id_de14';
+SELECT index_of.class_of.class_name, index_of.index_name, key_attr_name, key_order, asc_desc, func, index_of.filter_expression 
+FROM _db_index_key 
+WHERE index_of.index_name = 'ix_val_pid_id_de14';
 SHOW CREATE TABLE t_child;
 DROP INDEX ix_val_pid_id_de14 ON t_child;
 
@@ -29,7 +31,9 @@ SELECT 'DEDUPLICATE=4 INDEX CREATED' AS Step;
 CREATE INDEX ix_val_pid_de08p ON t_child (val, pid) WITH DEDUPLICATE=8, ONLINE PARALLEL 3 COMMENT 'invisibled';
 SELECT 'DEDUPLICATE=8 INDEX CREATED AND ONLINE PARALLE' AS Step;
 ALTER INDEX ix_val_pid_de08p ON t_child INVISIBLE;
-SELECT index_of.class_of.class_name, index_of.index_name, key_attr_name, key_order, asc_desc, index_of.status, CASE index_of.status WHEN 2 THEN 'INVISIBLE' ELSE 'VISIBLE' END AS status  FROM _db_index_key WHERE index_of.index_name LIKE 'ix_val_pid_de%'
+SELECT index_of.class_of.class_name, index_of.index_name, key_attr_name, key_order, asc_desc, index_of.status, CASE index_of.status WHEN 2 THEN 'INVISIBLE' ELSE 'VISIBLE' END AS status  
+FROM _db_index_key 
+WHERE index_of.index_name LIKE 'ix_val_pid_de%'
 ORDER BY index_of.class_of.class_name, index_of.index_name, key_order, index_of.status;
 SHOW CREATE TABLE t_child;
 
