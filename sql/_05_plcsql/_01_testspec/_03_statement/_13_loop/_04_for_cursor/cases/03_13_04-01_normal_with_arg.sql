@@ -4,10 +4,10 @@
 
 
 create or replace procedure t(i int) as
-    cursor c(bbb int) is select coll_name from db_collation where coll_id > bbb;
+    cursor c(bbb int) is select charset_name from db_charset where charset_id > bbb;
 begin
     for r in c(3) loop
-        dbms_output.put_line(r.coll_name);
+        dbms_output.put_line(r.charset_name);
     end loop;
 end;
 

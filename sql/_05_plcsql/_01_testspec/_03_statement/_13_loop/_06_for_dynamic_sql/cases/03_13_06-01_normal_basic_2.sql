@@ -5,9 +5,8 @@
 
 create or replace procedure t(i int) as
 begin
-    for r in (execute immediate 'select * from db_collation where coll_id > ?' using IN 3) loop
-        dbms_output.put_line('coll_id=' || r.coll_id);
-        dbms_output.put_line('coll_name=' || r.coll_name);
+    for r in (execute immediate 'select * from db_charset where charset_id > ?' using IN 3) loop
+        dbms_output.put_line('charset_id=' || r.charset_id);
         dbms_output.put_line('charset_name=' || r.charset_name);
     end loop;
 end;

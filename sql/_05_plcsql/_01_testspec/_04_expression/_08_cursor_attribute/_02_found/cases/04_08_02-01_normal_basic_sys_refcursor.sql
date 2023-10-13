@@ -14,7 +14,7 @@ create or replace procedure t(i int) as
         return case when b is null then 'null' when b then 'true' else 'false' end;
     end;
 begin
-    open rc for select coll_id, coll_name from db_collation;
+    open rc for select coll_id, coll_name from db_collation limit 10;
     dbms_output.put_line('after open-for: ' || helper(rc%found));
     loop
         fetch rc into id, name;

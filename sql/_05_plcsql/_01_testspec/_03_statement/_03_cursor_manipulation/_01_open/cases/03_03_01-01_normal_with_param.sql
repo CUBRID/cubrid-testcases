@@ -4,7 +4,8 @@
 
 
 create or replace procedure t(i int) as
-    cursor c(cs varchar(32), bbb int) is select coll_name from db_collation where charset_name = cs and coll_id > bbb;
+    cursor c(cs varchar(32), bbb int) is
+        select charset_name from db_charset where charset_name = cs and charset_id > bbb;
     r varchar(32);
 begin
     open c('utf8', 3);

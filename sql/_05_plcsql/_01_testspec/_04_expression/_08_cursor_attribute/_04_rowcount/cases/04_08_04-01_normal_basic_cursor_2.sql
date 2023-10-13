@@ -4,7 +4,7 @@
 
 
 create or replace procedure t(i int) as
-    cursor c is select coll_id, coll_name from db_collation;
+    cursor c is select coll_id, coll_name from db_collation limit 10;
 begin
     for r in c loop
         dbms_output.put_line('in loop body: ' || c%rowcount);

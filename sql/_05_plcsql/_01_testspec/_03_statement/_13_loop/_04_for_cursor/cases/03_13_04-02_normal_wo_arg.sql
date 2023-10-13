@@ -4,10 +4,10 @@
 
 
 create or replace procedure t(i int) as
-    cursor c is select coll_name from db_collation;
+    cursor c is select charset_name from db_charset;
 begin
     for r in c loop
-        dbms_output.put_line(r.coll_name);
+        dbms_output.put_line(r.charset_name);
     end loop;
 end;
 

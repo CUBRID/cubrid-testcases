@@ -4,7 +4,7 @@
 
 
 create or replace procedure t(i int) as
-    cursor c is select * from db_collation;
+    cursor c is select * from db_collation limit 10;
 
     function helper(b boolean) return varchar as
     begin

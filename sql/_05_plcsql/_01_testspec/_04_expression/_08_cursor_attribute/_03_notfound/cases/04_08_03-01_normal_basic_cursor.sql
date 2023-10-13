@@ -8,7 +8,7 @@ create or replace procedure t(i int) as
     id int;
     name varchar(32);
 
-    cursor c is select coll_id, coll_name from db_collation;
+    cursor c is select coll_id, coll_name from db_collation limit 10;
 
     function helper(b boolean) return varchar as
     begin

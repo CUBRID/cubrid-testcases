@@ -6,7 +6,7 @@
 create or replace procedure t(i int) as
     cs varchar(32) := 'utf8';
     bbb int := 3;
-    cursor c is select coll_name from db_collation where charset_name = cs and coll_id > bbb;
+    cursor c is select charset_name from db_charset where charset_name = cs and charset_id > bbb;
     r varchar(32);
 begin
     open c;

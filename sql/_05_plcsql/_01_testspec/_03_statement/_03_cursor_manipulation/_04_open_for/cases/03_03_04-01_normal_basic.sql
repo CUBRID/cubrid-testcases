@@ -5,14 +5,14 @@
 
 create or replace procedure t(i int) as
     rc sys_refcursor;
-    coll varchar(32);
+    id int;
     charset varchar(32);
 begin
-    open rc for select coll_name, charset_name from db_collation;
+    open rc for select charset_id, charset_name from db_charset;
     loop
-        fetch rc into coll, charset;
+        fetch rc into id, charset;
         exit when rc%notfound;
-        dbms_output.put_line('(' || coll || ', ' || charset || ')');
+        dbms_output.put_line('(' || id || ', ' || charset || ')');
     end loop;
     close rc;
 end;
