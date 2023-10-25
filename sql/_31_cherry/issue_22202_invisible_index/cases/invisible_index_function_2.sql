@@ -106,7 +106,7 @@ ALTER INDEX first_name_lower ON T1 INVISIBLE;
 update statistics on t1;
 --@queryplan
 SELECT /*+ recompile */ * FROM t1 WHERE LOWER(FirstName)='yin' using index first_name_lower(+);
-ALTER  INDEX first_name_lower on t1(firstname) WHERE LOWER(FirstName)='yin' REBUILD;
+ALTER  INDEX first_name_lower on t1 REBUILD;
 update statistics on t1;
 --@queryplan
 SELECT /*+ recompile */ * FROM t1 WHERE LOWER(FirstName)='yin' using index first_name_lower(+);

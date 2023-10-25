@@ -6,7 +6,7 @@ PARTITION BY LIST (str) (
 );
 alter table tbl add partition (partition  p2 values in (_utf8'gggg'));
 create unique index udex on tbl (str);
-alter index udex on tbl(j) rebuild;
+alter index udex on tbl rebuild;
 drop table if exists tbl;
 CREATE TABLE tbl (str STRING) 
 PARTITION BY LIST (str) (
@@ -16,7 +16,7 @@ PARTITION BY LIST (str) (
 alter table tbl add partition (partition  p2 values in  ('gggg'));
 
 create unique index udex on tbl (str);
-alter index udex on tbl(str) rebuild;
+alter index udex on tbl rebuild;
 set  names utf8;
 drop table if exists tbl;
 CREATE TABLE tbl (str STRING primary key) COLLATE utf8_en_cs
@@ -28,7 +28,7 @@ alter table tbl add partition (partition  p2 values in  ('gggg'));
 insert into tbl values('test');
 insert into tbl values('TEST');
 create unique index udex on tbl (str);
-alter index udex on tbl(str) rebuild;
+alter index udex on tbl rebuild;
 
 
 set names utf8;
