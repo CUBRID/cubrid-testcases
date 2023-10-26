@@ -10,7 +10,7 @@ SELECT /*+ recompile */* FROM t1 WHERE LOWER(FirstName)='yin';
 ALTER  INDEX first_name_lower on t1 REBUILD;
 --TEST Alter failed 
 ALTER  INDEX first_name_lower on t1 (trim(FirstName));
---TEST Alter successfully 
+--TEST Alter failed
 ALTER  INDEX first_name_lower on t1 (upper(FirstName))REBUILD;
 --Test should not use index first_name_lower
 SELECT /*+ recompile */* FROM t1 WHERE LOWER(FirstName)='yin';
@@ -20,6 +20,8 @@ SELECT /*+ recompile */* FROM t1 WHERE upper(FirstName)='yin';
 CREATE INDEX first_name_lower1 ON t1 (LOWER(FirstName));
 --TEST Alter failed 
 ALTER  INDEX first_name_lower on t1 (LOWER(FirstName)) REBUILD;
+--TEST Alter successfully 
+ALTER  INDEX first_name_lower on t1 REBUILD;
 drop  table t1 ;
 
 set  system parameters 'dont_reuse_heap_file=no';
