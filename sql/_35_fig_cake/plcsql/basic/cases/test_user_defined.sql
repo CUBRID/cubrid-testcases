@@ -1,4 +1,4 @@
---+ server-output on
+--+ server-message on
 
 create or replace procedure demo_hello() as
 begin

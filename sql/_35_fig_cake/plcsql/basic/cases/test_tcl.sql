@@ -3,7 +3,7 @@
 
 -- 1) Test COMMIT
 
---+ server-output on
+--+ server-message on
 autocommit off;
 
 SET SYSTEM PARAMETERS 'pl_transaction_control=yes';

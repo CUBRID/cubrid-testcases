@@ -1,4 +1,4 @@
---+ server-output on
+--+ server-message on
 
 create or replace procedure test_ddl(table_name VARCHAR, signature VARCHAR) as
 begin

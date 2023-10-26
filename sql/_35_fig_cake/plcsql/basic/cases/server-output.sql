@@ -1,6 +1,6 @@
--- Test basic registration of PL/CSQL and server-output CTP hint
+-- Test basic registration of PL/CSQL and server-message CTP hint
 
---+ server-output on
+--+ server-message on
 create or replace procedure demo_hello() as
 begin
     DBMS_OUTPUT.put_line('Hello CUBRID PL/CSQL! One');
