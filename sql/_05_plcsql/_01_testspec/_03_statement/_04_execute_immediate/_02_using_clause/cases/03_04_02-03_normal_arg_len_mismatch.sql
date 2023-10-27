@@ -3,7 +3,7 @@
 -- normal: if the number of host variables (?'s) and the length of using values do not match, then SQL_ERROR is raised
 
 
-create or replace procedure poo(a int, b IN int, c IN OUT int, d INOUT int, e OUT int) as
+create or replace procedure poo(a int, b int, c int, d int, e int) as
 begin
     null;
 end;
@@ -15,7 +15,7 @@ create or replace procedure t(i int) as
     d int := 4;
     e int := 5;
 begin
-    execute immediate 'call poo(?, ?, ?, ?, ?)' using IN b, IN OUT c, INOUT d, OUT e;
+    execute immediate 'call poo(?, ?, ?, ?, ?)' using b, c, d, e;
 end;
 
 select * from db_stored_procedure where sp_name = 't';
