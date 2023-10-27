@@ -10,9 +10,9 @@ insert into t values('가假價加可呵哥嘉嫁家','가假價加可呵哥嘉�
 insert into t values('가佳假價加可呵哥嘉嫁','가佳假價加可呵哥嘉嫁',N'가佳假價加可呵哥嘉嫁',N'가佳假價加可呵哥嘉嫁','가佳假價加可呵哥嘉嫁');
 create index idx on t(col1(2));
 select /*+recompile*/* from t where col1>'각' order by 1;
-alter index idx on t(col1) REBUILD;
+alter index idx on t REBUILD;
 select /*+recompile*/* from t where col1>'각' order by 1;
-alter index idx on t(col2) REBUILD;
+alter index idx on t REBUILD;
 select /*+recompile*/* from t where col2>'각' order by 1;
 drop table t;
 set names iso88591;

@@ -16,7 +16,7 @@ update statistics on all classes;
 
 select /*+ recompile INDEX_SS */ * from t where j = 1 order by 1;
 
-alter  index idx on t(i,j,k) where i >1 rebuild;
+alter  index idx on t rebuild;
 
 select /*+ recompile INDEX_SS */ * from t where j = 1  using index idx order by 1;
 
