@@ -5,10 +5,10 @@ insert into blogtopic value(1,DATE '2010-01-01',DATE '2010-01-02');
 CREATE INDEX my_filter_index ON blogtopic (topicId) WHERE closedDate IS NULL;
 update statistics on blogtopic;
 show index in blogtopic;
-alter REVERSE index my_filter_index on blogtopic (topicId) WHERE postDate>'2010-01-01' AND closedDate IS NULL rebuild;
+alter REVERSE index my_filter_index on blogtopic rebuild;
 update statistics on blogtopic;
 show index in blogtopic;
-alter index my_filter_index on blogtopic (topicId) rebuild;
+alter index my_filter_index on blogtopic rebuild;
 update statistics on blogtopic;
 show index in blogtopic;
 
@@ -16,17 +16,20 @@ drop index my_filter_index on blogtopic;
 
 
 CREATE UNIQUE INDEX my_filter_index ON blogtopic (topicId) WHERE closedDate IS NULL;
+-- fail case
 alter UNIQUE index my_filter_index on blogtopic (topicId) WHERE postDate>'2010-01-01' or closedDate IS not NULL rebuild;
-alter UNIQUE index my_filter_index on blogtopic (topicId) WHERE postDate>'2010-01-01' or closedDate IS not NULL rebuild;
+alter UNIQUE index my_filter_index on blogtopic rebuild;
 
+-- fail case
 alter UNIQUE index my_filter_index on blogtopic (topicId,postDate) WHERE postDate>'2010-01-01' and topicId>1 rebuild;
+alter UNIQUE index my_filter_index on blogtopic rebuild;
 update statistics on blogtopic;
 show index in blogtopic;
 drop UNIQUE index my_filter_index on blogtopic;
 
 
 CREATE INDEX my_filter_index ON blogtopic (topicId);
-alter index my_filter_index on blogtopic (topicId) WHERE closedDate IS NULL rebuild;
+alter index my_filter_index on blogtopic rebuild;
 update statistics on blogtopic;
 show index in blogtopic;
 
@@ -45,10 +48,10 @@ insert into blogtopic value(2,DATE '2010-01-01',null);
 CREATE INDEX my_filter_index ON blogtopic (topicId) WHERE topicId >1;
 --test using my_filter_index
 select /*+ recompile */ count(topicId) from blogtopic WHERE topicId >1 using index my_filter_index(+);
-alter REVERSE index my_filter_index on blogtopic (topicId) WHERE postDate>'2010-01-01' AND closedDate IS NULL rebuild;
+alter REVERSE index my_filter_index on blogtopic rebuild;
 --test not using my_filter_index
 select /*+ recompile */ count(topicId) from blogtopic WHERE topicId >1 using index my_filter_index(+);
-alter index my_filter_index on blogtopic (topicId)
+alter index my_filter_index on blogtopic rebuild;
 --test using my_filter_index
 select /*+ recompile */ count(topicId) from blogtopic WHERE topicId >1 using index my_filter_index(+);
 drop table blogtopic;
@@ -59,7 +62,7 @@ insert into blogtopic value(2,DATE '2010-01-01',null);
 CREATE INDEX my_filter_index ON blogtopic (topicId);
 --test using my_filter_index
 select /*+ recompile */ count(topicId) from blogtopic WHERE topicId >1 ;
-alter REVERSE index my_filter_index on blogtopic (topicId) WHERE topicId >1 rebuild;
+alter REVERSE index my_filter_index on blogtopic rebuild;
 --test using my_filter_index
 select /*+ recompile */ count(topicId) from blogtopic WHERE topicId >1;
 drop table blogtopic;
