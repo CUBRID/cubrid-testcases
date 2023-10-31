@@ -33,7 +33,7 @@ C1: commit;
 /* test case */
 C1: rename table tb1 as tb1_rename;
 MC: wait until C1 ready;
-C2: alter index i_tb2_id_col on tb2(id, col DESC) REBUILD;
+C2: alter index i_tb2_id_col on tb2 REBUILD;
 MC: wait until C2 ready;
 
 C3: select * from db_index where class_name like 'tb%' order by 1,2,3,4;
@@ -50,7 +50,7 @@ MC: wait until C3 ready;
 
 C1: alter table tb2 add constraint fk_id_col foreign key (id,col) references t1 (id,col);
 MC: wait until C1 ready;
-C2: alter index i_tb2_id_col on tb2(id, email) REBUILD;
+C2: alter index i_tb2_id_col on tb2 REBUILD;
 MC: wait until C2 blocked;
 
 C3: select * from db_index where class_name like 'tb%' order by 1,2,3,4;
