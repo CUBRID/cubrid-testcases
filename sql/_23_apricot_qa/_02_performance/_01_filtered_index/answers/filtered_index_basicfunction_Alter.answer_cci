@@ -41,9 +41,11 @@ Error:-493
 ===================================================
 Error:-493
 ===================================================
-Error:-493
+Error:-273
 ===================================================
 Error:-493
+===================================================
+Error:-273
 ===================================================
 0
 ===================================================
@@ -122,7 +124,18 @@ iscan
 Query stmt:
 select count(blogtopic.topicId) from blogtopic blogtopic where (blogtopic.topicId> ?:? ) using index blogtopic.my_filter_index(+)
 ===================================================
-Error:-493
+0
+===================================================
+count(topicId)    
+1     
+
+Query plan:
+iscan
+    class: blogtopic node[?]
+    index: my_filter_index term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select count(blogtopic.topicId) from blogtopic blogtopic where (blogtopic.topicId> ?:? ) using index blogtopic.my_filter_index(+)
 ===================================================
 0
 ===================================================
@@ -166,7 +179,7 @@ select count(blogtopic.topicId) from blogtopic blogtopic where (blogtopic.topicI
 ===================================================
 0
 ===================================================
-Error:-494
+Error:-493
 ===================================================
 0
 ===================================================
