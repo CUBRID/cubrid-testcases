@@ -1,4 +1,4 @@
---+ server-output on
+--+ server-message on
 
 drop table if exists history;
 create table history(event_code int, name varchar(40),host_year varchar(20),score int,unit varchar(20));

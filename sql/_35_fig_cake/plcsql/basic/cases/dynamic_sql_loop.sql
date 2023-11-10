@@ -1,6 +1,6 @@
 -- Test For-Loop with Dynamic SQL
 
---+ server-output on
+--+ server-message on
 DROP TABLE IF EXISTS tbl;
 CREATE TABLE tbl (id int primary key, name char(10), dept_name VARCHAR, salary INT);
 INSERT INTO tbl VALUES(1, 'Kim', 'devel', 4000000);
