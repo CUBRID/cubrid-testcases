@@ -69,3 +69,5 @@ DROP TABLE test_tcl_tbl;
 DROP PROCEDURE test_tcl_rollback, test_tcl_commit;
 
 autocommit on;
+
+--+ server-message off

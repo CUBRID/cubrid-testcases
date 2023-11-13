@@ -25,3 +25,5 @@ CALL get_salary_by_dept ('account');
 
 DROP TABLE tbl;
 DROP PROCEDURE get_salary_by_dept;
+
+--+ server-message off

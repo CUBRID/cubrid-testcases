@@ -22,3 +22,5 @@ call t(5);
 drop procedure t;
 
 
+
+--+ server-message off

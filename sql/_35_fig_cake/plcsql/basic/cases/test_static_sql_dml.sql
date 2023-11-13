@@ -129,3 +129,5 @@ SELECT * FROM test_tbl;
 
 DROP PROCEDURE test_dml_truncate, test_dml_delete, test_dml_insert, test_ddl;
 DROP TABLE test_tbl;
+
+--+ server-message off

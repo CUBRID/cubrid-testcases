@@ -13,3 +13,5 @@ begin
 end;
 
 drop function t;
+
+--+ server-message off
