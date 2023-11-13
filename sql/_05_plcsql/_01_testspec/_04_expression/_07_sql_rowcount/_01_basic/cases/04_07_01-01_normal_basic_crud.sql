@@ -47,3 +47,5 @@ call t(7);
 drop procedure t;
 drop table tbl;
 
+
+--+ server-message off

@@ -156,3 +156,5 @@ test_query_single_row,
 test_query_single_row_const;
 
 DROP PROCEDURE create_history_data;
+
+--+ server-message off

@@ -19,3 +19,5 @@ select * from db_stored_procedure_args where sp_name = 't';
 call t(7);
 
 drop procedure t;
+
+--+ server-message off

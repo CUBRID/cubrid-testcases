@@ -18,3 +18,5 @@ select t(5);
 
 drop function t;
 
+
+--+ server-message off

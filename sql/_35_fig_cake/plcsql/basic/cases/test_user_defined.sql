@@ -22,3 +22,5 @@ CALL demo_global_semantics_udpf ();
 
 DROP PROCEDURE demo_hello;
 DROP FUNCTION demo_hello_ret, demo_global_semantics_udpf;
+
+--+ server-message off

@@ -55,3 +55,5 @@ call t(7);
 drop procedure t;
 drop table target_table, source_table;
 
+
+--+ server-message off

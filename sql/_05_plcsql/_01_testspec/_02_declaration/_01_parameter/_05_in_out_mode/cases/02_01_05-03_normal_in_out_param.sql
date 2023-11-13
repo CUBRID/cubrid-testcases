@@ -112,3 +112,5 @@ select :s from dual;
 
 drop procedure t;
 
+
+--+ server-message off
