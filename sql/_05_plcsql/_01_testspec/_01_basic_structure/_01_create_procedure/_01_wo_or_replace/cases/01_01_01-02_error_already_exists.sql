@@ -13,3 +13,5 @@ begin
 end;
 
 drop procedure t;
+
+--+ server-message off

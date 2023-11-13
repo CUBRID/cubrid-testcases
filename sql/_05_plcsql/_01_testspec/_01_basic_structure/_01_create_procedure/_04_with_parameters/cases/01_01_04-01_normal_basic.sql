@@ -43,3 +43,5 @@ call t(
 
 drop procedure t;
 
+
+--+ server-message off

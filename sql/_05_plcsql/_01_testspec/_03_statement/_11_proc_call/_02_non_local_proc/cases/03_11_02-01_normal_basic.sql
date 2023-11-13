@@ -23,3 +23,5 @@ call t(7);
 drop procedure t;
 drop procedure poo;
 
+
+--+ server-message off

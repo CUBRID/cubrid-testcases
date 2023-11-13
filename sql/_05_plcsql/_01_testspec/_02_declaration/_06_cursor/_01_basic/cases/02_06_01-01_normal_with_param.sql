@@ -30,3 +30,5 @@ call t(2);
 
 drop procedure t;
 drop table tbl;
+
+--+ server-message off

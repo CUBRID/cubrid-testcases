@@ -43,3 +43,5 @@ select :a, :b, :c, :d from dual;
 
 drop procedure t;
 
+
+--+ server-message off

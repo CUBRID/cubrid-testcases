@@ -16,3 +16,5 @@ select t(7);
 
 drop function t;
 
+
+--+ server-message off
