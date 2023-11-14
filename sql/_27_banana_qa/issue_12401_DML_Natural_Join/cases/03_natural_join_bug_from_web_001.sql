@@ -16,14 +16,14 @@ select * from a join b on a.sub_classes=b.sub_classes;
 DROP TABLE if exists a,b;
 
 
-;autocommit on
+autocommit on;
 drop table a;
 drop table b;
 create table a (id int ,name varchar(10)) ;
 insert into a values (1,'aa');
 insert into a values (2,'bb');
 create table b as select * from a;
-;autocommit on
+autocommit on;
 select count(*) from a natural join b;
 truncate table a;
 truncate table b;
