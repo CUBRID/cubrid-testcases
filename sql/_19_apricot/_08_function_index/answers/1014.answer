@@ -35,7 +35,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.date_col from t? t? where  year(t?.date_col)>?
+select t?.i?, t?.i?, t?.date_col from t? t? where ( year(t?.date_col)> ?:? )
 ===================================================
 i1    i2    date_col    
 3     3     2001-01-01     
@@ -46,7 +46,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.date_col from t? t? where  year(t?.date_col)=?
+select t?.i?, t?.i?, t?.date_col from t? t? where  year(t?.date_col)= ?:? 
 ===================================================
 i1    i2    date_col    
 3     3     2001-01-01     
@@ -56,10 +56,9 @@ Query plan:
 iscan
     class: t? node[?]
     index: idx term[?]
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.date_col from t? t? where  year(t?.date_col)<? and  year(t?.date_col)>?
+select t?.i?, t?.i?, t?.date_col from t? t? where ( year(t?.date_col)> ?:?  and  year(t?.date_col)< ?:? )
 ===================================================
 i1    i2    date_col    
 4     4     2002-01-01     
@@ -98,7 +97,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.date_col from t? t? where  year(t?.date_col)>?
+select t?.i?, t?.i?, t?.date_col from t? t? where ( year(t?.date_col)> ?:? )
 ===================================================
 i1    i2    date_col    
 3     3     2001-01-01     
@@ -109,7 +108,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.date_col from t? t? where  year(t?.date_col)=?
+select t?.i?, t?.i?, t?.date_col from t? t? where  year(t?.date_col)= ?:? 
 ===================================================
 i1    i2    date_col    
 3     3     2001-01-01     
@@ -119,10 +118,9 @@ Query plan:
 iscan
     class: t? node[?]
     index: idx term[?]
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.date_col from t? t? where  year(t?.date_col)<? and  year(t?.date_col)>?
+select t?.i?, t?.i?, t?.date_col from t? t? where ( year(t?.date_col)> ?:?  and  year(t?.date_col)< ?:? )
 ===================================================
 i1    i2    date_col    
 4     4     2002-01-01     

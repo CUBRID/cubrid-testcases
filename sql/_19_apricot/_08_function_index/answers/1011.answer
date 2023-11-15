@@ -35,7 +35,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  lower(t?.s)> cast('ccc' as varchar)
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( lower(t?.s)> ?:? )
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.0     3.0     CCC     
@@ -46,7 +46,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  lower(t?.s)='ccc'
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  lower(t?.s)= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.0     3.0     CCC     
@@ -55,10 +55,9 @@ Query plan:
 iscan
     class: t? node[?]
     index: idx term[?]
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  lower(t?.s)< cast('ddd' as varchar) and  lower(t?.s)> cast('bbb' as varchar)
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( lower(t?.s)> ?:?  and  lower(t?.s)< ?:? )
 ===================================================
 i1    i2    d1    d2    s    
 
@@ -88,7 +87,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  lower(t?.s)> cast('ccc' as varchar)
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( lower(t?.s)> ?:? )
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.0     3.0     CCC     
@@ -99,7 +98,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  lower(t?.s)='ccc'
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  lower(t?.s)= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.0     3.0     CCC     
@@ -108,10 +107,9 @@ Query plan:
 iscan
     class: t? node[?]
     index: idx term[?]
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  lower(t?.s)< cast('ddd' as varchar) and  lower(t?.s)> cast('bbb' as varchar)
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( lower(t?.s)> ?:?  and  lower(t?.s)< ?:? )
 ===================================================
 i1    i2    d1    d2    s    
 
@@ -164,7 +162,7 @@ iscan
     index: idx term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  lower(t?.s)> cast('eee' as varchar) and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( lower(t?.s)> ?:? ) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 6     3     6.0     6.0     FFF     
@@ -174,10 +172,9 @@ Query plan:
 iscan
     class: t? node[?]
     index: idx term[?] AND term[?]
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  lower(t?.s)> cast('eee' as varchar) and  lower(t?.s)< cast('hhh' as varchar) and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( lower(t?.s)> ?:?  and  lower(t?.s)< ?:? ) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 
@@ -219,7 +216,7 @@ iscan
     index: idx term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  lower(t?.s)> cast('eee' as varchar) and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( lower(t?.s)> ?:? ) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 6     3     6.0     6.0     FFF     
@@ -229,10 +226,9 @@ Query plan:
 iscan
     class: t? node[?]
     index: idx term[?] AND term[?]
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  lower(t?.s)> cast('eee' as varchar) and  lower(t?.s)< cast('hhh' as varchar) and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( lower(t?.s)> ?:?  and  lower(t?.s)< ?:? ) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 

@@ -146,7 +146,7 @@ iscan
     index: idx? term[?]
     cost:  ? card ?
 Query stmt:
-select t.i, t.j from t t where  abs(t.i)>?
+select t.i, t.j from t t where ( abs(t.i)> ?:? )
 ===================================================
 i    j    
 -2     -2     
@@ -157,7 +157,7 @@ iscan
     index: idx? term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select t.i, t.j from t t where  abs(t.i)=? and (t.j< ?:? )
+select t.i, t.j from t t where  abs(t.i)= ?:?  and (t.j< ?:? )
 ===================================================
 0
 ===================================================
