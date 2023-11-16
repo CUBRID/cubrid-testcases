@@ -48,9 +48,9 @@ select t.i, t.j from t__p__p? t
 ===================================================
 0
 ===================================================
-Error:-272
+0
 ===================================================
-Error:-272
+0
 ===================================================
 0
 ===================================================
@@ -114,9 +114,9 @@ nl-join (cross join)
                class: t node[?]
                index: t_i_j term[?] (covers)
                cost:  ? card ?
-    inner: sscan
+    inner: iscan
                class: t? node[?]
-               sargs: term[?]
+               index: t?_i term[?] (covers)
                cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
@@ -457,15 +457,14 @@ a    b    c
 
 Query plan:
 temp(group by)
-    subplan: nl-join (inner join)
-                 edge:  term[?]
-                 outer: sscan
-                            class: t? node[?]
-                            cost:  ? card ?
-                 inner: iscan
+    subplan: idx-join (inner join)
+                 outer: iscan
                             class: t node[?]
                             index: i_t_d term[?] (covers)
-                            filtr: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t? node[?]
+                            index: i_t?_a term[?]
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc
@@ -481,15 +480,14 @@ a    b    c    count(*)    avg(t.a)
 Query plan:
 temp(distinct)
     subplan: temp(group by)
-                 subplan: nl-join (inner join)
-                              edge:  term[?]
-                              outer: sscan
-                                         class: t? node[?]
-                                         cost:  ? card ?
-                              inner: iscan
+                 subplan: idx-join (inner join)
+                              outer: iscan
                                          class: t node[?]
                                          index: i_t_d term[?] (covers)
-                                         filtr: term[?]
+                                         cost:  ? card ?
+                              inner: iscan
+                                         class: t? node[?]
+                                         index: i_t?_a term[?]
                                          cost:  ? card ?
                               cost:  ? card ?
                  sort:  ? asc
@@ -505,15 +503,14 @@ a    b    c    count(*)    avg(t.a)
 
 Query plan:
 temp(group by)
-    subplan: nl-join (inner join)
-                 edge:  term[?]
-                 outer: sscan
-                            class: t? node[?]
-                            cost:  ? card ?
-                 inner: iscan
+    subplan: idx-join (inner join)
+                 outer: iscan
                             class: t node[?]
                             index: i_t_d term[?] (covers)
-                            filtr: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t? node[?]
+                            index: i_t?_a term[?]
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc
@@ -529,15 +526,14 @@ a    b    c    count(*)
 Query plan:
 temp(distinct)
     subplan: temp(group by)
-                 subplan: nl-join (inner join)
-                              edge:  term[?]
-                              outer: sscan
-                                         class: t? node[?]
-                                         cost:  ? card ?
-                              inner: iscan
+                 subplan: idx-join (inner join)
+                              outer: iscan
                                          class: t node[?]
                                          index: i_t_d term[?] (covers)
-                                         filtr: term[?]
+                                         cost:  ? card ?
+                              inner: iscan
+                                         class: t? node[?]
+                                         index: i_t?_a term[?]
                                          cost:  ? card ?
                               cost:  ? card ?
                  sort:  ? asc
@@ -616,13 +612,13 @@ a    b    c
 Query plan:
 temp(group by)
     subplan: idx-join (inner join)
-                 outer: sscan
-                            class: t? node[?]
+                 outer: iscan
+                            class: t node[?]
+                            index: i_t_d term[?] (covers)
                             cost:  ? card ?
                  inner: iscan
-                            class: t node[?]
-                            index: i_t_a term[?]
-                            filtr: term[?]
+                            class: t? node[?]
+                            index: i_t?_a term[?]
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc
@@ -982,17 +978,17 @@ a    b    a    b    c    d    e
 Query plan:
 temp(order by)
     subplan: temp
-                 order: a[?]
+                 order: b[?]
                  subplan: m-join (right outer join)
                               edge:  term[?] AND term[?]
                               outer: temp
-                                         order: a[?]
+                                         order: b[?]
                                          subplan: sscan
                                                       class: s node[?]
                                                       cost:  ? card ?
                                          cost:  ? card ?
                               inner: temp
-                                         order: a[?]
+                                         order: b[?]
                                          subplan: temp(sort limit)
                                                       subplan: sscan
                                                                    class: t node[?]

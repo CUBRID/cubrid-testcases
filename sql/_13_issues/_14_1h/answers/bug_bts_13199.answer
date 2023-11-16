@@ -257,9 +257,9 @@ temp(order by)
                                                                  cost:  ? card ?
                                                       inner: temp
                                                                  order: id[?]
-                                                                 subplan: iscan
+                                                                 subplan: sscan
                                                                               class: t? node[?]
-                                                                              index: t?_idx term[?] (index skip scan)
+                                                                              sargs: term[?]
                                                                               cost:  ? card ?
                                                                  cost:  ? card ?
                                                       cost:  ? card ?
@@ -284,22 +284,21 @@ id    name    address    telephone    id    course_id    score    course_id    c
 Query plan:
 temp(order by)
     subplan: temp
-                 order: id[?]
+                 order: course_id[?]
                  subplan: m-join (inner join)
                               edge:  term[?]
                               outer: temp
-                                         order: id[?]
+                                         order: course_id[?]
                                          subplan: m-join (inner join)
                                                       edge:  term[?]
                                                       outer: temp
-                                                                 order: course_id[?]
+                                                                 order: id[?]
                                                                  subplan: sscan
                                                                               class: t? node[?]
-                                                                              sargs: term[?]
                                                                               cost:  ? card ?
                                                                  cost:  ? card ?
                                                       inner: temp
-                                                                 order: course_id[?]
+                                                                 order: id[?]
                                                                  subplan: sscan
                                                                               class: t? node[?]
                                                                               sargs: term[?]
@@ -308,9 +307,10 @@ temp(order by)
                                                       cost:  ? card ?
                                          cost:  ? card ?
                               inner: temp
-                                         order: id[?]
+                                         order: course_id[?]
                                          subplan: sscan
                                                       class: t? node[?]
+                                                      sargs: term[?]
                                                       cost:  ? card ?
                                          cost:  ? card ?
                               cost:  ? card ?

@@ -7,6 +7,8 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 4
 ===================================================
 0
@@ -33,14 +35,14 @@ nl-join (cross join)
                class: t node[?]
                index: idx_asc term[?] (covers) (desc_index)
                cost:  ? card ?
-    inner: sscan
+    inner: iscan
                class: t_a node[?]
-               sargs: term[?]
+               index: idx_t_a term[?] (covers)
                cost:  ? card ?
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-select /*+ USE_DESC_IDX */ t.y from t_a t_a, t_b t where t_a.x= ?:?  and t.x= ?:?  and t_a.x=t.x order by ? desc 
+select t.y from t_a t_a, t_b t where t_a.x= ?:?  and t.x= ?:?  and t_a.x=t.x order by ? desc 
 /* ---> skip ORDER BY */
 ===================================================
 y    
@@ -55,9 +57,9 @@ nl-join (cross join)
                class: t node[?]
                index: idx_desc term[?] (covers)
                cost:  ? card ?
-    inner: sscan
+    inner: iscan
                class: t_a node[?]
-               sargs: term[?]
+               index: idx_t_a term[?] (covers)
                cost:  ? card ?
     sort:  ? desc
     cost:  ? card ?
@@ -77,9 +79,9 @@ nl-join (cross join)
                class: t node[?]
                index: idx_desc term[?] (covers)
                cost:  ? card ?
-    inner: sscan
+    inner: iscan
                class: t_a node[?]
-               sargs: term[?]
+               index: idx_t_a term[?] (covers)
                cost:  ? card ?
     sort:  ? desc
     cost:  ? card ?
@@ -96,9 +98,9 @@ y
 Query plan:
 temp(order by)
     subplan: nl-join (cross join)
-                 outer: sscan
+                 outer: iscan
                             class: t_a node[?]
-                            sargs: term[?]
+                            index: idx_t_a term[?] (covers) (desc_index forced)
                             cost:  ? card ?
                  inner: iscan
                             class: t node[?]
