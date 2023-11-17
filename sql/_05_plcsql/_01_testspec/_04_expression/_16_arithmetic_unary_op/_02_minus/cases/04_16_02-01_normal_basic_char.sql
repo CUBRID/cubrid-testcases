@@ -5,7 +5,7 @@
 
 create or replace procedure t(i int) as
     a char := '3';
-    b char := -a;
+    b string := -a;
 begin
     dbms_output.put_line(a);
     dbms_output.put_line(b);
