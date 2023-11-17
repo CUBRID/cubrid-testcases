@@ -4,7 +4,7 @@
 
 
 create or replace procedure t(j int) as
-    bbi numeric := 99999999999999999999999999999999999999;
+    bbi numeric(38) := 99999999999999999999999999999999999999;
     bi bigint := 9223372036854775807;
     bi2 bigint := -9223372036854775808;
     i int := 2147483647;
