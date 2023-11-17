@@ -4,8 +4,8 @@
 
 
 create or replace procedure t(i int) as
-    a numeric := 3.5;
-    b numeric := -a;
+    a numeric(2, 1) := 3.5;
+    b numeric(2, 1) := -a;
 begin
     dbms_output.put_line(a);
     dbms_output.put_line(b);
