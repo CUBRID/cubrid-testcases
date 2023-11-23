@@ -32,7 +32,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select tree.id, tree.mgrid from tree tree where  log?(tree.id)>? start with  log?(tree.id)>? and  log?(tree.mgrid) is null  connect by  log?(tree.mgrid)= prior  log?(tree.id) using index tree.i_tree_id(+) keylimit  ?:? , tree.i_tree_mgrid(+) keylimit  ?:? 
+select tree.id, tree.mgrid from tree tree where ( log?(tree.id)> ?:? ) start with ( log?(tree.id)> ?:? ) and  log?(tree.mgrid) is null  connect by  log?(tree.mgrid)= prior  log?(tree.id) using index tree.i_tree_id(+) keylimit  ?:? , tree.i_tree_mgrid(+) keylimit  ?:? 
 ===================================================
 id    mgrid    
 2.0     null     
@@ -47,7 +47,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select tree.id, tree.mgrid from tree tree where  log?(tree.id)>? start with  log?(tree.id)>? and  log?(tree.mgrid) is null  connect by  prior tree.id=tree.mgrid
+select tree.id, tree.mgrid from tree tree where ( log?(tree.id)> ?:? ) start with ( log?(tree.id)> ?:? ) and  log?(tree.mgrid) is null  connect by  prior tree.id=tree.mgrid
 ===================================================
 id    mgrid    
 2.0     null     
@@ -62,7 +62,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select tree.id, tree.mgrid from tree tree where  log?(tree.id)>? start with  log?(tree.id)>? and tree.mgrid is null  connect by  prior tree.id=tree.mgrid
+select tree.id, tree.mgrid from tree tree where ( log?(tree.id)> ?:? ) start with ( log?(tree.id)> ?:? ) and tree.mgrid is null  connect by  prior tree.id=tree.mgrid
 ===================================================
 id    mgrid    
 3.0     1.0     
@@ -78,7 +78,7 @@ sscan
     sargs: term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select tree.id, tree.mgrid from tree tree where  log?(tree.id)>? start with (tree.id> ?:? ) and tree.mgrid is null  connect by  prior tree.id=tree.mgrid
+select tree.id, tree.mgrid from tree tree where ( log?(tree.id)> ?:? ) start with (tree.id> ?:? ) and tree.mgrid is null  connect by  prior tree.id=tree.mgrid
 ===================================================
 id    mgrid    
 1.0     null     

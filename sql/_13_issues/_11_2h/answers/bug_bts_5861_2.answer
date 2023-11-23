@@ -98,7 +98,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select u.id, u.val, u.[text] from u u where (u.id< ?:? ) and  right(u.[text], ?)< cast('zz' as varchar) using index u.[_u_id], u.[_u_r_text]
+select u.id, u.val, u.[text] from u u where (u.id< ?:? ) and ( right(u.[text], ?)< ?:? ) using index u.[_u_id], u.[_u_r_text]
 ===================================================
 id    val    text    
 1     1000     1000 text     
@@ -113,7 +113,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select u.id, u.val, u.[text] from u u where (u.id< ?:? ) and  right(u.[text], ?)< cast('zz' as varchar) using index u.[_u_id], u.[_u_r_text]
+select u.id, u.val, u.[text] from u u where (u.id< ?:? ) and ( right(u.[text], ?)< ?:? ) using index u.[_u_id], u.[_u_r_text]
 ===================================================
 id    val    text    
 1     1000     1000 text     
@@ -128,7 +128,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select u.id, u.val, u.[text] from u u where (u.id< ?:? ) and  right(u.[text], ?)< cast('zz' as varchar) using index u.[_u_id](+), u.[_u_r_text]
+select u.id, u.val, u.[text] from u u where (u.id< ?:? ) and ( right(u.[text], ?)< ?:? ) using index u.[_u_id](+), u.[_u_r_text]
 ===================================================
 id    val    text    
 1     1000     1000 text     
@@ -143,7 +143,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select u.id, u.val, u.[text] from u u where (u.id< ?:? ) and  right(u.[text], ?)< cast('zz' as varchar) using index u.[_u_id](+), u.[_u_r_text]
+select u.id, u.val, u.[text] from u u where (u.id< ?:? ) and ( right(u.[text], ?)< ?:? ) using index u.[_u_id](+), u.[_u_r_text]
 ===================================================
 id    val    fk    id    val    text    
 1     100     1     1     1000     1000 text     
@@ -200,7 +200,7 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select t.id, t.val, t.fk, u.id, u.val, u.[text] from t t, u u where  right(u.[text], ?)< cast('zz' as varchar) and t.fk=u.id using index u.[_u_id](+)
+select t.id, t.val, t.fk, u.id, u.val, u.[text] from t t, u u where ( right(u.[text], ?)< ?:? ) and t.fk=u.id using index u.[_u_id](+)
 ===================================================
 id    val    fk    id    val    text    
 1     100     1     1     1000     1000 text     
@@ -221,29 +221,7 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select t.id, t.val, t.fk, u.id, u.val, u.[text] from t t, u u where  right(u.[text], ?)< cast('zz' as varchar) and t.fk=u.id using index u.[_u_id](+)
-===================================================
-id    val    fk    id    val    text    
-1     100     1     1     1000     1000 text     
-2     200     1     1     1000     1000 text     
-3     300     2     2     2000     2000 text     
-4     300     3     3     3000     3000 text     
-4     300     3     3     3001     3001 text     
-
-Query plan:
-idx-join (inner join)
-    outer: sscan
-               class: t node[?]
-               cost:  ? card ?
-    inner: iscan
-               class: u node[?]
-               index: _u_id term[?]
-               filtr: term[?]
-               sargs: term[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select t.id, t.val, t.fk, u.id, u.val, u.[text] from t t, u u where  right(u.[text], ?)< cast('zz' as varchar) and (u.id< ?:? ) and t.fk=u.id using index t.[_t_val](+), u.[_u_id]
+select t.id, t.val, t.fk, u.id, u.val, u.[text] from t t, u u where ( right(u.[text], ?)< ?:? ) and t.fk=u.id using index u.[_u_id](+)
 ===================================================
 id    val    fk    id    val    text    
 1     100     1     1     1000     1000 text     
@@ -265,7 +243,29 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select t.id, t.val, t.fk, u.id, u.val, u.[text] from t t, u u where  right(u.[text], ?)< cast('zz' as varchar) and (u.id< ?:? ) and t.fk=u.id using index t.[_t_val](+), u.[_u_id]
+select t.id, t.val, t.fk, u.id, u.val, u.[text] from t t, u u where ( right(u.[text], ?)< ?:? ) and (u.id< ?:? ) and t.fk=u.id using index t.[_t_val](+), u.[_u_id]
+===================================================
+id    val    fk    id    val    text    
+1     100     1     1     1000     1000 text     
+2     200     1     1     1000     1000 text     
+3     300     2     2     2000     2000 text     
+4     300     3     3     3000     3000 text     
+4     300     3     3     3001     3001 text     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: t node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: u node[?]
+               index: _u_id term[?]
+               filtr: term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select t.id, t.val, t.fk, u.id, u.val, u.[text] from t t, u u where ( right(u.[text], ?)< ?:? ) and (u.id< ?:? ) and t.fk=u.id using index t.[_t_val](+), u.[_u_id]
 ===================================================
 id    val    fk    id    val    text    
 1     100     1     1     1000     1000 text     
@@ -280,7 +280,7 @@ sscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select /*+ NO_MERGE */ u.id, u.val, u.[text] from u u where  right(u.[text], ?)< cast('zz' as varchar) using index u.[_u_id](+))
+(select /*+ NO_MERGE */ u.id, u.val, u.[text] from u u where ( right(u.[text], ?)< ?:? ) using index u.[_u_id](+))
 Query plan:
 nl-join (inner join)
     edge:  term[?]
@@ -294,7 +294,7 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select t.id, t.val, t.fk, x.id, x.val, x.[text] from t t, (select /*+ NO_MERGE */ u.id, u.val, u.[text] from u u where  right(u.[text], ?)< cast('zz' as varchar) using index u.[_u_id](+)) x (id, val, [text]) where (t.id< ?:? ) and t.fk=x.id using index t.[_t_val](+)
+select t.id, t.val, t.fk, x.id, x.val, x.[text] from t t, (select /*+ NO_MERGE */ u.id, u.val, u.[text] from u u where ( right(u.[text], ?)< ?:? ) using index u.[_u_id](+)) x (id, val, [text]) where (t.id< ?:? ) and t.fk=x.id using index t.[_t_val](+)
 ===================================================
 id    val    fk    id    val    text    
 1     100     1     1     1000     1000 text     
@@ -309,7 +309,7 @@ sscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select /*+ NO_MERGE */ u.id, u.val, u.[text] from u u where  right(u.[text], ?)< cast('zz' as varchar) using index u.[_u_id](+))
+(select /*+ NO_MERGE */ u.id, u.val, u.[text] from u u where ( right(u.[text], ?)< ?:? ) using index u.[_u_id](+))
 Query plan:
 nl-join (inner join)
     edge:  term[?]
@@ -323,7 +323,7 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select t.id, t.val, t.fk, x.id, x.val, x.[text] from t t, (select /*+ NO_MERGE */ u.id, u.val, u.[text] from u u where  right(u.[text], ?)< cast('zz' as varchar) using index u.[_u_id](+)) x (id, val, [text]) where (t.id< ?:? ) and t.fk=x.id using index t.[_t_val](+)
+select t.id, t.val, t.fk, x.id, x.val, x.[text] from t t, (select /*+ NO_MERGE */ u.id, u.val, u.[text] from u u where ( right(u.[text], ?)< ?:? ) using index u.[_u_id](+)) x (id, val, [text]) where (t.id< ?:? ) and t.fk=x.id using index t.[_t_val](+)
 ===================================================
 0
 ===================================================

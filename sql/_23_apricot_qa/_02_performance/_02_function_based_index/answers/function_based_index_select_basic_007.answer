@@ -38,7 +38,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  ceil(t?.d?)>?
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( ceil(t?.d?)> ?:? )
 ===================================================
 i1    i2    d1    d2    s    
 2     2     2.2     2.0     2     
@@ -49,7 +49,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  ceil(t?.d?)=?
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  ceil(t?.d?)= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 2     2     2.2     2.0     2     
@@ -58,10 +58,9 @@ Query plan:
 iscan
     class: t? node[?]
     index: idx term[?]
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  ceil(t?.d?)<? and  ceil(t?.d?)>?
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( ceil(t?.d?)> ?:?  and  ceil(t?.d?)< ?:? )
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.3     3.0     3     
@@ -99,7 +98,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  ceil(t?.d?)>?
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( ceil(t?.d?)> ?:? )
 ===================================================
 i1    i2    d1    d2    s    
 2     2     2.2     2.0     2     
@@ -110,7 +109,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  ceil(t?.d?)=?
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  ceil(t?.d?)= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 2     2     2.2     2.0     2     
@@ -119,10 +118,9 @@ Query plan:
 iscan
     class: t? node[?]
     index: idx term[?]
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  ceil(t?.d?)<? and  ceil(t?.d?)>?
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( ceil(t?.d?)> ?:?  and  ceil(t?.d?)< ?:? )
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.3     3.0     3     
@@ -180,7 +178,7 @@ iscan
     index: idx term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  ceil(t?.d?)>? and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( ceil(t?.d?)> ?:? ) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 5     3     5.5     5.0     5     
@@ -190,10 +188,9 @@ Query plan:
 iscan
     class: t? node[?]
     index: idx term[?] AND term[?]
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  ceil(t?.d?)>? and  ceil(t?.d?)<? and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( ceil(t?.d?)> ?:?  and  ceil(t?.d?)< ?:? ) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.3     3.0     3     
@@ -247,7 +244,7 @@ iscan
     index: idx term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  ceil(t?.d?)>? and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( ceil(t?.d?)> ?:? ) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 5     3     5.5     5.0     5     
@@ -257,10 +254,9 @@ Query plan:
 iscan
     class: t? node[?]
     index: idx term[?] AND term[?]
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  ceil(t?.d?)>? and  ceil(t?.d?)<? and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( ceil(t?.d?)> ?:?  and  ceil(t?.d?)< ?:? ) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.3     3.0     3     
