@@ -18,7 +18,7 @@ iscan
     index: i? term[?]
     cost:  ? card ?
 Query stmt:
-select t.a from t t where  upper(t.a)='A'
+select t.a from t t where  upper(t.a)= ?:? 
 ===================================================
 a    
 a              
@@ -42,7 +42,7 @@ nl-join (cross join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select t.a from t t, (select distinct 'A' from t t) av? (av_?) where  upper(t.a)='A' and av?.av_?= upper(t.a)
+select t.a from t t, (select distinct 'A' from t t) av? (av_?) where  upper(t.a)='A' and  upper(t.a)=av?.av_?
 ===================================================
 a    
 a              
@@ -71,7 +71,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t.a from t t, (select distinct  upper(t.a) from t t where (t.a< ?:? )) av? (av_?) where av?.av_?= upper(t.a) order by ?
+select t.a from t t, (select distinct  upper(t.a) from t t where (t.a< ?:? )) av? (av_?) where  upper(t.a)=av?.av_? order by ?
 ===================================================
 a    
 b              
@@ -100,7 +100,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t.a from t t, (select distinct  upper(t.a) from t t where (t.a> ?:? )) av? (av_?) where av?.av_?= upper(t.a) order by ?
+select t.a from t t, (select distinct  upper(t.a) from t t where (t.a> ?:? )) av? (av_?) where  upper(t.a)=av?.av_? order by ?
 ===================================================
 a    
 a              
@@ -115,20 +115,19 @@ Query stmt:
 (select distinct max( upper(t.a)) from t t where ((t.a= ?:? ) or (t.a= ?:? )))
 Query plan:
 temp(order by)
-    subplan: nl-join (inner join)
-                 edge:  term[?]
+    subplan: idx-join (inner join)
                  outer: sscan
                             class: av? node[?]
                             cost:  ? card ?
-                 inner: sscan
+                 inner: iscan
                             class: t node[?]
-                            sargs: term[?]
+                            index: i? term[?]
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t.a from t t, (select distinct max( upper(t.a)) from t t where ((t.a= ?:? ) or (t.a= ?:? ))) av? (av_?) where (av?.av_?> upper(t.a)) order by ?
+select t.a from t t, (select distinct max( upper(t.a)) from t t where ((t.a= ?:? ) or (t.a= ?:? ))) av? (av_?) where ( upper(t.a)<av?.av_?) order by ?
 ===================================================
 a    
 a              
