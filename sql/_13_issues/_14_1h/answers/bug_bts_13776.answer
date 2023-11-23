@@ -21,10 +21,9 @@ i    j    k
 1     1     green     
 
 Query plan:
-iscan
+sscan
     class: v? node[?]
-    index: idx_t? term[?] (covers) (index skip scan)
-    filtr: term[?]
+    sargs: term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
 select /*+ INDEX_SS */ v?.i, v?.j, v?.k from t? v? where (v?.j<= ?:? ) and v?.k= ?:? 
@@ -33,10 +32,9 @@ i    j
 1     1     
 
 Query plan:
-iscan
+sscan
     class: v? node[?]
-    index: idx_t? term[?] (covers) (index skip scan)
-    filtr: term[?]
+    sargs: term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
 select /*+ INDEX_SS */ v?.i, v?.j from t? v? where (v?.j<= ?:? ) and v?.k= ?:? 
@@ -46,16 +44,13 @@ i    j    k    i    j    k
 
 Query plan:
 nl-join (cross join)
-    outer: iscan
+    outer: sscan
                class: v? node[?]
-               index: idx_t? term[?] (covers) (index skip scan)
-               filtr: term[?]
+               sargs: term[?] AND term[?]
                cost:  ? card ?
-    inner: iscan
+    inner: sscan
                class: v? node[?]
-               index: idx_t? term[?] (covers) (index skip scan)
-               filtr: term[?]
-               sargs: term[?]
+               sargs: term[?] AND term[?] AND term[?]
                cost:  ? card ?
     sargs: term[?]
     cost:  ? card ?
@@ -73,16 +68,13 @@ i    j    k    i    j    k
 
 Query plan:
 nl-join (cross join)
-    outer: iscan
+    outer: sscan
                class: v? node[?]
-               index: idx_t? term[?] (covers) (index skip scan)
-               filtr: term[?]
+               sargs: term[?] AND term[?]
                cost:  ? card ?
-    inner: iscan
+    inner: sscan
                class: v? node[?]
-               index: idx_t? term[?] (covers) (index skip scan)
-               filtr: term[?]
-               sargs: term[?]
+               sargs: term[?] AND term[?] AND term[?]
                cost:  ? card ?
     sargs: term[?]
     cost:  ? card ?
@@ -111,15 +103,14 @@ c1    c2    c3    c4    c5    c6
 Query plan:
 temp(order by)
     subplan: idx-join (inner join)
-                 outer: iscan
+                 outer: sscan
                             class: t? node[?]
-                            index: idx_t? term[?] (covers) (index skip scan)
+                            sargs: term[?]
                             cost:  ? card ?
                  inner: iscan
                             class: v? node[?]
                             index: idx_t? term[?] AND term[?] (covers)
                             cost:  ? card ?
-                 sort:  ? asc, ? asc, ? asc
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
@@ -134,15 +125,14 @@ c1    c2    c3    c4    c5    c6
 Query plan:
 temp(order by)
     subplan: idx-join (inner join)
-                 outer: iscan
+                 outer: sscan
                             class: t? node[?]
-                            index: idx_t? term[?] (covers) (index skip scan)
+                            sargs: term[?]
                             cost:  ? card ?
                  inner: iscan
                             class: v? node[?]
                             index: idx_t? term[?] AND term[?] (covers)
                             cost:  ? card ?
-                 sort:  ? asc, ? asc, ? asc
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
@@ -267,16 +257,14 @@ i    j    k    a    b    c
 Query plan:
 temp(order by)
     subplan: nl-join (cross join)
-                 outer: iscan
+                 outer: sscan
                             class: v? node[?]
-                            index: idx_t? term[?] (covers) (index skip scan)
-                            filtr: term[?]
+                            sargs: term[?] AND term[?]
                             cost:  ? card ?
                  inner: sscan
                             class: t? node[?]
                             sargs: term[?] AND term[?]
                             cost:  ? card ?
-                 sort:  ? asc, ? asc
                  cost:  ? card ?
     sort:  ? asc, ? asc
     cost:  ? card ?
@@ -302,17 +290,14 @@ i    j    k    a    b    c
 Query plan:
 temp(order by)
     subplan: nl-join (cross join)
-                 outer: iscan
+                 outer: sscan
                             class: v? node[?]
-                            index: idx_t? term[?] (covers) (index skip scan)
-                            filtr: term[?]
+                            sargs: term[?] AND term[?]
                             cost:  ? card ?
-                 inner: iscan
+                 inner: sscan
                             class: t? node[?]
-                            index: idx_t? term[?] (covers) (index skip scan)
-                            filtr: term[?]
+                            sargs: term[?] AND term[?]
                             cost:  ? card ?
-                 sort:  ? asc, ? asc
                  cost:  ? card ?
     sort:  ? asc, ? asc
     cost:  ? card ?
@@ -342,10 +327,9 @@ temp(order by)
                             class: v? node[?]
                             sargs: term[?] AND term[?]
                             cost:  ? card ?
-                 inner: iscan
+                 inner: sscan
                             class: t? node[?]
-                            index: idx_t? term[?] (covers) (index skip scan)
-                            filtr: term[?]
+                            sargs: term[?] AND term[?]
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc, ? asc
@@ -376,10 +360,9 @@ temp(order by)
                             class: v? node[?]
                             sargs: term[?] AND term[?]
                             cost:  ? card ?
-                 inner: iscan
+                 inner: sscan
                             class: t? node[?]
-                            index: idx_t? term[?] (covers) (index skip scan)
-                            filtr: term[?]
+                            sargs: term[?] AND term[?]
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc, ? asc

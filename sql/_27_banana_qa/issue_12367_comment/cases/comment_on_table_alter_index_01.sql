@@ -4,7 +4,7 @@ create table index_comment(id int primary key, name char(10));
 create index i_t_comment_s on index_comment(id desc);
 
 select index_name, class_name, comment from db_index where class_name='index_comment' order by 1,2,3;
-alter index i_t_comment_s on index_comment(id, name) where id>10 comment'change index from pk desc to multiple column index' rebuild;
+alter index i_t_comment_s on index_comment comment'change index from pk desc to multiple column index' rebuild;
 select index_name, class_name, comment from db_index where class_name='index_comment' order by 1,2,3;
 
 show index from index_comment;
@@ -23,7 +23,7 @@ create table index_comment(id int primary key, name char(10));
 create index i_t_comment_s on index_comment(id desc);
 
 select index_name, class_name, comment from db_index where class_name='index_comment' order by 1,2,3;
-alter index i_t_comment_s on index_comment(id, name) where id>10 comment'change index from pk desc to multiple column index' rebuild;
+alter index i_t_comment_s on index_comment comment'change index from pk desc to multiple column index' rebuild;
 select index_name, class_name, comment from db_index where class_name='index_comment' order by 1,2,3;
 
 
