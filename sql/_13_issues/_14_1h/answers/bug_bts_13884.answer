@@ -36,11 +36,11 @@
 nm    nm    
 
 Query plan:
-nl-join (left outer join)
-    edge:  term[?]
+idx-join (inner join)
     outer: nl-join (left outer join)
                edge:  term[?]
-               outer: idx-join (inner join)
+               outer: nl-join (left outer join)
+                          edge:  term[?]
                           outer: idx-join (inner join)
                                      outer: iscan
                                                 class: aaa node[?]
@@ -52,21 +52,22 @@ nl-join (left outer join)
                                                 filtr: term[?]
                                                 cost:  ? card ?
                                      cost:  ? card ?
-                          inner: iscan
-                                     class: eee node[?]
-                                     index: pk_eee_key? term[?]
+                          inner: sscan
+                                     class: ccc node[?]
+                                     sargs: term[?] AND term[?]
                                      cost:  ? card ?
                           cost:  ? card ?
                inner: sscan
-                          class: ccc node[?]
-                          sargs: term[?] AND term[?]
+                          class: ddd node[?]
+                          sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
-    inner: sscan
-               class: ddd node[?]
-               sargs: term[?] AND term[?]
+    inner: iscan
+               class: eee node[?]
+               index: pk_eee_key? term[?]
+               sargs: term[?]
                cost:  ? card ?
-    after: term[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
 select eee.nm, ddd.nm from aaa aaa, bbb bbb left outer join ccc ccc on bbb.id=ccc.id and ccc.id= ?:?  left outer join ddd ddd on bbb.key?=ddd.key?, eee eee where bbb.key?=eee.key? and ((ddd.nm= ?:? ) or (eee.nm= ?:? )) and bbb.id= ?:?  and aaa.id= ?:?  and aaa.id=bbb.id

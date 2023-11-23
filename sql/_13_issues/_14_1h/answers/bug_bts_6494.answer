@@ -469,14 +469,24 @@ count(b.aiid)
 30     
 
 Query plan:
-idx-join (left outer join)
-    outer: sscan
-               class: a node[?]
-               cost:  ? card ?
-    inner: iscan
-               class: b node[?]
-               index: pk_lwe_aiid_wmj_atid term[?] AND term[?] AND term[?] (covers)
-               cost:  ? card ?
+temp
+    order: UNORDERED
+    subplan: m-join (left outer join)
+                 edge:  term[?] AND term[?]
+                 outer: temp
+                            order: fatid[?]
+                            subplan: sscan
+                                         class: a node[?]
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 inner: temp
+                            order: atid[?]
+                            subplan: sscan
+                                         class: b node[?]
+                                         sargs: term[?]
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 cost:  ? card ?
     cost:  ? card ?
 Query stmt:
 select count(b.aiid) from fjj a left outer join lwe b on b.wmj= ?:?  and b.atid=a.fatid and b.aiid=a.fvid
