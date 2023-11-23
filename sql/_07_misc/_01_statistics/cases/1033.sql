@@ -11,7 +11,7 @@ update statistics on dba.t1, dba.t2, dba.t3;
 call login('dba') on class db_user;
 update statistics on t1, t2, t3;
 
-grant alter on t1,t2,t3 to test_user;
+grant select, alter on t1,t2,t3 to test_user;
 
 call login('test_user') on class db_user;
 update statistics on dba.t1, dba.t2, dba.t3;
