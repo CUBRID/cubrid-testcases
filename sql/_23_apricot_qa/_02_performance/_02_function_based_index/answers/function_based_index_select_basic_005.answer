@@ -3,6 +3,8 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 1
 ===================================================
 1
@@ -35,7 +37,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)>'?'
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( left(t?.s, ?)> ?:? )
 ===================================================
 i1    i2    d1    d2    s    
 33     33     33.0     33.0     33333     
@@ -46,7 +48,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)='?'
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 33     33     33.0     33.0     33333     
@@ -55,10 +57,9 @@ Query plan:
 iscan
     class: t? node[?]
     index: idx term[?]
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)<'?' and  left(t?.s, ?)>'?'
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( left(t?.s, ?)> ?:?  and  left(t?.s, ?)< ?:? )
 ===================================================
 i1    i2    d1    d2    s    
 33     33     33.0     33.0     33333     
@@ -95,7 +96,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)>'?'
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( left(t?.s, ?)> ?:? )
 ===================================================
 i1    i2    d1    d2    s    
 33     33     33.0     33.0     33333     
@@ -106,7 +107,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)='?'
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 33     33     33.0     33.0     33333     
@@ -115,10 +116,9 @@ Query plan:
 iscan
     class: t? node[?]
     index: idx term[?]
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)<'?' and  left(t?.s, ?)>'?'
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( left(t?.s, ?)> ?:?  and  left(t?.s, ?)< ?:? )
 ===================================================
 i1    i2    d1    d2    s    
 33     33     33.0     33.0     33333     
@@ -171,7 +171,7 @@ iscan
     index: idx term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)>'?' and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( left(t?.s, ?)> ?:? ) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 
@@ -179,10 +179,9 @@ Query plan:
 iscan
     class: t? node[?]
     index: idx term[?] AND term[?]
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)>'?' and  left(t?.s, ?)<'?' and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( left(t?.s, ?)> ?:?  and  left(t?.s, ?)< ?:? ) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 44     33     44.0     44.0     33333     
@@ -229,7 +228,7 @@ iscan
     index: idx term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)>'?' and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( left(t?.s, ?)> ?:? ) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 
@@ -237,10 +236,9 @@ Query plan:
 iscan
     class: t? node[?]
     index: idx term[?] AND term[?]
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  left(t?.s, ?)>'?' and  left(t?.s, ?)<'?' and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( left(t?.s, ?)> ?:?  and  left(t?.s, ?)< ?:? ) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 44     33     44.0     44.0     33333     
@@ -274,6 +272,8 @@ sscan
     cost:  ? card ?
 Query stmt:
 select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where (t?.i?> ?:? )
+===================================================
+0
 ===================================================
 0
 ===================================================

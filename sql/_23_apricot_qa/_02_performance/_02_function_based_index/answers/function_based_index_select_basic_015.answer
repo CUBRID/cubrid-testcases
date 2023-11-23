@@ -3,6 +3,8 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 1
 ===================================================
 1
@@ -35,7 +37,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)>'ccc'
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( rtrim(t?.s)> ?:? )
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.0     3.0     ccc        
@@ -46,7 +48,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)='ccc'
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.0     3.0     ccc        
@@ -55,12 +57,12 @@ Query plan:
 iscan
     class: t? node[?]
     index: idx term[?]
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)<'ddd' and  rtrim(t?.s)>'bbb'
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( rtrim(t?.s)> ?:?  and  rtrim(t?.s)< ?:? )
 ===================================================
 i1    i2    d1    d2    s    
+3     3     3.0     3.0     ccc        
 4     4     4.0     4.0     ddd        
 5     5     4.0     5.0     eee        
 6     6     6.0     6.0     fff        
@@ -94,7 +96,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)>'ccc'
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( rtrim(t?.s)> ?:? )
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.0     3.0     ccc        
@@ -105,7 +107,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)='ccc'
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.0     3.0     ccc        
@@ -114,12 +116,12 @@ Query plan:
 iscan
     class: t? node[?]
     index: idx term[?]
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)<'ddd' and  rtrim(t?.s)>'bbb'
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( rtrim(t?.s)> ?:?  and  rtrim(t?.s)< ?:? )
 ===================================================
 i1    i2    d1    d2    s    
+3     3     3.0     3.0     ccc        
 4     4     4.0     4.0     ddd        
 5     5     4.0     5.0     eee        
 6     6     6.0     6.0     fff        
@@ -173,7 +175,7 @@ iscan
     index: idx term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)>'eee' and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( rtrim(t?.s)> ?:? ) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 6     3     6.0     6.0     fff        
@@ -183,12 +185,12 @@ Query plan:
 iscan
     class: t? node[?]
     index: idx term[?] AND term[?]
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)>'eee' and  rtrim(t?.s)<'hhh' and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( rtrim(t?.s)> ?:?  and  rtrim(t?.s)< ?:? ) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
+3     3     3.0     3.0     ccc        
 4     3     4.0     4.0     ddd        
 5     3     4.0     5.0     eee        
 6     3     6.0     6.0     fff        
@@ -206,6 +208,7 @@ Query stmt:
 select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where (t?.i?> ?:? ) and (t?.s> ?:? )
 ===================================================
 i1    i2    d1    d2    s    
+3     3     3.0     3.0     ccc        
 4     3     4.0     4.0     ddd        
 5     3     4.0     5.0     eee        
 6     3     6.0     6.0     fff        
@@ -237,7 +240,7 @@ iscan
     index: idx term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)>'eee' and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( rtrim(t?.s)> ?:? ) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 6     3     6.0     6.0     fff        
@@ -247,12 +250,12 @@ Query plan:
 iscan
     class: t? node[?]
     index: idx term[?] AND term[?]
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  rtrim(t?.s)>'eee' and  rtrim(t?.s)<'hhh' and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( rtrim(t?.s)> ?:?  and  rtrim(t?.s)< ?:? ) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
+3     3     3.0     3.0     ccc        
 4     3     4.0     4.0     ddd        
 5     3     4.0     5.0     eee        
 6     3     6.0     6.0     fff        
@@ -270,6 +273,7 @@ Query stmt:
 select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where (t?.i?> ?:? ) and (t?.s> ?:? )
 ===================================================
 i1    i2    d1    d2    s    
+3     3     3.0     3.0     ccc        
 4     3     4.0     4.0     ddd        
 5     3     4.0     5.0     eee        
 6     3     6.0     6.0     fff        
@@ -284,6 +288,8 @@ sscan
     cost:  ? card ?
 Query stmt:
 select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where (t?.s> ?:? )
+===================================================
+0
 ===================================================
 0
 ===================================================
