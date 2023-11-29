@@ -103,17 +103,17 @@ a    b    a    b    c    d    e
 Query plan:
 temp(order by)
     subplan: temp
-                 order: b[?]
+                 order: a[?]
                  subplan: m-join (right outer join)
                               edge:  term[?] AND term[?]
                               outer: temp
-                                         order: b[?]
+                                         order: a[?]
                                          subplan: sscan
                                                       class: s node[?]
                                                       cost:  ? card ?
                                          cost:  ? card ?
                               inner: temp
-                                         order: b[?]
+                                         order: a[?]
                                          subplan: temp(sort limit)
                                                       subplan: sscan
                                                                    class: t node[?]
@@ -363,14 +363,14 @@ temp(order by)
                                        sargs: term[?]
                                        cost:  ? card ?
                             inner: iscan
-                                       class: u node[?]
-                                       index: idx_u_a term[?]
-                                       sargs: term[?]
+                                       class: t node[?]
+                                       index: idx_a_b_cd_d term[?] AND term[?]
                                        cost:  ? card ?
                             cost:  ? card ?
                  inner: iscan
-                            class: t node[?]
-                            index: idx_a_b_cd_d term[?] AND term[?]
+                            class: u node[?]
+                            index: idx_u_a term[?]
+                            sargs: term[?]
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? desc, ? asc
@@ -382,22 +382,21 @@ a    b    c    d    e    sa    sb    ua    ub
 
 Query plan:
 temp(order by)
-    subplan: idx-join (inner join)
-                 outer: nl-join (inner join)
-                            edge:  term[?]
-                            outer: sscan
-                                       class: s node[?]
-                                       cost:  ? card ?
-                            inner: iscan
+    subplan: nl-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: nl-join (cross join)
+                            outer: iscan
                                        class: u node[?]
                                        index: idx_u_a term[?]
-                                       sargs: term[?]
+                                       cost:  ? card ?
+                            inner: iscan
+                                       class: t node[?]
+                                       index: idx_a_b_cd_d term[?] AND term[?]
                                        cost:  ? card ?
                             cost:  ? card ?
-                 inner: iscan
-                            class: t node[?]
-                            index: idx_a_b_cd_d term[?] AND term[?]
-                            filtr: term[?]
+                 inner: sscan
+                            class: s node[?]
+                            sargs: term[?] AND term[?]
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? desc, ? asc
@@ -466,14 +465,14 @@ temp(order by)
                                        class: s node[?]
                                        cost:  ? card ?
                             inner: iscan
-                                       class: u node[?]
-                                       index: idx_u_a term[?]
+                                       class: t node[?]
+                                       index: idx_a_b_cd_d term[?] AND term[?]
                                        sargs: term[?]
                                        cost:  ? card ?
                             cost:  ? card ?
                  inner: iscan
-                            class: t node[?]
-                            index: idx_a_b_cd_d term[?] AND term[?]
+                            class: u node[?]
+                            index: idx_u_a term[?]
                             sargs: term[?]
                             cost:  ? card ?
                  cost:  ? card ?

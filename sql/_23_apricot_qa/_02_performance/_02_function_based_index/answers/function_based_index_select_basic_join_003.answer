@@ -78,12 +78,12 @@ a    a
 Query plan:
 nl-join (inner join)
     edge:  term[?]
-    outer: sscan
-               class: y node[?]
-               cost:  ? card ?
-    inner: iscan
+    outer: iscan
                class: x node[?]
                index: i_tb_a term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: y node[?]
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
@@ -129,13 +129,14 @@ select x.a, y.a from tb x, tb y where  log?(x.a)= log?(y.a) and (x.a> ?:? )
 a    a    
 
 Query plan:
-idx-join (inner join)
-    outer: sscan
-               class: y node[?]
-               cost:  ? card ?
-    inner: iscan
+nl-join (inner join)
+    edge:  term[?]
+    outer: iscan
                class: x node[?]
                index: i_tb_a term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: y node[?]
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?

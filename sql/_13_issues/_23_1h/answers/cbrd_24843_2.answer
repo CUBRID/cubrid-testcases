@@ -98,7 +98,7 @@ a    b    p_a    p_b
 trace    
 
 Query Plan:
-  INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a= ?:? key range: c.p_b= ?:? , key filter: c.p_b is not null , key filter: c.p_a is not null )
+  INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_b= ?:? key range: c.p_a= ?:? , key filter: c.p_b is not null , key filter: c.p_a is not null )
 
   rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_child] c where c.p_b= ?:?  and c.p_a= ?:?  and c.p_a is not null  and c.p_b is not null 
 
@@ -115,7 +115,7 @@ a    b    p_a    p_b
 trace    
 
 Query Plan:
-  INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a= ?:? key range: c.p_b= ?:? , key filter: c.p_b is not null , key filter: c.p_a is not null )
+  INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_b= ?:? key range: c.p_a= ?:? , key filter: c.p_b is not null , key filter: c.p_a is not null )
 
   rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_child] c where c.p_b= ?:?  and c.p_a= ?:?  and c.p_a is not null  and c.p_b is not null 
 
@@ -202,7 +202,7 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     TABLE SCAN (p)
-    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_b=p.bkey range: c.p_a=p.a)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a=p.akey range: c.p_b=p.b)
 
   rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_parent] p, [dba.t_child] c where ((p.a= ?:? ) or (p.b= ?:? )) and c.p_a=p.a and c.p_b=p.b
 
@@ -277,7 +277,7 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     INDEX SCAN (p.pk_t_parent_a_b) (key range: (p.a>= ?:? ), covered: true)
-    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_b=p.bkey range: c.p_a=p.a)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a=p.akey range: c.p_b=p.b)
 
   rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_parent] p, [dba.t_child] c where (p.a>= ?:? ) and c.p_a=p.a and c.p_b=p.b
 
@@ -322,7 +322,7 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     INDEX SCAN (p.pk_t_parent_a_b) (key range: ((p.a= ?:? ) or (p.a= ?:? ) or (p.a= ?:? ) or (p.a= ?:? ) or (p.a= ?:? )), covered: true)
-    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_b=p.bkey range: c.p_a=p.a)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a=p.akey range: c.p_b=p.b)
 
   rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_parent] p, [dba.t_child] c where ((p.a= ?:? ) or (p.a= ?:? ) or (p.a= ?:? ) or (p.a= ?:? ) or (p.a= ?:? )) and c.p_a=p.a and c.p_b=p.b
 
@@ -368,7 +368,7 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     INDEX SCAN (p.pk_t_parent_a_b) (key range: (p.a>= ?:?  and p.a<= ?:? ), covered: true)
-    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_b=p.bkey range: c.p_a=p.a)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a=p.akey range: c.p_b=p.b)
 
   rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_parent] p, [dba.t_child] c where (p.a>= ?:?  and p.a<= ?:? ) and c.p_a=p.a and c.p_b=p.b
 
@@ -415,7 +415,7 @@ Query Plan:
 
   NESTED LOOPS (inner join)
     INDEX SCAN (p.pk_t_parent_a_b) (key range: p.a=(select [dba.t_parent].a from [dba.t_parent] [dba.t_parent] order by ? desc  for orderby_num()<= ?:? ), covered: true)
-    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_b=p.bkey range: c.p_a=p.a)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a=p.akey range: c.p_b=p.b)
 
   rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_parent] p, [dba.t_child] c where p.a=(select [dba.t_parent].a from [dba.t_parent] [dba.t_parent] order by ? desc  for orderby_num()<= ?:? ) and c.p_a=p.a and c.p_b=p.b
 

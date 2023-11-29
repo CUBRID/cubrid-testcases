@@ -9,7 +9,7 @@ update statistics on dba.t1;
 
 call login('dba') on class db_user;
 update statistics on t1;
-grant select, alter on t1 to test_user;
+grant alter on t1 to test_user;
 
 call login('test_user') on class db_user;
 update statistics on dba.t1;

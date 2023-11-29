@@ -339,15 +339,17 @@ a    b    c    x    y
 
 Query plan:
 temp(order by)
-    subplan: idx-join (inner join)
-                 outer: sscan
-                            class: s node[?]
-                            cost:  ? card ?
-                 inner: iscan
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: iscan
                             class: t node[?]
                             index: t_a_b_cd term[?] (covers)
-                            filtr: term[?]
                             cost:  ? card ?
+                 inner: sscan
+                            class: s node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 sort:  ? asc, ? asc, ? desc
                  cost:  ? card ?
     sort:  ? asc, ? desc
     cost:  ? card ?

@@ -250,28 +250,30 @@ Query stmt:
 select t.a, t.b, t.c, t.d, t.e, s.a, s.b from t t, s s where ((t.a= ?:? ) or (t.a= ?:? )) and s.a=t.a and t.b= ?:?  order by ? desc , ? for orderby_num()<= ?:? 
 ===================================================
 a    b    c    d    e    a    b    
-3     1     2     1     1     3     1     
-3     1     2     1     3     3     1     
-1     1     2     1     3     1     2     
-1     1     2     1     2     1     2     
-1     1     2     1     3     1     1     
 3     1     2     1     2     3     1     
-1     1     2     1     2     1     1     
-1     1     2     1     1     1     2     
 1     1     2     1     1     1     1     
+3     1     2     1     1     3     1     
 3     1     2     1     1     3     2     
+1     1     2     1     3     1     2     
+1     1     2     1     2     1     1     
+1     1     2     1     2     1     2     
+1     1     2     1     1     1     2     
+1     1     2     1     3     1     1     
+3     1     2     1     2     3     2     
 
 Query plan:
 temp(order by)
-    subplan: idx-join (inner join)
-                 outer: sscan
-                            class: s node[?]
-                            cost:  ? card ?
-                 inner: iscan
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: iscan
                             class: t node[?]
                             index: idx_a_b_cd_d term[?] AND term[?]
-                            filtr: term[?]
                             cost:  ? card ?
+                 inner: sscan
+                            class: s node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 sort:  ? asc, ? desc, ? asc
                  cost:  ? card ?
     sort:  ? desc, ? asc
     cost:  ? card ?
@@ -279,27 +281,27 @@ Query stmt:
 select /*+ NO_MULTI_RANGE_OPT */ t.a, t.b, t.c, t.d, t.e, s.a, s.b from t t, s s where ((t.a= ?:? ) or (t.a= ?:? )) and s.a=t.a and t.b= ?:?  order by ? desc , ? for orderby_num()<= ?:? 
 ===================================================
 a    b    c    d    e    sa    sb    ua    ub    
-3     1     2     1     2     2     1     1     1     
-1     1     2     1     1     1     1     1     1     
 1     1     2     1     1     2     1     1     1     
-1     1     2     1     3     2     1     1     1     
-1     1     2     1     2     1     1     1     1     
-3     1     2     1     2     1     1     1     1     
-3     1     2     1     1     1     1     1     1     
+1     1     2     1     1     3     1     1     1     
 1     1     2     1     3     1     1     1     1     
-3     1     2     1     3     1     1     1     1     
-3     1     2     1     1     2     1     1     1     
+1     1     2     1     3     2     1     1     1     
+1     1     2     1     3     3     1     1     1     
+3     1     2     1     2     1     1     1     1     
+3     1     2     1     2     2     1     1     1     
+3     1     2     1     2     3     1     1     1     
+3     1     2     1     1     1     1     1     1     
+1     1     2     1     1     1     1     1     1     
 
 Query plan:
 nl-join (cross join)
     outer: nl-join (cross join)
-               outer: sscan
-                          class: s node[?]
-                          sargs: term[?]
-                          cost:  ? card ?
-               inner: iscan
+               outer: iscan
                           class: t node[?]
                           index: idx_a_b_cd_d term[?] AND term[?] (multi_range_opt)
+                          cost:  ? card ?
+               inner: sscan
+                          class: s node[?]
+                          sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
     inner: iscan
@@ -307,6 +309,7 @@ nl-join (cross join)
                index: idx_u_a term[?]
                sargs: term[?]
                cost:  ? card ?
+    sort:  ? asc, ? desc, ? asc
     cost:  ? card ?
 Query stmt:
 select t.a, t.b, t.c, t.d, t.e, s.a, s.b, u.a, u.b from t t, s s, u u where ((t.a= ?:? ) or (t.a= ?:? )) and u.b= ?:?  and u.a= ?:?  and s.b= ?:?  and t.b= ?:?  and t.b=s.b and t.b=u.a and s.b=u.b order by ? desc , ? for orderby_num()<= ?:? 
@@ -346,53 +349,49 @@ Query stmt:
 select t.a, t.b, t.c, t.d, t.e, s.a, s.b, u.a, u.b from t t, s s, u u where t.a=s.a and s.b=u.b and ((t.a= ?:? ) or (t.a= ?:? )) and u.a= ?:?  and t.b= ?:?  and t.b=u.a order by ? desc , ? for orderby_num()<= ?:? 
 ===================================================
 a    b    c    d    e    sa    sb    ua    ub    
-3     1     2     1     3     3     1     1     1     
 3     1     2     1     2     3     1     1     1     
-1     1     2     1     2     1     1     1     1     
-1     1     2     1     1     1     1     1     1     
+3     1     2     1     3     3     1     1     1     
 1     1     2     1     3     1     1     1     1     
+1     1     2     1     1     1     1     1     1     
+1     1     2     1     2     1     1     1     1     
 3     1     2     1     1     3     1     1     1     
-1     1     1     1     3     1     1     1     1     
-3     1     1     1     1     3     1     1     1     
-1     1     1     1     2     1     1     1     1     
 1     1     1     1     1     1     1     1     1     
+3     1     1     1     3     3     1     1     1     
+1     1     1     1     2     1     1     1     1     
+1     1     1     1     3     1     1     1     1     
 
 Query plan:
-temp(order by)
-    subplan: idx-join (inner join)
-                 outer: idx-join (inner join)
-                            outer: sscan
-                                       class: s node[?]
-                                       cost:  ? card ?
-                            inner: iscan
-                                       class: t node[?]
-                                       index: idx_a_b_cd_d term[?] AND term[?]
-                                       filtr: term[?]
-                                       cost:  ? card ?
-                            cost:  ? card ?
-                 inner: iscan
-                            class: u node[?]
-                            index: idx_u_a term[?]
-                            sargs: term[?]
-                            cost:  ? card ?
-                 sargs: term[?]
-                 cost:  ? card ?
-    sort:  ? desc, ? asc
+idx-join (inner join)
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: s node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: u node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: t node[?]
+               index: idx_a_b_cd_d term[?] AND term[?] (multi_range_opt)
+               filtr: term[?] AND term[?]
+               cost:  ? card ?
     cost:  ? card ?
 Query stmt:
 select t.a, t.b, t.c, t.d, t.e, s.a, s.b, u.a, u.b from t t, s s, u u where t.a=s.a and t.d=u.a and s.b=u.b and ((t.a= ?:? ) or (t.a= ?:? )) and t.b= ?:?  order by ? desc , ? for orderby_num()<= ?:? 
 ===================================================
 a    b    c    d    e    sa    sb    ua    ub    
-3     1     2     1     1     1     1     1     1     
 1     1     2     1     1     1     1     1     1     
-3     1     2     1     2     2     1     1     1     
-3     1     2     1     3     3     1     1     1     
-1     1     2     1     3     3     1     1     1     
 1     1     2     1     2     2     1     1     1     
+3     1     2     1     3     3     1     1     1     
+3     1     2     1     2     2     1     1     1     
+1     1     2     1     3     3     1     1     1     
+3     1     2     1     1     1     1     1     1     
+1     1     2     2     3     3     1     1     1     
 1     1     2     2     1     1     1     1     1     
-3     1     2     2     1     1     1     1     1     
 1     1     2     2     2     2     1     1     1     
-3     1     2     2     2     2     1     1     1     
+3     1     2     2     1     1     1     1     1     
 
 Query plan:
 temp(order by)
@@ -400,20 +399,21 @@ temp(order by)
                  edge:  term[?]
                  outer: nl-join (inner join)
                             edge:  term[?]
-                            outer: sscan
-                                       class: s node[?]
+                            outer: iscan
+                                       class: t node[?]
+                                       index: idx_a_b_cd_d term[?] AND term[?]
                                        cost:  ? card ?
-                            inner: iscan
-                                       class: u node[?]
-                                       index: idx_u_a term[?]
+                            inner: sscan
+                                       class: s node[?]
                                        sargs: term[?]
                                        cost:  ? card ?
                             cost:  ? card ?
                  inner: iscan
-                            class: t node[?]
-                            index: idx_a_b_cd_d term[?] AND term[?]
+                            class: u node[?]
+                            index: idx_u_a term[?]
                             sargs: term[?]
                             cost:  ? card ?
+                 sort:  ? asc, ? desc, ? asc
                  cost:  ? card ?
     sort:  ? desc, ? asc
     cost:  ? card ?

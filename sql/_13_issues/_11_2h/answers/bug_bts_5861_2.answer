@@ -151,12 +151,12 @@ id    val    fk    id    val    text
 Query plan:
 nl-join (inner join)
     edge:  term[?]
-    outer: sscan
-               class: u node[?]
-               cost:  ? card ?
-    inner: iscan
+    outer: iscan
                class: t node[?]
                index: _t_id term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: u node[?]
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
@@ -169,12 +169,12 @@ id    val    fk    id    val    text
 Query plan:
 nl-join (inner join)
     edge:  term[?]
-    outer: sscan
-               class: u node[?]
-               cost:  ? card ?
-    inner: iscan
+    outer: iscan
                class: t node[?]
                index: _t_id term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: u node[?]
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
@@ -231,14 +231,15 @@ id    val    fk    id    val    text
 4     300     3     3     3001     3001 text     
 
 Query plan:
-idx-join (inner join)
-    outer: sscan
-               class: t node[?]
-               cost:  ? card ?
-    inner: iscan
+nl-join (inner join)
+    edge:  term[?]
+    outer: iscan
                class: u node[?]
                index: _u_id term[?]
-               filtr: term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t node[?]
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
@@ -253,14 +254,15 @@ id    val    fk    id    val    text
 4     300     3     3     3001     3001 text     
 
 Query plan:
-idx-join (inner join)
-    outer: sscan
-               class: t node[?]
-               cost:  ? card ?
-    inner: iscan
+nl-join (inner join)
+    edge:  term[?]
+    outer: iscan
                class: u node[?]
                index: _u_id term[?]
-               filtr: term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t node[?]
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?

@@ -95,8 +95,7 @@ j1    j2    i1    i2    i3
 
 Query plan:
 temp(order by)
-    subplan: nl-join (inner join)
-                 edge:  term[?]
+    subplan: idx-join (inner join)
                  outer: iscan
                             class: t? node[?]
                             index: i_t?_j?_j? term[?] (covers)
@@ -146,8 +145,7 @@ i1    i2    i3    j1    j2
 1     2     4     1     4     
 
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
+idx-join (inner join)
     outer: iscan
                class: t? node[?]
                index: i_t?_j?_j? term[?] (covers)
@@ -169,8 +167,7 @@ j1    j2    i1    i2    i3
 1     4     1     2     4     
 
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
+idx-join (inner join)
     outer: iscan
                class: t? node[?]
                index: i_t?_j?_j? term[?] (covers)
@@ -246,14 +243,14 @@ Query plan:
 temp(order by)
     subplan: idx-join (inner join)
                  outer: iscan
-                            class: t node[?]
-                            index: i_t_j_i term[?] (covers)
-                            cost:  ? card ?
-                 inner: iscan
                             class: u node[?]
                             index: i_u_i_j_k_d term[?] AND term[?] (covers)
-                            filtr: term[?]
                             cost:  ? card ?
+                 inner: iscan
+                            class: t node[?]
+                            index: i_t_j_i term[?] AND term[?] (covers)
+                            cost:  ? card ?
+                 sort:  ? asc, ? desc
                  cost:  ? card ?
     sort:  ? desc
     cost:  ? card ?
@@ -318,14 +315,15 @@ i    k    p
 Query plan:
 temp(order by)
     subplan: nl-join (cross join)
-                 outer: sscan
-                            class: u node[?]
-                            sargs: term[?]
-                            cost:  ? card ?
-                 inner: iscan
+                 outer: iscan
                             class: t node[?]
                             index: i_t_i_k_p_d term[?] AND term[?] (covers)
                             cost:  ? card ?
+                 inner: sscan
+                            class: u node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 sort:  ? asc, ? desc
                  cost:  ? card ?
     sort:  ? desc
     cost:  ? card ?
@@ -343,14 +341,15 @@ i    k    p
 
 Query plan:
 nl-join (cross join)
-    outer: sscan
-               class: u node[?]
-               sargs: term[?]
-               cost:  ? card ?
-    inner: iscan
+    outer: iscan
                class: t node[?]
                index: i_t_i_k_p_d term[?] AND term[?] (covers) (multi_range_opt)
                cost:  ? card ?
+    inner: sscan
+               class: u node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sort:  ? asc, ? desc
     cost:  ? card ?
 Query stmt:
 select t.i, t.k, t.p from t t, u u where ((t.k= ?:? ) or (t.k= ?:? ) or (t.k= ?:? )) and u.i= ?:?  and t.i= ?:?  and t.i=u.i order by ? desc  for orderby_num()<= ?:? 
