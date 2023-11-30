@@ -39,7 +39,7 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     TABLE SCAN (p)
-    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_b=p.bkey range: c.p_a=p.a)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a=p.akey range: c.p_b=p.b)
 
   rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_parent] p, [dba.t_child] c where p.a<>? and c.p_a=p.a and c.p_b=p.b
 
@@ -93,7 +93,7 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     TABLE SCAN (p)
-    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_b=p.bkey range: c.p_a=p.a)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a=p.akey range: c.p_b=p.b)
 
   rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_parent] p, [dba.t_child] c where p.a<>? and c.p_a=p.a and c.p_b=p.b
 
@@ -140,7 +140,7 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     TABLE SCAN (p)
-    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_b=p.bkey range: c.p_a=p.a)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a=p.akey range: c.p_b=p.b)
 
   rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_parent] p, [dba.t_child] c where  cast(p.a as varchar) like  cast(? as varchar) and c.p_a=p.a and c.p_b=p.b
 

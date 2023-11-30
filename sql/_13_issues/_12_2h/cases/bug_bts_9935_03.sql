@@ -26,8 +26,8 @@ select /*+ recompile */ * from t partition (p0);
 create index t_i on t(i);
 create index t_i_j on t(i,j); 
 
-create index t1_i on t1(i);
-create index t1_i_j on t1(i,j); 
+create index t1_i on t(i);
+create index t1_i_j on t(i,j); 
 update statistics on t;
 
 --order by scan

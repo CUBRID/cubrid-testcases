@@ -35,7 +35,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  floor(t?.d?)>?
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( floor(t?.d?)> ?:? )
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.3     3.0     3     
@@ -46,7 +46,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  floor(t?.d?)=?
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  floor(t?.d?)= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.3     3.0     3     
@@ -55,10 +55,9 @@ Query plan:
 iscan
     class: t? node[?]
     index: idx term[?]
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  floor(t?.d?)<? and  floor(t?.d?)>?
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( floor(t?.d?)> ?:?  and  floor(t?.d?)< ?:? )
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.3     3.0     3     
@@ -98,7 +97,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  floor(t?.d?)>?
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( floor(t?.d?)> ?:? )
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.3     3.0     3     
@@ -109,7 +108,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  floor(t?.d?)=?
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  floor(t?.d?)= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.3     3.0     3     
@@ -118,10 +117,9 @@ Query plan:
 iscan
     class: t? node[?]
     index: idx term[?]
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  floor(t?.d?)<? and  floor(t?.d?)>?
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( floor(t?.d?)> ?:?  and  floor(t?.d?)< ?:? )
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.3     3.0     3     
@@ -181,7 +179,7 @@ iscan
     index: idx term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  floor(t?.d?)>? and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( floor(t?.d?)> ?:? ) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 6     3     6.6     6.0     6     
@@ -191,10 +189,9 @@ Query plan:
 iscan
     class: t? node[?]
     index: idx term[?] AND term[?]
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  floor(t?.d?)>? and  floor(t?.d?)<? and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( floor(t?.d?)> ?:?  and  floor(t?.d?)< ?:? ) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.3     3.0     3     
@@ -250,7 +247,7 @@ iscan
     index: idx term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  floor(t?.d?)>? and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( floor(t?.d?)> ?:? ) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 6     3     6.6     6.0     6     
@@ -260,10 +257,9 @@ Query plan:
 iscan
     class: t? node[?]
     index: idx term[?] AND term[?]
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  floor(t?.d?)>? and  floor(t?.d?)<? and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( floor(t?.d?)> ?:?  and  floor(t?.d?)< ?:? ) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.3     3.0     3     

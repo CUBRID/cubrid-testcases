@@ -270,57 +270,53 @@ i    j
 2     2     
 
 Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
+iscan
+    class: t node[?]
+    index: idx term[?] (covers) (index skip scan)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 select /*+ INDEX_SS */ t.i, t.j from t t where t.j= ?:?  order by ?
+/* ---> skip ORDER BY */
 ===================================================
 i    j    
 2     2     
 
 Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
+iscan
+    class: t node[?]
+    index: idx term[?] (covers) (index skip scan) (desc_index)
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
 select /*+ INDEX_SS */ t.i, t.j from t t where t.j= ?:?  order by ? desc 
+/* ---> skip ORDER BY */
 ===================================================
 i    j    
 1     1     
 
 Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
-    sort:  ? desc
+iscan
+    class: t node[?]
+    index: idx term[?] (covers) (index skip scan) (desc_index)
+    sort:  ? desc, ? desc
     cost:  ? card ?
 Query stmt:
 select /*+ INDEX_SS */ t.i, t.j from t t where (t.j<= ?:? ) order by ? desc 
+/* ---> skip ORDER BY */
 ===================================================
 i    j    
 1     1     
 
 Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
-    sort:  ? asc
+iscan
+    class: t node[?]
+    index: idx term[?] (covers) (index skip scan)
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select /*+ INDEX_SS */ t.i, t.j from t t where (t.j<= ?:? ) order by ?
+/* ---> skip ORDER BY */
 ===================================================
 0
 ===================================================
