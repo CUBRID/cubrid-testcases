@@ -37,7 +37,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  ltrim(t?.s)> cast('ccc' as varchar)
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( ltrim(t?.s)> ?:? )
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.0     3.0        ccc     
@@ -48,7 +48,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  ltrim(t?.s)='ccc'
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  ltrim(t?.s)= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.0     3.0        ccc     
@@ -57,10 +57,9 @@ Query plan:
 iscan
     class: t? node[?]
     index: idx term[?]
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  ltrim(t?.s)< cast('ddd' as varchar) and  ltrim(t?.s)> cast('bbb' as varchar)
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( ltrim(t?.s)> ?:?  and  ltrim(t?.s)< ?:? )
 ===================================================
 i1    i2    d1    d2    s    
 
@@ -90,7 +89,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  ltrim(t?.s)> cast('ccc' as varchar)
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( ltrim(t?.s)> ?:? )
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.0     3.0        ccc     
@@ -101,7 +100,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  ltrim(t?.s)='ccc'
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  ltrim(t?.s)= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.0     3.0        ccc     
@@ -110,10 +109,9 @@ Query plan:
 iscan
     class: t? node[?]
     index: idx term[?]
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  ltrim(t?.s)< cast('ddd' as varchar) and  ltrim(t?.s)> cast('bbb' as varchar)
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( ltrim(t?.s)> ?:?  and  ltrim(t?.s)< ?:? )
 ===================================================
 i1    i2    d1    d2    s    
 
@@ -163,7 +161,7 @@ iscan
     index: idx term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  ltrim(t?.s)> cast('eee' as varchar) and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( ltrim(t?.s)> ?:? ) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 6     3     6.0     6.0        fff     
@@ -173,10 +171,9 @@ Query plan:
 iscan
     class: t? node[?]
     index: idx term[?] AND term[?]
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  ltrim(t?.s)> cast('eee' as varchar) and  ltrim(t?.s)< cast('hhh' as varchar) and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( ltrim(t?.s)> ?:?  and  ltrim(t?.s)< ?:? ) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 
@@ -215,7 +212,7 @@ iscan
     index: idx term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  ltrim(t?.s)> cast('eee' as varchar) and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( ltrim(t?.s)> ?:? ) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 6     3     6.0     6.0        fff     
@@ -225,10 +222,9 @@ Query plan:
 iscan
     class: t? node[?]
     index: idx term[?] AND term[?]
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  ltrim(t?.s)> cast('eee' as varchar) and  ltrim(t?.s)< cast('hhh' as varchar) and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( ltrim(t?.s)> ?:?  and  ltrim(t?.s)< ?:? ) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 
