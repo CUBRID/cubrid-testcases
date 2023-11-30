@@ -1,6 +1,6 @@
 autocommit off;
 
-CREATE  FUNCTION test_float(f float) RETURN number
+CREATE  FUNCTION test_float(f float) RETURN int
 AS LANGUAGE JAVA NAME 'SpTest.testFloat(float) return float';
 
 

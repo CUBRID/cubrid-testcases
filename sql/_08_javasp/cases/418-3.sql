@@ -1,20 +1,20 @@
 --+ holdcas on;
 autocommit off;
 
-CREATE  FUNCTION typetestint( i monetary ) RETURN monetary as language java name 'SpTest7.typetestint(int) return int';
-CREATE  FUNCTION typetestinteger( i monetary ) RETURN monetary as language java name 'SpTest7.typetestinteger(java.lang.Integer) return java.lang.Integer';
-CREATE  FUNCTION typeteststring( i monetary ) RETURN monetary as language java name 'SpTest7.typeteststring(java.lang.String) return java.lang.String';
-CREATE  FUNCTION typetestshort( i monetary ) RETURN monetary as language java name 'SpTest7.typetestshort(java.lang.Short) return java.lang.Short';
-CREATE  FUNCTION typetestlong( i monetary ) RETURN monetary as language java name 'SpTest7.typetestlong(java.lang.Long) return java.lang.Long';
-CREATE  FUNCTION typetestfloat( i monetary ) RETURN monetary as language java name 'SpTest7.typetestfloat(java.lang.Float) return java.lang.Float';
-CREATE  FUNCTION typetestdouble( i monetary ) RETURN monetary as language java name 'SpTest7.typetestdouble(java.lang.Double) return java.lang.Double';
-CREATE  FUNCTION typetestbigdecimal( i monetary ) RETURN monetary as language java name 'SpTest7.typetestbigdecimal(java.math.BigDecimal) return java.math.BigDecimal';
-CREATE  FUNCTION typetestshort1( i monetary ) RETURN monetary as language java name 'SpTest7.typetestshort1(short) return short';
-CREATE  FUNCTION typetestlong1( i monetary ) RETURN monetary as language java name 'SpTest7.typetestlong1(long) return long';
-CREATE  FUNCTION typetestfloat1( i monetary ) RETURN monetary as language java name 'SpTest7.typetestfloat1(float) return float';
-CREATE  FUNCTION typetestdouble1( i monetary ) RETURN monetary as language java name 'SpTest7.typetestdouble1(double) return double';
+CREATE  FUNCTION typetestint( i int ) RETURN int as language java name 'SpTest7.typetestint(int) return int';
+CREATE  FUNCTION typetestinteger( i integer ) RETURN integer as language java name 'SpTest7.typetestinteger(java.lang.Integer) return java.lang.Integer';
+CREATE  FUNCTION typeteststring( i string ) RETURN string as language java name 'SpTest7.typeteststring(java.lang.String) return java.lang.String';
+CREATE  FUNCTION typetestshort( i short ) RETURN short as language java name 'SpTest7.typetestshort(java.lang.Short) return java.lang.Short';
+CREATE  FUNCTION typetestlong( i bigint ) RETURN bigint as language java name 'SpTest7.typetestlong(java.lang.Long) return java.lang.Long';
+CREATE  FUNCTION typetestfloat( i float ) RETURN float as language java name 'SpTest7.typetestfloat(java.lang.Float) return java.lang.Float';
+CREATE  FUNCTION typetestdouble( i double ) RETURN double as language java name 'SpTest7.typetestdouble(java.lang.Double) return java.lang.Double';
+CREATE  FUNCTION typetestbigdecimal( i decimal ) RETURN decimal as language java name 'SpTest7.typetestbigdecimal(java.math.BigDecimal) return java.math.BigDecimal';
+CREATE  FUNCTION typetestshort1( i short ) RETURN short as language java name 'SpTest7.typetestshort1(short) return short';
+CREATE  FUNCTION typetestlong1( i bigint ) RETURN bigint as language java name 'SpTest7.typetestlong1(long) return long';
+CREATE  FUNCTION typetestfloat1( i float ) RETURN float as language java name 'SpTest7.typetestfloat1(float) return float';
+CREATE  FUNCTION typetestdouble1( i double ) RETURN double as language java name 'SpTest7.typetestdouble1(double) return double';
 
-create class xoo ( cost monetary );
+create class xoo ( cost int );
 insert into xoo values(0);
 insert into xoo values(20);
 
@@ -103,18 +103,18 @@ $out:integer,$NULL,$integer,$20;
 ? = call typetestdouble1(?) ;
 
 
-CREATE  procedure ptypetestint( i inout monetary )  as language java name 'SpTest7.ptypetestint(int[]) ';
-CREATE  procedure ptypetestinteger( i inout monetary ) as language java name 'SpTest7.ptypetestinteger(java.lang.Integer[]) ';
-CREATE  procedure ptypeteststring( i  inout monetary )  as language java name 'SpTest7.ptypeteststring(java.lang.String[])' ;
-CREATE  procedure ptypetestshort( i  inout monetary ) as language java name 'SpTest7.ptypetestshort(java.lang.Short[])' ;
-CREATE  procedure ptypetestlong( i  inout monetary ) as language java name 'SpTest7.ptypetestlong(java.lang.Long[])';
-CREATE  procedure ptypetestfloat( i  inout monetary ) as language java name 'SpTest7.ptypetestfloat(java.lang.Float[]) ';
-CREATE  procedure ptypetestdouble( i  inout monetary )  as language java name 'SpTest7.ptypetestdouble(java.lang.Double[])';
-CREATE  procedure ptypetestbigdecimal( i  inout monetary ) as language java name 'SpTest7.ptypetestbigdecimal(java.math.BigDecimal[])';
-CREATE  procedure ptypetestshort1( i  inout monetary )  as language java name 'SpTest7.ptypetestshort1(short[]) ';
-CREATE  procedure ptypetestlong1( i  inout monetary )  as language java name 'SpTest7.ptypetestlong1(long[]) ';
-CREATE  procedure ptypetestfloat1( i  inout monetary )  as language java name 'SpTest7.ptypetestfloat1(float[]) ';
-CREATE  procedure ptypetestdouble1( i  inout monetary )  as language java name 'SpTest7.ptypetestdouble1(double[])';
+CREATE  procedure ptypetestint( i inout int )  as language java name 'SpTest7.ptypetestint(int[]) ';
+CREATE  procedure ptypetestinteger( i inout integer ) as language java name 'SpTest7.ptypetestinteger(java.lang.Integer[]) ';
+CREATE  procedure ptypeteststring( i  inout string )  as language java name 'SpTest7.ptypeteststring(java.lang.String[])' ;
+CREATE  procedure ptypetestshort( i  inout short ) as language java name 'SpTest7.ptypetestshort(java.lang.Short[])' ;
+CREATE  procedure ptypetestlong( i  inout bigint ) as language java name 'SpTest7.ptypetestlong(java.lang.Long[])';
+CREATE  procedure ptypetestfloat( i  inout float ) as language java name 'SpTest7.ptypetestfloat(java.lang.Float[]) ';
+CREATE  procedure ptypetestdouble( i  inout double )  as language java name 'SpTest7.ptypetestdouble(java.lang.Double[])';
+CREATE  procedure ptypetestbigdecimal( i  inout decimal ) as language java name 'SpTest7.ptypetestbigdecimal(java.math.BigDecimal[])';
+CREATE  procedure ptypetestshort1( i  inout short )  as language java name 'SpTest7.ptypetestshort1(short[]) ';
+CREATE  procedure ptypetestlong1( i  inout bigint )  as language java name 'SpTest7.ptypetestlong1(long[]) ';
+CREATE  procedure ptypetestfloat1( i  inout float )  as language java name 'SpTest7.ptypetestfloat1(float[]) ';
+CREATE  procedure ptypetestdouble1( i  inout double )  as language java name 'SpTest7.ptypetestdouble1(double[])';
 
 select 0 into x from db_root;
 call ptypetestint(x);

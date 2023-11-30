@@ -1,11 +1,11 @@
 autocommit on;
 
-create procedure test_int7(i number) 
+create procedure test_int7(i int) 
 as language java name 'SpTest.testInt_1(int) return int';
 
 drop procedure test_int7;
 
-create  procedure test_int7(i number) 
+create  procedure test_int7(i int) 
 as language java name 'SpTest.testInt_1(int) ';
 
 drop procedure test_int7;
@@ -19,7 +19,7 @@ call test_int7(?, '1') ;
 
 drop procedure test_int7;
 
-create  procedure test_int7(i  in out number) 
+create  procedure test_int7(i  in out int) 
 as language java name 'SpTest.testInt_3(int []) ';
 
 $integer,$5;
