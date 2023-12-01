@@ -1,6 +1,6 @@
 autocommit off;
 
-create  function test_int8(i number) return number
+create  function test_int8(i int) return int
 as language java name 'SpTest.testInt_1(int) return int';
 
 
@@ -15,7 +15,7 @@ $out:integer,$NULL;
 
 drop function test_int8;
 
-create  procedure test_int8(i in out number)
+create  procedure test_int8(i in out int)
 as language java name 'SpTest.testInt_3(int[])';
 
 
@@ -30,7 +30,7 @@ call test_int8(?) ;
 
 drop procedure test_int8;
 
-create  procedure test_int8(i  out number)
+create  procedure test_int8(i  out int)
 as language java name 'SpTest.testInt_3(int[])';
 
 
@@ -45,7 +45,7 @@ call test_int8(?) ;
 
 drop procedure test_int8;
 
-create procedure test_int8(i in out number)
+create procedure test_int8(i in out int)
 as language java name 'SpTest.testInt_3(int[]) ';
 
 

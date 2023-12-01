@@ -1,6 +1,6 @@
 autocommit off;
 
-create function test_int19(i number, j number) return string
+create function test_int19(i int, j int) return string
 is language java name 'SpTest.testInt_2(int, int) return java.lang.String';  
 --   string ¹İÈ¯
 
