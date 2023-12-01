@@ -1,6 +1,6 @@
 autocommit on;
 
-create function test_int17(i number, j string) return number
+create function test_int17(i int, j string) return int
 is language java name 'SpTest.testInt(int,int) return int';  
 
 $out:integer,$NULL;
