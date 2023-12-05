@@ -8,6 +8,7 @@ create or replace procedure t(i int) as
         return true;
     end;
 begin
+    null;
 end;
 
 select * from db_stored_procedure where sp_name = 't';
