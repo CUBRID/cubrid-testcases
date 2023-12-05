@@ -3,7 +3,7 @@ set  system parameters 'dont_reuse_heap_file=yes';
 create table t1 (FirstName varchar(20),LastName varchar(20),Age int,gender char (1));
 insert into t1 value('yin','jianye',32,'m');
 
-CREATE  FUNCTION test_int1(i number) RETURN number
+CREATE  FUNCTION test_int1(i int) RETURN int
 as language java name 'SpTest.testInt(int) return int';
 
 --TEST Create failed

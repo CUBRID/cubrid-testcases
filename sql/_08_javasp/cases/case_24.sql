@@ -1,11 +1,11 @@
 autocommit off;
 
-create  function test_int19(i number, j number) return varchar
+create  function test_int19(i int, j int) return varchar
 is language java name 'SpTest.testInt_2(int, int) return java.lang.String';  
 
 drop function test_int19;
 
-create  function Test_Int19(i number, j number) return varchar
+create  function Test_Int19(i int, j int) return varchar
 is language java name 'SpTest.testInt_2(int, int) return java.lang.String';  
 
 
