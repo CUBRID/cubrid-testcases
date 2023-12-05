@@ -1,11 +1,11 @@
 autocommit off;
 
-create function test_int14(i number, j number) return number            
+create function test_int14(i int, j int) return int            
 as language java name 'SpTest.testInt(int,int) return int';
 
 
 
-create function test_int15(i number, j string) return number 
+create function test_int15(i int, j string) return int 
 as language java name 'SpTest.testInt(int,java.lang.String) return int';
 
 
