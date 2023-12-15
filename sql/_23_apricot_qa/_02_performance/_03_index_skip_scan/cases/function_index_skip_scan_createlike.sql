@@ -1,3 +1,5 @@
+--+ holdcas on;
+set  system parameters 'dont_reuse_heap_file=yes';
 
 create table a (i int auto_increment);
 insert into a (i) values(NULL);
@@ -11,8 +13,6 @@ insert into a (i) select NULL from a;
 insert into a (i) select NULL from a;
 insert into a (i) select NULL from a;
 insert into a (i) select NULL from a;
---+ holdcas on;
-set  system parameters 'dont_reuse_heap_file=yes';
 insert into a (i) select NULL from a;
 insert into a (i) select NULL from a;
 
@@ -31,7 +31,7 @@ create index idx on t(i,j,k);
 create table t2 like t;
 insert into t2(i,j,k, s)  select lower(i),j,k,s from t;
 
-update statistics on all classes;
+update statistics on t, t2;
 
 --Test ISS
 select /*+ recompile INDEX_SS */ i, j from t where j = '2';
