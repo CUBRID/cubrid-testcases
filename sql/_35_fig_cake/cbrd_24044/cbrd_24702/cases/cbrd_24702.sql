@@ -1,3 +1,7 @@
+-- This scenario verifies CBRD-24702 issue.
+-- 'SAMPLING_SCAN' SQL hint is added.
+-- sampling weight is calculated as (total_page / smapling_page)
+
 --general cases
 drop table if exists t;
 create table t (col_a int, col_b int, col_c int, col_d varchar(20), col_e numeric(20,10), col_f varchar(20), col_g varchar(20), col_h varchar(20));
