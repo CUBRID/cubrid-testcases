@@ -19,7 +19,7 @@ iscan
     index: i_t?_a?q? term[?]
     cost:  ? card ?
 Query stmt:
-select t?.a, t?.b, t?.c, t?.d, t?.e, t?.f, t?.g, t?.h, t?.i, t?.j, t?.k, t?.l, t?.m, t?.n, t?.o, t?.p, t?.q from t? t? where  strcmp(t?.a, 'abc')=?
+select t?.a, t?.b, t?.c, t?.d, t?.e, t?.f, t?.g, t?.h, t?.i, t?.j, t?.k, t?.l, t?.m, t?.n, t?.o, t?.p, t?.q from t? t? where  strcmp(t?.a, 'abc')= ?:? 
 ===================================================
 0
 ===================================================
@@ -32,7 +32,7 @@ iscan
     index: i_t?_a?q? term[?]
     cost:  ? card ?
 Query stmt:
-select t?.a, t?.b, t?.c, t?.d, t?.e, t?.f, t?.g, t?.h, t?.i, t?.j, t?.k, t?.l, t?.m, t?.n, t?.o, t?.p, t?.q from t? t? where  strcmp('abc', t?.a)>?
+select t?.a, t?.b, t?.c, t?.d, t?.e, t?.f, t?.g, t?.h, t?.i, t?.j, t?.k, t?.l, t?.m, t?.n, t?.o, t?.p, t?.q from t? t? where ( strcmp('abc', t?.a)> ?:? )
 ===================================================
 0
 ===================================================
@@ -45,7 +45,7 @@ iscan
     index: i_t?_a?p term[?]
     cost:  ? card ?
 Query stmt:
-select t?.a, t?.b, t?.c, t?.d, t?.e, t?.f, t?.g, t?.h, t?.i, t?.j, t?.k, t?.l, t?.m, t?.n, t?.o, t?.p, t?.q from t? t? where  strcmp(t?.b,  cast('?' as varchar))<?
+select t?.a, t?.b, t?.c, t?.d, t?.e, t?.f, t?.g, t?.h, t?.i, t?.j, t?.k, t?.l, t?.m, t?.n, t?.o, t?.p, t?.q from t? t? where ( strcmp(t?.b,  cast('?' as varchar))< ?:? )
 ===================================================
 Error:-494
 ===================================================

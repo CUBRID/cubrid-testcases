@@ -50,7 +50,7 @@ select /*+ recompile */ * from tb where  a>0 and b is not null;
 --@queryplan
 select /*+ recompile */ * from tb where  a>0 and b is not null using index i_tb_all(+);
 
-alter index i_tb_all on tb(a,b) where b is not null rebuild;
+alter index i_tb_all on tb rebuild;
 update statistics on tb;
 --@queryplan
 select /*+ recompile */ * from tb where  a>0 and b is not null;
@@ -76,6 +76,7 @@ show indexes from t1;
 ALTER  INDEX first_name_lower on t1 REBUILD;
 update statistics on t1;
 show indexes from t1;
+-- fail case
 ALTER  INDEX first_name_lower on t1(firstname) WHERE LOWER(FirstName)='yin' REBUILD;
 update statistics on t1;
 show indexes from t1;

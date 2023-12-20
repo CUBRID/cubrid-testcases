@@ -16,13 +16,13 @@ iscan
     index: first_name_lower term[?]
     cost:  ? card ?
 Query stmt:
-select t?.firstname, t?.lastname, t?.age, t?.gender from t? t? where  lower(t?.FirstName)='yin'
+select t?.firstname, t?.lastname, t?.age, t?.gender from t? t? where  lower(t?.FirstName)= ?:? 
 ===================================================
 0
 ===================================================
 Error:-493
 ===================================================
-0
+Error:-493
 ===================================================
 firstname    lastname    age    gender    
 yin     jian ye     31     M     
@@ -33,7 +33,7 @@ iscan
     index: first_name_lower term[?]
     cost:  ? card ?
 Query stmt:
-select t?.firstname, t?.lastname, t?.age, t?.gender from t? t? where  lower(t?.FirstName)='yin'
+select t?.firstname, t?.lastname, t?.age, t?.gender from t? t? where  lower(t?.FirstName)= ?:? 
 ===================================================
 firstname    lastname    age    gender    
 
@@ -46,6 +46,8 @@ Query stmt:
 select t?.firstname, t?.lastname, t?.age, t?.gender from t? t? where  upper(t?.FirstName)='yin'
 ===================================================
 Error:-272
+===================================================
+Error:-493
 ===================================================
 0
 ===================================================

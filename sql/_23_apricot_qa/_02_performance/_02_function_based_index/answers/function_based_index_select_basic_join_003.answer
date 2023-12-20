@@ -24,7 +24,7 @@ iscan
     index: i_tb_a term[?]
     cost:  ? card ?
 Query stmt:
-select tb.a from tb tb where  log?(tb.a)=?
+select tb.a from tb tb where  log?(tb.a)= ?:? 
 ===================================================
 a    a    
 2.0     2.0     
@@ -49,7 +49,7 @@ nl-join (cross join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select x.a, y.a from tb x, tb y where  log?(x.a)>? and  log?(y.a)>?
+select x.a, y.a from tb x, tb y where ( log?(x.a)> ?:? ) and ( log?(y.a)> ?:? )
 ===================================================
 a    a    
 2.0     2.0     
@@ -68,7 +68,7 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select x.a, y.a from tb x, tb y where  log?(x.a)= log?(y.a) and ( log?(x.a)>?)
+select x.a, y.a from tb x, tb y where  log?(x.a)= log?(y.a) and ( log?(x.a)> ?:? )
 ===================================================
 a    a    
 2.0     2.0     
@@ -78,17 +78,17 @@ a    a
 Query plan:
 nl-join (inner join)
     edge:  term[?]
-    outer: iscan
+    outer: sscan
+               class: y node[?]
+               cost:  ? card ?
+    inner: iscan
                class: x node[?]
                index: i_tb_a term[?]
-               cost:  ? card ?
-    inner: sscan
-               class: y node[?]
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select x.a, y.a from tb x, tb y where x.a=y.a and ( log?(x.a)>?)
+select x.a, y.a from tb x, tb y where x.a=y.a and ( log?(x.a)> ?:? )
 ===================================================
 a    a    
 
@@ -104,7 +104,7 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select x.a, y.a from tb x, tb y where x.a= log?(y.a) and ( log?(x.a)>?)
+select x.a, y.a from tb x, tb y where x.a= log?(y.a) and ( log?(x.a)> ?:? )
 ===================================================
 a    a    
 1.0     1.0     
@@ -129,19 +129,18 @@ select x.a, y.a from tb x, tb y where  log?(x.a)= log?(y.a) and (x.a> ?:? )
 a    a    
 
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: iscan
+idx-join (inner join)
+    outer: sscan
+               class: y node[?]
+               cost:  ? card ?
+    inner: iscan
                class: x node[?]
                index: i_tb_a term[?]
-               cost:  ? card ?
-    inner: sscan
-               class: y node[?]
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select x.a, y.a from tb x, tb y where y.a= log?(x.a) and ( log?(x.a)>?)
+select x.a, y.a from tb x, tb y where  log?(x.a)=y.a and ( log?(x.a)> ?:? )
 ===================================================
 a    a    
 

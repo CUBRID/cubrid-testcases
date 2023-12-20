@@ -53,7 +53,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select foo.a, foo.b from foo foo where  weekday(foo.b)>=? order by ?
+select foo.a, foo.b from foo foo where ( weekday(foo.b)>= ?:? ) order by ?
 ===================================================
 0
 ===================================================
@@ -100,7 +100,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select foo.a from foo foo where  trunc(foo.a, -?)>? order by ?
+select foo.a from foo foo where ( trunc(foo.a, -?)> ?:? ) order by ?
 ===================================================
 0
 ===================================================
@@ -119,7 +119,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select foo.a from foo foo where  trunc(foo.a, -?)>? order by ?
+select foo.a from foo foo where ( trunc(foo.a, -?)> ?:? ) order by ?
 ===================================================
 0
 ===================================================
@@ -188,7 +188,7 @@ iscan
     index: idx_foo_translate term[?]
     cost:  ? card ?
 Query stmt:
-select foo.str,  translate(foo.str, foo.c?, foo.c?) from foo foo where  translate(foo.str, foo.c?, foo.c?) in set{'dbcdbc', 'smthsmth'}
+select foo.str,  translate(foo.str, foo.c?, foo.c?) from foo foo where (( translate(foo.str, foo.c?, foo.c?)= ?:? ) or ( translate(foo.str, foo.c?, foo.c?)= ?:? ))
 ===================================================
 0
 ===================================================
@@ -207,7 +207,7 @@ sscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select foo.str,  translate(foo.str, foo.c?, foo.c?) from foo foo where  translate(foo.str, foo.c?, foo.c?) in set{'dbcdbc', 'smthsmth'}
+select foo.str,  translate(foo.str, foo.c?, foo.c?) from foo foo where (( translate(foo.str, foo.c?, foo.c?)= ?:? ) or ( translate(foo.str, foo.c?, foo.c?)= ?:? ))
 ===================================================
 0
 ===================================================

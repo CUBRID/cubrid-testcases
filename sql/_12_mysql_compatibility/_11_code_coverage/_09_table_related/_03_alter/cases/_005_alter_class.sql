@@ -47,6 +47,7 @@ alter class c2 add index i_c2_i2(i2);
 
 alter index i_c2_i2 on c2 rebuild;
 
+-- should fail
 alter index i_c2_i2 on c2(i2) rebuild;
 
 drop index i_c2_i2 on c2;

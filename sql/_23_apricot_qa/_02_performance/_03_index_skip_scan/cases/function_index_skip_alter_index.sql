@@ -18,25 +18,25 @@ update statistics on all classes;
 --test should use ISS
 select /*+ recompile INDEX_SS */ * from t where j = 1 order by 1;
 
-alter unique index idx on t(i,j,k) where i is not null rebuild;
+alter unique index idx on t rebuild;
 
 update statistics on all classes;
 select /*+ recompile INDEX_SS */ * from t where j = 1 order by 1;
 
-alter unique index idx on t(i,j,k) rebuild;
+alter unique index idx on t rebuild;
 
 update statistics on all classes;
 select /*+ recompile INDEX_SS */ * from t where j = 1 order by 1;
-alter unique index idx on t(i,k,l) rebuild;
+alter unique index idx on t rebuild;
 
 update statistics on all classes;
 select /*+ recompile  */ * from t where k = 1 order by 1;
-alter unique index idx on t(i,j,k) where 1=1 rebuild;
+alter unique index idx on t rebuild;
 
 update statistics on all classes;
 select /*+ recompile INDEX_SS */ * from t where j = 1  using index idx order by 1;
 
-alter unique index idx on t(i,j,k) where i >1 rebuild;
+alter unique index idx on t rebuild;
 
 update statistics on all classes;
 --test should not use ISS

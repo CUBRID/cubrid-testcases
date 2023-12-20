@@ -7,7 +7,7 @@ CREATE INDEX idx1 ON t1 (i);
 
 CREATE  INDEX idx2 on t1(j);
 
-ALTER  INDEX idx1 on t1(j) REBUILD;
+ALTER  INDEX idx1 on t1 REBUILD;
 
 show indexes from t1;
 
@@ -21,7 +21,7 @@ CREATE INDEX idx1 ON t1 (i);
 
 CREATE  INDEX idx2 on t1(j);
 
-ALTER  INDEX idx1 on t1(j) REBUILD;
+ALTER  INDEX idx1 on t1 REBUILD;
 
 show indexes from t1;
 
@@ -39,16 +39,21 @@ CREATE INDEX first_name_lower ON t1 (LOWER(FirstName));
 
 create  INDEX first_name_lower1 on t1(firstname) WHERE LOWER(FirstName)='yin';
 
-ALTER  INDEX first_name_lower on t1(firstname) WHERE LOWER(FirstName)='yin' REBUILD;
+ALTER  INDEX first_name_lower on t1 REBUILD;
 
 update statistics on t1;
 show indexes from t1;
 
+-- fail case
 alter  INDEX first_name_lower1 on t1(firstname) REBUILD;
 
+-- fail case
 ALTER  INDEX first_name_lower on t1(FirstName) REBUILD;
 
+-- fail case
 ALTER  INDEX first_name_lower on t1(FirstName desc) REBUILD;
+
+ALTER  INDEX first_name_lower on t1 REBUILD;
 
 drop  table t1 ;
 
@@ -63,16 +68,21 @@ CREATE INDEX first_name_lower ON t1 (LOWER(FirstName));
 
 create  INDEX first_name_lower1 on t1(firstname) WHERE LOWER(FirstName)='yin';
 
-ALTER  INDEX first_name_lower on t1(firstname) WHERE LOWER(FirstName)='yin' REBUILD;
+ALTER  INDEX first_name_lower on t1 REBUILD;
 
 update statistics on t1;
 show indexes from t1;
 
+-- fail case
 alter  INDEX first_name_lower1 on t1(firstname) REBUILD;
 
+-- fail case
 ALTER  INDEX first_name_lower on t1(FirstName) REBUILD;
 
+-- fail case
 ALTER  INDEX first_name_lower on t1(FirstName desc) REBUILD;
+
+ALTER  INDEX first_name_lower on t1 REBUILD;
 
 drop  table t1 ;
 

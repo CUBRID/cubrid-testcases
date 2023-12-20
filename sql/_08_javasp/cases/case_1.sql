@@ -1,7 +1,7 @@
 --+ holdcas on;
 autocommit off;
 
-CREATE  FUNCTION test_int1(i number) RETURN number
+CREATE  FUNCTION test_int1(i int) RETURN int
 as language java name 'SpTest.testInt(int) return int';
 
 $out:integer,$NULL;
@@ -25,7 +25,7 @@ $out:integer,$NULL;
 ? = call test_int1(1,4.3) ;
 
 
- FUNCTION test_int1() RETURN number
+ FUNCTION test_int1() RETURN int
 as language java name 'SpTest.testInt() return int';
 
 call test_int1();

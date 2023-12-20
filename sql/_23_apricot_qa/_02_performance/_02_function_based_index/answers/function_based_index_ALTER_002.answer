@@ -16,57 +16,11 @@ iscan
     index: first_name_lower term[?]
     cost:  ? card ?
 Query stmt:
-select t?.firstname, t?.lastname, t?.age, t?.gender from t? t? where  lower(t?.FirstName)='yin'
+select t?.firstname, t?.lastname, t?.age, t?.gender from t? t? where  lower(t?.FirstName)= ?:? 
 ===================================================
-Error:-494
+Error:-493
 ===================================================
-0
-===================================================
-firstname    lastname    age    gender    
-yin     jian ye     31     M     
-
-Query plan:
-iscan
-    class: t? node[?]
-    index: first_name_lower term[?]
-    cost:  ? card ?
-Query stmt:
-select t?.firstname, t?.lastname, t?.age, t?.gender from t? t? where  lower(t?.FirstName)='yin'
-===================================================
-firstname    lastname    age    gender    
-yin     jian ye     31     M     
-
-Query plan:
-iscan
-    class: t? node[?]
-    index: first_name_lower term[?]
-    cost:  ? card ?
-Query stmt:
-select t?.firstname, t?.lastname, t?.age, t?.gender from t? t? where  lower(t?.FirstName)='yin' using index t?.first_name_lower(+)
-===================================================
-0
-===================================================
-firstname    lastname    age    gender    
-yin     jian ye     31     M     
-
-Query plan:
-sscan
-    class: t? node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select t?.firstname, t?.lastname, t?.age, t?.gender from t? t? where t?.FirstName= ?:? 
-===================================================
-firstname    lastname    age    gender    
-yin     jian ye     31     M     
-
-Query plan:
-iscan
-    class: t? node[?]
-    index: first_name_lower term[?]
-    cost:  ? card ?
-Query stmt:
-select t?.firstname, t?.lastname, t?.age, t?.gender from t? t? where  lower(t?.FirstName)='yin'
+Error:-493
 ===================================================
 0
 ===================================================
@@ -79,18 +33,18 @@ iscan
     index: first_name_lower term[?]
     cost:  ? card ?
 Query stmt:
-select t?.firstname, t?.lastname, t?.age, t?.gender from t? t? where  lower(t?.FirstName)='yin'
+select t?.firstname, t?.lastname, t?.age, t?.gender from t? t? where  lower(t?.FirstName)= ?:? 
 ===================================================
 firstname    lastname    age    gender    
 yin     jian ye     31     M     
 
 Query plan:
-sscan
+iscan
     class: t? node[?]
-    sargs: term[?]
+    index: first_name_lower term[?]
     cost:  ? card ?
 Query stmt:
-select t?.firstname, t?.lastname, t?.age, t?.gender from t? t? where t?.FirstName= ?:? 
+select t?.firstname, t?.lastname, t?.age, t?.gender from t? t? where  lower(t?.FirstName)= ?:?  using index t?.first_name_lower(+)
 ===================================================
 0
 ===================================================
@@ -114,7 +68,55 @@ iscan
     index: first_name_lower term[?]
     cost:  ? card ?
 Query stmt:
-select t?.firstname, t?.lastname, t?.age, t?.gender from t? t? where  lower(t?.FirstName)='yin'
+select t?.firstname, t?.lastname, t?.age, t?.gender from t? t? where  lower(t?.FirstName)= ?:? 
+===================================================
+0
+===================================================
+firstname    lastname    age    gender    
+yin     jian ye     31     M     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: first_name_lower term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.firstname, t?.lastname, t?.age, t?.gender from t? t? where  lower(t?.FirstName)= ?:? 
+===================================================
+firstname    lastname    age    gender    
+yin     jian ye     31     M     
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.firstname, t?.lastname, t?.age, t?.gender from t? t? where t?.FirstName= ?:? 
+===================================================
+0
+===================================================
+firstname    lastname    age    gender    
+yin     jian ye     31     M     
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.firstname, t?.lastname, t?.age, t?.gender from t? t? where t?.FirstName= ?:? 
+===================================================
+firstname    lastname    age    gender    
+yin     jian ye     31     M     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: first_name_lower term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.firstname, t?.lastname, t?.age, t?.gender from t? t? where  lower(t?.FirstName)= ?:? 
 ===================================================
 0
 ===================================================

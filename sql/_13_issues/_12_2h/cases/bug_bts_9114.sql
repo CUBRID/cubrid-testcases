@@ -26,7 +26,7 @@ create table t(i int) partition by hash(i) partitions 3;
 create unique index u_t_i on t(i);
 insert into t select rownum from db_class limit 45;
 
-alter unique index u_t_i on t(i) rebuild;
+alter unique index u_t_i on t rebuild;
 
 alter table t remove partitioning;
 
