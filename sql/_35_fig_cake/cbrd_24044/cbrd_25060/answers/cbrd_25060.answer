@@ -1,0 +1,76 @@
+===================================================
+0
+===================================================
+0
+===================================================
+10000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+1     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_a_e term[?] AND term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl tbl where tbl.col_e= ?:?  and tbl.col_a= ?:? 
+===================================================
+count(*)    
+10000     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx_a_e term[?] AND term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_e=b.col_e
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+1     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_a_e term[?] AND term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl tbl where tbl.col_e= ?:?  and tbl.col_a= ?:? 
+===================================================
+count(*)    
+10000     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx_a_e term[?] AND term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_e=b.col_e
+===================================================
+0
