@@ -1,7 +1,5 @@
 --+ server-message on
 
--- error: column name duplicates in the select list
-
 create or replace procedure t(k int) as
     i int;
     s string;
