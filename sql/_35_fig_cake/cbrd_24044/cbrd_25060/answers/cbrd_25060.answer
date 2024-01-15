@@ -40,6 +40,63 @@ idx-join (inner join)
 Query stmt:
 select /*+ ORDERED */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_e=b.col_e
 ===================================================
+count(*)    
+1     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: pk_tbl_col_a term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl tbl where tbl.col_a= ?:? 
+===================================================
+count(*)    
+10000     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: pk_tbl_col_a term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ count(*) from tbl a, tbl b where a.col_a=b.col_a
+===================================================
+count(*)    
+1     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_a_e term[?] AND term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl tbl where tbl.col_b= ?:?  and tbl.col_e= ?:?  and tbl.col_a= ?:? 
+===================================================
+count(*)    
+10000     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx_a_e term[?] AND term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_e=b.col_e and a.col_b=b.col_b
+===================================================
 0
 ===================================================
 0
@@ -72,5 +129,62 @@ idx-join (inner join)
     cost:  ? card ?
 Query stmt:
 select /*+ ORDERED */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_e=b.col_e
+===================================================
+count(*)    
+1     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_a term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl tbl where tbl.col_a= ?:? 
+===================================================
+count(*)    
+10000     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx_a term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ count(*) from tbl a, tbl b where a.col_a=b.col_a
+===================================================
+count(*)    
+1     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_a_e term[?] AND term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl tbl where tbl.col_b= ?:?  and tbl.col_e= ?:?  and tbl.col_a= ?:? 
+===================================================
+count(*)    
+10000     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx_a_e term[?] AND term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_e=b.col_e and a.col_b=b.col_b
 ===================================================
 0
