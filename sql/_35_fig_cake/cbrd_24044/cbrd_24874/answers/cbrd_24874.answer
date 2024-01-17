@@ -32,7 +32,7 @@ idx-join (inner join)
                cost:  ? card ?
     inner: iscan
                class: a node[?]
-               index: idx term[?] AND term[?]
+               index: idx_tab_a_ab term[?] AND term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -48,7 +48,7 @@ idx-join (inner join)
                cost:  ? card ?
     inner: iscan
                class: b node[?]
-               index: idx term[?]
+               index: idx_tab_b_ab term[?]
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
@@ -62,7 +62,7 @@ Query plan:
 temp(order by)
     subplan: iscan
                  class: a node[?]
-                 index: idx term[?]
+                 index: idx_tab_b_ab term[?]
                  sargs: term[?]
                  sort:  ? asc
                  cost:  ? card ?
@@ -71,13 +71,54 @@ temp(order by)
 Query stmt:
 select a.col_b, a.col_c from tab_b a where (a.col_c>= ?:? ) and a.col_a= ?:?  order by ?
 ===================================================
+col_b    
+1     
+
+Query plan:
+iscan
+    class: a node[?]
+    index: idx_tab_b_ab term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select a.col_b, a.col_a from tab_b a where (a.col_c>= ?:? ) and a.col_a= ?:? 
+===================================================
+col_b    
+1     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: a node[?]
+                 index: idx_tab_b_ab term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select a.col_b, a.col_c from tab_b a where a.col_a= ?:?  order by ?
+===================================================
+col_c    
+1     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: a node[?]
+                 index: idx_tab_b_ab term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select a.col_c from tab_b a where a.col_a= ?:?  order by ?
+===================================================
 count(*)    
 1     
 
 Query plan:
 iscan
     class: b node[?]
-    index: idx term[?]
+    index: idx_tab_b_ab term[?]
     sargs: term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
@@ -93,5 +134,16 @@ sscan
     cost:  ? card ?
 Query stmt:
 select /*+ INDEX_SS */ count(*) from tab_b b where b.col_b= ?:? 
+===================================================
+count(*)    
+200000     
+
+Query plan:
+iscan
+    class: b node[?]
+    index: idx_tab_b_c term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ count(*) from tab_b b where b.col_c= ?:? 
 ===================================================
 0

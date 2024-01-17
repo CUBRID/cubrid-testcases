@@ -8,11 +8,11 @@ create table tab_b (col_a varchar(100), col_b varchar(100),col_c varchar(100),co
 insert into tab_a select to_char(rownum) col_a, '1' col_b, to_char(rownum) col_c,'1' col_d from table({0,1,2,3,4,5,6,7,8,9}) a, table({0,1,2,3,4,5,6,7,8,9}) b,table({0,1,2,3,4,5,6,7,8,9}) c,table({0,1,2,3,4,5,6,7,8,9}) d,table({0,1,2,3,4,5,6,7,8,9})  e,table({0,1,2,3,4,5,6,7,8,9})  f limit 100000;
 insert into tab_b select to_char(rownum) col_a, to_char(rownum) col_b, '1' col_c,'1' col_d from table({0,1,2,3,4,5,6,7,8,9}) a, table({0,1,2,3,4,5,6,7,8,9}) b,table({0,1,2,3,4,5,6,7,8,9}) c,table({0,1,2,3,4,5,6,7,8,9}) d,table({0,1,2,3,4,5,6,7,8,9})  e,table({0,1,2,3,4,5,6,7,8,9})  f limit 200000;
 
-create index idx on tab_a(col_a,col_b);
-create index idx2 on tab_a(col_c);
-create index idx on tab_b(col_a,col_b);
-create index idx2 on tab_b(col_c);
-create index idx3 on tab_b(col_c,col_d);
+create index idx_tab_a_ab on tab_a(col_a,col_b);
+create index idx_tab_a_c on tab_a(col_c);
+create index idx_tab_b_ab on tab_b(col_a,col_b);
+create index idx_tab_b_c on tab_b(col_c);
+create index idx_tab_b_cd on tab_b(col_c,col_d);
 
 update statistics on tab_a, tab_b;
 
@@ -36,6 +36,19 @@ where a.col_a = '1'
 and a.col_c >= '1'
 order by col_c;
 
+select /*+ recompile */ col_b from tab_b a
+where a.col_a = '1'
+and a.col_c >= '1'
+order by col_a;
+
+select /*+ recompile */ col_b from tab_b a
+where a.col_a = '1'
+order by col_c;
+ 
+select /*+ recompile */ col_c from tab_b a
+where a.col_a = '1'
+order by col_c;
+
 --Indexes matching many columns are selected regardless of selectivity.
 select /*+ recompile */ count(*)
 from tab_b b
@@ -47,6 +60,10 @@ and col_a = '1';
 select /*+ recompile index_ss */ count(*)
 from tab_b b
 where col_b = '1';
+
+select /*+ recompile index_ss */ count(*)
+from tab_b b
+where col_c = '1';
 
 
 drop table tab_a, tab_b;
