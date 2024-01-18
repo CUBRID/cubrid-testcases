@@ -4,11 +4,11 @@
 
 create or replace procedure t () as
 begin
-    -- dbms_output.put_line(OCTET_LENGTH(NULL)); -- parse error NULL
-    -- dbms_output.put_line(OCTET_LENGTH('')); -- result data type not match
-    -- dbms_output.put_line(OCTET_LENGTH('CUBRID'));
-    -- dbms_output.put_line(OCTET_LENGTH('큐브리드'));
-    -- dbms_output.put_line(OCTET_LENGTH(B'01010101')); -- parse error type literal define parenthesis
+    dbms_output.put_line(OCTET_LENGTH(NULL)); -- parse error NULL
+    dbms_output.put_line(OCTET_LENGTH('')); -- result data type not match
+    dbms_output.put_line(OCTET_LENGTH('CUBRID'));
+    dbms_output.put_line(OCTET_LENGTH('큐브리드'));
+    dbms_output.put_line(OCTET_LENGTH(B'01010101')); -- parse error type literal define parenthesis
 end; 
 
 select * from db_stored_procedure where sp_name = 't';

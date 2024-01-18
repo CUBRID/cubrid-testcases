@@ -5,7 +5,6 @@
 create or replace procedure t () as
 begin
     -- STR_TO_DATE() parse error
-    /*
     dbms_output.put_line(STR_TO_DATE(NULL, NULL));
     dbms_output.put_line(STR_TO_DATE('00:00:00 AM', NULL));
     dbms_output.put_line(STR_TO_DATE('12:00:00 PM', '%r'));
@@ -27,8 +26,6 @@ begin
     dbms_output.put_line(STR_TO_DATE('1999-10-31 23:49:59.001', '%Y-%m-%d %H:%i:%s.%f'));
     dbms_output.put_line(STR_TO_DATE('1999-10-31 23:49:59.0001', '%Y-%m-%d %H:%i:%s.%f'));
     dbms_output.put_line(STR_TO_DATE('1999-10-31 23:49:59.000', '%Y-%m-%d %H:%i:%s.%f'));
-    */
-    null;
 end;
 
 select * from db_stored_procedure where sp_name = 't';

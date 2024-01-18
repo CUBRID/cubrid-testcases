@@ -4,7 +4,7 @@
 
 create or replace procedure t () as
 begin
-    dbms_output.put_line(REGEXP_REPLACE(NULL, NULL, NULL)); -- NULL
+    dbms_output.put_line(REGEXP_REPLACE(NULL, NULL, NULL)); -- should be NULL
     dbms_output.put_line(REGEXP_REPLACE('12345abcdeabcde', '5+ab', '#'));
     dbms_output.put_line(REGEXP_REPLACE('12345abcdeabcde', '5+ab', NULL)); 
     dbms_output.put_line(REGEXP_REPLACE('12345abcdeabcde', 'ab+c', '#', 1)); 

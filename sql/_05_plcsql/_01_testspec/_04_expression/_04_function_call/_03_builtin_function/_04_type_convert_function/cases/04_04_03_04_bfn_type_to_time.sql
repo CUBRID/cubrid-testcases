@@ -13,10 +13,7 @@ begin
 
     dbms_output.put_line('-- TO_TIME(extra)');
     dbms_output.put_line(TO_TIME('HOUR: 13 MINUTE: 10 SECOND: 30', '"HOUR:" HH24 "MINUTE:" MI "SECOND:" SS'));
-    -- TO_TIME 3rd parm parese error
-    /*
-    dbms_output.put_line(TO_TIME('6:41:53', 'HH:MI:SS', 'en_US'));
-    */
+    dbms_output.put_line(TO_TIME('6:41:53', 'HH:MI:SS', 'en_US')); -- TO_TIME 3rd parm parese error
 end;
 
 select * from db_stored_procedure where sp_name = 't';

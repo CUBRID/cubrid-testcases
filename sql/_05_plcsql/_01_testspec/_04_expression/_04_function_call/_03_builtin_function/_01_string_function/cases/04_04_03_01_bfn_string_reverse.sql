@@ -4,7 +4,7 @@
 
 create or replace procedure t () as
 begin
-    -- dbms_output.put_line(REVERSE(NULL)); -- parse error NULL
+    dbms_output.put_line(REVERSE(NULL)); -- parse error NULL
     dbms_output.put_line(REVERSE(''));
     dbms_output.put_line(REVERSE('CUBRID'));
     dbms_output.put_line(REVERSE('큐브리드')); -- multibyte korean result error about dbms_output

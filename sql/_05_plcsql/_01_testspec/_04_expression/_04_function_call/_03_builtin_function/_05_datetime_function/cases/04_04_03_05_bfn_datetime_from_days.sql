@@ -4,7 +4,7 @@
 
 create or replace procedure t () as
 begin
-    -- dbms_output.put_line(FROM_DAYS(NULL)); -- parse NULL param error
+    dbms_output.put_line(FROM_DAYS(NULL)); -- parse NULL param error
     dbms_output.put_line(FROM_DAYS(0));
     dbms_output.put_line(FROM_DAYS(1));
     dbms_output.put_line(FROM_DAYS(365));

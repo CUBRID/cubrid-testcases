@@ -4,7 +4,7 @@
 
 create or replace procedure t () as
 begin
-    -- dbms_output.put_line(SPACE(NULL)); -- param NULL parse error for first param
+    dbms_output.put_line(SPACE(NULL)); -- param NULL parse error for first param
     dbms_output.put_line('[' || SPACE(5) || ']');
     dbms_output.put_line('[' || SPACE(-5) || ']');
     dbms_output.put_line('[' || SPACE(1048577) || ']');

@@ -4,14 +4,12 @@
 
 create or replace procedure t () as
 begin
-    -- dbms_output.put_line(POSITION(NULL)); -- param NULL parse error for first param
+    dbms_output.put_line(POSITION(NULL)); -- param NULL parse error for first param
     -- parse error POSITON() of IN keword
-    /*
     dbms_output.put_line(POSITION('5' IN '12345abcdeabcde'));
     dbms_output.put_line(POSITION(5 IN '12345abcdeabcde'));
     dbms_output.put_line(POSITION(NULL IN '12345abcdeabcde'));
     dbms_output.put_line(POSITION(NULL IN NULL));
-    */
 end;
 
 select * from db_stored_procedure where sp_name = 't';

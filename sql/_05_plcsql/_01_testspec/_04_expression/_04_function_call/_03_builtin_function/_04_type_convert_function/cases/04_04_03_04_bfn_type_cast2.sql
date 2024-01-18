@@ -5,7 +5,6 @@
 create or replace procedure t () as
 begin
     -- CAST( AS ) parse error
-    /*
     dbms_output.put_line('-- CHAR');
     dbms_output.put_line(CAST('87654321098765432109876543210987654321' AS CHAR));
     dbms_output.put_line(CAST('-87654321098765432109876543210987654321' AS CHAR(10)));
@@ -68,8 +67,6 @@ begin
     dbms_output.put_line(CAST('00:00 01/01/1999' AS TIMESTAMP));
     dbms_output.put_line(CAST('10:00 am 01/01/1999' AS TIMESTAMP));
     dbms_output.put_line(CAST('10:00 pm 01/01/1999' AS TIMESTAMP));
-    */
-    null;
 end;
 
 select * from db_stored_procedure where sp_name = 't';

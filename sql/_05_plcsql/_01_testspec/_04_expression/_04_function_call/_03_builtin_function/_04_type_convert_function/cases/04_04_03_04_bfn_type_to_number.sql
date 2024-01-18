@@ -5,7 +5,6 @@
 create or replace procedure t () as
 begin
     -- parse error TO_NUMBER('digit')
-    /*
     dbms_output.put_line(TO_NUMBER(NULL,'9,999,999,999'));
     dbms_output.put_line(TO_NUMBER('1234567'));
     dbms_output.put_line(TO_NUMBER('1234567', '9999999'));
@@ -14,8 +13,6 @@ begin
     dbms_output.put_line(TO_NUMBER('1,234,567.890','9,999,999.999'));
     dbms_output.put_line(TO_NUMBER('1,234,567,890.123456789','9,999,999,999.999999999'));
     dbms_output.put_line(TO_NUMBER('1,234,567,890,123,456,789','9,999,999,999,999,999,999'));
-    */
-    null;
 end;
 
 select * from db_stored_procedure where sp_name = 't';

@@ -5,11 +5,8 @@
 create or replace procedure t () as
 begin
     -- UTC_TIME/DATE() not works
-    /*
     dbms_output.put_line(UTC_DATE());
     dbms_output.put_line(UTC_TIME());
-    */
-    null;
 end;
 
 select * from db_stored_procedure where sp_name = 't';

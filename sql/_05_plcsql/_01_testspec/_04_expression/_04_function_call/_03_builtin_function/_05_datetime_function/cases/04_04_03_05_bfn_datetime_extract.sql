@@ -5,7 +5,6 @@
 create or replace procedure t () as
 begin
     -- parse error about EXTRACT()
-    /*
     dbms_output.put_line(EXTRACT(NULL));
     dbms_output.put_line(EXTRACT(MILLISECOND FROM DATETIME '1999-01-11 12:34:52.333'));
     dbms_output.put_line(EXTRACT(SECOND FROM DATETIME '1999-01-11 12:34:52'));
@@ -14,8 +13,6 @@ begin
     dbms_output.put_line(EXTRACT(DAY FROM DATETIME '1999-01-11'));
     dbms_output.put_line(EXTRACT(MONTH FROM DATETIME '1999-01-11'));
     dbms_output.put_line(EXTRACT(YEAR FROM DATETIME '1999-01-11'));
-    */
-    null;
 end;
 
 select * from db_stored_procedure where sp_name = 't';

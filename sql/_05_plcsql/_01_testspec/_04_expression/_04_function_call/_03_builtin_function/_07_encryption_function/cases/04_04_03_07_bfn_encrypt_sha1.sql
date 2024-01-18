@@ -4,7 +4,7 @@
 
 create or replace procedure t () as
 begin
-    -- dbms_output.put_line(SHA1(NULL)); -- param NULL parse error for first param
+    dbms_output.put_line(SHA1(NULL)); -- param NULL parse error for first param
     dbms_output.put_line(SHA1('cubrid'));
     dbms_output.put_line(SHA1(255));
     dbms_output.put_line(SHA1('01/01/2010'));

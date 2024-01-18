@@ -4,11 +4,11 @@
 
 create or replace procedure t () as
 begin
+    dbms_output.put_line(SIGN(NULL)); -- param NULL parse error for first param
     dbms_output.put_line(SIGN(12.3));
     dbms_output.put_line(SIGN(-12.3));
     dbms_output.put_line(SIGN(0));
     dbms_output.put_line(SIGN(''));
-    --dbms_output.put_line(SIGN(NULL)); -- when builtin function gets null as parms get parse error
 end;
 
 select * from db_stored_procedure where sp_name = 't';

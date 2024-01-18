@@ -4,15 +4,11 @@
 
 create or replace procedure t () as
 begin
-    -- dbms_output.put_line(INET_ATON(NULL)); -- param NULL parse error for first paramA
-    -- dbms_output.put_line(INET_NTOA(NULL)); -- param NULL parse error for first paramA
+    dbms_output.put_line(INET_ATON(NULL)); -- param NULL parse error for first paramA
+    dbms_output.put_line(INET_NTOA(NULL)); -- param NULL parse error for first paramA
 
-    -- result not return properly
-    /*
-    dbms_output.put_line(INET_ATON('192.168.253.255'));
-    dbms_output.put_line(INET_NTOA(3232300543));
-    */
-    null;
+    dbms_output.put_line(INET_ATON('192.168.253.255')); -- result not return properly
+    dbms_output.put_line(INET_NTOA(3232300543)); -- result not return properly
 end;
 
 select * from db_stored_procedure where sp_name = 't';

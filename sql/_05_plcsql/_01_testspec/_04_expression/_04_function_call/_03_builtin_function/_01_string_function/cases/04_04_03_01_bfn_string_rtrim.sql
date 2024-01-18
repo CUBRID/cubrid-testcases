@@ -4,7 +4,7 @@
 
 create or replace procedure t () as
 begin
-    -- dbms_output.put_line(RTRIM(NULL)); -- param NULL parse error for first param
+    dbms_output.put_line(RTRIM(NULL)); -- param NULL parse error for first param
     dbms_output.put_line('[' ||RTRIM('   CUBRID   ') || ']');
     dbms_output.put_line(RTRIM('   CUBRID   ', NULL));
     dbms_output.put_line(RTRIM('aaaCUBRIDaaaa', 'a'));

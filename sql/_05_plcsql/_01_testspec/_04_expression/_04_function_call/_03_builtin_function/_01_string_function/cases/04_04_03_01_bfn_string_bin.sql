@@ -4,7 +4,7 @@
 
 create or replace procedure t () as
 begin
-    -- dbms_output.put_line(BIN(NULL)); -- parse error NULL
+    dbms_output.put_line(BIN(NULL)); -- parse error NULL
     dbms_output.put_line(BIN(0));
     dbms_output.put_line(BIN(1));
     dbms_output.put_line(BIN(9223372036854775807));

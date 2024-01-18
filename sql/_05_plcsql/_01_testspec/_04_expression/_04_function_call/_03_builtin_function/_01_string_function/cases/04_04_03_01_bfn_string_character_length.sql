@@ -4,11 +4,11 @@
 
 create or replace procedure t () as
 begin
-    -- dbms_output.put_line(CHARACTER_LENGTH(NULL)); -- parse error NULL
+    dbms_output.put_line(CHARACTER_LENGTH(NULL)); -- parse error NULL
     dbms_output.put_line(CHARACTER_LENGTH(''));
     dbms_output.put_line(CHARACTER_LENGTH('CUBRID')); -- param type mismath 
     dbms_output.put_line(CHARACTER_LENGTH('큐브리드'));
-    --dbms_output.put_line(CHARACTER_LENGTH(B'01010101')); -- parse error type literal define parenthesis
+    dbms_output.put_line(CHARACTER_LENGTH(B'01010101')); -- parse error type literal define parenthesis
 
     dbms_output.put_line(CHAR_LENGTH(''));
     dbms_output.put_line(CHAR_LENGTH('CUBRID')); -- param type mismath

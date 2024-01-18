@@ -4,7 +4,7 @@
 
 create or replace procedure t () as
 begin
-    -- dbms_output.put_line(TO_BASE64(NULL)); -- param NULL parse error for first param
+    dbms_output.put_line(TO_BASE64(NULL)); -- param NULL parse error for first param
     dbms_output.put_line(TO_BASE64('abcd'));
     dbms_output.put_line(TO_BASE64('Hello CUBRID'));
 end;

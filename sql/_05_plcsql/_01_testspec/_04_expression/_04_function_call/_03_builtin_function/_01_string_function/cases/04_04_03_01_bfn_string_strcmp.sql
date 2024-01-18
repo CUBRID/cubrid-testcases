@@ -10,7 +10,7 @@ begin
     dbms_output.put_line(STRCMP('abc', NULL));
     dbms_output.put_line(STRCMP('abcd', 'abc'));
     dbms_output.put_line(STRCMP('abc', 'abcd'));
-    --dbms_output.put_line(STRCMP('abc' COLLATE utf8, 'abc' COLLATE utf8_en_ci )); -- parse error COLLATE keyword
+    dbms_output.put_line(STRCMP('abc' COLLATE utf8, 'abc' COLLATE utf8_en_ci )); -- parse error COLLATE keyword
 end;
 
 select * from db_stored_procedure where sp_name = 't';

@@ -5,7 +5,6 @@
 create or replace procedure t () as
 begin
     -- function not work and skip IF()
-/*
     dbms_output.put_line('-- IF simple compare');	
     dbms_output.put_line(IF(NULL,  NULL, NULL));
     dbms_output.put_line(IF(NULL, 'ok', 'nok'));
@@ -39,8 +38,6 @@ begin
     dbms_output.put_line('-- IF time compare');
     dbms_output.put_line(IF(TO_TIME('00:00:00') = TO_TIME('00:00:00'), 'ok' , 'nok'));
     dbms_output.put_line(IF(TO_TIME('00:00:00') = '00:00:00', 'ok' , 'nok'));
-*/
-    null;
 end;
 
 select * from db_stored_procedure where sp_name = 't';

@@ -4,7 +4,7 @@
 
 create or replace procedure t () as
 begin
-    -- dbms_output.put_line(LEAST(NULL)); -- param NULL parse error for first param
+    dbms_output.put_line(LEAST(NULL)); -- param NULL parse error for first param
     dbms_output.put_line(LEAST(NULL, 255));
     dbms_output.put_line(LEAST(1, 255));
     dbms_output.put_line(LEAST(1, NULL));

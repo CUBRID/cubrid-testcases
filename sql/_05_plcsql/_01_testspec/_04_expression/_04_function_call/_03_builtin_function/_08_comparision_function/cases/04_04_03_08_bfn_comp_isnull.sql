@@ -5,11 +5,8 @@
 create or replace procedure t () as
 begin
     -- parse error ISNULL()
-    /*
     dbms_output.put_line(ISNULL(NULL));
     dbms_output.put_line(ISNULL(DECODE('a','a',NULL,'a')));
-    */
-    null;
 end;
 
 select * from db_stored_procedure where sp_name = 't';

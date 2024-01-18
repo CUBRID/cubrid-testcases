@@ -4,7 +4,7 @@
 
 create or replace procedure t () as
 begin
-    -- dbms_output.put_line(ASCII(NULL)); -- param NULL parse error
+    dbms_output.put_line(ASCII(NULL)); -- param NULL parse error
     dbms_output.put_line(ASCII(''));
     dbms_output.put_line(ASCII('5'));
     dbms_output.put_line(ASCII(53));

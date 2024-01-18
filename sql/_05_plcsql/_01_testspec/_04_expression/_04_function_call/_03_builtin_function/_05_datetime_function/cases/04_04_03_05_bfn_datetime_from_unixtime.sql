@@ -4,7 +4,7 @@
 
 create or replace procedure t () as
 begin
-    -- dbms_output.put_line(FROM_UNIXTIME(NULL)); -- parse NULL param error
+    dbms_output.put_line(FROM_UNIXTIME(NULL)); -- parse NULL param error
     dbms_output.put_line(FROM_UNIXTIME(0));
     dbms_output.put_line(FROM_UNIXTIME('915980400'));
     dbms_output.put_line(FROM_UNIXTIME(915980400));

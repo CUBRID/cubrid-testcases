@@ -4,7 +4,7 @@
 
 create or replace procedure t () as
 begin
-    -- dbms_output.put_line(WEEK(NULL)); -- parse NULL param error
+    dbms_output.put_line(WEEK(NULL)); -- parse NULL param error
     dbms_output.put_line(WEEK(TO_DATETIME('1999-01-11 12:34:52.333')));
     dbms_output.put_line(WEEK(TIMESTAMP('1999-01-11 12:34:52.333')));
     dbms_output.put_line(WEEK(TO_DATETIME('1999-01-11 12:34:52')));

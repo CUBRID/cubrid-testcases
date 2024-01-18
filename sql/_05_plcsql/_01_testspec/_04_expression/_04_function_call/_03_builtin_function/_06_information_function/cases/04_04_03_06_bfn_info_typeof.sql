@@ -5,11 +5,8 @@
 create or replace procedure t () as
 begin
     -- parse error for TYPEOF() 
-    /*
     dbms_output.put_line(TYPEOF(1));
     dbms_output.put_line(TYPEOF('abc'));
-    */
-    null;
 end;
 
 select * from db_stored_procedure where sp_name = 't';

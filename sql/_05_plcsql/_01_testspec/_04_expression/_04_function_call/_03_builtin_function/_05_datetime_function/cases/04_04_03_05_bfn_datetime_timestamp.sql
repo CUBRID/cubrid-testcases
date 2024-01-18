@@ -4,7 +4,7 @@
 
 create or replace procedure t () as
 begin
-    -- dbms_output.put_line(TIMESTAMP(NULL)); -- parse NULL param error
+    dbms_output.put_line(TIMESTAMP(NULL)); -- parse NULL param error
     dbms_output.put_line(TIMESTAMP('1999-01-11 12:34:52.333'));
     dbms_output.put_line(TIMESTAMP('1999-01-11', NULL));
     dbms_output.put_line(TIMESTAMP('1999-01-11', '12:34:52.333'));

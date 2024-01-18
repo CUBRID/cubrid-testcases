@@ -5,10 +5,7 @@
 create or replace procedure t () as
 begin
     -- parse error for LIST_DBS() 
-    /*
     dbms_output.put_line(LIST_DBS());
-    */
-    null;
 end;
 
 select * from db_stored_procedure where sp_name = 't';

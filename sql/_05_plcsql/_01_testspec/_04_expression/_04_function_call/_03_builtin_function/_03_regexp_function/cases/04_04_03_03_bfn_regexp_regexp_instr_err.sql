@@ -4,8 +4,7 @@
 
 create or replace procedure t () as
 begin
-    -- Should be null and not printed. not 0.
-    dbms_output.put_line(REGEXP_INSTR(NULL, 'abc'));
+    dbms_output.put_line(REGEXP_INSTR(NULL, 'abc')); -- Should be null and not printed. not 0.
     dbms_output.put_line(REGEXP_INSTR('12345abcdeabcde', NULL));
     dbms_output.put_line(REGEXP_INSTR('12345abcdeabcde', 'abc', NULL));
     dbms_output.put_line(REGEXP_INSTR('12345abcdeabcde', 'abc', 1, NULL));

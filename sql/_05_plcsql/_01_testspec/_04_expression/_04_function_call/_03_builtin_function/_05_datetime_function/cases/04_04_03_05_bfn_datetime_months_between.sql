@@ -4,8 +4,8 @@
 
 create or replace procedure t () as
 begin
-    -- dbms_output.put_line(MONTHS_BETWEEN(NULL, NULL)); -- parse NULL param error
-    -- dbms_output.put_line(MONTHS_BETWEEN(TO_DATETIME('1999-01-11 12:34:52.333'), NULL)));  -- parse NULL param error
+    dbms_output.put_line(MONTHS_BETWEEN(NULL, NULL)); -- parse NULL param error
+    dbms_output.put_line(MONTHS_BETWEEN(TO_DATETIME('1999-01-11 12:34:52.333'), NULL)));  -- parse NULL param error
     dbms_output.put_line(MONTHS_BETWEEN(NULL, TO_DATETIME('1999-01-11 12:34:52.333')));
 
     dbms_output.put_line(MONTHS_BETWEEN(TO_DATETIME('1999-01-11 12:34:52.333'), TO_DATETIME('1999-02-11 12:34:52.333')));

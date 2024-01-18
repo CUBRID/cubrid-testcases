@@ -4,7 +4,7 @@
 
 create or replace procedure t () as
 begin
-    -- dbms_output.put_line(COALESCE(NULL)); -- param NULL parse error for first param
+    dbms_output.put_line(COALESCE(NULL)); -- param NULL parse error for first param
     dbms_output.put_line(COALESCE(NULL, 'cubrid'));
     dbms_output.put_line(COALESCE(NULL, 255));
     dbms_output.put_line(COALESCE(TO_DATE('01/01/2010'), NULL, TO_DATE('01/02/2010')));

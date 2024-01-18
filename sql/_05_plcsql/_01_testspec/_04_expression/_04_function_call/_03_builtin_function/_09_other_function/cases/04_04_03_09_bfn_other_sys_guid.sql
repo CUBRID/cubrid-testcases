@@ -5,10 +5,7 @@
 create or replace procedure t () as
 begin
     -- parse error function SYS_GUID()
-    /*
     dbms_output.put_line(SYS_GUID());
-    */
-    null;
 end;
 
 select * from db_stored_procedure where sp_name = 't';

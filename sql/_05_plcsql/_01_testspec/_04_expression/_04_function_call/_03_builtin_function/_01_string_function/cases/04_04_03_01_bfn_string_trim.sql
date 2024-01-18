@@ -4,16 +4,14 @@
 
 create or replace procedure t () as
 begin
-    -- dbms_output.put_line(TRIM(NULL)); -- param NULL parse error for first param
+    dbms_output.put_line(TRIM(NULL)); -- param NULL parse error for first param
     dbms_output.put_line('[' || TRIM('   CUBRID   ') || ']');
 
     -- TRIM() keyword FROM/LEADING/TRAILING/BOTH parse error
-    /*
     dbms_output.put_line(TRIM('a' FROM 'aaaCUBRIDaaaa'));
     dbms_output.put_line(TRIM(LEADING 'a' FROM 'aaaCUBRIDaaaa'));
     dbms_output.put_line(TRIM(TRAILING 'a' FROM 'aaaCUBRIDaaaa'));
     dbms_output.put_line(TRIM(BOTH 'a' FROM 'aaaCUBRIDaaaa'));
-    */
 end;
 
 select * from db_stored_procedure where sp_name = 't';

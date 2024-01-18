@@ -8,7 +8,6 @@ begin
     dbms_output.put_line(ADDDATE(TO_DATETIME('1999-01-08'), NULL));
 
     -- ADDDATE() INTERVAL delimiter '' and option parse error
-    /*
     dbms_output.put_line(ADDDATE(NULL, INTERVAL 123 MILLISECOND));
     dbms_output.put_line(ADDDATE(TO_DATETIME('1999-01-08'), INTERVAL 123 MILLISECOND));
     dbms_output.put_line(ADDDATE(TO_DATETIME('1999-01-08'), INTERVAL 123 SECOND));
@@ -32,7 +31,6 @@ begin
     dbms_output.put_line(ADDDATE(TO_DATETIME('1999-01-08'), INTERVAL '12 12:12' DAY_MINUTE));
     dbms_output.put_line(ADDDATE(TO_DATETIME('1999-01-08'), INTERVAL '12 12' DAY_HOUR));
     dbms_output.put_line(ADDDATE(TO_DATETIME('1999-01-08'), INTERVAL '12-13' YEAR_MONTH));
-    */
 end;
 
 select * from db_stored_procedure where sp_name = 't';

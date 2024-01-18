@@ -5,8 +5,7 @@
 create or replace procedure t () as
 begin
     dbms_output.put_line(COERCIBILITY(USER()));
-    -- parse error _charset 
-    -- dbms_output.put_line(COERCIBILITY(_utf8'abc')));
+    dbms_output.put_line(COERCIBILITY(_utf8'abc'))); -- parse error _charset delimiter
 end;
 
 select * from db_stored_procedure where sp_name = 't';

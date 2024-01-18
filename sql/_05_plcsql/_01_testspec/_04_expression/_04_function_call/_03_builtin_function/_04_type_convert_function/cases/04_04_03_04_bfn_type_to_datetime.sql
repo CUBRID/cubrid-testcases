@@ -25,10 +25,7 @@ begin
 
     dbms_output.put_line('-- TO_DATETIME(extra)');
     dbms_output.put_line(TO_DATETIME('DATE: 12-25-2008 TIME: 13:10:30.999', '"DATE:" MM-DD-YYYY "TIME:" HH24:MI:SS.FF'));
-    -- TO_DATETIME 3rd parm parese error
-    /*
-    dbms_output.put_line(TO_DATETIME('01/11/1999 6:41:53.733', 'MM/DD/YYYY HH:MI:SS.FF', 'en_US'));
-    */
+    dbms_output.put_line(TO_DATETIME('01/11/1999 6:41:53.733', 'MM/DD/YYYY HH:MI:SS.FF', 'en_US')); -- TO_DATETIME 3rd parm parese error
 end;
 
 select * from db_stored_procedure where sp_name = 't';

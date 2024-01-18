@@ -4,7 +4,7 @@
 
 create or replace procedure t () as
 begin
-    -- dbms_output.put_line(MD5(NULL)); -- param NULL parse error for first param
+    dbms_output.put_line(MD5(NULL)); -- param NULL parse error for first param
     dbms_output.put_line(MD5('cubrid'));
     dbms_output.put_line(MD5(255));
     dbms_output.put_line(MD5('01/01/2010'));

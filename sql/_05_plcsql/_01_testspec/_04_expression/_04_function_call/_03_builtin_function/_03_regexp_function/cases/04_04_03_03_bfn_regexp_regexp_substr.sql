@@ -4,7 +4,7 @@
 
 create or replace procedure t () as
 begin
-    dbms_output.put_line(REGEXP_SUBSTR(NULL, NULL)); -- NULL
+    dbms_output.put_line(REGEXP_SUBSTR(NULL, NULL)); -- should be NULL
     dbms_output.put_line(REGEXP_SUBSTR('12345abcdeabcde', NULL));
     dbms_output.put_line(REGEXP_SUBSTR('12345abcdeabcde', '5+ab', NULL)); 
     dbms_output.put_line(REGEXP_SUBSTR('12345abcdeabcde', 'ab+c', 1)); 

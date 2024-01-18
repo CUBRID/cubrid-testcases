@@ -4,7 +4,7 @@
 
 create or replace procedure t () as
 begin
-    -- dbms_output.put_line(TO_DAYS(NULL)); -- parse NULL param error
+    dbms_output.put_line(TO_DAYS(NULL)); -- parse NULL param error
     dbms_output.put_line(TO_DAYS('1999-01-10'));
     dbms_output.put_line(TO_DAYS('1999-01-10 12:34:52.533'));
 end;

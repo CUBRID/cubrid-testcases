@@ -5,7 +5,6 @@
 create or replace procedure t () as
 begin
     -- CAST( AS ) parse error
-    /*
     dbms_output.put_line('INTEGER');
     dbms_output.put_line(CAST(NULL AS INTEGER));
     dbms_output.put_line(CAST(NULL AS INTEGER));
@@ -69,8 +68,6 @@ begin
     dbms_output.put_line(CAST('-87654321098765432109876543210987654321' AS NUMERIC(38,0)));
     dbms_output.put_line(CAST('0.87654321098765432109876543210987654321' AS NUMERIC(38,38)));
     dbms_output.put_line(CAST('-0.87654321098765432109876543210987654321' AS NUMERIC(38,38)));
-    */
-    null;
 end;
 
 select * from db_stored_procedure where sp_name = 't';

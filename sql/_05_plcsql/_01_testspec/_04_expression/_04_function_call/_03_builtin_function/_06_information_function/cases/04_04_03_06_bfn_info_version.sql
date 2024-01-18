@@ -5,10 +5,7 @@
 create or replace procedure t () as
 begin
     -- parse error for VERSION() 
-    /*
     dbms_output.put_line(VERSION());
-    */
-    null;
 end;
 
 select * from db_stored_procedure where sp_name = 't';

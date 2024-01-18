@@ -4,7 +4,7 @@
 
 create or replace procedure t () as
 begin
-    -- dbms_output.put_line(LEFT(NULL)); -- param NULL parse error for first param
+    dbms_output.put_line(LEFT(NULL)); -- param NULL parse error for first param
     dbms_output.put_line(LEFT('', NULL));
     dbms_output.put_line(LEFT('CUBRID', 3));
     dbms_output.put_line(LEFT('CUBRID', -3.0));

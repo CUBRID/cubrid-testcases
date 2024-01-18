@@ -4,11 +4,11 @@
 
 create or replace procedure t () as
 begin
-    -- dbms_output.put_line(LCASE(NULL)); -- param NULL parse error for first param
+    dbms_output.put_line(LCASE(NULL)); -- param NULL parse error for first param
     dbms_output.put_line(LCASE(''));
     dbms_output.put_line(LCASE('CUBRID'));
 
-    -- dbms_output.put_line(LOWER(NULL)); -- param NULL parse error for first param
+    dbms_output.put_line(LOWER(NULL)); -- param NULL parse error for first param
     dbms_output.put_line(LOWER(''));
     dbms_output.put_line(LOWER('CUBRID'));
 end;

@@ -4,7 +4,7 @@
 
 create or replace procedure t () as
 begin
-    -- dbms_output.put_line(GREATEST(NULL)); -- param NULL parse error for first param
+    dbms_output.put_line(GREATEST(NULL)); -- param NULL parse error for first param
     dbms_output.put_line(GREATEST(NULL, 255));
     dbms_output.put_line(GREATEST(1, 255));
     dbms_output.put_line(GREATEST(1, NULL));
