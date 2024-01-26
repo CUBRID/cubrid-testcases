@@ -21,15 +21,15 @@ count(*)
 0     
 
 Query plan:
-iscan
-    class: tab_b node[?]
-    index: idx (covers)
-    filtr: term[?]
+temp(group by)
+    subplan: sscan
+                 class: tab_b node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 (select tab_b.col_a, max(tab_b.col_b) from tab_b tab_b where  cast(nvl(tab_b.col_a, ?) as double)=? group by tab_b.col_a having max(tab_b.col_b)= cast(? as varchar))
-/* ---> skip GROUP BY */
 Query plan:
 idx-join (inner join)
     outer: sscan
@@ -49,15 +49,15 @@ count(*)
 0     
 
 Query plan:
-iscan
-    class: b node[?]
-    index: idx (covers)
-    filtr: term[?]
+temp(group by)
+    subplan: sscan
+                 class: b node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 (select b.col_a, max(b.col_b) from tab_b b where  cast(nvl(b.col_a, ?) as double)=? group by b.col_a having max(b.col_b)= cast(? as varchar))
-/* ---> skip GROUP BY */
 Query plan:
 idx-join (inner join)
     outer: sscan
@@ -185,15 +185,15 @@ count(*)
 10     
 
 Query plan:
-iscan
-    class: tab_b node[?]
-    index: idx (covers)
-    filtr: term[?]
+temp(group by)
+    subplan: sscan
+                 class: tab_b node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 (select tab_b.col_a from tab_b tab_b where  cast(nvl(tab_b.col_a, ?) as double)=? group by tab_b.col_a)
-/* ---> skip GROUP BY */
 Query plan:
 idx-join (inner join)
     outer: sscan
@@ -213,15 +213,15 @@ count(*)
 10     
 
 Query plan:
-iscan
-    class: b node[?]
-    index: idx (covers)
-    filtr: term[?]
+temp(group by)
+    subplan: sscan
+                 class: b node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 (select b.col_a from tab_b b where  cast(nvl(b.col_a, ?) as double)=? group by b.col_a)
-/* ---> skip GROUP BY */
 Query plan:
 idx-join (inner join)
     outer: sscan
@@ -311,15 +311,15 @@ count(*)
 100     
 
 Query plan:
-iscan
-    class: tab_b node[?]
-    index: idx (covers)
-    filtr: term[?]
+temp(group by)
+    subplan: sscan
+                 class: tab_b node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 (select tab_b.col_a from tab_b tab_b where  cast(nvl(tab_b.col_a, ?) as double)=? group by tab_b.col_a)
-/* ---> skip GROUP BY */
 Query plan:
 nl-join (cross join)
     outer: sscan
@@ -348,15 +348,15 @@ count(*)
 100     
 
 Query plan:
-iscan
-    class: a node[?]
-    index: idx (covers)
-    filtr: term[?]
+temp(group by)
+    subplan: sscan
+                 class: a node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 (select a.col_a from tab_b a where  cast(nvl(a.col_a, ?) as double)=? group by a.col_a)
-/* ---> skip GROUP BY */
 Query plan:
 idx-join (inner join)
     outer: idx-join (inner join)

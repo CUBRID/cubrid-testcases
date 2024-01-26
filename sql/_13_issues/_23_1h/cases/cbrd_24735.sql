@@ -14,13 +14,27 @@ create index idx_desc on t_b (x, y);
 update statistics on all classes with fullscan;
 
 
--- CBRD-24914 : core dumped caused by revert cbrd-24735
--- After core fixed this case will be included again.
---select /*+ recompile ordered */ t.y
---from t_a inner join t_b as t on t_a.x = t.x and t_a.x = 1
---where t.x = 1
---order by t.y
---limit 1;
+select /*+ recompile ordered */ t.y
+from t_a inner join t_b as t on t_a.x = t.x and t_a.x = 1
+where t.x = 1
+order by t.y
+limit 1;
+
+-- Always False Term
+-- In this case, we don't remove always false term and don't MRO optimize
+select /*+ recompile ordered */ t.y
+from t_a inner join t_b as t on t_a.x = t.x and t_a.x = 1
+where t.x = 2
+order by t.y
+limit 1;
+
+-- Always True Complicate Term
+-- In this case, we don't remove always true term and don't MRO optimize
+select /*+ recompile ordered */ t.y
+from t_a inner join t_b as t on t_a.x = t.x / 2 and t_a.x = 1
+where t.x = 2
+order by t.y
+limit 1;
 
 select /*+ recompile ordered no_multi_range_opt */ t.y
 from t_a inner join t_b as t on t_a.x = t.x and t_a.x = 1
