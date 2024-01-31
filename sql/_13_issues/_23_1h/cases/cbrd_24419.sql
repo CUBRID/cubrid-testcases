@@ -509,7 +509,7 @@ select * from db_index where class_name in (select class_name from db_class wher
 select * from db_index_key where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
 select * from db_trig order by owner_name, trigger_name;
 select sp_name, sp_type, return_type, arg_count, lang, target, owner, comment from db_stored_procedure order by sp_name;
-select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name;
+select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name, index_of;
 select * from db_method where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg_setdomain_elm order by owner_name, class_name, meth_name;
@@ -532,7 +532,7 @@ select * from db_index where class_name in (select class_name from db_class wher
 select * from db_index_key where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
 select * from db_trig order by owner_name, trigger_name;
 select sp_name, sp_type, return_type, arg_count, lang, target, owner, comment from db_stored_procedure order by sp_name;
-select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name;
+select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name, index_of;
 select * from db_method where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg_setdomain_elm order by owner_name, class_name, meth_name;
@@ -555,7 +555,7 @@ select * from db_index where class_name in (select class_name from db_class wher
 select * from db_index_key where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
 select * from db_trig order by owner_name, trigger_name;
 select sp_name, sp_type, return_type, arg_count, lang, target, owner, comment from db_stored_procedure order by sp_name;
-select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name;
+select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name, index_of;
 select * from db_method where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg_setdomain_elm order by owner_name, class_name, meth_name;
@@ -578,7 +578,7 @@ select * from db_index where class_name in (select class_name from db_class wher
 select * from db_index_key where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
 select * from db_trig order by owner_name, trigger_name;
 select sp_name, sp_type, return_type, arg_count, lang, target, owner, comment from db_stored_procedure order by sp_name;
-select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name;
+select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name, index_of;
 select * from db_method where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg_setdomain_elm order by owner_name, class_name, meth_name;
@@ -601,7 +601,7 @@ select * from db_index where class_name in (select class_name from db_class wher
 select * from db_index_key where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
 select * from db_trig order by owner_name, trigger_name;
 select sp_name, sp_type, return_type, arg_count, lang, target, owner, comment from db_stored_procedure order by sp_name;
-select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name;
+select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name, index_of;
 select * from db_method where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg_setdomain_elm order by owner_name, class_name, meth_name;
@@ -624,7 +624,7 @@ select * from db_index where class_name in (select class_name from db_class wher
 select * from db_index_key where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
 select * from db_trig order by owner_name, trigger_name;
 select sp_name, sp_type, return_type, arg_count, lang, target, owner, comment from db_stored_procedure order by sp_name;
-select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name;
+select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name, index_of;
 select * from db_method where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg_setdomain_elm order by owner_name, class_name, meth_name;
@@ -647,7 +647,7 @@ select * from db_index where class_name in (select class_name from db_class wher
 select * from db_index_key where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
 select * from db_trig order by owner_name, trigger_name;
 select sp_name, sp_type, return_type, arg_count, lang, target, owner, comment from db_stored_procedure order by sp_name;
-select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name;
+select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name, index_of;
 select * from db_method where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg_setdomain_elm order by owner_name, class_name, meth_name;
@@ -670,7 +670,7 @@ select * from db_index where class_name in (select class_name from db_class wher
 select * from db_index_key where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
 select * from db_trig order by owner_name, trigger_name;
 select sp_name, sp_type, return_type, arg_count, lang, target, owner, comment from db_stored_procedure order by sp_name;
-select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name;
+select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name, index_of;
 
 select * from db_method where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
@@ -694,7 +694,7 @@ select * from db_index where class_name in (select class_name from db_class wher
 select * from db_index_key where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
 select * from db_trig order by owner_name, trigger_name;
 select sp_name, sp_type, return_type, arg_count, lang, target, owner, comment from db_stored_procedure order by sp_name;
-select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name;
+select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name, index_of;
 
 select * from db_method where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
@@ -718,7 +718,7 @@ select * from db_index where class_name in (select class_name from db_class wher
 select * from db_index_key where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
 select * from db_trig order by owner_name, trigger_name;
 select sp_name, sp_type, return_type, arg_count, lang, target, owner, comment from db_stored_procedure order by sp_name;
-select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name;
+select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name, index_of;
 
 select * from db_method where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
