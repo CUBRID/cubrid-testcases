@@ -50,5 +50,5 @@ fi
 root_directory=$(realpath "$1")
 grep_condition="$2"
 
-# 루트 디렉토리부터 시작하여 처리
+# process from root_directory
 process_directory "${root_directory}" "${grep_condition}"
