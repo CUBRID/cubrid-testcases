@@ -7,8 +7,8 @@ begin
     dbms_output.put_line('i=' || i);
 end;
 
-select * from db_stored_procedure where sp_name = '프로시져';
-select * from db_stored_procedure_args where sp_name = '프로시져';
+select count(*) from db_stored_procedure where sp_name = '프로시져';
+select count(*) from db_stored_procedure_args where sp_name = '프로시져';
 
 call "프로시져"(7);
 call [프로시져](6);
@@ -26,8 +26,8 @@ begin
     dbms_output.put_line('상수_1=' || 상수_1);
 end;
 
-select * from db_stored_procedure where sp_name = '프로시져_파라미터';
-select * from db_stored_procedure_args where sp_name = '프로시져_파라미터';
+select count(*) from db_stored_procedure where sp_name = '프로시져_파라미터';
+select count(*) from db_stored_procedure_args where sp_name = '프로시져_파라미터';
 
 call "프로시져_파라미터"(7);
 call [프로시져_파라미터](6);

@@ -33,8 +33,8 @@ begin
     dbms_output.put_line(ADDDATE(TO_DATETIME('1999-01-08'), INTERVAL '12-13' YEAR_MONTH));
 end;
 
-select * from db_stored_procedure where sp_name = 't';
-select * from db_stored_procedure_args where sp_name = 't';
+select count(*) from db_stored_procedure where sp_name = 't';
+select count(*) from db_stored_procedure_args where sp_name = 't';
 
 call t();
 

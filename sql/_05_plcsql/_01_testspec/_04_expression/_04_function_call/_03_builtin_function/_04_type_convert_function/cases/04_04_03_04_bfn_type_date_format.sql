@@ -18,8 +18,8 @@ begin
     dbms_output.put_line(DATE_FORMAT('2011-12-1 22:23:24', '%D %W %y %a %d %m %M %b %j'));
 end;
 
-select * from db_stored_procedure where sp_name = 't';
-select * from db_stored_procedure_args where sp_name = 't';
+select count(*) from db_stored_procedure where sp_name = 't';
+select count(*) from db_stored_procedure_args where sp_name = 't';
 
 call t();
 

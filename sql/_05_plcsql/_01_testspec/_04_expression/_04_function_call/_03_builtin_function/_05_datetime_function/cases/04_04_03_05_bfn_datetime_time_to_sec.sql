@@ -10,8 +10,8 @@ begin
     dbms_output.put_line(TIME_TO_SEC(TO_TIME('12:34:52')));
 end;
 
-select * from db_stored_procedure where sp_name = 't';
-select * from db_stored_procedure_args where sp_name = 't';
+select count(*) from db_stored_procedure where sp_name = 't';
+select count(*) from db_stored_procedure_args where sp_name = 't';
 
 call t();
 

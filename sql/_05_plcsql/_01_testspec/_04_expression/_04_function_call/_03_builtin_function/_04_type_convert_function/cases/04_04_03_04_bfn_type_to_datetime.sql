@@ -28,8 +28,8 @@ begin
     dbms_output.put_line(TO_DATETIME('01/11/1999 6:41:53.733', 'MM/DD/YYYY HH:MI:SS.FF', 'en_US')); -- TO_DATETIME 3rd parm parese error
 end;
 
-select * from db_stored_procedure where sp_name = 't';
-select * from db_stored_procedure_args where sp_name = 't';
+select count(*) from db_stored_procedure where sp_name = 't';
+select count(*) from db_stored_procedure_args where sp_name = 't';
 
 call t();
 

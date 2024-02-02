@@ -20,8 +20,8 @@ begin
     dbms_output.put_line('-876,543,210,987,654,321.09876543210987654321 is right');
 end;
 
-select * from db_stored_procedure where sp_name = 't';
-select * from db_stored_procedure_args where sp_name = 't';
+select count(*) from db_stored_procedure where sp_name = 't';
+select count(*) from db_stored_procedure_args where sp_name = 't';
 
 call t();
 

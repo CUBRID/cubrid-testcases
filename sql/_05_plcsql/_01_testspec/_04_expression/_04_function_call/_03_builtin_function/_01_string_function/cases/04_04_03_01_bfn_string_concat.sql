@@ -13,8 +13,8 @@ begin
     dbms_output.put_line(CONCAT(_utf8'E381BE')); -- parse error type literal define parenthesis
 end;
 
-select * from db_stored_procedure where sp_name = 't';
-select * from db_stored_procedure_args where sp_name = 't';
+select count(*) from db_stored_procedure where sp_name = 't';
+select count(*) from db_stored_procedure_args where sp_name = 't';
 
 call t();
 

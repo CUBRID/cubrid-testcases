@@ -15,8 +15,8 @@ begin
     dbms_output.put_line(TIMEDIFF(TIMESTAMP('1999-01-11 12:34:52.533'), '1999-01-11 11:11:11'));
 end;
 
-select * from db_stored_procedure where sp_name = 't';
-select * from db_stored_procedure_args where sp_name = 't';
+select count(*) from db_stored_procedure where sp_name = 't';
+select count(*) from db_stored_procedure_args where sp_name = 't';
 
 call t();
 

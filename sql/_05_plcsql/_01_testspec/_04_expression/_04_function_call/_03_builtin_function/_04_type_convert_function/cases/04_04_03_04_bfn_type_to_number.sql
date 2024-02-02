@@ -15,8 +15,8 @@ begin
     dbms_output.put_line(TO_NUMBER('1,234,567,890,123,456,789','9,999,999,999,999,999,999'));
 end;
 
-select * from db_stored_procedure where sp_name = 't';
-select * from db_stored_procedure_args where sp_name = 't';
+select count(*) from db_stored_procedure where sp_name = 't';
+select count(*) from db_stored_procedure_args where sp_name = 't';
 
 call t();
 

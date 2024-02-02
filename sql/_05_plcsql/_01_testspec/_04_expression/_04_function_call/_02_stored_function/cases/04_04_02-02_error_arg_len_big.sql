@@ -12,8 +12,8 @@ begin
     dbms_output.put_line(foo(2, 3, 4));
 end;
 
-select * from db_stored_procedure where sp_name = 't';
-select * from db_stored_procedure_args where sp_name = 't';
+select count(*) from db_stored_procedure where sp_name = 't';
+select count(*) from db_stored_procedure_args where sp_name = 't';
 
 drop function foo;
 

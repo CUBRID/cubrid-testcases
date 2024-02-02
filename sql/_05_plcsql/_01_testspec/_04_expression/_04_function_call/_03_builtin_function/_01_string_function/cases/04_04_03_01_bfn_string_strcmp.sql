@@ -13,8 +13,8 @@ begin
     dbms_output.put_line(STRCMP('abc' COLLATE utf8, 'abc' COLLATE utf8_en_ci )); -- parse error COLLATE keyword
 end;
 
-select * from db_stored_procedure where sp_name = 't';
-select * from db_stored_procedure_args where sp_name = 't';
+select count(*) from db_stored_procedure where sp_name = 't';
+select count(*) from db_stored_procedure_args where sp_name = 't';
 
 call t();
 
