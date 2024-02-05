@@ -38,13 +38,13 @@ Query Plan:
   rewritten query: select a.cola, a.colb from [dba.tbl] a left outer join [dba.tbl] b on a.cola=b.cola left outer join [dba.tbl] c on a.cola=c.cola order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? + ?:? 
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (index: dba.tbl.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
         SCAN (index: dba.tbl.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
     ORDERBY (time: ?, topnsort: true)
     SUBQUERY (uncorrelated)
-      SELECT (time: ?, fetch: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         ORDERBY (time: ?, topnsort: true)
      

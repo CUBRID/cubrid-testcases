@@ -57,7 +57,7 @@ Query Plan:
   rewritten query: select c.col_a, c.col_b from [dba.t_super_parent] s, [dba.t_child] c where c.parent_col_a=s.col_a and c.col_b= ?:? 
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_child), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (index: dba.t_super_parent.pk_t_super_parent_col_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
      
@@ -80,7 +80,7 @@ Query Plan:
   rewritten query: select c.col_a, c.col_b from [dba.t_child] c, [dba.t_super_parent] s where c.parent_col_a=s.col_a and c.col_b= ?:? 
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_child), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (index: dba.t_super_parent.pk_t_super_parent_col_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
      
