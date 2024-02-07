@@ -10,8 +10,8 @@ begin
     dbms_output.put_line(CONCAT_WS('', 'CUBRID', NULL , 11.4)); -- param NULL parse error
 end;
 
-select * from db_stored_procedure where sp_name = 't';
-select * from db_stored_procedure_args where sp_name = 't';
+select count(*) from db_stored_procedure where sp_name = 't';
+select count(*) from db_stored_procedure_args where sp_name = 't';
 
 call t();
 

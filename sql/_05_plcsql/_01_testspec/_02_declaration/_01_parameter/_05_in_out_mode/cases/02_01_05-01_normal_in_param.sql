@@ -45,8 +45,8 @@ begin
     dbms_output.put_line('p_char_varying '       || p_char_varying);
 end;
 
-select * from db_stored_procedure where sp_name = 't';
-select * from db_stored_procedure_args where sp_name = 't';
+select count(*) from db_stored_procedure where sp_name = 't';
+select count(*) from db_stored_procedure_args where sp_name = 't';
 
 call t(
     cast(1 as short),

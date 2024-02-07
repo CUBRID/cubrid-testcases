@@ -11,8 +11,8 @@ begin
     dbms_output.put_line(ASIN(0.2)); -- parse error param value caused by dot? 2.013579207903308e-01
 end;
 
-select * from db_stored_procedure where sp_name = 't';
-select * from db_stored_procedure_args where sp_name = 't';
+select count(*) from db_stored_procedure where sp_name = 't';
+select count(*) from db_stored_procedure_args where sp_name = 't';
 
 call t();
 

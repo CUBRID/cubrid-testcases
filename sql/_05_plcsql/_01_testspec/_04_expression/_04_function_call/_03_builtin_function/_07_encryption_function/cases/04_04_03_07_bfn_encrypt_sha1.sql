@@ -11,8 +11,8 @@ begin
     dbms_output.put_line(SHA1(TO_DATE('01/01/2010')));
 end;
 
-select * from db_stored_procedure where sp_name = 't';
-select * from db_stored_procedure_args where sp_name = 't';
+select count(*) from db_stored_procedure where sp_name = 't';
+select count(*) from db_stored_procedure_args where sp_name = 't';
 
 call t();
 

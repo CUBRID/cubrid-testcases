@@ -69,8 +69,8 @@ begin
     dbms_output.put_line(CAST('10:00 pm 01/01/1999' AS TIMESTAMP));
 end;
 
-select * from db_stored_procedure where sp_name = 't';
-select * from db_stored_procedure_args where sp_name = 't';
+select count(*) from db_stored_procedure where sp_name = 't';
+select count(*) from db_stored_procedure_args where sp_name = 't';
 
 call t();
 

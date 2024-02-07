@@ -16,8 +16,8 @@ begin
     dbms_output.put_line(ADDTIME(TIMESTAMP('1999-01-08 12:00:00'), TO_TIME('02:30:52')));
 end;
 
-select * from db_stored_procedure where sp_name = 't';
-select * from db_stored_procedure_args where sp_name = 't';
+select count(*) from db_stored_procedure where sp_name = 't';
+select count(*) from db_stored_procedure_args where sp_name = 't';
 
 call t();
 

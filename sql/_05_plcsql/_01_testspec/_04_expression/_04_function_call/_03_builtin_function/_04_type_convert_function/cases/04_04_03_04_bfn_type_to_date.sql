@@ -18,8 +18,8 @@ begin
     dbms_output.put_line(TO_DATE('12/may/1999', 'dd/mon/yyyy', 'en_US')); -- TO_DATE 3rd arg parse error
 end;
 
-select * from db_stored_procedure where sp_name = 't';
-select * from db_stored_procedure_args where sp_name = 't';
+select count(*) from db_stored_procedure where sp_name = 't';
+select count(*) from db_stored_procedure_args where sp_name = 't';
 
 call t();
 

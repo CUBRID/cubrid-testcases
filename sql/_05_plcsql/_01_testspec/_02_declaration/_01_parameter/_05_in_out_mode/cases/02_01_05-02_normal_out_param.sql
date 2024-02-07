@@ -65,8 +65,8 @@ begin
     p_char_varying := 'D';
 end;
 
-select * from db_stored_procedure where sp_name = 't';
-select * from db_stored_procedure_args where sp_name = 't';
+select count(*) from db_stored_procedure where sp_name = 't';
+select count(*) from db_stored_procedure_args where sp_name = 't';
 
 select cast(1 as short) into :a from dual;
 select cast(2 as smallint) into :b from dual;
