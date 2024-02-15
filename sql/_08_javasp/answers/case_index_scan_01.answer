@@ -156,13 +156,14 @@ temp(distinct)
 Query stmt:
 (select distinct t_?.c_? from tbl tbl, (select t_?.c_?, t_?.c_? from (select tbl.ord from table({?}) t_? (c_?)) t_? (c_?), (inttest(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?))
 Query plan:
-idx-join (inner join)
+nl-join (inner join)
+    edge:  term[?]
     outer: sscan
-               class: av? node[?]
-               cost:  ? card ?
-    inner: iscan
                class: tbl node[?]
-               index: i_tbl term[?] (covers)
+               cost:  ? card ?
+    inner: sscan
+               class: av? node[?]
+               sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
