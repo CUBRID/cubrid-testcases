@@ -15,10 +15,10 @@ ALTER TABLE t_child ADD INDEX ix_val_pid_de09 (val, pid);
 CREATE INDEX ix_cannot_make ON t_child(id) WITH DEDUPLICATE=9;
 CREATE UNIQUE INDEX ux_pid ON t_child(pid); 
 CREATE INDEX ix_ign_dedupc ON t_child(pid,val) WITH DEDUPLICATE=9; 
-SELECT index_of.index_name, key_attr_name, key_order, asc_desc
+SELECT index_of.class_of.class_name, index_of.index_name, key_attr_name, key_order, asc_desc
 FROM _db_index_key 
 WHERE index_of.class_of.class_name = 't_child'
-ORDER BY index_of.class_of.class_name, key_order;
+ORDER BY index_of.class_of.class_name, index_of.index_name, key_order;
 SHOW CREATE TABLE t_child;
 DROP TABLE IF EXISTS t_child;
 
