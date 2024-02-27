@@ -21,12 +21,11 @@ WHERE sales_amount > 200
 GROUP BY a1 HAVING a2 > 200
 ORDER BY a2;
 
--- without column alias. (Results are different from csql. It seems to be a bug in the jdbc driver and cci driver) (refer to CBRD-24687)
---SELECT test_fc(dept_no), avg(sales_amount)
---FROM sales_tbl
---WHERE test_fc(sales_amount) > 200 
---GROUP BY test_fc(dept_no) HAVING test_fc(avg(sales_amount)) > 200
---ORDER BY test_fc(avg(sales_amount));
+SELECT test_fc(dept_no), avg(sales_amount)
+FROM sales_tbl
+WHERE test_fc(sales_amount) > 200 
+GROUP BY test_fc(dept_no) HAVING test_fc(avg(sales_amount)) > 200
+ORDER BY test_fc(avg(sales_amount));
 
 -- check WITH ROLLUP using javasp functions. (bug report CBRD-24658)
 SELECT test_fc(dept_no), test_fc2(name), avg(sales_amount)
