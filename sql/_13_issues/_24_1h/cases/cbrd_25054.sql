@@ -1,3 +1,6 @@
+-- This test case verifies CBRD-25054 issue.
+-- When inserting data using rownum, does not show any error even the numeric column is out ranged.
+
 drop table if exists test_tbl, test_int, test_short, test_bigint, test_float, test_float_n, test_double, test_numeric, test_numeric_n;
 
 create table test_tbl ( print_ord numeric(3,0) not null );
@@ -8,6 +11,7 @@ select max(print_ord) from test_tbl;
 select rownum, print_ord from test_tbl order by print_ord desc limit 10;
 
 create table test_int (a int);
+select typeof(-2147483647 - rownum), typeof(2147483646 + rownum);
 insert into test_int select -2147483647 - rownum;
  --error
 insert into test_int select -2147483648 - rownum;
@@ -18,6 +22,7 @@ select * from test_int order by 1;
 
 
 create table test_short (a short);
+select typeof(-32767 - rownum), typeof(32766 + rownum);
 insert into test_short select -32767 - rownum;
  --error
 insert into test_short select -32768 - rownum;
@@ -28,6 +33,7 @@ select * from test_short order by 1;
 
 
 create table test_bigint (a bigint);
+select typeof(-9223372036854775807 - rownum), typeof(9223372036854775806 + rownum);
 insert into test_bigint select -9223372036854775807 - rownum;
  --error
 insert into test_bigint select -9223372036854775808 - rownum;
@@ -37,6 +43,7 @@ insert into test_bigint select 9223372036854775807 + rownum;
 select * from test_bigint order by 1;
 
 create table test_float (i int, a float);
+select typeof(-3.402823465E+38 - rownum), typeof(3.402823465E+38 + rownum);
 insert into test_float select 1, -3.402823465E+38 - rownum;
 insert into test_float values(2, -3.402823466E+38);
 insert into test_float select 3, -3.402823466E+38 - rownum;
@@ -62,6 +69,7 @@ insert into test_float_n(i,b) values(8, 3.402823467E+38);
 select * from test_float_n order by 1;
 
 create table test_double (i int, a double);
+select typeof(-1.7976931348623156E+308 - rownum), typeof(1.7976931348623156E+308 + rownum);
 insert into test_double(i,a) select 1, -1.7976931348623156E+308 - rownum; 
 insert into test_double(i,a) values(2, -1.7976931348623157E+308);
 insert into test_double(i,a) select 3, -1.7976931348623157E+308 - rownum; 
@@ -73,6 +81,7 @@ insert into test_double(i,a) values(8, 1.7976931348623158E+308);
 select * from test_double order by 1;
 
 create table test_numeric (a numeric);
+select typeof(-999999999999998 - rownum), typeof(999999999999998 + rownum);
 insert into test_numeric select -999999999999998 - rownum;
  --error
 insert into test_numeric select -999999999999999 - rownum;
