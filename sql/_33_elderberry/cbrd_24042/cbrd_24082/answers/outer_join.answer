@@ -41,17 +41,23 @@ select a.col_a from (select a.col_a from t_a a left outer join t_b b on a.col_a=
 col_a    
 
 Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select a.col_a from t_a a, t_b b where (a.col_a=b.col_a))
+Query plan:
 nl-join (left outer join)
     edge:  term[?]
-    outer: nl-join (inner join)
-               edge:  term[?]
-               outer: sscan
-                          class: a node[?]
-                          cost:  ? card ?
-               inner: sscan
-                          class: b_? node[?]
-                          sargs: term[?]
-                          cost:  ? card ?
+    outer: sscan
+               class: a node[?]
                cost:  ? card ?
     inner: sscan
                class: b node[?]
@@ -59,7 +65,7 @@ nl-join (left outer join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select a.col_a from t_a a, t_b b_? left outer join t_b b on b.col_b= ?:?  and a.col_a=b.col_a where (a.col_a=b_?.col_a)
+select a.col_a from (select a.col_a from t_a a, t_b b where (a.col_a=b.col_a)) a (col_a) left outer join t_b b on b.col_b= ?:?  and a.col_a=b.col_a
 ===================================================
 0
 ===================================================
