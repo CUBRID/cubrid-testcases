@@ -139,12 +139,18 @@ i    j    i    j
 null     null     4     4     
 
 Query plan:
+sscan
+    class: vu node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select vu.i, vu.j from u vu where (vu.i< ?:? ))
+Query plan:
 temp(order by)
     subplan: nl-join (left outer join)
                  edge:  term[?]
                  outer: sscan
                             class: vu node[?]
-                            sargs: term[?]
                             cost:  ? card ?
                  inner: sscan
                             class: t node[?]
@@ -154,7 +160,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t.i, t.j, vu.i, vu.j from t t right outer join u vu on t.i=vu.i where (vu.i< ?:? ) order by ?
+select t.i, t.j, vu.i, vu.j from t t right outer join (select vu.i, vu.j from u vu where (vu.i< ?:? )) vu (i, j) on t.i=vu.i order by ?
 ===================================================
 i    j    i    j    
 1     1     1     1     
@@ -194,12 +200,18 @@ i    j    i    j
 3     3     null     null     
 
 Query plan:
+sscan
+    class: vt node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select vt.i, vt.j from t vt where (vt.i> ?:? ))
+Query plan:
 temp(order by)
     subplan: nl-join (left outer join)
                  edge:  term[?]
                  outer: sscan
                             class: vt node[?]
-                            sargs: term[?]
                             cost:  ? card ?
                  inner: sscan
                             class: u node[?]
@@ -209,7 +221,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select vt.i, vt.j, u.i, u.j from t vt left outer join u u on vt.i=u.j where (vt.i> ?:? ) order by ?
+select vt.i, vt.j, u.i, u.j from (select vt.i, vt.j from t vt where (vt.i> ?:? )) vt (i, j) left outer join u u on vt.i=u.j order by ?
 ===================================================
 i    j    i    j    
 1     1     1     1     
@@ -354,6 +366,13 @@ i    j    i    j
 
 Query plan:
 sscan
+    class: vt node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select vt.i, vt.j from t vt where (vt.i> ?:? ))
+Query plan:
+sscan
     class: vu node[?]
     sargs: term[?]
     cost:  ? card ?
@@ -365,7 +384,6 @@ temp(order by)
                  edge:  term[?]
                  outer: sscan
                             class: vt node[?]
-                            sargs: term[?]
                             cost:  ? card ?
                  inner: sscan
                             class: vu node[?]
@@ -375,7 +393,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select vt.i, vt.j, vu.i, vu.j from t vt left outer join (select vu.i, vu.j from u vu where (vu.i< ?:? )) vu (i, j) on vt.i=vu.i where (vt.i> ?:? ) order by ?
+select vt.i, vt.j, vu.i, vu.j from (select vt.i, vt.j from t vt where (vt.i> ?:? )) vt (i, j) left outer join (select vu.i, vu.j from u vu where (vu.i< ?:? )) vu (i, j) on vt.i=vu.i order by ?
 ===================================================
 i    j    i    j    
 1     1     1     1     
@@ -466,12 +484,18 @@ sscan
 Query stmt:
 (select vt.i, vt.j from t vt where (vt.i> ?:? ))
 Query plan:
+sscan
+    class: vu node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select vu.i, vu.j from u vu where (vu.i< ?:? ))
+Query plan:
 temp(order by)
     subplan: nl-join (left outer join)
                  edge:  term[?]
                  outer: sscan
                             class: vu node[?]
-                            sargs: term[?]
                             cost:  ? card ?
                  inner: sscan
                             class: vt node[?]
@@ -481,7 +505,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select vt.i, vt.j, vu.i, vu.j from (select vt.i, vt.j from t vt where (vt.i> ?:? )) vt (i, j) right outer join u vu on vt.i=vu.i where (vu.i< ?:? ) order by ?
+select vt.i, vt.j, vu.i, vu.j from (select vt.i, vt.j from t vt where (vt.i> ?:? )) vt (i, j) right outer join (select vu.i, vu.j from u vu where (vu.i< ?:? )) vu (i, j) on vt.i=vu.i order by ?
 ===================================================
 i    j    i    j    
 1     1     1     1     
