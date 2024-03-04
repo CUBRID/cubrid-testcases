@@ -151,12 +151,12 @@ id    val    fk    id    val    text
 Query plan:
 nl-join (inner join)
     edge:  term[?]
-    outer: iscan
+    outer: sscan
+               class: u node[?]
+               cost:  ? card ?
+    inner: iscan
                class: t node[?]
                index: _t_id term[?]
-               cost:  ? card ?
-    inner: sscan
-               class: u node[?]
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
@@ -169,12 +169,12 @@ id    val    fk    id    val    text
 Query plan:
 nl-join (inner join)
     edge:  term[?]
-    outer: iscan
+    outer: sscan
+               class: u node[?]
+               cost:  ? card ?
+    inner: iscan
                class: t node[?]
                index: _t_id term[?]
-               cost:  ? card ?
-    inner: sscan
-               class: u node[?]
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
@@ -231,15 +231,14 @@ id    val    fk    id    val    text
 4     300     3     3     3001     3001 text     
 
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: iscan
+idx-join (inner join)
+    outer: sscan
+               class: t node[?]
+               cost:  ? card ?
+    inner: iscan
                class: u node[?]
                index: _u_id term[?]
-               sargs: term[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t node[?]
+               filtr: term[?]
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
@@ -254,15 +253,14 @@ id    val    fk    id    val    text
 4     300     3     3     3001     3001 text     
 
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: iscan
+idx-join (inner join)
+    outer: sscan
+               class: t node[?]
+               cost:  ? card ?
+    inner: iscan
                class: u node[?]
                index: _u_id term[?]
-               sargs: term[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t node[?]
+               filtr: term[?]
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?

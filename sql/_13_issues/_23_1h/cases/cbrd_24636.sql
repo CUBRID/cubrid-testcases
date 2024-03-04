@@ -10,6 +10,7 @@ drop table if exists t_a, t_b, t_c;
 
 create table t_a (x int);
 insert into t_a values (1);
+create index idx_t_a on t_a (x);
 
 create table t_b (x int, y int);
 insert into t_b select a.*, b.* from table ({1}) as a, table ({1, 2, 3, 4}) as b;

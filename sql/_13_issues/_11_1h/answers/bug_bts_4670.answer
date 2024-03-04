@@ -121,25 +121,26 @@ select di.i, dk.i, dk.x from di di, dk dk where (di.i> ?:? ) and di.i=dk.i and (
 ===================================================
 i    i    x    
 5     5     1     
-5     5     2     
-5     5     3     
+5     5     1     
+5     5     1     
 
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: iscan
-               class: di node[?]
-               index: i_di_i term[?] (covers) (desc_index)
-               cost:  ? card ?
-    inner: sscan
-               class: dk node[?]
-               sargs: term[?] AND term[?]
-               cost:  ? card ?
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: dk node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: di node[?]
+                            index: i_di_i term[?] (covers)
+                            filtr: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
 select di.i, dk.i, dk.x from di di, dk dk where (di.i> ?:? ) and di.i=dk.i and (dk.x> ?:? ) order by ? desc  for orderby_num()<= ?:? 
-/* ---> skip ORDER BY */
 ===================================================
 i    i    x    
 5     5     1     
@@ -148,17 +149,16 @@ i    i    x
 
 Query plan:
 temp(order by)
-    subplan: nl-join (inner join)
-                 edge:  term[?]
-                 outer: iscan
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: dk node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
                             class: di node[?]
                             index: i_di_i term[?] (covers)
+                            filtr: term[?]
                             cost:  ? card ?
-                 inner: sscan
-                            class: dk node[?]
-                            sargs: term[?] AND term[?]
-                            cost:  ? card ?
-                 sort:  ? asc
                  cost:  ? card ?
     sort:  ? desc, ? asc
     cost:  ? card ?
@@ -167,31 +167,31 @@ select di.i, dk.i, dk.x from di di, dk dk where (di.i> ?:? ) and di.i=dk.i and (
 ===================================================
 i    i    i    x    
 5     5     5     1     
-5     5     5     2     
-5     5     5     3     
+5     5     5     1     
+5     5     5     1     
 
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: idx-join (inner join)
-               outer: iscan
-                          class: di node[?]
-                          index: i_di_i term[?] (covers) (desc_index)
-                          cost:  ? card ?
-               inner: iscan
-                          class: dj node[?]
-                          index: i_dj_i term[?] (covers)
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: dk node[?]
-               sargs: term[?]
-               cost:  ? card ?
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: idx-join (inner join)
+                            outer: sscan
+                                       class: dk node[?]
+                                       cost:  ? card ?
+                            inner: iscan
+                                       class: dj node[?]
+                                       index: i_dj_i term[?] (covers)
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: iscan
+                            class: di node[?]
+                            index: i_di_i term[?] (covers)
+                            filtr: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
 select di.i, dj.i, dk.i, dk.x from di di, dj dj, dk dk where (di.i> ?:? ) and di.i=dj.i and dj.i=dk.i order by ? desc  for orderby_num()<= ?:? 
-/* ---> skip ORDER BY */
 ===================================================
 0
 ===================================================
@@ -207,27 +207,27 @@ i    i    i
 5     5     5     
 
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: idx-join (inner join)
-               outer: iscan
-                          class: di node[?]
-                          index: i_di_i term[?] (covers) (desc_index)
-                          cost:  ? card ?
-               inner: iscan
-                          class: dj node[?]
-                          index: i_dj_i term[?] (covers)
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: dk node[?]
-               sargs: term[?]
-               cost:  ? card ?
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: idx-join (inner join)
+                            outer: sscan
+                                       class: dk node[?]
+                                       cost:  ? card ?
+                            inner: iscan
+                                       class: dj node[?]
+                                       index: i_dj_i term[?] (covers)
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: iscan
+                            class: di node[?]
+                            index: i_di_i term[?] (covers)
+                            filtr: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
 select di.i, dj.i, dk.i from di di, dj dj, dk dk where (di.i> ?:? ) and di.i=dj.i and dj.i=dk.i order by ? desc  for orderby_num()<= ?:? 
-/* ---> skip ORDER BY */
 ===================================================
 0
 ===================================================
