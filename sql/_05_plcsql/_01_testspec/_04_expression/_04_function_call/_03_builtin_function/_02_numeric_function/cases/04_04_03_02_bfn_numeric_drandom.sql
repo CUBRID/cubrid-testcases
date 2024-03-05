@@ -4,9 +4,9 @@
 
 create or replace procedure t () as
 begin
-    dbms_output.put_line(DRANDOM());
-    dbms_output.put_line(DRANDOM(1));
-    dbms_output.put_line(DRANDOM(1.4));
+    dbms_output.put_line(case isnull(DRANDOM()) when 0 then 'ok' when 1 then 'nok' end);
+    dbms_output.put_line(case isnull(DRANDOM(1)) when 0 then 'ok' when 1 then 'nok' end);
+    dbms_output.put_line(case isnull(DRANDOM(1.4)) when 0 then 'ok' when 1 then 'nok' end);
 end;
 
 select count(*) from db_stored_procedure where sp_name = 't';

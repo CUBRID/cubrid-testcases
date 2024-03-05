@@ -4,9 +4,9 @@
 
 create or replace procedure t () as
 begin
-    dbms_output.put_line(RANDOM());
-    dbms_output.put_line(RANDOM(1));
-    dbms_output.put_line(RANDOM(1.4));
+    dbms_output.put_line(case isnull(RANDOM()) when 0 then 'ok' when 1 then 'nok' end);
+    dbms_output.put_line(case isnull(RANDOM(1)) when 0 then 'ok' when 1 then 'nok' end);
+    dbms_output.put_line(case isnull(RANDOM(1.4)) when 0 then 'ok' when 1 then 'nok' end);
 end;
 
 select count(*) from db_stored_procedure where sp_name = 't';
