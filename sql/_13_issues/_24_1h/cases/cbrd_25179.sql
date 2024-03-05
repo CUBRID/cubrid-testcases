@@ -60,6 +60,25 @@ SELECT /*+ recompile */ 1 k, a1.* FROM   ( WITH cte AS (SELECT col_a, col_b FROM
 SELECT * FROM  cte) a1 INNER JOIN ( WITH cte AS (SELECT col_a, col_b FROM   tbl_b  WHERE col_a LIKE Concat ('KOR-', NULL, '%'))
 SELECT * FROM  cte) a2 ON a1.col_a = a2.col_a LEFT JOIN tbl_b ON tbl_b.col_b = a2.col_b ;
 
+--@queryplan
+SELECT /*+ recompile */ 1 l, T.* FROM ( WITH cte AS (SELECT col_a, col_b FROM tbl_a WHERE 1=0)
+SELECT tbl_a.* FROM tbl_a INNER JOIN cte ON tbl_a.col_a = cte.col_a LEFT JOIN tbl_b ON tbl_a.col_b = tbl_b.col_b ) t;
+
+--@queryplan
+SELECT /*+ recompile */ 1 m, T.* FROM ( WITH cte AS (SELECT col_a, col_b FROM tbl_a WHERE col_a > 10000 and col_a <100 )
+SELECT tbl_a.* FROM tbl_a INNER JOIN cte ON tbl_a.col_a = cte.col_a LEFT JOIN tbl_b ON tbl_a.col_b = tbl_b.col_b ) t;
+
+--@queryplan
+SELECT /*+ recompile */ 1 n, T.* FROM ( WITH cte AS (SELECT col_a, col_b FROM tbl_a WHERE col_b = '2024-13-01' )
+SELECT tbl_a.* FROM tbl_a INNER JOIN cte ON tbl_a.col_a = cte.col_a LEFT JOIN tbl_b ON tbl_a.col_b = tbl_b.col_b ) t;
+
+--@queryplan
+SELECT /*+ recompile */ 1 o, T.* FROM ( WITH cte AS (select col_a, count(*) cnt from tbl_a group by col_b )
+SELECT * FROM cte ) t;
+
+--@queryplan
+SELECT /*+ recompile */ 1 p, T.* FROM ( WITH cte AS (select col_a, count(*) col_b from tbl_a group by col_b )
+SELECT tbl_a.* FROM tbl_a INNER JOIN cte ON tbl_a.col_a = cte.col_a LEFT JOIN tbl_b ON tbl_a.col_b = tbl_b.col_b ) t;
 
 drop table tbl_a;
 drop table tbl_b;
