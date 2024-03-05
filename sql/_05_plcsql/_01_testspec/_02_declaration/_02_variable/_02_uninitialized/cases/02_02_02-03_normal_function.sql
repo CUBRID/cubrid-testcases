@@ -7,7 +7,7 @@ create or replace procedure t  as
     a date := to_date('2012-11-28', 'YYYY-MM-DD') + 7 ;
 begin
     dbms_output.put_line('a = ' || a );
-    
+
     a := to_date('1974-12-27', 'YYYY-MM-DD') + 7 ;
     dbms_output.put_line('a = ' || a );
 end;
@@ -37,10 +37,8 @@ call t();
 
 
 create or replace procedure t  as
-    a varchar := USER();
+    a varchar;
 begin
-    dbms_output.put_line('a = ' || a );
-
     a := CHARSET('abc');
     dbms_output.put_line('a = ' || a );
 end;
