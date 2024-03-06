@@ -2,6 +2,7 @@
 
 -- Scenario for declaring serial and entering data as nextvalue value
 
+drop table if exists plcsql_insert;
 create table plcsql_insert( s_01 int, s_02 varchar(5) );
 create serial plcsql_serial;
 

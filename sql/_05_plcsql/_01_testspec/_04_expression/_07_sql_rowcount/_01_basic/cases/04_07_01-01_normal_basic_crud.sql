@@ -3,6 +3,7 @@
 -- normal: using sql%rowcount with select, insert, update, and delete
 
 
+drop table if exists tbl;
 create table tbl (i int, j int);
 insert into tbl values (1, 1);
 

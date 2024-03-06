@@ -2,6 +2,7 @@
 
 -- error: unknown host variables in the definition of a cursor
 
+drop table if exists tbl;
 create table tbl (i int, j int);
 
 create or replace procedure t(k int) as

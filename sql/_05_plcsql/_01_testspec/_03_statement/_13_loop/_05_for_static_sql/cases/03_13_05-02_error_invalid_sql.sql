@@ -2,6 +2,7 @@
 
 -- error: static sql is not a select statement
 
+drop table if exists tbl;
 create table tbl(i int);
 
 create or replace procedure t(i int) as

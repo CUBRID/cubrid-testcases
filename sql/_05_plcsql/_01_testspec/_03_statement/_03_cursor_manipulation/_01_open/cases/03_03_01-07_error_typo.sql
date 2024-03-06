@@ -2,6 +2,7 @@
 
 -- Check cursor-related grammar.
 
+drop table if exists plcsql_tbl;
 create table plcsql_tbl ( id  integer, name string );
 insert into plcsql_tbl values(1, 'name1');
 insert into plcsql_tbl values(2, 'name2');

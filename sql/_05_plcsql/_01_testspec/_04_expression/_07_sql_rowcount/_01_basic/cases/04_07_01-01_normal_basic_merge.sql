@@ -4,6 +4,7 @@
 
 
 -- source_table
+drop table if exists source_table;
 CREATE TABLE source_table (a INT, b INT, c INT);
 INSERT INTO source_table VALUES (1, 1, 1);
 INSERT INTO source_table VALUES (1, 3, 2);
@@ -11,6 +12,7 @@ INSERT INTO source_table VALUES (2, 4, 5);
 INSERT INTO source_table VALUES (3, 1, 3);
 
 -- target_table
+drop table if exists target_table;
 CREATE TABLE target_table (a INT, b INT, c INT);
 INSERT INTO target_table VALUES (1, 1, 4);
 INSERT INTO target_table VALUES (1, 2, 5);
