@@ -4,8 +4,8 @@
 
 create or replace procedure t () as
 begin
-    -- parse error for LIST_DBS() 
-    dbms_output.put_line(LIST_DBS());
+    -- parse error for LIST_DBS()
+    dbms_output.put_line(case isnull(LIST_DBS()) when 0 then 'ok' when 1 then 'nok' end);
 end;
 
 select count(*) from db_stored_procedure where sp_name = 't';

@@ -4,9 +4,9 @@
 
 create or replace procedure t () as
 begin
-    dbms_output.put_line(CURRENT_USER);
-    dbms_output.put_line(SYSTEM_USER);
-    dbms_output.put_line(USER);
+    dbms_output.put_line(case isnull(CURRENT_USER) when 0 then 'ok' when 1 then 'nok' end);
+    dbms_output.put_line(case isnull(SYSTEM_USER) when 0 then 'ok' when 1 then 'nok' end);
+    dbms_output.put_line(case isnull(USER) when 0 then 'ok' when 1 then 'nok' end);
     dbms_output.put_line(CASE WHEN CURRENT_USER() = CURRENT_USER() THEN 'ok' ELSE 'no' END);
     dbms_output.put_line(CASE WHEN SYSTEM_USER() = SYSTEM_USER() THEN 'ok' ELSE 'no' END);
     dbms_output.put_line(CASE WHEN USER() = USER() THEN 'ok' ELSE 'no' END);
