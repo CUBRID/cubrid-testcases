@@ -3,6 +3,7 @@
 -- normal: using sql%rowcount with select, insert, update, and delete
 
 
+drop table if exists tbl;
 create table tbl (id INT UNIQUE, name VARCHAR, phone VARCHAR DEFAULT '000-0000');
 insert into tbl values
     (1, 'aaa', '000-0000'),

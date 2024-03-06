@@ -3,6 +3,7 @@
 -- normal: cursor without parameters
 
 
+drop table if exists tbl;
 create table tbl (i int, j int);
 insert into tbl values (1, 2), (2, 3), (3, 4);
 

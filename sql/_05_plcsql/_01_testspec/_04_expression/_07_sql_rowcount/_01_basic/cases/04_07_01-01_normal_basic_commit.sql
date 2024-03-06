@@ -3,6 +3,7 @@
 -- normal: using sql%rowcount with commit
 
 
+drop table if exists tbl;
 create table tbl (id INT UNIQUE, name VARCHAR, phone VARCHAR DEFAULT '000-0000');
 create or replace procedure t(i int) as
 

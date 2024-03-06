@@ -2,6 +2,7 @@
 
 -- error: into clause in the definition of a cursor
 
+drop table if exists tbl;
 create table tbl (i int, j int);
 
 create or replace procedure t(b int) as
