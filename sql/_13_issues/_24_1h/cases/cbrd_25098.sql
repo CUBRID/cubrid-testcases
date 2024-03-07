@@ -4,39 +4,39 @@
 -- orderby_num()
 -- create table & insert data
 drop table if exists tbl;
-create table tbl(col1 int, col2 int, col3 int);
+create table tbl(col_one int, col_two int, col_three int);
 insert into tbl values(1,1,1),(2,2,2),(3,3,3);
 
 -- const order by
 select
 	/*+ RECOMPILE */
-	col2,col3,orderby_num()
-	,(select 1 from tbl order by col1 limit 1) as "scala col1"
+	col_two,col_three,orderby_num()
+	,(select 1 from tbl order by col_one limit 1) as "scala col_one"
 from tbl 
-where col2 = 1 
-order by col2 for orderby_num() <= 1;
+where col_two = 1 
+order by col_two for orderby_num() <= 1;
 
 -- const order by with group by
 select
 	/*+ RECOMPILE */
-	col2,col3,orderby_num()
-	,(select col2 from tbl order by col1 limit 1) as "scala col1"
+	col_two,col_three,orderby_num()
+	,(select col_two from tbl order by col_one limit 1) as "scala col_one"
 from tbl 
-where col1 = 1 
-group by col1,col2 
-order by col1;
+where col_one = 1 
+group by col_one,col_two 
+order by col_one;
 
 
 -- view merge
 -- create table & insert data
-drop table if exists tbl1;
-drop table if exists tbl2;
+drop table if exists tbl_one;
+drop table if exists tbl_two;
 
-create table tbl1 (col1 int, col2 int);
-create table tbl2 (col3 int, col4 int);
+create table tbl_one (col_one int, col_two int);
+create table tbl_two (col_three int, col_four int);
 
-insert into tbl1 values (1,1),(2,2),(3,3);
-insert into tbl2 values (1,1),(2,2),(3,3);
+insert into tbl_one values (1,1),(2,2),(3,3);
+insert into tbl_two values (1,1),(2,2),(3,3);
 
 
 -- view merge 1
@@ -45,18 +45,18 @@ SELECT
 	rownum,
 	(
 		SELECT
-			col3
-		FROM tbl2
+			col_three
+		FROM tbl_two
 		WHERE
-			col3 = X.col1
+			col_three = X.col_one
 			AND ROWNUM =1
 	) AS test
 FROM
 (
 	SELECT
-		t1.col1
-	FROM tbl1 t1
-	ORDER BY t1.col1
+		t_one.col_one
+	FROM tbl_one t_one
+	ORDER BY t_one.col_one
 ) X;
 
 -- view merge 2
@@ -65,25 +65,25 @@ SELECT
 	rownum,
 	(
 		SELECT
-			col3
-		FROM tbl2
+			col_three
+		FROM tbl_two
 		WHERE
-			col3 = X.col1
+			col_three = X.col_one
 			AND ROWNUM =1
 	 ) AS test
 FROM
 (
 	SELECT
-	t1.col1
+	t_one.col_one
 	,(
 		select
 			1
-		from tbl1
-		where col1 = t1.col1
-	) as col10
-	FROM tbl1 t1
-	GROUP BY t1.col1
-	ORDER BY t1.col1
+		from tbl_one
+		where col_one = t_one.col_one
+	) as col_one_another
+	FROM tbl_one t_one
+	GROUP BY t_one.col_one
+	ORDER BY t_one.col_one
 ) X;
 
-drop table tbl, tbl1, tbl2;
+drop table tbl, tbl_one, tbl_two;

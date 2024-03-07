@@ -5,7 +5,7 @@
 ===================================================
 3
 ===================================================
-col2    col3    orderby_num()    scala col1    
+col_two    col_three    orderby_num()    scala col_one    
 1     1     1     1     
 
 Query plan:
@@ -16,22 +16,22 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select ?, tbl.col? from tbl tbl order by ? for orderby_num()<= ?:? )
+(select ?, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? )
 Query plan:
 sscan
     class: d? node[?]
     cost:  ? card ?
 Query stmt:
-(select d?.a_? from ((select ?, tbl.col? from tbl tbl order by ? for orderby_num()<= ?:? ) as [scala col?]) d? (a_?, col?))
+(select d?.a_? from ((select ?, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? ) as [scala col_one]) d? (a_?, col_one))
 Query plan:
 sscan
     class: tbl node[?]
     sargs: term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select tbl.col?, tbl.col?, (inst_num()), (select d?.a_? from ((select ?, tbl.col? from tbl tbl order by ? for orderby_num()<= ?:? ) as [scala col?]) d? (a_?, col?)) from tbl tbl where tbl.col?= ?:?  and (inst_num())<= ?:? 
+select tbl.col_two, tbl.col_three, (inst_num()), (select d?.a_? from ((select ?, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? ) as [scala col_one]) d? (a_?, col_one)) from tbl tbl where tbl.col_two= ?:?  and (inst_num())<= ?:? 
 ===================================================
-col2    col3    orderby_num()    scala col1    
+col_two    col_three    orderby_num()    scala col_one    
 1     1     1     1     
 
 Query plan:
@@ -42,13 +42,13 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select tbl.col?, tbl.col? from tbl tbl order by ? for orderby_num()<= ?:? )
+(select tbl.col_two, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? )
 Query plan:
 sscan
     class: d? node[?]
     cost:  ? card ?
 Query stmt:
-(select d?.col? from ((select tbl.col?, tbl.col? from tbl tbl order by ? for orderby_num()<= ?:? ) as [scala col?]) d? (col?, col?))
+(select d?.col_two from ((select tbl.col_two, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? ) as [scala col_one]) d? (col_two, col_one))
 Query plan:
 temp(group by)
     subplan: sscan
@@ -58,7 +58,7 @@ temp(group by)
     sort:  
     cost:  ? card ?
 Query stmt:
-select tbl.col?, tbl.col?, groupby_num(), (select d?.col? from ((select tbl.col?, tbl.col? from tbl tbl order by ? for orderby_num()<= ?:? ) as [scala col?]) d? (col?, col?)), tbl.col? from tbl tbl where tbl.col?= ?:?  group by tbl.col?, tbl.col?
+select tbl.col_two, tbl.col_three, groupby_num(), (select d?.col_two from ((select tbl.col_two, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? ) as [scala col_one]) d? (col_two, col_one)), tbl.col_one from tbl tbl where tbl.col_one= ?:?  group by tbl.col_one, tbl.col_two
 ===================================================
 0
 ===================================================
@@ -79,11 +79,11 @@ rownum    test
 
 Query plan:
 sscan
-    class: tbl? node[?]
+    class: tbl_two node[?]
     sargs: term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-(select tbl?.col? from tbl? tbl? where tbl?.col?=X.col? and (rownum= ?:? ))
+(select tbl_two.col_three from tbl_two tbl_two where tbl_two.col_three=X.col_one and (rownum= ?:? ))
 Query plan:
 temp(order by)
     subplan: sscan
@@ -92,7 +92,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select (orderby_num()), (select tbl?.col? from tbl? tbl? where tbl?.col?=X.col? and (rownum= ?:? )), X.col? from tbl? X order by ?
+select (orderby_num()), (select tbl_two.col_three from tbl_two tbl_two where tbl_two.col_three=X.col_one and (rownum= ?:? )), X.col_one from tbl_one X order by ?
 ===================================================
 rownum    test    
 1     1     
@@ -101,20 +101,20 @@ rownum    test
 
 Query plan:
 sscan
-    class: tbl? node[?]
+    class: tbl_two node[?]
     sargs: term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-(select tbl?.col? from tbl? tbl? where tbl?.col?=a_? and (rownum= ?:? ))
+(select tbl_two.col_three from tbl_two tbl_two where tbl_two.col_three=a_? and (rownum= ?:? ))
 Query plan:
 temp(group by)
     subplan: sscan
-                 class: t? node[?]
+                 class: t_one node[?]
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select t?.col? from tbl? t? group by t?.col?)
+(select t_one.col_one from tbl_one t_one group by t_one.col_one)
 Query plan:
 temp(order by)
     subplan: sscan
@@ -123,6 +123,6 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select (orderby_num()), (select tbl?.col? from tbl? tbl? where tbl?.col?=a_? and (rownum= ?:? )), a_? from (select t?.col? from tbl? t? group by t?.col?) X (a_?) order by ?
+select (orderby_num()), (select tbl_two.col_three from tbl_two tbl_two where tbl_two.col_three=a_? and (rownum= ?:? )), a_? from (select t_one.col_one from tbl_one t_one group by t_one.col_one) X (a_?) order by ?
 ===================================================
 0
