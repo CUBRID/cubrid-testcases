@@ -80,5 +80,19 @@ SELECT * FROM cte ) t;
 SELECT /*+ recompile */ 1 p, T.* FROM ( WITH cte AS (select col_a, count(*) col_b from tbl_a group by col_b )
 SELECT tbl_a.* FROM tbl_a INNER JOIN cte ON tbl_a.col_a = cte.col_a LEFT JOIN tbl_b ON tbl_a.col_b = tbl_b.col_b ) t;
 
+-- Query plan not created.
+--@queryplan
+SELECT /*+ recompile */ 1 q, T.* FROM   ( WITH cte AS (SELECT col_a, col_b FROM   tbl_a  WHERE col_a LIKE Concat ('KOR-', NULL, '%'))
+SELECT tbl_a.* FROM  tbl_a INNER JOIN cte ON tbl_a.col_a = cte.col_a ) t;
+
+--@queryplan
+SELECT /*+ recompile */ 1 r, T.* FROM   ( WITH cte AS (SELECT col_a, col_b FROM   tbl_a  WHERE col_a LIKE Concat ('KOR-', NULL, '%'))
+SELECT tbl_a.* FROM  tbl_a LEFT JOIN cte ON tbl_a.col_a = cte.col_a ) t;
+
+-- Query plan not created.
+--@queryplan
+SELECT /*+ recompile */ 1 s, T.* FROM   ( WITH cte AS (SELECT col_a, col_b FROM   tbl_a  WHERE col_a LIKE Concat ('KOR-', NULL, '%'))
+SELECT tbl_a.* FROM  tbl_a CROSS JOIN cte ) t;
+
 drop table tbl_a;
 drop table tbl_b;

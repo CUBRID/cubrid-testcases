@@ -400,6 +400,34 @@ sscan
 Query stmt:
 select ?, t.col_a, t.col_b from (with cte(col_a, col_b) as (select tbl_a.col_a, count(*) as [col_b] from tbl_a tbl_a group by tbl_a.col_b)select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a inner join  cte on tbl_a.col_a=cte.col_a left outer join tbl_b tbl_b on tbl_a.col_b=tbl_b.col_b) t (col_a, col_b)
 ===================================================
+q    col_a    col_b    
+
+===================================================
+r    col_a    col_b    
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl_a node[?]
+               cost:  ? card ?
+    inner: sscan
+               simple CTE:cte node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(with cte(col_a, col_b) as (null)select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a left outer join  cte on tbl_a.col_a=cte.col_a)
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select ?, t.col_a, t.col_b from (with cte(col_a, col_b) as (null)select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a left outer join  cte on tbl_a.col_a=cte.col_a) t (col_a, col_b)
+===================================================
+s    col_a    col_b    
+
+===================================================
 0
 ===================================================
 0
