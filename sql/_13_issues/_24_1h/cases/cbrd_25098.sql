@@ -41,6 +41,26 @@ insert into tbl_two values (1,1),(2,2),(3,3);
 
 -- view merge 1
 SELECT
+        /*+ RECOMPILE */
+        rownum,
+        (
+                SELECT
+                        col_three
+                FROM tbl_two
+                WHERE
+                        col_three = X.col_one
+                        AND ROWNUM =1
+        ) AS test
+FROM
+(
+        SELECT
+                t_one.col_one
+        FROM tbl_one t_one
+        ORDER BY t_one.col_one
+) X;
+
+-- view merge 1 + limit
+SELECT
 	/*+ RECOMPILE */
 	rownum,
 	(
@@ -61,6 +81,33 @@ FROM
 limit 1;
 
 -- view merge 2
+SELECT
+        /*+ RECOMPILE */
+        rownum,
+        (
+                SELECT
+                        col_three
+                FROM tbl_two
+                WHERE
+                        col_three = X.col_one
+                        AND ROWNUM =1
+         ) AS test
+FROM
+(
+        SELECT
+        t_one.col_one
+        ,(
+                select
+                        1
+                from tbl_one
+                where col_one = t_one.col_one
+        ) as col_one_another
+        FROM tbl_one t_one
+        GROUP BY t_one.col_one
+        ORDER BY t_one.col_one
+) X;
+
+-- view merge 2 + limit
 SELECT
 	/*+ RECOMPILE */
 	rownum,
@@ -87,5 +134,7 @@ FROM
 	ORDER BY t_one.col_one
 ) X
 limit 1;
+
+
 
 drop table tbl, tbl_one, tbl_two;
