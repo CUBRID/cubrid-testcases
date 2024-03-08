@@ -1,0 +1,433 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+a    col_a    col_b    
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: tbl_a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          simple CTE:cte node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(with cte(col_a, col_b) as (null)select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a inner join  cte on tbl_a.col_a=cte.col_a left outer join tbl_b tbl_b on tbl_a.col_b=tbl_b.col_b)
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select ?, t.col_a, t.col_b from (with cte(col_a, col_b) as (null)select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a inner join  cte on tbl_a.col_a=cte.col_a left outer join tbl_b tbl_b on tbl_a.col_b=tbl_b.col_b) t (col_a, col_b)
+===================================================
+b    col_a    col_b    
+
+===================================================
+0
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: tbl_a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          simple CTE:cte node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(with cte(col_a, col_b) as (null)select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a inner join  cte on tbl_a.col_a=cte.col_a left outer join tbl_b tbl_b on tbl_a.col_b=tbl_b.col_b)
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select ?, t.col_a, t.col_b from (with cte(col_a, col_b) as (null)select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a inner join  cte on tbl_a.col_a=cte.col_a left outer join tbl_b tbl_b on tbl_a.col_b=tbl_b.col_b) t (col_a, col_b)
+===================================================
+c    col_a    col_b    
+
+===================================================
+d    col_a    col_b    
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: tbl_b node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          simple CTE:cte node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(with cte(col_a, col_b) as (null)select tbl_b.col_a, tbl_b.col_b from tbl_b tbl_b inner join  cte on tbl_b.col_a=cte.col_a left outer join tbl_a tbl_a on tbl_a.col_b=cte.col_b)
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select ?, t.col_a, t.col_b from (with cte(col_a, col_b) as (null)select tbl_b.col_a, tbl_b.col_b from tbl_b tbl_b inner join  cte on tbl_b.col_a=cte.col_a left outer join tbl_a tbl_a on tbl_a.col_b=cte.col_b) t (col_a, col_b)
+===================================================
+e    col_a    col_b    
+
+===================================================
+0
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: tbl_b node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          simple CTE:cte node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(with cte(col_a, col_b) as (null)select tbl_b.col_a, tbl_b.col_b from tbl_b tbl_b inner join  cte on tbl_b.col_a=cte.col_a left outer join tbl_a tbl_a on tbl_a.col_b=cte.col_b)
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select ?, t.col_a, t.col_b from (with cte(col_a, col_b) as (null)select tbl_b.col_a, tbl_b.col_b from tbl_b tbl_b inner join  cte on tbl_b.col_a=cte.col_a left outer join tbl_a tbl_a on tbl_a.col_b=cte.col_b) t (col_a, col_b)
+===================================================
+f    col_a    col_b    
+
+===================================================
+g    col_a    col_b    
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: tbl_b node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          simple CTE:cte node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(with cte(col_a, col_b) as (null)select tbl_b.col_a, tbl_b.col_b from tbl_b tbl_b inner join  cte on tbl_b.col_a=cte.col_a left outer join tbl_a tbl_a on tbl_a.col_b=cte.col_b)
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select ?, t.col_a, t.col_b from (with cte(col_a, col_b) as (null)select tbl_b.col_a, tbl_b.col_b from tbl_b tbl_b inner join  cte on tbl_b.col_a=cte.col_a left outer join tbl_a tbl_a on tbl_a.col_b=cte.col_b) t (col_a, col_b)
+===================================================
+h    col_a    col_b    
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: tbl_b node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          simple CTE:cte node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(with cte(col_a, col_b) as (null)select tbl_b.col_a, tbl_b.col_b from tbl_b tbl_b inner join  cte on tbl_b.col_a=cte.col_a left outer join tbl_a tbl_a on tbl_a.col_b=cte.col_b)
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select ?, t.col_a, t.col_b from (with cte(col_a, col_b) as (null)select tbl_b.col_a, tbl_b.col_b from tbl_b tbl_b inner join  cte on tbl_b.col_a=cte.col_a left outer join tbl_a tbl_a on tbl_a.col_b=cte.col_b) t (col_a, col_b)
+===================================================
+i    col_a    col_b    
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: tbl_b node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          simple CTE:cte node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(with cte(col_a, col_b) as (null)select tbl_b.col_a, tbl_b.col_b from tbl_b tbl_b inner join  cte on tbl_b.col_a=cte.col_a left outer join tbl_a tbl_a on tbl_a.col_b=cte.col_b)
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select ?, t.col_a, t.col_b from (with cte(col_a, col_b) as (null)select tbl_b.col_a, tbl_b.col_b from tbl_b tbl_b inner join  cte on tbl_b.col_a=cte.col_a left outer join tbl_a tbl_a on tbl_a.col_b=cte.col_b) t (col_a, col_b)
+===================================================
+j    col_a    col_b    
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: tbl_b node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          simple CTE:cte node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+with cte(col_a, col_b) as (null)select ?, tbl_b.col_a, tbl_b.col_b from tbl_b tbl_b inner join  cte on tbl_b.col_a=cte.col_a left outer join tbl_a tbl_a on tbl_a.col_b=cte.col_b
+===================================================
+k    col_a    col_b    
+
+===================================================
+l    col_a    col_b    
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: tbl_a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          simple CTE:cte node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(with cte(col_a, col_b) as (null)select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a inner join  cte on tbl_a.col_a=cte.col_a left outer join tbl_b tbl_b on tbl_a.col_b=tbl_b.col_b)
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select ?, t.col_a, t.col_b from (with cte(col_a, col_b) as (null)select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a inner join  cte on tbl_a.col_a=cte.col_a left outer join tbl_b tbl_b on tbl_a.col_b=tbl_b.col_b) t (col_a, col_b)
+===================================================
+m    col_a    col_b    
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: tbl_a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          simple CTE:cte node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(with cte(col_a, col_b) as (null)select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a inner join  cte on tbl_a.col_a=cte.col_a left outer join tbl_b tbl_b on tbl_a.col_b=tbl_b.col_b)
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select ?, t.col_a, t.col_b from (with cte(col_a, col_b) as (null)select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a inner join  cte on tbl_a.col_a=cte.col_a left outer join tbl_b tbl_b on tbl_a.col_b=tbl_b.col_b) t (col_a, col_b)
+===================================================
+n    col_a    col_b    
+
+Query plan:
+sscan
+    class: tbl_a node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a where tbl_a.col_b= ?:? 
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: tbl_a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          simple CTE:cte node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(with cte(col_a, col_b) as (select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a where tbl_a.col_b= ?:? )select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a inner join  cte on tbl_a.col_a=cte.col_a left outer join tbl_b tbl_b on tbl_a.col_b=tbl_b.col_b)
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select ?, t.col_a, t.col_b from (with cte(col_a, col_b) as (select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a where tbl_a.col_b= ?:? )select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a inner join  cte on tbl_a.col_a=cte.col_a left outer join tbl_b tbl_b on tbl_a.col_b=tbl_b.col_b) t (col_a, col_b)
+===================================================
+o    col_a    cnt    
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: tbl_a node[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select tbl_a.col_a, count(*) from tbl_a tbl_a group by tbl_a.col_b
+Query plan:
+sscan
+    simple CTE:cte node[?]
+    cost:  ? card ?
+Query stmt:
+(with cte(col_a, cnt) as (select tbl_a.col_a, count(*) from tbl_a tbl_a group by tbl_a.col_b)select cte.col_a, cte.cnt from  cte)
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select ?, t.col_a, t.cnt from (with cte(col_a, cnt) as (select tbl_a.col_a, count(*) as [cnt] from tbl_a tbl_a group by tbl_a.col_b)select cte.col_a, cte.cnt from  cte) t (col_a, cnt)
+===================================================
+p    col_a    col_b    
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: tbl_a node[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select tbl_a.col_a, count(*) from tbl_a tbl_a group by tbl_a.col_b
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: tbl_a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          simple CTE:cte node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(with cte(col_a, col_b) as (select tbl_a.col_a, count(*) from tbl_a tbl_a group by tbl_a.col_b)select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a inner join  cte on tbl_a.col_a=cte.col_a left outer join tbl_b tbl_b on tbl_a.col_b=tbl_b.col_b)
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select ?, t.col_a, t.col_b from (with cte(col_a, col_b) as (select tbl_a.col_a, count(*) as [col_b] from tbl_a tbl_a group by tbl_a.col_b)select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a inner join  cte on tbl_a.col_a=cte.col_a left outer join tbl_b tbl_b on tbl_a.col_b=tbl_b.col_b) t (col_a, col_b)
+===================================================
+q    col_a    col_b    
+
+===================================================
+r    col_a    col_b    
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl_a node[?]
+               cost:  ? card ?
+    inner: sscan
+               simple CTE:cte node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(with cte(col_a, col_b) as (null)select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a left outer join  cte on tbl_a.col_a=cte.col_a)
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select ?, t.col_a, t.col_b from (with cte(col_a, col_b) as (null)select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a left outer join  cte on tbl_a.col_a=cte.col_a) t (col_a, col_b)
+===================================================
+s    col_a    col_b    
+
+===================================================
+0
+===================================================
+0
