@@ -317,24 +317,23 @@ select '-- Scenario ?: Queries including join operations' from dual dual
 ===================================================
 0
 ===================================================
-id    va    vc    
-1     10     1000     
-2     20     2000     
+id    vb    vc    
+1     100     1000     
+2     200     2000     
 
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
+idx-join (inner join)
     outer: sscan
                class: ty node[?]
                cost:  ? card ?
     inner: iscan
                class: tx node[?]
-               index: idx term[?]
-               sargs: term[?]
+               index: idx term[?] (covers)
+               filtr: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select ty.id, tx.va, ty.vc from tx tx, ty ty where  ln( cast(tx.va as double))>? and tx.id=ty.tx_id
+select ty.id, tx.vb, ty.vc from tx tx, ty ty where (tx.vb> ?:? ) and tx.id=ty.tx_id
 ===================================================
 0
 ===================================================

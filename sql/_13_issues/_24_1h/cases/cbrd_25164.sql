@@ -49,7 +49,7 @@ drop table tx;
 
 
 select '-- Scenario 1: Various function indexes and conditions in query';
--- Purpose: To verify the accuracy and performance of queries using function indexes with various mathematical functions such as ln(), exp(), sqrt().
+-- Purpose: To verify the accuracy of queries using function indexes with various mathematical functions such as ln(), exp(), sqrt().
 drop table if exists tx;
 
 create table tx (id int, va int, vb int, vc int);
@@ -65,7 +65,7 @@ select /*+ recompile */ vc from tx where sqrt(vc) > 30;
 drop table tx;
 
 select '-- Scenario 2: Queries including join operations';
--- Purpose: To verify the accuracy and performance of join operations on tables with function indexes.
+-- Purpose: To verify the accuracy of join operations on tables with function indexes.
 drop table if exists tx;
 drop table if exists ty;
 
@@ -73,15 +73,15 @@ create table tx (id int, va int, vb int);
 create table ty (id int, tx_id int, vc int);
 insert into tx values (1,10,100), (2,20,200);
 insert into ty values (1,1,1000), (2,2,2000);
-create index idx on tx(ln(va));
+create index idx on tx(id, ln(va), vb);
 update statistics on tx;
-select /*+ recompile */ ty.id, tx.va, ty.vc from tx join ty on tx.id = ty.tx_id where ln(tx.va) > 2;
+select /*+ recompile */ ty.id, tx.vb, ty.vc from tx join ty on tx.id = ty.tx_id where vb > 2;
 
 drop table tx;
 drop table ty;
 
 select '-- Scenario 3: Comparison with and without index hints';
--- Purpose: To compare the query results and performance with and without using index hints like NO_COVERING_IDX.
+-- Purpose: To compare the query results with and without using index hints like NO_COVERING_IDX.
 drop table if exists tx;
 
 create table tx (id int, va int, vb int, vc int);
