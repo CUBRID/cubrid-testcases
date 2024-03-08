@@ -1,4 +1,14 @@
 ===================================================
+'-- Verify correct results are returned for basic select query with function index.'    
+-- Verify correct results are returned for basic select query with function index.     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select '-- Verify correct results are returned for basic select query with function index.' from dual dual
+===================================================
 0
 ===================================================
 0
@@ -32,6 +42,16 @@ select tx.vc from tx tx where (tx.vc> ?:? ) and tx.va= ?:?
 ===================================================
 0
 ===================================================
+'-- Test with different data and more complex function index to ensure correct filtering.'    
+-- Test with different data and more complex function index to ensure correct filtering.     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select '-- Test with different data and more complex function index to ensure correct filtering.' from dual dual
+===================================================
 0
 ===================================================
 0
@@ -54,49 +74,8 @@ iscan
 Query stmt:
 select tx.vc from tx tx where tx.vc= ?:?  and tx.va= ?:? 
 ===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-vc    
-100     
-
-Query plan:
-iscan
-    class: tx node[?]
-    index: idx term[?] (covers)
-    filtr: term[?]
-    cost:  ? card ?
-Query stmt:
-select tx.vc from tx tx where tx.vc= ?:?  and tx.va= ?:? 
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-vb    
-10     
-
-Query plan:
-iscan
-    class: tx node[?]
-    index: idx term[?] (covers)
-    filtr: term[?]
-    cost:  ? card ?
-Query stmt:
-select tx.vb from tx tx where tx.vc= ?:?  and tx.va= ?:? 
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-vb    
+ln(vb)    vc    
+2.302585092994046     100     
 
 Query plan:
 iscan
@@ -105,9 +84,162 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select tx.vb from tx tx where  ln( cast(tx.va as double))>? and tx.vc= ?:? 
+select  ln( cast(tx.vb as double)), tx.vc from tx tx where tx.vc= ?:?  and tx.va= ?:? 
+===================================================
+vb    ln(vb)    vc    
+10     2.302585092994046     100     
+
+Query plan:
+iscan
+    class: tx node[?]
+    index: idx term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tx.vb,  ln( cast(tx.vb as double)), tx.vc from tx tx where tx.vc= ?:?  and tx.va= ?:? 
+===================================================
+vc    
+
+Query plan:
+iscan
+    class: tx node[?]
+    index: idx term[?] (covers)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select tx.vc from tx tx where (tx.va> ?:? ) and tx.vc= ?:? 
 ===================================================
 0
+===================================================
+0
+===================================================
+0
+===================================================
+vc    
+100     
+
+Query plan:
+iscan
+    class: tx node[?]
+    index: idx term[?] (covers)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select tx.vc from tx tx where tx.vc= ?:?  and tx.va= ?:? 
+===================================================
+vc    
+200     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tx node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tx.vc from tx tx where  ln( cast(tx.va as double))>? order by ?
+===================================================
+vc    
+100     
+200     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tx node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tx.vc from tx tx where (tx.vc> ?:? ) order by ?
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+vc    
+100     
+
+Query plan:
+iscan
+    class: tx node[?]
+    index: idx term[?] (covers)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select tx.vc from tx tx where tx.vc= ?:?  and tx.va= ?:? 
+===================================================
+ln(va)    vb    vc    
+0.0     10     100     
+
+Query plan:
+iscan
+    class: tx node[?]
+    index: idx term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select  ln( cast(tx.va as double)), tx.vb, tx.vc from tx tx where tx.vc= ?:?  and tx.va= ?:? 
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+vc    
+
+Query plan:
+iscan
+    class: tx node[?]
+    index: idx term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tx.vc from tx tx where  ln( cast(tx.va as double))>? and tx.vc= ?:? 
+===================================================
+va    vc    
+1     100     
+
+Query plan:
+iscan
+    class: tx node[?]
+    index: idx_length term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tx.va, tx.vc from tx tx where  char_length( cast(tx.vb as varchar))=? and tx.vc= ?:? 
+===================================================
+va    vc    
+2     200     
+
+Query plan:
+iscan
+    class: tx node[?]
+    index: idx_length term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tx.va, tx.vc from tx tx where  char_length( cast(tx.vb as varchar))=? and (tx.vc> ?:? )
+===================================================
+0
+===================================================
+'-- Scenario 1: Various function indexes and conditions in query'    
+-- Scenario 1: Various function indexes and conditions in query     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select '-- Scenario ?: Various function indexes and conditions in query' from dual dual
 ===================================================
 0
 ===================================================
@@ -123,9 +255,9 @@ select tx.vb from tx tx where  ln( cast(tx.va as double))>? and tx.vc= ?:?
 ===================================================
 0
 ===================================================
-id    
-1     
-2     
+vc    
+1000     
+2000     
 
 Query plan:
 iscan
@@ -133,9 +265,9 @@ iscan
     index: idx_ln term[?]
     cost:  ? card ?
 Query stmt:
-select tx.id from tx tx where  ln( cast(tx.va as double))>?
+select tx.vc from tx tx where  ln( cast(tx.va as double))>?
 ===================================================
-id    
+vc    
 
 Query plan:
 iscan
@@ -143,11 +275,11 @@ iscan
     index: idx_exp term[?]
     cost:  ? card ?
 Query stmt:
-select tx.id from tx tx where  exp( cast(tx.vb as double))<?
+select tx.vc from tx tx where  exp( cast(tx.vb as double))<?
 ===================================================
-id    
-1     
-2     
+vc    
+1000     
+2000     
 
 Query plan:
 iscan
@@ -155,9 +287,19 @@ iscan
     index: idx_sqrt term[?]
     cost:  ? card ?
 Query stmt:
-select tx.id from tx tx where  sqrt( cast(tx.vc as double))>?
+select tx.vc from tx tx where  sqrt( cast(tx.vc as double))>?
 ===================================================
 0
+===================================================
+'-- Scenario 2: Queries including join operations'    
+-- Scenario 2: Queries including join operations     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select '-- Scenario ?: Queries including join operations' from dual dual
 ===================================================
 0
 ===================================================
@@ -198,53 +340,15 @@ select ty.id, tx.va, ty.vc from tx tx, ty ty where  ln( cast(tx.va as double))>?
 ===================================================
 0
 ===================================================
-0
-===================================================
-0
-===================================================
-Error:-493
-===================================================
-0
-===================================================
-0
-===================================================
-count(*)    
-0     
+'-- Scenario 3: Comparison with and without index hints'    
+-- Scenario 3: Comparison with and without index hints     
 
 Query plan:
-iscan
-    class: tx node[?]
-    index: idx term[?]
+sscan
+    class: dual node[?]
     cost:  ? card ?
 Query stmt:
-select count(*) from tx tx where  ln( cast(tx.va as double))>?
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-2
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-id    
-1     
-
-Query plan:
-iscan
-    class: tx node[?]
-    index: idx_va_ln term[?] AND term[?]
-    cost:  ? card ?
-Query stmt:
-select tx.id from tx tx where  ln( cast(tx.vb as double))>? and tx.va= ?:? 
-===================================================
-0
+select '-- Scenario ?: Comparison with and without index hints' from dual dual
 ===================================================
 0
 ===================================================
@@ -255,6 +359,16 @@ select tx.id from tx tx where  ln( cast(tx.vb as double))>? and tx.va= ?:?
 0
 ===================================================
 0
+===================================================
+'-- Query without index hint'    
+-- Query without index hint     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select '-- Query without index hint' from dual dual
 ===================================================
 vc    
 100     
@@ -268,6 +382,16 @@ iscan
 Query stmt:
 select tx.vc from tx tx where tx.vc= ?:?  and tx.va= ?:? 
 ===================================================
+'-- Query with index hint NO_COVERING_IDX'    
+-- Query with index hint NO_COVERING_IDX     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select '-- Query with index hint NO_COVERING_IDX' from dual dual
+===================================================
 vc    
 100     
 
@@ -279,29 +403,5 @@ iscan
     cost:  ? card ?
 Query stmt:
 select /*+ NO_COVERING_IDX */ tx.vc from tx tx where tx.vc= ?:?  and tx.va= ?:? 
-===================================================
-count(*)    
-2     
-
-Query plan:
-iscan
-    class: tx node[?]
-    index: idx term[?]
-    sargs: term[?] AND term[?]
-    cost:  ? card ?
-Query stmt:
-select /*+ NO_COVERING_IDX */ count(*) from tx tx where (tx.va> ?:? ) and  ln( cast(tx.vb as double))>? and (tx.vc< ?:? )
-===================================================
-count(*)    
-2     
-
-Query plan:
-iscan
-    class: tx node[?]
-    index: idx term[?]
-    sargs: term[?] AND term[?]
-    cost:  ? card ?
-Query stmt:
-select count(*) from tx tx where (tx.va> ?:? ) and  ln( cast(tx.vb as double))>? and (tx.vc< ?:? )
 ===================================================
 0
