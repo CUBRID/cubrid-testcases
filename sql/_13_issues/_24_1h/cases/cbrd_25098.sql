@@ -57,7 +57,8 @@ FROM
 		t_one.col_one
 	FROM tbl_one t_one
 	ORDER BY t_one.col_one
-) X;
+) X
+limit 1;
 
 -- view merge 2
 SELECT
@@ -84,6 +85,7 @@ FROM
 	FROM tbl_one t_one
 	GROUP BY t_one.col_one
 	ORDER BY t_one.col_one
-) X;
+) X
+limit 1;
 
 drop table tbl, tbl_one, tbl_two;

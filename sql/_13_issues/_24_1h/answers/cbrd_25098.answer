@@ -74,8 +74,6 @@ select tbl.col_two, tbl.col_three, groupby_num(), (select d?.col_two from ((sele
 ===================================================
 rownum    test    
 1     1     
-2     2     
-3     3     
 
 Query plan:
 sscan
@@ -92,12 +90,10 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select (orderby_num()), (select tbl_two.col_three from tbl_two tbl_two where tbl_two.col_three=X.col_one and (rownum= ?:? )), X.col_one from tbl_one X order by ?
+select (orderby_num()), (select tbl_two.col_three from tbl_two tbl_two where tbl_two.col_three=X.col_one and (rownum= ?:? )), X.col_one from tbl_one X order by ? for (orderby_num())<= ?:? 
 ===================================================
 rownum    test    
 1     1     
-2     2     
-3     3     
 
 Query plan:
 sscan
@@ -123,6 +119,6 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select (orderby_num()), (select tbl_two.col_three from tbl_two tbl_two where tbl_two.col_three=a_? and (rownum= ?:? )), a_? from (select t_one.col_one from tbl_one t_one group by t_one.col_one) X (a_?) order by ?
+select (orderby_num()), (select tbl_two.col_three from tbl_two tbl_two where tbl_two.col_three=a_? and (rownum= ?:? )), a_? from (select t_one.col_one from tbl_one t_one group by t_one.col_one) X (a_?) order by ? for (orderby_num())<= ?:? 
 ===================================================
 0
