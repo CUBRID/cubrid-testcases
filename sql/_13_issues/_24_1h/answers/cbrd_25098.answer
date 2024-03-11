@@ -1,0 +1,191 @@
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+col_two    col_three    orderby_num()    scala col_one    
+1     1     1     1     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tbl node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select ?, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? )
+Query plan:
+sscan
+    class: d? node[?]
+    cost:  ? card ?
+Query stmt:
+(select d?.a_? from ((select ?, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? ) as [scala col_one]) d? (a_?, col_one))
+Query plan:
+sscan
+    class: tbl node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl.col_two, tbl.col_three, (inst_num()), (select d?.a_? from ((select ?, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? ) as [scala col_one]) d? (a_?, col_one)) from tbl tbl where tbl.col_two= ?:?  and (inst_num())<= ?:? 
+===================================================
+col_two    col_three    orderby_num()    scala col_one    
+1     1     1     1     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tbl node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select tbl.col_two, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? )
+Query plan:
+sscan
+    class: d? node[?]
+    cost:  ? card ?
+Query stmt:
+(select d?.col_two from ((select tbl.col_two, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? ) as [scala col_one]) d? (col_two, col_one))
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: tbl node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select tbl.col_two, tbl.col_three, groupby_num(), (select d?.col_two from ((select tbl.col_two, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? ) as [scala col_one]) d? (col_two, col_one)), tbl.col_one from tbl tbl where tbl.col_one= ?:?  group by tbl.col_one, tbl.col_two
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+3
+===================================================
+rownum    test    
+1     1     
+2     2     
+3     3     
+
+Query plan:
+sscan
+    class: tbl_two node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+(select tbl_two.col_three from tbl_two tbl_two where tbl_two.col_three=X.col_one and (rownum= ?:? ))
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: X node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select (orderby_num()), (select tbl_two.col_three from tbl_two tbl_two where tbl_two.col_three=X.col_one and (rownum= ?:? )), X.col_one from tbl_one X order by ?
+===================================================
+rownum    test    
+1     1     
+
+Query plan:
+sscan
+    class: tbl_two node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+(select tbl_two.col_three from tbl_two tbl_two where tbl_two.col_three=X.col_one and (rownum= ?:? ))
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t_one node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t_one.col_one from tbl_one t_one order by ?)
+Query plan:
+sscan
+    class: X node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select rownum, (select tbl_two.col_three from tbl_two tbl_two where tbl_two.col_three=X.col_one and (rownum= ?:? )) from (select t_one.col_one from tbl_one t_one order by ?) X (col_one) where (inst_num()<= ?:? )
+===================================================
+rownum    test    
+1     1     
+2     2     
+3     3     
+
+Query plan:
+sscan
+    class: tbl_two node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+(select tbl_two.col_three from tbl_two tbl_two where tbl_two.col_three=a_? and (rownum= ?:? ))
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t_one node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t_one.col_one from tbl_one t_one group by t_one.col_one)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: X node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select (orderby_num()), (select tbl_two.col_three from tbl_two tbl_two where tbl_two.col_three=a_? and (rownum= ?:? )), a_? from (select t_one.col_one from tbl_one t_one group by t_one.col_one) X (a_?) order by ?
+===================================================
+rownum    test    
+1     1     
+
+Query plan:
+sscan
+    class: tbl_two node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+(select tbl_two.col_three from tbl_two tbl_two where tbl_two.col_three=X.col_one and (rownum= ?:? ))
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t_one node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t_one.col_one from tbl_one t_one group by t_one.col_one)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t_one node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select a_? from (select t_one.col_one from tbl_one t_one group by t_one.col_one) t_one (a_?) order by ?)
+Query plan:
+sscan
+    class: X node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select rownum, (select tbl_two.col_three from tbl_two tbl_two where tbl_two.col_three=X.col_one and (rownum= ?:? )) from (select a_? from (select t_one.col_one from tbl_one t_one group by t_one.col_one) t_one (a_?) order by ?) X (col_one) where (inst_num()<= ?:? )
+===================================================
+0
