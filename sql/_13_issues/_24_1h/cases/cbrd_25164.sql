@@ -9,6 +9,8 @@ insert into tx values (1,1,1,1), (2,2,2,2);
 update statistics on tx;
 select /*+ recompile */ vc from tx where va = 1;
 select /*+ recompile */ vc from tx where va = 1 and vc > 0;
+select /*+ recompile */ vc from tx where va = 1 using index idx(+);
+select /*+ recompile */ vc from tx where va = 1 using index tx.NONE;
 
 drop table tx;
 
@@ -80,8 +82,7 @@ select /*+ recompile */ ty.id, tx.vb, ty.vc from tx join ty on tx.id = ty.tx_id 
 drop table tx;
 drop table ty;
 
-select '-- Scenario 3: Comparison with and without index hints';
--- Purpose: To compare the query results with and without using index hints like NO_COVERING_IDX.
+select '-- Scenario 3: Comparison with index hint NO_COVERING_IDX';
 drop table if exists tx;
 
 create table tx (id int, va int, vb int, vc int);
@@ -89,10 +90,6 @@ insert into tx values (1,1,10,100), (2,2,20,200), (3,3,30,300);
 create index idx on tx(va, ln(vb), vc);
 update statistics on tx;
 
-select '-- Query without index hint';
-select /*+ recompile */ vc from tx where va = 1 and vc = 100;
-
-select '-- Query with index hint NO_COVERING_IDX';
 select /*+ recompile NO_COVERING_IDX */ vc from tx where va = 1 and vc = 100;
 
 drop table tx;

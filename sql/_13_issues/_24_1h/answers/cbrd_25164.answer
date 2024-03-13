@@ -40,6 +40,28 @@ iscan
 Query stmt:
 select tx.vc from tx tx where (tx.vc> ?:? ) and tx.va= ?:? 
 ===================================================
+vc    
+1     
+
+Query plan:
+iscan
+    class: tx node[?]
+    index: idx term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select tx.vc from tx tx where tx.va= ?:?  using index tx.idx(+)
+===================================================
+vc    
+1     
+
+Query plan:
+sscan
+    class: tx node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tx.vc from tx tx where tx.va= ?:?  using index tx.none
+===================================================
 0
 ===================================================
 '-- Test with different data and more complex function index to ensure correct filtering.'    
@@ -339,15 +361,15 @@ select ty.id, tx.vb, ty.vc from tx tx, ty ty where (tx.vb> ?:? ) and tx.id=ty.tx
 ===================================================
 0
 ===================================================
-'-- Scenario 3: Comparison with and without index hints'    
--- Scenario 3: Comparison with and without index hints     
+'-- Scenario 3: Comparison with index hint NO_COVERING_IDX'    
+-- Scenario 3: Comparison with index hint NO_COVERING_IDX     
 
 Query plan:
 sscan
     class: dual node[?]
     cost:  ? card ?
 Query stmt:
-select '-- Scenario ?: Comparison with and without index hints' from dual dual
+select '-- Scenario ?: Comparison with index hint NO_COVERING_IDX' from dual dual
 ===================================================
 0
 ===================================================
@@ -358,38 +380,6 @@ select '-- Scenario ?: Comparison with and without index hints' from dual dual
 0
 ===================================================
 0
-===================================================
-'-- Query without index hint'    
--- Query without index hint     
-
-Query plan:
-sscan
-    class: dual node[?]
-    cost:  ? card ?
-Query stmt:
-select '-- Query without index hint' from dual dual
-===================================================
-vc    
-100     
-
-Query plan:
-iscan
-    class: tx node[?]
-    index: idx term[?] (covers)
-    filtr: term[?]
-    cost:  ? card ?
-Query stmt:
-select tx.vc from tx tx where tx.vc= ?:?  and tx.va= ?:? 
-===================================================
-'-- Query with index hint NO_COVERING_IDX'    
--- Query with index hint NO_COVERING_IDX     
-
-Query plan:
-sscan
-    class: dual node[?]
-    cost:  ? card ?
-Query stmt:
-select '-- Query with index hint NO_COVERING_IDX' from dual dual
 ===================================================
 vc    
 100     
