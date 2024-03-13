@@ -39,7 +39,7 @@ create user u__4;
 
 alter table t_______10t_______20t_______30t_______40t_______50t_______60t_______70t_______80t_______90t______100t______110t______120t______130t______140t______150t______160t______170t______180t______190t______200 owner to u__4;
 
-/* length = 100c(table) + 46c(column) + 3c(user: u__4) + 5c(extras) = 255c */
+/* length = 200c(table) + 46c(column) + 4c(user: u__4) + 5c(extras) = 255c */
 select length (unique_name), unique_name from db_serial;
 
 alter table u__4.t_______10t_______20t_______30t_______40t_______50t_______60t_______70t_______80t_______90t______100t______110t______120t______130t______140t______150t______160t______170t______180t______190t______200 modify column c_______10c_______20c_______30c_______40c____6 bigint auto_increment;
