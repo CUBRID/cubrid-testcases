@@ -52,6 +52,8 @@ create table t20 (a int);
 --*     => Selects data from 9 tables -> select 1 serial function -> select 10th table;
 --* Expected Result: The query should return 1
 --* ---------------------------------------- */
+select 'Test case 1 - min_tables_single_cast';
+
 create serial sr1;
 
 select a from t1
@@ -87,6 +89,8 @@ drop serial sr1;
 --*     => Selects data from 10 tables and 10 serial functions sequentially and returns the number of rows in the output 
 --* Expected Result: The query should return 10 results with values 1 
 --* ---------------------------------------- */
+select 'Test case 2 - min_tables_many_casts';
+
 create serial sr1;
 create serial sr2;
 create serial sr3;
@@ -158,6 +162,8 @@ drop serial sr10;
 --*     => Selects data from 19 tables -> select 1 serial function -> select 20th table;
 --* Expected Result: The query should return 1
 --* ---------------------------------------- */
+select 'Test case 3 - max_tables_single_cast';
+
 create serial sr1;
 
 select a from t1
@@ -213,6 +219,8 @@ drop serial sr1;
 --*     => Selects data from 20 tables and 10 serial functions sequentially and returns the number of rows in the output.
 --* Expected Result: The query should return 10 results with values 1 
 --* ---------------------------------------- */
+select 'Test case 4 - max_tables_many_casts' ;
+
 create serial sr1;
 create serial sr2;
 create serial sr3;
@@ -297,6 +305,8 @@ drop serial sr10;
 
 
 -- Table Cleanup
+select 'Cleanup' ;
+
 drop table t1;
 drop table t2;
 drop table t3;
