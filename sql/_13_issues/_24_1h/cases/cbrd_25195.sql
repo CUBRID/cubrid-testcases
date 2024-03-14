@@ -48,7 +48,7 @@ create table t20 (a int);
 --*
 --* Test case 1 - min_tables_single_cast
 --* 
---* Ensure core dump no longer occurs when using 10 tables and 1 serial function.
+--* Ensure core dump no longer occurs when performing unions using 10 tables and 1 serial function.
 --*     => Selects data from 9 tables -> select 1 serial function -> select 10th table;
 --* Expected Result: The query should return 1
 --* ---------------------------------------- */
@@ -85,7 +85,7 @@ drop serial sr1;
 --*
 --* Test case 2 - min_tables_many_casts
 --* 
---* Ensure core dump no longer occurs when using 10 tables and 10 serial functions sequentially.
+--* Ensure core dump no longer occurs when performing unions using 10 tables and 10 serial functions sequentially.
 --*     => Selects data from 10 tables and 10 serial functions sequentially and returns the number of rows in the output 
 --* Expected Result: The query should return 10 results with values 1 
 --* ---------------------------------------- */
@@ -158,7 +158,7 @@ drop serial sr10;
 --*
 --* Test case 3 - max_tables_single_cast
 --* 
---* Ensure core dump no longer occurs when using 20 tables and 1 serial function.
+--* Ensure core dump no longer occurs when performing unions using 20 tables and 1 serial function.
 --*     => Selects data from 19 tables -> select 1 serial function -> select 20th table;
 --* Expected Result: The query should return 1
 --* ---------------------------------------- */
@@ -215,7 +215,7 @@ drop serial sr1;
 --*
 --* Test case 4 - max_tables_many_casts
 --* 
---* Ensure core dump no longer occurs when using 20 tables and 10 serial functions.
+--* Ensure core dump no longer occurs when performing unions using 20 tables and 10 serial functions.
 --*     => Selects data from 20 tables and 10 serial functions sequentially and returns the number of rows in the output.
 --* Expected Result: The query should return 10 results with values 1 
 --* ---------------------------------------- */
@@ -304,6 +304,138 @@ drop serial sr9;
 drop serial sr10;
 
 
+--/* ----------------------------------------
+--*
+--* Test case 5 - distinct_union_cast
+--* 
+--* Ensure core dump no longer occurs when performing distinct unions using 10 tables and 1 serial function.
+--*     => Selects data from 9 tables -> select 1 serial function -> select 10th table;
+--* Expected Result: The query should return 1
+--* ---------------------------------------- */
+select 'Test case 5 - distinct_union_cast';
+
+create serial sr1;
+
+select a from t1
+union
+select a from t2
+union
+select a from t3
+union
+select a from t4
+union
+select a from t5
+union
+select a from t6
+union
+select a from t7
+union
+select a from t8
+union
+select a from t9
+union
+select cast(sr1.next_value as int)
+union
+select a from t10;
+
+drop serial sr1;
+
+
+--/* ----------------------------------------
+--*
+--* Test case 6 - current_value_cast
+--* 
+--* Ensure core dump no longer occurs when performing unions using 10 tables and 1 serial function (CURRENT_VALUE).
+--*     => Selects data from 9 tables -> select 1 serial function -> select 10th table;
+--* Expected Result: The query should return 1
+--* ---------------------------------------- */
+select 'Test case 6 - current_value_cast';
+
+create serial sr1;
+
+select a from t1
+union
+select a from t2
+union
+select a from t3
+union
+select a from t4
+union
+select a from t5
+union
+select a from t6
+union
+select a from t7
+union
+select a from t8
+union
+select a from t9
+union
+select cast(sr1.current_value as int)
+union
+select a from t10;
+
+drop serial sr1;
+
+
+--/* ----------------------------------------
+--*
+--* Test case 7 - auto_increment_table_cast
+--* 
+--* Ensure core dump no longer occurs when performing unions using 10 AUTO_INCREMENT tables and 1 serial function.
+--*     => Selects data from 9 tables -> select 1 serial function -> select 10th table;
+--* Expected Result: The query should return 1
+--* ---------------------------------------- */
+select 'Test case 7 - auto_increment_table_cast';
+
+drop table if exists t1_ai;
+drop table if exists t2_ai;
+drop table if exists t3_ai;
+drop table if exists t4_ai;
+drop table if exists t5_ai;
+drop table if exists t6_ai;
+drop table if exists t7_ai;
+drop table if exists t8_ai;
+drop table if exists t9_ai;
+drop table if exists t10_ai;
+create table t1_ai (a int AUTO_INCREMENT, id varchar);
+create table t2_ai (a int AUTO_INCREMENT, id varchar);
+create table t3_ai (a int AUTO_INCREMENT, id varchar);
+create table t4_ai (a int AUTO_INCREMENT, id varchar);
+create table t5_ai (a int AUTO_INCREMENT, id varchar);
+create table t6_ai (a int AUTO_INCREMENT, id varchar);
+create table t7_ai (a int AUTO_INCREMENT, id varchar);
+create table t8_ai (a int AUTO_INCREMENT, id varchar);
+create table t9_ai (a int AUTO_INCREMENT, id varchar);
+create table t10_ai (a int AUTO_INCREMENT, id varchar);
+
+create serial sr1;
+
+select a from t1
+union
+select a from t2
+union
+select a from t3
+union
+select a from t4
+union
+select a from t5
+union
+select a from t6
+union
+select a from t7
+union
+select a from t8
+union
+select a from t9
+union
+select cast(sr1.next_value as int)
+union
+select a from t10;
+
+drop serial sr1;
+
+
 -- Table Cleanup
 select 'Cleanup' ;
 
@@ -327,3 +459,13 @@ drop table t17;
 drop table t18;
 drop table t19;
 drop table t20;
+drop table t1_ai;
+drop table t2_ai;
+drop table t3_ai;
+drop table t4_ai;
+drop table t5_ai;
+drop table t6_ai;
+drop table t7_ai;
+drop table t8_ai;
+drop table t9_ai;
+drop table t10_ai;
