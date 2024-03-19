@@ -1,4 +1,12 @@
 --+ server-message on
+/* Verification CBRD-24521
+ Extend CREATE PROCEDURE/FUNCTION for PL/CSQL
+
+ Note:
+1. Java source is not displayed (changed spec)
+2. Console_output is check on CSQL, so verify to shell test case
+3. plcsql is changed the java code
+*/
 
 create procedure comment_test() as
 begin
