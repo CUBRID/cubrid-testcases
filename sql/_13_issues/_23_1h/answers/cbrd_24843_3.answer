@@ -41,7 +41,7 @@ Query Plan:
   rewritten query: select ca.a, ca.b, ca.p_a, cb.a, cb.b, cb.p_a from [dba.t_child_a] ca, [dba.t_child_b] cb where ca.b=cb.b and cb.p_a= ?:?  and ca.p_a= ?:?  and ca.p_a is not null  and cb.p_a is not null 
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (index: dba.t_child_a.fk_t_child_a_p_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
       SCAN (index: dba.t_child_b.fk_t_child_b_p_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
@@ -61,7 +61,7 @@ Query Plan:
   rewritten query: select ca.a, ca.b, ca.p_a, cb.a, cb.b, cb.p_a from [dba.t_child_a] ca, [dba.t_child_b] cb where ca.b=cb.b and cb.p_a= ?:?  and ca.p_a= ?:?  and ca.p_a is not null  and cb.p_a is not null 
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (index: dba.t_child_a.fk_t_child_a_p_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
       SCAN (index: dba.t_child_b.fk_t_child_b_p_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
@@ -82,7 +82,7 @@ Query Plan:
   rewritten query: select a.a, a.b, a.p_a, b.a, b.b, b.p_a from [dba.t_child_a] a, [dba.t_child_a] b where (a.a mod ?=?) and (b.a mod ?=?) and a.b=b.b and a.p_a is not null  and b.p_a is not null 
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_child_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.t_child_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
@@ -103,7 +103,7 @@ Query Plan:
   rewritten query: select a.a, a.b, a.p_a, b.a, b.b, b.p_a from [dba.t_child_a] a, [dba.t_child_a] b where (a.b=b.b) and a.a mod ?=? and b.a mod ?=? and a.p_a is not null  and b.p_a is not null 
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_child_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.t_child_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
@@ -124,7 +124,7 @@ Query Plan:
   rewritten query: select a.a, a.b, a.p_a, b.a, b.b, b.p_a from [dba.t_child_a] a, [dba.t_child_a] b where (a.a mod ?=?) and (b.a mod ?=?) and a.b=b.b and a.p_a is not null  and b.p_a is not null 
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_child_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.t_child_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
@@ -145,7 +145,7 @@ Query Plan:
   rewritten query: select a.a, a.b, a.p_a, b.a, b.b, b.p_a from [dba.t_child_a] a, [dba.t_child_a] b where (a.b=b.b) and a.a mod ?=? and b.a mod ?=? and a.p_a is not null  and b.p_a is not null 
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_child_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.t_child_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
@@ -165,7 +165,7 @@ Query Plan:
   rewritten query: select /*+ ORDERED */ c.a, c.b, c.p_a from [dba.t_child_a] c inner join [dba.t_parent_a] pb on c.p_a= ?:?  and c.p_a=pb.a where ((pb.a= ?:? ) or (pb.a= ?:? ) or (pb.a= ?:? )) and c.p_a is not null 
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (index: dba.t_child_a.fk_t_child_a_p_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
       SCAN (index: dba.t_parent_a.pk_t_parent_a_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
      
@@ -187,7 +187,7 @@ Query Plan:
   rewritten query: select /*+ ORDERED NO_ELIMINATE_JOIN */ c.a, c.b, c.p_a from [dba.t_child_a] c inner join [dba.t_parent_a] pa on c.p_a=pa.a and c.p_a= ?:?  inner join [dba.t_parent_a] pb on c.p_a=pb.a where ((pb.a= ?:? ) or (pb.a= ?:? ) or (pb.a= ?:? )) and pa.a= ?:? 
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (index: dba.t_child_a.fk_t_child_a_p_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
       SCAN (index: dba.t_parent_a.pk_t_parent_a_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
         SCAN (index: dba.t_parent_a.pk_t_parent_a_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
@@ -206,7 +206,7 @@ Query Plan:
   rewritten query: select /*+ ORDERED */ c.a, c.b, c.p_a from [dba.t_child_a] c where ? in multiset{?, ?, ?} and c.p_a= ?:?  and c.p_a is not null 
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (index: dba.t_child_a.fk_t_child_a_p_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
@@ -227,7 +227,7 @@ Query Plan:
   rewritten query: select /*+ ORDERED NO_ELIMINATE_JOIN */ c.a, c.b, c.p_a from [dba.t_child_a] c, [dba.t_parent_a] pa, [dba.t_parent_a] pb where ? in multiset{?, ?, ?} and pb.a= ?:?  and c.p_a= ?:?  and pa.a= ?:?  and c.p_a=pa.a and c.p_a=pb.a
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (index: dba.t_child_a.fk_t_child_a_p_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
       SCAN (index: dba.t_parent_a.pk_t_parent_a_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
         SCAN (index: dba.t_parent_a.pk_t_parent_a_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
@@ -246,7 +246,7 @@ Query Plan:
   rewritten query: select t.a, t.b, t.p_a from [dba.t_child_a] t where (t.p_a= ?:? ) and t.p_a is not null 
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (index: dba.t_child_a.fk_t_child_a_p_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
@@ -263,7 +263,7 @@ Query Plan:
   rewritten query: select t.a, t.b, t.p_a from [dba.t_child_a] t where (t.p_a= ?:? ) and t.p_a is not null 
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (index: dba.t_child_a.fk_t_child_a_p_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
@@ -280,7 +280,7 @@ Query Plan:
   rewritten query: select t.a, t.b, t.p_a from [dba.t_child_a] t where (t.p_a> ?:? ) and t.p_a is not null 
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (index: dba.t_child_a.fk_t_child_a_p_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
@@ -297,7 +297,7 @@ Query Plan:
   rewritten query: select t.a, t.b, t.p_a from [dba.t_child_a] t where (t.p_a> ?:? ) and t.p_a is not null 
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (index: dba.t_child_a.fk_t_child_a_p_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
