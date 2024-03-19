@@ -1,0 +1,454 @@
+===================================================
+0
+===================================================
+0
+===================================================
+10000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+9     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: pk_tbl_col_a term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl tbl where (tbl.col_a> ?:? ) and tbl.col_b= ?:? 
+===================================================
+count(*)    
+10000     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_b term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl tbl where tbl.col_b= ?:? 
+===================================================
+count(*)    
+9997     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: pk_tbl_col_a term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl tbl where (tbl.col_a> ?:? )
+===================================================
+count(*)    
+10000     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_b term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+(select count(*) from tbl tbl where tbl.col_b= ?:? )
+Query plan:
+sscan
+    class: tbl node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl.a_? from (select count(*) from tbl tbl where tbl.col_b= ?:? ) tbl (a_?) where (inst_num()<= ?:? )
+===================================================
+count(*)    
+9997     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: pk_tbl_col_a term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+(select count(*) from tbl tbl where (tbl.col_a> ?:? ))
+Query plan:
+sscan
+    class: tbl node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl.a_? from (select count(*) from tbl tbl where (tbl.col_a> ?:? )) tbl (a_?) where (inst_num()<= ?:? )
+===================================================
+count(*)    
+10000     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_b term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+(select count(*) from tbl tbl where tbl.col_b= ?:? )
+Query plan:
+sscan
+    class: tbl node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl.a_? from (select count(*) from tbl tbl where tbl.col_b= ?:? ) tbl (a_?) where (inst_num()<= ?:? )
+===================================================
+count(*)    
+9997     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: pk_tbl_col_a term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+(select count(*) from tbl tbl where (tbl.col_a> ?:? ))
+Query plan:
+sscan
+    class: tbl node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl.a_? from (select count(*) from tbl tbl where (tbl.col_a> ?:? )) tbl (a_?) where (inst_num()<= ?:? )
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+5     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: pk_tbl_col_a term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl tbl where (tbl.col_a> ?:? ) and tbl.col_c= ?:? 
+===================================================
+count(*)    
+5000     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_c term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl tbl where tbl.col_c= ?:? 
+===================================================
+count(*)    
+9997     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: pk_tbl_col_a term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl tbl where (tbl.col_a> ?:? )
+===================================================
+count(*)    
+5000     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_c term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+(select count(*) from tbl tbl where tbl.col_c= ?:? )
+Query plan:
+sscan
+    class: tbl node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl.a_? from (select count(*) from tbl tbl where tbl.col_c= ?:? ) tbl (a_?) where (inst_num()<= ?:? )
+===================================================
+count(*)    
+9997     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: pk_tbl_col_a term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+(select count(*) from tbl tbl where (tbl.col_a> ?:? ))
+Query plan:
+sscan
+    class: tbl node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl.a_? from (select count(*) from tbl tbl where (tbl.col_a> ?:? )) tbl (a_?) where (inst_num()<= ?:? )
+===================================================
+count(*)    
+5000     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_c term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+(select count(*) from tbl tbl where tbl.col_c= ?:? )
+Query plan:
+sscan
+    class: tbl node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl.a_? from (select count(*) from tbl tbl where tbl.col_c= ?:? ) tbl (a_?) where (inst_num()<= ?:? )
+===================================================
+count(*)    
+9997     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: pk_tbl_col_a term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+(select count(*) from tbl tbl where (tbl.col_a> ?:? ))
+Query plan:
+sscan
+    class: tbl node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl.a_? from (select count(*) from tbl tbl where (tbl.col_a> ?:? )) tbl (a_?) where (inst_num()<= ?:? )
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+3     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: pk_tbl_col_a term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl tbl where (tbl.col_a> ?:? ) and tbl.col_d= ?:? 
+===================================================
+count(*)    
+3334     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_d term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl tbl where tbl.col_d= ?:? 
+===================================================
+count(*)    
+9997     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: pk_tbl_col_a term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl tbl where (tbl.col_a> ?:? )
+===================================================
+count(*)    
+3334     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_d term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+(select count(*) from tbl tbl where tbl.col_d= ?:? )
+Query plan:
+sscan
+    class: tbl node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl.a_? from (select count(*) from tbl tbl where tbl.col_d= ?:? ) tbl (a_?) where (inst_num()<= ?:? )
+===================================================
+count(*)    
+9997     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: pk_tbl_col_a term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+(select count(*) from tbl tbl where (tbl.col_a> ?:? ))
+Query plan:
+sscan
+    class: tbl node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl.a_? from (select count(*) from tbl tbl where (tbl.col_a> ?:? )) tbl (a_?) where (inst_num()<= ?:? )
+===================================================
+count(*)    
+3334     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_d term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+(select count(*) from tbl tbl where tbl.col_d= ?:? )
+Query plan:
+sscan
+    class: tbl node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl.a_? from (select count(*) from tbl tbl where tbl.col_d= ?:? ) tbl (a_?) where (inst_num()<= ?:? )
+===================================================
+count(*)    
+9997     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: pk_tbl_col_a term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+(select count(*) from tbl tbl where (tbl.col_a> ?:? ))
+Query plan:
+sscan
+    class: tbl node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl.a_? from (select count(*) from tbl tbl where (tbl.col_a> ?:? )) tbl (a_?) where (inst_num()<= ?:? )
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+2     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: pk_tbl_col_a term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl tbl where (tbl.col_a> ?:? ) and tbl.col_e= ?:? 
+===================================================
+count(*)    
+2500     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_e term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl tbl where tbl.col_e= ?:? 
+===================================================
+count(*)    
+9997     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: pk_tbl_col_a term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl tbl where (tbl.col_a> ?:? )
+===================================================
+count(*)    
+2500     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_e term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+(select count(*) from tbl tbl where tbl.col_e= ?:? )
+Query plan:
+sscan
+    class: tbl node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl.a_? from (select count(*) from tbl tbl where tbl.col_e= ?:? ) tbl (a_?) where (inst_num()<= ?:? )
+===================================================
+count(*)    
+9997     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: pk_tbl_col_a term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+(select count(*) from tbl tbl where (tbl.col_a> ?:? ))
+Query plan:
+sscan
+    class: tbl node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl.a_? from (select count(*) from tbl tbl where (tbl.col_a> ?:? )) tbl (a_?) where (inst_num()<= ?:? )
+===================================================
+count(*)    
+2500     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_e term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+(select count(*) from tbl tbl where tbl.col_e= ?:? )
+Query plan:
+sscan
+    class: tbl node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl.a_? from (select count(*) from tbl tbl where tbl.col_e= ?:? ) tbl (a_?) where (inst_num()<= ?:? )
+===================================================
+count(*)    
+9997     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: pk_tbl_col_a term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+(select count(*) from tbl tbl where (tbl.col_a> ?:? ))
+Query plan:
+sscan
+    class: tbl node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl.a_? from (select count(*) from tbl tbl where (tbl.col_a> ?:? )) tbl (a_?) where (inst_num()<= ?:? )
+===================================================
+0

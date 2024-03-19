@@ -1,0 +1,142 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+'left outer join where a subquery is used as the join condition.'    
+left outer join where a subquery is used as the join condition.     
+
+===================================================
+seq    prof_sno    sno    name    
+
+Query plan:
+sscan
+    class: x node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select max(x.sno) from a_test_prof x where x.seq=a.seq)
+Query plan:
+sscan
+    class: a node[?]
+    cost:  ? card ?
+Query stmt:
+(select a.seq, (select max(x.sno) from a_test_prof x where x.seq=a.seq) from a_test a)
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.seq, a.prof_sno, c.sno, c.[name] from (select a.seq, (select max(x.sno) from a_test_prof x where x.seq=a.seq) as [prof_sno] from a_test a) a (seq, prof_sno) left outer join a_test_mbr c on a.prof_sno=c.sno
+===================================================
+seq    prof_sno    sno    name    
+
+Query plan:
+sscan
+    class: x node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select max(x.sno) from a_test_prof x where x.seq=a.seq)
+Query plan:
+sscan
+    class: a node[?]
+    cost:  ? card ?
+Query stmt:
+(select a.seq, (select max(x.sno) from a_test_prof x where x.seq=a.seq) from a_test a)
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.seq, a.prof_sno, c.sno, c.[name] from (select a.seq, (select max(x.sno) from a_test_prof x where x.seq=a.seq) as [prof_sno] from a_test a) a (seq, prof_sno) left outer join a_test_mbr c on a.prof_sno=c.sno
+===================================================
+'right outer join where a subquery is used as the join condition.'    
+right outer join where a subquery is used as the join condition.     
+
+===================================================
+seq    prof_sno    sno    name    
+
+Query plan:
+sscan
+    class: x node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select max(x.sno) from a_test_prof x where x.seq=a.seq)
+Query plan:
+sscan
+    class: a node[?]
+    cost:  ? card ?
+Query stmt:
+(select a.seq, (select max(x.sno) from a_test_prof x where x.seq=a.seq) from a_test a)
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: c node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.seq, a.prof_sno, c.sno, c.[name] from (select a.seq, (select max(x.sno) from a_test_prof x where x.seq=a.seq) as [prof_sno] from a_test a) a (seq, prof_sno) right outer join a_test_mbr c on a.prof_sno=c.sno
+===================================================
+seq    prof_sno    sno    name    
+
+Query plan:
+sscan
+    class: x node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select max(x.sno) from a_test_prof x where x.seq=a.seq)
+Query plan:
+sscan
+    class: a node[?]
+    cost:  ? card ?
+Query stmt:
+(select a.seq, (select max(x.sno) from a_test_prof x where x.seq=a.seq) from a_test a)
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: c node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.seq, a.prof_sno, c.sno, c.[name] from (select a.seq, (select max(x.sno) from a_test_prof x where x.seq=a.seq) as [prof_sno] from a_test a) a (seq, prof_sno) right outer join a_test_mbr c on a.prof_sno=c.sno
+===================================================
+0
+===================================================
+0
+===================================================
+0

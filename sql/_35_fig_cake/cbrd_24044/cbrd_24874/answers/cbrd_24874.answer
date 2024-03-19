@@ -1,0 +1,149 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+100000
+===================================================
+200000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+col_a    col_b    col_c    col_d    col_a    col_b    col_c    col_d    
+1     1     1     1     1     1     1     1     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: a node[?]
+               index: idx_tab_a_ab term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select b.col_a, b.col_b, b.col_c, b.col_d, a.col_a, a.col_b, a.col_c, a.col_d from tab_b b, tab_a a where a.col_a=b.col_a and b.col_b= ?:?  and a.col_b= ?:? 
+===================================================
+count(*)    
+100000     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx_tab_b_ab term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tab_a a, tab_b b where a.col_a=b.col_a and b.col_c= ?:? 
+===================================================
+col_b    
+1     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: a node[?]
+                 index: idx_tab_b_ab term[?]
+                 sargs: term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select a.col_b, a.col_c from tab_b a where (a.col_c>= ?:? ) and a.col_a= ?:?  order by ?
+===================================================
+col_b    
+1     
+
+Query plan:
+iscan
+    class: a node[?]
+    index: idx_tab_b_ab term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select a.col_b, a.col_a from tab_b a where (a.col_c>= ?:? ) and a.col_a= ?:? 
+===================================================
+col_b    
+1     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: a node[?]
+                 index: idx_tab_b_ab term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select a.col_b, a.col_c from tab_b a where a.col_a= ?:?  order by ?
+===================================================
+col_c    
+1     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: a node[?]
+                 index: idx_tab_b_ab term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select a.col_c from tab_b a where a.col_a= ?:?  order by ?
+===================================================
+count(*)    
+1     
+
+Query plan:
+iscan
+    class: b node[?]
+    index: idx_tab_b_ab term[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tab_b b where b.col_a= ?:?  and b.col_d= ?:?  and b.col_c= ?:? 
+===================================================
+count(*)    
+1     
+
+Query plan:
+sscan
+    class: b node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ count(*) from tab_b b where b.col_b= ?:? 
+===================================================
+count(*)    
+200000     
+
+Query plan:
+iscan
+    class: b node[?]
+    index: idx_tab_b_c term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ count(*) from tab_b b where b.col_c= ?:? 
+===================================================
+0
