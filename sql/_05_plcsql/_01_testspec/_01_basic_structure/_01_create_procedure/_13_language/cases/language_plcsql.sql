@@ -1,4 +1,9 @@
 --+ server-message on
+/*
+Verification for CBRD-24811
+language statement extend
+choose the 'java' or 'plcsql'
+*/
 
 -- plcsql
 create procedure pro_plcsql() as language plcsql

@@ -1,3 +1,12 @@
+/*
+Verification for CBRD-24811
+language statement extend
+choose the 'java' or 'plcsql'
+
+The 'language java' is legacy supported on stored procedure.
+but needs to be checked after extend the language statement by pl/csql.
+*/
+
 -- java sp
 create procedure pro_java(i string) as language java
 name 'SpTest2.typetestinteger(java.lang.String) return java.lang.Integer';
