@@ -95,8 +95,10 @@ select /*+ RECOMPILE */a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q from t1
   and p<TIMESTAMP '2012-10-31 00:00:00'
   and q=DATETIME  '2008-10-31 13:15:45'
   group by a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q using index i_t1_abcdefghijklmnopq(+);
+
  drop index i_t1_abcdefghijklmnopq on t1;
-  create index i_t1_abcdefghijklmnopq1 on t1(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q)
+
+  create index i_t1_abcdefghijklmnopq on t1(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q)
   where a = '1234567890'  
   and b > '000000000' 
   and e < B'11111111111111111111' 
