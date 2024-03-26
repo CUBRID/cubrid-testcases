@@ -5,11 +5,11 @@
 create or replace procedure t(i int) as
 begin
     raise_application_error(1, 'hello');
-    null;   -- unreachable
 end;
 
-select count(*) from db_stored_procedure where sp_name = 't';
-select count(*) from db_stored_procedure_args where sp_name = 't';
+call t(1);
+
+drop procedure t;
 
 
 --+ server-message off
