@@ -32,7 +32,7 @@ select /*+ recompile  */ count(*) from (select /*+ recompile INDEX_SS */ * from 
 --Test  not use ISS index 
 select /*+ recompile */ i,j,k,l,(select /*+ recompile INDEX_SS */ count(*) from t where j between 101 and 199 ) from t order by 1;
 --Test   use ISS index 
-select /*+ recompile index_ss */ i,j,k,l,(select /*+ recompile INDEX_SS */ count(*) from t where j between 101 and 199 ) from t where j = 100 order by 1;
+select /*+ recompile index_ss */ i,j,k,l,(select /*+ recompile INDEX_SS */ count(*) from t where j between 101 and 199 ) from t where j = 100 order by 1,2,3;
 --Test  use ISS index 
 select /*+ recompile index_ss  */ i,j,k,l,(select /*+ recompile INDEX_SS */ count(*) from t where j between 101 and 199 ) from t where j = 100  limit 1;
 --Test  use ISS index 
