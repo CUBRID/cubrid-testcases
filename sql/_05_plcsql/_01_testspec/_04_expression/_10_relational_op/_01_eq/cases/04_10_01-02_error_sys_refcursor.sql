@@ -1,4 +1,5 @@
 --+ server-message on
+-- Verified for CBRD-24565
 
 -- error: usage of operator '=' with sys_refcursor values
 

@@ -1,4 +1,5 @@
 --+ server-message on
+-- Verified for CBRD-24666
 
 -- normal: using system exceptions in when clauses
 
