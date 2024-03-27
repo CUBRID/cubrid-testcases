@@ -1,4 +1,5 @@
 --+ server-message on
+-- Verified for CBRD-24565
 
 -- error caused usage of string concatenation operator '||'
 -- CBRD-25095 bug reported
