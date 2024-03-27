@@ -38,9 +38,9 @@ Query Plan:
   rewritten query: select [dba.tree].id, [dba.tree].mgrid, [dba.tree].[name] from [dba.tree] [dba.tree] connect by  prior [dba.tree].id=[dba.tree].mgrid order by ?
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (table: dba.tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
@@ -72,9 +72,9 @@ Query Plan:
   rewritten query: select [dba.tree].id, [dba.tree].mgrid, [dba.tree].[name] from [dba.tree] [dba.tree] connect by [dba.tree].mgrid= prior [dba.tree].id order by ?
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (table: dba.tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
@@ -102,10 +102,10 @@ Query Plan:
   rewritten query: select t.id, t.[name], t?.[job], level from [dba.tree] t inner join [dba.tree?] t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id=t.mgrid order by ?
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
@@ -133,10 +133,10 @@ Query Plan:
   rewritten query: select t.id, t.[name], t?.[job], level from [dba.tree] t inner join [dba.tree?] t? on t.id=t?.treeid start with t.mgrid is null  connect by t.mgrid= prior t.id order by ?
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
@@ -160,10 +160,10 @@ Query Plan:
   rewritten query: select t.id, t.[name], t?.[job], level from [dba.tree] t inner join [dba.tree?] t? on t.id=t?.treeid start with t.mgrid is null  connect by t.mgrid= prior (t.id+t.id)
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
@@ -184,10 +184,10 @@ Query Plan:
   rewritten query: select t.id, t.[name], t?.[job], level from [dba.tree] t inner join [dba.tree?] t? on t.id=t?.treeid start with t.mgrid is null  connect by t.mgrid= prior t.id+t.id
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
@@ -212,10 +212,10 @@ Query Plan:
   rewritten query: select t.id, t.[name], t?.[job], level from [dba.tree] t inner join [dba.tree?] t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id=t.mgrid and  prior t?.[job]= ?:? 
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
@@ -241,10 +241,10 @@ Query Plan:
   rewritten query: select t.id, t.[name], t?.[job], level from [dba.tree] t inner join [dba.tree?] t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id=t.mgrid
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
@@ -270,10 +270,10 @@ Query Plan:
   rewritten query: select t.id, t.[name], t?.[job], level from [dba.tree] t inner join [dba.tree?] t? on t.id=t?.treeid start with t.mgrid is null  connect by t.mgrid= prior nvl(t.id, t.id+t.id)
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
@@ -303,10 +303,10 @@ Query Plan:
   rewritten query: select t.id, t.[name], t?.[job], level from [dba.tree] t inner join [dba.tree?] t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior nvl(t.id, t.id+t.id)=decode(t.mgrid, null, t?.id-?, t.mgrid)
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
@@ -335,10 +335,10 @@ Query Plan:
   rewritten query: select t.id, t.[name], t?.[job], level from [dba.tree] t left outer join [dba.tree?] t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id=t.mgrid
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
@@ -365,10 +365,10 @@ Query Plan:
   rewritten query: select t.id, t.[name], t?.[job], level from [dba.tree] t left outer join [dba.tree?] t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id=t.mgrid
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
@@ -407,10 +407,10 @@ Query Plan:
   rewritten query: select t.id, t.[name], t?.[job], level from [dba.tree] t inner join [dba.tree?] t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id= cast(t.mgrid as double) order by ?
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
@@ -424,10 +424,10 @@ Error:-181
 trace    
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
@@ -459,10 +459,10 @@ Query Plan:
   rewritten query: select t.id, t.[name], t?.[job], level from [dba.tree] t inner join [dba.tree?] t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id=t.mgrid order by ?
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
@@ -496,10 +496,10 @@ Query Plan:
   rewritten query: select t.id, t.[name], t?.[job], level from [dba.tree] t inner join [dba.tree?] t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id=t.mgrid order by ?
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
@@ -540,10 +540,10 @@ Query Plan:
   rewritten query: select count(*) from [dba.tree?] t inner join [dba.tree?] t? on t.id=t?.treeid start with t.mgrid is null  and t.gubun= ?:?  connect by  prior t.id=t.mgrid and t.gubun= ?:? 
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
@@ -569,10 +569,10 @@ Query Plan:
   rewritten query: select count(*) from [dba.tree?] t inner join [dba.tree?] t? on t.id=t?.treeid start with t.mgrid is null  and t.gubun= ?:?  connect by  prior t.id=t.mgrid and t.gubun= ?:? 
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
@@ -592,10 +592,10 @@ Query Plan:
   rewritten query: select /*+ NO_HASH_LIST_SCAN */ count(*) from [dba.tree?] t inner join [dba.tree?] t? on t.id=t?.treeid start with t.mgrid is null  and t.gubun= ?:?  connect by  prior t.id=t.mgrid and t.gubun= ?:? 
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
@@ -621,10 +621,10 @@ Query Plan:
   rewritten query: select count(*) from [dba.tree?] t inner join [dba.tree?] t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id=t.mgrid and t.gubun= ?:? 
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
@@ -644,10 +644,10 @@ Query Plan:
   rewritten query: select /*+ NO_HASH_LIST_SCAN */ count(*) from [dba.tree?] t inner join [dba.tree?] t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id=t.mgrid and t.gubun= ?:? 
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    CONNECTBY (time: ?, fetch: ?, ioread: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
