@@ -20490,14 +20490,14 @@ iscan
 Query stmt:
 (select /*+ INDEX_SS */ count(*) from t t where (t.j>= ?:?  and t.j<= ?:? ))
 Query plan:
-iscan
-    class: t node[?]
-    index: idx 
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
     sort:  ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.i, t.j, t.k, t.l, (select /*+ INDEX_SS */ count(*) from t t where (t.j>= ?:?  and t.j<= ?:? )) from t t order by ?
-/* ---> skip ORDER BY */
+select t.i, t.j, t.k, t.l, (select /*+ INDEX_SS */ count(*) from t t where (t.j>= ?:?  and t.j<= ?:? )) from t t order by ?, ?, ?
 ===================================================
 i    j    k    l    (select /*+ INDEX_SS */ count(*) from t where j between 101 and 199)    
 0     100     50     50     8000     

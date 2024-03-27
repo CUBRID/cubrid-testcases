@@ -22,14 +22,14 @@ trace
 
 Query Plan:
   NESTED LOOPS (inner join)
-    TABLE SCAN (a)
-    INDEX SCAN (b.pk_tbl_b_id) (key range: a.id=b.id)
+    TABLE SCAN (b)
+    INDEX SCAN (a.pk_tbl_a_id) (key range: a.id=b.id, covered: true)
 
   rewritten query: select a.id, b.com from [dba.tbl_a] a, [dba.tbl_b] b where b.com= ?:?  and b.com= ?:?  and a.id=b.id
 
   NESTED LOOPS (inner join)
-    TABLE SCAN (a)
-    INDEX SCAN (b.pk_tbl_b_id) (key range: a.id=b.id)
+    TABLE SCAN (b)
+    INDEX SCAN (a.pk_tbl_a_id) (key range: a.id=b.id, covered: true)
 
   rewritten query: select a.id, b.com from [dba.tbl_a] a, [dba.tbl_b] b where b.com= ?:?  and b.com= ?:?  and a.id=b.id
 
@@ -43,11 +43,11 @@ Trace Statistics:
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       UNION
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            SCAN (index: dba.tbl_b.pk_tbl_b_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+          SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (index: dba.tbl_a.pk_tbl_a_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            SCAN (index: dba.tbl_b.pk_tbl_b_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+          SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (index: dba.tbl_a.pk_tbl_a_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
      
 
 ===================================================
@@ -59,14 +59,14 @@ trace
 
 Query Plan:
   NESTED LOOPS (inner join)
-    TABLE SCAN (a)
-    INDEX SCAN (b.pk_tbl_b_id) (key range: a.id=b.id)
+    TABLE SCAN (b)
+    INDEX SCAN (a.pk_tbl_a_id) (key range: a.id=b.id, covered: true)
 
   rewritten query: select a.id, b.com from [dba.tbl_a] a, [dba.tbl_b] b where b.com= ?:?  and b.com= ?:?  and a.id=b.id
 
   NESTED LOOPS (inner join)
-    TABLE SCAN (a)
-    INDEX SCAN (b.pk_tbl_b_id) (key range: a.id=b.id)
+    TABLE SCAN (b)
+    INDEX SCAN (a.pk_tbl_a_id) (key range: a.id=b.id, covered: true)
 
   rewritten query: select a.id, b.com from [dba.tbl_a] a, [dba.tbl_b] b where b.com= ?:?  and b.com= ?:?  and a.id=b.id
 
@@ -80,11 +80,11 @@ Trace Statistics:
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       UNION
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            SCAN (index: dba.tbl_b.pk_tbl_b_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+          SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (index: dba.tbl_a.pk_tbl_a_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            SCAN (index: dba.tbl_b.pk_tbl_b_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+          SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (index: dba.tbl_a.pk_tbl_a_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
      
 
 ===================================================
