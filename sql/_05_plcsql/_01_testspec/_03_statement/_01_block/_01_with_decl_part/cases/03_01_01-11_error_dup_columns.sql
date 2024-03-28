@@ -16,5 +16,7 @@ END;
 
 CALL text_prc() ;
 
+drop procedure text_prc;
+
 
 --+ server-message off
