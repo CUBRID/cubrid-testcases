@@ -25,4 +25,6 @@ END;
 
 call choose(7, 5);
 
+drop function choose;
+
 --+ server-message off
