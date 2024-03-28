@@ -4,23 +4,23 @@
 
 create or replace procedure t () as
 begin
-    dbms_output.put_line(CURDATE() - CURDATE()); -- not support
-    dbms_output.put_line(CURRENT_DATE() - CURRENT_DATE());
-    dbms_output.put_line(CURRENT_DATE - CURRENT_DATE);
-    dbms_output.put_line(CURRENT_DATETIME - CURRENT_DATETIME); -- parse timing gap makes wrong result
-    dbms_output.put_line(CURTIME() - CURTIME()); -- not support
-    dbms_output.put_line(CURRENT_TIME - CURRENT_TIME);
-    dbms_output.put_line(LOCALTIME - LOCALTIME);
-    dbms_output.put_line(LOCALTIMESTAMP - LOCALTIMESTAMP);
-    dbms_output.put_line(SYS_DATE - SYS_DATE);
-    dbms_output.put_line(SYSDATE - SYSDATE);
-    dbms_output.put_line(SYS_DATETIME - SYS_DATETIME); -- parse timing gap makes wrong result
-    dbms_output.put_line(SYSDATETIME - SYSDATETIME); -- parse timing gap makes wrong result
-    dbms_output.put_line(SYS_DATE - SYS_DATE);
-    dbms_output.put_line(SYS_TIME - SYS_TIME);
-    dbms_output.put_line(SYS_TIMESTAMP - SYS_TIMESTAMP);
-    dbms_output.put_line(SYSTIMESTAMP - SYSTIMESTAMP);
-    dbms_output.put_line(NOW() - NOW()); -- not support
+    dbms_output.put_line(case CURDATE() - CURDATE() <= 0 when true then 'ok' else 'not ok' end);
+    dbms_output.put_line(case CURRENT_DATE() - CURRENT_DATE() <= 0 when true then 'ok' else 'not ok' end);
+    dbms_output.put_line(case CURRENT_DATE - CURRENT_DATE <= 0 when true then 'ok' else 'not ok' end);
+    dbms_output.put_line(case CURRENT_DATETIME - CURRENT_DATETIME <= 0 when true then 'ok' else 'not ok' end);
+    dbms_output.put_line(case CURTIME() - CURTIME() <= 0 when true then 'ok' else 'not ok' end);
+    dbms_output.put_line(case CURRENT_TIME - CURRENT_TIME <= 0 when true then 'ok' else 'not ok' end);
+    dbms_output.put_line(case LOCALTIME - LOCALTIME <= 0 when true then 'ok' else 'not ok' end);
+    dbms_output.put_line(case LOCALTIMESTAMP - LOCALTIMESTAMP <= 0 when true then 'ok' else 'not ok' end);
+    dbms_output.put_line(case SYS_DATE - SYS_DATE <= 0 when true then 'ok' else 'not ok' end);
+    dbms_output.put_line(case SYSDATE - SYSDATE <= 0 when true then 'ok' else 'not ok' end);
+    dbms_output.put_line(case SYS_DATETIME - SYS_DATETIME <= 0 when true then 'ok' else 'not ok' end);
+    dbms_output.put_line(case SYSDATETIME - SYSDATETIME <= 0 when true then 'ok' else 'not ok' end);
+    dbms_output.put_line(case SYS_DATE - SYS_DATE <= 0 when true then 'ok' else 'not ok' end);
+    dbms_output.put_line(case SYS_TIME - SYS_TIME <= 0 when true then 'ok' else 'not ok' end);
+    dbms_output.put_line(case SYS_TIMESTAMP - SYS_TIMESTAMP <= 0 when true then 'ok' else 'not ok' end);
+    dbms_output.put_line(case SYSTIMESTAMP - SYSTIMESTAMP <= 0 when true then 'ok' else 'not ok' end);
+    dbms_output.put_line(case NOW() - NOW() <= 0 when true then 'ok' else 'not ok' end);
 end;
 
 select count(*) from db_stored_procedure where sp_name = 't';
