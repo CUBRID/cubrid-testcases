@@ -22,6 +22,7 @@ set @p2 = '';
 call t('name1',@p1, @p2);
 select @p1, @p2 from dual;
 
+deallocate variable @p1, @p2;
 
 drop table plcsql_tbl;
 drop procedure t;
