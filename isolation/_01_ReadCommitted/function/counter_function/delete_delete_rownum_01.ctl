@@ -49,7 +49,7 @@ MC: wait until C1 ready;
 
 C2: DELETE FROM t1 WHERE ROWNUM < 3; 
 /* expect: no transactions need to wait */
-MC: wait until C2 blocked;
+MC: wait until C1 ready;
 
 /* expect: C1 2 rows are deleted */
 C1: SELECT count(*) FROM t1;
