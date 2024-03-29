@@ -1,6 +1,8 @@
 --+ server-message on
 -- verified for CBRD-24782
 
+drop if exists temp_table;
+
 create table temp_table(col int);
 insert into temp_table values (0), (1), (2), (4);
 
