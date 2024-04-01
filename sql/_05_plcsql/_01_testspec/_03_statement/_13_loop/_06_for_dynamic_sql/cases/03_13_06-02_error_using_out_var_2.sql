@@ -1,4 +1,5 @@
 --+ server-message on
+-- Verified for CBRD-24708
 
 -- error: specifying OUT, INOUT, or IN OUT in using clause
 
