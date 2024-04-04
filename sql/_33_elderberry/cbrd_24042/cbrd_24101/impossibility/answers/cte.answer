@@ -24,7 +24,7 @@ sscan
     simple CTE:t node[?]
     cost:  ? card ?
 Query stmt:
-(with t(col_a, col_b) as (select t_b.col_a, t_b.col_b from t_b t_b where (t_b.col_a> ?:? ))select t.col_a, t.col_b from  t)
+(with t(col_a, col_b) as (select t_b.col_a, t_b.col_b from t_b t_b where (t_b.col_a> ?:? ))select t.col_a, t.col_b from t t)
 Query plan:
 nl-join (inner join)
     edge:  term[?]
@@ -39,6 +39,6 @@ nl-join (inner join)
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select a.col_a from t_a a, (with t(col_a, col_b) as (select t_b.col_a, t_b.col_b from t_b t_b where (t_b.col_a> ?:? ))select t.col_a, t.col_b from  t) b (col_a, col_b) where (a.col_a=b.col_a) and (inst_num()<= ?:? )
+select a.col_a from t_a a, (with t(col_a, col_b) as (select t_b.col_a, t_b.col_b from t_b t_b where (t_b.col_a> ?:? ))select t.col_a, t.col_b from t t) b (col_a, col_b) where (a.col_a=b.col_a) and (inst_num()<= ?:? )
 ===================================================
 0

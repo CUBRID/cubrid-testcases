@@ -600,7 +600,7 @@ Query Plan:
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: with b(col_a, col_b, col_c) as (select /*+ ORDERED NO_MERGE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where  ?:? = ?:?  and bb.col_c= ?:? )select count(*) from [dba.tbl_a] a left outer join  b on a.col_a=b.col_a
+  rewritten query: with b(col_a, col_b, col_c) as (select /*+ ORDERED NO_MERGE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where  ?:? = ?:?  and bb.col_c= ?:? )select count(*) from [dba.tbl_a] a left outer join [dba.b] b on a.col_a=b.col_a
 
 
 Trace Statistics:
@@ -631,7 +631,7 @@ Query Plan:
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: with b(col_a, col_b, col_c) as (select /*+ ORDERED NO_MERGE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where  ?:? = ?:?  and bb.col_c= ?:? )select count(*) from [dba.tbl_a] a left outer join  b on a.col_a=b.col_a
+  rewritten query: with b(col_a, col_b, col_c) as (select /*+ ORDERED NO_MERGE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where  ?:? = ?:?  and bb.col_c= ?:? )select count(*) from [dba.tbl_a] a left outer join [dba.b] b on a.col_a=b.col_a
 
 
 Trace Statistics:
