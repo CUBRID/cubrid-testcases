@@ -1,6 +1,6 @@
 --+ server-message on
 /*
-Verification for CBRD-24811
+Verification for CBRD-24818
 if don't need to parameter then '()' is not need
 */
 create function func_plcsql() return int as language plcsql
