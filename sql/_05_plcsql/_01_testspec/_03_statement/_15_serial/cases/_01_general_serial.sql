@@ -29,7 +29,8 @@ drop table if exists t1;
 create table t1(col int);
 
 select func_demo_serial() as "call serial 1" from dual;
-insert into t1 values(func_demo_serial()); -- call serial 2
+-- call serial 2
+insert into t1 values(func_demo_serial());
 select * from t1;
 select func_demo_serial() as "call serial 3" from dual;
 
