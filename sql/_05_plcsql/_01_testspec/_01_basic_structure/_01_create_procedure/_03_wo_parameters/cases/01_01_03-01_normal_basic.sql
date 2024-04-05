@@ -1,5 +1,5 @@
 --+ server-message on
-
+-- Verification for CBRD-24818
 -- normal: procedures that do not have parameters can be defined with or without '()'
 
 

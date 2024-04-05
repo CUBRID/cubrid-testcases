@@ -1,4 +1,5 @@
 --+ server-message on
+-- Verification for CBRD-24481
 
 -- Korean characters are used in procedure names.
 

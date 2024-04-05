@@ -1,4 +1,5 @@
 --+ server-message on
+-- Verification for CBRD-25280
 
 -- normal: basic usage of a builtin function call
 
