@@ -16,7 +16,7 @@ end;
 
 -- java sp
 create procedure pro_java(i string) as language java
-name 'SpTest2.typetestinteger(java.lang.String) return java.lang.Integer';
+name 'SpTest2.typetestinteger(java.lang.String)';
 
 select pro_plcsql() from dual;
 select pro_java('1') from dual;
