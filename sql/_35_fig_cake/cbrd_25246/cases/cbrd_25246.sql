@@ -1,6 +1,6 @@
 -- This test case verifies the following issue: CBRD-25246.
--- Ensure that cur_pageid and volumeid columns exist in the SELECT_PAGE_INFO table
--- when the hint /*+ select_page_info */ is used in a SELECT query
+-- Ensure that cur_pageid and volumeid columns exist and show appropriate values in the 
+-- SELECT_PAGE_INFO table when the hint /*+ select_page_info */ is used in a SELECT query
 
 drop table if exists tbl;
 create table tbl (col_a varchar(20), col_b varchar(20), col_c varchar(20), col_d varchar(20), col_e numeric(20,10), col_f varchar(20), col_g varchar(20), col_h varchar(20));
