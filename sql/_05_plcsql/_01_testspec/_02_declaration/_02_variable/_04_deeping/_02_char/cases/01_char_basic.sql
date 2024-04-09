@@ -34,14 +34,17 @@ call char_test2();
 
 create or replace procedure char_test3(t_query varchar) as
 	ch_1 character;
+	ch_length char(1);
 begin
 	execute immediate t_query into ch_1;
+	select length(ch_1) into ch_length from dual;
 	
     dbms_output.put_line('check the default size');
 	dbms_output.put_line('char: "' || ch_1 ||'"');
+	dbms_output.put_line('length: ' || ch_length);
 end;
 
-call char_test3('select cast(''a'' as char) from dual;');
+call char_test3('select cast(''a'' as char(1)) from dual;');
 -- error, character type default size is 1
 call char_test3('select cast(''abc'' as char(3)) from dual;');
 
