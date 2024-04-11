@@ -1,6 +1,7 @@
 --+ server-message on
 
 -- normal: closing an unopen cursor or cursor variable raises INVALID_CURSOR
+-- Verified for CBRD-24951
 
 create or replace procedure t(i int) as
     c sys_refcursor;
