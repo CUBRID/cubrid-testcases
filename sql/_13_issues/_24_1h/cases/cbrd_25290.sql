@@ -15,13 +15,13 @@ DROP TABLE IF EXISTS tbl;
 CREATE TABLE tbl (a INT);
 
 GRANT SELECT ON tbl to user_select;
-GRANT SELECT ON tbl to user_insert;
-GRANT SELECT ON tbl to user_update;
-GRANT SELECT ON tbl to user_delete;
-GRANT SELECT ON tbl to user_alter;
-GRANT SELECT ON tbl to user_index;
-GRANT SELECT ON tbl to user_execute;
-GRANT SELECT ON tbl to user_all_privileges;
+GRANT INSERT ON tbl to user_insert;
+GRANT UPDATE ON tbl to user_update;
+GRANT DELETE ON tbl to user_delete;
+GRANT ALTER ON tbl to user_alter;
+GRANT INDEX ON tbl to user_index;
+GRANT EXECUTE ON tbl to user_execute;
+GRANT ALL PRIVILEGES ON tbl to user_all_privileges;
 
 SELECT COUNT(*) FROM _db_auth WHERE grantee IS NULL;
 
