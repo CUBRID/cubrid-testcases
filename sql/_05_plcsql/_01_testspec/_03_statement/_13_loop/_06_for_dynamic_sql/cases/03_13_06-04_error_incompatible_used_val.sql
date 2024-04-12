@@ -1,5 +1,5 @@
 --+ server-message on
-
+-- Verified for CBRD-24958
 -- error: the value in the using clause has an incompatible type
 
 
