@@ -2,7 +2,7 @@
 
 -- When column names are duplicated in the select list, it must be handled normally. However, it is treated as an error.
 
--- bug
+-- Verification for CBRD-25135
 
 CREATE OR REPLACE  PROCEDURE text_prc 
 AS 

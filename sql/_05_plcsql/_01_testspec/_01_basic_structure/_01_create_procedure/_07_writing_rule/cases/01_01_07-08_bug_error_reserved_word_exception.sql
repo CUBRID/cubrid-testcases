@@ -1,6 +1,6 @@
 --+ server-message on
 
--- 
+-- Verification for CBRD-25111 
 
 
 select 'AND' ;
@@ -904,6 +904,51 @@ begin
 EXCEPTION    WHEN XOR THEN 
               put_line('call exception: ');
 end;
+
+select 'INSERT' ;
+create or replace procedure p_var(i int) as
+INSERT EXCEPTION;
+begin
+    IF i > 0 THEN
+        RAISE INSERT;
+    end if;
+EXCEPTION    WHEN INSERT THEN
+              put_line('call exception: ');
+end;
+
+select 'TRUNCATE' ;
+create or replace procedure p_var(i int) as
+TRUNCATE EXCEPTION;
+begin
+    IF i > 0 THEN
+        RAISE TRUNCATE;
+    end if;
+EXCEPTION    WHEN TRUNCATE THEN
+              put_line('call exception: ');
+end;
+
+select 'AUTONOMOUS_TRANSACTION' ;
+create or replace procedure p_var(i int) as
+AUTONOMOUS_TRANSACTION EXCEPTION;
+begin
+    IF i > 0 THEN
+        RAISE AUTONOMOUS_TRANSACTION;
+    end if;
+EXCEPTION    WHEN AUTONOMOUS_TRANSACTION THEN
+              put_line('call exception: ');
+end;
+
+select 'BEGIN' ;
+create or replace procedure p_var(i int) as
+BEGIN EXCEPTION;
+begin
+    IF i > 0 THEN
+        RAISE BEGIN;
+    end if;
+EXCEPTION    WHEN BEGIN THEN
+              put_line('call exception: ');
+end;
+
 
 
 drop procedure p_var;

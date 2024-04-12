@@ -1,7 +1,7 @@
 --+ server-message on
 
 -- normal: basic usage of parenthesis
-
+-- Verification for CBRD-25130
 
 create or replace procedure t(i int) as
 begin

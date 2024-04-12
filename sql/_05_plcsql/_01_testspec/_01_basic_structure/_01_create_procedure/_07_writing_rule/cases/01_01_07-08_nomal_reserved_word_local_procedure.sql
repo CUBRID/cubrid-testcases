@@ -1,6 +1,6 @@
 --+ server-message on
 
--- 
+-- Verification for CBRD-25111 
 
 
 create or replace procedure p_local() as 
@@ -882,6 +882,49 @@ begin
     [XOR](); 
 end;
 call p_local();
+
+create or replace procedure p_local() as
+    procedure [INSERT] as
+    begin
+        dbms_output.put_line('call local_procedure.' || 'INSERT' );
+    end;
+begin
+    [INSERT]();
+end;
+call p_local();
+
+create or replace procedure p_local() as
+    procedure [TRUNCATE] as
+    begin
+        dbms_output.put_line('call local_procedure.' || 'TRUNCATE' );
+    end;
+begin
+    [TRUNCATE]();
+end;
+call p_local();
+
+create or replace procedure p_local() as
+    procedure [AUTONOMOUS_TRANSACTION] as
+    begin
+        dbms_output.put_line('call local_procedure.' || 'AUTONOMOUS_TRANSACTION' );
+    end;
+begin
+    [AUTONOMOUS_TRANSACTION]();
+end;
+call p_local();
+
+create or replace procedure p_local() as
+    procedure [BEGIN] as
+    begin
+        dbms_output.put_line('call local_procedure.' || 'BEGIN' );
+    end;
+begin
+    [BEGIN]();
+end;
+call p_local();
+
+
+
 
 drop procedure p_local;
 

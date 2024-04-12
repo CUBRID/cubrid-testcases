@@ -1,6 +1,6 @@
 --+ server-message on
 
--- 
+-- Verification for CBRD-25111 
 
 select 'AND' ;
 create or replace procedure p_local() as 
@@ -821,6 +821,48 @@ create or replace procedure p_local() as
 begin
     XOR(); 
 end;
+
+select 'INSERT' ;
+create or replace procedure p_local() as
+    procedure INSERT as
+    begin
+        dbms_output.put_line('poo');
+    end;
+begin
+    INSERT();
+end;
+
+select 'TRUNCATE' ;
+create or replace procedure p_local() as
+    procedure TRUNCATE as
+    begin
+        dbms_output.put_line('poo');
+    end;
+begin
+    TRUNCATE();
+end;
+
+select 'AUTONOMOUS_TRANSACTION' ;
+create or replace procedure p_local() as
+    procedure AUTONOMOUS_TRANSACTION as
+    begin
+        dbms_output.put_line('poo');
+    end;
+begin
+    AUTONOMOUS_TRANSACTION();
+end;
+
+select 'BEGIN' ;
+create or replace procedure p_local() as
+    procedure BEGIN as
+    begin
+        dbms_output.put_line('poo');
+    end;
+begin
+    BEGIN();
+end;
+
+
 
 
 drop procedure p_local;

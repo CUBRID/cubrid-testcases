@@ -1,10 +1,10 @@
 --+ server-message on
 
 -- normal: basic usage of a builtin function call
-
+-- Verification for CBRD-25170
 create or replace procedure t () as
 begin
-    -- function not work and skip NULLIF()
+    
     dbms_output.put_line(NULLIF(NULL,  NULL));
     dbms_output.put_line(NULLIF(1, 1));
     dbms_output.put_line(NULLIF(NULL, 1));

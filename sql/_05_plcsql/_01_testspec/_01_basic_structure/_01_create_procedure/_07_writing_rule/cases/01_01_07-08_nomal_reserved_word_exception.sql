@@ -970,6 +970,53 @@ EXCEPTION    WHEN [XOR] THEN
 end;
 call p_var(123);
 
+create or replace procedure p_var(i int) as
+[INSERT] EXCEPTION;
+begin
+    IF i > 0 THEN
+        RAISE [INSERT];
+    end if;
+EXCEPTION    WHEN [INSERT] THEN
+              put_line('call exception:' || 'INSERT' );
+end;
+call p_var(123);
+
+
+create or replace procedure p_var(i int) as
+[TRUNCATE] EXCEPTION;
+begin
+    IF i > 0 THEN
+        RAISE [TRUNCATE];
+    end if;
+EXCEPTION    WHEN [TRUNCATE] THEN
+              put_line('call exception:' || 'TRUNCATE' );
+end;
+call p_var(123);
+
+create or replace procedure p_var(i int) as
+[AUTONOMOUS_TRANSACTION] EXCEPTION;
+begin
+    IF i > 0 THEN
+        RAISE [AUTONOMOUS_TRANSACTION];
+    end if;
+EXCEPTION    WHEN [AUTONOMOUS_TRANSACTION] THEN
+              put_line('call exception:' || 'AUTONOMOUS_TRANSACTION' );
+end;
+call p_var(123);
+
+create or replace procedure p_var(i int) as
+[BEGIN] EXCEPTION;
+begin
+    IF i > 0 THEN
+        RAISE [BEGIN];
+    end if;
+EXCEPTION    WHEN [BEGIN] THEN
+              put_line('call exception:' || 'BEGIN' );
+end;
+call p_var(123);
+
+
+
 drop procedure p_var;
 
 --+ server-message off

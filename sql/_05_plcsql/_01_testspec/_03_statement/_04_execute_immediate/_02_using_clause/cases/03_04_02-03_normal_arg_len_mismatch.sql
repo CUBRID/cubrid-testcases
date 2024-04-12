@@ -1,7 +1,7 @@
 --+ server-message on
 
 -- normal: if the number of host variables (?'s) and the length of using values do not match, then SQL_ERROR is raised
-
+-- Verification for CBRD-25177
 
 create or replace procedure poo(a int, b int, c int, d int, e int) as
 begin

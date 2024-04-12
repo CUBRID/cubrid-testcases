@@ -2,7 +2,7 @@
 
 -- Check whether an error occurs when NO_DATA_FOUND and TOO_MANY_ROWS exceptions are not handled when executing the select into statement.
 
--- bug - An unknown error occurred
+-- Verification for CBRD-25134 
 CREATE OR REPLACE PROCEDURE t(name VARCHAR)
 AS
      c varchar(100);

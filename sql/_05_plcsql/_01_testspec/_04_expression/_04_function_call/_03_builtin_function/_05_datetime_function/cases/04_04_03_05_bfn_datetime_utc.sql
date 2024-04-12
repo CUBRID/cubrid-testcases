@@ -1,10 +1,10 @@
 --+ server-message on
 
 -- normal: basic usage of a builtin function call
-
+-- Verification for CBRD-25194
 create or replace procedure t () as
 begin
-    -- UTC_TIME/DATE() not works
+    
     dbms_output.put_line(case isnull(UTC_DATE()) when 0 then 'ok' when 1 then 'nok' end);
     dbms_output.put_line(case isnull(UTC_TIME()) when 0 then 'ok' when 1 then 'nok' end);
 end;
