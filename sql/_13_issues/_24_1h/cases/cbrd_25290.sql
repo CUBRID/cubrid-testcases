@@ -26,13 +26,28 @@ GRANT ALL PRIVILEGES ON tbl to user_all_privileges;
 SELECT COUNT(*) FROM _db_auth WHERE grantee IS NULL;
 
 DROP USER user_select;
+SELECT 'After deleting user_select', COUNT(*) FROM _db_auth WHERE grantee IS NULL;
+
 DROP USER user_insert;
+SELECT 'After deleting user_insert', COUNT(*) FROM _db_auth WHERE grantee IS NULL;
+
 DROP USER user_update;
+SELECT 'After deleting user_update', COUNT(*) FROM _db_auth WHERE grantee IS NULL;
+
 DROP USER user_delete;
+SELECT 'After deleting user_delete', COUNT(*) FROM _db_auth WHERE grantee IS NULL;
+
 DROP USER user_alter;
+SELECT 'After deleting user_alter', COUNT(*) FROM _db_auth WHERE grantee IS NULL;
+
 DROP USER user_index;
+SELECT 'After deleting user_index', COUNT(*) FROM _db_auth WHERE grantee IS NULL;
+
 DROP USER user_execute;
+SELECT 'After deleting user_execute', COUNT(*) FROM _db_auth WHERE grantee IS NULL;
+
 DROP USER user_all_privileges;
+SELECT 'After deleting user_all_privileges', COUNT(*) FROM _db_auth WHERE grantee IS NULL;
 
 SELECT COUNT(*) FROM _db_auth WHERE grantee IS NULL;
 
