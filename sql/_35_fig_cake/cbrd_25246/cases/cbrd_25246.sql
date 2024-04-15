@@ -10,6 +10,7 @@ insert into tbl select rownum, 1, mod(rownum,10), lpad(to_char(mod(rownum,100)),
 WITH tbl_data AS (
     SELECT /*+ select_page_info */ *
     FROM tbl
+    ORDER BY p_cur_volumeid, p_cur_pageid, p_prev_pageid, p_next_pageid
     LIMIT 2
 )
 SELECT 
@@ -37,7 +38,6 @@ SELECT
             END
         ELSE 'p_cur_pageid-1!=p_prev_pageid: FAIL' 
     END AS assert_p_cur_pageid__p_prev_pageid
-FROM tbl_data 
-ORDER BY p_cur_volumeid, p_cur_pageid, p_prev_pageid, p_next_pageid;
+FROM tbl_data;
 
 drop table tbl;
