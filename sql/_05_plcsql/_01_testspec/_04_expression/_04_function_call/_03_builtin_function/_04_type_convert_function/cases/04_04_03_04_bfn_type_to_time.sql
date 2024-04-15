@@ -7,7 +7,7 @@ begin
     dbms_output.put_line(TO_TIME(NULL, 'HH24:MI:SS'));
     dbms_output.put_line(TO_TIME('18:41:53.733', NULL));
     dbms_output.put_line(TO_TIME('184153', 'HH24MISS'));
-    dbms_output.put_line(TO_TIME('64153', 'HHMISS'));
+    dbms_output.put_line(TO_TIME('064153', 'HHMISS'));
     dbms_output.put_line(TO_TIME('18:41:53', 'HH24:MI:SS'));
     dbms_output.put_line(TO_TIME('6:41:53 PM', 'HH12:MI:SS PM'));
 
