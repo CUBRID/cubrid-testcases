@@ -4,10 +4,10 @@
 
 Query plan:
 sscan
-    class: dual node[?]
+    class: db_root node[?]
     cost:  ? card ?
 Query stmt:
-select '-- Verify correct results are returned for basic select query with function index.' from dual dual
+select '-- Verify correct results are returned for basic select query with function index.' from db_root db_root
 ===================================================
 0
 ===================================================
@@ -69,10 +69,10 @@ select tx.vc from tx tx where tx.va= ?:?  using index tx.none
 
 Query plan:
 sscan
-    class: dual node[?]
+    class: db_root node[?]
     cost:  ? card ?
 Query stmt:
-select '-- Test with different data and more complex function index to ensure correct filtering.' from dual dual
+select '-- Test with different data and more complex function index to ensure correct filtering.' from db_root db_root
 ===================================================
 0
 ===================================================
@@ -258,10 +258,10 @@ select tx.va, tx.vc from tx tx where  char_length( cast(tx.vb as varchar))=? and
 
 Query plan:
 sscan
-    class: dual node[?]
+    class: db_root node[?]
     cost:  ? card ?
 Query stmt:
-select '-- Scenario ?: Various function indexes and conditions in query' from dual dual
+select '-- Scenario ?: Various function indexes and conditions in query' from db_root db_root
 ===================================================
 0
 ===================================================
@@ -318,10 +318,10 @@ select tx.vc from tx tx where  sqrt( cast(tx.vc as double))>?
 
 Query plan:
 sscan
-    class: dual node[?]
+    class: db_root node[?]
     cost:  ? card ?
 Query stmt:
-select '-- Scenario ?: Queries including join operations' from dual dual
+select '-- Scenario ?: Queries including join operations' from db_root db_root
 ===================================================
 0
 ===================================================
@@ -344,14 +344,15 @@ id    vb    vc
 2     200     2000     
 
 Query plan:
-idx-join (inner join)
+nl-join (inner join)
+    edge:  term[?]
     outer: sscan
-               class: ty node[?]
-               cost:  ? card ?
-    inner: iscan
                class: tx node[?]
-               index: idx term[?] (covers)
-               filtr: term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: ty node[?]
+               sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -366,10 +367,10 @@ select ty.id, tx.vb, ty.vc from tx tx, ty ty where (tx.vb> ?:? ) and tx.id=ty.tx
 
 Query plan:
 sscan
-    class: dual node[?]
+    class: db_root node[?]
     cost:  ? card ?
 Query stmt:
-select '-- Scenario ?: Comparison with index hint NO_COVERING_IDX' from dual dual
+select '-- Scenario ?: Comparison with index hint NO_COVERING_IDX' from db_root db_root
 ===================================================
 0
 ===================================================
