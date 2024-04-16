@@ -72,10 +72,10 @@ select tbl.col_two, tbl.col_three, groupby_num(), (select d?.col_two from ((sele
 ===================================================
 3
 ===================================================
-rownum    test    
-1     1     
-2     2     
-3     3     
+rownum    'view merge 1'    test    
+1     view merge 1     1     
+2     view merge 1     2     
+3     view merge 1     3     
 
 Query plan:
 sscan
@@ -92,10 +92,10 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select (orderby_num()), (select tbl_two.col_three from tbl_two tbl_two where tbl_two.col_three=X.col_one and (rownum= ?:? )), X.col_one from tbl_one X order by ?
+select (orderby_num()), 'view merge ?', (select tbl_two.col_three from tbl_two tbl_two where tbl_two.col_three=X.col_one and (rownum= ?:? )), X.col_one from tbl_one X order by ?
 ===================================================
-rownum    test    
-1     1     
+rownum    'view merge 1 + limit'    test    
+1     view merge 1 + limit     1     
 
 Query plan:
 sscan
@@ -112,12 +112,12 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select (orderby_num()), (select tbl_two.col_three from tbl_two tbl_two where tbl_two.col_three=X.col_one and (rownum= ?:? )), X.col_one from tbl_one X order by ? for (orderby_num())<= ?:? 
+select (orderby_num()), 'view merge ? + limit', (select tbl_two.col_three from tbl_two tbl_two where tbl_two.col_three=X.col_one and (rownum= ?:? )), X.col_one from tbl_one X order by ? for (orderby_num())<= ?:? 
 ===================================================
-rownum    test    
-1     1     
-2     2     
-3     3     
+rownum    'view merge 2'    test    
+1     view merge 2     1     
+2     view merge 2     2     
+3     view merge 2     3     
 
 Query plan:
 sscan
@@ -143,10 +143,10 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select (orderby_num()), (select tbl_two.col_three from tbl_two tbl_two where tbl_two.col_three=a_? and (rownum= ?:? )), a_? from (select t_one.col_one from tbl_one t_one group by t_one.col_one) X (a_?) order by ?
+select (orderby_num()), 'view merge ?', (select tbl_two.col_three from tbl_two tbl_two where tbl_two.col_three=a_? and (rownum= ?:? )), a_? from (select t_one.col_one from tbl_one t_one group by t_one.col_one) X (a_?) order by ?
 ===================================================
-rownum    test    
-1     1     
+rownum    'view merge 2 + limit'    test    
+1     view merge 2 + limit     1     
 
 Query plan:
 sscan
@@ -172,6 +172,66 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select (orderby_num()), (select tbl_two.col_three from tbl_two tbl_two where tbl_two.col_three=a_? and (rownum= ?:? )), a_? from (select t_one.col_one from tbl_one t_one group by t_one.col_one) X (a_?) order by ? for (orderby_num())<= ?:? 
+select (orderby_num()), 'view merge ? + limit', (select tbl_two.col_three from tbl_two tbl_two where tbl_two.col_three=a_? and (rownum= ?:? )), a_? from (select t_one.col_one from tbl_one t_one group by t_one.col_one) X (a_?) order by ? for (orderby_num())<= ?:? 
+===================================================
+'view merge 3'    col_three    
+view merge 3     1     
+
+Query plan:
+sscan
+    class: tbl_two node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+(select tbl_two.col_three from tbl_two tbl_two where tbl_two.col_three=X.col_one and (rownum= ?:? ))
+Query plan:
+sscan
+    class: X node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select (select tbl_two.col_three from tbl_two tbl_two where tbl_two.col_three=X.col_one and (rownum= ?:? )) from tbl_one X where (rownum= ?:? ))
+Query plan:
+sscan
+    class: tbl_two node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select 'view merge ?', tbl_two.col_three from tbl_two tbl_two where tbl_two.col_three=(select (select tbl_two.col_three from tbl_two tbl_two where tbl_two.col_three=X.col_one and (rownum= ?:? )) from tbl_one X where (rownum= ?:? ))
+===================================================
+'view merge 3 + limit'    col_three    
+view merge 3 + limit     1     
+
+Query plan:
+sscan
+    class: tbl_two node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+(select tbl_two.col_three from tbl_two tbl_two where tbl_two.col_three=X.col_one and (rownum= ?:? ))
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t_one node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t_one.col_one from tbl_one t_one where (rownum= ?:? ) order by ?)
+Query plan:
+sscan
+    class: X node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select (select tbl_two.col_three from tbl_two tbl_two where tbl_two.col_three=X.col_one and (rownum= ?:? )) from (select t_one.col_one from tbl_one t_one where (rownum= ?:? ) order by ?) X (col_one) where (inst_num()<= ?:? ))
+Query plan:
+sscan
+    class: tbl_two node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select 'view merge ? + limit', tbl_two.col_three from tbl_two tbl_two where tbl_two.col_three=(select (select tbl_two.col_three from tbl_two tbl_two where tbl_two.col_three=X.col_one and (rownum= ?:? )) from (select t_one.col_one from tbl_one t_one where (rownum= ?:? ) order by ?) X (col_one) where (inst_num()<= ?:? ))
 ===================================================
 0

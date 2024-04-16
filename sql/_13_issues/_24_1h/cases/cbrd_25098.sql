@@ -43,6 +43,7 @@ insert into tbl_two values (1,1),(2,2),(3,3);
 SELECT
         /*+ RECOMPILE */
         rownum,
+		'view merge 1',
         (
                 SELECT
                         col_three
@@ -63,6 +64,7 @@ FROM
 SELECT
 	/*+ RECOMPILE */
 	rownum,
+	'view merge 1 + limit',
 	(
 		SELECT
 			col_three
@@ -84,6 +86,7 @@ limit 1;
 SELECT
         /*+ RECOMPILE */
         rownum,
+		'view merge 2',
         (
                 SELECT
                         col_three
@@ -111,6 +114,7 @@ FROM
 SELECT
 	/*+ RECOMPILE */
 	rownum,
+	'view merge 2 + limit',
 	(
 		SELECT
 			col_three
@@ -135,6 +139,63 @@ FROM
 ) X
 limit 1;
 
+-- view merge 3 (in nested subquery)
+SELECT
+	/*+ RECOMPILE */
+	'view merge 3',
+	col_three
+FROM tbl_two
+WHERE
+	col_three = 
+		(
+			SELECT
+				(
+					SELECT
+						col_three
+					FROM tbl_two
+					WHERE
+						col_three = X.col_one
+						AND ROWNUM = 1
+				) AS test
+			FROM
+			(
+				SELECT
+						t_one.col_one
+				FROM tbl_one t_one
+				WHERE ROWNUM = 1 
+				ORDER BY t_one.col_one
+			) X
+		)
+;
+
+-- view merge 3 (in nested subquery) + limit
+SELECT
+	/*+ RECOMPILE */
+	'view merge 3 + limit',
+	col_three
+FROM tbl_two
+WHERE
+	col_three = 
+		(
+			SELECT
+				(
+					SELECT
+						col_three
+					FROM tbl_two
+					WHERE
+						col_three = X.col_one
+						AND ROWNUM = 1
+				) AS test
+			FROM
+			(
+				SELECT
+						t_one.col_one
+				FROM tbl_one t_one
+				WHERE ROWNUM = 1 
+				ORDER BY t_one.col_one
+			) X limit 1
+		)
+;
 
 
 drop table tbl, tbl_one, tbl_two;
