@@ -27,14 +27,6 @@ end;
 call t();
 
 
-create or replace procedure t  as
-    a constant varchar := USER();
-begin
-    dbms_output.put_line('a = ' || a );
-end;
-call t();
-
-
 drop procedure t;
 
 
