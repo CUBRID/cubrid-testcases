@@ -4,7 +4,7 @@
 
 create or replace procedure test_proc as
 begin
-    for r in (select t.name from db_user t) loop
+    for r in (select t.name from db_user t order by t.name) loop
         dbms_output.put_line('user name=' || r.name);
     end loop;
 end;
