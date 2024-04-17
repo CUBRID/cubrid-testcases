@@ -4,5 +4,6 @@ autocommit off;
    from all joe.inventory_v i, joe.shipment_v s
   where i.location = s.origin
     and i.product_code = s.product_code
-    and i.shipment_pending = 'yes';
+    and i.shipment_pending = 'yes'
+  order by i.product_code;
 rollback;
