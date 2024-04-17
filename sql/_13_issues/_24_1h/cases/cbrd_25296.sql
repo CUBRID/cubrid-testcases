@@ -1,3 +1,8 @@
+/* Description
+This scenario verified CBRD-25296 issue.
+Assertion fail on a DATETIMELTZ value to a SP's parameter of DATETIME type
+*/
+
 create or replace procedure test_proc(p DATETIME) as language java name 'SpTest.testTimestamp(java.sql.Timestamp)';
 create or replace function test_func(p DATETIME) return DATETIME as language java name 'SpTest.testTimestamp(java.sql.Timestamp) return java.sql.Timestamp';
 
