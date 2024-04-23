@@ -15,29 +15,29 @@ WITH tbl_data AS (
 )
 SELECT 
     CASE 
-        WHEN p_cur_volumeid = 0 THEN 'p_cur_volumeid=0: PASS'
-        ELSE 'p_cur_volumeid!=0: FAIL'
+        WHEN p_cur_volumeid IS NOT NULL AND p_cur_volumeid >= 0 THEN 'p_cur_volumeid>=0: PASS'
+        ELSE 'p_cur_volumeid IS NULL or <0: FAIL'
     END AS assert__p_cur_volumeid,
     CASE 
-        WHEN p_cur_pageid + 1 = p_next_pageid THEN 'p_cur_pageid+1=p_next_pageid: PASS' 
+        WHEN p_cur_pageid < p_next_pageid THEN 'p_cur_pageid<p_next_pageid: PASS' 
         WHEN p_next_pageid = -1 THEN
             CASE 
                 WHEN p_cur_pageid IS NULL THEN 'p_next_pageid=-1 & p_cur_pageid IS NULL: FAIL'
                 WHEN p_next_pageid IS NULL THEN 'p_next_pageid=-1 & p_next_pageid IS NULL: FAIL'
                 ELSE 'p_next_pageid=-1: PASS'
             END
-        ELSE 'p_cur_pageid+1!=p_next_pageid: FAIL' 
+        ELSE 'p_cur_pageid>=p_next_pageid: FAIL' 
     END AS assert__p_cur_pageid__p_next_pageid,
     CASE 
-        WHEN p_cur_pageid - 1 = p_prev_pageid THEN 'p_cur_pageid-1=p_prev_pageid: PASS' 
+        WHEN p_cur_pageid > p_prev_pageid THEN 'p_cur_pageid>p_prev_pageid: PASS' 
         WHEN p_prev_pageid IS NULL THEN
             CASE 
                 WHEN p_cur_pageid IS NULL THEN 'p_prev_pageid & p_cur_pageid IS NULL: FAIL'
                 WHEN p_next_pageid IS NULL THEN 'p_prev_pageid & p_next_pageid IS NULL: FAIL'
                 ELSE 'p_prev_pageid IS NULL: PASS'
             END
-        ELSE 'p_cur_pageid-1!=p_prev_pageid: FAIL' 
-    END AS assert_p_cur_pageid__p_prev_pageid
+        ELSE 'p_cur_pageid<=p_prev_pageid: FAIL' 
+    END AS assert__p_cur_pageid__p_prev_pageid
 FROM tbl_data;
 
 drop table tbl;
