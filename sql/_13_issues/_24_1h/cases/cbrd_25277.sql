@@ -23,130 +23,103 @@ update statistics on ta_parent with fullscan;
 update statistics on tb_child with fullscan;
 update statistics on tc_dummy with fullscan;
 
---set optimization level 513;
 
-/* ----------------------------------------
- *
- * test case 1
- *   - Eliminate INNER JOIN for the first table
- *   - INNER JOIN
- *   - With ANSI JOIN syntax
- *
- * ---------------------------------------- */
-
-select 'AS-IS - Outer join query optimization failed.' as "test case 1";
+select 'AS-IS - Outer join query optimization failed.
+TO-BE
+- Eliminate INNER JOIN for the first table
+- INNER JOIN
+- With ANSI JOIN syntax
+' as "test case 1";
 
 select /*+ recompile ordered */
   c.c_b, d.c_b
 from
   ta_parent p
   inner join tb_child c on c.parent_c_a = p.c_a
-  inner join tc_dummy d /* With ANSI JOIN syntax */
+  inner join tc_dummy d
     on d.c_a = c.c_a;
 
 
-/* ----------------------------------------
- *
- * test case 2
- *   - Eliminate INNER JOIN for the first table
- *   - INNER JOIN
- *   - With ORACLE JOIN syntax
- *
- * ---------------------------------------- */
-
-select 'AS-IS - No error.' as "test case 2";
+select 'AS-IS - No error with ORACLE JOIN syntax.
+TO-BE
+- Eliminate INNER JOIN for the first table
+- INNER JOIN
+- With ORACLE JOIN syntax
+' as "test case 2";
 
 select /*+ recompile ordered */
   c.c_b, d.c_b
 from
   ta_parent p
   inner join tb_child c on c.parent_c_a = p.c_a,
-  tc_dummy d /* With ORACLE JOIN syntax */
+  tc_dummy d
 where
   d.c_a = c.c_a;
 
 
-/* ----------------------------------------
- *
- * test case 3
- *   - Eliminate INNER JOIN for the first table
- *   - LEFT OUTER JOIN
- *   - With ANSI JOIN syntax
- *
- * ---------------------------------------- */
-
-select 'AS-IS - Outer join query optimization failed.' as "test case 3";
+select 'AS-IS - Outer join query optimization failed.
+TO-BE
+- Eliminate INNER JOIN for the first table
+- LEFT OUTER JOIN
+- With ANSI JOIN syntax
+' as "test case 3";
 
 select /*+ recompile ordered */
   c.c_b, d.c_b
 from
   ta_parent p
   inner join tb_child c on c.parent_c_a = p.c_a
-  left outer join tc_dummy d /* With ANSI JOIN syntax */
+  left outer join tc_dummy d
     on d.c_a = c.c_a;
 
 
-/* ----------------------------------------
- *
- * test case 4
- *   - Eliminate INNER JOIN for the first table
- *   - LEFT OUTER JOIN
- *   - With ORACLE JOIN syntax
- *
- * ---------------------------------------- */
-
-select 'AS-IS - Outer join query optimization failed.' as "test case 4";
+select 'AS-IS - Outer join query optimization failed.
+TO-BE
+- Eliminate INNER JOIN for the first table
+- LEFT OUTER JOIN
+- With ORACLE JOIN syntaxi
+' as "test case 4";
 
 select /*+ recompile ordered */
   c.c_b, d.c_b
 from
   ta_parent p,
   tb_child c,
-  tc_dummy d /* With ORACLE JOIN syntax */
+  tc_dummy d
 where
   c.parent_c_a = p.c_a
   and d.c_a(+) = c.c_a;
 
 
-/* ----------------------------------------
- *
- * test case 5
- *   - Eliminate INNER JOIN for the first table
- *   - RIGHT OUTER JOIN
- *   - With ANSI JOIN syntax
- *
- * ---------------------------------------- */
-
-select 'AS-IS - Outer join query optimization failed.' as "test case 5";
+select 'AS-IS - Outer join query optimization failed.
+TO-BE
+- Eliminate INNER JOIN for the first table
+- RIGHT OUTER JOIN
+- With ANSI JOIN syntax
+' as "test case 5";
 
 select /*+ recompile ordered */
   c.c_b, d.c_b
 from
   ta_parent p
   inner join tb_child c on c.parent_c_a = p.c_a
-  right outer join tc_dummy d /* With ANSI JOIN syntax */
+  right outer join tc_dummy d
     on d.c_a = c.c_a;
 
 
-/* ----------------------------------------
- *
- * test case 6
- *   - Eliminate INNER JOIN for the first table
- *   - RIGHT OUTER JOIN
- *   - With ORACLE JOIN syntax
- *
- *  => In ORACLE, RIGHT OUTER JOIN is performed without error.
- *
- * ---------------------------------------- */
-
-select 'AS-IS - a class may be outer joined to at most one other class' as "test case 6";
+select 'AS-IS - a class may be outer joined to at most one other class
+- Eliminate INNER JOIN for the first table
+- RIGHT OUTER JOIN
+- With ORACLE JOIN syntax
+=> In ORACLE, RIGHT OUTER JOIN is performed without error.
+' as "test case 6";
 
 select /*+ recompile ordered no_eliminate_join */
   c.c_b, d.c_b
 from
   ta_parent p,
   tb_child c,
-  tc_dummy d /* With ORACLE JOIN syntax */
+  tc_dummy d
 where
   c.parent_c_a(+) = p.c_a
   and d.c_a = c.c_a(+);
