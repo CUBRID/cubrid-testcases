@@ -1,4 +1,5 @@
 --+ server-message on
+-- Verification for CBRD-24706
 
 -- error: unknown field lookup
 
