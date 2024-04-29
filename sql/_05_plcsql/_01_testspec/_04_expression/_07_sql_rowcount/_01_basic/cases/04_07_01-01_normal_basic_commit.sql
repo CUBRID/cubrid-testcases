@@ -1,4 +1,5 @@
 --+ server-message on
+-- verified for CBRD-24782
 
 -- normal: using sql%rowcount with commit
 
