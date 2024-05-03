@@ -20,7 +20,7 @@ call numeric_test(0.012345678901234567890123456789012345678);
 
 
 select 'success, 19.19 digit' from dual;
-call numeric_test(1234567890123456789.12345678901234567891);
+call numeric_test(1234567890123456789.1234567890123456789);
 select 'fail 19.20 digit' from dual;
 call numeric_test(1234567890123456789.12345678901234567891);
 select 'fail 20.19 digit' from dual;
