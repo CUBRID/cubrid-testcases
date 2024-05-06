@@ -1,4 +1,5 @@
 --+ server-message on
+-- Verified for CBRD-24565
 
 -- normal: basic usage of operator 'mod' with int values
 

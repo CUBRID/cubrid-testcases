@@ -1,4 +1,5 @@
 --+ server-message on
+-- Verification for CBRD-24706
 
 -- normal: basic usage of a loop of a static sql
 

@@ -1,4 +1,5 @@
 --+ server-message on
+-- Verified for CBRD-24565
 
 -- wrong answer of operator '<<'
 
