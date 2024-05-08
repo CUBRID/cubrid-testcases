@@ -68,7 +68,7 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ c.c_b, d.c_b from  inner join tb_child c inner join tc_dummy d on d.c_a=c.c_a
+select /*+ ORDERED */ c.c_b, d.c_b from tb_child c inner join tc_dummy d on d.c_a=c.c_a
 ===================================================
 test case 2    
 AS-IS - No error with ORACLE JOIN syntax.
@@ -99,7 +99,7 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ c.c_b, d.c_b from  inner join tb_child c, tc_dummy d where d.c_a=c.c_a
+select /*+ ORDERED */ c.c_b, d.c_b from tb_child c, tc_dummy d where d.c_a=c.c_a
 ===================================================
 test case 3    
 AS-IS - Outer join query optimization failed.
@@ -131,7 +131,7 @@ idx-join (left outer join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ c.c_b, d.c_b from  inner join tb_child c left outer join tc_dummy d on d.c_a=c.c_a
+select /*+ ORDERED */ c.c_b, d.c_b from tb_child c left outer join tc_dummy d on d.c_a=c.c_a
 ===================================================
 test case 4    
 AS-IS - Outer join query optimization failed.
@@ -195,7 +195,7 @@ idx-join (left outer join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt: [Warning: HINT ignored]
-select c.c_b, d.c_b from  inner join tb_child c right outer join tc_dummy d on d.c_a=c.c_a
+select c.c_b, d.c_b from tb_child c right outer join tc_dummy d on d.c_a=c.c_a
 ===================================================
 test case 6    
 AS-IS - a class may be outer joined to at most one other class
