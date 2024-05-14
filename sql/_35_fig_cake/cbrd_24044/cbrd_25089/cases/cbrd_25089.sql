@@ -4,6 +4,7 @@
 
 drop table if exists tbl;
 create table tbl(cola int, colb int);
+create index tbl_idx on tbl(cola, colb);
 update statistics on tbl;
 set optimization level 513;
 
@@ -87,14 +88,13 @@ group by a.cola;
 
 --12. Select only one table from the FROM clause in leading hint
 select ('test12');
-select /*+ recompile leading(a) */ *
+select /*+ recompile leading(b) */ *
 from tbl a, tbl b, tbl c
 where a.cola = b.cola
    and b.cola = c.cola;
 
 --13. Adding an index, using an index with the lowest selectivity with USING INDEX, and setting LEADING opposite to index
 select ('test13-without_hint');
-create index tbl_idx on tbl(cola, colb);
 update statistics on tbl;
 
 select /*+ recompile using index tbl_idx(+) */ *
@@ -125,48 +125,41 @@ JOIN tbl c ON a.cola = c.cola
 GROUP BY a.cola, b.colb
 ORDER BY a.cola;
 
---16. Combined Hints Usage
+--16. Cross Join with Filtering
 select ('test16');
-SELECT /*+ recompile leading(a,b) index(a idx_a_cola) */ *
-FROM tbl a, tbl b
-WHERE a.cola = b.cola
-AND a.colb = b.colb
-ORDER BY a.cola DESC;
-
---17. Cross Join with Filtering
-SELECT /*+ recompile leading(a,c) */ a.cola, c.colb
+SELECT /*+ recompile leading(c,a) */ a.cola, c.colb
 FROM tbl a, tbl c
 CROSS JOIN tbl b
 WHERE a.cola = b.cola
 AND b.colb > 50
 ORDER BY c.colb;
 
---18. Combining Various Join Types
-select ('test18');
+--17. Combining Various Join Types
+select ('test17');
 SELECT /*+ recompile leading(b,a,c) */ a.*, b.*, c.*
 FROM tbl a
 INNER JOIN tbl b ON a.cola = b.cola
 LEFT JOIN tbl c ON b.cola = c.cola
 WHERE a.colb > 10 AND b.colb < 20 AND c.colb IS NOT NULL;
 
---19. Complex Join with Subqueries
-select ('test19');
-SELECT /*+ recompile leading(s,b) */ b.*
+--18. Complex Join with Subqueries
+select ('test18');
+SELECT /*+ recompile leading(b,s) */ b.*
 FROM (SELECT cola FROM tbl WHERE colb < 100) s, tbl b
 WHERE s.cola = b.cola
 AND EXISTS (SELECT 1 FROM tbl c WHERE c.cola = b.cola);
 
---20. Multi-Level Subqueries
-select ('test20');
-SELECT /*+ recompile leading(a,b,c) */ a.cola, b.colb, c.colb
+--19. Multi-Level Subqueries
+select ('test19');
+SELECT /*+ recompile leading(c,b,a) */ a.cola, b.colb, c.colb
 FROM tbl a
 JOIN (SELECT cola, colb FROM tbl WHERE colb IN (SELECT colb FROM tbl WHERE colb > 200)) b ON a.cola = b.cola
 JOIN tbl c ON b.colb = c.colb
 WHERE a.cola IN (SELECT cola FROM tbl WHERE colb < 50);
 
---21. Complex Conditions and Grouping
-select ('test21');
-SELECT /*+ recompile leading(a,b) */ a.cola, COUNT(b.colb)
+--20. Complex Conditions and Grouping
+select ('test20');
+SELECT /*+ recompile leading(b,a) */ a.cola, COUNT(b.colb)
 FROM tbl a
 JOIN tbl b ON a.cola = b.cola AND a.colb = b.colb
 WHERE a.colb > 100
