@@ -1,0 +1,738 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+'test1'    
+test1     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select 'test?' from dual dual
+===================================================
+cola    colb    cola    colb    cola    colb    
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from tbl a, tbl b, tbl c where a.cola=b.cola and b.cola=c.cola
+===================================================
+'test2'    
+test2     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select 'test?' from dual dual
+===================================================
+cola    colb    cola    colb    cola    colb    
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: b node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: a node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(b, a) */ a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from tbl a, tbl b, tbl c where a.cola=b.cola and b.cola=c.cola
+===================================================
+'test3'    
+test3     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select 'test?' from dual dual
+===================================================
+cola    colb    cola    colb    cola    colb    
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: b node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: c node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(b, c, a) */ a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from tbl a, tbl b, tbl c where a.cola=b.cola and b.cola=c.cola
+===================================================
+'test4'    
+test4     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select 'test?' from dual dual
+===================================================
+cola    colb    cola    colb    cola    colb    
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt: [Warning: HINT ignored]
+select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from tbl a, tbl b, tbl c where a.cola=b.cola and b.cola=c.cola
+===================================================
+'test5'    
+test5     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select 'test?' from dual dual
+===================================================
+cola    colb    cola    colb    cola    colb    
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: b node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: c node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(b, c) */ a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from tbl a, tbl b, tbl c where a.cola=b.cola and b.cola=c.cola
+===================================================
+'test6'    
+test6     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select 'test?' from dual dual
+===================================================
+cola    colb    cola    colb    cola    colb    
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from tbl a, tbl b, tbl c where a.cola=b.cola and b.cola=c.cola
+===================================================
+'test7'    
+test7     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select 'test?' from dual dual
+===================================================
+cola    colb    cola    colb    cola    colb    
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (left outer join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt: [Warning: HINT ignored]
+select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from tbl a left outer join tbl b on a.cola=b.cola, tbl c where a.cola=c.cola
+===================================================
+'test8'    
+test8     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select 'test?' from dual dual
+===================================================
+cola    colb    cola    colb    cola    colb    
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from tbl a, tbl b, tbl c where a.cola=b.cola and b.cola=c.cola
+===================================================
+'test9'    
+test9     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select 'test?' from dual dual
+===================================================
+cola    colb    cola    colb    cola    colb    
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from tbl a, tbl b, tbl c where a.cola=b.cola and b.cola=c.cola
+===================================================
+'test10'    
+test10     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select 'test?' from dual dual
+===================================================
+cola    count(*)    
+
+Query plan:
+temp(group by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: a node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(b, a) */ a.cola, count(*) from tbl a, tbl b where a.cola=b.cola group by a.cola having count(*)>?
+===================================================
+'test11'    
+test11     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select 'test?' from dual dual
+===================================================
+cola    count(b.colb)    
+
+Query plan:
+temp(group by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: a node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(b, a) */ a.cola, count(b.colb) from tbl a, tbl b where a.cola=b.cola group by a.cola
+===================================================
+'test12'    
+test12     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select 'test?' from dual dual
+===================================================
+cola    colb    cola    colb    cola    colb    
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(a) */ a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from tbl a, tbl b, tbl c where a.cola=b.cola and b.cola=c.cola
+===================================================
+'test13-without_hint'    
+test13-without_hint     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select 'test?-without_hint' from dual dual
+===================================================
+0
+===================================================
+0
+===================================================
+cola    colb    cola    colb    
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: tbl_idx term[?] AND term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.cola, a.colb, b.cola, b.colb from tbl a, tbl b where a.colb=b.colb and a.cola=b.cola
+===================================================
+'test13-with_leading_hint'    
+test13-with_leading_hint     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select 'test?-with_leading_hint' from dual dual
+===================================================
+cola    colb    cola    colb    
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: b node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: a node[?]
+               index: tbl_idx term[?] AND term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(b, a) */ a.cola, a.colb, b.cola, b.colb from tbl a, tbl b where a.colb=b.colb and a.cola=b.cola
+===================================================
+'test14'    
+test14     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select 'test?' from dual dual
+===================================================
+cola    colb    cola    colb    cola    colb    
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: tbl_idx term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+(select max(tbl.colb) from tbl tbl where tbl.cola=a.cola)
+Query plan:
+idx-join (inner join)
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: b node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: a node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               subqs: ?
+               cost:  ? card ?
+    inner: iscan
+               class: c node[?]
+               index: tbl_idx term[?] AND term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(c, b, a) */ a.cola, a.colb, c.cola, c.colb, b.cola, b.colb from tbl a, tbl b, tbl c where (a.cola=c.cola) and c.cola=b.cola and b.colb=(select max(tbl.colb) from tbl tbl where tbl.cola=a.cola) and (c.colb> ?:? )
+===================================================
+'test15'    
+test15     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select 'test?' from dual dual
+===================================================
+cola    colb    sum(c.colb)    
+
+Query plan:
+temp(group by)
+    subplan: idx-join (inner join)
+                 outer: idx-join (inner join)
+                            outer: sscan
+                                       class: b node[?]
+                                       cost:  ? card ?
+                            inner: iscan
+                                       class: a node[?]
+                                       index: tbl_idx term[?] (covers)
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: iscan
+                            class: c node[?]
+                            index: tbl_idx term[?] (covers)
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(b, a, c) */ a.cola, b.colb, sum(c.colb) from tbl a, tbl b, tbl c where a.cola=b.cola and a.cola=c.cola group by a.cola, b.colb
+===================================================
+'test16'    
+test16     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select 'test?' from dual dual
+===================================================
+cola    colb    cola    colb    
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: b node[?]
+                            index: tbl_idx term[?] AND term[?] (covers)
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(a, b) */ a.cola, a.colb, b.cola, b.colb from tbl a, tbl b where a.cola=b.cola and a.colb=b.colb order by ? desc 
+===================================================
+cola    colb    
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: idx-join (inner join)
+                            outer: sscan
+                                       class: a node[?]
+                                       cost:  ? card ?
+                            inner: iscan
+                                       class: b node[?]
+                                       index: tbl_idx term[?] AND term[?] (covers)
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: c node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt: [Warning: HINT ignored]
+select a.cola, c.colb from tbl a, tbl c cross join tbl b where a.cola=b.cola and (b.colb> ?:? ) order by ?
+===================================================
+'test18'    
+test18     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select 'test?' from dual dual
+===================================================
+cola    colb    cola    colb    cola    colb    
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: sscan
+                          class: b node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: a node[?]
+                          index: tbl_idx term[?] AND term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: c node[?]
+               index: tbl_idx term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(b, a, c) */ a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from tbl a, tbl b, tbl c where (a.colb> ?:? ) and (b.colb< ?:? ) and c.colb is not null  and a.cola=b.cola and b.cola=c.cola
+===================================================
+'test19'    
+test19     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select 'test?' from dual dual
+===================================================
+cola    colb    
+
+Query plan:
+iscan
+    class: c node[?]
+    index: tbl_idx term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+(select ? from tbl c where c.cola=b.cola)
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: b node[?]
+               sargs: term[?]
+               subqs: ?
+               cost:  ? card ?
+    inner: iscan
+               class: s node[?]
+               index: tbl_idx term[?] AND term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(s, b) */ b.cola, b.colb from tbl s, tbl b where (s.cola=b.cola) and  exists (select ? from tbl c where c.cola=b.cola) and (s.colb< ?:? )
+===================================================
+'test20'    
+test20     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select 'test?' from dual dual
+===================================================
+cola    colb    colb    
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: tbl node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct tbl.cola from tbl tbl where (tbl.colb< ?:? ))
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: tbl node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct tbl.colb from tbl tbl where (tbl.colb> ?:? ))
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: idx-join (inner join)
+                          outer: nl-join (inner join)
+                                     edge:  term[?]
+                                     outer: sscan
+                                                class: c node[?]
+                                                cost:  ? card ?
+                                     inner: sscan
+                                                class: b node[?]
+                                                sargs: term[?]
+                                                cost:  ? card ?
+                                     cost:  ? card ?
+                          inner: iscan
+                                     class: a node[?]
+                                     index: tbl_idx term[?] (covers)
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: av? node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: av?_? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(a, b, c) */ a.cola, b.colb, c.colb from tbl a, tbl b, tbl c, (select distinct tbl.cola from tbl tbl where (tbl.colb< ?:? )) av? (av_?), (select distinct tbl.colb from tbl tbl where (tbl.colb> ?:? )) av?_? (av_?) where (a.cola=av?.av_?) and (b.colb=av?_?.av_?) and a.cola=b.cola and b.colb=c.colb
+===================================================
+'test21'    
+test21     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select 'test?' from dual dual
+===================================================
+cola    count(b.colb)    
+
+Query plan:
+temp(group by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: a node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: b node[?]
+                            index: tbl_idx term[?] AND term[?] (covers)
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(a, b) */ a.cola, count(b.colb) from tbl a, tbl b where (a.colb> ?:? ) and a.cola=b.cola and a.colb=b.colb group by a.cola having count(b.colb)>?
+===================================================
+0
