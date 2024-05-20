@@ -7,8 +7,6 @@
 ===================================================
 0
 ===================================================
-0
-===================================================
 'test1'    
 test1     
 
@@ -22,19 +20,21 @@ select 'test?' from dual dual
 cola    colb    cola    colb    cola    colb    
 
 Query plan:
-idx-join (inner join)
-    outer: idx-join (inner join)
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
                outer: sscan
                           class: a node[?]
                           cost:  ? card ?
-               inner: iscan
+               inner: sscan
                           class: b node[?]
-                          index: tbl_idx term[?] (covers)
+                          sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
-    inner: iscan
+    inner: sscan
                class: c node[?]
-               index: tbl_idx term[?] (covers)
+               sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -53,19 +53,21 @@ select 'test?' from dual dual
 cola    colb    cola    colb    cola    colb    
 
 Query plan:
-idx-join (inner join)
-    outer: idx-join (inner join)
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
                outer: sscan
                           class: b node[?]
                           cost:  ? card ?
-               inner: iscan
+               inner: sscan
                           class: a node[?]
-                          index: tbl_idx term[?] (covers)
+                          sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
-    inner: iscan
+    inner: sscan
                class: c node[?]
-               index: tbl_idx term[?] (covers)
+               sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -84,19 +86,21 @@ select 'test?' from dual dual
 cola    colb    cola    colb    cola    colb    
 
 Query plan:
-idx-join (inner join)
-    outer: idx-join (inner join)
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
                outer: sscan
                           class: b node[?]
                           cost:  ? card ?
-               inner: iscan
+               inner: sscan
                           class: c node[?]
-                          index: tbl_idx term[?] (covers)
+                          sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
-    inner: iscan
+    inner: sscan
                class: a node[?]
-               index: tbl_idx term[?] (covers)
+               sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -115,19 +119,21 @@ select 'test?' from dual dual
 cola    colb    cola    colb    cola    colb    
 
 Query plan:
-idx-join (inner join)
-    outer: idx-join (inner join)
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
                outer: sscan
                           class: a node[?]
                           cost:  ? card ?
-               inner: iscan
+               inner: sscan
                           class: b node[?]
-                          index: tbl_idx term[?] (covers)
+                          sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
-    inner: iscan
+    inner: sscan
                class: c node[?]
-               index: tbl_idx term[?] (covers)
+               sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt: [Warning: HINT ignored]
@@ -146,19 +152,21 @@ select 'test?' from dual dual
 cola    colb    cola    colb    cola    colb    
 
 Query plan:
-idx-join (inner join)
-    outer: idx-join (inner join)
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
                outer: sscan
                           class: b node[?]
                           cost:  ? card ?
-               inner: iscan
+               inner: sscan
                           class: c node[?]
-                          index: tbl_idx term[?] (covers)
+                          sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
-    inner: iscan
+    inner: sscan
                class: a node[?]
-               index: tbl_idx term[?] (covers)
+               sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -177,19 +185,21 @@ select 'test?' from dual dual
 cola    colb    cola    colb    cola    colb    
 
 Query plan:
-idx-join (inner join)
-    outer: idx-join (inner join)
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
                outer: sscan
                           class: a node[?]
                           cost:  ? card ?
-               inner: iscan
+               inner: sscan
                           class: b node[?]
-                          index: tbl_idx term[?] (covers)
+                          sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
-    inner: iscan
+    inner: sscan
                class: c node[?]
-               index: tbl_idx term[?] (covers)
+               sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -208,19 +218,21 @@ select 'test?' from dual dual
 cola    colb    cola    colb    cola    colb    
 
 Query plan:
-idx-join (inner join)
-    outer: idx-join (left outer join)
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (left outer join)
+               edge:  term[?]
                outer: sscan
                           class: a node[?]
                           cost:  ? card ?
-               inner: iscan
+               inner: sscan
                           class: b node[?]
-                          index: tbl_idx term[?] (covers)
+                          sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
-    inner: iscan
+    inner: sscan
                class: c node[?]
-               index: tbl_idx term[?] (covers)
+               sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt: [Warning: HINT ignored]
@@ -239,19 +251,21 @@ select 'test?' from dual dual
 cola    colb    cola    colb    cola    colb    
 
 Query plan:
-idx-join (inner join)
-    outer: idx-join (inner join)
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
                outer: sscan
                           class: a node[?]
                           cost:  ? card ?
-               inner: iscan
+               inner: sscan
                           class: b node[?]
-                          index: tbl_idx term[?] (covers)
+                          sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
-    inner: iscan
+    inner: sscan
                class: c node[?]
-               index: tbl_idx term[?] (covers)
+               sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -270,19 +284,21 @@ select 'test?' from dual dual
 cola    colb    cola    colb    cola    colb    
 
 Query plan:
-idx-join (inner join)
-    outer: idx-join (inner join)
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
                outer: sscan
                           class: a node[?]
                           cost:  ? card ?
-               inner: iscan
+               inner: sscan
                           class: b node[?]
-                          index: tbl_idx term[?] (covers)
+                          sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
-    inner: iscan
+    inner: sscan
                class: c node[?]
-               index: tbl_idx term[?] (covers)
+               sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -302,13 +318,14 @@ cola    count(*)
 
 Query plan:
 temp(group by)
-    subplan: idx-join (inner join)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
                  outer: sscan
                             class: b node[?]
                             cost:  ? card ?
-                 inner: iscan
+                 inner: sscan
                             class: a node[?]
-                            index: tbl_idx term[?] (covers)
+                            sargs: term[?]
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc
@@ -330,13 +347,14 @@ cola    count(b.colb)
 
 Query plan:
 temp(group by)
-    subplan: idx-join (inner join)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
                  outer: sscan
                             class: b node[?]
                             cost:  ? card ?
-                 inner: iscan
+                 inner: sscan
                             class: a node[?]
-                            index: tbl_idx term[?] (covers)
+                            sargs: term[?]
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc
@@ -357,33 +375,37 @@ select 'test?' from dual dual
 cola    colb    cola    colb    cola    colb    
 
 Query plan:
-idx-join (inner join)
-    outer: idx-join (inner join)
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
                outer: sscan
                           class: b node[?]
                           cost:  ? card ?
-               inner: iscan
+               inner: sscan
                           class: a node[?]
-                          index: tbl_idx term[?] (covers)
+                          sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
-    inner: iscan
+    inner: sscan
                class: c node[?]
-               index: tbl_idx term[?] (covers)
+               sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
 select /*+ LEADING(b) */ a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from tbl a, tbl b, tbl c where a.cola=b.cola and b.cola=c.cola
 ===================================================
-'test13-without_hint'    
-test13-without_hint     
+'test13'    
+test13     
 
 Query plan:
 sscan
     class: dual node[?]
     cost:  ? card ?
 Query stmt:
-select 'test?-without_hint' from dual dual
+select 'test?' from dual dual
+===================================================
+0
 ===================================================
 0
 ===================================================
@@ -402,16 +424,6 @@ idx-join (inner join)
 Query stmt:
 select a.cola, a.colb, b.cola, b.colb from tbl a, tbl b where a.colb=b.colb and a.cola=b.cola
 ===================================================
-'test13-with_leading_hint'    
-test13-with_leading_hint     
-
-Query plan:
-sscan
-    class: dual node[?]
-    cost:  ? card ?
-Query stmt:
-select 'test?-with_leading_hint' from dual dual
-===================================================
 cola    colb    cola    colb    
 
 Query plan:
@@ -427,6 +439,8 @@ idx-join (inner join)
 Query stmt:
 select /*+ LEADING(b, a) */ a.cola, a.colb, b.cola, b.colb from tbl a, tbl b where a.colb=b.colb and a.cola=b.cola
 ===================================================
+0
+===================================================
 'test14'    
 test14     
 
@@ -440,33 +454,25 @@ select 'test?' from dual dual
 cola    colb    cola    colb    cola    colb    
 
 Query plan:
-iscan
-    class: tbl node[?]
-    index: tbl_idx term[?] (covers)
-    cost:  ? card ?
-Query stmt:
-(select max(tbl.colb) from tbl tbl where tbl.cola=a.cola)
-Query plan:
-idx-join (inner join)
+nl-join (inner join)
+    edge:  term[?]
     outer: nl-join (inner join)
                edge:  term[?]
                outer: sscan
-                          class: b node[?]
+                          class: a node[?]
                           cost:  ? card ?
                inner: sscan
-                          class: a node[?]
+                          class: b node[?]
                           sargs: term[?]
                           cost:  ? card ?
-               subqs: ?
                cost:  ? card ?
-    inner: iscan
+    inner: sscan
                class: c node[?]
-               index: tbl_idx term[?] AND term[?] (covers)
-               filtr: term[?]
+               sargs: term[?] AND term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ LEADING(c, b, a) */ a.cola, a.colb, c.cola, c.colb, b.cola, b.colb from tbl a, tbl b, tbl c where (a.cola=c.cola) and c.cola=b.cola and b.colb=(select max(tbl.colb) from tbl tbl where tbl.cola=a.cola) and (c.colb> ?:? )
+select /*+ LEADING(b, c, a) */ a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from tbl a, tbl b, tbl c where (a.cola=b.cola) and b.cola=c.cola and (c.cola> ?:? )
 ===================================================
 'test15'    
 test15     
@@ -482,25 +488,27 @@ cola    colb    sum(c.colb)
 
 Query plan:
 temp(group by)
-    subplan: idx-join (inner join)
-                 outer: idx-join (inner join)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: nl-join (inner join)
+                            edge:  term[?]
                             outer: sscan
-                                       class: b node[?]
+                                       class: c node[?]
                                        cost:  ? card ?
-                            inner: iscan
+                            inner: sscan
                                        class: a node[?]
-                                       index: tbl_idx term[?] (covers)
+                                       sargs: term[?]
                                        cost:  ? card ?
                             cost:  ? card ?
-                 inner: iscan
-                            class: c node[?]
-                            index: tbl_idx term[?] (covers)
+                 inner: sscan
+                            class: b node[?]
+                            sargs: term[?]
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ LEADING(b, a, c) */ a.cola, b.colb, sum(c.colb) from tbl a, tbl b, tbl c where a.cola=b.cola and a.cola=c.cola group by a.cola, b.colb
+select /*+ LEADING(c, a, b) */ a.cola, b.colb, sum(c.colb) from tbl a, tbl b, tbl c where a.cola=b.cola and a.cola=c.cola group by a.cola, b.colb
 ===================================================
 'test16'    
 test16     
@@ -512,28 +520,27 @@ sscan
 Query stmt:
 select 'test?' from dual dual
 ===================================================
-cola    colb    
+cola    colb    cola    colb    cola    colb    
 
 Query plan:
-temp(order by)
-    subplan: nl-join (cross join)
-                 outer: idx-join (inner join)
-                            outer: sscan
-                                       class: a node[?]
-                                       cost:  ? card ?
-                            inner: iscan
-                                       class: b node[?]
-                                       index: tbl_idx term[?] AND term[?] (covers)
-                                       cost:  ? card ?
-                            cost:  ? card ?
-                 inner: sscan
-                            class: c node[?]
-                            cost:  ? card ?
-                 cost:  ? card ?
-    sort:  ? asc
+nl-join (cross join)
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: b node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: a node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               cost:  ? card ?
     cost:  ? card ?
-Query stmt: [Warning: HINT ignored]
-select a.cola, c.colb from tbl a, tbl c cross join tbl b where a.cola=b.cola and (b.colb> ?:? ) order by ?
+Query stmt:
+select /*+ LEADING(b, a) */ a.cola, a.colb, c.cola, c.colb, b.cola, b.colb from tbl a, tbl c cross join tbl b where a.cola=b.cola and (b.colb> ?:? )
 ===================================================
 'test17'    
 test17     
@@ -548,21 +555,22 @@ select 'test?' from dual dual
 cola    colb    cola    colb    cola    colb    
 
 Query plan:
-idx-join (inner join)
-    outer: idx-join (inner join)
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
                outer: sscan
                           class: b node[?]
                           sargs: term[?]
                           cost:  ? card ?
-               inner: iscan
+               inner: sscan
                           class: a node[?]
-                          index: tbl_idx term[?] AND term[?] (covers)
+                          sargs: term[?] AND term[?]
                           cost:  ? card ?
                cost:  ? card ?
-    inner: iscan
+    inner: sscan
                class: c node[?]
-               index: tbl_idx term[?] (covers)
-               filtr: term[?]
+               sargs: term[?] AND term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -581,22 +589,22 @@ select 'test?' from dual dual
 cola    colb    
 
 Query plan:
-iscan
+sscan
     class: c node[?]
-    index: tbl_idx term[?] (covers)
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
 (select ? from tbl c where c.cola=b.cola)
 Query plan:
-idx-join (inner join)
+nl-join (inner join)
+    edge:  term[?]
     outer: sscan
                class: s node[?]
                sargs: term[?]
                cost:  ? card ?
-    inner: iscan
+    inner: sscan
                class: b node[?]
-               index: tbl_idx term[?] (covers)
-               sargs: term[?]
+               sargs: term[?] AND term[?]
                subqs: ?
                cost:  ? card ?
     cost:  ? card ?
@@ -640,13 +648,14 @@ nl-join (inner join)
                edge:  term[?]
                outer: nl-join (inner join)
                           edge:  term[?]
-                          outer: idx-join (inner join)
+                          outer: nl-join (inner join)
+                                     edge:  term[?]
                                      outer: sscan
                                                 class: a node[?]
                                                 cost:  ? card ?
-                                     inner: iscan
+                                     inner: sscan
                                                 class: b node[?]
-                                                index: tbl_idx term[?] (covers)
+                                                sargs: term[?]
                                                 cost:  ? card ?
                                      cost:  ? card ?
                           inner: sscan
@@ -681,19 +690,56 @@ cola    count(b.colb)
 
 Query plan:
 temp(group by)
-    subplan: idx-join (inner join)
+    subplan: nl-join (inner join)
+                 edge:  term[?] AND term[?]
                  outer: sscan
                             class: b node[?]
                             cost:  ? card ?
-                 inner: iscan
+                 inner: sscan
                             class: a node[?]
-                            index: tbl_idx term[?] AND term[?] (covers)
-                            filtr: term[?]
+                            sargs: term[?] AND term[?] AND term[?]
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 select /*+ LEADING(b, a) */ a.cola, count(b.colb) from tbl a, tbl b where (a.colb> ?:? ) and a.cola=b.cola and a.colb=b.colb group by a.cola having count(b.colb)>?
+===================================================
+'test21'    
+test21     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select 'test?' from dual dual
+===================================================
+0
+===================================================
+cola    colb    colc    cola    colb    colc    cola    colb    colc    
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: c_partition node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b_partition node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: a_partition node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(c_partition, b_partition) */ a_partition.cola, a_partition.colb, a_partition.colc, b_partition.cola, b_partition.colb, b_partition.colc, c_partition.cola, c_partition.colb, c_partition.colc from tbl_partition a_partition, tbl_partition b_partition, tbl_partition c_partition where a_partition.cola=b_partition.cola and b_partition.cola=c_partition.cola
+===================================================
+0
 ===================================================
 0

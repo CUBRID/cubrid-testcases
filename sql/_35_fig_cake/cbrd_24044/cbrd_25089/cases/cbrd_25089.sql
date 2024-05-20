@@ -4,7 +4,6 @@
 
 drop table if exists tbl;
 create table tbl(cola int, colb int);
-create index tbl_idx on tbl(cola, colb);
 update statistics on tbl;
 set optimization level 513;
 
@@ -94,31 +93,32 @@ where a.cola = b.cola
    and b.cola = c.cola;
 
 --13. Adding an index, using an index with the lowest selectivity with USING INDEX, and setting LEADING opposite to index
-select ('test13-without_hint');
+select ('test13');
+create index tbl_idx on tbl(cola, colb);
 update statistics on tbl;
-
 select /*+ recompile using index tbl_idx(+) */ *
 from tbl a, tbl b
 where a.colb = b.colb
    and a.cola = b.cola;
 
-select ('test13-with_leading_hint');
 select /*+ recompile leading(b,a) using index tbl_idx(+) */ *
 from tbl a, tbl b
 where a.colb = b.colb
    and a.cola = b.cola;
+drop index tbl_idx on tbl;
 
 --14. Multiple Join Conditions with Subqueries
+--(SELECT * FROM tbl WHERE colb > 100) c
 select ('test14');
-SELECT /*+ recompile leading(c, b, a) */ a.*, c.*, b.*
-FROM tbl a, tbl b, (SELECT * FROM tbl WHERE colb > 100) c
-WHERE a.cola = c.cola
-AND c.cola = b.cola
-AND b.colb = (SELECT MAX(colb) FROM tbl WHERE cola = a.cola);
+SELECT /*+ recompile leading(b,c,a) */ *
+FROM tbl a, tbl b, (SELECT * FROM tbl WHERE cola > 100) c
+WHERE a.cola = b.cola
+AND b.cola = c.cola;
+--AND b.colb = (SELECT MAX(colb) FROM tbl WHERE cola = a.cola);
 
 --15. Complex Joins with Aggregate Functions
 select ('test15');
-SELECT /*+ recompile leading(b,a,c) */ a.cola, b.colb, SUM(c.colb)
+SELECT /*+ recompile leading(c,a,b) */ a.cola, b.colb, SUM(c.colb)
 FROM tbl a
 JOIN tbl b ON a.cola = b.cola
 JOIN tbl c ON a.cola = c.cola
@@ -127,12 +127,11 @@ ORDER BY a.cola;
 
 --16. Cross Join with Filtering
 select ('test16');
-SELECT /*+ recompile leading(c,a) */ a.cola, c.colb
+SELECT /*+ recompile leading(b,a) */ *
 FROM tbl a, tbl c
 CROSS JOIN tbl b
 WHERE a.cola = b.cola
-AND b.colb > 50
-ORDER BY c.colb;
+AND b.colb > 50;
 
 --17. Combining Various Join Types
 select ('test17');
@@ -166,4 +165,22 @@ WHERE a.colb > 100
 GROUP BY a.cola
 HAVING COUNT(b.colb) > 5;
 
+--21. Partition table
+select ('test21');
+CREATE TABLE tbl_partition (
+    cola INT,
+    colb INT,
+    colc VARCHAR(100)
+)
+PARTITION BY RANGE (cola) (
+    PARTITION p0 VALUES LESS THAN (50),
+    PARTITION p1 VALUES LESS THAN (100),
+    PARTITION p2 VALUES LESS THAN (150)
+);
+SELECT /*+ recompile leading(c_partition, b_partition) */ *
+FROM tbl_partition a_partition, tbl_partition b_partition, tbl_partition c_partition
+WHERE a_partition.cola = b_partition.cola
+AND b_partition.cola = c_partition.cola;
+
+drop table if exists tbl_partition;
 drop table if exists tbl;
