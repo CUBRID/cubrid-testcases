@@ -108,13 +108,12 @@ where a.colb = b.colb
 drop index tbl_idx on tbl;
 
 --14. Multiple Join Conditions with Subqueries
---(SELECT * FROM tbl WHERE colb > 100) c
 select ('test14');
 SELECT /*+ recompile leading(b,c,a) */ *
 FROM tbl a, tbl b, (SELECT * FROM tbl WHERE cola > 100) c
 WHERE a.cola = b.cola
-AND b.cola = c.cola;
---AND b.colb = (SELECT MAX(colb) FROM tbl WHERE cola = a.cola);
+AND b.cola = c.cola
+AND b.colb = (SELECT MAX(colb) FROM tbl WHERE cola = a.cola);
 
 --15. Complex Joins with Aggregate Functions
 select ('test15');

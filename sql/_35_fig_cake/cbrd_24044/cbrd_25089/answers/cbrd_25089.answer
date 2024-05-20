@@ -454,17 +454,25 @@ select 'test?' from dual dual
 cola    colb    cola    colb    cola    colb    
 
 Query plan:
+sscan
+    class: tbl node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select max(tbl.colb) from tbl tbl where tbl.cola=a.cola)
+Query plan:
 nl-join (inner join)
     edge:  term[?]
     outer: nl-join (inner join)
-               edge:  term[?]
+               edge:  term[?] AND term[?]
                outer: sscan
                           class: a node[?]
                           cost:  ? card ?
                inner: sscan
                           class: b node[?]
-                          sargs: term[?]
+                          sargs: term[?] AND term[?]
                           cost:  ? card ?
+               subqs: ?
                cost:  ? card ?
     inner: sscan
                class: c node[?]
@@ -472,7 +480,7 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ LEADING(b, c, a) */ a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from tbl a, tbl b, tbl c where (a.cola=b.cola) and b.cola=c.cola and (c.cola> ?:? )
+select /*+ LEADING(b, c, a) */ a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from tbl a, tbl b, tbl c where (a.cola=b.cola) and b.cola=c.cola and b.colb=(select max(tbl.colb) from tbl tbl where tbl.cola=a.cola) and (c.cola> ?:? )
 ===================================================
 'test15'    
 test15     
