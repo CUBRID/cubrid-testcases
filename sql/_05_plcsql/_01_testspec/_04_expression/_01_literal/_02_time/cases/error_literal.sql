@@ -7,7 +7,7 @@ create table test_literal(t time);
 -- wrong time literal
 create or replace procedure proc_test_literal() as
 begin
-    insert into test_insert() values (time'12:13:14.123');
+    insert into test_insert(t) values (time'12:13:14.123');
 end;
 
 call proc_test_literal();
