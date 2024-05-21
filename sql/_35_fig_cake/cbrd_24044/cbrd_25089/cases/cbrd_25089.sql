@@ -6,7 +6,6 @@ drop table if exists tbl;
 create table tbl(cola int, colb int);
 create view test_v as select cola, colb from tbl;
 update statistics on tbl;
-set optimization level 513;
 
 --1. without leading option
 select ('test1');
