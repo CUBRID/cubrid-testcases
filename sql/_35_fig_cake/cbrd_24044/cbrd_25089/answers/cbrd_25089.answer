@@ -7,6 +7,8 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 'test1'    
 test1     
 
@@ -747,6 +749,87 @@ nl-join (inner join)
     cost:  ? card ?
 Query stmt:
 select /*+ LEADING(c_partition, b_partition) */ a_partition.cola, a_partition.colb, a_partition.colc, b_partition.cola, b_partition.colb, b_partition.colc, c_partition.cola, c_partition.colb, c_partition.colc from tbl_partition a_partition, tbl_partition b_partition, tbl_partition c_partition where a_partition.cola=b_partition.cola and b_partition.cola=c_partition.cola
+===================================================
+'test22'    
+test22     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select 'test?' from dual dual
+===================================================
+cola    colb    cola    colb    cola    colb    
+
+Query plan:
+temp
+    order: cola[?]
+    subplan: m-join (inner join)
+                 edge:  term[?]
+                 outer: temp
+                            order: cola[?]
+                            subplan: m-join (inner join)
+                                         edge:  term[?]
+                                         outer: temp
+                                                    order: cola[?]
+                                                    subplan: sscan
+                                                                 class: b node[?]
+                                                                 cost:  ? card ?
+                                                    cost:  ? card ?
+                                         inner: temp
+                                                    order: cola[?]
+                                                    subplan: sscan
+                                                                 class: c node[?]
+                                                                 cost:  ? card ?
+                                                    cost:  ? card ?
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 inner: temp
+                            order: cola[?]
+                            subplan: sscan
+                                         class: a node[?]
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(b, c) USE_MERGE */ a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from tbl a, tbl b, tbl c where a.cola=b.cola and b.cola=c.cola
+===================================================
+'test23'    
+test23     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select 'test?' from dual dual
+===================================================
+cola    colb    
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: v node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(v, a, b) */ v.cola, a.colb from tbl v, tbl a, tbl b where (v.cola=a.cola) and a.cola=b.cola
+===================================================
+0
 ===================================================
 0
 ===================================================
