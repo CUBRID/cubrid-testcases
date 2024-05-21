@@ -18,7 +18,9 @@ begin
 end;
 
 select hostvar_test(5,'utf8') from dual;
-select hostvar_test(7,'utf-8') from dual; -- return NULL, because data is not found
+
+-- return NULL, because data is not found
+select hostvar_test(7,'utf-8') from dual;
 
 drop function hostvar_test;
 
