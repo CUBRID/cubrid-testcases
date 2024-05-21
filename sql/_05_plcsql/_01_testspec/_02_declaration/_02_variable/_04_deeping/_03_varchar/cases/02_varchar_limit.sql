@@ -44,6 +44,10 @@ call varchar_limit2('select ''a'' from dual');
 call varchar_limit2('select ''a'' || space(1048575) from dual');
 call varchar_limit2('select repeat(''a'', 1048576) from dual');
 
+-- hangul is 1 letter = 3 size
+call varchar_limit2('select ''한글'' from dual');
+call varchar_limit2('select repeat(''한'', 349525) from dual');
+
 create or replace procedure varchar_limit3(vch_param varchar) as
 	vch_1 varchar(1) := vch_param;
 	vch_length varchar(1);
@@ -57,7 +61,8 @@ end;
 
 call varchar_limit3('a');
 --error, size over
-call varchar_limit3('abc');
+call varchar_limit3('abcd');
+call varchar_limit3('한글');
 
 
 drop procedure varchar_limit2;

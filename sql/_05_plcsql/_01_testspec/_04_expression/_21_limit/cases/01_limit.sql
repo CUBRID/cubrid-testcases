@@ -18,7 +18,7 @@ call limit_test1();
 create or replace procedure limit_test2 as
 	col varchar;
 begin
-	select 'limit test 2' into col from dual limit 1;
+	select 'limit test 2' into col from t limit 1;
 	dbms_output.put_line('result: ' || col);
 end;
 

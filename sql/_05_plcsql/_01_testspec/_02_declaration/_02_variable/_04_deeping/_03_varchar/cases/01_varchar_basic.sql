@@ -14,10 +14,19 @@ call varchar_test1('select cast(''abc'' as varchar(3)) from dual;');
 
 
 create or replace procedure varchar_test2() as
-	num_1 varchar(20) := 3;
-	num_2 varchar(5) := 8;
+	num_1 varchar(20) := 2;
+	num_2 varchar(5) := 10;
 begin
-	dbms_output.put_line('compared to between two varchar type');
+	dbms_output.put_line('compared to between two varchar type (10 < 2)');
+	if num_2 < num_1 then
+		dbms_output.put_line('bigger:  "' || num_2 ||'"');
+		dbms_output.put_line('smaller: "' || num_1 ||'"');
+	else
+		dbms_output.put_line('error, num_1: ' || num_1);
+		dbms_output.put_line('error, num_2: ' || num_2);
+	end if;
+
+	dbms_output.put_line('compared to between two varchar type  (2 < 10)');
 	if num_1 < num_2 then
 		dbms_output.put_line('bigger:  "' || num_2 ||'"');
 		dbms_output.put_line('smaller: "' || num_1 ||'"');
