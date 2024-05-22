@@ -17,11 +17,17 @@ update statistics on tbl;
 
 -- use pk
 select /*+ recompile */ count(*) from tbl where col_a > 9990 and col_b = '1';
+-- use idx
 select /*+ recompile */ count(*) from tbl where col_b = 1  order by col_a ;
+-- use pk
 select /*+ recompile */ count(*) from tbl where col_a > 100  order by col_b;
+-- use idx
 select /*+ recompile */ count(*) from tbl where col_b = 1  order by col_a limit 1000;
+-- use pk
 select /*+ recompile */ count(*) from tbl where col_a > 100  order by col_b limit 1000;
+-- use idx
 select /*+ recompile */ count(*) from tbl where col_b = 1  order by col_a limit 10;
+-- use pk
 select /*+ recompile */ count(*) from tbl where col_a > 100  order by col_b limit 10;
  
  
@@ -31,11 +37,17 @@ update statistics on tbl;
  
 -- use pk
 select /*+ recompile */ count(*) from tbl where col_a > 9990 and col_c = '1';
+-- use idx
 select /*+ recompile */ count(*) from tbl where col_c = 1  order by col_a ;
+-- use pk
 select /*+ recompile */ count(*) from tbl where col_a > 100  order by col_c ;
+-- use idx
 select /*+ recompile */ count(*) from tbl where col_c = 1  order by col_a limit 1000;
+-- use pk
 select /*+ recompile */ count(*) from tbl where col_a > 100  order by col_c limit 1000;
+-- use idx
 select /*+ recompile */ count(*) from tbl where col_c = 1  order by col_a limit 10;
+-- use pk
 select /*+ recompile */ count(*) from tbl where col_a > 100  order by col_c limit 10;
  
  
@@ -45,11 +57,17 @@ update statistics on tbl;
 
 -- use pk
 select /*+ recompile */ count(*) from tbl where col_a > 9990 and col_d = '1';
+-- use idx
 select /*+ recompile */ count(*) from tbl where col_d = 1  order by col_a ;
+-- use pk
 select /*+ recompile */ count(*) from tbl where col_a > 100  order by col_d ;
+-- use idx
 select /*+ recompile */ count(*) from tbl where col_d = 1  order by col_a limit 1000;
+-- use pk
 select /*+ recompile */ count(*) from tbl where col_a > 100  order by col_d limit 1000;
+-- use idx
 select /*+ recompile */ count(*) from tbl where col_d = 1  order by col_a limit 10;
+-- use pk
 select /*+ recompile */ count(*) from tbl where col_a > 100  order by col_d limit 10;
  
  
@@ -59,9 +77,11 @@ update statistics on tbl;
  
 -- use pk
 select /*+ recompile */ count(*) from tbl where col_a > 9990 and col_e = '1';
-select /*+ recompile */ count(*) from tbl where col_e = 1  order by col_a ;
 -- use idx
+select /*+ recompile */ count(*) from tbl where col_e = 1  order by col_a ;
+-- use pk
 select /*+ recompile */ count(*) from tbl where col_a > 100  order by col_e ;
+-- use idx
 select /*+ recompile */ count(*) from tbl where col_e = 1  order by col_a limit 1000;
 -- use pk
 select /*+ recompile */ count(*) from tbl where col_a > 100  order by col_e limit 1000;
