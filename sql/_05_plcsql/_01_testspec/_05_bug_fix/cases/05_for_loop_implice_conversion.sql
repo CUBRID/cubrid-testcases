@@ -47,15 +47,45 @@ BEGIN
 	END LOOP;
 END;
 
+CREATE OR REPLACE procedure loop_with_smallint_val1 AS
+	j smallint := 0;
+	start_val smallint := 32764;
+	end_val int := 32780;
+	step_val smallint := 10;
+BEGIN
+	FOR i IN start_val .. end_val by step_val LOOP
+		dbms_output.put_line('for with smallint(auto cast to int) ' || i);
+	END LOOP;
+END;
+
+/*
+-- can not detect the overflow on plcsql
+-- this bug will be fixed CBRD-25373
+CREATE OR REPLACE procedure loop_with_smallint_val2 AS
+	j smallint := 32764;
+	end_val int := 32780;
+	step_val smallint := 10;
+BEGIN
+	while j <= end_val LOOP  
+		dbms_output.put_line('while with smallint ' || j);
+		j := j + step_val  ;
+	END LOOP;
+END;
+*/
+
 
 call poo();
 call loop_with_varchar();
 call loop_with_int_val();
+call loop_with_smallint_val1();
+--call loop_with_smallint_val2();
 
 
 drop procedure poo;
 drop procedure loop_with_varchar;
 drop procedure loop_with_int_val;
+drop procedure loop_with_smallint_val1;
+--drop procedure loop_with_smallint_val2;
 
 --+ server-message off
 
