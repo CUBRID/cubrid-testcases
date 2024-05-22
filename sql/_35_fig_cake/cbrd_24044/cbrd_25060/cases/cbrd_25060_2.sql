@@ -9,6 +9,7 @@ insert into tbl select rownum, 1, mod(rownum,10), lpad(to_char(mod(rownum,100)),
 set optimization level 513;
 update statistics on tbl;
 
+
 -- 1. Unique index prioritization in a single-column unique index scenario
     -- uidx_a: contains 1 unique index column (col_a) <- should be selected
     -- idx_b_c: contains 0 unique index columns, but covers more columns (b,c vs a)
@@ -18,7 +19,7 @@ create index idx_b_c on tbl(col_b,col_c);
 select /*+ recompile */ count(*) from tbl where col_a = 1 and col_b = 1 and col_c = 1;
 drop index uidx_a on tbl;
 drop index idx_b_c on tbl;
---pass: index: uidx_a term[0]
+
 
 -- 2. Unique index prioritization in a multi-column unique index scenario: non-unique index does not include unique index column
     -- uidx_a_b: contains 2 unique index columns (col_a, col_b) <- should be selected
@@ -29,7 +30,7 @@ update statistics on tbl;
 
 --should prioritize index with more unique indexes even if covers less columns
 select /*+ recompile */ count(*) from tbl where col_a = 1 and col_b = 1 and col_c = 1 and col_d = 1 and col_e = 1;
--- pass: index: uidx_a_b term[0] AND term[4]
+
 
 -- 3. Unique index prioritization in a multi-column unique index scenario: non-unique index includes unique index column
     -- uidx_a_b: contains 2 unique index columns (col_a, col_b) <- should be selected
@@ -39,7 +40,7 @@ update statistics on tbl;
 
 --should prioritize index with more unique indexes even if covers less columns
 select /*+ recompile */ count(*) from tbl where col_a = 1 and col_b = 1 and col_c = 1 and col_d = 1;
--- pass: index: uidx_a_b term[0] AND term[3]
+
 
 -- 4. Non-unique index prioritization in a multi-column unique index scenario: non-unique index includes all unique index columns
     -- uidx_a_b: contains 2 unique index columns (col_a, col_b)
@@ -49,14 +50,13 @@ update statistics on tbl;
 
 --should prioritize non-unique index because it contains the same amount of unique index columns and covers more columns
 select /*+ recompile */ count(*) from tbl where col_a = 1 and col_b = 1 and col_c = 1;
--- pass: index: idx_a_b_c term[0] AND term[1] AND term[2] (covers)
+
 
 -- 5. JOIN: Non-unique index prioritization in a multi-column unique index scenario: non-unique index includes all unique index columns
     -- uidx_a_b: contains 2 unique index columns (col_a, col_b)
     -- idx_a_b_c: contains 2 unique index columns (col_a, col_b), and covers more columns (a,b,c vs a,b) <- should be selected
 select /*+ recompile ordered */ count(*) from tbl a, tbl b where a.col_a = b.col_a and a.col_b = b.col_b and a.col_c = b.col_c and a.col_d = b.col_d;
 
--- pass: index: idx_a_b_c term[0] AND term[1] AND term[3]
 
 -- 6. JOIN: Unique index prioritization in a multi-column unique index scenario: non-unique index includes unique index columns
     -- uidx_a_b: contains 2 unique index columns (col_a, col_b) <- should be selected
@@ -66,7 +66,6 @@ update statistics on tbl;
 
 select /*+ recompile ordered */ count(*) from tbl a, tbl b where a.col_a = b.col_a and a.col_b = b.col_b and a.col_c = b.col_c and a.col_d = b.col_d;
 
--- pass: index: uidx_a_b term[0] AND term[3]
 
 -- 7. JOIN: Unique index prioritization in a multi-column unique index scenario: non-unique index includes unique index columns
     -- uidx_a_b: contains 2 unique index columns (col_a, col_b) <- should be selected
@@ -76,8 +75,6 @@ update statistics on tbl;
 
 select /*+ recompile ordered */ count(*) from tbl a, tbl b where a.col_a = b.col_a and a.col_b = b.col_b and a.col_c = b.col_c and a.col_d = b.col_d;
 
---pass: index: uidx_a_b term[0] AND term[3]
 
 drop index idx_c_d_e on tbl;
- 
 drop table tbl;
