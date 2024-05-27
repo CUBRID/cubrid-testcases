@@ -24,7 +24,7 @@ ALTER USER test_user1 ADD MEMBERS test_user2;
 ALTER USER test_user3 ADD MEMBERS test_user1;
 -- error:-142
 ALTER USER test_user2 ADD MEMBERS test_user1;
--- Attempt to add a mix of existing and non-existing users : error:-142
+-- Attempt to add both valid(test_user3) and invalid users as members : error:-142
 ALTER USER test_user2 ADD MEMBERS test_user3, test_user2, test_user1;
 ALTER USER test_user2 ADD MEMBERS test_user3;
 SELECT u.name, x.name as groups FROM db_user AS u, TABLE(u.direct_groups) AS g(x);
