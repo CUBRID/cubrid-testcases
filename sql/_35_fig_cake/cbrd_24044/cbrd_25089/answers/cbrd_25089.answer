@@ -7,15 +7,16 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 'test1'    
-test1     
 
 Query plan:
 sscan
-    class: dual node[?]
+    class: tbl node[?]
     cost:  ? card ?
 Query stmt:
-select 'test?' from dual dual
+select 'test?' from tbl tbl
 ===================================================
 cola    colb    cola    colb    cola    colb    
 
@@ -41,14 +42,13 @@ Query stmt:
 select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from tbl a, tbl b, tbl c where a.cola=b.cola and b.cola=c.cola
 ===================================================
 'test2'    
-test2     
 
 Query plan:
 sscan
-    class: dual node[?]
+    class: tbl node[?]
     cost:  ? card ?
 Query stmt:
-select 'test?' from dual dual
+select 'test?' from tbl tbl
 ===================================================
 cola    colb    cola    colb    cola    colb    
 
@@ -74,14 +74,13 @@ Query stmt:
 select /*+ LEADING(b, a) */ a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from tbl a, tbl b, tbl c where a.cola=b.cola and b.cola=c.cola
 ===================================================
 'test3'    
-test3     
 
 Query plan:
 sscan
-    class: dual node[?]
+    class: tbl node[?]
     cost:  ? card ?
 Query stmt:
-select 'test?' from dual dual
+select 'test?' from tbl tbl
 ===================================================
 cola    colb    cola    colb    cola    colb    
 
@@ -107,14 +106,13 @@ Query stmt:
 select /*+ LEADING(b, c, a) */ a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from tbl a, tbl b, tbl c where a.cola=b.cola and b.cola=c.cola
 ===================================================
 'test4'    
-test4     
 
 Query plan:
 sscan
-    class: dual node[?]
+    class: tbl node[?]
     cost:  ? card ?
 Query stmt:
-select 'test?' from dual dual
+select 'test?' from tbl tbl
 ===================================================
 cola    colb    cola    colb    cola    colb    
 
@@ -140,14 +138,13 @@ Query stmt: [Warning: HINT ignored]
 select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from tbl a, tbl b, tbl c where a.cola=b.cola and b.cola=c.cola
 ===================================================
 'test5'    
-test5     
 
 Query plan:
 sscan
-    class: dual node[?]
+    class: tbl node[?]
     cost:  ? card ?
 Query stmt:
-select 'test?' from dual dual
+select 'test?' from tbl tbl
 ===================================================
 cola    colb    cola    colb    cola    colb    
 
@@ -173,14 +170,13 @@ Query stmt:
 select /*+ LEADING(b, c) */ a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from tbl a, tbl b, tbl c where a.cola=b.cola and b.cola=c.cola
 ===================================================
 'test6'    
-test6     
 
 Query plan:
 sscan
-    class: dual node[?]
+    class: tbl node[?]
     cost:  ? card ?
 Query stmt:
-select 'test?' from dual dual
+select 'test?' from tbl tbl
 ===================================================
 cola    colb    cola    colb    cola    colb    
 
@@ -206,14 +202,13 @@ Query stmt:
 select /*+ ORDERED */ a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from tbl a, tbl b, tbl c where a.cola=b.cola and b.cola=c.cola
 ===================================================
 'test7'    
-test7     
 
 Query plan:
 sscan
-    class: dual node[?]
+    class: tbl node[?]
     cost:  ? card ?
 Query stmt:
-select 'test?' from dual dual
+select 'test?' from tbl tbl
 ===================================================
 cola    colb    cola    colb    cola    colb    
 
@@ -239,14 +234,13 @@ Query stmt: [Warning: HINT ignored]
 select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from tbl a left outer join tbl b on a.cola=b.cola, tbl c where a.cola=c.cola
 ===================================================
 'test8'    
-test8     
 
 Query plan:
 sscan
-    class: dual node[?]
+    class: tbl node[?]
     cost:  ? card ?
 Query stmt:
-select 'test?' from dual dual
+select 'test?' from tbl tbl
 ===================================================
 cola    colb    cola    colb    cola    colb    
 
@@ -272,14 +266,13 @@ Query stmt:
 select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from tbl a, tbl b, tbl c where a.cola=b.cola and b.cola=c.cola
 ===================================================
 'test9'    
-test9     
 
 Query plan:
 sscan
-    class: dual node[?]
+    class: tbl node[?]
     cost:  ? card ?
 Query stmt:
-select 'test?' from dual dual
+select 'test?' from tbl tbl
 ===================================================
 cola    colb    cola    colb    cola    colb    
 
@@ -305,14 +298,13 @@ Query stmt:
 select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from tbl a, tbl b, tbl c where a.cola=b.cola and b.cola=c.cola
 ===================================================
 'test10'    
-test10     
 
 Query plan:
 sscan
-    class: dual node[?]
+    class: tbl node[?]
     cost:  ? card ?
 Query stmt:
-select 'test?' from dual dual
+select 'test?' from tbl tbl
 ===================================================
 cola    count(*)    
 
@@ -334,14 +326,13 @@ Query stmt:
 select /*+ LEADING(b, a) */ a.cola, count(*) from tbl a, tbl b where a.cola=b.cola group by a.cola having count(*)>?
 ===================================================
 'test11'    
-test11     
 
 Query plan:
 sscan
-    class: dual node[?]
+    class: tbl node[?]
     cost:  ? card ?
 Query stmt:
-select 'test?' from dual dual
+select 'test?' from tbl tbl
 ===================================================
 cola    count(b.colb)    
 
@@ -363,14 +354,13 @@ Query stmt:
 select /*+ LEADING(b, a) */ a.cola, count(b.colb) from tbl a, tbl b where a.cola=b.cola group by a.cola
 ===================================================
 'test12'    
-test12     
 
 Query plan:
 sscan
-    class: dual node[?]
+    class: tbl node[?]
     cost:  ? card ?
 Query stmt:
-select 'test?' from dual dual
+select 'test?' from tbl tbl
 ===================================================
 cola    colb    cola    colb    cola    colb    
 
@@ -396,14 +386,13 @@ Query stmt:
 select /*+ LEADING(b) */ a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from tbl a, tbl b, tbl c where a.cola=b.cola and b.cola=c.cola
 ===================================================
 'test13'    
-test13     
 
 Query plan:
 sscan
-    class: dual node[?]
+    class: tbl node[?]
     cost:  ? card ?
 Query stmt:
-select 'test?' from dual dual
+select 'test?' from tbl tbl
 ===================================================
 0
 ===================================================
@@ -442,14 +431,13 @@ select /*+ LEADING(b, a) */ a.cola, a.colb, b.cola, b.colb from tbl a, tbl b whe
 0
 ===================================================
 'test14'    
-test14     
 
 Query plan:
 sscan
-    class: dual node[?]
+    class: tbl node[?]
     cost:  ? card ?
 Query stmt:
-select 'test?' from dual dual
+select 'test?' from tbl tbl
 ===================================================
 cola    colb    cola    colb    cola    colb    
 
@@ -483,14 +471,13 @@ Query stmt:
 select /*+ LEADING(b, c, a) */ a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from tbl a, tbl b, tbl c where (a.cola=b.cola) and b.cola=c.cola and b.colb=(select max(tbl.colb) from tbl tbl where tbl.cola=a.cola) and (c.cola> ?:? )
 ===================================================
 'test15'    
-test15     
 
 Query plan:
 sscan
-    class: dual node[?]
+    class: tbl node[?]
     cost:  ? card ?
 Query stmt:
-select 'test?' from dual dual
+select 'test?' from tbl tbl
 ===================================================
 cola    colb    sum(c.colb)    
 
@@ -519,14 +506,13 @@ Query stmt:
 select /*+ LEADING(c, a, b) */ a.cola, b.colb, sum(c.colb) from tbl a, tbl b, tbl c where a.cola=b.cola and a.cola=c.cola group by a.cola, b.colb
 ===================================================
 'test16'    
-test16     
 
 Query plan:
 sscan
-    class: dual node[?]
+    class: tbl node[?]
     cost:  ? card ?
 Query stmt:
-select 'test?' from dual dual
+select 'test?' from tbl tbl
 ===================================================
 cola    colb    cola    colb    cola    colb    
 
@@ -551,14 +537,13 @@ Query stmt:
 select /*+ LEADING(b, a) */ a.cola, a.colb, c.cola, c.colb, b.cola, b.colb from tbl a, tbl c cross join tbl b where a.cola=b.cola and (b.colb> ?:? )
 ===================================================
 'test17'    
-test17     
 
 Query plan:
 sscan
-    class: dual node[?]
+    class: tbl node[?]
     cost:  ? card ?
 Query stmt:
-select 'test?' from dual dual
+select 'test?' from tbl tbl
 ===================================================
 cola    colb    cola    colb    cola    colb    
 
@@ -585,14 +570,13 @@ Query stmt:
 select /*+ LEADING(b, a, c) */ a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from tbl a, tbl b, tbl c where (a.colb> ?:? ) and (b.colb< ?:? ) and c.colb is not null  and a.cola=b.cola and b.cola=c.cola
 ===================================================
 'test18'    
-test18     
 
 Query plan:
 sscan
-    class: dual node[?]
+    class: tbl node[?]
     cost:  ? card ?
 Query stmt:
-select 'test?' from dual dual
+select 'test?' from tbl tbl
 ===================================================
 cola    colb    
 
@@ -620,14 +604,13 @@ Query stmt: [Warning: HINT ignored]
 select b.cola, b.colb from tbl s, tbl b where (s.cola=b.cola) and  exists (select ? from tbl c where c.cola=b.cola) and (s.colb< ?:? )
 ===================================================
 'test19'    
-test19     
 
 Query plan:
 sscan
-    class: dual node[?]
+    class: tbl node[?]
     cost:  ? card ?
 Query stmt:
-select 'test?' from dual dual
+select 'test?' from tbl tbl
 ===================================================
 cola    colb    colb    
 
@@ -685,14 +668,13 @@ Query stmt:
 select /*+ LEADING(c, b, a) */ a.cola, b.colb, c.colb from tbl a, tbl b, tbl c, (select distinct tbl.cola from tbl tbl where (tbl.colb< ?:? )) av? (av_?), (select distinct tbl.colb from tbl tbl where (tbl.colb> ?:? )) av?_? (av_?) where (a.cola=av?.av_?) and (b.colb=av?_?.av_?) and a.cola=b.cola and b.colb=c.colb
 ===================================================
 'test20'    
-test20     
 
 Query plan:
 sscan
-    class: dual node[?]
+    class: tbl node[?]
     cost:  ? card ?
 Query stmt:
-select 'test?' from dual dual
+select 'test?' from tbl tbl
 ===================================================
 cola    count(b.colb)    
 
@@ -714,14 +696,13 @@ Query stmt:
 select /*+ LEADING(b, a) */ a.cola, count(b.colb) from tbl a, tbl b where (a.colb> ?:? ) and a.cola=b.cola and a.colb=b.colb group by a.cola having count(b.colb)>?
 ===================================================
 'test21'    
-test21     
 
 Query plan:
 sscan
-    class: dual node[?]
+    class: tbl node[?]
     cost:  ? card ?
 Query stmt:
-select 'test?' from dual dual
+select 'test?' from tbl tbl
 ===================================================
 0
 ===================================================
@@ -749,14 +730,13 @@ Query stmt:
 select /*+ LEADING(c_partition, b_partition) */ a_partition.cola, a_partition.colb, a_partition.colc, b_partition.cola, b_partition.colb, b_partition.colc, c_partition.cola, c_partition.colb, c_partition.colc from tbl_partition a_partition, tbl_partition b_partition, tbl_partition c_partition where a_partition.cola=b_partition.cola and b_partition.cola=c_partition.cola
 ===================================================
 'test22'    
-test22     
 
 Query plan:
 sscan
-    class: dual node[?]
+    class: tbl node[?]
     cost:  ? card ?
 Query stmt:
-select 'test?' from dual dual
+select 'test?' from tbl tbl
 ===================================================
 cola    colb    cola    colb    cola    colb    
 
@@ -795,14 +775,13 @@ Query stmt:
 select /*+ LEADING(b, c) USE_MERGE */ a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from tbl a, tbl b, tbl c where a.cola=b.cola and b.cola=c.cola
 ===================================================
 'test23'    
-test23     
 
 Query plan:
 sscan
-    class: dual node[?]
+    class: tbl node[?]
     cost:  ? card ?
 Query stmt:
-select 'test?' from dual dual
+select 'test?' from tbl tbl
 ===================================================
 cola    colb    
 
@@ -826,6 +805,33 @@ nl-join (inner join)
     cost:  ? card ?
 Query stmt:
 select /*+ LEADING(v, a, b) */ v.cola, a.colb from tbl v, tbl a, tbl b where (v.cola=a.cola) and a.cola=b.cola
+===================================================
+'test24'    
+
+Query plan:
+sscan
+    class: tbl node[?]
+    cost:  ? card ?
+Query stmt:
+select 'test?' from tbl tbl
+===================================================
+cola    colb    cola    colb    
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl_t node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(tbl_t, tbl) */ tbl.cola, tbl.colb, tbl_t.cola, tbl_t.colb from tbl tbl, tbl_t tbl_t where tbl.cola=tbl_t.cola
+===================================================
+0
 ===================================================
 0
 ===================================================
