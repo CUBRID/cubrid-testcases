@@ -60,7 +60,9 @@ begin
 end;
 
 call varchar_limit3('a');
---error, size over
+-- hangul is broken, because the DB character set is iso-88591 (UTF-8 was fine)
+call varchar_limit3('한');
+-- error, size over
 call varchar_limit3('abcd');
 call varchar_limit3('한글');
 
