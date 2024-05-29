@@ -54,8 +54,8 @@ end;
 call char_limit3('a');
 -- hangul is broken, because the DB character set is iso-88591 (UTF-8 was fine)
 call char_limit3('한');
--- the precision check process was not implemented in the plcsql variable.
--- expect: error, size over
+-- It is bug (Report to CBRD-25392)
+-- expect: Error:-889, Stored procedure execute error
 call char_limit3('abcd');
 call char_limit3('한글');
 
