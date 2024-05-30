@@ -1,7 +1,6 @@
 -- This test case verifies CBRD-24652 issue.
 -- The problem performing hash list scan when VOBJECT is included in predicates.
 -- Hash list scan should not be used in the result.
--- When using UNION, there is an issue where the output is inconsistent because UNION_PROC is used instead of OBJ_FETCH_PROC for processing.
 
 drop table if exists tbl;
 drop view if exists v_tbl;
