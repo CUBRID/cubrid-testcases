@@ -1,4 +1,5 @@
 --+ server-message on
+-- Verified for CBRD-24708
 
 -- normal: the value in the using clause has an incompatible type
 
