@@ -1,6 +1,5 @@
 --+ server-message on
--- Verified for CBRD-24708
-
+-- Verified for CBRD-24957
 -- normal: basic usage of a for loop using dynamic sql (specifying IN in using-clause)
 
 
