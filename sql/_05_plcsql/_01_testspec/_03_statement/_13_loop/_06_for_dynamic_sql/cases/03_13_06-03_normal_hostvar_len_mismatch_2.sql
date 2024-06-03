@@ -1,4 +1,5 @@
 --+ server-message on
+-- Verified for CBRD-24708
 
 -- normal: the number of host variables (?'s) and the length of using clause do not match
 
