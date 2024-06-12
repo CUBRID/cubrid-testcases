@@ -212,6 +212,58 @@ where a.cola = b.cola
    and b.cola = c.cola; 
 show trace;
 
+select 'select items - 1, remove b.cola = c.cola';
+select /*+ recompile */ a.cola, b.cola, a.colb, b.colb  
+from ta a, ta b, tb c
+where a.cola = b.cola
+   and a.cola = c.cola
+   and b.cola = c.cola;
+show trace;
+
+select 'select function - 1, remove b.cola = c.cola';
+select /*+ recompile */ mod(a.colb, a.cola), mod(b.colb, b.cola), mod(b.colb, a.cola), mod(a.colb, b.cola) 
+from ta a, ta b, tb c
+where a.cola = b.cola
+   and a.cola = c.cola
+   and b.cola = c.cola;
+show trace;
+
+select 'select function - 2, remove b.cola = c.cola';
+select /*+ recompile */ decode(a.cola,1,a.colb,b.colb), decode(b.cola,1,b.colb,a.colb), 
+	if(b.colb=2,a.cola,b.cola), if(a.colb=2,b.cola,a.cola) 
+from ta a, ta b, tb c
+where a.cola = b.cola
+   and a.cola = c.cola
+   and b.cola = c.cola;
+show trace;
+
+select 'select function - 3, remove b.cola = c.cola';
+select /*+ recompile */  a.cola, b.cola, a.colb, b.colb,
+      COUNT(*) OVER (ORDER BY a.colb) co1,
+      COUNT(*) OVER (ORDER BY b.colb) co
+from ta a, ta b, tb c
+where a.cola = b.cola
+   and a.cola = c.cola
+   and b.cola = c.cola;
+show trace;
+
+select 'group by - 1, remove b.cola = c.cola';
+select /*+ recompile */ a.cola, b.cola, count(*) from ta a, ta b, tb c
+where a.cola = b.cola
+   and a.cola = c.cola
+   and b.cola = c.cola
+group by a.cola, b.cola;
+show trace;
+
+select 'having - 1, remove b.cola = c.cola';
+select /*+ recompile */ a.cola, b.cola, count(*) 
+from ta a, ta b, tb c
+where a.cola = b.cola
+   and a.cola = c.cola
+   and b.cola = c.cola
+group by a.cola, b.cola
+having count(*) >= 1;
+show trace;
 
 select 'Join conditions are not removed. -1';
 select /*+ recompile */ * from ta a, ta b, tb c
