@@ -56,15 +56,7 @@ where a.cola = b.cola
    and a.cola = c.cola; 
 show trace;
 
-select 'remove b.colb = c.colb -4';
-select /*+ recompile */ * from ta a, ta b, tb c
-where a.cola = b.cola
-   and b.cola = c.cola
-   and a.colb = c.colb
-   and b.colb = c.colb; 
-show trace;
-
-select 'remove b.cola = c.cola -5';
+select 'remove b.cola = c.cola -4';
 select /*+ recompile */ * from ta a, ta b, tb c
 where a.cola = b.cola
    and b.colb = c.colb
@@ -72,7 +64,7 @@ where a.cola = b.cola
    and b.cola = c.cola; 
 show trace;
 
-select 'remove b.cola = c.cola -6';
+select 'remove b.cola = c.cola -5';
 select /*+ recompile */ * from ta a, ta b, tb c
 where a.cola = b.cola
    and a.colb = c.colb
@@ -80,7 +72,7 @@ where a.cola = b.cola
    and b.cola = c.cola; 
 show trace;
 
-select 'remove a.cola = b.colb -7';
+select 'remove a.cola = b.colb -6';
 select /*+ recompile */ * from ta a, ta b
 where a.cola = b.cola
    and a.colb = b.colb
@@ -88,7 +80,7 @@ where a.cola = b.cola
    and a.cola = b.colb; 
 show trace;
 
-select 'remove a.colb = b.cola -8';
+select 'remove a.colb = b.cola -7';
 select /*+ recompile */ * from ta a, ta b
 where a.cola = b.cola
    and a.colb = b.colb
@@ -96,7 +88,7 @@ where a.cola = b.cola
    and a.colb = b.cola;
 show trace;
 
-select 'remove b.cola = c.cola, e.cola = f.cola, e.cola = b.cola -9';
+select 'remove b.cola = c.cola, e.cola = f.cola, e.cola = b.cola -8';
 select /*+ recompile Ordered */ * from ta a, ta b, tb c, tb d, tb e, tb f
 where a.cola = b.cola
    and a.cola = c.cola
@@ -108,7 +100,7 @@ where a.cola = b.cola
    and e.cola = b.cola; 
 show trace;
 
-select 'remove outer join and a.cola = c.cola -10';
+select 'remove outer join and a.cola = c.cola -9';
 select /*+ recompile */ * from ta a, ta b, tb c
 where a.cola = b.cola(+)
    and a.cola = c.cola(+)
@@ -120,7 +112,7 @@ left outer join tb c on b.cola = c.cola
 where b.cola = c.cola;
 show trace;
 
-select 'remove outer join and b.cola = c.cola -11';
+select 'remove outer join and b.cola = c.cola -10';
 select /*+ recompile */ * from ta a, ta b, tb c
 where a.cola = b.cola(+)
    and b.cola = c.cola(+)
@@ -132,7 +124,7 @@ left outer join tb c on b.cola = c.cola
 where a.cola = c.cola;
 show trace;
 
-select 'remove a.cola = c.cola -12';
+select 'remove a.cola = c.cola -11';
 select /*+ recompile */ * from ta a, ta b, tb c
 where a.cola = b.cola(+)
    and a.cola = c.cola(+)
@@ -143,7 +135,7 @@ select /*+ recompile */ * from ta a left outer join ta b on a.cola = b.cola
 left outer join tb c on a.cola = c.cola and b.cola = c.cola;
 show trace;
 
-select 'remove b.cola = c.cola -13';
+select 'remove b.cola = c.cola -12';
 select /*+ recompile */ * from ta a, ta b, tb c
 where a.cola = b.cola(+)
    and b.cola = c.cola(+)
@@ -154,7 +146,7 @@ select /*+ recompile */ * from ta a left outer join ta b on a.cola = b.cola
 left outer join tb c on b.cola = c.cola and a.cola = c.cola;
 show trace;
 
-select 'remove b.cola = c.cola -14';
+select 'remove b.cola = c.cola -13';
 select /*+ recompile */ * from ta a, ta b, tb c
 where a.cola = b.cola(+)
    and b.colb = c.colb(+)
@@ -166,7 +158,7 @@ select /*+ recompile */ * from ta a left outer join ta b on a.cola = b.cola
 left outer join tb c on b.colb = c.colb and a.cola = c.cola and b.cola = c.cola;
 show trace;
 
-select 'remove b.cola = c.cola -15';
+select 'remove b.cola = c.cola -14';
 select /*+ recompile */ * from ta a, ta b, tb c
 where a.cola = b.cola(+)
    and a.colb = c.colb(+)
@@ -178,14 +170,14 @@ select /*+ recompile */ * from ta a left outer join ta b on a.cola = b.cola
 left outer join tb c on a.colb = c.colb and a.cola = c.cola and b.cola = c.cola;
 show trace;
 
-select 'remove b.cola = c.cola -16';
+select 'remove b.cola = c.cola -15';
 select /*+ recompile */ * from (select * from ta) a, (select * from ta) b, (select * from tb) c
 where a.cola = b.cola
    and a.cola = c.cola
    and b.cola = c.cola; 
 show trace;
 
-select 'change a.colb = b.cola to a.cola = b.cola,a.colb = c.cola to a.cola = c.cola,remove b.cola = c.cola -17';
+select 'change a.colb = b.cola to a.cola = b.cola,a.colb = c.cola to a.cola = c.cola,remove b.cola = c.cola -16';
 select /*+ recompile */ * from 
 (select cola as colb, colb as cola from ta) a, 
 (select * from ta) b, 
@@ -195,7 +187,7 @@ where a.colb = b.cola
    and b.cola = c.cola;
 show trace;
 
-select 'change a.cola = b.cola to b.cola = 1, a.cola = c.cola to c.cola = 1, b, c cross join, a cross join, remove b.cola = c.cola -18';
+select 'change a.cola = b.cola to b.cola = 1, a.cola = c.cola to c.cola = 1, b, c cross join, a cross join, remove b.cola = c.cola -17';
 select /*+ recompile */ * from 
 (select 1 as cola, colb from ta) a, 
 (select * from ta) b, 
@@ -205,7 +197,7 @@ where a.cola = b.cola
    and b.cola = c.cola; 
 show trace;
 
-select 'remove b.cola = c.cola -19';
+select 'remove b.cola = c.cola -18';
 select /*+ recompile */ * from tp__p__b_2 a, tp__p__b_2 b, tp__p__b_3 c 
 where a.cola = b.cola
    and a.cola = c.cola
@@ -307,6 +299,14 @@ select /*+ recompile */ * from tp__p__b_2 a, tp__p__b_2 b, tp__p__b_3 c
 where a.cola = b.cola
    and a.cola = c.cola
    and b.colb = c.colb;
+show trace;
+
+select 'Join conditions are not removed. -6';
+select /*+ recompile */ * from ta a, ta b, tb c
+where a.cola = b.cola
+   and b.cola = c.cola
+   and a.colb = c.colb
+   and b.colb = c.colb; 
 show trace;
 
 
