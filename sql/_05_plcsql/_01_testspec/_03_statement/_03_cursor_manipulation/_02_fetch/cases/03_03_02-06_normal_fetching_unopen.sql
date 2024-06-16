@@ -1,6 +1,7 @@
 --+ server-message on
 
 -- normal: fetching unopen cursor raises INVALID_CURSOR
+-- Verified for CBRD-24951
 
 
 create or replace procedure t(i int) as

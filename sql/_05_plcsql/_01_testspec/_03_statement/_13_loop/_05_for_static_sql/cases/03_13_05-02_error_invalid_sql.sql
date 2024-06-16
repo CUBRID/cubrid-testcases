@@ -1,6 +1,7 @@
 --+ server-message on
 -- Verification for CBRD-24706
 
+-- Verified for CBRD-24956
 -- error: static sql is not a select statement
 
 drop table if exists tbl;
