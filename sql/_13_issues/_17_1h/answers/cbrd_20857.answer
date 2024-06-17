@@ -41,6 +41,7 @@ trace
     "SELECT": {
       "time": ?,
       "fetch": ?,
+      "fetch_time": ?,
       "ioread": ?,
       "SCAN": {
         "access": "temp",
@@ -58,35 +59,38 @@ trace
         "page": ?,
         "ioread": ?
       },
-      "SUBQUERY (uncorrelated)": {
-        "CTE": {
-          "non_recursive_part": {
-            "SELECT": {
-              "time": ?,
-              "fetch": ?,
-              "ioread": ?,
-              "SCAN": {
-                "access": "table (dba.t?)",
-                "heap": {
+      "SUBQUERY (uncorrelated)": [
+        {
+          "CTE": {
+            "non_recursive_part": {
+              "SELECT": {
+                "time": ?,
+                "fetch": ?,
+                "fetch_time": ?,
+                "ioread": ?,
+                "SCAN": {
+                  "access": "table (dba.t?)",
+                  "heap": {
+                    "time": ?,
+                    "fetch": ?,
+                    "ioread": ?,
+                    "readrows": ?,
+                    "rows": ?
+                  }
+                },
+                "GROUPBY": {
                   "time": ?,
-                  "fetch": ?,
+                  "hash": true,
+                  "sort": true,
+                  "page": ?,
                   "ioread": ?,
-                  "readrows": ?,
                   "rows": ?
                 }
-              },
-              "GROUPBY": {
-                "time": ?,
-                "hash": true,
-                "sort": true,
-                "page": ?,
-                "ioread": ?,
-                "rows": ?
               }
             }
           }
         }
-      }
+      ]
     }
   }
 }     
