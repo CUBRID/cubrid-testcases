@@ -1,5 +1,5 @@
 --+ server-message on
-
+-- Verified for CBRD-24959
 -- normal: basic usage of a builtin function call
 
 create or replace procedure t () as
