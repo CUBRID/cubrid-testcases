@@ -17,4 +17,9 @@ end;
 
 drop procedure test_proc1;
 
+-- unsupported type by javasp
+create or replace procedure test_proc2(a blob) as language java name 'SpTest9.testblob()';
+
+drop function test_proc2;
+
 --_ server-message off
