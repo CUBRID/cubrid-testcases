@@ -12,4 +12,4 @@ call test_sys_datetime();
 
 drop procedure test_sys_datetime;
 
---+ server-messgae off
+--+ server-message off
