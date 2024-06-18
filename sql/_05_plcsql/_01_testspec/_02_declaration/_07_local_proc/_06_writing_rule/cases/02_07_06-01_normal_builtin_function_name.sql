@@ -50,5 +50,6 @@ begin
 end;
 call t(3);
  
+drop procedure t;
 
 --+ server-message off
