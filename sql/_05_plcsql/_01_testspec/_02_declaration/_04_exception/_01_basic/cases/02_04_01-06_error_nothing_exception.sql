@@ -11,5 +11,7 @@ end;
 
 run t(123);
 
+drop procedure t;
+
 --+ server-message off
 

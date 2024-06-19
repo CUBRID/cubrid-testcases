@@ -102,7 +102,8 @@ begin
     dbms_output.put_line('i_max=' || var_max);
 end;
 
-call t(-12345.6789, 12345.6789); --bug
+--bug
+call t(-12345.6789, 12345.6789);
 select cast( 12345.6789 as NUMERIC );
 
 
