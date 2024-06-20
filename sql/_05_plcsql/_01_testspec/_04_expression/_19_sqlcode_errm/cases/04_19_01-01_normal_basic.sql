@@ -1,4 +1,5 @@
 --+ server-message on
+-- Verification for CBRD-24819
 
 -- normal: basic usage of sqlcode dnd sqlerrm
 

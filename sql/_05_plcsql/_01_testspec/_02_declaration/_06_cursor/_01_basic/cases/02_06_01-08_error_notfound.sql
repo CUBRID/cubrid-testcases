@@ -28,6 +28,6 @@ end;
 call t(2);
 
 drop table tbl;
-
+drop procedure t;
 
 --+ server-message off

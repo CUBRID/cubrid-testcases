@@ -34,7 +34,7 @@ CREATE FUNCTION typetestinteger20() RETURN string as language java name 'SpTest3
 CREATE FUNCTION typetestinteger30() RETURN string as language java name 'SpTest3.typetestinteger3() return java.lang.Integer'; 
 
 
-CREATE procedure test2(x inout string) as language java name 'SpTest4.main(String []) return int' ; 
+CREATE procedure test2(x inout string) as language java name 'SpTest4.main(java.lang.String[]) return int' ; 
 call test2('xxx'); 
 
 CREATE procedure test3() as language java name 'SpTest4.SpTest4()' ; 

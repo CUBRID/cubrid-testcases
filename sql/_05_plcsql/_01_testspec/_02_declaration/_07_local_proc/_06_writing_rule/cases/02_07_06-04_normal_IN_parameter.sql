@@ -34,6 +34,6 @@ END;
 call t();
 
 drop table plcsql_tbl;
-
+drop procedure t;
 
 --+ server-message off
