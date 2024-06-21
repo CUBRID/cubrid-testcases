@@ -1,0 +1,1122 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+7
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+'remove b.cola = c.cola -1'    
+remove b.cola = c.cola -1     
+
+===================================================
+cola    colb    cola    colb    cola    colb    
+1     2     1     2     1     2     
+2     2     2     2     2     2     
+3     2     3     2     3     2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
+    INDEX SCAN (c.idx_tb) (key range: a.cola=c.cola, covered: true)
+
+  rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.ta] a, [dba.ta] b, [dba.tb] c where a.cola=b.cola and a.cola=c.cola and b.cola=c.cola
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+'remove b.cola = c.cola -2'    
+remove b.cola = c.cola -2     
+
+===================================================
+cola    colb    cola    colb    cola    colb    
+1     2     1     2     1     2     
+2     2     2     2     2     2     
+3     2     3     2     3     2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      INDEX SCAN (c.idx_tb) (key range: a.cola=c.cola, covered: true)
+    INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
+
+  rewritten query: select /*+ ORDERED */ a.cola, a.colb, c.cola, c.colb, b.cola, b.colb from [dba.ta] a, [dba.tb] c, [dba.ta] b where a.cola=c.cola and a.cola=b.cola and b.cola=c.cola
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+'remove a.cola = c.cola -3'    
+remove a.cola = c.cola -3     
+
+===================================================
+cola    colb    cola    colb    cola    colb    
+1     2     1     2     1     2     
+2     2     2     2     2     2     
+3     2     3     2     3     2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
+    INDEX SCAN (c.idx_tb) (key range: b.cola=c.cola, covered: true)
+
+  rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.ta] a, [dba.ta] b, [dba.tb] c where a.cola=b.cola and b.cola=c.cola and a.cola=c.cola
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+'remove b.cola = c.cola -4'    
+remove b.cola = c.cola -4     
+
+===================================================
+cola    colb    cola    colb    cola    colb    
+1     2     1     2     1     2     
+2     2     2     2     2     2     
+3     2     3     2     3     2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
+    INDEX SCAN (c.idx_tb) (key range: b.colb=c.colbkey range: a.cola=c.cola, covered: true)
+
+  rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.ta] a, [dba.ta] b, [dba.tb] c where a.cola=b.cola and b.colb=c.colb and a.cola=c.cola and b.cola=c.cola
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+'remove b.cola = c.cola -5'    
+remove b.cola = c.cola -5     
+
+===================================================
+cola    colb    cola    colb    cola    colb    
+1     2     1     2     1     2     
+2     2     2     2     2     2     
+3     2     3     2     3     2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
+    INDEX SCAN (c.idx_tb) (key range: a.colb=c.colbkey range: a.cola=c.cola, covered: true)
+
+  rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.ta] a, [dba.ta] b, [dba.tb] c where a.cola=b.cola and a.colb=c.colb and a.cola=c.cola and b.cola=c.cola
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+'remove a.cola = b.colb -6'    
+remove a.cola = b.colb -6     
+
+===================================================
+cola    colb    cola    colb    
+2     2     2     2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    INDEX SCAN (b.idx_ta) (key range: a.colb=b.colbkey range: a.cola=b.cola, key filter: a.colb=b.cola, covered: true)
+
+  rewritten query: select a.cola, a.colb, b.cola, b.colb from [dba.ta] a, [dba.ta] b where a.cola=b.cola and a.colb=b.colb and a.colb=b.cola and a.cola=b.colb
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+'remove a.colb = b.cola -7'    
+remove a.colb = b.cola -7     
+
+===================================================
+cola    colb    cola    colb    
+2     2     2     2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    INDEX SCAN (b.idx_ta) (key range: a.colb=b.colbkey range: a.cola=b.cola, key filter: a.cola=b.colb, covered: true)
+
+  rewritten query: select a.cola, a.colb, b.cola, b.colb from [dba.ta] a, [dba.ta] b where a.cola=b.cola and a.colb=b.colb and a.cola=b.colb and a.colb=b.cola
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+'remove b.cola = c.cola, e.cola = f.cola, e.cola = b.cola -8'    
+remove b.cola = c.cola, e.cola = f.cola, e.cola = b.cola -8     
+
+===================================================
+cola    colb    cola    colb    cola    colb    cola    colb    cola    colb    cola    colb    
+1     2     1     2     1     2     1     2     1     2     1     2     
+2     2     2     2     2     2     2     2     2     2     2     2     
+3     2     3     2     3     2     3     2     3     2     3     2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      NESTED LOOPS (inner join)
+        NESTED LOOPS (inner join)
+          NESTED LOOPS (inner join)
+            TABLE SCAN (a)
+            INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
+          INDEX SCAN (c.idx_tb) (key range: a.cola=c.cola, covered: true)
+        INDEX SCAN (d.idx_tb) (key range: c.cola=d.cola, covered: true)
+      INDEX SCAN (e.idx_tb) (key range: d.cola=e.cola, covered: true)
+    INDEX SCAN (f.idx_tb) (key range: b.cola=f.cola, covered: true)
+
+  rewritten query: select /*+ ORDERED */ a.cola, a.colb, b.cola, b.colb, c.cola, c.colb, d.cola, d.colb, e.cola, e.colb, f.cola, f.colb from [dba.ta] a, [dba.ta] b, [dba.tb] c, [dba.tb] d, [dba.tb] e, [dba.tb] f where a.cola=b.cola and a.cola=c.cola and b.cola=c.cola and b.cola=f.cola and c.cola=d.cola and d.cola=e.cola and e.cola=f.cola and e.cola=b.cola
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+          SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+            SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+              SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+'remove outer join and a.cola = c.cola -9'    
+remove outer join and a.cola = c.cola -9     
+
+===================================================
+cola    colb    cola    colb    cola    colb    
+1     2     1     2     1     2     
+2     2     2     2     2     2     
+3     2     3     2     3     2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
+    INDEX SCAN (c.idx_tb) (key range: b.cola=c.cola, covered: true)
+
+  rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.ta] a, [dba.ta] b, [dba.tb] c where b.cola=c.cola and a.cola=b.cola and a.cola=c.cola
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+cola    colb    cola    colb    cola    colb    
+1     2     1     2     1     2     
+2     2     2     2     2     2     
+3     2     3     2     3     2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
+    INDEX SCAN (c.idx_tb) (key range: b.cola=c.cola, covered: true)
+
+  rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.ta] a, [dba.ta] b, [dba.tb] c where b.cola=c.cola and a.cola=b.cola and b.cola=c.cola
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+'remove outer join and b.cola = c.cola -10'    
+remove outer join and b.cola = c.cola -10     
+
+===================================================
+cola    colb    cola    colb    cola    colb    
+1     2     1     2     1     2     
+2     2     2     2     2     2     
+3     2     3     2     3     2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
+    INDEX SCAN (c.idx_tb) (key range: a.cola=c.cola, covered: true)
+
+  rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.ta] a, [dba.ta] b, [dba.tb] c where a.cola=c.cola and a.cola=b.cola and b.cola=c.cola
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+cola    colb    cola    colb    cola    colb    
+1     2     1     2     1     2     
+2     2     2     2     2     2     
+3     2     3     2     3     2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
+    INDEX SCAN (c.idx_tb) (key range: a.cola=c.cola, covered: true)
+
+  rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.ta] a, [dba.ta] b, [dba.tb] c where a.cola=c.cola and a.cola=b.cola and b.cola=c.cola
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+'remove a.cola = c.cola -11'    
+remove a.cola = c.cola -11     
+
+===================================================
+cola    colb    cola    colb    cola    colb    
+1     2     1     2     1     2     
+2     2     2     2     2     2     
+3     2     3     2     3     2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
+    INDEX SCAN (c.idx_tb) (key range: b.cola=c.cola, covered: true)
+
+  rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.ta] a left outer join [dba.ta] b on a.cola=b.cola left outer join [dba.tb] c on b.cola=c.cola and a.cola=c.cola
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+cola    colb    cola    colb    cola    colb    
+1     2     1     2     1     2     
+2     2     2     2     2     2     
+3     2     3     2     3     2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
+    INDEX SCAN (c.idx_tb) (key range: b.cola=c.cola, covered: true)
+
+  rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.ta] a left outer join [dba.ta] b on a.cola=b.cola left outer join [dba.tb] c on b.cola=c.cola and a.cola=c.cola
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+'remove b.cola = c.cola -12'    
+remove b.cola = c.cola -12     
+
+===================================================
+cola    colb    cola    colb    cola    colb    
+1     2     1     2     1     2     
+2     2     2     2     2     2     
+3     2     3     2     3     2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
+    INDEX SCAN (c.idx_tb) (key range: a.cola=c.cola, covered: true)
+
+  rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.ta] a left outer join [dba.ta] b on a.cola=b.cola left outer join [dba.tb] c on a.cola=c.cola and b.cola=c.cola
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+cola    colb    cola    colb    cola    colb    
+1     2     1     2     1     2     
+2     2     2     2     2     2     
+3     2     3     2     3     2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
+    INDEX SCAN (c.idx_tb) (key range: a.cola=c.cola, covered: true)
+
+  rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.ta] a left outer join [dba.ta] b on a.cola=b.cola left outer join [dba.tb] c on a.cola=c.cola and b.cola=c.cola
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+'remove b.cola = c.cola -13'    
+remove b.cola = c.cola -13     
+
+===================================================
+cola    colb    cola    colb    cola    colb    
+1     2     1     2     1     2     
+2     2     2     2     2     2     
+3     2     3     2     3     2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
+    INDEX SCAN (c.idx_tb) (key range: b.colb=c.colbkey range: a.cola=c.cola, covered: true)
+
+  rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.ta] a left outer join [dba.ta] b on a.cola=b.cola left outer join [dba.tb] c on b.cola=c.cola and a.cola=c.cola and b.colb=c.colb
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+cola    colb    cola    colb    cola    colb    
+1     2     1     2     1     2     
+2     2     2     2     2     2     
+3     2     3     2     3     2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
+    INDEX SCAN (c.idx_tb) (key range: b.colb=c.colbkey range: a.cola=c.cola, covered: true)
+
+  rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.ta] a left outer join [dba.ta] b on a.cola=b.cola left outer join [dba.tb] c on b.cola=c.cola and a.cola=c.cola and b.colb=c.colb
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+'remove b.cola = c.cola -14'    
+remove b.cola = c.cola -14     
+
+===================================================
+cola    colb    cola    colb    cola    colb    
+1     2     1     2     1     2     
+2     2     2     2     2     2     
+3     2     3     2     3     2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
+    INDEX SCAN (c.idx_tb) (key range: a.colb=c.colbkey range: a.cola=c.cola, covered: true)
+
+  rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.ta] a left outer join [dba.ta] b on a.cola=b.cola left outer join [dba.tb] c on b.cola=c.cola and a.cola=c.cola and a.colb=c.colb
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+cola    colb    cola    colb    cola    colb    
+1     2     1     2     1     2     
+2     2     2     2     2     2     
+3     2     3     2     3     2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
+    INDEX SCAN (c.idx_tb) (key range: a.colb=c.colbkey range: a.cola=c.cola, covered: true)
+
+  rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.ta] a left outer join [dba.ta] b on a.cola=b.cola left outer join [dba.tb] c on b.cola=c.cola and a.cola=c.cola and a.colb=c.colb
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+'remove b.cola = c.cola -15'    
+remove b.cola = c.cola -15     
+
+===================================================
+cola    colb    cola    colb    cola    colb    
+1     2     1     2     1     2     
+2     2     2     2     2     2     
+3     2     3     2     3     2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
+    INDEX SCAN (c.idx_tb) (key range: a.cola=c.cola, covered: true)
+
+  rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.ta] a, [dba.ta] b, [dba.tb] c where a.cola=b.cola and a.cola=c.cola and b.cola=c.cola
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+'change a.colb = b.cola to a.cola = b.cola,a.colb = c.cola to a.cola = c.cola,remove b.cola = c.cola -16'    
+change a.colb = b.cola to a.cola = b.cola,a.colb = c.cola to a.cola = c.cola,remove b.cola = c.cola -16     
+
+===================================================
+colb    cola    cola    colb    cola    colb    
+1     2     1     2     1     2     
+2     2     2     2     2     2     
+3     2     3     2     3     2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.idx_ta) (key range: (a.cola=b.cola), covered: true)
+    INDEX SCAN (c.idx_tb) (key range: a.cola=c.cola, covered: true)
+
+  rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.ta] a, [dba.ta] b, [dba.tb] c where (a.cola=b.cola) and a.cola=c.cola and b.cola=c.cola
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+'change a.cola = b.cola to b.cola = 1, a.cola = c.cola to c.cola = 1, b, c cross join, a cross join, remove b.cola = c.cola -17'    
+change a.cola = b.cola to b.cola = 1, a.cola = c.cola to c.cola = 1, b, c cross join, a cross join, remove b.cola = c.cola -17     
+
+===================================================
+cola    colb    cola    colb    cola    colb    
+1     2     1     2     1     2     
+1     2     1     2     1     2     
+1     2     1     2     1     2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (cross join)
+    TABLE SCAN (a)
+    SORT (temp)
+      NESTED LOOPS (cross join)
+        INDEX SCAN (b.idx_ta) (key range: (b.cola= ?:? ), covered: true)
+        INDEX SCAN (c.idx_tb) (key range: c.cola= ?:? , covered: true)
+
+  rewritten query: select ?, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.ta] a, [dba.ta] b, [dba.tb] c where c.cola= ?:?  and (b.cola= ?:? ) and b.cola=c.cola
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (uncorrelated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+            SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+'remove b.cola = c.cola -18'    
+remove b.cola = c.cola -18     
+
+===================================================
+cola    colb    cola    colb    cola    colb    
+1     2     1     2     1     3     
+2     2     2     2     2     3     
+3     2     3     2     3     3     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      INDEX SCAN (c.idx_tp) (key range: a.cola=c.cola, covered: true)
+    INDEX SCAN (b.idx_tp) (key range: a.cola=b.cola, covered: true)
+
+  rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.tp__p__b_?] a, [dba.tp__p__b_?] b, [dba.tp__p__b_?] c where a.cola=b.cola and a.cola=c.cola and b.cola=c.cola
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tp__p__b_?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tp__p__b_?.idx_tp), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tp__p__b_?.idx_tp), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+'select items - 1, remove b.cola = c.cola'    
+select items - 1, remove b.cola = c.cola     
+
+===================================================
+cola    cola    colb    colb    
+1     1     2     2     
+2     2     2     2     
+3     3     2     2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
+    INDEX SCAN (c.idx_tb) (key range: a.cola=c.cola, covered: true)
+
+  rewritten query: select a.cola, b.cola, a.colb, b.colb from [dba.ta] a, [dba.ta] b, [dba.tb] c where a.cola=b.cola and a.cola=c.cola and b.cola=c.cola
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+'select function - 1, remove b.cola = c.cola'    
+select function - 1, remove b.cola = c.cola     
+
+===================================================
+mod(a.colb, a.cola)    mod(b.colb, b.cola)    mod(b.colb, a.cola)    mod(a.colb, b.cola)    
+0     0     0     0     
+0     0     0     0     
+2     2     2     2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
+    INDEX SCAN (c.idx_tb) (key range: a.cola=c.cola, covered: true)
+
+  rewritten query: select  mod(a.colb, a.cola),  mod(b.colb, b.cola),  mod(b.colb, a.cola),  mod(a.colb, b.cola) from [dba.ta] a, [dba.ta] b, [dba.tb] c where a.cola=b.cola and a.cola=c.cola and b.cola=c.cola
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+'select function - 2, remove b.cola = c.cola'    
+select function - 2, remove b.cola = c.cola     
+
+===================================================
+decode(a.cola, 1, a.colb, b.colb)    decode(b.cola, 1, b.colb, a.colb)    if(b.colb=2, a.cola, b.cola)    if(a.colb=2, b.cola, a.cola)    
+2     2     1     1     
+2     2     2     2     
+2     2     3     3     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
+    INDEX SCAN (c.idx_tb) (key range: a.cola=c.cola, covered: true)
+
+  rewritten query: select decode(a.cola, ?, a.colb, b.colb), decode(b.cola, ?, b.colb, a.colb),  if(b.colb=?, a.cola, b.cola),  if(a.colb=?, b.cola, a.cola) from [dba.ta] a, [dba.ta] b, [dba.tb] c where a.cola=b.cola and a.cola=c.cola and b.cola=c.cola
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+'select function - 3, remove b.cola = c.cola'    
+select function - 3, remove b.cola = c.cola     
+
+===================================================
+cola    cola    colb    colb    co1    co    
+1     1     2     2     3     3     
+2     2     2     2     3     3     
+3     3     2     2     3     3     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
+    INDEX SCAN (c.idx_tb) (key range: a.cola=c.cola, covered: true)
+
+  rewritten query: select a.cola, b.cola, a.colb, b.colb, count(*) over (order by ?), count(*) over (order by ?) from [dba.ta] a, [dba.ta] b, [dba.tb] c where a.cola=b.cola and a.cola=c.cola and b.cola=c.cola
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+'group by - 1, remove b.cola = c.cola'    
+group by - 1, remove b.cola = c.cola     
+
+===================================================
+cola    cola    count(*)    
+1     1     1     
+2     2     1     
+3     3     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (a)
+        INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
+      INDEX SCAN (c.idx_tb) (key range: a.cola=c.cola, covered: true)
+
+  rewritten query: select a.cola, b.cola, count(*) from [dba.ta] a, [dba.ta] b, [dba.tb] c where a.cola=b.cola and a.cola=c.cola and b.cola=c.cola group by a.cola, b.cola
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+'having - 1, remove b.cola = c.cola'    
+having - 1, remove b.cola = c.cola     
+
+===================================================
+cola    cola    count(*)    
+1     1     1     
+2     2     1     
+3     3     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (a)
+        INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
+      INDEX SCAN (c.idx_tb) (key range: a.cola=c.cola, covered: true)
+
+  rewritten query: select a.cola, b.cola, count(*) from [dba.ta] a, [dba.ta] b, [dba.tb] c where a.cola=b.cola and a.cola=c.cola and b.cola=c.cola group by a.cola, b.cola having count(*)>=?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+'Join conditions are not removed. -1'    
+Join conditions are not removed. -1     
+
+===================================================
+cola    colb    cola    colb    cola    colb    
+1     2     1     2     1     2     
+2     2     2     2     2     2     
+3     2     3     2     3     2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
+    INDEX SCAN (c.idx_tb) (key range: b.colb=c.colbkey range: a.cola=c.cola, covered: true)
+
+  rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.ta] a, [dba.ta] b, [dba.tb] c where a.cola=b.cola and b.colb=c.colb and a.cola=c.cola
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+'Join conditions are not removed. -2'    
+Join conditions are not removed. -2     
+
+===================================================
+cola    colb    cola    colb    cola    colb    
+1     2     1     2     1     2     
+2     2     2     2     2     2     
+3     2     3     2     3     2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
+    INDEX SCAN (c.idx_tb) (key range: a.colb=c.colbkey range: a.cola=c.cola, covered: true)
+
+  rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.ta] a, [dba.ta] b, [dba.tb] c where a.cola=b.cola and a.colb=c.colb and a.cola=c.cola
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+'Join conditions are not removed. remove outer join -3'    
+Join conditions are not removed. remove outer join -3     
+
+===================================================
+cola    colb    cola    colb    cola    colb    
+1     2     1     2     1     2     
+2     2     2     2     2     2     
+3     2     3     2     3     2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
+    INDEX SCAN (c.idx_tb) (key range: a.colb=c.colbkey range: b.cola=c.cola, covered: true)
+
+  rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.ta] a, [dba.ta] b, [dba.tb] c where a.colb=c.colb and a.cola=b.cola and b.cola=c.cola
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+cola    colb    cola    colb    cola    colb    
+1     2     1     2     1     2     
+2     2     2     2     2     2     
+3     2     3     2     3     2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
+    INDEX SCAN (c.idx_tb) (key range: a.colb=c.colbkey range: b.cola=c.cola, covered: true)
+
+  rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.ta] a, [dba.ta] b, [dba.tb] c where a.colb=c.colb and a.cola=b.cola and b.cola=c.cola
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+'Join conditions are not removed. -4'    
+Join conditions are not removed. -4     
+
+===================================================
+cola    colb    cola    colb    cola    colb    
+1     2     1     2     1     2     
+2     2     2     2     2     2     
+3     2     3     2     3     2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
+    INDEX SCAN (c.idx_tb) (key range: a.colb=c.colbkey range: b.cola=c.cola, covered: true)
+
+  rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.ta] a left outer join [dba.ta] b on a.cola=b.cola left outer join [dba.tb] c on a.colb=c.colb and b.cola=c.cola
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+cola    colb    cola    colb    cola    colb    
+1     2     1     2     1     2     
+2     2     2     2     2     2     
+3     2     3     2     3     2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
+    INDEX SCAN (c.idx_tb) (key range: a.colb=c.colbkey range: b.cola=c.cola, covered: true)
+
+  rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.ta] a left outer join [dba.ta] b on a.cola=b.cola left outer join [dba.tb] c on a.colb=c.colb and b.cola=c.cola
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+'Join conditions are not removed. -5'    
+Join conditions are not removed. -5     
+
+===================================================
+cola    colb    cola    colb    cola    colb    
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (c)
+      INDEX SCAN (a.idx_tp) (key range: a.cola=c.cola, covered: true)
+    INDEX SCAN (b.idx_tp) (key range: b.colb=c.colbkey range: a.cola=b.cola, covered: true)
+
+  rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.tp__p__b_?] a, [dba.tp__p__b_?] b, [dba.tp__p__b_?] c where a.cola=b.cola and a.cola=c.cola and b.colb=c.colb
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tp__p__b_?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tp__p__b_?.idx_tp), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tp__p__b_?.idx_tp), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+'Join conditions are not removed. -6'    
+Join conditions are not removed. -6     
+
+===================================================
+cola    colb    cola    colb    cola    colb    
+1     2     1     2     1     2     
+2     2     2     2     2     2     
+3     2     3     2     3     2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
+    INDEX SCAN (c.idx_tb) (key range: a.colb=c.colbkey range: b.cola=c.cola, key filter: b.colb=c.colb, covered: true)
+
+  rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.ta] a, [dba.ta] b, [dba.tb] c where a.cola=b.cola and b.cola=c.cola and a.colb=c.colb and b.colb=c.colb
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
