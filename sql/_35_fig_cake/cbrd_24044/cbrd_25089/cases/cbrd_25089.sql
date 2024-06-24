@@ -204,6 +204,12 @@ select /*+ recompile leading(tbl_t, tbl) */ *
 from tbl, tbl_t
 where tbl.cola = tbl_t.cola;
 
+--25. ignore case : Alias used in FROM clause but not in hint
+select ('test25') from tbl;
+select /*+ recompile leading(tbl_t, tbl) */ *
+from tbl a, tbl_t b
+where a.cola = b.cola;
+
 drop view if exists test_v;
 drop table if exists tbl_partition;
 drop table if exists tbl_t;

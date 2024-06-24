@@ -450,22 +450,22 @@ Query stmt:
 (select max(tbl.colb) from tbl tbl where tbl.cola=a.cola)
 Query plan:
 nl-join (inner join)
-    edge:  term[?]
+    edge:  term[?] AND term[?]
     outer: nl-join (inner join)
-               edge:  term[?] AND term[?]
+               edge:  term[?]
                outer: sscan
-                          class: a node[?]
+                          class: b node[?]
                           cost:  ? card ?
                inner: sscan
-                          class: b node[?]
+                          class: c node[?]
                           sargs: term[?] AND term[?]
                           cost:  ? card ?
-               subqs: ?
                cost:  ? card ?
     inner: sscan
-               class: c node[?]
+               class: a node[?]
                sargs: term[?] AND term[?]
                cost:  ? card ?
+    subqs: ?
     cost:  ? card ?
 Query stmt:
 select /*+ LEADING(b, c, a) */ a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from tbl a, tbl b, tbl c where (a.cola=b.cola) and b.cola=c.cola and b.colb=(select max(tbl.colb) from tbl tbl where tbl.cola=a.cola) and (c.cola> ?:? )
@@ -591,17 +591,17 @@ Query plan:
 nl-join (inner join)
     edge:  term[?]
     outer: sscan
-               class: s node[?]
-               sargs: term[?]
-               cost:  ? card ?
-    inner: sscan
                class: b node[?]
-               sargs: term[?] AND term[?]
+               sargs: term[?]
                subqs: ?
                cost:  ? card ?
+    inner: sscan
+               class: s node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
     cost:  ? card ?
-Query stmt: [Warning: HINT ignored]
-select b.cola, b.colb from tbl s, tbl b where (s.cola=b.cola) and  exists (select ? from tbl c where c.cola=b.cola) and (s.colb< ?:? )
+Query stmt:
+select /*+ LEADING(b, s) */ b.cola, b.colb from tbl s, tbl b where (s.cola=b.cola) and  exists (select ? from tbl c where c.cola=b.cola) and (s.colb< ?:? )
 ===================================================
 'test19'    
 
@@ -642,7 +642,7 @@ nl-join (inner join)
                           outer: nl-join (inner join)
                                      edge:  term[?]
                                      outer: sscan
-                                                class: a node[?]
+                                                class: c node[?]
                                                 cost:  ? card ?
                                      inner: sscan
                                                 class: b node[?]
@@ -650,7 +650,7 @@ nl-join (inner join)
                                                 cost:  ? card ?
                                      cost:  ? card ?
                           inner: sscan
-                                     class: c node[?]
+                                     class: a node[?]
                                      sargs: term[?]
                                      cost:  ? card ?
                           cost:  ? card ?
@@ -791,15 +791,15 @@ nl-join (inner join)
     outer: nl-join (inner join)
                edge:  term[?]
                outer: sscan
-                          class: a node[?]
+                          class: v node[?]
                           cost:  ? card ?
                inner: sscan
-                          class: b node[?]
+                          class: a node[?]
                           sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
     inner: sscan
-               class: v node[?]
+               class: b node[?]
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
@@ -830,6 +830,31 @@ nl-join (inner join)
     cost:  ? card ?
 Query stmt:
 select /*+ LEADING(tbl_t, tbl) */ tbl.cola, tbl.colb, tbl_t.cola, tbl_t.colb from tbl tbl, tbl_t tbl_t where tbl.cola=tbl_t.cola
+===================================================
+'test25'    
+
+Query plan:
+sscan
+    class: tbl node[?]
+    cost:  ? card ?
+Query stmt:
+select 'test?' from tbl tbl
+===================================================
+cola    colb    cola    colb    
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.cola, a.colb, b.cola, b.colb from tbl a, tbl_t b where a.cola=b.cola
 ===================================================
 0
 ===================================================
