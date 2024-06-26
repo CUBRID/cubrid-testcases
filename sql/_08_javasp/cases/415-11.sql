@@ -41,7 +41,7 @@ select * from yoo;
 call jdbc3_c('create class zoo');
 select * from zoo;
 
-call jdbc2('call jdbc3_c(''create class xoo ( id int)'')');
+create class xoo ( id int);
 select * from xoo;
 
 call jdbc2('insert into xoo values(10)');
@@ -58,6 +58,7 @@ drop procedure jdbc2;
 drop procedure jdbc3_c;
 drop procedure jdbc3_r;
 drop procedure jdbc3_autocommiton;
+drop xoo;
 drop yoo;
 drop zoo;
 

@@ -120,8 +120,9 @@ select 0 into x from db_root;
 call ptypetestint(x);
 select x from db_root;
 call ptypetestint(20);
-select ptypetestint(20) from xoo ;
-select  ptypetestint(cost) from xoo ;
+-- CBRD-25420, Spec out
+-- select ptypetestint(20) from xoo ;
+-- select  ptypetestint(cost) from xoo ;
 $integer,$20;
 call ptypetestint(?) ;
 
@@ -129,8 +130,9 @@ select 0 into x from db_root;
 call ptypetestinteger(x);
 select x from db_root;
 call ptypetestinteger(20);
-select ptypetestinteger(20) from xoo ;
-select  ptypetestinteger(cost) from xoo ;
+-- CBRD-25420, Spec out
+-- select ptypetestinteger(20) from xoo ;
+-- select  ptypetestinteger(cost) from xoo ;
 $integer,$20;
 call ptypetestinteger(?) ;
 
@@ -138,8 +140,9 @@ select '0' into x from db_root;
 call ptypeteststring(x);
 select x from db_root;
 call ptypeteststring('20');
-select ptypeteststring('20') from xoo ;
-select  ptypeteststring(cost) from xoo ;
+-- CBRD-25420, Spec out
+-- select ptypeteststring('20') from xoo ;
+-- select  ptypeteststring(cost) from xoo ;
 $integer,$20;
 call ptypeteststring(?) ;
 
@@ -147,8 +150,9 @@ select 0 into x from db_root;
 call ptypetestshort(x);
 select x from db_root;
 call ptypetestshort(20);
-select ptypetestshort(20) from xoo ;
-select  ptypetestshort(cost) from xoo ;
+-- CBRD-25420, Spec out
+-- select ptypetestshort(20) from xoo ;
+-- select  ptypetestshort(cost) from xoo ;
 $integer,$20;
 call ptypetestshort(?) ;
 
@@ -156,8 +160,9 @@ select 0 into x from db_root;
 call ptypetestlong(x);
 select x from db_root;
 call ptypetestlong(20);
-select ptypetestlong(20) from xoo ;
-select  ptypetestlong(cost) from xoo ;
+-- CBRD-25420, Spec out
+-- select ptypetestlong(20) from xoo ;
+-- select  ptypetestlong(cost) from xoo ;
 $integer,$20;
 call ptypetestlong(?) ;
 
@@ -165,8 +170,9 @@ select 0 into x from db_root;
 call ptypetestfloat(x);
 select x from db_root;
 call ptypetestfloat(20);
-select ptypetestfloat(20) from xoo ;
-select  ptypetestfloat(cost) from xoo ;
+-- CBRD-25420, Spec out
+-- select ptypetestfloat(20) from xoo ;
+-- select  ptypetestfloat(cost) from xoo ;
 $integer,$20;
 call ptypetestfloat(?) ;
 
@@ -174,8 +180,9 @@ select 0 into x from db_root;
 call ptypetestdouble(x);
 select x from db_root;
 call ptypetestdouble(20);
-select ptypetestdouble(20) from xoo ;
-select  ptypetestdouble(cost) from xoo ;
+-- CBRD-25420, Spec out
+-- select ptypetestdouble(20) from xoo ;
+-- select  ptypetestdouble(cost) from xoo ;
 $integer,$20;
 call ptypetestdouble(?) ;
 
@@ -183,8 +190,9 @@ select 0 into x from db_root;
 call ptypetestbigdecimal(x);
 select x from db_root;
 call ptypetestbigdecimal(20);
-select ptypetestbigdecimal(20) from xoo ;
-select  ptypetestbigdecimal(cost) from xoo ;
+-- CBRD-25420, Spec out
+-- select ptypetestbigdecimal(20) from xoo ;
+-- select  ptypetestbigdecimal(cost) from xoo ;
 $integer,$20;
 call ptypetestbigdecimal(?) ;
 
@@ -192,8 +200,9 @@ select 0 into x from db_root;
 call ptypetestshort1(x);
 select x from db_root;
 call ptypetestshort1(20);
-select ptypetestshort1(20) from xoo ;
-select  ptypetestshort1(cost) from xoo ;
+-- CBRD-25420, Spec out
+-- select ptypetestshort1(20) from xoo ;
+-- select  ptypetestshort1(cost) from xoo ;
 $integer,$20;
 call ptypetestshort1(?) ;
 
@@ -201,8 +210,9 @@ select 0 into x from db_root;
 call ptypetestlong1(x);
 select x from db_root;
 call ptypetestlong1(20);
-select ptypetestlong1('20') from xoo ;
-select  ptypetestlong1(cost) from xoo ;
+-- CBRD-25420, Spec out
+-- select ptypetestlong1('20') from xoo ;
+-- select  ptypetestlong1(cost) from xoo ;
 $integer,$20;
 call ptypetestlong1(?) ;
 
@@ -210,8 +220,9 @@ select 0 into x from db_root;
 call ptypetestfloat1(x);
 select x from db_root;
 call ptypetestfloat1(20);
-select ptypetestfloat1(20) from xoo ;
-select  ptypetestfloat1(cost) from xoo ;
+-- CBRD-25420, Spec out
+-- select ptypetestfloat1(20) from xoo ;
+-- select  ptypetestfloat1(cost) from xoo ;
 $integer,$20;
 call ptypetestfloat1(?) ;
 
@@ -219,8 +230,9 @@ select 0 into x from db_root;
 call ptypetestdouble1(x);
 select x from db_root;
 call ptypetestdouble1(20);
-select ptypetestdouble1(20) from xoo ;
-select  ptypetestdouble1(cost) from xoo ;
+-- CBRD-25420, Spec out
+-- select ptypetestdouble1(20) from xoo ;
+-- select  ptypetestdouble1(cost) from xoo ;
 $integer,$20;
 call ptypetestdouble1(?) ;
 

@@ -32,7 +32,8 @@ drop function test1;
 
 CREATE procedure  test2(x inout string) as language java name 'SpTest4.main(java.lang.String[]) return int' ;
 call test2('xxx');
-select test2('xxx') from db_root;
+-- CBRD-25420, Spec out
+-- select test2('xxx') from db_root;
 drop procedure test2;
 
 
