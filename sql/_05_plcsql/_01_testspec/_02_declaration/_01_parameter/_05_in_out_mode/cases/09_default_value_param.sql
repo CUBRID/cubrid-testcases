@@ -198,14 +198,14 @@ drop procedure char_default;
 -- error, before merge CBRD-25435
 create or replace procedure date_default (
         a date := '2024-06-25',
-		b datetime := '2024-06-25 12:22:33',
-		c time := '09:32:46',
+        b datetime := '2024-06-25 12:22:33',
+        c time := '09:32:46',
         d timestamp := '11:37 am 02-13'
 ) as
 begin
     DBMS_OUTPUT.put_line(a);
-	DBMS_OUTPUT.put_line(b);
-	DBMS_OUTPUT.put_line(c);
+    DBMS_OUTPUT.put_line(b);
+    DBMS_OUTPUT.put_line(c);
     DBMS_OUTPUT.put_line(d);
 end;
 
