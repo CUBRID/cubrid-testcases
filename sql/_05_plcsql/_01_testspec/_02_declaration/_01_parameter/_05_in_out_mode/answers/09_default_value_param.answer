@@ -1,0 +1,289 @@
+===================================================
+'all args'    
+all args     
+
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+3
+===================================================
+    
+null     
+
+
+122
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+a
+b
+===================================================
+    
+null     
+
+
+c
+b
+===================================================
+    
+null     
+
+
+c
+d
+===================================================
+Error:-888
+Parameter count is invalid. expected: 2, actual: 3
+
+===================================================
+0
+
+===================================================
+'trailing args'    
+trailing args     
+
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+k
+b
+===================================================
+    
+null     
+
+
+j
+c
+===================================================
+0
+
+===================================================
+'expression'    
+expression     
+
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+ +12345
+===================================================
+    
+null     
+
+
+cubrid
+===================================================
+0
+
+===================================================
+'null args'    
+null args     
+
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+a
+b
+===================================================
+    
+null     
+
+
+a
+===================================================
+    
+null     
+
+
+a
+===================================================
+0
+
+===================================================
+'error test, no trailing args'    
+error test, no trailing args     
+
+
+===================================================
+Error:-494
+Semantic: before ' 
+) as
+begin
+DBMS_OUTPUT.put_line(a);
+DBMS_OUTPUT.put_line(b);...'
+Only trailing default parameter is allowed: invalid at 'b'. create or replace procedure demo_default_value4(a  varchar d...
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+a
+1
+===================================================
+0
+
+===================================================
+'error test, type incompatible'    
+error test, type incompatible     
+
+
+===================================================
+Error:-494
+Semantic: before ' 
+) as
+begin
+DBMS_OUTPUT.put_line(a);
+DBMS_OUTPUT.put_line(b);...'
+Cannot coerce 'a' to type integer. create or replace procedure demo_default_value6(a  varchar, ...
+
+===================================================
+'error test, out can not used default value 1'    
+error test, out can not used default value 1     
+
+
+===================================================
+Error:-494
+Semantic: before ' 
+) as
+begin
+DBMS_OUTPUT.put_line(a);
+end; '
+Attempting to assign DEFAULT on an Out parameter is not allowed: 'a'. create or replace procedure demo_default_value7(a out varcha...
+
+===================================================
+'error test, out can not used default value 2'    
+error test, out can not used default value 2     
+
+
+===================================================
+Error:-494
+Semantic: before ' 
+) as
+begin
+DBMS_OUTPUT.put_line(a);
+end; '
+Attempting to assign DEFAULT on an Out parameter is not allowed: 'b'. create or replace procedure demo_default_value8(a  varchar d...
+
+===================================================
+'error test, "in out" can not used default value'    
+error test, "in out" can not used default value     
+
+
+===================================================
+Error:-494
+Semantic: before ' 
+) as
+begin
+DBMS_OUTPUT.put_line(a);
+end; '
+Attempting to assign DEFAULT on an Out parameter is not allowed: 'a'. create or replace procedure demo_default_value9(a inout varc...
+
+===================================================
+'error test, function can not use in default clause 1'    
+error test, function can not use in default clause 1     
+
+
+===================================================
+Error:-494
+Semantic: before ' 
+) as
+begin
+DBMS_OUTPUT.put_line(a);
+end; '
+' SYS_DATETIME ' function can not be used in DEFAULT clause. create or replace procedure demo_default_value10(a  varchar ...
+
+===================================================
+'error test, function can not use in default clause 2'    
+error test, function can not use in default clause 2     
+
+
+===================================================
+Error:-494
+Semantic: before ' 
+) as
+begin
+DBMS_OUTPUT.put_line(a);
+end; '
+' CURRENT_USER ' function can not be used in DEFAULT clause. create or replace procedure demo_default_value11(a  varchar ...
+
+===================================================
+'error test, data overflow'    
+error test, data overflow     
+
+
+===================================================
+Error:-427
+Data overflow on data type "character varying".
+
+===================================================
+'char default'    
+char default     
+
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+"d"
+===================================================
+    
+null     
+
+
+"a  "
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+Error:-889
+Stored procedure execute error: com.cubrid.jsp.exception.TypeMismatchException: invalid TIMESTAMP string: 07:28 pm 09-30
+
+===================================================
+Error:-889
+Stored procedure execute error: com.cubrid.jsp.exception.TypeMismatchException: invalid DATETIME string: 12:22:33.000 PM 06/25/2024
+
+===================================================
+0
+
