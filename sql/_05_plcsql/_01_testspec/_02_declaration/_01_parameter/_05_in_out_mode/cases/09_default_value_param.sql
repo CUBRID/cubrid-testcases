@@ -153,6 +153,7 @@ end;
 
 
 -- expression (error case)
+-- It is a constraint. but it might be improved in the future
 select 'error test, function can not use in default clause 1' from dual;
 create or replace procedure demo_default_value10 (
         a varchar := SYSDATETIME
