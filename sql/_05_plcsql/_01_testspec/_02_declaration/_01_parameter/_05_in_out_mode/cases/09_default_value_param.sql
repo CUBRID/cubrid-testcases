@@ -44,6 +44,7 @@ end;
 
 CALL demo_default_value3 ('k');
 CALL demo_default_value3 ('j', 'c');
+CALL demo_default_value3 ();
 
 drop procedure demo_default_value3;
 
