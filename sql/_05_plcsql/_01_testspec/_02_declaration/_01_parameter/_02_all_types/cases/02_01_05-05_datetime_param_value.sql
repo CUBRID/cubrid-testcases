@@ -19,7 +19,7 @@ end;
 call t();
 
 
--- bug - DATETIME'9999-12-31 23:59:59.999'
+-- normal
 create or replace procedure t( ) as
     var_min DATETIME := DATETIME'0001-01-01 00:00:00.000';
     var_max DATETIME := DATETIME'9999-12-31 23:59:59.999';
@@ -33,7 +33,7 @@ begin
     dbms_output.put_line('i_max=' || var_max);
 end;
 
-select DATETIME'9999-12-31 23:59:59.999'; 
+call t();
 
 
 
