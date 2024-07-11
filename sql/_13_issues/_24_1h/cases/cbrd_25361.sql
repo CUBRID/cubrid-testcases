@@ -3,8 +3,8 @@
 --------------------------------------------------------------------------------
 -- These test cases verify the fix for CBRD-25361, ensuring that trace information
 -- is correctly outputted for various scenarios involving CTEs and subqueries,
--- including UNION ALL, DIFFERENCE, INTERSECTION, and combinations of correlated
--- and uncorrelated subqueries.
+-- including UNION, UNION ALL, DIFFERENCE, DIFFERENCE ALL, INTERSECTION, 
+-- INTERSECTION ALL, and combinations of correlated and uncorrelated subqueries.
 --------------------------------------------------------------------------------
 
 -- 1. Uncorrelated Subqueries
@@ -20,29 +20,53 @@ from db_class a, db_class c, db_class d limit 100000;
 set trace on;
 
 WITH cte_a AS (SELECT * FROM tbl_a ORDER BY 1 LIMIT 20)
-(SELECT * FROM cte_a)
+(SELECT * FROM cte_a ORDER BY i)
 UNION ALL
-(SELECT * FROM cte_a);
+(SELECT * FROM cte_a ORDER BY i);
 
 show trace;
 
--- 1.2 Single CTE: DIFFERENCE
+-- 1.2 Single CTE: UNION
 WITH cte_a AS (SELECT * FROM tbl_a ORDER BY 1 LIMIT 20)
-(SELECT * FROM cte_a)
+(SELECT * FROM cte_a ORDER BY i)
+UNION
+(SELECT * FROM cte_a ORDER BY i);
+
+show trace;
+
+-- 1.3 Single CTE: DIFFERENCE
+WITH cte_a AS (SELECT * FROM tbl_a ORDER BY 1 LIMIT 20)
+(SELECT * FROM cte_a ORDER BY i)
 DIFFERENCE
-(SELECT * FROM cte_a);
+(SELECT * FROM cte_a ORDER BY i);
 
 show trace;
 
--- 1.3 Single CTE: INTERSECTION
+-- 1.4 Single CTE: DIFFERENCE ALL
 WITH cte_a AS (SELECT * FROM tbl_a ORDER BY 1 LIMIT 20)
-(SELECT * FROM cte_a)
-INTERSECTION
-(SELECT * FROM cte_a);
+(SELECT * FROM cte_a ORDER BY i)
+DIFFERENCE ALL
+(SELECT * FROM cte_a ORDER BY i);
 
 show trace;
 
--- 1.4 Multiple CTEs: UNION ALL with Uncorrelated Subqueries
+-- 1.5 Single CTE: INTERSECTION
+WITH cte_a AS (SELECT * FROM tbl_a ORDER BY 1 LIMIT 20)
+(SELECT * FROM cte_a ORDER BY i)
+INTERSECTION
+(SELECT * FROM cte_a ORDER BY i);
+
+show trace;
+
+-- 1.6 Single CTE: INTERSECTION ALL
+WITH cte_a AS (SELECT * FROM tbl_a ORDER BY 1 LIMIT 20)
+(SELECT * FROM cte_a ORDER BY i)
+INTERSECTION ALL
+(SELECT * FROM cte_a ORDER BY i);
+
+show trace;
+
+-- 1.7 Multiple CTEs: UNION ALL with Uncorrelated Subqueries
 drop table if exists tbl_b;
 
 create table tbl_b ( a int, b varchar, c varchar);
@@ -54,32 +78,65 @@ set trace on;
 
 WITH cte_a AS (SELECT * FROM tbl_a ORDER BY 1 LIMIT 20),
      cte_b AS (SELECT * FROM tbl_b ORDER BY 1 LIMIT 20)
-(SELECT * FROM cte_a WHERE i < 50)
+(SELECT * FROM cte_a WHERE i < 50 ORDER BY i)
 UNION ALL
-(SELECT * FROM cte_b WHERE a > 50);
+(SELECT * FROM cte_b WHERE a > 50 ORDER BY a);
 
 show trace;
 drop table tbl_b;
 
--- 1.5 Multiple CTEs: DIFFERENCE with Uncorrelated Subqueries
+-- 1.8 Multiple CTEs: UNION with Uncorrelated Subqueries
 set trace on;
 
 WITH cte_a AS (SELECT * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
      cte_b AS (SELECT * FROM tbl_a WHERE i >= 50 ORDER BY 1 LIMIT 20)
-(SELECT * FROM cte_a WHERE i < 20)
-DIFFERENCE
-(SELECT * FROM cte_b WHERE k > 30);
+(SELECT * FROM cte_a WHERE j < 30 ORDER BY i)
+UNION
+(SELECT * FROM cte_b WHERE k > 50 ORDER BY i);
 
 show trace;
 
--- 1.6 Multiple CTEs: UNION with Uncorrelated Subqueries
+-- 1.9 Multiple CTEs: DIFFERENCE with Uncorrelated Subqueries
 set trace on;
 
 WITH cte_a AS (SELECT * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
      cte_b AS (SELECT * FROM tbl_a WHERE i >= 50 ORDER BY 1 LIMIT 20)
-(SELECT * FROM cte_a WHERE j < 30)
-UNION
-(SELECT * FROM cte_b WHERE k > 50);
+(SELECT * FROM cte_a WHERE i < 20 ORDER BY i)
+DIFFERENCE
+(SELECT * FROM cte_b WHERE k > 30 ORDER BY i);
+
+show trace;
+
+-- 1.10 Multiple CTEs: DIFFERENCE ALL with Uncorrelated Subqueries
+set trace on;
+
+WITH cte_a AS (SELECT * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
+     cte_b AS (SELECT * FROM tbl_a WHERE i >= 50 ORDER BY 1 LIMIT 20)
+(SELECT * FROM cte_a WHERE i < 20 ORDER BY i)
+DIFFERENCE ALL
+(SELECT * FROM cte_b WHERE k > 30 ORDER BY i);
+
+show trace;
+
+-- 1.11 Multiple CTEs: INTERSECTION with Uncorrelated Subqueries
+set trace on;
+
+WITH cte_a AS (SELECT * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
+     cte_b AS (SELECT * FROM tbl_a WHERE i >= 50 ORDER BY 1 LIMIT 20)
+(SELECT * FROM cte_a WHERE j < 30 ORDER BY i)
+INTERSECTION
+(SELECT * FROM cte_b WHERE k > 50 ORDER BY i);
+
+show trace;
+
+-- 1.12 Multiple CTEs: INTERSECTION ALL with Uncorrelated Subqueries
+set trace on;
+
+WITH cte_a AS (SELECT * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
+     cte_b AS (SELECT * FROM tbl_a WHERE i >= 50 ORDER BY 1 LIMIT 20)
+(SELECT * FROM cte_a WHERE j < 30 ORDER BY i)
+INTERSECTION ALL
+(SELECT * FROM cte_b WHERE k > 50 ORDER BY i);
 
 show trace;
 
@@ -89,19 +146,19 @@ show trace;
 set trace on;
 
 WITH cte_a AS (SELECT * FROM tbl_a ORDER BY 1 LIMIT 20)
-(SELECT * FROM cte_a WHERE EXISTS (SELECT 1 FROM tbl_a WHERE tbl_a.i = cte_a.i))
+(SELECT * FROM cte_a WHERE EXISTS (SELECT 1 FROM tbl_a WHERE tbl_a.i = cte_a.i) ORDER BY i)
 UNION
-(SELECT * FROM cte_a WHERE EXISTS (SELECT 1 FROM tbl_a WHERE tbl_a.j = cte_a.j));
+(SELECT * FROM cte_a WHERE EXISTS (SELECT 1 FROM tbl_a WHERE tbl_a.j = cte_a.j) ORDER BY i);
 
 show trace;
 
--- 2.2 CTE with Correlated Subqueries: INTERSECTION
+-- 2.2 Single CTE: INTERSECTION with Correlated Subqueries
 set trace on;
 
 WITH cte_a AS (SELECT * FROM tbl_a ORDER BY 1 LIMIT 20)
-(SELECT * FROM cte_a WHERE EXISTS (SELECT 1 FROM tbl_a WHERE tbl_a.j = cte_a.j))
+(SELECT * FROM cte_a WHERE EXISTS (SELECT 1 FROM tbl_a WHERE tbl_a.j = cte_a.j) ORDER BY i)
 INTERSECTION
-(SELECT * FROM cte_a WHERE EXISTS (SELECT 1 FROM tbl_a WHERE tbl_a.k = cte_a.k));
+(SELECT * FROM cte_a WHERE EXISTS (SELECT 1 FROM tbl_a WHERE tbl_a.k = cte_a.k) ORDER BY i);
 
 show trace;
 
@@ -110,9 +167,67 @@ set trace on;
 
 WITH cte_a AS (SELECT * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
      cte_b AS (SELECT * FROM tbl_a WHERE i >= 50 ORDER BY 1 LIMIT 20)
-(SELECT * FROM cte_a WHERE j < 20)
+(SELECT * FROM cte_a WHERE j < 20 ORDER BY i)
 UNION ALL
-(SELECT * FROM cte_b WHERE EXISTS (SELECT 1 FROM tbl_a WHERE tbl_a.k = cte_b.k));
+(SELECT * FROM cte_b WHERE EXISTS (SELECT 1 FROM tbl_a WHERE tbl_a.k = cte_b.k) ORDER BY i);
 
 show trace;
+
+-- 2.4 Multiple CTEs: UNION with Mixed Correlated and Uncorrelated Subqueries
+set trace on;
+
+WITH cte_a AS (SELECT * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
+     cte_b AS (SELECT * FROM tbl_a WHERE i >= 50 ORDER BY 1 LIMIT 20)
+(SELECT * FROM cte_a WHERE j < 20 ORDER BY i)
+UNION
+(SELECT * FROM cte_b WHERE EXISTS (SELECT 1 FROM tbl_a WHERE tbl_a.k = cte_b.k) ORDER BY i);
+
+show trace;
+
+-- 2.5 Multiple CTEs: DIFFERENCE with Mixed Correlated and Uncorrelated Subqueries
+set trace on;
+
+WITH cte_a AS (SELECT * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
+     cte_b AS (SELECT * FROM tbl_a WHERE i >= 50 ORDER BY 1 LIMIT 20)
+(SELECT * FROM cte_a WHERE j < 20 ORDER BY i)
+DIFFERENCE
+(SELECT * FROM cte_b WHERE EXISTS (SELECT 1 FROM tbl_a WHERE tbl_a.k = cte_b.k) ORDER BY i);
+
+show trace;
+
+-- 2.6 Multiple CTEs: DIFFERENCE ALL with Mixed Correlated and Uncorrelated Subqueries
+set trace on;
+
+WITH cte_a AS (SELECT * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
+     cte_b AS (SELECT * FROM tbl_a WHERE i >= 50 ORDER BY 1 LIMIT 20)
+(SELECT * FROM cte_a WHERE j < 20 ORDER BY i)
+DIFFERENCE ALL
+(SELECT * FROM cte_b WHERE EXISTS (SELECT 1 FROM tbl_a WHERE tbl_a.k = cte_b.k) ORDER BY i);
+
+show trace;
+
+-- 2.7 Multiple CTEs: INTERSECTION with Mixed Correlated and Uncorrelated Subqueries
+set trace on;
+
+WITH cte_a AS (SELECT * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
+     cte_b AS (SELECT * FROM tbl_a WHERE i >= 50 ORDER BY 1 LIMIT 20)
+(SELECT * FROM cte_a WHERE j < 20 ORDER BY i)
+INTERSECTION
+(SELECT * FROM cte_b WHERE EXISTS (SELECT 1 FROM tbl_a WHERE tbl_a.k = cte_b.k) ORDER BY i);
+
+show trace;
+
+-- 2.8 Multiple CTEs: INTERSECTION ALL with Mixed Correlated and Uncorrelated Subqueries
+set trace on;
+
+WITH cte_a AS (SELECT * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
+     cte_b AS (SELECT * FROM tbl_a WHERE i >= 50 ORDER BY 1 LIMIT 20)
+(SELECT * FROM cte_a WHERE j < 20 ORDER BY i)
+INTERSECTION ALL
+(SELECT * FROM cte_b WHERE EXISTS (SELECT 1 FROM tbl_a WHERE tbl_a.k = cte_b.k) ORDER BY i);
+
+show trace;
+
+set trace off;
+drop table tbl_a;
 
