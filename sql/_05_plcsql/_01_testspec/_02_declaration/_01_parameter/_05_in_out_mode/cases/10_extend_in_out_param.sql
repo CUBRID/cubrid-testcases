@@ -72,4 +72,33 @@ drop procedure test_out3;
 
 drop t1;
 
+
+select 'recursive function/procedure' from dual;
+
+CREATE OR REPLACE PROCEDURE test_proc(
+  square_number IN OUT INTEGER
+)
+IS
+BEGIN
+  square_number := square_number * square_number;
+END;
+
+CREATE OR REPLACE FUNCTION test_func(
+  target_num IN INTEGER
+) RETURN varchar
+IS
+  result_num integer;
+BEGIN
+  result_num := target_num;
+  test_proc(result_num);
+
+  RETURN 'result: ' || result_num;
+END;
+
+select 5 into :a;
+
+call test_func(:a);
+select :a;
+
+
 --+ server-message off
