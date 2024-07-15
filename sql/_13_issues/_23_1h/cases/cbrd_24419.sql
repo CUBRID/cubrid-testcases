@@ -748,7 +748,7 @@ drop table u0.t3;
 drop table u0.t4;
 drop table u0.t5;
 drop table u0.t5_c;
-drop function j0;
+drop function u0.j0;
 drop server u0.s1;
 
 drop table u1.t1;
@@ -762,7 +762,7 @@ drop table u1.t3;
 drop table u1.t4;
 drop table u1.t5;
 drop table u1.t5_c;
-drop function j1;
+drop function u1.j1;
 drop server u1.s1;
 
 drop table u1_1.t1;
@@ -776,7 +776,7 @@ drop table u1_1.t3;
 drop table u1_1.t4;
 drop table u1_1.t5;
 drop table u1_1.t5_c;
-drop function j1_1;
+drop function u1_1.j1_1;
 drop server u1_1.s1;
 
 drop table u2.t1;
@@ -790,7 +790,7 @@ drop table u2.t3;
 drop table u2.t4;
 drop table u2.t5;
 drop table u2.t5_c;
-drop function j2;
+drop function u2.j2;
 drop server u2.s1;
 
 drop table u2_1.t1;
@@ -804,7 +804,7 @@ drop table u2_1.t3;
 drop table u2_1.t4;
 drop table u2_1.t5;
 drop table u2_1.t5_c;
-drop function j2_1;
+drop function u2_1.j2_1;
 drop server u2_1.s1;
 
 drop table u3.t1;
@@ -818,7 +818,7 @@ drop table u3.t3;
 drop table u3.t4;
 drop table u3.t5;
 drop table u3.t5_c;
-drop function j3;
+drop function u3.j3;
 drop server u3.s1;
 
 drop table u3_1.t1;
@@ -832,7 +832,7 @@ drop table u3_1.t3;
 drop table u3_1.t4;
 drop table u3_1.t5;
 drop table u3_1.t5_c;
-drop function j3_1;
+drop function u3_1.j3_1;
 drop server u3_1.s1;
 
 drop table u4.t1;
@@ -846,7 +846,7 @@ drop table u4.t3;
 drop table u4.t4;
 drop table u4.t5;
 drop table u4.t5_c;
-drop function j4;
+drop function u4.j4;
 drop server u4.s1;
 
 drop synonym u5.t1;
