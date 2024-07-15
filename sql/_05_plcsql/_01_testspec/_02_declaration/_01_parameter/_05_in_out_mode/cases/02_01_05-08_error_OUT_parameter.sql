@@ -1,6 +1,5 @@
-
 --+ server-message on
-
+-- verified for CBRD-25420
 -- Check if an error occurs when OUT parameters are used like IN parameters.
 
 
