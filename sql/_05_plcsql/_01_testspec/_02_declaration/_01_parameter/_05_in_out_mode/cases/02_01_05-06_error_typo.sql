@@ -1,5 +1,6 @@
+
 --+ server-message on
--- verified for CBRD-25420
+
 -- Check whether errors occur when writing in, out, and inout statements due to typos.
 
 create or replace procedure t(i on int) as

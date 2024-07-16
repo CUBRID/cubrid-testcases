@@ -1,5 +1,4 @@
 --+ server-message on
--- verified for CBRD-25420
 
 -- normal: OUT can be used for each parameter
 

@@ -1,6 +1,6 @@
 
 --+ server-message on
--- verified for CBRD-25420
+
 -- Check if the ON and INOUT parameter names are used properly. Check if an error occurs.
 
 create or replace procedure t( ON int ) as
