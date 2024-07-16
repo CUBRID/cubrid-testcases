@@ -60,6 +60,22 @@ SELECT :b;
 create table t1(col1 int);
 insert into t1 values(99);
 
+
+select 'test_out4' from dual;
+CREATE OR REPLACE FUNCTION test_out4() RETURN INTEGER
+IS
+BEGIN
+  RETURN 5;
+END;
+
+SELECT 1, 2 INTO :a, :b;
+CALL test_out4() INTO :a;
+SELECT :a;
+
+SELECT test_out4 () INTO :b;
+SELECT :b;
+
+
 select 'Used query result to param for function/procedure' from dual;
 -- error
 SELECT test_out1 (col1) FROM t1;
@@ -69,6 +85,8 @@ SELECT test_out3 (col1) FROM t1;
 drop function test_out1;
 drop function test_out2;
 drop procedure test_out3;
+drop function test_out4;
+
 
 drop t1;
 
