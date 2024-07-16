@@ -73,7 +73,7 @@ drop procedure test_out3;
 drop t1;
 
 
-select 'recursive function/procedure' from dual;
+select 'inner call function/procedure' from dual;
 
 CREATE OR REPLACE PROCEDURE test_proc(
   square_number INOUT INTEGER
