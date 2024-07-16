@@ -103,5 +103,8 @@ select 4 into :b;
 select test_func(:b);
 select :b;
 
+drop procedure test_proc;
+drop function test_func;
+
 
 --+ server-message off
