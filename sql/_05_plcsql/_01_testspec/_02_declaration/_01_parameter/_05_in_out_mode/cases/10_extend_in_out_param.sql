@@ -76,7 +76,7 @@ drop t1;
 select 'recursive function/procedure' from dual;
 
 CREATE OR REPLACE PROCEDURE test_proc(
-  square_number IN OUT INTEGER
+  square_number INOUT INTEGER
 )
 IS
 BEGIN
@@ -84,7 +84,7 @@ BEGIN
 END;
 
 CREATE OR REPLACE FUNCTION test_func(
-  target_num IN INTEGER
+  target_num IN OUT INTEGER
 ) RETURN varchar
 IS
   result_num integer;
@@ -96,9 +96,12 @@ BEGIN
 END;
 
 select 5 into :a;
-
 call test_func(:a);
 select :a;
+
+select 4 into :b;
+select test_func(:b);
+select :b;
 
 
 --+ server-message off
