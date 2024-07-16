@@ -131,7 +131,7 @@ select 5 into :a;
 call test_func1(:a);
 select :a;
 
--- result: null
+-- Error:-889
 call test_func2(:a);
 select :a;
 
