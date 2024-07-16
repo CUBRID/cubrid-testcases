@@ -83,7 +83,7 @@ BEGIN
   square_number := square_number * square_number;
 END;
 
-CREATE OR REPLACE FUNCTION test_func(
+CREATE OR REPLACE FUNCTION test_func1(
   target_num IN OUT INTEGER
 ) RETURN varchar
 IS
@@ -95,16 +95,36 @@ BEGIN
   RETURN 'result: ' || result_num;
 END;
 
+CREATE OR REPLACE FUNCTION test_func2(
+  target_num IN OUT INTEGER
+) RETURN varchar
+IS
+  result_num integer;
+  val integer;
+BEGIN
+  result_num := target_num;
+  select test_proc(result_num) into val from dual;
+
+  RETURN 'result: ' || result_num;
+END;
+
 select 5 into :a;
-call test_func(:a);
+-- result: 25
+call test_func1(:a);
+select :a;
+
+-- result: null
+call test_func2(:a);
 select :a;
 
 select 4 into :b;
-select test_func(:b);
+-- Error:-494
+select test_func1(:b);
 select :b;
 
 drop procedure test_proc;
-drop function test_func;
+drop function test_func1;
+drop function test_func2;
 
 
 --+ server-message off
