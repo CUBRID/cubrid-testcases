@@ -70,6 +70,7 @@ C1: quit;
 C2: quit;
 
 C3: login as 'dba';
+C3: DROP USER jones;
 C3: DROP USER design;
 C3: DROP USER company;
 C3: COMMIT;
