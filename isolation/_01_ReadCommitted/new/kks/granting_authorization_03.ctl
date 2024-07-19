@@ -1,5 +1,5 @@
 /*
-Test Case: add_user
+Test Case: granting authorization
 Priority: 1
 Reference case:
 Author: Bobo
@@ -36,45 +36,56 @@ C3: set transaction isolation level read committed;
 
 /* preparation */
 C1: DROP TABLE IF EXISTS t1;
-C1: CREATE TABLE t1(id INT primary key, phone VARCHAR(10));
+C1: DROP TABLE IF EXISTS t2;
 C1: CREATE USER company;
-C1: CREATE USER design GROUPS dba;
+C1: CREATE USER engineering GROUPS company;
+C1: CREATE USER jones GROUPS engineering; 
+C1: CREATE USER brown;
+C1: CREATE USER design MEMBERS brown;
+C1: COMMIT;
+MC: wait until C1 ready;
+
+C1: CREATE TABLE t1 (id INT primary key);
+C1: GRANT SELECT, UPDATE ON t1 TO company;
+C1: GRANT SELECT, DELETE ON t1 TO design;
+C1: GRANT SELECT ON t1 TO brown WITH GRANT OPTION;
+C1: insert into t1 values (1),(2);
 C1: COMMIT;
 MC: wait until C1 ready;
 
 C1: login as 'company';
-C1: CALL add_user ('jones', '') ON CLASS db_user;
-C1: select name from db_user order by 1;
-MC: wait until C1 ready;
-C1: COMMIT;
+C1: update dba.t1 set id=10 where id=1;
+C1: select * from dba.t1 order by 1;
 MC: wait until C1 ready;
 C2: login as 'design';
-C2: CREATE USER jones;
-C2: ALTER USER jones PASSWORD '1234';
-C2: select name from db_user order by 1;
+C2: delete from dba.t1 where id=2;
 MC: wait until C2 ready;
+C2: select * from dba.t1 order by 1;
+MC: wait until C2 ready;
+C3: login as 'brown';
+C3: delete from dba.t1 where id=2;
+MC: wait until C3 blocked;
 C1: COMMIT;
 MC: wait until C1 ready;
 C2: COMMIT;
-MC: wait until C2 ready;
-C2: CALL login ('jones', '1234') ON CLASS db_user;
-C2: select name from db_user order by 1;
+MC: wait until C3 ready;
+C3: COMMIT;
+MC: wait until C3 ready;
 C2: select * from dba.t1 order by 1;
 C2: COMMIT;
 MC: wait until C2 ready;
 
+C1: login as 'dba';
+C1: DROP table t1;
+C1: DROP USER jones;
+C1: DROP USER brown;
+C1: DROP USER design;
+C1: DROP USER engineering;
+C1: DROP USER company;
+C1: COMMIT;
+MC: wait until C1 ready;
 
 C1: quit;
 C2: quit;
-
-C3: login as 'dba';
-C3: DROP table t1;
-C3: DROP USER jones;
-C3: DROP USER design;
-C3: DROP USER company;
-C3: DROP USER jones;
-C3: COMMIT;
-MC: wait until C3 ready;
-
 C3: quit;
 
