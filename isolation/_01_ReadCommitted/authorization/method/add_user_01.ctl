@@ -69,7 +69,6 @@ C2: quit;
 
 C3: login as 'dba';
 C3: DROP table t1;
-C3: DROP USER jones;
 C3: DROP USER design;
 C3: DROP USER company;
 C3: DROP USER jones;
