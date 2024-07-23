@@ -8,7 +8,7 @@ begin
 end;
 
 
-select 'success, 38 digit' from dual;
+select 'fail, 38 digit' from dual;
 call numeric_test(12345678901234567890123456789012345678);
 select 'fail, 38 digit over' from dual;
 call numeric_test(123456789012345678901234567890123456789);
@@ -19,7 +19,7 @@ select 'fail, 0.38 digit over' from dual;
 call numeric_test(0.012345678901234567890123456789012345678);
 
 
-select 'success, 19.19 digit' from dual;
+select 'fail, 19.19 digit' from dual;
 call numeric_test(1234567890123456789.1234567890123456789);
 select 'fail 19.20 digit' from dual;
 call numeric_test(1234567890123456789.12345678901234567891);
