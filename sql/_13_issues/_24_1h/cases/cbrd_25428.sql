@@ -10,7 +10,6 @@ insert into tbl values(1, NULL, repeat('A', 1));
 insert into tbl values(2, 1, repeat('C', 255));
 
 update statistics on all classes with fullscan;
-set optimization level 513;
 
 -- Recursive CTE query
 with recursive c as (
@@ -34,7 +33,6 @@ insert into tbl values(20, 2, repeat('c', 255));
 insert into tbl values(21, 2, repeat('d', 255));
 
 update statistics on all classes with fullscan;
-set optimization level 513;
 
 -- Recursive CTE query
 with recursive c as (
