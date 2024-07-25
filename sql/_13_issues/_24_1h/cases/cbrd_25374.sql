@@ -1,3 +1,7 @@
+-- sort-limit-optimization does not work when there is an expression containing a bind variable in the limit clause.
+
+-- Check SORT (limit) in plan section and SUBQUERY (uncorrelated) in statistics section. 
+
 drop table if exists tbl;
 create table tbl (cola int, colb int);
 insert into tbl select rownum, rownum  from db_class a, db_class b, db_class c, db_class d limit 100000;
