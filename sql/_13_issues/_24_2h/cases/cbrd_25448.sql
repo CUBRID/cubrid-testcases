@@ -26,35 +26,35 @@ INSERT INTO game_tbl VALUES (1996, 20053, 13082, 30042, 'CUB', 'B', '07/27/1996'
 
 -- cases without view merge
 -- Verifying orderby_num() in the main query.
-SELECT /*+ RECOMPILE */ orderby_num(), host_year FROM game_tbl WHERE medal = 'B' ORDER BY medal;
+SELECT /*+ RECOMPILE */ '#1', orderby_num(), host_year FROM game_tbl WHERE medal = 'B' ORDER BY medal;
 
 -- Verifying orderby_num() in the main query when there is an additional condition on another column in the WHERE clause.
-SELECT /*+ RECOMPILE */ orderby_num(), host_year FROM game_tbl WHERE medal = 'B' AND event_code >= 20000 ORDER BY medal;
+SELECT /*+ RECOMPILE */ '#2', orderby_num(), host_year FROM game_tbl WHERE medal = 'B' AND event_code >= 20000 ORDER BY medal;
 
 -- Verifying orderby_num() in the main query with a LIMIT clause.
-SELECT /*+ RECOMPILE */ orderby_num(), host_year FROM game_tbl WHERE medal = 'B' ORDER BY medal LIMIT 3;
+SELECT /*+ RECOMPILE */ '#3', orderby_num(), host_year FROM game_tbl WHERE medal = 'B' ORDER BY medal LIMIT 3;
 
 -- Using REPLACE in the WHERE clause of the main query to check orderby_num().
-SELECT /*+ RECOMPILE */ orderby_num(), host_year FROM game_tbl WHERE REPLACE(medal, ' ', '') = 'B' ORDER BY medal;
+SELECT /*+ RECOMPILE */ '#4', orderby_num(), host_year FROM game_tbl WHERE REPLACE(medal, ' ', '') = 'B' ORDER BY medal;
 
 -- Using TO_CHAR in the WHERE clause of the main query to check orderby_num().
-SELECT /*+ RECOMPILE */ orderby_num(), host_year FROM game_tbl WHERE TO_CHAR(medal) = 'B' ORDER BY medal;
+SELECT /*+ RECOMPILE */ '#5', orderby_num(), host_year FROM game_tbl WHERE TO_CHAR(medal) = 'B' ORDER BY medal;
 
 
 --cases with view merge
 -- Using a subquery to verify that rownum values are correctly assigned.
-SELECT /*+ RECOMPILE */ ROWNUM rn, A.host_year FROM (SELECT /*+ RECOMPILE */ host_year FROM game_tbl WHERE medal = 'B' ORDER BY medal) A;
+SELECT /*+ RECOMPILE */ '#6', ROWNUM rn, A.host_year FROM (SELECT /*+ RECOMPILE */ host_year FROM game_tbl WHERE medal = 'B' ORDER BY medal) A;
 
 -- Using a subquery to verify that rownum values are correctly assigned when there is an additional condition on another column in the WHERE clause.
-SELECT /*+ RECOMPILE */ ROWNUM rn, A.host_year FROM (SELECT /*+ RECOMPILE */ host_year FROM game_tbl WHERE medal = 'B' AND event_code >= 20000 ORDER BY medal) A;
+SELECT /*+ RECOMPILE */ '#7', ROWNUM rn, A.host_year FROM (SELECT /*+ RECOMPILE */ host_year FROM game_tbl WHERE medal = 'B' AND event_code >= 20000 ORDER BY medal) A;
 
 -- Using a subquery to verify that rownum values are correctly assigned with filtering.
-SELECT /*+ RECOMPILE */ ROWNUM rn, A.host_year FROM (SELECT /*+ RECOMPILE */ host_year FROM game_tbl WHERE medal = 'B' ORDER BY medal) A WHERE ROWNUM <= 3;
+SELECT /*+ RECOMPILE */ '#8', ROWNUM rn, A.host_year FROM (SELECT /*+ RECOMPILE */ host_year FROM game_tbl WHERE medal = 'B' ORDER BY medal) A WHERE ROWNUM <= 3;
 
 -- Using REPLACE in the WHERE clause of a subquery to check rownum values.
-SELECT /*+ RECOMPILE */ ROWNUM rn, A.host_year FROM (SELECT /*+ RECOMPILE */ host_year FROM game_tbl WHERE REPLACE(medal, ' ', '') = 'B' ORDER BY medal) A;
+SELECT /*+ RECOMPILE */ '#9', ROWNUM rn, A.host_year FROM (SELECT /*+ RECOMPILE */ host_year FROM game_tbl WHERE REPLACE(medal, ' ', '') = 'B' ORDER BY medal) A;
 
 -- Using TO_CHAR in the WHERE clause of a subquery to check rownum values.
-SELECT /*+ RECOMPILE */ ROWNUM rn, A.host_year FROM (SELECT /*+ RECOMPILE */ host_year FROM game_tbl WHERE TO_CHAR(medal) = 'B' ORDER BY medal) A;
+SELECT /*+ RECOMPILE */ '#10', ROWNUM rn, A.host_year FROM (SELECT /*+ RECOMPILE */ host_year FROM game_tbl WHERE TO_CHAR(medal) = 'B' ORDER BY medal) A;
 
 DROP TABLE IF EXISTS game_tbl;
