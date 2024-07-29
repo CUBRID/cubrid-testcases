@@ -1,3 +1,6 @@
+-- This test case verifies CBRD-25316 issue.
+-- Analytic functions can be used in an UPDATE statement when only one table is involved in the query.
+-- Analytic functions cannot be used in an UPDATE JOIN statement when two or more tables are involved in the query.
 /* ----------------------------------------
  *
  * Analytic function
