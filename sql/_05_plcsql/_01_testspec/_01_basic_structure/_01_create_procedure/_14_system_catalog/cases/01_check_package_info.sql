@@ -6,21 +6,21 @@ select sp_name, pkg_name, is_system_generated from _db_stored_procedure order by
 
 -- drop test
 -- ERROR: Dropping system generated stored procedure is not allowed.
-drop procedure disable;
-drop procedure enable;
-drop procedure get_line;
-drop procedure get_lines;
-drop procedure new_line;
-drop procedure put;
-drop procedure put_line;
+drop procedure DBMS_OUTPUT.disable;
+drop procedure DBMS_OUTPUT.enable;
+drop procedure DBMS_OUTPUT.get_line;
+drop procedure DBMS_OUTPUT.get_lines;
+drop procedure DBMS_OUTPUT.new_line;
+drop procedure DBMS_OUTPUT.put;
+drop procedure DBMS_OUTPUT.put_line;
 
-drop function disable;
-drop function enable;
-drop function get_line;
-drop function get_lines;
-drop function new_line;
-drop function put;
-drop function put_line;
+drop function DBMS_OUTPUT.disable;
+drop function DBMS_OUTPUT.enable;
+drop function DBMS_OUTPUT.get_line;
+drop function DBMS_OUTPUT.get_lines;
+drop function DBMS_OUTPUT.new_line;
+drop function DBMS_OUTPUT.put;
+drop function DBMS_OUTPUT.put_line;
 
 
 
