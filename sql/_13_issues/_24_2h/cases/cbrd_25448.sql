@@ -23,6 +23,7 @@ INSERT INTO game_tbl VALUES (2000, 20080, 12547, 30003, 'SVK', 'B', '09/18/2000'
 INSERT INTO game_tbl VALUES (2000, 20153, 13014, 30020, 'RUS', 'B', '09/18/2000');
 INSERT INTO game_tbl VALUES (1996, 20049, 13853, 30042, 'RUS', 'S', '07/27/1996');
 INSERT INTO game_tbl VALUES (1996, 20053, 13082, 30042, 'CUB', 'B', '07/27/1996');
+INSERT INTO game_tbl VALUES (1996, 20054, 13082, 30042, 'CUB', null, '07/28/1996');
 
 CREATE TABLE products (id INTEGER PRIMARY KEY, parent_id INTEGER, item VARCHAR(100), price INTEGER);
 INSERT INTO products VALUES (1, -1, 'Drone', 2000);
@@ -36,50 +37,50 @@ INSERT INTO products VALUES (8, 5, 'Frame', 4700);
 
 -- cases without view merge
 -- Verifying orderby_num() in the main query.
-SELECT /*+ RECOMPILE */ '#1', orderby_num(), host_year FROM game_tbl WHERE medal = 'B' ORDER BY medal;
+SELECT /*+ RECOMPILE */ *, '#1', orderby_num() FROM game_tbl WHERE medal = 'B' ORDER BY medal;
 
 -- Verifying orderby_num() in the main query when there is an additional condition on another column in the WHERE clause.
-SELECT /*+ RECOMPILE */ '#2', orderby_num(), host_year FROM game_tbl WHERE medal = 'B' AND event_code >= 20000 ORDER BY medal;
+SELECT /*+ RECOMPILE */ *, '#2', orderby_num() FROM game_tbl WHERE medal = 'B' AND event_code >= 20000 ORDER BY medal;
 
 -- Verifying orderby_num() in the main query with a LIMIT clause.
-SELECT /*+ RECOMPILE */ '#3', orderby_num(), host_year FROM game_tbl WHERE medal = 'B' ORDER BY medal LIMIT 3;
+SELECT /*+ RECOMPILE */ *, '#3', orderby_num() FROM game_tbl WHERE medal = 'B' ORDER BY medal LIMIT 3;
 
 -- Using REPLACE in the WHERE clause of the main query to check orderby_num().
-SELECT /*+ RECOMPILE */ '#4', orderby_num(), host_year FROM game_tbl WHERE REPLACE(medal, ' ', '') = 'B' ORDER BY medal;
+SELECT /*+ RECOMPILE */ *, '#4', orderby_num() FROM game_tbl WHERE REPLACE(medal, ' ', '') = 'B' ORDER BY medal;
 
 -- Using TO_CHAR in the WHERE clause of the main query to check orderby_num().
-SELECT /*+ RECOMPILE */ '#5', orderby_num(), host_year FROM game_tbl WHERE TO_CHAR(medal) = 'B' ORDER BY medal;
+SELECT /*+ RECOMPILE */ *, '#5', orderby_num() FROM game_tbl WHERE TO_CHAR(medal) = 'B' ORDER BY medal;
 
 --cases with view merge
 -- Using a subquery to verify that rownum values are correctly assigned.
-SELECT /*+ RECOMPILE */ '#6', ROWNUM rn, A.host_year FROM (SELECT /*+ RECOMPILE */ host_year FROM game_tbl WHERE medal = 'B' ORDER BY medal) A;
+SELECT /*+ RECOMPILE */ *, '#6', ROWNUM rn FROM (SELECT /*+ RECOMPILE */ * FROM game_tbl WHERE medal = 'B' ORDER BY medal) A;
 
 -- Using a subquery to verify that rownum values are correctly assigned when there is an additional condition on another column in the WHERE clause.
-SELECT /*+ RECOMPILE */ '#7', ROWNUM rn, A.host_year FROM (SELECT /*+ RECOMPILE */ host_year FROM game_tbl WHERE medal = 'B' AND event_code >= 20000 ORDER BY medal) A;
+SELECT /*+ RECOMPILE */ *, '#7', ROWNUM rn FROM (SELECT /*+ RECOMPILE */ * FROM game_tbl WHERE medal = 'B' AND event_code >= 20000 ORDER BY medal) A;
 
 -- Using a subquery to verify that rownum values are correctly assigned with filtering.
-SELECT /*+ RECOMPILE */ '#8', ROWNUM rn, A.host_year FROM (SELECT /*+ RECOMPILE */ host_year FROM game_tbl WHERE medal = 'B' ORDER BY medal) A WHERE ROWNUM <= 3;
+SELECT /*+ RECOMPILE */ *, '#8', ROWNUM rn FROM (SELECT /*+ RECOMPILE */ * FROM game_tbl WHERE medal = 'B' ORDER BY medal) A WHERE ROWNUM <= 3;
 
 -- Using REPLACE in the WHERE clause of a subquery to check rownum values.
-SELECT /*+ RECOMPILE */ '#9', ROWNUM rn, A.host_year FROM (SELECT /*+ RECOMPILE */ host_year FROM game_tbl WHERE REPLACE(medal, ' ', '') = 'B' ORDER BY medal) A;
+SELECT /*+ RECOMPILE */ *, '#9', ROWNUM rn FROM (SELECT /*+ RECOMPILE */ * FROM game_tbl WHERE REPLACE(medal, ' ', '') = 'B' ORDER BY medal) A;
 
 -- Using TO_CHAR in the WHERE clause of a subquery to check rownum values.
-SELECT /*+ RECOMPILE */ '#10', ROWNUM rn, A.host_year FROM (SELECT /*+ RECOMPILE */ host_year FROM game_tbl WHERE TO_CHAR(medal) = 'B' ORDER BY medal) A;
+SELECT /*+ RECOMPILE */ *, '#10', ROWNUM rn FROM (SELECT /*+ RECOMPILE */ * FROM game_tbl WHERE TO_CHAR(medal) = 'B' ORDER BY medal) A;
 
 -- Using null condition
-SELECT /*+ RECOMPILE */ '#11',A.o_num rn, A.host_year from (select orderby_num() o_num, host_year FROM game_tbl WHERE medal is null ORDER BY medal) A;
-SELECT /*+ RECOMPILE */ '#12',A.o_num rn, A.host_year from (select orderby_num() o_num, host_year FROM game_tbl WHERE medal is not null ORDER BY medal) A;
+SELECT /*+ RECOMPILE */ A.*, '#11', A.o_num rn from (select *, orderby_num() o_num FROM game_tbl WHERE medal is null ORDER BY medal) A;
+SELECT /*+ RECOMPILE */ A.*, '#12', A.o_num rn from (select *, orderby_num() o_num FROM game_tbl WHERE medal is not null ORDER BY medal) A;
 
 -- Adding condition symbol change
-SELECT /*+ RECOMPILE */ '#13',A.o_num rn, A.host_year from (select orderby_num() o_num, host_year FROM game_tbl WHERE medal != 'B' ORDER BY medal) A;
-SELECT /*+ RECOMPILE */ '#14',A.o_num rn, A.host_year from (select orderby_num() o_num, host_year FROM game_tbl WHERE medal like '%B' ORDER BY medal) A;
-SELECT /*+ RECOMPILE */ '#15',A.o_num rn, A.host_year from (select orderby_num() o_num, host_year FROM game_tbl WHERE medal like 'B%' ORDER BY medal) A;
-SELECT /*+ RECOMPILE */ '#16',A.o_num rn, A.host_year from (select orderby_num() o_num, host_year FROM game_tbl WHERE medal like '%B%' ORDER BY medal) A;
-SELECT /*+ RECOMPILE */ '#17',A.o_num rn, A.host_year from (select orderby_num() o_num, host_year FROM game_tbl WHERE medal <> 'B' ORDER BY medal) A;
-SELECT /*+ RECOMPILE */ '#18',A.o_num rn, A.host_year from (select orderby_num() o_num, host_year FROM game_tbl WHERE medal <> 'B' or medal ='B' ORDER BY medal) A;
+SELECT /*+ RECOMPILE */ A.*, '#13', A.o_num rn from (select *, orderby_num() o_num FROM game_tbl WHERE medal != 'B' ORDER BY medal) A;
+SELECT /*+ RECOMPILE */ A.*, '#14', A.o_num rn from (select *, orderby_num() o_num FROM game_tbl WHERE medal like '%B' ORDER BY medal) A;
+SELECT /*+ RECOMPILE */ A.*, '#15', A.o_num rn from (select *, orderby_num() o_num FROM game_tbl WHERE medal like 'B%' ORDER BY medal) A;
+SELECT /*+ RECOMPILE */ A.*, '#16', A.o_num rn from (select *, orderby_num() o_num FROM game_tbl WHERE medal like '%B%' ORDER BY medal) A;
+SELECT /*+ RECOMPILE */ A.*, '#17', A.o_num rn from (select *, orderby_num() o_num FROM game_tbl WHERE medal <> 'B' ORDER BY medal) A;
+SELECT /*+ RECOMPILE */ A.*, '#18', A.o_num rn from (select *, orderby_num() o_num FROM game_tbl WHERE medal <> 'B' or medal ='B' ORDER BY medal) A;
 
 -- Using group by
-SELECT /*+ RECOMPILE */ '#19',orderby_num() o_num, host_year FROM game_tbl WHERE medal = 'B' group by medal ORDER BY medal;
+SELECT /*+ RECOMPILE */ *, '#19', orderby_num() o_num FROM game_tbl WHERE medal = 'B' group by medal ORDER BY medal;
 
 -- cases with CTE
 with
