@@ -15,8 +15,37 @@ FROM tbl a
          LEFT JOIN tbl c ON a.cola = c.cola
 ORDER BY a.colb,a.cola
 LIMIT ?*10,?';
-
 execute stmt using 10,10;
+show trace;
+
+prepare stmt from
+'SELECT a.cola, a.colb
+FROM tbl a
+         LEFT JOIN tbl b ON a.cola = b.cola
+         LEFT JOIN tbl c ON a.cola = c.cola
+ORDER BY a.colb,a.cola
+LIMIT ?*?,?';
+execute stmt using 10,10,10;
+show trace;
+
+prepare stmt from
+'SELECT a.cola, a.colb
+FROM tbl a
+         LEFT JOIN tbl b ON a.cola = b.cola
+         LEFT JOIN tbl c ON a.cola = c.cola
+ORDER BY a.colb,a.cola
+LIMIT ?,?';
+execute stmt using 100,10;
+show trace;
+
+prepare stmt from
+'SELECT a.cola, a.colb
+FROM tbl a
+         LEFT JOIN tbl b ON a.cola = b.cola
+         LEFT JOIN tbl c ON a.cola = c.cola
+ORDER BY a.colb,a.cola
+LIMIT ?,10*?';
+execute stmt using 100,1;
 show trace;
 
 set trace off;
