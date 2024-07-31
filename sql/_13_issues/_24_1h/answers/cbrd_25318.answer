@@ -7,7 +7,7 @@
 ===================================================
 0
 ===================================================
-rrnum    rnum    col1    col2    
+rrnum    rnum    col_a    col_b    
 1     4     4     4     
 2     3     3     3     
 3     2     2     2     
@@ -21,7 +21,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select (orderby_num()), tbl.col?, tbl.col? from tbl tbl order by ?)
+(select (orderby_num()), tbl.col_a, tbl.col_b from tbl tbl order by ?)
 Query plan:
 temp(order by)
     subplan: sscan
@@ -30,9 +30,9 @@ temp(order by)
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-select orderby_num(), [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rnum], tbl.col?, tbl.col? from tbl tbl order by ?) [__t?] (rnum, col?, col?) order by ? desc 
+select orderby_num(), [__t?].rnum, [__t?].col_a, [__t?].col_b from (select (orderby_num()) as [rnum], tbl.col_a, tbl.col_b from tbl tbl order by ?) [__t?] (rnum, col_a, col_b) order by ? desc 
 ===================================================
-rrnum    rnum    col1    col2    
+rrnum    rnum    col_a    col_b    
 1     4     4     4     
 2     3     3     3     
 3     2     2     2     
@@ -46,7 +46,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select (orderby_num()), tbl.col?, tbl.col? from tbl tbl order by ?)
+(select (orderby_num()), tbl.col_a, tbl.col_b from tbl tbl order by ?)
 Query plan:
 temp(order by)
     subplan: sscan
@@ -55,7 +55,7 @@ temp(order by)
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-(select (orderby_num()), [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rnum], tbl.col?, tbl.col? from tbl tbl order by ?) [__t?] (rnum, col?, col?) order by ? desc )
+(select (orderby_num()), [__t?].rnum, [__t?].col_a, [__t?].col_b from (select (orderby_num()) as [rnum], tbl.col_a, tbl.col_b from tbl tbl order by ?) [__t?] (rnum, col_a, col_b) order by ? desc )
 Query plan:
 temp(order by)
     subplan: sscan
@@ -64,9 +64,9 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select [__t?].rrnum, [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rrnum], [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rnum], tbl.col?, tbl.col? from tbl tbl order by ?) [__t?] (rnum, col?, col?) order by ? desc ) [__t?] (rrnum, rnum, col?, col?) order by ?
+select [__t?].rrnum, [__t?].rnum, [__t?].col_a, [__t?].col_b from (select (orderby_num()) as [rrnum], [__t?].rnum, [__t?].col_a, [__t?].col_b from (select (orderby_num()) as [rnum], tbl.col_a, tbl.col_b from tbl tbl order by ?) [__t?] (rnum, col_a, col_b) order by ? desc ) [__t?] (rrnum, rnum, col_a, col_b) order by ?
 ===================================================
-rrnum    rnum    col1    col2    
+rrnum    rnum    col_a    col_b    
 1     4     4     4     
 2     3     3     3     
 3     2     2     2     
@@ -79,7 +79,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select (orderby_num()), tbl.col?, tbl.col? from tbl tbl order by ?)
+(select (orderby_num()), tbl.col_a, tbl.col_b from tbl tbl order by ?)
 Query plan:
 temp(order by)
     subplan: sscan
@@ -88,7 +88,7 @@ temp(order by)
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-(select (orderby_num()), [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rnum], tbl.col?, tbl.col? from tbl tbl order by ?) [__t?] (rnum, col?, col?) order by ? desc  for orderby_num() between  ?:?  and  ?:? )
+(select (orderby_num()), [__t?].rnum, [__t?].col_a, [__t?].col_b from (select (orderby_num()) as [rnum], tbl.col_a, tbl.col_b from tbl tbl order by ?) [__t?] (rnum, col_a, col_b) order by ? desc  for orderby_num() between  ?:?  and  ?:? )
 Query plan:
 temp(order by)
     subplan: sscan
@@ -97,9 +97,9 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select [__t?].rrnum, [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rrnum], [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rnum], tbl.col?, tbl.col? from tbl tbl order by ?) [__t?] (rnum, col?, col?) order by ? desc  for orderby_num() between  ?:?  and  ?:? ) [__t?] (rrnum, rnum, col?, col?) order by ?
+select [__t?].rrnum, [__t?].rnum, [__t?].col_a, [__t?].col_b from (select (orderby_num()) as [rrnum], [__t?].rnum, [__t?].col_a, [__t?].col_b from (select (orderby_num()) as [rnum], tbl.col_a, tbl.col_b from tbl tbl order by ?) [__t?] (rnum, col_a, col_b) order by ? desc  for orderby_num() between  ?:?  and  ?:? ) [__t?] (rrnum, rnum, col_a, col_b) order by ?
 ===================================================
-rrnum    rnum    col1    col2    
+rrnum    rnum    col_a    col_b    
 1     4     4     4     
 2     3     3     3     
 3     2     2     2     
@@ -112,7 +112,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select (orderby_num()), tbl.col?, tbl.col? from tbl tbl order by ?)
+(select (orderby_num()), tbl.col_a, tbl.col_b from tbl tbl order by ?)
 Query plan:
 temp(order by)
     subplan: sscan
@@ -121,7 +121,7 @@ temp(order by)
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-(select (orderby_num()), [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rnum], tbl.col?, tbl.col? from tbl tbl order by ?) [__t?] (rnum, col?, col?) order by ? desc  for orderby_num()<= ?:? )
+(select (orderby_num()), [__t?].rnum, [__t?].col_a, [__t?].col_b from (select (orderby_num()) as [rnum], tbl.col_a, tbl.col_b from tbl tbl order by ?) [__t?] (rnum, col_a, col_b) order by ? desc  for orderby_num()<= ?:? )
 Query plan:
 temp(order by)
     subplan: sscan
@@ -130,9 +130,9 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select [__t?].rrnum, [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rrnum], [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rnum], tbl.col?, tbl.col? from tbl tbl order by ?) [__t?] (rnum, col?, col?) order by ? desc  for orderby_num()<= ?:? ) [__t?] (rrnum, rnum, col?, col?) order by ?
+select [__t?].rrnum, [__t?].rnum, [__t?].col_a, [__t?].col_b from (select (orderby_num()) as [rrnum], [__t?].rnum, [__t?].col_a, [__t?].col_b from (select (orderby_num()) as [rnum], tbl.col_a, tbl.col_b from tbl tbl order by ?) [__t?] (rnum, col_a, col_b) order by ? desc  for orderby_num()<= ?:? ) [__t?] (rrnum, rnum, col_a, col_b) order by ?
 ===================================================
-rrnum    rnum    col1    col2    
+rrnum    rnum    col_a    col_b    
 2     3     3     3     
 3     2     2     2     
 4     1     1     1     
@@ -145,7 +145,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select (orderby_num()), tbl.col?, tbl.col? from tbl tbl order by ?)
+(select (orderby_num()), tbl.col_a, tbl.col_b from tbl tbl order by ?)
 Query plan:
 temp(order by)
     subplan: sscan
@@ -154,7 +154,7 @@ temp(order by)
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-(select (orderby_num()), [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rnum], tbl.col?, tbl.col? from tbl tbl order by ?) [__t?] (rnum, col?, col?) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? )
+(select (orderby_num()), [__t?].rnum, [__t?].col_a, [__t?].col_b from (select (orderby_num()) as [rnum], tbl.col_a, tbl.col_b from tbl tbl order by ?) [__t?] (rnum, col_a, col_b) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? )
 Query plan:
 temp(order by)
     subplan: sscan
@@ -163,9 +163,9 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select [__t?].rrnum, [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rrnum], [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rnum], tbl.col?, tbl.col? from tbl tbl order by ?) [__t?] (rnum, col?, col?) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? ) [__t?] (rrnum, rnum, col?, col?) order by ?
+select [__t?].rrnum, [__t?].rnum, [__t?].col_a, [__t?].col_b from (select (orderby_num()) as [rrnum], [__t?].rnum, [__t?].col_a, [__t?].col_b from (select (orderby_num()) as [rnum], tbl.col_a, tbl.col_b from tbl tbl order by ?) [__t?] (rnum, col_a, col_b) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? ) [__t?] (rrnum, rnum, col_a, col_b) order by ?
 ===================================================
-rrrnum    rrnum    rnum    col1    col2    
+rrrnum    rrnum    rnum    col_a    col_b    
 1     4     4     4     4     
 2     3     3     3     3     
 3     2     2     2     2     
@@ -179,7 +179,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select (orderby_num()), tbl.col?, tbl.col? from tbl tbl order by ?)
+(select (orderby_num()), tbl.col_a, tbl.col_b from tbl tbl order by ?)
 Query plan:
 temp(order by)
     subplan: sscan
@@ -188,7 +188,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select (orderby_num()), [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rnum], tbl.col?, tbl.col? from tbl tbl order by ?) [__t?] (rnum, col?, col?) order by ?)
+(select (orderby_num()), [__t?].rnum, [__t?].col_a, [__t?].col_b from (select (orderby_num()) as [rnum], tbl.col_a, tbl.col_b from tbl tbl order by ?) [__t?] (rnum, col_a, col_b) order by ?)
 Query plan:
 temp(order by)
     subplan: sscan
@@ -197,7 +197,7 @@ temp(order by)
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-(select (orderby_num()), [__t?].rrnum, [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rrnum], [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rnum], tbl.col?, tbl.col? from tbl tbl order by ?) [__t?] (rnum, col?, col?) order by ?) [__t?] (rrnum, rnum, col?, col?) order by ? desc )
+(select (orderby_num()), [__t?].rrnum, [__t?].rnum, [__t?].col_a, [__t?].col_b from (select (orderby_num()) as [rrnum], [__t?].rnum, [__t?].col_a, [__t?].col_b from (select (orderby_num()) as [rnum], tbl.col_a, tbl.col_b from tbl tbl order by ?) [__t?] (rnum, col_a, col_b) order by ?) [__t?] (rrnum, rnum, col_a, col_b) order by ? desc )
 Query plan:
 temp(order by)
     subplan: sscan
@@ -206,6 +206,6 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select [__t?].rrrnum, [__t?].rrnum, [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rrrnum], [__t?].rrnum, [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rrnum], [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rnum], tbl.col?, tbl.col? from tbl tbl order by ?) [__t?] (rnum, col?, col?) order by ?) [__t?] (rrnum, rnum, col?, col?) order by ? desc ) [__t?] (rrrnum, rrnum, rnum, col?, col?) order by ?
+select [__t?].rrrnum, [__t?].rrnum, [__t?].rnum, [__t?].col_a, [__t?].col_b from (select (orderby_num()) as [rrrnum], [__t?].rrnum, [__t?].rnum, [__t?].col_a, [__t?].col_b from (select (orderby_num()) as [rrnum], [__t?].rnum, [__t?].col_a, [__t?].col_b from (select (orderby_num()) as [rnum], tbl.col_a, tbl.col_b from tbl tbl order by ?) [__t?] (rnum, col_a, col_b) order by ?) [__t?] (rrnum, rnum, col_a, col_b) order by ? desc ) [__t?] (rrrnum, rrnum, rnum, col_a, col_b) order by ?
 ===================================================
 0
