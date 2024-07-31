@@ -1,0 +1,211 @@
+===================================================
+0
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+rrnum    rnum    col1    col2    
+1     4     4     4     
+2     3     3     3     
+3     2     2     2     
+4     1     1     1     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tbl node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select (orderby_num()), tbl.col?, tbl.col? from tbl tbl order by ?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select orderby_num(), [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rnum], tbl.col?, tbl.col? from tbl tbl order by ?) [__t?] (rnum, col?, col?) order by ? desc 
+===================================================
+rrnum    rnum    col1    col2    
+1     4     4     4     
+2     3     3     3     
+3     2     2     2     
+4     1     1     1     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tbl node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select (orderby_num()), tbl.col?, tbl.col? from tbl tbl order by ?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+(select (orderby_num()), [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rnum], tbl.col?, tbl.col? from tbl tbl order by ?) [__t?] (rnum, col?, col?) order by ? desc )
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select [__t?].rrnum, [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rrnum], [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rnum], tbl.col?, tbl.col? from tbl tbl order by ?) [__t?] (rnum, col?, col?) order by ? desc ) [__t?] (rrnum, rnum, col?, col?) order by ?
+===================================================
+rrnum    rnum    col1    col2    
+1     4     4     4     
+2     3     3     3     
+3     2     2     2     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tbl node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select (orderby_num()), tbl.col?, tbl.col? from tbl tbl order by ?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+(select (orderby_num()), [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rnum], tbl.col?, tbl.col? from tbl tbl order by ?) [__t?] (rnum, col?, col?) order by ? desc  for orderby_num() between  ?:?  and  ?:? )
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select [__t?].rrnum, [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rrnum], [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rnum], tbl.col?, tbl.col? from tbl tbl order by ?) [__t?] (rnum, col?, col?) order by ? desc  for orderby_num() between  ?:?  and  ?:? ) [__t?] (rrnum, rnum, col?, col?) order by ?
+===================================================
+rrnum    rnum    col1    col2    
+1     4     4     4     
+2     3     3     3     
+3     2     2     2     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tbl node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select (orderby_num()), tbl.col?, tbl.col? from tbl tbl order by ?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+(select (orderby_num()), [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rnum], tbl.col?, tbl.col? from tbl tbl order by ?) [__t?] (rnum, col?, col?) order by ? desc  for orderby_num()<= ?:? )
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select [__t?].rrnum, [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rrnum], [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rnum], tbl.col?, tbl.col? from tbl tbl order by ?) [__t?] (rnum, col?, col?) order by ? desc  for orderby_num()<= ?:? ) [__t?] (rrnum, rnum, col?, col?) order by ?
+===================================================
+rrnum    rnum    col1    col2    
+2     3     3     3     
+3     2     2     2     
+4     1     1     1     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tbl node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select (orderby_num()), tbl.col?, tbl.col? from tbl tbl order by ?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+(select (orderby_num()), [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rnum], tbl.col?, tbl.col? from tbl tbl order by ?) [__t?] (rnum, col?, col?) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? )
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select [__t?].rrnum, [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rrnum], [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rnum], tbl.col?, tbl.col? from tbl tbl order by ?) [__t?] (rnum, col?, col?) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? ) [__t?] (rrnum, rnum, col?, col?) order by ?
+===================================================
+rrrnum    rrnum    rnum    col1    col2    
+1     4     4     4     4     
+2     3     3     3     3     
+3     2     2     2     2     
+4     1     1     1     1     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tbl node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select (orderby_num()), tbl.col?, tbl.col? from tbl tbl order by ?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select (orderby_num()), [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rnum], tbl.col?, tbl.col? from tbl tbl order by ?) [__t?] (rnum, col?, col?) order by ?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+(select (orderby_num()), [__t?].rrnum, [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rrnum], [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rnum], tbl.col?, tbl.col? from tbl tbl order by ?) [__t?] (rnum, col?, col?) order by ?) [__t?] (rrnum, rnum, col?, col?) order by ? desc )
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select [__t?].rrrnum, [__t?].rrnum, [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rrrnum], [__t?].rrnum, [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rrnum], [__t?].rnum, [__t?].col?, [__t?].col? from (select (orderby_num()) as [rnum], tbl.col?, tbl.col? from tbl tbl order by ?) [__t?] (rnum, col?, col?) order by ?) [__t?] (rrnum, rnum, col?, col?) order by ? desc ) [__t?] (rrrnum, rrnum, rnum, col?, col?) order by ?
+===================================================
+0
