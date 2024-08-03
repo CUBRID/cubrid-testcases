@@ -19,7 +19,7 @@ select * from dba.test_class order by 1;;
 call login('dba') on class db_user;
 
 select grantor_name, grantee_name, 
-       class_name, auth_type, is_grantable
+       object_name, auth_type, is_grantable
 from   db_auth
 where  grantee_name in ('TEST_USER','TEST_USER1')
 order by 1,2;
