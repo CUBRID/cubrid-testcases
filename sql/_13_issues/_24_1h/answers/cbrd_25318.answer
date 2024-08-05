@@ -165,6 +165,109 @@ temp(order by)
 Query stmt:
 select [__t?].rrnum, [__t?].rnum, [__t?].col_a, [__t?].col_b from (select (orderby_num()) as [rrnum], [__t?].rnum, [__t?].col_a, [__t?].col_b from (select (orderby_num()) as [rnum], tbl.col_a, tbl.col_b from tbl tbl order by ?) [__t?] (rnum, col_a, col_b) order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? ) [__t?] (rrnum, rnum, col_a, col_b) order by ?
 ===================================================
+rrnum    rnum    col_a    col_b    
+1     4     4     4     
+2     3     3     3     
+3     2     2     2     
+4     1     1     1     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tbl node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select (rownum), tbl.col_a, tbl.col_b from tbl tbl order by ?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+(select (orderby_num()), [__t?].rnum, [__t?].col_a, [__t?].col_b from (select (rownum) as [rnum], tbl.col_a, tbl.col_b from tbl tbl order by ?) [__t?] (rnum, col_a, col_b) where (rownum< ?:? ) order by ? desc )
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select [__t?].rrnum, [__t?].rnum, [__t?].col_a, [__t?].col_b from (select (orderby_num()) as [rrnum], [__t?].rnum, [__t?].col_a, [__t?].col_b from (select (rownum) as [rnum], tbl.col_a, tbl.col_b from tbl tbl order by ?) [__t?] (rnum, col_a, col_b) where (rownum< ?:? ) order by ? desc ) [__t?] (rrnum, rnum, col_a, col_b) order by ?
+===================================================
+rrnum    rnum    col_a    col_b    
+1     4     4     4     
+2     3     3     3     
+3     2     2     2     
+4     1     1     1     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tbl node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select (inst_num()), tbl.col_a, tbl.col_b from tbl tbl order by ?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+(select (orderby_num()), [__t?].rnum, [__t?].col_a, [__t?].col_b from (select (inst_num()) as [rnum], tbl.col_a, tbl.col_b from tbl tbl order by ?) [__t?] (rnum, col_a, col_b) order by ? desc )
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select [__t?].rrnum, [__t?].rnum, [__t?].col_a, [__t?].col_b from (select (orderby_num()) as [rrnum], [__t?].rnum, [__t?].col_a, [__t?].col_b from (select (inst_num()) as [rnum], tbl.col_a, tbl.col_b from tbl tbl order by ?) [__t?] (rnum, col_a, col_b) order by ? desc ) [__t?] (rrnum, rnum, col_a, col_b) order by ?
+===================================================
+rrnum    rnum    col_a    col_b    
+1     4     4     4     
+2     3     3     3     
+3     2     2     2     
+4     1     1     1     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: tbl node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select groupby_num(), tbl.col_a, tbl.col_b from tbl tbl group by tbl.col_a)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+(select (orderby_num()), [__t?].rnum, [__t?].col_a, [__t?].col_b from (select groupby_num() as [rnum], tbl.col_a, tbl.col_b from tbl tbl group by tbl.col_a) [__t?] (rnum, col_a, col_b) order by ? desc )
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select [__t?].rrnum, [__t?].rnum, [__t?].col_a, [__t?].col_b from (select (orderby_num()) as [rrnum], [__t?].rnum, [__t?].col_a, [__t?].col_b from (select groupby_num() as [rnum], tbl.col_a, tbl.col_b from tbl tbl group by tbl.col_a) [__t?] (rnum, col_a, col_b) order by ? desc ) [__t?] (rrnum, rnum, col_a, col_b) order by ?
+===================================================
 rrrnum    rrnum    rnum    col_a    col_b    
 1     4     4     4     4     
 2     3     3     3     3     

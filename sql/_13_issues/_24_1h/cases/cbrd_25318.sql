@@ -41,7 +41,31 @@ from (select orderby_num() rnum,col_a,col_b from tbl order by col_a)
 where 1=1 order by col_b desc limit 1, 3)
 where 1=1 order by rrnum;
 
---select '6. 3 Subqueries';
+--select '6. Subqueries - ROWNUM';
+-- Verifies handling of ROWNUM in simple nested subqueries.
+select /*+ recompile */ rrnum,rnum,col_a,col_b 
+from (select orderby_num() rrnum,rnum,col_a,col_b 
+from (select ROWNUM rnum,col_a,col_b from tbl order by col_a)
+where ROWNUM < 5 order by rnum desc)
+where 1=1 order by rrnum;
+
+--select '7. Subqueries - INST_NUM';
+-- Verifies handling of INST_NUM() in simple nested subqueries.
+select /*+ recompile */ rrnum,rnum,col_a,col_b 
+from (select orderby_num() rrnum,rnum,col_a,col_b 
+from (select INST_NUM() rnum,col_a,col_b from tbl order by col_a)
+where 1=1 order by rnum desc)
+where 1=1 order by rrnum;
+
+--select '8. Subqueries - GROUPBY_NUM()';
+-- Verifies handling of GROUPBY_NUM() in simple nested subqueries.
+select /*+ recompile */ rrnum,rnum,col_a,col_b 
+from (select orderby_num() rrnum,rnum,col_a,col_b 
+from (select GROUPBY_NUM() rnum,col_a,col_b from tbl group by col_a)
+where 1=1 order by rnum desc)
+where 1=1 order by rrnum;
+
+--select '9. 3 Subqueries';
 select /*+ recompile */ rrrnum,rrnum,rnum,col_a,col_b 
 from (select orderby_num() rrrnum,rrnum,rnum,col_a,col_b 
 from (select orderby_num() rrnum,rnum,col_a,col_b 
@@ -51,4 +75,5 @@ where 1=1 order by col_b desc)
 where 1=1 order by rrrnum;
 
 drop table tbl;
+
 
