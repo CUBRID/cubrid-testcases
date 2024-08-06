@@ -97,21 +97,24 @@ select 'check the Join graph nodes section in the plan.	The right_dep_set is rem
 
 --@joingraph
 select /*+ recompile */ * from tblb a inner join tbld b on a.col1 = b.col1 
-			           inner join tbld e on a.col1 = e.col1 
-                                               inner join tbld c on a.col1 = c.col1 
-                                               right outer join tbld d on a.col1 = d.col1;
+                                      inner join tbld e on a.col1 = e.col1 
+                                      inner join tbld c on a.col1 = c.col1 
+                                      right outer join tbld d on a.col1 = d.col1;
 
 --@joingraph
 select /*+ recompile */ * from tblb a inner join tbld b on a.col1 = b.col1 
-			           inner join tbld e on b.col1 = e.col1 
-                                               inner join tbld c on b.col1 = c.col1 
-                                               right outer join tbld d on a.col1 = d.col1;
+                                      inner join tbld e on b.col1 = e.col1 
+                                      inner join tbld c on b.col1 = c.col1 
+                                      right outer join tbld d on a.col1 = d.col1;
 
 --inner join
 select /*+ recompile */ * from tblb a inner join tbld b on a.col1 =4;
 select /*+ recompile */ * from tblb a inner join tbld b on a.col1 =4 right outer join tbld c on a.col1 = c.col1;
 select /*+ recompile */ * from tblb a inner join tbld b on a.col1 =4 left outer join tbld c on a.col1 = c.col1;
-select /*+ recompile */ * from tblb a inner join tbld b on a.col1 =4 right outer join tbld c on a.col1 = c.col1 inner join tbld d on c.col1 = d.col1 left outer join tbld e on e.col1 = 4;
+select /*+ recompile */ * from tblb a inner join tbld b on a.col1 =4 
+                                      right outer join tbld c on a.col1 = c.col1 
+                                      inner join tbld d on c.col1 = d.col1 
+                                      left outer join tbld e on e.col1 = 4;
 
 drop table tbla;
 drop table tblb;
