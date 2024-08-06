@@ -5,15 +5,9 @@
 ===================================================
 0
 ===================================================
-test data    
-     
+    
+test data     
 
-Query plan:
-sscan
-    class: dual node[?]
-    cost:  ? card ?
-Query stmt:
-select '' from dual dual
 ===================================================
 0
 ===================================================
@@ -39,18 +33,9 @@ select '' from dual dual
 ===================================================
 0
 ===================================================
-test case 7    
-AS-IS Eliminate INNER JOIN optimization is not performed.
-TO-BE
-- The join type of the second table is LEFT OUTER JOIN
-- With ANSI JOIN syntax     
+    
+test case 7     
 
-Query plan:
-sscan
-    class: dual node[?]
-    cost:  ? card ?
-Query stmt:
-select 'AS-IS Eliminate INNER JOIN optimization is not performed.
 ===================================================
 c_cb    d_cb    
 2     20     
@@ -75,19 +60,9 @@ idx-join (inner join)
 Query stmt:
 select /*+ ORDERED */ c.c_cb, d.d_cb from ta_parent p left outer join tc_dummy d on d.d_ca= ?:?  inner join tb_child c on c.c_parent_ca=p.p_ca
 ===================================================
-test case 8    
-AS-IS Eliminate INNER JOIN optimization is performed.
-TO-BE
-- The join type of the second table is LEFT OUTER JOIN
-- With ORACLE JOIN syntax
-     
+    
+test case 8     
 
-Query plan:
-sscan
-    class: dual node[?]
-    cost:  ? card ?
-Query stmt:
-select 'AS-IS Eliminate INNER JOIN optimization is performed.
 ===================================================
 c_cb    d_cb    
 2     20     
@@ -106,19 +81,9 @@ nl-join (cross join)
 Query stmt:
 select /*+ ORDERED */ c.c_cb, d.d_cb from tc_dummy d, tb_child c where d.d_ca= ?:? 
 ===================================================
-test case 9    
-AS-IS Eliminate INNER JOIN optimization is not performed.
-TO-BE
-- The join type of the second table is LEFT OUTER JOIN
-- With ORACLE JOIN syntax
-     
+    
+test case 9     
 
-Query plan:
-sscan
-    class: dual node[?]
-    cost:  ? card ?
-Query stmt:
-select 'AS-IS Eliminate INNER JOIN optimization is not performed.
 ===================================================
 c_cb    d_cb    
 2     20     
@@ -146,19 +111,9 @@ nl-join (cross join)
 Query stmt: [Warning: HINT ignored]
 select c.c_cb, d.d_cb from ta_parent p, tc_dummy d right outer join tb_child c on d.d_ca=c.c_ca where c.c_parent_ca=p.p_ca
 ===================================================
-test case 10    
-AS-IS Eliminate INNER JOIN optimization is not performed.
-TO-BE
-- The join type of the second table is NATURAL JOIN
-- With ANSI JOIN syntax
-     
+    
+test case 10     
 
-Query plan:
-sscan
-    class: dual node[?]
-    cost:  ? card ?
-Query stmt:
-select 'AS-IS Eliminate INNER JOIN optimization is not performed.
 ===================================================
 c_cb    p_cb    
 2     1     
@@ -185,19 +140,9 @@ idx-join (inner join)
 Query stmt:
 select /*+ ORDERED */ c.c_cb, t_p.p_cb from ta_parent p natural  inner join ta_parent t_p on p.p_cb=t_p.p_cb and p.p_ca=t_p.p_ca inner join tb_child c on c.c_parent_ca=p.p_ca
 ===================================================
-test case 11    
-AS-IS Eliminate INNER JOIN optimization is performed.
-TO-BE
-- The join type of the second table is NATURAL JOIN
-- With ANSI JOIN syntax
-     
+    
+test case 11     
 
-Query plan:
-sscan
-    class: dual node[?]
-    cost:  ? card ?
-Query stmt:
-select 'AS-IS Eliminate INNER JOIN optimization is performed.
 ===================================================
 c_cb    c_cb    
 2     2     
@@ -217,19 +162,9 @@ nl-join (cross join)
 Query stmt:
 select /*+ ORDERED */ c.c_cb, t_c.c_cb from tb_child t_c inner join tb_child c
 ===================================================
-test case 12    
-AS-IS Eliminate INNER JOIN optimization is not performed.
-TO-BE
-- The join type of the second table is RIGHT OUTER JOIN
-- With ANSI JOIN syntax
-     
+    
+test case 12     
 
-Query plan:
-sscan
-    class: dual node[?]
-    cost:  ? card ?
-Query stmt:
-select 'AS-IS Eliminate INNER JOIN optimization is not performed.
 ===================================================
 c_cb    d_cb    
 2     20     
@@ -255,19 +190,9 @@ idx-join (inner join)
 Query stmt: [Warning: HINT ignored]
 select c.c_cb, d.d_cb from ta_parent p right outer join tc_dummy d on d.d_ca= ?:?  inner join tb_child c on c.c_parent_ca=p.p_ca
 ===================================================
-test case 13    
-Eliminate INNER JOIN optimization is performed.
-TO-BE
-- The join type of the second table is RIGHT OUTER JOIN
-- With ORACLE JOIN syntax
-     
+    
+test case 13     
 
-Query plan:
-sscan
-    class: dual node[?]
-    cost:  ? card ?
-Query stmt:
-select 'Eliminate INNER JOIN optimization is performed.
 ===================================================
 c_cb    d_cb    
 2     20     
@@ -285,20 +210,9 @@ idx-join (inner join)
 Query stmt:
 select /*+ ORDERED */ c.c_cb, d.d_cb from tc_dummy d inner join tb_child c where d.d_ca=c.c_ca
 ===================================================
-test case 14    
-Eliminate INNER JOIN optimization is performed.
-TO-BE
-- The join type of the second table is CROSS JOIN
-- With ANSI JOIN syntax
-*
-     
+    
+test case 14     
 
-Query plan:
-sscan
-    class: dual node[?]
-    cost:  ? card ?
-Query stmt:
-select 'Eliminate INNER JOIN optimization is performed.
 ===================================================
 c_cb    d_cb    
 2     20     
@@ -318,19 +232,9 @@ nl-join (cross join)
 Query stmt:
 select /*+ ORDERED */ c.c_cb, d.d_cb from tc_dummy d inner join tb_child c
 ===================================================
-test case 15    
-Eliminate INNER JOIN optimization is performed.
-TO-BE
-- The join type of the second table is CROSS JOIN
-- With ORACLE JOIN syntax
-     
+    
+test case 15     
 
-Query plan:
-sscan
-    class: dual node[?]
-    cost:  ? card ?
-Query stmt:
-select 'Eliminate INNER JOIN optimization is performed.
 ===================================================
 c_cb    d_cb    
 2     20     
