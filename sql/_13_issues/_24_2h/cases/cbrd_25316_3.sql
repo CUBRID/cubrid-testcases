@@ -100,7 +100,7 @@ select '' as "test case3: use stddev_pop";
 update /*+ recompile */ tbl_a a set a.c_r = (select stddev_pop(b.col_b) over (partition by b.col_a) from tbl_a a, tbl_b b where a.col_a = b.col_a limit 1);
 select col_a, to_char(c_r), if(isnull(c_r)=0, 'pass', 'fail') from tbl_a order by col_a;
 select '' as "test case3: use stddev_samp";
-update /*+ recompile */ tbl_a a set a.c_r = (select stddev_samp(b.col_b ) over (partition by b.col_a) from tbl_a a, tbl_b b where a.col_a = b.col_a limit 1);
+update /*+ recompile */ tbl_a a set a.c_r = (select stddev_samp(b.col_b ) over (partition by b.col_a) from tbl_a a, tbl_b b where a.col_a = b.col_a order by 1 desc limit 1);
 select col_a, to_char(c_r), if(isnull(c_r)=0, 'pass', 'fail') from tbl_a order by col_a;
 select '' as "test case3: use var_pop";
 update /*+ recompile */ tbl_a a set a.c_r = (select var_pop(b.col_b) over (partition by b.col_a) from tbl_a a, tbl_b b where a.col_a = b.col_a limit 1);

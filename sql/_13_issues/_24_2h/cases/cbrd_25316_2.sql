@@ -127,7 +127,7 @@ select '' as "test case2: use nth_value";
 update /*+ recompile */ tbl_a a, tbl_b b set a.c_r = nth_value(b.col_b, 2) over (partition by b.col_a order by b.col_b) where a.col_a = b.col_a;
 select col_a, to_char(c_r), if(isnull(c_r)=1, 'pass', 'fail') from tbl_a order by col_a;
 select '' as "test case2: use lead";
-update /*+ recompile */ tbl_a a, tbl_b b set a.c_r = lead(b.col_b) over (partition by b.col_a order by b.col_b) where a.col_a = b.col_a;
+update /*+ recompile */ tbl_a a, tbl_b b set a.c_r = lead(b.col_b, 1, 0) over (partition by b.col_a order by b.col_b) where a.col_a = b.col_a;
 select col_a, to_char(c_r), if(isnull(c_r)=1, 'pass', 'fail') from tbl_a order by col_a;
 select '' as "test case2: use lag";
 update /*+ recompile */ tbl_a a, tbl_b b set a.c_r = lag(b.col_b, 1, 0) over (partition by b.col_a order by b.col_b) where a.col_a = b.col_a;
