@@ -31,7 +31,7 @@ MC: wait until C1 ready;
 /* test case 1 -- read committed */
 C1: select a, b, c from foo where a > 0 and c = 10;
 MC: wait until C1 ready;
-C2: insert into foo values (1,2,10);
+C2: insert into foo values (0,1,9), (1,2,10), (2,3,8);
 C2: commit;
 MC: wait until C2 ready;
 C1: select a, b, c from foo where a > 0 and c = 10;
@@ -50,7 +50,7 @@ MC: wait until C1 ready;
 /* test case 2 -- repeatable read */
 C1: select a, b, c from foo where a > 0 and c = 10;
 MC: wait until C1 ready;
-C2: insert into foo values (1,2,10);
+C2: insert into foo values (0,1,9), (1,2,10), (2,3,8);
 C2: commit;
 MC: wait until C2 ready;
 C1: select a, b, c from foo where a > 0 and c = 10;
@@ -69,7 +69,7 @@ MC: wait until C1 ready;
 /* test case 3 -- serializable */
 C1: select a, b, c from foo where a > 0 and c = 10;
 MC: wait until C1 ready;
-C2: insert into foo values (1,2,10);
+C2: insert into foo values (0,1,9), (1,2,10), (2,3,8);
 C2: commit;
 MC: wait until C2 ready;
 C1: select a, b, c from foo where a > 0 and c = 10;
