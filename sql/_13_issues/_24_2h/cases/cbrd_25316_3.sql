@@ -80,7 +80,7 @@ update statistics on tbl_b with fullscan;
 select 'The UPDATE JOIN statement allow the use of analytic functions With subquery.' as "test case 3";
 
 select '' as "test case3: use avg";
-update /*+ recompile */ tbl_a a set a.c_r = (select avg(b.col_a) over (partition by b.col_a) from tbl_b b where a.col_a = b.col_a limit 1);
+update /*+ recompile */ tbl_a a set a.c_r = (select avg(b.col_b) over (partition by b.col_a) from tbl_b b where a.col_a = b.col_a limit 1);
 select col_a, to_char(c_r) from tbl_a order by col_a;
 select '' as "test case3: use count";
 update /*+ recompile */ tbl_a a set a.c_r = (select count(b.col_b) over (partition by b.col_a) from tbl_b b where a.col_a = b.col_a limit 1);
