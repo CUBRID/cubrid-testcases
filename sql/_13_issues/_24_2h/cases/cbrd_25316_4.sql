@@ -71,6 +71,7 @@ with recursive cte (n) as (
   )
 select n, null, null, null from cte;
 insert into tbl_b select a.col_a, b.col_a, null from tbl_a a, tbl_a b where b.col_a <= a.col_a;
+insert into tbl_b values (1, 1, null), (1, 2, null), (1, 3, null);
 
 update statistics on tbl_a with fullscan;
 update statistics on tbl_b with fullscan;
@@ -130,7 +131,7 @@ select '' as "test case4: use lead";
 update /*+ recompile */ tbl_a a, (select b.col_a, lead(b.col_b, 1, 0) over (partition by b.col_a order by b.col_b) col_b from tbl_b b) b set a.c_r = b.col_b where a.col_a = b.col_a;
 select col_a, to_char(c_r), if(isnull(c_r)=0, 'pass', 'fail') from tbl_a order by col_a;
 select '' as "test case4: use lag";
-update /*+ recompile */ tbl_a a, (select b.col_a, lag(b.col_b, 1) over (partition by b.col_a order by b.col_b) col_b from tbl_b b) b set a.c_r = b.col_b where a.col_a = b.col_a;
+update /*+ recompile */ tbl_a a, (select b.col_a, lag(b.col_b, 1, 0) over (partition by b.col_a order by b.col_b) col_b from tbl_b b) b set a.c_r = b.col_b where a.col_a = b.col_a;
 select col_a, to_char(c_r), if(isnull(c_r)=0, 'pass', 'fail') from tbl_a order by col_a;
 select '' as "test case4: use row_number";
 update /*+ recompile */ tbl_a a, (select b.col_a, row_number() over (partition by b.col_a order by b.col_b) col_b from tbl_b b) b set a.c_r = b.col_b where a.col_a = b.col_a;
