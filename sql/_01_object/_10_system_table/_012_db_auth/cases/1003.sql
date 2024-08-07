@@ -8,8 +8,8 @@ create user test_user;
 grant select on test_class to test_user;
 grant alter on test_class1 to test_user;
 
-select grantor_name, grantee_name, class_name, auth_type from db_auth
-where  class_name in ('test_class', 'test_class1') order by 3;
+select grantor_name, grantee_name, object_name, auth_type from db_auth
+where object_name in ('test_class', 'test_class1') order by 3;
 
 drop user test_user;
 drop class test_class;

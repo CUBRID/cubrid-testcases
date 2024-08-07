@@ -18,7 +18,7 @@ drop class dba.test_class1;
 call login('dba') on class db_user;
 select * from test_class;
 select grantor_name, grantee_name, 
-       class_name, auth_type 
+       object_name, auth_type 
 from   db_auth
 where  grantee_name = 'TEST_USER' order by 3;
 

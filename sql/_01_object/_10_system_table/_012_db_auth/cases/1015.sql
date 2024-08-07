@@ -20,7 +20,7 @@ call login('dba') on class db_user;
 
 --Cannot query any record
 select grantor_name, grantee_name, 
-       class_name, auth_type, is_grantable
+       object_name, auth_type, is_grantable
 from   db_auth
 where  is_grantable in ('yes','no');
 call drop_user('test_user1') on class db_user;
