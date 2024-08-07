@@ -60,7 +60,7 @@
 
 select '' as "test data";
 drop table if exists tbl_a, tbl_b;
-create table tbl_a (col_a int, c_r float, c_r_nl float, c_r_merge float, index idx_a (col_a));
+create table tbl_a (col_a int, c_r float, index idx_a (col_a));
 create table tbl_b (col_a int, col_b int, c_r float, index idx_b (col_b));
 
 insert into tbl_a
@@ -69,7 +69,7 @@ with recursive cte (n) as (
     union all
     select n + 1 from cte where n < 10
   )
-select n, null, null, null from cte;
+select n, null from cte;
 insert into tbl_b select a.col_a, b.col_a, null from tbl_a a, tbl_a b where b.col_a <= a.col_a;
 insert into tbl_b values (1, 1, null), (1, 2, null), (1, 3, null);
 
@@ -81,79 +81,79 @@ select 'The UPDATE JOIN statement allow the use of analytic functions With inlin
 
 select '' as "test case4: use avg";
 update /*+ recompile */ tbl_a a, (select b.col_a, avg(b.col_b) over (partition by b.col_a) col_b from tbl_b b) b set a.c_r = b.col_b where a.col_a = b.col_a;
-select col_a, to_char(c_r), if(isnull(c_r)=0, 'pass', 'fail') from tbl_a order by col_a;
+select col_a, to_char(c_r) from tbl_a order by col_a;
 select '' as "test case4: use count";
 update /*+ recompile */ tbl_a a, (select b.col_a, count(b.col_b) over (partition by b.col_a) col_b from tbl_b b) b set a.c_r = b.col_b where a.col_a = b.col_a;
-select col_a, to_char(c_r), if(isnull(c_r)=0, 'pass', 'fail') from tbl_a order by col_a;
+select col_a, to_char(c_r) from tbl_a order by col_a;
 select '' as "test case4: use sum";
 update /*+ recompile */ tbl_a a, (select b.col_a, sum(b.col_b) over (partition by b.col_a) col_b from tbl_b b) b set a.c_r = b.col_b where a.col_a = b.col_a;
-select col_a, to_char(c_r), if(isnull(c_r)=0, 'pass', 'fail') from tbl_a order by col_a;
+select col_a, to_char(c_r) from tbl_a order by col_a;
 select '' as "test case4: use min";
 update /*+ recompile */ tbl_a a, (select b.col_a, min(b.col_b) over (partition by b.col_a) col_b from tbl_b b) b set a.c_r = b.col_b where a.col_a = b.col_a;
-select col_a, to_char(c_r), if(isnull(c_r)=0, 'pass', 'fail') from tbl_a order by col_a;
+select col_a, to_char(c_r) from tbl_a order by col_a;
 select '' as "test case4: use max";
 update /*+ recompile */ tbl_a a, (select b.col_a, max(b.col_b) over (partition by b.col_a) col_b from tbl_b b) b set a.c_r = b.col_b where a.col_a = b.col_a;
-select col_a, to_char(c_r), if(isnull(c_r)=0, 'pass', 'fail') from tbl_a order by col_a;
+select col_a, to_char(c_r) from tbl_a order by col_a;
 select '' as "test case4: use stddev";
 update /*+ recompile */ tbl_a a, (select b.col_a, stddev(b.col_b) over (partition by b.col_a) col_b from tbl_b b) b set a.c_r = b.col_b where a.col_a = b.col_a;
-select col_a, to_char(c_r), if(isnull(c_r)=0, 'pass', 'fail') from tbl_a order by col_a;
+select col_a, to_char(c_r) from tbl_a order by col_a;
 select '' as "test case4: use stddev_pop";
 update /*+ recompile */ tbl_a a, (select b.col_a, stddev_pop(b.col_b) over (partition by b.col_a) col_b from tbl_b b) b set a.c_r = b.col_b where a.col_a = b.col_a;
-select col_a, to_char(c_r), if(isnull(c_r)=0, 'pass', 'fail') from tbl_a order by col_a;
+select col_a, to_char(c_r) from tbl_a order by col_a;
 select '' as "test case4: use stddev_samp";
 update /*+ recompile */ tbl_a a, (select b.col_a, stddev_samp(b.col_b) over (partition by b.col_a) col_b from tbl_b b) b set a.c_r = b.col_b where a.col_a = b.col_a;
-select col_a, to_char(c_r), if(isnull(c_r)=0, 'pass', 'fail') from tbl_a order by col_a;
+select col_a, to_char(c_r) from tbl_a order by col_a;
 select '' as "test case4: use var_pop";
 update /*+ recompile */ tbl_a a, (select b.col_a, var_pop(b.col_b) over (partition by b.col_a) col_b from tbl_b b) b set a.c_r = b.col_b where a.col_a = b.col_a;
-select col_a, to_char(c_r), if(isnull(c_r)=0, 'pass', 'fail') from tbl_a order by col_a;
+select col_a, to_char(c_r) from tbl_a order by col_a;
 select '' as "test case4: use var_samp";
 update /*+ recompile */ tbl_a a, (select b.col_a, var_samp(b.col_b) over (partition by b.col_a) col_b from tbl_b b) b set a.c_r = b.col_b where a.col_a = b.col_a;
-select col_a, to_char(c_r), if(isnull(c_r)=0, 'pass', 'fail') from tbl_a order by col_a;
+select col_a, to_char(c_r) from tbl_a order by col_a;
 select '' as "test case4: use variance";
 update /*+ recompile */ tbl_a a, (select b.col_a, variance(b.col_b) over (partition by b.col_a) col_b from tbl_b b) b set a.c_r = b.col_b where a.col_a = b.col_a;
-select col_a, to_char(c_r), if(isnull(c_r)=0, 'pass', 'fail') from tbl_a order by col_a;
+select col_a, to_char(c_r) from tbl_a order by col_a;
 select '' as "test case4: use ntile";
 update /*+ recompile */ tbl_a a, (select b.col_a, ntile(4) over (partition by b.col_a order by b.col_b) col_b from tbl_b b) b set a.c_r = b.col_b where a.col_a = b.col_a;
-select col_a, to_char(c_r), if(isnull(c_r)=0, 'pass', 'fail') from tbl_a order by col_a;
+select col_a, to_char(c_r) from tbl_a order by col_a;
 select '' as "test case4: use median";
 update /*+ recompile */ tbl_a a, (select b.col_a, median(b.col_b) over (partition by b.col_a) col_b from tbl_b b) b set a.c_r = b.col_b where a.col_a = b.col_a;
-select col_a, to_char(c_r), if(isnull(c_r)=0, 'pass', 'fail') from tbl_a order by col_a;
+select col_a, to_char(c_r) from tbl_a order by col_a;
 select '' as "test case4: use first_value";
 update /*+ recompile */ tbl_a a, (select b.col_a, first_value(b.col_b) over (partition by b.col_a order by b.col_b) col_b from tbl_b b) b set a.c_r = b.col_b where a.col_a = b.col_a;
-select col_a, to_char(c_r), if(isnull(c_r)=0, 'pass', 'fail') from tbl_a order by col_a;
+select col_a, to_char(c_r) from tbl_a order by col_a;
 select '' as "test case4: use last_value";
 update /*+ recompile */ tbl_a a, (select b.col_a, last_value(b.col_b) over (partition by b.col_a order by b.col_b) col_b from tbl_b b) b set a.c_r = b.col_b where a.col_a = b.col_a;
-select col_a, to_char(c_r), if(isnull(c_r)=0, 'pass', 'fail') from tbl_a order by col_a;
+select col_a, to_char(c_r) from tbl_a order by col_a;
 select '' as "test case4: use nth_value";
 update /*+ recompile */ tbl_a a, (select b.col_a, nth_value(b.col_b, 1) over (partition by b.col_a order by b.col_b) col_b from tbl_b b) b set a.c_r = b.col_b where a.col_a = b.col_a;
-select col_a, to_char(c_r), if(isnull(c_r)=0, 'pass', 'fail') from tbl_a order by col_a;
+select col_a, to_char(c_r) from tbl_a order by col_a;
 select '' as "test case4: use lead";
 update /*+ recompile */ tbl_a a, (select b.col_a, lead(b.col_b, 1, 0) over (partition by b.col_a order by b.col_b) col_b from tbl_b b) b set a.c_r = b.col_b where a.col_a = b.col_a;
-select col_a, to_char(c_r), if(isnull(c_r)=0, 'pass', 'fail') from tbl_a order by col_a;
+select col_a, to_char(c_r) from tbl_a order by col_a;
 select '' as "test case4: use lag";
 update /*+ recompile */ tbl_a a, (select b.col_a, lag(b.col_b, 1, 0) over (partition by b.col_a order by b.col_b) col_b from tbl_b b) b set a.c_r = b.col_b where a.col_a = b.col_a;
-select col_a, to_char(c_r), if(isnull(c_r)=0, 'pass', 'fail') from tbl_a order by col_a;
+select col_a, to_char(c_r) from tbl_a order by col_a;
 select '' as "test case4: use row_number";
 update /*+ recompile */ tbl_a a, (select b.col_a, row_number() over (partition by b.col_a order by b.col_b) col_b from tbl_b b) b set a.c_r = b.col_b where a.col_a = b.col_a;
-select col_a, to_char(c_r), if(isnull(c_r)=0, 'pass', 'fail') from tbl_a order by col_a;
+select col_a, to_char(c_r) from tbl_a order by col_a;
 select '' as "test case4: use rank";
 update /*+ recompile */ tbl_a a, (select b.col_a, rank() over (partition by b.col_a order by b.col_b) col_b from tbl_b b) b set a.c_r = b.col_b where a.col_a = b.col_a;
-select col_a, to_char(c_r), if(isnull(c_r)=0, 'pass', 'fail') from tbl_a order by col_a;
+select col_a, to_char(c_r) from tbl_a order by col_a;
 select '' as "test case4: use dense_rank";
 update /*+ recompile */ tbl_a a, (select b.col_a, dense_rank() over (partition by b.col_a order by b.col_b) col_b from tbl_b b) b set a.c_r = b.col_b where a.col_a = b.col_a;
-select col_a, to_char(c_r), if(isnull(c_r)=0, 'pass', 'fail') from tbl_a order by col_a;
+select col_a, to_char(c_r) from tbl_a order by col_a;
 select '' as "test case4: use cume_dist";
 update /*+ recompile */ tbl_a a, (select b.col_a, cume_dist() over (partition by b.col_a order by b.col_b) col_b from tbl_b b) b set a.c_r = b.col_b where a.col_a = b.col_a;
-select col_a, to_char(c_r), if(isnull(c_r)=0, 'pass', 'fail') from tbl_a order by col_a;
+select col_a, to_char(c_r) from tbl_a order by col_a;
 select '' as "test case4: use percent_rank";
 update /*+ recompile */ tbl_a a, (select b.col_a, percent_rank() over (partition by b.col_a order by b.col_b) col_b from tbl_b b) b set a.c_r = b.col_b where a.col_a = b.col_a;
-select col_a, to_char(c_r), if(isnull(c_r)=0, 'pass', 'fail') from tbl_a order by col_a;
+select col_a, to_char(c_r) from tbl_a order by col_a;
 select '' as "test case4: use percentile_cont";
 update /*+ recompile */ tbl_a a, (select b.col_a, percentile_cont(0.5) within group (order by b.col_b) over (partition by b.col_a) col_b from tbl_b b) b set a.c_r = b.col_b where a.col_a = b.col_a;
-select col_a, to_char(c_r), if(isnull(c_r)=0, 'pass', 'fail') from tbl_a order by col_a;
+select col_a, to_char(c_r) from tbl_a order by col_a;
 select '' as "test case4: use percentile_disc";
 update /*+ recompile */ tbl_a a, (select b.col_a, percentile_disc(0.5) within group (order by b.col_b) over (partition by b.col_a) col_b from tbl_b b) b set a.c_r = b.col_b where a.col_a = b.col_a;
-select col_a, to_char(c_r), if(isnull(c_r)=0, 'pass', 'fail') from tbl_a order by col_a;
+select col_a, to_char(c_r) from tbl_a order by col_a;
 
 drop table tbl_a;
 drop table tbl_b;

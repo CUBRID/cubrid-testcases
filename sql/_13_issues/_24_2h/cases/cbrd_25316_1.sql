@@ -60,7 +60,7 @@
 
 select '' as "test data";
 drop table if exists tbl_a, tbl_b;
-create table tbl_a (col_a int, c_r float, c_r_nl float, c_r_merge float, index idx_a (col_a));
+create table tbl_a (col_a int, c_r float, index idx_a (col_a));
 create table tbl_b (col_a int, col_b int, c_r float, index idx_b (col_b));
 
 insert into tbl_a
@@ -69,8 +69,9 @@ with recursive cte (n) as (
     union all
     select n + 1 from cte where n < 10
   )
-select n, null, null, null from cte;
+select n, null from cte;
 insert into tbl_b select a.col_a, b.col_a, null from tbl_a a, tbl_a b where b.col_a <= a.col_a;
+insert into tbl_b values (1, 1, null), (1, 2, null), (1, 3, null);
 
 update statistics on tbl_a with fullscan;
 update statistics on tbl_b with fullscan;
@@ -129,7 +130,7 @@ select '' as "test case1: use lead";
 update /*+ recompile */ tbl_b b set b.c_r = lead(b.col_b) over (partition by b.col_a order by b.col_b);
 select distinct col_a, to_char(c_r) from tbl_b order by col_a;
 select '' as "test case1: use lag";
-update /*+ recompile */ tbl_b b set b.c_r = lag(b.col_b,1) over (partition by b.col_a order by b.col_b);
+update /*+ recompile */ tbl_b b set b.c_r = lag(b.col_b,1,0) over (partition by b.col_a order by b.col_b);
 select distinct col_a, to_char(c_r) from tbl_b order by col_a;
 select '' as "test case1: use row_number";
 update /*+ recompile */ tbl_b b set b.c_r = row_number() over (partition by b.col_a order by b.col_b);
