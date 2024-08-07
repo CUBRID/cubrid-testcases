@@ -38,27 +38,27 @@ id    time_format(ts,  ?:0 )    time_format(dtltz,  ?:1 )    time_format(dttz,  
 ===================================================
 id    time_format(ts,  ?:0 )    time_format(dtltz,  ?:1 )    time_format(dttz,  ?:2 )    
 1     a, D b. Y 22:30:45 -02     a, D b. Y 22:30:45 00     a, D b. Y 22:30:45 -02:00     
-2     a, D b. Y 19:30:21 -03     a, D b. Y 20:30:21 00     a, D b. Y 19:30:21 10:45     
-3     a, D b. Y 07:30:21 -03     a, D b. Y 18:30:21 00     a, D b. Y 07:30:21 09:00     
-4     a, D b. Y 23:59:59 -02     a, D b. Y 21:59:59 00     a, D b. Y 23:59:59 00:00     
+2     a, D b. Y 19:30:21 -03     a, D b. Y 20:30:21 00     a, D b. Y 19:30:21 +10:45     
+3     a, D b. Y 07:30:21 -03     a, D b. Y 18:30:21 00     a, D b. Y 07:30:21 +09:00     
+4     a, D b. Y 23:59:59 -02     a, D b. Y 21:59:59 00     a, D b. Y 23:59:59 +00:00     
 
 ===================================================
 0
 ===================================================
 id    time_format(ts,  ?:0 )    time_format(dtltz,  ?:1 )    time_format(dttz,  ?:2 )    
 1     [10:30:45 오후] W(w) M e, Y -06:00     [06:30:45 오후] W(w) M e, Y America/Mexico_City (-06)     [10:30:45 오후] W(w) M e, Y America/Sao_Paulo (-02)     
-2     [07:30:21 오후] W(w) M e, Y -05:00     [06:30:21 오후] W(w) M e, Y America/Mexico_City (-05)     [07:30:21 오후] W(w) M e, Y +10:45 (10)     
-3     [07:30:21 오전] W(w) M e, Y -05:00     [04:30:21 오후] W(w) M e, Y America/Mexico_City (-05)     [07:30:21 오전] W(w) M e, Y Asia/Seoul (09)     
-4     [11:59:59 오후] W(w) M e, Y -06:00     [05:59:59 오후] W(w) M e, Y America/Mexico_City (-06)     [11:59:59 오후] W(w) M e, Y Europe/London (00)     
+2     [07:30:21 오후] W(w) M e, Y -05:00     [06:30:21 오후] W(w) M e, Y America/Mexico_City (-05)     [07:30:21 오후] W(w) M e, Y +10:45 (+10)     
+3     [07:30:21 오전] W(w) M e, Y -05:00     [04:30:21 오후] W(w) M e, Y America/Mexico_City (-05)     [07:30:21 오전] W(w) M e, Y Asia/Seoul (+09)     
+4     [11:59:59 오후] W(w) M e, Y -06:00     [05:59:59 오후] W(w) M e, Y America/Mexico_City (-06)     [11:59:59 오후] W(w) M e, Y Europe/London (+00)     
 
 ===================================================
 0
 ===================================================
 id    time_format(ts,  ?:0 )    time_format(dtltz,  ?:1 )    time_format(dttz,  ?:2 )    
-1     X, V, U, Day j Asia/Shanghai@CST, 08:00     X, V, U, Day j Asia/Shanghai@CST, 08:00     X, V, U, Day j America/Sao_Paulo@-02, -02:00     
-2     X, V, U, Day j Asia/Shanghai@CST, 08:00     X, V, U, Day j Asia/Shanghai@CST, 08:00     X, V, U, Day j +10:45@, 10:45     
-3     X, V, U, Day j Asia/Shanghai@CST, 08:00     X, V, U, Day j Asia/Shanghai@CST, 08:00     X, V, U, Day j Asia/Seoul@KST, 09:00     
-4     X, V, U, Day j Asia/Shanghai@CST, 08:00     X, V, U, Day j Asia/Shanghai@CST, 08:00     X, V, U, Day j Europe/London@GMT, 00:00     
+1     X, V, U, Day j Asia/Shanghai@CST, +08:00     X, V, U, Day j Asia/Shanghai@CST, +08:00     X, V, U, Day j America/Sao_Paulo@-02, -02:00     
+2     X, V, U, Day j Asia/Shanghai@CST, +08:00     X, V, U, Day j Asia/Shanghai@CST, +08:00     X, V, U, Day j +10:45@, +10:45     
+3     X, V, U, Day j Asia/Shanghai@CST, +08:00     X, V, U, Day j Asia/Shanghai@CST, +08:00     X, V, U, Day j Asia/Seoul@KST, +09:00     
+4     X, V, U, Day j Asia/Shanghai@CST, +08:00     X, V, U, Day j Asia/Shanghai@CST, +08:00     X, V, U, Day j Europe/London@GMT, +00:00     
 
 ===================================================
 0
@@ -66,10 +66,10 @@ id    time_format(ts,  ?:0 )    time_format(dtltz,  ?:1 )    time_format(dttz,  
 0
 ===================================================
 id    time_format(ts+1,  ?:0 )    time_format(dtltz+1,  ?:1 )    time_format(dttz+1,  ?:2 )    
-1     x, v-u Day j 22:30:46 (00:00) Europe/London-GMT     x, v-u Day j 00:30:46 (00:00) Europe/London-GMT     x, v-u Day j 22:30:46 (-02:00) America/Sao_Paulo--02     
-2     x, v-u Day j 19:30:22 (01:00) Europe/London-BST     x, v-u Day j 00:30:22 (01:00) Europe/London-BST     x, v-u Day j 19:30:22 (10:45) +10:45-     
-3     x, v-u Day j 07:30:22 (01:00) Europe/London-BST     x, v-u Day j 22:30:22 (01:00) Europe/London-BST     x, v-u Day j 07:30:22 (09:00) Asia/Seoul-KST     
-4     x, v-u Day j 00:00:00 (00:00) Europe/London-GMT     x, v-u Day j 00:00:00 (00:00) Europe/London-GMT     x, v-u Day j 00:00:00 (00:00) Europe/London-GMT     
+1     x, v-u Day j 22:30:46 (+00:00) Europe/London-GMT     x, v-u Day j 00:30:46 (+00:00) Europe/London-GMT     x, v-u Day j 22:30:46 (-02:00) America/Sao_Paulo--02     
+2     x, v-u Day j 19:30:22 (+01:00) Europe/London-BST     x, v-u Day j 00:30:22 (+01:00) Europe/London-BST     x, v-u Day j 19:30:22 (+10:45) +10:45-     
+3     x, v-u Day j 07:30:22 (+01:00) Europe/London-BST     x, v-u Day j 22:30:22 (+01:00) Europe/London-BST     x, v-u Day j 07:30:22 (+09:00) Asia/Seoul-KST     
+4     x, v-u Day j 00:00:00 (+00:00) Europe/London-GMT     x, v-u Day j 00:00:00 (+00:00) Europe/London-GMT     x, v-u Day j 00:00:00 (+00:00) Europe/London-GMT     
 
 ===================================================
 0
