@@ -32,7 +32,7 @@ end;
 call test_proc1();
 select sp_name, pkg_name, is_system_generated from _db_stored_procedure where is_system_generated=0 order by sp_name;
 -- no result, because test_proc1 does not need parameter
-select * from _db_stored_procedure_args where is_system_generated=0 order by sp_name;
+select * from _db_stored_procedure_args where is_system_generated=0 order by sp_of;
 
 
 create or replace procedure test_proc2(a int) as
@@ -42,7 +42,7 @@ end;
 
 call test_proc2(99);
 select sp_name, pkg_name, is_system_generated from _db_stored_procedure where is_system_generated=0 order by sp_name;
-select * from _db_stored_procedure_args where is_system_generated=0 order by sp_name;
+select * from _db_stored_procedure_args where is_system_generated=0 order by sp_of;
 
 
 -- will be fix CBRD-25472
@@ -54,7 +54,7 @@ comment 'procedure comment';
 
 call test_proc3();
 select sp_name, pkg_name, is_system_generated, comment from _db_stored_procedure where is_system_generated=0 order by sp_name;
-select * from _db_stored_procedure_args where is_system_generated=0 order by sp_name;
+select * from _db_stored_procedure_args where is_system_generated=0 order by sp_of;
 
 
 drop procedure test_proc1;
@@ -63,7 +63,7 @@ drop procedure test_proc3;
 
 -- check to drop
 select sp_name, pkg_name, is_system_generated, comment from _db_stored_procedure where is_system_generated=0 order by sp_name;
-select * from _db_stored_procedure_args where is_system_generated=0 order by sp_name;
+select * from _db_stored_procedure_args where is_system_generated=0 order by sp_of;
 
 
 
