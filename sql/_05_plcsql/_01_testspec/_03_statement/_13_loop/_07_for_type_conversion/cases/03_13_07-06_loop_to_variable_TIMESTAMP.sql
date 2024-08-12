@@ -80,6 +80,15 @@ datetimeltz'0001-01-01 09:00:01.000', datetimetz'0001-01-01 09:00:01.000',
 'x-small', BIT_TO_BLOB(X'000100'), CHAR_TO_CLOB('This is a Cat'), 
 {'c','c','c','b','b','a'}, {'c','c','c','b','b','a'}, {'c','c','c','b','b','a'}, {'c','c','c','b','b','a'}, '{"key1": "value1", "key2": "value2"}'  );
 
+insert into plcsql_type_tbl
+(ID, T_DATE, T_TIME, T_TIMESTAMP, T_DATETIME
+)
+values
+(3, '1970-01-01', TIME'00:00:00', '1970-01-01 09:00:01', '1970-01-01 09:00:01'
+);
+
+
+
 create or replace procedure print_message(print_message string ) as begin
     dbms_output.put_line( print_message ); 
 end;
@@ -88,7 +97,7 @@ end;
 call print_message('t_DATETIME_TIMESTAMP. This scenario is a success.');
 create or replace procedure t_DATETIME_TIMESTAMP(param_type string, variables_type string ) as 
      CURSOR my_cursor1 IS 
-          SELECT T_DATETIME as col_val FROM plcsql_type_tbl WHERE ID = 1 ;
+          SELECT T_DATETIME as col_val FROM plcsql_type_tbl WHERE ID = 3 ;
 
    VAR TIMESTAMP  ;
 begin
@@ -101,6 +110,24 @@ end;
 call t_DATETIME_TIMESTAMP('DATETIME', 'TIMESTAMP'  ) ;
 drop procedure t_DATETIME_TIMESTAMP ;
 
+
+--BUG
+select  cast(  cast('0001-01-01 00:00:00.000' as datetime) as timestamp ) ;
+call print_message('t_DATETIME_TIMESTAMP. This scenario is a failure.');
+create or replace procedure t_DATETIME_TIMESTAMP(param_type string, variables_type string ) as
+     CURSOR my_cursor1 IS
+          SELECT T_DATETIME as col_val FROM plcsql_type_tbl WHERE ID = 1 ;
+
+   VAR TIMESTAMP  ;
+begin
+    FOR r IN my_cursor1 LOOP
+        VAR := r.col_val ;
+        dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR );
+    END LOOP;
+
+end;
+call t_DATETIME_TIMESTAMP('DATETIME', 'TIMESTAMP'  ) ;
+drop procedure t_DATETIME_TIMESTAMP ;
 
 
 call print_message('t_DATETIMELTZ_TIMESTAMP. This scenario is a failure.');
@@ -142,7 +169,7 @@ drop procedure t_DATETIMETZ_TIMESTAMP ;
 call print_message('t_DATE_TIMESTAMP. This scenario is a success.');
 create or replace procedure t_DATE_TIMESTAMP(param_type string, variables_type string ) as 
      CURSOR my_cursor1 IS 
-          SELECT T_DATE as col_val FROM plcsql_type_tbl WHERE ID = 1 ;
+          SELECT T_DATE as col_val FROM plcsql_type_tbl WHERE ID = 3 ;
 
    VAR TIMESTAMP  ;
 begin
@@ -154,6 +181,26 @@ begin
 end;
 call t_DATE_TIMESTAMP('DATE', 'TIMESTAMP'  ) ;
 drop procedure t_DATE_TIMESTAMP ;
+
+
+--BUG
+select  cast(  cast('0001-01-01' as date) as timestamp ) ;
+call print_message('t_DATE_TIMESTAMP. This scenario is a failure.');
+create or replace procedure t_DATE_TIMESTAMP(param_type string, variables_type string ) as
+     CURSOR my_cursor1 IS
+          SELECT T_DATE as col_val FROM plcsql_type_tbl WHERE ID = 1 ;
+
+   VAR TIMESTAMP  ;
+begin
+    FOR r IN my_cursor1 LOOP
+        VAR := r.col_val ;
+        dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR );
+    END LOOP;
+
+end;
+call t_DATE_TIMESTAMP('DATE', 'TIMESTAMP'  ) ;
+drop procedure t_DATE_TIMESTAMP ;
+
 
 
 
@@ -227,12 +274,12 @@ end;
 call t_TIMESTAMPTZ_TIMESTAMP('TIMESTAMPTZ', 'TIMESTAMP'  ) ;
 drop procedure t_TIMESTAMPTZ_TIMESTAMP ;
 
---BUG
+
 
 call print_message('t_DOUBLE_TIMESTAMP. This scenario is a success.');
 create or replace procedure t_DOUBLE_TIMESTAMP(param_type string, variables_type string ) as 
      CURSOR my_cursor1 IS 
-          SELECT T_DOUBLE as col_val FROM plcsql_type_tbl WHERE ID = 1 ;
+          SELECT T_DOUBLE as col_val FROM plcsql_type_tbl WHERE ID = 2 ;
 
    VAR TIMESTAMP  ;
 begin
@@ -245,12 +292,12 @@ end;
 call t_DOUBLE_TIMESTAMP('DOUBLE', 'TIMESTAMP'  ) ;
 drop procedure t_DOUBLE_TIMESTAMP ;
 
---BUG
+
 
 call print_message('t_FLOAT_TIMESTAMP. This scenario is a success.');
 create or replace procedure t_FLOAT_TIMESTAMP(param_type string, variables_type string ) as 
      CURSOR my_cursor1 IS 
-          SELECT T_FLOAT as col_val FROM plcsql_type_tbl WHERE ID = 1 ;
+          SELECT T_FLOAT as col_val FROM plcsql_type_tbl WHERE ID = 2 ;
      CURSOR my_cursor2 IS 
           SELECT T_REAL as col_val FROM plcsql_type_tbl WHERE ID = 2 ;
 
@@ -258,23 +305,23 @@ create or replace procedure t_FLOAT_TIMESTAMP(param_type string, variables_type 
 begin
     FOR r IN my_cursor1 LOOP  
         VAR := r.col_val ;
-        dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
+        dbms_output.put_line('select_type = ' ||'FLOAT' ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
     END LOOP;
     
     FOR r IN my_cursor2 LOOP  
         VAR := r.col_val ;
-        dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
+        dbms_output.put_line('select_type = ' ||'REAL' ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
     END LOOP;
 end;
 call t_FLOAT_TIMESTAMP('FLOAT', 'TIMESTAMP'  ) ;
 drop procedure t_FLOAT_TIMESTAMP ;
 
---BUG
+
 
 call print_message('t_NUMERIC_TIMESTAMP. This scenario is a success.');
 create or replace procedure t_NUMERIC_TIMESTAMP(param_type string, variables_type string ) as 
      CURSOR my_cursor1 IS 
-          SELECT T_NUMERIC as col_val FROM plcsql_type_tbl WHERE ID = 1 ;
+          SELECT T_NUMERIC as col_val FROM plcsql_type_tbl WHERE ID = 2 ;
      CURSOR my_cursor2 IS 
           SELECT T_DECIMAL as col_val FROM plcsql_type_tbl WHERE ID = 2 ;
 
@@ -282,23 +329,23 @@ create or replace procedure t_NUMERIC_TIMESTAMP(param_type string, variables_typ
 begin
     FOR r IN my_cursor1 LOOP  
         VAR := r.col_val ;
-        dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
+        dbms_output.put_line('select_type = ' ||'NUMERIC' ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
     END LOOP;
     
     FOR r IN my_cursor2 LOOP  
         VAR := r.col_val ;
-        dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
+        dbms_output.put_line('select_type = ' ||'DECIMAL' ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
     END LOOP;
 end;
 call t_NUMERIC_TIMESTAMP('NUMERIC(8,4)', 'TIMESTAMP'  ) ;
 drop procedure t_NUMERIC_TIMESTAMP ;
 
---BUG
+
 
 call print_message('t_BIGINT_TIMESTAMP. This scenario is a success.');
 create or replace procedure t_BIGINT_TIMESTAMP(param_type string, variables_type string ) as 
      CURSOR my_cursor1 IS 
-          SELECT T_BIGINT as col_val FROM plcsql_type_tbl WHERE ID = 1 ;
+          SELECT T_BIGINT as col_val FROM plcsql_type_tbl WHERE ID = 2 ;
 
    VAR TIMESTAMP  ;
 begin
@@ -311,12 +358,12 @@ end;
 call t_BIGINT_TIMESTAMP('BIGINT', 'TIMESTAMP'  ) ;
 drop procedure t_BIGINT_TIMESTAMP ;
 
---BUG
+
 
 call print_message('t_INT_TIMESTAMP. This scenario is a success.');
 create or replace procedure t_INT_TIMESTAMP(param_type string, variables_type string ) as 
      CURSOR my_cursor1 IS 
-          SELECT T_INT as col_val FROM plcsql_type_tbl WHERE ID = 1 ;
+          SELECT T_INT as col_val FROM plcsql_type_tbl WHERE ID = 2 ;
      CURSOR my_cursor2 IS 
           SELECT T_INTEGER as col_val FROM plcsql_type_tbl WHERE ID = 2 ;
 
@@ -324,23 +371,23 @@ create or replace procedure t_INT_TIMESTAMP(param_type string, variables_type st
 begin
     FOR r IN my_cursor1 LOOP  
         VAR := r.col_val ;
-        dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
+        dbms_output.put_line('select_type = ' ||'INT' ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
     END LOOP;
     
     FOR r IN my_cursor2 LOOP  
         VAR := r.col_val ;
-        dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
+        dbms_output.put_line('select_type = ' ||'INTEGER' ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
     END LOOP;
 end;
 call t_INT_TIMESTAMP('INT', 'TIMESTAMP'  ) ;
 drop procedure t_INT_TIMESTAMP ;
 
---BUG
+
 
 call print_message('t_SHORT_TIMESTAMP. This scenario is a success.');
 create or replace procedure t_SHORT_TIMESTAMP(param_type string, variables_type string ) as 
      CURSOR my_cursor1 IS 
-          SELECT T_SHORT as col_val FROM plcsql_type_tbl WHERE ID = 1 ;
+          SELECT T_SHORT as col_val FROM plcsql_type_tbl WHERE ID = 2 ;
      CURSOR my_cursor2 IS 
           SELECT T_SMALLINT as col_val FROM plcsql_type_tbl WHERE ID = 2 ;
 
@@ -348,12 +395,12 @@ create or replace procedure t_SHORT_TIMESTAMP(param_type string, variables_type 
 begin
     FOR r IN my_cursor1 LOOP  
         VAR := r.col_val ;
-        dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
+        dbms_output.put_line('select_type = ' ||'SHORT' ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
     END LOOP;
     
     FOR r IN my_cursor2 LOOP  
         VAR := r.col_val ;
-        dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
+        dbms_output.put_line('select_type = ' ||'SMALLINT' ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
     END LOOP;
 end;
 call t_SHORT_TIMESTAMP('SHORT', 'TIMESTAMP'  ) ;

@@ -11,6 +11,9 @@
 1
 
 ===================================================
+1
+
+===================================================
 0
 
 ===================================================
@@ -27,7 +30,29 @@ t_DATETIME_TIMESTAMP. This scenario is a success.
 null     
 
 
-select_type = DATETIME, variables_type = TIMESTAMP, SELECT column=>INTO variables = 12:00:00 AM 01/01/0001
+select_type = DATETIME, variables_type = TIMESTAMP, SELECT column=>INTO variables = 09:00:01 AM 01/01/1970
+===================================================
+0
+
+===================================================
+Error:-427
+Data overflow on data type "timestamp".
+
+===================================================
+    
+null     
+
+
+t_DATETIME_TIMESTAMP. This scenario is a failure.
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+select_type = DATETIME, variables_type = TIMESTAMP, SELECT column=>INTO variables = 12:00:00 AM 12/30/0001
 ===================================================
 0
 
@@ -85,7 +110,29 @@ t_DATE_TIMESTAMP. This scenario is a success.
 null     
 
 
-select_type = DATE, variables_type = TIMESTAMP, SELECT column=>INTO variables = 12:00:00 AM 01/01/0001
+select_type = DATE, variables_type = TIMESTAMP, SELECT column=>INTO variables = 12:00:00 AM 01/01/1970
+===================================================
+0
+
+===================================================
+Error:-427
+Data overflow on data type "timestamp".
+
+===================================================
+    
+null     
+
+
+t_DATE_TIMESTAMP. This scenario is a failure.
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+select_type = DATE, variables_type = TIMESTAMP, SELECT column=>INTO variables = 12:00:00 AM 12/30/0001
 ===================================================
 0
 
@@ -177,10 +224,11 @@ t_DOUBLE_TIMESTAMP. This scenario is a success.
 0
 
 ===================================================
-Error:-889
-Stored procedure execute error: 
-  (line 7, column 8) negative values not allowed
+    
+null     
 
+
+select_type = DOUBLE, variables_type = TIMESTAMP, SELECT column=>INTO variables = 09:00:03 AM 01/01/1970
 ===================================================
 0
 
@@ -194,10 +242,12 @@ t_FLOAT_TIMESTAMP. This scenario is a success.
 0
 
 ===================================================
-Error:-889
-Stored procedure execute error: 
-  (line 9, column 8) negative values not allowed
+    
+null     
 
+
+select_type = FLOAT, variables_type = TIMESTAMP, SELECT column=>INTO variables = 09:00:03 AM 01/01/1970
+select_type = REAL, variables_type = TIMESTAMP, SELECT column=>INTO variables = 09:00:03 AM 01/01/1970
 ===================================================
 0
 
@@ -215,8 +265,8 @@ t_NUMERIC_TIMESTAMP. This scenario is a success.
 null     
 
 
-select_type = NUMERIC(8,4), variables_type = TIMESTAMP, SELECT column=>INTO variables = 09:00:00 AM 01/01/1970
-select_type = NUMERIC(8,4), variables_type = TIMESTAMP, SELECT column=>INTO variables = 10:30:32 AM 01/01/1970
+select_type = NUMERIC, variables_type = TIMESTAMP, SELECT column=>INTO variables = 09:16:27 AM 01/01/1970
+select_type = DECIMAL, variables_type = TIMESTAMP, SELECT column=>INTO variables = 10:30:32 AM 01/01/1970
 ===================================================
 0
 
@@ -230,10 +280,11 @@ t_BIGINT_TIMESTAMP. This scenario is a success.
 0
 
 ===================================================
-Error:-889
-Stored procedure execute error: 
-  (line 7, column 8) negative values not allowed
+    
+null     
 
+
+select_type = BIGINT, variables_type = TIMESTAMP, SELECT column=>INTO variables = 11:33:43 AM 01/01/1970
 ===================================================
 0
 
@@ -247,10 +298,12 @@ t_INT_TIMESTAMP. This scenario is a success.
 0
 
 ===================================================
-Error:-889
-Stored procedure execute error: 
-  (line 9, column 8) negative values not allowed
+    
+null     
 
+
+select_type = INT, variables_type = TIMESTAMP, SELECT column=>INTO variables = 09:35:47 AM 01/01/1970
+select_type = INTEGER, variables_type = TIMESTAMP, SELECT column=>INTO variables = 02:57:54 PM 01/01/1970
 ===================================================
 0
 
@@ -264,10 +317,12 @@ t_SHORT_TIMESTAMP. This scenario is a success.
 0
 
 ===================================================
-Error:-889
-Stored procedure execute error: 
-  (line 9, column 8) negative values not allowed
+    
+null     
 
+
+select_type = SHORT, variables_type = TIMESTAMP, SELECT column=>INTO variables = 06:06:07 PM 01/01/1970
+select_type = SMALLINT, variables_type = TIMESTAMP, SELECT column=>INTO variables = 06:06:07 PM 01/01/1970
 ===================================================
 0
 
@@ -476,7 +531,7 @@ t_JSON_TIMESTAMP. This scenario is a failure.
 ===================================================
 Error:-1360
 In line 3, column 1
-Stored procedure compile error: the SELECT statement contains a column COL_VAL of an unsupported type UNKNOWN (code: 40)
+Stored procedure compile error: the SELECT statement contains a column COL_VAL of an unsupported type JSON
 
 ===================================================
 Error:-495

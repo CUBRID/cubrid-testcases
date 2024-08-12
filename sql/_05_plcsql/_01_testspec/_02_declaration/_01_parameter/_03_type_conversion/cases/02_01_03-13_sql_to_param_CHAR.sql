@@ -153,7 +153,7 @@ call print_message('t_SET_CHAR. This scenario is a failure.');
 create or replace procedure t_SET_CHAR(sql_type string, procedure_type string, param CHAR ) as begin
     dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param ); 
 end;
-call t_SET_CHAR('SET', 'CHAR', {'c','c','c','b','b','a'} ) ;
+call t_SET_CHAR('SET', 'CHAR', cast( {'c','c','c','b','b','a'} as SET) ) ;
 drop procedure t_SET_CHAR ;
 --BUG
 
@@ -161,7 +161,7 @@ call print_message('t_MULTISET_CHAR. This scenario is a failure.');
 create or replace procedure t_MULTISET_CHAR(sql_type string, procedure_type string, param CHAR ) as begin
     dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param ); 
 end;
-call t_MULTISET_CHAR('MULTISET', 'CHAR', {'c','c','c','b','b','a'} ) ;
+call t_MULTISET_CHAR('MULTISET', 'CHAR', cast( {'c','c','c','b','b','a'} as MULTISET) ) ;
 drop procedure t_MULTISET_CHAR ;
 --BUG
 
@@ -171,14 +171,22 @@ create or replace procedure t_LIST_CHAR(sql_type string, procedure_type string, 
 end;
 call t_LIST_CHAR('LIST', 'CHAR', {'c','c','c','b','b', 'a'} ) ;
 drop procedure t_LIST_CHAR ;
---BUG
+
 
 call print_message('t_ENUM_CHAR. This scenario is a failure.');
-create or replace procedure t_ENUM_CHAR(sql_type string, procedure_type string, param CHAR ) as begin
-    dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param ); 
+create or replace function t_ENUM_CHAR(sql_type string, procedure_type string, param CHAR ) return varchar(100) as begin
+    dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param );
+    return 'abc';
 end;
-call t_ENUM_CHAR('ENUM', 'CHAR', 'yellow' ) ;
-drop procedure t_ENUM_CHAR ;
+
+CREATE TABLE enum_tbl (
+    color ENUM ('red', 'yellow', 'blue', 'green')
+);
+INSERT INTO enum_tbl (color) VALUES ('yellow');
+
+select t_ENUM_CHAR( 'ENUM', 'CHAR', color ) from enum_tbl;
+drop function t_ENUM_CHAR ;
+drop table enum_tbl;
 
 
 call print_message('t_BLOB_CHAR. This scenario is a failure.');

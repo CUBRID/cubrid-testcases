@@ -34,7 +34,7 @@ Semantic: before '  ) RETURN NUMERIC IS
 VAR DATETIMELTZ  ;
 begin
 VAR := param_va...'
-Unsupported argument type of stored procedure: datetimeltz create or replace function t_DATETIMELTZ_NUMERIC(variables_t...
+Unsupported argument type 'datetimeltz' of the stored procedure create or replace function t_DATETIMELTZ_NUMERIC(variables_t...
 
 ===================================================
 Error:-494
@@ -58,7 +58,7 @@ Semantic: before '  ) RETURN NUMERIC IS
 VAR DATETIMETZ  ;
 begin
 VAR := param_val...'
-Unsupported argument type of stored procedure: datetimetz create or replace function t_DATETIMETZ_NUMERIC(variables_ty...
+Unsupported argument type 'datetimetz' of the stored procedure create or replace function t_DATETIMETZ_NUMERIC(variables_ty...
 
 ===================================================
 Error:-494
@@ -145,7 +145,7 @@ Semantic: before '  ) RETURN NUMERIC IS
 VAR TIMESTAMPLTZ  ;
 begin
 VAR := param_v...'
-Unsupported argument type of stored procedure: timestampltz create or replace function t_TIMESTAMPLTZ_NUMERIC(variables_...
+Unsupported argument type 'timestampltz' of the stored procedure create or replace function t_TIMESTAMPLTZ_NUMERIC(variables_...
 
 ===================================================
 Error:-494
@@ -169,7 +169,7 @@ Semantic: before '  ) RETURN NUMERIC IS
 VAR TIMESTAMPTZ  ;
 begin
 VAR := param_va...'
-Unsupported argument type of stored procedure: timestamptz create or replace function t_TIMESTAMPTZ_NUMERIC(variables_t...
+Unsupported argument type 'timestamptz' of the stored procedure create or replace function t_TIMESTAMPTZ_NUMERIC(variables_t...
 
 ===================================================
 Error:-494
@@ -192,7 +192,7 @@ t_DOUBLE_NUMERIC. This scenario is a success.
 
 ===================================================
 t_DOUBLE_NUMERIC('DOUBLE', 'NUMERIC(38,15)',  cast(1234.56789 as double))    typeof(t_DOUBLE_NUMERIC('DOUBLE', 'NUMERIC(38,15)',  cast(1234.56789 as double)))    
-1235     numeric (4, 0)     
+1235     numeric (9, 5)     
 
 
 variables_type = DOUBLE, return_type = NUMERIC(38,15), param_value(variable value) = 1.234567890000000e+03
@@ -211,7 +211,7 @@ t_FLOAT_NUMERIC. This scenario is a success.
 
 ===================================================
 t_FLOAT_NUMERIC('FLOAT', 'NUMERIC(38,15)',  cast(16777.217 as float))    typeof(t_FLOAT_NUMERIC('FLOAT', 'NUMERIC(38,15)',  cast(16777.217 as float)))    
-16777     numeric (5, 0)     
+16777     numeric (14, 9)     
 
 
 variables_type = FLOAT, return_type = NUMERIC(38,15), param_value(variable value) = 1.677722e+04
@@ -230,7 +230,7 @@ t_NUMERIC_NUMERIC. This scenario is a success.
 
 ===================================================
 t_NUMERIC_NUMERIC('NUMERIC(8,4)', 'NUMERIC(38,15)',  cast(0.123456789 as numeric(4,4)))    typeof(t_NUMERIC_NUMERIC('NUMERIC(8,4)', 'NUMERIC(38,15)',  cast(0.123456789 as numeric(4,4))))    
-0     numeric (1, 0)     
+0     numeric (4, 4)     
 
 
 variables_type = NUMERIC(8,4), return_type = NUMERIC(38,15), param_value(variable value) = 0.1235
@@ -307,7 +307,7 @@ Semantic: before '  ) RETURN NUMERIC IS
 VAR BIT(8)  ;
 begin
 VAR := param_value ;...'
-Unsupported argument type of stored procedure: bit create or replace function t_BIT_NUMERIC(variables_type  var...
+Unsupported argument type 'bit' of the stored procedure create or replace function t_BIT_NUMERIC(variables_type  var...
 
 ===================================================
 Error:-494
@@ -331,7 +331,7 @@ Semantic: before '  ) RETURN NUMERIC IS
 VAR BIT VARYING  ;
 begin
 VAR := param_va...'
-BITVARYING is not defined. create or replace function t_BITVARYING_NUMERIC(variables_ty...
+dba.BITVARYING is not defined. create or replace function t_BITVARYING_NUMERIC(variables_ty...
 
 ===================================================
 Error:-494
@@ -353,12 +353,10 @@ t_CHAR_NUMERIC. This scenario is a success.
 0
 
 ===================================================
-t_CHAR_NUMERIC('CHAR', 'NUMERIC(38,15)',  cast('123' as char(3)))    typeof(t_CHAR_NUMERIC('CHAR', 'NUMERIC(38,15)',  cast('123' as char(3))))    
-123     numeric (3, 0)     
+Error:-889
+Stored procedure execute error: 
+  (line 4, column 8) string does not fit in the target type's length
 
-
-variables_type = CHAR, return_type = NUMERIC(38,15), param_value(variable value) = 123
-variables_type = CHAR, return_type = NUMERIC(38,15), param_value(variable value) = 123
 ===================================================
 0
 
@@ -478,7 +476,7 @@ VAR BLOB  ;
 begin
 VAR := param_value ;
 d...'
-Unsupported argument type of stored procedure: blob create or replace function t_BLOB_NUMERIC(variables_type  va...
+Unsupported argument type 'blob' of the stored procedure create or replace function t_BLOB_NUMERIC(variables_type  va...
 
 ===================================================
 Error:-494
@@ -503,7 +501,7 @@ VAR CLOB  ;
 begin
 VAR := param_value ;
 d...'
-Unsupported argument type of stored procedure: clob create or replace function t_CLOB_NUMERIC(variables_type  va...
+Unsupported argument type 'clob' of the stored procedure create or replace function t_CLOB_NUMERIC(variables_type  va...
 
 ===================================================
 Error:-494
@@ -528,7 +526,7 @@ VAR JSON  ;
 begin
 VAR := param_value ;
 d...'
-Unsupported argument type of stored procedure: json create or replace function t_JSON_NUMERIC(variables_type  va...
+Unsupported argument type 'json' of the stored procedure create or replace function t_JSON_NUMERIC(variables_type  va...
 
 ===================================================
 Error:-494

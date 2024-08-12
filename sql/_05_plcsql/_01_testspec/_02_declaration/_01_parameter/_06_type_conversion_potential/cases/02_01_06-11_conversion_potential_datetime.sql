@@ -107,7 +107,7 @@ call t_datetime('date', cast('2024-03-05' as date) ) ;
 drop procedure t_datetime ; 
 
 
---BUG
+
 select 'An error occurs. ( t_time, datetime )' ;
 create or replace procedure t_datetime( from_type string, param datetime ) as 
 begin 

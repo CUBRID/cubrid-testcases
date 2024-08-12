@@ -35,7 +35,7 @@ create or replace procedure t_DATE_DATE(sql_type string, procedure_type string, 
 end;
 call t_DATE_DATE('DATE', 'DATE', DATE'2008-10-31' ) ;
 drop procedure t_DATE_DATE ;
---BUG
+
 
 call print_message('t_TIME_DATE. This scenario is a failure.');
 create or replace procedure t_TIME_DATE(sql_type string, procedure_type string, param DATE ) as begin

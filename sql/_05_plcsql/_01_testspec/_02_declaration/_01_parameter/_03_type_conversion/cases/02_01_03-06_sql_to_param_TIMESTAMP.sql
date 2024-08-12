@@ -35,7 +35,7 @@ create or replace procedure t_DATE_TIMESTAMP(sql_type string, procedure_type str
 end;
 call t_DATE_TIMESTAMP('DATE', 'TIMESTAMP', DATE'2008-10-31' ) ;
 drop procedure t_DATE_TIMESTAMP ;
---BUG
+
 
 call print_message('t_TIME_TIMESTAMP. This scenario is a failure.');
 create or replace procedure t_TIME_TIMESTAMP(sql_type string, procedure_type string, param TIMESTAMP ) as begin
@@ -67,7 +67,7 @@ create or replace procedure t_TIMESTAMPTZ_TIMESTAMP(sql_type string, procedure_t
 end;
 call t_TIMESTAMPTZ_TIMESTAMP('TIMESTAMPTZ', 'TIMESTAMP', timestamptz '09/01/2006 04:40:40 pm' ) ;
 drop procedure t_TIMESTAMPTZ_TIMESTAMP ;
---BUG
+
 
 call print_message('t_DOUBLE_TIMESTAMP. This scenario is a success.');
 create or replace procedure t_DOUBLE_TIMESTAMP(sql_type string, procedure_type string, param TIMESTAMP ) as begin
@@ -75,7 +75,7 @@ create or replace procedure t_DOUBLE_TIMESTAMP(sql_type string, procedure_type s
 end;
 call t_DOUBLE_TIMESTAMP('DOUBLE', 'TIMESTAMP', cast( 1234.56789 as double) ) ;
 drop procedure t_DOUBLE_TIMESTAMP ;
---BUG
+
 
 call print_message('t_FLOAT_TIMESTAMP. This scenario is a success.');
 create or replace procedure t_FLOAT_TIMESTAMP(sql_type string, procedure_type string, param TIMESTAMP ) as begin
@@ -83,7 +83,7 @@ create or replace procedure t_FLOAT_TIMESTAMP(sql_type string, procedure_type st
 end;
 call t_FLOAT_TIMESTAMP('FLOAT', 'TIMESTAMP', cast( 16777.217 as float ) ) ;
 drop procedure t_FLOAT_TIMESTAMP ;
---BUG
+
 
 call print_message('t_NUMERIC_TIMESTAMP. This scenario is a success.');
 create or replace procedure t_NUMERIC_TIMESTAMP(sql_type string, procedure_type string, param TIMESTAMP ) as begin
@@ -91,7 +91,7 @@ create or replace procedure t_NUMERIC_TIMESTAMP(sql_type string, procedure_type 
 end;
 call t_NUMERIC_TIMESTAMP('NUMERIC(8,4)', 'TIMESTAMP', cast( 0.123456789 as numeric(4,4) ) ) ;
 drop procedure t_NUMERIC_TIMESTAMP ;
---BUG
+
 
 call print_message('t_BIGINT_TIMESTAMP. This scenario is a success.');
 create or replace procedure t_BIGINT_TIMESTAMP(sql_type string, procedure_type string, param TIMESTAMP ) as begin
@@ -99,7 +99,7 @@ create or replace procedure t_BIGINT_TIMESTAMP(sql_type string, procedure_type s
 end;
 call t_BIGINT_TIMESTAMP('BIGINT', 'TIMESTAMP', cast( 34589012 as bigint ) ) ;
 drop procedure t_BIGINT_TIMESTAMP ;
---BUG
+
 
 call print_message('t_INT_TIMESTAMP. This scenario is a success.');
 create or replace procedure t_INT_TIMESTAMP(sql_type string, procedure_type string, param TIMESTAMP ) as begin
@@ -107,7 +107,7 @@ create or replace procedure t_INT_TIMESTAMP(sql_type string, procedure_type stri
 end;
 call t_INT_TIMESTAMP('INT', 'TIMESTAMP', cast( 782346 as int ) ) ;
 drop procedure t_INT_TIMESTAMP ;
---BUG
+
 
 call print_message('t_SHORT_TIMESTAMP. This scenario is a success.');
 create or replace procedure t_SHORT_TIMESTAMP(sql_type string, procedure_type string, param TIMESTAMP ) as begin

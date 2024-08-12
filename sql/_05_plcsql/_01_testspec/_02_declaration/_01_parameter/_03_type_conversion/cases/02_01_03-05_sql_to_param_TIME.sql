@@ -27,7 +27,7 @@ create or replace procedure t_DATETIMETZ_TIME(sql_type string, procedure_type st
 end;
 call t_DATETIMETZ_TIME('DATETIMETZ', 'TIME', datetimetz '09/01/2008 02:20:20 pm' ) ;
 drop procedure t_DATETIMETZ_TIME ;
---BUG
+
 
 call print_message('t_DATE_TIME. This scenario is a failure.');
 create or replace procedure t_DATE_TIME(sql_type string, procedure_type string, param TIME ) as begin
@@ -67,7 +67,7 @@ create or replace procedure t_TIMESTAMPTZ_TIME(sql_type string, procedure_type s
 end;
 call t_TIMESTAMPTZ_TIME('TIMESTAMPTZ', 'TIME', timestamptz '09/01/2006 04:40:40 pm' ) ;
 drop procedure t_TIMESTAMPTZ_TIME ;
---BUG
+
 
 call print_message('t_DOUBLE_TIME. This scenario is a success.');
 create or replace procedure t_DOUBLE_TIME(sql_type string, procedure_type string, param TIME ) as begin
@@ -75,7 +75,7 @@ create or replace procedure t_DOUBLE_TIME(sql_type string, procedure_type string
 end;
 call t_DOUBLE_TIME('DOUBLE', 'TIME', cast( 1234.56789 as double) ) ;
 drop procedure t_DOUBLE_TIME ;
---BUG
+
 
 call print_message('t_FLOAT_TIME. This scenario is a success.');
 create or replace procedure t_FLOAT_TIME(sql_type string, procedure_type string, param TIME ) as begin
@@ -83,7 +83,7 @@ create or replace procedure t_FLOAT_TIME(sql_type string, procedure_type string,
 end;
 call t_FLOAT_TIME('FLOAT', 'TIME', cast( 16777.217 as float ) ) ;
 drop procedure t_FLOAT_TIME ;
---BUG
+
 
 call print_message('t_NUMERIC(8,4)_TIME. This scenario is a failure.');
 create or replace procedure t_NUMERIC_TIME(sql_type string, procedure_type string, param TIME ) as begin
@@ -91,7 +91,7 @@ create or replace procedure t_NUMERIC_TIME(sql_type string, procedure_type strin
 end;
 call t_NUMERIC_TIME('NUMERIC(8,4)', 'TIME', cast( 0.123456789 as numeric(4,4) ) ) ;
 drop procedure t_NUMERIC_TIME ;
---BUG
+
 
 call print_message('t_BIGINT_TIME. This scenario is a success.');
 create or replace procedure t_BIGINT_TIME(sql_type string, procedure_type string, param TIME ) as begin
@@ -99,7 +99,7 @@ create or replace procedure t_BIGINT_TIME(sql_type string, procedure_type string
 end;
 call t_BIGINT_TIME('BIGINT', 'TIME', cast( 34589012 as bigint ) ) ;
 drop procedure t_BIGINT_TIME ;
---BUG
+
 
 call print_message('t_INT_TIME. This scenario is a success.');
 create or replace procedure t_INT_TIME(sql_type string, procedure_type string, param TIME ) as begin
@@ -107,7 +107,7 @@ create or replace procedure t_INT_TIME(sql_type string, procedure_type string, p
 end;
 call t_INT_TIME('INT', 'TIME', cast( 782346 as int ) ) ;
 drop procedure t_INT_TIME ;
---BUG
+
 
 call print_message('t_SHORT_TIME. This scenario is a success.');
 create or replace procedure t_SHORT_TIME(sql_type string, procedure_type string, param TIME ) as begin

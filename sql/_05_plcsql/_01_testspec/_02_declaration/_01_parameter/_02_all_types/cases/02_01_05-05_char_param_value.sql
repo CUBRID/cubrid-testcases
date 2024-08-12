@@ -2,7 +2,6 @@
 
 --A test case that delivers values exceeding the minimum and maximum values supported by char type parameters.
 
--- bug
 create or replace procedure t( ) as
     var_min CHAR(5) := 'a';
     var_max CHAR(5) := 'abc';
@@ -21,7 +20,6 @@ call t();
 select cast('a' as char(5) ) ||'char';
 
 
--- bug
 create or replace procedure t(i_min CHAR(5), i_max CHAR(5) ) as
     var_min CHAR(5) := i_min;
     var_max CHAR(5) := i_max;

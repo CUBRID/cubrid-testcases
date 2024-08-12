@@ -171,14 +171,22 @@ create or replace procedure t_LIST_VARCHAR(sql_type string, procedure_type strin
 end;
 call t_LIST_VARCHAR('LIST', 'VARCHAR', {'c','c','c','b','b', 'a'} ) ;
 drop procedure t_LIST_VARCHAR ;
---BUG
+
 
 call print_message('t_ENUM_VARCHAR. This scenario is a failure.');
-create or replace procedure t_ENUM_VARCHAR(sql_type string, procedure_type string, param VARCHAR ) as begin
-    dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param ); 
+create or replace function t_ENUM_VARCHAR(sql_type string, procedure_type string, param VARCHAR ) return varchar(100) as begin
+    dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param );
+    return 'abc';
 end;
-call t_ENUM_VARCHAR('ENUM', 'VARCHAR', 'yellow' ) ;
-drop procedure t_ENUM_VARCHAR ;
+
+CREATE TABLE enum_tbl (
+    color ENUM ('red', 'yellow', 'blue', 'green')
+);
+INSERT INTO enum_tbl (color) VALUES ('yellow');
+
+select t_ENUM_VARCHAR( 'ENUM', 'VARCHAR', color ) from enum_tbl;
+drop function t_ENUM_VARCHAR ;
+drop table enum_tbl;
 
 
 call print_message('t_BLOB_VARCHAR. This scenario is a failure.');
