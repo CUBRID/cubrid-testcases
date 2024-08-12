@@ -48,11 +48,10 @@ select * from too;
 drop poo, ooo, too;
 
 -------------------------------
--- error
-create view v1 (n) as select null from db_root;
-create view v1 as select null as n from db_root;
 
 -- success
+create view v1 (n) as select null from db_root; drop v1;
+create view v1 as select null as n from db_root; drop v1;
 create view v1 (n int) as select null from db_root;
 select * from v1;
 drop view v1;
