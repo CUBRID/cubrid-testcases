@@ -1,0 +1,1569 @@
+===================================================
+0
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+'1.1 Single CTE: UNION'    
+1.1 Single CTE: UNION     
+
+===================================================
+i    j    k    
+1     1     1     
+2     2     2     
+3     3     3     
+4     4     4     
+5     5     5     
+6     6     6     
+7     7     7     
+8     8     8     
+9     9     9     
+10     10     10     
+11     11     11     
+12     12     12     
+13     13     13     
+14     14     14     
+15     15     15     
+16     16     16     
+17     17     17     
+18     18     18     
+19     19     19     
+20     20     20     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] order by ? for orderby_num()<= ?:? 
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_a)
+
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] order by ?)
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_a)
+
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] order by ?)
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+'1.2 Single CTE: UNION ALL'    
+1.2 Single CTE: UNION ALL     
+
+===================================================
+i    j    k    
+1     1     1     
+2     2     2     
+3     3     3     
+4     4     4     
+5     5     5     
+6     6     6     
+7     7     7     
+8     8     8     
+9     9     9     
+10     10     10     
+11     11     11     
+12     12     12     
+13     13     13     
+14     14     14     
+15     15     15     
+16     16     16     
+17     17     17     
+18     18     18     
+19     19     19     
+20     20     20     
+1     1     1     
+2     2     2     
+3     3     3     
+4     4     4     
+5     5     5     
+6     6     6     
+7     7     7     
+8     8     8     
+9     9     9     
+10     10     10     
+11     11     11     
+12     12     12     
+13     13     13     
+14     14     14     
+15     15     15     
+16     16     16     
+17     17     17     
+18     18     18     
+19     19     19     
+20     20     20     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] order by ? for orderby_num()<= ?:? 
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_a)
+
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] order by ?)
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_a)
+
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] order by ?)
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+'1.3 Single CTE: DIFFERENCE'    
+1.3 Single CTE: DIFFERENCE     
+
+===================================================
+i    j    k    
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] order by ? for orderby_num()<= ?:? 
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_a)
+
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] order by ?)
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_a)
+
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] order by ?)
+
+
+Trace Statistics:
+  DIFFERENCE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+'1.4 Single CTE: DIFFERENCE ALL'    
+1.4 Single CTE: DIFFERENCE ALL     
+
+===================================================
+i    j    k    
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] order by ? for orderby_num()<= ?:? 
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_a)
+
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] order by ?)
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_a)
+
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] order by ?)
+
+
+Trace Statistics:
+  DIFFERENCE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+'1.5 Single CTE: INTERSECTION'    
+1.5 Single CTE: INTERSECTION     
+
+===================================================
+i    j    k    
+1     1     1     
+2     2     2     
+3     3     3     
+4     4     4     
+5     5     5     
+6     6     6     
+7     7     7     
+8     8     8     
+9     9     9     
+10     10     10     
+11     11     11     
+12     12     12     
+13     13     13     
+14     14     14     
+15     15     15     
+16     16     16     
+17     17     17     
+18     18     18     
+19     19     19     
+20     20     20     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] order by ? for orderby_num()<= ?:? 
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_a)
+
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] order by ?)
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_a)
+
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] order by ?)
+
+
+Trace Statistics:
+  INTERSECTION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+'1.6 Single CTE: INTERSECTION ALL'    
+1.6 Single CTE: INTERSECTION ALL     
+
+===================================================
+i    j    k    
+1     1     1     
+2     2     2     
+3     3     3     
+4     4     4     
+5     5     5     
+6     6     6     
+7     7     7     
+8     8     8     
+9     9     9     
+10     10     10     
+11     11     11     
+12     12     12     
+13     13     13     
+14     14     14     
+15     15     15     
+16     16     16     
+17     17     17     
+18     18     18     
+19     19     19     
+20     20     20     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] order by ? for orderby_num()<= ?:? 
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_a)
+
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] order by ?)
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_a)
+
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] order by ?)
+
+
+Trace Statistics:
+  INTERSECTION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+'1.7 Multiple CTEs: UNION ALL with Uncorrelated Subqueries'    
+1.7 Multiple CTEs: UNION ALL with Uncorrelated Subqueries     
+
+===================================================
+0
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+i    j    k    
+1     1     1     
+2     2     2     
+3     3     3     
+4     4     4     
+5     5     5     
+6     6     6     
+7     7     7     
+8     8     8     
+9     9     9     
+10     10     10     
+11     11     11     
+12     12     12     
+13     13     13     
+14     14     14     
+15     15     15     
+16     16     16     
+17     17     17     
+18     18     18     
+19     19     19     
+20     20     20     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] order by ? for orderby_num()<= ?:? 
+
+  SORT (order by)
+    TABLE SCAN (dba.tbl_b)
+
+  rewritten query: select [dba.tbl_b].a, [dba.tbl_b].b, [dba.tbl_b].c from [dba.tbl_b] [dba.tbl_b] order by ? for orderby_num()<= ?:? 
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_a)
+
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] where ([dba.cte_a].i< ?:? ) order by ?)
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_b)
+
+  rewritten query: (select [dba.cte_b].a, [dba.cte_b].b, [dba.cte_b].c from [dba.cte_b] [dba.cte_b] where ([dba.cte_b].a> ?:? ) order by ?)
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+'1.8 Multiple CTEs: UNION with Uncorrelated Subqueries'    
+1.8 Multiple CTEs: UNION with Uncorrelated Subqueries     
+
+===================================================
+0
+===================================================
+i    j    k    
+1     1     1     
+2     2     2     
+3     3     3     
+10     10     10     
+11     11     11     
+12     12     12     
+13     13     13     
+14     14     14     
+15     15     15     
+16     16     16     
+17     17     17     
+18     18     18     
+19     19     19     
+20     20     20     
+51     51     51     
+52     52     52     
+53     53     53     
+54     54     54     
+55     55     55     
+56     56     56     
+57     57     57     
+58     58     58     
+59     59     59     
+60     60     60     
+61     61     61     
+62     62     62     
+63     63     63     
+64     64     64     
+65     65     65     
+66     66     66     
+67     67     67     
+68     68     68     
+69     69     69     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? 
+
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? 
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_a)
+
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] where ([dba.cte_a].j< ?:? ) order by ?)
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_b)
+
+  rewritten query: (select [dba.cte_b].i, [dba.cte_b].j, [dba.cte_b].k from [dba.cte_b] [dba.cte_b] where ([dba.cte_b].k> ?:? ) order by ?)
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+'1.9 Multiple CTEs: DIFFERENCE with Uncorrelated Subqueries'    
+1.9 Multiple CTEs: DIFFERENCE with Uncorrelated Subqueries     
+
+===================================================
+0
+===================================================
+i    j    k    
+1     1     1     
+2     2     2     
+3     3     3     
+4     4     4     
+5     5     5     
+6     6     6     
+7     7     7     
+8     8     8     
+9     9     9     
+10     10     10     
+11     11     11     
+12     12     12     
+13     13     13     
+14     14     14     
+15     15     15     
+16     16     16     
+17     17     17     
+18     18     18     
+19     19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? 
+
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? 
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_a)
+
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] where ([dba.cte_a].i< ?:? ) order by ?)
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_b)
+
+  rewritten query: (select [dba.cte_b].i, [dba.cte_b].j, [dba.cte_b].k from [dba.cte_b] [dba.cte_b] where ([dba.cte_b].k> ?:? ) order by ?)
+
+
+Trace Statistics:
+  DIFFERENCE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+'1.10 Multiple CTEs: DIFFERENCE ALL with Uncorrelated Subqueries'    
+1.10 Multiple CTEs: DIFFERENCE ALL with Uncorrelated Subqueries     
+
+===================================================
+0
+===================================================
+i    j    k    
+1     1     1     
+2     2     2     
+3     3     3     
+4     4     4     
+5     5     5     
+6     6     6     
+7     7     7     
+8     8     8     
+9     9     9     
+10     10     10     
+11     11     11     
+12     12     12     
+13     13     13     
+14     14     14     
+15     15     15     
+16     16     16     
+17     17     17     
+18     18     18     
+19     19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? 
+
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? 
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_a)
+
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] where ([dba.cte_a].i< ?:? ) order by ?)
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_b)
+
+  rewritten query: (select [dba.cte_b].i, [dba.cte_b].j, [dba.cte_b].k from [dba.cte_b] [dba.cte_b] where ([dba.cte_b].k> ?:? ) order by ?)
+
+
+Trace Statistics:
+  DIFFERENCE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+'1.11 Multiple CTEs: INTERSECTION with Uncorrelated Subqueries'    
+1.11 Multiple CTEs: INTERSECTION with Uncorrelated Subqueries     
+
+===================================================
+0
+===================================================
+i    j    k    
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? 
+
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? 
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_a)
+
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] where ([dba.cte_a].j< ?:? ) order by ?)
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_b)
+
+  rewritten query: (select [dba.cte_b].i, [dba.cte_b].j, [dba.cte_b].k from [dba.cte_b] [dba.cte_b] where ([dba.cte_b].k> ?:? ) order by ?)
+
+
+Trace Statistics:
+  INTERSECTION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+'1.12 Multiple CTEs: INTERSECTION ALL with Uncorrelated Subqueries'    
+1.12 Multiple CTEs: INTERSECTION ALL with Uncorrelated Subqueries     
+
+===================================================
+0
+===================================================
+i    j    k    
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? 
+
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? 
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_a)
+
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] where ([dba.cte_a].j< ?:? ) order by ?)
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_b)
+
+  rewritten query: (select [dba.cte_b].i, [dba.cte_b].j, [dba.cte_b].k from [dba.cte_b] [dba.cte_b] where ([dba.cte_b].k> ?:? ) order by ?)
+
+
+Trace Statistics:
+  INTERSECTION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+'1.13 Use limit'    
+1.13 Use limit     
+
+===================================================
+i    
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].i from [dba.tbl_a] [dba.tbl_a] where (inst_num()> ?:?  and inst_num()<= ?:? )
+
+  TABLE SCAN (dba.cte?)
+
+  rewritten query: select [dba.cte?].i from [dba.cte?] [dba.cte?]
+
+  TABLE SCAN (dba.cte?)
+
+  rewritten query: select [dba.cte?].i from [dba.cte?] [dba.cte?]
+
+  TABLE SCAN (dba.cte?)
+
+  rewritten query: select [dba.cte?].i from [dba.cte?] [dba.cte?]
+
+  TABLE SCAN (dba.cte?)
+
+  rewritten query: select [dba.cte?].i from [dba.cte?] [dba.cte?]
+
+  TABLE SCAN (dba.cte?)
+
+  rewritten query: select [dba.cte?].i from [dba.cte?] [dba.cte?]
+
+
+Trace Statistics:
+  INTERSECTION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    DIFFERENCE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+'1.14 Use limit offset'    
+1.14 Use limit offset     
+
+===================================================
+i    
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dual)
+
+  rewritten query: select '?.? Use limit offset' from dual dual
+
+Trace Statistics:
+  INTERSECTION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    DIFFERENCE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+'1.15 Use rownum'    
+1.15 Use rownum     
+
+===================================================
+i    
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].i from [dba.tbl_a] [dba.tbl_a] where (rownum< ?:? )
+
+  TABLE SCAN (dba.cte?)
+
+  rewritten query: select [dba.cte?].i from [dba.cte?] [dba.cte?]
+
+  TABLE SCAN (dba.cte?)
+
+  rewritten query: select [dba.cte?].i from [dba.cte?] [dba.cte?]
+
+  TABLE SCAN (dba.cte?)
+
+  rewritten query: select [dba.cte?].i from [dba.cte?] [dba.cte?]
+
+  TABLE SCAN (dba.cte?)
+
+  rewritten query: select [dba.cte?].i from [dba.cte?] [dba.cte?]
+
+  TABLE SCAN (dba.cte?)
+
+  rewritten query: select [dba.cte?].i from [dba.cte?] [dba.cte?]
+
+
+Trace Statistics:
+  INTERSECTION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    DIFFERENCE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+'1.16 Use orderby_num()'    
+1.16 Use orderby_num()     
+
+===================================================
+i    
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].i from [dba.tbl_a] [dba.tbl_a] order by ? for orderby_num() between  ?:?  and  ?:? 
+
+  TABLE SCAN (dba.cte?)
+
+  rewritten query: select [dba.cte?].i from [dba.cte?] [dba.cte?]
+
+  TABLE SCAN (dba.cte?)
+
+  rewritten query: select [dba.cte?].i from [dba.cte?] [dba.cte?]
+
+  TABLE SCAN (dba.cte?)
+
+  rewritten query: select [dba.cte?].i from [dba.cte?] [dba.cte?]
+
+  TABLE SCAN (dba.cte?)
+
+  rewritten query: select [dba.cte?].i from [dba.cte?] [dba.cte?]
+
+  TABLE SCAN (dba.cte?)
+
+  rewritten query: select [dba.cte?].i from [dba.cte?] [dba.cte?]
+
+
+Trace Statistics:
+  INTERSECTION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    DIFFERENCE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+'2.1 Single CTE: UNION with Correlated Subqueries'    
+2.1 Single CTE: UNION with Correlated Subqueries     
+
+===================================================
+0
+===================================================
+i    j    k    
+1     1     1     
+2     2     2     
+3     3     3     
+4     4     4     
+5     5     5     
+6     6     6     
+7     7     7     
+8     8     8     
+9     9     9     
+10     10     10     
+11     11     11     
+12     12     12     
+13     13     13     
+14     14     14     
+15     15     15     
+16     16     16     
+17     17     17     
+18     18     18     
+19     19     19     
+20     20     20     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] order by ? for orderby_num()<= ?:? 
+
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].i=[dba.cte_a].i)
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_a)
+
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].i=[dba.cte_a].i) order by ?)
+
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].j=[dba.cte_a].j)
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_a)
+
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].j=[dba.cte_a].j) order by ?)
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+'2.2 Single CTE: INTERSECTION with Correlated Subqueries'    
+2.2 Single CTE: INTERSECTION with Correlated Subqueries     
+
+===================================================
+0
+===================================================
+i    j    k    
+1     1     1     
+2     2     2     
+3     3     3     
+4     4     4     
+5     5     5     
+6     6     6     
+7     7     7     
+8     8     8     
+9     9     9     
+10     10     10     
+11     11     11     
+12     12     12     
+13     13     13     
+14     14     14     
+15     15     15     
+16     16     16     
+17     17     17     
+18     18     18     
+19     19     19     
+20     20     20     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] order by ? for orderby_num()<= ?:? 
+
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].j=[dba.cte_a].j)
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_a)
+
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].j=[dba.cte_a].j) order by ?)
+
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_a].k)
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_a)
+
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_a].k) order by ?)
+
+
+Trace Statistics:
+  INTERSECTION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+'2.3 Multiple CTEs: UNION ALL with Mixed Correlated and Uncorrelated Subqueries'    
+2.3 Multiple CTEs: UNION ALL with Mixed Correlated and Uncorrelated Subqueries     
+
+===================================================
+0
+===================================================
+i    j    k    
+1     1     1     
+2     2     2     
+10     10     10     
+11     11     11     
+12     12     12     
+13     13     13     
+14     14     14     
+15     15     15     
+16     16     16     
+17     17     17     
+18     18     18     
+19     19     19     
+50     50     50     
+51     51     51     
+52     52     52     
+53     53     53     
+54     54     54     
+55     55     55     
+56     56     56     
+57     57     57     
+58     58     58     
+59     59     59     
+60     60     60     
+61     61     61     
+62     62     62     
+63     63     63     
+64     64     64     
+65     65     65     
+66     66     66     
+67     67     67     
+68     68     68     
+69     69     69     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? 
+
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? 
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_a)
+
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] where ([dba.cte_a].j< ?:? ) order by ?)
+
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_b].k)
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_b)
+
+  rewritten query: (select [dba.cte_b].i, [dba.cte_b].j, [dba.cte_b].k from [dba.cte_b] [dba.cte_b] where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_b].k) order by ?)
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+'2.4 Multiple CTEs: UNION with Mixed Correlated and Uncorrelated Subqueries'    
+2.4 Multiple CTEs: UNION with Mixed Correlated and Uncorrelated Subqueries     
+
+===================================================
+0
+===================================================
+i    j    k    
+1     1     1     
+2     2     2     
+10     10     10     
+11     11     11     
+12     12     12     
+13     13     13     
+14     14     14     
+15     15     15     
+16     16     16     
+17     17     17     
+18     18     18     
+19     19     19     
+50     50     50     
+51     51     51     
+52     52     52     
+53     53     53     
+54     54     54     
+55     55     55     
+56     56     56     
+57     57     57     
+58     58     58     
+59     59     59     
+60     60     60     
+61     61     61     
+62     62     62     
+63     63     63     
+64     64     64     
+65     65     65     
+66     66     66     
+67     67     67     
+68     68     68     
+69     69     69     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? 
+
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? 
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_a)
+
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] where ([dba.cte_a].j< ?:? ) order by ?)
+
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_b].k)
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_b)
+
+  rewritten query: (select [dba.cte_b].i, [dba.cte_b].j, [dba.cte_b].k from [dba.cte_b] [dba.cte_b] where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_b].k) order by ?)
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+'2.5 Multiple CTEs: DIFFERENCE with Mixed Correlated and Uncorrelated Subqueries'    
+2.5 Multiple CTEs: DIFFERENCE with Mixed Correlated and Uncorrelated Subqueries     
+
+===================================================
+0
+===================================================
+i    j    k    
+1     1     1     
+2     2     2     
+10     10     10     
+11     11     11     
+12     12     12     
+13     13     13     
+14     14     14     
+15     15     15     
+16     16     16     
+17     17     17     
+18     18     18     
+19     19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? 
+
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? 
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_a)
+
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] where ([dba.cte_a].j< ?:? ) order by ?)
+
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_b].k)
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_b)
+
+  rewritten query: (select [dba.cte_b].i, [dba.cte_b].j, [dba.cte_b].k from [dba.cte_b] [dba.cte_b] where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_b].k) order by ?)
+
+
+Trace Statistics:
+  DIFFERENCE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+'2.6 Multiple CTEs: DIFFERENCE ALL with Mixed Correlated and Uncorrelated Subqueries'    
+2.6 Multiple CTEs: DIFFERENCE ALL with Mixed Correlated and Uncorrelated Subqueries     
+
+===================================================
+0
+===================================================
+i    j    k    
+1     1     1     
+2     2     2     
+10     10     10     
+11     11     11     
+12     12     12     
+13     13     13     
+14     14     14     
+15     15     15     
+16     16     16     
+17     17     17     
+18     18     18     
+19     19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? 
+
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? 
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_a)
+
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] where ([dba.cte_a].j< ?:? ) order by ?)
+
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_b].k)
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_b)
+
+  rewritten query: (select [dba.cte_b].i, [dba.cte_b].j, [dba.cte_b].k from [dba.cte_b] [dba.cte_b] where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_b].k) order by ?)
+
+
+Trace Statistics:
+  DIFFERENCE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+'2.7 Multiple CTEs: INTERSECTION with Mixed Correlated and Uncorrelated Subqueries'    
+2.7 Multiple CTEs: INTERSECTION with Mixed Correlated and Uncorrelated Subqueries     
+
+===================================================
+0
+===================================================
+i    j    k    
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? 
+
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? 
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_a)
+
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] where ([dba.cte_a].j< ?:? ) order by ?)
+
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_b].k)
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_b)
+
+  rewritten query: (select [dba.cte_b].i, [dba.cte_b].j, [dba.cte_b].k from [dba.cte_b] [dba.cte_b] where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_b].k) order by ?)
+
+
+Trace Statistics:
+  INTERSECTION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+'2.8 Multiple CTEs: INTERSECTION ALL with Mixed Correlated and Uncorrelated Subqueries'    
+2.8 Multiple CTEs: INTERSECTION ALL with Mixed Correlated and Uncorrelated Subqueries     
+
+===================================================
+0
+===================================================
+i    j    k    
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? 
+
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? 
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_a)
+
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] where ([dba.cte_a].j< ?:? ) order by ?)
+
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_b].k)
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_b)
+
+  rewritten query: (select [dba.cte_b].i, [dba.cte_b].j, [dba.cte_b].k from [dba.cte_b] [dba.cte_b] where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_b].k) order by ?)
+
+
+Trace Statistics:
+  INTERSECTION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
