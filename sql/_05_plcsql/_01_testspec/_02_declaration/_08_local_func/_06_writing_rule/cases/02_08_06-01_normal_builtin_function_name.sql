@@ -16,7 +16,7 @@ AS
     abc varchar;
 begin
     IF n > m OR n < 0 THEN
-        put_line('error'||abc);
+        dbms_output.put_line('error'||abc);
         RETURN 'error';
     ELSE
         RETURN substr(123);

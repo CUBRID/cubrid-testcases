@@ -21,12 +21,12 @@ AS
 BEGIN
 -- If you try to read the OUT parameter before assigning it, no error occurs and it is treated as a null value. Oracle handles the same thing.
     
-    put_line('out_value: ' || out_value);
+    dbms_output.put_line('out_value: ' || out_value);
     OPEN my_cursor(out_value );
     LOOP
         FETCH my_cursor INTO target_id, target_name ;
         EXIT WHEN my_cursor%NOTFOUND;
-        put_line('id: ' || target_id || ' name: ' || target_name);
+        dbms_output.put_line('id: ' || target_id || ' name: ' || target_name);
     END LOOP;
     CLOSE my_cursor;
 END;
