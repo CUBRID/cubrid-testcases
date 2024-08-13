@@ -7,8 +7,11 @@ begin
 end;
 create or replace procedure p_test0 as
 begin
+    dbms_output.put_line('before p0');
     p0(7);
+    dbms_output.put_line('after p0');
 end;
+call p_test0();
 drop procedure p_test0;
 drop procedure p0;
 
@@ -19,8 +22,11 @@ begin
 end;
 create or replace procedure p_test1 as
 begin
+    dbms_output.put_line('before p1');
     p1(7);
+    dbms_output.put_line('after p1');
 end;
+call p_test1();
 drop procedure p_test1;
 drop procedure p1;
 
@@ -31,8 +37,11 @@ begin
 end;
 create or replace procedure p_test2 as
 begin
+    dbms_output.put_line('before p2');
     p2(7);
+    dbms_output.put_line('after p2');
 end;
+call p_test2();
 drop procedure p_test2;
 drop procedure p2;
 
@@ -45,9 +54,12 @@ end;
 create or replace procedure f_test0 as
     n numeric;
 begin
+    dbms_output.put_line('before f0');
     n := f0;
     dbms_output.put_line(n);
+    dbms_output.put_line('after f0');
 end;
+call f_test0();
 drop procedure f_test0;
 drop function f0;
 
@@ -59,9 +71,12 @@ end;
 create or replace procedure f_test1 as
     n numeric;
 begin
+    dbms_output.put_line('before f1');
     n := f1;
     dbms_output.put_line(n);
+    dbms_output.put_line('after f1');
 end;
+call f_test1();
 drop procedure f_test1;
 drop function f1;
 
@@ -73,9 +88,12 @@ end;
 create or replace procedure f_test2 as
     n numeric;
 begin
+    dbms_output.put_line('before f2');
     n := f2;
     dbms_output.put_line(n);
+    dbms_output.put_line('after f2');
 end;
+call f_test2();
 drop procedure f_test2;
 drop function f2;
 
