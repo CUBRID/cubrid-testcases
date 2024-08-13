@@ -11,10 +11,10 @@ BEGIN
     dbms_output.put_line('first call t()');
 END;
 
-select 'before', a.* from db_stored_procedure a where a.sp_name='t';
+select 'before', a.sp_name, a.pkg_name, a.sp_type, a.return_type, a.arg_count, a.lang, a.authid, a.owner, a.comment from db_stored_procedure a where a.sp_name='t';
 call t();
 
-select 'after', a.* from db_stored_procedure a where a.sp_name='t';
+select 'after', a.sp_name, a.pkg_name, a.sp_type, a.return_type, a.arg_count, a.lang, a.authid, a.owner, a.comment from db_stored_procedure a where a.sp_name='t';
 
 drop procedure t;
 
