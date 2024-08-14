@@ -45,6 +45,50 @@ call p_test2();
 drop procedure p_test2;
 drop procedure p2;
 
+create or replace procedure p3(n numeric(1,1)) as 
+begin
+    dbms_output.put_line('in p3');
+    null;
+end;
+create or replace procedure p_test3 as
+begin
+    p3(7);
+    dbms_output.put_line('after p3');
+end;
+call p_test3();
+drop procedure p_test3;
+drop procedure p3;
+
+
+create or replace procedure p4(n char(1)) as 
+begin
+    dbms_output.put_line('in p4');
+    null;
+end;
+create or replace procedure p_test4 as
+begin
+    p4(7);
+    dbms_output.put_line('after p4');
+end;
+call p_test4();
+drop procedure p_test4;
+drop procedure p4;
+
+
+create or replace procedure p5(n varchar(1)) as 
+begin
+    dbms_output.put_line('in p5');
+    null;
+end;
+create or replace procedure p_test5 as
+begin
+    p5(7);
+    dbms_output.put_line('after p5');
+end;
+call p_test5();
+drop procedure p_test5;
+drop procedure p5;
+
 
 
 create or replace function f0 return numeric as
@@ -96,6 +140,57 @@ end;
 call f_test2();
 drop procedure f_test2;
 drop function f2;
+
+
+create or replace function f3 return numeric as
+begin
+    dbms_output.put_line('in f3');
+    return null;
+end;
+create or replace procedure f_test3 as
+    n numeric;
+begin
+    n := f3;
+    dbms_output.put_line(n);
+    dbms_output.put_line('after f3');
+end;
+call f_test3();
+drop procedure f_test3;
+drop function f3;
+
+
+create or replace function f4 return char as
+begin
+    dbms_output.put_line('in f4');
+    return null;
+end;
+create or replace procedure f_test4 as
+    n numeric;
+begin
+    n := f4;
+    dbms_output.put_line(n);
+    dbms_output.put_line('after f4');
+end;
+call f_test4();
+drop procedure f_test4;
+drop function f4;
+
+
+create or replace function f5 return varchar(1) as
+begin
+    dbms_output.put_line('in f5');
+    return null;
+end;
+create or replace procedure f_test5 as
+    n numeric;
+begin
+    n := f5;
+    dbms_output.put_line(n);
+    dbms_output.put_line('after f5');
+end;
+call f_test5();
+drop procedure f_test5;
+drop function f5;
 
 
 --+ server-message off
