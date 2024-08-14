@@ -148,106 +148,55 @@ drop procedure f_test2;
 drop function f2;
 
 
-create or replace function f3 return numeric as
+create or replace function rf3 return numeric as
 begin
-    dbms_output.put_line('in f3');
-    return null;
-end;
-create or replace procedure f_test3 as
-    n numeric;
-begin
-    n := f3();
-    dbms_output.put_line(n);
-    dbms_output.put_line('after f3');
-end;
-call f_test3();
-drop procedure f_test3;
-drop function f3;
-
-
-create or replace function f4 return char as
-begin
-    dbms_output.put_line('in f4');
-    return null;
-end;
-create or replace procedure f_test4 as
-    n numeric;
-begin
-    n := f4();
-    dbms_output.put_line(n);
-    dbms_output.put_line('after f4');
-end;
-call f_test4();
-drop procedure f_test4;
-drop function f4;
-
-
-create or replace function f5 return varchar(1) as
-begin
-    dbms_output.put_line('in f5');
-    return null;
-end;
-create or replace procedure f_test5 as
-    n numeric;
-begin
-    n := f5();
-    dbms_output.put_line(n);
-    dbms_output.put_line('after f5');
-end;
-call f_test5();
-drop procedure f_test5;
-drop function f5;
-
-
-create or replace function rf6 return numeric as
-begin
-    dbms_output.put_line('in rf6');
+    dbms_output.put_line('in rf3');
     return 1.2;
 end;
-create or replace procedure rf_test6 as
+create or replace procedure rf_test3 as
     n numeric(2,1);
 begin
-    n := rf6();
+    n := rf3();
     dbms_output.put_line(n);
-    dbms_output.put_line('after rf6');
+    dbms_output.put_line('after rf3');
 end;
-call rf_test6();
-drop procedure rf_test6;
-drop function rf6;
+call rf_test3();
+drop procedure rf_test3;
+drop function rf3;
 
 
-create or replace function rf7 return char as
+create or replace function rf4 return char as
 begin
-    dbms_output.put_line('in rf7');
+    dbms_output.put_line('in rf4');
     return 'char';
 end;
-create or replace procedure rf_test7 as
+create or replace procedure rf_test4 as
     n char(4);
 begin
-    n := rf7();
+    n := rf4();
     dbms_output.put_line(n);
-    dbms_output.put_line('after rf7');
+    dbms_output.put_line('after rf4');
 end;
-call rf_test7();
-drop procedure rf_test7;
-drop function rf7;
+call rf_test4();
+drop procedure rf_test4;
+drop function rf4;
 
 
-create or replace function rf8 return varchar as
+create or replace function rf5 return varchar as
 begin
-    dbms_output.put_line('in rf8');
+    dbms_output.put_line('in rf5');
     return 'varchar';
 end;
-create or replace procedure rf_test8 as
+create or replace procedure rf_test5 as
     n varchar;
 begin
-    n := rf8();
+    n := rf5();
     dbms_output.put_line(n);
-    dbms_output.put_line('after rf8');
+    dbms_output.put_line('after rf5');
 end;
-call rf_test8();
-drop procedure rf_test8;
-drop function rf8;
+call rf_test5();
+drop procedure rf_test5;
+drop function rf5;
 
 
 --+ server-message off
