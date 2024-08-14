@@ -4,6 +4,7 @@
 create or replace procedure p0(n numeric) as 
 begin
     dbms_output.put_line('in p0');
+    dbms_output.put_line(n);
     null;
 end;
 create or replace procedure p_test0 as
@@ -19,6 +20,7 @@ drop procedure p0;
 create or replace procedure p1(n char) as 
 begin
     dbms_output.put_line('in p1');
+    dbms_output.put_line(n);
     null;
 end;
 create or replace procedure p_test1 as
@@ -34,6 +36,7 @@ drop procedure p1;
 create or replace procedure p2(n varchar) as 
 begin
     dbms_output.put_line('in p2');
+    dbms_output.put_line(n);
     null;
 end;
 create or replace procedure p_test2 as
@@ -48,6 +51,7 @@ drop procedure p2;
 create or replace procedure p3(n numeric(2,1)) as 
 begin
     dbms_output.put_line('in p3');
+    dbms_output.put_line(n);
     null;
 end;
 create or replace procedure p_test3 as
@@ -63,6 +67,7 @@ drop procedure p3;
 create or replace procedure p4(n char(1)) as 
 begin
     dbms_output.put_line('in p4');
+    dbms_output.put_line(n);
     null;
 end;
 create or replace procedure p_test4 as
@@ -78,6 +83,7 @@ drop procedure p4;
 create or replace procedure p5(n varchar(1)) as 
 begin
     dbms_output.put_line('in p5');
+    dbms_output.put_line(n);
     null;
 end;
 create or replace procedure p_test5 as
