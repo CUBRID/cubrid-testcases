@@ -45,7 +45,7 @@ call p_test2();
 drop procedure p_test2;
 drop procedure p2;
 
-create or replace procedure p3(n numeric(1,1)) as 
+create or replace procedure p3(n numeric(2,1)) as 
 begin
     dbms_output.put_line('in p3');
     null;
