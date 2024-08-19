@@ -8,10 +8,10 @@ AS
     tmp_str string;
 BEGIN
     EXECUTE IMMEDIATE 'SELECT ''A''||CHR(10)||CHR(13)||''B'' FROM DUAL' INTO tmp_str ;
-    put_line('CHR(10)||CHR(13) ==> ' || tmp_str);
+    dbms_output.put_line('CHR(10)||CHR(13) ==> ' || tmp_str);
 
     EXECUTE IMMEDIATE 'SELECT ''\n''||''B'' FROM DUAL' INTO tmp_str ;
-    put_line(' \n || B ==> ' || tmp_str);
+    dbms_output.put_line(' \n || B ==> ' || tmp_str);
 END;
 
 set system parameters 'no_backslash_escapes=n';
