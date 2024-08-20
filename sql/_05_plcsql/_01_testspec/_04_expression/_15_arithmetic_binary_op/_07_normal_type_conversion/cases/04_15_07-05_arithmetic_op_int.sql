@@ -1184,7 +1184,7 @@ call t_datetime_int(' Arithmetic operations : datetime, int ' ) ;
 drop procedure t_datetime_int ; 
 
 
-
+--BUG NVL(left_timestamp,'NULL') ( normal : 11:30:45 PM 05/05/2024, BUG : 11:30:45.000 PM 05/05/2024)
 select 'This test is a normal run case. ( t_timestamp, int )' ;
 create or replace procedure t_timestamp_int( tc_comment string ) as 
     left_boolean                   boolean       := TRUE;

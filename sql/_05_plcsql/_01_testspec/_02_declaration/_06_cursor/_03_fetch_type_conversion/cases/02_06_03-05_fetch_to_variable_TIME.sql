@@ -251,12 +251,12 @@ end;
 call t_TIMESTAMPTZ_TIME('TIMESTAMPTZ', 'TIME'  ) ;
 drop procedure t_TIMESTAMPTZ_TIME ;
 
---BUG
+
 
 call print_message('t_DOUBLE_TIME. This scenario is a success.');
 create or replace procedure t_DOUBLE_TIME(param_type string, variables_type string ) as 
      CURSOR my_cursor1 IS 
-          SELECT T_DOUBLE FROM plcsql_type_tbl WHERE ID = 1 ;
+          SELECT T_DOUBLE FROM plcsql_type_tbl WHERE ID = 2 ;
 
    VAR TIME  ;
 begin
@@ -272,12 +272,34 @@ end;
 call t_DOUBLE_TIME('DOUBLE', 'TIME'  ) ;
 drop procedure t_DOUBLE_TIME ;
 
---BUG
+
+call print_message('t_DOUBLE_TIME(-1.7976931348623). This scenario is a failure.');
+create or replace procedure t_DOUBLE_TIME(param_type string, variables_type string ) as
+     CURSOR my_cursor1 IS
+          SELECT T_DOUBLE FROM plcsql_type_tbl WHERE ID = 1 ;
+
+   VAR TIME  ;
+begin
+    OPEN my_cursor1 ;
+    LOOP
+        FETCH my_cursor1 INTO VAR;
+        EXIT WHEN my_cursor1%NOTFOUND;
+        dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR );
+    END LOOP;
+    CLOSE my_cursor1;
+
+end;
+call t_DOUBLE_TIME('DOUBLE', 'TIME'  ) ;
+drop procedure t_DOUBLE_TIME ;
+
+
+
+
 
 call print_message('t_FLOAT_TIME. This scenario is a success.');
 create or replace procedure t_FLOAT_TIME(param_type string, variables_type string ) as 
      CURSOR my_cursor1 IS 
-          SELECT T_FLOAT FROM plcsql_type_tbl WHERE ID = 1 ;
+          SELECT T_FLOAT FROM plcsql_type_tbl WHERE ID = 2 ;
      CURSOR my_cursor2 IS 
           SELECT T_REAL FROM plcsql_type_tbl WHERE ID = 2 ;
 
@@ -301,6 +323,45 @@ begin
     
 end;
 call t_FLOAT_TIME('FLOAT', 'TIME'  ) ;
+drop procedure t_FLOAT_TIME ;
+
+
+call print_message('t_FLOAT_TIME. This scenario is a failure.');
+create or replace procedure t_FLOAT_TIME(param_type string, variables_type string ) as
+     CURSOR my_cursor1 IS
+          SELECT T_FLOAT FROM plcsql_type_tbl WHERE ID = 1 ;
+
+   VAR TIME  ;
+begin
+    OPEN my_cursor1 ;
+    LOOP
+        FETCH my_cursor1 INTO VAR;
+        EXIT WHEN my_cursor1%NOTFOUND;
+        dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR );
+    END LOOP;
+    CLOSE my_cursor1;
+end;
+call t_FLOAT_TIME('FLOAT', 'TIME'  ) ;
+drop procedure t_FLOAT_TIME ;
+
+
+call print_message('t_FLOAT_TIME. This scenario is a failure.');
+create or replace procedure t_FLOAT_TIME(param_type string, variables_type string ) as
+     CURSOR my_cursor2 IS
+          SELECT T_REAL FROM plcsql_type_tbl WHERE ID = 1 ;
+
+   VAR TIME  ;
+begin
+    OPEN my_cursor2 ;
+    LOOP
+        FETCH my_cursor2 INTO VAR;
+        EXIT WHEN my_cursor2%NOTFOUND;
+        dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR );
+    END LOOP;
+    CLOSE my_cursor2;
+
+end;
+call t_FLOAT_TIME('REAL', 'TIME'  ) ;
 drop procedure t_FLOAT_TIME ;
 
 
@@ -334,12 +395,12 @@ end;
 call t_NUMERIC_TIME('NUMERIC(8,4)', 'TIME'  ) ;
 drop procedure t_NUMERIC_TIME ;
 
---BUG
+
 
 call print_message('t_BIGINT_TIME. This scenario is a success.');
 create or replace procedure t_BIGINT_TIME(param_type string, variables_type string ) as 
      CURSOR my_cursor1 IS 
-          SELECT T_BIGINT FROM plcsql_type_tbl WHERE ID = 1 ;
+          SELECT T_BIGINT FROM plcsql_type_tbl WHERE ID = 2 ;
 
    VAR TIME  ;
 begin
@@ -355,12 +416,34 @@ end;
 call t_BIGINT_TIME('BIGINT', 'TIME'  ) ;
 drop procedure t_BIGINT_TIME ;
 
---BUG
+
+call print_message('t_BIGINT_TIME. This scenario is a failure.');
+create or replace procedure t_BIGINT_TIME(param_type string, variables_type string ) as
+     CURSOR my_cursor1 IS
+          SELECT T_BIGINT FROM plcsql_type_tbl WHERE ID = 1 ;
+
+   VAR TIME  ;
+begin
+    OPEN my_cursor1 ;
+    LOOP
+        FETCH my_cursor1 INTO VAR;
+        EXIT WHEN my_cursor1%NOTFOUND;
+        dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR );
+    END LOOP;
+    CLOSE my_cursor1;
+
+end;
+call t_BIGINT_TIME('BIGINT', 'TIME'  ) ;
+drop procedure t_BIGINT_TIME ;
+
+
+
+
 
 call print_message('t_INT_TIME. This scenario is a success.');
 create or replace procedure t_INT_TIME(param_type string, variables_type string ) as 
      CURSOR my_cursor1 IS 
-          SELECT T_INT FROM plcsql_type_tbl WHERE ID = 1 ;
+          SELECT T_INT FROM plcsql_type_tbl WHERE ID = 2 ;
      CURSOR my_cursor2 IS 
           SELECT T_INTEGER FROM plcsql_type_tbl WHERE ID = 2 ;
 
@@ -386,12 +469,53 @@ end;
 call t_INT_TIME('INT', 'TIME'  ) ;
 drop procedure t_INT_TIME ;
 
---BUG
+
+call print_message('t_INT_TIME. This scenario is a failure.');
+create or replace procedure t_INT_TIME(param_type string, variables_type string ) as
+     CURSOR my_cursor1 IS
+          SELECT T_INT FROM plcsql_type_tbl WHERE ID = 1 ;
+
+   VAR TIME  ;
+begin
+    OPEN my_cursor1 ;
+    LOOP
+        FETCH my_cursor1 INTO VAR;
+        EXIT WHEN my_cursor1%NOTFOUND;
+        dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR );
+    END LOOP;
+    CLOSE my_cursor1;
+end;
+call t_INT_TIME('INT', 'TIME'  ) ;
+drop procedure t_INT_TIME ;
+
+
+call print_message('t_INT_TIME. This scenario is a failure.');
+create or replace procedure t_INT_TIME(param_type string, variables_type string ) as
+     CURSOR my_cursor2 IS
+          SELECT T_INTEGER FROM plcsql_type_tbl WHERE ID = 1 ;
+
+   VAR TIME  ;
+begin
+    OPEN my_cursor2 ;
+    LOOP
+        FETCH my_cursor2 INTO VAR;
+        EXIT WHEN my_cursor2%NOTFOUND;
+        dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR );
+    END LOOP;
+    CLOSE my_cursor2;
+
+end;
+call t_INT_TIME('INTEGER', 'TIME'  ) ;
+drop procedure t_INT_TIME ;
+
+
+
+
 
 call print_message('t_SHORT_TIME. This scenario is a success.');
 create or replace procedure t_SHORT_TIME(param_type string, variables_type string ) as 
      CURSOR my_cursor1 IS 
-          SELECT T_SHORT FROM plcsql_type_tbl WHERE ID = 1 ;
+          SELECT T_SHORT FROM plcsql_type_tbl WHERE ID = 2 ;
      CURSOR my_cursor2 IS 
           SELECT T_SMALLINT FROM plcsql_type_tbl WHERE ID = 2 ;
 
@@ -416,6 +540,47 @@ begin
 end;
 call t_SHORT_TIME('SHORT', 'TIME'  ) ;
 drop procedure t_SHORT_TIME ;
+
+
+call print_message('t_SHORT_TIME. This scenario is a failure.');
+create or replace procedure t_SHORT_TIME(param_type string, variables_type string ) as
+     CURSOR my_cursor1 IS
+          SELECT T_SHORT FROM plcsql_type_tbl WHERE ID = 1 ;
+
+   VAR TIME  ;
+begin
+    OPEN my_cursor1 ;
+    LOOP
+        FETCH my_cursor1 INTO VAR;
+        EXIT WHEN my_cursor1%NOTFOUND;
+        dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR );
+    END LOOP;
+    CLOSE my_cursor1;
+
+end;
+call t_SHORT_TIME('SHORT', 'TIME'  ) ;
+drop procedure t_SHORT_TIME ;
+
+
+call print_message('t_SHORT_TIME. This scenario is a failure.');
+create or replace procedure t_SHORT_TIME(param_type string, variables_type string ) as
+     CURSOR my_cursor2 IS
+          SELECT T_SMALLINT FROM plcsql_type_tbl WHERE ID = 1 ;
+
+   VAR TIME  ;
+begin
+    OPEN my_cursor2 ;
+    LOOP
+        FETCH my_cursor2 INTO VAR;
+        EXIT WHEN my_cursor2%NOTFOUND;
+        dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR );
+    END LOOP;
+    CLOSE my_cursor2;
+
+end;
+call t_SHORT_TIME('SMALLINT', 'TIME'  ) ;
+drop procedure t_SHORT_TIME ;
+
 
 
 

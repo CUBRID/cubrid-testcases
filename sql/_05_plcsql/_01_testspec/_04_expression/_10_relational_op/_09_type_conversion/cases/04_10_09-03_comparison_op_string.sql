@@ -458,7 +458,7 @@ begin
     dbms_output.put_line('');
     dbms_output.put_line('********************************');
     dbms_output.put_line('big_short = ' || NVL(big_short,'NULL') );
-    dbms_output.put_line('small_string_short = ' || NVL(small_string,'NULL') );
+    dbms_output.put_line('small_string_short = ' || NVL(small_string_short,'NULL') );
     dbms_output.put_line('********************************');
     dbms_output.put_line('');
 
@@ -624,7 +624,7 @@ begin
     dbms_output.put_line('');
     dbms_output.put_line('********************************');
     dbms_output.put_line('big_int = ' || NVL(big_int,'NULL') );
-    dbms_output.put_line('small_string_int = ' || NVL(small_string,'NULL') );
+    dbms_output.put_line('small_string_int = ' || NVL(small_string_int,'NULL') );
     dbms_output.put_line('********************************');
     dbms_output.put_line('');
 
@@ -790,7 +790,7 @@ begin
     dbms_output.put_line('');
     dbms_output.put_line('********************************');
     dbms_output.put_line('big_bigint = ' || NVL(big_bigint,'NULL') );
-    dbms_output.put_line('small_string_bigint = ' || NVL(small_string,'NULL') );
+    dbms_output.put_line('small_string_bigint = ' || NVL(small_string_bigint,'NULL') );
     dbms_output.put_line('********************************');
     dbms_output.put_line('');
 
@@ -956,7 +956,7 @@ begin
     dbms_output.put_line('');
     dbms_output.put_line('********************************');
     dbms_output.put_line('big_numeric = ' || NVL(big_numeric,'NULL') );
-    dbms_output.put_line('small_string_numeric = ' || NVL(small_string,'NULL') );
+    dbms_output.put_line('small_string_numeric = ' || NVL(small_string_numeric,'NULL') );
     dbms_output.put_line('********************************');
     dbms_output.put_line('');
 
@@ -1122,7 +1122,7 @@ begin
     dbms_output.put_line('');
     dbms_output.put_line('********************************');
     dbms_output.put_line('big_float = ' || NVL(big_float,'NULL') );
-    dbms_output.put_line('small_string_float = ' || NVL(small_string,'NULL') );
+    dbms_output.put_line('small_string_float = ' || NVL(small_string_float,'NULL') );
     dbms_output.put_line('********************************');
     dbms_output.put_line('');
 
@@ -1288,7 +1288,7 @@ begin
     dbms_output.put_line('');
     dbms_output.put_line('********************************');
     dbms_output.put_line('big_double = ' || NVL(big_double,'NULL') );
-    dbms_output.put_line('small_string_double = ' || NVL(small_string,'NULL') );
+    dbms_output.put_line('small_string_double = ' || NVL(small_string_double,'NULL') );
     dbms_output.put_line('********************************');
     dbms_output.put_line('');
 
@@ -1454,7 +1454,7 @@ begin
     dbms_output.put_line('');
     dbms_output.put_line('********************************');
     dbms_output.put_line('big_date = ' || NVL(big_date,'NULL') );
-    dbms_output.put_line('small_string_date = ' || NVL(small_string,'NULL') );
+    dbms_output.put_line('small_string_date = ' || NVL(small_string_date,'NULL') );
     dbms_output.put_line('********************************');
     dbms_output.put_line('');
 
@@ -1620,7 +1620,7 @@ begin
     dbms_output.put_line('');
     dbms_output.put_line('********************************');
     dbms_output.put_line('big_time = ' || NVL(big_time,'NULL') );
-    dbms_output.put_line('small_string_time = ' || NVL(small_string,'NULL') );
+    dbms_output.put_line('small_string_time = ' || NVL(small_string_time,'NULL') );
     dbms_output.put_line('********************************');
     dbms_output.put_line('');
 
@@ -1786,7 +1786,7 @@ begin
     dbms_output.put_line('');
     dbms_output.put_line('********************************');
     dbms_output.put_line('big_datetime = ' || NVL(big_datetime,'NULL') );
-    dbms_output.put_line('small_string_datetime = ' || NVL(small_string,'NULL') );
+    dbms_output.put_line('small_string_datetime = ' || NVL(small_string_datetime,'NULL') );
     dbms_output.put_line('********************************');
     dbms_output.put_line('');
 
@@ -1952,7 +1952,7 @@ begin
     dbms_output.put_line('');
     dbms_output.put_line('********************************');
     dbms_output.put_line('big_timestamp = ' || NVL(big_timestamp,'NULL') );
-    dbms_output.put_line('small_string_timestamp = ' || NVL(small_string,'NULL') );
+    dbms_output.put_line('small_string_timestamp = ' || NVL(small_string_timestamp,'NULL') );
     dbms_output.put_line('********************************');
     dbms_output.put_line('');
 

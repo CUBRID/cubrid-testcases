@@ -89,7 +89,8 @@ call print_message('t_NUMERIC_FLOAT. This scenario is a success.');
 create or replace procedure t_NUMERIC_FLOAT(sql_type string, procedure_type string, param FLOAT ) as begin
     dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param ); 
 end;
-call t_NUMERIC_FLOAT('NUMERIC(8,4)', 'FLOAT', cast( 0.123456789 as numeric(4,4) ) ) ;
+call t_NUMERIC_FLOAT('NUMERIC(4,4)', 'FLOAT', cast( 0.123456789 as numeric(4,4) ) ) ;
+call t_NUMERIC_FLOAT('NUMERIC(8,4)', 'FLOAT', cast( 0.123456789 as numeric(8,4) ) ) ;
 drop procedure t_NUMERIC_FLOAT ;
 
 

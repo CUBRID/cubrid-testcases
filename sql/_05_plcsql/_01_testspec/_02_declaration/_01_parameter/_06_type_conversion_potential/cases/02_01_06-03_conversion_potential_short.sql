@@ -1,6 +1,6 @@
 --+ server-message on
---BUG
-select 'An error occurs. ( t_boolean, short )' ;
+
+select 'It is called normally. ( t_boolean, short )' ;
 create or replace procedure t_short( from_type string, param short ) as 
 begin 
     dbms_output.put_line(from_type||' to short ' ) ;
@@ -85,14 +85,25 @@ drop procedure t_short ;
 
 
 select 'It is called normally. ( t_double, short )' ;
-create or replace procedure t_short( from_type string, param short ) as 
-begin 
+create or replace procedure t_short( from_type string, param short ) as
+begin
     dbms_output.put_line(from_type||' to short ' ) ;
     dbms_output.put_line('param value = '|| param );
 end;
 
-call t_short('double', cast(56789.1234 as double) ) ; 
-drop procedure t_short ; 
+call t_short('double', cast(1024.1234 as double) ) ;
+drop procedure t_short ;
+
+-- BUG ( normal : overflow error,  BUG : -8747 )
+select 'An error occurs. ( t_double, short )' ;
+create or replace procedure t_short( from_type string, param short ) as
+begin
+    dbms_output.put_line(from_type||' to short ' ) ;
+    dbms_output.put_line('param value = '|| param );
+end;
+
+call t_short('double', cast(56789.1234 as double) ) ;
+drop procedure t_short ;
 
 
 

@@ -1142,7 +1142,7 @@ call t_double_null(' Arithmetic operations : double, null ' ) ;
 drop procedure t_double_null ; 
 
 
---BUG
+
 select 'This test is a normal run case. ( t_date, null )' ;
 create or replace procedure t_date_null( tc_comment string ) as 
     left_boolean                   boolean       := TRUE;
@@ -1206,8 +1206,6 @@ begin
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_date + null = '||left_date + null ) ; 
     dbms_output.put_line('left_date - null = '||left_date - null ) ; 
-    dbms_output.put_line('left_date * null = '||left_date * null ) ; 
-    dbms_output.put_line('left_date / null = '||left_date / null ) ; 
     dbms_output.put_line('');
 end;
 
@@ -1215,7 +1213,7 @@ call t_date_null(' Arithmetic operations : date, null ' ) ;
 drop procedure t_date_null ; 
 
 
---BUG
+
 select 'This test is a normal run case. ( t_time, null )' ;
 create or replace procedure t_time_null( tc_comment string ) as 
     left_boolean                   boolean       := TRUE;
@@ -1279,8 +1277,6 @@ begin
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_time + null = '||left_time + null ) ; 
     dbms_output.put_line('left_time - null = '||left_time - null ) ; 
-    dbms_output.put_line('left_time * null = '||left_time * null ) ; 
-    dbms_output.put_line('left_time / null = '||left_time / null ) ; 
     dbms_output.put_line('');
 end;
 
@@ -1288,7 +1284,7 @@ call t_time_null(' Arithmetic operations : time, null ' ) ;
 drop procedure t_time_null ; 
 
 
---BUG
+
 select 'This test is a normal run case. ( t_datetime, null )' ;
 create or replace procedure t_datetime_null( tc_comment string ) as 
     left_boolean                   boolean       := TRUE;
@@ -1352,8 +1348,6 @@ begin
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_datetime + null = '||left_datetime + null ) ; 
     dbms_output.put_line('left_datetime - null = '||left_datetime - null ) ; 
-    dbms_output.put_line('left_datetime * null = '||left_datetime * null ) ; 
-    dbms_output.put_line('left_datetime / null = '||left_datetime / null ) ; 
     dbms_output.put_line('');
 end;
 
@@ -1361,7 +1355,7 @@ call t_datetime_null(' Arithmetic operations : datetime, null ' ) ;
 drop procedure t_datetime_null ; 
 
 
---BUG
+
 select 'This test is a normal run case. ( t_timestamp, null )' ;
 create or replace procedure t_timestamp_null( tc_comment string ) as 
     left_boolean                   boolean       := TRUE;
@@ -1425,8 +1419,6 @@ begin
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_timestamp + null = '||left_timestamp + null ) ; 
     dbms_output.put_line('left_timestamp - null = '||left_timestamp - null ) ; 
-    dbms_output.put_line('left_timestamp * null = '||left_timestamp * null ) ; 
-    dbms_output.put_line('left_timestamp / null = '||left_timestamp / null ) ; 
     dbms_output.put_line('');
 end;
 

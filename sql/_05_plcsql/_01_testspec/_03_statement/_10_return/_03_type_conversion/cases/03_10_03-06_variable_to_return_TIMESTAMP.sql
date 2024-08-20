@@ -247,15 +247,15 @@ drop function t_BITVARYING_TIMESTAMP ;
 
 call print_message('t_CHAR_TIMESTAMP. This scenario is a success.');
 create or replace function t_CHAR_TIMESTAMP(variables_type string, return_type string, param_value CHAR ) RETURN TIMESTAMP IS 
-   VAR CHAR  ;
+   VAR CHAR(30)  ;
 begin
    VAR := param_value ;
         dbms_output.put_line('variables_type = ' ||variables_type ||', return_type = '||return_type||', param_value(variable value) = '|| VAR ); 
     
    RETURN VAR ; 
 end;
-select  t_CHAR_TIMESTAMP('CHAR', 'TIMESTAMP', cast( '09/01/2005 05:05:05 pm' as char(22) ) ), 
- typeof( t_CHAR_TIMESTAMP('CHAR', 'TIMESTAMP', cast( '09/01/2005 05:05:05 pm' as char(22) ) ) ) ;
+select  t_CHAR_TIMESTAMP('CHAR', 'TIMESTAMP', cast( '09/01/2005 05:05:05 pm' as char(30) ) ), 
+ typeof( t_CHAR_TIMESTAMP('CHAR', 'TIMESTAMP', cast( '09/01/2005 05:05:05 pm' as char(30) ) ) ) ;
 drop function t_CHAR_TIMESTAMP ;
 
 

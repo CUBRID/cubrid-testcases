@@ -228,7 +228,10 @@ call t_DOUBLE_NUMERIC('DOUBLE', 'NUMERIC(38,15)'  ) ;
 drop procedure t_DOUBLE_NUMERIC ;
 
 
-
+--BUG ( normal : -3.402823000000000, BUG : -3.402823448181152 )
+--BUG ( normal : 3.402823000000000, BUG : 3.402800083160400 )
+--BUG ( normal : -3.402822000000000, BUG : 3.402822971343994 )
+--BUG ( normal : 3.402823000000000, BUG : 3.402823448181152 )
 call print_message('t_FLOAT_NUMERIC. This scenario is a success.');
 create or replace procedure t_FLOAT_NUMERIC(param_type string, variables_type string ) as 
 VAR NUMERIC(38,15)  ;
@@ -254,17 +257,17 @@ create or replace procedure t_NUMERIC_NUMERIC(param_type string, variables_type 
 VAR NUMERIC(38,15)  ;
 begin
     SELECT T_NUMERIC INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
-    dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
+    dbms_output.put_line('select_type = 'NUMERIC(38,15)', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
     SELECT  T_NUMERIC INTO VAR FROM plcsql_type_tbl WHERE ID = 2 ;
-    dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
+    dbms_output.put_line('param_type = 'NUMERIC(38,15)', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
 
 
     SELECT  T_DECIMAL INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
-    dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
+    dbms_output.put_line('select_type = 'DECIMAL', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
     SELECT T_DECIMAL INTO VAR FROM plcsql_type_tbl WHERE ID = 2 ;
-    dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
+    dbms_output.put_line('select_type = 'DECIMAL', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
 end;
-call t_NUMERIC_NUMERIC('NUMERIC(8,4)', 'NUMERIC(38,15)'  ) ;
+call t_NUMERIC_NUMERIC('NUMERIC(38,15), DECIMAL', 'NUMERIC(38,15)'  ) ;
 drop procedure t_NUMERIC_NUMERIC ;
 
 

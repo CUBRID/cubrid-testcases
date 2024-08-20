@@ -59,7 +59,7 @@ begin
 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('null = ' ||  NVL(null,'NULL') ); 
-    dbms_output.put_line('right_sys_refcursor = ' ||NVL(right_sys_refcursor,'NULL') ); 
+    dbms_output.put_line('right_sys_refcursor = ' ||right_sys_refcursor ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('null mod right_sys_refcursor = '||null mod right_sys_refcursor ) ; 
     dbms_output.put_line('');
@@ -124,7 +124,7 @@ begin
 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('null = ' ||  NVL(null,'NULL') ); 
-    dbms_output.put_line('right_sys_refcursor = ' ||NVL(right_sys_refcursor,'NULL') ); 
+    dbms_output.put_line('right_sys_refcursor = ' ||right_sys_refcursor ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('null div right_sys_refcursor = '||null div right_sys_refcursor ) ; 
     dbms_output.put_line('');
@@ -188,8 +188,8 @@ create or replace procedure t_compile_error_boolean_sys_refcursor( tc_comment st
 begin 
 
     dbms_output.put_line('***************************************');
-    dbms_output.put_line('left_boolean = ' || 'TRUE'' ,'NULL') ); 
-    dbms_output.put_line('right_sys_refcursor = ' ||NVL(right_sys_refcursor,'NULL') ); 
+    dbms_output.put_line('left_boolean = ' || 'TRUE' ); 
+    dbms_output.put_line('right_sys_refcursor = ' ||right_sys_refcursor ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_boolean mod right_sys_refcursor = '||left_boolean mod right_sys_refcursor ) ; 
     dbms_output.put_line('');
@@ -253,8 +253,8 @@ create or replace procedure t_compile_error_boolean_sys_refcursor( tc_comment st
 begin 
 
     dbms_output.put_line('***************************************');
-    dbms_output.put_line('left_boolean = ' || 'TRUE'' ,'NULL') ); 
-    dbms_output.put_line('right_sys_refcursor = ' ||NVL(right_sys_refcursor,'NULL') ); 
+    dbms_output.put_line('left_boolean = ' || 'TRUE' ); 
+    dbms_output.put_line('right_sys_refcursor = ' ||right_sys_refcursor ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_boolean div right_sys_refcursor = '||left_boolean div right_sys_refcursor ) ; 
     dbms_output.put_line('');
@@ -319,7 +319,7 @@ begin
 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_string = ' ||  NVL(left_string,'NULL') ); 
-    dbms_output.put_line('right_sys_refcursor = ' ||NVL(right_sys_refcursor,'NULL') ); 
+    dbms_output.put_line('right_sys_refcursor = ' ||right_sys_refcursor ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_string mod right_sys_refcursor = '||left_string mod right_sys_refcursor ) ; 
     dbms_output.put_line('');
@@ -384,7 +384,7 @@ begin
 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_string = ' ||  NVL(left_string,'NULL') ); 
-    dbms_output.put_line('right_sys_refcursor = ' ||NVL(right_sys_refcursor,'NULL') ); 
+    dbms_output.put_line('right_sys_refcursor = ' ||right_sys_refcursor ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_string div right_sys_refcursor = '||left_string div right_sys_refcursor ) ; 
     dbms_output.put_line('');
@@ -449,7 +449,7 @@ begin
 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_short = ' ||  NVL(left_short,'NULL') ); 
-    dbms_output.put_line('right_sys_refcursor = ' ||NVL(right_sys_refcursor,'NULL') ); 
+    dbms_output.put_line('right_sys_refcursor = ' ||right_sys_refcursor ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_short mod right_sys_refcursor = '||left_short mod right_sys_refcursor ) ; 
     dbms_output.put_line('');
@@ -514,7 +514,7 @@ begin
 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_short = ' ||  NVL(left_short,'NULL') ); 
-    dbms_output.put_line('right_sys_refcursor = ' ||NVL(right_sys_refcursor,'NULL') ); 
+    dbms_output.put_line('right_sys_refcursor = ' ||right_sys_refcursor ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_short div right_sys_refcursor = '||left_short div right_sys_refcursor ) ; 
     dbms_output.put_line('');
@@ -579,7 +579,7 @@ begin
 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_int = ' ||  NVL(left_int,'NULL') ); 
-    dbms_output.put_line('right_sys_refcursor = ' ||NVL(right_sys_refcursor,'NULL') ); 
+    dbms_output.put_line('right_sys_refcursor = ' ||right_sys_refcursor ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_int mod right_sys_refcursor = '||left_int mod right_sys_refcursor ) ; 
     dbms_output.put_line('');
@@ -644,7 +644,7 @@ begin
 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_int = ' ||  NVL(left_int,'NULL') ); 
-    dbms_output.put_line('right_sys_refcursor = ' ||NVL(right_sys_refcursor,'NULL') ); 
+    dbms_output.put_line('right_sys_refcursor = ' ||right_sys_refcursor ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_int div right_sys_refcursor = '||left_int div right_sys_refcursor ) ; 
     dbms_output.put_line('');
@@ -709,7 +709,7 @@ begin
 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_bigint = ' ||  NVL(left_bigint,'NULL') ); 
-    dbms_output.put_line('right_sys_refcursor = ' ||NVL(right_sys_refcursor,'NULL') ); 
+    dbms_output.put_line('right_sys_refcursor = ' ||right_sys_refcursor ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_bigint mod right_sys_refcursor = '||left_bigint mod right_sys_refcursor ) ; 
     dbms_output.put_line('');
@@ -774,7 +774,7 @@ begin
 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_bigint = ' ||  NVL(left_bigint,'NULL') ); 
-    dbms_output.put_line('right_sys_refcursor = ' ||NVL(right_sys_refcursor,'NULL') ); 
+    dbms_output.put_line('right_sys_refcursor = ' ||right_sys_refcursor ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_bigint div right_sys_refcursor = '||left_bigint div right_sys_refcursor ) ; 
     dbms_output.put_line('');
@@ -839,7 +839,7 @@ begin
 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_numeric = ' ||  NVL(left_numeric,'NULL') ); 
-    dbms_output.put_line('right_sys_refcursor = ' ||NVL(right_sys_refcursor,'NULL') ); 
+    dbms_output.put_line('right_sys_refcursor = ' ||right_sys_refcursor ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_numeric mod right_sys_refcursor = '||left_numeric mod right_sys_refcursor ) ; 
     dbms_output.put_line('');
@@ -904,7 +904,7 @@ begin
 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_numeric = ' ||  NVL(left_numeric,'NULL') ); 
-    dbms_output.put_line('right_sys_refcursor = ' ||NVL(right_sys_refcursor,'NULL') ); 
+    dbms_output.put_line('right_sys_refcursor = ' ||right_sys_refcursor ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_numeric div right_sys_refcursor = '||left_numeric div right_sys_refcursor ) ; 
     dbms_output.put_line('');
@@ -969,7 +969,7 @@ begin
 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_float = ' ||  NVL(left_float,'NULL') ); 
-    dbms_output.put_line('right_sys_refcursor = ' ||NVL(right_sys_refcursor,'NULL') ); 
+    dbms_output.put_line('right_sys_refcursor = ' ||right_sys_refcursor ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_float mod right_sys_refcursor = '||left_float mod right_sys_refcursor ) ; 
     dbms_output.put_line('');
@@ -1034,7 +1034,7 @@ begin
 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_float = ' ||  NVL(left_float,'NULL') ); 
-    dbms_output.put_line('right_sys_refcursor = ' ||NVL(right_sys_refcursor,'NULL') ); 
+    dbms_output.put_line('right_sys_refcursor = ' ||right_sys_refcursor ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_float div right_sys_refcursor = '||left_float div right_sys_refcursor ) ; 
     dbms_output.put_line('');
@@ -1099,7 +1099,7 @@ begin
 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_double = ' ||  NVL(left_double,'NULL') ); 
-    dbms_output.put_line('right_sys_refcursor = ' ||NVL(right_sys_refcursor,'NULL') ); 
+    dbms_output.put_line('right_sys_refcursor = ' ||right_sys_refcursor ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_double mod right_sys_refcursor = '||left_double mod right_sys_refcursor ) ; 
     dbms_output.put_line('');
@@ -1164,7 +1164,7 @@ begin
 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_double = ' ||  NVL(left_double,'NULL') ); 
-    dbms_output.put_line('right_sys_refcursor = ' ||NVL(right_sys_refcursor,'NULL') ); 
+    dbms_output.put_line('right_sys_refcursor = ' ||right_sys_refcursor ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_double div right_sys_refcursor = '||left_double div right_sys_refcursor ) ; 
     dbms_output.put_line('');
@@ -1229,7 +1229,7 @@ begin
 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_date = ' ||  NVL(left_date,'NULL') ); 
-    dbms_output.put_line('right_sys_refcursor = ' ||NVL(right_sys_refcursor,'NULL') ); 
+    dbms_output.put_line('right_sys_refcursor = ' ||right_sys_refcursor ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_date mod right_sys_refcursor = '||left_date mod right_sys_refcursor ) ; 
     dbms_output.put_line('');
@@ -1294,7 +1294,7 @@ begin
 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_date = ' ||  NVL(left_date,'NULL') ); 
-    dbms_output.put_line('right_sys_refcursor = ' ||NVL(right_sys_refcursor,'NULL') ); 
+    dbms_output.put_line('right_sys_refcursor = ' ||right_sys_refcursor ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_date div right_sys_refcursor = '||left_date div right_sys_refcursor ) ; 
     dbms_output.put_line('');
@@ -1359,7 +1359,7 @@ begin
 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_time = ' ||  NVL(left_time,'NULL') ); 
-    dbms_output.put_line('right_sys_refcursor = ' ||NVL(right_sys_refcursor,'NULL') ); 
+    dbms_output.put_line('right_sys_refcursor = ' ||right_sys_refcursor ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_time mod right_sys_refcursor = '||left_time mod right_sys_refcursor ) ; 
     dbms_output.put_line('');
@@ -1424,7 +1424,7 @@ begin
 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_time = ' ||  NVL(left_time,'NULL') ); 
-    dbms_output.put_line('right_sys_refcursor = ' ||NVL(right_sys_refcursor,'NULL') ); 
+    dbms_output.put_line('right_sys_refcursor = ' ||right_sys_refcursor ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_time div right_sys_refcursor = '||left_time div right_sys_refcursor ) ; 
     dbms_output.put_line('');
@@ -1489,7 +1489,7 @@ begin
 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_datetime = ' ||  NVL(left_datetime,'NULL') ); 
-    dbms_output.put_line('right_sys_refcursor = ' ||NVL(right_sys_refcursor,'NULL') ); 
+    dbms_output.put_line('right_sys_refcursor = ' ||right_sys_refcursor ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_datetime mod right_sys_refcursor = '||left_datetime mod right_sys_refcursor ) ; 
     dbms_output.put_line('');
@@ -1554,7 +1554,7 @@ begin
 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_datetime = ' ||  NVL(left_datetime,'NULL') ); 
-    dbms_output.put_line('right_sys_refcursor = ' ||NVL(right_sys_refcursor,'NULL') ); 
+    dbms_output.put_line('right_sys_refcursor = ' ||right_sys_refcursor ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_datetime div right_sys_refcursor = '||left_datetime div right_sys_refcursor ) ; 
     dbms_output.put_line('');
@@ -1619,7 +1619,7 @@ begin
 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_timestamp = ' ||  NVL(left_timestamp,'NULL') ); 
-    dbms_output.put_line('right_sys_refcursor = ' ||NVL(right_sys_refcursor,'NULL') ); 
+    dbms_output.put_line('right_sys_refcursor = ' ||right_sys_refcursor ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_timestamp mod right_sys_refcursor = '||left_timestamp mod right_sys_refcursor ) ; 
     dbms_output.put_line('');
@@ -1684,7 +1684,7 @@ begin
 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_timestamp = ' ||  NVL(left_timestamp,'NULL') ); 
-    dbms_output.put_line('right_sys_refcursor = ' ||NVL(right_sys_refcursor,'NULL') ); 
+    dbms_output.put_line('right_sys_refcursor = ' ||right_sys_refcursor ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_timestamp div right_sys_refcursor = '||left_timestamp div right_sys_refcursor ) ; 
     dbms_output.put_line('');
@@ -1748,8 +1748,8 @@ create or replace procedure t_compile_error_sys_refcursor_sys_refcursor( tc_comm
 begin 
 
     dbms_output.put_line('***************************************');
-    dbms_output.put_line('left_sys_refcursor = ' ||  NVL(left_sys_refcursor,'NULL') ); 
-    dbms_output.put_line('right_sys_refcursor = ' ||NVL(right_sys_refcursor,'NULL') ); 
+    dbms_output.put_line('left_sys_refcursor = ' ||  left_sys_refcursor ); 
+    dbms_output.put_line('right_sys_refcursor = ' ||right_sys_refcursor ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_sys_refcursor mod right_sys_refcursor = '||left_sys_refcursor mod right_sys_refcursor ) ; 
     dbms_output.put_line('');
@@ -1813,8 +1813,8 @@ create or replace procedure t_compile_error_sys_refcursor_sys_refcursor( tc_comm
 begin 
 
     dbms_output.put_line('***************************************');
-    dbms_output.put_line('left_sys_refcursor = ' ||  NVL(left_sys_refcursor,'NULL') ); 
-    dbms_output.put_line('right_sys_refcursor = ' ||NVL(right_sys_refcursor,'NULL') ); 
+    dbms_output.put_line('left_sys_refcursor = ' ||  left_sys_refcursor ); 
+    dbms_output.put_line('right_sys_refcursor = ' ||right_sys_refcursor ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_sys_refcursor div right_sys_refcursor = '||left_sys_refcursor div right_sys_refcursor ) ; 
     dbms_output.put_line('');
@@ -1878,8 +1878,8 @@ create or replace procedure t_compile_error_cursor_sys_refcursor( tc_comment str
 begin 
 
     dbms_output.put_line('***************************************');
-    dbms_output.put_line('left_cursor = ' ||  NVL(left_cursor,'NULL') ); 
-    dbms_output.put_line('right_sys_refcursor = ' ||NVL(right_sys_refcursor,'NULL') ); 
+    dbms_output.put_line('left_cursor = ' ||  left_cursor ); 
+    dbms_output.put_line('right_sys_refcursor = ' ||right_sys_refcursor ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_cursor mod right_sys_refcursor = '||left_cursor mod right_sys_refcursor ) ; 
     dbms_output.put_line('');
@@ -1943,8 +1943,8 @@ create or replace procedure t_compile_error_cursor_sys_refcursor( tc_comment str
 begin 
 
     dbms_output.put_line('***************************************');
-    dbms_output.put_line('left_cursor = ' ||  NVL(left_cursor,'NULL') ); 
-    dbms_output.put_line('right_sys_refcursor = ' ||NVL(right_sys_refcursor,'NULL') ); 
+    dbms_output.put_line('left_cursor = ' ||  left_cursor ); 
+    dbms_output.put_line('right_sys_refcursor = ' ||right_sys_refcursor ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_cursor div right_sys_refcursor = '||left_cursor div right_sys_refcursor ) ; 
     dbms_output.put_line('');

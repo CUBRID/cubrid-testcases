@@ -144,7 +144,8 @@ VAR1 := VAR ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', param=>variables = '|| VAR ); 
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
-call t_NUMERIC_BIGINT('NUMERIC(8,4)', 'BIGINT', cast( 0.123456789 as numeric(4,4) ) ) ;
+call t_NUMERIC_BIGINT('NUMERIC(4,4)', 'BIGINT', cast( 0.123456789 as numeric(4,4) ) ) ;
+call t_NUMERIC_BIGINT('NUMERIC(8,4)', 'BIGINT', cast( 0.123456789 as numeric(8,4) ) ) ;
 drop procedure t_NUMERIC_BIGINT ;
 
 

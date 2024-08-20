@@ -90,7 +90,7 @@ create or replace procedure t_DATETIME_CHAR(param_type string, variables_type st
      CURSOR my_cursor1 IS 
           SELECT T_DATETIME FROM plcsql_type_tbl WHERE ID = 1 ;
 
-   VAR CHAR  ;
+   VAR CHAR(30)  ;
 begin
     OPEN my_cursor1 ; 
     LOOP 
@@ -111,7 +111,7 @@ create or replace procedure t_DATETIMELTZ_CHAR(param_type string, variables_type
      CURSOR my_cursor1 IS 
           SELECT T_DATETIMELTZ FROM plcsql_type_tbl WHERE ID = 1 ;
 
-   VAR CHAR  ;
+   VAR CHAR(30)  ;
 begin
     OPEN my_cursor1 ; 
     LOOP 
@@ -132,7 +132,7 @@ create or replace procedure t_DATETIMETZ_CHAR(param_type string, variables_type 
      CURSOR my_cursor1 IS 
           SELECT T_DATETIMETZ FROM plcsql_type_tbl WHERE ID = 1 ;
 
-   VAR CHAR  ;
+   VAR CHAR(30)  ;
 begin
     OPEN my_cursor1 ; 
     LOOP 
@@ -153,7 +153,7 @@ create or replace procedure t_DATE_CHAR(param_type string, variables_type string
      CURSOR my_cursor1 IS 
           SELECT T_DATE FROM plcsql_type_tbl WHERE ID = 1 ;
 
-   VAR CHAR  ;
+   VAR CHAR(30)  ;
 begin
     OPEN my_cursor1 ; 
     LOOP 
@@ -174,7 +174,7 @@ create or replace procedure t_TIME_CHAR(param_type string, variables_type string
      CURSOR my_cursor1 IS 
           SELECT T_TIME FROM plcsql_type_tbl WHERE ID = 1 ;
 
-   VAR CHAR  ;
+   VAR CHAR(30)  ;
 begin
     OPEN my_cursor1 ; 
     LOOP 
@@ -195,7 +195,7 @@ create or replace procedure t_TIMESTAMP_CHAR(param_type string, variables_type s
      CURSOR my_cursor1 IS 
           SELECT T_TIMESTAMP FROM plcsql_type_tbl WHERE ID = 1 ;
 
-   VAR CHAR  ;
+   VAR CHAR(30)  ;
 begin
     OPEN my_cursor1 ; 
     LOOP 
@@ -216,7 +216,7 @@ create or replace procedure t_TIMESTAMPLTZ_CHAR(param_type string, variables_typ
      CURSOR my_cursor1 IS 
           SELECT T_TIMESTAMPLTZ FROM plcsql_type_tbl WHERE ID = 1 ;
 
-   VAR CHAR  ;
+   VAR CHAR(30)  ;
 begin
     OPEN my_cursor1 ; 
     LOOP 
@@ -237,7 +237,7 @@ create or replace procedure t_TIMESTAMPTZ_CHAR(param_type string, variables_type
      CURSOR my_cursor1 IS 
           SELECT T_TIMESTAMPTZ FROM plcsql_type_tbl WHERE ID = 1 ;
 
-   VAR CHAR  ;
+   VAR CHAR(30)  ;
 begin
     OPEN my_cursor1 ; 
     LOOP 
@@ -258,7 +258,7 @@ create or replace procedure t_DOUBLE_CHAR(param_type string, variables_type stri
      CURSOR my_cursor1 IS 
           SELECT T_DOUBLE FROM plcsql_type_tbl WHERE ID = 1 ;
 
-   VAR CHAR  ;
+   VAR CHAR(30)  ;
 begin
     OPEN my_cursor1 ; 
     LOOP 
@@ -281,7 +281,7 @@ create or replace procedure t_FLOAT_CHAR(param_type string, variables_type strin
      CURSOR my_cursor2 IS 
           SELECT T_REAL FROM plcsql_type_tbl WHERE ID = 2 ;
 
-   VAR CHAR  ;
+   VAR CHAR(30)  ;
 begin
     OPEN my_cursor1 ; 
     LOOP 
@@ -312,7 +312,7 @@ create or replace procedure t_NUMERIC_CHAR(param_type string, variables_type str
      CURSOR my_cursor2 IS 
           SELECT T_DECIMAL FROM plcsql_type_tbl WHERE ID = 2 ;
 
-   VAR CHAR  ;
+   VAR CHAR(30)  ;
 begin
     OPEN my_cursor1 ; 
     LOOP 
@@ -341,7 +341,7 @@ create or replace procedure t_BIGINT_CHAR(param_type string, variables_type stri
      CURSOR my_cursor1 IS 
           SELECT T_BIGINT FROM plcsql_type_tbl WHERE ID = 1 ;
 
-   VAR CHAR  ;
+   VAR CHAR(30)  ;
 begin
     OPEN my_cursor1 ; 
     LOOP 
@@ -364,7 +364,7 @@ create or replace procedure t_INT_CHAR(param_type string, variables_type string 
      CURSOR my_cursor2 IS 
           SELECT T_INTEGER FROM plcsql_type_tbl WHERE ID = 2 ;
 
-   VAR CHAR  ;
+   VAR CHAR(30)  ;
 begin
     OPEN my_cursor1 ; 
     LOOP 
@@ -395,7 +395,7 @@ create or replace procedure t_SHORT_CHAR(param_type string, variables_type strin
      CURSOR my_cursor2 IS 
           SELECT T_SMALLINT FROM plcsql_type_tbl WHERE ID = 2 ;
 
-   VAR CHAR  ;
+   VAR CHAR(30)  ;
 begin
     OPEN my_cursor1 ; 
     LOOP 
@@ -424,7 +424,7 @@ create or replace procedure t_BIT_CHAR(param_type string, variables_type string 
      CURSOR my_cursor1 IS 
           SELECT T_BIT FROM plcsql_type_tbl WHERE ID = 1 ;
 
-   VAR CHAR  ;
+   VAR CHAR(30)  ;
 begin
     OPEN my_cursor1 ; 
     LOOP 
@@ -445,7 +445,7 @@ create or replace procedure t_BITVARYING_CHAR(param_type string, variables_type 
      CURSOR my_cursor1 IS 
           SELECT T_BITVARYING FROM plcsql_type_tbl WHERE ID = 1 ;
 
-   VAR CHAR  ;
+   VAR CHAR(30)  ;
 begin
     OPEN my_cursor1 ; 
     LOOP 
@@ -466,7 +466,7 @@ create or replace procedure t_CHAR_CHAR(param_type string, variables_type string
      CURSOR my_cursor1 IS 
           SELECT T_CHAR FROM plcsql_type_tbl WHERE ID = 1 ;
 
-   VAR CHAR  ;
+   VAR CHAR(30)  ;
 begin
     OPEN my_cursor1 ; 
     LOOP 
@@ -487,7 +487,7 @@ create or replace procedure t_VARCHAR_CHAR(param_type string, variables_type str
      CURSOR my_cursor1 IS 
           SELECT T_VARCHAR FROM plcsql_type_tbl WHERE ID = 1 ;
 
-   VAR CHAR  ;
+   VAR CHAR(30)  ;
 begin
     OPEN my_cursor1 ; 
     LOOP 
@@ -508,7 +508,7 @@ create or replace procedure t_SET_CHAR(param_type string, variables_type string 
      CURSOR my_cursor1 IS 
           SELECT T_SET FROM plcsql_type_tbl WHERE ID = 1 ;
 
-   VAR CHAR  ;
+   VAR CHAR(30)  ;
 begin
     OPEN my_cursor1 ; 
     LOOP 
@@ -529,7 +529,7 @@ create or replace procedure t_MULTISET_CHAR(param_type string, variables_type st
      CURSOR my_cursor1 IS 
           SELECT T_MULTISET FROM plcsql_type_tbl WHERE ID = 1 ;
 
-   VAR CHAR  ;
+   VAR CHAR(30)  ;
 begin
     OPEN my_cursor1 ; 
     LOOP 
@@ -550,7 +550,7 @@ create or replace procedure t_LIST_CHAR(param_type string, variables_type string
      CURSOR my_cursor1 IS 
           SELECT T_LIST FROM plcsql_type_tbl WHERE ID = 1 ;
 
-   VAR CHAR  ;
+   VAR CHAR(30)  ;
 begin
     OPEN my_cursor1 ; 
     LOOP 
@@ -571,7 +571,7 @@ create or replace procedure t_ENUM_CHAR(param_type string, variables_type string
      CURSOR my_cursor1 IS 
           SELECT T_ENUM FROM plcsql_type_tbl WHERE ID = 1 ;
 
-   VAR CHAR  ;
+   VAR CHAR(30)  ;
 begin
     OPEN my_cursor1 ; 
     LOOP 
@@ -592,7 +592,7 @@ create or replace procedure t_BLOB_CHAR(param_type string, variables_type string
      CURSOR my_cursor1 IS 
           SELECT T_BLOB FROM plcsql_type_tbl WHERE ID = 1 ;
 
-   VAR CHAR  ;
+   VAR CHAR(30)  ;
 begin
     OPEN my_cursor1 ; 
     LOOP 
@@ -613,7 +613,7 @@ create or replace procedure t_CLOB_CHAR(param_type string, variables_type string
      CURSOR my_cursor1 IS 
           SELECT T_CLOB FROM plcsql_type_tbl WHERE ID = 1 ;
 
-   VAR CHAR  ;
+   VAR CHAR(30)  ;
 begin
     OPEN my_cursor1 ; 
     LOOP 
@@ -634,7 +634,7 @@ create or replace procedure t_JSON_CHAR(param_type string, variables_type string
      CURSOR my_cursor1 IS 
           SELECT T_JSON FROM plcsql_type_tbl WHERE ID = 1 ;
 
-   VAR CHAR  ;
+   VAR CHAR(30)  ;
 begin
     OPEN my_cursor1 ; 
     LOOP 

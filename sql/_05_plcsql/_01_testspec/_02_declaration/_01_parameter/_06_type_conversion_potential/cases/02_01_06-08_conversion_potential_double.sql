@@ -1,6 +1,6 @@
 --+ server-message on
---BUG
-select 'An error occurs. ( t_boolean, double )' ;
+
+select 'It is called normally. ( t_boolean, double )' ;
 create or replace procedure t_double( from_type string, param double ) as 
 begin 
     dbms_output.put_line(from_type||' to double ' ) ;

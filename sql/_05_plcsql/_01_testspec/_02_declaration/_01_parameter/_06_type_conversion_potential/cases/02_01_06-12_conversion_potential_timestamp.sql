@@ -1,6 +1,6 @@
 --+ server-message on
 
-select 'An error occurs. ( t_boolean, timestamp )' ;
+select 'It is called normally. ( t_boolean, timestamp )' ;
 create or replace procedure t_timestamp( from_type string, param timestamp ) as 
 begin 
     dbms_output.put_line(from_type||' to timestamp ' ) ;

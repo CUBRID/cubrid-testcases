@@ -536,6 +536,7 @@ create or replace procedure t_compile_error_string_cursor( tc_comment string ) a
     left_string_time               string        := '23:59:59';                   
     left_string_datetime           string        := '2024-03-01 22:15:25'; 
     left_string_timestamp          string        := '2024-05-05 23:30:45';
+    left_string_cursor             string        := 'left_string_cursor';
     left_short                     short         := 8934;
     left_int                       int           := 78234;
     left_bigint                    bigint        := 278234;
@@ -601,6 +602,7 @@ create or replace procedure t_compile_error_string_cursor( tc_comment string ) a
     left_string_time               string        := '23:59:59';                   
     left_string_datetime           string        := '2024-03-01 22:15:25'; 
     left_string_timestamp          string        := '2024-05-05 23:30:45';
+    left_string_cursor             string        := 'left_string_cursor';
     left_short                     short         := 8934;
     left_int                       int           := 78234;
     left_bigint                    bigint        := 278234;
@@ -666,6 +668,7 @@ create or replace procedure t_compile_error_string_cursor( tc_comment string ) a
     left_string_time               string        := '23:59:59';                   
     left_string_datetime           string        := '2024-03-01 22:15:25'; 
     left_string_timestamp          string        := '2024-05-05 23:30:45';
+    left_string_cursor             string        := 'left_string_cursor';
     left_short                     short         := 8934;
     left_int                       int           := 78234;
     left_bigint                    bigint        := 278234;
@@ -731,6 +734,7 @@ create or replace procedure t_compile_error_string_cursor( tc_comment string ) a
     left_string_time               string        := '23:59:59';                   
     left_string_datetime           string        := '2024-03-01 22:15:25'; 
     left_string_timestamp          string        := '2024-05-05 23:30:45';
+    left_string_cursor             string        := 'left_string_cursor';
     left_short                     short         := 8934;
     left_int                       int           := 78234;
     left_bigint                    bigint        := 278234;

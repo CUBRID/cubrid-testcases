@@ -1,6 +1,6 @@
 --+ server-message on
---BUG
-select 'An error occurs. ( t_boolean, bigint )' ;
+
+select 'It is called normally. ( t_boolean, bigint )' ;
 create or replace procedure t_bigint( from_type string, param bigint ) as 
 begin 
     dbms_output.put_line(from_type||' to bigint ' ) ;

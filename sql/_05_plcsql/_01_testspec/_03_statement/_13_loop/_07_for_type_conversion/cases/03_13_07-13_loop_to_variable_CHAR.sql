@@ -90,7 +90,7 @@ create or replace procedure t_DATETIME_CHAR(param_type string, variables_type st
      CURSOR my_cursor1 IS 
           SELECT T_DATETIME as col_val FROM plcsql_type_tbl WHERE ID = 1 ;
 
-   VAR CHAR  ;
+   VAR CHAR(30)  ;
 begin
     FOR r IN my_cursor1 LOOP  
         VAR := r.col_val ;

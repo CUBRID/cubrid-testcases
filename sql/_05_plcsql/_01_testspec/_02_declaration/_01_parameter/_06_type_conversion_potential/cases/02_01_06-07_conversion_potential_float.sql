@@ -1,6 +1,6 @@
 --+ server-message on
---BUG
-select 'An error occurs. ( t_boolean, float )' ;
+
+select 'It is called normally. ( t_boolean, float )' ;
 create or replace procedure t_float( from_type string, param float ) as 
 begin 
     dbms_output.put_line(from_type||' to float ' ) ;
@@ -83,7 +83,7 @@ call t_float('float', cast(3677.345 as float) ) ;
 drop procedure t_float ; 
 
 
-
+-- BUG ( normal : 5.678912e+04, BUG : 5.678913e+04 )
 select 'It is called normally. ( t_double, float )' ;
 create or replace procedure t_float( from_type string, param float ) as 
 begin 

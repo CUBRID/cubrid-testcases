@@ -1,6 +1,6 @@
 --+ server-message on
---BUG
-select 'An error occurs. ( t_boolean, int )' ;
+
+select 'It is called normally. ( t_boolean, int )' ;
 create or replace procedure t_int( from_type string, param int ) as 
 begin 
     dbms_output.put_line(from_type||' to int ' ) ;

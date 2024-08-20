@@ -44,7 +44,7 @@ end;
 call t_TIME_VARCHAR('TIME', 'VARCHAR', TIME'13:15:45' ) ;
 drop procedure t_TIME_VARCHAR ;
 
-
+--BUG( normal:'2023-10-31 13:15:45', error:'2023-10-31 13:15:45.0' )
 call print_message('t_TIMESTAMP_VARCHAR. This scenario is a success.');
 create or replace procedure t_TIMESTAMP_VARCHAR(sql_type string, procedure_type string, param VARCHAR ) as begin
     dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param ); 
@@ -89,7 +89,8 @@ call print_message('t_NUMERIC_VARCHAR. This scenario is a success.');
 create or replace procedure t_NUMERIC_VARCHAR(sql_type string, procedure_type string, param VARCHAR ) as begin
     dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param ); 
 end;
-call t_NUMERIC_VARCHAR('NUMERIC(8,4)', 'VARCHAR', cast( 0.123456789 as numeric(4,4) ) ) ;
+call t_NUMERIC_VARCHAR('NUMERIC(4,4)', 'VARCHAR', cast( 0.123456789 as numeric(4,4) ) ) ;
+call t_NUMERIC_VARCHAR('NUMERIC(8,4)', 'VARCHAR', cast( 0.123456789 as numeric(8,4) ) ) ;
 drop procedure t_NUMERIC_VARCHAR ;
 
 
@@ -153,7 +154,7 @@ call print_message('t_SET_VARCHAR. This scenario is a failure.');
 create or replace procedure t_SET_VARCHAR(sql_type string, procedure_type string, param VARCHAR ) as begin
     dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param ); 
 end;
-call t_SET_VARCHAR('SET', 'VARCHAR', {'c','c','c','b','b','a'} ) ;
+call t_SET_VARCHAR('SET', 'VARCHAR', set {'c','c','c','b','b','a'} ) ;
 drop procedure t_SET_VARCHAR ;
 --BUG
 
@@ -161,7 +162,7 @@ call print_message('t_MULTISET_VARCHAR. This scenario is a failure.');
 create or replace procedure t_MULTISET_VARCHAR(sql_type string, procedure_type string, param VARCHAR ) as begin
     dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param ); 
 end;
-call t_MULTISET_VARCHAR('MULTISET', 'VARCHAR', {'c','c','c','b','b','a'} ) ;
+call t_MULTISET_VARCHAR('MULTISET', 'VARCHAR', multiset {'c','c','c','b','b','a'} ) ;
 drop procedure t_MULTISET_VARCHAR ;
 --BUG
 
@@ -169,7 +170,7 @@ call print_message('t_LIST_VARCHAR. This scenario is a failure.');
 create or replace procedure t_LIST_VARCHAR(sql_type string, procedure_type string, param VARCHAR ) as begin
     dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param ); 
 end;
-call t_LIST_VARCHAR('LIST', 'VARCHAR', {'c','c','c','b','b', 'a'} ) ;
+call t_LIST_VARCHAR('LIST', 'VARCHAR', list {'c','c','c','b','b', 'a'} ) ;
 drop procedure t_LIST_VARCHAR ;
 
 
@@ -209,7 +210,7 @@ call print_message('t_JSON_VARCHAR. This scenario is a failure.');
 create or replace procedure t_JSON_VARCHAR(sql_type string, procedure_type string, param VARCHAR ) as begin
     dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param ); 
 end;
-call t_JSON_VARCHAR('JSON', 'VARCHAR', '{"a":1}' ) ;
+call t_JSON_VARCHAR('JSON', 'VARCHAR', json'{"a":1}' ) ;
 drop procedure t_JSON_VARCHAR ;
 drop procedure print_message;
 

@@ -188,7 +188,7 @@ create or replace procedure t_compile_error_boolean_date( tc_comment string ) as
 begin 
 
     dbms_output.put_line('***************************************');
-    dbms_output.put_line('left_boolean = ' || 'TRUE'' ,'NULL') ); 
+    dbms_output.put_line('left_boolean = ' || 'TRUE' ); 
     dbms_output.put_line('right_date = ' ||NVL(right_date,'NULL') ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_boolean mod right_date = '||left_boolean mod right_date ) ; 
@@ -253,7 +253,7 @@ create or replace procedure t_compile_error_boolean_date( tc_comment string ) as
 begin 
 
     dbms_output.put_line('***************************************');
-    dbms_output.put_line('left_boolean = ' || 'TRUE'' ,'NULL') ); 
+    dbms_output.put_line('left_boolean = ' || 'TRUE' ); 
     dbms_output.put_line('right_date = ' ||NVL(right_date,'NULL') ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_boolean div right_date = '||left_boolean div right_date ) ; 
@@ -1748,7 +1748,7 @@ create or replace procedure t_compile_error_sys_refcursor_date( tc_comment strin
 begin 
 
     dbms_output.put_line('***************************************');
-    dbms_output.put_line('left_sys_refcursor = ' ||  NVL(left_sys_refcursor,'NULL') ); 
+    dbms_output.put_line('left_sys_refcursor = ' ||  left_sys_refcursor ); 
     dbms_output.put_line('right_date = ' ||NVL(right_date,'NULL') ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_sys_refcursor mod right_date = '||left_sys_refcursor mod right_date ) ; 
@@ -1813,7 +1813,7 @@ create or replace procedure t_compile_error_sys_refcursor_date( tc_comment strin
 begin 
 
     dbms_output.put_line('***************************************');
-    dbms_output.put_line('left_sys_refcursor = ' ||  NVL(left_sys_refcursor,'NULL') ); 
+    dbms_output.put_line('left_sys_refcursor = ' ||  left_sys_refcursor ); 
     dbms_output.put_line('right_date = ' ||NVL(right_date,'NULL') ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_sys_refcursor div right_date = '||left_sys_refcursor div right_date ) ; 
@@ -1878,7 +1878,7 @@ create or replace procedure t_compile_error_cursor_date( tc_comment string ) as
 begin 
 
     dbms_output.put_line('***************************************');
-    dbms_output.put_line('left_cursor = ' ||  NVL(left_cursor,'NULL') ); 
+    dbms_output.put_line('left_cursor = ' ||  left_cursor ); 
     dbms_output.put_line('right_date = ' ||NVL(right_date,'NULL') ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_cursor mod right_date = '||left_cursor mod right_date ) ; 
@@ -1943,7 +1943,7 @@ create or replace procedure t_compile_error_cursor_date( tc_comment string ) as
 begin 
 
     dbms_output.put_line('***************************************');
-    dbms_output.put_line('left_cursor = ' ||  NVL(left_cursor,'NULL') ); 
+    dbms_output.put_line('left_cursor = ' ||  left_cursor ); 
     dbms_output.put_line('right_date = ' ||NVL(right_date,'NULL') ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_cursor div right_date = '||left_cursor div right_date ) ; 

@@ -36,7 +36,7 @@ end;
 call t_DATE_TIMESTAMP('DATE', 'TIMESTAMP', DATE'2008-10-31' ) ;
 drop procedure t_DATE_TIMESTAMP ;
 
-
+-- CBRD-25362
 call print_message('t_TIME_TIMESTAMP. This scenario is a failure.');
 create or replace procedure t_TIME_TIMESTAMP(sql_type string, procedure_type string, param TIMESTAMP ) as begin
     dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param ); 
@@ -68,7 +68,7 @@ end;
 call t_TIMESTAMPTZ_TIMESTAMP('TIMESTAMPTZ', 'TIMESTAMP', timestamptz '09/01/2006 04:40:40 pm' ) ;
 drop procedure t_TIMESTAMPTZ_TIMESTAMP ;
 
-
+-- CBRD-25362
 call print_message('t_DOUBLE_TIMESTAMP. This scenario is a success.');
 create or replace procedure t_DOUBLE_TIMESTAMP(sql_type string, procedure_type string, param TIMESTAMP ) as begin
     dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param ); 
@@ -76,7 +76,7 @@ end;
 call t_DOUBLE_TIMESTAMP('DOUBLE', 'TIMESTAMP', cast( 1234.56789 as double) ) ;
 drop procedure t_DOUBLE_TIMESTAMP ;
 
-
+-- CBRD-25362
 call print_message('t_FLOAT_TIMESTAMP. This scenario is a success.');
 create or replace procedure t_FLOAT_TIMESTAMP(sql_type string, procedure_type string, param TIMESTAMP ) as begin
     dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param ); 
@@ -84,7 +84,7 @@ end;
 call t_FLOAT_TIMESTAMP('FLOAT', 'TIMESTAMP', cast( 16777.217 as float ) ) ;
 drop procedure t_FLOAT_TIMESTAMP ;
 
-
+-- CBRD-25362
 call print_message('t_NUMERIC_TIMESTAMP. This scenario is a success.');
 create or replace procedure t_NUMERIC_TIMESTAMP(sql_type string, procedure_type string, param TIMESTAMP ) as begin
     dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param ); 
@@ -92,7 +92,7 @@ end;
 call t_NUMERIC_TIMESTAMP('NUMERIC(8,4)', 'TIMESTAMP', cast( 0.123456789 as numeric(4,4) ) ) ;
 drop procedure t_NUMERIC_TIMESTAMP ;
 
-
+-- CBRD-25362
 call print_message('t_BIGINT_TIMESTAMP. This scenario is a success.');
 create or replace procedure t_BIGINT_TIMESTAMP(sql_type string, procedure_type string, param TIMESTAMP ) as begin
     dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param ); 
@@ -100,7 +100,7 @@ end;
 call t_BIGINT_TIMESTAMP('BIGINT', 'TIMESTAMP', cast( 34589012 as bigint ) ) ;
 drop procedure t_BIGINT_TIMESTAMP ;
 
-
+-- CBRD-25362
 call print_message('t_INT_TIMESTAMP. This scenario is a success.');
 create or replace procedure t_INT_TIMESTAMP(sql_type string, procedure_type string, param TIMESTAMP ) as begin
     dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param ); 
@@ -108,7 +108,7 @@ end;
 call t_INT_TIMESTAMP('INT', 'TIMESTAMP', cast( 782346 as int ) ) ;
 drop procedure t_INT_TIMESTAMP ;
 
-
+-- CBRD-25362
 call print_message('t_SHORT_TIMESTAMP. This scenario is a success.');
 create or replace procedure t_SHORT_TIMESTAMP(sql_type string, procedure_type string, param TIMESTAMP ) as begin
     dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param ); 

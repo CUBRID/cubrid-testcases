@@ -97,6 +97,14 @@ call print_message('t_BIGINT_SHORT. This scenario is a success.');
 create or replace procedure t_BIGINT_SHORT(sql_type string, procedure_type string, param SHORT ) as begin
     dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param ); 
 end;
+call t_BIGINT_SHORT('BIGINT', 'SHORT', cast( 9012 as bigint ) ) ;
+drop procedure t_BIGINT_SHORT ;
+
+-- BUG
+call print_message('t_BIGINT_SHORT. This scenario is a failure(ERROR: Data overflow on data type "smallint")');
+create or replace procedure t_BIGINT_SHORT(sql_type string, procedure_type string, param SHORT ) as begin
+    dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param );
+end;
 call t_BIGINT_SHORT('BIGINT', 'SHORT', cast( 34589012 as bigint ) ) ;
 drop procedure t_BIGINT_SHORT ;
 
@@ -104,6 +112,14 @@ drop procedure t_BIGINT_SHORT ;
 call print_message('t_INT_SHORT. This scenario is a success.');
 create or replace procedure t_INT_SHORT(sql_type string, procedure_type string, param SHORT ) as begin
     dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param ); 
+end;
+call t_INT_SHORT('INT', 'SHORT', cast( 32768 as int ) ) ;
+drop procedure t_INT_SHORT ;
+
+-- BUG
+call print_message('t_INT_SHORT. This scenario is a failure(ERROR: Data overflow on data type "smallint").');
+create or replace procedure t_INT_SHORT(sql_type string, procedure_type string, param SHORT ) as begin
+    dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param );
 end;
 call t_INT_SHORT('INT', 'SHORT', cast( 782346 as int ) ) ;
 drop procedure t_INT_SHORT ;

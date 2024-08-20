@@ -36,7 +36,7 @@ end;
 call t_DATE_DATETIME('DATE', 'DATETIME', DATE'2008-10-31' ) ;
 drop procedure t_DATE_DATETIME ;
 
-
+--CBRD-25362
 call print_message('t_TIME_DATETIME. This scenario is a failure.');
 create or replace procedure t_TIME_DATETIME(sql_type string, procedure_type string, param DATETIME ) as begin
     dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param ); 

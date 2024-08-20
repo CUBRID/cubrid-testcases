@@ -80,20 +80,52 @@ datetimeltz'0001-01-01 09:00:01.000', datetimetz'0001-01-01 09:00:01.000',
 'x-small', BIT_TO_BLOB(X'000100'), CHAR_TO_CLOB('This is a Cat'), 
 {'c','c','c','b','b','a'}, {'c','c','c','b','b','a'}, {'c','c','c','b','b','a'}, {'c','c','c','b','b','a'}, '{"key1": "value1", "key2": "value2"}'  );
 
+insert into plcsql_type_tbl
+(ID, T_DATE, T_TIME, T_TIMESTAMP, T_DATETIME,
+T_VARCHAR_DATE, T_VARCHAR_TIME, T_VARCHAR_DATETIME
+)
+values
+(3,
+'2024-12-31', TIME '23:59:59', '2024-01-19 03:14:07', '2024-12-31 23:59:59.999',
+'09/01/2019', '09:09:09 pm', '09/01/2019 09:09:09 pm'
+ );
+
 create or replace procedure print_message(print_message string ) as begin
     dbms_output.put_line( print_message ); 
 end;
 
-
-call print_message('t_DATETIME_TIMESTAMP. This scenario is a success.');
+--BUG ( normal : Data overflow on data type "timestamp", BUG : 12:00:00 AM 12/30/0001 )
+call print_message('t_DATETIME_TIMESTAMP. This scenario is a failure.');
 create or replace procedure t_DATETIME_TIMESTAMP(param_type string, variables_type string ) as 
 VAR TIMESTAMP  ;
 begin
     SELECT T_DATETIME INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
     dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
-    SELECT  T_DATETIME INTO VAR FROM plcsql_type_tbl WHERE ID = 2 ;
-    dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
 
+end;
+call t_DATETIME_TIMESTAMP('DATETIME', 'TIMESTAMP'  ) ;
+drop procedure t_DATETIME_TIMESTAMP ;
+
+
+--BUG ( normal : Data overflow on data type "timestamp", BUG : 11:59:59 PM 12/31/9999 )
+call print_message('t_DATETIME_TIMESTAMP. This scenario is a failure.');
+create or replace procedure t_DATETIME_TIMESTAMP(param_type string, variables_type string ) as
+VAR TIMESTAMP  ;
+begin
+    SELECT  T_DATETIME INTO VAR FROM plcsql_type_tbl WHERE ID = 2 ;
+    dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR );
+
+end;
+call t_DATETIME_TIMESTAMP('DATETIME', 'TIMESTAMP'  ) ;
+drop procedure t_DATETIME_TIMESTAMP ;
+
+
+call print_message('t_DATETIME_TIMESTAMP. This scenario is a success.');
+create or replace procedure t_DATETIME_TIMESTAMP(param_type string, variables_type string ) as
+VAR TIMESTAMP  ;
+begin
+    SELECT  T_DATETIME INTO VAR FROM plcsql_type_tbl WHERE ID = 3 ;
+    dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR );
 
 end;
 call t_DATETIME_TIMESTAMP('DATETIME', 'TIMESTAMP'  ) ;
@@ -132,21 +164,39 @@ call t_DATETIMETZ_TIMESTAMP('DATETIMETZ', 'TIMESTAMP'  ) ;
 drop procedure t_DATETIMETZ_TIMESTAMP ;
 
 
-
-call print_message('t_DATE_TIMESTAMP. This scenario is a success.');
+--BUG ( normal : Data overflow on data type "timestamp", BUG : 12:00:00 AM 12/30/0001 )
+call print_message('t_DATE_TIMESTAMP. This scenario is a failure.');
 create or replace procedure t_DATE_TIMESTAMP(param_type string, variables_type string ) as 
 VAR TIMESTAMP  ;
 begin
     SELECT T_DATE INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
     dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
-    SELECT  T_DATE INTO VAR FROM plcsql_type_tbl WHERE ID = 2 ;
-    dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
-
-
 end;
 call t_DATE_TIMESTAMP('DATE', 'TIMESTAMP'  ) ;
 drop procedure t_DATE_TIMESTAMP ;
 
+
+--BUG ( normal : Data overflow on data type "timestamp", BUG : 12:00:00 AM 12/31/9999 )
+call print_message('t_DATE_TIMESTAMP. This scenario is a failure.');
+create or replace procedure t_DATE_TIMESTAMP(param_type string, variables_type string ) as
+VAR TIMESTAMP  ;
+begin
+    SELECT  T_DATE INTO VAR FROM plcsql_type_tbl WHERE ID = 2 ;
+    dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR );
+end;
+call t_DATE_TIMESTAMP('DATE', 'TIMESTAMP'  ) ;
+drop procedure t_DATE_TIMESTAMP ;
+
+
+call print_message('t_DATE_TIMESTAMP. This scenario is a success..');
+create or replace procedure t_DATE_TIMESTAMP(param_type string, variables_type string ) as
+VAR TIMESTAMP  ;
+begin
+    SELECT  T_DATE INTO VAR FROM plcsql_type_tbl WHERE ID = 3 ;
+    dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR );
+end;
+call t_DATE_TIMESTAMP('DATE', 'TIMESTAMP'  ) ;
+drop procedure t_DATE_TIMESTAMP ;
 
 
 call print_message('t_TIME_TIMESTAMP. This scenario is a failure.');
@@ -211,43 +261,71 @@ end;
 call t_TIMESTAMPTZ_TIMESTAMP('TIMESTAMPTZ', 'TIMESTAMP'  ) ;
 drop procedure t_TIMESTAMPTZ_TIMESTAMP ;
 
---BUG
+
 
 call print_message('t_DOUBLE_TIMESTAMP. This scenario is a success.');
 create or replace procedure t_DOUBLE_TIMESTAMP(param_type string, variables_type string ) as 
 VAR TIMESTAMP  ;
 begin
-    SELECT T_DOUBLE INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
-    dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
     SELECT  T_DOUBLE INTO VAR FROM plcsql_type_tbl WHERE ID = 2 ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
-
-
 end;
 call t_DOUBLE_TIMESTAMP('DOUBLE', 'TIMESTAMP'  ) ;
 drop procedure t_DOUBLE_TIMESTAMP ;
 
---BUG
+
+call print_message('t_DOUBLE_TIMESTAMP. This scenario is a failure.');
+create or replace procedure t_DOUBLE_TIMESTAMP(param_type string, variables_type string ) as
+VAR TIMESTAMP  ;
+begin
+    SELECT T_DOUBLE INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
+    dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR );
+end;
+call t_DOUBLE_TIMESTAMP('DOUBLE', 'TIMESTAMP'  ) ;
+drop procedure t_DOUBLE_TIMESTAMP ;
+
+
+
+
 
 call print_message('t_FLOAT_TIMESTAMP. This scenario is a success.');
 create or replace procedure t_FLOAT_TIMESTAMP(param_type string, variables_type string ) as 
 VAR TIMESTAMP  ;
 begin
-    SELECT T_FLOAT INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
-    dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
     SELECT  T_FLOAT INTO VAR FROM plcsql_type_tbl WHERE ID = 2 ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
 
-
-    SELECT  T_REAL INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
-    dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
     SELECT T_REAL INTO VAR FROM plcsql_type_tbl WHERE ID = 2 ;
     dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
 end;
 call t_FLOAT_TIMESTAMP('FLOAT', 'TIMESTAMP'  ) ;
 drop procedure t_FLOAT_TIMESTAMP ;
 
---BUG
+
+call print_message('t_FLOAT_TIMESTAMP. This scenario is a failure.');
+create or replace procedure t_FLOAT_TIMESTAMP(param_type string, variables_type string ) as
+VAR TIMESTAMP  ;
+begin
+    SELECT T_FLOAT INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
+    dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR );
+end;
+call t_FLOAT_TIMESTAMP('FLOAT', 'TIMESTAMP'  ) ;
+drop procedure t_FLOAT_TIMESTAMP ;
+
+
+call print_message('t_FLOAT_TIMESTAMP. This scenario is a failure.');
+create or replace procedure t_FLOAT_TIMESTAMP(param_type string, variables_type string ) as
+VAR TIMESTAMP  ;
+begin
+    SELECT  T_REAL INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
+    dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR );
+end;
+call t_FLOAT_TIMESTAMP('REAL', 'TIMESTAMP'  ) ;
+drop procedure t_FLOAT_TIMESTAMP ;
+
+
+
+
 
 call print_message('t_NUMERIC_TIMESTAMP. This scenario is a success.');
 create or replace procedure t_NUMERIC_TIMESTAMP(param_type string, variables_type string ) as 
@@ -267,60 +345,105 @@ end;
 call t_NUMERIC_TIMESTAMP('NUMERIC(8,4)', 'TIMESTAMP'  ) ;
 drop procedure t_NUMERIC_TIMESTAMP ;
 
---BUG
+
+
+
 
 call print_message('t_BIGINT_TIMESTAMP. This scenario is a success.');
 create or replace procedure t_BIGINT_TIMESTAMP(param_type string, variables_type string ) as 
 VAR TIMESTAMP  ;
 begin
-    SELECT T_BIGINT INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
-    dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
     SELECT  T_BIGINT INTO VAR FROM plcsql_type_tbl WHERE ID = 2 ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
-
-
 end;
 call t_BIGINT_TIMESTAMP('BIGINT', 'TIMESTAMP'  ) ;
 drop procedure t_BIGINT_TIMESTAMP ;
 
---BUG
+
+call print_message('t_BIGINT_TIMESTAMP. This scenario is a failure.');
+create or replace procedure t_BIGINT_TIMESTAMP(param_type string, variables_type string ) as
+VAR TIMESTAMP  ;
+begin
+    SELECT T_BIGINT INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
+    dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR );
+end;
+call t_BIGINT_TIMESTAMP('BIGINT', 'TIMESTAMP'  ) ;
+drop procedure t_BIGINT_TIMESTAMP ;
+
+
+
 
 call print_message('t_INT_TIMESTAMP. This scenario is a success.');
 create or replace procedure t_INT_TIMESTAMP(param_type string, variables_type string ) as 
 VAR TIMESTAMP  ;
 begin
-    SELECT T_INT INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
-    dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
     SELECT  T_INT INTO VAR FROM plcsql_type_tbl WHERE ID = 2 ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
 
-
-    SELECT  T_INTEGER INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
-    dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
     SELECT T_INTEGER INTO VAR FROM plcsql_type_tbl WHERE ID = 2 ;
     dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
 end;
 call t_INT_TIMESTAMP('INT', 'TIMESTAMP'  ) ;
 drop procedure t_INT_TIMESTAMP ;
 
---BUG
+
+call print_message('t_INT_TIMESTAMP. This scenario is a failure.');
+create or replace procedure t_INT_TIMESTAMP(param_type string, variables_type string ) as
+VAR TIMESTAMP  ;
+begin
+    SELECT  T_INTEGER INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
+    dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR );
+end;
+call t_INT_TIMESTAMP('INTEGER', 'TIMESTAMP'  ) ;
+drop procedure t_INT_TIMESTAMP ;
+
+
+call print_message('t_INT_TIMESTAMP. This scenario is a failure.');
+create or replace procedure t_INT_TIMESTAMP(param_type string, variables_type string ) as
+VAR TIMESTAMP  ;
+begin
+    SELECT T_INT INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
+    dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR );
+end;
+call t_INT_TIMESTAMP('INT', 'TIMESTAMP'  ) ;
+drop procedure t_INT_TIMESTAMP ;
+
+
+
 
 call print_message('t_SHORT_TIMESTAMP. This scenario is a success.');
 create or replace procedure t_SHORT_TIMESTAMP(param_type string, variables_type string ) as 
 VAR TIMESTAMP  ;
 begin
-    SELECT T_SHORT INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
-    dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
     SELECT  T_SHORT INTO VAR FROM plcsql_type_tbl WHERE ID = 2 ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
 
-
-    SELECT  T_SMALLINT INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
-    dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
     SELECT T_SMALLINT INTO VAR FROM plcsql_type_tbl WHERE ID = 2 ;
     dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
 end;
 call t_SHORT_TIMESTAMP('SHORT', 'TIMESTAMP'  ) ;
+drop procedure t_SHORT_TIMESTAMP ;
+
+
+call print_message('t_SHORT_TIMESTAMP. This scenario is a failure.');
+create or replace procedure t_SHORT_TIMESTAMP(param_type string, variables_type string ) as
+VAR TIMESTAMP  ;
+begin
+    SELECT T_SHORT INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
+    dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR );
+end;
+call t_SHORT_TIMESTAMP('SHORT', 'TIMESTAMP'  ) ;
+drop procedure t_SHORT_TIMESTAMP ;
+
+
+call print_message('t_SHORT_TIMESTAMP. This scenario is a failure.');
+create or replace procedure t_SHORT_TIMESTAMP(param_type string, variables_type string ) as
+VAR TIMESTAMP  ;
+begin
+    SELECT  T_SMALLINT INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
+    dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR );
+end;
+call t_SHORT_TIMESTAMP('SMALLINT', 'TIMESTAMP'  ) ;
 drop procedure t_SHORT_TIMESTAMP ;
 
 

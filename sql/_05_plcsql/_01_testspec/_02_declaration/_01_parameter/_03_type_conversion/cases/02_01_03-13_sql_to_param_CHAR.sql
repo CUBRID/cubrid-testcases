@@ -44,7 +44,7 @@ end;
 call t_TIME_CHAR('TIME', 'CHAR', TIME'13:15:45' ) ;
 drop procedure t_TIME_CHAR ;
 
-
+--BUG( normal:'2023-10-31 13:15:45', error:'2023-10-31 13:15:45.0' )
 call print_message('t_TIMESTAMP_CHAR. This scenario is a success.');
 create or replace procedure t_TIMESTAMP_CHAR(sql_type string, procedure_type string, param CHAR ) as begin
     dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param ); 
@@ -89,7 +89,8 @@ call print_message('t_NUMERIC_CHAR. This scenario is a success.');
 create or replace procedure t_NUMERIC_CHAR(sql_type string, procedure_type string, param CHAR ) as begin
     dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param ); 
 end;
-call t_NUMERIC_CHAR('NUMERIC(8,4)', 'CHAR', cast( 0.123456789 as numeric(4,4) ) ) ;
+call t_NUMERIC_CHAR('NUMERIC(4,4)', 'CHAR', cast( 0.123456789 as numeric(4,4) ) ) ;
+call t_NUMERIC_CHAR('NUMERIC(8,4)', 'CHAR', cast( 0.123456789 as numeric(8,4) ) ) ;
 drop procedure t_NUMERIC_CHAR ;
 
 
@@ -169,7 +170,7 @@ call print_message('t_LIST_CHAR. This scenario is a failure.');
 create or replace procedure t_LIST_CHAR(sql_type string, procedure_type string, param CHAR ) as begin
     dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param ); 
 end;
-call t_LIST_CHAR('LIST', 'CHAR', {'c','c','c','b','b', 'a'} ) ;
+call t_LIST_CHAR('LIST', 'CHAR', list{'c','c','c','b','b', 'a'} ) ;
 drop procedure t_LIST_CHAR ;
 
 
@@ -203,13 +204,13 @@ create or replace procedure t_CLOB_CHAR(sql_type string, procedure_type string, 
 end;
 call t_CLOB_CHAR('CLOB', 'CHAR', CHAR_TO_CLOB('This is a Dog') ) ;
 drop procedure t_CLOB_CHAR ;
---BUG
+
 
 call print_message('t_JSON_CHAR. This scenario is a failure.');
 create or replace procedure t_JSON_CHAR(sql_type string, procedure_type string, param CHAR ) as begin
     dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param ); 
 end;
-call t_JSON_CHAR('JSON', 'CHAR', '{"a":1}' ) ;
+call t_JSON_CHAR('JSON', 'CHAR', json'{"a":1}' ) ;
 drop procedure t_JSON_CHAR ;
 drop procedure print_message;
 

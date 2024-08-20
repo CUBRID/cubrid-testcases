@@ -89,7 +89,8 @@ call print_message('t_NUMERIC_BIGINT. This scenario is a success.');
 create or replace procedure t_NUMERIC_BIGINT(sql_type string, procedure_type string, param BIGINT ) as begin
     dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param ); 
 end;
-call t_NUMERIC_BIGINT('NUMERIC(8,4)', 'BIGINT', cast( 0.123456789 as numeric(4,4) ) ) ;
+call t_NUMERIC_BIGINT('NUMERIC(4,4)', 'BIGINT', cast( 0.123456789 as numeric(4,4) ) ) ;
+call t_NUMERIC_BIGINT('NUMERIC(8,4)', 'BIGINT', cast( 0.123456789 as numeric(8,4) ) ) ;
 drop procedure t_NUMERIC_BIGINT ;
 
 

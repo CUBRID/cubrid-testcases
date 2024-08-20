@@ -1,6 +1,6 @@
 --+ server-message on
 
-select 'An error occurs. ( t_boolean, time )' ;
+select 'It is called normally. ( t_boolean, time )' ;
 create or replace procedure t_time( from_type string, param time ) as 
 begin 
     dbms_output.put_line(from_type||' to time ' ) ;
@@ -23,7 +23,7 @@ call t_time('string', cast('23:59:59' as string) ) ;
 drop procedure t_time ; 
 
 
-
+-- CBRD-25362
 select 'It is called normally. ( t_short, time )' ;
 create or replace procedure t_time( from_type string, param time ) as 
 begin 
@@ -35,7 +35,7 @@ call t_time('short', cast(8934 as short) ) ;
 drop procedure t_time ; 
 
 
-
+-- CBRD-25362
 select 'It is called normally. ( t_int, time )' ;
 create or replace procedure t_time( from_type string, param time ) as 
 begin 
@@ -47,7 +47,7 @@ call t_time('int', cast(78234 as int) ) ;
 drop procedure t_time ; 
 
 
-
+-- CBRD-25362
 select 'It is called normally. ( t_bigint, time )' ;
 create or replace procedure t_time( from_type string, param time ) as 
 begin 
@@ -71,7 +71,7 @@ call t_time('numeric(8,3)', cast(5678.123 as numeric(8,3)) ) ;
 drop procedure t_time ; 
 
 
-
+-- CBRD-25362
 select 'It is called normally. ( t_float, time )' ;
 create or replace procedure t_time( from_type string, param time ) as 
 begin 
@@ -83,7 +83,7 @@ call t_time('float', cast(3677.345 as float) ) ;
 drop procedure t_time ; 
 
 
-
+-- CBRD-25362
 select 'It is called normally. ( t_double, time )' ;
 create or replace procedure t_time( from_type string, param time ) as 
 begin 
@@ -95,7 +95,7 @@ call t_time('double', cast(56789.1234 as double) ) ;
 drop procedure t_time ; 
 
 
-
+-- CBRD-25362
 select 'An error occurs. ( t_date, time )' ;
 create or replace procedure t_time( from_type string, param time ) as 
 begin 

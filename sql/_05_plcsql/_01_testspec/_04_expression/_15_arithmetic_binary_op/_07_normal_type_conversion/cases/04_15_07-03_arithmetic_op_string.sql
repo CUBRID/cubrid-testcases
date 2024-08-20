@@ -1355,7 +1355,7 @@ call t_datetime_string(' Arithmetic operations : datetime, string ' ) ;
 drop procedure t_datetime_string ; 
 
 
-
+--BUG NVL(left_timestamp,'NULL') ( normal : 11:30:45 PM 05/05/2024, BUG : 11:30:45.000 PM 05/05/2024)
 select 'This test is a normal run case. ( t_timestamp, string )' ;
 create or replace procedure t_timestamp_string( tc_comment string ) as 
     left_boolean                   boolean       := TRUE;
@@ -1470,6 +1470,7 @@ create or replace procedure t_compile_error_sys_refcursor_string( tc_comment str
     right_string_time             string        := '03:59:59';               
     right_string_datetime         string        := '2002-02-02 02:22:22';
     right_string_timestamp        string        := '2002-01-01 01:01:01';
+    right_string_sys_refcursor    string        := 'right_string_sys_refcursor';
     right_short                   short         := 34;
     right_int                     int           := 234;
     right_bigint                  bigint        := 1234;
@@ -1535,6 +1536,7 @@ create or replace procedure t_compile_error_sys_refcursor_string( tc_comment str
     right_string_time             string        := '03:59:59';               
     right_string_datetime         string        := '2002-02-02 02:22:22';
     right_string_timestamp        string        := '2002-01-01 01:01:01';
+    right_string_sys_refcursor    string        := 'right_string_sys_refcursor';
     right_short                   short         := 34;
     right_int                     int           := 234;
     right_bigint                  bigint        := 1234;
@@ -1600,6 +1602,7 @@ create or replace procedure t_compile_error_sys_refcursor_string( tc_comment str
     right_string_time             string        := '03:59:59';               
     right_string_datetime         string        := '2002-02-02 02:22:22';
     right_string_timestamp        string        := '2002-01-01 01:01:01';
+    right_string_sys_refcursor    string        := 'right_string_sys_refcursor';
     right_short                   short         := 34;
     right_int                     int           := 234;
     right_bigint                  bigint        := 1234;
@@ -1665,6 +1668,7 @@ create or replace procedure t_compile_error_sys_refcursor_string( tc_comment str
     right_string_time             string        := '03:59:59';               
     right_string_datetime         string        := '2002-02-02 02:22:22';
     right_string_timestamp        string        := '2002-01-01 01:01:01';
+    right_string_sys_refcursor    string        := 'right_string_sys_refcursor';
     right_short                   short         := 34;
     right_int                     int           := 234;
     right_bigint                  bigint        := 1234;
@@ -1730,6 +1734,7 @@ create or replace procedure t_compile_error_cursor_string( tc_comment string ) a
     right_string_time             string        := '03:59:59';               
     right_string_datetime         string        := '2002-02-02 02:22:22';
     right_string_timestamp        string        := '2002-01-01 01:01:01';
+    right_string_cursor           string        := 'right_string_cursor';
     right_short                   short         := 34;
     right_int                     int           := 234;
     right_bigint                  bigint        := 1234;
@@ -1795,6 +1800,7 @@ create or replace procedure t_compile_error_cursor_string( tc_comment string ) a
     right_string_time             string        := '03:59:59';               
     right_string_datetime         string        := '2002-02-02 02:22:22';
     right_string_timestamp        string        := '2002-01-01 01:01:01';
+    right_string_cursor           string        := 'right_string_cursor';
     right_short                   short         := 34;
     right_int                     int           := 234;
     right_bigint                  bigint        := 1234;
@@ -1860,6 +1866,7 @@ create or replace procedure t_compile_error_cursor_string( tc_comment string ) a
     right_string_time             string        := '03:59:59';               
     right_string_datetime         string        := '2002-02-02 02:22:22';
     right_string_timestamp        string        := '2002-01-01 01:01:01';
+    right_string_cursor           string        := 'right_string_cursor';
     right_short                   short         := 34;
     right_int                     int           := 234;
     right_bigint                  bigint        := 1234;
@@ -1925,6 +1932,7 @@ create or replace procedure t_compile_error_cursor_string( tc_comment string ) a
     right_string_time             string        := '03:59:59';               
     right_string_datetime         string        := '2002-02-02 02:22:22';
     right_string_timestamp        string        := '2002-01-01 01:01:01';
+    right_string_cursor           string        := 'right_string_cursor';
     right_short                   short         := 34;
     right_int                     int           := 234;
     right_bigint                  bigint        := 1234;

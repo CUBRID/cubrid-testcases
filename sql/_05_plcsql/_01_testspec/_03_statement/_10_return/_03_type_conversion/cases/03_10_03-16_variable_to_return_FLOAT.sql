@@ -247,7 +247,7 @@ drop function t_BITVARYING_FLOAT ;
 
 call print_message('t_CHAR_FLOAT. This scenario is a success.');
 create or replace function t_CHAR_FLOAT(variables_type string, return_type string, param_value CHAR ) RETURN FLOAT IS 
-   VAR CHAR  ;
+   VAR CHAR(3)  ;
 begin
    VAR := param_value ;
         dbms_output.put_line('variables_type = ' ||variables_type ||', return_type = '||return_type||', param_value(variable value) = '|| VAR ); 

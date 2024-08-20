@@ -87,7 +87,7 @@ end;
 
 call print_message('t_DATETIME_CHAR. This scenario is a success.');
 create or replace procedure t_DATETIME_CHAR(param_type string, variables_type string ) as 
-VAR CHAR  ;
+VAR CHAR(30)  ;
 begin
     SELECT T_DATETIME INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
     dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
@@ -103,7 +103,7 @@ drop procedure t_DATETIME_CHAR ;
 
 call print_message('t_DATETIMELTZ_CHAR. This scenario is a failure.');
 create or replace procedure t_DATETIMELTZ_CHAR(param_type string, variables_type string ) as 
-VAR CHAR  ;
+VAR CHAR(30)  ;
 begin
     SELECT T_DATETIMELTZ INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
     dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
@@ -119,7 +119,7 @@ drop procedure t_DATETIMELTZ_CHAR ;
 
 call print_message('t_DATETIMETZ_CHAR. This scenario is a failure.');
 create or replace procedure t_DATETIMETZ_CHAR(param_type string, variables_type string ) as 
-VAR CHAR  ;
+VAR CHAR(30)  ;
 begin
     SELECT T_DATETIMETZ INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
     dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
@@ -135,7 +135,7 @@ drop procedure t_DATETIMETZ_CHAR ;
 
 call print_message('t_DATE_CHAR. This scenario is a success.');
 create or replace procedure t_DATE_CHAR(param_type string, variables_type string ) as 
-VAR CHAR  ;
+VAR CHAR(30)  ;
 begin
     SELECT T_DATE INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
     dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
@@ -151,7 +151,7 @@ drop procedure t_DATE_CHAR ;
 
 call print_message('t_TIME_CHAR. This scenario is a success.');
 create or replace procedure t_TIME_CHAR(param_type string, variables_type string ) as 
-VAR CHAR  ;
+VAR CHAR(30)  ;
 begin
     SELECT T_TIME INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
     dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
@@ -167,7 +167,7 @@ drop procedure t_TIME_CHAR ;
 
 call print_message('t_TIMESTAMP_CHAR. This scenario is a success.');
 create or replace procedure t_TIMESTAMP_CHAR(param_type string, variables_type string ) as 
-VAR CHAR  ;
+VAR CHAR(30)  ;
 begin
     SELECT T_TIMESTAMP INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
     dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
@@ -183,7 +183,7 @@ drop procedure t_TIMESTAMP_CHAR ;
 
 call print_message('t_TIMESTAMPLTZ_CHAR. This scenario is a failure.');
 create or replace procedure t_TIMESTAMPLTZ_CHAR(param_type string, variables_type string ) as 
-VAR CHAR  ;
+VAR CHAR(30)  ;
 begin
     SELECT T_TIMESTAMPLTZ INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
     dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
@@ -199,7 +199,7 @@ drop procedure t_TIMESTAMPLTZ_CHAR ;
 
 call print_message('t_TIMESTAMPTZ_CHAR. This scenario is a failure.');
 create or replace procedure t_TIMESTAMPTZ_CHAR(param_type string, variables_type string ) as 
-VAR CHAR  ;
+VAR CHAR(30)  ;
 begin
     SELECT T_TIMESTAMPTZ INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
     dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
@@ -215,7 +215,7 @@ drop procedure t_TIMESTAMPTZ_CHAR ;
 
 call print_message('t_DOUBLE_CHAR. This scenario is a success.');
 create or replace procedure t_DOUBLE_CHAR(param_type string, variables_type string ) as 
-VAR CHAR  ;
+VAR CHAR(30)  ;
 begin
     SELECT T_DOUBLE INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
     dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
@@ -231,7 +231,7 @@ drop procedure t_DOUBLE_CHAR ;
 
 call print_message('t_FLOAT_CHAR. This scenario is a success.');
 create or replace procedure t_FLOAT_CHAR(param_type string, variables_type string ) as 
-VAR CHAR  ;
+VAR CHAR(30)  ;
 begin
     SELECT T_FLOAT INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
     dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
@@ -251,7 +251,7 @@ drop procedure t_FLOAT_CHAR ;
 
 call print_message('t_NUMERIC_CHAR. This scenario is a success.');
 create or replace procedure t_NUMERIC_CHAR(param_type string, variables_type string ) as 
-VAR CHAR  ;
+VAR CHAR(30)  ;
 begin
     SELECT T_NUMERIC INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
     dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
@@ -271,7 +271,7 @@ drop procedure t_NUMERIC_CHAR ;
 
 call print_message('t_BIGINT_CHAR. This scenario is a success.');
 create or replace procedure t_BIGINT_CHAR(param_type string, variables_type string ) as 
-VAR CHAR  ;
+VAR CHAR(30)  ;
 begin
     SELECT T_BIGINT INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
     dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
@@ -287,7 +287,7 @@ drop procedure t_BIGINT_CHAR ;
 
 call print_message('t_INT_CHAR. This scenario is a success.');
 create or replace procedure t_INT_CHAR(param_type string, variables_type string ) as 
-VAR CHAR  ;
+VAR CHAR(30)  ;
 begin
     SELECT T_INT INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
     dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
@@ -307,7 +307,7 @@ drop procedure t_INT_CHAR ;
 
 call print_message('t_SHORT_CHAR. This scenario is a success.');
 create or replace procedure t_SHORT_CHAR(param_type string, variables_type string ) as 
-VAR CHAR  ;
+VAR CHAR(30)  ;
 begin
     SELECT T_SHORT INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
     dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
@@ -327,7 +327,7 @@ drop procedure t_SHORT_CHAR ;
 
 call print_message('t_BIT(8)_CHAR. This scenario is a failure.');
 create or replace procedure t_BIT_CHAR(param_type string, variables_type string ) as 
-VAR CHAR  ;
+VAR CHAR(30)  ;
 begin
     SELECT T_BIT INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
     dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
@@ -343,7 +343,7 @@ drop procedure t_BIT_CHAR ;
 
 call print_message('t_BIT VARYING_CHAR. This scenario is a failure.');
 create or replace procedure t_BITVARYING_CHAR(param_type string, variables_type string ) as 
-VAR CHAR  ;
+VAR CHAR(30)  ;
 begin
     SELECT T_BITVARYING INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
     dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
@@ -359,7 +359,7 @@ drop procedure t_BITVARYING_CHAR ;
 
 call print_message('t_CHAR_CHAR. This scenario is a success.');
 create or replace procedure t_CHAR_CHAR(param_type string, variables_type string ) as 
-VAR CHAR  ;
+VAR CHAR(30)  ;
 begin
     SELECT T_CHAR INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
     dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
@@ -375,7 +375,7 @@ drop procedure t_CHAR_CHAR ;
 
 call print_message('t_VARCHAR_CHAR. This scenario is a success.');
 create or replace procedure t_VARCHAR_CHAR(param_type string, variables_type string ) as 
-VAR CHAR  ;
+VAR CHAR(30)  ;
 begin
     SELECT T_VARCHAR INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
     dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
@@ -391,7 +391,7 @@ drop procedure t_VARCHAR_CHAR ;
 
 call print_message('t_SET_CHAR. This scenario is a failure.');
 create or replace procedure t_SET_CHAR(param_type string, variables_type string ) as 
-VAR CHAR  ;
+VAR CHAR(30)  ;
 begin
     SELECT T_SET INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
     dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
@@ -407,7 +407,7 @@ drop procedure t_SET_CHAR ;
 
 call print_message('t_MULTISET_CHAR. This scenario is a failure.');
 create or replace procedure t_MULTISET_CHAR(param_type string, variables_type string ) as 
-VAR CHAR  ;
+VAR CHAR(30)  ;
 begin
     SELECT T_MULTISET INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
     dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
@@ -423,7 +423,7 @@ drop procedure t_MULTISET_CHAR ;
 
 call print_message('t_LIST_CHAR. This scenario is a failure.');
 create or replace procedure t_LIST_CHAR(param_type string, variables_type string ) as 
-VAR CHAR  ;
+VAR CHAR(30)  ;
 begin
     SELECT T_LIST INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
     dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
@@ -439,7 +439,7 @@ drop procedure t_LIST_CHAR ;
 
 call print_message('t_ENUM_CHAR. This scenario is a failure.');
 create or replace procedure t_ENUM_CHAR(param_type string, variables_type string ) as 
-VAR CHAR  ;
+VAR CHAR(30)  ;
 begin
     SELECT T_ENUM INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
     dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
@@ -455,7 +455,7 @@ drop procedure t_ENUM_CHAR ;
 
 call print_message('t_BLOB_CHAR. This scenario is a failure.');
 create or replace procedure t_BLOB_CHAR(param_type string, variables_type string ) as 
-VAR CHAR  ;
+VAR CHAR(30)  ;
 begin
     SELECT T_BLOB INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
     dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
@@ -471,7 +471,7 @@ drop procedure t_BLOB_CHAR ;
 
 call print_message('t_CLOB_CHAR. This scenario is a failure.');
 create or replace procedure t_CLOB_CHAR(param_type string, variables_type string ) as 
-VAR CHAR  ;
+VAR CHAR(30)  ;
 begin
     SELECT T_CLOB INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
     dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
@@ -487,7 +487,7 @@ drop procedure t_CLOB_CHAR ;
 
 call print_message('t_JSON_CHAR. This scenario is a failure.');
 create or replace procedure t_JSON_CHAR(param_type string, variables_type string ) as 
-VAR CHAR  ;
+VAR CHAR(30)  ;
 begin
     SELECT T_JSON INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
     dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 

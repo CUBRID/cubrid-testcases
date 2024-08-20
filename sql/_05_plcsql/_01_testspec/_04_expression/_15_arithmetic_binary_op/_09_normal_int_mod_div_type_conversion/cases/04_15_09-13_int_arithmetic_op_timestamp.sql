@@ -188,7 +188,7 @@ create or replace procedure t_compile_error_boolean_timestamp( tc_comment string
 begin 
 
     dbms_output.put_line('***************************************');
-    dbms_output.put_line('left_boolean = ' || 'TRUE'' ,'NULL') ); 
+    dbms_output.put_line('left_boolean = ' || 'TRUE' ); 
     dbms_output.put_line('right_timestamp = ' ||NVL(right_timestamp,'NULL') ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_boolean mod right_timestamp = '||left_boolean mod right_timestamp ) ; 
@@ -253,7 +253,7 @@ create or replace procedure t_compile_error_boolean_timestamp( tc_comment string
 begin 
 
     dbms_output.put_line('***************************************');
-    dbms_output.put_line('left_boolean = ' || 'TRUE'' ,'NULL') ); 
+    dbms_output.put_line('left_boolean = ' || 'TRUE' ); 
     dbms_output.put_line('right_timestamp = ' ||NVL(right_timestamp,'NULL') ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_boolean div right_timestamp = '||left_boolean div right_timestamp ) ; 
@@ -1748,7 +1748,7 @@ create or replace procedure t_compile_error_sys_refcursor_timestamp( tc_comment 
 begin 
 
     dbms_output.put_line('***************************************');
-    dbms_output.put_line('left_sys_refcursor = ' ||  NVL(left_sys_refcursor,'NULL') ); 
+    dbms_output.put_line('left_sys_refcursor = ' ||  left_sys_refcursor ); 
     dbms_output.put_line('right_timestamp = ' ||NVL(right_timestamp,'NULL') ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_sys_refcursor mod right_timestamp = '||left_sys_refcursor mod right_timestamp ) ; 
@@ -1813,7 +1813,7 @@ create or replace procedure t_compile_error_sys_refcursor_timestamp( tc_comment 
 begin 
 
     dbms_output.put_line('***************************************');
-    dbms_output.put_line('left_sys_refcursor = ' ||  NVL(left_sys_refcursor,'NULL') ); 
+    dbms_output.put_line('left_sys_refcursor = ' ||  left_sys_refcursor ); 
     dbms_output.put_line('right_timestamp = ' ||NVL(right_timestamp,'NULL') ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_sys_refcursor div right_timestamp = '||left_sys_refcursor div right_timestamp ) ; 
@@ -1878,7 +1878,7 @@ create or replace procedure t_compile_error_cursor_timestamp( tc_comment string 
 begin 
 
     dbms_output.put_line('***************************************');
-    dbms_output.put_line('left_cursor = ' ||  NVL(left_cursor,'NULL') ); 
+    dbms_output.put_line('left_cursor = ' ||  left_cursor ); 
     dbms_output.put_line('right_timestamp = ' ||NVL(right_timestamp,'NULL') ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_cursor mod right_timestamp = '||left_cursor mod right_timestamp ) ; 
@@ -1943,7 +1943,7 @@ create or replace procedure t_compile_error_cursor_timestamp( tc_comment string 
 begin 
 
     dbms_output.put_line('***************************************');
-    dbms_output.put_line('left_cursor = ' ||  NVL(left_cursor,'NULL') ); 
+    dbms_output.put_line('left_cursor = ' ||  left_cursor ); 
     dbms_output.put_line('right_timestamp = ' ||NVL(right_timestamp,'NULL') ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_cursor div right_timestamp = '||left_cursor div right_timestamp ) ; 

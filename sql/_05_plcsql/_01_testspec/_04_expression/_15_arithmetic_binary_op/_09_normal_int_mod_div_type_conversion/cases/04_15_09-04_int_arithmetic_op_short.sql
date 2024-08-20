@@ -170,7 +170,7 @@ create or replace procedure t_compile_error_boolean_short( tc_comment string ) a
 begin 
 
     dbms_output.put_line('***************************************');
-    dbms_output.put_line('left_boolean = ' || 'TRUE'' ,'NULL') ); 
+    dbms_output.put_line('left_boolean = ' || 'TRUE' ); 
     dbms_output.put_line('right_short = ' ||NVL(right_short,'NULL') ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_boolean mod right_short = '||left_boolean mod right_short ) ; 
@@ -235,7 +235,7 @@ create or replace procedure t_compile_error_boolean_short( tc_comment string ) a
 begin 
 
     dbms_output.put_line('***************************************');
-    dbms_output.put_line('left_boolean = ' || 'TRUE'' ,'NULL') ); 
+    dbms_output.put_line('left_boolean = ' || 'TRUE' ); 
     dbms_output.put_line('right_short = ' ||NVL(right_short,'NULL') ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_boolean div right_short = '||left_boolean div right_short ) ; 
@@ -1604,7 +1604,7 @@ create or replace procedure t_compile_error_sys_refcursor_short( tc_comment stri
 begin 
 
     dbms_output.put_line('***************************************');
-    dbms_output.put_line('left_sys_refcursor = ' ||  NVL(left_sys_refcursor,'NULL') ); 
+    dbms_output.put_line('left_sys_refcursor = ' ||  left_sys_refcursor ); 
     dbms_output.put_line('right_short = ' ||NVL(right_short,'NULL') ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_sys_refcursor mod right_short = '||left_sys_refcursor mod right_short ) ; 
@@ -1669,7 +1669,7 @@ create or replace procedure t_compile_error_sys_refcursor_short( tc_comment stri
 begin 
 
     dbms_output.put_line('***************************************');
-    dbms_output.put_line('left_sys_refcursor = ' ||  NVL(left_sys_refcursor,'NULL') ); 
+    dbms_output.put_line('left_sys_refcursor = ' ||  left_sys_refcursor ); 
     dbms_output.put_line('right_short = ' ||NVL(right_short,'NULL') ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_sys_refcursor div right_short = '||left_sys_refcursor div right_short ) ; 
@@ -1734,7 +1734,7 @@ create or replace procedure t_compile_error_cursor_short( tc_comment string ) as
 begin 
 
     dbms_output.put_line('***************************************');
-    dbms_output.put_line('left_cursor = ' ||  NVL(left_cursor,'NULL') ); 
+    dbms_output.put_line('left_cursor = ' ||  left_cursor ); 
     dbms_output.put_line('right_short = ' ||NVL(right_short,'NULL') ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_cursor mod right_short = '||left_cursor mod right_short ) ; 
@@ -1799,7 +1799,7 @@ create or replace procedure t_compile_error_cursor_short( tc_comment string ) as
 begin 
 
     dbms_output.put_line('***************************************');
-    dbms_output.put_line('left_cursor = ' ||  NVL(left_cursor,'NULL') ); 
+    dbms_output.put_line('left_cursor = ' ||  left_cursor ); 
     dbms_output.put_line('right_short = ' ||NVL(right_short,'NULL') ); 
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_cursor div right_short = '||left_cursor div right_short ) ; 

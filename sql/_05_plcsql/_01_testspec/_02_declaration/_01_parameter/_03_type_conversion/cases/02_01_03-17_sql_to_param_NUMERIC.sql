@@ -68,7 +68,7 @@ end;
 call t_TIMESTAMPTZ_NUMERIC('TIMESTAMPTZ', 'NUMERIC(38,15)', timestamptz '09/01/2006 04:40:40 pm' ) ;
 drop procedure t_TIMESTAMPTZ_NUMERIC ;
 
-
+--BUG( normal : 1234.567890000000000,  BUG : 1234.567890000000033978722058236598968505859375 )
 call print_message('t_DOUBLE_NUMERIC. This scenario is a success.');
 create or replace procedure t_DOUBLE_NUMERIC(sql_type string, procedure_type string, param NUMERIC(38,15) ) as begin
     dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param ); 
@@ -76,7 +76,7 @@ end;
 call t_DOUBLE_NUMERIC('DOUBLE', 'NUMERIC(38,15)', cast( 1234.56789 as double) ) ;
 drop procedure t_DOUBLE_NUMERIC ;
 
-
+--BUG ( normal : 16777.210000000000000, BUG : 16777.216796875 )
 call print_message('t_FLOAT_NUMERIC. This scenario is a success.');
 create or replace procedure t_FLOAT_NUMERIC(sql_type string, procedure_type string, param NUMERIC(38,15) ) as begin
     dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param ); 
@@ -84,15 +84,16 @@ end;
 call t_FLOAT_NUMERIC('FLOAT', 'NUMERIC(38,15)', cast( 16777.217 as float ) ) ;
 drop procedure t_FLOAT_NUMERIC ;
 
-
+--BUG ( normal : 0.123500000000000 , BUG : 0.1235 )
 call print_message('t_NUMERIC_NUMERIC. This scenario is a success.');
 create or replace procedure t_NUMERIC_NUMERIC(sql_type string, procedure_type string, param NUMERIC(38,15) ) as begin
     dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param ); 
 end;
-call t_NUMERIC_NUMERIC('NUMERIC(8,4)', 'NUMERIC(38,15)', cast( 0.123456789 as numeric(4,4) ) ) ;
+call t_NUMERIC_NUMERIC('NUMERIC(4,4)', 'NUMERIC(38,15)', cast( 0.123456789 as numeric(4,4) ) ) ;
+call t_NUMERIC_NUMERIC('NUMERIC(8,4)', 'NUMERIC(38,15)', cast( 0.123456789 as numeric(8,4) ) ) ;
 drop procedure t_NUMERIC_NUMERIC ;
 
-
+--BUG ( normal : 34589012.000000000000000, BUG : 34589012 )
 call print_message('t_BIGINT_NUMERIC. This scenario is a success.');
 create or replace procedure t_BIGINT_NUMERIC(sql_type string, procedure_type string, param NUMERIC(38,15) ) as begin
     dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param ); 
@@ -100,7 +101,7 @@ end;
 call t_BIGINT_NUMERIC('BIGINT', 'NUMERIC(38,15)', cast( 34589012 as bigint ) ) ;
 drop procedure t_BIGINT_NUMERIC ;
 
-
+--BUG ( normal : 782346.000000000000000, BUG : 782346 )
 call print_message('t_INT_NUMERIC. This scenario is a success.');
 create or replace procedure t_INT_NUMERIC(sql_type string, procedure_type string, param NUMERIC(38,15) ) as begin
     dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param ); 
@@ -108,7 +109,7 @@ end;
 call t_INT_NUMERIC('INT', 'NUMERIC(38,15)', cast( 782346 as int ) ) ;
 drop procedure t_INT_NUMERIC ;
 
-
+--BUG ( normal : 8394.000000000000000, BUG : 8394 )
 call print_message('t_SHORT_NUMERIC. This scenario is a success.');
 create or replace procedure t_SHORT_NUMERIC(sql_type string, procedure_type string, param NUMERIC(38,15) ) as begin
     dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param ); 
@@ -132,7 +133,7 @@ end;
 call t_BITVARYING_NUMERIC('BIT VARYING', 'NUMERIC(38,15)', 0xaa ) ;
 drop procedure t_BITVARYING_NUMERIC ;
 
-
+--BUG ( normal : 123.000000000000000, BUG : 123 )
 call print_message('t_CHAR_NUMERIC. This scenario is a success.');
 create or replace procedure t_CHAR_NUMERIC(sql_type string, procedure_type string, param NUMERIC(38,15) ) as begin
     dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param ); 
@@ -140,7 +141,7 @@ end;
 call t_CHAR_NUMERIC('CHAR', 'NUMERIC(38,15)', cast( '123' as char(3) ) ) ;
 drop procedure t_CHAR_NUMERIC ;
 
-
+--BUG ( normal : 567.000000000000000, BUG : 567 )
 call print_message('t_VARCHAR_NUMERIC. This scenario is a success.');
 create or replace procedure t_VARCHAR_NUMERIC(sql_type string, procedure_type string, param NUMERIC(38,15) ) as begin
     dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param ); 

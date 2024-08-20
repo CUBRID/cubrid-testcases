@@ -211,41 +211,67 @@ end;
 call t_TIMESTAMPTZ_TIME('TIMESTAMPTZ', 'TIME'  ) ;
 drop procedure t_TIMESTAMPTZ_TIME ;
 
---BUG
 
-call print_message('t_DOUBLE_TIME. This scenario is a success.');
+
+call print_message('t_DOUBLE_TIME(3.402823). This scenario is a success.');
 create or replace procedure t_DOUBLE_TIME(param_type string, variables_type string ) as 
 VAR TIME  ;
 begin
-    SELECT T_DOUBLE INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
-    dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
     SELECT  T_DOUBLE INTO VAR FROM plcsql_type_tbl WHERE ID = 2 ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
-
-
 end;
 call t_DOUBLE_TIME('DOUBLE', 'TIME'  ) ;
 drop procedure t_DOUBLE_TIME ;
 
---BUG
 
-call print_message('t_FLOAT_TIME. This scenario is a success.');
+call print_message('t_DOUBLE_TIME(-1.7976931348623). This scenario is a failure.');
+create or replace procedure t_DOUBLE_TIME(param_type string, variables_type string ) as
+VAR TIME  ;
+begin
+    SELECT T_DOUBLE INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
+    dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR );
+end;
+call t_DOUBLE_TIME('DOUBLE', 'TIME'  ) ;
+drop procedure t_DOUBLE_TIME ;
+
+
+
+
+call print_message('t_FLOAT_TIME(3.4028, 3.402823466). This scenario is a success.');
 create or replace procedure t_FLOAT_TIME(param_type string, variables_type string ) as 
 VAR TIME  ;
 begin
-    SELECT T_FLOAT INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
-    dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
     SELECT  T_FLOAT INTO VAR FROM plcsql_type_tbl WHERE ID = 2 ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
 
-
-    SELECT  T_REAL INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
-    dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
     SELECT T_REAL INTO VAR FROM plcsql_type_tbl WHERE ID = 2 ;
     dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
 end;
 call t_FLOAT_TIME('FLOAT', 'TIME'  ) ;
 drop procedure t_FLOAT_TIME ;
+
+
+call print_message('t_FLOAT_TIME(-3.4028234). This scenario is a failure.');
+create or replace procedure t_FLOAT_TIME(param_type string, variables_type string ) as
+VAR TIME  ;
+begin
+    SELECT T_FLOAT INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
+    dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR );
+end;
+call t_FLOAT_TIME('FLOAT', 'TIME'  ) ;
+drop procedure t_FLOAT_TIME ;
+
+
+call print_message('t_FLOAT_TIME(-3.402823). This scenario is a failure.');
+create or replace procedure t_FLOAT_TIME(param_type string, variables_type string ) as
+VAR TIME  ;
+begin
+    SELECT  T_REAL INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
+    dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR );
+end;
+call t_FLOAT_TIME('REAL', 'TIME'  ) ;
+drop procedure t_FLOAT_TIME ;
+
 
 
 
@@ -267,61 +293,105 @@ end;
 call t_NUMERIC_TIME('NUMERIC(8,4)', 'TIME'  ) ;
 drop procedure t_NUMERIC_TIME ;
 
---BUG
 
-call print_message('t_BIGINT_TIME. This scenario is a success.');
+
+call print_message('t_BIGINT_TIME(9223). This scenario is a success.');
 create or replace procedure t_BIGINT_TIME(param_type string, variables_type string ) as 
 VAR TIME  ;
 begin
-    SELECT T_BIGINT INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
-    dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
     SELECT  T_BIGINT INTO VAR FROM plcsql_type_tbl WHERE ID = 2 ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
-
-
 end;
 call t_BIGINT_TIME('BIGINT', 'TIME'  ) ;
 drop procedure t_BIGINT_TIME ;
 
---BUG
+
+call print_message('t_BIGINT_TIME(-9223). This scenario is a failure.');
+create or replace procedure t_BIGINT_TIME(param_type string, variables_type string ) as
+VAR TIME  ;
+begin
+    SELECT T_BIGINT INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
+    dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR );
+end;
+call t_BIGINT_TIME('BIGINT', 'TIME'  ) ;
+drop procedure t_BIGINT_TIME ;
+
+
+
 
 call print_message('t_INT_TIME. This scenario is a success.');
 create or replace procedure t_INT_TIME(param_type string, variables_type string ) as 
 VAR TIME  ;
 begin
-    SELECT T_INT INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
-    dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
     SELECT  T_INT INTO VAR FROM plcsql_type_tbl WHERE ID = 2 ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
 
-
-    SELECT  T_INTEGER INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
-    dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
     SELECT T_INTEGER INTO VAR FROM plcsql_type_tbl WHERE ID = 2 ;
     dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
 end;
 call t_INT_TIME('INT', 'TIME'  ) ;
 drop procedure t_INT_TIME ;
 
---BUG
+
+call print_message('t_INT_TIME. This scenario is a failure.');
+create or replace procedure t_INT_TIME(param_type string, variables_type string ) as
+VAR TIME  ;
+begin
+    SELECT T_INT INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
+    dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR );
+end;
+call t_INT_TIME('INT', 'TIME'  ) ;
+drop procedure t_INT_TIME ;
+
+
+call print_message('t_INT_TIME. This scenario is a failure.');
+create or replace procedure t_INT_TIME(param_type string, variables_type string ) as
+VAR TIME  ;
+begin
+    SELECT  T_INTEGER INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
+    dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR );
+end;
+call t_INT_TIME('INTEGER', 'TIME'  ) ;
+drop procedure t_INT_TIME ;
+
+
+
 
 call print_message('t_SHORT_TIME. This scenario is a success.');
 create or replace procedure t_SHORT_TIME(param_type string, variables_type string ) as 
 VAR TIME  ;
 begin
-    SELECT T_SHORT INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
-    dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
     SELECT  T_SHORT INTO VAR FROM plcsql_type_tbl WHERE ID = 2 ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
 
-
-    SELECT  T_SMALLINT INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
-    dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
     SELECT T_SMALLINT INTO VAR FROM plcsql_type_tbl WHERE ID = 2 ;
     dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR ); 
 end;
 call t_SHORT_TIME('SHORT', 'TIME'  ) ;
 drop procedure t_SHORT_TIME ;
+
+
+call print_message('t_SHORT_TIME. This scenario is a failure.');
+create or replace procedure t_SHORT_TIME(param_type string, variables_type string ) as
+VAR TIME  ;
+begin
+    SELECT  T_SMALLINT INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
+    dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR );
+end;
+call t_SHORT_TIME('SMALLINT', 'TIME'  ) ;
+drop procedure t_SHORT_TIME ;
+
+
+call print_message('t_SHORT_TIME. This scenario is a failure.');
+create or replace procedure t_SHORT_TIME(param_type string, variables_type string ) as
+VAR TIME  ;
+begin
+    SELECT T_SHORT INTO VAR FROM plcsql_type_tbl WHERE ID = 1 ;
+    dbms_output.put_line('select_type = ' ||param_type ||', variables_type = '||variables_type||', SELECT column=>INTO variables = '|| VAR );
+end;
+call t_SHORT_TIME('SHORT', 'TIME'  ) ;
+drop procedure t_SHORT_TIME ;
+
 
 
 
