@@ -19,7 +19,7 @@ from db_class a, db_class c, db_class d limit 100000;
 set trace on;
 
 -- 1.1 Single CTE: UNION
-SELECT '1.1 Single CTE: UNION';
+EVALUATE '1.1 Single CTE: UNION';
 WITH cte_a AS (SELECT * FROM tbl_a ORDER BY 1 LIMIT 20)
 (SELECT * FROM cte_a ORDER BY i)
 UNION
@@ -28,7 +28,7 @@ UNION
 show trace;
 
 -- 1.2 Single CTE: UNION ALL
-SELECT '1.2 Single CTE: UNION ALL';
+EVALUATE '1.2 Single CTE: UNION ALL';
 WITH cte_a AS (SELECT * FROM tbl_a ORDER BY 1 LIMIT 20)
 (SELECT * FROM cte_a ORDER BY i)
 UNION ALL
@@ -37,7 +37,7 @@ UNION ALL
 show trace;
 
 -- 1.3 Single CTE: DIFFERENCE
-SELECT '1.3 Single CTE: DIFFERENCE';
+EVALUATE '1.3 Single CTE: DIFFERENCE';
 WITH cte_a AS (SELECT * FROM tbl_a ORDER BY 1 LIMIT 20)
 (SELECT * FROM cte_a ORDER BY i)
 DIFFERENCE
@@ -46,7 +46,7 @@ DIFFERENCE
 show trace;
 
 -- 1.4 Single CTE: DIFFERENCE ALL
-SELECT '1.4 Single CTE: DIFFERENCE ALL';
+EVALUATE '1.4 Single CTE: DIFFERENCE ALL';
 WITH cte_a AS (SELECT * FROM tbl_a ORDER BY 1 LIMIT 20)
 (SELECT * FROM cte_a ORDER BY i)
 DIFFERENCE ALL
@@ -55,7 +55,7 @@ DIFFERENCE ALL
 show trace;
 
 -- 1.5 Single CTE: INTERSECTION
-SELECT '1.5 Single CTE: INTERSECTION';
+EVALUATE '1.5 Single CTE: INTERSECTION';
 WITH cte_a AS (SELECT * FROM tbl_a ORDER BY 1 LIMIT 20)
 (SELECT * FROM cte_a ORDER BY i)
 INTERSECTION
@@ -64,7 +64,7 @@ INTERSECTION
 show trace;
 
 -- 1.6 Single CTE: INTERSECTION ALL
-SELECT '1.6 Single CTE: INTERSECTION ALL';
+EVALUATE '1.6 Single CTE: INTERSECTION ALL';
 WITH cte_a AS (SELECT * FROM tbl_a ORDER BY 1 LIMIT 20)
 (SELECT * FROM cte_a ORDER BY i)
 INTERSECTION ALL
@@ -73,7 +73,7 @@ INTERSECTION ALL
 show trace;
 
 -- 1.7 Multiple CTEs: UNION ALL with Uncorrelated Subqueries
-SELECT '1.7 Multiple CTEs: UNION ALL with Uncorrelated Subqueries';
+EVALUATE '1.7 Multiple CTEs: UNION ALL with Uncorrelated Subqueries';
 drop table if exists tbl_b;
 
 create table tbl_b ( a int, b varchar, c varchar);
@@ -93,7 +93,7 @@ show trace;
 drop table tbl_b;
 
 -- 1.8 Multiple CTEs: UNION with Uncorrelated Subqueries
-SELECT '1.8 Multiple CTEs: UNION with Uncorrelated Subqueries';
+EVALUATE '1.8 Multiple CTEs: UNION with Uncorrelated Subqueries';
 set trace on;
 
 WITH cte_a AS (SELECT * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
@@ -105,7 +105,7 @@ UNION
 show trace;
 
 -- 1.9 Multiple CTEs: DIFFERENCE with Uncorrelated Subqueries
-SELECT '1.9 Multiple CTEs: DIFFERENCE with Uncorrelated Subqueries';
+EVALUATE '1.9 Multiple CTEs: DIFFERENCE with Uncorrelated Subqueries';
 set trace on;
 
 WITH cte_a AS (SELECT * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
@@ -117,7 +117,7 @@ DIFFERENCE
 show trace;
 
 -- 1.10 Multiple CTEs: DIFFERENCE ALL with Uncorrelated Subqueries
-SELECT '1.10 Multiple CTEs: DIFFERENCE ALL with Uncorrelated Subqueries';
+EVALUATE '1.10 Multiple CTEs: DIFFERENCE ALL with Uncorrelated Subqueries';
 set trace on;
 
 WITH cte_a AS (SELECT * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
@@ -129,7 +129,7 @@ DIFFERENCE ALL
 show trace;
 
 -- 1.11 Multiple CTEs: INTERSECTION with Uncorrelated Subqueries
-SELECT '1.11 Multiple CTEs: INTERSECTION with Uncorrelated Subqueries';
+EVALUATE '1.11 Multiple CTEs: INTERSECTION with Uncorrelated Subqueries';
 set trace on;
 
 WITH cte_a AS (SELECT * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
@@ -141,7 +141,7 @@ INTERSECTION
 show trace;
 
 -- 1.12 Multiple CTEs: INTERSECTION ALL with Uncorrelated Subqueries
-SELECT '1.12 Multiple CTEs: INTERSECTION ALL with Uncorrelated Subqueries';
+EVALUATE '1.12 Multiple CTEs: INTERSECTION ALL with Uncorrelated Subqueries';
 set trace on;
 
 WITH cte_a AS (SELECT * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
@@ -153,7 +153,7 @@ INTERSECTION ALL
 show trace;
 
 -- 1.13 Use limit
-SELECT '1.13 Use limit';
+EVALUATE '1.13 Use limit';
 WITH cte1 AS (SELECT i FROM tbl_a limit 1, 10)
 (SELECT * FROM cte1)
 UNION ALL
@@ -168,7 +168,7 @@ INTERSECTION
 show trace;
 
 -- 1.14 Use limit offset
-SELECT '1.14 Use limit offset';
+EVALUATE '1.14 Use limit offset';
 WITH cte1 AS (SELECT i FROM tbl_a limit 3 offset 7)
 (SELECT * FROM cte1)
 UNION ALL
@@ -183,7 +183,7 @@ INTERSECTION
 show trace;
 
 -- 1.15 Use rownum
-SELECT '1.15 Use rownum';
+EVALUATE '1.15 Use rownum';
 WITH cte1 AS (SELECT i FROM tbl_a where rownum < 5 )
 (SELECT * FROM cte1)
 UNION ALL
@@ -198,7 +198,7 @@ INTERSECTION
 show trace;
 
 -- 1.16 Use orderby_num()
-SELECT '1.16 Use orderby_num()';
+EVALUATE '1.16 Use orderby_num()';
 WITH cte1 AS (SELECT i FROM tbl_a order by 1 for orderby_num() between 3 and 5)
 (SELECT * FROM cte1)
 UNION ALL
@@ -215,7 +215,7 @@ show trace;
 -- 2. Correlated Subqueries
 
 -- 2.1 Single CTE: UNION with Correlated Subqueries
-SELECT '2.1 Single CTE: UNION with Correlated Subqueries';
+EVALUATE '2.1 Single CTE: UNION with Correlated Subqueries';
 set trace on;
 
 WITH cte_a AS (SELECT * FROM tbl_a ORDER BY 1 LIMIT 20)
@@ -226,7 +226,7 @@ UNION
 show trace;
 
 -- 2.2 Single CTE: INTERSECTION with Correlated Subqueries
-SELECT '2.2 Single CTE: INTERSECTION with Correlated Subqueries';
+EVALUATE '2.2 Single CTE: INTERSECTION with Correlated Subqueries';
 set trace on;
 
 WITH cte_a AS (SELECT * FROM tbl_a ORDER BY 1 LIMIT 20)
@@ -237,7 +237,7 @@ INTERSECTION
 show trace;
 
 -- 2.3 Multiple CTEs: UNION ALL with Mixed Correlated and Uncorrelated Subqueries
-SELECT '2.3 Multiple CTEs: UNION ALL with Mixed Correlated and Uncorrelated Subqueries';
+EVALUATE '2.3 Multiple CTEs: UNION ALL with Mixed Correlated and Uncorrelated Subqueries';
 set trace on;
 
 WITH cte_a AS (SELECT * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
@@ -249,7 +249,7 @@ UNION ALL
 show trace;
 
 -- 2.4 Multiple CTEs: UNION with Mixed Correlated and Uncorrelated Subqueries
-SELECT '2.4 Multiple CTEs: UNION with Mixed Correlated and Uncorrelated Subqueries';
+EVALUATE '2.4 Multiple CTEs: UNION with Mixed Correlated and Uncorrelated Subqueries';
 set trace on;
 
 WITH cte_a AS (SELECT * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
@@ -261,7 +261,7 @@ UNION
 show trace;
 
 -- 2.5 Multiple CTEs: DIFFERENCE with Mixed Correlated and Uncorrelated Subqueries
-SELECT '2.5 Multiple CTEs: DIFFERENCE with Mixed Correlated and Uncorrelated Subqueries';
+EVALUATE '2.5 Multiple CTEs: DIFFERENCE with Mixed Correlated and Uncorrelated Subqueries';
 set trace on;
 
 WITH cte_a AS (SELECT * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
@@ -273,7 +273,7 @@ DIFFERENCE
 show trace;
 
 -- 2.6 Multiple CTEs: DIFFERENCE ALL with Mixed Correlated and Uncorrelated Subqueries
-SELECT '2.6 Multiple CTEs: DIFFERENCE ALL with Mixed Correlated and Uncorrelated Subqueries';
+EVALUATE '2.6 Multiple CTEs: DIFFERENCE ALL with Mixed Correlated and Uncorrelated Subqueries';
 set trace on;
 
 WITH cte_a AS (SELECT * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
@@ -285,7 +285,7 @@ DIFFERENCE ALL
 show trace;
 
 -- 2.7 Multiple CTEs: INTERSECTION with Mixed Correlated and Uncorrelated Subqueries
-SELECT '2.7 Multiple CTEs: INTERSECTION with Mixed Correlated and Uncorrelated Subqueries';
+EVALUATE '2.7 Multiple CTEs: INTERSECTION with Mixed Correlated and Uncorrelated Subqueries';
 set trace on;
 
 WITH cte_a AS (SELECT * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
@@ -297,7 +297,7 @@ INTERSECTION
 show trace;
 
 -- 2.8 Multiple CTEs: INTERSECTION ALL with Mixed Correlated and Uncorrelated Subqueries
-SELECT '2.8 Multiple CTEs: INTERSECTION ALL with Mixed Correlated and Uncorrelated Subqueries';
+EVALUATE '2.8 Multiple CTEs: INTERSECTION ALL with Mixed Correlated and Uncorrelated Subqueries';
 set trace on;
 
 WITH cte_a AS (SELECT * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
@@ -310,4 +310,5 @@ show trace;
 
 set trace off;
 drop table tbl_a;
+
 
