@@ -290,7 +290,7 @@ Query Plan:
       INDEX SCAN (dba.u.i_u_j) (key range: ([dba.u].j> ?:? ))
     INDEX SCAN (dba.t.pk_t_i) (key range: [dba.u].i=[dba.t].i)
 
-  rewritten query: select [dba.u].i, [dba.u].j, [dba.u].k, [dba.t].i, [dba.t].j, [dba.t].k from [dba.u] [dba.u], [dba.t] [dba.t] where [dba.u].i=[dba.t].i and ([dba.u].j> ?:? ) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? + cast(? as bigint)*( ?:?  div  ?:? )
+  rewritten query: select [dba.u].i, [dba.u].j, [dba.u].k, [dba.t].i, [dba.t].j, [dba.t].k from [dba.u] [dba.u], [dba.t] [dba.t] where [dba.u].i=[dba.t].i and ([dba.u].j> ?:? ) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? +?*( ?:? / ?:? )
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, ioread: ?)
