@@ -9,7 +9,7 @@ begin
         RAISE [AND];
     end if;
 EXCEPTION    WHEN [AND] THEN 
-              put_line('call exception:' || 'AND' );
+              dbms_output.put_line('call exception:' || 'AND' );
 end;
 call p_var(123);
 
@@ -20,7 +20,7 @@ begin
         RAISE [AS];
     end if;
 EXCEPTION    WHEN [AS] THEN 
-              put_line('call exception:' || 'AS' );
+              dbms_output.put_line('call exception:' || 'AS' );
 end;
 call p_var(123);
 
@@ -31,7 +31,7 @@ begin
         RAISE [BEGIN];
     end if;
 EXCEPTION    WHEN [BEGIN] THEN 
-              put_line('call exception:' || 'BEGIN' );
+              dbms_output.put_line('call exception:' || 'BEGIN' );
 end;
 call p_var(123);
 
@@ -42,7 +42,7 @@ begin
         RAISE [BETWEEN];
     end if;
 EXCEPTION    WHEN [BETWEEN] THEN 
-              put_line('call exception:' || 'BETWEEN' );
+              dbms_output.put_line('call exception:' || 'BETWEEN' );
 end;
 call p_var(123);
 
@@ -53,7 +53,7 @@ begin
         RAISE [BIGINT];
     end if;
 EXCEPTION    WHEN [BIGINT] THEN 
-              put_line('call exception:' || 'BIGINT' );
+              dbms_output.put_line('call exception:' || 'BIGINT' );
 end;
 call p_var(123);
 
@@ -64,7 +64,7 @@ begin
         RAISE [BOOLEAN];
     end if;
 EXCEPTION    WHEN [BOOLEAN] THEN 
-              put_line('call exception:' || 'BOOLEAN' );
+              dbms_output.put_line('call exception:' || 'BOOLEAN' );
 end;
 call p_var(123);
 
@@ -75,7 +75,7 @@ begin
         RAISE [BY];
     end if;
 EXCEPTION    WHEN [BY] THEN 
-              put_line('call exception:' || 'BY' );
+              dbms_output.put_line('call exception:' || 'BY' );
 end;
 call p_var(123);
 
@@ -86,7 +86,7 @@ begin
         RAISE [CASE];
     end if;
 EXCEPTION    WHEN [CASE] THEN 
-              put_line('call exception:' || 'CASE' );
+              dbms_output.put_line('call exception:' || 'CASE' );
 end;
 call p_var(123);
 
@@ -97,7 +97,7 @@ begin
         RAISE [CHAR];
     end if;
 EXCEPTION    WHEN [CHAR] THEN 
-              put_line('call exception:' || 'CHAR' );
+              dbms_output.put_line('call exception:' || 'CHAR' );
 end;
 call p_var(123);
 
@@ -108,7 +108,7 @@ begin
         RAISE [CLOSE];
     end if;
 EXCEPTION    WHEN [CLOSE] THEN 
-              put_line('call exception:' || 'CLOSE' );
+              dbms_output.put_line('call exception:' || 'CLOSE' );
 end;
 call p_var(123);
 
@@ -119,7 +119,7 @@ begin
         RAISE [COMMIT];
     end if;
 EXCEPTION    WHEN [COMMIT] THEN 
-              put_line('call exception:' || 'COMMIT' );
+              dbms_output.put_line('call exception:' || 'COMMIT' );
 end;
 call p_var(123);
 
@@ -130,7 +130,7 @@ begin
         RAISE [CONSTANT];
     end if;
 EXCEPTION    WHEN [CONSTANT] THEN 
-              put_line('call exception:' || 'CONSTANT' );
+              dbms_output.put_line('call exception:' || 'CONSTANT' );
 end;
 call p_var(123);
 
@@ -141,7 +141,7 @@ begin
         RAISE [CONTINUE];
     end if;
 EXCEPTION    WHEN [CONTINUE] THEN 
-              put_line('call exception:' || 'CONTINUE' );
+              dbms_output.put_line('call exception:' || 'CONTINUE' );
 end;
 call p_var(123);
 
@@ -152,7 +152,7 @@ begin
         RAISE [CREATE];
     end if;
 EXCEPTION    WHEN [CREATE] THEN 
-              put_line('call exception:' || 'CREATE' );
+              dbms_output.put_line('call exception:' || 'CREATE' );
 end;
 call p_var(123);
 
@@ -163,7 +163,7 @@ begin
         RAISE [CURSOR];
     end if;
 EXCEPTION    WHEN [CURSOR] THEN 
-              put_line('call exception:' || 'CURSOR' );
+              dbms_output.put_line('call exception:' || 'CURSOR' );
 end;
 call p_var(123);
 
@@ -174,7 +174,7 @@ begin
         RAISE [DATE];
     end if;
 EXCEPTION    WHEN [DATE] THEN 
-              put_line('call exception:' || 'DATE' );
+              dbms_output.put_line('call exception:' || 'DATE' );
 end;
 call p_var(123);
 
@@ -185,7 +185,7 @@ begin
         RAISE [DATETIME];
     end if;
 EXCEPTION    WHEN [DATETIME] THEN 
-              put_line('call exception:' || 'DATETIME' );
+              dbms_output.put_line('call exception:' || 'DATETIME' );
 end;
 call p_var(123);
 
@@ -196,7 +196,7 @@ begin
         RAISE [DATETIMELTZ];
     end if;
 EXCEPTION    WHEN [DATETIMELTZ] THEN 
-              put_line('call exception:' || 'DATETIMELTZ' );
+              dbms_output.put_line('call exception:' || 'DATETIMELTZ' );
 end;
 call p_var(123);
 
@@ -207,7 +207,7 @@ begin
         RAISE [DATETIMETZ];
     end if;
 EXCEPTION    WHEN [DATETIMETZ] THEN 
-              put_line('call exception:' || 'DATETIMETZ' );
+              dbms_output.put_line('call exception:' || 'DATETIMETZ' );
 end;
 call p_var(123);
 
@@ -218,7 +218,7 @@ begin
         RAISE [DEC];
     end if;
 EXCEPTION    WHEN [DEC] THEN 
-              put_line('call exception:' || 'DEC' );
+              dbms_output.put_line('call exception:' || 'DEC' );
 end;
 call p_var(123);
 
@@ -229,7 +229,7 @@ begin
         RAISE [DECIMAL];
     end if;
 EXCEPTION    WHEN [DECIMAL] THEN 
-              put_line('call exception:' || 'DECIMAL' );
+              dbms_output.put_line('call exception:' || 'DECIMAL' );
 end;
 call p_var(123);
 
@@ -240,7 +240,7 @@ begin
         RAISE [DECLARE];
     end if;
 EXCEPTION    WHEN [DECLARE] THEN 
-              put_line('call exception:' || 'DECLARE' );
+              dbms_output.put_line('call exception:' || 'DECLARE' );
 end;
 call p_var(123);
 
@@ -251,7 +251,7 @@ begin
         RAISE [DEFAULT];
     end if;
 EXCEPTION    WHEN [DEFAULT] THEN 
-              put_line('call exception:' || 'DEFAULT' );
+              dbms_output.put_line('call exception:' || 'DEFAULT' );
 end;
 call p_var(123);
 
@@ -262,7 +262,7 @@ begin
         RAISE [DIV];
     end if;
 EXCEPTION    WHEN [DIV] THEN 
-              put_line('call exception:' || 'DIV' );
+              dbms_output.put_line('call exception:' || 'DIV' );
 end;
 call p_var(123);
 
@@ -273,7 +273,7 @@ begin
         RAISE [DOUBLE];
     end if;
 EXCEPTION    WHEN [DOUBLE] THEN 
-              put_line('call exception:' || 'DOUBLE' );
+              dbms_output.put_line('call exception:' || 'DOUBLE' );
 end;
 call p_var(123);
 
@@ -284,7 +284,7 @@ begin
         RAISE [ELSE];
     end if;
 EXCEPTION    WHEN [ELSE] THEN 
-              put_line('call exception:' || 'ELSE' );
+              dbms_output.put_line('call exception:' || 'ELSE' );
 end;
 call p_var(123);
 
@@ -295,7 +295,7 @@ begin
         RAISE [ELSIF];
     end if;
 EXCEPTION    WHEN [ELSIF] THEN 
-              put_line('call exception:' || 'ELSIF' );
+              dbms_output.put_line('call exception:' || 'ELSIF' );
 end;
 call p_var(123);
 
@@ -306,7 +306,7 @@ begin
         RAISE [END];
     end if;
 EXCEPTION    WHEN [END] THEN 
-              put_line('call exception:' || 'END' );
+              dbms_output.put_line('call exception:' || 'END' );
 end;
 call p_var(123);
 
@@ -317,7 +317,7 @@ begin
         RAISE [ESCAPE];
     end if;
 EXCEPTION    WHEN [ESCAPE] THEN 
-              put_line('call exception:' || 'ESCAPE' );
+              dbms_output.put_line('call exception:' || 'ESCAPE' );
 end;
 call p_var(123);
 
@@ -328,7 +328,7 @@ begin
         RAISE [EXCEPTION];
     end if;
 EXCEPTION    WHEN [EXCEPTION] THEN 
-              put_line('call exception:' || 'EXCEPTION' );
+              dbms_output.put_line('call exception:' || 'EXCEPTION' );
 end;
 call p_var(123);
 
@@ -339,7 +339,7 @@ begin
         RAISE [EXECUTE];
     end if;
 EXCEPTION    WHEN [EXECUTE] THEN 
-              put_line('call exception:' || 'EXECUTE' );
+              dbms_output.put_line('call exception:' || 'EXECUTE' );
 end;
 call p_var(123);
 
@@ -350,7 +350,7 @@ begin
         RAISE [EXIT];
     end if;
 EXCEPTION    WHEN [EXIT] THEN 
-              put_line('call exception:' || 'EXIT' );
+              dbms_output.put_line('call exception:' || 'EXIT' );
 end;
 call p_var(123);
 
@@ -361,7 +361,7 @@ begin
         RAISE [FALSE];
     end if;
 EXCEPTION    WHEN [FALSE] THEN 
-              put_line('call exception:' || 'FALSE' );
+              dbms_output.put_line('call exception:' || 'FALSE' );
 end;
 call p_var(123);
 
@@ -372,7 +372,7 @@ begin
         RAISE [FETCH];
     end if;
 EXCEPTION    WHEN [FETCH] THEN 
-              put_line('call exception:' || 'FETCH' );
+              dbms_output.put_line('call exception:' || 'FETCH' );
 end;
 call p_var(123);
 
@@ -383,7 +383,7 @@ begin
         RAISE [FLOAT];
     end if;
 EXCEPTION    WHEN [FLOAT] THEN 
-              put_line('call exception:' || 'FLOAT' );
+              dbms_output.put_line('call exception:' || 'FLOAT' );
 end;
 call p_var(123);
 
@@ -394,7 +394,7 @@ begin
         RAISE [FOR];
     end if;
 EXCEPTION    WHEN [FOR] THEN 
-              put_line('call exception:' || 'FOR' );
+              dbms_output.put_line('call exception:' || 'FOR' );
 end;
 call p_var(123);
 
@@ -405,7 +405,7 @@ begin
         RAISE [FUNCTION];
     end if;
 EXCEPTION    WHEN [FUNCTION] THEN 
-              put_line('call exception:' || 'FUNCTION' );
+              dbms_output.put_line('call exception:' || 'FUNCTION' );
 end;
 call p_var(123);
 
@@ -416,7 +416,7 @@ begin
         RAISE [IF];
     end if;
 EXCEPTION    WHEN [IF] THEN 
-              put_line('call exception:' || 'IF' );
+              dbms_output.put_line('call exception:' || 'IF' );
 end;
 call p_var(123);
 
@@ -427,7 +427,7 @@ begin
         RAISE [IMMEDIATE];
     end if;
 EXCEPTION    WHEN [IMMEDIATE] THEN 
-              put_line('call exception:' || 'IMMEDIATE' );
+              dbms_output.put_line('call exception:' || 'IMMEDIATE' );
 end;
 call p_var(123);
 
@@ -438,7 +438,7 @@ begin
         RAISE [IN];
     end if;
 EXCEPTION    WHEN [IN] THEN 
-              put_line('call exception:' || 'IN' );
+              dbms_output.put_line('call exception:' || 'IN' );
 end;
 call p_var(123);
 
@@ -449,7 +449,7 @@ begin
         RAISE [INT];
     end if;
 EXCEPTION    WHEN [INT] THEN 
-              put_line('call exception:' || 'INT' );
+              dbms_output.put_line('call exception:' || 'INT' );
 end;
 call p_var(123);
 
@@ -460,7 +460,7 @@ begin
         RAISE [INTEGER];
     end if;
 EXCEPTION    WHEN [INTEGER] THEN 
-              put_line('call exception:' || 'INTEGER' );
+              dbms_output.put_line('call exception:' || 'INTEGER' );
 end;
 call p_var(123);
 
@@ -471,7 +471,7 @@ begin
         RAISE [INTO];
     end if;
 EXCEPTION    WHEN [INTO] THEN 
-              put_line('call exception:' || 'INTO' );
+              dbms_output.put_line('call exception:' || 'INTO' );
 end;
 call p_var(123);
 
@@ -482,7 +482,7 @@ begin
         RAISE [IS];
     end if;
 EXCEPTION    WHEN [IS] THEN 
-              put_line('call exception:' || 'IS' );
+              dbms_output.put_line('call exception:' || 'IS' );
 end;
 call p_var(123);
 
@@ -493,7 +493,7 @@ begin
         RAISE [LIKE];
     end if;
 EXCEPTION    WHEN [LIKE] THEN 
-              put_line('call exception:' || 'LIKE' );
+              dbms_output.put_line('call exception:' || 'LIKE' );
 end;
 call p_var(123);
 
@@ -504,7 +504,7 @@ begin
         RAISE [LIST];
     end if;
 EXCEPTION    WHEN [LIST] THEN 
-              put_line('call exception:' || 'LIST' );
+              dbms_output.put_line('call exception:' || 'LIST' );
 end;
 call p_var(123);
 
@@ -515,7 +515,7 @@ begin
         RAISE [LOOP];
     end if;
 EXCEPTION    WHEN [LOOP] THEN 
-              put_line('call exception:' || 'LOOP' );
+              dbms_output.put_line('call exception:' || 'LOOP' );
 end;
 call p_var(123);
 
@@ -526,7 +526,7 @@ begin
         RAISE [MOD];
     end if;
 EXCEPTION    WHEN [MOD] THEN 
-              put_line('call exception:' || 'MOD' );
+              dbms_output.put_line('call exception:' || 'MOD' );
 end;
 call p_var(123);
 
@@ -537,7 +537,7 @@ begin
         RAISE [MULTISET];
     end if;
 EXCEPTION    WHEN [MULTISET] THEN 
-              put_line('call exception:' || 'MULTISET' );
+              dbms_output.put_line('call exception:' || 'MULTISET' );
 end;
 call p_var(123);
 
@@ -548,7 +548,7 @@ begin
         RAISE [NOT];
     end if;
 EXCEPTION    WHEN [NOT] THEN 
-              put_line('call exception:' || 'NOT' );
+              dbms_output.put_line('call exception:' || 'NOT' );
 end;
 call p_var(123);
 
@@ -559,7 +559,7 @@ begin
         RAISE [NULL];
     end if;
 EXCEPTION    WHEN [NULL] THEN 
-              put_line('call exception:' || 'NULL' );
+              dbms_output.put_line('call exception:' || 'NULL' );
 end;
 call p_var(123);
 
@@ -570,7 +570,7 @@ begin
         RAISE [NUMERIC];
     end if;
 EXCEPTION    WHEN [NUMERIC] THEN 
-              put_line('call exception:' || 'NUMERIC' );
+              dbms_output.put_line('call exception:' || 'NUMERIC' );
 end;
 call p_var(123);
 
@@ -581,7 +581,7 @@ begin
         RAISE [OPEN];
     end if;
 EXCEPTION    WHEN [OPEN] THEN 
-              put_line('call exception:' || 'OPEN' );
+              dbms_output.put_line('call exception:' || 'OPEN' );
 end;
 call p_var(123);
 
@@ -592,7 +592,7 @@ begin
         RAISE [OR];
     end if;
 EXCEPTION    WHEN [OR] THEN 
-              put_line('call exception:' || 'OR' );
+              dbms_output.put_line('call exception:' || 'OR' );
 end;
 call p_var(123);
 
@@ -603,7 +603,7 @@ begin
         RAISE [OUT];
     end if;
 EXCEPTION    WHEN [OUT] THEN 
-              put_line('call exception:' || 'OUT' );
+              dbms_output.put_line('call exception:' || 'OUT' );
 end;
 call p_var(123);
 
@@ -614,7 +614,7 @@ begin
         RAISE [PRAGMA];
     end if;
 EXCEPTION    WHEN [PRAGMA] THEN 
-              put_line('call exception:' || 'PRAGMA' );
+              dbms_output.put_line('call exception:' || 'PRAGMA' );
 end;
 call p_var(123);
 
@@ -625,7 +625,7 @@ begin
         RAISE [PROCEDURE];
     end if;
 EXCEPTION    WHEN [PROCEDURE] THEN 
-              put_line('call exception:' || 'PROCEDURE' );
+              dbms_output.put_line('call exception:' || 'PROCEDURE' );
 end;
 call p_var(123);
 
@@ -636,7 +636,7 @@ begin
         RAISE [RAISE];
     end if;
 EXCEPTION    WHEN [RAISE] THEN 
-              put_line('call exception:' || 'RAISE' );
+              dbms_output.put_line('call exception:' || 'RAISE' );
 end;
 call p_var(123);
 
@@ -647,7 +647,7 @@ begin
         RAISE [REAL];
     end if;
 EXCEPTION    WHEN [REAL] THEN 
-              put_line('call exception:' || 'REAL' );
+              dbms_output.put_line('call exception:' || 'REAL' );
 end;
 call p_var(123);
 
@@ -658,7 +658,7 @@ begin
         RAISE [REPLACE];
     end if;
 EXCEPTION    WHEN [REPLACE] THEN 
-              put_line('call exception:' || 'REPLACE' );
+              dbms_output.put_line('call exception:' || 'REPLACE' );
 end;
 call p_var(123);
 
@@ -669,7 +669,7 @@ begin
         RAISE [RETURN];
     end if;
 EXCEPTION    WHEN [RETURN] THEN 
-              put_line('call exception:' || 'RETURN' );
+              dbms_output.put_line('call exception:' || 'RETURN' );
 end;
 call p_var(123);
 
@@ -680,7 +680,7 @@ begin
         RAISE [REVERSE];
     end if;
 EXCEPTION    WHEN [REVERSE] THEN 
-              put_line('call exception:' || 'REVERSE' );
+              dbms_output.put_line('call exception:' || 'REVERSE' );
 end;
 call p_var(123);
 
@@ -691,7 +691,7 @@ begin
         RAISE [ROLLBACK];
     end if;
 EXCEPTION    WHEN [ROLLBACK] THEN 
-              put_line('call exception:' || 'ROLLBACK' );
+              dbms_output.put_line('call exception:' || 'ROLLBACK' );
 end;
 call p_var(123);
 
@@ -702,7 +702,7 @@ begin
         RAISE [SEQUENCE];
     end if;
 EXCEPTION    WHEN [SEQUENCE] THEN 
-              put_line('call exception:' || 'SEQUENCE' );
+              dbms_output.put_line('call exception:' || 'SEQUENCE' );
 end;
 call p_var(123);
 
@@ -713,7 +713,7 @@ begin
         RAISE [SET];
     end if;
 EXCEPTION    WHEN [SET] THEN 
-              put_line('call exception:' || 'SET' );
+              dbms_output.put_line('call exception:' || 'SET' );
 end;
 call p_var(123);
 
@@ -724,7 +724,7 @@ begin
         RAISE [SETEQ];
     end if;
 EXCEPTION    WHEN [SETEQ] THEN 
-              put_line('call exception:' || 'SETEQ' );
+              dbms_output.put_line('call exception:' || 'SETEQ' );
 end;
 call p_var(123);
 
@@ -735,7 +735,7 @@ begin
         RAISE [SETNEQ];
     end if;
 EXCEPTION    WHEN [SETNEQ] THEN 
-              put_line('call exception:' || 'SETNEQ' );
+              dbms_output.put_line('call exception:' || 'SETNEQ' );
 end;
 call p_var(123);
 
@@ -746,7 +746,7 @@ begin
         RAISE [SHORT];
     end if;
 EXCEPTION    WHEN [SHORT] THEN 
-              put_line('call exception:' || 'SHORT' );
+              dbms_output.put_line('call exception:' || 'SHORT' );
 end;
 call p_var(123);
 
@@ -757,7 +757,7 @@ begin
         RAISE [SMALLINT];
     end if;
 EXCEPTION    WHEN [SMALLINT] THEN 
-              put_line('call exception:' || 'SMALLINT' );
+              dbms_output.put_line('call exception:' || 'SMALLINT' );
 end;
 call p_var(123);
 
@@ -768,7 +768,7 @@ begin
         RAISE [SQL];
     end if;
 EXCEPTION    WHEN [SQL] THEN 
-              put_line('call exception:' || 'SQL' );
+              dbms_output.put_line('call exception:' || 'SQL' );
 end;
 call p_var(123);
 
@@ -779,7 +779,7 @@ begin
         RAISE [STRING];
     end if;
 EXCEPTION    WHEN [STRING] THEN 
-              put_line('call exception:' || 'STRING' );
+              dbms_output.put_line('call exception:' || 'STRING' );
 end;
 call p_var(123);
 
@@ -790,7 +790,7 @@ begin
         RAISE [SUBSET];
     end if;
 EXCEPTION    WHEN [SUBSET] THEN 
-              put_line('call exception:' || 'SUBSET' );
+              dbms_output.put_line('call exception:' || 'SUBSET' );
 end;
 call p_var(123);
 
@@ -801,7 +801,7 @@ begin
         RAISE [SUBSETEQ];
     end if;
 EXCEPTION    WHEN [SUBSETEQ] THEN 
-              put_line('call exception:' || 'SUBSETEQ' );
+              dbms_output.put_line('call exception:' || 'SUBSETEQ' );
 end;
 call p_var(123);
 
@@ -812,7 +812,7 @@ begin
         RAISE [SUPERSET];
     end if;
 EXCEPTION    WHEN [SUPERSET] THEN 
-              put_line('call exception:' || 'SUPERSET' );
+              dbms_output.put_line('call exception:' || 'SUPERSET' );
 end;
 call p_var(123);
 
@@ -823,7 +823,7 @@ begin
         RAISE [SUPERSETEQ];
     end if;
 EXCEPTION    WHEN [SUPERSETEQ] THEN 
-              put_line('call exception:' || 'SUPERSETEQ' );
+              dbms_output.put_line('call exception:' || 'SUPERSETEQ' );
 end;
 call p_var(123);
 
@@ -834,7 +834,7 @@ begin
         RAISE [SYS_REFCURSOR];
     end if;
 EXCEPTION    WHEN [SYS_REFCURSOR] THEN 
-              put_line('call exception:' || 'SYS_REFCURSOR' );
+              dbms_output.put_line('call exception:' || 'SYS_REFCURSOR' );
 end;
 call p_var(123);
 
@@ -845,7 +845,7 @@ begin
         RAISE [THEN];
     end if;
 EXCEPTION    WHEN [THEN] THEN 
-              put_line('call exception:' || 'THEN' );
+              dbms_output.put_line('call exception:' || 'THEN' );
 end;
 call p_var(123);
 
@@ -856,7 +856,7 @@ begin
         RAISE [TIME];
     end if;
 EXCEPTION    WHEN [TIME] THEN 
-              put_line('call exception:' || 'TIME' );
+              dbms_output.put_line('call exception:' || 'TIME' );
 end;
 call p_var(123);
 
@@ -867,7 +867,7 @@ begin
         RAISE [TIMESTAMP];
     end if;
 EXCEPTION    WHEN [TIMESTAMP] THEN 
-              put_line('call exception:' || 'TIMESTAMP' );
+              dbms_output.put_line('call exception:' || 'TIMESTAMP' );
 end;
 call p_var(123);
 
@@ -878,7 +878,7 @@ begin
         RAISE [TIMESTAMPLTZ];
     end if;
 EXCEPTION    WHEN [TIMESTAMPLTZ] THEN 
-              put_line('call exception:' || 'TIMESTAMPLTZ' );
+              dbms_output.put_line('call exception:' || 'TIMESTAMPLTZ' );
 end;
 call p_var(123);
 
@@ -889,7 +889,7 @@ begin
         RAISE [TIMESTAMPTZ];
     end if;
 EXCEPTION    WHEN [TIMESTAMPTZ] THEN 
-              put_line('call exception:' || 'TIMESTAMPTZ' );
+              dbms_output.put_line('call exception:' || 'TIMESTAMPTZ' );
 end;
 call p_var(123);
 
@@ -900,7 +900,7 @@ begin
         RAISE [TRUE];
     end if;
 EXCEPTION    WHEN [TRUE] THEN 
-              put_line('call exception:' || 'TRUE' );
+              dbms_output.put_line('call exception:' || 'TRUE' );
 end;
 call p_var(123);
 
@@ -911,7 +911,7 @@ begin
         RAISE [USING];
     end if;
 EXCEPTION    WHEN [USING] THEN 
-              put_line('call exception:' || 'USING' );
+              dbms_output.put_line('call exception:' || 'USING' );
 end;
 call p_var(123);
 
@@ -922,7 +922,7 @@ begin
         RAISE [VARCHAR];
     end if;
 EXCEPTION    WHEN [VARCHAR] THEN 
-              put_line('call exception:' || 'VARCHAR' );
+              dbms_output.put_line('call exception:' || 'VARCHAR' );
 end;
 call p_var(123);
 
@@ -933,7 +933,7 @@ begin
         RAISE [WHEN];
     end if;
 EXCEPTION    WHEN [WHEN] THEN 
-              put_line('call exception:' || 'WHEN' );
+              dbms_output.put_line('call exception:' || 'WHEN' );
 end;
 call p_var(123);
 
@@ -944,7 +944,7 @@ begin
         RAISE [WHILE];
     end if;
 EXCEPTION    WHEN [WHILE] THEN 
-              put_line('call exception:' || 'WHILE' );
+              dbms_output.put_line('call exception:' || 'WHILE' );
 end;
 call p_var(123);
 
@@ -955,7 +955,7 @@ begin
         RAISE [WORK];
     end if;
 EXCEPTION    WHEN [WORK] THEN 
-              put_line('call exception:' || 'WORK' );
+              dbms_output.put_line('call exception:' || 'WORK' );
 end;
 call p_var(123);
 
@@ -966,7 +966,7 @@ begin
         RAISE [XOR];
     end if;
 EXCEPTION    WHEN [XOR] THEN 
-              put_line('call exception:' || 'XOR' );
+              dbms_output.put_line('call exception:' || 'XOR' );
 end;
 call p_var(123);
 

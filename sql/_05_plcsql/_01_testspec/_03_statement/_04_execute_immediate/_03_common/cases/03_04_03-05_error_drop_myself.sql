@@ -11,10 +11,10 @@ BEGIN
     dbms_output.put_line('first call t()');
 END;
 
-select 'before', a.* from db_stored_procedure a where a.sp_name='t';
+select count(*) from db_stored_procedure where sp_name='t';
 call t();
 
-select 'after', a.* from db_stored_procedure a where a.sp_name='t';
+select count(*) from db_stored_procedure where sp_name='t';
 
 drop procedure t;
 

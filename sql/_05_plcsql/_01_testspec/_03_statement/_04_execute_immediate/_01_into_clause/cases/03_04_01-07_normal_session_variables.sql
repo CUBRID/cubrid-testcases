@@ -12,7 +12,7 @@ CREATE OR REPLACE PROCEDURE t(param varchar, r_id OUT integer, r_name OUT string
 AS
 BEGIN
     EXECUTE IMMEDIATE 'select id, name  from plcsql_tbl where name = ? ' INTO r_id, r_name USING param   ;
-    put_line('id: ' || r_id || ' name: ' || r_name);
+    dbms_output.put_line('id: ' || r_id || ' name: ' || r_name);
 END;
 
 -- session variables : bug

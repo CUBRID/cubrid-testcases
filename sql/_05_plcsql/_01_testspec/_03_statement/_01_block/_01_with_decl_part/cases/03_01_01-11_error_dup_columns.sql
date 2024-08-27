@@ -10,8 +10,8 @@ AS
     b varchar(10);
 BEGIN
    SELECT dummy x, dummy x INTO a, b  FROM dual;
-   put_line('a=' || a);
-   put_line('b=' || b);
+   dbms_output.put_line('a=' || a);
+   dbms_output.put_line('b=' || b);
 END;
 
 CALL text_prc() ;
