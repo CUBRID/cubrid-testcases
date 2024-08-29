@@ -1,5 +1,4 @@
 set system parameters 'deduplicate_key_level=0';
-set system parameters 'print_index_detail=yes';
 
 drop table if exists b_child;
 drop table if exists a_parent;
@@ -10,6 +9,8 @@ insert into b_child select * from a_parent;
 alter table a_parent add primary key(id,name);
 
 alter table b_child add constraint fk_id_name1 FOREIGN KEY(id,name) with deduplicate=13 REFERENCES a_parent(id,name);
+
+alter table b_child drop constraint fk_id_name1;
 
 drop table b_child;
 drop table a_parent;
