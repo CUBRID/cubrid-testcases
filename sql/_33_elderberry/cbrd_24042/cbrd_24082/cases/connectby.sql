@@ -27,6 +27,20 @@ FROM   v a,
        t_b b
 WHERE  a.col_a = b.col_a
        AND b.col_b = 2;
+DROP VIEW v;
+
+--Convert the view to an inline view (unmergable)
+SELECT /*+ recompile */ a.col_a
+FROM   (SELECT a.col_a,
+               a.col_b
+        FROM   t_a a,
+               t_b b
+        WHERE  a.col_a = b.col_a
+        CONNECT BY a.col_a = PRIOR a.col_b) a,
+       t_b b
+WHERE  a.col_a = b.col_a
+       AND b.col_b = 2;
+
 
 --subquery check. connect by (unmergable)
 CREATE OR replace VIEW v
@@ -44,4 +58,17 @@ WHERE  a.col_a = b.col_a
        AND b.col_b = 2
 CONNECT BY a.col_a = PRIOR a.col_b;  
 DROP VIEW v;
+
+--Convert the view to an inline view (unmergable)
+SELECT /*+ recompile */ a.col_a
+FROM   t_b b,
+       (SELECT a.col_a,
+               a.col_b
+        FROM   t_a a,
+               t_b b
+        WHERE  a.col_a = b.col_a) a
+WHERE  a.col_a = b.col_a
+       AND b.col_b = 2
+CONNECT BY a.col_a = PRIOR a.col_b;
+
 DROP TABLE t_a, t_b;

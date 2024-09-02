@@ -26,6 +26,19 @@ FROM   v a,
        t_b b
 WHERE  a.col_a = b.col_a
        AND b.col_b = 2;
+DROP VIEW v;
+
+--Convert the view to an inline view (unmergable)
+SELECT /*+ recompile */ a.col_a
+FROM   (SELECT a.col_a,
+               a.col_b
+        FROM   t_a a,
+               t_b b
+        WHERE  a.col_a = b.col_a(+)) a,
+       t_b b
+WHERE  a.col_a = b.col_a
+       AND b.col_b = 2;
+
 
 --mainquery check. has outer join spec (mergable)
 CREATE OR replace VIEW v
@@ -40,6 +53,19 @@ FROM   v a,
        t_b b
 WHERE  a.col_a = b.col_a(+)
        AND b.col_b(+) = 2;  
+DROP VIEW v;
+
+--Convert the view to an inline view (mergable)
+SELECT /*+ recompile */ a.col_a
+FROM   (SELECT a.col_a,
+               a.col_b
+        FROM   t_a a,
+               t_b b
+        WHERE  a.col_a = b.col_a) a,
+       t_b b
+WHERE  a.col_a = b.col_a(+)
+       AND b.col_b(+) = 2;
+
 
 --mainquery check. view is outer join spec (unmergable)
 CREATE OR replace VIEW v
@@ -55,4 +81,16 @@ FROM   t_b b,
 WHERE  a.col_a(+) = b.col_a
        AND b.col_b = 2;
 DROP VIEW v;
+
+--Convert the view to an inline view (unmergable)
+SELECT /*+ recompile */ a.col_a
+FROM   t_b b,
+       (SELECT a.col_a,
+               a.col_b
+        FROM   t_a a,
+               t_b b
+        WHERE  a.col_a = b.col_a) a
+WHERE  a.col_a(+) = b.col_a
+       AND b.col_b = 2;
+
 DROP TABLE t_a, t_b;

@@ -23,11 +23,24 @@ AS
   WHERE  a.col_a = b.col_a
   ORDER  BY b.col_a
   LIMIT  10;
-
 SELECT /*+ recompile */ a.col_a
 FROM   v a,
        t_b b
 WHERE  a.col_a = b.col_a
        AND b.col_b = 2; 
 DROP VIEW v;
+
+--Convert the view to an inline view (unmergable)
+SELECT /*+ recompile */ a.col_a
+FROM   (SELECT a.col_a,
+               b.col_b col_b
+        FROM   t_a a,
+               t_b b
+        WHERE  a.col_a = b.col_a
+        ORDER  BY b.col_a
+        LIMIT  10) a,
+       t_b b
+WHERE  a.col_a = b.col_a
+       AND b.col_b = 2;
+
 DROP TABLE t_a, t_b;
