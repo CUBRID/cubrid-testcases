@@ -1,0 +1,68 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+av    bv    
+value a1     value a1     
+value a2     value a2     
+value a3     value a3     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: sq node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: b node[?]
+                            index: tj_id term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ sq.val, b.val from tj sq inner join tj b on sq.id=b.id using index b.tj_id, sq.tj_id order by ?, ?
+===================================================
+id    val    
+1     value b1     
+2     value b2     
+3     value b3     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: sq node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: tk node[?]
+                            index: tk_id term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ sq.id, tk.val from tj sq inner join tk tk on sq.id=tk.id using index sq.tj_id order by ?
+===================================================
+0
+===================================================
+0
