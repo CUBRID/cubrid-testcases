@@ -1,3 +1,5 @@
+--There are cases where problems arise when deduplicate indexes are created with FK
+
 set system parameters 'deduplicate_key_level=0';
 
 drop table if exists b_child;
