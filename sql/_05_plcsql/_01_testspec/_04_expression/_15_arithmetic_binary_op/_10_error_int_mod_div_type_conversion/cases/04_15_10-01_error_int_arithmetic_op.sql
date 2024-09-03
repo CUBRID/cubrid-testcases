@@ -83,7 +83,6 @@ end;
 call t_exe_error_null(' Integer Arithmetic operations : variable(null) div 0 ' ) ;
 drop procedure t_exe_error_null;
 
---BUG ( normal : division by zero, BUG : internal server error )
 select 'This test throws an execution error. ( t_string mod 0 )' ;
 create or replace procedure t_exe_error_string( tc_comment string ) as
 begin
@@ -95,7 +94,6 @@ call t_exe_error(' Integer Arithmetic operations : string mod 0 ' ) ;
 drop procedure t_exe_error_string;
 
 
---BUG ( normal : division by zero, BUG : internal server error )
 select 'This test throws an execution error. ( t_string div 0 )' ;
 create or replace procedure t_exe_error_string( tc_comment string ) as
     left_string                    string        := '123';
@@ -175,7 +173,6 @@ call t_exe_error_int(' Integer Arithmetic operations : int div 0 ' ) ;
 drop procedure t_exe_error_int;
 
 
---BUG ( normal : division by zero, BUG : internal server error )
 select 'This test throws an execution error. ( t_bigint mod 0 )' ;
 create or replace procedure t_exe_error_bigint( tc_comment string ) as
     left_bigint                    bigint        := 278234;
@@ -189,7 +186,6 @@ call t_exe_error_bigint(' Integer Arithmetic operations : bigint mod 0 ' ) ;
 drop procedure t_exe_error_bigint;
 
 
---BUG ( normal : division by zero, BUG : internal server error )
 select 'This test throws an execution error. ( t_bigint div 0 )' ;
 create or replace procedure t_exe_error_bigint( tc_comment string ) as
     left_bigint                    bigint        := 278234;
@@ -206,7 +202,6 @@ call t_exe_error_bigint(' Integer Arithmetic operations : bigint, string ' ) ;
 drop procedure t_exe_error_bigint;
 
 
---BUG ( normal : division by zero, BUG : internal server error )
 select 'This test throws an execution error. ( t_numeric mod 0)' ;
 create or replace procedure t_exe_error_numeric( tc_comment string ) as
     left_numeric                   numeric(8,4)  := 5678.123;
@@ -219,7 +214,6 @@ call t_exe_error_numeric(' Integer Arithmetic operations : numeric mod 0 ' ) ;
 drop procedure t_exe_error_numeric;
 
 
---BUG ( normal : division by zero, BUG : internal server error )
 select 'This test throws an execution error. ( t_numeric div 0 )' ;
 create or replace procedure t_exe_error_numeric( tc_comment string ) as
     left_numeric                   numeric(8,4)  := 5678.123;
@@ -235,7 +229,6 @@ call t_exe_error_numeric(' Integer Arithmetic operations : numeric, string ' ) ;
 drop procedure t_exe_error_numeric;
 
 
---BUG ( normal : division by zero, BUG : internal server error )
 select 'This test throws an execution error. ( t_float mod 0 )' ;
 create or replace procedure t_exe_error_float( tc_comment string ) as
     left_float                     float         := 3677.345;
@@ -248,7 +241,6 @@ call t_exe_error_float(' Integer Arithmetic operations : float mod 0 ' ) ;
 drop procedure t_exe_error_float ;
 
 
---BUG ( normal : division by zero, BUG : internal server error )
 select 'This test throws an execution error. ( t_float div 0 )' ;
 create or replace procedure t_exe_error_float( tc_comment string ) as
     left_float                     float         := 3677.345;
@@ -265,7 +257,6 @@ call t_exe_error_float(' Integer Arithmetic operations : float div 0 ' ) ;
 drop procedure t_exe_error_float ;
 
 
---BUG ( normal : division by zero, BUG : internal server error )
 select 'This test throws an execution error. ( t_double mod 0 )' ;
 create or replace procedure t_exe_error_double( tc_comment string ) as
     left_double                    double        := 56789.1234;
@@ -279,7 +270,6 @@ call t_exe_error_double(' Integer Arithmetic operations : double mod 0 ' ) ;
 drop procedure t_exe_error_double ;
 
 
---BUG ( normal : division by zero, BUG : internal server error )
 select 'This test throws an execution error. ( t_double div 0 )' ;
 create or replace procedure t_exe_error_double( tc_comment string ) as
     left_double                    double        := 56789.1234;

@@ -227,8 +227,6 @@ end;
 call t_TIMESTAMPTZ_TIME('TIMESTAMPTZ', 'TIME'  ) ;
 drop procedure t_TIMESTAMPTZ_TIME ;
 
---BUG
-
 call print_message('t_DOUBLE_TIME. This scenario is a success.');
 create or replace procedure t_DOUBLE_TIME(param_type string, variables_type string ) as 
      CURSOR my_cursor1 IS 
@@ -244,8 +242,6 @@ begin
 end;
 call t_DOUBLE_TIME('DOUBLE', 'TIME'  ) ;
 drop procedure t_DOUBLE_TIME ;
-
---BUG
 
 call print_message('t_FLOAT_TIME. This scenario is a success.');
 create or replace procedure t_FLOAT_TIME(param_type string, variables_type string ) as 
@@ -293,8 +289,6 @@ end;
 call t_NUMERIC_TIME('NUMERIC(8,4)', 'TIME'  ) ;
 drop procedure t_NUMERIC_TIME ;
 
---BUG
-
 call print_message('t_BIGINT_TIME. This scenario is a success.');
 create or replace procedure t_BIGINT_TIME(param_type string, variables_type string ) as 
      CURSOR my_cursor1 IS 
@@ -310,8 +304,6 @@ begin
 end;
 call t_BIGINT_TIME('BIGINT', 'TIME'  ) ;
 drop procedure t_BIGINT_TIME ;
-
---BUG
 
 call print_message('t_INT_TIME. This scenario is a success.');
 create or replace procedure t_INT_TIME(param_type string, variables_type string ) as 
@@ -334,8 +326,6 @@ begin
 end;
 call t_INT_TIME('INT', 'TIME'  ) ;
 drop procedure t_INT_TIME ;
-
---BUG
 
 call print_message('t_SHORT_TIME. This scenario is a success.');
 create or replace procedure t_SHORT_TIME(param_type string, variables_type string ) as 

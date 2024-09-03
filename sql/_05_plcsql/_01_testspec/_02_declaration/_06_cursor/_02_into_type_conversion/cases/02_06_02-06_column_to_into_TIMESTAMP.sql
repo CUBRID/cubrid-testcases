@@ -94,7 +94,7 @@ create or replace procedure print_message(print_message string ) as begin
     dbms_output.put_line( print_message ); 
 end;
 
---BUG ( normal : Data overflow on data type "timestamp", BUG : 12:00:00 AM 12/30/0001 )
+--BUG ( normal : Data overflow on data type "timestamp", BUG : 12:00:00 AM 12/30/0001 ) - CBRD-25564
 call print_message('t_DATETIME_TIMESTAMP. This scenario is a failure.');
 create or replace procedure t_DATETIME_TIMESTAMP(param_type string, variables_type string ) as 
 VAR TIMESTAMP  ;
@@ -107,7 +107,7 @@ call t_DATETIME_TIMESTAMP('DATETIME', 'TIMESTAMP'  ) ;
 drop procedure t_DATETIME_TIMESTAMP ;
 
 
---BUG ( normal : Data overflow on data type "timestamp", BUG : 11:59:59 PM 12/31/9999 )
+--BUG ( normal : Data overflow on data type "timestamp", BUG : 11:59:59 PM 12/31/9999 ) - CBRD-25564
 call print_message('t_DATETIME_TIMESTAMP. This scenario is a failure.');
 create or replace procedure t_DATETIME_TIMESTAMP(param_type string, variables_type string ) as
 VAR TIMESTAMP  ;
@@ -164,7 +164,7 @@ call t_DATETIMETZ_TIMESTAMP('DATETIMETZ', 'TIMESTAMP'  ) ;
 drop procedure t_DATETIMETZ_TIMESTAMP ;
 
 
---BUG ( normal : Data overflow on data type "timestamp", BUG : 12:00:00 AM 12/30/0001 )
+--BUG ( normal : Data overflow on data type "timestamp", BUG : 12:00:00 AM 12/30/0001 ) - CBRD-25564
 call print_message('t_DATE_TIMESTAMP. This scenario is a failure.');
 create or replace procedure t_DATE_TIMESTAMP(param_type string, variables_type string ) as 
 VAR TIMESTAMP  ;
@@ -176,7 +176,7 @@ call t_DATE_TIMESTAMP('DATE', 'TIMESTAMP'  ) ;
 drop procedure t_DATE_TIMESTAMP ;
 
 
---BUG ( normal : Data overflow on data type "timestamp", BUG : 12:00:00 AM 12/31/9999 )
+--BUG ( normal : Data overflow on data type "timestamp", BUG : 12:00:00 AM 12/31/9999 ) - CBRD-25564
 call print_message('t_DATE_TIMESTAMP. This scenario is a failure.');
 create or replace procedure t_DATE_TIMESTAMP(param_type string, variables_type string ) as
 VAR TIMESTAMP  ;

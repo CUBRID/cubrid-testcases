@@ -121,7 +121,6 @@ end;
 call t_DOUBLE_NUMERIC('DOUBLE', 'NUMERIC(38,15)', cast( 1234.56789 as double) ) ;
 drop procedure t_DOUBLE_NUMERIC ;
 
--- BUG( normal : 1677.217000000000000, BUG : 1677.217041015625000)
 call print_message('t_FLOAT_NUMERIC. This scenario is a success.');
 create or replace procedure t_FLOAT_NUMERIC(param_type string, variables_type string, param FLOAT ) as 
 VAR NUMERIC(38,15) := param ;
