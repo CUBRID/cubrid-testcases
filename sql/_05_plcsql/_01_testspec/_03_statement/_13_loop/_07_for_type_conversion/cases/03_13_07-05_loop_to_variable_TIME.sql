@@ -330,7 +330,7 @@ drop procedure t_INT_TIME ;
 call print_message('t_SHORT_TIME. This scenario is a success.');
 create or replace procedure t_SHORT_TIME(param_type string, variables_type string ) as 
      CURSOR my_cursor1 IS 
-          SELECT T_SHORT as col_val FROM plcsql_type_tbl WHERE ID = 1 ;
+          SELECT T_SHORT as col_val FROM plcsql_type_tbl WHERE ID = 2 ;
      CURSOR my_cursor2 IS 
           SELECT T_SMALLINT as col_val FROM plcsql_type_tbl WHERE ID = 2 ;
 
