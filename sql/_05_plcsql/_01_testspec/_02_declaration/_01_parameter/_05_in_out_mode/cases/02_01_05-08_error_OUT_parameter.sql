@@ -13,7 +13,7 @@ insert into plcsql_tbl values(3, 'name3');
 
 CREATE OR REPLACE PROCEDURE t(in_value IN int, out_value OUT VARCHAR)
 AS
-    CURSOR my_cursor(a NUMERIC) IS SELECT name FROM plcsql_tbl
+    CURSOR my_cursor(a int) IS SELECT name FROM plcsql_tbl
         WHERE id = a;
     target_name STRING;
 BEGIN
@@ -30,7 +30,7 @@ END;
 
 select '12' into :a from dual;
 
-call t('1', :a);
+call t(1, :a);
 select :a as "out parameter result" from dual;
 
 --bug: If called as above, an error occurs in Oracle. CUBRID runs normally (confirmed on 2023-12-28)
