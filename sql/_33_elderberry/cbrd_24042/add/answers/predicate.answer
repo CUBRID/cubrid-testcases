@@ -1,0 +1,117 @@
+===================================================
+0
+===================================================
+6
+===================================================
+a    b    c    a    b    c    
+park     parksehun     1     cub     cubrid     1     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?] AND term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?] AND term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, tmp_hls b where (a.c=b.c) and (a.b>b.b) and (b.c>= ?:? )
+===================================================
+a    b    c    a    b    c    
+ora     oracle     2     ora     oracle     2     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?] AND term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?] AND term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, tmp_hls b where (a.c=b.c) and a.c+b.c=? and (b.c>= ?:? )
+===================================================
+a    b    c    a    b    c    
+cub     cubrid     1     cub     cubrid     1     
+ora     oracle     2     ora     oracle     2     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, tmp_hls b where (b.a= substr(a.b, ?, ?)) and (b.c>= ?:? )
+===================================================
+a    b    c    a    b    c    
+cub     cubrid     1     cub     cubrid     1     
+ora     oracle     2     ora     oracle     2     
+post     postgre     3     post     postgre     3     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, tmp_hls b where ( substr(a.b, ?, ?)=decode(b.a, 'post',  cast('pos' as varchar), b.a)) and (b.c>= ?:? )
+===================================================
+a    b    c    a    b    c    
+cub     cubrid     1     cub     cubrid     1     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, tmp_hls b where (b.a|| cast('rid' as varchar)=decode(a.a, 'cub',  cast('cubrid' as varchar), 'post',  cast('postgre' as varchar), a.a)) and (b.c>= ?:? )
+===================================================
+a    b    c    a    b    c    
+cub     cubrid     1     cub     cubrid     1     
+ora     oracle     2     ora     oracle     2     
+my     mysql     4     my     mysql     4     
+ms     mssql     5     ms     mssql     5     
+park     parksehun     1     park     parksehun     1     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, tmp_hls b where (b.b=decode(a.a, 'cub',  cast('cubrid' as varchar), 'post',  cast('bad' as varchar), a.b)) and (b.c>= ?:? )
+===================================================
+0
+===================================================
+0
