@@ -8,6 +8,9 @@ begin
     return 'func1 param: ' || a;
 end;
 
+select test_func1() from dual;
+
+
 -- without default value
 create or replace function test_func2(a int comment 'param comment without default value') return varchar
 as
@@ -15,6 +18,9 @@ begin
     test_func1(3);
     return 'func2 param: ' || a;
 end;
+
+select test_func2(10) from dual;
+
 
 -- recursive
 create or replace function test_func3(num int comment 'recursive function') return int
@@ -26,6 +32,9 @@ begin
         return num * test_func3(num-1);
     end if;
 end;
+
+select test_func3(5) from dual;
+
 
 -- maximum test
 -- compile error: length over
@@ -41,12 +50,10 @@ begin
     return 'maximum comment length';
 end;
 
-select test_func1() from dual;
-select test_func2(10) from dual;
-select test_func3(5) from dual;
 select test_func4(99) from dual;
 
-select sp_name, comment from db_stored_procedure_args where comment is not null;
+
+select sp_name, arg_name, comment from db_stored_procedure_args where comment is not null order by sp_name;
 
 drop function test_func1;
 drop function test_func2;
