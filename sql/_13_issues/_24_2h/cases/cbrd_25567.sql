@@ -17,7 +17,7 @@ insert into t (b)
   from db_class a, db_class b, db_class c, db_class d
   limit 10000;
 
--- Using pipe (combined into key_range)
+-- Using pipe (Two range conditions are combined into a single key range)
 prepare q from'
 select /*+ recompile */ count (*)
 from t
@@ -27,7 +27,7 @@ set trace on;
 execute q using '20240901', '20240901';
 show trace;
 
--- Using concat (combined into key_range)
+-- Using concat (Two range conditions are combined into a single key range)
 prepare q from'
 select /*+ recompile */ count (*)
 from t
@@ -37,7 +37,7 @@ set trace on;
 execute q using '20240901', '20240901';
 show trace;
 
--- Using session variable (not combined into key_range)
+-- Using session variable (Two range conditions are not combined into a single key range)
 set @v = '20240901';
 set trace on;
 select /*+ recompile */ count (*)
