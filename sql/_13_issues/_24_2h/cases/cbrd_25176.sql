@@ -16,3 +16,5 @@ alter table b_child drop constraint fk_id_name1;
 
 drop table b_child;
 drop table a_parent;
+
+set system parameters 'deduplicate_key_level=-1';
