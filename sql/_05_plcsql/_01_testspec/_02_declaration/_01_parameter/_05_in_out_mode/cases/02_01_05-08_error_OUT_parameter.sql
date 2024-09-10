@@ -33,7 +33,7 @@ select '12' into :a from dual;
 call t(1, :a);
 select :a as "out parameter result" from dual;
 
---bug: If called as above, an error occurs in Oracle. CUBRID runs normally (confirmed on 2023-12-28)
+--bug: If called as below, an error occurs in Oracle. CUBRID runs normally (confirmed on 2023-12-28)
 call t('1234', '12');
 
 drop procedure t;
