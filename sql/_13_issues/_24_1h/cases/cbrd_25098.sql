@@ -16,7 +16,7 @@ from tbl
 where col_two = 1 
 order by col_two for orderby_num() <= 1;
 
---TC expansion (cubridqa-1222)
+--TC expansion (cubridqa-1226)
 select 'expand 1';
 select
 	/*+ RECOMPILE */
@@ -26,7 +26,7 @@ from tbl
 where col_two = 1 and rownum <= 1
 order by col_two;
 
---TC expansion (cubridqa-1222)
+--TC expansion (cubridqa-1226)
 select 'expand 2';
 select
 	/*+ RECOMPILE */
@@ -36,7 +36,7 @@ from tbl
 where col_two in (1, 2, 3)
 order by col_two for orderby_num() <= 1;
 
---TC expansion (cubridqa-1222)
+--TC expansion (cubridqa-1226)
 select 'expand 3';
 select
 	/*+ RECOMPILE */
