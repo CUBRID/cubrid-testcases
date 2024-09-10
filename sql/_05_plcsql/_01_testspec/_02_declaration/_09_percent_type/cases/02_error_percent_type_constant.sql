@@ -30,7 +30,7 @@ T_BIGINT,T_NUMERIC,T_DECIMAL,T_FLOAT,T_REAL,T_DOUBLE,
 T_DATE,T_TIME,T_TIMESTAMP,T_DATETIME,
 T_CHAR,T_VARCHAR)
 values
-(-32768, -32767, -2147483648, -2147483648,
+(-32768, -32768, -2147483648, -2147483648,
 -9223372036854775808, 0.1, 0.1, -3.402823466E+38, -3.402823466E+38, -1.7976931348623157E+308,
 '0001-01-01', TIME '00:00:00', '1970-01-01 09:00:01', '0001-01-01 00:00:00.000',
 '1234567890abcdef','1234567890abcdef');
@@ -278,6 +278,15 @@ create or replace procedure type_support as
 begin 
    dbms_output.put_line('v_TIMESTAMP    ' || v_TIMESTAMP    );
 end;
+
+
+EVALUATE 'ERROR : Conversion error in timestamp format.';
+create or replace procedure type_support as
+    v_TIMESTAMP CONSTANT type_support.T_TIMESTAMP%type := TIMESTAMP('0000-01-01 08:00:01');
+begin
+    dbms_output.put_line('v_TIMESTAMP ' || v_TIMESTAMP );
+end;
+call type_support();
 
 
 EVALUATE 'nomal';

@@ -30,7 +30,7 @@ T_BIGINT,T_NUMERIC,T_DECIMAL,T_FLOAT,T_REAL,T_DOUBLE,
 T_DATE,T_TIME,T_TIMESTAMP,T_DATETIME,
 T_CHAR,T_VARCHAR)
 values
-(-32768, -32767, -2147483648, -2147483648,
+(-32768, -32768, -2147483648, -2147483648,
 -9223372036854775808, 0.1, 0.1, -3.402823466E+38, -3.402823466E+38, -1.7976931348623157E+308,
 '0001-01-01', TIME '00:00:00', '1970-01-01 09:00:01', '0001-01-01 00:00:00.000',
 '1234567890abcdef','1234567890abcdef');
@@ -156,12 +156,12 @@ create or replace function type_support_return() return  dba.type_support.T_DATE
 
 EVALUATE '16 T_CHAR';
 create or replace function type_support_return() return  dba.type_support.T_CHAR%type       as Begin   return 'abcdefghijklmnopqrstuvwxyz1234567'     ;   end;    
---BUG( normal : string does not fit in the target types length, BUG : abcdefghijklmnopqrstuvwxyz1234567)
+
 select type_support_return();
 
 EVALUATE '17 T_VARCHAR';
 create or replace function type_support_return() return  dba.type_support.T_VARCHAR%type    as Begin   return 'abcdefghijklmnopqrstuvwxyz1234567'  ;   end;    
---BUG( normal : string does not fit in the target types length, BUG : abcdefghijklmnopqrstuvwxyz1234567)
+
 select type_support_return();       
 
 

@@ -3,48 +3,47 @@
 -- Verification for CBRD-24707 ( Support API for %TYPE )
 -- normal: %type basic prameter
 
--- create table & insert data
-create table type_support (
-   ID INT AUTO_INCREMENT,
-   T_SHORT SHORT,
-   T_SMALLINT SMALLINT,
-   T_INTEGER INTEGER,
-   T_INT INT,
-   T_BIGINT BIGINT,
-   T_NUMERIC NUMERIC(38,15),
-   T_DECIMAL DECIMAL,
-   T_FLOAT FLOAT,
-   T_REAL REAL,
-   T_DOUBLE DOUBLE,
-   T_DATE DATE,
-   T_TIME TIME,
-   T_TIMESTAMP TIMESTAMP,
-   T_DATETIME DATETIME,
-   T_CHAR CHAR(32),
-   T_VARCHAR VARCHAR(32)
-);
+-- create view
+create or replace view type_support AS 
+   SELECT 
+      1 as ID,
+      cast( -32768                    as short          ) t_short,
+      cast( -32768                    as smallint       ) t_smallint,
+      cast( -2147483648               as integer        ) t_integer,
+      cast( -2147483648               as int            ) t_int,
+      cast( -9223372036854775808      as bigint         ) t_bigint,
+      cast( 0.1                       as numeric(38,15) ) t_numeric,
+      cast( 0.1                       as DECIMAL        ) t_decimal,
+      cast( -3.402823466E+38          as float          ) t_float,
+      cast( -3.402823466E+38          as real           ) t_real,
+      cast( -1.7976931348623157E+308  as double         ) t_double,
+      cast( '0001-01-01'              as date           ) t_date,
+      cast( '00:00:00'                as time           ) t_time,
+      cast( '1970-01-01 09:00:01'     as timestamp      ) t_timestamp,
+      cast( '0001-01-01 00:00:00.000' as datetime       ) t_datetime,
+      cast('c'                        as char(32)       ) t_char, 
+      cast('v'                        as varchar(32)    ) t_varchar
+    FROM dual  union all 
+   SELECT 
+      2 as ID,
+      cast( 32768                                   as short          ) t_short,
+      cast( 32768                                   as smallint       ) t_smallint,
+      cast( 2147483647                              as integer        ) t_integer,
+      cast( 2147483647                              as int            ) t_int,
+      cast( 9223372036854775807                     as bigint         ) t_bigint,
+      cast( 9876543210987654321098.7654321098765432 as numeric(38,15) ) t_numeric,
+      cast( 987654321054321                         as DECIMAL        ) t_decimal,
+      cast( 3.402823466E+38                         as float          ) t_float,
+      cast( 3.402823466E+38                         as real           ) t_real,
+      cast( 1.7976931348623157E+308                 as double         ) t_double,
+      cast( '9999-12-31'                            as date           ) t_date,
+      cast( '23:59:59'                              as time           ) t_time,
+      cast( '2038-01-19 03:14:07'                   as timestamp      ) t_timestamp,
+      cast( '9999-12-31 23:59:59.999'               as datetime       ) t_datetime,
+      cast('cahr_cubrid'                            as char(32)       ) t_char, 
+      cast('varchar_cubrid'                         as varchar(32)    ) t_varchar
+   FROM dual;
 
-insert into type_support
-(T_SHORT,T_SMALLINT,T_INTEGER,T_INT,
-T_BIGINT,T_NUMERIC,T_DECIMAL,T_FLOAT,T_REAL,T_DOUBLE,
-T_DATE,T_TIME,T_TIMESTAMP,T_DATETIME,
-T_CHAR,T_VARCHAR)
-values
-(-32768, -32767, -2147483648, -2147483648,
--9223372036854775808, 0.1, 0.1, -3.402823466E+38, -3.402823466E+38, -1.7976931348623157E+308,
-'0001-01-01', TIME '00:00:00', '1970-01-01 09:00:01', '0001-01-01 00:00:00.000',
-'1234567890abcdef','1234567890abcdef');
-
-insert into type_support
-(T_SHORT,T_SMALLINT,T_INTEGER,T_INT,
-T_BIGINT,T_NUMERIC,T_DECIMAL,T_FLOAT,T_REAL,T_DOUBLE,
-T_DATE,T_TIME,T_TIMESTAMP,T_DATETIME,
-T_CHAR,T_VARCHAR)
-values
-(32767, 32767, 2147483647, 2147483647,
-9223372036854775807, 9876543210987654321098.7654321098765432, 987654321054321, 3.402823466E+38, 3.402823466E+38, 3.402823466E+38,
-'9999-12-31', TIME '23:59:59', '2038-01-19 03:14:07', '9999-12-31 23:59:59.999',
-'1234567890abcdef','1234567890abcdef');
 
 
 
@@ -87,14 +86,15 @@ begin
     dbms_output.put_line('===========================');
 end;
 
--- BUG( normal : NUMERIC-0.100000000000000, BUG : NUMERIC-0.1 )
--- BUG( normal : DECIMAL-0, BUG : DECIMAL-0.1 )
-call type_support(-32768, -32767, -2147483648, -2147483648,
+-- The precision and scale of the NUMERIC (DECIMAL) type specified in the argument or return type are ignored.
+-- So the result is normal.
+call type_support(-32768, -32768, -2147483648, -2147483648,
 -9223372036854775808, 0.1, 0.1, -3.402823466E+38, -3.402823466E+38, -1.7976931348623157E+308,
 '0001-01-01', TIME '00:00:00', '1970-01-01 09:00:01', '0001-01-01 00:00:00.000',
 '1234567890abcdef','1234567890abcdef');
 
--- BUG( normal : NUMERIC-9876543210987654321098.765432109876543, BUG : NUMERIC-9876543210987654321098.7654321098765432 )
+-- The precision and scale of the NUMERIC (DECIMAL) type specified in the argument or return type are ignored.
+-- So the result is normal.
 call type_support(32767, 32767, 2147483647, 2147483647,
 9223372036854775807, 9876543210987654321098.7654321098765432, 987654321054321, 3.402823466E+38, 3.402823466E+38, 3.402823466E+38,
 '9999-12-31', TIME '23:59:59', '2038-01-19 03:14:07', '9999-12-31 23:59:59.999',
@@ -143,14 +143,15 @@ begin
     dbms_output.put_line('===========================');
 end;
 
--- BUG( normal : NUMERIC-0.100000000000000, BUG : NUMERIC-0.1 )
--- BUG( normal : DECIMAL-0, BUG : DECIMAL-0.1 )
-call type_support(-32768, -32767, -2147483648, -2147483648,
+-- The precision and scale of the NUMERIC (DECIMAL) type specified in the argument or return type are ignored.
+-- So the result is normal.
+call type_support(-32768, -32768, -2147483648, -2147483648,
 -9223372036854775808, 0.1, 0.1, -3.402823466E+38, -3.402823466E+38, -1.7976931348623157E+308,
 '0001-01-01', TIME '00:00:00', '1970-01-01 09:00:01', '0001-01-01 00:00:00.000',
 '1234567890abcdef','1234567890abcdef');
 
--- BUG( normal : NUMERIC-9876543210987654321098.765432109876543, BUG : NUMERIC-9876543210987654321098.7654321098765432 )
+-- The precision and scale of the NUMERIC (DECIMAL) type specified in the argument or return type are ignored.
+-- So the result is normal.
 call type_support(32767, 32767, 2147483647, 2147483647,
 9223372036854775807, 9876543210987654321098.7654321098765432, 987654321054321, 3.402823466E+38, 3.402823466E+38, 3.402823466E+38,
 '9999-12-31', TIME '23:59:59', '2038-01-19 03:14:07', '9999-12-31 23:59:59.999',
@@ -198,14 +199,15 @@ begin
     dbms_output.put_line('===========================');
 end;
 
--- BUG( normal : NUMERIC-0.100000000000000, BUG : NUMERIC-0.1 )
--- BUG( normal : DECIMAL-0, BUG : DECIMAL-0.1 )
-call type_support(-32768, -32767, -2147483648, -2147483648,
+-- The precision and scale of the NUMERIC (DECIMAL) type specified in the argument or return type are ignored.
+-- So the result is normal.
+call type_support(-32768, -32768, -2147483648, -2147483648,
 -9223372036854775808, 0.1, 0.1, -3.402823466E+38, -3.402823466E+38, -1.7976931348623157E+308,
 '0001-01-01', TIME '00:00:00', '1970-01-01 09:00:01', '0001-01-01 00:00:00.000',
 '1234567890abcdef','1234567890abcdef');
 
--- BUG( normal : NUMERIC-9876543210987654321098.765432109876543, BUG : NUMERIC-9876543210987654321098.7654321098765432 )
+-- The precision and scale of the NUMERIC (DECIMAL) type specified in the argument or return type are ignored.
+-- So the result is normal.
 call type_support(32767, 32767, 2147483647, 2147483647,
 9223372036854775807, 9876543210987654321098.7654321098765432, 987654321054321, 3.402823466E+38, 3.402823466E+38, 3.402823466E+38,
 '9999-12-31', TIME '23:59:59', '2038-01-19 03:14:07', '9999-12-31 23:59:59.999',
@@ -236,7 +238,7 @@ create or replace procedure type_support(
   ) as
 begin 
    v_SHORT      := -32768;
-   v_SMALLINT   := -32767;
+   v_SMALLINT   := -32768;
    v_INTEGER    := -2147483648;
    v_INT        := -2147483648;
    v_BIGINT     := -9223372036854775808;
@@ -279,8 +281,8 @@ call type_support(
    :v_VARCHAR   
 );
 
--- BUG( normal : NUMERIC-0.100000000000000, BUG : NUMERIC-0.1 )
--- BUG( normal : DECIMAL-0, BUG : DECIMAL-0.1 )
+-- The precision and scale of the NUMERIC (DECIMAL) type specified in the argument or return type are ignored.
+-- So the result is normal.
 select 
    :v_SHORT     ,
    :v_SMALLINT  ,
@@ -367,7 +369,8 @@ call type_support(
    :v_VARCHAR   
 );
 
--- BUG( normal : NUMERIC-9876543210987654321098.765432109876543, BUG : NUMERIC-9876543210987654321098.7654321098765432 )
+-- The precision and scale of the NUMERIC (DECIMAL) type specified in the argument or return type are ignored.
+-- So the result is normal.
 select 
    :v_SHORT     ,
    :v_SMALLINT  ,
@@ -391,7 +394,7 @@ FROM db_root;
 
 drop procedure type_support;
 
-drop table  type_support ;
+drop view  type_support ;
 
 --+ server-message off
 

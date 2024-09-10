@@ -30,7 +30,7 @@ T_BIGINT,T_NUMERIC,T_DECIMAL,T_FLOAT,T_REAL,T_DOUBLE,
 T_DATE,T_TIME,T_TIMESTAMP,T_DATETIME,
 T_CHAR,T_VARCHAR)
 values
-(-32768, -32767, -2147483648, -2147483648,
+(-32768, -32768, -2147483648, -2147483648,
 -9223372036854775808, 0.1, 0.1, -3.402823466E+38, -3.402823466E+38, -1.7976931348623157E+308,
 '0001-01-01', TIME '00:00:00', '1970-01-01 09:00:01', '0001-01-01 00:00:00.000',
 '1234567890abcdef','1234567890abcdef');
@@ -87,14 +87,15 @@ begin
     dbms_output.put_line('===========================');
 end;
 
--- BUG( normal : NUMERIC-0.100000000000000, BUG : NUMERIC-0.1 )
--- BUG( normal : DECIMAL-0, BUG : DECIMAL-0.1 )
-call type_support(-32768, -32767, -2147483648, -2147483648,
+-- The precision and scale of the NUMERIC (DECIMAL) type specified in the argument or return type are ignored.
+-- So the result is normal.
+call type_support(-32768, -32768, -2147483648, -2147483648,
 -9223372036854775808, 0.1, 0.1, -3.402823466E+38, -3.402823466E+38, -1.7976931348623157E+308,
 '0001-01-01', TIME '00:00:00', '1970-01-01 09:00:01', '0001-01-01 00:00:00.000',
 '1234567890abcdef','1234567890abcdef');
 
--- BUG( normal : NUMERIC-9876543210987654321098.765432109876543, BUG : NUMERIC-9876543210987654321098.7654321098765432 )
+-- The precision and scale of the NUMERIC (DECIMAL) type specified in the argument or return type are ignored. 
+-- So the result is normal.
 call type_support(32767, 32767, 2147483647, 2147483647,
 9223372036854775807, 9876543210987654321098.7654321098765432, 987654321054321, 3.402823466E+38, 3.402823466E+38, 3.402823466E+38,
 '9999-12-31', TIME '23:59:59', '2038-01-19 03:14:07', '9999-12-31 23:59:59.999',
@@ -146,15 +147,15 @@ call type_support(9223372036854775808);
 
 EVALUATE 'T_NUMERIC';
 create or replace procedure type_support(
-   v_NUMERIC  CONSTANT   type_support.T_NUMERIC%type 
+   v_NUMERIC  IN   type_support.T_NUMERIC%type 
   ) as
 begin 
    dbms_output.put_line('v_NUMERIC    ' || v_NUMERIC    );
 end;
 
---BUG ( nomal : numeric value does not fit in the target type precision and scale,  BUG : 7269072992350064654 )
+--BUG ( nomal : Data overflow on data type "numeric",  BUG : -123456789012345678901234 )
 call type_support(-123456789012345678901234);
---BUG ( nomal : numeric value does not fit in the target type precision and scale,  BUG : -7269072992350064654 )
+--BUG ( nomal : Data overflow on data type "numeric",  BUG : 1234567890123456789012344 )
 call type_support( 123456789012345678901234);
 
 
@@ -166,9 +167,9 @@ create or replace procedure type_support(
 begin 
    dbms_output.put_line('v_DECIMAL    ' || v_DECIMAL    );
 end;
---BUG ( nomal : numeric value does not fit in the target type precision and scale,  BUG : -1234567890123456 )
+-- The precision and scale of the NUMERIC (DECIMAL) type specified in the argument or return type are ignored.
+--  So the result is normal.
 call type_support(-1234567890123456);
---BUG ( nomal : numeric value does not fit in the target type precision and scale,  BUG : 1234567890123456 )
 call type_support(1234567890123456);
 
 
@@ -276,7 +277,7 @@ create or replace procedure type_support(
 begin 
    dbms_output.put_line('v_CHAR    ' || v_CHAR    );
 end;
---BUG( normal : string does not fit in the target types length, BUG : abcdefghijklmnopqrstuvwxyz1234567)
+
 call type_support('abcdefghijklmnopqrstuvwxyz1234567');
 
 
@@ -287,7 +288,7 @@ create or replace procedure type_support(
 begin 
    dbms_output.put_line('v_VARCHAR    ' || v_VARCHAR    );
 end;
---BUG( normal : string does not fit in the target types length, BUG : abcdefghijklmnopqrstuvwxyz1234567)
+
 call type_support('abcdefghijklmnopqrstuvwxyz1234567');
 
 

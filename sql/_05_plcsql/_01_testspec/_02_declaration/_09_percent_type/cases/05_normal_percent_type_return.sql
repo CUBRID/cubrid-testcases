@@ -30,7 +30,7 @@ T_BIGINT,T_NUMERIC,T_DECIMAL,T_FLOAT,T_REAL,T_DOUBLE,
 T_DATE,T_TIME,T_TIMESTAMP,T_DATETIME,
 T_CHAR,T_VARCHAR)
 values
-(-32768, -32767, -2147483648, -2147483648,
+(-32768, -32768, -2147483648, -2147483648,
 -9223372036854775808, 0.1, 0.1, -3.402823466E+38, -3.402823466E+38, -1.7976931348623157E+308,
 '0001-01-01', TIME '00:00:00', '1970-01-01 09:00:01', '0001-01-01 00:00:00.000',
 '1234567890abcdef','1234567890abcdef');
@@ -56,7 +56,7 @@ select type_support_return(32767  );
 
 EVALUATE 'T_SMALLINT';
 create or replace function type_support_return( v_SMALLINT  type_support.T_SMALLINT%type      ) return  type_support.T_SMALLINT%type       as Begin   return v_SMALLINT ;   end;    
-select type_support_return(-32767 );       
+select type_support_return(-32768 );       
 select type_support_return(32767  );
 
 
@@ -87,6 +87,7 @@ select type_support_return(9876543210987654321098.7654321098765432);
 
 EVALUATE 'T_DECIMAL';
 create or replace function type_support_return( v_DECIMAL   type_support.T_DECIMAL%type       ) return  type_support.T_DECIMAL%type        as Begin   return v_DECIMAL  ;   end;    
+-- BUG( normal : 0.100000000000000, BUG : 0 )
 select type_support_return(0.1    );       
 select type_support_return(987654321054321 );
 
