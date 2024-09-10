@@ -51,14 +51,6 @@ set trace on;
 execute q using '20240901', '20240901';
 show trace;
 
---In case of executing without using the Prepare statement (Two range conditions are not combined into a single key range) 
-set @v = '20240901';
-set trace on;
-select /*+ recompile */ count (*)
-from t
-where b >= concat(@v, '000000') and b <= concat(@v, '999999');
-show trace;
-
 -- Using session variable (Two range conditions are not combined into a single key range)
 set @v = '20240901';
 set trace on;
