@@ -31,6 +31,120 @@ sscan
 Query stmt:
 select tbl.col_two, tbl.col_three, (inst_num()), (select d?.a_? from ((select ?, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? ) as [scala col_one]) d? (a_?, col_one)) from tbl tbl where tbl.col_two= ?:?  and (inst_num())<= ?:? 
 ===================================================
+'expand 1'    
+expand 1     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select 'expand ?' from dual dual
+===================================================
+col_two    col_three    orderby_num()    scalar col_one    
+1     1     1     1     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tbl node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select ?, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? )
+Query plan:
+sscan
+    class: d? node[?]
+    cost:  ? card ?
+Query stmt:
+(select d?.a_? from ((select ?, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? ) as [scalar col_one]) d? (a_?, col_one))
+Query plan:
+sscan
+    class: tbl node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl.col_two, tbl.col_three, (inst_num()), (select d?.a_? from ((select ?, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? ) as [scalar col_one]) d? (a_?, col_one)) from tbl tbl where (rownum<= ?:? ) and tbl.col_two= ?:? 
+===================================================
+'expand 2'    
+expand 2     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select 'expand ?' from dual dual
+===================================================
+col_two    col_three    orderby_num()    scalar col_one    
+1     1     1     1     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tbl node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select ?, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? )
+Query plan:
+sscan
+    class: d? node[?]
+    cost:  ? card ?
+Query stmt:
+(select d?.a_? from ((select ?, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? ) as [scalar col_one]) d? (a_?, col_one))
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tbl node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tbl.col_two, tbl.col_three, orderby_num(), (select d?.a_? from ((select ?, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? ) as [scalar col_one]) d? (a_?, col_one)) from tbl tbl where ((tbl.col_two= ?:? ) or (tbl.col_two= ?:? ) or (tbl.col_two= ?:? )) order by ? for orderby_num()<= ?:? 
+===================================================
+'expand 3'    
+expand 3     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select 'expand ?' from dual dual
+===================================================
+col_two    col_three    orderby_num()    scalar col_one    
+1     1     1     1     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tbl node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select ?, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? )
+Query plan:
+sscan
+    class: d? node[?]
+    cost:  ? card ?
+Query stmt:
+(select d?.a_? from ((select ?, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? ) as [scalar col_one]) d? (a_?, col_one))
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tbl node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tbl.col_two, tbl.col_three, orderby_num(), (select d?.a_? from ((select ?, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? ) as [scalar col_one]) d? (a_?, col_one)) from tbl tbl where tbl.col_two= ?:?  order by ? for orderby_num()<= ?:? 
+===================================================
 col_two    col_three    orderby_num()    scala col_one    
 1     1     1     1     
 
