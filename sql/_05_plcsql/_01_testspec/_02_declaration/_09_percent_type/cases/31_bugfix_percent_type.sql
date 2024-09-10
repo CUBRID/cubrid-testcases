@@ -47,7 +47,7 @@ begin
 end;
 
 call test_percent_typed_var_to_eq();
-drop procedure test_percent_typed_var_to_eq
+drop procedure test_percent_typed_var_to_eq;
 
 
 
