@@ -112,46 +112,92 @@ create or replace function type_support_return() return  dba.type_support.T_DOUB
 --BUG( normal : 1.7976931348623157E+309 exceeds limit of double., BUG :  Inf)
 select type_support_return();
 
+
 EVALUATE '11 T_DATE';
-create or replace function type_support_return() return  dba.type_support.T_DATE%type       as Begin   return date'0000-00-00'     ;   end;    
+create or replace function type_support_return() return  dba.type_support.T_DATE%type       as Begin   return date'0000-00-00'     ;   end;
 --BUG( normal : 00/00/0000, BUG : 11/30/0002)
 select type_support_return();
 drop function type_support_return;
 
 EVALUATE '12 T_DATE';
-create or replace function type_support_return() return  dba.type_support.T_DATE%type       as Begin   return date'0001-01-01 00:00:00'     ;   end;    
-create or replace function type_support_return() return  dba.type_support.T_DATE%type       as Begin   return date'0000-13-00'     ;   end;    
-create or replace function type_support_return() return  dba.type_support.T_DATE%type       as Begin   return date'0001-01-32'     ;   end;    
-create or replace function type_support_return() return  dba.type_support.T_DATE%type       as Begin   return date'202A-12-27'     ;   end;    
+create or replace function type_support_return() return  dba.type_support.T_DATE%type       as Begin   return '0001-01-01 00:00:00'     ;   end;
+select type_support_return();
+drop function type_support_return;
+
+create or replace function type_support_return() return  dba.type_support.T_DATE%type       as Begin   return '0000-13-00'     ;   end;
+select type_support_return();
+drop function type_support_return;
+
+create or replace function type_support_return() return  dba.type_support.T_DATE%type       as Begin   return '0001-01-32'     ;   end;
+select type_support_return();
+drop function type_support_return;
+
+create or replace function type_support_return() return  dba.type_support.T_DATE%type       as Begin   return '202A-12-27'     ;   end;
+select type_support_return();
+drop function type_support_return;
+
 
 EVALUATE '13 T_TIME';
-create or replace function type_support_return() return  dba.type_support.T_TIME%type       as Begin   return TIME'24:30:21'        ;   end;    
-create or replace function type_support_return() return  dba.type_support.T_TIME%type       as Begin   return TIME'23:60:21'        ;   end;    
-create or replace function type_support_return() return  dba.type_support.T_TIME%type       as Begin   return TIME'23:59:60'        ;   end;    
-create or replace function type_support_return() return  dba.type_support.T_TIME%type       as Begin   return TIME'11:59:59 CM'     ;   end;    
+create or replace function type_support_return() return  dba.type_support.T_TIME%type       as Begin   return '24:30:21'        ;   end;
+select type_support_return();
+drop function type_support_return;
+
+create or replace function type_support_return() return  dba.type_support.T_TIME%type       as Begin   return '23:60:21'        ;   end;
+select type_support_return();
+drop function type_support_return;
+
+create or replace function type_support_return() return  dba.type_support.T_TIME%type       as Begin   return '23:59:60'        ;   end;
+select type_support_return();
+drop function type_support_return;
+
+create or replace function type_support_return() return  dba.type_support.T_TIME%type       as Begin   return '11:59:59 CM'     ;   end;
+select type_support_return();
+drop function type_support_return;
+
+
 
 
 EVALUATE '14 T_TIMESTAMP';
-create or replace function type_support_return() return  dba.type_support.T_TIMESTAMP%type  as Begin   return TIMESTAMP'1970-01-01 08:00:01';   end;    
-create or replace function type_support_return() return  dba.type_support.T_TIMESTAMP%type  as Begin   return TIMESTAMP'2038-01-20 03:14:07';   end;    
+create or replace function type_support_return() return  dba.type_support.T_TIMESTAMP%type  as Begin   return '1970-01-01 08:00:01';   end;
+select type_support_return();
+drop function type_support_return;
+
+create or replace function type_support_return() return  dba.type_support.T_TIMESTAMP%type  as Begin   return '2038-01-20 03:14:07';   end;
+select type_support_return();
+drop function type_support_return;
+
+
+
 
 EVALUATE '15 T_DATETIME';
-create or replace function type_support_return() return  dba.type_support.T_DATETIME%type   as Begin   return DATETIME'0000-00-00 00:00:00' ;   end;    
---BUG( normal : 00:00:00.000 AM 00/00/0000, BUG : 12:00:00.000 AM 11/30/0002)
-select type_support_return();
-
-create or replace function type_support_return() return  dba.type_support.T_DATETIME%type   as Begin   return DATETIME'0000-00-00' ;   end;    
---BUG( normal : 00:00:00.000 AM 00/00/0000, BUG : 12:00:00.000 AM 11/30/0002)
-select type_support_return();
-
-create or replace function type_support_return() return  dba.type_support.T_DATETIME%type   as Begin   return DATETIME'00-00-00' ;   end;    
+create or replace function type_support_return() return  dba.type_support.T_DATETIME%type   as Begin   return DATETIME'0000-00-00 00:00:00' ;   end;
 --BUG( normal : 00:00:00.000 AM 00/00/0000, BUG : 12:00:00.000 AM 11/30/0002)
 select type_support_return();
 drop function type_support_return;
 
-create or replace function type_support_return() return  dba.type_support.T_DATETIME%type   as Begin   return DATETIME'0000-03-01 00:00:00' ;   end;    
-create or replace function type_support_return() return  dba.type_support.T_DATETIME%type   as Begin   return DATETIME'0001-13-01 00:00:00' ;   end;    
-create or replace function type_support_return() return  dba.type_support.T_DATETIME%type   as Begin   return DATETIME'0001-03-32 00:00:00' ;   end;    
+
+create or replace function type_support_return() return  dba.type_support.T_DATETIME%type   as Begin   return DATETIME'0000-00-00' ;   end;
+--BUG( normal : 00:00:00.000 AM 00/00/0000, BUG : 12:00:00.000 AM 11/30/0002)
+select type_support_return();
+drop function type_support_return;
+
+create or replace function type_support_return() return  dba.type_support.T_DATETIME%type   as Begin   return DATETIME'00-00-00' ;   end;
+--BUG( normal : 00:00:00.000 AM 00/00/0000, BUG : 12:00:00.000 AM 11/30/0002)
+select type_support_return();
+drop function type_support_return;
+
+create or replace function type_support_return() return  dba.type_support.T_DATETIME%type   as Begin   return '0000-03-01 00:00:00' ;   end;
+select type_support_return();
+drop function type_support_return;
+
+create or replace function type_support_return() return  dba.type_support.T_DATETIME%type   as Begin   return '0001-13-01 00:00:00' ;   end;
+select type_support_return();
+drop function type_support_return;
+
+create or replace function type_support_return() return  dba.type_support.T_DATETIME%type   as Begin   return '0001-03-32 00:00:00' ;   end;
+select type_support_return();
+drop function type_support_return;
+
 
 EVALUATE '16 T_CHAR';
 create or replace function type_support_return() return  dba.type_support.T_CHAR%type       as Begin   return 'abcdefghijklmnopqrstuvwxyz1234567'     ;   end;    

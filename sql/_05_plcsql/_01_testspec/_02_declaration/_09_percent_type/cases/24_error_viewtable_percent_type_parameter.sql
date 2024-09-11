@@ -200,53 +200,57 @@ call type_support(-1.7976931348623157E+309);
 call type_support( 1.7976931348623157E+309);
 
 
-
 EVALUATE 'T_DATE';
 create or replace procedure type_support(
    v_DATE  IN      type_support.T_DATE%type
   ) as
-begin 
+begin
    dbms_output.put_line('v_DATE    ' || v_DATE    );
 end;
---normal 
+--normal
 call type_support(date'0000-00-00');
+call type_support('0000-00-00');
 
 --error
-call type_support(date'0001-01-01 00:00:00');
-call type_support(date'0000-13-00');
-call type_support(date'0001-01-32');
-call type_support(date'202A-12-27');
+call type_support('0001-01-01 00:00:00');
+call type_support('0000-13-00');
+call type_support('0001-01-32');
+call type_support('202A-12-27');
 
 
 EVALUATE 'T_TIME';
 create or replace procedure type_support(
    v_TIME  IN      type_support.T_TIME%type
   ) as
-begin 
+begin
    dbms_output.put_line('v_TIME    ' || v_TIME    );
 end;
---normal 
+--normal
 call type_support(TIME'11:59:59 PM');
 call type_support(TIME'11:59:59 AM');
+call type_support('11:59:59 PM');
+call type_support('11:59:59 AM');
 
 --error
-call type_support(TIME'24:30:21');
-call type_support(TIME'23:60:21');
-call type_support(TIME'23:59:60');
-call type_support(TIME'11:59:59 CM');
+call type_support('24:30:21');
+call type_support('23:60:21');
+call type_support('23:59:60');
+call type_support('11:59:59 CM');
 
 
 EVALUATE 'T_TIMESTAMP';
 create or replace procedure type_support(
    v_TIMESTAMP IN  type_support.T_TIMESTAMP%type
   ) as
-begin 
+begin
    dbms_output.put_line('v_TIMESTAMP    ' || v_TIMESTAMP    );
 end;
 
 --error
 call type_support(TIMESTAMP'1970-01-01 08:00:01');
 call type_support(TIMESTAMP'2038-01-20 03:14:07');
+call type_support('1970-01-01 08:00:01');
+call type_support('2038-01-20 03:14:07');
 
 
 
@@ -254,19 +258,23 @@ EVALUATE 'nomal';
 create or replace procedure type_support(
    v_DATETIME  IN  type_support.T_DATETIME%type
   ) as
-begin 
+begin
    dbms_output.put_line('v_DATETIME    ' || v_DATETIME    );
 end;
 
---normal 
+--normal
 call type_support(DATETIME'0000-00-00 00:00:00');
 call type_support(DATETIME'0000-00-00');
 call type_support(DATETIME'00-00-00');
+call type_support('0000-00-00 00:00:00');
+call type_support('0000-00-00');
+call type_support('00-00-00');
 
 --error
-call type_support(DATETIME'0000-03-01 00:00:00');
-call type_support(DATETIME'0001-13-01 00:00:00');
-call type_support(DATETIME'0001-03-32 00:00:00');
+call type_support('0000-03-01 00:00:00');
+call type_support('0001-13-01 00:00:00');
+call type_support('0001-03-32 00:00:00');
+
 
 
 EVALUATE 'T_CHAR';

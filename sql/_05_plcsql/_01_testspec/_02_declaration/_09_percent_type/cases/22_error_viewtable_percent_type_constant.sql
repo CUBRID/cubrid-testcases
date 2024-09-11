@@ -3,7 +3,7 @@
 -- Verification for CBRD-24707 ( Support API for %TYPE )
 -- ERROR : %type basic constant declarations
 
--- create table & insert data
+-- create view 
 create or replace view type_support AS 
    SELECT 
       1 as ID,
@@ -177,106 +177,164 @@ call type_support();
 EVALUATE 'normal';
 create or replace procedure type_support as
    v_DATE  CONSTANT      type_support.T_DATE%type := date'0000-00-00';
-begin 
+begin
    dbms_output.put_line('v_DATE    ' || v_DATE    );
 end;
 call type_support();
 drop procedure type_support;
 
 
-EVALUATE 'ERROR : invalid DATE string: 0001-01-01 00:00:00';
+EVALUATE 'ERROR 1: not in a DATE format';
 create or replace procedure type_support as
-   v_DATE  CONSTANT      type_support.T_DATE%type := date'0001-01-01 00:00:00';
-begin 
+   v_DATE  CONSTANT      type_support.T_DATE%type := '0001-01-01 00:00:00';
+begin
    dbms_output.put_line('v_DATE    ' || v_DATE    );
 end;
+call type_support();
+drop procedure type_support;
 
 
-EVALUATE 'ERROR : invalid DATE string: 0000-13-00';
+EVALUATE 'ERROR 2: not in a DATE format';
 create or replace procedure type_support as
-   v_DATE  CONSTANT      type_support.T_DATE%type := date'0000-13-00';
-begin 
+   v_DATE  CONSTANT      type_support.T_DATE%type := '0000-13-00';
+begin
    dbms_output.put_line('v_DATE    ' || v_DATE    );
 end;
+call type_support();
+drop procedure type_support;
 
 
-EVALUATE 'ERROR : invalid DATE string: 0001-01-32';
+EVALUATE 'ERROR 3: not in a DATE format';
 create or replace procedure type_support as
-   v_DATE  CONSTANT      type_support.T_DATE%type := date'0001-01-32';
-begin 
+   v_DATE  CONSTANT      type_support.T_DATE%type := '0001-01-32';
+begin
    dbms_output.put_line('v_DATE    ' || v_DATE    );
 end;
+call type_support();
+drop procedure type_support;
 
 
-EVALUATE 'ERROR : invalid DATE string: 202A-12-27';
+EVALUATE 'ERROR 4: not in a DATE format';
 create or replace procedure type_support as
-   v_DATE  CONSTANT      type_support.T_DATE%type := date'202A-12-27';
-begin 
+   v_DATE  CONSTANT      type_support.T_DATE%type := '202A-12-27';
+begin
    dbms_output.put_line('v_DATE    ' || v_DATE    );
 end;
+call type_support();
+drop procedure type_support;
 
 
-EVALUATE 'ERROR : invalid TIME string: 24:30:21';
+EVALUATE 'ERROR 1: not in a TIME format';
 create or replace procedure type_support as
-   v_TIME  CONSTANT      type_support.T_TIME%type := TIME'24:30:21';
-begin 
+   v_TIME  CONSTANT      type_support.T_TIME%type := '24:30:21';
+begin
    dbms_output.put_line('v_TIME    ' || v_TIME    );
 end;
+call type_support();
+drop procedure type_support;
 
-EVALUATE 'ERROR : invalid TIME string: 23:60:21';
+EVALUATE 'ERROR 2: not in a TIME format';
 create or replace procedure type_support as
-   v_TIME  CONSTANT      type_support.T_TIME%type := TIME'23:60:21';
-begin 
-   dbms_output.put_line('v_TIME    ' || v_TIME    );
+   v_TIME  CONSTANT      type_support.T_TIME%type := '23:60:21';
+begin
+^E   dbms_output.put_line('v_TIME    ' || v_TIME    );
 end;
+call type_support();
+drop procedure type_support;
 
-EVALUATE 'ERROR : invalid TIME string: 3:59:60';
+
+EVALUATE 'ERROR 3: not in a TIME format';
 create or replace procedure type_support as
-   v_TIME  CONSTANT      type_support.T_TIME%type := TIME'23:59:60';
-begin 
+   v_TIME  CONSTANT      type_support.T_TIME%type := '23:59:60';
+begin
    dbms_output.put_line('v_TIME    ' || v_TIME    );
 end;
-
+call type_support();
+drop procedure type_support;
 
 EVALUATE 'normal TIME 1';
 create or replace procedure type_support as
    v_TIME  CONSTANT      type_support.T_TIME%type := TIME'11:59:59 PM';
-begin 
+begin
    dbms_output.put_line('v_TIME    ' || v_TIME    );
 end;
 call type_support();
 
+
 EVALUATE 'normal TIME 2';
 create or replace procedure type_support as
+   v_TIME  CONSTANT      type_support.T_TIME%type := '11:59:59 PM';
+begin
+   dbms_output.put_line('v_TIME    ' || v_TIME    );
+end;
+call type_support();
+
+
+EVALUATE 'normal TIME 3';
+create or replace procedure type_support as
    v_TIME  CONSTANT      type_support.T_TIME%type := TIME'11:59:59 AM';
-begin 
+begin
    dbms_output.put_line('v_TIME    ' || v_TIME    );
 end;
 call type_support();
 drop procedure type_support;
 
 
-EVALUATE 'ERROR : invalid TIME string: 11:59:59 CM';
+EVALUATE 'normal TIME 4';
 create or replace procedure type_support as
-   v_TIME  CONSTANT      type_support.T_TIME%type := TIME'11:59:59 CM';
-begin 
+   v_TIME  CONSTANT      type_support.T_TIME%type := '11:59:59 AM';
+begin
    dbms_output.put_line('v_TIME    ' || v_TIME    );
 end;
+call type_support();
+drop procedure type_support;
+
+
+EVALUATE 'ERROR : not in a TIME format';
+create or replace procedure type_support as
+   v_TIME  CONSTANT      type_support.T_TIME%type := '11:59:59 CM';
+begin
+   dbms_output.put_line('v_TIME    ' || v_TIME    );
+end;
+call type_support();
+drop procedure type_support;
 
 
 EVALUATE 'ERROR : invalid TIMESTAMP string: 1970-01-01 08:00:01';
 create or replace procedure type_support as
    v_TIMESTAMP CONSTANT  type_support.T_TIMESTAMP%type := TIMESTAMP'1970-01-01 08:00:01';
-begin 
+begin
    dbms_output.put_line('v_TIMESTAMP    ' || v_TIMESTAMP    );
 end;
+
+
+EVALUATE 'ERROR : not int a TIMESTAMP format';
+create or replace procedure type_support as
+   v_TIMESTAMP CONSTANT  type_support.T_TIMESTAMP%type := '1970-01-01 08:00:01';
+begin
+   dbms_output.put_line('v_TIMESTAMP    ' || v_TIMESTAMP    );
+end;
+call type_support();
+drop procedure type_support;
 
 EVALUATE 'ERROR : invalid TIMESTAMP string: 2038-01-20 03:14:07';
 create or replace procedure type_support as
    v_TIMESTAMP CONSTANT  type_support.T_TIMESTAMP%type := TIMESTAMP'2038-01-20 03:14:07';
-begin 
+begin
    dbms_output.put_line('v_TIMESTAMP    ' || v_TIMESTAMP    );
 end;
+call type_support();
+drop procedure type_support;
+
+
+EVALUATE 'ERROR : not in a TIMESTAMP format';
+create or replace procedure type_support as
+   v_TIMESTAMP CONSTANT  type_support.T_TIMESTAMP%type := '2038-01-20 03:14:07';
+begin
+   dbms_output.put_line('v_TIMESTAMP    ' || v_TIMESTAMP    );
+end;
+call type_support();
+drop procedure type_support;
 
 
 EVALUATE 'ERROR : Conversion error in timestamp format.';
@@ -288,56 +346,63 @@ end;
 call type_support();
 
 
-EVALUATE 'nomal';
+EVALUATE 'nomal 1';
 create or replace procedure type_support as
    v_DATETIME  CONSTANT  type_support.T_DATETIME%type := DATETIME'0000-00-00 00:00:00';
-begin 
+begin
    dbms_output.put_line('v_DATETIME    ' || v_DATETIME    );
 end;
 call type_support();
 
 
-EVALUATE 'nomal';
+EVALUATE 'nomal 2';
 create or replace procedure type_support as
    v_DATETIME CONSTANT   type_support.T_DATETIME%type := DATETIME'0000-00-00';
-begin 
+begin
    dbms_output.put_line('v_DATETIME    ' || v_DATETIME    );
 end;
 call type_support();
 
 
-EVALUATE 'nomal';
+EVALUATE 'nomal 3';
 create or replace procedure type_support as
    v_DATETIME CONSTANT   type_support.T_DATETIME%type := DATETIME'00-00-00';
-begin 
+begin
    dbms_output.put_line('v_DATETIME    ' || v_DATETIME    );
 end;
 call type_support();
 drop procedure type_support;
 
 
-EVALUATE 'ERROR : invalid DATETIME string: 0000-03-01 00:00:00';
+
+EVALUATE 'ERROR 1: not in a DATETIME format';
 create or replace procedure type_support as
-   v_DATETIME CONSTANT   type_support.T_DATETIME%type := DATETIME'0000-03-01 00:00:00';
-begin 
+   v_DATETIME CONSTANT   type_support.T_DATETIME%type := '0000-03-01 00:00:00';
+begin
    dbms_output.put_line('v_DATETIME    ' || v_DATETIME    );
 end;
+call type_support();
+drop procedure type_support;
 
-
-EVALUATE 'ERROR : invalid DATETIME string: 0001-13-01 00:00:00';
+EVALUATE 'ERROR 2: not in a DATETIME format';
 create or replace procedure type_support as
-   v_DATETIME CONSTANT   type_support.T_DATETIME%type := DATETIME'0001-13-01 00:00:00';
-begin 
+   v_DATETIME CONSTANT   type_support.T_DATETIME%type := '0001-13-01 00:00:00';
+begin
    dbms_output.put_line('v_DATETIME    ' || v_DATETIME    );
 end;
+call type_support();
+drop procedure type_support;
 
-
-EVALUATE 'ERROR : invalid DATETIME string: 0001-03-32 00:00:00';
+EVALUATE 'ERROR 3: not in a DATETIME format';
 create or replace procedure type_support as
-   v_DATETIME CONSTANT   type_support.T_DATETIME%type := DATETIME'0001-03-32 00:00:00';
-begin 
+   v_DATETIME CONSTANT   type_support.T_DATETIME%type := '0001-03-32 00:00:00';
+begin
    dbms_output.put_line('v_DATETIME    ' || v_DATETIME    );
 end;
+call type_support();
+drop procedure type_support;
+
+
 
 
 EVALUATE 'ERROR : string does not fit in the target types length';

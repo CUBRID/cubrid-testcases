@@ -211,12 +211,13 @@ begin
 end;
 --normal 
 call type_support(date'0000-00-00');
+call type_support('0000-00-00');
 
 --error
-call type_support(date'0001-01-01 00:00:00');
-call type_support(date'0000-13-00');
-call type_support(date'0001-01-32');
-call type_support(date'202A-12-27');
+call type_support('0001-01-01 00:00:00');
+call type_support('0000-13-00');
+call type_support('0001-01-32');
+call type_support('202A-12-27');
 
 
 EVALUATE 'T_TIME';
@@ -229,12 +230,14 @@ end;
 --normal 
 call type_support(TIME'11:59:59 PM');
 call type_support(TIME'11:59:59 AM');
+call type_support('11:59:59 PM');
+call type_support('11:59:59 AM');
 
 --error
-call type_support(TIME'24:30:21');
-call type_support(TIME'23:60:21');
-call type_support(TIME'23:59:60');
-call type_support(TIME'11:59:59 CM');
+call type_support('24:30:21');
+call type_support('23:60:21');
+call type_support('23:59:60');
+call type_support('11:59:59 CM');
 
 
 EVALUATE 'T_TIMESTAMP';
@@ -248,6 +251,8 @@ end;
 --error
 call type_support(TIMESTAMP'1970-01-01 08:00:01');
 call type_support(TIMESTAMP'2038-01-20 03:14:07');
+call type_support('1970-01-01 08:00:01');
+call type_support('2038-01-20 03:14:07');
 
 
 
@@ -263,11 +268,14 @@ end;
 call type_support(DATETIME'0000-00-00 00:00:00');
 call type_support(DATETIME'0000-00-00');
 call type_support(DATETIME'00-00-00');
+call type_support('0000-00-00 00:00:00');
+call type_support('0000-00-00');
+call type_support('00-00-00');
 
 --error
-call type_support(DATETIME'0000-03-01 00:00:00');
-call type_support(DATETIME'0001-13-01 00:00:00');
-call type_support(DATETIME'0001-03-32 00:00:00');
+call type_support('0000-03-01 00:00:00');
+call type_support('0001-13-01 00:00:00');
+call type_support('0001-03-32 00:00:00');
 
 
 EVALUATE 'T_CHAR';
