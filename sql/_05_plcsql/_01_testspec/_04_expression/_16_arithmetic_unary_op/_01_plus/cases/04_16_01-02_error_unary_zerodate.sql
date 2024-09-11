@@ -1,4 +1,4 @@
--- error : basic usage of unary operator '-'  with zero date, datetime and time values
+-- error : basic usage of unary operator '+'  with zero date, datetime and time values
 -- Verified for CBRD-25015
 
 create or replace procedure t as
