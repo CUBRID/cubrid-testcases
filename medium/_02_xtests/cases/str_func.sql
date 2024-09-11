@@ -1,9 +1,9 @@
 autocommit off;
 create class dummy( a string );
 insert into dummy values (null);
-select char_length(a) from dummy;  --??
-select bit_length(a) from dummy;  --??
-select octet_length(a) from dummy;  --??
+select char_length(a) from dummy;
+select bit_length(a) from dummy;
+select octet_length(a) from dummy;
 select position(a in a) from dummy;
 select position(a in 'hihi') from dummy;
 select substring(a from 1) from dummy;
