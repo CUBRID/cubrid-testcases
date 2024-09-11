@@ -604,6 +604,7 @@ BEGIN varchar ;
 begin
     dbms_output.put_line('Use of reserved word variables.');
 end;
+end;
 
 
 

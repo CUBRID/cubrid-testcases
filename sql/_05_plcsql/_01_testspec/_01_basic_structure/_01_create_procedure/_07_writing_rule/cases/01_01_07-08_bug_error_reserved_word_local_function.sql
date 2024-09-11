@@ -861,6 +861,8 @@ create or replace procedure p_local() as
 begin
     dbms_output.put_line('call local function =' || [BEGIN]() );
 end;
+end;
+end;
 
 
 drop procedure p_local;

@@ -861,6 +861,9 @@ create or replace procedure p_local() as
 begin
     BEGIN();
 end;
+end;
+end;
+end;
 
 
 
