@@ -1,6 +1,6 @@
 --+ server-message on
 
--- 
+-- Verification for CBRD-25111 
 
 create or replace procedure p_local() as 
     function [AND] return varchar as 
@@ -881,6 +881,50 @@ begin
     dbms_output.put_line('call local function =' || [XOR]() ); 
 end;
 call p_local();
+
+
+create or replace procedure p_local() as
+    function [INSERT] return varchar as
+    begin
+        return 'INSERT';
+    end;
+begin
+    dbms_output.put_line('call local function =' || [INSERT]() );
+end;
+call p_local();
+
+
+create or replace procedure p_local() as
+    function [TRUNCATE] return varchar as
+    begin
+        return 'TRUNCATE';
+    end;
+begin
+    dbms_output.put_line('call local function =' || [TRUNCATE]() );
+end;
+call p_local();
+
+create or replace procedure p_local() as
+    function [AUTONOMOUS_TRANSACTION] return varchar as
+    begin
+        return 'AUTONOMOUS_TRANSACTION';
+    end;
+begin
+    dbms_output.put_line('call local function =' || [AUTONOMOUS_TRANSACTION]() );
+end;
+call p_local();
+
+create or replace procedure p_local() as
+    function [BEGIN] return varchar as
+    begin
+        return 'BEGIN';
+    end;
+begin
+    dbms_output.put_line('call local function =' || [BEGIN]() );
+end;
+call p_local();
+
+
 
 drop procedure p_local;
 
