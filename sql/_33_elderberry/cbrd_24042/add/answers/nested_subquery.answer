@@ -13,6 +13,8 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 count(*)    
 10     
 
@@ -48,12 +50,12 @@ Query stmt:
 select tab_b.col_a, count(*) from tab_b tab_b where tab_b.col_a= ?:?  group by tab_b.col_a
 Query plan:
 nl-join (cross join)
-    outer: sscan
-               class: b node[?]
-               cost:  ? card ?
-    inner: iscan
+    outer: iscan
                class: a node[?]
                index: idx term[?] (covers)
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -96,17 +98,19 @@ Query stmt:
 select tab_b.col_a, count(*) from tab_b tab_b where tab_b.col_a= ?:?  group by tab_b.col_a
 Query plan:
 nl-join (cross join)
-    outer: sscan
-               class: b node[?]
-               cost:  ? card ?
-    inner: iscan
+    outer: iscan
                class: a node[?]
                index: idx term[?] (covers)
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
 select count(*) from tab_a a, ((select tab_b.col_a, count(*) from tab_b tab_b where tab_b.col_a= ?:?  group by tab_b.col_a union select tab_b.col_a, count(*) from tab_b tab_b where tab_b.col_a= ?:?  group by tab_b.col_a) union select tab_b.col_a, count(*) from tab_b tab_b where tab_b.col_a= ?:?  group by tab_b.col_a) b (col_a, cnt) where (a.col_a= ?:? ) and (a.col_a=b.col_a)
 ===================================================
+0
+===================================================
 count(*)    
 10     
 
@@ -122,12 +126,12 @@ Query stmt:
 (select tab_b.col_a, count(*) from tab_b tab_b where tab_b.col_a= ?:?  group by tab_b.col_a)
 Query plan:
 nl-join (cross join)
-    outer: sscan
-               class: d node[?]
-               cost:  ? card ?
-    inner: iscan
+    outer: iscan
                class: a node[?]
                index: idx term[?] (covers)
+               cost:  ? card ?
+    inner: sscan
+               class: d node[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -150,17 +154,15 @@ Query stmt:
 (select tab_b.col_a, count(*) from tab_b tab_b where tab_b.col_a= ?:?  group by tab_b.col_a)
 Query plan:
 nl-join (cross join)
-    outer: sscan
-               class: d node[?]
-               cost:  ? card ?
-    inner: iscan
+    outer: iscan
                class: a node[?]
                index: idx term[?] (covers)
+               cost:  ? card ?
+    inner: sscan
+               class: d node[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
 select count(*) from tab_a a, (select tab_b.col_a, count(*) from tab_b tab_b where tab_b.col_a= ?:?  group by tab_b.col_a) d (col_a, cnt) where (a.col_a= ?:? ) and (a.col_a=d.col_a)
-===================================================
-0
 ===================================================
 0

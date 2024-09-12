@@ -21,6 +21,7 @@ FROM v_random
 WHERE RandomValue < 0.5;
 
 --Convert the view to an inline view (unmergable)
+DROP VIEW IF EXISTS v_random;
 SELECT /*+ recompile */ *
 FROM (
     SELECT ID, Name, RANDOM() AS RandomValue
@@ -41,6 +42,7 @@ FROM v_drandom
 WHERE RandomRange > 50;
 
 --Convert the view to an inline view (unmergable)
+DROP VIEW IF EXISTS v_drandom;
 SELECT /*+ recompile */ *
 FROM (
     SELECT ID, Name, DRANDOM() AS RandomRange
@@ -61,6 +63,7 @@ FROM v_sys_guid
 WHERE UniqueID IS NULL;
 
 --Convert the view to an inline view (unmergable)
+DROP VIEW IF EXISTS v_sys_guid;
 SELECT /*+ recompile */ *
 FROM (
     SELECT ID, Name, SYS_GUID() AS UniqueID

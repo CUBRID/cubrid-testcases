@@ -8,17 +8,7 @@ insert into tab_b select to_char(rownum mod 100) col_a, to_char(rownum) col_b fr
 create index idx on tab_a(col_a,col_b);
 create index idx on tab_b(col_a,col_b);
 
-select /*+ recompile */ count(*)
-  from tab_a a
-        ,(select col_a, cnt from (
-  	      select col_a,count(*) cnt from tab_b group by col_a
-  	      union
-       	      select col_a,count(*) from tab_b group by col_a
-              union
-              select col_a,count(*) from tab_b group by col_a)) b
- 	 where a.col_a = b.col_a
-    	 and b.col_a = 1;
-
+-- Create a view using the nested_subquery
 create or replace view v_a as select col_a, cnt from (
 	select col_a,count(*) cnt from tab_b group by col_a 
 	union
@@ -26,12 +16,43 @@ create or replace view v_a as select col_a, cnt from (
 	union
 	select col_a,count(*) from tab_b group by col_a);
 
+-- execute query (mergable)
 select /*+ recompile */ count(*)
 from tab_a a
      ,v_a b
 where a.col_a = b.col_a
      and b.col_a = 1;
 
+--Convert the view to an inline view (mergable)
+drop view if exists v_a;
+select /*+ recompile */ count(*)
+  from tab_a a
+        ,(select col_a, cnt from (
+              select col_a,count(*) cnt from tab_b group by col_a
+              union
+              select col_a,count(*) from tab_b group by col_a
+              union
+              select col_a,count(*) from tab_b group by col_a)) b
+         where a.col_a = b.col_a
+         and b.col_a = 1;
+
+-- Create a view using the nested_subquery
+create or replace view v_a as select col_a, cnt from (
+          select col_a, cnt from (
+            select col_a, cnt from (
+                select col_a,count(*) cnt from tab_b group by col_a
+        ) )
+        );
+
+-- execute query (mergable)
+select /*+ recompile */ count(*)
+from tab_a a
+      ,v_a d
+where a.col_a = d.col_a
+  and d.col_a = 1;
+
+--Convert the view to an inline view (mergable)
+drop view if exists v_a;
 select /*+ recompile */ count(*)
 from tab_a a
       , (select col_a, cnt from (
@@ -43,18 +64,4 @@ from tab_a a
 where a.col_a = d.col_a
   and d.col_a = 1;
 
-create or replace view v_a as select col_a, cnt from (
-          select col_a, cnt from (
-            select col_a, cnt from (
-                select col_a,count(*) cnt from tab_b group by col_a
-        ) )
-        );
-
-select /*+ recompile */ count(*)
-from tab_a a
-      ,v_a d
-where a.col_a = d.col_a
-  and d.col_a = 1;
-
-drop view v_a;
 drop table if exists tab_a, tab_b;

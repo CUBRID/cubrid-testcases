@@ -18,12 +18,12 @@ SELECT ID,
        END AS AgeGroup 
 FROM tbl;
 
--- Check result (unmergable)
+-- Check result (mergable)
 SELECT * 
 FROM v 
 WHERE AgeGroup = 'Young';
 
---Convert the view to an inline view (unmergable)
+--Convert the view to an inline view (mergable)
 DROP VIEW IF EXISTS v;
 SELECT *
 FROM   (SELECT ID, 
