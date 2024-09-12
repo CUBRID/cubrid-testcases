@@ -16,7 +16,7 @@ create or replace view v_a as select col_a, cnt from (
 	union
 	select col_a,count(*) from tab_b group by col_a);
 
--- execute query (mergable)
+-- Check result (mergable)
 select /*+ recompile */ count(*)
 from tab_a a
      ,v_a b
@@ -44,7 +44,7 @@ create or replace view v_a as select col_a, cnt from (
         ) )
         );
 
--- execute query (mergable)
+-- Check result (mergable)
 select /*+ recompile */ count(*)
 from tab_a a
       ,v_a d

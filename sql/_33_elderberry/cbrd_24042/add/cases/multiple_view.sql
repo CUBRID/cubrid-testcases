@@ -21,7 +21,7 @@ SELECT v_a.ID, v_a.Name, t.MgrID
 FROM v_a 
 JOIN tbl t ON v_a.ID = t.ID;
 
--- execute query (mergable)
+-- Check result (mergable)
 SELECT v_b.ID, v_b.Name, v_b.MgrID 
 FROM v_b
 WHERE MgrID > 1;

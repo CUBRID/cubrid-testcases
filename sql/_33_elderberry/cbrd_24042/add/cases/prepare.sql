@@ -40,7 +40,7 @@ PREPARE q FROM '
     WHERE v.JobTitle = ''Developer''
 ';
 
--- Check result (unmergable)
+-- Check result (mergable)
 --@queryplan
 EXECUTE q USING 1500, 3000;
 
