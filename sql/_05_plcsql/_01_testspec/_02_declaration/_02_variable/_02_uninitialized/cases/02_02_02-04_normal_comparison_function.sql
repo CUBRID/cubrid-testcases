@@ -1,7 +1,7 @@
 --+ server-message on
 
 -- A test that assigns the result of a comparison function when declaring a variable. 
-
+-- Verification for CBRD-25167,CBRD-25168,CBRD-25170
 create or replace procedure t  as
     a varchar := COALESCE(5, 10.0000);
 begin
@@ -47,8 +47,8 @@ begin
 end;
 call t();
 
---bug
-select 'bug ISNULL(NULL)';
+
+select 'ISNULL(NULL)';
 create or replace procedure t  as
     a varchar := ISNULL(NULL);
 begin
@@ -63,8 +63,8 @@ begin
 end;
 call t();
 
---bug
-select 'bug NULLIF(NULL, 1), normal:null, bug:0';
+
+select 'NULLIF(NULL, 1), normal:null, bug:0';
 create or replace procedure t  as
     a varchar := NULLIF(NULL, 1);
 begin

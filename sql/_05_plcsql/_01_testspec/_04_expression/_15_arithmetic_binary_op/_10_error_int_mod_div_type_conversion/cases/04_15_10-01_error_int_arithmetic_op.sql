@@ -90,7 +90,7 @@ begin
     dbms_output.put_line('');
 end;
 
-call t_exe_error(' Integer Arithmetic operations : string mod 0 ' ) ;
+call t_exe_error_string(' Integer Arithmetic operations : string mod 0 ' ) ;
 drop procedure t_exe_error_string;
 
 
@@ -106,7 +106,7 @@ begin
     dbms_output.put_line('');
 end;
 
-call t_exe_error(' Integer Arithmetic operations : string div 0 ' ) ;
+call t_exe_error_string(' Integer Arithmetic operations : string div 0 ' ) ;
 drop procedure t_exe_error_string ;
 
 

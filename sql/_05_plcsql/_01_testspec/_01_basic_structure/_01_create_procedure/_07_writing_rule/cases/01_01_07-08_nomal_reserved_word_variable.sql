@@ -1,6 +1,6 @@
 --+ server-message on
 
--- 
+-- Verification for CBRD-25111 
 
 create or replace procedure p_var() as 
 [AND] varchar := 'AND'; 
@@ -530,6 +530,35 @@ begin
     dbms_output.put_line('Use of reserved word variables.' || [XOR] );
 end;
 call p_var();
+
+create or replace procedure p_var() as
+[INSERT] varchar := 'INSERT';
+begin
+    dbms_output.put_line('Use of reserved word variables.' || [INSERT] );
+end;
+call p_var();
+
+create or replace procedure p_var() as
+[TRUNCATE] varchar := 'TRUNCATE';
+begin
+    dbms_output.put_line('Use of reserved word variables.' || [TRUNCATE] );
+end;
+call p_var();
+
+create or replace procedure p_var() as
+[AUTONOMOUS_TRANSACTION] varchar := 'AUTONOMOUS_TRANSACTION';
+begin
+    dbms_output.put_line('Use of reserved word variables.' || [AUTONOMOUS_TRANSACTION] );
+end;
+call p_var();
+
+create or replace procedure p_var() as
+[BEGIN] varchar := 'BEGIN';
+begin
+    dbms_output.put_line('Use of reserved word variables.' || [BEGIN] );
+end;
+call p_var();
+
 
 drop procedure p_var;
 

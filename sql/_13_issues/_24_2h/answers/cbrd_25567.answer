@@ -1,0 +1,117 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+10000
+===================================================
+2
+===================================================
+10000
+===================================================
+0
+===================================================
+count(*)    
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t.idx) (key range: ([dba.t].b>= ?:?  and [dba.t].b<= ?:? ), covered: true)
+
+  rewritten query: select count(*) from [dba.t] [dba.t] where ([dba.t].b>= ?:?  and [dba.t].b<= ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t.idx) (key range: ([dba.t].b>= ?:? || cast('?' as varchar) and [dba.t].b<= ?:? || cast('?' as varchar)), covered: true)
+
+  rewritten query: select count(*) from [dba.t] [dba.t] where ([dba.t].b>= ?:? || cast('?' as varchar) and [dba.t].b<= ?:? || cast('?' as varchar))
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+0
+===================================================
+count(*)    
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t.idx) (key range: ([dba.t].b>= ?:?  and [dba.t].b<= ?:? ), covered: true)
+
+  rewritten query: select count(*) from [dba.t] [dba.t] where ([dba.t].b>= ?:?  and [dba.t].b<= ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t.idx) (key range: ([dba.t].b>= concat( ?:? , '?') and [dba.t].b<= concat( ?:? , '?')), covered: true)
+
+  rewritten query: select count(*) from [dba.t] [dba.t] where ([dba.t].b>= concat( ?:? , '?') and [dba.t].b<= concat( ?:? , '?'))
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t.idx) (key range: ([dba.t].b<= concat( cast(@v as varchar), '?')), key filter: ([dba.t].b>= concat( cast(@v as varchar), '?')), covered: true)
+
+  rewritten query: select count(*) from [dba.t] [dba.t] where ([dba.t].b>= concat( cast(@v as varchar), '?')) and ([dba.t].b<= concat( cast(@v as varchar), '?'))
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+0
+===================================================
+0
