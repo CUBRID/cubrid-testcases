@@ -303,8 +303,6 @@ end;
 call t_FLOAT_INT('FLOAT', 'INT'  ) ;
 drop procedure t_FLOAT_INT ;
 
---BUG
-
 call print_message('t_NUMERIC_INT. This scenario is a success.');
 create or replace procedure t_NUMERIC_INT(param_type string, variables_type string ) as 
      CURSOR my_cursor1 IS 

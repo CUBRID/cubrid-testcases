@@ -111,7 +111,7 @@ call t_DATETIME_TIMESTAMP('DATETIME', 'TIMESTAMP'  ) ;
 drop procedure t_DATETIME_TIMESTAMP ;
 
 
---BUG
+--BUG - CBRD-25564
 select  cast(  cast('0001-01-01 00:00:00.000' as datetime) as timestamp ) ;
 call print_message('t_DATETIME_TIMESTAMP. This scenario is a failure.');
 create or replace procedure t_DATETIME_TIMESTAMP(param_type string, variables_type string ) as
@@ -183,7 +183,7 @@ call t_DATE_TIMESTAMP('DATE', 'TIMESTAMP'  ) ;
 drop procedure t_DATE_TIMESTAMP ;
 
 
---BUG
+--BUG - CBRD-25564
 select  cast(  cast('0001-01-01' as date) as timestamp ) ;
 call print_message('t_DATE_TIMESTAMP. This scenario is a failure.');
 create or replace procedure t_DATE_TIMESTAMP(param_type string, variables_type string ) as

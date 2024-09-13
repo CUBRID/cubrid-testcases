@@ -44,7 +44,7 @@ end;
 call t_TIME_CHAR('TIME', 'CHAR', TIME'13:15:45' ) ;
 drop procedure t_TIME_CHAR ;
 
---BUG( normal:'2023-10-31 13:15:45', error:'2023-10-31 13:15:45.0' )
+--BUG( normal:'2023-10-31 13:15:45', error:'2023-10-31 13:15:45.0' ) - CBRD-25554
 call print_message('t_TIMESTAMP_CHAR. This scenario is a success.');
 create or replace procedure t_TIMESTAMP_CHAR(sql_type string, procedure_type string, param CHAR ) as begin
     dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param ); 
@@ -148,7 +148,7 @@ create or replace procedure t_VARCHAR_CHAR(sql_type string, procedure_type strin
 end;
 call t_VARCHAR_CHAR('VARCHAR', 'CHAR', 'VARCHAR CUBRID' ) ;
 drop procedure t_VARCHAR_CHAR ;
---BUG
+--BUG - CBRD-25554
 
 call print_message('t_SET_CHAR. This scenario is a failure.');
 create or replace procedure t_SET_CHAR(sql_type string, procedure_type string, param CHAR ) as begin
@@ -156,7 +156,7 @@ create or replace procedure t_SET_CHAR(sql_type string, procedure_type string, p
 end;
 call t_SET_CHAR('SET', 'CHAR', cast( {'c','c','c','b','b','a'} as SET) ) ;
 drop procedure t_SET_CHAR ;
---BUG
+--BUG - CBRD-25554
 
 call print_message('t_MULTISET_CHAR. This scenario is a failure.');
 create or replace procedure t_MULTISET_CHAR(sql_type string, procedure_type string, param CHAR ) as begin
@@ -164,7 +164,7 @@ create or replace procedure t_MULTISET_CHAR(sql_type string, procedure_type stri
 end;
 call t_MULTISET_CHAR('MULTISET', 'CHAR', cast( {'c','c','c','b','b','a'} as MULTISET) ) ;
 drop procedure t_MULTISET_CHAR ;
---BUG
+--BUG - CBRD-25554
 
 call print_message('t_LIST_CHAR. This scenario is a failure.');
 create or replace procedure t_LIST_CHAR(sql_type string, procedure_type string, param CHAR ) as begin

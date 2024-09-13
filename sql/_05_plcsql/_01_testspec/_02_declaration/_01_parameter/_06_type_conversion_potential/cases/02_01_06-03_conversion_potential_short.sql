@@ -94,7 +94,7 @@ end;
 call t_short('double', cast(1024.1234 as double) ) ;
 drop procedure t_short ;
 
--- BUG ( normal : overflow error,  BUG : -8747 )
+-- BUG ( normal : overflow error,  BUG : -8747 ) - CBRD-25554
 select 'An error occurs. ( t_double, short )' ;
 create or replace procedure t_short( from_type string, param short ) as
 begin
