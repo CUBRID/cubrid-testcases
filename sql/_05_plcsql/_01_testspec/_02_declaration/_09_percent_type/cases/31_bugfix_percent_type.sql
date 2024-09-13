@@ -36,6 +36,21 @@ call test_percent_typed_arg_to_out_param();
 
 drop procedure test_percent_typed_arg_to_out_param;
 
+
+create or replace procedure test_percent_typed_arg_to_in_param() as
+    c dual.dummy%type :='z' ;
+    procedure poo(in_param in char(1)) as
+    begin
+        dbms_output.put_line('print in value: ' + in_param);
+    end;
+begin
+    poo(c);
+    dbms_output.put_line('c value: ' + c);
+end;
+call test_percent_typed_arg_to_in_param();
+drop procedure test_percent_typed_arg_to_in_param;
+
+
 create or replace procedure test_percent_typed_var_to_eq as
     c dual.dummy%type;
 begin
