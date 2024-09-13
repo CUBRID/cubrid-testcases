@@ -230,7 +230,7 @@ EVALUATE 'ERROR 2: not in a DATE format';
 create or replace procedure type_support as
    v_DATE        type_support.T_DATE%type;
 begin 
-   v_DATE      := '0000-13-00';
+   v_DATE      := '0000-03-01';
 
    dbms_output.put_line('v_DATE    ' || v_DATE    );
 end;
@@ -242,7 +242,7 @@ EVALUATE 'ERROR 3: not in a DATE format';
 create or replace procedure type_support as
    v_DATE        type_support.T_DATE%type;
 begin
-   v_DATE      := '0000-13-00';
+   v_DATE      := '0001-13-01';
 
    dbms_output.put_line('v_DATE    ' || v_DATE    );
 end;
