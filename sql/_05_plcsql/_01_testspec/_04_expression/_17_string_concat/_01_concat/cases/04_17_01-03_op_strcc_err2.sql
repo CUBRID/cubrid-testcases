@@ -1,8 +1,8 @@
 --+ server-message on
 -- Verified for CBRD-24565
 
--- error caused usage of string concatenation operator '||'
--- CBRD-25095 bug reported
+-- Verified for CBRD-25095
+-- lexer rule for floating point number literals mismatch.
 
 create or replace procedure t() as
 begin
