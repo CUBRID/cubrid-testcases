@@ -122,6 +122,7 @@ create or replace procedure t_compile_error_null_string( tc_comment string ) as
     cursor  right_cursor is select * from dual ;
 begin 
 
+    -- Bug fix on CBRD-25272
     dbms_output.put_line('***************************************');
     dbms_output.put_line('null = ' ||  NVL(null,'NULL')  ); 
     dbms_output.put_line('right_string_null = ' ||NVL(right_string_null,'NULL')  ); 
