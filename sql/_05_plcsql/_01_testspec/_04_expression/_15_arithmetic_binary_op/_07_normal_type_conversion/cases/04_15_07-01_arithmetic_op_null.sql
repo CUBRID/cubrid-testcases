@@ -57,7 +57,6 @@ create or replace procedure t_null_null( tc_comment string ) as
     cursor  right_cursor is select * from dual ;
 begin 
 
-    -- Bug fix on CBRD-25272
     dbms_output.put_line('***************************************');
     dbms_output.put_line('null = ' ||  NVL(null,'NULL') ); 
     dbms_output.put_line('null = ' ||NVL(null,'NULL') ); 
@@ -350,7 +349,7 @@ begin
     dbms_output.put_line('');
 end;
 
-select 'This test produces a compilation error. ( t_compile_error_string, null )' ;
+select 'This test is a normal run case ( t_compile_error_string, null )' ;
 create or replace procedure t_compile_error_string_null( tc_comment string ) as 
     left_boolean                   boolean       := TRUE;
     left_string                    string        := '123';
@@ -407,6 +406,7 @@ create or replace procedure t_compile_error_string_null( tc_comment string ) as
     cursor  right_cursor is select * from dual ;
 begin 
 
+    -- Bug fix on CBRD-25272
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_string_null = ' ||  NVL(left_string_null,'NULL')  ); 
     dbms_output.put_line('null = ' ||NVL(null,'NULL')  ); 
@@ -415,7 +415,7 @@ begin
     dbms_output.put_line('');
 end;
 
-select 'This test produces a compilation error. ( t_compile_error_string, null )' ;
+select 'Bug fix on CBRD-25272 ( t_compile_error_string, null )' ;
 create or replace procedure t_compile_error_string_null( tc_comment string ) as 
     left_boolean                   boolean       := TRUE;
     left_string                    string        := '123';
@@ -472,6 +472,7 @@ create or replace procedure t_compile_error_string_null( tc_comment string ) as
     cursor  right_cursor is select * from dual ;
 begin 
 
+    -- Bug fix on CBRD-25272
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_string_null = ' ||  NVL(left_string_null,'NULL')  ); 
     dbms_output.put_line('null = ' ||NVL(null,'NULL')  ); 
@@ -480,7 +481,7 @@ begin
     dbms_output.put_line('');
 end;
 
-select 'This test produces a compilation error. ( t_compile_error_string, null )' ;
+select 'Bug fix on CBRD-25272 ( t_compile_error_string, null )' ;
 create or replace procedure t_compile_error_string_null( tc_comment string ) as 
     left_boolean                   boolean       := TRUE;
     left_string                    string        := '123';
@@ -537,6 +538,7 @@ create or replace procedure t_compile_error_string_null( tc_comment string ) as
     cursor  right_cursor is select * from dual ;
 begin 
 
+    -- Bug fix on CBRD-25272
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_string_null = ' ||  NVL(left_string_null,'NULL')  ); 
     dbms_output.put_line('null = ' ||NVL(null,'NULL')  ); 
@@ -545,7 +547,7 @@ begin
     dbms_output.put_line('');
 end;
 
-select 'This test produces a compilation error. ( t_compile_error_string, null )' ;
+select 'Bug fix on CBRD-25272 ( t_compile_error_string, null )' ;
 create or replace procedure t_compile_error_string_null( tc_comment string ) as 
     left_boolean                   boolean       := TRUE;
     left_string                    string        := '123';
@@ -602,6 +604,7 @@ create or replace procedure t_compile_error_string_null( tc_comment string ) as
     cursor  right_cursor is select * from dual ;
 begin 
 
+    -- Bug fix on CBRD-25272
     dbms_output.put_line('***************************************');
     dbms_output.put_line('left_string_null = ' ||  NVL(left_string_null,'NULL')  ); 
     dbms_output.put_line('null = ' ||NVL(null,'NULL')  ); 
