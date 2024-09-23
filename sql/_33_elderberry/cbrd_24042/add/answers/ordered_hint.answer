@@ -19,15 +19,9 @@
 ===================================================
 1
 ===================================================
-'test1'    
+    
 test1     
 
-Query plan:
-sscan
-    class: dual node[?]
-    cost:  ? card ?
-Query stmt:
-select 'test?' from dual dual
 ===================================================
 av    bv    
 value a1     value a1     
@@ -50,15 +44,9 @@ temp(order by)
 Query stmt:
 select /*+ ORDERED */ sq.val, b.val from tj sq inner join tj b on sq.id=b.id using index b.tj_id, sq.tj_id order by ?, ?
 ===================================================
-'test2'    
+    
 test2     
 
-Query plan:
-sscan
-    class: dual node[?]
-    cost:  ? card ?
-Query stmt:
-select 'test?' from dual dual
 ===================================================
 id    val    
 1     value b1     
@@ -85,15 +73,9 @@ select /*+ ORDERED */ sq.id, tk.val from tj sq inner join tk tk on sq.id=tk.id u
 ===================================================
 6
 ===================================================
-'test3'    
+    
 test3     
 
-Query plan:
-sscan
-    class: dual node[?]
-    cost:  ? card ?
-Query stmt:
-select 'test?' from dual dual
 ===================================================
 a    b    c    
 cub     cubrid     1     
@@ -117,15 +99,9 @@ nl-join (inner join)
 Query stmt:
 select /*+ ORDERED */ a.a, a.b, a.c from tmp_hls a, tmp_hls b where (a.a=b.a) and a.b=b.b and a.c=b.c and (b.c>= ?:? )
 ===================================================
-'test4'    
+    
 test4     
 
-Query plan:
-sscan
-    class: dual node[?]
-    cost:  ? card ?
-Query stmt:
-select 'test?' from dual dual
 ===================================================
 a    b    c    
 cub     cubrid     1     
@@ -149,15 +125,9 @@ nl-join (inner join)
 Query stmt:
 select /*+ ORDERED */ a.a, a.b, a.c from tmp_hls a, tmp_hls b where (b.a=a.a) and a.c=b.c and b.b=a.b and (b.c>= ?:? )
 ===================================================
-'test5'    
+    
 test5     
 
-Query plan:
-sscan
-    class: dual node[?]
-    cost:  ? card ?
-Query stmt:
-select 'test?' from dual dual
 ===================================================
 a    b    c    
 cub     cubrid     1     
@@ -183,15 +153,9 @@ nl-join (inner join)
 Query stmt:
 select /*+ ORDERED */ a.a, a.b, a.c from tmp_hls a, tmp_hls b where (b.c=a.c) and (b.c>= ?:? )
 ===================================================
-'test6'    
+    
 test6     
 
-Query plan:
-sscan
-    class: dual node[?]
-    cost:  ? card ?
-Query stmt:
-select 'test?' from dual dual
 ===================================================
 a    b    c    
 post     postgre     3     
@@ -219,15 +183,9 @@ nl-join (inner join)
 Query stmt:
 select /*+ ORDERED */ a.a, a.b, a.c from tmp_hls a, tmp_hls b, tmp_hls c where (a.a=b.a) and b.b=a.b and b.a=c.a and (b.c>= ?:? ) and (c.c>= ?:? )
 ===================================================
-'test7'    
+    
 test7     
 
-Query plan:
-sscan
-    class: dual node[?]
-    cost:  ? card ?
-Query stmt:
-select 'test?' from dual dual
 ===================================================
 a    b    c    
 cub     cubrid     1     
@@ -260,15 +218,9 @@ nl-join (inner join)
 Query stmt:
 select /*+ ORDERED */ aa.a, aa.b, aa.c from tmp_hls aa, (select distinct tmp_hls.a, tmp_hls.b, tmp_hls.c from tmp_hls tmp_hls) av? (av_?, av_?, av_?) where (aa.a=av?.av_?) and aa.b=av?.av_? and aa.c=av?.av_? and (aa.c>= ?:? )
 ===================================================
-'test8'    
+    
 test8     
 
-Query plan:
-sscan
-    class: dual node[?]
-    cost:  ? card ?
-Query stmt:
-select 'test?' from dual dual
 ===================================================
 a    b    c    
 cub     cubrid     1     
@@ -316,15 +268,9 @@ nl-join (inner join)
 Query stmt:
 select /*+ ORDERED */ aa.a, aa.b, aa.c from tmp_hls aa, (select distinct tmp_hls.a, tmp_hls.b from tmp_hls tmp_hls) av? (av_?, av_?), (select distinct tmp_hls.c from tmp_hls tmp_hls) av?_? (av_?) where (aa.a=av?.av_?) and aa.b=av?.av_? and aa.c=av?_?.av_? and (aa.c>= ?:? )
 ===================================================
-'test9'    
+    
 test9     
 
-Query plan:
-sscan
-    class: dual node[?]
-    cost:  ? card ?
-Query stmt:
-select 'test?' from dual dual
 ===================================================
 a    b    c    a    b    c    
 park     parksehun     1     cub     cubrid     1     
@@ -343,15 +289,9 @@ nl-join (inner join)
 Query stmt:
 select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, tmp_hls b where (a.c=b.c) and (a.b>b.b) and (b.c>= ?:? )
 ===================================================
-'test10'    
+    
 test10     
 
-Query plan:
-sscan
-    class: dual node[?]
-    cost:  ? card ?
-Query stmt:
-select 'test?' from dual dual
 ===================================================
 a    b    c    a    b    c    
 ora     oracle     2     ora     oracle     2     
@@ -370,15 +310,9 @@ nl-join (inner join)
 Query stmt:
 select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, tmp_hls b where (a.c=b.c) and a.c+b.c=? and (b.c>= ?:? )
 ===================================================
-'test11'    
+    
 test11     
 
-Query plan:
-sscan
-    class: dual node[?]
-    cost:  ? card ?
-Query stmt:
-select 'test?' from dual dual
 ===================================================
 a    b    c    a    b    c    
 cub     cubrid     1     cub     cubrid     1     
@@ -398,15 +332,9 @@ nl-join (inner join)
 Query stmt:
 select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, tmp_hls b where (b.a= substr(a.b, ?, ?)) and (b.c>= ?:? )
 ===================================================
-'test12'    
+    
 test12     
 
-Query plan:
-sscan
-    class: dual node[?]
-    cost:  ? card ?
-Query stmt:
-select 'test?' from dual dual
 ===================================================
 a    b    c    a    b    c    
 cub     cubrid     1     cub     cubrid     1     
@@ -427,15 +355,9 @@ nl-join (inner join)
 Query stmt:
 select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, tmp_hls b where ( substr(a.b, ?, ?)=decode(b.a, 'post',  cast('pos' as varchar), b.a)) and (b.c>= ?:? )
 ===================================================
-'test13'    
+    
 test13     
 
-Query plan:
-sscan
-    class: dual node[?]
-    cost:  ? card ?
-Query stmt:
-select 'test?' from dual dual
 ===================================================
 a    b    c    a    b    c    
 cub     cubrid     1     cub     cubrid     1     
@@ -454,15 +376,9 @@ nl-join (inner join)
 Query stmt:
 select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, tmp_hls b where (b.a|| cast('rid' as varchar)=decode(a.a, 'cub',  cast('cubrid' as varchar), 'post',  cast('postgre' as varchar), a.a)) and (b.c>= ?:? )
 ===================================================
-'test14'    
+    
 test14     
 
-Query plan:
-sscan
-    class: dual node[?]
-    cost:  ? card ?
-Query stmt:
-select 'test?' from dual dual
 ===================================================
 a    b    c    a    b    c    
 cub     cubrid     1     cub     cubrid     1     

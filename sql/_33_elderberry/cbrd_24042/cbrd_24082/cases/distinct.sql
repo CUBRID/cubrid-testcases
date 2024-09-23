@@ -21,6 +21,7 @@ AS
   FROM   t_a a,
          t_b b
   WHERE  a.col_a = b.col_a;
+evaluate 'test1';
 SELECT /*+ recompile */ a.col_a
 FROM   v a,
        t_b b
@@ -29,6 +30,7 @@ WHERE  a.col_a = b.col_a
 DROP VIEW v;
 
 --Convert the view to an inline view (unmergable)
+evaluate 'test1 with inline view';
 SELECT /*+ recompile */ a.col_a
 FROM   (SELECT DISTINCT a.col_a,
                        a.col_b
@@ -48,6 +50,7 @@ AS
   FROM   t_a a,
          t_b b
   WHERE  a.col_a = b.col_a;
+evaluate 'test2';
 SELECT /*+ recompile */ DISTINCT a.col_a
 FROM   t_b b,
        v a
@@ -56,6 +59,7 @@ WHERE  a.col_a = b.col_a
 DROP VIEW v;
 
 --Convert the view to an inline view (mergable)
+evaluate 'test2 with inline view';
 SELECT /*+ recompile */ DISTINCT a.col_a
 FROM   t_b b,
        (SELECT a.col_a,

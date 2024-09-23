@@ -15,6 +15,10 @@
 ===================================================
 0
 ===================================================
+    
+test1     
+
+===================================================
 count(*)    
 10     
 
@@ -42,6 +46,10 @@ Query stmt:
 select /*+ NO_PUSH_PRED */ count(*) from tab_a a, (select tab_b.col_a, count(*) from tab_b tab_b group by tab_b.col_a) b (col_a, cnt) where (b.cnt>= ?:? ) and (a.col_a= ?:? ) and b.col_a= ?:?  and (a.col_a=b.col_a)
 ===================================================
 0
+===================================================
+    
+test1 with inline view     
+
 ===================================================
 count(*)    
 10     
@@ -71,6 +79,10 @@ select /*+ NO_PUSH_PRED */ count(*) from tab_a a, (select tab_b.col_a, count(*) 
 ===================================================
 0
 ===================================================
+    
+test2     
+
+===================================================
 count(*)    
 10     
 
@@ -98,6 +110,10 @@ Query stmt:
 select /*+ NO_PUSH_PRED */ count(*) from tab_a a, (select tab_b.col_a, count(*) from tab_b tab_b group by tab_b.col_a) b (col_a, cnt) where (b.cnt>= ?:? ) and (a.col_a= ?:? ) and b.col_a= ?:?  and (a.col_a=b.col_a)
 ===================================================
 0
+===================================================
+    
+test2 with inline view     
+
 ===================================================
 count(*)    
 10     

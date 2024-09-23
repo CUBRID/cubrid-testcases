@@ -17,7 +17,7 @@ where col_two = 1
 order by col_two for orderby_num() <= 1;
 
 --TC expansion (cubridqa-1226)
-select 'expand 1';
+evaluate 'expand 1';
 select
 	/*+ RECOMPILE */
 	col_two, col_three, orderby_num(),
@@ -27,7 +27,7 @@ where col_two = 1 and rownum <= 1
 order by col_two;
 
 --TC expansion (cubridqa-1226)
-select 'expand 2';
+evaluate 'expand 2';
 select
 	/*+ RECOMPILE */
 	col_two, col_three, orderby_num(),
@@ -37,7 +37,7 @@ where col_two in (1, 2, 3)
 order by col_two for orderby_num() <= 1;
 
 --TC expansion (cubridqa-1226)
-select 'expand 3';
+evaluate 'expand 3';
 select
 	/*+ RECOMPILE */
 	col_two, col_three, orderby_num(),
@@ -165,7 +165,5 @@ FROM
 	ORDER BY t_one.col_one
 ) X
 limit 1;
-
-
 
 drop table tbl, tbl_one, tbl_two;

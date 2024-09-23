@@ -7,6 +7,10 @@
 ===================================================
 0
 ===================================================
+    
+test1     
+
+===================================================
 col_a    
 
 Query plan:
@@ -38,6 +42,10 @@ select a.col_a from (select a.col_a from t_a a left outer join t_b b on a.col_a=
 ===================================================
 0
 ===================================================
+    
+test1 with inline view     
+
+===================================================
 col_a    
 
 Query plan:
@@ -68,6 +76,10 @@ Query stmt:
 select a.col_a from (select a.col_a from t_a a left outer join t_b b on a.col_a=b.col_a) a (col_a), t_b b where a.col_a=b.col_a and b.col_b= ?:? 
 ===================================================
 0
+===================================================
+    
+test2     
+
 ===================================================
 col_a    
 
@@ -100,6 +112,10 @@ select a.col_a from (select a.col_a from t_a a, t_b b where (a.col_a=b.col_a)) a
 ===================================================
 0
 ===================================================
+    
+test2 with inline view     
+
+===================================================
 col_a    
 
 Query plan:
@@ -130,6 +146,10 @@ Query stmt:
 select a.col_a from (select a.col_a from t_a a, t_b b where a.col_a=b.col_a) a (col_a) left outer join t_b b on b.col_b= ?:?  and a.col_a=b.col_a
 ===================================================
 0
+===================================================
+    
+test3     
+
 ===================================================
 col_a    
 
@@ -162,6 +182,10 @@ Query stmt:
 select a.col_a from t_b b left outer join (select a.col_a from t_a a, t_b b where (a.col_a=b.col_a)) a (col_a) on a.col_a=b.col_a where b.col_b= ?:? 
 ===================================================
 0
+===================================================
+    
+test3 with inline view     
+
 ===================================================
 col_a    
 

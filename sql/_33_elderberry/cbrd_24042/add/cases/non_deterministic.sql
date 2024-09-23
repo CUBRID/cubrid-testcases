@@ -16,12 +16,14 @@ FROM tbl
 WHERE BirthYear > 1970;
 
 -- Check result (unmergable)
+evaluate 'RANDOM test';
 SELECT /*+ recompile */ *
 FROM v_random
 WHERE RandomValue < 0.5;
 
 --Convert the view to an inline view (unmergable)
 DROP VIEW IF EXISTS v_random;
+evaluate 'RANDOM test with inline view';
 SELECT /*+ recompile */ *
 FROM (
     SELECT ID, Name, RANDOM() AS RandomValue
@@ -37,12 +39,14 @@ FROM tbl
 WHERE BirthYear > 1970;
 
 -- Check result (unmergable)
+evaluate 'DRANDOM test';
 SELECT /*+ recompile */ *
 FROM v_drandom
 WHERE RandomRange > 50;
 
 --Convert the view to an inline view (unmergable)
 DROP VIEW IF EXISTS v_drandom;
+evaluate 'DRANDOM test with inline view';
 SELECT /*+ recompile */ *
 FROM (
     SELECT ID, Name, DRANDOM() AS RandomRange
@@ -58,12 +62,14 @@ FROM tbl
 WHERE BirthYear < 1980;
 
 -- Check result (unmergable)
+evaluate 'SYS_GUID test';
 SELECT /*+ recompile */ *
 FROM v_sys_guid
 WHERE UniqueID IS NULL;
 
 --Convert the view to an inline view (unmergable)
 DROP VIEW IF EXISTS v_sys_guid;
+evaluate 'SYS_GUID test with inline view';
 SELECT /*+ recompile */ *
 FROM (
     SELECT ID, Name, SYS_GUID() AS UniqueID

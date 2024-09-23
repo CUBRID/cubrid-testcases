@@ -22,6 +22,7 @@ AS
          t_b b
   WHERE  a.col_a = b.col_a
   CONNECT BY a.col_a = PRIOR a.col_b;
+evaluate 'test1';
 SELECT /*+ recompile */ a.col_a
 FROM   v a,
        t_b b
@@ -30,6 +31,7 @@ WHERE  a.col_a = b.col_a
 DROP VIEW v;
 
 --Convert the view to an inline view (unmergable)
+evaluate 'test1 with inline view';
 SELECT /*+ recompile */ a.col_a
 FROM   (SELECT a.col_a,
                a.col_b
@@ -51,6 +53,7 @@ AS
          t_b b
   WHERE  a.col_a = b.col_a;
 
+evaluate 'test2';
 SELECT /*+ recompile */ a.col_a
 FROM   t_b b,
        v a
@@ -60,6 +63,7 @@ CONNECT BY a.col_a = PRIOR a.col_b;
 DROP VIEW v;
 
 --Convert the view to an inline view (unmergable)
+evaluate 'test2 with inline view';
 SELECT /*+ recompile */ a.col_a
 FROM   t_b b,
        (SELECT a.col_a,

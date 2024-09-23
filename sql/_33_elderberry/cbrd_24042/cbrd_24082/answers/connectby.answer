@@ -7,6 +7,10 @@
 ===================================================
 0
 ===================================================
+    
+test1     
+
+===================================================
 col_a    
 
 Query plan:
@@ -37,6 +41,10 @@ Query stmt:
 select a.col_a from (select a.col_a, a.col_b from t_a a, t_b b where (a.col_a=b.col_a) connect by a.col_a= prior a.col_b) a (col_a, col_b), t_b b where a.col_a=b.col_a and b.col_b= ?:? 
 ===================================================
 0
+===================================================
+    
+test1 with inline view     
+
 ===================================================
 col_a    
 
@@ -69,6 +77,10 @@ select a.col_a from (select a.col_a, a.col_b from t_a a, t_b b where a.col_a=b.c
 ===================================================
 0
 ===================================================
+    
+test2     
+
+===================================================
 col_a    
 
 Query plan:
@@ -99,6 +111,10 @@ Query stmt:
 select a.col_a from t_b b, (select a.col_a, a.col_b from t_a a, t_b b where (a.col_a=b.col_a)) a (col_a, col_b) where a.col_a=b.col_a and b.col_b= ?:?  connect by a.col_a= prior a.col_b
 ===================================================
 0
+===================================================
+    
+test2 with inline view     
+
 ===================================================
 col_a    
 

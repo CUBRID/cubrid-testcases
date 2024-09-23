@@ -1,3 +1,6 @@
+-- When a view is created, the types in the select list are stored along with it. During the process of merging the view into the main query, a type check is performed and a cast is added if necessary. Therefore, the query plan differs between a regular view and a query using an inline view.
+-- In the case of the 'CASE WHEN' statement, since the type `varchar` is not explicitly clear, it was added.
+
 DROP TABLE IF EXISTS tbl;
 CREATE TABLE tbl(ID INT, MgrID INT, Name VARCHAR(32), BirthYear INT);
 INSERT INTO tbl VALUES (1,NULL,'Kim', 1963);

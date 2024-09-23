@@ -36,7 +36,7 @@ WHERE
 USING INDEX 
     idx_tbl_birthyear(+);
 
--- Check view merging when using index in the subquery (mergable)
+-- Check view merging when using force index(The selection of the specified index is prioritized) in the subquery (mergable)
 SELECT /*+ recompile */ * 
 FROM 
     tbl FORCE INDEX (idx_tbl_birthyear) INNER JOIN 

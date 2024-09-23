@@ -38,12 +38,14 @@ FROM (
 ) cc;
 
 -- Check result (main query has no_push_pred hint) (mergable)
+evaluate 'test1';
 SELECT /*+ RECOMPILE no_push_pred */ COUNT(*)
 FROM tab_a a, v b
 WHERE a.col_a = b.col_a AND b.col_a = 1;
 
 -- Convert the view to an inline view (mergable)
 DROP VIEW IF EXISTS v;
+evaluate 'test1 with inline view';
 SELECT /*+ RECOMPILE no_push_pred */ COUNT(*)
 FROM tab_a a,
      (SELECT col_a, cnt FROM (
@@ -76,6 +78,7 @@ FROM (
 ) cc;
 
 -- Check result (mergable)
+evaluate 'test2';
 SELECT /*+ RECOMPILE */ COUNT(*)
 FROM tab_a a, v b
 WHERE a.col_a = b.col_a
@@ -83,6 +86,7 @@ WHERE a.col_a = b.col_a
 
 -- Convert the view to an inline view (mergable)
 DROP VIEW IF EXISTS v;
+evaluate 'test2 with inline view';
 SELECT /*+ RECOMPILE */ COUNT(*)
 FROM tab_a a,
      (SELECT col_a, cnt FROM (

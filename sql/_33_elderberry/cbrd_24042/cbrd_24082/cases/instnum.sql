@@ -42,5 +42,9 @@ FROM   (SELECT a.col_a,
        t_b b
 WHERE  a.col_a = b.col_a
        AND b.col_b = 2;
+-- In the query plan for an inline view, 'ha_?' refers to a hidden attribute. When a column in the ORDER BY clause is not present 
+-- in the select list, a hidden column is added. In this case, 'b.col_a' was added, and as a result, a value was also added 
+-- to the as_attr_list. 'ha' stands for 'hidden attribute.'
+
 
 DROP TABLE t_a, t_b;

@@ -17,6 +17,7 @@ create or replace view v_a as select col_a, cnt from (
 	select col_a,count(*) from tab_b group by col_a);
 
 -- Check result (mergable)
+evaluate 'test1';
 select /*+ recompile */ count(*)
 from tab_a a
      ,v_a b
@@ -25,6 +26,7 @@ where a.col_a = b.col_a
 
 --Convert the view to an inline view (mergable)
 drop view if exists v_a;
+evaluate 'test1 with inline view';
 select /*+ recompile */ count(*)
   from tab_a a
         ,(select col_a, cnt from (
@@ -45,6 +47,7 @@ create or replace view v_a as select col_a, cnt from (
         );
 
 -- Check result (mergable)
+evaluate 'test2';
 select /*+ recompile */ count(*)
 from tab_a a
       ,v_a d
@@ -53,6 +56,7 @@ where a.col_a = d.col_a
 
 --Convert the view to an inline view (mergable)
 drop view if exists v_a;
+evaluate 'test2 with inline view';
 select /*+ recompile */ count(*)
 from tab_a a
       , (select col_a, cnt from (

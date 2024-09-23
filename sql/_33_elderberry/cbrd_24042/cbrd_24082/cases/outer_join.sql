@@ -21,6 +21,7 @@ AS
   FROM   t_a a,
          t_b b
   WHERE  a.col_a = b.col_a(+);
+evaluate 'test1';
 SELECT /*+ recompile */ a.col_a
 FROM   v a,
        t_b b
@@ -29,6 +30,7 @@ WHERE  a.col_a = b.col_a
 DROP VIEW v;
 
 --Convert the view to an inline view (unmergable)
+evaluate 'test1 with inline view';
 SELECT /*+ recompile */ a.col_a
 FROM   (SELECT a.col_a,
                a.col_b
@@ -40,7 +42,7 @@ WHERE  a.col_a = b.col_a
        AND b.col_b = 2;
 
 
---mainquery check. has outer join spec (mergable)
+--mainquery check. has outer join spec (unmergable)
 CREATE OR replace VIEW v
 AS
   SELECT a.col_a,
@@ -48,6 +50,7 @@ AS
   FROM   t_a a,
          t_b b
   WHERE  a.col_a = b.col_a;
+evaluate 'test2';
 SELECT /*+ recompile */ a.col_a
 FROM   v a,
        t_b b
@@ -55,7 +58,8 @@ WHERE  a.col_a = b.col_a(+)
        AND b.col_b(+) = 2;  
 DROP VIEW v;
 
---Convert the view to an inline view (mergable)
+--Convert the view to an inline view (unmergable)
+evaluate 'test2 with inline view';
 SELECT /*+ recompile */ a.col_a
 FROM   (SELECT a.col_a,
                a.col_b
@@ -75,6 +79,7 @@ AS
   FROM   t_a a,
          t_b b
   WHERE  a.col_a = b.col_a;
+evaluate 'test3';
 SELECT /*+ recompile */ a.col_a
 FROM   t_b b,
        v a
@@ -83,6 +88,7 @@ WHERE  a.col_a(+) = b.col_a
 DROP VIEW v;
 
 --Convert the view to an inline view (unmergable)
+evaluate 'test3 with inline view';
 SELECT /*+ recompile */ a.col_a
 FROM   t_b b,
        (SELECT a.col_a,
