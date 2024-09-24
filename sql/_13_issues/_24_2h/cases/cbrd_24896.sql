@@ -1,3 +1,5 @@
+-- This testcase verifies CBRD-24896 issue.
+
 -- create table
 drop table if exists tbl;
 create table tbl (col_a int, col_b int, col_c int, col_d int);
