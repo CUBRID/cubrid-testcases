@@ -60,100 +60,266 @@
 
 select '' as "test data";
 drop table if exists tbl_a, tbl_b;
-create table tbl_a (col_a int, c_r float, index idx_a (col_a));
-create table tbl_b (col_a int, col_b int, c_r float, index idx_b (col_b));
+create table tbl_a (col_a int, c_r varchar, index idx_a (col_a));
+create table tbl_b (col_a int, col_b int, c_r varchar, index idx_b (col_a, col_b));
 
-insert into tbl_a
-with recursive cte (n) as (
-    select 1
-    union all
-    select n + 1 from cte where n < 10
-  )
-select n, null from cte;
+insert into tbl_a (col_a) values (1), (2), (3), (4), (5), (6), (7), (8), (9), (10);
 insert into tbl_b select a.col_a, b.col_a, null from tbl_a a, tbl_a b where b.col_a <= a.col_a;
 insert into tbl_b values (1, 1, null), (1, 2, null), (1, 3, null);
 
-update statistics on tbl_a with fullscan;
-update statistics on tbl_b with fullscan;
-
+update statistics on tbl_a, tbl_b with fullscan;
 
 select 'The UPDATE JOIN statement allow the use of analytic functions With subquery.' as "test case 3";
 
 select '' as "test case3: use avg";
-update /*+ recompile */ tbl_a a set a.c_r = (select avg(b.col_b) over (partition by b.col_a) from tbl_b b where a.col_a = b.col_a limit 1);
-select col_a, to_char(c_r) from tbl_a order by col_a;
+update /*+ recompile */ tbl_a a
+set a.c_r = (
+    select group_concat (t.c_r)
+    from (select distinct b.col_a, avg (b.col_b) over (partition by b.col_a) as c_r from tbl_b b) t
+    group by t.col_a
+    having t.col_a = a.col_a
+  );
+select col_a, c_r from tbl_a order by col_a;
+
 select '' as "test case3: use count";
-update /*+ recompile */ tbl_a a set a.c_r = (select count(b.col_b) over (partition by b.col_a) from tbl_b b where a.col_a = b.col_a limit 1);
-select col_a, to_char(c_r) from tbl_a order by col_a;
+update /*+ recompile */ tbl_a a
+set a.c_r = (
+    select group_concat (t.c_r)
+    from (select distinct b.col_a, count (b.col_b) over (partition by b.col_a) as c_r from tbl_b b) t
+    group by t.col_a
+    having t.col_a = a.col_a
+  );
+select col_a, c_r from tbl_a order by col_a;
+
 select '' as "test case3: use sum";
-update /*+ recompile */ tbl_a a set a.c_r = (select sum(b.col_b) over (partition by b.col_a) from tbl_b b where a.col_a = b.col_a limit 1);
-select col_a, to_char(c_r) from tbl_a order by col_a;
+update /*+ recompile */ tbl_a a
+set a.c_r = (
+    select group_concat (t.c_r)
+    from (select distinct b.col_a, sum (b.col_b) over (partition by b.col_a) as c_r from tbl_b b) t
+    group by t.col_a
+    having t.col_a = a.col_a
+  );
+select col_a, c_r from tbl_a order by col_a;
+
 select '' as "test case3: use min";
-update /*+ recompile */ tbl_a a set a.c_r = (select min(b.col_b) over (partition by b.col_a) from tbl_b b where a.col_a = b.col_a limit 1);
-select col_a, to_char(c_r) from tbl_a order by col_a;
+update /*+ recompile */ tbl_a a
+set a.c_r = (
+    select group_concat (t.c_r)
+    from (select distinct b.col_a, min (b.col_b) over (partition by b.col_a) as c_r from tbl_b b) t
+    group by t.col_a
+    having t.col_a = a.col_a
+  );
+select col_a, c_r from tbl_a order by col_a;
+
 select '' as "test case3: use max";
-update /*+ recompile */ tbl_a a set a.c_r = (select max(b.col_b) over (partition by b.col_a) from tbl_b b where a.col_a = b.col_a limit 1);
-select col_a, to_char(c_r) from tbl_a order by col_a;
+update /*+ recompile */ tbl_a a
+set a.c_r = (
+    select group_concat (t.c_r)
+    from (select distinct b.col_a, max (b.col_b) over (partition by b.col_a) as c_r from tbl_b b) t
+    group by t.col_a
+    having t.col_a = a.col_a
+  );
+select col_a, c_r from tbl_a order by col_a;
+
 select '' as "test case3: use stddev";
-update /*+ recompile */ tbl_a a set a.c_r = (select stddev(b.col_b) over (partition by b.col_a) from tbl_b b where a.col_a = b.col_a limit 1);
-select col_a, to_char(c_r) from tbl_a order by col_a;
+update /*+ recompile */ tbl_a a
+set a.c_r = (
+    select group_concat (t.c_r)
+    from (select distinct b.col_a, stddev (b.col_b) over (partition by b.col_a) as c_r from tbl_b b) t
+    group by t.col_a
+    having t.col_a = a.col_a
+  );
+select col_a, c_r from tbl_a order by col_a;
+
 select '' as "test case3: use stddev_pop";
-update /*+ recompile */ tbl_a a set a.c_r = (select stddev_pop(b.col_b) over (partition by b.col_a) from tbl_b b where a.col_a = b.col_a limit 1);
-select col_a, to_char(c_r) from tbl_a order by col_a;
+update /*+ recompile */ tbl_a a
+set a.c_r = (
+    select group_concat (t.c_r)
+    from (select distinct b.col_a, stddev_pop (b.col_b) over (partition by b.col_a) as c_r from tbl_b b) t
+    group by t.col_a
+    having t.col_a = a.col_a
+  );
+select col_a, c_r from tbl_a order by col_a;
+
 select '' as "test case3: use stddev_samp";
-update /*+ recompile */ tbl_a a set a.c_r = (select stddev_samp(b.col_b) over (partition by b.col_a) from tbl_b b where a.col_a = b.col_a limit 1);
-select col_a, to_char(c_r) from tbl_a order by col_a;
+update /*+ recompile */ tbl_a a
+set a.c_r = (
+    select group_concat (t.c_r)
+    from (select distinct b.col_a, stddev_samp (b.col_b) over (partition by b.col_a) as c_r from tbl_b b) t
+    group by t.col_a
+    having t.col_a = a.col_a
+  );
+select col_a, c_r from tbl_a order by col_a;
+
 select '' as "test case3: use var_pop";
-update /*+ recompile */ tbl_a a set a.c_r = (select var_pop(b.col_b) over (partition by b.col_a) from tbl_b b where a.col_a = b.col_a limit 1);
-select col_a, to_char(c_r) from tbl_a order by col_a;
+update /*+ recompile */ tbl_a a
+set a.c_r = (
+    select group_concat (t.c_r)
+    from (select distinct b.col_a, var_pop (b.col_b) over (partition by b.col_a) as c_r from tbl_b b) t
+    group by t.col_a
+    having t.col_a = a.col_a
+  );
+select col_a, c_r from tbl_a order by col_a;
+
 select '' as "test case3: use var_samp";
-update /*+ recompile */ tbl_a a set a.c_r = (select var_samp(b.col_b) over (partition by b.col_a) from tbl_b b where a.col_a = b.col_a limit 1);
-select col_a, to_char(c_r) from tbl_a order by col_a;
+update /*+ recompile */ tbl_a a
+set a.c_r = (
+    select group_concat (t.c_r)
+    from (select distinct b.col_a, var_samp (b.col_b) over (partition by b.col_a) as c_r from tbl_b b) t
+    group by t.col_a
+    having t.col_a = a.col_a
+  );
+select col_a, c_r from tbl_a order by col_a;
+
 select '' as "test case3: use variance";
-update /*+ recompile */ tbl_a a set a.c_r = (select variance(b.col_b) over (partition by b.col_a) from tbl_b b where a.col_a = b.col_a limit 1);
-select col_a, to_char(c_r) from tbl_a order by col_a;
+update /*+ recompile */ tbl_a a
+set a.c_r = (
+    select group_concat (t.c_r)
+    from (select distinct b.col_a, variance (b.col_b) over (partition by b.col_a) as c_r from tbl_b b) t
+    group by t.col_a
+    having t.col_a = a.col_a
+  );
+select col_a, c_r from tbl_a order by col_a;
+
 select '' as "test case3: use ntile";
-update /*+ recompile */ tbl_a a set a.c_r = (select ntile(4) over (partition by b.col_a order by b.col_b) from tbl_b b where a.col_a = b.col_a limit 1);
-select col_a, to_char(c_r) from tbl_a order by col_a;
+update /*+ recompile */ tbl_a a
+set a.c_r = (
+    select group_concat (t.c_r)
+    from (select distinct b.col_a, ntile (4) over (partition by b.col_a order by b.col_b) as c_r from tbl_b b) t
+    group by t.col_a
+    having t.col_a = a.col_a
+  );
+select col_a, c_r from tbl_a order by col_a;
+
 select '' as "test case3: use median";
-update /*+ recompile */ tbl_a a set a.c_r = (select median(b.col_b) over (partition by b.col_a) from tbl_b b where a.col_a = b.col_a limit 1);
-select col_a, to_char(c_r) from tbl_a order by col_a;
+update /*+ recompile */ tbl_a a
+set a.c_r = (
+    select group_concat (t.c_r)
+    from (select distinct b.col_a, median (b.col_b) over (partition by b.col_a) as c_r from tbl_b b) t
+    group by t.col_a
+    having t.col_a = a.col_a
+  );
+select col_a, c_r from tbl_a order by col_a;
+
 select '' as "test case3: use first_value";
-update /*+ recompile */ tbl_a a set a.c_r = (select first_value(b.col_b) over (partition by b.col_a order by b.col_b) from tbl_b b where a.col_a = b.col_a limit 1);
-select col_a, to_char(c_r) from tbl_a order by col_a;
+update /*+ recompile */ tbl_a a
+set a.c_r = (
+    select group_concat (t.c_r)
+    from (select distinct b.col_a, first_value (b.col_b) over (partition by b.col_a order by b.col_b) as c_r from tbl_b b) t
+    group by t.col_a
+    having t.col_a = a.col_a
+  );
+select col_a, c_r from tbl_a order by col_a;
+
 select '' as "test case3: use last_value";
-update /*+ recompile */ tbl_a a set a.c_r = (select last_value(b.col_b) over (partition by b.col_a order by b.col_b) from tbl_b b where a.col_a = b.col_a limit 1);
-select col_a, to_char(c_r) from tbl_a order by col_a;
+update /*+ recompile */ tbl_a a
+set a.c_r = (
+    select group_concat (t.c_r)
+    from (select distinct b.col_a, last_value (b.col_b) over (partition by b.col_a order by b.col_b) as c_r from tbl_b b) t
+    group by t.col_a
+    having t.col_a = a.col_a
+  );
+select col_a, c_r from tbl_a order by col_a;
+
 select '' as "test case3: use nth_value";
-update /*+ recompile */ tbl_a a set a.c_r = (select nth_value(b.col_b, 1) over (partition by b.col_a order by b.col_b) from tbl_b b where a.col_a = b.col_a limit 1);
-select col_a, to_char(c_r) from tbl_a order by col_a;
+update /*+ recompile */ tbl_a a
+set a.c_r = (
+    select group_concat (t.c_r)
+    from (select distinct b.col_a, nth_value (b.col_b, 1) over (partition by b.col_a order by b.col_b) as c_r from tbl_b b) t
+    group by t.col_a
+    having t.col_a = a.col_a
+  );
+select col_a, c_r from tbl_a order by col_a;
+
 select '' as "test case3: use lead";
-update /*+ recompile */ tbl_a a set a.c_r = (select lead(b.col_b, 1, 0) over (partition by b.col_a order by b.col_b) from tbl_b b where a.col_a = b.col_a limit 1);
-select col_a, to_char(c_r) from tbl_a order by col_a;
+update /*+ recompile */ tbl_a a
+set a.c_r = (
+    select group_concat (t.c_r)
+    from (select distinct b.col_a, lead (b.col_b, 1, -1) over (partition by b.col_a order by b.col_b) as c_r from tbl_b b) t
+    group by t.col_a
+    having t.col_a = a.col_a
+  );
+select col_a, c_r from tbl_a order by col_a;
+
 select '' as "test case3: use lag";
-update /*+ recompile */ tbl_a a set a.c_r = (select lag(b.col_b, 1, 0) over (partition by b.col_a order by b.col_b) from tbl_b b where a.col_a = b.col_a limit 1);
-select col_a, to_char(c_r) from tbl_a order by col_a;
+update /*+ recompile */ tbl_a a
+set a.c_r = (
+    select group_concat (t.c_r)
+    from (select distinct b.col_a, lag (b.col_b, 1, -1) over (partition by b.col_a order by b.col_b) as c_r from tbl_b b) t
+    group by t.col_a
+    having t.col_a = a.col_a
+  );
+select col_a, c_r from tbl_a order by col_a;
+
 select '' as "test case3: use row_number";
-update /*+ recompile */ tbl_a a set a.c_r = (select row_number() over (partition by b.col_a order by b.col_b) from tbl_b b where a.col_a = b.col_a limit 1);
-select col_a, to_char(c_r) from tbl_a order by col_a;
+update /*+ recompile */ tbl_a a
+set a.c_r = (
+    select group_concat (t.c_r)
+    from (select distinct b.col_a, row_number () over (partition by b.col_a order by b.col_b) as c_r from tbl_b b) t
+    group by t.col_a
+    having t.col_a = a.col_a
+  );
+select col_a, c_r from tbl_a order by col_a;
+
 select '' as "test case3: use rank";
-update /*+ recompile */ tbl_a a set a.c_r = (select rank() over (partition by b.col_a order by b.col_b) from tbl_b b where a.col_a = b.col_a limit 1);
-select col_a, to_char(c_r) from tbl_a order by col_a;
+update /*+ recompile */ tbl_a a
+set a.c_r = (
+    select group_concat (t.c_r)
+    from (select distinct b.col_a, rank () over (partition by b.col_a order by b.col_b) as c_r from tbl_b b) t
+    group by t.col_a
+    having t.col_a = a.col_a
+  );
+select col_a, c_r from tbl_a order by col_a;
+
 select '' as "test case3: use dense_rank";
-update /*+ recompile */ tbl_a a set a.c_r = (select dense_rank() over (partition by b.col_a order by b.col_b) from tbl_b b where a.col_a = b.col_a limit 1);
-select col_a, to_char(c_r) from tbl_a order by col_a;
+update /*+ recompile */ tbl_a a
+set a.c_r = (
+    select group_concat (t.c_r)
+    from (select distinct b.col_a, dense_rank () over (partition by b.col_a order by b.col_b) as c_r from tbl_b b) t
+    group by t.col_a
+    having t.col_a = a.col_a
+  );
+select col_a, c_r from tbl_a order by col_a;
+
 select '' as "test case3: use cume_dist";
-update /*+ recompile */ tbl_a a set a.c_r = (select cume_dist() over (partition by b.col_a order by b.col_b) from tbl_b b where a.col_a = b.col_a limit 1);
-select col_a, to_char(c_r) from tbl_a order by col_a;
+update /*+ recompile */ tbl_a a
+set a.c_r = (
+    select group_concat (t.c_r)
+    from (select distinct b.col_a, cume_dist () over (partition by b.col_a order by b.col_b) as c_r from tbl_b b) t
+    group by t.col_a
+    having t.col_a = a.col_a
+  );
+select col_a, c_r from tbl_a order by col_a;
+
 select '' as "test case3: use percent_rank";
-update /*+ recompile */ tbl_a a set a.c_r = (select percent_rank() over (partition by b.col_a order by b.col_b) from tbl_b b where a.col_a = b.col_a limit 1);
-select col_a, to_char(c_r) from tbl_a order by col_a;
+update /*+ recompile */ tbl_a a
+set a.c_r = (
+    select group_concat (t.c_r)
+    from (select distinct b.col_a, percent_rank () over (partition by b.col_a order by b.col_b) as c_r from tbl_b b) t
+    group by t.col_a
+    having t.col_a = a.col_a
+  );
+select col_a, c_r from tbl_a order by col_a;
+
 select '' as "test case3: use percentile_cont";
-update /*+ recompile */ tbl_a a set a.c_r = (select percentile_cont(0.5) within group (order by b.col_b) over (partition by b.col_a) from tbl_b b where a.col_a = b.col_a limit 1);
-select col_a, to_char(c_r) from tbl_a order by col_a;
+update /*+ recompile */ tbl_a a
+set a.c_r = (
+    select group_concat (t.c_r)
+    from (select distinct b.col_a, percentile_cont (0.5) within group (order by b.col_b) over (partition by b.col_a) as c_r from tbl_b b) t
+    group by t.col_a
+    having t.col_a = a.col_a
+  );
+select col_a, c_r from tbl_a order by col_a;
+
 select '' as "test case3: use percentile_disc";
-update /*+ recompile */ tbl_a a set a.c_r = (select percentile_disc(0.5) within group (order by b.col_b) over (partition by b.col_a) from tbl_b b where a.col_a = b.col_a limit 1);
-select col_a, to_char(c_r) from tbl_a order by col_a;
+update /*+ recompile */ tbl_a a
+set a.c_r = (
+    select group_concat (t.c_r)
+    from (select distinct b.col_a, percentile_disc (0.5) within group (order by b.col_b) over (partition by b.col_a) as c_r from tbl_b b) t
+    group by t.col_a
+    having t.col_a = a.col_a
+  );
+select col_a, c_r from tbl_a order by col_a;
 
 drop table tbl_a;
 drop table tbl_b;
