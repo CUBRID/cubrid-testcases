@@ -35,7 +35,8 @@ select '12' into :a ;
 
 call t('1234', :a);
 
-call t('1234', '12'); --bug
+--bug
+call t('1234', '12');
 --If called as above, an error occurs in Oracle. CUBRID runs normally (confirmed on 2023-12-28)
 
 drop procedure t;
