@@ -1,4 +1,4 @@
-
+-- This test case verifies CBRD-24795 issue.
 /* ----------------------------------------
  *  1. predicate:  1 = abs (ta.b)                               key range: ( abs(ta.b)= ?:0 )
  *  2. predicate:  1 = -abs (ta.b)                              key range: ( abs(ta.b)=-1)
