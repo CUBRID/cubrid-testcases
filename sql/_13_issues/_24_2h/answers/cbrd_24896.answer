@@ -1,4 +1,70 @@
 ===================================================
+    
+using seteq for search condition on system table     
+
+===================================================
+grantor    grantee    class_of    auth_type    is_grantable    
+db_user     db_user     _db_class     SELECT     0     
+
+Query plan:
+follow
+    edge:  au node[?] grantee -> db_user node[?]
+    head:  sscan
+              class: au node[?]
+              sargs: term[?]
+              cost:  ? card ?
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select au.grantor, au.grantee, au.class_of, au.auth_type, au.is_grantable from [_db_auth] au where ({au.grantee.[name]} seteq {'PUBLIC'}) and (inst_num()<= ?:? )
+===================================================
+grantor    grantee    class_of    auth_type    is_grantable    
+
+Query plan:
+follow
+    edge:  au node[?] grantee -> db_user node[?]
+    head:  sscan
+              class: au node[?]
+              sargs: term[?]
+              cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select au.grantor, au.grantee, au.class_of, au.auth_type, au.is_grantable from [_db_auth] au where {au.grantee.[name]} seteq {} and (au.is_grantable= ?:? )
+===================================================
+    
+using = for search condition on system table     
+
+===================================================
+grantor    grantee    class_of    auth_type    is_grantable    
+db_user     db_user     _db_class     SELECT     0     
+
+Query plan:
+follow
+    edge:  au node[?] grantee -> db_user node[?]
+    head:  sscan
+              class: au node[?]
+              sargs: term[?]
+              cost:  ? card ?
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select au.grantor, au.grantee, au.class_of, au.auth_type, au.is_grantable from [_db_auth] au where ({au.grantee.[name]}={'PUBLIC'}) and (inst_num()<= ?:? )
+===================================================
+grantor    grantee    class_of    auth_type    is_grantable    
+
+Query plan:
+follow
+    edge:  au node[?] grantee -> db_user node[?]
+    head:  sscan
+              class: au node[?]
+              sargs: term[?]
+              cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select au.grantor, au.grantee, au.class_of, au.auth_type, au.is_grantable from [_db_auth] au where {au.grantee.[name]}={} and (au.is_grantable= ?:? )
+===================================================
 0
 ===================================================
 0

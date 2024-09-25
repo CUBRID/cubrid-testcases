@@ -1,5 +1,13 @@
 -- This testcase verifies CBRD-24896 issue.
 
+EVALUATE 'using seteq for search condition on system table';
+SELECT /*+ recompile */ * FROM [_db_auth] AS [au] WHERE {[au].[grantee].[name]} seteq {'PUBLIC'} LIMIT 1;
+SELECT /*+ recompile */ * FROM [_db_auth] AS [au] WHERE  (is_grantable = 1) AND {[au].[grantee].[name]} seteq {};
+
+EVALUATE 'using = for search condition on system table';
+SELECT /*+ recompile */ * FROM [_db_auth] AS [au] WHERE {[au].[grantee].[name]} = {'PUBLIC'} LIMIT 1;
+SELECT /*+ recompile */ * FROM [_db_auth] AS [au] WHERE  (is_grantable = 1) AND {[au].[grantee].[name]} = {};
+
 -- create table
 drop table if exists tbl;
 create table tbl (col_a int, col_b int, col_c int, col_d int);
