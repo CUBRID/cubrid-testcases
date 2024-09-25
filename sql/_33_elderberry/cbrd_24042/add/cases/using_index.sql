@@ -39,11 +39,11 @@ USING INDEX
 -- Check view merging when using force index(The selection of the specified index is prioritized) in the subquery (mergable)
 SELECT /*+ recompile */ * 
 FROM 
-    tbl FORCE INDEX (idx_tbl_birthyear) INNER JOIN 
+    tbl t FORCE INDEX (idx_tbl_birthyear) INNER JOIN 
     (SELECT * FROM tbl_emp FORCE INDEX (idx_empinfo_empid) WHERE RIGHT(JobTitle, 2) < 'zz') x 
-    ON tbl.ID = x.EmpID 
+    ON t.ID = x.EmpID 
 WHERE 
-    tbl.BirthYear < 1980;
+    t.BirthYear < 1980;
 
 DROP TABLE IF EXISTS tbl;
 DROP TABLE IF EXISTS tbl_emp;
