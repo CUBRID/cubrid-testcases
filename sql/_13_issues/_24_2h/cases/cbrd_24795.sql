@@ -77,7 +77,7 @@ evaluate 'test case 1';
 select /*+ recompile */ ta.*
 from tbla ta
 where 1 = abs (ta.b)
-using index tb.idx_tbla_a_abs_b
+using index ta.idx_tbla_abs_b_a
 limit 1;
 show trace;
 
@@ -85,7 +85,7 @@ evaluate 'test case 2';
 select /*+ recompile */ ta.*
 from tbla ta
 where 1 = -abs (ta.b)
-using index tb.idx_tbla_a_abs_b
+using index ta.idx_tbla_abs_b_a
 limit 1;
 show trace;
 
@@ -93,7 +93,7 @@ evaluate 'test case 3';
 select /*+ recompile */ ta.*
 from tbla ta
 where 1 = -(-abs (ta.b))
-using index tb.idx_tbla_a_abs_b
+using index ta.idx_tbla_abs_b_a
 limit 1;
 show trace;
 
@@ -101,7 +101,7 @@ evaluate 'test case 4';
 select /*+ recompile */ ta.*
 from tbla ta
 where -1 = -abs (ta.b)
-using index tb.idx_tbla_a_abs_b
+using index ta.idx_tbla_abs_b_a
 limit 1;
 show trace;
 
@@ -109,7 +109,7 @@ evaluate 'test case 5';
 select /*+ recompile */ ta.*
 from tbla ta
 where -1 = -(-abs (ta.b))
-using index tb.idx_tbla_a_abs_b
+using index ta.idx_tbla_abs_b_a
 limit 1;
 show trace;
 
@@ -117,7 +117,7 @@ evaluate 'test case 6';
 select /*+ recompile */ ta.*
 from tbla ta
 where 1 > abs (ta.b)
-using index tb.idx_tbla_a_abs_b
+using index ta.idx_tbla_abs_b_a
 limit 1;
 show trace;
 
@@ -125,7 +125,7 @@ evaluate 'test case 7';
 select /*+ recompile */ ta.*
 from tbla ta
 where 1 > -abs (ta.b)
-using index tb.idx_tbla_a_abs_b
+using index ta.idx_tbla_abs_b_a
 limit 1;
 show trace;
 
