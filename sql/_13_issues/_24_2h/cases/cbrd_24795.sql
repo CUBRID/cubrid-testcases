@@ -297,7 +297,7 @@ evaluate 'test case 27';
 select /*+ recompile */ ta.*
 from tbla ta
 where length (cast (ta.b as varchar)) > 5 and length (cast (ta.b as varchar)) <= 6
-using index tb.idx_tbla_a_length_b;
+using index ta.idx_tbla_length_b(+);
 show trace;
 
 evaluate 'test case 28';
