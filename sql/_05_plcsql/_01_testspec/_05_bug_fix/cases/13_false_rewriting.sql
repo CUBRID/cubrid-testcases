@@ -10,6 +10,7 @@ BEGIN
 END;
 select 'x' into :a ;
 call poo(:a);
+select :a from dual;
 
 
 CREATE OR REPLACE function foo(a int) return char(3) AS
