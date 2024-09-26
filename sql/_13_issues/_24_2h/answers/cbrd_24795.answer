@@ -620,13 +620,13 @@ a    b    c    d    e
 trace    
 
 Query Plan:
-  TABLE SCAN (ta)
+  INDEX SCAN (ta.idx_tbla_length_b) (key range:  char_length( cast(ta.b as varchar))<=?)
 
-  rewritten query: select ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta where  char_length( cast(ta.b as varchar))>? and  char_length( cast(ta.b as varchar))<=?
+  rewritten query: select ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta where  char_length( cast(ta.b as varchar))>? and  char_length( cast(ta.b as varchar))<=? using index ta.idx_tbla_length_b(+)
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.tbla), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (index: dba.tbla.idx_tbla_length_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
 ===================================================
@@ -641,13 +641,13 @@ a    b    c    d    e
 trace    
 
 Query Plan:
-  TABLE SCAN (ta)
+  INDEX SCAN (ta.idx_tbla_length_b) (key range: ( char_length( cast(ta.b as varchar))> ?:?  and  char_length( cast(ta.b as varchar))<= ?:? ))
 
-  rewritten query: select ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta where ( char_length( cast(ta.b as varchar))> ?:?  and  char_length( cast(ta.b as varchar))<= ?:? )
+  rewritten query: select ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta where ( char_length( cast(ta.b as varchar))> ?:?  and  char_length( cast(ta.b as varchar))<= ?:? ) using index ta.idx_tbla_length_b(+)
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.tbla), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (index: dba.tbla.idx_tbla_length_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
 ===================================================
