@@ -2,9 +2,7 @@
 
 --A test case that delivers values exceeding the minimum and maximum values supported by float type parameters.
 
---bug
-select 'An error should occur if "3.402823466E+39" is assigned to a decimal variable, but "Infinity" is output. This is a bug.';
-
+-- error
 create or replace procedure t( ) as
     var_min REAL := -3.402823466E+38;
     var_max REAL := 3.402823466E+38;
@@ -32,10 +30,10 @@ end;
 -- normal
 call t(-3.402823466E+38, 3.402823466E+38);
 
---bug
-call t(-3.402823466E+39, 0);  --bug
---bug
-call t(0, 3.402823466E+39);  --bug
+--BUG CBRD-25554
+call t(-3.402823466E+39, 0);
+--BUG CBRD-25554
+call t(0, 3.402823466E+39);
 
 select cast(-3.402823466E+39 as float);
 
