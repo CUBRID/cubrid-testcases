@@ -290,7 +290,7 @@ evaluate 'test case 26';
 select /*+ recompile */ ta.*
 from tbla ta
 where length (ta.b) > 5 and length (ta.b) <= 6
-using index tb.idx_tbla_a_length_b;
+using index ta.idx_tbla_length_b(+);
 show trace;
 
 evaluate 'test case 27';
