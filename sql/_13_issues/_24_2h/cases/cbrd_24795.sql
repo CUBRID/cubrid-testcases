@@ -11,7 +11,7 @@
  *  9. predicate: ta.b <= abs (tb.b) and ta.c > abs (tb.b)      key range: NULL
  *                                                               - data filter: (ta.b<= abs(tb.b)) and (ta.c> abs(tb.b))
  * 10. predicate: abs (tb.b) >= ta.b and ta.c > abs (tb.b)      key range: ( abs(tb.b)>=ta.b)
- *                                                               - data filter: ( abs(tb.b)>=ta.b) and (ta.c> abs(tb.b))
+ *                                                               - data filter: (ta.c> abs(tb.b))
  * 11. predicate: abs (tb.b) >= ta.b and abs (tb.b) < ta.c      key range: ( abs(tb.b)>=ta.b and  abs(tb.b)<ta.c)
  * 12. predicate: ta.b <= tb.b and ta.c > tb.b                  key range: NULL
  *                                                               - key filter: (ta.b<=tb.b), key filter: (ta.c>tb.b)
@@ -21,7 +21,7 @@
  * 16. predicate: (ta.b <= -abs (tb.b) or ta.c > -abs (tb.b))   key range: NULL
  *                                                               - data filter: ((ta.b<=- abs(tb.b)) or (ta.c>- abs(tb.b)))
  * 17. predicate: (ta.b <= -abs (tb.b) or ta.c > abs (tb.b))    key range: NULL
- *                                                               - data filter: ((ta.b<=- abs(tb.b)) or (ta.c> abs(tb.b)))
+ *                                                               - data filter: ((ta.b<=- abs(tb.b)) or ( abs(tb.b)<ta.c))
  * 18. predicate: (-ta.b <= -abs (tb.b) or ta.c > abs (tb.b))   key range: (( abs(tb.b)<=ta.b) or ( abs(tb.b)<ta.c))
  * 19. predicate: (ta.b >= -tb.b or ta.c > -tb.b)               key range: NULL
  *                                                               - key filter: ((ta.b<=-tb.b) or (ta.c>-tb.b))
@@ -41,9 +41,10 @@
  *                                                              key range: (ta.b>=--1 and ta.b<=--1000)
  *                                                               - key filter: (ta.b>= ?:0 )
  * 26. predicate: length (ta.b) > 5 and length (ta.b) <= 6      key range:  char_length( cast(ta.b as varchar))<=6
- * 27. predicate: length (cast (ta.b as varchar(10))) > 5 and length (cast (ta.b as varchar(10))) <= 6
+ * 27. predicate: length (cast (ta.b as varchar)) > 5 and length (cast (ta.b as varchar)) <= 6
  *                                                              key range: ( char_length( cast(ta.b as varchar))> ?:0  and  char_length( cast(ta.b as varchar))<= ?:1 )
- * 28. predicate: to_char (cb, 'YYYY-MM-DD HH24:MI:SS') >= '2023-04-26 00:00:00' and to_char (cb, 'YYYY-MM-DD HH24:MI:SS') <= '2023-04-27 23:59:59'
+ * 28. predicate: ca = 'Y' and to_char (cb, 'YYYY-MM-DD HH24:MI:SS') >= '2023-04-26 00:00:00' and to_char (cb, 'YYYY-MM-DD HH24:MI:SS') <= '2023-04-27 23:59:59'
+ *                                                              key range: [dba.tblb].ca= ?:2
  *                                                              key range: ( to_char([dba.tblb].cb, 'YYYY-MM-DD HH24:MI:SS')>= ?:0  and  to_char([dba.tblb].cb, 'YYYY-MM-DD HH24:MI:SS')<= ?:1 )
  * 29. predicate: to_char (cb, 'YYYY-MM-DD HH24:MI:SS') >= '2023-04-26 00:00:00' and to_char (cb, 'YYYY-MM-DD HH24:MI:SS') <= '2023-04-27 23:59:59'
  *                                                              key range: ( to_char([dba.tblb].cb, 'YYYY-MM-DD HH24:MI:SS')>= ?:0  and  to_char([dba.tblb].cb, 'YYYY-MM-DD HH24:MI:SS')<= ?:1 )
