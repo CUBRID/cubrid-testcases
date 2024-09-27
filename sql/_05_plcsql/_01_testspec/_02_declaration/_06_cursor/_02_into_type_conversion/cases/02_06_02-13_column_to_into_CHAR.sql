@@ -247,7 +247,6 @@ end;
 call t_FLOAT_CHAR('FLOAT', 'CHAR'  ) ;
 drop procedure t_FLOAT_CHAR ;
 
---BUG
 
 call print_message('t_NUMERIC_CHAR. This scenario is a success.');
 create or replace procedure t_NUMERIC_CHAR(param_type string, variables_type string ) as 

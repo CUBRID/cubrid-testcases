@@ -618,6 +618,37 @@ begin
 end;
 call p_var();
 
+create or replace procedure p_var() as
+[INSERT] CONSTANT varchar := 'INSERT';
+begin
+    dbms_output.put_line('Use of reserved word variables.' || [INSERT] );
+end;
+call p_var();
+
+
+create or replace procedure p_var() as
+[TRUNCATE] CONSTANT varchar := 'TRUNCATE';
+begin
+    dbms_output.put_line('Use of reserved word variables.' || [TRUNCATE] );
+end;
+call p_var();
+
+create or replace procedure p_var() as
+[AUTONOMOUS_TRANSACTION] CONSTANT varchar := 'AUTONOMOUS_TRANSACTION';
+begin
+    dbms_output.put_line('Use of reserved word variables.' || [AUTONOMOUS_TRANSACTION] );
+end;
+call p_var();
+
+create or replace procedure p_var() as
+[BEGIN] CONSTANT varchar := 'BEGIN';
+begin
+    dbms_output.put_line('Use of reserved word variables.' || [BEGIN] );
+end;
+call p_var();
+
+
+
 drop procedure p_var;
 
 --+ server-message off

@@ -71,7 +71,7 @@ call t_numeric('numeric(8,3)', cast(5678.123 as numeric(8,3)) ) ;
 drop procedure t_numeric ; 
 
 
--- BUG ( normal : 3677.344, BUG : 3677.344970703125 ) 
+-- BUG ( normal : 3677.344, BUG : 3677.344970703125 ) - CBRD-25566
 select 'It is called normally. ( t_float, numeric(8,3) )' ;
 create or replace procedure t_numeric( from_type string, param numeric(8,3) ) as 
 begin 
@@ -83,7 +83,7 @@ call t_numeric('float', cast(3677.345 as float) ) ;
 drop procedure t_numeric ; 
 
 
--- BUG ( normal : 56789.123, BUG : 56789.123399999996763654053211212158203125 ) 
+-- BUG ( normal : 56789.123, BUG : 56789.123399999996763654053211212158203125 ) - CBRD-25566
 select 'It is called normally. ( t_double, numeric(8,3) )' ;
 create or replace procedure t_numeric( from_type string, param numeric(8,3) ) as 
 begin 

@@ -70,7 +70,7 @@ call t_null_timestamp(' Arithmetic operations : null, timestamp ' ) ;
 drop procedure t_null_timestamp ; 
 
 
---BUG NVL(left_timestamp,'NULL') ( normal : 01:01:01 AM 01/01/2002, BUG : 01:01:01.000 AM 01/01/2002)
+--BUG NVL(left_timestamp,'NULL') ( normal : 01:01:01 AM 01/01/2002, BUG : 01:01:01.000 AM 01/01/2002) - CBRD-25565
 select 'This test produces a compilation error. ( t_compile_error_boolean, timestamp )' ;
 create or replace procedure t_compile_error_boolean_timestamp( tc_comment string ) as 
     left_boolean                   boolean       := TRUE;
@@ -136,7 +136,7 @@ begin
     dbms_output.put_line('');
 end;
 
---BUG NVL(left_timestamp,'NULL') ( normal : 01:01:01 AM 01/01/2002, BUG : 01:01:01.000 AM 01/01/2002)
+--BUG NVL(left_timestamp,'NULL') ( normal : 01:01:01 AM 01/01/2002, BUG : 01:01:01.000 AM 01/01/2002) - CBRD-25565
 select 'This test produces a compilation error. ( t_compile_error_boolean, timestamp )' ;
 create or replace procedure t_compile_error_boolean_timestamp( tc_comment string ) as 
     left_boolean                   boolean       := TRUE;

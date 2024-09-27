@@ -303,8 +303,6 @@ end;
 call t_FLOAT_DOUBLE('FLOAT', 'DOUBLE'  ) ;
 drop procedure t_FLOAT_DOUBLE ;
 
---BUG
-
 call print_message('t_NUMERIC_DOUBLE. This scenario is a success.');
 create or replace procedure t_NUMERIC_DOUBLE(param_type string, variables_type string ) as 
      CURSOR my_cursor1 IS 
