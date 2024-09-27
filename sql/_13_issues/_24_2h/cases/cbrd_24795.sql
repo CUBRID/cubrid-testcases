@@ -318,5 +318,34 @@ and to_char (cb, 'YYYY-MM-DD HH24:MI:SS') >= '2023-04-26 00:00:00'
 and to_char (cb, 'YYYY-MM-DD HH24:MI:SS') <= '2023-04-27 23:59:59';
 show trace;
 
+set trace off;
+
 drop table tbla;
 drop table tblb;
+
+evaluate 'CBRD-25116 - regression issue caused by CBRD-24795';
+create table item (i_id int primary key, i_related_a int, i_related_b int, i_related_c int, i_related_d int, i_related_e int);
+insert into item
+select
+  rownum, rownum + 1, rownum + 2,rownum + 3,rownum + 4,rownum + 5
+from
+  table ({0, 1, 2, 3, 4, 5, 6, 7, 8, 9}) a,
+  table ({0, 1, 2, 3, 4, 5, 6, 7, 8, 9}) b;
+
+update statistics on item with fullscan;
+
+set trace on;
+
+select /*+ recompile */ j.i_id 
+from item i, item j 
+where (i.i_related_a = j.i_id 
+or i.i_related_b = j.i_id 
+or i.i_related_c = j.i_id 
+or i.i_related_d = j.i_id 
+or i.i_related_e = j.i_id) 
+and i.i_id = 35;
+show trace;
+
+set trace off;
+
+drop table item;

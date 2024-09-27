@@ -696,3 +696,45 @@ Trace Statistics:
 0
 ===================================================
 0
+===================================================
+0
+===================================================
+    
+CBRD-25116 - regression issue caused by CBRD-24795     
+
+===================================================
+0
+===================================================
+100
+===================================================
+0
+===================================================
+0
+===================================================
+i_id    
+36     
+37     
+38     
+39     
+40     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    INDEX SCAN (i.pk_item_i_id) (key range: i.i_id= ?:? )
+    INDEX SCAN (j.pk_item_i_id) (key range: ((j.i_id=i.i_related_a) or (j.i_id=i.i_related_b) or (j.i_id=i.i_related_c) or (j.i_id=i.i_related_d) or (j.i_id=i.i_related_e)), covered: true)
+
+  rewritten query: select j.i_id from [dba.item] i, [dba.item] j where ((j.i_id=i.i_related_a) or (j.i_id=i.i_related_b) or (j.i_id=i.i_related_c) or (j.i_id=i.i_related_d) or (j.i_id=i.i_related_e)) and i.i_id= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.item.pk_item_i_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.item.pk_item_i_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+0
+===================================================
+0
