@@ -16,8 +16,8 @@
  * 12. predicate: ta.b <= tb.b and ta.c > tb.b                  key range: NULL
  *                                                               - key filter: (ta.b<=tb.b), key filter: (ta.c>tb.b)
  * 13. predicate: tb.b >= ta.b and tb.b < ta.c                  key range: (tb.b>=ta.b and tb.b<ta.c)
- * 14. predicate: (ta.b = abs (tb.b) or ta.c = abs (tb.b))      key range: (( abs(tb.b)>=ta.b) or ( abs(tb.b)<ta.c))
- * 15. predicate: (ta.b <= abs (tb.b) or ta.c > abs (tb.b))     key range: (( abs(tb.b)<=ta.b) or ( abs(tb.b)<ta.c))
+ * 14. predicate: (ta.b = abs (tb.b) or ta.c = abs (tb.b))      key range: (( abs(tb.b)=ta.b) or ( abs(tb.b)=ta.c))
+ * 15. predicate: (ta.b <= abs (tb.b) or ta.c > abs (tb.b))     key range: (( abs(tb.b)>=ta.b) or ( abs(tb.b)<ta.c))
  * 16. predicate: (ta.b <= -abs (tb.b) or ta.c > -abs (tb.b))   key range: NULL
  *                                                               - data filter: ((ta.b<=- abs(tb.b)) or (ta.c>- abs(tb.b)))
  * 17. predicate: (ta.b <= -abs (tb.b) or ta.c > abs (tb.b))    key range: NULL
