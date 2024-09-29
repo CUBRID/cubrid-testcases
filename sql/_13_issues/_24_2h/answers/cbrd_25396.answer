@@ -1,0 +1,252 @@
+===================================================
+0
+===================================================
+0
+===================================================
+    
+test data     
+
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+1. GROUP BY & ORDER BY with NO_MERGE Hint     
+
+===================================================
+test    
+1     
+2     
+3     
+
+Query plan:
+sscan
+    class: tbl_b node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+(select tbl_b.col_c from tbl_b tbl_b where tbl_b.col_c=X.col_a and (rownum= ?:? ))
+Query plan:
+sscan
+    class: tbl_a node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select ? from tbl_a tbl_a where tbl_a.col_a=a_?)
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t.col_a from tbl_a t group by t.col_a)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select /*+ NO_MERGE */ a_?, (select ? from tbl_a tbl_a where tbl_a.col_a=a_?) from (select t.col_a from tbl_a t group by t.col_a) t (a_?) order by ?)
+Query plan:
+sscan
+    class: X node[?]
+    cost:  ? card ?
+Query stmt:
+select (select tbl_b.col_c from tbl_b tbl_b where tbl_b.col_c=X.col_a and (rownum= ?:? )) from (select /*+ NO_MERGE */ a_?, (select ? from tbl_a tbl_a where tbl_a.col_a=a_?) as [col_x] from (select t.col_a from tbl_a t group by t.col_a) t (a_?) order by ?) X (col_a, col_x)
+===================================================
+    
+2. GROUP BY & ORDER BY with QUERY_CACHE Hint     
+
+===================================================
+test    
+1     
+2     
+3     
+
+Query plan:
+sscan
+    class: tbl_b node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+(select tbl_b.col_c from tbl_b tbl_b where tbl_b.col_c=X.col_a and (rownum= ?:? ))
+Query plan:
+sscan
+    class: tbl_a node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select ? from tbl_a tbl_a where tbl_a.col_a=a_?)
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t.col_a from tbl_a t group by t.col_a)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select /*+ QUERY_CACHE */ a_?, (select ? from tbl_a tbl_a where tbl_a.col_a=a_?) from (select t.col_a from tbl_a t group by t.col_a) t (a_?) order by ?)
+Query plan:
+sscan
+    class: X node[?]
+    cost:  ? card ?
+Query stmt:
+select (select tbl_b.col_c from tbl_b tbl_b where tbl_b.col_c=X.col_a and (rownum= ?:? )) from (select /*+ QUERY_CACHE */ a_?, (select ? from tbl_a tbl_a where tbl_a.col_a=a_?) as [col_x] from (select t.col_a from tbl_a t group by t.col_a) t (a_?) order by ?) X (col_a, col_x)
+===================================================
+    
+3. GROUP BY & ORDER BY with NO_MERGE hint in a nested subquery     
+
+===================================================
+test    
+1     
+2     
+3     
+
+Query plan:
+sscan
+    class: tbl_b node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+(select tbl_b.col_c from tbl_b tbl_b where tbl_b.col_c=X.col_a and (rownum= ?:? ))
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: tbl_a node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select /*+ NO_MERGE */ tbl_a.col_a from tbl_a tbl_a where tbl_a.col_a=a_? group by tbl_a.col_a)
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t.col_a from tbl_a t group by t.col_a)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select /*+ NO_MERGE */ a_?, (select /*+ NO_MERGE */ tbl_a.col_a from tbl_a tbl_a where tbl_a.col_a=a_? group by tbl_a.col_a) from (select t.col_a from tbl_a t group by t.col_a) t (a_?) order by ?)
+Query plan:
+sscan
+    class: X node[?]
+    cost:  ? card ?
+Query stmt:
+select (select tbl_b.col_c from tbl_b tbl_b where tbl_b.col_c=X.col_a and (rownum= ?:? )) from (select /*+ NO_MERGE */ a_?, (select /*+ NO_MERGE */ tbl_a.col_a from tbl_a tbl_a where tbl_a.col_a=a_? group by tbl_a.col_a) as [col_x] from (select t.col_a from tbl_a t group by t.col_a) t (a_?) order by ?) X (col_a, col_x)
+===================================================
+    
+4. Multiple Subqueries with NO_MERGE AND QUERY_CACHE Hints     
+
+===================================================
+test    
+1     
+2     
+3     
+
+Query plan:
+sscan
+    class: tbl_b node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+(select tbl_b.col_c from tbl_b tbl_b where tbl_b.col_c=X.col_a and (rownum= ?:? ))
+Query plan:
+sscan
+    class: tbl_a node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select /*+ QUERY_CACHE */ tbl_a.col_a from tbl_a tbl_a where tbl_a.col_a=a_?)
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t.col_a from tbl_a t group by t.col_a)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select /*+ NO_MERGE */ a_?, (select /*+ QUERY_CACHE */ tbl_a.col_a from tbl_a tbl_a where tbl_a.col_a=a_?) from (select t.col_a from tbl_a t group by t.col_a) t (a_?) order by ?)
+Query plan:
+sscan
+    class: X node[?]
+    cost:  ? card ?
+Query stmt:
+select (select tbl_b.col_c from tbl_b tbl_b where tbl_b.col_c=X.col_a and (rownum= ?:? )) from (select /*+ NO_MERGE */ a_?, (select /*+ QUERY_CACHE */ tbl_a.col_a from tbl_a tbl_a where tbl_a.col_a=a_?) as [col_x] from (select t.col_a from tbl_a t group by t.col_a) t (a_?) order by ?) X (col_a, col_x)
+===================================================
+    
+5. NO_MERGE Hint on Outer Query Only     
+
+===================================================
+test    
+1     
+2     
+3     
+
+Query plan:
+sscan
+    class: tbl_b node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+(select tbl_b.col_c from tbl_b tbl_b where tbl_b.col_c=a_? and (rownum= ?:? ))
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t.col_a from tbl_a t group by t.col_a)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: X node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_MERGE */ (select tbl_b.col_c from tbl_b tbl_b where tbl_b.col_c=a_? and (rownum= ?:? )), a_? from (select t.col_a from tbl_a t group by t.col_a) X (a_?) order by ?
