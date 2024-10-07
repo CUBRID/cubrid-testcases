@@ -4,7 +4,7 @@
 -- normal: %type unsupport return
 
 -- create table & view
-create table type_unsupport (
+create table unsupport (
    ID INT AUTO_INCREMENT,
    T_TIMESTAMPLTZ TIMESTAMPLTZ,
    T_TIMESTAMPTZ TIMESTAMPTZ,
