@@ -28,4 +28,18 @@ FROM t_b b,
 WHERE a.col_a = b.col_a
 AND   b.col_b = 2;
 DROP VIEW v;
+--Convert the view to an inline view (unmergable)
+SELECT /*+ recompile */ a.col_a
+FROM   t_b b, 
+       (VALUES
+         (1 AS col_a,
+          2 AS col_b
+         ),
+         (
+          2, 3
+         )
+       ) a
+WHERE  a.col_a = b.col_a
+AND    b.col_b = 2;
+
 DROP TABLE t_a, t_b;

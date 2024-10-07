@@ -90,32 +90,32 @@ select type_support_return( );
 
 EVALUATE '8 T_FLOAT';
 create or replace function type_support_return() return  type_support.T_FLOAT%type          as Begin   return -3.402823466E+39    ;   end;    
---BUG( normal : Data overflow on data type "float", BUG : -Inf)
+-- error
 select type_support_return();       
 create or replace function type_support_return() return  type_support.T_FLOAT%type          as Begin   return  3.402823466E+39    ;   end;    
---BUG( normal : Data overflow on data type "float", BUG : Inf)
+-- error
 select type_support_return();
 
 EVALUATE '9 T_REAL';
 create or replace function type_support_return() return  type_support.T_REAL%type           as Begin   return -3.402823466E+39     ;   end;    
---BUG( normal : Data overflow on data type "float", BUG : -Inf)
+-- error
 select type_support_return();       
 create or replace function type_support_return() return  type_support.T_REAL%type           as Begin   return  3.402823466E+39     ;   end;    
---BUG( normal : Data overflow on data type "float", BUG :  Inf)
+-- error
 select type_support_return();
 
 EVALUATE '10 T_DOUBLE';
 create or replace function type_support_return() return  dba.type_support.T_DOUBLE%type     as Begin   return -1.7976931348623157E+309   ;   end;    
---BUG( normal : -1.7976931348623157E+309 exceeds limit of double., BUG : -Inf)
+-- error
 select type_support_return();       
 create or replace function type_support_return() return  dba.type_support.T_DOUBLE%type     as Begin   return  1.7976931348623157E+309   ;   end;    
---BUG( normal : 1.7976931348623157E+309 exceeds limit of double., BUG :  Inf)
+-- error
 select type_support_return();
 
 
 EVALUATE '11 T_DATE';
 create or replace function type_support_return() return  dba.type_support.T_DATE%type       as Begin   return date'0000-00-00'     ;   end;
---BUG( normal : 00/00/0000, BUG : 11/30/0002)
+-- error
 select type_support_return();
 drop function type_support_return;
 
@@ -171,18 +171,18 @@ drop function type_support_return;
 
 EVALUATE '15 T_DATETIME';
 create or replace function type_support_return() return  dba.type_support.T_DATETIME%type   as Begin   return DATETIME'0000-00-00 00:00:00' ;   end;
---BUG( normal : 00:00:00.000 AM 00/00/0000, BUG : 12:00:00.000 AM 11/30/0002)
+-- error
 select type_support_return();
 drop function type_support_return;
 
 
 create or replace function type_support_return() return  dba.type_support.T_DATETIME%type   as Begin   return DATETIME'0000-00-00' ;   end;
---BUG( normal : 00:00:00.000 AM 00/00/0000, BUG : 12:00:00.000 AM 11/30/0002)
+-- error
 select type_support_return();
 drop function type_support_return;
 
 create or replace function type_support_return() return  dba.type_support.T_DATETIME%type   as Begin   return DATETIME'00-00-00' ;   end;
---BUG( normal : 00:00:00.000 AM 00/00/0000, BUG : 12:00:00.000 AM 11/30/0002)
+-- error
 select type_support_return();
 drop function type_support_return;
 

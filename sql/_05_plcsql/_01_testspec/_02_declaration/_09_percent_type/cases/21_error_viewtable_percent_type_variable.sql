@@ -153,7 +153,7 @@ end;
 call type_support();
 
 
---BUG( normal : Data overflow on data type "float", BUG : -Infinity)
+-- error
 EVALUATE 'ERROR : Data overflow on data type "float".';
 create or replace procedure type_support as
    v_FLOAT       type_support.T_FLOAT%type;
@@ -165,7 +165,7 @@ end;
 call type_support();
 
 
---BUG( normal : Data overflow on data type "float", BUG : Infinity)
+-- error
 EVALUATE 'ERROR : Data overflow on data type "float".';
 create or replace procedure type_support as
    v_FLOAT       type_support.T_FLOAT%type;
@@ -177,7 +177,7 @@ end;
 call type_support();
 
 
---BUG( normal : 1.7976931348623157E+309 exceeds limit of double., BUG : -Infinity)
+-- error
 EVALUATE 'ERROR : 1.7976931348623157E+309 exceeds limit of double.';
 create or replace procedure type_support as
    v_DOUBLE      type_support.T_DOUBLE%type;
@@ -189,7 +189,7 @@ end;
 call type_support();
 
 
---BUG( normal : 1.7976931348623157E+309 exceeds limit of double., BUG : Infinity)
+-- error
 EVALUATE 'ERROR : 1.7976931348623157E+309 exceeds limit of double.';
 create or replace procedure type_support as
    v_DOUBLE      type_support.T_DOUBLE%type;
