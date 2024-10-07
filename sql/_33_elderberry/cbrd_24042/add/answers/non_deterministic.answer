@@ -1,0 +1,118 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+    
+RANDOM test     
+
+===================================================
+id    name    randomvalue    
+
+Query plan:
+sscan
+    class: v_random node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select v_random.ID, v_random.[Name], ( random()) from tbl v_random where (( random())<?.?) and (v_random.BirthYear> ?:? )
+===================================================
+0
+===================================================
+    
+RANDOM test with inline view     
+
+===================================================
+ID    Name    RandomValue    
+
+Query plan:
+sscan
+    class: v node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select v.ID, v.[Name], ( random()) from tbl v where (( random())<?.?) and (v.BirthYear> ?:? )
+===================================================
+0
+===================================================
+    
+DRANDOM test     
+
+===================================================
+id    name    randomrange    
+
+Query plan:
+sscan
+    class: v_drandom node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select v_drandom.ID, v_drandom.[Name], ( drandom()) from tbl v_drandom where (( drandom())>?) and (v_drandom.BirthYear> ?:? )
+===================================================
+0
+===================================================
+    
+DRANDOM test with inline view     
+
+===================================================
+ID    Name    RandomRange    
+
+Query plan:
+sscan
+    class: v node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select v.ID, v.[Name], ( drandom()) from tbl v where (( drandom())>?) and (v.BirthYear> ?:? )
+===================================================
+0
+===================================================
+    
+SYS_GUID test     
+
+===================================================
+id    name    uniqueid    
+
+Query plan:
+sscan
+    class: v_sys_guid node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select v_sys_guid.ID, v_sys_guid.[Name], ( sys_guid() ) from tbl v_sys_guid where (( sys_guid() ) is null ) and (v_sys_guid.BirthYear< ?:? )
+===================================================
+0
+===================================================
+    
+SYS_GUID test with inline view     
+
+===================================================
+ID    Name    UniqueID    
+
+Query plan:
+sscan
+    class: v node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select v.ID, v.[Name], ( sys_guid() ) from tbl v where (( sys_guid() ) is null ) and (v.BirthYear< ?:? )
+===================================================
+0
