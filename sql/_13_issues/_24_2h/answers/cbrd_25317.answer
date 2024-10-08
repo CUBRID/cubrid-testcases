@@ -1,0 +1,559 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+1. A non-ANSI outer join can be rewritten as an inner join     
+
+===================================================
+0
+===================================================
+'q1: '||a.col_b    
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast(a.col_b as varchar) from [dba.tbl] a, [dba.tbl] b where a.col_a=b.col_a and b.col_b= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+'q1: '||a.col_b    
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select  cast('q?: ' as varchar)|| cast(a.col_b as varchar) from tbl a, tbl b where a.col_a=b.col_a and b.col_b= ?:? 
+===================================================
+    
+2. An ANSI outer join can be rewritten as an inner join     
+
+===================================================
+0
+===================================================
+'q2: '||a.col_b    
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast(a.col_b as varchar) from [dba.tbl] a, [dba.tbl] b where a.col_a=b.col_a and b.col_b= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+'q2: '||a.col_b    
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select  cast('q?: ' as varchar)|| cast(a.col_b as varchar) from tbl a, tbl b where a.col_a=b.col_a and b.col_b= ?:? 
+===================================================
+    
+3. A non-ANSI outer join can be rewritten as an inner join     
+
+===================================================
+0
+===================================================
+'q3: '||a.col_b    
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast(a.col_b as varchar) from [dba.tbl] a, [dba.tbl] b where a.col_a=b.col_a and b.col_b= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+4. An ANSI outer join can be rewritten as an inner join     
+
+===================================================
+0
+===================================================
+'q4: '||a.col_b    
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast(a.col_b as varchar) from [dba.tbl] a, [dba.tbl] b where a.col_a=b.col_a and b.col_b= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+5. A non-ANSI outer join can be rewritten as an inner join     
+
+===================================================
+0
+===================================================
+'q5: '||hello(a.col_b)    
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (t_?)
+
+  rewritten query: (select a.col_b, a.col_a from table({?}) t_? (c_?))
+
+  NESTED LOOPS (cselect)
+    TABLE SCAN (t_?)
+    TABLE SCAN (t_?)
+
+  rewritten query: (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (hello(t_?.c_?)) t_? (c_?))
+
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+    TABLE SCAN (t_?)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from [dba.tbl] a, [dba.tbl] b, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (hello(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=b.col_a and b.col_b=?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (noscan time: ?, fetch: ?, ioread: ?)
+          SCAN (noscan time: ?, fetch: ?, ioread: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (noscan time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+'q5: '||hello(a.col_b)    
+
+Query plan:
+sscan
+    class: t_? node[?]
+    cost:  ? card ?
+Query stmt:
+(select a.col_b, a.col_a from table({?}) t_? (c_?))
+Query plan:
+nl-join (cselect join)
+    edge:  table(?) -> t_? node[?]
+    outer: sscan
+               class: t_? node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t_? node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (hello(t_?.c_?)) t_? (c_?))
+Query plan:
+nl-join (inner join)
+    edge:  table(?) -> t_? node[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?] AND term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: t_? node[?]
+               sargs: table(?) -> t_? node[?]
+               cost:  ? card ?
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from tbl a, tbl b, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (hello(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=b.col_a and b.col_b=?
+===================================================
+    
+6. An ANSI outer join can be rewritten as an inner join     
+
+===================================================
+0
+===================================================
+'q6: '||hello(a.col_b)    
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (t_?)
+
+  rewritten query: (select a.col_b, a.col_a from table({?}) t_? (c_?))
+
+  NESTED LOOPS (cselect)
+    TABLE SCAN (t_?)
+    TABLE SCAN (t_?)
+
+  rewritten query: (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (hello(t_?.c_?)) t_? (c_?))
+
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+    TABLE SCAN (t_?)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from [dba.tbl] a, [dba.tbl] b, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (hello(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=b.col_a and b.col_b=?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (noscan time: ?, fetch: ?, ioread: ?)
+          SCAN (noscan time: ?, fetch: ?, ioread: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (noscan time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+'q6: '||hello(a.col_b)    
+
+Query plan:
+sscan
+    class: t_? node[?]
+    cost:  ? card ?
+Query stmt:
+(select a.col_b, a.col_a from table({?}) t_? (c_?))
+Query plan:
+nl-join (cselect join)
+    edge:  table(?) -> t_? node[?]
+    outer: sscan
+               class: t_? node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t_? node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (hello(t_?.c_?)) t_? (c_?))
+Query plan:
+nl-join (inner join)
+    edge:  table(?) -> t_? node[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?] AND term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: t_? node[?]
+               sargs: table(?) -> t_? node[?]
+               cost:  ? card ?
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from tbl a, tbl b, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (hello(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=b.col_a and b.col_b=?
+===================================================
+    
+7. A non-ANSI outer join can be rewritten as an inner join     
+
+===================================================
+0
+===================================================
+'q7: '||hello(a.col_b)    
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (t_?)
+
+  rewritten query: (select a.col_b, a.col_a from table({?}) t_? (c_?))
+
+  NESTED LOOPS (cselect)
+    TABLE SCAN (t_?)
+    TABLE SCAN (t_?)
+
+  rewritten query: (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (hello(t_?.c_?)) t_? (c_?))
+
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+    TABLE SCAN (t_?)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from [dba.tbl] a, [dba.tbl] b, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (hello(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=b.col_a and b.col_b= ?:? 
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (noscan time: ?, fetch: ?, ioread: ?)
+          SCAN (noscan time: ?, fetch: ?, ioread: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (noscan time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+    
+8. An ANSI outer join can be rewritten as an inner join     
+
+===================================================
+0
+===================================================
+'q8: '||hello(a.col_b)    
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (t_?)
+
+  rewritten query: (select a.col_b, a.col_a from table({?}) t_? (c_?))
+
+  NESTED LOOPS (cselect)
+    TABLE SCAN (t_?)
+    TABLE SCAN (t_?)
+
+  rewritten query: (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (hello(t_?.c_?)) t_? (c_?))
+
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+    TABLE SCAN (t_?)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from [dba.tbl] a, [dba.tbl] b, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (hello(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=b.col_a and b.col_b= ?:? 
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (noscan time: ?, fetch: ?, ioread: ?)
+          SCAN (noscan time: ?, fetch: ?, ioread: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (noscan time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+    
+9. A non-ANSI outer join can be rewritten as an inner join     
+
+===================================================
+0
+===================================================
+'q9: '||hello(a.col_b)    
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (t_?)
+
+  rewritten query: (select a.col_b, a.col_a from table({?}) t_? (c_?))
+
+  NESTED LOOPS (cselect)
+    TABLE SCAN (t_?)
+    TABLE SCAN (t_?)
+
+  rewritten query: (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (hello(t_?.c_?)) t_? (c_?))
+
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (a)
+        TABLE SCAN (b)
+      TABLE SCAN (c)
+    TABLE SCAN (t_?)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from [dba.tbl] a, [dba.tbl] b, [dba.tbl] c, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (hello(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=c.col_a and a.col_a=b.col_a and b.col_b= ?:? 
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (noscan time: ?, fetch: ?, ioread: ?)
+            SCAN (noscan time: ?, fetch: ?, ioread: ?)
+            SUBQUERY (uncorrelated)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (noscan time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+    
+10. A non-ANSI outer join can be rewritten as an inner join     
+
+===================================================
+0
+===================================================
+'q10: '||hello(a.col_b)    
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (t_?)
+
+  rewritten query: (select a.col_b, a.col_a from table({?}) t_? (c_?))
+
+  NESTED LOOPS (cselect)
+    TABLE SCAN (t_?)
+    TABLE SCAN (t_?)
+
+  rewritten query: (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (hello(t_?.c_?)) t_? (c_?))
+
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (a)
+        TABLE SCAN (b)
+      TABLE SCAN (c)
+    TABLE SCAN (t_?)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from [dba.tbl] a, [dba.tbl] b, [dba.tbl] c, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (hello(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=b.col_a and b.col_a=c.col_a and a.col_b= ?:? 
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (noscan time: ?, fetch: ?, ioread: ?)
+            SCAN (noscan time: ?, fetch: ?, ioread: ?)
+            SUBQUERY (uncorrelated)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (noscan time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+    
+11. A non-ANSI outer join can be rewritten as an inner join     
+
+===================================================
+0
+===================================================
+'q11: '||hello(a.col_b)    
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (t_?)
+
+  rewritten query: (select a.col_b, a.col_a from table({?}) t_? (c_?))
+
+  NESTED LOOPS (cselect)
+    TABLE SCAN (t_?)
+    TABLE SCAN (t_?)
+
+  rewritten query: (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (hello(t_?.c_?)) t_? (c_?))
+
+  NESTED LOOPS (cross join)
+    NESTED LOOPS (inner join)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (a)
+        TABLE SCAN (b)
+      TABLE SCAN (t_?)
+    TABLE SCAN (c)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from [dba.tbl] a, [dba.tbl] b, [dba.tbl] c, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (hello(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=b.col_a and b.col_b= ?:? 
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (noscan time: ?, fetch: ?, ioread: ?)
+          SCAN (noscan time: ?, fetch: ?, ioread: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (noscan time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+0
