@@ -1,0 +1,66 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+id    name    
+1     Kim     
+2     Moy     
+
+Query plan:
+sscan
+    class: tb node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select ? from tbl tb where tb.ID=v.MgrID)
+Query plan:
+sscan
+    class: v node[?]
+    sargs: term[?] AND term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+select v.ID, v.[Name] from tbl v where (v.ID< ?:? ) and ( not  exists (select ? from tbl tb where tb.ID=v.MgrID))
+===================================================
+0
+===================================================
+ID    Name    
+1     Kim     
+2     Moy     
+
+Query plan:
+sscan
+    class: tb node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select ? from tbl tb where tb.ID=v.MgrID)
+Query plan:
+sscan
+    class: v node[?]
+    sargs: term[?] AND term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+select v.ID, v.[Name] from tbl v where (v.ID< ?:? ) and ( not  exists (select ? from tbl tb where tb.ID=v.MgrID))
+===================================================
+0
