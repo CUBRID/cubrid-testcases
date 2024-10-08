@@ -1,6 +1,7 @@
 --+ server-message on
--- verified the CBRD-25499
+-- verified the CBRD-25499, CBRD-25506
 
+-- GRANT test
 CREATE OR REPLACE FUNCTION sp1() return varchar as
 begin
     return 'hello';
@@ -30,6 +31,11 @@ drop function sp2;
 
 
 call login('dba','') on class db_user;
+
+-- REVOKE test (verify with CBRD-25506)
+REVOKE EXECUTE ON PROCEDURE sp1 FROM t1;
+SHOW GRANTS FOR T1;
+
 drop user t1;
 drop function sp1;
 
