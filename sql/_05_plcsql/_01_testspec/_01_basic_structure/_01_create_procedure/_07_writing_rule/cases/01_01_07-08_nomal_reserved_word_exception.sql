@@ -977,7 +977,7 @@ begin
         RAISE [INSERT];
     end if;
 EXCEPTION    WHEN [INSERT] THEN
-              put_line('call exception:' || 'INSERT' );
+              dbms_output.put_line('call exception:' || 'INSERT' );
 end;
 call p_var(123);
 
@@ -989,7 +989,7 @@ begin
         RAISE [TRUNCATE];
     end if;
 EXCEPTION    WHEN [TRUNCATE] THEN
-              put_line('call exception:' || 'TRUNCATE' );
+              dbms_output.put_line('call exception:' || 'TRUNCATE' );
 end;
 call p_var(123);
 
@@ -1000,7 +1000,7 @@ begin
         RAISE [AUTONOMOUS_TRANSACTION];
     end if;
 EXCEPTION    WHEN [AUTONOMOUS_TRANSACTION] THEN
-              put_line('call exception:' || 'AUTONOMOUS_TRANSACTION' );
+              dbms_output.put_line('call exception:' || 'AUTONOMOUS_TRANSACTION' );
 end;
 call p_var(123);
 
@@ -1011,7 +1011,7 @@ begin
         RAISE [BEGIN];
     end if;
 EXCEPTION    WHEN [BEGIN] THEN
-              put_line('call exception:' || 'BEGIN' );
+              dbms_output.put_line('call exception:' || 'BEGIN' );
 end;
 call p_var(123);
 
