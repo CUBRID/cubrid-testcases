@@ -38,19 +38,6 @@ Trace Statistics:
 'q1: '||a.col_b    
 q1: 1     
 
-Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: sscan
-               class: a node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: b node[?]
-               sargs: term[?] AND term[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select  cast('q?: ' as varchar)|| cast(a.col_b as varchar) from tbl a, tbl b where a.col_a=b.col_a and b.col_b= ?:? 
 ===================================================
 trace    
 
@@ -97,19 +84,6 @@ Trace Statistics:
 'q2: '||a.col_b    
 q2: 1     
 
-Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: sscan
-               class: a node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: b node[?]
-               sargs: term[?] AND term[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select  cast('q?: ' as varchar)|| cast(a.col_b as varchar) from tbl a, tbl b where a.col_a=b.col_a and b.col_b= ?:? 
 ===================================================
 trace    
 
@@ -229,45 +203,6 @@ Trace Statistics:
 'q5: '||test_fc(a.col_b)    
 q5: 2     
 
-Query plan:
-sscan
-    class: t_? node[?]
-    cost:  ? card ?
-Query stmt:
-(select a.col_b, a.col_a from table({?}) t_? (c_?))
-Query plan:
-nl-join (cselect join)
-    edge:  table(?) -> t_? node[?]
-    outer: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?))
-Query plan:
-nl-join (inner join)
-    edge:  table(?) -> t_? node[?]
-    outer: nl-join (inner join)
-               edge:  term[?]
-               outer: sscan
-                          class: a node[?]
-                          cost:  ? card ?
-               inner: sscan
-                          class: b node[?]
-                          sargs: term[?] AND term[?]
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: t_? node[?]
-               sargs: table(?) -> t_? node[?]
-               cost:  ? card ?
-    subqs: ?
-    cost:  ? card ?
-Query stmt:
-select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from tbl a, tbl b, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=b.col_a and b.col_b=?
 ===================================================
 trace    
 
@@ -356,45 +291,6 @@ Trace Statistics:
 'q6: '||test_fc(a.col_b)    
 q6: 2     
 
-Query plan:
-sscan
-    class: t_? node[?]
-    cost:  ? card ?
-Query stmt:
-(select a.col_b, a.col_a from table({?}) t_? (c_?))
-Query plan:
-nl-join (cselect join)
-    edge:  table(?) -> t_? node[?]
-    outer: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?))
-Query plan:
-nl-join (inner join)
-    edge:  table(?) -> t_? node[?]
-    outer: nl-join (inner join)
-               edge:  term[?]
-               outer: sscan
-                          class: a node[?]
-                          cost:  ? card ?
-               inner: sscan
-                          class: b node[?]
-                          sargs: term[?] AND term[?]
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: t_? node[?]
-               sargs: table(?) -> t_? node[?]
-               cost:  ? card ?
-    subqs: ?
-    cost:  ? card ?
-Query stmt:
-select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from tbl a, tbl b, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=b.col_a and b.col_b=?
 ===================================================
 trace    
 
