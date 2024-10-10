@@ -3,6 +3,8 @@
 ===================================================
 0
 ===================================================
+3
+===================================================
 0
 ===================================================
 0
@@ -14,6 +16,7 @@
 0
 ===================================================
 'q1: '||a.col_b    
+q1: 1     
 
 ===================================================
 trace    
@@ -33,6 +36,7 @@ Trace Statistics:
 
 ===================================================
 'q1: '||a.col_b    
+q1: 1     
 
 Query plan:
 nl-join (inner join)
@@ -48,6 +52,22 @@ nl-join (inner join)
 Query stmt:
 select  cast('q?: ' as varchar)|| cast(a.col_b as varchar) from tbl a, tbl b where a.col_a=b.col_a and b.col_b= ?:? 
 ===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast(a.col_b as varchar) from [dba.tbl] a, [dba.tbl] b where a.col_a=b.col_a and b.col_b= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
     
 2. An ANSI outer join can be rewritten as an inner join     
 
@@ -55,6 +75,7 @@ select  cast('q?: ' as varchar)|| cast(a.col_b as varchar) from tbl a, tbl b whe
 0
 ===================================================
 'q2: '||a.col_b    
+q2: 1     
 
 ===================================================
 trace    
@@ -74,6 +95,7 @@ Trace Statistics:
 
 ===================================================
 'q2: '||a.col_b    
+q2: 1     
 
 Query plan:
 nl-join (inner join)
@@ -89,6 +111,22 @@ nl-join (inner join)
 Query stmt:
 select  cast('q?: ' as varchar)|| cast(a.col_b as varchar) from tbl a, tbl b where a.col_a=b.col_a and b.col_b= ?:? 
 ===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast(a.col_b as varchar) from [dba.tbl] a, [dba.tbl] b where a.col_a=b.col_a and b.col_b= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
     
 3. A non-ANSI outer join can be rewritten as an inner join     
 
@@ -96,6 +134,7 @@ select  cast('q?: ' as varchar)|| cast(a.col_b as varchar) from tbl a, tbl b whe
 0
 ===================================================
 'q3: '||a.col_b    
+q3: 1     
 
 ===================================================
 trace    
@@ -121,6 +160,7 @@ Trace Statistics:
 0
 ===================================================
 'q4: '||a.col_b    
+q4: 1     
 
 ===================================================
 trace    
@@ -145,7 +185,8 @@ Trace Statistics:
 ===================================================
 0
 ===================================================
-'q5: '||hello(a.col_b)    
+'q5: '||test_fc(a.col_b)    
+q5: 2     
 
 ===================================================
 trace    
@@ -159,7 +200,7 @@ Query Plan:
     TABLE SCAN (t_?)
     TABLE SCAN (t_?)
 
-  rewritten query: (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (hello(t_?.c_?)) t_? (c_?))
+  rewritten query: (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?))
 
   NESTED LOOPS (inner join)
     NESTED LOOPS (inner join)
@@ -167,7 +208,7 @@ Query Plan:
       TABLE SCAN (b)
     TABLE SCAN (t_?)
 
-  rewritten query: select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from [dba.tbl] a, [dba.tbl] b, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (hello(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=b.col_a and b.col_b=?
+  rewritten query: select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from [dba.tbl] a, [dba.tbl] b, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=b.col_a and b.col_b=?
 
 
 Trace Statistics:
@@ -177,15 +218,16 @@ Trace Statistics:
         SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SUBQUERY (correlated)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (noscan time: ?, fetch: ?, ioread: ?)
-          SCAN (noscan time: ?, fetch: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (method time: ?, fetch: ?, ioread: ?)
           SUBQUERY (uncorrelated)
             SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-              SCAN (noscan time: ?, fetch: ?, ioread: ?)
+              SCAN (set time: ?, fetch: ?, ioread: ?)
      
 
 ===================================================
-'q5: '||hello(a.col_b)    
+'q5: '||test_fc(a.col_b)    
+q5: 2     
 
 Query plan:
 sscan
@@ -204,7 +246,7 @@ nl-join (cselect join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (hello(t_?.c_?)) t_? (c_?))
+(select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?))
 Query plan:
 nl-join (inner join)
     edge:  table(?) -> t_? node[?]
@@ -225,7 +267,44 @@ nl-join (inner join)
     subqs: ?
     cost:  ? card ?
 Query stmt:
-select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from tbl a, tbl b, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (hello(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=b.col_a and b.col_b=?
+select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from tbl a, tbl b, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=b.col_a and b.col_b=?
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (t_?)
+
+  rewritten query: (select a.col_b, a.col_a from table({?}) t_? (c_?))
+
+  NESTED LOOPS (cselect)
+    TABLE SCAN (t_?)
+    TABLE SCAN (t_?)
+
+  rewritten query: (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?))
+
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+    TABLE SCAN (t_?)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from [dba.tbl] a, [dba.tbl] b, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=b.col_a and b.col_b=?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (method time: ?, fetch: ?, ioread: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (set time: ?, fetch: ?, ioread: ?)
+     
+
 ===================================================
     
 6. An ANSI outer join can be rewritten as an inner join     
@@ -233,7 +312,8 @@ select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from tbl a, tbl b, (s
 ===================================================
 0
 ===================================================
-'q6: '||hello(a.col_b)    
+'q6: '||test_fc(a.col_b)    
+q6: 2     
 
 ===================================================
 trace    
@@ -247,7 +327,7 @@ Query Plan:
     TABLE SCAN (t_?)
     TABLE SCAN (t_?)
 
-  rewritten query: (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (hello(t_?.c_?)) t_? (c_?))
+  rewritten query: (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?))
 
   NESTED LOOPS (inner join)
     NESTED LOOPS (inner join)
@@ -255,7 +335,7 @@ Query Plan:
       TABLE SCAN (b)
     TABLE SCAN (t_?)
 
-  rewritten query: select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from [dba.tbl] a, [dba.tbl] b, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (hello(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=b.col_a and b.col_b=?
+  rewritten query: select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from [dba.tbl] a, [dba.tbl] b, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=b.col_a and b.col_b=?
 
 
 Trace Statistics:
@@ -265,15 +345,16 @@ Trace Statistics:
         SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SUBQUERY (correlated)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (noscan time: ?, fetch: ?, ioread: ?)
-          SCAN (noscan time: ?, fetch: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (method time: ?, fetch: ?, ioread: ?)
           SUBQUERY (uncorrelated)
             SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-              SCAN (noscan time: ?, fetch: ?, ioread: ?)
+              SCAN (set time: ?, fetch: ?, ioread: ?)
      
 
 ===================================================
-'q6: '||hello(a.col_b)    
+'q6: '||test_fc(a.col_b)    
+q6: 2     
 
 Query plan:
 sscan
@@ -292,7 +373,7 @@ nl-join (cselect join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (hello(t_?.c_?)) t_? (c_?))
+(select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?))
 Query plan:
 nl-join (inner join)
     edge:  table(?) -> t_? node[?]
@@ -313,7 +394,44 @@ nl-join (inner join)
     subqs: ?
     cost:  ? card ?
 Query stmt:
-select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from tbl a, tbl b, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (hello(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=b.col_a and b.col_b=?
+select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from tbl a, tbl b, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=b.col_a and b.col_b=?
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (t_?)
+
+  rewritten query: (select a.col_b, a.col_a from table({?}) t_? (c_?))
+
+  NESTED LOOPS (cselect)
+    TABLE SCAN (t_?)
+    TABLE SCAN (t_?)
+
+  rewritten query: (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?))
+
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+    TABLE SCAN (t_?)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from [dba.tbl] a, [dba.tbl] b, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=b.col_a and b.col_b=?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (method time: ?, fetch: ?, ioread: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (set time: ?, fetch: ?, ioread: ?)
+     
+
 ===================================================
     
 7. A non-ANSI outer join can be rewritten as an inner join     
@@ -321,7 +439,8 @@ select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from tbl a, tbl b, (s
 ===================================================
 0
 ===================================================
-'q7: '||hello(a.col_b)    
+'q7: '||test_fc(a.col_b)    
+q7: 2     
 
 ===================================================
 trace    
@@ -335,7 +454,7 @@ Query Plan:
     TABLE SCAN (t_?)
     TABLE SCAN (t_?)
 
-  rewritten query: (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (hello(t_?.c_?)) t_? (c_?))
+  rewritten query: (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?))
 
   NESTED LOOPS (inner join)
     NESTED LOOPS (inner join)
@@ -343,7 +462,7 @@ Query Plan:
       TABLE SCAN (b)
     TABLE SCAN (t_?)
 
-  rewritten query: select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from [dba.tbl] a, [dba.tbl] b, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (hello(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=b.col_a and b.col_b= ?:? 
+  rewritten query: select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from [dba.tbl] a, [dba.tbl] b, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=b.col_a and b.col_b= ?:? 
 
 
 Trace Statistics:
@@ -353,11 +472,11 @@ Trace Statistics:
         SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SUBQUERY (correlated)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (noscan time: ?, fetch: ?, ioread: ?)
-          SCAN (noscan time: ?, fetch: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (method time: ?, fetch: ?, ioread: ?)
           SUBQUERY (uncorrelated)
             SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-              SCAN (noscan time: ?, fetch: ?, ioread: ?)
+              SCAN (set time: ?, fetch: ?, ioread: ?)
      
 
 ===================================================
@@ -367,7 +486,8 @@ Trace Statistics:
 ===================================================
 0
 ===================================================
-'q8: '||hello(a.col_b)    
+'q8: '||test_fc(a.col_b)    
+q8: 2     
 
 ===================================================
 trace    
@@ -381,7 +501,7 @@ Query Plan:
     TABLE SCAN (t_?)
     TABLE SCAN (t_?)
 
-  rewritten query: (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (hello(t_?.c_?)) t_? (c_?))
+  rewritten query: (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?))
 
   NESTED LOOPS (inner join)
     NESTED LOOPS (inner join)
@@ -389,7 +509,7 @@ Query Plan:
       TABLE SCAN (b)
     TABLE SCAN (t_?)
 
-  rewritten query: select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from [dba.tbl] a, [dba.tbl] b, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (hello(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=b.col_a and b.col_b= ?:? 
+  rewritten query: select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from [dba.tbl] a, [dba.tbl] b, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=b.col_a and b.col_b= ?:? 
 
 
 Trace Statistics:
@@ -399,11 +519,11 @@ Trace Statistics:
         SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SUBQUERY (correlated)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (noscan time: ?, fetch: ?, ioread: ?)
-          SCAN (noscan time: ?, fetch: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (method time: ?, fetch: ?, ioread: ?)
           SUBQUERY (uncorrelated)
             SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-              SCAN (noscan time: ?, fetch: ?, ioread: ?)
+              SCAN (set time: ?, fetch: ?, ioread: ?)
      
 
 ===================================================
@@ -413,7 +533,8 @@ Trace Statistics:
 ===================================================
 0
 ===================================================
-'q9: '||hello(a.col_b)    
+'q9: '||test_fc(a.col_b)    
+q9: 2     
 
 ===================================================
 trace    
@@ -427,7 +548,7 @@ Query Plan:
     TABLE SCAN (t_?)
     TABLE SCAN (t_?)
 
-  rewritten query: (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (hello(t_?.c_?)) t_? (c_?))
+  rewritten query: (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?))
 
   NESTED LOOPS (inner join)
     NESTED LOOPS (inner join)
@@ -437,7 +558,7 @@ Query Plan:
       TABLE SCAN (c)
     TABLE SCAN (t_?)
 
-  rewritten query: select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from [dba.tbl] a, [dba.tbl] b, [dba.tbl] c, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (hello(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=c.col_a and a.col_a=b.col_a and b.col_b= ?:? 
+  rewritten query: select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from [dba.tbl] a, [dba.tbl] b, [dba.tbl] c, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=c.col_a and a.col_a=b.col_a and b.col_b= ?:? 
 
 
 Trace Statistics:
@@ -448,11 +569,11 @@ Trace Statistics:
           SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SUBQUERY (correlated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (noscan time: ?, fetch: ?, ioread: ?)
-            SCAN (noscan time: ?, fetch: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (method time: ?, fetch: ?, ioread: ?)
             SUBQUERY (uncorrelated)
               SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                SCAN (noscan time: ?, fetch: ?, ioread: ?)
+                SCAN (set time: ?, fetch: ?, ioread: ?)
      
 
 ===================================================
@@ -462,7 +583,8 @@ Trace Statistics:
 ===================================================
 0
 ===================================================
-'q10: '||hello(a.col_b)    
+'q10: '||test_fc(a.col_b)    
+q10: 2     
 
 ===================================================
 trace    
@@ -476,7 +598,7 @@ Query Plan:
     TABLE SCAN (t_?)
     TABLE SCAN (t_?)
 
-  rewritten query: (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (hello(t_?.c_?)) t_? (c_?))
+  rewritten query: (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?))
 
   NESTED LOOPS (inner join)
     NESTED LOOPS (inner join)
@@ -486,7 +608,7 @@ Query Plan:
       TABLE SCAN (c)
     TABLE SCAN (t_?)
 
-  rewritten query: select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from [dba.tbl] a, [dba.tbl] b, [dba.tbl] c, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (hello(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=b.col_a and b.col_a=c.col_a and a.col_b= ?:? 
+  rewritten query: select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from [dba.tbl] a, [dba.tbl] b, [dba.tbl] c, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=b.col_a and b.col_a=c.col_a and a.col_b= ?:? 
 
 
 Trace Statistics:
@@ -497,11 +619,11 @@ Trace Statistics:
           SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SUBQUERY (correlated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (noscan time: ?, fetch: ?, ioread: ?)
-            SCAN (noscan time: ?, fetch: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (method time: ?, fetch: ?, ioread: ?)
             SUBQUERY (uncorrelated)
               SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                SCAN (noscan time: ?, fetch: ?, ioread: ?)
+                SCAN (set time: ?, fetch: ?, ioread: ?)
      
 
 ===================================================
@@ -511,7 +633,10 @@ Trace Statistics:
 ===================================================
 0
 ===================================================
-'q11: '||hello(a.col_b)    
+'q11: '||test_fc(a.col_b)    
+q11: 2     
+q11: 2     
+q11: 2     
 
 ===================================================
 trace    
@@ -525,7 +650,7 @@ Query Plan:
     TABLE SCAN (t_?)
     TABLE SCAN (t_?)
 
-  rewritten query: (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (hello(t_?.c_?)) t_? (c_?))
+  rewritten query: (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?))
 
   NESTED LOOPS (cross join)
     NESTED LOOPS (inner join)
@@ -535,7 +660,7 @@ Query Plan:
       TABLE SCAN (t_?)
     TABLE SCAN (c)
 
-  rewritten query: select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from [dba.tbl] a, [dba.tbl] b, [dba.tbl] c, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (hello(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=b.col_a and b.col_b= ?:? 
+  rewritten query: select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from [dba.tbl] a, [dba.tbl] b, [dba.tbl] c, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=b.col_a and b.col_b= ?:? 
 
 
 Trace Statistics:
@@ -546,13 +671,15 @@ Trace Statistics:
           SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SUBQUERY (correlated)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (noscan time: ?, fetch: ?, ioread: ?)
-          SCAN (noscan time: ?, fetch: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (method time: ?, fetch: ?, ioread: ?)
           SUBQUERY (uncorrelated)
             SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-              SCAN (noscan time: ?, fetch: ?, ioread: ?)
+              SCAN (set time: ?, fetch: ?, ioread: ?)
      
 
+===================================================
+0
 ===================================================
 0
 ===================================================
