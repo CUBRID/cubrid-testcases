@@ -10,7 +10,7 @@
 0
 ===================================================
     
-1. A non-ANSI outer join can be rewritten as an inner join     
+1. A non-ANSI outer join can be rewritten as an inner join (bind X, sp X)     
 
 ===================================================
 0
@@ -56,7 +56,7 @@ Trace Statistics:
 
 ===================================================
     
-2. An ANSI outer join can be rewritten as an inner join     
+2. An ANSI outer join can be rewritten as an inner join (bind X, sp X)     
 
 ===================================================
 0
@@ -102,7 +102,7 @@ Trace Statistics:
 
 ===================================================
     
-3. A non-ANSI outer join can be rewritten as an inner join     
+3. A non-ANSI outer join can be rewritten as an inner join (bind O, sp X)     
 
 ===================================================
 0
@@ -128,7 +128,7 @@ Trace Statistics:
 
 ===================================================
     
-4. An ANSI outer join can be rewritten as an inner join     
+4. An ANSI outer join can be rewritten as an inner join (bind O, sp X)     
 
 ===================================================
 0
@@ -154,7 +154,7 @@ Trace Statistics:
 
 ===================================================
     
-5. A non-ANSI outer join can be rewritten as an inner join     
+5. A non-ANSI outer join can be rewritten as an inner join (bind X, sp O)     
 
 ===================================================
 0
@@ -242,7 +242,7 @@ Trace Statistics:
 
 ===================================================
     
-6. An ANSI outer join can be rewritten as an inner join     
+6. An ANSI outer join can be rewritten as an inner join (bind X, sp O)     
 
 ===================================================
 0
@@ -330,7 +330,7 @@ Trace Statistics:
 
 ===================================================
     
-7. A non-ANSI outer join can be rewritten as an inner join     
+7. A non-ANSI outer join can be rewritten as an inner join (bind O, sp O)     
 
 ===================================================
 0
@@ -377,7 +377,7 @@ Trace Statistics:
 
 ===================================================
     
-8. An ANSI outer join can be rewritten as an inner join     
+8. An ANSI outer join can be rewritten as an inner join (bind O, sp O)     
 
 ===================================================
 0
@@ -424,13 +424,65 @@ Trace Statistics:
 
 ===================================================
     
-9. A non-ANSI outer join can be rewritten as an inner join     
+9. A non-ANSI outer join can be rewritten as an inner join ([non-where-clause] bind O , sp O)     
 
 ===================================================
 0
 ===================================================
-'q9: '||test_fc(a.col_b)    
+'q9: '||test_fc( ?:0 )    
 q9: 2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast(test_fc( ?:? ) as varchar) from [dba.tbl] a, [dba.tbl] b where a.col_a=b.col_a and b.col_b=?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+10. An ANSI outer join can be rewritten as an inner join ([non-where-clause] bind O , sp O)     
+
+===================================================
+0
+===================================================
+'q10: '||test_fc( ?:0 )    
+q10: 2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast(test_fc( ?:? ) as varchar) from [dba.tbl] a, [dba.tbl] b where a.col_a=b.col_a and b.col_b=?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+11. A non-ANSI outer join (w/ another table) can be rewritten as an inner join (bind O, sp O)     
+
+===================================================
+0
+===================================================
+'q11: '||test_fc(a.col_b)    
+q11: 2     
 
 ===================================================
 trace    
@@ -474,13 +526,13 @@ Trace Statistics:
 
 ===================================================
     
-10. A non-ANSI outer join can be rewritten as an inner join     
+12. A non-ANSI outer join (w/ another table) can be rewritten as an inner join (bind O, sp O)     
 
 ===================================================
 0
 ===================================================
-'q10: '||test_fc(a.col_b)    
-q10: 2     
+'q12: '||test_fc(a.col_b)    
+q12: 2     
 
 ===================================================
 trace    
@@ -524,15 +576,15 @@ Trace Statistics:
 
 ===================================================
     
-11. A non-ANSI outer join can be rewritten as an inner join     
+13. A non-ANSI outer join (w/ another table via cross join) can be rewritten as an inner join (bind O, sp O)     
 
 ===================================================
 0
 ===================================================
-'q11: '||test_fc(a.col_b)    
-q11: 2     
-q11: 2     
-q11: 2     
+'q13: '||test_fc(a.col_b)    
+q13: 2     
+q13: 2     
+q13: 2     
 
 ===================================================
 trace    
