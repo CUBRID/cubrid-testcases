@@ -13,7 +13,7 @@ name 'SpTest.testInt(int) return int';
 
 set trace on;
 
-evaluate '1. A non-ANSI outer join can be rewritten as an inner join';
+evaluate '1. A non-ANSI outer join can be rewritten as an inner join (bind X, sp X)';
 -- No bind variables are used.
 -- Java stored procedure is not used.
 
@@ -24,7 +24,8 @@ show trace;
 select /*+ recompile */ 'q1: ' || a.col_b from tbl a, tbl b where a.col_a = b.col_a(+) and b.col_b = 1;
 show trace;
 
-evaluate '2. An ANSI outer join can be rewritten as an inner join';
+
+evaluate '2. An ANSI outer join can be rewritten as an inner join (bind X, sp X)';
 -- No bind variables are used.
 -- Java stored procedure is not used.
 
@@ -35,7 +36,8 @@ show trace;
 select /*+ recompile */ 'q2: ' || a.col_b from tbl a left outer join tbl b on a.col_a = b.col_a where b.col_b = 1;
 show trace;
 
-evaluate '3. A non-ANSI outer join can be rewritten as an inner join';
+
+evaluate '3. A non-ANSI outer join can be rewritten as an inner join (bind O, sp X)';
 -- Bind variables are used.
 -- Java stored procedure is not used.
 
@@ -44,7 +46,7 @@ execute q3 using 1;
 show trace;
 
 
-evaluate '4. An ANSI outer join can be rewritten as an inner join';
+evaluate '4. An ANSI outer join can be rewritten as an inner join (bind O, sp X)';
 -- Bind variables are used.
 -- Java stored procedure is not used.
 
@@ -53,7 +55,7 @@ execute q4 using 1;
 show trace;
 
 
-evaluate '5. A non-ANSI outer join can be rewritten as an inner join';
+evaluate '5. A non-ANSI outer join can be rewritten as an inner join (bind X, sp O)';
 -- No bind variables are used.
 -- Java stored procedure is used.
 
@@ -64,7 +66,8 @@ show trace;
 select /*+ recompile */ 'q5: ' || test_fc (a.col_b) from tbl a, tbl b where a.col_a = b.col_a(+) and b.col_b = 1;
 show trace;
 
-evaluate '6. An ANSI outer join can be rewritten as an inner join';
+
+evaluate '6. An ANSI outer join can be rewritten as an inner join (bind X, sp O)';
 -- No bind variables are used.
 -- Java stored procedure is used.
 
@@ -75,7 +78,8 @@ show trace;
 select /*+ recompile */ 'q6: ' || test_fc (a.col_b) from tbl a left outer join tbl b on a.col_a = b.col_a where b.col_b = 1;
 show trace;
 
-evaluate '7. A non-ANSI outer join can be rewritten as an inner join';
+
+evaluate '7. A non-ANSI outer join can be rewritten as an inner join (bind O, sp O)';
 -- Bind variables are used.
 -- Java stored procedure is used.
 
@@ -84,7 +88,7 @@ execute q7 using 1;
 show trace;
 
 
-evaluate '8. An ANSI outer join can be rewritten as an inner join';
+evaluate '8. An ANSI outer join can be rewritten as an inner join (bind O, sp O)';
 -- Bind variables are used.
 -- Java stored procedure is used.
 
@@ -93,36 +97,55 @@ execute q8 using 1;
 show trace;
 
 
-evaluate '9. A non-ANSI outer join can be rewritten as an inner join';
--- Joined with another table using inner join.
--- Bind variables are used.
+evaluate '9. A non-ANSI outer join can be rewritten as an inner join ([non-where-clause] bind O , sp O)';
+-- Bind variables are used, with the bind variable placed in different positions.
 -- Java stored procedure is used.
 
-prepare q9 from 'select /*+ recompile */ ''q9: ''  || test_fc (a.col_b) from tbl a, tbl b, tbl c where a.col_a = b.col_a(+) and b.col_b = ? and a.col_a = c.col_a';
+prepare q9 from 'select ''q9: ''  || test_fc (?) from tbl a, tbl b where a.col_a = b.col_a(+) and b.col_b = 1';
 execute q9 using 1;
 show trace;
 
 
-evaluate '10. A non-ANSI outer join can be rewritten as an inner join';
--- Joined with another table using non-ANSI outer join.
--- Bind variables are used.
+evaluate '10. An ANSI outer join can be rewritten as an inner join ([non-where-clause] bind O , sp O)';
+-- Bind variables are used, with the bind variable placed in different positions.
 -- Java stored procedure is used.
 
-prepare q10 from 'select /*+ recompile */ ''q10: ''  || test_fc (a.col_b) from tbl a, tbl b, tbl c where a.col_a(+) = b.col_a and a.col_b = ? and b.col_a(+) = c.col_a';
+prepare q10 from 'select ''q10: '' || test_fc (?) from tbl a left outer join tbl b on a.col_a = b.col_a where b.col_b = 1';
 execute q10 using 1;
 show trace;
 
 
-evaluate '11. A non-ANSI outer join can be rewritten as an inner join';
+evaluate '11. A non-ANSI outer join (w/ another table) can be rewritten as an inner join (bind O, sp O)';
+-- Joined with another table using inner join.
+-- Bind variables are used.
+-- Java stored procedure is used.
+
+prepare q11 from 'select /*+ recompile */ ''q11: ''  || test_fc (a.col_b) from tbl a, tbl b, tbl c where a.col_a = b.col_a(+) and b.col_b = ? and a.col_a = c.col_a';
+execute q11 using 1;
+show trace;
+
+
+evaluate '12. A non-ANSI outer join (w/ another table) can be rewritten as an inner join (bind O, sp O)';
+-- Joined with another table using non-ANSI outer join.
+-- Bind variables are used.
+-- Java stored procedure is used.
+
+prepare q12 from 'select /*+ recompile */ ''q12: ''  || test_fc (a.col_b) from tbl a, tbl b, tbl c where a.col_a(+) = b.col_a and a.col_b = ? and b.col_a(+) = c.col_a';
+execute q12 using 1;
+show trace;
+
+
+evaluate '13. A non-ANSI outer join (w/ another table via cross join) can be rewritten as an inner join (bind O, sp O)';
 -- Joined with another table using cross join.
 -- Bind variables are used.
 -- Java stored procedure is used.
 
-prepare q11 from 'select /*+ recompile */ ''q11: '' || test_fc (a.col_b) from tbl a, tbl b, tbl c where a.col_a = b.col_a(+) and b.col_b = ?';
-execute q11 using 1;
+prepare q13 from 'select /*+ recompile */ ''q13: '' || test_fc (a.col_b) from tbl a, tbl b, tbl c where a.col_a = b.col_a(+) and b.col_b = ?';
+execute q13 using 1;
 show trace;
 
 set trace off;
 
 drop table if exists tbl;
 drop function test_fc;
+
