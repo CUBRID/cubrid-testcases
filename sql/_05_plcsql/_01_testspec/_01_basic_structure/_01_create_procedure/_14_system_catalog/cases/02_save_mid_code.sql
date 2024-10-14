@@ -1,6 +1,8 @@
 --+ server-message on
 -- verified for CBRD-25222
 
+select * from db_attribute where class_name = '_db_stored_procedure_code' order by def_order;
+
 create or replace procedure test_mid_code()
 as
 begin
