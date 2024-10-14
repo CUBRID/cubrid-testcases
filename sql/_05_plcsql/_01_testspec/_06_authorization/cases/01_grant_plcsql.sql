@@ -7,6 +7,8 @@ CREATE OR REPLACE FUNCTION sp1() return varchar as
 begin
     return 'hello';
 end;
+
+-- bug, If use the command a 'show grant' on the not DBA user group, that return a error
 CREATE USER t1 GROUPS dba;
 GRANT EXECUTE ON PROCEDURE sp1 TO t1;
 
@@ -14,20 +16,11 @@ GRANT EXECUTE ON PROCEDURE sp1 TO t1;
 create table test1 (col1 int);
 insert into test1 values(0),(2);
 create view view1 as select * from test1;
-GRANT SELECT ON test1 TO t1;
-GRANT SELECT ON view1 TO t1;
-
-CREATE OR REPLACE FUNCTION t1.sp2() return varchar as
-begin
-    return 't1 hello';
-end;
-GRANT EXECUTE ON PROCEDURE t1.sp2 TO dba;
+GRANT ALL PRIVILEGES ON test1 TO t1;
+GRANT ALL PRIVILEGES ON view1 TO t1;
 
 SELECT * FROM db_auth WHERE grantee_name = 'T1' ORDER BY object_name;
 SHOW GRANTS FOR T1;
-
--- DBA needs not permission
-SHOW GRANTS FOR DBA;
 
 call login('t1','') on class db_user;
 
@@ -35,10 +28,18 @@ call login('t1','') on class db_user;
 SELECT * FROM db_auth WHERE grantee_name = 'T1' ORDER BY object_name;
 SHOW GRANTS;
 
-drop function sp2;
+CREATE OR REPLACE FUNCTION t1.sp2() return varchar as
+begin
+    return 't1 hello';
+end;
+GRANT EXECUTE ON PROCEDURE t1.sp2 TO dba;
 
 
 call login('dba','') on class db_user;
+
+SHOW GRANTS FOR DBA;
+
+drop function t1.sp2;
 
 -- REVOKE test (verify with CBRD-25506)
 REVOKE EXECUTE ON PROCEDURE sp1 FROM t1;

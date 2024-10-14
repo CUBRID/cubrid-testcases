@@ -5,6 +5,7 @@
 CREATE FUNCTION test1() RETURN int as
 language java name 'SpTest3.typetestint0() return int';
 
+-- bug, If use the command a 'show grant' on the not DBA user group, that return a error
 CREATE USER t1 GROUPS dba;
 GRANT EXECUTE ON PROCEDURE test1 TO t1;
 
