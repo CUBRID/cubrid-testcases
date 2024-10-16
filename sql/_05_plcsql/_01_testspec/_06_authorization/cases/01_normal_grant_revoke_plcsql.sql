@@ -8,7 +8,6 @@ begin
     return 'hello';
 end;
 
--- bug, If use the command a 'show grant' on the not DBA user group, that return a error
 CREATE USER t1 GROUPS dba;
 GRANT EXECUTE ON PROCEDURE sp1 TO t1;
 
@@ -41,12 +40,17 @@ SHOW GRANTS FOR DBA;
 
 drop function t1.sp2;
 
--- REVOKE test (verify with CBRD-25506)
+
+-- drop user when before revoke from t1
+drop user t1;
+
+-- REVOKE error (because user t1 is drop)
 REVOKE EXECUTE ON PROCEDURE sp1 FROM t1;
 SHOW GRANTS FOR T1;
 
-drop user t1;
 drop function sp1;
+
+drop user t1;
 drop test1, view1;
 
 --+ server-message off

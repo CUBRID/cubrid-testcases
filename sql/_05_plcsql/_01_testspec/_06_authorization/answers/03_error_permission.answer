@@ -16,7 +16,16 @@ Comparison to table and sp grant/revoke
 0
 
 ===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+DBA     U2     CLASS     tbl1     U1     EXECUTE     NO     
+
+
+===================================================
 0
+
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+
 
 ===================================================
 0
@@ -25,7 +34,16 @@ Comparison to table and sp grant/revoke
 0
 
 ===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+DBA     U2     FUNCTION     test1     U1     EXECUTE     NO     
+
+
+===================================================
 0
+
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+
 
 ===================================================
     
@@ -91,12 +109,71 @@ Cannot revoke privileges from self.
 
 ===================================================
     
+in u1     
+
+
+===================================================
+    
+null     
+
+
+===================================================
+Error:-494
+Semantic: SELECT is not authorized on _db_auth. [__t1].auth_type
+
+===================================================
+    
 in dba     
 
 
 ===================================================
     
 null     
+
+
+===================================================
+    
+do not use "on procedure": error     
+
+
+===================================================
+Error:-493
+Syntax: missing authorized command list
+  authorized command = SELECT, INSERT, INDEX, DELETE, UPDATE, ALTER, ADD, DROP, EXECUTE, REFERENCES, ALL PRIVILEGES, ALL  
+
+===================================================
+    
+incorrect test: error     
+
+
+===================================================
+Error:-494
+Semantic: before '  to u2; '
+Unknown class "u1.test1". grant execute on [u1.test1] to u2
+
+===================================================
+Error:-493
+Syntax: missing class spec list 
+
+===================================================
+Error:-494
+Semantic: before '  to u2; '
+Stored procedure/function "dba.test1" does not exist. grant execute on procedure on [dba.test1] to u2
+
+===================================================
+    
+mixed lower case and upper case: succ     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+    
+test end     
 
 
 ===================================================
