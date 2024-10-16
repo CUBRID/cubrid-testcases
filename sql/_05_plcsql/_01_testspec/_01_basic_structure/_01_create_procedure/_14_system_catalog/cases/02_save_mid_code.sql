@@ -1,5 +1,5 @@
 --+ server-message on
--- verified for CBRD-25222
+-- verified for CBRD-25522
 
 select * from db_attribute where class_name = '_db_stored_procedure_code' order by def_order;
 
@@ -11,8 +11,9 @@ end;
 
 -- icode is CLOB type. so the substr() with CLOB type prints the real file's contents
 -- expect result: 0, import
+
 select
-    itype, substr(icode,0,6)
+    itype, substr(icode,0,6), scode
 from
     _db_stored_procedure_code
 where
