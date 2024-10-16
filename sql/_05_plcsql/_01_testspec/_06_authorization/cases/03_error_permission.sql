@@ -43,6 +43,7 @@ call login('u2','') on class db_user;
 GRANT EXECUTE ON u1.tbl1 TO u1;
 
 -- Execute OK. but no operate because u2 does not have permission on tb1
+-- bug: CBRD-25585
 GRANT EXECUTE ON u1.tbl1 TO u2;
 -- Return empty
 SHOW GRANTS FOR u2;
@@ -50,6 +51,7 @@ SHOW GRANTS FOR u2;
 REVOKE EXECUTE ON u1.tbl1 FROM u2;
 
 -- Execute OK. but no operate because u2 does not have permission on test1
+-- bug: CBRD-25585
 GRANT EXECUTE ON PROCEDURE u1.test1 TO u2;
 -- Return empty
 SHOW GRANTS FOR u2;
