@@ -136,7 +136,7 @@ drop procedure t_FLOAT_TIMESTAMP ;
 
 
 call print_message('t_NUMERIC_TIMESTAMP. This scenario is a success.');
-create or replace procedure t_NUMERIC_TIMESTAMP(param_type string, variables_type string, param NUMERIC(8,4) ) as 
+create or replace procedure t_NUMERIC_TIMESTAMP(param_type string, variables_type string, param NUMERIC ) as 
 VAR TIMESTAMP := param ;
 VAR1 TIMESTAMP  ;
 begin
@@ -144,7 +144,7 @@ VAR1 := VAR ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', param=>variables = '|| VAR ); 
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
-call t_NUMERIC_TIMESTAMP('NUMERIC(8,4)', 'TIMESTAMP', cast( 0.123456789 as numeric(4,4) ) ) ;
+call t_NUMERIC_TIMESTAMP('NUMERIC', 'TIMESTAMP', cast( 0.123456789 as numeric(4,4) ) ) ;
 drop procedure t_NUMERIC_TIMESTAMP ;
 
 
@@ -157,7 +157,7 @@ VAR1 := VAR ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', param=>variables = '|| VAR ); 
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
-call t_BIGINT_TIMESTAMP('BIGINT', 'TIMESTAMP', decode('TIMESTAMP', 'INT',cast( 34589012 as bigint ) /1000, 'SHORT', cast( 34589012 as bigint ) /10000, 'NUMERIC(8,4)', cast( 34589012 as bigint ) /10000, cast( 34589012 as bigint ) )  ) ;
+call t_BIGINT_TIMESTAMP('BIGINT', 'TIMESTAMP', decode('TIMESTAMP', 'INT',cast( 34589012 as bigint ) /1000, 'SHORT', cast( 34589012 as bigint ) /10000, 'NUMERIC', cast( 34589012 as bigint ) /10000, cast( 34589012 as bigint ) )  ) ;
 drop procedure t_BIGINT_TIMESTAMP ;
 
 
@@ -170,7 +170,7 @@ VAR1 := VAR ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', param=>variables = '|| VAR ); 
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
-call t_INT_TIMESTAMP('INT', 'TIMESTAMP', decode('TIMESTAMP', 'INT',cast( 782346 as int ) /1000, 'SHORT', cast( 782346 as int ) /10000, 'NUMERIC(8,4)', cast( 782346 as int ) /10000, cast( 782346 as int ) )  ) ;
+call t_INT_TIMESTAMP('INT', 'TIMESTAMP', decode('TIMESTAMP', 'INT',cast( 782346 as int ) /1000, 'SHORT', cast( 782346 as int ) /10000, 'NUMERIC', cast( 782346 as int ) /10000, cast( 782346 as int ) )  ) ;
 drop procedure t_INT_TIMESTAMP ;
 
 
@@ -183,12 +183,12 @@ VAR1 := VAR ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', param=>variables = '|| VAR ); 
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
-call t_SHORT_TIMESTAMP('SHORT', 'TIMESTAMP', decode('TIMESTAMP', 'INT',cast( 8934 as short ) /1000, 'SHORT', cast( 8934 as short ) /10000, 'NUMERIC(8,4)', cast( 8934 as short ) /10000, cast( 8934 as short ) )  ) ;
+call t_SHORT_TIMESTAMP('SHORT', 'TIMESTAMP', decode('TIMESTAMP', 'INT',cast( 8934 as short ) /1000, 'SHORT', cast( 8934 as short ) /10000, 'NUMERIC', cast( 8934 as short ) /10000, cast( 8934 as short ) )  ) ;
 drop procedure t_SHORT_TIMESTAMP ;
 
 
-call print_message('t_BIT(8)_TIMESTAMP. This scenario is a failure.');
-create or replace procedure t_BIT_TIMESTAMP(param_type string, variables_type string, param BIT(8) ) as 
+call print_message('t_BIT_TIMESTAMP. This scenario is a failure.');
+create or replace procedure t_BIT_TIMESTAMP(param_type string, variables_type string, param BIT ) as 
 VAR TIMESTAMP := param ;
 VAR1 TIMESTAMP  ;
 begin
@@ -196,7 +196,7 @@ VAR1 := VAR ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', param=>variables = '|| VAR ); 
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
-call t_BIT_TIMESTAMP('BIT(8)', 'TIMESTAMP', 0xaa ) ;
+call t_BIT_TIMESTAMP('BIT', 'TIMESTAMP', 0xaa ) ;
 drop procedure t_BIT_TIMESTAMP ;
 
 

@@ -135,8 +135,8 @@ call t_FLOAT_SET('FLOAT', 'SET', cast( 1677.217 as float ) ) ;
 drop procedure t_FLOAT_SET ;
 
 
-call print_message('t_NUMERIC(8,4)_SET. This scenario is a failure.');
-create or replace procedure t_NUMERIC_SET(param_type string, variables_type string, param NUMERIC(8,4) ) as 
+call print_message('t_NUMERIC_SET. This scenario is a failure.');
+create or replace procedure t_NUMERIC_SET(param_type string, variables_type string, param NUMERIC ) as 
 VAR SET := param ;
 VAR1 SET  ;
 begin
@@ -144,7 +144,7 @@ VAR1 := VAR ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', param=>variables = '|| VAR ); 
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
-call t_NUMERIC_SET('NUMERIC(8,4)', 'SET', cast( 0.123456789 as numeric(4,4) ) ) ;
+call t_NUMERIC_SET('NUMERIC', 'SET', cast( 0.123456789 as numeric(4,4) ) ) ;
 drop procedure t_NUMERIC_SET ;
 
 
@@ -157,7 +157,7 @@ VAR1 := VAR ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', param=>variables = '|| VAR ); 
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
-call t_BIGINT_SET('BIGINT', 'SET', decode('SET', 'INT',cast( 34589012 as bigint ) /1000, 'SHORT', cast( 34589012 as bigint ) /10000, 'NUMERIC(8,4)', cast( 34589012 as bigint ) /10000, cast( 34589012 as bigint ) )  ) ;
+call t_BIGINT_SET('BIGINT', 'SET', decode('SET', 'INT',cast( 34589012 as bigint ) /1000, 'SHORT', cast( 34589012 as bigint ) /10000, 'NUMERIC', cast( 34589012 as bigint ) /10000, cast( 34589012 as bigint ) )  ) ;
 drop procedure t_BIGINT_SET ;
 
 
@@ -170,7 +170,7 @@ VAR1 := VAR ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', param=>variables = '|| VAR ); 
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
-call t_INT_SET('INT', 'SET', decode('SET', 'INT',cast( 782346 as int ) /1000, 'SHORT', cast( 782346 as int ) /10000, 'NUMERIC(8,4)', cast( 782346 as int ) /10000, cast( 782346 as int ) )  ) ;
+call t_INT_SET('INT', 'SET', decode('SET', 'INT',cast( 782346 as int ) /1000, 'SHORT', cast( 782346 as int ) /10000, 'NUMERIC', cast( 782346 as int ) /10000, cast( 782346 as int ) )  ) ;
 drop procedure t_INT_SET ;
 
 
@@ -183,12 +183,12 @@ VAR1 := VAR ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', param=>variables = '|| VAR ); 
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
-call t_SHORT_SET('SHORT', 'SET', decode('SET', 'INT',cast( 8934 as short ) /1000, 'SHORT', cast( 8934 as short ) /10000, 'NUMERIC(8,4)', cast( 8934 as short ) /10000, cast( 8934 as short ) )  ) ;
+call t_SHORT_SET('SHORT', 'SET', decode('SET', 'INT',cast( 8934 as short ) /1000, 'SHORT', cast( 8934 as short ) /10000, 'NUMERIC', cast( 8934 as short ) /10000, cast( 8934 as short ) )  ) ;
 drop procedure t_SHORT_SET ;
 
 
-call print_message('t_BIT(8)_SET. This scenario is a failure.');
-create or replace procedure t_BIT_SET(param_type string, variables_type string, param BIT(8) ) as 
+call print_message('t_BIT_SET. This scenario is a failure.');
+create or replace procedure t_BIT_SET(param_type string, variables_type string, param BIT ) as 
 VAR SET := param ;
 VAR1 SET  ;
 begin
@@ -196,7 +196,7 @@ VAR1 := VAR ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', param=>variables = '|| VAR ); 
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
-call t_BIT_SET('BIT(8)', 'SET', 0xaa ) ;
+call t_BIT_SET('BIT', 'SET', 0xaa ) ;
 drop procedure t_BIT_SET ;
 
 

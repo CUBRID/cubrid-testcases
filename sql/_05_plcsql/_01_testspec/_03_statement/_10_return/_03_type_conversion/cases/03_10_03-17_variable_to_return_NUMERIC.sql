@@ -126,7 +126,7 @@ drop function t_TIMESTAMPTZ_NUMERIC ;
 
 --BUG( normal : 1234.567890000000000, BUG : 1235) - CBRD-25529
 call print_message('t_DOUBLE_NUMERIC. This scenario is a success.');
-create or replace function t_DOUBLE_NUMERIC(variables_type string, return_type string, param_value DOUBLE ) RETURN NUMERIC(38,5) IS 
+create or replace function t_DOUBLE_NUMERIC(variables_type string, return_type string, param_value DOUBLE ) RETURN NUMERIC IS 
    VAR DOUBLE  ;
 begin
    VAR := param_value ;

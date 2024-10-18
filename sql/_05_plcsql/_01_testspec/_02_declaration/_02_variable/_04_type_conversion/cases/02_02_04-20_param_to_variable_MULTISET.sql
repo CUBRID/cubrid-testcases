@@ -135,8 +135,8 @@ call t_FLOAT_MULTISET('FLOAT', 'MULTISET', cast( 1677.217 as float ) ) ;
 drop procedure t_FLOAT_MULTISET ;
 
 
-call print_message('t_NUMERIC(8,4)_MULTISET. This scenario is a failure.');
-create or replace procedure t_NUMERIC_MULTISET(param_type string, variables_type string, param NUMERIC(8,4) ) as 
+call print_message('t_NUMERIC_MULTISET. This scenario is a failure.');
+create or replace procedure t_NUMERIC_MULTISET(param_type string, variables_type string, param NUMERIC ) as 
 VAR MULTISET := param ;
 VAR1 MULTISET  ;
 begin
@@ -144,7 +144,7 @@ VAR1 := VAR ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', param=>variables = '|| VAR ); 
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
-call t_NUMERIC_MULTISET('NUMERIC(8,4)', 'MULTISET', cast( 0.123456789 as numeric(4,4) ) ) ;
+call t_NUMERIC_MULTISET('NUMERIC', 'MULTISET', cast( 0.123456789 as numeric(4,4) ) ) ;
 drop procedure t_NUMERIC_MULTISET ;
 
 
@@ -157,7 +157,7 @@ VAR1 := VAR ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', param=>variables = '|| VAR ); 
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
-call t_BIGINT_MULTISET('BIGINT', 'MULTISET', decode('MULTISET', 'INT',cast( 34589012 as bigint ) /1000, 'SHORT', cast( 34589012 as bigint ) /10000, 'NUMERIC(8,4)', cast( 34589012 as bigint ) /10000, cast( 34589012 as bigint ) )  ) ;
+call t_BIGINT_MULTISET('BIGINT', 'MULTISET', decode('MULTISET', 'INT',cast( 34589012 as bigint ) /1000, 'SHORT', cast( 34589012 as bigint ) /10000, 'NUMERIC', cast( 34589012 as bigint ) /10000, cast( 34589012 as bigint ) )  ) ;
 drop procedure t_BIGINT_MULTISET ;
 
 
@@ -170,7 +170,7 @@ VAR1 := VAR ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', param=>variables = '|| VAR ); 
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
-call t_INT_MULTISET('INT', 'MULTISET', decode('MULTISET', 'INT',cast( 782346 as int ) /1000, 'SHORT', cast( 782346 as int ) /10000, 'NUMERIC(8,4)', cast( 782346 as int ) /10000, cast( 782346 as int ) )  ) ;
+call t_INT_MULTISET('INT', 'MULTISET', decode('MULTISET', 'INT',cast( 782346 as int ) /1000, 'SHORT', cast( 782346 as int ) /10000, 'NUMERIC', cast( 782346 as int ) /10000, cast( 782346 as int ) )  ) ;
 drop procedure t_INT_MULTISET ;
 
 
@@ -183,12 +183,12 @@ VAR1 := VAR ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', param=>variables = '|| VAR ); 
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
-call t_SHORT_MULTISET('SHORT', 'MULTISET', decode('MULTISET', 'INT',cast( 8934 as short ) /1000, 'SHORT', cast( 8934 as short ) /10000, 'NUMERIC(8,4)', cast( 8934 as short ) /10000, cast( 8934 as short ) )  ) ;
+call t_SHORT_MULTISET('SHORT', 'MULTISET', decode('MULTISET', 'INT',cast( 8934 as short ) /1000, 'SHORT', cast( 8934 as short ) /10000, 'NUMERIC', cast( 8934 as short ) /10000, cast( 8934 as short ) )  ) ;
 drop procedure t_SHORT_MULTISET ;
 
 
-call print_message('t_BIT(8)_MULTISET. This scenario is a failure.');
-create or replace procedure t_BIT_MULTISET(param_type string, variables_type string, param BIT(8) ) as 
+call print_message('t_BIT_MULTISET. This scenario is a failure.');
+create or replace procedure t_BIT_MULTISET(param_type string, variables_type string, param BIT ) as 
 VAR MULTISET := param ;
 VAR1 MULTISET  ;
 begin
@@ -196,7 +196,7 @@ VAR1 := VAR ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', param=>variables = '|| VAR ); 
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
-call t_BIT_MULTISET('BIT(8)', 'MULTISET', 0xaa ) ;
+call t_BIT_MULTISET('BIT', 'MULTISET', 0xaa ) ;
 drop procedure t_BIT_MULTISET ;
 
 

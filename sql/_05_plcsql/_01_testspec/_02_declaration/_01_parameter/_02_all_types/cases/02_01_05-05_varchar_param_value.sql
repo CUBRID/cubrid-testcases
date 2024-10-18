@@ -20,7 +20,7 @@ call t();
 
 
 -- normal
-create or replace procedure t(i_min VARCHAR(5), i_max VARCHAR(5) ) as
+create or replace procedure t(i_min VARCHAR, i_max VARCHAR ) as
     var_min VARCHAR(5) := i_min;
     var_max VARCHAR(5) := i_max;
 begin

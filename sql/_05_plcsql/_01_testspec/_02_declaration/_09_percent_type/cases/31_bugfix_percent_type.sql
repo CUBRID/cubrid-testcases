@@ -25,7 +25,7 @@ drop function test_percent_type_in_sig;
 create or replace procedure test_percent_typed_arg_to_out_param as
     c dual.dummy%type;
 
-    procedure poo(c out char(1)) as
+    procedure poo(c out char) as
     begin
         dbms_output.put_line('Call OK');
     end;
@@ -39,7 +39,7 @@ drop procedure test_percent_typed_arg_to_out_param;
 
 create or replace procedure test_percent_typed_arg_to_in_param() as
     c dual.dummy%type :='z' ;
-    procedure poo(in_param in char(1)) as
+    procedure poo(in_param in char) as
     begin
         dbms_output.put_line('print in value: ' + in_param);
     end;

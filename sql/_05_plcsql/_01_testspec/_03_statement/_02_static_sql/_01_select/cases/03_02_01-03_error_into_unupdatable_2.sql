@@ -2,7 +2,7 @@
 
 -- error: identifiers in the into clause of static sql select statements must be updatable
 
-create or replace procedure t(c varchar(1)) as
+create or replace procedure t(c varchar) as
 begin
     select dummy into c from dual;
 end;

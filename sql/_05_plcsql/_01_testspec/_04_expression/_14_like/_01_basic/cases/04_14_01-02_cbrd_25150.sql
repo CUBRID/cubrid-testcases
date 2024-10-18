@@ -1,7 +1,7 @@
 --+ server-message on
 -- Verified for CBRD-25150
 
-create or replace procedure poo(s varchar(10), w varchar(10)) as
+create or replace procedure poo(s varchar, w varchar) as
     b boolean;
     result_b varchar(10);
 begin

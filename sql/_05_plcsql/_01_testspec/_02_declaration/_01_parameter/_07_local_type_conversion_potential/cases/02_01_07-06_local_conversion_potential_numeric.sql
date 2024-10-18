@@ -1,12 +1,12 @@
 --+ server-message on
 
-select 'An error occurs. ( t_boolean, numeric(8,3) )' ;
+select 'An error occurs. ( t_boolean, numeric )' ;
 create or replace procedure t_numeric( from_type string ) as 
     a_param boolean := False ;
-    procedure t_local(from_type string, param numeric(8,3)) 
+    procedure t_local(from_type string, param numeric) 
     AS 
     begin 
-        dbms_output.put_line(from_type||' to numeric(8,3)' ); 
+        dbms_output.put_line(from_type||' to numeric' ); 
         dbms_output.put_line('boolean => ' ||  param ) ; 
     END;
 begin
@@ -18,13 +18,13 @@ drop procedure t_numeric ;
 
 
 
-select 'It is called normally. ( t_string, numeric(8,3) )' ;
+select 'It is called normally. ( t_string, numeric )' ;
 create or replace procedure t_numeric( from_type string ) as 
     a_param string := '123' ;
-    procedure t_local(from_type string, param numeric(8,3)) 
+    procedure t_local(from_type string, param numeric) 
     AS 
     begin 
-        dbms_output.put_line(from_type||' to numeric(8,3)' ); 
+        dbms_output.put_line(from_type||' to numeric' ); 
         dbms_output.put_line('string => ' ||  param ) ; 
     END;
 begin
@@ -36,13 +36,13 @@ drop procedure t_numeric ;
 
 
 
-select 'It is called normally. ( t_short, numeric(8,3) )' ;
+select 'It is called normally. ( t_short, numeric )' ;
 create or replace procedure t_numeric( from_type string ) as 
     a_param short := 8934 ;
-    procedure t_local(from_type string, param numeric(8,3)) 
+    procedure t_local(from_type string, param numeric) 
     AS 
     begin 
-        dbms_output.put_line(from_type||' to numeric(8,3)' ); 
+        dbms_output.put_line(from_type||' to numeric' ); 
         dbms_output.put_line('short => ' ||  param ) ; 
     END;
 begin
@@ -54,13 +54,13 @@ drop procedure t_numeric ;
 
 
 
-select 'It is called normally. ( t_int, numeric(8,3) )' ;
+select 'It is called normally. ( t_int, numeric )' ;
 create or replace procedure t_numeric( from_type string ) as 
     a_param int := 8234 ;
-    procedure t_local(from_type string, param numeric(8,3)) 
+    procedure t_local(from_type string, param numeric) 
     AS 
     begin 
-        dbms_output.put_line(from_type||' to numeric(8,3)' ); 
+        dbms_output.put_line(from_type||' to numeric' ); 
         dbms_output.put_line('int => ' ||  param ) ; 
     END;
 begin
@@ -72,13 +72,13 @@ drop procedure t_numeric ;
 
 
 
-select 'It is called normally. ( t_bigint, numeric(8,3) )' ;
+select 'It is called normally. ( t_bigint, numeric )' ;
 create or replace procedure t_numeric( from_type string ) as 
     a_param bigint := 278 ;
-    procedure t_local(from_type string, param numeric(8,3)) 
+    procedure t_local(from_type string, param numeric) 
     AS 
     begin 
-        dbms_output.put_line(from_type||' to numeric(8,3)' ); 
+        dbms_output.put_line(from_type||' to numeric' ); 
         dbms_output.put_line('bigint => ' ||  param ) ; 
     END;
 begin
@@ -90,13 +90,13 @@ drop procedure t_numeric ;
 
 
 
-select 'It is called normally. ( t_numeric(8,3), numeric(8,3) )' ;
+select 'It is called normally. ( t_numeric(8,3), numeric )' ;
 create or replace procedure t_numeric( from_type string ) as 
     a_param numeric(8,3) := 5678.123 ;
-    procedure t_local(from_type string, param numeric(8,3)) 
+    procedure t_local(from_type string, param numeric) 
     AS 
     begin 
-        dbms_output.put_line(from_type||' to numeric(8,3)' ); 
+        dbms_output.put_line(from_type||' to numeric' ); 
         dbms_output.put_line('numeric(8,3) => ' ||  param ) ; 
     END;
 begin
@@ -108,13 +108,13 @@ drop procedure t_numeric ;
 
 
 
-select 'It is called normally. ( t_float, numeric(8,3) )' ;
+select 'It is called normally. ( t_float, numeric )' ;
 create or replace procedure t_numeric( from_type string ) as 
     a_param float := 3677.345 ;
-    procedure t_local(from_type string, param numeric(8,3)) 
+    procedure t_local(from_type string, param numeric) 
     AS 
     begin 
-        dbms_output.put_line(from_type||' to numeric(8,3)' ); 
+        dbms_output.put_line(from_type||' to numeric' ); 
         dbms_output.put_line('float => ' ||  param ) ; 
     END;
 begin
@@ -126,13 +126,13 @@ drop procedure t_numeric ;
 
 
 
-select 'It is called normally. ( t_double, numeric(8,3) )' ;
+select 'It is called normally. ( t_double, numeric )' ;
 create or replace procedure t_numeric( from_type string ) as 
     a_param double := 789.1234 ;
-    procedure t_local(from_type string, param numeric(8,3)) 
+    procedure t_local(from_type string, param numeric) 
     AS 
     begin 
-        dbms_output.put_line(from_type||' to numeric(8,3)' ); 
+        dbms_output.put_line(from_type||' to numeric' ); 
         dbms_output.put_line('double => ' ||  param ) ; 
     END;
 begin
@@ -144,13 +144,13 @@ drop procedure t_numeric ;
 
 
 
-select 'An error occurs. ( t_date, numeric(8,3) )' ;
+select 'An error occurs. ( t_date, numeric )' ;
 create or replace procedure t_numeric( from_type string ) as 
     a_param date := '2024-03-05' ;
-    procedure t_local(from_type string, param numeric(8,3)) 
+    procedure t_local(from_type string, param numeric) 
     AS 
     begin 
-        dbms_output.put_line(from_type||' to numeric(8,3)' ); 
+        dbms_output.put_line(from_type||' to numeric' ); 
         dbms_output.put_line('date => ' ||  param ) ; 
     END;
 begin
@@ -162,13 +162,13 @@ drop procedure t_numeric ;
 
 
 
-select 'An error occurs. ( t_time, numeric(8,3) )' ;
+select 'An error occurs. ( t_time, numeric )' ;
 create or replace procedure t_numeric( from_type string ) as 
     a_param time := '23:59:59' ;
-    procedure t_local(from_type string, param numeric(8,3)) 
+    procedure t_local(from_type string, param numeric) 
     AS 
     begin 
-        dbms_output.put_line(from_type||' to numeric(8,3)' ); 
+        dbms_output.put_line(from_type||' to numeric' ); 
         dbms_output.put_line('time => ' ||  param ) ; 
     END;
 begin
@@ -180,13 +180,13 @@ drop procedure t_numeric ;
 
 
 
-select 'An error occurs. ( t_datetime, numeric(8,3) )' ;
+select 'An error occurs. ( t_datetime, numeric )' ;
 create or replace procedure t_numeric( from_type string ) as 
     a_param datetime := '2024-03-01 22:15:25' ;
-    procedure t_local(from_type string, param numeric(8,3)) 
+    procedure t_local(from_type string, param numeric) 
     AS 
     begin 
-        dbms_output.put_line(from_type||' to numeric(8,3)' ); 
+        dbms_output.put_line(from_type||' to numeric' ); 
         dbms_output.put_line('datetime => ' ||  param ) ; 
     END;
 begin
@@ -198,13 +198,13 @@ drop procedure t_numeric ;
 
 
 
-select 'An error occurs. ( t_timestamp, numeric(8,3) )' ;
+select 'An error occurs. ( t_timestamp, numeric )' ;
 create or replace procedure t_numeric( from_type string ) as 
     a_param timestamp := '2024-05-05 23:30:45' ;
-    procedure t_local(from_type string, param numeric(8,3)) 
+    procedure t_local(from_type string, param numeric) 
     AS 
     begin 
-        dbms_output.put_line(from_type||' to numeric(8,3)' ); 
+        dbms_output.put_line(from_type||' to numeric' ); 
         dbms_output.put_line('timestamp => ' ||  param ) ; 
     END;
 begin
