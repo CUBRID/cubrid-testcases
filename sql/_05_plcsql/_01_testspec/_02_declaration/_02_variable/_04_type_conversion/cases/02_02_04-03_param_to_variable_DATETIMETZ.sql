@@ -187,8 +187,8 @@ call t_SHORT_DATETIMETZ('SHORT', 'DATETIMETZ', decode('DATETIMETZ', 'INT',cast( 
 drop procedure t_SHORT_DATETIMETZ ;
 
 
-call print_message('t_BIT(8)_DATETIMETZ. This scenario is a failure.');
-create or replace procedure t_BIT_DATETIMETZ(param_type string, variables_type string, param BIT(8) ) as 
+call print_message('t_BIT_DATETIMETZ. This scenario is a failure.');
+create or replace procedure t_BIT_DATETIMETZ(param_type string, variables_type string, param BIT ) as 
 VAR DATETIMETZ := param ;
 VAR1 DATETIMETZ  ;
 begin
@@ -196,7 +196,7 @@ VAR1 := VAR ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', param=>variables = '|| VAR ); 
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
-call t_BIT_DATETIMETZ('BIT(8)', 'DATETIMETZ', 0xaa ) ;
+call t_BIT_DATETIMETZ('BIT', 'DATETIMETZ', 0xaa ) ;
 drop procedure t_BIT_DATETIMETZ ;
 
 

@@ -196,7 +196,7 @@ call print_message('t_JSON_NUMERIC. This scenario is a failure.');
 create or replace procedure t_JSON_NUMERIC(sql_type string, procedure_type string, param NUMERIC ) as begin
     dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param ); 
 end;
-call t_JSON_NUMERIC('JSON', 'NUMERIC ;
+call t_JSON_NUMERIC('JSON', 'NUMERIC', '{"a":1}' ) ;
 drop procedure t_JSON_NUMERIC ;
 drop procedure print_message;
 
