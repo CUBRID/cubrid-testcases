@@ -3,7 +3,7 @@
 
 create or replace procedure public.test() as
 begin
-    dbms_output.put_line('onwer is public');
+    dbms_output.put_line('owner is public');
 end;
 
 call public.test();
