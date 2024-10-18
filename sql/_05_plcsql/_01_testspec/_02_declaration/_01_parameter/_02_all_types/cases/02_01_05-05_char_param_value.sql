@@ -20,7 +20,7 @@ call t();
 select cast('a' as char(5) ) ||'char';
 
 
-create or replace procedure t(i_min CHAR(5), i_max CHAR(5) ) as
+create or replace procedure t(i_min CHAR, i_max CHAR) as
     var_min CHAR(5) := i_min;
     var_max CHAR(5) := i_max;
 begin

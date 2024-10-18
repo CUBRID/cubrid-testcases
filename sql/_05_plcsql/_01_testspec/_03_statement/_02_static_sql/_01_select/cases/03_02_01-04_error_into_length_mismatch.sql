@@ -2,7 +2,7 @@
 
 -- error: the lengths of into clause and the select list must match
 
-create or replace procedure t(c out varchar(1)) as
+create or replace procedure t(c out varchar) as
     d varchar(1);
 begin
     select dummy into c, d from dual;

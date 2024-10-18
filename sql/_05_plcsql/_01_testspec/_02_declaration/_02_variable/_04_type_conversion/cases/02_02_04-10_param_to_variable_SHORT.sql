@@ -136,7 +136,7 @@ drop procedure t_FLOAT_SHORT ;
 
 
 call print_message('t_NUMERIC_SHORT. This scenario is a success.');
-create or replace procedure t_NUMERIC_SHORT(param_type string, variables_type string, param NUMERIC(8,4) ) as 
+create or replace procedure t_NUMERIC_SHORT(param_type string, variables_type string, param NUMERIC ) as 
 VAR SHORT := param ;
 VAR1 SHORT  ;
 begin
@@ -145,7 +145,7 @@ VAR1 := VAR ;
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
 call t_NUMERIC_SHORT('NUMERIC(4,4)', 'SHORT', cast( 0.123456789 as numeric(4,4) ) ) ;
-call t_NUMERIC_SHORT('NUMERIC(8,4)', 'SHORT', cast( 0.123456789 as numeric(8,4) ) ) ;
+call t_NUMERIC_SHORT('NUMERIC', 'SHORT', cast( 0.123456789 as NUMERIC ) ) ;
 drop procedure t_NUMERIC_SHORT ;
 
 
@@ -158,7 +158,7 @@ VAR1 := VAR ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', param=>variables = '|| VAR ); 
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
-call t_BIGINT_SHORT('BIGINT', 'SHORT', decode('SHORT', 'INT',cast( 34589012 as bigint ) /1000, 'SHORT', cast( 34589012 as bigint ) /10000, 'NUMERIC(8,4)', cast( 34589012 as bigint ) /10000, cast( 34589012 as bigint ) )  ) ;
+call t_BIGINT_SHORT('BIGINT', 'SHORT', decode('SHORT', 'INT',cast( 34589012 as bigint ) /1000, 'SHORT', cast( 34589012 as bigint ) /10000, 'NUMERIC', cast( 34589012 as bigint ) /10000, cast( 34589012 as bigint ) )  ) ;
 drop procedure t_BIGINT_SHORT ;
 
 
@@ -171,7 +171,7 @@ VAR1 := VAR ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', param=>variables = '|| VAR ); 
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
-call t_INT_SHORT('INT', 'SHORT', decode('SHORT', 'INT',cast( 782346 as int ) /1000, 'SHORT', cast( 782346 as int ) /10000, 'NUMERIC(8,4)', cast( 782346 as int ) /10000, cast( 782346 as int ) )  ) ;
+call t_INT_SHORT('INT', 'SHORT', decode('SHORT', 'INT',cast( 782346 as int ) /1000, 'SHORT', cast( 782346 as int ) /10000, 'NUMERIC', cast( 782346 as int ) /10000, cast( 782346 as int ) )  ) ;
 drop procedure t_INT_SHORT ;
 
 
@@ -184,12 +184,12 @@ VAR1 := VAR ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', param=>variables = '|| VAR ); 
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
-call t_SHORT_SHORT('SHORT', 'SHORT', decode('SHORT', 'INT',cast( 8934 as short ) /1000, 'SHORT', cast( 8934 as short ) /10000, 'NUMERIC(8,4)', cast( 8934 as short ) /10000, cast( 8934 as short ) )  ) ;
+call t_SHORT_SHORT('SHORT', 'SHORT', decode('SHORT', 'INT',cast( 8934 as short ) /1000, 'SHORT', cast( 8934 as short ) /10000, 'NUMERIC', cast( 8934 as short ) /10000, cast( 8934 as short ) )  ) ;
 drop procedure t_SHORT_SHORT ;
 
 
-call print_message('t_BIT(8)_SHORT. This scenario is a failure.');
-create or replace procedure t_BIT_SHORT(param_type string, variables_type string, param BIT(8) ) as 
+call print_message('t_BIT_SHORT. This scenario is a failure.');
+create or replace procedure t_BIT_SHORT(param_type string, variables_type string, param BIT ) as 
 VAR SHORT := param ;
 VAR1 SHORT  ;
 begin
@@ -197,7 +197,7 @@ VAR1 := VAR ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', param=>variables = '|| VAR ); 
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
-call t_BIT_SHORT('BIT(8)', 'SHORT', 0xaa ) ;
+call t_BIT_SHORT('BIT', 'SHORT', 0xaa ) ;
 drop procedure t_BIT_SHORT ;
 
 

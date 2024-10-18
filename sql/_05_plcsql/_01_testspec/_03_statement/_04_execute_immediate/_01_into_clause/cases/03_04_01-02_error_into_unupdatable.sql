@@ -2,7 +2,7 @@
 
 -- error: into unupdatable identifiers
 
-create or replace procedure t(charset varchar(32)) as
+create or replace procedure t(charset varchar) as
 begin
     execute immediate 'select charset_name from db_collation where coll_name = ''utf8_en_cs''' into charset;
 end;
