@@ -175,7 +175,7 @@ drop procedure t_LIST_VARCHAR ;
 
 
 call print_message('t_ENUM_VARCHAR. This scenario is a failure.');
-create or replace function t_ENUM_VARCHAR(sql_type string, procedure_type string, param VARCHAR ) return varchar(100) as begin
+create or replace function t_ENUM_VARCHAR(sql_type string, procedure_type string, param VARCHAR ) return varchar as begin
     dbms_output.put_line('sql_type = ' ||sql_type ||', procedure_type = '||procedure_type||', current_value = '|| param );
     return 'abc';
 end;

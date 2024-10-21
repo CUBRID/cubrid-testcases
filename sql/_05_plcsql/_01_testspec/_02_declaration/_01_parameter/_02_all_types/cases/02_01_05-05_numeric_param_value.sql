@@ -40,7 +40,7 @@ select cast( 0.123456789 as numeric(4,4)) ;
 
 
 
-create or replace procedure t(i_min NUMERIC(4,4), i_max NUMERIC(4,4) ) as
+create or replace procedure t(i_min NUMERIC, i_max NUMERIC) as
     var_min NUMERIC := i_min;
     var_max NUMERIC := i_max;
 begin
@@ -55,7 +55,7 @@ select cast( cast( 0.123456789 as numeric(4,4)) as NUMERIC);
 
 select 'This is a normal case because an error occurred in the parameter "NUMERIC(3,4)" when creating.';
 
-create or replace procedure t(i_min NUMERIC(3,4), i_max NUMERIC(3,4) ) as
+create or replace procedure t(i_min NUMERIC, i_max NUMERIC) as
     var_min NUMERIC := i_min;
     var_max NUMERIC := i_max;
 begin
