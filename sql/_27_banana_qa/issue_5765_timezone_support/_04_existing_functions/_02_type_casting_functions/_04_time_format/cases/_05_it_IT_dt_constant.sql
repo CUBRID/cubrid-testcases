@@ -19,7 +19,7 @@ execute st using @v2, '%m/%d/%y %k:%i:%s.%f [%p] *%TZR %TZH*';
 execute st using @v3, '%m/%d/%y %k:%i:%s.%f [%p] *%TZR %TZH*';
 
 execute st using datetime'2024-09-01 22:30:45.999', '%a, %D %b. %Y %T $%TZR-%TZD$';
-execute st using datetimeltz'2024-09-01 22:30:45.999 -3:00', '%a, %D %b. %Y %T $%TZR-%TZD ($%TZH)$';
+execute st using datetimeltz'2024-09-01 22:30:45.999 -2:00', '%a, %D %b. %Y %T $%TZR-%TZD ($%TZH)$';
 execute st using datetimetz'2024-09-01 22:30:45.999 America/Sao_Paulo', '%a, %D %b. %Y %T $%TZR-%TZD ($%TZM)$';
 
 set time zone 'America/Mexico_City';
