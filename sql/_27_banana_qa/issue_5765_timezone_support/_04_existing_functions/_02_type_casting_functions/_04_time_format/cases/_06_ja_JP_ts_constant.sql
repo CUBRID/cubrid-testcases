@@ -10,17 +10,17 @@ set time zone 'America/Sao_Paulo';
 
 prepare st from 'select time_format(?, ?)';
 
-set @v1=timestamp'2025-12-31 22:30:45';
-set @v2=timestampltz'2025-12-31 22:30:45 -2:00';
-set @v3=timestamptz'2025-12-31 22:30:45 America/Sao_Paulo';
+set @v1=timestamp'2024-09-01 22:30:45';
+set @v2=timestampltz'2024-09-01 22:30:45 -2:00';
+set @v3=timestamptz'2024-09-01 22:30:45 America/Sao_Paulo';
 
 execute st using @v1, '%m/%d/%y %k:%i:%s.%f [%p] *%TZR %TZH*';
 execute st using @v2, '%m/%d/%y %k:%i:%s.%f [%p] *%TZR %TZH*';
 execute st using @v3, '%m/%d/%y %k:%i:%s.%f [%p] *%TZR %TZH*';
 
-execute st using timestamp'2025-12-31 22:30:45', '%a, %D %b. %Y %T $%TZR-%TZD$';
-execute st using timestampltz'2025-12-31 22:30:45 -2:00', '%a, %D %b. %Y %T $%TZR-%TZD ($%TZH)$';
-execute st using timestamptz'2025-12-31 22:30:45 America/Sao_Paulo', '%a, %D %b. %Y %T $%TZR-%TZD ($%TZM)$';
+execute st using timestamp'2024-09-01 22:30:45', '%a, %D %b. %Y %T $%TZR-%TZD$';
+execute st using timestampltz'2024-09-01 22:30:45 -2:00', '%a, %D %b. %Y %T $%TZR-%TZD ($%TZH)$';
+execute st using timestamptz'2024-09-01 22:30:45 America/Sao_Paulo', '%a, %D %b. %Y %T $%TZR-%TZD ($%TZM)$';
 
 set time zone 'America/Mexico_City';
 -- -6:00, DST

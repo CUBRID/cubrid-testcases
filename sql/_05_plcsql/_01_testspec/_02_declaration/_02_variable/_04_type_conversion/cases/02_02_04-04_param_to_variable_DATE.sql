@@ -135,8 +135,8 @@ call t_FLOAT_DATE('FLOAT', 'DATE', cast( 1677.217 as float ) ) ;
 drop procedure t_FLOAT_DATE ;
 
 
-call print_message('t_NUMERIC(8,4)_DATE. This scenario is a failure.');
-create or replace procedure t_NUMERIC_DATE(param_type string, variables_type string, param NUMERIC(8,4) ) as 
+call print_message('t_NUMERIC_DATE. This scenario is a failure.');
+create or replace procedure t_NUMERIC_DATE(param_type string, variables_type string, param NUMERIC ) as 
 VAR DATE := param ;
 VAR1 DATE  ;
 begin
@@ -144,7 +144,7 @@ VAR1 := VAR ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', param=>variables = '|| VAR ); 
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
-call t_NUMERIC_DATE('NUMERIC(8,4)', 'DATE', cast( 0.123456789 as numeric(4,4) ) ) ;
+call t_NUMERIC_DATE('NUMERIC', 'DATE', cast( 0.123456789 as numeric(4,4) ) ) ;
 drop procedure t_NUMERIC_DATE ;
 
 
@@ -157,7 +157,7 @@ VAR1 := VAR ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', param=>variables = '|| VAR ); 
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
-call t_BIGINT_DATE('BIGINT', 'DATE', decode('DATE', 'INT',cast( 34589012 as bigint ) /1000, 'SHORT', cast( 34589012 as bigint ) /10000, 'NUMERIC(8,4)', cast( 34589012 as bigint ) /10000, cast( 34589012 as bigint ) )  ) ;
+call t_BIGINT_DATE('BIGINT', 'DATE', decode('DATE', 'INT',cast( 34589012 as bigint ) /1000, 'SHORT', cast( 34589012 as bigint ) /10000, 'NUMERIC', cast( 34589012 as bigint ) /10000, cast( 34589012 as bigint ) )  ) ;
 drop procedure t_BIGINT_DATE ;
 
 
@@ -170,7 +170,7 @@ VAR1 := VAR ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', param=>variables = '|| VAR ); 
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
-call t_INT_DATE('INT', 'DATE', decode('DATE', 'INT',cast( 782346 as int ) /1000, 'SHORT', cast( 782346 as int ) /10000, 'NUMERIC(8,4)', cast( 782346 as int ) /10000, cast( 782346 as int ) )  ) ;
+call t_INT_DATE('INT', 'DATE', decode('DATE', 'INT',cast( 782346 as int ) /1000, 'SHORT', cast( 782346 as int ) /10000, 'NUMERIC', cast( 782346 as int ) /10000, cast( 782346 as int ) )  ) ;
 drop procedure t_INT_DATE ;
 
 
@@ -183,12 +183,12 @@ VAR1 := VAR ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', param=>variables = '|| VAR ); 
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
-call t_SHORT_DATE('SHORT', 'DATE', decode('DATE', 'INT',cast( 8934 as short ) /1000, 'SHORT', cast( 8934 as short ) /10000, 'NUMERIC(8,4)', cast( 8934 as short ) /10000, cast( 8934 as short ) )  ) ;
+call t_SHORT_DATE('SHORT', 'DATE', decode('DATE', 'INT',cast( 8934 as short ) /1000, 'SHORT', cast( 8934 as short ) /10000, 'NUMERIC', cast( 8934 as short ) /10000, cast( 8934 as short ) )  ) ;
 drop procedure t_SHORT_DATE ;
 
 
-call print_message('t_BIT(8)_DATE. This scenario is a failure.');
-create or replace procedure t_BIT_DATE(param_type string, variables_type string, param BIT(8) ) as 
+call print_message('t_BIT_DATE. This scenario is a failure.');
+create or replace procedure t_BIT_DATE(param_type string, variables_type string, param BIT ) as 
 VAR DATE := param ;
 VAR1 DATE  ;
 begin
@@ -196,7 +196,7 @@ VAR1 := VAR ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', param=>variables = '|| VAR ); 
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
-call t_BIT_DATE('BIT(8)', 'DATE', 0xaa ) ;
+call t_BIT_DATE('BIT', 'DATE', 0xaa ) ;
 drop procedure t_BIT_DATE ;
 
 

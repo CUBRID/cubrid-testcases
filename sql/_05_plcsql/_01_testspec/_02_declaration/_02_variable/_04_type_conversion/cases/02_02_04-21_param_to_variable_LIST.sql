@@ -135,8 +135,8 @@ call t_FLOAT_LIST('FLOAT', 'LIST', cast( 1677.217 as float ) ) ;
 drop procedure t_FLOAT_LIST ;
 
 
-call print_message('t_NUMERIC(8,4)_LIST. This scenario is a failure.');
-create or replace procedure t_NUMERIC_LIST(param_type string, variables_type string, param NUMERIC(8,4) ) as 
+call print_message('t_NUMERIC_LIST. This scenario is a failure.');
+create or replace procedure t_NUMERIC_LIST(param_type string, variables_type string, param NUMERIC ) as 
 VAR LIST := param ;
 VAR1 LIST  ;
 begin
@@ -144,7 +144,7 @@ VAR1 := VAR ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', param=>variables = '|| VAR ); 
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
-call t_NUMERIC_LIST('NUMERIC(8,4)', 'LIST', cast( 0.123456789 as numeric(4,4) ) ) ;
+call t_NUMERIC_LIST('NUMERIC', 'LIST', cast( 0.123456789 as numeric(4,4) ) ) ;
 drop procedure t_NUMERIC_LIST ;
 
 
@@ -157,7 +157,7 @@ VAR1 := VAR ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', param=>variables = '|| VAR ); 
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
-call t_BIGINT_LIST('BIGINT', 'LIST', decode('LIST', 'INT',cast( 34589012 as bigint ) /1000, 'SHORT', cast( 34589012 as bigint ) /10000, 'NUMERIC(8,4)', cast( 34589012 as bigint ) /10000, cast( 34589012 as bigint ) )  ) ;
+call t_BIGINT_LIST('BIGINT', 'LIST', decode('LIST', 'INT',cast( 34589012 as bigint ) /1000, 'SHORT', cast( 34589012 as bigint ) /10000, 'NUMERIC', cast( 34589012 as bigint ) /10000, cast( 34589012 as bigint ) )  ) ;
 drop procedure t_BIGINT_LIST ;
 
 
@@ -170,7 +170,7 @@ VAR1 := VAR ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', param=>variables = '|| VAR ); 
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
-call t_INT_LIST('INT', 'LIST', decode('LIST', 'INT',cast( 782346 as int ) /1000, 'SHORT', cast( 782346 as int ) /10000, 'NUMERIC(8,4)', cast( 782346 as int ) /10000, cast( 782346 as int ) )  ) ;
+call t_INT_LIST('INT', 'LIST', decode('LIST', 'INT',cast( 782346 as int ) /1000, 'SHORT', cast( 782346 as int ) /10000, 'NUMERIC', cast( 782346 as int ) /10000, cast( 782346 as int ) )  ) ;
 drop procedure t_INT_LIST ;
 
 
@@ -183,12 +183,12 @@ VAR1 := VAR ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', param=>variables = '|| VAR ); 
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
-call t_SHORT_LIST('SHORT', 'LIST', decode('LIST', 'INT',cast( 8934 as short ) /1000, 'SHORT', cast( 8934 as short ) /10000, 'NUMERIC(8,4)', cast( 8934 as short ) /10000, cast( 8934 as short ) )  ) ;
+call t_SHORT_LIST('SHORT', 'LIST', decode('LIST', 'INT',cast( 8934 as short ) /1000, 'SHORT', cast( 8934 as short ) /10000, 'NUMERIC', cast( 8934 as short ) /10000, cast( 8934 as short ) )  ) ;
 drop procedure t_SHORT_LIST ;
 
 
-call print_message('t_BIT(8)_LIST. This scenario is a failure.');
-create or replace procedure t_BIT_LIST(param_type string, variables_type string, param BIT(8) ) as 
+call print_message('t_BIT_LIST. This scenario is a failure.');
+create or replace procedure t_BIT_LIST(param_type string, variables_type string, param BIT ) as 
 VAR LIST := param ;
 VAR1 LIST  ;
 begin
@@ -196,7 +196,7 @@ VAR1 := VAR ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', param=>variables = '|| VAR ); 
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
-call t_BIT_LIST('BIT(8)', 'LIST', 0xaa ) ;
+call t_BIT_LIST('BIT', 'LIST', 0xaa ) ;
 drop procedure t_BIT_LIST ;
 
 

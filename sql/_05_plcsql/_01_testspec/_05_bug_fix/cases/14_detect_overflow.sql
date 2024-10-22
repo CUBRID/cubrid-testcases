@@ -1,7 +1,7 @@
 --+ server-message on
 -- verified the CBRD-25373
 
-evaluate 'undersigned smallint';
+select 'undersigned smallint';
 create or replace procedure under_sint_minus()
 as
     under_sint smallint := -32768;
@@ -50,7 +50,7 @@ drop procedure under_sint_divide;
 
 
 
-evaluate 'undersigned int';
+select 'undersigned int';
 create or replace procedure under_int_minus()
 as
     under_int int := -2147483648;
@@ -93,7 +93,7 @@ drop procedure under_int_divide;
 
 
 
-evaluate ' undersigned bigint';
+select ' undersigned bigint';
 create or replace procedure under_bint_minus()
 as
     under_bint bigint := -9223372036854775808;
@@ -136,7 +136,7 @@ drop procedure under_bint_divide;
 
 
 
-evaluate 'smallint';
+select 'smallint';
 create or replace procedure over_sint_minus()
 as
     over_sint smallint := 0;
@@ -179,7 +179,7 @@ drop procedure over_sint_divide;
 
 
 
-evaluate 'int';
+select 'int';
 create or replace procedure over_int_minus()
 as
     over_int int := 0;
@@ -222,7 +222,7 @@ drop procedure over_int_divide;
 
 
 
-evaluate 'bigint';
+select 'bigint';
 create or replace procedure over_bint_minus()
 as
     over_bint bigint := 0;

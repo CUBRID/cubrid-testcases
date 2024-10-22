@@ -136,7 +136,7 @@ drop procedure t_FLOAT_DOUBLE ;
 
 
 call print_message('t_NUMERIC_DOUBLE. This scenario is a success.');
-create or replace procedure t_NUMERIC_DOUBLE(param_type string, variables_type string, param NUMERIC(8,4) ) as 
+create or replace procedure t_NUMERIC_DOUBLE(param_type string, variables_type string, param NUMERIC ) as 
 VAR DOUBLE := param ;
 VAR1 DOUBLE  ;
 begin
@@ -144,7 +144,7 @@ VAR1 := VAR ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', param=>variables = '|| VAR ); 
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
-call t_NUMERIC_DOUBLE('NUMERIC(8,4)', 'DOUBLE', cast( 0.123456789 as numeric(4,4) ) ) ;
+call t_NUMERIC_DOUBLE('NUMERIC', 'DOUBLE', cast( 0.123456789 as numeric(4,4) ) ) ;
 drop procedure t_NUMERIC_DOUBLE ;
 
 
@@ -157,7 +157,7 @@ VAR1 := VAR ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', param=>variables = '|| VAR ); 
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
-call t_BIGINT_DOUBLE('BIGINT', 'DOUBLE', decode('DOUBLE', 'INT',cast( 34589012 as bigint ) /1000, 'SHORT', cast( 34589012 as bigint ) /10000, 'NUMERIC(8,4)', cast( 34589012 as bigint ) /10000, cast( 34589012 as bigint ) )  ) ;
+call t_BIGINT_DOUBLE('BIGINT', 'DOUBLE', decode('DOUBLE', 'INT',cast( 34589012 as bigint ) /1000, 'SHORT', cast( 34589012 as bigint ) /10000, 'NUMERIC', cast( 34589012 as bigint ) /10000, cast( 34589012 as bigint ) )  ) ;
 drop procedure t_BIGINT_DOUBLE ;
 
 
@@ -170,7 +170,7 @@ VAR1 := VAR ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', param=>variables = '|| VAR ); 
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
-call t_INT_DOUBLE('INT', 'DOUBLE', decode('DOUBLE', 'INT',cast( 782346 as int ) /1000, 'SHORT', cast( 782346 as int ) /10000, 'NUMERIC(8,4)', cast( 782346 as int ) /10000, cast( 782346 as int ) )  ) ;
+call t_INT_DOUBLE('INT', 'DOUBLE', decode('DOUBLE', 'INT',cast( 782346 as int ) /1000, 'SHORT', cast( 782346 as int ) /10000, 'NUMERIC', cast( 782346 as int ) /10000, cast( 782346 as int ) )  ) ;
 drop procedure t_INT_DOUBLE ;
 
 
@@ -183,12 +183,12 @@ VAR1 := VAR ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', param=>variables = '|| VAR ); 
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
-call t_SHORT_DOUBLE('SHORT', 'DOUBLE', decode('DOUBLE', 'INT',cast( 8934 as short ) /1000, 'SHORT', cast( 8934 as short ) /10000, 'NUMERIC(8,4)', cast( 8934 as short ) /10000, cast( 8934 as short ) )  ) ;
+call t_SHORT_DOUBLE('SHORT', 'DOUBLE', decode('DOUBLE', 'INT',cast( 8934 as short ) /1000, 'SHORT', cast( 8934 as short ) /10000, 'NUMERIC', cast( 8934 as short ) /10000, cast( 8934 as short ) )  ) ;
 drop procedure t_SHORT_DOUBLE ;
 
 
-call print_message('t_BIT(8)_DOUBLE. This scenario is a failure.');
-create or replace procedure t_BIT_DOUBLE(param_type string, variables_type string, param BIT(8) ) as 
+call print_message('t_BIT_DOUBLE. This scenario is a failure.');
+create or replace procedure t_BIT_DOUBLE(param_type string, variables_type string, param BIT ) as 
 VAR DOUBLE := param ;
 VAR1 DOUBLE  ;
 begin
@@ -196,7 +196,7 @@ VAR1 := VAR ;
     dbms_output.put_line('param_type = ' ||param_type ||', variables_type = '||variables_type||', param=>variables = '|| VAR ); 
     dbms_output.put_line('variables=>variables = ' || VAR1  ); 
 end;
-call t_BIT_DOUBLE('BIT(8)', 'DOUBLE', 0xaa ) ;
+call t_BIT_DOUBLE('BIT', 'DOUBLE', 0xaa ) ;
 drop procedure t_BIT_DOUBLE ;
 
 

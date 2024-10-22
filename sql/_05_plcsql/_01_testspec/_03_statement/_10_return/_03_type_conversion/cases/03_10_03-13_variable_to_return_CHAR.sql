@@ -6,7 +6,7 @@ end;
 
 
 call print_message('t_DATETIME_CHAR. This scenario is a success.');
-create or replace function t_DATETIME_CHAR(variables_type string, return_type string, param_value DATETIME ) RETURN CHAR(40) IS 
+create or replace function t_DATETIME_CHAR(variables_type string, return_type string, param_value DATETIME ) RETURN CHAR IS 
    VAR DATETIME  ;
 begin
    VAR := param_value ;
@@ -21,7 +21,7 @@ drop function t_DATETIME_CHAR ;
 
 
 call print_message('t_DATETIMELTZ_CHAR. This scenario is a failure.');
-create or replace function t_DATETIMELTZ_CHAR(variables_type string, return_type string, param_value DATETIMELTZ ) RETURN CHAR(40) IS 
+create or replace function t_DATETIMELTZ_CHAR(variables_type string, return_type string, param_value DATETIMELTZ ) RETURN CHAR IS 
    VAR DATETIMELTZ  ;
 begin
    VAR := param_value ;
@@ -36,7 +36,7 @@ drop function t_DATETIMELTZ_CHAR ;
 
 
 call print_message('t_DATETIMETZ_CHAR. This scenario is a failure.');
-create or replace function t_DATETIMETZ_CHAR(variables_type string, return_type string, param_value DATETIMETZ ) RETURN CHAR(40) IS 
+create or replace function t_DATETIMETZ_CHAR(variables_type string, return_type string, param_value DATETIMETZ ) RETURN CHAR IS 
    VAR DATETIMETZ  ;
 begin
    VAR := param_value ;
@@ -51,7 +51,7 @@ drop function t_DATETIMETZ_CHAR ;
 
 
 call print_message('t_DATE_CHAR. This scenario is a success.');
-create or replace function t_DATE_CHAR(variables_type string, return_type string, param_value DATE ) RETURN CHAR(40) IS 
+create or replace function t_DATE_CHAR(variables_type string, return_type string, param_value DATE ) RETURN CHAR IS 
    VAR DATE  ;
 begin
    VAR := param_value ;
@@ -66,7 +66,7 @@ drop function t_DATE_CHAR ;
 
 
 call print_message('t_TIME_CHAR. This scenario is a success.');
-create or replace function t_TIME_CHAR(variables_type string, return_type string, param_value TIME ) RETURN CHAR(40) IS 
+create or replace function t_TIME_CHAR(variables_type string, return_type string, param_value TIME ) RETURN CHAR IS 
    VAR TIME  ;
 begin
    VAR := param_value ;
@@ -81,7 +81,7 @@ drop function t_TIME_CHAR ;
 
 
 call print_message('t_TIMESTAMP_CHAR. This scenario is a success.');
-create or replace function t_TIMESTAMP_CHAR(variables_type string, return_type string, param_value TIMESTAMP ) RETURN CHAR(40) IS 
+create or replace function t_TIMESTAMP_CHAR(variables_type string, return_type string, param_value TIMESTAMP ) RETURN CHAR IS 
    VAR TIMESTAMP  ;
 begin
    VAR := param_value ;
@@ -96,7 +96,7 @@ drop function t_TIMESTAMP_CHAR ;
 
 
 call print_message('t_TIMESTAMPLTZ_CHAR. This scenario is a failure.');
-create or replace function t_TIMESTAMPLTZ_CHAR(variables_type string, return_type string, param_value TIMESTAMPLTZ ) RETURN CHAR(40) IS 
+create or replace function t_TIMESTAMPLTZ_CHAR(variables_type string, return_type string, param_value TIMESTAMPLTZ ) RETURN CHAR IS 
    VAR TIMESTAMPLTZ  ;
 begin
    VAR := param_value ;
@@ -111,7 +111,7 @@ drop function t_TIMESTAMPLTZ_CHAR ;
 
 
 call print_message('t_TIMESTAMPTZ_CHAR. This scenario is a failure.');
-create or replace function t_TIMESTAMPTZ_CHAR(variables_type string, return_type string, param_value TIMESTAMPTZ ) RETURN CHAR(40) IS 
+create or replace function t_TIMESTAMPTZ_CHAR(variables_type string, return_type string, param_value TIMESTAMPTZ ) RETURN CHAR IS 
    VAR TIMESTAMPTZ  ;
 begin
    VAR := param_value ;
@@ -126,7 +126,7 @@ drop function t_TIMESTAMPTZ_CHAR ;
 
 
 call print_message('t_DOUBLE_CHAR. This scenario is a success.');
-create or replace function t_DOUBLE_CHAR(variables_type string, return_type string, param_value DOUBLE ) RETURN CHAR(40) IS 
+create or replace function t_DOUBLE_CHAR(variables_type string, return_type string, param_value DOUBLE ) RETURN CHAR IS 
    VAR DOUBLE  ;
 begin
    VAR := param_value ;
@@ -141,7 +141,7 @@ drop function t_DOUBLE_CHAR ;
 
 
 call print_message('t_FLOAT_CHAR. This scenario is a success.');
-create or replace function t_FLOAT_CHAR(variables_type string, return_type string, param_value FLOAT ) RETURN CHAR(40) IS 
+create or replace function t_FLOAT_CHAR(variables_type string, return_type string, param_value FLOAT ) RETURN CHAR IS 
    VAR FLOAT  ;
 begin
    VAR := param_value ;
@@ -156,7 +156,7 @@ drop function t_FLOAT_CHAR ;
 
 
 call print_message('t_NUMERIC_CHAR. This scenario is a success.');
-create or replace function t_NUMERIC_CHAR(variables_type string, return_type string, param_value NUMERIC ) RETURN CHAR(40) IS 
+create or replace function t_NUMERIC_CHAR(variables_type string, return_type string, param_value NUMERIC ) RETURN CHAR IS 
    VAR NUMERIC(8,4)  ;
 begin
    VAR := param_value ;
@@ -171,7 +171,7 @@ drop function t_NUMERIC_CHAR ;
 
 
 call print_message('t_BIGINT_CHAR. This scenario is a success.');
-create or replace function t_BIGINT_CHAR(variables_type string, return_type string, param_value BIGINT ) RETURN CHAR(40) IS 
+create or replace function t_BIGINT_CHAR(variables_type string, return_type string, param_value BIGINT ) RETURN CHAR IS 
    VAR BIGINT  ;
 begin
    VAR := param_value ;
@@ -186,7 +186,7 @@ drop function t_BIGINT_CHAR ;
 
 
 call print_message('t_INT_CHAR. This scenario is a success.');
-create or replace function t_INT_CHAR(variables_type string, return_type string, param_value INT ) RETURN CHAR(40) IS 
+create or replace function t_INT_CHAR(variables_type string, return_type string, param_value INT ) RETURN CHAR IS 
    VAR INT  ;
 begin
    VAR := param_value ;
@@ -201,7 +201,7 @@ drop function t_INT_CHAR ;
 
 
 call print_message('t_SHORT_CHAR. This scenario is a success.');
-create or replace function t_SHORT_CHAR(variables_type string, return_type string, param_value SHORT ) RETURN CHAR(40) IS 
+create or replace function t_SHORT_CHAR(variables_type string, return_type string, param_value SHORT ) RETURN CHAR IS 
    VAR SHORT  ;
 begin
    VAR := param_value ;
@@ -216,7 +216,7 @@ drop function t_SHORT_CHAR ;
 
 
 call print_message('t_BIT(8)_CHAR. This scenario is a failure.');
-create or replace function t_BIT_CHAR(variables_type string, return_type string, param_value BIT ) RETURN CHAR(40) IS 
+create or replace function t_BIT_CHAR(variables_type string, return_type string, param_value BIT ) RETURN CHAR IS 
    VAR BIT(8)  ;
 begin
    VAR := param_value ;
@@ -231,7 +231,7 @@ drop function t_BIT_CHAR ;
 
 
 call print_message('t_BIT VARYING_CHAR. This scenario is a failure.');
-create or replace function t_BITVARYING_CHAR(variables_type string, return_type string, param_value BITVARYING ) RETURN CHAR(40) IS 
+create or replace function t_BITVARYING_CHAR(variables_type string, return_type string, param_value BITVARYING ) RETURN CHAR IS 
    VAR BIT VARYING  ;
 begin
    VAR := param_value ;
@@ -246,7 +246,7 @@ drop function t_BITVARYING_CHAR ;
 
 
 call print_message('t_CHAR_CHAR. This scenario is a success.');
-create or replace function t_CHAR_CHAR(variables_type string, return_type string, param_value CHAR ) RETURN CHAR(40) IS 
+create or replace function t_CHAR_CHAR(variables_type string, return_type string, param_value CHAR ) RETURN CHAR IS 
    VAR CHAR  ;
 begin
    VAR := param_value ;
@@ -261,7 +261,7 @@ drop function t_CHAR_CHAR ;
 
 
 call print_message('t_VARCHAR_CHAR. This scenario is a success.');
-create or replace function t_VARCHAR_CHAR(variables_type string, return_type string, param_value VARCHAR ) RETURN CHAR(40) IS 
+create or replace function t_VARCHAR_CHAR(variables_type string, return_type string, param_value VARCHAR ) RETURN CHAR IS 
    VAR VARCHAR  ;
 begin
    VAR := param_value ;
@@ -276,7 +276,7 @@ drop function t_VARCHAR_CHAR ;
 
 
 call print_message('t_SET_CHAR. This scenario is a failure.');
-create or replace function t_SET_CHAR(variables_type string, return_type string, param_value SET ) RETURN CHAR(40) IS 
+create or replace function t_SET_CHAR(variables_type string, return_type string, param_value SET ) RETURN CHAR IS 
    VAR SET  ;
 begin
    VAR := param_value ;
@@ -291,7 +291,7 @@ drop function t_SET_CHAR ;
 
 
 call print_message('t_MULTISET_CHAR. This scenario is a failure.');
-create or replace function t_MULTISET_CHAR(variables_type string, return_type string, param_value MULTISET ) RETURN CHAR(40) IS 
+create or replace function t_MULTISET_CHAR(variables_type string, return_type string, param_value MULTISET ) RETURN CHAR IS 
    VAR MULTISET  ;
 begin
    VAR := param_value ;
@@ -306,7 +306,7 @@ drop function t_MULTISET_CHAR ;
 
 
 call print_message('t_LIST_CHAR. This scenario is a failure.');
-create or replace function t_LIST_CHAR(variables_type string, return_type string, param_value LIST ) RETURN CHAR(40) IS 
+create or replace function t_LIST_CHAR(variables_type string, return_type string, param_value LIST ) RETURN CHAR IS 
    VAR LIST  ;
 begin
    VAR := param_value ;
@@ -321,7 +321,7 @@ drop function t_LIST_CHAR ;
 
 
 call print_message('t_ENUM_CHAR. This scenario is a failure.');
-create or replace function t_ENUM_CHAR(variables_type string, return_type string, param_value ENUM ) RETURN CHAR(40) IS 
+create or replace function t_ENUM_CHAR(variables_type string, return_type string, param_value ENUM ) RETURN CHAR IS 
    VAR ENUM  ;
 begin
    VAR := param_value ;
@@ -336,7 +336,7 @@ drop function t_ENUM_CHAR ;
 
 
 call print_message('t_BLOB_CHAR. This scenario is a failure.');
-create or replace function t_BLOB_CHAR(variables_type string, return_type string, param_value BLOB ) RETURN CHAR(40) IS 
+create or replace function t_BLOB_CHAR(variables_type string, return_type string, param_value BLOB ) RETURN CHAR IS 
    VAR BLOB  ;
 begin
    VAR := param_value ;
@@ -351,7 +351,7 @@ drop function t_BLOB_CHAR ;
 
 
 call print_message('t_CLOB_CHAR. This scenario is a failure.');
-create or replace function t_CLOB_CHAR(variables_type string, return_type string, param_value CLOB ) RETURN CHAR(40) IS 
+create or replace function t_CLOB_CHAR(variables_type string, return_type string, param_value CLOB ) RETURN CHAR IS 
    VAR CLOB  ;
 begin
    VAR := param_value ;
@@ -366,7 +366,7 @@ drop function t_CLOB_CHAR ;
 
 
 call print_message('t_JSON_CHAR. This scenario is a failure.');
-create or replace function t_JSON_CHAR(variables_type string, return_type string, param_value JSON ) RETURN CHAR(40) IS 
+create or replace function t_JSON_CHAR(variables_type string, return_type string, param_value JSON ) RETURN CHAR IS 
    VAR JSON  ;
 begin
    VAR := param_value ;
