@@ -30,7 +30,7 @@ begin
    dbms_output.put_line('v_Double    ' || v_Double    );
 end;
 
--- error: data overflow on data type FLOAT
+-- error: data overflow on data type DOUBLE
 call double_max();
 drop procedure double_max;
 
@@ -41,7 +41,7 @@ begin
    dbms_output.put_line('v_Double    ' || v_Double    );
 end;
 
--- error: data overflow on data type FLOAT
+-- error: data overflow on data type DOUBLE
 call double_min();
 drop procedure double_min;
 
