@@ -11,9 +11,47 @@ public.fibonacci     fibonacci     PUBLIC
 
 
 ===================================================
-name    owner.name    substring(scode from 0 for 60)    
-Func_FIBONACCI     DBA     CREATE OR REPLACE FUNCTION dba.fibonacci(n INTEGER) RETURN I     
-Func_FIBONACCI     PUBLIC     CREATE OR REPLACE FUNCTION public.fibonacci(n INTEGER) RETUR     
+name    owner.name    scode    substr(icode, 0, 6)    
+Func_FIBONACCI     DBA     CREATE OR REPLACE FUNCTION dba.fibonacci(n INTEGER) RETURN INTEGER
+IS
+invalid_input EXCEPTION;
+BEGIN
+IF n <= 0 THEN
+RAISE invalid_input;
+END IF;
+IF n = 1 OR n = 2 THEN
+RETURN 1;
+ELSE
+RETURN fibonacci(n-1) + fibonacci(n-2);
+END IF;
+EXCEPTION
+WHEN invalid_input THEN
+DBMS_OUTPUT.put_line('invalid input: ' || n);
+RETURN -1;
+WHEN OTHERS THEN
+DBMS_OUTPUT.put_line('unknown exception');
+RETURN -1;
+END     import     
+Func_FIBONACCI     PUBLIC     CREATE OR REPLACE FUNCTION public.fibonacci(n INTEGER) RETURN INTEGER
+IS
+invalid_input EXCEPTION;
+BEGIN
+IF n <= 0 THEN
+RAISE invalid_input;
+END IF;
+IF n = 1 OR n = 2 THEN
+RETURN 1;
+ELSE
+RETURN dba.fibonacci(n-1) + dba.fibonacci(n-2);
+END IF;
+EXCEPTION
+WHEN invalid_input THEN
+DBMS_OUTPUT.put_line('invalid input: ' || n);
+RETURN -1;
+WHEN OTHERS THEN
+DBMS_OUTPUT.put_line('unknown exception');
+RETURN -1;
+END     import     
 
 
 ===================================================

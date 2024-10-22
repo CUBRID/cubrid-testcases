@@ -47,7 +47,7 @@ END;
 
 -- check onwer & source
 SELECT unique_name, sp_name, owner.name FROM _db_stored_procedure WHERE is_system_generated = 0 order by owner.name;
-SELECT 'Func_FIBONACCI' as "name", owner.name, SUBSTRING(scode,0,60) FROM _db_stored_procedure_code order by owner.name;
+SELECT 'Func_FIBONACCI' as "name", owner.name, scode, substr(icode,0,6) FROM _db_stored_procedure_code order by owner.name;
 
 -- return: 2
 select fibonacci(3) as "dba fibonacci: succ" from dual;
