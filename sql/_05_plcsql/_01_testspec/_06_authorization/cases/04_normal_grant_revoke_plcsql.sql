@@ -1,5 +1,5 @@
 --+ server-message on
--- verified the CBRD-25499, CBRD-25506
+-- verified the CBRD-25499
 
 
 -- GRANT test
