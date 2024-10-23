@@ -63,7 +63,6 @@ REVOKE EXECUTE ON PROCEDURE u1.test1 FROM u2;
 evaluate('in u1');
 call login('u1','') on class db_user;
 
--- bug, If use the command a 'show grant' on the not DBA user group, that return a error
 SHOW GRANTS FOR u1;
 
 
