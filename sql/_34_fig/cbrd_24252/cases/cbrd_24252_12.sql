@@ -45,7 +45,9 @@ from
     t_super_parent as s
     inner join t_child as c on c.parent_col_a = s.col_a
 where
-    c.col_b = -1;
+    c.col_b = -1
+order by
+    c.col_a;
 show trace;
 
 select /*+ recompile */
@@ -56,7 +58,10 @@ from
     t_super_parent as s
 where
     c.parent_col_a = s.col_a
-    and c.col_b = -1;
+    and c.col_b = -1
+order by
+    c.col_a;
+
 show trace;
 
 drop table if exists t_child;
