@@ -1,6 +1,9 @@
 -- If you execute the AUTO_INCREMENT and DEFAULT properties individually using the ALTER TABLE MODIFY syntax on the same column, the two properties coexist in that column even though they should not.
 -- If two properties are individually executed for the column, the property must be changed to the last executed property.
 
+-- All table drop
+DROP TABLE IF EXISTS tbl0, tbl1, tbl2, tbl3, tbl4, tbl5, tbl6;
+
 -- 0. An error occurs when using auto_increment and default properties together.
 CREATE TABLE tbl0 (col1 INTEGER AUTO_INCREMENT(1,1) default 0);
 
