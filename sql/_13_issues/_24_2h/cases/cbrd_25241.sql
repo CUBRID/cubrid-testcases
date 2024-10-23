@@ -40,6 +40,28 @@ drop serial cubrid_seq;
 drop user test_user1;
 
 /* ------------------------------------------------------------------------------------*/
+/* 2. Test when created with serial cache and changed to another user                  */
+/* ------------------------------------------------------------------------------------*/
+create user test_user1;
+create user test_user2;
+create serial test_user1.cubrid_seq cache 5;
+SELECT test_user1.cubrid_seq.nextval from dual;
+
+alter serial test_user1.cubrid_seq OWNER TO test_user2;
+SELECT unique_name, name, owner.name, current_val, cached_num, [comment] FROM db_serial WHERE name = 'cubrid_seq';
+
+SELECT test_user2.cubrid_seq.nextval from dual;
+
+alter serial test_user2.cubrid_seq comment 'test comment';
+SELECT unique_name, name, owner.name, current_val, cached_num, [comment] FROM db_serial WHERE name = 'cubrid_seq';
+
+SELECT test_user2.cubrid_seq.nextval from dual;
+
+/* reset */
+DROP serial test_user2.cubrid_seq;
+DROP USER test_user1;
+DROP USER test_user2;
+/* ------------------------------------------------------------------------------------*/
 /* 3. Test whether serial can be created in the view table                             */
 /* ------------------------------------------------------------------------------------*/
 create serial cubrid_seq;
