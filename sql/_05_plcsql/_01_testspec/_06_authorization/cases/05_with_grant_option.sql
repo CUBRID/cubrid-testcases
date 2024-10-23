@@ -13,21 +13,21 @@ end;
 
 create user t1;
 
--- error: Grant option is not allowed for procedure
+evaluate 'error: Grant option is not allowed for procedure';
 grant execute on procedure public.proc_test to t1 with grant option;
 grant execute on procedure public.func_test to t1 with grant option;
 
 grant execute on procedure public.proc_test to t1;
 grant execute on procedure public.func_test to t1;
 
--- in t1
+evaluate 'connect t1';
 call login('t1','') on class db_user;
 
 call public.proc_test();
 call public.func_test();
 
 
--- in dba
+evaluate 'connect dba';
 call login('dba','') on class db_user;
 
 drop user t1;
