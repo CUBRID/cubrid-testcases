@@ -51,13 +51,15 @@ col_a    col_b
 trace    
 
 Query Plan:
-  TABLE SCAN (c)
+  SORT (order by)
+    TABLE SCAN (c)
 
-  rewritten query: select c.col_a, c.col_b from [dba.t_child] c where c.col_b= ?:? 
+  rewritten query: select c.col_a, c.col_b from [dba.t_child] c where c.col_b= ?:?  order by ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_child), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
@@ -71,13 +73,15 @@ col_a    col_b
 trace    
 
 Query Plan:
-  TABLE SCAN (c)
+  SORT (order by)
+    TABLE SCAN (c)
 
-  rewritten query: select c.col_a, c.col_b from [dba.t_child] c where c.col_b= ?:? 
+  rewritten query: select c.col_a, c.col_b from [dba.t_child] c where c.col_b= ?:?  order by ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_child), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
