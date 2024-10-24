@@ -39,8 +39,33 @@ alter serial cubrid_seq start with 1 OWNER TO test_user1 comment '2) start with 
 drop serial cubrid_seq;
 drop user test_user1;
 
+/* ------------------------------------------*/
+/* 2. alter serial owner to permission check */
+/* ------------------------------------------*/
+create user test_user1 groups dba;
+create user test_user2;
+
+create serial cubrid_seq;
+select unique_name, name, owner.name, [comment] from db_serial where name = 'cubrid_seq';
+
+alter serial cubrid_seq OWNER TO test_user1;
+select unique_name, name, owner.name, [comment] from db_serial where name = 'cubrid_seq';
+
+CALL login ('test_user1', '') ON CLASS db_user;
+alter serial cubrid_seq OWNER TO test_user2;
+select unique_name, name, owner.name, [comment] from db_serial where name = 'cubrid_seq';
+
+CALL login ('test_user2', '') ON CLASS db_user;
+alter serial cubrid_seq OWNER TO test_user1;
+
+/* reset */
+CALL login ('dba', '') ON CLASS db_user;
+drop serial test_user2.cubrid_seq;
+drop user test_user1;
+drop user test_user2;
+
 /* ------------------------------------------------------------------------------------*/
-/* 2. Test when created with serial cache and changed to another user                  */
+/* 2-1. Test when created with serial cache and changed to another user                  */
 /* ------------------------------------------------------------------------------------*/
 create user test_user1;
 create user test_user2;
