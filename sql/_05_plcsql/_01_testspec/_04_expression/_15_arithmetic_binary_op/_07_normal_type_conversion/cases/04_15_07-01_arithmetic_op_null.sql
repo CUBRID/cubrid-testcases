@@ -349,7 +349,10 @@ begin
     dbms_output.put_line('');
 end;
 
-select 'This test produces a compilation error. ( t_compile_error_string, null )' ;
+call t_compile_error_string_null('Arithmetic operations : string, null');
+drop procedure t_compile_error_string_null;
+
+select 'This test is a normal run case. ( t_compile_error_string, null )' ;
 create or replace procedure t_compile_error_string_null( tc_comment string ) as 
     left_boolean                   boolean       := TRUE;
     left_string                    string        := '123';
@@ -414,7 +417,10 @@ begin
     dbms_output.put_line('');
 end;
 
-select 'This test produces a compilation error. ( t_compile_error_string, null )' ;
+call t_compile_error_string_null('Arithmetic operations : string, null');
+drop procedure t_compile_error_string_null;
+
+select 'This test is a normal run case. ( t_compile_error_string, null )' ;
 create or replace procedure t_compile_error_string_null( tc_comment string ) as 
     left_boolean                   boolean       := TRUE;
     left_string                    string        := '123';
@@ -479,7 +485,10 @@ begin
     dbms_output.put_line('');
 end;
 
-select 'This test produces a compilation error. ( t_compile_error_string, null )' ;
+call t_compile_error_string_null('Arithmetic operations : string, null');
+drop procedure t_compile_error_string_null;
+
+select 'This test is a normal run case. ( t_compile_error_string, null )' ;
 create or replace procedure t_compile_error_string_null( tc_comment string ) as 
     left_boolean                   boolean       := TRUE;
     left_string                    string        := '123';
@@ -544,7 +553,10 @@ begin
     dbms_output.put_line('');
 end;
 
-select 'This test produces a compilation error. ( t_compile_error_string, null )' ;
+call t_compile_error_string_null('Arithmetic operations : string, null');
+drop procedure t_compile_error_string_null;
+
+select 'This test is a normal run case. ( t_compile_error_string, null )' ;
 create or replace procedure t_compile_error_string_null( tc_comment string ) as 
     left_boolean                   boolean       := TRUE;
     left_string                    string        := '123';
@@ -608,6 +620,9 @@ begin
     dbms_output.put_line('left_string_null / null = '||left_string_null / null ) ; 
     dbms_output.put_line('');
 end;
+
+call t_compile_error_string_null('Arithmetic operations : string, null');
+drop procedure t_compile_error_string_null;
 
 select 'This test is a normal run case. ( t_short, null )' ;
 create or replace procedure t_short_null( tc_comment string ) as 
