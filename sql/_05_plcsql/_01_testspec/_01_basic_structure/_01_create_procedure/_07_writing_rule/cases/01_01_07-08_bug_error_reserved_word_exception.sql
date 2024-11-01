@@ -11,7 +11,7 @@ begin
         RAISE AND;
     end if;
 EXCEPTION    WHEN AND THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'AS' ;
@@ -22,7 +22,7 @@ begin
         RAISE AS;
     end if;
 EXCEPTION    WHEN AS THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'BETWEEN' ;
@@ -33,7 +33,7 @@ begin
         RAISE BETWEEN;
     end if;
 EXCEPTION    WHEN BETWEEN THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'BIGINT' ;
@@ -44,7 +44,7 @@ begin
         RAISE BIGINT;
     end if;
 EXCEPTION    WHEN BIGINT THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'BOOLEAN' ;
@@ -55,7 +55,7 @@ begin
         RAISE BOOLEAN;
     end if;
 EXCEPTION    WHEN BOOLEAN THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'BY' ;
@@ -66,7 +66,7 @@ begin
         RAISE BY;
     end if;
 EXCEPTION    WHEN BY THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'CHAR' ;
@@ -77,7 +77,7 @@ begin
         RAISE CHAR;
     end if;
 EXCEPTION    WHEN CHAR THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'CLOSE' ;
@@ -88,7 +88,7 @@ begin
         RAISE CLOSE;
     end if;
 EXCEPTION    WHEN CLOSE THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'COMMIT' ;
@@ -99,7 +99,7 @@ begin
         RAISE COMMIT;
     end if;
 EXCEPTION    WHEN COMMIT THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'CONSTANT' ;
@@ -110,7 +110,7 @@ begin
         RAISE CONSTANT;
     end if;
 EXCEPTION    WHEN CONSTANT THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'CONTINUE' ;
@@ -121,7 +121,7 @@ begin
         RAISE CONTINUE;
     end if;
 EXCEPTION    WHEN CONTINUE THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'CREATE' ;
@@ -132,7 +132,7 @@ begin
         RAISE CREATE;
     end if;
 EXCEPTION    WHEN CREATE THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'CURSOR' ;
@@ -143,7 +143,7 @@ begin
         RAISE CURSOR;
     end if;
 EXCEPTION    WHEN CURSOR THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'DATE' ;
@@ -154,7 +154,7 @@ begin
         RAISE DATE;
     end if;
 EXCEPTION    WHEN DATE THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'DATETIME' ;
@@ -165,7 +165,7 @@ begin
         RAISE DATETIME;
     end if;
 EXCEPTION    WHEN DATETIME THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'DATETIMELTZ' ;
@@ -176,7 +176,7 @@ begin
         RAISE DATETIMELTZ;
     end if;
 EXCEPTION    WHEN DATETIMELTZ THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'DATETIMETZ' ;
@@ -187,7 +187,7 @@ begin
         RAISE DATETIMETZ;
     end if;
 EXCEPTION    WHEN DATETIMETZ THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'DEC' ;
@@ -198,7 +198,7 @@ begin
         RAISE DEC;
     end if;
 EXCEPTION    WHEN DEC THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'DECIMAL' ;
@@ -209,7 +209,7 @@ begin
         RAISE DECIMAL;
     end if;
 EXCEPTION    WHEN DECIMAL THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'DECLARE' ;
@@ -220,7 +220,7 @@ begin
         RAISE DECLARE;
     end if;
 EXCEPTION    WHEN DECLARE THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'DEFAULT' ;
@@ -231,7 +231,7 @@ begin
         RAISE DEFAULT;
     end if;
 EXCEPTION    WHEN DEFAULT THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'DIV' ;
@@ -242,7 +242,7 @@ begin
         RAISE DIV;
     end if;
 EXCEPTION    WHEN DIV THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'DOUBLE' ;
@@ -253,7 +253,7 @@ begin
         RAISE DOUBLE;
     end if;
 EXCEPTION    WHEN DOUBLE THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'ELSE' ;
@@ -264,7 +264,7 @@ begin
         RAISE ELSE;
     end if;
 EXCEPTION    WHEN ELSE THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'ELSIF' ;
@@ -275,7 +275,7 @@ begin
         RAISE ELSIF;
     end if;
 EXCEPTION    WHEN ELSIF THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'END' ;
@@ -286,7 +286,7 @@ begin
         RAISE END;
     end if;
 EXCEPTION    WHEN END THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'ESCAPE' ;
@@ -297,7 +297,7 @@ begin
         RAISE ESCAPE;
     end if;
 EXCEPTION    WHEN ESCAPE THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'EXCEPTION' ;
@@ -308,7 +308,7 @@ begin
         RAISE EXCEPTION;
     end if;
 EXCEPTION    WHEN EXCEPTION THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'EXECUTE' ;
@@ -319,7 +319,7 @@ begin
         RAISE EXECUTE;
     end if;
 EXCEPTION    WHEN EXECUTE THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'EXIT' ;
@@ -330,7 +330,7 @@ begin
         RAISE EXIT;
     end if;
 EXCEPTION    WHEN EXIT THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'FALSE' ;
@@ -341,7 +341,7 @@ begin
         RAISE FALSE;
     end if;
 EXCEPTION    WHEN FALSE THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'FETCH' ;
@@ -352,7 +352,7 @@ begin
         RAISE FETCH;
     end if;
 EXCEPTION    WHEN FETCH THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'FLOAT' ;
@@ -363,7 +363,7 @@ begin
         RAISE FLOAT;
     end if;
 EXCEPTION    WHEN FLOAT THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'FOR' ;
@@ -374,7 +374,7 @@ begin
         RAISE FOR;
     end if;
 EXCEPTION    WHEN FOR THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'IMMEDIATE' ;
@@ -385,7 +385,7 @@ begin
         RAISE IMMEDIATE;
     end if;
 EXCEPTION    WHEN IMMEDIATE THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'IN' ;
@@ -396,7 +396,7 @@ begin
         RAISE IN;
     end if;
 EXCEPTION    WHEN IN THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'INT' ;
@@ -407,7 +407,7 @@ begin
         RAISE INT;
     end if;
 EXCEPTION    WHEN INT THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'INTEGER' ;
@@ -418,7 +418,7 @@ begin
         RAISE INTEGER;
     end if;
 EXCEPTION    WHEN INTEGER THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'INTO' ;
@@ -429,7 +429,7 @@ begin
         RAISE INTO;
     end if;
 EXCEPTION    WHEN INTO THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'IS' ;
@@ -440,7 +440,7 @@ begin
         RAISE IS;
     end if;
 EXCEPTION    WHEN IS THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'LIKE' ;
@@ -451,7 +451,7 @@ begin
         RAISE LIKE;
     end if;
 EXCEPTION    WHEN LIKE THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'LIST' ;
@@ -462,7 +462,7 @@ begin
         RAISE LIST;
     end if;
 EXCEPTION    WHEN LIST THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'MOD' ;
@@ -473,7 +473,7 @@ begin
         RAISE MOD;
     end if;
 EXCEPTION    WHEN MOD THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'MULTISET' ;
@@ -484,7 +484,7 @@ begin
         RAISE MULTISET;
     end if;
 EXCEPTION    WHEN MULTISET THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'NOT' ;
@@ -495,7 +495,7 @@ begin
         RAISE NOT;
     end if;
 EXCEPTION    WHEN NOT THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'NULL' ;
@@ -506,7 +506,7 @@ begin
         RAISE NULL;
     end if;
 EXCEPTION    WHEN NULL THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'NUMERIC' ;
@@ -517,7 +517,7 @@ begin
         RAISE NUMERIC;
     end if;
 EXCEPTION    WHEN NUMERIC THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'OPEN' ;
@@ -528,7 +528,7 @@ begin
         RAISE OPEN;
     end if;
 EXCEPTION    WHEN OPEN THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'OR' ;
@@ -539,7 +539,7 @@ begin
         RAISE OR;
     end if;
 EXCEPTION    WHEN OR THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'OUT' ;
@@ -550,7 +550,7 @@ begin
         RAISE OUT;
     end if;
 EXCEPTION    WHEN OUT THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'PRAGMA' ;
@@ -561,7 +561,7 @@ begin
         RAISE PRAGMA;
     end if;
 EXCEPTION    WHEN PRAGMA THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'RAISE' ;
@@ -572,7 +572,7 @@ begin
         RAISE RAISE;
     end if;
 EXCEPTION    WHEN RAISE THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'REAL' ;
@@ -583,7 +583,7 @@ begin
         RAISE REAL;
     end if;
 EXCEPTION    WHEN REAL THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'REPLACE' ;
@@ -594,7 +594,7 @@ begin
         RAISE REPLACE;
     end if;
 EXCEPTION    WHEN REPLACE THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'RETURN' ;
@@ -605,7 +605,7 @@ begin
         RAISE RETURN;
     end if;
 EXCEPTION    WHEN RETURN THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'REVERSE' ;
@@ -616,7 +616,7 @@ begin
         RAISE REVERSE;
     end if;
 EXCEPTION    WHEN REVERSE THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'ROLLBACK' ;
@@ -627,7 +627,7 @@ begin
         RAISE ROLLBACK;
     end if;
 EXCEPTION    WHEN ROLLBACK THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'SEQUENCE' ;
@@ -638,7 +638,7 @@ begin
         RAISE SEQUENCE;
     end if;
 EXCEPTION    WHEN SEQUENCE THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'SET' ;
@@ -649,7 +649,7 @@ begin
         RAISE SET;
     end if;
 EXCEPTION    WHEN SET THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'SETEQ' ;
@@ -660,7 +660,7 @@ begin
         RAISE SETEQ;
     end if;
 EXCEPTION    WHEN SETEQ THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'SETNEQ' ;
@@ -671,7 +671,7 @@ begin
         RAISE SETNEQ;
     end if;
 EXCEPTION    WHEN SETNEQ THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'SHORT' ;
@@ -682,7 +682,7 @@ begin
         RAISE SHORT;
     end if;
 EXCEPTION    WHEN SHORT THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'SMALLINT' ;
@@ -693,7 +693,7 @@ begin
         RAISE SMALLINT;
     end if;
 EXCEPTION    WHEN SMALLINT THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'SQL' ;
@@ -704,7 +704,7 @@ begin
         RAISE SQL;
     end if;
 EXCEPTION    WHEN SQL THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'STRING' ;
@@ -715,7 +715,7 @@ begin
         RAISE STRING;
     end if;
 EXCEPTION    WHEN STRING THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'SUBSET' ;
@@ -726,7 +726,7 @@ begin
         RAISE SUBSET;
     end if;
 EXCEPTION    WHEN SUBSET THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'SUBSETEQ' ;
@@ -737,7 +737,7 @@ begin
         RAISE SUBSETEQ;
     end if;
 EXCEPTION    WHEN SUBSETEQ THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'SUPERSET' ;
@@ -748,7 +748,7 @@ begin
         RAISE SUPERSET;
     end if;
 EXCEPTION    WHEN SUPERSET THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'SUPERSETEQ' ;
@@ -759,7 +759,7 @@ begin
         RAISE SUPERSETEQ;
     end if;
 EXCEPTION    WHEN SUPERSETEQ THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'SYS_REFCURSOR' ;
@@ -770,7 +770,7 @@ begin
         RAISE SYS_REFCURSOR;
     end if;
 EXCEPTION    WHEN SYS_REFCURSOR THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'THEN' ;
@@ -781,7 +781,7 @@ begin
         RAISE THEN;
     end if;
 EXCEPTION    WHEN THEN THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'TIME' ;
@@ -792,7 +792,7 @@ begin
         RAISE TIME;
     end if;
 EXCEPTION    WHEN TIME THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'TIMESTAMP' ;
@@ -803,7 +803,7 @@ begin
         RAISE TIMESTAMP;
     end if;
 EXCEPTION    WHEN TIMESTAMP THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'TIMESTAMPLTZ' ;
@@ -814,7 +814,7 @@ begin
         RAISE TIMESTAMPLTZ;
     end if;
 EXCEPTION    WHEN TIMESTAMPLTZ THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'TIMESTAMPTZ' ;
@@ -825,7 +825,7 @@ begin
         RAISE TIMESTAMPTZ;
     end if;
 EXCEPTION    WHEN TIMESTAMPTZ THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'TRUE' ;
@@ -836,7 +836,7 @@ begin
         RAISE TRUE;
     end if;
 EXCEPTION    WHEN TRUE THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'USING' ;
@@ -847,7 +847,7 @@ begin
         RAISE USING;
     end if;
 EXCEPTION    WHEN USING THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'VARCHAR' ;
@@ -858,7 +858,7 @@ begin
         RAISE VARCHAR;
     end if;
 EXCEPTION    WHEN VARCHAR THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'WHEN' ;
@@ -869,7 +869,7 @@ begin
         RAISE WHEN;
     end if;
 EXCEPTION    WHEN WHEN THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'WHILE' ;
@@ -880,7 +880,7 @@ begin
         RAISE WHILE;
     end if;
 EXCEPTION    WHEN WHILE THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'WORK' ;
@@ -891,7 +891,7 @@ begin
         RAISE WORK;
     end if;
 EXCEPTION    WHEN WORK THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'XOR' ;
@@ -902,7 +902,7 @@ begin
         RAISE XOR;
     end if;
 EXCEPTION    WHEN XOR THEN 
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'INSERT' ;
@@ -913,7 +913,7 @@ begin
         RAISE INSERT;
     end if;
 EXCEPTION    WHEN INSERT THEN
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'TRUNCATE' ;
@@ -924,7 +924,7 @@ begin
         RAISE TRUNCATE;
     end if;
 EXCEPTION    WHEN TRUNCATE THEN
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'AUTONOMOUS_TRANSACTION' ;
@@ -935,7 +935,7 @@ begin
         RAISE AUTONOMOUS_TRANSACTION;
     end if;
 EXCEPTION    WHEN AUTONOMOUS_TRANSACTION THEN
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 
 select 'BEGIN' ;
@@ -946,7 +946,7 @@ begin
         RAISE BEGIN;
     end if;
 EXCEPTION    WHEN BEGIN THEN
-              put_line('call exception: ');
+              DBMS_OUTPUT.put_line('call exception: ');
 end;
 end;
 end;
