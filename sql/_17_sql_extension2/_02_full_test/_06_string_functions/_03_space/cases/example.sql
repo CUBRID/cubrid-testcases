@@ -68,6 +68,7 @@ execute s using 12345.5e0, 12346;
 execute s using 12345.4, 12345;
 execute s using 12345.4f, 12345;
 execute s using 12345.4e0, 12345;
+deallocate prepare s;
 
 -- failure
 prepare s from 'select space(?)';
@@ -80,6 +81,7 @@ execute s using timestamp'2010-09-02 17:30:30';
 -- the following queries should be succeeded when implicit type conversion is introduced
 execute s using '1';
 execute s using n'1';
+deallocate prepare s;
 
 
 set system parameters 'string_max_size_bytes=1048576';

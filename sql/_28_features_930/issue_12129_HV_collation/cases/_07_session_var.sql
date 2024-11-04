@@ -15,6 +15,7 @@ prepare s from 'select @v + ?, collation (@v + ?)';
 execute s using '2','2';
 execute s using _utf8'2',_utf8'2';
 execute s using _iso88591'2',_iso88591'2';
+deallocate prepare s;
 
 set names iso88591;
 set @v1='a';

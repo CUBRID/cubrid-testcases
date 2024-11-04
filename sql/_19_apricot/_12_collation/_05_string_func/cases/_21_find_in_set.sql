@@ -17,13 +17,16 @@ select s1,find_in_set (s1,'aa,ab') from t2 order by 1;
 -- late binding
 prepare s from 'select find_in_set(? , ?)';
 execute s using 'aa','aa,ab';
+deallocate prepare s;
 
 
 prepare s from 'select s1, find_in_set(s1 , ?) from t1 order by 1';
 execute s using 'aa,ab';
+deallocate prepare s;
 
 prepare s from 'select s1, find_in_set(s1 , ?) from t2 order by 1';
 execute s using 'aa,ab';
+deallocate prepare s;
 
 select t1.s1,t2.s1,find_in_set (t1.s1,t2.s1) from t1,t2 order by 1,2,3;
 

@@ -24,20 +24,23 @@ select * from t order by id desc limit 10 offset 4 ;
 
 prepare st from 'select * from t order by id desc limit ? offset ?';
 execute st using 4,10;
-
+deallocate prepare st;
 drop t;
+
 create table t(id int auto_increment(3,4));
 insert into t select NULL from db_class limit 20;
 prepare st from 'select * from (select * from t limit ? offset ?)  t1 order by 1 desc limit ? offset ?';
 execute st using  7,3,3,2;
-
+deallocate prepare st;
 drop t;
+
 create table t(id varchar(10));
 insert into t values('abc'),('dbb'),('abb'),(' tt'),('ta'),(' ta '),('o'),('b'),('a'),('c ');
 prepare st from 'select * from (select * from t limit ? offset ?)  t1 order by 1 desc limit ? offset ?';
 execute st using 8,1,4,4;
-
+deallocate prepare st;
 drop t;
+
 create table t(id int) partition by hash(id) partitions 3;
 insert into t select rownum from db_class limit 40;
 select * from t order by 1 limit 5,10;

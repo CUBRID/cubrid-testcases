@@ -30,6 +30,7 @@ select concat_ws(cast (t1.sep as string collate utf8_bin), 't1.s1', t2.s1) from 
 -- late binding
 prepare s from 'select concat_ws(?, s1 ,?) from t1 order by 1';
 execute s using '+', 'c';
+deallocate prepare s;
 
 
 drop table t1;

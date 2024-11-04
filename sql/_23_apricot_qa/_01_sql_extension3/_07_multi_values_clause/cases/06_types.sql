@@ -18,18 +18,23 @@ values ( timestamp '23:15:45 10/31/2009' + 65535,    timestamp '23:15:45 10/31/2
 
 prepare s from 'values(timestamp ''23:15:45 10/31/2009''),(?)';
 execute s using 123;
+deallocate prepare s;
 
 prepare s from 'select (timestamp ''23:15:45 10/31/2009'') union select (?)';
 execute s using 123;
+deallocate prepare s;
 
 prepare s from 'values(1+  ? )';
 execute s using  timestamp '23:15:45 10/31/2009';
+deallocate prepare s;
 
 prepare s from 'values(1+ ''10'' + ? )';
 execute s using  timestamp '23:15:45 10/31/2009';
+deallocate prepare s;
 
 prepare s from 'values(timestamp ''23:15:45 10/31/2009'' + ? )';
 execute s using  10;
+deallocate prepare s;
 
 
 values (date '1989-10-01'), (date '1990-02-21');

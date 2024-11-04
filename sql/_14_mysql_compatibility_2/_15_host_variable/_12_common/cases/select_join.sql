@@ -18,18 +18,21 @@ select t1.i1, t2.i1 from t1,t2 where  t1.i1 = t2.d1 - 1.0 order by 1,2;
 
 prepare st from 'select t1.i1, t2.i1 from t1,t2 where  t1.i1 = t2.d1 - ? order by 1,2';
 execute st using 1.0;
+deallocate prepare st;
 
 
 select t1.i1, t2.i1 from t1 left join t2 on t1.i1 = t2.d1 - 1.0 order by 1,2;
 
 prepare st from 'select t1.i1, t2.i1 from t1 left join t2 on t1.i1 = t2.d1 - ? order by 1,2';
 execute st using 1.0;
+deallocate prepare st;
 
 
 select t1.i1, t2.d1 from t1 join t2 on t1.i1 * '10' < t2.d1 - 30.0 order by 1,2;
 
 prepare st from 'select t1.i1, t2.d1 from t1 join t2 on t1.i1 * ? < t2.d1 - ? order by 1,2';
 execute st using '10', 30.0;
+deallocate prepare st;
 
 drop t1;
 drop t2;

@@ -749,6 +749,8 @@ prepare st from 'SELECT COUNT(*) AS CNT FROM that_d D , (SELECT DID FROM that_de
 execute st using 'testadmin',
 'testadmin', 'testadmin', 'testadmin', 'testadmin', 1, 2, '2013-01-01',
 '2013-03-25 23:59:59';
+deallocate prepare st;
+
 drop table if exists that1;
 drop table if exists that2;
 drop table if exists that3;

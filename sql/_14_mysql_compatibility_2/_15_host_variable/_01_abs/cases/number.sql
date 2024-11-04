@@ -19,9 +19,12 @@ select abs(4.001e1);
 
 prepare st from 'select abs(?)';
 execute st using 4;
+deallocate prepare st;
 
 prepare st from 'select abs(?)';
 execute st using 4.12;
+deallocate prepare st;
 
 prepare st from 'select abs(?)';
 execute st using 4.001123e1;
+deallocate prepare st;

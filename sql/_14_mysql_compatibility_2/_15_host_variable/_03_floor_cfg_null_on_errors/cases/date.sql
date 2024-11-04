@@ -16,6 +16,7 @@ select floor(date'2001-10-10');
 
 prepare st from 'select floor(?)';
 execute st using date'2001-10-11';
+deallocate prepare st;
 
 set system parameters 'return_null_on_function_errors=no';
 commit;

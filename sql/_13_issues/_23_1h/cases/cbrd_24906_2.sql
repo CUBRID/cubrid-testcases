@@ -29,6 +29,7 @@ from
   )';
 execute q using 1, 9;
 show trace;
+deallocate prepare q;
 
 
 -- test case 2
@@ -48,6 +49,7 @@ from
 limit 999, 1';
 execute q using 1, 9;
 show trace;
+deallocate prepare q;
 
 
 -- test case 3
@@ -68,6 +70,7 @@ from
 ';
 execute q using 9;
 show trace;
+deallocate prepare q;
 
 
 -- test case 4
@@ -88,6 +91,7 @@ from
 '; 
 execute q using 1;
 show trace;
+deallocate prepare q;
 
 
 -- test case 5
@@ -118,6 +122,7 @@ limit 999, 1
 ';
 execute q using 1,9;
 show trace;
+deallocate prepare q;
 
 
 -- test case 7
@@ -131,6 +136,7 @@ limit 999, 1
 ';
 execute q using 1, 9;
 show trace;
+deallocate prepare q;
 
 
 -- test case 8
@@ -144,6 +150,7 @@ where
 ';
 execute q using 1, 9;
 show trace;
+deallocate prepare q;
 
 
 -- test case 9
@@ -157,6 +164,7 @@ where
 ';
 execute q using 1, 9;
 show trace;
+deallocate prepare q;
 
 
 -- test case 10 
@@ -170,6 +178,7 @@ where
 ';
 execute q using 1,9;
 show trace;
+deallocate prepare q;
 
 
 -- test case 11 
@@ -183,6 +192,7 @@ where
 ';
 execute q using 1, 9;
 show trace;
+deallocate prepare q;
 
 
 -- test case 12 
@@ -196,6 +206,7 @@ where
 ';
 execute q using 1,9;
 show trace;
+deallocate prepare q;
 
 
 -- test case 13 
@@ -209,6 +220,7 @@ where
 ';
 execute q using 1, 9;
 show trace;
+deallocate prepare q;
 
 
 -- test case 14 
@@ -221,6 +233,7 @@ from
 ';
 execute q using 1, 9;
 show trace;
+deallocate prepare q;
 
 prepare q from '
 select /*+ recompile */
@@ -232,6 +245,7 @@ where a.col_a = b.col_a (+)
 ';
 execute q using 1, 9;
 show trace;
+deallocate prepare q;
 
 
 -- test case 15 
@@ -244,6 +258,7 @@ from
 ';
 execute q using 1, 9;
 show trace;
+deallocate prepare q;
 
 prepare q from '
 select /*+ recompile */
@@ -256,6 +271,7 @@ and b.col_b (+) = ?
 ';
 execute q using 1,9;
 show trace;
+deallocate prepare q;
 
 
 -- test case 16 
@@ -269,6 +285,7 @@ from
 ';
 execute q using 1, 9, 1;
 show trace;
+deallocate prepare q;
 
 prepare q from '
 select /*+ recompile */
@@ -282,6 +299,7 @@ and b.col_b = c.col_b (+)
 ';
 execute q using 1, 9, 1;
 show trace;
+deallocate prepare q;
 
 
 -- test case 17 
@@ -298,6 +316,7 @@ from
 ';
 execute q using 1, 9;
 show trace;
+deallocate prepare q;
 
 prepare q from '
 with b as
@@ -313,6 +332,7 @@ where a.col_a = b.col_a (+)
 ';
 execute q using 1, 9;
 show trace;
+deallocate prepare q;
 
 
 -- test case 18 
@@ -328,6 +348,7 @@ from
 ';
 execute q using 1, 9;
 show trace;
+deallocate prepare q;
 
 
 -- test case 19 
@@ -350,6 +371,7 @@ from
 ';
 execute q using 1, 9;
 show trace;
+deallocate prepare q;
 
 
 -- test case 20 
@@ -372,6 +394,7 @@ from
 ';
 execute q using 1, 9;
 show trace;
+deallocate prepare q;
 
 
 -- test case 21 
@@ -394,6 +417,7 @@ from
 ';
 execute q using 1,9;
 show trace;
+deallocate prepare q;
 
 
 -- test case 22 
@@ -413,6 +437,7 @@ from
 ';
 execute q using -1;
 show trace;
+deallocate prepare q;
 
 
 -- test case 23 
@@ -434,6 +459,7 @@ where
 ';
 execute q using 1, 9;
 show trace;
+deallocate prepare q;
 
 
 -- test case 24 
@@ -453,6 +479,7 @@ from
 ';
 execute q using 1, 9;
 show trace;
+deallocate prepare q;
 
 
 set trace off;

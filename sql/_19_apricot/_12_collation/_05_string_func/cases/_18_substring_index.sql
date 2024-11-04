@@ -14,6 +14,7 @@ select substring_index (s1,'.',1) from t2 order by 1;
 -- late binding
 prepare s from 'select substring_index(s1 ,?,?) from t1 order by 1';
 execute s using '.',1;
+deallocate prepare s;
 
 
 select substring_index(t1.s1, t2.s1, 1) from t1,t2 order by 1;

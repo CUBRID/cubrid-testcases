@@ -27,12 +27,15 @@ select mod (4 , NULL);
 -- 2 HV
 prepare st from 'select mod (? , ?)';
 execute st using '2001-10-11',4;
+deallocate prepare st;
 
 prepare st from 'select mod (? , ?)';
 execute st using 4,'abc';
+deallocate prepare st;
 
 prepare st from 'select mod (? , ?)';
 execute st using 4,NULL;
+deallocate prepare st;
 
 
 set system parameters 'return_null_on_function_errors=no';

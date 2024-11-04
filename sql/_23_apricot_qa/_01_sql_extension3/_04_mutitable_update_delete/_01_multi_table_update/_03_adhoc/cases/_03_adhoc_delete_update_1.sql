@@ -134,7 +134,7 @@ create table t2(id2 bigint, col2 time);
 insert into t2 values(1, '11:11:11'), (2, '12:12:12');
 prepare st from 'update t1 m1 right outer join t2 m2 on m1.col1=m2.col2 set m1.col1=date_add(m2.col2, interval ? second);';
 drop table  t1,t2;
-
+deallocate prepare st;
 
 
 

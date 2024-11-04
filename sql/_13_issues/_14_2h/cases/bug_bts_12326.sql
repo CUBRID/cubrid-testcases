@@ -274,6 +274,7 @@ SELECT a FROM ((SELECT @v1 as a ) UNION (SELECT * FROM t1 WHERE 'test' = 'test1'
 
 prepare prepare_stmt FROM 'SELECT a FROM ((SELECT ? as a)) UNION (select * from t1 where 0=1)';
 execute prepare_stmt using 30;
+deallocate prepare prepare_stmt;
 
 -- UNION ALL EVAL
 SELECT * FROM ((SELECT 20 * 2 ) UNION ALL (SELECT * FROM t1 WHERE 'test' = 'test1'));
@@ -282,6 +283,7 @@ SELECT * FROM ((SELECT @v1 as a ) UNION ALL (SELECT * FROM t1 WHERE 'test' = 'te
 
 prepare prepare_stmt FROM 'SELECT a FROM ((SELECT ? as a)) UNION ALL (select * from t1 where 0=1)';
 execute prepare_stmt using 30;
+deallocate prepare prepare_stmt;
 
 -- INTERSECTION EVAL
 SELECT * FROM ((SELECT 20 * 2 ) INTERSECTION (SELECT * FROM t1 WHERE 'test' = 'test1'));
@@ -290,6 +292,7 @@ SELECT * FROM ((SELECT @v1 as a ) INTERSECTION (SELECT * FROM t1 WHERE 'test' = 
 
 -- error happened, because INTERSECTION return null, can not be prepared
 prepare prepare_stmt FROM 'SELECT a FROM ((SELECT ? as a)) INTERSECTION (select * from t1 where 0=1)';
+deallocate prepare prepare_stmt;
 -- execute prepare_stmt using 30;
 
 -- DIFFERENCE EVAL
@@ -299,6 +302,7 @@ SELECT * FROM ((SELECT @v1 as a ) DIFFERENCE (SELECT * FROM t1 WHERE 'test' = 't
 
 prepare prepare_stmt FROM 'SELECT a FROM ((SELECT ? as a)) DIFFERENCE (select * from t1 where 0=1)';
 execute prepare_stmt using 30;
+deallocate prepare prepare_stmt;
 drop variable @v1;
 
 drop table if exists t1;

@@ -23,5 +23,6 @@ select bit_count(2);
 prepare st from 'bit_count(?)'
 execute st using 4;
 
+deallocate prepare st;
 
 drop table t1;

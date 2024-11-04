@@ -1,6 +1,7 @@
 --- collection
 prepare st from 'select round(?,?)';
 execute st using {12.2},1;
+deallocate prepare st;
 
 create table t1 (s1 set(double));
 

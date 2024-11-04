@@ -18,9 +18,11 @@ select s1,i from t2 where s1 like 'A%' order by 1,2;
 
 prepare s from 'select s1,i from t1 where s1 like ? order by 1,2';
 execute s using 'A%';
+deallocate prepare s;
 
 prepare s from 'select s1,i from t1 where s1 like ? order by 1,2';
 execute s using 'a%';
+deallocate prepare s;
 
 select 1 from db_root where cast ('AA' as string collate utf8_en_ci) like 'a%';
 

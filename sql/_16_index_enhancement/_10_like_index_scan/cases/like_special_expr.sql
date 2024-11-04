@@ -39,22 +39,27 @@ set system parameters 'no_backslash_escapes = true';
 prepare stmt from 'select * from tbl where c like ? order by 1'; execute stmt using '%';
 $varchar, $%
 select * from tbl where c like ? order by 1;
+deallocate prepare stmt;
 
 prepare stmt from 'select * from tbl where c like ? escape c order by 1'; execute stmt using '%';
 $varchar, $%
 select * from tbl where c like ? escape c order by 1;
+deallocate prepare stmt;
 
 prepare stmt from 'select r.c from reff where reff.r.c like ? order by 1'; execute stmt using '%';
 $varchar, $%
 select r.c from reff where reff.r.c like ? order by 1;
+deallocate prepare stmt;
 
 prepare stmt from 'select c from tbl where c like ? + c order by 1'; execute stmt using '%';
 $varchar, $%
 select c from tbl where c like ? + c order by 1;
+deallocate prepare stmt;
 
 prepare stmt from 'select c from tbl, reff where c like ? + r.c order by 1'; execute stmt using '%';
 $varchar, $%
 select c from tbl, reff where c like ? + r.c order by 1;
+deallocate prepare stmt;
 
 prepare stmt from 'select c from tbl where c like (select * from tbl where c = ''\'') + ? escape ? order by 1'; execute stmt using '%', '\';
 $varchar, $%, $varchar, $\

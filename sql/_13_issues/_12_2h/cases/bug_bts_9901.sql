@@ -21,7 +21,7 @@ execute s using 2147483646.9;
 execute s using 2147483647;
 execute s using 2147483647.1;
 execute s using 2147483648;
-
+deallocate prepare s;
 
 drop table if exists t_ntile;
  

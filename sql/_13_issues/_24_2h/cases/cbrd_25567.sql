@@ -33,6 +33,7 @@ where b >= ? || ''000000'' and b <= ? || ''999999''
 set trace on;
 execute q using '20240901', '20240901';
 show trace;
+deallocate prepare q;
 
 -- In case of executing without using the Prepare statement (Two range conditions are combined into a single key range)
 set trace on;
@@ -50,6 +51,7 @@ where b >= concat (?, ''000000'') and b <= concat (?, ''999999'')
 set trace on;
 execute q using '20240901', '20240901';
 show trace;
+deallocate prepare q;
 
 -- Using session variable (Two range conditions are not combined into a single key range)
 set @v = '20240901';

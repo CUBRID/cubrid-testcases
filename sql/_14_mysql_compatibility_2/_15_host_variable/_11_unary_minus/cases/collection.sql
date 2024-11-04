@@ -2,6 +2,7 @@
 
 prepare st from 'select -(?)';
 execute st using {12,12.2};
+deallocate prepare st;
 
 
 create table t1 (s1 set(int, double));

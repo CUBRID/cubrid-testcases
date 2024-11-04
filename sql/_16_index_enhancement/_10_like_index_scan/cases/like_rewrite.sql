@@ -26,38 +26,47 @@ insert into tbl values ('zzz');
 prepare stmt from 'select * from tbl where c like ? order by 1'; execute stmt using '%';
 $varchar, $%
 select * from tbl where c like ? order by 1;
+deallocate prepare stmt;
 
 prepare stmt from 'select * from tbl where c like ? order by 1'; execute stmt using '_';
 $varchar, $_
 select * from tbl where c like ? order by 1;
+deallocate prepare stmt;
 
 prepare stmt from 'select * from tbl where c like ''%'' + ? order by 1'; execute stmt using 'c';
 $varchar, $c
 select * from tbl where c like '%' + ? order by 1;
+deallocate prepare stmt;
 
 prepare stmt from 'select * from tbl where c like ? + ''%'' order by 1'; execute stmt using 'c';
 $varchar, $c
 select * from tbl where c like ? + '%' order by 1;
+deallocate prepare stmt;
 
 prepare stmt from 'select * from tbl where c like ''%'' + ? + ''%'' order by 1'; execute stmt using 'z';
 $varchar, $z
 select * from tbl where c like '%' + ? + '%' order by 1;
+deallocate prepare stmt;
 
 prepare stmt from 'select * from tbl where c like ''a'' + ? order by 1'; execute stmt using 'a';
 $varchar, $a
 select * from tbl where c like 'a' + ? order by 1;
+deallocate prepare stmt;
 
 prepare stmt from 'select * from tbl where c like ''a'' + ? order by 1'; execute stmt using '%';
 $varchar, $%
 select * from tbl where c like 'a' + ? order by 1;
+deallocate prepare stmt;
 
 prepare stmt from 'select * from tbl where c like ''a'' + ? escape ? order by 1'; execute stmt using '%', NULL;
 $varchar, $%, $varchar, $NULL
 select * from tbl where c like 'a' + ? escape ? order by 1;
+deallocate prepare stmt;
 
 prepare stmt from 'select * from tbl where c like ''2'' + ? escape ? order by 1'; execute stmt using '%', 2;
 $varchar, $%, $int, $2
 select * from tbl where c like '2' + ? escape ? order by 1;
+deallocate prepare stmt;
 
 set system parameters 'no_backslash_escapes = false';
 set system parameters 'require_like_escape_character = true';
@@ -65,10 +74,12 @@ set system parameters 'require_like_escape_character = true';
 prepare stmt from 'select * from tbl where c like ? + ''%'' order by 1'; execute stmt using '\\';
 $varchar, $\
 select * from tbl where c like ? + '%' order by 1;
+deallocate prepare stmt;
 
 prepare stmt from 'select * from tbl where c like ? + ''_'' order by 1'; execute stmt using '\\';
 $varchar, $\
 select * from tbl where c like ? + '_' order by 1;
+deallocate prepare stmt;
 
 set system parameters 'require_like_escape_character = false';
 
@@ -90,6 +101,7 @@ insert into tbl_nv values (N' b');
 insert into tbl_nv values (N'zzz');
 
 prepare stmt from 'select * from tbl_nv where c like ? order by 1'; execute stmt using n'a%b';
+deallocate prepare stmt;
 
 drop table tbl_nv;
 

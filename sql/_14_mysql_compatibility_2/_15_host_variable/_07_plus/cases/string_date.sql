@@ -31,12 +31,15 @@ insert into t1 values ('abc',date'2001-10-11');
 
 prepare st from 'select s1 + ? from t1';
 execute st using date'2001-10-11';
+deallocate prepare st;
 
 prepare st from 'select ? + d2 from t1';
 execute st using n'abc';
+deallocate prepare st;
 
 prepare st from 'select s1 + ? from t1';
 execute st using NULL;
+deallocate prepare st;
 
 truncate table t1;
 insert into t1 values (NULL,date'2001-10-11');
@@ -44,9 +47,11 @@ insert into t1 values ('abc',NULL);
 
 prepare st from 'select s1 + ? from t1';
 execute st using NULL;
+deallocate prepare st;
 
 prepare st from 'select ? + d2 from t1';
 execute st using NULL;
+deallocate prepare st;
 
 drop table t1;
 
@@ -66,25 +71,32 @@ select NULL + date'2001-10-11';
 -- 2 HV
 prepare st from 'select ? + ?';
 execute st using '34',date'2001-10-11';
+deallocate prepare st;
 
 prepare st from 'select ? + ?';
 execute st using date'2001-10-11','34';
+deallocate prepare st;
 
 prepare st from 'select ? + ?';
 execute st using NULL,'34';
+deallocate prepare st;
 
 prepare st from 'select ? + ?';
 execute st using '34',NULL;
+deallocate prepare st;
 
 prepare st from 'select ? + ?';
 execute st using n'34',time'10:11:12';
+deallocate prepare st;
 
 -- 1 HV
 prepare st from 'select ''34'' + ?';
 execute st using date'2001-10-11';
+deallocate prepare st;
 
 prepare st from 'select time''10:11:12'' + ?';
 execute st using n'2';
+deallocate prepare st;
 
 prepare st from 'select time''10:11:12'' + ?';
 execute st using NULL;

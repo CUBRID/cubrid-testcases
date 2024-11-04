@@ -82,8 +82,11 @@ select * from w1;
 
 -- PREPARE NAME
 prepare [[p1]] from 'select 1';
+deallocate prepare [[p1]];
 prepare "[p1]" from 'select 1';
+deallocate prepare "[p1]";
 prepare `[p1]` from 'select 1';
+deallocate prepare `[p1]`;
 
 -- SESSION VARIABLE NAME
 SET @[[v1]] = 'a';

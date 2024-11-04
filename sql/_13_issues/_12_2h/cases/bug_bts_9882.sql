@@ -10,6 +10,7 @@ show collation 'aa';
 set @a='show';
 show collation @a;
 prepare st from 'show collation 1';
+deallocate prepare st;
 drop variable @a;
 set names iso88591;
 

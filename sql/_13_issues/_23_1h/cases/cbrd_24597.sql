@@ -19,8 +19,7 @@ create index idx on t1 (a, b);
 select * from t1 where a <= '1';
 execute s using '1';
 execute s using 1;
-
-
+deallocate prepare s;
 
 -- alter table modify column numeric(10,1) -> numeric(10,3)
 create table t2(a numeric(10,1), b int);
@@ -37,7 +36,7 @@ create index idx on t2 (a, b);
 select * from t2 where a <= '1';
 execute s using '1';
 execute s using 1;
-
+deallocate prepare s;
 
 -- alter table modify column numeric(10,0) -> numeric(10,3)
 create table t3(a numeric(10,0), b int);
@@ -54,7 +53,7 @@ create index idx on t3 (a, b);
 select * from t3 where a <= '1';
 execute s using '1';
 execute s using 1;
-
+deallocate prepare s;
 
 -- alter table modify column numeric(10,3) -> numeric(10,1)
 create table t4(a numeric(10,3), b int);
@@ -71,7 +70,7 @@ create index idx on t4 (a, b);
 select * from t4 where a <= '1';
 execute s using '1';
 execute s using 1;
-
+deallocate prepare s;
 
 -- alter table modify column numeric(10,3) -> numeric(10,0)
 create table t5(a numeric(10,3), b int);
@@ -88,6 +87,6 @@ create index idx on t5 (a, b);
 select * from t5 where a <= '1';
 execute s using '1';
 execute s using 1;
-
+deallocate prepare s;
 
 drop t1, t2, t3, t4, t5;

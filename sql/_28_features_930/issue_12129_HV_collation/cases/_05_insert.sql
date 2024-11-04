@@ -30,6 +30,8 @@ execute s using '1','2',_utf8'xx', '1','2',_utf8'xx';
 
 execute s using '1','2',_iso88591'xx', '1','2',_iso88591'xx';
 
+deallocate prepare s;
+
 drop table t1;
 
 set names iso88591;

@@ -23,15 +23,20 @@ select (floor(n'asd'));
 
 prepare st from 'select floor(?)';
 execute st using '2001-10-11';
+deallocate prepare st;
 
 prepare st from 'select floor(?)';
 execute st using '2001';
+deallocate prepare st;
 
 prepare st from 'select floor(?)';
 execute st using '2.0011e1';
+deallocate prepare st;
 
 prepare st from 'select floor(?)';
 execute st using '2001.12';
+deallocate prepare st;
 
 prepare st from 'select floor(?)';
 execute st using 'asd';
+deallocate prepare st;

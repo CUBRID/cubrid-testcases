@@ -35,18 +35,22 @@ insert into lead_str values('bbbbb', 'This is a dog.', n'2009-1-1 1', n'cubrid',
 --TEST: over() clause, with where clause
 prepare st from 'select  *, lead(col1, ?, ?) over() next_v from lead_str where col2 = ? order by 1';
 execute st using 2, 'This is a dog.';
+deallocate prepare st;
 
 --TEST: OVER(PARTITION BY) clause
 prepare st from 'select new.col1, new.col2, new.col3, new.col4, new.col5, lead(new.col2, ?) over(partition by new.col1) next_v from (select * from lead_str order by 1,2,3,4,5) new';
 execute st using 3;
+deallocate prepare st;
 
 --TEST: OVER(ORDER BY) clause
 prepare st from 'select col2, lead(col3, ?, ?) over(order by 1) next_v from lead_str where col5 in (?) order by 1, 2';
 execute st using 4, n'string';
+deallocate prepare st;
 
 --TEST: OVER(PARTITION BY ORDER BY) clause
 prepare st from 'select col1, col2, col3, lead(col4, ?) over(partition by col1 order by col1, col2, col3) next_v from lead_str order by 1, 2, 3, 4';
 execute st using 3;
+deallocate prepare st;
 
 
 drop table lead_str; 
