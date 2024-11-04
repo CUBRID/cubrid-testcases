@@ -1,5 +1,5 @@
 -- Verified the CBRD-25279
--- As-is: Casting functions in prepared statements with host variable arguments incorrectly encounter syntax errors\
+-- As-is: Casting functions in prepared statements with host variable arguments incorrectly encounter syntax errors
 -- To-be: bug fix
 
 PREPARE st from 'SELECT TO_CHAR(?,?,?)';
