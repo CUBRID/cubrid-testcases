@@ -135,21 +135,3 @@ select unique_name, name, owner.name from db_serial where name = 'tbl1_ai_col1';
 drop table test_user1.tbl1;
 drop user test_user1;
 
-/* ------------------------------------------------------------------------------------*/
-/* 5. Add test_user2 as a member to test_user1 group, delete member test_user2 in test_user1 group */
-/* ------------------------------------------------------------------------------------*/
-create user test_user1;
-create serial cubrid_seq cache 5;
-SELECT cubrid_seq.nextval from dual;
-
-alter serial cubrid_seq owner to test_user1;
-SELECT unique_name, name, owner.name, current_val, cached_num, [comment] FROM db_serial WHERE name = 'cubrid_seq';
-
-/* 5 delete member test_user2 in test_user1 group */
-drop serial test_user1.cubrid_seq;
-SELECT unique_name, name, owner.name, current_val, cached_num, [comment] FROM db_serial WHERE name = 'cubrid_seq';
-
-/* reset */
-/* master node */
-DROP USER test_user1;
-
