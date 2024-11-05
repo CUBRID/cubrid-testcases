@@ -9,7 +9,6 @@ begin
     select length(ch_1) into ch_length from dual;
     
     dbms_output.put_line('char size 1');
-    dbms_output.put_line('value:   ' || ch_1);
     dbms_output.put_line('length:  ' || ch_length);
 end;
 
