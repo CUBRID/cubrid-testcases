@@ -44,19 +44,19 @@ create index i_t1_a2m on t1(OCTET_LENGTH(e));
 select /*+ RECOMPILE */* from t1 where OCTET_LENGTH(e)>=2 ;
 --TEST Create successfully 
 create index i_t1_a2l on t1(OCTET_LENGTH(f));
---TEST Create failed
+--TEST Create successfully
 create index i_t1_a2k on t1(OCTET_LENGTH(g));
---TEST Create failed
+--TEST Create successfully
 create index i_t1_a2j on t1(OCTET_LENGTH(h));
---TEST Create failed
+--TEST Create successfully
 create index i_t1_a2i on t1(OCTET_LENGTH(i));
---TEST Create failed
+--TEST Create successfully
 create index i_t1_a2h on t1(OCTET_LENGTH(j));
---TEST Create failed
+--TEST Create successfully
 create index i_t1_a2g on t1(OCTET_LENGTH(k));
---TEST Create failed
+--TEST Create successfully
 create index i_t1_a2f on t1(OCTET_LENGTH(l));
---TEST Create failed
+--TEST Create successfully
 create index i_t1_a2e on t1(OCTET_LENGTH(m));
 --TEST Create successfully 
 create index i_t1_a2d on t1(OCTET_LENGTH(n));

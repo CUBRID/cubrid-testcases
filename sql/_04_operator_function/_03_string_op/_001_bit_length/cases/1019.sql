@@ -1,4 +1,4 @@
---[er]test bit_length with time as parameter
+--test bit_length with time as parameter
 create class tb(
 		col1 time
 );

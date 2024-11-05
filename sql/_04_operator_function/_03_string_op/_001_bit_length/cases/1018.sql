@@ -1,4 +1,4 @@
---[er]test bit_length with date as parameter
+--test bit_length with date as parameter
 create class tb(
 		col1 date
 );

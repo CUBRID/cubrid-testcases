@@ -1,4 +1,4 @@
---[er]test bit_length with numeric as parameter
+--test bit_length with numeric as parameter
 create class tb(
 		col1 numeric
 );

@@ -1,4 +1,4 @@
--- [er]retrieve by function of bit_length using parameter of integer
+-- retrieve by function of bit_length using parameter of integer
 
 create class dummy( a string );
 insert into dummy values (null);
