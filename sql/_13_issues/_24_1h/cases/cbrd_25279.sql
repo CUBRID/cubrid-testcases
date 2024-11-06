@@ -10,5 +10,10 @@ PREPARE st from 'SELECT TO_NUMBER(?,?)';
 PREPARE st from 'SELECT TO_TIME(?,?,?)';
 PREPARE st from 'SELECT TO_TIMESTAMP(?,?,?)';
 PREPARE st from 'SELECT TO_TIMESTAMP_TZ(?,?,?)';
+PREPARE st from 'SELECT DATE_FORMAT(?,?)';
+PREPARE st from 'SELECT FORMAT(?,?)';
+PREPARE st from 'SELECT TIME_FORMAT(?,?)';
+PREPARE st from 'SELECT STR_TO_DATE(?,?)';
+
 
 DROP PREPARE st;
