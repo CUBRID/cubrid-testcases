@@ -1,0 +1,116 @@
+===================================================
+0
+===================================================
+    
+case 1: Check if the is_grantable value in the db_auth catalog changes     
+
+===================================================
+0
+===================================================
+    
+u1 grant to dba.tbl     
+
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+DBA     U1     CLASS     tbl     DBA     SELECT     NO     
+
+===================================================
+    
+u1 re-grant to dba.tbl     
+
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+DBA     U1     CLASS     tbl     DBA     SELECT     NO     
+
+===================================================
+owner.name    grants    
+U1     null     
+
+===================================================
+    
+u1 grant to dba.tbl (with grant option)     
+
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+DBA     U1     CLASS     tbl     DBA     SELECT     YES     
+
+===================================================
+owner.name    grants    
+U1     null     
+
+===================================================
+    
+u1 re-grant to dba.tbl     
+
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+DBA     U1     CLASS     tbl     DBA     SELECT     YES     
+
+===================================================
+owner.name    grants    
+U1     null     
+
+===================================================
+    
+test done and init     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+case 2: If two or more permissions are granted, Check whether the is_grantable value in the db_auth catalog has changed     
+
+===================================================
+0
+===================================================
+    
+u1 grant to dba.tbl (with grant option)     
+
+===================================================
+0
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+DBA     U1     CLASS     tbl     DBA     SELECT     YES     
+DBA     U1     CLASS     tbl     DBA     INSERT     NO     
+
+===================================================
+owner.name    grants    
+U1     null     
+
+===================================================
+    
+u1 re-grant to dba.tbl     
+
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+DBA     U1     CLASS     tbl     DBA     SELECT     YES     
+DBA     U1     CLASS     tbl     DBA     INSERT     NO     
+
+===================================================
+owner.name    grants    
+U1     null     
+
+===================================================
+    
+test done and init     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
