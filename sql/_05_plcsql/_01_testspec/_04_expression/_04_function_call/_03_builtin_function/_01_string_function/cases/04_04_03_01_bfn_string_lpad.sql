@@ -8,8 +8,6 @@ begin
     dbms_output.put_line(LPAD('cubrid', NULL));
     dbms_output.put_line(LPAD('cubrid', 7, '!' ));
     dbms_output.put_line(LPAD('cubrid', -1, '!' ));
-    dbms_output.put_line(LPAD('큐브리드', 7, '!'));
-    dbms_output.put_line(LPAD('큐브리드', 4, '!'));
     dbms_output.put_line(LPAD('cubrid', 7, NULL));
 end;
 
