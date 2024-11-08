@@ -44,6 +44,7 @@ SELECT sha2('SQL-99 Complete. Really!', 512);
 -- check host variables support --
 PREPARE st FROM 'SELECT sha2(?, ?)';
 EXECUTE st USING 'SQL-99 Complete. Really!', 512;
+DEALLOCATE PREPARE st;
 
 create table coo(
     col1 char(20),

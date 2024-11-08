@@ -38,6 +38,7 @@ select strcmp(s2,'0123') from t1 order by s,b,d,s1,s2,i1;
 
 prepare st from 'select strcmp(?,?)';
 execute st using n'1',n'3';
+drop prepare st;
 
 prepare st from 'select strcmp(?,?)';
 execute st using '123','43';

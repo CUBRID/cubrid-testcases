@@ -31,10 +31,12 @@ select field('x',NULL, NULL);
 
 prepare st from 'select field(?,?,?)';
 execute st using '1','2','1';
+drop prepare st;
 
 
 prepare st from 'select field(?,?,?)';
 execute st using NULL,'2','1';
+drop prepare st;
 
 prepare st from 'select field(?,?,?)';
 execute st using '1',NULL,'1';

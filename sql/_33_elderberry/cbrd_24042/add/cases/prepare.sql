@@ -43,6 +43,7 @@ PREPARE q FROM '
 -- Check result (mergable)
 --@queryplan
 EXECUTE q USING 1500, 3000;
+DEALLOCATE PREPARE q;
 
 DROP TABLE IF EXISTS tbl;
 DROP TABLE IF EXISTS tbl_emp;

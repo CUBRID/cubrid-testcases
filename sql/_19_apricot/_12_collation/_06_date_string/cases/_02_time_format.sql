@@ -29,6 +29,7 @@ select time_format (t1.s1, tf.f_utf8) from t1,tf order by 1;
 -- late binding
 prepare s from 'select time_format(s1, ?) from t1 order by 1';
 execute s using '%H _%p';
+deallocate prepare s;
 
 prepare s from 'select time_format(s1, ?) from t2 order by 1';
 execute s using '%H _%p';

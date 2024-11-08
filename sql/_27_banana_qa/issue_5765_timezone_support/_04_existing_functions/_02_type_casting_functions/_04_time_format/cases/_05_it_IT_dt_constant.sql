@@ -32,6 +32,7 @@ set time zone 'Asia/Shanghai';
 execute st using datetimeltz'2014-06-30 7:30:21.999', '%X, %V, %U, Day %j !(%TZH:%TZM) %TZR==%TZD!';
 execute st using datetimeltz'2014-06-30 7:30:21.999 +10:00', '%X, %V, %U, Day %j !(%TZH:%TZM) %TZR==%TZD!';
 execute st using datetimetz'2014-06-30 7:30:21.999 Asia/Seoul', '%X, %V, %U, Day %j !(%TZH:%TZM) %TZR==%TZD!';
+deallocate prepare st;
 
 set time zone 'Europe/London';
 -- 0:00, DST

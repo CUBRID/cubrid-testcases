@@ -19,6 +19,7 @@ SELECT MD5('SQL-99 Complete. Really!');
 -- check host variables support --
 PREPARE st FROM 'SELECT MD5(?)';
 EXECUTE st USING 'SQL-99 Complete. Really!';
+DEALLOCATE PREPARE st;
 
 CREATE TABLE test (
   test_id				int 						NOT NULL,

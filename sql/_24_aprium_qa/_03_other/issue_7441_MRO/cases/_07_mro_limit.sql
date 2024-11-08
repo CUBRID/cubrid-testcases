@@ -34,6 +34,7 @@ PREPARE st  from
 'select /*+ recompile */ t.i2,t.i3,u.i from t join u on t.i2 = u.i where t.i1 in (3,1) order by t.i2 desc ,i3 desc,i limit ?';
 
 EXECUTE st USING 4;  
+DEALLOCATE PREPARE st;
 
 drop u,t;
 

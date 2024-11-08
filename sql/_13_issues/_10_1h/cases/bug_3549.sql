@@ -1,6 +1,7 @@
 --+ holdcas on;
 prepare s from 'select power(?, ?) into :result';
 execute s using 2, 3;
+deallocate prepare s;
 
 evaluate power(2, 3) into :expected; 
 
@@ -8,6 +9,7 @@ select case when :expected = :result then 'YES' else 'NO' end as case1;
 
 prepare s from 'select power(2, ?) into :result';
 execute s using 3;
+deallocate prepare s;
 
 evaluate power(2, 3) into :expected; 
 
@@ -15,6 +17,7 @@ select case when :expected = :result then 'YES' else 'NO' end as case2;
 
 prepare s from 'select power(2, ?) into :result';
 execute s using 3;
+deallocate prepare s;
 
 evaluate power(2, 3) into :expected; 
 
@@ -22,6 +25,7 @@ select case when :expected = :result then 'YES' else 'NO' end as case3;
 
 prepare s from 'select power(?, ?) into :result';
 execute s using 2.0f, 3.0f;
+deallocate prepare s;
 
 evaluate power(2.0f, 3.0f) into :expected; 
 
@@ -29,6 +33,7 @@ select case when :expected = :result then 'YES' else 'NO' end as case4;
 
 prepare s from 'select power(?, ?) * PI() into :result';
 execute s using 2.0f, 3.0f;
+deallocate prepare s;
 
 evaluate power(2.0f, 3.0f) * PI() into :expected; 
 

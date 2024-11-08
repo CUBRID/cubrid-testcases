@@ -5,15 +5,20 @@ insert into foo values (1, timestamp'2013-7-18 16:34:56');
 
 prepare stmt from 'insert into bar select * from foo where i = ?';
 execute stmt using 1;
+deallocate prepare stmt;
 
 prepare stmt from 'insert into bar(i) select ts from foo where i = ?';
 execute stmt using 1;
+deallocate prepare stmt;
 
 prepare stmt from 'insert into bar select * from foo where i = ?';
+deallocate prepare stmt;
 prepare stmt from 'insert into aoo select * from foo where i = ?';
 execute stmt using 1;
+deallocate prepare stmt;
 
 prepare stmt from 'insert into bar select * from foo where i = ?';
+deallocate prepare stmt;
 prepare stmt from 'insert ihnto aoo select * from foo where i = ?';
 execute stmt using 1;
 

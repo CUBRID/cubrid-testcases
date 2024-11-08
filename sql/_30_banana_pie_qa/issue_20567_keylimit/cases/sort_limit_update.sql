@@ -39,6 +39,7 @@ select * from u where j=12349 order by 1;
 select * from u where j=123410 order by 1;
 prepare stmt from 'update u, t set u.j=2341 WHERE u.i = t.i AND u.j > 10 using index i_u_j keyLIMIT ?-?,?/?';
 execute stmt using 2,1,10,2;
+deallocate prepare stmt;
 prepare stmt from 'update u, t set u.j=2342 WHERE u.i = t.i AND u.j > 10 using index i_u_j keyLIMIT ?-?,?*?';
 execute stmt using 2,1,5,1;
 deallocate prepare stmt;

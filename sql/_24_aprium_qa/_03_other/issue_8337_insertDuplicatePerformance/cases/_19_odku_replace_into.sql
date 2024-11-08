@@ -21,6 +21,8 @@ PREPARE st FROM 'REPLACE INTO with_trigger VALUES(?)';
 
 EXECUTE st USING 22;
 
+DEALLOCATE PREPARE st;
+
 SELECT * FROM trigger_actions order by 1;
 
 SELECT * FROM with_trigger  order by 1;;

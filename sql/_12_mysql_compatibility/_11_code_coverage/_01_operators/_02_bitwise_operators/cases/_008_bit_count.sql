@@ -20,7 +20,7 @@ select bit_count(s) from t1 order by 1;
 
 select bit_count(2);
 
-prepare st from 'bit_count(?)'
+prepare st from 'bit_count(?)';
 execute st using 4;
 
 deallocate prepare st;

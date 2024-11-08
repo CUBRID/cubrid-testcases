@@ -125,18 +125,23 @@ select CAST('0b1111' AS float);
 
 prepare s from 'values(?),(?),(?)';
 execute s using 1,2,'3';
+deallocate prepare s;
 
 prepare s from 'select ? union select ? union select ?';
 execute s using 1,2,'3';
+deallocate prepare s;
 
 prepare s from 'select ? union select ? union select ?';
 execute s using 1,2,3;
+deallocate prepare s;
 
 prepare s from 'values(1+?),(?+2),(?+3)';
 execute s using 1,'2',3;
+deallocate prepare s;
 
 prepare s from 'values(?),(?),(?)';
 execute s using 1,2,3;
+deallocate prepare s;
 
 -- I think these a bug
 values(1),(2),('3');

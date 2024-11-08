@@ -16,6 +16,7 @@ execute s using '123456','1','2',_utf8'xx', '123456','1','2',_utf8'xx';
 execute s using _utf8'123456','1','2','xx', _utf8'123456','1','2','xx';
 
 execute s using _utf8'123456','1','2',_euckr'xx', _utf8'123456','1','2',_euckr'xx';
+deallocate prepare s;
 
 drop table if exists t1;
 create table t1 (s1 string collate utf8_en_ci);

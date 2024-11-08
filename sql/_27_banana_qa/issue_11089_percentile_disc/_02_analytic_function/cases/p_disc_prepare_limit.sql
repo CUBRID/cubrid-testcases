@@ -63,19 +63,25 @@ select col1, col2, percentile_disc(0.8) within group (order by col2) over(order 
 --TEST: over(partition by) clause + ps
 prepare st from 'select *, percentile_disc(?) within group (order by col2) over(partition by col3) p_disc1 from p_disc_limit order by 1, 2, 3, 4, 5, 6 limit ?';
 execute st using 0.323, 10;
+deallocate prepare st;
 prepare st from 'select *, percentile_disc(?) within group (order by col1) over(partition by col4) p_disc from p_disc_limit order by 1, 2, 3, 4, 5, 6 limit ?';
 execute st using -1, 20;
+deallocate prepare st;
 prepare st from 'select col3, col4, col2, percentile_disc(?) within group (order by col4 desc) over(partition by col3, col5) p_disc from p_disc_limit order by 1, 2, 3, 4 limit ?';
 execute st using 0.99, 5;
+deallocate prepare st;
 prepare st from 'select col3, col4, col5, percentile_disc(?) within group (order by col2) over(partition by col4) p_disc from p_disc_limit order by 1, 2, 4 desc, 3 asc limit ?';
 execute st using 1, -1;
+deallocate prepare st;
 
 
 --TEST: over(partition by) clause + group by ... having ...
 prepare st from 'select col1, col2, percentile_disc(?) within group (order by col1) over(partition by col3) p_disc from p_disc_limit group by col1 having col1 > ? order by col2 desc, col1 limit ?';
 execute st using 0.4, 500, 1;
+deallocate prepare st;
 prepare st from 'select new.col4, percentile_disc(?) within group (order by new.col2 desc) over(partition by new.col4, new.col3, new.col5) p_disc from (select * from p_disc_limit order by 1,2,3,4,5) new  group by new.col4 having right(new.col3, 4) =  ? order by 2 asc, 1 limit ?';
 execute st using 0.6, 'brid', 15;
+deallocate prepare st;
 prepare st from 'select col1, col2, col3, col4, col5, percentile_disc(?) within group (order by col1) over(partition by col3) p_disc from p_disc_limit group by col1, col2, col3, col4 having col3 in (''cubrid'', ?) order by col3 desc, col2 asc, 6, 1 limit ?';
 execute st using 0.2, 'mysql', 30;
 

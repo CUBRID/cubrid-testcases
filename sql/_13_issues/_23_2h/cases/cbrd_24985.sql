@@ -99,6 +99,7 @@ where a.RCTR_ID = '0000001'
 prepare st from 'update TB_RDRECORD a  set a.drc_yn=1 WHERE a.FLS_ID in ( SELECT F.FLS_ID from TB_RDFOLDER F WHERE F.FLS_ID  = ? AND F.RCTR_ID = ?)';
 EXECUTE st USING '20160000078754', '0000001';
 EXECUTE st USING '20160000078753', '0000001';
+deallocate prepare st;
 
 --@queryplan
 prepare st from 'select * from TB_RDRECORD a WHERE a.FLS_ID in ( SELECT F.FLS_ID from TB_RDFOLDER F WHERE F.FLS_ID  = ? AND F.RCTR_ID = ?)';
@@ -112,5 +113,5 @@ select /*+ recompile */ count(*) from
 (select colb, min(colc), max(colc) from subquery_big where colb=1 group by colb) b
 where a.colb=b.colb;
 
-drop prepare st;
+deallocate prepare st;
 drop table if exists TB_RDRECORD, TB_RDFOLDER, subquery_big;

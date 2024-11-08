@@ -25,8 +25,10 @@ insert into t3 select rownum,rownum from db_class a,db_class limit 100;
 insert into t4 select rownum,rownum from db_class a,db_class limit 100;
 PREPARE s FROM 'update t1 inner join t2 on t1.a=t2.a  inner join t3 on t1.a=t3.a set t2.a=?,t1.a=?,t3.a=?  where  t1.a>=0';
 EXECUTE s USING  -999999999 ,-999999999,-999999999;
+DEALLOCATE PREPARE s;
 PREPARE s1 FROM 'delete t1.*,t2.* from t1,t2   where t1.a=t2.a and t1.a=?';
 EXECUTE s1 USING -999999999;
+DEALLOCATE PREPARE s1;
 drop table if exists t1,t2,t3,t4;
 
 
@@ -128,6 +130,7 @@ INSERT INTO t2 VALUES ('99999999999999999','99999999999999999');
 update t1 inner join t2 on t1.a=t2.a set t1.b='0000000000';
 PREPARE st FROM 'SELECT * from t1 limit ?';
 EXECUTE st USING 0;
+DEALLOCATE PREPARE st;
 drop table t1,t2;
 
 
