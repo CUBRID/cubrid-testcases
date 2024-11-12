@@ -100,7 +100,6 @@ select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_
 
 
 
-/* 10. [변경된 No-op 테스트] dba_member가 dba_member에게 권한 부여 */
 evaluate 'case 10: dba_member grants privileges to dba_member';
 evaluate 'connect to dba_member & owner.tbl, owner.hello grant to dba_member user';
 CALL LOGIN('dba_member','') ON  CLASS db_user;
@@ -112,7 +111,6 @@ select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_
 
 
 
-/* 11. [변경된 No-op 테스트] owner_member가 owner_member에게 권한 부여 */
 evaluate 'case 10: owner_member grants privileges to owner_member';
 evaluate 'connect to owner_member & owner.tbl, owner.hello grant to owner_member user';
 CALL LOGIN('owner_member','') ON  CLASS db_user;
