@@ -24,7 +24,7 @@ case 5: grantable user grants to privileges other user (negative)
 
 ===================================================
     
-connect to owner & grantable user grant to owner.tbl     
+connect to owner & owner.tbl grant to grantable user     
 
 ===================================================
     
@@ -34,7 +34,7 @@ null
 0
 ===================================================
     
-grantable user grant to owner.hello, ERROR: Grant option is not allowed     
+owner.hello grant to grantable user, ERROR: Grant option is not allowed     
 
 ===================================================
 Error:-494
@@ -44,7 +44,7 @@ OWNER     GRANTABLE     tbl     SELECT     YES
 
 ===================================================
     
-connect to grantable_member & grantable user grant to owner.tbl, ERROR: SELECT authorization failure     
+connect to grantable_member & owner.tbl grant to grantable user, ERROR: SELECT authorization failure     
 
 ===================================================
     
@@ -54,13 +54,13 @@ null
 Error:-157
 ===================================================
     
-grantable user grant to owner.hello, ERROR: Only DBA and the owner can grant the EXECUTE privilege     
+owner.hello grant to grantable user, ERROR: Only DBA and the owner can grant the EXECUTE privilege     
 
 ===================================================
 Error:-1364
 ===================================================
     
-connect to grantable & grantable_member user, temp_user grant to owner.tbl     
+connect to grantable & owner.tbl grant to grantable_member user, temp_user     
 
 ===================================================
     
@@ -86,13 +86,13 @@ null
 
 ===================================================
     
-grantable_member user grant to owner.tbl, ERROR: Cannot revoke privileges from self     
+owner.tbl grant to grantable_member user, ERROR: Cannot revoke privileges from self     
 
 ===================================================
 Error:-150
 ===================================================
     
-temp_user user grant to owner.tbl, ERROR: ERROR: No GRANT option     
+owner.tbl grant to temp_user user, ERROR: ERROR: No GRANT option     
 
 ===================================================
 Error:-152
@@ -128,7 +128,7 @@ case 5-1: grantable user grants to privileges other user (positive)
 
 ===================================================
     
-connect to owner & grantable_member grant to owner.tbl, owner.hello     
+connect to owner & owner.tbl grant to grantable_member, owner.hello     
 
 ===================================================
     
@@ -140,7 +140,7 @@ null
 0
 ===================================================
     
-connect to grantable_member & temp_user grant to owner.tbl     
+connect to grantable_member & owner.tbl grant to temp_user     
 
 ===================================================
     

@@ -20,7 +20,7 @@ NAME 'SpTest.Hello(String) return java.lang.String';
 
 
 evaluate 'case 1: compare to "owner" and "dba"';
-evaluate 'connect to owner user & temp_user grant to owner.tbl, owner.hello';
+evaluate 'connect to owner user & owner.tbl, owner.hello grant to temp_user';
 CALL LOGIN('owner','') ON  CLASS db_user;
 GRANT SELECT ON owner.tbl TO temp_user;
 GRANT EXECUTE ON PROCEDURE owner.hello TO temp_user;
@@ -55,7 +55,7 @@ select grantor_name, grantee_name, auth_type, is_grantable from db_auth where gr
 
 
 evaluate 'case 2: compare to "owner" and "grantable"';
-evaluate 'connect to owner & grantable grant to owner.tbl';
+evaluate 'connect to owner & owner.tbl grant to grantable';
 CALL LOGIN('owner','') ON  CLASS db_user;
 GRANT select ON owner.tbl TO grantable WITH GRANT OPTION;
 evaluate 'grantable user grant owner.hello, ERROR: Grant option is not allowed';

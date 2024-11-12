@@ -20,22 +20,22 @@ NAME 'SpTest.Hello(String) return java.lang.String';
 
 
 evaluate 'case 5: grantable user grants to privileges other user (negative)';
-evaluate 'connect to owner & grantable user grant to owner.tbl';
+evaluate 'connect to owner & owner.tbl grant to grantable user';
 CALL LOGIN('owner','') ON  CLASS db_user;
 GRANT select ON owner.tbl TO grantable WITH GRANT OPTION;
-evaluate 'grantable user grant to owner.hello, ERROR: Grant option is not allowed';
+evaluate 'owner.hello grant to grantable user, ERROR: Grant option is not allowed';
 GRANT EXECUTE ON PROCEDURE owner.hello TO grantable WITH GRANT OPTION;
 
 select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by object_name, auth_type;
 
-evaluate 'connect to grantable_member & grantable user grant to owner.tbl, ERROR: SELECT authorization failure';
+evaluate 'connect to grantable_member & owner.tbl grant to grantable user, ERROR: SELECT authorization failure';
 CALL LOGIN('grantable_member','') ON  CLASS db_user;
 GRANT select ON owner.tbl TO temp_user;
 
-evaluate 'grantable user grant to owner.hello, ERROR: Only DBA and the owner can grant the EXECUTE privilege';
+evaluate 'owner.hello grant to grantable user, ERROR: Only DBA and the owner can grant the EXECUTE privilege';
 GRANT EXECUTE ON PROCEDURE owner.hello TO temp_user;
 
-evaluate 'connect to grantable & grantable_member user, temp_user grant to owner.tbl';
+evaluate 'connect to grantable & owner.tbl grant to grantable_member user, temp_user';
 CALL LOGIN('grantable','') ON  CLASS db_user;
 GRANT select ON owner.tbl TO grantable_member WITH GRANT OPTION;
 GRANT select ON owner.tbl TO temp_user;
@@ -45,9 +45,9 @@ select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_
 
 evaluate 'connect to grantable_member';
 CALL LOGIN('grantable_member','') ON CLASS db_user;
-evaluate 'grantable_member user grant to owner.tbl, ERROR: Cannot revoke privileges from self';
+evaluate 'owner.tbl grant to grantable_member user, ERROR: Cannot revoke privileges from self';
 revoke select on owner.tbl from grantable_member;
-evaluate 'temp_user user grant to owner.tbl, ERROR: ERROR: No GRANT option';
+evaluate 'owner.tbl grant to temp_user user, ERROR: ERROR: No GRANT option';
 revoke select on owner.tbl from temp_user;
 
 
@@ -65,12 +65,12 @@ revoke select on owner.tbl from grantable;
 
 
 evaluate 'case 5-1: grantable user grants to privileges other user (positive)';
-evaluate 'connect to owner & grantable_member grant to owner.tbl, owner.hello';
+evaluate 'connect to owner & owner.tbl grant to grantable_member, owner.hello';
 CALL LOGIN('owner','') ON  CLASS db_user;
 GRANT select ON owner.tbl TO grantable_member WITH GRANT OPTION;
 GRANT EXECUTE ON PROCEDURE owner.hello TO grantable_member;
 
-evaluate 'connect to grantable_member & temp_user grant to owner.tbl';
+evaluate 'connect to grantable_member & owner.tbl grant to temp_user';
 CALL LOGIN('grantable_member','') ON  CLASS db_user;
 GRANT select ON owner.tbl TO temp_user;
 

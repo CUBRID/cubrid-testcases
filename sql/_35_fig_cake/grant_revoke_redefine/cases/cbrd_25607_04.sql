@@ -24,14 +24,14 @@ NAME 'SpTest.Hello(String) return java.lang.String';
 
 
 evaluate 'case 6: dba grants privileges to dba groups';
-evaluate 'connect to dba & dba_member grant to owner.tbl, owner.hello';
+evaluate 'connect to dba & owner.tbl, owner.hello grant to dba_member';
 CALL LOGIN('dba','') ON  CLASS db_user;
 GRANT select ON owner.tbl TO dba_member;
 GRANT EXECUTE ON PROCEDURE owner.hello TO dba_member;
 
 select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by object_name, auth_type;
 
-evaluate 'connect to dba_member & dba grant to owner.tbl, owner.hello';
+evaluate 'connect to dba_member & owner.tbl, owner.hello grant to dba';
 CALL LOGIN('dba_member','') ON  CLASS db_user;
 GRANT select ON owner.tbl TO dba;
 GRANT EXECUTE ON PROCEDURE owner.hello TO dba;
@@ -55,7 +55,7 @@ select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_
 
 
 evaluate 'case 7: dba grants privileges to dba';
-evaluate 'connect to dba & dba user grant to owner.tbl, owner.hello';
+evaluate 'connect to dba & owner.tbl, owner.hello grant to dba user';
 CALL LOGIN('dba','') ON  CLASS db_user;
 GRANT select ON owner.tbl TO dba;
 GRANT EXECUTE ON PROCEDURE owner.hello TO dba;
@@ -65,7 +65,7 @@ select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_
 
 
 evaluate 'case 8: owner grants privileges to owner';
-evaluate 'connect to owner & owner user grant to owner.tbl, owner.hello';
+evaluate 'connect to owner & owner.tbl, owner.hello grant to owner user';
 CALL LOGIN('owner','') ON  CLASS db_user;
 GRANT select ON owner.tbl TO owner;
 GRANT EXECUTE ON PROCEDURE owner.hello TO owner;
@@ -75,15 +75,15 @@ select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_
 
 
 evaluate 'case 9: grantable user grants privileges to grantable user';
-evaluate 'connect to owner & grantable user grant to owner.tbl, owner.hello';
+evaluate 'connect to owner & owner.tbl, owner.hello grant to grantable user';
 CALL LOGIN('owner','') ON  CLASS db_user;
 GRANT select ON owner.tbl TO grantable WITH GRANT OPTION;
 GRANT EXECUTE ON PROCEDURE owner.hello TO grantable;
 
-evaluate 'connect to grantable & grantable user grant to owner.tbl';
+evaluate 'connect to grantable & owner.tbl grant to grantable user';
 CALL LOGIN('grantable','') ON  CLASS db_user;
 GRANT select ON owner.tbl TO grantable;
-evaluate 'grantable user grant to owner.hello, ERROR: Only DBA and the owner can grant the EXECUTE privilege';
+evaluate 'owner.hello grant to grantable user, ERROR: Only DBA and the owner can grant the EXECUTE privilege';
 GRANT EXECUTE ON PROCEDURE owner.hello TO grantable;
 
 select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by object_name, auth_type;
@@ -102,7 +102,7 @@ select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_
 
 /* 10. [변경된 No-op 테스트] dba_member가 dba_member에게 권한 부여 */
 evaluate 'case 10: dba_member grants privileges to dba_member';
-evaluate 'connect to dba_member & dba_member user grant to owner.tbl, owner.hello';
+evaluate 'connect to dba_member & owner.tbl, owner.hello grant to dba_member user';
 CALL LOGIN('dba_member','') ON  CLASS db_user;
 GRANT select ON owner.tbl TO dba_member;
 GRANT EXECUTE ON PROCEDURE owner.hello TO dba_member;
@@ -114,7 +114,7 @@ select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_
 
 /* 11. [변경된 No-op 테스트] owner_member가 owner_member에게 권한 부여 */
 evaluate 'case 10: owner_member grants privileges to owner_member';
-evaluate 'connect to owner_member & owner_member user grant to owner.tbl, owner.hello';
+evaluate 'connect to owner_member & owner.tbl, owner.hello grant to owner_member user';
 CALL LOGIN('owner_member','') ON  CLASS db_user;
 GRANT select ON owner.tbl TO owner_member;
 GRANT EXECUTE ON PROCEDURE owner.hello TO owner_member;
