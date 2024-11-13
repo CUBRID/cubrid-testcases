@@ -54,8 +54,8 @@ evaluate 'connect to dba';
 call login('dba','') on class db_user;
 
 evaluate 'check to the u1.tbl2 removed';
-select * from db_auth where grantee_name != 'PUBLIC';
-select owner.name, grants from db_authorization where owner.name != 'PUBLIC';
+select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name;
+select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
 select * from db_class where class_name = 'tbl2';
 
 
