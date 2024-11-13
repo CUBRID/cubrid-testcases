@@ -13,425 +13,117 @@
 ===================================================
 100
 ===================================================
-count(*)    
-10     
+'test right outer join: on join conditions'    
+test right outer join: on join conditions     
 
 Query plan:
 sscan
-    class: t_? node[?]
+    class: dual node[?]
     cost:  ? card ?
 Query stmt:
-(select tbl_b.y, tbl_b.x from table({?}) t_? (c_?))
-Query plan:
-nl-join (cselect join)
-    edge:  table(?) -> t_? node[?]
-    outer: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select t_?.c_?, t_?.c_?, t_?.c_? from (select tbl_b.y, tbl_b.x from table({?}) t_? (c_?)) t_? (c_?, c_?), (fn_string(t_?.c_?)) t_? (c_?))
-Query plan:
-nl-join (inner join)
-    edge:  table(?) -> t_? node[?]
-    outer: nl-join (left outer join)
-               edge:  term[?]
-               outer: sscan
-                          class: tbl_b node[?]
-                          cost:  ? card ?
-               inner: sscan
-                          class: tbl_a node[?]
-                          sargs: term[?]
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: t_? node[?]
-               sargs: table(?) -> t_? node[?] AND term[?]
-               cost:  ? card ?
-    sargs: term[?]
-    subqs: ?
-    cost:  ? card ?
-Query stmt:
-select count(*) from tbl_a tbl_a right outer join tbl_b tbl_b on t_?.c_?='?' and tbl_a.x=tbl_b.x, (select t_?.c_?, t_?.c_?, t_?.c_? from (select tbl_b.y, tbl_b.x from table({?}) t_? (c_?)) t_? (c_?, c_?), (fn_string(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?)
-===================================================
-count(*)    
-10     
-
-Query plan:
-sscan
-    class: t_? node[?]
-    cost:  ? card ?
-Query stmt:
-(select tbl_a.y, tbl_a.x from table({?}) t_? (c_?))
-Query plan:
-nl-join (cselect join)
-    edge:  table(?) -> t_? node[?]
-    outer: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select t_?.c_?, t_?.c_?, t_?.c_? from (select tbl_a.y, tbl_a.x from table({?}) t_? (c_?)) t_? (c_?, c_?), (fn_string(t_?.c_?)) t_? (c_?))
-Query plan:
-nl-join (inner join)
-    edge:  table(?) -> t_? node[?]
-    outer: nl-join (left outer join)
-               edge:  term[?]
-               outer: sscan
-                          class: tbl_a node[?]
-                          cost:  ? card ?
-               inner: sscan
-                          class: tbl_b node[?]
-                          sargs: term[?]
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: t_? node[?]
-               sargs: table(?) -> t_? node[?] AND term[?]
-               cost:  ? card ?
-    sargs: term[?]
-    subqs: ?
-    cost:  ? card ?
-Query stmt:
-select count(*) from tbl_a tbl_a left outer join tbl_b tbl_b on t_?.c_?='?' and tbl_a.x=tbl_b.x, (select t_?.c_?, t_?.c_?, t_?.c_? from (select tbl_a.y, tbl_a.x from table({?}) t_? (c_?)) t_? (c_?, c_?), (fn_string(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?)
-===================================================
-count(*)    
-10     
-
-Query plan:
-sscan
-    class: t_? node[?]
-    cost:  ? card ?
-Query stmt:
-(select tbl_b.x, tbl_b.y from table({?}) t_? (c_?))
-Query plan:
-nl-join (cselect join)
-    edge:  table(?) -> t_? node[?]
-    outer: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select t_?.c_?, t_?.c_?, t_?.c_? from (select tbl_b.x, tbl_b.y from table({?}) t_? (c_?)) t_? (c_?, c_?), (fn_string(t_?.c_?)) t_? (c_?))
-Query plan:
-nl-join (inner join)
-    edge:  table(?) -> t_? node[?]
-    outer: nl-join (left outer join)
-               edge:  term[?]
-               outer: sscan
-                          class: tbl_b node[?]
-                          cost:  ? card ?
-               inner: sscan
-                          class: tbl_a node[?]
-                          sargs: term[?]
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: t_? node[?]
-               sargs: table(?) -> t_? node[?] AND term[?]
-               cost:  ? card ?
-    subqs: ?
-    cost:  ? card ?
-Query stmt:
-select count(*) from tbl_a tbl_a right outer join tbl_b tbl_b on tbl_a.x=tbl_b.x, (select t_?.c_?, t_?.c_?, t_?.c_? from (select tbl_b.x, tbl_b.y from table({?}) t_? (c_?)) t_? (c_?, c_?), (fn_string(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where t_?.c_?='?'
-===================================================
-count(*)    
-10     
-
-Query plan:
-sscan
-    class: t_? node[?]
-    cost:  ? card ?
-Query stmt:
-(select tbl_a.x, tbl_a.y from table({?}) t_? (c_?))
-Query plan:
-nl-join (cselect join)
-    edge:  table(?) -> t_? node[?]
-    outer: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select t_?.c_?, t_?.c_?, t_?.c_? from (select tbl_a.x, tbl_a.y from table({?}) t_? (c_?)) t_? (c_?, c_?), (fn_string(t_?.c_?)) t_? (c_?))
-Query plan:
-nl-join (inner join)
-    edge:  table(?) -> t_? node[?]
-    outer: nl-join (left outer join)
-               edge:  term[?]
-               outer: sscan
-                          class: tbl_a node[?]
-                          cost:  ? card ?
-               inner: sscan
-                          class: tbl_b node[?]
-                          sargs: term[?]
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: t_? node[?]
-               sargs: table(?) -> t_? node[?] AND term[?]
-               cost:  ? card ?
-    subqs: ?
-    cost:  ? card ?
-Query stmt:
-select count(*) from tbl_a tbl_a left outer join tbl_b tbl_b on tbl_a.x=tbl_b.x, (select t_?.c_?, t_?.c_?, t_?.c_? from (select tbl_a.x, tbl_a.y from table({?}) t_? (c_?)) t_? (c_?, c_?), (fn_string(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where t_?.c_?='?'
-===================================================
-count(*)    
-10     
-
-Query plan:
-sscan
-    class: t_? node[?]
-    cost:  ? card ?
-Query stmt:
-(select tbl_b.x, tbl_b.y from table({?}) t_? (c_?))
-Query plan:
-nl-join (cselect join)
-    edge:  table(?) -> t_? node[?]
-    outer: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select t_?.c_?, t_?.c_?, t_?.c_? from (select tbl_b.x, tbl_b.y from table({?}) t_? (c_?)) t_? (c_?, c_?), (fn_string(t_?.c_?)) t_? (c_?))
-Query plan:
-nl-join (inner join)
-    edge:  table(?) -> t_? node[?]
-    outer: nl-join (left outer join)
-               edge:  term[?]
-               outer: sscan
-                          class: tbl_b node[?]
-                          cost:  ? card ?
-               inner: sscan
-                          class: tbl_a node[?]
-                          sargs: term[?]
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: t_? node[?]
-               sargs: table(?) -> t_? node[?] AND term[?]
-               cost:  ? card ?
-    subqs: ?
-    cost:  ? card ?
-Query stmt:
-select count(*) from tbl_a tbl_a right outer join tbl_b tbl_b on tbl_a.x=tbl_b.x, (select t_?.c_?, t_?.c_?, t_?.c_? from (select tbl_b.x, tbl_b.y from table({?}) t_? (c_?)) t_? (c_?, c_?), (fn_string(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where t_?.c_?='?'
-===================================================
-count(*)    
-10     
-
-Query plan:
-sscan
-    class: t_? node[?]
-    cost:  ? card ?
-Query stmt:
-(select tbl_a.x, tbl_a.y from table({?}) t_? (c_?))
-Query plan:
-nl-join (cselect join)
-    edge:  table(?) -> t_? node[?]
-    outer: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select t_?.c_?, t_?.c_?, t_?.c_? from (select tbl_a.x, tbl_a.y from table({?}) t_? (c_?)) t_? (c_?, c_?), (fn_string(t_?.c_?)) t_? (c_?))
-Query plan:
-nl-join (inner join)
-    edge:  table(?) -> t_? node[?]
-    outer: nl-join (left outer join)
-               edge:  term[?]
-               outer: sscan
-                          class: tbl_a node[?]
-                          cost:  ? card ?
-               inner: sscan
-                          class: tbl_b node[?]
-                          sargs: term[?]
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: t_? node[?]
-               sargs: table(?) -> t_? node[?] AND term[?]
-               cost:  ? card ?
-    subqs: ?
-    cost:  ? card ?
-Query stmt:
-select count(*) from tbl_a tbl_a left outer join tbl_b tbl_b on tbl_a.x=tbl_b.x, (select t_?.c_?, t_?.c_?, t_?.c_? from (select tbl_a.x, tbl_a.y from table({?}) t_? (c_?)) t_? (c_?, c_?), (fn_string(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where t_?.c_?='?'
-===================================================
-count(*)    
-1000     
-
-Query plan:
-sscan
-    class: t_? node[?]
-    cost:  ? card ?
-Query stmt:
-(select tbl_a.y from table({?}) t_? (c_?))
-Query plan:
-nl-join (cselect join)
-    edge:  table(?) -> t_? node[?]
-    outer: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select t_?.c_?, t_?.c_? from (select tbl_a.y from table({?}) t_? (c_?)) t_? (c_?), (fn_string(t_?.c_?)) t_? (c_?))
-Query plan:
-nl-join (cross join)
-    outer: nl-join (inner join)
-               edge:  table(?) -> t_? node[?]
-               outer: sscan
-                          class: tbl_a node[?]
-                          cost:  ? card ?
-               inner: sscan
-                          class: t_? node[?]
-                          sargs: table(?) -> t_? node[?] AND term[?]
-                          cost:  ? card ?
-               subqs: ?
-               cost:  ? card ?
-    inner: sscan
-               class: tbl_b node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select count(*) from tbl_a tbl_a cross join tbl_b tbl_b, (select t_?.c_?, t_?.c_? from (select tbl_a.y from table({?}) t_? (c_?)) t_? (c_?), (fn_string(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?) where t_?.c_?='?'
-===================================================
-count(*)    
-1000     
-
-Query plan:
-sscan
-    class: t_? node[?]
-    cost:  ? card ?
-Query stmt:
-(select tbl_a.y from table({?}) t_? (c_?))
-Query plan:
-nl-join (cselect join)
-    edge:  table(?) -> t_? node[?]
-    outer: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select t_?.c_?, t_?.c_? from (select tbl_a.y from table({?}) t_? (c_?)) t_? (c_?), (fn_string(t_?.c_?)) t_? (c_?))
-Query plan:
-nl-join (cross join)
-    outer: nl-join (inner join)
-               edge:  table(?) -> t_? node[?]
-               outer: sscan
-                          class: tbl_a node[?]
-                          cost:  ? card ?
-               inner: sscan
-                          class: t_? node[?]
-                          sargs: table(?) -> t_? node[?] AND term[?]
-                          cost:  ? card ?
-               subqs: ?
-               cost:  ? card ?
-    inner: sscan
-               class: tbl_b node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select count(*) from tbl_a tbl_a cross join tbl_b tbl_b, (select t_?.c_?, t_?.c_? from (select tbl_a.y from table({?}) t_? (c_?)) t_? (c_?), (fn_string(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?) where t_?.c_?='?'
-===================================================
-count(*)    
-0     
-
-Query plan:
-sscan
-    class: t_? node[?]
-    cost:  ? card ?
-Query stmt:
-(select tbl_a.y, tbl_a.x, tbl_a.z from table({?}) t_? (c_?))
-Query plan:
-nl-join (cselect join)
-    edge:  table(?) -> t_? node[?]
-    outer: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select t_?.c_?, t_?.c_?, t_?.c_?, t_?.c_? from (select tbl_a.y, tbl_a.x, tbl_a.z from table({?}) t_? (c_?)) t_? (c_?, c_?, c_?), (fn_string(t_?.c_?)) t_? (c_?))
-Query plan:
-nl-join (inner join)
-    edge:  table(?) -> t_? node[?]
-    outer: nl-join (inner join)
-               edge:  term[?] AND term[?] AND term[?]
-               outer: sscan
-                          class: tbl_a node[?]
-                          cost:  ? card ?
-               inner: sscan
-                          class: tbl_b node[?]
-                          sargs: term[?] AND term[?] AND term[?]
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: t_? node[?]
-               sargs: table(?) -> t_? node[?] AND term[?]
-               cost:  ? card ?
-    subqs: ?
-    cost:  ? card ?
-Query stmt:
-select count(*) from tbl_a tbl_a,  natural tbl_b tbl_b, (select t_?.c_?, t_?.c_?, t_?.c_?, t_?.c_? from (select tbl_a.y, tbl_a.x, tbl_a.z from table({?}) t_? (c_?)) t_? (c_?, c_?, c_?), (fn_string(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?, c_?) where t_?.c_?='?' and tbl_a.x=tbl_b.x and tbl_a.y=tbl_b.y and tbl_a.z=tbl_b.z
+select 'test right outer join: on join conditions' from dual dual
 ===================================================
 count(*)    
 100     
 
 Query plan:
-sscan
-    class: t_? node[?]
-    cost:  ? card ?
-Query stmt:
-(select tbl_b.x from table({?}) t_? (c_?))
-Query plan:
-nl-join (cselect join)
-    edge:  table(?) -> t_? node[?]
+nl-join (left outer join)
+    edge:  term[?]
     outer: sscan
-               class: t_? node[?]
+               class: tbl_b node[?]
                cost:  ? card ?
     inner: sscan
-               class: t_? node[?]
+               class: tbl_a node[?]
+               sargs: term[?] AND term[?]
                cost:  ? card ?
+    during:term[?]
     cost:  ? card ?
 Query stmt:
-(select t_?.c_?, t_?.c_? from (select tbl_b.x from table({?}) t_? (c_?)) t_? (c_?), (fn_string(t_?.c_?)) t_? (c_?))
+select count(*) from tbl_a tbl_a right outer join tbl_b tbl_b on fn_string(tbl_b.y)='?' and tbl_a.x=tbl_b.x
+===================================================
+count(*)    
+100     
+
 Query plan:
-nl-join (inner join)
+nl-join (left outer join)
     edge:  term[?]
-    outer: nl-join (inner join)
-               edge:  table(?) -> t_? node[?]
-               outer: sscan
-                          class: tbl_b node[?]
-                          cost:  ? card ?
-               inner: sscan
-                          class: t_? node[?]
-                          sargs: table(?) -> t_? node[?]
-                          cost:  ? card ?
-               subqs: ?
+    outer: sscan
+               class: tbl_b node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_a node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    during:term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a tbl_a right outer join tbl_b tbl_b on tbl_b.y= ?:?  and tbl_a.x=tbl_b.x
+===================================================
+'test left outer join: on join conditions'    
+test left outer join: on join conditions     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select 'test left outer join: on join conditions' from dual dual
+===================================================
+count(*)    
+1000     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl_a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_b node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    during:term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a tbl_a left outer join tbl_b tbl_b on fn_string(tbl_a.y)='?' and tbl_a.x=tbl_b.x
+===================================================
+count(*)    
+1000     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl_a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_b node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    during:term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a tbl_a left outer join tbl_b tbl_b on tbl_a.y= ?:?  and tbl_a.x=tbl_b.x
+===================================================
+'test right outer join: on join condition and where'    
+test right outer join: on join condition and where     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select 'test right outer join: on join condition and where' from dual dual
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl_b node[?]
+               sargs: term[?]
                cost:  ? card ?
     inner: sscan
                class: tbl_a node[?]
@@ -439,7 +131,307 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from tbl_a tbl_a, tbl_b tbl_b, (select t_?.c_?, t_?.c_? from (select tbl_b.x from table({?}) t_? (c_?)) t_? (c_?), (fn_string(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?) where tbl_a.x= cast(t_?.c_? as double)
+select count(*) from tbl_a tbl_a right outer join tbl_b tbl_b on tbl_a.x=tbl_b.x where fn_string(tbl_b.y)='?'
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl_b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a tbl_a right outer join tbl_b tbl_b on tbl_a.x=tbl_b.x where tbl_b.y= ?:? 
+===================================================
+'test left outer join: on join condition and where'    
+test left outer join: on join condition and where     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select 'test left outer join: on join condition and where' from dual dual
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl_a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a tbl_a left outer join tbl_b tbl_b on tbl_a.x=tbl_b.x where fn_string(tbl_a.y)='?'
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl_a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a tbl_a left outer join tbl_b tbl_b on tbl_a.x=tbl_b.x where tbl_a.y= ?:? 
+===================================================
+'test oracle style outer join'    
+test oracle style outer join     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select 'test oracle style outer join' from dual dual
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl_b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a tbl_a right outer join tbl_b tbl_b on tbl_a.x=tbl_b.x where fn_string(tbl_b.y)='?'
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl_b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a tbl_a right outer join tbl_b tbl_b on tbl_a.x=tbl_b.x where tbl_b.y= ?:? 
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl_a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a tbl_a left outer join tbl_b tbl_b on tbl_a.x=tbl_b.x where fn_string(tbl_a.y)='?'
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl_a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a tbl_a left outer join tbl_b tbl_b on tbl_a.x=tbl_b.x where tbl_a.y= ?:? 
+===================================================
+'test cross join'    
+test cross join     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select 'test cross join' from dual dual
+===================================================
+count(*)    
+1000     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: tbl_a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a tbl_a cross join tbl_b tbl_b where fn_string(tbl_a.y)='?'
+===================================================
+count(*)    
+1000     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: tbl_a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a tbl_a cross join tbl_b tbl_b where tbl_a.y= ?:? 
+===================================================
+count(*)    
+1000     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: tbl_a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a tbl_a cross join tbl_b tbl_b where fn_string(tbl_a.y)='?'
+===================================================
+count(*)    
+1000     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: tbl_a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a tbl_a cross join tbl_b tbl_b where tbl_a.y= ?:? 
+===================================================
+'test natural join'    
+test natural join     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select 'test natural join' from dual dual
+===================================================
+count(*)    
+0     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?] AND term[?] AND term[?]
+    outer: sscan
+               class: tbl_a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_b node[?]
+               sargs: term[?] AND term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a tbl_a,  natural tbl_b tbl_b where fn_string(tbl_a.y)='?' and tbl_a.x=tbl_b.x and tbl_a.y=tbl_b.y and tbl_a.z=tbl_b.z
+===================================================
+count(*)    
+0     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?] AND term[?]
+    outer: sscan
+               class: tbl_a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_b node[?]
+               sargs: term[?] AND term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a tbl_a,  natural tbl_b tbl_b where tbl_a.x=tbl_b.x and tbl_a.z=tbl_b.z and tbl_b.y= ?:?  and tbl_a.y= ?:?  and tbl_a.y=tbl_b.y
+===================================================
+count(*)    
+100     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl_a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a tbl_a, tbl_b tbl_b where tbl_a.x= cast(fn_string(tbl_b.x) as double)
+===================================================
+count(*)    
+100     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl_a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a tbl_a, tbl_b tbl_b where tbl_a.x=tbl_b.x
 ===================================================
 0
 ===================================================

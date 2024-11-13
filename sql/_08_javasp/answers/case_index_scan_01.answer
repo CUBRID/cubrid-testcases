@@ -54,45 +54,19 @@ equal
 1     
 
 Query plan:
-sscan
-    class: t_? node[?]
+iscan
+    class: tbl node[?]
+    index: i_tbl term[?] (covers)
     cost:  ? card ?
 Query stmt:
-(select tbl.ord from table({?}) t_? (c_?))
-Query plan:
-nl-join (cselect join)
-    edge:  table(?) -> t_? node[?]
-    outer: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select t_?.c_?, t_?.c_? from (select tbl.ord from table({?}) t_? (c_?)) t_? (c_?), (inttest(t_?.c_?)) t_? (c_?))
-Query plan:
-nl-join (inner join)
-    edge:  table(?) -> t_? node[?]
-    outer: iscan
-               class: tbl node[?]
-               index: i_tbl term[?] (covers)
-               cost:  ? card ?
-    inner: sscan
-               class: t_? node[?]
-               sargs: table(?) -> t_? node[?]
-               cost:  ? card ?
-    subqs: ?
-    cost:  ? card ?
-Query stmt:
-(select t_?.c_? from tbl tbl, (select t_?.c_?, t_?.c_? from (select tbl.ord from table({?}) t_? (c_?)) t_? (c_?), (inttest(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?) where tbl.ord=?)
+(select inttest(tbl.ord) from tbl tbl where tbl.ord=?)
 Query plan:
 iscan
     class: tbl node[?]
     index: i_tbl term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select count(*) from tbl tbl where tbl.ord=(select t_?.c_? from tbl tbl, (select t_?.c_?, t_?.c_? from (select tbl.ord from table({?}) t_? (c_?)) t_? (c_?), (inttest(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?) where tbl.ord=?)
+select count(*) from tbl tbl where tbl.ord=(select inttest(tbl.ord) from tbl tbl where tbl.ord=?)
 ===================================================
 in    
 1     
@@ -122,52 +96,25 @@ in
 10     
 
 Query plan:
-sscan
-    class: t_? node[?]
-    cost:  ? card ?
-Query stmt:
-(select tbl.ord from table({?}) t_? (c_?))
-Query plan:
-nl-join (cselect join)
-    edge:  table(?) -> t_? node[?]
-    outer: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select t_?.c_?, t_?.c_? from (select tbl.ord from table({?}) t_? (c_?)) t_? (c_?), (inttest(t_?.c_?)) t_? (c_?))
-Query plan:
 temp(distinct)
-    subplan: nl-join (inner join)
-                 edge:  table(?) -> t_? node[?]
-                 outer: sscan
-                            class: tbl node[?]
-                            cost:  ? card ?
-                 inner: sscan
-                            class: t_? node[?]
-                            sargs: table(?) -> t_? node[?]
-                            cost:  ? card ?
-                 subqs: ?
+    subplan: sscan
+                 class: tbl node[?]
                  cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(select distinct t_?.c_? from tbl tbl, (select t_?.c_?, t_?.c_? from (select tbl.ord from table({?}) t_? (c_?)) t_? (c_?), (inttest(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?))
+(select distinct inttest(tbl.ord) from tbl tbl)
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
+idx-join (inner join)
     outer: sscan
-               class: tbl node[?]
-               cost:  ? card ?
-    inner: sscan
                class: av? node[?]
-               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: tbl node[?]
+               index: i_tbl term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from tbl tbl, (select distinct t_?.c_? from tbl tbl, (select t_?.c_?, t_?.c_? from (select tbl.ord from table({?}) t_? (c_?)) t_? (c_?), (inttest(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?)) av? (av_?) where tbl.ord=av?.av_?
+select count(*) from tbl tbl, (select distinct inttest(tbl.ord) from tbl tbl) av? (av_?) where tbl.ord=av?.av_?
 ===================================================
 like    
 1     
@@ -190,45 +137,19 @@ like
 1     
 
 Query plan:
-sscan
-    class: t_? node[?]
+iscan
+    class: tbl node[?]
+    index: i_tbl term[?]
     cost:  ? card ?
 Query stmt:
-(select tbl.col_char, tbl.ord from table({?}) t_? (c_?))
-Query plan:
-nl-join (cselect join)
-    edge:  table(?) -> t_? node[?]
-    outer: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select t_?.c_?, t_?.c_?, t_?.c_? from (select tbl.col_char, tbl.ord from table({?}) t_? (c_?)) t_? (c_?, c_?), (stringTest(t_?.c_?)) t_? (c_?))
-Query plan:
-nl-join (inner join)
-    edge:  table(?) -> t_? node[?]
-    outer: iscan
-               class: tbl node[?]
-               index: i_tbl term[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t_? node[?]
-               sargs: table(?) -> t_? node[?]
-               cost:  ? card ?
-    subqs: ?
-    cost:  ? card ?
-Query stmt:
-(select t_?.c_? from tbl tbl, (select t_?.c_?, t_?.c_?, t_?.c_? from (select tbl.col_char, tbl.ord from table({?}) t_? (c_?)) t_? (c_?, c_?), (stringTest(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where tbl.ord=?)
+(select stringTest(tbl.col_char) from tbl tbl where tbl.ord=?)
 Query plan:
 sscan
     class: tbl node[?]
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select count(*) from tbl tbl where tbl.col_char like (select t_?.c_? from tbl tbl, (select t_?.c_?, t_?.c_?, t_?.c_? from (select tbl.col_char, tbl.ord from table({?}) t_? (c_?)) t_? (c_?, c_?), (stringTest(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where tbl.ord=?)
+select count(*) from tbl tbl where tbl.col_char like (select stringTest(tbl.col_char) from tbl tbl where tbl.ord=?)
 ===================================================
 0
 ===================================================
