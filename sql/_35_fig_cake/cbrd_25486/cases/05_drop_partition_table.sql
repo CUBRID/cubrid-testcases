@@ -75,9 +75,9 @@ call login(class db_user,'u1','');
 
 drop table u1.t1_h;
 
-select * from db_auth where grantee_name != 'PUBLIC';
+select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, object_name;
 
-select owner.name, grants from db_authorization where owner.name != 'PUBLIC';
+select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
 
 
 evaluate 'connect to dba, drop u1.t1_r';
@@ -85,9 +85,9 @@ call login(class db_user,'dba','');
 
 drop table u1.t1_r;
 
-select * from db_auth where grantee_name != 'PUBLIC';
+select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, object_name;
 
-select owner.name, grants from db_authorization where owner.name != 'PUBLIC';
+select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
 
 
 evaluate 'Test done';
