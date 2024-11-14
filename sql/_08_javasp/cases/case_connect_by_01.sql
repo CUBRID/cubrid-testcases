@@ -14,7 +14,6 @@ INSERT INTO tbl1 VALUES (6,3,'Foster', 1972);
 INSERT INTO tbl1 VALUES (7,2,'Brown', 1981);
 INSERT INTO tbl1 VALUES (8,7,'Lin', 1983);
 
--- CBRD-24720 : result different with using javasp
 -- test connect by
 
 -- with sp
