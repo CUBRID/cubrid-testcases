@@ -14,7 +14,6 @@ INSERT INTO tbl1 VALUES (6,3,'Foster', 1972);
 INSERT INTO tbl1 VALUES (7,2,'Brown', 1981);
 INSERT INTO tbl1 VALUES (8,7,'Lin', 1983);
 
--- CBRD-24720 : result different with using javasp
 -- test connect by
 
 -- with sp
@@ -41,7 +40,6 @@ START WITH (mgrid) IS NULL
 CONNECT BY prior id=mgrid
 ORDER BY id;
 
--- CBRD-24720 : result different with using javasp
 -- test 'LEVEL' as parameter
 SELECT id, mgrid, name, LEVEL
 FROM tbl1
@@ -57,7 +55,6 @@ START WITH mgrid IS NULL
 CONNECT BY PRIOR id=mgrid
 ORDER BY id;
 
--- CBRD-24720 : result different with using javasp
 -- test 'CONNECT_BY_ISLEAF'
 SELECT id, mgrid, name, fn_string(CONNECT_BY_ISLEAF)
 FROM tbl1
@@ -71,7 +68,6 @@ START WITH mgrid IS NULL
 CONNECT BY PRIOR id=mgrid
 ORDER BY id;
 
--- CBRD-24720 : result different with using javasp
 -- test 'CONNECT_BY_ISCYCLE'
 UPDATE tbl1 SET mgrid=8 WHERE id=2;
 SELECT id, mgrid, name, fn_string(CONNECT_BY_ISCYCLE)
@@ -128,7 +124,6 @@ START WITH mgrid IS NULL
 CONNECT BY PRIOR id=mgrid
 ORDER BY id;
 
--- CBRD-24720 : result different with using javasp
 SELECT id, mgrid, name, SYS_CONNECT_BY_PATH( fn_string(name) ,'/' )
 FROM tbl1
 START WITH mgrid IS NULL
