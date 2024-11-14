@@ -26,7 +26,7 @@ GRANT select ON owner.tbl TO grantable WITH GRANT OPTION;
 evaluate 'owner.hello grant to grantable user, ERROR: Grant option is not allowed';
 GRANT EXECUTE ON PROCEDURE owner.hello TO grantable WITH GRANT OPTION;
 
-select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by object_name, auth_type;
+select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantee_name, object_name, auth_type;
 
 evaluate 'connect to grantable_member & owner.tbl grant to grantable user, ERROR: SELECT authorization failure';
 CALL LOGIN('grantable_member','') ON  CLASS db_user;
@@ -40,7 +40,7 @@ CALL LOGIN('grantable','') ON  CLASS db_user;
 GRANT select ON owner.tbl TO grantable_member WITH GRANT OPTION;
 GRANT select ON owner.tbl TO temp_user;
 
-select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by object_name, auth_type;
+select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantee_name, object_name, auth_type;
 
 
 evaluate 'connect to grantable_member';
@@ -74,7 +74,7 @@ evaluate 'connect to grantable_member & owner.tbl grant to temp_user';
 CALL LOGIN('grantable_member','') ON  CLASS db_user;
 GRANT select ON owner.tbl TO temp_user;
 
-select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by object_name, auth_type;
+select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantee_name, object_name, auth_type;
 
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
 

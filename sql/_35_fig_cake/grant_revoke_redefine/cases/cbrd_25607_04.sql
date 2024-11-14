@@ -29,14 +29,14 @@ CALL LOGIN('dba','') ON  CLASS db_user;
 GRANT select ON owner.tbl TO dba_member;
 GRANT EXECUTE ON PROCEDURE owner.hello TO dba_member;
 
-select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by object_name, auth_type;
+select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantee_name, object_name, auth_type;
 
 evaluate 'connect to dba_member & owner.tbl, owner.hello grant to dba';
 CALL LOGIN('dba_member','') ON  CLASS db_user;
 GRANT select ON owner.tbl TO dba;
 GRANT EXECUTE ON PROCEDURE owner.hello TO dba;
 
-select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by object_name, auth_type;
+select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantee_name, object_name, auth_type;
 
 
 evaluate 'Test init';
@@ -50,7 +50,7 @@ CALL LOGIN('dba','') ON  CLASS db_user;
 revoke select on owner.tbl from dba_member;
 revoke EXECUTE on PROCEDURE owner.hello from dba_member;
 
-select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by object_name, auth_type;
+select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantee_name, object_name, auth_type;
 
 
 
@@ -60,7 +60,7 @@ CALL LOGIN('dba','') ON  CLASS db_user;
 GRANT select ON owner.tbl TO dba;
 GRANT EXECUTE ON PROCEDURE owner.hello TO dba;
 
-select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by object_name, auth_type;
+select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantee_name, object_name, auth_type;
 
 
 
@@ -70,7 +70,7 @@ CALL LOGIN('owner','') ON  CLASS db_user;
 GRANT select ON owner.tbl TO owner;
 GRANT EXECUTE ON PROCEDURE owner.hello TO owner;
 
-select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by object_name, auth_type;
+select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantee_name, object_name, auth_type;
 
 
 
@@ -86,7 +86,7 @@ GRANT select ON owner.tbl TO grantable;
 evaluate 'owner.hello grant to grantable user, ERROR: Only DBA and the owner can grant the EXECUTE privilege';
 GRANT EXECUTE ON PROCEDURE owner.hello TO grantable;
 
-select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by object_name, auth_type;
+select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantee_name, object_name, auth_type;
 
 
 evaluate 'Test init';
@@ -95,7 +95,7 @@ CALL LOGIN('dba','') ON  CLASS db_user;
 revoke select on owner.tbl from grantable;
 revoke EXECUTE ON PROCEDURE owner.hello from grantable;
 
-select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by object_name, auth_type;
+select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantee_name, object_name, auth_type;
 
 
 
@@ -106,18 +106,18 @@ CALL LOGIN('dba_member','') ON  CLASS db_user;
 GRANT select ON owner.tbl TO dba_member;
 GRANT EXECUTE ON PROCEDURE owner.hello TO dba_member;
 
-select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by object_name, auth_type;
+select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantee_name, object_name, auth_type;
 
 
 
 
-evaluate 'case 10: owner_member grants privileges to owner_member';
+evaluate 'case 11: owner_member grants privileges to owner_member';
 evaluate 'connect to owner_member & owner.tbl, owner.hello grant to owner_member user';
 CALL LOGIN('owner_member','') ON  CLASS db_user;
 GRANT select ON owner.tbl TO owner_member;
 GRANT EXECUTE ON PROCEDURE owner.hello TO owner_member;
 
-select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by object_name, auth_type;
+select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantee_name, object_name, auth_type;
 
 
 

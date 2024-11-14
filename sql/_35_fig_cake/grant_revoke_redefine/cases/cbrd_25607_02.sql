@@ -23,13 +23,13 @@ CALL LOGIN('owner','') ON  CLASS db_user;
 GRANT select ON owner.tbl TO temp_user;
 GRANT EXECUTE ON PROCEDURE owner.hello TO temp_user;
 
-select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by object_name, auth_type;
+select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name;
 
 evaluate 'revoke from temp_user';
 revoke select on owner.tbl from temp_user;
 revoke EXECUTE on PROCEDURE owner.hello from temp_user;
 
-select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by object_name, auth_type;
+select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name;
 
 
 evaluate 'connect to dba_member & owner.tbl, owner.hello grant to temp_user';
@@ -37,7 +37,7 @@ CALL LOGIN('dba_member','') ON  CLASS db_user;
 GRANT select ON owner.tbl TO temp_user WITH GRANT OPTION;;
 GRANT EXECUTE ON PROCEDURE owner.hello TO temp_user;
 
-select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by object_name, auth_type;
+select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name;
 
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
 
@@ -48,7 +48,7 @@ CALL LOGIN('dba_member','') ON  CLASS db_user;
 revoke select on owner.tbl from temp_user;
 revoke EXECUTE on PROCEDURE owner.hello from temp_user;
 
-select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by object_name, auth_type;
+select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name;
 
 
 
@@ -58,7 +58,7 @@ CALL LOGIN('owner','') ON  CLASS db_user;
 GRANT select ON owner.tbl TO temp_user;
 GRANT EXECUTE ON PROCEDURE owner.hello TO temp_user;
 
-select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by object_name, auth_type;
+select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name;
 
 evaluate 'revoke from temp_user';
 revoke select on owner.tbl from temp_user;
@@ -70,7 +70,7 @@ CALL LOGIN('owner_member','') ON  CLASS db_user;
 GRANT select ON owner.tbl TO temp_user WITH GRANT OPTION;
 GRANT EXECUTE ON PROCEDURE owner.hello TO temp_user;
 
-select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by object_name, auth_type;
+select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name;
 
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC';
 
@@ -81,7 +81,7 @@ CALL LOGIN('owner_member','') ON  CLASS db_user;
 revoke select on owner.tbl from temp_user;
 revoke EXECUTE on PROCEDURE owner.hello from temp_user;
 
-select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by object_name, auth_type;
+select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name;
 
 
 evaluate 'connect to dba & removed test users & test objects';
