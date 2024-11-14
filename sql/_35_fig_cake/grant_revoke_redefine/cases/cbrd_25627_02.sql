@@ -26,7 +26,7 @@ GRANT SELECT ON u1.tbl TO u3 WITH GRANT OPTION;
 
 evaluate 'connect to dba';
 call login(class db_user,'dba','');
-select grantor_name, grantee_name, owner_name, object_type, object_name, auth_type from db_auth where grantee_name != 'PUBLIC' order by grantor_name;
+select grantor_name, grantee_name, owner_name, object_type, object_name, auth_type from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name;
 
 
 evaluate 'connect to u3';
@@ -38,7 +38,7 @@ evaluate 'connect to dba & changed owner u1.v1_tbl -> u3.v1_tbl';
 call login('dba','') on class db_user;
 ALTER VIEW u1.v1_tbl OWNER TO u3;
 
-select grantor_name, grantee_name, owner_name, object_type, object_name, auth_type from db_auth where grantee_name != 'PUBLIC' order by grantor_name;
+select grantor_name, grantee_name, owner_name, object_type, object_name, auth_type from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name;
 
 select class_name, owner_name from db_class where class_name = 'v1_tbl' order by class_name;
 
