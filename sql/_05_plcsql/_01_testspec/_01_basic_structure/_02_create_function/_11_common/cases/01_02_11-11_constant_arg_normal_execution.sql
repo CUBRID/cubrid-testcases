@@ -1,5 +1,6 @@
 --+ server-message on
 
+-- Verified for CBRD-25308
 -- normal: For constant arguments, the exact value must be returned.
 drop table if exists tbl;
 create table tbl (a int);
