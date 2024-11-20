@@ -1,6 +1,6 @@
 --+ server-message on
 
--- normal: recursive call is possible
+-- normal: For constant arguments, the exact value must be returned.
 drop table if exists tbl;
 create table tbl (a int);
 insert into tbl values (1), (2), (3);
