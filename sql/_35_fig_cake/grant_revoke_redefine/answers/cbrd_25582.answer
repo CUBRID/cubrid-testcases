@@ -220,6 +220,12 @@ null
 ===================================================
 grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
 U1     U2     CLASS     tbl     U1     SELECT     YES     
+U1     U2     CLASS     tbl     U1     INSERT     YES     
+U1     U2     CLASS     tbl     U1     UPDATE     YES     
+U1     U2     CLASS     tbl     U1     DELETE     YES     
+U1     U2     CLASS     tbl     U1     ALTER     YES     
+U1     U2     CLASS     tbl     U1     INDEX     YES     
+U1     U2     CLASS     tbl     U1     EXECUTE     YES     
 U2     U3     CLASS     tbl     U1     SELECT     YES     
 U3     U4     CLASS     tbl     U1     SELECT     YES     
 U4     U5     CLASS     tbl     U1     SELECT     YES     
@@ -237,10 +243,57 @@ null
 ===================================================
 grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
 U1     U2     CLASS     tbl     U1     SELECT     YES     
+U1     U2     CLASS     tbl     U1     INSERT     YES     
+U1     U2     CLASS     tbl     U1     UPDATE     YES     
+U1     U2     CLASS     tbl     U1     DELETE     YES     
+U1     U2     CLASS     tbl     U1     ALTER     YES     
+U1     U2     CLASS     tbl     U1     INDEX     YES     
+U1     U2     CLASS     tbl     U1     EXECUTE     YES     
 
 ===================================================
     
-init test     
+connect to u1, test for cascade     
+
+===================================================
+    
+null     
+
+===================================================
+    
+grant all privileges on u1.tbl to u3     
+
+===================================================
+0
+===================================================
+    
+grant SELECT, UPDATE, INSERT, DELETE on u1.tbl to u4     
+
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+U1     U2     CLASS     tbl     U1     SELECT     YES     
+U1     U2     CLASS     tbl     U1     INSERT     YES     
+U1     U2     CLASS     tbl     U1     UPDATE     YES     
+U1     U2     CLASS     tbl     U1     DELETE     YES     
+U1     U2     CLASS     tbl     U1     ALTER     YES     
+U1     U2     CLASS     tbl     U1     INDEX     YES     
+U1     U2     CLASS     tbl     U1     EXECUTE     YES     
+U2     U3     CLASS     tbl     U1     SELECT     YES     
+U2     U3     CLASS     tbl     U1     INSERT     YES     
+U2     U3     CLASS     tbl     U1     UPDATE     YES     
+U2     U3     CLASS     tbl     U1     DELETE     YES     
+U2     U3     CLASS     tbl     U1     ALTER     YES     
+U2     U3     CLASS     tbl     U1     INDEX     YES     
+U2     U3     CLASS     tbl     U1     EXECUTE     YES     
+U2     U4     CLASS     tbl     U1     DELETE     YES     
+U2     U4     CLASS     tbl     U1     INSERT     YES     
+U2     U4     CLASS     tbl     U1     UPDATE     YES     
+U2     U4     CLASS     tbl     U1     SELECT     YES     
+
+===================================================
+    
+connect to dba, revoke to u1.tbl(SELECT) from u2 (cascade test)     
 
 ===================================================
     
@@ -250,10 +303,30 @@ null
 0
 ===================================================
 grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+U1     U2     CLASS     tbl     U1     INSERT     YES     
+U1     U2     CLASS     tbl     U1     UPDATE     YES     
+U1     U2     CLASS     tbl     U1     DELETE     YES     
+U1     U2     CLASS     tbl     U1     ALTER     YES     
+U1     U2     CLASS     tbl     U1     INDEX     YES     
+U1     U2     CLASS     tbl     U1     EXECUTE     YES     
+U2     U3     CLASS     tbl     U1     INSERT     YES     
+U2     U3     CLASS     tbl     U1     UPDATE     YES     
+U2     U3     CLASS     tbl     U1     DELETE     YES     
+U2     U3     CLASS     tbl     U1     ALTER     YES     
+U2     U3     CLASS     tbl     U1     INDEX     YES     
+U2     U3     CLASS     tbl     U1     EXECUTE     YES     
+U2     U4     CLASS     tbl     U1     DELETE     YES     
+U2     U4     CLASS     tbl     U1     INSERT     YES     
+U2     U4     CLASS     tbl     U1     UPDATE     YES     
 
 ===================================================
     
-null     
+init test: revoke to u1.tbl(ALL PRIVILEGES) from u2 (cascade test)     
+
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
 
 ===================================================
     
@@ -263,6 +336,8 @@ case 4: grant to all user and execute revoke
     
 null     
 
+===================================================
+0
 ===================================================
 0
 ===================================================
@@ -285,6 +360,8 @@ ERROR: Cannot issue GRANT/REVOKE to owner of a class
 
 ===================================================
 Error:-146
+===================================================
+0
 ===================================================
 0
 ===================================================

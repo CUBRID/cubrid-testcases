@@ -86,7 +86,7 @@ call login('dba','') on class db_user;
 evaluate 'case 3: execute to revoke on grantable user (u2)';
 evaluate 'connect to u1, u1.tbl grant to u2';
 call login('u1','') on class db_user;
-GRANT SELECT ON u1.TBL TO u2 WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON u1.TBL TO u2 WITH GRANT OPTION;
 
 evaluate 'connect to u2, u1.tbl grant to u3';
 call login('u2','') on class db_user;
@@ -110,18 +110,32 @@ REVOKE SELECT ON u1.TBL FROM u3;
 select * from db_auth where grantee_name != 'PUBLIC'  order by grantor_name;
 
 
-evaluate 'init test';
-call login('u1','') on class db_user;
+evaluate 'connect to u1, test for cascade';
+call login('u2','') on class db_user;
+evaluate 'grant all privileges on u1.tbl to u3';
+GRANT ALL PRIVILEGES ON u1.TBL TO u3 WITH GRANT OPTION;
+evaluate 'grant SELECT, UPDATE, INSERT, DELETE on u1.tbl to u4';
+GRANT SELECT, UPDATE, INSERT, DELETE ON u1.TBL TO u4 WITH GRANT OPTION;
+
+select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name;
+
+
+evaluate 'connect to dba, revoke to u1.tbl(SELECT) from u2 (cascade test)';
+call login('dba','') on class db_user;
 REVOKE SELECT ON u1.TBL FROM u2;
 
 select * from db_auth where grantee_name != 'PUBLIC'  order by grantor_name;
 
-call login('dba','') on class db_user;
+evaluate 'init test: revoke to u1.tbl(ALL PRIVILEGES) from u2 (cascade test)';
+REVOKE ALL PRIVILEGES ON u1.TBL FROM u2;
+
+select * from db_auth where grantee_name != 'PUBLIC'  order by grantor_name;
 
 
 
 evaluate 'case 4: grant to all user and execute revoke';
 call login('u1','') on class db_user;
+GRANT SELECT ON u1.TBL TO u1 WITH GRANT OPTION;
 GRANT SELECT ON u1.TBL TO u2 WITH GRANT OPTION;
 GRANT SELECT ON u1.TBL TO u3 WITH GRANT OPTION;
 GRANT SELECT ON u1.TBL TO u4 WITH GRANT OPTION;
@@ -133,6 +147,7 @@ call login('u2','') on class db_user;
 evaluate 'ERROR: Cannot issue GRANT/REVOKE to owner of a class';
 GRANT SELECT ON u1.TBL TO u1 WITH GRANT OPTION;
 
+GRANT SELECT ON u1.TBL TO u2 WITH GRANT OPTION;
 GRANT SELECT ON u1.TBL TO u3 WITH GRANT OPTION;
 GRANT SELECT ON u1.TBL TO u4 WITH GRANT OPTION;
 GRANT SELECT ON u1.TBL TO u5 WITH GRANT OPTION;
