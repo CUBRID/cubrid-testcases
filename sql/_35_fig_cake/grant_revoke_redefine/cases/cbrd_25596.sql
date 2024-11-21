@@ -46,7 +46,7 @@ evaluate 'u1 grant to dba.tbl (with grant option)';
 GRANT SELECT ON dba.tbl TO u1 WITH GRANT OPTION;
 GRANT INSERT ON dba.tbl TO u1;
 
-select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name;
+select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, auth_type;
 
 select owner.name, grants from db_authorization where owner.name = 'U1' order by owner.name;
 

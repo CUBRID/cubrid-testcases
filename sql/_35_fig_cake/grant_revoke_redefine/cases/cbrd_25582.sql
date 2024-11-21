@@ -172,6 +172,9 @@ GRANT SELECT ON u1.TBL TO u2 WITH GRANT OPTION;
 GRANT SELECT ON u1.TBL TO u3 WITH GRANT OPTION;
 GRANT SELECT ON u1.TBL TO u5 WITH GRANT OPTION;
 
+evaluate 'ERROR: INDEX authorization failure';
+GRANT INDEX ON u1.TBL TO u5 WITH GRANT OPTION;
+
 
 evaluate 'connect to u5';
 call login('u5','') on class db_user;
