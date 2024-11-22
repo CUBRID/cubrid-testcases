@@ -1,6 +1,8 @@
 /* Verified the CBRD-25486
 As-is: if removed the object then remove the related data on the db_authorization table
 To-be: if removed the object then set 'NULL' relate data on the db_authorization table
+
+Scenario 01: Drop table when table permission granted to other users
 */
 
 create user u1;
