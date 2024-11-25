@@ -14,10 +14,16 @@ begin
 	select val into r.val from tbl limit 1;
 	dbms_output.put_line(r.val);
 
+	select r.val into r.val from tbl r limit 1;
+	dbms_output.put_line(r.val);
+
 	select val into v from tbl limit 1;
 	dbms_output.put_line(v);
 
 	execute immediate 'select val from tbl limit 1' into r.val;
+	dbms_output.put_line(r.val);
+
+	execute immediate 'select r.val from tbl r limit 1' into r.val;
 	dbms_output.put_line(r.val);
 
 	execute immediate 'select val from tbl limit 1' into v;
