@@ -31,7 +31,7 @@ grant select, alter on t1_l to u2 with grant option;
 evaluate 'ERROR: Invalid partition requests';
 grant insert on t1_l__p__p1 to u2 with grant option;
 
-select * from db_auth where grantee_name != 'PUBLIC' order by object_name;
+select * from db_auth where grantee_name != 'PUBLIC' order by object_name, auth_type;
 
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
 
