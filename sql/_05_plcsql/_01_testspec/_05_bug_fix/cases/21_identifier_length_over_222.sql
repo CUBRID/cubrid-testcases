@@ -12,5 +12,6 @@ begin
 end;
 
 call poo();
+drop procedure poo;
 
 --+ server-message off
