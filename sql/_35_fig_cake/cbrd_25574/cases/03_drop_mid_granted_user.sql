@@ -23,9 +23,11 @@ call login('u1','') on class db_user;
 
 evaluate 'u2 grant to u1.tbl (granted select twice, but duplicate granted does not work)';
 GRANT SELECT ON u1.tbl TO u2 WITH GRANT OPTION;
-GRANT SELECT ON u1.tbl TO u2;
-
 select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name;
+
+GRANT SELECT ON u1.tbl TO u2;
+select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name;
+
 
 evaluate 'u2 grant to u1.tbl (insert)';
 GRANT INSERT ON u1.tbl TO u2 WITH GRANT OPTION;
