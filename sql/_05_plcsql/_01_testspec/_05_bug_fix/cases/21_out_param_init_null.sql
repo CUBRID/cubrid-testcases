@@ -20,4 +20,6 @@ end;
 select 7 into :a;
 call test_out_param(:a);
 
+drop procedure test_out_param;
+
 --+ server-message off
