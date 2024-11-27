@@ -5,7 +5,8 @@ create or replace procedure test_out_param(i OUT int) as
     procedure print_null_or_not(k int) as
     begin
         dbms_output.put_line(case when k is null then 'null' else 'non-null' end);
-    end;    procedure inner(j OUT int) as
+    end;
+    procedure inner(j OUT int) as
     begin
         print_null_or_not(j);
         i := 777;
