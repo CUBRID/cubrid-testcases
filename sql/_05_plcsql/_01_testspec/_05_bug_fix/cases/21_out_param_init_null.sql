@@ -23,4 +23,6 @@ call test_out_param(:a);
 
 drop procedure test_out_param;
 
+select a from dual;
+
 --+ server-message off
