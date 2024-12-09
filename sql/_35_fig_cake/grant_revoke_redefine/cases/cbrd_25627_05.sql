@@ -31,7 +31,12 @@ create table t1_l (c1 int) comment 'u1 > t1_l (list)'
 evaluate 'u1.t1_r, u1.t1_h, u1.t1_l grant to u2';
 grant select on t1_r to u2 with grant option;
 grant select on t1_h to u2 with grant option;
+
+evaluate 'ERROR: Invalid partition requests';
+grant select on t1_l__p__p0 to u2 with grant option;
+
 grant select on t1_l to u2 with grant option;
+
 
 select grantor_name, grantee_name, owner_name, object_type, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, object_name;
 
