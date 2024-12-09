@@ -45,6 +45,15 @@ Stored procedure execute error:
 
 ===================================================
     
+ERROR: An object with the supplied attribute value doesnt exist     
+
+
+===================================================
+Error:-711
+An object with the supplied attribute value doesn't exist.
+
+===================================================
+    
 change procedure owner (dba -> public)     
 
 
@@ -69,6 +78,16 @@ ERROR: Stored procedure compile error
 Error:-1360
 In line 2, column 13
 Stored procedure compile error: Syntax: Unknown class "dba.tbl". select col1, col2 from [dba.tbl]
+
+===================================================
+    
+ERROR: Syntax error     
+
+
+===================================================
+Error:-493
+Syntax: In line 1, column 41 before ' TO dba ; '
+Syntax error: unexpected 'OWNER', expecting ';' 
 
 ===================================================
 sp_name    lang    owner    comment    
@@ -108,6 +127,88 @@ alter comment of procedure
 sp_name    lang    owner    comment    
 test_tbl     PLCSQL     DBA     2: COMMENT     
 
+
+===================================================
+    
+check to _db_class on procedure     
+
+
+===================================================
+    
+create to dba.test_db_class     
+
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+_db_class result: dba.tbl
+===================================================
+    
+create to public.test_db_class2, ERROR: Semantic: SELECT is not authorized on _db_class     
+
+
+===================================================
+Error:-1360
+In line 2, column 13
+Stored procedure compile error: Semantic: SELECT is not authorized on _db_class. select [_db_class].unique_name from [_db_class] [_db_class] ...
+
+===================================================
+    
+alter owner dba.test_db_class to public, ERROR: Semantic: SELECT is not authorized on _db_class     
+
+
+===================================================
+Error:-1360
+In line 2, column 13
+Stored procedure compile error: Semantic: SELECT is not authorized on _db_class. select [_db_class].unique_name from [_db_class] [_db_class] ...
+
+===================================================
+    
+grant select on _db_class to public & ALTER procedure dba.test_db_class OWNER TO public     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+    
+connect to public & call public.test_db_class()     
+
+
+===================================================
+    
+null     
+
+
+===================================================
+    
+null     
+
+
+_db_class result: dba.tbl
+===================================================
+    
+connect to dba & Test done     
+
+
+===================================================
+    
+null     
+
+
+===================================================
+0
+
+===================================================
+0
 
 ===================================================
 0
