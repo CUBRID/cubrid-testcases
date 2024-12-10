@@ -116,7 +116,7 @@ select length(to_char(s1)),disk_size(to_char(s1)) from t3 order by 1;
 
 select length(to_char(s2)),disk_size(to_char(s2)) from t3 order by 1;  
 
-select to_char(sysdatetime, repeat('YYYY/DD/MM DAY hh24:MI:ss.ff',50));
+select to_char(sysdatetime, repeat('YYYY/DD/MM DAY hh24:MI:ss.ff',200));
 
 drop table t3;
 
