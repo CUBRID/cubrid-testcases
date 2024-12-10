@@ -1,0 +1,324 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+####  1. hint: recompile use_hash     
+
+===================================================
+a_ca    b_ca    c_ca    
+1     1     1     
+2     2     2     
+3     3     3     
+4     4     4     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: ab node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ ab.ca, b.ca, c.ca from ta ab, tb b, tc c where (b.ca=c.ca) and (ab.ca=b.ca) and b.flag= ?:?  and ab.flag= ?:?  and c.flag= ?:? 
+===================================================
+0
+===================================================
+    
+####  2. hint: recompile + use_hash     
+
+===================================================
+a_ca    b_ca    c_ca    
+1     1     1     
+2     2     2     
+3     3     3     
+4     4     4     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: ab node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ ab.ca, b.ca, c.ca from ta ab, tb b, tc c where (b.ca=c.ca) and (ab.ca=b.ca) and b.flag= ?:?  and ab.flag= ?:?  and c.flag= ?:? 
+===================================================
+0
+===================================================
+    
+####  3. hint: recompile use_hash + use_hash     
+
+===================================================
+a_ca    b_ca    c_ca    
+1     1     1     
+2     2     2     
+3     3     3     
+4     4     4     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: ab node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ ab.ca, b.ca, c.ca from ta ab, tb b, tc c where (b.ca=c.ca) and (ab.ca=b.ca) and b.flag= ?:?  and ab.flag= ?:?  and c.flag= ?:? 
+===================================================
+0
+===================================================
+    
+####  4. hint: recompile no_use_hash + use_hash     
+
+===================================================
+a_ca    b_ca    c_ca    
+1     1     1     
+2     2     2     
+3     3     3     
+4     4     4     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: ab node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?] AND term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH USE_HASH */ ab.ca, b.ca, c.ca from ta ab, tb b, tc c where (b.ca=c.ca) and (ab.ca=b.ca) and b.flag= ?:?  and ab.flag= ?:?  and c.flag= ?:? 
+===================================================
+0
+===================================================
+    
+####  5. hint: recompile use_hash(ab,c) + use_hash(a,b)     
+
+===================================================
+a_ca    b_ca    c_ca    
+1     1     1     
+2     2     2     
+3     3     3     
+4     4     4     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: ab node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH(ab, c, a, b) */ ab.ca, b.ca, c.ca from ta ab, tb b, tc c where (b.ca=c.ca) and (ab.ca=b.ca) and b.flag= ?:?  and ab.flag= ?:?  and c.flag= ?:? 
+===================================================
+0
+===================================================
+    
+####  6. hint: recompile use_hash(ab) + no_use_hash(a)     
+
+===================================================
+a_ca    b_ca    c_ca    
+1     1     1     
+2     2     2     
+3     3     3     
+4     4     4     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: ab node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?] AND term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH(a) USE_HASH(ab) */ ab.ca, b.ca, c.ca from ta ab, tb b, tc c where (b.ca=c.ca) and (ab.ca=b.ca) and b.flag= ?:?  and ab.flag= ?:?  and c.flag= ?:? 
+===================================================
+0
+===================================================
+    
+####  7. hint: recompile no_use_hash(ab) + use_hash(a)     
+
+===================================================
+a_ca    b_ca    c_ca    
+1     1     1     
+2     2     2     
+3     3     3     
+4     4     4     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: b node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: ab node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH(ab) USE_HASH(a) */ ab.ca, b.ca, c.ca from ta ab, tb b, tc c where (b.ca=c.ca) and (ab.ca=b.ca) and b.flag= ?:?  and ab.flag= ?:?  and c.flag= ?:? 
+===================================================
+0
+===================================================
+    
+####  8. hint: recompile no_use_hash(a,b,c) + use_hash(a,b,c)     
+
+===================================================
+a_ca    b_ca    c_ca    
+1     1     1     
+2     2     2     
+3     3     3     
+4     4     4     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: c node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: ab node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH(c) USE_HASH(a, b) */ ab.ca, b.ca, c.ca from ta ab, tb b, tc c where (b.ca=c.ca) and (ab.ca=b.ca) and b.flag= ?:?  and ab.flag= ?:?  and c.flag= ?:? 
+===================================================
+0
+===================================================
+    
+####  9. hint: recompile use_hash(a,b,c) + no_use_hash(a,b,c)     
+
+===================================================
+a_ca    b_ca    c_ca    
+1     1     1     
+2     2     2     
+3     3     3     
+4     4     4     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: ab node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?] AND term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH(a, b) USE_HASH(c) */ ab.ca, b.ca, c.ca from ta ab, tb b, tc c where (b.ca=c.ca) and (ab.ca=b.ca) and b.flag= ?:?  and ab.flag= ?:?  and c.flag= ?:? 
+===================================================
+0
+===================================================
+0

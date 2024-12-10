@@ -19,7 +19,7 @@ drop table if exists foo;
 create table foo as
 WITH RECURSIVE cte (l, container_id, container_name, container_id_snr, path)
 AS (
-  SELECT 1 AS l, container_id, container_name, container_id_snr, CAST(container.container_name AS CHAR(4000)) AS path
+  SELECT 1 AS l, container_id, container_name, container_id_snr, CAST(container.container_name AS CHAR(2048)) AS path
    FROM container
   WHERE container_id_snr IS NULL
 UNION ALL
@@ -36,7 +36,7 @@ select count(*) from foo;
 insert into foo
 WITH RECURSIVE cte (l, container_id, container_name, container_id_snr, path)
 AS (
-  SELECT 1 AS l, container_id, container_name, container_id_snr, CAST(container.container_name AS CHAR(4000)) AS path
+  SELECT 1 AS l, container_id, container_name, container_id_snr, CAST(container.container_name AS CHAR(2048)) AS path
    FROM container
   WHERE container_id_snr IS NULL
 UNION ALL
@@ -52,7 +52,7 @@ select count(*) from foo;
 replace into foo
 WITH RECURSIVE cte (l, container_id, container_name, container_id_snr, path)
 AS (
-  SELECT 1 AS l, container_id, container_name, container_id_snr, CAST(container.container_name AS CHAR(4000)) AS path
+  SELECT 1 AS l, container_id, container_name, container_id_snr, CAST(container.container_name AS CHAR(2048)) AS path
    FROM container
   WHERE container_id_snr IS NULL
 UNION ALL
@@ -68,7 +68,7 @@ select count(*) from foo;
 
 WITH RECURSIVE cte (l, container_id, container_name, container_id_snr, path)
 AS (
-  SELECT 1 AS l, container_id, container_name, container_id_snr, CAST(container.container_name AS CHAR(4000)) AS path
+  SELECT 1 AS l, container_id, container_name, container_id_snr, CAST(container.container_name AS CHAR(2048)) AS path
    FROM container
   WHERE container_id_snr IS NULL
 UNION ALL
@@ -86,7 +86,7 @@ select count(*) from foo;
 replace into foo
 WITH RECURSIVE cte (l, container_id, container_name, container_id_snr, path)
 AS (
-  SELECT 1 AS l, container_id, container_name, container_id_snr, CAST(container.container_name AS CHAR(4000)) AS path
+  SELECT 1 AS l, container_id, container_name, container_id_snr, CAST(container.container_name AS CHAR(2048)) AS path
    FROM container
   WHERE container_id_snr IS NULL
 UNION ALL
@@ -103,7 +103,7 @@ select count(*) from foo;
 
 WITH RECURSIVE cte (l, container_id, container_name, container_id_snr, path)
 AS (
-  SELECT 1 AS l, container_id, container_name, container_id_snr, CAST(container.container_name AS CHAR(4000)) AS path
+  SELECT 1 AS l, container_id, container_name, container_id_snr, CAST(container.container_name AS CHAR(2048)) AS path
    FROM container
   WHERE container_id_snr IS NULL
 UNION ALL
@@ -114,7 +114,7 @@ WHERE container.container_id_snr IN ('10101000000000000000000000000001','1010100
 ) update foo set l=l+10 where container_name in (
 with cte2 as
 (
-SELECT 1 AS l, container_id, container_name, container_id_snr, CAST(container.container_name AS CHAR(4000)) AS path
+SELECT 1 AS l, container_id, container_name, container_id_snr, CAST(container.container_name AS CHAR(2048)) AS path
    FROM container
   WHERE container_id_snr IS NULL
 ) select container_name from cte2

@@ -1,0 +1,504 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+2000
+===================================================
+2000
+===================================================
+2000
+===================================================
+2000
+===================================================
+2000
+===================================================
+2000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+####  1. build input: small tuple count     
+
+===================================================
+count(*)    
+20     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: hash-join (inner join)
+                          edge:  term[?]
+                          outer: iscan
+                                     class: c node[?]
+                                     index: i_b term[?]
+                                     cost:  ? card ?
+                          inner: iscan
+                                     class: d node[?]
+                                     index: i_b term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: iscan
+                          class: b node[?]
+                          index: i_b term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: a node[?]
+               index: i_b term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from ta a, tb b, tc c, td d where a.cd=b.cd and b.cd=c.cd and c.cd=d.cd and ((a.cb= ?:? ) or (a.cb= ?:? )) and ((b.cb= ?:? ) or (b.cb= ?:? ) or (b.cb= ?:? )) and ((c.cb= ?:? ) or (c.cb= ?:? ) or (c.cb= ?:? ) or (c.cb= ?:? )) and d.cb= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    HASH JOIN (inner join)
+      HASH JOIN (inner join)
+        INDEX SCAN (c.i_b) (key range: ((c.cb= ?:? ) or (c.cb= ?:? ) or (c.cb= ?:? ) or (c.cb= ?:? )))
+        INDEX SCAN (d.i_b) (key range: d.cb= ?:? )
+      INDEX SCAN (b.i_b) (key range: ((b.cb= ?:? ) or (b.cb= ?:? ) or (b.cb= ?:? )))
+    INDEX SCAN (a.i_b) (key range: ((a.cb= ?:? ) or (a.cb= ?:? )))
+
+  rewritten query: select /*+ USE_HASH */ count(*) from [dba.ta] a, [dba.tb] b, [dba.tc] c, [dba.td] d where a.cd=b.cd and b.cd=c.cd and c.cd=d.cd and ((a.cb= ?:? ) or (a.cb= ?:? )) and ((b.cb= ?:? ) or (b.cb= ?:? ) or (b.cb= ?:? )) and ((c.cb= ?:? ) or (c.cb= ?:? ) or (c.cb= ?:? ) or (c.cb= ?:? )) and d.cb= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, build_time: ?, fetch: ?, fetch_time: ?, ioread: ?, hash_method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                BUILD (time: ?, build_time: ?, fetch: ?, fetch_time: ?, ioread: ?, hash_method: memory)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                        BUILD (time: ?, build_time: ?, fetch: ?, fetch_time: ?, ioread: ?, hash_method: memory)
+                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                            SCAN (index: dba.td.i_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+                        PROBE (time: ?, probe_time: ?, fetch: ?, fetch_time: ?, ioread: ?, readkeys: ?, rows: ?, max_collisions: ?)
+                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                            SCAN (index: dba.tc.i_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+                PROBE (time: ?, probe_time: ?, fetch: ?, fetch_time: ?, ioread: ?, readkeys: ?, rows: ?, max_collisions: ?)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (index: dba.tb.i_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        PROBE (time: ?, probe_time: ?, fetch: ?, fetch_time: ?, ioread: ?, readkeys: ?, rows: ?, max_collisions: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: dba.ta.i_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+    
+####  2. build input: small tuple count + ordered     
+
+===================================================
+count(*)    
+20     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: hash-join (inner join)
+                          edge:  term[?]
+                          outer: iscan
+                                     class: a node[?]
+                                     index: i_b term[?]
+                                     cost:  ? card ?
+                          inner: iscan
+                                     class: b node[?]
+                                     index: i_b term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: iscan
+                          class: c node[?]
+                          index: i_b term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: d node[?]
+               index: i_b term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ count(*) from ta a, tb b, tc c, td d where a.cd=b.cd and b.cd=c.cd and c.cd=d.cd and ((a.cb= ?:? ) or (a.cb= ?:? ) or (a.cb= ?:? )) and ((b.cb= ?:? ) or (b.cb= ?:? ) or (b.cb= ?:? ) or (b.cb= ?:? )) and ((d.cb= ?:? ) or (d.cb= ?:? )) and c.cb= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    HASH JOIN (inner join)
+      HASH JOIN (inner join)
+        INDEX SCAN (a.i_b) (key range: ((a.cb= ?:? ) or (a.cb= ?:? ) or (a.cb= ?:? )))
+        INDEX SCAN (b.i_b) (key range: ((b.cb= ?:? ) or (b.cb= ?:? ) or (b.cb= ?:? ) or (b.cb= ?:? )))
+      INDEX SCAN (c.i_b) (key range: c.cb= ?:? )
+    INDEX SCAN (d.i_b) (key range: ((d.cb= ?:? ) or (d.cb= ?:? )))
+
+  rewritten query: select /*+ ORDERED USE_HASH */ count(*) from [dba.ta] a, [dba.tb] b, [dba.tc] c, [dba.td] d where a.cd=b.cd and b.cd=c.cd and c.cd=d.cd and ((a.cb= ?:? ) or (a.cb= ?:? ) or (a.cb= ?:? )) and ((b.cb= ?:? ) or (b.cb= ?:? ) or (b.cb= ?:? ) or (b.cb= ?:? )) and ((d.cb= ?:? ) or (d.cb= ?:? )) and c.cb= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, build_time: ?, fetch: ?, fetch_time: ?, ioread: ?, hash_method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                BUILD (time: ?, build_time: ?, fetch: ?, fetch_time: ?, ioread: ?, hash_method: memory)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (index: dba.tc.i_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+                PROBE (time: ?, probe_time: ?, fetch: ?, fetch_time: ?, ioread: ?, readkeys: ?, rows: ?, max_collisions: ?)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                        BUILD (time: ?, build_time: ?, fetch: ?, fetch_time: ?, ioread: ?, hash_method: memory)
+                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                            SCAN (index: dba.ta.i_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+                        PROBE (time: ?, probe_time: ?, fetch: ?, fetch_time: ?, ioread: ?, readkeys: ?, rows: ?, max_collisions: ?)
+                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                            SCAN (index: dba.tb.i_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        PROBE (time: ?, probe_time: ?, fetch: ?, fetch_time: ?, ioread: ?, readkeys: ?, rows: ?, max_collisions: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: dba.td.i_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+    
+####  3. build input: int vs bigint -> int or bigint (page: int == bigint)     
+
+===================================================
+count(*)    
+2000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?] AND term[?] AND term[?] AND term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from ta a, t_bigint b where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ USE_HASH */ count(*) from [dba.ta] a, [dba.t_bigint] b where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, build_time: ?, fetch: ?, fetch_time: ?, ioread: ?, hash_method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_bigint), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, probe_time: ?, fetch: ?, fetch_time: ?, ioread: ?, readkeys: ?, rows: ?, max_collisions: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+    
+####  4. build input: int vs numeric -> int (page: int < numeric)     
+
+===================================================
+count(*)    
+2000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?] AND term[?] AND term[?] AND term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from ta a, t_numeric b where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ USE_HASH */ count(*) from [dba.ta] a, [dba.t_numeric] b where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, build_time: ?, fetch: ?, fetch_time: ?, ioread: ?, hash_method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, probe_time: ?, fetch: ?, fetch_time: ?, ioread: ?, readkeys: ?, rows: ?, max_collisions: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_numeric), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+    
+####  5. cost: in_memory, hybrid < file, build_method: in_memory     
+
+===================================================
+0
+===================================================
+count(*)    
+2000     
+
+Query plan:
+idx-join (inner join)
+    outer: hash-join (inner join)
+               edge:  term[?] AND term[?] AND term[?] AND term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: c node[?]
+               index: i_a term[?] AND term[?] AND term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_NL(c) USE_HASH(a, b) */ count(*) from ta a, tb b, tc c where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd and a.ca=c.ca and a.cb=c.cb and a.cc=c.cc and a.cd=c.cd
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    HASH JOIN (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+    INDEX SCAN (c.i_a) (key range: a.ca=c.cakey range: a.cb=c.cbkey range: a.cc=c.cc)
+
+  rewritten query: select /*+ USE_NL(c) USE_HASH(a, b) */ count(*) from [dba.ta] a, [dba.tb] b, [dba.tc] c where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd and a.ca=c.ca and a.cb=c.cb and a.cc=c.cc and a.cd=c.cd
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tc.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, build_time: ?, fetch: ?, fetch_time: ?, ioread: ?, hash_method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, probe_time: ?, fetch: ?, fetch_time: ?, ioread: ?, readkeys: ?, rows: ?, max_collisions: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+    
+####  6. cost: in_memory, hybrid < file, build_method: hybrid     
+
+===================================================
+0
+===================================================
+count(*)    
+2000     
+
+Query plan:
+idx-join (inner join)
+    outer: hash-join (inner join)
+               edge:  term[?] AND term[?] AND term[?] AND term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: c node[?]
+               index: i_a term[?] AND term[?] AND term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_NL(c) USE_HASH(a, b) */ count(*) from ta a, tb b, tc c where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd and a.ca=c.ca and a.cb=c.cb and a.cc=c.cc and a.cd=c.cd
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    HASH JOIN (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+    INDEX SCAN (c.i_a) (key range: a.ca=c.cakey range: a.cb=c.cbkey range: a.cc=c.cc)
+
+  rewritten query: select /*+ USE_NL(c) USE_HASH(a, b) */ count(*) from [dba.ta] a, [dba.tb] b, [dba.tc] c where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd and a.ca=c.ca and a.cb=c.cb and a.cc=c.cc and a.cd=c.cd
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tc.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, build_time: ?, fetch: ?, fetch_time: ?, ioread: ?, hash_method: hybrid)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, probe_time: ?, fetch: ?, fetch_time: ?, ioread: ?, readkeys: ?, rows: ?, max_collisions: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+    
+####  7. cost: in_memory, hybrid < file, build_method: file     
+
+===================================================
+0
+===================================================
+count(*)    
+2000     
+
+Query plan:
+idx-join (inner join)
+    outer: hash-join (inner join)
+               edge:  term[?] AND term[?] AND term[?] AND term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: c node[?]
+               index: i_a term[?] AND term[?] AND term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL(c) USE_HASH(a, b) */ count(*) from ta a, tb b, tc c where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd and a.ca=c.ca and a.cb=c.cb and a.cc=c.cc and a.cd=c.cd
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    HASH JOIN (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+    INDEX SCAN (c.i_a) (key range: a.ca=c.cakey range: a.cb=c.cbkey range: a.cc=c.cc)
+
+  rewritten query: select /*+ ORDERED USE_NL(c) USE_HASH(a, b) */ count(*) from [dba.ta] a, [dba.tb] b, [dba.tc] c where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd and a.ca=c.ca and a.cb=c.cb and a.cc=c.cc and a.cd=c.cd
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tc.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, build_time: ?, fetch: ?, fetch_time: ?, ioread: ?, hash_method: file)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, probe_time: ?, fetch: ?, fetch_time: ?, ioread: ?, readkeys: ?, rows: ?, max_collisions: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+2000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?] AND term[?] AND term[?] AND term[?]
+    outer: idx-join (inner join)
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: c node[?]
+                          index: i_a term[?] AND term[?] AND term[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_NL(c) USE_HASH(a, b) */ count(*) from ta a, tb b, tc c where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd and a.ca=c.ca and a.cb=c.cb and a.cc=c.cc and a.cd=c.cd
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      INDEX SCAN (c.i_a) (key range: a.ca=c.cakey range: a.cb=c.cbkey range: a.cc=c.cc)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ USE_NL(c) USE_HASH(a, b) */ count(*) from [dba.ta] a, [dba.tb] b, [dba.tc] c where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd and a.ca=c.ca and a.cb=c.cb and a.cc=c.cc and a.cd=c.cd
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, build_time: ?, fetch: ?, fetch_time: ?, ioread: ?, hash_method: file)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, probe_time: ?, fetch: ?, fetch_time: ?, ioread: ?, readkeys: ?, rows: ?, max_collisions: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              SCAN (index: dba.tc.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

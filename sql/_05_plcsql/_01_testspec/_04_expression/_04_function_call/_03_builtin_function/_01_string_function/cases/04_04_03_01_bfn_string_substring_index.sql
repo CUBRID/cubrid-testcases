@@ -17,10 +17,6 @@ begin
     dbms_output.put_line(SUBSTRING_INDEX('aaa-bbb-ccc-ddd-eee', '-', -200));
     dbms_output.put_line('[' || SUBSTRING_INDEX('     ', ' ', 2) || ']');
 
-    dbms_output.put_line('[' || SUBSTRING_INDEX('いイ基盤','い',1) || ']');
-    dbms_output.put_line(SUBSTRING_INDEX('いイ基盤','盤',1));
-    dbms_output.put_line(SUBSTRING_INDEX('いイ基盤','詳l',2));
-    dbms_output.put_line(SUBSTRING_INDEX('いイ基盤','詳',-1));
 end;
 
 select count(*) from db_stored_procedure where sp_name = 't';

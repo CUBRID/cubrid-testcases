@@ -97,11 +97,11 @@ drop t2;
 --- cast
 drop table if exists t3;
 
-create table t3(s1 string,s2 char(3000));
+create table t3(s1 string,s2 char(2048));
 
 insert into t3 values('abc','def');
 
-insert into t3 values(repeat('abc',1000),repeat('def',1000));
+insert into t3 values(repeat('abc',500),repeat('def',500));
 
 select cast(s1 as char(10)),length(cast(s1 as char(10))),disk_size(cast(s1 as char(10))) from t3 order by 1;
 

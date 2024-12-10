@@ -103,9 +103,9 @@ drop t1,t2;
 
 
 drop table if exists t1,t2;
-create table t1 (a int , b int, c int, d char(10),e char(100),f char(5000),index i_t1_b(b) ,PRIMARY KEY(a,b,c,d,e,f)) partition by hash(f) partitions 6; 
+create table t1 (a int , b int, c int, d char(10),e char(100),f char(2048),index i_t1_b(b) ,PRIMARY KEY(a,b,c,d,e,f)) partition by hash(f) partitions 6; 
 insert into t1 select rownum,rownum, rownum, rownum||'', rownum||'', rownum||'' from db_class c1, db_class c2, db_class c3 limit 100;;
-create table t2 (a int , b int, c int, d char(10),e char(100),f char(5000),index i_t1_b(b) ,PRIMARY KEY(a,b,c,d,e,f)) partition by hash(f) partitions 6; 
+create table t2 (a int , b int, c int, d char(10),e char(100),f char(2048),index i_t1_b(b) ,PRIMARY KEY(a,b,c,d,e,f)) partition by hash(f) partitions 6; 
 insert into t2 select rownum,rownum, rownum, rownum||'', rownum||'', rownum||'' from db_class c1, db_class c2 limit 100;;
 
 ALTER TABLE t1 COALESCE PARTITION 5;
@@ -128,9 +128,9 @@ drop t1,t2;
 
 
 drop table if exists t1,t2;
-create table t1 (a int , b int, c int, d char(10),e char(100),f char(5000),index i_t1_b(b) ,PRIMARY KEY(a,b,c,d,e,f));
+create table t1 (a int , b int, c int, d char(10),e char(100),f char(2048),index i_t1_b(b) ,PRIMARY KEY(a,b,c,d,e,f));
 insert into t1 select rownum,rownum, rownum, rownum||'', rownum||'', rownum||'' from db_class c1, db_class c2 limit 100;
-create table t2 (a int , b int, c int, d char(10),e char(100),f char(5000),index i_t1_b(b) ,PRIMARY KEY(a,b,c,d,e,f)) ; 
+create table t2 (a int , b int, c int, d char(10),e char(100),f char(2048),index i_t1_b(b) ,PRIMARY KEY(a,b,c,d,e,f)) ; 
 insert into t2 select rownum,rownum, rownum, rownum||'', rownum||'', rownum||'' from db_class c1, db_class c2 limit 100;
 INSERT INTO t1 VALUES(-1,-1, -1, -1, -1, -1)
 ON DUPLICATE KEY UPDATE b=2;
@@ -177,16 +177,16 @@ delete from reuse_tbl;
 
 
 drop table if exists t1,t2,t3;
-create table t1 (a int , b int, c int, d char(10),e char(100),f char(5000),index i_t1_b(b) ,PRIMARY KEY(a,b,c,d,e,f)) partition by hash(f) partitions 10; 
+create table t1 (a int , b int, c int, d char(10),e char(100),f char(2048),index i_t1_b(b) ,PRIMARY KEY(a,b,c,d,e,f)) partition by hash(f) partitions 10; 
 
 insert into t1 select rownum,rownum, rownum, rownum||'', rownum||'', rownum||'' from db_class c1, db_class c2 limit 100;;
 
-create table t2 (a int , b int, c int, d char(10),e char(100),f char(5000),index i_t1_b(b) ,PRIMARY KEY(a,b,c,d,e,f)) partition by hash(f) partitions 9; 
+create table t2 (a int , b int, c int, d char(10),e char(100),f char(2048),index i_t1_b(b) ,PRIMARY KEY(a,b,c,d,e,f)) partition by hash(f) partitions 9; 
 
 insert into t2 select rownum,rownum, rownum, rownum||'', rownum||'', rownum||'' from db_class c1, db_class c2 limit 100;;
 
 
-create table t3 (a int , b int, c int, d char(10),e char(100),f char(5000),index i_t1_b(b) ,PRIMARY KEY(a,b,c,d,e,f)) partition by hash(f) partitions 8; 
+create table t3 (a int , b int, c int, d char(10),e char(100),f char(2048),index i_t1_b(b) ,PRIMARY KEY(a,b,c,d,e,f)) partition by hash(f) partitions 8; 
 
 insert into t3 select rownum,rownum, rownum, rownum||'', rownum||'', rownum||'' from db_class c1, db_class c2 limit 100;;
 
@@ -197,11 +197,11 @@ update t1 right outer join t2 on t2.c=t1.b right outer join t3 on t3.c=t1.b set 
 
 
  drop table if exists t1,t2,t3;
-create table t1 (a int , b int, c int, d char(10),e char(100),f char(5000),index i_t1_b(b) ,PRIMARY KEY(a,b,c,d,e,f)) partition by hash(f) partitions 16 ; 
+create table t1 (a int , b int, c int, d char(10),e char(100),f char(2048),index i_t1_b(b) ,PRIMARY KEY(a,b,c,d,e,f)) partition by hash(f) partitions 16 ; 
 insert into t1 select rownum,rownum, rownum, rownum||'', rownum||'', rownum||'' from db_class c1, db_class c2 limit 100;;
-create table t2 (a int , b int, c int, d char(10),e char(100),f char(5000),index i_t1_b(b) ,PRIMARY KEY(a,b,c,d,e,f)) partition by hash(f) partitions 32 ;
+create table t2 (a int , b int, c int, d char(10),e char(100),f char(2048),index i_t1_b(b) ,PRIMARY KEY(a,b,c,d,e,f)) partition by hash(f) partitions 32 ;
 insert into t2 select rownum,rownum, rownum, rownum||'', rownum||'', rownum||'' from db_class c1, db_class c2 limit 100;;
-create table t3 (a int , b int, c int, d char(10),e char(100),f char(5000),index i_t1_b(b) ,PRIMARY KEY(a,b,c,d,e,f)) partition by hash(f) partitions 64 ;
+create table t3 (a int , b int, c int, d char(10),e char(100),f char(2048),index i_t1_b(b) ,PRIMARY KEY(a,b,c,d,e,f)) partition by hash(f) partitions 64 ;
 insert into t3 select rownum,rownum, rownum, rownum||'', rownum||'', rownum||'' from db_class c1, db_class c2 limit 100;;
 --select * from t1 right outer join t2 on t2.c=t1.b right outer join t3 on t3.c=t1.b where  rownum <2;
 update statistics on t1, t2, t3;

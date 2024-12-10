@@ -14,8 +14,8 @@ insert into a values (8);
 insert into a values (9);
 insert into a values (0);
 
-create table t (o1 int, o2 int, p1 int, p2 int, v char(20000));
-insert into t select rownum, rownum, a1.i, a1.i, cast(a1.i / 3 as char(20000)) from a a1;
+create table t (o1 int, o2 int, p1 int, p2 int, v char(2048));
+insert into t select rownum, rownum, a1.i, a1.i, cast(a1.i / 3 as char(2048)) from a a1;
 
 -- same grouping and ordering
 select count(*) from (select

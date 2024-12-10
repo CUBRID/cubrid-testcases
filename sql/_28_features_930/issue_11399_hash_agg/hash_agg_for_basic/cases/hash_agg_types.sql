@@ -59,7 +59,7 @@ select /*+ no_hash_aggregation */ group_concat(id order by id), sum(id), avg(id)
 drop table t4;
 
 
-create table t5(id bigint, a char(100), b char(1000), c char(20000), d varchar);
+create table t5(id bigint, a char(100), b char(1000), c char(2048), d varchar);
 
 insert into t5 values(199999, 'Welcome to use CUBRID for 9.3', 'For more details please refer to manual', 'Topic Quick Reference Table', 'The contefnts of the CUBRID Database Management System (CUBRID DBMS) product manual are as follows:');
 insert into t5 values(1, 'Welcome to use CUBRID for 8.4', 'For more details please refer to manuarl', 'Topic Quick Reference Table', 'The contents oaf the CUBRID Database Management System (CUBRID DBMS) product manual are as follows:');

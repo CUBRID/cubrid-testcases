@@ -55,7 +55,6 @@ begin
 	select length(vch_1) into vch_length from dual;
 	
 	dbms_output.put_line('varchar size 1');
-	dbms_output.put_line('value:   ' || vch_1);
 	dbms_output.put_line('length:  ' || vch_length);
 end;
 

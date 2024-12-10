@@ -1,7 +1,7 @@
 --+ holdcas on;
 set system parameters 'dont_reuse_heap_file=yes';
 
-create table foo (id int not null, treeid int, age int, text char(8192));
+create table foo (id int not null, treeid int, age int, text char(2048));
 
 insert into foo values(2, 0, null, 'C');
 

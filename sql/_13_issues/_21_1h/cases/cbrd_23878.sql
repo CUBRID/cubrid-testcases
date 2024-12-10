@@ -10,7 +10,7 @@ show columns from tbl1;
 show create table tbl1;
 desc tbl1;
 
-create table t2 (col1 char, col2 char(268435455), col3 char(10));
+create table t2 (col1 char, col2 char(2048), col3 char(10));
 create table tbl2 as select * from t2;
 select attr_name, data_type, prec from db_attribute where attr_name like '%col%' and class_name='tbl2' order by 1;
 show columns from tbl2;

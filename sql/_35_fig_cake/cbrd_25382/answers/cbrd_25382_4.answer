@@ -1,0 +1,604 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+####  1. hint: recompile ordered use_hash     
+
+===================================================
+a_ca    b_ca    c_ca    d_ca    
+1     1     1     1     
+2     2     2     2     
+3     3     3     3     
+4     4     4     4     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: hash-join (inner join)
+                            edge:  term[?]
+                            outer: hash-join (inner join)
+                                       edge:  term[?]
+                                       outer: sscan
+                                                  class: a node[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: b node[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: c node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: d node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ a.ca, b.ca, c.ca, d.ca from ta a, tb b, tc c, td d where a.ca=b.ca and b.ca=c.ca and c.ca=d.ca order by ?
+===================================================
+0
+===================================================
+    
+####  2. hint: recompile ordered use_hash(a)     
+
+===================================================
+a_ca    b_ca    c_ca    d_ca    
+1     1     1     1     
+2     2     2     2     
+3     3     3     3     
+4     4     4     4     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: nl-join (inner join)
+                            edge:  term[?]
+                            outer: nl-join (inner join)
+                                       edge:  term[?]
+                                       outer: sscan
+                                                  class: a node[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: b node[?]
+                                                  sargs: term[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: c node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: d node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH(a) */ a.ca, b.ca, c.ca, d.ca from ta a, tb b, tc c, td d where a.ca=b.ca and b.ca=c.ca and c.ca=d.ca order by ?
+===================================================
+0
+===================================================
+    
+####  3. hint: recompile ordered use_hash(b)     
+
+===================================================
+a_ca    b_ca    c_ca    d_ca    
+1     1     1     1     
+2     2     2     2     
+3     3     3     3     
+4     4     4     4     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: nl-join (inner join)
+                            edge:  term[?]
+                            outer: hash-join (inner join)
+                                       edge:  term[?]
+                                       outer: sscan
+                                                  class: a node[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: b node[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: c node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: d node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH(b) */ a.ca, b.ca, c.ca, d.ca from ta a, tb b, tc c, td d where a.ca=b.ca and b.ca=c.ca and c.ca=d.ca order by ?
+===================================================
+0
+===================================================
+    
+####  4. hint: recompile ordered use_hash(c)     
+
+===================================================
+a_ca    b_ca    c_ca    d_ca    
+1     1     1     1     
+2     2     2     2     
+3     3     3     3     
+4     4     4     4     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: hash-join (inner join)
+                            edge:  term[?]
+                            outer: nl-join (inner join)
+                                       edge:  term[?]
+                                       outer: sscan
+                                                  class: a node[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: b node[?]
+                                                  sargs: term[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: c node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: d node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH(c) */ a.ca, b.ca, c.ca, d.ca from ta a, tb b, tc c, td d where a.ca=b.ca and b.ca=c.ca and c.ca=d.ca order by ?
+===================================================
+0
+===================================================
+    
+####  5. hint: recompile ordered use_hash(d)     
+
+===================================================
+a_ca    b_ca    c_ca    d_ca    
+1     1     1     1     
+2     2     2     2     
+3     3     3     3     
+4     4     4     4     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: nl-join (inner join)
+                            edge:  term[?]
+                            outer: nl-join (inner join)
+                                       edge:  term[?]
+                                       outer: sscan
+                                                  class: a node[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: b node[?]
+                                                  sargs: term[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: c node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: d node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH(d) */ a.ca, b.ca, c.ca, d.ca from ta a, tb b, tc c, td d where a.ca=b.ca and b.ca=c.ca and c.ca=d.ca order by ?
+===================================================
+0
+===================================================
+    
+####  6. hint: recompile ordered use_hash no_use_hash     
+
+===================================================
+a_ca    b_ca    c_ca    d_ca    
+1     1     1     1     
+2     2     2     2     
+3     3     3     3     
+4     4     4     4     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: nl-join (inner join)
+                            edge:  term[?]
+                            outer: nl-join (inner join)
+                                       edge:  term[?]
+                                       outer: sscan
+                                                  class: a node[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: b node[?]
+                                                  sargs: term[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: c node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: d node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_USE_HASH USE_HASH */ a.ca, b.ca, c.ca, d.ca from ta a, tb b, tc c, td d where a.ca=b.ca and b.ca=c.ca and c.ca=d.ca order by ?
+===================================================
+0
+===================================================
+    
+####  7. hint: recompile ordered use_hash no_use_hash(a)     
+
+===================================================
+a_ca    b_ca    c_ca    d_ca    
+1     1     1     1     
+2     2     2     2     
+3     3     3     3     
+4     4     4     4     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: hash-join (inner join)
+                            edge:  term[?]
+                            outer: hash-join (inner join)
+                                       edge:  term[?]
+                                       outer: sscan
+                                                  class: a node[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: b node[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: c node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: d node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_USE_HASH(a) USE_HASH */ a.ca, b.ca, c.ca, d.ca from ta a, tb b, tc c, td d where a.ca=b.ca and b.ca=c.ca and c.ca=d.ca order by ?
+===================================================
+0
+===================================================
+    
+####  8. hint: recompile ordered use_hash no_use_hash(b)     
+
+===================================================
+a_ca    b_ca    c_ca    d_ca    
+1     1     1     1     
+2     2     2     2     
+3     3     3     3     
+4     4     4     4     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: hash-join (inner join)
+                            edge:  term[?]
+                            outer: nl-join (inner join)
+                                       edge:  term[?]
+                                       outer: sscan
+                                                  class: a node[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: b node[?]
+                                                  sargs: term[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: c node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: d node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_USE_HASH(b) USE_HASH */ a.ca, b.ca, c.ca, d.ca from ta a, tb b, tc c, td d where a.ca=b.ca and b.ca=c.ca and c.ca=d.ca order by ?
+===================================================
+0
+===================================================
+    
+####  9. hint: recompile ordered use_hash no_use_hash(c)     
+
+===================================================
+a_ca    b_ca    c_ca    d_ca    
+1     1     1     1     
+2     2     2     2     
+3     3     3     3     
+4     4     4     4     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: nl-join (inner join)
+                            edge:  term[?]
+                            outer: hash-join (inner join)
+                                       edge:  term[?]
+                                       outer: sscan
+                                                  class: a node[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: b node[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: c node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: d node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_USE_HASH(c) USE_HASH */ a.ca, b.ca, c.ca, d.ca from ta a, tb b, tc c, td d where a.ca=b.ca and b.ca=c.ca and c.ca=d.ca order by ?
+===================================================
+0
+===================================================
+    
+#### 10. hint: recompile ordered use_hash no_use_hash(d)     
+
+===================================================
+a_ca    b_ca    c_ca    d_ca    
+1     1     1     1     
+2     2     2     2     
+3     3     3     3     
+4     4     4     4     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: hash-join (inner join)
+                            edge:  term[?]
+                            outer: hash-join (inner join)
+                                       edge:  term[?]
+                                       outer: sscan
+                                                  class: a node[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: b node[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: c node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: d node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_USE_HASH(d) USE_HASH */ a.ca, b.ca, c.ca, d.ca from ta a, tb b, tc c, td d where a.ca=b.ca and b.ca=c.ca and c.ca=d.ca order by ?
+===================================================
+0
+===================================================
+    
+#### 11. hint: recompile ordered use_hash(a,b) no_use_hash(c,d)     
+
+===================================================
+a_ca    b_ca    c_ca    d_ca    
+1     1     1     1     
+2     2     2     2     
+3     3     3     3     
+4     4     4     4     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: nl-join (inner join)
+                            edge:  term[?]
+                            outer: hash-join (inner join)
+                                       edge:  term[?]
+                                       outer: sscan
+                                                  class: a node[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: b node[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: c node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: d node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_USE_HASH(c, d) USE_HASH(a, b) */ a.ca, b.ca, c.ca, d.ca from ta a, tb b, tc c, td d where a.ca=b.ca and b.ca=c.ca and c.ca=d.ca order by ?
+===================================================
+0
+===================================================
+    
+#### 12. hint: recompile ordered use_hash(a,c) no_use_hash(b,d)     
+
+===================================================
+a_ca    b_ca    c_ca    d_ca    
+1     1     1     1     
+2     2     2     2     
+3     3     3     3     
+4     4     4     4     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: hash-join (inner join)
+                            edge:  term[?]
+                            outer: nl-join (inner join)
+                                       edge:  term[?]
+                                       outer: sscan
+                                                  class: a node[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: b node[?]
+                                                  sargs: term[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: c node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: d node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_USE_HASH(b, d) USE_HASH(a, c) */ a.ca, b.ca, c.ca, d.ca from ta a, tb b, tc c, td d where a.ca=b.ca and b.ca=c.ca and c.ca=d.ca order by ?
+===================================================
+0
+===================================================
+    
+#### 13. hint: recompile ordered use_hash(a,b,c) no_use_hash(b,d)     
+
+===================================================
+a_ca    b_ca    c_ca    d_ca    
+1     1     1     1     
+2     2     2     2     
+3     3     3     3     
+4     4     4     4     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: hash-join (inner join)
+                            edge:  term[?]
+                            outer: nl-join (inner join)
+                                       edge:  term[?]
+                                       outer: sscan
+                                                  class: a node[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: b node[?]
+                                                  sargs: term[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: c node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: d node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_USE_HASH(b, d) USE_HASH(a, b, c) */ a.ca, b.ca, c.ca, d.ca from ta a, tb b, tc c, td d where a.ca=b.ca and b.ca=c.ca and c.ca=d.ca order by ?
+===================================================
+0
+===================================================
+    
+#### 14. hint: recompile ordered use_hash(b,c,d) no_use_hash(b,c,d)     
+
+===================================================
+a_ca    b_ca    c_ca    d_ca    
+1     1     1     1     
+2     2     2     2     
+3     3     3     3     
+4     4     4     4     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: nl-join (inner join)
+                            edge:  term[?]
+                            outer: nl-join (inner join)
+                                       edge:  term[?]
+                                       outer: sscan
+                                                  class: a node[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: b node[?]
+                                                  sargs: term[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: c node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: d node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_USE_HASH(b, c, d) USE_HASH(b, c, d) */ a.ca, b.ca, c.ca, d.ca from ta a, tb b, tc c, td d where a.ca=b.ca and b.ca=c.ca and c.ca=d.ca order by ?
+===================================================
+0
+===================================================
+0
