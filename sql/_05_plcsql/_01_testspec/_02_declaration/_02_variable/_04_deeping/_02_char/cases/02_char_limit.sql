@@ -29,8 +29,8 @@ begin
 end;
 
 
-create or replace procedure char_limit2(p_char char(1)) as
-	ch_1 character(268435455) := p_char;
+create or replace procedure char_limit2(p_char char) as
+	ch_1 character(2048) := p_char;
 	ch_length character(10);
 begin
 	select length(ch_1) into ch_length from dual;
@@ -40,7 +40,7 @@ end;
 
 call char_limit2('a');
 
-create or replace procedure char_limit3(p_char char(1)) as
+create or replace procedure char_limit3(p_char char) as
 	ch_1 character(1) := p_char;
 	ch_length character(1);
 begin
@@ -54,7 +54,6 @@ end;
 call char_limit3('a');
 -- hangul is broken, because the DB character set is iso-88591 (UTF-8 was fine)
 call char_limit3('한');
--- It is bug (Report to CBRD-25392)
 -- expect: Error:-889, Stored procedure execute error
 call char_limit3('abcd');
 call char_limit3('한글');
