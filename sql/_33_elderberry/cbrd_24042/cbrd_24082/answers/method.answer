@@ -23,7 +23,7 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(select a.col_a, Sp_int(a.col_b) from t_a a, t_b b where (a.col_a=b.col_a))
+(select a.col_a, sp_int(a.col_b) from t_a a, t_b b where (a.col_a=b.col_a))
 Query plan:
 nl-join (inner join)
     edge:  term[?]
@@ -36,7 +36,7 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select a.col_a, a.col_b from (select a.col_a, Sp_int(a.col_b) from t_a a, t_b b where (a.col_a=b.col_a)) a (col_a, col_b), t_b b where a.col_a=b.col_a and b.col_b=?
+select a.col_a, a.col_b from (select a.col_a, sp_int(a.col_b) from t_a a, t_b b where (a.col_a=b.col_a)) a (col_a, col_b), t_b b where a.col_a=b.col_a and b.col_b=?
 ===================================================
 0
 ===================================================
@@ -54,7 +54,7 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(select a.col_a, Sp_int(a.col_b) from t_a a, t_b b where a.col_a=b.col_a)
+(select a.col_a, sp_int(a.col_b) from t_a a, t_b b where a.col_a=b.col_a)
 Query plan:
 nl-join (inner join)
     edge:  term[?]
@@ -67,7 +67,7 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select a.col_a, a.col_b from (select a.col_a, Sp_int(a.col_b) from t_a a, t_b b where a.col_a=b.col_a) a (col_a, col_b), t_b b where a.col_a=b.col_a and b.col_b=?
+select a.col_a, a.col_b from (select a.col_a, sp_int(a.col_b) from t_a a, t_b b where a.col_a=b.col_a) a (col_a, col_b), t_b b where a.col_a=b.col_a and b.col_b=?
 ===================================================
 0
 ===================================================
