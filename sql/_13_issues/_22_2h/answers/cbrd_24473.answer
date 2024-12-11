@@ -21,7 +21,7 @@ iscan
     index: idx term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select ? from tbl tbl where tbl.cola= cast(Hello(?) as double)
+select ? from tbl tbl where tbl.cola= cast(hello(?) as double)
 ===================================================
 1    
 
@@ -31,7 +31,7 @@ sscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select ? from tbl tbl where tbl.cola= cast(Hello(tbl.colb) as double)
+select ? from tbl tbl where tbl.cola= cast(hello(tbl.colb) as double)
 ===================================================
 cola    
 
@@ -41,13 +41,13 @@ iscan
     index: idx term[?] (covers)
     cost:  ? card ?
 Query stmt:
-(select ? from tbl a where a.cola= cast(Hello(b.cola) as double))
+(select ? from tbl a where a.cola= cast(hello(b.cola) as double))
 Query plan:
 sscan
     class: b node[?]
     cost:  ? card ?
 Query stmt:
-select (select ? from tbl a where a.cola= cast(Hello(b.cola) as double)) from tbl b
+select (select ? from tbl a where a.cola= cast(hello(b.cola) as double)) from tbl b
 ===================================================
 Hello(b.colb)    
 
@@ -65,7 +65,7 @@ nl-join (inner join)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ Hello(b.colb), a.cola from tbl a, tbl b where (a.cola>?) and a.colb=b.colb order by ? for orderby_num()<=?
+select /*+ ORDERED */ hello(b.colb), a.cola from tbl a, tbl b where (a.cola>?) and a.colb=b.colb order by ? for orderby_num()<=?
 /* ---> skip ORDER BY */
 ===================================================
 0
