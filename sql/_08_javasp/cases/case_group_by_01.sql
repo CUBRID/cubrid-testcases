@@ -28,7 +28,7 @@ GROUP BY test_fc(dept_no) HAVING test_fc(avg(sales_amount)) > 200
 ORDER BY test_fc(avg(sales_amount));
 
 -- check WITH ROLLUP using javasp functions. (bug report CBRD-24658)
-SELECT test_fc(dept_no), test_fc2(name), avg(sales_amount)
+SELECT NVL2(dept_no, test_fc2(dept_no), NULL), test_fc2(name), avg(sales_amount)
 FROM sales_tbl
 WHERE sales_amount > 100
 GROUP BY test_fc(dept_no), test_fc2(name) WITH ROLLUP;

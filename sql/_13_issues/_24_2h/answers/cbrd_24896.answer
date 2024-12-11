@@ -3,8 +3,8 @@
 using seteq for search condition on system table     
 
 ===================================================
-grantor    grantee    class_of    auth_type    is_grantable    
-db_user     db_user     _db_class     SELECT     0     
+grantor    grantee    object_type    object_of    auth_type    is_grantable    
+db_user     db_user     0     null     SELECT     0     
 
 Query plan:
 follow
@@ -16,9 +16,9 @@ follow
     sargs: term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select au.grantor, au.grantee, au.class_of, au.auth_type, au.is_grantable from [_db_auth] au where ({au.grantee.[name]} seteq {'PUBLIC'}) and (inst_num()<= ?:? )
+select au.grantor, au.grantee, au.object_type, au.object_of, au.auth_type, au.is_grantable from [_db_auth] au where ({au.grantee.[name]} seteq {'PUBLIC'}) and (inst_num()<= ?:? )
 ===================================================
-grantor    grantee    class_of    auth_type    is_grantable    
+grantor    grantee    object_type    object_of    auth_type    is_grantable    
 
 Query plan:
 follow
@@ -30,14 +30,14 @@ follow
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select au.grantor, au.grantee, au.class_of, au.auth_type, au.is_grantable from [_db_auth] au where {au.grantee.[name]} seteq {} and (au.is_grantable= ?:? )
+select au.grantor, au.grantee, au.object_type, au.object_of, au.auth_type, au.is_grantable from [_db_auth] au where {au.grantee.[name]} seteq {} and (au.is_grantable= ?:? )
 ===================================================
     
 using = for search condition on system table     
 
 ===================================================
-grantor    grantee    class_of    auth_type    is_grantable    
-db_user     db_user     _db_class     SELECT     0     
+grantor    grantee    object_type    object_of    auth_type    is_grantable    
+db_user     db_user     0     null     SELECT     0     
 
 Query plan:
 follow
@@ -49,9 +49,9 @@ follow
     sargs: term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select au.grantor, au.grantee, au.class_of, au.auth_type, au.is_grantable from [_db_auth] au where ({au.grantee.[name]}={'PUBLIC'}) and (inst_num()<= ?:? )
+select au.grantor, au.grantee, au.object_type, au.object_of, au.auth_type, au.is_grantable from [_db_auth] au where ({au.grantee.[name]}={'PUBLIC'}) and (inst_num()<= ?:? )
 ===================================================
-grantor    grantee    class_of    auth_type    is_grantable    
+grantor    grantee    object_type    object_of    auth_type    is_grantable    
 
 Query plan:
 follow
@@ -63,7 +63,7 @@ follow
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select au.grantor, au.grantee, au.class_of, au.auth_type, au.is_grantable from [_db_auth] au where {au.grantee.[name]}={} and (au.is_grantable= ?:? )
+select au.grantor, au.grantee, au.object_type, au.object_of, au.auth_type, au.is_grantable from [_db_auth] au where {au.grantee.[name]}={} and (au.is_grantable= ?:? )
 ===================================================
 0
 ===================================================

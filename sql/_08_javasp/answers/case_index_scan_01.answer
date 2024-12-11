@@ -124,14 +124,14 @@ sscan
     class: dual node[?]
     cost:  ? card ?
 Query stmt:
-(select stringTest('a') from dual dual)
+(select stringtest('a') from dual dual)
 Query plan:
 sscan
     class: tbl node[?]
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select count(*) from tbl tbl where tbl.col_char like (select stringTest('a') from dual dual)
+select count(*) from tbl tbl where tbl.col_char like (select stringtest('a') from dual dual)
 ===================================================
 like    
 1     
@@ -142,14 +142,14 @@ iscan
     index: i_tbl term[?]
     cost:  ? card ?
 Query stmt:
-(select stringTest(tbl.col_char) from tbl tbl where tbl.ord=?)
+(select stringtest(tbl.col_char) from tbl tbl where tbl.ord=?)
 Query plan:
 sscan
     class: tbl node[?]
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select count(*) from tbl tbl where tbl.col_char like (select stringTest(tbl.col_char) from tbl tbl where tbl.ord=?)
+select count(*) from tbl tbl where tbl.col_char like (select stringtest(tbl.col_char) from tbl tbl where tbl.ord=?)
 ===================================================
 0
 ===================================================
