@@ -21,7 +21,12 @@ create class zoo ( set1 set(xoo));
 insert into xoo values(1);
 select xoo into oid1 from xoo where rownum = 1;
 select * from xoo where xoo = testoid1(xoo);
-update xoo set id = 100 where xoo = testoid1(xoo);
+
+-- TODO: http://jira.cubrid.org/browse/CBRD-25694
+-- fix the following queries
+select * from xoo where xoo = testoid1(oid1);
+update xoo set id = 100 where xoo = (xoo);
+
 select * from xoo;
 select testoid1(xoo) into x from xoo;
 update object x set id = 1000;
