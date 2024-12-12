@@ -9,7 +9,7 @@ begin
     for i in 1 .. 5 loop
 
         for j in 1 .. 5 loop
-            exit when j % 2 = 0;
+            exit when j mod 2 = 0;
             dbms_output.put_line('j=' || j);
         end loop;
 
