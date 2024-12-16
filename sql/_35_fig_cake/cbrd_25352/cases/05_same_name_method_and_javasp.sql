@@ -6,14 +6,14 @@ create class rectangle(height int, width int) dont_reuse_oid
 method set_cost(string, string) string function qo_set_cost;
 insert into rectangle values (10, 10);
  
-select rectangle into :r from rectangle where height=10;
+select rectangle into :r from rectangle where height=10 order by rectangle;
 
 
 evaluate 'call set_cost(method)';
 call set_cost('nl-join', 0) on :r;
  
-select set_cost(r, 'nl-join', '0') from rectangle r;
-select 11, set_cost(r, 'nl-join', '0'), 'aaa' from rectangle r;
+select set_cost(r, 'nl-join', '0') from rectangle r  order by rectangle;
+select 11, set_cost(r, 'nl-join', '0'), 'aaa' from rectangle r ;
 
 evaluate 'ERROR: Function dba.set_cost is undefined';
 select 11, dba.set_cost(r, 'nl-join', '0'), 'aaa' from rectangle r;

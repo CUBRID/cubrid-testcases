@@ -19,13 +19,13 @@ INSERT INTO tbl1 VALUES(3, public.sp_int(2), 'test3');
 INSERT INTO tbl1 VALUES(4, public.sp_int(3), hello('cubrid'));
 INSERT INTO tbl1 VALUES(5, select public.sp_int(3) * 2 from dual, select dba.hello('cubrid'));
 
-SELECT * FROM tbl1;
+SELECT * FROM tbl1 order by col1;
 
 evaluate 'Scalar Subquery with dba.hello';
 SELECT
 	col1,
 	public.sp_int(col1) as col2,
-	(select hello() from dual limit 1) as col3,
+	(select hello('a') from dual limit 1) as col3,
 	col3 as col4
 from
 	tbl1;
@@ -68,7 +68,8 @@ from
 	) t3
 where 
 	t1.col2 = t2.col2
-	and t1.col2 = t3.col2;
+	and t1.col2 = t3.col2
+order by t1.col1, t1.col2;
 
 evaluate 'Inline View with public.sp_int';
 SELECT
@@ -77,7 +78,8 @@ FROM
 	tbl1 a,
 	(select public.sp_int(1) as col1) b
 where
-	a.col1 = b.col1;
+	a.col1 = b.col1
+order by a.col1;
 
 evaluate 'Subquery with public.sp_int';
 SELECT
@@ -85,7 +87,8 @@ SELECT
 FROM
 	tbl1 a
 where
-	a.col1 = public.sp_int(1);
+	a.col1 = public.sp_int(1)
+order by a.col1;
 
 evaluate 'Test done';
 drop function hello;

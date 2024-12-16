@@ -57,7 +57,7 @@ create view v_method11 (h11 varchar) as select dba.hello('cubrid') as "dual" fro
 select * from v_method11;
 
 
-select class_of.unique_name, spec from _db_query_spec where class_of.unique_name like '%v_method%';
+select class_of.unique_name, spec from _db_query_spec where class_of.unique_name like '%v_method%' order by class_of.unique_name;
 
 
 evaluate 'Test done (expected: 1, 2, 5, 6 is not exists)';

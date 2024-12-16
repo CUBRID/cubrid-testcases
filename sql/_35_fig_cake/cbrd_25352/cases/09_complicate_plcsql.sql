@@ -67,18 +67,18 @@ END;
 
 evaluate 'select insert_athlete() & call insert_athlete()';
 select insert_athlete('a','a','a','a') from dual;
-select * from athlete;
+select * from athlete order by code;
 		
 call insert_athlete('b','b','b','b');
-select * from athlete;
+select * from athlete order by code;
 
 
 evaluate 'select delete_athlete() & call delete_athlete()';
 select delete_athlete(16693);
-select * from athlete;
+select * from athlete order by code;
 
 call delete_athlete(16694);
-select * from athlete;
+select * from athlete order by code;
 
 
 evaluate 'create function dba.fibonacci';
