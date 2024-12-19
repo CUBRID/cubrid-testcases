@@ -52,8 +52,15 @@ begin
 end;
 
 call char_limit3('a');
--- hangul is broken, because the DB character set is iso-88591 (UTF-8 was fine)
+/*
+the Hangul is broken, and an error occurs
+because the pl server(=utf-8) do to sync a character encoding from CUBRID server(iso-88591)
+
+so '한' is encoding to 3 broken character and send to CUBRID server.
+and that is size over on char(1) type.
+*/
 call char_limit3('한');
+
 -- expect: Error:-889, Stored procedure execute error
 call char_limit3('abcd');
 call char_limit3('한글');
