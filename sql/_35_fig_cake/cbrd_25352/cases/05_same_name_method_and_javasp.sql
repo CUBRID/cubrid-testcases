@@ -12,7 +12,7 @@ select rectangle into :r from rectangle where height=10 order by rectangle;
 evaluate 'call set_cost(method)';
 call set_cost('nl-join', 0) on :r;
  
-select set_cost(r, 'nl-join', '0') from rectangle r  order by rectangle;
+select set_cost(r, 'nl-join', '0') from rectangle r;
 select 11, set_cost(r, 'nl-join', '0'), 'aaa' from rectangle r ;
 
 evaluate 'ERROR: Function dba.set_cost is undefined';
