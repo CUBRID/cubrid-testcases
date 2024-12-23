@@ -65,7 +65,7 @@ ALTER procedure test_proc compile;
 call test_proc('a');
 call test_proc(1);
 
-evaluate 'ddd';
+evaluate 'changed column type on t1.col (char(1) -> int)';
 alter table t1 modify column col int;
 ALTER procedure test_proc compile;
 call test_proc('a');
