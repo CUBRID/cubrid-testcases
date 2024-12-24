@@ -11,7 +11,9 @@ create table u1.tbl (col1 int);
 
 
 evaluate 'case 1: execute to revoke on dba';
+evaluate '(3-3 on CBRD-25580) dba is not target on grant: no operation';
 GRANT SELECT ON u1.TBL TO dba WITH GRANT OPTION;
+
 evaluate 'ERROR: Cannot issue GRANT/REVOKE to owner of a class';
 GRANT SELECT ON u1.TBL TO u1 WITH GRANT OPTION;
 
@@ -22,6 +24,9 @@ GRANT SELECT ON u1.TBL TO u2 WITH GRANT OPTION;
 evaluate 'connect to u2, u1.tbl grant to u3';
 call login('u2','') on class db_user;
 GRANT SELECT ON u1.TBL TO u3 WITH GRANT OPTION;
+
+evaluate '(3-2 on CBRD-25580) u2 has a u1.tbl select permission: no operation';
+GRANT SELECT ON u1.TBL TO u2 WITH GRANT OPTION;
 
 evaluate 'connect to u3, u1.tbl grant to u4';
 call login('u3','') on class db_user;
@@ -34,8 +39,12 @@ GRANT SELECT ON u1.TBL TO u5 WITH GRANT OPTION;
 select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name;
 
 
-evaluate 'init test, connect to dba';
+evaluate 'connect to dba';
 call login('dba','') on class db_user;
+evaluate '(3-1 on CBRD-25580) u1.tbl owner is u1: no operation';
+GRANT SELECT ON u1.TBL TO u1 WITH GRANT OPTION;
+
+evaluate 'init test';
 REVOKE SELECT ON u1.TBL FROM u2;
 
 select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name;
