@@ -76,5 +76,6 @@ drop trigger test_trigger5;
 drop trigger test_trigger6;
 drop table name_list;
 drop table name_list2;
+drop table tbl;
 call drop_user('test_user') on class db_user;
 call drop_user('test_user2') on class db_user;
