@@ -83,6 +83,8 @@ C2: set transaction lock timeout INFINITE;
 C2: set transaction isolation level read committed;
 C2: select * from dba.t1_view order by 1;
 C2: COMMIT;
+C2: login as 'dba';
+C2: COMMIT;
 MC: wait until C2 ready;
 
 C1: login as 'dba';
