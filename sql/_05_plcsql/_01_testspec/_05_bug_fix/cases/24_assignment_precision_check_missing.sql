@@ -42,5 +42,6 @@ call boo();
 
 drop procedure poo;
 drop procedure boo;
+drop table if exists tbl;
 
 --+ server-message off
