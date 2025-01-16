@@ -6,8 +6,8 @@
 
 create or replace procedure t() as
 begin
-    dbms_output.put_line( 10. || .5);
-    dbms_output.put_line( 10. );
+    dbms_output.put_line( 10.0 || .5);
+    dbms_output.put_line( 10.0 );
     dbms_output.put_line( .5 );
 end;
 
