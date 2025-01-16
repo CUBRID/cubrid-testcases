@@ -118,10 +118,19 @@ temp(order by)
     subplan: sscan
                  class: v node[?]
                  cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select v.id from t v order by ?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: v node[?]
+                 cost:  ? card ?
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-select v.id from t v order by ? desc  for orderby_num()<= ?:? 
+select v.id from (select v.id from t v order by ?) v (id) order by ? desc  for orderby_num()<= ?:? 
 ===================================================
 0
 ===================================================
