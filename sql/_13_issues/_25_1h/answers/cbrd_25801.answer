@@ -1,0 +1,51 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: (select [dba.tb].ca, [dba.tb].cb, [dba.tb].cc from [dba.tb] [dba.tb] order by ?, ? for orderby_num()<= ?:? )
+
+  TABLE SCAN (d?)
+
+  rewritten query: (select d?.ca from (select [dba.tb].ca, [dba.tb].cb, [dba.tb].cc from [dba.tb] [dba.tb] order by ?, ? for orderby_num()<= ?:? ) d? (ca, cb, cc))
+
+  TABLE SCAN (dba.ta)
+
+  rewritten query: select [dba.ta],class [dba.ta], ?:?  as [ta.cb] from [dba.ta] [dba.ta] where [dba.ta].ca=(select d?.ca from (select [dba.tb].ca, [dba.tb].cb, [dba.tb].cc from [dba.tb] [dba.tb] order by ?, ? for orderby_num()<= ?:? ) d? (ca, cb, cc))
+
+
+Trace Statistics:
+  UPDATE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SUBQUERY (uncorrelated)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                ORDERBY (time: ?, topnsort: true)
+     
+
+===================================================
+0
+===================================================
+0
