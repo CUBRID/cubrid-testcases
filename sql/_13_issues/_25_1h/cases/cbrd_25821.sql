@@ -17,7 +17,6 @@ select /*+ recompile */ *
 from
   (
     select
-    -- select /*+ no_merge */
       (select max (b.c2) from t2 b where b.c1 = a.c1)
     from t1 a
   ) ab (max_c2)
