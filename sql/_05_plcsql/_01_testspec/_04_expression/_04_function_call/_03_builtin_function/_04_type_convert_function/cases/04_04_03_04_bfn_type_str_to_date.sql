@@ -2,11 +2,19 @@
 
 -- normal: basic usage of a builtin function call
 
-create or replace procedure t () as
+create or replace procedure t1 () as
 begin
     -- STR_TO_DATE() parse error
     dbms_output.put_line(STR_TO_DATE(NULL, NULL));
     dbms_output.put_line(STR_TO_DATE('00:00:00 AM', NULL));
+end;
+
+call t1();
+drop procedure t1;
+
+-- [Revised] The bug in the built-in function STR_TO_DATE('12:00:00 AM', '%r') was fixed by CBRD-25189.
+create or replace procedure t2 () as
+begin
     dbms_output.put_line(STR_TO_DATE('12:00:00 PM', '%r'));
     dbms_output.put_line(STR_TO_DATE('12:00:00 AM', '%r'));
 
@@ -28,11 +36,11 @@ begin
     dbms_output.put_line(STR_TO_DATE('1999-10-31 23:49:59.000', '%Y-%m-%d %H:%i:%s.%f'));
 end;
 
-select count(*) from db_stored_procedure where sp_name = 't';
-select count(*) from db_stored_procedure_args where sp_name = 't';
+select count(*) from db_stored_procedure where sp_name = 't2';
+select count(*) from db_stored_procedure_args where sp_name = 't2';
 
-call t();
+call t2();
 
-drop procedure t;
+drop procedure t2;
 
 --+ server-message off
