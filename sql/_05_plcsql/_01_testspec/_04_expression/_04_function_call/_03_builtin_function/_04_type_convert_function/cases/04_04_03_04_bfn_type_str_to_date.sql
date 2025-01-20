@@ -2,9 +2,9 @@
 
 -- normal: basic usage of a builtin function call
 
+-- [Revised] The bug in the built-in function STR_TO_DATE('12:00:00 AM', '%r') was fixed by CBRD-25189.
 create or replace procedure t () as
 begin
-    -- STR_TO_DATE() parse error
     dbms_output.put_line(STR_TO_DATE(NULL, NULL));
     dbms_output.put_line(STR_TO_DATE('00:00:00 AM', NULL));
     dbms_output.put_line(STR_TO_DATE('12:00:00 PM', '%r'));
