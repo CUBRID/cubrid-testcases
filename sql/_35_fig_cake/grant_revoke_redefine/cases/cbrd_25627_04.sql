@@ -26,7 +26,7 @@ GRANT ALTER ON u1.tbl2 TO u3 WITH GRANT OPTION;
 
 evaluate 'connect to dba';
 call login('dba','') on class db_user;
-select grantor_name, grantee_name, owner_name, object_type, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, object_type;
+select grantor_name, grantee_name, owner_name, object_type, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, object_name;
 
 
 evaluate 'connect to u3 & changed owner u1.tbl, u1.tbl2 -> u3.tbl, u3.tbl2, ERROR: can only be performed by the DBA or a DBA group member';

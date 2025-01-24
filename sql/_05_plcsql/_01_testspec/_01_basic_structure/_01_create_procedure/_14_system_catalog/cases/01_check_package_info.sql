@@ -54,7 +54,7 @@ comment 'procedure comment';
 
 call test_proc3();
 select sp_name, pkg_name, is_system_generated, comment from _db_stored_procedure where is_system_generated=0 order by sp_name;
-select * from _db_stored_procedure_args where is_system_generated=0 order by sp_of;
+select * from _db_stored_procedure_args where is_system_generated=0 order by sp_of, default_value, is_optional, comment;
 
 
 drop procedure test_proc1;

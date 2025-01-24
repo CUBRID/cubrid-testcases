@@ -18,13 +18,13 @@ create view view1 as select * from test1;
 GRANT ALL PRIVILEGES ON test1 TO t1;
 GRANT ALL PRIVILEGES ON view1 TO t1;
 
-SELECT * FROM db_auth WHERE grantee_name = 'T1' ORDER BY object_name;
+SELECT * FROM db_auth WHERE grantee_name = 'T1' ORDER BY object_name, auth_type;
 SHOW GRANTS FOR T1;
 
 call login('t1','') on class db_user;
 
 -- in t1
-SELECT * FROM db_auth WHERE grantee_name = 'T1' ORDER BY object_name;
+SELECT * FROM db_auth WHERE grantee_name = 'T1' ORDER BY object_name, auth_type;
 SHOW GRANTS;
 
 CREATE OR REPLACE FUNCTION t1.sp2() return varchar as

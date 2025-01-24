@@ -6,7 +6,7 @@
 
 create or replace procedure t() as
 begin
-    dbms_output.put_line( 10. || null);
+    dbms_output.put_line( 10.0 || null);
 end;
 
 select count(*) from db_stored_procedure where sp_name = 't';

@@ -20,10 +20,8 @@ END;
 CALL test_prc();
 
 
-EVALUATE 'CASE 1. Error ';
+EVALUATE 'CASE 1. Normal ';
 EVALUATE 'Change the column length from 3 to 5 and enter data.';
-EVALUATE 'When I run the procedure, I get an error.';
-EVALUATE 'ERROR : string does not fit in the target type length';
 drop table tbl1;
 create table tbl1 ( col1 varchar(5) );
 insert into tbl1 values('abcde');
@@ -31,7 +29,7 @@ CALL test_prc();
 
 
 EVALUATE 'CASE 2. Normal ';
-EVALUATE 'If you recompile, it will be processed normally.';
+EVALUATE 'If you recompile, it will still be processed normally.';
 CREATE OR REPLACE PROCEDURE test_prc IS
   v_col1   tbl1.col1%TYPE;
 BEGIN

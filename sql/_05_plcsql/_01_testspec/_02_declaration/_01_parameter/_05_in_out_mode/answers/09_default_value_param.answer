@@ -149,6 +149,10 @@ DBMS_OUTPUT.put_line(b);...'
 Only trailing default parameter is allowed: invalid at 'b'. create or replace procedure [dba.demo_default_value4](a  var...
 
 ===================================================
+Error:-894
+Stored procedure/function 'dba.demo_default_value4' does not exist.
+
+===================================================
 0
 
 ===================================================
@@ -176,6 +180,10 @@ DBMS_OUTPUT.put_line(b);...'
 Cannot coerce 'a' to type integer. create or replace procedure [dba.demo_default_value6](a  var...
 
 ===================================================
+Error:-894
+Stored procedure/function 'dba.demo_default_value6' does not exist.
+
+===================================================
 'error test, out can not used default value 1'    
 error test, out can not used default value 1     
 
@@ -188,6 +196,10 @@ begin
 DBMS_OUTPUT.put_line(a);
 end; '
 Attempting to assign DEFAULT on an Out parameter is not allowed: 'a'. create or replace procedure [dba.demo_default_value7](a out ...
+
+===================================================
+Error:-894
+Stored procedure/function 'dba.demo_default_value7' does not exist.
 
 ===================================================
 'error test, out can not used default value 2'    
@@ -204,6 +216,10 @@ end; '
 Attempting to assign DEFAULT on an Out parameter is not allowed: 'b'. create or replace procedure [dba.demo_default_value8](a  var...
 
 ===================================================
+Error:-894
+Stored procedure/function 'dba.demo_default_value8' does not exist.
+
+===================================================
 'error test, "in out" can not used default value'    
 error test, "in out" can not used default value     
 
@@ -218,32 +234,30 @@ end; '
 Attempting to assign DEFAULT on an Out parameter is not allowed: 'a'. create or replace procedure [dba.demo_default_value9](a inou...
 
 ===================================================
-'error test, function can not use in default clause 1'    
-error test, function can not use in default clause 1     
+Error:-894
+Stored procedure/function 'dba.demo_default_value9' does not exist.
+
+===================================================
+'Function (SYSDATETIME) can be used in default clause 1'    
+Function (SYSDATETIME) can be used in default clause 1     
 
 
 ===================================================
-Error:-494
-Semantic: before ' 
-) as
-begin
-DBMS_OUTPUT.put_line(a);
-end; '
-' SYS_DATETIME ' function can not be used in DEFAULT clause. create or replace procedure [dba.demo_default_value10](a  va...
+0
 
 ===================================================
-'error test, function can not use in default clause 2'    
-error test, function can not use in default clause 2     
+0
+
+===================================================
+'Function can be used in default clause 2'    
+Function can be used in default clause 2     
 
 
 ===================================================
-Error:-494
-Semantic: before ' 
-) as
-begin
-DBMS_OUTPUT.put_line(a);
-end; '
-' CURRENT_USER ' function can not be used in DEFAULT clause. create or replace procedure [dba.demo_default_value11](a  va...
+0
+
+===================================================
+0
 
 ===================================================
 'error test, data overflow'    
@@ -251,8 +265,17 @@ error test, data overflow
 
 
 ===================================================
-Error:-427
-Data overflow on data type "character varying".
+Error:-495
+Execute: before ' 
+) as
+begin
+DBMS_OUTPUT.put_line(a);
+end; '
+String representation of a default value of a Stored procedure/function parameter may not exceed 255 characters. create or replace procedure [dba.demo_default_value12](a  va...
+
+===================================================
+Error:-894
+Stored procedure/function 'dba.demo_default_value12' does not exist.
 
 ===================================================
 'char default'    
@@ -273,7 +296,7 @@ null
 null     
 
 
-"a  "
+"a"
 ===================================================
 0
 
@@ -281,12 +304,172 @@ null
 0
 
 ===================================================
-Error:-889
-Stored procedure execute error: com.cubrid.jsp.exception.TypeMismatchException: invalid TIMESTAMP string: 07:28 pm 09-30
+    
+null     
+
+
+11/22/2000
+07:56:17.000 AM 01/23/2000
+01:23:45 AM
+07:28:00 PM 09/30/2025
+===================================================
+    
+null     
+
+
+06/25/2024
+12:22:33.000 PM 06/25/2024
+09:32:46 AM
+11:37:00 AM 02/13/2025
+===================================================
+0
 
 ===================================================
-Error:-889
-Stored procedure execute error: com.cubrid.jsp.exception.TypeMismatchException: invalid DATETIME string: 12:22:33.000 PM 06/25/2024
+    
+Default parameter substitution in nested procedure calls     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+proc2 param: 10
+proc1 param: 1
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+    
+Multiple default parameters in nested calls     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+proc4 param: 5
+proc3 params: 2, default
+proc3 params: 10, default
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+    
+Missing required parameters in nested calls     
+
+
+===================================================
+0
+
+===================================================
+Error:-1360
+In line 4, column 1
+Stored procedure compile error: the number of arguments to procedure TEST_PROC5 does not match the number of the procedure's formal parameters
+
+===================================================
+Error:-894
+Stored procedure/function 'dba.test_proc6' does not exist.
+
+===================================================
+0
+
+===================================================
+Error:-894
+Stored procedure/function 'dba.test_proc6' does not exist.
+
+===================================================
+    
+Nested calling of a process owned by another user (dba -> public)     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+proc7 params: 1, 9
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+    
+Chaining procedures with default parameters     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+proc_c param: 15
+proc_b param: 10
+proc_a param: 5
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+    
+Default parameter conflict in nested calls     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+proc_x param: 50
+===================================================
+0
 
 ===================================================
 0
