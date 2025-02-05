@@ -24,7 +24,7 @@ GRANT ALTER ON u1.tbl2 TO u3 WITH GRANT OPTION;
 
 evaluate 'connect to dba';
 call login('dba','') on class db_user;
-select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name;
+select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, object_name;
 
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
 
