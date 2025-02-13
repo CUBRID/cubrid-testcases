@@ -12,8 +12,8 @@ begin
         <<inner>>
         for j in 1 .. 3 loop
             dbms_output.put_line('j=' || j);
-            exit outer when j % 2 = 0;
-            exit inner when j % 2 = 1;
+            exit outer when j mod 2 = 0;
+            exit inner when j mod 2 = 1;
             dbms_output.put_line('unreachable');
         end loop;
 

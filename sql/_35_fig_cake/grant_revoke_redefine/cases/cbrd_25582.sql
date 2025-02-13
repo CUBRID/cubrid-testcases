@@ -36,7 +36,7 @@ evaluate 'connect to u4, u1.tbl grant to u5';
 call login('u4','') on class db_user;
 GRANT SELECT ON u1.TBL TO u5 WITH GRANT OPTION;
 
-select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name;
+select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name;
 
 
 evaluate 'connect to dba';
@@ -47,7 +47,7 @@ GRANT SELECT ON u1.TBL TO u1 WITH GRANT OPTION;
 evaluate 'init test';
 REVOKE SELECT ON u1.TBL FROM u2;
 
-select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name;
+select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name;
 
 
 
@@ -74,19 +74,19 @@ evaluate 'connect to u4, u1.tbl grant to u5';
 call login('u4','') on class db_user;
 GRANT SELECT ON u1.TBL TO u5 WITH GRANT OPTION;
 
-select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name;
+select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name;
 
 
 evaluate 'connect to u1, revoke to u1.tbl from u2';
 call login('u1','') on class db_user;
 REVOKE SELECT ON u1.TBL FROM u2;
 
-select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name;
+select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name;
 
 evaluate 'init test, connect to dba';
 REVOKE SELECT ON u1.TBL FROM u3;
 
-select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name;
+select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name;
 
 call login('dba','') on class db_user;
 
@@ -109,14 +109,14 @@ evaluate 'connect to u4, u1.tbl grant to u5';
 call login('u4','') on class db_user;
 GRANT SELECT ON u1.TBL TO u5 WITH GRANT OPTION;
 
-select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name;
+select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, auth_type;
 
 
 evaluate 'connect to u2, revoke to u1.tbl from u3';
 call login('u2','') on class db_user;
 REVOKE SELECT ON u1.TBL FROM u3;
 
-select * from db_auth where grantee_name != 'PUBLIC'  order by grantor_name;
+select * from db_auth where grantee_name != 'PUBLIC'  order by grantor_name, auth_type;
 
 
 evaluate 'connect to u1, test for cascade';
@@ -126,19 +126,19 @@ GRANT ALL PRIVILEGES ON u1.TBL TO u3 WITH GRANT OPTION;
 evaluate 'grant SELECT, UPDATE, INSERT, DELETE on u1.tbl to u4';
 GRANT SELECT, UPDATE, INSERT, DELETE ON u1.TBL TO u4 WITH GRANT OPTION;
 
-select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name;
+select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, auth_type;
 
 
 evaluate 'connect to dba, revoke to u1.tbl(SELECT) from u2 (cascade test)';
 call login('dba','') on class db_user;
 REVOKE SELECT ON u1.TBL FROM u2;
 
-select * from db_auth where grantee_name != 'PUBLIC'  order by grantor_name;
+select * from db_auth where grantee_name != 'PUBLIC'  order by grantor_name, auth_type;
 
 evaluate 'init test: revoke to u1.tbl(ALL PRIVILEGES) from u2 (cascade test)';
 REVOKE ALL PRIVILEGES ON u1.TBL FROM u2;
 
-select * from db_auth where grantee_name != 'PUBLIC'  order by grantor_name;
+select * from db_auth where grantee_name != 'PUBLIC'  order by grantor_name, auth_type;
 
 
 
@@ -194,7 +194,7 @@ GRANT SELECT ON u1.TBL TO u2 WITH GRANT OPTION;
 GRANT SELECT ON u1.TBL TO u3 WITH GRANT OPTION;
 GRANT SELECT ON u1.TBL TO u4 WITH GRANT OPTION;
 
-select * from db_auth where grantee_name != 'PUBLIC';
+select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name;
 
 
 
@@ -204,12 +204,12 @@ REVOKE SELECT ON u1.TBL FROM u2;
 REVOKE SELECT ON u1.TBL FROM u3;
 REVOKE SELECT ON u1.TBL FROM u4;
 
-select * from db_auth where grantee_name != 'PUBLIC';
+select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name;
 
 evaluate 'connect to u1 and revoke u5';
 REVOKE SELECT ON u1.TBL FROM u5;
 
-select * from db_auth where grantee_name != 'PUBLIC';
+select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name;
 
 
 evaluate 'test done';

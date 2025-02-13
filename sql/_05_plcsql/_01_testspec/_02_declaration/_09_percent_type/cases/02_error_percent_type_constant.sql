@@ -238,7 +238,7 @@ EVALUATE 'ERROR 2: not in a TIME format';
 create or replace procedure type_support as
    v_TIME  CONSTANT      type_support.T_TIME%type := '23:60:21';
 begin 
-   dbms_output.put_line('v_TIME    ' || v_TIME    );
+   dbms_output.put_line('v_TIME    ' || v_TIME    );
 end;
 call type_support();
 drop procedure type_support;
