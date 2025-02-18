@@ -21,6 +21,6 @@ insert into vt values ('[1, 2, nan]');
 --insert into vt values ('[1, 2]');
 --insert into vt values ('[1, 2, 3, 4]');
 
-select * from vt;
+select cast (vec as VARCHAR) from vt;
 
 drop table if exists vt;
