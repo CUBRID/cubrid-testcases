@@ -21,6 +21,8 @@ insert into vt values ('[1, 2, nan]');
 --insert into vt values ('[1, 2]');
 --insert into vt values ('[1, 2, 3, 4]');
 
+-- Todo : Currently, CTP cannot view the result of select statement due to JDBC driver issue.
+-- For future work, CUBRID JDBC driver should be updated to support VECTOR data type.
 select cast (vec as VARCHAR) from vt;
 
 drop table if exists vt;
