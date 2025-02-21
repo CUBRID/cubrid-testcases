@@ -1,0 +1,539 @@
+===================================================
+0
+===================================================
+0
+===================================================
+10
+===================================================
+0
+===================================================
+0
+===================================================
+10
+===================================================
+0
+===================================================
+0
+===================================================
+10
+===================================================
+    
+TEST 1: Invalid USE_HASH column: USE_HASH hint should be ignored.     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t? a, t? b, t? c where a.c?=b.c? and b.c?=c.c?
+===================================================
+    
+TEST 2: Valid USE_HASH columns with invalid column: USE_HASH hint for valid columns should NOT be ignored.     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: c node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: a node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH(a, b) */ count(*) from t? a, t? b, t? c where a.c?=b.c? and b.c?=c.c?
+===================================================
+    
+TEST 3: Invalid NO_USE_HASH column: NO_USE_HASH hint should be ignored and USE_HASH hint for valid columns should be applied.     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: c node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: a node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH(a, b) */ count(*) from t? a, t? b, t? c where a.c?=b.c? and b.c?=c.c?
+===================================================
+    
+TEST 4: Valid NO_USE_HASH columns: NO_USE_HASH and USE_HASH hints should be applied to all valid columns     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: b node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH(b, c) USE_HASH(a) */ count(*) from t? a, t? b, t? c where a.c?=b.c? and b.c?=c.c?
+===================================================
+    
+TEST 5: Invalid USE_HASH column with NO_USE_HASH: NO_USE_HASH should be applied     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH */ count(*) from t? a, t? b, t? c where a.c?=b.c? and b.c?=c.c?
+===================================================
+    
+TEST 6: Invalid USE_HASH column with valid NO_USE_HASH columns: NO_USE_HASH should be applied to all valid columns     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH(a, b) */ count(*) from t? a, t? b, t? c where a.c?=b.c? and b.c?=c.c?
+===================================================
+    
+TEST 7: Invalid NO_USE_HASH column with USE_HASH: USE_HASH should be applied to all valid columns     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from t? a, t? b, t? c where a.c?=b.c? and b.c?=c.c?
+===================================================
+    
+TEST 8: Invalid NO_USE_HASH column with valid USE_HASH columns: USE_HASH should be applied to all valid columns     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: c node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: a node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH(a, b) */ count(*) from t? a, t? b, t? c where a.c?=b.c? and b.c?=c.c?
+===================================================
+    
+TEST 9: Empty USE_HASH with NO_USE_HASH columns: NO_USE_HASH should be applied to all valid columns.     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH(a, b) */ count(*) from t? a, t? b, t? c where a.c?=b.c? and b.c?=c.c?
+===================================================
+    
+TEST 10: Empty NO_USE_HASH with USE_HASH columns - USE_HASH should be applied to all valid columns     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: c node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: a node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH(a, b) */ count(*) from t? a, t? b, t? c where a.c?=b.c? and b.c?=c.c?
+===================================================
+    
+TEST 11: Both USE_HASH and NO_USE_HASH hints used with invalid arguments: Hash Join should not be applied     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t? a, t? b, t? c where a.c?=b.c? and b.c?=c.c?
+===================================================
+    
+TEST 12: USE_HASH alongside USE_HASH/NO_USE_HASH with no columns: Hash join should be applied.     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from t? a, t? b, t? c where a.c?=b.c? and b.c?=c.c?
+===================================================
+    
+TEST 13: NO_USE_HASH alongside USE_HASH/NO_USE_HASH with no columns: Hash join should not be applied.     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH */ count(*) from t? a, t? b, t? c where a.c?=b.c? and b.c?=c.c?
+===================================================
+    
+TEST 14: USE_HASH alongside USE_HASH/NO_USE_HASH with invalid columns: Hash join should be applied.     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from t? a, t? b, t? c where a.c?=b.c? and b.c?=c.c?
+===================================================
+    
+TEST 15: NO_USE_HASH alongside USE_HASH/NO_USE_HASH with invalid columns: Hash join should not be applied.     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH */ count(*) from t? a, t? b, t? c where a.c?=b.c? and b.c?=c.c?
+===================================================
+    
+TEST 16: Multiple invalid USE_HASH columns (3): USE_HASH hint should be ignored.     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t? a, t? b, t? c where a.c?=b.c? and b.c?=c.c?
+===================================================
+    
+TEST 17: Multiple invalid NO_USE_HASH columns (3): NO_USE_HASH hint should be ignored and USE_HASH hint for valid columns should be applied.     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: c node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: a node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH(a, b) */ count(*) from t? a, t? b, t? c where a.c?=b.c? and b.c?=c.c?
+===================================================
+    
+TEST 18: Invalid USE_HASH column alongside USE_HASH: Cache hint(s) should not be applied.     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t? a, t? b, t? c where a.c?=b.c? and b.c?=c.c?
+===================================================
+    
+TEST 19: Invalid NO_USE_HASH column alongside NO_USE_HASH: Cache hint(s) should not be applied.     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t? a, t? b, t? c where a.c?=b.c? and b.c?=c.c?
+===================================================
+0
+===================================================
+0
+===================================================
+0

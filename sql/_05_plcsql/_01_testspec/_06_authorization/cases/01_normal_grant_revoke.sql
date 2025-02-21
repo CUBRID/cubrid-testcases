@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION sp1() return varchar as begin return 'hello'; end;
 CREATE OR REPLACE PROCEDURE sp2() as begin dbms_output.put_line('call sp2'); end;
 CREATE USER u1;
 SELECT grantor.name, grantee.name, object_type, object_of, auth_type, is_grantable FROM _db_auth where grantee.name = 'U1';
-SELECT unique_name, sp_name, sp_type, return_type, arg_count, target_method, owner.name FROM _db_stored_procedure where sp_name like 'sp%';
+SELECT unique_name, sp_name, sp_type, return_type, arg_count, target_method, owner.name FROM _db_stored_procedure where sp_name like 'sp%' ORDER BY unique_name;
 
 call login('u1','') on class db_user;
 SELECT dba.sp1();
@@ -25,7 +25,7 @@ call login('u1','') on class db_user;
 evaluate 'CUBRID does not support synonyms for procedures.';
 CREATE SYNONYM u1.sp1 FOR dba.sp1;
 CREATE SYNONYM u1.sp2 FOR dba.sp2;
-select * from db_synonym where synonym_owner_name='U1';
+select * from db_synonym where synonym_owner_name='U1' ORDER BY synonym_name;
 
 evaluate '2-1. error-synonym.( SELECt sp1(); )'; 
 SELECT sp1();
