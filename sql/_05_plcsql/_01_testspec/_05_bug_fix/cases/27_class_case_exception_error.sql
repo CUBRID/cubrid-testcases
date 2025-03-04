@@ -28,6 +28,7 @@ insert into ttt values (3);
 
 call poo();
 
+drop procedure poo;
 drop table if exists ttt;
 
 --+ server-message off
