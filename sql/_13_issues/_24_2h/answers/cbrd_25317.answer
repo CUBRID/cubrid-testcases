@@ -1,0 +1,634 @@
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
+    
+1. A non-ANSI outer join can be rewritten as an inner join (bind X, sp X)     
+
+===================================================
+0
+===================================================
+'q1: '||a.col_b    
+q1: 1     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast(a.col_b as varchar) from [dba.tbl] a, [dba.tbl] b where a.col_a=b.col_a and b.col_b= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+'q1: '||a.col_b    
+q1: 1     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast(a.col_b as varchar) from [dba.tbl] a, [dba.tbl] b where a.col_a=b.col_a and b.col_b= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+2. An ANSI outer join can be rewritten as an inner join (bind X, sp X)     
+
+===================================================
+0
+===================================================
+'q2: '||a.col_b    
+q2: 1     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast(a.col_b as varchar) from [dba.tbl] a, [dba.tbl] b where a.col_a=b.col_a and b.col_b= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+'q2: '||a.col_b    
+q2: 1     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast(a.col_b as varchar) from [dba.tbl] a, [dba.tbl] b where a.col_a=b.col_a and b.col_b= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+3. A non-ANSI outer join can be rewritten as an inner join (bind O, sp X)     
+
+===================================================
+0
+===================================================
+'q3: '||a.col_b    
+q3: 1     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast(a.col_b as varchar) from [dba.tbl] a, [dba.tbl] b where a.col_a=b.col_a and b.col_b= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+4. An ANSI outer join can be rewritten as an inner join (bind O, sp X)     
+
+===================================================
+0
+===================================================
+'q4: '||a.col_b    
+q4: 1     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast(a.col_b as varchar) from [dba.tbl] a, [dba.tbl] b where a.col_a=b.col_a and b.col_b= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+5. A non-ANSI outer join can be rewritten as an inner join (bind X, sp O)     
+
+===================================================
+0
+===================================================
+'q5: '||test_fc(a.col_b)    
+q5: 2     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (t_?)
+
+  rewritten query: (select a.col_b, a.col_a from table({?}) t_? (c_?))
+
+  NESTED LOOPS (cselect)
+    TABLE SCAN (t_?)
+    TABLE SCAN (t_?)
+
+  rewritten query: (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?))
+
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+    TABLE SCAN (t_?)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from [dba.tbl] a, [dba.tbl] b, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=b.col_a and b.col_b=?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (method time: ?, fetch: ?, ioread: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (set time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+'q5: '||test_fc(a.col_b)    
+q5: 2     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (t_?)
+
+  rewritten query: (select a.col_b, a.col_a from table({?}) t_? (c_?))
+
+  NESTED LOOPS (cselect)
+    TABLE SCAN (t_?)
+    TABLE SCAN (t_?)
+
+  rewritten query: (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?))
+
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+    TABLE SCAN (t_?)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from [dba.tbl] a, [dba.tbl] b, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=b.col_a and b.col_b=?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (method time: ?, fetch: ?, ioread: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (set time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+    
+6. An ANSI outer join can be rewritten as an inner join (bind X, sp O)     
+
+===================================================
+0
+===================================================
+'q6: '||test_fc(a.col_b)    
+q6: 2     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (t_?)
+
+  rewritten query: (select a.col_b, a.col_a from table({?}) t_? (c_?))
+
+  NESTED LOOPS (cselect)
+    TABLE SCAN (t_?)
+    TABLE SCAN (t_?)
+
+  rewritten query: (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?))
+
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+    TABLE SCAN (t_?)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from [dba.tbl] a, [dba.tbl] b, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=b.col_a and b.col_b=?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (method time: ?, fetch: ?, ioread: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (set time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+'q6: '||test_fc(a.col_b)    
+q6: 2     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (t_?)
+
+  rewritten query: (select a.col_b, a.col_a from table({?}) t_? (c_?))
+
+  NESTED LOOPS (cselect)
+    TABLE SCAN (t_?)
+    TABLE SCAN (t_?)
+
+  rewritten query: (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?))
+
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+    TABLE SCAN (t_?)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from [dba.tbl] a, [dba.tbl] b, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=b.col_a and b.col_b=?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (method time: ?, fetch: ?, ioread: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (set time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+    
+7. A non-ANSI outer join can be rewritten as an inner join (bind O, sp O)     
+
+===================================================
+0
+===================================================
+'q7: '||test_fc(a.col_b)    
+q7: 2     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (t_?)
+
+  rewritten query: (select a.col_b, a.col_a from table({?}) t_? (c_?))
+
+  NESTED LOOPS (cselect)
+    TABLE SCAN (t_?)
+    TABLE SCAN (t_?)
+
+  rewritten query: (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?))
+
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+    TABLE SCAN (t_?)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from [dba.tbl] a, [dba.tbl] b, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=b.col_a and b.col_b= ?:? 
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (method time: ?, fetch: ?, ioread: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (set time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+    
+8. An ANSI outer join can be rewritten as an inner join (bind O, sp O)     
+
+===================================================
+0
+===================================================
+'q8: '||test_fc(a.col_b)    
+q8: 2     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (t_?)
+
+  rewritten query: (select a.col_b, a.col_a from table({?}) t_? (c_?))
+
+  NESTED LOOPS (cselect)
+    TABLE SCAN (t_?)
+    TABLE SCAN (t_?)
+
+  rewritten query: (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?))
+
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+    TABLE SCAN (t_?)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from [dba.tbl] a, [dba.tbl] b, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=b.col_a and b.col_b= ?:? 
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (method time: ?, fetch: ?, ioread: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (set time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+    
+9. A non-ANSI outer join can be rewritten as an inner join ([non-where-clause] bind O , sp O)     
+
+===================================================
+0
+===================================================
+'q9: '||test_fc( ?:0 )    
+q9: 2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast(test_fc( ?:? ) as varchar) from [dba.tbl] a, [dba.tbl] b where a.col_a=b.col_a and b.col_b=?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+10. An ANSI outer join can be rewritten as an inner join ([non-where-clause] bind O , sp O)     
+
+===================================================
+0
+===================================================
+'q10: '||test_fc( ?:0 )    
+q10: 2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast(test_fc( ?:? ) as varchar) from [dba.tbl] a, [dba.tbl] b where a.col_a=b.col_a and b.col_b=?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+11. A non-ANSI outer join (w/ another table) can be rewritten as an inner join (bind O, sp O)     
+
+===================================================
+0
+===================================================
+'q11: '||test_fc(a.col_b)    
+q11: 2     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (t_?)
+
+  rewritten query: (select a.col_b, a.col_a from table({?}) t_? (c_?))
+
+  NESTED LOOPS (cselect)
+    TABLE SCAN (t_?)
+    TABLE SCAN (t_?)
+
+  rewritten query: (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?))
+
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (a)
+        TABLE SCAN (b)
+      TABLE SCAN (c)
+    TABLE SCAN (t_?)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from [dba.tbl] a, [dba.tbl] b, [dba.tbl] c, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=c.col_a and a.col_a=b.col_a and b.col_b= ?:? 
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (method time: ?, fetch: ?, ioread: ?)
+            SUBQUERY (uncorrelated)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (set time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+    
+12. A non-ANSI outer join (w/ another table) can be rewritten as an inner join (bind O, sp O)     
+
+===================================================
+0
+===================================================
+'q12: '||test_fc(a.col_b)    
+q12: 2     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (t_?)
+
+  rewritten query: (select a.col_b, a.col_a from table({?}) t_? (c_?))
+
+  NESTED LOOPS (cselect)
+    TABLE SCAN (t_?)
+    TABLE SCAN (t_?)
+
+  rewritten query: (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?))
+
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (a)
+        TABLE SCAN (b)
+      TABLE SCAN (c)
+    TABLE SCAN (t_?)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from [dba.tbl] a, [dba.tbl] b, [dba.tbl] c, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=b.col_a and b.col_a=c.col_a and a.col_b= ?:? 
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (method time: ?, fetch: ?, ioread: ?)
+            SUBQUERY (uncorrelated)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (set time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+    
+13. A non-ANSI outer join (w/ another table via cross join) can be rewritten as an inner join (bind O, sp O)     
+
+===================================================
+0
+===================================================
+'q13: '||test_fc(a.col_b)    
+q13: 2     
+q13: 2     
+q13: 2     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (t_?)
+
+  rewritten query: (select a.col_b, a.col_a from table({?}) t_? (c_?))
+
+  NESTED LOOPS (cselect)
+    TABLE SCAN (t_?)
+    TABLE SCAN (t_?)
+
+  rewritten query: (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?))
+
+  NESTED LOOPS (cross join)
+    NESTED LOOPS (inner join)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (a)
+        TABLE SCAN (b)
+      TABLE SCAN (t_?)
+    TABLE SCAN (c)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast(t_?.c_? as varchar) from [dba.tbl] a, [dba.tbl] b, [dba.tbl] c, (select t_?.c_?, t_?.c_?, t_?.c_? from (select a.col_b, a.col_a from table({?}) t_? (c_?)) t_? (c_?, c_?), (test_fc(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?, c_?) where a.col_a=b.col_a and b.col_b= ?:? 
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (method time: ?, fetch: ?, ioread: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (set time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
