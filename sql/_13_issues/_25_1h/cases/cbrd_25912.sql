@@ -5,7 +5,6 @@ CREATE TABLE products (id INTEGER PRIMARY KEY, parent_id INTEGER, item VARCHAR(1
 INSERT INTO products VALUES (101, 1, 'Blade', 10);
 INSERT INTO products VALUES (102, 2, 'Wheel', 100);
 
-// test query
 WITH 
    of_drones AS (SELECT item, 'drones', test(id) as id FROM products WHERE parent_id = 1), 
    of_cars AS (SELECT item, 'cars', 'xyz' FROM products WHERE parent_id = 2)
