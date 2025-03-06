@@ -10,17 +10,17 @@ set time zone 'America/Sao_Paulo';
 
 prepare st from 'select time_format(?, ?)';
 
-set @v1=datetime'2025-12-31 22:30:45.999';
-set @v2=datetimeltz'2025-12-31 22:30:45.999 -2:00';
-set @v3=datetimetz'2025-12-31 22:30:45.999 America/Sao_Paulo';
+set @v1=datetime'2024-09-01 22:30:45.999';
+set @v2=datetimeltz'2024-09-01 22:30:45.999 -2:00';
+set @v3=datetimetz'2024-09-01 22:30:45.999 America/Sao_Paulo';
 
 execute st using @v1, '%m/%d/%y %k:%i:%s.%f [%p] *%TZR %TZH*';
 execute st using @v2, '%m/%d/%y %k:%i:%s.%f [%p] *%TZR %TZH*';
 execute st using @v3, '%m/%d/%y %k:%i:%s.%f [%p] *%TZR %TZH*';
 
-execute st using datetime'2025-12-31 22:30:45.999', '%a, %D %b. %Y %T $%TZR-%TZD$';
-execute st using datetimeltz'2025-12-31 22:30:45.999 -2:00', '%a, %D %b. %Y %T $%TZR-%TZD ($%TZH)$';
-execute st using datetimetz'2025-12-31 22:30:45.999 America/Sao_Paulo', '%a, %D %b. %Y %T $%TZR-%TZD ($%TZM)$';
+execute st using datetime'2024-09-01 22:30:45.999', '%a, %D %b. %Y %T $%TZR-%TZD$';
+execute st using datetimeltz'2024-09-01 22:30:45.999 -2:00', '%a, %D %b. %Y %T $%TZR-%TZD ($%TZH)$';
+execute st using datetimetz'2024-09-01 22:30:45.999 America/Sao_Paulo', '%a, %D %b. %Y %T $%TZR-%TZD ($%TZM)$';
 
 set time zone 'America/Mexico_City';
 -- -6:00, DST
@@ -32,6 +32,7 @@ set time zone 'Asia/Shanghai';
 execute st using datetimeltz'2014-06-30 7:30:21.999', '%X, %V, %U, Day %j !(%TZH:%TZM) %TZR==%TZD!';
 execute st using datetimeltz'2014-06-30 7:30:21.999 +10:00', '%X, %V, %U, Day %j !(%TZH:%TZM) %TZR==%TZD!';
 execute st using datetimetz'2014-06-30 7:30:21.999 Asia/Seoul', '%X, %V, %U, Day %j !(%TZH:%TZM) %TZR==%TZD!';
+deallocate prepare st;
 
 set time zone 'Europe/London';
 -- 0:00, DST
