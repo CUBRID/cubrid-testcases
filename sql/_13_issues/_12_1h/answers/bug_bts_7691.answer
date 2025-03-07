@@ -16,7 +16,7 @@ iscan
     index: i? term[?]
     cost:  ? card ?
 Query stmt:
-select t?.a, t?.b from t? t? where  upper(t?.a)='A'
+select t?.a, t?.b from t? t? where  upper(t?.a)= ?:? 
 ===================================================
 a    b    
 a     a     
@@ -27,7 +27,7 @@ iscan
     index: i? term[?]
     cost:  ? card ?
 Query stmt:
-select t?.a, t?.b from t? t? where  upper(t?.a)='A'
+select t?.a, t?.b from t? t? where  upper(t?.a)= ?:? 
 ===================================================
 a    b    
 a     a     
@@ -38,7 +38,7 @@ iscan
     index: i? term[?]
     cost:  ? card ?
 Query stmt:
-select s?.a, s?.b from t? s? where  upper(s?.a)='A'
+select s?.a, s?.b from t? s? where  upper(s?.a)= ?:? 
 ===================================================
 a    b    
 a     a     
@@ -49,7 +49,7 @@ iscan
     index: i? term[?]
     cost:  ? card ?
 Query stmt:
-select s?.a, s?.b from t? s? where  upper(s?.a)='A'
+select s?.a, s?.b from t? s? where  upper(s?.a)= ?:? 
 ===================================================
 0
 ===================================================
@@ -73,7 +73,7 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ t?.a, t?.b, t?.a, t?.b from t? t?, t? t? where t?.a=t?.a and  upper(t?.a)='B'
+select /*+ ORDERED */ t?.a, t?.b, t?.a, t?.b from t? t?, t? t? where t?.a=t?.a and  upper(t?.a)= ?:? 
 ===================================================
 a    b    a    b    
 b     b     b     B     
@@ -91,7 +91,7 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ a.a, a.b, b.a, b.b from t? a, t? b where a.a=b.a and  upper(a.a)='B'
+select /*+ ORDERED */ a.a, a.b, b.a, b.b from t? a, t? b where a.a=b.a and  upper(a.a)= ?:? 
 ===================================================
 a    b    a    b    
 a     a     a     A     
@@ -109,7 +109,7 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ a.a, a.b, b.a, b.b from t? a, t? b where a.a=b.a and  lower(b.b)='a'
+select /*+ ORDERED */ a.a, a.b, b.a, b.b from t? a, t? b where a.a=b.a and  lower(b.b)= ?:? 
 ===================================================
 a    b    a    b    
 a     a     a     A     
@@ -127,7 +127,7 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ a.a, a.b, b.a, b.b from t? a, t? b where a.a=b.a and  lower(b.b) in multiset{'a', 'c'}
+select /*+ ORDERED */ a.a, a.b, b.a, b.b from t? a, t? b where a.a=b.a and (( lower(b.b)= ?:? ) or ( lower(b.b)= ?:? ))
 ===================================================
 a    b    a    b    
 a     a     a     A     
@@ -146,7 +146,7 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ a.a, a.b, b.a, b.b from t? a, t? b where a.a=b.a and  lower(b.b) in multiset{'a', 'c'} and  upper(a.a)< cast('b' as varchar)
+select /*+ ORDERED */ a.a, a.b, b.a, b.b from t? a, t? b where a.a=b.a and (( lower(b.b)= ?:? ) or ( lower(b.b)= ?:? )) and ( upper(a.a)< ?:? )
 ===================================================
 a    b    
 a     a     

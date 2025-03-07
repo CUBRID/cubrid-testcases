@@ -71,7 +71,7 @@ temp(order by)
     sort:  ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.i, t.j, t.k from t t where  abs(t.i)>? order by ?, ?, ?
+select t.i, t.j, t.k from t t where ( abs(t.i)> ?:? ) order by ?, ?, ?
 ===================================================
 i    j    k    
 10     2     2     
@@ -88,7 +88,7 @@ temp(order by)
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.i, t.j, t.k from t t where  abs(t.j)>? and t.i= ?:?  order by ?, ?
+select t.i, t.j, t.k from t t where ( abs(t.j)> ?:? ) and t.i= ?:?  order by ?, ?
 ===================================================
 i    j    k    
 100     100     2     
@@ -105,7 +105,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t.i, t.j, t.k from t t where  abs(t.k)>? and t.j= ?:?  and t.i= ?:?  order by ?
+select t.i, t.j, t.k from t t where ( abs(t.k)> ?:? ) and t.j= ?:?  and t.i= ?:?  order by ?
 ===================================================
 i    j    k    
 1     1     1     
@@ -121,7 +121,7 @@ temp(order by)
     sort:  ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.i, t.j, t.k from t t where  mod(t.i, ?)>? order by ?, ?, ?
+select t.i, t.j, t.k from t t where ( mod(t.i, ?)> ?:? ) order by ?, ?, ?
 ===================================================
 i    j    k    
 10     1     1     
@@ -137,7 +137,7 @@ temp(order by)
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.i, t.j, t.k from t t where  mod(t.j, ?)>? and t.i= ?:?  order by ?, ?
+select t.i, t.j, t.k from t t where ( mod(t.j, ?)> ?:? ) and t.i= ?:?  order by ?, ?
 ===================================================
 i    j    k    
 100     100     1     
@@ -153,7 +153,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t.i, t.j, t.k from t t where  mod(t.k, ?)>? and t.j= ?:?  and t.i= ?:?  order by ?
+select t.i, t.j, t.k from t t where ( mod(t.k, ?)> ?:? ) and t.j= ?:?  and t.i= ?:?  order by ?
 ===================================================
 i    j    k    
 100     100     1     
@@ -248,7 +248,7 @@ temp(order by)
     sort:  ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t?.i, t?.j, t?.k from t? t? where  abs(t?.i)>? order by ?, ?, ?
+select t?.i, t?.j, t?.k from t? t? where ( abs(t?.i)> ?:? ) order by ?, ?, ?
 ===================================================
 i    j    k    
 10     2     2     
@@ -265,7 +265,7 @@ temp(order by)
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t?.i, t?.j, t?.k from t? t? where  abs(t?.j)>? and t?.i= ?:?  order by ?, ?
+select t?.i, t?.j, t?.k from t? t? where ( abs(t?.j)> ?:? ) and t?.i= ?:?  order by ?, ?
 ===================================================
 i    j    k    
 100     100     2     
@@ -283,7 +283,7 @@ temp(order by)
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t?.i, t?.j, t?.k from t? t? where ?=? and  abs(t?.k)>? and t?.i= ?:?  order by ?, ?
+select t?.i, t?.j, t?.k from t? t? where ?=? and ( abs(t?.k)> ?:? ) and t?.i= ?:?  order by ?, ?
 ===================================================
 i    j    k    
 1     1     1     
@@ -299,7 +299,7 @@ temp(order by)
     sort:  ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t?.i, t?.j, t?.k from t? t? where  mod(t?.i, ?)>? order by ?, ?, ?
+select t?.i, t?.j, t?.k from t? t? where ( mod(t?.i, ?)> ?:? ) order by ?, ?, ?
 ===================================================
 i    j    k    
 10     1     1     
@@ -315,7 +315,7 @@ temp(order by)
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t?.i, t?.j, t?.k from t? t? where  mod(t?.j, ?)>? and t?.i= ?:?  order by ?, ?
+select t?.i, t?.j, t?.k from t? t? where ( mod(t?.j, ?)> ?:? ) and t?.i= ?:?  order by ?, ?
 ===================================================
 i    j    k    
 100     100     1     
@@ -331,7 +331,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.i, t?.j, t?.k from t? t? where  mod(t?.k, ?)>? and t?.j= ?:?  and t?.i= ?:?  order by ?
+select t?.i, t?.j, t?.k from t? t? where ( mod(t?.k, ?)> ?:? ) and t?.j= ?:?  and t?.i= ?:?  order by ?
 ===================================================
 i    j    k    
 100     100     1     

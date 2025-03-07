@@ -34,7 +34,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  sin(t?.d?)> sin( cast(? as double))
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( sin(t?.d?)> ?:? )
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.0     3.0     3     
@@ -45,18 +45,10 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  sin(t?.d?)= sin( cast(? as double))
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  sin(t?.d?)= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 
-Query plan:
-iscan
-    class: t? node[?]
-    index: idx term[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  sin(t?.d?)< sin( cast(? as double)) and  sin(t?.d?)> sin( cast(? as double))
 ===================================================
 i1    i2    d1    d2    s    
 4     4     4.0     4.0     4     
@@ -94,7 +86,7 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  sin(t?.d?)> sin( cast(? as double))
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( sin(t?.d?)> ?:? )
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.0     3.0     3     
@@ -105,18 +97,10 @@ iscan
     index: idx term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  sin(t?.d?)= sin( cast(? as double))
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  sin(t?.d?)= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 
-Query plan:
-iscan
-    class: t? node[?]
-    index: idx term[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  sin(t?.d?)< sin( cast(? as double)) and  sin(t?.d?)> sin( cast(? as double))
 ===================================================
 i1    i2    d1    d2    s    
 4     4     4.0     4.0     4     
@@ -172,7 +156,7 @@ iscan
     index: idx term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  sin(t?.d?)> sin( cast(? as double)) and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( sin(t?.d?)> ?:? ) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.0     3.0     3     
@@ -181,10 +165,9 @@ Query plan:
 iscan
     class: t? node[?]
     index: idx term[?] AND term[?]
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  sin(t?.d?)> sin( cast(? as double)) and  sin(t?.d?)< sin( cast(? as double)) and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( sin(t?.d?)> ?:?  and  sin(t?.d?)< ?:? ) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 4     4     4.0     4.0     4     
@@ -235,7 +218,7 @@ iscan
     index: idx term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  sin(t?.d?)> sin( cast(? as double)) and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( sin(t?.d?)> ?:? ) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 3     3     3.0     3.0     3     
@@ -244,10 +227,9 @@ Query plan:
 iscan
     class: t? node[?]
     index: idx term[?] AND term[?]
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where  sin(t?.d?)> sin( cast(? as double)) and  sin(t?.d?)< sin( cast(? as double)) and t?.i?= ?:? 
+select t?.i?, t?.i?, t?.d?, t?.d?, t?.s from t? t? where ( sin(t?.d?)> ?:?  and  sin(t?.d?)< ?:? ) and t?.i?= ?:? 
 ===================================================
 i1    i2    d1    d2    s    
 4     4     4.0     4.0     4     

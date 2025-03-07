@@ -1,0 +1,740 @@
+===================================================
+0
+===================================================
+0
+===================================================
+10000
+===================================================
+10000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+100000
+===================================================
+100000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+test case 1     
+
+===================================================
+a    b    c    d    e    
+-1     -1     -1     -1     -1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (ta.idx_tbla_abs_b_a) (key range: ( abs(ta.b)= ?:? ))
+
+  rewritten query: select ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta where ( abs(ta.b)= ?:? ) and (inst_num()<= ?:? ) using index ta.idx_tbla_abs_b_a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbla.idx_tbla_abs_b_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+test case 2     
+
+===================================================
+a    b    c    d    e    
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (ta.idx_tbla_abs_b_a) (key range: ( abs(ta.b)=-?))
+
+  rewritten query: select ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta where ( abs(ta.b)=-?) and (inst_num()<= ?:? ) using index ta.idx_tbla_abs_b_a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbla.idx_tbla_abs_b_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+test case 3     
+
+===================================================
+a    b    c    d    e    
+-1     -1     -1     -1     -1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (ta.idx_tbla_abs_b_a) (key range: ( abs(ta.b)= ?:? ))
+
+  rewritten query: select ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta where ( abs(ta.b)= ?:? ) and (inst_num()<= ?:? ) using index ta.idx_tbla_abs_b_a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbla.idx_tbla_abs_b_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+test case 4     
+
+===================================================
+a    b    c    d    e    
+-1     -1     -1     -1     -1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (ta.idx_tbla_abs_b_a) (key range: ( abs(ta.b)=--?))
+
+  rewritten query: select ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta where ( abs(ta.b)=--?) and (inst_num()<= ?:? ) using index ta.idx_tbla_abs_b_a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbla.idx_tbla_abs_b_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+test case 5     
+
+===================================================
+a    b    c    d    e    
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (ta.idx_tbla_abs_b_a) (key range: ( abs(ta.b)= ?:? ))
+
+  rewritten query: select ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta where ( abs(ta.b)= ?:? ) and (inst_num()<= ?:? ) using index ta.idx_tbla_abs_b_a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbla.idx_tbla_abs_b_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+test case 6     
+
+===================================================
+a    b    c    d    e    
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (ta.idx_tbla_abs_b_a) (key range: ( abs(ta.b)< ?:? ))
+
+  rewritten query: select ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta where ( abs(ta.b)< ?:? ) and (inst_num()<= ?:? ) using index ta.idx_tbla_abs_b_a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbla.idx_tbla_abs_b_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+test case 7     
+
+===================================================
+a    b    c    d    e    
+-1     -1     -1     -1     -1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (ta.idx_tbla_abs_b_a) (key range: ( abs(ta.b)>-?))
+
+  rewritten query: select ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta where ( abs(ta.b)>-?) and (inst_num()<= ?:? ) using index ta.idx_tbla_abs_b_a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbla.idx_tbla_abs_b_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+test case 8     
+
+===================================================
+a    b    c    d    e    
+1     1     1     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (ta)
+    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: ta.b= abs(tb.b)key range: ta.a=tb.a)
+
+  rewritten query: select /*+ ORDERED */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta, [dba.tbla] tb where ta.b= abs(tb.b) and ta.c= abs(tb.b) and ta.a=tb.a and (inst_num()<= ?:? ) using index tb.idx_tbla_a_abs_b
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbla), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+test case 9     
+
+===================================================
+a    b    c    d    e    
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (ta)
+    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: ta.a=tb.a)
+
+  rewritten query: select /*+ ORDERED */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta, [dba.tbla] tb where (ta.b<= abs(tb.b)) and (ta.c> abs(tb.b)) and ta.a=tb.a and (inst_num()<= ?:? ) using index tb.idx_tbla_a_abs_b
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbla), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+test case 10     
+
+===================================================
+a    b    c    d    e    
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (ta)
+    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: ( abs(tb.b)>=ta.b)key range: ta.a=tb.a)
+
+  rewritten query: select /*+ ORDERED */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta, [dba.tbla] tb where ( abs(tb.b)>=ta.b) and (ta.c> abs(tb.b)) and ta.a=tb.a and (inst_num()<= ?:? ) using index tb.idx_tbla_a_abs_b
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbla), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+test case 11     
+
+===================================================
+a    b    c    d    e    
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (ta)
+    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: ( abs(tb.b)>=ta.b and  abs(tb.b)<ta.c)key range: ta.a=tb.a)
+
+  rewritten query: select /*+ ORDERED */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta, [dba.tbla] tb where ( abs(tb.b)>=ta.b and  abs(tb.b)<ta.c) and ta.a=tb.a and (inst_num()<= ?:? ) using index tb.idx_tbla_a_abs_b
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbla), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+test case 12     
+
+===================================================
+a    b    c    d    e    
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (ta)
+    INDEX SCAN (tb.idx_tbla_a_b) (key range: ta.a=tb.a, key filter: (ta.b<=tb.b), key filter: (ta.c>tb.b), covered: true)
+
+  rewritten query: select /*+ ORDERED */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta, [dba.tbla] tb where (ta.b<=tb.b) and (ta.c>tb.b) and ta.a=tb.a and (inst_num()<= ?:? ) using index tb.idx_tbla_a_b
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbla), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tbla.idx_tbla_a_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+    
+test case 13     
+
+===================================================
+a    b    c    d    e    
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (ta)
+    INDEX SCAN (tb.idx_tbla_a_b) (key range: (tb.b>=ta.b and tb.b<ta.c)key range: ta.a=tb.a, covered: true)
+
+  rewritten query: select /*+ ORDERED */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta, [dba.tbla] tb where (tb.b>=ta.b and tb.b<ta.c) and ta.a=tb.a and (inst_num()<= ?:? ) using index tb.idx_tbla_a_b
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbla), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tbla.idx_tbla_a_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+    
+test case 14 (Changed after CBRD-25116)     
+
+===================================================
+a    b    c    d    e    
+1     1     1     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (ta)
+    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: (( abs(tb.b)=ta.b) or ( abs(tb.b)=ta.c))key range: ta.a=tb.a)
+
+  rewritten query: select /*+ ORDERED */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta, [dba.tbla] tb where (( abs(tb.b)=ta.b) or ( abs(tb.b)=ta.c)) and ta.a=tb.a and (inst_num()<= ?:? ) using index tb.idx_tbla_a_abs_b
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbla), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+test case 15 (Changed after CBRD-25116)     
+
+===================================================
+a    b    c    d    e    
+1     1     1     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (ta)
+    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: (( abs(tb.b)>=ta.b) or ( abs(tb.b)<ta.c))key range: ta.a=tb.a)
+
+  rewritten query: select /*+ ORDERED */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta, [dba.tbla] tb where (( abs(tb.b)>=ta.b) or ( abs(tb.b)<ta.c)) and ta.a=tb.a and (inst_num()<= ?:? ) using index tb.idx_tbla_a_abs_b
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbla), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+test case 16     
+
+===================================================
+a    b    c    d    e    
+1     1     1     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (ta)
+    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: ta.a=tb.a)
+
+  rewritten query: select /*+ ORDERED */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta, [dba.tbla] tb where ((ta.b<=- abs(tb.b)) or (ta.c>- abs(tb.b))) and ta.a=tb.a and (inst_num()<= ?:? ) using index tb.idx_tbla_a_abs_b
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbla), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+test case 17     
+
+===================================================
+a    b    c    d    e    
+-10000     -10000     -10000     -10000     -10000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (ta)
+      INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: ta.a=tb.a)
+
+  rewritten query: select /*+ ORDERED */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta, [dba.tbla] tb where ((ta.b<=- abs(tb.b)) or ( abs(tb.b)<ta.c)) and ta.a=tb.a using index tb.idx_tbla_a_abs_b order by ? for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbla), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
+     
+
+===================================================
+    
+test case 18 (Changed after CBRD-25116)     
+
+===================================================
+a    b    c    d    e    
+1     1     1     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (ta)
+    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: (( abs(tb.b)<=ta.b) or ( abs(tb.b)<ta.c))key range: ta.a=tb.a)
+
+  rewritten query: select /*+ ORDERED */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta, [dba.tbla] tb where (( abs(tb.b)<=ta.b) or ( abs(tb.b)<ta.c)) and ta.a=tb.a and (inst_num()<= ?:? ) using index tb.idx_tbla_a_abs_b
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbla), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+test case 19     
+
+===================================================
+a    b    c    d    e    
+1     1     1     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (ta)
+    INDEX SCAN (tb.idx_tbla_a_b) (key range: ta.a=tb.a, key filter: ((ta.b<=-tb.b) or (ta.c>-tb.b)), covered: true)
+
+  rewritten query: select /*+ ORDERED */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta, [dba.tbla] tb where ((ta.b<=-tb.b) or (ta.c>-tb.b)) and ta.a=tb.a and (inst_num()<= ?:? ) using index tb.idx_tbla_a_b
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbla), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tbla.idx_tbla_a_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+    
+test case 20 (Changed after CBRD-25116)     
+
+===================================================
+a    b    c    d    e    
+-10000     -10000     -10000     -10000     -10000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (ta)
+      INDEX SCAN (tb.idx_tbla_a_b) (key range: ta.a=tb.a, key filter: ((ta.b<=-tb.b) or (tb.b<ta.c)), covered: true)
+
+  rewritten query: select /*+ ORDERED */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta, [dba.tbla] tb where ((ta.b<=-tb.b) or (tb.b<ta.c)) and ta.a=tb.a using index tb.idx_tbla_a_b order by ? for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbla), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tbla.idx_tbla_a_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ORDERBY (time: ?, topnsort: true)
+     
+
+===================================================
+    
+test case 21 (Changed after CBRD-25116)     
+
+===================================================
+a    b    c    d    e    
+1     1     1     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (ta)
+    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: (( abs(tb.b)=ta.b) or ( abs(tb.b)=ta.c) or ( abs(tb.b)=ta.d))key range: ta.a=tb.a)
+
+  rewritten query: select /*+ ORDERED */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta, [dba.tbla] tb where (( abs(tb.b)=ta.b) or ( abs(tb.b)=ta.c) or ( abs(tb.b)=ta.d)) and ta.a=tb.a and (inst_num()<= ?:? ) using index tb.idx_tbla_a_abs_b
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbla), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+test case 22     
+
+===================================================
+a    b    c    d    e    
+-9     -9     -9     -9     -9     
+9     9     9     9     9     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    INDEX SCAN (ta.idx_tbla_abs_b_a) (key range: ( abs(ta.b)>= ?:?  and  abs(ta.b)< ?:? ))
+    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: ta.a=tb.akey range: ( abs(tb.b)>= ?:?  and  abs(tb.b)< ?:? ))
+
+  rewritten query: select /*+ ORDERED */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta, [dba.tbla] tb where ( abs(ta.b)>= ?:?  and  abs(ta.b)< ?:? ) and ( abs(tb.b)>= ?:?  and  abs(tb.b)< ?:? ) and ta.a=tb.a using index ta.idx_tbla_abs_b_a, tb.idx_tbla_a_abs_b
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbla.idx_tbla_abs_b_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+test case 23     
+
+===================================================
+a    b    c    d    e    
+-999     -999     -999     -999     -999     
+999     999     999     999     999     
+-1000     -1000     -1000     -1000     -1000     
+1000     1000     1000     1000     1000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (ta.idx_tbla_abs_b_a) (key range: ( abs(ta.b)>= ?:?  and  abs(ta.b)<= ?:? ))
+
+  rewritten query: select ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta where ( abs(ta.b)>= ?:?  and  abs(ta.b)<= ?:? ) using index ta.idx_tbla_abs_b_a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbla.idx_tbla_abs_b_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+test case 24 (Changed after CBRD-25116)     
+
+===================================================
+a    b    c    d    e    
+-999     -999     -999     -999     -999     
+999     999     999     999     999     
+-1000     -1000     -1000     -1000     -1000     
+1000     1000     1000     1000     1000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (ta.idx_tbla_abs_b_a) (key range: ( abs(ta.b)>=--? and  abs(ta.b)<=--?))
+
+  rewritten query: select ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta where ( abs(ta.b)>=--? and  abs(ta.b)<=--?) and ( abs(ta.b)>= ?:? ) using index ta.idx_tbla_abs_b_a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbla.idx_tbla_abs_b_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+test case 25     
+
+===================================================
+a    b    c    d    e    
+999     999     999     999     999     
+1000     1000     1000     1000     1000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (ta.idx_tbla_b_a) (key range: (ta.b>=--? and ta.b<=--?), key filter: (ta.b>= ?:? ))
+
+  rewritten query: select ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta where (ta.b>=--? and ta.b<=--?) and (ta.b>= ?:? ) using index ta.idx_tbla_b_a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbla.idx_tbla_b_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+test case 26     
+
+===================================================
+a    b    c    d    e    
+-10000     -10000     -10000     -10000     -10000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (ta.idx_tbla_length_b) (key range:  char_length( cast(ta.b as varchar))<=?)
+
+  rewritten query: select ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta where  char_length( cast(ta.b as varchar))>? and  char_length( cast(ta.b as varchar))<=? using index ta.idx_tbla_length_b(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbla.idx_tbla_length_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+test case 27     
+
+===================================================
+a    b    c    d    e    
+-10000     -10000     -10000     -10000     -10000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (ta.idx_tbla_length_b) (key range: ( char_length( cast(ta.b as varchar))> ?:?  and  char_length( cast(ta.b as varchar))<= ?:? ))
+
+  rewritten query: select ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta where ( char_length( cast(ta.b as varchar))> ?:?  and  char_length( cast(ta.b as varchar))<= ?:? ) using index ta.idx_tbla_length_b(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbla.idx_tbla_length_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+test case 28     
+
+===================================================
+count(ca)    
+48     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tblb.i_b) (key range: ( to_char([dba.tblb].cb, 'YYYY-MM-DD HH?:MI:SS')>= ?:?  and  to_char([dba.tblb].cb, 'YYYY-MM-DD HH?:MI:SS')<= ?:? )key range: [dba.tblb].ca= ?:? )
+
+  rewritten query: select count([dba.tblb].ca) from [dba.tblb] [dba.tblb] where ( to_char([dba.tblb].cb, 'YYYY-MM-DD HH?:MI:SS')>= ?:?  and  to_char([dba.tblb].cb, 'YYYY-MM-DD HH?:MI:SS')<= ?:? ) and [dba.tblb].ca= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tblb.i_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+test case 29     
+
+===================================================
+count(ca)    
+96     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tblb.i_c) (key range: ( to_char([dba.tblb].cb, 'YYYY-MM-DD HH?:MI:SS')>= ?:?  and  to_char([dba.tblb].cb, 'YYYY-MM-DD HH?:MI:SS')<= ?:? ))
+
+  rewritten query: select count([dba.tblb].ca) from [dba.tblb] [dba.tblb] where ( to_char([dba.tblb].cb, 'YYYY-MM-DD HH?:MI:SS')>= ?:?  and  to_char([dba.tblb].cb, 'YYYY-MM-DD HH?:MI:SS')<= ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tblb.i_c), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+CBRD-25116 - regression issue caused by CBRD-24795     
+
+===================================================
+0
+===================================================
+100
+===================================================
+0
+===================================================
+0
+===================================================
+i_id    
+36     
+37     
+38     
+39     
+40     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    INDEX SCAN (i.pk_item_i_id) (key range: i.i_id= ?:? )
+    INDEX SCAN (j.pk_item_i_id) (key range: ((j.i_id=i.i_related_a) or (j.i_id=i.i_related_b) or (j.i_id=i.i_related_c) or (j.i_id=i.i_related_d) or (j.i_id=i.i_related_e)), covered: true)
+
+  rewritten query: select j.i_id from [dba.item] i, [dba.item] j where ((j.i_id=i.i_related_a) or (j.i_id=i.i_related_b) or (j.i_id=i.i_related_c) or (j.i_id=i.i_related_d) or (j.i_id=i.i_related_e)) and i.i_id= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.item.pk_item_i_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.item.pk_item_i_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+0
+===================================================
+0
