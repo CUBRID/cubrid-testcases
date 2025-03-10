@@ -12,7 +12,7 @@ C2: set transaction lock timeout INFINITE;
 C2: set transaction isolation level read committed;
 
 C1: drop table if exists t1;
-C1: create table t1 (id1 char (50000));
+C1: create table t1 (id1 char (2048));
 C1: insert into t1 values (1);
 C1: commit;
 MC: wait until C1 ready;

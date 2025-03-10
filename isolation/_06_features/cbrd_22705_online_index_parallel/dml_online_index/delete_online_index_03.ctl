@@ -11,7 +11,7 @@ C3: set transaction isolation level read committed;
 
 /* preparation */
 C1: drop table if exists t;
-C1: create table t(id bigint primary key,col char(5000));
+C1: create table t(id bigint primary key,col char(2048));
 C1: insert into t select rownum,rownum from db_root connect by level<=1000;
 C1: commit;
 MC: wait until C1 ready;
