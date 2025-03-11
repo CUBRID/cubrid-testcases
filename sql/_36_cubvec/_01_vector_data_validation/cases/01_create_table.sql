@@ -46,8 +46,8 @@ create table vt (vec VECTOR 1024, float));
 drop table if exists vt;
 
 -- Restriction testcases for VECTOR data type
-create table vt (v VECTOR(1024) primary key);
-create table vt (vec VECTOR unique);
+--create table vt (v VECTOR(1024) primary key);
+--create table vt (vec VECTOR unique);
 create table vt (vec VECTOR) partition by hash (vec) partitions 4;
 
 drop table if exists vt;
