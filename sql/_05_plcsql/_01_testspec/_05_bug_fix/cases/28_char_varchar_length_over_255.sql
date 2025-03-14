@@ -27,6 +27,7 @@ create or replace procedure poo as
     v varchar;
 begin
     boo(v);
+    dbms_output.put_line(v);
 end;
 
 call poo();
@@ -41,9 +42,11 @@ create or replace procedure poo as
     v char(255);
 begin
     boo(v);
+    dbms_output.put_line(v);
 end;
 call poo();
 
+drop procedure boo;
 drop procedure poo;
 drop procedure t;
 
