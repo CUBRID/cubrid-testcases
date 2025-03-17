@@ -46,7 +46,7 @@ call login('dba','') on class db_user;
 ALTER TABLE u1.tbl OWNER TO u3;
 ALTER TABLE u1.tbl2 OWNER TO u3;
 
-select grantor_name, grantee_name, owner_name, object_type, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, object_type;
+select grantor_name, grantee_name, owner_name, object_type, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, object_name;
 
 select class_name, owner_name from db_class where class_name in ('tbl', 'tbl2') order by class_name;
 
