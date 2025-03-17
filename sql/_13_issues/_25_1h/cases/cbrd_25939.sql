@@ -69,9 +69,9 @@ CALL change_owner ('u3.tbl_v', 'u1') ON CLASS db_authorizations;
 SELECT * FROM db_synonym WHERE synonym_name LIKE 'tbl%';
 SELECT owner_name, class_name FROM db_class WHERE class_name LIKE 'tbl%';
 
-DROP TABLE if exists u1.tbl;
-DROP TABLE if exists u2.tbl;
-DROP TABLE if exists u3.tbl;
+DROP TABLE IF EXISTS u1.tbl;
+DROP TABLE IF EXISTS u2.tbl;
+DROP TABLE IF EXISTS u3.tbl;
 DROP VIEW u1.tbl_v;
 DROP VIEW u2.tbl_v;
 DROP SYNONYM dba.tbl;
