@@ -1,4 +1,3 @@
---+ server-message on
 -- This test verifies the following issue: CBRD-25944
 -- Specifying a user-defined variable as the first argument of time_format() versus directly specifying the same value
 -- returns consistent results for various datetime values (datetime, datetimeltz, datetimetz)
@@ -33,4 +32,3 @@ execute st using @v4, '%TZR %TZD %TZH %TZM';
 
 set timezone 'Asia/Seoul';
 
---+ server-message off
