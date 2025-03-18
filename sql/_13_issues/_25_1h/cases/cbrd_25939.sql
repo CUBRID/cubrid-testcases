@@ -60,14 +60,14 @@ evaluate '8. Success case';
 ALTER TABLE u1.tbl OWNER TO u3;
 ALTER VIEW u1.tbl_v OWNER TO u3;
 --Even if the owner is changed, the target_owner_name in the synonym remains invalid, so the following case is not an issue
-SELECT * FROM db_synonym WHERE synonym_name LIKE 'tbl%';
-SELECT owner_name, class_name FROM db_class WHERE class_name LIKE 'tbl%';
+SELECT * FROM db_synonym WHERE synonym_name LIKE 'tbl%' order by synonym_name;
+SELECT owner_name, class_name FROM db_class WHERE class_name LIKE 'tbl%' order by owner_name, class_name;
 
 CALL change_owner ('u3.tbl', 'u1') ON CLASS db_authorizations;
 CALL change_owner ('u3.tbl_v', 'u1') ON CLASS db_authorizations;
 --Even if the owner is changed, the target_owner_name in the synonym remains invalid, so the following case is not an issue
-SELECT * FROM db_synonym WHERE synonym_name LIKE 'tbl%';
-SELECT owner_name, class_name FROM db_class WHERE class_name LIKE 'tbl%';
+SELECT * FROM db_synonym WHERE synonym_name LIKE 'tbl%' order by synonym_name;
+SELECT owner_name, class_name FROM db_class WHERE class_name LIKE 'tbl%' order by owner_name, class_name;
 
 DROP TABLE IF EXISTS u1.tbl;
 DROP TABLE IF EXISTS u2.tbl;
