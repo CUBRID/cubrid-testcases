@@ -2,7 +2,7 @@
 -- Spec
 --------------------------------------------------------------------------------
 
--- Spec: Multiple Vector Indexes on the Same Vector Column (Invalid)
+-- Spec/ Multiple Vector Indexes on the Same Vector Column (Invalid)
 DROP IF EXISTS test_vector_index;
 CREATE TABLE test_vector_index (
     id INT,
@@ -11,9 +11,9 @@ CREATE TABLE test_vector_index (
 INSERT INTO test_vector_index VALUES (1, '[1,2,3]');
 INSERT INTO test_vector_index VALUES (2, '[3,2,1]');
 
--- Spec: Valid
+-- Spec/ Valid
 CREATE VECTOR INDEX idx_vector1 ON test_vector_index(vector_data COSINE);
 
--- Spec: Error
+-- Spec/ Error
 CREATE VECTOR INDEX idx_vector2 ON test_vector_index(vector_data COSINE);
 
