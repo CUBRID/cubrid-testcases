@@ -15,13 +15,15 @@ insert into athlete_t values ('a'), ('b'), ('c');
 create or replace procedure poo as
     cursor c is select name from athlete_t limit 1;
     nm varchar(40);
+    final_val int := 0;
 begin
     for i in 1..2001 loop
         open c;
         fetch c into nm;
-        dbms_output.put_line(i);
         close c;
+        final_val := i;
     end loop;
+    dbms_output.put_line(final_val);
 end;
 
 call poo();
