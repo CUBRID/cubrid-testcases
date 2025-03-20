@@ -11,13 +11,13 @@ SELECT VECTOR_DISTANCE('[0,0,0]', name) FROM tbl;
 -------------------------------------------------------------------------------
 -- spec
 -------------------------------------------------------------------------------
--- spec: vector_distance on non-indexed column: should use COSINE
+-- spec/ vector_distance on non-indexed column/ should use COSINE
 SELECT VECTOR_DISTANCE('[0,0,0]', name) FROM tbl;
 
 CREATE VECTOR INDEX idx ON tbl(vector_data EUCLIDEAN);
--- spec: vector_distance on indexed column: should use EUCLIDEAN
+-- spec/ vector_distance on indexed column/ should use EUCLIDEAN
 SELECT VECTOR_DISTANCE('[0,0,0]', name) FROM tbl;
 
--- spec: vector_distance on indexed column with metric: should use DOT
+-- spec/ vector_distance on indexed column with metric/ should use DOT
 SELECT VECTOR_DISTANCE(name, name, DOT) FROM tbl;
 

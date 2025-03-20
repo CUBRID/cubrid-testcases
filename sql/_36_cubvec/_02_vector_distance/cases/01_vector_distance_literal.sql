@@ -1,47 +1,47 @@
 -- Syntax
--- Syntax: 6 Metrics: Valid
+-- Syntax/ 6 Metrics/ Valid
 SELECT VECTOR_DISTANCE('[1,2,3]', '[3,2,1]', COSINE);
 SELECT VECTOR_DISTANCE('[1,2,3]', '[3,2,1]', EUCLIDEAN);
 SELECT VECTOR_DISTANCE('[1,2,3]', '[3,2,1]', MANHATTAN);
 SELECT VECTOR_DISTANCE('[1,2,3]', '[3,2,1]', DOT);
--- Not Implemented: SELECT VECTOR_DISTANCE('[1,2,3]', '[3,2,1]', JACCARD);
--- Not Implemented: SELECT VECTOR_DISTANCE('[1,2,3]', '[3,2,1]', HAMMING);
--- Syntax: Metrics: Error
+-- Not Implemented/ SELECT VECTOR_DISTANCE('[1,2,3]', '[3,2,1]', JACCARD);
+-- Not Implemented/ SELECT VECTOR_DISTANCE('[1,2,3]', '[3,2,1]', HAMMING);
+-- Syntax/ Metrics/ Error
 SELECT VECTOR_DISTANCE('[1,2,3]', '[3,2,1]', some_random_token);
 SELECT VECTOR_DISTANCE('[1,2,3]', '[3,2,1]', SOME_RANDOM_TOKEN);
 SELECT VECTOR_DISTANCE('[1,2,3]', '[3,2,1]', VECTOR_DISTANCE);
 
 -- Semantics
--- Semantics: Error
+-- Semantics/ Error
 SELECT VECTOR_DISTANCE();
 SELECT VECTOR_DISTANCE('[1,2,3]');
 SELECT VECTOR_DISTANCE('[1,2,3]', '[3,2,1]');
--- Semantics: No Metrics: Error
+-- Semantics/ No Metrics/ Error
 SELECT VECTOR_DISTANCE(NULL, NULL);
 SELECT VECTOR_DISTANCE(NULL, '[3,2,1]');
 SELECT VECTOR_DISTANCE('[1,2,3]', NULL);
--- Semantics: Wrong Metrics: Error
+-- Semantics/ Wrong Metrics/ Error
 SELECT VECTOR_DISTANCE('[1,2,3]', '[3,2,1]', '[1,2,3]');
 SELECT VECTOR_DISTANCE('[1,2,3]', '[3,2,1]', 1);
 SELECT VECTOR_DISTANCE('[1,2,3]', '[3,2,1]', 99);
--- Semantics: Wrong Argument Types: Error
+-- Semantics/ Wrong Argument Types/ Error
 SELECT VECTOR_DISTANCE(1, '[3,2,1]', EUCLIDEAN);
 SELECT VECTOR_DISTANCE('[1,2,3]', 1, EUCLIDEAN);
--- Semantics: Wrong Argument Formats: Error
+-- Semantics/ Wrong Argument Formats/ Error
 SELECT VECTOR_DISTANCE('hello world', '[3,2,1]', EUCLIDEAN);
 SELECT VECTOR_DISTANCE('[hello,world]', '[3,2,1]', EUCLIDEAN);
 SELECT VECTOR_DISTANCE('[1,2,3]', '[hello,world]', EUCLIDEAN);
 
--- Spec: Not Equal Dimensions: Error
+-- Spec/ Not Equal Dimensions/ Error
 SELECT VECTOR_DISTANCE('[1,2,3,4]', '[3,2,1]', EUCLIDEAN);
 SELECT VECTOR_DISTANCE('[1,2,3]', '[3,2,1,4]', EUCLIDEAN);
 
--- Spec: Null Arguments: Valid
--- Spec: Null Arguments: COSINE: Valid
+-- Spec/ Null Arguments/ Valid
+-- Spec/ Null Arguments/ COSINE/ Valid
 SELECT VECTOR_DISTANCE(NULL, NULL, COSINE);
 SELECT VECTOR_DISTANCE(NULL, '[3,2,1]', COSINE);
 SELECT VECTOR_DISTANCE('[1,2,3]', NULL, COSINE);
--- Spec: Null Arguments: EUCLIDEAN: Valid
+-- Spec/ Null Arguments/ EUCLIDEAN/ Valid
 SELECT VECTOR_DISTANCE(NULL, NULL, EUCLIDEAN);
 SELECT VECTOR_DISTANCE(NULL, '[3,2,1]', EUCLIDEAN);
 SELECT VECTOR_DISTANCE('[1,2,3]', NULL, EUCLIDEAN);

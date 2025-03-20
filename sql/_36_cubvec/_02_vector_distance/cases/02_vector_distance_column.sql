@@ -17,7 +17,7 @@ SELECT COSINE_DISTANCE(name name) FROM test_non_vector;
 -- Semantics
 -------------------------------------------------------------------------------
 
--- Semantics: Argument type: Error
+-- Semantics/ Argument type/ Error
 DROP IF EXISTS test_non_vector;
 CREATE TABLE test_non_vector (
     id INT,
@@ -34,7 +34,7 @@ SELECT L2_DISTANCE(name, name) FROM test_non_vector;
 SELECT HAMMING_DISTANCE(name, name) FROM test_non_vector;
 SELECT JACCARD_DISTANCE(name, name) FROM test_non_vector;
 
--- Semantics: Argument looks like vector but not vector type: Error
+-- Semantics/ Argument looks like vector but not vector type/ Error
 DROP IF EXISTS test_non_vector;
 CREATE TABLE test_non_vector (
     id INT,
@@ -49,7 +49,7 @@ SELECT L2_DISTANCE(name, name) FROM test_non_vector;
 SELECT HAMMING_DISTANCE(name, name) FROM test_non_vector;
 SELECT JACCARD_DISTANCE(name, name) FROM test_non_vector;
 
--- Semantics: Vector and non-vector: Error
+-- Semantics/ Vector and non-vector/ Error
 DROP IF EXISTS test_non_vector;
 CREATE TABLE test_non_vector (
     id INT,
@@ -70,7 +70,7 @@ SELECT JACCARD_DISTANCE(vec, vec) FROM test_non_vector;
 -- Spec
 -------------------------------------------------------------------------------
 
--- Spec: Two Column Arguments: Valid
+-- Spec/ Two Column Arguments/ Valid
 DROP IF EXISTS test_vector_table;
 CREATE TABLE test_vector_table (
     id INT,
@@ -88,7 +88,7 @@ SELECT
     JACCARD_DISTANCE(t1.vector_col, t2.vector_col) AS jaccard_distance
 FROM test_vector_table t1, test_vector_table t2;
 
--- Spec: Column and a literal: Valid
+-- Spec/ Column and a literal/ Valid
 SELECT 
     VECTOR_DISTANCE(vector_col, '[2, 3, 4]', COSINE) AS cosine_distance,
     COSINE_DISTANCE(vector_col, '[2, 3, 4]') AS cosine_distance,
@@ -109,7 +109,7 @@ SELECT
     JACCARD_DISTANCE('[2, 3, 4]', vector_col) AS jaccard_distance
 FROM test_vector_table;
 
--- Spec: NULL and column: Valid
+-- Spec/ NULL and column/ Valid
 SELECT 
     VECTOR_DISTANCE(NULL, vector_col, COSINE) AS cosine_distance,
     COSINE_DISTANCE(NULL, vector_col) AS cosine_distance,
@@ -120,7 +120,7 @@ SELECT
     JACCARD_DISTANCE(NULL, vector_col) AS jaccard_distance
 FROM test_vector_table;
 
--- Spec: column and NULL: Valid
+-- Spec/ column and NULL/ Valid
 SELECT 
     VECTOR_DISTANCE(vector_col, NULL, COSINE) AS cosine_distance,
     INNER_PRODUCT(vector_col, NULL) AS inner_product,
@@ -130,7 +130,7 @@ SELECT
     JACCARD_DISTANCE(vector_col, NULL) AS jaccard_distance
 FROM test_vector_table;
 
--- Spec: Different vector dimensions: Error
+-- Spec/ Different vector dimensions/ Error
 DROP IF EXISTS test_vector_table;
 CREATE TABLE test_vector_table (
     id INT,
@@ -149,7 +149,7 @@ SELECT
     JACCARD_DISTANCE(t1.vector_col, t2.vector_col) AS jaccard_distance
 FROM test_vector_table t1, test_vector_table t2;
 
--- Spec: Empty vectors: Error
+-- Spec/ Empty vectors/ Error
 DROP IF EXISTS test_vector_table;
 CREATE TABLE test_vector_table (
     id INT,
@@ -161,7 +161,7 @@ SELECT
     VECTOR_DISTANCE(t1.vector_col, t2.vector_col, COSINE) AS cosine_distance
 FROM test_vector_table t1, test_vector_table t2;
 
--- Spec: Zero vectors: Valid
+-- Spec/ Zero vectors/ Valid
 DROP IF EXISTS test_vector_table;
 CREATE TABLE test_vector_table (
     id INT,
@@ -179,7 +179,7 @@ SELECT
     JACCARD_DISTANCE(t1.vector_col, t2.vector_col) AS jaccard_distance
 FROM test_vector_table t1, test_vector_table t2;
 
--- Spec: Negative values: Valid
+-- Spec/ Negative values/ Valid
 DROP IF EXISTS test_vector_table;
 CREATE TABLE test_vector_table (
     id INT,
@@ -197,7 +197,7 @@ SELECT
     JACCARD_DISTANCE(t1.vector_col, t2.vector_col) AS jaccard_distance
 FROM test_vector_table t1, test_vector_table t2;
 
--- Spec: Non integer values: Valid
+-- Spec/ Non integer values/ Valid
 DROP IF EXISTS test_vector_table;
 CREATE TABLE test_vector_table (
     id INT,
@@ -215,7 +215,7 @@ SELECT
     JACCARD_DISTANCE(t1.vector_col, t2.vector_col) AS jaccard_distance
 FROM test_vector_table t1, test_vector_table t2;
 
--- Spec: large numbers: Valid
+-- Spec/ large numbers/ Valid
 DROP IF EXISTS test_vector_table;
 CREATE TABLE test_vector_table (
     id INT,
@@ -233,7 +233,7 @@ SELECT
     JACCARD_DISTANCE(t1.vector_col, t2.vector_col) AS jaccard_distance
 FROM test_vector_table t1, test_vector_table t2;
 
--- Spec: very large numbers exceeding floating points range: Error
+-- Spec/ very large numbers exceeding floating points range/ Error
 DROP IF EXISTS test_vector_table;
 CREATE TABLE test_vector_table (
     id INT,
