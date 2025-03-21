@@ -4,7 +4,8 @@
 
 create or replace procedure t () as
 begin
-    -- CAST( AS ) parse error
+    -- [CBRD-25866] fixed : CAST( AS ) parse error
+
     dbms_output.put_line('INTEGER');
     dbms_output.put_line(CAST(NULL AS INTEGER));
     dbms_output.put_line(CAST(NULL AS INTEGER));
