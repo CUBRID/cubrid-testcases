@@ -9,41 +9,29 @@ insert into t1 values(1,1),(2,2),(3,3),(4,4);
 create table t2(c1 int);
 insert into t2 values(1),(2),(3),(4);
 
-set optimization level 513;
+evaluate '1. Main query: rownum replaced by orderby_num() when ORDER BY is added';
+select /*+ recompile */ rownum from (select c2 from t1 order by c1 desc);
 
-evaluate '1. in-list, main query''s select-list contains rownum';
+evaluate '1-1. Query 1 with no_merge hint';
+select /*+ recompile */ rownum from (select /*+ no_merge */ * from t2 order by 1);
+
+evaluate '2. Main query: rownum remains unchanged when no ORDER BY is added in the main query';
 select /*+ recompile */ * from t2
     where c1 in (select rownum from (select c2 from t1 order by c1 desc));
 
-evaluate '2. main query''s select-list contains rownum/orderby_num()';
-select /*+ recompile */ distinct rownum from (select c2 from t1 order by c1 desc);
-
-evaluate '3. in-list, main query contains limit clause';
+evaluate '2-2. Query 2 with no_merge hint';
 select /*+ recompile */ * from t2
-    where c1 in (select c2 from (select c2 from t1 order by c1 desc) limit 2);
+    where c1 in (select rownum from (select c2 from t1 order by c1 desc));
 
-evaluate '4. main query contains limit clause';
-select /*+ recompile */ distinct c2 from (select c2 from t1 order by c1 desc) limit 2;
-
-evaluate '5. in-list, subquery''s select-list contains orderby_num()';
+evaluate '3. Subquery: orderby_num() replaced by rownum when ORDER BY is removed from subquery';
 select /*+ recompile */ * from t2
     where c1 in (select orderby_num from (select orderby_num() as orderby_num from t1 order by c1 desc));
 
-evaluate '6. subquery''s select-list contains orderby_num()';
-select /*+ recompile */ distinct orderby_num from (select orderby_num() as orderby_num from t1 order by c1 desc);
+evaluate '4. Subquery: orderby_num() remains unchanged when ORDER BY is retained in subquery';
+select /*+ recompile */ orderby_num from (select orderby_num() as orderby_num from t1 order by c1 desc);
 
-evaluate '7. in-list, subquery contains limit clause';
+evaluate '5. Subquery with LIMIT: view merge disabled and ordering preserved';
 select /*+ recompile */ * from t2
     where c1 in (select c2 from (select c2 from t1 order by c1 desc limit 2));
-
-evaluate '8. subquery contains limit clause';
-select /*+ recompile */ distinct c2 from (select c2 from t1 order by c1 desc limit 2);
-
-evaluate '9. Main query with no_merge';
-select rownum from (select /*+ no_merge */ * from t2 order by 1);
-
-evaluate '10. in-list, subquery contains no_merge';
-select /*+ recompile */ * from t1
-    where c1 in (select rownum from (select /*+ no_merge */ * from t2 order by 1));
 
 drop table if exists t1, t2;
