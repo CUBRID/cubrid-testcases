@@ -12,14 +12,7 @@ insert into t2 values(1),(2),(3),(4);
 evaluate '1. Main query: rownum replaced by orderby_num() when ORDER BY is added';
 select /*+ recompile */ rownum from (select c2 from t1 order by c1 desc);
 
-evaluate '1-1. Query 1 with no_merge hint';
-select /*+ recompile */ rownum from (select /*+ no_merge */ * from t2 order by 1);
-
 evaluate '2. Main query: rownum remains unchanged when no ORDER BY is added in the main query';
-select /*+ recompile */ * from t2
-    where c1 in (select rownum from (select c2 from t1 order by c1 desc));
-
-evaluate '2-2. Query 2 with no_merge hint';
 select /*+ recompile */ * from t2
     where c1 in (select rownum from (select c2 from t1 order by c1 desc));
 
@@ -33,5 +26,12 @@ select /*+ recompile */ orderby_num from (select orderby_num() as orderby_num fr
 evaluate '5. Subquery with LIMIT: view merge disabled and ordering preserved';
 select /*+ recompile */ * from t2
     where c1 in (select c2 from (select c2 from t1 order by c1 desc limit 2));
+
+evaluate '6. Main query with no_merge';
+select rownum from (select /*+ no_merge */ * from t2 order by 1);
+
+evaluate '7. in-list, subquery contains no_merge';
+select /*+ recompile */ * from t1
+    where c1 in (select rownum from (select /*+ no_merge */ * from t2 order by 1));
 
 drop table if exists t1, t2;
