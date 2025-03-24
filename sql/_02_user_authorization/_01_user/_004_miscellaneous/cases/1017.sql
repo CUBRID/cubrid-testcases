@@ -4,7 +4,7 @@ call login('dba') on class db_user;
 call add_user('test_user') on class db_user;
 create class t1(a int);
 
-call change_owner('t1', 'test_user') on class db_authorizations;
+call change_owner('t1', 'test_user') on class db_root;
 
 select * from db_class where class_name='t1';
 
