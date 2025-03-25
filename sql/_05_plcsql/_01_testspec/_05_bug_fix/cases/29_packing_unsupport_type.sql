@@ -252,7 +252,7 @@ insert into t values ('pass', '{"a":1}');
 create or replace procedure proc_json() as
     ii string;
 begin
-    select i into ii from t where d = cast('{\"a\":1}' as json);
+    select i into ii from t where d = cast('{"a":1}' as json);
     dbms_output.put_line(ii);
 end;
 
