@@ -1,0 +1,1013 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+1. change to the table owner     
+
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+U1     U2     CLASS     tbl     U1     SELECT     YES     
+U2     U3     CLASS     tbl     U1     SELECT     YES     
+
+===================================================
+owner.name    grants    
+DBA          
+U1          
+U2     null     
+U3     null     
+U4          
+U5          
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+U3     U2     CLASS     tbl     U3     SELECT     YES     
+
+===================================================
+owner.name    grants    
+DBA          
+U1          
+U2     null     
+U3          
+U4          
+U5          
+
+===================================================
+class_name    owner_name    class_type    is_system_class    tde_algorithm    partitioned    is_reuse_oid_class    collation    comment    
+tbl     U3     CLASS     NO     NONE     NO     YES     iso88591_bin     null     
+
+===================================================
+0
+===================================================
+    
+2. change to the view owner     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+U1     U2     CLASS     tbl     U1     SELECT     YES     
+U1     U3     VCLASS     v1_tbl     U1     SELECT     YES     
+U2     U3     CLASS     tbl     U1     SELECT     YES     
+
+===================================================
+owner.name    grants    
+DBA          
+U1          
+U2     null     
+U3     null     
+U4          
+U5          
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+U1     U2     CLASS     tbl     U1     SELECT     YES     
+U2     U3     CLASS     tbl     U1     SELECT     YES     
+U2     U3     VCLASS     v1_tbl     U2     SELECT     YES     
+
+===================================================
+owner.name    grants    
+DBA          
+U1          
+U2     null     
+U3     null     
+U4          
+U5          
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+U1     U2     CLASS     tbl     U1     SELECT     YES     
+U2     U3     CLASS     tbl     U1     SELECT     YES     
+
+===================================================
+owner.name    grants    
+DBA          
+U1          
+U2     null     
+U3     null     
+U4          
+U5          
+
+===================================================
+class_name    owner_name    class_type    is_system_class    tde_algorithm    partitioned    is_reuse_oid_class    collation    comment    
+v1_tbl     U3     VCLASS     NO     NONE     NO     NO     iso88591_bin     null     
+
+===================================================
+VIEW    CREATE VIEW    
+u3.v1_tbl     select [u1.tbl].[col1] from [u1.tbl] [u1.tbl]     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+3. change to stored procedure owner     
+
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+U1     U2     FUNCTION     hello     U1     EXECUTE     NO     
+U1     U3     FUNCTION     hello     U1     EXECUTE     NO     
+
+===================================================
+owner.name    grants    
+DBA          
+U1          
+U2     null     
+U3     null     
+U4          
+U5          
+
+===================================================
+    
+null     
+
+===================================================
+    
+check error message     
+
+===================================================
+Error:-140
+===================================================
+Error:-140
+===================================================
+Error:-907
+===================================================
+Error:-907
+===================================================
+    
+null     
+
+===================================================
+    
+success     
+
+===================================================
+0
+===================================================
+sp_name    owner    comment    
+hello     U1     aaaa     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+U3     U2     FUNCTION     hello     U3     EXECUTE     NO     
+
+===================================================
+owner.name    grants    
+DBA          
+U1          
+U2     null     
+U3          
+U4          
+U5          
+
+===================================================
+sp_name    owner    
+hello     U3     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+    
+4. Change the owner of a table to which you have granted ALTER permission     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+U1     U2     CLASS     tbl     U1     ALTER     NO     
+U1     U2     CLASS     tbl2     U1     ALTER     YES     
+U2     U3     CLASS     tbl2     U1     ALTER     YES     
+
+===================================================
+owner.name    grants    
+DBA          
+U1          
+U2     null     
+U3     null     
+U4          
+U5          
+
+===================================================
+    
+null     
+
+===================================================
+    
+check error meessage     
+
+===================================================
+Error:-140
+===================================================
+Error:-140
+===================================================
+    
+null     
+
+===================================================
+    
+check error meessage     
+
+===================================================
+Error:-140
+===================================================
+Error:-140
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+U3     U2     CLASS     tbl     U3     ALTER     NO     
+U3     U2     CLASS     tbl2     U3     ALTER     YES     
+
+===================================================
+owner.name    grants    
+DBA          
+U1          
+U2     null     
+U3          
+U4          
+U5          
+
+===================================================
+class_name    owner_name    
+tbl     U3     
+tbl2     U3     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+Error:-493
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+DBA     U2     CLASS     t1_r     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_r__p__p0     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_r__p__p1     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_h     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_h__p__p0     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_h__p__p1     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_l     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_l__p__p0     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_l__p__p1     DBA     SELECT     YES     
+
+===================================================
+owner.name    grants    
+DBA          
+U1          
+U2     null     
+U3          
+U4          
+U5          
+
+===================================================
+    
+null     
+
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+DBA     U2     CLASS     t1_r     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_r__p__p0     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_r__p__p1     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_h     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_h__p__p0     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_h__p__p1     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_l     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_l__p__p0     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_l__p__p1     DBA     SELECT     YES     
+
+===================================================
+owner.name    grants    
+DBA          
+U1          
+U2     null     
+U3          
+U4          
+U5          
+
+===================================================
+    
+null     
+
+===================================================
+    
+check error message     
+
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+    
+null     
+
+===================================================
+    
+check error message     
+
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+    
+null     
+
+===================================================
+    
+success     
+
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+DBA     U2     CLASS     t1_r     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_r__p__p0     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_r__p__p1     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_h     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_h__p__p0     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_h__p__p1     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_l     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_l__p__p0     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_l__p__p1     DBA     SELECT     YES     
+
+===================================================
+owner.name    grants    
+DBA          
+U1          
+U2     null     
+U3          
+U4          
+U5          
+
+===================================================
+class_name    owner_name    
+t1_h     DBA     
+t1_l     DBA     
+t1_r     DBA     
+
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+    
+6-1. change to owner(u1->u3) when after grant to permission u1.tbl1     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+DBA     U2     CLASS     t1_r     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_r__p__p0     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_r__p__p1     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_h     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_h__p__p0     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_h__p__p1     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_l     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_l__p__p0     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_l__p__p1     DBA     SELECT     YES     
+U1     U2     CLASS     tbl1     U1     SELECT     YES     
+U1     U2     CLASS     tbl1     U1     INSERT     YES     
+U2     U3     CLASS     tbl1     U1     SELECT     YES     
+U2     U3     CLASS     tbl1     U1     INSERT     YES     
+U3     U2     CLASS     tbl1     U1     SELECT     NO     
+U3     U2     CLASS     tbl1     U1     INSERT     YES     
+
+===================================================
+owner.name    grants    
+DBA          
+U1          
+U2     null     
+U3     null     
+U4          
+U5          
+
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+DBA     U2     CLASS     t1_r     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_r__p__p0     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_r__p__p1     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_h     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_h__p__p0     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_h__p__p1     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_l     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_l__p__p0     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_l__p__p1     DBA     SELECT     YES     
+U3     U2     CLASS     tbl1     U3     SELECT     YES     
+U3     U2     CLASS     tbl1     U3     INSERT     YES     
+
+===================================================
+owner.name    grants    
+DBA          
+U1          
+U2     null     
+U3          
+U4          
+U5          
+
+===================================================
+0
+===================================================
+    
+6-2. change to owner(u1->u3) when after grant to permission u1.tbl1     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+DBA     U2     CLASS     t1_r     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_r__p__p0     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_r__p__p1     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_h     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_h__p__p0     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_h__p__p1     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_l     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_l__p__p0     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_l__p__p1     DBA     SELECT     YES     
+U1     U2     CLASS     tbl1     U1     SELECT     YES     
+U1     U3     CLASS     tbl1     U1     INSERT     YES     
+U1     U4     CLASS     tbl1     U1     SELECT     NO     
+U2     U3     CLASS     tbl1     U1     SELECT     YES     
+U3     U4     CLASS     tbl1     U1     SELECT     YES     
+
+===================================================
+owner.name    grants    
+DBA          
+U1          
+U2     null     
+U3     null     
+U4     null     
+U5          
+
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+DBA     U2     CLASS     t1_r     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_r__p__p0     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_r__p__p1     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_h     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_h__p__p0     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_h__p__p1     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_l     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_l__p__p0     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_l__p__p1     DBA     SELECT     YES     
+U3     U2     CLASS     tbl1     U3     SELECT     YES     
+U3     U4     CLASS     tbl1     U3     SELECT     YES     
+
+===================================================
+owner.name    grants    
+DBA          
+U1          
+U2     null     
+U3          
+U4     null     
+U5          
+
+===================================================
+0
+===================================================
+    
+6-3. Check to mask(bit) on db_authorization     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+DBA     U2     CLASS     t1_r     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_r__p__p0     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_r__p__p1     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_h     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_h__p__p0     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_h__p__p1     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_l     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_l__p__p0     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_l__p__p1     DBA     SELECT     YES     
+U1     U2     CLASS     tbl1     U1     INSERT     YES     
+U1     U3     CLASS     tbl1     U1     SELECT     YES     
+U2     U4     CLASS     tbl1     U1     INSERT     NO     
+U3     U4     CLASS     tbl1     U1     SELECT     YES     
+U3     U2     CLASS     tbl1     U1     SELECT     NO     
+
+===================================================
+owner.name    grants    
+DBA          
+U1          
+U2     null     
+U3     null     
+U4     null     
+U5          
+
+===================================================
+    
+null     
+
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+DBA     U2     CLASS     t1_r     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_r__p__p0     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_r__p__p1     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_h     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_h__p__p0     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_h__p__p1     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_l     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_l__p__p0     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_l__p__p1     DBA     SELECT     YES     
+U2     U4     CLASS     tbl1     U3     INSERT     NO     
+U3     U2     CLASS     tbl1     U3     INSERT     YES     
+U3     U4     CLASS     tbl1     U3     SELECT     YES     
+U3     U2     CLASS     tbl1     U3     SELECT     NO     
+
+===================================================
+owner.name    grants    
+DBA          
+U1          
+U2     null     
+U3          
+U4     null     
+U5          
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+    
+ERROR: SELECT authorization failure     
+
+===================================================
+Error:-157
+===================================================
+1
+===================================================
+col1    
+1     
+
+===================================================
+    
+null     
+
+===================================================
+    
+ERROR: INSERT authorization failure     
+
+===================================================
+Error:-160
+===================================================
+    
+success     
+
+===================================================
+0
+===================================================
+1
+===================================================
+col1    
+1     
+2     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+    
+6-4. Check to mask(bit) on db_authorization     
+
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+    
+ERROR: Cannot issue GRANT/REVOKE to owner of a class     
+
+===================================================
+Error:-146
+===================================================
+    
+success     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+    
+ERROR: Cannot issue GRANT/REVOKE to owner of a class     
+
+===================================================
+Error:-146
+===================================================
+    
+success     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+    
+ERROR: Cannot issue GRANT/REVOKE to owner of a class     
+
+===================================================
+Error:-146
+===================================================
+    
+success     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+    
+ERROR: Cannot issue GRANT/REVOKE to owner of a class     
+
+===================================================
+Error:-146
+===================================================
+    
+success     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+DBA     U2     CLASS     t1_r     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_r__p__p0     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_r__p__p1     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_h     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_h__p__p0     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_h__p__p1     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_l     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_l__p__p0     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_l__p__p1     DBA     SELECT     YES     
+U1     U2     CLASS     tbl     U1     SELECT     YES     
+U1     U3     CLASS     tbl     U1     SELECT     YES     
+U1     U4     CLASS     tbl     U1     SELECT     YES     
+U1     U5     CLASS     tbl     U1     SELECT     YES     
+U2     U3     CLASS     tbl     U1     SELECT     YES     
+U2     U4     CLASS     tbl     U1     SELECT     YES     
+U2     U5     CLASS     tbl     U1     SELECT     YES     
+U3     U2     CLASS     tbl     U1     SELECT     YES     
+U3     U4     CLASS     tbl     U1     SELECT     YES     
+U3     U5     CLASS     tbl     U1     SELECT     YES     
+U4     U2     CLASS     tbl     U1     SELECT     YES     
+U4     U3     CLASS     tbl     U1     SELECT     YES     
+U4     U5     CLASS     tbl     U1     SELECT     YES     
+U5     U2     CLASS     tbl     U1     SELECT     YES     
+U5     U3     CLASS     tbl     U1     SELECT     YES     
+U5     U4     CLASS     tbl     U1     SELECT     YES     
+
+===================================================
+owner.name    grants    
+DBA          
+U1          
+U2     null     
+U3     null     
+U4     null     
+U5     null     
+
+===================================================
+0
+===================================================
+Error:-493
+===================================================
+owner.name    grants    
+DBA          
+U1          
+U2     null     
+U3     null     
+U4     null     
+U5     null     
+
+===================================================
+0
+===================================================
+Error:-493
+===================================================
+owner.name    grants    
+DBA          
+U1          
+U2     null     
+U3          
+U4     null     
+U5     null     
+
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+DBA     U2     CLASS     t1_r     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_r__p__p0     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_r__p__p1     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_h     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_h__p__p0     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_h__p__p1     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_l     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_l__p__p0     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_l__p__p1     DBA     SELECT     YES     
+U4     U5     CLASS     tbl     U4     SELECT     YES     
+
+===================================================
+owner.name    grants    
+DBA          
+U1          
+U2     null     
+U3          
+U4          
+U5     null     
+
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+DBA     U2     CLASS     t1_r     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_r__p__p0     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_r__p__p1     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_h     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_h__p__p0     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_h__p__p1     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_l     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_l__p__p0     DBA     SELECT     YES     
+DBA     U2     CLASS     t1_l__p__p1     DBA     SELECT     YES     
+
+===================================================
+0
+===================================================
+    
+Test done     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
