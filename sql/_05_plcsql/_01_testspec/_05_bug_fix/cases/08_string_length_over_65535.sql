@@ -1,6 +1,13 @@
 --+ server-message on
 -- Verified for CBRD-25007
--- but Bug is not fixed
+/*
+    CUBRID literal is char type and char type max size is 2048
+    but literal is possible to over 2048 size
+    also, the JAVA is string max size is 65535
+    but it is not CUBRID spec
+    so if over 65535 size then the CUBRID is divided to 65535 undersize for send to server and then it is joined on server
+    therefore the CUBRID(=plcsql) is possible to input the string 65535 over size
+*/
 
 -- 'a' is 65536 count
 create or replace procedure poo()
