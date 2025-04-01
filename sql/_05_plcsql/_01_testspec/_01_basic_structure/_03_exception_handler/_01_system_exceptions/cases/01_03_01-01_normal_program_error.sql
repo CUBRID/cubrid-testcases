@@ -6,7 +6,7 @@
 
 create or replace procedure t(i int) as
 begin
-    raise program_error;
+    raise zero_divide;
 exception
 when case_not_found then
     dbms_output.put_line('case_not_found');

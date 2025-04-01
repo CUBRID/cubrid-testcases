@@ -44,7 +44,6 @@ CALL test_prc();
 EVALUATE 'CASE 3. Error ';
 EVALUATE 'Change the column type from varchar to date and enter data.';
 EVALUATE 'Error when running the procedure.';
-EVALUATE 'ERROR : internal server error';
 drop table tbl_a;
 create table tbl_a ( col1 date );
 insert into tbl_a values( to_date('2024-09-03','YYYY-MM-DD') );
