@@ -1,0 +1,168 @@
+===================================================
+0
+===================================================
+0
+===================================================
+12
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+1. Calling a stored procedure in the SELECT list     
+
+===================================================
+fn_string(name)    
+George     
+George     
+Laura     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.sales_tbl)
+
+  rewritten query: select [dba.fn_string]([dba.sales_tbl].[name]) from [dba.sales_tbl] [dba.sales_tbl] where (inst_num()<=?)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+2. Calling a stored procedure in the WHERE clause     
+
+===================================================
+name    
+George     
+George     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.sales_tbl)
+
+  rewritten query: select [dba.sales_tbl].[name] from [dba.sales_tbl] [dba.sales_tbl] where [dba.fn_string]([dba.sales_tbl].[name])='George'
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+3. Calling a stored procedure in the WHERE clause with LIMIT     
+
+===================================================
+name    
+George     
+Laura     
+Stephan     
+Chang     
+Chang     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.sales_tbl)
+
+  rewritten query: select [dba.sales_tbl].[name] from [dba.sales_tbl] [dba.sales_tbl] where ([dba.fn_int]([dba.sales_tbl].sales_amount)<?) and (inst_num()<=?)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+4. Calling a stored procedure with CONCAT in the WHERE clause     
+
+===================================================
+name    
+George     
+George     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.sales_tbl)
+
+  rewritten query: select [dba.sales_tbl].[name] from [dba.sales_tbl] [dba.sales_tbl] where  concat([dba.fn_string]([dba.sales_tbl].[name]), '')='George'
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+5. Calling a stored procedure in both SELECT and WHERE clauses     
+
+===================================================
+fn_string(name)    
+George     
+Laura     
+Stephan     
+Chang     
+Chang     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.sales_tbl)
+
+  rewritten query: select [dba.fn_string]([dba.sales_tbl].[name]) from [dba.sales_tbl] [dba.sales_tbl] where ([dba.fn_int]([dba.sales_tbl].sales_amount)<?) and (inst_num()<=?)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+6. Calling a stored procedure in the GROUP BY clause     
+
+===================================================
+dept_no    sum(fn_int(sales_amount))    
+201     1300     
+301     600     
+501     1050     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.sales_tbl)
+
+  rewritten query: select [dba.sales_tbl].dept_no, sum([dba.fn_int]([dba.sales_tbl].sales_amount)) from [dba.sales_tbl] [dba.sales_tbl] group by [dba.fn_int]([dba.sales_tbl].dept_no)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
