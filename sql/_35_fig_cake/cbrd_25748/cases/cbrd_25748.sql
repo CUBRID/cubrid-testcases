@@ -26,29 +26,30 @@ END;
 SET TRACE ON;
 
 evaluate '1. Calling a stored procedure in the SELECT list';
-SELECT fn_string(name) FROM sales_tbl LIMIT 3;
+SELECT fn_string(name) FROM sales_tbl ORDER BY 1 LIMIT 3;
 SHOW TRACE;
 
 evaluate '2. Calling a stored procedure in the WHERE clause';
-SELECT name FROM sales_tbl WHERE fn_string(name) = 'George';
+SELECT name FROM sales_tbl WHERE fn_string(name) = 'George' ORDER BY 1;
 SHOW TRACE;
 
 evaluate '3. Calling a stored procedure in the WHERE clause with LIMIT';
-SELECT name FROM sales_tbl WHERE fn_int(sales_amount) < 300 LIMIT 5;
+SELECT name FROM sales_tbl WHERE fn_int(sales_amount) < 300 ORDER BY 1 LIMIT 5;
 SHOW TRACE;
 
 evaluate '4. Calling a stored procedure with CONCAT in the WHERE clause';
-SELECT name FROM sales_tbl WHERE CONCAT(fn_string(name), '') = 'George';
+SELECT name FROM sales_tbl WHERE CONCAT(fn_string(name), '') = 'George' ORDER BY 1;
 SHOW TRACE;
 
 evaluate '5. Calling a stored procedure in both SELECT and WHERE clauses';
-SELECT fn_string(name) FROM sales_tbl WHERE fn_int(sales_amount) < 300 LIMIT 5;
+SELECT fn_string(name) FROM sales_tbl WHERE fn_int(sales_amount) < 300 ORDER BY 1 LIMIT 5;
 SHOW TRACE;
 
 evaluate '6. Calling a stored procedure in the GROUP BY clause';
 SELECT dept_no, sum(fn_int(sales_amount))
 FROM sales_tbl
-GROUP BY fn_int(dept_no);
+GROUP BY fn_int(dept_no)
+ORDER BY 1;
 SHOW TRACE;
 
 SET TRACE OFF;

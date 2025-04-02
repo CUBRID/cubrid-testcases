@@ -16,22 +16,24 @@
 
 ===================================================
 fn_string(name)    
+Chang     
+Chang     
 George     
-George     
-Laura     
 
 ===================================================
 trace    
 
 Query Plan:
-  TABLE SCAN (dba.sales_tbl)
+  SORT (order by)
+    TABLE SCAN (dba.sales_tbl)
 
-  rewritten query: select [dba.fn_string]([dba.sales_tbl].[name]) from [dba.sales_tbl] [dba.sales_tbl] where (inst_num()<=?)
+  rewritten query: select [dba.fn_string]([dba.sales_tbl].[name]) from [dba.sales_tbl] [dba.sales_tbl] order by ? for orderby_num()<=?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
     SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
      
 
 ===================================================
@@ -47,14 +49,16 @@ George
 trace    
 
 Query Plan:
-  TABLE SCAN (dba.sales_tbl)
+  SORT (order by)
+    TABLE SCAN (dba.sales_tbl)
 
-  rewritten query: select [dba.sales_tbl].[name] from [dba.sales_tbl] [dba.sales_tbl] where [dba.fn_string]([dba.sales_tbl].[name])='George'
+  rewritten query: select [dba.sales_tbl].[name] from [dba.sales_tbl] [dba.sales_tbl] where [dba.fn_string]([dba.sales_tbl].[name])='George' order by ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
     SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
@@ -63,24 +67,26 @@ Trace Statistics:
 
 ===================================================
 name    
+Chang     
+Chang     
 George     
 Laura     
 Stephan     
-Chang     
-Chang     
 
 ===================================================
 trace    
 
 Query Plan:
-  TABLE SCAN (dba.sales_tbl)
+  SORT (order by)
+    TABLE SCAN (dba.sales_tbl)
 
-  rewritten query: select [dba.sales_tbl].[name] from [dba.sales_tbl] [dba.sales_tbl] where ([dba.fn_int]([dba.sales_tbl].sales_amount)<?) and (inst_num()<=?)
+  rewritten query: select [dba.sales_tbl].[name] from [dba.sales_tbl] [dba.sales_tbl] where [dba.fn_int]([dba.sales_tbl].sales_amount)<? order by ? for orderby_num()<=?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
     SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
      
 
 ===================================================
@@ -96,14 +102,16 @@ George
 trace    
 
 Query Plan:
-  TABLE SCAN (dba.sales_tbl)
+  SORT (order by)
+    TABLE SCAN (dba.sales_tbl)
 
-  rewritten query: select [dba.sales_tbl].[name] from [dba.sales_tbl] [dba.sales_tbl] where  concat([dba.fn_string]([dba.sales_tbl].[name]), '')='George'
+  rewritten query: select [dba.sales_tbl].[name] from [dba.sales_tbl] [dba.sales_tbl] where  concat([dba.fn_string]([dba.sales_tbl].[name]), '')='George' order by ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
     SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
@@ -112,24 +120,26 @@ Trace Statistics:
 
 ===================================================
 fn_string(name)    
+Chang     
+Chang     
 George     
 Laura     
 Stephan     
-Chang     
-Chang     
 
 ===================================================
 trace    
 
 Query Plan:
-  TABLE SCAN (dba.sales_tbl)
+  SORT (order by)
+    TABLE SCAN (dba.sales_tbl)
 
-  rewritten query: select [dba.fn_string]([dba.sales_tbl].[name]) from [dba.sales_tbl] [dba.sales_tbl] where ([dba.fn_int]([dba.sales_tbl].sales_amount)<?) and (inst_num()<=?)
+  rewritten query: select [dba.fn_string]([dba.sales_tbl].[name]) from [dba.sales_tbl] [dba.sales_tbl] where [dba.fn_int]([dba.sales_tbl].sales_amount)<? order by ? for orderby_num()<=?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
     SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
      
 
 ===================================================
@@ -146,16 +156,18 @@ dept_no    sum(fn_int(sales_amount))
 trace    
 
 Query Plan:
-  SORT (group by)
-    TABLE SCAN (dba.sales_tbl)
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (dba.sales_tbl)
 
-  rewritten query: select [dba.sales_tbl].dept_no, sum([dba.fn_int]([dba.sales_tbl].sales_amount)) from [dba.sales_tbl] [dba.sales_tbl] group by [dba.fn_int]([dba.sales_tbl].dept_no)
+  rewritten query: select [dba.sales_tbl].dept_no, sum([dba.fn_int]([dba.sales_tbl].sales_amount)) from [dba.sales_tbl] [dba.sales_tbl] group by [dba.fn_int]([dba.sales_tbl].dept_no) order by ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
     SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
