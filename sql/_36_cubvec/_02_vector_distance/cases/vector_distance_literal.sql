@@ -1,5 +1,5 @@
 -- Syntax
--- Syntax/ 6 Metrics/ Valid
+-- Syntax/ Metrics/ Valid
 SELECT VECTOR_DISTANCE('[1,2,3]', '[3,2,1]', COSINE);
 SELECT VECTOR_DISTANCE('[1,2,3]', '[3,2,1]', EUCLIDEAN);
 SELECT VECTOR_DISTANCE('[1,2,3]', '[3,2,1]', MANHATTAN);
