@@ -52,6 +52,7 @@ CREATE TABLE test_non_vector (
     name VARCHAR(50)
     vec VECTOR(3)
 );
+-- Semantics/ Vector and non-vector/ Vector and Varchar/ Error
 INSERT INTO test_non_vector VALUES (1, '[3,2,1]', '[1,2,3]');
 INSERT INTO test_non_vector VALUES (2, '[2,3,4]', '[4,5,6]');
 SELECT VECTOR_DISTANCE(name, vec, COSINE) FROM test_non_vector;
@@ -61,6 +62,22 @@ SELECT COSINE_DISTANCE(vec, name) FROM test_non_vector;
 SELECT INNER_PRODUCT(name, vec) FROM test_non_vector;
 SELECT L1_DISTANCE(name, vec) FROM test_non_vector;
 SELECT L2_DISTANCE(name, vec) FROM test_non_vector;
+
+-- Semantics/ Vector and non-vector/ Vector and Int/ Error
+SELECT VECTOR_DISTANCE(id, vec, COSINE) FROM test_non_vector;
+SELECT VECTOR_DISTANCE(vec, id, EUCLIDEAN) FROM test_non_vector;
+SELECT COSINE_DISTANCE(id, vec) FROM test_non_vector;
+SELECT COSINE_DISTANCE(vec, id) FROM test_non_vector;
+SELECT INNER_PRODUCT(id, vec) FROM test_non_vector;
+SELECT L1_DISTANCE(id, vec) FROM test_non_vector;
+SELECT L2_DISTANCE(id, vec) FROM test_non_vector;
+
+-- Semantics/ Vector Element Type Not Binary/ Valid
+SELECT VECTOR_DISTANCE(vec, vec) FROM test_non_vector;
+SELECT COSINE_DISTANCE(vec, vec) FROM test_non_vector;
+-- Semantics/ Vector Element Type Not Binary/ Error
+SELECT HAMMING_DISTANCE(vec, vec) FROM test_non_vector;
+SELECT JACCARD_DISTANCE(vec, vec) FROM test_non_vector;
 
 -------------------------------------------------------------------------------
 -- Spec
