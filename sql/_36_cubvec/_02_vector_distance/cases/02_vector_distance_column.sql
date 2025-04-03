@@ -54,7 +54,7 @@ DROP IF EXISTS test_non_vector;
 CREATE TABLE test_non_vector (
     id INT,
     name VARCHAR(50)
-    vec VECTOR
+    vec VECTOR(3)
 );
 INSERT INTO test_non_vector VALUES (1, 'Alice', '[1,2,3]');
 INSERT INTO test_non_vector VALUES (2, 'Bob', '[4,5,6]');
@@ -74,7 +74,7 @@ SELECT JACCARD_DISTANCE(vec, vec) FROM test_non_vector;
 DROP IF EXISTS test_vector_table;
 CREATE TABLE test_vector_table (
     id INT,
-    vector_col VECTOR
+    vector_col VECTOR(3)
 );
 INSERT INTO test_vector_table VALUES (1, '[1,2,3]');
 INSERT INTO test_vector_table VALUES (2, '[3,2,1]');
@@ -165,7 +165,7 @@ FROM test_vector_table t1, test_vector_table t2;
 DROP IF EXISTS test_vector_table;
 CREATE TABLE test_vector_table (
     id INT,
-    vector_col VECTOR
+    vector_col VECTOR(4)
 );
 INSERT INTO test_vector_table VALUES (1, '[0,0,0,0]');
 INSERT INTO test_vector_table VALUES (2, '[0,0,0,0]');
@@ -183,7 +183,7 @@ FROM test_vector_table t1, test_vector_table t2;
 DROP IF EXISTS test_vector_table;
 CREATE TABLE test_vector_table (
     id INT,
-    vector_col VECTOR
+    vector_col VECTOR(3)
 );
 INSERT INTO test_vector_table VALUES (1, '[-1,-2,-3]');
 INSERT INTO test_vector_table VALUES (2, '[1,2,3]');
@@ -201,7 +201,7 @@ FROM test_vector_table t1, test_vector_table t2;
 DROP IF EXISTS test_vector_table;
 CREATE TABLE test_vector_table (
     id INT,
-    vector_col VECTOR
+    vector_col VECTOR(3)
 );
 INSERT INTO test_vector_table VALUES (1, '[1.5,2.5,3.5]');
 INSERT INTO test_vector_table VALUES (2, '[0.1,0.2,0.3]');
@@ -219,7 +219,7 @@ FROM test_vector_table t1, test_vector_table t2;
 DROP IF EXISTS test_vector_table;
 CREATE TABLE test_vector_table (
     id INT,
-    vector_col VECTOR
+    vector_col VECTOR(3)
 );
 INSERT INTO test_vector_table VALUES (1, '[1e10,2e10,3e10]');
 INSERT INTO test_vector_tablE VALUES (2, '[1e-10,2e-10,3e-10]');
@@ -237,7 +237,7 @@ FROM test_vector_table t1, test_vector_table t2;
 DROP IF EXISTS test_vector_table;
 CREATE TABLE test_vector_table (
     id INT,
-    vector_col VECTOR
+    vector_col VECTOR(3)
 );
 INSERT INTO test_vector_table VALUES (1, '[1e100,2e100,3e100]');
 INSERT INTO test_vector_tablE VALUES (2, '[1e-100,2e-100,3e-100]');
