@@ -3,12 +3,29 @@
 -------------------------------------------------------------------------------
 
 -- Syntax/ Valid
+SELECT cosine_distance('[1,2,3]', '[3,2,1]')
 SELECT COSINE_DISTANCE('[1,2,3]', '[3,2,1]')
 
--- Syntax/ Number of arguments/ Error
+-- Syntax/ Error
+-- Syntax/ Arguments/ Error
 SELECT COSINE_DISTANCE();
 SELECT COSINE_DISTANCE('[1,2,3]');
+SELECT COSINE_DISTANCE('[1,2,3]', EUCLIDEAN);
+SELECT COSINE_DISTANCE('[1,2,3]', '[3,2,1]', COSINE);
+SELECT COSINE_DISTANCE('[1,2,3]', '[3,2,1]', hello);
+SELECT COSINE_DISTANCE('[1,2,3]', '[3,2,1]', '1234');
 SELECT COSINE_DISTANCE('[1,2,3]', '[3,2,1]', '[1,2,3]');
+
+-- Syntax/ NULL/ Valid
+-- SELECT COSINE_DISTANCE(NULL, NULL);
+-- SELECT COSINE_DISTANCE(NULL, '[3,2,1]');
+-- SELECT COSINE_DISTANCE('[1,2,3]', NULL);
+-- Syntax/ Wrong Metrics/ Error
+
+-- Syntax/ Mistyped Comma
+SELECT COSINE_DISTANCE('[1, 2]', '[1, 2]',);
+SELECT COSINE_DISTANCE('[1, 2]',, '[1, 2]');
+SELECT COSINE_DISTANCE(,'[1, 2]', '[1, 2]');
 
 -------------------------------------------------------------------------------
 -- Semantics
@@ -23,18 +40,58 @@ SELECT COSINE_DISTANCE('[1,2,3]', '[3,2,1]', '[1,2,3]');
 SELECT COSINE_DISTANCE(1, '[3,2,1]');
 SELECT COSINE_DISTANCE('[1,2,3]', 1);
 
--- Semantics/ Wrong Argument Types Even Though in Vector Format?
--- Is this possible in CSQL?
+-- Semantics
+-- Semantics/ Wrong Argument Formats/ Error
+SELECT COSINE_DISTANCE('', '[3,2,1]');
+SELECT COSINE_DISTANCE('[', '[3,2,1]');
+SELECT COSINE_DISTANCE(']', '[3,2,1]');
+SELECT COSINE_DISTANCE('[]', '[3,2,1]');
+SELECT COSINE_DISTANCE('1', '[3,2,1]');
+SELECT COSINE_DISTANCE('[1', '[3,2,1]');
+SELECT COSINE_DISTANCE('1]', '[3,2,1]');
+SELECT COSINE_DISTANCE('[1]', '[3,2,1]');
+SELECT COSINE_DISTANCE(',', '[3,2,1]');
+SELECT COSINE_DISTANCE('[,', '[3,2,1]');
+SELECT COSINE_DISTANCE(',]', '[3,2,1]');
+SELECT COSINE_DISTANCE('[,]', '[3,2,1]');
+SELECT COSINE_DISTANCE('1,', '[3,2,1]');
+SELECT COSINE_DISTANCE('[1,', '[3,2,1]');
+SELECT COSINE_DISTANCE('1,]', '[3,2,1]');
+SELECT COSINE_DISTANCE('[1,]', '[3,2,1]');
+SELECT COSINE_DISTANCE('[1,2,3', '[3,2,1]');
+SELECT COSINE_DISTANCE('1,2,3]', '[3,2,1]');
+SELECT COSINE_DISTANCE('1,2,3', '[3,2,1]');
+SELECT COSINE_DISTANCE('[3,2,1]', '');
+SELECT COSINE_DISTANCE('[3,2,1]', '[');
+SELECT COSINE_DISTANCE('[3,2,1]', ']');
+SELECT COSINE_DISTANCE('[3,2,1]', '[]');
+SELECT COSINE_DISTANCE('[3,2,1]', '1');
+SELECT COSINE_DISTANCE('[3,2,1]', '[1');
+SELECT COSINE_DISTANCE('[3,2,1]', '1]');
+SELECT COSINE_DISTANCE('[3,2,1]', '[1]');
+SELECT COSINE_DISTANCE('[3,2,1]', ',');
+SELECT COSINE_DISTANCE('[3,2,1]', '[,');
+SELECT COSINE_DISTANCE('[3,2,1]', ',]');
+SELECT COSINE_DISTANCE('[3,2,1]', '[,]');
+SELECT COSINE_DISTANCE('[3,2,1]', '1,');
+SELECT COSINE_DISTANCE('[3,2,1]', '[1,');
+SELECT COSINE_DISTANCE('[3,2,1]', '1,]');
+SELECT COSINE_DISTANCE('[3,2,1]', '[1,]');
+SELECT COSINE_DISTANCE('[3,2,1]', '[1,2,3');
+SELECT COSINE_DISTANCE('[3,2,1]', '1,2,3]');
+SELECT COSINE_DISTANCE('[3,2,1]', '1,2,3');
+SELECT COSINE_DISTANCE('hello world', '[3,2,1]');
+SELECT COSINE_DISTANCE('[hello world', '[3,2,1]');
+SELECT COSINE_DISTANCE('hello world]', '[3,2,1]');
+SELECT COSINE_DISTANCE('[hello,world]', '[3,2,1]');
+SELECT COSINE_DISTANCE('[1,2,3]', '[hello,world]');
+
+-- Semantics/ Wrong Argument Types Even Though in Vector/ Error
 SELECT COSINE_DISTANCE(CAST('[1,2,3]' AS VARCHAR), '[3,2,1]');
 SELECT COSINE_DISTANCE('[1,2,3]', CAST('[3,2,1]' AS VARCHAR));
 SELECT COSINE_DISTANCE(CAST('[1,2,3]' AS VARCHAR), CAST('[3,2,1]' AS VARCHAR));
 
--- Semantics/ Wrong Argument Formats/ Error
-SELECT COSINE_DISTANCE('hello world', '[3,2,1]');
-SELECT COSINE_DISTANCE('[hello,world]', '[3,2,1]');
-SELECT COSINE_DISTANCE('[1,2,3]', '[hello,world]');
-
--- Spec/ Not Equal Dimensions/ Error
+-- Execution/ Not Equal Dimensions/ Error
 SELECT COSINE_DISTANCE('[1,2,3,4]', '[3,2,1]');
 SELECT COSINE_DISTANCE('[1,2,3]', '[3,2,1,4]');
 
