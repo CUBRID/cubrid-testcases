@@ -19,7 +19,7 @@ SELECT INNER_PRODUCT('[1,2,3]', '[3,2,1]');
 -- Semantics/ Number of arguments/ Error
 SELECT INNER_PRODUCT('[1,2,3]', '[3,2,1]', '[1,2,3]');
 
--- -- Spec/ NULL/ Valid
+-- -- Execution/ NULL/ Valid
 -- SELECT INNER_PRODUCT(NULL, NULL);
 -- SELECT INNER_PRODUCT(NULL, '[3,2,1]');
 -- SELECT INNER_PRODUCT('[1,2,3]', NULL);
@@ -39,7 +39,7 @@ SELECT INNER_PRODUCT('hello world', '[3,2,1]');
 SELECT INNER_PRODUCT('[hello,world]', '[3,2,1]');
 SELECT INNER_PRODUCT('[1,2,3]', '[hello,world]');
 
--- Spec/ Not Equal Dimensions/ Error
+-- Execution/ Not Equal Dimensions/ Error
 SELECT INNER_PRODUCT('[1,2,3,4]', '[3,2,1]');
 SELECT INNER_PRODUCT('[1,2,3]', '[3,2,1,4]');
 

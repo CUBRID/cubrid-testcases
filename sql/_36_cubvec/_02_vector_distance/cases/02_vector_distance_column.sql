@@ -84,10 +84,10 @@ SELECT HAMMING_DISTANCE(vec, vec) FROM test_non_vector;
 SELECT JACCARD_DISTANCE(vec, vec) FROM test_non_vector;
 
 -------------------------------------------------------------------------------
--- Spec
+-- Execution
 -------------------------------------------------------------------------------
 
--- Spec/ Two Column Arguments/ Valid
+-- Execution/ Two Column Arguments/ Valid
 DROP IF EXISTS test_vector_table;
 CREATE TABLE test_vector_table (
     id INT,
@@ -95,7 +95,21 @@ CREATE TABLE test_vector_table (
 );
 INSERT INTO test_vector_table VALUES (1, '[1,2,3]');
 INSERT INTO test_vector_table VALUES (2, '[3,2,1]');
-SELECT 
+SELECT
+    VECTOR_DISTANCE('[33, 44, 55]', t2.vector_col, COSINE) AS cosine_distance,
+    COSINE_DISTANCE('[33, 44, 55]', t2.vector_col) AS cosine_distance,
+    INNER_PRODUCT('[33, 44, 55]', t2.vector_col) AS inner_product,
+    L1_DISTANCE('[33, 44, 55]', t2.vector_col) AS l1_distance,
+    L2_DISTANCE('[33, 44, 55]', t2.vector_col) AS l2_distance,
+FROM test_vector_table t1, test_vector_table t2;
+SELECT
+    VECTOR_DISTANCE(t1.vector_col, '[33, 44, 55]', COSINE) AS cosine_distance,
+    COSINE_DISTANCE(t1.vector_col, '[33, 44, 55]') AS cosine_distance,
+    INNER_PRODUCT(t1.vector_col, '[33, 44, 55]') AS inner_product,
+    L1_DISTANCE(t1.vector_col, '[33, 44, 55]') AS l1_distance,
+    L2_DISTANCE(t1.vector_col, '[33, 44, 55]') AS l2_distance,
+FROM test_vector_table t1, test_vector_table t2;
+SELECT
     VECTOR_DISTANCE(t1.vector_col, t2.vector_col, COSINE) AS cosine_distance,
     COSINE_DISTANCE(t1.vector_col, t2.vector_col) AS cosine_distance,
     INNER_PRODUCT(t1.vector_col, t2.vector_col) AS inner_product,
@@ -103,8 +117,8 @@ SELECT
     L2_DISTANCE(t1.vector_col, t2.vector_col) AS l2_distance,
 FROM test_vector_table t1, test_vector_table t2;
 
--- Spec/ Column and a literal/ Valid
-SELECT 
+-- Execution/ Column and a literal/ Valid
+SELECT
     VECTOR_DISTANCE(vector_col, '[2, 3, 4]', COSINE) AS cosine_distance,
     COSINE_DISTANCE(vector_col, '[2, 3, 4]') AS cosine_distance,
     INNER_PRODUCT(vector_col, '[2, 3, 4]') AS inner_product,
@@ -112,7 +126,7 @@ SELECT
     L2_DISTANCE(vector_col, '[2, 3, 4]') AS l2_distance,
 FROM test_vector_table;
 
-SELECT 
+SELECT
     VECTOR_DISTANCE('[2, 3, 4]', vector_col, COSINE) AS cosine_distance,
     COSINE_DISTANCE('[2, 3, 4]', vector_col) AS cosine_distance,
     INNER_PRODUCT('[2, 3, 4]', vector_col) AS inner_product,
@@ -120,7 +134,7 @@ SELECT
     L2_DISTANCE('[2, 3, 4]', vector_col) AS l2_distance,
 FROM test_vector_table;
 
--- -- Spec/ NULL and column/ Valid
+-- -- Execution/ NULL and column/ Valid
 -- SELECT 
 --     VECTOR_DISTANCE(NULL, vector_col, COSINE) AS cosine_distance,
 --     COSINE_DISTANCE(NULL, vector_col) AS cosine_distance,
@@ -129,7 +143,7 @@ FROM test_vector_table;
 --     L2_DISTANCE(NULL, vector_col) AS l2_distance,
 -- FROM test_vector_table;
 
--- -- Spec/ column and NULL/ Valid
+-- -- Execution/ column and NULL/ Valid
 -- SELECT 
 --     VECTOR_DISTANCE(vector_col, NULL, COSINE) AS cosine_distance,
 --     INNER_PRODUCT(vector_col, NULL) AS inner_product,
@@ -137,7 +151,7 @@ FROM test_vector_table;
 --     L2_DISTANCE(vector_col, NULL) AS l2_distance,
 -- FROM test_vector_table;
 
--- Spec/ Different vector dimensions/ Error
+-- Execution/ Different vector dimensions/ Error
 DROP IF EXISTS test_vector_table;
 CREATE TABLE test_vector_table (
     id INT,
@@ -146,7 +160,7 @@ CREATE TABLE test_vector_table (
 INSERT INTO test_vector_table VALUES (1, '[1,2,3]');
 INSERT INTO test_vector_table VALUES (2, '[1,2,3,4]');  -- Different dimension
 INSERT INTO test_vector_table VALUES (3, '[1,2]');     -- Different dimension
-SELECT 
+SELECT
     VECTOR_DISTANCE(t1.vector_col, t2.vector_col, COSINE) AS cosine_distance,
     COSINE_DISTANCE(t1.vector_col, t2.vector_col) AS cosine_distance,
     INNER_PRODUCT(t1.vector_col, t2.vector_col) AS inner_product,
@@ -154,7 +168,7 @@ SELECT
     L2_DISTANCE(t1.vector_col, t2.vector_col) AS l2_distance,
 FROM test_vector_table t1, test_vector_table t2;
 
--- Spec/ Empty vectors/ Error
+-- Execution/ Empty vectors/ Error
 DROP IF EXISTS test_vector_table;
 CREATE TABLE test_vector_table (
     id INT,
@@ -162,11 +176,11 @@ CREATE TABLE test_vector_table (
 );
 INSERT INTO test_vector_table VALUES (1, '[]');
 INSERT INTO test_vector_table VALUES (2, '[1,2,3]');
-SELECT 
+SELECT
     VECTOR_DISTANCE(t1.vector_col, t2.vector_col, COSINE) AS cosine_distance
 FROM test_vector_table t1, test_vector_table t2;
 
--- Spec/ Zero vectors/ Valid
+-- Execution/ Zero vectors/ Valid
 DROP IF EXISTS test_vector_table;
 CREATE TABLE test_vector_table (
     id INT,
@@ -174,7 +188,7 @@ CREATE TABLE test_vector_table (
 );
 INSERT INTO test_vector_table VALUES (1, '[0,0,0,0]');
 INSERT INTO test_vector_table VALUES (2, '[0,0,0,0]');
-SELECT 
+SELECT
     VECTOR_DISTANCE(t1.vector_col, t2.vector_col, COSINE) AS cosine_distance,
     COSINE_DISTANCE(t1.vector_col, t2.vector_col) AS cosine_distance,
     INNER_PRODUCT(t1.vector_col, t2.vector_col) AS inner_product,
@@ -182,7 +196,7 @@ SELECT
     L2_DISTANCE(t1.vector_col, t2.vector_col) AS l2_distance,
 FROM test_vector_table t1, test_vector_table t2;
 
--- Spec/ Negative values/ Valid
+-- Execution/ Negative values/ Valid
 DROP IF EXISTS test_vector_table;
 CREATE TABLE test_vector_table (
     id INT,
@@ -190,7 +204,7 @@ CREATE TABLE test_vector_table (
 );
 INSERT INTO test_vector_table VALUES (1, '[-1,-2,-3]');
 INSERT INTO test_vector_table VALUES (2, '[1,2,3]');
-SELECT 
+SELECT
     VECTOR_DISTANCE(t1.vector_col, t2.vector_col, COSINE) AS cosine_distance,
     COSINE_DISTANCE(t1.vector_col, t2.vector_col) AS cosine_distance,
     INNER_PRODUCT(t1.vector_col, t2.vector_col) AS inner_product,
@@ -198,7 +212,7 @@ SELECT
     L2_DISTANCE(t1.vector_col, t2.vector_col) AS l2_distance,
 FROM test_vector_table t1, test_vector_table t2;
 
--- Spec/ Non integer values/ Valid
+-- Execution/ Non integer values/ Valid
 DROP IF EXISTS test_vector_table;
 CREATE TABLE test_vector_table (
     id INT,
@@ -206,7 +220,7 @@ CREATE TABLE test_vector_table (
 );
 INSERT INTO test_vector_table VALUES (1, '[1.5,2.5,3.5]');
 INSERT INTO test_vector_table VALUES (2, '[0.1,0.2,0.3]');
-SELECT 
+SELECT
     VECTOR_DISTANCE(t1.vector_col, t2.vector_col, COSINE) AS cosine_distance,
     COSINE_DISTANCE(t1.vector_col, t2.vector_col) AS cosine_distance,
     INNER_PRODUCT(t1.vector_col, t2.vector_col) AS inner_product,
@@ -214,7 +228,7 @@ SELECT
     L2_DISTANCE(t1.vector_col, t2.vector_col) AS l2_distance,
 FROM test_vector_table t1, test_vector_table t2;
 
--- Spec/ large numbers/ Valid
+-- Execution/ large numbers/ Valid
 DROP IF EXISTS test_vector_table;
 CREATE TABLE test_vector_table (
     id INT,
@@ -222,7 +236,7 @@ CREATE TABLE test_vector_table (
 );
 INSERT INTO test_vector_table VALUES (1, '[1e10,2e10,3e10]');
 INSERT INTO test_vector_tablE VALUES (2, '[1e-10,2e-10,3e-10]');
-SELECT 
+SELECT
     VECTOR_DISTANCE(t1.vector_col, t2.vector_col, COSINE) AS cosine_distance,
     COSINE_DISTANCE(t1.vector_col, t2.vector_col) AS cosine_distance,
     INNER_PRODUCT(t1.vector_col, t2.vector_col) AS inner_product,
@@ -230,7 +244,7 @@ SELECT
     L2_DISTANCE(t1.vector_col, t2.vector_col) AS l2_distance,
 FROM test_vector_table t1, test_vector_table t2;
 
--- Spec/ very large numbers exceeding floating points range/ Error
+-- Execution/ very large numbers exceeding floating points range/ Error
 DROP IF EXISTS test_vector_table;
 CREATE TABLE test_vector_table (
     id INT,
@@ -238,7 +252,7 @@ CREATE TABLE test_vector_table (
 );
 INSERT INTO test_vector_table VALUES (1, '[1e100,2e100,3e100]');
 INSERT INTO test_vector_tablE VALUES (2, '[1e-100,2e-100,3e-100]');
-SELECT 
+SELECT
     VECTOR_DISTANCE(t1.vector_col, t2.vector_col, COSINE) AS cosine_distance,
     COSINE_DISTANCE(t1.vector_col, t2.vector_col) AS cosine_distance,
     INNER_PRODUCT(t1.vector_col, t2.vector_col) AS inner_product,

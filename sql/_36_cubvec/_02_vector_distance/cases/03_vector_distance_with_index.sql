@@ -9,15 +9,15 @@ INSERT INTO test_index_lifecycle VALUES (2, '[9,8,7]');
 SELECT VECTOR_DISTANCE('[0,0,0]', name) FROM tbl;
 
 -------------------------------------------------------------------------------
--- spec
+-- Execution
 -------------------------------------------------------------------------------
--- spec/ vector_distance on non-indexed column/ should use COSINE
+-- Execution/ vector_distance on non-indexed column/ should use COSINE
 SELECT VECTOR_DISTANCE('[0,0,0]', name) FROM tbl;
 
 CREATE VECTOR INDEX idx ON tbl(vector_data EUCLIDEAN);
--- spec/ vector_distance on indexed column/ should use EUCLIDEAN
+-- Execution/ vector_distance on indexed column/ should use EUCLIDEAN
 SELECT VECTOR_DISTANCE('[0,0,0]', name) FROM tbl;
 
--- spec/ vector_distance on indexed column with metric/ should use DOT
+-- Execution/ vector_distance on indexed column with metric/ should use DOT
 SELECT VECTOR_DISTANCE(name, name, DOT) FROM tbl;
 

@@ -19,7 +19,7 @@ SELECT L1_DISTANCE('[1,2,3]', '[3,2,1]');
 -- Semantics/ Number of arguments/ Error
 SELECT L1_DISTANCE('[1,2,3]', '[3,2,1]', '[1,2,3]');
 
--- -- Spec/ NULL/ Valid
+-- -- Execution/ NULL/ Valid
 -- SELECT L1_DISTANCE(NULL, NULL);
 -- SELECT L1_DISTANCE(NULL, '[3,2,1]');
 -- SELECT L1_DISTANCE('[1,2,3]', NULL);
@@ -39,7 +39,7 @@ SELECT L1_DISTANCE('hello world', '[3,2,1]');
 SELECT L1_DISTANCE('[hello,world]', '[3,2,1]');
 SELECT L1_DISTANCE('[1,2,3]', '[hello,world]');
 
--- Spec/ Not Equal Dimensions/ Error
+-- Execution/ Not Equal Dimensions/ Error
 SELECT L1_DISTANCE('[1,2,3,4]', '[3,2,1]');
 SELECT L1_DISTANCE('[1,2,3]', '[3,2,1,4]');
 
