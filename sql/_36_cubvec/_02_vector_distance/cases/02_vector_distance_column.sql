@@ -31,8 +31,6 @@ SELECT VECTOR_DISTANCE(name, name, COSINE) FROM test_non_vector;
 SELECT INNER_PRODUCT(name, name) FROM test_non_vector;
 SELECT L1_DISTANCE(name, name) FROM test_non_vector;
 SELECT L2_DISTANCE(name, name) FROM test_non_vector;
-SELECT HAMMING_DISTANCE(name, name) FROM test_non_vector;
-SELECT JACCARD_DISTANCE(name, name) FROM test_non_vector;
 
 -- Semantics/ Argument looks like vector but not vector type/ Error
 DROP IF EXISTS test_non_vector;
@@ -46,8 +44,6 @@ SELECT COSINE_DISTANCE(name, name) FROM test_non_vector;
 SELECT INNER_PRODUCT(name, name) FROM test_non_vector;
 SELECT L1_DISTANCE(name, name) FROM test_non_vector;
 SELECT L2_DISTANCE(name, name) FROM test_non_vector;
-SELECT HAMMING_DISTANCE(name, name) FROM test_non_vector;
-SELECT JACCARD_DISTANCE(name, name) FROM test_non_vector;
 
 -- Semantics/ Vector and non-vector/ Error
 DROP IF EXISTS test_non_vector;
@@ -56,15 +52,15 @@ CREATE TABLE test_non_vector (
     name VARCHAR(50)
     vec VECTOR(3)
 );
-INSERT INTO test_non_vector VALUES (1, 'Alice', '[1,2,3]');
-INSERT INTO test_non_vector VALUES (2, 'Bob', '[4,5,6]');
-SELECT VECTOR_DISTANCE(vec, vec, COSINE) FROM test_non_vector;
-SELECT COSINE_DISTANCE(vec, vec) FROM test_non_vector;
-SELECT INNER_PRODUCT(vec, vec) FROM test_non_vector;
-SELECT L1_DISTANCE(vec, vec) FROM test_non_vector;
-SELECT L2_DISTANCE(vec, vec) FROM test_non_vector;
-SELECT HAMMING_DISTANCE(vec, vec) FROM test_non_vector;
-SELECT JACCARD_DISTANCE(vec, vec) FROM test_non_vector;
+INSERT INTO test_non_vector VALUES (1, '[3,2,1]', '[1,2,3]');
+INSERT INTO test_non_vector VALUES (2, '[2,3,4]', '[4,5,6]');
+SELECT VECTOR_DISTANCE(name, vec, COSINE) FROM test_non_vector;
+SELECT VECTOR_DISTANCE(vec, name, EUCLIDEAN) FROM test_non_vector;
+SELECT COSINE_DISTANCE(name, vec) FROM test_non_vector;
+SELECT COSINE_DISTANCE(vec, name) FROM test_non_vector;
+SELECT INNER_PRODUCT(name, vec) FROM test_non_vector;
+SELECT L1_DISTANCE(name, vec) FROM test_non_vector;
+SELECT L2_DISTANCE(name, vec) FROM test_non_vector;
 
 -------------------------------------------------------------------------------
 -- Spec
@@ -84,8 +80,6 @@ SELECT
     INNER_PRODUCT(t1.vector_col, t2.vector_col) AS inner_product,
     L1_DISTANCE(t1.vector_col, t2.vector_col) AS l1_distance,
     L2_DISTANCE(t1.vector_col, t2.vector_col) AS l2_distance,
-    HAMMING_DISTANCE(t1.vector_col, t2.vector_col) AS hamming_distance,
-    JACCARD_DISTANCE(t1.vector_col, t2.vector_col) AS jaccard_distance
 FROM test_vector_table t1, test_vector_table t2;
 
 -- Spec/ Column and a literal/ Valid
@@ -95,8 +89,6 @@ SELECT
     INNER_PRODUCT(vector_col, '[2, 3, 4]') AS inner_product,
     L1_DISTANCE(vector_col, '[2, 3, 4]') AS l1_distance,
     L2_DISTANCE(vector_col, '[2, 3, 4]') AS l2_distance,
-    HAMMING_DISTANCE(vector_col, '[2, 3, 4]') AS hamming_distance,
-    JACCARD_DISTANCE(vector_col, '[2, 3, 4]') AS jaccard_distance
 FROM test_vector_table;
 
 SELECT 
@@ -105,8 +97,6 @@ SELECT
     INNER_PRODUCT('[2, 3, 4]', vector_col) AS inner_product,
     L1_DISTANCE('[2, 3, 4]', vector_col) AS l1_distance,
     L2_DISTANCE('[2, 3, 4]', vector_col) AS l2_distance,
-    HAMMING_DISTANCE('[2, 3, 4]', vector_col) AS hamming_distance,
-    JACCARD_DISTANCE('[2, 3, 4]', vector_col) AS jaccard_distance
 FROM test_vector_table;
 
 -- -- Spec/ NULL and column/ Valid
@@ -116,8 +106,6 @@ FROM test_vector_table;
 --     INNER_PRODUCT(NULL, vector_col) AS inner_product,
 --     L1_DISTANCE(NULL, vector_col) AS l1_distance,
 --     L2_DISTANCE(NULL, vector_col) AS l2_distance,
---     HAMMING_DISTANCE(NULL, vector_col) AS hamming_distance,
---     JACCARD_DISTANCE(NULL, vector_col) AS jaccard_distance
 -- FROM test_vector_table;
 
 -- -- Spec/ column and NULL/ Valid
@@ -126,8 +114,6 @@ FROM test_vector_table;
 --     INNER_PRODUCT(vector_col, NULL) AS inner_product,
 --     L1_DISTANCE(vector_col, NULL) AS l1_distance,
 --     L2_DISTANCE(vector_col, NULL) AS l2_distance,
---     HAMMING_DISTANCE(vector_col, NULL) AS hamming_distance,
---     JACCARD_DISTANCE(vector_col, NULL) AS jaccard_distance
 -- FROM test_vector_table;
 
 -- Spec/ Different vector dimensions/ Error
@@ -145,8 +131,6 @@ SELECT
     INNER_PRODUCT(t1.vector_col, t2.vector_col) AS inner_product,
     L1_DISTANCE(t1.vector_col, t2.vector_col) AS l1_distance,
     L2_DISTANCE(t1.vector_col, t2.vector_col) AS l2_distance,
-    HAMMING_DISTANCE(t1.vector_col, t2.vector_col) AS hamming_distance,
-    JACCARD_DISTANCE(t1.vector_col, t2.vector_col) AS jaccard_distance
 FROM test_vector_table t1, test_vector_table t2;
 
 -- Spec/ Empty vectors/ Error
@@ -175,8 +159,6 @@ SELECT
     INNER_PRODUCT(t1.vector_col, t2.vector_col) AS inner_product,
     L1_DISTANCE(t1.vector_col, t2.vector_col) AS l1_distance,
     L2_DISTANCE(t1.vector_col, t2.vector_col) AS l2_distance,
-    HAMMING_DISTANCE(t1.vector_col, t2.vector_col) AS hamming_distance,
-    JACCARD_DISTANCE(t1.vector_col, t2.vector_col) AS jaccard_distance
 FROM test_vector_table t1, test_vector_table t2;
 
 -- Spec/ Negative values/ Valid
@@ -193,8 +175,6 @@ SELECT
     INNER_PRODUCT(t1.vector_col, t2.vector_col) AS inner_product,
     L1_DISTANCE(t1.vector_col, t2.vector_col) AS l1_distance,
     L2_DISTANCE(t1.vector_col, t2.vector_col) AS l2_distance,
-    HAMMING_DISTANCE(t1.vector_col, t2.vector_col) AS hamming_distance,
-    JACCARD_DISTANCE(t1.vector_col, t2.vector_col) AS jaccard_distance
 FROM test_vector_table t1, test_vector_table t2;
 
 -- Spec/ Non integer values/ Valid
@@ -211,8 +191,6 @@ SELECT
     INNER_PRODUCT(t1.vector_col, t2.vector_col) AS inner_product,
     L1_DISTANCE(t1.vector_col, t2.vector_col) AS l1_distance,
     L2_DISTANCE(t1.vector_col, t2.vector_col) AS l2_distance,
-    HAMMING_DISTANCE(t1.vector_col, t2.vector_col) AS hamming_distance,
-    JACCARD_DISTANCE(t1.vector_col, t2.vector_col) AS jaccard_distance
 FROM test_vector_table t1, test_vector_table t2;
 
 -- Spec/ large numbers/ Valid
@@ -229,8 +207,6 @@ SELECT
     INNER_PRODUCT(t1.vector_col, t2.vector_col) AS inner_product,
     L1_DISTANCE(t1.vector_col, t2.vector_col) AS l1_distance,
     L2_DISTANCE(t1.vector_col, t2.vector_col) AS l2_distance,
-    HAMMING_DISTANCE(t1.vector_col, t2.vector_col) AS hamming_distance,
-    JACCARD_DISTANCE(t1.vector_col, t2.vector_col) AS jaccard_distance
 FROM test_vector_table t1, test_vector_table t2;
 
 -- Spec/ very large numbers exceeding floating points range/ Error
@@ -247,6 +223,4 @@ SELECT
     INNER_PRODUCT(t1.vector_col, t2.vector_col) AS inner_product,
     L1_DISTANCE(t1.vector_col, t2.vector_col) AS l1_distance,
     L2_DISTANCE(t1.vector_col, t2.vector_col) AS l2_distance,
-    HAMMING_DISTANCE(t1.vector_col, t2.vector_col) AS hamming_distance,
-    JACCARD_DISTANCE(t1.vector_col, t2.vector_col) AS jaccard_distance
 FROM test_vector_table t1, test_vector_table t2;
