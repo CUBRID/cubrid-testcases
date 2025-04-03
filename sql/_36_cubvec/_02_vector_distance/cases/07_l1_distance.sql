@@ -3,23 +3,35 @@
 -------------------------------------------------------------------------------
 
 -- Syntax/ Valid
+SELECT l1_distance('[1,2,3]', '[3,2,1]')
 SELECT L1_DISTANCE('[1,2,3]', '[3,2,1]')
+
+-- Syntax/ Error
+-- Syntax/ Arguments/ Error
+SELECT L1_DISTANCE();
+SELECT L1_DISTANCE('[1,2,3]');
+SELECT L1_DISTANCE('[1,2,3]', EUCLIDEAN);
+SELECT L1_DISTANCE('[1,2,3]', '[3,2,1]', COSINE);
+SELECT L1_DISTANCE('[1,2,3]', '[3,2,1]', hello);
+SELECT L1_DISTANCE('[1,2,3]', '[3,2,1]', '1234');
+SELECT L1_DISTANCE('[1,2,3]', '[3,2,1]', '[1,2,3]');
+
+-- Syntax/ NULL/ Valid
+-- SELECT L1_DISTANCE(NULL, NULL);
+-- SELECT L1_DISTANCE(NULL, '[3,2,1]');
+-- SELECT L1_DISTANCE('[1,2,3]', NULL);
+-- Syntax/ Wrong Metrics/ Error
+
+-- Syntax/ Mistyped Comma
+SELECT L1_DISTANCE('[1, 2]', '[1, 2]',);
+SELECT L1_DISTANCE('[1, 2]',, '[1, 2]');
+SELECT L1_DISTANCE(,'[1, 2]', '[1, 2]');
 
 -------------------------------------------------------------------------------
 -- Semantics
 -------------------------------------------------------------------------------
 
--- Semantics/ Number of arguments/ Error
-SELECT L1_DISTANCE();
-SELECT L1_DISTANCE('[1,2,3]');
-
--- Semantics/ Number of arguments/ Valid
-SELECT L1_DISTANCE('[1,2,3]', '[3,2,1]');
-
--- Semantics/ Number of arguments/ Error
-SELECT L1_DISTANCE('[1,2,3]', '[3,2,1]', '[1,2,3]');
-
--- -- Execution/ NULL/ Valid
+-- -- Semantics/ NULL/ Valid
 -- SELECT L1_DISTANCE(NULL, NULL);
 -- SELECT L1_DISTANCE(NULL, '[3,2,1]');
 -- SELECT L1_DISTANCE('[1,2,3]', NULL);
@@ -28,16 +40,56 @@ SELECT L1_DISTANCE('[1,2,3]', '[3,2,1]', '[1,2,3]');
 SELECT L1_DISTANCE(1, '[3,2,1]');
 SELECT L1_DISTANCE('[1,2,3]', 1);
 
--- Semantics/ Wrong Argument Types Even Though in Vector Format?
--- Is this possible in CSQL?
-SELECT L1_DISTANCE('[1,2,3]' AS VARCHAR, '[3,2,1]');
-SELECT L1_DISTANCE('[1,2,3]', '[3,2,1]' AS VARCHAR);
-SELECT L1_DISTANCE('[1,2,3]' AS VARCHAR, '[3,2,1]' AS VARCHAR);
-
+-- Semantics
 -- Semantics/ Wrong Argument Formats/ Error
+SELECT L1_DISTANCE('', '[3,2,1]');
+SELECT L1_DISTANCE('[', '[3,2,1]');
+SELECT L1_DISTANCE(']', '[3,2,1]');
+SELECT L1_DISTANCE('[]', '[3,2,1]');
+SELECT L1_DISTANCE('1', '[3,2,1]');
+SELECT L1_DISTANCE('[1', '[3,2,1]');
+SELECT L1_DISTANCE('1]', '[3,2,1]');
+SELECT L1_DISTANCE('[1]', '[3,2,1]');
+SELECT L1_DISTANCE(',', '[3,2,1]');
+SELECT L1_DISTANCE('[,', '[3,2,1]');
+SELECT L1_DISTANCE(',]', '[3,2,1]');
+SELECT L1_DISTANCE('[,]', '[3,2,1]');
+SELECT L1_DISTANCE('1,', '[3,2,1]');
+SELECT L1_DISTANCE('[1,', '[3,2,1]');
+SELECT L1_DISTANCE('1,]', '[3,2,1]');
+SELECT L1_DISTANCE('[1,]', '[3,2,1]');
+SELECT L1_DISTANCE('[1,2,3', '[3,2,1]');
+SELECT L1_DISTANCE('1,2,3]', '[3,2,1]');
+SELECT L1_DISTANCE('1,2,3', '[3,2,1]');
+SELECT L1_DISTANCE('[3,2,1]', '');
+SELECT L1_DISTANCE('[3,2,1]', '[');
+SELECT L1_DISTANCE('[3,2,1]', ']');
+SELECT L1_DISTANCE('[3,2,1]', '[]');
+SELECT L1_DISTANCE('[3,2,1]', '1');
+SELECT L1_DISTANCE('[3,2,1]', '[1');
+SELECT L1_DISTANCE('[3,2,1]', '1]');
+SELECT L1_DISTANCE('[3,2,1]', '[1]');
+SELECT L1_DISTANCE('[3,2,1]', ',');
+SELECT L1_DISTANCE('[3,2,1]', '[,');
+SELECT L1_DISTANCE('[3,2,1]', ',]');
+SELECT L1_DISTANCE('[3,2,1]', '[,]');
+SELECT L1_DISTANCE('[3,2,1]', '1,');
+SELECT L1_DISTANCE('[3,2,1]', '[1,');
+SELECT L1_DISTANCE('[3,2,1]', '1,]');
+SELECT L1_DISTANCE('[3,2,1]', '[1,]');
+SELECT L1_DISTANCE('[3,2,1]', '[1,2,3');
+SELECT L1_DISTANCE('[3,2,1]', '1,2,3]');
+SELECT L1_DISTANCE('[3,2,1]', '1,2,3');
 SELECT L1_DISTANCE('hello world', '[3,2,1]');
+SELECT L1_DISTANCE('[hello world', '[3,2,1]');
+SELECT L1_DISTANCE('hello world]', '[3,2,1]');
 SELECT L1_DISTANCE('[hello,world]', '[3,2,1]');
 SELECT L1_DISTANCE('[1,2,3]', '[hello,world]');
+
+-- Semantics/ Wrong Argument Types Even Though in Vector/ Error
+SELECT L1_DISTANCE(CAST('[1,2,3]' AS VARCHAR), '[3,2,1]');
+SELECT L1_DISTANCE('[1,2,3]', CAST('[3,2,1]' AS VARCHAR));
+SELECT L1_DISTANCE(CAST('[1,2,3]' AS VARCHAR), CAST('[3,2,1]' AS VARCHAR));
 
 -- Execution/ Not Equal Dimensions/ Error
 SELECT L1_DISTANCE('[1,2,3,4]', '[3,2,1]');
