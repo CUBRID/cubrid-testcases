@@ -8,9 +8,14 @@ CREATE TABLE test_non_vector (
     name VARCHAR(50)
 );
 INSERT INTO test_non_vector VALUES (1, 'Alice');
--- Syntax/ Error
+-- Syntax/ Wrong Comma/ Error
 SELECT COSINE_DISTANCE(name,, name) FROM test_non_vector;
 SELECT COSINE_DISTANCE(name name) FROM test_non_vector;
+SELECT COSINE_DISTANCE(name name,) FROM test_non_vector;
+SELECT COSINE_DISTANCE(,name,name,) FROM test_non_vector;
+SELECT COSINE_DISTANCE(name,name,) FROM test_non_vector;
+SELECT COSINE_DISTANCE(,name,name) FROM test_non_vector;
+SELECT COSINE_DISTANCE(,name,name) FROM test_non_vector;
 
 -------------------------------------------------------------------------------
 -- Semantics
