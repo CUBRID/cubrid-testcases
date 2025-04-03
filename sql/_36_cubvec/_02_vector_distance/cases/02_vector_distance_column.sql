@@ -151,15 +151,24 @@ FROM test_vector_table;
 --     L2_DISTANCE(vector_col, NULL) AS l2_distance,
 -- FROM test_vector_table;
 
--- Execution/ Different vector dimensions/ Error
+-- Execution/ Different vector dimensions
 DROP IF EXISTS test_vector_table;
 CREATE TABLE test_vector_table (
     id INT,
     vector_col VECTOR
 );
+DROP IF EXISTS test_vector_table2;
+CREATE TABLE test_vector_table2 (
+    id INT,
+    vector_col VECTOR   3
+);
 INSERT INTO test_vector_table VALUES (1, '[1,2,3]');
-INSERT INTO test_vector_table VALUES (2, '[1,2,3,4]');  -- Different dimension
-INSERT INTO test_vector_table VALUES (3, '[1,2]');     -- Different dimension
+INSERT INTO test_vector_table VALUES (2, '[1,2,3,4]');
+INSERT INTO test_vector_table VALUES (3, '[1,2]');
+INSERT INTO test_vector_table2 VALUES (1, '[1,2,3,4]');
+INSERT INTO test_vector_table2 VALUES (2, '[1,2,3]');
+INSERT INTO test_vector_table2 VALUES (3, '[1,2]');
+-- Execution / Different vector dimensions/ With itself/ Valid
 SELECT
     VECTOR_DISTANCE(t1.vector_col, t2.vector_col, COSINE) AS cosine_distance,
     COSINE_DISTANCE(t1.vector_col, t2.vector_col) AS cosine_distance,
@@ -167,6 +176,22 @@ SELECT
     L1_DISTANCE(t1.vector_col, t2.vector_col) AS l1_distance,
     L2_DISTANCE(t1.vector_col, t2.vector_col) AS l2_distance,
 FROM test_vector_table t1, test_vector_table t2;
+-- Execution / Different vector dimensions/ With Constant Vectors/ Error
+SELECT
+    VECTOR_DISTANCE('[1,2,3]', t2.vector_col, COSINE) AS cosine_distance,
+    COSINE_DISTANCE('[1,2,3]',t2.vector_col) AS cosine_distance,
+    INNER_PRODUCT('[1,2,3]', t2.vector_col) AS inner_product,
+    L1_DISTANCE('[1,2,3]', t2.vector_col) AS l1_distance,
+    L2_DISTANCE('[1,2,3]', t2.vector_col) AS l2_distance,
+FROM test_vector_table t1, test_vector_table t2;
+-- Execution / Different vector dimensions/ With table of different dimensions/ Error
+SELECT
+    VECTOR_DISTANCE(t1.vector_col, t2.vector_col, COSINE) AS cosine_distance,
+    COSINE_DISTANCE(t1.vector_col, t2.vector_col) AS cosine_distance,
+    INNER_PRODUCT(t1.vector_col, t2.vector_col) AS inner_product,
+    L1_DISTANCE(t1.vector_col, t2.vector_col) AS l1_distance,
+    L2_DISTANCE(t1.vector_col, t2.vector_col) AS l2_distance,
+FROM test_vector_table t1, test_vector_table2 t2;
 
 -- Execution/ Empty vectors/ Error
 DROP IF EXISTS test_vector_table;
