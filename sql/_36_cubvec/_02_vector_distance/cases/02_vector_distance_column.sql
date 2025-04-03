@@ -8,7 +8,7 @@ CREATE TABLE test_non_vector (
     name VARCHAR(50)
 );
 INSERT INTO test_non_vector VALUES (1, 'Alice');
-SELECT VECTOR_DISTANCE(name, name, COSINE) FROM test_non_vector;
+-- Syntax/ Error
 SELECT COSINE_DISTANCE(name name) FROM test_non_vector;
 SELECT COSINE_DISTANCE(name,, name) FROM test_non_vector;
 SELECT COSINE_DISTANCE(name name) FROM test_non_vector;
