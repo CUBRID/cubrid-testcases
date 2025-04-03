@@ -1,8 +1,13 @@
 --+ server-message on
 
--- Normal processing checks notfound before using the fetch statement.
--- After using the fetch statement, check whether the cursor is not found.
+-- This test case verifies the following issue: CBRD-25982
 
+-- Status              ISOPEN   FOUND     NOTFOUND   ROWCOUNT  
+-- Before OPEN         FALSE    Exception Exception  Exception  
+-- After OPEN, before FETCH  TRUE     NULL      NULL       0  
+-- After FETCH (1st and 2nd valid fetch)  TRUE     TRUE      FALSE      1, 2  
+-- After FETCH (no more data)            TRUE     FALSE     TRUE       2  
+-- After CLOSE          FALSE    Exception Exception  Exception  
 
 drop table if exists athlete_t;
 CREATE TABLE athlete_t (
