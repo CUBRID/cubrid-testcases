@@ -11,43 +11,226 @@
 ===================================================
 0
 ===================================================
-    
-owner select     
-
+0
+===================================================
+0
+===================================================
+0
 ===================================================
     
-null     
-
-===================================================
-sp_name    owner    
-fibonacci     U1     
-hello     U1     
-phone_info     U1     
-test_sp     U1     
-
-===================================================
-sp_name    owner_name    arg_name    
-fibonacci     U1     n     
-phone_info     U1     name     
-phone_info     U1     phoneno     
-
-===================================================
-    
-unauthorized user select     
+dba     
 
 ===================================================
     
 null     
 
 ===================================================
-sp_name    owner    
+sp_name    owner    code    
+fibonacci     OWNER_USER     CREATE OR REPLACE FUNCTION owner_user.fibonacci(n INTEGER) RETURN INTEGER
+IS
+invalid_input EXCEPTION;
+BEGIN
+IF n <= 0 THEN
+RAISE invalid_input;
+END IF;
+IF n = 1 OR n = 2 THEN
+RETURN 1;
+ELSE
+RETURN fibonacci(n-1) + fibonacci(n-2);
+END IF;
+EXCEPTION
+WHEN invalid_input THEN
+DBMS_OUTPUT.put_line('invalid input: ' || n);
+RETURN -1;
+WHEN OTHERS THEN
+DBMS_OUTPUT.put_line('unknown exception');
+RETURN -1;
+END     
+hello     OWNER_USER     null     
+phone_info     OWNER_USER     null     
+test_sp     OWNER_USER     create or replace procedure owner_user.test_sp as
+cursor c is select hello() as sp from db_class limit 5;
+begin
+FOR r IN c LOOP
+DBMS_OUTPUT.put_line(r.sp);
+END LOOP;
+end     
+
+===================================================
+sp_name    owner_name    arg_name    
+fibonacci     OWNER_USER     n     
+phone_info     OWNER_USER     name     
+phone_info     OWNER_USER     phoneno     
+
+===================================================
+    
+dba_member     
+
+===================================================
+    
+null     
+
+===================================================
+sp_name    owner    code    
+fibonacci     OWNER_USER     CREATE OR REPLACE FUNCTION owner_user.fibonacci(n INTEGER) RETURN INTEGER
+IS
+invalid_input EXCEPTION;
+BEGIN
+IF n <= 0 THEN
+RAISE invalid_input;
+END IF;
+IF n = 1 OR n = 2 THEN
+RETURN 1;
+ELSE
+RETURN fibonacci(n-1) + fibonacci(n-2);
+END IF;
+EXCEPTION
+WHEN invalid_input THEN
+DBMS_OUTPUT.put_line('invalid input: ' || n);
+RETURN -1;
+WHEN OTHERS THEN
+DBMS_OUTPUT.put_line('unknown exception');
+RETURN -1;
+END     
+hello     OWNER_USER     null     
+phone_info     OWNER_USER     null     
+test_sp     OWNER_USER     create or replace procedure owner_user.test_sp as
+cursor c is select hello() as sp from db_class limit 5;
+begin
+FOR r IN c LOOP
+DBMS_OUTPUT.put_line(r.sp);
+END LOOP;
+end     
+
+===================================================
+sp_name    owner_name    arg_name    
+fibonacci     OWNER_USER     n     
+phone_info     OWNER_USER     name     
+phone_info     OWNER_USER     phoneno     
+
+===================================================
+    
+owner     
+
+===================================================
+    
+null     
+
+===================================================
+sp_name    owner    code    
+fibonacci     OWNER_USER     CREATE OR REPLACE FUNCTION owner_user.fibonacci(n INTEGER) RETURN INTEGER
+IS
+invalid_input EXCEPTION;
+BEGIN
+IF n <= 0 THEN
+RAISE invalid_input;
+END IF;
+IF n = 1 OR n = 2 THEN
+RETURN 1;
+ELSE
+RETURN fibonacci(n-1) + fibonacci(n-2);
+END IF;
+EXCEPTION
+WHEN invalid_input THEN
+DBMS_OUTPUT.put_line('invalid input: ' || n);
+RETURN -1;
+WHEN OTHERS THEN
+DBMS_OUTPUT.put_line('unknown exception');
+RETURN -1;
+END     
+hello     OWNER_USER     null     
+phone_info     OWNER_USER     null     
+test_sp     OWNER_USER     create or replace procedure owner_user.test_sp as
+cursor c is select hello() as sp from db_class limit 5;
+begin
+FOR r IN c LOOP
+DBMS_OUTPUT.put_line(r.sp);
+END LOOP;
+end     
+
+===================================================
+sp_name    owner_name    arg_name    
+fibonacci     OWNER_USER     n     
+phone_info     OWNER_USER     name     
+phone_info     OWNER_USER     phoneno     
+
+===================================================
+    
+owner_member     
+
+===================================================
+    
+null     
+
+===================================================
+sp_name    owner    code    
+fibonacci     OWNER_USER     CREATE OR REPLACE FUNCTION owner_user.fibonacci(n INTEGER) RETURN INTEGER
+IS
+invalid_input EXCEPTION;
+BEGIN
+IF n <= 0 THEN
+RAISE invalid_input;
+END IF;
+IF n = 1 OR n = 2 THEN
+RETURN 1;
+ELSE
+RETURN fibonacci(n-1) + fibonacci(n-2);
+END IF;
+EXCEPTION
+WHEN invalid_input THEN
+DBMS_OUTPUT.put_line('invalid input: ' || n);
+RETURN -1;
+WHEN OTHERS THEN
+DBMS_OUTPUT.put_line('unknown exception');
+RETURN -1;
+END     
+hello     OWNER_USER     null     
+phone_info     OWNER_USER     null     
+test_sp     OWNER_USER     create or replace procedure owner_user.test_sp as
+cursor c is select hello() as sp from db_class limit 5;
+begin
+FOR r IN c LOOP
+DBMS_OUTPUT.put_line(r.sp);
+END LOOP;
+end     
+
+===================================================
+sp_name    owner_name    arg_name    
+fibonacci     OWNER_USER     n     
+phone_info     OWNER_USER     name     
+phone_info     OWNER_USER     phoneno     
+
+===================================================
+    
+unauthorized user select - grantee_user, dont show     
+
+===================================================
+    
+null     
+
+===================================================
+sp_name    owner    code    
 
 ===================================================
 sp_name    owner_name    arg_name    
 
 ===================================================
     
-grant permission to u2     
+unauthorized user select - grantee_member_user, dont show     
+
+===================================================
+    
+null     
+
+===================================================
+sp_name    owner    code    
+
+===================================================
+sp_name    owner_name    arg_name    
+
+===================================================
+    
+grant permission to grantee_user     
 
 ===================================================
     
@@ -58,22 +241,48 @@ null
 ===================================================
 0
 ===================================================
+0
+===================================================
+    
+grantee_user select, the code appears as null     
+
+===================================================
     
 null     
 
 ===================================================
-sp_name    owner    
-hello     U1     
-phone_info     U1     
+sp_name    owner    code    
+hello     OWNER_USER     null     
+phone_info     OWNER_USER     null     
+test_sp     OWNER_USER     null     
 
 ===================================================
 sp_name    owner_name    arg_name    
-phone_info     U1     name     
-phone_info     U1     phoneno     
+phone_info     OWNER_USER     name     
+phone_info     OWNER_USER     phoneno     
 
 ===================================================
     
-revoke permission to u2     
+grantee_member_user select, the code appears as null     
+
+===================================================
+    
+null     
+
+===================================================
+sp_name    owner    code    
+hello     OWNER_USER     null     
+phone_info     OWNER_USER     null     
+test_sp     OWNER_USER     null     
+
+===================================================
+sp_name    owner_name    arg_name    
+phone_info     OWNER_USER     name     
+phone_info     OWNER_USER     phoneno     
+
+===================================================
+    
+revoke permission to grantee_user     
 
 ===================================================
     
@@ -84,11 +293,13 @@ null
 ===================================================
 0
 ===================================================
+0
+===================================================
     
 null     
 
 ===================================================
-sp_name    owner    
+sp_name    owner    code    
 
 ===================================================
 sp_name    owner_name    arg_name    
@@ -97,6 +308,22 @@ sp_name    owner_name    arg_name
     
 null     
 
+===================================================
+sp_name    owner    code    
+
+===================================================
+sp_name    owner_name    arg_name    
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
 ===================================================
 0
 ===================================================

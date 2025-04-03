@@ -1,16 +1,19 @@
 -- verified the CBRD-25834
 -- Verify that the db_stored_procedure view is queried according to permissions.
-create user u1;
-create user u2;
+create user owner_user;
+create user grantee_user;
+create user dba_member_user groups dba;
+create user owner_member_user groups owner_user;
+create user grantee_member_user groups grantee_user;
 
-CREATE OR REPLACE FUNCTION u1.hello() RETURN STRING
+CREATE OR REPLACE FUNCTION owner_user.hello() RETURN STRING
 AS LANGUAGE JAVA
 NAME 'SpCubrid.HelloCubrid() return java.lang.String';
 
-CREATE OR REPLACE PROCEDURE u1.phone_info(name varchar, phoneno varchar) as language java
+CREATE OR REPLACE PROCEDURE owner_user.phone_info(name varchar, phoneno varchar) as language java
 name 'PhoneNumber.Phone(java.lang.String, java.lang.String)';
 
-create or replace procedure u1.test_sp as
+create or replace procedure owner_user.test_sp as
 	cursor c is select hello() as sp from db_class limit 5;
 begin
 	FOR r IN c LOOP
@@ -18,7 +21,7 @@ begin
 	END LOOP;
 end;
 
-CREATE OR REPLACE FUNCTION u1.fibonacci(n INTEGER) RETURN INTEGER
+CREATE OR REPLACE FUNCTION owner_user.fibonacci(n INTEGER) RETURN INTEGER
 IS
 	invalid_input EXCEPTION;
 BEGIN
@@ -40,39 +43,74 @@ EXCEPTION
 		RETURN -1;
 END;
 
-evaluate 'owner select';
-call login('u1','') on class db_user;
-select sp_name, owner from db_stored_procedure order by sp_name, owner;
-select sp_name, owner_name, arg_name from db_stored_procedure_args order by sp_name, owner_name, arg_name;
-
-evaluate 'unauthorized user select';
-call login('u2','') on class db_user;
-select sp_name, owner from db_stored_procedure order by sp_name, owner;
-select sp_name, owner_name, arg_name from db_stored_procedure_args order by sp_name, owner_name, arg_name;
-
-evaluate 'grant permission to u2';
+evaluate 'dba';
 call login('dba','') on class db_user;
-grant execute on procedure u1.hello to u2;
-grant execute on procedure u1.phone_info to u2;
-
-call login('u2','') on class db_user;
-select sp_name, owner from db_stored_procedure order by sp_name, owner;
+select sp_name, owner, code from db_stored_procedure order by sp_name;
 select sp_name, owner_name, arg_name from db_stored_procedure_args order by sp_name, owner_name, arg_name;
 
-evaluate 'revoke permission to u2';
-call login('dba','') on class db_user;
-revoke execute on procedure u1.hello from u2;
-revoke execute on procedure u1.phone_info from u2;
+evaluate 'dba_member';
+call login('dba_member_user','') on class db_user;
+select sp_name, owner, code from db_stored_procedure order by sp_name;
+select sp_name, owner_name, arg_name from db_stored_procedure_args order by sp_name, owner_name, arg_name;
 
-call login('u2','') on class db_user;
-select sp_name, owner from db_stored_procedure order by sp_name, owner;
+evaluate 'owner';
+call login('owner_user','') on class db_user;
+select sp_name, owner, code from db_stored_procedure order by sp_name, owner;
+select sp_name, owner_name, arg_name from db_stored_procedure_args order by sp_name, owner_name, arg_name;
+
+evaluate 'owner_member';
+call login('owner_member_user','') on class db_user;
+select sp_name, owner, code from db_stored_procedure order by sp_name, owner;
+select sp_name, owner_name, arg_name from db_stored_procedure_args order by sp_name, owner_name, arg_name;
+
+evaluate 'unauthorized user select - grantee_user, dont show';
+call login('grantee_user','') on class db_user;
+select sp_name, owner, code from db_stored_procedure order by sp_name, owner;
+select sp_name, owner_name, arg_name from db_stored_procedure_args order by sp_name, owner_name, arg_name;
+
+evaluate 'unauthorized user select - grantee_member_user, dont show';
+call login('grantee_member_user','') on class db_user;
+select sp_name, owner, code from db_stored_procedure order by sp_name, owner;
+select sp_name, owner_name, arg_name from db_stored_procedure_args order by sp_name, owner_name, arg_name;
+
+evaluate 'grant permission to grantee_user';
+call login('dba','') on class db_user;
+grant execute on procedure owner_user.hello to grantee_user;
+grant execute on procedure owner_user.phone_info to grantee_user;
+grant execute on procedure owner_user.test_sp to grantee_user;
+
+evaluate 'grantee_user select, the code appears as null';
+call login('grantee_user','') on class db_user;
+select sp_name, owner, code from db_stored_procedure order by sp_name, owner;
+select sp_name, owner_name, arg_name from db_stored_procedure_args order by sp_name, owner_name, arg_name;
+
+evaluate 'grantee_member_user select, the code appears as null';
+call login('grantee_member_user','') on class db_user;
+select sp_name, owner, code from db_stored_procedure order by sp_name, owner;
+select sp_name, owner_name, arg_name from db_stored_procedure_args order by sp_name, owner_name, arg_name;
+
+evaluate 'revoke permission to grantee_user';
+call login('dba','') on class db_user;
+revoke execute on procedure owner_user.hello from grantee_user;
+revoke execute on procedure owner_user.phone_info from grantee_user;
+revoke execute on procedure owner_user.test_sp from grantee_user;
+
+call login('grantee_user','') on class db_user;
+select sp_name, owner, code from db_stored_procedure order by sp_name, owner;
+select sp_name, owner_name, arg_name from db_stored_procedure_args order by sp_name, owner_name, arg_name;
+
+call login('grantee_member_user','') on class db_user;
+select sp_name, owner, code from db_stored_procedure order by sp_name, owner;
 select sp_name, owner_name, arg_name from db_stored_procedure_args order by sp_name, owner_name, arg_name;
 
 call login('dba','') on class db_user;
-drop function u1.hello;
-drop procedure u1.phone_info;
-drop procedure u1.test_sp;
-drop function u1.fibonacci;
+drop function owner_user.hello;
+drop procedure owner_user.phone_info;
+drop procedure owner_user.test_sp;
+drop function owner_user.fibonacci;
 
-drop user u1;
-drop user u2;
+drop user owner_user;
+drop user grantee_user;
+drop user dba_member_user;
+drop user owner_member_user;
+drop user grantee_member_user;
