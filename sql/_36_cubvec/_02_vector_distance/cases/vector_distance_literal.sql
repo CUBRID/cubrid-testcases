@@ -1,5 +1,7 @@
 -- Syntax
 -- Syntax/ Metrics/ Valid
+-- TODO:Add more testcases where the third argument (metric) is omitted.
+SELECT VECTOR_DISTANCE('[1,2,3]', '[3,2,1]');
 SELECT VECTOR_DISTANCE('[1,2,3]', '[3,2,1]', COSINE);
 SELECT VECTOR_DISTANCE('[1,2,3]', '[3,2,1]', EUCLIDEAN);
 SELECT VECTOR_DISTANCE('[1,2,3]', '[3,2,1]', MANHATTAN);
@@ -8,26 +10,33 @@ SELECT VECTOR_DISTANCE('[1,2,3]', '[3,2,1]', DOT);
 -- Not Implemented/ SELECT VECTOR_DISTANCE('[1,2,3]', '[3,2,1]', HAMMING);
 -- Syntax/ Metrics/ Error
 -- SELECT VECTOR_DISTANCE('[1,2,3]', '[3,2,1]', some_random_token); -- breaks CTP
--- SELECT VECTOR_DISTANCE('[1,2,3]', '[3,2,1]', SOME_RANDOM_TOKEN); -- breaks CTP
 SELECT VECTOR_DISTANCE('[1,2,3]', '[3,2,1]', VECTOR_DISTANCE);
-
--- Semantics
--- Semantics/ Error
+SELECT VECTOR_DISTANCE('[1,2,3]', '[3,2,1]', 'COSINE');
+SELECT VECTOR_DISTANCE('[1,2,3]', '[3,2,1]', 1);
+-- Syntax/ Arguments/ Error
 SELECT VECTOR_DISTANCE();
 SELECT VECTOR_DISTANCE('[1,2,3]');
+SELECT VECTOR_DISTANCE('[1,2,3]', EUCLIDEAN);
+-- Syntax/ Arguments/ Valid
 SELECT VECTOR_DISTANCE('[1,2,3]', '[3,2,1]');
--- Semantics/ No Metrics/ Error
+-- Syntax/ No Metrics/ Error
 -- SELECT VECTOR_DISTANCE(NULL, NULL);
 -- SELECT VECTOR_DISTANCE(NULL, '[3,2,1]');
 -- SELECT VECTOR_DISTANCE('[1,2,3]', NULL);
--- Semantics/ Wrong Metrics/ Error
+-- SELECT VECTOR_DISTANCE('[1,2,3]', NULL, EUCLIDEAN);
+-- SELECT VECTOR_DISTANCE(NULL, '[1,2,3]', EUCLIDEAN);
+-- SELECT VECTOR_DISTANCE(NULL, NULL, EUCLIDEAN);
+-- SELECT VECTOR_DISTANCE(NULL, NULL, NULL);
+-- Syntax/ Wrong Metrics/ Error
 SELECT VECTOR_DISTANCE('[1,2,3]', '[3,2,1]', '[1,2,3]');
 SELECT VECTOR_DISTANCE('[1,2,3]', '[3,2,1]');
 -- SELECT VECTOR_DISTANCE('[1,2,3]', '[3,2,1]', 99);
--- Semantics/ Wrong Argument Types/ Error
+-- Syntax/ Wrong Argument Types/ Error
+SELECT VECTOR_DISTANCE(1, 2, EUCLIDEAN);
 SELECT VECTOR_DISTANCE(1, '[3,2,1]', EUCLIDEAN);
 SELECT VECTOR_DISTANCE('[1,2,3]', 1, EUCLIDEAN);
--- Semantics/ Wrong Argument Formats/ Error
+SELECT VECTOR_DISTANCE('[1, 2, 3]', '[2, 3, 4]', '1234');
+-- Syntax/ Wrong Argument Formats/ Error
 SELECT VECTOR_DISTANCE('', '[3,2,1]', EUCLIDEAN);
 SELECT VECTOR_DISTANCE('[', '[3,2,1]', EUCLIDEAN);
 SELECT VECTOR_DISTANCE(']', '[3,2,1]', EUCLIDEAN);
