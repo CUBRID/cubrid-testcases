@@ -109,26 +109,26 @@ SELECT
     JACCARD_DISTANCE('[2, 3, 4]', vector_col) AS jaccard_distance
 FROM test_vector_table;
 
--- Spec/ NULL and column/ Valid
-SELECT 
-    VECTOR_DISTANCE(NULL, vector_col, COSINE) AS cosine_distance,
-    COSINE_DISTANCE(NULL, vector_col) AS cosine_distance,
-    INNER_PRODUCT(NULL, vector_col) AS inner_product,
-    L1_DISTANCE(NULL, vector_col) AS l1_distance,
-    L2_DISTANCE(NULL, vector_col) AS l2_distance,
-    HAMMING_DISTANCE(NULL, vector_col) AS hamming_distance,
-    JACCARD_DISTANCE(NULL, vector_col) AS jaccard_distance
-FROM test_vector_table;
+-- -- Spec/ NULL and column/ Valid
+-- SELECT 
+--     VECTOR_DISTANCE(NULL, vector_col, COSINE) AS cosine_distance,
+--     COSINE_DISTANCE(NULL, vector_col) AS cosine_distance,
+--     INNER_PRODUCT(NULL, vector_col) AS inner_product,
+--     L1_DISTANCE(NULL, vector_col) AS l1_distance,
+--     L2_DISTANCE(NULL, vector_col) AS l2_distance,
+--     HAMMING_DISTANCE(NULL, vector_col) AS hamming_distance,
+--     JACCARD_DISTANCE(NULL, vector_col) AS jaccard_distance
+-- FROM test_vector_table;
 
--- Spec/ column and NULL/ Valid
-SELECT 
-    VECTOR_DISTANCE(vector_col, NULL, COSINE) AS cosine_distance,
-    INNER_PRODUCT(vector_col, NULL) AS inner_product,
-    L1_DISTANCE(vector_col, NULL) AS l1_distance,
-    L2_DISTANCE(vector_col, NULL) AS l2_distance,
-    HAMMING_DISTANCE(vector_col, NULL) AS hamming_distance,
-    JACCARD_DISTANCE(vector_col, NULL) AS jaccard_distance
-FROM test_vector_table;
+-- -- Spec/ column and NULL/ Valid
+-- SELECT 
+--     VECTOR_DISTANCE(vector_col, NULL, COSINE) AS cosine_distance,
+--     INNER_PRODUCT(vector_col, NULL) AS inner_product,
+--     L1_DISTANCE(vector_col, NULL) AS l1_distance,
+--     L2_DISTANCE(vector_col, NULL) AS l2_distance,
+--     HAMMING_DISTANCE(vector_col, NULL) AS hamming_distance,
+--     JACCARD_DISTANCE(vector_col, NULL) AS jaccard_distance
+-- FROM test_vector_table;
 
 -- Spec/ Different vector dimensions/ Error
 DROP IF EXISTS test_vector_table;

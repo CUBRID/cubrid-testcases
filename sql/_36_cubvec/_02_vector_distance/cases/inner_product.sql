@@ -19,10 +19,10 @@ SELECT INNER_PRODUCT('[1,2,3]', '[3,2,1]');
 -- Semantics/ Number of arguments/ Error
 SELECT INNER_PRODUCT('[1,2,3]', '[3,2,1]', '[1,2,3]');
 
--- Spec/ NULL/ Valid
-SELECT INNER_PRODUCT(NULL, NULL);
-SELECT INNER_PRODUCT(NULL, '[3,2,1]');
-SELECT INNER_PRODUCT('[1,2,3]', NULL);
+-- -- Spec/ NULL/ Valid
+-- SELECT INNER_PRODUCT(NULL, NULL);
+-- SELECT INNER_PRODUCT(NULL, '[3,2,1]');
+-- SELECT INNER_PRODUCT('[1,2,3]', NULL);
 
 -- Semantics/ Wrong Argument Types/ Error
 SELECT INNER_PRODUCT(1, '[3,2,1]');

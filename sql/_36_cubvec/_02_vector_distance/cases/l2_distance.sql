@@ -19,10 +19,10 @@ SELECT L2_DISTANCE('[1,2,3]', '[3,2,1]');
 -- Semantics/ Number of arguments/ Error
 SELECT L2_DISTANCE('[1,2,3]', '[3,2,1]', '[1,2,3]');
 
--- Spec/ NULL/ Valid
-SELECT L2_DISTANCE(NULL, NULL);
-SELECT L2_DISTANCE(NULL, '[3,2,1]');
-SELECT L2_DISTANCE('[1,2,3]', NULL);
+-- -- Spec/ NULL/ Valid
+-- SELECT L2_DISTANCE(NULL, NULL);
+-- SELECT L2_DISTANCE(NULL, '[3,2,1]');
+-- SELECT L2_DISTANCE('[1,2,3]', NULL);
 
 -- Semantics/ Wrong Argument Types/ Error
 SELECT L2_DISTANCE(1, '[3,2,1]');

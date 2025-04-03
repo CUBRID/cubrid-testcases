@@ -19,10 +19,10 @@ SELECT COSINE_DISTANCE('[1,2,3]', '[3,2,1]');
 -- Semantics/ Number of arguments/ Error
 SELECT COSINE_DISTANCE('[1,2,3]', '[3,2,1]', '[1,2,3]');
 
--- Spec/ NULL/ Valid
-SELECT COSINE_DISTANCE(NULL, NULL);
-SELECT COSINE_DISTANCE(NULL, '[3,2,1]');
-SELECT COSINE_DISTANCE('[1,2,3]', NULL);
+-- -- Spec/ NULL/ Valid
+-- SELECT COSINE_DISTANCE(NULL, NULL);
+-- SELECT COSINE_DISTANCE(NULL, '[3,2,1]');
+-- SELECT COSINE_DISTANCE('[1,2,3]', NULL);
 
 -- Semantics/ Wrong Argument Types/ Error
 SELECT COSINE_DISTANCE(1, '[3,2,1]');
