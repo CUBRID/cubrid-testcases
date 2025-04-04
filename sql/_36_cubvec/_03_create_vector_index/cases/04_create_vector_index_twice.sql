@@ -17,9 +17,9 @@ CREATE VECTOR INDEX idx_vector1 ON test_vector_index(vector_data COSINE);
 CREATE VECTOR INDEX idx_vector2 ON test_vector_index(vector_data COSINE);
 
 -- Execution/ Cannot create other indexes/ Error
-CREATE VECTOR INDEX idx_vector2 ON test_vector_index(vector_data EUCLIDEAN);
-CREATE VECTOR INDEX idx_vector2 ON test_vector_index(vector_data DOT);
-CREATE VECTOR INDEX idx_vector2 ON test_vector_index(vector_data MANHATTAN);
+CREATE VECTOR INDEX idx_vector3 ON test_vector_index(vector_data EUCLIDEAN);
+CREATE VECTOR INDEX idx_vector4 ON test_vector_index(vector_data DOT);
+CREATE VECTOR INDEX idx_vector5 ON test_vector_index(vector_data MANHATTAN);
 -- TODO! Only for Binary vectors
--- CREATE VECTOR INDEX idx_vector2 ON test_vector_index(vector_data HAMMING);
--- CREATE VECTOR INDEX idx_vector2 ON test_vector_index(vector_data JACCARD);
+-- CREATE VECTOR INDEX idx_vector6 ON test_vector_index(vector_data HAMMING);
+-- CREATE VECTOR INDEX idx_vector7 ON test_vector_index(vector_data JACCARD);
