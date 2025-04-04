@@ -11,9 +11,15 @@ CREATE TABLE test_vector_index (
 INSERT INTO test_vector_index VALUES (1, '[1,2,3]');
 INSERT INTO test_vector_index VALUES (2, '[3,2,1]');
 
--- Execution/ Valid
 CREATE VECTOR INDEX idx_vector1 ON test_vector_index(vector_data COSINE);
 
--- Execution/ Error
+-- Execution/ Cannot create same indexes twice/ Error
 CREATE VECTOR INDEX idx_vector2 ON test_vector_index(vector_data COSINE);
 
+-- Execution/ Cannot create other indexes/ Error
+CREATE VECTOR INDEX idx_vector2 ON test_vector_index(vector_data EUCLIDEAN);
+CREATE VECTOR INDEX idx_vector2 ON test_vector_index(vector_data DOT);
+CREATE VECTOR INDEX idx_vector2 ON test_vector_index(vector_data MANHATTAN);
+-- TODO! Only for Binary vectors
+-- CREATE VECTOR INDEX idx_vector2 ON test_vector_index(vector_data HAMMING);
+-- CREATE VECTOR INDEX idx_vector2 ON test_vector_index(vector_data JACCARD);
