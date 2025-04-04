@@ -2,7 +2,7 @@
 DROP IF EXISTS test_vector_index_hnsw;
 CREATE TABLE test_vector_index_hnsw (
     id INT,
-    vec1 VECTOR
+    vec1 VECTOR,
     vec2 VECTOR
 );
 INSERT INTO test_vector_index_hnsw VALUES (1, '[0.1,0.2,0.3]', '[0.1,0.2,0.3]');
@@ -14,7 +14,6 @@ INSERT INTO test_vector_index_hnsw VALUES (4, '[0.3,0.2,0.1]');
 -- Syntax
 --------------------------------------------------------------------------------
 -- Syntax/ creation with parameters/ Valid
-drop vector index idx_hnsw;
 CREATE VECTOR INDEX idx_hnsw ON test_vector_index_hnsw(embedding COSINE)
   WITH (m = 40, ef_construction = 500);
 
