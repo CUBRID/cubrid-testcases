@@ -28,7 +28,7 @@ CREATE VECTOR INDEX idx_hnsw ON test_vector_index_hnsw(embedding COSINE)
   WITH (ef_construction = 500, m = 40);
 
 --------------------------------------------------------------------------------
--- Spec
+-- Execution
 --------------------------------------------------------------------------------
 -- Prepare
 CREATE TABLE test_invalid_params (
@@ -37,10 +37,10 @@ CREATE TABLE test_invalid_params (
 );
 INSERT INTO test_invalid_params VALUES (1, '[1,2,3]');
 
--- Spec/ ef_construction is zero/ Error
+-- Execution/ ef_construction is zero/ Error
 CREATE VECTOR INDEX idx_invalid_params2 ON test_invalid_params(embedding COSINE)
   WITH (m = 40, ef_construction = 0);
 
--- Spec/ m is zero/ Error
+-- Execution/ m is zero/ Error
 CREATE VECTOR INDEX idx_valid_boundary ON test_invalid_params(embedding COSINE)
   WITH (m = 0, ef_construction = 1);
