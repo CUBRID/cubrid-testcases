@@ -1,0 +1,93 @@
+===================================================
+0
+===================================================
+0
+===================================================
+30
+===================================================
+    
+query1-1     
+
+===================================================
+c1    
+30     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select [__t?].c? from t? [__t?] order by ? desc  for (orderby_num())< ?:? 
+===================================================
+    
+query1-2     
+
+===================================================
+c1    
+30     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select [__t?].c? from t? [__t?] order by ? desc  for (orderby_num())<= ?:? 
+===================================================
+    
+query2     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+(select ?, [__t?].c? from t? [__t?] order by ? desc  for (orderby_num())<= ?:? )
+Query plan:
+sscan
+    class: __t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select ?, [__t?].c? from t? [__t?] order by ? desc  for (orderby_num())<= ?:? ) [__t?] (?, c?) where (rownum>= ?:? )
+===================================================
+    
+query3     
+
+===================================================
+c1    
+28     
+29     
+30     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+(select [__t?].c?, [__t?].c? from t? [__t?] order by ? desc  for (orderby_num())<= ?:? )
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select distinct [__t?].c? from (select [__t?].c?, [__t?].c? from t? [__t?] order by ? desc  for (orderby_num())<= ?:? ) [__t?] (c?, c?)
+===================================================
+0
