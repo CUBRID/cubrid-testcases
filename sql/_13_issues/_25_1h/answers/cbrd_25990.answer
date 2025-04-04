@@ -9,7 +9,7 @@
 query1-1     
 
 ===================================================
-c1    
+cola    
 30     
 
 Query plan:
@@ -20,13 +20,13 @@ temp(order by)
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-select [__t?].c? from t? [__t?] order by ? desc  for (orderby_num())< ?:? 
+select [__t?].cola from tbl [__t?] order by ? desc  for (orderby_num())< ?:? 
 ===================================================
     
 query1-2     
 
 ===================================================
-c1    
+cola    
 30     
 
 Query plan:
@@ -37,7 +37,7 @@ temp(order by)
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-select [__t?].c? from t? [__t?] order by ? desc  for (orderby_num())<= ?:? 
+select [__t?].cola from tbl [__t?] order by ? desc  for (orderby_num())<= ?:? 
 ===================================================
     
 query2     
@@ -54,20 +54,20 @@ temp(order by)
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-(select ?, [__t?].c? from t? [__t?] order by ? desc  for (orderby_num())<= ?:? )
+(select ?, [__t?].cola from tbl [__t?] order by ? desc  for (orderby_num())<= ?:? )
 Query plan:
 sscan
     class: __t? node[?]
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select count(*) from (select ?, [__t?].c? from t? [__t?] order by ? desc  for (orderby_num())<= ?:? ) [__t?] (?, c?) where (rownum>= ?:? )
+select count(*) from (select ?, [__t?].cola from tbl [__t?] order by ? desc  for (orderby_num())<= ?:? ) [__t?] (?, cola) where (rownum>= ?:? )
 ===================================================
     
 query3     
 
 ===================================================
-c1    
+cola    
 28     
 29     
 30     
@@ -80,7 +80,7 @@ temp(order by)
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-(select [__t?].c?, [__t?].c? from t? [__t?] order by ? desc  for (orderby_num())<= ?:? )
+(select [__t?].cola, [__t?].colb from tbl [__t?] order by ? desc  for (orderby_num())<= ?:? )
 Query plan:
 temp(distinct)
     subplan: sscan
@@ -88,6 +88,6 @@ temp(distinct)
                  cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select distinct [__t?].c? from (select [__t?].c?, [__t?].c? from t? [__t?] order by ? desc  for (orderby_num())<= ?:? ) [__t?] (c?, c?)
+select distinct [__t?].cola from (select [__t?].cola, [__t?].colb from tbl [__t?] order by ? desc  for (orderby_num())<= ?:? ) [__t?] (cola, colb)
 ===================================================
 0

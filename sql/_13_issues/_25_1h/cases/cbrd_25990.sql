@@ -1,17 +1,17 @@
 -- This test case verifies the following issue: CBRD-25990
 -- The problem where for orderby_num() in inline views gets removed due to view merging
 
-drop table if exists t1;
-create table t1(c1 int, c2 int);
-insert into t1 (select rownum, rownum + 1 from db_class limit 30);
+drop table if exists tbl;
+create table tbl(cola int, colb int);
+insert into tbl (select rownum, rownum + 1 from db_class limit 30);
 
 -- query1: When an inline view is merged, the ORDER BY remains but the ORDERBY FOR clause is removed  
 evaluate 'query1-1';
 select /*+ recompile */ * from 
-    (select * from (select c1 from t1 order by 1 desc) where rownum < 2);
+    (select * from (select cola from tbl order by 1 desc) where rownum < 2);
 evaluate 'query1-2';
 select /*+ recompile */ * from 
-    (select * from (select c1 from t1 order by 1 desc) limit 1);
+    (select * from (select cola from tbl order by 1 desc) limit 1);
 
 -- query2: When using aggregate functions, ORDER BY and ORDERBY FOR clauses cannot be pushed up to the parent query.
 evaluate 'query2';
@@ -19,7 +19,7 @@ select /*+ recompile */ count(*) from
 (
     select * from 
     (
-        select * from t1 order by 1 desc
+        select * from tbl order by 1 desc
     ) where rownum <= 20
 ) where rownum >= 11;
 
@@ -27,10 +27,10 @@ select /*+ recompile */ count(*) from
 evaluate 'query3';
 select /*+ recompile */ distinct * from 
 (
-    select c1 from 
+    select cola from 
     (
-        select c1 from t1 order by c2 desc
+        select cola from tbl order by colb desc
     ) limit 3
 );
 
-drop table if exists t1;
+drop table if exists tbl;
