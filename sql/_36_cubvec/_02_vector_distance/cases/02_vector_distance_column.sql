@@ -103,26 +103,26 @@ INSERT INTO test_vector_table VALUES (1, '[1,2,3]');
 INSERT INTO test_vector_table VALUES (2, '[3,2,1]');
 
 SELECT VECTOR_DISTANCE('[33, 44, 55]', t2.vector_col, COSINE)
-FROM test_vector_table t1, test_vector_table t2;
+FROM test_vector_table t2;
 SELECT COSINE_DISTANCE('[33, 44, 55]', t2.vector_col)
-FROM test_vector_table t1, test_vector_table t2;
+FROM test_vector_table t2;
 SELECT INNER_PRODUCT('[33, 44, 55]', t2.vector_col)
-FROM test_vector_table t1, test_vector_table t2;
+FROM test_vector_table t2;
 SELECT L1_DISTANCE('[33, 44, 55]', t2.vector_col)
-FROM test_vector_table t1, test_vector_table t2;
+FROM test_vector_table t2;
 SELECT L2_DISTANCE('[33, 44, 55]', t2.vector_col)
-FROM test_vector_table t1, test_vector_table t2;
+FROM test_vector_table t2;
 
 SELECT VECTOR_DISTANCE(t1.vector_col, '[33, 44, 55]', COSINE)
-FROM test_vector_table t1, test_vector_table t2;
+FROM test_vector_table t1;
 SELECT COSINE_DISTANCE(t1.vector_col, '[33, 44, 55]')
-FROM test_vector_table t1, test_vector_table t2;
+FROM test_vector_table t1;
 SELECT INNER_PRODUCT(t1.vector_col, '[33, 44, 55]')
-FROM test_vector_table t1, test_vector_table t2;
+FROM test_vector_table t1;
 SELECT L1_DISTANCE(t1.vector_col, '[33, 44, 55]')
-FROM test_vector_table t1, test_vector_table t2;
+FROM test_vector_table t1;
 SELECT L2_DISTANCE(t1.vector_col, '[33, 44, 55]')
-FROM test_vector_table t1, test_vector_table t2;
+FROM test_vector_table t1;
 
 SELECT VECTOR_DISTANCE(t1.vector_col, t2.vector_col, COSINE)
 FROM test_vector_table t1, test_vector_table t2;
