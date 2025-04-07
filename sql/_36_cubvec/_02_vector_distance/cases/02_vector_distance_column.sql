@@ -5,16 +5,21 @@
 DROP IF EXISTS test_non_vector;
 CREATE TABLE test_non_vector (
     id INT,
-    name VARCHAR(50)
+    name VECTOR(3)
 );
-INSERT INTO test_non_vector VALUES (1, 'Alice');
+INSERT INTO test_non_vector VALUES (1, '[1, 2, 3]');
 -- Syntax/ Wrong Comma/ Error
+SELECT COSINE_DISTANCE('[2, 3, 4]',, name) FROM test_non_vector;
+SELECT COSINE_DISTANCE('[2, 3, 4]' name) FROM test_non_vector;
+SELECT COSINE_DISTANCE('[2, 3, 4]' name,) FROM test_non_vector;
+SELECT COSINE_DISTANCE(,'[2, 3, 4]',name,) FROM test_non_vector;
+SELECT COSINE_DISTANCE('[2, 3, 4]',name,) FROM test_non_vector;
+SELECT COSINE_DISTANCE(,'[2, 3, 4]',name) FROM test_non_vector;
 SELECT COSINE_DISTANCE(name,, name) FROM test_non_vector;
 SELECT COSINE_DISTANCE(name name) FROM test_non_vector;
 SELECT COSINE_DISTANCE(name name,) FROM test_non_vector;
 SELECT COSINE_DISTANCE(,name,name,) FROM test_non_vector;
 SELECT COSINE_DISTANCE(name,name,) FROM test_non_vector;
-SELECT COSINE_DISTANCE(,name,name) FROM test_non_vector;
 SELECT COSINE_DISTANCE(,name,name) FROM test_non_vector;
 
 -------------------------------------------------------------------------------
