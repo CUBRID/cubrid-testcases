@@ -5,8 +5,9 @@ CREATE TABLE test_vector_index (
     vector_data VECTOR,
     varchar_data VARCHAR
 );
-INSERT INTO test_vector_index VALUES (1, '[1,2,3]', '[1,2,3]');
-INSERT INTO test_vector_index VALUES (2, '[3,2,1]', '[3,2,1]');
+-- TODO: Creating vector index on table containing elements are not yet supported.
+-- INSERT INTO test_vector_index VALUES (1, '[1,2,3]', '[1,2,3]');
+-- INSERT INTO test_vector_index VALUES (2, '[3,2,1]', '[3,2,1]');
 
 --------------------------------------------------------------------------------
 -- Syntax
@@ -24,7 +25,7 @@ INSERT INTO test_vector_index VALUES (2, '[3,2,1]', '[3,2,1]');
 -- Syntax/ Create Vector Index
 -- Syntax/ Create Vector Index/ With Metric/Valid
 CREATE VECTOR INDEX idx_vector1 ON test_vector_index(vector_data COSINE);
--- DROP VECTOR INDEX idx_vector1 on test_vector_index(vector_data);
+DROP VECTOR INDEX idx_vector1 on test_vector_index(vector_data);
 
 -- Syntax/ Create Vector Index/ Without Metric/ Valid
 -- TODO: Should be able to create without metric.
@@ -45,7 +46,7 @@ CREATE VECTOR INDEX idx_vector5 ON test_vector_index(COSINE);
 --------------------------------------------------------------------------------
 -- Semantics/ Create Vector Index/Non-vector type/ Error
 -- TODO: Currently these statements pass
--- CREATE VECTOR INDEX idx_vector6 ON test_vector_index(id COSINE);
--- DROP VECTOR INDEX idx_vector6 on test_vector_index(id);
--- CREATE VECTOR INDEX idx_vector7 ON test_vector_index(varchar_data COSINE);
--- DROP VECTOR INDEX idx_vector7 on test_vector_index(varchar_data);
+CREATE VECTOR INDEX idx_vector6 ON test_vector_index(id COSINE);
+DROP VECTOR INDEX idx_vector6 on test_vector_index(id);
+CREATE VECTOR INDEX idx_vector7 ON test_vector_index(varchar_data COSINE);
+DROP VECTOR INDEX idx_vector7 on test_vector_index(varchar_data);
