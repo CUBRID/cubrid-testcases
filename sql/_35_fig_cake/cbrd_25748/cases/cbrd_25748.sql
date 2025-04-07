@@ -52,6 +52,45 @@ GROUP BY fn_int(dept_no)
 ORDER BY 1;
 SHOW TRACE;
 
+evaluate '7. Calling a stored procedure in a CTE';
+WITH cte AS (
+    SELECT fn_string(name) AS fn_name FROM sales_tbl ORDER BY 1
+)
+SELECT fn_name FROM cte LIMIT 3;
+SHOW TRACE;
+
+evaluate '8. Calling a stored procedure in a correlated subquery in the SELECT list';
+SELECT name,
+       (SELECT fn_int(sales_amount) FROM sales_tbl s2 
+         WHERE s2.dept_no = s1.dept_no LIMIT 1) AS amt
+FROM sales_tbl s1
+ORDER BY 1 LIMIT 3;
+SHOW TRACE;
+
+evaluate '9. Calling a stored procedure in the JOIN inner query';
+SELECT a.dept_no, a.name, b.fn_amt
+FROM sales_tbl a
+JOIN (
+    SELECT dept_no, fn_int(sales_amount) AS fn_amt
+    FROM sales_tbl
+    GROUP BY dept_no
+) b ON a.dept_no = b.dept_no
+ORDER BY a.dept_no LIMIT 3;
+SHOW TRACE;
+
+evaluate '10. Calling a stored procedure in an inline view';
+SELECT * FROM (
+    SELECT fn_string(name) AS fname, sales_amount FROM sales_tbl ORDER BY 1
+) iv LIMIT 3;
+SHOW TRACE;
+
+evaluate '11. Calling a stored procedure via a view';
+CREATE OR REPLACE VIEW v_sales AS
+    SELECT dept_no, fn_string(name) AS fname, sales_amount FROM sales_tbl;
+SELECT * FROM v_sales ORDER BY 1 LIMIT 3;
+SHOW TRACE;
+DROP VIEW v_sales;
+
 SET TRACE OFF;
 DROP FUNCTION fn_string;
 DROP FUNCTION fn_int;
