@@ -8,5 +8,7 @@ CREATE TABLE tbl (
     id INT,
     vector_data VECTOR
 );
-CREATE VECTOR INDEX idx ON tbl(vector_data);
+-- TODO: Must fail but passes.
+CREATE VECTOR INDEX idx ON tbl(vector_data COSINE);
+DROP VECTOR INDEX idx ON tbl(vector_data);
 
