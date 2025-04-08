@@ -27,6 +27,15 @@ CREATE TABLE test_vector_index (
 CREATE VECTOR INDEX idx_vector1 ON test_vector_index(vector_data COSINE);
 DROP VECTOR INDEX idx_vector1 on test_vector_index(vector_data);
 
+CREATE VECTOR INDEX idx_vector1 ON test_vector_index(vector_data EUCLIDEAN);
+DROP VECTOR INDEX idx_vector1 on test_vector_index(vector_data);
+
+CREATE VECTOR INDEX idx_vector1 ON test_vector_index(vector_data DOT);
+DROP VECTOR INDEX idx_vector1 on test_vector_index(vector_data);
+
+CREATE VECTOR INDEX idx_vector1 ON test_vector_index(vector_data MANHATTAN);
+DROP VECTOR INDEX idx_vector1 on test_vector_index(vector_data);
+
 -- Syntax/ Create Vector Index/ Without Metric/ Valid
 -- TODO: Should be able to create without metric.
 -- CREATE VECTOR INDEX idx_vector2 ON test_vector_index(vector_data);
