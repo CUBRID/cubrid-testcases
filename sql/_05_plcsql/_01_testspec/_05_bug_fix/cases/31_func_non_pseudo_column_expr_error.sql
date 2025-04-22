@@ -14,6 +14,9 @@ CREATE OR REPLACE function t1 (a int log(4,2)) return int as begin return a; end
 -- compile success : add log function  
 CREATE OR REPLACE function t1 (a int default log(4,2)) return int as begin return a; end;
 
+-- default_value
+SELECT default_value FROM db_stored_procedure_args WHERE sp_name = 't1';
+
 -- Error : -493 invalid create statement
 CREATE OK REPLACE FUNCTION t2 (a int logk(4,2)) return int as begin return a; end;
 
