@@ -8,6 +8,9 @@ CREATE OR REPLACE FUNCTION t (a int RAND()) RETURN int as begin return a; end;
 -- compile success : rand function
 CREATE OR REPLACE FUNCTION t (a int default RAND()) RETURN int as begin return a; end;
 
+-- CASE WHEN default_value is not null THEN OK ELSE NOK END  
+SELECT CASE WHEN default_value is not null THEN 'OK' ELSE 'NOK' END as default_value FROM db_stored_procedure_args WHERE sp_name = 't';
+
 -- Error : -493 non-default
 CREATE OR REPLACE function t1 (a int log(4,2)) return int as begin return a; end;
 
