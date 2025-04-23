@@ -1,0 +1,93 @@
+===================================================
+0
+===================================================
+0
+===================================================
+30
+===================================================
+    
+query1-1     
+
+===================================================
+cola    
+30     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select [__t?].cola from tbl [__t?] order by ? desc  for (orderby_num())< ?:? 
+===================================================
+    
+query1-2     
+
+===================================================
+cola    
+30     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select [__t?].cola from tbl [__t?] order by ? desc  for (orderby_num())<= ?:? 
+===================================================
+    
+query2     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+(select ?, [__t?].cola from tbl [__t?] order by ? desc  for (orderby_num())<= ?:? )
+Query plan:
+sscan
+    class: __t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select ?, [__t?].cola from tbl [__t?] order by ? desc  for (orderby_num())<= ?:? ) [__t?] (?, cola) where (rownum>= ?:? )
+===================================================
+    
+query3     
+
+===================================================
+cola    
+28     
+29     
+30     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+(select [__t?].cola, [__t?].colb from tbl [__t?] order by ? desc  for (orderby_num())<= ?:? )
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select distinct [__t?].cola from (select [__t?].cola, [__t?].colb from tbl [__t?] order by ? desc  for (orderby_num())<= ?:? ) [__t?] (cola, colb)
+===================================================
+0

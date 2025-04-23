@@ -4,11 +4,7 @@
 -- This is likely due to a change in the table column type after the stored procedure was compiled. In such cases, recompilation is required. 
 -- The error message has been improved to provide a more precise explanation in this scenario. 
 
---Previous error message:  
--- ERROR: Stored procedure execute error:  
--- (line 4, column 5) internal server error  
-
--- Updated error message:  
+-- error message:  
 -- ERROR: Stored procedure execute error:  
 -- (line 4, column 5) type of a value does not match the one known at compile time (hint: try recompiling this stored procedure)  
 

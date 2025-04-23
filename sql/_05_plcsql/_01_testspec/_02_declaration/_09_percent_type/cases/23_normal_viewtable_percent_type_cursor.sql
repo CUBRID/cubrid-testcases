@@ -114,7 +114,6 @@ begin
    
 end;
 
---BUG(normal : "Normal execution" , BUG : "internal server error") CBRD-25606
 call type_support();
 
 

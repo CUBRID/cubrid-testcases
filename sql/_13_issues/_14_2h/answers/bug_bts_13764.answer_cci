@@ -1304,23 +1304,26 @@ Query stmt:
 select newt.i, newt.k from t? newt where newt.i= ?:?  group by newt.i, newt.k
 ===================================================
 i    k    
-1     1     
-2     2     
-3     3     
-4     4     
-5     5     
-6     6     
 7     7     
+6     6     
+5     5     
+4     4     
+3     3     
+2     2     
+1     1     
 
 Query plan:
-temp(group by)
-    subplan: sscan
-                 class: newt node[?]
+temp(order by)
+    subplan: temp(group by)
+                 subplan: sscan
+                              class: newt node[?]
+                              cost:  ? card ?
+                 sort:  ? asc, ? asc
                  cost:  ? card ?
-    sort:  ? asc, ? asc
+    sort:  ? desc, ? asc
     cost:  ? card ?
 Query stmt:
-select newt.i, newt.k from t? newt group by newt.i, newt.k
+select newt.i, newt.k from t? newt group by newt.i, newt.k order by ? desc , ?
 ===================================================
 i    k    
 
@@ -1338,15 +1341,18 @@ i    k
 1     1     
 
 Query plan:
-temp(group by)
-    subplan: sscan
-                 class: newt node[?]
-                 sargs: term[?]
+temp(order by)
+    subplan: temp(group by)
+                 subplan: sscan
+                              class: newt node[?]
+                              sargs: term[?]
+                              cost:  ? card ?
+                 sort:  ? asc, ? asc
                  cost:  ? card ?
-    sort:  ? asc, ? asc
+    sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select newt.i, newt.k from t? newt where newt.i= ?:?  group by newt.i, newt.k
+select newt.i, newt.k from t? newt where newt.i= ?:?  group by newt.i, newt.k order by ?
 ===================================================
 0
 ===================================================
