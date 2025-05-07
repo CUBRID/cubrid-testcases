@@ -39,7 +39,7 @@ delete from t_d_1 where i=(select count(*) from cte2);
 
 replace into t_replace WITH cte3 AS
 (
-select :xx.id from db_root
+select /*+ MATERIALIZE */ :xx.id from db_root
 )
 select count(*) from cte3;
 
@@ -47,7 +47,7 @@ replace into t_replace select count(*) from (select /*+ NO_MERGE */ :xx.id from 
 
 insert into t_replace WITH cte5 AS
 (
-select :xx.id from db_root
+select /*+ MATERIALIZE */ :xx.id from db_root
 )
 select count(*) from cte5;
 

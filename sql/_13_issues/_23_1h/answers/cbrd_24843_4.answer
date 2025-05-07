@@ -712,38 +712,24 @@ xxxxx     27     -900     9     9
 trace    
 
 Query Plan:
-  INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a= ?:? , key filter: c.p_a is not null , key filter: c.p_b is not null )
+  INDEX SCAN (of_ooooo.fk_t_child_p_a_p_b) (key range: of_ooooo.p_a= ?:? , key filter: of_ooooo.p_a is not null , key filter: of_ooooo.p_b is not null )
 
-  rewritten query: select 'ooooo', c.a, c.b, c.p_a, c.p_b from [dba.t_child] c where c.p_a= ?:?  and c.p_b is not null  and c.p_a is not null 
+  rewritten query: select 'ooooo', of_ooooo.a, of_ooooo.b, of_ooooo.p_a, of_ooooo.p_b from [dba.t_child] of_ooooo where of_ooooo.p_a= ?:?  and of_ooooo.p_b is not null  and of_ooooo.p_a is not null 
 
   NESTED LOOPS (inner join)
     INDEX SCAN (p.pk_t_parent_a_b) (key range: (p.a>= ?:? ), covered: true)
-    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a=p.akey range: c.p_b=p.b)
+    INDEX SCAN (of_xxxxx.fk_t_child_p_a_p_b) (key range: (of_xxxxx.p_a=p.a)key range: of_xxxxx.p_b=p.b)
 
-  rewritten query: select 'xxxxx', c.a, c.b, c.p_a, c.p_b from [dba.t_child] c, [dba.t_parent] p where c.p_a=p.a and c.p_b=p.b and (p.a>= ?:? )
-
-  TABLE SCAN (dba.of_ooooo)
-
-  rewritten query: select [dba.of_ooooo].['ooooo'], [dba.of_ooooo].a, [dba.of_ooooo].b, [dba.of_ooooo].p_a, [dba.of_ooooo].p_b from [dba.of_ooooo] [dba.of_ooooo]
-
-  TABLE SCAN (dba.of_xxxxx)
-
-  rewritten query: select [dba.of_xxxxx].['xxxxx'], [dba.of_xxxxx].a, [dba.of_xxxxx].b, [dba.of_xxxxx].p_a, [dba.of_xxxxx].p_b from [dba.of_xxxxx] [dba.of_xxxxx]
+  rewritten query: select 'xxxxx', of_xxxxx.a, of_xxxxx.b, of_xxxxx.p_a, of_xxxxx.p_b from [dba.t_child] of_xxxxx, [dba.t_parent] p where (of_xxxxx.p_a=p.a) and of_xxxxx.p_b=p.b and (p.a>= ?:? )
 
 
 Trace Statistics:
   UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    CTE (non_recursive_part)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (index: dba.t_child.fk_t_child_p_a_p_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (index: dba.t_parent.pk_t_parent_a_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
         SCAN (index: dba.t_child.fk_t_child_p_a_p_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-    CTE (non_recursive_part)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (index: dba.t_parent.pk_t_parent_a_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
-          SCAN (index: dba.t_child.fk_t_child_p_a_p_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
   ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
