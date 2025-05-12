@@ -126,7 +126,7 @@ GRANT ALTER ON u1.tbl2 TO u3 WITH GRANT OPTION;
 
 
 call login('dba','') on class db_user;
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name, object_name;
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by 1;
 
 
@@ -146,7 +146,7 @@ call login('dba','') on class db_user;
 CALL change_owner ('u1.tbl', 'u3') ON CLASS db_authorizations;
 CALL change_owner ('u1.tbl2', 'u3') ON CLASS db_authorizations;
 
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name, object_name;
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by 1;
 select class_name, owner_name from db_class where class_name in ('tbl', 'tbl2') order by 1;
 
@@ -177,7 +177,7 @@ grant select on t1_r to u2 with grant option;
 grant select on t1_h to u2 with grant option;
 grant select on t1_l to u2 with grant option;
 
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name, object_name;
 
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by 1;
 
@@ -188,7 +188,7 @@ grant select on u1.t1_r to u3 with grant option;
 grant select on u1.t1_h to u3 with grant option;
 grant select on u1.t1_l to u3 with grant option;
 
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name, object_name;
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by 1;
 
 
@@ -212,7 +212,7 @@ CALL change_owner ('u1.t1_r', 'u3') ON CLASS db_authorizations;
 CALL change_owner ('u1.t1_h', 'u3') ON CLASS db_authorizations;
 CALL change_owner ('u1.t1_l', 'u3') ON CLASS db_authorizations;
 
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name, object_name;
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by 1;
 select class_name, owner_name from db_class where class_name in ('t1_r', 't1_h', 't1_l') order by 1;
 
@@ -240,12 +240,12 @@ GRANT INSERT ON u1.tbl1 TO u2 WITH GRANT OPTION;
 
 
 call login('dba','') on class db_user;
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name, object_name;
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by 1;
 
 CALL change_owner ('u1.tbl1', 'u3') ON CLASS db_authorizations;
 
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name, object_name;
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by 1;
 
 drop table u3.tbl1;
@@ -271,11 +271,11 @@ GRANT INSERT ON u1.tbl1 TO U3;
 
 call login('dba','') on class db_user;
 
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name, object_name;
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by 1;
 
 CALL change_owner ('u1.tbl1', 'u3') ON CLASS db_authorizations;
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name, object_name;
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by 1;
 
 drop table u3.tbl1;
@@ -302,11 +302,11 @@ GRANT SELECT ON u1.tbl1 TO u2;
 
 
 call login('dba','') on class db_user;
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name, object_name;
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by 1;
 
 CALL change_owner ('u1.tbl1', 'u3') ON CLASS db_authorizations;
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name, object_name;
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by 1;
 
 
@@ -381,23 +381,23 @@ GRANT SELECT ON u1.TBL TO u4 WITH GRANT OPTION;
 
 
 call login('dba','') on class db_user;
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name, object_name;
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by 1;
 
 CALL change_owner ('u1.TBL', 'u2') ON CLASS db_authorizations;
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name, object_name;
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by 1;
 
 CALL change_owner ('u2.TBL', 'u3') ON CLASS db_authorizations;
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name, object_name;
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by 1;
 
 CALL change_owner ('u3.TBL', 'u4') ON CLASS db_authorizations;
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name, object_name;
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by 1;
 
 CALL change_owner ('u4.TBL', 'u5') ON CLASS db_authorizations;
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name, object_name;
 
 drop table u5.tbl;
 
