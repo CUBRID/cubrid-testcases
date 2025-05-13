@@ -238,11 +238,11 @@ GRANT INSERT ON u1.tbl1 TO u2 WITH GRANT OPTION;
 
 
 call login('dba','') on class db_user;
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name, object_name;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name, auth_type;
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by 1;
 
 ALTER TABLE u1.tbl1 OWNER TO u3;
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name, object_name;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name, auth_type;
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by 1;
 
 drop table u3.tbl1;
@@ -299,11 +299,11 @@ GRANT SELECT ON u1.tbl1 TO u2;
 
 
 call login('dba','') on class db_user;
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name, object_name;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name, auth_type;
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by 1;
 
 CALL change_owner ('u1.tbl1', 'u3') ON CLASS db_authorizations;
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name, object_name;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' ORDER BY grantor_name, grantee_name, auth_type;
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by 1;
 
 
