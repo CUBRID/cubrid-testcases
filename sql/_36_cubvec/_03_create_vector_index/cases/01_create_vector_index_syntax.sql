@@ -2,7 +2,7 @@
 DROP IF EXISTS test_vector_index;
 CREATE TABLE test_vector_index (
     id INT,
-    vector_data VECTOR,
+    vector_data VECTOR(3),
     varchar_data VARCHAR
 );
 -- TODO: Creating vector index on table containing elements are not yet supported.
