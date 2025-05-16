@@ -6,7 +6,7 @@
 DROP IF EXISTS test_vector_index;
 CREATE TABLE test_vector_index (
     id INT,
-    vector_data VECTOR
+    vector_data VECTOR(3)
 );
 -- TODO: creating vector index on non-empty table not yet implemented.
 -- INSERT INTO test_vector_index VALUES (1, '[1,2,3]');
