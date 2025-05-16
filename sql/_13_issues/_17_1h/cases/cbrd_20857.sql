@@ -7,7 +7,7 @@ insert into t1 values(-1,to_date('2017-02-16')-6, NULL, 3);
 set trace on output json;
 WITH cte_Z2EqZHVEA AS
 (
-select avg(a), max(b) from (select * from t1 order by 1,2,3,4) group by d
+select /*+ MATERIALIZE */ avg(a), max(b) from (select * from t1 order by 1,2,3,4) group by d
 )
 select * from cte_Z2EqZHVEA order by 1;
 
@@ -16,7 +16,7 @@ show trace;
 set trace on output text;
 WITH cte_Z2EqZHVEA AS
 (
-select avg(a), max(b) from (select * from t1 order by 1,2,3,4) group by d
+select /*+ MATERIALIZE */ avg(a), max(b) from (select * from t1 order by 1,2,3,4) group by d
 )
 select * from cte_Z2EqZHVEA order by 1;
 show trace;

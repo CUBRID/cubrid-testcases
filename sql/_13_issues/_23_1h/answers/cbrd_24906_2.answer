@@ -164,7 +164,7 @@ Trace Statistics:
 0
 ===================================================
 col_a    c9    
-1000     null     
+338     null     
 
 ===================================================
 trace    
@@ -193,7 +193,7 @@ Trace Statistics:
 0
 ===================================================
 col_a    c9    
-1000     null     
+338     null     
 
 ===================================================
 trace    
@@ -635,13 +635,13 @@ trace
 Query Plan:
   TABLE SCAN (bb)
 
-  rewritten query: (select /*+ ORDERED NO_MERGE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where  ?:? = ?:?  and bb.col_c= ?:? )
+  rewritten query: select /*+ ORDERED NO_MERGE MATERIALIZE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where  ?:? = ?:?  and bb.col_c= ?:? 
 
   NESTED LOOPS (left outer join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select count(*) from [dba.tbl_a] a left outer join (select /*+ ORDERED NO_MERGE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where  ?:? = ?:?  and bb.col_c= ?:? ) b (col_a, col_b, col_c) on a.col_a=b.col_a
+  rewritten query: with b(col_a, col_b, col_c) as (select /*+ ORDERED NO_MERGE MATERIALIZE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where  ?:? = ?:?  and bb.col_c= ?:? )select count(*) from [dba.tbl_a] a left outer join [dba.b] b on a.col_a=b.col_a
 
 
 Trace Statistics:
@@ -649,8 +649,9 @@ Trace Statistics:
     SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -667,13 +668,13 @@ trace
 Query Plan:
   TABLE SCAN (bb)
 
-  rewritten query: (select /*+ ORDERED NO_MERGE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where  ?:? = ?:?  and bb.col_c= ?:? )
+  rewritten query: select /*+ ORDERED NO_MERGE MATERIALIZE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where  ?:? = ?:?  and bb.col_c= ?:? 
 
   NESTED LOOPS (left outer join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select count(*) from [dba.tbl_a] a left outer join (select /*+ ORDERED NO_MERGE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where  ?:? = ?:?  and bb.col_c= ?:? ) b (col_a, col_b, col_c) on a.col_a=b.col_a
+  rewritten query: with b(col_a, col_b, col_c) as (select /*+ ORDERED NO_MERGE MATERIALIZE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where  ?:? = ?:?  and bb.col_c= ?:? )select count(*) from [dba.tbl_a] a left outer join [dba.b] b on a.col_a=b.col_a
 
 
 Trace Statistics:
@@ -681,8 +682,9 @@ Trace Statistics:
     SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================

@@ -26,15 +26,15 @@ trace
           "table": "__t?"
         }
       },
-      "rewritten query": "(select avg([__t?].a), max([__t?].b) from [dba.t?] [__t?] group by [__t?].d)"
+      "rewritten query": "select /*+ MATERIALIZE */ avg([__t?].a), max([__t?].b) from [dba.t?] [__t?] group by [__t?].d"
     },
     {
       "SORT (order by)": {
         "TABLE SCAN": {
-          "table": "cte_Z?EqZHVEA"
+          "table": "dba.cte_Z?EqZHVEA"
         }
       },
-      "rewritten query": "select cte_Z?EqZHVEA.[avg([__t?].a)], cte_Z?EqZHVEA.[max([__t?].b)] from (select avg([__t?].a), max([__t?].b) from [dba.t?] [__t?] group by [__t?].d) cte_Z?EqZHVEA ([avg([__t?].a)], [max([__t?].b)]) order by ?"
+      "rewritten query": "with cte_Z?EqZHVEA([avg([__t?].a)], [max([__t?].b)]) as (select /*+ MATERIALIZE */ avg([__t?].a), max([__t?].b) from [dba.t?] [__t?] group by [__t?].d)select [dba.cte_Z?EqZHVEA].[avg([__t?].a)], [dba.cte_Z?EqZHVEA].[max([__t?].b)] from [dba.cte_Z?EqZHVEA] [dba.cte_Z?EqZHVEA] order by ?"
     }
   ],
   "Trace Statistics": {
@@ -61,28 +61,32 @@ trace
       },
       "SUBQUERY (uncorrelated)": [
         {
-          "SELECT": {
-            "time": ?,
-            "fetch": ?,
-            "fetch_time": ?,
-            "ioread": ?,
-            "SCAN": {
-              "access": "table (dba.t?)",
-              "heap": {
+          "CTE": {
+            "non_recursive_part": {
+              "SELECT": {
                 "time": ?,
                 "fetch": ?,
+                "fetch_time": ?,
                 "ioread": ?,
-                "readrows": ?,
-                "rows": ?
+                "SCAN": {
+                  "access": "table (dba.t?)",
+                  "heap": {
+                    "time": ?,
+                    "fetch": ?,
+                    "ioread": ?,
+                    "readrows": ?,
+                    "rows": ?
+                  }
+                },
+                "GROUPBY": {
+                  "time": ?,
+                  "hash": true,
+                  "sort": true,
+                  "page": ?,
+                  "ioread": ?,
+                  "rows": ?
+                }
               }
-            },
-            "GROUPBY": {
-              "time": ?,
-              "hash": true,
-              "sort": true,
-              "page": ?,
-              "ioread": ?,
-              "rows": ?
             }
           }
         }
@@ -107,9 +111,10 @@ Trace Statistics:
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
     SUBQUERY (uncorrelated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
      
 
 ===================================================

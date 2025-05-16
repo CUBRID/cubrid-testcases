@@ -394,39 +394,39 @@ Query Plan:
   SORT (order by)
     TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] order by ? for orderby_num()<= ?:? )
-
-  SORT (order by)
-    TABLE SCAN (cte_a)
-
-  rewritten query: (select cte_a.i, cte_a.j, cte_a.k from (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] order by ? for orderby_num()<= ?:? ) cte_a (i, j, k) where (cte_a.i< ?:? ) order by ?)
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] order by ? for orderby_num()<= ?:? 
 
   SORT (order by)
     TABLE SCAN (dba.tbl_b)
 
-  rewritten query: (select [dba.tbl_b].a, [dba.tbl_b].b, [dba.tbl_b].c from [dba.tbl_b] [dba.tbl_b] order by ? for orderby_num()<= ?:? )
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_b].a, [dba.tbl_b].b, [dba.tbl_b].c from [dba.tbl_b] [dba.tbl_b] order by ? for orderby_num()<= ?:? 
 
   SORT (order by)
-    TABLE SCAN (cte_b)
+    TABLE SCAN (dba.cte_a)
 
-  rewritten query: (select cte_b.a, cte_b.b, cte_b.c from (select [dba.tbl_b].a, [dba.tbl_b].b, [dba.tbl_b].c from [dba.tbl_b] [dba.tbl_b] order by ? for orderby_num()<= ?:? ) cte_b (a, b, c) where (cte_b.a> ?:? ) order by ?)
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] where ([dba.cte_a].i< ?:? ) order by ?)
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_b)
+
+  rewritten query: (select [dba.cte_b].a, [dba.cte_b].b, [dba.cte_b].c from [dba.cte_b] [dba.cte_b] where ([dba.cte_b].a> ?:? ) order by ?)
 
 
 Trace Statistics:
   UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-      SUBQUERY (uncorrelated)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          ORDERBY (time: ?, topnsort: true)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SUBQUERY (uncorrelated)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          ORDERBY (time: ?, topnsort: true)
      
 
 ===================================================
@@ -480,40 +480,40 @@ Query Plan:
   SORT (order by)
     TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? )
-
-  SORT (order by)
-    TABLE SCAN (cte_a)
-
-  rewritten query: (select cte_a.i, cte_a.j, cte_a.k from (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? ) cte_a (i, j, k) where (cte_a.j< ?:? ) order by ?)
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? 
 
   SORT (order by)
     TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? )
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? 
 
   SORT (order by)
-    TABLE SCAN (cte_b)
+    TABLE SCAN (dba.cte_a)
 
-  rewritten query: (select cte_b.i, cte_b.j, cte_b.k from (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? ) cte_b (i, j, k) where (cte_b.k> ?:? ) order by ?)
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] where ([dba.cte_a].j< ?:? ) order by ?)
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_b)
+
+  rewritten query: (select [dba.cte_b].i, [dba.cte_b].j, [dba.cte_b].k from [dba.cte_b] [dba.cte_b] where ([dba.cte_b].k> ?:? ) order by ?)
 
 
 Trace Statistics:
   UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-      SUBQUERY (uncorrelated)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          ORDERBY (time: ?, topnsort: true)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-      SUBQUERY (uncorrelated)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          ORDERBY (time: ?, topnsort: true)
      
 
 ===================================================
@@ -551,40 +551,40 @@ Query Plan:
   SORT (order by)
     TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? )
-
-  SORT (order by)
-    TABLE SCAN (cte_a)
-
-  rewritten query: (select cte_a.i, cte_a.j, cte_a.k from (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? ) cte_a (i, j, k) where (cte_a.i< ?:? ) order by ?)
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? 
 
   SORT (order by)
     TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? )
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? 
 
   SORT (order by)
-    TABLE SCAN (cte_b)
+    TABLE SCAN (dba.cte_a)
 
-  rewritten query: (select cte_b.i, cte_b.j, cte_b.k from (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? ) cte_b (i, j, k) where (cte_b.k> ?:? ) order by ?)
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] where ([dba.cte_a].i< ?:? ) order by ?)
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_b)
+
+  rewritten query: (select [dba.cte_b].i, [dba.cte_b].j, [dba.cte_b].k from [dba.cte_b] [dba.cte_b] where ([dba.cte_b].k> ?:? ) order by ?)
 
 
 Trace Statistics:
   DIFFERENCE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-      SUBQUERY (uncorrelated)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          ORDERBY (time: ?, topnsort: true)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-      SUBQUERY (uncorrelated)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          ORDERBY (time: ?, topnsort: true)
      
 
 ===================================================
@@ -622,40 +622,40 @@ Query Plan:
   SORT (order by)
     TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? )
-
-  SORT (order by)
-    TABLE SCAN (cte_a)
-
-  rewritten query: (select cte_a.i, cte_a.j, cte_a.k from (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? ) cte_a (i, j, k) where (cte_a.i< ?:? ) order by ?)
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? 
 
   SORT (order by)
     TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? )
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? 
 
   SORT (order by)
-    TABLE SCAN (cte_b)
+    TABLE SCAN (dba.cte_a)
 
-  rewritten query: (select cte_b.i, cte_b.j, cte_b.k from (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? ) cte_b (i, j, k) where (cte_b.k> ?:? ) order by ?)
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] where ([dba.cte_a].i< ?:? ) order by ?)
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_b)
+
+  rewritten query: (select [dba.cte_b].i, [dba.cte_b].j, [dba.cte_b].k from [dba.cte_b] [dba.cte_b] where ([dba.cte_b].k> ?:? ) order by ?)
 
 
 Trace Statistics:
   DIFFERENCE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-      SUBQUERY (uncorrelated)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          ORDERBY (time: ?, topnsort: true)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-      SUBQUERY (uncorrelated)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          ORDERBY (time: ?, topnsort: true)
      
 
 ===================================================
@@ -674,40 +674,40 @@ Query Plan:
   SORT (order by)
     TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? )
-
-  SORT (order by)
-    TABLE SCAN (cte_a)
-
-  rewritten query: (select cte_a.i, cte_a.j, cte_a.k from (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? ) cte_a (i, j, k) where (cte_a.j< ?:? ) order by ?)
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? 
 
   SORT (order by)
     TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? )
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? 
 
   SORT (order by)
-    TABLE SCAN (cte_b)
+    TABLE SCAN (dba.cte_a)
 
-  rewritten query: (select cte_b.i, cte_b.j, cte_b.k from (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? ) cte_b (i, j, k) where (cte_b.k> ?:? ) order by ?)
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] where ([dba.cte_a].j< ?:? ) order by ?)
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_b)
+
+  rewritten query: (select [dba.cte_b].i, [dba.cte_b].j, [dba.cte_b].k from [dba.cte_b] [dba.cte_b] where ([dba.cte_b].k> ?:? ) order by ?)
 
 
 Trace Statistics:
   INTERSECTION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-      SUBQUERY (uncorrelated)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          ORDERBY (time: ?, topnsort: true)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-      SUBQUERY (uncorrelated)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          ORDERBY (time: ?, topnsort: true)
      
 
 ===================================================
@@ -726,40 +726,40 @@ Query Plan:
   SORT (order by)
     TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? )
-
-  SORT (order by)
-    TABLE SCAN (cte_a)
-
-  rewritten query: (select cte_a.i, cte_a.j, cte_a.k from (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? ) cte_a (i, j, k) where (cte_a.j< ?:? ) order by ?)
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? 
 
   SORT (order by)
     TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? )
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? 
 
   SORT (order by)
-    TABLE SCAN (cte_b)
+    TABLE SCAN (dba.cte_a)
 
-  rewritten query: (select cte_b.i, cte_b.j, cte_b.k from (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? ) cte_b (i, j, k) where (cte_b.k> ?:? ) order by ?)
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] where ([dba.cte_a].j< ?:? ) order by ?)
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_b)
+
+  rewritten query: (select [dba.cte_b].i, [dba.cte_b].j, [dba.cte_b].k from [dba.cte_b] [dba.cte_b] where ([dba.cte_b].k> ?:? ) order by ?)
 
 
 Trace Statistics:
   INTERSECTION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-      SUBQUERY (uncorrelated)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          ORDERBY (time: ?, topnsort: true)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-      SUBQUERY (uncorrelated)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          ORDERBY (time: ?, topnsort: true)
      
 
 ===================================================
@@ -1164,44 +1164,44 @@ Query Plan:
   SORT (order by)
     TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? )
-
-  SORT (order by)
-    TABLE SCAN (cte_a)
-
-  rewritten query: (select cte_a.i, cte_a.j, cte_a.k from (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? ) cte_a (i, j, k) where (cte_a.j< ?:? ) order by ?)
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? 
 
   SORT (order by)
     TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? )
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? 
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_a)
+
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] where ([dba.cte_a].j< ?:? ) order by ?)
 
   TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=cte_b.k)
+  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_b].k)
 
   SORT (order by)
-    TABLE SCAN (cte_b)
+    TABLE SCAN (dba.cte_b)
 
-  rewritten query: (select cte_b.i, cte_b.j, cte_b.k from (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? ) cte_b (i, j, k) where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=cte_b.k) order by ?)
+  rewritten query: (select [dba.cte_b].i, [dba.cte_b].j, [dba.cte_b].k from [dba.cte_b] [dba.cte_b] where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_b].k) order by ?)
 
 
 Trace Statistics:
   UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-      SUBQUERY (uncorrelated)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          ORDERBY (time: ?, topnsort: true)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-      SUBQUERY (uncorrelated)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          ORDERBY (time: ?, topnsort: true)
       SUBQUERY (correlated)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -1255,44 +1255,44 @@ Query Plan:
   SORT (order by)
     TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? )
-
-  SORT (order by)
-    TABLE SCAN (cte_a)
-
-  rewritten query: (select cte_a.i, cte_a.j, cte_a.k from (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? ) cte_a (i, j, k) where (cte_a.j< ?:? ) order by ?)
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? 
 
   SORT (order by)
     TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? )
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? 
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_a)
+
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] where ([dba.cte_a].j< ?:? ) order by ?)
 
   TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=cte_b.k)
+  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_b].k)
 
   SORT (order by)
-    TABLE SCAN (cte_b)
+    TABLE SCAN (dba.cte_b)
 
-  rewritten query: (select cte_b.i, cte_b.j, cte_b.k from (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? ) cte_b (i, j, k) where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=cte_b.k) order by ?)
+  rewritten query: (select [dba.cte_b].i, [dba.cte_b].j, [dba.cte_b].k from [dba.cte_b] [dba.cte_b] where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_b].k) order by ?)
 
 
 Trace Statistics:
   UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-      SUBQUERY (uncorrelated)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          ORDERBY (time: ?, topnsort: true)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-      SUBQUERY (uncorrelated)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          ORDERBY (time: ?, topnsort: true)
       SUBQUERY (correlated)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -1326,44 +1326,44 @@ Query Plan:
   SORT (order by)
     TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? )
-
-  SORT (order by)
-    TABLE SCAN (cte_a)
-
-  rewritten query: (select cte_a.i, cte_a.j, cte_a.k from (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? ) cte_a (i, j, k) where (cte_a.j< ?:? ) order by ?)
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? 
 
   SORT (order by)
     TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? )
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? 
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_a)
+
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] where ([dba.cte_a].j< ?:? ) order by ?)
 
   TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=cte_b.k)
+  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_b].k)
 
   SORT (order by)
-    TABLE SCAN (cte_b)
+    TABLE SCAN (dba.cte_b)
 
-  rewritten query: (select cte_b.i, cte_b.j, cte_b.k from (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? ) cte_b (i, j, k) where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=cte_b.k) order by ?)
+  rewritten query: (select [dba.cte_b].i, [dba.cte_b].j, [dba.cte_b].k from [dba.cte_b] [dba.cte_b] where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_b].k) order by ?)
 
 
 Trace Statistics:
   DIFFERENCE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-      SUBQUERY (uncorrelated)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          ORDERBY (time: ?, topnsort: true)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-      SUBQUERY (uncorrelated)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          ORDERBY (time: ?, topnsort: true)
       SUBQUERY (correlated)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -1397,44 +1397,44 @@ Query Plan:
   SORT (order by)
     TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? )
-
-  SORT (order by)
-    TABLE SCAN (cte_a)
-
-  rewritten query: (select cte_a.i, cte_a.j, cte_a.k from (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? ) cte_a (i, j, k) where (cte_a.j< ?:? ) order by ?)
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? 
 
   SORT (order by)
     TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? )
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? 
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_a)
+
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] where ([dba.cte_a].j< ?:? ) order by ?)
 
   TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=cte_b.k)
+  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_b].k)
 
   SORT (order by)
-    TABLE SCAN (cte_b)
+    TABLE SCAN (dba.cte_b)
 
-  rewritten query: (select cte_b.i, cte_b.j, cte_b.k from (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? ) cte_b (i, j, k) where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=cte_b.k) order by ?)
+  rewritten query: (select [dba.cte_b].i, [dba.cte_b].j, [dba.cte_b].k from [dba.cte_b] [dba.cte_b] where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_b].k) order by ?)
 
 
 Trace Statistics:
   DIFFERENCE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-      SUBQUERY (uncorrelated)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          ORDERBY (time: ?, topnsort: true)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-      SUBQUERY (uncorrelated)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          ORDERBY (time: ?, topnsort: true)
       SUBQUERY (correlated)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -1456,44 +1456,44 @@ Query Plan:
   SORT (order by)
     TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? )
-
-  SORT (order by)
-    TABLE SCAN (cte_a)
-
-  rewritten query: (select cte_a.i, cte_a.j, cte_a.k from (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? ) cte_a (i, j, k) where (cte_a.j< ?:? ) order by ?)
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? 
 
   SORT (order by)
     TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? )
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? 
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_a)
+
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] where ([dba.cte_a].j< ?:? ) order by ?)
 
   TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=cte_b.k)
+  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_b].k)
 
   SORT (order by)
-    TABLE SCAN (cte_b)
+    TABLE SCAN (dba.cte_b)
 
-  rewritten query: (select cte_b.i, cte_b.j, cte_b.k from (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? ) cte_b (i, j, k) where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=cte_b.k) order by ?)
+  rewritten query: (select [dba.cte_b].i, [dba.cte_b].j, [dba.cte_b].k from [dba.cte_b] [dba.cte_b] where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_b].k) order by ?)
 
 
 Trace Statistics:
   INTERSECTION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-      SUBQUERY (uncorrelated)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          ORDERBY (time: ?, topnsort: true)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-      SUBQUERY (uncorrelated)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          ORDERBY (time: ?, topnsort: true)
       SUBQUERY (correlated)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -1515,44 +1515,44 @@ Query Plan:
   SORT (order by)
     TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? )
-
-  SORT (order by)
-    TABLE SCAN (cte_a)
-
-  rewritten query: (select cte_a.i, cte_a.j, cte_a.k from (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? ) cte_a (i, j, k) where (cte_a.j< ?:? ) order by ?)
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i< ?:? ) order by ? for orderby_num()<= ?:? 
 
   SORT (order by)
     TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? )
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? 
+
+  SORT (order by)
+    TABLE SCAN (dba.cte_a)
+
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] where ([dba.cte_a].j< ?:? ) order by ?)
 
   TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=cte_b.k)
+  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_b].k)
 
   SORT (order by)
-    TABLE SCAN (cte_b)
+    TABLE SCAN (dba.cte_b)
 
-  rewritten query: (select cte_b.i, cte_b.j, cte_b.k from (select [dba.tbl_a].i, [dba.tbl_a].j, [dba.tbl_a].k from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>= ?:? ) order by ? for orderby_num()<= ?:? ) cte_b (i, j, k) where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=cte_b.k) order by ?)
+  rewritten query: (select [dba.cte_b].i, [dba.cte_b].j, [dba.cte_b].k from [dba.cte_b] [dba.cte_b] where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_b].k) order by ?)
 
 
 Trace Statistics:
   INTERSECTION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-      SUBQUERY (uncorrelated)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          ORDERBY (time: ?, topnsort: true)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-      SUBQUERY (uncorrelated)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          ORDERBY (time: ?, topnsort: true)
       SUBQUERY (correlated)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)

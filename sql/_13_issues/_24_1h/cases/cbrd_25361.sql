@@ -83,8 +83,8 @@ from db_class a, db_class c, db_class d limit 100000;
 
 set trace on;
 
-WITH cte_a AS (SELECT * FROM tbl_a ORDER BY 1 LIMIT 20),
-     cte_b AS (SELECT * FROM tbl_b ORDER BY 1 LIMIT 20)
+WITH cte_a AS (SELECT /*+ MATERIALIZE */ * FROM tbl_a ORDER BY 1 LIMIT 20),
+     cte_b AS (SELECT /*+ MATERIALIZE */ * FROM tbl_b ORDER BY 1 LIMIT 20)
 (SELECT * FROM cte_a WHERE i < 50 ORDER BY i)
 UNION ALL
 (SELECT * FROM cte_b WHERE a > 50 ORDER BY a);
@@ -96,8 +96,8 @@ drop table tbl_b;
 EVALUATE '1.8 Multiple CTEs: UNION with Uncorrelated Subqueries';
 set trace on;
 
-WITH cte_a AS (SELECT * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
-     cte_b AS (SELECT * FROM tbl_a WHERE i >= 50 ORDER BY 1 LIMIT 20)
+WITH cte_a AS (SELECT /*+ MATERIALIZE */ * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
+     cte_b AS (SELECT /*+ MATERIALIZE */ * FROM tbl_a WHERE i >= 50 ORDER BY 1 LIMIT 20)
 (SELECT * FROM cte_a WHERE j < 30 ORDER BY i)
 UNION
 (SELECT * FROM cte_b WHERE k > 50 ORDER BY i);
@@ -108,8 +108,8 @@ show trace;
 EVALUATE '1.9 Multiple CTEs: DIFFERENCE with Uncorrelated Subqueries';
 set trace on;
 
-WITH cte_a AS (SELECT * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
-     cte_b AS (SELECT * FROM tbl_a WHERE i >= 50 ORDER BY 1 LIMIT 20)
+WITH cte_a AS (SELECT /*+ MATERIALIZE */ * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
+     cte_b AS (SELECT /*+ MATERIALIZE */ * FROM tbl_a WHERE i >= 50 ORDER BY 1 LIMIT 20)
 (SELECT * FROM cte_a WHERE i < 20 ORDER BY i)
 DIFFERENCE
 (SELECT * FROM cte_b WHERE k > 30 ORDER BY i);
@@ -120,8 +120,8 @@ show trace;
 EVALUATE '1.10 Multiple CTEs: DIFFERENCE ALL with Uncorrelated Subqueries';
 set trace on;
 
-WITH cte_a AS (SELECT * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
-     cte_b AS (SELECT * FROM tbl_a WHERE i >= 50 ORDER BY 1 LIMIT 20)
+WITH cte_a AS (SELECT /*+ MATERIALIZE */ * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
+     cte_b AS (SELECT /*+ MATERIALIZE */ * FROM tbl_a WHERE i >= 50 ORDER BY 1 LIMIT 20)
 (SELECT * FROM cte_a WHERE i < 20 ORDER BY i)
 DIFFERENCE ALL
 (SELECT * FROM cte_b WHERE k > 30 ORDER BY i);
@@ -132,8 +132,8 @@ show trace;
 EVALUATE '1.11 Multiple CTEs: INTERSECTION with Uncorrelated Subqueries';
 set trace on;
 
-WITH cte_a AS (SELECT * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
-     cte_b AS (SELECT * FROM tbl_a WHERE i >= 50 ORDER BY 1 LIMIT 20)
+WITH cte_a AS (SELECT /*+ MATERIALIZE */ * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
+     cte_b AS (SELECT /*+ MATERIALIZE */ * FROM tbl_a WHERE i >= 50 ORDER BY 1 LIMIT 20)
 (SELECT * FROM cte_a WHERE j < 30 ORDER BY i)
 INTERSECTION
 (SELECT * FROM cte_b WHERE k > 50 ORDER BY i);
@@ -144,8 +144,8 @@ show trace;
 EVALUATE '1.12 Multiple CTEs: INTERSECTION ALL with Uncorrelated Subqueries';
 set trace on;
 
-WITH cte_a AS (SELECT * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
-     cte_b AS (SELECT * FROM tbl_a WHERE i >= 50 ORDER BY 1 LIMIT 20)
+WITH cte_a AS (SELECT /*+ MATERIALIZE */ * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
+     cte_b AS (SELECT /*+ MATERIALIZE */ * FROM tbl_a WHERE i >= 50 ORDER BY 1 LIMIT 20)
 (SELECT * FROM cte_a WHERE j < 30 ORDER BY i)
 INTERSECTION ALL
 (SELECT * FROM cte_b WHERE k > 50 ORDER BY i);
@@ -240,8 +240,8 @@ show trace;
 EVALUATE '2.3 Multiple CTEs: UNION ALL with Mixed Correlated and Uncorrelated Subqueries';
 set trace on;
 
-WITH cte_a AS (SELECT * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
-     cte_b AS (SELECT * FROM tbl_a WHERE i >= 50 ORDER BY 1 LIMIT 20)
+WITH cte_a AS (SELECT /*+ MATERIALIZE */ * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
+     cte_b AS (SELECT /*+ MATERIALIZE */ * FROM tbl_a WHERE i >= 50 ORDER BY 1 LIMIT 20)
 (SELECT * FROM cte_a WHERE j < 20 ORDER BY i)
 UNION ALL
 (SELECT * FROM cte_b WHERE EXISTS (SELECT 1 FROM tbl_a WHERE tbl_a.k = cte_b.k) ORDER BY i);
@@ -252,8 +252,8 @@ show trace;
 EVALUATE '2.4 Multiple CTEs: UNION with Mixed Correlated and Uncorrelated Subqueries';
 set trace on;
 
-WITH cte_a AS (SELECT * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
-     cte_b AS (SELECT * FROM tbl_a WHERE i >= 50 ORDER BY 1 LIMIT 20)
+WITH cte_a AS (SELECT /*+ MATERIALIZE */ * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
+     cte_b AS (SELECT /*+ MATERIALIZE */ * FROM tbl_a WHERE i >= 50 ORDER BY 1 LIMIT 20)
 (SELECT * FROM cte_a WHERE j < 20 ORDER BY i)
 UNION
 (SELECT * FROM cte_b WHERE EXISTS (SELECT 1 FROM tbl_a WHERE tbl_a.k = cte_b.k) ORDER BY i);
@@ -264,8 +264,8 @@ show trace;
 EVALUATE '2.5 Multiple CTEs: DIFFERENCE with Mixed Correlated and Uncorrelated Subqueries';
 set trace on;
 
-WITH cte_a AS (SELECT * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
-     cte_b AS (SELECT * FROM tbl_a WHERE i >= 50 ORDER BY 1 LIMIT 20)
+WITH cte_a AS (SELECT /*+ MATERIALIZE */ * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
+     cte_b AS (SELECT /*+ MATERIALIZE */ * FROM tbl_a WHERE i >= 50 ORDER BY 1 LIMIT 20)
 (SELECT * FROM cte_a WHERE j < 20 ORDER BY i)
 DIFFERENCE
 (SELECT * FROM cte_b WHERE EXISTS (SELECT 1 FROM tbl_a WHERE tbl_a.k = cte_b.k) ORDER BY i);
@@ -276,8 +276,8 @@ show trace;
 EVALUATE '2.6 Multiple CTEs: DIFFERENCE ALL with Mixed Correlated and Uncorrelated Subqueries';
 set trace on;
 
-WITH cte_a AS (SELECT * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
-     cte_b AS (SELECT * FROM tbl_a WHERE i >= 50 ORDER BY 1 LIMIT 20)
+WITH cte_a AS (SELECT /*+ MATERIALIZE */ * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
+     cte_b AS (SELECT /*+ MATERIALIZE */ * FROM tbl_a WHERE i >= 50 ORDER BY 1 LIMIT 20)
 (SELECT * FROM cte_a WHERE j < 20 ORDER BY i)
 DIFFERENCE ALL
 (SELECT * FROM cte_b WHERE EXISTS (SELECT 1 FROM tbl_a WHERE tbl_a.k = cte_b.k) ORDER BY i);
@@ -288,8 +288,8 @@ show trace;
 EVALUATE '2.7 Multiple CTEs: INTERSECTION with Mixed Correlated and Uncorrelated Subqueries';
 set trace on;
 
-WITH cte_a AS (SELECT * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
-     cte_b AS (SELECT * FROM tbl_a WHERE i >= 50 ORDER BY 1 LIMIT 20)
+WITH cte_a AS (SELECT /*+ MATERIALIZE */ * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
+     cte_b AS (SELECT /*+ MATERIALIZE */ * FROM tbl_a WHERE i >= 50 ORDER BY 1 LIMIT 20)
 (SELECT * FROM cte_a WHERE j < 20 ORDER BY i)
 INTERSECTION
 (SELECT * FROM cte_b WHERE EXISTS (SELECT 1 FROM tbl_a WHERE tbl_a.k = cte_b.k) ORDER BY i);
@@ -300,8 +300,8 @@ show trace;
 EVALUATE '2.8 Multiple CTEs: INTERSECTION ALL with Mixed Correlated and Uncorrelated Subqueries';
 set trace on;
 
-WITH cte_a AS (SELECT * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
-     cte_b AS (SELECT * FROM tbl_a WHERE i >= 50 ORDER BY 1 LIMIT 20)
+WITH cte_a AS (SELECT /*+ MATERIALIZE */ * FROM tbl_a WHERE i < 50 ORDER BY 1 LIMIT 20),
+     cte_b AS (SELECT /*+ MATERIALIZE */ * FROM tbl_a WHERE i >= 50 ORDER BY 1 LIMIT 20)
 (SELECT * FROM cte_a WHERE j < 20 ORDER BY i)
 INTERSECTION ALL
 (SELECT * FROM cte_b WHERE EXISTS (SELECT 1 FROM tbl_a WHERE tbl_a.k = cte_b.k) ORDER BY i);

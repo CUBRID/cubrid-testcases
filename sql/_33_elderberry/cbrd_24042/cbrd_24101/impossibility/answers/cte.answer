@@ -26,6 +26,6 @@ nl-join (inner join)
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select a.col_a from t_a a, t_b b where (a.col_a=b.col_a) and (inst_num()<= ?:? ) and (b.col_a> ?:? )
+select /*+ MATERIALIZE */ a.col_a from t_a a, t_b b where (a.col_a=b.col_a) and (inst_num()<= ?:? ) and (b.col_a> ?:? )
 ===================================================
 0

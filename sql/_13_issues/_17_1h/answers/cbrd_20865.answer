@@ -57,12 +57,12 @@ Query Plan:
   SORT (group by)
     TABLE SCAN (__t?)
 
-  rewritten query: (select [__t?].d, max([__t?].b) from [dba.t?] [__t?] group by [__t?].d)
+  rewritten query: select /*+ MATERIALIZE */ [__t?].d, max([__t?].b) from [dba.t?] [__t?] group by [__t?].d
 
   SORT (order by)
-    TABLE SCAN (cte_?I?nizhY)
+    TABLE SCAN (dba.cte_?I?nizhY)
 
-  rewritten query: select cte_?I?nizhY.d, cte_?I?nizhY.[max([__t?].b)] from (select [__t?].d, max([__t?].b) from [dba.t?] [__t?] group by [__t?].d) cte_?I?nizhY (d, [max([__t?].b)]) order by ?, ?
+  rewritten query: with cte_?I?nizhY(d, [max([__t?].b)]) as (select /*+ MATERIALIZE */ [__t?].d, max([__t?].b) from [dba.t?] [__t?] group by [__t?].d)select [dba.cte_?I?nizhY].d, [dba.cte_?I?nizhY].[max([__t?].b)] from [dba.cte_?I?nizhY] [dba.cte_?I?nizhY] order by ?, ?
 
 
 Trace Statistics:
@@ -70,9 +70,10 @@ Trace Statistics:
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
     SUBQUERY (uncorrelated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
      
 
 ===================================================
@@ -83,25 +84,24 @@ count(*)
 trace    
 
 Query Plan:
-  SORT (order by)
-    SORT (group by)
-      TABLE SCAN (__t?)
+  SORT (group by)
+    TABLE SCAN (__t?)
 
-  rewritten query: (select ?, [__t?].d from [dba.t?] [__t?] group by [__t?].d order by ?)
+  rewritten query: select /*+ MATERIALIZE */ [__t?].d, max([__t?].b) from [dba.t?] [__t?] group by [__t?].d
 
-  TABLE SCAN (cte_?I?nizhY)
+  TABLE SCAN (dba.cte_?I?nizhY)
 
-  rewritten query: select count(*) from (select ?, [__t?].d from [dba.t?] [__t?] group by [__t?].d order by ?) cte_?I?nizhY (?, d)
+  rewritten query: with cte_?I?nizhY(d, [max([__t?].b)]) as (select /*+ MATERIALIZE */ [__t?].d, max([__t?].b) from [dba.t?] [__t?] group by [__t?].d)select count(*) from [dba.cte_?I?nizhY] [dba.cte_?I?nizhY]
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
-        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
      
 
 ===================================================
@@ -112,32 +112,30 @@ count(*)
 trace    
 
 Query Plan:
-  SORT (order by)
-    SORT (group by)
-      TABLE SCAN (__t?)
+  SORT (group by)
+    TABLE SCAN (__t?)
 
-  rewritten query: (select ?, [__t?].d from [dba.t?] [__t?] group by [__t?].d order by ?)
+  rewritten query: select /*+ MATERIALIZE */ [__t?].d, max([__t?].b) from [dba.t?] [__t?] group by [__t?].d
 
-  TABLE SCAN (cte_?I?nizhY)
+  TABLE SCAN (dba.cte_?I?nizhY)
 
-  rewritten query: (select count(*) from (select ?, [__t?].d from [dba.t?] [__t?] group by [__t?].d order by ?) cte_?I?nizhY (?, d))
+  rewritten query: (select count(*) from [dba.cte_?I?nizhY] [dba.cte_?I?nizhY])
 
   TABLE SCAN (cte_?)
 
-  rewritten query: select cte_?.[count(*)] from (select count(*) from (select ?, [__t?].d from [dba.t?] [__t?] group by [__t?].d order by ?) cte_?I?nizhY (?, d)) cte_? ([count(*)])
+  rewritten query: with cte_?I?nizhY(d, [max([__t?].b)]) as (select /*+ MATERIALIZE */ [__t?].d, max([__t?].b) from [dba.t?] [__t?] group by [__t?].d)select cte_?.[count(*)] from (select count(*) from [dba.cte_?I?nizhY] [dba.cte_?I?nizhY]) cte_? ([count(*)])
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        SUBQUERY (uncorrelated)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
-            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================

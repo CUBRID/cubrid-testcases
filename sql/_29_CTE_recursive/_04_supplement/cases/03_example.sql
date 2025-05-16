@@ -63,30 +63,30 @@ update statistics on all classes;
 
 WITH cte_LKITbOKfi AS 
 (
-select /*+ recompile INDEX_SS */ i,j,k,l from t where j >= 9
+select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where j >= 9
 )
 ,cte_2HIavrDHB AS 
 (
-select /*+ recompile INDEX_SS */ i,j,k,l from t where j >= 9
+select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where j >= 9
 )
 ,
 cte_MmPLfaJHi AS 
 (
-select /*+ recompile INDEX_SS */ i,j,k,l from t where j >= 9
+select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where j >= 9
 )
 select * from cte_LKITbOKfi,cte_2HIavrDHB,cte_MmPLfaJHi order by 1 limit 10;
 WITH cte_5CF0gJbeT AS 
 (
-select /*+ recompile INDEX_SS */ i,j,k,l from t where j >= 9 and k > 4000
+select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where j >= 9 and k > 4000
 )
 ,cte_WEwSnJA3L AS 
 (
-select /*+ recompile INDEX_SS */ i,j,k,l from t where j >= 9 and k > 4000
+select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where j >= 9 and k > 4000
 )
 ,
 cte_aub0aLIzL AS 
 (
-select /*+ recompile INDEX_SS */ i,j,k,l from t where j >= 9 and k > 4000
+select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where j >= 9 and k > 4000
 )
 select * from cte_5CF0gJbeT,cte_WEwSnJA3L,cte_aub0aLIzL order by 1 limit 10;
 WITH cte_r0qnBAIpz AS 
@@ -119,16 +119,16 @@ select /*+ recompile INDEX_SS */ i,j,k,l from t where (j = 2 or j = 3) and l bet
 select * from cte_Z9rP4M8V3,cte_iCFuHl37Q,cte_6SNnS5HNA order by 1 limit 10;
 WITH cte_vtAsbWpBu AS 
 (
-select /*+ recompile INDEX_SS */ i,j,k,l from t where (j = 2 or j = 3)
+select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where (j = 2 or j = 3)
 )
 ,cte_C7bDlr3hP AS 
 (
-select /*+ recompile INDEX_SS */ i,j,k,l from t where (j = 2 or j = 3)
+select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where (j = 2 or j = 3)
 )
 ,
 cte_gamBmQ3L1 AS 
 (
-select /*+ recompile INDEX_SS */ i,j,k,l from t where (j = 2 or j = 3)
+select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where (j = 2 or j = 3)
 )
 select * from cte_vtAsbWpBu,cte_C7bDlr3hP,cte_gamBmQ3L1 order by 1 limit 10;
 

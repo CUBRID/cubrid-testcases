@@ -23,7 +23,7 @@ FROM   t_a a,
         col_b col_b
         FROM  t_b
         WHERE col_a > 1
-        SELECT *
+        SELECT /*+ MATERIALIZE */ *
         FROM t) b
 WHERE  a.col_a = b.col_a limit 1;
 DROP TABLE t_a, t_b;

@@ -306,7 +306,7 @@ deallocate prepare q;
 prepare q from '
 with b as
   (
-    select /*+ no_merge ordered */ bb.col_a, bb.col_b, bb.col_c from tbl_b as bb where bb.col_c = ? and bb.col_c = ?
+    select /*+ no_merge ordered materialize */ bb.col_a, bb.col_b, bb.col_c from tbl_b as bb where bb.col_c = ? and bb.col_c = ?
   )
 select /*+ recompile */
   count (*)
@@ -321,7 +321,7 @@ deallocate prepare q;
 prepare q from '
 with b as
   (
-    select /*+ no_merge ordered */ bb.col_a, bb.col_b, bb.col_c from tbl_b as bb where bb.col_c = ? and bb.col_c = ?
+    select /*+ no_merge ordered materialize */ bb.col_a, bb.col_b, bb.col_c from tbl_b as bb where bb.col_c = ? and bb.col_c = ?
   )
 select /*+ recompile */
   count (*)
