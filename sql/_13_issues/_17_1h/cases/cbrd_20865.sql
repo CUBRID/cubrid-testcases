@@ -65,7 +65,7 @@ WITH cte_6I00nizhY AS
 (
 select /*+ MATERIALIZE */ d, max(b) from (select * from t1 order by 1,2,3,4) group by d
 )
-, cte_1110 as (select count(*) from cte_6I00nizhY) select * from cte_1110;
+, cte_1110 as (select /*+ MATERIALIZE */ count(*) from cte_6I00nizhY) select * from cte_1110;
 
 show trace;
 drop table if exists t1;

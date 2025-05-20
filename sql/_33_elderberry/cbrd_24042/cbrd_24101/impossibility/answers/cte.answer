@@ -13,6 +13,19 @@ col_a
 2     
 
 Query plan:
+sscan
+    class: t_b node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ MATERIALIZE */ t_b.col_a, t_b.col_b from t_b t_b where (t_b.col_a> ?:? )
+Query plan:
+sscan
+    simple CTE:t node[?]
+    cost:  ? card ?
+Query stmt:
+(with t(col_a, col_b) as (select /*+ MATERIALIZE */ t_b.col_a, t_b.col_b from t_b t_b where (t_b.col_a> ?:? ))select t.col_a, t.col_b from t t)
+Query plan:
 nl-join (inner join)
     edge:  term[?]
     outer: sscan
@@ -21,11 +34,11 @@ nl-join (inner join)
                cost:  ? card ?
     inner: sscan
                class: b node[?]
-               sargs: term[?] AND term[?]
+               sargs: term[?]
                cost:  ? card ?
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select /*+ MATERIALIZE */ a.col_a from t_a a, t_b b where (a.col_a=b.col_a) and (inst_num()<= ?:? ) and (b.col_a> ?:? )
+select a.col_a from t_a a, (with t(col_a, col_b) as (select /*+ MATERIALIZE */ t_b.col_a, t_b.col_b from t_b t_b where (t_b.col_a> ?:? ))select t.col_a, t.col_b from t t) b (col_a, col_b) where (a.col_a=b.col_a) and (inst_num()<= ?:? )
 ===================================================
 0
