@@ -17,16 +17,20 @@ select trim ('c' FROM cast (s1 as string collate utf8_en_ci)) from t2 order by 1
 -- late binding
 prepare s from 'select trim(? from s1 ) from t1 order by 1';
 execute s using 'c';
+deallocate prepare s;
 
 prepare s from 'select trim( ? from s1 + ?) from t1 order by 1';
 execute s using 'c', 'A';
+deallocate prepare s;
 
 prepare s from 'select trim(? from s1 + ?) from t2 order by 1';
 execute s using 'c','A';
+deallocate prepare s;
 
 
 prepare s from 'select trim( ? from cast ((s1 + ?) as string collate utf8_en_ci)) from t2 order by 1';
 execute s using 'c','A';
+deallocate prepare s;
 
 
 drop table t1;

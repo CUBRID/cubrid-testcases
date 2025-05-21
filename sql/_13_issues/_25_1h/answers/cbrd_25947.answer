@@ -1,0 +1,222 @@
+===================================================
+0
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+4
+===================================================
+    
+1. Main query: rownum replaced by orderby_num() when ORDER BY is added     
+
+===================================================
+rownum    
+1     
+2     
+3     
+4     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select (orderby_num()), [__t?].c? from t? [__t?] order by ? desc 
+===================================================
+    
+2. Main query: rownum remains unchanged when no ORDER BY is added in the main query     
+
+===================================================
+c1    
+1     
+2     
+3     
+4     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct rownum from t? [__t?])
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: t? node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: av? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select t?.c? from t? t?, (select distinct rownum from t? [__t?]) av? (av_?) where t?.c?=av?.av_?
+===================================================
+    
+3. Subquery: orderby_num() replaced by rownum when ORDER BY is removed from subquery     
+
+===================================================
+c1    
+1     
+2     
+3     
+4     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct (inst_num()) from t? [__t?])
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: t? node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: av? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select t?.c? from t? t?, (select distinct (inst_num()) from t? [__t?]) av? (av_?) where t?.c?=av?.av_?
+===================================================
+    
+4. Subquery: orderby_num() remains unchanged when ORDER BY is retained in subquery     
+
+===================================================
+orderby_num    
+1     
+2     
+3     
+4     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select (orderby_num()), [__t?].c? from t? [__t?] order by ? desc 
+===================================================
+    
+5. Subquery with LIMIT: view merge disabled and ordering preserved     
+
+===================================================
+c1    
+3     
+4     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+(select t?.c?, t?.c? from t? t? order by ? desc  for orderby_num()<= ?:? )
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct [__t?].c? from (select t?.c?, t?.c? from t? t? order by ? desc  for orderby_num()<= ?:? ) [__t?] (c?, ha_?))
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: t? node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: av? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select t?.c? from t? t?, (select distinct [__t?].c? from (select t?.c?, t?.c? from t? t? order by ? desc  for orderby_num()<= ?:? ) [__t?] (c?, ha_?)) av? (av_?) where t?.c?=av?.av_?
+===================================================
+    
+6. Main query with no_merge     
+
+===================================================
+rownum    
+1     
+2     
+3     
+4     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select /*+ NO_MERGE */ t?.c? from t? t? order by ?)
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select rownum from (select /*+ NO_MERGE */ t?.c? from t? t? order by ?) [__t?] (c?)
+===================================================
+    
+7. in-list, subquery contains no_merge     
+
+===================================================
+c1    c2    
+1     1     
+2     2     
+3     3     
+4     4     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select /*+ NO_MERGE */ t?.c? from t? t? order by ?)
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct rownum from (select /*+ NO_MERGE */ t?.c? from t? t? order by ?) [__t?] (c?))
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: t? node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: av? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select t?.c?, t?.c? from t? t?, (select distinct rownum from (select /*+ NO_MERGE */ t?.c? from t? t? order by ?) [__t?] (c?)) av? (av_?) where t?.c?=av?.av_?
+===================================================
+0

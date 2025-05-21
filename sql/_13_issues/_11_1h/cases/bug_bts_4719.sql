@@ -13,15 +13,19 @@ select /*+ recompile */ a from t where a like '1234567890ABCDEF%';
 
 prepare stmt from 'select /*+ recompile */ a from t where a like ?+''%''';
 execute stmt using '1234567890ABCDEF';
+drop prepare stmt;
 
 prepare stmt from 'select /*+ recompile */ a from t where a not like ?+''%''';
 execute stmt using '1234567890ABCDEF';
+drop prepare stmt;
 
 prepare stmt from 'select /*+ recompile */ a from t where a like cast ((?+''%'') as varchar(11))';
 execute stmt using '1234567890ABCDEF';
+drop prepare stmt;
 
 prepare stmt from 'select /*+ recompile */ a from t where a like cast ((?+''%'') as varchar(10))';
 execute stmt using '1234567890ABCDEF';
+drop prepare stmt;
 
 drop t;
 
@@ -36,18 +40,23 @@ select /*+ recompile */ a from t2 where a like '1234567890ABCDEF%';
 
 prepare stmt from 'select /*+ recompile */ a from t2 where a like ?+''%''';
 execute stmt using '1234567890ABCDEF';
+drop prepare stmt;
 
 prepare stmt from 'select /*+ recompile */ a from t2 where a not like ?+''%''';
 execute stmt using '1234567890ABCDEF';
+drop prepare stmt;
 
 prepare stmt from 'select /*+ recompile */ a from t2 where a like cast ((?+''%'') as char(11))';
 execute stmt using '1234567890ABCDEF';
+drop prepare stmt;
 
 prepare stmt from 'select /*+ recompile */ a from t2 where a like cast ((?+''%'') as char(11))';
 execute stmt using '123456789';
+drop prepare stmt;
 
 prepare stmt from 'select /*+ recompile */ a from t2 where a like cast ((?+''%'') as varchar(11))';
 execute stmt using '1234567890ABCDEF';
+drop prepare stmt;
 
 prepare stmt from 'select /*+ recompile */ a from t2 where a like cast ((?+''%'') as varchar(11))';
 execute stmt using '123456789';

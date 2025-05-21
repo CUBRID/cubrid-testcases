@@ -5,7 +5,11 @@
 create or replace procedure t () as
 begin
     dbms_output.put_line(POSITION(NULL)); -- param NULL parse error for first param
-    -- parse error POSITON() of IN keword
+end;
+
+-- [CBRD-25866] fixed : parse error POSITON() of IN keword
+create or replace procedure t () as
+begin
     dbms_output.put_line(POSITION('5' IN '12345abcdeabcde'));
     dbms_output.put_line(POSITION(5 IN '12345abcdeabcde'));
     dbms_output.put_line(POSITION(NULL IN '12345abcdeabcde'));

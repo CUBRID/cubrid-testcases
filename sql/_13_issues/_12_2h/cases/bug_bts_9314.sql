@@ -7,6 +7,7 @@ select a,b from foo where a=1 and ((b=10 and c<100) or b>10);
 
 prepare stmt from 'select a,b from foo where a=1 and ((b=? and c<?) or b>?)';
 execute stmt using 10,100,10;
+deallocate prepare stmt;
 
 
 select * from foo where a>1 or ((b=10 and c<100) or b>10);

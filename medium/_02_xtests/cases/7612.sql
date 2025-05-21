@@ -75,9 +75,9 @@ create class test_class
         attr_sequence_object    sequence_of(obj_class)
 );
 create class ins_test as subclass of test_class(
-        long_char char(16384),
-        long_char1 char(16384),
-        long_char2 char(16384),
+        long_char char(2048),
+        long_char1 char(2048),
+        long_char2 char(2048),
         long_varchar varchar(16384),
         long_nchar nchar(8192),
         long_varnchar nchar varying(8192),
@@ -101,14 +101,14 @@ drop class test_class;
 commit work;
 create class test1 
 (
-    col1 char(8192),
-    col2 char(8192),
-    col3 char(8192),
-    col4 char(8192),
-    col5 char(8192),
-    col6 char(8192),
-    col7 char(8192),
-    col8 char(8192)
+    col1 char(2048),
+    col2 char(2048),
+    col3 char(2048),
+    col4 char(2048),
+    col5 char(2048),
+    col6 char(2048),
+    col7 char(2048),
+    col8 char(2048)
 );
 insert into test1 (col1) values ('test');
 select * from test1;

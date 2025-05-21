@@ -1,4 +1,4 @@
---[er]test octet_length with timestamp as parameter
+--test octet_length with timestamp as parameter
 create class tb(
 		col1 timestamp
 );

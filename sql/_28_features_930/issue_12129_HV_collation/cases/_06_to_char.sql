@@ -12,7 +12,7 @@ execute s using 'a','a';
 
 set names euckr;
 execute s using 'a','a';
-
+deallocate prepare s;
 
 set names iso88591;
 

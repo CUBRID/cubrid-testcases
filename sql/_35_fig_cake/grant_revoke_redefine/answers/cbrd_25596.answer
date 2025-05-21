@@ -1,0 +1,116 @@
+===================================================
+0
+===================================================
+    
+case 1: Check if the is_grantable value in the db_auth catalog changes     
+
+===================================================
+0
+===================================================
+Error:-493
+===================================================
+    
+u1 grant to dba.vtbl     
+
+===================================================
+Error:-494
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+
+===================================================
+    
+u1 re-grant to dba.vtbl     
+
+===================================================
+Error:-494
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+
+===================================================
+owner.name    grants    
+U1          
+
+===================================================
+    
+u1 grant to dba.vtbl (with grant option)     
+
+===================================================
+Error:-494
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+
+===================================================
+owner.name    grants    
+U1          
+
+===================================================
+    
+u1 re-grant to dba.vtbl     
+
+===================================================
+Error:-494
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+
+===================================================
+owner.name    grants    
+U1          
+
+===================================================
+    
+test done and init     
+
+===================================================
+Error:-494
+===================================================
+Error:-494
+===================================================
+    
+case 2: If two or more permissions are granted, Check whether the is_grantable value in the db_auth catalog has changed     
+
+===================================================
+0
+===================================================
+    
+u1 grant to dba.vtbl (with grant option)     
+
+===================================================
+0
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+DBA     U1     CLASS     vtbl     DBA     INSERT     NO     
+DBA     U1     CLASS     vtbl     DBA     SELECT     YES     
+
+===================================================
+owner.name    grants    
+U1     null     
+
+===================================================
+    
+u1 re-grant to dba.vtbl     
+
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+DBA     U1     CLASS     vtbl     DBA     SELECT     YES     
+DBA     U1     CLASS     vtbl     DBA     INSERT     NO     
+
+===================================================
+owner.name    grants    
+U1     null     
+
+===================================================
+    
+test done and init     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

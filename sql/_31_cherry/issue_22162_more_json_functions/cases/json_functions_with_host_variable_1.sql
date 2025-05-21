@@ -22,6 +22,7 @@ execute st using @b5_True;
 execute st using @n1_null;
 execute st using @n1_NULL;
 execute st using @empty_str;
+deallocate prepare st;
 
 prepare st from 'select json_length(?);';
 execute st using @jdoc;
@@ -37,6 +38,7 @@ execute st using @b5_True;
 execute st using @n1_null;
 execute st using @n1_NULL;
 execute st using @empty_str;
+deallocate prepare st;
 
 prepare st from 'select json_keys(?);';
 execute st using @jdoc;
@@ -52,6 +54,7 @@ execute st using @b5_True;
 execute st using @n1_null;
 execute st using @n1_NULL;
 execute st using @empty_str;
+deallocate prepare st;
 
 prepare st from 'select json_get_all_paths(?);';
 execute st using @jdoc;
@@ -67,6 +70,7 @@ execute st using @b5_True;
 execute st using @n1_null;
 execute st using @n1_NULL;
 execute st using @empty_str;
+deallocate prepare st;
 
 prepare st from 'select json_quote(?);';
 execute st using @jdoc;
@@ -83,6 +87,7 @@ execute st using @b5_True;
 execute st using @n1_null;
 execute st using @n1_NULL;
 execute st using @empty_str;
+deallocate prepare st;
 
 prepare st from 'select json_unquote(?);';
 execute st using @jdoc;
@@ -99,6 +104,7 @@ execute st using @b5_True;
 execute st using @empty_str;
 execute st using @n1_null;
 execute st using @n1_NULL;
+deallocate prepare st;
 
 prepare st from 'select json_pretty(?);';
 execute st using @jdoc;
@@ -114,6 +120,7 @@ execute st using @b5_True;
 execute st using @n1_null;
 execute st using @n1_NULL;
 execute st using @empty_str;
+deallocate prepare st;
 
 prepare st from 'select json_valid(?);';
 execute st using @jdoc;
@@ -129,6 +136,7 @@ execute st using @b5_True;
 execute st using @n1_null;
 execute st using @n1_NULL;
 execute st using @empty_str;
+deallocate prepare st;
 
 prepare st from 'select json_type(?);';
 execute st using @jdoc;
@@ -144,6 +152,7 @@ execute st using @b5_True;
 execute st using @n1_null;
 execute st using @n1_NULL;
 execute st using @empty_str;
+deallocate prepare st;
 
 prepare st from 'select json_arrayagg(?);';
 execute st using @jdoc;
@@ -159,6 +168,7 @@ execute st using @b5_True;
 execute st using @n1_null;
 execute st using @n1_NULL;
 execute st using @empty_str;
+deallocate prepare st;
 
 prepare st from 'select * from json_table(?, ''$'' 
 columns(

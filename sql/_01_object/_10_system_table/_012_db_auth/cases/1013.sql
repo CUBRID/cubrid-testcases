@@ -9,7 +9,7 @@ grant alter on test_class1 to test_user;
 
 
 --Can't query any record
-select grantor_name, grantee_name, class_name from db_auth
+select grantor_name, grantee_name, object_name from db_auth
 where  grantee_name ='test_user';
 
 drop user test_user;

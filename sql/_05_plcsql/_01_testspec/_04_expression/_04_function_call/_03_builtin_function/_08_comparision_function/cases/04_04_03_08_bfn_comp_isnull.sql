@@ -1,10 +1,10 @@
 --+ server-message on
 
 -- normal: basic usage of a builtin function call
-
+-- Verification for CBRD-25168
 create or replace procedure t () as
 begin
-    -- parse error ISNULL()
+    
     dbms_output.put_line(ISNULL(NULL));
     dbms_output.put_line(ISNULL(DECODE('a','a',NULL,'a')));
 end;

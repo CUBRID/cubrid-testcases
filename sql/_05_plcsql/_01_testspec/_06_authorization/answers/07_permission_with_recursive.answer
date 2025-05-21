@@ -1,0 +1,90 @@
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+unique_name    sp_name    owner.name    
+dba.fibonacci     fibonacci     DBA     
+public.fibonacci     fibonacci     PUBLIC     
+
+
+===================================================
+name    owner.name    scode    substr(scode, 0, 6)    
+Func_FIBONACCI     DBA     CREATE OR REPLACE FUNCTION dba.fibonacci(n INTEGER) RETURN INTEGER
+IS
+invalid_input EXCEPTION;
+BEGIN
+IF n <= 0 THEN
+RAISE invalid_input;
+END IF;
+IF n = 1 OR n = 2 THEN
+RETURN 1;
+ELSE
+RETURN fibonacci(n-1) + fibonacci(n-2);
+END IF;
+EXCEPTION
+WHEN invalid_input THEN
+DBMS_OUTPUT.put_line('invalid input: ' || n);
+RETURN -1;
+WHEN OTHERS THEN
+DBMS_OUTPUT.put_line('unknown exception');
+RETURN -1;
+END     CREATE     
+Func_FIBONACCI     PUBLIC     CREATE OR REPLACE FUNCTION public.fibonacci(n INTEGER) RETURN INTEGER
+IS
+invalid_input EXCEPTION;
+BEGIN
+IF n <= 0 THEN
+RAISE invalid_input;
+END IF;
+IF n = 1 OR n = 2 THEN
+RETURN 1;
+ELSE
+RETURN dba.fibonacci(n-1) + dba.fibonacci(n-2);
+END IF;
+EXCEPTION
+WHEN invalid_input THEN
+DBMS_OUTPUT.put_line('invalid input: ' || n);
+RETURN -1;
+WHEN OTHERS THEN
+DBMS_OUTPUT.put_line('unknown exception');
+RETURN -1;
+END     CREATE     
+
+
+===================================================
+dba fibonacci: succ    
+2     
+
+
+===================================================
+public fibonacci: fail    
+-1     
+
+
+unknown exception
+===================================================
+0
+
+===================================================
+public fibonacci: succ    
+2     
+
+
+===================================================
+0
+
+===================================================
+public fibonacci: fail    
+-1     
+
+
+unknown exception
+===================================================
+0
+
+===================================================
+0
+

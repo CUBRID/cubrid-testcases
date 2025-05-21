@@ -23,6 +23,15 @@ i    j    i    j    k    a    b
 
 Query plan:
 temp(order by)
+    subplan: sscan
+                 class: v? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select v?.i, v?.j, (v?.i+v?.j) from foo v? order by ?)
+Query plan:
+temp(order by)
     subplan: nl-join (cross join)
                  outer: nl-join (cross join)
                             outer: sscan
@@ -39,7 +48,7 @@ temp(order by)
     sort:  ? asc, ? desc, ? asc, ? asc, ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select foo.i, foo.j, v?.i, v?.j, (v?.i+v?.j), jt.a, jt.b from foo foo, foo v?, (json_table ('[ {"a": ?, "b": [?,?]}, {"a": ?, "b": [?,?]}, {"a":?}]', '$[*]' columns (a integer PATH '$."a"' NULL ON EMPTY NULL ON ERROR, nested path '$."b"[*]' columns (b integer PATH '$' NULL ON EMPTY NULL ON ERROR ) )) as jt) order by ?, ? desc , ?, ?, ?, ?, ? for orderby_num()<= ?:? 
+select foo.i, foo.j, v?.i, v?.j, v?.k, jt.a, jt.b from foo foo, (select v?.i, v?.j, (v?.i+v?.j) from foo v? order by ?) v? (i, j, k), (json_table ('[ {"a": ?, "b": [?,?]}, {"a": ?, "b": [?,?]}, {"a":?}]', '$[*]' columns (a integer PATH '$."a"' NULL ON EMPTY NULL ON ERROR, nested path '$."b"[*]' columns (b integer PATH '$' NULL ON EMPTY NULL ON ERROR ) )) as jt) order by ?, ? desc , ?, ?, ?, ?, ? for orderby_num()<= ?:? 
 ===================================================
 count(foo.i)    group_concat(distinct jt.a)    b    
 9     3     null     

@@ -6,7 +6,7 @@ create table t (name varchar(100020), job varchar(100020));
 
 create index idx on t(name);
 
-insert into t values(repeat('Tom',300),repeat('account',300));
+insert into t values(repeat('Tom',300),repeat('account',200));
 
 select /*+ select_btree_node_info(idx) */ bt_node_key_count,bt_node_first_key,bt_node_last_key  from t; 
 
@@ -23,11 +23,11 @@ drop table t;
 
 drop table if exists t1;
 
-create table t1 (name varchar(100020), job char(100020),i1 int,primary key (name,job));
+create table t1 (name varchar(100020), job char(2048),i1 int,primary key (name,job));
 
-insert into t1 values(repeat('Tom',300),repeat('account',300),1);
+insert into t1 values(repeat('Tom',300),repeat('account',200),1);
 
-insert into t1 values(repeat('Tom',200),repeat('account',200),2);
+insert into t1 values(repeat('Tom',200),repeat('account',100),2);
 
 select /*+ select_btree_node_info(pk_t1_name_job) */ bt_node_key_count,bt_node_first_key,bt_node_last_key  from t1;
 
@@ -44,7 +44,7 @@ insert into t2 values(1,repeat('a',300));
 
 insert into t2 values(11,repeat('test',300));
 
-insert into t2 values(11,repeat('master',300));
+insert into t2 values(11,repeat('master',200));
 
 create index idx_t2 on t2(b);
 

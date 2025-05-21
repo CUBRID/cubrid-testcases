@@ -42,19 +42,19 @@ select /*+ RECOMPILE */* from t1 where BIT_LENGTH(d)=-1 using index i_t1_a2n(+);
 create index i_t1_a2m on t1(BIT_LENGTH(e));
 --TEST Create successfully 
 create index i_t1_a2l on t1(BIT_LENGTH(f));
---TEST Create failed
+--TEST Create successfully
 create index i_t1_a2k on t1(BIT_LENGTH(g));
---TEST Create failed
+--TEST Create successfully
 create index i_t1_a2j on t1(BIT_LENGTH(h));
---TEST Create failed
+--TEST Create successfully
 create index i_t1_a2i on t1(BIT_LENGTH(i));
---TEST Create failed
+--TEST Create successfully
 create index i_t1_a2h on t1(BIT_LENGTH(j));
---TEST Create failed
+--TEST Create successfully
 create index i_t1_a2g on t1(BIT_LENGTH(k));
---TEST Create failed
+--TEST Create successfully
 create index i_t1_a2f on t1(BIT_LENGTH(l));
---TEST Create failed
+--TEST Create successfully
 create index i_t1_a2e on t1(BIT_LENGTH(m));
 --TEST Create successfully 
 create index i_t1_a2d on t1(BIT_LENGTH(n));

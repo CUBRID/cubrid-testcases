@@ -21,6 +21,7 @@ SELECT /*+ recompile */ 1 c, T.* FROM   ( WITH cte AS (SELECT col_a, col_b FROM 
 SELECT tbl_a.* FROM  tbl_a INNER JOIN cte ON tbl_a.col_a = cte.col_a LEFT JOIN tbl_b ON tbl_a.col_b = tbl_b.col_b ) t
 ';
 execute q using 'KOR-','%';
+deallocate prepare q;
 
 --@queryplan
 SELECT /*+ recompile */ 1 d, T.* FROM   (WITH cte AS (SELECT col_a, col_b FROM   tbl_a  WHERE col_a LIKE Concat ('KOR-', NULL, '%'))
@@ -37,6 +38,7 @@ SELECT /*+ recompile */ 1 f, T.* FROM   (WITH cte AS (SELECT col_a, col_b FROM  
 SELECT tbl_b.* FROM  tbl_b INNER JOIN cte ON tbl_b.col_a = cte.col_a LEFT JOIN tbl_a ON tbl_a.col_b = cte.col_b) t
 ';
 execute q using 'KOR-','%';
+deallocate prepare q;
 
 --@queryplan
 SELECT /*+ recompile */ 1 g, T.* FROM   (WITH cte AS (SELECT col_a, col_b FROM   tbl_a  WHERE replace(col_b, 'abc', NULL) = 'pabc')

@@ -67,21 +67,28 @@ select col1, col2, var_pop(col1) over(order by col2) from var_pop_limit order by
 --TEST: over(partition by.. order by ..) clause + order by
 prepare st from 'select *, var_pop(unique col2) over(partition by col3 order by col1) from var_pop_limit order by col3 limit ?';
 execute st using 10;
+deallocate prepare st;
 prepare st from 'select *, var_pop(col1) over(partition by col4 order by col4, col1 desc) var_pop from var_pop_limit order by col1 limit ?';
 execute st using 20;
+deallocate prepare st;
 prepare st from 'select col1, col3, col4, var_pop(distinct col2) over(partition by col4 order by col3, col2, col1 desc) var_pop from var_pop_limit order by 1, 2, 3, 4limit ?';
 execute st using 1;
+deallocate prepare st;
 prepare st from 'select col3, col4, col2, var_pop(all col1) over(partition by col3 order by col4) from var_pop_limit order by 1, 2, 3, 4 limit ?';
 execute st using 5;
+deallocate prepare st;
 prepare st from 'select col3, col4, col5, var_pop(distinctrow col2) over(partition by col4 order by col3, col2) var_pop_limit order by 1, 2, 4 desc, 3 asc limit ?';
 execute st using -1;
+deallocate prepare st;
 
 
 --TEST: over(partition by.. order by ..) clause + order by ... having ...
 prepare st from 'select col1, col2, var_pop(col1) over(partition by col1 order by col2) from var_pop_limit group by col1 having col1 > 500 order by col2 desc, col1 limit ?';
 execute st using 1;
+deallocate prepare st;
 prepare st from 'select col5, col2, col4, var_pop(all col2) over(partition by col4 order by col4, col2, col5) from var_pop_limit group by col4 having right(clob_to_char(col5), 4) =  '.com' order by 4, 3 desc, 2 asc, 1 limit ?';
 execute st using 15;
+deallocate prepare st;
 prepare st from 'select col1, col2, col3, col4, col5, var_pop(col1) over(partition by col3 order by col2 desc, col4, col5) from var_pop_limit group by col1, col2, col3, col4 having col2 in ('cubrid', 'mysql') and right(clob_to_char(col5), 12) = '@domainname.com' order by col3 desc, col2 asc, 6, 1 limit ?';
 execute st using 30;
 

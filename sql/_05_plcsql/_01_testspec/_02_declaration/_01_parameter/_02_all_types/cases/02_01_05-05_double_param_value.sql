@@ -2,9 +2,7 @@
 
 --A test case that delivers values exceeding the minimum and maximum values supported by double type parameters.
 
---bug
-select 'An error should occur if "1.7976931348623157E+309" is assigned to a decimal variable, but "Infinity" is output. This is a bug.';
-
+-- error
 create or replace procedure t( ) as
     var_min DOUBLE PRECISION := -1.7976931348623157E+308;
     var_max DOUBLE PRECISION := 1.7976931348623157E+308;

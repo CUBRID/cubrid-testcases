@@ -67,21 +67,28 @@ select col1, col2, row_number() over(order by col2) from rn_limit order by col3,
 --TEST: over(partition by.. order by ..) clause + order by
 prepare st from 'select *, row_number() over(partition by col3 order by col1) from rn_limit order by col3 limit ?';
 execute st using 10;
+deallocate prepare st;
 prepare st from 'select *, row_number() over(partition by col4 order by col4, col1 desc) row_num from rn_limit order by col1 limit ?';
 execute st using 20;
+deallocate prepare st;
 prepare st from 'select col1, col3, col4, row_number() over(partition by col4 order by col3, col2, col1 desc) row_num from rn_limit order by row_num, col4 limit ?';
 execute st using 1;
+deallocate prepare st;
 prepare st from 'select col3, col4, col2, row_number() over(partition by col3 order by col4) from rn_limit order by ?, ? limit ?';
 execute st using 3, 4, 5;
+deallocate prepare st;
 prepare st from 'select row_num from (select col3, col4, col5, row_number() over(partition by col4 order by col3, col2) row_num from rn_limit) order by 1 limit ?';
 execute st using -1;
+deallocate prepare st;
 
 
 --TEST: over(partition by.. order by ..) clause + order by ... having ...
 prepare st from 'select col1, col2, row_number() over(partition by col1 order by col2) from rn_limit group by col1 having col1 > 500 order by col2 desc, col1 limit ?';
 execute st using 1;
+deallocate prepare st;
 prepare st from 'select col5, col2, col4, row_number() over(partition by col4 order by col4, col2, col5) from rn_limit group by col4 having right(col3, 2) =  'id' order by 4, 3 desc, 2 asc, 1 limit ?';
 execute st using 15;
+deallocate prepare st;
 prepare st from 'select col1, col2, col3, col4, col5, row_number() over(partition by col3 order by col2 desc, col4, col5) from rn_limit group by col1, col2, col3, col4 having col3 in ('cubrid', 'mysql') order by col3 desc, col2 asc, 6, 1 limit ?';
 execute st using 30;
  

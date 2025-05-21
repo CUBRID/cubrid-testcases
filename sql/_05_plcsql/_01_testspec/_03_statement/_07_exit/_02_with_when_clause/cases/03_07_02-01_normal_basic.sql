@@ -6,7 +6,7 @@
 create or replace procedure t(i int) as
 begin
     for i in 1 .. 5 loop
-        exit when i % 2 = 0;
+        exit when i mod 2 = 0;
         dbms_output.put_line('i=' || i);
     end loop;
     dbms_output.put_line('done');

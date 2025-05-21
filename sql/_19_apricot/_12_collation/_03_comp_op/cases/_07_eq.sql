@@ -10,18 +10,22 @@ select * from t1 where s1 = 'Aa'  order by 1;
 
 prepare s from 'select * from t1 where s1 = ?  order by 1';
 execute s using 'Aa';
+deallocate prepare s;
 
 prepare s from 'select * from t1 where s1 = ? + ?  order by 1';
 execute s using 'A','a';
+deallocate prepare s;
 
 
 select * from t2 where s1 = 'Aa' order by 1;
 
 prepare s from 'select * from t2 where s1 = ?  order by 1';
 execute s using 'Ab';
+deallocate prepare s;
 
 prepare s from 'select * from t2 where s1 = ? + ?  order by 1';
 execute s using 'A','b';
+deallocate prepare s;
 
 select s1 from t1 where cast (s1 as string collate utf8_en_cs) = 'Aa' order by 1;
 

@@ -45,6 +45,7 @@ select concat_ws('x','2','1');
 
 prepare st from 'select concat(?,?,?)';
 execute st using '1','2','1';
+drop prepare st;
 
 prepare st from 'select concat_ws(?,?,?)';
 execute st using 'x','2','1';

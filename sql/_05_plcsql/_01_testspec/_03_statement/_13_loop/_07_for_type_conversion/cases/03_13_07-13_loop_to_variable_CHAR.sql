@@ -269,8 +269,6 @@ end;
 call t_FLOAT_CHAR('FLOAT', 'CHAR'  ) ;
 drop procedure t_FLOAT_CHAR ;
 
---BUG
-
 call print_message('t_NUMERIC_CHAR. This scenario is a success.');
 create or replace procedure t_NUMERIC_CHAR(param_type string, variables_type string ) as 
      CURSOR my_cursor1 IS 
@@ -278,7 +276,7 @@ create or replace procedure t_NUMERIC_CHAR(param_type string, variables_type str
      CURSOR my_cursor2 IS 
           SELECT T_DECIMAL as col_val FROM plcsql_type_tbl WHERE ID = 2 ;
 
-   VAR CHAR  ;
+   VAR CHAR(30)  ;
 begin
     FOR r IN my_cursor1 LOOP  
         VAR := r.col_val ;

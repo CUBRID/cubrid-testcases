@@ -17,19 +17,24 @@ select left (cast (s1 as string collate utf8_en_ci),2) from t2 order by 1;
 -- late binding
 prepare s from 'select left(? , ?)';
 execute s using 'Abcde',2;
+deallocate prepare s;
 
 prepare s from 'select left(s1 , ?) from t1 order by 1';
 execute s using 2;
+deallocate prepare s;
 
 prepare s from 'select left(s1 + ?,?) from t1 order by 1';
 execute s using 'A','2';
+deallocate prepare s;
 
 prepare s from 'select left(s1 + ?,?) from t2 order by 1';
 execute s using 'A',2;
+deallocate prepare s;
 
 
 prepare s from 'select left(cast ((s1 + ?) as string collate utf8_en_ci),?) from t2 order by 1';
 execute s using 'A',2;
+deallocate prepare s;
 
 
 drop table t1;

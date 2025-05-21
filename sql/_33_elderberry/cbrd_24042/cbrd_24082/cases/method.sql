@@ -27,6 +27,18 @@ FROM   v a,
        t_b b
 WHERE  a.col_a = b.col_a
 AND    b.col_b = 2;
+
+-- Convert the view to an inline view (unmergable)
 DROP VIEW v;
+SELECT /*+ recompile */ a.col_a, a.col_b
+FROM   (SELECT a.col_a,
+               Sp_int(a.col_b) col_b
+        FROM   t_a a,
+               t_b b
+        WHERE  a.col_a = b.col_a) a,
+       t_b b
+WHERE  a.col_a = b.col_a
+AND    b.col_b = 2;
+
 DROP FUNCTION Sp_int;
 DROP TABLE t_a, t_b;

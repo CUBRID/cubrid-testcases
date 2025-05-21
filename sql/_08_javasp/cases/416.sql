@@ -14,7 +14,7 @@ create class xoo ( x int, y int);
 insert into xoo values(1,2);
 insert into xoo values(2,2);
 $integer,$3;
-insert into xoo values(3,test1(?)) ;
+insert into xoo values(3,user1.test1(?)) ;
 drop xoo;
 
 call login('user1','') on class db_user;
@@ -30,8 +30,8 @@ create class xoo ( x int, y int);
 insert into xoo values(1,2);
 insert into xoo values(2,2);
 $integer,$3;
-insert into xoo values(3,test1(?)) ;
-drop function test1;
+insert into xoo values(3,user1.test1(?)) ;
+drop function user1.test1;
 drop xoo;
 
 call login('public','') on class db_user;
@@ -43,9 +43,9 @@ create class xoo ( x int, y int);
 insert into xoo values(1,2);
 insert into xoo values(2,2);
 $integer,$3;
-insert into xoo values(3,test1(?)) ;
+insert into xoo values(3,public.test1(?)) ;
 drop xoo;
-drop function test1;
+drop function public.test1;
 
 call login('dba','') on class db_user;
 CREATE  FUNCTION test1(i int) RETURN int as language java name 'SpTest.testInt(int) return int';
@@ -56,9 +56,9 @@ create class xoo ( x int, y int);
 insert into xoo values(1,2);
 insert into xoo values(2,2);
 $integer,$3;
-insert into xoo values(3,test1(?)) ;
+insert into xoo values(3,dba.test1(?)) ;
 drop xoo;
-drop function test1;
+drop function dba.test1;
 
 call login('dba','') on class db_user;
 drop xoo;

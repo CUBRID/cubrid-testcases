@@ -247,8 +247,6 @@ end;
 call t_FLOAT_BIGINT('FLOAT', 'BIGINT'  ) ;
 drop procedure t_FLOAT_BIGINT ;
 
---BUG
-
 call print_message('t_NUMERIC_BIGINT. This scenario is a success.');
 create or replace procedure t_NUMERIC_BIGINT(param_type string, variables_type string ) as 
 VAR BIGINT  ;

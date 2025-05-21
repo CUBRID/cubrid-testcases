@@ -10,7 +10,7 @@ execute s using _euckr'a',_euckr'b', _euckr'a',_euckr'b';
 execute s using _utf8'a',_euckr'b', _utf8'a',_euckr'b';
 
 execute s using _euckr'a',_utf8'b', _euckr'a',_utf8'b';
-
+deallocate prepare s;
 
 
 select 'named variable';
@@ -26,6 +26,7 @@ select :r, collation (:r);
 
 execute s using _euckr'a';
 select :r, collation (:r);
+deallocate prepare s;
 
 drop variable r;
 set names iso88591;

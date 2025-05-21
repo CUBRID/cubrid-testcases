@@ -14,12 +14,15 @@ select replace (s1,'a','aA') from t2 order by 1;
 -- late binding
 prepare s from 'select replace(s1 ,?,?) from t1 order by 1';
 execute s using 'a','aA';
+deallocate prepare s;
 
 prepare s from 'select replace(?, s1 , ?) from t1 order by 1';
 execute s using 'aabbaabb','XX';
+deallocate prepare s;
 
 prepare s from 'select replace(?, s1 , ?) from t2 order by 1';
 execute s using 'aabbaabb','XX';
+deallocate prepare s;
 
 select replace(t1.s1, t2.s1, 'x') from t1,t2 order by 1;
 

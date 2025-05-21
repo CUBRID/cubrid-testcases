@@ -45,10 +45,10 @@ BEGIN
         DBMS_OUTPUT.put_line('inner block ' || out_msg || ' ran.');
         EXCEPTION
             WHEN invalid_input THEN
-                put_line('invalid input: ' || out_msg);
+               dbms_output.put_line('invalid input: ' || out_msg);
                 RAISE;      -- 현재 처리 중인 invalid_input을 다시 일으킴
             WHEN OTHERS THEN
-                put_line('unknown exception');
+               dbms_output.put_line('unknown exception');
                 RAISE;      -- 현재 처리 중인 Exception을 다시 일으킴
     END;
 END;
@@ -64,10 +64,10 @@ BEGIN
         DBMS_OUTPUT.put_line('inner block ' || out_msg || ' ran.');
         EXCEPTIONS
             WHEN invalid_input THEN
-                put_line('invalid input: ' || out_msg);
+               dbms_output.put_line('invalid input: ' || out_msg);
                 RAISE;      -- 현재 처리 중인 invalid_input을 다시 일으킴
             WHEN OTHERS THEN
-                put_line('unknown exception');
+               dbms_output.put_line('unknown exception');
                 RAISE;      -- 현재 처리 중인 Exception을 다시 일으킴
     END;
 END;
@@ -82,10 +82,10 @@ BEGIN
         DBMS_OUTPUT.put_line('inner block ' || out_msg || ' ran.');
         EXCEPTION
             WHENS invalid_input THEN
-                put_line('invalid input: ' || out_msg);
+               dbms_output.put_line('invalid input: ' || out_msg);
                 RAISE;      -- 현재 처리 중인 invalid_input을 다시 일으킴
             WHEN OTHERS THEN
-                put_line('unknown exception');
+               dbms_output.put_line('unknown exception');
                 RAISE;      -- 현재 처리 중인 Exception을 다시 일으킴
     END;
 END;
@@ -100,10 +100,10 @@ BEGIN
         DBMS_OUTPUT.put_line('inner block ' || out_msg || ' ran.');
         EXCEPTION
             WHEN invalid_input THENS
-                put_line('invalid input: ' || out_msg);
+               dbms_output.put_line('invalid input: ' || out_msg);
                 RAISE;      -- 현재 처리 중인 invalid_input을 다시 일으킴
             WHEN OTHERS THEN
-                put_line('unknown exception');
+               dbms_output.put_line('unknown exception');
                 RAISE;      -- 현재 처리 중인 Exception을 다시 일으킴
     END;
 END;
@@ -118,10 +118,10 @@ BEGIN
         DBMS_OUTPUT.put_line('inner block ' || out_msg || ' ran.');
         EXCEPTION
             WHEN invalid_input THEN
-                put_line('invalid input: ' || out_msg);
+               dbms_output.put_line('invalid input: ' || out_msg);
                 RAISE;      -- 현재 처리 중인 invalid_input을 다시 일으킴
             WHEN OTHERSE THEN
-                put_line('unknown exception');
+               dbms_output.put_line('unknown exception');
                 RAISE;      -- 현재 처리 중인 Exception을 다시 일으킴
     END;
 END;
@@ -136,10 +136,10 @@ BEGIN
         DBMS_OUTPUT.put_line('inner block ' || out_msg || ' ran.');
         EXCEPTION
             WHEN invalid_input THEN
-                put_line('invalid input: ' || out_msg);
+               dbms_output.put_line('invalid input: ' || out_msg);
                 RAISE;      -- 현재 처리 중인 invalid_input을 다시 일으킴
             WHEN OTHERS THEN
-                put_line('unknown exception');
+               dbms_output.put_line('unknown exception');
                 RAISES;      -- 현재 처리 중인 Exception을 다시 일으킴
     END;
 END;

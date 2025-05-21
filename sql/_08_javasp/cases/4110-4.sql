@@ -1,9 +1,9 @@
 --+ holdcas on;
 autocommit off;
 
-CREATE  function   testresult(q string)  return string as language java name 'jdbc_cubrid415.testresult(java.lang.String) return java.lang.String ';
-CREATE  function   testResultSet(q string)  return cursor as language java name 'jdbc_cubrid415.testResultSet(java.lang.String) return java.sql.ResultSet ';
-create function func(a int, b int) return int as language java name 'SpTest.testInt(int, int) return int';
+CREATE or replace function   testresult(q string)  return string as language java name 'jdbc_cubrid415.testresult(java.lang.String) return java.lang.String ';
+CREATE or replace function   testResultSet(q string)  return cursor as language java name 'jdbc_cubrid415.testResultSet(java.lang.String) return java.sql.ResultSet ';
+create or replace function func(a int, b int) return int as language java name 'SpTest.testInt(int, int) return int';
 
 create class kor ( id int, name string);
 insert into kor values(1000, 'xxx');
@@ -38,10 +38,10 @@ select testResultSet10() from db_root;
 select testResultSet10() + 1 from db_root;
 call testresult10();
 
-CREATE  procedure   testResultSet2(x out cursor)  as language java name 'jdbc_cubrid415.testResultSet2(java.sql.ResultSet ) ';
+CREATE or replace procedure   testResultSet2(x out cursor)  as language java name 'jdbc_cubrid415.testResultSet2(java.sql.ResultSet ) ';
 drop procedure testResultSet2;
-CREATE  procedure   testResultSet2(x in out cursor)  as language java name 'jdbc_cubrid415.testResultSet2(java.sql.ResultSet ) ';
-CREATE  procedure   testResultSet2(x in  cursor)  as language java name 'jdbc_cubrid415.testResultSet2(java.sql.ResultSet ) ';
+CREATE or replace procedure   testResultSet2(x in out cursor)  as language java name 'jdbc_cubrid415.testResultSet2(java.sql.ResultSet ) ';
+CREATE or replace procedure   testResultSet2(x in  cursor)  as language java name 'jdbc_cubrid415.testResultSet2(java.sql.ResultSet ) ';
 
 CREATE  function   testresult1()  return string as language java name 'jdbc_cubrid415.testresult1() return java.lang.String ';
 CREATE  function   testResultSet1()  return cursor as language java name 'jdbc_cubrid415.testResultSet1() return java.sql.ResultSet ';

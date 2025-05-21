@@ -1,5 +1,5 @@
 --+ server-message on
--- verified the CBRD-25059
+-- verified for CBRD-25059 and CBRD-25273
 
 -- adddate
 create or replace procedure test_adddate1 as
@@ -26,6 +26,14 @@ end;
 
 call test_adddate2();
 
+--verifies CBRD-25273
+create or replace procedure test_adddate3 as
+    a datetime := datetime'2013-10-09 01:02:03.456';
+begin
+    dbms_output.put_line('adddate 3: ' || adddate(a, 1));
+end;
+
+call test_adddate3();
 
 --addtime
 create or replace procedure test_time as
@@ -57,6 +65,7 @@ call test_months();
 
 drop procedure test_adddate1;
 drop procedure test_adddate2;
+drop procedure test_adddate3;
 drop procedure test_time;
 drop procedure test_months;
 

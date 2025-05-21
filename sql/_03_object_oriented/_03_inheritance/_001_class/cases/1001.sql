@@ -4,7 +4,7 @@ CREATE CLASS ddl_0001(
  col1  integer unique,
  col2  numeric(10,5) not null,
  col3  varchar(123456789) default 'ddl_0001',
- col4  char(100000),
+ col4  char(2048),
  col5  float,
  col6  double,
  col7  bit(1000),
@@ -22,7 +22,7 @@ CREATE CLASS ddl_0002 UNDER ddl_0001(
  col16  bit(1000),
  col17  timestamp,
  col18  time,
- col19  char(100000),
+ col19  char(2048),
  col20  float
 );
 
@@ -31,7 +31,7 @@ CREATE CLASS ddl_0003 UNDER ddl_0001, ddl_0002(
  col22  varchar(123456789) not null,
  col23  integer default 123456789,
  col24  numeric(10,5),
- col25  char(100000),
+ col25  char(2048),
  col26  float,
  col27  time,
  col28  timestamp,
@@ -47,7 +47,7 @@ CREATE CLASS ddl_0004 UNDER ddl_0003(
  col45  bit(1000),
  col46  numeric(10,5),
  col47  date,
- col48  char(100000),
+ col48  char(2048),
  col49  float,
  col50  varchar(123456789)
 );
@@ -62,7 +62,7 @@ CREATE CLASS ddl_0005 UNDER ddl_0001, ddl_0002, ddl_0003, ddl_0004(
  col57  time,
  col58  double,
  col59  bit(1000),
- col60  char(100000)
+ col60  char(2048)
 );
 
 CREATE CLASS ddl_0006 UNDER ddl_0001, ddl_0003(
@@ -71,7 +71,7 @@ CREATE CLASS ddl_0006 UNDER ddl_0001, ddl_0003(
  col63  double default NULL, 
  col64  date,
  col65  numeric(10,5),
- col66  char(100000),
+ col66  char(2048),
  col67  integer,
  col68  timestamp,
  col69  time,
@@ -93,7 +93,7 @@ CREATE CLASS ddl_0007 UNDER ddl_0003, ddl_0006(
 
 CREATE CLASS ddl_0008 UNDER ddl_0001, ddl_0002, ddl_0003, ddl_0004, ddl_0007(
  col81  numeric(10,5) unique,  
- col82  char(100000) not null,
+ col82  char(2048) not null,
  col83  varchar(1000) default 'abcdefghijklmnopqrstuvwxyz', 
  col84  varchar(123456789),
  col85  float,
@@ -109,7 +109,7 @@ CREATE CLASS ddl_0009 UNDER ddl_0001, ddl_0002, ddl_0003, ddl_0004, ddl_0005, dd
  col92  time not null,
  col93  varchar(123456789) default 'abcdefghijklmnopqrstuvwxyz', 
  col94  double,
- col95  char(100000),
+ col95  char(2048),
  col96  date,
  col97  bit(1000),
  col98  float,
@@ -126,7 +126,7 @@ CREATE CLASS ddl_000a UNDER ddl_0001, ddl_0002, ddl_0003, ddl_0004, ddl_0005, dd
  col106  double,
  col107  date,
  col108  varchar(100000),
- col109  char(100000),
+ col109  char(2048),
  col110  float
 );
 
@@ -140,7 +140,7 @@ CREATE CLASS ddl_000b UNDER ddl_0001, ddl_0002, ddl_0003, ddl_0004, ddl_0005, dd
  col117  float,
  col118  double,
  col119  varchar(123456789),
- col120  char(100000)
+ col120  char(2048)
 );
 
 CREATE CLASS ddl_000c UNDER ddl_0001, ddl_0002, ddl_0003, ddl_0004, ddl_0005, ddl_0006, ddl_0007, ddl_0008, ddl_0009, ddl_000a, ddl_000b(
@@ -149,7 +149,7 @@ CREATE CLASS ddl_000c UNDER ddl_0001, ddl_0002, ddl_0003, ddl_0004, ddl_0005, dd
  col123  varchar(100000) default 'abcdefghijklmnopqrstuvwxyz', 
  col124  varchar(123456789),
  col125  double,
- col126  char(100000),
+ col126  char(2048),
  col127  numeric(10,5),
  col128  date,
  col129  bit(1000),
@@ -165,7 +165,7 @@ CREATE CLASS ddl_000d UNDER ddl_0001, ddl_0002, ddl_0003, ddl_0004, ddl_0005, dd
  col136  varchar(123456789),
  col137  double,
  col138  float,
- col139  char(100000),
+ col139  char(2048),
  col140  date
 );
 
@@ -174,7 +174,7 @@ CREATE CLASS ddl_000e UNDER ddl_0001, ddl_0002, ddl_0003, ddl_0004, ddl_0005, dd
  col142  float not null,
  col143  char(1000) default 'abcdefghijklmnopqrstuvwxyz', 
  col144  integer,
- col145  char(100000),
+ col145  char(2048),
  col146  varchar(123456789),
  col147  time,
  col148  date,
@@ -183,12 +183,12 @@ CREATE CLASS ddl_000e UNDER ddl_0001, ddl_0002, ddl_0003, ddl_0004, ddl_0005, dd
 );
 
 CREATE CLASS ddl_000f UNDER ddl_0001, ddl_0002, ddl_0003, ddl_0004, ddl_0005, ddl_0006, ddl_0007, ddl_0008, ddl_0009, ddl_000a, ddl_000b, ddl_000c, ddl_000d, ddl_000e(
- col151  char(100000) unique,  
+ col151  char(2048) unique,  
  col152  time not null,
  col153  double default 1234567890123, 
  col154  varchar(123456789),
  col155  integer,
- col156  char(100000),
+ col156  char(2048),
  col157  date,
  col158  timestamp,
  col159  numeric(10,5),
@@ -202,7 +202,7 @@ CREATE CLASS ddl_0010 UNDER ddl_0001, ddl_0002, ddl_0003, ddl_0004, ddl_0005, dd
  col164  double,
  col165  time,
  col166  integer,
- col167  char(100000),
+ col167  char(2048),
  col168  date,
  col169  bit(1000),
  col170  varchar(123456789)
@@ -212,7 +212,7 @@ CREATE CLASS ddl_0011 UNDER ddl_0001, ddl_0002, ddl_0003, ddl_0004, ddl_0005, dd
  col171  float unique,  
  col172  varchar(123456789) not null,
  col173  integer default 123546789, 
- col174  char(100000),
+ col174  char(2048),
  col175  bit(1000),
  col176  double,
  col177  integer,
@@ -222,7 +222,7 @@ CREATE CLASS ddl_0011 UNDER ddl_0001, ddl_0002, ddl_0003, ddl_0004, ddl_0005, dd
 );
 
 CREATE CLASS ddl_0012 UNDER ddl_0001, ddl_0002, ddl_0003, ddl_0004, ddl_0005, ddl_0006, ddl_0007, ddl_0008, ddl_0009, ddl_000a, ddl_000b, ddl_000c, ddl_000d, ddl_000e, ddl_000f, ddl_0010, ddl_0011(
- col181  char(100000) unique,  
+ col181  char(2048) unique,  
  col182  time not null,
  col183  varchar(123456789) default 'abcdefghijklmnopqrstuvwxyz', 
  col184  numeric(10,5),
@@ -238,7 +238,7 @@ CREATE CLASS ddl_0013 UNDER ddl_0001, ddl_0002, ddl_0003, ddl_0004, ddl_0005, dd
  col191  varchar(123456789) unique,  
  col192  date not null,
  col193  numeric(5,1) default 1234.1, 
- col194  char(100000),
+ col194  char(2048),
  col195  bit(1000),
  col196  numeric(10,5),
  col197  time,

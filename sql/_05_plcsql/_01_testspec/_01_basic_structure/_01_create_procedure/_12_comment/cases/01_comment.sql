@@ -15,7 +15,7 @@ end
 comment 'comment test';
 
 --select comment_test() as "col" from dual;
-select * from _db_stored_procedure where sp_name='comment_test';
+select unique_name, sp_name, owner.name, comment from _db_stored_procedure where sp_name='comment_test';
 
 drop procedure comment_test;
 

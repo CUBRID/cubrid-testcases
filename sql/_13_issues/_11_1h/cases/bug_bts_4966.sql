@@ -34,9 +34,11 @@ select * from t where col < '2.1';
 
 prepare s from 'select * from t where col < ?';
 execute s using '2.1';
+deallocate prepare s;
 
 prepare s from 'select * from t where col < ?';
 execute s using 2.1;
+deallocate prepare s;
 
 drop table t;
 
@@ -76,9 +78,11 @@ select * from t where col < '2.1';
 
 prepare s from 'select * from t where col < ?';
 execute s using '2.1';
+deallocate prepare s;
 
 prepare s from 'select * from t where col < ?';
 execute s using 2.1;
+deallocate prepare s;
 
 drop table t;
 
@@ -118,9 +122,11 @@ select * from t where col < '2.1';
 
 prepare s from 'select * from t where col < ?';
 execute s using '2.1';
+deallocate prepare s;
 
 prepare s from 'select * from t where col < ?';
 execute s using 2.1;
+deallocate prepare s;
 
 drop table t;
 
@@ -162,9 +168,11 @@ select * from t where col < '2.1';
 
 prepare s from 'select * from t where col < ?';
 execute s using '2.1';
+deallocate prepare s;
 
 prepare s from 'select * from t where col < ?';
 execute s using 2.1;
+deallocate prepare s;
 
 drop table t;
 
@@ -204,9 +212,11 @@ select * from t where col < '2.1';
 
 prepare s from 'select * from t where col < ?';
 execute s using '2.1';
+deallocate prepare s;
 
 prepare s from 'select * from t where col < ?';
 execute s using 2.1;
+deallocate prepare s;
 
 drop table t;
 
@@ -246,9 +256,11 @@ select * from t where col < '2.1';
 
 prepare s from 'select * from t where col < ?';
 execute s using '2.1';
+deallocate prepare s;
 
 prepare s from 'select * from t where col < ?';
 execute s using 2.1;
+deallocate prepare s;
 
 drop table t;
 
@@ -288,9 +300,11 @@ select * from t where col < '2.1';
 
 prepare s from 'select * from t where col < ?';
 execute s using '2.1';
+deallocate prepare s;
 
 prepare s from 'select * from t where col < ?';
 execute s using 2.1;
+deallocate prepare s;
 
 drop table t;
 

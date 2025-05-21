@@ -78,6 +78,7 @@ execute s using 'a', 1.5f, 'aa';
 execute s using 'a', 1.4f, 'a';
 execute s using 'a', 1.5e0, 'aa';
 execute s using 'a', 1.4e0, 'a';
+deallocate prepare s;
 
 prepare s from 'select if(repeat(?, 3) = repeat(?, 3), ''ok'', ''nok'')';
 execute s using 12345, '12345';
@@ -90,6 +91,7 @@ execute s using time'09:30:30 AM', '09:30:30 AM';
 execute s using datetime'09:30:30 AM 08/02/2010', '09:30:30.000 AM 08/02/2010';
 execute s using timestamp'09:30:30 AM 08/02/2010', '09:30:30 AM 08/02/2010';
 execute s using 0b00010001, '11';
+deallocate prepare s;
 
 -- failure
 prepare s from 'select repeat(?, ?)';
@@ -100,6 +102,7 @@ execute s using 'a', time'17:30:30';
 execute s using 'a', 0b00110001;
 -- cannot coerce nchar to varchar
 execute s using n'a', 2;
+deallocate prepare s;
 
 --5. Test the range of count
 -- return NULL

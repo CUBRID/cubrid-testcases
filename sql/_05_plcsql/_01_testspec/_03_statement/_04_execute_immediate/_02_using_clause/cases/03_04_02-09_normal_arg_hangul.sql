@@ -15,7 +15,7 @@ AS
 BEGIN
     EXECUTE IMMEDIATE 'insert into plcsql_tbl ( id, name ) values ( ?, ? ) ' USING 5, param||'파라미터 + 한글 바인딩 테스트' ;
     EXECUTE IMMEDIATE 'select id, name from plcsql_tbl where id =?' USING 5 INTO r_id, r_name;
-    put_line('id: ' || r_id || ' name: ' || r_name);
+    dbms_output.put_line('id: ' || r_id || ' name: ' || r_name);
     
 END;
 

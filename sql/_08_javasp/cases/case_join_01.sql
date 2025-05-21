@@ -11,47 +11,86 @@ insert into tbl_b select rownum, to_char(rownum mod 10) col_a, to_char(rownum mo
 
 
 -- test outer join
--- CBRD-24720 : result different with using javasp
+select 'test right outer join: on join conditions';
 select count(*) from tbl_a right outer join tbl_b
 on tbl_a.x = tbl_b.x
 and fn_string(tbl_b.y) = '1';
+--
+select count(*) from tbl_a right outer join tbl_b
+on tbl_a.x = tbl_b.x
+and (tbl_b.y) = '1';
 
--- CBRD-24720 : result different with using javasp
+select 'test left outer join: on join conditions';
 select count(*) from tbl_a left outer join tbl_b
 on tbl_a.x = tbl_b.x
 and fn_string(tbl_a.y) = '1';
+--
+select count(*) from tbl_a left outer join tbl_b
+on tbl_a.x = tbl_b.x
+and (tbl_a.y) = '1';
 
-
+select 'test right outer join: on join condition and where';
 select count(*) from tbl_a right outer join tbl_b
 on tbl_a.x = tbl_b.x
 where fn_string(tbl_b.y) = '1';
+--
+select count(*) from tbl_a right outer join tbl_b
+on tbl_a.x = tbl_b.x
+where (tbl_b.y) = '1';
 
--- CBRD-24720 : result different with using javasp
+select 'test left outer join: on join condition and where';
 select count(*) from tbl_a left outer join tbl_b
 on tbl_a.x = tbl_b.x
 where fn_string(tbl_a.y) = '1';
+--
+select count(*) from tbl_a left outer join tbl_b
+on tbl_a.x = tbl_b.x
+where (tbl_a.y) = '1';
 
+select 'test oracle style outer join';
 select count(*) from tbl_a, tbl_b
 where tbl_a.x(+) = tbl_b.x
 and fn_string(tbl_b.y) = '1';
+--
+select count(*) from tbl_a, tbl_b
+where tbl_a.x(+) = tbl_b.x
+and (tbl_b.y) = '1';
 
 select count(*) from tbl_a, tbl_b
 where tbl_a.x = tbl_b.x(+)
 and fn_string(tbl_a.y) = '1';
+--
+select count(*) from tbl_a, tbl_b
+where tbl_a.x = tbl_b.x(+)
+and (tbl_a.y) = '1';
 
 -- test cross join
+select 'test cross join';
 select count(*) from tbl_a cross join tbl_b
 where fn_string(tbl_a.y) = '1';	
+--
+select count(*) from tbl_a cross join tbl_b
+where (tbl_a.y) = '1';	
 
 select count(*) from tbl_a cross join tbl_b
 where fn_string(tbl_a.y) = '1';
+--
+select count(*) from tbl_a cross join tbl_b
+where (tbl_a.y) = '1';
 
 -- test natural join
+select 'test natural join';
 select count(*) from tbl_a natural join tbl_b
 where fn_string(tbl_a.y)='10';
+--
+select count(*) from tbl_a natural join tbl_b
+where (tbl_a.y)='10';
 
 select count(*) from tbl_a inner join tbl_b
 on tbl_a.x = fn_string(tbl_b.x);
+--
+select count(*) from tbl_a inner join tbl_b
+on tbl_a.x = (tbl_b.x);
 
 
 drop function fn_string;

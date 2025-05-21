@@ -19,21 +19,21 @@ AS
         target_name STRING;
         target_temp STRING;
     begin
-        put_line('INOUT parameter-1 : ' || param_name );
+        dbms_output.put_line('INOUT parameter-1 : ' || param_name );
         OPEN my_cursor(param_name );
         LOOP
             FETCH my_cursor INTO param_name, target_name;
             EXIT WHEN my_cursor%NOTFOUND;
-            put_line('id: ' || param_name || ' name: ' || target_name);
+            dbms_output.put_line('id: ' || param_name || ' name: ' || target_name);
         END LOOP;
-        put_line('INOUT parameter-2 : ' || param_name );
+        dbms_output.put_line('INOUT parameter-2 : ' || param_name );
         CLOSE my_cursor;
     end;
     abc varchar;  
 BEGIN
     abc := 'name1';
     local_t(abc);
-    put_line('INOUT parameter-3 : ' || abc );
+    dbms_output.put_line('INOUT parameter-3 : ' || abc );
 END;
 
 call t();

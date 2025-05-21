@@ -6,9 +6,9 @@ insert into tbl values(4,4);
 select /*+ select_record_info */ t_reprid from tbl;
 drop table if exists tbl;
 
-create table tbl (a char(20000));
+create table tbl (a char(2048));
 insert into tbl values('abcde');
-alter table tbl add column b char(20000);
+alter table tbl add column b char(2048);
 insert into tbl values('abc','abc');
 select /*+ select_record_info */ t_reprid from tbl;
 drop table if exists tbl;

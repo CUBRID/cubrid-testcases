@@ -11,7 +11,7 @@ C3: set transaction isolation level read committed;
 
 /* preparation */
 C1: drop table if exists t;
-C1: create table t(id bigint ,col char(10000)) partition by range(id)(partition p1 values less than (3),partition p2 values less than MAXVALUE);
+C1: create table t(id bigint ,col char(2048)) partition by range(id)(partition p1 values less than (3),partition p2 values less than MAXVALUE);
 C1: insert into t select rownum,rownum||'1' from db_root connect by level<=5;
 C1: insert into t select rownum,rownum||'9' from db_root connect by level<=5;
 C1: insert into t select rownum,rownum||'6' from db_root connect by level<=5;

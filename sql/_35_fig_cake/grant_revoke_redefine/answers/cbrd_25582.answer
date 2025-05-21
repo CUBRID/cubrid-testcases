@@ -1,0 +1,534 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+case 1: execute to revoke on dba     
+
+===================================================
+    
+(3-3 on CBRD-25580) dba is not target on grant: no operation     
+
+===================================================
+0
+===================================================
+    
+ERROR: Cannot issue GRANT/REVOKE to owner of a class     
+
+===================================================
+Error:-146
+===================================================
+    
+connect to u1, u1.tbl grant to u2     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+    
+connect to u2, u1.tbl grant to u3     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+    
+(3-2 on CBRD-25580) u2 has a u1.tbl select permission: no operation     
+
+===================================================
+0
+===================================================
+    
+connect to u3, u1.tbl grant to u4     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+    
+connect to u4, u1.tbl grant to u5     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+U1     U2     CLASS     tbl     U1     SELECT     YES     
+U2     U3     CLASS     tbl     U1     SELECT     YES     
+U3     U4     CLASS     tbl     U1     SELECT     YES     
+U4     U5     CLASS     tbl     U1     SELECT     YES     
+
+===================================================
+    
+connect to dba     
+
+===================================================
+    
+null     
+
+===================================================
+    
+(3-1 on CBRD-25580) u1.tbl owner is u1: no operation     
+
+===================================================
+Error:-146
+===================================================
+    
+init test     
+
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+
+===================================================
+    
+case 2: execute to revoke on owner     
+
+===================================================
+    
+ERROR: Cannot issue GRANT/REVOKE to owner of a class     
+
+===================================================
+Error:-146
+===================================================
+0
+===================================================
+    
+connect to u1, u1.tbl grant to u2, u3     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+connect to u2, u1.tbl grant to u3     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+    
+connect to u3, u1.tbl grant to u4     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+    
+connect to u4, u1.tbl grant to u5     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+U1     U2     CLASS     tbl     U1     SELECT     YES     
+U1     U3     CLASS     tbl     U1     SELECT     YES     
+U2     U3     CLASS     tbl     U1     SELECT     YES     
+U3     U4     CLASS     tbl     U1     SELECT     YES     
+U4     U5     CLASS     tbl     U1     SELECT     YES     
+
+===================================================
+    
+connect to u1, revoke to u1.tbl from u2     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+U1     U3     CLASS     tbl     U1     SELECT     YES     
+U3     U4     CLASS     tbl     U1     SELECT     YES     
+U4     U5     CLASS     tbl     U1     SELECT     YES     
+
+===================================================
+    
+init test, connect to dba     
+
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+
+===================================================
+    
+null     
+
+===================================================
+    
+case 3: execute to revoke on grantable user (u2)     
+
+===================================================
+    
+connect to u1, u1.tbl grant to u2     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+    
+connect to u2, u1.tbl grant to u3     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+    
+connect to u3, u1.tbl grant to u4     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+    
+connect to u4, u1.tbl grant to u5     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+U1     U2     CLASS     tbl     U1     ALTER     YES     
+U1     U2     CLASS     tbl     U1     DELETE     YES     
+U1     U2     CLASS     tbl     U1     EXECUTE     YES     
+U1     U2     CLASS     tbl     U1     INDEX     YES     
+U1     U2     CLASS     tbl     U1     INSERT     YES     
+U1     U2     CLASS     tbl     U1     SELECT     YES     
+U1     U2     CLASS     tbl     U1     UPDATE     YES     
+U2     U3     CLASS     tbl     U1     SELECT     YES     
+U3     U4     CLASS     tbl     U1     SELECT     YES     
+U4     U5     CLASS     tbl     U1     SELECT     YES     
+
+===================================================
+    
+connect to u2, revoke to u1.tbl from u3     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+U1     U2     CLASS     tbl     U1     ALTER     YES     
+U1     U2     CLASS     tbl     U1     DELETE     YES     
+U1     U2     CLASS     tbl     U1     EXECUTE     YES     
+U1     U2     CLASS     tbl     U1     INDEX     YES     
+U1     U2     CLASS     tbl     U1     INSERT     YES     
+U1     U2     CLASS     tbl     U1     SELECT     YES     
+U1     U2     CLASS     tbl     U1     UPDATE     YES     
+
+===================================================
+    
+connect to u1, test for cascade     
+
+===================================================
+    
+null     
+
+===================================================
+    
+grant all privileges on u1.tbl to u3     
+
+===================================================
+0
+===================================================
+    
+grant SELECT, UPDATE, INSERT, DELETE on u1.tbl to u4     
+
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+U1     U2     CLASS     tbl     U1     ALTER     YES     
+U1     U2     CLASS     tbl     U1     DELETE     YES     
+U1     U2     CLASS     tbl     U1     EXECUTE     YES     
+U1     U2     CLASS     tbl     U1     INDEX     YES     
+U1     U2     CLASS     tbl     U1     INSERT     YES     
+U1     U2     CLASS     tbl     U1     SELECT     YES     
+U1     U2     CLASS     tbl     U1     UPDATE     YES     
+U2     U3     CLASS     tbl     U1     ALTER     YES     
+U2     U3     CLASS     tbl     U1     DELETE     YES     
+U2     U4     CLASS     tbl     U1     DELETE     YES     
+U2     U3     CLASS     tbl     U1     EXECUTE     YES     
+U2     U3     CLASS     tbl     U1     INDEX     YES     
+U2     U3     CLASS     tbl     U1     INSERT     YES     
+U2     U4     CLASS     tbl     U1     INSERT     YES     
+U2     U3     CLASS     tbl     U1     SELECT     YES     
+U2     U4     CLASS     tbl     U1     SELECT     YES     
+U2     U3     CLASS     tbl     U1     UPDATE     YES     
+U2     U4     CLASS     tbl     U1     UPDATE     YES     
+
+===================================================
+    
+connect to dba, revoke to u1.tbl(SELECT) from u2 (cascade test)     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+U1     U2     CLASS     tbl     U1     ALTER     YES     
+U1     U2     CLASS     tbl     U1     DELETE     YES     
+U1     U2     CLASS     tbl     U1     EXECUTE     YES     
+U1     U2     CLASS     tbl     U1     INDEX     YES     
+U1     U2     CLASS     tbl     U1     INSERT     YES     
+U1     U2     CLASS     tbl     U1     UPDATE     YES     
+U2     U3     CLASS     tbl     U1     ALTER     YES     
+U2     U3     CLASS     tbl     U1     DELETE     YES     
+U2     U4     CLASS     tbl     U1     DELETE     YES     
+U2     U3     CLASS     tbl     U1     EXECUTE     YES     
+U2     U3     CLASS     tbl     U1     INDEX     YES     
+U2     U3     CLASS     tbl     U1     INSERT     YES     
+U2     U4     CLASS     tbl     U1     INSERT     YES     
+U2     U3     CLASS     tbl     U1     UPDATE     YES     
+U2     U4     CLASS     tbl     U1     UPDATE     YES     
+
+===================================================
+    
+init test: revoke to u1.tbl(ALL PRIVILEGES) from u2 (cascade test)     
+
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+
+===================================================
+    
+case 4: grant to all user and execute revoke     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+connect to u2     
+
+===================================================
+    
+null     
+
+===================================================
+    
+ERROR: Cannot issue GRANT/REVOKE to owner of a class     
+
+===================================================
+Error:-146
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+connect to u3     
+
+===================================================
+    
+null     
+
+===================================================
+    
+ERROR: Cannot issue GRANT/REVOKE to owner of a class     
+
+===================================================
+Error:-146
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+connect to u4     
+
+===================================================
+    
+null     
+
+===================================================
+    
+ERROR: Cannot issue GRANT/REVOKE to owner of a class     
+
+===================================================
+Error:-146
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+ERROR: INDEX authorization failure     
+
+===================================================
+Error:-162
+===================================================
+    
+connect to u5     
+
+===================================================
+    
+null     
+
+===================================================
+    
+ERROR: Cannot issue GRANT/REVOKE to owner of a class     
+
+===================================================
+Error:-146
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+U1     U2     CLASS     tbl     U1     SELECT     YES     
+U1     U3     CLASS     tbl     U1     SELECT     YES     
+U1     U4     CLASS     tbl     U1     SELECT     YES     
+U1     U5     CLASS     tbl     U1     SELECT     YES     
+U2     U3     CLASS     tbl     U1     SELECT     YES     
+U2     U4     CLASS     tbl     U1     SELECT     YES     
+U2     U5     CLASS     tbl     U1     SELECT     YES     
+U3     U2     CLASS     tbl     U1     SELECT     YES     
+U3     U4     CLASS     tbl     U1     SELECT     YES     
+U3     U5     CLASS     tbl     U1     SELECT     YES     
+U4     U2     CLASS     tbl     U1     SELECT     YES     
+U4     U3     CLASS     tbl     U1     SELECT     YES     
+U4     U5     CLASS     tbl     U1     SELECT     YES     
+U5     U2     CLASS     tbl     U1     SELECT     YES     
+U5     U3     CLASS     tbl     U1     SELECT     YES     
+U5     U4     CLASS     tbl     U1     SELECT     YES     
+
+===================================================
+    
+connect to u1 and revoke u2, u3, u4     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+U1     U5     CLASS     tbl     U1     SELECT     YES     
+U2     U3     CLASS     tbl     U1     SELECT     YES     
+U2     U4     CLASS     tbl     U1     SELECT     YES     
+U2     U5     CLASS     tbl     U1     SELECT     YES     
+U3     U2     CLASS     tbl     U1     SELECT     YES     
+U3     U4     CLASS     tbl     U1     SELECT     YES     
+U3     U5     CLASS     tbl     U1     SELECT     YES     
+U4     U2     CLASS     tbl     U1     SELECT     YES     
+U4     U3     CLASS     tbl     U1     SELECT     YES     
+U4     U5     CLASS     tbl     U1     SELECT     YES     
+U5     U2     CLASS     tbl     U1     SELECT     YES     
+U5     U3     CLASS     tbl     U1     SELECT     YES     
+U5     U4     CLASS     tbl     U1     SELECT     YES     
+
+===================================================
+    
+connect to u1 and revoke u5     
+
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+
+===================================================
+    
+test done     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

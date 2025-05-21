@@ -14,7 +14,7 @@ AS
      r_name string ;
 BEGIN
     EXECUTE IMMEDIATE 'select id, name  from plcsql_tbl where name = ? ' INTO out_id, out_name USING param ;
-    put_line('id: ' || out_id || ' name: ' || out_name);
+    dbms_output.put_line('id: ' || out_id || ' name: ' || out_name);
 END;
 
 select '1', '2' into :a, :b ;

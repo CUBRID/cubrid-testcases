@@ -35,18 +35,22 @@ insert into ntile_str values('bbbbb', 'This is a dog.', n'2009-1-1 1', n'cubrid'
 --TEST: over() clause, with where clause
 prepare st from 'select  new.*, ntile(?) over() b_num from (select * from ntile_str order by 1,2,3,4,5) new where new.col2 = ? order by 1';
 execute st using 6, 'This is a dog.';
+deallocate prepare st;
 
 --TEST: OVER(PARTITION BY) clause
 prepare st from 'select new.col1, new.col2, new.col3, new.col4, new.col5, ntile(?) over(partition by new.col1) b_num from (select * from ntile_str order by 1,2,3,4,5) new order by 1';
 execute st using 5;
+deallocate prepare st;
 
 --TEST: OVER(ORDER BY) clause
 prepare st from 'select col2, ntile(?) over(order by 1) b_num from ntile_str where col5 in (?) order by 1, 2';
 execute st using 4, 'string';
+deallocate prepare st;
 
 --TEST: OVER(PARTITION BY ORDER BY) clause
 prepare st from 'select col1, col2, col3, ntile(?) over(partition by col1 order by col1, col2, col3) b_num from ntile_str order by 1, 2, 3, 4';
 execute st using 3;
+deallocate prepare st;
 
 
 drop table ntile_str; 

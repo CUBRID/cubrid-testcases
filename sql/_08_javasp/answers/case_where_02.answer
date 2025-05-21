@@ -44,72 +44,22 @@ count(*)
 
 Query plan:
 sscan
-    class: t_? node[?]
+    class: tbl node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select tbl.a from table({?}) t_? (c_?))
-Query plan:
-nl-join (cselect join)
-    edge:  table(?) -> t_? node[?]
-    outer: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select t_?.c_?, t_?.c_? from (select tbl.a from table({?}) t_? (c_?)) t_? (c_?), (fn_string(t_?.c_?)) t_? (c_?))
-Query plan:
-nl-join (inner join)
-    edge:  table(?) -> t_? node[?]
-    outer: sscan
-               class: tbl node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t_? node[?]
-               sargs: table(?) -> t_? node[?] AND term[?]
-               cost:  ? card ?
-    subqs: ?
-    cost:  ? card ?
-Query stmt:
-select count(*) from tbl tbl, (select t_?.c_?, t_?.c_? from (select tbl.a from table({?}) t_? (c_?)) t_? (c_?), (fn_string(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?) where  cast(t_?.c_? as double)=?
+select count(*) from tbl tbl where  cast(fn_string(tbl.a) as double)=?
 ===================================================
 count(*)    
 0     
 
 Query plan:
 sscan
-    class: t_? node[?]
+    class: tbl node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select tbl.a from table({?}) t_? (c_?))
-Query plan:
-nl-join (cselect join)
-    edge:  table(?) -> t_? node[?]
-    outer: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select t_?.c_?, t_?.c_? from (select tbl.a from table({?}) t_? (c_?)) t_? (c_?), (fn_string(t_?.c_?)) t_? (c_?))
-Query plan:
-nl-join (inner join)
-    edge:  table(?) -> t_? node[?]
-    outer: sscan
-               class: tbl node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t_? node[?]
-               sargs: table(?) -> t_? node[?] AND term[?]
-               cost:  ? card ?
-    subqs: ?
-    cost:  ? card ?
-Query stmt:
-select count(*) from tbl tbl, (select t_?.c_?, t_?.c_? from (select tbl.a from table({?}) t_? (c_?)) t_? (c_?), (fn_string(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?) where  cast(t_?.c_? as double) in multiset{?, ?}
+select count(*) from tbl tbl where  cast(fn_string(tbl.a) as double) in multiset{?, ?}
 ===================================================
 count(*)    
 1001     
@@ -147,12 +97,13 @@ count(*)
 110     
 
 Query plan:
-sscan
+iscan
     class: tbl node[?]
-    sargs: term[?]
+    index: idx?_tbl term[?] (covers)
+    filtr: term[?]
     cost:  ? card ?
 Query stmt:
-select count(*) from tbl tbl where tbl.b like  cast(fn_int(?) as varchar)|| cast('%' as varchar)
+select count(*) from tbl tbl where tbl.b like  cast(fn_int(?) as varchar)|| cast('%' as varchar) and (tbl.b>= like_match_lower_bound( cast(fn_int(?) as varchar)|| cast('%' as varchar)) and tbl.b< like_match_upper_bound( cast(fn_int(?) as varchar)|| cast('%' as varchar)))
 ===================================================
 count(*)    
 190     
@@ -167,36 +118,11 @@ count(*)
 
 Query plan:
 sscan
-    class: t_? node[?]
+    class: tbl node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select tbl.b from table({?}) t_? (c_?))
-Query plan:
-nl-join (cselect join)
-    edge:  table(?) -> t_? node[?]
-    outer: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t_? node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select t_?.c_?, t_?.c_? from (select tbl.b from table({?}) t_? (c_?)) t_? (c_?), (fn_string(t_?.c_?)) t_? (c_?))
-Query plan:
-nl-join (inner join)
-    edge:  table(?) -> t_? node[?]
-    outer: sscan
-               class: tbl node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t_? node[?]
-               sargs: table(?) -> t_? node[?] AND term[?]
-               cost:  ? card ?
-    subqs: ?
-    cost:  ? card ?
-Query stmt:
-select count(*) from tbl tbl, (select t_?.c_?, t_?.c_? from (select tbl.b from table({?}) t_? (c_?)) t_? (c_?), (fn_string(t_?.c_?)) t_? (c_?)) t_? (c_?, c_?) where t_?.c_? like  cast(fn_int(?) as varchar)|| cast('%' as varchar)
+select count(*) from tbl tbl where fn_string(tbl.b) like  cast(fn_int(?) as varchar)|| cast('%' as varchar)
 ===================================================
 count(*)    
 0     

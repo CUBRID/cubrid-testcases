@@ -151,15 +151,19 @@ select index_cardinality (NULL,n'i_t1_i1',0);
 -- HV : TODO
 PREPARE st FROM 'SELECT index_cardinality(?,?,?)';
 EXECUTE st USING 'dba.t1', 'i_t1_i1', 0; 
+DEALLOCATE PREPARE st;
 
 PREPARE st FROM 'SELECT index_cardinality(?,?,?)';
 EXECUTE st USING 'dba.t1', 'i_t1_i1', '0';
+DEALLOCATE PREPARE st;
 
 PREPARE st FROM 'SELECT index_cardinality(?,?,?)';
 EXECUTE st USING 1, 'i_t1_i1', '0'; 
+DEALLOCATE PREPARE st;
 
 PREPARE st FROM 'SELECT index_cardinality(?,?,?)';
 EXECUTE st USING date'2001-10-01', 'i_t1_i1', '0'; 
+DEALLOCATE PREPARE st;
 
 -- tables:
 select tbl_name, idx_name, key_pos, index_cardinality ('dba.' || tbl_name, idx_name, key_pos) from data_tb_1 order by 1,2,3;

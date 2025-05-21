@@ -47,6 +47,7 @@ set time zone 'Europe/London';
 set @v1='2009-01-01 12:59:59.999 AM';
 set @v2='2008-12-31 23:59:59.999 UTC';
 set @v3='2009-01-01 12:59:59.999 AM Europe/London';
+deallocate prepare st;
 
 prepare st from 'select date_format(?+1, ?)';
 execute st using @v1, '%x, %v-%u Day %j %H:%i:%S &&%TZR-%TZD [%TZH:%TZM] &&';

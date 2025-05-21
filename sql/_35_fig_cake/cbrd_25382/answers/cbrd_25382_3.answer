@@ -1,0 +1,481 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+4
+===================================================
+4
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+####  1. left outer join (ansi) ####     
+
+===================================================
+a_ca    b_ca    c_ca    d_ca    
+1     1     1     1     
+2     null     null     null     
+3     3     null     null     
+4     4     4     null     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (left outer join)
+                 edge:  term[?]
+                 outer: hash-join (left outer join)
+                            edge:  term[?]
+                            outer: hash-join (left outer join)
+                                       edge:  term[?]
+                                       outer: sscan
+                                                  class: a node[?]
+                                                  sargs: term[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: b node[?]
+                                                  sargs: term[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: c node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: d node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ a.ca, b.ca, c.ca, d.ca from ta a left outer join tb b on b.flag= ?:?  and b.ca=a.ca left outer join tc c on c.flag= ?:?  and c.ca=b.ca left outer join td d on d.flag= ?:?  and d.ca=c.ca where a.flag= ?:?  order by ?
+===================================================
+0
+===================================================
+    
+####  2. left outer join (non-ansi)     
+
+===================================================
+a_ca    b_ca    c_ca    d_ca    
+1     1     1     1     
+2     null     null     null     
+3     3     null     null     
+4     4     4     null     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (left outer join)
+                 edge:  term[?]
+                 outer: hash-join (left outer join)
+                            edge:  term[?]
+                            outer: hash-join (left outer join)
+                                       edge:  term[?]
+                                       outer: sscan
+                                                  class: a node[?]
+                                                  sargs: term[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: b node[?]
+                                                  sargs: term[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: c node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: d node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ a.ca, b.ca, c.ca, d.ca from ta a left outer join tb b on b.flag= ?:?  and a.ca=b.ca left outer join tc c on c.flag= ?:?  and b.ca=c.ca left outer join td d on d.flag= ?:?  and c.ca=d.ca where a.flag= ?:?  order by ?
+===================================================
+0
+===================================================
+    
+####  3. left outer join + during join terms     
+
+===================================================
+a_ca    b_ca    c_ca    d_ca    
+1     1     1     1     
+2     null     null     null     
+3     3     null     null     
+4     4     4     null     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (left outer join)
+                 edge:  term[?]
+                 outer: hash-join (left outer join)
+                            edge:  term[?]
+                            outer: hash-join (left outer join)
+                                       edge:  term[?]
+                                       outer: sscan
+                                                  class: a node[?]
+                                                  sargs: term[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: b node[?]
+                                                  sargs: term[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: c node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            during:term[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: d node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 during:term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ a.ca, b.ca, c.ca, d.ca, a.flag from ta a left outer join tb b on b.flag= ?:?  and b.ca=a.ca left outer join tc c on c.flag= ?:?  and b.flag= ?:?  and c.ca=b.ca left outer join td d on d.flag= ?:?  and c.flag= ?:?  and d.ca=c.ca where a.flag= ?:?  order by ?
+===================================================
+0
+===================================================
+    
+####  4. left outer join (ansi) + after join terms     
+
+===================================================
+a_ca    b_ca    c_ca    d_ca    
+1     1     1     1     
+2     null     null     null     
+3     3     null     null     
+4     4     4     null     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (left outer join)
+                 edge:  term[?]
+                 outer: hash-join (left outer join)
+                            edge:  term[?]
+                            outer: hash-join (left outer join)
+                                       edge:  term[?]
+                                       outer: sscan
+                                                  class: a node[?]
+                                                  sargs: term[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: b node[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: c node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: d node[?]
+                            cost:  ? card ?
+                 after: term[?] AND term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ a.ca, b.ca, c.ca, d.ca from ta a left outer join tb b on b.ca=a.ca left outer join tc c on c.ca=b.ca left outer join td d on d.ca=c.ca where nvl(b.flag, ?)=? and nvl(c.flag, ?)=? and nvl(d.flag, ?)=? and a.flag= ?:?  order by ?
+===================================================
+0
+===================================================
+    
+####  5. left outer join (non-ansi) + after join terms     
+
+===================================================
+a_ca    b_ca    c_ca    d_ca    
+1     1     1     1     
+2     null     null     null     
+3     3     null     null     
+4     4     4     null     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (left outer join)
+                 edge:  term[?]
+                 outer: hash-join (left outer join)
+                            edge:  term[?]
+                            outer: hash-join (left outer join)
+                                       edge:  term[?]
+                                       outer: sscan
+                                                  class: a node[?]
+                                                  sargs: term[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: b node[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: c node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: d node[?]
+                            cost:  ? card ?
+                 after: term[?] AND term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ a.ca, b.ca, c.ca, d.ca from ta a left outer join tb b on a.ca=b.ca left outer join tc c on b.ca=c.ca left outer join td d on c.ca=d.ca where nvl(b.flag, ?)=? and nvl(c.flag, ?)=? and nvl(d.flag, ?)=? and a.flag= ?:?  order by ?
+===================================================
+0
+===================================================
+    
+####  6. right outer join (ansi)     
+
+===================================================
+d_ca    d_flag    c_ca    c_flag    b_ca    b_flag    a_ca    
+1     0     1     0     1     0     1     
+1     1     1     0     1     0     1     
+1     0     1     1     1     0     1     
+1     1     1     1     1     0     1     
+1     0     1     0     1     1     1     
+1     1     1     0     1     1     1     
+1     0     1     1     1     1     1     
+1     1     1     1     1     1     1     
+null     null     null     null     null     null     2     
+null     null     null     null     3     0     3     
+null     null     null     null     3     1     3     
+null     null     4     0     4     0     4     
+null     null     4     1     4     0     4     
+null     null     4     0     4     1     4     
+null     null     4     1     4     1     4     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (right outer join)
+                 edge:  term[?]
+                 outer: hash-join (right outer join)
+                            edge:  term[?]
+                            outer: hash-join (right outer join)
+                                       edge:  term[?]
+                                       outer: sscan
+                                                  class: d node[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: c node[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: a node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ d.ca, d.flag, c.ca, c.flag, b.ca, b.flag, a.ca from td d right outer join tc c on c.ca=d.ca right outer join tb b on b.ca=c.ca right outer join ta a on a.ca=b.ca where a.flag= ?:?  order by ?, ?, ?, ?, ?, ?, ?
+===================================================
+0
+===================================================
+    
+####  7. right outer join (non-ansi)     
+
+===================================================
+d_ca    d_flag    c_ca    c_flag    b_ca    b_flag    a_ca    
+1     0     1     0     1     0     1     
+1     1     1     0     1     0     1     
+1     0     1     1     1     0     1     
+1     1     1     1     1     0     1     
+1     0     1     0     1     1     1     
+1     1     1     0     1     1     1     
+1     0     1     1     1     1     1     
+1     1     1     1     1     1     1     
+null     null     null     null     null     null     2     
+null     null     null     null     3     0     3     
+null     null     null     null     3     1     3     
+null     null     4     0     4     0     4     
+null     null     4     1     4     0     4     
+null     null     4     0     4     1     4     
+null     null     4     1     4     1     4     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (right outer join)
+                 edge:  term[?]
+                 outer: hash-join (right outer join)
+                            edge:  term[?]
+                            outer: hash-join (right outer join)
+                                       edge:  term[?]
+                                       outer: sscan
+                                                  class: d node[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: c node[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: a node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ d.ca, d.flag, c.ca, c.flag, b.ca, b.flag, a.ca from td d right outer join tc c on d.ca=c.ca right outer join tb b on c.ca=b.ca right outer join ta a on b.ca=a.ca where a.flag= ?:?  order by ?, ?, ?, ?, ?, ?, ?
+===================================================
+0
+===================================================
+    
+####  8. right outer join + during join terms     
+
+===================================================
+d_ca    d_flag    c_ca    c_flag    b_ca    b_flag    a_ca    a_flag    
+null     null     null     null     null     null     1     0     
+null     null     null     null     null     null     2     0     
+null     null     null     null     null     null     3     0     
+null     null     null     null     null     null     4     0     
+null     null     null     null     1     0     1     1     
+null     null     1     0     1     1     1     1     
+1     0     1     1     1     1     1     1     
+1     1     1     1     1     1     1     1     
+null     null     null     null     null     null     2     1     
+null     null     null     null     3     0     3     1     
+null     null     null     null     3     1     3     1     
+null     null     null     null     4     0     4     1     
+null     null     4     0     4     1     4     1     
+null     null     4     1     4     1     4     1     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (right outer join)
+                 edge:  term[?]
+                 outer: hash-join (right outer join)
+                            edge:  term[?]
+                            outer: hash-join (right outer join)
+                                       edge:  term[?]
+                                       outer: sscan
+                                                  class: d node[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: c node[?]
+                                                  cost:  ? card ?
+                                       during:term[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       cost:  ? card ?
+                            during:term[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 during:term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ d.ca, d.flag, c.ca, c.flag, b.ca, b.flag, a.ca, a.flag from td d right outer join tc c on c.flag= ?:?  and c.ca=d.ca right outer join tb b on b.flag= ?:?  and b.ca=c.ca right outer join ta a on a.flag= ?:?  and a.ca=b.ca order by ?, ?, ?, ?, ?, ?, ?, ?
+===================================================
+0
+===================================================
+    
+####  9. right outer join (ansi) + after join terms     
+
+===================================================
+d_ca    c_ca    b_ca    a_ca    
+1     1     1     1     
+null     null     null     2     
+null     null     3     3     
+null     4     4     4     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (right outer join)
+                 edge:  term[?]
+                 outer: hash-join (right outer join)
+                            edge:  term[?]
+                            outer: hash-join (right outer join)
+                                       edge:  term[?]
+                                       outer: sscan
+                                                  class: d node[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: c node[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: a node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 after: term[?] AND term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ d.ca, c.ca, b.ca, a.ca from td d right outer join tc c on c.ca=d.ca right outer join tb b on b.ca=c.ca right outer join ta a on a.ca=b.ca where nvl(d.flag, ?)=? and nvl(c.flag, ?)=? and nvl(b.flag, ?)=? and a.flag= ?:?  order by ?, ?, ?, ?
+===================================================
+0
+===================================================
+    
+#### 10. right outer join (non-ansi) + after join terms     
+
+===================================================
+d_ca    c_ca    b_ca    a_ca    
+1     1     1     1     
+null     null     null     2     
+null     null     3     3     
+null     4     4     4     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (right outer join)
+                 edge:  term[?]
+                 outer: hash-join (right outer join)
+                            edge:  term[?]
+                            outer: hash-join (right outer join)
+                                       edge:  term[?]
+                                       outer: sscan
+                                                  class: d node[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: c node[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: a node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 after: term[?] AND term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ d.ca, c.ca, b.ca, a.ca from td d right outer join tc c on d.ca=c.ca right outer join tb b on c.ca=b.ca right outer join ta a on b.ca=a.ca where nvl(d.flag, ?)=? and nvl(c.flag, ?)=? and nvl(b.flag, ?)=? and a.flag= ?:?  order by ?, ?, ?, ?
+===================================================
+0
+===================================================
+0

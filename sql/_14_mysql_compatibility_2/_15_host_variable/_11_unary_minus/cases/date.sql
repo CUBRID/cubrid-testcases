@@ -14,5 +14,6 @@ select -(date'2001-10-10');
 
 prepare st from 'select -(?)';
 execute st using date'2001-10-11';
+deallocate prepare st;
 
 

@@ -8,9 +8,9 @@ as
     AS
     BEGIN
         IF n <= 0 THEN
-            put_line('-- end --');
+            dbms_output.put_line('-- end --');
         ELSE
-            put_line('ping ->');
+            dbms_output.put_line('ping ->');
         END IF;
     END;
 begin    
@@ -23,9 +23,9 @@ as
     AS
     BEGIN
         IF n <= 0 THEN
-            put_line('-- end --');
+            dbms_output.put_line('-- end --');
         ELSE
-            put_line('ping ->');
+            dbms_output.put_line('ping ->');
         END IF;
     END;
 begin    

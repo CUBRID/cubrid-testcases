@@ -16,7 +16,7 @@ C4: set transaction isolation level read committed;
 /* preparation */
 C1: drop table if exists t2;
 C1: drop table if exists t1;
-C1: create table t1(id int primary key, col1 char(3000));
+C1: create table t1(id int primary key, col1 char(2048));
 C1: insert into t1 values(1,'james'),(2,'mikey'),(3,'lucy'),(5,'nancy'),(6,null);
 C1: create table t2(id bigint primary key ,col1 varchar(10),col2 int, constraint foreign key(col2) references t1(id));
 C1: insert into t2 select rownum,'a'||rownum,1 from db_root connect by level<=10;

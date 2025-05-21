@@ -19,12 +19,12 @@ AS
         target_name STRING;
         target_temp STRING;
     begin
-        put_line('IN prameter-1 : ' || param_name );
+        dbms_output.put_line('IN prameter-1 : ' || param_name );
         OPEN my_cursor(param_name );
         LOOP
             FETCH my_cursor INTO target_id, target_name;
             EXIT WHEN my_cursor%NOTFOUND;
-            put_line('id: ' || target_id || ' name: ' || target_name);
+            dbms_output.put_line('id: ' || target_id || ' name: ' || target_name);
         END LOOP;
         CLOSE my_cursor;
     end;

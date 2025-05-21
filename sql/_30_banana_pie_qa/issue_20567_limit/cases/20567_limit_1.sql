@@ -48,14 +48,19 @@ set @a='qwe';
 execute s using @a;
 set @a=-1;
 execute s using @a;
+deallocate prepare s;
+
 prepare s from 'select * from (select 1) limit 0+1, ?';
 execute s using @a;
+deallocate prepare s;
+
 prepare s from 'select * from (select 1) limit 0+?, ?';
 execute s using @a, @a;
 set @a=1;
 execute s using @a, @a;
 set @a=-14632475938453979136;
 execute s using @a, @a;
+deallocate prepare s;
 
 drop table if exists t1;
 drop variable @a;

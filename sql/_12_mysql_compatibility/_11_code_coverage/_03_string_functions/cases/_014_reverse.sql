@@ -30,6 +30,7 @@ select reverse(b'101101');
 
 prepare st from 'select reverse(?)';
 execute st using n'123';
+drop prepare st;
 
 prepare st from 'select reverse(?)';
 execute st using '123';

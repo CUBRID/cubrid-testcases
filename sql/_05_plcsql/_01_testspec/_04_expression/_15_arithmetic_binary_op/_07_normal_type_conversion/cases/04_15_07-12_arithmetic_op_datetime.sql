@@ -1221,7 +1221,7 @@ call t_datetime_datetime(' Arithmetic operations : datetime, datetime ' ) ;
 drop procedure t_datetime_datetime ; 
 
 
---BUG NVL(left_timestamp,'NULL') ( normal : 01:01:01 AM 01/01/2002, BUG : 01:01:01.000 AM 01/01/2002)
+--BUG NVL(left_timestamp,'NULL') ( normal : 01:01:01 AM 01/01/2002, BUG : 01:01:01.000 AM 01/01/2002) - CBRD-25565
 select 'This test is a normal run case. ( t_timestamp, datetime )' ;
 create or replace procedure t_timestamp_datetime( tc_comment string ) as 
     left_boolean                   boolean       := TRUE;

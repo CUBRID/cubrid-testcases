@@ -15,7 +15,7 @@ end;
 select 'change ''dba'' user & drop test_proc' from dual;
 call login('dba','') on class db_user;
 drop user test;
-select * from db_stored_procedure where sp_name='test_proc';
+select count(*) from db_stored_procedure where sp_name='test_proc';
 
 select 'change ''test'' user & drop test_proc' from dual;
 call login('test','') on class db_user;
@@ -24,6 +24,6 @@ drop procedure test_proc;
 select 'change ''dba'' user & data clear' from dual;
 call login('dba','') on class db_user;
 drop user test;
-select * from db_stored_procedure where sp_name='test_proc';
+select count(*) from db_stored_procedure where sp_name='test_proc';
 
 --+ server-message off

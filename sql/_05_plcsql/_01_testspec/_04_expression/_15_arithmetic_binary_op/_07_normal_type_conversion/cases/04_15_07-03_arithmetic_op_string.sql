@@ -1,6 +1,6 @@
 --+ server-message on
 
-select 'This test produces a compilation error. ( t_compile_error_null, string )' ;
+select 'This test is a normal run case. ( t_compile_error_null, string )' ;
 create or replace procedure t_compile_error_null_string( tc_comment string ) as 
     left_boolean                   boolean       := TRUE;
     left_string                    string        := '123';
@@ -65,7 +65,11 @@ begin
     dbms_output.put_line('');
 end;
 
-select 'This test produces a compilation error. ( t_compile_error_null, string )' ;
+call t_compile_error_null_string('Arithmetic operations : null, string');
+drop procedure t_compile_error_null_string;
+
+
+select 'This test is a normal run case. ( t_compile_error_null, string )' ;
 create or replace procedure t_compile_error_null_string( tc_comment string ) as 
     left_boolean                   boolean       := TRUE;
     left_string                    string        := '123';
@@ -122,6 +126,7 @@ create or replace procedure t_compile_error_null_string( tc_comment string ) as
     cursor  right_cursor is select * from dual ;
 begin 
 
+    -- Bug fix on CBRD-25272
     dbms_output.put_line('***************************************');
     dbms_output.put_line('null = ' ||  NVL(null,'NULL')  ); 
     dbms_output.put_line('right_string_null = ' ||NVL(right_string_null,'NULL')  ); 
@@ -130,7 +135,11 @@ begin
     dbms_output.put_line('');
 end;
 
-select 'This test produces a compilation error. ( t_compile_error_null, string )' ;
+
+call t_compile_error_null_string('Arithmetic operations : null, string');
+drop procedure t_compile_error_null_string;
+
+select 'This test is a normal run case. ( t_compile_error_null, string )' ;
 create or replace procedure t_compile_error_null_string( tc_comment string ) as 
     left_boolean                   boolean       := TRUE;
     left_string                    string        := '123';
@@ -187,6 +196,7 @@ create or replace procedure t_compile_error_null_string( tc_comment string ) as
     cursor  right_cursor is select * from dual ;
 begin 
 
+    -- Bug fix on CBRD-25272
     dbms_output.put_line('***************************************');
     dbms_output.put_line('null = ' ||  NVL(null,'NULL')  ); 
     dbms_output.put_line('right_string_null = ' ||NVL(right_string_null,'NULL')  ); 
@@ -195,7 +205,11 @@ begin
     dbms_output.put_line('');
 end;
 
-select 'This test produces a compilation error. ( t_compile_error_null, string )' ;
+
+call t_compile_error_null_string('Arithmetic operations : null, string');
+drop procedure t_compile_error_null_string;
+
+select 'This test is a normal run case. ( t_compile_error_null, string )' ;
 create or replace procedure t_compile_error_null_string( tc_comment string ) as 
     left_boolean                   boolean       := TRUE;
     left_string                    string        := '123';
@@ -252,6 +266,7 @@ create or replace procedure t_compile_error_null_string( tc_comment string ) as
     cursor  right_cursor is select * from dual ;
 begin 
 
+    -- Bug fix on CBRD-25272
     dbms_output.put_line('***************************************');
     dbms_output.put_line('null = ' ||  NVL(null,'NULL')  ); 
     dbms_output.put_line('right_string_null = ' ||NVL(right_string_null,'NULL')  ); 
@@ -259,6 +274,11 @@ begin
     dbms_output.put_line('null / right_string_null = '||null / right_string_null ) ; 
     dbms_output.put_line('');
 end;
+
+
+call t_compile_error_null_string('Arithmetic operations : null, string');
+drop procedure t_compile_error_null_string;
+
 
 select 'This test produces a compilation error. ( t_compile_error_boolean, string )' ;
 create or replace procedure t_compile_error_boolean_string( tc_comment string ) as 
@@ -1355,7 +1375,7 @@ call t_datetime_string(' Arithmetic operations : datetime, string ' ) ;
 drop procedure t_datetime_string ; 
 
 
---BUG NVL(left_timestamp,'NULL') ( normal : 11:30:45 PM 05/05/2024, BUG : 11:30:45.000 PM 05/05/2024)
+--BUG NVL(left_timestamp,'NULL') ( normal : 11:30:45 PM 05/05/2024, BUG : 11:30:45.000 PM 05/05/2024) - CBRD-25565
 select 'This test is a normal run case. ( t_timestamp, string )' ;
 create or replace procedure t_timestamp_string( tc_comment string ) as 
     left_boolean                   boolean       := TRUE;

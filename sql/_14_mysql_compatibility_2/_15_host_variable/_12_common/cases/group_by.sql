@@ -12,12 +12,14 @@ select i1+3,d1 from t1 group by i1+3;
 
 prepare st from 'select i1+?,d1 from t1 group by i1+?';
 execute st using 3,3;
+deallocate prepare st;
 
 
 select i1,d1 from t1 group by i1+3.3;
 
 prepare st from 'select i1,d1 from t1 group by i1+?';
 execute st using 3.3;
+deallocate prepare st;
 
 
 
@@ -25,35 +27,42 @@ select f1+3.3,d1 from t1 group by i1+3.3;
 
 prepare st from 'select f1+?,d1 from t1 group by i1+?';
 execute st using 3.3,3.3;
+deallocate prepare st;
 
 
 select f1+3.3,d1,d1+6 from t1 group by i1+3.3;
 
 prepare st from 'select f1+?,d1,d1+? from t1 group by i1+?';
 execute st using 3.3,6,3.3;
+deallocate prepare st;
 
 
 select f1+3.3,d1 from t1 group by i1;
 
 prepare st from 'select f1+?,d1 from t1 group by i1';
 execute st using 3.3;
+deallocate prepare st;
 
 
 select i1+3,d1 from t1 group by 1;
 -- should fail:   cannot be a GROUP by column
 prepare st from 'select i1+3,d1 from t1 group by ?';
 execute st using 1;
+deallocate prepare st;
 
 select f1+3.3,d1 from t1 group by i1 having f1<3;
 
 prepare st from 'select f1+?,d1 from t1 group by i1 having f1<?';
 execute st using 3.3,3;
+deallocate prepare st;
 
 prepare st from 'select count(i1) from t1 group by 1+?';
 execute st using 1.1;
+deallocate prepare st;
 
 prepare st from 'select i1 from t1 group by d1+?';
 execute st using 1.1;
+deallocate prepare st;
 
 drop table t1;
 
@@ -72,18 +81,21 @@ select i1+3,d1 from t1 group by i1+3;
 
 prepare st from 'select i1+?,d1 from t1 group by i1+?';
 execute st using 3,3;
+deallocate prepare st;
 
 
 select f1+3.3,d1,d1+6 from t1 group by i1+3.3;
 
 prepare st from 'select f1+?,d1,d1+? from t1 group by i1+?';
 execute st using 3.3,6,3.3;
+deallocate prepare st;
 
 
 select 4.2+f1,max(i1+2) from t1 group by d1;
 
 prepare st from 'select 4.2+f1,max(i1+?) from t1 group by d1';
 execute st using 2;
+deallocate prepare st;
 
 drop table t1;
 
@@ -101,6 +113,7 @@ select min(f1-1),group_concat(i1+2 order by 1),d1 from t1 group by d1;
 
 prepare st from 'select min(f1-?),group_concat(i1+? order by 1),d1 from t1 group by d1';
 execute st using 1,2;
+deallocate prepare st;
 
 drop table t1;
 
@@ -116,17 +129,20 @@ select i1+3,d1 from t1 group by i1+3;
 
 prepare st from 'select i1+?,d1 from t1 group by i1+?';
 execute st using 3,3;
+deallocate prepare st;
 
 
 select f1+3.3,d1,d1+6 from t1 group by i1+3.3;
 
 prepare st from 'select f1+?,d1,d1+? from t1 group by i1+?';
 execute st using 3.3,6,3.3;
+deallocate prepare st;
 
 
 select 4.2+f1,max(i1+2) from t1 group by d1;
 
 prepare st from 'select 4.2+f1,max(i1+?) from t1 group by d1';
 execute st using 2;
+deallocate prepare st;
 
 drop table t1;

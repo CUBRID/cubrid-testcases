@@ -36,7 +36,7 @@ drop table if exists a, b, c, t,tt;
 
 
 drop table if exists t;
-create table t (i char(5000));
+create table t (i char(2048));
 create unique index i_t on t(i);
 insert into t select rownum from db_class a,db_class b ,db_class c limit 100; 
 select count(*) from t where i> 100;

@@ -26,7 +26,7 @@ BEGIN
     LOOP
         FETCH my_cursor INTO target_id, target_name;
         EXIT WHEN my_cursor%NOTFOUND;
-        put_line('id: ' || target_id || ' name: ' || target_name);
+        dbms_output.put_line('id: ' || target_id || ' name: ' || target_name);
     END LOOP;
 END;
 
@@ -48,7 +48,7 @@ BEGIN
     LOOP
         FETCH my_cursor INTO target_id, target_name;
         EXIT WHEN my_cursor%NOTFOUND;
-        put_line('id: ' || target_id || ' name: ' || target_name);
+        dbms_output.put_line('id: ' || target_id || ' name: ' || target_name);
     END LOOP;
     CLOSE my_cursor;
 END;
@@ -72,7 +72,7 @@ BEGIN
     LOOP
         FETCH my_cursor INTO target_id, target_name;
         EXIT WHEN my_cursor%NOTFOUND;
-        put_line('id: ' || target_id || ' name: ' || target_name);
+        dbms_output.put_line('id: ' || target_id || ' name: ' || target_name);
     END LOOP;
 END;
 
@@ -96,7 +96,7 @@ BEGIN
         CLOSE my_cursor;
         FETCH my_cursor INTO target_id, target_name;
         EXIT WHEN my_cursor%NOTFOUND;
-        put_line('id: ' || target_id || ' name: ' || target_name);
+        dbms_output.put_line('id: ' || target_id || ' name: ' || target_name);
     END LOOP;
 END;
 
@@ -120,7 +120,7 @@ BEGIN
         FETCH my_cursor INTO target_id, target_name;
         CLOSE my_cursor;
         EXIT WHEN my_cursor%NOTFOUND;
-        put_line('id: ' || target_id || ' name: ' || target_name);
+        dbms_output.put_line('id: ' || target_id || ' name: ' || target_name);
     END LOOP;
     CLOSE my_cursor;
 END;
@@ -144,7 +144,7 @@ BEGIN
     LOOP
         FETCH my_cursor INTO target_id, target_name;
         EXIT WHEN my_cursor%NOTFOUND;
-        put_line('id: ' || target_id || ' name: ' || target_name);
+        dbms_output.put_line('id: ' || target_id || ' name: ' || target_name);
     END LOOP;
     CLOSE my_cursor;
 END;
@@ -167,7 +167,7 @@ BEGIN
         FETCH my_cursor INTO target_id, target_name;
         FETCH my_cursor INTO target_id, target_name;
         EXIT WHEN my_cursor%NOTFOUND;
-        put_line('id: ' || target_id || ' name: ' || target_name);
+        dbms_output.put_line('id: ' || target_id || ' name: ' || target_name);
     END LOOP;
     CLOSE my_cursor;
 END;
@@ -191,7 +191,7 @@ BEGIN
     LOOP
         FETCH my_cursor INTO target_id, target_name;
         EXIT WHEN my_cursor%NOTFOUND;
-        put_line('id: ' || target_id || ' name: ' || target_name);
+        dbms_output.put_line('id: ' || target_id || ' name: ' || target_name);
     END LOOP;
     CLOSE my_cursor;
 END;

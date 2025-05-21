@@ -9,15 +9,19 @@ select * from t1 order by 1,2;
 
 prepare st from 'select distinct(i1+?) from t1 order by 1';
 execute st using 3;
+deallocate prepare st;
 
 prepare st from 'select distinct(i1+?) from t1 order by 1';
 execute st using 3.2;
+deallocate prepare st;
 
 prepare st from 'select distinct(? - d1) from t1 order by 1';
 execute st using 3;
+deallocate prepare st;
 
 prepare st from 'select distinct(? - d1) from t1 order by 1';
 execute st using 3.2;
+deallocate prepare st;
 
 drop table t1;
 
@@ -35,9 +39,11 @@ select * from t1 order by 1,2;
 
 prepare st from 'select distinct(i1+?) from t1 order by 1';
 execute st using 3.2;
+deallocate prepare st;
 
 prepare st from 'select distinct(? - d1) from t1 order by 1';
 execute st using 3;
+deallocate prepare st;
 
 drop table t1;
 
@@ -52,9 +58,11 @@ select * from t1 order by 1,2;
 
 prepare st from 'select distinct(i1+?) from t1 order by 1';
 execute st using 3.2;
+deallocate prepare st;
 
 prepare st from 'select distinct(? - d1) from t1 order by 1';
 execute st using 3;
+deallocate prepare st;
 
 drop table t1;
 

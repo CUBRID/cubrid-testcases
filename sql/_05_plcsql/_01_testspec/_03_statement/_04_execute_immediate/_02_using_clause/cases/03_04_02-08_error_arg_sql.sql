@@ -15,7 +15,7 @@ AS
 BEGIN
     EXECUTE IMMEDIATE 'insert into plcsql_tbl ( id, name ) values ( ?, ? ) ' USING trunc(5)+trunc(5), to_date('1974-12-27','YYYY-MM-DD') + 'birth day'  ;
     EXECUTE IMMEDIATE 'select id, name from plcsql_tbl where id =?' USING trunc(5)+trunc(5) INTO r_id, r_name;
-    put_line('id: ' || r_id || ' name: ' || r_name);
+    dbms_output.put_line('id: ' || r_id || ' name: ' || r_name);
 END;
 
 call t('name1');

@@ -12,6 +12,7 @@ select time (s1) from t2 order by 1;
 -- late binding
 prepare s from 'select s1 + time(?) from t1 order by 1';
 execute s using '2001-11-12';
+deallocate prepare s;
 
 prepare s from 'select s1 + time(?) from t2 order by 1';
 execute s using '2001-11-12';

@@ -1,0 +1,157 @@
+===================================================
+    
+using seteq for search condition on system table     
+
+===================================================
+grantor    grantee    object_type    object_of    auth_type    is_grantable    
+db_user     db_user     0     nulldb_user     SELECT     0     
+
+Query plan:
+follow
+    edge:  au node[?] grantee -> db_user node[?]
+    head:  sscan
+              class: au node[?]
+              sargs: term[?]
+              cost:  ? card ?
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select au.grantor, au.grantee, au.object_type, au.object_of, au.auth_type, au.is_grantable from [_db_auth] au where ({au.grantee.[name]} seteq {'PUBLIC'}) and (inst_num()<= ?:? )
+===================================================
+grantor    grantee    object_type    object_of    auth_type    is_grantable    
+
+Query plan:
+follow
+    edge:  au node[?] grantee -> db_user node[?]
+    head:  sscan
+              class: au node[?]
+              sargs: term[?]
+              cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select au.grantor, au.grantee, au.object_type, au.object_of, au.auth_type, au.is_grantable from [_db_auth] au where {au.grantee.[name]} seteq {} and (au.is_grantable= ?:? )
+===================================================
+    
+using = for search condition on system table     
+
+===================================================
+grantor    grantee    object_type    object_of    auth_type    is_grantable    
+db_user     db_user     0     nulldb_user     SELECT     0     
+
+Query plan:
+follow
+    edge:  au node[?] grantee -> db_user node[?]
+    head:  sscan
+              class: au node[?]
+              sargs: term[?]
+              cost:  ? card ?
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select au.grantor, au.grantee, au.object_type, au.object_of, au.auth_type, au.is_grantable from [_db_auth] au where ({au.grantee.[name]}={'PUBLIC'}) and (inst_num()<= ?:? )
+===================================================
+grantor    grantee    object_type    object_of    auth_type    is_grantable    
+
+Query plan:
+follow
+    edge:  au node[?] grantee -> db_user node[?]
+    head:  sscan
+              class: au node[?]
+              sargs: term[?]
+              cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select au.grantor, au.grantee, au.object_type, au.object_of, au.auth_type, au.is_grantable from [_db_auth] au where {au.grantee.[name]}={} and (au.is_grantable= ?:? )
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
+    
+index scan case     
+
+===================================================
+col_a    col_b    col_c    col_d    
+1     1     1     1     
+2     2     2     2     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl.col_a, tbl.col_b, tbl.col_c, tbl.col_d from tbl tbl where (({tbl.col_a, tbl.col_b}={?, ?}) or ({tbl.col_a, tbl.col_b}={?, ?}))
+===================================================
+col_a    col_b    col_c    col_d    
+1     1     1     1     
+2     2     2     2     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx term[?]
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl.col_a, tbl.col_b, tbl.col_c, tbl.col_d from tbl tbl where (({tbl.col_a, tbl.col_c}={?, ?}) or ({tbl.col_a, tbl.col_c}={?, ?}))
+===================================================
+col_a    col_b    col_c    col_d    
+1     1     1     1     
+2     2     2     2     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl.col_a, tbl.col_b, tbl.col_c, tbl.col_d from tbl tbl where (({tbl.col_a, tbl.col_d}={?, ?}) or ({tbl.col_a, tbl.col_d}={?, ?}))
+===================================================
+    
+sscan case     
+
+===================================================
+col_a    col_b    col_c    col_d    
+1     1     1     1     
+2     2     2     2     
+
+Query plan:
+sscan
+    class: tbl node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl.col_a, tbl.col_b, tbl.col_c, tbl.col_d from tbl tbl where (({tbl.col_a, tbl.col_b}={?, ?}) or ({tbl.col_a, tbl.col_b}={?, ?}))
+===================================================
+col_a    col_b    col_c    col_d    
+2     2     2     2     
+
+Query plan:
+sscan
+    class: tbl node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl.col_a, tbl.col_b, tbl.col_c, tbl.col_d from tbl tbl where {tbl.col_a}={?}
+===================================================
+col_a    col_b    col_c    col_d    
+
+Query plan:
+sscan
+    class: tbl node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl.col_a, tbl.col_b, tbl.col_c, tbl.col_d from tbl tbl where {tbl.col_a}={}
+===================================================
+0

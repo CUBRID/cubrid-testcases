@@ -37,7 +37,7 @@ show full columns from g;
 alter table g modify i int primary key comment 'sea';
 show create table g;
 show full columns from g;
-alter table g modify i char(5000) comment 'go with the wind';
+alter table g modify i char(2048) comment 'go with the wind';
 show full columns from g;
 alter table g add col_short short comment ' ÄãºÃ£¬china';
 alter table g add col_smallint short comment ' ÌÕÔ¨Ã÷';

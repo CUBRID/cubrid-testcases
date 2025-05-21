@@ -25,6 +25,7 @@ create table t1 (s1 varchar(10));
 create index i on t1(s1(1999999999));
 -- 494
 create index i on t1(s1(2000000000));
+deallocate prepare s;
 drop table t1;
 
 

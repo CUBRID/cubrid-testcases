@@ -1,0 +1,167 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+case 5: changed owner for partition table     
+
+===================================================
+    
+connect to u1 & create u1.t1_r, u1.t1_h, u1.t1_l partition table     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+u1.t1_r, u1.t1_h, u1.t1_l grant to u2     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+ERROR: Invalid partition requests     
+
+===================================================
+Error:-494
+===================================================
+0
+===================================================
+grantor_name    grantee_name    owner_name    object_type    object_name    auth_type    is_grantable    
+U1     U2     U1     CLASS     t1_h     SELECT     YES     
+U1     U2     U1     CLASS     t1_h__p__p0     SELECT     YES     
+U1     U2     U1     CLASS     t1_h__p__p1     SELECT     YES     
+U1     U2     U1     CLASS     t1_l     SELECT     YES     
+U1     U2     U1     CLASS     t1_l__p__p0     SELECT     YES     
+U1     U2     U1     CLASS     t1_l__p__p1     SELECT     YES     
+U1     U2     U1     CLASS     t1_r     SELECT     YES     
+U1     U2     U1     CLASS     t1_r__p__p0     SELECT     YES     
+U1     U2     U1     CLASS     t1_r__p__p1     SELECT     YES     
+
+===================================================
+    
+connect to u2 & u1.t1_r, u1.t1_h, u1.t1_l grant to u3     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+grantor_name    grantee_name    owner_name    object_type    object_name    auth_type    is_grantable    
+U1     U2     U1     CLASS     t1_h     SELECT     YES     
+U1     U2     U1     CLASS     t1_h__p__p0     SELECT     YES     
+U1     U2     U1     CLASS     t1_h__p__p1     SELECT     YES     
+U1     U2     U1     CLASS     t1_l     SELECT     YES     
+U1     U2     U1     CLASS     t1_l__p__p0     SELECT     YES     
+U1     U2     U1     CLASS     t1_l__p__p1     SELECT     YES     
+U1     U2     U1     CLASS     t1_r     SELECT     YES     
+U1     U2     U1     CLASS     t1_r__p__p0     SELECT     YES     
+U1     U2     U1     CLASS     t1_r__p__p1     SELECT     YES     
+U2     U3     U1     CLASS     t1_h     SELECT     YES     
+U2     U3     U1     CLASS     t1_h__p__p0     SELECT     YES     
+U2     U3     U1     CLASS     t1_h__p__p1     SELECT     YES     
+U2     U3     U1     CLASS     t1_l     SELECT     YES     
+U2     U3     U1     CLASS     t1_l__p__p0     SELECT     YES     
+U2     U3     U1     CLASS     t1_l__p__p1     SELECT     YES     
+U2     U3     U1     CLASS     t1_r     SELECT     YES     
+U2     U3     U1     CLASS     t1_r__p__p0     SELECT     YES     
+U2     U3     U1     CLASS     t1_r__p__p1     SELECT     YES     
+
+===================================================
+    
+connect to u3 & changed owner, ERROR: can only be performed by the DBA or a DBA group member     
+
+===================================================
+    
+null     
+
+===================================================
+Error:-140
+===================================================
+Error:-140
+===================================================
+Error:-140
+===================================================
+    
+connect to u2 & changed owner, ERROR: can only be performed by the DBA or a DBA group member     
+
+===================================================
+    
+null     
+
+===================================================
+Error:-140
+===================================================
+Error:-140
+===================================================
+Error:-140
+===================================================
+    
+connect to dba & changed owner u1.t1_r, u1.t1_h, u1.t1_l -> u3.t1_r, u3.t1_h, u3.t1_l     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+grantor_name    grantee_name    owner_name    object_type    object_name    auth_type    is_grantable    
+U3     U2     U3     CLASS     t1_h     SELECT     YES     
+U3     U2     U3     CLASS     t1_h__p__p0     SELECT     YES     
+U3     U2     U3     CLASS     t1_h__p__p1     SELECT     YES     
+U3     U2     U3     CLASS     t1_l     SELECT     YES     
+U3     U2     U3     CLASS     t1_l__p__p0     SELECT     YES     
+U3     U2     U3     CLASS     t1_l__p__p1     SELECT     YES     
+U3     U2     U3     CLASS     t1_r     SELECT     YES     
+U3     U2     U3     CLASS     t1_r__p__p0     SELECT     YES     
+U3     U2     U3     CLASS     t1_r__p__p1     SELECT     YES     
+
+===================================================
+class_name    owner_name    
+t1_h     U3     
+t1_l     U3     
+t1_r     U3     
+
+===================================================
+    
+Test init     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

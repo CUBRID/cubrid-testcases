@@ -1,0 +1,215 @@
+===================================================
+0
+
+===================================================
+1
+
+===================================================
+1
+
+===================================================
+1
+
+===================================================
+1
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+col1: 1  col2: a
+col1: 2  col2: b
+col1: 3  col2: c
+col1: 4  col2: d
+===================================================
+    
+change table owner (dba -> public)     
+
+
+===================================================
+0
+
+===================================================
+    
+ERROR: Stored procedure execute error     
+
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 4, column 1) Syntax: Unknown class "dba.tbl". select [dba.tbl].col1, [dba.tbl].col2 from [dba.tbl] [dba.tbl]
+
+===================================================
+    
+ERROR: An object with the supplied attribute value doesnt exist     
+
+
+===================================================
+Error:-711
+An object with the supplied attribute value doesn't exist.
+
+===================================================
+    
+change procedure owner (dba -> public)     
+
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+col1: 1  col2: a
+col1: 2  col2: b
+col1: 3  col2: c
+col1: 4  col2: d
+===================================================
+    
+ERROR: Stored procedure compile error     
+
+
+===================================================
+Error:-1360
+Stored procedure compile error: Syntax: Unknown class "dba.tbl". select col1, col2 from [dba.tbl]
+
+===================================================
+    
+ERROR: Syntax error     
+
+
+===================================================
+Error:-493
+Syntax: In line 1, column 41 before ' TO dba ; '
+Syntax error: unexpected 'OWNER', expecting ';' 
+
+===================================================
+sp_name    lang    owner    comment    
+test_tbl     PLCSQL     PUBLIC     null     
+
+
+===================================================
+    
+change table, procedure owner (public -> dba)     
+
+
+===================================================
+0
+
+===================================================
+    
+add comment of procedure     
+
+
+===================================================
+0
+
+===================================================
+sp_name    lang    owner    comment    
+test_tbl     PLCSQL     DBA     1: OWNER TO COMMENT     
+
+
+===================================================
+    
+alter comment of procedure     
+
+
+===================================================
+0
+
+===================================================
+sp_name    lang    owner    comment    
+test_tbl     PLCSQL     DBA     2: COMMENT     
+
+
+===================================================
+    
+check to _db_class on procedure     
+
+
+===================================================
+    
+create to dba.test_db_class     
+
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+_db_class result: dba.tbl
+===================================================
+    
+create to public.test_db_class2, ERROR: Semantic: SELECT is not authorized on _db_class     
+
+
+===================================================
+Error:-1360
+Stored procedure compile error: Semantic: SELECT is not authorized on _db_class. select [_db_class].unique_name from [_db_class] [_db_class] ...
+
+===================================================
+    
+alter owner dba.test_db_class to public, ERROR: Semantic: SELECT is not authorized on _db_class     
+
+
+===================================================
+Error:-1360
+Stored procedure compile error: Semantic: SELECT is not authorized on _db_class. select [_db_class].unique_name from [_db_class] [_db_class] ...
+
+===================================================
+    
+grant select on _db_class to public & ALTER procedure dba.test_db_class OWNER TO public     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+    
+connect to public & call public.test_db_class()     
+
+
+===================================================
+    
+null     
+
+
+===================================================
+    
+null     
+
+
+_db_class result: dba.tbl
+===================================================
+    
+connect to dba & Test done     
+
+
+===================================================
+    
+null     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+

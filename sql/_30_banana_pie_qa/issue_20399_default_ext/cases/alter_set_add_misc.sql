@@ -30,6 +30,8 @@ alter table xoo modify title varchar default to_char(systimestamp, 'HH:MI:SS AM 
 select if(id=to_char(dd,'MM'),'OK','NOK'),title, if((@xx :=id)<>0,'OK','NOK') from xoo;
 prepare xx from 'update xoo set title=default(title) where id =?'; 
 execute xx using @xx;
+deallocate prepare xx;
+
 prepare xx from 'update xoo set title=default(title)||? where id =?';
 execute xx using '- Meeting', @xx;
 deallocate prepare xx;

@@ -1,4 +1,4 @@
---[er]test octet_length with double as parameter
+--test octet_length with double as parameter
 create class tb(
 		col1 double
 );

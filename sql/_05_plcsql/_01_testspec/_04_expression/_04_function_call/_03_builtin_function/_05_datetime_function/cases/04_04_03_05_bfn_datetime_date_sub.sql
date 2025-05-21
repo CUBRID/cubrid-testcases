@@ -4,7 +4,7 @@
 
 create or replace procedure t () as
 begin
-    -- parse error INTERVAL 
+    -- [CBRD-25866] fixed : parse error INTERVAL 
     dbms_output.put_line(DATE_SUB(NULL, INTERVAL 24 HOUR)); 
     dbms_output.put_line(DATE_SUB(TO_DATE('1999-01-10'), INTERVAL 24 HOUR)); 
     dbms_output.put_line(DATE_SUB(TO_DATETIME('1999-01-10 01:00:00.000'), INTERVAL 24 HOUR)); 

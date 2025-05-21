@@ -1,0 +1,160 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+    
+RANDOM test     
+
+===================================================
+id    name    randomvalue    
+
+Query plan:
+sscan
+    class: v_random node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select v_random.ID, v_random.[Name], ( random()) from tbl v_random where (v_random.BirthYear> ?:? ))
+Query plan:
+sscan
+    class: v_random node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select v_random.id, v_random.[name], v_random.randomvalue from (select v_random.ID, v_random.[Name], ( random()) from tbl v_random where (v_random.BirthYear> ?:? )) v_random (id, [name], randomvalue) where (v_random.RandomValue< ?:? )
+===================================================
+0
+===================================================
+    
+RANDOM test with inline view     
+
+===================================================
+ID    Name    RandomValue    
+
+Query plan:
+sscan
+    class: tbl node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select tbl.ID, tbl.[Name], ( random()) from tbl tbl where (tbl.BirthYear> ?:? ))
+Query plan:
+sscan
+    class: v node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select v.ID, v.[Name], v.RandomValue from (select tbl.ID, tbl.[Name], ( random()) as [RandomValue] from tbl tbl where (tbl.BirthYear> ?:? )) v (ID, [Name], RandomValue) where (v.RandomValue< ?:? )
+===================================================
+0
+===================================================
+    
+DRANDOM test     
+
+===================================================
+id    name    randomrange    
+
+Query plan:
+sscan
+    class: v_drandom node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select v_drandom.ID, v_drandom.[Name], ( drandom()) from tbl v_drandom where (v_drandom.BirthYear> ?:? ))
+Query plan:
+sscan
+    class: v_drandom node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select v_drandom.id, v_drandom.[name], v_drandom.randomrange from (select v_drandom.ID, v_drandom.[Name], ( drandom()) from tbl v_drandom where (v_drandom.BirthYear> ?:? )) v_drandom (id, [name], randomrange) where (v_drandom.RandomRange> ?:? )
+===================================================
+0
+===================================================
+    
+DRANDOM test with inline view     
+
+===================================================
+ID    Name    RandomRange    
+
+Query plan:
+sscan
+    class: tbl node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select tbl.ID, tbl.[Name], ( drandom()) from tbl tbl where (tbl.BirthYear> ?:? ))
+Query plan:
+sscan
+    class: v node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select v.ID, v.[Name], v.RandomRange from (select tbl.ID, tbl.[Name], ( drandom()) as [RandomRange] from tbl tbl where (tbl.BirthYear> ?:? )) v (ID, [Name], RandomRange) where (v.RandomRange> ?:? )
+===================================================
+0
+===================================================
+    
+SYS_GUID test     
+
+===================================================
+id    name    uniqueid    
+
+Query plan:
+sscan
+    class: v_sys_guid node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select v_sys_guid.ID, v_sys_guid.[Name], ( sys_guid() ) from tbl v_sys_guid where (v_sys_guid.BirthYear< ?:? ))
+Query plan:
+sscan
+    class: v_sys_guid node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select v_sys_guid.id, v_sys_guid.[name], v_sys_guid.uniqueid from (select v_sys_guid.ID, v_sys_guid.[Name], ( sys_guid() ) from tbl v_sys_guid where (v_sys_guid.BirthYear< ?:? )) v_sys_guid (id, [name], uniqueid) where v_sys_guid.UniqueID is null 
+===================================================
+0
+===================================================
+    
+SYS_GUID test with inline view     
+
+===================================================
+ID    Name    UniqueID    
+
+Query plan:
+sscan
+    class: tbl node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select tbl.ID, tbl.[Name], ( sys_guid() ) from tbl tbl where (tbl.BirthYear< ?:? ))
+Query plan:
+sscan
+    class: v node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select v.ID, v.[Name], v.UniqueID from (select tbl.ID, tbl.[Name], ( sys_guid() ) as [UniqueID] from tbl tbl where (tbl.BirthYear< ?:? )) v (ID, [Name], UniqueID) where v.UniqueID is null 
+===================================================
+0

@@ -9,6 +9,8 @@ execute stm using 5,2,'BA';
 execute stm using 6,2,'BB';
 execute stm using 7,3,'A--';
 execute stm using 8,3,'A--';
+deallocate prepare stm;
+
 prepare stm from 'insert tree values(?,4,''ABA'');';
 execute stm using 9;
 deallocate prepare stm;

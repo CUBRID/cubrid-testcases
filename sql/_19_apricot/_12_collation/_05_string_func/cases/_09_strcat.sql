@@ -17,6 +17,7 @@ select cast (s1 as string collate utf8_en_ci) || 'c' from t2 order by 1;
 -- late binding
 prepare s from 'select s1 || ?  from t1 order by 1';
 execute s using 'c';
+deallocate prepare s;
 
 
 select t1.s1 || t2.s1 from t1,t2 order by 1;

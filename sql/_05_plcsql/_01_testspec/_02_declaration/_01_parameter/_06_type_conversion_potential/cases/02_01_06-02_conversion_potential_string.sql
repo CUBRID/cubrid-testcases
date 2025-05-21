@@ -119,7 +119,7 @@ call t_string('time', cast('23:59:59' as time) ) ;
 drop procedure t_string ; 
 
 
--- BUG( normal : 10:15:25.000 PM 03/01/2024, BUG : 2024-03-01 22:15:25.0 )
+-- BUG( normal : 10:15:25.000 PM 03/01/2024, BUG : 2024-03-01 22:15:25.0 ) - CBRD-25554
 select 'It is called normally. ( t_datetime, string )' ;
 create or replace procedure t_string( from_type string, param string ) as 
 begin 
@@ -131,7 +131,7 @@ call t_string('datetime', cast('2024-03-01 22:15:25' as datetime) ) ;
 drop procedure t_string ; 
 
 
--- BUG( normal : 2024-05-05 23:30:45, BUG : 2024-05-05 23:30:45.0 )
+-- BUG( normal : 2024-05-05 23:30:45, BUG : 2024-05-05 23:30:45.0 ) - CBRD-25554
 select 'It is called normally. ( t_timestamp, string )' ;
 create or replace procedure t_string( from_type string, param string ) as 
 begin 

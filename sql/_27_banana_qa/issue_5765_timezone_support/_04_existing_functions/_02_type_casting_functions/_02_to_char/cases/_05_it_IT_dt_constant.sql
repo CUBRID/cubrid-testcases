@@ -29,6 +29,7 @@ prepare st from 'select to_char(?)';
 execute st using @v1;
 execute st using @v2;
 execute st using @v3;
+deallocate prepare st;
 
 --test: with format argument
 prepare st from 'select to_char(?, ?)';
@@ -81,6 +82,7 @@ execute st using @v3, 'DD"th", YYYY; DY/d HH24:MI:SS TZR';
 execute st using @v3, 'DD"th", YYYY; DY/d HH24:MI:SS TZR TZD';
 execute st using @v3, 'DD"th", YYYY; DY/d HH24:MI:SS TZM';
 execute st using @v3, 'DD"th", YYYY; DY/d HH24:MI:SS TZH:TRM';
+deallocate prepare st;
 
 set time zone 'Asia/Shanghai';
 set @v1='2014-06-30 7:30:21.999';

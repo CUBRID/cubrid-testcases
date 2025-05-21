@@ -42,7 +42,7 @@ create table foo(a int);
 grant select on foo to public;
 drop table foo;
 
-select count(*) from _db_auth where class_of is null;
+select count(*) from _db_auth where object_of is null;
 
 
 

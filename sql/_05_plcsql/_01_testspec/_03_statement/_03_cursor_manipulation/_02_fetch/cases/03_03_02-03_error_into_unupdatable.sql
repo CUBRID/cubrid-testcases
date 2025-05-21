@@ -2,7 +2,7 @@
 
 -- error: fetching a value into an unupdatable
 
-create or replace procedure t(r varchar(1)) as
+create or replace procedure t(r varchar) as
     cursor c is select dummy from dual;
 begin
     open c;

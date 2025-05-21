@@ -1,0 +1,279 @@
+===================================================
+    
+0. create procedure & user     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+    
+1. error - Granting unavailable permissions.     
+
+
+===================================================
+Error:-493
+Syntax: missing class spec list 
+
+===================================================
+Error:-493
+Syntax: missing class spec list 
+
+===================================================
+Error:-493
+Syntax: missing class spec list 
+
+===================================================
+Error:-493
+Syntax: missing class spec list 
+
+===================================================
+Error:-493
+Syntax: missing authorized command list
+  authorized command = SELECT, INSERT, INDEX, DELETE, UPDATE, ALTER, ADD, DROP, EXECUTE, REFERENCES, ALL PRIVILEGES, ALL  
+
+===================================================
+Error:-493
+Syntax: missing class spec list 
+
+===================================================
+Error:-493
+Syntax: missing class spec list 
+
+===================================================
+Error:-493
+Syntax: missing class spec list 
+
+===================================================
+Error:-493
+Syntax: missing class spec list 
+
+===================================================
+Error:-493
+Syntax: missing class spec list 
+
+===================================================
+Error:-493
+Syntax: missing class spec list 
+
+===================================================
+Error:-493
+Syntax: missing class spec list 
+
+===================================================
+Error:-493
+Syntax: missing class spec list 
+
+===================================================
+Error:-493
+Syntax: missing class spec list 
+
+===================================================
+Error:-493
+Syntax: missing class spec list 
+
+===================================================
+Error:-493
+Syntax: missing authorized command list
+  authorized command = SELECT, INSERT, INDEX, DELETE, UPDATE, ALTER, ADD, DROP, EXECUTE, REFERENCES, ALL PRIVILEGES, ALL  
+
+===================================================
+Error:-493
+Syntax: missing class spec list 
+
+===================================================
+Error:-493
+Syntax: missing class spec list 
+
+===================================================
+Error:-493
+Syntax: missing class spec list 
+
+===================================================
+Error:-493
+Syntax: missing class spec list 
+
+===================================================
+Error:-493
+Syntax: missing class spec list 
+
+===================================================
+Error:-493
+Syntax: missing class spec list 
+
+===================================================
+    
+2. error - Granting permissions to non-existent users.     
+
+
+===================================================
+Error:-494
+Semantic: before ' ; '
+User t2 is not in the database. grant execute on procedure on [dba.sp1] to t2
+
+===================================================
+Error:-494
+Semantic: before ' ; '
+User t2 is not in the database. grant execute on procedure on [dba.sp2] to t2
+
+===================================================
+    
+3. error - unavailable permissions and non-existent users.     
+
+
+===================================================
+Error:-493
+Syntax: missing class spec list 
+
+===================================================
+Error:-493
+Syntax: missing class spec list 
+
+===================================================
+    
+4. error - Grant processing for non-existent procedures.     
+
+
+===================================================
+Error:-493
+Syntax: missing class spec list 
+
+===================================================
+Error:-493
+Syntax: missing class spec list 
+
+===================================================
+Error:-494
+Semantic: before '  TO u1; '
+Stored procedure/function "dba.xxx_sp1" does not exist. grant execute on procedure on [dba.xxx_sp1] to u1
+
+===================================================
+    
+5. error - Typo(grants, revokes, AS, FOR )     
+
+
+===================================================
+Error:-493
+Syntax: In line 1, column 1 before '  EXECUTE ON PROCEDURE sp1 TO u1; '
+Syntax error: unexpected 'GRANTS', expecting SELECT or VALUE or VALUES or '(' 
+
+===================================================
+Error:-493
+Syntax: In line 1, column 1 before ' EXECUTE ON PROCEDURE sp1 TO u1; '
+Syntax error: unexpected 'REVOKES', expecting SELECT or VALUE or VALUES or '(' 
+
+===================================================
+Error:-493
+Syntax: missing authorized command list
+  authorized command = SELECT, INSERT, INDEX, DELETE, UPDATE, ALTER, ADD, DROP, EXECUTE, REFERENCES, ALL PRIVILEGES, ALL  
+
+===================================================
+Error:-493
+Syntax: missing authorized command list
+  authorized command = SELECT, INSERT, INDEX, DELETE, UPDATE, ALTER, ADD, DROP, EXECUTE, REFERENCES, ALL PRIVILEGES, ALL  
+
+===================================================
+Error:-493
+Syntax: missing authorized command list
+  authorized command = SELECT, INSERT, INDEX, DELETE, UPDATE, ALTER, ADD, DROP, EXECUTE, REFERENCES, ALL PRIVILEGES, ALL  
+
+===================================================
+Error:-493
+Syntax: missing authorized command list
+  authorized command = SELECT, INSERT, INDEX, DELETE, UPDATE, ALTER, ADD, DROP, EXECUTE, REFERENCES, ALL PRIVILEGES, ALL  
+
+===================================================
+Error:-493
+Syntax: In line 1, column 33 before ' u1; '
+Syntax error: unexpected 'AS', expecting TO or ',' 
+
+===================================================
+Error:-493
+Syntax: In line 1, column 33 before ' u1; '
+Syntax error: unexpected 'AS', expecting FROM or ',' 
+
+===================================================
+Error:-493
+Syntax: In line 1, column 33 before ' u1; '
+Syntax error: unexpected 'FOR', expecting TO or ',' 
+
+===================================================
+Error:-493
+Syntax: In line 1, column 33 before ' u1; '
+Syntax error: unexpected 'FOR', expecting FROM or ',' 
+
+===================================================
+    
+6. Run GRANT twice.( Not error )     
+
+
+===================================================
+grantor.name    grantee.name    object_type    object_of    auth_type    is_grantable    
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+grantor.name    grantee.name    object_type    object_of    auth_type    is_grantable    
+DBA     U1     5     _db_stored_procedure     EXECUTE     0     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+grantor.name    grantee.name    object_type    object_of    auth_type    is_grantable    
+DBA     U1     5     _db_stored_procedure     EXECUTE     0     
+DBA     U1     5     _db_stored_procedure     EXECUTE     0     
+
+
+===================================================
+    
+7. error - Run REVOKE twice.     
+
+
+===================================================
+0
+
+===================================================
+Error:-152
+GRANT not found.
+
+===================================================
+grantor.name    grantee.name    object_type    object_of    auth_type    is_grantable    
+DBA     U1     5     _db_stored_procedure     EXECUTE     0     
+
+
+===================================================
+0
+
+===================================================
+Error:-152
+GRANT not found.
+
+===================================================
+grantor.name    grantee.name    object_type    object_of    auth_type    is_grantable    
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+

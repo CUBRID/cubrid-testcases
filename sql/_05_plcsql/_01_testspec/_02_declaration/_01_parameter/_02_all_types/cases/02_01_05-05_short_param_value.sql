@@ -29,9 +29,9 @@ end;
 call t( -32768, 32767 );
 
 
-call t(-32769, 0); --bug
+call t(-32769, 0);
 
-call t(0, 32768); --bug
+call t(0, 32768);
 
 drop procedure t;
 

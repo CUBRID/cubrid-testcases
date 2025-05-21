@@ -9,7 +9,7 @@ update statistics on all classes;
 drop t1;
 
 
-create table t1(c char (30000), i int);
+create table t1(c char (2048), i int);
 insert into t1 values ('def', 1);
 
 create index idx on t1 (repeat(c, 10), i);

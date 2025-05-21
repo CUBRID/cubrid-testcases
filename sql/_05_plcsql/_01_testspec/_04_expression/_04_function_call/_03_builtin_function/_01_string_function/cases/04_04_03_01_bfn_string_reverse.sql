@@ -8,8 +8,7 @@ begin
     dbms_output.put_line(REVERSE(''));
     dbms_output.put_line(REVERSE('CUBRID'));
     dbms_output.put_line(REVERSE('큐브리드')); -- multibyte korean result error about dbms_output
-    dbms_output.put_line(REVERSE(B'01010101')); -- parse error type literal define parenthesis
-end; 
+end;
 
 select count(*) from db_stored_procedure where sp_name = 't';
 select count(*) from db_stored_procedure_args where sp_name = 't';

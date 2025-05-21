@@ -17,16 +17,20 @@ select ltrim (cast (s1 as string collate utf8_en_ci),'c') from t2 order by 1;
 -- late binding
 prepare s from 'select ltrim(s1 ,?) from t1 order by 1';
 execute s using 'c';
+deallocate prepare s;
 
 prepare s from 'select ltrim(s1 + ?,?) from t1 order by 1';
 execute s using 'A','c';
+deallocate prepare s;
 
 prepare s from 'select ltrim(s1 + ?,?) from t2 order by 1';
 execute s using 'A','c';
+deallocate prepare s;
 
 
 prepare s from 'select ltrim(cast ((s1 + ?) as string collate utf8_en_ci),?) from t2 order by 1';
 execute s using 'A','c';
+deallocate prepare s;
 
 
 drop table t1;

@@ -1,0 +1,1057 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+8
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+####  1. hint: recompile ordered use_hash     
+
+===================================================
+4
+===================================================
+12
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: hash-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: a node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: b node[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: c node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: d node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ d,class d,c,class c,b,class b from ta a, tb b, tc c, td d where a.ca=b.ca and b.ca=c.ca and c.ca=d.ca and a.flag= ?:? 
+===================================================
+a_ca    a_flag    b_ca    c_ca    d_ca    
+1     1     null     null     null     
+2     1     null     null     null     
+3     1     null     null     null     
+4     1     null     null     null     
+5     null     5     5     5     
+6     null     6     6     6     
+7     null     7     7     7     
+8     null     8     8     8     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+####  2. hint: recompile ordered use_hash(a)     
+
+===================================================
+1
+===================================================
+3
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: nl-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: a node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: b node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: c node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: d node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH(a) */ d,class d,c,class c,b,class b from ta a, tb b, tc c, td d where a.ca=b.ca and b.ca=c.ca and c.ca=d.ca and a.flag= ?:? 
+===================================================
+a_ca    a_flag    b_ca    c_ca    d_ca    
+1     1     null     null     null     
+2     null     2     2     2     
+3     null     3     3     3     
+4     null     4     4     4     
+5     null     5     5     5     
+6     null     6     6     6     
+7     null     7     7     7     
+8     null     8     8     8     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+####  3. hint: recompile ordered use_hash(b)     
+
+===================================================
+1
+===================================================
+3
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: hash-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: a node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: b node[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: c node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: d node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH(b) */ d,class d,c,class c,b,class b from ta a, tb b, tc c, td d where a.ca=b.ca and b.ca=c.ca and c.ca=d.ca and a.flag= ?:? 
+===================================================
+a_ca    a_flag    b_ca    c_ca    d_ca    
+1     null     1     1     1     
+2     1     null     null     null     
+3     null     3     3     3     
+4     null     4     4     4     
+5     null     5     5     5     
+6     null     6     6     6     
+7     null     7     7     7     
+8     null     8     8     8     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+####  4. hint: recompile ordered use_hash(c)     
+
+===================================================
+1
+===================================================
+3
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: nl-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: a node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: b node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: c node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: d node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH(c) */ d,class d,c,class c,b,class b from ta a, tb b, tc c, td d where a.ca=b.ca and b.ca=c.ca and c.ca=d.ca and a.flag= ?:? 
+===================================================
+a_ca    a_flag    b_ca    c_ca    d_ca    
+1     null     1     1     1     
+2     null     2     2     2     
+3     1     null     null     null     
+4     null     4     4     4     
+5     null     5     5     5     
+6     null     6     6     6     
+7     null     7     7     7     
+8     null     8     8     8     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+####  5. hint: recompile ordered use_hash(d)     
+
+===================================================
+1
+===================================================
+3
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: nl-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: a node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: b node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: c node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: d node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH(d) */ d,class d,c,class c,b,class b from ta a, tb b, tc c, td d where a.ca=b.ca and b.ca=c.ca and c.ca=d.ca and a.flag= ?:? 
+===================================================
+a_ca    a_flag    b_ca    c_ca    d_ca    
+1     null     1     1     1     
+2     null     2     2     2     
+3     null     3     3     3     
+4     1     null     null     null     
+5     null     5     5     5     
+6     null     6     6     6     
+7     null     7     7     7     
+8     null     8     8     8     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+####  6. hint: recompile ordered use_hash no_use_hash     
+
+===================================================
+8
+===================================================
+24
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: nl-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: a node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: b node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: c node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: d node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_USE_HASH USE_HASH */ d,class d,c,class c,b,class b from ta a, tb b, tc c, td d where a.ca=b.ca and b.ca=c.ca and c.ca=d.ca and a.flag= ?:? 
+===================================================
+a_ca    a_flag    b_ca    c_ca    d_ca    
+1     1     null     null     null     
+2     1     null     null     null     
+3     1     null     null     null     
+4     1     null     null     null     
+5     1     null     null     null     
+6     1     null     null     null     
+7     1     null     null     null     
+8     1     null     null     null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+####  7. hint: recompile ordered use_hash no_use_hash(a)     
+
+===================================================
+5
+===================================================
+15
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: hash-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: a node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: b node[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: c node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: d node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_USE_HASH(a) USE_HASH */ d,class d,c,class c,b,class b from ta a, tb b, tc c, td d where a.ca=b.ca and b.ca=c.ca and c.ca=d.ca and a.flag= ?:? 
+===================================================
+a_ca    a_flag    b_ca    c_ca    d_ca    
+1     1     null     null     null     
+2     1     null     null     null     
+3     1     null     null     null     
+4     1     null     null     null     
+5     1     null     null     null     
+6     null     6     6     6     
+7     null     7     7     7     
+8     null     8     8     8     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+####  8. hint: recompile ordered use_hash no_use_hash(b)     
+
+===================================================
+5
+===================================================
+15
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: nl-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: a node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: b node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: c node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: d node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_USE_HASH(b) USE_HASH */ d,class d,c,class c,b,class b from ta a, tb b, tc c, td d where a.ca=b.ca and b.ca=c.ca and c.ca=d.ca and a.flag= ?:? 
+===================================================
+a_ca    a_flag    b_ca    c_ca    d_ca    
+1     1     null     null     null     
+2     1     null     null     null     
+3     1     null     null     null     
+4     1     null     null     null     
+5     null     5     5     5     
+6     1     null     null     null     
+7     null     7     7     7     
+8     null     8     8     8     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+####  9. hint: recompile ordered use_hash no_use_hash(c)     
+
+===================================================
+5
+===================================================
+15
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: hash-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: a node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: b node[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: c node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: d node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_USE_HASH(c) USE_HASH */ d,class d,c,class c,b,class b from ta a, tb b, tc c, td d where a.ca=b.ca and b.ca=c.ca and c.ca=d.ca and a.flag= ?:? 
+===================================================
+a_ca    a_flag    b_ca    c_ca    d_ca    
+1     1     null     null     null     
+2     1     null     null     null     
+3     1     null     null     null     
+4     1     null     null     null     
+5     null     5     5     5     
+6     null     6     6     6     
+7     1     null     null     null     
+8     null     8     8     8     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+#### 10. hint: recompile ordered use_hash no_use_hash(d)     
+
+===================================================
+5
+===================================================
+15
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: hash-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: a node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: b node[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: c node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: d node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_USE_HASH(d) USE_HASH */ d,class d,c,class c,b,class b from ta a, tb b, tc c, td d where a.ca=b.ca and b.ca=c.ca and c.ca=d.ca and a.flag= ?:? 
+===================================================
+a_ca    a_flag    b_ca    c_ca    d_ca    
+1     1     null     null     null     
+2     1     null     null     null     
+3     1     null     null     null     
+4     1     null     null     null     
+5     null     5     5     5     
+6     null     6     6     6     
+7     null     7     7     7     
+8     1     null     null     null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+#### 11. hint: recompile ordered use_hash(a,b) no_use_hash(c,d)     
+
+===================================================
+4
+===================================================
+12
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: hash-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: a node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: b node[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: c node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: d node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_USE_HASH(c, d) USE_HASH(a, b) */ d,class d,c,class c,b,class b from ta a, tb b, tc c, td d where a.ca=b.ca and b.ca=c.ca and c.ca=d.ca and a.flag= ?:? 
+===================================================
+a_ca    a_flag    b_ca    c_ca    d_ca    
+1     1     null     null     null     
+2     1     null     null     null     
+3     null     3     3     3     
+4     null     4     4     4     
+5     null     5     5     5     
+6     null     6     6     6     
+7     1     null     null     null     
+8     1     null     null     null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+#### 12. hint: recompile ordered use_hash(a,c) no_use_hash(b,d)     
+
+===================================================
+4
+===================================================
+12
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: nl-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: a node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: b node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: c node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: d node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_USE_HASH(b, d) USE_HASH(a, c) */ d,class d,c,class c,b,class b from ta a, tb b, tc c, td d where a.ca=b.ca and b.ca=c.ca and c.ca=d.ca and a.flag= ?:? 
+===================================================
+a_ca    a_flag    b_ca    c_ca    d_ca    
+1     1     null     null     null     
+2     null     2     2     2     
+3     1     null     null     null     
+4     null     4     4     4     
+5     null     5     5     5     
+6     1     null     null     null     
+7     null     7     7     7     
+8     1     null     null     null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+#### 13. hint: recompile ordered use_hash(a,b,c) no_use_hash(b,d)     
+
+===================================================
+5
+===================================================
+15
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: nl-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: a node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: b node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: c node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: d node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_USE_HASH(b, d) USE_HASH(a, b, c) */ d,class d,c,class c,b,class b from ta a, tb b, tc c, td d where a.ca=b.ca and b.ca=c.ca and c.ca=d.ca and a.flag= ?:? 
+===================================================
+a_ca    a_flag    b_ca    c_ca    d_ca    
+1     1     null     null     null     
+2     1     null     null     null     
+3     1     null     null     null     
+4     null     4     4     4     
+5     null     5     5     5     
+6     1     null     null     null     
+7     null     7     7     7     
+8     1     null     null     null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+#### 14. hint: recompile ordered use_hash(b,c,d) no_use_hash(b,c,d)     
+
+===================================================
+6
+===================================================
+18
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: nl-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: a node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: b node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: c node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: d node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_USE_HASH(b, c, d) USE_HASH(b, c, d) */ d,class d,c,class c,b,class b from ta a, tb b, tc c, td d where a.ca=b.ca and b.ca=c.ca and c.ca=d.ca and a.flag= ?:? 
+===================================================
+a_ca    a_flag    b_ca    c_ca    d_ca    
+1     null     1     1     1     
+2     1     null     null     null     
+3     1     null     null     null     
+4     1     null     null     null     
+5     null     5     5     5     
+6     1     null     null     null     
+7     1     null     null     null     
+8     1     null     null     null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+#### 15. hint: recompile use_hash     
+
+===================================================
+4
+===================================================
+16
+Query plan:
+nl-join (cross join)
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: hash-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: a node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: b node[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: c node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: d node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ d,class d,c,class c,b,class b from ta a, tb b, tc c, td d where a.ca=b.ca and b.ca=c.ca and a.flag= ?:? 
+===================================================
+a_ca    a_flag    b_ca    c_ca    d_ca    
+1     1     null     null     null     
+2     1     null     null     null     
+3     1     null     null     null     
+4     1     null     null     null     
+5     null     5     5     null     
+6     null     6     6     null     
+7     null     7     7     null     
+8     null     8     8     null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+#### 16. hint: recompile use_hash(a,b,c) -> split(d)     
+
+===================================================
+3
+===================================================
+14
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH(a, b, c) */ c,class c,b,class b from ta a, tb b, tc c where a.ca=b.ca and b.ca=c.ca and a.flag= ?:? 
+Query plan:
+sscan
+    class: d node[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ d,class d from td d
+===================================================
+a_ca    a_flag    b_ca    c_ca    d_ca    
+1     1     null     null     null     
+2     1     null     null     null     
+3     1     null     null     null     
+4     null     4     4     null     
+5     null     5     5     null     
+6     null     6     6     null     
+7     null     7     7     null     
+8     null     8     8     null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+#### 17. hint: recompile no_use_hash     
+
+===================================================
+4
+===================================================
+20
+Query plan:
+nl-join (cross join)
+    outer: nl-join (cross join)
+               outer: nl-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: a node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: b node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: c node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: d node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH */ d,class d,c,class c,b,class b from ta a, tb b, tc c, td d where a.ca=b.ca and a.flag= ?:? 
+===================================================
+a_ca    a_flag    b_ca    c_ca    d_ca    
+1     null     1     null     null     
+2     null     2     null     null     
+3     null     3     null     null     
+4     null     4     null     null     
+5     1     null     null     null     
+6     1     null     null     null     
+7     1     null     null     null     
+8     1     null     null     null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+#### 18. hint: recompile no_use_hash(a,b) -> split(c,d)     
+
+===================================================
+2
+===================================================
+18
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH(a, b) */ b,class b from ta a, tb b where a.ca=b.ca and a.flag= ?:? 
+Query plan:
+sscan
+    class: c node[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH */ c,class c from tc c
+Query plan:
+sscan
+    class: d node[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH */ d,class d from td d
+===================================================
+a_ca    a_flag    b_ca    c_ca    d_ca    
+1     null     1     null     null     
+2     null     2     null     null     
+3     null     3     null     null     
+4     null     4     null     null     
+5     1     null     null     null     
+6     1     null     null     null     
+7     null     7     null     null     
+8     null     8     null     null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+#### 19. hint: recompile use_hash(a,c) no_use_hash(b) -> split(d)     
+
+===================================================
+3
+===================================================
+19
+Query plan:
+nl-join (cross join)
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: b node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: a node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH(b) USE_HASH(a, c) */ c,class c,b,class b from ta a, tb b, tc c where a.ca=b.ca and a.flag= ?:? 
+Query plan:
+sscan
+    class: d node[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH USE_HASH */ d,class d from td d
+===================================================
+a_ca    a_flag    b_ca    c_ca    d_ca    
+1     1     null     null     null     
+2     null     2     null     null     
+3     1     null     null     null     
+4     null     4     null     null     
+5     null     5     null     null     
+6     1     null     null     null     
+7     null     7     null     null     
+8     null     8     null     null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+#### 20. hint: recompile use_hash(a,b)     
+
+===================================================
+2
+===================================================
+18
+Query plan:
+nl-join (cross join)
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: temp
+               order: UNORDERED
+               subplan: nl-join (inner join)
+                            edge:  term[?]
+                            outer: sscan
+                                       class: c node[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: d node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH(a, b) */ d,class d,c,class c,b,class b from ta a, tb b, tc c, td d where a.ca=b.ca and c.ca=d.ca and a.flag= ?:? 
+===================================================
+a_ca    a_flag    b_ca    c_ca    d_ca    
+1     1     null     null     null     
+2     1     null     null     null     
+3     null     3     null     null     
+4     null     4     null     null     
+5     null     5     null     null     
+6     null     6     null     null     
+7     null     7     null     null     
+8     null     8     null     null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+#### 21. hint: recompile use_hash(a,b,c)     
+
+===================================================
+3
+===================================================
+7
+Query plan:
+nl-join (cross join)
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: hash-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: a node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: b node[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: c node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: d node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH(a, b, c) */ d,class d,c,class c,b,class b from ta a, tb b, tc c, td d where a.ca=b.ca and b.ca=c.ca and a.flag= ?:?  and d.ca= ?:? 
+===================================================
+a_ca    a_flag    b_ca    c_ca    d_ca    
+1     1     null     null     1     
+2     1     null     null     2     
+3     1     null     null     3     
+4     null     4     4     4     
+5     null     5     5     5     
+6     null     6     6     6     
+7     null     7     7     7     
+8     null     8     8     null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

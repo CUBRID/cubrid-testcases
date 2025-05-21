@@ -8,6 +8,7 @@ prepare st from 'select to_timestamp(?, ?)';
 
 execute st using '10:10:45 CST 8', 'HH:MI:SS TZD TZH';
 execute st using '10:10:45 America/Tijuana PST -8', 'HH:MI:SS TZR TZD5 TZH';
+deallocate prepare st;
 
 
 prepare st from 'select to_timestamp(?, ?, ''en_US'')';

@@ -54,7 +54,7 @@ insert into iscantbl values (1, 2, 2);
 
 select * from iscantbl where a = 1 and b = 1 using index idx1(+) order by a, b desc for orderby_num () = 1;
 
-create table sorttbl (a char(10000), b int);
+create table sorttbl (a char(2048), b int);
 insert into sorttbl values ('1', 1);
 insert into sorttbl values ('2', 2);
 insert into sorttbl values ('3', 3);

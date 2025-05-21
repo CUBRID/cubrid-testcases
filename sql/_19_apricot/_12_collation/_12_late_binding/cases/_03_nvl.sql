@@ -17,12 +17,15 @@ select /*+ RECOMPILE */ s1,nvl(s1,'AA') from t3 order by 2,1;
 
 prepare s from 'select /*+ RECOMPILE */ s1,nvl(s1,?) from t1 order by 2,1';
 execute s using 'AA';
+deallocate prepare s;
 
 prepare s from 'select /*+ RECOMPILE */ s1,nvl(s1,?) from t2 order by 2,1';
 execute s using 'AA';
+deallocate prepare s;
 
 prepare s from 'select /*+ RECOMPILE */ s1,nvl(s1,?) from t3 order by 2,1';
 execute s using 'AA';
+deallocate prepare s;
 
 
 select /*+ RECOMPILE */ * from t1 where 'aa' > nvl(s1,'0')  order by 1;
@@ -34,9 +37,11 @@ select /*+ RECOMPILE */ * from t3 where 'aa' > nvl(s1,'0')  order by 1;
 
 prepare s from 'select /*+ RECOMPILE */ * from t1 where ? > nvl(s1,?)  order by 1';
 execute s using 'aa','0';
+deallocate prepare s;
 
 prepare s from 'select /*+ RECOMPILE */ * from t2 where ? > nvl(s1,?)  order by 1';
 execute s using 'aa','0';
+deallocate prepare s;
 
 prepare s from 'select /*+ RECOMPILE */ * from t3 where ? > nvl(s1,?)  order by 1';
 execute s using 'aa','0';

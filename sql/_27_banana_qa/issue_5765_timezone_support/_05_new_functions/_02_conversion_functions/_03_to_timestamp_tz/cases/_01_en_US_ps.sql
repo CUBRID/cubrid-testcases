@@ -26,6 +26,7 @@ execute st using '55.6', 'TZM','DD,HH24:MI:SS TZR TZD';
 execute st using '3:55', 'TZH:TZM','DD,HH24:MI:SS TZR TZD';
 execute st using '3:55', 'TZH:TZM','DD,HH24:MI:SS TZR TZD';
 execute st using '-11:34', 'TZH:TZM','DD,HH24:MI:SS TZR TZD';
+deallocate prepare st;
 
 --[er] unsupported format
 prepare st from 'select to_timestamp_tz(?, ?)';
@@ -34,15 +35,18 @@ execute st using '10:10:45 Auralia/Lieman 00', 'HH:MI:SS TZR TZM';
 execute st using '10:10:45 CST 8', 'HH:MI:SS TZD TZH';
 execute st using '10:10:45 America/Tijuana PST -8', 'HH:MI:SS TZR TZD5 TZH';
 execute st using '10:10:45 America/Cayman EST -5:00', 'HH:MI:SS TZR TZD TZH:TZM';
+deallocate prepare st;
 
 
 prepare st from 'select to_timestamp_tz(?, ?, ''en_US'')';
 --test: time
 execute st using '20 10 45 +10/00', 'SS HH MI +TZH/TZM';
 execute st using '20 10 45 +-10/33', 'SS HH MI +TZH/TZM';
+deallocate prepare st;
 prepare st from 'select to_char(to_timestamp_tz(?, ?),?)';
 execute st using '05 55 58 am America/Manaus', 'HH MI SS AM TZR','DD,HH24:MI:SS TZR TZD';
 execute st using '05 55 58 PM America/Manaus -04', 'HH MI SS AM TZR TZD','DD,HH24:MI:SS TZR TZD';
+deallocate prepare st;
 prepare st from 'select to_timestamp_tz(?, ?)';
 execute st using '05 55 58 PM America/Manaus AMST', 'HH MI SS AM TZR,TZD';
 execute st using 'EST 12:34:22 [PM] America/New_York', 'TZD HH:MI:SS [AM] TZR';

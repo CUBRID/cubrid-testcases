@@ -19,7 +19,7 @@ grant execute on test_class to test_user;
 
 --Cannot query any record
 select grantor_name, grantee_name, 
-       class_name, auth_type 
+       object_name, auth_type 
 from   db_auth
 where  auth_type in ('select','insert','update','delete','alter','indes','execute');
 

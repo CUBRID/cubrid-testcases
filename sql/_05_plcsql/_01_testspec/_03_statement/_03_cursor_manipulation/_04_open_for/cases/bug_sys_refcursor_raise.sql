@@ -1,6 +1,6 @@
 --+ server-message on
 -- Verified for CBRD-24963
--- Querying cursor attributes from unopened SYS_REFCURSOR raises an exception (do not internal server error)
+-- Querying cursor attributes from unopened SYS_REFCURSOR raises an exception
 
 create or replace procedure poo as
     rc sys_refcursor;

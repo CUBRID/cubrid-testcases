@@ -1,4 +1,4 @@
---[er]test octet_length with monetary as parameter
+--test octet_length with monetary as parameter
 create class tb(
 		col1 monetary
 );

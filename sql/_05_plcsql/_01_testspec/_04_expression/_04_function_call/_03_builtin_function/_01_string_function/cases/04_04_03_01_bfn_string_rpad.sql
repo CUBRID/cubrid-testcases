@@ -8,8 +8,6 @@ begin
     dbms_output.put_line(RPAD('cubrid', NULL));
     dbms_output.put_line(RPAD('cubrid', 10, '!' ));
     dbms_output.put_line(RPAD('cubrid', 4, '!' ));
-    dbms_output.put_line(RPAD('큐브리드', 10, '!')); -- multibyte korean dbms_output unrecognizable
-    dbms_output.put_line(RPAD('큐브리드', 2, '!')); -- multibyte korean dbms_output unrecognizable
     dbms_output.put_line(RPAD('cubrid', 10, NULL));
 end;
 

@@ -303,8 +303,6 @@ end;
 call t_FLOAT_SHORT('FLOAT', 'SHORT'  ) ;
 drop procedure t_FLOAT_SHORT ;
 
---BUG
-
 call print_message('t_NUMERIC_SHORT. This scenario is a success.');
 create or replace procedure t_NUMERIC_SHORT(param_type string, variables_type string ) as 
      CURSOR my_cursor1 IS 

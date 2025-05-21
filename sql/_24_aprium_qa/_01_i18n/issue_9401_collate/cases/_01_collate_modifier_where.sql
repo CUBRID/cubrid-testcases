@@ -20,7 +20,9 @@ select * from t where s1 collate utf8_ko_cs_uca > s2 order by s1 collate utf8_ko
 select * from t where (s1>s2) collate utf8_ko_cs_uca order by 1;
 
 prepare st from 'select * from t where s1>s2 collate ?';
+deallocate prepare st;
 prepare st from 'select * from t where (s>?) collate iso88591_en_ci order by 1 collate iso88591_bin';
+deallocate prepare st;
 
 drop t;
 set names iso88591;

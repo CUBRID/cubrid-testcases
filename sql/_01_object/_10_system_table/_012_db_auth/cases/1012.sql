@@ -8,7 +8,7 @@ grant select on test_class to test_user;
 grant alter on test_class to test_user1;
 
 --Can't query any record
-select grantor_name, grantee_name, class_name from db_auth
+select grantor_name, grantee_name, object_name from db_auth
 where  grantor_name ='dba';
 
 drop user test_user1;

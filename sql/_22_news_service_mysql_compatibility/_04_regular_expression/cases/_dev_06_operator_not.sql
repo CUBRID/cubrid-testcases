@@ -8,6 +8,7 @@ select ('a' rlike binary 'a'), ('a' not rlike binary 'a');
 -- NOT tests (prep statements)
 prepare regex_st from 'select (? rlike ?), (? not rlike ?), (? rlike binary ?), (? not rlike binary ?)';
 execute regex_st using 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a';
+deallocate prepare regex_st;
 
 -- NOT tests (table)
 create table t(c char(10), s string);

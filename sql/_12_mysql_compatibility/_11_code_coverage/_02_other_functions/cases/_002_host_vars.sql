@@ -7,13 +7,16 @@ select * from t1 order by 1,2;
 
 prepare st from 'select i1+? from t1 order by 1';
 execute st using 2;
+deallocate prepare st;
 
 -- should fail
 prepare st from 'select i1+? from t1 order by 1';
 execute st using ?;
+deallocate prepare st;
 
 prepare st from 'select i1 from t1 limit ? order by 1';
 execute st using 2;
+deallocate prepare st;
 
 drop table t1;
 
@@ -23,6 +26,7 @@ select ?:1 from db_root order by 1;
 -- should fail  - HOST VAR not allowed here
 prepare st from 'select ? from t1 limit ? order by 1';
 execute st using ?:1;
+deallocate prepare st;
 
 
 set system parameters 'compat_mode=mysql';
@@ -37,13 +41,16 @@ execute not_valid_statement;
 
 -- should fail - statement not found
 drop prepare not_valid_statement;
+deallocate prepare st;
 
 -- should fail - incorrect number of values 
 prepare st from 'select concat(?,?)';
 execute st using 'a','b','c';
+deallocate prepare st;
 
 -- should fail - incorrect number of values
 prepare st from 'select concat(?,?)';
 execute st;
+deallocate prepare st;
 commit;
 --+ holdcas off;

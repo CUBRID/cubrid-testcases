@@ -4,7 +4,7 @@ CREATE CLASS ddl_0001(
  col1  integer ,
  col2  numeric(10,5) ,
  col3  varchar(123456789) default 'ddl_0001',
- col4  char(100000),
+ col4  char(2048),
  col5  float,
  col6  double,
  col7  bit(1000),
@@ -22,7 +22,7 @@ CREATE VCLASS ddl_0002 UNDER ddl_0001(
  col16  bit(1000),
  col17  timestamp,
  col18  time,
- col19  char(100000),
+ col19  char(2048),
  col20  float
 );
 

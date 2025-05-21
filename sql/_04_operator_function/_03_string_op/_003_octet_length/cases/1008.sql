@@ -1,4 +1,4 @@
---[er]test octet_length with smallint as parameter
+--test octet_length with smallint as parameter
 create class tb(
 		col1 smallint
 );

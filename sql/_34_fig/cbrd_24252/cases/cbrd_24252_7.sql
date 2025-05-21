@@ -50,7 +50,9 @@ from
     inner join t_parent as p on c.parent_col_a = p.col_a
     inner join t_super_parent as s on p.super_parent_col_a = s.col_a
 where
-    c.col_b = -1;
+    c.col_b = -1
+order by 1;
+
 show trace;
 
 select /*+ recompile */
@@ -63,7 +65,9 @@ from
 where
     c.parent_col_a = p.col_a
     and p.super_parent_col_a = s.col_a
-    and c.col_b = -1;
+    and c.col_b = -1
+order by 1;
+
 show trace;
 
 drop table if exists t_child;

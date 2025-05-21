@@ -24,11 +24,11 @@ BEGIN
     
     select count(*), min(s_01), max(s_01), min(s_02), max(s_02) INTO cnt,s_01_min,s_01_max,s_02_min,s_02_max  from plcsql_insert ;    
     
-    put_line('count = ' || cnt );
-    put_line('s_01_min = ' || s_01_min );
-    put_line('s_01_max = ' || s_01_max );
-    put_line('s_02_min = ' || s_02_min );
-    put_line('s_02_max = ' || s_02_max );
+    dbms_output.put_line('count = ' || cnt );
+    dbms_output.put_line('s_01_min = ' || s_01_min );
+    dbms_output.put_line('s_01_max = ' || s_01_max );
+    dbms_output.put_line('s_02_min = ' || s_02_min );
+    dbms_output.put_line('s_02_max = ' || s_02_max );
 
 END;
 call t();

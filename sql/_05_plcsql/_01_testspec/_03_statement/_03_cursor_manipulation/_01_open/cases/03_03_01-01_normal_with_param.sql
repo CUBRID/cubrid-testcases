@@ -4,7 +4,7 @@
 
 
 create or replace procedure t(i int) as
-    cursor c(cs varchar(32), bbb int) is
+    cursor c(cs varchar, bbb int) is
         select charset_name from db_charset where charset_name = cs and charset_id > bbb;
     r varchar(32);
 begin

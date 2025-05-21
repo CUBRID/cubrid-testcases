@@ -285,7 +285,7 @@ drop t2;
 
 
 drop table if exists t1;
- create table t1 (a int auto_increment primary key, b int,c CHAR(131072),d short auto_increment(1000,1000),e int  auto_increment(1000,1000)) partition by hash(a) partitions 3;
+ create table t1 (a int auto_increment primary key, b int,c CHAR(2048),d short auto_increment(1000,1000),e int  auto_increment(1000,1000)) partition by hash(a) partitions 3;
 
 insert into t1 select null,rownum,rownum||'                                                                                                                                                                      !!',null,null from db_class limit 10;
 

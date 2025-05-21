@@ -7,7 +7,7 @@ AS
     out_cnt integer;
 BEGIN
     EXECUTE IMMEDIATE 'select count(*)  from db_class where class_name = ? ' INTO out_cnt USING 'db_class', 'db_server' ;
-    put_line('count(*): ' || out_cnt);
+    dbms_output.put_line('count(*): ' || out_cnt);
 END;
 call t();
 
@@ -16,7 +16,7 @@ AS
     out_cnt integer;
 BEGIN
     EXECUTE IMMEDIATE 'select count(*)  from db_class where class_name = ? ' INTO out_cnt ;
-    put_line('count(*): ' || out_cnt);
+    dbms_output.put_line('count(*): ' || out_cnt);
 END;
 call t();
 

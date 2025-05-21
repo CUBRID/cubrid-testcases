@@ -1,4 +1,4 @@
---[er]test bit_length with timestamp as parameter
+--test bit_length with timestamp as parameter
 create class tb(
 		col1 timestamp
 );

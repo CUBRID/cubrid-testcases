@@ -132,6 +132,7 @@ set @js='{
 }';
 
 execute st using @js;
+deallocate prepare st;
 
 drop variable @js;
 

@@ -9,6 +9,7 @@ prepare s from 'select coercibility(?), coercibility(@v), @v + ?, coercibility (
 execute s using _utf8'2', _utf8'2',_utf8'2',_utf8'2';
 execute s using '2', '2','2','2';
 execute s using _iso88591'2',_iso88591'2',_iso88591'2',_iso88591'2';
+deallocate prepare s;
 
 set @v1='a';
 prepare stmt from 'select coercibility(?), coercibility(@v1), collation(?), collation(@v1), ? = @v1';

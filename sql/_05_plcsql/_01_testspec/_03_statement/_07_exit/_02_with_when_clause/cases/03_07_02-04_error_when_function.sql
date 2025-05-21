@@ -10,9 +10,9 @@ BEGIN
     FOR i IN 1 .. 9 LOOP
         tmp_str := tmp_str || i ;
         EXIT WHEN lengthb( tmp_str ) ;
-        put_line('tmp_str : ' || tmp_str);
+        dbms_output.put_line('tmp_str : ' || tmp_str);
     END LOOP;
-    put_line('tmp_str : ' || tmp_str);
+    dbms_output.put_line('tmp_str : ' || tmp_str);
 END;
 
 
@@ -24,9 +24,9 @@ BEGIN
     FOR i IN 1 .. 9 LOOP
         tmp_str := tmp_str || i ;
         EXIT WHEN decode(lengthb( tmp_str ),5,true, false ) ;
-        put_line('tmp_str : ' || tmp_str);
+        dbms_output.put_line('tmp_str : ' || tmp_str);
     END LOOP;
-    put_line('tmp_str : ' || tmp_str);
+    dbms_output.put_line('tmp_str : ' || tmp_str);
 END;
 
 

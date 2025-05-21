@@ -15,7 +15,7 @@ AS
    r_name string;
 BEGIN
     EXECUTE IMMEDIATE 'select id, name  from plcsql_tbl where name = ? ' USING param  INTO r_id, r_name ;
-    put_line('id: ' || r_id || ' name: ' || r_name);
+    dbms_output.put_line('id: ' || r_id || ' name: ' || r_name);
 END;
 call t('name1');
 
@@ -26,7 +26,7 @@ AS
    r_name string;
 BEGIN
     EXECUTE IMMEDIATE 'select id, name  from plcsql_tbl where name = ? ' INTO r_id, r_name USING param   ;
-    put_line('id: ' || r_id || ' name: ' || r_name);
+    dbms_output.put_line('id: ' || r_id || ' name: ' || r_name);
 END;
 call t('name1');
 

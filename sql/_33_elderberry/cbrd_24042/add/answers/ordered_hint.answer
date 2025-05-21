@@ -1,0 +1,410 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+    
+test1     
+
+===================================================
+av    bv    
+value a1     value a1     
+value a2     value a2     
+value a3     value a3     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: sq node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: b node[?]
+                            index: tj_id term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ sq.val, b.val from tj sq inner join tj b on sq.id=b.id using index b.tj_id, sq.tj_id order by ?, ?
+===================================================
+    
+test2     
+
+===================================================
+id    val    
+1     value b1     
+2     value b2     
+3     value b3     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: sq node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: tk node[?]
+                            index: tk_id term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ sq.id, tk.val from tj sq inner join tk tk on sq.id=tk.id using index sq.tj_id order by ?
+===================================================
+0
+===================================================
+6
+===================================================
+    
+test3     
+
+===================================================
+a    b    c    
+cub     cubrid     1     
+ora     oracle     2     
+post     postgre     3     
+my     mysql     4     
+ms     mssql     5     
+park     parksehun     1     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?] AND term[?] AND term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?] AND term[?] AND term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ a.a, a.b, a.c from tmp_hls a, tmp_hls b where (a.a=b.a) and a.b=b.b and a.c=b.c and (b.c>= ?:? )
+===================================================
+    
+test4     
+
+===================================================
+a    b    c    
+cub     cubrid     1     
+ora     oracle     2     
+post     postgre     3     
+my     mysql     4     
+ms     mssql     5     
+park     parksehun     1     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?] AND term[?] AND term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?] AND term[?] AND term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ a.a, a.b, a.c from tmp_hls a, tmp_hls b where (b.a=a.a) and a.c=b.c and b.b=a.b and (b.c>= ?:? )
+===================================================
+    
+test5     
+
+===================================================
+a    b    c    
+cub     cubrid     1     
+cub     cubrid     1     
+ora     oracle     2     
+post     postgre     3     
+my     mysql     4     
+ms     mssql     5     
+park     parksehun     1     
+park     parksehun     1     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ a.a, a.b, a.c from tmp_hls a, tmp_hls b where (b.c=a.c) and (b.c>= ?:? )
+===================================================
+    
+test6     
+
+===================================================
+a    b    c    
+post     postgre     3     
+my     mysql     4     
+ms     mssql     5     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?] AND term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?] AND term[?] AND term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ a.a, a.b, a.c from tmp_hls a, tmp_hls b, tmp_hls c where (a.a=b.a) and b.b=a.b and b.a=c.a and (b.c>= ?:? ) and (c.c>= ?:? )
+===================================================
+    
+test7     
+
+===================================================
+a    b    c    
+cub     cubrid     1     
+ora     oracle     2     
+post     postgre     3     
+my     mysql     4     
+ms     mssql     5     
+park     parksehun     1     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: tmp_hls node[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct tmp_hls.a, tmp_hls.b, tmp_hls.c from tmp_hls tmp_hls)
+Query plan:
+nl-join (inner join)
+    edge:  term[?] AND term[?] AND term[?]
+    outer: sscan
+               class: aa node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: av? node[?]
+               sargs: term[?] AND term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ aa.a, aa.b, aa.c from tmp_hls aa, (select distinct tmp_hls.a, tmp_hls.b, tmp_hls.c from tmp_hls tmp_hls) av? (av_?, av_?, av_?) where (aa.a=av?.av_?) and aa.b=av?.av_? and aa.c=av?.av_? and (aa.c>= ?:? )
+===================================================
+    
+test8     
+
+===================================================
+a    b    c    
+cub     cubrid     1     
+ora     oracle     2     
+post     postgre     3     
+my     mysql     4     
+ms     mssql     5     
+park     parksehun     1     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: tmp_hls node[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct tmp_hls.a, tmp_hls.b from tmp_hls tmp_hls)
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: tmp_hls node[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct tmp_hls.c from tmp_hls tmp_hls)
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?] AND term[?]
+               outer: sscan
+                          class: aa node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: av? node[?]
+                          sargs: term[?] AND term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: av?_? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ aa.a, aa.b, aa.c from tmp_hls aa, (select distinct tmp_hls.a, tmp_hls.b from tmp_hls tmp_hls) av? (av_?, av_?), (select distinct tmp_hls.c from tmp_hls tmp_hls) av?_? (av_?) where (aa.a=av?.av_?) and aa.b=av?.av_? and aa.c=av?_?.av_? and (aa.c>= ?:? )
+===================================================
+    
+test9     
+
+===================================================
+a    b    c    a    b    c    
+park     parksehun     1     cub     cubrid     1     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?] AND term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?] AND term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, tmp_hls b where (a.c=b.c) and (a.b>b.b) and (b.c>= ?:? )
+===================================================
+    
+test10     
+
+===================================================
+a    b    c    a    b    c    
+ora     oracle     2     ora     oracle     2     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?] AND term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?] AND term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, tmp_hls b where (a.c=b.c) and a.c+b.c=? and (b.c>= ?:? )
+===================================================
+    
+test11     
+
+===================================================
+a    b    c    a    b    c    
+cub     cubrid     1     cub     cubrid     1     
+ora     oracle     2     ora     oracle     2     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, tmp_hls b where (b.a= substr(a.b, ?, ?)) and (b.c>= ?:? )
+===================================================
+    
+test12     
+
+===================================================
+a    b    c    a    b    c    
+cub     cubrid     1     cub     cubrid     1     
+ora     oracle     2     ora     oracle     2     
+post     postgre     3     post     postgre     3     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, tmp_hls b where ( substr(a.b, ?, ?)=decode(b.a, 'post',  cast('pos' as varchar), b.a)) and (b.c>= ?:? )
+===================================================
+    
+test13     
+
+===================================================
+a    b    c    a    b    c    
+cub     cubrid     1     cub     cubrid     1     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, tmp_hls b where (b.a|| cast('rid' as varchar)=decode(a.a, 'cub',  cast('cubrid' as varchar), 'post',  cast('postgre' as varchar), a.a)) and (b.c>= ?:? )
+===================================================
+    
+test14     
+
+===================================================
+a    b    c    a    b    c    
+cub     cubrid     1     cub     cubrid     1     
+ora     oracle     2     ora     oracle     2     
+my     mysql     4     my     mysql     4     
+ms     mssql     5     ms     mssql     5     
+park     parksehun     1     park     parksehun     1     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from tmp_hls a, tmp_hls b where (b.b=decode(a.a, 'cub',  cast('cubrid' as varchar), 'post',  cast('bad' as varchar), a.b)) and (b.c>= ?:? )
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

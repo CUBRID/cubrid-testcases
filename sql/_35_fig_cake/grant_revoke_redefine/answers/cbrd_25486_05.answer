@@ -1,0 +1,220 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+connect u1, create u1.t1_r, u1.t1_h, u1.t1_l (partition table)     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+u2 grant to u1.t1_r, u1.t1_h, u1.t1_l     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+U1     U2     CLASS     t1_h     U1     SELECT     YES     
+U1     U2     CLASS     t1_h__p__p0     U1     SELECT     YES     
+U1     U2     CLASS     t1_h__p__p1     U1     SELECT     YES     
+U1     U2     CLASS     t1_l     U1     SELECT     YES     
+U1     U2     CLASS     t1_l     U1     ALTER     YES     
+U1     U2     CLASS     t1_l__p__p0     U1     SELECT     YES     
+U1     U2     CLASS     t1_l__p__p0     U1     ALTER     YES     
+U1     U2     CLASS     t1_l__p__p1     U1     SELECT     YES     
+U1     U2     CLASS     t1_l__p__p1     U1     ALTER     YES     
+U1     U2     CLASS     t1_r     U1     SELECT     YES     
+U1     U2     CLASS     t1_r__p__p0     U1     SELECT     YES     
+U1     U2     CLASS     t1_r__p__p1     U1     SELECT     YES     
+
+===================================================
+owner.name    grants    
+DBA          
+U1          
+U2     null     
+U3          
+
+===================================================
+    
+connect to u2 & u3 grant to u1.t1_r, u1.t1_h, u1.t1_l     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+U1     U2     CLASS     t1_h     U1     SELECT     YES     
+U1     U2     CLASS     t1_h__p__p0     U1     SELECT     YES     
+U1     U2     CLASS     t1_h__p__p1     U1     SELECT     YES     
+U1     U2     CLASS     t1_l     U1     SELECT     YES     
+U1     U2     CLASS     t1_l     U1     ALTER     YES     
+U1     U2     CLASS     t1_l__p__p0     U1     SELECT     YES     
+U1     U2     CLASS     t1_l__p__p0     U1     ALTER     YES     
+U1     U2     CLASS     t1_l__p__p1     U1     SELECT     YES     
+U1     U2     CLASS     t1_l__p__p1     U1     ALTER     YES     
+U1     U2     CLASS     t1_r     U1     SELECT     YES     
+U1     U2     CLASS     t1_r__p__p0     U1     SELECT     YES     
+U1     U2     CLASS     t1_r__p__p1     U1     SELECT     YES     
+U2     U3     CLASS     t1_h     U1     SELECT     YES     
+U2     U3     CLASS     t1_h__p__p0     U1     SELECT     YES     
+U2     U3     CLASS     t1_h__p__p1     U1     SELECT     YES     
+U2     U3     CLASS     t1_l     U1     SELECT     YES     
+U2     U3     CLASS     t1_l     U1     ALTER     YES     
+U2     U3     CLASS     t1_l__p__p0     U1     SELECT     YES     
+U2     U3     CLASS     t1_l__p__p0     U1     ALTER     YES     
+U2     U3     CLASS     t1_l__p__p1     U1     SELECT     YES     
+U2     U3     CLASS     t1_l__p__p1     U1     ALTER     YES     
+U2     U3     CLASS     t1_r     U1     SELECT     YES     
+U2     U3     CLASS     t1_r__p__p0     U1     SELECT     YES     
+U2     U3     CLASS     t1_r__p__p1     U1     SELECT     YES     
+
+===================================================
+owner.name    grants    
+DBA          
+U1          
+U2     null     
+U3     null     
+
+===================================================
+    
+connect u3, drop table u1.t1_r, u1.t1_h, u1.t1_l     
+
+===================================================
+    
+null     
+
+===================================================
+    
+ERROR: ALTER authorization failure     
+
+===================================================
+Error:-158
+===================================================
+Error:-158
+===================================================
+    
+success: drop u1.t1_l     
+
+===================================================
+0
+===================================================
+    
+success: drop u1.t1_l     
+
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+U1     U2     CLASS     t1_h     U1     SELECT     YES     
+U1     U2     CLASS     t1_h__p__p0     U1     SELECT     YES     
+U1     U2     CLASS     t1_h__p__p1     U1     SELECT     YES     
+U1     U2     CLASS     t1_r     U1     SELECT     YES     
+U1     U2     CLASS     t1_r__p__p0     U1     SELECT     YES     
+U1     U2     CLASS     t1_r__p__p1     U1     SELECT     YES     
+U2     U3     CLASS     t1_h     U1     SELECT     YES     
+U2     U3     CLASS     t1_h__p__p0     U1     SELECT     YES     
+U2     U3     CLASS     t1_h__p__p1     U1     SELECT     YES     
+U2     U3     CLASS     t1_r     U1     SELECT     YES     
+U2     U3     CLASS     t1_r__p__p0     U1     SELECT     YES     
+U2     U3     CLASS     t1_r__p__p1     U1     SELECT     YES     
+
+===================================================
+owner.name    grants    
+DBA          
+U1          
+U2     null     
+U3     null     
+
+===================================================
+    
+connect to u2, drop table u1.t1_r, u1.t1_h     
+
+===================================================
+    
+null     
+
+===================================================
+    
+ERROR: ALTER authorization failure     
+
+===================================================
+Error:-158
+===================================================
+Error:-158
+===================================================
+    
+connect to u1, drop u1.t1_h     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+U1     U2     CLASS     t1_r     U1     SELECT     YES     
+U1     U2     CLASS     t1_r__p__p0     U1     SELECT     YES     
+U1     U2     CLASS     t1_r__p__p1     U1     SELECT     YES     
+U2     U3     CLASS     t1_r     U1     SELECT     YES     
+U2     U3     CLASS     t1_r__p__p0     U1     SELECT     YES     
+U2     U3     CLASS     t1_r__p__p1     U1     SELECT     YES     
+
+===================================================
+owner.name    grants    
+DBA          
+U1          
+U2     null     
+U3     null     
+
+===================================================
+    
+connect to dba, drop u1.t1_r     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+
+===================================================
+owner.name    grants    
+DBA          
+U1          
+U2          
+U3          
+
+===================================================
+    
+Test done     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0

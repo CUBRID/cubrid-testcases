@@ -59,6 +59,7 @@ select locate('1','2','1');
 -- should fail
 prepare st from 'select locate(?,?,?)';
 execute st using '1','2','1';
+drop prepare st;
 
 prepare st from 'select locate(?,?,?)';
 execute st using '1','2',1;

@@ -269,8 +269,6 @@ end;
 call t_FLOAT_VARCHAR('FLOAT', 'VARCHAR'  ) ;
 drop procedure t_FLOAT_VARCHAR ;
 
---BUG
-
 call print_message('t_NUMERIC_VARCHAR. This scenario is a success.');
 create or replace procedure t_NUMERIC_VARCHAR(param_type string, variables_type string ) as 
      CURSOR my_cursor1 IS 

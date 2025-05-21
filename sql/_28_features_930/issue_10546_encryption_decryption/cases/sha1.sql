@@ -21,6 +21,7 @@ SELECT sha1('SQL-99 Complete. Really!');
 -- check host variables support --
 PREPARE st FROM 'SELECT sha1(?)';
 EXECUTE st USING 'SQL-99 Complete. Really!';
+DEALLOCATE PREPARE st;
 
 create class coo(
     col1 char(20),
