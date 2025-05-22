@@ -22,16 +22,16 @@ select /*+ recompile INDEX_SS */ i,j,k,l from t where j = 10 and k > 4000 order 
 select /*+ recompile INDEX_SS */ i,j,k,l from t where j = 10 and k > 4000 order by i desc, j asc;
 WITH cte_E6H4opTTz AS 
 (
-select /*+ recompile INDEX_SS */ i,j,k,l from t where j = 10 and k > 4000 order by i desc, j desc
+select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where j = 10 and k > 4000 order by i desc, j desc
 )
 ,cte_ZMXRwH3sE AS 
 (
-select /*+ recompile INDEX_SS */ i,j,k,l from t where j = 10 and k > 4000 order by i desc, j desc
+select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where j = 10 and k > 4000 order by i desc, j desc
 )
 ,
 cte_RyHstqnFm AS 
 (
-select /*+ recompile INDEX_SS */ i,j,k,l from t where j = 10 and k > 4000 order by i desc, j desc
+select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where j = 10 and k > 4000 order by i desc, j desc
 )
 select * from cte_E6H4opTTz,cte_ZMXRwH3sE,cte_RyHstqnFm order by 1 limit 10;
 
@@ -41,21 +41,21 @@ select /*+ recompile INDEX_SS */ i,j,k,l from t where j = 10 and k > 4000 order 
 
 WITH cte_rZJ9v6Ljh AS 
 (
-select /*+ recompile INDEX_SS */ i,j,k,l from t where j = 10 and k > 4000 order by i desc, k asc
+select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where j = 10 and k > 4000 order by i desc, k asc
 )
 ,cte_xdAvJG39f AS 
 (
-select /*+ recompile INDEX_SS */ i,j,k,l from t where j = 10 and k > 4000 order by i desc, k asc
+select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where j = 10 and k > 4000 order by i desc, k asc
 )
 ,
 cte_EIZ7LzaTY AS 
 (
-select /*+ recompile INDEX_SS */ i,j,k,l from t where j = 10 and k > 4000 order by i desc, k asc
+select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where j = 10 and k > 4000 order by i desc, k asc
 )
 select * from cte_rZJ9v6Ljh,cte_xdAvJG39f,cte_EIZ7LzaTY order by 1 limit 10;
 
 -- skip order by again:
-select /*+ recompile INDEX_SS */ i,j,k,l from t where j = 10 and k > 4000 order by i desc, k desc;
+select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where j = 10 and k > 4000 order by i desc, k desc;
 
 drop index idx on t;
 create index idx on t(i asc,j desc,k desc,l asc);
@@ -91,30 +91,30 @@ select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where j >= 9 and k >
 select * from cte_5CF0gJbeT,cte_WEwSnJA3L,cte_aub0aLIzL order by 1 limit 10;
 WITH cte_r0qnBAIpz AS 
 (
-select /*+ recompile INDEX_SS */ i,j,k,l from t where (j = 2 or j = 3) and l between 1063 and 1064
+select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where (j = 2 or j = 3) and l between 1063 and 1064
 )
 ,cte_O7KqkzGCb AS 
 (
-select /*+ recompile INDEX_SS */ i,j,k,l from t where (j = 2 or j = 3) and l between 1063 and 1064
+select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where (j = 2 or j = 3) and l between 1063 and 1064
 )
 ,
 cte_0SighCiby AS 
 (
-select /*+ recompile INDEX_SS */ i,j,k,l from t where (j = 2 or j = 3) and l between 1063 and 1064
+select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where (j = 2 or j = 3) and l between 1063 and 1064
 )
 select * from cte_r0qnBAIpz,cte_O7KqkzGCb,cte_0SighCiby order by 1 limit 10;
 WITH cte_Z9rP4M8V3 AS 
 (
-select /*+ recompile INDEX_SS */ i,j,k,l from t where (j = 2 or j = 3) and l between 1063 and 1080 and i <> 0
+select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where (j = 2 or j = 3) and l between 1063 and 1080 and i <> 0
 )
 ,cte_iCFuHl37Q AS 
 (
-select /*+ recompile INDEX_SS */ i,j,k,l from t where (j = 2 or j = 3) and l between 1063 and 1080 and i <> 0
+select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where (j = 2 or j = 3) and l between 1063 and 1080 and i <> 0
 )
 ,
 cte_6SNnS5HNA AS 
 (
-select /*+ recompile INDEX_SS */ i,j,k,l from t where (j = 2 or j = 3) and l between 1063 and 1080 and i <> 0
+select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where (j = 2 or j = 3) and l between 1063 and 1080 and i <> 0
 )
 select * from cte_Z9rP4M8V3,cte_iCFuHl37Q,cte_6SNnS5HNA order by 1 limit 10;
 WITH cte_vtAsbWpBu AS 
@@ -137,64 +137,64 @@ select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS */ i,j,k,l 
 
 WITH cte_VQ7yS0XHQ AS 
 (
-select /*+ recompile INDEX_SS */ i,j,k,l from t where i is not null and j = 2 and k = 1001
+select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where i is not null and j = 2 and k = 1001
 )
 ,cte_2ZQcXDAdA AS 
 (
-select /*+ recompile INDEX_SS */ i,j,k,l from t where i is not null and j = 2 and k = 1001
+select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where i is not null and j = 2 and k = 1001
 )
 ,
 cte_3eZUzGwXo AS 
 (
-select /*+ recompile INDEX_SS */ i,j,k,l from t where i is not null and j = 2 and k = 1001
+select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where i is not null and j = 2 and k = 1001
 )
 select * from cte_VQ7yS0XHQ,cte_2ZQcXDAdA,cte_3eZUzGwXo order by 1 limit 10;
 WITH cte_WxQZy76Ma AS 
 (
-select /*+ recompile INDEX_SS */ i,j,k,l from t where j = 2 and k = 1001 and (l = 3 or l > 5)
+select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where j = 2 and k = 1001 and (l = 3 or l > 5)
 )
 ,cte_BrMiSZiv0 AS 
 (
-select /*+ recompile INDEX_SS */ i,j,k,l from t where j = 2 and k = 1001 and (l = 3 or l > 5)
+select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where j = 2 and k = 1001 and (l = 3 or l > 5)
 )
 ,
 cte_XB6X5mAZX AS 
 (
-select /*+ recompile INDEX_SS */ i,j,k,l from t where j = 2 and k = 1001 and (l = 3 or l > 5)
+select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where j = 2 and k = 1001 and (l = 3 or l > 5)
 )
 select * from cte_WxQZy76Ma,cte_BrMiSZiv0,cte_XB6X5mAZX order by 1;
 
 
 WITH cte_Fy3YOYnpy AS 
 (
-select /*+ recompile INDEX_SS */ i,j,k,l from t where i > 2
+select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where i > 2
 )
 ,cte_NgBNjLROe AS 
 (
-select /*+ recompile INDEX_SS */ i,j,k,l from t where i > 2
+select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where i > 2
 )
 select * from cte_Fy3YOYnpy,cte_NgBNjLROe order by 1 limit 10;
 WITH cte_Gwrn14Rz8 AS 
 (
-select /*+ recompile INDEX_SS */ i,j,k,l from t where j <> 2 order by i,j,k,l limit 10
+select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where j <> 2 order by i,j,k,l limit 10
 )
 ,cte_ef4TXC0xH AS 
 (
-select /*+ recompile INDEX_SS */ i,j,k,l from t where j <> 2 order by i,j,k,l limit 10
+select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where j <> 2 order by i,j,k,l limit 10
 )
 select * from cte_Gwrn14Rz8,cte_ef4TXC0xH order by 1 limit 10;
 WITH cte_vpBtw1O1e AS 
 (
-select /*+ recompile INDEX_SS */ i,j,k,l from t where j is not null and l = 1001
+select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where j is not null and l = 1001
 )
 ,cte_IB1YDM4bs AS 
 (
-select /*+ recompile INDEX_SS */ i,j,k,l from t where j is not null and l = 1001
+select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where j is not null and l = 1001
 )
 ,
 cte_XFluxeWjy AS 
 (
-select /*+ recompile INDEX_SS */ i,j,k,l from t where j is not null and l = 1001
+select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where j is not null and l = 1001
 )
 select * from cte_vpBtw1O1e,cte_IB1YDM4bs,cte_XFluxeWjy order by 1 limit 10;
 

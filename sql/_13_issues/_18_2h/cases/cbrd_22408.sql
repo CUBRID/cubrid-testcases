@@ -26,13 +26,13 @@ insert into tbl values (99) into :xx;
 
 WITH cte1 AS
 (
-select :xx.id from db_root
+select /*+ MATERIALIZE */ :xx.id from db_root
 )
 update t_update set i=(select count(*) from cte1);
 
 WITH cte2 AS
 (
-select :xx.id from db_root
+select /*+ MATERIALIZE */ :xx.id from db_root
 )
 delete from t_d_1 where i=(select count(*) from cte2);
 
@@ -55,14 +55,14 @@ insert into t_replace select count(*) from (select /*+ NO_MERGE */ :xx.id from d
 
 WITH cte7 AS
 (
-select :xx.id from db_root
+select /*+ MATERIALIZE */ :xx.id from db_root
 )
 select * from cte7;
 
 
 insert into t_replace WITH cte8 AS
 (
-select :xx.id from db_root
+select /*+ MATERIALIZE */ :xx.id from db_root
 )
 select * from cte8;
 
@@ -74,14 +74,14 @@ set @a = 1;
 
 create table cte9 as WITH cte9 AS
 (
-select @a
+select /*+ MATERIALIZE */ @a
 )
 select * from cte9;
 
 insert into t 
 WITH cte10 AS
 (
-select @a
+select /*+ MATERIALIZE */ @a
 )
 select * from cte10;
 select * from t order by 1;
@@ -89,21 +89,21 @@ select * from t order by 1;
 replace into t 
 WITH cte11 AS
 (
-select @a
+select /*+ MATERIALIZE */ @a
 )
 select * from cte11;
 select * from t order by 1;
 
 WITH cte12 AS
 (
-select @a
+select /*+ MATERIALIZE */ @a
 )
 delete from t where i in (select * from cte12) limit 1;
 select * from t order by 1;
 
 WITH cte13 AS
 (
-select @a
+select /*+ MATERIALIZE */ @a
 )
 update t set i=-1 where i in (select * from cte13);
 select * from t order by 1;

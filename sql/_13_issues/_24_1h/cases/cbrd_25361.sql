@@ -20,7 +20,7 @@ set trace on;
 
 -- 1.1 Single CTE: UNION
 EVALUATE '1.1 Single CTE: UNION';
-WITH cte_a AS (SELECT * FROM tbl_a ORDER BY 1 LIMIT 20)
+WITH cte_a AS (SELECT /*+ MATERIALIZE */ * FROM tbl_a ORDER BY 1 LIMIT 20)
 (SELECT * FROM cte_a ORDER BY i)
 UNION
 (SELECT * FROM cte_a ORDER BY i);
@@ -29,7 +29,7 @@ show trace;
 
 -- 1.2 Single CTE: UNION ALL
 EVALUATE '1.2 Single CTE: UNION ALL';
-WITH cte_a AS (SELECT * FROM tbl_a ORDER BY 1 LIMIT 20)
+WITH cte_a AS (SELECT /*+ MATERIALIZE */ * FROM tbl_a ORDER BY 1 LIMIT 20)
 (SELECT * FROM cte_a ORDER BY i)
 UNION ALL
 (SELECT * FROM cte_a ORDER BY i);
@@ -38,7 +38,7 @@ show trace;
 
 -- 1.3 Single CTE: DIFFERENCE
 EVALUATE '1.3 Single CTE: DIFFERENCE';
-WITH cte_a AS (SELECT * FROM tbl_a ORDER BY 1 LIMIT 20)
+WITH cte_a AS (SELECT /*+ MATERIALIZE */ * FROM tbl_a ORDER BY 1 LIMIT 20)
 (SELECT * FROM cte_a ORDER BY i)
 DIFFERENCE
 (SELECT * FROM cte_a ORDER BY i);
@@ -47,7 +47,7 @@ show trace;
 
 -- 1.4 Single CTE: DIFFERENCE ALL
 EVALUATE '1.4 Single CTE: DIFFERENCE ALL';
-WITH cte_a AS (SELECT * FROM tbl_a ORDER BY 1 LIMIT 20)
+WITH cte_a AS (SELECT /*+ MATERIALIZE */ * FROM tbl_a ORDER BY 1 LIMIT 20)
 (SELECT * FROM cte_a ORDER BY i)
 DIFFERENCE ALL
 (SELECT * FROM cte_a ORDER BY i);
@@ -56,7 +56,7 @@ show trace;
 
 -- 1.5 Single CTE: INTERSECTION
 EVALUATE '1.5 Single CTE: INTERSECTION';
-WITH cte_a AS (SELECT * FROM tbl_a ORDER BY 1 LIMIT 20)
+WITH cte_a AS (SELECT /*+ MATERIALIZE */ * FROM tbl_a ORDER BY 1 LIMIT 20)
 (SELECT * FROM cte_a ORDER BY i)
 INTERSECTION
 (SELECT * FROM cte_a ORDER BY i);
@@ -65,7 +65,7 @@ show trace;
 
 -- 1.6 Single CTE: INTERSECTION ALL
 EVALUATE '1.6 Single CTE: INTERSECTION ALL';
-WITH cte_a AS (SELECT * FROM tbl_a ORDER BY 1 LIMIT 20)
+WITH cte_a AS (SELECT /*+ MATERIALIZE */ * FROM tbl_a ORDER BY 1 LIMIT 20)
 (SELECT * FROM cte_a ORDER BY i)
 INTERSECTION ALL
 (SELECT * FROM cte_a ORDER BY i);
@@ -154,7 +154,7 @@ show trace;
 
 -- 1.13 Use limit
 EVALUATE '1.13 Use limit';
-WITH cte1 AS (SELECT i FROM tbl_a limit 1, 10)
+WITH cte1 AS (SELECT /*+ MATERIALIZE */ i FROM tbl_a limit 1, 10)
 (SELECT * FROM cte1)
 UNION ALL
 (SELECT * FROM cte1)
@@ -169,7 +169,7 @@ show trace;
 
 -- 1.14 Use limit offset
 EVALUATE '1.14 Use limit offset';
-WITH cte1 AS (SELECT i FROM tbl_a limit 3 offset 7)
+WITH cte1 AS (SELECT /*+ MATERIALIZE */ i FROM tbl_a limit 3 offset 7)
 (SELECT * FROM cte1)
 UNION ALL
 (SELECT * FROM cte1)
@@ -184,7 +184,7 @@ show trace;
 
 -- 1.15 Use rownum
 EVALUATE '1.15 Use rownum';
-WITH cte1 AS (SELECT i FROM tbl_a where rownum < 5 )
+WITH cte1 AS (SELECT /*+ MATERIALIZE */ i FROM tbl_a where rownum < 5 )
 (SELECT * FROM cte1)
 UNION ALL
 (SELECT * FROM cte1)
@@ -199,7 +199,7 @@ show trace;
 
 -- 1.16 Use orderby_num()
 EVALUATE '1.16 Use orderby_num()';
-WITH cte1 AS (SELECT i FROM tbl_a order by 1 for orderby_num() between 3 and 5)
+WITH cte1 AS (SELECT /*+ MATERIALIZE */ i FROM tbl_a order by 1 for orderby_num() between 3 and 5)
 (SELECT * FROM cte1)
 UNION ALL
 (SELECT * FROM cte1)
@@ -218,7 +218,7 @@ show trace;
 EVALUATE '2.1 Single CTE: UNION with Correlated Subqueries';
 set trace on;
 
-WITH cte_a AS (SELECT * FROM tbl_a ORDER BY 1 LIMIT 20)
+WITH cte_a AS (SELECT /*+ MATERIALIZE */ * FROM tbl_a ORDER BY 1 LIMIT 20)
 (SELECT * FROM cte_a WHERE EXISTS (SELECT 1 FROM tbl_a WHERE tbl_a.i = cte_a.i) ORDER BY i)
 UNION
 (SELECT * FROM cte_a WHERE EXISTS (SELECT 1 FROM tbl_a WHERE tbl_a.j = cte_a.j) ORDER BY i);
@@ -229,7 +229,7 @@ show trace;
 EVALUATE '2.2 Single CTE: INTERSECTION with Correlated Subqueries';
 set trace on;
 
-WITH cte_a AS (SELECT * FROM tbl_a ORDER BY 1 LIMIT 20)
+WITH cte_a AS (SELECT /*+ MATERIALIZE */ * FROM tbl_a ORDER BY 1 LIMIT 20)
 (SELECT * FROM cte_a WHERE EXISTS (SELECT 1 FROM tbl_a WHERE tbl_a.j = cte_a.j) ORDER BY i)
 INTERSECTION
 (SELECT * FROM cte_a WHERE EXISTS (SELECT 1 FROM tbl_a WHERE tbl_a.k = cte_a.k) ORDER BY i);
