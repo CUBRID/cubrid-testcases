@@ -235,4 +235,7 @@ select CUME_DIST() over(order by 123) from scores;
 
 select PERCENT_RANK(NULL, 80, 'A') within group(order by NULL, NULL, NULL) from scores;
 
+deallocate prepare st1;
+deallocate prepare st2;
+deallocate prepare st3;
 drop table scores;

@@ -20,5 +20,6 @@ select * from t order by 1,2,3;
 update t set col2='updated' WHERE year(col3)=2008 or col2='book2' using index idx1(+) keylimit 0,3;
 prepare stmt from 'update t set col2=? WHERE year(col3)=2008 or col2=? using index idx2(+) keylimit ?*(?-?),?';
 execute stmt using 'updated','book2', 1,2,2,3;
+deallocate prepare stmt;
 select * from t order by 1,2,3;
 drop table if exists t;

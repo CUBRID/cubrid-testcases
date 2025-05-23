@@ -45,6 +45,7 @@ execute st using 'HH24:MI:SS TZR', 'HH24:MI:SS TZR', 'HH24:MI:SS TZR';
 execute st using 'HH24:MI:SS TZR TZD', 'HH24:MI:SS TZR TZD', 'HH24:MI:SS TZR TZD';
 execute st using 'HH24:MI:SS TZH', 'HH24:MI:SS TZH', 'HH24:MI:SS TZH';
 execute st using 'HH24:MI:SS TZH TZM', 'HH24:MI:SS TZH TZM', 'HH24:MI:SS TZH TZM';
+deallocate prepare st;
 
 set time zone 'Asia/Makassar';
 --test: with date_lang_string_literal argument
@@ -56,7 +57,7 @@ execute st using 'HH:MI:SS PM TZR', 'HH:MI:SS PM TZR', 'HH:MI:SS PM TZR';
 execute st using 'HH:MI:SS PM TZR TZD', 'HH:MI:SS PM TZR TZD', 'HH:MI:SS PM TZR TZD';
 execute st using 'HH:MI:SS PM TZH', 'HH:MI:SS PM TZH', 'HH:MI:SS PM TZH';
 execute st using 'HH:MI:SS PM TZH:TZM', 'HH:MI:SS PM TZH:TZM', 'HH:MI:SS PM TZH:TZM';
-
+deallocate prepare st;
 
 set time zone 'Asia/Shanghai';
 prepare st from 'select id, to_char(ts+1, ?, ''de_DE''), to_char(tltz+1, ?, ''de_DE''), to_char(ttz+1, ?, ''de_DE'') from tz_test order by 1';

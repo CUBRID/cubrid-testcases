@@ -35,6 +35,8 @@ execute x using 0, 3;
 
 execute x using 2, 7;
 
+deallocate prepare x;
+
 drop table u;
 drop table t;
 

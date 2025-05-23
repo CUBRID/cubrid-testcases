@@ -377,6 +377,7 @@ from
 ';
 execute q using 1, 9;
 show trace;
+deallocate prepare q;
 
 
 set trace off;

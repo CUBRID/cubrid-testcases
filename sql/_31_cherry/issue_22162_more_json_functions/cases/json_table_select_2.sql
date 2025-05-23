@@ -16,6 +16,7 @@ set @jdoc='[{"a":1},{"a":2}]';
 select * from json_table ( @jdoc, '$[*]' columns ( code int path '$.a' )) as jt;
 prepare s from 'select * from json_table ( ? , ''$[*]'' columns ( code int path ''$.a'' )) as jt;';
 execute s using @jdoc;
+deallocate prepare s;
 
 drop table if exists tbl;
 drop view if exists v1;
@@ -33,6 +34,7 @@ prepare s from 'select * from json_table ( ? , ''$[*]'' COLUMNS(
     AddressType INT PATH ''$.AddressType'',
     AdrressCode VARCHAR(50) PATH ''$.AdrressCode'')) AS Address;';
 execute s using @jdoc;
+deallocate prepare s;
 
 drop table if exists t;
 create table t as SELECT * FROM JSON_TABLE( @jdoc, '$[*]' COLUMNS(

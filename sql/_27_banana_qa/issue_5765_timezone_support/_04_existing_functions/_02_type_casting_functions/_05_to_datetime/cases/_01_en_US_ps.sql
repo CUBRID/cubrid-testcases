@@ -9,6 +9,7 @@ prepare st from 'select to_datetime(?, ?)';
 --test: new tokens
 execute st using '3:55', 'TZH:TZM';
 execute st using '10:10:45 America/Cayman EST -5:00', 'HH:MI:SS TZR TZD TZH:TZM';
+deallocate prepare st;
 
 
 prepare st from 'select to_datetime(?, ?, ''en_US'')';

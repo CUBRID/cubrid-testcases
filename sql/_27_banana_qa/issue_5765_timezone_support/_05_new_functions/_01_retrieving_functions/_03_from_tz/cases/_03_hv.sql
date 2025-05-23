@@ -31,6 +31,7 @@ execute st using datetime'1988-04-01 00:20:33', @tz;
 execute st using datetime'2000-03-30 00:00:00', @tz;
 --!!! different result in Oracle and Postgre
 execute st using datetime'2005-04-01 00:00:00', @tz;
+deallocate prepare st;
 
 --test: ambiguous values
 prepare st from 'select if(from_tz(?, ?)=?, ''ok'', ''nok'')';
@@ -40,6 +41,7 @@ execute st using datetime'1994-09-15 23:30:00', @tz, timestamptz'1994-09-15 23:3
 execute st using datetime'1996-09-20 00:30:00', @tz, timestamptz'1996-09-19 21:30:00 UTC';
 execute st using datetime'2025-10-26 00:00:00', @tz, timestamptz'2025-10-26 6:00:00 Asia/Seoul';
 execute st using datetime'1930-12-31 23:50:00', @tz, datetimetz'1930-12-31 23:50:00 Asia/Amman LMT';
+deallocate prepare st;
 
 prepare st from 'select if(from_tz(?, ?)+3600*1000=?, ''ok'', ''nok'')';
 execute st using datetime'1977-09-30 23:00:00', @tz, timestamptz'1977-09-30 23:00:00 Asia/Amman EET';
@@ -47,6 +49,7 @@ execute st using datetime'1986-10-02 23:30:00', @tz, timestamptz'1986-10-02 23:3
 execute st using datetime'1994-09-15 23:30:00', @tz, timestamptz'1994-09-15 23:30:00 Asia/Amman EET';
 execute st using datetime'1996-09-20 00:30:00', @tz, timestamptz'1996-09-19 22:30:00 UTC';
 execute st using datetime'2025-10-26 00:00:00', @tz, timestamptz'2025-10-26 7:00:00 Asia/Seoul';
+deallocate prepare st;
 
 prepare st from 'select if(from_tz(?, ?)+(23*60+44)*1000=?, ''ok'', ''nok'')';
 --BUG: CUBRIDSUS-17063, resolved
