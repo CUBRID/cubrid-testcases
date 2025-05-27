@@ -14,6 +14,7 @@ set @b=1;
 prepare stmt from 'select 1 as a from t1 union all select 1 from db_class limit ?, ?+?;';
 execute stmt using 0, 0, 1 ;
 execute stmt using @a, @a, @b ;
+deallocate prepare stmt;
 
 prepare stmt from 'select 1 as a from t1 union all select 1 from db_class limit ?+?, ?;';
 execute stmt using 0, 1, 3 ;

@@ -62,6 +62,7 @@ execute s using '2013-5-7 15:26:30.123';
 execute s using '2013-5-7 15:26:31';
 execute s using '15:30:00';
 execute s using 'abcdefg';
+deallocate prepare s;
 
 --aggregate
 select a,median(c1) from median_t group by a order by 1,2;
@@ -109,6 +110,7 @@ execute s using '2013-5-7 15:26:30.123';
 execute s using '2013-5-7 15:26:31';
 execute s using '15:30:00';
 execute s using 'abcdefg';
+deallocate prepare s;
 
 --more test
 insert into median_t values(2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '123', NULL);

@@ -28,6 +28,7 @@ set time zone '-10:56';
 execute st using datetimeltz'1900-06-30 7:30:21.999', '%X, %V, %U, Day %j %TZD %TZM';
 execute st using datetimetz'1900-06-30 7:30:21.999 +10:00', '%X, %V, %U, Day %j %TZD %TZM';
 execute st using datetimetz'1900-06-30 7:30:21.999 Asia/Seoul', '%X, %V, %U, Day %j %TZD %TZM';
+deallocate prepare st;
 
 prepare st from 'select date_format(?+1, ?)';
 set time zone 'Europe/London';

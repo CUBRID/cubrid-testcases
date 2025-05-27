@@ -29,4 +29,6 @@ prepare st from 'SELECT * FROM t1 WHERE v IN (SELECT (? LIKE ?));';
 execute st using 'a','aaa';
 execute st using 'aaa','aaa';
 
+deallocate prepare st;
+
 drop t1;

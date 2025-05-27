@@ -16,6 +16,7 @@ execute st1 using 'AaB', 'a%';
 
 execute st1 using _iso88591'abC', 'A%';
 execute st1 using 'abC', _euckr'a%';
+deallocate prepare st1;
 
 
 --with subquery
@@ -42,7 +43,7 @@ execute st2 using 'a', 'B';
 
 execute st2 using _iso88591'a', 'b';
 execute st2 using _euckr'A', _utf8'b';
-
+deallocate prepare st2;
 
 --compare with s2
 prepare st3 from 'select * from t where s2 like ?+? order by 1, 2';
@@ -56,6 +57,7 @@ execute st3 using 'a', 'B';
 
 execute st3 using _iso88591'a', 'b';
 execute st3 using _euckr'A', _utf8'B';
+deallocate prepare st3;
 
 
 --session variable

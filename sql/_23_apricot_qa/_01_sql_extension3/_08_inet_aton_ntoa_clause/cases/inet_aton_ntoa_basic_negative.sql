@@ -4,6 +4,7 @@
 select inet_aton('8.9.10.11.12');
 prepare y from 'select inet_aton(?)';
 execute y using '1.2';
+deallocate prepare y;
 select inet_aton('400.300.200.100');
 select inet_aton(123.5);
 select inet_ntoa(0x2356);

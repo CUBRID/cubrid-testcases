@@ -59,16 +59,20 @@ execute s using 1,2,3,'4';
 execute s using 1.0,2,3,4;
 execute s using 1,2,3,4.0;
 execute s using 1,2,3,time '0:0:4';
+deallocate prepare s;
 
 prepare s from 'values(?),(?),(?) union values(?),(?)';
 execute s using 1,2,3,4,5;
 execute s using 1,'2',3,4,5;
 execute s using 1,2,3,4,'5';
+deallocate prepare s;
 
 prepare s from 'values(?,1),(?,2) union all values(1,2),(3,4)';
 execute s using 1,2;
+deallocate prepare s;
 prepare s from 'values(1,2),(3,4) union all values(?,1),(?,2)';
 execute s using 1,2;
+deallocate prepare s;
 prepare s from 'values(?,2),(?,4) union all values(?,1),(?,2)';
 execute s using 1,2,3,4;
 

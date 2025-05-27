@@ -34,6 +34,7 @@ execute st using '[%r] %TZH:%TZM', '[%r] %TZR (%TZH)', '[%r] %TZR (%TZH)';
 
 set time zone 'Asia/Shanghai';
 execute st using '%TZR@%TZD, %TZH:%TZM', '%TZR@%TZD, %TZH:%TZM', '%TZR@%TZD, %TZH:%TZM';
+deallocate prepare st;
 
 prepare st from 'select id, time_format(ts+1, ?), time_format(dtltz+1, ?), time_format(dttz+1, ?) from tz_test order by 1';
 set time zone 'Europe/London';

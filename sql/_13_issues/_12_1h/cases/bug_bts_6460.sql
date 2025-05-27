@@ -11,4 +11,6 @@ select x div -1 from t1;
 select y div cast(-1 as int) from t1;
 select z div cast(-1 as short) from t1;
 
+deallocate prepare stmt;
+
 drop t1;

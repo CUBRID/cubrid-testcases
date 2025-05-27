@@ -10,6 +10,7 @@ execute st using 'Asia/Seoul CST', 'TZR TZD';
 
 execute st using '-55', 'TZM';
 execute st using '3:55', 'TZH:TZM';
+deallocate prepare st;
 
 prepare st from 'select to_time(?, ?, ''en_US'')';
 --test: time

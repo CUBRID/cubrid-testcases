@@ -108,6 +108,7 @@ execute st using null, null, null;
 execute st using 123, 10, 10;
 execute st using '123', 10, 10;
 execute st using b'10', 10, 10;
+deallocate prepare st;
 
 -- const folding
 select conv(null, null, null);

@@ -11,6 +11,7 @@ execute st1 using 'AaB','a,ab,aab,AAb,AaB,aAB';
 
 execute st1 using _iso88591'ABc','abc,AbC,aBc,ABc,ABC';
 execute st1 using 'AaB',_euckr'a,ab,aab,AAb,AaB,aAB';
+deallocate prepare st1;
 
 --with subquery
 prepare st1 from 'select position(? in (select ? from db_root))';
@@ -42,6 +43,7 @@ execute st2 using 'a', 'B';
 
 execute st2 using _iso88591'a', 'b';
 execute st2 using _euckr'A', _utf8'b';
+deallocate prepare st2;
 
 
 --compare with s2
@@ -56,6 +58,7 @@ execute st3 using 'a', 'B';
 
 execute st3 using _iso88591'a', 'b';
 execute st3 using _euckr'A', _euckr'B';
+deallocate prepare st3;
 
 
 --session variable
