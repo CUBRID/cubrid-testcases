@@ -96,6 +96,7 @@ show columns from t__p__p16;
 
 prepare st from 'delete from t where t in (?,?) or t < ?';
 execute st using '1985-2-28','1993-2-14','1972-2-19';
+deallocate prepare st;
 
 select count(*) from t where t in ('1985-2-28','1993-2-14','1972-2-19');
 

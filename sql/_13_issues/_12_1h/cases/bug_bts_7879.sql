@@ -58,8 +58,7 @@ select /*+ recompile */ oahe_fam,oahe_af,oahe_vam from vwisa where (oahe_fam = 1
 
 prepare s1 from 'select /*+ recompile */ oahe_fam,oahe_af,oahe_vam from vwisa where (oahe_fam = ? and ((oahe_vam > ? and oahe_af = ?) or (oahe_af > ?))) and vwisa.that_nk = ? and vwisa.that_nk_hash = ? and vwisa.that_dhs_ta is null order by oahe_af ASC,oahe_fsd ASC,oahe_af ASC limit 0,3';
 
-
 execute s1 using 101, 5, 0, 0, 'nm_test_1', 334406952;
-
+deallocate prepare s1;
 drop table vwisa;
 

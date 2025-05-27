@@ -25,6 +25,7 @@ prepare st from 'select to_char(?)';
 execute st using datetime'2025-12-31 22:30:45.999';
 execute st using datetimeltz'2025-12-31 22:30:45.999 -2:25';
 execute st using datetimetz'2025-12-31 22:30:45.999 America/Sao_Paulo';
+deallocate prepare st;
 
 --test: with format argument
 prepare st from 'select to_char(?, ?)';
@@ -74,6 +75,7 @@ execute st using datetimetz'2014-06-30 7:30:21.999 PM America/New_York', 'DD"th"
 execute st using datetimetz'2014-06-30 7:30:21.999 PM America/New_York', 'DD"th", YYYY; DY/d HH24:MI:SS TZR TZD';
 execute st using datetimetz'2014-06-30 7:30:21.999 PM America/New_York', 'DD"th", YYYY; DY/d HH24:MI:SS TZM';
 execute st using datetimetz'2014-06-30 7:30:21.999 PM America/New_York', 'DD"th", YYYY; DY/d HH24:MI:SS TZH:TZM';
+deallocate prepare st;
 
 set time zone 'Asia/Shanghai';
 --test: with date_lang_string_literal argument
@@ -96,6 +98,7 @@ execute st using datetimetz'2014-06-30 7:30:21.999 Asia/Seoul', 'YYYY "Quarter "
 execute st using datetimetz'2014-06-30 7:30:21.999 Asia/Seoul', 'YYYY "Quarter " Q, MONTH-DD DAY HH:MI:SS PM TZR TZD';
 execute st using datetimetz'2014-06-30 7:30:21.999 Asia/Seoul', 'YYYY "Quarter " Q, MONTH-DD DAY HH:MI:SS PM TZH';
 execute st using datetimetz'2014-06-30 7:30:21.999 Asia/Seoul', 'YYYY "Quarter " Q, MONTH-DD DAY HH:MI:SS PM TZH:TZM';
+deallocate prepare st;
 
 
 --test: leap seconds

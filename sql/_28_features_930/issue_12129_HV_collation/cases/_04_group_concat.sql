@@ -12,6 +12,7 @@ execute st using 'x','x';
 
 execute st using _utf8'x',_utf8'x';
 execute st using _euckr'x',_euckr'x';
+deallocate prepare st;
 
 drop table t1;
 

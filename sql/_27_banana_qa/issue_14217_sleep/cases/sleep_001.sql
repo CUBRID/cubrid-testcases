@@ -18,6 +18,7 @@ execute s using 'abc';
 execute s using 0.0;
 execute s using -0.2;
 execute s using NULL;
+deallocate prepare s;
 
 drop table if exists t1; 
 

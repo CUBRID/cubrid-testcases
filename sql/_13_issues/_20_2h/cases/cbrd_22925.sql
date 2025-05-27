@@ -11,6 +11,7 @@ PREPARE stmt from 'select 1
    and col2 in (?,?)
    and col1 in (1,2)';
 EXECUTE stmt using 1,2;
+DEALLOCATE PREPARE stmt;
 
 PREPARE stmt from 'select 1
   from tmp1
@@ -19,5 +20,6 @@ PREPARE stmt from 'select 1
    and col3 = 1
    and col3 <> 2';
 EXECUTE stmt using 1,2;
+DEALLOCATE PREPARE stmt;
 
 drop table tmp1;

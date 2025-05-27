@@ -167,6 +167,7 @@ prepare st from 'select ascii(?)';
 execute st using null;
 execute st using '123';
 execute st using b'10';
+deallocate prepare st;
 
 -- const folding
 select ascii(null);

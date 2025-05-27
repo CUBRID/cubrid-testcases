@@ -14,6 +14,7 @@ execute s using '2012-07-01', 'yy';
 execute s using '2012-06-30', 'yy';
 execute s using '2012-01-01', 'yyyy';
 execute s using '2012-12-31', 'yyyy';
+deallocate prepare s;
 
 --round with month
 prepare s from 'select round(?, ''mm'')';
@@ -22,6 +23,7 @@ execute s using timestamp'11:59:59 pm 2012-02-15';
 execute s using timestamp'11:59:59 pm 2012-02-16';
 execute s using timestamp'11:59:59 pm 2012-12-15';
 execute s using timestamp'11:59:59 pm 2012-12-16';
+deallocate prepare s;
 
 --round with day
 prepare s from 'select round(to_datetime(?), ''dd'') from db_root order by 1';
@@ -35,6 +37,7 @@ execute s using '11:59:59.499 pm 2012-02-28';
 execute s using '11:59:59.499 pm 2012-02-29';
 execute s using '11:59:59.500 pm 2011-02-28';
 execute s using '11:59:59.500 pm 2012-12-31';
+deallocate prepare s;
 
 --round with hour, minute, second
 prepare s from 'select round(to_datetime(?), ?)';
@@ -72,6 +75,7 @@ execute s using '11:59:59.500 pm 2011-12-31', 'dd';
 execute s using '11:59:59.500 pm 2011-12-31', 'hh';
 execute s using '11:59:59.500 pm 2011-12-31', 'mi';
 execute s using '11:59:59.500 pm 2011-12-31', 'ss';
+deallocate prepare s;
 
 --for quater:
 prepare s from 'select round(to_datetime(?), ''q'')';
@@ -87,6 +91,7 @@ execute s using '11:59:59.499 pm 2012-08-16';
 
 execute s using '11:59:59.499 pm 2012-11-15';
 execute s using '11:59:59.499 pm 2012-11-16';
+deallocate prepare s;
 
 --for day:
 prepare s from 'select round(to_datetime(?), ''day'')';
@@ -102,6 +107,7 @@ execute s using '11:59:59.499 pm 2013-01-02';
 execute s using '11:59:59.499 pm 2013-01-03';
 execute s using '11:59:59.499 pm 2013-01-04';
 execute s using '11:59:59.499 pm 2013-01-05';
+deallocate prepare s;
 
 --boundary check
 select round(to_datetime('11:59:59.999 pm 9999-12-31'), 'yy');
@@ -284,6 +290,7 @@ prepare s from 'select round(?, ''yyyy'')';
 execute s using date'2012-12-23';
 execute s using datetime'2012-12-23 12:23:45';
 execute s using timestamp'2012-12-23 12:23:45';
+deallocate prepare s;
 
 prepare s from 'select round(date''2012-12-23'', ?)';
 execute s using 'yyyy';
@@ -311,6 +318,7 @@ execute s using N'ff';
 execute s using N'day';
 execute s using N'dy';
 execute s using N'q';
+deallocate prepare s;
 
 prepare s from 'select round(datetime''2012-12-23 23:59:59'', ?)';
 execute s using 'yyyy';
@@ -342,6 +350,7 @@ execute s using N'ff';
 execute s using N'day';
 execute s using N'dy';
 execute s using N'q';
+deallocate prepare s;
 
 prepare s from 'select round(timestamp''2012-12-23 23:59:59'', ?)';
 execute s using 'yyyy';
@@ -373,6 +382,7 @@ execute s using N'ff';
 execute s using N'day';
 execute s using N'dy';
 execute s using N'q';
+deallocate prepare s;
 
 --negative
 select round('2010-1-2', 'a');
@@ -387,6 +397,7 @@ execute s using datetime'11:59:59.500 am 2012-12-21';
 execute s using datetime'11:59:59.500 pm 2012-12-21';
 execute s using date'2012-12-21';
 execute s using '1.2345';
+deallocate prepare s;
 
 --2 arguments:
 prepare s from 'select round(to_datetime(?))';

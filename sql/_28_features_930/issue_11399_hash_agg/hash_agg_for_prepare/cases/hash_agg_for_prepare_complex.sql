@@ -77,9 +77,11 @@ execute s5 using 1;
 
 prepare s6 from 'select min(id), sum(a) from t4 where (select sum(a) from t4) is not null group by b having count(b)>?';
 execute s6 using 1;
+deallocate prepare s6;
 
 prepare s6 from 'select min(id), sum(a) from t4 where (select sum(a) from t4) is not null group by c having count(b)>?';
 execute s6 using 1;
+deallocate prepare s6;
 
 prepare s6 from 'select min(id), sum(a) from t4 where (select sum(a) from t4) is not null group by d having count(b)>?';
 execute s6 using 1;

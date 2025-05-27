@@ -37,27 +37,36 @@ insert into wb_numeric values(50000, 100, 80000000, 12345.56789, 111.31, 11111.1
 --TEST: int 
 prepare st from 'select col1, col2, width_bucket(col1, ?, 50000, 5) wb from wb_numeric order by 1, 2';
 execute st using 10000;
+deallocate prepare st;
 prepare st from 'select col1, col2, width_bucket(col1, ?, ?, 5) wb from wb_numeric order by 1, 2';
 execute st using 10000, 50001;
+deallocate prepare st;
 prepare st from 'select col1, col2, width_bucket(col1, 10000, ?, ?) wb from wb_numeric order by 1, 2';
 execute st using 60000, 4;
+deallocate prepare st;
 prepare st from 'select col1, col2, width_bucket(col1, ?, ?, ?) wb from wb_numeric order by 1, 2';
 execute st using 1, 60000, 300;
+deallocate prepare st;
 --TEST: short
 prepare st from 'select col2, col3, width_bucket(col2, ?, ?, ?) wb from wb_numeric order by 1, 2';
 execute st using 99, 500, 20;
+deallocate prepare st;
 --TEST: bigint, with where clause
 prepare st from 'select col3, col4, width_bucket(col3, ?, ?, 8) wb from wb_numeric where col1 > 10000 order by col3, col4';
 execute st using 20, 2000000;
+deallocate prepare st;
 --TEST: numeric
 prepare st from 'select col4, col5, width_bucket(col4, ?, ?, ?) wb from wb_numeric order by 1, 2';
 execute st using 12345.01, 12345.60, 20;
+deallocate prepare st;
 --TEST: float
 prepare st from 'select col5, col6, width_bucket(col5, ?, 111.32, ?) wb from wb_numeric order by col5, col6';
 execute st using 100, 30;
+deallocate prepare st;
 --TEST: double
 prepare st from 'select col6, col1, width_bucket(col6, ?, ?, ?) wb from wb_numeric where length(col3)=8 and round(col5)=111 order by 1, 2, 3';
 execute st using 11111, 11112, 10;
+deallocate prepare st;
 --TEST: monetary
 prepare st from 'select col7, col3, width_bucket(col7, ?, ?, ?) wb from wb_numeric order by 1, 2';
 execute st using 1000, 999, 1;

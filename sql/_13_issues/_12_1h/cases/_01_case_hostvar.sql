@@ -85,6 +85,8 @@ execute s using :_smallint, :_bit, 'first', :_date, 'second', 'else';
 execute s using :_double, :_char, 'first', :_time, 'second', 'else';
 execute s using :_timestamp, :_monetary, 'first', :_numeric, 'second', 'else';
 
+deallocate prepare s;
+
 
 -- one type in case (will force expected domain for hostvars)
 prepare s from 'select case ? when ? then ? when ? then ? when 3 then ? else cast(1 as smallint) end';
@@ -96,6 +98,7 @@ execute s using 2, 1, :_date, 2, :_float, :_char;
 execute s using 2, 1, :_time, 2, :_datetime, :_char;
 execute s using 2, 1, :_timestamp, 2, :_bit, :_varchar;
 execute s using 2, 1, :_numeric, 2, :_varbit, :_varchar;
+deallocate prepare s;
 
 prepare s from 'select case ? when ? then ? when ? then ? when 3 then ? else cast(''101'' as char(10)) end';
 execute s using 2, 1, :_smallint, 2, :_int, :_bigint;
@@ -106,6 +109,7 @@ execute s using 2, 1, :_date, 2, :_float, :_char;
 execute s using 2, 1, :_time, 2, :_datetime, :_char;
 execute s using 2, 1, :_timestamp, 2, :_bit, :_varchar;
 execute s using 2, 1, :_numeric, 2, :_varbit, :_varchar;
+deallocate prepare s;
 
 prepare s from 'select case ? when ? then ? when ? then ? when 3 then ? else cast(''2012-01-01'' as date) end';
 execute s using 2, 1, :_smallint, 2, :_int, :_bigint;
@@ -116,5 +120,7 @@ execute s using 2, 1, :_date, 2, :_float, :_char;
 execute s using 2, 1, :_time, 2, :_datetime, :_timestamp;
 execute s using 2, 1, :_date, 2, :_datetime, :_timestamp;
 execute s using 2, 1, :_numeric, 2, :_varbit, :_varchar;
+deallocate prepare s;
+
 commit;
 --+ holdcas off;

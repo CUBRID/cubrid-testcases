@@ -25,24 +25,31 @@ insert into trunc_ps(str, dt, ts, dtime) values('ddd', '1999-12-1', '2009-09-01 
 
 prepare st from 'select id, str, dt, trunc(dt) from trunc_ps where trunc(dt) < ? and trunc(ts) > ? order by 1';
 execute st using '1994-12-12', '2002-1-1';
+deallocate prepare st;
 
 prepare st from 'select id, str, dtime, trunc(dtime) from trunc_ps where trunc(dtime, ?) between trunc(?) and trunc(?) order by 1';
 execute st using 'dd', date'2012-1-1', date'2018-12-12';
+deallocate prepare st;
 
 prepare st from 'select id, str, dt, ts, trunc(ts) from trunc_ps where dt in (trunc(?), trunc(?)) order by 1';
 execute st using date'1990-12-31', date'12/15/1994';
+deallocate prepare st;
 
 prepare st from 'select 1 from (select id, str, dt, trunc(ts), trunc(dtime) from trunc_ps where dtime >= trunc(sysdatetime) or ts between trunc(?) and (trunc(?) + 1)) order by 1';
 execute st using date'2008-10-25', timestamp'2013-12-12 11:11:11';
+deallocate prepare st;
 
 prepare st from 'select 100 from (select id, str, dt, trunc(ts), trunc(dtime) from trunc_ps where dt < trunc(sysdate) and ts between trunc(?) and (trunc(?) + 1)) order by 1';
 execute st using date'2005-10-25', timestamp'2013-12-12 11:11:11';
+deallocate prepare st;
 
 prepare st from 'insert into trunc_ps(str, dt, ts, dtime) select str, trunc(?), trunc(ts), trunc(dtime) from trunc_ps where dt between trunc(?) and (trunc(?) -1) order by 1';
 execute st using datetime'2013-12-12 11:11:11.999', date'1993-12-1', date'1998-1-1';
+deallocate prepare st;
 
 prepare st from 'insert into trunc_ps(str, dt) values(?, trunc(sysdate, ?))';
 execute st using 'inserted', 'dd';
+deallocate prepare st;
 
 prepare st from 'select if(dt=sysdate, ?, ?) from trunc_ps where str=?;';
 execute st using 'ok', 'nok', 'inserted';
