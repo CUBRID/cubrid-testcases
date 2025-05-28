@@ -6100,9 +6100,9 @@ select * from t where utf8_str != cast (euc_str as string charset utf8) order by
 
 set system parameters 'group_concat_max_len=1000000';
 -- check that concatenation of all possible conversions are always converted correctly
-select 'NOK' from db_root where (select group_concat (euc_str) from t_utf8_jiss_only) != cast ((select group_concat (utf8_str) from t_utf8_jiss_only) as string charset euckr);
+select 'NOK' from db_root where (select /*+ NO_PARALLEL_HEAP_SCAN */ group_concat (euc_str) from t_utf8_jiss_only) != cast ((select /*+ NO_PARALLEL_HEAP_SCAN */ group_concat (utf8_str) from t_utf8_jiss_only) as string charset euckr);
 
-select 'NOK' from db_root where (select group_concat (utf8_str) from t) != cast ((select group_concat (euc_str) from t) as string charset utf8);
+select 'NOK' from db_root where (select /*+ NO_PARALLEL_HEAP_SCAN */ group_concat (utf8_str) from t) != cast ((select /*+ NO_PARALLEL_HEAP_SCAN */ group_concat (euc_str) from t) as string charset utf8);
 
 
 
@@ -6128,7 +6128,7 @@ create table t_iso_jiss_only as select * from t_iso where euc_str = cast (iso_st
 select hex_jisx_cp, hex_iso_cp, cast (iso_str as string charset utf8) from t_iso where iso_str = cast (euc_str as string charset iso88591) order by 1,2,3;
 
 -- check that concatenation of all possible conversions are always converted correctly
-select 'NOK' from db_root where (select group_concat (euc_str) from t_iso_jiss_only) != cast ((select group_concat (iso_str) from t_iso_jiss_only) as string charset euckr);
+select 'NOK' from db_root where (select /*+ NO_PARALLEL_HEAP_SCAN */ group_concat (euc_str) from t_iso_jiss_only) != cast ((select /*+ NO_PARALLEL_HEAP_SCAN */ group_concat (iso_str) from t_iso_jiss_only) as string charset euckr);
 
 -- binary test EUC and UTF8
 alter table t add column euckr_to_binary_str string charset binary;
