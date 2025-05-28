@@ -21,7 +21,6 @@ begin
     dbms_output.put_line(REPLACE('CUBRID DATABASE', 'D', 'd'));
     dbms_output.put_line(REPLACE('CUBRID DATABASE', 3.0));
     dbms_output.put_line(REPLACE('CUBRID DATABASE', 32000000));
-    dbms_output.put_line(REPLACE('你好我好大家好','好','开心'));
 end;
 
 select count(*) from db_stored_procedure where sp_name = 't';
