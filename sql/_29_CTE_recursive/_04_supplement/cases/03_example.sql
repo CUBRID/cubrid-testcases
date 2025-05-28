@@ -55,7 +55,7 @@ select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where j = 10 and k >
 select * from cte_rZJ9v6Ljh,cte_xdAvJG39f,cte_EIZ7LzaTY order by 1 limit 10;
 
 -- skip order by again:
-select /*+ recompile INDEX_SS MATERIALIZE */ i,j,k,l from t where j = 10 and k > 4000 order by i desc, k desc;
+select /*+ recompile INDEX_SS */ i,j,k,l from t where j = 10 and k > 4000 order by i desc, k desc;
 
 drop index idx on t;
 create index idx on t(i asc,j desc,k desc,l asc);

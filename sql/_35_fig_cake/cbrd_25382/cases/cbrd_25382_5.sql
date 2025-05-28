@@ -129,7 +129,7 @@ evaluate concat ('####', lpad (@i, 3), '. ctes (common table expressions)');
 
 --@queryplan
 with cte as (
-    select /*+ use_hash */
+    select /*+ use_hash materialize */
       a.ca as ca, a.cb as cb, a.cc as cc, a.cd as cd
     from ta a, tb b
     where a.cd = b.cd and a.ca = 4 and b.ca = 4
