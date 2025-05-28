@@ -8248,9 +8248,9 @@ select hex_ksc_cp, hex_unicode_cp, utf8_str from t where utf8_str != cast (euc_s
 
 set system parameters 'group_concat_max_len=1000000';
 -- check that concatenation of all possible conversions are always converted correctly
-select 'NOK' from db_root where (select group_concat (euc_str) from t) != cast ((select group_concat (utf8_str) from t) as string charset euckr);
+select 'NOK' from db_root where (select /*+ NO_PARALLEL_HEAP_SCAN */ group_concat (euc_str) from t) != cast ((select /*+ NO_PARALLEL_HEAP_SCAN */ group_concat (utf8_str) from t) as string charset euckr);
 
-select 'NOK' from db_root where (select group_concat (utf8_str) from t) != cast ((select group_concat (euc_str) from t) as string charset utf8);
+select 'NOK' from db_root where (select /*+ NO_PARALLEL_HEAP_SCAN */ group_concat (utf8_str) from t) != cast ((select /*+ NO_PARALLEL_HEAP_SCAN */ group_concat (euc_str) from t) as string charset utf8);
 
 
 
@@ -8270,7 +8270,7 @@ select hex_ksc_cp, hex_iso_cp, cast (iso_str as string charset utf8) from t_iso 
 select hex_ksc_cp, hex_iso_cp, cast (iso_str as string charset utf8) from t_iso where iso_str = cast (euc_str as string charset iso88591) order by 1,2,3;
 
 -- check that concatenation of all possible conversions are always converted correctly
-select 'NOK' from db_root where cast((select group_concat (iso_str) from t_iso) as string collate iso88591_en_cs) != cast ((select group_concat (iso_str) from t_iso) as string charset euckr);
+select 'NOK' from db_root where cast((select /*+ NO_PARALLEL_HEAP_SCAN */ group_concat (iso_str) from t_iso) as string collate iso88591_en_cs) != cast ((select /*+ NO_PARALLEL_HEAP_SCAN */ group_concat (iso_str) from t_iso) as string charset euckr);
 
 -- BINARY test EUC and UTF8
 alter table t add column euckr_to_binary_str string charset binary;
@@ -8289,9 +8289,9 @@ select count(*) from t where cast(cast(utf8_to_binary_str as string charset utf8
 
 select count(*) from t where cast(euc_str as string charset binary)=cast(utf8_str as string charset binary);
 -- CUBRIDSUS-17805
-select 'NOK' from db_root where (select group_concat (euckr_to_binary_str) from t order by hex_ksc_cp) != cast ((select group_concat (euc_str) from t order by hex_ksc_cp) as string charset binary);
+select 'NOK' from db_root where (select /*+ NO_PARALLEL_HEAP_SCAN */ group_concat (euckr_to_binary_str) from t order by hex_ksc_cp) != cast ((select /*+ NO_PARALLEL_HEAP_SCAN */ group_concat (euc_str) from t order by hex_ksc_cp) as string charset binary);
 -- CUBRIDSUS-17805
-select 'NOK' from db_root where (select group_concat (utf8_to_binary_str) from t order by hex_ksc_cp) != cast ((select group_concat (utf8_str) from t order by hex_ksc_cp) as string charset binary);
+select 'NOK' from db_root where (select /*+ NO_PARALLEL_HEAP_SCAN */ group_concat (utf8_to_binary_str) from t order by hex_ksc_cp) != cast ((select /*+ NO_PARALLEL_HEAP_SCAN */ group_concat (utf8_str) from t order by hex_ksc_cp) as string charset binary);
 
 -- BINARY test ISO and EUC
 alter table t_iso add column iso_to_binary_str string charset  binary;
@@ -8299,7 +8299,7 @@ update t_iso set iso_to_binary_str = chr (iso_cp using iso88591);
 select count(*) from t_iso where iso_to_binary_str=iso_str;
 select count(*) from t_iso where cast(iso_str as string charset euckr) = cast(euc_str as string charset binary);
 -- CUBRIDSUS-17805
-select 'NOK' from db_root where (select group_concat (iso_str) from t_iso order by hex_ksc_cp) != cast ((select group_concat (iso_to_binary_str) from t_iso order by hex_ksc_cp) as string charset iso88591);
+select 'NOK' from db_root where (select /*+ NO_PARALLEL_HEAP_SCAN */ group_concat (iso_str) from t_iso order by hex_ksc_cp) != cast ((select /*+ NO_PARALLEL_HEAP_SCAN */ group_concat (iso_to_binary_str) from t_iso order by hex_ksc_cp) as string charset iso88591);
 
 set system parameters 'group_concat_max_len=1024';
 

@@ -4,8 +4,17 @@
 
 create or replace procedure t () as
 begin
-    dbms_output.put_line(COERCIBILITY(USER()));
     dbms_output.put_line(COERCIBILITY(_utf8'abc'))); -- parse error _charset delimiter
+end;
+
+select count(*) from db_stored_procedure where sp_name = 't';
+select count(*) from db_stored_procedure_args where sp_name = 't';
+
+call t();
+
+create or replace procedure t () as
+begin
+    dbms_output.put_line(COERCIBILITY(USER()));
 end;
 
 select count(*) from db_stored_procedure where sp_name = 't';
