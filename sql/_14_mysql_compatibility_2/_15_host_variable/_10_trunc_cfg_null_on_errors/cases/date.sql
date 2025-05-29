@@ -20,11 +20,9 @@ select trunc(1.123,date'2001-10-10');
 
 prepare st from 'select trunc(?,?)'
 execute st using date'2001-10-11',1;
-deallocate prepare st;
 
 prepare st from 'select trunc(?,?)'
 execute st using 1.123,time'10:11:12';
-deallocate prepare st;
 
 set system parameters 'return_null_on_function_errors=no';commit;
 --+ holdcas off;
