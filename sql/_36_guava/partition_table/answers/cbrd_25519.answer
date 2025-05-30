@@ -396,7 +396,7 @@ Query Plan:
         INDEX SCAN (c.pk_tb_ca_cd) (key range: b.ca=c.cakey range: b.cd=c.cd)
       INDEX SCAN (d.pk_ta_list_ca_cd) (key range: c.ca=d.cakey range: c.cd=d.cd)
 
-  rewritten query: select /*+ ORDERED USE_NL */ a.ca, a.cb, a.cc, a.cd, b.ca, b.cb, b.cc, b.cd, c.ca, c.cb, c.cc, c.cd, d.ca, d.cb, d.cc, d.cd from [dba.ta_range] a, [dba.ta_hash] b, [dba.tb] c, [dba.ta_list] d where a.ca=b.ca and a.cd=b.cd and b.ca=c.ca and b.cd=c.cd and c.ca=d.ca and c.cd=d.cd order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+  rewritten query: select /*+ ORDERED USE_NL */ a.ca, a.cb, a.cc, a.cd, b.ca, b.cb, b.cc, b.cd, c.ca, c.cb, c.cc, c.cd, d.ca, d.cb, d.cc, d.cd from [dba.ta_range] a, [dba.ta_hash] b, [dba.tb] c, [dba.ta_list] d where a.ca=b.ca and a.cd=b.cd and b.ca=c.ca and b.cd=c.cd and c.ca=d.ca and c.cd=d.cd order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -469,7 +469,7 @@ Query Plan:
         SORT (temp)
           TABLE SCAN (d)
 
-  rewritten query: select /*+ ORDERED USE_MERGE */ a.ca, a.cb, a.cc, a.cd, b.ca, b.cb, b.cc, b.cd, c.ca, c.cb, c.cc, c.cd, d.ca, d.cb, d.cc, d.cd from [dba.ta_range] a, [dba.ta_hash] b, [dba.tb] c, [dba.ta_list] d where a.ca=b.ca and a.cd=b.cd and b.ca=c.ca and b.cd=c.cd and c.ca=d.ca and c.cd=d.cd order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+  rewritten query: select /*+ ORDERED USE_MERGE */ a.ca, a.cb, a.cc, a.cd, b.ca, b.cb, b.cc, b.cd, c.ca, c.cb, c.cc, c.cd, d.ca, d.cb, d.cc, d.cd from [dba.ta_range] a, [dba.ta_hash] b, [dba.tb] c, [dba.ta_list] d where a.ca=b.ca and a.cd=b.cd and b.ca=c.ca and b.cd=c.cd and c.ca=d.ca and c.cd=d.cd order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -553,7 +553,7 @@ Query Plan:
         TABLE SCAN (c)
       TABLE SCAN (d)
 
-  rewritten query: select /*+ ORDERED USE_HASH */ a.ca, a.cb, a.cc, a.cd, b.ca, b.cb, b.cc, b.cd, c.ca, c.cb, c.cc, c.cd, d.ca, d.cb, d.cc, d.cd from [dba.ta_range] a, [dba.ta_hash] b, [dba.tb] c, [dba.ta_list] d where a.ca=b.ca and a.cd=b.cd and b.ca=c.ca and b.cd=c.cd and c.ca=d.ca and c.cd=d.cd order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+  rewritten query: select /*+ ORDERED USE_HASH */ a.ca, a.cb, a.cc, a.cd, b.ca, b.cb, b.cc, b.cd, c.ca, c.cb, c.cc, c.cd, d.ca, d.cb, d.cc, d.cd from [dba.ta_range] a, [dba.ta_hash] b, [dba.tb] c, [dba.ta_list] d where a.ca=b.ca and a.cd=b.cd and b.ca=c.ca and b.cd=c.cd and c.ca=d.ca and c.cd=d.cd order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)

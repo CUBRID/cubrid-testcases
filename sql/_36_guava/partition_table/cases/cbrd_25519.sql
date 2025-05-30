@@ -168,7 +168,7 @@ evaluate concat ('####', lpad (@i, 3), '. partition table + nl join');
 select /*+ recompile ordered use_nl */ *
 from ta_range a, ta_hash b, tb c, ta_list d
 where a.ca = b.ca and a.cd = b.cd and b.ca = c.ca and b.cd = c.cd and c.ca = d.ca and c.cd = d.cd
-order by a.cd
+order by a.cd, a.ca
 limit 250, 10;
 show trace;
 
@@ -178,7 +178,7 @@ evaluate concat ('####', lpad (@i, 3), '. partition table + merge join');
 select /*+ recompile ordered use_merge */ *
 from ta_range a, ta_hash b, tb c, ta_list d
 where a.ca = b.ca and a.cd = b.cd and b.ca = c.ca and b.cd = c.cd and c.ca = d.ca and c.cd = d.cd
-order by a.cd
+order by a.cd, a.ca
 limit 250, 10;
 show trace;
 
@@ -188,7 +188,7 @@ evaluate concat ('####', lpad (@i, 3), '. partition table + hash join');
 select /*+ recompile ordered use_hash*/ *
 from ta_range a, ta_hash b, tb c, ta_list d
 where a.ca = b.ca and a.cd = b.cd and b.ca = c.ca and b.cd = c.cd and c.ca = d.ca and c.cd = d.cd
-order by a.cd
+order by a.cd, a.ca
 limit 250, 10;
 show trace;
 
