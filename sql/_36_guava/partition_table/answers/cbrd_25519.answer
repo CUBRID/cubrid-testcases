@@ -1,0 +1,814 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1000
+===================================================
+1000
+===================================================
+1000
+===================================================
+1000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+####  1. agl     
+
+===================================================
+count(*)    
+1000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (a)
+
+  rewritten query: select count(*) from [dba.ta_range] a using index none
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta_range), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_ta_range_ca_cd)
+     
+
+===================================================
+0
+===================================================
+    
+####  2. all partitions (range)     
+
+===================================================
+ca    cb    cc    cd    
+9     9     9     1000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (a)
+
+  rewritten query: select a.ca, a.cb, a.cc, a.cd from [dba.ta_range] a using index none order by ? desc  for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta_range), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
+     
+
+===================================================
+0
+===================================================
+    
+####  3. all partitions (hash)     
+
+===================================================
+ca    cb    cc    cd    
+9     9     9     1000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (a)
+
+  rewritten query: select a.ca, a.cb, a.cc, a.cd from [dba.ta_hash] a using index none order by ? desc  for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta_hash), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_hash__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_hash__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_hash__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_hash__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_hash__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_hash__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_hash__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_hash__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
+     
+
+===================================================
+0
+===================================================
+    
+####  4. all partitions (list)     
+
+===================================================
+ca    cb    cc    cd    
+9     9     9     1000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (a)
+
+  rewritten query: select a.ca, a.cb, a.cc, a.cd from [dba.ta_list] a using index none order by ? desc  for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta_list), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_list__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_list__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_list__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_list__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_list__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
+     
+
+===================================================
+0
+===================================================
+    
+####  5. pruning (range)     
+
+===================================================
+count(*)    
+400     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (a.pk_ta_range_ca_cd) (key range: (a.ca>= ?:?  and a.ca<= ?:? ), covered: true)
+
+  rewritten query: select count(*) from [dba.ta_range] a where (a.ca>= ?:?  and a.ca<= ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ta_range.pk_ta_range_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta_range__p__p?.pk_ta_range_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta_range__p__p?.pk_ta_range_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta_range__p__p?.pk_ta_range_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta_range__p__p?.pk_ta_range_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+0
+===================================================
+    
+####  6. pruning (hash)     
+
+===================================================
+count(*)    
+200     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (a.pk_ta_hash_ca_cd) (key range: ((a.ca= ?:? ) or (a.ca= ?:? )), covered: true)
+
+  rewritten query: select count(*) from [dba.ta_hash] a where ((a.ca= ?:? ) or (a.ca= ?:? ))
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ta_hash.pk_ta_hash_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta_hash__p__p?.pk_ta_hash_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta_hash__p__p?.pk_ta_hash_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+count(*)    
+100     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (a.pk_ta_hash_ca_cd) (key range: (a.ca>= ?:? ), covered: true)
+
+  rewritten query: select count(*) from [dba.ta_hash] a where (a.ca>= ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ta_hash.pk_ta_hash_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta_hash__p__p?.pk_ta_hash_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta_hash__p__p?.pk_ta_hash_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta_hash__p__p?.pk_ta_hash_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta_hash__p__p?.pk_ta_hash_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta_hash__p__p?.pk_ta_hash_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta_hash__p__p?.pk_ta_hash_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta_hash__p__p?.pk_ta_hash_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta_hash__p__p?.pk_ta_hash_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+0
+===================================================
+    
+####  7. pruning (list)     
+
+===================================================
+count(*)    
+200     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (a.pk_ta_list_ca_cd) (key range: ((a.ca= ?:? ) or (a.ca= ?:? )), covered: true)
+
+  rewritten query: select count(*) from [dba.ta_list] a where ((a.ca= ?:? ) or (a.ca= ?:? ))
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ta_list.pk_ta_list_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta_list__p__p?.pk_ta_list_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta_list__p__p?.pk_ta_list_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+0
+===================================================
+    
+####  8. pruning + limit     
+
+===================================================
+ca    cb    cc    cd    
+1     5     0     151     
+1     5     1     152     
+1     5     2     153     
+1     5     3     154     
+1     5     4     155     
+1     5     5     156     
+1     5     6     157     
+1     5     7     158     
+1     5     8     159     
+1     5     9     160     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (a)
+
+  rewritten query: select a.ca, a.cb, a.cc, a.cd from [dba.ta_range] a where (inst_num()> ?:?  and inst_num()<= ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta_range), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+ca    cb    cc    cd    
+5     5     0     551     
+5     5     1     552     
+5     5     2     553     
+5     5     3     554     
+5     5     4     555     
+5     5     5     556     
+5     5     6     557     
+5     5     7     558     
+5     5     8     559     
+5     5     9     560     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (a)
+
+  rewritten query: select a.ca, a.cb, a.cc, a.cd from [dba.ta_range] a where (inst_num()> ?:?  and inst_num()<= ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta_range), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+    
+####  9. pruning + inline view + limit     
+
+===================================================
+count(*)    
+250     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (a.pk_ta_range_ca_cd) (key range: (a.ca>= ?:?  and a.ca<= ?:? ), covered: true)
+
+  rewritten query: (select a.ca, a.cd from [dba.ta_range] a where (a.ca>= ?:?  and a.ca<= ?:? ) and (inst_num()<= ?:? ))
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    INDEX SCAN (b.pk_tb_ca_cd) (key range: a.ca=b.cakey range: a.cd=b.cd, covered: true)
+
+  rewritten query: select /*+ ORDERED */ count(*) from (select a.ca, a.cd from [dba.ta_range] a where (a.ca>= ?:?  and a.ca<= ?:? ) and (inst_num()<= ?:? )) a (ca, cd), [dba.tb] b where a.ca=b.ca and a.cd=b.cd
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tb.pk_tb_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.ta_range.pk_ta_range_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+               PARTITION (index: dba.ta_range__p__p?.pk_ta_range_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+               PARTITION (index: dba.ta_range__p__p?.pk_ta_range_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+               PARTITION (index: dba.ta_range__p__p?.pk_ta_range_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+0
+===================================================
+    
+#### 10. partition table + nl join     
+
+===================================================
+ca    cb    cc    cd    ca    cb    cc    cd    ca    cb    cc    cd    ca    cb    cc    cd    
+2     5     0     251     2     5     0     251     2     5     0     251     2     5     0     251     
+2     5     1     252     2     5     1     252     2     5     1     252     2     5     1     252     
+2     5     2     253     2     5     2     253     2     5     2     253     2     5     2     253     
+2     5     3     254     2     5     3     254     2     5     3     254     2     5     3     254     
+2     5     4     255     2     5     4     255     2     5     4     255     2     5     4     255     
+2     5     5     256     2     5     5     256     2     5     5     256     2     5     5     256     
+2     5     6     257     2     5     6     257     2     5     6     257     2     5     6     257     
+2     5     7     258     2     5     7     258     2     5     7     258     2     5     7     258     
+2     5     8     259     2     5     8     259     2     5     8     259     2     5     8     259     
+2     5     9     260     2     5     9     260     2     5     9     260     2     5     9     260     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (a)
+        INDEX SCAN (b.pk_ta_hash_ca_cd) (key range: a.ca=b.cakey range: a.cd=b.cd)
+      INDEX SCAN (c.pk_tb_ca_cd) (key range: b.ca=c.cakey range: b.cd=c.cd)
+    INDEX SCAN (d.pk_ta_list_ca_cd) (key range: c.ca=d.cakey range: c.cd=d.cd)
+
+  rewritten query: select /*+ ORDERED USE_NL */ a.ca, a.cb, a.cc, a.cd, b.ca, b.cb, b.cc, b.cd, c.ca, c.cb, c.cc, c.cd, d.ca, d.cb, d.cc, d.cd from [dba.ta_range] a, [dba.ta_hash] b, [dba.tb] c, [dba.ta_list] d where a.ca=b.ca and a.cd=b.cd and b.ca=c.ca and b.cd=c.cd and c.ca=d.ca and c.cd=d.cd and (inst_num()> ?:?  and inst_num()<= ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta_range), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta_hash.pk_ta_hash_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+             PARTITION (index: dba.ta_hash__p__p?.pk_ta_hash_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+             PARTITION (index: dba.ta_hash__p__p?.pk_ta_hash_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+             PARTITION (index: dba.ta_hash__p__p?.pk_ta_hash_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+             PARTITION (index: dba.ta_hash__p__p?.pk_ta_hash_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+             PARTITION (index: dba.ta_hash__p__p?.pk_ta_hash_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+             PARTITION (index: dba.ta_hash__p__p?.pk_ta_hash_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+             PARTITION (index: dba.ta_hash__p__p?.pk_ta_hash_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+             PARTITION (index: dba.ta_hash__p__p?.pk_ta_hash_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        SCAN (index: dba.tb.pk_tb_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+          SCAN (index: dba.ta_list.pk_ta_list_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+                 PARTITION (index: dba.ta_list__p__p?.pk_ta_list_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+                 PARTITION (index: dba.ta_list__p__p?.pk_ta_list_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+                 PARTITION (index: dba.ta_list__p__p?.pk_ta_list_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+                 PARTITION (index: dba.ta_list__p__p?.pk_ta_list_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+                 PARTITION (index: dba.ta_list__p__p?.pk_ta_list_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+    
+#### 11. partition table + merge join     
+
+===================================================
+ca    cb    cc    cd    ca    cb    cc    cd    ca    cb    cc    cd    ca    cb    cc    cd    
+2     5     0     251     2     5     0     251     2     5     0     251     2     5     0     251     
+2     5     1     252     2     5     1     252     2     5     1     252     2     5     1     252     
+2     5     2     253     2     5     2     253     2     5     2     253     2     5     2     253     
+2     5     3     254     2     5     3     254     2     5     3     254     2     5     3     254     
+2     5     4     255     2     5     4     255     2     5     4     255     2     5     4     255     
+2     5     5     256     2     5     5     256     2     5     5     256     2     5     5     256     
+2     5     6     257     2     5     6     257     2     5     6     257     2     5     6     257     
+2     5     7     258     2     5     7     258     2     5     7     258     2     5     7     258     
+2     5     8     259     2     5     8     259     2     5     8     259     2     5     8     259     
+2     5     9     260     2     5     9     260     2     5     9     260     2     5     9     260     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (temp)
+    MERGE JOIN (inner join)
+      SORT (temp)
+        MERGE JOIN (inner join)
+          SORT (temp)
+            MERGE JOIN (inner join)
+              SORT (temp)
+                TABLE SCAN (a)
+              SORT (temp)
+                TABLE SCAN (b)
+          SORT (temp)
+            TABLE SCAN (c)
+      SORT (temp)
+        TABLE SCAN (d)
+
+  rewritten query: select /*+ ORDERED USE_MERGE */ a.ca, a.cb, a.cc, a.cd, b.ca, b.cb, b.cc, b.cd, c.ca, c.cb, c.cc, c.cd, d.ca, d.cb, d.cc, d.cd from [dba.ta_range] a, [dba.ta_hash] b, [dba.tb] c, [dba.ta_list] d where a.ca=b.ca and a.cd=b.cd and b.ca=c.ca and b.cd=c.cd and c.ca=d.ca and c.cd=d.cd and (inst_num()> ?:?  and inst_num()<= ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MERGELIST
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+            MERGELIST
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                  MERGELIST
+                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                      SCAN (table: dba.ta_range), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                             PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                             PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                             PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                             PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                             PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                             PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                             PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                             PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                             PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                             PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                      SCAN (table: dba.ta_hash), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                             PARTITION (table: dba.ta_hash__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                             PARTITION (table: dba.ta_hash__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                             PARTITION (table: dba.ta_hash__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                             PARTITION (table: dba.ta_hash__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                             PARTITION (table: dba.ta_hash__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                             PARTITION (table: dba.ta_hash__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                             PARTITION (table: dba.ta_hash__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                             PARTITION (table: dba.ta_hash__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.ta_list), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 PARTITION (table: dba.ta_list__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 PARTITION (table: dba.ta_list__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 PARTITION (table: dba.ta_list__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 PARTITION (table: dba.ta_list__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 PARTITION (table: dba.ta_list__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+    
+#### 12. partition table + hash join     
+
+===================================================
+ca    cb    cc    cd    ca    cb    cc    cd    ca    cb    cc    cd    ca    cb    cc    cd    
+2     5     0     251     2     5     0     251     2     5     0     251     2     5     0     251     
+2     5     1     252     2     5     1     252     2     5     1     252     2     5     1     252     
+2     5     2     253     2     5     2     253     2     5     2     253     2     5     2     253     
+2     5     3     254     2     5     3     254     2     5     3     254     2     5     3     254     
+2     5     4     255     2     5     4     255     2     5     4     255     2     5     4     255     
+2     5     5     256     2     5     5     256     2     5     5     256     2     5     5     256     
+2     5     6     257     2     5     6     257     2     5     6     257     2     5     6     257     
+2     5     7     258     2     5     7     258     2     5     7     258     2     5     7     258     
+2     5     8     259     2     5     8     259     2     5     8     259     2     5     8     259     
+2     5     9     260     2     5     9     260     2     5     9     260     2     5     9     260     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    HASH JOIN (inner join)
+      HASH JOIN (inner join)
+        TABLE SCAN (a)
+        TABLE SCAN (b)
+      TABLE SCAN (c)
+    TABLE SCAN (d)
+
+  rewritten query: select /*+ ORDERED USE_HASH */ a.ca, a.cb, a.cc, a.cd, b.ca, b.cb, b.cc, b.cd, c.ca, c.cb, c.cc, c.cd, d.ca, d.cb, d.cc, d.cd from [dba.ta_range] a, [dba.ta_hash] b, [dba.tb] c, [dba.ta_list] d where a.ca=b.ca and a.cd=b.cd and b.ca=c.ca and b.cd=c.cd and c.ca=d.ca and c.cd=d.cd and (inst_num()> ?:?  and inst_num()<= ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, build_time: ?, fetch: ?, fetch_time: ?, ioread: ?, rows: ?, method: memory, build: inner)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta_list), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                   PARTITION (table: dba.ta_list__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                   PARTITION (table: dba.ta_list__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                   PARTITION (table: dba.ta_list__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                   PARTITION (table: dba.ta_list__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                   PARTITION (table: dba.ta_list__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, probe_time: ?, fetch: ?, fetch_time: ?, ioread: ?, readkeys: ?, rows: ?, max_collisions: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                BUILD (time: ?, build_time: ?, fetch: ?, fetch_time: ?, ioread: ?, rows: ?, method: memory, build: inner)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                PROBE (time: ?, probe_time: ?, fetch: ?, fetch_time: ?, ioread: ?, readkeys: ?, rows: ?, max_collisions: ?)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                        BUILD (time: ?, build_time: ?, fetch: ?, fetch_time: ?, ioread: ?, rows: ?, method: memory, build: inner)
+                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                            SCAN (table: dba.ta_hash), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                                   PARTITION (table: dba.ta_hash__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                                   PARTITION (table: dba.ta_hash__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                                   PARTITION (table: dba.ta_hash__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                                   PARTITION (table: dba.ta_hash__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                                   PARTITION (table: dba.ta_hash__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                                   PARTITION (table: dba.ta_hash__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                                   PARTITION (table: dba.ta_hash__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                                   PARTITION (table: dba.ta_hash__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                        PROBE (time: ?, probe_time: ?, fetch: ?, fetch_time: ?, ioread: ?, readkeys: ?, rows: ?, max_collisions: ?)
+                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                            SCAN (table: dba.ta_range), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                                   PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                                   PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                                   PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                                   PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                                   PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                                   PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                                   PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                                   PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                                   PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                                   PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+    
+#### 13. partition table + from list     
+
+===================================================
+count(*)    
+4000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (__t?)
+
+  rewritten query: select count(*) from ((([dba.ta_range], [dba.ta_list]), [dba.ta_hash]), [dba.tb]) [__t?]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (table: dba.ta_hash), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_hash__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_hash__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_hash__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_hash__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_hash__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_hash__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_hash__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_hash__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (table: dba.ta_list), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_list__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_list__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_list__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_list__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_list__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (table: dba.ta_range), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+    
+#### 14. pruning + union     
+
+===================================================
+count(*)    
+300     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (a.pk_ta_range_ca_cd) (key range: ((a.ca= ?:? ) or (a.ca= ?:? )))
+
+  rewritten query: select a.ca, a.cb, a.cc, a.cd from [dba.ta_range] a where ((a.ca= ?:? ) or (a.ca= ?:? ))
+
+  INDEX SCAN (a.pk_ta_list_ca_cd) (key range: ((a.ca= ?:? ) or (a.ca= ?:? )))
+
+  rewritten query: select a.ca, a.cb, a.cc, a.cd from [dba.ta_list] a where ((a.ca= ?:? ) or (a.ca= ?:? ))
+
+  TABLE SCAN (__t?)
+
+  rewritten query: select count(*) from (select a.ca, a.cb, a.cc, a.cd from [dba.ta_range] a where ((a.ca= ?:? ) or (a.ca= ?:? )) union select a.ca, a.cb, a.cc, a.cd from [dba.ta_list] a where ((a.ca= ?:? ) or (a.ca= ?:? ))) [__t?] (ca, cb, cc, cd)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: dba.ta_range.pk_ta_range_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+                 PARTITION (index: dba.ta_range__p__p?.pk_ta_range_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+                 PARTITION (index: dba.ta_range__p__p?.pk_ta_range_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: dba.ta_list.pk_ta_list_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+                 PARTITION (index: dba.ta_list__p__p?.pk_ta_list_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+                 PARTITION (index: dba.ta_list__p__p?.pk_ta_list_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+    
+#### 15. pruning + cte     
+
+===================================================
+count(*)    
+200     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (a.pk_ta_range_ca_cd) (key range: (a.ca>= ?:?  and a.ca<= ?:? ))
+
+  rewritten query: select a.ca, a.cb, a.cc, a.cd from [dba.ta_range] a where (a.ca>= ?:?  and a.ca<= ?:? ) and (inst_num()<= ?:? )
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    INDEX SCAN (b.pk_ta_list_ca_cd) (key range: a.ca=b.cakey range: a.cd=b.cd, covered: true)
+
+  rewritten query: with cte(ca, cb, cc, cd) as (select a.ca, a.cb, a.cc, a.cd from [dba.ta_range] a where (a.ca>= ?:?  and a.ca<= ?:? ) and (inst_num()<= ?:? ))select /*+ ORDERED */ count(*) from [dba.cte] a, [dba.ta_list] b where a.ca=b.ca and a.cd=b.cd
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta_list.pk_ta_list_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+             PARTITION (index: dba.ta_list__p__p?.pk_ta_list_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+             PARTITION (index: dba.ta_list__p__p?.pk_ta_list_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+             PARTITION (index: dba.ta_list__p__p?.pk_ta_list_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+             PARTITION (index: dba.ta_list__p__p?.pk_ta_list_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+             PARTITION (index: dba.ta_list__p__p?.pk_ta_list_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: dba.ta_range.pk_ta_range_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+                 PARTITION (index: dba.ta_range__p__p?.pk_ta_range_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+                 PARTITION (index: dba.ta_range__p__p?.pk_ta_range_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+    
+#### 16. json format output     
+
+===================================================
+0
+===================================================
+count(*)    
+400     
+
+===================================================
+trace    
+{
+  "Query Plan": {
+    "INDEX SCAN": {
+      "table": "a",
+      "index": "pk_ta_range_ca_cd",
+      "key range": [
+        "(a.ca>= ?:?  and a.ca<= ?:? )"
+      ],
+      "covered": true
+    },
+    "rewritten query": "select count(*) from [dba.ta_range] a where (a.ca>= ?:?  and a.ca<= ?:? )"
+  },
+  "Trace Statistics": {
+    "SELECT": {
+      "time": ?,
+      "fetch": ?,
+      "fetch_time": ?,
+      "ioread": ?,
+      "SCAN": {
+        "access": "index (dba.ta_range.pk_ta_range_ca_cd)",
+        "btree": {
+          "time": ?,
+          "fetch": ?,
+          "ioread": ?,
+          "readkeys": ?,
+          "filteredkeys": ?,
+          "rows": ?
+        },
+        "covered": true,
+        "PARTITION": [
+          {
+            "access": "index (dba.ta_range__p__p?.pk_ta_range_ca_cd)",
+            "btree": {
+              "time": ?,
+              "fetch": ?,
+              "ioread": ?,
+              "readkeys": ?,
+              "filteredkeys": ?,
+              "rows": ?
+            },
+            "covered": true
+          },
+          {
+            "access": "index (dba.ta_range__p__p?.pk_ta_range_ca_cd)",
+            "btree": {
+              "time": ?,
+              "fetch": ?,
+              "ioread": ?,
+              "readkeys": ?,
+              "filteredkeys": ?,
+              "rows": ?
+            },
+            "covered": true
+          },
+          {
+            "access": "index (dba.ta_range__p__p?.pk_ta_range_ca_cd)",
+            "btree": {
+              "time": ?,
+              "fetch": ?,
+              "ioread": ?,
+              "readkeys": ?,
+              "filteredkeys": ?,
+              "rows": ?
+            },
+            "covered": true
+          },
+          {
+            "access": "index (dba.ta_range__p__p?.pk_ta_range_ca_cd)",
+            "btree": {
+              "time": ?,
+              "fetch": ?,
+              "ioread": ?,
+              "readkeys": ?,
+              "filteredkeys": ?,
+              "rows": ?
+            },
+            "covered": true
+          }
+        ]
+      }
+    }
+  }
+}     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
