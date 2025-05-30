@@ -8,6 +8,7 @@ execute s using 'a', 1, 2, 'a', 1, 2;
 execute s using _utf8'a', _iso88591'b', 2, _utf8'a', _iso88591'b', 2;
 
 execute s using NULL, 1, 2, NULL, 1, 2;
+deallocate prepare s;
 
 drop table if exists t1;
 create table t1 (s1 string collate utf8_en_ci);
@@ -23,6 +24,7 @@ execute s using _euckr'b', 1, _euckr'b', 1;
 
 execute s using _euckr'b', _utf8'A', _euckr'b', _utf8'A';
 drop table t1;
+deallocate prepare s;
 
 
 
@@ -40,6 +42,7 @@ execute s using NULL, 1, 2, NULL, 1, 2;
 
 create table t1 (s1 string collate utf8_en_ci);
 insert into t1 values ('A'),('a');
+deallocate prepare s;
 
 
 prepare s from 'select least (? , s1 , ?), collation (least (? , s1 , ?)) from t1 order by 1,2';
@@ -49,6 +52,7 @@ execute s using 'b', NULL, 'b', NULL;
 
 execute s using _euckr'b', 1, _euckr'b', 1;
 execute s using _euckr'b', _utf8'B', _euckr'b', _utf8'B';
+deallocate prepare s;
 
 drop table t1;
 

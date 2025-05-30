@@ -172,6 +172,7 @@ execute st using 123;
 execute st using 123.45;
 execute st using b'10';
 execute st using '123';
+deallocate prepare st;
 
 -- const folding
 select hex(null);

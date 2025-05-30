@@ -10,7 +10,7 @@ create table t(s string charset iso88591);
 insert into t values('D'),('d'),('a');
 select case when s>'¥' collate iso88591_en_ci then 'big' when s<'¥' then 'small' end from t;
 prepare st from 'select case when s>? collate iso88591_en_ci then 1 when s<? then 2 end from t;';
-
+deallocate prepare st;
 drop t;
 
 set names iso88591;

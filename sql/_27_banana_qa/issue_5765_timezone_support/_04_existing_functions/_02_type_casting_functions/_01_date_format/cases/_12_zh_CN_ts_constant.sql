@@ -41,6 +41,7 @@ set @v3='2014-06-30 7:30:21 Asia/Seoul';
 execute st using @v1, '%X, %V, %U, Day %j !(%TZH:%TZM) %TZR==%TZD!';
 execute st using @v2, '%X, %V, %U, Day %j !(%TZH:%TZM) %TZR==%TZD!';
 execute st using @v3, '%X, %V, %U, Day %j !(%TZH:%TZM) %TZR==%TZD!';
+deallocate prepare st;
 
 set time zone 'Europe/London';
 -- 0:00, DST

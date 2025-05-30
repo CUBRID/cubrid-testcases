@@ -133,6 +133,7 @@ execute s using timestamp'2010-07-30 09:30:30', 4, 2, timestamp'2010-08-01 15:40
 execute s using 'abcde', 6, 3, 'xxxxx', 'abcdexxxxx';
 execute s using 0b0001001000110100, 1, 2, 'x', 'x34';
 execute s using 0b0001001000110100, 1, 2, 0b10001000, '8834';
+deallocate prepare s;
 
 prepare s from 'select if(insert(''abcde'', ?, ?, ?) = insert(''abcde'', ?, ?, ?), ''ok'', ''nok'')';
 execute s using 0, 3, 'X', 7, 3, 'X';
@@ -145,6 +146,7 @@ execute s using 1.5f, 3, 'xxxxx', 2.4f, 3, 'xxxxx';
 execute s using 2, 2.5f, 'xxxxx', 2, 3.4f, 'xxxxx';
 execute s using 2, -0.5e0, 'x', 2, -1, 'x';
 execute s using 2, -0.4e0, 'x', 2, 0, 'x';
+deallocate prepare s;
 
 -- failure
 prepare s from 'select insert(?, ?, ?, ?)';
@@ -166,4 +168,5 @@ execute s using 'abcde', 1, 0b0001, 'x';
 execute s using 'abcde', 0b0001, 1, 'x';
 -- failure, cannot coerce nchar to varchar;
 execute s using n'abcde', 1, 2, n'x';
+deallocate prepare s;
 

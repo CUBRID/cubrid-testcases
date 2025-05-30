@@ -33,6 +33,7 @@ execute st using '10:10:45 Auralia/Lieman 00', 'HH:MI:SS TZR TZM';
 execute st using '10:10:45 CST 8', 'HH:MI:SS TZD TZH';
 execute st using '10:10:45 America/Tijuana PST -8', 'HH:MI:SS TZR TZD5 TZH';
 execute st using '10:10:45 America/Cayman EST -5:00', 'HH:MI:SS TZR TZD TZH:TZM';
+deallocate prepare st;
 
 
 prepare st from 'select to_datetime_tz(?, ?, ''en_US'')';

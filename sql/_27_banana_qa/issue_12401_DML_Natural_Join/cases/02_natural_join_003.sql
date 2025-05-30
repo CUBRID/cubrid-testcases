@@ -30,6 +30,7 @@ select * from (select * from t1 order by 1,2) t1 natural join (select * from t2 
 select f1,i1+2 from (select * from t1 order by 1,2)  t1 natural join (select * from t2 order by 1,2)  t2 group by d1 order by 1,2;
 prepare st from 'select f1,i1+? from t1 natural join t2 group by d1 order by 1,2';
 execute st using 2;
+deallocate prepare st;
 
 
 select t1.f1,bit_and(t1.i1+2), bit_or(t1.i1-2), bit_xor(t1.i1*1) from t1;
@@ -37,16 +38,20 @@ select t1.f1,bit_and(t1.i1+2), bit_or(t1.i1-2), bit_xor(t2.i1*1) from t1 nature 
 
 prepare st from 'select t1.f1,bit_and(t1.i1+?), bit_or(t1.i1-?), bit_xor(t2.i1*?) from t1 nature join t2';
 execute st using 2,2,1;
+deallocate prepare st;
 
 prepare st from 'select /*+ RECOMPILE*/ * from (select * from t1 order by 1,2) ? natural join (select * from t2 order by 1,2) ?';
 execute st using N't1',N't2';
+deallocate prepare st;
 
 prepare st from 'select /*+ RECOMPILE*/ * from (select * from t1 order by 1,2) ? join (select * from t2 order by 1,2) ? on ?';
 execute st using N't1',N't2',N't1.a';
+deallocate prepare st;
 
 
 prepare st from 'values ( ? nautral join ?)';
 execute st using 1,2;
+deallocate prepare st;
 
 -- 4 constants
 select 1 natural join 2 natural join 3 natural join 4;
@@ -54,9 +59,11 @@ values ( 1 natural join 2 natural join 3 natural join 4);
 
 prepare st from 'select ? natural join ? natural join ? natural join ?';
 execute st using 1,2;
+deallocate prepare st;
 
 prepare st from 'values ( ? nautral join ? natural join ? natural join ?)';
 execute st using 1,2,3,4;
+deallocate prepare st;
 
 drop table if exists t1;
 drop table if exists t2;

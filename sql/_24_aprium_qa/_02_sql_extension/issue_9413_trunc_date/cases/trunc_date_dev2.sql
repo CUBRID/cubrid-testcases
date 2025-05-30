@@ -158,6 +158,7 @@ execute s using datetime'2012-12-23 12:23:45';
 execute s using timestamp'2012-12-23 12:23:45';
 execute s using '2012-12-23 12:23:45';
 execute s using '2012';
+deallocate prepare s;
 
 prepare s from 'select trunc(date''2012-12-23'', ?)';
 execute s using 'yyyy';
@@ -185,6 +186,7 @@ execute s using N'ff';
 execute s using N'day';
 execute s using N'dy';
 execute s using N'q';
+deallocate prepare s;
 
 prepare s from 'select trunc(datetime''2012-12-23 23:59:59'', ?)';
 execute s using 'yyyy';
@@ -212,6 +214,7 @@ execute s using N'ff';
 execute s using N'day';
 execute s using N'dy';
 execute s using N'q';
+deallocate prepare s;
 
 prepare s from 'select trunc(timestamp''2012-12-23 23:59:59'', ?)';
 execute s using 'yyyy';

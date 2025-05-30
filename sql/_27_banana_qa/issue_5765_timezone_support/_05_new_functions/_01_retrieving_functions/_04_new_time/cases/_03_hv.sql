@@ -30,6 +30,7 @@ execute st using datetime'1936-04-05 12:20:33 AM', @tz, 'America/New_York';
 execute st using datetime'1980-04-05 23:20:33', @tz, 'Asia/Seoul';
 --BUG: CUBRIDSUS-17064
 execute st using datetime'1931-07-24 00:00:00', @tz, '-00:00';
+deallocate prepare st;
 
 
 set @tz='Africa/Tunis';
@@ -40,6 +41,7 @@ execute st using datetime'1944-04-03 10:00:00', 'Asia/Seoul', @tz, '1944-04-03 0
 execute st using datetime'1911-03-10 23:50:00', 'UTC', @tz, datetime'1911-03-10 23:59:21'; 
 execute st using datetime'1911-03-10 23:50:39', 'UTC', @tz, datetime'1911-03-11 00:50:39'; 
 execute st using datetime'1911-03-11 00:00:00', 'UTC', @tz, datetime'1911-03-11 1:00:00';
+deallocate prepare st;
 
 
 set @tz='America/St_Johns';

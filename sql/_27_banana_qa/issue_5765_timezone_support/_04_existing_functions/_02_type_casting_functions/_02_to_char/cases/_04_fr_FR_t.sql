@@ -50,6 +50,7 @@ execute st using 'DD"th", YYYY; DY/d HH24:MI:SS TZR', 'DD"th", YYYY; DY/d HH24:M
 execute st using 'DD"th", YYYY; DY/d HH24:MI:SS TZR TZD', 'DD"th", YYYY; DY/d HH24:MI:SS TZR TZD', 'DD"th", YYYY; DY/d HH24:MI:SS TZR TZD';
 execute st using 'DD"th", YYYY; DY/d HH24:MI:SS TZH', 'DD"th", YYYY; DY/d HH24:MI:SS TZH', 'DD"th", YYYY; DY/d HH24:MI:SS TZH';
 execute st using 'DD"th", YYYY; DY/d HH24:MI:SS TZH TZM', 'DD"th", YYYY; DY/d HH24:MI:SS TZH TZM', 'DD"th", YYYY; DY/d HH24:MI:SS TZH TZM';
+deallocate prepare st;
 
 set time zone 'Asia/Shanghai';
 --test: with date_lang_string_literal argument
@@ -61,6 +62,7 @@ execute st using 'YYYY "Quarter " Q, MONTH-DD DAY HH:MI:SS.FF PM TZR', 'YYYY "Qu
 execute st using 'YYYY "Quarter " Q, MONTH-DD DAY HH:MI:SS.FF PM TZR TZD', 'YYYY "Quarter " Q, MONTH-DD DAY HH:MI:SS.FF PM TZR TZD', 'YYYY "Quarter " Q, MONTH-DD DAY HH:MI:SS.FF PM TZR TZD';
 execute st using 'YYYY "Quarter " Q, MONTH-DD DAY HH:MI:SS.FF PM TZH', 'YYYY "Quarter " Q, MONTH-DD DAY HH:MI:SS.FF PM TZH', 'YYYY "Quarter " Q, MONTH-DD DAY HH:MI:SS.FF PM TZH';
 execute st using 'YYYY "Quarter " Q, MONTH-DD DAY HH:MI:SS.FF PM TZH:TZM', 'YYYY "Quarter " Q, MONTH-DD DAY HH:MI:SS.FF PM TZH:TZM', 'YYYY "Quarter " Q, MONTH-DD DAY HH:MI:SS.FF PM TZH:TZM';
+deallocate prepare st;
 
 
 --test: leap seconds

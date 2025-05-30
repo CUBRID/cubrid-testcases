@@ -34,6 +34,7 @@ execute st using '[%r] %W(%w) %M %e, %Y %TZH:%TZM', '[%r] %W(%w) %M %e, %Y %TZR 
 
 set time zone 'Asia/Shanghai';
 execute st using '%X, %V, %U, Day %j %TZR@%TZD, %TZH:%TZM', '%X, %V, %U, Day %j %TZR@%TZD, %TZH:%TZM', '%X, %V, %U, Day %j %TZR@%TZD, %TZH:%TZM';
+deallocate prepare st;
 
 prepare st from 'select id, date_format(ts+1, ?), date_format(tsltz+1, ?), date_format(tstz+1, ?) from tz_test order by 1';
 set time zone 'Europe/London';

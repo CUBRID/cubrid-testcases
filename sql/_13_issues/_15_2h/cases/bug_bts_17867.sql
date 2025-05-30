@@ -6,6 +6,7 @@ select /*+ recompile */ * from ((SELECT a from t1 where 1=0) UNION (SELECT * FRO
 select /*+ recompile */ * from ((SELECT a from t1 where 1=0) UNION (SELECT * FROM t1) ORDER BY a desc for orderby_num() <= 1);
 prepare st from 'select /*+ recompile */ * from ((SELECT a from t1 where ?=?) UNION (SELECT * FROM t1) ORDER BY a desc limit 1);';
 execute st using 1,0;
+deallocate prepare st;
 
 select /*+ recompile */ '1', x.* from ((SELECT a from t1 where 1=0) UNION (SELECT * FROM t1 ) ORDER BY a desc for orderby_num() <= 1) x;
 select /*+ recompile */ '2', x.* from ((SELECT a from t1 where 1=0) UNION (SELECT * FROM t1 ) ORDER BY a desc limit 1) x;

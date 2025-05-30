@@ -99,6 +99,7 @@ execute s using 2, datetime'2010-09-02 17:30:30', timestamp'2010-09-02 18:30:30'
 execute s using 1, 1.1, 2.2, '1.1';
 execute s using 2, 1.1f, 2.2e0, '2.2';
 execute s using 1, $1.1, $2.2, '$1.1';
+deallocate prepare s;
 
 -- failure
 prepare s from 'select elt(?, ?, ?)';
@@ -110,4 +111,5 @@ execute s using time'17:30:30', 1, 2;
 execute s using datetime'2010-09-02 17:30:30', 1, 2;
 execute s using timestamp'2010-09-02 17:30:30', 1, 2;
 execute s using 1, n'a', n'b';
+deallocate prepare s;
 

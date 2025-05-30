@@ -20,6 +20,6 @@ execute s using 123.123;
 execute s using 2147483647;
 execute s using 2147483648;
 execute s using '123.123';
-
+deallocate prepare s;
 
 select trunc('1999-12-12');

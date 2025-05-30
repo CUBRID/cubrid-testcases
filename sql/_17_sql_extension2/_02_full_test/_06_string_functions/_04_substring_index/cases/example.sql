@@ -170,9 +170,11 @@ execute s using date'08/02/2010', '/', -2, '02/2010';
 execute s using time'09:30:30 AM', ':', -2, '30:30 AM';
 execute s using datetime'09:30:30.000 AM 08/02/2010', ' ', -2, 'AM 08/02/2010';
 execute s using timestamp'09:30:30 AM 08/02/2010', ' ', -2, 'AM 08/02/2010';
+deallocate prepare s;
 
 prepare s from 'select if(length(substring_index(?, ?, ?)) = ?, ''ok'', ''nok'')';
 execute s using 'abc.def.ghi.jkl', '.', 0, 0;
+deallocate prepare s;
 
 prepare s from 'select if(substring_index(''abc.def.ghi.jkl'', ''.'', ?) = substring_index(''abc.def.ghi.jkl'', ''.'', ?), ''ok'', ''nok'')';
 execute s using 4, 5;
@@ -189,6 +191,7 @@ execute s using -1.5e0, -2e0;
 execute s using -2.4, -2.0 ;
 execute s using -2.4f, -2.0f;
 execute s using -2.4e0, -2e0;
+deallocate prepare s;
 
 -- failure
 prepare s from 'select substring_index(?, ?, ?)';
@@ -199,4 +202,5 @@ execute s using 'abc.def.ghi.jkl', '.', date'08/02/2010';
 execute s using 'abc.def.ghi.jkl', '.', time'09:30:30 AM';
 execute s using 'abc.def.ghi.jkl', '.', datetime'09:30:30.000 AM 08/02/2010';
 execute s using 'abc.def.ghi.jkl', '.', timestamp'09:30:30 AM 08/02/2010';
+deallocate prepare s;
 

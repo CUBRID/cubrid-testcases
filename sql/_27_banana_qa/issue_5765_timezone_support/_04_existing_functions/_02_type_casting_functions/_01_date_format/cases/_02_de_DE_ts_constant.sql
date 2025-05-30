@@ -30,6 +30,7 @@ set time zone 'Asia/Shanghai';
 execute st using timestampltz'2014-06-30 7:30:21', '%X, %V, %U, Day %j %TZD %TZM';
 execute st using timestamptz'2014-06-30 7:30:21 +10:00', '%X, %V, %U, Day %j %TZD %TZM';
 execute st using timestamptz'2014-06-30 7:30:21 Asia/Seoul', '%X, %V, %U, Day %j %TZD %TZM';
+deallocate prepare st;
 
 prepare st from 'select date_format(?+1, ?)';
 set time zone 'Europe/London';
