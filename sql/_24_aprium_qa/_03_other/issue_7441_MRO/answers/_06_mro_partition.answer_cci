@@ -3,6 +3,8 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 3
 ===================================================
 3
@@ -37,13 +39,12 @@ i2    i3    i
 Query plan:
 temp(order by)
     subplan: idx-join (inner join)
-                 outer: iscan
-                            class: t node[?]
-                            index: idx? term[?] (covers)
+                 outer: sscan
+                            class: u node[?]
                             cost:  ? card ?
                  inner: iscan
-                            class: u node[?]
-                            index: i_u_i_j term[?] (covers)
+                            class: t node[?]
+                            index: idx? term[?] AND term[?]
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? desc, ? desc, ? asc
@@ -74,13 +75,12 @@ i2    i3    i
 Query plan:
 temp(order by)
     subplan: idx-join (inner join)
-                 outer: iscan
-                            class: t node[?]
-                            index: idx? term[?] (covers)
+                 outer: sscan
+                            class: u node[?]
                             cost:  ? card ?
                  inner: iscan
-                            class: u node[?]
-                            index: i_u_i_j term[?] (covers)
+                            class: t node[?]
+                            index: idx? term[?] AND term[?]
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? desc, ? desc, ? asc
@@ -111,13 +111,12 @@ i2    i3    i
 Query plan:
 temp(order by)
     subplan: idx-join (inner join)
-                 outer: iscan
-                            class: t node[?]
-                            index: idx? term[?] (covers)
+                 outer: sscan
+                            class: u node[?]
                             cost:  ? card ?
                  inner: iscan
-                            class: u node[?]
-                            index: i_u_i_j term[?] (covers)
+                            class: t node[?]
+                            index: idx? term[?] AND term[?]
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc, ? asc, ? asc
@@ -135,13 +134,12 @@ i2    i3    i
 Query plan:
 temp(order by)
     subplan: idx-join (inner join)
-                 outer: iscan
-                            class: t node[?]
-                            index: idx? term[?] (covers)
+                 outer: sscan
+                            class: u node[?]
                             cost:  ? card ?
                  inner: iscan
-                            class: u node[?]
-                            index: i_u_i_j term[?] (covers)
+                            class: t node[?]
+                            index: idx? term[?] AND term[?]
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc, ? desc, ? asc
@@ -160,19 +158,22 @@ i2    i3    i
 Query plan:
 temp(order by)
     subplan: idx-join (inner join)
-                 outer: iscan
-                            class: t node[?]
-                            index: idx? term[?] (covers)
+                 outer: sscan
+                            class: u node[?]
                             cost:  ? card ?
                  inner: iscan
-                            class: u node[?]
-                            index: i_u_i_j term[?] (covers)
+                            class: t node[?]
+                            index: idx? term[?] AND term[?]
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? desc, ? desc, ? asc
     cost:  ? card ?
 Query stmt:
 select t.i?, t.i?, u.i from t t, u u where ((t.i?= ?:? ) or (t.i?= ?:? )) and t.i?=u.i order by ? desc , ? desc , ? for orderby_num()<= ?:? 
+===================================================
+0
+===================================================
+0
 ===================================================
 0
 ===================================================
