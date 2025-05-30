@@ -53,7 +53,7 @@ Trace Statistics:
 
 ===================================================
 ca    cb    cc    cd    
-9     9     9     1000     
+0     0     0     1     
 
 ===================================================
 trace    
@@ -62,7 +62,7 @@ Query Plan:
   SORT (order by)
     TABLE SCAN (a)
 
-  rewritten query: select a.ca, a.cb, a.cc, a.cd from [dba.ta_range] a using index none order by ? desc  for orderby_num()<= ?:? 
+  rewritten query: select a.ca, a.cb, a.cc, a.cd from [dba.ta_range] a using index none order by ? for orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -88,7 +88,7 @@ Trace Statistics:
 
 ===================================================
 ca    cb    cc    cd    
-9     9     9     1000     
+0     0     0     1     
 
 ===================================================
 trace    
@@ -97,7 +97,7 @@ Query Plan:
   SORT (order by)
     TABLE SCAN (a)
 
-  rewritten query: select a.ca, a.cb, a.cc, a.cd from [dba.ta_hash] a using index none order by ? desc  for orderby_num()<= ?:? 
+  rewritten query: select a.ca, a.cb, a.cc, a.cd from [dba.ta_hash] a using index none order by ? for orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -268,15 +268,25 @@ ca    cb    cc    cd
 trace    
 
 Query Plan:
-  TABLE SCAN (a)
+  SORT (order by)
+    TABLE SCAN (a)
 
-  rewritten query: select a.ca, a.cb, a.cc, a.cd from [dba.ta_range] a where (inst_num()> ?:?  and inst_num()<= ?:? )
+  rewritten query: select a.ca, a.cb, a.cc, a.cd from [dba.ta_range] a order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta_range), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
            PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
            PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
      
 
 ===================================================
@@ -296,9 +306,10 @@ ca    cb    cc    cd
 trace    
 
 Query Plan:
-  TABLE SCAN (a)
+  SORT (order by)
+    TABLE SCAN (a)
 
-  rewritten query: select a.ca, a.cb, a.cc, a.cd from [dba.ta_range] a where (inst_num()> ?:?  and inst_num()<= ?:? )
+  rewritten query: select a.ca, a.cb, a.cc, a.cd from [dba.ta_range] a order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -309,6 +320,11 @@ Trace Statistics:
            PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
            PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
            PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
      
 
 ===================================================
@@ -371,19 +387,27 @@ ca    cb    cc    cd    ca    cb    cc    cd    ca    cb    cc    cd    ca    cb
 trace    
 
 Query Plan:
-  NESTED LOOPS (inner join)
+  SORT (order by)
     NESTED LOOPS (inner join)
       NESTED LOOPS (inner join)
-        TABLE SCAN (a)
-        INDEX SCAN (b.pk_ta_hash_ca_cd) (key range: a.ca=b.cakey range: a.cd=b.cd)
-      INDEX SCAN (c.pk_tb_ca_cd) (key range: b.ca=c.cakey range: b.cd=c.cd)
-    INDEX SCAN (d.pk_ta_list_ca_cd) (key range: c.ca=d.cakey range: c.cd=d.cd)
+        NESTED LOOPS (inner join)
+          TABLE SCAN (a)
+          INDEX SCAN (b.pk_ta_hash_ca_cd) (key range: a.ca=b.cakey range: a.cd=b.cd)
+        INDEX SCAN (c.pk_tb_ca_cd) (key range: b.ca=c.cakey range: b.cd=c.cd)
+      INDEX SCAN (d.pk_ta_list_ca_cd) (key range: c.ca=d.cakey range: c.cd=d.cd)
 
-  rewritten query: select /*+ ORDERED USE_NL */ a.ca, a.cb, a.cc, a.cd, b.ca, b.cb, b.cc, b.cd, c.ca, c.cb, c.cc, c.cd, d.ca, d.cb, d.cc, d.cd from [dba.ta_range] a, [dba.ta_hash] b, [dba.tb] c, [dba.ta_list] d where a.ca=b.ca and a.cd=b.cd and b.ca=c.ca and b.cd=c.cd and c.ca=d.ca and c.cd=d.cd and (inst_num()> ?:?  and inst_num()<= ?:? )
+  rewritten query: select /*+ ORDERED USE_NL */ a.ca, a.cb, a.cc, a.cd, b.ca, b.cb, b.cc, b.cd, c.ca, c.cb, c.cc, c.cd, d.ca, d.cb, d.cc, d.cd from [dba.ta_range] a, [dba.ta_hash] b, [dba.tb] c, [dba.ta_list] d where a.ca=b.ca and a.cd=b.cd and b.ca=c.ca and b.cd=c.cd and c.ca=d.ca and c.cd=d.cd order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta_range), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
            PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
            PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
            PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -403,6 +427,7 @@ Trace Statistics:
                  PARTITION (index: dba.ta_list__p__p?.pk_ta_list_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
                  PARTITION (index: dba.ta_list__p__p?.pk_ta_list_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
                  PARTITION (index: dba.ta_list__p__p?.pk_ta_list_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
      
 
 ===================================================
@@ -428,26 +453,28 @@ ca    cb    cc    cd    ca    cb    cc    cd    ca    cb    cc    cd    ca    cb
 trace    
 
 Query Plan:
-  SORT (temp)
-    MERGE JOIN (inner join)
-      SORT (temp)
-        MERGE JOIN (inner join)
-          SORT (temp)
-            MERGE JOIN (inner join)
-              SORT (temp)
-                TABLE SCAN (a)
-              SORT (temp)
-                TABLE SCAN (b)
-          SORT (temp)
-            TABLE SCAN (c)
-      SORT (temp)
-        TABLE SCAN (d)
+  SORT (order by)
+    SORT (temp)
+      MERGE JOIN (inner join)
+        SORT (temp)
+          MERGE JOIN (inner join)
+            SORT (temp)
+              MERGE JOIN (inner join)
+                SORT (temp)
+                  TABLE SCAN (a)
+                SORT (temp)
+                  TABLE SCAN (b)
+            SORT (temp)
+              TABLE SCAN (c)
+        SORT (temp)
+          TABLE SCAN (d)
 
-  rewritten query: select /*+ ORDERED USE_MERGE */ a.ca, a.cb, a.cc, a.cd, b.ca, b.cb, b.cc, b.cd, c.ca, c.cb, c.cc, c.cd, d.ca, d.cb, d.cc, d.cd from [dba.ta_range] a, [dba.ta_hash] b, [dba.tb] c, [dba.ta_list] d where a.ca=b.ca and a.cd=b.cd and b.ca=c.ca and b.cd=c.cd and c.ca=d.ca and c.cd=d.cd and (inst_num()> ?:?  and inst_num()<= ?:? )
+  rewritten query: select /*+ ORDERED USE_MERGE */ a.ca, a.cb, a.cc, a.cd, b.ca, b.cb, b.cc, b.cd, c.ca, c.cb, c.cc, c.cd, d.ca, d.cb, d.cc, d.cd from [dba.ta_range] a, [dba.ta_hash] b, [dba.tb] c, [dba.ta_list] d where a.ca=b.ca and a.cd=b.cd and b.ca=c.ca and b.cd=c.cd and c.ca=d.ca and c.cd=d.cd order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
       MERGELIST
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -517,19 +544,21 @@ ca    cb    cc    cd    ca    cb    cc    cd    ca    cb    cc    cd    ca    cb
 trace    
 
 Query Plan:
-  HASH JOIN (inner join)
+  SORT (order by)
     HASH JOIN (inner join)
       HASH JOIN (inner join)
-        TABLE SCAN (a)
-        TABLE SCAN (b)
-      TABLE SCAN (c)
-    TABLE SCAN (d)
+        HASH JOIN (inner join)
+          TABLE SCAN (a)
+          TABLE SCAN (b)
+        TABLE SCAN (c)
+      TABLE SCAN (d)
 
-  rewritten query: select /*+ ORDERED USE_HASH */ a.ca, a.cb, a.cc, a.cd, b.ca, b.cb, b.cc, b.cd, c.ca, c.cb, c.cc, c.cd, d.ca, d.cb, d.cc, d.cd from [dba.ta_range] a, [dba.ta_hash] b, [dba.tb] c, [dba.ta_list] d where a.ca=b.ca and a.cd=b.cd and b.ca=c.ca and b.cd=c.cd and c.ca=d.ca and c.cd=d.cd and (inst_num()> ?:?  and inst_num()<= ?:? )
+  rewritten query: select /*+ ORDERED USE_HASH */ a.ca, a.cb, a.cc, a.cd, b.ca, b.cb, b.cc, b.cd, c.ca, c.cb, c.cc, c.cd, d.ca, d.cb, d.cc, d.cd from [dba.ta_range] a, [dba.ta_hash] b, [dba.tb] c, [dba.ta_list] d where a.ca=b.ca and a.cd=b.cd and b.ca=c.ca and b.cd=c.cd and c.ca=d.ca and c.cd=d.cd order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         BUILD (time: ?, build_time: ?, fetch: ?, fetch_time: ?, ioread: ?, rows: ?, method: memory, build: inner)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
