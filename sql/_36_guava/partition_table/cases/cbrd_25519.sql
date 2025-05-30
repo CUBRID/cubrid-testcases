@@ -134,16 +134,20 @@ show trace;
 do @i := @i + 1;
 evaluate concat ('####', lpad (@i, 3), '. pruning + limit');
 
-select /*+ recompile */ *
-from ta_range a
-order by cd
-limit 150, 10;
+select /*+ recompile */ count(*)
+from (
+    select *
+    from ta_range a
+    limit 150, 10
+  );
 show trace;
 
-select /*+ recompile */ *
-from ta_range a
-order by cd
-limit 550, 10;
+select /*+ recompile */ count(*)
+from (
+    select *
+    from ta_range a
+    limit 550, 10
+  );
 show trace;
 
 do @i := @i + 1;
@@ -165,31 +169,37 @@ show trace;
 do @i := @i + 1;
 evaluate concat ('####', lpad (@i, 3), '. partition table + nl join');
 
-select /*+ recompile ordered use_nl */ *
-from ta_range a, ta_hash b, tb c, ta_list d
-where a.ca = b.ca and a.cd = b.cd and b.ca = c.ca and b.cd = c.cd and c.ca = d.ca and c.cd = d.cd
-order by a.cd, a.ca
-limit 250, 10;
+select /*+ recompile */ count (*)
+from (
+    select /*+ ordered use_nl */ a.cd as a_cd, b.cd as b_cd, c.cd as c_cd, d.cd as d_cd
+    from ta_range a, ta_hash b, tb c, ta_list d
+    where a.ca = b.ca and a.cd = b.cd and b.ca = c.ca and b.cd = c.cd and c.ca = d.ca and c.cd = d.cd
+    limit 250, 10
+  );
 show trace;
 
 do @i := @i + 1;
 evaluate concat ('####', lpad (@i, 3), '. partition table + merge join');
 
-select /*+ recompile ordered use_merge */ *
-from ta_range a, ta_hash b, tb c, ta_list d
-where a.ca = b.ca and a.cd = b.cd and b.ca = c.ca and b.cd = c.cd and c.ca = d.ca and c.cd = d.cd
-order by a.cd, a.ca
-limit 250, 10;
+select /*+ recompile */ count (*)
+from (
+    select /*+ ordered use_merge */ a.cd as a_cd, b.cd as b_cd, c.cd as c_cd, d.cd as d_cd
+    from ta_range a, ta_hash b, tb c, ta_list d
+    where a.ca = b.ca and a.cd = b.cd and b.ca = c.ca and b.cd = c.cd and c.ca = d.ca and c.cd = d.cd
+    limit 250, 10
+  );
 show trace;
 
 do @i := @i + 1;
 evaluate concat ('####', lpad (@i, 3), '. partition table + hash join');
 
-select /*+ recompile ordered use_hash*/ *
-from ta_range a, ta_hash b, tb c, ta_list d
-where a.ca = b.ca and a.cd = b.cd and b.ca = c.ca and b.cd = c.cd and c.ca = d.ca and c.cd = d.cd
-order by a.cd, a.ca
-limit 250, 10;
+select /*+ recompile */ count (*)
+from (
+    select /*+ ordered use_hash */ a.cd as a_cd, b.cd as b_cd, c.cd as c_cd, d.cd as d_cd
+    from ta_range a, ta_hash b, tb c, ta_list d
+    where a.ca = b.ca and a.cd = b.cd and b.ca = c.ca and b.cd = c.cd and c.ca = d.ca and c.cd = d.cd
+    limit 250, 10
+  );
 show trace;
 
 do @i := @i + 1;
