@@ -37,7 +37,6 @@ SELECT name <-> name FROM test_non_vector;
 SELECT name <c> name FROM test_non_vector;
 SELECT name <#> name FROM test_non_vector;
 SELECT name <+> name FROM test_non_vector;
-SELECT name <-> name FROM test_non_vector;
 
 -- Semantics/ Argument looks like vector but not vector type/ Error
 DROP IF EXISTS test_non_vector;
@@ -50,7 +49,6 @@ SELECT name <-> name FROM test_non_vector;
 SELECT name <c> name FROM test_non_vector;
 SELECT name <#> name FROM test_non_vector;
 SELECT name <+> name FROM test_non_vector;
-SELECT name <-> name FROM test_non_vector;
 
 -- Semantics/ Vector and non-vector/ Error
 DROP IF EXISTS test_non_vector;
@@ -64,19 +62,19 @@ CREATE TABLE test_non_vector (
 INSERT INTO test_non_vector VALUES (1, '[3,2,1]', '[1,2,3]');
 INSERT INTO test_non_vector VALUES (2, '[2,3,4]', '[4,5,6]');
 SELECT vec <-> name FROM test_non_vector;
+SELECT name <-> vec FROM test_non_vector;
 SELECT name <c> vec FROM test_non_vector;
 SELECT vec <c> name FROM test_non_vector;
 SELECT name <#> vec FROM test_non_vector;
 SELECT name <+> vec FROM test_non_vector;
-SELECT name <-> vec FROM test_non_vector;
 
 -- Semantics/ Vector and non-vector/ Vector and Int/ Error
 SELECT vec <-> id FROM test_non_vector;
+SELECT id <-> vec FROM test_non_vector;
 SELECT id <c> vec FROM test_non_vector;
 SELECT vec <c> id FROM test_non_vector;
 SELECT id <#> vec FROM test_non_vector;
 SELECT id <+> vec FROM test_non_vector;
-SELECT id <-> vec FROM test_non_vector;
 
 -- Semantics/ Vector Element Type Not Binary/ Valid
 SELECT vec <-> vec FROM test_non_vector;
