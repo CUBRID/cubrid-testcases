@@ -10,7 +10,7 @@ INSERT INTO tbl VALUES (2, '[9,8,7]');
 -- Execution
 -------------------------------------------------------------------------------
 -- Execution/ vector_distance on non-indexed column/ should use COSINE
-SELECT '[0,0,0]' <=> name FROM tbl;
+SELECT '[0,0,0]' <c> name FROM tbl;
 
 -- Execution/ vector_distance on indexed column/ should use EUCLIDEAN
 -- TODO: xhnsw_delete_index assertion
