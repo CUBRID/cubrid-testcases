@@ -78,7 +78,7 @@ evaluate concat ('####', lpad (@i, 3), '. all partitions (range)');
 select /*+ recompile */ *
 from ta_range a
 using index none
-order by 1
+order by cd desc
 limit 1;
 show trace;
 
@@ -88,7 +88,7 @@ evaluate concat ('####', lpad (@i, 3), '. all partitions (hash)');
 select /*+ recompile */ *
 from ta_hash a
 using index none
-order by 1
+order by cd desc
 limit 1;
 show trace;
 
