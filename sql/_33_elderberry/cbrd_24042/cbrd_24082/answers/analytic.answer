@@ -7,7 +7,7 @@
 ===================================================
 0
 ===================================================
-col_a    
+col_a    col_b    
 
 Query plan:
 nl-join (inner join)
@@ -20,8 +20,11 @@ nl-join (inner join)
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: rank partition by (? asc nulls first) order by (? asc nulls first)
 Query stmt:
-(select a.col_a from t_a a, t_b b where (a.col_a=b.col_a))
+(select a.col_a, rank() over (partition by ? order by ?) from t_a a, t_b b where (a.col_a=b.col_a))
 Query plan:
 nl-join (inner join)
     edge:  term[?]
@@ -34,11 +37,11 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select a.col_a from (select a.col_a from t_a a, t_b b where (a.col_a=b.col_a)) a (col_a), t_b b where a.col_a=b.col_a and b.col_b= ?:? 
+select a.col_a, a.col_b from (select a.col_a, rank() over (partition by ? order by ?) from t_a a, t_b b where (a.col_a=b.col_a)) a (col_a, col_b), t_b b where a.col_a=b.col_a and b.col_b= ?:? 
 ===================================================
 0
 ===================================================
-col_a    
+col_a    col_b    
 
 Query plan:
 nl-join (inner join)
@@ -51,8 +54,11 @@ nl-join (inner join)
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: rank partition by (? asc nulls first) order by (? asc nulls first)
 Query stmt:
-(select a.col_a from t_a a, t_b b where a.col_a=b.col_a)
+(select a.col_a, rank() over (partition by ? order by ?) from t_a a, t_b b where a.col_a=b.col_a)
 Query plan:
 nl-join (inner join)
     edge:  term[?]
@@ -65,6 +71,6 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select a.col_a from (select a.col_a from t_a a, t_b b where a.col_a=b.col_a) a (col_a), t_b b where a.col_a=b.col_a and b.col_b= ?:? 
+select a.col_a, a.col_b from (select a.col_a, rank() over (partition by ? order by ?) as [col_b] from t_a a, t_b b where a.col_a=b.col_a) a (col_a, col_b), t_b b where a.col_a=b.col_a and b.col_b= ?:? 
 ===================================================
 0

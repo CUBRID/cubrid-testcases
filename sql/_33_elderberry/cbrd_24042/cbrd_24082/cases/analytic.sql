@@ -25,7 +25,7 @@ AS
          t_b b
   WHERE  a.col_a = b.col_a;
 
-SELECT /*+ recompile */ a.col_a
+SELECT /*+ recompile */ a.col_a, a.col_b
 FROM   v a,
        t_b b
 WHERE  a.col_a = b.col_a
@@ -33,7 +33,7 @@ WHERE  a.col_a = b.col_a
 DROP VIEW v; 
 
 -- Convert the view to an inline view (unmergable)
-SELECT /*+ recompile */ a.col_a
+SELECT /*+ recompile */ a.col_a, a.col_b
 FROM   (SELECT a.col_a,
                RANK() 
 		 over (
