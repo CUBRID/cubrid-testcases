@@ -129,3 +129,4 @@ SELECT /*+ RECOMPILE */ id, l2_distance(vc1, '[5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5]'
 FROM items
 ORDER BY dist
 LIMIT 10;
+

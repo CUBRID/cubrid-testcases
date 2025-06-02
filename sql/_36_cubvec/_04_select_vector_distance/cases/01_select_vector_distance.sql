@@ -17,3 +17,4 @@ INSERT INTO items VALUES (12, '[1,1,1]');
 
 SELECT id FROM items ORDER by l2_distance(vc1, '[0,0,0]') LIMIT 3;
 SELECT id FROM items WHERE id < 11 ORDER by l2_distance(vc1, '[1,2,3]') LIMIT 5;
+
