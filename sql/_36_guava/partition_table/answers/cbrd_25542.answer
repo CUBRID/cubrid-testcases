@@ -18,14 +18,14 @@ count(*)
 trace    
 
 Query Plan:
-  INDEX SCAN (dba.ta.i?) (key range: [dba.ta].col?= ?:? key range: ([dba.ta].col?> ?:? ), covered: true)
+  INDEX SCAN (dba.ta.idx) (key range: [dba.ta].cola= ?:? key range: ([dba.ta].colb> ?:? ), covered: true)
 
-  rewritten query: select count(*) from [dba.ta] [dba.ta] where ([dba.ta].col?> ?:? ) and [dba.ta].col?= ?:?  using index [dba.ta].i?
+  rewritten query: select count(*) from [dba.ta] [dba.ta] where ([dba.ta].colb> ?:? ) and [dba.ta].cola= ?:?  using index [dba.ta].idx
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.ta.i?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
-           PARTITION (index: dba.ta__p__pb.i?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+    SCAN (index: dba.ta.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta__p__pb.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
      
 
 ===================================================
@@ -36,14 +36,14 @@ count(*)
 trace    
 
 Query Plan:
-  INDEX SCAN (dba.ta.i?) (key range: [dba.ta].col?= ?:? key range: ([dba.ta].col?> ?:? ), covered: true)
+  INDEX SCAN (dba.ta.idx) (key range: [dba.ta].cola= ?:? key range: ([dba.ta].colb> ?:? ), covered: true)
 
-  rewritten query: select count(*) from [dba.ta] [dba.ta] where ([dba.ta].col?> ?:? ) and [dba.ta].col?= ?:?  using index [dba.ta].i?
+  rewritten query: select count(*) from [dba.ta] [dba.ta] where ([dba.ta].colb> ?:? ) and [dba.ta].cola= ?:?  using index [dba.ta].idx
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.ta.i?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
-           PARTITION (index: dba.ta__p__pb.i?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+    SCAN (index: dba.ta.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta__p__pb.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
      
 
 ===================================================
@@ -58,15 +58,15 @@ count(*)
 trace    
 
 Query Plan:
-  INDEX SCAN (dba.ta.i?) (key range: ([dba.ta].col?> ?:? ), key filter: [dba.ta].col?= ?:? , covered: true)
+  INDEX SCAN (dba.ta.idx) (key range: ([dba.ta].cola> ?:? ), key filter: [dba.ta].colb= ?:? , covered: true)
 
-  rewritten query: select count(*) from [dba.ta] [dba.ta] where ([dba.ta].col?> ?:? ) and [dba.ta].col?= ?:?  using index [dba.ta].i?
+  rewritten query: select count(*) from [dba.ta] [dba.ta] where ([dba.ta].cola> ?:? ) and [dba.ta].colb= ?:?  using index [dba.ta].idx
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.ta.i?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
-           PARTITION (index: dba.ta__p__pb.i?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
-           PARTITION (index: dba.ta__p__pc.i?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+    SCAN (index: dba.ta.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta__p__pb.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta__p__pc.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
      
 
 ===================================================
@@ -83,7 +83,7 @@ trace
 Query Plan:
   TABLE SCAN (dba.ta)
 
-  rewritten query: select count(*) from [dba.ta] [dba.ta] where ([dba.ta].col?> ?:? ) and [dba.ta].col?= ?:?  using index [dba.ta].i?(-)
+  rewritten query: select count(*) from [dba.ta] [dba.ta] where ([dba.ta].colb> ?:? ) and [dba.ta].cola= ?:?  using index [dba.ta].idx(-)
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -126,7 +126,7 @@ Trace Statistics:
 5. function index, where_range     
 
 ===================================================
-col1    
+cola    
 -2     
 2     
 -3     
@@ -137,15 +137,15 @@ col1
 trace    
 
 Query Plan:
-  INDEX SCAN (dba.tb.i?) (key range: ( abs([dba.tb].col?)>= ?:? ))
+  INDEX SCAN (dba.tb.iidx) (key range: ( abs([dba.tb].cola)>= ?:? ))
 
-  rewritten query: select [dba.tb].col? from [dba.tb] [dba.tb] where ( abs([dba.tb].col?)>= ?:? ) using index [dba.tb].i?
+  rewritten query: select [dba.tb].cola from [dba.tb] [dba.tb] where ( abs([dba.tb].cola)>= ?:? ) using index [dba.tb].iidx
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.tb.i?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-           PARTITION (index: dba.tb__p__pc.i?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-           PARTITION (index: dba.tb__p__pd.i?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SCAN (index: dba.tb.iidx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+           PARTITION (index: dba.tb__p__pc.iidx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+           PARTITION (index: dba.tb__p__pd.iidx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
 ===================================================
@@ -153,7 +153,7 @@ Trace Statistics:
 6. ignore function index, no predicate expression     
 
 ===================================================
-col1    
+cola    
 -2     
 2     
 -3     
@@ -166,7 +166,7 @@ trace
 Query Plan:
   TABLE SCAN (dba.tb)
 
-  rewritten query: select [dba.tb].col? from [dba.tb] [dba.tb] where ( abs([dba.tb].col?)>= ?:? ) using index [dba.tb].i?(-)
+  rewritten query: select [dba.tb].cola from [dba.tb] [dba.tb] where ( abs([dba.tb].cola)>= ?:? ) using index [dba.tb].iidx(-)
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
