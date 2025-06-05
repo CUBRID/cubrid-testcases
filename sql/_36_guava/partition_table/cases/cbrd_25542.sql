@@ -3,6 +3,8 @@
  */
 
 drop table if exists ta;
+drop table if exists tb;
+
 create table ta(cola int, colb int,index idx(cola, colb))
     partition by range(cola)
     (
@@ -43,7 +45,6 @@ select /*+ recompile */ count(*) from ta;
 show trace;
 --select trace_stats ();
 
-drop table if exists tb;
 create table tb(cola int, index iidx(abs(cola))) 
     partition by range(abs(cola)) 
     (
@@ -68,3 +69,4 @@ show trace;
 --select trace_stats ();
 
 drop table if exists ta;
+drop table if exists tb;
