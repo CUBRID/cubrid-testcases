@@ -366,9 +366,10 @@ i    j    k    l
 Query plan:
 sscan
     class: dual node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select t.i from dual dual)
+(select t.i from dual dual where inst_num()<=?)
 Query plan:
 iscan
     class: t node[?]
@@ -377,7 +378,7 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where  exists (select t.i from dual dual) and t.j= ?:? 
+select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where  exists (select t.i from dual dual where inst_num()<=?) and t.j= ?:? 
 ===================================================
 i    j    k    l    
 1     199     50     50     
@@ -544,9 +545,10 @@ i    j    k    l
 Query plan:
 sscan
     class: dual node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select t.l from dual dual)
+(select t.l from dual dual where inst_num()<=?)
 Query plan:
 iscan
     class: t node[?]
@@ -555,7 +557,7 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where  exists (select t.l from dual dual) and t.j= ?:? 
+select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where  exists (select t.l from dual dual where inst_num()<=?) and t.j= ?:? 
 ===================================================
 i    j    k    l    
 1     199     50     50     
@@ -723,9 +725,10 @@ Query plan:
 iscan
     class: t node[?]
     index: idx term[?] (index skip scan)
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select /*+ INDEX_SS */ t.l from t t where t.j= ?:? )
+(select /*+ INDEX_SS */ t.l from t t where (t.j= ?:? ) and inst_num()<= ?:? )
 Query plan:
 iscan
     class: t node[?]
@@ -733,7 +736,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where  exists (select /*+ INDEX_SS */ t.l from t t where t.j= ?:? ) and t.j= ?:? 
+select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where  exists (select /*+ INDEX_SS */ t.l from t t where (t.j= ?:? ) and inst_num()<= ?:? ) and t.j= ?:? 
 ===================================================
 0
 ===================================================
