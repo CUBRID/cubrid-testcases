@@ -14,16 +14,17 @@ Query plan:
 iscan
     class: t? node[?]
     index: i_t?_a?a term[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select t?.a from t? t? where ( lower(t?.b)> ?:? ))
+(select t?.a from t? t? where ( lower(t?.b)> ?:? ) and inst_num()<= ?:? )
 Query plan:
 sscan
     class: t? node[?]
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select count( char_length(t?.a)), ? from t? t? where  exists (select t?.a from t? t? where ( lower(t?.b)> ?:? ))
+select count( char_length(t?.a)), ? from t? t? where  exists (select t?.a from t? t? where ( lower(t?.b)> ?:? ) and inst_num()<= ?:? )
 ===================================================
 count( char_length(a))    10    
 1     10     
@@ -31,9 +32,10 @@ count( char_length(a))    10
 Query plan:
 sscan
     class: dual node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select t?.a from dual dual)
+(select t?.a from dual dual where inst_num()<=?)
 Query plan:
 iscan
     class: t? node[?]
@@ -42,7 +44,7 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-select count( char_length(t?.a)), ? from t? t? where  exists (select t?.a from dual dual) and ( lower(t?.b)> ?:? )
+select count( char_length(t?.a)), ? from t? t? where  exists (select t?.a from dual dual where inst_num()<=?) and ( lower(t?.b)> ?:? )
 ===================================================
 count( char_length(a))    10    
 1     10     
@@ -50,9 +52,10 @@ count( char_length(a))    10
 Query plan:
 sscan
     class: dual node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select t?.a from dual dual)
+(select t?.a from dual dual where inst_num()<=?)
 Query plan:
 sscan
     class: t? node[?]
@@ -60,7 +63,7 @@ sscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-select count( char_length(t?.a)), ? from t? t? where ( exists (select t?.a from dual dual) or ( lower(t?.b)> ?:? ))
+select count( char_length(t?.a)), ? from t? t? where ( exists (select t?.a from dual dual where inst_num()<=?) or ( lower(t?.b)> ?:? ))
 ===================================================
 0
 ===================================================

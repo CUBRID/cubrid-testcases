@@ -149,9 +149,10 @@ a    b    c    d    e    f    g    h    i    j    k    l    m    n    o    p    
 Query plan:
 sscan
     class: db_root node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select ? from db_root db_root)
+(select ? from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: t? node[?]
@@ -160,7 +161,7 @@ iscan
     sort:  ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t?.a, t?.b, t?.c, t?.d, t?.e, t?.f, t?.g, t?.h, t?.i, t?.j, t?.k, t?.l, t?.m, t?.n, t?.o, t?.p, t?.q from t? t? where  exists (select ? from db_root db_root) group by t?.a, t?.b, t?.c, t?.d, t?.e, t?.f, t?.g, t?.h, t?.i, t?.j, t?.k, t?.l, t?.m, t?.n, t?.o, t?.p, t?.q using index t?.i_t?_abcdefghijklmnopq(+)
+select t?.a, t?.b, t?.c, t?.d, t?.e, t?.f, t?.g, t?.h, t?.i, t?.j, t?.k, t?.l, t?.m, t?.n, t?.o, t?.p, t?.q from t? t? where  exists (select ? from db_root db_root where inst_num()<=?) group by t?.a, t?.b, t?.c, t?.d, t?.e, t?.f, t?.g, t?.h, t?.i, t?.j, t?.k, t?.l, t?.m, t?.n, t?.o, t?.p, t?.q using index t?.i_t?_abcdefghijklmnopq(+)
 /* ---> skip GROUP BY */
 ===================================================
 a    b    c    d    e    f    g    h    i    j    k    l    m    n    o    p    q    

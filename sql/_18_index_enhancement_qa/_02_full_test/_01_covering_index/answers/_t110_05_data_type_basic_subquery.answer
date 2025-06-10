@@ -64,6 +64,7 @@ count(b||e||f||g||h||i||j||k||l||m||n||o||p)    count(c)    count(d)    10
 Query plan:
 sscan
     class: dual node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
 (select t?.a from dual dual where inst_num()<=?)
@@ -93,7 +94,8 @@ sscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-select count(t?.b|| cast(t?.e as varchar)|| cast(t?.f as varchar)|| cast(t?.g as varchar)|| cast(t?.h as varchar)|| cast(t?.i as varchar)|| cast(t?.j as varchar)|| cast(t?.k as varchar)|| cast(t?.l as varchar)|| cast(t?.m as varchar)|| cast(t?.n as varchar)|| cast(t?.o as varchar)), count(t?.c), count(t?.d), ? from t? t? where  exists (select t?.a from dual dual where inst_num()<=?)===================================================
+select count(t?.b|| cast(t?.e as varchar)|| cast(t?.f as varchar)|| cast(t?.g as varchar)|| cast(t?.h as varchar)|| cast(t?.i as varchar)|| cast(t?.j as varchar)|| cast(t?.k as varchar)|| cast(t?.l as varchar)|| cast(t?.m as varchar)|| cast(t?.n as varchar)|| cast(t?.o as varchar)), count(t?.c), count(t?.d), ? from t? t? where  exists (select t?.a from dual dual where inst_num()<=?)
+===================================================
 count(b||e||f||g||h||i||j||k||l||m||n)    count(c)    count(d)    10    
 1     1     1     10     
 
@@ -103,7 +105,6 @@ sscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select t?.a from dual dual)
 (select t?.a from dual dual where inst_num()<=?)
 Query plan:
 sscan
@@ -139,7 +140,7 @@ count(b||e||f||g||h||i||j||k||l)    count(c)    count(d)    10
 Query plan:
 sscan
     class: dual node[?]
-    args: term[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
 (select t?.a from dual dual where inst_num()<=?)

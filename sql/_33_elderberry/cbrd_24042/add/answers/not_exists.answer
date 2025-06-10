@@ -28,10 +28,10 @@ id    name
 Query plan:
 sscan
     class: tb node[?]
-    sargs: term[?]
+    sargs: term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-(select ? from tbl tb where tb.ID=v.MgrID)
+(select ? from tbl tb where (tb.ID=v.MgrID) and inst_num()<= ?:? )
 Query plan:
 sscan
     class: v node[?]
@@ -39,7 +39,7 @@ sscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-select v.ID, v.[Name] from tbl v where (v.ID< ?:? ) and ( not  exists (select ? from tbl tb where tb.ID=v.MgrID))
+select v.ID, v.[Name] from tbl v where (v.ID< ?:? ) and ( not  exists (select ? from tbl tb where (tb.ID=v.MgrID) and inst_num()<= ?:? ))
 ===================================================
 0
 ===================================================
@@ -50,10 +50,10 @@ ID    Name
 Query plan:
 sscan
     class: tb node[?]
-    sargs: term[?]
+    sargs: term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-(select ? from tbl tb where tb.ID=v.MgrID)
+(select ? from tbl tb where (tb.ID=v.MgrID) and inst_num()<= ?:? )
 Query plan:
 sscan
     class: v node[?]
@@ -61,6 +61,6 @@ sscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-select v.ID, v.[Name] from tbl v where (v.ID< ?:? ) and ( not  exists (select ? from tbl tb where tb.ID=v.MgrID))
+select v.ID, v.[Name] from tbl v where (v.ID< ?:? ) and ( not  exists (select ? from tbl tb where (tb.ID=v.MgrID) and inst_num()<= ?:? ))
 ===================================================
 0

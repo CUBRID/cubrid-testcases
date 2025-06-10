@@ -47,15 +47,16 @@ nl-join (inner join)
     edge:  term[?]
     outer: sscan
                class: a node[?]
-               sargs: term[?] AND term[?]
+               sargs: term[?] AND term[?] AND term[?]
                cost:  ? card ?
     inner: sscan
                class: b node[?]
                sargs: term[?] AND term[?]
                cost:  ? card ?
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select a.col_a from t_a a, t_b b where (a.col_a=b.col_a) and a.col_a=aa.col_a and (a.col_a> ?:?  and a.col_a< ?:? ) and (b.col_a> ?:? ))
+(select a.col_a from t_a a, t_b b where (a.col_a=b.col_a) and a.col_a=aa.col_a and (a.col_a> ?:?  and a.col_a< ?:? ) and (b.col_a> ?:? ) and inst_num()<= ?:? )
 Query plan:
 sscan
     class: aa node[?]
@@ -63,7 +64,7 @@ sscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-select aa.col_a from t_a aa where  exists (select a.col_a from t_a a, t_b b where (a.col_a=b.col_a) and a.col_a=aa.col_a and (a.col_a> ?:?  and a.col_a< ?:? ) and (b.col_a> ?:? ))
+select aa.col_a from t_a aa where  exists (select a.col_a from t_a a, t_b b where (a.col_a=b.col_a) and a.col_a=aa.col_a and (a.col_a> ?:?  and a.col_a< ?:? ) and (b.col_a> ?:? ) and inst_num()<= ?:? )
 ===================================================
 col_a    
 2     
