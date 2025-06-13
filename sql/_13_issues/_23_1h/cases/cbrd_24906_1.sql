@@ -235,7 +235,7 @@ show trace;
 -- test case 17 
 with b as
   (
-    select /*+ no_merge ordered */ bb.col_a, bb.col_b, bb.col_c from tbl_b as bb where bb.col_c = 1 and bb.col_c = 9
+    select /*+ no_merge ordered materialize */ bb.col_a, bb.col_b, bb.col_c from tbl_b as bb where bb.col_c = 1 and bb.col_c = 9
   )
 select /*+ recompile */
   count (*)
@@ -246,7 +246,7 @@ show trace;
 
 with b as
   (
-    select /*+ no_merge ordered */ bb.col_a, bb.col_b, bb.col_c from tbl_b as bb where bb.col_c = 1 and bb.col_c = 9
+    select /*+ no_merge ordered materialize */ bb.col_a, bb.col_b, bb.col_c from tbl_b as bb where bb.col_c = 1 and bb.col_c = 9
   )
 select /*+ recompile */
   count (*)

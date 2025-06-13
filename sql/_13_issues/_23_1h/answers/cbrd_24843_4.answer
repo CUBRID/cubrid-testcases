@@ -714,13 +714,13 @@ trace
 Query Plan:
   INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a= ?:? , key filter: c.p_a is not null , key filter: c.p_b is not null )
 
-  rewritten query: select 'ooooo', c.a, c.b, c.p_a, c.p_b from [dba.t_child] c where c.p_a= ?:?  and c.p_b is not null  and c.p_a is not null 
+  rewritten query: select /*+ MATERIALIZE */ 'ooooo', c.a, c.b, c.p_a, c.p_b from [dba.t_child] c where c.p_a= ?:?  and c.p_b is not null  and c.p_a is not null 
 
   NESTED LOOPS (inner join)
     INDEX SCAN (p.pk_t_parent_a_b) (key range: (p.a>= ?:? ), covered: true)
     INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a=p.akey range: c.p_b=p.b)
 
-  rewritten query: select 'xxxxx', c.a, c.b, c.p_a, c.p_b from [dba.t_child] c, [dba.t_parent] p where c.p_a=p.a and c.p_b=p.b and (p.a>= ?:? )
+  rewritten query: select /*+ MATERIALIZE */ 'xxxxx', c.a, c.b, c.p_a, c.p_b from [dba.t_child] c, [dba.t_parent] p where c.p_a=p.a and c.p_b=p.b and (p.a>= ?:? )
 
   TABLE SCAN (dba.of_ooooo)
 
