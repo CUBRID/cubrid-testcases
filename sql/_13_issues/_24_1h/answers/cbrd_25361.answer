@@ -1024,21 +1024,21 @@ Query Plan:
 
   TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].i=[dba.cte_a].i)
+  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i=[dba.cte_a].i) and inst_num()<= ?:? )
 
   SORT (order by)
     TABLE SCAN (dba.cte_a)
 
-  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].i=[dba.cte_a].i) order by ?)
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i=[dba.cte_a].i) and inst_num()<= ?:? ) order by ?)
 
   TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].j=[dba.cte_a].j)
+  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].j=[dba.cte_a].j) and inst_num()<= ?:? )
 
   SORT (order by)
     TABLE SCAN (dba.cte_a)
 
-  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].j=[dba.cte_a].j) order by ?)
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].j=[dba.cte_a].j) and inst_num()<= ?:? ) order by ?)
 
 
 Trace Statistics:
@@ -1102,21 +1102,21 @@ Query Plan:
 
   TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].j=[dba.cte_a].j)
+  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].j=[dba.cte_a].j) and inst_num()<= ?:? )
 
   SORT (order by)
     TABLE SCAN (dba.cte_a)
 
-  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].j=[dba.cte_a].j) order by ?)
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].j=[dba.cte_a].j) and inst_num()<= ?:? ) order by ?)
 
   TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_a].k)
+  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].k=[dba.cte_a].k) and inst_num()<= ?:? )
 
   SORT (order by)
     TABLE SCAN (dba.cte_a)
 
-  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_a].k) order by ?)
+  rewritten query: (select [dba.cte_a].i, [dba.cte_a].j, [dba.cte_a].k from [dba.cte_a] [dba.cte_a] where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].k=[dba.cte_a].k) and inst_num()<= ?:? ) order by ?)
 
 
 Trace Statistics:
@@ -1202,12 +1202,12 @@ Query Plan:
 
   TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_b].k)
+  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].k=[dba.cte_b].k) and inst_num()<= ?:? )
 
   SORT (order by)
     TABLE SCAN (dba.cte_b)
 
-  rewritten query: (select [dba.cte_b].i, [dba.cte_b].j, [dba.cte_b].k from [dba.cte_b] [dba.cte_b] where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_b].k) order by ?)
+  rewritten query: (select [dba.cte_b].i, [dba.cte_b].j, [dba.cte_b].k from [dba.cte_b] [dba.cte_b] where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].k=[dba.cte_b].k) and inst_num()<= ?:? ) order by ?)
 
 
 Trace Statistics:
@@ -1295,12 +1295,12 @@ Query Plan:
 
   TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_b].k)
+  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].k=[dba.cte_b].k) and inst_num()<= ?:? )
 
   SORT (order by)
     TABLE SCAN (dba.cte_b)
 
-  rewritten query: (select [dba.cte_b].i, [dba.cte_b].j, [dba.cte_b].k from [dba.cte_b] [dba.cte_b] where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_b].k) order by ?)
+  rewritten query: (select [dba.cte_b].i, [dba.cte_b].j, [dba.cte_b].k from [dba.cte_b] [dba.cte_b] where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].k=[dba.cte_b].k) and inst_num()<= ?:? ) order by ?)
 
 
 Trace Statistics:
@@ -1368,12 +1368,12 @@ Query Plan:
 
   TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_b].k)
+  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].k=[dba.cte_b].k) and inst_num()<= ?:? )
 
   SORT (order by)
     TABLE SCAN (dba.cte_b)
 
-  rewritten query: (select [dba.cte_b].i, [dba.cte_b].j, [dba.cte_b].k from [dba.cte_b] [dba.cte_b] where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_b].k) order by ?)
+  rewritten query: (select [dba.cte_b].i, [dba.cte_b].j, [dba.cte_b].k from [dba.cte_b] [dba.cte_b] where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].k=[dba.cte_b].k) and inst_num()<= ?:? ) order by ?)
 
 
 Trace Statistics:
@@ -1441,12 +1441,12 @@ Query Plan:
 
   TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_b].k)
+  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].k=[dba.cte_b].k) and inst_num()<= ?:? )
 
   SORT (order by)
     TABLE SCAN (dba.cte_b)
 
-  rewritten query: (select [dba.cte_b].i, [dba.cte_b].j, [dba.cte_b].k from [dba.cte_b] [dba.cte_b] where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_b].k) order by ?)
+  rewritten query: (select [dba.cte_b].i, [dba.cte_b].j, [dba.cte_b].k from [dba.cte_b] [dba.cte_b] where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].k=[dba.cte_b].k) and inst_num()<= ?:? ) order by ?)
 
 
 Trace Statistics:
@@ -1502,12 +1502,12 @@ Query Plan:
 
   TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_b].k)
+  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].k=[dba.cte_b].k) and inst_num()<= ?:? )
 
   SORT (order by)
     TABLE SCAN (dba.cte_b)
 
-  rewritten query: (select [dba.cte_b].i, [dba.cte_b].j, [dba.cte_b].k from [dba.cte_b] [dba.cte_b] where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_b].k) order by ?)
+  rewritten query: (select [dba.cte_b].i, [dba.cte_b].j, [dba.cte_b].k from [dba.cte_b] [dba.cte_b] where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].k=[dba.cte_b].k) and inst_num()<= ?:? ) order by ?)
 
 
 Trace Statistics:
@@ -1563,12 +1563,12 @@ Query Plan:
 
   TABLE SCAN (dba.tbl_a)
 
-  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_b].k)
+  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].k=[dba.cte_b].k) and inst_num()<= ?:? )
 
   SORT (order by)
     TABLE SCAN (dba.cte_b)
 
-  rewritten query: (select [dba.cte_b].i, [dba.cte_b].j, [dba.cte_b].k from [dba.cte_b] [dba.cte_b] where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].k=[dba.cte_b].k) order by ?)
+  rewritten query: (select [dba.cte_b].i, [dba.cte_b].j, [dba.cte_b].k from [dba.cte_b] [dba.cte_b] where  exists (select ? from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].k=[dba.cte_b].k) and inst_num()<= ?:? ) order by ?)
 
 
 Trace Statistics:

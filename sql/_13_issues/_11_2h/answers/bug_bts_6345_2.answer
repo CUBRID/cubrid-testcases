@@ -75,9 +75,10 @@ Query plan:
 iscan
     class: z node[?]
     index: i_foo_i_j term[?] AND term[?] (covers)
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select ? from foo z where z.i=x.i+? and z.j=y.j+?)
+(select ? from foo z where z.i=x.i+? and (z.j=y.j+?) and inst_num()<= ?:? )
 Query plan:
 idx-join (inner join)
     outer: sscan
@@ -92,7 +93,7 @@ idx-join (inner join)
     subqs: ?
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED USE_IDX */ count(*) from foo x, foo y where x.i=y.i and  exists (select ? from foo z where z.i=x.i+? and z.j=y.j+?)
+select /*+ ORDERED USE_IDX */ count(*) from foo x, foo y where x.i=y.i and  exists (select ? from foo z where z.i=x.i+? and (z.j=y.j+?) and inst_num()<= ?:? )
 ===================================================
 0
 ===================================================

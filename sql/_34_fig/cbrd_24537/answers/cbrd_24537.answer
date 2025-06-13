@@ -13,16 +13,17 @@
 Query plan:
 sscan
     class: tt node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select ? from tt tt)
+(select ? from tt tt where inst_num()<=?)
 Query plan:
 sscan
     class: d node[?]
     sargs: term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select  ?:? ,  ?:?  from src d where  not  exists (select ? from tt tt) and d.s= ?:? 
+select  ?:? ,  ?:?  from src d where  not  exists (select ? from tt tt where inst_num()<=?) and d.s= ?:? 
 ===================================================
 s    
 1     

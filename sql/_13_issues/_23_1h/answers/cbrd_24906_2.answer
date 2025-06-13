@@ -231,11 +231,11 @@ trace
 Query Plan:
   INDEX SCAN (b.pk_tbl_b_col_a) (key range: b.col_a=a.col_a)
 
-  rewritten query: (select /*+ ORDERED NO_MERGE */ ? from [dba.tbl_b] b where b.col_a=a.col_a and  ?:? = ?:?  and b.col_c= ?:? )
+  rewritten query: (select /*+ ORDERED NO_MERGE */ ? from [dba.tbl_b] b where b.col_a=a.col_a and  ?:? = ?:?  and (b.col_c= ?:? ) and inst_num()<= ?:? )
 
   TABLE SCAN (a)
 
-  rewritten query: select count(*) from [dba.tbl_a] a where  exists (select /*+ ORDERED NO_MERGE */ ? from [dba.tbl_b] b where b.col_a=a.col_a and  ?:? = ?:?  and b.col_c= ?:? )
+  rewritten query: select count(*) from [dba.tbl_a] a where  exists (select /*+ ORDERED NO_MERGE */ ? from [dba.tbl_b] b where b.col_a=a.col_a and  ?:? = ?:?  and (b.col_c= ?:? ) and inst_num()<= ?:? )
 
 
 Trace Statistics:
@@ -262,11 +262,11 @@ Query Plan:
     INDEX SCAN (b.pk_tbl_b_col_a) (key range: b.col_a=a.col_a, covered: true)
     INDEX SCAN (c.pk_tbl_c_col_a) (key range: b.col_a=c.col_a)
 
-  rewritten query: (select /*+ ORDERED NO_MERGE */ ? from [dba.tbl_b] b, [dba.tbl_c] c where b.col_a=a.col_a and b.col_a=c.col_a and  ?:? = ?:?  and c.col_c= ?:? )
+  rewritten query: (select /*+ ORDERED NO_MERGE */ ? from [dba.tbl_b] b, [dba.tbl_c] c where b.col_a=a.col_a and b.col_a=c.col_a and  ?:? = ?:?  and (c.col_c= ?:? ) and inst_num()<= ?:? )
 
   TABLE SCAN (a)
 
-  rewritten query: select count(*) from [dba.tbl_a] a where  exists (select /*+ ORDERED NO_MERGE */ ? from [dba.tbl_b] b, [dba.tbl_c] c where b.col_a=a.col_a and b.col_a=c.col_a and  ?:? = ?:?  and c.col_c= ?:? )
+  rewritten query: select count(*) from [dba.tbl_a] a where  exists (select /*+ ORDERED NO_MERGE */ ? from [dba.tbl_b] b, [dba.tbl_c] c where b.col_a=a.col_a and b.col_a=c.col_a and  ?:? = ?:?  and (c.col_c= ?:? ) and inst_num()<= ?:? )
 
 
 Trace Statistics:

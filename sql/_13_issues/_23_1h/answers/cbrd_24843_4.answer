@@ -424,13 +424,13 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     TABLE SCAN (p)
-    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: p.a=c.p_akey range: p.b=c.p_b, covered: true)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: p.a=c.p_akey range: (p.b=c.p_b), covered: true)
 
-  rewritten query: (select p.a from [dba.t_parent] p, [dba.t_child] c where p.a=c.p_a and p.b=c.p_b)
+  rewritten query: (select p.a from [dba.t_parent] p, [dba.t_child] c where p.a=c.p_a and (p.b=c.p_b) and inst_num()<= ?:? )
 
   TABLE SCAN (c)
 
-  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_child] c where  exists (select p.a from [dba.t_parent] p, [dba.t_child] c where p.a=c.p_a and p.b=c.p_b) and c.p_a is not null  and c.p_b is not null 
+  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_child] c where  exists (select p.a from [dba.t_parent] p, [dba.t_child] c where p.a=c.p_a and (p.b=c.p_b) and inst_num()<= ?:? ) and c.p_a is not null  and c.p_b is not null 
 
 
 Trace Statistics:
@@ -460,13 +460,13 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     TABLE SCAN (p)
-    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: p.a=c.p_akey range: p.b=c.p_b, covered: true)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: p.a=c.p_akey range: (p.b=c.p_b), covered: true)
 
-  rewritten query: (select p.a from [dba.t_parent] p, [dba.t_child] c where p.a=c.p_a and p.b=c.p_b)
+  rewritten query: (select p.a from [dba.t_parent] p, [dba.t_child] c where p.a=c.p_a and (p.b=c.p_b) and inst_num()<= ?:? )
 
   TABLE SCAN (c)
 
-  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_child] c where  exists (select p.a from [dba.t_parent] p, [dba.t_child] c where p.a=c.p_a and p.b=c.p_b) and c.p_a is not null  and c.p_b is not null 
+  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_child] c where  exists (select p.a from [dba.t_parent] p, [dba.t_child] c where p.a=c.p_a and (p.b=c.p_b) and inst_num()<= ?:? ) and c.p_a is not null  and c.p_b is not null 
 
 
 Trace Statistics:
@@ -487,13 +487,13 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     TABLE SCAN (p)
-    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: p.a=c.p_akey range: p.b=c.p_b, covered: true)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: p.a=c.p_akey range: (p.b=c.p_b), covered: true)
 
-  rewritten query: (select p.a from [dba.t_parent] p, [dba.t_child] c where p.a=c.p_a and p.b=c.p_b)
+  rewritten query: (select p.a from [dba.t_parent] p, [dba.t_child] c where p.a=c.p_a and (p.b=c.p_b) and inst_num()<= ?:? )
 
   TABLE SCAN (c)
 
-  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_child] c where  not  exists (select p.a from [dba.t_parent] p, [dba.t_child] c where p.a=c.p_a and p.b=c.p_b) and c.p_a is not null  and c.p_b is not null 
+  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_child] c where  not  exists (select p.a from [dba.t_parent] p, [dba.t_child] c where p.a=c.p_a and (p.b=c.p_b) and inst_num()<= ?:? ) and c.p_a is not null  and c.p_b is not null 
 
 
 Trace Statistics:
@@ -514,13 +514,13 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     TABLE SCAN (p)
-    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: p.a=c.p_akey range: p.b=c.p_b, covered: true)
+    INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: p.a=c.p_akey range: (p.b=c.p_b), covered: true)
 
-  rewritten query: (select p.a from [dba.t_parent] p, [dba.t_child] c where p.a=c.p_a and p.b=c.p_b)
+  rewritten query: (select p.a from [dba.t_parent] p, [dba.t_child] c where p.a=c.p_a and (p.b=c.p_b) and inst_num()<= ?:? )
 
   TABLE SCAN (c)
 
-  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_child] c where  not  exists (select p.a from [dba.t_parent] p, [dba.t_child] c where p.a=c.p_a and p.b=c.p_b) and c.p_a is not null  and c.p_b is not null 
+  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_child] c where  not  exists (select p.a from [dba.t_parent] p, [dba.t_child] c where p.a=c.p_a and (p.b=c.p_b) and inst_num()<= ?:? ) and c.p_a is not null  and c.p_b is not null 
 
 
 Trace Statistics:
