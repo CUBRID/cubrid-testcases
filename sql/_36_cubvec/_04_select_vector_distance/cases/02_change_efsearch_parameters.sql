@@ -1,3 +1,5 @@
+-- Test case for change efSearch parameters
+
 -- Drop existing table
 DROP IF EXISTS items;
 
@@ -111,14 +113,14 @@ INSERT INTO items VALUES (98, '[0,7,5,7,0,9,7,9,5,0,6,0,7,1,1,7]');
 INSERT INTO items VALUES (99, '[0,0,2,4,2,5,1,6,3,8,3,1,6,5,8,0]');
 INSERT INTO items VALUES (100, '[2,1,0,4,0,6,3,2,3,5,9,8,1,5,2,6]');
 
---Step 4 : Test query with default efSearch
+--Step 4 : Test query with default efSearch(40)
 SELECT /*+ RECOMPILE */ id
 FROM items
 ORDER BY l2_distance(vc1, '[5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5]')
 LIMIT 10;
 
 -- Step 5: Test query with low efSearch (approximate)
-SET SYSTEM PARAMETERS 'hnsw_ef_search=1';
+SET SYSTEM PARAMETERS 'hnsw_ef_search=40';
 SELECT /*+ RECOMPILE */ id
 FROM items
 ORDER BY l2_distance(vc1, '[5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5]')

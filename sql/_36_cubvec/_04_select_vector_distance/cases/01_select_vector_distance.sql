@@ -1,3 +1,5 @@
+-- Test case for select vector distance by ANN query
+
 -- Drop existing table
 DROP IF EXISTS items;
 
