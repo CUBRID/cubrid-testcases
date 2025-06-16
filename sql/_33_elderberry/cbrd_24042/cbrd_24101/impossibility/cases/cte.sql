@@ -19,7 +19,7 @@ VALUES (1,1),(2,2),(3,3);
 --subquery has CTE spec.
 SELECT /*+ recompile */ a.col_a
 FROM   t_a a,
-       (WITH t AS SELECT /*+ MATERIALIZE */ col_a,
+       (WITH t AS SELECT col_a,
         col_b col_b
         FROM  t_b
         WHERE col_a > 1

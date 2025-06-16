@@ -327,13 +327,13 @@ show trace;
 /* 13. union all */
 WITH
 of_ooooo AS 
-( select /*+ recompile materialize */ 
+( select /*+ recompile */ 
 	'ooooo', c.*
   from t_child as c, t_parent as p
   where c.p_a = p.a and c.p_b = p.b
   and c.p_a = 1 ),
 of_xxxxx AS
-( select /*+ recompile materialize */ 
+( select /*+ recompile */ 
 	'xxxxx', c.*
   from t_child as c, t_parent as p
   where c.p_a = p.a and c.p_b = p.b

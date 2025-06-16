@@ -54,7 +54,7 @@ SHOW TRACE;
 
 evaluate '7. Calling a stored procedure in a CTE';
 WITH cte AS (
-    SELECT /*+ materialize */ fn_string(name) AS fn_name FROM sales_tbl ORDER BY 1
+    SELECT fn_string(name) AS fn_name FROM sales_tbl ORDER BY 1
 )
 SELECT fn_name FROM cte LIMIT 3;
 SHOW TRACE;

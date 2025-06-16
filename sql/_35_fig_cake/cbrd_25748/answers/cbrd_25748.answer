@@ -187,11 +187,11 @@ Query Plan:
   SORT (order by)
     TABLE SCAN (dba.sales_tbl)
 
-  rewritten query: select /*+ MATERIALIZE */ [dba.fn_string]([dba.sales_tbl].[name]) from [dba.sales_tbl] [dba.sales_tbl] order by ?
+  rewritten query: select [dba.fn_string]([dba.sales_tbl].[name]) from [dba.sales_tbl] [dba.sales_tbl] order by ?
 
   TABLE SCAN (dba.cte)
 
-  rewritten query: with cte(fn_name) as (select /*+ MATERIALIZE */ [dba.fn_string]([dba.sales_tbl].[name]) from [dba.sales_tbl] [dba.sales_tbl] order by ?)select [dba.cte].fn_name from [dba.cte] [dba.cte] where (inst_num()<=?)
+  rewritten query: with cte(fn_name) as (select [dba.fn_string]([dba.sales_tbl].[name]) from [dba.sales_tbl] [dba.sales_tbl] order by ?)select [dba.cte].fn_name from [dba.cte] [dba.cte] where (inst_num()<=?)
 
 
 Trace Statistics:

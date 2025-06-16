@@ -314,7 +314,7 @@ sscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select /*+ MATERIALIZE */ tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a where tbl_a.col_b= ?:? 
+select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a where tbl_a.col_b= ?:? 
 Query plan:
 nl-join (left outer join)
     edge:  term[?]
@@ -334,13 +334,13 @@ nl-join (left outer join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(with cte(col_a, col_b) as (select /*+ MATERIALIZE */ tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a where tbl_a.col_b= ?:? )select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a inner join cte cte on tbl_a.col_a=cte.col_a left outer join tbl_b tbl_b on tbl_a.col_b=tbl_b.col_b)
+(with cte(col_a, col_b) as (select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a where tbl_a.col_b= ?:? )select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a inner join cte cte on tbl_a.col_a=cte.col_a left outer join tbl_b tbl_b on tbl_a.col_b=tbl_b.col_b)
 Query plan:
 sscan
     class: t node[?]
     cost:  ? card ?
 Query stmt:
-select ?, t.col_a, t.col_b from (with cte(col_a, col_b) as (select /*+ MATERIALIZE */ tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a where tbl_a.col_b= ?:? )select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a inner join cte cte on tbl_a.col_a=cte.col_a left outer join tbl_b tbl_b on tbl_a.col_b=tbl_b.col_b) t (col_a, col_b)
+select ?, t.col_a, t.col_b from (with cte(col_a, col_b) as (select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a where tbl_a.col_b= ?:? )select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a inner join cte cte on tbl_a.col_a=cte.col_a left outer join tbl_b tbl_b on tbl_a.col_b=tbl_b.col_b) t (col_a, col_b)
 ===================================================
 o    col_a    cnt    
 
@@ -352,19 +352,19 @@ temp(group by)
     sort:  
     cost:  ? card ?
 Query stmt:
-select /*+ MATERIALIZE */ tbl_a.col_a, count(*) from tbl_a tbl_a group by tbl_a.col_b
+select tbl_a.col_a, count(*) from tbl_a tbl_a group by tbl_a.col_b
 Query plan:
 sscan
     simple CTE:cte node[?]
     cost:  ? card ?
 Query stmt:
-(with cte(col_a, cnt) as (select /*+ MATERIALIZE */ tbl_a.col_a, count(*) from tbl_a tbl_a group by tbl_a.col_b)select cte.col_a, cte.cnt from cte cte)
+(with cte(col_a, cnt) as (select tbl_a.col_a, count(*) from tbl_a tbl_a group by tbl_a.col_b)select cte.col_a, cte.cnt from cte cte)
 Query plan:
 sscan
     class: t node[?]
     cost:  ? card ?
 Query stmt:
-select ?, t.col_a, t.cnt from (with cte(col_a, cnt) as (select /*+ MATERIALIZE */ tbl_a.col_a, count(*) as [cnt] from tbl_a tbl_a group by tbl_a.col_b)select cte.col_a, cte.cnt from cte cte) t (col_a, cnt)
+select ?, t.col_a, t.cnt from (with cte(col_a, cnt) as (select tbl_a.col_a, count(*) as [cnt] from tbl_a tbl_a group by tbl_a.col_b)select cte.col_a, cte.cnt from cte cte) t (col_a, cnt)
 ===================================================
 p    col_a    col_b    
 
@@ -376,7 +376,7 @@ temp(group by)
     sort:  
     cost:  ? card ?
 Query stmt:
-select /*+ MATERIALIZE */ tbl_a.col_a, count(*) from tbl_a tbl_a group by tbl_a.col_b
+select tbl_a.col_a, count(*) from tbl_a tbl_a group by tbl_a.col_b
 Query plan:
 nl-join (left outer join)
     edge:  term[?]
@@ -396,13 +396,13 @@ nl-join (left outer join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(with cte(col_a, col_b) as (select /*+ MATERIALIZE */ tbl_a.col_a, count(*) from tbl_a tbl_a group by tbl_a.col_b)select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a inner join cte cte on tbl_a.col_a=cte.col_a left outer join tbl_b tbl_b on tbl_a.col_b=tbl_b.col_b)
+(with cte(col_a, col_b) as (select tbl_a.col_a, count(*) from tbl_a tbl_a group by tbl_a.col_b)select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a inner join cte cte on tbl_a.col_a=cte.col_a left outer join tbl_b tbl_b on tbl_a.col_b=tbl_b.col_b)
 Query plan:
 sscan
     class: t node[?]
     cost:  ? card ?
 Query stmt:
-select ?, t.col_a, t.col_b from (with cte(col_a, col_b) as (select /*+ MATERIALIZE */ tbl_a.col_a, count(*) as [col_b] from tbl_a tbl_a group by tbl_a.col_b)select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a inner join cte cte on tbl_a.col_a=cte.col_a left outer join tbl_b tbl_b on tbl_a.col_b=tbl_b.col_b) t (col_a, col_b)
+select ?, t.col_a, t.col_b from (with cte(col_a, col_b) as (select tbl_a.col_a, count(*) as [col_b] from tbl_a tbl_a group by tbl_a.col_b)select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a inner join cte cte on tbl_a.col_a=cte.col_a left outer join tbl_b tbl_b on tbl_a.col_b=tbl_b.col_b) t (col_a, col_b)
 ===================================================
 q    col_a    col_b    
 
