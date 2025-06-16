@@ -120,7 +120,7 @@ ORDER BY l2_distance(vc1, '[5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5]')
 LIMIT 10;
 
 -- Step 5: Test query with low efSearch (approximate)
-SET SYSTEM PARAMETERS 'hnsw_ef_search=40';
+SET SYSTEM PARAMETERS 'hnsw_ef_search=1';
 SELECT /*+ RECOMPILE */ id
 FROM items
 ORDER BY l2_distance(vc1, '[5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5]')
