@@ -229,7 +229,7 @@ show trace;
 do @i := @i + 1;
 evaluate concat ('####', lpad (@i, 3), '. pruning + cte');
 
-with cte as (select * from ta_range a where a.ca between 8 and 9 limit 1500)
+with cte as (select /*+ materialize */ * from ta_range a where a.ca between 8 and 9 limit 1500)
 select /*+ recompile ordered */ count(*)
 from  cte a, ta_list b
 where a.ca = b.ca and a.cd = b.cd;

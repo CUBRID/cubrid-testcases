@@ -637,13 +637,13 @@ trace
 Query Plan:
   INDEX SCAN (a.pk_ta_range_ca_cd) (key range: (a.ca>= ?:?  and a.ca<= ?:? ))
 
-  rewritten query: select a.ca, a.cb, a.cc, a.cd from [dba.ta_range] a where (a.ca>= ?:?  and a.ca<= ?:? ) and (inst_num()<= ?:? )
+  rewritten query: select /*+ MATERIALIZE */ a.ca, a.cb, a.cc, a.cd from [dba.ta_range] a where (a.ca>= ?:?  and a.ca<= ?:? ) and (inst_num()<= ?:? )
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     INDEX SCAN (b.pk_ta_list_ca_cd) (key range: a.ca=b.cakey range: a.cd=b.cd, covered: true)
 
-  rewritten query: with cte(ca, cb, cc, cd) as (select a.ca, a.cb, a.cc, a.cd from [dba.ta_range] a where (a.ca>= ?:?  and a.ca<= ?:? ) and (inst_num()<= ?:? ))select /*+ ORDERED */ count(*) from [dba.cte] a, [dba.ta_list] b where a.ca=b.ca and a.cd=b.cd
+  rewritten query: with cte(ca, cb, cc, cd) as (select /*+ MATERIALIZE */ a.ca, a.cb, a.cc, a.cd from [dba.ta_range] a where (a.ca>= ?:?  and a.ca<= ?:? ) and (inst_num()<= ?:? ))select /*+ ORDERED */ count(*) from [dba.cte] a, [dba.ta_list] b where a.ca=b.ca and a.cd=b.cd
 
 
 Trace Statistics:
