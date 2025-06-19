@@ -8,7 +8,7 @@ begin
     null;
 end;
 
-create or replace procedure t(i int) as
+create or replace procedure t3423n(i int) as
     a int := 1;
     b int := 2;
     c int := 3;
@@ -18,12 +18,12 @@ begin
     execute immediate 'call poo(?, ?, ?, ?, ?)' using b, c, d, e;
 end;
 
-select count(*) from db_stored_procedure where sp_name = 't';
-select count(*) from db_stored_procedure_args where sp_name = 't';
+select count(*) from db_stored_procedure where sp_name = 't3423n';
+select count(*) from db_stored_procedure_args where sp_name = 't3423n';
 
-call t(7);
+call t3423n(7);
 
-drop procedure t;
+drop procedure t3423n;
 drop procedure poo;
 
 

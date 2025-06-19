@@ -2,24 +2,24 @@
 
 -- Check whether an error occurs if the number of host variable positions (question marks) in the execution string of the execute immediate statement and the number of values in the using clause are different.
 
-CREATE OR REPLACE PROCEDURE t()
+CREATE OR REPLACE PROCEDURE t3438e()
 AS
     out_cnt integer;
 BEGIN
     EXECUTE IMMEDIATE 'select count(*)  from db_class where class_name = ? ' INTO out_cnt USING 'db_class', 'db_server' ;
     dbms_output.put_line('count(*): ' || out_cnt);
 END;
-call t();
+call t3438e();
 
-CREATE OR REPLACE PROCEDURE t()
+CREATE OR REPLACE PROCEDURE t3438e()
 AS
     out_cnt integer;
 BEGIN
     EXECUTE IMMEDIATE 'select count(*)  from db_class where class_name = ? ' INTO out_cnt ;
     dbms_output.put_line('count(*): ' || out_cnt);
 END;
-call t();
+call t3438e();
 
-drop procedure t;
+drop procedure t3438e;
 
 --+ server-message off
