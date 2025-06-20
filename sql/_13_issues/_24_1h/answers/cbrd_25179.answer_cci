@@ -228,22 +228,15 @@ select ?, t.col_a, t.col_b from (with cte(col_a, col_b) as (null)select tbl_a.co
 m    col_a    col_b    
 
 Query plan:
-sscan
-    class: av? node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-(select null from table({}) av? (av_?) where ? <> ?)
-Query plan:
 nl-join (left outer join)
     edge:  term[?]
     outer: nl-join (inner join)
                edge:  term[?]
                outer: sscan
-                          class: t node[?]
+                          class: tbl_a node[?]
                           cost:  ? card ?
                inner: sscan
-                          class: cte node[?]
+                          simple CTE:cte node[?]
                           sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
@@ -253,7 +246,13 @@ nl-join (left outer join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select ?, t.col_a, t.col_b from tbl_a t inner join (select null from table({}) av? (av_?) where ? <> ?) cte (col_a) on t.col_a=cte.col_a left outer join tbl_b tbl_b on t.col_b=tbl_b.col_b
+(with cte(col_a, col_b) as (null)select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a inner join cte cte on tbl_a.col_a=cte.col_a left outer join tbl_b tbl_b on tbl_a.col_b=tbl_b.col_b)
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select ?, t.col_a, t.col_b from (with cte(col_a, col_b) as (null)select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a inner join cte cte on tbl_a.col_a=cte.col_a left outer join tbl_b tbl_b on tbl_a.col_b=tbl_b.col_b) t (col_a, col_b)
 ===================================================
 n    col_a    col_b    
 
@@ -263,17 +262,17 @@ sscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select tbl_a.col_a from tbl_a tbl_a where tbl_a.col_b= ?:? )
+select /*+ MATERIALIZE */ tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a where tbl_a.col_b= ?:? 
 Query plan:
 nl-join (left outer join)
     edge:  term[?]
     outer: nl-join (inner join)
                edge:  term[?]
                outer: sscan
-                          class: t node[?]
+                          class: tbl_a node[?]
                           cost:  ? card ?
                inner: sscan
-                          class: cte node[?]
+                          simple CTE:cte node[?]
                           sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
@@ -283,7 +282,13 @@ nl-join (left outer join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select ?, t.col_a, t.col_b from tbl_a t inner join (select tbl_a.col_a from tbl_a tbl_a where tbl_a.col_b= ?:? ) cte (col_a) on t.col_a=cte.col_a left outer join tbl_b tbl_b on t.col_b=tbl_b.col_b
+(with cte(col_a, col_b) as (select /*+ MATERIALIZE */ tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a where tbl_a.col_b= ?:? )select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a inner join cte cte on tbl_a.col_a=cte.col_a left outer join tbl_b tbl_b on tbl_a.col_b=tbl_b.col_b)
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select ?, t.col_a, t.col_b from (with cte(col_a, col_b) as (select /*+ MATERIALIZE */ tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a where tbl_a.col_b= ?:? )select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a inner join cte cte on tbl_a.col_a=cte.col_a left outer join tbl_b tbl_b on tbl_a.col_b=tbl_b.col_b) t (col_a, col_b)
 ===================================================
 o    col_a    cnt    
 
@@ -295,13 +300,19 @@ temp(group by)
     sort:  
     cost:  ? card ?
 Query stmt:
-(select tbl_a.col_a, count(*) from tbl_a tbl_a group by tbl_a.col_b)
+select /*+ MATERIALIZE */ tbl_a.col_a, count(*) from tbl_a tbl_a group by tbl_a.col_b
+Query plan:
+sscan
+    simple CTE:cte node[?]
+    cost:  ? card ?
+Query stmt:
+(with cte(col_a, cnt) as (select /*+ MATERIALIZE */ tbl_a.col_a, count(*) from tbl_a tbl_a group by tbl_a.col_b)select cte.col_a, cte.cnt from cte cte)
 Query plan:
 sscan
     class: t node[?]
     cost:  ? card ?
 Query stmt:
-select ?, t.col_a, t.cnt from (select tbl_a.col_a, count(*) as [cnt] from tbl_a tbl_a group by tbl_a.col_b) t (col_a, cnt)
+select ?, t.col_a, t.cnt from (with cte(col_a, cnt) as (select /*+ MATERIALIZE */ tbl_a.col_a, count(*) as [cnt] from tbl_a tbl_a group by tbl_a.col_b)select cte.col_a, cte.cnt from cte cte) t (col_a, cnt)
 ===================================================
 p    col_a    col_b    
 
@@ -313,17 +324,17 @@ temp(group by)
     sort:  
     cost:  ? card ?
 Query stmt:
-(select tbl_a.col_a from tbl_a tbl_a group by tbl_a.col_b)
+select /*+ MATERIALIZE */ tbl_a.col_a, count(*) from tbl_a tbl_a group by tbl_a.col_b
 Query plan:
 nl-join (left outer join)
     edge:  term[?]
     outer: nl-join (inner join)
                edge:  term[?]
                outer: sscan
-                          class: t node[?]
+                          class: tbl_a node[?]
                           cost:  ? card ?
                inner: sscan
-                          class: cte node[?]
+                          simple CTE:cte node[?]
                           sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
@@ -333,7 +344,13 @@ nl-join (left outer join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select ?, t.col_a, t.col_b from tbl_a t inner join (select tbl_a.col_a from tbl_a tbl_a group by tbl_a.col_b) cte (col_a) on t.col_a=cte.col_a left outer join tbl_b tbl_b on t.col_b=tbl_b.col_b
+(with cte(col_a, col_b) as (select /*+ MATERIALIZE */ tbl_a.col_a, count(*) from tbl_a tbl_a group by tbl_a.col_b)select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a inner join cte cte on tbl_a.col_a=cte.col_a left outer join tbl_b tbl_b on tbl_a.col_b=tbl_b.col_b)
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select ?, t.col_a, t.col_b from (with cte(col_a, col_b) as (select /*+ MATERIALIZE */ tbl_a.col_a, count(*) as [col_b] from tbl_a tbl_a group by tbl_a.col_b)select tbl_a.col_a, tbl_a.col_b from tbl_a tbl_a inner join cte cte on tbl_a.col_a=cte.col_a left outer join tbl_b tbl_b on tbl_a.col_b=tbl_b.col_b) t (col_a, col_b)
 ===================================================
 q    col_a    col_b    
 
