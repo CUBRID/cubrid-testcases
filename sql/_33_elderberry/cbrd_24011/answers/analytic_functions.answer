@@ -17,6 +17,29 @@
 ===================================================
 0
 ===================================================
+count(*)    
+100     
+
+Query plan:
+iscan
+    class: tab_b node[?]
+    index: idx term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+(select tab_b.col_a from tab_b tab_b where tab_b.col_a= ?:? )
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: b node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: a node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tab_a a, (select tab_b.col_a from tab_b tab_b where tab_b.col_a= ?:? ) b (col_a) where a.col_a= ?:?  and a.col_a=b.col_a
+===================================================
 count(b.col_b)    
 100     
 
