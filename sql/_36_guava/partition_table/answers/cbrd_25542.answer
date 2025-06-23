@@ -118,12 +118,146 @@ Trace Statistics:
      
 
 ===================================================
+    
+5. where: colb between 1 and 3     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ta.idx) (key range: [dba.ta].cola= ?:? key range: ([dba.ta].colb>= ?:?  and [dba.ta].colb<= ?:? ), covered: true)
+
+  rewritten query: select count(*) from [dba.ta] [dba.ta] where ([dba.ta].colb>= ?:?  and [dba.ta].colb<= ?:? ) and [dba.ta].cola= ?:?  using index [dba.ta].idx
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ta.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta__p__pb.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+    
+6. multi IN, with range     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ta.idx) (key range: (([dba.ta].cola= ?:? ) or ([dba.ta].cola= ?:? ) or ([dba.ta].cola= ?:? ))key range: ([dba.ta].colb> ?:? ), covered: true)
+
+  rewritten query: select count(*) from [dba.ta] [dba.ta] where (([dba.ta].cola= ?:? ) or ([dba.ta].cola= ?:? ) or ([dba.ta].cola= ?:? )) and ([dba.ta].colb> ?:? ) using index [dba.ta].idx
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ta.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta__p__pb.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta__p__pc.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+    
+7. IN + OR     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ta.idx) (key range: (([dba.ta].cola= ?:? ) or ([dba.ta].cola= ?:? ))key range: ([dba.ta].colb> ?:? ), key filter: ([dba.ta].cola= ?:? ) or ([dba.ta].colb> ?:? ), key filter: ([dba.ta].colb> ?:? ) or ([dba.ta].cola= ?:? ), covered: true)
+
+  rewritten query: select count(*) from [dba.ta] [dba.ta] where (([dba.ta].cola= ?:? ) or ([dba.ta].cola= ?:? )) and (([dba.ta].cola= ?:? ) or ([dba.ta].colb> ?:? )) and (([dba.ta].colb> ?:? ) or ([dba.ta].cola= ?:? )) and ([dba.ta].colb> ?:? ) using index [dba.ta].idx
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ta.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta__p__pb.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta__p__pc.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+    
+8. IN + colb > cola     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ta.idx) (key range: [dba.ta].cola= ?:? key range: ([dba.ta].colb> ?:? ), covered: true)
+
+  rewritten query: select count(*) from [dba.ta] [dba.ta] where ([dba.ta].colb> ?:? ) and [dba.ta].cola= ?:?  using index [dba.ta].idx
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ta.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta__p__pb.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+    
+9. duplicate IN     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ta.idx) (key range: (([dba.ta].cola= ?:? ) or ([dba.ta].cola= ?:? ) or ([dba.ta].cola= ?:? ))key range: ([dba.ta].colb> ?:? ), covered: true)
+
+  rewritten query: select count(*) from [dba.ta] [dba.ta] where (([dba.ta].cola= ?:? ) or ([dba.ta].cola= ?:? ) or ([dba.ta].cola= ?:? )) and ([dba.ta].colb> ?:? ) using index [dba.ta].idx
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ta.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta__p__pb.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+    
+10. IN + IS NOT NULL     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ta.idx) (key range: [dba.ta].cola= ?:? , key filter: [dba.ta].colb is not null , covered: true)
+
+  rewritten query: select count(*) from [dba.ta] [dba.ta] where [dba.ta].colb is not null  and [dba.ta].cola= ?:?  using index [dba.ta].idx
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ta.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta__p__pb.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
 0
 ===================================================
 7
 ===================================================
     
-5. function index, where_range     
+11. function index, where_range     
 
 ===================================================
 cola    
@@ -150,7 +284,7 @@ Trace Statistics:
 
 ===================================================
     
-6. ignore function index, no predicate expression     
+12. ignore function index, no predicate expression     
 
 ===================================================
 cola    
