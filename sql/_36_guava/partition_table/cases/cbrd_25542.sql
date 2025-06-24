@@ -75,7 +75,7 @@ evaluate concat ('11. function index, where_range');
 select /*+ recompile */ * from tb use index(iidx) where abs(cola) >= 2;
 show trace;
 
-evaluate concat ('12. ignore function index, no predicate expression');
+evaluate concat ('12. ignore function index, where_pred');
 select  /*+ recompile */ * from tb ignore index(iidx) where abs(cola) >= 2;
 show trace;
 
