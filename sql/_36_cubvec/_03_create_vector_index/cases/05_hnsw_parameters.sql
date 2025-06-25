@@ -13,6 +13,8 @@ CREATE TABLE test_vector_index_hnsw (
 -- Syntax
 --------------------------------------------------------------------------------
 -- Syntax/ creation with parameters/ Valid
+-- TODO : min, max, range out value of m and ef_construction should be tested.
+-- TODO : Also, when m and ef_construction is changed, recall will be changed, which should be tested by shell test.
 CREATE VECTOR INDEX idx_hnsw1 ON test_vector_index_hnsw(embedding COSINE)
   WITH (m = 40, ef_construction = 500);
 DROP VECTOR INDEX idx_hnsw1 ON test_vector_index_hnsw(embedding);
