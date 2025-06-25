@@ -79,5 +79,6 @@ evaluate concat ('12. ignore function index, where_pred');
 select  /*+ recompile */ * from tb ignore index(iidx) where abs(cola) >= 2;
 show trace;
 
+set trace off;
 drop table if exists ta;
 drop table if exists tb;
