@@ -15,5 +15,11 @@ from tab_a a
 where a.col_a = b.col_a
   and b.col_a = 2;
 
+select /*+ recompile */ count(b.col_b)
+from tab_a a
+      ,(select col_a, rank() over(partition by col_a order by col_b) col_b from tab_b ) b
+where a.col_a = b.col_a
+  and b.col_a = 2;
+
 drop table if exists tab_a, tab_b;
 

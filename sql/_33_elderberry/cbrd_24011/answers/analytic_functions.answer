@@ -21,6 +21,29 @@ count(*)
 100     
 
 Query plan:
+iscan
+    class: tab_b node[?]
+    index: idx term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+(select tab_b.col_a from tab_b tab_b where tab_b.col_a= ?:? )
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: b node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: a node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tab_a a, (select tab_b.col_a from tab_b tab_b where tab_b.col_a= ?:? ) b (col_a) where a.col_a= ?:?  and a.col_a=b.col_a
+===================================================
+count(b.col_b)    
+100     
+
+Query plan:
 sscan
     class: tab_b node[?]
     cost:  ? card ?
@@ -28,7 +51,7 @@ Analytic functions:
     run[?]: sort with key (? asc nulls first, ? asc nulls first)
            func[?]: rank partition by (? asc nulls first) order by (? asc nulls first)
 Query stmt:
-(select tab_b.col_a, rank() over (partition by ? order by ?) from tab_b tab_b)
+(select rank() over (partition by ? order by ?), tab_b.col_a from tab_b tab_b)
 Query plan:
 nl-join (cross join)
     outer: sscan
@@ -41,6 +64,6 @@ nl-join (cross join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from tab_a a, (select tab_b.col_a, rank() over (partition by ? order by ?) from tab_b tab_b) b (col_a, col_b) where a.col_a= ?:?  and b.col_a= ?:?  and a.col_a=b.col_a
+select count(b.col_b) from tab_a a, (select rank() over (partition by ? order by ?), tab_b.col_a from tab_b tab_b) b (col_b, col_a) where a.col_a= ?:?  and b.col_a= ?:?  and a.col_a=b.col_a
 ===================================================
 0
