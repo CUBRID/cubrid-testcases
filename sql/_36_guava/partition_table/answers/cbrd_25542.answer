@@ -1,0 +1,317 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+    
+1. multi column index, where_range     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ta.idx) (key range: [dba.ta].cola= ?:? key range: ([dba.ta].colb> ?:? ), covered: true)
+
+  rewritten query: select count(*) from [dba.ta] [dba.ta] where ([dba.ta].colb> ?:? ) and [dba.ta].cola= ?:?  using index [dba.ta].idx
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ta.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta__p__pb.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ta.idx) (key range: [dba.ta].cola= ?:? key range: ([dba.ta].colb> ?:? ), covered: true)
+
+  rewritten query: select count(*) from [dba.ta] [dba.ta] where ([dba.ta].colb> ?:? ) and [dba.ta].cola= ?:?  using index [dba.ta].idx
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ta.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta__p__pb.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+    
+2. multi column index, where_key, where_range     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ta.idx) (key range: ([dba.ta].cola> ?:? ), key filter: [dba.ta].colb= ?:? , covered: true)
+
+  rewritten query: select count(*) from [dba.ta] [dba.ta] where ([dba.ta].cola> ?:? ) and [dba.ta].colb= ?:?  using index [dba.ta].idx
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ta.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta__p__pb.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta__p__pc.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+    
+3. ignore index, where_pred     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.ta)
+
+  rewritten query: select count(*) from [dba.ta] [dba.ta] where ([dba.ta].colb> ?:? ) and [dba.ta].cola= ?:?  using index [dba.ta].idx(-)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta__p__pa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+4. ignore index, no predicate expression     
+
+===================================================
+count(*)    
+3     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.ta)
+
+  rewritten query: select count(*) from [dba.ta] [dba.ta]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta__p__pa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta__p__pb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ta__p__pc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+5. where: colb between 1 and 3     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ta.idx) (key range: [dba.ta].cola= ?:? key range: ([dba.ta].colb>= ?:?  and [dba.ta].colb<= ?:? ), covered: true)
+
+  rewritten query: select count(*) from [dba.ta] [dba.ta] where ([dba.ta].colb>= ?:?  and [dba.ta].colb<= ?:? ) and [dba.ta].cola= ?:?  using index [dba.ta].idx
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ta.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta__p__pb.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+    
+6. multi IN, with range     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ta.idx) (key range: (([dba.ta].cola= ?:? ) or ([dba.ta].cola= ?:? ) or ([dba.ta].cola= ?:? ))key range: ([dba.ta].colb> ?:? ), covered: true)
+
+  rewritten query: select count(*) from [dba.ta] [dba.ta] where (([dba.ta].cola= ?:? ) or ([dba.ta].cola= ?:? ) or ([dba.ta].cola= ?:? )) and ([dba.ta].colb> ?:? ) using index [dba.ta].idx
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ta.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta__p__pb.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta__p__pc.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+    
+7. IN + OR     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ta.idx) (key range: (([dba.ta].cola= ?:? ) or ([dba.ta].cola= ?:? ))key range: ([dba.ta].colb> ?:? ), key filter: ([dba.ta].cola= ?:? ) or ([dba.ta].colb> ?:? ), key filter: ([dba.ta].colb> ?:? ) or ([dba.ta].cola= ?:? ), covered: true)
+
+  rewritten query: select count(*) from [dba.ta] [dba.ta] where (([dba.ta].cola= ?:? ) or ([dba.ta].cola= ?:? )) and (([dba.ta].cola= ?:? ) or ([dba.ta].colb> ?:? )) and (([dba.ta].colb> ?:? ) or ([dba.ta].cola= ?:? )) and ([dba.ta].colb> ?:? ) using index [dba.ta].idx
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ta.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta__p__pb.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta__p__pc.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+    
+8. IN + colb > cola     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ta.idx) (key range: [dba.ta].cola= ?:? key range: ([dba.ta].colb> ?:? ), covered: true)
+
+  rewritten query: select count(*) from [dba.ta] [dba.ta] where ([dba.ta].colb> ?:? ) and [dba.ta].cola= ?:?  using index [dba.ta].idx
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ta.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta__p__pb.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+    
+9. duplicate IN     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ta.idx) (key range: (([dba.ta].cola= ?:? ) or ([dba.ta].cola= ?:? ) or ([dba.ta].cola= ?:? ))key range: ([dba.ta].colb> ?:? ), covered: true)
+
+  rewritten query: select count(*) from [dba.ta] [dba.ta] where (([dba.ta].cola= ?:? ) or ([dba.ta].cola= ?:? ) or ([dba.ta].cola= ?:? )) and ([dba.ta].colb> ?:? ) using index [dba.ta].idx
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ta.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta__p__pb.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+    
+10. IN + IS NOT NULL     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ta.idx) (key range: [dba.ta].cola= ?:? , key filter: [dba.ta].colb is not null , covered: true)
+
+  rewritten query: select count(*) from [dba.ta] [dba.ta] where [dba.ta].colb is not null  and [dba.ta].cola= ?:?  using index [dba.ta].idx
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ta.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           PARTITION (index: dba.ta__p__pb.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+0
+===================================================
+7
+===================================================
+    
+11. function index, where_range     
+
+===================================================
+cola    
+-2     
+2     
+-3     
+3     
+-4     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tb.iidx) (key range: ( abs([dba.tb].cola)>= ?:? ))
+
+  rewritten query: select [dba.tb].cola from [dba.tb] [dba.tb] where ( abs([dba.tb].cola)>= ?:? ) using index [dba.tb].iidx
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tb.iidx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+           PARTITION (index: dba.tb__p__pc.iidx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+           PARTITION (index: dba.tb__p__pd.iidx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+12. ignore function index, where_pred     
+
+===================================================
+cola    
+-2     
+2     
+-3     
+3     
+-4     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tb)
+
+  rewritten query: select [dba.tb].cola from [dba.tb] [dba.tb] where ( abs([dba.tb].cola)>= ?:? ) using index [dba.tb].iidx(-)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.tb__p__pc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.tb__p__pd), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
