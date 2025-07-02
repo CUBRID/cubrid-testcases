@@ -23,11 +23,11 @@ INSERT INTO year_tbl VALUES
   ('2024-01-01 00:00:00'),
   (NULL);
 
-EVALUATE '1. NULL compare col IS NULL (no pruning)';
+EVALUATE '1. NULL compare col IS NULL (only the first partition is pruned)';
 SELECT /*+ recompile */ COUNT(*) FROM year_tbl WHERE col IS NULL;
 show trace;
 
-EVALUATE '2. NULL compare YEAR(col) IS NULL (no pruning)';
+EVALUATE '2. NULL compare YEAR(col) IS NULL (only the first partition is pruned)';
 SELECT /*+ recompile */ COUNT(*) FROM year_tbl WHERE YEAR(col) IS NULL;
 show trace;
 
