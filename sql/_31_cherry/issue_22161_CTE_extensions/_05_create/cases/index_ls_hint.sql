@@ -20,6 +20,13 @@ select /*+ recompile index_ls */ a, min(b),c from t1 where a>0 group by a order 
 )
 select * from cte;
 
+WITH cte_m(a,min_b,i) AS
+(
+select /*+ recompile index_ls MATERIALIZE */ a, min(b),c from t1 where a>0 group by a order by a
+)
+select * from cte_m;
+
+
 create table foo (i int) 
 partition by range(i) 
 (partition p1 values less  than(10),
