@@ -221,6 +221,46 @@ evaluate '27. delete statement (should not work)';
 delete from new_tbl where colb <2;
 show trace;
 
+
+evaluate '28. Table scan with large BLOB/CLOB columns (should work) -> row by row';
+drop table if exists large_tbl;
+create table large_tbl (id int, data_blob BLOB, data_clob CLOB, dumy char(2048));
+insert into large_tbl select rownum, X'0102030405060708090A' || repeat('FF', 1024), repeat('A', 10240),'' from db_class a, db_class b limit 300;
+
+select count(*) from large_tbl where id > 0;
+show trace;
+
+drop table if exists large_tbl;
+
+
+evaluate '29. Complex WHERE clause with AND/OR (should work) -> row by row';
+select count(*) from tbl where (cola like '0%' AND colb = '00000000000000000000') OR (colc like '1%' AND cold = '00000000000000000001');
+show trace;
+
+
+evaluate '30. UPDATE statement with subquery in WHERE clause. subquery SELECT part (should not work)';
+update new_tbl set cola = 'updated' where id in (select id from tbl where cola like '000%');
+show trace;
+
+
+evaluate '31. DELETE statement with subquery in WHERE clause. subquery SELECT part (should not work)';
+delete from new_tbl where id in (select id from tbl where colb like '000%');
+show trace;
+
+
+evaluate '32. Parallel heap scan under different isolation levels (REPEATABLE READ) (should work) -> row by row';
+set transaction isolation level repeatable read;
+select count(*) from tbl where colb < 2;
+show trace;
+
+
+evaluate '33. Parallel heap scan under different isolation levels (SERIALIZABLE) (should work) -> row by row';
+set transaction isolation level serializable;
+select count(*) from tbl where colb < 2;
+show trace;
+
+set transaction isolation level read committed;
+
 set trace off;
 drop table if exists new_tbl;
 drop table if exists tbl;
