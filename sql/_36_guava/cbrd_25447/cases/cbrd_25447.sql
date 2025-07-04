@@ -239,12 +239,12 @@ show trace;
 
 
 evaluate '30. UPDATE statement with subquery in WHERE clause. subquery SELECT part (should not work)';
-update new_tbl set cola = 'updated' where id in (select id from tbl where cola like '000%');
+update new_tbl set cola = 'updated' where id in (select /*+ PARALLEL(2) */ id from tbl where cola like '000%');
 show trace;
 
 
 evaluate '31. DELETE statement with subquery in WHERE clause. subquery SELECT part (should not work)';
-delete from new_tbl where id in (select id from tbl where colb like '000%');
+delete from new_tbl where id in (select /*+ PARALLEL(2) */ id from tbl where colb like '000%');
 show trace;
 
 

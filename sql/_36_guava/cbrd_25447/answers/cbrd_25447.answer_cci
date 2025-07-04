@@ -986,13 +986,13 @@ Query Plan:
   SORT (distinct)
     TABLE SCAN (dba.tbl)
 
-  rewritten query: (select distinct [dba.tbl].id from [dba.tbl] [dba.tbl] where ([dba.tbl].cola>= ?:?  and [dba.tbl].cola< ?:? ))
+  rewritten query: (select /*+ PARALLEL(?) */ distinct [dba.tbl].id from [dba.tbl] [dba.tbl] where ([dba.tbl].cola>= ?:?  and [dba.tbl].cola< ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (dba.new_tbl)
     TABLE SCAN (av?)
 
-  rewritten query: select [dba.new_tbl],class [dba.new_tbl], ?:?  as [new_tbl.cola] from [dba.new_tbl] [dba.new_tbl], (select distinct [dba.tbl].id from [dba.tbl] [dba.tbl] where ([dba.tbl].cola>= ?:?  and [dba.tbl].cola< ?:? )) av? (av_?) where [dba.new_tbl].id=av?.av_?
+  rewritten query: select [dba.new_tbl],class [dba.new_tbl], ?:?  as [new_tbl.cola] from [dba.new_tbl] [dba.new_tbl], (select /*+ PARALLEL(?) */ distinct [dba.tbl].id from [dba.tbl] [dba.tbl] where ([dba.tbl].cola>= ?:?  and [dba.tbl].cola< ?:? )) av? (av_?) where [dba.new_tbl].id=av?.av_?
 
 
 Trace Statistics:
@@ -1021,13 +1021,13 @@ Query Plan:
   SORT (distinct)
     TABLE SCAN (dba.tbl)
 
-  rewritten query: (select distinct [dba.tbl].id from [dba.tbl] [dba.tbl] where ([dba.tbl].colb>= ?:?  and [dba.tbl].colb< ?:? ))
+  rewritten query: (select /*+ PARALLEL(?) */ distinct [dba.tbl].id from [dba.tbl] [dba.tbl] where ([dba.tbl].colb>= ?:?  and [dba.tbl].colb< ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (dba.new_tbl)
     TABLE SCAN (av?)
 
-  rewritten query: select [dba.new_tbl],class [dba.new_tbl] from [dba.new_tbl] [dba.new_tbl], (select distinct [dba.tbl].id from [dba.tbl] [dba.tbl] where ([dba.tbl].colb>= ?:?  and [dba.tbl].colb< ?:? )) av? (av_?) where [dba.new_tbl].id=av?.av_?
+  rewritten query: select [dba.new_tbl],class [dba.new_tbl] from [dba.new_tbl] [dba.new_tbl], (select /*+ PARALLEL(?) */ distinct [dba.tbl].id from [dba.tbl] [dba.tbl] where ([dba.tbl].colb>= ?:?  and [dba.tbl].colb< ?:? )) av? (av_?) where [dba.new_tbl].id=av?.av_?
 
 
 Trace Statistics:
