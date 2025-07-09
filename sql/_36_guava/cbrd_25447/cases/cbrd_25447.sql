@@ -69,6 +69,10 @@ show trace;
 select cola from tbl where id = 1 DIFFERENCE select cola from tbl where id = 2;
 show trace;
 
+select cola from tbl where id = 1 UNION ALL select cola from tbl where id = 1;
+show trace;
+
+
 evaluate '8. contains GROUP BY, ORDER BY (should work)';
 evaluate '8-1. with hash aggregation -> row by row';
 select cola, count(*) from tbl group by cola limit 2;
@@ -95,6 +99,15 @@ show trace;
 
 evaluate '11. JOIN first table (should work) -> row by row, second table (should not work)';
 select count(*) from tbl a join tbl b on a.cola = b.cola where a.id = 1;
+show trace;
+
+select /*+ recompile */ count(*) from tbl a, tbl b where a.cola = b.cola and a.id = 1;
+show trace;
+
+select /*+ ordered recompile */ count(*) from tbl b, tbl a where a.cola = b.cola and a.id = 1;
+show trace;
+
+select /*+ recompile */ count(*) from tbl a left join tbl b on a.cola = b.cola where a.id = 1;
 show trace;
 
 
@@ -156,6 +169,12 @@ show trace;
 
 evaluate '17. select list contains function (should work) -> mergeable list';
 select * from (select /*+ NO_MERGE */ abs(cola) from tbl) order by 1 limit 2;
+show trace;
+
+select * from (select /*+ NO_MERGE */ to_char(id) from tbl) order by 1 limit 2;
+show trace;
+
+select * from (select /*+ NO_MERGE */ decode(sysdate, sysdate, cola, colb) col from tbl) order by 1 limit 2;
 show trace;
 
 
@@ -261,6 +280,26 @@ show trace;
 
 set transaction isolation level read committed;
 
+
 set trace off;
+
+drop table if exists up_tbl;
+create table up_tbl (id int primary key, cola varchar(20), colb varchar(20), colc varchar(20),cold varchar(20),cole varchar(20),colf varchar(20));
+insert into up_tbl select rownum,lpad(rownum,20,'0'),lpad(rownum % 5,20,'0'),lpad(rownum,20,'0'),lpad(rownum,20,'0'),lpad(rownum,20,'0'),lpad(rownum,20,'0') 
+from db_class a, db_class b, db_class c, db_class d, db_class e limit 4000;
+
+set trace on;
+evaluate '34. merge into, replace into statement (should not work)';
+merge into up_tbl tt using tbl st on tt.id = st.id
+when matched then update set cola = 'merge'
+when not matched then insert values (st.id, st.cola, st.colb, st.colc, st.cold, st.cole, st.colf);
+show trace;
+
+replace into up_tbl values(1, 'replace', 'replace', 'replace', 'replace', 'replace', 'replace');
+show trace;
+
+
+set trace off;
+drop table if exists up_tbl;
 drop table if exists new_tbl;
 drop table if exists tbl;

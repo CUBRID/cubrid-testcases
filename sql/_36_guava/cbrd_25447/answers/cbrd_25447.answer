@@ -200,7 +200,7 @@ Query Plan:
 
 
 Trace Statistics:
-  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
            (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
@@ -227,7 +227,7 @@ Query Plan:
 
 
 Trace Statistics:
-  INTERSECTION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+  INTERSECTION (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
            (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
@@ -254,7 +254,35 @@ Query Plan:
 
 
 Trace Statistics:
-  DIFFERENCE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+  DIFFERENCE (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+cola    
+00000000000000000001     
+00000000000000000001     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl)
+
+  rewritten query: select [dba.tbl].cola from [dba.tbl] [dba.tbl] where [dba.tbl].id= ?:? 
+
+  TABLE SCAN (dba.tbl)
+
+  rewritten query: select [dba.tbl].cola from [dba.tbl] [dba.tbl] where [dba.tbl].id= ?:? 
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
            (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
@@ -414,6 +442,69 @@ Query Plan:
     TABLE SCAN (b)
 
   rewritten query: select count(*) from [dba.tbl] a, [dba.tbl] b where a.cola=b.cola and a.id= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select count(*) from [dba.tbl] a, [dba.tbl] b where a.cola=b.cola and a.id= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (b)
+    TABLE SCAN (a)
+
+  rewritten query: select /*+ ORDERED */ count(*) from [dba.tbl] b, [dba.tbl] a where a.cola=b.cola and a.id= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select count(*) from [dba.tbl] a left outer join [dba.tbl] b on a.cola=b.cola where a.id= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -607,6 +698,64 @@ Query Plan:
     TABLE SCAN (__t?)
 
   rewritten query: select [__t?].[ abs( cast(tbl.cola as double))] from (select /*+ NO_MERGE */  abs( cast([dba.tbl].cola as double)) from [dba.tbl] [dba.tbl]) [__t?] ([ abs( cast(tbl.cola as double))]) order by ? for orderby_num()<= ?:? 
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+to_char(tbl.id)    
+1     
+10     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl)
+
+  rewritten query: (select /*+ NO_MERGE */  to_char([dba.tbl].id) from [dba.tbl] [dba.tbl])
+
+  SORT (order by)
+    TABLE SCAN (__t?)
+
+  rewritten query: select [__t?].[ to_char(tbl.id)] from (select /*+ NO_MERGE */  to_char([dba.tbl].id) from [dba.tbl] [dba.tbl]) [__t?] ([ to_char(tbl.id)]) order by ? for orderby_num()<= ?:? 
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+col    
+00000000000000000001     
+00000000000000000002     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl)
+
+  rewritten query: (select /*+ NO_MERGE */ decode( SYS_DATE ,  SYS_DATE , [dba.tbl].cola, [dba.tbl].colb) from [dba.tbl] [dba.tbl])
+
+  SORT (order by)
+    TABLE SCAN (__t?)
+
+  rewritten query: select [__t?].col from (select /*+ NO_MERGE */ decode( SYS_DATE ,  SYS_DATE , [dba.tbl].cola, [dba.tbl].colb) as [col] from [dba.tbl] [dba.tbl]) [__t?] (col) order by ? for orderby_num()<= ?:? 
 
 
 Trace Statistics:
@@ -1084,6 +1233,37 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+4000
+===================================================
+0
+===================================================
+    
+34. merge into, replace into statement (should not work)     
+
+===================================================
+4000
+===================================================
+trace    
+null     
+
+===================================================
+2
+===================================================
+trace    
+
+Trace Statistics:
+  INSERT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
      
 
 ===================================================
