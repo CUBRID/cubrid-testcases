@@ -39,11 +39,7 @@ EVALUATE '4. Mixed AND B: YEAR(col) > 2022 AND col = 2023-11-30';
 SELECT /*+ recompile */ COUNT(*) FROM year_tbl WHERE YEAR(col) > 2022 AND col = '2023-11-30 23:59:59';
 show trace;
 
-EVALUATE '5. BETWEEN col BETWEEN 2022 and 2023';
-SELECT /*+ recompile */ COUNT(*) FROM year_tbl WHERE col BETWEEN '2022-01-01' AND '2023-12-31 23:59:59';
-show trace;
-
-EVALUATE '6. IN list multiple col IN (...)';
+EVALUATE '5. IN list multiple col IN (...)';
 SELECT /*+ recompile */ COUNT(*) FROM year_tbl
  WHERE col IN (
    '2021-05-01 10:00:00',
@@ -51,7 +47,7 @@ SELECT /*+ recompile */ COUNT(*) FROM year_tbl
  );
 show trace;
 
-EVALUATE '7. NOT IN: col NOT IN (2023,2024 dates)';
+EVALUATE '6. NOT IN: col NOT IN (2023,2024 dates) (no pruning)';
 SELECT /*+ recompile */ COUNT(*) FROM year_tbl
  WHERE col NOT IN (
    '2023-11-30 23:59:59',
@@ -59,24 +55,50 @@ SELECT /*+ recompile */ COUNT(*) FROM year_tbl
  );
 show trace;
 
-EVALUATE '8. <> and NOT YEAR(col)=2022';
+EVALUATE '7. <> and NOT YEAR(col)=2022 (no pruning)';
 SELECT /*+ recompile */ COUNT(*) FROM year_tbl WHERE col <> '2022-07-15 12:00:00' AND NOT YEAR(col) = 2022;
 show trace;
 
-EVALUATE '9. MAXVALUE only col >= 2024-...';
+EVALUATE '8. MAXVALUE only col >= 2024-...';
 SELECT /*+ recompile */ COUNT(*) FROM year_tbl WHERE col >= '2024-01-01';
 show trace;
 
-EVALUATE '10. ALL quantifier YEAR(col) >= ALL{2022,2023}';
+EVALUATE '9. ALL quantifier YEAR(col) >= ALL{2022,2023}';
 SELECT /*+ recompile */ COUNT(*) FROM year_tbl WHERE YEAR(col) >= ALL{2022,2023};
 show trace;
 
-EVALUATE '11. Using nested function as partition key (expected error)';
+EVALUATE '10. Using nested function as partition key (expected error)';
 CREATE TABLE chain_tbl(col1 INT)
   PARTITION BY RANGE (ABS(FLOOR(col / 2))) (
     PARTITION pa VALUES LESS THAN (1),
     PARTITION p_max VALUES LESS THAN MAXVALUE
   );
+
+EVALUATE '11. OR A: col = 2021-05-01 OR col = 2023-11-30 ';
+SELECT /*+ recompile */ COUNT(*) FROM year_tbl
+WHERE col = '2021-05-01 10:00:00' OR col = '2023-11-30 23:59:59';
+show trace;
+
+EVALUATE '12. OR B: col < 2022-01-01 OR YEAR(col) > 2023 ';
+SELECT /*+ recompile */ COUNT(*) FROM year_tbl
+WHERE col < '2022-01-01 00:00:00' OR YEAR(col) > 2023;
+show trace;
+
+EVALUATE '13. NULL compare with = : col = NULL (no pruning)';
+SELECT /*+ recompile */ COUNT(*) FROM year_tbl WHERE col = NULL;
+show trace;
+
+EVALUATE '14. Empty result set: col > 2025-01-01 ';
+SELECT /*+ recompile */ COUNT(*) FROM year_tbl WHERE col > '2025-01-01 00:00:00';
+show trace;
+
+EVALUATE '15. IS NOT NULL: col IS NOT NULL (no pruning)';
+SELECT /*+ recompile */ COUNT(*) FROM year_tbl WHERE col IS NOT NULL;
+show trace;
+
+EVALUATE '16. IS NOT NULL on function: YEAR(col) IS NOT NULL (no pruning)';
+SELECT /*+ recompile */ COUNT(*) FROM year_tbl WHERE YEAR(col) IS NOT NULL;
+show trace;
 
 set trace off;
 

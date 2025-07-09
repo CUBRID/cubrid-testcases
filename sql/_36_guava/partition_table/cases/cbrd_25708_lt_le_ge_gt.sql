@@ -20,7 +20,14 @@ CREATE TABLE year_tbl(col DATETIME) PARTITION BY RANGE (YEAR(col)) (
         PARTITION p_max VALUES LESS THAN MAXVALUE
         );
 
-INSERT INTO year_tbl VALUES('2024-01-01 23:23:59');
+INSERT INTO year_tbl VALUES
+  ('2018-12-30 23:59:59'),
+  ('2019-03-30 19:51:40'),
+  ('2020-04-05 01:01:01'),
+  ('2021-05-01 10:00:00'),
+  ('2022-07-15 12:00:00'),
+  ('2023-11-30 23:59:59'),
+  ('2024-01-01 00:00:00');
 
 evaluate concat('1. YEAR, <');
 SELECT /*+ recompile */ count(*) FROM year_tbl WHERE col < '2023-01-01 23:23:59';
@@ -36,6 +43,14 @@ show trace;
 
 evaluate concat('4. YEAR, >');
 SELECT /*+ recompile */ count(*) FROM year_tbl WHERE col > '2023-01-01 23:23:59';
+show trace;
+
+evaluate concat('5. YEAR, >, <');
+SELECT /*+ recompile */ count(*) FROM year_tbl WHERE col > '2021-01-01 23:23:59' and col < '2024-01-01 23:23:59';
+show trace;
+
+evaluate concat('6. YEAR, BETWEEN');
+SELECT /*+ recompile */ count(*) FROM year_tbl WHERE col BETWEEN '2021-01-01 23:23:59' AND  '2024-01-01 23:23:59';
 show trace;
 
 evaluate concat('1. YEAR, ALSM, <');
@@ -64,7 +79,14 @@ CREATE TABLE to_days_tbl(col DATETIME) PARTITION BY RANGE (TO_DAYS(col)) (
         PARTITION p_max VALUES LESS THAN MAXVALUE
         );
 
-INSERT INTO to_days_tbl VALUES('1-1-12');
+INSERT INTO to_days_tbl VALUES
+  ('1-1-09'),
+  ('1-1-10'),
+  ('1-1-11'),
+  ('1-1-12'),
+  ('1-1-13'),
+  ('1-1-14'),
+  ('1-1-15');
 
 evaluate concat('1. TO_DAYS, <');
 SELECT /*+ recompile */ count(*) FROM to_days_tbl WHERE col < '1-1-12';
@@ -80,6 +102,14 @@ show trace;
 
 evaluate concat('4. TO_DAYS, >');
 SELECT /*+ recompile */ count(*) FROM to_days_tbl WHERE col > '1-1-12';
+show trace;
+
+evaluate concat('5. TO_DAYS, >, <');
+SELECT /*+ recompile */ count(*) FROM to_days_tbl WHERE col > '1-1-12' AND col < '1-1-15';
+show trace;
+
+evaluate concat('6. TO_DAYS, BETWEEN');
+SELECT /*+ recompile */ count(*) FROM to_days_tbl WHERE col BETWEEN '1-1-12' AND '1-1-15';
 show trace;
 
 evaluate concat('1. TO_DAYS, ALSM, <');
@@ -108,7 +138,15 @@ CREATE TABLE unix_timestamp_tbl(col DATETIME) PARTITION BY RANGE (UNIX_TIMESTAMP
         PARTITION pf VALUES LESS THAN (486000),
         PARTITION p_max VALUES LESS THAN MAXVALUE
         );
-INSERT INTO unix_timestamp_tbl VALUES('1970-01-04 23:23:59');
+
+INSERT INTO unix_timestamp_tbl VALUES
+  ('1970-01-01 10:00:00'),
+  ('1970-01-02 10:34:51'),
+  ('1970-01-03 09:30:00'),
+  ('1970-01-04 23:23:59'),
+  ('1970-01-05 20:01:02'),
+  ('1970-01-05 23:59:59'),
+  ('1970-01-07 00:00:00');
 
 evaluate concat('1. UNIX_TIMESTAMP, <');
 SELECT /*+ recompile */ count(*) FROM unix_timestamp_tbl WHERE col < '1970-01-04 23:23:59';
@@ -124,6 +162,14 @@ show trace;
 
 evaluate concat('4. UNIX_TIMESTAMP, >');
 SELECT /*+ recompile */ count(*) FROM unix_timestamp_tbl WHERE col > '1970-01-04 23:23:59';
+show trace;
+
+evaluate concat('5. UNIX_TIMESTAMP, >, <');
+SELECT /*+ recompile */ count(*) FROM unix_timestamp_tbl WHERE col > '1970-01-04 23:23:59' AND col < '1970-01-07 00:00:00';
+show trace;
+
+evaluate concat('6. UNIX_TIMESTAMP, BETWEEN');
+SELECT /*+ recompile */ count(*) FROM unix_timestamp_tbl WHERE col BETWEEN '1970-01-04 23:23:59' AND '1970-01-07 00:00:00';
 show trace;
 
 evaluate concat('1. UNIX_TIMESTAMP, ALSM, <');

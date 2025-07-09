@@ -11,14 +11,14 @@
 ===================================================
 0
 ===================================================
-1
+7
 ===================================================
     
 1. YEAR, <     
 
 ===================================================
 count(*)    
-0     
+5     
 
 ===================================================
 trace    
@@ -44,7 +44,7 @@ Trace Statistics:
 
 ===================================================
 count(*)    
-0     
+5     
 
 ===================================================
 trace    
@@ -71,7 +71,7 @@ Trace Statistics:
 
 ===================================================
 count(*)    
-1     
+2     
 
 ===================================================
 trace    
@@ -112,11 +112,59 @@ Trace Statistics:
 
 ===================================================
     
+5. YEAR, >, <     
+
+===================================================
+count(*)    
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.year_tbl)
+
+  rewritten query: select count(*) from [dba.year_tbl] [dba.year_tbl] where ([dba.year_tbl].col> ?:?  and [dba.year_tbl].col< ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.year_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__pe), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__pf), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+6. YEAR, BETWEEN     
+
+===================================================
+count(*)    
+4     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.year_tbl)
+
+  rewritten query: select count(*) from [dba.year_tbl] [dba.year_tbl] where ([dba.year_tbl].col>= ?:?  and [dba.year_tbl].col<= ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.year_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__pd), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__pe), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__pf), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__p_max), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
 1. YEAR, ALSM, <     
 
 ===================================================
 count(*)    
-0     
+5     
 
 ===================================================
 trace    
@@ -142,7 +190,7 @@ Trace Statistics:
 
 ===================================================
 count(*)    
-0     
+5     
 
 ===================================================
 trace    
@@ -169,7 +217,7 @@ Trace Statistics:
 
 ===================================================
 count(*)    
-1     
+2     
 
 ===================================================
 trace    
@@ -211,14 +259,14 @@ Trace Statistics:
 ===================================================
 0
 ===================================================
-1
+7
 ===================================================
     
 1. TO_DAYS, <     
 
 ===================================================
 count(*)    
-0     
+3     
 
 ===================================================
 trace    
@@ -242,7 +290,7 @@ Trace Statistics:
 
 ===================================================
 count(*)    
-1     
+4     
 
 ===================================================
 trace    
@@ -267,7 +315,7 @@ Trace Statistics:
 
 ===================================================
 count(*)    
-1     
+4     
 
 ===================================================
 trace    
@@ -292,7 +340,7 @@ Trace Statistics:
 
 ===================================================
 count(*)    
-0     
+3     
 
 ===================================================
 trace    
@@ -312,11 +360,59 @@ Trace Statistics:
 
 ===================================================
     
+5. TO_DAYS, >, <     
+
+===================================================
+count(*)    
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.to_days_tbl)
+
+  rewritten query: select count(*) from [dba.to_days_tbl] [dba.to_days_tbl] where ([dba.to_days_tbl].col> ?:?  and [dba.to_days_tbl].col< ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.to_days_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.to_days_tbl__p__pe), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.to_days_tbl__p__pf), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+6. TO_DAYS, BETWEEN     
+
+===================================================
+count(*)    
+4     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.to_days_tbl)
+
+  rewritten query: select count(*) from [dba.to_days_tbl] [dba.to_days_tbl] where ([dba.to_days_tbl].col>= ?:?  and [dba.to_days_tbl].col<= ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.to_days_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.to_days_tbl__p__pd), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.to_days_tbl__p__pe), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.to_days_tbl__p__pf), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.to_days_tbl__p__p_max), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
 1. TO_DAYS, ALSM, <     
 
 ===================================================
 count(*)    
-0     
+3     
 
 ===================================================
 trace    
@@ -340,7 +436,7 @@ Trace Statistics:
 
 ===================================================
 count(*)    
-1     
+4     
 
 ===================================================
 trace    
@@ -365,7 +461,7 @@ Trace Statistics:
 
 ===================================================
 count(*)    
-1     
+4     
 
 ===================================================
 trace    
@@ -390,7 +486,7 @@ Trace Statistics:
 
 ===================================================
 count(*)    
-0     
+3     
 
 ===================================================
 trace    
@@ -411,14 +507,14 @@ Trace Statistics:
 ===================================================
 0
 ===================================================
-1
+7
 ===================================================
     
 1. UNIX_TIMESTAMP, <     
 
 ===================================================
 count(*)    
-0     
+3     
 
 ===================================================
 trace    
@@ -443,7 +539,7 @@ Trace Statistics:
 
 ===================================================
 count(*)    
-1     
+4     
 
 ===================================================
 trace    
@@ -468,7 +564,7 @@ Trace Statistics:
 
 ===================================================
 count(*)    
-1     
+4     
 
 ===================================================
 trace    
@@ -493,7 +589,7 @@ Trace Statistics:
 
 ===================================================
 count(*)    
-0     
+3     
 
 ===================================================
 trace    
@@ -514,11 +610,60 @@ Trace Statistics:
 
 ===================================================
     
+5. UNIX_TIMESTAMP, >, <     
+
+===================================================
+count(*)    
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.unix_timestamp_tbl)
+
+  rewritten query: select count(*) from [dba.unix_timestamp_tbl] [dba.unix_timestamp_tbl] where ([dba.unix_timestamp_tbl].col> ?:?  and [dba.unix_timestamp_tbl].col< ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.unix_timestamp_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.unix_timestamp_tbl__p__pd), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.unix_timestamp_tbl__p__pe), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.unix_timestamp_tbl__p__pf), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+6. UNIX_TIMESTAMP, BETWEEN     
+
+===================================================
+count(*)    
+4     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.unix_timestamp_tbl)
+
+  rewritten query: select count(*) from [dba.unix_timestamp_tbl] [dba.unix_timestamp_tbl] where ([dba.unix_timestamp_tbl].col>= ?:?  and [dba.unix_timestamp_tbl].col<= ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.unix_timestamp_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.unix_timestamp_tbl__p__pd), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.unix_timestamp_tbl__p__pe), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.unix_timestamp_tbl__p__pf), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.unix_timestamp_tbl__p__p_max), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
 1. UNIX_TIMESTAMP, ALSM, <     
 
 ===================================================
 count(*)    
-0     
+3     
 
 ===================================================
 trace    
@@ -543,7 +688,7 @@ Trace Statistics:
 
 ===================================================
 count(*)    
-1     
+4     
 
 ===================================================
 trace    
@@ -568,7 +713,7 @@ Trace Statistics:
 
 ===================================================
 count(*)    
-1     
+4     
 
 ===================================================
 trace    
@@ -593,7 +738,7 @@ Trace Statistics:
 
 ===================================================
 count(*)    
-0     
+3     
 
 ===================================================
 trace    
