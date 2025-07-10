@@ -88,7 +88,7 @@ EVALUATE '13. NULL compare with = : col = NULL (no pruning)';
 SELECT /*+ recompile */ COUNT(*) FROM year_tbl WHERE col = NULL;
 show trace;
 
-EVALUATE '14. Empty result set: col > 2025-01-01 ';
+EVALUATE '14. Pruning to MAXVALUE partition only: col > 2025-01-01 ';
 SELECT /*+ recompile */ COUNT(*) FROM year_tbl WHERE col > '2025-01-01 00:00:00';
 show trace;
 
