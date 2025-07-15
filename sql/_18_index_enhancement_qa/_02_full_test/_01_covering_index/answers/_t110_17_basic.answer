@@ -52,16 +52,17 @@ Query stmt:
 Query plan:
 sscan
     class: c node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select c.user_id from t? c)
+(select c.user_id from t? c where inst_num()<=?)
 Query plan:
 sscan
     class: a node[?]
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select count( cast(a.age as varchar)||a.user_name), (select count(b.age) from t? b where (rownum= ?:? )) from t? a where  exists (select c.user_id from t? c)
+select count( cast(a.age as varchar)||a.user_name), (select count(b.age) from t? b where (rownum= ?:? )) from t? a where  exists (select c.user_id from t? c where inst_num()<=?)
 ===================================================
 count(a.user_id)    
 4     

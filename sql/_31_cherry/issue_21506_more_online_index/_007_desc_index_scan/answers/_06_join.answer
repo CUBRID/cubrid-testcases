@@ -104,9 +104,10 @@ Query plan:
 iscan
     class: tb node[?]
     index: i_tb_a term[?] (covers)
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ))
+(select tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and inst_num()<= ?:? )
 Query plan:
 iscan
     class: ta node[?]
@@ -115,7 +116,7 @@ iscan
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-select ta.a from ta ta where (ta.a>= ?:?  and ta.a<= ?:? ) and  exists (select tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? )) order by ? desc  for orderby_num()<= ?:? 
+select ta.a from ta ta where (ta.a>= ?:?  and ta.a<= ?:? ) and  exists (select tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and inst_num()<= ?:? ) order by ? desc  for orderby_num()<= ?:? 
 /* ---> skip ORDER BY */
 ===================================================
 0

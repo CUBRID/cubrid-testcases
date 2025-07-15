@@ -7,7 +7,7 @@ insert into plcsql_tbl values(1, 'name1');
 insert into plcsql_tbl values(2, 'name2');
 insert into plcsql_tbl values(3, 'name3');
 
-CREATE OR REPLACE PROCEDURE t(param varchar)
+CREATE OR REPLACE PROCEDURE t3425e(param varchar)
 AS
      var_01 string := param;
      r_id integer ;
@@ -17,9 +17,9 @@ BEGIN
     dbms_output.put_line('id: ' || r_id || ' name: ' || r_name);
 END;
 
-call t('name1');
+call t3425e('name1');
 
-drop procedure t;
+drop procedure t3425e;
 drop table plcsql_tbl;
 
 --+ server-message off

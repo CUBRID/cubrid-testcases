@@ -83,7 +83,7 @@ Query Plan:
   rewritten query: select /*+ USE_HASH */ count(*) from [dba.ta] a, [dba.tb] b, [dba.tc] c, [dba.td] d where a.cd=b.cd and b.cd=c.cd and c.cd=d.cd and ((a.cb= ?:? ) or (a.cb= ?:? )) and ((b.cb= ?:? ) or (b.cb= ?:? ) or (b.cb= ?:? )) and ((c.cb= ?:? ) or (c.cb= ?:? ) or (c.cb= ?:? ) or (c.cb= ?:? )) and d.cb= ?:? 
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         BUILD (time: ?, build_time: ?, fetch: ?, fetch_time: ?, ioread: ?, rows: ?, method: memory, build: outer)
@@ -161,7 +161,7 @@ Query Plan:
   rewritten query: select /*+ ORDERED USE_HASH */ count(*) from [dba.ta] a, [dba.tb] b, [dba.tc] c, [dba.td] d where a.cd=b.cd and b.cd=c.cd and c.cd=d.cd and ((a.cb= ?:? ) or (a.cb= ?:? ) or (a.cb= ?:? )) and ((b.cb= ?:? ) or (b.cb= ?:? ) or (b.cb= ?:? ) or (b.cb= ?:? )) and ((d.cb= ?:? ) or (d.cb= ?:? )) and c.cb= ?:? 
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         BUILD (time: ?, build_time: ?, fetch: ?, fetch_time: ?, ioread: ?, rows: ?, method: memory, build: outer)
@@ -219,7 +219,7 @@ Query Plan:
   rewritten query: select /*+ USE_HASH */ count(*) from [dba.ta] a, [dba.t_bigint] b where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         BUILD (time: ?, build_time: ?, fetch: ?, fetch_time: ?, ioread: ?, rows: ?, method: memory, build: inner)
@@ -263,7 +263,7 @@ Query Plan:
   rewritten query: select /*+ USE_HASH */ count(*) from [dba.ta] a, [dba.t_numeric] b where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         BUILD (time: ?, build_time: ?, fetch: ?, fetch_time: ?, ioread: ?, rows: ?, method: memory, build: outer)
@@ -319,7 +319,7 @@ Query Plan:
   rewritten query: select /*+ USE_NL(c) USE_HASH(a, b) */ count(*) from [dba.ta] a, [dba.tb] b, [dba.tc] c where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd and a.ca=c.ca and a.cb=c.cb and a.cc=c.cc and a.cd=c.cd
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (index: dba.tc.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -376,7 +376,7 @@ Query Plan:
   rewritten query: select /*+ USE_NL(c) USE_HASH(a, b) */ count(*) from [dba.ta] a, [dba.tb] b, [dba.tc] c where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd and a.ca=c.ca and a.cb=c.cb and a.cc=c.cc and a.cd=c.cd
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (index: dba.tc.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -433,7 +433,7 @@ Query Plan:
   rewritten query: select /*+ ORDERED USE_NL(c) USE_HASH(a, b) */ count(*) from [dba.ta] a, [dba.tb] b, [dba.tc] c where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd and a.ca=c.ca and a.cb=c.cb and a.cc=c.cc and a.cd=c.cd
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (index: dba.tc.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -485,7 +485,7 @@ Query Plan:
   rewritten query: select /*+ USE_NL(c) USE_HASH(a, b) */ count(*) from [dba.ta] a, [dba.tb] b, [dba.tc] c where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd and a.ca=c.ca and a.cb=c.cb and a.cc=c.cc and a.cd=c.cd
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (index: dba.tc.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)

@@ -49,9 +49,10 @@ num1    num2    num3    num4
 Query plan:
 sscan
     class: db_root node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select v_t?_a?q.a from db_root db_root)
+(select v_t?_a?q.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?q node[?]
@@ -60,13 +61,13 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?q.b|| cast(v_t?_a?q.e as varchar)|| cast(v_t?_a?q.f as varchar)|| cast(v_t?_a?q.g as varchar)|| cast(v_t?_a?q.h as varchar)|| cast(v_t?_a?q.i as varchar)|| cast(v_t?_a?q.j as varchar)|| cast(v_t?_a?q.k as varchar)|| cast(v_t?_a?q.l as varchar)|| cast(v_t?_a?q.m as varchar)|| cast(v_t?_a?q.n as varchar)|| cast(v_t?_a?q.o as varchar)|| cast(v_t?_a?q.p as varchar)|| cast(v_t?_a?q.q as varchar)), count(v_t?_a?q.c), count(v_t?_a?q.d), ? from t? v_t?_a?q where ( exists (select v_t?_a?q.a from db_root db_root)) and (v_t?_a?q.a> ?:? ))
+(select count(v_t?_a?q.b|| cast(v_t?_a?q.e as varchar)|| cast(v_t?_a?q.f as varchar)|| cast(v_t?_a?q.g as varchar)|| cast(v_t?_a?q.h as varchar)|| cast(v_t?_a?q.i as varchar)|| cast(v_t?_a?q.j as varchar)|| cast(v_t?_a?q.k as varchar)|| cast(v_t?_a?q.l as varchar)|| cast(v_t?_a?q.m as varchar)|| cast(v_t?_a?q.n as varchar)|| cast(v_t?_a?q.o as varchar)|| cast(v_t?_a?q.p as varchar)|| cast(v_t?_a?q.q as varchar)), count(v_t?_a?q.c), count(v_t?_a?q.d), ? from t? v_t?_a?q where ( exists (select v_t?_a?q.a from db_root db_root where inst_num()<=?)) and (v_t?_a?q.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?q node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?q.num?, v_t?_a?q.num?, v_t?_a?q.num?, v_t?_a?q.num? from (select count(v_t?_a?q.b|| cast(v_t?_a?q.e as varchar)|| cast(v_t?_a?q.f as varchar)|| cast(v_t?_a?q.g as varchar)|| cast(v_t?_a?q.h as varchar)|| cast(v_t?_a?q.i as varchar)|| cast(v_t?_a?q.j as varchar)|| cast(v_t?_a?q.k as varchar)|| cast(v_t?_a?q.l as varchar)|| cast(v_t?_a?q.m as varchar)|| cast(v_t?_a?q.n as varchar)|| cast(v_t?_a?q.o as varchar)|| cast(v_t?_a?q.p as varchar)|| cast(v_t?_a?q.q as varchar)), count(v_t?_a?q.c), count(v_t?_a?q.d), ? from t? v_t?_a?q where ( exists (select v_t?_a?q.a from db_root db_root)) and (v_t?_a?q.a> ?:? )) v_t?_a?q (num?, num?, num?, num?)
+select v_t?_a?q.num?, v_t?_a?q.num?, v_t?_a?q.num?, v_t?_a?q.num? from (select count(v_t?_a?q.b|| cast(v_t?_a?q.e as varchar)|| cast(v_t?_a?q.f as varchar)|| cast(v_t?_a?q.g as varchar)|| cast(v_t?_a?q.h as varchar)|| cast(v_t?_a?q.i as varchar)|| cast(v_t?_a?q.j as varchar)|| cast(v_t?_a?q.k as varchar)|| cast(v_t?_a?q.l as varchar)|| cast(v_t?_a?q.m as varchar)|| cast(v_t?_a?q.n as varchar)|| cast(v_t?_a?q.o as varchar)|| cast(v_t?_a?q.p as varchar)|| cast(v_t?_a?q.q as varchar)), count(v_t?_a?q.c), count(v_t?_a?q.d), ? from t? v_t?_a?q where ( exists (select v_t?_a?q.a from db_root db_root where inst_num()<=?)) and (v_t?_a?q.a> ?:? )) v_t?_a?q (num?, num?, num?, num?)
 ===================================================
 0
 ===================================================
@@ -77,30 +78,10 @@ num1    num2    num3    num4
 Query plan:
 sscan
     class: db_root node[?]
-    cost:  ? card ?
-Query stmt:
-(select v_t?_a?q.a from db_root db_root)
-Query plan:
-iscan
-    class: v_t?_a?q node[?]
-    index: i_t?_a?q term[?] (covers)
     sargs: term[?]
-    subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?q.b|| cast(v_t?_a?q.e as varchar)|| cast(v_t?_a?q.f as varchar)|| cast(v_t?_a?q.g as varchar)|| cast(v_t?_a?q.h as varchar)|| cast(v_t?_a?q.i as varchar)|| cast(v_t?_a?q.j as varchar)|| cast(v_t?_a?q.k as varchar)|| cast(v_t?_a?q.l as varchar)|| cast(v_t?_a?q.m as varchar)|| cast(v_t?_a?q.n as varchar)|| cast(v_t?_a?q.o as varchar)|| cast(v_t?_a?q.p as varchar)|| cast(v_t?_a?q.q as varchar)), count(v_t?_a?q.c), count(v_t?_a?q.d), ? from t? v_t?_a?q where ( exists (select v_t?_a?q.a from db_root db_root)) and (v_t?_a?q.a> ?:? ))
-Query plan:
-sscan
-    class: v_t?_a?q node[?]
-    cost:  ? card ?
-Query stmt:
-select v_t?_a?q.num?, v_t?_a?q.num?, v_t?_a?q.num?, v_t?_a?q.num? from (select count(v_t?_a?q.b|| cast(v_t?_a?q.e as varchar)|| cast(v_t?_a?q.f as varchar)|| cast(v_t?_a?q.g as varchar)|| cast(v_t?_a?q.h as varchar)|| cast(v_t?_a?q.i as varchar)|| cast(v_t?_a?q.j as varchar)|| cast(v_t?_a?q.k as varchar)|| cast(v_t?_a?q.l as varchar)|| cast(v_t?_a?q.m as varchar)|| cast(v_t?_a?q.n as varchar)|| cast(v_t?_a?q.o as varchar)|| cast(v_t?_a?q.p as varchar)|| cast(v_t?_a?q.q as varchar)), count(v_t?_a?q.c), count(v_t?_a?q.d), ? from t? v_t?_a?q where ( exists (select v_t?_a?q.a from db_root db_root)) and (v_t?_a?q.a> ?:? )) v_t?_a?q (num?, num?, num?, num?)
-Query plan:
-sscan
-    class: db_root node[?]
-    cost:  ? card ?
-Query stmt:
-(select v_t?_a?q.a from db_root db_root)
+(select v_t?_a?q.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?q node[?]
@@ -109,19 +90,41 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?q.b|| cast(v_t?_a?q.e as varchar)|| cast(v_t?_a?q.f as varchar)|| cast(v_t?_a?q.g as varchar)|| cast(v_t?_a?q.h as varchar)|| cast(v_t?_a?q.i as varchar)|| cast(v_t?_a?q.j as varchar)|| cast(v_t?_a?q.k as varchar)|| cast(v_t?_a?q.l as varchar)|| cast(v_t?_a?q.m as varchar)|| cast(v_t?_a?q.n as varchar)|| cast(v_t?_a?q.o as varchar)|| cast(v_t?_a?q.p as varchar)|| cast(v_t?_a?q.q as varchar)), count(v_t?_a?q.c), count(v_t?_a?q.d), ? from t? v_t?_a?q where ( exists (select v_t?_a?q.a from db_root db_root)) and (v_t?_a?q.a> ?:? ))
+(select count(v_t?_a?q.b|| cast(v_t?_a?q.e as varchar)|| cast(v_t?_a?q.f as varchar)|| cast(v_t?_a?q.g as varchar)|| cast(v_t?_a?q.h as varchar)|| cast(v_t?_a?q.i as varchar)|| cast(v_t?_a?q.j as varchar)|| cast(v_t?_a?q.k as varchar)|| cast(v_t?_a?q.l as varchar)|| cast(v_t?_a?q.m as varchar)|| cast(v_t?_a?q.n as varchar)|| cast(v_t?_a?q.o as varchar)|| cast(v_t?_a?q.p as varchar)|| cast(v_t?_a?q.q as varchar)), count(v_t?_a?q.c), count(v_t?_a?q.d), ? from t? v_t?_a?q where ( exists (select v_t?_a?q.a from db_root db_root where inst_num()<=?)) and (v_t?_a?q.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?q node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?q.num?, v_t?_a?q.num?, v_t?_a?q.num?, v_t?_a?q.num? from (select count(v_t?_a?q.b|| cast(v_t?_a?q.e as varchar)|| cast(v_t?_a?q.f as varchar)|| cast(v_t?_a?q.g as varchar)|| cast(v_t?_a?q.h as varchar)|| cast(v_t?_a?q.i as varchar)|| cast(v_t?_a?q.j as varchar)|| cast(v_t?_a?q.k as varchar)|| cast(v_t?_a?q.l as varchar)|| cast(v_t?_a?q.m as varchar)|| cast(v_t?_a?q.n as varchar)|| cast(v_t?_a?q.o as varchar)|| cast(v_t?_a?q.p as varchar)|| cast(v_t?_a?q.q as varchar)), count(v_t?_a?q.c), count(v_t?_a?q.d), ? from t? v_t?_a?q where ( exists (select v_t?_a?q.a from db_root db_root)) and (v_t?_a?q.a> ?:? )) v_t?_a?q (num?, num?, num?, num?)
+select v_t?_a?q.num?, v_t?_a?q.num?, v_t?_a?q.num?, v_t?_a?q.num? from (select count(v_t?_a?q.b|| cast(v_t?_a?q.e as varchar)|| cast(v_t?_a?q.f as varchar)|| cast(v_t?_a?q.g as varchar)|| cast(v_t?_a?q.h as varchar)|| cast(v_t?_a?q.i as varchar)|| cast(v_t?_a?q.j as varchar)|| cast(v_t?_a?q.k as varchar)|| cast(v_t?_a?q.l as varchar)|| cast(v_t?_a?q.m as varchar)|| cast(v_t?_a?q.n as varchar)|| cast(v_t?_a?q.o as varchar)|| cast(v_t?_a?q.p as varchar)|| cast(v_t?_a?q.q as varchar)), count(v_t?_a?q.c), count(v_t?_a?q.d), ? from t? v_t?_a?q where ( exists (select v_t?_a?q.a from db_root db_root where inst_num()<=?)) and (v_t?_a?q.a> ?:? )) v_t?_a?q (num?, num?, num?, num?)
+Query plan:
+sscan
+    class: db_root node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select v_t?_a?q.a from db_root db_root where inst_num()<=?)
+Query plan:
+iscan
+    class: v_t?_a?q node[?]
+    index: i_t?_a?q term[?] (covers)
+    sargs: term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+(select count(v_t?_a?q.b|| cast(v_t?_a?q.e as varchar)|| cast(v_t?_a?q.f as varchar)|| cast(v_t?_a?q.g as varchar)|| cast(v_t?_a?q.h as varchar)|| cast(v_t?_a?q.i as varchar)|| cast(v_t?_a?q.j as varchar)|| cast(v_t?_a?q.k as varchar)|| cast(v_t?_a?q.l as varchar)|| cast(v_t?_a?q.m as varchar)|| cast(v_t?_a?q.n as varchar)|| cast(v_t?_a?q.o as varchar)|| cast(v_t?_a?q.p as varchar)|| cast(v_t?_a?q.q as varchar)), count(v_t?_a?q.c), count(v_t?_a?q.d), ? from t? v_t?_a?q where ( exists (select v_t?_a?q.a from db_root db_root where inst_num()<=?)) and (v_t?_a?q.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?q node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?q.num?, v_t?_a?q.num?, v_t?_a?q.num?, v_t?_a?q.num? from (select v_t?_a?q.num?, v_t?_a?q.num?, v_t?_a?q.num?, v_t?_a?q.num? from (select count(v_t?_a?q.b|| cast(v_t?_a?q.e as varchar)|| cast(v_t?_a?q.f as varchar)|| cast(v_t?_a?q.g as varchar)|| cast(v_t?_a?q.h as varchar)|| cast(v_t?_a?q.i as varchar)|| cast(v_t?_a?q.j as varchar)|| cast(v_t?_a?q.k as varchar)|| cast(v_t?_a?q.l as varchar)|| cast(v_t?_a?q.m as varchar)|| cast(v_t?_a?q.n as varchar)|| cast(v_t?_a?q.o as varchar)|| cast(v_t?_a?q.p as varchar)|| cast(v_t?_a?q.q as varchar)), count(v_t?_a?q.c), count(v_t?_a?q.d), ? from t? v_t?_a?q where ( exists (select v_t?_a?q.a from db_root db_root)) and (v_t?_a?q.a> ?:? )) v_t?_a?q (num?, num?, num?, num?) union all select v_t?_a?q.num?, v_t?_a?q.num?, v_t?_a?q.num?, v_t?_a?q.num? from (select count(v_t?_a?q.b|| cast(v_t?_a?q.e as varchar)|| cast(v_t?_a?q.f as varchar)|| cast(v_t?_a?q.g as varchar)|| cast(v_t?_a?q.h as varchar)|| cast(v_t?_a?q.i as varchar)|| cast(v_t?_a?q.j as varchar)|| cast(v_t?_a?q.k as varchar)|| cast(v_t?_a?q.l as varchar)|| cast(v_t?_a?q.m as varchar)|| cast(v_t?_a?q.n as varchar)|| cast(v_t?_a?q.o as varchar)|| cast(v_t?_a?q.p as varchar)|| cast(v_t?_a?q.q as varchar)), count(v_t?_a?q.c), count(v_t?_a?q.d), ? from t? v_t?_a?q where ( exists (select v_t?_a?q.a from db_root db_root)) and (v_t?_a?q.a> ?:? )) v_t?_a?q (num?, num?, num?, num?)) v_t?_a?q (num?, num?, num?, num?)
+select v_t?_a?q.num?, v_t?_a?q.num?, v_t?_a?q.num?, v_t?_a?q.num? from (select count(v_t?_a?q.b|| cast(v_t?_a?q.e as varchar)|| cast(v_t?_a?q.f as varchar)|| cast(v_t?_a?q.g as varchar)|| cast(v_t?_a?q.h as varchar)|| cast(v_t?_a?q.i as varchar)|| cast(v_t?_a?q.j as varchar)|| cast(v_t?_a?q.k as varchar)|| cast(v_t?_a?q.l as varchar)|| cast(v_t?_a?q.m as varchar)|| cast(v_t?_a?q.n as varchar)|| cast(v_t?_a?q.o as varchar)|| cast(v_t?_a?q.p as varchar)|| cast(v_t?_a?q.q as varchar)), count(v_t?_a?q.c), count(v_t?_a?q.d), ? from t? v_t?_a?q where ( exists (select v_t?_a?q.a from db_root db_root where inst_num()<=?)) and (v_t?_a?q.a> ?:? )) v_t?_a?q (num?, num?, num?, num?)
+Query plan:
+sscan
+    class: v_t?_a?q node[?]
+    cost:  ? card ?
+Query stmt:
+select v_t?_a?q.num?, v_t?_a?q.num?, v_t?_a?q.num?, v_t?_a?q.num? from (select v_t?_a?q.num?, v_t?_a?q.num?, v_t?_a?q.num?, v_t?_a?q.num? from (select count(v_t?_a?q.b|| cast(v_t?_a?q.e as varchar)|| cast(v_t?_a?q.f as varchar)|| cast(v_t?_a?q.g as varchar)|| cast(v_t?_a?q.h as varchar)|| cast(v_t?_a?q.i as varchar)|| cast(v_t?_a?q.j as varchar)|| cast(v_t?_a?q.k as varchar)|| cast(v_t?_a?q.l as varchar)|| cast(v_t?_a?q.m as varchar)|| cast(v_t?_a?q.n as varchar)|| cast(v_t?_a?q.o as varchar)|| cast(v_t?_a?q.p as varchar)|| cast(v_t?_a?q.q as varchar)), count(v_t?_a?q.c), count(v_t?_a?q.d), ? from t? v_t?_a?q where ( exists (select v_t?_a?q.a from db_root db_root where inst_num()<=?)) and (v_t?_a?q.a> ?:? )) v_t?_a?q (num?, num?, num?, num?) union all select v_t?_a?q.num?, v_t?_a?q.num?, v_t?_a?q.num?, v_t?_a?q.num? from (select count(v_t?_a?q.b|| cast(v_t?_a?q.e as varchar)|| cast(v_t?_a?q.f as varchar)|| cast(v_t?_a?q.g as varchar)|| cast(v_t?_a?q.h as varchar)|| cast(v_t?_a?q.i as varchar)|| cast(v_t?_a?q.j as varchar)|| cast(v_t?_a?q.k as varchar)|| cast(v_t?_a?q.l as varchar)|| cast(v_t?_a?q.m as varchar)|| cast(v_t?_a?q.n as varchar)|| cast(v_t?_a?q.o as varchar)|| cast(v_t?_a?q.p as varchar)|| cast(v_t?_a?q.q as varchar)), count(v_t?_a?q.c), count(v_t?_a?q.d), ? from t? v_t?_a?q where ( exists (select v_t?_a?q.a from db_root db_root where inst_num()<=?)) and (v_t?_a?q.a> ?:? )) v_t?_a?q (num?, num?, num?, num?)) v_t?_a?q (num?, num?, num?, num?)
 ===================================================
 0
 ===================================================
@@ -131,9 +134,10 @@ num1    num2    num3    num4
 Query plan:
 sscan
     class: db_root node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select v_t?_a?p.a from db_root db_root)
+(select v_t?_a?p.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?p node[?]
@@ -142,13 +146,13 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?p.b|| cast(v_t?_a?p.e as varchar)|| cast(v_t?_a?p.f as varchar)|| cast(v_t?_a?p.g as varchar)|| cast(v_t?_a?p.h as varchar)|| cast(v_t?_a?p.i as varchar)|| cast(v_t?_a?p.j as varchar)|| cast(v_t?_a?p.k as varchar)|| cast(v_t?_a?p.l as varchar)|| cast(v_t?_a?p.m as varchar)|| cast(v_t?_a?p.n as varchar)|| cast(v_t?_a?p.o as varchar)|| cast(v_t?_a?p.p as varchar)), count(v_t?_a?p.c), count(v_t?_a?p.d), ? from t? v_t?_a?p where ( exists (select v_t?_a?p.a from db_root db_root)) and (v_t?_a?p.a> ?:? ))
+(select count(v_t?_a?p.b|| cast(v_t?_a?p.e as varchar)|| cast(v_t?_a?p.f as varchar)|| cast(v_t?_a?p.g as varchar)|| cast(v_t?_a?p.h as varchar)|| cast(v_t?_a?p.i as varchar)|| cast(v_t?_a?p.j as varchar)|| cast(v_t?_a?p.k as varchar)|| cast(v_t?_a?p.l as varchar)|| cast(v_t?_a?p.m as varchar)|| cast(v_t?_a?p.n as varchar)|| cast(v_t?_a?p.o as varchar)|| cast(v_t?_a?p.p as varchar)), count(v_t?_a?p.c), count(v_t?_a?p.d), ? from t? v_t?_a?p where ( exists (select v_t?_a?p.a from db_root db_root where inst_num()<=?)) and (v_t?_a?p.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?p node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?p.num?, v_t?_a?p.num?, v_t?_a?p.num?, v_t?_a?p.num? from (select count(v_t?_a?p.b|| cast(v_t?_a?p.e as varchar)|| cast(v_t?_a?p.f as varchar)|| cast(v_t?_a?p.g as varchar)|| cast(v_t?_a?p.h as varchar)|| cast(v_t?_a?p.i as varchar)|| cast(v_t?_a?p.j as varchar)|| cast(v_t?_a?p.k as varchar)|| cast(v_t?_a?p.l as varchar)|| cast(v_t?_a?p.m as varchar)|| cast(v_t?_a?p.n as varchar)|| cast(v_t?_a?p.o as varchar)|| cast(v_t?_a?p.p as varchar)), count(v_t?_a?p.c), count(v_t?_a?p.d), ? from t? v_t?_a?p where ( exists (select v_t?_a?p.a from db_root db_root)) and (v_t?_a?p.a> ?:? )) v_t?_a?p (num?, num?, num?, num?)
+select v_t?_a?p.num?, v_t?_a?p.num?, v_t?_a?p.num?, v_t?_a?p.num? from (select count(v_t?_a?p.b|| cast(v_t?_a?p.e as varchar)|| cast(v_t?_a?p.f as varchar)|| cast(v_t?_a?p.g as varchar)|| cast(v_t?_a?p.h as varchar)|| cast(v_t?_a?p.i as varchar)|| cast(v_t?_a?p.j as varchar)|| cast(v_t?_a?p.k as varchar)|| cast(v_t?_a?p.l as varchar)|| cast(v_t?_a?p.m as varchar)|| cast(v_t?_a?p.n as varchar)|| cast(v_t?_a?p.o as varchar)|| cast(v_t?_a?p.p as varchar)), count(v_t?_a?p.c), count(v_t?_a?p.d), ? from t? v_t?_a?p where ( exists (select v_t?_a?p.a from db_root db_root where inst_num()<=?)) and (v_t?_a?p.a> ?:? )) v_t?_a?p (num?, num?, num?, num?)
 ===================================================
 0
 ===================================================
@@ -159,30 +163,10 @@ num1    num2    num3    num4
 Query plan:
 sscan
     class: db_root node[?]
-    cost:  ? card ?
-Query stmt:
-(select v_t?_a?p.a from db_root db_root)
-Query plan:
-iscan
-    class: v_t?_a?p node[?]
-    index: i_t?_a?p term[?] (covers)
     sargs: term[?]
-    subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?p.b|| cast(v_t?_a?p.e as varchar)|| cast(v_t?_a?p.f as varchar)|| cast(v_t?_a?p.g as varchar)|| cast(v_t?_a?p.h as varchar)|| cast(v_t?_a?p.i as varchar)|| cast(v_t?_a?p.j as varchar)|| cast(v_t?_a?p.k as varchar)|| cast(v_t?_a?p.l as varchar)|| cast(v_t?_a?p.m as varchar)|| cast(v_t?_a?p.n as varchar)|| cast(v_t?_a?p.o as varchar)|| cast(v_t?_a?p.p as varchar)), count(v_t?_a?p.c), count(v_t?_a?p.d), ? from t? v_t?_a?p where ( exists (select v_t?_a?p.a from db_root db_root)) and (v_t?_a?p.a> ?:? ))
-Query plan:
-sscan
-    class: v_t?_a?p node[?]
-    cost:  ? card ?
-Query stmt:
-select v_t?_a?p.num?, v_t?_a?p.num?, v_t?_a?p.num?, v_t?_a?p.num? from (select count(v_t?_a?p.b|| cast(v_t?_a?p.e as varchar)|| cast(v_t?_a?p.f as varchar)|| cast(v_t?_a?p.g as varchar)|| cast(v_t?_a?p.h as varchar)|| cast(v_t?_a?p.i as varchar)|| cast(v_t?_a?p.j as varchar)|| cast(v_t?_a?p.k as varchar)|| cast(v_t?_a?p.l as varchar)|| cast(v_t?_a?p.m as varchar)|| cast(v_t?_a?p.n as varchar)|| cast(v_t?_a?p.o as varchar)|| cast(v_t?_a?p.p as varchar)), count(v_t?_a?p.c), count(v_t?_a?p.d), ? from t? v_t?_a?p where ( exists (select v_t?_a?p.a from db_root db_root)) and (v_t?_a?p.a> ?:? )) v_t?_a?p (num?, num?, num?, num?)
-Query plan:
-sscan
-    class: db_root node[?]
-    cost:  ? card ?
-Query stmt:
-(select v_t?_a?p.a from db_root db_root)
+(select v_t?_a?p.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?p node[?]
@@ -191,19 +175,41 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?p.b|| cast(v_t?_a?p.e as varchar)|| cast(v_t?_a?p.f as varchar)|| cast(v_t?_a?p.g as varchar)|| cast(v_t?_a?p.h as varchar)|| cast(v_t?_a?p.i as varchar)|| cast(v_t?_a?p.j as varchar)|| cast(v_t?_a?p.k as varchar)|| cast(v_t?_a?p.l as varchar)|| cast(v_t?_a?p.m as varchar)|| cast(v_t?_a?p.n as varchar)|| cast(v_t?_a?p.o as varchar)|| cast(v_t?_a?p.p as varchar)), count(v_t?_a?p.c), count(v_t?_a?p.d), ? from t? v_t?_a?p where ( exists (select v_t?_a?p.a from db_root db_root)) and (v_t?_a?p.a> ?:? ))
+(select count(v_t?_a?p.b|| cast(v_t?_a?p.e as varchar)|| cast(v_t?_a?p.f as varchar)|| cast(v_t?_a?p.g as varchar)|| cast(v_t?_a?p.h as varchar)|| cast(v_t?_a?p.i as varchar)|| cast(v_t?_a?p.j as varchar)|| cast(v_t?_a?p.k as varchar)|| cast(v_t?_a?p.l as varchar)|| cast(v_t?_a?p.m as varchar)|| cast(v_t?_a?p.n as varchar)|| cast(v_t?_a?p.o as varchar)|| cast(v_t?_a?p.p as varchar)), count(v_t?_a?p.c), count(v_t?_a?p.d), ? from t? v_t?_a?p where ( exists (select v_t?_a?p.a from db_root db_root where inst_num()<=?)) and (v_t?_a?p.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?p node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?p.num?, v_t?_a?p.num?, v_t?_a?p.num?, v_t?_a?p.num? from (select count(v_t?_a?p.b|| cast(v_t?_a?p.e as varchar)|| cast(v_t?_a?p.f as varchar)|| cast(v_t?_a?p.g as varchar)|| cast(v_t?_a?p.h as varchar)|| cast(v_t?_a?p.i as varchar)|| cast(v_t?_a?p.j as varchar)|| cast(v_t?_a?p.k as varchar)|| cast(v_t?_a?p.l as varchar)|| cast(v_t?_a?p.m as varchar)|| cast(v_t?_a?p.n as varchar)|| cast(v_t?_a?p.o as varchar)|| cast(v_t?_a?p.p as varchar)), count(v_t?_a?p.c), count(v_t?_a?p.d), ? from t? v_t?_a?p where ( exists (select v_t?_a?p.a from db_root db_root)) and (v_t?_a?p.a> ?:? )) v_t?_a?p (num?, num?, num?, num?)
+select v_t?_a?p.num?, v_t?_a?p.num?, v_t?_a?p.num?, v_t?_a?p.num? from (select count(v_t?_a?p.b|| cast(v_t?_a?p.e as varchar)|| cast(v_t?_a?p.f as varchar)|| cast(v_t?_a?p.g as varchar)|| cast(v_t?_a?p.h as varchar)|| cast(v_t?_a?p.i as varchar)|| cast(v_t?_a?p.j as varchar)|| cast(v_t?_a?p.k as varchar)|| cast(v_t?_a?p.l as varchar)|| cast(v_t?_a?p.m as varchar)|| cast(v_t?_a?p.n as varchar)|| cast(v_t?_a?p.o as varchar)|| cast(v_t?_a?p.p as varchar)), count(v_t?_a?p.c), count(v_t?_a?p.d), ? from t? v_t?_a?p where ( exists (select v_t?_a?p.a from db_root db_root where inst_num()<=?)) and (v_t?_a?p.a> ?:? )) v_t?_a?p (num?, num?, num?, num?)
+Query plan:
+sscan
+    class: db_root node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select v_t?_a?p.a from db_root db_root where inst_num()<=?)
+Query plan:
+iscan
+    class: v_t?_a?p node[?]
+    index: i_t?_a?p term[?] (covers)
+    sargs: term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+(select count(v_t?_a?p.b|| cast(v_t?_a?p.e as varchar)|| cast(v_t?_a?p.f as varchar)|| cast(v_t?_a?p.g as varchar)|| cast(v_t?_a?p.h as varchar)|| cast(v_t?_a?p.i as varchar)|| cast(v_t?_a?p.j as varchar)|| cast(v_t?_a?p.k as varchar)|| cast(v_t?_a?p.l as varchar)|| cast(v_t?_a?p.m as varchar)|| cast(v_t?_a?p.n as varchar)|| cast(v_t?_a?p.o as varchar)|| cast(v_t?_a?p.p as varchar)), count(v_t?_a?p.c), count(v_t?_a?p.d), ? from t? v_t?_a?p where ( exists (select v_t?_a?p.a from db_root db_root where inst_num()<=?)) and (v_t?_a?p.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?p node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?p.num?, v_t?_a?p.num?, v_t?_a?p.num?, v_t?_a?p.num? from (select v_t?_a?p.num?, v_t?_a?p.num?, v_t?_a?p.num?, v_t?_a?p.num? from (select count(v_t?_a?p.b|| cast(v_t?_a?p.e as varchar)|| cast(v_t?_a?p.f as varchar)|| cast(v_t?_a?p.g as varchar)|| cast(v_t?_a?p.h as varchar)|| cast(v_t?_a?p.i as varchar)|| cast(v_t?_a?p.j as varchar)|| cast(v_t?_a?p.k as varchar)|| cast(v_t?_a?p.l as varchar)|| cast(v_t?_a?p.m as varchar)|| cast(v_t?_a?p.n as varchar)|| cast(v_t?_a?p.o as varchar)|| cast(v_t?_a?p.p as varchar)), count(v_t?_a?p.c), count(v_t?_a?p.d), ? from t? v_t?_a?p where ( exists (select v_t?_a?p.a from db_root db_root)) and (v_t?_a?p.a> ?:? )) v_t?_a?p (num?, num?, num?, num?) union all select v_t?_a?p.num?, v_t?_a?p.num?, v_t?_a?p.num?, v_t?_a?p.num? from (select count(v_t?_a?p.b|| cast(v_t?_a?p.e as varchar)|| cast(v_t?_a?p.f as varchar)|| cast(v_t?_a?p.g as varchar)|| cast(v_t?_a?p.h as varchar)|| cast(v_t?_a?p.i as varchar)|| cast(v_t?_a?p.j as varchar)|| cast(v_t?_a?p.k as varchar)|| cast(v_t?_a?p.l as varchar)|| cast(v_t?_a?p.m as varchar)|| cast(v_t?_a?p.n as varchar)|| cast(v_t?_a?p.o as varchar)|| cast(v_t?_a?p.p as varchar)), count(v_t?_a?p.c), count(v_t?_a?p.d), ? from t? v_t?_a?p where ( exists (select v_t?_a?p.a from db_root db_root)) and (v_t?_a?p.a> ?:? )) v_t?_a?p (num?, num?, num?, num?)) v_t?_a?p (num?, num?, num?, num?)
+select v_t?_a?p.num?, v_t?_a?p.num?, v_t?_a?p.num?, v_t?_a?p.num? from (select count(v_t?_a?p.b|| cast(v_t?_a?p.e as varchar)|| cast(v_t?_a?p.f as varchar)|| cast(v_t?_a?p.g as varchar)|| cast(v_t?_a?p.h as varchar)|| cast(v_t?_a?p.i as varchar)|| cast(v_t?_a?p.j as varchar)|| cast(v_t?_a?p.k as varchar)|| cast(v_t?_a?p.l as varchar)|| cast(v_t?_a?p.m as varchar)|| cast(v_t?_a?p.n as varchar)|| cast(v_t?_a?p.o as varchar)|| cast(v_t?_a?p.p as varchar)), count(v_t?_a?p.c), count(v_t?_a?p.d), ? from t? v_t?_a?p where ( exists (select v_t?_a?p.a from db_root db_root where inst_num()<=?)) and (v_t?_a?p.a> ?:? )) v_t?_a?p (num?, num?, num?, num?)
+Query plan:
+sscan
+    class: v_t?_a?p node[?]
+    cost:  ? card ?
+Query stmt:
+select v_t?_a?p.num?, v_t?_a?p.num?, v_t?_a?p.num?, v_t?_a?p.num? from (select v_t?_a?p.num?, v_t?_a?p.num?, v_t?_a?p.num?, v_t?_a?p.num? from (select count(v_t?_a?p.b|| cast(v_t?_a?p.e as varchar)|| cast(v_t?_a?p.f as varchar)|| cast(v_t?_a?p.g as varchar)|| cast(v_t?_a?p.h as varchar)|| cast(v_t?_a?p.i as varchar)|| cast(v_t?_a?p.j as varchar)|| cast(v_t?_a?p.k as varchar)|| cast(v_t?_a?p.l as varchar)|| cast(v_t?_a?p.m as varchar)|| cast(v_t?_a?p.n as varchar)|| cast(v_t?_a?p.o as varchar)|| cast(v_t?_a?p.p as varchar)), count(v_t?_a?p.c), count(v_t?_a?p.d), ? from t? v_t?_a?p where ( exists (select v_t?_a?p.a from db_root db_root where inst_num()<=?)) and (v_t?_a?p.a> ?:? )) v_t?_a?p (num?, num?, num?, num?) union all select v_t?_a?p.num?, v_t?_a?p.num?, v_t?_a?p.num?, v_t?_a?p.num? from (select count(v_t?_a?p.b|| cast(v_t?_a?p.e as varchar)|| cast(v_t?_a?p.f as varchar)|| cast(v_t?_a?p.g as varchar)|| cast(v_t?_a?p.h as varchar)|| cast(v_t?_a?p.i as varchar)|| cast(v_t?_a?p.j as varchar)|| cast(v_t?_a?p.k as varchar)|| cast(v_t?_a?p.l as varchar)|| cast(v_t?_a?p.m as varchar)|| cast(v_t?_a?p.n as varchar)|| cast(v_t?_a?p.o as varchar)|| cast(v_t?_a?p.p as varchar)), count(v_t?_a?p.c), count(v_t?_a?p.d), ? from t? v_t?_a?p where ( exists (select v_t?_a?p.a from db_root db_root where inst_num()<=?)) and (v_t?_a?p.a> ?:? )) v_t?_a?p (num?, num?, num?, num?)) v_t?_a?p (num?, num?, num?, num?)
 ===================================================
 0
 ===================================================
@@ -213,9 +219,10 @@ num1    num2    num3    num4
 Query plan:
 sscan
     class: db_root node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select v_t?_a?o.a from db_root db_root)
+(select v_t?_a?o.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?o node[?]
@@ -224,13 +231,13 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?o.b|| cast(v_t?_a?o.e as varchar)|| cast(v_t?_a?o.f as varchar)|| cast(v_t?_a?o.g as varchar)|| cast(v_t?_a?o.h as varchar)|| cast(v_t?_a?o.i as varchar)|| cast(v_t?_a?o.j as varchar)|| cast(v_t?_a?o.k as varchar)|| cast(v_t?_a?o.l as varchar)|| cast(v_t?_a?o.m as varchar)|| cast(v_t?_a?o.n as varchar)|| cast(v_t?_a?o.o as varchar)), count(v_t?_a?o.c), count(v_t?_a?o.d), ? from t? v_t?_a?o where ( exists (select v_t?_a?o.a from db_root db_root)) and (v_t?_a?o.a> ?:? ))
+(select count(v_t?_a?o.b|| cast(v_t?_a?o.e as varchar)|| cast(v_t?_a?o.f as varchar)|| cast(v_t?_a?o.g as varchar)|| cast(v_t?_a?o.h as varchar)|| cast(v_t?_a?o.i as varchar)|| cast(v_t?_a?o.j as varchar)|| cast(v_t?_a?o.k as varchar)|| cast(v_t?_a?o.l as varchar)|| cast(v_t?_a?o.m as varchar)|| cast(v_t?_a?o.n as varchar)|| cast(v_t?_a?o.o as varchar)), count(v_t?_a?o.c), count(v_t?_a?o.d), ? from t? v_t?_a?o where ( exists (select v_t?_a?o.a from db_root db_root where inst_num()<=?)) and (v_t?_a?o.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?o node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?o.num?, v_t?_a?o.num?, v_t?_a?o.num?, v_t?_a?o.num? from (select count(v_t?_a?o.b|| cast(v_t?_a?o.e as varchar)|| cast(v_t?_a?o.f as varchar)|| cast(v_t?_a?o.g as varchar)|| cast(v_t?_a?o.h as varchar)|| cast(v_t?_a?o.i as varchar)|| cast(v_t?_a?o.j as varchar)|| cast(v_t?_a?o.k as varchar)|| cast(v_t?_a?o.l as varchar)|| cast(v_t?_a?o.m as varchar)|| cast(v_t?_a?o.n as varchar)|| cast(v_t?_a?o.o as varchar)), count(v_t?_a?o.c), count(v_t?_a?o.d), ? from t? v_t?_a?o where ( exists (select v_t?_a?o.a from db_root db_root)) and (v_t?_a?o.a> ?:? )) v_t?_a?o (num?, num?, num?, num?)
+select v_t?_a?o.num?, v_t?_a?o.num?, v_t?_a?o.num?, v_t?_a?o.num? from (select count(v_t?_a?o.b|| cast(v_t?_a?o.e as varchar)|| cast(v_t?_a?o.f as varchar)|| cast(v_t?_a?o.g as varchar)|| cast(v_t?_a?o.h as varchar)|| cast(v_t?_a?o.i as varchar)|| cast(v_t?_a?o.j as varchar)|| cast(v_t?_a?o.k as varchar)|| cast(v_t?_a?o.l as varchar)|| cast(v_t?_a?o.m as varchar)|| cast(v_t?_a?o.n as varchar)|| cast(v_t?_a?o.o as varchar)), count(v_t?_a?o.c), count(v_t?_a?o.d), ? from t? v_t?_a?o where ( exists (select v_t?_a?o.a from db_root db_root where inst_num()<=?)) and (v_t?_a?o.a> ?:? )) v_t?_a?o (num?, num?, num?, num?)
 ===================================================
 0
 ===================================================
@@ -241,30 +248,10 @@ num1    num2    num3    num4
 Query plan:
 sscan
     class: db_root node[?]
-    cost:  ? card ?
-Query stmt:
-(select v_t?_a?o.a from db_root db_root)
-Query plan:
-iscan
-    class: v_t?_a?o node[?]
-    index: i_t?_a?o term[?] (covers)
     sargs: term[?]
-    subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?o.b|| cast(v_t?_a?o.e as varchar)|| cast(v_t?_a?o.f as varchar)|| cast(v_t?_a?o.g as varchar)|| cast(v_t?_a?o.h as varchar)|| cast(v_t?_a?o.i as varchar)|| cast(v_t?_a?o.j as varchar)|| cast(v_t?_a?o.k as varchar)|| cast(v_t?_a?o.l as varchar)|| cast(v_t?_a?o.m as varchar)|| cast(v_t?_a?o.n as varchar)|| cast(v_t?_a?o.o as varchar)), count(v_t?_a?o.c), count(v_t?_a?o.d), ? from t? v_t?_a?o where ( exists (select v_t?_a?o.a from db_root db_root)) and (v_t?_a?o.a> ?:? ))
-Query plan:
-sscan
-    class: v_t?_a?o node[?]
-    cost:  ? card ?
-Query stmt:
-select v_t?_a?o.num?, v_t?_a?o.num?, v_t?_a?o.num?, v_t?_a?o.num? from (select count(v_t?_a?o.b|| cast(v_t?_a?o.e as varchar)|| cast(v_t?_a?o.f as varchar)|| cast(v_t?_a?o.g as varchar)|| cast(v_t?_a?o.h as varchar)|| cast(v_t?_a?o.i as varchar)|| cast(v_t?_a?o.j as varchar)|| cast(v_t?_a?o.k as varchar)|| cast(v_t?_a?o.l as varchar)|| cast(v_t?_a?o.m as varchar)|| cast(v_t?_a?o.n as varchar)|| cast(v_t?_a?o.o as varchar)), count(v_t?_a?o.c), count(v_t?_a?o.d), ? from t? v_t?_a?o where ( exists (select v_t?_a?o.a from db_root db_root)) and (v_t?_a?o.a> ?:? )) v_t?_a?o (num?, num?, num?, num?)
-Query plan:
-sscan
-    class: db_root node[?]
-    cost:  ? card ?
-Query stmt:
-(select v_t?_a?o.a from db_root db_root)
+(select v_t?_a?o.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?o node[?]
@@ -273,19 +260,41 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?o.b|| cast(v_t?_a?o.e as varchar)|| cast(v_t?_a?o.f as varchar)|| cast(v_t?_a?o.g as varchar)|| cast(v_t?_a?o.h as varchar)|| cast(v_t?_a?o.i as varchar)|| cast(v_t?_a?o.j as varchar)|| cast(v_t?_a?o.k as varchar)|| cast(v_t?_a?o.l as varchar)|| cast(v_t?_a?o.m as varchar)|| cast(v_t?_a?o.n as varchar)|| cast(v_t?_a?o.o as varchar)), count(v_t?_a?o.c), count(v_t?_a?o.d), ? from t? v_t?_a?o where ( exists (select v_t?_a?o.a from db_root db_root)) and (v_t?_a?o.a> ?:? ))
+(select count(v_t?_a?o.b|| cast(v_t?_a?o.e as varchar)|| cast(v_t?_a?o.f as varchar)|| cast(v_t?_a?o.g as varchar)|| cast(v_t?_a?o.h as varchar)|| cast(v_t?_a?o.i as varchar)|| cast(v_t?_a?o.j as varchar)|| cast(v_t?_a?o.k as varchar)|| cast(v_t?_a?o.l as varchar)|| cast(v_t?_a?o.m as varchar)|| cast(v_t?_a?o.n as varchar)|| cast(v_t?_a?o.o as varchar)), count(v_t?_a?o.c), count(v_t?_a?o.d), ? from t? v_t?_a?o where ( exists (select v_t?_a?o.a from db_root db_root where inst_num()<=?)) and (v_t?_a?o.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?o node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?o.num?, v_t?_a?o.num?, v_t?_a?o.num?, v_t?_a?o.num? from (select count(v_t?_a?o.b|| cast(v_t?_a?o.e as varchar)|| cast(v_t?_a?o.f as varchar)|| cast(v_t?_a?o.g as varchar)|| cast(v_t?_a?o.h as varchar)|| cast(v_t?_a?o.i as varchar)|| cast(v_t?_a?o.j as varchar)|| cast(v_t?_a?o.k as varchar)|| cast(v_t?_a?o.l as varchar)|| cast(v_t?_a?o.m as varchar)|| cast(v_t?_a?o.n as varchar)|| cast(v_t?_a?o.o as varchar)), count(v_t?_a?o.c), count(v_t?_a?o.d), ? from t? v_t?_a?o where ( exists (select v_t?_a?o.a from db_root db_root)) and (v_t?_a?o.a> ?:? )) v_t?_a?o (num?, num?, num?, num?)
+select v_t?_a?o.num?, v_t?_a?o.num?, v_t?_a?o.num?, v_t?_a?o.num? from (select count(v_t?_a?o.b|| cast(v_t?_a?o.e as varchar)|| cast(v_t?_a?o.f as varchar)|| cast(v_t?_a?o.g as varchar)|| cast(v_t?_a?o.h as varchar)|| cast(v_t?_a?o.i as varchar)|| cast(v_t?_a?o.j as varchar)|| cast(v_t?_a?o.k as varchar)|| cast(v_t?_a?o.l as varchar)|| cast(v_t?_a?o.m as varchar)|| cast(v_t?_a?o.n as varchar)|| cast(v_t?_a?o.o as varchar)), count(v_t?_a?o.c), count(v_t?_a?o.d), ? from t? v_t?_a?o where ( exists (select v_t?_a?o.a from db_root db_root where inst_num()<=?)) and (v_t?_a?o.a> ?:? )) v_t?_a?o (num?, num?, num?, num?)
+Query plan:
+sscan
+    class: db_root node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select v_t?_a?o.a from db_root db_root where inst_num()<=?)
+Query plan:
+iscan
+    class: v_t?_a?o node[?]
+    index: i_t?_a?o term[?] (covers)
+    sargs: term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+(select count(v_t?_a?o.b|| cast(v_t?_a?o.e as varchar)|| cast(v_t?_a?o.f as varchar)|| cast(v_t?_a?o.g as varchar)|| cast(v_t?_a?o.h as varchar)|| cast(v_t?_a?o.i as varchar)|| cast(v_t?_a?o.j as varchar)|| cast(v_t?_a?o.k as varchar)|| cast(v_t?_a?o.l as varchar)|| cast(v_t?_a?o.m as varchar)|| cast(v_t?_a?o.n as varchar)|| cast(v_t?_a?o.o as varchar)), count(v_t?_a?o.c), count(v_t?_a?o.d), ? from t? v_t?_a?o where ( exists (select v_t?_a?o.a from db_root db_root where inst_num()<=?)) and (v_t?_a?o.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?o node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?o.num?, v_t?_a?o.num?, v_t?_a?o.num?, v_t?_a?o.num? from (select v_t?_a?o.num?, v_t?_a?o.num?, v_t?_a?o.num?, v_t?_a?o.num? from (select count(v_t?_a?o.b|| cast(v_t?_a?o.e as varchar)|| cast(v_t?_a?o.f as varchar)|| cast(v_t?_a?o.g as varchar)|| cast(v_t?_a?o.h as varchar)|| cast(v_t?_a?o.i as varchar)|| cast(v_t?_a?o.j as varchar)|| cast(v_t?_a?o.k as varchar)|| cast(v_t?_a?o.l as varchar)|| cast(v_t?_a?o.m as varchar)|| cast(v_t?_a?o.n as varchar)|| cast(v_t?_a?o.o as varchar)), count(v_t?_a?o.c), count(v_t?_a?o.d), ? from t? v_t?_a?o where ( exists (select v_t?_a?o.a from db_root db_root)) and (v_t?_a?o.a> ?:? )) v_t?_a?o (num?, num?, num?, num?) union all select v_t?_a?o.num?, v_t?_a?o.num?, v_t?_a?o.num?, v_t?_a?o.num? from (select count(v_t?_a?o.b|| cast(v_t?_a?o.e as varchar)|| cast(v_t?_a?o.f as varchar)|| cast(v_t?_a?o.g as varchar)|| cast(v_t?_a?o.h as varchar)|| cast(v_t?_a?o.i as varchar)|| cast(v_t?_a?o.j as varchar)|| cast(v_t?_a?o.k as varchar)|| cast(v_t?_a?o.l as varchar)|| cast(v_t?_a?o.m as varchar)|| cast(v_t?_a?o.n as varchar)|| cast(v_t?_a?o.o as varchar)), count(v_t?_a?o.c), count(v_t?_a?o.d), ? from t? v_t?_a?o where ( exists (select v_t?_a?o.a from db_root db_root)) and (v_t?_a?o.a> ?:? )) v_t?_a?o (num?, num?, num?, num?)) v_t?_a?o (num?, num?, num?, num?)
+select v_t?_a?o.num?, v_t?_a?o.num?, v_t?_a?o.num?, v_t?_a?o.num? from (select count(v_t?_a?o.b|| cast(v_t?_a?o.e as varchar)|| cast(v_t?_a?o.f as varchar)|| cast(v_t?_a?o.g as varchar)|| cast(v_t?_a?o.h as varchar)|| cast(v_t?_a?o.i as varchar)|| cast(v_t?_a?o.j as varchar)|| cast(v_t?_a?o.k as varchar)|| cast(v_t?_a?o.l as varchar)|| cast(v_t?_a?o.m as varchar)|| cast(v_t?_a?o.n as varchar)|| cast(v_t?_a?o.o as varchar)), count(v_t?_a?o.c), count(v_t?_a?o.d), ? from t? v_t?_a?o where ( exists (select v_t?_a?o.a from db_root db_root where inst_num()<=?)) and (v_t?_a?o.a> ?:? )) v_t?_a?o (num?, num?, num?, num?)
+Query plan:
+sscan
+    class: v_t?_a?o node[?]
+    cost:  ? card ?
+Query stmt:
+select v_t?_a?o.num?, v_t?_a?o.num?, v_t?_a?o.num?, v_t?_a?o.num? from (select v_t?_a?o.num?, v_t?_a?o.num?, v_t?_a?o.num?, v_t?_a?o.num? from (select count(v_t?_a?o.b|| cast(v_t?_a?o.e as varchar)|| cast(v_t?_a?o.f as varchar)|| cast(v_t?_a?o.g as varchar)|| cast(v_t?_a?o.h as varchar)|| cast(v_t?_a?o.i as varchar)|| cast(v_t?_a?o.j as varchar)|| cast(v_t?_a?o.k as varchar)|| cast(v_t?_a?o.l as varchar)|| cast(v_t?_a?o.m as varchar)|| cast(v_t?_a?o.n as varchar)|| cast(v_t?_a?o.o as varchar)), count(v_t?_a?o.c), count(v_t?_a?o.d), ? from t? v_t?_a?o where ( exists (select v_t?_a?o.a from db_root db_root where inst_num()<=?)) and (v_t?_a?o.a> ?:? )) v_t?_a?o (num?, num?, num?, num?) union all select v_t?_a?o.num?, v_t?_a?o.num?, v_t?_a?o.num?, v_t?_a?o.num? from (select count(v_t?_a?o.b|| cast(v_t?_a?o.e as varchar)|| cast(v_t?_a?o.f as varchar)|| cast(v_t?_a?o.g as varchar)|| cast(v_t?_a?o.h as varchar)|| cast(v_t?_a?o.i as varchar)|| cast(v_t?_a?o.j as varchar)|| cast(v_t?_a?o.k as varchar)|| cast(v_t?_a?o.l as varchar)|| cast(v_t?_a?o.m as varchar)|| cast(v_t?_a?o.n as varchar)|| cast(v_t?_a?o.o as varchar)), count(v_t?_a?o.c), count(v_t?_a?o.d), ? from t? v_t?_a?o where ( exists (select v_t?_a?o.a from db_root db_root where inst_num()<=?)) and (v_t?_a?o.a> ?:? )) v_t?_a?o (num?, num?, num?, num?)) v_t?_a?o (num?, num?, num?, num?)
 ===================================================
 0
 ===================================================
@@ -295,9 +304,10 @@ num1    num2    num3    num4
 Query plan:
 sscan
     class: db_root node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select v_t?_a?n.a from db_root db_root)
+(select v_t?_a?n.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?n node[?]
@@ -306,13 +316,13 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?n.b|| cast(v_t?_a?n.e as varchar)|| cast(v_t?_a?n.f as varchar)|| cast(v_t?_a?n.g as varchar)|| cast(v_t?_a?n.h as varchar)|| cast(v_t?_a?n.i as varchar)|| cast(v_t?_a?n.j as varchar)|| cast(v_t?_a?n.k as varchar)|| cast(v_t?_a?n.l as varchar)|| cast(v_t?_a?n.m as varchar)|| cast(v_t?_a?n.n as varchar)), count(v_t?_a?n.c), count(v_t?_a?n.d), ? from t? v_t?_a?n where ( exists (select v_t?_a?n.a from db_root db_root)) and (v_t?_a?n.a> ?:? ))
+(select count(v_t?_a?n.b|| cast(v_t?_a?n.e as varchar)|| cast(v_t?_a?n.f as varchar)|| cast(v_t?_a?n.g as varchar)|| cast(v_t?_a?n.h as varchar)|| cast(v_t?_a?n.i as varchar)|| cast(v_t?_a?n.j as varchar)|| cast(v_t?_a?n.k as varchar)|| cast(v_t?_a?n.l as varchar)|| cast(v_t?_a?n.m as varchar)|| cast(v_t?_a?n.n as varchar)), count(v_t?_a?n.c), count(v_t?_a?n.d), ? from t? v_t?_a?n where ( exists (select v_t?_a?n.a from db_root db_root where inst_num()<=?)) and (v_t?_a?n.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?n node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?n.num?, v_t?_a?n.num?, v_t?_a?n.num?, v_t?_a?n.num? from (select count(v_t?_a?n.b|| cast(v_t?_a?n.e as varchar)|| cast(v_t?_a?n.f as varchar)|| cast(v_t?_a?n.g as varchar)|| cast(v_t?_a?n.h as varchar)|| cast(v_t?_a?n.i as varchar)|| cast(v_t?_a?n.j as varchar)|| cast(v_t?_a?n.k as varchar)|| cast(v_t?_a?n.l as varchar)|| cast(v_t?_a?n.m as varchar)|| cast(v_t?_a?n.n as varchar)), count(v_t?_a?n.c), count(v_t?_a?n.d), ? from t? v_t?_a?n where ( exists (select v_t?_a?n.a from db_root db_root)) and (v_t?_a?n.a> ?:? )) v_t?_a?n (num?, num?, num?, num?)
+select v_t?_a?n.num?, v_t?_a?n.num?, v_t?_a?n.num?, v_t?_a?n.num? from (select count(v_t?_a?n.b|| cast(v_t?_a?n.e as varchar)|| cast(v_t?_a?n.f as varchar)|| cast(v_t?_a?n.g as varchar)|| cast(v_t?_a?n.h as varchar)|| cast(v_t?_a?n.i as varchar)|| cast(v_t?_a?n.j as varchar)|| cast(v_t?_a?n.k as varchar)|| cast(v_t?_a?n.l as varchar)|| cast(v_t?_a?n.m as varchar)|| cast(v_t?_a?n.n as varchar)), count(v_t?_a?n.c), count(v_t?_a?n.d), ? from t? v_t?_a?n where ( exists (select v_t?_a?n.a from db_root db_root where inst_num()<=?)) and (v_t?_a?n.a> ?:? )) v_t?_a?n (num?, num?, num?, num?)
 ===================================================
 0
 ===================================================
@@ -323,30 +333,10 @@ num1    num2    num3    num4
 Query plan:
 sscan
     class: db_root node[?]
-    cost:  ? card ?
-Query stmt:
-(select v_t?_a?n.a from db_root db_root)
-Query plan:
-iscan
-    class: v_t?_a?n node[?]
-    index: i_t?_a?n term[?] (covers)
     sargs: term[?]
-    subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?n.b|| cast(v_t?_a?n.e as varchar)|| cast(v_t?_a?n.f as varchar)|| cast(v_t?_a?n.g as varchar)|| cast(v_t?_a?n.h as varchar)|| cast(v_t?_a?n.i as varchar)|| cast(v_t?_a?n.j as varchar)|| cast(v_t?_a?n.k as varchar)|| cast(v_t?_a?n.l as varchar)|| cast(v_t?_a?n.m as varchar)|| cast(v_t?_a?n.n as varchar)), count(v_t?_a?n.c), count(v_t?_a?n.d), ? from t? v_t?_a?n where ( exists (select v_t?_a?n.a from db_root db_root)) and (v_t?_a?n.a> ?:? ))
-Query plan:
-sscan
-    class: v_t?_a?n node[?]
-    cost:  ? card ?
-Query stmt:
-select v_t?_a?n.num?, v_t?_a?n.num?, v_t?_a?n.num?, v_t?_a?n.num? from (select count(v_t?_a?n.b|| cast(v_t?_a?n.e as varchar)|| cast(v_t?_a?n.f as varchar)|| cast(v_t?_a?n.g as varchar)|| cast(v_t?_a?n.h as varchar)|| cast(v_t?_a?n.i as varchar)|| cast(v_t?_a?n.j as varchar)|| cast(v_t?_a?n.k as varchar)|| cast(v_t?_a?n.l as varchar)|| cast(v_t?_a?n.m as varchar)|| cast(v_t?_a?n.n as varchar)), count(v_t?_a?n.c), count(v_t?_a?n.d), ? from t? v_t?_a?n where ( exists (select v_t?_a?n.a from db_root db_root)) and (v_t?_a?n.a> ?:? )) v_t?_a?n (num?, num?, num?, num?)
-Query plan:
-sscan
-    class: db_root node[?]
-    cost:  ? card ?
-Query stmt:
-(select v_t?_a?n.a from db_root db_root)
+(select v_t?_a?n.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?n node[?]
@@ -355,19 +345,41 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?n.b|| cast(v_t?_a?n.e as varchar)|| cast(v_t?_a?n.f as varchar)|| cast(v_t?_a?n.g as varchar)|| cast(v_t?_a?n.h as varchar)|| cast(v_t?_a?n.i as varchar)|| cast(v_t?_a?n.j as varchar)|| cast(v_t?_a?n.k as varchar)|| cast(v_t?_a?n.l as varchar)|| cast(v_t?_a?n.m as varchar)|| cast(v_t?_a?n.n as varchar)), count(v_t?_a?n.c), count(v_t?_a?n.d), ? from t? v_t?_a?n where ( exists (select v_t?_a?n.a from db_root db_root)) and (v_t?_a?n.a> ?:? ))
+(select count(v_t?_a?n.b|| cast(v_t?_a?n.e as varchar)|| cast(v_t?_a?n.f as varchar)|| cast(v_t?_a?n.g as varchar)|| cast(v_t?_a?n.h as varchar)|| cast(v_t?_a?n.i as varchar)|| cast(v_t?_a?n.j as varchar)|| cast(v_t?_a?n.k as varchar)|| cast(v_t?_a?n.l as varchar)|| cast(v_t?_a?n.m as varchar)|| cast(v_t?_a?n.n as varchar)), count(v_t?_a?n.c), count(v_t?_a?n.d), ? from t? v_t?_a?n where ( exists (select v_t?_a?n.a from db_root db_root where inst_num()<=?)) and (v_t?_a?n.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?n node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?n.num?, v_t?_a?n.num?, v_t?_a?n.num?, v_t?_a?n.num? from (select count(v_t?_a?n.b|| cast(v_t?_a?n.e as varchar)|| cast(v_t?_a?n.f as varchar)|| cast(v_t?_a?n.g as varchar)|| cast(v_t?_a?n.h as varchar)|| cast(v_t?_a?n.i as varchar)|| cast(v_t?_a?n.j as varchar)|| cast(v_t?_a?n.k as varchar)|| cast(v_t?_a?n.l as varchar)|| cast(v_t?_a?n.m as varchar)|| cast(v_t?_a?n.n as varchar)), count(v_t?_a?n.c), count(v_t?_a?n.d), ? from t? v_t?_a?n where ( exists (select v_t?_a?n.a from db_root db_root)) and (v_t?_a?n.a> ?:? )) v_t?_a?n (num?, num?, num?, num?)
+select v_t?_a?n.num?, v_t?_a?n.num?, v_t?_a?n.num?, v_t?_a?n.num? from (select count(v_t?_a?n.b|| cast(v_t?_a?n.e as varchar)|| cast(v_t?_a?n.f as varchar)|| cast(v_t?_a?n.g as varchar)|| cast(v_t?_a?n.h as varchar)|| cast(v_t?_a?n.i as varchar)|| cast(v_t?_a?n.j as varchar)|| cast(v_t?_a?n.k as varchar)|| cast(v_t?_a?n.l as varchar)|| cast(v_t?_a?n.m as varchar)|| cast(v_t?_a?n.n as varchar)), count(v_t?_a?n.c), count(v_t?_a?n.d), ? from t? v_t?_a?n where ( exists (select v_t?_a?n.a from db_root db_root where inst_num()<=?)) and (v_t?_a?n.a> ?:? )) v_t?_a?n (num?, num?, num?, num?)
+Query plan:
+sscan
+    class: db_root node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select v_t?_a?n.a from db_root db_root where inst_num()<=?)
+Query plan:
+iscan
+    class: v_t?_a?n node[?]
+    index: i_t?_a?n term[?] (covers)
+    sargs: term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+(select count(v_t?_a?n.b|| cast(v_t?_a?n.e as varchar)|| cast(v_t?_a?n.f as varchar)|| cast(v_t?_a?n.g as varchar)|| cast(v_t?_a?n.h as varchar)|| cast(v_t?_a?n.i as varchar)|| cast(v_t?_a?n.j as varchar)|| cast(v_t?_a?n.k as varchar)|| cast(v_t?_a?n.l as varchar)|| cast(v_t?_a?n.m as varchar)|| cast(v_t?_a?n.n as varchar)), count(v_t?_a?n.c), count(v_t?_a?n.d), ? from t? v_t?_a?n where ( exists (select v_t?_a?n.a from db_root db_root where inst_num()<=?)) and (v_t?_a?n.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?n node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?n.num?, v_t?_a?n.num?, v_t?_a?n.num?, v_t?_a?n.num? from (select v_t?_a?n.num?, v_t?_a?n.num?, v_t?_a?n.num?, v_t?_a?n.num? from (select count(v_t?_a?n.b|| cast(v_t?_a?n.e as varchar)|| cast(v_t?_a?n.f as varchar)|| cast(v_t?_a?n.g as varchar)|| cast(v_t?_a?n.h as varchar)|| cast(v_t?_a?n.i as varchar)|| cast(v_t?_a?n.j as varchar)|| cast(v_t?_a?n.k as varchar)|| cast(v_t?_a?n.l as varchar)|| cast(v_t?_a?n.m as varchar)|| cast(v_t?_a?n.n as varchar)), count(v_t?_a?n.c), count(v_t?_a?n.d), ? from t? v_t?_a?n where ( exists (select v_t?_a?n.a from db_root db_root)) and (v_t?_a?n.a> ?:? )) v_t?_a?n (num?, num?, num?, num?) union all select v_t?_a?n.num?, v_t?_a?n.num?, v_t?_a?n.num?, v_t?_a?n.num? from (select count(v_t?_a?n.b|| cast(v_t?_a?n.e as varchar)|| cast(v_t?_a?n.f as varchar)|| cast(v_t?_a?n.g as varchar)|| cast(v_t?_a?n.h as varchar)|| cast(v_t?_a?n.i as varchar)|| cast(v_t?_a?n.j as varchar)|| cast(v_t?_a?n.k as varchar)|| cast(v_t?_a?n.l as varchar)|| cast(v_t?_a?n.m as varchar)|| cast(v_t?_a?n.n as varchar)), count(v_t?_a?n.c), count(v_t?_a?n.d), ? from t? v_t?_a?n where ( exists (select v_t?_a?n.a from db_root db_root)) and (v_t?_a?n.a> ?:? )) v_t?_a?n (num?, num?, num?, num?)) v_t?_a?n (num?, num?, num?, num?)
+select v_t?_a?n.num?, v_t?_a?n.num?, v_t?_a?n.num?, v_t?_a?n.num? from (select count(v_t?_a?n.b|| cast(v_t?_a?n.e as varchar)|| cast(v_t?_a?n.f as varchar)|| cast(v_t?_a?n.g as varchar)|| cast(v_t?_a?n.h as varchar)|| cast(v_t?_a?n.i as varchar)|| cast(v_t?_a?n.j as varchar)|| cast(v_t?_a?n.k as varchar)|| cast(v_t?_a?n.l as varchar)|| cast(v_t?_a?n.m as varchar)|| cast(v_t?_a?n.n as varchar)), count(v_t?_a?n.c), count(v_t?_a?n.d), ? from t? v_t?_a?n where ( exists (select v_t?_a?n.a from db_root db_root where inst_num()<=?)) and (v_t?_a?n.a> ?:? )) v_t?_a?n (num?, num?, num?, num?)
+Query plan:
+sscan
+    class: v_t?_a?n node[?]
+    cost:  ? card ?
+Query stmt:
+select v_t?_a?n.num?, v_t?_a?n.num?, v_t?_a?n.num?, v_t?_a?n.num? from (select v_t?_a?n.num?, v_t?_a?n.num?, v_t?_a?n.num?, v_t?_a?n.num? from (select count(v_t?_a?n.b|| cast(v_t?_a?n.e as varchar)|| cast(v_t?_a?n.f as varchar)|| cast(v_t?_a?n.g as varchar)|| cast(v_t?_a?n.h as varchar)|| cast(v_t?_a?n.i as varchar)|| cast(v_t?_a?n.j as varchar)|| cast(v_t?_a?n.k as varchar)|| cast(v_t?_a?n.l as varchar)|| cast(v_t?_a?n.m as varchar)|| cast(v_t?_a?n.n as varchar)), count(v_t?_a?n.c), count(v_t?_a?n.d), ? from t? v_t?_a?n where ( exists (select v_t?_a?n.a from db_root db_root where inst_num()<=?)) and (v_t?_a?n.a> ?:? )) v_t?_a?n (num?, num?, num?, num?) union all select v_t?_a?n.num?, v_t?_a?n.num?, v_t?_a?n.num?, v_t?_a?n.num? from (select count(v_t?_a?n.b|| cast(v_t?_a?n.e as varchar)|| cast(v_t?_a?n.f as varchar)|| cast(v_t?_a?n.g as varchar)|| cast(v_t?_a?n.h as varchar)|| cast(v_t?_a?n.i as varchar)|| cast(v_t?_a?n.j as varchar)|| cast(v_t?_a?n.k as varchar)|| cast(v_t?_a?n.l as varchar)|| cast(v_t?_a?n.m as varchar)|| cast(v_t?_a?n.n as varchar)), count(v_t?_a?n.c), count(v_t?_a?n.d), ? from t? v_t?_a?n where ( exists (select v_t?_a?n.a from db_root db_root where inst_num()<=?)) and (v_t?_a?n.a> ?:? )) v_t?_a?n (num?, num?, num?, num?)) v_t?_a?n (num?, num?, num?, num?)
 ===================================================
 0
 ===================================================
@@ -377,9 +389,10 @@ num1    num2    num3    num4
 Query plan:
 sscan
     class: db_root node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select v_t?_a?m.a from db_root db_root)
+(select v_t?_a?m.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?m node[?]
@@ -388,13 +401,13 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?m.b|| cast(v_t?_a?m.e as varchar)|| cast(v_t?_a?m.f as varchar)|| cast(v_t?_a?m.g as varchar)|| cast(v_t?_a?m.h as varchar)|| cast(v_t?_a?m.i as varchar)|| cast(v_t?_a?m.j as varchar)|| cast(v_t?_a?m.k as varchar)|| cast(v_t?_a?m.l as varchar)|| cast(v_t?_a?m.m as varchar)), count(v_t?_a?m.c), count(v_t?_a?m.d), ? from t? v_t?_a?m where ( exists (select v_t?_a?m.a from db_root db_root)) and (v_t?_a?m.a> ?:? ))
+(select count(v_t?_a?m.b|| cast(v_t?_a?m.e as varchar)|| cast(v_t?_a?m.f as varchar)|| cast(v_t?_a?m.g as varchar)|| cast(v_t?_a?m.h as varchar)|| cast(v_t?_a?m.i as varchar)|| cast(v_t?_a?m.j as varchar)|| cast(v_t?_a?m.k as varchar)|| cast(v_t?_a?m.l as varchar)|| cast(v_t?_a?m.m as varchar)), count(v_t?_a?m.c), count(v_t?_a?m.d), ? from t? v_t?_a?m where ( exists (select v_t?_a?m.a from db_root db_root where inst_num()<=?)) and (v_t?_a?m.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?m node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?m.num?, v_t?_a?m.num?, v_t?_a?m.num?, v_t?_a?m.num? from (select count(v_t?_a?m.b|| cast(v_t?_a?m.e as varchar)|| cast(v_t?_a?m.f as varchar)|| cast(v_t?_a?m.g as varchar)|| cast(v_t?_a?m.h as varchar)|| cast(v_t?_a?m.i as varchar)|| cast(v_t?_a?m.j as varchar)|| cast(v_t?_a?m.k as varchar)|| cast(v_t?_a?m.l as varchar)|| cast(v_t?_a?m.m as varchar)), count(v_t?_a?m.c), count(v_t?_a?m.d), ? from t? v_t?_a?m where ( exists (select v_t?_a?m.a from db_root db_root)) and (v_t?_a?m.a> ?:? )) v_t?_a?m (num?, num?, num?, num?)
+select v_t?_a?m.num?, v_t?_a?m.num?, v_t?_a?m.num?, v_t?_a?m.num? from (select count(v_t?_a?m.b|| cast(v_t?_a?m.e as varchar)|| cast(v_t?_a?m.f as varchar)|| cast(v_t?_a?m.g as varchar)|| cast(v_t?_a?m.h as varchar)|| cast(v_t?_a?m.i as varchar)|| cast(v_t?_a?m.j as varchar)|| cast(v_t?_a?m.k as varchar)|| cast(v_t?_a?m.l as varchar)|| cast(v_t?_a?m.m as varchar)), count(v_t?_a?m.c), count(v_t?_a?m.d), ? from t? v_t?_a?m where ( exists (select v_t?_a?m.a from db_root db_root where inst_num()<=?)) and (v_t?_a?m.a> ?:? )) v_t?_a?m (num?, num?, num?, num?)
 ===================================================
 0
 ===================================================
@@ -405,30 +418,10 @@ num1    num2    num3    num4
 Query plan:
 sscan
     class: db_root node[?]
-    cost:  ? card ?
-Query stmt:
-(select v_t?_a?m.a from db_root db_root)
-Query plan:
-iscan
-    class: v_t?_a?m node[?]
-    index: i_t?_a?m term[?] (covers)
     sargs: term[?]
-    subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?m.b|| cast(v_t?_a?m.e as varchar)|| cast(v_t?_a?m.f as varchar)|| cast(v_t?_a?m.g as varchar)|| cast(v_t?_a?m.h as varchar)|| cast(v_t?_a?m.i as varchar)|| cast(v_t?_a?m.j as varchar)|| cast(v_t?_a?m.k as varchar)|| cast(v_t?_a?m.l as varchar)|| cast(v_t?_a?m.m as varchar)), count(v_t?_a?m.c), count(v_t?_a?m.d), ? from t? v_t?_a?m where ( exists (select v_t?_a?m.a from db_root db_root)) and (v_t?_a?m.a> ?:? ))
-Query plan:
-sscan
-    class: v_t?_a?m node[?]
-    cost:  ? card ?
-Query stmt:
-select v_t?_a?m.num?, v_t?_a?m.num?, v_t?_a?m.num?, v_t?_a?m.num? from (select count(v_t?_a?m.b|| cast(v_t?_a?m.e as varchar)|| cast(v_t?_a?m.f as varchar)|| cast(v_t?_a?m.g as varchar)|| cast(v_t?_a?m.h as varchar)|| cast(v_t?_a?m.i as varchar)|| cast(v_t?_a?m.j as varchar)|| cast(v_t?_a?m.k as varchar)|| cast(v_t?_a?m.l as varchar)|| cast(v_t?_a?m.m as varchar)), count(v_t?_a?m.c), count(v_t?_a?m.d), ? from t? v_t?_a?m where ( exists (select v_t?_a?m.a from db_root db_root)) and (v_t?_a?m.a> ?:? )) v_t?_a?m (num?, num?, num?, num?)
-Query plan:
-sscan
-    class: db_root node[?]
-    cost:  ? card ?
-Query stmt:
-(select v_t?_a?m.a from db_root db_root)
+(select v_t?_a?m.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?m node[?]
@@ -437,19 +430,41 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?m.b|| cast(v_t?_a?m.e as varchar)|| cast(v_t?_a?m.f as varchar)|| cast(v_t?_a?m.g as varchar)|| cast(v_t?_a?m.h as varchar)|| cast(v_t?_a?m.i as varchar)|| cast(v_t?_a?m.j as varchar)|| cast(v_t?_a?m.k as varchar)|| cast(v_t?_a?m.l as varchar)|| cast(v_t?_a?m.m as varchar)), count(v_t?_a?m.c), count(v_t?_a?m.d), ? from t? v_t?_a?m where ( exists (select v_t?_a?m.a from db_root db_root)) and (v_t?_a?m.a> ?:? ))
+(select count(v_t?_a?m.b|| cast(v_t?_a?m.e as varchar)|| cast(v_t?_a?m.f as varchar)|| cast(v_t?_a?m.g as varchar)|| cast(v_t?_a?m.h as varchar)|| cast(v_t?_a?m.i as varchar)|| cast(v_t?_a?m.j as varchar)|| cast(v_t?_a?m.k as varchar)|| cast(v_t?_a?m.l as varchar)|| cast(v_t?_a?m.m as varchar)), count(v_t?_a?m.c), count(v_t?_a?m.d), ? from t? v_t?_a?m where ( exists (select v_t?_a?m.a from db_root db_root where inst_num()<=?)) and (v_t?_a?m.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?m node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?m.num?, v_t?_a?m.num?, v_t?_a?m.num?, v_t?_a?m.num? from (select count(v_t?_a?m.b|| cast(v_t?_a?m.e as varchar)|| cast(v_t?_a?m.f as varchar)|| cast(v_t?_a?m.g as varchar)|| cast(v_t?_a?m.h as varchar)|| cast(v_t?_a?m.i as varchar)|| cast(v_t?_a?m.j as varchar)|| cast(v_t?_a?m.k as varchar)|| cast(v_t?_a?m.l as varchar)|| cast(v_t?_a?m.m as varchar)), count(v_t?_a?m.c), count(v_t?_a?m.d), ? from t? v_t?_a?m where ( exists (select v_t?_a?m.a from db_root db_root)) and (v_t?_a?m.a> ?:? )) v_t?_a?m (num?, num?, num?, num?)
+select v_t?_a?m.num?, v_t?_a?m.num?, v_t?_a?m.num?, v_t?_a?m.num? from (select count(v_t?_a?m.b|| cast(v_t?_a?m.e as varchar)|| cast(v_t?_a?m.f as varchar)|| cast(v_t?_a?m.g as varchar)|| cast(v_t?_a?m.h as varchar)|| cast(v_t?_a?m.i as varchar)|| cast(v_t?_a?m.j as varchar)|| cast(v_t?_a?m.k as varchar)|| cast(v_t?_a?m.l as varchar)|| cast(v_t?_a?m.m as varchar)), count(v_t?_a?m.c), count(v_t?_a?m.d), ? from t? v_t?_a?m where ( exists (select v_t?_a?m.a from db_root db_root where inst_num()<=?)) and (v_t?_a?m.a> ?:? )) v_t?_a?m (num?, num?, num?, num?)
+Query plan:
+sscan
+    class: db_root node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select v_t?_a?m.a from db_root db_root where inst_num()<=?)
+Query plan:
+iscan
+    class: v_t?_a?m node[?]
+    index: i_t?_a?m term[?] (covers)
+    sargs: term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+(select count(v_t?_a?m.b|| cast(v_t?_a?m.e as varchar)|| cast(v_t?_a?m.f as varchar)|| cast(v_t?_a?m.g as varchar)|| cast(v_t?_a?m.h as varchar)|| cast(v_t?_a?m.i as varchar)|| cast(v_t?_a?m.j as varchar)|| cast(v_t?_a?m.k as varchar)|| cast(v_t?_a?m.l as varchar)|| cast(v_t?_a?m.m as varchar)), count(v_t?_a?m.c), count(v_t?_a?m.d), ? from t? v_t?_a?m where ( exists (select v_t?_a?m.a from db_root db_root where inst_num()<=?)) and (v_t?_a?m.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?m node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?m.num?, v_t?_a?m.num?, v_t?_a?m.num?, v_t?_a?m.num? from (select v_t?_a?m.num?, v_t?_a?m.num?, v_t?_a?m.num?, v_t?_a?m.num? from (select count(v_t?_a?m.b|| cast(v_t?_a?m.e as varchar)|| cast(v_t?_a?m.f as varchar)|| cast(v_t?_a?m.g as varchar)|| cast(v_t?_a?m.h as varchar)|| cast(v_t?_a?m.i as varchar)|| cast(v_t?_a?m.j as varchar)|| cast(v_t?_a?m.k as varchar)|| cast(v_t?_a?m.l as varchar)|| cast(v_t?_a?m.m as varchar)), count(v_t?_a?m.c), count(v_t?_a?m.d), ? from t? v_t?_a?m where ( exists (select v_t?_a?m.a from db_root db_root)) and (v_t?_a?m.a> ?:? )) v_t?_a?m (num?, num?, num?, num?) union all select v_t?_a?m.num?, v_t?_a?m.num?, v_t?_a?m.num?, v_t?_a?m.num? from (select count(v_t?_a?m.b|| cast(v_t?_a?m.e as varchar)|| cast(v_t?_a?m.f as varchar)|| cast(v_t?_a?m.g as varchar)|| cast(v_t?_a?m.h as varchar)|| cast(v_t?_a?m.i as varchar)|| cast(v_t?_a?m.j as varchar)|| cast(v_t?_a?m.k as varchar)|| cast(v_t?_a?m.l as varchar)|| cast(v_t?_a?m.m as varchar)), count(v_t?_a?m.c), count(v_t?_a?m.d), ? from t? v_t?_a?m where ( exists (select v_t?_a?m.a from db_root db_root)) and (v_t?_a?m.a> ?:? )) v_t?_a?m (num?, num?, num?, num?)) v_t?_a?m (num?, num?, num?, num?)
+select v_t?_a?m.num?, v_t?_a?m.num?, v_t?_a?m.num?, v_t?_a?m.num? from (select count(v_t?_a?m.b|| cast(v_t?_a?m.e as varchar)|| cast(v_t?_a?m.f as varchar)|| cast(v_t?_a?m.g as varchar)|| cast(v_t?_a?m.h as varchar)|| cast(v_t?_a?m.i as varchar)|| cast(v_t?_a?m.j as varchar)|| cast(v_t?_a?m.k as varchar)|| cast(v_t?_a?m.l as varchar)|| cast(v_t?_a?m.m as varchar)), count(v_t?_a?m.c), count(v_t?_a?m.d), ? from t? v_t?_a?m where ( exists (select v_t?_a?m.a from db_root db_root where inst_num()<=?)) and (v_t?_a?m.a> ?:? )) v_t?_a?m (num?, num?, num?, num?)
+Query plan:
+sscan
+    class: v_t?_a?m node[?]
+    cost:  ? card ?
+Query stmt:
+select v_t?_a?m.num?, v_t?_a?m.num?, v_t?_a?m.num?, v_t?_a?m.num? from (select v_t?_a?m.num?, v_t?_a?m.num?, v_t?_a?m.num?, v_t?_a?m.num? from (select count(v_t?_a?m.b|| cast(v_t?_a?m.e as varchar)|| cast(v_t?_a?m.f as varchar)|| cast(v_t?_a?m.g as varchar)|| cast(v_t?_a?m.h as varchar)|| cast(v_t?_a?m.i as varchar)|| cast(v_t?_a?m.j as varchar)|| cast(v_t?_a?m.k as varchar)|| cast(v_t?_a?m.l as varchar)|| cast(v_t?_a?m.m as varchar)), count(v_t?_a?m.c), count(v_t?_a?m.d), ? from t? v_t?_a?m where ( exists (select v_t?_a?m.a from db_root db_root where inst_num()<=?)) and (v_t?_a?m.a> ?:? )) v_t?_a?m (num?, num?, num?, num?) union all select v_t?_a?m.num?, v_t?_a?m.num?, v_t?_a?m.num?, v_t?_a?m.num? from (select count(v_t?_a?m.b|| cast(v_t?_a?m.e as varchar)|| cast(v_t?_a?m.f as varchar)|| cast(v_t?_a?m.g as varchar)|| cast(v_t?_a?m.h as varchar)|| cast(v_t?_a?m.i as varchar)|| cast(v_t?_a?m.j as varchar)|| cast(v_t?_a?m.k as varchar)|| cast(v_t?_a?m.l as varchar)|| cast(v_t?_a?m.m as varchar)), count(v_t?_a?m.c), count(v_t?_a?m.d), ? from t? v_t?_a?m where ( exists (select v_t?_a?m.a from db_root db_root where inst_num()<=?)) and (v_t?_a?m.a> ?:? )) v_t?_a?m (num?, num?, num?, num?)) v_t?_a?m (num?, num?, num?, num?)
 ===================================================
 0
 ===================================================
@@ -459,9 +474,10 @@ num1    num2    num3    num4
 Query plan:
 sscan
     class: db_root node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select v_t?_a?l.a from db_root db_root)
+(select v_t?_a?l.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?l node[?]
@@ -470,13 +486,13 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?l.b|| cast(v_t?_a?l.e as varchar)|| cast(v_t?_a?l.f as varchar)|| cast(v_t?_a?l.g as varchar)|| cast(v_t?_a?l.h as varchar)|| cast(v_t?_a?l.i as varchar)|| cast(v_t?_a?l.j as varchar)|| cast(v_t?_a?l.k as varchar)|| cast(v_t?_a?l.l as varchar)), count(v_t?_a?l.c), count(v_t?_a?l.d), ? from t? v_t?_a?l where ( exists (select v_t?_a?l.a from db_root db_root)) and (v_t?_a?l.a> ?:? ))
+(select count(v_t?_a?l.b|| cast(v_t?_a?l.e as varchar)|| cast(v_t?_a?l.f as varchar)|| cast(v_t?_a?l.g as varchar)|| cast(v_t?_a?l.h as varchar)|| cast(v_t?_a?l.i as varchar)|| cast(v_t?_a?l.j as varchar)|| cast(v_t?_a?l.k as varchar)|| cast(v_t?_a?l.l as varchar)), count(v_t?_a?l.c), count(v_t?_a?l.d), ? from t? v_t?_a?l where ( exists (select v_t?_a?l.a from db_root db_root where inst_num()<=?)) and (v_t?_a?l.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?l node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?l.num?, v_t?_a?l.num?, v_t?_a?l.num?, v_t?_a?l.num? from (select count(v_t?_a?l.b|| cast(v_t?_a?l.e as varchar)|| cast(v_t?_a?l.f as varchar)|| cast(v_t?_a?l.g as varchar)|| cast(v_t?_a?l.h as varchar)|| cast(v_t?_a?l.i as varchar)|| cast(v_t?_a?l.j as varchar)|| cast(v_t?_a?l.k as varchar)|| cast(v_t?_a?l.l as varchar)), count(v_t?_a?l.c), count(v_t?_a?l.d), ? from t? v_t?_a?l where ( exists (select v_t?_a?l.a from db_root db_root)) and (v_t?_a?l.a> ?:? )) v_t?_a?l (num?, num?, num?, num?)
+select v_t?_a?l.num?, v_t?_a?l.num?, v_t?_a?l.num?, v_t?_a?l.num? from (select count(v_t?_a?l.b|| cast(v_t?_a?l.e as varchar)|| cast(v_t?_a?l.f as varchar)|| cast(v_t?_a?l.g as varchar)|| cast(v_t?_a?l.h as varchar)|| cast(v_t?_a?l.i as varchar)|| cast(v_t?_a?l.j as varchar)|| cast(v_t?_a?l.k as varchar)|| cast(v_t?_a?l.l as varchar)), count(v_t?_a?l.c), count(v_t?_a?l.d), ? from t? v_t?_a?l where ( exists (select v_t?_a?l.a from db_root db_root where inst_num()<=?)) and (v_t?_a?l.a> ?:? )) v_t?_a?l (num?, num?, num?, num?)
 ===================================================
 0
 ===================================================
@@ -487,30 +503,10 @@ num1    num2    num3    num4
 Query plan:
 sscan
     class: db_root node[?]
-    cost:  ? card ?
-Query stmt:
-(select v_t?_a?l.a from db_root db_root)
-Query plan:
-iscan
-    class: v_t?_a?l node[?]
-    index: i_t?_a?l term[?] (covers)
     sargs: term[?]
-    subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?l.b|| cast(v_t?_a?l.e as varchar)|| cast(v_t?_a?l.f as varchar)|| cast(v_t?_a?l.g as varchar)|| cast(v_t?_a?l.h as varchar)|| cast(v_t?_a?l.i as varchar)|| cast(v_t?_a?l.j as varchar)|| cast(v_t?_a?l.k as varchar)|| cast(v_t?_a?l.l as varchar)), count(v_t?_a?l.c), count(v_t?_a?l.d), ? from t? v_t?_a?l where ( exists (select v_t?_a?l.a from db_root db_root)) and (v_t?_a?l.a> ?:? ))
-Query plan:
-sscan
-    class: v_t?_a?l node[?]
-    cost:  ? card ?
-Query stmt:
-select v_t?_a?l.num?, v_t?_a?l.num?, v_t?_a?l.num?, v_t?_a?l.num? from (select count(v_t?_a?l.b|| cast(v_t?_a?l.e as varchar)|| cast(v_t?_a?l.f as varchar)|| cast(v_t?_a?l.g as varchar)|| cast(v_t?_a?l.h as varchar)|| cast(v_t?_a?l.i as varchar)|| cast(v_t?_a?l.j as varchar)|| cast(v_t?_a?l.k as varchar)|| cast(v_t?_a?l.l as varchar)), count(v_t?_a?l.c), count(v_t?_a?l.d), ? from t? v_t?_a?l where ( exists (select v_t?_a?l.a from db_root db_root)) and (v_t?_a?l.a> ?:? )) v_t?_a?l (num?, num?, num?, num?)
-Query plan:
-sscan
-    class: db_root node[?]
-    cost:  ? card ?
-Query stmt:
-(select v_t?_a?l.a from db_root db_root)
+(select v_t?_a?l.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?l node[?]
@@ -519,19 +515,41 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?l.b|| cast(v_t?_a?l.e as varchar)|| cast(v_t?_a?l.f as varchar)|| cast(v_t?_a?l.g as varchar)|| cast(v_t?_a?l.h as varchar)|| cast(v_t?_a?l.i as varchar)|| cast(v_t?_a?l.j as varchar)|| cast(v_t?_a?l.k as varchar)|| cast(v_t?_a?l.l as varchar)), count(v_t?_a?l.c), count(v_t?_a?l.d), ? from t? v_t?_a?l where ( exists (select v_t?_a?l.a from db_root db_root)) and (v_t?_a?l.a> ?:? ))
+(select count(v_t?_a?l.b|| cast(v_t?_a?l.e as varchar)|| cast(v_t?_a?l.f as varchar)|| cast(v_t?_a?l.g as varchar)|| cast(v_t?_a?l.h as varchar)|| cast(v_t?_a?l.i as varchar)|| cast(v_t?_a?l.j as varchar)|| cast(v_t?_a?l.k as varchar)|| cast(v_t?_a?l.l as varchar)), count(v_t?_a?l.c), count(v_t?_a?l.d), ? from t? v_t?_a?l where ( exists (select v_t?_a?l.a from db_root db_root where inst_num()<=?)) and (v_t?_a?l.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?l node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?l.num?, v_t?_a?l.num?, v_t?_a?l.num?, v_t?_a?l.num? from (select count(v_t?_a?l.b|| cast(v_t?_a?l.e as varchar)|| cast(v_t?_a?l.f as varchar)|| cast(v_t?_a?l.g as varchar)|| cast(v_t?_a?l.h as varchar)|| cast(v_t?_a?l.i as varchar)|| cast(v_t?_a?l.j as varchar)|| cast(v_t?_a?l.k as varchar)|| cast(v_t?_a?l.l as varchar)), count(v_t?_a?l.c), count(v_t?_a?l.d), ? from t? v_t?_a?l where ( exists (select v_t?_a?l.a from db_root db_root)) and (v_t?_a?l.a> ?:? )) v_t?_a?l (num?, num?, num?, num?)
+select v_t?_a?l.num?, v_t?_a?l.num?, v_t?_a?l.num?, v_t?_a?l.num? from (select count(v_t?_a?l.b|| cast(v_t?_a?l.e as varchar)|| cast(v_t?_a?l.f as varchar)|| cast(v_t?_a?l.g as varchar)|| cast(v_t?_a?l.h as varchar)|| cast(v_t?_a?l.i as varchar)|| cast(v_t?_a?l.j as varchar)|| cast(v_t?_a?l.k as varchar)|| cast(v_t?_a?l.l as varchar)), count(v_t?_a?l.c), count(v_t?_a?l.d), ? from t? v_t?_a?l where ( exists (select v_t?_a?l.a from db_root db_root where inst_num()<=?)) and (v_t?_a?l.a> ?:? )) v_t?_a?l (num?, num?, num?, num?)
+Query plan:
+sscan
+    class: db_root node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select v_t?_a?l.a from db_root db_root where inst_num()<=?)
+Query plan:
+iscan
+    class: v_t?_a?l node[?]
+    index: i_t?_a?l term[?] (covers)
+    sargs: term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+(select count(v_t?_a?l.b|| cast(v_t?_a?l.e as varchar)|| cast(v_t?_a?l.f as varchar)|| cast(v_t?_a?l.g as varchar)|| cast(v_t?_a?l.h as varchar)|| cast(v_t?_a?l.i as varchar)|| cast(v_t?_a?l.j as varchar)|| cast(v_t?_a?l.k as varchar)|| cast(v_t?_a?l.l as varchar)), count(v_t?_a?l.c), count(v_t?_a?l.d), ? from t? v_t?_a?l where ( exists (select v_t?_a?l.a from db_root db_root where inst_num()<=?)) and (v_t?_a?l.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?l node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?l.num?, v_t?_a?l.num?, v_t?_a?l.num?, v_t?_a?l.num? from (select v_t?_a?l.num?, v_t?_a?l.num?, v_t?_a?l.num?, v_t?_a?l.num? from (select count(v_t?_a?l.b|| cast(v_t?_a?l.e as varchar)|| cast(v_t?_a?l.f as varchar)|| cast(v_t?_a?l.g as varchar)|| cast(v_t?_a?l.h as varchar)|| cast(v_t?_a?l.i as varchar)|| cast(v_t?_a?l.j as varchar)|| cast(v_t?_a?l.k as varchar)|| cast(v_t?_a?l.l as varchar)), count(v_t?_a?l.c), count(v_t?_a?l.d), ? from t? v_t?_a?l where ( exists (select v_t?_a?l.a from db_root db_root)) and (v_t?_a?l.a> ?:? )) v_t?_a?l (num?, num?, num?, num?) union all select v_t?_a?l.num?, v_t?_a?l.num?, v_t?_a?l.num?, v_t?_a?l.num? from (select count(v_t?_a?l.b|| cast(v_t?_a?l.e as varchar)|| cast(v_t?_a?l.f as varchar)|| cast(v_t?_a?l.g as varchar)|| cast(v_t?_a?l.h as varchar)|| cast(v_t?_a?l.i as varchar)|| cast(v_t?_a?l.j as varchar)|| cast(v_t?_a?l.k as varchar)|| cast(v_t?_a?l.l as varchar)), count(v_t?_a?l.c), count(v_t?_a?l.d), ? from t? v_t?_a?l where ( exists (select v_t?_a?l.a from db_root db_root)) and (v_t?_a?l.a> ?:? )) v_t?_a?l (num?, num?, num?, num?)) v_t?_a?l (num?, num?, num?, num?)
+select v_t?_a?l.num?, v_t?_a?l.num?, v_t?_a?l.num?, v_t?_a?l.num? from (select count(v_t?_a?l.b|| cast(v_t?_a?l.e as varchar)|| cast(v_t?_a?l.f as varchar)|| cast(v_t?_a?l.g as varchar)|| cast(v_t?_a?l.h as varchar)|| cast(v_t?_a?l.i as varchar)|| cast(v_t?_a?l.j as varchar)|| cast(v_t?_a?l.k as varchar)|| cast(v_t?_a?l.l as varchar)), count(v_t?_a?l.c), count(v_t?_a?l.d), ? from t? v_t?_a?l where ( exists (select v_t?_a?l.a from db_root db_root where inst_num()<=?)) and (v_t?_a?l.a> ?:? )) v_t?_a?l (num?, num?, num?, num?)
+Query plan:
+sscan
+    class: v_t?_a?l node[?]
+    cost:  ? card ?
+Query stmt:
+select v_t?_a?l.num?, v_t?_a?l.num?, v_t?_a?l.num?, v_t?_a?l.num? from (select v_t?_a?l.num?, v_t?_a?l.num?, v_t?_a?l.num?, v_t?_a?l.num? from (select count(v_t?_a?l.b|| cast(v_t?_a?l.e as varchar)|| cast(v_t?_a?l.f as varchar)|| cast(v_t?_a?l.g as varchar)|| cast(v_t?_a?l.h as varchar)|| cast(v_t?_a?l.i as varchar)|| cast(v_t?_a?l.j as varchar)|| cast(v_t?_a?l.k as varchar)|| cast(v_t?_a?l.l as varchar)), count(v_t?_a?l.c), count(v_t?_a?l.d), ? from t? v_t?_a?l where ( exists (select v_t?_a?l.a from db_root db_root where inst_num()<=?)) and (v_t?_a?l.a> ?:? )) v_t?_a?l (num?, num?, num?, num?) union all select v_t?_a?l.num?, v_t?_a?l.num?, v_t?_a?l.num?, v_t?_a?l.num? from (select count(v_t?_a?l.b|| cast(v_t?_a?l.e as varchar)|| cast(v_t?_a?l.f as varchar)|| cast(v_t?_a?l.g as varchar)|| cast(v_t?_a?l.h as varchar)|| cast(v_t?_a?l.i as varchar)|| cast(v_t?_a?l.j as varchar)|| cast(v_t?_a?l.k as varchar)|| cast(v_t?_a?l.l as varchar)), count(v_t?_a?l.c), count(v_t?_a?l.d), ? from t? v_t?_a?l where ( exists (select v_t?_a?l.a from db_root db_root where inst_num()<=?)) and (v_t?_a?l.a> ?:? )) v_t?_a?l (num?, num?, num?, num?)) v_t?_a?l (num?, num?, num?, num?)
 ===================================================
 0
 ===================================================
@@ -541,9 +559,10 @@ num1    num2    num3    num4
 Query plan:
 sscan
     class: db_root node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select v_t?_a?k.a from db_root db_root)
+(select v_t?_a?k.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?k node[?]
@@ -552,13 +571,13 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?k.b|| cast(v_t?_a?k.e as varchar)|| cast(v_t?_a?k.f as varchar)|| cast(v_t?_a?k.g as varchar)|| cast(v_t?_a?k.h as varchar)|| cast(v_t?_a?k.i as varchar)|| cast(v_t?_a?k.j as varchar)|| cast(v_t?_a?k.k as varchar)), count(v_t?_a?k.c), count(v_t?_a?k.d), ? from t? v_t?_a?k where ( exists (select v_t?_a?k.a from db_root db_root)) and (v_t?_a?k.a> ?:? ))
+(select count(v_t?_a?k.b|| cast(v_t?_a?k.e as varchar)|| cast(v_t?_a?k.f as varchar)|| cast(v_t?_a?k.g as varchar)|| cast(v_t?_a?k.h as varchar)|| cast(v_t?_a?k.i as varchar)|| cast(v_t?_a?k.j as varchar)|| cast(v_t?_a?k.k as varchar)), count(v_t?_a?k.c), count(v_t?_a?k.d), ? from t? v_t?_a?k where ( exists (select v_t?_a?k.a from db_root db_root where inst_num()<=?)) and (v_t?_a?k.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?k node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?k.num?, v_t?_a?k.num?, v_t?_a?k.num?, v_t?_a?k.num? from (select count(v_t?_a?k.b|| cast(v_t?_a?k.e as varchar)|| cast(v_t?_a?k.f as varchar)|| cast(v_t?_a?k.g as varchar)|| cast(v_t?_a?k.h as varchar)|| cast(v_t?_a?k.i as varchar)|| cast(v_t?_a?k.j as varchar)|| cast(v_t?_a?k.k as varchar)), count(v_t?_a?k.c), count(v_t?_a?k.d), ? from t? v_t?_a?k where ( exists (select v_t?_a?k.a from db_root db_root)) and (v_t?_a?k.a> ?:? )) v_t?_a?k (num?, num?, num?, num?)
+select v_t?_a?k.num?, v_t?_a?k.num?, v_t?_a?k.num?, v_t?_a?k.num? from (select count(v_t?_a?k.b|| cast(v_t?_a?k.e as varchar)|| cast(v_t?_a?k.f as varchar)|| cast(v_t?_a?k.g as varchar)|| cast(v_t?_a?k.h as varchar)|| cast(v_t?_a?k.i as varchar)|| cast(v_t?_a?k.j as varchar)|| cast(v_t?_a?k.k as varchar)), count(v_t?_a?k.c), count(v_t?_a?k.d), ? from t? v_t?_a?k where ( exists (select v_t?_a?k.a from db_root db_root where inst_num()<=?)) and (v_t?_a?k.a> ?:? )) v_t?_a?k (num?, num?, num?, num?)
 ===================================================
 0
 ===================================================
@@ -569,30 +588,10 @@ num1    num2    num3    num4
 Query plan:
 sscan
     class: db_root node[?]
-    cost:  ? card ?
-Query stmt:
-(select v_t?_a?k.a from db_root db_root)
-Query plan:
-iscan
-    class: v_t?_a?k node[?]
-    index: i_t?_a?k term[?] (covers)
     sargs: term[?]
-    subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?k.b|| cast(v_t?_a?k.e as varchar)|| cast(v_t?_a?k.f as varchar)|| cast(v_t?_a?k.g as varchar)|| cast(v_t?_a?k.h as varchar)|| cast(v_t?_a?k.i as varchar)|| cast(v_t?_a?k.j as varchar)|| cast(v_t?_a?k.k as varchar)), count(v_t?_a?k.c), count(v_t?_a?k.d), ? from t? v_t?_a?k where ( exists (select v_t?_a?k.a from db_root db_root)) and (v_t?_a?k.a> ?:? ))
-Query plan:
-sscan
-    class: v_t?_a?k node[?]
-    cost:  ? card ?
-Query stmt:
-select v_t?_a?k.num?, v_t?_a?k.num?, v_t?_a?k.num?, v_t?_a?k.num? from (select count(v_t?_a?k.b|| cast(v_t?_a?k.e as varchar)|| cast(v_t?_a?k.f as varchar)|| cast(v_t?_a?k.g as varchar)|| cast(v_t?_a?k.h as varchar)|| cast(v_t?_a?k.i as varchar)|| cast(v_t?_a?k.j as varchar)|| cast(v_t?_a?k.k as varchar)), count(v_t?_a?k.c), count(v_t?_a?k.d), ? from t? v_t?_a?k where ( exists (select v_t?_a?k.a from db_root db_root)) and (v_t?_a?k.a> ?:? )) v_t?_a?k (num?, num?, num?, num?)
-Query plan:
-sscan
-    class: db_root node[?]
-    cost:  ? card ?
-Query stmt:
-(select v_t?_a?k.a from db_root db_root)
+(select v_t?_a?k.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?k node[?]
@@ -601,19 +600,41 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?k.b|| cast(v_t?_a?k.e as varchar)|| cast(v_t?_a?k.f as varchar)|| cast(v_t?_a?k.g as varchar)|| cast(v_t?_a?k.h as varchar)|| cast(v_t?_a?k.i as varchar)|| cast(v_t?_a?k.j as varchar)|| cast(v_t?_a?k.k as varchar)), count(v_t?_a?k.c), count(v_t?_a?k.d), ? from t? v_t?_a?k where ( exists (select v_t?_a?k.a from db_root db_root)) and (v_t?_a?k.a> ?:? ))
+(select count(v_t?_a?k.b|| cast(v_t?_a?k.e as varchar)|| cast(v_t?_a?k.f as varchar)|| cast(v_t?_a?k.g as varchar)|| cast(v_t?_a?k.h as varchar)|| cast(v_t?_a?k.i as varchar)|| cast(v_t?_a?k.j as varchar)|| cast(v_t?_a?k.k as varchar)), count(v_t?_a?k.c), count(v_t?_a?k.d), ? from t? v_t?_a?k where ( exists (select v_t?_a?k.a from db_root db_root where inst_num()<=?)) and (v_t?_a?k.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?k node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?k.num?, v_t?_a?k.num?, v_t?_a?k.num?, v_t?_a?k.num? from (select count(v_t?_a?k.b|| cast(v_t?_a?k.e as varchar)|| cast(v_t?_a?k.f as varchar)|| cast(v_t?_a?k.g as varchar)|| cast(v_t?_a?k.h as varchar)|| cast(v_t?_a?k.i as varchar)|| cast(v_t?_a?k.j as varchar)|| cast(v_t?_a?k.k as varchar)), count(v_t?_a?k.c), count(v_t?_a?k.d), ? from t? v_t?_a?k where ( exists (select v_t?_a?k.a from db_root db_root)) and (v_t?_a?k.a> ?:? )) v_t?_a?k (num?, num?, num?, num?)
+select v_t?_a?k.num?, v_t?_a?k.num?, v_t?_a?k.num?, v_t?_a?k.num? from (select count(v_t?_a?k.b|| cast(v_t?_a?k.e as varchar)|| cast(v_t?_a?k.f as varchar)|| cast(v_t?_a?k.g as varchar)|| cast(v_t?_a?k.h as varchar)|| cast(v_t?_a?k.i as varchar)|| cast(v_t?_a?k.j as varchar)|| cast(v_t?_a?k.k as varchar)), count(v_t?_a?k.c), count(v_t?_a?k.d), ? from t? v_t?_a?k where ( exists (select v_t?_a?k.a from db_root db_root where inst_num()<=?)) and (v_t?_a?k.a> ?:? )) v_t?_a?k (num?, num?, num?, num?)
+Query plan:
+sscan
+    class: db_root node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select v_t?_a?k.a from db_root db_root where inst_num()<=?)
+Query plan:
+iscan
+    class: v_t?_a?k node[?]
+    index: i_t?_a?k term[?] (covers)
+    sargs: term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+(select count(v_t?_a?k.b|| cast(v_t?_a?k.e as varchar)|| cast(v_t?_a?k.f as varchar)|| cast(v_t?_a?k.g as varchar)|| cast(v_t?_a?k.h as varchar)|| cast(v_t?_a?k.i as varchar)|| cast(v_t?_a?k.j as varchar)|| cast(v_t?_a?k.k as varchar)), count(v_t?_a?k.c), count(v_t?_a?k.d), ? from t? v_t?_a?k where ( exists (select v_t?_a?k.a from db_root db_root where inst_num()<=?)) and (v_t?_a?k.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?k node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?k.num?, v_t?_a?k.num?, v_t?_a?k.num?, v_t?_a?k.num? from (select v_t?_a?k.num?, v_t?_a?k.num?, v_t?_a?k.num?, v_t?_a?k.num? from (select count(v_t?_a?k.b|| cast(v_t?_a?k.e as varchar)|| cast(v_t?_a?k.f as varchar)|| cast(v_t?_a?k.g as varchar)|| cast(v_t?_a?k.h as varchar)|| cast(v_t?_a?k.i as varchar)|| cast(v_t?_a?k.j as varchar)|| cast(v_t?_a?k.k as varchar)), count(v_t?_a?k.c), count(v_t?_a?k.d), ? from t? v_t?_a?k where ( exists (select v_t?_a?k.a from db_root db_root)) and (v_t?_a?k.a> ?:? )) v_t?_a?k (num?, num?, num?, num?) union all select v_t?_a?k.num?, v_t?_a?k.num?, v_t?_a?k.num?, v_t?_a?k.num? from (select count(v_t?_a?k.b|| cast(v_t?_a?k.e as varchar)|| cast(v_t?_a?k.f as varchar)|| cast(v_t?_a?k.g as varchar)|| cast(v_t?_a?k.h as varchar)|| cast(v_t?_a?k.i as varchar)|| cast(v_t?_a?k.j as varchar)|| cast(v_t?_a?k.k as varchar)), count(v_t?_a?k.c), count(v_t?_a?k.d), ? from t? v_t?_a?k where ( exists (select v_t?_a?k.a from db_root db_root)) and (v_t?_a?k.a> ?:? )) v_t?_a?k (num?, num?, num?, num?)) v_t?_a?k (num?, num?, num?, num?)
+select v_t?_a?k.num?, v_t?_a?k.num?, v_t?_a?k.num?, v_t?_a?k.num? from (select count(v_t?_a?k.b|| cast(v_t?_a?k.e as varchar)|| cast(v_t?_a?k.f as varchar)|| cast(v_t?_a?k.g as varchar)|| cast(v_t?_a?k.h as varchar)|| cast(v_t?_a?k.i as varchar)|| cast(v_t?_a?k.j as varchar)|| cast(v_t?_a?k.k as varchar)), count(v_t?_a?k.c), count(v_t?_a?k.d), ? from t? v_t?_a?k where ( exists (select v_t?_a?k.a from db_root db_root where inst_num()<=?)) and (v_t?_a?k.a> ?:? )) v_t?_a?k (num?, num?, num?, num?)
+Query plan:
+sscan
+    class: v_t?_a?k node[?]
+    cost:  ? card ?
+Query stmt:
+select v_t?_a?k.num?, v_t?_a?k.num?, v_t?_a?k.num?, v_t?_a?k.num? from (select v_t?_a?k.num?, v_t?_a?k.num?, v_t?_a?k.num?, v_t?_a?k.num? from (select count(v_t?_a?k.b|| cast(v_t?_a?k.e as varchar)|| cast(v_t?_a?k.f as varchar)|| cast(v_t?_a?k.g as varchar)|| cast(v_t?_a?k.h as varchar)|| cast(v_t?_a?k.i as varchar)|| cast(v_t?_a?k.j as varchar)|| cast(v_t?_a?k.k as varchar)), count(v_t?_a?k.c), count(v_t?_a?k.d), ? from t? v_t?_a?k where ( exists (select v_t?_a?k.a from db_root db_root where inst_num()<=?)) and (v_t?_a?k.a> ?:? )) v_t?_a?k (num?, num?, num?, num?) union all select v_t?_a?k.num?, v_t?_a?k.num?, v_t?_a?k.num?, v_t?_a?k.num? from (select count(v_t?_a?k.b|| cast(v_t?_a?k.e as varchar)|| cast(v_t?_a?k.f as varchar)|| cast(v_t?_a?k.g as varchar)|| cast(v_t?_a?k.h as varchar)|| cast(v_t?_a?k.i as varchar)|| cast(v_t?_a?k.j as varchar)|| cast(v_t?_a?k.k as varchar)), count(v_t?_a?k.c), count(v_t?_a?k.d), ? from t? v_t?_a?k where ( exists (select v_t?_a?k.a from db_root db_root where inst_num()<=?)) and (v_t?_a?k.a> ?:? )) v_t?_a?k (num?, num?, num?, num?)) v_t?_a?k (num?, num?, num?, num?)
 ===================================================
 0
 ===================================================
@@ -623,9 +644,10 @@ num1    num2    num3    num4
 Query plan:
 sscan
     class: db_root node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select v_t?_a?j.a from db_root db_root)
+(select v_t?_a?j.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?j node[?]
@@ -634,13 +656,13 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?j.b|| cast(v_t?_a?j.e as varchar)|| cast(v_t?_a?j.f as varchar)|| cast(v_t?_a?j.g as varchar)|| cast(v_t?_a?j.h as varchar)|| cast(v_t?_a?j.i as varchar)|| cast(v_t?_a?j.j as varchar)), count(v_t?_a?j.c), count(v_t?_a?j.d), ? from t? v_t?_a?j where ( exists (select v_t?_a?j.a from db_root db_root)) and (v_t?_a?j.a> ?:? ))
+(select count(v_t?_a?j.b|| cast(v_t?_a?j.e as varchar)|| cast(v_t?_a?j.f as varchar)|| cast(v_t?_a?j.g as varchar)|| cast(v_t?_a?j.h as varchar)|| cast(v_t?_a?j.i as varchar)|| cast(v_t?_a?j.j as varchar)), count(v_t?_a?j.c), count(v_t?_a?j.d), ? from t? v_t?_a?j where ( exists (select v_t?_a?j.a from db_root db_root where inst_num()<=?)) and (v_t?_a?j.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?j node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?j.num?, v_t?_a?j.num?, v_t?_a?j.num?, v_t?_a?j.num? from (select count(v_t?_a?j.b|| cast(v_t?_a?j.e as varchar)|| cast(v_t?_a?j.f as varchar)|| cast(v_t?_a?j.g as varchar)|| cast(v_t?_a?j.h as varchar)|| cast(v_t?_a?j.i as varchar)|| cast(v_t?_a?j.j as varchar)), count(v_t?_a?j.c), count(v_t?_a?j.d), ? from t? v_t?_a?j where ( exists (select v_t?_a?j.a from db_root db_root)) and (v_t?_a?j.a> ?:? )) v_t?_a?j (num?, num?, num?, num?)
+select v_t?_a?j.num?, v_t?_a?j.num?, v_t?_a?j.num?, v_t?_a?j.num? from (select count(v_t?_a?j.b|| cast(v_t?_a?j.e as varchar)|| cast(v_t?_a?j.f as varchar)|| cast(v_t?_a?j.g as varchar)|| cast(v_t?_a?j.h as varchar)|| cast(v_t?_a?j.i as varchar)|| cast(v_t?_a?j.j as varchar)), count(v_t?_a?j.c), count(v_t?_a?j.d), ? from t? v_t?_a?j where ( exists (select v_t?_a?j.a from db_root db_root where inst_num()<=?)) and (v_t?_a?j.a> ?:? )) v_t?_a?j (num?, num?, num?, num?)
 ===================================================
 0
 ===================================================
@@ -651,30 +673,10 @@ num1    num2    num3    num4
 Query plan:
 sscan
     class: db_root node[?]
-    cost:  ? card ?
-Query stmt:
-(select v_t?_a?j.a from db_root db_root)
-Query plan:
-iscan
-    class: v_t?_a?j node[?]
-    index: i_t?_a?j term[?] (covers)
     sargs: term[?]
-    subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?j.b|| cast(v_t?_a?j.e as varchar)|| cast(v_t?_a?j.f as varchar)|| cast(v_t?_a?j.g as varchar)|| cast(v_t?_a?j.h as varchar)|| cast(v_t?_a?j.i as varchar)|| cast(v_t?_a?j.j as varchar)), count(v_t?_a?j.c), count(v_t?_a?j.d), ? from t? v_t?_a?j where ( exists (select v_t?_a?j.a from db_root db_root)) and (v_t?_a?j.a> ?:? ))
-Query plan:
-sscan
-    class: v_t?_a?j node[?]
-    cost:  ? card ?
-Query stmt:
-select v_t?_a?j.num?, v_t?_a?j.num?, v_t?_a?j.num?, v_t?_a?j.num? from (select count(v_t?_a?j.b|| cast(v_t?_a?j.e as varchar)|| cast(v_t?_a?j.f as varchar)|| cast(v_t?_a?j.g as varchar)|| cast(v_t?_a?j.h as varchar)|| cast(v_t?_a?j.i as varchar)|| cast(v_t?_a?j.j as varchar)), count(v_t?_a?j.c), count(v_t?_a?j.d), ? from t? v_t?_a?j where ( exists (select v_t?_a?j.a from db_root db_root)) and (v_t?_a?j.a> ?:? )) v_t?_a?j (num?, num?, num?, num?)
-Query plan:
-sscan
-    class: db_root node[?]
-    cost:  ? card ?
-Query stmt:
-(select v_t?_a?j.a from db_root db_root)
+(select v_t?_a?j.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?j node[?]
@@ -683,19 +685,41 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?j.b|| cast(v_t?_a?j.e as varchar)|| cast(v_t?_a?j.f as varchar)|| cast(v_t?_a?j.g as varchar)|| cast(v_t?_a?j.h as varchar)|| cast(v_t?_a?j.i as varchar)|| cast(v_t?_a?j.j as varchar)), count(v_t?_a?j.c), count(v_t?_a?j.d), ? from t? v_t?_a?j where ( exists (select v_t?_a?j.a from db_root db_root)) and (v_t?_a?j.a> ?:? ))
+(select count(v_t?_a?j.b|| cast(v_t?_a?j.e as varchar)|| cast(v_t?_a?j.f as varchar)|| cast(v_t?_a?j.g as varchar)|| cast(v_t?_a?j.h as varchar)|| cast(v_t?_a?j.i as varchar)|| cast(v_t?_a?j.j as varchar)), count(v_t?_a?j.c), count(v_t?_a?j.d), ? from t? v_t?_a?j where ( exists (select v_t?_a?j.a from db_root db_root where inst_num()<=?)) and (v_t?_a?j.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?j node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?j.num?, v_t?_a?j.num?, v_t?_a?j.num?, v_t?_a?j.num? from (select count(v_t?_a?j.b|| cast(v_t?_a?j.e as varchar)|| cast(v_t?_a?j.f as varchar)|| cast(v_t?_a?j.g as varchar)|| cast(v_t?_a?j.h as varchar)|| cast(v_t?_a?j.i as varchar)|| cast(v_t?_a?j.j as varchar)), count(v_t?_a?j.c), count(v_t?_a?j.d), ? from t? v_t?_a?j where ( exists (select v_t?_a?j.a from db_root db_root)) and (v_t?_a?j.a> ?:? )) v_t?_a?j (num?, num?, num?, num?)
+select v_t?_a?j.num?, v_t?_a?j.num?, v_t?_a?j.num?, v_t?_a?j.num? from (select count(v_t?_a?j.b|| cast(v_t?_a?j.e as varchar)|| cast(v_t?_a?j.f as varchar)|| cast(v_t?_a?j.g as varchar)|| cast(v_t?_a?j.h as varchar)|| cast(v_t?_a?j.i as varchar)|| cast(v_t?_a?j.j as varchar)), count(v_t?_a?j.c), count(v_t?_a?j.d), ? from t? v_t?_a?j where ( exists (select v_t?_a?j.a from db_root db_root where inst_num()<=?)) and (v_t?_a?j.a> ?:? )) v_t?_a?j (num?, num?, num?, num?)
+Query plan:
+sscan
+    class: db_root node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select v_t?_a?j.a from db_root db_root where inst_num()<=?)
+Query plan:
+iscan
+    class: v_t?_a?j node[?]
+    index: i_t?_a?j term[?] (covers)
+    sargs: term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+(select count(v_t?_a?j.b|| cast(v_t?_a?j.e as varchar)|| cast(v_t?_a?j.f as varchar)|| cast(v_t?_a?j.g as varchar)|| cast(v_t?_a?j.h as varchar)|| cast(v_t?_a?j.i as varchar)|| cast(v_t?_a?j.j as varchar)), count(v_t?_a?j.c), count(v_t?_a?j.d), ? from t? v_t?_a?j where ( exists (select v_t?_a?j.a from db_root db_root where inst_num()<=?)) and (v_t?_a?j.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?j node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?j.num?, v_t?_a?j.num?, v_t?_a?j.num?, v_t?_a?j.num? from (select v_t?_a?j.num?, v_t?_a?j.num?, v_t?_a?j.num?, v_t?_a?j.num? from (select count(v_t?_a?j.b|| cast(v_t?_a?j.e as varchar)|| cast(v_t?_a?j.f as varchar)|| cast(v_t?_a?j.g as varchar)|| cast(v_t?_a?j.h as varchar)|| cast(v_t?_a?j.i as varchar)|| cast(v_t?_a?j.j as varchar)), count(v_t?_a?j.c), count(v_t?_a?j.d), ? from t? v_t?_a?j where ( exists (select v_t?_a?j.a from db_root db_root)) and (v_t?_a?j.a> ?:? )) v_t?_a?j (num?, num?, num?, num?) union all select v_t?_a?j.num?, v_t?_a?j.num?, v_t?_a?j.num?, v_t?_a?j.num? from (select count(v_t?_a?j.b|| cast(v_t?_a?j.e as varchar)|| cast(v_t?_a?j.f as varchar)|| cast(v_t?_a?j.g as varchar)|| cast(v_t?_a?j.h as varchar)|| cast(v_t?_a?j.i as varchar)|| cast(v_t?_a?j.j as varchar)), count(v_t?_a?j.c), count(v_t?_a?j.d), ? from t? v_t?_a?j where ( exists (select v_t?_a?j.a from db_root db_root)) and (v_t?_a?j.a> ?:? )) v_t?_a?j (num?, num?, num?, num?)) v_t?_a?j (num?, num?, num?, num?)
+select v_t?_a?j.num?, v_t?_a?j.num?, v_t?_a?j.num?, v_t?_a?j.num? from (select count(v_t?_a?j.b|| cast(v_t?_a?j.e as varchar)|| cast(v_t?_a?j.f as varchar)|| cast(v_t?_a?j.g as varchar)|| cast(v_t?_a?j.h as varchar)|| cast(v_t?_a?j.i as varchar)|| cast(v_t?_a?j.j as varchar)), count(v_t?_a?j.c), count(v_t?_a?j.d), ? from t? v_t?_a?j where ( exists (select v_t?_a?j.a from db_root db_root where inst_num()<=?)) and (v_t?_a?j.a> ?:? )) v_t?_a?j (num?, num?, num?, num?)
+Query plan:
+sscan
+    class: v_t?_a?j node[?]
+    cost:  ? card ?
+Query stmt:
+select v_t?_a?j.num?, v_t?_a?j.num?, v_t?_a?j.num?, v_t?_a?j.num? from (select v_t?_a?j.num?, v_t?_a?j.num?, v_t?_a?j.num?, v_t?_a?j.num? from (select count(v_t?_a?j.b|| cast(v_t?_a?j.e as varchar)|| cast(v_t?_a?j.f as varchar)|| cast(v_t?_a?j.g as varchar)|| cast(v_t?_a?j.h as varchar)|| cast(v_t?_a?j.i as varchar)|| cast(v_t?_a?j.j as varchar)), count(v_t?_a?j.c), count(v_t?_a?j.d), ? from t? v_t?_a?j where ( exists (select v_t?_a?j.a from db_root db_root where inst_num()<=?)) and (v_t?_a?j.a> ?:? )) v_t?_a?j (num?, num?, num?, num?) union all select v_t?_a?j.num?, v_t?_a?j.num?, v_t?_a?j.num?, v_t?_a?j.num? from (select count(v_t?_a?j.b|| cast(v_t?_a?j.e as varchar)|| cast(v_t?_a?j.f as varchar)|| cast(v_t?_a?j.g as varchar)|| cast(v_t?_a?j.h as varchar)|| cast(v_t?_a?j.i as varchar)|| cast(v_t?_a?j.j as varchar)), count(v_t?_a?j.c), count(v_t?_a?j.d), ? from t? v_t?_a?j where ( exists (select v_t?_a?j.a from db_root db_root where inst_num()<=?)) and (v_t?_a?j.a> ?:? )) v_t?_a?j (num?, num?, num?, num?)) v_t?_a?j (num?, num?, num?, num?)
 ===================================================
 0
 ===================================================
@@ -705,9 +729,10 @@ num1    num2    num3    num4
 Query plan:
 sscan
     class: db_root node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select v_t?_a?i.a from db_root db_root)
+(select v_t?_a?i.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?i node[?]
@@ -716,13 +741,13 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?i.b|| cast(v_t?_a?i.e as varchar)|| cast(v_t?_a?i.f as varchar)|| cast(v_t?_a?i.g as varchar)|| cast(v_t?_a?i.h as varchar)|| cast(v_t?_a?i.i as varchar)), count(v_t?_a?i.c), count(v_t?_a?i.d), ? from t? v_t?_a?i where ( exists (select v_t?_a?i.a from db_root db_root)) and (v_t?_a?i.a> ?:? ))
+(select count(v_t?_a?i.b|| cast(v_t?_a?i.e as varchar)|| cast(v_t?_a?i.f as varchar)|| cast(v_t?_a?i.g as varchar)|| cast(v_t?_a?i.h as varchar)|| cast(v_t?_a?i.i as varchar)), count(v_t?_a?i.c), count(v_t?_a?i.d), ? from t? v_t?_a?i where ( exists (select v_t?_a?i.a from db_root db_root where inst_num()<=?)) and (v_t?_a?i.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?i node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?i.num?, v_t?_a?i.num?, v_t?_a?i.num?, v_t?_a?i.num? from (select count(v_t?_a?i.b|| cast(v_t?_a?i.e as varchar)|| cast(v_t?_a?i.f as varchar)|| cast(v_t?_a?i.g as varchar)|| cast(v_t?_a?i.h as varchar)|| cast(v_t?_a?i.i as varchar)), count(v_t?_a?i.c), count(v_t?_a?i.d), ? from t? v_t?_a?i where ( exists (select v_t?_a?i.a from db_root db_root)) and (v_t?_a?i.a> ?:? )) v_t?_a?i (num?, num?, num?, num?)
+select v_t?_a?i.num?, v_t?_a?i.num?, v_t?_a?i.num?, v_t?_a?i.num? from (select count(v_t?_a?i.b|| cast(v_t?_a?i.e as varchar)|| cast(v_t?_a?i.f as varchar)|| cast(v_t?_a?i.g as varchar)|| cast(v_t?_a?i.h as varchar)|| cast(v_t?_a?i.i as varchar)), count(v_t?_a?i.c), count(v_t?_a?i.d), ? from t? v_t?_a?i where ( exists (select v_t?_a?i.a from db_root db_root where inst_num()<=?)) and (v_t?_a?i.a> ?:? )) v_t?_a?i (num?, num?, num?, num?)
 ===================================================
 0
 ===================================================
@@ -733,30 +758,10 @@ num1    num2    num3    num4
 Query plan:
 sscan
     class: db_root node[?]
-    cost:  ? card ?
-Query stmt:
-(select v_t?_a?i.a from db_root db_root)
-Query plan:
-iscan
-    class: v_t?_a?i node[?]
-    index: i_t?_a?i term[?] (covers)
     sargs: term[?]
-    subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?i.b|| cast(v_t?_a?i.e as varchar)|| cast(v_t?_a?i.f as varchar)|| cast(v_t?_a?i.g as varchar)|| cast(v_t?_a?i.h as varchar)|| cast(v_t?_a?i.i as varchar)), count(v_t?_a?i.c), count(v_t?_a?i.d), ? from t? v_t?_a?i where ( exists (select v_t?_a?i.a from db_root db_root)) and (v_t?_a?i.a> ?:? ))
-Query plan:
-sscan
-    class: v_t?_a?i node[?]
-    cost:  ? card ?
-Query stmt:
-select v_t?_a?i.num?, v_t?_a?i.num?, v_t?_a?i.num?, v_t?_a?i.num? from (select count(v_t?_a?i.b|| cast(v_t?_a?i.e as varchar)|| cast(v_t?_a?i.f as varchar)|| cast(v_t?_a?i.g as varchar)|| cast(v_t?_a?i.h as varchar)|| cast(v_t?_a?i.i as varchar)), count(v_t?_a?i.c), count(v_t?_a?i.d), ? from t? v_t?_a?i where ( exists (select v_t?_a?i.a from db_root db_root)) and (v_t?_a?i.a> ?:? )) v_t?_a?i (num?, num?, num?, num?)
-Query plan:
-sscan
-    class: db_root node[?]
-    cost:  ? card ?
-Query stmt:
-(select v_t?_a?i.a from db_root db_root)
+(select v_t?_a?i.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?i node[?]
@@ -765,19 +770,41 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?i.b|| cast(v_t?_a?i.e as varchar)|| cast(v_t?_a?i.f as varchar)|| cast(v_t?_a?i.g as varchar)|| cast(v_t?_a?i.h as varchar)|| cast(v_t?_a?i.i as varchar)), count(v_t?_a?i.c), count(v_t?_a?i.d), ? from t? v_t?_a?i where ( exists (select v_t?_a?i.a from db_root db_root)) and (v_t?_a?i.a> ?:? ))
+(select count(v_t?_a?i.b|| cast(v_t?_a?i.e as varchar)|| cast(v_t?_a?i.f as varchar)|| cast(v_t?_a?i.g as varchar)|| cast(v_t?_a?i.h as varchar)|| cast(v_t?_a?i.i as varchar)), count(v_t?_a?i.c), count(v_t?_a?i.d), ? from t? v_t?_a?i where ( exists (select v_t?_a?i.a from db_root db_root where inst_num()<=?)) and (v_t?_a?i.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?i node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?i.num?, v_t?_a?i.num?, v_t?_a?i.num?, v_t?_a?i.num? from (select count(v_t?_a?i.b|| cast(v_t?_a?i.e as varchar)|| cast(v_t?_a?i.f as varchar)|| cast(v_t?_a?i.g as varchar)|| cast(v_t?_a?i.h as varchar)|| cast(v_t?_a?i.i as varchar)), count(v_t?_a?i.c), count(v_t?_a?i.d), ? from t? v_t?_a?i where ( exists (select v_t?_a?i.a from db_root db_root)) and (v_t?_a?i.a> ?:? )) v_t?_a?i (num?, num?, num?, num?)
+select v_t?_a?i.num?, v_t?_a?i.num?, v_t?_a?i.num?, v_t?_a?i.num? from (select count(v_t?_a?i.b|| cast(v_t?_a?i.e as varchar)|| cast(v_t?_a?i.f as varchar)|| cast(v_t?_a?i.g as varchar)|| cast(v_t?_a?i.h as varchar)|| cast(v_t?_a?i.i as varchar)), count(v_t?_a?i.c), count(v_t?_a?i.d), ? from t? v_t?_a?i where ( exists (select v_t?_a?i.a from db_root db_root where inst_num()<=?)) and (v_t?_a?i.a> ?:? )) v_t?_a?i (num?, num?, num?, num?)
+Query plan:
+sscan
+    class: db_root node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select v_t?_a?i.a from db_root db_root where inst_num()<=?)
+Query plan:
+iscan
+    class: v_t?_a?i node[?]
+    index: i_t?_a?i term[?] (covers)
+    sargs: term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+(select count(v_t?_a?i.b|| cast(v_t?_a?i.e as varchar)|| cast(v_t?_a?i.f as varchar)|| cast(v_t?_a?i.g as varchar)|| cast(v_t?_a?i.h as varchar)|| cast(v_t?_a?i.i as varchar)), count(v_t?_a?i.c), count(v_t?_a?i.d), ? from t? v_t?_a?i where ( exists (select v_t?_a?i.a from db_root db_root where inst_num()<=?)) and (v_t?_a?i.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?i node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?i.num?, v_t?_a?i.num?, v_t?_a?i.num?, v_t?_a?i.num? from (select v_t?_a?i.num?, v_t?_a?i.num?, v_t?_a?i.num?, v_t?_a?i.num? from (select count(v_t?_a?i.b|| cast(v_t?_a?i.e as varchar)|| cast(v_t?_a?i.f as varchar)|| cast(v_t?_a?i.g as varchar)|| cast(v_t?_a?i.h as varchar)|| cast(v_t?_a?i.i as varchar)), count(v_t?_a?i.c), count(v_t?_a?i.d), ? from t? v_t?_a?i where ( exists (select v_t?_a?i.a from db_root db_root)) and (v_t?_a?i.a> ?:? )) v_t?_a?i (num?, num?, num?, num?) union all select v_t?_a?i.num?, v_t?_a?i.num?, v_t?_a?i.num?, v_t?_a?i.num? from (select count(v_t?_a?i.b|| cast(v_t?_a?i.e as varchar)|| cast(v_t?_a?i.f as varchar)|| cast(v_t?_a?i.g as varchar)|| cast(v_t?_a?i.h as varchar)|| cast(v_t?_a?i.i as varchar)), count(v_t?_a?i.c), count(v_t?_a?i.d), ? from t? v_t?_a?i where ( exists (select v_t?_a?i.a from db_root db_root)) and (v_t?_a?i.a> ?:? )) v_t?_a?i (num?, num?, num?, num?)) v_t?_a?i (num?, num?, num?, num?)
+select v_t?_a?i.num?, v_t?_a?i.num?, v_t?_a?i.num?, v_t?_a?i.num? from (select count(v_t?_a?i.b|| cast(v_t?_a?i.e as varchar)|| cast(v_t?_a?i.f as varchar)|| cast(v_t?_a?i.g as varchar)|| cast(v_t?_a?i.h as varchar)|| cast(v_t?_a?i.i as varchar)), count(v_t?_a?i.c), count(v_t?_a?i.d), ? from t? v_t?_a?i where ( exists (select v_t?_a?i.a from db_root db_root where inst_num()<=?)) and (v_t?_a?i.a> ?:? )) v_t?_a?i (num?, num?, num?, num?)
+Query plan:
+sscan
+    class: v_t?_a?i node[?]
+    cost:  ? card ?
+Query stmt:
+select v_t?_a?i.num?, v_t?_a?i.num?, v_t?_a?i.num?, v_t?_a?i.num? from (select v_t?_a?i.num?, v_t?_a?i.num?, v_t?_a?i.num?, v_t?_a?i.num? from (select count(v_t?_a?i.b|| cast(v_t?_a?i.e as varchar)|| cast(v_t?_a?i.f as varchar)|| cast(v_t?_a?i.g as varchar)|| cast(v_t?_a?i.h as varchar)|| cast(v_t?_a?i.i as varchar)), count(v_t?_a?i.c), count(v_t?_a?i.d), ? from t? v_t?_a?i where ( exists (select v_t?_a?i.a from db_root db_root where inst_num()<=?)) and (v_t?_a?i.a> ?:? )) v_t?_a?i (num?, num?, num?, num?) union all select v_t?_a?i.num?, v_t?_a?i.num?, v_t?_a?i.num?, v_t?_a?i.num? from (select count(v_t?_a?i.b|| cast(v_t?_a?i.e as varchar)|| cast(v_t?_a?i.f as varchar)|| cast(v_t?_a?i.g as varchar)|| cast(v_t?_a?i.h as varchar)|| cast(v_t?_a?i.i as varchar)), count(v_t?_a?i.c), count(v_t?_a?i.d), ? from t? v_t?_a?i where ( exists (select v_t?_a?i.a from db_root db_root where inst_num()<=?)) and (v_t?_a?i.a> ?:? )) v_t?_a?i (num?, num?, num?, num?)) v_t?_a?i (num?, num?, num?, num?)
 ===================================================
 0
 ===================================================
@@ -787,9 +814,10 @@ num1    num2    num3    num4
 Query plan:
 sscan
     class: db_root node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select v_t?_a?h.a from db_root db_root)
+(select v_t?_a?h.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?h node[?]
@@ -798,13 +826,13 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?h.b|| cast(v_t?_a?h.e as varchar)|| cast(v_t?_a?h.f as varchar)|| cast(v_t?_a?h.g as varchar)|| cast(v_t?_a?h.h as varchar)), count(v_t?_a?h.c), count(v_t?_a?h.d), ? from t? v_t?_a?h where ( exists (select v_t?_a?h.a from db_root db_root)) and (v_t?_a?h.a> ?:? ))
+(select count(v_t?_a?h.b|| cast(v_t?_a?h.e as varchar)|| cast(v_t?_a?h.f as varchar)|| cast(v_t?_a?h.g as varchar)|| cast(v_t?_a?h.h as varchar)), count(v_t?_a?h.c), count(v_t?_a?h.d), ? from t? v_t?_a?h where ( exists (select v_t?_a?h.a from db_root db_root where inst_num()<=?)) and (v_t?_a?h.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?h node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?h.num?, v_t?_a?h.num?, v_t?_a?h.num?, v_t?_a?h.num? from (select count(v_t?_a?h.b|| cast(v_t?_a?h.e as varchar)|| cast(v_t?_a?h.f as varchar)|| cast(v_t?_a?h.g as varchar)|| cast(v_t?_a?h.h as varchar)), count(v_t?_a?h.c), count(v_t?_a?h.d), ? from t? v_t?_a?h where ( exists (select v_t?_a?h.a from db_root db_root)) and (v_t?_a?h.a> ?:? )) v_t?_a?h (num?, num?, num?, num?)
+select v_t?_a?h.num?, v_t?_a?h.num?, v_t?_a?h.num?, v_t?_a?h.num? from (select count(v_t?_a?h.b|| cast(v_t?_a?h.e as varchar)|| cast(v_t?_a?h.f as varchar)|| cast(v_t?_a?h.g as varchar)|| cast(v_t?_a?h.h as varchar)), count(v_t?_a?h.c), count(v_t?_a?h.d), ? from t? v_t?_a?h where ( exists (select v_t?_a?h.a from db_root db_root where inst_num()<=?)) and (v_t?_a?h.a> ?:? )) v_t?_a?h (num?, num?, num?, num?)
 ===================================================
 0
 ===================================================
@@ -815,30 +843,10 @@ num1    num2    num3    num4
 Query plan:
 sscan
     class: db_root node[?]
-    cost:  ? card ?
-Query stmt:
-(select v_t?_a?h.a from db_root db_root)
-Query plan:
-iscan
-    class: v_t?_a?h node[?]
-    index: i_t?_a?h term[?] (covers)
     sargs: term[?]
-    subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?h.b|| cast(v_t?_a?h.e as varchar)|| cast(v_t?_a?h.f as varchar)|| cast(v_t?_a?h.g as varchar)|| cast(v_t?_a?h.h as varchar)), count(v_t?_a?h.c), count(v_t?_a?h.d), ? from t? v_t?_a?h where ( exists (select v_t?_a?h.a from db_root db_root)) and (v_t?_a?h.a> ?:? ))
-Query plan:
-sscan
-    class: v_t?_a?h node[?]
-    cost:  ? card ?
-Query stmt:
-select v_t?_a?h.num?, v_t?_a?h.num?, v_t?_a?h.num?, v_t?_a?h.num? from (select count(v_t?_a?h.b|| cast(v_t?_a?h.e as varchar)|| cast(v_t?_a?h.f as varchar)|| cast(v_t?_a?h.g as varchar)|| cast(v_t?_a?h.h as varchar)), count(v_t?_a?h.c), count(v_t?_a?h.d), ? from t? v_t?_a?h where ( exists (select v_t?_a?h.a from db_root db_root)) and (v_t?_a?h.a> ?:? )) v_t?_a?h (num?, num?, num?, num?)
-Query plan:
-sscan
-    class: db_root node[?]
-    cost:  ? card ?
-Query stmt:
-(select v_t?_a?h.a from db_root db_root)
+(select v_t?_a?h.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?h node[?]
@@ -847,19 +855,41 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?h.b|| cast(v_t?_a?h.e as varchar)|| cast(v_t?_a?h.f as varchar)|| cast(v_t?_a?h.g as varchar)|| cast(v_t?_a?h.h as varchar)), count(v_t?_a?h.c), count(v_t?_a?h.d), ? from t? v_t?_a?h where ( exists (select v_t?_a?h.a from db_root db_root)) and (v_t?_a?h.a> ?:? ))
+(select count(v_t?_a?h.b|| cast(v_t?_a?h.e as varchar)|| cast(v_t?_a?h.f as varchar)|| cast(v_t?_a?h.g as varchar)|| cast(v_t?_a?h.h as varchar)), count(v_t?_a?h.c), count(v_t?_a?h.d), ? from t? v_t?_a?h where ( exists (select v_t?_a?h.a from db_root db_root where inst_num()<=?)) and (v_t?_a?h.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?h node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?h.num?, v_t?_a?h.num?, v_t?_a?h.num?, v_t?_a?h.num? from (select count(v_t?_a?h.b|| cast(v_t?_a?h.e as varchar)|| cast(v_t?_a?h.f as varchar)|| cast(v_t?_a?h.g as varchar)|| cast(v_t?_a?h.h as varchar)), count(v_t?_a?h.c), count(v_t?_a?h.d), ? from t? v_t?_a?h where ( exists (select v_t?_a?h.a from db_root db_root)) and (v_t?_a?h.a> ?:? )) v_t?_a?h (num?, num?, num?, num?)
+select v_t?_a?h.num?, v_t?_a?h.num?, v_t?_a?h.num?, v_t?_a?h.num? from (select count(v_t?_a?h.b|| cast(v_t?_a?h.e as varchar)|| cast(v_t?_a?h.f as varchar)|| cast(v_t?_a?h.g as varchar)|| cast(v_t?_a?h.h as varchar)), count(v_t?_a?h.c), count(v_t?_a?h.d), ? from t? v_t?_a?h where ( exists (select v_t?_a?h.a from db_root db_root where inst_num()<=?)) and (v_t?_a?h.a> ?:? )) v_t?_a?h (num?, num?, num?, num?)
+Query plan:
+sscan
+    class: db_root node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select v_t?_a?h.a from db_root db_root where inst_num()<=?)
+Query plan:
+iscan
+    class: v_t?_a?h node[?]
+    index: i_t?_a?h term[?] (covers)
+    sargs: term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+(select count(v_t?_a?h.b|| cast(v_t?_a?h.e as varchar)|| cast(v_t?_a?h.f as varchar)|| cast(v_t?_a?h.g as varchar)|| cast(v_t?_a?h.h as varchar)), count(v_t?_a?h.c), count(v_t?_a?h.d), ? from t? v_t?_a?h where ( exists (select v_t?_a?h.a from db_root db_root where inst_num()<=?)) and (v_t?_a?h.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?h node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?h.num?, v_t?_a?h.num?, v_t?_a?h.num?, v_t?_a?h.num? from (select v_t?_a?h.num?, v_t?_a?h.num?, v_t?_a?h.num?, v_t?_a?h.num? from (select count(v_t?_a?h.b|| cast(v_t?_a?h.e as varchar)|| cast(v_t?_a?h.f as varchar)|| cast(v_t?_a?h.g as varchar)|| cast(v_t?_a?h.h as varchar)), count(v_t?_a?h.c), count(v_t?_a?h.d), ? from t? v_t?_a?h where ( exists (select v_t?_a?h.a from db_root db_root)) and (v_t?_a?h.a> ?:? )) v_t?_a?h (num?, num?, num?, num?) union all select v_t?_a?h.num?, v_t?_a?h.num?, v_t?_a?h.num?, v_t?_a?h.num? from (select count(v_t?_a?h.b|| cast(v_t?_a?h.e as varchar)|| cast(v_t?_a?h.f as varchar)|| cast(v_t?_a?h.g as varchar)|| cast(v_t?_a?h.h as varchar)), count(v_t?_a?h.c), count(v_t?_a?h.d), ? from t? v_t?_a?h where ( exists (select v_t?_a?h.a from db_root db_root)) and (v_t?_a?h.a> ?:? )) v_t?_a?h (num?, num?, num?, num?)) v_t?_a?h (num?, num?, num?, num?)
+select v_t?_a?h.num?, v_t?_a?h.num?, v_t?_a?h.num?, v_t?_a?h.num? from (select count(v_t?_a?h.b|| cast(v_t?_a?h.e as varchar)|| cast(v_t?_a?h.f as varchar)|| cast(v_t?_a?h.g as varchar)|| cast(v_t?_a?h.h as varchar)), count(v_t?_a?h.c), count(v_t?_a?h.d), ? from t? v_t?_a?h where ( exists (select v_t?_a?h.a from db_root db_root where inst_num()<=?)) and (v_t?_a?h.a> ?:? )) v_t?_a?h (num?, num?, num?, num?)
+Query plan:
+sscan
+    class: v_t?_a?h node[?]
+    cost:  ? card ?
+Query stmt:
+select v_t?_a?h.num?, v_t?_a?h.num?, v_t?_a?h.num?, v_t?_a?h.num? from (select v_t?_a?h.num?, v_t?_a?h.num?, v_t?_a?h.num?, v_t?_a?h.num? from (select count(v_t?_a?h.b|| cast(v_t?_a?h.e as varchar)|| cast(v_t?_a?h.f as varchar)|| cast(v_t?_a?h.g as varchar)|| cast(v_t?_a?h.h as varchar)), count(v_t?_a?h.c), count(v_t?_a?h.d), ? from t? v_t?_a?h where ( exists (select v_t?_a?h.a from db_root db_root where inst_num()<=?)) and (v_t?_a?h.a> ?:? )) v_t?_a?h (num?, num?, num?, num?) union all select v_t?_a?h.num?, v_t?_a?h.num?, v_t?_a?h.num?, v_t?_a?h.num? from (select count(v_t?_a?h.b|| cast(v_t?_a?h.e as varchar)|| cast(v_t?_a?h.f as varchar)|| cast(v_t?_a?h.g as varchar)|| cast(v_t?_a?h.h as varchar)), count(v_t?_a?h.c), count(v_t?_a?h.d), ? from t? v_t?_a?h where ( exists (select v_t?_a?h.a from db_root db_root where inst_num()<=?)) and (v_t?_a?h.a> ?:? )) v_t?_a?h (num?, num?, num?, num?)) v_t?_a?h (num?, num?, num?, num?)
 ===================================================
 0
 ===================================================
@@ -869,9 +899,10 @@ num1    num2    num3    num4
 Query plan:
 sscan
     class: db_root node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select v_t?_a?g.a from db_root db_root)
+(select v_t?_a?g.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?g node[?]
@@ -880,13 +911,13 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?g.b|| cast(v_t?_a?g.e as varchar)|| cast(v_t?_a?g.f as varchar)|| cast(v_t?_a?g.g as varchar)), count(v_t?_a?g.c), count(v_t?_a?g.d), ? from t? v_t?_a?g where ( exists (select v_t?_a?g.a from db_root db_root)) and (v_t?_a?g.a> ?:? ))
+(select count(v_t?_a?g.b|| cast(v_t?_a?g.e as varchar)|| cast(v_t?_a?g.f as varchar)|| cast(v_t?_a?g.g as varchar)), count(v_t?_a?g.c), count(v_t?_a?g.d), ? from t? v_t?_a?g where ( exists (select v_t?_a?g.a from db_root db_root where inst_num()<=?)) and (v_t?_a?g.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?g node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?g.num?, v_t?_a?g.num?, v_t?_a?g.num?, v_t?_a?g.num? from (select count(v_t?_a?g.b|| cast(v_t?_a?g.e as varchar)|| cast(v_t?_a?g.f as varchar)|| cast(v_t?_a?g.g as varchar)), count(v_t?_a?g.c), count(v_t?_a?g.d), ? from t? v_t?_a?g where ( exists (select v_t?_a?g.a from db_root db_root)) and (v_t?_a?g.a> ?:? )) v_t?_a?g (num?, num?, num?, num?)
+select v_t?_a?g.num?, v_t?_a?g.num?, v_t?_a?g.num?, v_t?_a?g.num? from (select count(v_t?_a?g.b|| cast(v_t?_a?g.e as varchar)|| cast(v_t?_a?g.f as varchar)|| cast(v_t?_a?g.g as varchar)), count(v_t?_a?g.c), count(v_t?_a?g.d), ? from t? v_t?_a?g where ( exists (select v_t?_a?g.a from db_root db_root where inst_num()<=?)) and (v_t?_a?g.a> ?:? )) v_t?_a?g (num?, num?, num?, num?)
 ===================================================
 0
 ===================================================
@@ -897,30 +928,10 @@ num1    num2    num3    num4
 Query plan:
 sscan
     class: db_root node[?]
-    cost:  ? card ?
-Query stmt:
-(select v_t?_a?g.a from db_root db_root)
-Query plan:
-iscan
-    class: v_t?_a?g node[?]
-    index: i_t?_a?g term[?] (covers)
     sargs: term[?]
-    subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?g.b|| cast(v_t?_a?g.e as varchar)|| cast(v_t?_a?g.f as varchar)|| cast(v_t?_a?g.g as varchar)), count(v_t?_a?g.c), count(v_t?_a?g.d), ? from t? v_t?_a?g where ( exists (select v_t?_a?g.a from db_root db_root)) and (v_t?_a?g.a> ?:? ))
-Query plan:
-sscan
-    class: v_t?_a?g node[?]
-    cost:  ? card ?
-Query stmt:
-select v_t?_a?g.num?, v_t?_a?g.num?, v_t?_a?g.num?, v_t?_a?g.num? from (select count(v_t?_a?g.b|| cast(v_t?_a?g.e as varchar)|| cast(v_t?_a?g.f as varchar)|| cast(v_t?_a?g.g as varchar)), count(v_t?_a?g.c), count(v_t?_a?g.d), ? from t? v_t?_a?g where ( exists (select v_t?_a?g.a from db_root db_root)) and (v_t?_a?g.a> ?:? )) v_t?_a?g (num?, num?, num?, num?)
-Query plan:
-sscan
-    class: db_root node[?]
-    cost:  ? card ?
-Query stmt:
-(select v_t?_a?g.a from db_root db_root)
+(select v_t?_a?g.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?g node[?]
@@ -929,19 +940,41 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?g.b|| cast(v_t?_a?g.e as varchar)|| cast(v_t?_a?g.f as varchar)|| cast(v_t?_a?g.g as varchar)), count(v_t?_a?g.c), count(v_t?_a?g.d), ? from t? v_t?_a?g where ( exists (select v_t?_a?g.a from db_root db_root)) and (v_t?_a?g.a> ?:? ))
+(select count(v_t?_a?g.b|| cast(v_t?_a?g.e as varchar)|| cast(v_t?_a?g.f as varchar)|| cast(v_t?_a?g.g as varchar)), count(v_t?_a?g.c), count(v_t?_a?g.d), ? from t? v_t?_a?g where ( exists (select v_t?_a?g.a from db_root db_root where inst_num()<=?)) and (v_t?_a?g.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?g node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?g.num?, v_t?_a?g.num?, v_t?_a?g.num?, v_t?_a?g.num? from (select count(v_t?_a?g.b|| cast(v_t?_a?g.e as varchar)|| cast(v_t?_a?g.f as varchar)|| cast(v_t?_a?g.g as varchar)), count(v_t?_a?g.c), count(v_t?_a?g.d), ? from t? v_t?_a?g where ( exists (select v_t?_a?g.a from db_root db_root)) and (v_t?_a?g.a> ?:? )) v_t?_a?g (num?, num?, num?, num?)
+select v_t?_a?g.num?, v_t?_a?g.num?, v_t?_a?g.num?, v_t?_a?g.num? from (select count(v_t?_a?g.b|| cast(v_t?_a?g.e as varchar)|| cast(v_t?_a?g.f as varchar)|| cast(v_t?_a?g.g as varchar)), count(v_t?_a?g.c), count(v_t?_a?g.d), ? from t? v_t?_a?g where ( exists (select v_t?_a?g.a from db_root db_root where inst_num()<=?)) and (v_t?_a?g.a> ?:? )) v_t?_a?g (num?, num?, num?, num?)
+Query plan:
+sscan
+    class: db_root node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select v_t?_a?g.a from db_root db_root where inst_num()<=?)
+Query plan:
+iscan
+    class: v_t?_a?g node[?]
+    index: i_t?_a?g term[?] (covers)
+    sargs: term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+(select count(v_t?_a?g.b|| cast(v_t?_a?g.e as varchar)|| cast(v_t?_a?g.f as varchar)|| cast(v_t?_a?g.g as varchar)), count(v_t?_a?g.c), count(v_t?_a?g.d), ? from t? v_t?_a?g where ( exists (select v_t?_a?g.a from db_root db_root where inst_num()<=?)) and (v_t?_a?g.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?g node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?g.num?, v_t?_a?g.num?, v_t?_a?g.num?, v_t?_a?g.num? from (select v_t?_a?g.num?, v_t?_a?g.num?, v_t?_a?g.num?, v_t?_a?g.num? from (select count(v_t?_a?g.b|| cast(v_t?_a?g.e as varchar)|| cast(v_t?_a?g.f as varchar)|| cast(v_t?_a?g.g as varchar)), count(v_t?_a?g.c), count(v_t?_a?g.d), ? from t? v_t?_a?g where ( exists (select v_t?_a?g.a from db_root db_root)) and (v_t?_a?g.a> ?:? )) v_t?_a?g (num?, num?, num?, num?) union all select v_t?_a?g.num?, v_t?_a?g.num?, v_t?_a?g.num?, v_t?_a?g.num? from (select count(v_t?_a?g.b|| cast(v_t?_a?g.e as varchar)|| cast(v_t?_a?g.f as varchar)|| cast(v_t?_a?g.g as varchar)), count(v_t?_a?g.c), count(v_t?_a?g.d), ? from t? v_t?_a?g where ( exists (select v_t?_a?g.a from db_root db_root)) and (v_t?_a?g.a> ?:? )) v_t?_a?g (num?, num?, num?, num?)) v_t?_a?g (num?, num?, num?, num?)
+select v_t?_a?g.num?, v_t?_a?g.num?, v_t?_a?g.num?, v_t?_a?g.num? from (select count(v_t?_a?g.b|| cast(v_t?_a?g.e as varchar)|| cast(v_t?_a?g.f as varchar)|| cast(v_t?_a?g.g as varchar)), count(v_t?_a?g.c), count(v_t?_a?g.d), ? from t? v_t?_a?g where ( exists (select v_t?_a?g.a from db_root db_root where inst_num()<=?)) and (v_t?_a?g.a> ?:? )) v_t?_a?g (num?, num?, num?, num?)
+Query plan:
+sscan
+    class: v_t?_a?g node[?]
+    cost:  ? card ?
+Query stmt:
+select v_t?_a?g.num?, v_t?_a?g.num?, v_t?_a?g.num?, v_t?_a?g.num? from (select v_t?_a?g.num?, v_t?_a?g.num?, v_t?_a?g.num?, v_t?_a?g.num? from (select count(v_t?_a?g.b|| cast(v_t?_a?g.e as varchar)|| cast(v_t?_a?g.f as varchar)|| cast(v_t?_a?g.g as varchar)), count(v_t?_a?g.c), count(v_t?_a?g.d), ? from t? v_t?_a?g where ( exists (select v_t?_a?g.a from db_root db_root where inst_num()<=?)) and (v_t?_a?g.a> ?:? )) v_t?_a?g (num?, num?, num?, num?) union all select v_t?_a?g.num?, v_t?_a?g.num?, v_t?_a?g.num?, v_t?_a?g.num? from (select count(v_t?_a?g.b|| cast(v_t?_a?g.e as varchar)|| cast(v_t?_a?g.f as varchar)|| cast(v_t?_a?g.g as varchar)), count(v_t?_a?g.c), count(v_t?_a?g.d), ? from t? v_t?_a?g where ( exists (select v_t?_a?g.a from db_root db_root where inst_num()<=?)) and (v_t?_a?g.a> ?:? )) v_t?_a?g (num?, num?, num?, num?)) v_t?_a?g (num?, num?, num?, num?)
 ===================================================
 0
 ===================================================
@@ -951,9 +984,10 @@ num1    num2    num3    num4
 Query plan:
 sscan
     class: db_root node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select v_t?_a?f.a from db_root db_root)
+(select v_t?_a?f.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?f node[?]
@@ -962,13 +996,13 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?f.b|| cast(v_t?_a?f.e as varchar)|| cast(v_t?_a?f.f as varchar)), count(v_t?_a?f.c), count(v_t?_a?f.d), ? from t? v_t?_a?f where ( exists (select v_t?_a?f.a from db_root db_root)) and (v_t?_a?f.a> ?:? ))
+(select count(v_t?_a?f.b|| cast(v_t?_a?f.e as varchar)|| cast(v_t?_a?f.f as varchar)), count(v_t?_a?f.c), count(v_t?_a?f.d), ? from t? v_t?_a?f where ( exists (select v_t?_a?f.a from db_root db_root where inst_num()<=?)) and (v_t?_a?f.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?f node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?f.num?, v_t?_a?f.num?, v_t?_a?f.num?, v_t?_a?f.num? from (select count(v_t?_a?f.b|| cast(v_t?_a?f.e as varchar)|| cast(v_t?_a?f.f as varchar)), count(v_t?_a?f.c), count(v_t?_a?f.d), ? from t? v_t?_a?f where ( exists (select v_t?_a?f.a from db_root db_root)) and (v_t?_a?f.a> ?:? )) v_t?_a?f (num?, num?, num?, num?)
+select v_t?_a?f.num?, v_t?_a?f.num?, v_t?_a?f.num?, v_t?_a?f.num? from (select count(v_t?_a?f.b|| cast(v_t?_a?f.e as varchar)|| cast(v_t?_a?f.f as varchar)), count(v_t?_a?f.c), count(v_t?_a?f.d), ? from t? v_t?_a?f where ( exists (select v_t?_a?f.a from db_root db_root where inst_num()<=?)) and (v_t?_a?f.a> ?:? )) v_t?_a?f (num?, num?, num?, num?)
 ===================================================
 0
 ===================================================
@@ -979,9 +1013,10 @@ num1    num2    num3    num4
 Query plan:
 sscan
     class: db_root node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select v_t?_a?f.a from db_root db_root)
+(select v_t?_a?f.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?f node[?]
@@ -990,19 +1025,20 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?f.b|| cast(v_t?_a?f.e as varchar)|| cast(v_t?_a?f.f as varchar)), count(v_t?_a?f.c), count(v_t?_a?f.d), ? from t? v_t?_a?f where ( exists (select v_t?_a?f.a from db_root db_root)) and (v_t?_a?f.a> ?:? ))
+(select count(v_t?_a?f.b|| cast(v_t?_a?f.e as varchar)|| cast(v_t?_a?f.f as varchar)), count(v_t?_a?f.c), count(v_t?_a?f.d), ? from t? v_t?_a?f where ( exists (select v_t?_a?f.a from db_root db_root where inst_num()<=?)) and (v_t?_a?f.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?f node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?f.num?, v_t?_a?f.num?, v_t?_a?f.num?, v_t?_a?f.num? from (select count(v_t?_a?f.b|| cast(v_t?_a?f.e as varchar)|| cast(v_t?_a?f.f as varchar)), count(v_t?_a?f.c), count(v_t?_a?f.d), ? from t? v_t?_a?f where ( exists (select v_t?_a?f.a from db_root db_root)) and (v_t?_a?f.a> ?:? )) v_t?_a?f (num?, num?, num?, num?)
+select v_t?_a?f.num?, v_t?_a?f.num?, v_t?_a?f.num?, v_t?_a?f.num? from (select count(v_t?_a?f.b|| cast(v_t?_a?f.e as varchar)|| cast(v_t?_a?f.f as varchar)), count(v_t?_a?f.c), count(v_t?_a?f.d), ? from t? v_t?_a?f where ( exists (select v_t?_a?f.a from db_root db_root where inst_num()<=?)) and (v_t?_a?f.a> ?:? )) v_t?_a?f (num?, num?, num?, num?)
 Query plan:
 sscan
     class: db_root node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select v_t?_a?f.a from db_root db_root)
+(select v_t?_a?f.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?f node[?]
@@ -1011,19 +1047,19 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?f.b|| cast(v_t?_a?f.e as varchar)|| cast(v_t?_a?f.f as varchar)), count(v_t?_a?f.c), count(v_t?_a?f.d), ? from t? v_t?_a?f where ( exists (select v_t?_a?f.a from db_root db_root)) and (v_t?_a?f.a> ?:? ))
+(select count(v_t?_a?f.b|| cast(v_t?_a?f.e as varchar)|| cast(v_t?_a?f.f as varchar)), count(v_t?_a?f.c), count(v_t?_a?f.d), ? from t? v_t?_a?f where ( exists (select v_t?_a?f.a from db_root db_root where inst_num()<=?)) and (v_t?_a?f.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?f node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?f.num?, v_t?_a?f.num?, v_t?_a?f.num?, v_t?_a?f.num? from (select count(v_t?_a?f.b|| cast(v_t?_a?f.e as varchar)|| cast(v_t?_a?f.f as varchar)), count(v_t?_a?f.c), count(v_t?_a?f.d), ? from t? v_t?_a?f where ( exists (select v_t?_a?f.a from db_root db_root)) and (v_t?_a?f.a> ?:? )) v_t?_a?f (num?, num?, num?, num?)
+select v_t?_a?f.num?, v_t?_a?f.num?, v_t?_a?f.num?, v_t?_a?f.num? from (select count(v_t?_a?f.b|| cast(v_t?_a?f.e as varchar)|| cast(v_t?_a?f.f as varchar)), count(v_t?_a?f.c), count(v_t?_a?f.d), ? from t? v_t?_a?f where ( exists (select v_t?_a?f.a from db_root db_root where inst_num()<=?)) and (v_t?_a?f.a> ?:? )) v_t?_a?f (num?, num?, num?, num?)
 Query plan:
 sscan
     class: v_t?_a?f node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?f.num?, v_t?_a?f.num?, v_t?_a?f.num?, v_t?_a?f.num? from (select v_t?_a?f.num?, v_t?_a?f.num?, v_t?_a?f.num?, v_t?_a?f.num? from (select count(v_t?_a?f.b|| cast(v_t?_a?f.e as varchar)|| cast(v_t?_a?f.f as varchar)), count(v_t?_a?f.c), count(v_t?_a?f.d), ? from t? v_t?_a?f where ( exists (select v_t?_a?f.a from db_root db_root)) and (v_t?_a?f.a> ?:? )) v_t?_a?f (num?, num?, num?, num?) union all select v_t?_a?f.num?, v_t?_a?f.num?, v_t?_a?f.num?, v_t?_a?f.num? from (select count(v_t?_a?f.b|| cast(v_t?_a?f.e as varchar)|| cast(v_t?_a?f.f as varchar)), count(v_t?_a?f.c), count(v_t?_a?f.d), ? from t? v_t?_a?f where ( exists (select v_t?_a?f.a from db_root db_root)) and (v_t?_a?f.a> ?:? )) v_t?_a?f (num?, num?, num?, num?)) v_t?_a?f (num?, num?, num?, num?)
+select v_t?_a?f.num?, v_t?_a?f.num?, v_t?_a?f.num?, v_t?_a?f.num? from (select v_t?_a?f.num?, v_t?_a?f.num?, v_t?_a?f.num?, v_t?_a?f.num? from (select count(v_t?_a?f.b|| cast(v_t?_a?f.e as varchar)|| cast(v_t?_a?f.f as varchar)), count(v_t?_a?f.c), count(v_t?_a?f.d), ? from t? v_t?_a?f where ( exists (select v_t?_a?f.a from db_root db_root where inst_num()<=?)) and (v_t?_a?f.a> ?:? )) v_t?_a?f (num?, num?, num?, num?) union all select v_t?_a?f.num?, v_t?_a?f.num?, v_t?_a?f.num?, v_t?_a?f.num? from (select count(v_t?_a?f.b|| cast(v_t?_a?f.e as varchar)|| cast(v_t?_a?f.f as varchar)), count(v_t?_a?f.c), count(v_t?_a?f.d), ? from t? v_t?_a?f where ( exists (select v_t?_a?f.a from db_root db_root where inst_num()<=?)) and (v_t?_a?f.a> ?:? )) v_t?_a?f (num?, num?, num?, num?)) v_t?_a?f (num?, num?, num?, num?)
 ===================================================
 0
 ===================================================
@@ -1033,9 +1069,10 @@ num1    num2    num3    num4
 Query plan:
 sscan
     class: db_root node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select v_t?_a?e.a from db_root db_root)
+(select v_t?_a?e.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?e node[?]
@@ -1044,13 +1081,13 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?e.b|| cast(v_t?_a?e.e as varchar)), count(v_t?_a?e.c), count(v_t?_a?e.d), ? from t? v_t?_a?e where ( exists (select v_t?_a?e.a from db_root db_root)) and (v_t?_a?e.a> ?:? ))
+(select count(v_t?_a?e.b|| cast(v_t?_a?e.e as varchar)), count(v_t?_a?e.c), count(v_t?_a?e.d), ? from t? v_t?_a?e where ( exists (select v_t?_a?e.a from db_root db_root where inst_num()<=?)) and (v_t?_a?e.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?e node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?e.num?, v_t?_a?e.num?, v_t?_a?e.num?, v_t?_a?e.num? from (select count(v_t?_a?e.b|| cast(v_t?_a?e.e as varchar)), count(v_t?_a?e.c), count(v_t?_a?e.d), ? from t? v_t?_a?e where ( exists (select v_t?_a?e.a from db_root db_root)) and (v_t?_a?e.a> ?:? )) v_t?_a?e (num?, num?, num?, num?)
+select v_t?_a?e.num?, v_t?_a?e.num?, v_t?_a?e.num?, v_t?_a?e.num? from (select count(v_t?_a?e.b|| cast(v_t?_a?e.e as varchar)), count(v_t?_a?e.c), count(v_t?_a?e.d), ? from t? v_t?_a?e where ( exists (select v_t?_a?e.a from db_root db_root where inst_num()<=?)) and (v_t?_a?e.a> ?:? )) v_t?_a?e (num?, num?, num?, num?)
 ===================================================
 0
 ===================================================
@@ -1061,9 +1098,10 @@ num1    num2    num3    num4
 Query plan:
 sscan
     class: db_root node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select v_t?_a?e.a from db_root db_root)
+(select v_t?_a?e.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?e node[?]
@@ -1072,19 +1110,20 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?e.b|| cast(v_t?_a?e.e as varchar)), count(v_t?_a?e.c), count(v_t?_a?e.d), ? from t? v_t?_a?e where ( exists (select v_t?_a?e.a from db_root db_root)) and (v_t?_a?e.a> ?:? ))
+(select count(v_t?_a?e.b|| cast(v_t?_a?e.e as varchar)), count(v_t?_a?e.c), count(v_t?_a?e.d), ? from t? v_t?_a?e where ( exists (select v_t?_a?e.a from db_root db_root where inst_num()<=?)) and (v_t?_a?e.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?e node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?e.num?, v_t?_a?e.num?, v_t?_a?e.num?, v_t?_a?e.num? from (select count(v_t?_a?e.b|| cast(v_t?_a?e.e as varchar)), count(v_t?_a?e.c), count(v_t?_a?e.d), ? from t? v_t?_a?e where ( exists (select v_t?_a?e.a from db_root db_root)) and (v_t?_a?e.a> ?:? )) v_t?_a?e (num?, num?, num?, num?)
+select v_t?_a?e.num?, v_t?_a?e.num?, v_t?_a?e.num?, v_t?_a?e.num? from (select count(v_t?_a?e.b|| cast(v_t?_a?e.e as varchar)), count(v_t?_a?e.c), count(v_t?_a?e.d), ? from t? v_t?_a?e where ( exists (select v_t?_a?e.a from db_root db_root where inst_num()<=?)) and (v_t?_a?e.a> ?:? )) v_t?_a?e (num?, num?, num?, num?)
 Query plan:
 sscan
     class: db_root node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select v_t?_a?e.a from db_root db_root)
+(select v_t?_a?e.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?e node[?]
@@ -1093,19 +1132,19 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?e.b|| cast(v_t?_a?e.e as varchar)), count(v_t?_a?e.c), count(v_t?_a?e.d), ? from t? v_t?_a?e where ( exists (select v_t?_a?e.a from db_root db_root)) and (v_t?_a?e.a> ?:? ))
+(select count(v_t?_a?e.b|| cast(v_t?_a?e.e as varchar)), count(v_t?_a?e.c), count(v_t?_a?e.d), ? from t? v_t?_a?e where ( exists (select v_t?_a?e.a from db_root db_root where inst_num()<=?)) and (v_t?_a?e.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?e node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?e.num?, v_t?_a?e.num?, v_t?_a?e.num?, v_t?_a?e.num? from (select count(v_t?_a?e.b|| cast(v_t?_a?e.e as varchar)), count(v_t?_a?e.c), count(v_t?_a?e.d), ? from t? v_t?_a?e where ( exists (select v_t?_a?e.a from db_root db_root)) and (v_t?_a?e.a> ?:? )) v_t?_a?e (num?, num?, num?, num?)
+select v_t?_a?e.num?, v_t?_a?e.num?, v_t?_a?e.num?, v_t?_a?e.num? from (select count(v_t?_a?e.b|| cast(v_t?_a?e.e as varchar)), count(v_t?_a?e.c), count(v_t?_a?e.d), ? from t? v_t?_a?e where ( exists (select v_t?_a?e.a from db_root db_root where inst_num()<=?)) and (v_t?_a?e.a> ?:? )) v_t?_a?e (num?, num?, num?, num?)
 Query plan:
 sscan
     class: v_t?_a?e node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?e.num?, v_t?_a?e.num?, v_t?_a?e.num?, v_t?_a?e.num? from (select v_t?_a?e.num?, v_t?_a?e.num?, v_t?_a?e.num?, v_t?_a?e.num? from (select count(v_t?_a?e.b|| cast(v_t?_a?e.e as varchar)), count(v_t?_a?e.c), count(v_t?_a?e.d), ? from t? v_t?_a?e where ( exists (select v_t?_a?e.a from db_root db_root)) and (v_t?_a?e.a> ?:? )) v_t?_a?e (num?, num?, num?, num?) union all select v_t?_a?e.num?, v_t?_a?e.num?, v_t?_a?e.num?, v_t?_a?e.num? from (select count(v_t?_a?e.b|| cast(v_t?_a?e.e as varchar)), count(v_t?_a?e.c), count(v_t?_a?e.d), ? from t? v_t?_a?e where ( exists (select v_t?_a?e.a from db_root db_root)) and (v_t?_a?e.a> ?:? )) v_t?_a?e (num?, num?, num?, num?)) v_t?_a?e (num?, num?, num?, num?)
+select v_t?_a?e.num?, v_t?_a?e.num?, v_t?_a?e.num?, v_t?_a?e.num? from (select v_t?_a?e.num?, v_t?_a?e.num?, v_t?_a?e.num?, v_t?_a?e.num? from (select count(v_t?_a?e.b|| cast(v_t?_a?e.e as varchar)), count(v_t?_a?e.c), count(v_t?_a?e.d), ? from t? v_t?_a?e where ( exists (select v_t?_a?e.a from db_root db_root where inst_num()<=?)) and (v_t?_a?e.a> ?:? )) v_t?_a?e (num?, num?, num?, num?) union all select v_t?_a?e.num?, v_t?_a?e.num?, v_t?_a?e.num?, v_t?_a?e.num? from (select count(v_t?_a?e.b|| cast(v_t?_a?e.e as varchar)), count(v_t?_a?e.c), count(v_t?_a?e.d), ? from t? v_t?_a?e where ( exists (select v_t?_a?e.a from db_root db_root where inst_num()<=?)) and (v_t?_a?e.a> ?:? )) v_t?_a?e (num?, num?, num?, num?)) v_t?_a?e (num?, num?, num?, num?)
 ===================================================
 0
 ===================================================
@@ -1115,9 +1154,10 @@ num1    num2    num3    num4
 Query plan:
 sscan
     class: db_root node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select v_t?_a?d.a from db_root db_root)
+(select v_t?_a?d.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?d node[?]
@@ -1126,13 +1166,13 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?d.b), count(v_t?_a?d.c), count(v_t?_a?d.d), ? from t? v_t?_a?d where ( exists (select v_t?_a?d.a from db_root db_root)) and (v_t?_a?d.a> ?:? ))
+(select count(v_t?_a?d.b), count(v_t?_a?d.c), count(v_t?_a?d.d), ? from t? v_t?_a?d where ( exists (select v_t?_a?d.a from db_root db_root where inst_num()<=?)) and (v_t?_a?d.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?d node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?d.num?, v_t?_a?d.num?, v_t?_a?d.num?, v_t?_a?d.num? from (select count(v_t?_a?d.b), count(v_t?_a?d.c), count(v_t?_a?d.d), ? from t? v_t?_a?d where ( exists (select v_t?_a?d.a from db_root db_root)) and (v_t?_a?d.a> ?:? )) v_t?_a?d (num?, num?, num?, num?)
+select v_t?_a?d.num?, v_t?_a?d.num?, v_t?_a?d.num?, v_t?_a?d.num? from (select count(v_t?_a?d.b), count(v_t?_a?d.c), count(v_t?_a?d.d), ? from t? v_t?_a?d where ( exists (select v_t?_a?d.a from db_root db_root where inst_num()<=?)) and (v_t?_a?d.a> ?:? )) v_t?_a?d (num?, num?, num?, num?)
 ===================================================
 0
 ===================================================
@@ -1143,9 +1183,10 @@ num1    num2    num3    num4
 Query plan:
 sscan
     class: db_root node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select v_t?_a?d.a from db_root db_root)
+(select v_t?_a?d.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?d node[?]
@@ -1154,19 +1195,20 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?d.b), count(v_t?_a?d.c), count(v_t?_a?d.d), ? from t? v_t?_a?d where ( exists (select v_t?_a?d.a from db_root db_root)) and (v_t?_a?d.a> ?:? ))
+(select count(v_t?_a?d.b), count(v_t?_a?d.c), count(v_t?_a?d.d), ? from t? v_t?_a?d where ( exists (select v_t?_a?d.a from db_root db_root where inst_num()<=?)) and (v_t?_a?d.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?d node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?d.num?, v_t?_a?d.num?, v_t?_a?d.num?, v_t?_a?d.num? from (select count(v_t?_a?d.b), count(v_t?_a?d.c), count(v_t?_a?d.d), ? from t? v_t?_a?d where ( exists (select v_t?_a?d.a from db_root db_root)) and (v_t?_a?d.a> ?:? )) v_t?_a?d (num?, num?, num?, num?)
+select v_t?_a?d.num?, v_t?_a?d.num?, v_t?_a?d.num?, v_t?_a?d.num? from (select count(v_t?_a?d.b), count(v_t?_a?d.c), count(v_t?_a?d.d), ? from t? v_t?_a?d where ( exists (select v_t?_a?d.a from db_root db_root where inst_num()<=?)) and (v_t?_a?d.a> ?:? )) v_t?_a?d (num?, num?, num?, num?)
 Query plan:
 sscan
     class: db_root node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select v_t?_a?d.a from db_root db_root)
+(select v_t?_a?d.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?d node[?]
@@ -1175,19 +1217,19 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?d.b), count(v_t?_a?d.c), count(v_t?_a?d.d), ? from t? v_t?_a?d where ( exists (select v_t?_a?d.a from db_root db_root)) and (v_t?_a?d.a> ?:? ))
+(select count(v_t?_a?d.b), count(v_t?_a?d.c), count(v_t?_a?d.d), ? from t? v_t?_a?d where ( exists (select v_t?_a?d.a from db_root db_root where inst_num()<=?)) and (v_t?_a?d.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?d node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?d.num?, v_t?_a?d.num?, v_t?_a?d.num?, v_t?_a?d.num? from (select count(v_t?_a?d.b), count(v_t?_a?d.c), count(v_t?_a?d.d), ? from t? v_t?_a?d where ( exists (select v_t?_a?d.a from db_root db_root)) and (v_t?_a?d.a> ?:? )) v_t?_a?d (num?, num?, num?, num?)
+select v_t?_a?d.num?, v_t?_a?d.num?, v_t?_a?d.num?, v_t?_a?d.num? from (select count(v_t?_a?d.b), count(v_t?_a?d.c), count(v_t?_a?d.d), ? from t? v_t?_a?d where ( exists (select v_t?_a?d.a from db_root db_root where inst_num()<=?)) and (v_t?_a?d.a> ?:? )) v_t?_a?d (num?, num?, num?, num?)
 Query plan:
 sscan
     class: v_t?_a?d node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?d.num?, v_t?_a?d.num?, v_t?_a?d.num?, v_t?_a?d.num? from (select v_t?_a?d.num?, v_t?_a?d.num?, v_t?_a?d.num?, v_t?_a?d.num? from (select count(v_t?_a?d.b), count(v_t?_a?d.c), count(v_t?_a?d.d), ? from t? v_t?_a?d where ( exists (select v_t?_a?d.a from db_root db_root)) and (v_t?_a?d.a> ?:? )) v_t?_a?d (num?, num?, num?, num?) union all select v_t?_a?d.num?, v_t?_a?d.num?, v_t?_a?d.num?, v_t?_a?d.num? from (select count(v_t?_a?d.b), count(v_t?_a?d.c), count(v_t?_a?d.d), ? from t? v_t?_a?d where ( exists (select v_t?_a?d.a from db_root db_root)) and (v_t?_a?d.a> ?:? )) v_t?_a?d (num?, num?, num?, num?)) v_t?_a?d (num?, num?, num?, num?)
+select v_t?_a?d.num?, v_t?_a?d.num?, v_t?_a?d.num?, v_t?_a?d.num? from (select v_t?_a?d.num?, v_t?_a?d.num?, v_t?_a?d.num?, v_t?_a?d.num? from (select count(v_t?_a?d.b), count(v_t?_a?d.c), count(v_t?_a?d.d), ? from t? v_t?_a?d where ( exists (select v_t?_a?d.a from db_root db_root where inst_num()<=?)) and (v_t?_a?d.a> ?:? )) v_t?_a?d (num?, num?, num?, num?) union all select v_t?_a?d.num?, v_t?_a?d.num?, v_t?_a?d.num?, v_t?_a?d.num? from (select count(v_t?_a?d.b), count(v_t?_a?d.c), count(v_t?_a?d.d), ? from t? v_t?_a?d where ( exists (select v_t?_a?d.a from db_root db_root where inst_num()<=?)) and (v_t?_a?d.a> ?:? )) v_t?_a?d (num?, num?, num?, num?)) v_t?_a?d (num?, num?, num?, num?)
 ===================================================
 0
 ===================================================
@@ -1197,9 +1239,10 @@ num1    num2    num3
 Query plan:
 sscan
     class: db_root node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select v_t?_a?c.a from db_root db_root)
+(select v_t?_a?c.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?c node[?]
@@ -1208,13 +1251,13 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?c.b), count(v_t?_a?c.c), ? from t? v_t?_a?c where ( exists (select v_t?_a?c.a from db_root db_root)) and (v_t?_a?c.a> ?:? ))
+(select count(v_t?_a?c.b), count(v_t?_a?c.c), ? from t? v_t?_a?c where ( exists (select v_t?_a?c.a from db_root db_root where inst_num()<=?)) and (v_t?_a?c.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?c node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?c.num?, v_t?_a?c.num?, v_t?_a?c.num? from (select count(v_t?_a?c.b), count(v_t?_a?c.c), ? from t? v_t?_a?c where ( exists (select v_t?_a?c.a from db_root db_root)) and (v_t?_a?c.a> ?:? )) v_t?_a?c (num?, num?, num?)
+select v_t?_a?c.num?, v_t?_a?c.num?, v_t?_a?c.num? from (select count(v_t?_a?c.b), count(v_t?_a?c.c), ? from t? v_t?_a?c where ( exists (select v_t?_a?c.a from db_root db_root where inst_num()<=?)) and (v_t?_a?c.a> ?:? )) v_t?_a?c (num?, num?, num?)
 ===================================================
 0
 ===================================================
@@ -1225,9 +1268,10 @@ num1    num2    num3
 Query plan:
 sscan
     class: db_root node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select v_t?_a?c.a from db_root db_root)
+(select v_t?_a?c.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?c node[?]
@@ -1236,19 +1280,20 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?c.b), count(v_t?_a?c.c), ? from t? v_t?_a?c where ( exists (select v_t?_a?c.a from db_root db_root)) and (v_t?_a?c.a> ?:? ))
+(select count(v_t?_a?c.b), count(v_t?_a?c.c), ? from t? v_t?_a?c where ( exists (select v_t?_a?c.a from db_root db_root where inst_num()<=?)) and (v_t?_a?c.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?c node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?c.num?, v_t?_a?c.num?, v_t?_a?c.num? from (select count(v_t?_a?c.b), count(v_t?_a?c.c), ? from t? v_t?_a?c where ( exists (select v_t?_a?c.a from db_root db_root)) and (v_t?_a?c.a> ?:? )) v_t?_a?c (num?, num?, num?)
+select v_t?_a?c.num?, v_t?_a?c.num?, v_t?_a?c.num? from (select count(v_t?_a?c.b), count(v_t?_a?c.c), ? from t? v_t?_a?c where ( exists (select v_t?_a?c.a from db_root db_root where inst_num()<=?)) and (v_t?_a?c.a> ?:? )) v_t?_a?c (num?, num?, num?)
 Query plan:
 sscan
     class: db_root node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select v_t?_a?c.a from db_root db_root)
+(select v_t?_a?c.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?c node[?]
@@ -1257,19 +1302,19 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?c.b), count(v_t?_a?c.c), ? from t? v_t?_a?c where ( exists (select v_t?_a?c.a from db_root db_root)) and (v_t?_a?c.a> ?:? ))
+(select count(v_t?_a?c.b), count(v_t?_a?c.c), ? from t? v_t?_a?c where ( exists (select v_t?_a?c.a from db_root db_root where inst_num()<=?)) and (v_t?_a?c.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?c node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?c.num?, v_t?_a?c.num?, v_t?_a?c.num? from (select count(v_t?_a?c.b), count(v_t?_a?c.c), ? from t? v_t?_a?c where ( exists (select v_t?_a?c.a from db_root db_root)) and (v_t?_a?c.a> ?:? )) v_t?_a?c (num?, num?, num?)
+select v_t?_a?c.num?, v_t?_a?c.num?, v_t?_a?c.num? from (select count(v_t?_a?c.b), count(v_t?_a?c.c), ? from t? v_t?_a?c where ( exists (select v_t?_a?c.a from db_root db_root where inst_num()<=?)) and (v_t?_a?c.a> ?:? )) v_t?_a?c (num?, num?, num?)
 Query plan:
 sscan
     class: v_t?_a?c node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?c.num?, v_t?_a?c.num?, v_t?_a?c.num? from (select v_t?_a?c.num?, v_t?_a?c.num?, v_t?_a?c.num? from (select count(v_t?_a?c.b), count(v_t?_a?c.c), ? from t? v_t?_a?c where ( exists (select v_t?_a?c.a from db_root db_root)) and (v_t?_a?c.a> ?:? )) v_t?_a?c (num?, num?, num?) union all select v_t?_a?c.num?, v_t?_a?c.num?, v_t?_a?c.num? from (select count(v_t?_a?c.b), count(v_t?_a?c.c), ? from t? v_t?_a?c where ( exists (select v_t?_a?c.a from db_root db_root)) and (v_t?_a?c.a> ?:? )) v_t?_a?c (num?, num?, num?)) v_t?_a?c (num?, num?, num?)
+select v_t?_a?c.num?, v_t?_a?c.num?, v_t?_a?c.num? from (select v_t?_a?c.num?, v_t?_a?c.num?, v_t?_a?c.num? from (select count(v_t?_a?c.b), count(v_t?_a?c.c), ? from t? v_t?_a?c where ( exists (select v_t?_a?c.a from db_root db_root where inst_num()<=?)) and (v_t?_a?c.a> ?:? )) v_t?_a?c (num?, num?, num?) union all select v_t?_a?c.num?, v_t?_a?c.num?, v_t?_a?c.num? from (select count(v_t?_a?c.b), count(v_t?_a?c.c), ? from t? v_t?_a?c where ( exists (select v_t?_a?c.a from db_root db_root where inst_num()<=?)) and (v_t?_a?c.a> ?:? )) v_t?_a?c (num?, num?, num?)) v_t?_a?c (num?, num?, num?)
 ===================================================
 0
 ===================================================
@@ -1279,9 +1324,10 @@ num1    num2
 Query plan:
 sscan
     class: db_root node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select v_t?_a?b.a from db_root db_root)
+(select v_t?_a?b.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?b node[?]
@@ -1290,13 +1336,13 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?b.b), ? from t? v_t?_a?b where ( exists (select v_t?_a?b.a from db_root db_root)) and (v_t?_a?b.a> ?:? ))
+(select count(v_t?_a?b.b), ? from t? v_t?_a?b where ( exists (select v_t?_a?b.a from db_root db_root where inst_num()<=?)) and (v_t?_a?b.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?b node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?b.num?, v_t?_a?b.num? from (select count(v_t?_a?b.b), ? from t? v_t?_a?b where ( exists (select v_t?_a?b.a from db_root db_root)) and (v_t?_a?b.a> ?:? )) v_t?_a?b (num?, num?)
+select v_t?_a?b.num?, v_t?_a?b.num? from (select count(v_t?_a?b.b), ? from t? v_t?_a?b where ( exists (select v_t?_a?b.a from db_root db_root where inst_num()<=?)) and (v_t?_a?b.a> ?:? )) v_t?_a?b (num?, num?)
 ===================================================
 0
 ===================================================
@@ -1307,9 +1353,10 @@ num1    num2
 Query plan:
 sscan
     class: db_root node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select v_t?_a?b.a from db_root db_root)
+(select v_t?_a?b.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?b node[?]
@@ -1318,19 +1365,20 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?b.b), ? from t? v_t?_a?b where ( exists (select v_t?_a?b.a from db_root db_root)) and (v_t?_a?b.a> ?:? ))
+(select count(v_t?_a?b.b), ? from t? v_t?_a?b where ( exists (select v_t?_a?b.a from db_root db_root where inst_num()<=?)) and (v_t?_a?b.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?b node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?b.num?, v_t?_a?b.num? from (select count(v_t?_a?b.b), ? from t? v_t?_a?b where ( exists (select v_t?_a?b.a from db_root db_root)) and (v_t?_a?b.a> ?:? )) v_t?_a?b (num?, num?)
+select v_t?_a?b.num?, v_t?_a?b.num? from (select count(v_t?_a?b.b), ? from t? v_t?_a?b where ( exists (select v_t?_a?b.a from db_root db_root where inst_num()<=?)) and (v_t?_a?b.a> ?:? )) v_t?_a?b (num?, num?)
 Query plan:
 sscan
     class: db_root node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select v_t?_a?b.a from db_root db_root)
+(select v_t?_a?b.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?b node[?]
@@ -1339,19 +1387,19 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-(select count(v_t?_a?b.b), ? from t? v_t?_a?b where ( exists (select v_t?_a?b.a from db_root db_root)) and (v_t?_a?b.a> ?:? ))
+(select count(v_t?_a?b.b), ? from t? v_t?_a?b where ( exists (select v_t?_a?b.a from db_root db_root where inst_num()<=?)) and (v_t?_a?b.a> ?:? ))
 Query plan:
 sscan
     class: v_t?_a?b node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?b.num?, v_t?_a?b.num? from (select count(v_t?_a?b.b), ? from t? v_t?_a?b where ( exists (select v_t?_a?b.a from db_root db_root)) and (v_t?_a?b.a> ?:? )) v_t?_a?b (num?, num?)
+select v_t?_a?b.num?, v_t?_a?b.num? from (select count(v_t?_a?b.b), ? from t? v_t?_a?b where ( exists (select v_t?_a?b.a from db_root db_root where inst_num()<=?)) and (v_t?_a?b.a> ?:? )) v_t?_a?b (num?, num?)
 Query plan:
 sscan
     class: v_t?_a?b node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?b.num?, v_t?_a?b.num? from (select v_t?_a?b.num?, v_t?_a?b.num? from (select count(v_t?_a?b.b), ? from t? v_t?_a?b where ( exists (select v_t?_a?b.a from db_root db_root)) and (v_t?_a?b.a> ?:? )) v_t?_a?b (num?, num?) union all select v_t?_a?b.num?, v_t?_a?b.num? from (select count(v_t?_a?b.b), ? from t? v_t?_a?b where ( exists (select v_t?_a?b.a from db_root db_root)) and (v_t?_a?b.a> ?:? )) v_t?_a?b (num?, num?)) v_t?_a?b (num?, num?)
+select v_t?_a?b.num?, v_t?_a?b.num? from (select v_t?_a?b.num?, v_t?_a?b.num? from (select count(v_t?_a?b.b), ? from t? v_t?_a?b where ( exists (select v_t?_a?b.a from db_root db_root where inst_num()<=?)) and (v_t?_a?b.a> ?:? )) v_t?_a?b (num?, num?) union all select v_t?_a?b.num?, v_t?_a?b.num? from (select count(v_t?_a?b.b), ? from t? v_t?_a?b where ( exists (select v_t?_a?b.a from db_root db_root where inst_num()<=?)) and (v_t?_a?b.a> ?:? )) v_t?_a?b (num?, num?)) v_t?_a?b (num?, num?)
 ===================================================
 0
 ===================================================
@@ -1361,9 +1409,10 @@ num1
 Query plan:
 sscan
     class: db_root node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select v_t?_a?a.a from db_root db_root)
+(select v_t?_a?a.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?a node[?]
@@ -1372,7 +1421,7 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-select ? from t? v_t?_a?a where ( exists (select v_t?_a?a.a from db_root db_root)) and (v_t?_a?a.a> ?:? )
+select ? from t? v_t?_a?a where ( exists (select v_t?_a?a.a from db_root db_root where inst_num()<=?)) and (v_t?_a?a.a> ?:? )
 ===================================================
 0
 ===================================================
@@ -1383,9 +1432,10 @@ num1
 Query plan:
 sscan
     class: db_root node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select v_t?_a?a.a from db_root db_root)
+(select v_t?_a?a.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?a node[?]
@@ -1394,13 +1444,14 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-select ? from t? v_t?_a?a where ( exists (select v_t?_a?a.a from db_root db_root)) and (v_t?_a?a.a> ?:? )
+select ? from t? v_t?_a?a where ( exists (select v_t?_a?a.a from db_root db_root where inst_num()<=?)) and (v_t?_a?a.a> ?:? )
 Query plan:
 sscan
     class: db_root node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select v_t?_a?a.a from db_root db_root)
+(select v_t?_a?a.a from db_root db_root where inst_num()<=?)
 Query plan:
 iscan
     class: v_t?_a?a node[?]
@@ -1409,13 +1460,13 @@ iscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-select ? from t? v_t?_a?a where ( exists (select v_t?_a?a.a from db_root db_root)) and (v_t?_a?a.a> ?:? )
+select ? from t? v_t?_a?a where ( exists (select v_t?_a?a.a from db_root db_root where inst_num()<=?)) and (v_t?_a?a.a> ?:? )
 Query plan:
 sscan
     class: v_t?_a?a node[?]
     cost:  ? card ?
 Query stmt:
-select v_t?_a?a.num? from (select ? from t? v_t?_a?a where ( exists (select v_t?_a?a.a from db_root db_root)) and (v_t?_a?a.a> ?:? ) union all select ? from t? v_t?_a?a where ( exists (select v_t?_a?a.a from db_root db_root)) and (v_t?_a?a.a> ?:? )) v_t?_a?a (num?)
+select v_t?_a?a.num? from (select ? from t? v_t?_a?a where ( exists (select v_t?_a?a.a from db_root db_root where inst_num()<=?)) and (v_t?_a?a.a> ?:? ) union all select ? from t? v_t?_a?a where ( exists (select v_t?_a?a.a from db_root db_root where inst_num()<=?)) and (v_t?_a?a.a> ?:? )) v_t?_a?a (num?)
 ===================================================
 0
 ===================================================
