@@ -18,6 +18,8 @@ INSERT INTO vtbl VALUES (5, '[-1, -1, -1]');
 INSERT INTO vtbl VALUES (6, '[100, 100, 100]');
 INSERT INTO vtbl VALUES (7, '[0.1, 0.1, 0.1]');
 
+SELECT COUNT(*) FROM (SELECT vec from vtbl where vec = '[0, 0, 0]');
+
 SELECT id, CAST (vec AS VARCHAR) FROM vtbl ORDER BY vec <c> '[-1, -1, -1]' LIMIT 3;
 
 -- Test 2: When using an all-zero vector as a condition in the vector index, it does not return any results.
