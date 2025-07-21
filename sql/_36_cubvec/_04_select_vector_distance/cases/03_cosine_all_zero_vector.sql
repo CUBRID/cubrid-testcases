@@ -6,7 +6,7 @@
 
 -- Test 1: all zero vector is not allowed as index input.
 -- Therefore, even if the data is inserted into the table, it does not appear in the index result.
-DROP TABLE vtbl;
+DROP TABLE IF EXISTS vtbl;
 CREATE TABLE vtbl (id int, vec vector(3));
 CREATE VECTOR INDEX vidx ON vtbl(vec COSINE); -- default m, ef_construction
 
