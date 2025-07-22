@@ -19,4 +19,4 @@ select  char_length( format( cast('abc' as int), 2))>0;
 select  char_length( format( cast('abc' as int), 2))>0;
 
 
-set names iso88591;
+set names utf8;

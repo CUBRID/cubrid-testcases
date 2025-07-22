@@ -20,4 +20,4 @@ select replace(s collate utf8_fr_exp_ab,'é' collate utf8_fr_exp_ab,'e' collate
 select replace(s,'é','e') collate utf8_fr_exp_ab from t1 order by 1;
 
 drop t1;
-set names iso88591;
+set names utf8;

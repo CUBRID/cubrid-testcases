@@ -38,4 +38,4 @@ alter table fact add constraint foreign key(s) references dim;
 
 drop fact,dim;
 
-set names iso88591;
+set names utf8;

@@ -17,6 +17,5 @@ select * from t where SUBSTR(col4,0,2)>N'ab' order by 1;
 select * from t where SUBSTR(col4,0,2)=N'ab' order by 1;
 
 drop table t;
-set names iso88591;
 rollback;
 autocommit on;

@@ -74,6 +74,6 @@ deallocate prepare st7;
 deallocate prepare st8;
 
 
-set names iso88591;
+set names utf8;
 
 

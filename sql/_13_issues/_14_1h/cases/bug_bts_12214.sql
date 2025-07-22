@@ -48,7 +48,7 @@ desc v;
 drop table t;
 drop view v;
 
-set names iso88591;
+set names utf8;
 
 
 --+ holdcas off;
