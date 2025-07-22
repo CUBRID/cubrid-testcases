@@ -49,7 +49,7 @@ select s from t order by s collate iso88591_bin
 )
 select * from cte_R5La5QeiV;
 
-set names iso88591;
+set names utf8;
 
 drop view v;
 drop table if exists t;

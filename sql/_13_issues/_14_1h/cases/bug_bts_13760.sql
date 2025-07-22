@@ -61,4 +61,4 @@ deallocate prepare s4;
 deallocate prepare s5;
 deallocate prepare s6;
 
-set names iso88591;
+set names utf8;

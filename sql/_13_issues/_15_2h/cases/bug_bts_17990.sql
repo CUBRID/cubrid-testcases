@@ -51,6 +51,6 @@ select hex(cast(chr(31) as string charset iso88591));
 drop test_to_char;
 drop test_to_char_f;
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

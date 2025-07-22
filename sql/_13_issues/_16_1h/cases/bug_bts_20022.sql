@@ -19,7 +19,7 @@ deallocate prepare stmt_coll;
 deallocate prepare stmt_coerce;
 drop variable @v1, @v2;
 
-set names iso88591;
+set names utf8;
 
 commit;
 --+ holdcas off;

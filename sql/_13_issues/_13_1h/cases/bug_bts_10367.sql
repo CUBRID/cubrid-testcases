@@ -22,5 +22,5 @@ select id, field('B', b, 'B') from t1 order by id;
 
 drop table t1;
 
-set names iso88591;
+set names utf8;
 
