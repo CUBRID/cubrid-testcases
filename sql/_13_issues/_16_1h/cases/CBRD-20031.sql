@@ -1,3 +1,4 @@
+set names iso88591;
 drop table if exists t;
 create table t(c char(30));
 insert into t value ('3');
@@ -30,3 +31,4 @@ execute st using '%';
 deallocate prepare st;
 drop t;
 
+set names utf8;

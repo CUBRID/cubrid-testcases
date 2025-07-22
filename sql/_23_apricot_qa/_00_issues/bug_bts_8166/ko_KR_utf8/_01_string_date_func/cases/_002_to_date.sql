@@ -130,7 +130,7 @@ SELECT TO_DATE('2010-01 te월t 11월', 'yyyy-dd "te월t" Mon');
 SELECT TO_DATE('2010-01 te월t 11월', 'yyyy-dd "tE월t" Mon');
 
 set system parameters 'intl_date_lang = en_US';
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

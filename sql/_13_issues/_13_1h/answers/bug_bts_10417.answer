@@ -9,17 +9,17 @@
 ===================================================
 1
 ===================================================
-( lpad('CUBRID', a, 'X'))    
+( lpad(_iso88591'CUBRID', a, _iso88591'X'))    
 null     
 XXXXCUBRID     
 
 ===================================================
-( lpad(a, 10, 'X'))    
+( lpad(a, 10, _iso88591'X'))    
 XXXXXX-100     
 XXXXXXXX10     
 
 ===================================================
-( lpad('CUBRID', 20, a))    
+( lpad(_iso88591'CUBRID', 20, a))    
 -100-100-100-1CUBRID     
 10101010101010CUBRID     
 
@@ -34,8 +34,10 @@ XXXXXXXX10
 ===================================================
 Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
 dba.t1     1     i1     1     null     A     1     null     null     YES     BTREE      lpad(_iso88591'CUBRID' collate iso88591_bin, [dba.t1].[a], _iso88591'X' collate iso88591_bin)     null     YES     
-dba.t1     1     i2     1     null     A     2     null     null     YES     BTREE      lpad( cast([dba.t1].[a] as varchar), 10, _iso88591'X' collate iso88591_bin)     null     YES     
-dba.t1     1     i3     1     null     A     2     null     null     YES     BTREE      lpad(_iso88591'CUBRID' collate iso88591_bin, 20,  cast([dba.t1].[a] as varchar))     null     YES     
+dba.t1     1     i2     1     null     A     2     null     null     YES     BTREE      lpad( cast([dba.t1].[a] as varchar collate iso88591_bin), 10, _iso88591'X' collate iso88591_bin)     null     YES     
+dba.t1     1     i3     1     null     A     2     null     null     YES     BTREE      lpad(_iso88591'CUBRID' collate iso88591_bin, 20,  cast([dba.t1].[a] as varchar collate iso88591_bin))     null     YES     
 
+===================================================
+0
 ===================================================
 0

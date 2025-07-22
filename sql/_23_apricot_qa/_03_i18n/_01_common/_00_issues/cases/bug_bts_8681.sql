@@ -6,4 +6,4 @@ insert into t values('年','天'),('天','');
 select * from t where s1>s2 order by 1,2;
 select count(s1||s2) from t;
 drop t;
-set names iso88591;
+set names utf8;

@@ -41,11 +41,11 @@ drop view v;
 create table t(id smallint auto_increment, s enum('c','b','a'));
 insert into t(s) values(1),(2),(3);
 create view v as select s from t;
-select id, s from t order by s collate iso88591_bin;
-select * from (select s from t order by s collate iso88591_bin); 
+select id, s from t order by s collate utf8_bin;
+select * from (select s from t order by s collate utf8_bin); 
 WITH cte_R5La5QeiV AS
 (
-select s from t order by s collate iso88591_bin
+select s from t order by s collate utf8_bin
 )
 select * from cte_R5La5QeiV;
 

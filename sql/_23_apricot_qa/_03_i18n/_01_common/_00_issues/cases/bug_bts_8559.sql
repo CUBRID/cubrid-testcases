@@ -10,4 +10,4 @@ select ('ba' rlike 'a$');
 
 set names iso88591;
 select ('월' rlike '월$');
-
+set names utf8;

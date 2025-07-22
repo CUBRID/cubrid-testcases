@@ -5,4 +5,4 @@ insert into x1 values (X'41');
 insert into x1 values (0x41);
 select * from x1;
 drop x1;
-set names iso88591;
+set names utf8;
