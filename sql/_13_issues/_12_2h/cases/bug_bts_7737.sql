@@ -15,6 +15,6 @@ insert into t values ('aBa');
 insert into t values ('ABa');
 select * from t where s > 'ab';
 drop table t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

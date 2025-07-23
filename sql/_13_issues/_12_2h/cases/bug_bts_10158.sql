@@ -10,4 +10,4 @@ select * from t order by s;
 select * from t order by cast (s as string collate utf8_not_exist);
 drop table t;
 
-set names iso88591;
+set names utf8;
