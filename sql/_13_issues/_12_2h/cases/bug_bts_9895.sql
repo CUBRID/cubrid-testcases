@@ -10,5 +10,5 @@ select * from t1 where 'dba' = USER;
 select * from t1 where 'DBA' = USER;
 
 drop t1;
-set names utf8;
+set names iso88591;
 

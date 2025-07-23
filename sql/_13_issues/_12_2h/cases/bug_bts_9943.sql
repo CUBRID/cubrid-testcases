@@ -26,4 +26,4 @@ select s collate utf8_ko_cs,count(*) from v group by 1 desc;
 
 drop t;
 drop v;
-set names utf8;
+set names iso88591;

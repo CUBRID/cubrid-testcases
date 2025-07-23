@@ -12,4 +12,4 @@ select s1 collate utf8_ko_cs || s2 || 'a' from t;
 select s1 + s2 collate utf8_ko_cs + 'a' from t;
 
 drop t;
-set names utf8;
+set names iso88591;

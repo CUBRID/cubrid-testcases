@@ -14,4 +14,4 @@ select * from t;
 drop t;
 drop v10137;
 
-set names utf8;
+set names iso88591;

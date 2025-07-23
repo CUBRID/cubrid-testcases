@@ -37,4 +37,4 @@ select * from t order by s collate utf8_fr_exp_ab;
 select * from t order by s collate utf8_fr_exp_ab desc;
 
 drop t;
-set names utf8;
+set names iso88591;

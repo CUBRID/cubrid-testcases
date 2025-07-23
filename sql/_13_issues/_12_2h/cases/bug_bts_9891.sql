@@ -41,4 +41,4 @@ select collation(cast(s as string charset euckr)) from t;
 --select coercibility(cast(s as string charset euckr)) from t;
 
 drop t;
-set names utf8;
+set names iso88591;

@@ -46,5 +46,5 @@ alter table t change column e e enum('b', 'B');
 
 drop t;
 
-set names utf8;
+set names iso88591;
 

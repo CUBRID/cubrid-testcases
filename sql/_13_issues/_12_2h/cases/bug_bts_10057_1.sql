@@ -48,6 +48,8 @@ select coercibility(@a);
 
 drop variable @a;
 drop t;
-set names utf8;
+set names iso88591;
+
+
 
 --+ holdcas off;

@@ -7,4 +7,4 @@ SHOW /*+ RECOMPILE */ COLLATION;
 SHOW /*+ RECOMPILE */ COLLATION like '%ci%';
 SHOW /*+ RECOMPILE */ COLLATION where charset='utf8';
 
-set names utf8;
+set names iso88591;

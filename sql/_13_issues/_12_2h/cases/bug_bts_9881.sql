@@ -10,4 +10,4 @@ show columns from t1 union show collation;
 show collation union show collation;
 
 drop t1;
-set names utf8;
+set names iso88591;
