@@ -410,7 +410,7 @@ Query Plan:
   rewritten query: select /*+ ORDERED USE_MERGE */ count(*) from [dba.ta_range] [__t?], [dba.ta_hash] b, [dba.tb] c, [dba.ta_list] d where ([__t?].ca=b.ca) and [__t?].cd=b.cd and b.ca=c.ca and b.cd=c.cd and c.ca=d.ca and c.cd=d.cd and (inst_num()> ?:?  and inst_num()<= ?:? )
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       MERGELIST
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -483,7 +483,7 @@ Query Plan:
   rewritten query: select /*+ ORDERED USE_HASH */ count(*) from [dba.ta_range] [__t?], [dba.ta_hash] b, [dba.tb] c, [dba.ta_list] d where ([__t?].ca=b.ca) and [__t?].cd=b.cd and b.ca=c.ca and b.cd=c.cd and c.ca=d.ca and c.cd=d.cd and (inst_num()> ?:?  and inst_num()<= ?:? )
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         BUILD (time: ?, build_time: ?, fetch: ?, fetch_time: ?, ioread: ?, rows: ?, method: memory, build: inner)
@@ -608,7 +608,7 @@ Query Plan:
 
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
