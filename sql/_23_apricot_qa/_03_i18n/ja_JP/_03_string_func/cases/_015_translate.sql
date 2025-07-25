@@ -33,6 +33,6 @@ select id, name, translate (name,'中国','韩国人') from test_jp order by 1;
 
 
 drop table test_jp;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

@@ -69,6 +69,6 @@ select * from hash_test__p__p3 order by id;
 
 drop table hash_test;
 drop table hash_test2;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
