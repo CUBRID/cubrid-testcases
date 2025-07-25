@@ -27,4 +27,4 @@ select * from t where v1 is null order by v3;
 select * from t where v1 is null order by v3 desc;
 select substring(v3,1,1) as v3,count(*) from t group by substring(v3,1,1);
 drop t;
-set names iso88591;
+set names utf8;
