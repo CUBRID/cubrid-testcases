@@ -23,13 +23,18 @@
  *  Multiple Expressions and Functions
  *  15. Two Built-in functions as the expression
  *  16. Built-in and User-Defined function as the expression
+ *  Aggregate functions
+ *  17. Built-in with Aggregate functions
+ *  18. User-defined with Aggregate functions
+ *  19. Multiple functions with different aggregate functions
  *  Other Cases
- *  17. 3-Level ROLLUP
- *  18. GROUPING BY with HAVING
- *  19. Inline Function
+ *  20. 3-Level ROLLUP
+ *  21. GROUP BY with HAVING
+ *  22. Inline Function
  */
 
 -- Test Setup
+DROP TABLE IF EXISTS t1;
 CREATE TABLE t1 (
     c1 int,
     c2 float,
@@ -78,26 +83,22 @@ group by c0, c1 with rollup;
 evaluate('5. original column referenced by the expression exists in both select-list and group by clause (CEIL)');
 select /*+ recompile */ ceil(c1) as c0, c1, count(*) as cnt
 from t1 
-group by c0, c1 with rollup
-order by c0, c1;
+group by c0, c1 with rollup;
 
 evaluate('6. original column referenced by the expression is not specified in group by clause');
 select /*+ recompile */ ceil(c1) as c0, c1, count(*) as cnt
 from t1 
-group by c0, c2 with rollup
-order by c0, c2;
+group by c0, c2 with rollup;
 
 evaluate('7. original column referenced by the expression is not specified in select-list and group by clause');
 select /*+ recompile */ ceil(c1) as c0, c2, count(*) as cnt
 from t1 
-group by c0, c2 with rollup
-order by c0, c2;
+group by c0, c2 with rollup;
 
 evaluate('8. dimension level of the original column referenced by the expression is less than that of the expression');
 select /*+ recompile */ c1, ceil(c1) as c0, count(*) as cnt
 from t1 
-group by c1, c0 with rollup
-order by c1, c0;
+group by c1, c0 with rollup;
 
 -- =====================================================
 -- Cases with User-Defined Function
@@ -105,26 +106,22 @@ order by c1, c0;
 evaluate('9. original column referenced by the function exists in both select-list and group by clause');
 select /*+ recompile */ test_func(c1) as c0, c1, count(*) as cnt
 from t1 
-group by c0, c1 with rollup
-order by c0, c1;
+group by c0, c1 with rollup;
 
 evaluate('10. original column referenced by the function is not specified in group by clause');
 select /*+ recompile */ test_func(c1) as c0, c1, count(*) as cnt
 from t1 
-group by c0, c2 with rollup
-order by c0, c1;
+group by c0, c2 with rollup;
 
 evaluate('11. original column referenced by the function is not specified in select-list and group by clause');
 select /*+ recompile */ test_func(c1) as c0, c2, count(*) as cnt
 from t1 
-group by c0, c2 with rollup
-order by c0, c2;
+group by c0, c2 with rollup;
 
 evaluate('12. dimension level of the original column referenced by the function is less than that of the expression');
 select /*+ recompile */ c1, test_func(c1) as c0, count(*) as cnt
 from t1 
-group by c1, c0 with rollup
-order by c1, c0;
+group by c1, c0 with rollup;
 
 -- =====================================================
 -- Nested Function
@@ -132,52 +129,65 @@ order by c1, c0;
 evaluate('13. Built-in inside Built-in');
 select /*+ recompile */ ceil(abs(c1)) as c0, c1, count(*) as cnt
 from t1 
-group by c0, c1 with rollup
-order by c0, c1;
+group by c0, c1 with rollup;
 
 evaluate('14. Built-in inside User-Defined Function');
 select /*+ recompile */ test_func(abs(c1)) as c0, c1, count(*) as cnt
 from t1 
-group by c0, c1 with rollup
-order by c0, c1;
+group by c0, c1 with rollup;
 
 -- =====================================================
 -- Multiple Expressions
 -- =====================================================
 evaluate('15. Two Built-in functions as the expression');
-select /*+ recompile */ ceil(c1) as c1_cell, floor(c2) as c2_floor, count(*) as cnt
+select /*+ recompile */ ceil(c1) as c1_ceil, floor(c2) as c2_floor, count(*) as cnt
 from t1 
-group by c1_cell, c2_floor with rollup
-order by c1_cell, c2_floor;
+group by c1_ceil, c2_floor with rollup;
 
 evaluate('16. Built-in and User-Defined function as the expression');
 select /*+ recompile */ ceil(c1) as c1_ceil, test_func(c1) as c1_tf, count(*) as cnt
 from t1 
-group by c1_ceil, c1_tf with rollup
-order by c1_ceil, c1_tf;
+group by c1_ceil, c1_tf with rollup;
+
+-- =====================================================
+-- Aggregate Functions
+-- =====================================================
+
+evaluate('17. Built-in with Aggregate functions');
+select /*+ recompile */ ceil(c1) as c0, c1, sum(c2) as sum_c2, avg(c2) as avg_c2, count(*) as cnt
+from t1 
+group by c0, c1 with rollup;
+
+evaluate('18. User-defined with Aggregate functions');
+select /*+ recompile */ test_func(c1) as c0, c1, sum(c2) as sum_c2, avg(c2) as avg_c2, count(*) as cnt
+from t1 
+group by c0, c1 with rollup;
+
+evaluate('19. Multiple functions with different aggregates functions');
+select /*+ recompile */ ceil(c1) as c1_ceil, test_func(c1) as c1_tf,
+    sum(c2) as sum_c2, avg(c2) as avg_c2, count(*) as cnt
+from t1 
+group by c1_ceil, c1_tf with rollup;
 
 -- =====================================================
 -- Other Cases
 -- =====================================================
 
-evaluate('17. 3-Level ROLLUP');
+evaluate('20. 3-Level ROLLUP');
 SELECT /*+ recompile */ ceil(c1) as c1_ceil, floor(c2) as c2_floor, c1, count(*) as cnt
 FROM t1 
-GROUP BY c1_ceil, c2_floor, c1 WITH ROLLUP
-ORDER BY c1_ceil, c2_floor, c1;
+GROUP BY c1_ceil, c2_floor, c1 WITH ROLLUP;
 
-evaluate('18. GROUPING BY with HAVING');
+evaluate('21. GROUP BY with HAVING');
 SELECT /*+ recompile */ ceil(c1) as c0, c1, count(*) as cnt
 FROM t1 
 GROUP BY c0, c1 WITH ROLLUP
-HAVING cnt > 0
-ORDER BY c0, c1;
+HAVING cnt > 0;
 
-evaluate('19. Inline Function');
+evaluate('22. Inline Function');
 SELECT /*+ recompile */ (c1 * 2) as c1_mult, ceil(c1 + 1) as c1_expr, count(*) as cnt
 FROM t1 
-GROUP BY c1_mult, c1_expr WITH ROLLUP
-ORDER BY c1_mult, c1_expr;
+GROUP BY c1_mult, c1_expr WITH ROLLUP;
 
 -- =====================================================
 -- Cleanup
