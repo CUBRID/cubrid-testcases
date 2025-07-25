@@ -5,6 +5,6 @@ SELECT STRCMP(cast('ABC' as string collate utf8_gen), 'abc');
 SELECT STRCMP('ABC', 'abc');
 SELECT STRCMP(cast('ABC' as string collate utf8_en_ci), 'abc');
 SELECT STRCMP('ABC',cast('abc' as string collate utf8_en_ci));
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

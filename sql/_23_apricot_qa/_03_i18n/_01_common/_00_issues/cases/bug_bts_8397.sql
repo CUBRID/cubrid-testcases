@@ -7,4 +7,4 @@ select * from t order by 1;
 select * from t order by v2;
 select * from t where v1 < v2; 
 drop t;
-set names iso88591;
+set names utf8;
