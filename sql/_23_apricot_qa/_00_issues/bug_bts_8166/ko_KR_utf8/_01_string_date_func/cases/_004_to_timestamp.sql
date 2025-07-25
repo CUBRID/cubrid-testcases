@@ -136,6 +136,6 @@ SELECT TO_TIMESTAMP('2011-05-01 일요일 10:11:12 오후', 'yyyy-MM-DD DAY HH:M
 SELECT TO_TIMESTAMP('2011-05-01 일요일 10:11:12 오전', 'yyyy-MM-DD DAY HH:MI:SS A.M.');
 
 set system parameters 'intl_date_lang = en_US';
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

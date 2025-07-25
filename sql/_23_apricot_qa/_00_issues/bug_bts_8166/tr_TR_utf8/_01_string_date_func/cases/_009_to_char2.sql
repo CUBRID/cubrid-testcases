@@ -8,7 +8,7 @@ select to_char (123456.789123);
 select to_char (123456.789123,'999999,999999');  
 
 set system parameters 'intl_number_lang = en_US';
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

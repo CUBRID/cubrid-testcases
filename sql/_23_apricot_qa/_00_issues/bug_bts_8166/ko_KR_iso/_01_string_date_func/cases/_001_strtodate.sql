@@ -112,6 +112,6 @@ SELECT STR_TO_DATE('10wol 1, 2013 8:11:12 ojeon','%M %d,%Y %h:%i:%s %p') FROM db
 SELECT STR_TO_DATE('10wol 1, 2013 8:11:12 ojeon','%M %d,%Y %r') FROM db_root;
 
 set system parameters 'intl_date_lang = en_US';
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
