@@ -41,6 +41,6 @@ select id,name from test_kr where name >= ALL{'둔둘乧득등락', '론뢰료�
 select id,name from test_kr where name <> ALL {'가각간갈감', '과괄광괘광괵괵굉', '개객갱갹', '보병별변벽법'} order by 1;
 
 drop table test_kr;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

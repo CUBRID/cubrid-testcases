@@ -12,6 +12,6 @@ create index idx on t(col1);
 update t 테이블 set col1='0x01234567' where 테이블.col1>'각';
 select col1 as 칼럼1 from t 테이블 where 테이블.col1>'0' order by 칼럼1;
 drop table t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

@@ -4,4 +4,4 @@ insert into 가댁체힐你好(가댁,체힐你好)values(upper('가'),'체힐�
 insert into 가댁체힐你好(체힐你好)values('hello');
 SELECT * FROM 가댁체힐你好 order by 1;
 drop table 가댁체힐你好;
-set names iso88591;
+set names utf8;

@@ -13,6 +13,6 @@ select /*+recompile*/* from t where col1>'각' order by 1;
 alter table t change col1 col0 char(10) collate utf8_ko_cs_uca;
 select /*+recompile*/* from t where col0>'각' order by 1;
 drop table t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
