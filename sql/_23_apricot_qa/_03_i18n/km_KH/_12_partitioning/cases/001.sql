@@ -12,8 +12,8 @@ create table list_test(id int,
             primary key(id, test_char))
 
 PARTITION BY LIST (test_char) (
-    PARTITION p0 VALUES IN (_iso88591'កខណតស',_iso88591'ហឡកឯ'),
-	PARTITION p1 VALUES IN (_iso88591'ហឡ៏ខ',_iso88591'ឯឡ៏ខ')
+    PARTITION p0 VALUES IN (_utf8'កខណតស',_utf8'ហឡកឯ'),
+	PARTITION p1 VALUES IN (_utf8'ហឡ៏ខ',_utf8'ឯឡ៏ខ')
 );
 
 select * from db_class where class_name like 'list%' order by 1;
