@@ -80,22 +80,22 @@ group by c0, c1 with rollup;
 -- =====================================================
 -- Cases with Built-in Functions
 -- =====================================================
-evaluate('5. original column referenced by the expression exists in both select-list and group by clause (CEIL)');
+evaluate('5. Original column referenced by the expression exists in both select-list and group by clause (CEIL)');
 select /*+ recompile */ ceil(c1) as c0, c1, count(*) as cnt
 from t1 
 group by c0, c1 with rollup;
 
-evaluate('6. original column referenced by the expression is not specified in group by clause');
+evaluate('6. Original column referenced by the expression is not specified in group by clause');
 select /*+ recompile */ ceil(c1) as c0, c1, count(*) as cnt
 from t1 
 group by c0, c2 with rollup;
 
-evaluate('7. original column referenced by the expression is not specified in select-list and group by clause');
+evaluate('7. Original column referenced by the expression is not specified in select-list and group by clause');
 select /*+ recompile */ ceil(c1) as c0, c2, count(*) as cnt
 from t1 
 group by c0, c2 with rollup;
 
-evaluate('8. dimension level of the original column referenced by the expression is less than that of the expression');
+evaluate('8. Dimension level of the original column referenced by the expression is less than that of the expression');
 select /*+ recompile */ c1, ceil(c1) as c0, count(*) as cnt
 from t1 
 group by c1, c0 with rollup;
@@ -103,22 +103,22 @@ group by c1, c0 with rollup;
 -- =====================================================
 -- Cases with User-Defined Function
 -- =====================================================
-evaluate('9. original column referenced by the function exists in both select-list and group by clause');
+evaluate('9. Original column referenced by the function exists in both select-list and group by clause');
 select /*+ recompile */ test_func(c1) as c0, c1, count(*) as cnt
 from t1 
 group by c0, c1 with rollup;
 
-evaluate('10. original column referenced by the function is not specified in group by clause');
+evaluate('10. Original column referenced by the function is not specified in group by clause');
 select /*+ recompile */ test_func(c1) as c0, c1, count(*) as cnt
 from t1 
 group by c0, c2 with rollup;
 
-evaluate('11. original column referenced by the function is not specified in select-list and group by clause');
+evaluate('11. Original column referenced by the function is not specified in select-list and group by clause');
 select /*+ recompile */ test_func(c1) as c0, c2, count(*) as cnt
 from t1 
 group by c0, c2 with rollup;
 
-evaluate('12. dimension level of the original column referenced by the function is less than that of the expression');
+evaluate('12. Dimension level of the original column referenced by the function is less than that of the expression');
 select /*+ recompile */ c1, test_func(c1) as c0, count(*) as cnt
 from t1 
 group by c1, c0 with rollup;
@@ -154,18 +154,18 @@ group by c1_ceil, c1_tf with rollup;
 -- =====================================================
 
 evaluate('17. Built-in with Aggregate functions');
-select /*+ recompile */ ceil(c1) as c0, c1, sum(c2) as sum_c2, avg(c2) as avg_c2, count(*) as cnt
+select /*+ recompile */ ceil(c1) as c0, c1, sum(c2) as sum_c2, trunc(avg(c2)) as avg_c2, count(*) as cnt
 from t1 
 group by c0, c1 with rollup;
 
 evaluate('18. User-defined with Aggregate functions');
-select /*+ recompile */ test_func(c1) as c0, c1, sum(c2) as sum_c2, avg(c2) as avg_c2, count(*) as cnt
+select /*+ recompile */ test_func(c1) as c0, c1, sum(c2) as sum_c2, trunc(avg(c2)) as avg_c2, count(*) as cnt
 from t1 
 group by c0, c1 with rollup;
 
 evaluate('19. Multiple functions with different aggregates functions');
 select /*+ recompile */ ceil(c1) as c1_ceil, test_func(c1) as c1_tf,
-    sum(c2) as sum_c2, avg(c2) as avg_c2, count(*) as cnt
+    sum(c2) as sum_c2, trunc(avg(c2)) as avg_c2, count(*) as cnt
 from t1 
 group by c1_ceil, c1_tf with rollup;
 
