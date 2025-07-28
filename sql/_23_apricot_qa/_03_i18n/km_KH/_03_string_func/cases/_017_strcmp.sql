@@ -43,7 +43,7 @@ select id, name, strcmp (name, 'មិនា') from test_kh order by 1;
 select id, name, strcmp (name, 'មិនា') from test_kh order by 1;
 
 drop table test_kh;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 
