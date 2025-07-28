@@ -11,6 +11,6 @@ alter table  t1 CHANGE a s1 varchar(120) collate 'utf8_gen';
 select * from t1;
 SHOW full COLUMNS FROM t1;
 drop t1;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

@@ -39,6 +39,6 @@ insert into t values('伽');
 set names utf8 collate utf8_gen;
 select * from t where a<='가';
 drop table t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
