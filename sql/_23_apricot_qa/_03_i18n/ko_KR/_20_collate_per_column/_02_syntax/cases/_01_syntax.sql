@@ -36,7 +36,7 @@ select cast (s1 as string collate utf8_gen) from t1 order by 1;
 
 drop t1;
 drop t2;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

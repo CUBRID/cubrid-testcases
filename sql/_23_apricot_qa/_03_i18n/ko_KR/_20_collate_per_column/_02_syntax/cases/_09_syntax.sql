@@ -9,6 +9,6 @@ insert into t2 select * from t1;
 select * from t2 order by 1;
 SHOW full COLUMNS FROM t2;
 drop t1,t2;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

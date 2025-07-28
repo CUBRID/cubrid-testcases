@@ -7,7 +7,7 @@ insert into t2 values ('가'),( '伽');
 select t1.s1,t2.s1 from t1,t2 where t1.s1<t2.s1 order by 1, 2;
 select t1.s1,t2.s1 from t1,t2 where t2.s1<t1.s1 order by 1, 2;
 drop t1,t2;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

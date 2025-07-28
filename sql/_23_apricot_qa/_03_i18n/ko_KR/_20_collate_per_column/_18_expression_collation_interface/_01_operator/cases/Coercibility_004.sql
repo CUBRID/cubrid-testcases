@@ -9,6 +9,6 @@ insert into t values('d','b');
 insert into t values('d','c');
 select * from t where s1> any(select s2 from t);
 drop table t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
