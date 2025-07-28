@@ -31,6 +31,6 @@ select id,name from test_kr where name IN {'개객갱갹' , '손솔송쇄쇠수�
 select id,name from test_kr where name NOT IN {'가각간갈감 ' , '과괄광괘광괵괵굉 ', '개객갱갹' , '근끽낙김나'} order by 1;
 
 drop table test_kr;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

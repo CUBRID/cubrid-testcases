@@ -14,6 +14,6 @@ select * from t where SUBSTR(col3,0,2)>N'가伽' order by 3;
 select * from t where SUBSTR(col4,0,2)>N'각刊' order by 4;
 select * from t where SUBSTR(col5,9,2)>'嘉' order by 5;
 drop table t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
