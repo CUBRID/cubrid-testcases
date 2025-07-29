@@ -20,6 +20,6 @@ select id,name from test_tr where name != '*İzgö ' order by 1;
 select id,name from test_tr where name <> 'İzzettin ' order by 1;
 
 drop table test_tr;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

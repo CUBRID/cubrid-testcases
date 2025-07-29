@@ -32,7 +32,7 @@ SELECT INDEX_CARDINALITY('dba.Çç_Ğğ_İı_Öö_Şş_Üü','i_Çç_Ğğ_İı_�
 SELECT INDEX_CARDINALITY('dba.Çç_Ğğ_İı_Öö_Şş_Üü23','i_Çç_Ğğ_İı_Öö_Şş_Üü_Çç_Öö',1);
 --test 
 drop table Çç_Ğğ_İı_Öö_Şş_Üü;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

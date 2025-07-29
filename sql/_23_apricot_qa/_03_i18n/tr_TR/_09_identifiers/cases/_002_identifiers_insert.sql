@@ -8,7 +8,7 @@ alter table Çç_Ğğ_İı_Öö_Şş_Üü add column i_Çç_Ğğ_İı_Öö_Şş_
 insert into Çç_Ğğ_İı_Öö_Şş_Üü values('Çç_Ğğ_İı_Öö_Şş_Üü',1);
 --test 
 drop table Çç_Ğğ_İı_Öö_Şş_Üü;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 
