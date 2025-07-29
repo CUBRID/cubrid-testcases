@@ -39,7 +39,7 @@ select id, name, ltrim (name,'Iz') from test_tr order by 1;
 
 
 drop table test_tr;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 
