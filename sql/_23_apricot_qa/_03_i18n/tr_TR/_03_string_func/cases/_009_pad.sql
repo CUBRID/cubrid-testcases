@@ -34,6 +34,6 @@ select id, name, RPAD (name,10,null) from test_tr order by 1;
 
 drop table test_tr;
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

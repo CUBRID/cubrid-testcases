@@ -12,6 +12,6 @@ insert into test_tr values (5,null);
 --test
 select id, name, reverse (name) from test_tr order by 1;
 drop table test_tr;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

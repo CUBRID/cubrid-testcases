@@ -20,7 +20,7 @@ select id, name, replace (name,'İz','') from test_tr order by 1;
 --test
 select id, name, replace (name,'İ','I') from test_tr order by 1;
 drop table test_tr;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 
