@@ -21,7 +21,7 @@ select * from test_cn where i = 102 and s IN { '风雨雷电露' , '风雨雷电
 
 
 drop class test_cn;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

@@ -32,7 +32,7 @@ select * from test_cn where i = 101 or t = '枣菠萝桃西瓜蜜桔' using inde
 select * from test_cn where i = 101 or t = '枣菠萝桃西瓜蜜桔' using index none  order by t;
 
 drop class test_cn;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 
