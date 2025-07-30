@@ -1,6 +1,4 @@
--- =====================================================
--- Scenario 1 - Mixed CASE branches (Integer in THEN, NULL in ELSE)
--- =====================================================
+-- evalulate 1 - Mixed CASE branches (Integer in THEN, NULL in ELSE)
 SELECT DISTINCT dummy
 FROM dual T1
 WHERE
@@ -20,9 +18,7 @@ WHERE
             )
     END = 1;
 
--- =====================================================
--- Scenario 2 - THEN returns 0 or 1
--- =====================================================
+-- evalulate 2 - THEN returns 0 or 1
 SELECT DISTINCT dummy
 FROM dual T1
 WHERE
@@ -37,9 +33,7 @@ WHERE
         ELSE FALSE
     END = 1;
 
--- =====================================================
--- Scenario 3 - THEN returns TRUE or FALSE
--- =====================================================
+-- evalulate 3 - THEN returns TRUE or FALSE
 SELECT DISTINCT dummy
 FROM dual T1
 WHERE
@@ -54,9 +48,7 @@ WHERE
         ELSE FALSE
     END = TRUE;
 
--- =====================================================
--- Scenario 4 - THEN returns string literals
--- =====================================================
+-- evalulate 4 - THEN returns string literals
 SELECT DISTINCT dummy
 FROM dual T1
 WHERE
@@ -71,9 +63,7 @@ WHERE
         ELSE FALSE
     END = TRUE;
 
--- =====================================================
--- Scenario 5 - THEN returns 1, 2, or NULL
--- =====================================================
+-- evalulate 5 - THEN returns 1, 2, or NULL
 SELECT DISTINCT dummy
 FROM dual T1
 WHERE
@@ -88,9 +78,7 @@ WHERE
         ELSE FALSE
     END = TRUE;
 
--- =====================================================
--- Scenario 6 - THEN contains scalar subquery
--- =====================================================
+-- evalulate 6 - THEN contains scalar subquery
 SELECT DISTINCT dummy
 FROM dual T1
 WHERE
@@ -99,4 +87,13 @@ WHERE
         THEN (SELECT 1) = 1
         ELSE FALSE
     END = TRUE;
+
+-- evalulate 7 - CASE expression in SELECT clause
+SELECT dummy,
+       CASE
+           WHEN dummy = 'X' THEN 'label-X'
+           WHEN dummy = 'Y' THEN 'label-Y'
+           ELSE 'Other'
+       END AS label
+FROM dual;
 
