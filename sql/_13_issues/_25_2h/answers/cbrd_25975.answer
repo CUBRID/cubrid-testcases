@@ -5,69 +5,247 @@
 ===================================================
 1
 ===================================================
-c1    
-1     
+    
+1 - Nested hint     
 
 ===================================================
-c1    
+columna    
 1     
+
+Query plan:
+sscan
+    class: tableA node[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH(tableA, tableA) */ tableA.columna from tableA tableA
+===================================================
+    
+2 - Invalid but safe hint     
 
 ===================================================
-c1    
+columna    
 1     
+
+Query plan:
+sscan
+    class: tableA node[?]
+    cost:  ? card ?
+Query stmt:
+select tableA.columna from tableA tableA
+===================================================
+    
+3 - Malformed hint     
 
 ===================================================
-c1    
+columna    
 1     
+
+Query plan:
+sscan
+    class: tableA node[?]
+    cost:  ? card ?
+Query stmt:
+select tableA.columna from tableA tableA
+===================================================
+columna    
+1     
+
+Query plan:
+sscan
+    class: tableA node[?]
+    cost:  ? card ?
+Query stmt:
+select tableA.columna from tableA tableA
+===================================================
+columna    
+1     
+
+Query plan:
+sscan
+    class: tableA node[?]
+    cost:  ? card ?
+Query stmt:
+select tableA.columna from tableA tableA
+===================================================
+columna    
+1     
+
+Query plan:
+sscan
+    class: tableA node[?]
+    cost:  ? card ?
+Query stmt:
+select tableA.columna from tableA tableA
+===================================================
+    
+4 - Escaped backtick     
 
 ===================================================
-c1    
+columna    
 1     
+
+Query plan:
+sscan
+    class: tableA node[?]
+    cost:  ? card ?
+Query stmt:
+select tableA.columna from tableA tableA
+===================================================
+    
+5 - Empty hint     
 
 ===================================================
-c1    
+columna    
 1     
+
+Query plan:
+sscan
+    class: tableA node[?]
+    cost:  ? card ?
+Query stmt:
+select tableA.columna from tableA tableA
+===================================================
+    
+6 - Random content     
 
 ===================================================
-c1    
+columna    
 1     
+
+Query plan:
+sscan
+    class: tableA node[?]
+    cost:  ? card ?
+Query stmt:
+select tableA.columna from tableA tableA
+===================================================
+    
+7 - Special characters     
 
 ===================================================
-c1    
+columna    
 1     
+
+Query plan:
+sscan
+    class: tableA node[?]
+    cost:  ? card ?
+Query stmt:
+select tableA.columna from tableA tableA
+===================================================
+    
+8 - Foreign language     
 
 ===================================================
-c1    
+columna    
 1     
+
+Query plan:
+sscan
+    class: tableA node[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ tableA.columna from tableA tableA
+===================================================
+    
+9 - Using other hints rather than use_hash     
 
 ===================================================
-c1    
+columna    
 1     
+
+Query plan:
+sscan
+    class: tableA node[?]
+    cost:  ? card ?
+Query stmt:
+select tableA.columna from tableA tableA
+===================================================
+columna    
+1     
+
+Query plan:
+sscan
+    class: tableA node[?]
+    cost:  ? card ?
+Query stmt:
+select tableA.columna from tableA tableA
+===================================================
+columna    
+1     
+
+Query plan:
+sscan
+    class: tableA node[?]
+    cost:  ? card ?
+Query stmt:
+select tableA.columna from tableA tableA
+===================================================
+columna    
+1     
+
+Query plan:
+sscan
+    class: tableA node[?]
+    cost:  ? card ?
+Query stmt:
+select tableA.columna from tableA tableA
+===================================================
+    
+10 - two same hints with one backtick     
 
 ===================================================
-c1    
+columna    
 1     
+
+Query plan:
+sscan
+    class: tableA node[?]
+    cost:  ? card ?
+Query stmt:
+select tableA.columna from tableA tableA
+===================================================
+    
+11 - two same hints with two backtick     
 
 ===================================================
-c1    
+columna    
 1     
+
+Query plan:
+sscan
+    class: tableA node[?]
+    cost:  ? card ?
+Query stmt:
+select tableA.columna from tableA tableA
+===================================================
+    
+12 - different hints with backtick     
 
 ===================================================
-c1    
+columna    
 1     
+
+Query plan:
+sscan
+    class: tableA node[?]
+    cost:  ? card ?
+Query stmt:
+select tableA.columna from tableA tableA
+===================================================
+    
+13 - three same hints with a backtick     
 
 ===================================================
-c1    
+columna    
 1     
 
-===================================================
-c1    
-1     
-
-===================================================
-c1    
-1     
-
+Query plan:
+sscan
+    class: tableA node[?]
+    cost:  ? card ?
+Query stmt:
+select tableA.columna from tableA tableA
 ===================================================
 0
 ===================================================
@@ -81,10 +259,64 @@ c1
 ===================================================
 1
 ===================================================
-c1    c2    c1    c2    
-1     1     1     1     
+    
+14 - Malformed hint in join     
 
 ===================================================
-c1    c2    c1    c2    
+columnb    columnc    columnb    columnc    
 1     1     1     1     
 
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: tableB node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tableC node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select tableB.columnb, tableB.columnc, tableC.columnb, tableC.columnc from tableB tableB, tableC tableC where tableB.columnB=tableC.columnB
+===================================================
+    
+15 - Unclosed hint     
+
+===================================================
+columnb    columnc    columnb    columnc    
+1     1     1     1     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: tableB node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tableC node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select tableB.columnb, tableB.columnc, tableC.columnb, tableC.columnc from tableB tableB, tableC tableC where tableB.columnB=tableC.columnB
+===================================================
+    
+16 - Valid hint     
+
+===================================================
+columna    
+1     
+
+Query plan:
+sscan
+    class: tableA node[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH(tableA) */ tableA.columna from tableA tableA
+===================================================
+0
+===================================================
+0
+===================================================
+0
