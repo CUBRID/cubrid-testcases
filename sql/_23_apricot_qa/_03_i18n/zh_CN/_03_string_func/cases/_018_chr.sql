@@ -8,6 +8,6 @@ select chr(sh1), chr(i1), chr (b1), chr(n1) , chr (f1), chr (d1), chr (m1) from 
 
 drop table test_cn;
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

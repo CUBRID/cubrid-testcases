@@ -67,7 +67,7 @@ insert into test_cn values (110,'*程序员');
 select id, name, CHAR_LENGTH (name), BIT_LENGTH(name), LENGTH(name), OCTET_LENGTH(name) from test_cn order by 1;
 
 drop table test_cn;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

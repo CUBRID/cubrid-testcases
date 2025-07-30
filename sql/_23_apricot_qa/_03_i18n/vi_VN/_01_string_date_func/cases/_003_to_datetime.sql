@@ -135,7 +135,7 @@ SELECT TO_DATETIME('2011-05-01 CHỦ NHẬT 10:11:12 SA', 'yyyy-MM-DD DAY HH:MI:
 SELECT TO_DATETIME('2011-05-01 CHỦ NHẬT 10:11:12 CH', 'yyyy-MM-DD DAY HH:MI:SS P.M.');
 SELECT TO_DATETIME('2011-05-01 CHỦ NHẬT 10:11:12 SA', 'yyyy-MM-DD DAY HH:MI:SS A.M.');
 set system parameters 'intl_date_lang = en_US';
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 
