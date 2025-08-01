@@ -28,4 +28,4 @@ select position('ぁー' in 'aBｧー');
 set names utf8;
 select position('ｧー' in 'ぁーBbc');
 
-set names iso88591;
+set names utf8;

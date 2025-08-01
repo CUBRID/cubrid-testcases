@@ -20,6 +20,6 @@ select i, s, replace (s,'áe', 'xy') from t order by 1;
 
 
 drop table t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
