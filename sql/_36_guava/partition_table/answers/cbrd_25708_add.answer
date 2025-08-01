@@ -1,0 +1,369 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+5
+===================================================
+    
+1. NULL compare col IS NULL (only the first partition is pruned)     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.year_tbl)
+
+  rewritten query: select count(*) from [dba.year_tbl] [dba.year_tbl] where [dba.year_tbl].col is null 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.year_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__pa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+2. NULL compare YEAR(col) IS NULL (only the first partition is pruned)     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.year_tbl)
+
+  rewritten query: select count(*) from [dba.year_tbl] [dba.year_tbl] where  year([dba.year_tbl].col) is null 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.year_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__pa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+3. Mixed AND A: col = 2023-11-30 AND YEAR(col) > 2022     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.year_tbl)
+
+  rewritten query: select count(*) from [dba.year_tbl] [dba.year_tbl] where  year( cast('?-?-? ?:?:?' as datetime))>? and [dba.year_tbl].col= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.year_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__pc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+4. Mixed AND B: YEAR(col) > 2022 AND col = 2023-11-30     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.year_tbl)
+
+  rewritten query: select count(*) from [dba.year_tbl] [dba.year_tbl] where  year( cast('?-?-? ?:?:?' as datetime))>? and [dba.year_tbl].col= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.year_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__pc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+5. IN list multiple col IN (...)     
+
+===================================================
+count(*)    
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.year_tbl)
+
+  rewritten query: select count(*) from [dba.year_tbl] [dba.year_tbl] where (([dba.year_tbl].col= ?:? ) or ([dba.year_tbl].col= ?:? ))
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.year_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__pa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__p_max), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+6. NOT IN: col NOT IN (2023,2024 dates) (no pruning)     
+
+===================================================
+count(*)    
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.year_tbl)
+
+  rewritten query: select count(*) from [dba.year_tbl] [dba.year_tbl] where [dba.year_tbl].col not in set{datetime '?:?:?.? PM ?/?/?', datetime '?:?:?.? AM ?/?/?'}
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.year_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__pa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__pb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__pc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__p_max), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+7. <> and NOT YEAR(col)=2022 (no pruning)     
+
+===================================================
+count(*)    
+3     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.year_tbl)
+
+  rewritten query: select count(*) from [dba.year_tbl] [dba.year_tbl] where [dba.year_tbl].col<> cast('?-?-? ?:?:?' as datetime) and  year([dba.year_tbl].col)<>?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.year_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__pa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__pb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__pc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__p_max), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+8. MAXVALUE only col >= 2024-...     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.year_tbl)
+
+  rewritten query: select count(*) from [dba.year_tbl] [dba.year_tbl] where ([dba.year_tbl].col>= ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.year_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__p_max), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+9. ALL quantifier YEAR(col) >= ALL{2022,2023}     
+
+===================================================
+count(*)    
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.year_tbl)
+
+  rewritten query: select count(*) from [dba.year_tbl] [dba.year_tbl] where  year([dba.year_tbl].col)>= all {?, ?}
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.year_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__pb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__pc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__p_max), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+10. Using nested function as partition key (expected error)     
+
+===================================================
+Error:-494
+===================================================
+    
+11. OR A: col = 2021-05-01 OR col = 2023-11-30      
+
+===================================================
+count(*)    
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.year_tbl)
+
+  rewritten query: select count(*) from [dba.year_tbl] [dba.year_tbl] where (([dba.year_tbl].col= ?:? ) or ([dba.year_tbl].col= ?:? ))
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.year_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__pa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__pc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+12. OR B: col < 2022-01-01 OR YEAR(col) > 2023      
+
+===================================================
+count(*)    
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.year_tbl)
+
+  rewritten query: select count(*) from [dba.year_tbl] [dba.year_tbl] where (([dba.year_tbl].col< ?:? ) or  year([dba.year_tbl].col)>?)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.year_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__pa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__pb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__p_max), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+13. NULL compare with = : col = NULL (no pruning)     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.year_tbl)
+
+  rewritten query: select count(*) from [dba.year_tbl] [dba.year_tbl] where ? <> ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.year_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+14. Pruning to MAXVALUE partition only: col > 2025-01-01      
+
+===================================================
+count(*)    
+0     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.year_tbl)
+
+  rewritten query: select count(*) from [dba.year_tbl] [dba.year_tbl] where ([dba.year_tbl].col> ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.year_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__p_max), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+15. IS NOT NULL: col IS NOT NULL (no pruning)     
+
+===================================================
+count(*)    
+4     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.year_tbl)
+
+  rewritten query: select count(*) from [dba.year_tbl] [dba.year_tbl] where [dba.year_tbl].col is not null 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.year_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__pa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__pb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__pc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__p_max), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+16. IS NOT NULL on function: YEAR(col) IS NOT NULL (no pruning)     
+
+===================================================
+count(*)    
+4     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.year_tbl)
+
+  rewritten query: select count(*) from [dba.year_tbl] [dba.year_tbl] where  year([dba.year_tbl].col) is not null 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.year_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__pa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__pb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__pc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.year_tbl__p__p_max), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
