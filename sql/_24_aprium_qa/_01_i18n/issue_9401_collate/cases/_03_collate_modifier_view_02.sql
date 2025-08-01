@@ -37,7 +37,7 @@ select * from t order by s1 collate utf8_ko_cs;
 drop t;
 drop v;
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 set system parameters 'create_table_reuseoid=yes';

@@ -23,4 +23,4 @@ select * from v order by s1 collate utf8_ko_cs_uca;
 drop t;
 drop v;
 
-set names iso88591;
+set names utf8;
