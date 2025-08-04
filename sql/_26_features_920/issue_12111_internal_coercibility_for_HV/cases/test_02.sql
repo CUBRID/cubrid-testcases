@@ -84,5 +84,5 @@ execute stmt using 1, 1;
 execute stmt using 1, '1';
 deallocate prepare stmt;
 
-set names iso88591;
+set names utf8;
 

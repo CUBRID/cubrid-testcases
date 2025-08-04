@@ -10,5 +10,5 @@ insert into t values('a');
 select md5(c) from t;
 drop table t;
 
-set names iso88591;
+set names utf8;
 

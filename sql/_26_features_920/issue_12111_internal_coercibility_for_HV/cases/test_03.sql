@@ -110,6 +110,6 @@ execute stmt using 'a', 'B', 'c';
 deallocate prepare stmt;
 drop variable @v1;
 
-set names iso88591;
+set names utf8;
 
 --+ holdcas off;

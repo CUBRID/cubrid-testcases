@@ -29,7 +29,7 @@ select id, name, POSITION(lower('Ș') in name) from test_ro order by 1;
 select upper('ș'), lower('Ș');
 
 drop table test_ro;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 
