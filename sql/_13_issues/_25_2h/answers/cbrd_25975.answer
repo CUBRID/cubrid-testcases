@@ -6,246 +6,156 @@
 1
 ===================================================
     
-1 - Nested hint     
+1 - Nested hint: [SELECT /*+ recompile use_hash(tbl_a, tbl_a) */ * FROM tbl_a;]     
 
 ===================================================
-columna    
+col_a    
 1     
 
-Query plan:
-sscan
-    class: tableA node[?]
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_HASH(tableA, tableA) */ tableA.columna from tableA tableA
 ===================================================
     
-2 - Invalid but safe hint     
+2 - Invalid but safe hint: [SELECT /*+ recompile unknown_hint */ * FROM tbl_a;]     
 
 ===================================================
-columna    
+col_a    
 1     
 
-Query plan:
-sscan
-    class: tableA node[?]
-    cost:  ? card ?
-Query stmt:
-select tableA.columna from tableA tableA
 ===================================================
     
-3 - Malformed hint     
+3 - Malformed hint: [SELECT /*+ recompile use_hash( ) */ * FROM tbl_a;]     
 
 ===================================================
-columna    
+col_a    
 1     
 
-Query plan:
-sscan
-    class: tableA node[?]
-    cost:  ? card ?
-Query stmt:
-select tableA.columna from tableA tableA
-===================================================
-columna    
-1     
-
-Query plan:
-sscan
-    class: tableA node[?]
-    cost:  ? card ?
-Query stmt:
-select tableA.columna from tableA tableA
-===================================================
-columna    
-1     
-
-Query plan:
-sscan
-    class: tableA node[?]
-    cost:  ? card ?
-Query stmt:
-select tableA.columna from tableA tableA
-===================================================
-columna    
-1     
-
-Query plan:
-sscan
-    class: tableA node[?]
-    cost:  ? card ?
-Query stmt:
-select tableA.columna from tableA tableA
 ===================================================
     
-4 - Escaped backtick     
+3-1 - Malformed hint: [SELECT /*+ recompile use_hash( ` ) */ * FROM tbl_a;]     
 
 ===================================================
-columna    
+col_a    
 1     
 
-Query plan:
-sscan
-    class: tableA node[?]
-    cost:  ? card ?
-Query stmt:
-select tableA.columna from tableA tableA
 ===================================================
     
-5 - Empty hint     
+3-2 - Malformed hint: [SELECT /*+ recompile use_hash( [ ) */ * FROM tbl_a;]     
 
 ===================================================
-columna    
+col_a    
 1     
 
-Query plan:
-sscan
-    class: tableA node[?]
-    cost:  ? card ?
-Query stmt:
-select tableA.columna from tableA tableA
 ===================================================
     
-6 - Random content     
+3-4 - Malformed hint: [SELECT /*+ recompile use_hash( " ) */ * FROM tbl_a;]     
 
 ===================================================
-columna    
+col_a    
 1     
 
-Query plan:
-sscan
-    class: tableA node[?]
-    cost:  ? card ?
-Query stmt:
-select tableA.columna from tableA tableA
 ===================================================
     
-7 - Special characters     
+4 - Escaped backtick: [SELECT /*+ recompile use_hash(\`) */ * FROM tbl_a;]     
 
 ===================================================
-columna    
+col_a    
 1     
 
-Query plan:
-sscan
-    class: tableA node[?]
-    cost:  ? card ?
-Query stmt:
-select tableA.columna from tableA tableA
 ===================================================
     
-8 - Foreign language     
+5 - Empty hint: [SELECT /*+ recompile */ * FROM tbl_a;]     
 
 ===================================================
-columna    
+col_a    
 1     
 
-Query plan:
-sscan
-    class: tableA node[?]
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_HASH */ tableA.columna from tableA tableA
 ===================================================
     
-9 - Using other hints rather than use_hash     
+6 - Random content: [SELECT /*+ recompile 123abc */ * FROM tbl_a;]     
 
 ===================================================
-columna    
+col_a    
 1     
 
-Query plan:
-sscan
-    class: tableA node[?]
-    cost:  ? card ?
-Query stmt:
-select tableA.columna from tableA tableA
-===================================================
-columna    
-1     
-
-Query plan:
-sscan
-    class: tableA node[?]
-    cost:  ? card ?
-Query stmt:
-select tableA.columna from tableA tableA
-===================================================
-columna    
-1     
-
-Query plan:
-sscan
-    class: tableA node[?]
-    cost:  ? card ?
-Query stmt:
-select tableA.columna from tableA tableA
-===================================================
-columna    
-1     
-
-Query plan:
-sscan
-    class: tableA node[?]
-    cost:  ? card ?
-Query stmt:
-select tableA.columna from tableA tableA
 ===================================================
     
-10 - two same hints with one backtick     
+7 - Special characters: [SELECT /*+ recompile use_hash(@!$%) */ * FROM tbl_a;]     
 
 ===================================================
-columna    
+col_a    
 1     
 
-Query plan:
-sscan
-    class: tableA node[?]
-    cost:  ? card ?
-Query stmt:
-select tableA.columna from tableA tableA
 ===================================================
     
-11 - two same hints with two backtick     
+8 - Foreign language: [SELECT /*+ recompile use_hash (ááááá) */ * FROM tbl_a;]     
 
 ===================================================
-columna    
+col_a    
 1     
 
-Query plan:
-sscan
-    class: tableA node[?]
-    cost:  ? card ?
-Query stmt:
-select tableA.columna from tableA tableA
 ===================================================
     
-12 - different hints with backtick     
+9 - Using other hints rather than use_hash: [SELECT /*+ recompile use_nl( ` ) */ * FROM tbl_a;]     
 
 ===================================================
-columna    
+col_a    
 1     
 
-Query plan:
-sscan
-    class: tableA node[?]
-    cost:  ? card ?
-Query stmt:
-select tableA.columna from tableA tableA
 ===================================================
     
-13 - three same hints with a backtick     
+9-1 - Using other hints rather than use_hash: [SELECT /*+ recompile use_merge( ` ) */ * FROM tbl_a;     
 
 ===================================================
-columna    
+col_a    
 1     
 
-Query plan:
-sscan
-    class: tableA node[?]
-    cost:  ? card ?
-Query stmt:
-select tableA.columna from tableA tableA
+===================================================
+    
+9-2 - Using other hints rather than use_hash: [SELECT /*+ recompile no_use_hash( ` ) */ * FROM tbl_a;]     
+
+===================================================
+col_a    
+1     
+
+===================================================
+    
+9-3 - Using other hints rather than use_hash: [SELECT /*+ recompile no_merge( ` ) */ * FROM tbl_a;]     
+
+===================================================
+col_a    
+1     
+
+===================================================
+    
+10 - two same hints with one backtick: [SELECT /*+ recompile use_hash( ` ) use_hash(tbl_a) */ * FROM tbl_a;]     
+
+===================================================
+col_a    
+1     
+
+===================================================
+    
+11 - two same hints with two backtick: [SELECT /*+ recompile use_hash( ` ) use_hash( ` ) */ * FROM tbl_a;]     
+
+===================================================
+col_a    
+1     
+
+===================================================
+    
+12 - different hints with backtick: [SELECT /*+ recompile use_hash( ` ) no_merge( ` ) */ * FROM tbl_a;]     
+
+===================================================
+col_a    
+1     
+
+===================================================
+    
+13 - three same hints with a backtick: [SELECT /*+ recompile use_hash( ` ) use_nl(tbl_a) no_merge(tbl_a) */ * FROM tbl_a;]     
+
+===================================================
+col_a    
+1     
+
 ===================================================
 0
 ===================================================
@@ -260,60 +170,28 @@ select tableA.columna from tableA tableA
 1
 ===================================================
     
-14 - Malformed hint in join     
+14 - Malformed hint in join: [SELECT /*+ recompile use_hash(`) */ * FROM tbl_b, tbl_c WHERE tbl_b.col_b = tbl_c.col_b;]     
 
 ===================================================
-columnb    columnc    columnb    columnc    
+col_b    col_c    col_b    col_c    
 1     1     1     1     
 
-Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: sscan
-               class: tableB node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: tableC node[?]
-               sargs: term[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select tableB.columnb, tableB.columnc, tableC.columnb, tableC.columnc from tableB tableB, tableC tableC where tableB.columnB=tableC.columnB
 ===================================================
     
-15 - Unclosed hint     
+15 - Unclosed hint: [SELECT /*+ recompile use_hash(tbl_b, tbl_c */ * FROM tbl_b, tbl_c WHERE tbl_b.col_b = tbl_c.col_b;]     
 
 ===================================================
-columnb    columnc    columnb    columnc    
+col_b    col_c    col_b    col_c    
 1     1     1     1     
 
-Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: sscan
-               class: tableB node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: tableC node[?]
-               sargs: term[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select tableB.columnb, tableB.columnc, tableC.columnb, tableC.columnc from tableB tableB, tableC tableC where tableB.columnB=tableC.columnB
 ===================================================
     
-16 - Valid hint     
+16 - Valid hint: SELECT /*+ recompile use_hash(tbl_a) */ * FROM tbl_a;     
 
 ===================================================
-columna    
+col_a    
 1     
 
-Query plan:
-sscan
-    class: tableA node[?]
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_HASH(tableA) */ tableA.columna from tableA tableA
 ===================================================
 0
 ===================================================
