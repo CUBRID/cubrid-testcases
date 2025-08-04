@@ -28,5 +28,5 @@ select id, col_binary ,HEX(col_euckr ),col_utf8, col_iso  from t where repeat(co
 
 drop table t;
 
-set names iso88591;
+set names utf8;
 --+ holdcas off;

@@ -10,7 +10,7 @@ select coercibility(substr(s,1,1)) from t;
 select coercibility(chr(65)),coercibility(chr(i)) from t;
 
 drop t;
-set names iso88591;
+set names utf8;
 
 commit;
 --+ holdcas off;
