@@ -15,6 +15,6 @@ SELECT id, length(col_iso), CHAR_LENGTH(col_iso),CHARACTER_LENGTH(col_iso),LENGT
 
 drop table t1;
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

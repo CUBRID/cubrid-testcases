@@ -13,6 +13,6 @@ select * from t1 where exists(select * from t1,t2 where t1.col2=t2.col2);
 drop table t1;
 drop table t2;
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

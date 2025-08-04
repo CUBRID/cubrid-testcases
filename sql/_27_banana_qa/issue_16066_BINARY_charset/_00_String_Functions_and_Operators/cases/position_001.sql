@@ -33,5 +33,5 @@ select col_binary, position(cast(_utf8'中国' as string charset binary) in col_
 
 
 drop table t;
-set names iso88591;
+set names utf8;
 --+ holdcas off;

@@ -17,5 +17,5 @@ SELECT RPAD ('CUBRID', 10, '?'),length(RPAD('CUBRID', 10, '?'));
 SELECT RPAD ( '큐브리드', 10, '드'),length(RPAD ( '큐브리드', 10, '드'));
 
 
-set names iso88591;
+set names utf8;
 --+ holdcas off;
