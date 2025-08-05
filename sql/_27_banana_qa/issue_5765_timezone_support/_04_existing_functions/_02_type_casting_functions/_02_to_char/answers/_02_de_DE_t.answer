@@ -52,14 +52,14 @@ id    ts
 4     -03 -03:00     
 
 ===================================================
-id    to_char(tltz, _utf8'TZD:TZM')    
+id    to_char(tltz, 'TZD:TZM')    
 1     :00     
 2     :00     
 3     :00     
 4     :00     
 
 ===================================================
-id    to_char(ts, _utf8'TZH:TZM TZR TZD')    
+id    to_char(ts, 'TZH:TZM TZR TZD')    
 1     -03:00 -03:00      
 2     -03:00 -03:00      
 3     -03:00 -03:00      
@@ -77,21 +77,56 @@ id    to_char(ts)    to_char(tltz)    to_char(ttz)
 ===================================================
 Error:-783
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 )    to_char(tltz,  ?:1 )    to_char(ttz,  ?:2 )    
+1     10:30:45 Nachm. -03:00     09:55:45 Nachm. -03:00     10:30:45 Nachm. -03:00     
+2     07:30:21 Nachm. -03:00     06:00:21 Vorm. -03:00     07:30:21 Nachm. -03:00     
+3     07:30:21 Vorm. -03:00     06:30:21 Nachm. -03:00     07:30:21 Vorm. -03:00     
+4     11:59:59 Nachm. -03:00     08:59:59 Nachm. -03:00     11:59:59 Nachm. -03:00     
+
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 )    to_char(tltz,  ?:1 )    to_char(ttz,  ?:2 )    
+1     10:30:45 Nachm. -03:00      09:55:45 Nachm. -03:00      10:30:45 Nachm. -03:00      
+2     07:30:21 Nachm. -03:00      06:00:21 Vorm. -03:00      07:30:21 Nachm. -03:00      
+3     07:30:21 Vorm. -03:00      06:30:21 Nachm. -03:00      07:30:21 Vorm. -03:00      
+4     11:59:59 Nachm. -03:00      08:59:59 Nachm. -03:00      11:59:59 Nachm. -03:00      
+
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 )    to_char(tltz,  ?:1 )    to_char(ttz,  ?:2 )    
+1     10:30:45 Nachm. -03:00     09:55:45 Nachm. -03:00     10:30:45 Nachm. -03:00     
+2     07:30:21 Nachm. -03:00     06:00:21 Vorm. -03:00     07:30:21 Nachm. -03:00     
+3     07:30:21 Vorm. -03:00     06:30:21 Nachm. -03:00     07:30:21 Vorm. -03:00     
+4     11:59:59 Nachm. -03:00     08:59:59 Nachm. -03:00     11:59:59 Nachm. -03:00     
+
 ===================================================
 0
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 )    to_char(tltz,  ?:1 )    to_char(ttz,  ?:2 )    
+1     10:30:45 Nachm. -06:23     09:55:45 Nachm. -06:23     10:30:45 Nachm. -06:23     
+2     07:30:21 Nachm. -06:23     06:00:21 Vorm. -06:23     07:30:21 Nachm. -06:23     
+3     07:30:21 Vorm. -06:23     06:30:21 Nachm. -06:23     07:30:21 Vorm. -06:23     
+4     11:59:59 Nachm. -06:23     08:59:59 Nachm. -06:23     11:59:59 Nachm. -06:23     
+
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 )    to_char(tltz,  ?:1 )    to_char(ttz,  ?:2 )    
+1     10:30:45 Nachm.      09:55:45 Nachm.      10:30:45 Nachm.      
+2     07:30:21 Nachm.      06:00:21 Vorm.      07:30:21 Nachm.      
+3     07:30:21 Vorm.      06:30:21 Nachm.      07:30:21 Vorm.      
+4     11:59:59 Nachm.      08:59:59 Nachm.      11:59:59 Nachm.      
+
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 )    to_char(tltz,  ?:1 )    to_char(ttz,  ?:2 )    
+1     10:30:45 Nachm. -06:23     09:55:45 Nachm. -06:23     10:30:45 Nachm. -06:23     
+2     07:30:21 Nachm. -06:23     06:00:21 Vorm. -06:23     07:30:21 Nachm. -06:23     
+3     07:30:21 Vorm. -06:23     06:30:21 Nachm. -06:23     07:30:21 Vorm. -06:23     
+4     11:59:59 Nachm. -06:23     08:59:59 Nachm. -06:23     11:59:59 Nachm. -06:23     
+
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 )    to_char(tltz,  ?:1 )    to_char(ttz,  ?:2 )    
+1     10:30:45 Nachm. -06:23      09:55:45 Nachm. -06:23      10:30:45 Nachm. -06:23      
+2     07:30:21 Nachm. -06:23      06:00:21 Vorm. -06:23      07:30:21 Nachm. -06:23      
+3     07:30:21 Vorm. -06:23      06:30:21 Nachm. -06:23      07:30:21 Vorm. -06:23      
+4     11:59:59 Nachm. -06:23      08:59:59 Nachm. -06:23      11:59:59 Nachm. -06:23      
+
 ===================================================
 0
 ===================================================
@@ -138,15 +173,40 @@ id    to_char(ts,  ?:0 )    to_char(tltz,  ?:1 )    to_char(ttz,  ?:2 )
 ===================================================
 0
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 , 'de_DE')    to_char(tltz,  ?:1 , 'de_DE')    to_char(ttz,  ?:2 , 'de_DE')    
+1     10:30:45 Nachm.     09:55:45 Nachm.     10:30:45 Nachm.     
+2     07:30:21 Nachm.     06:00:21 Vorm.     07:30:21 Nachm.     
+3     07:30:21 Vorm.     06:30:21 Nachm.     07:30:21 Vorm.     
+4     11:59:59 Nachm.     08:59:59 Nachm.     11:59:59 Nachm.     
+
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 , 'de_DE')    to_char(tltz,  ?:1 , 'de_DE')    to_char(ttz,  ?:2 , 'de_DE')    
+1     10:30:45 Nachm. Asia/Makassar     09:55:45 Nachm. Asia/Makassar     10:30:45 Nachm. Asia/Makassar     
+2     07:30:21 Nachm. Asia/Makassar     06:00:21 Vorm. Asia/Makassar     07:30:21 Nachm. Asia/Makassar     
+3     07:30:21 Vorm. Asia/Makassar     06:30:21 Nachm. Asia/Makassar     07:30:21 Vorm. Asia/Makassar     
+4     11:59:59 Nachm. Asia/Makassar     08:59:59 Nachm. Asia/Makassar     11:59:59 Nachm. Asia/Makassar     
+
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 , 'de_DE')    to_char(tltz,  ?:1 , 'de_DE')    to_char(ttz,  ?:2 , 'de_DE')    
+1     10:30:45 Nachm. Asia/Makassar WITA     09:55:45 Nachm. Asia/Makassar WITA     10:30:45 Nachm. Asia/Makassar WITA     
+2     07:30:21 Nachm. Asia/Makassar WITA     06:00:21 Vorm. Asia/Makassar WITA     07:30:21 Nachm. Asia/Makassar WITA     
+3     07:30:21 Vorm. Asia/Makassar WITA     06:30:21 Nachm. Asia/Makassar WITA     07:30:21 Vorm. Asia/Makassar WITA     
+4     11:59:59 Nachm. Asia/Makassar WITA     08:59:59 Nachm. Asia/Makassar WITA     11:59:59 Nachm. Asia/Makassar WITA     
+
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 , 'de_DE')    to_char(tltz,  ?:1 , 'de_DE')    to_char(ttz,  ?:2 , 'de_DE')    
+1     10:30:45 Nachm. +08     09:55:45 Nachm. +08     10:30:45 Nachm. +08     
+2     07:30:21 Nachm. +08     06:00:21 Vorm. +08     07:30:21 Nachm. +08     
+3     07:30:21 Vorm. +08     06:30:21 Nachm. +08     07:30:21 Vorm. +08     
+4     11:59:59 Nachm. +08     08:59:59 Nachm. +08     11:59:59 Nachm. +08     
+
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 , 'de_DE')    to_char(tltz,  ?:1 , 'de_DE')    to_char(ttz,  ?:2 , 'de_DE')    
+1     10:30:45 Nachm. +08:00     09:55:45 Nachm. +08:00     10:30:45 Nachm. +08:00     
+2     07:30:21 Nachm. +08:00     06:00:21 Vorm. +08:00     07:30:21 Nachm. +08:00     
+3     07:30:21 Vorm. +08:00     06:30:21 Nachm. +08:00     07:30:21 Vorm. +08:00     
+4     11:59:59 Nachm. +08:00     08:59:59 Nachm. +08:00     11:59:59 Nachm. +08:00     
+
 ===================================================
 0
 ===================================================

@@ -55,13 +55,13 @@ id    ts
 4     -03 America/Sao_Paulo     
 
 ===================================================
-id    to_char(dtltz, _utf8'TZD:TZM')    
+id    to_char(dtltz, 'TZD:TZM')    
 1     -03:00     
 2     -03:00     
 4     -03:00     
 
 ===================================================
-id    to_char(ts, _utf8'TZH:TZM TZR TZD')    
+id    to_char(ts, 'TZH:TZM TZR TZD')    
 1     -03:00 America/Sao_Paulo -03     
 2     -03:00 America/Sao_Paulo -03     
 4     -03:00 America/Sao_Paulo -03     
@@ -75,53 +75,125 @@ id    to_char(ts)    to_char(dtltz)    to_char(dttz)
 ===================================================
 0
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 )    to_char(dtltz,  ?:1 )    to_char(dttz,  ?:2 )    
+1     21, 15/09/17 10:30:45.000 P.M.     21, 15/09/17 09:55:45.000 P.M.     21, 15/09/17 10:30:45.000 P.M.     
+2     21, 15/09/17 07:30:21.000 P.M.     21, 15/09/17 06:00:21.000 A.M.     21, 15/09/17 07:30:21.000 P.M.     
+4     21, 15/09/17 12:59:59.000 A.M.     21, 15/09/17 08:59:59.000 P.M.     21, 15/09/17 12:59:59.000 A.M.     
+
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 )    to_char(dtltz,  ?:1 )    to_char(dttz,  ?:2 )    
+1     21, 15/09/17 10:30:45.000 P.M. America/Sao_Paulo     21, 15/09/17 09:55:45.000 P.M. America/Sao_Paulo     21, 15/09/17 10:30:45.000 P.M. America/Sao_Paulo     
+2     21, 15/09/17 07:30:21.000 P.M. America/Sao_Paulo     21, 15/09/17 06:00:21.000 A.M. America/Sao_Paulo     21, 15/09/17 07:30:21.000 P.M. America/New_York     
+4     21, 15/09/17 12:59:59.000 A.M. America/Sao_Paulo     21, 15/09/17 08:59:59.000 P.M. America/Sao_Paulo     21, 15/09/17 12:59:59.000 A.M. Europe/London     
+
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 )    to_char(dtltz,  ?:1 )    to_char(dttz,  ?:2 )    
+1     21, 15/09/17 10:30:45.000 P.M. America/Sao_Paulo -03     21, 15/09/17 09:55:45.000 P.M. America/Sao_Paulo -03     21, 15/09/17 10:30:45.000 P.M. America/Sao_Paulo -03     
+2     21, 15/09/17 07:30:21.000 P.M. America/Sao_Paulo -03     21, 15/09/17 06:00:21.000 A.M. America/Sao_Paulo -03     21, 15/09/17 07:30:21.000 P.M. America/New_York EDT     
+4     21, 15/09/17 12:59:59.000 A.M. America/Sao_Paulo -03     21, 15/09/17 08:59:59.000 P.M. America/Sao_Paulo -03     21, 15/09/17 12:59:59.000 A.M. Europe/London BST     
+
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 )    to_char(dtltz,  ?:1 )    to_char(dttz,  ?:2 )    
+1     21, 15/09/17 10:30:45.000 P.M. -03:00     21, 15/09/17 09:55:45.000 P.M. -03:00     21, 15/09/17 10:30:45.000 P.M. -03:00     
+2     21, 15/09/17 07:30:21.000 P.M. -03:00     21, 15/09/17 06:00:21.000 A.M. -03:00     21, 15/09/17 07:30:21.000 P.M. -04:00     
+4     21, 15/09/17 12:59:59.000 A.M. -03:00     21, 15/09/17 08:59:59.000 P.M. -03:00     21, 15/09/17 12:59:59.000 A.M. +01:00     
+
 ===================================================
 Error:-493
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 )    to_char(dtltz,  ?:1 )    to_char(dttz,  ?:2 )    
+1     21, 15/09/17 10:30:45.000 P.M. America/Sao_Paulo     21, 15/09/17 09:55:45.000 P.M. America/Sao_Paulo     21, 15/09/17 10:30:45.000 P.M. America/Sao_Paulo     
+2     21, 15/09/17 07:30:21.000 P.M. America/Sao_Paulo     21, 15/09/17 06:00:21.000 A.M. America/Sao_Paulo     21, 15/09/17 07:30:21.000 P.M. America/New_York     
+4     21, 15/09/17 12:59:59.000 A.M. America/Sao_Paulo     21, 15/09/17 08:59:59.000 P.M. America/Sao_Paulo     21, 15/09/17 12:59:59.000 A.M. Europe/London     
+
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 )    to_char(dtltz,  ?:1 )    to_char(dttz,  ?:2 )    
+1     21, 15/09/17 10:30:45.000 P.M. -03     21, 15/09/17 09:55:45.000 P.M. -03     21, 15/09/17 10:30:45.000 P.M. -03     
+2     21, 15/09/17 07:30:21.000 P.M. -03     21, 15/09/17 06:00:21.000 A.M. -03     21, 15/09/17 07:30:21.000 P.M. EDT     
+4     21, 15/09/17 12:59:59.000 A.M. -03     21, 15/09/17 08:59:59.000 P.M. -03     21, 15/09/17 12:59:59.000 A.M. BST     
+
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 )    to_char(dtltz,  ?:1 )    to_char(dttz,  ?:2 )    
+1     21, 15/09/17 10:30:45.000 P.M. -03:00     21, 15/09/17 09:55:45.000 P.M. -03:00     21, 15/09/17 10:30:45.000 P.M. -03:00     
+2     21, 15/09/17 07:30:21.000 P.M. -03:00     21, 15/09/17 06:00:21.000 A.M. -03:00     21, 15/09/17 07:30:21.000 P.M. -04:00     
+4     21, 15/09/17 12:59:59.000 A.M. -03:00     21, 15/09/17 08:59:59.000 P.M. -03:00     21, 15/09/17 12:59:59.000 A.M. +01:00     
+
 ===================================================
-Error:-1098
-===================================================
-0
-===================================================
-Error:-1098
-===================================================
-Error:-1098
-===================================================
-Error:-1098
-===================================================
-Error:-1098
-===================================================
-Error:-1098
-===================================================
-0
-===================================================
-0
-===================================================
-0
+id    to_char(ts,  ?:0 )    to_char(dtltz,  ?:1 )    to_char(dttz,  ?:2 )    
+1     21, 15/09/17 10:30:45.000 P.M. America/Sao_Paulo -03     21, 15/09/17 09:55:45.000 P.M. America/Sao_Paulo -03     21, 15/09/17 10:30:45.000 P.M. America/Sao_Paulo -03     
+2     21, 15/09/17 07:30:21.000 P.M. America/Sao_Paulo -03     21, 15/09/17 06:00:21.000 A.M. America/Sao_Paulo -03     21, 15/09/17 07:30:21.000 P.M. America/New_York EDT     
+4     21, 15/09/17 12:59:59.000 A.M. America/Sao_Paulo -03     21, 15/09/17 08:59:59.000 P.M. America/Sao_Paulo -03     21, 15/09/17 12:59:59.000 A.M. Europe/London BST     
+
 ===================================================
 0
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 )    to_char(dtltz,  ?:1 )    to_char(dttz,  ?:2 )    
+1     17th, 2015; JEU./5 22:30:45     17th, 2015; JEU./5 19:55:45     17th, 2015; JEU./5 22:30:45     
+2     17th, 2015; JEU./5 19:30:21     17th, 2015; JEU./5 04:00:21     17th, 2015; JEU./5 19:30:21     
+4     17th, 2015; JEU./5 00:59:59     17th, 2015; JEU./5 18:59:59     17th, 2015; JEU./5 00:59:59     
+
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 )    to_char(dtltz,  ?:1 )    to_char(dttz,  ?:2 )    
+1     17th, 2015; JEU./5 22:30:45 America/Mexico_City     17th, 2015; JEU./5 19:55:45 America/Mexico_City     17th, 2015; JEU./5 22:30:45 America/Sao_Paulo     
+2     17th, 2015; JEU./5 19:30:21 America/Mexico_City     17th, 2015; JEU./5 04:00:21 America/Mexico_City     17th, 2015; JEU./5 19:30:21 America/New_York     
+4     17th, 2015; JEU./5 00:59:59 America/Mexico_City     17th, 2015; JEU./5 18:59:59 America/Mexico_City     17th, 2015; JEU./5 00:59:59 Europe/London     
+
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 )    to_char(dtltz,  ?:1 )    to_char(dttz,  ?:2 )    
+1     17th, 2015; JEU./5 22:30:45 America/Mexico_City CDT     17th, 2015; JEU./5 19:55:45 America/Mexico_City CDT     17th, 2015; JEU./5 22:30:45 America/Sao_Paulo -03     
+2     17th, 2015; JEU./5 19:30:21 America/Mexico_City CDT     17th, 2015; JEU./5 04:00:21 America/Mexico_City CDT     17th, 2015; JEU./5 19:30:21 America/New_York EDT     
+4     17th, 2015; JEU./5 00:59:59 America/Mexico_City CDT     17th, 2015; JEU./5 18:59:59 America/Mexico_City CDT     17th, 2015; JEU./5 00:59:59 Europe/London BST     
+
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 )    to_char(dtltz,  ?:1 )    to_char(dttz,  ?:2 )    
+1     17th, 2015; JEU./5 22:30:45 -05     17th, 2015; JEU./5 19:55:45 -05     17th, 2015; JEU./5 22:30:45 -03     
+2     17th, 2015; JEU./5 19:30:21 -05     17th, 2015; JEU./5 04:00:21 -05     17th, 2015; JEU./5 19:30:21 -04     
+4     17th, 2015; JEU./5 00:59:59 -05     17th, 2015; JEU./5 18:59:59 -05     17th, 2015; JEU./5 00:59:59 +01     
+
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 )    to_char(dtltz,  ?:1 )    to_char(dttz,  ?:2 )    
+1     17th, 2015; JEU./5 22:30:45 -05 00     17th, 2015; JEU./5 19:55:45 -05 00     17th, 2015; JEU./5 22:30:45 -03 00     
+2     17th, 2015; JEU./5 19:30:21 -05 00     17th, 2015; JEU./5 04:00:21 -05 00     17th, 2015; JEU./5 19:30:21 -04 00     
+4     17th, 2015; JEU./5 00:59:59 -05 00     17th, 2015; JEU./5 18:59:59 -05 00     17th, 2015; JEU./5 00:59:59 +01 00     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+id    to_char(ts,  ?:0 , 'fr_FR')    to_char(dtltz,  ?:1 , 'fr_FR')    to_char(dttz,  ?:2 , 'fr_FR')    
+1     2015 Quarter  3, SEPTEMBRE-17 JEUDI     10:30:45.000 PM     2015 Quarter  3, SEPTEMBRE-18 VENDREDI  08:55:45.000 AM     2015 Quarter  3, SEPTEMBRE-17 JEUDI     10:30:45.000 PM     
+2     2015 Quarter  3, SEPTEMBRE-17 JEUDI     07:30:21.000 PM     2015 Quarter  3, SEPTEMBRE-17 JEUDI     05:00:21.000 PM     2015 Quarter  3, SEPTEMBRE-17 JEUDI     07:30:21.000 PM     
+4     2015 Quarter  3, SEPTEMBRE-17 JEUDI     12:59:59.000 AM     2015 Quarter  3, SEPTEMBRE-18 VENDREDI  07:59:59.000 AM     2015 Quarter  3, SEPTEMBRE-17 JEUDI     12:59:59.000 AM     
+
+===================================================
+id    to_char(ts,  ?:0 , 'fr_FR')    to_char(dtltz,  ?:1 , 'fr_FR')    to_char(dttz,  ?:2 , 'fr_FR')    
+1     2015 Quarter  3, SEPTEMBRE-17 JEUDI     10:30:45.000 PM Asia/Shanghai     2015 Quarter  3, SEPTEMBRE-18 VENDREDI  08:55:45.000 AM Asia/Shanghai     2015 Quarter  3, SEPTEMBRE-17 JEUDI     10:30:45.000 PM America/Sao_Paulo     
+2     2015 Quarter  3, SEPTEMBRE-17 JEUDI     07:30:21.000 PM Asia/Shanghai     2015 Quarter  3, SEPTEMBRE-17 JEUDI     05:00:21.000 PM Asia/Shanghai     2015 Quarter  3, SEPTEMBRE-17 JEUDI     07:30:21.000 PM America/New_York     
+4     2015 Quarter  3, SEPTEMBRE-17 JEUDI     12:59:59.000 AM Asia/Shanghai     2015 Quarter  3, SEPTEMBRE-18 VENDREDI  07:59:59.000 AM Asia/Shanghai     2015 Quarter  3, SEPTEMBRE-17 JEUDI     12:59:59.000 AM Europe/London     
+
+===================================================
+id    to_char(ts,  ?:0 , 'fr_FR')    to_char(dtltz,  ?:1 , 'fr_FR')    to_char(dttz,  ?:2 , 'fr_FR')    
+1     2015 Quarter  3, SEPTEMBRE-17 JEUDI     10:30:45.000 PM Asia/Shanghai CST     2015 Quarter  3, SEPTEMBRE-18 VENDREDI  08:55:45.000 AM Asia/Shanghai CST     2015 Quarter  3, SEPTEMBRE-17 JEUDI     10:30:45.000 PM America/Sao_Paulo -03     
+2     2015 Quarter  3, SEPTEMBRE-17 JEUDI     07:30:21.000 PM Asia/Shanghai CST     2015 Quarter  3, SEPTEMBRE-17 JEUDI     05:00:21.000 PM Asia/Shanghai CST     2015 Quarter  3, SEPTEMBRE-17 JEUDI     07:30:21.000 PM America/New_York EDT     
+4     2015 Quarter  3, SEPTEMBRE-17 JEUDI     12:59:59.000 AM Asia/Shanghai CST     2015 Quarter  3, SEPTEMBRE-18 VENDREDI  07:59:59.000 AM Asia/Shanghai CST     2015 Quarter  3, SEPTEMBRE-17 JEUDI     12:59:59.000 AM Europe/London BST     
+
+===================================================
+id    to_char(ts,  ?:0 , 'fr_FR')    to_char(dtltz,  ?:1 , 'fr_FR')    to_char(dttz,  ?:2 , 'fr_FR')    
+1     2015 Quarter  3, SEPTEMBRE-17 JEUDI     10:30:45.000 PM +08     2015 Quarter  3, SEPTEMBRE-18 VENDREDI  08:55:45.000 AM +08     2015 Quarter  3, SEPTEMBRE-17 JEUDI     10:30:45.000 PM -03     
+2     2015 Quarter  3, SEPTEMBRE-17 JEUDI     07:30:21.000 PM +08     2015 Quarter  3, SEPTEMBRE-17 JEUDI     05:00:21.000 PM +08     2015 Quarter  3, SEPTEMBRE-17 JEUDI     07:30:21.000 PM -04     
+4     2015 Quarter  3, SEPTEMBRE-17 JEUDI     12:59:59.000 AM +08     2015 Quarter  3, SEPTEMBRE-18 VENDREDI  07:59:59.000 AM +08     2015 Quarter  3, SEPTEMBRE-17 JEUDI     12:59:59.000 AM +01     
+
+===================================================
+id    to_char(ts,  ?:0 , 'fr_FR')    to_char(dtltz,  ?:1 , 'fr_FR')    to_char(dttz,  ?:2 , 'fr_FR')    
+1     2015 Quarter  3, SEPTEMBRE-17 JEUDI     10:30:45.000 PM +08:00     2015 Quarter  3, SEPTEMBRE-18 VENDREDI  08:55:45.000 AM +08:00     2015 Quarter  3, SEPTEMBRE-17 JEUDI     10:30:45.000 PM -03:00     
+2     2015 Quarter  3, SEPTEMBRE-17 JEUDI     07:30:21.000 PM +08:00     2015 Quarter  3, SEPTEMBRE-17 JEUDI     05:00:21.000 PM +08:00     2015 Quarter  3, SEPTEMBRE-17 JEUDI     07:30:21.000 PM -04:00     
+4     2015 Quarter  3, SEPTEMBRE-17 JEUDI     12:59:59.000 AM +08:00     2015 Quarter  3, SEPTEMBRE-18 VENDREDI  07:59:59.000 AM +08:00     2015 Quarter  3, SEPTEMBRE-17 JEUDI     12:59:59.000 AM +01:00     
+
 ===================================================
 0
 ===================================================
