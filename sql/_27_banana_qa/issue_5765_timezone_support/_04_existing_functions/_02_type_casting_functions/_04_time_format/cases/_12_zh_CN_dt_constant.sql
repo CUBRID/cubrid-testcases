@@ -46,6 +46,6 @@ drop variable @v1, @v2, @v3;
 
 set timezone 'Asia/Seoul';
 set system parameters 'intl_date_lang=en_US';
-set names iso88591;
+set names utf8;
 
 --+ holdcas off;
