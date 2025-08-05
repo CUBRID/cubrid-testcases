@@ -140,7 +140,7 @@ drop variable @v1, @v2, @v3;
 
 set time zone '+0:00';
 set system parameters 'intl_date_lang=en_US';
-set names iso88591;
+set names utf8;
 set system parameters 'tz_leap_second_support=no';
 
 --+ holdcas off;
