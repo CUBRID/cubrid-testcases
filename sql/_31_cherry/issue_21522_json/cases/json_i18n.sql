@@ -19,5 +19,5 @@ select json_length(json_merge(name, de)) from t10;
 select json_remove(json_merge(name, de), '/0', '/1') from t10;
 
 
-set names iso88591;
+set names utf8;
 drop table if exists t10;

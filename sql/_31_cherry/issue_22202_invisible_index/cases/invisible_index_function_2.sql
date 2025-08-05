@@ -115,3 +115,4 @@ update statistics on t1;
 --@queryplan
 SELECT /*+ recompile */ * FROM t1 WHERE LOWER(FirstName)='yin' using index first_name_lower(+);
 drop table if exists t1;
+set names utf8;
