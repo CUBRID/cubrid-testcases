@@ -42,4 +42,4 @@ select * from t where s like '_côté' order by 1;
 select replace(s,'é','e') from t order by 1;
 drop t;
 
-set names iso88591;
+set names utf8;
