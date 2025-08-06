@@ -33,4 +33,4 @@ select 1 from db_class where 'ぁぁゝ' like '_ぁ' limit 1;
 select 1 from db_class where 'ぁぁゝ' like '%ぁゝ' escape '%' limit 1;
 select 1 from db_class where 'ぁゝぁゝ' like '_ぁゝ%' escape '_' limit 1;
 
-set names iso88591;
+set names utf8;
