@@ -42,7 +42,7 @@ execute st using timestamptz'2009-01-01 12:59:59 AM Europe/London', '%x, %v-%u D
 deallocate prepare st;
 
 set timezone 'Asia/Seoul';
-set names iso88591;
+set names utf8;
 set system parameters 'intl_date_lang=en_US';
 
 --+ holdcas off;
