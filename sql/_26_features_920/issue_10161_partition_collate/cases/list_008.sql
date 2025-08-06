@@ -247,4 +247,4 @@ insert into t1 values ('a');
 select a, hex(a) from t1 order by 2,1;
 drop table t1;
 
-set names iso88591;
+set names utf8;

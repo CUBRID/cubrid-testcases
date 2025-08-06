@@ -42,4 +42,4 @@ select * from t1 partition(a2);
 select * from t1 partition(a3);
 
 drop table t1;
-set names iso88591;
+set names utf8;

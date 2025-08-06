@@ -28,6 +28,6 @@ select * from t1 order by 1, 2;
 drop view v1;
 drop table t1;
 
-set names iso88591;
+set names utf8;
 
 set system parameters 'create_table_reuseoid=yes';

@@ -22,6 +22,6 @@ select id, name, substring_index(name,'ÎĂ',3) from test_ro;
 
 drop table test_ro;
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

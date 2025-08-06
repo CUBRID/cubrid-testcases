@@ -30,7 +30,7 @@ select id, name, LOCATE ('ă', name, 0) from test_ro order by 1;
 
 
 drop table test_ro;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 
