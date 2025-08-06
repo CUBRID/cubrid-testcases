@@ -1,35 +1,35 @@
 ===================================================
 0
 ===================================================
-json_valid(_utf8'{"bar": "baz", "balance": 7.77, "active":false}')    
+json_valid('{"bar": "baz", "balance": 7.77, "active":false}')    
 1     
 
 ===================================================
-json_merge(_utf8'{"bar": "baz", "balance": 7.77, "active":false}', json_extract(_utf8'{"bar": "baz", "balance": 7.77, "active":false}', _utf8'/active'))    
+json_merge('{"bar": "baz", "balance": 7.77, "active":false}', json_extract('{"bar": "baz", "balance": 7.77, "active":false}', '/active'))    
 [{"bar":"baz","balance":7.77,"active":false},false]     
 
 ===================================================
-json_insert(_utf8'{"bar": "baz", "balance": 7.77, "active":false}', _utf8'/status', json_extract(_utf8'{"bar": "baz", "balance": 7.77, "active":false}', _utf8'/active'))    
+json_insert('{"bar": "baz", "balance": 7.77, "active":false}', '/status', json_extract('{"bar": "baz", "balance": 7.77, "active":false}', '/active'))    
 {"bar":"baz","balance":7.77,"active":false,"status":false}     
 
 ===================================================
-json_extract(_utf8'{"bar": "baz", "balance": 7.77, "active":false}', _utf8'/active')=false    
+json_extract('{"bar": "baz", "balance": 7.77, "active":false}', '/active')=false    
 0     
 
 ===================================================
-json_extract(_utf8'{"bar": "baz", "balance": 7.77, "active":false}', _utf8'/active')= cast(false as json)    
+json_extract('{"bar": "baz", "balance": 7.77, "active":false}', '/active')= cast(false as json)    
 0     
 
 ===================================================
-json_extract(_utf8'{"bar": "baz", "balance": 7.77, "active":false}' collate utf8_en_ci, _utf8'/active')    
+json_extract('{"bar": "baz", "balance": 7.77, "active":false}' collate utf8_en_ci, '/active')    
 false     
 
 ===================================================
-json_extract(_utf8'{"bar": "baz", "balance": 7.77, "active":"false"}' collate utf8_en_ci, _utf8'/active')=json_extract(json_object(_utf8'name', _utf8'false' collate utf8_en_ci), _utf8'/name')    
+json_extract('{"bar": "baz", "balance": 7.77, "active":"false"}' collate utf8_en_ci, '/active')=json_extract(json_object('name', 'false' collate utf8_en_ci), '/name')    
 1     
 
 ===================================================
-json_extract(_utf8'{"bar": "baz", "balance": 7.77, "active":"false"}' collate utf8_en_ci, _utf8'/active')=json_extract(json_object(_utf8'name', _utf8'FALSE' collate utf8_en_ci), _utf8'/name')    
+json_extract('{"bar": "baz", "balance": 7.77, "active":"false"}' collate utf8_en_ci, '/active')=json_extract(json_object('name', 'FALSE' collate utf8_en_ci), '/name')    
 0     
 
 ===================================================
@@ -38,7 +38,7 @@ json_extract(_utf8'{"bar": "baz", "balance": 7.77, "active":"false"}' collate ut
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.t10     CREATE TABLE [t10] ([id] INTEGER AUTO_INCREMENT (1, 1) NOT NULL, [name] CHARACTER VARYING(1073741823) COLLATE utf8_en_ci, [de] JSON DEFAULT json '["{\"bar\": \"baz\", \"balance\": 7.77, \"active\":\"false\"}"]',  CONSTRAINT [pk_t10_id] PRIMARY KEY  ([id])) REUSE_OID, COLLATE iso88591_bin     
+dba.t10     CREATE TABLE [t10] ([id] INTEGER AUTO_INCREMENT (1, 1) NOT NULL, [name] CHARACTER VARYING(1073741823) COLLATE utf8_en_ci, [de] JSON DEFAULT json '["{\"bar\": \"baz\", \"balance\": 7.77, \"active\":\"false\"}"]',  CONSTRAINT [pk_t10_id] PRIMARY KEY  ([id])) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 1
