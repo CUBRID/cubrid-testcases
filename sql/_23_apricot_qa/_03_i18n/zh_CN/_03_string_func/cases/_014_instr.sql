@@ -61,7 +61,7 @@ select instr ('我们.国家','们.国',-1);
 select instr ('我们.国家','们.国',-8);
 
 select instr ('我们.国家','们.国',-9);
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

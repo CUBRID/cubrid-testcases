@@ -31,6 +31,6 @@ select id, name, translate (name,'今天','水仙花') from test_cn order by 1;
 
 drop table test_cn;
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
