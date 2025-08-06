@@ -10,6 +10,6 @@ select * from កខណតថ__p__p1;
 desc កខណតថ;
 
 drop table កខណតថ;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

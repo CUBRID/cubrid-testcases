@@ -62,6 +62,6 @@ select instr ('ច.អ','ប្រាំ.ក',-8);
 
 select instr ('ច.អ','ប្រាំ.ក',-9);
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

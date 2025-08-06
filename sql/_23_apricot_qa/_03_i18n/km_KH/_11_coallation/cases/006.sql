@@ -118,6 +118,6 @@ SELECT * from t  where col2 between UPPER('២') and 'ក'  order by col2 ,col1 
 SELECT * from t  where col2 between UPPER('ខ') and '៩' order by col2 desc ,col1 limit 2;
 
 DROP TABLE t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

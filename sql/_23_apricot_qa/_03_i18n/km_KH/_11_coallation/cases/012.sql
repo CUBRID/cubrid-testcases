@@ -30,7 +30,7 @@ SELECT /*+ recompile */col5 FROM t1 order by col5;
 
 drop class t1;
 
-set names iso88591;
+set names utf8;
 set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;
