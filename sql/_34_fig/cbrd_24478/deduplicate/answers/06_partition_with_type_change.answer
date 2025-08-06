@@ -92,7 +92,7 @@ tbl     ix_val_de02     _dedup_02     2     0     null
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.tbl     CREATE TABLE [tbl] ([id] INTEGER NOT NULL, [val] INTEGER,  INDEX [ix_val] ([val]) WHERE [dba.tbl].val< cast('50' as double)) REUSE_OID, COLLATE iso88591_bin     
+dba.tbl     CREATE TABLE [tbl] ([id] INTEGER NOT NULL, [val] INTEGER,  INDEX [ix_val] ([val]) WHERE [dba.tbl].val< cast('50' as double)) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 0
@@ -102,7 +102,7 @@ dba.tbl     CREATE TABLE [tbl] ([id] INTEGER NOT NULL, [val] INTEGER,  INDEX [ix
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.tbl     CREATE TABLE [tbl] ([id] INTEGER NOT NULL, [val] CHARACTER VARYING(2000),  INDEX [ix_val_de02] ([val]) WHERE [dba.tbl].val<_iso88591'50' collate iso88591_bin WITH DEDUPLICATE=2) REUSE_OID, COLLATE iso88591_bin     
+dba.tbl     CREATE TABLE [tbl] ([id] INTEGER NOT NULL, [val] CHARACTER VARYING(2000),  INDEX [ix_val_de02] ([val]) WHERE [dba.tbl].val<_utf8'50' collate utf8_bin WITH DEDUPLICATE=2) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 index_of.class_of.class_name    index_of.index_name    key_attr_name    key_order    asc_desc    data_type    
@@ -123,13 +123,13 @@ tbl     ix_val_de02     _dedup_02     1     0     null
 51
 ===================================================
 TABLE    CREATE TABLE    
-dba.tbl     CREATE TABLE [tbl] ([id] INTEGER NOT NULL, [val] CHARACTER VARYING(2000),  INDEX [ix_val_de02] ([val]) WITH DEDUPLICATE=2) REUSE_OID, COLLATE iso88591_bin PARTITION BY RANGE ([id])  (PARTITION [below_50] VALUES LESS THAN (50), PARTITION [over_50] VALUES LESS THAN MAXVALUE)     
+dba.tbl     CREATE TABLE [tbl] ([id] INTEGER NOT NULL, [val] CHARACTER VARYING(2000),  INDEX [ix_val_de02] ([val]) WITH DEDUPLICATE=2) REUSE_OID, COLLATE utf8_bin PARTITION BY RANGE ([id])  (PARTITION [below_50] VALUES LESS THAN (50), PARTITION [over_50] VALUES LESS THAN MAXVALUE)     
 
 ===================================================
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.tbl     CREATE TABLE [tbl] ([id] INTEGER NOT NULL, [val] INTEGER,  INDEX [ix_val_de02] ([val]) WITH DEDUPLICATE=2) REUSE_OID, COLLATE iso88591_bin PARTITION BY RANGE ([id])  (PARTITION [below_50] VALUES LESS THAN (50), PARTITION [over_50] VALUES LESS THAN MAXVALUE)     
+dba.tbl     CREATE TABLE [tbl] ([id] INTEGER NOT NULL, [val] INTEGER,  INDEX [ix_val_de02] ([val]) WITH DEDUPLICATE=2) REUSE_OID, COLLATE utf8_bin PARTITION BY RANGE ([id])  (PARTITION [below_50] VALUES LESS THAN (50), PARTITION [over_50] VALUES LESS THAN MAXVALUE)     
 
 ===================================================
 0
@@ -141,13 +141,13 @@ dba.tbl     CREATE TABLE [tbl] ([id] INTEGER NOT NULL, [val] INTEGER,  INDEX [ix
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.tbl     CREATE TABLE [tbl] ([id] INTEGER NOT NULL, [val] CHARACTER VARYING(2000), [val2] INTEGER,  INDEX [ix_val_de02] ([val], [val2]) WITH DEDUPLICATE=2) REUSE_OID, COLLATE iso88591_bin PARTITION BY LIST ([val])  (PARTITION [tv_null] VALUES IN (NULL), PARTITION [tv_zero] VALUES IN ('0'), PARTITION [tv_one] VALUES IN ('1'))     
+dba.tbl     CREATE TABLE [tbl] ([id] INTEGER NOT NULL, [val] CHARACTER VARYING(2000), [val2] INTEGER,  INDEX [ix_val_de02] ([val], [val2]) WITH DEDUPLICATE=2) REUSE_OID, COLLATE utf8_bin PARTITION BY LIST ([val])  (PARTITION [tv_null] VALUES IN (NULL), PARTITION [tv_zero] VALUES IN ('0'), PARTITION [tv_one] VALUES IN ('1'))     
 
 ===================================================
 Error:-1044
 ===================================================
 TABLE    CREATE TABLE    
-dba.tbl     CREATE TABLE [tbl] ([id] INTEGER NOT NULL, [val] CHARACTER VARYING(2000), [val2] INTEGER,  INDEX [ix_val_de02] ([val], [val2]) WITH DEDUPLICATE=2) REUSE_OID, COLLATE iso88591_bin PARTITION BY LIST ([val])  (PARTITION [tv_null] VALUES IN (NULL), PARTITION [tv_zero] VALUES IN ('0'), PARTITION [tv_one] VALUES IN ('1'))     
+dba.tbl     CREATE TABLE [tbl] ([id] INTEGER NOT NULL, [val] CHARACTER VARYING(2000), [val2] INTEGER,  INDEX [ix_val_de02] ([val], [val2]) WITH DEDUPLICATE=2) REUSE_OID, COLLATE utf8_bin PARTITION BY LIST ([val])  (PARTITION [tv_null] VALUES IN (NULL), PARTITION [tv_zero] VALUES IN ('0'), PARTITION [tv_one] VALUES IN ('1'))     
 
 ===================================================
 0
@@ -159,13 +159,13 @@ dba.tbl     CREATE TABLE [tbl] ([id] INTEGER NOT NULL, [val] CHARACTER VARYING(2
 100
 ===================================================
 TABLE    CREATE TABLE    
-dba.tbl     CREATE TABLE [tbl] ([id] INTEGER NOT NULL, [val] CHARACTER VARYING(2000),  INDEX [ix_val_de02] ([val]) WITH DEDUPLICATE=2) REUSE_OID, COLLATE iso88591_bin PARTITION BY HASH ([id]) PARTITIONS 3     
+dba.tbl     CREATE TABLE [tbl] ([id] INTEGER NOT NULL, [val] CHARACTER VARYING(2000),  INDEX [ix_val_de02] ([val]) WITH DEDUPLICATE=2) REUSE_OID, COLLATE utf8_bin PARTITION BY HASH ([id]) PARTITIONS 3     
 
 ===================================================
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.tbl     CREATE TABLE [tbl] ([id] INTEGER NOT NULL, [val] INTEGER,  INDEX [ix_val_de02] ([val]) WITH DEDUPLICATE=2) REUSE_OID, COLLATE iso88591_bin PARTITION BY HASH ([id]) PARTITIONS 3     
+dba.tbl     CREATE TABLE [tbl] ([id] INTEGER NOT NULL, [val] INTEGER,  INDEX [ix_val_de02] ([val]) WITH DEDUPLICATE=2) REUSE_OID, COLLATE utf8_bin PARTITION BY HASH ([id]) PARTITIONS 3     
 
 ===================================================
 0

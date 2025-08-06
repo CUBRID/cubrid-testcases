@@ -35,4 +35,4 @@ execute st using '/a';
 DROP TRIGGER tr_t;
 drop table t;
 deallocate prepare st;
-set names iso88591;
+set names utf8;
