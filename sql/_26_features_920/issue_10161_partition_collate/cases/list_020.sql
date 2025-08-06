@@ -17,4 +17,4 @@ select * from t1 partition(a2) order by b;
 select * from t1 partition(a3) order by b;
 drop table t1;
 
-set names iso88591;
+set names utf8;

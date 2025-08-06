@@ -48,4 +48,4 @@ select a, hex(a) from (select distinct a from (select * from t1 order by b)) ord
 
 drop table t1;
 
-set names iso88591;
+set names utf8;
