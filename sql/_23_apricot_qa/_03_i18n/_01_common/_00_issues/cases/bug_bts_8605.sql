@@ -11,4 +11,4 @@ select * from t where '年' between s1 and s2 order by s1;
 select * from t where '年' between s2 and s1 order by s1;
 
 drop t;
-set names iso88591;
+set names utf8;

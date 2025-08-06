@@ -17,4 +17,4 @@ select id,lower(v1),lower(v2),upper(v1),upper(v2) from t order by 1;
 select id,v1,v2,lower(v1),lower(cast(v2 as string collate utf8_tr_cs_uca)),upper(v1),upper(cast(v2 as string collate utf8_tr_cs_uca)) from t order by 1;
 select id,v1,v2,lower(cast(v1 as string collate utf8_de_exp)),lower(v2),upper(cast(v1 as string collate utf8_de_exp)),upper(v2) from t order by 1;
 drop t;
-set names iso88591;
+set names utf8;
