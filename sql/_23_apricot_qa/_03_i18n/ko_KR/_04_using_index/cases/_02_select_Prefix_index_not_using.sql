@@ -19,6 +19,6 @@ select/*+ recompile*/* from t where col3>N'abc' order by 3;
 select/*+ recompile*/* from t where col4>N'abc' order by 4;
 select/*+ recompile*/* from t where col5>'abc' order by 5;
 drop table t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

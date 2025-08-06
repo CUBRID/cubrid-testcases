@@ -16,6 +16,6 @@ insert into t values ( upper('你好'),  upper('你好'),  upper(N'你好'),  up
 select * from t order by 1;
 
 drop table t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

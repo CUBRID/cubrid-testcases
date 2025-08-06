@@ -9,29 +9,29 @@
 ===================================================
 2
 ===================================================
-concat_ws(_utf8'+', s1, _utf8'가')    
+concat_ws('+', s1, '가')    
 가+가     
 伽+가     
 
 ===================================================
-concat_ws(_utf8'+', s1, _utf8'가')    
+concat_ws('+', s1, '가')    
 伽+가     
 가+가     
 
 ===================================================
-concat_ws(_utf8'+',  cast(s1 as varchar collate utf8_gen), _utf8'가')    
+concat_ws('+',  cast(s1 as varchar collate utf8_gen), '가')    
 伽+가     
 가+가     
 
 ===================================================
-concat_ws(_utf8'+',  cast(s1 as varchar collate utf8_ko_cs_uca), _utf8'가')    
+concat_ws('+',  cast(s1 as varchar collate utf8_ko_cs_uca), '가')    
 가+가     
 伽+가     
 
 ===================================================
 Error:-494
 ===================================================
-concat_ws(_utf8'+', t1.s1,  cast(t2.s1 as varchar collate utf8_ko_cs_uca))    
+concat_ws('+', t1.s1,  cast(t2.s1 as varchar collate utf8_ko_cs_uca))    
 가+가     
 가+伽     
 伽+가     
@@ -42,7 +42,7 @@ concat_ws(_utf8'+', t1.s1,  cast(t2.s1 as varchar collate utf8_ko_cs_uca))
 ===================================================
 Error:-494
 ===================================================
-concat_ws( cast(t1.sep as varchar collate utf8_bin), _utf8't1.s1', t2.s1)    
+concat_ws( cast(t1.sep as varchar), 't1.s1', t2.s1)    
 t1.s1+伽     
 t1.s1+伽     
 t1.s1+가     

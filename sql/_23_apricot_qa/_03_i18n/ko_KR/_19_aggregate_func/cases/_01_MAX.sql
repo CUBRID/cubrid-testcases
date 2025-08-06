@@ -25,6 +25,6 @@ select max(UNIQUE col4) from t;
 select max(UNIQUE col5) from t;
 
 drop table t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
