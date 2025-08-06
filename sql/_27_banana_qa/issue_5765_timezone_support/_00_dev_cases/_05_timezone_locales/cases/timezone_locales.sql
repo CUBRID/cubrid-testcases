@@ -101,4 +101,4 @@ select to_datetime_tz('23:59:59.00 2001-12-11 Europe/Vienna');
 
 set system parameters 'intl_date_lang=en_US';
 
-set names iso88591;
+set names utf8;
