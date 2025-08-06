@@ -40,4 +40,4 @@ partition p1 values in('a' charset euckr),
 partition p2 values in('가'));
 
 drop table if exists t;
-set names iso88591;
+set names utf8;

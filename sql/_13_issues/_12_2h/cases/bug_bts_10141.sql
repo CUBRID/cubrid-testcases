@@ -25,4 +25,4 @@ select distinct 1 from t2;
 select distinct t2.* from t2;
 
 drop table if exists t2;
-set names iso88591 collate iso88591_bin;
+set names utf8;

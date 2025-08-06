@@ -15,3 +15,4 @@ select chr(65) collate utf8_ko_cs;
 select 1 from db_class where SCHEMA() is not null limit 1;
 select substr('aa',2) collate iso88591_bin;
 select substr('aa',2) collate utf8_bin;
+set names utf8;
