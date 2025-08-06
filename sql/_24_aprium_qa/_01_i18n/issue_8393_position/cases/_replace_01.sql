@@ -24,6 +24,6 @@ select i,s,replace (s,'SS ','XX') from t order by 1;
 select i,s,replace (s,'Ss','Xx') from t order by 1;
 
 drop table t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

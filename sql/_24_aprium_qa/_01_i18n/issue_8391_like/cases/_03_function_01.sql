@@ -36,4 +36,4 @@ insert into t values('bbb','%Bb_%');
 select s,trim(replace(s,'b','B')),trim(p) from t where trim(replace(s,'b','B')) collate utf8_gen like trim(p) collate utf8_gen order by 1;
 
 drop t;
-set names iso88591;
+set names utf8;

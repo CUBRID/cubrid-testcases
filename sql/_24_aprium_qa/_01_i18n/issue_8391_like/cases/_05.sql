@@ -22,6 +22,6 @@ select * from t where s like '%か%' order by 1;
 
 
 drop table t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
