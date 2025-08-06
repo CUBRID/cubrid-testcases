@@ -33,6 +33,6 @@ prepare st from 'select to_char(?)';
 execute st using 'a';
 deallocate prepare st;
 
-set names iso88591;
+set names utf8;
 
 --+ holdcas off;
