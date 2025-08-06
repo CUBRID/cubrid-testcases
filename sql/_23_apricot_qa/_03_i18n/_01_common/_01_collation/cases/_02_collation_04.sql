@@ -37,4 +37,4 @@ select * from t__p__p2 order by 1;
 alter table t reorganize partition p2 into (partition p21 values less than ('각'),partition p22 values less than ('간'));
 drop t;
 drop t__p__p1;
-set names iso88591;
+set names utf8;

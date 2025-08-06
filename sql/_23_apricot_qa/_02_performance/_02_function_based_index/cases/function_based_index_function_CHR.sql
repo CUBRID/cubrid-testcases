@@ -52,7 +52,7 @@ create index i_t1_a2h on t1(CHR(j));
 create index i_t1_a2g on t1(CHR(k));
 --TEST Create successfully
 create index i_t1_a2f on t1(CHR(l));
---TEST Create successfully
+--TEST Create failed 
 create index i_t1_a2e on t1(CHR(m));
 --TEST Create failed 
 create index i_t1_a2d on t1(CHR(n));

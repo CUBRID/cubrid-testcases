@@ -137,6 +137,6 @@ SELECT TO_DATETIME('2011-05-01 SONNTAG 10:11:12 Nachm.', 'yyyy-MM-DD DAY HH:MI:S
 SELECT TO_DATETIME('2011-05-01 SONNTAG 10:11:12 Vorm.', 'yyyy-MM-DD DAY HH:MI:SS A.M.');
 set system parameters 'intl_date_lang = en_US';
 set system parameters 'intl_number_lang = en_US';
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

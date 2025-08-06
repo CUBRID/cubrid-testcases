@@ -21,4 +21,4 @@ insert into t__p__p1 values('伽'),('假'),('却');
 
 drop t__p__p1;
 drop t;
-set names iso88591;
+set names utf8;

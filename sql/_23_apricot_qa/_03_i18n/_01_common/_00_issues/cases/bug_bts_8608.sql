@@ -19,4 +19,4 @@ select replace('abbaabaabb',s2,s1) from tbl order by 1 desc;
 select replace('ab baabaabb',s2,s1) from tbl order by 1 desc;
 
 drop tbl;
-set names iso88591;
+set names utf8;
