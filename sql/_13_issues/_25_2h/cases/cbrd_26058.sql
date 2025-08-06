@@ -1,4 +1,21 @@
--- evalulate 1 - Mixed CASE branches (Integer in THEN, NULL in ELSE)
+/**
+ *  This test case verifies CBRD-26058 : Fix error in CASE expression with logical type
+ *  
+ *  Coverage:
+ *  Different Scenario
+1 - Mixed CASE branches (Integer in THEN, NULL in ELSE)
+2 - THEN returns 0 or 1
+3 - THEN returns TRUE or FALSE
+4 - THEN returns string literals
+5 - THEN returns 1, 2, or NULL
+6 - THEN contains scalar subquery
+7 - CASE in SELECT list (comparison vs NULL)
+8 - THEN comparison predicate, ELSE NULL
+9 - THEN NULL, ELSE comparison predicate
+10 - CASE in ORDER BY (comparison vs NULL)
+ */
+
+evaluate '1 - Mixed CASE branches (Integer in THEN, NULL in ELSE)';
 SELECT DISTINCT dummy
 FROM dual T1
 WHERE
@@ -18,7 +35,7 @@ WHERE
             )
     END = 1;
 
--- evalulate 2 - THEN returns 0 or 1
+evaluate '2 - THEN returns 0 or 1';
 SELECT DISTINCT dummy
 FROM dual T1
 WHERE
@@ -33,7 +50,7 @@ WHERE
         ELSE FALSE
     END = 1;
 
--- evalulate 3 - THEN returns TRUE or FALSE
+evaluate '3 - THEN returns TRUE or FALSE';
 SELECT DISTINCT dummy
 FROM dual T1
 WHERE
@@ -48,7 +65,7 @@ WHERE
         ELSE FALSE
     END = TRUE;
 
--- evalulate 4 - THEN returns string literals
+evaluate '4 - THEN returns string literals';
 SELECT DISTINCT dummy
 FROM dual T1
 WHERE
@@ -63,7 +80,7 @@ WHERE
         ELSE FALSE
     END = TRUE;
 
--- evalulate 5 - THEN returns 1, 2, or NULL
+evaluate '5 - THEN returns 1, 2, or NULL';
 SELECT DISTINCT dummy
 FROM dual T1
 WHERE
@@ -78,7 +95,7 @@ WHERE
         ELSE FALSE
     END = TRUE;
 
--- evalulate 6 - THEN contains scalar subquery
+evaluate '6 - THEN contains scalar subquery';
 SELECT DISTINCT dummy
 FROM dual T1
 WHERE
@@ -88,12 +105,45 @@ WHERE
         ELSE FALSE
     END = TRUE;
 
--- evalulate 7 - CASE expression in SELECT clause
+evaluate '7 - CASE in SELECT list (comparison vs NULL)';
+-- THEN : comparison predicate (dummy = 'X')
+-- ELSE : NULL
 SELECT dummy,
        CASE
-           WHEN dummy = 'X' THEN 'label-X'
-           WHEN dummy = 'Y' THEN 'label-Y'
-           ELSE 'Other'
-       END AS label
+           WHEN dummy = 'X' THEN dummy = 'X'
+           ELSE NULL
+       END AS flag
 FROM dual;
 
+evaluate '8 - THEN comparison predicate, ELSE NULL';
+-- THEN : comparison predicate (dummy != 'X')
+-- ELSE : NULL
+SELECT DISTINCT dummy
+FROM dual
+WHERE
+    CASE
+        WHEN dummy = 'X' THEN dummy != 'X'
+        ELSE NULL
+    END = TRUE;
+
+evaluate '9 - THEN NULL, ELSE comparison predicate';
+-- THEN : NULL
+-- ELSE : comparison predicate (dummy = 'X')
+SELECT DISTINCT dummy
+FROM dual
+WHERE
+    CASE
+        WHEN dummy != 'X' THEN NULL
+        ELSE dummy = 'X'
+    END = TRUE;
+
+evaluate '10 - CASE in ORDER BY (comparison vs NULL)';
+-- THEN : comparison predicate (dummy = 'X')
+-- ELSE : NULL
+SELECT dummy
+FROM dual
+ORDER BY CASE
+             WHEN dummy = 'X' THEN dummy = 'X'
+             ELSE NULL
+         END;
+         
