@@ -2,6 +2,7 @@
 --+ holdcas on;
 
 --example01
+set names iso88591;
 drop table if exists [partition];
 
 CREATE TABLE [partition](id integer AUTO_INCREMENT(1,1) NOT NULL,
@@ -42,6 +43,6 @@ ALTER TABLE [partition] PARTITION BY RANGE ([[ch]]) (PARTITION p1 VALUES LESS TH
 show create table [partition];
 
 drop table if exists [partition];
-
+set names utf8;
 --+ holdcas off;
 commit;

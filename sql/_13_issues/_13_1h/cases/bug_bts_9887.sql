@@ -14,4 +14,4 @@ select charset('abc'), if(charset('abc')='euckr', 'OK','NOK');
 select charset(''), if(charset('')='euckr', 'OK','NOK');
 select charset('~*. '), if(charset('~*. ')='euckr', 'OK','NOK');
 
-set names iso88591;
+set names utf8;

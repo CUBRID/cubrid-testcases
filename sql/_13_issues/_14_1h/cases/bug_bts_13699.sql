@@ -20,7 +20,7 @@ select * from _db_collation where coll_name=@v;
 
 
 drop variable @v;
-set names iso88591;
+set names utf8;
 
 
 --+ holdcas off;

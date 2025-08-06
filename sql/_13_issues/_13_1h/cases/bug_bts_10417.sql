@@ -22,5 +22,4 @@ show index in t1;
 
 
 drop table t1;
-
-
+set names utf8;

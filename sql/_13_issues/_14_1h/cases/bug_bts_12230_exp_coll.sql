@@ -36,6 +36,6 @@ select INDEX_PREFIX ('ab c', 'ab', 'd');
 
 select INDEX_PREFIX ('ab', 'ab  c', 'a');
 
-set names iso88591;
+set names utf8 collate utf8_bin;
 commit;
 autocommit on;

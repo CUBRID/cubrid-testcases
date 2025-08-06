@@ -6,3 +6,5 @@ select 'a' 'b';
 
 set names iso88591;
 select 'a' 'b';
+
+set names utf8;
