@@ -21,7 +21,7 @@ select * from Çç_Ğğ_İı_Öö_Şş_Üü order by s1 desc;
 drop trigger tr_Çç_Ğğ_İı_Öö_Şş_Üü;
 --test 
 drop table Çç_Ğğ_İı_Öö_Şş_Üü;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

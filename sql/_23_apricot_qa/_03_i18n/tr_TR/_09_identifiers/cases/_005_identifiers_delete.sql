@@ -23,7 +23,7 @@ delete from Çç_Ğğ_İı_Öö_Şş_Üü where i_Çç_Ğğ_İı_Öö_Şş_Üü=
 select * from Çç_Ğğ_İı_Öö_Şş_Üü;
 --test 
 drop table Çç_Ğğ_İı_Öö_Şş_Üü;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 
