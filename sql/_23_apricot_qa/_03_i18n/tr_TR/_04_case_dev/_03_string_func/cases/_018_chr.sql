@@ -7,6 +7,6 @@ insert into test_tr values (193, 193,193,193,193,193,193);
 select chr(sh1), chr(i1), chr (b1), chr(n1) , chr (f1), chr (d1), chr (m1) from test_tr;
 
 drop table test_tr;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

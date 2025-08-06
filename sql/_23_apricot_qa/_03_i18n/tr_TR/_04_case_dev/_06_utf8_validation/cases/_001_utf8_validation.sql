@@ -47,7 +47,7 @@ insert into t1 values ('ñ1xxx');
 insert into t1 values ('úxxxxx');
 
 drop table test_utf8;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

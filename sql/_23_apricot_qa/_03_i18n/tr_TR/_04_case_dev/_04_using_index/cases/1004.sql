@@ -32,7 +32,7 @@ select * from foo where i = 101 or t = 'dŞükb' using index int_idx(+), foo_udx
 select * from foo where i = 101 or t = 'dŞükb' using index none  order by t;
 
 drop class foo;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 
