@@ -26,6 +26,6 @@ select to_number ('123,456.789','999,999.999');
 
 set system parameters 'intl_date_lang = ja_JP';
 set system parameters 'intl_number_lang = ja_JP';
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

@@ -31,6 +31,6 @@ select id,name from test_jp where name IN {'Qdぁ1' , '卍卍ヰ亜亜Qン '} or
 select id,name from test_jp where name NOT IN {'ぁはァヰン ' , 'Qddヰ亜愛Qン ', 'Qdぁ1' , 'Qァ遠沢ン'} order by 1;
 
 drop table test_jp;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
