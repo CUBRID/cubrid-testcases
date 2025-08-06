@@ -6,6 +6,6 @@ SELECT ASCII(cast( _utf8'abc' as string charset iso88591));
 SELECT ASCII(chr(0));
 
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

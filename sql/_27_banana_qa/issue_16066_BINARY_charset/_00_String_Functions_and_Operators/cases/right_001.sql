@@ -20,5 +20,5 @@ SELECT RIGHT(col_binary,10), HEX(RIGHT(col_euckr,10)), RIGHT(col_utf8,10), RIGHT
 SELECT RIGHT(col_binary,null), RIGHT(col_euckr,null), RIGHT(col_utf8,null), RIGHT(col_iso,null) from t order by 1;
 
 drop t;
-set names iso88591;
+set names utf8;
 --+ holdcas off;

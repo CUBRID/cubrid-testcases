@@ -25,6 +25,6 @@ SELECT (cast( _utf8'Öö_Şş_Üü2' as string charset iso88591)  REGEXP BINARY 
 SELECT ('chr(0)'  REGEXP '^字符');
 
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

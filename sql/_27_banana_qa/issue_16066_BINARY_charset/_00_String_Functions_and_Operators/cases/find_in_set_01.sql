@@ -45,6 +45,6 @@ drop prepare st3;
 drop variable @a;
 drop table t1;
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

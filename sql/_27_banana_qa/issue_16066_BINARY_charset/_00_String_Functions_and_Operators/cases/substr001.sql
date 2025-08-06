@@ -25,6 +25,6 @@ SELECT SUBSTR(cast( _utf8'Öö_Şş_Üü2Öö_Şş_Üü2Öö_Şş_Üü2' as stri
 SELECT SUBSTR(chr(0),3,1);
 
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

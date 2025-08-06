@@ -21,6 +21,6 @@ SELECT id,TO_BASE64(col_iso) , FROM_BASE64(TO_BASE64(col_iso))  from t1 order by
 
 drop table t1;
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
