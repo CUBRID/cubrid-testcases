@@ -39,6 +39,6 @@ select id, name, RPAD (name,7,'図') from test_jp order by 1;
 select id, name, RPAD (name,7,'辷図') from test_jp order by 1;
 
 drop table test_jp;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

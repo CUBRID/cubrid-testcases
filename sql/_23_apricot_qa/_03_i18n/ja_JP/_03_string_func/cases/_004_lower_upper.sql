@@ -67,7 +67,7 @@ select id, name, CHAR_LENGTH (name), lower (name), CHAR_LENGTH (lower(name)), up
 select id, name, OCTET_LENGTH (name), lower (name), OCTET_LENGTH (lower(name)), upper(name), OCTET_LENGTH (upper(name))  from test_jp order by 1;
 
 drop table test_jp;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

@@ -30,7 +30,7 @@ SELECT * FROM db_index WHERE class_name='t1' order by 1,2;
 SELECT lower(col3) FROM t1 where lower(col3) >''order by lower(col3);
 
 drop class t1;
-set names iso88591;
+set names utf8;
 
 commit;
 --+ holdcas off;

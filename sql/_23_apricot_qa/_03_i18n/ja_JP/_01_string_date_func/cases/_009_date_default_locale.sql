@@ -49,6 +49,6 @@ select to_char (time'10:11:12');
 
 set system parameters 'intl_date_lang = ja_JP';
 set system parameters 'intl_number_lang = ja_JP';
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

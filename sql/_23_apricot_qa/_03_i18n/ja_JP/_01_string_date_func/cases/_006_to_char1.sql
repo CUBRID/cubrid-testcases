@@ -119,6 +119,6 @@ SELECT TO_CHAR(datetime'2011-12-01 20:11:12.678', 'HH:MI:SS A.m.');
 select TO_CHAR(cast (12 as float));
 set system parameters 'intl_date_lang = ja_JP';
 set system parameters 'intl_number_lang = ja_JP';
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

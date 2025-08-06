@@ -137,7 +137,7 @@ SELECT TO_DATETIME('2011-05-01 日曜日 10:11:12 午後', 'yyyy-MM-DD DAY HH:MI
 SELECT TO_DATETIME('2011-05-01 日曜日 10:11:12 午前', 'yyyy-MM-DD DAY HH:MI:SS A.M.');
 set system parameters 'intl_date_lang = ja_JP';
 set system parameters 'intl_number_lang = ja_JP';
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 
