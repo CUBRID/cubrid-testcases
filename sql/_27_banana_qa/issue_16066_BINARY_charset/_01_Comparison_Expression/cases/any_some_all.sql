@@ -39,7 +39,7 @@ select * from t1 where id=1 and col_binary = SOME{cast ('문자열' as string co
 select * from t1 where id=1 and col_binary = ANY{cast ('문자열' as string collate binary), 'ÀÏ'};
 drop table t1;
 
-set names iso88591;
+set names utf8;
 commit;
 
 --+ holdcas off;
