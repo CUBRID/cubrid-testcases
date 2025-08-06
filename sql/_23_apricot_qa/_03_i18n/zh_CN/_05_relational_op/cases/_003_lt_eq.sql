@@ -37,6 +37,6 @@ select id,name from test_cn where name < '蛤咱 ' order by 1;
 select id,name from test_cn where name < '_ ' order by 1;
 
 drop table test_cn;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

@@ -10,6 +10,6 @@ select * from 测试表__p__p1;
 desc 测试表;
 
 drop table 测试表;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

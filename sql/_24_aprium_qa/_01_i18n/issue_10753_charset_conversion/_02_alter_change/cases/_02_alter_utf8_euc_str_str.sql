@@ -17,7 +17,7 @@ select i1, cast (e1 as string charset utf8),  hex (e1) from t order by 1;
 alter table t modify e1 string charset utf8;
 select i1, e1, hex (e1) from t order by 1;
 
-set names iso88591;
+set names utf8;
 drop t;
 
 commit;

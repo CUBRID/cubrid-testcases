@@ -39,7 +39,7 @@ using index i_test_cn_name(+) order by 2;
 
 
 drop test_cn;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

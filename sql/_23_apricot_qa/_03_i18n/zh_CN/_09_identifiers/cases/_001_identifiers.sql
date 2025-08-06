@@ -45,7 +45,7 @@ alter table 表 drop constraint 约束2;
 alter table 表 drop column 列;
 alter table 表 drop column 列1;
 drop table 表;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 
