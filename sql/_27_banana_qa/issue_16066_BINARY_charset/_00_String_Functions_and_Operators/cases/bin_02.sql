@@ -13,6 +13,6 @@ SELECT BIN(col_binary), BIN(col_euckr), BIN(col_utf8), BIN(col_iso) from t1;
 
 
 drop table t1;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

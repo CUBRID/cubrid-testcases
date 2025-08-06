@@ -9,4 +9,4 @@ select length(a), length(b) from foo order by 2;
 
 drop table foo;
 
-
+set names utf8;

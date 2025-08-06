@@ -44,5 +44,5 @@ SELECT RTRIM('     011101     ', cast(_utf8'01     ' as string charset iso88591)
 SELECT concat('_',RTRIM('     011101     ', cast(_utf8' ' as string charset iso88591)),'_');
 SELECT concat('_',RTRIM(cast(_utf8'     011101     ' as string charset iso88591), ' '),'_');
 
-set names iso88591;
+set names utf8;
 --+ holdcas off;

@@ -22,7 +22,7 @@ select length(space(cast(_utf8'Öö_Şş_Üü 2' as string charset iso88591)));
 
 select space('chr(0)');
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

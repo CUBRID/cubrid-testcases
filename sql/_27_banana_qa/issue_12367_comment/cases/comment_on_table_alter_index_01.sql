@@ -35,6 +35,6 @@ alter table index_comment add index i_index_comment_name(name) comment'add new i
 select index_name, class_name, comment from db_index where class_name='index_comment' order by 1,2,3;
 select attr_name, class_name, comment from db_attribute where class_name='index_comment' order by 1,2,3;
 
-set names iso88591;
+set names utf8;
 
 drop table if exists index_comment;
