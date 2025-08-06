@@ -59,7 +59,7 @@ iscan
     sort:  ? asc collate iso?_en_cs
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_LS */ t?.a from t? t? where (t?.c> ?:? ) group by t?.a having max(t?.b collate iso?_en_ci)='a' collate iso?_en_ci
+select /*+ INDEX_LS */ t?.a from t? t? where (t?.c> ?:? ) group by t?.a having max(t?.b collate iso?_en_ci)= cast('a' as char(-?) collate iso?_en_ci)
 /* ---> skip GROUP BY */
 ===================================================
 a    
@@ -72,7 +72,7 @@ iscan
     sort:  ? asc collate iso?_en_cs
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_LS */ t?.a from t? t? where (t?.c> ?:? ) group by t?.a having max(t?.b collate iso?_en_cs)='a' collate iso?_en_cs
+select /*+ INDEX_LS */ t?.a from t? t? where (t?.c> ?:? ) group by t?.a having max(t?.b collate iso?_en_cs)= cast('a' as char(-?) collate iso?_en_cs)
 /* ---> skip GROUP BY */
 ===================================================
 a    
@@ -85,7 +85,7 @@ iscan
     sort:  ? asc collate iso?_en_cs
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_LS */ t?.a from t? t? where (t?.c> ?:? ) group by t?.a having max(t?.b collate iso?_en_cs)='A' collate iso?_en_cs
+select /*+ INDEX_LS */ t?.a from t? t? where (t?.c> ?:? ) group by t?.a having max(t?.b collate iso?_en_cs)= cast('A' as char(-?) collate iso?_en_cs)
 /* ---> skip GROUP BY */
 ===================================================
 a    
