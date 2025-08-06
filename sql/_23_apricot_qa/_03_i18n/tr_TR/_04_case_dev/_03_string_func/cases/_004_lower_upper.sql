@@ -120,6 +120,6 @@ select id, name, OCTET_LENGTH (name), lower (name), OCTET_LENGTH (lower(name)), 
 
 drop table test_tr;
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
