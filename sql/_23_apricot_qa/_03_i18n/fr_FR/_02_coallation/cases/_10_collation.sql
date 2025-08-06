@@ -369,6 +369,6 @@ INSERT INTO coll_test (id, s) values (4, 'X.');
 SELECT id, s FROM coll_test ORDER BY s;
 
 DROP TABLE coll_test;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

@@ -31,8 +31,8 @@ set names iso9 collate iso88591_en_ci;
 
 set names iso88591 collate iso88591_en_cp;
 
---restore default names : this assumes CUBRID_LANG=en_US (ISO-8859-1 charset)
-set names iso88591; 
+--restore default names : this assumes CUBRID_LANG=en_US (UTF-8 charset)
+set names utf8; 
 
 commit;
 --+ holdcas off;

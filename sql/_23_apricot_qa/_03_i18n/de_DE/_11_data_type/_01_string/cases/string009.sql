@@ -9,6 +9,6 @@ select * from t order by 1;
 update t set a='你',b='你',c=N'你',d=N'你',e='你' where a='ä';
 select * from t order by 1;
 drop table t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
