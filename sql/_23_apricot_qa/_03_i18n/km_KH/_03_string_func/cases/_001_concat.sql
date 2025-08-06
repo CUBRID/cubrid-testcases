@@ -7,6 +7,6 @@ SELECT '១០' || 'វិច្ឆិកា';
 select concat('ព្រឹក','ល្ងាច');
 
 select concat_ws(' ធ្នូ','វិច្ឆិកា','តុលា');
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
