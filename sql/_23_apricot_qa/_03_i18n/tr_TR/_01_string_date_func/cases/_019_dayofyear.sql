@@ -30,6 +30,6 @@ SELECT DAYOFYEAR('2010-01 OCAK');
 SELECT DAYOFYEAR('2010-01');
 set system parameters 'intl_date_lang = en_US';
 set system parameters 'intl_number_lang = en_US';
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

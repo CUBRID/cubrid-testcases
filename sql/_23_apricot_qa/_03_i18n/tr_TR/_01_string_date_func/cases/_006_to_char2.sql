@@ -172,6 +172,6 @@ SELECT TO_CHAR(DATE'2011-11-01', 'mon');
 SELECT TO_CHAR(DATE'2011-12-01', 'mon');
 set system parameters 'intl_date_lang = en_US';
 set system parameters 'intl_number_lang = en_US';
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

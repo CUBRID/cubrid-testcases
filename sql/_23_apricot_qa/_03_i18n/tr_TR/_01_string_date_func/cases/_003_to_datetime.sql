@@ -14,6 +14,6 @@ SELECT TO_DATETIME(null);
 SELECT TO_DATETIME(null,'yyyy-MM-DD DAY HH:MI:SS.FF');
 set system parameters 'intl_date_lang = en_US';
 set system parameters 'intl_number_lang = en_US';
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
