@@ -64,4 +64,4 @@ select HEX(cast('ß' as string collate euckr_bin));
 select 'ß' collate euckr_bin;
 
 drop t;
-set names iso88591;
+set names utf8;

@@ -39,4 +39,4 @@ select * from t using index i(+) order by 2;
 
 drop t;
 
-set names iso88591;
+set names utf8;

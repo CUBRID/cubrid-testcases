@@ -20,6 +20,6 @@ select t1.s from (select _utf8'Ñ' as s union select _utf8'N' union select _utf
 
 select t1.s from (select '¥' as s union select version()) t1 order by t1.s collate utf8_ja_exp_cbm;
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

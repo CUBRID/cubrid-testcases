@@ -88,7 +88,7 @@ temp(order by)
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-select ui.i?, ui.i?, ui.i?, ui.i? from ui ui where (ui.i?< ?:? ) using index ui.pk_ui_i?(-), ui.idx_i?, ui.idx_all, ui.idx_i?_i? order by ? desc 
+select ui.i?, ui.i?, ui.i?, ui.i? from ui ui where (ui.i?< ?:? ) using index ui.pk_ui_i?(-), ui.idx_all, ui.idx_i?_i?, ui.idx_i? order by ? desc 
 ===================================================
 i1    i2    i3    i4    
 3     18.0     bbb     1996-01-01     
@@ -205,7 +205,7 @@ temp(order by)
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-select ui.i?, ui.i?, ui.i?, ui.i? from ui ui where (ui.i?< ?:? ) and ui.i?<> cast(? as varchar) using index ui.idx_i?(-), ui.idx_i?(-), ui.idx_i?_i?(-), ui.idx_i?_i?(-), ui.idx_i?_i?_i?(+) order by ? desc 
+select ui.i?, ui.i?, ui.i?, ui.i? from ui ui where (ui.i?< ?:? ) and ui.i?<> cast(? as varchar) using index ui.idx_i?_i?(-), ui.idx_i?(-), ui.idx_i?_i?(-), ui.idx_i?(-), ui.idx_i?_i?_i?(+) order by ? desc 
 ===================================================
 i1    i2    i3    i4    
 7     null     aaa     1995-01-01     
@@ -222,7 +222,7 @@ temp(order by)
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-select ui.i?, ui.i?, ui.i?, ui.i? from ui ui where  to_date( cast(ui.i? as varchar))< cast('?-?-?' as date) using index ui.idx_i?(-), ui.idx_i?(-), ui.idx_all(-), ui.idx_i?_i?(+) order by ? desc 
+select ui.i?, ui.i?, ui.i?, ui.i? from ui ui where  to_date( cast(ui.i? as varchar))< cast('?-?-?' as date) using index ui.idx_all(-), ui.idx_i?(-), ui.idx_i?(-), ui.idx_i?_i?(+) order by ? desc 
 ===================================================
 i1    i2    i3    i4    
 7     null     aaa     1995-01-01     
@@ -239,7 +239,7 @@ temp(order by)
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-select ui.i?, ui.i?, ui.i?, ui.i? from ui ui where (ui.i?< ?:? ) using index ui.idx_i?_i?(-), ui.idx_i?(+), ui.idx_all(+) order by ? desc 
+select ui.i?, ui.i?, ui.i?, ui.i? from ui ui where (ui.i?< ?:? ) using index ui.idx_i?_i?(-), ui.idx_all(+), ui.idx_i?(+) order by ? desc 
 ===================================================
 i1    i2    i3    i4    
 2     null     bbb     1991-01-01     
@@ -256,7 +256,7 @@ temp(order by)
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select ui.i?, ui.i?, ui.i?, ui.i? from ui ui where  to_date( cast(ui.i? as varchar))< cast('?-?-?' as date) using index ui.idx_i?(-), ui.idx_all(-), ui.idx_i?_i?(-) order by ?, ?
+select ui.i?, ui.i?, ui.i?, ui.i? from ui ui where  to_date( cast(ui.i? as varchar))< cast('?-?-?' as date) using index ui.idx_all(-), ui.idx_i?(-), ui.idx_i?_i?(-) order by ?, ?
 ===================================================
 i1    i2    i3    i4    
 8     100.0     aaa     1998-01-01     
@@ -288,7 +288,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select ui.i?, ui.i?, ui.i?, ui.i? from ui ui where ((ui.i?= ?:? ) or (ui.i?= ?:? )) and ui.i?= ?:?  using index ui.idx_i?(-), ui.idx_i?(-), ui.pk_ui_i?(-), ui.idx_i?_i?(-), ui.idx_all(+), ui.idx_i?_i?, ui.idx_i?_i?_i? order by ?
+select ui.i?, ui.i?, ui.i?, ui.i? from ui ui where ((ui.i?= ?:? ) or (ui.i?= ?:? )) and ui.i?= ?:?  using index ui.idx_i?_i?(-), ui.idx_i?(-), ui.idx_i?(-), ui.pk_ui_i?(-), ui.idx_all(+), ui.idx_i?_i?_i?, ui.idx_i?_i? order by ?
 ===================================================
 i1    i2    i3    i4    
 1     8.0     ccc     1999-01-01     
@@ -300,7 +300,7 @@ sscan
     sargs: term[?] AND term[?] AND term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select ui.i?, ui.i?, ui.i?, ui.i? from ui ui where (ui.i?< ?:? ) and (ui.i?> ?:? ) and ui.i? is not null  and  to_date( cast(ui.i? as varchar))> cast('?-?-?' as date) using index ui.idx_i?(-), ui.idx_i?(-), ui.idx_i?(-), ui.idx_all(-), ui.pk_ui_i?(-), ui.idx_i?_i?(-), ui.idx_i?_i?(-), ui.idx_i?_i?_i?(-)
+select ui.i?, ui.i?, ui.i?, ui.i? from ui ui where (ui.i?< ?:? ) and (ui.i?> ?:? ) and ui.i? is not null  and  to_date( cast(ui.i? as varchar))> cast('?-?-?' as date) using index ui.idx_all(-), ui.idx_i?_i?(-), ui.idx_i?(-), ui.idx_i?(-), ui.idx_i?_i?_i?(-), ui.idx_i?(-), ui.idx_i?_i?(-), ui.pk_ui_i?(-)
 ===================================================
 0
 ===================================================
