@@ -28,4 +28,4 @@ select find_in_set('ぁー', 'a,B,ｧー');
 set nameS utf8;
 select find_in_set('ｧー', 'ぁー,B,b,c');
 
-set names iso88591;
+set names utf8;

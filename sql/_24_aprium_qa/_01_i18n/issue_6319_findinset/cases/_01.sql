@@ -25,6 +25,6 @@ select i, s, find_in_set ('SS ',s) from t order by 1;
 select i, s, find_in_set ('Ss',s) from t order by 1;
 
 drop table t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
