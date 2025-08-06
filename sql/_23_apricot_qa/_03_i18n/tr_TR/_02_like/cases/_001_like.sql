@@ -12,6 +12,6 @@ INSERT INTO test_tr(ch, vc, str) VALUES('乡', '乡', CONCAT(' ', '乡'));
 SELECT str FROM test_tr WHERE str LIKE 'a'; 
 
 DROP TABLE test_tr;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

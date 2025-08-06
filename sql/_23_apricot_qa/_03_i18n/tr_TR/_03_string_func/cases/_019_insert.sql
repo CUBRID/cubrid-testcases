@@ -25,6 +25,6 @@ select insert('Ğülen',3,-1,null);
 --test
 select insert('',1,1,'İzgğ');
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

@@ -14,7 +14,7 @@ select id, name, left (name,null) from test_tr order by 1;
 --test
 select id, name, left (name,100) from test_tr order by 1;
 drop table test_tr;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 
