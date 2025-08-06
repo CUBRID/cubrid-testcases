@@ -29,4 +29,4 @@ CREATE TABLE t1 (a ENUM('- -', '- -')) collate utf8_en_ci;
 CREATE TABLE t2 (a ENUM(_utf8'- -',_utf8'- -')) collate utf8_en_ci; 
 
 drop table if exists t1,t2;
-set names iso88591 collate iso88591_bin;
+set names utf8;

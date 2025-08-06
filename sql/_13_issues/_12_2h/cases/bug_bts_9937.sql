@@ -9,4 +9,4 @@ set names iso88591;
 select 1 from db_class where ('B'>'a') collate iso88591_en_ci limit 1;
 select 1 from db_class where ('B'>'a') collate iso88591_en_cs limit 1;
 
-set names iso88591;
+set names utf8;

@@ -13,4 +13,4 @@ select coercibility(s2), COERCIBILITY(concat(s2,s2)), COERCIBILITY(s2||s2) from 
 select COERCIBILITY(concat(a,s)), COERCIBILITY(a||s) from t1;
 
 drop t1;
-set names iso88591;
+set names utf8;

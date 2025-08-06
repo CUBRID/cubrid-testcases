@@ -15,4 +15,4 @@ create table t(s string collate utf8_de_exp) partition by range(s) (partition p0
 set system parameters 'unicode_input_normalization=no';
 set system parameters 'unicode_output_normalization=no';
 
-set names iso88591;
+set names utf8;

@@ -87,6 +87,6 @@ select * from t2_8725_001_in where a not in (select a from t1_8725_001_in);
 drop t1_8725_001_in;
 drop t2_8725_001_in;
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
