@@ -16,7 +16,7 @@ alter table Çç_Ğğ_İı_Öö_Şş_Üü drop constraint i_Çç_Ğğ_İı_Öö_
 alter table Çç_Ğğ_İı_Öö_Şş_Üü drop column i_Çç_Ğğ_İı_Öö_Şş_Üü;
 --test 
 drop table Çç_Ğğ_İı_Öö_Şş_Üü;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

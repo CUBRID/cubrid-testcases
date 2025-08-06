@@ -12,6 +12,6 @@ select i, blob_to_bit(b1), clob_to_char(c1) from t1 order by 1;
 drop table t1;
 set system parameters 'intl_date_lang = en_US';
 set system parameters 'intl_number_lang = en_US';
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

@@ -13,6 +13,6 @@ CREATE TABLE Çç_Ğğ_İı_Öö_Şş_Üü (
  SHOW COLUMNS FROM Çç_Ğğ_İı_Öö_Şş_Üü where "Default" like '_\%你%' escape '\';
  DESC Çç_Ğğ_İı_Öö_Şş_Üü;
  drop table Çç_Ğğ_İı_Öö_Şş_Üü;
- set names iso88591;
+ set names utf8;
 commit;
 --+ holdcas off;
