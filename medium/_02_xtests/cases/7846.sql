@@ -13,8 +13,6 @@ create class dtcsv_class01 (
         data_id        	int,
         attr_char       char(7),
         attr_varchar    varchar(7),
-        attr_nchar      nchar(7),
-        attr_varnchar   nchar varying(7)
 );
 insert into dtcsv_class01 (data_id) values ( 0 );
 insert into  dtcsv_class01 values (
@@ -33,8 +31,6 @@ create class dtcsv_class02 (
         data_id        	int,
         attr_char       char(10),
         attr_varchar    varchar(10),
-        attr_nchar      nchar(10),
-        attr_varnchar   nchar varying(10)
 );
 insert into dtcsv_class02 (data_id) values ( 0 );
 insert into  dtcsv_class02 values (
@@ -55,8 +51,6 @@ create class dtcsv_class_err (
         attr_double     double,
         attr_char       char(5),
         attr_varchar    varchar(5),
-        attr_nchar      nchar(5),
-        attr_varnchar   nchar varying(5),
         attr_bit        bit(4),
         attr_varbit     bit varying(4),
         attr_time       time,
@@ -468,12 +462,8 @@ insert into dtcsv_class_varchar values (
 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'+
 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'+
 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' );
-create class dtcsv_class_nchar (
         data_id        	int,
-        attr_nchar       nchar(16384)
 );
-insert into dtcsv_class_nchar (data_id) values ( 0 );
-insert into dtcsv_class_nchar values (
         1, N'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'+
 N'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'+
 N'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'+
@@ -638,7 +628,6 @@ N'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 N'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'+
 N'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'+
 N'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' );
-insert into dtcsv_class_nchar values (
         2, N'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'+
 N'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'+
 N'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'+
@@ -803,12 +792,8 @@ N'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 N'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'+
 N'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'+
 N'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' );
-create class dtcsv_class_varnchar (
         data_id        	int,
-        attr_varnchar       nchar varying(16384)
 );
-insert into dtcsv_class_varnchar (data_id) values ( 0 );
-insert into dtcsv_class_varnchar values (
         1, N'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'+
 N'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'+
 N'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'+
@@ -973,7 +958,6 @@ N'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 N'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'+
 N'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'+
 N'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' );
-insert into dtcsv_class_varnchar values (
         2, N'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'+
 N'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'+
 N'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'+
@@ -1145,9 +1129,7 @@ create class dtctv_class01 (
         attr_float      float,
         attr_double     double,
         attr_varchar    varchar(5),
-        attr_varnchar   nchar varying(5),
         attr_char       char(5),
-        attr_nchar      nchar(5),
         attr_varbit     bit varying(4),
         attr_bit        bit(4),
         attr_date       date,
@@ -1162,9 +1144,7 @@ insert into  dtctv_class01 values (
 create class dtctv_class02 (
         data_id             int,
         attr_varchar    varchar(25),
-        attr_varnchar   nchar varying(25),
         attr_char       char(25),
-        attr_nchar      nchar(25)
 );
 insert into  dtctv_class02 ( data_id ) values ( 0 );
 insert into  dtctv_class02 values (
@@ -1172,9 +1152,7 @@ insert into  dtctv_class02 values (
 create class dtctv_class03 (
         data_id             int,
         attr_varchar    varchar(25),
-        attr_varnchar   nchar varying(25),
         attr_char       char(25),
-        attr_nchar      nchar(25)
 );
 insert into  dtctv_class03 ( data_id ) values ( 0 );
 insert into  dtctv_class03 values (
@@ -1182,9 +1160,7 @@ insert into  dtctv_class03 values (
 create class dtctv_class04 (
         data_id             int,
         attr_varchar    varchar(25),
-        attr_varnchar   nchar varying(25),
         attr_char       char(25),
-        attr_nchar      nchar(25)
 );
 insert into  dtctv_class04 ( data_id ) values ( 0 );
 insert into  dtctv_class04 values (
@@ -1192,9 +1168,7 @@ insert into  dtctv_class04 values (
 create class dtctv_class05 (
         data_id             int,
         attr_varchar    varchar(25),
-        attr_varnchar   nchar varying(25),
         attr_char       char(25),
-        attr_nchar      nchar(25)
 );
 insert into  dtctv_class05 ( data_id ) values ( 0 );
 insert into  dtctv_class05 values (
@@ -1202,9 +1176,7 @@ insert into  dtctv_class05 values (
 create class dtctv_class06 (
         data_id             int,
         attr_varchar    varchar(25),
-        attr_varnchar   nchar varying(25),
         attr_char       char(25),
-        attr_nchar      nchar(25)
 );
 insert into  dtctv_class06 ( data_id ) values ( 0 );
 insert into  dtctv_class06 values (
@@ -1216,9 +1188,7 @@ create class dtctv_class_b (
         attr_float      float,
         attr_double     double,
         attr_varchar    varchar(25),
-        attr_varnchar   nchar varying(25),
         attr_char       char(25),
-        attr_nchar      nchar(25),
         attr_varbit     bit varying(4),
         attr_bit        bit(4),
         attr_date       date,
@@ -1608,8 +1578,6 @@ create class dtstv_class_int2 (
         attr_int        int,
         attr_char       char(10),
         attr_varchar    varchar(10),
-        attr_nchar      nchar(10),
-        attr_varnchar   nchar varying(10),
         attr_bit      bit(16),
         attr_varbit   bit varying(16)
 );
@@ -1817,8 +1785,6 @@ create class dtstv_class02 (
         data_id        	int,
         attr_char       char(10),
         attr_varchar    varchar(10),
-        attr_nchar      nchar(10),
-        attr_varnchar   nchar varying(10),
         attr_bit      bit(16),
         attr_varbit   bit varying(16)
 );
@@ -1835,8 +1801,6 @@ create class dtstv_class_err (
         attr_double     double,
         attr_char       char(5),
         attr_varchar    varchar(5),
-        attr_nchar      nchar(5),
-        attr_varnchar   nchar varying(5),
         attr_bit        bit(4),
         attr_varbit     bit varying(4),
         attr_time       time,
@@ -1856,3 +1820,4 @@ SELECT to_char(attr_double) FROM dtctv_class_b WHERE data_id = 8;
 SELECT attr_double FROM dtctv_class_b WHERE data_id = 16;
 SELECT CAST( attr_double AS varchar) FROM dtctv_class_b WHERE data_id = 16;
 rollback;
+

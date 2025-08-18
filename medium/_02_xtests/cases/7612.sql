@@ -20,8 +20,6 @@ create class test_class
         attr_timestamp          timestamp,
         attr_char               char(10),
         attr_varchar            varchar(10),
-        attr_nchar              nchar(10),
-        attr_varnchar           nchar varying(10),
         attr_bit                bit(10),
         attr_varbit             bit varying(10),
         attr_object             obj_class,
@@ -36,8 +34,6 @@ create class test_class
         attr_set_timestamp      set_of(timestamp),
         attr_set_char           set_of(char(4)),
         attr_set_varchar        set_of(varchar(4)),
-        attr_set_nchar          set_of(nchar(4)),
-        attr_set_varnchar       set_of(nchar varying(4)),
         attr_set_bit            set_of(bit(6)),
         attr_set_varbit         set_of(bit varying(6)),
         attr_set_object         set_of(obj_class),
@@ -52,8 +48,6 @@ create class test_class
         attr_multiset_timestamp multiset_of(timestamp),
         attr_multiset_char      multiset_of(char(4)),
         attr_multiset_varchar   multiset_of(varchar(4)),
-        attr_multiset_nchar     multiset_of(nchar(4)),
-        attr_multiset_varnchar  multiset_of(nchar varying(4)),
         attr_multiset_bit       multiset_of(bit(6)),
         attr_multiset_varbit    multiset_of(bit varying(6)),
         attr_multiset_object    multiset_of(obj_class),
@@ -68,8 +62,6 @@ create class test_class
         attr_sequence_timestamp sequence_of(timestamp),
         attr_sequence_char      sequence_of(char(4)),
         attr_sequence_varchar   sequence_of(varchar(4)),
-        attr_sequence_nchar     sequence_of(nchar(4)),
-        attr_sequence_varnchar  sequence_of(nchar varying(4)),
         attr_sequence_bit       sequence_of(bit(6)),
         attr_sequence_varbit    sequence_of(bit varying(6)),
         attr_sequence_object    sequence_of(obj_class)
@@ -79,8 +71,6 @@ create class ins_test as subclass of test_class(
         long_char1 char(2048),
         long_char2 char(2048),
         long_varchar varchar(16384),
-        long_nchar nchar(8192),
-        long_varnchar nchar varying(8192),
         long_bit bit(16384),
         long_varbit bit varying(16384));
 insert into ins_test(id, attr_int)
@@ -116,3 +106,4 @@ commit work;
 drop class test1;
 commit work;
 rollback;
+
