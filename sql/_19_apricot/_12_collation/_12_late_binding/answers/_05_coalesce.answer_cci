@@ -24,7 +24,7 @@ temp(order by)
     sort:  ? asc collate utf?_en_ci, ? asc collate utf?_en_ci
     cost:  ? card ?
 Query stmt:
-select t?.s?, coalesce(t?.s?,  cast('AA' as char(-?) collate utf?_en_ci)) from t? t? order by ?, ?
+select t?.s?, coalesce(t?.s?, 'AA' collate utf?_en_ci) from t? t? order by ?, ?
 ===================================================
 s1    coalesce(s1, 'AA')    
 null     AA     
@@ -39,7 +39,7 @@ temp(order by)
     sort:  ? asc collate utf?_en_ci, ? asc collate utf?_en_ci
     cost:  ? card ?
 Query stmt:
-select t?.s?, coalesce(t?.s?,  cast('AA' as char(-?) collate utf?_en_ci)) from t? t? order by ?, ?
+select t?.s?, coalesce(t?.s?, 'AA' collate utf?_en_ci) from t? t? order by ?, ?
 ===================================================
 s1    coalesce(s1, 'AA')    
 null     AA     
@@ -54,7 +54,7 @@ temp(order by)
     sort:  ? asc collate iso?_en_cs, ? asc collate iso?_en_cs
     cost:  ? card ?
 Query stmt:
-select t?.s?, coalesce(t?.s?, 'AA' collate iso?_en_cs) from t? t? order by ?, ?
+select t?.s?, coalesce(t?.s?,  cast('AA' as char(-?) collate iso?_en_cs)) from t? t? order by ?, ?
 ===================================================
 0
 ===================================================
@@ -125,7 +125,7 @@ temp(order by)
     sort:  ? asc collate utf?_en_ci
     cost:  ? card ?
 Query stmt:
-select t?.s? from t? t? where  cast('aa' as varchar collate utf?_en_ci)>coalesce(t?.s?,  cast('?' as char(-?) collate utf?_en_ci)) order by ?
+select t?.s? from t? t? where  cast('aa' as varchar collate utf?_en_ci)>coalesce(t?.s?, '?' collate utf?_en_ci) order by ?
 ===================================================
 s1    
 null     
@@ -139,7 +139,7 @@ temp(order by)
     sort:  ? asc collate utf?_en_ci
     cost:  ? card ?
 Query stmt:
-select t?.s? from t? t? where  cast('aa' as char(-?) collate utf?_en_ci)>coalesce(t?.s?,  cast('?' as char(-?) collate utf?_en_ci)) order by ?
+select t?.s? from t? t? where 'aa' collate utf?_en_ci>coalesce(t?.s?, '?' collate utf?_en_ci) order by ?
 ===================================================
 s1    
 null     
@@ -154,7 +154,7 @@ temp(order by)
     sort:  ? asc collate iso?_en_cs
     cost:  ? card ?
 Query stmt:
-select t?.s? from t? t? where 'aa' collate iso?_en_cs>coalesce(t?.s?, '?' collate iso?_en_cs) order by ?
+select t?.s? from t? t? where  cast('aa' as char(-?) collate iso?_en_cs)>coalesce(t?.s?,  cast('?' as char(-?) collate iso?_en_cs)) order by ?
 ===================================================
 0
 ===================================================
