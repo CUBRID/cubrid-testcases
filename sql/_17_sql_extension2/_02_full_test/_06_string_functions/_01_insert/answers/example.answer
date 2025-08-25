@@ -43,11 +43,11 @@ if(insert( cast('abcdefghijk' as char(32)), 5, 3, 'XXX')='abcdXXXhijk', 'ok', 'n
 nok     
 
 ===================================================
-if(insert( cast(N'abcdefghijk' as nchar varying(32)), 5, 3, N'XXX')=N'abcdXXXhijk', 'ok', 'nok')    
+if(insert( cast('abcdefghijk' as varchar(32)), 5, 3, 'XXX')='abcdXXXhijk', 'ok', 'nok')    
 ok     
 
 ===================================================
-if(insert( cast(N'abcdefghijk' as nchar(32)), 5, 3, N'XXX')=N'abcdXXXhijk', 'ok', 'nok')    
+if(insert( cast('abcdefghijk' as char(32)), 5, 3, 'XXX')='abcdXXXhijk', 'ok', 'nok')    
 nok     
 
 ===================================================
@@ -63,23 +63,31 @@ if(insert(vc, 2, 3, vc)=insert( cast('ABCDE' as varchar(32)), 2, 3,  cast('ABCDE
 ok     
 
 ===================================================
-if(insert(nc, 2, 3, nc)=insert( cast(N'vwxyz' as nchar(32)), 2, 3,  cast(N'vwxyz' as nchar(32))), 'ok', 'nok')    
+if(insert(nc, 2, 3, nc)=insert( cast('vwxyz' as char(32)), 2, 3,  cast('vwxyz' as char(32))), 'ok', 'nok')    
 ok     
 
 ===================================================
-if(insert(vnc, 2, 3, vnc)=insert( cast(N'VWXYZ' as nchar varying(32)), 2, 3,  cast(N'VWXYZ' as nchar varying(32))), 'ok', 'nok')    
+if(insert(vnc, 2, 3, vnc)=insert( cast('VWXYZ' as varchar(32)), 2, 3,  cast('VWXYZ' as varchar(32))), 'ok', 'nok')    
 ok     
 
 ===================================================
 0
 ===================================================
-Error:-494
+insert( cast('abcdefghijk' as varchar(32)), 5, 3, 'XXX')    
+abcdXXXhijk     
+
 ===================================================
-Error:-494
+insert( cast('abcdefghijk' as char(32)), 5, 3, 'XXX')    
+abcdXXXhijk                          
+
 ===================================================
-Error:-494
+insert( cast('abcdefghijk' as varchar(32)), 5, 3, 'XXX')    
+abcdXXXhijk     
+
 ===================================================
-Error:-494
+insert( cast('abcdefghijk' as char(32)), 5, 3, 'XXX')    
+abcdXXXhijk                          
+
 ===================================================
 if(insert( cast(12345 as smallint), 3, 2,  cast(99 as smallint))='12995', 'ok', 'nok')    
 ok     
@@ -217,7 +225,7 @@ insert('abcde', '1', 3, 'x')
 xde     
 
 ===================================================
-insert('abcde', N'1', 3, 'x')    
+insert('abcde', '1', 3, 'x')    
 xde     
 
 ===================================================
@@ -375,7 +383,13 @@ Error:-494
 ===================================================
 Error:-494
 ===================================================
-Error:-494
+insert( ?:0 ,  ?:1 ,  ?:2 ,  ?:3 )    
+xcde     
+
+===================================================
+insert( ?:0 ,  ?:1 ,  ?:2 ,  ?:3 )    
+xcde     
+
 ===================================================
 Error:-494
 ===================================================
@@ -397,8 +411,8 @@ Error:-494
 ===================================================
 Error:-494
 ===================================================
-Error:-494
-===================================================
-Error:-494
+insert( ?:0 ,  ?:1 ,  ?:2 ,  ?:3 )    
+xcde     
+
 ===================================================
 0
