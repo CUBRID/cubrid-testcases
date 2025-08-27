@@ -507,6 +507,7 @@ begin
    dbms_output.put_line('v_TIMESTAMP ' || v_TIMESTAMP );
 end;
 call type_support();
+drop procedure type_support;
 
 
 
