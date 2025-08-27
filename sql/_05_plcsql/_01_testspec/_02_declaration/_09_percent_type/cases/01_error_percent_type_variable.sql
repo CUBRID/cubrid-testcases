@@ -513,6 +513,8 @@ call type_support();
 
 
 
+drop procedure type_support;
+
 drop table  type_support ;
 
 --+ server-message off
