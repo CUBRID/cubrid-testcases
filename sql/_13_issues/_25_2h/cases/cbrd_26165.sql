@@ -82,3 +82,8 @@ BEGIN
 END;
 
 SELECT foo(3);
+
+DROP PROCEDURE test_pl;
+DROP FUNCTION foo;
+DROP TABLE test_tbl;
+DROP TABLE ttt;
