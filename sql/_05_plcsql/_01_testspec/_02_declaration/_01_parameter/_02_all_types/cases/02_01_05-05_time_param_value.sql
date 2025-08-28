@@ -34,9 +34,11 @@ call t(TIME'1:15', TIME'13:15:45');
 
 call t(TIME'1:15', TIME'13:15:45 am');
 
-call t(TIME'25:15', TIME'13:15:45 am'); --error
+--error
+call t(TIME'25:15', TIME'13:15:45 am');
 
-call t(TIME'1:15', TIME'13:15:61 am'); --error
+--error
+call t(TIME'1:15', TIME'13:15:61 am');
 
 drop procedure t;
 
