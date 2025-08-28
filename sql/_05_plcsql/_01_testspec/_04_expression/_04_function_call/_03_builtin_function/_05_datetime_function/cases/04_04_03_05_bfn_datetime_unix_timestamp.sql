@@ -4,7 +4,8 @@
 
 create or replace procedure t () as
 begin
-    dbms_output.put_line(UNIX_TIMESTAMP(NULL)); -- parse NULL param error
+    -- parse NULL param error
+    dbms_output.put_line(UNIX_TIMESTAMP(NULL));
     -- 0000-00-00 date/datetime value convert error
     dbms_output.put_line(UNIX_TIMESTAMP(TO_DATETIME('0000-00-00 00:00:00.000')));
     dbms_output.put_line(UNIX_TIMESTAMP(TIMESTAMP('0000-00-00 00:00:00.000')));

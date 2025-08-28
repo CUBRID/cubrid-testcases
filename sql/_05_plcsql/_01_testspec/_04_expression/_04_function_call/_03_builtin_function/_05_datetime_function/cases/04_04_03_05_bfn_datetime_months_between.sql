@@ -4,8 +4,9 @@
 
 create or replace procedure t () as
 begin
-    dbms_output.put_line(MONTHS_BETWEEN(NULL, NULL)); -- parse NULL param error
-    dbms_output.put_line(MONTHS_BETWEEN(TO_DATETIME('1999-01-11 12:34:52.333'), NULL)));  -- parse NULL param error
+    -- parse NULL param error
+    dbms_output.put_line(MONTHS_BETWEEN(NULL, NULL));
+    dbms_output.put_line(MONTHS_BETWEEN(TO_DATETIME('1999-01-11 12:34:52.333'), NULL));
 end;
 
 select count(*) from db_stored_procedure where sp_name = 't';

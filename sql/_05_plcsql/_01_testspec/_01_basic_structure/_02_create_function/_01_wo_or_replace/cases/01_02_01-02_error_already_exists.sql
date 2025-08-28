@@ -7,7 +7,8 @@ begin
     return i;
 end;
 
-create function t(i int) return int as    -- error
+-- error
+create function t(i int) return int as   
 begin
     return i;
 end;

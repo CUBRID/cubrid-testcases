@@ -4,7 +4,8 @@
 
 create or replace procedure t () as
 begin
-    dbms_output.put_line(TRIM(NULL)); -- param NULL parse error for first param
+    -- param NULL parse error for first param
+    dbms_output.put_line(TRIM(NULL));
     dbms_output.put_line('[' || TRIM('   CUBRID   ') || ']');
 
     -- TRIM() keyword FROM/LEADING/TRAILING/BOTH parse error
