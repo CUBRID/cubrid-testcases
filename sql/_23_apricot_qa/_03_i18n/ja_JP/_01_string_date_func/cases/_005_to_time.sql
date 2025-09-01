@@ -16,7 +16,7 @@ SELECT TO_TIME('10:11:12 午後', 'HH:MI:SS P.M.');
 SELECT TO_TIME('10:11:12 午前', 'HH:MI:SS A.M.');
 set system parameters 'intl_date_lang = ja_JP';
 set system parameters 'intl_number_lang = ja_JP';
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

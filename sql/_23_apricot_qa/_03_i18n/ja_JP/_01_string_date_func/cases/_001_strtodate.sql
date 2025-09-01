@@ -115,6 +115,6 @@ SELECT STR_TO_DATE('10月 1, 2013 8:11:12 午前','%M %d,%Y %h:%i:%s %p') FROM d
 SELECT STR_TO_DATE('10月 1, 2013 8:11:12 午前','%M %d,%Y %r') FROM db_root;
 set system parameters 'intl_date_lang = ja_JP';
 set system parameters 'intl_number_lang = ja_JP';
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

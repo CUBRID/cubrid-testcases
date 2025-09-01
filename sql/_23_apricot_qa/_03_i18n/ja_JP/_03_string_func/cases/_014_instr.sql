@@ -61,7 +61,7 @@ select instr ('午前.西暦','前.西',-1);
 select instr ('午前.西暦','前.西',-2);
 
 select instr ('午前.西暦','前.西',-3);
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 
