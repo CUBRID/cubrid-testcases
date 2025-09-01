@@ -5,6 +5,6 @@ create index 색인2 on 테이블(lower(칼럼1));
 select * from _db_index where index_name like'색%' order by index_name;
 
 drop table 테이블;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

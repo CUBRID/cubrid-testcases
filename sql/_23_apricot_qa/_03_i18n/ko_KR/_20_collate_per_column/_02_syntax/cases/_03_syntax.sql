@@ -8,7 +8,7 @@ SHOW full COLUMNS FROM t1;
 alter table  t1 CHANGE s1 a INTEGER;
 SHOW full COLUMNS FROM t1;
 drop t1;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

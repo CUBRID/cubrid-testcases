@@ -5,6 +5,6 @@ create index 색인2 on 테이블(lower(칼럼2),칼럼1);
 select * from db_class where class_name like'테이%' order by class_name;
 
 drop table 테이블;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

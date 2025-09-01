@@ -28,6 +28,6 @@ select concat(t1.s1, cast (t2.s1 as string collate utf8_ko_cs_uca)) from t1,t2 o
 
 drop table t1;
 drop table t2;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

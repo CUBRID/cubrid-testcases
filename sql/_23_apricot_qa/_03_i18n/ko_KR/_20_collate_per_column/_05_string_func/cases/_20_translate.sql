@@ -32,6 +32,6 @@ select translate(t1.s1, cast (t2.s1 as string collate utf8_ko_cs_uca),'X') from 
 
 drop table t1;
 drop table t2;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
