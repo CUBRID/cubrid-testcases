@@ -39,6 +39,6 @@ order by 2,1;
 
 drop test_kh;
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

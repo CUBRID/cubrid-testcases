@@ -442,7 +442,7 @@ INSERT INTO coll_test (id, s) values (2, 'x឴');
 SELECT id, s FROM coll_test ORDER BY s;
 
 DROP TABLE coll_test;
-set names iso88591;
+set names utf8;
 set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

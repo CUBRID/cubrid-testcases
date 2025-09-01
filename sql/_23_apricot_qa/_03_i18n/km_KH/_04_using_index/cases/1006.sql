@@ -22,7 +22,7 @@ select * from test_kh where i = 102 and s IN { 'ឯឡ៏ខឯ' , 'ឯឡ៏ខ
 
 
 drop class test_kh;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

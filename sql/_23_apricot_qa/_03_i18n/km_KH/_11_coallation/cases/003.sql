@@ -79,6 +79,6 @@ SELECT *,hex(col2) from t order by col2,col1;
 SELECT *,hex(col2) from t order by col2 desc,col1;
 
 DROP TABLE t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
