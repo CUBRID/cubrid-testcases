@@ -21,6 +21,6 @@ select (hex(hex(col3))),col3, count(col3) from t group by col2, col3, col4 order
 select (hex(hex(col4))),col4, count(col3) from t group by col3, col4, col5 order by 1;
 select (hex(hex(col5))),col5, count(col3) from t group by col4, col5, col1 order by 1;
 drop table t;
-set names iso88591;
+set names utf8;
 commit;
 autocommit on;
