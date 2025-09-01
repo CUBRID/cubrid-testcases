@@ -62,14 +62,14 @@ id    ts
 4     -02 America/Sao_Paulo     
 
 ===================================================
-id    to_char(tsltz, _utf8'TZD:TZM')    
+id    to_char(tsltz, 'TZD:TZM')    
 1     -02:00     
 2     -03:00     
 3     -03:00     
 4     -02:00     
 
 ===================================================
-id    to_char(ts, _utf8'TZH:TZM TZR TZD')    
+id    to_char(ts, 'TZH:TZM TZR TZD')    
 1     -02:00 America/Sao_Paulo -02     
 2     -03:00 America/Sao_Paulo -03     
 3     -03:00 America/Sao_Paulo -03     
@@ -85,53 +85,143 @@ id    to_char(ts)    to_char(tsltz)    to_char(tstz)
 ===================================================
 0
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 )    to_char(tsltz,  ?:1 )    to_char(tstz,  ?:2 )    
+1     21, 25/12/31 10:30:45 Nachm.     21, 25/12/31 10:55:45 Nachm.     21, 25/12/31 10:30:45 Nachm.     
+2     21, 14/06/30 09:30:21 Nachm.     21, 14/06/30 06:00:21 Vorm.     21, 14/06/30 07:30:21 Nachm.     
+3     21, 14/06/29 08:30:21 Nachm.     21, 14/06/29 06:30:21 Nachm.     21, 14/06/30 07:30:21 Vorm.     
+4     21, 08/12/31 09:59:59 Nachm.     21, 08/12/31 09:59:59 Nachm.     21, 08/12/31 11:59:59 Nachm.     
+
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 )    to_char(tsltz,  ?:1 )    to_char(tstz,  ?:2 )    
+1     21, 25/12/31 10:30:45 Nachm. America/Sao_Paulo     21, 25/12/31 10:55:45 Nachm. America/Sao_Paulo     21, 25/12/31 10:30:45 Nachm. America/Sao_Paulo     
+2     21, 14/06/30 09:30:21 Nachm. America/Sao_Paulo     21, 14/06/30 06:00:21 Vorm. America/Sao_Paulo     21, 14/06/30 07:30:21 Nachm. America/New_York     
+3     21, 14/06/29 08:30:21 Nachm. America/Sao_Paulo     21, 14/06/29 06:30:21 Nachm. America/Sao_Paulo     21, 14/06/30 07:30:21 Vorm. Asia/Seoul     
+4     21, 08/12/31 09:59:59 Nachm. America/Sao_Paulo     21, 08/12/31 09:59:59 Nachm. America/Sao_Paulo     21, 08/12/31 11:59:59 Nachm. Europe/London     
+
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 )    to_char(tsltz,  ?:1 )    to_char(tstz,  ?:2 )    
+1     21, 25/12/31 10:30:45 Nachm. America/Sao_Paulo -02     21, 25/12/31 10:55:45 Nachm. America/Sao_Paulo -02     21, 25/12/31 10:30:45 Nachm. America/Sao_Paulo -02     
+2     21, 14/06/30 09:30:21 Nachm. America/Sao_Paulo -03     21, 14/06/30 06:00:21 Vorm. America/Sao_Paulo -03     21, 14/06/30 07:30:21 Nachm. America/New_York EDT     
+3     21, 14/06/29 08:30:21 Nachm. America/Sao_Paulo -03     21, 14/06/29 06:30:21 Nachm. America/Sao_Paulo -03     21, 14/06/30 07:30:21 Vorm. Asia/Seoul KST     
+4     21, 08/12/31 09:59:59 Nachm. America/Sao_Paulo -02     21, 08/12/31 09:59:59 Nachm. America/Sao_Paulo -02     21, 08/12/31 11:59:59 Nachm. Europe/London GMT     
+
 ===================================================
-Error:-1098
-===================================================
-0
-===================================================
-Error:-1098
-===================================================
-Error:-1098
-===================================================
-Error:-1098
-===================================================
-Error:-1098
-===================================================
-0
-===================================================
-Error:-1098
-===================================================
-Error:-1098
-===================================================
-Error:-1098
-===================================================
-Error:-1098
-===================================================
-Error:-1098
+id    to_char(ts,  ?:0 )    to_char(tsltz,  ?:1 )    to_char(tstz,  ?:2 )    
+1     21, 25/12/31 10:30:45 Nachm. -02:00     21, 25/12/31 10:55:45 Nachm. -02:00     21, 25/12/31 10:30:45 Nachm. -02:00     
+2     21, 14/06/30 09:30:21 Nachm. -03:00     21, 14/06/30 06:00:21 Vorm. -03:00     21, 14/06/30 07:30:21 Nachm. -04:00     
+3     21, 14/06/29 08:30:21 Nachm. -03:00     21, 14/06/29 06:30:21 Nachm. -03:00     21, 14/06/30 07:30:21 Vorm. +09:00     
+4     21, 08/12/31 09:59:59 Nachm. -02:00     21, 08/12/31 09:59:59 Nachm. -02:00     21, 08/12/31 11:59:59 Nachm. +00:00     
+
 ===================================================
 0
 ===================================================
+id    to_char(ts,  ?:0 )    to_char(tsltz,  ?:1 )    to_char(tstz,  ?:2 )    
+1     21, 25/12/31 06:07:45 Nachm. -06:23     21, 25/12/31 06:32:45 Nachm. -06:23     21, 25/12/31 10:30:45 Nachm. America/Sao_Paulo     
+2     21, 14/06/30 06:07:21 Nachm. -06:23     21, 14/06/30 02:37:21 Vorm. -06:23     21, 14/06/30 07:30:21 Nachm. America/New_York     
+3     21, 14/06/29 05:07:21 Nachm. -06:23     21, 14/06/29 03:07:21 Nachm. -06:23     21, 14/06/30 07:30:21 Vorm. Asia/Seoul     
+4     21, 08/12/31 05:36:59 Nachm. -06:23     21, 08/12/31 05:36:59 Nachm. -06:23     21, 08/12/31 11:59:59 Nachm. Europe/London     
+
+===================================================
+id    to_char(ts,  ?:0 )    to_char(tsltz,  ?:1 )    to_char(tstz,  ?:2 )    
+1     21, 25/12/31 06:07:45 Nachm.      21, 25/12/31 06:32:45 Nachm.      21, 25/12/31 10:30:45 Nachm. -02     
+2     21, 14/06/30 06:07:21 Nachm.      21, 14/06/30 02:37:21 Vorm.      21, 14/06/30 07:30:21 Nachm. EDT     
+3     21, 14/06/29 05:07:21 Nachm.      21, 14/06/29 03:07:21 Nachm.      21, 14/06/30 07:30:21 Vorm. KST     
+4     21, 08/12/31 05:36:59 Nachm.      21, 08/12/31 05:36:59 Nachm.      21, 08/12/31 11:59:59 Nachm. GMT     
+
+===================================================
+id    to_char(ts,  ?:0 )    to_char(tsltz,  ?:1 )    to_char(tstz,  ?:2 )    
+1     21, 25/12/31 06:07:45 Nachm. -06:23     21, 25/12/31 06:32:45 Nachm. -06:23     21, 25/12/31 10:30:45 Nachm. -02:00     
+2     21, 14/06/30 06:07:21 Nachm. -06:23     21, 14/06/30 02:37:21 Vorm. -06:23     21, 14/06/30 07:30:21 Nachm. -04:00     
+3     21, 14/06/29 05:07:21 Nachm. -06:23     21, 14/06/29 03:07:21 Nachm. -06:23     21, 14/06/30 07:30:21 Vorm. +09:00     
+4     21, 08/12/31 05:36:59 Nachm. -06:23     21, 08/12/31 05:36:59 Nachm. -06:23     21, 08/12/31 11:59:59 Nachm. +00:00     
+
+===================================================
+id    to_char(ts,  ?:0 )    to_char(tsltz,  ?:1 )    to_char(tstz,  ?:2 )    
+1     21, 25/12/31 06:07:45 Nachm. -06:23      21, 25/12/31 06:32:45 Nachm. -06:23      21, 25/12/31 10:30:45 Nachm. America/Sao_Paulo -02     
+2     21, 14/06/30 06:07:21 Nachm. -06:23      21, 14/06/30 02:37:21 Vorm. -06:23      21, 14/06/30 07:30:21 Nachm. America/New_York EDT     
+3     21, 14/06/29 05:07:21 Nachm. -06:23      21, 14/06/29 03:07:21 Nachm. -06:23      21, 14/06/30 07:30:21 Vorm. Asia/Seoul KST     
+4     21, 08/12/31 05:36:59 Nachm. -06:23      21, 08/12/31 05:36:59 Nachm. -06:23      21, 08/12/31 11:59:59 Nachm. Europe/London GMT     
+
+===================================================
+0
+===================================================
+id    to_char(ts,  ?:0 )    to_char(tsltz,  ?:1 )    to_char(tstz,  ?:2 )    
+1     31th, 2025; MI./4 18:30:45     31th, 2025; MI./4 18:55:45     31th, 2025; MI./4 22:30:45     
+2     30th, 2014; MO./2 19:30:21     30th, 2014; MO./2 04:00:21     30th, 2014; MO./2 19:30:21     
+3     29th, 2014; SO./1 18:30:21     29th, 2014; SO./1 16:30:21     30th, 2014; MO./2 07:30:21     
+4     31th, 2008; MI./4 17:59:59     31th, 2008; MI./4 17:59:59     31th, 2008; MI./4 23:59:59     
+
+===================================================
+id    to_char(ts,  ?:0 )    to_char(tsltz,  ?:1 )    to_char(tstz,  ?:2 )    
+1     31th, 2025; MI./4 18:30:45 America/Mexico_City     31th, 2025; MI./4 18:55:45 America/Mexico_City     31th, 2025; MI./4 22:30:45 America/Sao_Paulo     
+2     30th, 2014; MO./2 19:30:21 America/Mexico_City     30th, 2014; MO./2 04:00:21 America/Mexico_City     30th, 2014; MO./2 19:30:21 America/New_York     
+3     29th, 2014; SO./1 18:30:21 America/Mexico_City     29th, 2014; SO./1 16:30:21 America/Mexico_City     30th, 2014; MO./2 07:30:21 Asia/Seoul     
+4     31th, 2008; MI./4 17:59:59 America/Mexico_City     31th, 2008; MI./4 17:59:59 America/Mexico_City     31th, 2008; MI./4 23:59:59 Europe/London     
+
+===================================================
+id    to_char(ts,  ?:0 )    to_char(tsltz,  ?:1 )    to_char(tstz,  ?:2 )    
+1     31th, 2025; MI./4 18:30:45 America/Mexico_City CST     31th, 2025; MI./4 18:55:45 America/Mexico_City CST     31th, 2025; MI./4 22:30:45 America/Sao_Paulo -02     
+2     30th, 2014; MO./2 19:30:21 America/Mexico_City CDT     30th, 2014; MO./2 04:00:21 America/Mexico_City CDT     30th, 2014; MO./2 19:30:21 America/New_York EDT     
+3     29th, 2014; SO./1 18:30:21 America/Mexico_City CDT     29th, 2014; SO./1 16:30:21 America/Mexico_City CDT     30th, 2014; MO./2 07:30:21 Asia/Seoul KST     
+4     31th, 2008; MI./4 17:59:59 America/Mexico_City CST     31th, 2008; MI./4 17:59:59 America/Mexico_City CST     31th, 2008; MI./4 23:59:59 Europe/London GMT     
+
+===================================================
+id    to_char(ts,  ?:0 )    to_char(tsltz,  ?:1 )    to_char(tstz,  ?:2 )    
+1     31th, 2025; MI./4 18:30:45 -06     31th, 2025; MI./4 18:55:45 -06     31th, 2025; MI./4 22:30:45 -02     
+2     30th, 2014; MO./2 19:30:21 -05     30th, 2014; MO./2 04:00:21 -05     30th, 2014; MO./2 19:30:21 -04     
+3     29th, 2014; SO./1 18:30:21 -05     29th, 2014; SO./1 16:30:21 -05     30th, 2014; MO./2 07:30:21 +09     
+4     31th, 2008; MI./4 17:59:59 -06     31th, 2008; MI./4 17:59:59 -06     31th, 2008; MI./4 23:59:59 +00     
+
+===================================================
+id    to_char(ts,  ?:0 )    to_char(tsltz,  ?:1 )    to_char(tstz,  ?:2 )    
+1     31th, 2025; MI./4 18:30:45 -06 00     31th, 2025; MI./4 18:55:45 -06 00     31th, 2025; MI./4 22:30:45 -02 00     
+2     30th, 2014; MO./2 19:30:21 -05 00     30th, 2014; MO./2 04:00:21 -05 00     30th, 2014; MO./2 19:30:21 -04 00     
+3     29th, 2014; SO./1 18:30:21 -05 00     29th, 2014; SO./1 16:30:21 -05 00     30th, 2014; MO./2 07:30:21 +09 00     
+4     31th, 2008; MI./4 17:59:59 -06 00     31th, 2008; MI./4 17:59:59 -06 00     31th, 2008; MI./4 23:59:59 +00 00     
+
+===================================================
 0
 ===================================================
 0
 ===================================================
 0
 ===================================================
-Error:-1098
+0
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 , 'de_DE')    to_char(tsltz,  ?:1 , 'de_DE')    to_char(tstz,  ?:2 , 'de_DE')    
+1     2026 Quarter  1, JANUAR-01 DONNERSTAG 08:30:45 Vorm.     2026 Quarter  1, JANUAR-01 DONNERSTAG 08:55:45 Vorm.     2025 Quarter  4, DEZEMBER-31 MITTWOCH  10:30:45 Nachm.     
+2     2014 Quarter  3, JULI-01 DIENSTAG  08:30:21 Vorm.     2014 Quarter  2, JUNI-30 MONTAG    05:00:21 Nachm.     2014 Quarter  2, JUNI-30 MONTAG    07:30:21 Nachm.     
+3     2014 Quarter  2, JUNI-30 MONTAG    07:30:21 Vorm.     2014 Quarter  2, JUNI-30 MONTAG    05:30:21 Vorm.     2014 Quarter  2, JUNI-30 MONTAG    07:30:21 Vorm.     
+4     2009 Quarter  1, JANUAR-01 DONNERSTAG 07:59:59 Vorm.     2009 Quarter  1, JANUAR-01 DONNERSTAG 07:59:59 Vorm.     2008 Quarter  4, DEZEMBER-31 MITTWOCH  11:59:59 Nachm.     
+
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 , 'de_DE')    to_char(tsltz,  ?:1 , 'de_DE')    to_char(tstz,  ?:2 , 'de_DE')    
+1     2026 Quarter  1, JANUAR-01 DONNERSTAG 08:30:45 Vorm. Asia/Shanghai     2026 Quarter  1, JANUAR-01 DONNERSTAG 08:55:45 Vorm. Asia/Shanghai     2025 Quarter  4, DEZEMBER-31 MITTWOCH  10:30:45 Nachm. America/Sao_Paulo     
+2     2014 Quarter  3, JULI-01 DIENSTAG  08:30:21 Vorm. Asia/Shanghai     2014 Quarter  2, JUNI-30 MONTAG    05:00:21 Nachm. Asia/Shanghai     2014 Quarter  2, JUNI-30 MONTAG    07:30:21 Nachm. America/New_York     
+3     2014 Quarter  2, JUNI-30 MONTAG    07:30:21 Vorm. Asia/Shanghai     2014 Quarter  2, JUNI-30 MONTAG    05:30:21 Vorm. Asia/Shanghai     2014 Quarter  2, JUNI-30 MONTAG    07:30:21 Vorm. Asia/Seoul     
+4     2009 Quarter  1, JANUAR-01 DONNERSTAG 07:59:59 Vorm. Asia/Shanghai     2009 Quarter  1, JANUAR-01 DONNERSTAG 07:59:59 Vorm. Asia/Shanghai     2008 Quarter  4, DEZEMBER-31 MITTWOCH  11:59:59 Nachm. Europe/London     
+
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 , 'de_DE')    to_char(tsltz,  ?:1 , 'de_DE')    to_char(tstz,  ?:2 , 'de_DE')    
+1     2026 Quarter  1, JANUAR-01 DONNERSTAG 08:30:45 Vorm. Asia/Shanghai CST     2026 Quarter  1, JANUAR-01 DONNERSTAG 08:55:45 Vorm. Asia/Shanghai CST     2025 Quarter  4, DEZEMBER-31 MITTWOCH  10:30:45 Nachm. America/Sao_Paulo -02     
+2     2014 Quarter  3, JULI-01 DIENSTAG  08:30:21 Vorm. Asia/Shanghai CST     2014 Quarter  2, JUNI-30 MONTAG    05:00:21 Nachm. Asia/Shanghai CST     2014 Quarter  2, JUNI-30 MONTAG    07:30:21 Nachm. America/New_York EDT     
+3     2014 Quarter  2, JUNI-30 MONTAG    07:30:21 Vorm. Asia/Shanghai CST     2014 Quarter  2, JUNI-30 MONTAG    05:30:21 Vorm. Asia/Shanghai CST     2014 Quarter  2, JUNI-30 MONTAG    07:30:21 Vorm. Asia/Seoul KST     
+4     2009 Quarter  1, JANUAR-01 DONNERSTAG 07:59:59 Vorm. Asia/Shanghai CST     2009 Quarter  1, JANUAR-01 DONNERSTAG 07:59:59 Vorm. Asia/Shanghai CST     2008 Quarter  4, DEZEMBER-31 MITTWOCH  11:59:59 Nachm. Europe/London GMT     
+
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 , 'de_DE')    to_char(tsltz,  ?:1 , 'de_DE')    to_char(tstz,  ?:2 , 'de_DE')    
+1     2026 Quarter  1, JANUAR-01 DONNERSTAG 08:30:45 Vorm. +08     2026 Quarter  1, JANUAR-01 DONNERSTAG 08:55:45 Vorm. +08     2025 Quarter  4, DEZEMBER-31 MITTWOCH  10:30:45 Nachm. -02     
+2     2014 Quarter  3, JULI-01 DIENSTAG  08:30:21 Vorm. +08     2014 Quarter  2, JUNI-30 MONTAG    05:00:21 Nachm. +08     2014 Quarter  2, JUNI-30 MONTAG    07:30:21 Nachm. -04     
+3     2014 Quarter  2, JUNI-30 MONTAG    07:30:21 Vorm. +08     2014 Quarter  2, JUNI-30 MONTAG    05:30:21 Vorm. +08     2014 Quarter  2, JUNI-30 MONTAG    07:30:21 Vorm. +09     
+4     2009 Quarter  1, JANUAR-01 DONNERSTAG 07:59:59 Vorm. +08     2009 Quarter  1, JANUAR-01 DONNERSTAG 07:59:59 Vorm. +08     2008 Quarter  4, DEZEMBER-31 MITTWOCH  11:59:59 Nachm. +00     
+
+===================================================
+id    to_char(ts,  ?:0 , 'de_DE')    to_char(tsltz,  ?:1 , 'de_DE')    to_char(tstz,  ?:2 , 'de_DE')    
+1     2026 Quarter  1, JANUAR-01 DONNERSTAG 08:30:45 Vorm. +08:00     2026 Quarter  1, JANUAR-01 DONNERSTAG 08:55:45 Vorm. +08:00     2025 Quarter  4, DEZEMBER-31 MITTWOCH  10:30:45 Nachm. -02:00     
+2     2014 Quarter  3, JULI-01 DIENSTAG  08:30:21 Vorm. +08:00     2014 Quarter  2, JUNI-30 MONTAG    05:00:21 Nachm. +08:00     2014 Quarter  2, JUNI-30 MONTAG    07:30:21 Nachm. -04:00     
+3     2014 Quarter  2, JUNI-30 MONTAG    07:30:21 Vorm. +08:00     2014 Quarter  2, JUNI-30 MONTAG    05:30:21 Vorm. +08:00     2014 Quarter  2, JUNI-30 MONTAG    07:30:21 Vorm. +09:00     
+4     2009 Quarter  1, JANUAR-01 DONNERSTAG 07:59:59 Vorm. +08:00     2009 Quarter  1, JANUAR-01 DONNERSTAG 07:59:59 Vorm. +08:00     2008 Quarter  4, DEZEMBER-31 MITTWOCH  11:59:59 Nachm. +00:00     
+
 ===================================================
 0
 ===================================================
