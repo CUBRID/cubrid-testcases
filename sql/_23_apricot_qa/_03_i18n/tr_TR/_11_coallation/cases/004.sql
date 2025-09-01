@@ -38,6 +38,6 @@ select * from t order by col2;
 select * from t order by col2 desc;
 
 drop table t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

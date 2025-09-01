@@ -33,7 +33,7 @@ SELECT col9 FROM t1 order by col9;
 
 drop class t1;
 
-set names iso88591;
+set names utf8;
 
 commit;
 --+ holdcas off;

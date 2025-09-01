@@ -14,7 +14,7 @@ CREATE OR REPLACE VIEW 视图 as Select * from Çç_Ğğ_İı_Öö_Şş_Üü ORD
 SHOW CREATE VIEW "视图";
 drop view 视图;
 drop table Çç_Ğğ_İı_Öö_Şş_Üü;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 
