@@ -16,3 +16,4 @@ create view v2 as select clob_to_char(c using utf8) collate utf8_de_exp as c fro
 drop t;
 drop v;
 drop v2;
+set names utf8;
