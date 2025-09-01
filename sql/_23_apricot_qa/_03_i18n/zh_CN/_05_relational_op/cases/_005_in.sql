@@ -31,6 +31,6 @@ select id,name from test_cn where name IN {'火咱工哎' , '蛤我我鹅他他�
 select id,name from test_cn where name NOT IN {'工洼垃鹅嗯 ' , '火咱咱鹅他她火嗯 ', '火咱工哎' , '火垃哈啊嗯'} order by 1;
 
 drop table test_cn;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
