@@ -40,6 +40,6 @@ using index i_test_tr_name(+) order by 2;
 
 
 drop test_tr;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

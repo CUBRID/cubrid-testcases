@@ -41,6 +41,6 @@ select id,name from test_tr where name >= ALL{'Şükran', 'İzğü'} order by 1;
 select id,name from test_tr where name <> ALL {'Gülen', 'İzzettin', 'İzgi', 'SevINÇ'} order by 1;
 
 drop table test_tr;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

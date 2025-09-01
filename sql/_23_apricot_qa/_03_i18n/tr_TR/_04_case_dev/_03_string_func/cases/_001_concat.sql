@@ -7,6 +7,6 @@ SELECT 'aöşüz' || 'öşü';
 select concat('ı','İ');
 
 select concat_ws('ö','Salı','PAZARTESİ');
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
