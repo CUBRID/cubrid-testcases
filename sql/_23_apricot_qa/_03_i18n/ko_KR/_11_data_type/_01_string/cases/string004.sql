@@ -83,6 +83,6 @@ select * from t where a>'규' and a<='균'order by 1;
 select * from t where a>='규' and a<='균'order by 1,5;
 
 drop table t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

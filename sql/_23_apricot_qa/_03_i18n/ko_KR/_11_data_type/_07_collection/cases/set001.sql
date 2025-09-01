@@ -7,6 +7,6 @@ INSERT INTO set_tbl VALUES ({''});
 SELECT * FROM set_tbl order by 1; 
 SELECT CAST(col_1 AS MULTISET), CAST(col_1 AS LIST) FROM set_tbl order by 1; ;
 drop table set_tbl;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

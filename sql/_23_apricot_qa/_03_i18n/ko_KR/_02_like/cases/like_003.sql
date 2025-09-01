@@ -20,6 +20,6 @@ select * from t order by 1,2;
 update t set col1='0x12345678' where col5 like '%可%';
 select * from t order by 1,2;
 drop table t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

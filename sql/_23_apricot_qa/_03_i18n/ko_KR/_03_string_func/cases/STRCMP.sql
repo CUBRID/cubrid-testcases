@@ -20,6 +20,6 @@ select * from t where STRCMP(col3,N'가伽')=1 order by 3;
 select * from t where STRCMP(col4,N'각刊')=1 order by 4;
 select * from t where STRCMP(col5,'嘉' )=1 order by 5;
 drop table t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
