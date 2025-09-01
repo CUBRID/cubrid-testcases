@@ -8,7 +8,7 @@ select repeat('Ğü',-1);
 select repeat('Ğu',32000000);
 --test
 select repeat('Ğu',16000000);
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 
