@@ -35,7 +35,7 @@ select * from t where s like 'x%Aa%x_%' escape 'A' order by 1;
 select * from t where s like 'x%A%%_' escape 'A' order by 1;
 
 drop table t;
-set names iso88591;
+set names utf8;
 
 set system parameters 'unicode_input_normalization=no';
 set system parameters 'unicode_output_normalization=no';
