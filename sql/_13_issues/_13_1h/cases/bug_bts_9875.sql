@@ -15,6 +15,6 @@ select length('中');
 select * from db_collation;
 
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

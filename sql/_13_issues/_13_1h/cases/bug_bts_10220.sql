@@ -7,4 +7,4 @@ deallocate prepare st;
 prepare st from 'select coercibility(? collate euckr_bin)';
 deallocate prepare st;
 
-set names iso88591;
+set names utf8;

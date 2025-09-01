@@ -19,5 +19,5 @@ select charset(decode(id, 1, a, 2, b)), collation(decode(id, 1, a, 2, b)) from t
 
 drop table t1;
 
-set names iso88591;
+set names utf8;
 

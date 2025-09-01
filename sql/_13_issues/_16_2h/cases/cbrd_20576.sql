@@ -30,5 +30,5 @@ execute st1 using '모음';
 drop table t1;
 drop variable @a1;
 deallocate prepare st1;
-set names iso88591;
+set names utf8;
 --+ holdcas off;

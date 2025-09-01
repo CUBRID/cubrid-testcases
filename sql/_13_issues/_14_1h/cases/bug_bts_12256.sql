@@ -21,6 +21,6 @@ select @b;
 
 
 drop variable @tmp, @a, @b;
-set names iso88591;
+set names utf8;
 
 --+ holdcas off;
