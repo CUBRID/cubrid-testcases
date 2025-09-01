@@ -29,6 +29,6 @@ show full columns in t1;
 
 drop table t1;
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

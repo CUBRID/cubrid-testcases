@@ -15,7 +15,7 @@ select collation(lcase('A' collate binary)),coercibility(lcase('A' collate binar
 select collation(mid('ABbD' collate binary,2,2)),coercibility(mid('ABbD' collate binary,2,2));
 select coercibility(date('2010-02-27 15:10:23'));
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 
