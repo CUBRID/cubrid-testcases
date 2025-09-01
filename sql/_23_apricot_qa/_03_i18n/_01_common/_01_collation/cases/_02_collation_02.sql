@@ -37,4 +37,4 @@ create index i on t(substring(v2,1,1)) ;
 select * from t where substring(v2,1,1)<'A'  order by 1,2;
 show full columns from t;
 drop t;
-set names iso88591;
+set names utf8;

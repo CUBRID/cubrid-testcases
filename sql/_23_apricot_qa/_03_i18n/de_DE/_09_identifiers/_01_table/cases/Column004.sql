@@ -9,4 +9,4 @@ select * from ßäöü你好 order by 1;
 insert into ßäöü你好(öü)values(7);
 select * from ßäöü你好 order by 1;
 drop table ßäöü你好;
-set names iso88591;
+set names utf8;

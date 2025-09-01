@@ -6,4 +6,4 @@ insert into ßäöü你好 values('a');
 insert into ßäöü你好 values('A');
 select * from ßäöü你好 order by 1;
 drop table ßäöü你好;
-set names iso88591;
+set names utf8;
