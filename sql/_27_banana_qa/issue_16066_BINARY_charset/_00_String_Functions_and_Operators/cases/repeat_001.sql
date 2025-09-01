@@ -31,5 +31,5 @@ select id, col_binary, repeat(col_binary, 3),HEX(repeat(col_euckr, 3)),repeat(co
 
 drop t1;
 
-set names iso88591;
+set names utf8;
 --+ holdcas off;

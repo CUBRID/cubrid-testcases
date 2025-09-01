@@ -35,5 +35,5 @@ SELECT id, MID(col_binary, 2,2), HEX(MID(col_euckr, 2,2)), MID(col_utf8, 2,2), M
 SELECT id, MID(col_binary, -2,3),HEX(MID(col_euckr, -2,3)),MID(col_utf8, -2,3),MID(col_iso, -2,3) from t order by 1;
 drop table if exists t;
 
-set names iso88591;
+set names utf8;
 --+ holdcas off;

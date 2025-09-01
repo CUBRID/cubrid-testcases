@@ -11,6 +11,6 @@ SELECT   CHAR_LENGTH(cast( _utf8'문자열' as string charset euckr));
 SELECT  CHARACTER_LENGTH(cast( _utf8'문자열' as string charset euckr));
 select LENGTHB(cast( _utf8'문자열' as string charset euckr));
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

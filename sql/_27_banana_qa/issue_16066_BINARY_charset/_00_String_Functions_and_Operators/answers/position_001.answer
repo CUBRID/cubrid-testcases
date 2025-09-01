@@ -9,7 +9,7 @@ position(_binary'abcd' in _binary'12345abcdeabcde')
 6     
 
 ===================================================
-position(_binary'나' in _binary'12345가나다라마가나다라마')    cast(_utf8'나' as varchar collate binary)    cast(_utf8'12345가나다라마가나다라마' as varchar collate binary)    
+position(_binary'나' in _binary'12345가나다라마가나다라마')    cast('나' as varchar collate binary)    cast('12345가나다라마가나다라마' as varchar collate binary)    
 9     EB 82 98      31 32 33 34 35 EA B0 80 EB 82 98 EB 8B A4 EB 9D BC EB A7 88 EA B0 80 EB 82 98 EB 8B A4 EB 9D BC EB A7 88      
 
 ===================================================
@@ -21,7 +21,7 @@ position(B'1' in B'000011110000')
 0     
 
 ===================================================
-position(_binary'中国' in _binary'中国人民共和国')    cast(_utf8'中国' as varchar collate binary)    cast(_utf8'中国人民共和国' as varchar collate binary)    
+position(_binary'中国' in _binary'中国人民共和国')    cast('中国' as varchar collate binary)    cast('中国人民共和国' as varchar collate binary)    
 1     E4 B8 AD E5 9B BD      E4 B8 AD E5 9B BD E4 BA BA E6 B0 91 E5 85 B1 E5 92 8C E5 9B BD      
 
 ===================================================
@@ -84,7 +84,7 @@ col_binary    position(_binary'나' in col_binary)    position(_binary'나' in c
 31 32 33 34 35 EA B0 80 EB 82 98 EB 8B A4 EB 9D BC EB A7 88 EA B0 80 EB 82 98 EB 8B A4 EB 9D BC EB A7 88      9     0     7     0     
 
 ===================================================
-col_binary    position( cast(_utf8'나' as varchar collate binary) in col_binary)    position( cast(_utf8'나' as varchar collate euckr_bin) in col_euckr)    position(_utf8'나' in col_utf8)    
+col_binary    position( cast('나' as varchar collate binary) in col_binary)    position( cast('나' as varchar collate euckr_bin) in col_euckr)    position('나' in col_utf8)    
 31 32 33 34 35 EA B0 80 EB 82 98 EB 8B A4 EB 9D BC EB A7 88 EA B0 80 EB 82 98 EB 8B A4 EB 9D BC EB A7 88      9     7     7     
 
 ===================================================
@@ -105,7 +105,7 @@ col_binary    position(_binary'中国' in col_binary)    position(_binary'中国
 E4 B8 AD E5 9B BD E4 BA BA E6 B0 91 E5 85 B1 E5 92 8C E5 9B BD      1     0     1     0     
 
 ===================================================
-col_binary    position( cast(_utf8'中国' as varchar collate binary) in col_binary)    position( cast(_utf8'中国' as varchar collate euckr_bin) in col_euckr)    position(_utf8'中国' in col_utf8)    position( cast(_utf8'中国' as varchar) in col_iso)    
+col_binary    position( cast('中国' as varchar collate binary) in col_binary)    position( cast('中国' as varchar collate euckr_bin) in col_euckr)    position('中国' in col_utf8)    position( cast('中国' as varchar collate iso88591_bin) in col_iso)    
 E4 B8 AD E5 9B BD E4 BA BA E6 B0 91 E5 85 B1 E5 92 8C E5 9B BD      1     1     1     1     
 
 ===================================================

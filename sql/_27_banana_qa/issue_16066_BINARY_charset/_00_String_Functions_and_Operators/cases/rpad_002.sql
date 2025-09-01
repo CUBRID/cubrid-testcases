@@ -20,5 +20,5 @@ SELECT RPAD(col_binary,3,'?'), Length(RPAD(col_binary,3,'?')), HEX(RPAD(col_euck
 SELECT RPAD(col_utf8,3,'?'), Length(RPAD(col_utf8,3,'?')),RPAD(col_iso,3,'?'), Length(RPAD(col_iso,3,'?')) from t order by 1;
 
 drop table t;
-set names iso88591;
+set names utf8;
 --+ holdcas off;

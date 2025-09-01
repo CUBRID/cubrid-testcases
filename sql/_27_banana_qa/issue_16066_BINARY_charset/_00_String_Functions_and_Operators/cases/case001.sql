@@ -73,6 +73,6 @@ order by a NULLS LAST;
 
 
 drop table case_tbl;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
