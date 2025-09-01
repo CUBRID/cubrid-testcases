@@ -24,4 +24,4 @@ select collation(s),charset(s),coercibility(s) from t order by 1,2,3;
 select collation(s),charset(s),coercibility(s) from t__p__p2 order by 1,2,3;
 
 drop t;
-set names iso88591;
+set names utf8;

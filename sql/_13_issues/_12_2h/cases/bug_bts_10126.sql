@@ -14,4 +14,4 @@ insert into t values({'A','A','a'});
 select * from t;
 drop t;
 
-set names iso88591;
+set names utf8;
