@@ -8,5 +8,5 @@ deallocate prepare s;
 
 
 
-
+set names utf8;
 --+ holdcas off;

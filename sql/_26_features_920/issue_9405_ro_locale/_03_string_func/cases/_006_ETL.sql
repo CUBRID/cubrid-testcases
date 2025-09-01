@@ -10,6 +10,6 @@ SELECT ELT(-1, 'O', 'să', 'plouă?' collate utf8_ro_cs,'string2','string3');
 --test
 SELECT ELT(3, 'O', lower('să'), upper('plouă?' collate utf8_ro_cs),'string2','string3');
  
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

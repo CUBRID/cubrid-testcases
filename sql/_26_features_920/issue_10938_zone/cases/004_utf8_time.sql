@@ -35,5 +35,5 @@ select date_format(datetime'07/31/2012 11:22:33','%d.%M.%Y %h:%i:%s');
 set system parameters 'intl_date_lang=en_US';
 select date_format(datetime'07/31/2012 11:22:33','%d.%M.%Y %h:%i:%s');
 
-set names iso88591;
+set names utf8;
 

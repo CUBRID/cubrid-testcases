@@ -135,7 +135,7 @@ SELECT str, hex(str) FROM test_ro WHERE str LIKE '_ș' OR str LIKE '_Ș' OR str 
 SELECT vc, hex(vc) FROM test_ro WHERE vc LIKE 'A' OR vc LIKE 'Ă' OR vc LIKE 'Â' OR vc LIKE 'a' OR vc LIKE 'ă' OR vc LIKE 'â' ORDER BY vc collate utf8_ro_cs ASC, 2;
 
 DROP TABLE test_ro;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

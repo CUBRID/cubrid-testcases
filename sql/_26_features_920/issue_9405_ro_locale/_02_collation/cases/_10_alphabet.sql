@@ -57,6 +57,6 @@ SELECT id, s FROM coll_test_ro2 ORDER BY s,id;
 DROP TABLE coll_test_ro2;
 DROP TABLE coll_test_ro;
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

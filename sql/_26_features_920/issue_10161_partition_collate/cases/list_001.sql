@@ -25,4 +25,4 @@ select * from t1 partition(event1) x1, t1__p__event1 x2 where x1.event=x2.event 
 select distinct * from t1 partition(event1) x1, t1__p__event1 x2 where x1.event=x2.event order by 1,2,3,4 ;
 
 drop table t1;
-set names iso88591;
+set names utf8;
