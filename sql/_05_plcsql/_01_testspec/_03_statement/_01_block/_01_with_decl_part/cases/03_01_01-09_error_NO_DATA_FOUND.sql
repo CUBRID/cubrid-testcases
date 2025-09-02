@@ -20,6 +20,7 @@ BEGIN
 END;
 
 call t('db_class_cubrid');
- 
+
+drop procedure t; 
 
 --+ server-message off
