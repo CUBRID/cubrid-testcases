@@ -32,7 +32,7 @@ select * from test_kh where i = 101 or t = 'ា៝ខ០ឦ' using index int_idx
 select * from test_kh where i = 101 or t = 'ា៝ខ០ឦ' using index none  order by t;
 
 drop class test_kh;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

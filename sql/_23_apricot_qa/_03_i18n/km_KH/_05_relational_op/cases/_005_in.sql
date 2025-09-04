@@ -31,6 +31,6 @@ select id,name from test_kh where name IN {'ហឡកឮ' , 'ឯ័័តឰឰ�
 select id,name from test_kh where name NOT IN {'កខណតថ ' , 'ហឡឡតឰឿហថ ', 'ហឡកឮ' , 'ហណ៰៩ថ'} order by 1;
 
 drop table test_kh;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

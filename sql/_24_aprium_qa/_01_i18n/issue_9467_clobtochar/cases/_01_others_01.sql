@@ -22,4 +22,4 @@ select length(s1),length(s2) from ll;
 drop t;
 drop ll;
 
-set names iso88591;
+set names utf8;

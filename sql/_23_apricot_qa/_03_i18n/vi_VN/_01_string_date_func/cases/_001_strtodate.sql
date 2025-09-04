@@ -115,6 +115,6 @@ SELECT STR_TO_DATE('tháng mười 1, 2013 8:11:12 Sa','%M %d,%Y %h:%i:%s %p') F
 
 SELECT STR_TO_DATE('tháng mười 1, 2013 8:11:12 sa','%M %d,%Y %r') FROM db_root;
 set system parameters 'intl_date_lang = en_US';
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

@@ -1,5 +1,5 @@
 --+ holdcas on;
-set names utf8;
+set names iso88591;
 create table range_test(id int,
 				test_char char(10),
 				test_varchar varchar(2000) collate utf8_tr_cs,
@@ -11,7 +11,7 @@ create table range_test(id int,
 				test_datetime timestamp,
                 primary key(id, test_char))
 	PARTITION BY RANGE (test_char) (
-	    PARTITION p0 VALUES LESS THAN (_iso88591'şşş')
+	    PARTITION p0 VALUES LESS THAN (_utf8'şşş')
 	);
 	insert into range_test values(1,_iso88591'şşş','şşş',B'1',B'1011',N'şşş',N'şşş','şşşşşşşşşş','2007-01-01 09:00:00');
 	insert into range_test values(2,_iso88591'ĞĞĞ','ĞĞĞ',B'10',B'1100',N'ĞĞĞ',N'ĞĞĞ','ĞĞĞĞĞĞĞĞĞĞ','2007-01-01 09:00:00');
@@ -25,6 +25,6 @@ select * from range_test order by 1;
 
 
 drop table range_test;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

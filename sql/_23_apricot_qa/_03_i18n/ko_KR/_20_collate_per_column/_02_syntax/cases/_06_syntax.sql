@@ -8,6 +8,6 @@ select * from t1;
 alter table  t1 CHANGE s1 a varchar(90) charset utf8;
 select * from t1;
 drop t1;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

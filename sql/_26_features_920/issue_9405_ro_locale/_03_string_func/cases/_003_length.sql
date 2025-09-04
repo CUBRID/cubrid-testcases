@@ -53,7 +53,7 @@ insert into test_ro values (303,'vremea.iZZETtin');
 select id, name, CHAR_LENGTH (name), BIT_LENGTH(name), LENGTH(name), OCTET_LENGTH(name) from test_ro order by 1;
 
 drop table test_ro;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

@@ -35,6 +35,6 @@ select id,name from test_cn where name != '*火咱工澳 ' order by 1;
 select id,name from test_cn where name <> '火咱咱鹅他她火嗯 ' order by 1;
 
 drop table test_cn;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

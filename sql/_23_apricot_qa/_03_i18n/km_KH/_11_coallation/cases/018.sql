@@ -29,7 +29,7 @@ SELECT /*+ recompile */* FROM db_index WHERE class_name='t1' order by 1,2;
 SELECT /*+ recompile */col3 FROM t1 where t1 col1>='ហឡឡតឰឿហថ'order by col3;
 
 drop class t1;
-set names iso88591;
+set names utf8;
 set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

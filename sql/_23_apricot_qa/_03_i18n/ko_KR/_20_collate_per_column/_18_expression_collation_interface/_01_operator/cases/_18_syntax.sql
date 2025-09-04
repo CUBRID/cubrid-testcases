@@ -7,6 +7,6 @@ insert into t2 values ('가'),( '伽');
 select cast(t1.s1 as string collate 'utf8_bin') +t2.s1 from t1,t2 order by t1.s1,t2.s1;
 select cast(t1.s1 as string collate 'utf8_bin') +t2.s1 from t1,t2 order by cast(t1.s1 as string collate 'utf8_bin'),t2.s1;
 drop t1,t2;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

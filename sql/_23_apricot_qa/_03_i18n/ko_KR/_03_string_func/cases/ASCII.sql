@@ -20,6 +20,6 @@ select (ASCII(ASCII(col3))),col3 from t order by 1;
 select (ASCII(ASCII(col4))),col4 from t order by 1;
 select (ASCII(ASCII(col5))),col5 from t order by 1;
 drop table t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

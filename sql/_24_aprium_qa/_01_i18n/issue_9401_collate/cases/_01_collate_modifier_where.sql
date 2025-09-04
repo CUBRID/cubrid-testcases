@@ -25,6 +25,6 @@ prepare st from 'select * from t where (s>?) collate iso88591_en_ci order by 1 c
 deallocate prepare st;
 
 drop t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

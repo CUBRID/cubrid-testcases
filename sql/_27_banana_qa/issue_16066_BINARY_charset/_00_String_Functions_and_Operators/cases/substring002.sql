@@ -37,6 +37,6 @@ SELECT id,SUBSTRING(col_iso from -6 for 4 ) from t1 order by 1;
 
 drop table t1;
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

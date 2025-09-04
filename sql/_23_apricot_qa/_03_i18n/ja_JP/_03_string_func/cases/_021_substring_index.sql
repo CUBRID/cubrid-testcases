@@ -30,6 +30,6 @@ select i1,s1, substring_index (s1, '語', -1) from t1 order by 1;
 select i1,s1, substring_index (s1, '広東', -1) from t1 order by 1;
 
 drop table t1;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

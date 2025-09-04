@@ -11,6 +11,6 @@ SELECT TO_CHAR(datetime'2011-05-01 10:11:12.678', 'day','ko_KR');
 SELECT TO_CHAR(datetime'2011-05-01 10:11:12.678', 'day','tr_TR');
 SELECT TO_CHAR(datetime'2011-05-01 10:11:12.678', 'day','vi_VN');
 SELECT TO_CHAR(datetime'2011-05-01 10:11:12.678', 'day','zh_CN');
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

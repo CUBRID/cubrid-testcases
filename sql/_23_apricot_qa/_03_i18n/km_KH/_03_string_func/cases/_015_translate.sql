@@ -31,6 +31,6 @@ select id, name, translate (name,'មករា','ច.អ') from test_kh order by
 
 drop table test_kh;
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

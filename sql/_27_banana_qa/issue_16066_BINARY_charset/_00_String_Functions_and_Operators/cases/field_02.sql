@@ -18,6 +18,6 @@ SELECT field(chr(0), col_euckr) from t1 where id=4;
 SELECT field(chr(0), col_iso) from t1 where id=4;
 drop table t1;
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

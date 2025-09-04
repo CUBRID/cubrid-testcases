@@ -5,8 +5,10 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 TABLE    CREATE TABLE    
-dba.partition     CREATE TABLE [partition] ([id] INTEGER AUTO_INCREMENT (1, 1) NOT NULL, [ch] CHARACTER(10) NOT NULL,  CONSTRAINT [pk] PRIMARY KEY  ([id], [ch])) REUSE_OID, COLLATE iso88591_bin PARTITION BY RANGE ([ch])  (PARTITION [p1] VALUES LESS THAN ('100'), PARTITION [p2] VALUES LESS THAN ('200'), PARTITION [p3] VALUES LESS THAN ('300'))     
+dba.partition     CREATE TABLE [partition] ([id] INTEGER AUTO_INCREMENT (1, 1) NOT NULL, [ch] CHARACTER(10) COLLATE iso88591_bin NOT NULL,  CONSTRAINT [pk] PRIMARY KEY  ([id], [ch])) REUSE_OID, COLLATE iso88591_bin PARTITION BY RANGE ([ch])  (PARTITION [p1] VALUES LESS THAN (_iso88591'100'), PARTITION [p2] VALUES LESS THAN (_iso88591'200'), PARTITION [p3] VALUES LESS THAN (_iso88591'300'))     
 
 ===================================================
 0
@@ -18,7 +20,7 @@ dba.partition     CREATE TABLE [partition] ([id] INTEGER AUTO_INCREMENT (1, 1) N
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.partition     CREATE TABLE [partition] ([id] INTEGER AUTO_INCREMENT (1, 1) NOT NULL, [ch] CHARACTER(10) NOT NULL,  CONSTRAINT [pk] PRIMARY KEY  ([id], [ch])) REUSE_OID, COLLATE iso88591_bin PARTITION BY RANGE ([ch])  (PARTITION [p1] VALUES LESS THAN ('100'), PARTITION [p2] VALUES LESS THAN ('200'), PARTITION [p3] VALUES LESS THAN ('300'))     
+dba.partition     CREATE TABLE [partition] ([id] INTEGER AUTO_INCREMENT (1, 1) NOT NULL, [ch] CHARACTER(10) COLLATE iso88591_bin NOT NULL,  CONSTRAINT [pk] PRIMARY KEY  ([id], [ch])) REUSE_OID, COLLATE iso88591_bin PARTITION BY RANGE ([ch])  (PARTITION [p1] VALUES LESS THAN (_iso88591'100'), PARTITION [p2] VALUES LESS THAN (_iso88591'200'), PARTITION [p3] VALUES LESS THAN (_iso88591'300'))     
 
 ===================================================
 0
@@ -30,8 +32,10 @@ dba.partition     CREATE TABLE [partition] ([id] INTEGER AUTO_INCREMENT (1, 1) N
 Error:-493
 ===================================================
 TABLE    CREATE TABLE    
-dba.partition     CREATE TABLE [partition] ([id] INTEGER AUTO_INCREMENT (1, 1) NOT NULL, [ch] CHARACTER(10) NOT NULL,  CONSTRAINT [pk] PRIMARY KEY  ([id], [ch])) REUSE_OID, COLLATE iso88591_bin     
+dba.partition     CREATE TABLE [partition] ([id] INTEGER AUTO_INCREMENT (1, 1) NOT NULL, [ch] CHARACTER(10) COLLATE iso88591_bin NOT NULL,  CONSTRAINT [pk] PRIMARY KEY  ([id], [ch])) REUSE_OID, COLLATE iso88591_bin     
 
+===================================================
+0
 ===================================================
 0
 ===================================================

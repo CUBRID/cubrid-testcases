@@ -7,6 +7,6 @@ set names utf8 collate utf8_en_cs;
 execute stmt using 'a', 'A', 1;
 deallocate prepare stmt;
 
-set names iso88591;
+set names utf8;
 
 

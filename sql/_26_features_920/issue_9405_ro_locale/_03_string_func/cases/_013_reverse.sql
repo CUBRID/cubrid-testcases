@@ -15,6 +15,6 @@ select id, name, reverse (name) from test_ro order by 1;
 select 'De ce râdeți?' collate utf8_ro_cs, reverse('De ce râdeți?' collate utf8_ro_cs);
 
 drop table test_ro;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

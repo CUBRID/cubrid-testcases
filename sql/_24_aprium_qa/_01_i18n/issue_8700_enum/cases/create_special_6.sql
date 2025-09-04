@@ -20,6 +20,6 @@ select * from t1, t2 where t1.i1 = t2.i2 and t1.coll_enum1=t2.coll_enum2 order b
 drop table t1;
 drop table t2;
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

@@ -129,7 +129,7 @@ select str_to_date('1995-März-26th 3:00:00 Vorm. Europe/Uzhgorod', '%Y-%M-%D %h
 select str_to_date('1995-März-26th 4:00:00 Vorm. Europe/Uzhgorod EEST', '%Y-%M-%D %h:%i:%s %p %TZR %TZD');
 
 
-set names iso88591;
+set names utf8;
 set system parameters 'intl_date_lang=en_US';
 set timezone 'Asia/Seoul';
 

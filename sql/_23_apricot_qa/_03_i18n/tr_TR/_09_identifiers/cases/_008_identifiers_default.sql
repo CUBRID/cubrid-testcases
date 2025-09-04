@@ -15,7 +15,7 @@ SELECT Öö, DEFAULT(Öö) FROM Çç_Ğğ_İı_Öö_Şş_Üü order by 1, 2;
 
 --test 
 drop table Çç_Ğğ_İı_Öö_Şş_Üü;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

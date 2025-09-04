@@ -22,6 +22,6 @@ select charset('a'),collation('a');
 select charset(_iso88591'a'),collation(_iso88591'a');
 select coercibility('a');
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

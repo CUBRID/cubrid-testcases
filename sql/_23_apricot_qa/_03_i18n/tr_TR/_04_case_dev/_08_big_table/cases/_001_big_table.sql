@@ -40110,6 +40110,6 @@ select /*+ recompile */ * from big_table where v3='pW' and c3='s' and v9='wÇPng
 
 
 drop big_table;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;			

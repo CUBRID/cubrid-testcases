@@ -20,6 +20,6 @@ SELECT TO_TIME(null,'HH:MI:SS A.M.');
 SELECT TO_TIME(null,null);
 set system parameters 'intl_date_lang = en_US';
 set system parameters 'intl_number_lang = en_US';
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

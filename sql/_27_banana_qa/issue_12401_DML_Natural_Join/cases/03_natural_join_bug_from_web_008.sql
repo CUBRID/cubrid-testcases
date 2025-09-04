@@ -353,5 +353,5 @@ select /*+ RECOMPILE*/ u.a as s ,v.a as t from (select * from t1 order by 1) t1 
 drop table if exists t1;
 drop view t2;
 
-set names iso88591;
+set names utf8;
 --+ holdcas off;

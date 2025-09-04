@@ -43,7 +43,7 @@ select id, name, strcmp (name, '它们') from test_cn order by 1;
 select id, name, strcmp (name, '它们') from test_cn order by 1;
 
 drop table test_cn;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

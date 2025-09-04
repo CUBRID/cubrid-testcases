@@ -29,6 +29,6 @@ select :r, collation (:r);
 deallocate prepare s;
 
 drop variable r;
-set names iso88591;
+set names utf8;
 
 --+ holdcas off;

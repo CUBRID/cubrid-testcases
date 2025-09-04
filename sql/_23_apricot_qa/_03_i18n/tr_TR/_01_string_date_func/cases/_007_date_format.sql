@@ -12,6 +12,6 @@ SELECT DATE_FORMAT('2011-1-1 22:23:24', null);
 SELECT DATE_FORMAT(null, '%X %V');
 set system parameters 'intl_date_lang = en_US';
 set system parameters 'intl_number_lang = en_US';
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

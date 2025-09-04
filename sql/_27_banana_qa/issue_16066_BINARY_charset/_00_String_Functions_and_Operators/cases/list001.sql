@@ -21,6 +21,6 @@ select * from list_test order by 1;
 
 
 drop table list_test;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

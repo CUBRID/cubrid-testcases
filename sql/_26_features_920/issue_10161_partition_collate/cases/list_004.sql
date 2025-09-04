@@ -63,4 +63,4 @@ drop table t1__p__event5;
 drop table t1__p__event6;
 drop table t1__p__event7;
 
-set names iso88591;
+set names utf8;

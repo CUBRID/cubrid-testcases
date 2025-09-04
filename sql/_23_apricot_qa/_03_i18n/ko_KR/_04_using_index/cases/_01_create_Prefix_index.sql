@@ -8,6 +8,6 @@ create index idx4 on 테이블(칼럼4(2));
 create index idx5 on 테이블(칼럼5(2));
 show index in 테이블;
 drop table 테이블;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

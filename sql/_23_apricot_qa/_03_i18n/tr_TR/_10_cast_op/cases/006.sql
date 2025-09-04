@@ -17,7 +17,7 @@ select cast(stringtest as datetime) from func_03 order by 1;
 drop table func_03;
 set system parameters 'intl_date_lang = en_US';
 set system parameters 'intl_number_lang = en_US';
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

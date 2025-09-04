@@ -24,12 +24,12 @@ create table t (i int);
 insert into t values (99);
 
 
-create view w1 as select (select 2 from t where 3 = charset) as col from db_root;
+create view w1 as select (select 2 from t where 5 = charset) as col from db_root;
 select * from w1;
 drop view w1;
 
 -- it should complain that charset is unknown
-create view w1 as select (select 2 from t where 3 = charset) as col;
+create view w1 as select (select 2 from t where 5 = charset) as col;
 drop table t;
 
 

@@ -7,6 +7,6 @@ insert into t values(null,'你好你好你好你好你好'),('你好你好你好
 select col1,DEFAULT(col1),col2,DEFAULT(col2) from t order by 1,col2;
 
 drop table t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

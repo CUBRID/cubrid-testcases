@@ -21,7 +21,7 @@ select id, name, instr (name,'Î',5) from test_ro order by 1;
 select id, name, instr (name,'Ă*') from test_ro order by 1;
 
 drop table test_ro;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

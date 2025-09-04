@@ -32,6 +32,6 @@ select * from t order by col2, col1;
 select * from t order by col2 desc, col1;
 
 drop table t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

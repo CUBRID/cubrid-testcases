@@ -35,6 +35,6 @@ select id,name from test_kh where name != '*ហឡក៹ ' order by 1;
 select id,name from test_kh where name <> 'ហឡឡតឰឿហថ ' order by 1;
 
 drop table test_kh;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

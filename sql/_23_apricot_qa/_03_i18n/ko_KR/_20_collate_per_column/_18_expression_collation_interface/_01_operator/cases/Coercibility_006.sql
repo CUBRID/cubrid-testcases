@@ -40,6 +40,6 @@ drop user 用户;
 drop table 각.t;
 drop user 각;
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

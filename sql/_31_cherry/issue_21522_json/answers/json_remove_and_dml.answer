@@ -9,11 +9,11 @@
 ===================================================
 Error:-1200
 ===================================================
-json_remove(json_merge(name, de), _utf8'/1')    
+json_remove(json_merge(name, de), '/1')    
 [{"bar":"baz","balance":7.77,"active":"false"}]     
 
 ===================================================
-json_remove(json_merge(name, de), _utf8'/1', _utf8'/0')    
+json_remove(json_merge(name, de), '/1', '/0')    
 []     
 
 ===================================================
@@ -21,17 +21,17 @@ Error:-1202
 ===================================================
 Error:-1202
 ===================================================
-json_remove(json_remove(json_merge(name, de), _utf8'/1'), _utf8'/0/bar')    
+json_remove(json_remove(json_merge(name, de), '/1'), '/0/bar')    
 [{"balance":7.77,"active":"false"}]     
 
 ===================================================
 Error:-1202
 ===================================================
-json_remove(json_remove(json_merge(name, de), '/1'), '/0/bar')    
+json_remove(json_remove(json_merge(name, de), _iso88591'/1'), _iso88591'/0/bar')    
 [{"balance":7.77,"active":"false"}]     
 
 ===================================================
-json_remove(json_remove(json_merge(name, de), _utf8'/1'), _utf8'/0/'||json_extract(json_object(_utf8'a', _utf8'bar'), _utf8'/a'))    
+json_remove(json_remove(json_merge(name, de), '/1'), '/0/'||json_extract(json_object('a', 'bar'), '/a'))    
 [{"balance":7.77,"active":"false"}]     
 
 ===================================================
@@ -42,13 +42,13 @@ json_remove(json_remove(json_merge(name, de), _utf8'/1'), _utf8'/0/'||json_extra
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.t     CREATE TABLE [t] ([id] INTEGER AUTO_INCREMENT (1, 1) NOT NULL, [a] JSON,  CONSTRAINT [pk_t_id] PRIMARY KEY  ([id])) REUSE_OID, COLLATE iso88591_bin     
+dba.t     CREATE TABLE [t] ([id] INTEGER AUTO_INCREMENT (1, 1) NOT NULL, [a] JSON,  CONSTRAINT [pk_t_id] PRIMARY KEY  ([id])) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.t     CREATE TABLE [t] ([id] INTEGER AUTO_INCREMENT (1, 1) NOT NULL, [a] JSON NOT NULL,  CONSTRAINT [pk_t_id] PRIMARY KEY  ([id])) REUSE_OID, COLLATE iso88591_bin     
+dba.t     CREATE TABLE [t] ([id] INTEGER AUTO_INCREMENT (1, 1) NOT NULL, [a] JSON NOT NULL,  CONSTRAINT [pk_t_id] PRIMARY KEY  ([id])) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 0

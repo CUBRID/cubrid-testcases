@@ -11,6 +11,6 @@ set names binary;
 SELECT id, BIT_LENGTH(col_binary), BIT_LENGTH(col_euckr), BIT_LENGTH(col_utf8), BIT_LENGTH(col_iso) from t1 order by id;
 
 drop table t1;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

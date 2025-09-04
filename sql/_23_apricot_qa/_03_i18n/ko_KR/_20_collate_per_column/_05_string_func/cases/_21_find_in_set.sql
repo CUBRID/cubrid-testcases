@@ -36,6 +36,6 @@ select t1.s1,t3.s1,find_in_set (t1.s1,t3.s1) from t1,t3 order by 1;
 drop table t1;
 drop table t2;
 drop table t3;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

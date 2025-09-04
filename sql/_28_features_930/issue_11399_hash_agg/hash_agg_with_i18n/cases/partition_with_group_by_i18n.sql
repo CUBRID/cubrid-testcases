@@ -72,7 +72,7 @@ select s1 as s1_in_len10 from t1__p__len10 group by 2 order by 1;
 
 drop table t1;
 
-set names iso88591; 
+set names utf8; 
 
 commit;
 autocommit on;

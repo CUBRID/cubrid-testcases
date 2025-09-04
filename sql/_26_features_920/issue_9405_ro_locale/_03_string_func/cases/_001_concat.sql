@@ -31,6 +31,6 @@ insert into test_ro values (8,concat('ţ',123));
 select * from test_ro order by 1;
 
 drop table test_ro;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

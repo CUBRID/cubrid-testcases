@@ -35,6 +35,6 @@ select id,name from test_jp where name != '*Qdぁ實 ' order by 1;
 select id,name from test_jp where name <> 'Qddヰ亜愛Qン ' order by 1;
 
 drop table test_jp;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

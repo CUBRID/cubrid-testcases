@@ -38,6 +38,6 @@ select id, col_binary, HEX(col_euckr), col_utf8, col_iso from t1 order by 1;
 SELECT id, OCTET_LENGTH(col_binary), OCTET_LENGTH(col_euckr),OCTET_LENGTH(col_utf8),OCTET_LENGTH(col_iso) from t1 order by id;
 
 drop table t1;
-set names iso88591;
+set names utf8;
 --+ holdcas off;
 

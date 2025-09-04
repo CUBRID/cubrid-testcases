@@ -133,7 +133,7 @@ SELECT TO_DATETIME('2011-05-01   星期日 10:11:12 上午', 'yyyy-MM-DD DAY HH:
 SELECT TO_DATETIME('2011-05-01   星期日 10:11:12 P.M.', 'yyyy-MM-DD DAY HH:MI:SS P.M.');
 SELECT TO_DATETIME('2011-05-01   星期日 10:11:12 A.M.', 'yyyy-MM-DD DAY HH:MI:SS A.M.');
 set system parameters 'intl_date_lang = en_US';
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

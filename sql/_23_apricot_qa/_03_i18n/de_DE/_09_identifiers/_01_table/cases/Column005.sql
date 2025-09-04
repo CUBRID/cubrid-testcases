@@ -4,5 +4,5 @@ insert into ßäöü你好(ßä,öü你好)values(upper('ß'),'öü你好');
 insert into ßäöü你好(öü你好)values('hello');
 select * from ßäöü你好 order by 1;
 drop table ßäöü你好;
-set names iso88591;
+set names utf8;
 

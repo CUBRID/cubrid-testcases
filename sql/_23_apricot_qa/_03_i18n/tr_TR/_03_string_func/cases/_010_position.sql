@@ -21,7 +21,7 @@ select id, name, POSITION ('' in name) from test_tr order by 1;
 select id, name, POSITION (null in name) from test_tr order by 1;
 --test
 drop table test_tr;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

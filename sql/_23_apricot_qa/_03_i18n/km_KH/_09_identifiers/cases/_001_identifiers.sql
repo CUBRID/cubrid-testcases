@@ -45,7 +45,7 @@ alter table តថ drop constraint ប្រាំបី2;
 alter table តថ drop column បី;
 alter table តថ drop column បី1;
 drop table តថ;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

@@ -35,6 +35,6 @@ select id,name from test_kr where name != '*맹멱면몌 ' order by 1;
 select id,name from test_kr where name <> '과괄광괘광괵괵굉 ' order by 1;
 
 drop table test_kr;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

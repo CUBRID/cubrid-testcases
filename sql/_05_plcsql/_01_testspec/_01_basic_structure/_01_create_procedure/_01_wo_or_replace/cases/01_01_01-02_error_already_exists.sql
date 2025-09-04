@@ -7,7 +7,8 @@ begin
     null;
 end;
 
-create procedure t(i int) as    -- error
+-- error
+create procedure t(i int) as   
 begin
     null;
 end;

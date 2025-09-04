@@ -22,7 +22,7 @@ select * from foo where i = 102 and s IN { 'İzğüı' , 'İzgüf'}  and x betwe
 
 
 drop class foo;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 
