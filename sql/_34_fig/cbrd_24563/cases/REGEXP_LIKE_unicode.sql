@@ -18,6 +18,6 @@ SELECT REGEXP_LIKE('Kłak Aleksander', '\p{Hangul}');
 SET NAMES iso88591;
 SELECT REGEXP_LIKE('Kłak Aleksander', '[[:alpha:]]');
 
-
+SET NAMES utf8;
 set system parameters 'regexp_engine=default';
 

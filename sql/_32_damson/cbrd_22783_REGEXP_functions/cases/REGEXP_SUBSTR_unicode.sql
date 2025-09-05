@@ -13,5 +13,6 @@ SELECT REGEXP_SUBSTR('가나다라' COLLATE utf8_ko_cs,  _utf8' [த]' COLLATE u
 SET NAMES iso88591;
 SELECT REGEXP_SUBSTR('Kłak Aleksander', '[[:alpha:]]+', 1, 1);
 
+SET NAMES utf8;
 set system parameters 'regexp_engine=default';
 
