@@ -24,6 +24,6 @@ SELECT MAKETIME('1','34','4');
 SELECT MAKETIME(24,0,0);
 set system parameters 'intl_date_lang = en_US';
 set system parameters 'intl_number_lang = en_US';
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

@@ -47,7 +47,7 @@ set system parameters 'group_concat_max_len=1024';
 select group_concat (s1 order by 1 separator '_') from t1 group by a;
 
 drop table t1;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

@@ -38,7 +38,7 @@ SELECT FIELD('大家好', '大家好','大家好');
 SELECT FIELD('大家好', '大家好','大家好');
 
 SELECT FIELD('一蹴而', '一蹴而就','一蹴而就');
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

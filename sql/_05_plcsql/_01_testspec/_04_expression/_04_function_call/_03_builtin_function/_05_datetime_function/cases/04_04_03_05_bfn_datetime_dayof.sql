@@ -4,7 +4,8 @@
 
 create or replace procedure t () as
 begin
-    dbms_output.put_line(DAYOFMONTH(NULL)); -- parse NULL param error
+    -- parse NULL param error
+    dbms_output.put_line(DAYOFMONTH(NULL));
     dbms_output.put_line(DAYOFMONTH('1999-01-11 12:34:52.333'));
     dbms_output.put_line(DAYOFMONTH('1999-01-11 12:34:52'));
     dbms_output.put_line(DAYOFMONTH('1999-01-11'));
@@ -12,12 +13,14 @@ begin
     dbms_output.put_line(DAYOFMONTH('0000-00-00 00:00:00'));
     dbms_output.put_line(DAYOFMONTH('0000-00-00'));
 
-    dbms_output.put_line(DAYOFWEEK(NULL)); -- parse NULL param error
+    -- parse NULL param error
+    dbms_output.put_line(DAYOFWEEK(NULL));
     dbms_output.put_line(DAYOFWEEK('1999-01-11 12:34:52.333'));
     dbms_output.put_line(DAYOFWEEK('1999-01-11 12:34:52'));
     dbms_output.put_line(DAYOFWEEK('1999-01-11'));
 
-    dbms_output.put_line(DAYOFYEAR(NULL)); -- parse NULL param error
+    -- parse NULL param error
+    dbms_output.put_line(DAYOFYEAR(NULL));
     dbms_output.put_line(DAYOFYEAR('1999-01-11 12:34:52.333'));
     dbms_output.put_line(DAYOFYEAR('1999-01-11 12:34:52'));
     dbms_output.put_line(DAYOFYEAR('1999-01-11'));

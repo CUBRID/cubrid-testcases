@@ -82,6 +82,6 @@ SELECT * from t  where col2 between UPPER('阿') and '帀' order by col2, col1 l
 --test
 SELECT * from t  where col2 between UPPER('ē') and '帀' order by col2 desc, col1 limit 2;
 DROP TABLE t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

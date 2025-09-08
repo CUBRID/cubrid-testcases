@@ -25,6 +25,6 @@ select i,s,substring_index (s,'SS ',1) from t order by 1;
 select i,s,substring_index (s,'Ss',-1) from t order by 1;
 
 drop table t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

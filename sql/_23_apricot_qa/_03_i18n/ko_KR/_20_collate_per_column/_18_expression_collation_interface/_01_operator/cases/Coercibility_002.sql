@@ -16,6 +16,6 @@ insert into t2 values('i','h');
 insert into t2 values('A','a');
 SELECT s1, s2 FROM t2 WHERE s1 > s2;
 drop table t2;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

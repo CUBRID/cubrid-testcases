@@ -32,6 +32,6 @@ select * from t where b<='AR' and b>'a'order by 1;
 select * from t where b<='AE' and b>'a'order by 1;
 select * from t where b<='AR' and b>='AE'order by 1;
 drop table t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

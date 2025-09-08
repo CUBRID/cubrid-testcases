@@ -32,7 +32,7 @@ select * from test_jp where i = 101 or t = '師麼は樹岡' using index int_idx
 select * from test_jp where i = 101 or t = '師麼は樹岡' using index none  order by t;
 
 drop class test_jp;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

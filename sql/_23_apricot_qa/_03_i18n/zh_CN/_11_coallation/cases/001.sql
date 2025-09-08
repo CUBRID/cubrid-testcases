@@ -82,6 +82,6 @@ SELECT * from t order by col3 DESC,col1;
 SELECT * from t order by col4,col1;
 
 DROP TABLE t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

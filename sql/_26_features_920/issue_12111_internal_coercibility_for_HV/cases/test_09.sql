@@ -12,5 +12,5 @@ set names iso88591 collate iso88591_en_ci;
 execute stmt using 'f8%';
 deallocate prepare stmt;
 
-set names iso88591;
+set names utf8;
 

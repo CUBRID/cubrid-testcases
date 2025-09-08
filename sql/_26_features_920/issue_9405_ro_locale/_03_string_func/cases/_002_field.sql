@@ -50,6 +50,6 @@ SELECT FIELD('Sînt', '%Sînt', 'Sînt1', '*Sînt*', 'Sînt');
 SELECT FIELD('Sînt' collate utf8_ro_cs, 'S', 'Sî', null, 'Sînt', 'Sîn');
 --Test
 SELECT FIELD(123, '123Sînt','Sînt','123', 'S123înt');
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

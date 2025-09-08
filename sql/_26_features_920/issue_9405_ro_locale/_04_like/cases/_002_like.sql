@@ -61,6 +61,6 @@ select * from t_like where name like '?%'  order by 1;
 select * from t_like where name like '*%'  order by 1;
 
 drop class t_like;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

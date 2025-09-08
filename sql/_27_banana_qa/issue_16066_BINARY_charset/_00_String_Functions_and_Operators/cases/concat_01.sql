@@ -20,6 +20,6 @@ SELECT '字符串1' collate binary || cast( _utf8'문자열 2' as string charset
 select concat('字符串1' collate binary, cast( _utf8'문자열 2' as string charset euckr));
 select concat_ws('分隔符' collate binary, '字符串1' collate binary,cast( _utf8'문자열 2' as string charset euckr));
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

@@ -23,6 +23,6 @@ select strcmp(cast(_utf8'Öö_Şş_Üü2' as string charset iso88591));
 
 select strcmp('chr(0)', _utf8'字符串2');
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

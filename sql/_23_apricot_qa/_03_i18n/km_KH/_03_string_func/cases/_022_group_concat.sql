@@ -33,6 +33,6 @@ select group_concat (s1 order by 1 separator '____សសសសស____') from t1 
 set system parameters 'group_concat_max_len=1024';
 
 drop table t1;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

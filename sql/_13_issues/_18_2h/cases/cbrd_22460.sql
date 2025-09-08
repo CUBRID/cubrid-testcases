@@ -144,3 +144,4 @@ CREATE INDEX i2 on t1 (LPAD (a, 10, 'X')) with online;
 update statistics on t1;
 show index from t1;
 drop table if exists t1,foo,t;
+set names utf8;

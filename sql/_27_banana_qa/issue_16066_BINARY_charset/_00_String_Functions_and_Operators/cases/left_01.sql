@@ -21,6 +21,6 @@ SELECT cast(LEFT(cast(col3 as string charset binary),10) as string collate euckr
 
 drop table t1;
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

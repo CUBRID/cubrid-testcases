@@ -11,6 +11,6 @@ when "exception" then
     dbms_output.put_line('OK');
 end;
 call t();
-
+drop procedure t;
 --+ server-message off
 

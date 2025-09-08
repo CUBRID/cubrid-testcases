@@ -23,6 +23,6 @@ SELECT LCASE(col2) from t1;
 SELECT LOWER(cast(col3 as string charset binary)) from t1;
 
 drop table t1;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

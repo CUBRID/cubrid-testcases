@@ -35,4 +35,4 @@ select date_format(date'07/31/2012','%d.%M.%Y');
 set system parameters 'intl_date_lang=en_US';
 select date_format(date'07/31/2012','%d.%M.%Y');
 
-set names iso88591;
+set names utf8;

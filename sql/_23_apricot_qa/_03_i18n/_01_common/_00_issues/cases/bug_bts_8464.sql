@@ -43,5 +43,5 @@ select * from t order by 1;
 select /*+ recompile*/ * from t where v1>='天' order by 1;
 select /*+ recompile*/ * from t where v1<='天' order by 1;
 drop t;
-set names iso88591;
+set names utf8;
 --+ holdcas off;

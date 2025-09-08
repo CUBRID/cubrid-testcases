@@ -67,7 +67,7 @@ insert into test_jp values (110,'*中国語');
 select id, name, CHAR_LENGTH (name), BIT_LENGTH(name), LENGTH(name), OCTET_LENGTH(name) from test_jp order by 1;
 
 drop table test_jp;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

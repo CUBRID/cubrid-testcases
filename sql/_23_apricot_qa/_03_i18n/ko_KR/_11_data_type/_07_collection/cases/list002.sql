@@ -10,6 +10,6 @@ INSERT INTO list_tbl VALUES ({3,3,3,2,2,1,0,'c','c','c','b','b','a','가','伽'}
 SELECT * FROM list_tbl;
 SELECT cast(col_1 as set),cast(col_1 as multiset) FROM list_tbl;
 drop table list_tbl ;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

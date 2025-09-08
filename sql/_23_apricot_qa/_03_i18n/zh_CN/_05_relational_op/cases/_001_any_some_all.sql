@@ -41,6 +41,6 @@ select id,name from test_cn where name >= ALL{'尚洼开人啊嗯', '蛤咱弓�
 select id,name from test_cn where name <> ALL {'工洼垃鹅嗯', '火咱咱鹅他她火嗯', '火咱工哎', '尚洼开人啊嗯'} order by 1;
 
 drop table test_cn;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

@@ -22,6 +22,6 @@ select id,name from test_tr where name < 'İz ' order by 1;
 select id,name from test_tr where name < '_ ' order by 1;
 
 drop table test_tr;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

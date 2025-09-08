@@ -30,4 +30,4 @@ select id,sfr,s from t1 order by sfr;
 
 drop t1;
 
-set names iso88591;
+set names utf8;

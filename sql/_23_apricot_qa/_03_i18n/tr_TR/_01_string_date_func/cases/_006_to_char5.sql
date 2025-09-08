@@ -80,6 +80,6 @@ SELECT TO_CHAR(datetime'2011-12-01 10:11:12.678', 'HH:MI:SS A.m.','en_US');
 SELECT TO_CHAR(datetime'2011-12-01 20:11:12.678', 'HH:MI:SS A.m.','ko_KR');
 set system parameters 'intl_date_lang = en_US';
 set system parameters 'intl_number_lang = en_US';
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

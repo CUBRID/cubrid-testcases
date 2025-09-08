@@ -9,4 +9,4 @@ insert into t values('가假價加可呵哥嘉嫁家','가假價加可呵哥嘉�
 insert into t values('가佳假價加可呵哥嘉嫁','가佳假價加可呵哥嘉嫁',N'가佳假價加可呵哥嘉嫁',N'가佳假價加可呵哥嘉嫁','가佳假價加可呵哥嘉嫁');
 select col1 as 칼럼1 from t 테이블 where 테이블.col1>'각' order by 1;
 drop table t;
-set names iso88591;
+set names utf8;

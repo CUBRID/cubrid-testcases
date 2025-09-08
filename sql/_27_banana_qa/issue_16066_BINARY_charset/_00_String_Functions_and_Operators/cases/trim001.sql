@@ -35,6 +35,6 @@ select trim(TRAILING '棒'  from   cast(_utf8'ÖöÖöÖöÖö_Şş_Üü2ÖöÖ�
 
 SELECT TRIM (chr(0) FROM 'iiiiiOlympiciiiii');
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

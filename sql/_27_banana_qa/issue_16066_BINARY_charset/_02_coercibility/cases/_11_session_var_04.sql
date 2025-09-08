@@ -20,6 +20,6 @@ select coercibility(@a);
 
 drop variable @a;
 drop t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

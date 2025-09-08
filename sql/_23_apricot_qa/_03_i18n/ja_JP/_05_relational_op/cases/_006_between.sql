@@ -33,6 +33,6 @@ select id,name from test_jp where name between 'Qdぁ=. ' and '_  ' order by 1;
 select id,name from test_jp where name between ' .' and 'Qdぁ=   ' order by 1;
 
 drop table test_jp;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

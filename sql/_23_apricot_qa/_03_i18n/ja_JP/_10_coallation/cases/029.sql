@@ -18,6 +18,6 @@ SELECT id, s FROM coll_test WHERE s LIKE 'xぇ%' ORDER BY 2;
 SELECT id, s FROM coll_test WHERE s > 'xぇ' ORDER BY 2;
 
 DROP TABLE coll_test;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

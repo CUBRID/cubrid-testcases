@@ -19,6 +19,6 @@ SELECT UPPER(col_binary) , UPPER(col_euckr),UPPER(col_utf8),UPPER(col_iso)   fro
 
 drop table t1;
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

@@ -15,6 +15,6 @@ SELECT TO_TIME('10:11:12 오후', 'HH:MI:SS P.M.');
 SELECT TO_TIME('10:11:12 오전', 'HH:MI:SS A.M.');
 
 set system parameters 'intl_date_lang = en_US';
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

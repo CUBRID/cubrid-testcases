@@ -33,7 +33,7 @@ select id, name, left (name,2) from test_cn order by 1;
 select id, name, left (name,4) from test_cn order by 1;
 
 drop table test_cn;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

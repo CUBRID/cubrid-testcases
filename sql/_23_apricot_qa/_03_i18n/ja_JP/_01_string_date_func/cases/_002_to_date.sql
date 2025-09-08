@@ -131,7 +131,7 @@ SELECT TO_DATE('2010-01 te月t 11月', 'yyyy-dd "tE月t" Mon');
 SELECT TO_DATE('2010-01 tE月t 11月', 'yyyy-dd "te月t" Mon');
 set system parameters 'intl_date_lang = ja_JP';
 set system parameters 'intl_number_lang = ja_JP';
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

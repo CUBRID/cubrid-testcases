@@ -62,14 +62,14 @@ id    ts
 4     -02 America/Sao_Paulo     
 
 ===================================================
-id    to_char(tsltz, _utf8'TZD:TZM')    
+id    to_char(tsltz, 'TZD:TZM')    
 1     -02:00     
 2     -03:00     
 3     -03:00     
 4     -02:00     
 
 ===================================================
-id    to_char(ts, _utf8'TZH:TZM TZR TZD')    
+id    to_char(ts, 'TZH:TZM TZR TZD')    
 1     -02:00 America/Sao_Paulo -02     
 2     -03:00 America/Sao_Paulo -03     
 3     -03:00 America/Sao_Paulo -03     
@@ -85,13 +85,33 @@ id    to_char(ts)    to_char(tsltz)    to_char(tstz)
 ===================================================
 0
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 )    to_char(tsltz,  ?:1 )    to_char(tstz,  ?:2 )    
+1     21, 25/12/31 10:30:45 P.M.     21, 25/12/31 10:55:45 P.M.     21, 25/12/31 10:30:45 P.M.     
+2     21, 14/06/30 09:30:21 P.M.     21, 14/06/30 06:00:21 A.M.     21, 14/06/30 07:30:21 P.M.     
+3     21, 14/06/29 08:30:21 P.M.     21, 14/06/29 06:30:21 P.M.     21, 14/06/30 07:30:21 A.M.     
+4     21, 08/12/31 10:59:59 P.M.     21, 08/12/31 09:59:59 P.M.     21, 09/01/01 12:59:59 A.M.     
+
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 )    to_char(tsltz,  ?:1 )    to_char(tstz,  ?:2 )    
+1     21, 25/12/31 10:30:45 P.M. America/Sao_Paulo     21, 25/12/31 10:55:45 P.M. America/Sao_Paulo     21, 25/12/31 10:30:45 P.M. America/Sao_Paulo     
+2     21, 14/06/30 09:30:21 P.M. America/Sao_Paulo     21, 14/06/30 06:00:21 A.M. America/Sao_Paulo     21, 14/06/30 07:30:21 P.M. America/New_York     
+3     21, 14/06/29 08:30:21 P.M. America/Sao_Paulo     21, 14/06/29 06:30:21 P.M. America/Sao_Paulo     21, 14/06/30 07:30:21 A.M. Asia/Seoul     
+4     21, 08/12/31 10:59:59 P.M. America/Sao_Paulo     21, 08/12/31 09:59:59 P.M. America/Sao_Paulo     21, 09/01/01 12:59:59 A.M. Europe/London     
+
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 )    to_char(tsltz,  ?:1 )    to_char(tstz,  ?:2 )    
+1     21, 25/12/31 10:30:45 P.M. America/Sao_Paulo -02     21, 25/12/31 10:55:45 P.M. America/Sao_Paulo -02     21, 25/12/31 10:30:45 P.M. America/Sao_Paulo -02     
+2     21, 14/06/30 09:30:21 P.M. America/Sao_Paulo -03     21, 14/06/30 06:00:21 A.M. America/Sao_Paulo -03     21, 14/06/30 07:30:21 P.M. America/New_York EDT     
+3     21, 14/06/29 08:30:21 P.M. America/Sao_Paulo -03     21, 14/06/29 06:30:21 P.M. America/Sao_Paulo -03     21, 14/06/30 07:30:21 A.M. Asia/Seoul KST     
+4     21, 08/12/31 10:59:59 P.M. America/Sao_Paulo -02     21, 08/12/31 09:59:59 P.M. America/Sao_Paulo -02     21, 09/01/01 12:59:59 A.M. Europe/London GMT     
+
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 )    to_char(tsltz,  ?:1 )    to_char(tstz,  ?:2 )    
+1     21, 25/12/31 10:30:45 P.M. -02:00     21, 25/12/31 10:55:45 P.M. -02:00     21, 25/12/31 10:30:45 P.M. -02:00     
+2     21, 14/06/30 09:30:21 P.M. -03:00     21, 14/06/30 06:00:21 A.M. -03:00     21, 14/06/30 07:30:21 P.M. -04:00     
+3     21, 14/06/29 08:30:21 P.M. -03:00     21, 14/06/29 06:30:21 P.M. -03:00     21, 14/06/30 07:30:21 A.M. +09:00     
+4     21, 08/12/31 10:59:59 P.M. -02:00     21, 08/12/31 09:59:59 P.M. -02:00     21, 09/01/01 12:59:59 A.M. +00:00     
+
 ===================================================
 0
 ===================================================
@@ -105,15 +125,40 @@ Error:-783
 ===================================================
 0
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 )    to_char(tsltz,  ?:1 )    to_char(tstz,  ?:2 )    
+1     31th, 2025; MER./4 18:30:45     31th, 2025; MER./4 18:55:45     31th, 2025; MER./4 22:30:45     
+2     30th, 2014; LUN./2 19:30:21     30th, 2014; LUN./2 04:00:21     30th, 2014; LUN./2 19:30:21     
+3     29th, 2014; DIM./1 18:30:21     29th, 2014; DIM./1 16:30:21     30th, 2014; LUN./2 07:30:21     
+4     31th, 2008; MER./4 18:59:59     31th, 2008; MER./4 17:59:59     01th, 2009; JEU./5 00:59:59     
+
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 )    to_char(tsltz,  ?:1 )    to_char(tstz,  ?:2 )    
+1     31th, 2025; MER./4 18:30:45 America/Mexico_City     31th, 2025; MER./4 18:55:45 America/Mexico_City     31th, 2025; MER./4 22:30:45 America/Sao_Paulo     
+2     30th, 2014; LUN./2 19:30:21 America/Mexico_City     30th, 2014; LUN./2 04:00:21 America/Mexico_City     30th, 2014; LUN./2 19:30:21 America/New_York     
+3     29th, 2014; DIM./1 18:30:21 America/Mexico_City     29th, 2014; DIM./1 16:30:21 America/Mexico_City     30th, 2014; LUN./2 07:30:21 Asia/Seoul     
+4     31th, 2008; MER./4 18:59:59 America/Mexico_City     31th, 2008; MER./4 17:59:59 America/Mexico_City     01th, 2009; JEU./5 00:59:59 Europe/London     
+
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 )    to_char(tsltz,  ?:1 )    to_char(tstz,  ?:2 )    
+1     31th, 2025; MER./4 18:30:45 America/Mexico_City CST     31th, 2025; MER./4 18:55:45 America/Mexico_City CST     31th, 2025; MER./4 22:30:45 America/Sao_Paulo -02     
+2     30th, 2014; LUN./2 19:30:21 America/Mexico_City CDT     30th, 2014; LUN./2 04:00:21 America/Mexico_City CDT     30th, 2014; LUN./2 19:30:21 America/New_York EDT     
+3     29th, 2014; DIM./1 18:30:21 America/Mexico_City CDT     29th, 2014; DIM./1 16:30:21 America/Mexico_City CDT     30th, 2014; LUN./2 07:30:21 Asia/Seoul KST     
+4     31th, 2008; MER./4 18:59:59 America/Mexico_City CST     31th, 2008; MER./4 17:59:59 America/Mexico_City CST     01th, 2009; JEU./5 00:59:59 Europe/London GMT     
+
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 )    to_char(tsltz,  ?:1 )    to_char(tstz,  ?:2 )    
+1     31th, 2025; MER./4 18:30:45 -06     31th, 2025; MER./4 18:55:45 -06     31th, 2025; MER./4 22:30:45 -02     
+2     30th, 2014; LUN./2 19:30:21 -05     30th, 2014; LUN./2 04:00:21 -05     30th, 2014; LUN./2 19:30:21 -04     
+3     29th, 2014; DIM./1 18:30:21 -05     29th, 2014; DIM./1 16:30:21 -05     30th, 2014; LUN./2 07:30:21 +09     
+4     31th, 2008; MER./4 18:59:59 -06     31th, 2008; MER./4 17:59:59 -06     01th, 2009; JEU./5 00:59:59 +00     
+
 ===================================================
-Error:-1098
+id    to_char(ts,  ?:0 )    to_char(tsltz,  ?:1 )    to_char(tstz,  ?:2 )    
+1     31th, 2025; MER./4 18:30:45 -06 00     31th, 2025; MER./4 18:55:45 -06 00     31th, 2025; MER./4 22:30:45 -02 00     
+2     30th, 2014; LUN./2 19:30:21 -05 00     30th, 2014; LUN./2 04:00:21 -05 00     30th, 2014; LUN./2 19:30:21 -04 00     
+3     29th, 2014; DIM./1 18:30:21 -05 00     29th, 2014; DIM./1 16:30:21 -05 00     30th, 2014; LUN./2 07:30:21 +09 00     
+4     31th, 2008; MER./4 18:59:59 -06 00     31th, 2008; MER./4 17:59:59 -06 00     01th, 2009; JEU./5 00:59:59 +00 00     
+
 ===================================================
 0
 ===================================================

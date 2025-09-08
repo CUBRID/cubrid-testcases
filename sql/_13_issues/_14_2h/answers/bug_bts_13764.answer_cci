@@ -1565,7 +1565,7 @@ yyyy    mm    sales_sum    sum(sales_sum)
 2000     10     1300.0     1300.0     
 2000     11     1500.0     1500.0     
 2000     12     1610.0     1610.0     
-2000     null     null     14300.0     
+2000     null     1610.0     14300.0     
 2001     1     1010.0     1010.0     
 2001     2     700.0     700.0     
 2001     3     600.0     600.0     
@@ -1578,7 +1578,7 @@ yyyy    mm    sales_sum    sum(sales_sum)
 2001     10     690.0     690.0     
 2001     11     710.0     710.0     
 2001     12     880.0     880.0     
-2001     null     null     11870.0     
+2001     null     880.0     11870.0     
 2002     1     980.0     980.0     
 2002     2     750.0     750.0     
 2002     3     730.0     730.0     
@@ -1591,8 +1591,8 @@ yyyy    mm    sales_sum    sum(sales_sum)
 2002     10     970.0     970.0     
 2002     11     420.0     420.0     
 2002     12     1300.0     1300.0     
-2002     null     null     13450.0     
-null     null     null     39620.0     
+2002     null     1300.0     13450.0     
+null     null     1300.0     39620.0     
 
 Query plan:
 sscan
@@ -1602,10 +1602,10 @@ Query stmt:
 select t.yyyy, t.mm, t.sales_sum, sum(t.sales_sum) from t t group by t.yyyy, t.mm with rollup
 ===================================================
 yyyy    mm    sales_sum    sum(sales_sum)    
-2000     null     null     14300.0     
-2001     null     null     11870.0     
-2002     null     null     13450.0     
-null     null     null     39620.0     
+2000     null     1610.0     14300.0     
+2001     null     880.0     11870.0     
+2002     null     1300.0     13450.0     
+null     null     1300.0     39620.0     
 
 Query plan:
 sscan
@@ -1639,7 +1639,7 @@ yyyy    mm    sales_sum    sum(sales_sum)
 2000     10     1300.0     1300.0     
 2000     11     1500.0     1500.0     
 2000     12     1610.0     1610.0     
-2000     null     null     14300.0     
+2000     null     1610.0     14300.0     
 
 Query plan:
 sscan
@@ -1649,7 +1649,7 @@ Query stmt:
 select t.yyyy, t.mm, t.sales_sum, sum(t.sales_sum) from t t group by t.yyyy, t.mm with rollup having t.yyyy= ?:? 
 ===================================================
 yyyy    mm    sales_sum    sum(sales_sum)    
-2000     null     null     14300.0     
+2000     null     1610.0     14300.0     
 
 Query plan:
 sscan

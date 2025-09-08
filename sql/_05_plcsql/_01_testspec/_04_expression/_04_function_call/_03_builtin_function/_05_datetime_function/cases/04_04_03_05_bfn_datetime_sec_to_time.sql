@@ -4,7 +4,8 @@
 
 create or replace procedure t () as
 begin
-    dbms_output.put_line(SEC_TO_TIME(NULL)); -- parse NULL param error
+    -- parse NULL param error
+    dbms_output.put_line(SEC_TO_TIME(NULL));
     dbms_output.put_line(SEC_TO_TIME(1));
     dbms_output.put_line(SEC_TO_TIME('1'));
     dbms_output.put_line(SEC_TO_TIME('82800.3'));

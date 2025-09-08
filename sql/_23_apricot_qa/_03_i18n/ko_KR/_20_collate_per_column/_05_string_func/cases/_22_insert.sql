@@ -54,6 +54,6 @@ select insert (t1.s1,3,1,t2.s1) from t1,t2 order by 1;
 
 drop table t1;
 drop table t2;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

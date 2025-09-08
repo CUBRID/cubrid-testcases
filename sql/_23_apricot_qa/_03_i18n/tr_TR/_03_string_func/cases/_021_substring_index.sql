@@ -12,7 +12,7 @@ select substring_index('Ğülen','b',-1);
 select substring_index('Ğülen',null,-1);
 --test
 select substring_index('Ğülen','',2);
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

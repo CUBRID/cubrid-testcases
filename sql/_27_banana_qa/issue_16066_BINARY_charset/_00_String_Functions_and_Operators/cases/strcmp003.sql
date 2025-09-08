@@ -19,7 +19,7 @@ SELECT id,strcmp(col1 collate iso88591, col2 collate iso88591) order by 1;
 
 
 drop class t1;
-set names iso88591;
+set names utf8;
 
 commit;
 --+ holdcas off;

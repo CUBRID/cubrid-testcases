@@ -33,7 +33,7 @@ SHOW full COLUMNS FROM t1;
 SHOW FULL COLUMNS FROM t2;
 drop t1;
 drop t2;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

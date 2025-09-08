@@ -24,6 +24,6 @@ drop t;
 set system parameters 'unicode_input_normalization=no';
 set system parameters 'unicode_output_normalization=no';
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

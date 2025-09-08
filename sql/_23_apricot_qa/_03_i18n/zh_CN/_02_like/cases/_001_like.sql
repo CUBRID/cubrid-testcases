@@ -81,6 +81,6 @@ SELECT str FROM test_tr WHERE str LIKE '_木' OR str LIKE '电' OR str LIKE '电
 SELECT vc FROM test_tr WHERE vc LIKE '木' OR vc LIKE '水' OR vc LIKE '水' OR vc LIKE '水' ORDER BY vc ASC;
 
 DROP TABLE test_tr;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

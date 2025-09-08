@@ -13,6 +13,6 @@ prepare st from 'select case when s>? collate iso88591_en_ci then 1 when s<? the
 deallocate prepare st;
 drop t;
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

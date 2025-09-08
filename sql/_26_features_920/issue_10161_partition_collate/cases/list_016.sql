@@ -33,4 +33,4 @@ select count(*) from t1 partition(a2);
 drop table t1;
 
 
-set names iso88591;
+set names utf8;

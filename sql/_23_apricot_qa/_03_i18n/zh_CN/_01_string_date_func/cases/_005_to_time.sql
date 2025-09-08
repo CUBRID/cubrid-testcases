@@ -14,7 +14,7 @@ SELECT TO_TIME('10:11:12 上午', 'HH:MI:SS AM');
 SELECT TO_TIME('10:11:12 下.午.', 'HH:MI:SS 下.午.');
 SELECT TO_TIME('10:11:12 上.午.', 'HH:MI:SS A.M.');
 set system parameters 'intl_date_lang = en_US';
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

@@ -69,6 +69,6 @@ SELECT id,trim(col_utf8 from col_iso ) from t1 order by 1;
 
 drop table t1;
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
