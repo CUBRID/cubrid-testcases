@@ -13,6 +13,6 @@ SELECT REGEXP_LIKE('가나다라' COLLATE utf8_ko_cs,  _utf8' [த]' COLLATE utf
 SET NAMES iso88591;
 SELECT REGEXP_LIKE('Kłak Aleksander', '[[:alpha:]]');
 
-
+SET NAMES utf8;
 set system parameters 'regexp_engine=default';
 
