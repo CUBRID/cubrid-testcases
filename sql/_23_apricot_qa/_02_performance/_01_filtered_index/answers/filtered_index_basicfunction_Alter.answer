@@ -72,12 +72,13 @@ count(topicId)
 1     
 
 Query plan:
-sscan
+iscan
     class: blogtopic node[?]
+    index: my_filter_index 
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select count(*) from blogtopic blogtopic where blogtopic.closedDate is null  using index blogtopic.my_filter_index(+)
+select count(blogtopic.topicId) from blogtopic blogtopic where blogtopic.closedDate is null  using index blogtopic.my_filter_index(+)
 ===================================================
 0
 ===================================================
@@ -98,7 +99,7 @@ iscan
     index: my_filter_index term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select count(*) from blogtopic blogtopic where (blogtopic.topicId> ?:? ) using index blogtopic.my_filter_index(+)
+select count(blogtopic.topicId) from blogtopic blogtopic where (blogtopic.topicId> ?:? ) using index blogtopic.my_filter_index(+)
 ===================================================
 0
 ===================================================
@@ -111,7 +112,7 @@ iscan
     index: my_filter_index term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select count(*) from blogtopic blogtopic where (blogtopic.topicId> ?:? ) using index blogtopic.my_filter_index(+)
+select count(blogtopic.topicId) from blogtopic blogtopic where (blogtopic.topicId> ?:? ) using index blogtopic.my_filter_index(+)
 ===================================================
 0
 ===================================================
@@ -124,7 +125,7 @@ iscan
     index: my_filter_index term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select count(*) from blogtopic blogtopic where (blogtopic.topicId> ?:? ) using index blogtopic.my_filter_index(+)
+select count(blogtopic.topicId) from blogtopic blogtopic where (blogtopic.topicId> ?:? ) using index blogtopic.my_filter_index(+)
 ===================================================
 0
 ===================================================
