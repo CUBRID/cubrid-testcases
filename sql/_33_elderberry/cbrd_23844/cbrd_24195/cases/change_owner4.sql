@@ -13,7 +13,7 @@ create table t1 (c1 int);
 create table t2 (c1 int);
 create trigger trig2 after insert on t1 execute insert into t2 values (obj.c1);
 call login ('dba') on class db_user;
-select class_of, unique_name, class_name, owner.name from _db_class where is_system_class % 8 = 0 order by 1,2;
+select class_of, unique_name, class_name, owner.name from _db_class where flags % 8 = 0 order by 1,2;
 select unique_name, name, owner.name from _db_serial;
 call change_serial_owner ('dba.t1_ai_c1', 'u1') on class _db_serial;
 select unique_name, name, owner.name, target_class, action_definition from _db_trigger order by 1;

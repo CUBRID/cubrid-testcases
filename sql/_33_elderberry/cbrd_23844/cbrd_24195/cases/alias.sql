@@ -19,7 +19,7 @@ create table t2 (c1 int);
 insert into t1 values (2);
 insert into t2 values (2);
 call login ('dba') on class db_user;
-select class_of, unique_name, class_name, owner.name from _db_class where is_system_class % 8 = 0 order by 1,2;
+select class_of, unique_name, class_name, owner.name from _db_class where flags % 8 = 0 order by 1,2;
 select c1, c2 from t1, t2;
 select c1, c2 from u1.t1, u2.t1;
 select c1 from u1.t2, u2.t2;

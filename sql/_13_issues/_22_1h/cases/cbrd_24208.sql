@@ -15,7 +15,7 @@ insert into t1 values (11, 'b');
 insert into t1 values (21, 'c');
 insert into t1 values (91, 'z');
 
-select class_name from _db_class where is_system_class % 8 = 0 order by 1;
+select class_name from _db_class where flags % 8 = 0 order by 1;
 select * from t1 order by 1;
 select * from t1__p__less_than_10;
 select * from t1__p__less_than_20;
@@ -55,7 +55,7 @@ insert into t1 values (51, 'f');
 insert into t1 values (61, 'g');
 insert into t1 values (71, 'h');
 
-select class_name from _db_class where is_system_class % 8 = 0 order by 1;
+select class_name from _db_class where flags % 8 = 0 order by 1;
 select * from t1 order by 1;
 select * from t1__p__p0;
 select * from t1__p__p1 order by 1;
@@ -114,7 +114,7 @@ insert into t1 values (81, 'h');
 insert into t1 values (91, 'i');
 insert into t1 values (99, 'z');
 
-select class_name from _db_class where is_system_class % 8 = 0 order by 1;
+select class_name from _db_class where flags % 8 = 0 order by 1;
 select * from t1 order by 1;
 select * from t1__p__value_abc order by 1;
 select * from t1__p__value_def order by 1;
