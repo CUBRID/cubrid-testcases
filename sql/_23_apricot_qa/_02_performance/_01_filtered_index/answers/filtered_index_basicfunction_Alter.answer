@@ -72,13 +72,12 @@ count(topicId)
 1     
 
 Query plan:
-iscan
+sscan
     class: blogtopic node[?]
-    index: my_filter_index 
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select count(blogtopic.topicId) from blogtopic blogtopic where blogtopic.closedDate is null  using index blogtopic.my_filter_index(+)
+select count(*) from blogtopic blogtopic where blogtopic.closedDate is null  using index blogtopic.my_filter_index(+)
 ===================================================
 0
 ===================================================
@@ -99,7 +98,7 @@ iscan
     index: my_filter_index term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select count(blogtopic.topicId) from blogtopic blogtopic where (blogtopic.topicId> ?:? ) using index blogtopic.my_filter_index(+)
+select count(*) from blogtopic blogtopic where (blogtopic.topicId> ?:? ) using index blogtopic.my_filter_index(+)
 ===================================================
 0
 ===================================================
@@ -112,7 +111,7 @@ iscan
     index: my_filter_index term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select count(blogtopic.topicId) from blogtopic blogtopic where (blogtopic.topicId> ?:? ) using index blogtopic.my_filter_index(+)
+select count(*) from blogtopic blogtopic where (blogtopic.topicId> ?:? ) using index blogtopic.my_filter_index(+)
 ===================================================
 0
 ===================================================
@@ -125,7 +124,7 @@ iscan
     index: my_filter_index term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select count(blogtopic.topicId) from blogtopic blogtopic where (blogtopic.topicId> ?:? ) using index blogtopic.my_filter_index(+)
+select count(*) from blogtopic blogtopic where (blogtopic.topicId> ?:? ) using index blogtopic.my_filter_index(+)
 ===================================================
 0
 ===================================================
@@ -146,7 +145,7 @@ iscan
     index: my_filter_index term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select count(blogtopic.topicId) from blogtopic blogtopic where (blogtopic.topicId> ?:? )
+select count(*) from blogtopic blogtopic where (blogtopic.topicId> ?:? )
 ===================================================
 0
 ===================================================
@@ -159,7 +158,7 @@ iscan
     index: my_filter_index term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select count(blogtopic.topicId) from blogtopic blogtopic where (blogtopic.topicId> ?:? )
+select count(*) from blogtopic blogtopic where (blogtopic.topicId> ?:? )
 ===================================================
 0
 ===================================================
