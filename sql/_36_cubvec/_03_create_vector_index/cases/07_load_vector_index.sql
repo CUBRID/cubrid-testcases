@@ -23,6 +23,12 @@ INSERT INTO test_empty_table VALUES (11, '[2,3,4]');
 INSERT INTO test_empty_table VALUES (12, '[1,1,1]');
 
 CREATE VECTOR INDEX idx_vector_index ON test_empty_table(vector_data EUCLIDEAN);
+
+set trace on;
+
 SELECT id FROM test_empty_table ORDER by l2_distance(vector_data, '[0,0,0]') LIMIT 3;
+
+show trace;
+
 DROP INDEX idx_vector_index ON test_empty_table(vector_data);
 
