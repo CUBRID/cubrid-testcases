@@ -17,7 +17,7 @@ insert INTO a VALUES (ser1.next_value);
 
 select * FROM a;
 
-select * from db_serial WHERE name='ser1';
+select * from _db_serial WHERE name='ser1';
 
 
 

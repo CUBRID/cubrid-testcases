@@ -16,7 +16,7 @@ set system parameters 'alter_table_change_type_strict=no';
 drop table if exists foo;
 create table foo(a int auto_increment, b char(20), c smallint default 22)auto_increment=100;
 
-select * from db_serial order by 1;
+select * from _db_serial order by 1;
 drop serial foo_ai_a;
 
 drop table if exists foo;

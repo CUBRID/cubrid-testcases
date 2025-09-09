@@ -6,6 +6,6 @@ start with 2
 INCREMENT BY -2
 MINVALUE -999999999999999999999999999999999999;
 
-select * from db_serial WHERE name='ser1';
+select * from _db_serial WHERE name='ser1';
 
 drop serial ser1;

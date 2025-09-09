@@ -6,7 +6,7 @@ alter serial ser1
 INCREMENT BY 9999999999999999999999999999999999999
 ;
 
-select * from db_serial WHERE name='ser1';
+select * from _db_serial WHERE name='ser1';
 
 drop serial ser1;
 
@@ -15,6 +15,6 @@ alter serial ser1
 INCREMENT BY 12
 ;
 
-select * from db_serial WHERE name='ser1';
+select * from _db_serial WHERE name='ser1';
 
 drop serial ser1;

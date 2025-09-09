@@ -6,6 +6,6 @@ START WITH -2
 MAXVALUE 9999999999999999999999999999999999999
 ;
 
-select * from db_serial WHERE name='ser1';
+select * from _db_serial WHERE name='ser1';
 
 drop serial ser1;

@@ -1,5 +1,5 @@
 --+ holdcas on;
---Create trigger and retrieve the owner from virtual class db_trigger
+--Create trigger and retrieve the owner from virtual class _db_trigger
 
 call login('dba') on class db_user;
 call add_user('test_user') on class db_user;
@@ -12,7 +12,7 @@ create trigger test_trigger
   
 call login('dba') on class db_user;
 select owner, name
-from   db_trigger
+from   _db_trigger
 where  name = 'test_trigger';
 
 drop trigger test_user.test_trigger;

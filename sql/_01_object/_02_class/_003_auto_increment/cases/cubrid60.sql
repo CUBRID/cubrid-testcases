@@ -7,7 +7,7 @@ create table aaa_new ( a int auto_increment, b varchar(2));
 insert into aaa (a,b) values(1,'xx');
 insert into aaa (b) values('yy');
 
-select name, class_name from db_serial order by 1,2;
+select name, class_name from _db_serial order by 1,2;
 
 rename class aaa as aaa_old;
 
@@ -18,7 +18,7 @@ rename class aaa_new as aaa;
 insert into aaa (a,b) values(1,'xx');
 insert into aaa (b) values('yy');
 
-select name, class_name from db_serial order by 1,2;
+select name, class_name from _db_serial order by 1,2;
 select class_name from db_class where class_name like 'aaa%' order by 1;
 select attr_name, class_name from db_attribute where class_name like 'aaa%' order by 1,2;
 select index_name, class_name from db_index where class_name like 'aaa%' order by 1,2;

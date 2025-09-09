@@ -7,7 +7,7 @@ NOCYCLE;
 
 SELECT ser1.next_value,ser1.next_value,ser1.next_value,ser1.next_value FROM db_root;
 
-select * from db_serial WHERE name='ser1';
+select * from _db_serial WHERE name='ser1';
 
 
 

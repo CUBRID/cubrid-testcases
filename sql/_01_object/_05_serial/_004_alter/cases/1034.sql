@@ -6,6 +6,6 @@ INCREMENT BY 2;
 alter serial ser1
 MAXVALUE -999999999999999999999999999999999998;
 
-select * from db_serial WHERE name='ser1';
+select * from _db_serial WHERE name='ser1';
 
 drop serial ser1;

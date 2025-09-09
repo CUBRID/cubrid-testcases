@@ -5,6 +5,6 @@ create serial ser1;
 alter serial ser1
 INCREMENT BY -10000000000000000000000000000000000000;
 
-select * from db_serial WHERE name='ser1';
+select * from _db_serial WHERE name='ser1';
 
 drop serial ser1;

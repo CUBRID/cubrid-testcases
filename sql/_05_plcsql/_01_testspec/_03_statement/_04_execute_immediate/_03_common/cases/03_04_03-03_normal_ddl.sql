@@ -65,7 +65,7 @@ END;
 call t_5();
 select 'ddl_test create view', a.* from view_ddl_test a ;
 select 'ddl_test create index', a.* from db_index a where a.index_name ='ix01_ddl_test_as' ;
-select 'ddl_test create serial', a.* from db_serial a where a.name='seq_test_plcsql';
+select 'ddl_test create serial', a.* from _db_serial a where a.name='seq_test_plcsql';
 select 'ddl_test create server', a.* from db_server a where a.link_name='srv1';
 select 'ddl_test create synonym', a.* from db_synonym a where a.synonym_name = 'synonym_ddl_test';
 
@@ -82,7 +82,7 @@ END;
 call t_6();
 select 'ddl_test drop table', a.* from db_class a where a.class_name in ('ddl_test', 'ddl_test_like', 'ddl_test_as');
 select 'ddl_test drop view', a.* from db_class a where a.class_name = 'view_ddl_test';
-select 'ddl_test drop serial', a.* from db_serial a where a.name = 'seq_test_plcsql';
+select 'ddl_test drop serial', a.* from _db_serial a where a.name = 'seq_test_plcsql';
 select 'ddl_test drop server', a.* from db_server a where a.link_name='srv1';
 select 'ddl_test drop synonym', a.* from db_synonym a where a.synonym_name = 'synonym_ddl_test';
 

@@ -13,12 +13,12 @@ update son set i = 23;
 drop son;
 
 -- select * from db_root;
-select count(*) as trig_count from db_trigger where name like 'trg';
+select count(*) as trig_count from _db_trigger where name like 'trg';
 
 drop father;
 
 -- and now thew father's trigger should be gone
-select count(*) as trig_count from db_trigger where name like 'trg';
+select count(*) as trig_count from _db_trigger where name like 'trg';
 
 
 -----------------------------------------------------------------------------
@@ -38,16 +38,16 @@ update son set i = 23;
 drop father;
 
 -- check that the trigger still exists but it is disabled: statement should return 1
-select count(*) as cnt from db_trigger where (name = 'trg') and (status = 0);
+select count(*) as cnt from _db_trigger where (name = 'trg') and (status = 0);
 
 -- drop the descendant table - the trigger should still be there
 drop son;
 
-select count(*) as cnt from db_trigger where (name = 'trg') and (status = 0);
+select count(*) as cnt from _db_trigger where (name = 'trg') and (status = 0);
 
 -- cleanup
 drop trigger trg;
 
 -- check that everything's gone
 -- select * from db_root;
-select count(*) as cnt from db_trigger where (name = 'trg') and (status = 0);
+select count(*) as cnt from _db_trigger where (name = 'trg') and (status = 0);

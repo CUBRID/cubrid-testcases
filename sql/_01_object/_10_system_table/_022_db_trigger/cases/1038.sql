@@ -1,5 +1,5 @@
 --+ holdcas on;
---Create trigger and retrieve the information about action_time from db_trigger
+--Create trigger and retrieve the information about action_time from _db_trigger
 
 create class test_class(col1 integer, col2 varchar(20));
 create class op_record(operator varchar(20), 
@@ -25,7 +25,7 @@ select owner, name,action_definition,decode(action_time,1,'BEFORE',
                                                           3,'DEFRRED',
                                                           'Unkown action time') 
                                       as action_time
-from   db_trigger
+from   _db_trigger
 where  name = 'test_trigger';
 
 drop trigger test_trigger;

@@ -6,6 +6,6 @@ start with 10000000000000000000000000000000000000
 INCREMENT BY 2
 NOMINVALUE ;
 
-select * from db_serial WHERE name='ser1';
+select * from _db_serial WHERE name='ser1';
 
 drop serial ser1;

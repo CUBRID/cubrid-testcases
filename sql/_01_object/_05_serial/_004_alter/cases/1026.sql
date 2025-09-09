@@ -6,7 +6,7 @@ create serial ser1;
 alter serial ser1
 MINVALUE 1;
 
-select * from db_serial WHERE name='ser1';
+select * from _db_serial WHERE name='ser1';
 
 drop serial ser1;
 
@@ -14,6 +14,6 @@ create serial ser1;
 alter serial ser1
 MINVALUE  2;
 
-select * from db_serial WHERE name='ser1';
+select * from _db_serial WHERE name='ser1';
 
 drop serial ser1;
