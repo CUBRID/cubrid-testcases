@@ -3,13 +3,13 @@
 create table authors (au_id char(10), name char(10)); 
 create unique index uidx_authors on authors(au_id);
 
-select * from db_index a 
+SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index a 
 inner join db_index_key b 
 on a.class_name = b.class_name 
 and a.index_name = b.index_name 
 where a.class_name = 'authors' ;
 
-select * from db_index a, db_index_key b 
+SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index a, db_index_key b 
 where a.class_name = b.class_name and a.index_name = b.index_name 
 and a.class_name = 'authors' ;
 

@@ -30,7 +30,7 @@ create index idx_test_5 on test(testno desc, testname asc, pname desc, testdate 
 create index idx_test_6 on test(testname asc, pname desc, testdate asc); 
 create index idx_test_7 on test(pname desc, testdate asc); 
 create index idx_test_8 on test(testdate asc, testno desc, testname asc, pname desc); 
-select * from db_index where class_name = 'test' order by 1,2,3;
+SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name = 'test' order by 1,2,3;
 update test set testno = '00011' where testno='00001' ;
 delete from test;
 drop class test;

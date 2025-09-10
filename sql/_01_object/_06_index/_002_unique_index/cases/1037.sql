@@ -19,7 +19,7 @@ col14 bit );
 
 create Unique index t1_index on t1(col12);
 
-SELECT * FROM db_index WHERE class_name='t1' order by 1,2;
+SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index WHERE class_name='t1' order by 1,2;
 
 INSERT INTO t1 VALUES (1,'string1','a','aaa',10,10,10, '05/26/2008', '14:24:00', '14:24:00 05/26/2008',{'a'},{'a'},{'a'},B'1');
 INSERT INTO t1 VALUES (null,'string1','a','aaa',10,10,10, '05/26/2008', '14:24:00', '14:24:00 05/26/2008',{'a'},null,{'a'},B'1');

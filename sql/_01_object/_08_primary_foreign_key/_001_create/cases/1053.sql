@@ -10,7 +10,7 @@ create index i_p1_a on p1 ( a);
 
 select attr_name, is_nullable from db_attribute where class_name = 'p1' order by 1;
 
-select * from db_index where class_name = 'p1';
+SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name = 'p1';
 
 select * from p1;
 
