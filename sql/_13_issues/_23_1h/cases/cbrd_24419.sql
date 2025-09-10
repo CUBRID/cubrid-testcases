@@ -507,7 +507,7 @@ select * from db_attr_setdomain_elm where class_name in (select class_name from 
 select * from db_auth where object_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, grantor_name, grantee_name, object_name, auth_type;
 SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
 select * from db_index_key where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
-select * from db_trigger order by owner_name, trigger_name;
+select trigger_name, owner_name, target_class_name, target_owner_name, target_attr_name, target_attr_type, action_type, action_time, comment from db_trigger order by owner_name, trigger_name;
 select sp_name, sp_type, return_type, arg_count, lang, target, owner, comment from db_stored_procedure order by sp_name;
 select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name, index_of;
 select * from db_method where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
@@ -530,7 +530,7 @@ select * from db_attr_setdomain_elm where class_name in (select class_name from 
 select * from db_auth where object_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, grantor_name, grantee_name, object_name, auth_type;
 SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
 select * from db_index_key where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
-select * from db_trigger order by owner_name, trigger_name;
+select trigger_name, owner_name, target_class_name, target_owner_name, target_attr_name, target_attr_type, action_type, action_time, comment from db_trigger order by owner_name, trigger_name;
 select sp_name, sp_type, return_type, arg_count, lang, target, owner, comment from db_stored_procedure order by sp_name;
 select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name, index_of;
 select * from db_method where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
@@ -553,7 +553,7 @@ select * from db_attr_setdomain_elm where class_name in (select class_name from 
 select * from db_auth where object_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, grantor_name, grantee_name, object_name, auth_type;
 SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
 select * from db_index_key where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
-select * from db_trigger order by owner_name, trigger_name;
+select trigger_name, owner_name, target_class_name, target_owner_name, target_attr_name, target_attr_type, action_type, action_time, comment from db_trigger order by owner_name, trigger_name;
 select sp_name, sp_type, return_type, arg_count, lang, target, owner, comment from db_stored_procedure order by sp_name;
 select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name, index_of;
 select * from db_method where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
@@ -576,7 +576,7 @@ select * from db_attr_setdomain_elm where class_name in (select class_name from 
 select * from db_auth where object_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, grantor_name, grantee_name, object_name, auth_type;
 SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
 select * from db_index_key where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
-select * from db_trigger order by owner_name, trigger_name;
+select trigger_name, owner_name, target_class_name, target_owner_name, target_attr_name, target_attr_type, action_type, action_time, comment from db_trigger order by owner_name, trigger_name;
 select sp_name, sp_type, return_type, arg_count, lang, target, owner, comment from db_stored_procedure order by sp_name;
 select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name, index_of;
 select * from db_method where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
@@ -599,7 +599,7 @@ select * from db_attr_setdomain_elm where class_name in (select class_name from 
 select * from db_auth where object_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, grantor_name, grantee_name, object_name, auth_type;
 SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
 select * from db_index_key where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
-select * from db_trigger order by owner_name, trigger_name;
+select trigger_name, owner_name, target_class_name, target_owner_name, target_attr_name, target_attr_type, action_type, action_time, comment from db_trigger order by owner_name, trigger_name;
 select sp_name, sp_type, return_type, arg_count, lang, target, owner, comment from db_stored_procedure order by sp_name;
 select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name, index_of;
 select * from db_method where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
@@ -622,7 +622,7 @@ select * from db_attr_setdomain_elm where class_name in (select class_name from 
 select * from db_auth where object_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, grantor_name, grantee_name, object_name, auth_type;
 SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
 select * from db_index_key where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
-select * from db_trigger order by owner_name, trigger_name;
+select trigger_name, owner_name, target_class_name, target_owner_name, target_attr_name, target_attr_type, action_type, action_time, comment from db_trigger order by owner_name, trigger_name;
 select sp_name, sp_type, return_type, arg_count, lang, target, owner, comment from db_stored_procedure order by sp_name;
 select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name, index_of;
 select * from db_method where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
@@ -645,7 +645,7 @@ select * from db_attr_setdomain_elm where class_name in (select class_name from 
 select * from db_auth where object_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, grantor_name, grantee_name, object_name, auth_type;
 SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
 select * from db_index_key where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
-select * from db_trigger order by owner_name, trigger_name;
+select trigger_name, owner_name, target_class_name, target_owner_name, target_attr_name, target_attr_type, action_type, action_time, comment from db_trigger order by owner_name, trigger_name;
 select sp_name, sp_type, return_type, arg_count, lang, target, owner, comment from db_stored_procedure order by sp_name;
 select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name, index_of;
 select * from db_method where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
@@ -668,7 +668,7 @@ select * from db_attr_setdomain_elm where class_name in (select class_name from 
 select * from db_auth where object_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, grantor_name, grantee_name, object_name, auth_type;
 SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
 select * from db_index_key where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
-select * from db_trigger order by owner_name, trigger_name;
+select trigger_name, owner_name, target_class_name, target_owner_name, target_attr_name, target_attr_type, action_type, action_time, comment from db_trigger order by owner_name, trigger_name;
 select sp_name, sp_type, return_type, arg_count, lang, target, owner, comment from db_stored_procedure order by sp_name;
 select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name, index_of;
 
@@ -692,7 +692,7 @@ select * from db_attr_setdomain_elm where class_name in (select class_name from 
 select * from db_auth where object_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, grantor_name, grantee_name, object_name, auth_type;
 SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
 select * from db_index_key where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
-select * from db_trigger order by owner_name, trigger_name;
+select trigger_name, owner_name, target_class_name, target_owner_name, target_attr_name, target_attr_type, action_type, action_time, comment from db_trigger order by owner_name, trigger_name;
 select sp_name, sp_type, return_type, arg_count, lang, target, owner, comment from db_stored_procedure order by sp_name;
 select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name, index_of;
 
@@ -716,7 +716,7 @@ select * from db_attr_setdomain_elm where class_name in (select class_name from 
 select * from db_auth where object_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, grantor_name, grantee_name, object_name, auth_type;
 SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
 select * from db_index_key where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
-select * from db_trigger order by owner_name, trigger_name;
+select trigger_name, owner_name, target_class_name, target_owner_name, target_attr_name, target_attr_type, action_type, action_time, comment from db_trigger order by owner_name, trigger_name;
 select sp_name, sp_type, return_type, arg_count, lang, target, owner, comment from db_stored_procedure order by sp_name;
 select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name, index_of;
 
