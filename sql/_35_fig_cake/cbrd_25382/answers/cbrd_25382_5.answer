@@ -46,7 +46,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED USE_HASH */ a.cd, b.cd from ta a, tb b where a.cd=b.cd and a.ca= ?:?  order by ?
+select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd from ta a, tb b where a.cd=b.cd and a.ca= ?:?  order by ?
 ===================================================
 trace    
 
@@ -56,16 +56,16 @@ Query Plan:
       INDEX SCAN (a.i_a) (key range: a.ca= ?:? )
       TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED USE_HASH */ a.cd, b.cd from [dba.ta] a, [dba.tb] b where a.cd=b.cd and a.ca= ?:?  order by ?
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd from [dba.ta] a, [dba.tb] b where a.cd=b.cd and a.ca= ?:?  order by ?
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        BUILD (time: ?, build_time: ?, fetch: ?, fetch_time: ?, ioread: ?, rows: ?, method: skip)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: skip, collision_rate: ?%)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        PROBE (time: ?, probe_time: ?, fetch: ?, fetch_time: ?, ioread: ?, readkeys: ?, rows: ?, max_collisions: ?)
+            SCAN (table: dba.tb), (noscan time: ?, fetch: ?, ioread: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (index: dba.ta.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
@@ -94,7 +94,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED USE_HASH */ a.cd, b.cd from ta a, tb b where a.cd=b.cd and b.ca= ?:?  order by ?
+select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd from ta a, tb b where a.cd=b.cd and b.ca= ?:?  order by ?
 ===================================================
 trace    
 
@@ -104,16 +104,16 @@ Query Plan:
       TABLE SCAN (a)
       INDEX SCAN (b.i_a) (key range: b.ca= ?:? )
 
-  rewritten query: select /*+ ORDERED USE_HASH */ a.cd, b.cd from [dba.ta] a, [dba.tb] b where a.cd=b.cd and b.ca= ?:?  order by ?
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd from [dba.ta] a, [dba.tb] b where a.cd=b.cd and b.ca= ?:?  order by ?
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        BUILD (time: ?, build_time: ?, fetch: ?, fetch_time: ?, ioread: ?, rows: ?, method: skip)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: skip, collision_rate: ?%)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (index: dba.tb.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-        PROBE (time: ?, probe_time: ?, fetch: ?, fetch_time: ?, ioread: ?, readkeys: ?, rows: ?, max_collisions: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
@@ -143,7 +143,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED USE_HASH */ a.cd, b.cd from ta a left outer join tb b on b.ca= ?:?  and b.cd=a.cd order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd from ta a left outer join tb b on b.ca= ?:?  and b.cd=a.cd order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 ===================================================
 trace    
 
@@ -153,17 +153,17 @@ Query Plan:
       TABLE SCAN (a)
       INDEX SCAN (b.i_a) (key range: b.ca= ?:? )
 
-  rewritten query: select /*+ ORDERED USE_HASH */ a.cd, b.cd from [dba.ta] a left outer join [dba.tb] b on b.ca= ?:?  and b.cd=a.cd order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd from [dba.ta] a left outer join [dba.tb] b on b.ca= ?:?  and b.cd=a.cd order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, topnsort: true)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        BUILD (time: ?, build_time: ?, fetch: ?, fetch_time: ?, ioread: ?, rows: ?, method: skip)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: skip, collision_rate: ?%)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (index: dba.tb.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-        PROBE (time: ?, probe_time: ?, fetch: ?, fetch_time: ?, ioread: ?, readkeys: ?, rows: ?, max_collisions: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
@@ -209,7 +209,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH */ a.cd, b.cd, c.cd, d.cd from ta a, tb b, tc c, td d where a.cd=b.cd and b.cd=c.cd and c.cd=d.cd and d.cc= ?:?  and c.cc= ?:?  and b.cc= ?:?  and a.cc= ?:?  order by ?
+select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd, c.cd, d.cd from ta a, tb b, tc c, td d where a.cd=b.cd and b.cd=c.cd and c.cd=d.cd and d.cc= ?:?  and c.cc= ?:?  and b.cc= ?:?  and a.cc= ?:?  order by ?
 ===================================================
 trace    
 
@@ -223,31 +223,31 @@ Query Plan:
         TABLE SCAN (c)
       TABLE SCAN (d)
 
-  rewritten query: select /*+ USE_HASH */ a.cd, b.cd, c.cd, d.cd from [dba.ta] a, [dba.tb] b, [dba.tc] c, [dba.td] d where a.cd=b.cd and b.cd=c.cd and c.cd=d.cd and d.cc= ?:?  and c.cc= ?:?  and b.cc= ?:?  and a.cc= ?:?  order by ?
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd, c.cd, d.cd from [dba.ta] a, [dba.tb] b, [dba.tc] c, [dba.td] d where a.cd=b.cd and b.cd=c.cd and c.cd=d.cd and d.cc= ?:?  and c.cc= ?:?  and b.cc= ?:?  and a.cc= ?:?  order by ?
 
 Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        BUILD (time: ?, build_time: ?, fetch: ?, fetch_time: ?, ioread: ?, rows: ?, method: memory, build: inner)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory, collision_rate: ?%)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        PROBE (time: ?, probe_time: ?, fetch: ?, fetch_time: ?, ioread: ?, readkeys: ?, rows: ?, max_collisions: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
               HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                BUILD (time: ?, build_time: ?, fetch: ?, fetch_time: ?, ioread: ?, rows: ?, method: memory, build: inner)
+                BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory, collision_rate: ?%)
                   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
                     SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                PROBE (time: ?, probe_time: ?, fetch: ?, fetch_time: ?, ioread: ?, readkeys: ?, rows: ?, max_collisions: ?)
+                PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
                   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
                     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
                       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                        BUILD (time: ?, build_time: ?, fetch: ?, fetch_time: ?, ioread: ?, rows: ?, method: memory, build: inner)
+                        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory, collision_rate: ?%)
                           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
                             SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                        PROBE (time: ?, probe_time: ?, fetch: ?, fetch_time: ?, ioread: ?, readkeys: ?, rows: ?, max_collisions: ?)
+                        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
                           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
                             SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
@@ -291,7 +291,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH */ a.cd, b.cd from (select /*+ NO_MERGE */ ta.ca, ta.cb, ta.cc, ta.cd from ta ta where ta.cc= ?:? ) a (ca, cb, cc, cd), (select /*+ NO_MERGE */ tb.ca, tb.cb, tb.cc, tb.cd from tb tb where tb.cc= ?:? ) b (ca, cb, cc, cd) where a.cd=b.cd order by ?
+select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd from (select /*+ NO_MERGE */ ta.ca, ta.cb, ta.cc, ta.cd from ta ta where ta.cc= ?:? ) a (ca, cb, cc, cd), (select /*+ NO_MERGE */ tb.ca, tb.cb, tb.cc, tb.cd from tb tb where tb.cc= ?:? ) b (ca, cb, cc, cd) where a.cd=b.cd order by ?
 ===================================================
 trace    
 
@@ -309,7 +309,7 @@ Query Plan:
       TABLE SCAN (a)
       TABLE SCAN (b)
 
-  rewritten query: select /*+ USE_HASH */ a.cd, b.cd from (select /*+ NO_MERGE */ [dba.ta].ca, [dba.ta].cb, [dba.ta].cc, [dba.ta].cd from [dba.ta] [dba.ta] where [dba.ta].cc= ?:? ) a (ca, cb, cc, cd), (select /*+ NO_MERGE */ [dba.tb].ca, [dba.tb].cb, [dba.tb].cc, [dba.tb].cd from [dba.tb] [dba.tb] where [dba.tb].cc= ?:? ) b (ca, cb, cc, cd) where a.cd=b.cd order by ?
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd from (select /*+ NO_MERGE */ [dba.ta].ca, [dba.ta].cb, [dba.ta].cc, [dba.ta].cd from [dba.ta] [dba.ta] where [dba.ta].cc= ?:? ) a (ca, cb, cc, cd), (select /*+ NO_MERGE */ [dba.tb].ca, [dba.tb].cb, [dba.tb].cc, [dba.tb].cd from [dba.tb] [dba.tb] where [dba.tb].cc= ?:? ) b (ca, cb, cc, cd) where a.cd=b.cd order by ?
 
 
 Trace Statistics:
@@ -322,10 +322,10 @@ Trace Statistics:
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        BUILD (time: ?, build_time: ?, fetch: ?, fetch_time: ?, ioread: ?, rows: ?, method: memory, build: inner)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory, collision_rate: ?%)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        PROBE (time: ?, probe_time: ?, fetch: ?, fetch_time: ?, ioread: ?, readkeys: ?, rows: ?, max_collisions: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
@@ -391,7 +391,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH */ a.cd, b.cd, (select /*+ NO_SUBQUERY_CACHE */ d.cd from td d where d.cd=b.cd and d.cd=b.cd) from (select /*+ NO_MERGE */ ta.ca, ta.cb, ta.cc, ta.cd from ta ta where ta.cc= ?:? ) a (ca, cb, cc, cd), (select /*+ NO_MERGE */ tb.ca, tb.cb, tb.cc, tb.cd from tb tb where tb.cc= ?:? ) b (ca, cb, cc, cd), (select distinct c.ca from tc c) av? (av_?) where a.cd=b.cd and a.ca=av?.av_? order by ?
+select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd, (select /*+ NO_SUBQUERY_CACHE */ d.cd from td d where d.cd=b.cd and d.cd=b.cd) from (select /*+ NO_MERGE */ ta.ca, ta.cb, ta.cc, ta.cd from ta ta where ta.cc= ?:? ) a (ca, cb, cc, cd), (select /*+ NO_MERGE */ tb.ca, tb.cb, tb.cc, tb.cd from tb tb where tb.cc= ?:? ) b (ca, cb, cc, cd), (select distinct c.ca from tc c) av? (av_?) where a.cd=b.cd and a.ca=av?.av_? order by ?
 ===================================================
 trace    
 
@@ -420,7 +420,7 @@ Query Plan:
         TABLE SCAN (b)
       TABLE SCAN (av?)
 
-  rewritten query: select /*+ USE_HASH */ a.cd, b.cd, (select /*+ NO_SUBQUERY_CACHE */ d.cd from [dba.td] d where d.cd=b.cd and d.cd=b.cd) from (select /*+ NO_MERGE */ [dba.ta].ca, [dba.ta].cb, [dba.ta].cc, [dba.ta].cd from [dba.ta] [dba.ta] where [dba.ta].cc= ?:? ) a (ca, cb, cc, cd), (select /*+ NO_MERGE */ [dba.tb].ca, [dba.tb].cb, [dba.tb].cc, [dba.tb].cd from [dba.tb] [dba.tb] where [dba.tb].cc= ?:? ) b (ca, cb, cc, cd), (select distinct c.ca from [dba.tc] c) av? (av_?) where a.cd=b.cd and a.ca=av?.av_? order by ?
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd, (select /*+ NO_SUBQUERY_CACHE */ d.cd from [dba.td] d where d.cd=b.cd and d.cd=b.cd) from (select /*+ NO_MERGE */ [dba.ta].ca, [dba.ta].cb, [dba.ta].cc, [dba.ta].cd from [dba.ta] [dba.ta] where [dba.ta].cc= ?:? ) a (ca, cb, cc, cd), (select /*+ NO_MERGE */ [dba.tb].ca, [dba.tb].cb, [dba.tb].cc, [dba.tb].cd from [dba.tb] [dba.tb] where [dba.tb].cc= ?:? ) b (ca, cb, cc, cd), (select distinct c.ca from [dba.tc] c) av? (av_?) where a.cd=b.cd and a.ca=av?.av_? order by ?
 
 
 Trace Statistics:
@@ -436,17 +436,17 @@ Trace Statistics:
         SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        BUILD (time: ?, build_time: ?, fetch: ?, fetch_time: ?, ioread: ?, rows: ?, method: memory, build: outer)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory, collision_rate: ?%)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
               HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                BUILD (time: ?, build_time: ?, fetch: ?, fetch_time: ?, ioread: ?, rows: ?, method: memory, build: inner)
+                BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory, collision_rate: ?%)
                   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
                     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                PROBE (time: ?, probe_time: ?, fetch: ?, fetch_time: ?, ioread: ?, readkeys: ?, rows: ?, max_collisions: ?)
+                PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
                   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
                     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        PROBE (time: ?, probe_time: ?, fetch: ?, fetch_time: ?, ioread: ?, readkeys: ?, rows: ?, max_collisions: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (correlated)
@@ -495,7 +495,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-with cte(ca, cb, cc, cd) as (select /*+ USE_HASH MATERIALIZE */ a.ca, a.cb, a.cc, a.cd from ta a, tb b where a.cd=b.cd and b.ca= ?:?  and a.ca= ?:? )select /*+ USE_HASH */ c.cd, d.cd from cte c, td d where c.cd=d.cd and d.cc= ?:?  and c.cc= ?:?  order by ?
+with cte(ca, cb, cc, cd) as (select /*+ USE_HASH MATERIALIZE */ a.ca, a.cb, a.cc, a.cd from ta a, tb b where a.cd=b.cd and b.ca= ?:?  and a.ca= ?:? )select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ c.cd, d.cd from cte c, td d where c.cd=d.cd and d.cc= ?:?  and c.cc= ?:?  order by ?
 ===================================================
 trace    
 
@@ -511,7 +511,7 @@ Query Plan:
       TABLE SCAN (c)
       TABLE SCAN (d)
 
-  rewritten query: with cte(ca, cb, cc, cd) as (select /*+ USE_HASH MATERIALIZE */ a.ca, a.cb, a.cc, a.cd from [dba.ta] a, [dba.tb] b where a.cd=b.cd and b.ca= ?:?  and a.ca= ?:? )select /*+ USE_HASH */ c.cd, d.cd from [dba.cte] c, [dba.td] d where c.cd=d.cd and d.cc= ?:?  and c.cc= ?:?  order by ?
+  rewritten query: with cte(ca, cb, cc, cd) as (select /*+ USE_HASH MATERIALIZE */ a.ca, a.cb, a.cc, a.cd from [dba.ta] a, [dba.tb] b where a.cd=b.cd and b.ca= ?:?  and a.ca= ?:? )select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ c.cd, d.cd from [dba.cte] c, [dba.td] d where c.cd=d.cd and d.cc= ?:?  and c.cc= ?:?  order by ?
 
 
 Trace Statistics:
@@ -523,17 +523,17 @@ Trace Statistics:
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
             HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-              BUILD (time: ?, build_time: ?, fetch: ?, fetch_time: ?, ioread: ?, rows: ?, method: memory, build: inner)
+              BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory, collision_rate: ?%)
                 SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
                   SCAN (index: dba.tb.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-              PROBE (time: ?, probe_time: ?, fetch: ?, fetch_time: ?, ioread: ?, readkeys: ?, rows: ?, max_collisions: ?)
+              PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
                 SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
                   SCAN (index: dba.ta.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        BUILD (time: ?, build_time: ?, fetch: ?, fetch_time: ?, ioread: ?, rows: ?, method: memory, build: inner)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory, collision_rate: ?%)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        PROBE (time: ?, probe_time: ?, fetch: ?, fetch_time: ?, ioread: ?, readkeys: ?, rows: ?, max_collisions: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
@@ -567,7 +567,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH */ a.cd, b.cd from ta a, tb b where a.cd=b.cd and b.cc= ?:?  and a.cc= ?:?  order by ?
+select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd from ta a, tb b where a.cd=b.cd and b.cc= ?:?  and a.cc= ?:?  order by ?
 ===================================================
 trace    
 {
@@ -586,7 +586,7 @@ trace
         }
       ]
     },
-    "rewritten query": "select /*+ USE_HASH */ a.cd, b.cd from [dba.ta] a, [dba.tb] b where a.cd=b.cd and b.cc= ?:?  and a.cc= ?:?  order by ?"
+    "rewritten query": "select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd from [dba.ta] a, [dba.tb] b where a.cd=b.cd and b.cc= ?:?  and a.cc= ?:?  order by ?"
   },
   "Trace Statistics": {
     "SELECT": {
@@ -619,13 +619,11 @@ trace
             "ioread": ?,
             "build": {
               "time": ?,
-              "build_time": ?,
               "fetch": ?,
-              "fetch_time": ?,
               "ioread": ?,
               "rows": ?,
               "method": "memory",
-              "build: ": "inner",
+              "collision_rate": ?.?,
               "input": {
                 "SELECT": {
                   "time": ?,
@@ -647,13 +645,11 @@ trace
             },
             "probe": {
               "time": ?,
-              "probe_time": ?,
               "fetch": ?,
-              "fetch_time": ?,
               "ioread": ?,
+              "readrows": ?,
               "readkeys": ?,
               "rows": ?,
-              "max_collisions": ?,
               "input": {
                 "SELECT": {
                   "time": ?,
