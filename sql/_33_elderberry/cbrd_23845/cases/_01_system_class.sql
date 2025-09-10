@@ -13,5 +13,5 @@ show create view db_synonym;
 show columns from _db_synonym;
 show columns from db_synonym;
 show index in _db_synonym;
-select * from _db_synonym;
+select unique_name, name, owner, is_public, target_unique_name, target_name, target_owner, comment from _db_synonym;
 select * from db_synonym;

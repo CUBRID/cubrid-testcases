@@ -9,7 +9,7 @@ drop synonym if exists s1;
 create table t1 (c1 int);
 insert into t1 values (1),(2),(3);
 create synonym s1 for t1;
-select * from db_synonym order by 1;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym order by 1;
 select * from s1;
 
 --err case

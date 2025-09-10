@@ -25,7 +25,7 @@ call login('u1','') on class db_user;
 evaluate 'CUBRID does not support synonyms for procedures.';
 CREATE SYNONYM u1.sp1 FOR dba.sp1;
 CREATE SYNONYM u1.sp2 FOR dba.sp2;
-select * from db_synonym where synonym_owner_name='U1' ORDER BY synonym_name;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym where synonym_owner_name='U1' ORDER BY synonym_name;
 
 evaluate '2-1. error-synonym.( SELECt sp1(); )'; 
 SELECT sp1();

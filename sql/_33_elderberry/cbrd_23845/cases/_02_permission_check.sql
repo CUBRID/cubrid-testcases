@@ -5,9 +5,9 @@
 
 call login ('public') on class db_user;
 --err case
-select * from _db_synonym order by 1;
+select unique_name, name, owner, is_public, target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
 --success case
-select * from db_synonym order by 1;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym order by 1;
 
 call login ('dba') on class db_user;
 drop table if exists t1;
@@ -56,22 +56,22 @@ create synonym s1 for t1;
 
 
 call login ('dba') on class db_user;
-select * from db_synonym order by 1;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym order by 1;
 
 call login ('u1') on class db_user;
-select * from db_synonym order by 1;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym order by 1;
 
 call login ('u2') on class db_user;
-select * from db_synonym order by 1;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym order by 1;
 
 call login ('u3') on class db_user;
-select * from db_synonym order by 1;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym order by 1;
 
 call login ('u4') on class db_user;
-select * from db_synonym order by 1;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym order by 1;
 
 call login ('u5') on class db_user;
-select * from db_synonym order by 1;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym order by 1;
 
 call login ('dba') on class db_user;
 drop synonym u1.s1;

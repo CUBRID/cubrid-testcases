@@ -514,7 +514,7 @@ select * from db_method where class_name in (select class_name from db_class whe
 select * from db_meth_arg where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg_setdomain_elm order by owner_name, class_name, meth_name;
 select * from db_meth_file order by owner_name, class_name, path_name, from_owner_name, from_class_name;
-select * from db_synonym order by synonym_owner_name, synonym_name;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym order by synonym_owner_name, synonym_name;
 select link_name, host, port, db_name, user_name, properties, owner, comment from db_server order by owner, link_name;
 
 
@@ -537,7 +537,7 @@ select * from db_method where class_name in (select class_name from db_class whe
 select * from db_meth_arg where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg_setdomain_elm order by owner_name, class_name, meth_name;
 select * from db_meth_file order by owner_name, class_name, path_name, from_owner_name, from_class_name;
-select * from db_synonym order by synonym_owner_name, synonym_name;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym order by synonym_owner_name, synonym_name;
 select link_name, host, port, db_name, user_name, properties, owner, comment from db_server order by owner, link_name;
 
 
@@ -560,7 +560,7 @@ select * from db_method where class_name in (select class_name from db_class whe
 select * from db_meth_arg where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg_setdomain_elm order by owner_name, class_name, meth_name;
 select * from db_meth_file order by owner_name, class_name, path_name, from_owner_name, from_class_name;
-select * from db_synonym order by synonym_owner_name, synonym_name;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym order by synonym_owner_name, synonym_name;
 select link_name, host, port, db_name, user_name, properties, owner, comment from db_server order by owner, link_name;
 
 
@@ -583,7 +583,7 @@ select * from db_method where class_name in (select class_name from db_class whe
 select * from db_meth_arg where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg_setdomain_elm order by owner_name, class_name, meth_name;
 select * from db_meth_file order by owner_name, class_name, path_name, from_owner_name, from_class_name;
-select * from db_synonym order by synonym_owner_name, synonym_name;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym order by synonym_owner_name, synonym_name;
 select link_name, host, port, db_name, user_name, properties, owner, comment from db_server order by owner, link_name;
 
 
@@ -606,7 +606,7 @@ select * from db_method where class_name in (select class_name from db_class whe
 select * from db_meth_arg where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg_setdomain_elm order by owner_name, class_name, meth_name;
 select * from db_meth_file order by owner_name, class_name, path_name, from_owner_name, from_class_name;
-select * from db_synonym order by synonym_owner_name, synonym_name;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym order by synonym_owner_name, synonym_name;
 select link_name, host, port, db_name, user_name, properties, owner, comment from db_server order by owner, link_name;
 
 
@@ -629,7 +629,7 @@ select * from db_method where class_name in (select class_name from db_class whe
 select * from db_meth_arg where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg_setdomain_elm order by owner_name, class_name, meth_name;
 select * from db_meth_file order by owner_name, class_name, path_name, from_owner_name, from_class_name;
-select * from db_synonym order by synonym_owner_name, synonym_name;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym order by synonym_owner_name, synonym_name;
 select link_name, host, port, db_name, user_name, properties, owner, comment from db_server order by owner, link_name;
 
 
@@ -652,7 +652,7 @@ select * from db_method where class_name in (select class_name from db_class whe
 select * from db_meth_arg where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg_setdomain_elm order by owner_name, class_name, meth_name;
 select * from db_meth_file order by owner_name, class_name, path_name, from_owner_name, from_class_name;
-select * from db_synonym order by synonym_owner_name, synonym_name;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym order by synonym_owner_name, synonym_name;
 select link_name, host, port, db_name, user_name, properties, owner, comment from db_server order by owner, link_name;
 
 
@@ -676,7 +676,7 @@ select * from db_method where class_name in (select class_name from db_class whe
 select * from db_meth_arg where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg_setdomain_elm order by owner_name, class_name, meth_name;
 select * from db_meth_file order by owner_name, class_name, path_name, from_owner_name, from_class_name;
-select * from db_synonym order by synonym_owner_name, synonym_name;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym order by synonym_owner_name, synonym_name;
 select link_name, host, port, db_name, user_name, properties, owner, comment from db_server order by owner, link_name;
 
 
@@ -700,7 +700,7 @@ select * from db_method where class_name in (select class_name from db_class whe
 select * from db_meth_arg where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg_setdomain_elm order by owner_name, class_name, meth_name;
 select * from db_meth_file order by owner_name, class_name, path_name, from_owner_name, from_class_name;
-select * from db_synonym order by synonym_owner_name, synonym_name;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym order by synonym_owner_name, synonym_name;
 select link_name, host, port, db_name, user_name, properties, owner, comment from db_server order by owner, link_name;
 
 
@@ -724,7 +724,7 @@ select * from db_method where class_name in (select class_name from db_class whe
 select * from db_meth_arg where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg_setdomain_elm order by owner_name, class_name, meth_name;
 select * from db_meth_file order by owner_name, class_name, path_name, from_owner_name, from_class_name;
-select * from db_synonym order by synonym_owner_name, synonym_name;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym order by synonym_owner_name, synonym_name;
 select link_name, host, port, db_name, user_name, properties, owner, comment from db_server order by owner, link_name;
 
 
