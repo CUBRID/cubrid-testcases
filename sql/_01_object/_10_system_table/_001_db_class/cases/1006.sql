@@ -32,4 +32,4 @@ WHERE CURRENT_USER = 'DBA'
                                                        AND  au.auth_type = 'SELECT')
                                                        order by 1;
                                                        
-select * from db_class order by 1;
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class order by 1;

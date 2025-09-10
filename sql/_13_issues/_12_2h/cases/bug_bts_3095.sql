@@ -44,13 +44,13 @@ drop table if exists t1,t2,t3;
 
 drop view v1,v2,v4;
 
-create view v1 as select * from db_class;
+create view v1 as select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class;
 
-alter view v1 as (select * from db_class) union (select * from db_class) ;
+alter view v1 as (select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class) union (select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class) ;
 
-alter view v1 as (select * from db_class) union (select * from db_class v1) ;
+alter view v1 as (select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class) union (select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class v1) ;
 
-alter view v1 as select distinct * from ((select * from db_class) union (select * from db_class v1) union all (select * from db_class v1)) ;
+alter view v1 as select distinct * from ((select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class) union (select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class v1) union all (select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class v1)) ;
 
 create table t1( v1 int);
 

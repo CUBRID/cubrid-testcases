@@ -6,9 +6,9 @@ create class t1(a int);
 
 call change_owner('t1', 'test_user') on class db_root;
 
-select * from db_class where class_name='t1';
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where class_name='t1';
 
-select * from db_class where class_name='t1';
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where class_name='t1';
 drop class test_user.t1;
 call drop_user('test_user') on class db_user;
 --+ holdcas off;

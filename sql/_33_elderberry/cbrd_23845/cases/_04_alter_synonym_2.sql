@@ -29,5 +29,5 @@ drop table if exists u1.t2;
 drop user u1;
 
 select * from db_synonym;
-select * from db_class where is_system_class = upper ('NO');
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where is_system_class = upper ('NO');
 

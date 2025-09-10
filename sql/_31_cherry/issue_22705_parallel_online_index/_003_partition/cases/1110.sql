@@ -15,7 +15,7 @@ PARTITION BY RANGE (test_char) (
     PARTITION p2 VALUES LESS THAN MAXVALUE
 );
 create index aa on range_test(test_char) with online parallel 5;
-select * from db_class where class_name like 'range_test%' order by 1;
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where class_name like 'range_test%' order by 1;
 
 
 drop table range_test;

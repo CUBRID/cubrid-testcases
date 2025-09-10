@@ -15,7 +15,7 @@ PARTITION BY RANGE (test_nvarchar) (
     PARTITION p2 VALUES LESS THAN (N'kkk')
 );
 
-select * from db_class where class_name like 'range_test%' order by 1;
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where class_name like 'range_test%' order by 1;
 
 
 drop table range_test;

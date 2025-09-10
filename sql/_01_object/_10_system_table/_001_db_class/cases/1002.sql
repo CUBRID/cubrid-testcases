@@ -11,7 +11,7 @@ create class test_class(col1 integer);
 insert into test_class values(999);
 insert into test_class values(888);
 
-select * from db_class 
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class 
 where  owner_name = current_user;
 
 

@@ -1,6 +1,6 @@
 autocommit off;
 call login('dba', '') on class db_user;
-select * from db_class where is_system_class = 'YES' order by class_name;
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where is_system_class = 'YES' order by class_name;
 create class foo01;
 create class bar01 (ba int, bb int, bc int, bd int);
 select * 

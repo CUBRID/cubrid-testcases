@@ -12,7 +12,7 @@ PARTITION BY LIST (test_nchar) (
     PARTITION p0 VALUES IN (N'aaa',N'bbb',N'ddd')
 );
 
-select * from db_class where class_name like 'list%' order by 1,2;
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where class_name like 'list%' order by 1,2;
 
 
 drop table list_test;

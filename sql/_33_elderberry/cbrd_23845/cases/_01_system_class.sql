@@ -5,7 +5,7 @@
  */
 
 SELECT class_of, unique_name, class_name, owner.name FROM _db_class WHERE class_name LIKE '%db_synonym%';
-SELECT * FROM db_class WHERE class_name LIKE '%db_synonym%';
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class WHERE class_name LIKE '%db_synonym%';
 DESCRIBE _db_synonym;
 DESCRIBE db_synonym;
 show create table _db_synonym;

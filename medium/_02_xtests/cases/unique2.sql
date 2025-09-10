@@ -8,7 +8,7 @@ create class foo5 (a int unique, b int, c int);
 alter class foo5 add attribute d float, unique(a,d);
 create class bar1 as subclass of foo3 (d int);
 create class bar2 as subclass of foo1 (b int, d int, unique(b,d));
-select * from db_class where class_name like 'foo%';
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where class_name like 'foo%';
 rollback;
 commit;
 autocommit on;

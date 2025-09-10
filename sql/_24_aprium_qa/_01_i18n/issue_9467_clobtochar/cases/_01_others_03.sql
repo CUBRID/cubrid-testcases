@@ -1,9 +1,9 @@
 set names utf8 collate utf8_en_ci;
 
 drop table if exists t;
-select * from db_class where chr(65) like '%a%' limit 1;
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where chr(65) like '%a%' limit 1;
 set names utf8;
-select * from db_class where chr(65)||chr(97) collate utf8_en_ci like '%a%' limit 1;
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where chr(65)||chr(97) collate utf8_en_ci like '%a%' limit 1;
 select substr(chr(65)||chr(97),2,1) collate utf8_en_ci from db_class where substr(chr(65)||chr(97),2,1) collate utf8_en_ci like 'A%' limit 1;
 select substr(chr(65)||chr(97),2,1) collate utf8_en_ci from db_class where substr(chr(65)||chr(97),2,1) collate utf8_en_cs like 'A%' limit 1;
 

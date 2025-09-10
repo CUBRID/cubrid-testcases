@@ -13,7 +13,7 @@ create table hash_test(id int ,
 	PARTITIONS 2;
 
 
-select * from db_class where class_name like 'hash%';
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where class_name like 'hash%';
 
 
 drop table hash_test;

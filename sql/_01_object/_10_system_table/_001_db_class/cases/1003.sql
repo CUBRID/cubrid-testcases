@@ -12,7 +12,7 @@ create vclass test_vclass(col1, col3)
 as 
 select col1, col2 from test_class;
 
-select * from db_class 
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class 
 where  class_type = 'VCLASS';
 
 

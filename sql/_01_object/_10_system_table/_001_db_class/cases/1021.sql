@@ -9,7 +9,7 @@ create table range_test(id int not null,
 	PARTITION p0 VALUES LESS THAN ('09:00:00 AM')
 );
 
-select * from db_class where class_name like 'range_test%' order by 1;
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where class_name like 'range_test%' order by 1;
 
 
 drop table range_test;

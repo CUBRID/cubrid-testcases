@@ -7,7 +7,7 @@ create table list_test(id int,
 	PARTITION p0 VALUES IN ('2006-01-01','2006-02-01','2006-03-01',NULL)
 );
 
-select * from db_class where class_name like 'list%' order by 1;
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where class_name like 'list%' order by 1;
 
 
 drop table list_test;

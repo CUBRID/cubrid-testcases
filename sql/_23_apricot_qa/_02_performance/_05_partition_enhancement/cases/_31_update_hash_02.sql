@@ -14,7 +14,7 @@ insert into t select * from t;
 insert into t select * from t;
 
 select * from db_partition where class_name='t' order by 3;
-select * from db_class where class_name='t';
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where class_name='t';
 
 select d,add_months(d,3),count(*) from t__p__p0 where d <> '2012-5-6' group by d;
 select d,add_months(d,3),count(*) from t__p__p2 where d <> '2012-5-6' group by d;
