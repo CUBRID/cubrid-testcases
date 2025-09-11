@@ -10,7 +10,7 @@ insert into ddl_0001 values(seq_test.next_value,'Tom');
 insert into ddl_0001 values(seq_test.next_value,'Hello');
 insert into ddl_0001 values(seq_test.next_value,'Dennis');
 
-select * from db_index
+select index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status from db_index
 where class_name = 'ddl_0001';
 
 drop class ddl_0001;
