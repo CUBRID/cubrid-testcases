@@ -16,7 +16,7 @@ select owner, name, priority, decode(condition_time,
                                        3,'DEFERRED',
                                        'Unkown time')
                                as condition_time
-from   _db_triggerr
+from   _db_trigger
 where  name = 'test_trigger';
 
 drop trigger test_trigger;
