@@ -60,7 +60,7 @@ id_61, id_62, id_63, id_64, id_65)
 select * from db_index_key
 where class_name in ('album','track') order by key_attr_name,class_name,index_name;
 
-SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name in ('album', 'track') order by 1;
+select index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, status, referential_index_class_owner_name, referential_index_class_name, referential_index_name, delete_rule, update_rule, referential_match_option, index_type, deduplicate_key_level, comment from db_index where class_name in ('album', 'track') order by 1;
 
 select * from db_attribute
 where class_name in ('album','track') order by 3, 2,1;
