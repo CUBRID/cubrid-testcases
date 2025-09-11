@@ -1,8 +1,8 @@
 --03_natural_join_bug_from_web_001.sql
 
 DROP TABLE if exists a,b;
-create table a as select * from (select class_of, unique_name, class_name, class_type, flags, owner, inst_attr_count, class_attr_count, shared_attr_count, inst_meth_count, class_meth_count, collation_id, tde_algorithm, sub_classes, super_classes, inst_attrs, class_attrs, shared_attrs, inst_meths, class_meths, meth_files, query_specs, indexes, comment, partition from _db_class order by 2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20);
-create table b as select * from (select class_of, unique_name, class_name, class_type, flags, owner, inst_attr_count, class_attr_count, shared_attr_count, inst_meth_count, class_meth_count, collation_id, tde_algorithm, sub_classes, super_classes, inst_attrs, class_attrs, shared_attrs, inst_meths, class_meths, meth_files, query_specs, indexes, comment, partition from _db_class order by 2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20);
+create table a as select * from (select class_of, unique_name, class_name, class_type, flags, owner, inst_attr_count, class_attr_count, shared_attr_count, inst_meth_count, class_meth_count, collation_id, tde_algorithm, sub_classes, super_classes, inst_attrs, class_attrs, shared_attrs, inst_meths, class_meths, meth_files, query_specs, indexes, comment, [partition] from _db_class order by 2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20);
+create table b as select * from (select class_of, unique_name, class_name, class_type, flags, owner, inst_attr_count, class_attr_count, shared_attr_count, inst_meth_count, class_meth_count, collation_id, tde_algorithm, sub_classes, super_classes, inst_attrs, class_attrs, shared_attrs, inst_meths, class_meths, meth_files, query_specs, indexes, comment, [partition] from _db_class order by 2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20);
 set
 select count(*) from a join b on a.class_of=b.class_of and a.class_name=b.class_name and a.class_name!=b.class_name;
 
