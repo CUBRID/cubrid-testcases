@@ -5,4 +5,4 @@ CALL set_password('你好') on user_common;
 CALL find_user('你好') ON CLASS db_user to x;
 SELECT x FROM db_root;
 CALL drop_user ('你好') ON CLASS db_user;
-SELECT * from db_user where name ='你好';
+SELECT name, id, password, direct_groups, groups, authorization, triggers, is_loginable, is_system_created, comment from db_user where name ='你好';
