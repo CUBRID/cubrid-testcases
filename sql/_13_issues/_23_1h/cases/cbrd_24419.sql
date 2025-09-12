@@ -521,7 +521,7 @@ select link_name, host, port, db_name, user_name, properties, owner, comment fro
 
 
 call login ('u1') on class db_user;
-select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_classer_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where is_system_class = 'NO' order by owner_name, class_name;
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where is_system_class = 'NO' order by owner_name, class_name;
 select * from db_direct_super_class order by owner_name, class_name;
 select * from db_partition order by owner_name, partition_class_name;
 select * from db_vclass where vclass_name in ('v1') order by owner_name, vclass_name;
