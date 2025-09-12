@@ -5,7 +5,7 @@ create user u3;
 create user u21 members u2;
 create user u31 members u3;
 
-select * from db_synonym;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym;
 
 call login ('u1') on class db_user;
 drop table if exists t1;
@@ -96,6 +96,6 @@ drop user u1;
 drop user u2;
 drop user u3;
 
-select * from db_synonym;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym;
 select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where is_system_class = upper ('NO');
 

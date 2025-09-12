@@ -46,7 +46,7 @@ drop class foo06;
 drop class bar062;
 drop class cuu061;
 drop class cuu062;
-select * 
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, statistics_strategy, partitioned, is_reuse_oid_class, collation, comment 
 from db_class 
 where class_name = 'foo06' or class_name = 'bar062' or class_name = 'cuu061' or class_name = 'cuu062' 
 order by class_name;

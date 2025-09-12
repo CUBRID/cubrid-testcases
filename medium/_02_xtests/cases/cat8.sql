@@ -8,7 +8,7 @@ alter class foo08 add method m_fa(int) int;
 savepoint aaa;
 create index i_foo08_a on foo08(fa);
 rollback to savepoint aaa;
-select * 
+select index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, status, index_type, deduplicate_key_level, comment 
 from db_index 
 where class_name = 'foo08' 
 order by index_name;
@@ -22,7 +22,7 @@ from db_method
 where class_name = 'foo08' 
 order by meth_name, meth_type;
 rollback to savepoint 1;
-select * 
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, statistics_strategy, partitioned, is_reuse_oid_class, collation, comment 
 from db_class 
 where class_name = 'foo08' 
 order by class_name;

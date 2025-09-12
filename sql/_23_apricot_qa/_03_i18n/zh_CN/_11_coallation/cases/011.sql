@@ -26,7 +26,7 @@ UPDATE t1 SET col4='2008-05-26' WHERE col4='08年2月26日';
 
 DELETE  FROM t1 WHERE col4='2008-05-26';
 --test
-SELECT  * FROM db_index WHERE class_name='t1' order by 1,2;
+SELECT  index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, status, index_type, deduplicate_key_level, comment FROM db_index WHERE class_name='t1' order by 1,2;
 --test
 SELECT  col4 FROM t1 order by col4;
 

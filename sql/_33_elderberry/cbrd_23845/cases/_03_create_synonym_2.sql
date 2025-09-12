@@ -12,12 +12,12 @@ drop synonym if exists s1;
 --err case : no user
 create synonym s2 for u1.t1;
 
-select * from db_synonym;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym;
 
 call login ('dba') on class db_user;
 drop synonym if exists s1;
 drop synonym if exists s2;
 
-select * from db_synonym;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym;
 select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where is_system_class = upper ('NO');
 

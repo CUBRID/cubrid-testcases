@@ -24,7 +24,7 @@ UPDATE t1 SET col2='ហណ៰៩ថ' WHERE col2='ហឡកឮ';
 
 DELETE  FROM t1 WHERE col2='ឯកកតឰឰហថ';
 --test
-SELECT /*+ recompile */* FROM db_index WHERE class_name='t1'  order by 1,2;
+SELECT /*+ recompile */index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, status, index_type, deduplicate_key_level, comment FROM db_index WHERE class_name='t1'  order by 1,2;
 --test
 SELECT /*+ recompile */col2 FROM t1 where col1>='ហឡឡតឰឿហថ' order by col2;
 
