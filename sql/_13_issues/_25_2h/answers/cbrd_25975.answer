@@ -343,7 +343,22 @@ select /*+ USE_HASH(tbl_a) */ tbl_a.col_a from tbl_a tbl_a
 17 - Empty parentheses: [SELECT /*+ recompile use_hash() */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]     
 
 ===================================================
-Error:-493
+col_b    col_c    col_b    col_c    
+1     1     1     1     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl_b node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select tbl_b.col_b, tbl_b.col_c, tbl_c.col_b, tbl_c.col_c from tbl_b tbl_b, tbl_c tbl_c where tbl_b.col_b=tbl_c.col_b
 ===================================================
     
 17-1 - Spaces only: [SELECT /*+ recompile use_hash(   ) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]     
@@ -509,7 +524,9 @@ nl-join (inner join)
 Query stmt:
 select tbl_b.col_b, tbl_b.col_c, tbl_c.col_b, tbl_c.col_c from tbl_b tbl_b, tbl_c tbl_c where tbl_b.col_b=tbl_c.col_b
 ===================================================
-Error:-493
+    
+19 - Single quote: [SELECT /*+ recompile use_hash(single quote) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]     
+
 ===================================================
 col_b    col_c    col_b    col_c    
 1     1     1     1     
