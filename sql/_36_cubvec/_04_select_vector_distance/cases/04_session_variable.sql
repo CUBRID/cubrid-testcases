@@ -2,7 +2,7 @@
 --   Problem where the index is not selected
 --   Segfault occurs if the session variable is not initialized
 
-DROP TABLE tbl_sv;
+DROP TABLE if exists tbl_sv;
 CREATE TABLE tbl_sv (id int, vec vector(3)) DONT_REUSE_OID;
 CREATE VECTOR INDEX idx_v ON tbl_sv(vec EUCLIDEAN);
 INSERT INTO tbl_sv VALUES (1, '[1,2,3]');
