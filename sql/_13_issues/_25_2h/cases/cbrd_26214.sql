@@ -28,7 +28,7 @@ call commit_poo();
 drop procedure commit_poo;
 
 
-
+-- this query is an error, will be fixed in the other issue
 create or replace procedure rollback_poo as
 	cursor rc is select /*+ no_parallel_heap_scan */ i from ttt;
     rv int;
