@@ -64,7 +64,7 @@ select attr_name, attr_type
 from db_attribute 
 where class_name = 'bar01' 
 order by attr_name, attr_type;
-select * 
+select index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status 
 from db_index 
 where class_name = 'bar01' 
 order by index_name;
