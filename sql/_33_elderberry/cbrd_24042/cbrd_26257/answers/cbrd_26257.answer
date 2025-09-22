@@ -117,7 +117,35 @@ Query stmt:
 select (orderby_num()), Z.cola, Z.colb from ta Z order by ? for (orderby_num()) between null and  ?:? 
 ===================================================
     
-6. Combined with additional condition (AND)     
+6. Combined with additional condition     
+
+===================================================
+rn    cola    colb    
+52     52     52     
+54     54     54     
+56     56     56     
+58     58     58     
+60     60     60     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: a node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select (orderby_num()), a.cola, a.colb from ta a order by ?)
+Query plan:
+sscan
+    class: Z node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select Z.rn, Z.cola, Z.colb from (select (orderby_num()), a.cola, a.colb from ta a order by ?) Z (rn, cola, colb) where Z.colb mod ?=? and (Z.rn>= ?:?  and Z.rn<= ?:? )
+===================================================
+    
+7. Combined with additional condition (between first)     
 
 ===================================================
 rn    cola    colb    
@@ -142,6 +170,51 @@ temp(order by)
 Query stmt:
 select (orderby_num()), Z.cola, Z.colb from ta Z order by ? for (orderby_num()) between  ?:?  and  ?:?  and Z.colb mod ?=?
 ===================================================
+    
+8. Two BETWEENs     
+
+===================================================
+rn    cola    colb    
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: Z node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select (orderby_num()), Z.cola, Z.colb from ta Z order by ? for (orderby_num()) between  ?:?  and  ?:?  and Z.cola between  ?:?  and  ?:? 
+===================================================
+    
+9. BETWEEN in WHERE + HAVING (groupby_num)     
+
+===================================================
+cola    
+19     
+18     
+17     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: a node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select a.cola, (orderby_num()) from ta a order by ?)
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: Z node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select Z.cola from (select a.cola, (orderby_num()) from ta a order by ?) Z (cola, rn) where (Z.rn>= ?:?  and Z.rn<= ?:? ) group by Z.cola desc  having groupby_num() between ? and ?
+===================================================
 0
 ===================================================
 0
@@ -149,7 +222,7 @@ select (orderby_num()), Z.cola, Z.colb from ta Z order by ? for (orderby_num()) 
 51
 ===================================================
     
-7. BETWEEN with join     
+10. BETWEEN with join     
 
 ===================================================
 rn    cola    colb    
