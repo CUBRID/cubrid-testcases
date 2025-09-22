@@ -15,7 +15,7 @@ prepare stmt from 'select a,coercibility(cast(a as varchar collate utf8_en_ci)),
 execute stmt using 'a','a';
 deallocate prepare stmt;
 
-set names iso88591;
+set names utf8;
 drop table t1;
 commit;
 --+ holdcas off;

@@ -40,3 +40,4 @@ SELECT sec_to_time('2011-05-03 你好');
 SELECT sec_to_time('2010-01 OCAK');
 --test
 SELECT sec_to_time('2010-01');
+set names utf8;

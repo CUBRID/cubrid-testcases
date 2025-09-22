@@ -24,6 +24,6 @@ select i, s, substring_index (s,'ゝぁ',-1) from t order by 1;
 
 
 drop table t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

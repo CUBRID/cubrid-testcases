@@ -38,7 +38,7 @@ SELECT FIELD('広東語', '広東語','広東語');
 SELECT FIELD('広東語', '広東語','広東語');
 
 SELECT FIELD('ズニ語', 'ズニ語族','ズニ語族');
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

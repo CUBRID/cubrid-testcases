@@ -7,6 +7,6 @@ insert into t2 (s1)values select * from t1 order by 1;
 select * from t2 order by s1;
 select * from t1 order by s1;
 drop t1,t2;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

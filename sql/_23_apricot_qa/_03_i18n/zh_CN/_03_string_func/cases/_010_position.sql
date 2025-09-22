@@ -32,7 +32,7 @@ select id, name, POSITION ('们' in name) from test_cn order by 1;
 select id, name, POSITION ('车' in name) from test_cn order by 1;
 
 drop table test_cn;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

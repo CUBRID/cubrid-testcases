@@ -18,6 +18,6 @@ select collation(chr(97) collate utf8_de_exp_ai_ci),coercibility(chr(97) collate
 select collation(lcase('A' collate iso88591_en_ci)),coercibility(lcase('A' collate iso88591_en_ci));
 select collation(mid('ABbD' collate utf8_en_ci,2,2));
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

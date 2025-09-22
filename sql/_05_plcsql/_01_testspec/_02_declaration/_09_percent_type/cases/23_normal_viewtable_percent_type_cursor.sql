@@ -138,29 +138,6 @@ create or replace procedure type_support as
    v_VARCHAR     type_support.T_VARCHAR%type;
 
    CURSOR my_cursor IS
-          SELECT T_SHORT, 
-                 T_SMALLINT,
-                 T_INTEGER,
-                 T_INT,
-                 T_BIGINTte or replace procedure type_support as
-   v_SHORT       type_support.T_SHORT%type;
-   v_SMALLINT    type_support.T_SMALLINT%type;
-   v_INTEGER     type_support.T_INTEGER%type;
-   v_INT         type_support.T_INT%type;
-   v_BIGINT      type_support.T_BIGINT%type;
-   v_NUMERIC     type_support.T_NUMERIC%type;
-   v_DECIMAL     type_support.T_DECIMAL%type;
-   v_FLOAT       type_support.T_FLOAT%type;
-   v_REAL        type_support.T_REAL%type;
-   v_DOUBLE      type_support.T_DOUBLE%type;
-   v_DATE        type_support.T_DATE%type;
-   v_TIME        type_support.T_TIME%type;
-   v_TIMESTAMP   type_support.T_TIMESTAMP%type;
-   v_DATETIME    type_support.T_DATETIME%type;
-   v_CHAR        type_support.T_CHAR%type;
-   v_VARCHAR     type_support.T_VARCHAR%type;
-
-   CURSOR my_cursor IS
           SELECT T_SHORT,
                  T_SMALLINT,
                  T_INTEGER,

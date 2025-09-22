@@ -70,11 +70,11 @@ count(a.user_id)
 Query plan:
 iscan
     class: a node[?]
-    index: idx_t?_age_name term[?]
+    index: idx_t?_age_name term[?] (covers)
     filtr: term[?]
     cost:  ? card ?
 Query stmt:
-select count(a.user_id) from t? a where (a.age> ?:? ) and a.user_name is not null 
+select count(*) from t? a where (a.age> ?:? ) and a.user_name is not null 
 ===================================================
 count(a.user_id)    
 16     
@@ -83,7 +83,7 @@ Query plan:
 nl-join (cross join)
     outer: iscan
                class: a node[?]
-               index: idx_t?_age_name term[?]
+               index: idx_t?_age_name term[?] (covers)
                filtr: term[?]
                cost:  ? card ?
     inner: iscan
@@ -92,7 +92,7 @@ nl-join (cross join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ count(a.user_id) from t? a, t? b where (a.age> ?:? ) and a.user_name is not null  and (b.age> ?:? )
+select /*+ ORDERED */ count(*) from t? a, t? b where (a.age> ?:? ) and a.user_name is not null  and (b.age> ?:? )
 ===================================================
 0
 ===================================================

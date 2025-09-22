@@ -19,7 +19,7 @@ deallocate prepare st;
 
 drop table t;
 
-set names iso88591;
+set names utf8;
 
 
 

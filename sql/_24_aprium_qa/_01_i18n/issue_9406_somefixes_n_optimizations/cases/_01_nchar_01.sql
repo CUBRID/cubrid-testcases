@@ -27,4 +27,4 @@ alter table t change column n2 n2 nchar(10) collate utf8_ko_cs;
 select * from dim left join t on t.n3=dim.n3 order by t.n3,t.n2,t.n1;
 drop t,dim;
 
-set names iso88591;
+set names utf8;

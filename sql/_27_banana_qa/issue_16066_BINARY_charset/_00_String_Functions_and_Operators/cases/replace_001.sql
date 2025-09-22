@@ -65,5 +65,5 @@ insert into t values(null,'abcdef', 'def', 'abcdef',  'abc');
 select replace( col_binary, col_iso, col_euckr) from t where id=5;
 
 drop t;
-set names iso88591;
+set names utf8;
 --+ holdcas off;

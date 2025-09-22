@@ -75,6 +75,6 @@ select * from t where lower(b) like '규%' order by 1;
 select * from t where lower(c) like N'함%' order by 1;
 select * from t where lower(d) like N'힐%' order by 1;
 drop table t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

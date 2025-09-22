@@ -25,4 +25,4 @@ select 1 from db_class where _utf8'abc' like _utf8'__C' limit 1;
 set names utf8 collate utf8_gen_ai_ci;
 select 1 from db_class where _utf8'abc' like _utf8'__C' limit 1;
 
-set names iso88591;
+set names utf8;

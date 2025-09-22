@@ -4156,7 +4156,7 @@ INSERT INTO coll_test_JP (id, s) values (10, 'X￣');
 SELECT id, s FROM coll_test_JP ORDER BY s,id;
 
 DROP TABLE coll_test_JP;
-set names iso88591;
+set names utf8;
 set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

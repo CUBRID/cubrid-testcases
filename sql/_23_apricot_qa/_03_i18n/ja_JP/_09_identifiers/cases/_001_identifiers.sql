@@ -45,7 +45,7 @@ alter table テーブル drop constraint 制約2;
 alter table テーブル drop column の行;
 alter table テーブル drop column の行1;
 drop table テーブル;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

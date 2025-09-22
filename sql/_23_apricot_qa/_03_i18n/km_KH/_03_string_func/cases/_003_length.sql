@@ -64,6 +64,6 @@ insert into test_kh values (110,'*មេសា');
 select id, name, CHAR_LENGTH (name), BIT_LENGTH(name), LENGTH(name), OCTET_LENGTH(name) from test_kh order by 1;
 
 drop table test_kh;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

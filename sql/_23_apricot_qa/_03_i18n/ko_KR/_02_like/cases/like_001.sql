@@ -14,6 +14,6 @@ select * from t where col3 like N'가%' order by 1;
 select * from t where col4 like N'%嫁' order by 1;
 select * from t where col5 like '%可%' order by 1;
 drop table t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

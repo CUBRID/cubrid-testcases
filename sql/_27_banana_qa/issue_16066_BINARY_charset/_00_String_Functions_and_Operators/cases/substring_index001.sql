@@ -19,6 +19,6 @@ SELECT SUBSTRING_INDEX (cast( _utf8'Öö_Şş.Üü2Öö_Şş.Üü2Öö_Şş_Üü
 SELECT SUBSTRING_INDEX(chr(0),'.','2');
 
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

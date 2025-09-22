@@ -24,6 +24,6 @@ SELECT CLOB_TO_CHAR(content) FROM doc_t ORDER BY CLOB_TO_CHAR(content);
 SELECT CLOB_TO_CHAR(content) FROM doc_t WHERE content LIKE '이%' order by 1;
 SELECT * FROM doc_t ORDER BY content;
 drop table doc_t,image_t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

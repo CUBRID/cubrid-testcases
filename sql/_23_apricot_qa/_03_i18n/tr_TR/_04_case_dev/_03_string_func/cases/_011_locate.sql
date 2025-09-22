@@ -36,7 +36,7 @@ select id, name, locate ('ı.i',name, 4) from test_tr order by 1;
 
 
 drop table test_tr;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

@@ -30,6 +30,6 @@ SELECT MAKEDATE('9999','365');
 SELECT MAKEDATE(9999,366);
 set system parameters 'intl_date_lang = en_US';
 set system parameters 'intl_number_lang = en_US';
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

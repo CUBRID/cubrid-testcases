@@ -16,6 +16,6 @@ select * from t1 where if(id%2<>0, _utf8'a' collate utf8_en_cs, _utf8'b' collate
 select * from t1 where if(id%2<>0, _iso88591'a' , _iso88591'b' ) = concat(a, '') order by id;
 select * from t1 where if(id%2<>0, _utf8'a' , _utf8'b' ) = concat(a, '') order by id;
 drop table t1;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

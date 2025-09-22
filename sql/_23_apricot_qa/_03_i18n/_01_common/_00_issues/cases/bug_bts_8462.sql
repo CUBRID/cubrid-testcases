@@ -18,4 +18,4 @@ alter table t change s s string collate utf8_de_exp;
 select * from t where substring(s,1,1)='g' order by 1;
 drop t;
 
-set names iso88591;
+set names utf8;

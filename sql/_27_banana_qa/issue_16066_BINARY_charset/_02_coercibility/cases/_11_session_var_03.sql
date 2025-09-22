@@ -38,7 +38,7 @@ select s1,@v + s1, collation (@v + s1) from t1 order by 1;
 drop variable @v,@v1,@tmp,@a;
 drop t1;
 
-set names iso88591;
+set names utf8;
 
 commit;
 --+ holdcas off;

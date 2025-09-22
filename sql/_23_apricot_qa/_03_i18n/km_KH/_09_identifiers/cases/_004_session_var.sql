@@ -5,6 +5,6 @@ set @ហឡកឮ = 2;
 select @ហឡកឮ + 2;
 
 drop variable @ហឡកឮ;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

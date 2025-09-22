@@ -14,6 +14,6 @@ select chr(sh1+2), chr(i1+2), chr (b1+2), chr(n1+2) , chr (f1+2), chr (d1+2), ch
 --test
 select chr(sh1-2), chr(i1-2), chr (b1-2), chr(n1-2) , chr (f1-2), chr (d1-2), chr (m1-2) from test_tr;
 drop table test_tr;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

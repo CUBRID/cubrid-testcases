@@ -38,7 +38,7 @@ SELECT FIELD('çğıİöşü', 'çğıIöşü','çğıIöşü');
 SELECT FIELD('çğıIöşü', 'çğıIöşü','çğıIöşü');
 
 SELECT FIELD('çğıIIöş', 'çIğıIöşü','çğıIIöşü');
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

@@ -46,6 +46,6 @@ SELECT FIELD('çğıIIöş', 'çIğıIöşü','çğıIIöşü');
 SELECT FIELD('çğıIIöş', 'çIğıIöşü','çğıIIöşü',null);
 --Test
 SELECT FIELD(123, '123çIğıIöşü','çğıIIöşü','123',123);
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

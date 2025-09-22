@@ -55,6 +55,6 @@ select collation('a');
 set system parameters 'intl_collation=iso88591_bin';
 select collation('a');
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

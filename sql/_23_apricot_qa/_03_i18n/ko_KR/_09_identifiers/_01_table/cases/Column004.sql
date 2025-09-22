@@ -6,4 +6,4 @@ insert into 가댁체힐你好(가댁)values('a');
 insert into 가댁체힐你好(가댁)values('A');
 SELECT * FROM 가댁체힐你好 order by 1;
 drop table 가댁체힐你好;
-set names iso88591;
+set names utf8;

@@ -41,7 +41,7 @@ select /* +recompile */ s1 from t1 where locate(_utf8'İ',s1) > 1 order by 1;
 
 drop table t1;
 
-set names iso88591;
+set names utf8;
 
 commit;
 --+ holdcas off;

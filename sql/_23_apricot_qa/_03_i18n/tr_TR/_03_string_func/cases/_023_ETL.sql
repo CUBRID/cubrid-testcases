@@ -13,6 +13,6 @@ SELECT ELT(3.2,'string1','string2','string3');
 --test
 SELECT ELT('a','string1','string2','string3');
  
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

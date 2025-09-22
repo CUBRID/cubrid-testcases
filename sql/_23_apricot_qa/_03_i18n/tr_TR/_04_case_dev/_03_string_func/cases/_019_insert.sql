@@ -44,6 +44,6 @@ select i1, s1, insert (s1,3,0,'ÇI_') from t1 order by 1;
 select i1, s1, insert (s1,2,2,'CIŞ') from t1 order by 1;
 
 drop table t1;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

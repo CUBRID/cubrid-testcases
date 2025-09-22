@@ -38,6 +38,6 @@ deallocate prepare st8;
 
 select collation(upper('a')) collation, coercibility(upper('a')) coeribility;
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

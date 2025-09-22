@@ -28,7 +28,7 @@ t_child     ux_pid     pid     0     0
 
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  CONSTRAINT [ux_pid] UNIQUE KEY  ([pid]),  INDEX [ix_val_pid_de09] ([val], [pid]) WITH DEDUPLICATE=9,  INDEX [ix_ign_dedupc] ([pid], [val])) REUSE_OID, COLLATE iso88591_bin     
+dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  CONSTRAINT [ux_pid] UNIQUE KEY  ([pid]),  INDEX [ix_val_pid_de09] ([val], [pid]) WITH DEDUPLICATE=9,  INDEX [ix_ign_dedupc] ([pid], [val])) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 0
@@ -46,7 +46,7 @@ ix_val_pid_de10     _dedup_10     2     0
 
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  INDEX [ix_val_pid_de10] ([val] DESC, [pid]) WITH DEDUPLICATE=10) REUSE_OID, COLLATE iso88591_bin     
+dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  INDEX [ix_val_pid_de10] ([val] DESC, [pid]) WITH DEDUPLICATE=10) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 0
@@ -62,7 +62,7 @@ ix_val_pid_de11     _dedup_11     2     0
 
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  INDEX [ix_val_pid_de11] ([val], [pid] DESC) WITH DEDUPLICATE=11) REUSE_OID, COLLATE iso88591_bin     
+dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  INDEX [ix_val_pid_de11] ([val], [pid] DESC) WITH DEDUPLICATE=11) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 0
@@ -78,7 +78,7 @@ ix_val_pid_de12     _dedup_12     2     0
 
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  INDEX [ix_val_pid_de12] ([val] DESC, [pid] DESC) WITH DEDUPLICATE=12) REUSE_OID, COLLATE iso88591_bin     
+dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  INDEX [ix_val_pid_de12] ([val] DESC, [pid] DESC) WITH DEDUPLICATE=12) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 0
@@ -92,13 +92,13 @@ dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT
 0
 ===================================================
 index_of.index_name    key_attr_name    key_order    asc_desc    func    
-ix_val_pid_de13     null     0     0     nvl([dba.t_child].[val], _iso88591'' collate iso88591_bin)     
+ix_val_pid_de13     null     0     0     nvl([dba.t_child].[val], _utf8'' collate utf8_bin)     
 ix_val_pid_de13     pid     1     1     null     
 ix_val_pid_de13     _dedup_13     2     0     null     
 
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  INDEX [ix_val_pid_de13] (nvl([dba.t_child].[val], _iso88591'' collate iso88591_bin), [pid] DESC)) REUSE_OID, COLLATE iso88591_bin     
+dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  INDEX [ix_val_pid_de13] (nvl([dba.t_child].[val], _utf8'' collate utf8_bin), [pid] DESC)) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 0
@@ -110,13 +110,13 @@ dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT
 0
 ===================================================
 index_of.index_name    key_attr_name    key_order    asc_desc    func    index_of.filter_expression    
-ix_val_pid_de14     val     0     0     null     [dba.t_child].val=_iso88591'N' collate iso88591_bin     
-ix_val_pid_de14     pid     1     0     null     [dba.t_child].val=_iso88591'N' collate iso88591_bin     
-ix_val_pid_de14     _dedup_14     2     0     null     [dba.t_child].val=_iso88591'N' collate iso88591_bin     
+ix_val_pid_de14     val     0     0     null     [dba.t_child].val=_utf8'N' collate utf8_bin     
+ix_val_pid_de14     pid     1     0     null     [dba.t_child].val=_utf8'N' collate utf8_bin     
+ix_val_pid_de14     _dedup_14     2     0     null     [dba.t_child].val=_utf8'N' collate utf8_bin     
 
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  INDEX [ix_val_pid_de14] ([val], [pid]) WHERE [dba.t_child].val=_iso88591'N' collate iso88591_bin) REUSE_OID, COLLATE iso88591_bin     
+dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  INDEX [ix_val_pid_de14] ([val], [pid]) WHERE [dba.t_child].val=_utf8'N' collate utf8_bin) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 0

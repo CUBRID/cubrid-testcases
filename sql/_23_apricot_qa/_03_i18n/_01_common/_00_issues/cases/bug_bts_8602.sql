@@ -20,4 +20,4 @@ alter table t change column s s string collate utf8_km_exp;
 create index i on t(s(2));
 drop t;
 
-set names iso88591;
+set names utf8;

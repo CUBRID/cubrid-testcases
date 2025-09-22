@@ -30,6 +30,6 @@ drop user Çç_Ğğ_İı;
 drop user 你好;
 drop table Çç_Ğğ_İı_Öö_Şş_Üü;
 drop table 表1;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

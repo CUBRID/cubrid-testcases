@@ -1,4 +1,4 @@
---+ holdcas on;
+--+ holdcas on
 
 set names utf8;
 create class t1(
@@ -33,7 +33,7 @@ SELECT trim(col3) FROM t1 order by trim(col3);
 
 drop class t1;
 
-set names iso88591;
+set names utf8;
 
 commit;
 --+ holdcas off;

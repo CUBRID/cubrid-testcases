@@ -90,6 +90,6 @@ SELECT * from t  where col2 between UPPER('ç') and 'ü' order by col2 limit 3;
 --test
 SELECT * from t  where col2 between UPPER('ç') and 'ü' order by col2 desc limit 2;
 DROP TABLE t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

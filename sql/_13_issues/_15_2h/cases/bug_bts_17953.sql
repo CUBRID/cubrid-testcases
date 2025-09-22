@@ -9,6 +9,6 @@ insert into test_to_char_from_number values ('0000 9999 9,999 9,9,9,9, s999999 s
 select to_char(9999.99,type_char) from test_to_char_from_number;
 drop table test_to_char_from_number;
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

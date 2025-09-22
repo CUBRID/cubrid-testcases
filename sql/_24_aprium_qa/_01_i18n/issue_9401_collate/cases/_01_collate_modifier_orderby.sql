@@ -18,8 +18,15 @@ set system parameters 'unicode_output_normalization=no';
 
 select t1.s from (select _utf8'Ñ' as s union select _utf8'N' union select _utf8'Ñ') t1 order by t1.s collate utf8_es_cs;
 
-select t1.s from (select '¥' as s union select version()) t1 order by t1.s collate utf8_ja_exp_cbm;
+select
+  case when t1.s = version() then '[VERSION]' else t1.s end as s
+from (
+  select '¥' as s
+  union
+  select version()
+) t1
+order by t1.s collate utf8_ja_exp_cbm;
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

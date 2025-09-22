@@ -35,6 +35,6 @@ select /*+ recompile index_ss */ i, j from t where j like '_2';
 drop table t;
 
 drop table a;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

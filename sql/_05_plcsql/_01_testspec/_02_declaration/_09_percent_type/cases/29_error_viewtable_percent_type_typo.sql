@@ -224,6 +224,10 @@ create or replace function type_support_return() return  type_support.T_SMALLINT
 create or replace function type_support_return() return  type_support.T_SMALLINT$type   as Begin   return 51 ;   end;    
 
 
+drop function type_support_return;
+
+drop procedure type_support;
+
 drop view  type_support ;
 
 --+ server-message off

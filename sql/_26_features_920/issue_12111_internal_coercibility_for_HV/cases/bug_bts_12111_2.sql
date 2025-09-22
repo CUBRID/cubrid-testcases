@@ -5,4 +5,4 @@ set names iso88591;
 evaluate 'a' into :b;
 prepare x from 'select if(?=?, ?, :b)';
 deallocate prepare x;
-
+set names utf8;

@@ -44,7 +44,7 @@ select * from t order by col1;
 select * from t using index none order by col1 desc; 
 
 drop t;
-set names iso88591;
+set names utf8;
 
 commit;
 --+ holdcas off;

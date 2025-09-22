@@ -86,7 +86,7 @@ drop table tz_test;
 
 set timezone 'Asia/Seoul';
 set system parameters 'intl_date_lang=en_US';
-set names iso88591;
+set names utf8;
 set system parameters 'tz_leap_second_support=no';
 
 --+ holdcas off;

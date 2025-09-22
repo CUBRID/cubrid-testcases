@@ -88,4 +88,4 @@ create index idx on tbl(str2);
 select  a.*,b.* from tbl__p__p0 a,tbl__P__p0 b where a.str='test' and b.str2='1';
 select  a.*,b.* from tbl__p__p0 a ,tbl__P__p1 b where a.str2=b.str2 and a.str='test' and b.str2='2';
 drop tbl;
-set names iso88591;
+set names utf8;

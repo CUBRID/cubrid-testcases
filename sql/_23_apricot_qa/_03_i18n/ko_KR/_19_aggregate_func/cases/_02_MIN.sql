@@ -25,6 +25,6 @@ select min(UNIQUE col4) from t;
 select min(UNIQUE col5) from t;
 
 drop table t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

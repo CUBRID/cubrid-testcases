@@ -13,6 +13,6 @@ select col4, ifnull(col4,N'각伽佳假價加可呵哥嘉') from t order by 2;
 select col5, ifnull(col5,'각伽佳假價加可呵哥嘉') from t order by 2;
 
 drop table t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

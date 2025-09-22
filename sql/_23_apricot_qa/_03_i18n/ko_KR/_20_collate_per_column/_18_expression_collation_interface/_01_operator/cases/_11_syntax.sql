@@ -10,6 +10,6 @@ select t1.s1,t2.s1 from t1,t2 where (cast(t1.s1 as string collate 'utf8_gen')>t2
 select t1.s1,t2.s1 from t1,t2 where (t1.s1>cast(t2.s1 as string collate'utf8_ko_cs_uca')) order by 1,2;
 drop t1,t2;
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

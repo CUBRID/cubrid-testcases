@@ -6,13 +6,13 @@ create view a_view as select a +1 x from a_tbl;
 create view b_view as select to_char(a ) x from a_tbl;
 
 select * from db_vclass
-where  vclass_name like '%view';
+where  vclass_name like '%view' order by vclass_name;
 
 drop a_tbl;
 
 
 select * from db_vclass
-where  vclass_name like '%view';
+where  vclass_name like '%view' order by vclass_name;
 
 drop view a_view;
 drop view b_view;
