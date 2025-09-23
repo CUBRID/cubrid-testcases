@@ -3,7 +3,7 @@ call login('dba', '') on class db_user;
 select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where is_system_class = 'YES' order by class_name;
 create class foo01;
 create class bar01 (ba int, bb int, bc int, bd int);
-select * 
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment 
 from db_class 
 where class_name = 'foo01' or class_name = 'bar01' 
 order by class_name;

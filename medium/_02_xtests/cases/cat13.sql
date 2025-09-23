@@ -18,12 +18,12 @@ from db_user
 where name = 'USER13_2';
 call add_member(u2) on u1;
 call login('USER13_1') on class db_user;
-select * 
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, statistics_strategy, partitioned, is_reuse_oid_class, collation, comment 
 from db_class 
 where class_name = 'foo13' 
 order by class_name;
 call login('USER13_2') on class db_user;
-select * 
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, statistics_strategy, partitioned, is_reuse_oid_class, collation, comment 
 from db_class 
 where class_name = 'foo13' 
 order by class_name;
