@@ -12,6 +12,6 @@ insert into t value('07:44:13' );
 select * from t order by 1;
 drop table t;
 set system parameters 'intl_date_lang = en_US';
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

@@ -30,5 +30,11 @@ execute st using datetimetz'2025-12-31 22:30:45.999 America/Sao_Paulo', '%TZR %T
 select time_format(@v4, '%TZR %TZD %TZH %TZM'); 
 execute st using @v4, '%TZR %TZD %TZH %TZM';
 
+drop prepare st;
+drop variable @v1;
+drop variable @v2;
+drop variable @v3;
+drop variable @v4;
+
 set timezone 'Asia/Seoul';
 

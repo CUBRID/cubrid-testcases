@@ -22,7 +22,7 @@ select * from test_jp where i = 102 and s IN { '=d発は=' , '=d発は发'}  and
 
 
 drop class test_jp;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

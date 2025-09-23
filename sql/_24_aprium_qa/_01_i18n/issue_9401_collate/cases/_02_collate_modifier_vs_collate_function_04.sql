@@ -16,6 +16,6 @@ select s2 from t where coercibility(cast(s2 as string collate iso88591_en_cs) co
 
 drop t;
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

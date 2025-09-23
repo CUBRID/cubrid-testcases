@@ -33,6 +33,6 @@ select insert('',1,1,name) from test_ro order by 1;
 
 drop table test_ro;
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

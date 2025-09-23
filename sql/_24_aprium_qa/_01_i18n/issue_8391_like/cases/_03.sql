@@ -31,6 +31,6 @@ select * from t where s like 'x%Áá%x_%' escape 'Á' order by 1;
 select * from t where s like 'x%Á%%_' escape 'Á' order by 1;
 
 drop table t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

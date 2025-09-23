@@ -61,7 +61,7 @@ select instr ('İzgı.iZZETtin','gı.i',-1);
 select instr ('İzgı.iZZETtin','gı.i',-8);
 
 select instr ('İzgı.iZZETtin','gı.i',-9);
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

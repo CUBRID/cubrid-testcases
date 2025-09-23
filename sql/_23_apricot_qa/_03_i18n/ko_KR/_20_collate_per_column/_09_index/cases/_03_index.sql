@@ -15,7 +15,7 @@ select /*+ RECOMPILE */ s1 from t1 where upper(s1)>'a' order by 1;
 select /*+ RECOMPILE */ s1 from t2 where upper(s1)>'a' order by 1;
 drop t1;
 drop t2;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

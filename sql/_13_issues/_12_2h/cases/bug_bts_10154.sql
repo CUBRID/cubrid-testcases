@@ -15,4 +15,4 @@ insert into t values(1,2),(2,1);
 select * from t where e> '年';
 drop t;
 
-set names iso88591;
+set names utf8;

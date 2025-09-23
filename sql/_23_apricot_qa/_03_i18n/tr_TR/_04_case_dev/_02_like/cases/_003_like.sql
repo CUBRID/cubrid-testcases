@@ -45,6 +45,6 @@ select * from source,pattern where source.v like pattern.v escape 'Ç' order by 
 
 drop source;
 drop pattern;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

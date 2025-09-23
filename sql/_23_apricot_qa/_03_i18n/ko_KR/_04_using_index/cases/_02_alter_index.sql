@@ -15,6 +15,6 @@ select /*+recompile*/* from t where col1>'각' order by 1;
 alter index idx on t REBUILD;
 select /*+recompile*/* from t where col2>'각' order by 1;
 drop table t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

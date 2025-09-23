@@ -29,6 +29,6 @@ select 1 from db_root where cast ('伽' as string collate utf8_ko_cs_uca) like '
 
 drop table t1;
 drop table t2;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

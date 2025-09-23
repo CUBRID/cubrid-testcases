@@ -131,7 +131,7 @@ SELECT TO_DATE('2010-01 teÄt Nov', 'yyyy-dd "teät" Mon');
 SELECT TO_DATE('2010-01 teät Nov', 'yyyy-dd "teÄt" Mon');
 set system parameters 'intl_date_lang = en_US';
 set system parameters 'intl_number_lang = en_US';
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

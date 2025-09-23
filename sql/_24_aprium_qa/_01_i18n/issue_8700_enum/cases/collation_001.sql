@@ -13,7 +13,7 @@ select * from t2 order by 1;
 
 drop table t2;
 
-set names iso88591;
+set names utf8;
 
 commit;
 --+ holdcas off;

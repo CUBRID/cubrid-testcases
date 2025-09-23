@@ -46,4 +46,4 @@ execute stmt using 'a', 'b', 'x', 'd';
 deallocate prepare stmt;
 drop table t1;
 
-set names iso88591;
+set names utf8;

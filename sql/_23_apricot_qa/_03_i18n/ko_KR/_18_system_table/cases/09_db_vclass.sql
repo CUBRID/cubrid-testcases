@@ -6,6 +6,6 @@ create view 보는 as select * from db_class where class_name like'테이%' orde
 select * from db_vclass where vclass_name=_binary'보는';
 drop table 테이블;
 drop view 보는;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

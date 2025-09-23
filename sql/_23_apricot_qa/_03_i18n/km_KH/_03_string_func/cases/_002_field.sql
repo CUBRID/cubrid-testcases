@@ -38,7 +38,7 @@ SELECT FIELD('៥ពុ', '៥ពុ','៥ពុ');
 SELECT FIELD('៥ពុ', '៥ពុ','៥ពុ');
 
 SELECT FIELD('កក្កដា', 'កក្កដា៨','កក្កដា៨');
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

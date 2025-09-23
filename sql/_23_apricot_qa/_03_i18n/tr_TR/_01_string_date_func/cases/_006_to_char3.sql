@@ -155,6 +155,6 @@ SELECT TO_CHAR(TIMESTAMP'2011-12-01 20:11:12', 'HH:MI:SS A.m.');
 
 set system parameters 'intl_date_lang = en_US';
 set system parameters 'intl_number_lang = en_US';
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

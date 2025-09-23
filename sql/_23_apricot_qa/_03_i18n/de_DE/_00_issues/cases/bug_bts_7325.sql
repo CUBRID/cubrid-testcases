@@ -5,6 +5,6 @@ create table t( a timestamp);
 insert into t value(timestamp'07:44:00 26.03.2012');
 drop table t;
 set system parameters 'intl_date_lang = en_US';
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

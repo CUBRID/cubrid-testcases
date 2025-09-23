@@ -33,6 +33,6 @@ select id,name from test_cn where name between '火咱工蛤. ' and '_  ' order 
 select id,name from test_cn where name between ' .' and '火咱工蛤   ' order by 1;
 
 drop table test_cn;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

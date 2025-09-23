@@ -38,6 +38,6 @@ using index i_test_jp_name(+) order by 2,1;
 
 
 drop test_jp;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

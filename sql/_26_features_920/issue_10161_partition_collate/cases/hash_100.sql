@@ -47,4 +47,4 @@ select count(*) from w2 partition(p3);
 select count(*) from w2 partition(p4);
 drop table w2;
 
-set names iso88591;
+set names utf8;

@@ -88,4 +88,4 @@ select collation (charset (_euckr'a'));
 select collation (collation (_euckr'a'));
 
 
-set names iso88591;
+set names utf8;

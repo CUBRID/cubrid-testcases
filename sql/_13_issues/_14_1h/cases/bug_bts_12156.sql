@@ -22,4 +22,4 @@ execute stmt using 'aBc', 'AbC', 0;
 deallocate prepare stmt;
 
 
-set names iso88591;
+set names utf8;

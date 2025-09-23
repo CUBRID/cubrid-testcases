@@ -134,7 +134,7 @@ SELECT str FROM test_tr WHERE str LIKE '_ı' OR str LIKE '_I' OR str LIKE '_i' O
 SELECT vc FROM test_tr WHERE vc LIKE 'ı' OR vc LIKE 'I' OR vc LIKE 'i' OR vc LIKE 'İ' ORDER BY vc ASC;
 
 DROP TABLE test_tr;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

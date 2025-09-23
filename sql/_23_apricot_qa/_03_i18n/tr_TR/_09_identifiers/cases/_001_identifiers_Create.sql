@@ -6,7 +6,7 @@ create table Çç_Ğğ_İı_Öö_Şş_Üü(s1 varchar(200));
 alter table Çç_Ğğ_İı_Öö_Şş_Üü add column i_Çç_Ğğ_İı_Öö_Şş_Üü int;
 --test 
 drop table Çç_Ğğ_İı_Öö_Şş_Üü;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
 

@@ -41,6 +41,6 @@ select id,name from test_jp where name >= ALL{'麼は樹■沢ン', '=d発は'} 
 select id,name from test_jp where name <> ALL {'ぁはァヰン', 'Qddヰ亜愛Qン', 'Qdぁ1', '麼は樹■沢ン'} order by 1;
 
 drop table test_jp;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

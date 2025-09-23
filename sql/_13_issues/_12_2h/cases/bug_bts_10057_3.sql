@@ -108,5 +108,6 @@ set names iso88591 collate iso88591_bin;
 deallocate prepare st;
 
 drop variable @a;
+set names utf8;
 
 --+ holdcas off;

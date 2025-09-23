@@ -40,7 +40,7 @@ deallocate prepare st;
 drop table tz_test;
 
 set timezone 'Asia/Seoul';
-set names iso88591;
+set names utf8;
 set system parameters 'intl_date_lang=en_US';
 
 --+ holdcas off;

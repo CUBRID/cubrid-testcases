@@ -5,6 +5,6 @@ create index 색인2 on 테이블(lower(칼럼2),칼럼1);
 select * from _db_index_key where key_attr_name like'칼%' order by key_attr_name, key_order;
 
 drop table 테이블;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

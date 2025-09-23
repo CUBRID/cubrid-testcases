@@ -26,6 +26,6 @@ select translate( cast(_utf8'Öö_Şş_Üü2' as string charset iso88591), cast(
 
 
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

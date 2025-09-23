@@ -10,6 +10,6 @@ show collation where charset in (charset(@v1));
 show collation where charset in (@v1); 
 show collation where charset=@v1; 
 drop variable @v1;
-set names iso88591 collate iso88591_bin;
+set names utf8;
 
 --+ holdcas off;

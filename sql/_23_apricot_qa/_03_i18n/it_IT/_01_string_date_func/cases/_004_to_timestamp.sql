@@ -135,6 +135,6 @@ SELECT TO_TIMESTAMP('2011-05-01 DOMENICA 10:11:12 M', 'yyyy-MM-DD DAY HH:MI:SS A
 SELECT TO_TIMESTAMP('2011-05-01 DOMENICA 10:11:12 P.', 'yyyy-MM-DD DAY HH:MI:SS P.M.');
 SELECT TO_TIMESTAMP('2011-05-01 DOMENICA 10:11:12 M.', 'yyyy-MM-DD DAY HH:MI:SS A.M.');
 set system parameters 'intl_date_lang = en_US';
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

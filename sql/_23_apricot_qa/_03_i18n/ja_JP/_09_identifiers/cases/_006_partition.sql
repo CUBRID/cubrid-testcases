@@ -10,6 +10,6 @@ select * from テストテーブル__p__p1;
 desc テストテーブル;
 
 drop table テストテーブル;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

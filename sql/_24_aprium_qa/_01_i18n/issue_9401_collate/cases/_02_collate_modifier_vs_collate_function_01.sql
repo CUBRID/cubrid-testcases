@@ -25,6 +25,6 @@ select coercibility('ß' collate utf8_gen),coercibility('가' collate utf8_gen),
 set system parameters 'unicode_input_normalization=no';
 set system parameters 'unicode_output_normalization=no';
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

@@ -20,6 +20,6 @@ select (hex(hex(col3))),col3 from t order by 1;
 select (hex(hex(col4))),col4 from t order by 1;
 select (hex(hex(col5))),col5 from t order by 1;
 drop table t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

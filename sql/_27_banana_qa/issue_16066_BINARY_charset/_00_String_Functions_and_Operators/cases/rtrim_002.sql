@@ -37,5 +37,5 @@ select id, rtrim(col_binary, '바'), rtrim(col_utf8, '바'), rtrim(col_euckr, '�
 select id, rtrim(col_binary, 'Â'), rtrim(col_utf8, 'Â'), HEX(rtrim(col_euckr, 'Â')), rtrim(col_iso, 'Â'),rtrim(col_iso,cast( _utf8'Â' as string charset iso88591) ) from t where id in (5) order by 1;
 
 drop t;
-set names iso88591;
+set names utf8;
 --+ holdcas off;

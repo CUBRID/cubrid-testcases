@@ -41,6 +41,6 @@ select id,name from test_kh where name >= ALL{'៝ខ០ស៩ថ', 'ឯឡ៏�
 select id,name from test_kh where name <> ALL {'កខណតថ', 'ហឡឡតឰឿហថ', 'ហឡកឮ', '៝ខ០ស៩ថ'} order by 1;
 
 drop table test_kh;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

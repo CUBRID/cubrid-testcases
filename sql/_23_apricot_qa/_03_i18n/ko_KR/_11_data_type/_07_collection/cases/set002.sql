@@ -8,6 +8,6 @@ INSERT INTO t1 VALUES ({'탐탕', '톤투'});
 select * from t1 order by col1;
 
 drop t1;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

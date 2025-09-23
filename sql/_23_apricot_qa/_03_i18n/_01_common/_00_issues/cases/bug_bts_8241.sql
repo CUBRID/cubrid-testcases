@@ -7,6 +7,6 @@ select * from t where a > any{cast('伽' as string collate utf8_gen)};
 select * from t where a > some{cast('伽' as string collate utf8_gen)};
 select * from t where a > all{cast('伽' as string collate utf8_gen)};
 drop table t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

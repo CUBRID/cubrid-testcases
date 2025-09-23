@@ -5,6 +5,6 @@ insert into t1 values (null),( null);
 select s1+'가' from t1 order by 1;
 select s1+cast('伽'as string collate 'utf8_gen') from t1 order by 1;
 drop t1;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

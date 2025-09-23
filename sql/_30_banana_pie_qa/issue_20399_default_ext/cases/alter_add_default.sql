@@ -88,3 +88,4 @@ insert into t1 values(9, default to_char(sysdatetime, 'YYYYMMDD'), default);
 select * from t1 order by 1,2;
 drop t1;
 drop t2;
+set names utf8;

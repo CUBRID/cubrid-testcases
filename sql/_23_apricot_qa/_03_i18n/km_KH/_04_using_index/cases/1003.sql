@@ -34,6 +34,6 @@ select * from test_kh where i = 101 or t = 'ា៝ខ០ឦ' using index none  o
 drop class test_kh;
 
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

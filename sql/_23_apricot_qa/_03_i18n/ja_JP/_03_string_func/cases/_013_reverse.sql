@@ -28,6 +28,6 @@ insert into test_jp values (110,'*中国語');
 select id, name, reverse (name) from test_jp order by 1;
 
 drop table test_jp;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

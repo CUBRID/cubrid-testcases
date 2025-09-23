@@ -33,7 +33,7 @@ select length(s1),length(s2) from ll order by length(s1);
 
 drop t;
 drop ll;
-set names iso88591;
+set names utf8;
 rollback;
 
 

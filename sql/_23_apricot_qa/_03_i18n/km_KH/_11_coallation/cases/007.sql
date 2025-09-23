@@ -43,7 +43,7 @@ select /*+ recompile */* from t order by col1;
 select /*+ recompile */* from t using index none order by col1 desc; 
 
 drop t;
-set names iso88591;
+set names utf8;
 set  system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

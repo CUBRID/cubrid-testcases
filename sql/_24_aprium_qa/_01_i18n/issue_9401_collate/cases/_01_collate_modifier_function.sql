@@ -37,6 +37,6 @@ insert into t values('AaaD');
 select left(s collate utf8_en_ci,2) from t;
 drop t;
 
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

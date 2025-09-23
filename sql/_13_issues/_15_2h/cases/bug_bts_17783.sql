@@ -10,6 +10,6 @@ select char_length(chr(0));
 select character_length(chr(0));
 select length(chr(0));
 select lengthb(chr(0));
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

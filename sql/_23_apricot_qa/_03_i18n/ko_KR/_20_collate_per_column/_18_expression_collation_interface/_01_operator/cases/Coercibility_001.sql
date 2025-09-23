@@ -10,6 +10,6 @@ SELECT s1, s2 FROM t WHERE s1 > CAST (s2 AS STRING COLLATE utf8_tr_cs);
 SELECT s1, s2 FROM t WHERE s1 > CONCAT (s2,'');
 SELECT s1, s2 FROM t WHERE s1 > 'abc';
 drop table t;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

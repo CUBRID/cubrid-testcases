@@ -337,6 +337,6 @@ SELECT t.user_id AS c, COUNT(*) AS s FROM PostFavorite t INNER JOIN Post posts O
 
 drop table if exists `Post`,`PostFavorite`,`User`;
 
-set names iso88591;
+set names utf8;
 --+ holdcas off;
 commit;

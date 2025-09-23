@@ -12,7 +12,7 @@
 Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
 dba.t     1     idx1     1     null     A     0     null     null     YES     BTREE      ifnull([dba.t].[a], [dba.t].[b])     null     YES     
 dba.t     1     idx2     1     null     A     0     null     null     YES     BTREE     nvl([dba.t].[a], [dba.t].[b])     null     YES     
-dba.t     1     idx3     1     null     A     0     null     null     YES     BTREE     nvl2([dba.t].[a], [dba.t].[b], _iso88591'a is null' collate iso88591_bin)     null     YES     
+dba.t     1     idx3     1     null     A     0     null     null     YES     BTREE     nvl2([dba.t].[a], [dba.t].[b], _utf8'a is null' collate utf8_bin)     null     YES     
 
 ===================================================
 0
@@ -32,7 +32,7 @@ dba.t     1     idx3     1     null     A     0     null     null     YES     BT
 Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
 dba.t     1     idx1     1     null     A     3     null     null     YES     BTREE      ifnull([dba.t].[a], [dba.t].[b])     null     YES     
 dba.t     1     idx2     1     null     A     3     null     null     YES     BTREE     nvl([dba.t].[a], [dba.t].[b])     null     YES     
-dba.t     1     idx3     1     null     A     2     null     null     YES     BTREE     nvl2([dba.t].[a], [dba.t].[b], _iso88591'a is null' collate iso88591_bin)     null     YES     
+dba.t     1     idx3     1     null     A     2     null     null     YES     BTREE     nvl2([dba.t].[a], [dba.t].[b], _utf8'a is null' collate utf8_bin)     null     YES     
 
 ===================================================
 0
@@ -84,7 +84,7 @@ Error:-787
 0
 ===================================================
 Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
-dba.t1     1     i_t1_a2m     1     null     A     1     null     null     YES     BTREE      position( cast([dba.t1].[e] as varchar) in _iso88591'fff' collate iso88591_bin)     null     YES     
+dba.t1     1     i_t1_a2m     1     null     A     1     null     null     YES     BTREE      position( cast([dba.t1].[e] as varchar) in _utf8'fff' collate utf8_bin)     null     YES     
 dba.t1     1     idx3     1     null     A     1     null     null     YES     BTREE      to_timestamp_tz( cast([dba.t1].[p] as varchar))     null     YES     
 dba.t1     1     idx4     1     null     A     1     null     null     YES     BTREE      to_datetime_tz( cast([dba.t1].[q] as varchar))     null     YES     
 dba.t1     1     idx_2n     1     null     A     1     null     null     YES     BTREE      month([dba.t1].[n])     null     YES     
@@ -211,7 +211,7 @@ Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    C
 dba.t     1     i_t_dtcol     1     null     A     0     null     null     YES     BTREE      timediff([dba.t].[datetime_col], datetime '2010-01-01 12:34:56')     null     YES     
 dba.t     1     i_t_mi     1     null     A     0     null     null     YES     BTREE      mod([dba.t].[int_col], 2)     null     YES     
 dba.t     1     i_t_pf     1     null     A     0     null     null     YES     BTREE      power( cast([dba.t].[float_col] as double),  cast(3.0 as double))     null     YES     
-dba.t     1     i_t_rpcol     1     null     A     0     null     null     YES     BTREE      replace([dba.t].[string_col], _iso88591'b' collate iso88591_bin, _iso88591'c' collate iso88591_bin)     null     YES     
+dba.t     1     i_t_rpcol     1     null     A     0     null     null     YES     BTREE      replace([dba.t].[string_col], _utf8'b' collate utf8_bin, _utf8'c' collate utf8_bin)     null     YES     
 dba.t     1     i_t_td2col     1     null     A     0     null     null     YES     BTREE      timediff([dba.t].[time_col], time '12:00:00')     null     YES     
 dba.t     1     i_t_tdcol     1     null     A     0     null     null     YES     BTREE      timediff([dba.t].[datetime_col],  cast(timestamp '2010-01-01 12:34:56' as datetime))     null     YES     
 
@@ -226,17 +226,17 @@ dba.t     1     i_t_tdcol     1     null     A     0     null     null     YES  
 ===================================================
 1
 ===================================================
-( lpad('CUBRID', a, 'X'))    
+( lpad(_iso88591'CUBRID', a, _iso88591'X'))    
 null     
 XXXXCUBRID     
 
 ===================================================
-( lpad(a, 10, 'X'))    
+( lpad(a, 10, _iso88591'X'))    
 XXXXXX-100     
 XXXXXXXX10     
 
 ===================================================
-( lpad('CUBRID', 20, a))    
+( lpad(_iso88591'CUBRID', 20, a))    
 -100-100-100-1CUBRID     
 10101010101010CUBRID     
 
@@ -249,7 +249,9 @@ XXXXXXXX10
 ===================================================
 Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
 dba.t1     1     i1     1     null     A     1     null     null     YES     BTREE      lpad(_iso88591'CUBRID' collate iso88591_bin, [dba.t1].[a], _iso88591'X' collate iso88591_bin)     null     YES     
-dba.t1     1     i2     1     null     A     2     null     null     YES     BTREE      lpad( cast([dba.t1].[a] as varchar), 10, _iso88591'X' collate iso88591_bin)     null     YES     
+dba.t1     1     i2     1     null     A     2     null     null     YES     BTREE      lpad( cast([dba.t1].[a] as varchar collate iso88591_bin), 10, _iso88591'X' collate iso88591_bin)     null     YES     
 
+===================================================
+0
 ===================================================
 0

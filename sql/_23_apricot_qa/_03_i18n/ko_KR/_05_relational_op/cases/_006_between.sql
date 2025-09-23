@@ -33,6 +33,6 @@ select id,name from test_kr where name between '십쌍악안. ' and '_  ' order 
 select id,name from test_kr where name between ' .' and '십쌍악안   ' order by 1;
 
 drop table test_kr;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

@@ -6,6 +6,6 @@ INSERT INTO multiset_tbl VALUES ({3,3,3,2,2,1,0,'','통터','통터','퉁','퉁'
 SELECT * FROM multiset_tbl order by 1;
 SELECT CAST(col_1 AS SET), CAST(col_1 AS LIST) FROM multiset_tbl order by 1;
 drop table multiset_tbl;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

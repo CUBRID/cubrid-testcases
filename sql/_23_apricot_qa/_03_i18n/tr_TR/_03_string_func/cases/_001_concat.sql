@@ -24,6 +24,6 @@ insert into test_tr values (1,concat_ws('a',CURDATE()));
 --Test
 insert into test_tr values (1,concat_ws('ö',CURDATE()));
 drop table test_tr;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

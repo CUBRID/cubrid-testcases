@@ -10,6 +10,6 @@ select * from t where a=STR_TO_DATE('월 2 2011','%a %u %Y');
 drop table t;
 set system parameters 'intl_date_lang = en_US';
 set system parameters 'intl_number_lang = en_US';
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;

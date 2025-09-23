@@ -17,7 +17,7 @@ insert into t values('abcdefghig');
 select/*+ recompile*/count(*) from t where col1>'abc' using index none ;
 select/*+ recompile*/count(*) from t where col1>'abc' ;
 drop table t;
-set names iso88591;
+set names utf8;
 rollback;
 autocommit on;
 

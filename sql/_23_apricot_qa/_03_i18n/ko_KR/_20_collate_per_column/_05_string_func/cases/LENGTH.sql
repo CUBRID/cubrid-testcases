@@ -8,6 +8,6 @@ select s1,length(s1),LENGTHB(s1),CHARACTER_LENGTH(s1),CHAR_LENGTH(s1),BIT_LENGTH
 select s1,length(s1),LENGTHB(s1),CHARACTER_LENGTH(s1),CHAR_LENGTH(s1),BIT_LENGTH (s1),OCTET_LENGTH (s1) from t2 order by s1;
 drop t1;
 drop t2;
-set names iso88591;
+set names utf8;
 commit;
 --+ holdcas off;
