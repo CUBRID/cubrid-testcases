@@ -32,7 +32,35 @@ Query stmt:
 select (orderby_num()), Z.cola, Z.colb from ta Z order by ? for (orderby_num())>= ?:?  and (orderby_num())<= ?:? 
 ===================================================
     
-2. BETWEEN expression (constant + arithmetic)     
+2. Condition with additional filters (excluding ROWNUM)     
+
+===================================================
+rn    cola    colb    
+2     2     2     
+4     4     4     
+6     6     6     
+8     8     8     
+10     10     10     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: a node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select (orderby_num()), a.cola, a.colb from ta a order by ?)
+Query plan:
+sscan
+    class: Z node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select Z.rn, Z.cola, Z.colb from (select (orderby_num()), a.cola, a.colb from ta a order by ?) Z (rn, cola, colb) where (Z.rn>= ?:?  and Z.rn<= ?:? ) and Z.colb mod ?=?
+===================================================
+    
+3. BETWEEN expression (constant + arithmetic)     
 
 ===================================================
 rn    cola    colb    
@@ -58,7 +86,7 @@ Query stmt:
 select (orderby_num()), Z.cola, Z.colb from ta Z order by ? for (orderby_num()) between  ?:?  and  ?:? 
 ===================================================
     
-3. Basic BETWEEN with constant range     
+4. Basic BETWEEN with constant range     
 
 ===================================================
 rn    cola    colb    
@@ -84,7 +112,7 @@ Query stmt:
 select (orderby_num()), Z.cola, Z.colb from ta Z order by ? for (orderby_num()) between  ?:?  and  ?:? 
 ===================================================
     
-4. Range with a single row     
+5. Single-row range (BETWEEN same values)     
 
 ===================================================
 rn    cola    colb    
@@ -101,7 +129,7 @@ Query stmt:
 select (orderby_num()), Z.cola, Z.colb from ta Z order by ? for (orderby_num()) between  ?:?  and  ?:? 
 ===================================================
     
-5. BETWEEN including NULL     
+6. BETWEEN including NULL     
 
 ===================================================
 rn    cola    colb    
@@ -117,7 +145,7 @@ Query stmt:
 select (orderby_num()), Z.cola, Z.colb from ta Z order by ? for (orderby_num()) between null and  ?:? 
 ===================================================
     
-6. Combined with additional condition     
+7. Combined with additional condition (filter first)     
 
 ===================================================
 rn    cola    colb    
@@ -145,49 +173,62 @@ Query stmt:
 select Z.rn, Z.cola, Z.colb from (select (orderby_num()), a.cola, a.colb from ta a order by ?) Z (rn, cola, colb) where Z.colb mod ?=? and (Z.rn>= ?:?  and Z.rn<= ?:? )
 ===================================================
     
-7. Combined with additional condition (between first)     
+8. Combined with additional condition (between first)     
 
 ===================================================
 rn    cola    colb    
-51     51     51     
 52     52     52     
-53     53     53     
 54     54     54     
-55     55     55     
 56     56     56     
-57     57     57     
 58     58     58     
-59     59     59     
 60     60     60     
 
 Query plan:
 temp(order by)
     subplan: sscan
-                 class: Z node[?]
+                 class: a node[?]
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select (orderby_num()), Z.cola, Z.colb from ta Z order by ? for (orderby_num()) between  ?:?  and  ?:?  and Z.colb mod ?=?
+(select (orderby_num()), a.cola, a.colb from ta a order by ?)
+Query plan:
+sscan
+    class: Z node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select Z.rn, Z.cola, Z.colb from (select (orderby_num()), a.cola, a.colb from ta a order by ?) Z (rn, cola, colb) where (Z.rn>= ?:?  and Z.rn<= ?:? ) and Z.colb mod ?=?
 ===================================================
     
-8. Two BETWEENs     
+9. Two BETWEEN predicates (ROWNUM + column)     
 
 ===================================================
 rn    cola    colb    
+15     15     15     
+16     16     16     
+17     17     17     
+18     18     18     
 
 Query plan:
 temp(order by)
     subplan: sscan
-                 class: Z node[?]
+                 class: a node[?]
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select (orderby_num()), Z.cola, Z.colb from ta Z order by ? for (orderby_num()) between  ?:?  and  ?:?  and Z.cola between  ?:?  and  ?:? 
+(select (orderby_num()), a.cola, a.colb from ta a order by ?)
+Query plan:
+sscan
+    class: Z node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select Z.rn, Z.cola, Z.colb from (select (orderby_num()), a.cola, a.colb from ta a order by ?) Z (rn, cola, colb) where (Z.rn>= ?:?  and Z.rn<= ?:? ) and (Z.cola>= ?:?  and Z.cola<= ?:? )
 ===================================================
     
-9. BETWEEN in WHERE + HAVING (groupby_num)     
+10. BETWEEN in WHERE + HAVING (groupby_num)     
 
 ===================================================
 cola    
@@ -222,7 +263,7 @@ select Z.cola from (select a.cola, (orderby_num()) from ta a order by ?) Z (cola
 51
 ===================================================
     
-10. BETWEEN with join     
+11. BETWEEN with join     
 
 ===================================================
 rn    cola    colb    
