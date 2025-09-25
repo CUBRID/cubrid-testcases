@@ -44,7 +44,7 @@ evaluate '7 - Special characters: [SELECT /*+ recompile use_hash(@!$%) */ * FROM
 -- Expected: Hint ignored; no crash
 SELECT /*+ recompile use_hash(@!$%) */ * FROM tbl_a;
 
-evaluate '8 - Foreign language: [SELECT /*+ recompile use_hash (កខគឃង) */ * FROM tbl_a;]';
+evaluate '8 - Foreign language: [SELECT /*+ recompile use_hash (~~~~~) */ * FROM tbl_a;]';
 -- Expected : Query runs normally; no effect
 SELECT /*+ recompile use_hash (កខគឃង) */ * FROM tbl_a;
 
@@ -187,7 +187,7 @@ CREATE TABLE "조인" (col_d INT);
 INSERT INTO "테이블" VALUES (1);
 INSERT INTO "조인" VALUES (1);
 
-evaluate '24 - Korean identifiers: [SELECT /*+ recompile use_hash("테이블","조인") */ * FROM "테이블" JOIN "조인" USING (col_d);]';
+evaluate '24 - Korean identifiers: [SELECT /*+ recompile use_hash("~~~","~~") */ * FROM "~~~" JOIN "~~" USING (col_d);]';
 -- Expected: Runs if Unicode identifiers supported or else syntax error
 SELECT /*+ recompile use_hash("테이블","조인") */ * FROM "테이블" JOIN "조인" USING (col_d);
 
