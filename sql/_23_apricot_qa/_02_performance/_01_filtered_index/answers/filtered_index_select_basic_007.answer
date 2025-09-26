@@ -181,11 +181,11 @@ Query plan:
 iscan
     class: tb node[?]
     index: i_tb_all (covers)
-    filtr: term[?] AND term[?]
+    filtr: term[?]
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select tb.a from tb tb where (tb.b> ?:? ) and tb.a is not null  using index tb.i_tb_a(+), tb.i_tb_all(+), tb.i_tb_b(+) order by ?
+select tb.a from tb tb where (tb.b> ?:? ) using index tb.i_tb_a(+), tb.i_tb_all(+), tb.i_tb_b(+) order by ?
 /* ---> skip ORDER BY */
 ===================================================
 a    
@@ -195,12 +195,11 @@ Query plan:
 iscan
     class: tb node[?]
     index: i_tb_a  (desc_index)
-    filtr: term[?]
     sargs: term[?]
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select tb.a from tb tb where (tb.b> ?:? ) and tb.a is not null  using index tb.i_tb_a(+), tb.i_tb_b(+) order by ?
+select tb.a from tb tb where (tb.b> ?:? ) using index tb.i_tb_a(+), tb.i_tb_b(+) order by ?
 /* ---> skip ORDER BY */
 ===================================================
 b    
@@ -225,12 +224,11 @@ temp(order by)
     subplan: iscan
                  class: tb node[?]
                  index: i_tb_all term[?] (covers)
-                 filtr: term[?]
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select tb.b from tb tb where (tb.a> ?:? ) and tb.b is not null  using index tb.i_tb_a(+), tb.i_tb_all(+), tb.i_tb_b(+) order by ?
+select tb.b from tb tb where (tb.a> ?:? ) using index tb.i_tb_a(+), tb.i_tb_all(+), tb.i_tb_b(+) order by ?
 ===================================================
 0
 ===================================================
