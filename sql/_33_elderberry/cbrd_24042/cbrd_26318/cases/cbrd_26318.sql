@@ -1,13 +1,12 @@
 -- Verification for CBRD-26318
--- This test verifies view-merge optimization scenarios where index scan 
--- behavior differs depending on the type of subquery.
--- The following cases are covered:
---   1. Correlated subquery: index scan should not be applied due to dependency.
---   2. Nested subquery: verifies that view-merge correctly handles multiple
---      levels of subqueries with external column references.
--- Note: Uncorrelated subquery case is already covered in 
+-- This test checks view-merge optimization and index scan behavior
+-- under different subquery types:
+--   1. Correlated: depends on outer column, index scan not applied.
+--   2. Nested: multiple levels of subqueries with outer references.
+--   3. Uncorrelated: no outer reference, index scan allowed.
+--   4. Uncorrelated with multiple outer refs (aptr): still index scan possible.
+-- Note: A basic uncorrelated subquery case is also covered in
 --       sql/_33_elderberry/cbrd_24042/add/cases/using_index.sql.
-
 
 drop table if exists ta, tb, tc;
 create table ta (ca int, cb int);
