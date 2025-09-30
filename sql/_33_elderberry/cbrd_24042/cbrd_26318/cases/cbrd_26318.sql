@@ -12,7 +12,25 @@ drop table if exists ta, tb, tc;
 create table ta (ca int, cb int);
 create table tb (ca int, cb int);
 create table tc (ca int, cb int);
- 
+
+insert into ta values (1, 100);
+insert into ta values (2, 200);
+insert into ta values (3, 300);
+insert into ta values (4, 400);
+insert into ta values (5, 500);
+
+insert into tb values (1, 11);
+insert into tb values (2, 22);
+insert into tb values (3, 33);
+insert into tb values (4, 44);
+insert into tb values (5, 55);
+
+insert into tc values (1, 1001);
+insert into tc values (2, 1002);
+insert into tc values (3, 1003);
+insert into tc values (4, 1004);
+insert into tc values (5, 1005);
+
 create index idx on ta (ca);
 create index idx on tb (ca);
 create index idx on tc (ca);
