@@ -80,7 +80,4 @@ select /*+ recompile */
     limit 1) as uncorr_multi_outer
 from ta a;
 
-drop index idx on ta;
-drop index idx on tb;
-drop index idx on tc;
 drop table if exists ta, tb, tc;
