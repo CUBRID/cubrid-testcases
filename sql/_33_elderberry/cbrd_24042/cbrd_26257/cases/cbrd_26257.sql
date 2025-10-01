@@ -38,12 +38,52 @@ SELECT /*+ recompile */ * FROM ( SELECT ROWNUM rn, a.* FROM (SELECT * FROM ta OR
 evaluate '10. BETWEEN in WHERE + HAVING (groupby_num)';
 SELECT /*+ recompile */ cola FROM ( SELECT ROWNUM rn, a.* FROM (SELECT * FROM ta ORDER BY cola) a) Z WHERE rn BETWEEN 1 AND 20 GROUP BY cola DESC HAVING groupby_num() BETWEEN 2 AND 4;
 
+evaluate '11. Reversed BETWEEN boundaries';
+SELECT /*+ recompile */ * FROM ( SELECT ROWNUM rn, a.* FROM (select * from ta order by cola) a ) Z WHERE rn BETWEEN 10 AND 1;
+
+evaluate '12. BETWEEN with negative and positive range';
+SELECT /*+ recompile */ * FROM ( SELECT ROWNUM rn, a.* FROM (select * from ta order by cola) a ) Z WHERE rn BETWEEN -5 and 5;
+
+evaluate '13. BETWEEN combined with OR condition';
+SELECT /*+ recompile */ * FROM ( SELECT ROWNUM rn, a.* FROM (select * from ta order by cola) a ) Z WHERE rn BETWEEN 1 AND 10 OR colb BETWEEN 50 AND 60;
+
 drop table if exists tb;
-create table tb (k int primary key);
+create table tb (
+  k int primary key
+);
 insert into tb select rownum from db_class limit 1000;
 
-evaluate '11. BETWEEN with join';
+evaluate '14. BETWEEN with join';
 SELECT /*+ recompile */ * FROM ( SELECT ROWNUM rn, a.* FROM (select ta.* from ta inner join tb on ta.cola = tb.k order by ta.cola) a) Z WHERE rn BETWEEN 1 AND 10;
+
+evaluate '15. BETWEEN with expressions instead of constants';
+SELECT /*+ recompile */ * 
+FROM ( SELECT ROWNUM rn, a.* FROM (select * from ta order by cola) a ) Z 
+WHERE rn BETWEEN (select min(k) from tb) AND (select max(k) from tb);
+
+evaluate '16. Prepared statement with AND range';
+prepare sa from 'SELECT /*+ recompile */ * 
+                 FROM ( SELECT ROWNUM rn, a.* FROM (select * from ta order by cola) a) Z 
+                 WHERE rn >= ? AND rn <= ?';
+--@queryplan
+execute sa using 1, 10;
+deallocate prepare sa;
+
+evaluate '17. Prepared statement with BETWEEN expression';
+prepare sb from 'SELECT /*+ recompile */ * 
+                 FROM ( SELECT ROWNUM rn, a.* FROM (select * from ta order by cola) a) Z 
+                 WHERE rn BETWEEN ? AND ?';
+--@queryplan
+execute sb using 1, 10;
+deallocate prepare sb;
+
+evaluate '18. Prepared statement with BETWEEN + additional filter';
+prepare sc from 'SELECT /*+ recompile */ * 
+                 FROM ( SELECT ROWNUM rn, a.* FROM (select * from ta order by cola) a) Z 
+                 WHERE rn BETWEEN ? AND ? AND colb % 2 = 0';
+--@queryplan
+execute sc using 51, 60;
+deallocate prepare sc;
 
 drop table if exists ta;
 drop table if exists tb;
