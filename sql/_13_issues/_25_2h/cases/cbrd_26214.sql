@@ -9,7 +9,7 @@ insert into ttt select rownum from db_class a, db_class b, db_class c limit 1000
 
 
 create or replace procedure commit_poo as
-    cursor c is select /*+ no_parallel_heap_scan */ i from ttt;
+    cursor c is select i from ttt;
     v int;
 begin
     open c;
@@ -30,7 +30,7 @@ drop procedure commit_poo;
 
 -- this query is an error, will be fixed in the other issue
 create or replace procedure rollback_poo as
-	cursor rc is select /*+ no_parallel_heap_scan */ i from ttt;
+	cursor rc is select i from ttt;
     rv int;
 begin
     open rc;
