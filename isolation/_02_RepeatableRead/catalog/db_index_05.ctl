@@ -37,15 +37,15 @@ MC: wait until C1 ready;
 C3: alter table tb1 drop constraint pk_tb1_id_col;
 MC: wait until C2 ready;
 
-C1: select * from db_index where class_name like 'tb%' order by 1,2,3,4;
+C1: select index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status from db_index where class_name like 'tb%' order by 1,2,3,4;
 MC: wait until C1 ready;
 C2: commit;
 MC: wait until C2 ready;
 C3: commit;
 MC: wait until C3 ready;
-C1: select * from db_index where class_name like 'tb%' order by 1,2,3,4;
+C1: select index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status from db_index where class_name like 'tb%' order by 1,2,3,4;
 C1: commit;
-C1: select * from db_index where class_name like 'tb%' order by 1,2,3,4;
+C1: select index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status from db_index where class_name like 'tb%' order by 1,2,3,4;
 C1: commit;
 MC: wait until C1 ready;
 
@@ -54,15 +54,15 @@ MC: wait until C2 ready;
 C3: drop index i_tb2_id_col on tb2;
 MC: wait until C3 blocked;
 
-C1: select * from db_index where class_name like 'tb%' order by 1,2,3,4;
+C1: select index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status from db_index where class_name like 'tb%' order by 1,2,3,4;
 MC: wait until C1 ready;
 C2: commit;
 MC: wait until C2 ready;
 C3: commit;
 MC: wait until C3 ready;
-C1: select * from db_index where class_name like 'tb%' order by 1,2,3,4;
+C1: select index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status from db_index where class_name like 'tb%' order by 1,2,3,4;
 C1: commit;
-C1: select * from db_index where class_name like 'tb%' order by 1,2,3,4;
+C1: select index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status from db_index where class_name like 'tb%' order by 1,2,3,4;
 C1: commit;
 MC: wait until C1 ready;
 

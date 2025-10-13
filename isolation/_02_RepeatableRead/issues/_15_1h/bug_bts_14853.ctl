@@ -29,7 +29,7 @@ C1: select * from t;
 MC: wait until C1 blocked;
 C2: commit;
 MC: wait until C1 ready;
-C1: SELECT * FROM db_index where class_name='t';
+C1: select index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status from db_index where class_name='t';
 C1: show index from t;
 C1: commit;
 MC: wait until C1 ready;

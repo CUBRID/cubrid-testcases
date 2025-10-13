@@ -25,7 +25,7 @@ MC: wait until C1 ready;
 /* test case 1 */
 C1: CREATE TRIGGER trg1 AFTER INSERT ON tt1 EXECUTE INSERT INTO hi VALUES(obj.id,obj.col);
 C1: CREATE TRIGGER trg2 before update ON tt1 EXECUTE update hi set col=new.col,id=new.id where id=obj.id;
-C1: SELECT * FROM db_trig order by 1,2;
+C1: select trigger_name, owner_name, target_class_name, target_owner_name, target_attr_name, target_attr_type, action_type, action_time, comment from db_trigger order by 1,2;
 C1: insert into tt1 values(0,'run');
 C1: commit;
 MC: wait until C1 ready;
@@ -40,7 +40,7 @@ C1: commit;
 MC: wait until C1 ready;
 MC: wait until C2 ready;
 
-C2: SELECT * FROM db_trig order by 1,2;
+C2: select trigger_name, owner_name, target_class_name, target_owner_name, target_attr_name, target_attr_type, action_type, action_time, comment from db_trigger order by 1,2;
 C2: commit;
 MC: wait until C2 ready;
 

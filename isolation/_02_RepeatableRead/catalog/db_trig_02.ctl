@@ -32,15 +32,15 @@ C1: CREATE TRIGGER tt1_insert AFTER INSERT ON tt1 EXECUTE INSERT INTO hi(id,col)
 MC: wait until C1 ready;
 C2: CREATE TRIGGER tt1_delete BEFORE DELETE ON tt1 EXECUTE DELETE FROM hi WHERE id = obj.id;
 MC: wait until C2 blocked;
-C3: select * from db_trig order by 1;
+C3: select trigger_name, owner_name, target_class_name, target_owner_name, target_attr_name, target_attr_type, action_type, action_time, comment from db_trigger order by 1;
 MC: wait until C3 ready;
 C1: commit;
 MC: wait until C1 ready;
 C2: commit;
 MC: wait until C2 ready;
-C3: select * from db_trig order by 1;
+C3: select trigger_name, owner_name, target_class_name, target_owner_name, target_attr_name, target_attr_type, action_type, action_time, comment from db_trigger order by 1;
 C3: commit;
-C3: select * from db_trig order by 1;
+C3: select trigger_name, owner_name, target_class_name, target_owner_name, target_attr_name, target_attr_type, action_type, action_time, comment from db_trigger order by 1;
 C3: commit;
 MC: wait until C3 ready;
 
@@ -48,15 +48,15 @@ C1: CREATE TRIGGER tt1_update1 AFTER UPDATE ON tt1 EXECUTE UPDATE hi SET id=id+1
 MC: wait until C1 ready;
 C2: CREATE TRIGGER tt1_update2 AFTER UPDATE ON tt1 EXECUTE UPDATE hi SET id=id+10 WHERE id = obj.id;
 MC: wait until C2 blocked;
-C3: select * from db_trig order by 1;
+C3: select trigger_name, owner_name, target_class_name, target_owner_name, target_attr_name, target_attr_type, action_type, action_time, comment from db_trigger order by 1;
 MC: wait until C3 ready;
 C1: commit;
 MC: wait until C1 ready;
 C2: commit;
 MC: wait until C2 ready;
-C3: select * from db_trig order by 1;
+C3: select trigger_name, owner_name, target_class_name, target_owner_name, target_attr_name, target_attr_type, action_type, action_time, comment from db_trigger order by 1;
 C3: commit;
-C3: select * from db_trig order by 1;
+C3: select trigger_name, owner_name, target_class_name, target_owner_name, target_attr_name, target_attr_type, action_type, action_time, comment from db_trigger order by 1;
 C3: commit;
 MC: wait until C3 ready;
 C3: quit;
