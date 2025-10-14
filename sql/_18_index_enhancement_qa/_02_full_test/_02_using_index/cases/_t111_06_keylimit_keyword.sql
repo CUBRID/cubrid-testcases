@@ -5,7 +5,7 @@ CREATE TABLE t1 (
    b  VARCHAR(40) NOT NULL,
    c  CHAR(3)
   );
-REATE INDEX keylimit ON t1(a,c);
+CREATE INDEX keylimit ON t1(a,c);
 
 insert into t1 values (1, 'Adalius', '086');
 insert into t1 values (2, 'Agassi', '086');
