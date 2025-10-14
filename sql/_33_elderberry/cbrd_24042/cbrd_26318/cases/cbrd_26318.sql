@@ -36,6 +36,11 @@ create index idx on tb (ca);
 create index idx on tc (ca);
 
 evaluate '1. Correlated Subquery Case';
+select /*+ recompile */ d.cb 
+ from tc d 
+where d.ca=(select b.cb from tb b where b.ca=d.ca);
+
+evaluate '2-1. Nested Subquery Case';
 select /*+ recompile */
   (
     select
@@ -49,12 +54,12 @@ from
   (
     select
       a.ca,
-      (select  b.cb from tb b where b.ca = a.ca limit 1) as a_ca
+      (select b.cb from tb b where b.ca = a.ca limit 1) as a_ca
     from
       ta a
   ) c;
 
-evaluate '2. Nested Subquery Case';
+evaluate '2-2. Nested Subquery Case';
 select /*+ recompile */
   (select b.cb
      from tb b

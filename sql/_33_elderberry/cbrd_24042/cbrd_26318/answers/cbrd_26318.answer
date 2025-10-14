@@ -47,6 +47,28 @@
 1. Correlated Subquery Case     
 
 ===================================================
+cb    
+
+Query plan:
+iscan
+    class: b node[?]
+    index: idx term[?]
+    cost:  ? card ?
+Query stmt:
+(select b.cb from tb b where b.ca=d.ca)
+Query plan:
+sscan
+    class: d node[?]
+    sargs: term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+select d.cb from tc d where d.ca=(select b.cb from tb b where b.ca=d.ca)
+===================================================
+    
+2-1. Nested Subquery Case     
+
+===================================================
 (select d.cb from tc d where c.a_ca=d.ca)    
 null     
 null     
@@ -77,7 +99,7 @@ Query stmt:
 select (select d.cb from tc d where d.ca=(select b.cb from tb b where (b.ca=c.ca) and (inst_num()<= ?:? ))) from ta c
 ===================================================
     
-2. Nested Subquery Case     
+2-2. Nested Subquery Case     
 
 ===================================================
 nested_val    
