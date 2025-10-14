@@ -78,12 +78,19 @@ rn    cola    colb
 Query plan:
 temp(order by)
     subplan: sscan
-                 class: Z node[?]
+                 class: a node[?]
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select (orderby_num()), Z.cola, Z.colb from ta Z order by ? for (orderby_num()) between  ?:?  and  ?:? 
+(select (orderby_num()), a.cola, a.colb from ta a order by ?)
+Query plan:
+sscan
+    class: Z node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select Z.rn, Z.cola, Z.colb from (select (orderby_num()), a.cola, a.colb from ta a order by ?) Z (rn, cola, colb) where (Z.rn>= ?:?  and Z.rn<= ?:? )
 ===================================================
     
 4. Basic BETWEEN with constant range     
@@ -104,12 +111,19 @@ rn    cola    colb
 Query plan:
 temp(order by)
     subplan: sscan
-                 class: Z node[?]
+                 class: a node[?]
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select (orderby_num()), Z.cola, Z.colb from ta Z order by ? for (orderby_num()) between  ?:?  and  ?:? 
+(select (orderby_num()), a.cola, a.colb from ta a order by ?)
+Query plan:
+sscan
+    class: Z node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select Z.rn, Z.cola, Z.colb from (select (orderby_num()), a.cola, a.colb from ta a order by ?) Z (rn, cola, colb) where (Z.rn>= ?:?  and Z.rn<= ?:? )
 ===================================================
     
 5. Single-row range (BETWEEN same values)     
@@ -121,12 +135,19 @@ rn    cola    colb
 Query plan:
 temp(order by)
     subplan: sscan
-                 class: Z node[?]
+                 class: a node[?]
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select (orderby_num()), Z.cola, Z.colb from ta Z order by ? for (orderby_num()) between  ?:?  and  ?:? 
+(select (orderby_num()), a.cola, a.colb from ta a order by ?)
+Query plan:
+sscan
+    class: Z node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select Z.rn, Z.cola, Z.colb from (select (orderby_num()), a.cola, a.colb from ta a order by ?) Z (rn, cola, colb) where (Z.rn>= ?:?  and Z.rn<= ?:? )
 ===================================================
     
 6. BETWEEN including NULL     
@@ -137,12 +158,19 @@ rn    cola    colb
 Query plan:
 temp(order by)
     subplan: sscan
-                 class: Z node[?]
+                 class: a node[?]
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select (orderby_num()), Z.cola, Z.colb from ta Z order by ? for (orderby_num()) between null and  ?:? 
+(select (orderby_num()), a.cola, a.colb from ta a order by ?)
+Query plan:
+sscan
+    class: Z node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select Z.rn, Z.cola, Z.colb from (select (orderby_num()), a.cola, a.colb from ta a order by ?) Z (rn, cola, colb) where (Z.rn>=null and Z.rn<= ?:? )
 ===================================================
     
 7. Combined with additional condition (filter first)     
@@ -262,15 +290,6 @@ select Z.cola from (select a.cola, (orderby_num()) from ta a order by ?) Z (cola
 ===================================================
 rn    cola    colb    
 
-Query plan:
-temp(order by)
-    subplan: sscan
-                 class: Z node[?]
-                 cost:  ? card ?
-    sort:  ? asc
-    cost:  ? card ?
-Query stmt:
-select (orderby_num()), Z.cola, Z.colb from ta Z order by ? for (orderby_num()) between  ?:?  and  ?:? 
 ===================================================
     
 12. BETWEEN with negative and positive range     
@@ -286,12 +305,19 @@ rn    cola    colb
 Query plan:
 temp(order by)
     subplan: sscan
-                 class: Z node[?]
+                 class: a node[?]
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select (orderby_num()), Z.cola, Z.colb from ta Z order by ? for (orderby_num()) between  ?:?  and  ?:? 
+(select (orderby_num()), a.cola, a.colb from ta a order by ?)
+Query plan:
+sscan
+    class: Z node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select Z.rn, Z.cola, Z.colb from (select (orderby_num()), a.cola, a.colb from ta a order by ?) Z (rn, cola, colb) where (Z.rn>= ?:?  and Z.rn<= ?:? )
 ===================================================
     
 13. BETWEEN combined with OR condition     
@@ -363,7 +389,7 @@ Query plan:
 temp(order by)
     subplan: idx-join (inner join)
                  outer: sscan
-                            class: Z node[?]
+                            class: a node[?]
                             cost:  ? card ?
                  inner: iscan
                             class: tb node[?]
@@ -373,7 +399,14 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select (orderby_num()), Z.cola, Z.colb from ta Z, tb tb where Z.cola=tb.k order by ? for (orderby_num()) between  ?:?  and  ?:? 
+(select (orderby_num()), a.cola, a.colb from ta a, tb tb where a.cola=tb.k order by ?)
+Query plan:
+sscan
+    class: Z node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select Z.rn, Z.cola, Z.colb from (select (orderby_num()), a.cola, a.colb from ta a, tb tb where a.cola=tb.k order by ?) Z (rn, cola, colb) where (Z.rn>= ?:?  and Z.rn<= ?:? )
 ===================================================
     
 15. BETWEEN with expressions instead of constants     
@@ -433,6 +466,15 @@ rn    cola    colb
 51     51     51     
 
 Query plan:
+temp(order by)
+    subplan: sscan
+                 class: a node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select (orderby_num()), a.cola, a.colb from ta a order by ?)
+Query plan:
 sscan
     class: tb node[?]
     cost:  ? card ?
@@ -445,14 +487,12 @@ sscan
 Query stmt:
 (select max(tb.k) from tb tb)
 Query plan:
-temp(order by)
-    subplan: sscan
-                 class: Z node[?]
-                 cost:  ? card ?
-    sort:  ? asc
+sscan
+    class: Z node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select (orderby_num()), Z.cola, Z.colb from ta Z order by ? for (orderby_num()) between (select min(tb.k) from tb tb) and (select max(tb.k) from tb tb)
+select Z.rn, Z.cola, Z.colb from (select (orderby_num()), a.cola, a.colb from ta a order by ?) Z (rn, cola, colb) where (Z.rn>=(select min(tb.k) from tb tb) and Z.rn<=(select max(tb.k) from tb tb))
 ===================================================
     
 16. Prepared statement with AND range     
@@ -505,12 +545,19 @@ rn    cola    colb
 Query plan:
 temp(order by)
     subplan: sscan
-                 class: Z node[?]
+                 class: a node[?]
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select (orderby_num()), Z.cola, Z.colb from ta Z order by ? for (orderby_num()) between  ?:?  and  ?:? 
+(select (orderby_num()), a.cola, a.colb from ta a order by ?)
+Query plan:
+sscan
+    class: Z node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select Z.rn, Z.cola, Z.colb from (select (orderby_num()), a.cola, a.colb from ta a order by ?) Z (rn, cola, colb) where (Z.rn>= ?:?  and Z.rn<= ?:? )
 ===================================================
 0
 ===================================================
