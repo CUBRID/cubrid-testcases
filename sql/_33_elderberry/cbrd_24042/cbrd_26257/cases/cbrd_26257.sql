@@ -1,8 +1,12 @@
--- Verification for CBRD-26257, CBRD-26313
--- View-merge optimization is restricted when using the BETWEEN operator.
--- In Oracle-style partial range processing, view-merge is applied,
--- but BETWEEN was previously excluded. This test verifies that
--- BETWEEN is now included in the optimization.
+-- Verification for CBRD-26257 and CBRD-26313
+-- Issue summary:
+--   CBRD-26257 : Extends view-merge optimization to include the BETWEEN operator.
+--   CBRD-26313 : Fixes an issue where view-merge was applied even when
+--                   additional filters existed beyond the ROWNUM condition.
+--                   (Only test case #2 applies to this issue.)
+-- Note:
+--   - Only CBRD-26313 is included in the 11.4 Patch 2 backport.
+--   - The rest of the test cases belong to CBRD-26257 (feature extension).
 
 drop table if exists ta;
 create table ta(cola int, colb int);
@@ -11,6 +15,7 @@ insert into ta select rownum,rownum from db_class a, db_class b limit 1000;
 evaluate '1. Range condition using AND';
 SELECT /*+ recompile */ * FROM ( SELECT ROWNUM rn, a.* FROM (select * from ta order by cola) a) Z WHERE rn >= 0 + 1 AND rn <= 0 + 10;
 
+-- [CBRD-26313] Case: View-merge applied with extra filter beyond ROWNUM condition.
 evaluate '2. Condition with additional filters (excluding ROWNUM)';
 SELECT /*+ recompile */ * FROM ( SELECT ROWNUM rn, a.* FROM (select * from ta order by cola) a) Z WHERE rn >= 0 + 1 AND rn <= 0 + 10 AND colb % 2 = 0;
 
