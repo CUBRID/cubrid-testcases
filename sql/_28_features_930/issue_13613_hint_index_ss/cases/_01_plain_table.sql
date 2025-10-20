@@ -43,7 +43,7 @@ update /*+ recompile index_ss(t2) index_ss(t1) ordered*/ t1 set c=c where t1.b<5
 
 --@queryplan
 select /*+ recompile index_ss */ * from 
-((select /*+ recompile index_ss(t1) ordered*/ t1.* from t1, t2 where t1.b<5 and t1.c<5 and t2.c<5 order by 1 limit 1)
+((select /*+ recompile index_ss(t1) ordered*/ t1.* from t1, t2 where t1.b<5 and t1.c<5 and t2.c<5 order by 1, 2 limit 1)
 union
 (select /*+ recompile index_ss(t2) ordered*/ t1.* from t1, t2 where t1.b<5 and t1.c<5 and t2.c<5 order by 1 desc limit 1));
 

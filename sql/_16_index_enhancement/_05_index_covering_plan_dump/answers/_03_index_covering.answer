@@ -139,7 +139,6 @@ temp(order by)
                             index: idx_tbl? term[?] (covers)
                             filtr: term[?]
                             cost:  ? card ?
-                 sort:  ? asc
                  cost:  ? card ?
     sort:  ? asc, ? asc, ? asc
     cost:  ? card ?
@@ -176,7 +175,6 @@ temp(order by)
                             index: idx_tbl? term[?] (covers)
                             filtr: term[?]
                             cost:  ? card ?
-                 sort:  ? asc, ? asc
                  cost:  ? card ?
     sort:  ? asc, ? asc, ? asc, ? asc
     cost:  ? card ?
@@ -413,20 +411,20 @@ iscan
 Query stmt:
 (select /*+ NO_MERGE */ t?.id, (select t?.id from tbl? t? where t?.id=t?.id) from tbl? t? where t?.id= ?:? )
 Query plan:
-temp(order by)
-    subplan: nl-join (cross join)
-                 outer: sscan
-                            class: t? node[?]
-                            sargs: term[?]
-                            cost:  ? card ?
-                 inner: sscan
-                            class: t? node[?]
-                            cost:  ? card ?
-                 cost:  ? card ?
+nl-join (cross join)
+    outer: iscan
+               class: t? node[?]
+               index: idx_tbl? (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 select t?.id from tbl t?, (select /*+ NO_MERGE */ t?.id, (select t?.id from tbl? t? where t?.id=t?.id) from tbl? t? where t?.id= ?:? ) t? (id, t?_?) where t?.id is not null  order by ?
+/* ---> skip ORDER BY */
 ===================================================
 id    text    (select t2.id from tbl2 t2 where t1.id=t2.id)    
 1     AAABC     1     
