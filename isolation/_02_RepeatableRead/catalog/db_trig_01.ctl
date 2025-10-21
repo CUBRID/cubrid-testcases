@@ -1,12 +1,12 @@
 /*
-Test Case: read & write db_trig 
+Test Case: read & write db_trigger
 Priority: 1
 Reference case:
 Author: Lily
 
 Test Point:
-- C1 read db_trig
-- C2 write db_trig
+- C1 read db_trigger
+- C2 write db_trigger
 */
 
 MC: setup NUM_CLIENTS = 2;

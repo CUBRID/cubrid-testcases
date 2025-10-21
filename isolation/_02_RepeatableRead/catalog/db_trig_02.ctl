@@ -1,13 +1,13 @@
 /*
-Test Case: insert & insert db_trig 
+Test Case: insert & insert db_trigger
 Priority: 1
 Reference case:
 Author: Lily
 
 Test Point:
-- C1 insert db_trig
-- C2 insert db_trig
-- C3 select db_trig
+- C1 insert db_trigger
+- C2 insert db_trigger
+- C3 select db_trigger
 */
 
 MC: setup NUM_CLIENTS = 3;
