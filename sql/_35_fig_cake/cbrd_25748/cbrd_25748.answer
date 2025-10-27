@@ -1,0 +1,365 @@
+===================================================
+0
+===================================================
+0
+===================================================
+12
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+1. Calling a stored procedure in the SELECT list     
+
+===================================================
+fn_string(name)    
+Chang     
+Chang     
+George     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.sales_tbl)
+
+  rewritten query: select [dba.fn_string]([dba.sales_tbl].[name]) from [dba.sales_tbl] [dba.sales_tbl] order by ? for orderby_num()<=?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
+     
+
+===================================================
+    
+2. Calling a stored procedure in the WHERE clause     
+
+===================================================
+name    
+George     
+George     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.sales_tbl)
+
+  rewritten query: select [dba.sales_tbl].[name] from [dba.sales_tbl] [dba.sales_tbl] where [dba.fn_string]([dba.sales_tbl].[name])='George' order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+3. Calling a stored procedure in the WHERE clause with LIMIT     
+
+===================================================
+name    
+Chang     
+Chang     
+George     
+Laura     
+Stephan     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.sales_tbl)
+
+  rewritten query: select [dba.sales_tbl].[name] from [dba.sales_tbl] [dba.sales_tbl] where [dba.fn_int]([dba.sales_tbl].sales_amount)<? order by ? for orderby_num()<=?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
+     
+
+===================================================
+    
+4. Calling a stored procedure with CONCAT in the WHERE clause     
+
+===================================================
+name    
+George     
+George     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.sales_tbl)
+
+  rewritten query: select [dba.sales_tbl].[name] from [dba.sales_tbl] [dba.sales_tbl] where  concat([dba.fn_string]([dba.sales_tbl].[name]), '')='George' order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+5. Calling a stored procedure in both SELECT and WHERE clauses     
+
+===================================================
+fn_string(name)    
+Chang     
+Chang     
+George     
+Laura     
+Stephan     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.sales_tbl)
+
+  rewritten query: select [dba.fn_string]([dba.sales_tbl].[name]) from [dba.sales_tbl] [dba.sales_tbl] where [dba.fn_int]([dba.sales_tbl].sales_amount)<? order by ? for orderby_num()<=?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
+     
+
+===================================================
+    
+6. Calling a stored procedure in the GROUP BY clause     
+
+===================================================
+dept_no    sum(fn_int(sales_amount))    
+201     1300     
+301     600     
+501     1050     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (dba.sales_tbl)
+
+  rewritten query: select [dba.sales_tbl].dept_no, sum([dba.fn_int]([dba.sales_tbl].sales_amount)) from [dba.sales_tbl] [dba.sales_tbl] group by [dba.fn_int]([dba.sales_tbl].dept_no) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+7. Calling a stored procedure in a CTE     
+
+===================================================
+fn_name    
+Chang     
+Chang     
+George     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.sales_tbl)
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.fn_string]([dba.sales_tbl].[name]) from [dba.sales_tbl] [dba.sales_tbl] order by ?
+
+  TABLE SCAN (dba.cte)
+
+  rewritten query: with cte(fn_name) as (select /*+ MATERIALIZE */ [dba.fn_string]([dba.sales_tbl].[name]) from [dba.sales_tbl] [dba.sales_tbl] order by ?)select [dba.cte].fn_name from [dba.cte] [dba.cte] where (inst_num()<=?)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+          SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+8. Calling a stored procedure in a correlated subquery in the SELECT list     
+
+===================================================
+name    amt    
+Chang     150     
+Chang     150     
+George     450     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (s?.pk_sales_tbl_dept_no_name_sales_month) (key range: (s?.dept_no=s?.dept_no))
+
+  rewritten query: (select [dba.fn_int](s?.sales_amount) from [dba.sales_tbl] s? where (s?.dept_no=s?.dept_no) and (inst_num()<=?))
+
+  SORT (order by)
+    TABLE SCAN (s?)
+
+  rewritten query: select s?.[name], (select [dba.fn_int](s?.sales_amount) from [dba.sales_tbl] s? where (s?.dept_no=s?.dept_no) and (inst_num()<=?)) from [dba.sales_tbl] s? order by ? for orderby_num()<=?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (index: dba.sales_tbl.pk_sales_tbl_dept_no_name_sales_month), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+9. Calling a stored procedure in the JOIN inner query     
+
+===================================================
+dept_no    name    fn_amt    
+201     George     500     
+201     Laura     500     
+201     George     500     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.sales_tbl.pk_sales_tbl_dept_no_name_sales_month) ()
+  group by nosort: true
+
+  rewritten query: (select [dba.fn_int]([dba.sales_tbl].sales_amount), [dba.sales_tbl].dept_no from [dba.sales_tbl] [dba.sales_tbl] group by [dba.sales_tbl].dept_no)
+
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (b)
+      INDEX SCAN (a.pk_sales_tbl_dept_no_name_sales_month) (key range: a.dept_no=b.dept_no, covered: true)
+
+  rewritten query: select a.dept_no, a.[name], b.fn_amt from [dba.sales_tbl] a, (select [dba.fn_int]([dba.sales_tbl].sales_amount), [dba.sales_tbl].dept_no from [dba.sales_tbl] [dba.sales_tbl] group by [dba.sales_tbl].dept_no) b (fn_amt, dept_no) where a.dept_no=b.dept_no order by ? for orderby_num()<=?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.sales_tbl.pk_sales_tbl_dept_no_name_sales_month), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ORDERBY (time: ?, topnsort: true)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (index: dba.sales_tbl.pk_sales_tbl_dept_no_name_sales_month), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        GROUPBY (time: ?, hash: false, sort: false, rows: ?)
+     
+
+===================================================
+    
+10. Calling a stored procedure in an inline view     
+
+===================================================
+fname    sales_amount    
+Chang     150     
+Chang     150     
+George     450     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.sales_tbl)
+
+  rewritten query: (select [dba.fn_string]([dba.sales_tbl].[name]), [dba.sales_tbl].sales_amount from [dba.sales_tbl] [dba.sales_tbl] order by ?)
+
+  TABLE SCAN (iv)
+
+  rewritten query: select iv.fname, iv.sales_amount from (select [dba.fn_string]([dba.sales_tbl].[name]), [dba.sales_tbl].sales_amount from [dba.sales_tbl] [dba.sales_tbl] order by ?) iv (fname, sales_amount) where (inst_num()<=?)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+11. Calling a stored procedure via a view     
+
+===================================================
+0
+===================================================
+dept_no    fname    sales_amount    
+201     George     250     
+201     Laura     100     
+201     George     450     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.v_sales)
+
+  rewritten query: (select [dba.v_sales].dept_no, [dba.fn_string]([dba.v_sales].[name]), [dba.v_sales].sales_amount from [dba.sales_tbl] [dba.v_sales])
+
+  SORT (order by)
+    TABLE SCAN (dba.v_sales)
+
+  rewritten query: select [dba.v_sales].dept_no, [dba.v_sales].fname, [dba.v_sales].sales_amount from (select [dba.v_sales].dept_no, [dba.fn_string]([dba.v_sales].[name]), [dba.v_sales].sales_amount from [dba.sales_tbl] [dba.v_sales]) [dba.v_sales] (dept_no, fname, sales_amount) order by ? for orderby_num()<=?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

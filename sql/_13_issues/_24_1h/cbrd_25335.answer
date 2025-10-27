@@ -1,0 +1,255 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+1000
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+TEST    
+The result count of 1 before modification was 4, which should have been 2. Check the join operation order in the plan.     
+
+===================================================
+0
+===================================================
+result    
+1     
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (left outer join)
+      NESTED LOOPS (inner join)
+        NESTED LOOPS (left outer join)
+          NESTED LOOPS (inner join)
+            TABLE SCAN (A)
+            TABLE SCAN (E)
+          TABLE SCAN (H)
+        TABLE SCAN (F)
+      TABLE SCAN (G)
+    TABLE SCAN (Z)
+
+  rewritten query: select ? from [dba.tbla] A inner join [dba.tblb] E on A.BUSI_CLS=E.BUSI_CD left outer join [dba.tblc] H on A.PROJ_RQST_NO=H.RQST_NO inner join [dba.tbld] F on H.RQST_NO=F.RQST_NO left outer join [dba.tble] G on F.APROV_STAT=G.COMM_CD inner join [dba.tblf] Z on E.BUSI_CD=Z.BUSI_CD
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbla), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tblb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tblc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.tbld), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.tble), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              SCAN (table: dba.tblf), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+col1    col2    col1    col2    
+1     1     null     null     
+2     2     null     null     
+
+===================================================
+col1    col2    col1    col2    
+1     1     1     1     
+2     2     2     2     
+
+===================================================
+col1    col2    col1    col2    col1    col2    
+1     1     null     null     1     1     
+2     2     null     null     2     2     
+
+===================================================
+col1    col2    col1    col2    col1    col2    
+1     1     null     null     null     null     
+2     2     null     null     null     null     
+
+===================================================
+col1    col2    col1    col2    col1    col2    
+1     1     null     null     null     null     
+2     2     null     null     null     null     
+
+===================================================
+col1    col2    col1    col2    
+null     null     1     1     
+null     null     2     2     
+
+===================================================
+col1    col2    col1    col2    
+1     1     1     1     
+2     2     2     2     
+
+===================================================
+col1    col2    col1    col2    col1    col2    
+1     1     null     null     1     1     
+2     2     null     null     2     2     
+
+===================================================
+col1    col2    col1    col2    col1    col2    
+null     null     null     null     1     1     
+null     null     null     null     2     2     
+
+===================================================
+col1    col2    col1    col2    col1    col2    
+null     null     null     null     1     1     
+null     null     null     null     2     2     
+
+===================================================
+col1    col2    col1    col2    col1    col2    
+1     1     1     1     1     1     
+2     2     2     2     2     2     
+
+===================================================
+col1    col2    col1    col2    col1    col2    
+1     1     1     1     1     1     
+2     2     2     2     2     2     
+
+===================================================
+TEST    
+check the Join graph nodes section in the plan.	The right_dep_set is removed and the dummy_join_term is not generated.     
+
+===================================================
+col1    col2    col1    col2    col1    col2    col1    col2    col1    col2    
+1     1     1     1     1     1     1     1     1     1     
+2     2     2     2     2     2     2     2     2     2     
+
+Join graph segments (f indicates final):
+seg[0]: [0]
+seg[1]: col1[0] (f)
+seg[2]: col2[0] (f)
+seg[3]: [1]
+seg[4]: col1[1] (f)
+seg[5]: col2[1] (f)
+seg[6]: [2]
+seg[7]: col1[2] (f)
+seg[8]: col2[2] (f)
+seg[9]: [3]
+seg[10]: col1[3] (f)
+seg[11]: col2[3] (f)
+seg[12]: [4]
+seg[13]: col1[4] (f)
+seg[14]: col2[4] (f)
+Join graph nodes:
+node[0]: dba.tblb a(0/1) (loc 0)
+node[1]: dba.tbld b(0/1) (loc 1)
+node[2]: dba.tbld e(0/1) (loc 2)
+node[3]: dba.tbld c(0/1) (loc 3)
+node[4]: dba.tbld d(0/1) (outer-dep-set 0 1 2 3) (loc 4)
+Join graph equivalence classes:
+eqclass[0]: col1[0] col1[1] col1[2] col1[3] col1[4]
+Join graph edges:
+term[0]: a.col1=b.col1 (sel ?) (join term) (mergeable) (inner-join) (loc 1)
+term[1]: a.col1=e.col1 (sel ?) (join term) (mergeable) (inner-join) (loc 2)
+term[2]: a.col1=c.col1 (sel ?) (join term) (mergeable) (inner-join) (loc 3)
+term[3]: a.col1=d.col1 (sel ?) (join term) (mergeable) (right-join) (loc 4)
+===================================================
+col1    col2    col1    col2    col1    col2    col1    col2    col1    col2    
+1     1     1     1     1     1     1     1     1     1     
+2     2     2     2     2     2     2     2     2     2     
+
+Join graph segments (f indicates final):
+seg[0]: [0]
+seg[1]: col1[0] (f)
+seg[2]: col2[0] (f)
+seg[3]: [1]
+seg[4]: col1[1] (f)
+seg[5]: col2[1] (f)
+seg[6]: [2]
+seg[7]: col1[2] (f)
+seg[8]: col2[2] (f)
+seg[9]: [3]
+seg[10]: col1[3] (f)
+seg[11]: col2[3] (f)
+seg[12]: [4]
+seg[13]: col1[4] (f)
+seg[14]: col2[4] (f)
+Join graph nodes:
+node[0]: dba.tblb a(0/1) (loc 0)
+node[1]: dba.tbld b(0/1) (loc 1)
+node[2]: dba.tbld e(0/1) (loc 2)
+node[3]: dba.tbld c(0/1) (loc 3)
+node[4]: dba.tbld d(0/1) (outer-dep-set 0 1 2 3) (loc 4)
+Join graph equivalence classes:
+eqclass[0]: col1[0] col1[1] col1[2] col1[3] col1[4]
+Join graph edges:
+term[0]: a.col1=b.col1 (sel ?) (join term) (mergeable) (inner-join) (loc 1)
+term[1]: b.col1=e.col1 (sel ?) (join term) (mergeable) (inner-join) (loc 2)
+term[2]: b.col1=c.col1 (sel ?) (join term) (mergeable) (inner-join) (loc 3)
+term[3]: a.col1=d.col1 (sel ?) (join term) (mergeable) (right-join) (loc 4)
+===================================================
+col1    col2    col1    col2    
+
+===================================================
+col1    col2    col1    col2    col1    col2    
+null     null     null     null     1     1     
+null     null     null     null     2     2     
+
+===================================================
+col1    col2    col1    col2    col1    col2    
+
+===================================================
+col1    col2    col1    col2    col1    col2    col1    col2    col1    col2    
+null     null     null     null     1     1     1     1     null     null     
+null     null     null     null     2     2     2     2     null     null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
