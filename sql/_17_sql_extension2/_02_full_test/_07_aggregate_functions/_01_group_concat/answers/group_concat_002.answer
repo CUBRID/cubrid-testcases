@@ -50,9 +50,17 @@ yahoo          ,www.yahoo.com,www.yahoo.us
 yahoo1         www.yahoo.com     
 
 ===================================================
-Error:-494
+name    group_concat(adr order by 1 separator '&&&')    
+null     www.google.com     
+               www.google.us     
+cnn            www.cnn.com     
+google         www.google.com&&&www.google.com&&&www.google.us     
+google1        www.google.com     
+yahoo          &&&www.yahoo.com&&&www.yahoo.us     
+yahoo1         www.yahoo.com     
+
 ===================================================
-name    group_concat(adr order by 1 separator N'^^^')    
+name    group_concat(adr order by 1 separator '^^^')    
 null     www.google.com     
                www.google.us     
 cnn            www.cnn.com     
@@ -62,7 +70,7 @@ yahoo          ^^^www.yahoo.com^^^www.yahoo.us
 yahoo1         www.yahoo.com     
 
 ===================================================
-name    group_concat(distinct adr order by 1 separator N'~~~')    
+name    group_concat(distinct adr order by 1 separator '~~~')    
 null     www.google.com     
                www.google.us     
 cnn            www.cnn.com     
@@ -72,9 +80,7 @@ yahoo          ~~~www.yahoo.com~~~www.yahoo.us
 yahoo1         www.yahoo.com     
 
 ===================================================
-Error:-494
-===================================================
-name    group_concat(adr+N'sss' order by 1)    
+name    group_concat(adr+'sss' order by 1)    
 null     www.google.comsss     
                www.google.ussss     
 cnn            www.cnn.comsss     
@@ -84,7 +90,17 @@ yahoo          sss,www.yahoo.comsss,www.yahoo.ussss
 yahoo1         www.yahoo.comsss     
 
 ===================================================
-name    group_concat(adr+N'sss' order by 1 separator N'888')    
+name    group_concat(adr+'sss' order by 1)    
+null     www.google.comsss     
+               www.google.ussss     
+cnn            www.cnn.comsss     
+google         www.google.comsss,www.google.comsss,www.google.ussss     
+google1        www.google.comsss     
+yahoo          sss,www.yahoo.comsss,www.yahoo.ussss     
+yahoo1         www.yahoo.comsss     
+
+===================================================
+name    group_concat(adr+'sss' order by 1 separator '888')    
 null     www.google.comsss     
                www.google.ussss     
 cnn            www.cnn.comsss     
@@ -94,7 +110,7 @@ yahoo          sss888www.yahoo.comsss888www.yahoo.ussss
 yahoo1         www.yahoo.comsss     
 
 ===================================================
-name    group_concat(distinct adr+N'sss' order by 1 separator N'888')    
+name    group_concat(distinct adr+'sss' order by 1 separator '888')    
 null     www.google.comsss     
                www.google.ussss     
 cnn            www.cnn.comsss     
