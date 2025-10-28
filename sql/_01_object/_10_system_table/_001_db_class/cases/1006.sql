@@ -9,7 +9,7 @@ SELECT c.class_name,
          WHEN 2 THEN 'PROXY' 
          ELSE 'UNKNOW' END, 
        CASE 
-         WHEN MOD(c.flags, 2) = 1 THEN 'YES' 
+         WHEN c.is_system_class = 1 THEN 'YES' 
          ELSE 'NO' END, 
        CASE 
          WHEN c.sub_classes IS NULL THEN 'NO' 
