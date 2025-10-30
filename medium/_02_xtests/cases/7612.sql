@@ -79,7 +79,6 @@ create class ins_test as subclass of test_class(
         long_char1 char(2048),
         long_char2 char(2048),
         long_varchar varchar(16384),
-        long_nchar nchar(8192),
         long_varnchar nchar varying(8192),
         long_bit bit(16384),
         long_varbit bit varying(16384));
