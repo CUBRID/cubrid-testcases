@@ -142,7 +142,7 @@ Query Plan:
     TABLE SCAN (p)
     INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_b=p.bkey range: c.p_a=p.a)
 
-  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_parent] p, [dba.t_child] c where  cast(p.a as varchar) like  cast(? as varchar) and c.p_a=p.a and c.p_b=p.b
+  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_parent] p, [dba.t_child] c where  cast(p.a as varchar)= cast(? as varchar) and c.p_a=p.a and c.p_b=p.b
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -162,7 +162,7 @@ Query Plan:
     TABLE SCAN (p)
     INDEX SCAN (c.fk_t_child_p_a_p_b) (key range: c.p_a=p.akey range: c.p_b=p.b)
 
-  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_child] c, [dba.t_parent] p where c.p_a=p.a and c.p_b=p.b and  cast(p.a as varchar) like  cast(? as varchar)
+  rewritten query: select c.a, c.b, c.p_a, c.p_b from [dba.t_child] c, [dba.t_parent] p where c.p_a=p.a and c.p_b=p.b and  cast(p.a as varchar)= cast(? as varchar)
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
