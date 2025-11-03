@@ -5,7 +5,7 @@
 --                   additional filters existed beyond the ROWNUM condition.
 --                   (Only test case #2 applies to this issue.)
 -- Note:
---   - Only CBRD-26313 is included in the 11.4 Patch 2 backport.
+--   - Only CBRD-26313 is included in the 11.3 Patch 4 backport.
 --   - The rest of the test cases belong to CBRD-26257 (feature extension).
 
 drop table if exists ta;
