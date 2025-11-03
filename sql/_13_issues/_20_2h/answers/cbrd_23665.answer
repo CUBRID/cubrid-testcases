@@ -398,43 +398,23 @@ park     parksehun     1     null     null     null
 trace    
 
 Query Plan:
+  TABLE SCAN (b)
+
+  rewritten query: (select b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? ))
+
   NESTED LOOPS (left outer join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from [dba.tmp_hls] a left outer join [dba.tmp_hls] b on (b.c>= ?:? ) and a.b=b.b
+  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from [dba.tmp_hls] a left outer join (select b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) b (a, b, c) on a.b=b.b
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-     
-
-===================================================
-a    b    c    a    b    c    a    b    c    
-cub     cubrid     1     null     null     null     null     null     null     
-ora     oracle     2     null     null     null     null     null     null     
-post     postgre     3     post     postgre     3     null     null     null     
-my     mysql     4     my     mysql     4     null     null     null     
-ms     mssql     5     ms     mssql     5     ms     mssql     5     
-park     parksehun     1     null     null     null     null     null     null     
-
-===================================================
-trace    
-
-Query Plan:
-  NESTED LOOPS (left outer join)
-    NESTED LOOPS (left outer join)
-      TABLE SCAN (a)
-      TABLE SCAN (b)
-    TABLE SCAN (c)
-
-  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c, c.a, c.b, c.c from [dba.tmp_hls] a left outer join [dba.tmp_hls] b on (b.c>= ?:? ) and b.b=a.b and a.a=b.a left outer join [dba.tmp_hls] c on (c.c>= ?:? ) and a.a=c.a
-
-Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
@@ -451,18 +431,76 @@ park     parksehun     1     null     null     null     null     null     null
 trace    
 
 Query Plan:
+  TABLE SCAN (b)
+
+  rewritten query: (select b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? ))
+
+  TABLE SCAN (b)
+
+  rewritten query: (select b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? ))
+
   NESTED LOOPS (left outer join)
     NESTED LOOPS (left outer join)
       TABLE SCAN (a)
       TABLE SCAN (b)
     TABLE SCAN (c)
 
-  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c, c.a, c.b, c.c from [dba.tmp_hls] a left outer join [dba.tmp_hls] b on (b.c>= ?:? ) and b.b=a.b and a.a=b.a left outer join [dba.tmp_hls] c on (c.c>= ?:? ) and b.a=c.a
+  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c, c.a, c.b, c.c from [dba.tmp_hls] a left outer join (select b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) b (a, b, c) on b.b=a.b and a.a=b.a left outer join (select b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) c (a, b, c) on a.a=c.a
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+a    b    c    a    b    c    a    b    c    
+cub     cubrid     1     null     null     null     null     null     null     
+ora     oracle     2     null     null     null     null     null     null     
+post     postgre     3     post     postgre     3     null     null     null     
+my     mysql     4     my     mysql     4     null     null     null     
+ms     mssql     5     ms     mssql     5     ms     mssql     5     
+park     parksehun     1     null     null     null     null     null     null     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (b)
+
+  rewritten query: (select b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? ))
+
+  TABLE SCAN (b)
+
+  rewritten query: (select b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? ))
+
+  NESTED LOOPS (left outer join)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+    TABLE SCAN (c)
+
+  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c, c.a, c.b, c.c from [dba.tmp_hls] a left outer join (select b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) b (a, b, c) on b.b=a.b and a.a=b.a left outer join (select b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) c (a, b, c) on b.a=c.a
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
