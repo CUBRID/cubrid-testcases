@@ -919,17 +919,17 @@ trace
 Query Plan:
   TABLE SCAN (dba.t?)
 
-  rewritten query: (select [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? ))
+  rewritten query: (select /*+ NO_PARALLEL_HEAP_SCAN */ [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? ))
 
   TABLE SCAN (dba.t?)
 
-  rewritten query: (select [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? ))
+  rewritten query: (select /*+ NO_PARALLEL_HEAP_SCAN */ [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ count(*) from (select [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? )) a (a, b, c), (select [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? )) b (a, b, c) where a.a=b.a and a.b=b.b and a.c=b.c
+  rewritten query: select /*+ ORDERED */ count(*) from (select /*+ NO_PARALLEL_HEAP_SCAN */ [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? )) a (a, b, c), (select /*+ NO_PARALLEL_HEAP_SCAN */ [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? )) b (a, b, c) where a.a=b.a and a.b=b.b and a.c=b.c
 
 
 Trace Statistics:
@@ -941,10 +941,8 @@ Trace Statistics:
              (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
      
 
 ===================================================
@@ -963,10 +961,8 @@ Trace Statistics:
              (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
      
 
 ===================================================
@@ -981,17 +977,17 @@ trace
 Query Plan:
   TABLE SCAN (dba.t?)
 
-  rewritten query: (select [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? ))
+  rewritten query: (select /*+ NO_PARALLEL_HEAP_SCAN */ [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? ))
 
   TABLE SCAN (dba.t?)
 
-  rewritten query: (select [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? ))
+  rewritten query: (select /*+ NO_PARALLEL_HEAP_SCAN */ [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ count(*) from (select [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? )) a (a, b, c), (select [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? )) b (a, b, c) where a.a=b.a and a.b=b.b and a.c=b.c
+  rewritten query: select /*+ ORDERED */ count(*) from (select /*+ NO_PARALLEL_HEAP_SCAN */ [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? )) a (a, b, c), (select /*+ NO_PARALLEL_HEAP_SCAN */ [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? )) b (a, b, c) where a.a=b.a and a.b=b.b and a.c=b.c
 
 
 Trace Statistics:
@@ -1003,10 +999,8 @@ Trace Statistics:
              (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
      
 
 ===================================================
@@ -1027,10 +1021,8 @@ Trace Statistics:
              (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
      
 
 ===================================================
@@ -1043,17 +1035,17 @@ trace
 Query Plan:
   TABLE SCAN (dba.t?)
 
-  rewritten query: (select [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? ))
+  rewritten query: (select /*+ NO_PARALLEL_HEAP_SCAN */ [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? ))
 
   TABLE SCAN (dba.t?)
 
-  rewritten query: (select [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? ))
+  rewritten query: (select /*+ NO_PARALLEL_HEAP_SCAN */ [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED NO_HASH_LIST_SCAN */ count(*) from (select [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? )) a (a, b, c), (select [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? )) b (a, b, c) where a.a=b.a and a.b=b.b and a.c=b.c
+  rewritten query: select /*+ ORDERED NO_HASH_LIST_SCAN */ count(*) from (select /*+ NO_PARALLEL_HEAP_SCAN */ [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? )) a (a, b, c), (select /*+ NO_PARALLEL_HEAP_SCAN */ [dba.t?].a, [dba.t?].b, [dba.t?].c from [dba.t?] [dba.t?] where (inst_num()<= ?:? )) b (a, b, c) where a.a=b.a and a.b=b.b and a.c=b.c
 
 
 Trace Statistics:
@@ -1065,10 +1057,8 @@ Trace Statistics:
              (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
      
 
 ===================================================

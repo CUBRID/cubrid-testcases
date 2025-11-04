@@ -8,7 +8,7 @@
 0
 ===================================================
     
-1. talbe full scan (should work) -> row by row     
+1. table full scan (should work) -> row by row     
 
 ===================================================
 count(*)    
@@ -796,7 +796,7 @@ Trace Statistics:
 
 ===================================================
     
-19. no select list from table, no predicate from table (should not work)     
+19. no select list from table, no predicate from table (should work)     
 
 ===================================================
 count(*)    
@@ -813,6 +813,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
      
 
 ===================================================
@@ -831,6 +832,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
      
 
 ===================================================
@@ -865,7 +867,7 @@ Trace Statistics:
 
 ===================================================
     
-21. when query contains interpolation (should work) -> row by row     
+21. when query contains interpolation (should work) -> mergeable list     
 
 ===================================================
 median(cola)    
@@ -887,7 +889,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
     GROUPBY (time: ?, hash: false, sort: true, page: ?, ioread: ?, rows: ?)
      
 
