@@ -33,11 +33,11 @@ select /*+ ordered */ * from tmp_hls a, (select /*+ NO_MERGE */ * from tmp_hls b
 show trace;
 
 -- outer join
-select /*+ ordered */ * from tmp_hls a, (select /*+ NO_MERGE */ * from tmp_hls b where b.c >=3) b where a.b = b.b(+);
+select /*+ ordered */ * from tmp_hls a, (select * from tmp_hls b where b.c >=3) b where a.b = b.b(+);
 show trace;
-select /*+ ordered */ * from tmp_hls a, (select /*+ NO_MERGE */ * from tmp_hls b where b.c >=3) b, (select /*+ NO_MERGE */ * from tmp_hls b where b.c >=5) c where a.a = b.a(+) and b.b(+) = a.b and a.a = c.a(+); 
+select /*+ ordered */ * from tmp_hls a, (select * from tmp_hls b where b.c >=3) b, (select * from tmp_hls b where b.c >=5) c where a.a = b.a(+) and b.b(+) = a.b and a.a = c.a(+); 
 show trace;
-select /*+ ordered */ * from tmp_hls a, (select /*+ NO_MERGE */ * from tmp_hls b where b.c >=3) b, (select /*+ NO_MERGE */ * from tmp_hls b where b.c >=5) c where a.a = b.a(+) and b.b(+) = a.b and b.a = c.a(+); 
+select /*+ ordered */ * from tmp_hls a, (select * from tmp_hls b where b.c >=3) b, (select * from tmp_hls b where b.c >=5) c where a.a = b.a(+) and b.b(+) = a.b and b.a = c.a(+); 
 show trace;
 
 set trace off;
