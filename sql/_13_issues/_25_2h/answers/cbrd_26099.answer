@@ -13,15 +13,7 @@ count(*)
 100     
 
 Query plan:
-sscan
-    class: av? node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-(select null from table({}) av? (av_?) where ? <> ?)
-Query plan:
-hash-join (left outer join)
-    edge:  term[?]
+nl-join (left outer join)
     outer: sscan
                class: a node[?]
                cost:  ? card ?
@@ -30,22 +22,14 @@ hash-join (left outer join)
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
-Query stmt:
-select /*+ USE_HASH */ count(*) from tbl a left outer join (select null from table({}) av? (av_?) where ? <> ?) b (cola) on a.cola=b.cola and null
+Query stmt: [Warning: HINT ignored]
+select count(*) from tbl a left outer join table({}) b (av_?) on ? <> ?
 ===================================================
 count(*)    
 100     
 
 Query plan:
-sscan
-    class: av? node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-(select null from table({}) av? (av_?) where ? <> ?)
-Query plan:
-hash-join (left outer join)
-    edge:  term[?]
+nl-join (left outer join)
     outer: sscan
                class: a node[?]
                cost:  ? card ?
@@ -54,74 +38,40 @@ hash-join (left outer join)
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
-Query stmt:
-select /*+ USE_HASH */ count(*) from tbl a left outer join (select null from table({}) av? (av_?) where ? <> ?) b (cola) on a.cola=b.cola and null
+Query stmt: [Warning: HINT ignored]
+select count(*) from tbl a left outer join table({}) b (av_?) on ? <> ?
 ===================================================
 count(*)    
 100     
 
 Query plan:
-sscan
-    class: av? node[?]
-    sargs: term[?]
+nl-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
     cost:  ? card ?
-Query stmt:
-(select null from table({}) av? (av_?) where ? <> ?)
-Query plan:
-temp
-    order: UNORDERED
-    subplan: m-join (left outer join)
-                 edge:  term[?]
-                 outer: temp
-                            order: cola[?]
-                            subplan: sscan
-                                         class: a node[?]
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 inner: temp
-                            order: cola[?]
-                            subplan: sscan
-                                         class: b node[?]
-                                         sargs: term[?]
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_MERGE */ count(*) from tbl a left outer join (select null from table({}) av? (av_?) where ? <> ?) b (cola) on a.cola=b.cola and null
+Query stmt: [Warning: HINT ignored]
+select count(*) from tbl a left outer join table({}) b (av_?) on ? <> ?
 ===================================================
 count(*)    
 100     
 
 Query plan:
-sscan
-    class: av? node[?]
-    sargs: term[?]
+nl-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
     cost:  ? card ?
-Query stmt:
-(select null from table({}) av? (av_?) where ? <> ?)
-Query plan:
-temp
-    order: UNORDERED
-    subplan: m-join (left outer join)
-                 edge:  term[?]
-                 outer: temp
-                            order: cola[?]
-                            subplan: sscan
-                                         class: a node[?]
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 inner: temp
-                            order: cola[?]
-                            subplan: sscan
-                                         class: b node[?]
-                                         sargs: term[?]
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_MERGE */ count(*) from tbl a left outer join (select null from table({}) av? (av_?) where ? <> ?) b (cola) on a.cola=b.cola and null
+Query stmt: [Warning: HINT ignored]
+select count(*) from tbl a left outer join table({}) b (av_?) on ? <> ?
 ===================================================
     
 "1=0" condition     
@@ -131,15 +81,7 @@ count(*)
 100     
 
 Query plan:
-sscan
-    class: av? node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-(select null from table({}) av? (av_?) where ?=?)
-Query plan:
-hash-join (left outer join)
-    edge:  term[?]
+nl-join (left outer join)
     outer: sscan
                class: a node[?]
                cost:  ? card ?
@@ -148,22 +90,14 @@ hash-join (left outer join)
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
-Query stmt:
-select /*+ USE_HASH */ count(*) from tbl a left outer join (select null from table({}) av? (av_?) where ?=?) b (cola) on a.cola=b.cola and null
+Query stmt: [Warning: HINT ignored]
+select count(*) from tbl a left outer join table({}) b (av_?) on ? <> ?
 ===================================================
 count(*)    
 100     
 
 Query plan:
-sscan
-    class: av? node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-(select null from table({}) av? (av_?) where ?=?)
-Query plan:
-hash-join (left outer join)
-    edge:  term[?]
+nl-join (left outer join)
     outer: sscan
                class: a node[?]
                cost:  ? card ?
@@ -172,74 +106,40 @@ hash-join (left outer join)
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
-Query stmt:
-select /*+ USE_HASH */ count(*) from tbl a left outer join (select null from table({}) av? (av_?) where ?=?) b (cola) on a.cola=b.cola and null
+Query stmt: [Warning: HINT ignored]
+select count(*) from tbl a left outer join table({}) b (av_?) on ? <> ?
 ===================================================
 count(*)    
 100     
 
 Query plan:
-sscan
-    class: av? node[?]
-    sargs: term[?]
+nl-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
     cost:  ? card ?
-Query stmt:
-(select null from table({}) av? (av_?) where ?=?)
-Query plan:
-temp
-    order: UNORDERED
-    subplan: m-join (left outer join)
-                 edge:  term[?]
-                 outer: temp
-                            order: cola[?]
-                            subplan: sscan
-                                         class: a node[?]
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 inner: temp
-                            order: cola[?]
-                            subplan: sscan
-                                         class: b node[?]
-                                         sargs: term[?]
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_MERGE */ count(*) from tbl a left outer join (select null from table({}) av? (av_?) where ?=?) b (cola) on a.cola=b.cola and null
+Query stmt: [Warning: HINT ignored]
+select count(*) from tbl a left outer join table({}) b (av_?) on ? <> ?
 ===================================================
 count(*)    
 100     
 
 Query plan:
-sscan
-    class: av? node[?]
-    sargs: term[?]
+nl-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
     cost:  ? card ?
-Query stmt:
-(select null from table({}) av? (av_?) where ?=?)
-Query plan:
-temp
-    order: UNORDERED
-    subplan: m-join (left outer join)
-                 edge:  term[?]
-                 outer: temp
-                            order: cola[?]
-                            subplan: sscan
-                                         class: a node[?]
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 inner: temp
-                            order: cola[?]
-                            subplan: sscan
-                                         class: b node[?]
-                                         sargs: term[?]
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_MERGE */ count(*) from tbl a left outer join (select null from table({}) av? (av_?) where ?=?) b (cola) on a.cola=b.cola and null
+Query stmt: [Warning: HINT ignored]
+select count(*) from tbl a left outer join table({}) b (av_?) on ? <> ?
 ===================================================
     
 1-1. Create a view and use it instead of an inline view.     
@@ -265,111 +165,65 @@ count(*)
 100     
 
 Query plan:
-sscan
-    class: av? node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-(select null from table({}) av? (av_?) where ?=?)
-Query plan:
-hash-join (left outer join)
-    edge:  term[?]
+nl-join (left outer join)
     outer: sscan
                class: a node[?]
                cost:  ? card ?
     inner: sscan
                class: b node[?]
+               sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
-Query stmt:
-select /*+ USE_HASH */ count(*) from tbl a left outer join (select null from table({}) av? (av_?) where ?=?) b (cola) on a.cola=b.cola
+Query stmt: [Warning: HINT ignored]
+select count(*) from tbl a left outer join tbl b on ? <> ?
 ===================================================
 count(*)    
 100     
 
 Query plan:
-sscan
-    class: av? node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-(select null from table({}) av? (av_?) where ?=?)
-Query plan:
-hash-join (left outer join)
-    edge:  term[?]
+nl-join (left outer join)
     outer: sscan
                class: a node[?]
                cost:  ? card ?
     inner: sscan
                class: b node[?]
+               sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
-Query stmt:
-select /*+ USE_HASH */ count(*) from tbl a left outer join (select null from table({}) av? (av_?) where ?=?) b (cola) on a.cola=b.cola
+Query stmt: [Warning: HINT ignored]
+select count(*) from tbl a left outer join tbl b on ? <> ?
 ===================================================
 count(*)    
 100     
 
 Query plan:
-sscan
-    class: av? node[?]
-    sargs: term[?]
+nl-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
     cost:  ? card ?
-Query stmt:
-(select null from table({}) av? (av_?) where ?=?)
-Query plan:
-temp
-    order: UNORDERED
-    subplan: m-join (left outer join)
-                 edge:  term[?]
-                 outer: temp
-                            order: cola[?]
-                            subplan: sscan
-                                         class: a node[?]
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 inner: temp
-                            order: cola[?]
-                            subplan: sscan
-                                         class: b node[?]
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_MERGE */ count(*) from tbl a left outer join (select null from table({}) av? (av_?) where ?=?) b (cola) on a.cola=b.cola
+Query stmt: [Warning: HINT ignored]
+select count(*) from tbl a left outer join tbl b on ? <> ?
 ===================================================
 count(*)    
 100     
 
 Query plan:
-sscan
-    class: av? node[?]
-    sargs: term[?]
+nl-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
     cost:  ? card ?
-Query stmt:
-(select null from table({}) av? (av_?) where ?=?)
-Query plan:
-temp
-    order: UNORDERED
-    subplan: m-join (left outer join)
-                 edge:  term[?]
-                 outer: temp
-                            order: cola[?]
-                            subplan: sscan
-                                         class: a node[?]
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 inner: temp
-                            order: cola[?]
-                            subplan: sscan
-                                         class: b node[?]
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_MERGE */ count(*) from tbl a left outer join (select null from table({}) av? (av_?) where ?=?) b (cola) on a.cola=b.cola
+Query stmt: [Warning: HINT ignored]
+select count(*) from tbl a left outer join tbl b on ? <> ?
 ===================================================
     
 2. If there is a constant equality condition for the join column of the inline view     
@@ -379,12 +233,23 @@ count(*)
 100     
 
 Query plan:
-sscan
-    class: tbl node[?]
-    sargs: term[?]
+hash-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    during:term[?]
     cost:  ? card ?
 Query stmt:
-(select tbl.cola from tbl tbl where tbl.cola= ?:? )
+select /*+ USE_HASH */ count(*) from tbl a left outer join tbl b on a.cola=b.cola and b.cola= ?:?  and a.cola= ?:? 
+===================================================
+count(*)    
+100     
+
 Query plan:
 hash-join (left outer join)
     edge:  term[?]
@@ -393,46 +258,16 @@ hash-join (left outer join)
                cost:  ? card ?
     inner: sscan
                class: b node[?]
+               sargs: term[?]
                cost:  ? card ?
     during:term[?]
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH */ count(*) from tbl a left outer join (select tbl.cola from tbl tbl where tbl.cola= ?:? ) b (cola) on a.cola=b.cola and a.cola=?
+select /*+ USE_HASH */ count(*) from tbl a left outer join tbl b on a.cola=b.cola and b.cola= ?:?  and a.cola= ?:? 
 ===================================================
 count(*)    
 100     
 
-Query plan:
-sscan
-    class: tbl node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-(select tbl.cola from tbl tbl where tbl.cola= ?:? )
-Query plan:
-hash-join (left outer join)
-    edge:  term[?]
-    outer: sscan
-               class: a node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: b node[?]
-               cost:  ? card ?
-    during:term[?]
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_HASH */ count(*) from tbl a left outer join (select tbl.cola from tbl tbl where tbl.cola= ?:? ) b (cola) on a.cola=b.cola and a.cola=?
-===================================================
-count(*)    
-100     
-
-Query plan:
-sscan
-    class: tbl node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-(select tbl.cola from tbl tbl where tbl.cola= ?:? )
 Query plan:
 temp
     order: UNORDERED
@@ -448,24 +283,18 @@ temp
                             order: cola[?]
                             subplan: sscan
                                          class: b node[?]
+                                         sargs: term[?]
                                          cost:  ? card ?
                             cost:  ? card ?
                  during:term[?]
                  cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ USE_MERGE */ count(*) from tbl a left outer join (select tbl.cola from tbl tbl where tbl.cola= ?:? ) b (cola) on a.cola=b.cola and a.cola=?
+select /*+ USE_MERGE */ count(*) from tbl a left outer join tbl b on a.cola=b.cola and b.cola= ?:?  and a.cola= ?:? 
 ===================================================
 count(*)    
 100     
 
-Query plan:
-sscan
-    class: tbl node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-(select tbl.cola from tbl tbl where tbl.cola= ?:? )
 Query plan:
 temp
     order: UNORDERED
@@ -481,13 +310,14 @@ temp
                             order: cola[?]
                             subplan: sscan
                                          class: b node[?]
+                                         sargs: term[?]
                                          cost:  ? card ?
                             cost:  ? card ?
                  during:term[?]
                  cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ USE_MERGE */ count(*) from tbl a left outer join (select tbl.cola from tbl tbl where tbl.cola= ?:? ) b (cola) on a.cola=b.cola and a.cola=?
+select /*+ USE_MERGE */ count(*) from tbl a left outer join tbl b on a.cola=b.cola and b.cola= ?:?  and a.cola= ?:? 
 ===================================================
     
 2-1. Create a view and use it instead of an inline view.     
@@ -499,12 +329,23 @@ count(*)
 100     
 
 Query plan:
-sscan
-    class: b node[?]
-    sargs: term[?]
+hash-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    during:term[?]
     cost:  ? card ?
 Query stmt:
-(select b.cola from tbl b where (b.cola= ?:? ))
+select /*+ USE_HASH */ count(*) from tbl a left outer join tbl b on a.cola=b.cola and b.cola= ?:?  and a.cola= ?:? 
+===================================================
+count(*)    
+100     
+
 Query plan:
 hash-join (left outer join)
     edge:  term[?]
@@ -513,46 +354,16 @@ hash-join (left outer join)
                cost:  ? card ?
     inner: sscan
                class: b node[?]
+               sargs: term[?]
                cost:  ? card ?
     during:term[?]
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH */ count(*) from tbl a left outer join (select b.cola from tbl b where (b.cola= ?:? )) b (cola) on a.cola=b.cola and a.cola=?
+select /*+ USE_HASH */ count(*) from tbl a left outer join tbl b on a.cola=b.cola and b.cola= ?:?  and a.cola= ?:? 
 ===================================================
 count(*)    
 100     
 
-Query plan:
-sscan
-    class: b node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-(select b.cola from tbl b where (b.cola= ?:? ))
-Query plan:
-hash-join (left outer join)
-    edge:  term[?]
-    outer: sscan
-               class: a node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: b node[?]
-               cost:  ? card ?
-    during:term[?]
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_HASH */ count(*) from tbl a left outer join (select b.cola from tbl b where (b.cola= ?:? )) b (cola) on a.cola=b.cola and a.cola=?
-===================================================
-count(*)    
-100     
-
-Query plan:
-sscan
-    class: b node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-(select b.cola from tbl b where (b.cola= ?:? ))
 Query plan:
 temp
     order: UNORDERED
@@ -568,24 +379,18 @@ temp
                             order: cola[?]
                             subplan: sscan
                                          class: b node[?]
+                                         sargs: term[?]
                                          cost:  ? card ?
                             cost:  ? card ?
                  during:term[?]
                  cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ USE_MERGE */ count(*) from tbl a left outer join (select b.cola from tbl b where (b.cola= ?:? )) b (cola) on a.cola=b.cola and a.cola=?
+select /*+ USE_MERGE */ count(*) from tbl a left outer join tbl b on a.cola=b.cola and b.cola= ?:?  and a.cola= ?:? 
 ===================================================
 count(*)    
 100     
 
-Query plan:
-sscan
-    class: b node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-(select b.cola from tbl b where (b.cola= ?:? ))
 Query plan:
 temp
     order: UNORDERED
@@ -601,13 +406,14 @@ temp
                             order: cola[?]
                             subplan: sscan
                                          class: b node[?]
+                                         sargs: term[?]
                                          cost:  ? card ?
                             cost:  ? card ?
                  during:term[?]
                  cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ USE_MERGE */ count(*) from tbl a left outer join (select b.cola from tbl b where (b.cola= ?:? )) b (cola) on a.cola=b.cola and a.cola=?
+select /*+ USE_MERGE */ count(*) from tbl a left outer join tbl b on a.cola=b.cola and b.cola= ?:?  and a.cola= ?:? 
 ===================================================
     
 3. If the SELECT clause of the inline view is a constant     
@@ -617,111 +423,69 @@ count(*)
 199     
 
 Query plan:
-sscan
-    class: tbl node[?]
-    cost:  ? card ?
-Query stmt:
-(select ? from tbl tbl)
-Query plan:
-hash-join (left outer join)
-    edge:  term[?]
+nl-join (left outer join)
     outer: sscan
                class: a node[?]
                cost:  ? card ?
     inner: sscan
                class: b node[?]
+               sargs: term[?]
                cost:  ? card ?
     during:term[?]
     cost:  ? card ?
-Query stmt:
-select /*+ USE_HASH */ count(*) from tbl a left outer join (select ? from tbl tbl) b (cola) on a.cola=b.cola and a.cola=?
+Query stmt: [Warning: HINT ignored]
+select count(*) from tbl a left outer join tbl b on a.cola= ?:? 
 ===================================================
 count(*)    
 199     
 
 Query plan:
-sscan
-    class: tbl node[?]
-    cost:  ? card ?
-Query stmt:
-(select ? from tbl tbl)
-Query plan:
-hash-join (left outer join)
-    edge:  term[?]
+nl-join (left outer join)
     outer: sscan
                class: a node[?]
                cost:  ? card ?
     inner: sscan
                class: b node[?]
+               sargs: term[?]
                cost:  ? card ?
     during:term[?]
     cost:  ? card ?
-Query stmt:
-select /*+ USE_HASH */ count(*) from tbl a left outer join (select ? from tbl tbl) b (cola) on a.cola=b.cola and a.cola=?
+Query stmt: [Warning: HINT ignored]
+select count(*) from tbl a left outer join tbl b on a.cola= ?:? 
 ===================================================
 count(*)    
 199     
 
 Query plan:
-sscan
-    class: tbl node[?]
+nl-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    during:term[?]
     cost:  ? card ?
-Query stmt:
-(select ? from tbl tbl)
-Query plan:
-temp
-    order: UNORDERED
-    subplan: m-join (left outer join)
-                 edge:  term[?]
-                 outer: temp
-                            order: cola[?]
-                            subplan: sscan
-                                         class: a node[?]
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 inner: temp
-                            order: cola[?]
-                            subplan: sscan
-                                         class: b node[?]
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 during:term[?]
-                 cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_MERGE */ count(*) from tbl a left outer join (select ? from tbl tbl) b (cola) on a.cola=b.cola and a.cola=?
+Query stmt: [Warning: HINT ignored]
+select count(*) from tbl a left outer join tbl b on a.cola= ?:? 
 ===================================================
 count(*)    
 199     
 
 Query plan:
-sscan
-    class: tbl node[?]
+nl-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    during:term[?]
     cost:  ? card ?
-Query stmt:
-(select ? from tbl tbl)
-Query plan:
-temp
-    order: UNORDERED
-    subplan: m-join (left outer join)
-                 edge:  term[?]
-                 outer: temp
-                            order: cola[?]
-                            subplan: sscan
-                                         class: a node[?]
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 inner: temp
-                            order: cola[?]
-                            subplan: sscan
-                                         class: b node[?]
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 during:term[?]
-                 cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_MERGE */ count(*) from tbl a left outer join (select ? from tbl tbl) b (cola) on a.cola=b.cola and a.cola=?
+Query stmt: [Warning: HINT ignored]
+select count(*) from tbl a left outer join tbl b on a.cola= ?:? 
 ===================================================
     
 multi constant     
@@ -731,111 +495,69 @@ count(*)
 199     
 
 Query plan:
-sscan
-    class: tbl node[?]
-    cost:  ? card ?
-Query stmt:
-(select ? from tbl tbl)
-Query plan:
-hash-join (left outer join)
-    edge:  term[?]
+nl-join (left outer join)
     outer: sscan
                class: a node[?]
                cost:  ? card ?
     inner: sscan
                class: b node[?]
+               sargs: term[?]
                cost:  ? card ?
     during:term[?]
     cost:  ? card ?
-Query stmt:
-select /*+ USE_HASH */ count(*) from tbl a left outer join (select ? from tbl tbl) b (cola) on a.cola=b.cola and a.cola=?
+Query stmt: [Warning: HINT ignored]
+select count(*) from tbl a left outer join tbl b on a.cola= ?:? 
 ===================================================
 count(*)    
 199     
 
 Query plan:
-sscan
-    class: tbl node[?]
-    cost:  ? card ?
-Query stmt:
-(select ? from tbl tbl)
-Query plan:
-hash-join (left outer join)
-    edge:  term[?]
+nl-join (left outer join)
     outer: sscan
                class: a node[?]
                cost:  ? card ?
     inner: sscan
                class: b node[?]
+               sargs: term[?]
                cost:  ? card ?
     during:term[?]
     cost:  ? card ?
-Query stmt:
-select /*+ USE_HASH */ count(*) from tbl a left outer join (select ? from tbl tbl) b (cola) on a.cola=b.cola and a.cola=?
+Query stmt: [Warning: HINT ignored]
+select count(*) from tbl a left outer join tbl b on a.cola= ?:? 
 ===================================================
 count(*)    
 199     
 
 Query plan:
-sscan
-    class: tbl node[?]
+nl-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    during:term[?]
     cost:  ? card ?
-Query stmt:
-(select ? from tbl tbl)
-Query plan:
-temp
-    order: UNORDERED
-    subplan: m-join (left outer join)
-                 edge:  term[?]
-                 outer: temp
-                            order: cola[?]
-                            subplan: sscan
-                                         class: a node[?]
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 inner: temp
-                            order: cola[?]
-                            subplan: sscan
-                                         class: b node[?]
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 during:term[?]
-                 cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_MERGE */ count(*) from tbl a left outer join (select ? from tbl tbl) b (cola) on a.cola=b.cola and a.cola=?
+Query stmt: [Warning: HINT ignored]
+select count(*) from tbl a left outer join tbl b on a.cola= ?:? 
 ===================================================
 count(*)    
 199     
 
 Query plan:
-sscan
-    class: tbl node[?]
+nl-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    during:term[?]
     cost:  ? card ?
-Query stmt:
-(select ? from tbl tbl)
-Query plan:
-temp
-    order: UNORDERED
-    subplan: m-join (left outer join)
-                 edge:  term[?]
-                 outer: temp
-                            order: cola[?]
-                            subplan: sscan
-                                         class: a node[?]
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 inner: temp
-                            order: cola[?]
-                            subplan: sscan
-                                         class: b node[?]
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 during:term[?]
-                 cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_MERGE */ count(*) from tbl a left outer join (select ? from tbl tbl) b (cola) on a.cola=b.cola and a.cola=?
+Query stmt: [Warning: HINT ignored]
+select count(*) from tbl a left outer join tbl b on a.cola= ?:? 
 ===================================================
     
 single row     
@@ -961,111 +683,69 @@ count(*)
 199     
 
 Query plan:
-sscan
-    class: b node[?]
-    cost:  ? card ?
-Query stmt:
-(select ? from tbl b)
-Query plan:
-hash-join (left outer join)
-    edge:  term[?]
+nl-join (left outer join)
     outer: sscan
                class: a node[?]
                cost:  ? card ?
     inner: sscan
                class: b node[?]
+               sargs: term[?]
                cost:  ? card ?
     during:term[?]
     cost:  ? card ?
-Query stmt:
-select /*+ USE_HASH */ count(*) from tbl a left outer join (select ? from tbl b) b (cola) on a.cola=b.cola and a.cola=?
+Query stmt: [Warning: HINT ignored]
+select count(*) from tbl a left outer join tbl b on a.cola= ?:? 
 ===================================================
 count(*)    
 199     
 
 Query plan:
-sscan
-    class: b node[?]
-    cost:  ? card ?
-Query stmt:
-(select ? from tbl b)
-Query plan:
-hash-join (left outer join)
-    edge:  term[?]
+nl-join (left outer join)
     outer: sscan
                class: a node[?]
                cost:  ? card ?
     inner: sscan
                class: b node[?]
+               sargs: term[?]
                cost:  ? card ?
     during:term[?]
     cost:  ? card ?
-Query stmt:
-select /*+ USE_HASH */ count(*) from tbl a left outer join (select ? from tbl b) b (cola) on a.cola=b.cola and a.cola=?
+Query stmt: [Warning: HINT ignored]
+select count(*) from tbl a left outer join tbl b on a.cola= ?:? 
 ===================================================
 count(*)    
 199     
 
 Query plan:
-sscan
-    class: b node[?]
+nl-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    during:term[?]
     cost:  ? card ?
-Query stmt:
-(select ? from tbl b)
-Query plan:
-temp
-    order: UNORDERED
-    subplan: m-join (left outer join)
-                 edge:  term[?]
-                 outer: temp
-                            order: cola[?]
-                            subplan: sscan
-                                         class: a node[?]
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 inner: temp
-                            order: cola[?]
-                            subplan: sscan
-                                         class: b node[?]
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 during:term[?]
-                 cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_MERGE */ count(*) from tbl a left outer join (select ? from tbl b) b (cola) on a.cola=b.cola and a.cola=?
+Query stmt: [Warning: HINT ignored]
+select count(*) from tbl a left outer join tbl b on a.cola= ?:? 
 ===================================================
 count(*)    
 199     
 
 Query plan:
-sscan
-    class: b node[?]
+nl-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    during:term[?]
     cost:  ? card ?
-Query stmt:
-(select ? from tbl b)
-Query plan:
-temp
-    order: UNORDERED
-    subplan: m-join (left outer join)
-                 edge:  term[?]
-                 outer: temp
-                            order: cola[?]
-                            subplan: sscan
-                                         class: a node[?]
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 inner: temp
-                            order: cola[?]
-                            subplan: sscan
-                                         class: b node[?]
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 during:term[?]
-                 cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_MERGE */ count(*) from tbl a left outer join (select ? from tbl b) b (cola) on a.cola=b.cola and a.cola=?
+Query stmt: [Warning: HINT ignored]
+select count(*) from tbl a left outer join tbl b on a.cola= ?:? 
 ===================================================
     
 multi constant     
@@ -1077,111 +757,69 @@ count(*)
 199     
 
 Query plan:
-sscan
-    class: b node[?]
-    cost:  ? card ?
-Query stmt:
-(select ? from tbl b)
-Query plan:
-hash-join (left outer join)
-    edge:  term[?]
+nl-join (left outer join)
     outer: sscan
                class: a node[?]
                cost:  ? card ?
     inner: sscan
                class: b node[?]
+               sargs: term[?]
                cost:  ? card ?
     during:term[?]
     cost:  ? card ?
-Query stmt:
-select /*+ USE_HASH */ count(*) from tbl a left outer join (select ? from tbl b) b (cola) on a.cola=b.cola and a.cola=?
+Query stmt: [Warning: HINT ignored]
+select count(*) from tbl a left outer join tbl b on a.cola= ?:? 
 ===================================================
 count(*)    
 199     
 
 Query plan:
-sscan
-    class: b node[?]
-    cost:  ? card ?
-Query stmt:
-(select ? from tbl b)
-Query plan:
-hash-join (left outer join)
-    edge:  term[?]
+nl-join (left outer join)
     outer: sscan
                class: a node[?]
                cost:  ? card ?
     inner: sscan
                class: b node[?]
+               sargs: term[?]
                cost:  ? card ?
     during:term[?]
     cost:  ? card ?
-Query stmt:
-select /*+ USE_HASH */ count(*) from tbl a left outer join (select ? from tbl b) b (cola) on a.cola=b.cola and a.cola=?
+Query stmt: [Warning: HINT ignored]
+select count(*) from tbl a left outer join tbl b on a.cola= ?:? 
 ===================================================
 count(*)    
 199     
 
 Query plan:
-sscan
-    class: b node[?]
+nl-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    during:term[?]
     cost:  ? card ?
-Query stmt:
-(select ? from tbl b)
-Query plan:
-temp
-    order: UNORDERED
-    subplan: m-join (left outer join)
-                 edge:  term[?]
-                 outer: temp
-                            order: cola[?]
-                            subplan: sscan
-                                         class: a node[?]
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 inner: temp
-                            order: cola[?]
-                            subplan: sscan
-                                         class: b node[?]
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 during:term[?]
-                 cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_MERGE */ count(*) from tbl a left outer join (select ? from tbl b) b (cola) on a.cola=b.cola and a.cola=?
+Query stmt: [Warning: HINT ignored]
+select count(*) from tbl a left outer join tbl b on a.cola= ?:? 
 ===================================================
 count(*)    
 199     
 
 Query plan:
-sscan
-    class: b node[?]
+nl-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    during:term[?]
     cost:  ? card ?
-Query stmt:
-(select ? from tbl b)
-Query plan:
-temp
-    order: UNORDERED
-    subplan: m-join (left outer join)
-                 edge:  term[?]
-                 outer: temp
-                            order: cola[?]
-                            subplan: sscan
-                                         class: a node[?]
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 inner: temp
-                            order: cola[?]
-                            subplan: sscan
-                                         class: b node[?]
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 during:term[?]
-                 cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_MERGE */ count(*) from tbl a left outer join (select ? from tbl b) b (cola) on a.cola=b.cola and a.cola=?
+Query stmt: [Warning: HINT ignored]
+select count(*) from tbl a left outer join tbl b on a.cola= ?:? 
 ===================================================
     
 single row     
@@ -1193,111 +831,69 @@ count(*)
 100     
 
 Query plan:
-sscan
-    class: b node[?]
-    cost:  ? card ?
-Query stmt:
-(select ? from db_root b)
-Query plan:
-hash-join (left outer join)
-    edge:  term[?]
+nl-join (left outer join)
     outer: sscan
                class: a node[?]
                cost:  ? card ?
     inner: sscan
                class: b node[?]
+               sargs: term[?]
                cost:  ? card ?
     during:term[?]
     cost:  ? card ?
-Query stmt:
-select /*+ USE_HASH */ count(*) from tbl a left outer join (select ? from db_root b) b (cola) on a.cola=b.cola and a.cola=?
+Query stmt: [Warning: HINT ignored]
+select count(*) from tbl a left outer join db_root b on a.cola= ?:? 
 ===================================================
 count(*)    
 100     
 
 Query plan:
-sscan
-    class: b node[?]
-    cost:  ? card ?
-Query stmt:
-(select ? from db_root b)
-Query plan:
-hash-join (left outer join)
-    edge:  term[?]
+nl-join (left outer join)
     outer: sscan
                class: a node[?]
                cost:  ? card ?
     inner: sscan
                class: b node[?]
+               sargs: term[?]
                cost:  ? card ?
     during:term[?]
     cost:  ? card ?
-Query stmt:
-select /*+ USE_HASH */ count(*) from tbl a left outer join (select ? from db_root b) b (cola) on a.cola=b.cola and a.cola=?
+Query stmt: [Warning: HINT ignored]
+select count(*) from tbl a left outer join db_root b on a.cola= ?:? 
 ===================================================
 count(*)    
 100     
 
 Query plan:
-sscan
-    class: b node[?]
+nl-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    during:term[?]
     cost:  ? card ?
-Query stmt:
-(select ? from db_root b)
-Query plan:
-temp
-    order: UNORDERED
-    subplan: m-join (left outer join)
-                 edge:  term[?]
-                 outer: temp
-                            order: cola[?]
-                            subplan: sscan
-                                         class: a node[?]
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 inner: temp
-                            order: cola[?]
-                            subplan: sscan
-                                         class: b node[?]
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 during:term[?]
-                 cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_MERGE */ count(*) from tbl a left outer join (select ? from db_root b) b (cola) on a.cola=b.cola and a.cola=?
+Query stmt: [Warning: HINT ignored]
+select count(*) from tbl a left outer join db_root b on a.cola= ?:? 
 ===================================================
 count(*)    
 100     
 
 Query plan:
-sscan
-    class: b node[?]
+nl-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    during:term[?]
     cost:  ? card ?
-Query stmt:
-(select ? from db_root b)
-Query plan:
-temp
-    order: UNORDERED
-    subplan: m-join (left outer join)
-                 edge:  term[?]
-                 outer: temp
-                            order: cola[?]
-                            subplan: sscan
-                                         class: a node[?]
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 inner: temp
-                            order: cola[?]
-                            subplan: sscan
-                                         class: b node[?]
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 during:term[?]
-                 cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_MERGE */ count(*) from tbl a left outer join (select ? from db_root b) b (cola) on a.cola=b.cola and a.cola=?
+Query stmt: [Warning: HINT ignored]
+select count(*) from tbl a left outer join db_root b on a.cola= ?:? 
 ===================================================
 0
 ===================================================
