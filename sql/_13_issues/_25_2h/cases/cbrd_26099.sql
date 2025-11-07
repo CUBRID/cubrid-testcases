@@ -5,7 +5,7 @@
 
 drop table if exists tbl;
 create table tbl (cola int,colb int);
-insert into tbl select rownum, rownum from db_class a,db_class b,db_class c,db_class d,db_class e limit 1000000;
+insert into tbl select rownum, rownum from db_class a,db_class b,db_class c,db_class d,db_class e limit 100;
 
 evaluate '1. If there is no result of the inline view with the "= NULL" condition';
 select /*+ recompile use_hash */ count(*)
