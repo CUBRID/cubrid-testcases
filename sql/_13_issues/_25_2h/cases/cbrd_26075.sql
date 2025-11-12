@@ -109,8 +109,111 @@ SELECT (
 )
 FROM tbl_c c;
 
+EVALUATE 'case 9. HAVING outer col + AND condition';
+SELECT a.col
+FROM tbl_a a
+WHERE EXISTS (
+  SELECT 1
+  FROM tbl_b b
+  GROUP BY b.id
+  HAVING MAX(b.col) = a.col AND MIN(b.col) <> a.col
+);
+
+EVALUATE 'case 10. HAVING outer col + OR condition';
+SELECT a.col
+FROM tbl_a a
+WHERE EXISTS (
+  SELECT 1
+  FROM tbl_b b
+  GROUP BY b.id
+  HAVING MAX(b.col) = a.col OR MIN(b.col) = a.col
+)
+ORDER BY a.col;
+
+EVALUATE 'case 11. HAVING CASE WHEN uses outer col';
+SELECT a.col
+FROM tbl_a a
+WHERE EXISTS (
+  SELECT 1
+  FROM tbl_b b
+  GROUP BY b.id
+  HAVING CASE WHEN MAX(b.col) = a.col THEN 1 ELSE 0 END = 1
+);
+
+EVALUATE 'case 12. HAVING COUNT() compared with outer col';
+SELECT a.col
+FROM tbl_a a
+WHERE EXISTS (
+  SELECT 1
+  FROM tbl_b b
+  GROUP BY b.id
+  HAVING COUNT(*) = LENGTH(a.col) - 1
+);
+
+EVALUATE 'case 13. HAVING compares CAST(a.col AS INT)';
+SELECT a.col
+FROM tbl_a a
+WHERE EXISTS (
+  SELECT 1
+  FROM tbl_b b
+  GROUP BY b.id
+  HAVING MAX(CAST(b.col AS INT)) = CAST(a.col AS INT)
+);
+
+EVALUATE 'case 14. HAVING uses LIKE with outer column';
+SELECT a.col
+FROM tbl_a a
+WHERE EXISTS (
+  SELECT 1
+  FROM tbl_b b
+  GROUP BY b.id
+  HAVING MAX(b.col) LIKE CONCAT(SUBSTRING(a.col, 1, 1), '%')
+);
+
+EVALUATE 'case 15. HAVING uses BETWEEN with outer column';
+SELECT a.col
+FROM tbl_a a
+WHERE EXISTS (
+  SELECT 1
+  FROM tbl_b b
+  GROUP BY b.id
+  HAVING MAX(CAST(b.col AS INT)) BETWEEN CAST(a.col AS INT) - 5 AND CAST(a.col AS INT) + 5
+);
+
+EVALUATE 'case 16. HAVING subquery + outer column';
+SELECT a.col
+FROM tbl_a a
+WHERE EXISTS (
+  SELECT 1
+  FROM tbl_b b
+  GROUP BY b.id
+  HAVING MAX(b.col) = (SELECT MIN(col) FROM tbl_b WHERE col >= a.col)
+);
+
+EVALUATE 'case 17. HAVING with string function and outer col';
+SELECT a.col
+FROM tbl_a a
+WHERE EXISTS (
+  SELECT 1
+  FROM tbl_b b
+  GROUP BY b.id
+  HAVING LENGTH(MAX(b.col)) = LENGTH(a.col)
+)
+ORDER BY a.col;
+
+EVALUATE 'case 18. WHERE + HAVING both reference outer col';
+SELECT c.id
+FROM tbl_c c
+WHERE EXISTS (
+  SELECT 1
+  FROM tbl_d d
+  WHERE d.id = c.id AND d.num < c.num
+  GROUP BY d.id
+  HAVING MAX(d.num) < c.num
+)
+ORDER BY c.id;
+
 DROP TABLE IF EXISTS tbl_a;
 DROP TABLE IF EXISTS tbl_b;
 DROP TABLE IF EXISTS tbl_c;
 DROP TABLE IF EXISTS tbl_d;
-
