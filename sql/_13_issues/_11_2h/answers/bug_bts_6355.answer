@@ -286,7 +286,6 @@ temp(order by)
                             index: ta_id term[?]
                             filtr: term[?]
                             cost:  ? card ?
-                 sort:  ? asc
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
@@ -309,7 +308,6 @@ temp(order by)
                             index: ta_id term[?]
                             filtr: term[?]
                             cost:  ? card ?
-                 sort:  ? asc
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
@@ -332,79 +330,6 @@ temp(order by)
                             index: ta_id term[?]
                             filtr: term[?]
                             cost:  ? card ?
-                 sort:  ? asc
-                 cost:  ? card ?
-    sort:  ? asc
-    cost:  ? card ?
-Query stmt:
-select /*+ ORDERED */ tb.id, tb.v, ta.id, ta.v from tb tb inner join ta ta on ta.id=tb.id where (ta.id> ?:? ) and (tb.id> ?:? ) using index tb.tb_id(+) keylimit  ?:? , ?:?  order by ?
-===================================================
-id    v    id    v    
-1     value 1 occ 1     1     value 1     
-1     value 1 occ 2     1     value 1     
-1     value 1 occ 3     1     value 1     
-1     value 3 occ 1     1     value 1     
-2     value 2 occ 1     2     value 2     
-2     value 2 occ 1     2     value 2     
-
-Query plan:
-temp(order by)
-    subplan: idx-join (inner join)
-                 outer: sscan
-                            class: tb node[?]
-                            sargs: term[?]
-                            cost:  ? card ?
-                 inner: iscan
-                            class: ta node[?]
-                            index: ta_id term[?]
-                            filtr: term[?]
-                            cost:  ? card ?
-                 cost:  ? card ?
-    sort:  ? asc
-    cost:  ? card ?
-Query stmt:
-select /*+ ORDERED */ tb.id, tb.v, ta.id, ta.v from tb tb inner join ta ta on ta.id=tb.id where (ta.id> ?:? ) and (tb.id> ?:? ) using index tb.tb_id(-) order by ?
-===================================================
-id    v    id    v    
-1     value 1 occ 1     1     value 1     
-1     value 1 occ 2     1     value 1     
-
-Query plan:
-temp(order by)
-    subplan: idx-join (inner join)
-                 outer: iscan
-                            class: tb node[?]
-                            index: tb_id keylimit ?, ? term[?]
-                            cost:  ? card ?
-                 inner: iscan
-                            class: ta node[?]
-                            index: ta_id term[?]
-                            filtr: term[?]
-                            cost:  ? card ?
-                 sort:  ? asc
-                 cost:  ? card ?
-    sort:  ? asc
-    cost:  ? card ?
-Query stmt:
-select /*+ ORDERED */ tb.id, tb.v, ta.id, ta.v from tb tb inner join ta ta on ta.id=tb.id where (ta.id> ?:? ) and (tb.id> ?:? ) using index tb.tb_id(+) keylimit  ?:? , ?:?  order by ?
-===================================================
-id    v    id    v    
-1     value 1 occ 1     1     value 1     
-1     value 1 occ 2     1     value 1     
-
-Query plan:
-temp(order by)
-    subplan: idx-join (inner join)
-                 outer: iscan
-                            class: tb node[?]
-                            index: tb_id keylimit ?, ? term[?]
-                            cost:  ? card ?
-                 inner: iscan
-                            class: ta node[?]
-                            index: ta_id term[?]
-                            filtr: term[?]
-                            cost:  ? card ?
-                 sort:  ? asc
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
@@ -453,7 +378,76 @@ temp(order by)
                             index: ta_id term[?]
                             filtr: term[?]
                             cost:  ? card ?
-                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ tb.id, tb.v, ta.id, ta.v from tb tb inner join ta ta on ta.id=tb.id where (ta.id> ?:? ) and (tb.id> ?:? ) using index tb.tb_id(+) keylimit  ?:? , ?:?  order by ?
+===================================================
+id    v    id    v    
+1     value 1 occ 1     1     value 1     
+1     value 1 occ 2     1     value 1     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: tb node[?]
+                            index: tb_id keylimit ?, ? term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: ta node[?]
+                            index: ta_id term[?]
+                            filtr: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ tb.id, tb.v, ta.id, ta.v from tb tb inner join ta ta on ta.id=tb.id where (ta.id> ?:? ) and (tb.id> ?:? ) using index tb.tb_id(+) keylimit  ?:? , ?:?  order by ?
+===================================================
+id    v    id    v    
+1     value 1 occ 1     1     value 1     
+1     value 1 occ 2     1     value 1     
+1     value 1 occ 3     1     value 1     
+1     value 3 occ 1     1     value 1     
+2     value 2 occ 1     2     value 2     
+2     value 2 occ 1     2     value 2     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: tb node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: ta node[?]
+                            index: ta_id term[?]
+                            filtr: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ tb.id, tb.v, ta.id, ta.v from tb tb inner join ta ta on ta.id=tb.id where (ta.id> ?:? ) and (tb.id> ?:? ) using index tb.tb_id(-) order by ?
+===================================================
+id    v    id    v    
+1     value 1 occ 1     1     value 1     
+1     value 1 occ 2     1     value 1     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: tb node[?]
+                            index: tb_id keylimit ?, ? term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: ta node[?]
+                            index: ta_id term[?]
+                            filtr: term[?]
+                            cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
