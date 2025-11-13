@@ -5,7 +5,7 @@
 create or replace procedure t () as
 begin
     -- function not work and skip IF()
-    dbms_output.put_line('-- IF simple compare');	
+    dbms_output.put_line('-- IF simple compare');
     dbms_output.put_line(IF(NULL,  NULL, NULL));
     dbms_output.put_line(IF(NULL, 'ok', 'nok'));
     dbms_output.put_line(IF(1, 'ok', 'nok'));
@@ -13,7 +13,7 @@ begin
     dbms_output.put_line(IF(1, 1, NULL));
     dbms_output.put_line(IF('1', 'ok', 'nok'));
     dbms_output.put_line(IF('1', 'ok', 'nok'));
-    
+
     dbms_output.put_line('-- IF datetime compare');
     dbms_output.put_line(IF(TO_DATETIME('01/01/2000') = '01/01/2000 00:00:00.000', 'ok' , 'nok'));
     dbms_output.put_line(IF(TO_DATETIME('01/01/2000') = '01/01/2000 00:00:00', 'ok' , 'nok'));
@@ -39,6 +39,10 @@ begin
     dbms_output.put_line(IF(TO_TIME('00:00:00') = TO_TIME('00:00:00'), 'ok' , 'nok'));
     dbms_output.put_line(IF(TO_TIME('00:00:00') = '00:00:00', 'ok' , 'nok'));
 end;
+
+-- to end the above syntactically wrong statement. 24 ENDs to match 24 IFs above
+END; END; END; END; END; END; END; END; END; END; END; END;
+END; END; END; END; END; END; END; END; END; END; END; END;
 
 select count(*) from db_stored_procedure where sp_name = 't';
 select count(*) from db_stored_procedure_args where sp_name = 't';
