@@ -3449,11 +3449,10 @@ j    k    l
 Query plan:
 iscan
     class: t node[?]
-    index: idx term[?] AND term[?] (index skip scan)
-    sargs: term[?]
+    index: idx term[?] AND term[?] (covers) (index skip scan)
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.j, t.k, t.l from t t where t.i is not null  and t.k= ?:?  and t.j= ?:? 
+select /*+ INDEX_SS */ t.j, t.k, t.l from t t where t.k= ?:?  and t.j= ?:? 
 ===================================================
 j    k    l    
 

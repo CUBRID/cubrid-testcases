@@ -330,12 +330,11 @@ temp(order by)
                             class: t? node[?]
                             sargs: term[?]
                             cost:  ? card ?
-                 sort:  ? asc, ? asc
                  cost:  ? card ?
-    sort:  ? asc
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-(select /*+ ORDERED INDEX_SS(t?) */ t?.id, t?.a, t?.b, t?.c from t? t?, t? t? where (t?.b< ?:? ) and (t?.c< ?:? ) and (t?.c< ?:? ) order by ? for orderby_num()<= ?:? )
+(select /*+ ORDERED INDEX_SS(t?) */ t?.id, t?.a, t?.b, t?.c from t? t?, t? t? where (t?.b< ?:? ) and (t?.c< ?:? ) and (t?.c< ?:? ) order by ?, ? for orderby_num()<= ?:? )
 Query plan:
 temp(order by)
     subplan: nl-join (cross join)
@@ -348,16 +347,16 @@ temp(order by)
                             index: i_ac term[?] (covers) (index skip scan)
                             cost:  ? card ?
                  cost:  ? card ?
-    sort:  ? desc
+    sort:  ? desc, ? desc
     cost:  ? card ?
 Query stmt:
-(select /*+ ORDERED INDEX_SS(t?) */ t?.id, t?.a, t?.b, t?.c from t? t?, t? t? where (t?.b< ?:? ) and (t?.c< ?:? ) and (t?.c< ?:? ) order by ? desc  for orderby_num()<= ?:? )
+(select /*+ ORDERED INDEX_SS(t?) */ t?.id, t?.a, t?.b, t?.c from t? t?, t? t? where (t?.b< ?:? ) and (t?.c< ?:? ) and (t?.c< ?:? ) order by ? desc , ? desc  for orderby_num()<= ?:? )
 Query plan:
 sscan
     class: __t? node[?]
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ [__t?].id, [__t?].a, [__t?].b, [__t?].c from ((select /*+ ORDERED INDEX_SS(t?) */ t?.id, t?.a, t?.b, t?.c from t? t?, t? t? where (t?.b< ?:? ) and (t?.c< ?:? ) and (t?.c< ?:? ) order by ? for orderby_num()<= ?:? ) union (select /*+ ORDERED INDEX_SS(t?) */ t?.id, t?.a, t?.b, t?.c from t? t?, t? t? where (t?.b< ?:? ) and (t?.c< ?:? ) and (t?.c< ?:? ) order by ? desc  for orderby_num()<= ?:? )) [__t?] (id, a, b, c)
+select /*+ INDEX_SS */ [__t?].id, [__t?].a, [__t?].b, [__t?].c from ((select /*+ ORDERED INDEX_SS(t?) */ t?.id, t?.a, t?.b, t?.c from t? t?, t? t? where (t?.b< ?:? ) and (t?.c< ?:? ) and (t?.c< ?:? ) order by ?, ? for orderby_num()<= ?:? ) union (select /*+ ORDERED INDEX_SS(t?) */ t?.id, t?.a, t?.b, t?.c from t? t?, t? t? where (t?.b< ?:? ) and (t?.c< ?:? ) and (t?.c< ?:? ) order by ? desc , ? desc  for orderby_num()<= ?:? )) [__t?] (id, a, b, c)
 ===================================================
 0
 Query plan:

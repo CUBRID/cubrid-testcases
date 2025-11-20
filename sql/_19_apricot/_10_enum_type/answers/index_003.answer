@@ -112,20 +112,20 @@ Sunday     7
 Sunday     7     
 
 Query plan:
-temp(order by)
-    subplan: idx-join (inner join)
-                 outer: sscan
-                            class: t node[?]
-                            cost:  ? card ?
-                 inner: iscan
-                            class: u node[?]
-                            index: i_u_i term[?] (covers)
-                            cost:  ? card ?
-                 cost:  ? card ?
+idx-join (inner join)
+    outer: iscan
+               class: t node[?]
+               index: i_t_e (covers)
+               cost:  ? card ?
+    inner: iscan
+               class: u node[?]
+               index: i_u_i term[?] (covers)
+               cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 select t.e, u.i from t t, u u where u.i= cast(t.e as integer) order by ?
+/* ---> skip ORDER BY */
 ===================================================
 e    i    
 Thursday     4     

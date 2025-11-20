@@ -10,7 +10,7 @@ from db_class a, db_class b, db_class c, db_class d, db_class e limit 4000;
 
 set trace on;
 
-evaluate '1. talbe full scan (should work) -> row by row';
+evaluate '1. table full scan (should work) -> row by row';
 select count(*) from tbl where colb <2;
 show trace;
 
@@ -183,7 +183,7 @@ select count(*) from tbl where id = 1;
 show trace;
 
 
-evaluate '19. no select list from table, no predicate from table (should not work)';
+evaluate '19. no select list from table, no predicate from table (should work)';
 select /*+ PARALLEL(2) */ count(*) from tbl;
 show trace;
 
@@ -196,7 +196,7 @@ select count(*) from (select /*+ NO_MERGE */ rownum, cola from tbl);
 show trace;
 
 
-evaluate '21. when query contains interpolation (should work) -> row by row';
+evaluate '21. when query contains interpolation (should work) -> mergeable list';
 select median(cola) from tbl group by colb;
 show trace;
 
