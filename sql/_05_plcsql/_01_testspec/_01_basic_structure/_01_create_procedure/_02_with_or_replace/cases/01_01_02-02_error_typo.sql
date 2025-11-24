@@ -41,6 +41,10 @@ create or replace procedure t(i int) as return integer begin
     dbms_output.put_line('i=' || i);
 end;
 
+-- to end a statement syntactically
+end;
+
+drop procedure t;
 
 --+ server-message off
 

@@ -78,15 +78,16 @@ a    b    c    d    count(*)
 1     1.1     AAAAA     AAAAA     2     
 
 Query plan:
-iscan
-    class: t node[?]
-    index: i_t_abcd term[?] (covers)
-    sargs: term[?]
-    sort:  ? asc, ? asc, ? asc
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_abcd term[?] (covers)
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
     cost:  ? card ?
 Query stmt:
 select t.a, t.b, t.c, t.d, count(*) from t t where (rownum< ?:? ) and t.a= ?:?  group by t.b
-/* ---> skip GROUP BY */
 ===================================================
 a    b    c    d    count(*)    
 1     1.1     AAAAA     AAAAA     2     
@@ -198,15 +199,16 @@ a    b    count(*)
 1     1.1     2     
 
 Query plan:
-iscan
-    class: t node[?]
-    index: i_t_abcd term[?] (covers)
-    sargs: term[?]
+temp(group by)
+    subplan: iscan
+                 class: t node[?]
+                 index: i_t_abcd term[?] (covers)
+                 sargs: term[?]
+                 cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 select t.a, t.b, count(*) from t t where (rownum< ?:? ) and t.a= ?:?  group by t.b
-/* ---> skip GROUP BY */
 ===================================================
 a    b    count(*)    
 1     1.1     2     

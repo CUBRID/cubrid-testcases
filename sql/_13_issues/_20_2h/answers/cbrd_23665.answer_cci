@@ -400,13 +400,13 @@ trace
 Query Plan:
   TABLE SCAN (b)
 
-  rewritten query: (select b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? ))
 
   NESTED LOOPS (left outer join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from [dba.tmp_hls] a left outer join (select b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) b (a, b, c) on a.b=b.b
+  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c from [dba.tmp_hls] a left outer join (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) b (a, b, c) on a.b=b.b
 
 
 Trace Statistics:
@@ -433,11 +433,11 @@ trace
 Query Plan:
   TABLE SCAN (b)
 
-  rewritten query: (select b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? ))
 
   TABLE SCAN (b)
 
-  rewritten query: (select b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? ))
 
   NESTED LOOPS (left outer join)
     NESTED LOOPS (left outer join)
@@ -445,7 +445,7 @@ Query Plan:
       TABLE SCAN (b)
     TABLE SCAN (c)
 
-  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c, c.a, c.b, c.c from [dba.tmp_hls] a left outer join (select b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) b (a, b, c) on b.b=a.b and a.a=b.a left outer join (select b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) c (a, b, c) on a.a=c.a
+  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c, c.a, c.b, c.c from [dba.tmp_hls] a left outer join (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) b (a, b, c) on b.b=a.b and a.a=b.a left outer join (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) c (a, b, c) on a.a=c.a
 
 
 Trace Statistics:
@@ -476,11 +476,11 @@ trace
 Query Plan:
   TABLE SCAN (b)
 
-  rewritten query: (select b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? ))
 
   TABLE SCAN (b)
 
-  rewritten query: (select b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? ))
 
   NESTED LOOPS (left outer join)
     NESTED LOOPS (left outer join)
@@ -488,7 +488,7 @@ Query Plan:
       TABLE SCAN (b)
     TABLE SCAN (c)
 
-  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c, c.a, c.b, c.c from [dba.tmp_hls] a left outer join (select b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) b (a, b, c) on b.b=a.b and a.a=b.a left outer join (select b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) c (a, b, c) on b.a=c.a
+  rewritten query: select /*+ ORDERED */ a.a, a.b, a.c, b.a, b.b, b.c, c.a, c.b, c.c from [dba.tmp_hls] a left outer join (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) b (a, b, c) on b.b=a.b and a.a=b.a left outer join (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) c (a, b, c) on b.a=c.a
 
 
 Trace Statistics:

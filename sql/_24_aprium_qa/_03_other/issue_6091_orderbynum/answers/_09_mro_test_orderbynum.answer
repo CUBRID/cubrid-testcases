@@ -84,7 +84,6 @@ temp(distinct)
     subplan: iscan
                  class: t node[?]
                  index: idx_a_b_cd_d_ed term[?] AND term[?] (covers)
-                 sort:  ? asc, ? desc, ? asc, ? desc
                  cost:  ? card ?
     sort:  ? desc, ? asc
     cost:  ? card ?
@@ -125,40 +124,40 @@ id    id    phone    name
 0     0     111-1111     George     
 
 Query plan:
-temp(order by)
-    subplan: idx-join (inner join)
-                 outer: sscan
-                            class: a node[?]
-                            cost:  ? card ?
-                 inner: iscan
-                            class: b node[?]
-                            index: pk_id term[?]
-                            cost:  ? card ?
-                 cost:  ? card ?
+idx-join (inner join)
+    outer: iscan
+               class: a node[?]
+               index: pk_a_tbl_id  (desc_index)
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: pk_id term[?]
+               cost:  ? card ?
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
 select a.id, b.id, a.phone, b.[name] from a_tbl a, b_tbl b where a.id=b.id order by ? desc  for orderby_num() between  ?:?  and  ?:? 
+/* ---> skip ORDER BY */
 ===================================================
 id    id    phone    name    
 0     0     111-1111     George     
 
 Query plan:
-temp(order by)
-    subplan: idx-join (inner join)
-                 outer: sscan
-                            class: a node[?]
-                            sargs: term[?]
-                            cost:  ? card ?
-                 inner: iscan
-                            class: b node[?]
-                            index: pk_id term[?]
-                            cost:  ? card ?
-                 cost:  ? card ?
+idx-join (inner join)
+    outer: iscan
+               class: a node[?]
+               index: pk_a_tbl_id  (desc_index)
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: pk_id term[?]
+               cost:  ? card ?
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
 select a.id, b.id, a.phone, b.[name] from a_tbl a, b_tbl b where a.id=b.id and (a.phone>= ?:?  and a.phone< ?:? ) order by ? desc  for orderby_num() between  ?:?  and  ?:? 
+/* ---> skip ORDER BY */
 ===================================================
 min(a.id)    
 0     
