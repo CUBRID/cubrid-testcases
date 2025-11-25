@@ -6,7 +6,7 @@
 
 drop table if exists tbl;
 create table tbl(cola int, colb int, CONSTRAINT [pk] PRIMARY KEY  (cola,colb));
---insert into tbl values (1, 10), (1, 20), (2, 10), (2, 30), (3, 30), (3, 40);
+insert into tbl values (1, 10), (1, 20), (2, 10), (2, 30), (3, 30), (3, 40);
 
 
 -- When using LEFT OUTER JOIN
