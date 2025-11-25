@@ -105,6 +105,49 @@ prepare sc from '
 execute sc using 10, 1, 4;
 deallocate prepare sc;
 
+evaluate '16. View on left side of LEFT JOIN (view_a preserved)';
+select /*+ recompile */ count(*) as cnt
+from view_a a
+left join tbl_b b on a.colb = b.colb;
+
+evaluate '17. View with GROUP BY (no mergable)';
+create or replace view view_b_group as
+select colb, sum(x) as sx
+from tbl_b
+group by colb;
+select /*+ recompile */ count(*) as cnt
+from tbl_a a
+left join view_b_group b on a.colb = b.colb;
+
+evaluate '18. LEFT JOIN + IS NULL filter using view_b';
+select /*+ recompile */ count(*) as cnt
+from tbl_a a
+left join view_b b on a.colb = b.colb
+where b.colb is null;
+
+evaluate '19. LEFT JOIN view_b with extra filter on preserved table (mergable)';
+select /*+ recompile */ count(*) as cnt
+from tbl_a a
+left join view_b b on a.colb = b.colb
+where a.cola between 2 and 4;
+
+evaluate '20. Prepared statement: LEFT JOIN with parameterized ON clause (mergable)';
+prepare sc from '
+SELECT /*+ recompile */ COUNT(*) AS cnt
+FROM tbl_a a
+LEFT JOIN (
+SELECT colb, x
+FROM tbl_b
+WHERE x >= 10
+) b
+ON a.colb = b.colb
+AND b.x >= ?
+WHERE a.cola BETWEEN ? AND ?';
+
+--@queryplan
+execute sc using 20, 1, 4;
+deallocate prepare sc;
+
 drop table if exists tbl_a;
 drop table if exists tbl_b;
 drop table if exists tbl_c;

@@ -355,6 +355,109 @@ select count(*) from tbl_a a, tbl_b b where (b.x>= ?:? ) and (a.cola>= ?:?  and 
 ===================================================
 0
 ===================================================
+    
+16. View on left side of LEFT JOIN (view_a preserved)     
+
+===================================================
+cnt    
+1     
+
+Query plan:
+iscan
+    class: a node[?]
+    index: pk term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a a where (a.cola= ?:? )
+===================================================
+    
+17. View with GROUP BY (no mergable)     
+
+===================================================
+0
+===================================================
+cnt    
+4     
+
+Query plan:
+iscan
+    class: b node[?]
+    index: pk_tbl_b_colb (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select b.colb from tbl_b b group by b.colb)
+/* ---> skip GROUP BY */
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a a left outer join (select b.colb from tbl_b b group by b.colb) b (colb) on a.colb=b.colb
+===================================================
+    
+18. LEFT JOIN + IS NULL filter using view_b     
+
+===================================================
+cnt    
+1     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: pk_tbl_b_colb term[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    after: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a a left outer join tbl_b b on (b.x>= ?:? ) and a.colb=b.colb where b.colb is null 
+===================================================
+    
+19. LEFT JOIN view_b with extra filter on preserved table (mergable)     
+
+===================================================
+cnt    
+3     
+
+Query plan:
+iscan
+    class: a node[?]
+    index: pk term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a a where (a.cola>= ?:?  and a.cola<= ?:? )
+===================================================
+    
+20. Prepared statement: LEFT JOIN with parameterized ON clause (mergable)     
+
+===================================================
+0
+===================================================
+cnt    
+4     
+
+Query plan:
+iscan
+    class: a node[?]
+    index: pk term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a a where (a.cola>= ?:?  and a.cola<= ?:? )
+===================================================
+0
+===================================================
 0
 ===================================================
 0
