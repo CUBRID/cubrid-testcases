@@ -6,19 +6,30 @@
 
 drop table if exists tbl;
 create table tbl(cola int, colb int, CONSTRAINT [pk] PRIMARY KEY  (cola,colb));
-insert into tbl values (1, 10), (1, 20), (2, 10), (2, 30), (3, 30), (3, 40);
+--insert into tbl values (1, 10), (1, 20), (2, 10), (2, 30), (3, 30), (3, 40);
 
 
 -- When using LEFT OUTER JOIN
-select *
+evaluate 'Case 1';
+select count(*)
+from tbl a left outer join tbl b on b.cola = 1 and a.colb = b.colb;
+evaluate 'Case 2';
+select a.*
 from tbl a left outer join tbl b on b.cola = 1 and a.colb = b.colb;
 
 -- When using LEFT OUTER JOIN with an inline view
-select *
+evaluate 'Case 3';
+select count(*)
+from tbl a left outer join (select cola, colb from tbl where cola = 1) b on a.colb = b.colb;
+evaluate 'Case 4';
+select a.*
 from tbl a left outer join (select cola, colb from tbl where cola = 1) b on a.colb = b.colb;
 
 -- When using a view
 create or replace view v as select cola, colb from tbl where cola = 1;
-select * from tbl a left outer join v b on a.colb = b.colb;
+evaluate 'Case 5';
+select count(*) from tbl a left outer join v b on a.colb = b.colb;
+evaluate 'Case 6';
+select a.* from tbl a left outer join v b on a.colb = b.colb;
 
 drop table if exists tbl;
