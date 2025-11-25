@@ -1,4 +1,4 @@
--- Verification for LEFT JOIN View-Merge Optimization
+-- Verification for CBRD-26260 : LEFT JOIN View-Merge Optimization
 
 drop table if exists tbl_a;
 drop table if exists tbl_b;
