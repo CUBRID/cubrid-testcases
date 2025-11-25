@@ -105,7 +105,7 @@ prepare sc from '
 execute sc using 10, 1, 4;
 deallocate prepare sc;
 
-evaluate '16. View on left side of LEFT JOIN (view_a preserved)';
+evaluate '16. View on left side of LEFT JOIN (view_a preserved) (mergable)';
 select /*+ recompile */ count(*) as cnt
 from view_a a
 left join tbl_b b on a.colb = b.colb;
@@ -119,7 +119,7 @@ select /*+ recompile */ count(*) as cnt
 from tbl_a a
 left join view_b_group b on a.colb = b.colb;
 
-evaluate '18. LEFT JOIN + IS NULL filter using view_b';
+evaluate '18. LEFT JOIN + IS NULL filter using view_b (no mergable)';
 select /*+ recompile */ count(*) as cnt
 from tbl_a a
 left join view_b b on a.colb = b.colb
