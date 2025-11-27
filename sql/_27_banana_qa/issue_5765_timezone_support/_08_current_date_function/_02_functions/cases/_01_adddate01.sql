@@ -154,4 +154,6 @@ insert into t select 2,new_time(curtime(),tz_offset('Asia/Seoul'),tz_offset('Ame
 
 select if((select a.newj-b.newj from (select i,hour(j) as newj from t where i=2) a,(select i,hour(j) as newj from t where i=1) b where a.i=2 and b.i=1)=0,'ok','nok');
 set timezone 'Asia/Seoul';
+
+drop table t;
 --+ holdcas off;
