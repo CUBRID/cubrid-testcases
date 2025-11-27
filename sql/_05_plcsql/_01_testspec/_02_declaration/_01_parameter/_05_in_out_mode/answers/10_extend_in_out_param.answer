@@ -92,7 +92,7 @@ null
 
 ===================================================
 Error:-494
-Semantic: Stored procedure/function 'dba.test_out3' has OUT or IN OUT arguments 
+Semantic: Stored Procedures can be invoked only through CALL statements. select [dba.test_out3](1)
 
 ===================================================
 :b    
@@ -153,7 +153,7 @@ Semantic: Stored procedure/function 'dba.test_out2' has OUT or IN OUT arguments
 
 ===================================================
 Error:-494
-Semantic: Stored procedure/function 'dba.test_out3' has OUT or IN OUT arguments 
+Semantic: Stored Procedures can be invoked only through CALL statements. select [dba.test_out3]([dba.t1].col1) from [dba.t1] [dba.t1]
 
 ===================================================
 0
@@ -182,7 +182,8 @@ inner call function/procedure
 0
 
 ===================================================
-0
+Error:-1360
+Stored procedure compile error: Semantic: Stored Procedures can be invoked only through CALL statements. select [dba.test_proc]( result_num ) from dual dual
 
 ===================================================
 5    
@@ -200,9 +201,9 @@ result: 25
 
 
 ===================================================
-Error:-889
-Stored procedure execute error: 
-  (line 9, column 1) Semantic: Stored procedure/function 'dba.test_proc' has OUT or IN OUT arguments 
+Error:-495
+Execute: before ' ; '
+Methods require an object as their target. call test_func2() on :a
 
 ===================================================
 :a    
@@ -230,5 +231,6 @@ Semantic: Stored procedure/function 'dba.test_func1' has OUT or IN OUT arguments
 0
 
 ===================================================
-0
+Error:-894
+Stored procedure/function 'dba.test_func2' does not exist.
 
