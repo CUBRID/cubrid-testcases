@@ -1,0 +1,161 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+Error:-493
+===================================================
+a    b    c    
+2     ABC     15000     
+3     JJJ     17000     
+4     ABC     18000     
+4     III     13000     
+
+Query plan:
+iscan
+    class: tbl? node[?]
+    index: idx_tbl?_ab term[?]
+    filtr: term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl?.a, tbl?.b, tbl?.c from tbl? tbl? where (tbl?.a> ?:?  and tbl?.a< ?:? ) and (tbl?.b< ?:? ) and (tbl?.c> ?:? )
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tbl?.idx_tbl?_ab) (key range: ([dba.tbl?].a> ?:?  and [dba.tbl?].a< ?:? ), key filter: ([dba.tbl?].b< ?:? ))
+
+  rewritten query: select [dba.tbl?].a, [dba.tbl?].b, [dba.tbl?].c from [dba.tbl?] [dba.tbl?] where ([dba.tbl?].a> ?:?  and [dba.tbl?].a< ?:? ) and ([dba.tbl?].b< ?:? ) and ([dba.tbl?].c> ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbl?.idx_tbl?_ab), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+5
+===================================================
+Error:-493
+===================================================
+a    b    c    
+3     CCC     7000     
+
+Query plan:
+iscan
+    class: tbl? node[?]
+    index: idx_tbl?_ab term[?]
+    filtr: term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl?.a, tbl?.b, tbl?.c from tbl? tbl? where (tbl?.a> ?:?  and tbl?.a< ?:? ) and (tbl?.c>= ?:? ) and tbl?.b= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tbl?.idx_tbl?_ab) (key range: ([dba.tbl?].a> ?:?  and [dba.tbl?].a< ?:? ), key filter: [dba.tbl?].b= ?:? )
+
+  rewritten query: select [dba.tbl?].a, [dba.tbl?].b, [dba.tbl?].c from [dba.tbl?] [dba.tbl?] where ([dba.tbl?].a> ?:?  and [dba.tbl?].a< ?:? ) and ([dba.tbl?].c>= ?:? ) and [dba.tbl?].b= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbl?.idx_tbl?_ab), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+    
+[select * from tbl3 where a = 1]     
+
+===================================================
+a    b    c    
+1     AAA     100     
+1     AAB     200     
+1     AAC     300     
+
+Query plan:
+iscan
+    class: tbl? node[?]
+    index: idx_tbl?_ab term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl?.a, tbl?.b, tbl?.c from tbl? tbl? where tbl?.a= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tbl?.idx_tbl?_ab) (key range: [dba.tbl?].a= ?:? )
+
+  rewritten query: select [dba.tbl?].a, [dba.tbl?].b, [dba.tbl?].c from [dba.tbl?] [dba.tbl?] where [dba.tbl?].a= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbl?.idx_tbl?_ab), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+Error:-493
+===================================================
+a    b    c    
+2     AAA     11000     
+2     CCC     15000     
+
+Query plan:
+iscan
+    class: tbl? node[?]
+    index: idx_tbl?_ab term[?] AND term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl?.a, tbl?.b, tbl?.c from tbl? tbl? where (tbl?.b<= ?:? ) and (tbl?.c> ?:? ) and tbl?.a= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tbl?.idx_tbl?_ab) (key range: [dba.tbl?].a= ?:? key range: ([dba.tbl?].b<= ?:? ))
+
+  rewritten query: select [dba.tbl?].a, [dba.tbl?].b, [dba.tbl?].c from [dba.tbl?] [dba.tbl?] where ([dba.tbl?].b<= ?:? ) and ([dba.tbl?].c> ?:? ) and [dba.tbl?].a= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbl?.idx_tbl?_ab), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
