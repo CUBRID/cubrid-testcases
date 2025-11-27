@@ -19,24 +19,24 @@ a    b    c
 
 Query plan:
 iscan
-    class: tbl? node[?]
-    index: idx_tbl?_ab term[?]
+    class: tbl_w node[?]
+    index: idx_tbl_w_ab term[?]
     filtr: term[?]
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select tbl?.a, tbl?.b, tbl?.c from tbl? tbl? where (tbl?.a> ?:?  and tbl?.a< ?:? ) and (tbl?.b< ?:? ) and (tbl?.c> ?:? )
+select tbl_w.a, tbl_w.b, tbl_w.c from tbl_w tbl_w where (tbl_w.a> ?:?  and tbl_w.a< ?:? ) and (tbl_w.b< ?:? ) and (tbl_w.c> ?:? )
 ===================================================
 trace    
 
 Query Plan:
-  INDEX SCAN (dba.tbl?.idx_tbl?_ab) (key range: ([dba.tbl?].a> ?:?  and [dba.tbl?].a< ?:? ), key filter: ([dba.tbl?].b< ?:? ))
+  INDEX SCAN (dba.tbl_w.idx_tbl_w_ab) (key range: ([dba.tbl_w].a> ?:?  and [dba.tbl_w].a< ?:? ), key filter: ([dba.tbl_w].b< ?:? ))
 
-  rewritten query: select [dba.tbl?].a, [dba.tbl?].b, [dba.tbl?].c from [dba.tbl?] [dba.tbl?] where ([dba.tbl?].a> ?:?  and [dba.tbl?].a< ?:? ) and ([dba.tbl?].b< ?:? ) and ([dba.tbl?].c> ?:? )
+  rewritten query: select [dba.tbl_w].a, [dba.tbl_w].b, [dba.tbl_w].c from [dba.tbl_w] [dba.tbl_w] where ([dba.tbl_w].a> ?:?  and [dba.tbl_w].a< ?:? ) and ([dba.tbl_w].b< ?:? ) and ([dba.tbl_w].c> ?:? )
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.tbl?.idx_tbl?_ab), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SCAN (index: dba.tbl_w.idx_tbl_w_ab), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
 ===================================================
@@ -55,24 +55,24 @@ a    b    c
 
 Query plan:
 iscan
-    class: tbl? node[?]
-    index: idx_tbl?_ab term[?]
+    class: tbl_x node[?]
+    index: idx_tbl_x_ab term[?]
     filtr: term[?]
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select tbl?.a, tbl?.b, tbl?.c from tbl? tbl? where (tbl?.a> ?:?  and tbl?.a< ?:? ) and (tbl?.c>= ?:? ) and tbl?.b= ?:? 
+select tbl_x.a, tbl_x.b, tbl_x.c from tbl_x tbl_x where (tbl_x.a> ?:?  and tbl_x.a< ?:? ) and (tbl_x.c>= ?:? ) and tbl_x.b= ?:? 
 ===================================================
 trace    
 
 Query Plan:
-  INDEX SCAN (dba.tbl?.idx_tbl?_ab) (key range: ([dba.tbl?].a> ?:?  and [dba.tbl?].a< ?:? ), key filter: [dba.tbl?].b= ?:? )
+  INDEX SCAN (dba.tbl_x.idx_tbl_x_ab) (key range: ([dba.tbl_x].a> ?:?  and [dba.tbl_x].a< ?:? ), key filter: [dba.tbl_x].b= ?:? )
 
-  rewritten query: select [dba.tbl?].a, [dba.tbl?].b, [dba.tbl?].c from [dba.tbl?] [dba.tbl?] where ([dba.tbl?].a> ?:?  and [dba.tbl?].a< ?:? ) and ([dba.tbl?].c>= ?:? ) and [dba.tbl?].b= ?:? 
+  rewritten query: select [dba.tbl_x].a, [dba.tbl_x].b, [dba.tbl_x].c from [dba.tbl_x] [dba.tbl_x] where ([dba.tbl_x].a> ?:?  and [dba.tbl_x].a< ?:? ) and ([dba.tbl_x].c>= ?:? ) and [dba.tbl_x].b= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.tbl?.idx_tbl?_ab), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SCAN (index: dba.tbl_x.idx_tbl_x_ab), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
 ===================================================
@@ -85,7 +85,7 @@ Trace Statistics:
 3
 ===================================================
     
-[select * from tbl3 where a = 1]     
+[select * from tbl_y where a = 1]     
 
 ===================================================
 a    b    c    
@@ -95,22 +95,22 @@ a    b    c
 
 Query plan:
 iscan
-    class: tbl? node[?]
-    index: idx_tbl?_ab term[?]
+    class: tbl_y node[?]
+    index: idx_tbl_y_ab term[?]
     cost:  ? card ?
 Query stmt:
-select tbl?.a, tbl?.b, tbl?.c from tbl? tbl? where tbl?.a= ?:? 
+select tbl_y.a, tbl_y.b, tbl_y.c from tbl_y tbl_y where tbl_y.a= ?:? 
 ===================================================
 trace    
 
 Query Plan:
-  INDEX SCAN (dba.tbl?.idx_tbl?_ab) (key range: [dba.tbl?].a= ?:? )
+  INDEX SCAN (dba.tbl_y.idx_tbl_y_ab) (key range: [dba.tbl_y].a= ?:? )
 
-  rewritten query: select [dba.tbl?].a, [dba.tbl?].b, [dba.tbl?].c from [dba.tbl?] [dba.tbl?] where [dba.tbl?].a= ?:? 
+  rewritten query: select [dba.tbl_y].a, [dba.tbl_y].b, [dba.tbl_y].c from [dba.tbl_y] [dba.tbl_y] where [dba.tbl_y].a= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.tbl?.idx_tbl?_ab), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SCAN (index: dba.tbl_y.idx_tbl_y_ab), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
 ===================================================
@@ -130,23 +130,23 @@ a    b    c
 
 Query plan:
 iscan
-    class: tbl? node[?]
-    index: idx_tbl?_ab term[?] AND term[?]
+    class: tbl_z node[?]
+    index: idx_tbl_z_ab term[?] AND term[?]
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select tbl?.a, tbl?.b, tbl?.c from tbl? tbl? where (tbl?.b<= ?:? ) and (tbl?.c> ?:? ) and tbl?.a= ?:? 
+select tbl_z.a, tbl_z.b, tbl_z.c from tbl_z tbl_z where (tbl_z.b<= ?:? ) and (tbl_z.c> ?:? ) and tbl_z.a= ?:? 
 ===================================================
 trace    
 
 Query Plan:
-  INDEX SCAN (dba.tbl?.idx_tbl?_ab) (key range: [dba.tbl?].a= ?:? key range: ([dba.tbl?].b<= ?:? ))
+  INDEX SCAN (dba.tbl_z.idx_tbl_z_ab) (key range: [dba.tbl_z].a= ?:? key range: ([dba.tbl_z].b<= ?:? ))
 
-  rewritten query: select [dba.tbl?].a, [dba.tbl?].b, [dba.tbl?].c from [dba.tbl?] [dba.tbl?] where ([dba.tbl?].b<= ?:? ) and ([dba.tbl?].c> ?:? ) and [dba.tbl?].a= ?:? 
+  rewritten query: select [dba.tbl_z].a, [dba.tbl_z].b, [dba.tbl_z].c from [dba.tbl_z] [dba.tbl_z] where ([dba.tbl_z].b<= ?:? ) and ([dba.tbl_z].c> ?:? ) and [dba.tbl_z].a= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.tbl?.idx_tbl?_ab), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SCAN (index: dba.tbl_z.idx_tbl_z_ab), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
 ===================================================
