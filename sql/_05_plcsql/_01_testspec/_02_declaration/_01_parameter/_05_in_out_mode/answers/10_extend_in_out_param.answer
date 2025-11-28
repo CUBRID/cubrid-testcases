@@ -92,7 +92,8 @@ null
 
 ===================================================
 Error:-494
-Semantic: Stored Procedures can be invoked only through CALL statements. select [dba.test_out3](1)
+Semantic: before ' ; '
+Stored Procedures can be invoked only through CALL statements. select [dba.test_out3](:b)
 
 ===================================================
 :b    
@@ -153,7 +154,8 @@ Semantic: Stored procedure/function 'dba.test_out2' has OUT or IN OUT arguments
 
 ===================================================
 Error:-494
-Semantic: Stored Procedures can be invoked only through CALL statements. select [dba.test_out3]([dba.t1].col1) from [dba.t1] [dba.t1]
+Semantic: before '  FROM t1; '
+Stored Procedures can be invoked only through CALL statements. select [dba.test_out3](col1) from [dba.t1] [dba.t1]
 
 ===================================================
 0
@@ -183,7 +185,8 @@ inner call function/procedure
 
 ===================================================
 Error:-1360
-Stored procedure compile error: Semantic: Stored Procedures can be invoked only through CALL statements. select [dba.test_proc]( result_num ) from dual dual
+Stored procedure compile error: Semantic: before '  into val from dual'
+Stored Procedures can be invoked only through CALL statements. select [dba.test_proc](result_num) into :val from dual dual
 
 ===================================================
 5    
