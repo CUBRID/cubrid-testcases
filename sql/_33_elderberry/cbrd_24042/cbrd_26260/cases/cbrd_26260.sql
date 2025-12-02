@@ -119,7 +119,8 @@ select /*+ recompile */ count(*) as cnt
 from tbl_a a
 left join view_b_group b on a.colb = b.colb;
 
-evaluate '18. LEFT JOIN + IS NULL filter using view_b (no mergable)';
+--View is merged, but tbl_b is not eliminated due to 'b.colb is null' condition.
+evaluate '18. LEFT JOIN + IS NULL filter using view_b (mergable)';
 select /*+ recompile */ count(*) as cnt
 from tbl_a a
 left join view_b b on a.colb = b.colb
