@@ -37,9 +37,11 @@ from
     t_parent as p
 where
     c.parent_col_a = cast(p.col_a as bigint)
-    and c.col_b = -1;
+    and c.col_b = -1
+order by
+    c.col_a,
+    c.col_b;
 show trace;
-
 
 drop table if exists t_child;
 drop table if exists t_parent;

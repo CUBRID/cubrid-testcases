@@ -37,7 +37,10 @@ from
     inner join t_parent as p on c.parent_col_a = p.col_a
 where
     c.col_b = -1
-group by p.col_a;
+group by p.col_a
+order by
+    max (c.col_a),
+    max (c.col_b);
 show trace;
 
 select /*+ recompile */
@@ -49,9 +52,11 @@ from
 where
     c.parent_col_a = p.col_a
     and c.col_b = -1
-group by p.col_a;
+group by p.col_a
+order by
+    max (c.col_a),
+    max (c.col_b);
 show trace;
-
 
 drop table if exists t_child;
 drop table if exists t_parent;

@@ -48,7 +48,10 @@ select /*+ recompile */
 from
     t_other as o
 where
-    o.col_b = 10001;
+    o.col_b = 10001
+order by
+    col_a,
+    col_b;
 show trace;
 
 select /*+ recompile */
@@ -67,7 +70,10 @@ select /*+ recompile */
 from
     t_other as o
 where
-    o.col_b = 10001;
+    o.col_b = 10001
+order by
+    col_a,
+    col_b;
 show trace;
 
 drop table if exists t_other;
