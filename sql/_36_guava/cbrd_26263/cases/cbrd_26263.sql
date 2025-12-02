@@ -8,7 +8,6 @@ drop table if exists tbl;
 create table tbl(cola int, colb int, CONSTRAINT [pk] PRIMARY KEY  (cola,colb));
 insert into tbl values (1, 10), (1, 20), (2, 10), (2, 30), (3, 30), (3, 40);
 
-
 -- When using LEFT OUTER JOIN
 evaluate 'Case 1';
 select count(*) from tbl a left outer join tbl b on b.cola = 1 and a.colb = b.colb;
@@ -54,7 +53,7 @@ on b.cola = 1
 and a.colb = b.colb
 where b.cola is null;
 
-evaluate 'Case 10: uniqueness inside inner subquery (distributed) -> ?';
+evaluate 'Case 10: uniqueness inside inner subquery (distributed) -> elimination allowed';
 select /*+ recompile */ count(*)
 from tbl a
 left outer join (
@@ -126,7 +125,7 @@ from tbl a
 left outer join v_multi b
 on a.colb = b.colb;
 
-evaluate 'Case 16: view projects only part of PK (colb) -> ?';
+evaluate 'Case 16: view projects only part of PK (colb) -> elimination allowed';
 create or replace view v_partial_pk as
 select colb
 from tbl
@@ -137,7 +136,7 @@ from tbl a
 left outer join v_partial_pk b
 on a.colb = b.colb;
 
-evaluate 'Case 17: partial condition inside view (cola=1) + outer join condition -> ?';
+evaluate 'Case 17: partial condition inside view (cola=1) + outer join condition -> elimination allowed';
 create or replace view v_cond as
 select cola, colb
 from tbl
@@ -166,7 +165,7 @@ and a.colb = b.colb
 group by a.cola
 having max(b.cola) is not null;
 
-evaluate 'Case 20: RIGHT OUTER JOIN, check elimination on left-side uniqueness';
+evaluate 'Case 20: RIGHT OUTER JOIN, check elimination on left-side uniqueness -> elimination not allowed';
 select /*+ recompile */ count(*)
 from tbl a
 right outer join tbl b
@@ -174,7 +173,7 @@ on a.cola = b.cola
 and a.colb = b.colb
 and a.cola = 1;
 
-evaluate 'Case 21: WHERE applies NOT NULL on right-side column -> convertible to INNER JOIN';
+evaluate 'Case 21: WHERE applies NOT NULL on right-side column -> elimination not allowed';
 select /*+ recompile */ count(*)
 from tbl a
 left outer join tbl b

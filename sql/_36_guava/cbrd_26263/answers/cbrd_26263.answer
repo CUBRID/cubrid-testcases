@@ -184,7 +184,7 @@ Query stmt:
 select count(*) from tbl a left outer join tbl b on b.cola= ?:?  and a.colb=b.colb where b.cola is null 
 ===================================================
     
-Case 10: uniqueness inside inner subquery (distributed) -> ?     
+Case 10: uniqueness inside inner subquery (distributed) -> elimination allowed     
 
 ===================================================
 count(*)    
@@ -324,7 +324,7 @@ Query stmt:
 select count(*) from tbl a left outer join (select b_?.colb from tbl b_?, tbl b where b_?.colb=b.colb) b (colb) on a.colb=b.colb
 ===================================================
     
-Case 16: view projects only part of PK (colb) -> ?     
+Case 16: view projects only part of PK (colb) -> elimination allowed     
 
 ===================================================
 0
@@ -340,7 +340,7 @@ Query stmt:
 select count(*) from tbl a
 ===================================================
     
-Case 17: partial condition inside view (cola=1) + outer join condition -> ?     
+Case 17: partial condition inside view (cola=1) + outer join condition -> elimination allowed     
 
 ===================================================
 0
@@ -394,7 +394,7 @@ Query stmt:
 select a.cola, count(*) from tbl a left outer join tbl b on b.cola= ?:?  and a.colb=b.colb group by a.cola having max(b.cola) is not null 
 ===================================================
     
-Case 20: RIGHT OUTER JOIN, check elimination on left-side uniqueness     
+Case 20: RIGHT OUTER JOIN, check elimination on left-side uniqueness -> elimination not allowed     
 
 ===================================================
 count(*)    
@@ -417,7 +417,7 @@ Query stmt:
 select count(*) from tbl a right outer join tbl b on a.cola=b.cola and a.cola= ?:?  and b.cola= ?:?  and a.colb=b.colb
 ===================================================
     
-Case 21: WHERE applies NOT NULL on right-side column -> convertible to INNER JOIN     
+Case 21: WHERE applies NOT NULL on right-side column -> elimination not allowed     
 
 ===================================================
 count(*)    
