@@ -50,8 +50,8 @@ from
 where
     o.col_b = 10001
 order by
-    col_a,
-    col_b;
+    c.col_a,
+    c.col_b;
 show trace;
 
 select /*+ recompile */
@@ -72,8 +72,8 @@ from
 where
     o.col_b = 10001
 order by
-    col_a,
-    col_b;
+    c.col_a,
+    c.col_b;
 show trace;
 
 drop table if exists t_other;
