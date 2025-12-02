@@ -1,0 +1,465 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+0
+===================================================
+    
+1. Single table LEFT JOIN (inline view, mergable)     
+
+===================================================
+count(*)    
+4     
+
+Query plan:
+sscan
+    class: a node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a a
+===================================================
+    
+2. Single table LEFT JOIN (Oracle compatible, mergable)     
+
+===================================================
+count(*)    
+4     
+
+Query plan:
+sscan
+    class: a node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a a
+===================================================
+    
+3. view LEFT JOIN table (mergable)     
+
+===================================================
+0
+===================================================
+count(*)    
+4     
+
+Query plan:
+sscan
+    class: a node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a a
+===================================================
+    
+4. view LEFT JOIN table (Oracle compatible, mergable)     
+
+===================================================
+count(*)    
+4     
+
+Query plan:
+sscan
+    class: a node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a a
+===================================================
+    
+5. A LEFT JOIN (single-table inline view B) + INNER JOIN C (mergable)     
+
+===================================================
+count(*)    
+2     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: c node[?]
+               index: pk_tbl_c_colc term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a a inner join tbl_c c on c.colc=a.cola
+===================================================
+    
+6. A LEFT JOIN (view view_b) + INNER JOIN C (mergable)     
+
+===================================================
+count(*)    
+2     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: c node[?]
+               index: pk_tbl_c_colc term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a a inner join tbl_c c on c.colc=a.cola
+===================================================
+    
+7. Oracle compatible (+) A and B are outer + inner join C (mergable)     
+
+===================================================
+count(*)    
+2     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: c node[?]
+               index: pk_tbl_c_colc term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a a, tbl_c c where c.colc=a.cola
+===================================================
+    
+8. LEFT JOIN converted to INNER JOIN (mergable)     
+
+===================================================
+count(*)    
+2     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: pk_tbl_b_colb term[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a a, tbl_b b where (b.x> ?:? ) and a.colb=b.colb and (b.x>= ?:? )
+===================================================
+    
+9. Mixed LEFT JOIN + RIGHT JOIN (no mergable)     
+
+===================================================
+count(*)    
+2     
+
+Query plan:
+sscan
+    class: tbl_b node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select tbl_b.colb from tbl_b tbl_b where (tbl_b.x>= ?:? ))
+Query plan:
+sscan
+    class: tbl_c node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select tbl_c.colc from tbl_c tbl_c where (tbl_c.y>= ?:? ))
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: d node[?]
+               cost:  ? card ?
+    inner: temp
+               order: UNORDERED
+               subplan: nl-join (left outer join)
+                            edge:  term[?]
+                            outer: sscan
+                                       class: a node[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a a left outer join (select tbl_b.colb from tbl_b tbl_b where (tbl_b.x>= ?:? )) b (colb) on a.colb=b.colb right outer join (select tbl_c.colc from tbl_c tbl_c where (tbl_c.y>= ?:? )) d (colc) on a.cola=d.colc
+===================================================
+    
+10. LEFT JOIN + RIGHT JOIN using views (no mergable)     
+
+===================================================
+count(*)    
+2     
+
+Query plan:
+sscan
+    class: b node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select b.colb from tbl_b b where (b.x>= ?:? ))
+Query plan:
+sscan
+    class: d node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select d.colc from tbl_c d where (d.y>= ?:? ))
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: d node[?]
+               cost:  ? card ?
+    inner: temp
+               order: UNORDERED
+               subplan: nl-join (left outer join)
+                            edge:  term[?]
+                            outer: sscan
+                                       class: a node[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a a left outer join (select b.colb from tbl_b b where (b.x>= ?:? )) b (colb) on a.colb=b.colb right outer join (select d.colc from tbl_c d where (d.y>= ?:? )) d (colc) on a.cola=d.colc
+===================================================
+    
+11. View with key-only filter (mergable)     
+
+===================================================
+0
+===================================================
+cnt    
+4     
+
+Query plan:
+sscan
+    class: a node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a a
+===================================================
+    
+12. Chained LEFT JOIN (A LEFT JOIN view_b LEFT JOIN view_c, mergable)     
+
+===================================================
+cnt    
+4     
+
+Query plan:
+sscan
+    class: a node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a a
+===================================================
+    
+13. View with DISTINCT (no mergable)     
+
+===================================================
+0
+===================================================
+cnt    
+4     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: b node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct b.colb, b.x from tbl_b b where (b.x>= ?:? ))
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a a left outer join (select distinct b.colb, b.x from tbl_b b where (b.x>= ?:? )) b (colb, x) on a.colb=b.colb
+===================================================
+    
+14. Prepared statement: LEFT JOIN with inline view (mergable)     
+
+===================================================
+0
+===================================================
+cnt    
+4     
+
+Query plan:
+iscan
+    class: a node[?]
+    index: pk term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a a where (a.cola>= ?:?  and a.cola<= ?:? )
+===================================================
+0
+===================================================
+    
+15. Prepared statement: LEFT JOIN with view_b (mergable)     
+
+===================================================
+0
+===================================================
+cnt    
+3     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: a node[?]
+               index: pk term[?] (covers)
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: pk_tbl_b_colb term[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a a, tbl_b b where (b.x>= ?:? ) and (a.cola>= ?:?  and a.cola<= ?:? ) and a.colb=b.colb and (b.x>= ?:? )
+===================================================
+0
+===================================================
+    
+16. View on left side of LEFT JOIN (view_a preserved) (mergable)     
+
+===================================================
+cnt    
+1     
+
+Query plan:
+iscan
+    class: a node[?]
+    index: pk term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a a where (a.cola= ?:? )
+===================================================
+    
+17. View with GROUP BY (no mergable)     
+
+===================================================
+0
+===================================================
+cnt    
+4     
+
+Query plan:
+iscan
+    class: b node[?]
+    index: pk_tbl_b_colb (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select b.colb from tbl_b b group by b.colb)
+/* ---> skip GROUP BY */
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a a left outer join (select b.colb from tbl_b b group by b.colb) b (colb) on a.colb=b.colb
+===================================================
+    
+18. LEFT JOIN + IS NULL filter using view_b (mergable)     
+
+===================================================
+cnt    
+1     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: pk_tbl_b_colb term[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    after: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a a left outer join tbl_b b on (b.x>= ?:? ) and a.colb=b.colb where b.colb is null 
+===================================================
+    
+19. LEFT JOIN view_b with extra filter on preserved table (mergable)     
+
+===================================================
+cnt    
+3     
+
+Query plan:
+iscan
+    class: a node[?]
+    index: pk term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a a where (a.cola>= ?:?  and a.cola<= ?:? )
+===================================================
+    
+20. Prepared statement: LEFT JOIN with parameterized ON clause (mergable)     
+
+===================================================
+0
+===================================================
+cnt    
+4     
+
+Query plan:
+iscan
+    class: a node[?]
+    index: pk term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl_a a where (a.cola>= ?:?  and a.cola<= ?:? )
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
