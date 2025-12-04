@@ -39,8 +39,7 @@ where
     c.col_b = -1
 group by p.col_a
 order by
-    max (c.col_a),
-    max (c.col_b);
+    max (c.col_a);
 show trace;
 
 select /*+ recompile */
@@ -54,8 +53,7 @@ where
     and c.col_b = -1
 group by p.col_a
 order by
-    max (c.col_a),
-    max (c.col_b);
+    max (c.col_a);
 show trace;
 
 drop table if exists t_child;

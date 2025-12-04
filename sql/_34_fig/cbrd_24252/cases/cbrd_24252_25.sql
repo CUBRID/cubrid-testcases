@@ -46,8 +46,7 @@ from
 where
     ca.col_b = -1
 order by
-    ca.col_a,
-    ca.col_b;
+    ca.col_a;
 show trace;
 
 select /*+ recompile */
@@ -60,8 +59,7 @@ where
     ca.parent_col_a = p.col_a
     and ca.col_b = -1
 order by
-    ca.col_a,
-    ca.col_b;
+    ca.col_a;
 show trace;
 
 drop table if exists t_childa;
