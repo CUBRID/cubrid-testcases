@@ -65,16 +65,16 @@ EXCEPTION
         DBMS_OUTPUT.put_line('exception occurred');
 END;
 
-evaluate 'select insert_athlete() & call insert_athlete()';
-select insert_athlete('a','a','a','a') from dual;
+evaluate 'call insert_athlete()';
+call insert_athlete('a','a','a','a');
 select * from athlete order by code;
 		
 call insert_athlete('b','b','b','b');
 select * from athlete order by code;
 
 
-evaluate 'select delete_athlete() & call delete_athlete()';
-select delete_athlete(16693);
+evaluate 'call delete_athlete()';
+call delete_athlete(16693);
 select * from athlete order by code;
 
 call delete_athlete(16694);
