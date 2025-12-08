@@ -1,0 +1,332 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+200
+===================================================
+2000
+===================================================
+0
+===================================================
+    
+Q201. When both inst_num condition and orderby_num are used, skip ORDER BY cannot be applied.     
+
+===================================================
+'Q201'    inst_num()    orderby_num()    cola    colb    colc    cold    cole    colf    
+Q201     101     1     11     11     11     11     11     119     
+Q201     102     2     11     11     11     11     11     118     
+Q201     103     3     11     11     11     11     11     117     
+Q201     104     4     11     11     11     11     11     116     
+Q201     105     5     11     11     11     11     11     115     
+Q201     106     6     11     11     11     11     11     114     
+Q201     107     7     11     11     11     11     11     113     
+Q201     108     8     11     11     11     11     11     112     
+Q201     109     9     11     11     11     11     11     111     
+Q201     110     10     11     11     11     11     11     110     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: a node[?]
+                            index: i?_cola_colb_colc 
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: b node[?]
+                            index: i?_cole term[?]
+                            cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_PARALLEL_HEAP_SCAN */ 'Q?', inst_num(), orderby_num(), a.cola, a.colb, a.colc, a.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cole and (inst_num()> ?:?  and inst_num()<= ?:? ) using index a.i?_cola_colb_colc(+) order by ?, ?
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      INDEX SCAN (a.i?_cola_colb_colc) ()
+      INDEX SCAN (b.i?_cole) (key range: a.cola=b.cole)
+
+  rewritten query: select /*+ ORDERED NO_PARALLEL_HEAP_SCAN */ 'Q?', inst_num(), orderby_num(), a.cola, a.colb, a.colc, a.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cole and (inst_num()> ?:?  and inst_num()<= ?:? ) using index a.i?_cola_colb_colc(+) order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbl_a.i?_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.tbl_b.i?_cole), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Q202. When inst_num is not used in WHERE clause but used together with orderby_num, skip ORDER BY can be applied.     
+
+===================================================
+'Q202'    inst_num()    orderby_num()    cola    colb    colc    cold    cole    colf    
+Q202     111     111     12     12     12     12     12     129     
+Q202     112     112     12     12     12     12     12     128     
+Q202     113     113     12     12     12     12     12     127     
+Q202     114     114     12     12     12     12     12     126     
+Q202     115     115     12     12     12     12     12     125     
+Q202     116     116     12     12     12     12     12     124     
+Q202     117     117     12     12     12     12     12     123     
+Q202     118     118     12     12     12     12     12     122     
+Q202     119     119     12     12     12     12     12     121     
+Q202     120     120     12     12     12     12     12     120     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: a node[?]
+               index: i?_cola_colb_colc 
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: i?_cole term[?]
+               cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_PARALLEL_HEAP_SCAN */ 'Q?', inst_num(), orderby_num(), a.cola, a.colb, a.colc, a.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cole using index a.i?_cola_colb_colc(+) order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    INDEX SCAN (a.i?_cola_colb_colc) ()
+    INDEX SCAN (b.i?_cole) (key range: a.cola=b.cole)
+  skip order by: true
+
+  rewritten query: select /*+ ORDERED NO_PARALLEL_HEAP_SCAN */ 'Q?', inst_num(), orderby_num(), a.cola, a.colb, a.colc, a.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cole using index a.i?_cola_colb_colc(+) order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbl_a.i?_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.tbl_b.i?_cole), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+    
+Q203. When both inst_num condition and for orderby_num are used, skip ORDER BY cannot be applied.     
+
+===================================================
+'Q203'    inst_num()    orderby_num()    cola    colb    colc    cold    cole    colf    
+Q203     112     1     12     12     12     12     12     128     
+Q203     113     2     12     12     12     12     12     127     
+Q203     114     3     12     12     12     12     12     126     
+Q203     115     4     12     12     12     12     12     125     
+Q203     116     5     12     12     12     12     12     124     
+Q203     117     6     12     12     12     12     12     123     
+Q203     118     7     12     12     12     12     12     122     
+Q203     119     8     12     12     12     12     12     121     
+Q203     120     9     12     12     12     12     12     120     
+Q203     111     10     12     12     12     12     12     129     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: a node[?]
+                            index: i?_cola_colb_colc 
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: b node[?]
+                            index: i?_cole term[?]
+                            cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_PARALLEL_HEAP_SCAN */ 'Q?', inst_num(), orderby_num(), a.cola, a.colb, a.colc, a.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cole and (inst_num()> ?:?  and inst_num()<= ?:? ) using index a.i?_cola_colb_colc(+) order by ?, ? for orderby_num()<= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      INDEX SCAN (a.i?_cola_colb_colc) ()
+      INDEX SCAN (b.i?_cole) (key range: a.cola=b.cole)
+
+  rewritten query: select /*+ ORDERED NO_PARALLEL_HEAP_SCAN */ 'Q?', inst_num(), orderby_num(), a.cola, a.colb, a.colc, a.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cole and (inst_num()> ?:?  and inst_num()<= ?:? ) using index a.i?_cola_colb_colc(+) order by ?, ? for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbl_a.i?_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.tbl_b.i?_cole), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    ORDERBY (time: ?, topnsort: true)
+     
+
+===================================================
+    
+Q204. When only inst_num condition is used, skip ORDER BY can be applied.     
+
+===================================================
+'Q204'    inst_num()    cola    colb    colc    cold    cole    colf    
+Q204     131     14     14     14     14     14     149     
+Q204     132     14     14     14     14     14     148     
+Q204     133     14     14     14     14     14     147     
+Q204     134     14     14     14     14     14     146     
+Q204     135     14     14     14     14     14     145     
+Q204     136     14     14     14     14     14     144     
+Q204     137     14     14     14     14     14     143     
+Q204     138     14     14     14     14     14     142     
+Q204     139     14     14     14     14     14     141     
+Q204     140     14     14     14     14     14     140     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: a node[?]
+               index: i?_cola_colb_colc 
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: i?_cole term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_PARALLEL_HEAP_SCAN */ 'Q?', inst_num(), a.cola, a.colb, a.colc, a.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cole and (inst_num()> ?:?  and inst_num()<= ?:? ) using index a.i?_cola_colb_colc(+) order by ?, ?
+/* ---> skip ORDER BY */
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    INDEX SCAN (a.i?_cola_colb_colc) ()
+    INDEX SCAN (b.i?_cole) (key range: a.cola=b.cole)
+  skip order by: true
+
+  rewritten query: select /*+ ORDERED NO_PARALLEL_HEAP_SCAN */ 'Q?', inst_num(), a.cola, a.colb, a.colc, a.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cole and (inst_num()> ?:?  and inst_num()<= ?:? ) using index a.i?_cola_colb_colc(+) order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbl_a.i?_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.tbl_b.i?_cole), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+    
+Q205. When only orderby_num() filter is used (no inst_num, no LIMIT), skip ORDER BY can be applied.     
+
+===================================================
+'Q205'    inst_num()    orderby_num()    cola    colb    colc    cold    cole    colf    
+Q205     11     11     2     2     2     2     2     29     
+Q205     12     12     2     2     2     2     2     28     
+Q205     13     13     2     2     2     2     2     27     
+Q205     14     14     2     2     2     2     2     26     
+Q205     15     15     2     2     2     2     2     25     
+Q205     16     16     2     2     2     2     2     24     
+Q205     17     17     2     2     2     2     2     23     
+Q205     18     18     2     2     2     2     2     22     
+Q205     19     19     2     2     2     2     2     21     
+Q205     20     20     2     2     2     2     2     20     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: a node[?]
+               index: i?_cola_colb_colc 
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: i?_cole term[?]
+               cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_PARALLEL_HEAP_SCAN */ 'Q?', inst_num(), orderby_num(), a.cola, a.colb, a.colc, a.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cole using index a.i?_cola_colb_colc(+) order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    INDEX SCAN (a.i?_cola_colb_colc) ()
+    INDEX SCAN (b.i?_cole) (key range: a.cola=b.cole)
+  skip order by: true
+
+  rewritten query: select /*+ ORDERED NO_PARALLEL_HEAP_SCAN */ 'Q?', inst_num(), orderby_num(), a.cola, a.colb, a.colc, a.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cole using index a.i?_cola_colb_colc(+) order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbl_a.i?_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.tbl_b.i?_cole), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+    
+Q206. When inst_num() is used only in the SELECT list, skip ORDER BY should behave the same as without inst_num().     
+
+===================================================
+'Q206'    inst_num()    cola    colb    colc    cold    cole    colf    
+Q206     11     2     2     2     2     2     29     
+Q206     12     2     2     2     2     2     28     
+Q206     13     2     2     2     2     2     27     
+Q206     14     2     2     2     2     2     26     
+Q206     15     2     2     2     2     2     25     
+Q206     16     2     2     2     2     2     24     
+Q206     17     2     2     2     2     2     23     
+Q206     18     2     2     2     2     2     22     
+Q206     19     2     2     2     2     2     21     
+Q206     20     2     2     2     2     2     20     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: a node[?]
+               index: i?_cola_colb_colc 
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: i?_cole term[?]
+               cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_PARALLEL_HEAP_SCAN */ 'Q?', inst_num(), a.cola, a.colb, a.colc, a.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cole using index a.i?_cola_colb_colc(+) order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    INDEX SCAN (a.i?_cola_colb_colc) ()
+    INDEX SCAN (b.i?_cole) (key range: a.cola=b.cole)
+  skip order by: true
+
+  rewritten query: select /*+ ORDERED NO_PARALLEL_HEAP_SCAN */ 'Q?', inst_num(), a.cola, a.colb, a.colc, a.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cole using index a.i?_cola_colb_colc(+) order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbl_a.i?_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.tbl_b.i?_cole), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+0
+===================================================
+0
