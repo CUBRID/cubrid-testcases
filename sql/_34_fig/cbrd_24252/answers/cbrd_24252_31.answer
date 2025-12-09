@@ -33,12 +33,13 @@ max(c.col_a)    max(c.col_b)
 trace    
 
 Query Plan:
-  SORT (group by)
-    NESTED LOOPS (inner join)
-      TABLE SCAN (c)
-      INDEX SCAN (p.pk_t_parent_col_a) (key range: c.parent_col_a=p.col_a, covered: true)
+  SORT (order by)
+    SORT (group by)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (c)
+        INDEX SCAN (p.pk_t_parent_col_a) (key range: c.parent_col_a=p.col_a, covered: true)
 
-  rewritten query: select max(c.col_a), max(c.col_b) from [dba.t_child] c, [dba.t_parent] p where c.parent_col_a=p.col_a and c.col_b= ?:?  group by p.col_a
+  rewritten query: select max(c.col_a), max(c.col_b) from [dba.t_child] c, [dba.t_parent] p where c.parent_col_a=p.col_a and c.col_b= ?:?  group by p.col_a order by ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -56,12 +57,13 @@ max(c.col_a)    max(c.col_b)
 trace    
 
 Query Plan:
-  SORT (group by)
-    NESTED LOOPS (inner join)
-      TABLE SCAN (c)
-      INDEX SCAN (p.pk_t_parent_col_a) (key range: c.parent_col_a=p.col_a, covered: true)
+  SORT (order by)
+    SORT (group by)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (c)
+        INDEX SCAN (p.pk_t_parent_col_a) (key range: c.parent_col_a=p.col_a, covered: true)
 
-  rewritten query: select max(c.col_a), max(c.col_b) from [dba.t_child] c, [dba.t_parent] p where c.parent_col_a=p.col_a and c.col_b= ?:?  group by p.col_a
+  rewritten query: select max(c.col_a), max(c.col_b) from [dba.t_child] c, [dba.t_parent] p where c.parent_col_a=p.col_a and c.col_b= ?:?  group by p.col_a order by ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
