@@ -421,13 +421,20 @@ Case 21: WHERE applies NOT NULL on right-side column -> elimination not allowed
 
 ===================================================
 count(*)    
-6     
+3     
 
 Query plan:
-sscan
-    class: a node[?]
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: pk term[?] AND term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from tbl a
+select count(*) from tbl a, tbl b where b.cola is not null  and a.colb=b.colb and b.cola= ?:? 
 ===================================================
 0
