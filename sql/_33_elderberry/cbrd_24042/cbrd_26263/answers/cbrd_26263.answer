@@ -1,0 +1,440 @@
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+    
+Case 1     
+
+===================================================
+count(*)    
+6     
+
+Query plan:
+sscan
+    class: a node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a
+===================================================
+    
+Case 2     
+
+===================================================
+cola    colb    
+1     10     
+1     20     
+2     10     
+2     30     
+3     30     
+3     40     
+
+Query plan:
+iscan
+    class: a node[?]
+    index: pk (covers)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select a.cola, a.colb from tbl a order by ?
+/* ---> skip ORDER BY */
+===================================================
+    
+Case 3     
+
+===================================================
+count(*)    
+6     
+
+Query plan:
+sscan
+    class: a node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a
+===================================================
+    
+Case 4     
+
+===================================================
+cola    colb    
+1     10     
+1     20     
+2     10     
+2     30     
+3     30     
+3     40     
+
+Query plan:
+iscan
+    class: a node[?]
+    index: pk (covers)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select a.cola, a.colb from tbl a order by ?
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+    
+Case 5     
+
+===================================================
+count(*)    
+6     
+
+Query plan:
+sscan
+    class: a node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a
+===================================================
+    
+Case 6     
+
+===================================================
+cola    colb    
+1     10     
+1     20     
+2     10     
+2     30     
+3     30     
+3     40     
+
+Query plan:
+iscan
+    class: a node[?]
+    index: pk (covers)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select a.cola, a.colb from tbl a order by ?
+/* ---> skip ORDER BY */
+===================================================
+    
+Case 7: right side is non-unique on join key -> elimination not allowed     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a left outer join tbl b on a.colb=b.colb
+===================================================
+    
+Case 8: unique join but right-side columns used in SELECT -> elimination not allowed     
+
+===================================================
+cola    colb    b_cola    b_colb    
+1     10     1     10     
+1     20     1     20     
+2     10     1     10     
+2     30     null     null     
+3     30     null     null     
+3     40     null     null     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: pk term[?] AND term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.cola, a.colb, b.cola, b.colb from tbl a left outer join tbl b on b.cola= ?:?  and a.colb=b.colb
+===================================================
+    
+Case 9: unique join but WHERE uses right-side column -> elimination not allowed     
+
+===================================================
+count(*)    
+3     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: pk term[?] AND term[?] (covers)
+               sargs: term[?]
+               cost:  ? card ?
+    after: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a left outer join tbl b on b.cola= ?:?  and a.colb=b.colb where b.cola is null 
+===================================================
+    
+Case 10: uniqueness inside inner subquery (distributed) -> elimination allowed     
+
+===================================================
+count(*)    
+6     
+
+Query plan:
+sscan
+    class: a node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a
+===================================================
+    
+Case 11: subquery with GROUP BY, uniqueness not trivially inferred -> elimination not allowed     
+
+===================================================
+count(*)    
+6     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: pk (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select tbl.cola from tbl tbl group by tbl.cola)
+/* ---> skip GROUP BY */
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a left outer join (select tbl.cola from tbl tbl group by tbl.cola) b (cola) on a.cola=b.cola
+===================================================
+    
+Case 12: subquery with DISTINCT, uniqueness due to DISTINCT not reliable -> elimination not allowed     
+
+===================================================
+count(*)    
+6     
+
+Query plan:
+temp(distinct)
+    subplan: iscan
+                 class: tbl node[?]
+                 index: pk term[?] (covers)
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct tbl.cola, tbl.colb from tbl tbl where tbl.cola= ?:? )
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a left outer join (select distinct tbl.cola, tbl.colb from tbl tbl where tbl.cola= ?:? ) b (cola, colb) on a.colb=b.colb
+===================================================
+    
+Case 13: subquery with ORDER BY only, order does not affect uniqueness -> elimination allowed     
+
+===================================================
+count(*)    
+6     
+
+Query plan:
+sscan
+    class: a node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a
+===================================================
+    
+Case 14: simple selection-only view, join on full PK -> elimination allowed     
+
+===================================================
+0
+===================================================
+count(*)    
+6     
+
+Query plan:
+sscan
+    class: a node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a
+===================================================
+    
+Case 15: multi-table view (self join) -> uniqueness inference difficult, elimination not allowed     
+
+===================================================
+0
+===================================================
+count(*)    
+18     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: b_? node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select b_?.colb from tbl b_?, tbl b where b_?.colb=b.colb)
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a left outer join (select b_?.colb from tbl b_?, tbl b where b_?.colb=b.colb) b (colb) on a.colb=b.colb
+===================================================
+    
+Case 16: view projects only part of PK (colb) -> elimination allowed     
+
+===================================================
+0
+===================================================
+count(*)    
+6     
+
+Query plan:
+sscan
+    class: a node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a
+===================================================
+    
+Case 17: partial condition inside view (cola=1) + outer join condition -> elimination allowed     
+
+===================================================
+0
+===================================================
+count(*)    
+6     
+
+Query plan:
+sscan
+    class: a node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a
+===================================================
+    
+Case 18: join key wrapped by function (CAST) -> elimination allowed     
+
+===================================================
+count(*)    
+6     
+
+Query plan:
+sscan
+    class: a node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a
+===================================================
+    
+Case 19: HAVING uses right-side column (aggregate) -> elimination not allowed     
+
+===================================================
+cola    cnt    
+1     2     
+2     2     
+
+Query plan:
+temp(group by)
+    subplan: idx-join (left outer join)
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: b node[?]
+                            index: pk term[?] AND term[?] (covers)
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select a.cola, count(*) from tbl a left outer join tbl b on b.cola= ?:?  and a.colb=b.colb group by a.cola having max(b.cola) is not null 
+===================================================
+    
+Case 20: RIGHT OUTER JOIN, check elimination on left-side uniqueness -> elimination not allowed     
+
+===================================================
+count(*)    
+6     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: b node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: a node[?]
+               index: pk term[?] AND term[?]
+               filtr: term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a right outer join tbl b on a.cola=b.cola and a.cola= ?:?  and b.cola= ?:?  and a.colb=b.colb
+===================================================
+    
+Case 21: WHERE applies NOT NULL on right-side column -> elimination not allowed     
+
+===================================================
+count(*)    
+3     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: pk term[?] AND term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a, tbl b where b.cola is not null  and a.colb=b.colb and b.cola= ?:? 
+===================================================
+0
