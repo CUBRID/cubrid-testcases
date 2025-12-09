@@ -36,7 +36,9 @@ from
     t_parent as p
 where
     (c.parent_col_a = p.col_a or c.c3 = p.c3)
-    and c.col_b = -1;
+    and c.col_b = -1
+order by
+    c.col_a;
 show trace;
 
 drop table if exists t_child;
