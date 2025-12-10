@@ -34,16 +34,19 @@ col_a    col_b
 trace    
 
 Query Plan:
-  NESTED LOOPS (inner join)
-    TABLE SCAN (c)
-    INDEX SCAN (p.pk_t_parent_col_a) (key range: c.parent_col_a=p.col_a, covered: true)
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (c)
+      INDEX SCAN (p.pk_t_parent_col_a) (key range: c.parent_col_a=p.col_a, covered: true)
 
-  rewritten query: select c.col_a, c.col_b from [dba.t_parent__p__p?] p, [dba.t_child] c where c.parent_col_a=p.col_a and c.col_b= ?:? 
+  rewritten query: select c.col_a, c.col_b from [dba.t_parent__p__p?] p, [dba.t_child] c where c.parent_col_a=p.col_a and c.col_b= ?:?  order by ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_child), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (index: dba.t_parent__p__p?.pk_t_parent_col_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
@@ -55,16 +58,19 @@ col_a    col_b
 trace    
 
 Query Plan:
-  NESTED LOOPS (inner join)
-    TABLE SCAN (c)
-    INDEX SCAN (p.pk_t_parent_col_a) (key range: c.parent_col_a=p.col_a, covered: true)
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (c)
+      INDEX SCAN (p.pk_t_parent_col_a) (key range: c.parent_col_a=p.col_a, covered: true)
 
-  rewritten query: select c.col_a, c.col_b from [dba.t_child] c, [dba.t_parent__p__p?] p where c.parent_col_a=p.col_a and c.col_b= ?:? 
+  rewritten query: select c.col_a, c.col_b from [dba.t_child] c, [dba.t_parent__p__p?] p where c.parent_col_a=p.col_a and c.col_b= ?:?  order by ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_child), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (index: dba.t_parent__p__p?.pk_t_parent_col_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================

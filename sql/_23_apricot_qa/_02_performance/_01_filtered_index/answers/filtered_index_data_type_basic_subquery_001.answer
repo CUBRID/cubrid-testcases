@@ -363,7 +363,28 @@ sscan
 Query stmt:
 select a_?, a_?, a_?, ?, (select count(a_?) from dual dual) from (select count(t?.b), count(t?.c), count(t?.d), t?.a from t? t? where (t?.a> ?:? ) using index t?.i_t?_a?d(+)) t? (a_?, a_?, a_?, a_?)
 ===================================================
-Error:-494
+count(b)    count(c)    10    (select count(a))    
+1     1     10     1     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+(select count(a_?) from dual dual)
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select count(t?.b), count(t?.c), t?.a from t? t? where (t?.d> ?:? ))
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Query stmt:
+select a_?, a_?, ?, (select count(a_?) from dual dual) from (select count(t?.b), count(t?.c), t?.a from t? t? where (t?.d> ?:? )) t? (a_?, a_?, a_?)
 ===================================================
 count(b)    10    (select count(a))    
 1     10     1     

@@ -34,16 +34,19 @@ col_a    col_b
 trace    
 
 Query Plan:
-  NESTED LOOPS (inner join)
-    TABLE SCAN (c)
-    TABLE SCAN (p)
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (c)
+      TABLE SCAN (p)
 
-  rewritten query: select c.col_a, c.col_b from [dba.t_child] c, [dba.t_parent] p where c.parent_col_a= cast(p.col_a as bigint) and c.col_b= ?:? 
+  rewritten query: select c.col_a, c.col_b from [dba.t_child] c, [dba.t_parent] p where c.parent_col_a= cast(p.col_a as bigint) and c.col_b= ?:?  order by ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_child), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.t_parent), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================

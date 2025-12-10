@@ -16,7 +16,7 @@ begin
     end loop;
 end;
 
-select test_cursor1() from dual;
+call test_cursor1();
 
 -- in user t1
 create user t1 groups dba;
@@ -24,7 +24,7 @@ grant execute on procedure test_cursor1 to t1;
 
 evaluate 'connect user t1';
 call login('t1','') on class db_user;
-select dba.test_cursor1() from dual;
+call dba.test_cursor1();
 
 -- in user dba
 evaluate 'connect user dba';
@@ -44,7 +44,7 @@ begin
     end loop;
 end;
 
-select test_cursor2() from dual;
+call test_cursor2();
 
 drop procedure test_cursor2;
 drop function test_return;

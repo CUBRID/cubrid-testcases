@@ -58,7 +58,8 @@ grant execute on procedure u1.test_sp to u2;
 evaluate 'succ: call the procedure on u2';
 call login('u2', '') on class db_user;
 
-select u1.test_sp(), 'execute to the owner right (owner: u1)' from dual;
+evaluate 'execute to the owner right (owner: u1)';
+call u1.test_sp();
 
 call login('dba', '') on class db_user;
 

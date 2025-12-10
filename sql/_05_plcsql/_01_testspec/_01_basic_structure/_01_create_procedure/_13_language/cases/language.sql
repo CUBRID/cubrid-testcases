@@ -18,8 +18,8 @@ end;
 create procedure pro_java(i string) as language java
 name 'SpTest2.typetestinteger(java.lang.String)';
 
-select pro_plcsql() from dual;
-select pro_java('1') from dual;
+call pro_plcsql();
+call pro_java('1');
 
 drop procedure pro_plcsql;
 drop procedure pro_java;

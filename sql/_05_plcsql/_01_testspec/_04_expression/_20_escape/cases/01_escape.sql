@@ -18,7 +18,7 @@ begin
 	dbms_output.put_line(' ''escape test'' ');
 end;
 
-select proc_unesc_test() from dual;
+call proc_unesc_test();
 
 drop procedure proc_unesc_test;
 
