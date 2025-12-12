@@ -5,7 +5,7 @@ create table c2 (a char(10), b char(10), c char(10));
 alter table c2 add index i_c2_a (a(5) asc); 
 alter table c2 add index idx_c2 (b(5)), add key i_c2_c_d(c(5) desc) ; 
 
-select * from db_index where class_name like 'c%' order by class_name, index_name; 
+SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name like 'c%' order by class_name, index_name; 
 select * from db_index_key where class_name like 'c%' order by class_name, index_name; 
 
 drop table c1;

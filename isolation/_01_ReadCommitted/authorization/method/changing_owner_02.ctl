@@ -48,7 +48,7 @@ C1: insert into t1 values (1),(2),(3),(4),(5),(6),(7);
 C1: COMMIT;
 MC: wait until C1 ready;
 
-C1: CALL change_owner ('t1_view', 'company') ON CLASS db_authorizations; 
+C1: CALL change_owner ('t1_view', 'company') ON CLASS db_root; 
 C1: COMMIT;
 MC: wait until C1 ready;
 C2: login as 'company';

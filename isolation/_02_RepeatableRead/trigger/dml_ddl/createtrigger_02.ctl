@@ -23,17 +23,17 @@ C1: CREATE TABLE hi( id INT, col VARCHAR(10));
 C1: CREATE TABLE tt1( id INT, col VARCHAR(10));
 C1: commit;
 C1: CREATE TRIGGER trg1 AFTER INSERT ON tt1 EXECUTE INSERT INTO hi VALUES(obj.id,obj.col);
-C1: SELECT * FROM db_trig;
+C1: SELECT trigger_name, owner_name, target_class_name, target_owner_name, target_attr_name, target_attr_type, action_type, action_time, comment FROM db_trigger;
 C1: commit;
 MC: wait until C1 ready;
 C2: drop trigger trg1;
 C2: CREATE TRIGGER trg1 AFTER INSERT ON tt1 EXECUTE INSERT INTO hi VALUES(obj.id,obj.col);
 C2: commit;
 MC: wait until C2 ready;
-C1: SELECT * FROM db_trig;
+C1: SELECT trigger_name, owner_name, target_class_name, target_owner_name, target_attr_name, target_attr_type, action_type, action_time, comment FROM db_trigger;
 C1: drop trigger trg1; --expected is successful to drop
 C1: CREATE TRIGGER trg1 AFTER INSERT ON tt1 EXECUTE INSERT INTO hi VALUES(obj.id,obj.col);
-C1: SELECT * FROM db_trig;
+C1: SELECT trigger_name, owner_name, target_class_name, target_owner_name, target_attr_name, target_attr_type, action_type, action_time, comment FROM db_trigger;
 C1: commit;
 MC: wait until C1 ready;
 

@@ -29,6 +29,6 @@ create index dd_0002_idx8 on ddl_0002(col5 desc,col4 asc);
 create index dd_0002_idx9 on ddl_0002(col3 desc, col2 asc);
 create index dd_0002_idx10 on ddl_0002(col4 asc, col1 desc);
 create index dd_0002_idx11 on ddl_0002(col1 desc, col2 asc, col3 desc, col4 asc, col5 desc);
-select * from db_index where class_name in ('ddl_0001','ddl_0002') order by 1,2,3;
+SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name in ('ddl_0001','ddl_0002') order by 1,2,3;
 drop class ddl_0002;
 drop class ddl_0001;

@@ -1,14 +1,14 @@
 /*
-Test Case: insert,update,delete & select db_trig 
+Test Case: insert,update,delete & select db_trigger
 Priority: 1
 Reference case:
 Author: Lily
 
 Test Point:
-- C1 insert db_trig
-- C2 update db_trig
-- C3 delete db_trig
-- C4 select db_trig
+- C1 insert db_trigger
+- C2 update db_trigger
+- C3 delete db_trigger
+- C4 select db_trigger
 */
 
 MC: setup NUM_CLIENTS = 4;
@@ -38,7 +38,7 @@ C2: insert into tt1 values(1,'abc');
 MC: wait until C2 ready;
 C3: rename tt1 as tb1;
 MC: wait until C3 blocked;
-C1: select * from db_trig order by 1;
+C1: select trigger_name, owner_name, target_class_name, target_owner_name, target_attr_name, target_attr_type, action_type, action_time, comment from db_trigger order by 1;
 MC: wait until C1 ready;
 C2: commit;
 MC: wait until C2 ready;
@@ -48,7 +48,7 @@ C3: commit;
 MC: wait until C3 ready;
 C4: commit;
 MC: wait until C4 ready;
-C1: select * from db_trig order by 1;
+C1: select trigger_name, owner_name, target_class_name, target_owner_name, target_attr_name, target_attr_type, action_type, action_time, comment from db_trigger order by 1;
 C1: rename tb1 as tt1;
 C1: commit;
 MC: wait until C1 ready;
@@ -59,7 +59,7 @@ C2: ALTER TRIGGER tt1_insert STATUS INACTIVE;
 MC: wait until C2 blocked;
 C3: CREATE TRIGGER tt1_delete BEFORE DELETE ON tt1 EXECUTE DELETE FROM hi WHERE id = obj.id+4;
 MC: wait until C3 blocked;
-C4: select * from db_trig order by 1;
+C4: select trigger_name, owner_name, target_class_name, target_owner_name, target_attr_name, target_attr_type, action_type, action_time, comment from db_trigger order by 1;
 MC: wait until C4 ready;
 C1: commit;
 MC: wait until C1 ready;
@@ -67,7 +67,7 @@ C2: commit;
 MC: wait until C2 ready;
 C3: commit;
 MC: wait until C3 ready;
-C4: select * from db_trig order by 1;
+C4: select trigger_name, owner_name, target_class_name, target_owner_name, target_attr_name, target_attr_type, action_type, action_time, comment from db_trigger order by 1;
 C4: drop table hi,tt1;
 C4: commit;
 MC: wait until C4 ready;

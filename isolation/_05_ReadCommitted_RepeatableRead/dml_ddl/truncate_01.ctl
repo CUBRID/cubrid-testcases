@@ -33,7 +33,7 @@ C2: commit;
 MC: wait until C1 ready;
 C1: commit;
 MC: wait until C1 ready;
-C2: SELECT * FROM db_class where owner_name='PUBLIC';
+C2: select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where owner_name='PUBLIC';
 C2: commit;
 C2: quit;
 C1: quit;

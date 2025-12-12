@@ -25,7 +25,7 @@ UPDATE t1 SET col2='亜唖娃阿哀愛挨姶啊你' WHERE col2='ゞ ゝヽ ヾ �
 
 DELETE  FROM t1 WHERE col2='せぜそぞただちぢ';
 --test
-SELECT * FROM db_index WHERE class_name='t1' where col1>='ヨあ12p■「亜' order by 1,2;
+SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index WHERE class_name='t1' where col1>='ヨあ12p■「亜' order by 1,2;
 --test
 SELECT col2 FROM t1 where col1>='ヨあ12p■「亜' order by col2;
 

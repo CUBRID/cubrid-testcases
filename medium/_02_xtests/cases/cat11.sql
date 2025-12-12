@@ -108,7 +108,7 @@ select *
 from db_attribute 
 where class_name = 'foo11' 
 order by attr_name, attr_type;
-select * 
+select index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, status, index_type, deduplicate_key_level, comment 
 from db_index 
 where class_name = 'foo11' 
 order by index_name;

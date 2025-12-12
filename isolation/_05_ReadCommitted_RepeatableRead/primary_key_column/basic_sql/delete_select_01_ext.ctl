@@ -34,7 +34,7 @@ C2: SELECT COUNT(*) FROM tb1;
 C2: show index from tb1;
 C2: commit;
 MC: wait until C2 ready;
-C1: select * from db_index where class_name='tb1';
+C1: select index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status from db_index where class_name='tb1';
 C1: ALTER TABLE tb1 ADD CONSTRAINT pk_tb1_id PRIMARY KEY(id);
 C1: DELETE FROM tb1 WHERE id between 120 and 151;
 MC: wait until C1 ready;

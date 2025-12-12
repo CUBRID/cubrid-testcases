@@ -25,7 +25,7 @@ INSERT INTO EMPLOYEE VALUES ('00009', 'Aeran', 'planning', TO_DATE('20060601', '
 INSERT INTO EMPLOYEE VALUES ('00010', 'Yoonjung', 'R&D', TO_DATE('20070601', 'YYYYMMDD'));
 
 
-select * from db_class
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class
 where  class_name = 'employee';
 
 drop class employee;

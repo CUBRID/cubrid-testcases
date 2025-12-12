@@ -8,7 +8,7 @@ create table range_test(id int not null ,
  	PARTITION BY RANGE (test_timestamp) (
 	PARTITION p0 VALUES LESS THAN MAXVALUE
 );
-select * from db_class where class_name like 'range_test%' order by class_name;
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where class_name like 'range_test%' order by class_name;
 
 
 drop table range_test;

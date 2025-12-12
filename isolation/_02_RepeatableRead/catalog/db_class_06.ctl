@@ -37,17 +37,17 @@ MC: wait until C1 ready;
 C2: drop table tb1; 
 MC: wait until C2 blocked;
 
-C3: select * from db_class where class_name like 'tb%';
+C3: select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where class_name like 'tb%';
 MC: wait until C3 ready;
 C1: commit;
 MC: wait until C1 ready;
-C2: select * from db_class where class_name like 'tb%';
+C2: select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where class_name like 'tb%';
 C2: commit;
 MC: wait until C2 ready;
 C3: commit;
 MC: wait until C3 ready;
 C3: drop table tb2_rename;
-C3: select * from db_class where class_name like 'tb%';
+C3: select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where class_name like 'tb%';
 C3: commit;
 MC: wait until C3 ready;
 

@@ -36,7 +36,7 @@ DROP TABLE u1.tbl;
 
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
 
-select * from db_class where class_name = 'tbl' order by class_name;
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where class_name = 'tbl' order by class_name;
 
 evaluate 'Test done';
 drop user u1;

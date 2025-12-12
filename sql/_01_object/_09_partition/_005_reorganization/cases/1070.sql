@@ -15,7 +15,7 @@ PARTITION BY RANGE (test_string) (
     PARTITION p1 VALUES LESS THAN ('gggggggggg'),
     PARTITION p2 VALUES LESS THAN ('kkkkkkkkkk')
 );
-select * from db_class where class_name like 'range_test%' order by class_name;
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where class_name like 'range_test%' order by class_name;
 
 
 drop table range_test;

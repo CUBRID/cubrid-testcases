@@ -30,7 +30,7 @@ create index timestamp_idx on list_test (test_timestamp);
 	insert into list_test values(20,null,null,null);
 select * from list_test order by id;
 
-select * from db_class
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class
 where class_name like 'list_test%' order by 1;
 
 drop class list_test;

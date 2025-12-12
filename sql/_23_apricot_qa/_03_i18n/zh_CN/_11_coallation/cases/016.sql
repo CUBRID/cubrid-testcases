@@ -27,7 +27,7 @@ UPDATE t1 SET col9={'喝水shū果91_uu'} WHERE col1='喝水shū果91';
 
 DELETE  FROM t1 WHERE col1='喝水shū果91';
 --test
-SELECT  * FROM db_index WHERE class_name='t1' order by 1,2;
+SELECT  index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, status, index_type, deduplicate_key_level, comment FROM db_index WHERE class_name='t1' order by 1,2;
 --test
 SELECT  col9 FROM t1 order by col9;
 

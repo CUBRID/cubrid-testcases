@@ -1,7 +1,7 @@
 autocommit off;
 call login('dba','') on class db_user;
 CREATE CLASS tbibrs;
-call change_owner('tbibrs', 'public') on class db_authorizations;
+call change_owner('tbibrs', 'public') on class db_root;
 ALTER CLASS public.tbibrs ADD ATTRIBUTE
        ibrs_yymm string,
        ibrs_sevcd string,

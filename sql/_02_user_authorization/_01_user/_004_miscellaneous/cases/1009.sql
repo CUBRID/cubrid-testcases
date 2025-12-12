@@ -3,7 +3,7 @@
 call login('dba') on class db_user;
 call add_user('test_user') on class db_user;
 
-call change_owner('t1') on class db_authorizations;
+call change_owner('t1') on class db_root;
 
 
 drop class t1;

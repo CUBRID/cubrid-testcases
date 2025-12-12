@@ -8,7 +8,7 @@ select name from db_user;
 
 call login ('u1') on class db_user;
 create synonym s1 for dba.t1;
-select * from db_synonym;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym;
 --err case
 select * from s1;
 
@@ -27,6 +27,6 @@ drop table if exists t1;
 drop user u1;
 
 select name from db_user;
-select * from db_synonym;
-select * from db_class where is_system_class = upper ('NO');
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym;
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where is_system_class = upper ('NO');
 

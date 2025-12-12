@@ -2,7 +2,7 @@
 
 CREATE VCLASS ddl_0001;
 
-call change_owner('ddl_0001', 'PUBLIC') on class db_authorizations;
+call change_owner('ddl_0001', 'PUBLIC') on class db_root;
 
 ALTER VCLASS public.ddl_0001 ADD ATTRIBUTE
        korean_name character varying(30),

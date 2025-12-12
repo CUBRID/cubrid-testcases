@@ -6,14 +6,14 @@ id int ,
 c1 int UNIQUE not null
 );
 
-select * from db_class
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class
 where class_name = 't1';
 drop class t1;
 create table t1 (
 id int ,
 c1 int not null UNIQUE
 );
-select * from db_class
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class
 where class_name = 't1';
 
 drop class t1;

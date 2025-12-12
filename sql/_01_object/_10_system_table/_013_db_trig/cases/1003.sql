@@ -9,7 +9,7 @@ create trigger test_trigger
 select trigger_name, 
        target_class_name,
        target_attr_name
-from   db_trig
+from db_trigger
 where  trigger_name = 'test_trigger';
 
 drop trigger test_trigger;

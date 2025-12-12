@@ -15,7 +15,7 @@ PARTITION BY LIST (test_time) (
 	PARTITION p1 VALUES IN ('06:00:00 PM','07:00:00 PM','09:00:00 PM')
 );
 
-select * from db_class where class_name like 'list%' order by 1;
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where class_name like 'list%' order by 1;
 
 
 drop table list_test;
