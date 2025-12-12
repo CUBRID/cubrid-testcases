@@ -36,7 +36,7 @@ order by cole desc, colf desc;
 
 update statistics on tbl_a, tbl_b with fullscan;
 
-evaluate 'Q201. When both inst_num condition and orderby_num are used, skip ORDER BY cannot be applied.';
+evaluate 'Q201. When an inst_num() condition is used and orderby_num() is referenced in the SELECT list, skip ORDER BY cannot be applied.';
 select /*+ recompile ordered no_parallel_heap_scan */
   'Q201', inst_num(), orderby_num(), a.*, b.*
 from tbl_a a, tbl_b b

@@ -57,7 +57,7 @@ with q as (
 select /*+ recompile */ 'Q004', q.* from q limit 10;
 show trace;
 
-evaluate 'Q005. Even if all columns in the index do not have NOT NULL constraints, skip ORDER BY can still be applied.';
+evaluate 'Q005. Even if not all index columns are defined as NOT NULL, skip ORDER BY can still be applied as long as the leading column satisfies the requirements.';
 drop index i1_cola on tbl_a;
 create index i1_cola_colb on tbl_a (cola, colb);
 with q as (

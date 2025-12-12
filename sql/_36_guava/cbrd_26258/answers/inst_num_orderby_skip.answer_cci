@@ -70,6 +70,12 @@ Trace Statistics:
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
 ===================================================
     
 Q202. When inst_num is not used in WHERE clause but used together with orderby_num, skip ORDER BY can be applied.     
@@ -120,6 +126,12 @@ Trace Statistics:
       MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
      
 
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
 ===================================================
     
 Q203. When both inst_num condition and for orderby_num are used, skip ORDER BY cannot be applied.     
@@ -174,6 +186,12 @@ Trace Statistics:
     ORDERBY (time: ?, topnsort: true)
      
 
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
 ===================================================
     
 Q204. When only inst_num condition is used, skip ORDER BY can be applied.     
@@ -226,6 +244,12 @@ Trace Statistics:
       MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
      
 
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
 ===================================================
     
 Q205. When only orderby_num() filter is used (no inst_num, no LIMIT), skip ORDER BY can be applied.     
@@ -276,6 +300,12 @@ Trace Statistics:
       MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
      
 
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
 ===================================================
     
 Q206. When inst_num() is used only in the SELECT list, skip ORDER BY should behave the same as without inst_num().     
@@ -326,6 +356,12 @@ Trace Statistics:
       MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
      
 
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
 ===================================================
 0
 ===================================================

@@ -76,6 +76,12 @@ Trace Statistics:
                   (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
 
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
 ===================================================
     
 Q002. When a covering index scan cannot be used, skip ORDER BY cannot be applied because it is less cost-effective.     
@@ -136,6 +142,12 @@ Trace Statistics:
                   (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
 
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
 ===================================================
     
 Q003. Even when a covering index scan cannot be used, skip ORDER BY can be forced by index hints, but performance improvement is not expected.     
@@ -192,6 +204,12 @@ Trace Statistics:
           SCAN (index: dba.tbl_a.i?_cola), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
 ===================================================
     
 Q004. When a covering index scan can be used, skip ORDER BY is applied because it is more cost-effective.     
@@ -248,6 +266,12 @@ Trace Statistics:
           SCAN (index: dba.tbl_a.i?_cola), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
      
 
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
 ===================================================
     
 Q005. Even if not all index columns are defined as NOT NULL, skip ORDER BY can still be applied as long as the leading column satisfies the requirements.     
@@ -308,6 +332,12 @@ Trace Statistics:
           SCAN (index: dba.tbl_a.i?_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
      
 
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
 ===================================================
     
 Q006. When some columns have different sort orders, skip ORDER BY cannot be applied.     
@@ -366,6 +396,12 @@ Trace Statistics:
                   (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
 
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
 ===================================================
     
 Q007. When all columns have reversed sort orders, skip ORDER BY can be applied.     
@@ -422,6 +458,12 @@ Trace Statistics:
           SCAN (index: dba.tbl_a.i?_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
      
 
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
 ===================================================
     
 Q008. When NO_DESC_IDX hint is used, skip ORDER BY cannot be applied even if all columns have reversed sort orders.     
@@ -480,6 +522,12 @@ Trace Statistics:
                   (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
 
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
 ===================================================
     
 Q009. When the first column of ORDER BY has no NOT NULL constraint, skip ORDER BY cannot be applied. (TODO: improvement needed)     
@@ -542,6 +590,12 @@ Trace Statistics:
                   (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
 
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
 ===================================================
     
 Q010. Even without NOT NULL constraints, skip ORDER BY can be applied when IS NOT NULL condition is specified.     
@@ -599,6 +653,12 @@ Trace Statistics:
           SCAN (index: dba.tbl_a.i?_colb_cola), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
      
 
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
 ===================================================
     
 Q011. When an index scan is used with indexable predicates, skip ORDER BY can be applied together.     
@@ -659,6 +719,12 @@ Trace Statistics:
           SCAN (index: dba.tbl_a.i?_colc_cola), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
 ===================================================
     
 Q012. When an index skip scan is used, skip ORDER BY can also be applied.     
@@ -719,6 +785,12 @@ Trace Statistics:
           SCAN (index: dba.tbl_a.i?_cola_colc_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
      
 
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
 ===================================================
     
 Q013. skip GROUP BY and skip ORDER BY cannot be applied together.     
@@ -788,6 +860,12 @@ Trace Statistics:
                   (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
 
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
 ===================================================
     
 Q014. Even if skip GROUP BY is not applied, skip ORDER BY cannot be applied when GROUP BY exists.     
@@ -854,6 +932,12 @@ Trace Statistics:
                   (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
 
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
 ===================================================
     
 Q015. When there is no GROUP BY, skip ORDER BY can be applied.     
@@ -911,6 +995,12 @@ Trace Statistics:
           SCAN (index: dba.tbl_a.i?_colb_colc_cola), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
      
 
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
 ===================================================
 0
 ===================================================
