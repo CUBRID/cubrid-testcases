@@ -25,18 +25,19 @@ sscan
 Query stmt:
 (select ? from tbl tbl)
 Query plan:
-hash-join (left outer join)
+nl-join (left outer join)
     edge:  term[?]
     outer: sscan
                class: a node[?]
                cost:  ? card ?
     inner: sscan
                class: b node[?]
+               sargs: term[?] AND term[?]
                cost:  ? card ?
     during:term[?]
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH */ count(*) from tbl a left outer join (select ? from tbl tbl) b (cola) on a.cola=b.cola and a.cola=?
+select count(*) from tbl a left outer join (select ? from tbl tbl) b (cola) on a.cola=b.cola and a.cola=?
 ===================================================
     
 1-2. view     
@@ -52,18 +53,19 @@ sscan
 Query stmt:
 (select ? from tbl b)
 Query plan:
-hash-join (left outer join)
+nl-join (left outer join)
     edge:  term[?]
     outer: sscan
                class: a node[?]
                cost:  ? card ?
     inner: sscan
                class: b node[?]
+               sargs: term[?] AND term[?]
                cost:  ? card ?
     during:term[?]
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH */ count(*) from tbl a left outer join (select ? from tbl b) b (cola) on a.cola=b.cola and a.cola=?
+select count(*) from tbl a left outer join (select ? from tbl b) b (cola) on a.cola=b.cola and a.cola=?
 ===================================================
     
 Case 2: LEFT OUTER JOIN where view returns a normal column (inline view vs view)     
@@ -79,17 +81,18 @@ count(*)
 10000     
 
 Query plan:
-hash-join (left outer join)
+nl-join (left outer join)
     edge:  term[?]
     outer: sscan
                class: a node[?]
                cost:  ? card ?
     inner: sscan
                class: b node[?]
+               sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH */ count(*) from tbl a left outer join tbl b on a.cola=b.cola
+select count(*) from tbl a left outer join tbl b on a.cola=b.cola
 ===================================================
     
 2-2. view     
@@ -105,18 +108,19 @@ sscan
 Query stmt:
 (select ? from tbl b)
 Query plan:
-hash-join (left outer join)
+nl-join (left outer join)
     edge:  term[?]
     outer: sscan
                class: a node[?]
                cost:  ? card ?
     inner: sscan
                class: b node[?]
+               sargs: term[?] AND term[?]
                cost:  ? card ?
     during:term[?]
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH */ count(*) from tbl a left outer join (select ? from tbl b) b (cola) on a.cola=b.cola and a.cola=?
+select count(*) from tbl a left outer join (select ? from tbl b) b (cola) on a.cola=b.cola and a.cola=?
 ===================================================
     
 Case 3: constant expression in view select with outer filter (inline view vs view)     
@@ -132,7 +136,7 @@ count(*)
 10009     
 
 Query plan:
-hash-join (left outer join)
+nl-join (left outer join)
     edge:  term[?]
     outer: sscan
                class: a node[?]
@@ -140,10 +144,11 @@ hash-join (left outer join)
                cost:  ? card ?
     inner: sscan
                class: b node[?]
+               sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH */ count(*) from tbl a left outer join tbl b on a.cola=(b.cola*?+?) where (a.cola>= ?:?  and a.cola<= ?:? )
+select count(*) from tbl a left outer join tbl b on a.cola=(b.cola*?+?) where (a.cola>= ?:?  and a.cola<= ?:? )
 ===================================================
     
 3-2. view     
@@ -153,7 +158,7 @@ count(*)
 10009     
 
 Query plan:
-hash-join (left outer join)
+nl-join (left outer join)
     edge:  term[?]
     outer: sscan
                class: a node[?]
@@ -161,10 +166,11 @@ hash-join (left outer join)
                cost:  ? card ?
     inner: sscan
                class: b node[?]
+               sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH */ count(*) from tbl a left outer join tbl b on a.cola=(b.cola*?+?) where (a.cola>= ?:?  and a.cola<= ?:? )
+select count(*) from tbl a left outer join tbl b on a.cola=(b.cola*?+?) where (a.cola>= ?:?  and a.cola<= ?:? )
 ===================================================
     
 Case 4: grouped view with constant join column (inline view vs view)     
@@ -189,18 +195,19 @@ temp(group by)
 Query stmt:
 (select ? from tbl tbl group by ?)
 Query plan:
-hash-join (left outer join)
+nl-join (left outer join)
     edge:  term[?]
     outer: sscan
                class: a node[?]
                cost:  ? card ?
     inner: sscan
                class: b node[?]
+               sargs: term[?] AND term[?]
                cost:  ? card ?
     during:term[?]
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH */ count(*) from tbl a left outer join (select ? from tbl tbl group by ?) b (cola) on a.cola=b.cola and a.cola=?
+select count(*) from tbl a left outer join (select ? from tbl tbl group by ?) b (cola) on a.cola=b.cola and a.cola=?
 ===================================================
     
 4-2. view     
@@ -219,18 +226,19 @@ temp(group by)
 Query stmt:
 (select ? from tbl b group by ?)
 Query plan:
-hash-join (left outer join)
+nl-join (left outer join)
     edge:  term[?]
     outer: sscan
                class: a node[?]
                cost:  ? card ?
     inner: sscan
                class: b node[?]
+               sargs: term[?] AND term[?]
                cost:  ? card ?
     during:term[?]
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH */ count(*) from tbl a left outer join (select ? from tbl b group by ?) b (cola) on a.cola=b.cola and a.cola=?
+select count(*) from tbl a left outer join (select ? from tbl b group by ?) b (cola) on a.cola=b.cola and a.cola=?
 ===================================================
     
 Case 5: LEFT OUTER JOIN vs INNER JOIN with the same constant-key view     
@@ -253,18 +261,19 @@ sscan
 Query stmt:
 (select ? from tbl b where (b.cola>= ?:?  and b.cola<= ?:? ))
 Query plan:
-hash-join (left outer join)
+nl-join (left outer join)
     edge:  term[?]
     outer: sscan
                class: a node[?]
                cost:  ? card ?
     inner: sscan
                class: b node[?]
+               sargs: term[?] AND term[?]
                cost:  ? card ?
     during:term[?]
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH */ count(*) from tbl a left outer join (select ? from tbl b where (b.cola>= ?:?  and b.cola<= ?:? )) b (cola) on a.cola=b.cola and a.cola=?
+select count(*) from tbl a left outer join (select ? from tbl b where (b.cola>= ?:?  and b.cola<= ?:? )) b (cola) on a.cola=b.cola and a.cola=?
 ===================================================
     
 5-2. INNER JOIN using the view     
@@ -285,6 +294,6 @@ nl-join (cross join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH */ count(*) from tbl a, tbl b where (b.cola>= ?:?  and b.cola<= ?:? ) and a.cola= ?:? 
+select count(*) from tbl a, tbl b where (b.cola>= ?:?  and b.cola<= ?:? ) and a.cola= ?:? 
 ===================================================
 0

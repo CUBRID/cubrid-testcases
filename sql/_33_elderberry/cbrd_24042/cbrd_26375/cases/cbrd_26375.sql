@@ -12,12 +12,12 @@ create or replace view v_tbl as
 select 1 cola from tbl;
 
 evaluate '1-1. inline view';
-select /*+ recompile use_hash */ count(*)
+select /*+ recompile */ count(*)
 from tbl a, (select 1 cola from tbl) b
 where a.cola = b.cola(+);
 
 evaluate '1-2. view';
-select /*+ recompile use_hash */ count(*)
+select /*+ recompile */ count(*)
 from tbl a, v_tbl b
 where a.cola = b.cola(+);
 
@@ -27,12 +27,12 @@ acreate or replace view v_tbl as
 select cola from tbl;
 
 evaluate '2-1. inline view';
-select /*+ recompile use_hash */ count(*)
+select /*+ recompile */ count(*)
 from tbl a, (select cola from tbl) b
 where a.cola = b.cola(+);
 
 evaluate '2-2. view';
-select /*+ recompile use_hash */ count(*)
+select /*+ recompile */ count(*)
 from tbl a, v_tbl b
 where a.cola = b.cola(+);
 
@@ -42,14 +42,14 @@ select cola * 0 + 1 as cola_expr
 from tbl;
 
 evaluate '3-1. inline view';
-select /*+ recompile use_hash */ count(*)
+select /*+ recompile */ count(*)
 from tbl a,
      (select cola * 0 + 1 as cola_expr from tbl) b
 where a.cola = b.cola_expr(+)
   and a.cola between 1 and 10;
 
 evaluate '3-2. view';
-select /*+ recompile use_hash */ count(*)
+select /*+ recompile */ count(*)
 from tbl a,
      v_tbl_const_expr b
 where a.cola = b.cola_expr(+)
@@ -62,13 +62,13 @@ from tbl
 group by 1;
 
 evaluate '4-1. inline view';
-select /*+ recompile use_hash */ count(*)
+select /*+ recompile */ count(*)
 from tbl a,
      (select 1 as cola, count(*) as cnt from tbl group by 1) b
 where a.cola = b.cola(+);
 
 evaluate '4-2. view';
-select /*+ recompile use_hash */ count(*)
+select /*+ recompile */ count(*)
 from tbl a,
      v_tbl_group_const b
 where a.cola = b.cola(+);
@@ -80,13 +80,13 @@ from tbl
 where cola between 1 and 10;
 
 evaluate '5-1. LEFT OUTER JOIN using the view';
-select /*+ recompile use_hash */ count(*)
+select /*+ recompile */ count(*)
 from tbl a
      left outer join v_tbl_const_key b
        on a.cola = b.cola;
 
 evaluate '5-2. INNER JOIN using the view';
-select /*+ recompile use_hash */ count(*)
+select /*+ recompile */ count(*)
 from tbl a
      inner join v_tbl_const_key b
        on a.cola = b.cola;
