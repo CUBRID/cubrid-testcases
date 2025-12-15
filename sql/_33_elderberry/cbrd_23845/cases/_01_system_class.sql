@@ -5,7 +5,7 @@
  */
 
 SELECT class_of, unique_name, class_name, owner.name FROM _db_class WHERE class_name LIKE '%db_synonym%';
-SELECT * FROM db_class WHERE class_name LIKE '%db_synonym%';
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class WHERE class_name LIKE '%db_synonym%';
 DESCRIBE _db_synonym;
 DESCRIBE db_synonym;
 show create table _db_synonym;
@@ -13,5 +13,5 @@ show create view db_synonym;
 show columns from _db_synonym;
 show columns from db_synonym;
 show index in _db_synonym;
-select * from _db_synonym;
-select * from db_synonym;
+select unique_name, name, owner, is_public, target_unique_name, target_name, target_owner, comment from _db_synonym;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym;

@@ -10,7 +10,7 @@ select trigger_name,
        target_class_name,
        target_attr_name
        target_attr_type
-from   db_trig
+from db_trigger
 where  trigger_name = 'test_trigger';
 
 drop trigger test_trigger;

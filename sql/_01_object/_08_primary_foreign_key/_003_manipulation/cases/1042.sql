@@ -18,4 +18,4 @@ CREATE TABLE track(
 drop class track;
 drop class album;
 
-select * from db_class where class_name in ('album','track');
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where class_name in ('album','track');

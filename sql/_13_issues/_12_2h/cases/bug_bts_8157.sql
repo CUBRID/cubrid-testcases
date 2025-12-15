@@ -9,11 +9,11 @@ select s1.nextval;
 drop serial s1;
 create serial s1;
 select s1.nextval;
-select started from db_serial;
+select started from _db_serial;
 alter serial s1 start with 10;
-select started from db_serial;
+select started from _db_serial;
 select s1.nextval;
-select started from db_serial;
+select started from _db_serial;
 select s1.nextval;
 
 drop serial s1;

@@ -50,7 +50,7 @@ MC: wait until C2 ready;
 C1: update statistics on tb1;
 C1: show index from tb1;
 C1: CREATE INDEX idx_col on tb1(id);
-C1: select * from db_index where class_name='tb1';
+C1: select index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status from db_index where class_name='tb1';
 C1: commit work;
 
 C2: quit;

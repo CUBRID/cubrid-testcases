@@ -36,7 +36,7 @@ C1: commit;
 MC: wait until C1 ready;
 
 /* test case */
-C4: select * from db_class where class_name like 'tb%';
+C4: select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where class_name like 'tb%';
 MC: wait until C4 ready;
 
 C1: CREATE TABLE tb3( id INT primary key, col VARCHAR(10));
@@ -53,7 +53,7 @@ C3: drop table tb5;
 C3: drop table tb1; 
 MC: wait until C3 blocked;
 
-C4: select * from db_class where class_name like 'tb%';
+C4: select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where class_name like 'tb%';
 MC: wait until C4 ready;
 C1: commit;
 MC: wait until C1 ready;
@@ -62,7 +62,7 @@ MC: wait until C2 ready;
 C3: commit;
 MC: wait until C3 ready;
 C4: drop table tb2_rename;
-C4: select * from db_class where class_name like 'tb%';
+C4: select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where class_name like 'tb%';
 C4: commit;
 MC: wait until C4 ready;
 

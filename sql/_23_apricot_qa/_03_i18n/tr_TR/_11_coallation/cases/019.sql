@@ -27,7 +27,7 @@ UPDATE t1 SET col3='Öö_Şş_Üü你好' WHERE col3='Öö_Şş_Üü阿啊';
 
 DELETE  FROM t1 WHERE col3='Öö_Şş_Üü啊阿';
 --test
-SELECT * FROM db_index WHERE class_name='t1' order by 1,2;
+SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index WHERE class_name='t1' order by 1,2;
 --test
 SELECT trim(col3) FROM t1 order by trim(col3);
 

@@ -21,8 +21,8 @@ create index i4 on t(substr(s collate utf8_ko_cs,2,1));
 drop index i1 on t;
 create index i5 on t(s) where s collate utf8_ko_cs >'天';
 insert into t(s) values(1),(2),(3);
-select * from db_index where have_function='YES' order by 1;
-select * from db_index where filter_expression is not null;
+SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where have_function='YES' order by 1;
+SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where filter_expression is not null;
 show indexes from t;
 
 drop t;

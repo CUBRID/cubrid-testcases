@@ -22,13 +22,13 @@ C1: drop table if exists t;
 C1: create table t(id int primary key,col varchar(10)) partition by range(id)(partition p1 values less than (100),partition p2 values less than (500));
 C1: commit;
 /* test case */
-C1: select * from db_partition order by 1,2,3,4;
+C1: select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, comment from db_partition order by 1,2,3,4;
 C1: commit;
 MC: wait until C1 ready;
 C2: drop table t;
 MC: wait until C2 ready;
-C1: SELECT * FROM db_class where owner_name='PUBLIC' order by 1,2,3,4;
-C1: select * from db_partition order by 1,2,3,4;
+C1: select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where owner_name='PUBLIC' order by 1,2,3,4;
+C1: select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, comment from db_partition order by 1,2,3,4;
 C1: commit;
 MC: wait until C1 ready;
 C2: commit;

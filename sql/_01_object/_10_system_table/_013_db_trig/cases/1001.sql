@@ -6,7 +6,7 @@ create trigger test_trigger
   execute print 'Insert a new record to test_class';
   
 select trigger_name, target_class_name 
-from   db_trig;
+from db_trigger;
 
 drop trigger test_trigger;
 drop class test_class;

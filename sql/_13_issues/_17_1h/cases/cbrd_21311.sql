@@ -20,7 +20,7 @@ create trigger [ALTER] before insert on [DESC] if new.CHAR < 0 execute REJECT;
 
 RENAME TRIGGER tri_check_userid AS [SELECT];
 
-select name,condition,action_type,action_definition,comment from db_trigger order by name;
+select name,condition,action_type,action_definition,comment from _db_trigger order by name;
 
 drop if exists tri_check_userid, [TRIGGER], [GRANT], [ALTER], [SELECT] ;
 drop if exists [USER], t1, [ALL], [DESC], [SELECT] ;
@@ -44,7 +44,7 @@ SELECT * FROM [CLASS];
 REPLACE INTO [TABLE] VALUES (22);
 SELECT * FROM [CLASS] order by 1;
 
-select name,condition,action_type,action_definition,comment from db_trigger order by name;
+select name,condition,action_type,action_definition,comment from _db_trigger order by name;
 
 drop if exists [TABLE], [CLASS] ;
 drop if exists [INSERT], [UPDATE], [DELETE] ;

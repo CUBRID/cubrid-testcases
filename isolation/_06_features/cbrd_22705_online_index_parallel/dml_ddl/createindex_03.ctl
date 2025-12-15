@@ -30,7 +30,7 @@ MC: wait until C1 ready;
 /* test case 1 */
 C1: CREATE INDEX idx1 on tb_a(id,col);
 C1: CREATE INDEX idx2 on tb_b(id,col);
-C1: SELECT * FROM db_index where class_name like 'tb_%';
+C1: select index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status from db_index where class_name like 'tb_%';
 C1: insert into tb_b values(5,'run'),(100,'test'),(25,'com');
 C1: commit;
 
@@ -39,25 +39,25 @@ C2: DROP INDEX idx1 on tb_a;
 C2: CREATE INDEX idx1 on tb_a(id);
 C2: insert into tb_a values(150,'test');
 C2: DROP INDEX idx2 on tb_b;
-C2: SELECT * FROM db_index where class_name like 'tb_%';
+C2: select index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status from db_index where class_name like 'tb_%';
 C2: rollback;
 
 MC: wait until C2 ready;
 C2: DROP INDEX idx1 on tb_a;
 C2: DROP INDEX idx2 on tb_b;
-C2: SELECT * FROM db_index where class_name like 'tb_%';
+C2: select index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status from db_index where class_name like 'tb_%';
 C2: commit;
 
 MC: wait until C2 ready;
 C2: CREATE INDEX idx1 on tb_a(id,col) ;
 C2: CREATE INDEX idx2 on tb_b(id,col) ;
 MC: wait until C2 ready;
-C1: SELECT * FROM db_index where class_name like 'tb_%';
+C1: select index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status from db_index where class_name like 'tb_%';
 C1: CREATE INDEX idx_all on tb_a(id desc,col desc);
 MC: wait until C1 blocked;
 C2: commit;
 MC: wait until C1 ready;
-C1: SELECT * FROM db_index where class_name like 'tb_%';
+C1: select index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status from db_index where class_name like 'tb_%';
 C1: select count(*) from tb_a;
 C1: select count(*) from tb_b;
 C1: commit;

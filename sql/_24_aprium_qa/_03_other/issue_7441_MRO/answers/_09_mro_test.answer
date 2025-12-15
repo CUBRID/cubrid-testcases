@@ -1023,14 +1023,13 @@ temp(distinct)
     subplan: nl-join (cross join)
                  outer: follow
                             edge:  a node[?] owner -> db_user node[?]
-                            head:  nl-join (inner join)
-                                      edge:  term[?]
+                            head:  idx-join (inner join)
                                       outer: sscan
                                                  class: a node[?]
                                                  cost:  ? card ?
-                                      inner: sscan
+                                      inner: iscan
                                                  class: coll node[?]
-                                                 sargs: term[?]
+                                                 index: pk__db_collation_coll_id term[?] (covers)
                                                  cost:  ? card ?
                                       cost:  ? card ?
                             sargs: term[?]
@@ -1039,14 +1038,13 @@ temp(distinct)
                             order: UNORDERED
                             subplan: follow
                                          edge:  b node[?] owner -> db_user node[?]
-                                         head:  nl-join (inner join)
-                                                   edge:  term[?]
+                                         head:  idx-join (inner join)
                                                    outer: sscan
                                                               class: b node[?]
                                                               cost:  ? card ?
-                                                   inner: sscan
+                                                   inner: iscan
                                                               class: coll_? node[?]
-                                                              sargs: term[?]
+                                                              index: pk__db_collation_coll_id term[?] (covers)
                                                               cost:  ? card ?
                                                    cost:  ? card ?
                                          sargs: term[?]

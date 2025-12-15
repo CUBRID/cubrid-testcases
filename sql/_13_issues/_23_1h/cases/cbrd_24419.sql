@@ -498,177 +498,177 @@ call login ('u6') on class db_user;
 
 
 call login ('u0') on class db_user;
-select * from db_class where is_system_class = 'NO' order by owner_name, class_name;
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where is_system_class = 'NO' order by owner_name, class_name;
 select * from db_direct_super_class order by owner_name, class_name;
 select * from db_partition order by owner_name, partition_class_name;
 select * from db_vclass where vclass_name in ('v1') order by owner_name, vclass_name;
 select * from db_attribute where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_attr_setdomain_elm where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_auth where object_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, grantor_name, grantee_name, object_name, auth_type;
-select * from db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
+SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
 select * from db_index_key where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
-select * from db_trig order by owner_name, trigger_name;
+select trigger_name, owner_name, target_class_name, target_owner_name, target_attr_name, target_attr_type, action_type, action_time, comment from db_trigger order by owner_name, trigger_name;
 select sp_name, sp_type, return_type, arg_count, lang, target, owner, comment from db_stored_procedure order by sp_name;
 select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name, index_of;
 select * from db_method where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg_setdomain_elm order by owner_name, class_name, meth_name;
 select * from db_meth_file order by owner_name, class_name, path_name, from_owner_name, from_class_name;
-select * from db_synonym order by synonym_owner_name, synonym_name;
-select * from db_server order by owner, link_name;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym order by synonym_owner_name, synonym_name;
+select link_name, host, port, db_name, user_name, properties, owner, comment from db_server order by owner, link_name;
 
 
 
 
 call login ('u1') on class db_user;
-select * from db_class where is_system_class = 'NO' order by owner_name, class_name;
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where is_system_class = 'NO' order by owner_name, class_name;
 select * from db_direct_super_class order by owner_name, class_name;
 select * from db_partition order by owner_name, partition_class_name;
 select * from db_vclass where vclass_name in ('v1') order by owner_name, vclass_name;
 select * from db_attribute where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_attr_setdomain_elm where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_auth where object_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, grantor_name, grantee_name, object_name, auth_type;
-select * from db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
+SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
 select * from db_index_key where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
-select * from db_trig order by owner_name, trigger_name;
+select trigger_name, owner_name, target_class_name, target_owner_name, target_attr_name, target_attr_type, action_type, action_time, comment from db_trigger order by owner_name, trigger_name;
 select sp_name, sp_type, return_type, arg_count, lang, target, owner, comment from db_stored_procedure order by sp_name;
 select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name, index_of;
 select * from db_method where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg_setdomain_elm order by owner_name, class_name, meth_name;
 select * from db_meth_file order by owner_name, class_name, path_name, from_owner_name, from_class_name;
-select * from db_synonym order by synonym_owner_name, synonym_name;
-select * from db_server order by owner, link_name;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym order by synonym_owner_name, synonym_name;
+select link_name, host, port, db_name, user_name, properties, owner, comment from db_server order by owner, link_name;
 
 
 
 
 call login ('u1_1') on class db_user;
-select * from db_class where is_system_class = 'NO' order by owner_name, class_name;
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where is_system_class = 'NO' order by owner_name, class_name;
 select * from db_direct_super_class order by owner_name, class_name;
 select * from db_partition order by owner_name, partition_class_name;
 select * from db_vclass where vclass_name in ('v1') order by owner_name, vclass_name;
 select * from db_attribute where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_attr_setdomain_elm where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_auth where object_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, grantor_name, grantee_name, object_name, auth_type;
-select * from db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
+SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
 select * from db_index_key where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
-select * from db_trig order by owner_name, trigger_name;
+select trigger_name, owner_name, target_class_name, target_owner_name, target_attr_name, target_attr_type, action_type, action_time, comment from db_trigger order by owner_name, trigger_name;
 select sp_name, sp_type, return_type, arg_count, lang, target, owner, comment from db_stored_procedure order by sp_name;
 select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name, index_of;
 select * from db_method where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg_setdomain_elm order by owner_name, class_name, meth_name;
 select * from db_meth_file order by owner_name, class_name, path_name, from_owner_name, from_class_name;
-select * from db_synonym order by synonym_owner_name, synonym_name;
-select * from db_server order by owner, link_name;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym order by synonym_owner_name, synonym_name;
+select link_name, host, port, db_name, user_name, properties, owner, comment from db_server order by owner, link_name;
 
 
 
 
 call login ('u2') on class db_user;
-select * from db_class where is_system_class = 'NO' order by owner_name, class_name;
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where is_system_class = 'NO' order by owner_name, class_name;
 select * from db_direct_super_class order by owner_name, class_name;
 select * from db_partition order by owner_name, partition_class_name;
 select * from db_vclass where vclass_name in ('v1') order by owner_name, vclass_name;
 select * from db_attribute where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_attr_setdomain_elm where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_auth where object_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, grantor_name, grantee_name, object_name, auth_type;
-select * from db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
+SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
 select * from db_index_key where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
-select * from db_trig order by owner_name, trigger_name;
+select trigger_name, owner_name, target_class_name, target_owner_name, target_attr_name, target_attr_type, action_type, action_time, comment from db_trigger order by owner_name, trigger_name;
 select sp_name, sp_type, return_type, arg_count, lang, target, owner, comment from db_stored_procedure order by sp_name;
 select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name, index_of;
 select * from db_method where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg_setdomain_elm order by owner_name, class_name, meth_name;
 select * from db_meth_file order by owner_name, class_name, path_name, from_owner_name, from_class_name;
-select * from db_synonym order by synonym_owner_name, synonym_name;
-select * from db_server order by owner, link_name;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym order by synonym_owner_name, synonym_name;
+select link_name, host, port, db_name, user_name, properties, owner, comment from db_server order by owner, link_name;
 
 
 
 
 call login ('u2_1') on class db_user;
-select * from db_class where is_system_class = 'NO' order by owner_name, class_name;
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where is_system_class = 'NO' order by owner_name, class_name;
 select * from db_direct_super_class order by owner_name, class_name;
 select * from db_partition order by owner_name, partition_class_name;
 select * from db_vclass where vclass_name in ('v1') order by owner_name, vclass_name;
 select * from db_attribute where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_attr_setdomain_elm where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_auth where object_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, grantor_name, grantee_name, object_name, auth_type;
-select * from db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
+SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
 select * from db_index_key where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
-select * from db_trig order by owner_name, trigger_name;
+select trigger_name, owner_name, target_class_name, target_owner_name, target_attr_name, target_attr_type, action_type, action_time, comment from db_trigger order by owner_name, trigger_name;
 select sp_name, sp_type, return_type, arg_count, lang, target, owner, comment from db_stored_procedure order by sp_name;
 select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name, index_of;
 select * from db_method where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg_setdomain_elm order by owner_name, class_name, meth_name;
 select * from db_meth_file order by owner_name, class_name, path_name, from_owner_name, from_class_name;
-select * from db_synonym order by synonym_owner_name, synonym_name;
-select * from db_server order by owner, link_name;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym order by synonym_owner_name, synonym_name;
+select link_name, host, port, db_name, user_name, properties, owner, comment from db_server order by owner, link_name;
 
 
 
 
 call login ('u3') on class db_user;
-select * from db_class where is_system_class = 'NO' order by owner_name, class_name;
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where is_system_class = 'NO' order by owner_name, class_name;
 select * from db_direct_super_class order by owner_name, class_name;
 select * from db_partition order by owner_name, partition_class_name;
 select * from db_vclass where vclass_name in ('v1') order by owner_name, vclass_name;
 select * from db_attribute where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_attr_setdomain_elm where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_auth where object_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, grantor_name, grantee_name, object_name, auth_type;
-select * from db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
+SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
 select * from db_index_key where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
-select * from db_trig order by owner_name, trigger_name;
+select trigger_name, owner_name, target_class_name, target_owner_name, target_attr_name, target_attr_type, action_type, action_time, comment from db_trigger order by owner_name, trigger_name;
 select sp_name, sp_type, return_type, arg_count, lang, target, owner, comment from db_stored_procedure order by sp_name;
 select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name, index_of;
 select * from db_method where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg_setdomain_elm order by owner_name, class_name, meth_name;
 select * from db_meth_file order by owner_name, class_name, path_name, from_owner_name, from_class_name;
-select * from db_synonym order by synonym_owner_name, synonym_name;
-select * from db_server order by owner, link_name;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym order by synonym_owner_name, synonym_name;
+select link_name, host, port, db_name, user_name, properties, owner, comment from db_server order by owner, link_name;
 
 
 
 
 call login ('u3_1') on class db_user;
-select * from db_class where is_system_class = 'NO' order by owner_name, class_name;
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where is_system_class = 'NO' order by owner_name, class_name;
 select * from db_direct_super_class order by owner_name, class_name;
 select * from db_partition order by owner_name, partition_class_name;
 select * from db_vclass where vclass_name in ('v1') order by owner_name, vclass_name;
 select * from db_attribute where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_attr_setdomain_elm where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_auth where object_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, grantor_name, grantee_name, object_name, auth_type;
-select * from db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
+SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
 select * from db_index_key where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
-select * from db_trig order by owner_name, trigger_name;
+select trigger_name, owner_name, target_class_name, target_owner_name, target_attr_name, target_attr_type, action_type, action_time, comment from db_trigger order by owner_name, trigger_name;
 select sp_name, sp_type, return_type, arg_count, lang, target, owner, comment from db_stored_procedure order by sp_name;
 select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name, index_of;
 select * from db_method where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg_setdomain_elm order by owner_name, class_name, meth_name;
 select * from db_meth_file order by owner_name, class_name, path_name, from_owner_name, from_class_name;
-select * from db_synonym order by synonym_owner_name, synonym_name;
-select * from db_server order by owner, link_name;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym order by synonym_owner_name, synonym_name;
+select link_name, host, port, db_name, user_name, properties, owner, comment from db_server order by owner, link_name;
 
 
 
 
 call login ('u4') on class db_user;
-select * from db_class where is_system_class = 'NO' order by owner_name, class_name;
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where is_system_class = 'NO' order by owner_name, class_name;
 select * from db_direct_super_class order by owner_name, class_name;
 select * from db_partition order by owner_name, partition_class_name;
 select * from db_vclass where vclass_name in ('v1') order by owner_name, vclass_name;
 select * from db_attribute where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_attr_setdomain_elm where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_auth where object_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, grantor_name, grantee_name, object_name, auth_type;
-select * from db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
+SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
 select * from db_index_key where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
-select * from db_trig order by owner_name, trigger_name;
+select trigger_name, owner_name, target_class_name, target_owner_name, target_attr_name, target_attr_type, action_type, action_time, comment from db_trigger order by owner_name, trigger_name;
 select sp_name, sp_type, return_type, arg_count, lang, target, owner, comment from db_stored_procedure order by sp_name;
 select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name, index_of;
 
@@ -676,23 +676,23 @@ select * from db_method where class_name in (select class_name from db_class whe
 select * from db_meth_arg where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg_setdomain_elm order by owner_name, class_name, meth_name;
 select * from db_meth_file order by owner_name, class_name, path_name, from_owner_name, from_class_name;
-select * from db_synonym order by synonym_owner_name, synonym_name;
-select * from db_server order by owner, link_name;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym order by synonym_owner_name, synonym_name;
+select link_name, host, port, db_name, user_name, properties, owner, comment from db_server order by owner, link_name;
 
 
 
 
 call login ('u5') on class db_user;
-select * from db_class where is_system_class = 'NO' order by owner_name, class_name;
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where is_system_class = 'NO' order by owner_name, class_name;
 select * from db_direct_super_class order by owner_name, class_name;
 select * from db_partition order by owner_name, partition_class_name;
 select * from db_vclass where vclass_name in ('v1') order by owner_name, vclass_name;
 select * from db_attribute where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_attr_setdomain_elm where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_auth where object_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, grantor_name, grantee_name, object_name, auth_type;
-select * from db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
+SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
 select * from db_index_key where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
-select * from db_trig order by owner_name, trigger_name;
+select trigger_name, owner_name, target_class_name, target_owner_name, target_attr_name, target_attr_type, action_type, action_time, comment from db_trigger order by owner_name, trigger_name;
 select sp_name, sp_type, return_type, arg_count, lang, target, owner, comment from db_stored_procedure order by sp_name;
 select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name, index_of;
 
@@ -700,23 +700,23 @@ select * from db_method where class_name in (select class_name from db_class whe
 select * from db_meth_arg where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg_setdomain_elm order by owner_name, class_name, meth_name;
 select * from db_meth_file order by owner_name, class_name, path_name, from_owner_name, from_class_name;
-select * from db_synonym order by synonym_owner_name, synonym_name;
-select * from db_server order by owner, link_name;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym order by synonym_owner_name, synonym_name;
+select link_name, host, port, db_name, user_name, properties, owner, comment from db_server order by owner, link_name;
 
 
 
 
 call login ('u6') on class db_user;
-select * from db_class where is_system_class = 'NO' order by owner_name, class_name;
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where is_system_class = 'NO' order by owner_name, class_name;
 select * from db_direct_super_class order by owner_name, class_name;
 select * from db_partition order by owner_name, partition_class_name;
 select * from db_vclass where vclass_name in ('v1') order by owner_name, vclass_name;
 select * from db_attribute where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_attr_setdomain_elm where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_auth where object_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, grantor_name, grantee_name, object_name, auth_type;
-select * from db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
+SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
 select * from db_index_key where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
-select * from db_trig order by owner_name, trigger_name;
+select trigger_name, owner_name, target_class_name, target_owner_name, target_attr_name, target_attr_type, action_type, action_time, comment from db_trigger order by owner_name, trigger_name;
 select sp_name, sp_type, return_type, arg_count, lang, target, owner, comment from db_stored_procedure order by sp_name;
 select sp_name, index_of, arg_name, data_type, mode, comment from db_stored_procedure_args order by sp_name, index_of;
 
@@ -724,8 +724,8 @@ select * from db_method where class_name in (select class_name from db_class whe
 select * from db_meth_arg where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, meth_name;
 select * from db_meth_arg_setdomain_elm order by owner_name, class_name, meth_name;
 select * from db_meth_file order by owner_name, class_name, path_name, from_owner_name, from_class_name;
-select * from db_synonym order by synonym_owner_name, synonym_name;
-select * from db_server order by owner, link_name;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym order by synonym_owner_name, synonym_name;
+select link_name, host, port, db_name, user_name, properties, owner, comment from db_server order by owner, link_name;
 
 
 

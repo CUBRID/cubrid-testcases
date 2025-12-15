@@ -17,7 +17,7 @@ create reverse index ddl_0001_idx6 on ddl_0001(col5 desc, col4 asc, col1 desc);
 create reverse index ddl_0001_idx7 on ddl_0001(col3 desc, col2 asc, col1 asc);
 create reverse index ddl_0001_idx8 on ddl_0001(col4 desc, col1 asc, col3 desc);
 create reverse index ddl_0001_idx9 on ddl_0001(col1 asc, col5 desc, col4 asc);
-select * from db_index where class_name='ddl_0001' order by 1,2,3;
+SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name='ddl_0001' order by 1,2,3;
 select * from db_index_key where class_name='ddl_0001' order by index_name,class_name,key_attr_name;
 select * from ddl_0001 where col1 <> '08/08/2008' order by 1,2,3;
 update ddl_0001 set col1 = sysdate;

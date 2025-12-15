@@ -47,7 +47,7 @@ insert into t3 values(4);
 update statistics on t3;
 show index in t3; 
 
-select * from db_index where class_name in ('t1', 't2', 't3') order by class_name;
+SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name in ('t1', 't2', 't3') order by class_name;
 
 update statistics on all classes with fullscan;
 update statistics on catalog classes with fullscan;
@@ -56,7 +56,7 @@ show index in t1;
 show index in t2;
 show index in t3;
 
-select * from db_index where class_name in ('t1', 't2', 't3') order by class_name;
+SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name in ('t1', 't2', 't3') order by class_name;
 
 drop table t1;
 drop table t2;

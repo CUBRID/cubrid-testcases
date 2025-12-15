@@ -1,5 +1,5 @@
 --+ holdcas on;
---Create trigger and retrieve the priority from virtual class db_trigger
+--Create trigger and retrieve the priority from virtual class _db_trigger
 
 create class test_class(col1 integer, col2 varchar(20));
 create trigger test_trigger
@@ -9,7 +9,7 @@ create trigger test_trigger
   
 call login('dba') on class db_user;
 select owner, name, priority
-from   db_trigger
+from   _db_trigger
 where  name = 'test_trigger';
 
 drop trigger test_trigger;

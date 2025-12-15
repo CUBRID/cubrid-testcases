@@ -32,7 +32,7 @@ create index idx_substation_3 on substation(station_name desc);
 create index idx_substation_4 on substation(line_id asc, station_id desc);
 create index idx_substation_5 on substation(line_id desc, station_id asc, station_name desc);
 create index idx_substation_6 on substation(station_name asc, line_id desc);
-select * from db_index where class_name='substation' order by 1,2,3;
+SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name='substation' order by 1,2,3;
 select * from db_index_key where class_name='substation' order by index_name,class_name,key_attr_name;
 select * from substation where line_id < 'Line 5' order by 1,2,3;
 update substation set line_id='Line9' where line_id = 'Line 1';

@@ -13,6 +13,6 @@ create index par_index on par_t (pgm_id)  with online;
 
 drop index par_index on par_t;
 
-select * from db_index where index_name like 'par_index%';
+SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where index_name like 'par_index%';
 
 drop table par_t;

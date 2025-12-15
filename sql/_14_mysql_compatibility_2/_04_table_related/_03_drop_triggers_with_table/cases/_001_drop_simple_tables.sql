@@ -20,7 +20,7 @@ drop table u;
 -- select * from db_root;
 
 -- should return 0
-select count(*) as trig_count from db_trigger where name like 'trg';
+select count(*) as trig_count from _db_trigger where name like 'trg';
 
 ----------------------------------------------------------------------------
 
@@ -40,12 +40,12 @@ update t set j = 4;
 -- now disable t2: DROP TABLE (later) should delete even disabled triggers
 alter trigger trg2 status inactive;
 
-select count(*) as trig_count from db_trigger where name like 'trg%';
+select count(*) as trig_count from _db_trigger where name like 'trg%';
 
 drop t;
 
 -- select * from db_root;
-select count(*) as trig_count from db_trigger where name like 'trg%';
+select count(*) as trig_count from _db_trigger where name like 'trg%';
 
 ----------------------------------------------------------------------------
 
@@ -60,5 +60,5 @@ drop class t;
 
 -- check if the trigger is gone
 -- select * from db_root;
-select count(*) as trig_count from db_trigger where name like 'trg';
+select count(*) as trig_count from _db_trigger where name like 'trg';
 

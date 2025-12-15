@@ -55,7 +55,7 @@ drop table t7;
 CREATE TABLE t8 (a int primary key, b int, CONSTRAINT fk_t8 FOREIGN KEY (b) REFERENCES t8 (a));
 alter table t8 add FOREIGN key (b) REFERENCES t8 (a);
 
-select * from _db_index where index_name like '%t8%' order by 2;
+select class_of, index_name, is_unique, key_count, key_attrs, is_reverse, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status from _db_index where index_name like '%t8%' order by 2;
 
 drop table t8;
 --case 9

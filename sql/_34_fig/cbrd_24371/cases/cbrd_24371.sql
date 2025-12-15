@@ -18,12 +18,12 @@
 drop synonym if exists s1;
 create synonym s1 for t1;
 
-select * from db_synonym where synonym_name = 's1';
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym where synonym_name = 's1';
 alter synonym s1 comment 'Change comment without for clause.';
-select * from db_synonym where synonym_name = 's1';
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym where synonym_name = 's1';
 
 alter synonym s1 for t1_new comment 'Change comment with for clause.';
-select * from db_synonym where synonym_name = 's1';
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym where synonym_name = 's1';
 
 --err case
 alter synonym s1 comment 'Change comment with for clause.' for t1_new;
@@ -58,11 +58,11 @@ create synonym s2_3 for t2 comment NULL;
 create synonym s2_4 for t2 comment 'Dummy comment.';
 create synonym s2_5 for t2 comment 'Dummy comment.';
 
-select * from db_synonym where synonym_name in ('s2_1', 's2_2', 's2_3', 's2_4', 's2_5');
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym where synonym_name in ('s2_1', 's2_2', 's2_3', 's2_4', 's2_5');
 create or replace synonym s2_4 for t2_new comment '';
-select * from db_synonym where synonym_name in ('s2_4', 's2_5');
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym where synonym_name in ('s2_4', 's2_5');
 create or replace synonym s2_5 for t2_new;
-select * from db_synonym where synonym_name in ('s2_4', 's2_5');
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym where synonym_name in ('s2_4', 's2_5');
 
 
 /*
@@ -74,19 +74,19 @@ select * from db_synonym where synonym_name in ('s2_4', 's2_5');
 drop synonym if exists s3;
 create synonym s3 for t3 comment 'Dummy comment.';
 
-select * from db_synonym where synonym_name = 's3';
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym where synonym_name = 's3';
 alter synonym s3 for t3_new;
-select * from db_synonym where synonym_name = 's3';
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym where synonym_name = 's3';
 
 --err case
 alter synonym s3 comment NULL;
 
 alter synonym s3 comment '';
-select * from db_synonym where synonym_name = 's3';
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym where synonym_name = 's3';
 alter synonym s3 for t4 comment 'Dummy comment.';
-select * from db_synonym where synonym_name = 's3';
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym where synonym_name = 's3';
 alter synonym s3 for t4_new comment '';
-select * from db_synonym where synonym_name = 's3';
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym where synonym_name = 's3';
 
 
 drop synonym s1;

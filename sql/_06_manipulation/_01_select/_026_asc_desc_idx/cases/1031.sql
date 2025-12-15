@@ -38,7 +38,7 @@ create index idx_city_5 on city(city_id desc, city_name desc);
 create index idx_city_6 on city(city_id asc, city_area desc, city_name desc);
 create index idx_city_7 on city(city_id asc, city_area asc, city_name desc);
 create index idx_city_8 on city(city_name desc, city_area asc, city_id desc);
-select * from db_index where class_name='city' order by 1,2,3;
+SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name='city' order by 1,2,3;
 select * from db_index_key where class_name='city' order by index_name,class_name,key_attr_name;
 select * from city where city_id < 00013 order by 1,2,3;
 update city set city_id = 200001;

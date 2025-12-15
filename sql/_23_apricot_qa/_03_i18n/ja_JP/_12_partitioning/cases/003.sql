@@ -10,11 +10,11 @@ create table list_test(id int not null primary key ,
 			test_string string collate utf8_ja_exp,
 			test_time time)
 PARTITION BY LIST (test_time) (
-    PARTITION p0 VALUES IN ('06:00:00 ÎçÇ°','07:00:00 ÎçÇ°','09:00:00 ÎçÇ°'),
-	PARTITION p1 VALUES IN ('06:00:00 Îçáá','07:00:00 Îçáá','09:00:00 Îçáá')
+    PARTITION p0 VALUES IN ('06:00:00 ï¿½ï¿½Ç°','07:00:00 ï¿½ï¿½Ç°','09:00:00 ï¿½ï¿½Ç°'),
+	PARTITION p1 VALUES IN ('06:00:00 ï¿½ï¿½ï¿½ï¿½','07:00:00 ï¿½ï¿½ï¿½ï¿½','09:00:00 ï¿½ï¿½ï¿½ï¿½')
 );
 
-select * from db_class where class_nÎçÇ°e like 'list%' order by 1;
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where class_nï¿½ï¿½Ç°e like 'list%' order by 1;
 
 
 drop table list_test;

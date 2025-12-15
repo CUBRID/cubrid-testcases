@@ -27,7 +27,7 @@ UPDATE t1 SET col6=' 2008-05-26 14:24:00' WHERE col6='2008-05-26 14:24:0010秒 '
 
 DELETE  FROM t1 WHERE col6=' 2008-05-26 14:24:00';
 --test
-SELECT  * FROM db_index WHERE class_name='t1' order by 1,2;
+SELECT  index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, status, index_type, deduplicate_key_level, comment FROM db_index WHERE class_name='t1' order by 1,2;
 --test
 SELECT  col6 FROM t1 order by col6;
 

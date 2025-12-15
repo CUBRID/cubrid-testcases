@@ -1,5 +1,5 @@
 --+ holdcas on;
---Create trigger and retrieve the information about action_type from db_trigger
+--Create trigger and retrieve the information about action_type from _db_trigger
 
 create class name_list (name varchar(50));
 call login('dba') on class db_user;
@@ -15,7 +15,7 @@ select owner, name,decode(action_type,  1,'INSERT or UPDATE or DELETE or CALL or
                                           3,'INVALIDATE_TRANSCATION',
                                           4,'PRINT',
                                           'unknown Action_type')as action_type
-from   db_trigger
+from   _db_trigger
 where  name = 'test_trigger';
 
 drop trigger test_trigger;

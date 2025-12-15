@@ -45,7 +45,7 @@ insert into t values('02/28/2004 12:00:00 AM',NULL);
 update t set t = '12:00:00 AM 02/28/2008' where t = '12:00:00 AM 02/28/2004';
 
 select * from db_partition where class_name='t' order by 3;
-select * from db_class where class_name='t' or class_name like 't__p__p%' order by 1;
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where class_name='t' or class_name like 't__p__p%' order by 1;
 
 select distinct t from t__p__p101 order by 1 ;
 select distinct t from t__p__p102 order by 1 ;

@@ -19,7 +19,7 @@ insert into test_class values ('Line 4', 4004, 'Guachon');
 insert into test_class values ('Line 4', 4005, 'Kumjung');
 insert into test_class values ('Line 5', 5001, 'Kangdong');
 
-select * from db_index
+select index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status from db_index
 where class_name = 'test_class';
 
 drop class test_class;

@@ -1,5 +1,5 @@
 --+ holdcas on;
---Create triggers with different priority and retrieve the priority from virtual class db_trigger
+--Create triggers with different priority and retrieve the priority from virtual class _db_trigger
 
 create class test_class(col1 integer, col2 varchar(20));
 create class insert_record(col1 varchar(50), insert_time date);
@@ -22,7 +22,7 @@ order by insert_time, col1 asc;
   
 call login('dba') on class db_user;
 select owner, name, priority
-from   db_trigger
+from   _db_trigger
 where  name in ('low_priority_trigger','high_priority_trigger') 
 order by 1,2;
 

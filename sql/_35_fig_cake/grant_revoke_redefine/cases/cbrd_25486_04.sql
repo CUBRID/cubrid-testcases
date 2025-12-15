@@ -44,7 +44,7 @@ call login('dba','') on class db_user;
 evaluate 'check to the u1.tbl removed';
 select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name;
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
-select * from db_class where class_name = 'tbl';
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where class_name = 'tbl';
 
 
 evaluate 'connect to u3 & drop u1.tbl2, success';
@@ -58,7 +58,7 @@ call login('dba','') on class db_user;
 evaluate 'check to the u1.tbl2 removed';
 select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name;
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
-select * from db_class where class_name = 'tbl2';
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where class_name = 'tbl2';
 
 
 evaluate 'Test done';

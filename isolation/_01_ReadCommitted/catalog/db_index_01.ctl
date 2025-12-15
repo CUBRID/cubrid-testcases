@@ -24,7 +24,7 @@ C1: commit;
 C1: CREATE TABLE tb1(id INT primary key,col VARCHAR(10));
 MC: wait until C1 ready;
 
-C2: select * from db_index where class_name like 'tb%';
+C2: select index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status from db_index where class_name like 'tb%';
 MC: wait until C2 ready;
 C1: commit;
 MC: wait until C1 ready;
@@ -35,7 +35,7 @@ MC: sleep 1;
 C1: CREATE TABLE tb2(id INT primary key,col VARCHAR(10));
 MC: wait until C1 ready;
 
-C2: select * from db_index where class_name like 'tb%';
+C2: select index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status from db_index where class_name like 'tb%';
 MC: wait until C2 ready;
 C1: commit;
 C2: commit;

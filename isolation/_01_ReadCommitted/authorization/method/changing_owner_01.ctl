@@ -46,7 +46,7 @@ C1: insert into t1 values (1),(2),(3),(4),(5),(6),(7);
 C1: COMMIT;
 MC: wait until C1 ready;
 
-C1: CALL change_owner ('t1', 'company') ON CLASS db_authorizations; 
+C1: CALL change_owner ('t1', 'company') ON CLASS db_root; 
 C1: GRANT SELECT, ALTER, INDEX, DELETE ON company.t1 TO design;
 C1: COMMIT;
 MC: wait until C1 ready;

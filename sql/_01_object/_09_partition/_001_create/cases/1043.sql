@@ -9,7 +9,7 @@ create table list_test(id int,
 	PARTITION p2 VALUES IN ('2006-04-01 09:00:00','2006-04-11 09:00:00','2006-04-21 09:00:00')
 );
 
-select * from db_class where class_name like 'list%' order by 1;
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where class_name like 'list%' order by 1;
 
 
 drop table list_test;

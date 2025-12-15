@@ -23,50 +23,50 @@ CREATE SYNONYM u1.tbl_v for u1.tbl_v;
 evaluate '2. Error when changing the owner to a non-existent user';
 ALTER TABLE u1.tbl OWNER TO err_user;
 ALTER VIEW u1.tbl_v OWNER TO err_user;
-CALL change_owner ('u1.tbl', 'err_user') ON CLASS db_authorizations;
-CALL change_owner ('u1.tbl_v', 'err_user') ON CLASS db_authorizations;
+CALL change_owner ('u1.tbl', 'err_user') ON CLASS db_root;
+CALL change_owner ('u1.tbl_v', 'err_user') ON CLASS db_root;
 
 evaluate '3. Error when changing the owner using a synonym name';
 ALTER TABLE dba.tbl OWNER TO u2;
 ALTER VIEW dba.tbl_v OWNER TO u2;
-CALL change_owner ('dba.tbl', 'u2') ON CLASS db_authorizations;
-CALL change_owner ('dba.tbl_v', 'u2') ON CLASS db_authorizations;
+CALL change_owner ('dba.tbl', 'u2') ON CLASS db_root;
+CALL change_owner ('dba.tbl_v', 'u2') ON CLASS db_root;
 
 evaluate '4. No-Op when changing the owner to the same owner (self-change)';
 ALTER TABLE u1.tbl OWNER TO u1;
 ALTER VIEW u1.tbl_v OWNER TO u1;
-CALL change_owner ('u1.tbl', 'u1') ON CLASS db_authorizations;
-CALL change_owner ('u1.tbl_v', 'u1') ON CLASS db_authorizations;
+CALL change_owner ('u1.tbl', 'u1') ON CLASS db_root;
+CALL change_owner ('u1.tbl_v', 'u1') ON CLASS db_root;
 
 evaluate '5. Error when changing the owner of a Class/Vclass if a synonym with the same name exists';
 ALTER TABLE u1.tbl OWNER TO dba;
 ALTER VIEW u1.tbl_v OWNER TO dba;
-CALL change_owner ('u1.tbl', 'dba') ON CLASS db_authorizations;
-CALL change_owner ('u1.tbl_v', 'dba') ON CLASS db_authorizations;
+CALL change_owner ('u1.tbl', 'dba') ON CLASS db_root;
+CALL change_owner ('u1.tbl_v', 'dba') ON CLASS db_root;
 
 evaluate '6. Error when changing the owner of a Class/Vclass if a Class/Vclass with the same name already exists';
 ALTER TABLE u1.tbl OWNER TO u2;
 ALTER VIEW u1.tbl_v OWNER TO u2;
-CALL change_owner ('u1.tbl', 'u2') ON CLASS db_authorizations;
-CALL change_owner ('u1.tbl_v', 'u2') ON CLASS db_authorizations;
+CALL change_owner ('u1.tbl', 'u2') ON CLASS db_root;
+CALL change_owner ('u1.tbl_v', 'u2') ON CLASS db_root;
 
 evaluate '7. Error when changing the owner of a non-existent Class/Vclass';
 ALTER TABLE u3.tbl OWNER TO u2;
 ALTER VIEW u3.tbl_v OWNER TO u2;
-CALL change_owner ('u3.tbl', 'u2') ON CLASS db_authorizations;
-CALL change_owner ('u3.tbl_v', 'u2') ON CLASS db_authorizations;
+CALL change_owner ('u3.tbl', 'u2') ON CLASS db_root;
+CALL change_owner ('u3.tbl_v', 'u2') ON CLASS db_root;
 
 evaluate '8. Success case';
 ALTER TABLE u1.tbl OWNER TO u3;
 ALTER VIEW u1.tbl_v OWNER TO u3;
 --Even if the owner is changed, the target_owner_name in the synonym remains invalid, so the following case is not an issue
-SELECT * FROM db_synonym WHERE synonym_name LIKE 'tbl%' order by synonym_name;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym WHERE synonym_name LIKE 'tbl%' order by synonym_name;
 SELECT owner_name, class_name FROM db_class WHERE class_name LIKE 'tbl%' order by owner_name, class_name;
 
-CALL change_owner ('u3.tbl', 'u1') ON CLASS db_authorizations;
-CALL change_owner ('u3.tbl_v', 'u1') ON CLASS db_authorizations;
+CALL change_owner ('u3.tbl', 'u1') ON CLASS db_root;
+CALL change_owner ('u3.tbl_v', 'u1') ON CLASS db_root;
 --Even if the owner is changed, the target_owner_name in the synonym remains invalid, so the following case is not an issue
-SELECT * FROM db_synonym WHERE synonym_name LIKE 'tbl%' order by synonym_name;
+select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym WHERE synonym_name LIKE 'tbl%' order by synonym_name;
 SELECT owner_name, class_name FROM db_class WHERE class_name LIKE 'tbl%' order by owner_name, class_name;
 
 DROP TABLE IF EXISTS u1.tbl;

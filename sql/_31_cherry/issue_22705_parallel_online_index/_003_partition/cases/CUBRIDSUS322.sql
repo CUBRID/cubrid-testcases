@@ -11,4 +11,4 @@ PARTITION p1 VALUES LESS THAN (20)
 
 create index idx_int on range_test__p__p0 (test_int) with online parallel 5;
 drop table range_test;
-select * from db_index where class_name like '%range%';
+SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name like '%range%';

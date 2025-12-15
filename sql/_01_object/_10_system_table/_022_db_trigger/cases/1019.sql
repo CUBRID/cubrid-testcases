@@ -1,5 +1,5 @@
 --+ holdcas on;
---Create trigger and retrieve the information about target_class_attribute from db_trigger
+--Create trigger and retrieve the information about target_class_attribute from _db_trigger
 
 create class test_class(col1 integer, col2 varchar(20));
 create trigger test_trigger
@@ -17,7 +17,7 @@ select owner, name, priority, event,
        decode(target_class_attribute,0,'instance attribute',
                                      1,'class attribute',
                                      'unknown attribute') as target_class_attribute
-from   db_trigger
+from   _db_trigger
 where  name = 'test_trigger';
 
 drop trigger test_trigger;

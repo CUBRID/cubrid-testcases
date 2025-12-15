@@ -1,4 +1,4 @@
---Create trigger and retrieve the information about condition from db_trigger
+--Create trigger and retrieve the information about condition from _db_trigger
 --+ holdcas on;
 create class test_class(col1 integer, col2 varchar(20));
 insert into test_class values(999, 'nhn');
@@ -17,7 +17,7 @@ select owner, name, priority,decode(condition_type,
                                       4,'PRINT','Unknown condition_type')
                               as condition_type,
                               condition
-from   db_trigger
+from   _db_trigger
 where  name = 'test_trigger';
 
 drop trigger test_trigger;

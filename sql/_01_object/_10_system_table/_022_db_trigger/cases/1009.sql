@@ -1,5 +1,5 @@
 --+ holdcas on;
---Create trigger with 'updates statement' event and retrieve the priority from virtual class db_trigger
+--Create trigger with 'updates statement' event and retrieve the priority from virtual class _db_trigger
 
 create class test_class(col1 integer, col2 varchar(20));
 create class op_record(operator varchar(20), 
@@ -30,7 +30,7 @@ select owner, name, priority,decode(event,0,'update',
                                           5,'insert statement',
                                           8,'commit',
                                           9,'rollback','unknown event')as event
-from   db_trigger
+from   _db_trigger
 where  name = 'test_trigger';
 
 drop trigger test_trigger;
