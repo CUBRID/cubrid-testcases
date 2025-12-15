@@ -57,6 +57,8 @@ evaluate 'Q108. When performing a CROSS JOIN, skip ORDER BY can be applied.';
 select /*+ recompile ordered */ 'Q108', a.cola, b.* from tbl_a a, tbl_b b where b.cold = -1 order by a.cola desc limit 70, 10;
 show trace;
 
+drop index idx_cola_colb_colc on tbl_a;
+create index idx_cola_colb on tbl_a (cola, colb);
 evaluate 'Q109. When SORT LIMIT optimization is applied, skip ORDER BY optimization can also be applied together. (LEFT JOIN)';
 select /*+ recompile */ 'Q109', a.*, b.* from tbl_a a left outer join tbl_b b on a.cola = b.cold order by a.cola, a.colb limit 80, 10;
 show trace;
@@ -135,6 +137,8 @@ set system parameters 'sort_limit_max_count=default';
 -- Q125~Q130 : Additional scenarios for skip ORDER BY optimization
 -- ===================================================================
 
+drop index idx_cola_colb on tbl_a;
+create index idx_cola_colb_colc on tbl_a (cola, colb, colc);
 evaluate 'Q125. When the FK-PK relationship exists, skip ORDER BY can be applied even with NO_COVERING_IDX.';
 select /*+ recompile ordered no_covering_idx */ 'Q125', a.*, b.* from tbl_a a, tbl_b b where a.cola = b.cold order by a.cola limit 10, 10;
 show trace;

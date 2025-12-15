@@ -474,6 +474,10 @@ Trace Statistics:
      
 
 ===================================================
+0
+===================================================
+0
+===================================================
     
 Q109. When SORT LIMIT optimization is applied, skip ORDER BY optimization can also be applied together. (LEFT JOIN)     
 
@@ -495,14 +499,14 @@ idx-join (left outer join)
     outer: temp(sort limit)
                subplan: iscan
                             class: a node[?]
-                            index: idx_cola_colb_colc (covers)
+                            index: idx_cola_colb 
                             cost:  ? card ?
                cost:  ? card ?
     inner: iscan
                class: b node[?]
                index: pk_tbl_b_cold term[?]
                cost:  ? card ?
-    sort:  ? asc, ? asc, ? asc
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a left outer join tbl_b b on a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
@@ -512,7 +516,7 @@ trace
 Query Plan:
   NESTED LOOPS (left outer join)
     SORT (limit)
-      INDEX SCAN (a.idx_cola_colb_colc) (covered: true)
+      INDEX SCAN (a.idx_cola_colb) ()
     INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
 
   rewritten query: select 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a left outer join [dba.tbl_b] b on a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
@@ -524,7 +528,7 @@ Trace Statistics:
       MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
         ORDERBY (time: ?, skipsort: true)
      
 
@@ -609,14 +613,14 @@ idx-join (left outer join)
     outer: temp(sort limit)
                subplan: iscan
                             class: a node[?]
-                            index: idx_cola_colb_colc (covers) (desc_index)
+                            index: idx_cola_colb  (desc_index)
                             cost:  ? card ?
                cost:  ? card ?
     inner: iscan
                class: b node[?]
                index: pk_tbl_b_cold term[?]
                cost:  ? card ?
-    sort:  ? desc, ? desc, ? desc
+    sort:  ? desc, ? desc
     cost:  ? card ?
 Query stmt:
 select 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a left outer join tbl_b b on a.cola=b.cold order by ? desc , ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
@@ -626,7 +630,7 @@ trace
 Query Plan:
   NESTED LOOPS (left outer join)
     SORT (limit)
-      INDEX SCAN (a.idx_cola_colb_colc) (covered: true, desc_index: true)
+      INDEX SCAN (a.idx_cola_colb) (desc_index: true)
     INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
 
   rewritten query: select 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a left outer join [dba.tbl_b] b on a.cola=b.cold order by ? desc , ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
@@ -638,7 +642,7 @@ Trace Statistics:
       MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
         ORDERBY (time: ?, skipsort: true)
      
 
@@ -669,7 +673,7 @@ temp
                             subplan: temp(sort limit)
                                          subplan: iscan
                                                       class: a node[?]
-                                                      index: idx_cola_colb_colc (covers)
+                                                      index: idx_cola_colb 
                                                       cost:  ? card ?
                                          cost:  ? card ?
                             cost:  ? card ?
@@ -680,7 +684,7 @@ temp
                                          cost:  ? card ?
                             cost:  ? card ?
                  cost:  ? card ?
-    sort:  ? asc, ? asc, ? asc
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select /*+ USE_MERGE */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a left outer join tbl_b b on a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
@@ -692,7 +696,7 @@ Query Plan:
     MERGE JOIN (left outer join)
       SORT (temp)
         SORT (limit)
-          INDEX SCAN (a.idx_cola_colb_colc) (covered: true)
+          INDEX SCAN (a.idx_cola_colb) ()
       SORT (temp)
         TABLE SCAN (b)
 
@@ -708,7 +712,7 @@ Trace Statistics:
           ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
           SUBQUERY (uncorrelated)
             SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-              SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+              SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
               ORDERBY (time: ?, skipsort: true)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -744,7 +748,7 @@ temp
                             subplan: temp(sort limit)
                                          subplan: iscan
                                                       class: a node[?]
-                                                      index: idx_cola_colb_colc (covers) (desc_index)
+                                                      index: idx_cola_colb  (desc_index)
                                                       cost:  ? card ?
                                          cost:  ? card ?
                             cost:  ? card ?
@@ -755,7 +759,7 @@ temp
                                          cost:  ? card ?
                             cost:  ? card ?
                  cost:  ? card ?
-    sort:  ? desc, ? desc, ? desc
+    sort:  ? desc, ? desc
     cost:  ? card ?
 Query stmt:
 select /*+ USE_MERGE */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a left outer join tbl_b b on a.cola=b.cold order by ? desc , ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
@@ -767,7 +771,7 @@ Query Plan:
     MERGE JOIN (left outer join)
       SORT (temp)
         SORT (limit)
-          INDEX SCAN (a.idx_cola_colb_colc) (covered: true, desc_index: true)
+          INDEX SCAN (a.idx_cola_colb) (desc_index: true)
       SORT (temp)
         TABLE SCAN (b)
 
@@ -783,7 +787,7 @@ Trace Statistics:
           ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
           SUBQUERY (uncorrelated)
             SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-              SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+              SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
               ORDERBY (time: ?, skipsort: true)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -815,13 +819,13 @@ hash-join (left outer join)
     outer: temp(sort limit)
                subplan: iscan
                             class: a node[?]
-                            index: idx_cola_colb_colc (covers)
+                            index: idx_cola_colb 
                             cost:  ? card ?
                cost:  ? card ?
     inner: sscan
                class: b node[?]
                cost:  ? card ?
-    sort:  ? asc, ? asc, ? asc
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a left outer join tbl_b b on a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
@@ -831,7 +835,7 @@ trace
 Query Plan:
   HASH JOIN (left outer join)
     SORT (limit)
-      INDEX SCAN (a.idx_cola_colb_colc) (covered: true)
+      INDEX SCAN (a.idx_cola_colb) ()
     TABLE SCAN (b)
 
   rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a left outer join [dba.tbl_b] b on a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
@@ -850,7 +854,7 @@ Trace Statistics:
             SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
             SUBQUERY (uncorrelated)
               SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+                SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
                 ORDERBY (time: ?, skipsort: true)
      
 
@@ -877,13 +881,13 @@ hash-join (left outer join)
     outer: temp(sort limit)
                subplan: iscan
                             class: a node[?]
-                            index: idx_cola_colb_colc (covers) (desc_index)
+                            index: idx_cola_colb  (desc_index)
                             cost:  ? card ?
                cost:  ? card ?
     inner: sscan
                class: b node[?]
                cost:  ? card ?
-    sort:  ? desc, ? desc, ? desc
+    sort:  ? desc, ? desc
     cost:  ? card ?
 Query stmt:
 select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a left outer join tbl_b b on a.cola=b.cold order by ? desc , ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
@@ -893,7 +897,7 @@ trace
 Query Plan:
   HASH JOIN (left outer join)
     SORT (limit)
-      INDEX SCAN (a.idx_cola_colb_colc) (covered: true, desc_index: true)
+      INDEX SCAN (a.idx_cola_colb) (desc_index: true)
     TABLE SCAN (b)
 
   rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a left outer join [dba.tbl_b] b on a.cola=b.cold order by ? desc , ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
@@ -912,7 +916,7 @@ Trace Statistics:
             SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
             SUBQUERY (uncorrelated)
               SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+                SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
                 ORDERBY (time: ?, skipsort: true)
      
 
@@ -941,13 +945,13 @@ hash-join (left outer join)
     outer: temp(sort limit)
                subplan: iscan
                             class: a node[?]
-                            index: idx_cola_colb_colc (covers)
+                            index: idx_cola_colb 
                             cost:  ? card ?
                cost:  ? card ?
     inner: sscan
                class: b node[?]
                cost:  ? card ?
-    sort:  ? asc, ? asc, ? asc
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a left outer join tbl_b b on a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
@@ -957,7 +961,7 @@ trace
 Query Plan:
   HASH JOIN (left outer join)
     SORT (limit)
-      INDEX SCAN (a.idx_cola_colb_colc) (covered: true)
+      INDEX SCAN (a.idx_cola_colb) ()
     TABLE SCAN (b)
 
   rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a left outer join [dba.tbl_b] b on a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
@@ -975,7 +979,7 @@ Trace Statistics:
             SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
             SUBQUERY (uncorrelated)
               SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+                SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
                 ORDERBY (time: ?, skipsort: true)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -1005,13 +1009,13 @@ hash-join (left outer join)
     outer: temp(sort limit)
                subplan: iscan
                             class: a node[?]
-                            index: idx_cola_colb_colc (covers) (desc_index)
+                            index: idx_cola_colb  (desc_index)
                             cost:  ? card ?
                cost:  ? card ?
     inner: sscan
                class: b node[?]
                cost:  ? card ?
-    sort:  ? desc, ? desc, ? desc
+    sort:  ? desc, ? desc
     cost:  ? card ?
 Query stmt:
 select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a left outer join tbl_b b on a.cola=b.cold order by ? desc , ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
@@ -1021,7 +1025,7 @@ trace
 Query Plan:
   HASH JOIN (left outer join)
     SORT (limit)
-      INDEX SCAN (a.idx_cola_colb_colc) (covered: true, desc_index: true)
+      INDEX SCAN (a.idx_cola_colb) (desc_index: true)
     TABLE SCAN (b)
 
   rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a left outer join [dba.tbl_b] b on a.cola=b.cold order by ? desc , ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
@@ -1039,7 +1043,7 @@ Trace Statistics:
             SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
             SUBQUERY (uncorrelated)
               SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+                SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
                 ORDERBY (time: ?, skipsort: true)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -1069,13 +1073,13 @@ hash-join (left outer join)
     outer: temp(sort limit)
                subplan: iscan
                             class: a node[?]
-                            index: idx_cola_colb_colc (covers)
+                            index: idx_cola_colb 
                             cost:  ? card ?
                cost:  ? card ?
     inner: sscan
                class: b node[?]
                cost:  ? card ?
-    sort:  ? asc, ? asc, ? asc
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select /*+ USE_HASH */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a left outer join tbl_b b on a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
@@ -1085,7 +1089,7 @@ trace
 Query Plan:
   HASH JOIN (left outer join)
     SORT (limit)
-      INDEX SCAN (a.idx_cola_colb_colc) (covered: true)
+      INDEX SCAN (a.idx_cola_colb) ()
     TABLE SCAN (b)
 
   rewritten query: select /*+ USE_HASH */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a left outer join [dba.tbl_b] b on a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
@@ -1104,7 +1108,7 @@ Trace Statistics:
             SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
             SUBQUERY (uncorrelated)
               SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+                SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
                 ORDERBY (time: ?, skipsort: true)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -1134,13 +1138,13 @@ hash-join (left outer join)
     outer: temp(sort limit)
                subplan: iscan
                             class: a node[?]
-                            index: idx_cola_colb_colc (covers) (desc_index)
+                            index: idx_cola_colb  (desc_index)
                             cost:  ? card ?
                cost:  ? card ?
     inner: sscan
                class: b node[?]
                cost:  ? card ?
-    sort:  ? desc, ? desc, ? desc
+    sort:  ? desc, ? desc
     cost:  ? card ?
 Query stmt:
 select /*+ USE_HASH */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a left outer join tbl_b b on a.cola=b.cold order by ? desc , ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
@@ -1150,7 +1154,7 @@ trace
 Query Plan:
   HASH JOIN (left outer join)
     SORT (limit)
-      INDEX SCAN (a.idx_cola_colb_colc) (covered: true, desc_index: true)
+      INDEX SCAN (a.idx_cola_colb) (desc_index: true)
     TABLE SCAN (b)
 
   rewritten query: select /*+ USE_HASH */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a left outer join [dba.tbl_b] b on a.cola=b.cold order by ? desc , ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
@@ -1169,7 +1173,7 @@ Trace Statistics:
             SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
             SUBQUERY (uncorrelated)
               SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+                SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
                 ORDERBY (time: ?, skipsort: true)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -1202,14 +1206,14 @@ idx-join (inner join)
     outer: temp(sort limit)
                subplan: iscan
                             class: a node[?]
-                            index: idx_cola_colb_colc (covers)
+                            index: idx_cola_colb 
                             cost:  ? card ?
                cost:  ? card ?
     inner: iscan
                class: b node[?]
                index: pk_tbl_b_cold term[?]
                cost:  ? card ?
-    sort:  ? asc, ? asc, ? asc
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
@@ -1219,7 +1223,7 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     SORT (limit)
-      INDEX SCAN (a.idx_cola_colb_colc) (covered: true)
+      INDEX SCAN (a.idx_cola_colb) ()
     INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
 
   rewritten query: select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
@@ -1231,7 +1235,7 @@ Trace Statistics:
       MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
         ORDERBY (time: ?, skipsort: true)
      
 
@@ -1253,37 +1257,39 @@ Q121     209     209     209     209     209     209
 Q121     210     210     210     210     210     210     
 
 Query plan:
-idx-join (inner join)
-    outer: iscan
-               class: a node[?]
-               index: idx_cola_colb_colc (covers)
-               cost:  ? card ?
-    inner: iscan
-               class: b node[?]
-               index: pk_tbl_b_cold term[?]
-               filtr: term[?]
-               cost:  ? card ?
-    sort:  ? asc, ? asc, ? asc
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: b node[?]
+                            index: pk_tbl_b_cold term[?]
+                            filtr: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold and b.cold<>-? order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
-/* ---> skip ORDER BY */
 ===================================================
 trace    
 
 Query Plan:
-  NESTED LOOPS (inner join)
-    INDEX SCAN (a.idx_cola_colb_colc) (covered: true)
-    INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold, key filter: b.cold<>-?)
-  skip order by: true
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold, key filter: b.cold<>-?)
 
   rewritten query: select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold and b.cold<>-? order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
       SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: false)
+    ORDERBY (time: ?, topnsort: true)
      
 
 ===================================================
@@ -1311,7 +1317,7 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     SORT (limit)
-      INDEX SCAN (a.idx_cola_colb_colc) (covered: true)
+      INDEX SCAN (a.idx_cola_colb) ()
     INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
 
   rewritten query: select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? + ?:? 
@@ -1323,7 +1329,7 @@ Trace Statistics:
       MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
         ORDERBY (time: ?, skipsort: true)
      
 
@@ -1347,36 +1353,38 @@ Q123     1009     1009     1009     1009     1009     1009
 Q123     1010     1010     1010     1010     1010     1010     
 
 Query plan:
-idx-join (inner join)
-    outer: iscan
-               class: a node[?]
-               index: idx_cola_colb_colc (covers)
-               cost:  ? card ?
-    inner: iscan
-               class: b node[?]
-               index: pk_tbl_b_cold term[?]
-               cost:  ? card ?
-    sort:  ? asc, ? asc, ? asc
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: b node[?]
+                            index: pk_tbl_b_cold term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
-/* ---> skip ORDER BY */
 ===================================================
 trace    
 
 Query Plan:
-  NESTED LOOPS (inner join)
-    INDEX SCAN (a.idx_cola_colb_colc) (covered: true)
-    INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
-  skip order by: true
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
 
   rewritten query: select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
       SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
       MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: false)
+    ORDERBY (time: ?, topnsort: true)
      
 
 ===================================================
@@ -1403,14 +1411,14 @@ idx-join (inner join)
     outer: temp(sort limit)
                subplan: iscan
                             class: a node[?]
-                            index: idx_cola_colb_colc (covers)
+                            index: idx_cola_colb 
                             cost:  ? card ?
                cost:  ? card ?
     inner: iscan
                class: b node[?]
                index: pk_tbl_b_cold term[?]
                cost:  ? card ?
-    sort:  ? asc, ? asc, ? asc
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
@@ -1420,7 +1428,7 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     SORT (limit)
-      INDEX SCAN (a.idx_cola_colb_colc) (covered: true)
+      INDEX SCAN (a.idx_cola_colb) ()
     INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
 
   rewritten query: select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
@@ -1432,10 +1440,14 @@ Trace Statistics:
       MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: false)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
         ORDERBY (time: ?, skipsort: true)
      
 
+===================================================
+0
+===================================================
+0
 ===================================================
 0
 ===================================================
