@@ -81,18 +81,17 @@ count(*)
 10000     
 
 Query plan:
-nl-join (left outer join)
+hash-join (left outer join)
     edge:  term[?]
     outer: sscan
                class: a node[?]
                cost:  ? card ?
     inner: sscan
                class: b node[?]
-               sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from tbl a left outer join tbl b on a.cola=b.cola
+select /*+ USE_HASH */ count(*) from tbl a left outer join tbl b on a.cola=b.cola
 ===================================================
     
 2-2. view     
@@ -102,18 +101,17 @@ count(*)
 10000     
 
 Query plan:
-nl-join (left outer join)
+hash-join (left outer join)
     edge:  term[?]
     outer: sscan
                class: a node[?]
                cost:  ? card ?
     inner: sscan
                class: b node[?]
-               sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from tbl a left outer join tbl b on a.cola=b.cola
+select /*+ USE_HASH */ count(*) from tbl a left outer join tbl b on a.cola=b.cola
 ===================================================
     
 Case 3: constant expression in view select with outer filter (inline view vs view)     
@@ -129,7 +127,7 @@ count(*)
 10009     
 
 Query plan:
-nl-join (left outer join)
+hash-join (left outer join)
     edge:  term[?]
     outer: sscan
                class: a node[?]
@@ -137,11 +135,10 @@ nl-join (left outer join)
                cost:  ? card ?
     inner: sscan
                class: b node[?]
-               sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from tbl a left outer join tbl b on a.cola=(b.cola*?+?) where (a.cola>= ?:?  and a.cola<= ?:? )
+select /*+ USE_HASH */ count(*) from tbl a left outer join tbl b on a.cola=(b.cola*?+?) where (a.cola>= ?:?  and a.cola<= ?:? )
 ===================================================
     
 3-2. view     
@@ -151,7 +148,7 @@ count(*)
 10009     
 
 Query plan:
-nl-join (left outer join)
+hash-join (left outer join)
     edge:  term[?]
     outer: sscan
                class: a node[?]
@@ -159,11 +156,10 @@ nl-join (left outer join)
                cost:  ? card ?
     inner: sscan
                class: b node[?]
-               sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from tbl a left outer join tbl b on a.cola=(b.cola*?+?) where (a.cola>= ?:?  and a.cola<= ?:? )
+select /*+ USE_HASH */ count(*) from tbl a left outer join tbl b on a.cola=(b.cola*?+?) where (a.cola>= ?:?  and a.cola<= ?:? )
 ===================================================
     
 Case 4: grouped view with constant join column (inline view vs view)     
@@ -288,5 +284,71 @@ nl-join (cross join)
     cost:  ? card ?
 Query stmt:
 select count(*) from tbl a, tbl b where (b.cola>= ?:?  and b.cola<= ?:? ) and a.cola= ?:? 
+===================================================
+    
+Case 6: Grouped view with normal column join column (inline view vs view)     
+
+===================================================
+0
+===================================================
+    
+6-1. inline view     
+
+===================================================
+count(*)    
+10000     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: tbl node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select tbl.cola from tbl tbl group by tbl.cola)
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a left outer join (select tbl.cola from tbl tbl group by tbl.cola) b (cola) on a.cola=b.cola
+===================================================
+    
+6-2. view     
+
+===================================================
+count(*)    
+10000     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: b node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select b.cola from tbl b group by b.cola)
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a left outer join (select b.cola from tbl b group by b.cola) b (cola) on a.cola=b.cola
 ===================================================
 0

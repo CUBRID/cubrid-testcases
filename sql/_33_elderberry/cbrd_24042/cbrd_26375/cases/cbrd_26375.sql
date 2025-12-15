@@ -27,12 +27,12 @@ create or replace view v_tbl as
 select cola from tbl;
 
 evaluate '2-1. inline view';
-select /*+ recompile */ count(*)
+select /*+ recompile use_hash */ count(*)
 from tbl a, (select cola from tbl) b
 where a.cola = b.cola(+);
 
 evaluate '2-2. view';
-select /*+ recompile */ count(*)
+select /*+ recompile use_hash */ count(*)
 from tbl a, v_tbl b
 where a.cola = b.cola(+);
 
@@ -42,14 +42,14 @@ select cola * 0 + 1 as cola_expr
 from tbl;
 
 evaluate '3-1. inline view';
-select /*+ recompile */ count(*)
+select /*+ recompile use_hash */ count(*)
 from tbl a,
      (select cola * 0 + 1 as cola_expr from tbl) b
 where a.cola = b.cola_expr(+)
   and a.cola between 1 and 10;
 
 evaluate '3-2. view';
-select /*+ recompile */ count(*)
+select /*+ recompile use_hash */ count(*)
 from tbl a,
      v_tbl_const_expr b
 where a.cola = b.cola_expr(+)
@@ -90,5 +90,23 @@ select /*+ recompile */ count(*)
 from tbl a
      inner join v_tbl_const_key b
        on a.cola = b.cola;
+
+evaluate 'Case 6: Grouped view with normal column join column (inline view vs view)';
+create or replace view v_tbl_group_col as
+select cola, max(colb) as cnt
+from tbl
+group by cola;
+
+evaluate '6-1. inline view';
+select /*+ recompile */ count(*)
+from tbl a,
+     (select cola, max(colb) as cnt from tbl group by cola) b
+where a.cola = b.cola(+);
+
+evaluate '6-2. view';
+select /*+ recompile */ count(*)
+from tbl a,
+     v_tbl_group_col b
+where a.cola = b.cola(+);
 
 drop table if exists tbl;
