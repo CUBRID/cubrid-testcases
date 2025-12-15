@@ -23,7 +23,7 @@ where a.cola = b.cola(+);
 
 evaluate 'Case 2: LEFT OUTER JOIN where view returns a normal column (inline view vs view)';
 -- join key is not a constant; view merge should still be allowed
-acreate or replace view v_tbl as
+create or replace view v_tbl as
 select cola from tbl;
 
 evaluate '2-1. inline view';
