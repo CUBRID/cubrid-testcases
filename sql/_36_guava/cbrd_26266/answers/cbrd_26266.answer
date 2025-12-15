@@ -1,0 +1,344 @@
+===================================================
+    
+Test 1 Setup     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+7
+===================================================
+    
+[TEST 1] orderby_num -> skip order by     
+
+===================================================
+col_a    col_b    
+50     200     
+30     300     
+
+Query plan:
+iscan
+    class: tbl_orderby_num node[?]
+    index: idx_col_a_upper_col_b term[?]
+    sargs: term[?]
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select tbl_orderby_num.col_a, tbl_orderby_num.col_b,  upper( cast(tbl_orderby_num.col_b as varchar)) from tbl_orderby_num tbl_orderby_num where (tbl_orderby_num.col_a> ?:? ) and  upper( cast(tbl_orderby_num.col_b as varchar))> cast('?' as varchar) order by ? desc , ? desc  for orderby_num() between  ?:?  and  ?:? 
+/* ---> skip ORDER BY */
+===================================================
+    
+Test 2 Setup     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+8
+===================================================
+8
+===================================================
+8
+===================================================
+    
+[TEST 2.1] JOIN -> skip order by     
+
+===================================================
+col_a    col_a    
+1     1     
+2     2     
+3     3     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: a node[?]
+               index: idx_join_a_upper_col_a term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx_join_b_col_a term[?] (covers)
+               cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select a.col_a, b.col_a,  upper( cast(a.col_a as varchar)) from tbl_join_a a, tbl_join_b b where  upper( cast(a.col_a as varchar))> cast('?' as varchar) and b.col_a= cast( upper( cast(a.col_a as varchar)) as double) order by ? for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+    
+[TEST 2.2] JOIN -> skip order by (desc)     
+
+===================================================
+col_a    col_a    col_a    col_x    
+5     5     5     1     
+5     5     5     2     
+5     5     5     3     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: iscan
+                          class: a node[?]
+                          index: idx_join_a_upper_col_a term[?] (desc_index)
+                          cost:  ? card ?
+               inner: iscan
+                          class: b node[?]
+                          index: idx_join_b_col_a term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: c node[?]
+               index: idx_join_c_col_a_col_x term[?] (covers)
+               cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select a.col_a, b.col_a, c.col_a, c.col_x,  upper( cast(a.col_a as varchar)) from tbl_join_a a, tbl_join_b b, tbl_join_c c where  upper( cast(a.col_a as varchar))> cast('?' as varchar) and b.col_a= cast( upper( cast(a.col_a as varchar)) as double) and b.col_a=c.col_a order by ? desc  for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+    
+Test 3 Setup     
+
+===================================================
+0
+===================================================
+0
+===================================================
+9
+===================================================
+0
+===================================================
+    
+[TEST 3.1] KEYLIMIT -> skip order by     
+
+===================================================
+col_a    col_b    col_s    
+3     7     three     
+4     6     four     
+5     5     five     
+6     4     six     
+
+Query plan:
+iscan
+    class: tbl_keylimit node[?]
+    index: idx_keylimit_upper_col_a keylimit ?, ? term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tbl_keylimit.col_a, tbl_keylimit.col_b, tbl_keylimit.col_s,  upper( cast(tbl_keylimit.col_a as varchar)) from tbl_keylimit tbl_keylimit where  upper( cast(tbl_keylimit.col_a as varchar))> cast('?' as varchar) using index tbl_keylimit.idx_keylimit_upper_col_a keylimit  ?:? , ?:?  order by ?
+/* ---> skip ORDER BY */
+===================================================
+    
+[TEST 3.2] KEYLIMIT -> skip order by (desc)     
+
+===================================================
+col_a    col_b    col_s    
+5     5     five     
+6     4     six     
+
+Query plan:
+iscan
+    class: tbl_keylimit node[?]
+    index: idx_keylimit_upper_col_a keylimit ?, ? term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tbl_keylimit.col_a, tbl_keylimit.col_b, tbl_keylimit.col_s,  upper( cast(tbl_keylimit.col_a as varchar)) from tbl_keylimit tbl_keylimit where  upper( cast(tbl_keylimit.col_a as varchar))> cast('?' as varchar) using index tbl_keylimit.idx_keylimit_upper_col_a keylimit  ?:? , ?:?  order by ?
+/* ---> skip ORDER BY */
+===================================================
+    
+Test 4 Setup     
+
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+    
+[TEST 4] Multi-column index + function-based 2nd column ORDER BY (equality on 1st) -> skip order by     
+
+===================================================
+seq    titl    
+4     jkl     
+
+Query plan:
+iscan
+    class: tbl_brd_notice node[?]
+    index: idx_brd_id_nvl_notice_yn term[?]
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tbl_brd_notice.seq, tbl_brd_notice.titl, nvl(tbl_brd_notice.notice_yn, 'N') from tbl_brd_notice tbl_brd_notice where tbl_brd_notice.brd_id= ?:?  order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+    
+Test 5 Setup     
+
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+    
+[TEST 5] Multiple equality columns before function-based ORDER BY column -> skip order by     
+
+===================================================
+col_c    col_val    
+cherry     3     
+Banana     2     
+apple     1     
+
+Query plan:
+iscan
+    class: tbl_multi_eq node[?]
+    index: idx_multi_eq_lower term[?] AND term[?]
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tbl_multi_eq.col_c, tbl_multi_eq.col_val,  lower(tbl_multi_eq.col_c) from tbl_multi_eq tbl_multi_eq where tbl_multi_eq.col_b= ?:?  and tbl_multi_eq.col_a= ?:?  order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+    
+Test 6 Setup     
+
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+    
+[TEST 6] Equality on function-based first column, ORDER BY on second column -> skip order by     
+
+===================================================
+col_a    col_b    
+HELLO     3     
+Hello     2     
+hello     1     
+
+Query plan:
+iscan
+    class: tbl_func_eq node[?]
+    index: idx_func_eq_upper term[?]
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tbl_func_eq.col_a, tbl_func_eq.col_b from tbl_func_eq tbl_func_eq where  upper(tbl_func_eq.col_a)= ?:?  order by ? desc 
+/* ---> skip ORDER BY */
+===================================================
+    
+Test 7 Setup     
+
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+    
+[TEST 7] Equality + function-based (trim) ORDER BY ASC -> skip order by     
+
+===================================================
+item_name    
+apple       
+banana     
+ mango      
+  zebra     
+
+Query plan:
+iscan
+    class: tbl_trim_order node[?]
+    index: idx_trim_order term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tbl_trim_order.item_name,  trim(both  from tbl_trim_order.item_name) from tbl_trim_order tbl_trim_order where tbl_trim_order.category= ?:?  order by ?
+/* ---> skip ORDER BY */
+===================================================
+    
+Clean up     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
