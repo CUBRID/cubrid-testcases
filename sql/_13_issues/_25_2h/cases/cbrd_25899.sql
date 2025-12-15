@@ -115,11 +115,32 @@ CONNECT BY PRIOR col1 = parnts_col1
 GROUP  BY col1
 HAVING SYS_CONNECT_BY_PATH(id,'/') LIKE '/Kim%';
 
+evaluate('13. Invalid: CONNECT_BY_ROOT + SYS_CONNECT_BY_PATH + GROUP BY positional reference');
+SELECT /*+ recompile */ CONNECT_BY_ROOT id, SYS_CONNECT_BY_PATH(id,'/') AS path_col
+FROM   tbl
+CONNECT BY PRIOR col1 = parnts_col1
+START WITH parnts_col1 IS NULL
+GROUP BY 1;
+
+evaluate('14. Invalid: CONNECT_BY_ROOT + SYS_CONNECT_BY_PATH + GROUP BY explicit column');
+SELECT /*+ recompile */ col1, CONNECT_BY_ROOT id, SYS_CONNECT_BY_PATH(id,'/') AS path_col
+FROM   tbl
+START WITH parnts_col1 IS NULL
+CONNECT BY PRIOR col1 = parnts_col1
+GROUP BY col1;
+
+evaluate('15. Invalid: CONNECT_BY_ROOT + SYS_CONNECT_BY_PATH alias grouped');
+SELECT /*+ recompile */ CONNECT_BY_ROOT id AS root_id, SYS_CONNECT_BY_PATH(id,'/') AS path_col
+FROM   tbl
+CONNECT BY PRIOR col1 = parnts_col1
+START WITH parnts_col1 IS NULL
+GROUP BY path_col;
+
 ------------------------------------------------------------------------
---  13 – 15  VALID CONTROLS (should succeed)
+--  16 – 18  VALID CONTROLS (should succeed)
 ------------------------------------------------------------------------
 
-evaluate('13. Valid: CONNECT_BY_ROOT without GROUP BY');
+evaluate('16. Valid: CONNECT_BY_ROOT without GROUP BY');
 SELECT /*+ recompile */ col1,
        CONNECT_BY_ROOT id AS root_id
 FROM   tbl
@@ -127,7 +148,7 @@ CONNECT BY PRIOR col1 = parnts_col1
 START WITH parnts_col1 IS NULL
 ORDER  BY col1;
 
-evaluate('14. Valid: SYS_CONNECT_BY_PATH without GROUP BY');
+evaluate('17. Valid: SYS_CONNECT_BY_PATH without GROUP BY');
 SELECT /*+ recompile */ col1,
        SYS_CONNECT_BY_PATH(id,'/') AS full_path
 FROM   tbl
@@ -135,7 +156,7 @@ START WITH parnts_col1 IS NULL
 CONNECT BY PRIOR col1 = parnts_col1
 ORDER  BY col1;
 
-evaluate('15. Valid: CONNECT_BY_ROOT in subquery, outer GROUP BY');
+evaluate('18. Valid: CONNECT_BY_ROOT in subquery, outer GROUP BY');
 SELECT /*+ recompile */ root_id, COUNT(*)
 FROM (
     SELECT /*+ recompile */ CONNECT_BY_ROOT id AS root_id

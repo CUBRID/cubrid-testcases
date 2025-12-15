@@ -78,7 +78,25 @@ Error:-494
 Error:-493
 ===================================================
     
-13. Valid: CONNECT_BY_ROOT without GROUP BY     
+13. Invalid: CONNECT_BY_ROOT + SYS_CONNECT_BY_PATH + GROUP BY positional reference     
+
+===================================================
+Error:-494
+===================================================
+    
+14. Invalid: CONNECT_BY_ROOT + SYS_CONNECT_BY_PATH + GROUP BY explicit column     
+
+===================================================
+Error:-494
+===================================================
+    
+15. Invalid: CONNECT_BY_ROOT + SYS_CONNECT_BY_PATH alias grouped     
+
+===================================================
+Error:-494
+===================================================
+    
+16. Valid: CONNECT_BY_ROOT without GROUP BY     
 
 ===================================================
 col1    root_id    
@@ -92,7 +110,7 @@ col1    root_id
 
 ===================================================
     
-14. Valid: SYS_CONNECT_BY_PATH without GROUP BY     
+17. Valid: SYS_CONNECT_BY_PATH without GROUP BY     
 
 ===================================================
 col1    full_path    
@@ -106,7 +124,7 @@ col1    full_path
 
 ===================================================
     
-15. Valid: CONNECT_BY_ROOT in subquery, outer GROUP BY     
+18. Valid: CONNECT_BY_ROOT in subquery, outer GROUP BY     
 
 ===================================================
 root_id    count(*)    
