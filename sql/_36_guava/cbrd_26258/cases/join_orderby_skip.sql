@@ -4,6 +4,9 @@ drop table if exists tbl_a, tbl_b;
 set trace on;
 create table tbl_a (cola int not null, colb int, colc int);
 create index idx_cola on tbl_a (cola);
+
+-- Keep the data volume at around 100000 rows so that a partitioned hash join can be chosen.
+-- With max_hash_list_scan_size=16k, the hash list is split into 5 partitions during the hash join. (Q116~Q119)
 insert into tbl_a
 with recursive cte (n) as (
     select 1
@@ -144,16 +147,21 @@ select /*+ recompile ordered no_covering_idx */ 'Q125', a.*, b.* from tbl_a a, t
 show trace;
 
 alter table tbl_a drop foreign key fk_cola;
-
-evaluate 'Q125-2. When NO_COVERING_IDX is used and there is no FK-PK relationship, skip ORDER BY should not be applied.';
+evaluate 'Q125-2. After dropping the FK-PK relationship, this test enforces an index scan with USING INDEX and verifies that skip ORDER BY can still be applied even with NO_COVERING_IDX.';
 select /*+ recompile ordered no_covering_idx */ 'Q125-2', a.*, b.* 
 from tbl_a a, tbl_b b 
 where a.cola = b.cold 
+using index a.idx_cola_colb_colc(+)
 order by a.cola limit 10, 10;
 show trace;
 
-evaluate 'Q126. When ORDER BY includes columns from multiple tables, skip ORDER BY should not be applied.';
-select /*+ recompile ordered */ 'Q126', a.cola, b.cole from tbl_a a, tbl_b b where a.cola = b.cold order by a.cola, b.cole limit 10;
+evaluate 'Q126. Even when the driving table uses an index scan, skip ORDER BY cannot be applied if ORDER BY includes columns from multiple tables.';
+select /*+ recompile ordered */ 'Q126', a.cola, b.cole 
+from tbl_a a, tbl_b b 
+where a.cola = b.cold 
+and a.cola between 1 and 100
+using index a.idx_cola_colb_colc(+)
+order by a.cola, b.cole limit 10;
 show trace;
 
 evaluate 'Q127. When DISTINCT is used with ORDER BY and LIMIT, SORT-LIMIT optimization and skip ORDER BY should not be applied.';
@@ -186,6 +194,8 @@ select /*+ recompile ordered */
        'Q130', a.*, b.*
 from   tbl_a a, tbl_b b
 where  a.cola = b.cold
+and a.cola between 1 and 100
+using index a.idx_cola_colb_colc(+)
 order by (a.cola + 10)
 limit 30, 10;
 show trace;

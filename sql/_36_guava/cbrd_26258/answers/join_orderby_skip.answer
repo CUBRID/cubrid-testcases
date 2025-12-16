@@ -1509,7 +1509,7 @@ Trace Statistics:
 0
 ===================================================
     
-Q125-2. When NO_COVERING_IDX is used and there is no FK-PK relationship, skip ORDER BY should not be applied.     
+Q125-2. After dropping the FK-PK relationship, this test enforces an index scan with USING INDEX and verifies that skip ORDER BY can still be applied even with NO_COVERING_IDX.     
 
 ===================================================
 'Q125-2'    cola    colb    colc    cold    cole    colf    
@@ -1525,43 +1525,41 @@ Q125-2     19     19     19     19     19     19
 Q125-2     20     20     20     20     20     20     
 
 Query plan:
-temp(order by)
-    subplan: idx-join (inner join)
-                 outer: sscan
-                            class: a node[?]
-                            cost:  ? card ?
-                 inner: iscan
-                            class: b node[?]
-                            index: pk_tbl_b_cold term[?]
-                            cost:  ? card ?
-                 cost:  ? card ?
-    sort:  ? asc
+idx-join (inner join)
+    outer: iscan
+               class: a node[?]
+               index: idx_cola_colb_colc 
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: pk_tbl_b_cold term[?]
+               cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED NO_COVERING_IDX */ 'Q?-?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+select /*+ ORDERED NO_COVERING_IDX */ 'Q?-?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold using index a.idx_cola_colb_colc(+) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
 ===================================================
 trace    
 
 Query Plan:
-  SORT (order by)
-    NESTED LOOPS (inner join)
-      TABLE SCAN (a)
-      INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
+  NESTED LOOPS (inner join)
+    INDEX SCAN (a.idx_cola_colb_colc) ()
+    INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
+  skip order by: true
 
-  rewritten query: select /*+ ORDERED NO_COVERING_IDX */ 'Q?-?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+  rewritten query: select /*+ ORDERED NO_COVERING_IDX */ 'Q?-?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold using index a.idx_cola_colb_colc(+) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+    SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
       SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: false)
-    ORDERBY (time: ?, topnsort: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
      
 
 ===================================================
     
-Q126. When ORDER BY includes columns from multiple tables, skip ORDER BY should not be applied.     
+Q126. Even when the driving table uses an index scan, skip ORDER BY cannot be applied if ORDER BY includes columns from multiple tables.     
 
 ===================================================
 'Q126'    cola    cole    
@@ -1579,8 +1577,9 @@ Q126     10     10
 Query plan:
 temp(order by)
     subplan: idx-join (inner join)
-                 outer: sscan
+                 outer: iscan
                             class: a node[?]
+                            index: idx_cola_colb_colc term[?] (covers)
                             cost:  ? card ?
                  inner: iscan
                             class: b node[?]
@@ -1590,24 +1589,23 @@ temp(order by)
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ 'Q?', a.cola, b.cole from tbl_a a, tbl_b b where a.cola=b.cold order by ?, ? for orderby_num()<= ?:? 
+select /*+ ORDERED */ 'Q?', a.cola, b.cole from tbl_a a, tbl_b b where a.cola=b.cold and (a.cola>= ?:?  and a.cola<= ?:? ) using index a.idx_cola_colb_colc(+) order by ?, ? for orderby_num()<= ?:? 
 ===================================================
 trace    
 
 Query Plan:
   SORT (order by)
     NESTED LOOPS (inner join)
-      TABLE SCAN (a)
+      INDEX SCAN (a.idx_cola_colb_colc) (key range: (a.cola>= ?:?  and a.cola<= ?:? ), covered: true)
       INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
 
-  rewritten query: select /*+ ORDERED */ 'Q?', a.cola, b.cole from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold order by ?, ? for orderby_num()<= ?:? 
+  rewritten query: select /*+ ORDERED */ 'Q?', a.cola, b.cole from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold and (a.cola>= ?:?  and a.cola<= ?:? ) using index a.idx_cola_colb_colc(+) order by ?, ? for orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+    SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
       SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: false)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
     ORDERBY (time: ?, topnsort: true)
      
 
@@ -1779,8 +1777,9 @@ Q130     40     40     40     40     40     40
 Query plan:
 temp(order by)
     subplan: idx-join (inner join)
-                 outer: sscan
+                 outer: iscan
                             class: a node[?]
+                            index: idx_cola_colb_colc term[?] (covers)
                             cost:  ? card ?
                  inner: iscan
                             class: b node[?]
@@ -1790,24 +1789,23 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf, (a.cola+?) from tbl_a a, tbl_b b where a.cola=b.cold order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf, (a.cola+?) from tbl_a a, tbl_b b where a.cola=b.cold and (a.cola>= ?:?  and a.cola<= ?:? ) using index a.idx_cola_colb_colc(+) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 ===================================================
 trace    
 
 Query Plan:
   SORT (order by)
     NESTED LOOPS (inner join)
-      TABLE SCAN (a)
+      INDEX SCAN (a.idx_cola_colb_colc) (key range: (a.cola>= ?:?  and a.cola<= ?:? ), covered: true)
       INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
 
-  rewritten query: select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf, (a.cola+?) from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+  rewritten query: select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf, (a.cola+?) from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold and (a.cola>= ?:?  and a.cola<= ?:? ) using index a.idx_cola_colb_colc(+) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+    SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
       SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: false)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
     ORDERBY (time: ?, topnsort: true)
      
 
