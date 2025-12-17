@@ -1745,23 +1745,23 @@ temp(order by)
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ 'Q?', a.cola, b.cole from tbl_a a, tbl_b b where a.cola=b.cold and (a.cola>= ?:?  and a.cola<= ?:? ) using index a.idx_cola_colb_colc(+) order by ?, ? for orderby_num()<= ?:? 
+select /*+ ORDERED */ 'Q?', a.cola, b.cole from tbl_a a, tbl_b b where a.cola=b.cold and (a.cola> ?:? ) using index a.idx_cola_colb_colc(+) order by ?, ? for orderby_num()<= ?:? 
 ===================================================
 trace    
 
 Query Plan:
   SORT (order by)
     NESTED LOOPS (inner join)
-      INDEX SCAN (a.idx_cola_colb_colc) (key range: (a.cola>= ?:?  and a.cola<= ?:? ), covered: true)
+      INDEX SCAN (a.idx_cola_colb_colc) (key range: (a.cola> ?:? ), covered: true)
       INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
 
-  rewritten query: select /*+ ORDERED */ 'Q?', a.cola, b.cole from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold and (a.cola>= ?:?  and a.cola<= ?:? ) using index a.idx_cola_colb_colc(+) order by ?, ? for orderby_num()<= ?:? 
+  rewritten query: select /*+ ORDERED */ 'Q?', a.cola, b.cole from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold and (a.cola> ?:? ) using index a.idx_cola_colb_colc(+) order by ?, ? for orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
       SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: false)
     ORDERBY (time: ?, topnsort: true)
      
 

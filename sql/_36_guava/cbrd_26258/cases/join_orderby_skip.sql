@@ -159,7 +159,7 @@ evaluate 'Q126. Even when the driving table uses an index scan, skip ORDER BY ca
 select /*+ recompile ordered */ 'Q126', a.cola, b.cole 
 from tbl_a a, tbl_b b 
 where a.cola = b.cold 
-and a.cola between 1 and 100
+and a.cola > 0
 using index a.idx_cola_colb_colc(+)
 order by a.cola, b.cole limit 10;
 show trace;
