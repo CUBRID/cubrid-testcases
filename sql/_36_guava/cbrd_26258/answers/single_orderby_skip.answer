@@ -1,0 +1,917 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+10000
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+    
+Q001. When a column has no NOT NULL constraint, index scan cannot be performed.     
+
+===================================================
+'Q001'    cola    colb    colc    
+Q001     1     1     1     
+Q001     2     2     2     
+Q001     3     3     3     
+Q001     4     4     4     
+Q001     5     5     5     
+Q001     6     6     6     
+Q001     7     7     7     
+Q001     8     8     8     
+Q001     9     9     9     
+Q001     10     10     0     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tbl_a node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ MATERIALIZE */ tbl_a.cola, tbl_a.colb, tbl_a.colc from tbl_a tbl_a order by ?
+Query plan:
+sscan
+    simple CTE:q node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+with q(cola, colb, colc) as (select /*+ MATERIALIZE */ tbl_a.cola, tbl_a.colb, tbl_a.colc from tbl_a tbl_a order by ?)select 'Q?', q.cola, q.colb, q.colc from q q where (inst_num()<= ?:? )
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].cola, [dba.tbl_a].colb, [dba.tbl_a].colc from [dba.tbl_a] [dba.tbl_a] order by ?
+
+  TABLE SCAN (dba.q)
+
+  rewritten query: with q(cola, colb, colc) as (select /*+ MATERIALIZE */ [dba.tbl_a].cola, [dba.tbl_a].colb, [dba.tbl_a].colc from [dba.tbl_a] [dba.tbl_a] order by ?)select 'Q?', [dba.q].cola, [dba.q].colb, [dba.q].colc from [dba.q] [dba.q] where (inst_num()<= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                  (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+    
+Q002. When a covering index scan cannot be used, skip ORDER BY cannot be applied because the cost is high in the cost comparison.     
+
+===================================================
+0
+===================================================
+'Q002'    cola    colb    colc    
+Q002     1     1     1     
+Q002     2     2     2     
+Q002     3     3     3     
+Q002     4     4     4     
+Q002     5     5     5     
+Q002     6     6     6     
+Q002     7     7     7     
+Q002     8     8     8     
+Q002     9     9     9     
+Q002     10     10     0     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tbl_a node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ MATERIALIZE */ tbl_a.cola, tbl_a.colb, tbl_a.colc from tbl_a tbl_a order by ?
+Query plan:
+sscan
+    simple CTE:q node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+with q(cola, colb, colc) as (select /*+ MATERIALIZE */ tbl_a.cola, tbl_a.colb, tbl_a.colc from tbl_a tbl_a order by ?)select 'Q?', q.cola, q.colb, q.colc from q q where (inst_num()<= ?:? )
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].cola, [dba.tbl_a].colb, [dba.tbl_a].colc from [dba.tbl_a] [dba.tbl_a] order by ?
+
+  TABLE SCAN (dba.q)
+
+  rewritten query: with q(cola, colb, colc) as (select /*+ MATERIALIZE */ [dba.tbl_a].cola, [dba.tbl_a].colb, [dba.tbl_a].colc from [dba.tbl_a] [dba.tbl_a] order by ?)select 'Q?', [dba.q].cola, [dba.q].colb, [dba.q].colc from [dba.q] [dba.q] where (inst_num()<= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                  (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+    
+Q003. Even when a covering index scan cannot be used, skip ORDER BY can be forced by index hints, but performance improvement is not expected.     
+
+===================================================
+'Q003'    cola    colb    colc    
+Q003     1     1     1     
+Q003     2     2     2     
+Q003     3     3     3     
+Q003     4     4     4     
+Q003     5     5     5     
+Q003     6     6     6     
+Q003     7     7     7     
+Q003     8     8     8     
+Q003     9     9     9     
+Q003     10     10     0     
+
+Query plan:
+iscan
+    class: tbl_a node[?]
+    index: i?_cola 
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ MATERIALIZE */ tbl_a.cola, tbl_a.colb, tbl_a.colc from tbl_a tbl_a using index tbl_a.i?_cola(+) order by ?
+/* ---> skip ORDER BY */
+Query plan:
+sscan
+    simple CTE:q node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+with q(cola, colb, colc) as (select /*+ MATERIALIZE */ tbl_a.cola, tbl_a.colb, tbl_a.colc from tbl_a tbl_a using index tbl_a.i?_cola(+) order by ?)select 'Q?', q.cola, q.colb, q.colc from q q where (inst_num()<= ?:? )
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tbl_a.i?_cola) ()
+  skip order by: true
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].cola, [dba.tbl_a].colb, [dba.tbl_a].colc from [dba.tbl_a] [dba.tbl_a] using index [dba.tbl_a].i?_cola(+) order by ?
+
+  TABLE SCAN (dba.q)
+
+  rewritten query: with q(cola, colb, colc) as (select /*+ MATERIALIZE */ [dba.tbl_a].cola, [dba.tbl_a].colb, [dba.tbl_a].colc from [dba.tbl_a] [dba.tbl_a] using index [dba.tbl_a].i?_cola(+) order by ?)select 'Q?', [dba.q].cola, [dba.q].colb, [dba.q].colc from [dba.q] [dba.q] where (inst_num()<= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: dba.tbl_a.i?_cola), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+Q004. When a covering index scan can be used, skip ORDER BY is applied because it is more cost-effective.     
+
+===================================================
+'Q004'    cola    
+Q004     1     
+Q004     2     
+Q004     3     
+Q004     4     
+Q004     5     
+Q004     6     
+Q004     7     
+Q004     8     
+Q004     9     
+Q004     10     
+
+Query plan:
+iscan
+    class: tbl_a node[?]
+    index: i?_cola (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ MATERIALIZE */ tbl_a.cola from tbl_a tbl_a order by ?
+/* ---> skip ORDER BY */
+Query plan:
+sscan
+    simple CTE:q node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+with q(cola) as (select /*+ MATERIALIZE */ tbl_a.cola from tbl_a tbl_a order by ?)select 'Q?', q.cola from q q where (inst_num()<= ?:? )
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tbl_a.i?_cola) (covered: true)
+  skip order by: true
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].cola from [dba.tbl_a] [dba.tbl_a] order by ?
+
+  TABLE SCAN (dba.q)
+
+  rewritten query: with q(cola) as (select /*+ MATERIALIZE */ [dba.tbl_a].cola from [dba.tbl_a] [dba.tbl_a] order by ?)select 'Q?', [dba.q].cola from [dba.q] [dba.q] where (inst_num()<= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: dba.tbl_a.i?_cola), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+    
+Q005. Even if not all index columns are defined as NOT NULL, skip ORDER BY can still be applied as long as the leading column satisfies the requirements.     
+
+===================================================
+0
+===================================================
+0
+===================================================
+'Q005'    cola    colb    
+Q005     1     1     
+Q005     2     2     
+Q005     3     3     
+Q005     4     4     
+Q005     5     5     
+Q005     6     6     
+Q005     7     7     
+Q005     8     8     
+Q005     9     9     
+Q005     10     10     
+
+Query plan:
+iscan
+    class: tbl_a node[?]
+    index: i?_cola_colb (covers)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ MATERIALIZE */ tbl_a.cola, tbl_a.colb from tbl_a tbl_a order by ?, ?
+/* ---> skip ORDER BY */
+Query plan:
+sscan
+    simple CTE:q node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+with q(cola, colb) as (select /*+ MATERIALIZE */ tbl_a.cola, tbl_a.colb from tbl_a tbl_a order by ?, ?)select 'Q?', q.cola, q.colb from q q where (inst_num()<= ?:? )
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tbl_a.i?_cola_colb) (covered: true)
+  skip order by: true
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].cola, [dba.tbl_a].colb from [dba.tbl_a] [dba.tbl_a] order by ?, ?
+
+  TABLE SCAN (dba.q)
+
+  rewritten query: with q(cola, colb) as (select /*+ MATERIALIZE */ [dba.tbl_a].cola, [dba.tbl_a].colb from [dba.tbl_a] [dba.tbl_a] order by ?, ?)select 'Q?', [dba.q].cola, [dba.q].colb from [dba.q] [dba.q] where (inst_num()<= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: dba.tbl_a.i?_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+    
+Q006. When some columns have different sort orders, skip ORDER BY cannot be applied.     
+
+===================================================
+'Q006'    cola    colb    
+Q006     1     1     
+Q006     2     2     
+Q006     3     3     
+Q006     4     4     
+Q006     5     5     
+Q006     6     6     
+Q006     7     7     
+Q006     8     8     
+Q006     9     9     
+Q006     10     10     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tbl_a node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ MATERIALIZE */ tbl_a.cola, tbl_a.colb from tbl_a tbl_a order by ?, ? desc 
+Query plan:
+sscan
+    simple CTE:q node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+with q(cola, colb) as (select /*+ MATERIALIZE */ tbl_a.cola, tbl_a.colb from tbl_a tbl_a order by ?, ? desc )select 'Q?', q.cola, q.colb from q q where (inst_num()<= ?:? )
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].cola, [dba.tbl_a].colb from [dba.tbl_a] [dba.tbl_a] order by ?, ? desc 
+
+  TABLE SCAN (dba.q)
+
+  rewritten query: with q(cola, colb) as (select /*+ MATERIALIZE */ [dba.tbl_a].cola, [dba.tbl_a].colb from [dba.tbl_a] [dba.tbl_a] order by ?, ? desc )select 'Q?', [dba.q].cola, [dba.q].colb from [dba.q] [dba.q] where (inst_num()<= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                  (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+    
+Q007. When all columns have reversed sort orders, skip ORDER BY can be applied.     
+
+===================================================
+'Q007'    cola    colb    
+Q007     10001     20004     
+Q007     10001     20003     
+Q007     10001     20002     
+Q007     10001     20001     
+Q007     10000     10000     
+Q007     9999     9999     
+Q007     9998     9998     
+Q007     9997     9997     
+Q007     9996     9996     
+Q007     9995     9995     
+
+Query plan:
+iscan
+    class: tbl_a node[?]
+    index: i?_cola_colb (covers) (desc_index)
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ MATERIALIZE */ tbl_a.cola, tbl_a.colb from tbl_a tbl_a order by ? desc , ? desc 
+/* ---> skip ORDER BY */
+Query plan:
+sscan
+    simple CTE:q node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+with q(cola, colb) as (select /*+ MATERIALIZE */ tbl_a.cola, tbl_a.colb from tbl_a tbl_a order by ? desc , ? desc )select 'Q?', q.cola, q.colb from q q where (inst_num()<= ?:? )
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tbl_a.i?_cola_colb) (covered: true, desc_index: true)
+  skip order by: true
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].cola, [dba.tbl_a].colb from [dba.tbl_a] [dba.tbl_a] order by ? desc , ? desc 
+
+  TABLE SCAN (dba.q)
+
+  rewritten query: with q(cola, colb) as (select /*+ MATERIALIZE */ [dba.tbl_a].cola, [dba.tbl_a].colb from [dba.tbl_a] [dba.tbl_a] order by ? desc , ? desc )select 'Q?', [dba.q].cola, [dba.q].colb from [dba.q] [dba.q] where (inst_num()<= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: dba.tbl_a.i?_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+    
+Q008. When NO_DESC_IDX hint is used, skip ORDER BY cannot be applied even if all columns have reversed sort orders.     
+
+===================================================
+'Q008'    cola    colb    
+Q008     10001     20004     
+Q008     10001     20003     
+Q008     10001     20002     
+Q008     10001     20001     
+Q008     10000     10000     
+Q008     9999     9999     
+Q008     9998     9998     
+Q008     9997     9997     
+Q008     9996     9996     
+Q008     9995     9995     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tbl_a node[?]
+                 cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_DESC_IDX MATERIALIZE */ tbl_a.cola, tbl_a.colb from tbl_a tbl_a order by ? desc , ? desc 
+Query plan:
+sscan
+    simple CTE:q node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+with q(cola, colb) as (select /*+ NO_DESC_IDX MATERIALIZE */ tbl_a.cola, tbl_a.colb from tbl_a tbl_a order by ? desc , ? desc )select 'Q?', q.cola, q.colb from q q where (inst_num()<= ?:? )
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select /*+ NO_DESC_IDX MATERIALIZE */ [dba.tbl_a].cola, [dba.tbl_a].colb from [dba.tbl_a] [dba.tbl_a] order by ? desc , ? desc 
+
+  TABLE SCAN (dba.q)
+
+  rewritten query: with q(cola, colb) as (select /*+ NO_DESC_IDX MATERIALIZE */ [dba.tbl_a].cola, [dba.tbl_a].colb from [dba.tbl_a] [dba.tbl_a] order by ? desc , ? desc )select 'Q?', [dba.q].cola, [dba.q].colb from [dba.q] [dba.q] where (inst_num()<= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                  (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+    
+Q009. When the first column of ORDER BY has no NOT NULL constraint, skip ORDER BY cannot be applied. (TODO: improvement needed)     
+
+===================================================
+0
+===================================================
+0
+===================================================
+'Q009'    colb    cola    
+Q009     1     1     
+Q009     2     2     
+Q009     3     3     
+Q009     4     4     
+Q009     5     5     
+Q009     6     6     
+Q009     7     7     
+Q009     8     8     
+Q009     9     9     
+Q009     10     10     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tbl_a node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ MATERIALIZE */ tbl_a.colb, tbl_a.cola from tbl_a tbl_a order by ?, ?
+Query plan:
+sscan
+    simple CTE:q node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+with q(colb, cola) as (select /*+ MATERIALIZE */ tbl_a.colb, tbl_a.cola from tbl_a tbl_a order by ?, ?)select 'Q?', q.colb, q.cola from q q where (inst_num()<= ?:? )
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].colb, [dba.tbl_a].cola from [dba.tbl_a] [dba.tbl_a] order by ?, ?
+
+  TABLE SCAN (dba.q)
+
+  rewritten query: with q(colb, cola) as (select /*+ MATERIALIZE */ [dba.tbl_a].colb, [dba.tbl_a].cola from [dba.tbl_a] [dba.tbl_a] order by ?, ?)select 'Q?', [dba.q].colb, [dba.q].cola from [dba.q] [dba.q] where (inst_num()<= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                  (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+    
+Q010. Even without NOT NULL constraints, skip ORDER BY can be applied when IS NOT NULL condition is specified.     
+
+===================================================
+'Q010'    colb    cola    
+Q010     1     1     
+Q010     2     2     
+Q010     3     3     
+Q010     4     4     
+Q010     5     5     
+Q010     6     6     
+Q010     7     7     
+Q010     8     8     
+Q010     9     9     
+Q010     10     10     
+
+Query plan:
+iscan
+    class: tbl_a node[?]
+    index: i?_colb_cola (covers)
+    filtr: term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ MATERIALIZE */ tbl_a.colb, tbl_a.cola from tbl_a tbl_a where tbl_a.colb is not null  order by ?, ?
+/* ---> skip ORDER BY */
+Query plan:
+sscan
+    simple CTE:q node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+with q(colb, cola) as (select /*+ MATERIALIZE */ tbl_a.colb, tbl_a.cola from tbl_a tbl_a where tbl_a.colb is not null  order by ?, ?)select 'Q?', q.colb, q.cola from q q where (inst_num()<= ?:? )
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tbl_a.i?_colb_cola) (key filter: [dba.tbl_a].colb is not null , covered: true)
+  skip order by: true
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].colb, [dba.tbl_a].cola from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].colb is not null  order by ?, ?
+
+  TABLE SCAN (dba.q)
+
+  rewritten query: with q(colb, cola) as (select /*+ MATERIALIZE */ [dba.tbl_a].colb, [dba.tbl_a].cola from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].colb is not null  order by ?, ?)select 'Q?', [dba.q].colb, [dba.q].cola from [dba.q] [dba.q] where (inst_num()<= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: dba.tbl_a.i?_colb_cola), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+    
+Q011. When an index scan is used with indexable predicates, skip ORDER BY can be applied together.     
+
+===================================================
+0
+===================================================
+0
+===================================================
+'Q011'    cola    colb    colc    
+Q011     1     1     1     
+Q011     11     11     1     
+Q011     21     21     1     
+Q011     31     31     1     
+Q011     41     41     1     
+Q011     51     51     1     
+Q011     61     61     1     
+Q011     71     71     1     
+Q011     81     81     1     
+Q011     91     91     1     
+
+Query plan:
+iscan
+    class: tbl_a node[?]
+    index: i?_colc_cola term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ MATERIALIZE */ tbl_a.cola, tbl_a.colb, tbl_a.colc from tbl_a tbl_a where tbl_a.colc= ?:?  order by ?
+/* ---> skip ORDER BY */
+Query plan:
+sscan
+    simple CTE:q node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+with q(cola, colb, colc) as (select /*+ MATERIALIZE */ tbl_a.cola, tbl_a.colb, tbl_a.colc from tbl_a tbl_a where tbl_a.colc= ?:?  order by ?)select 'Q?', q.cola, q.colb, q.colc from q q where (inst_num()<= ?:? )
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tbl_a.i?_colc_cola) (key range: [dba.tbl_a].colc= ?:? )
+  skip order by: true
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].cola, [dba.tbl_a].colb, [dba.tbl_a].colc from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].colc= ?:?  order by ?
+
+  TABLE SCAN (dba.q)
+
+  rewritten query: with q(cola, colb, colc) as (select /*+ MATERIALIZE */ [dba.tbl_a].cola, [dba.tbl_a].colb, [dba.tbl_a].colc from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].colc= ?:?  order by ?)select 'Q?', [dba.q].cola, [dba.q].colb, [dba.q].colc from [dba.q] [dba.q] where (inst_num()<= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: dba.tbl_a.i?_colc_cola), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+Q012. When an index skip scan is used, skip ORDER BY can also be applied.     
+
+===================================================
+0
+===================================================
+0
+===================================================
+'Q012'    cola    colb    colc    
+Q012     1     1     1     
+Q012     11     11     1     
+Q012     21     21     1     
+Q012     31     31     1     
+Q012     41     41     1     
+Q012     51     51     1     
+Q012     61     61     1     
+Q012     71     71     1     
+Q012     81     81     1     
+Q012     91     91     1     
+
+Query plan:
+iscan
+    class: tbl_a node[?]
+    index: i?_cola_colc_colb term[?] (covers) (index skip scan)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS MATERIALIZE */ tbl_a.cola, tbl_a.colb, tbl_a.colc from tbl_a tbl_a where tbl_a.colc= ?:?  order by ?, ?
+/* ---> skip ORDER BY */
+Query plan:
+sscan
+    simple CTE:q node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+with q(cola, colb, colc) as (select /*+ INDEX_SS MATERIALIZE */ tbl_a.cola, tbl_a.colb, tbl_a.colc from tbl_a tbl_a where tbl_a.colc= ?:?  order by ?, ?)select 'Q?', q.cola, q.colb, q.colc from q q where (inst_num()<= ?:? )
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tbl_a.i?_cola_colc_colb) (key range: [dba.tbl_a].colc= ?:? , covered: true)
+  skip order by: true
+
+  rewritten query: select /*+ INDEX_SS MATERIALIZE */ [dba.tbl_a].cola, [dba.tbl_a].colb, [dba.tbl_a].colc from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].colc= ?:?  order by ?, ?
+
+  TABLE SCAN (dba.q)
+
+  rewritten query: with q(cola, colb, colc) as (select /*+ INDEX_SS MATERIALIZE */ [dba.tbl_a].cola, [dba.tbl_a].colb, [dba.tbl_a].colc from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].colc= ?:?  order by ?, ?)select 'Q?', [dba.q].cola, [dba.q].colb, [dba.q].colc from [dba.q] [dba.q] where (inst_num()<= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: dba.tbl_a.i?_cola_colc_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+    
+Q013. skip GROUP BY and skip ORDER BY cannot be applied together.     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+'Q013'    cola    colb    max(tbl_a.colc)    
+Q013     1     1     1     
+Q013     2     2     2     
+Q013     3     3     3     
+Q013     4     4     4     
+Q013     5     5     5     
+Q013     6     6     6     
+Q013     7     7     7     
+Q013     8     8     8     
+Q013     9     9     9     
+Q013     10     10     0     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: tbl_a node[?]
+                 index: i?_cola_colb_colc (covers)
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ MATERIALIZE */ tbl_a.cola, tbl_a.colb, max(tbl_a.colc) from tbl_a tbl_a group by tbl_a.cola order by ?
+/* ---> skip GROUP BY */
+Query plan:
+sscan
+    simple CTE:q node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+with q(cola, colb, [max(tbl_a.colc)]) as (select /*+ MATERIALIZE */ tbl_a.cola, tbl_a.colb, max(tbl_a.colc) from tbl_a tbl_a group by tbl_a.cola order by ?)select 'Q?', q.cola, q.colb, q.[max(tbl_a.colc)] from q q where (inst_num()<= ?:? )
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    INDEX SCAN (dba.tbl_a.i?_cola_colb_colc) (covered: true)
+  group by nosort: true
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].cola, [dba.tbl_a].colb, max([dba.tbl_a].colc) from [dba.tbl_a] [dba.tbl_a] group by [dba.tbl_a].cola order by ?
+
+  TABLE SCAN (dba.q)
+
+  rewritten query: with q(cola, colb, [max(tbl_a.colc)]) as (select /*+ MATERIALIZE */ [dba.tbl_a].cola, [dba.tbl_a].colb, max([dba.tbl_a].colc) from [dba.tbl_a] [dba.tbl_a] group by [dba.tbl_a].cola order by ?)select 'Q?', [dba.q].cola, [dba.q].colb, [dba.q].[max(tbl_a.colc)] from [dba.q] [dba.q] where (inst_num()<= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: dba.tbl_a.i?_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+          GROUPBY (time: ?, hash: false, sort: false, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                  (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+    
+Q014. Even if skip GROUP BY is not applied, skip ORDER BY cannot be applied when GROUP BY exists.     
+
+===================================================
+0
+===================================================
+'Q014'    cola    colb    max(tbl_a.colc)    
+Q014     1     1     1     
+Q014     2     2     2     
+Q014     3     3     3     
+Q014     4     4     4     
+Q014     5     5     5     
+Q014     6     6     6     
+Q014     7     7     7     
+Q014     8     8     8     
+Q014     9     9     9     
+Q014     10     10     0     
+
+Query plan:
+temp(order by)
+    subplan: temp(group by)
+                 subplan: sscan
+                              class: tbl_a node[?]
+                              sargs: term[?]
+                              cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ MATERIALIZE */ tbl_a.cola, tbl_a.colb, max(tbl_a.colc) from tbl_a tbl_a where tbl_a.colb is not null  group by tbl_a.cola using index tbl_a.i?_colb_colc_cola(+) order by ?
+Query plan:
+sscan
+    simple CTE:q node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+with q(cola, colb, [max(tbl_a.colc)]) as (select /*+ MATERIALIZE */ tbl_a.cola, tbl_a.colb, max(tbl_a.colc) from tbl_a tbl_a where tbl_a.colb is not null  group by tbl_a.cola using index tbl_a.i?_colb_colc_cola(+) order by ?)select 'Q?', q.cola, q.colb, q.[max(tbl_a.colc)] from q q where (inst_num()<= ?:? )
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].cola, [dba.tbl_a].colb, max([dba.tbl_a].colc) from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].colb is not null  group by [dba.tbl_a].cola using index [dba.tbl_a].i?_colb_colc_cola(+) order by ?
+
+  TABLE SCAN (dba.q)
+
+  rewritten query: with q(cola, colb, [max(tbl_a.colc)]) as (select /*+ MATERIALIZE */ [dba.tbl_a].cola, [dba.tbl_a].colb, max([dba.tbl_a].colc) from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].colb is not null  group by [dba.tbl_a].cola using index [dba.tbl_a].i?_colb_colc_cola(+) order by ?)select 'Q?', [dba.q].cola, [dba.q].colb, [dba.q].[max(tbl_a.colc)] from [dba.q] [dba.q] where (inst_num()<= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                  (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+    
+Q015. When there is no GROUP BY, skip ORDER BY can be applied.     
+
+===================================================
+'Q015'    cola    colb    
+Q015     1     1     
+Q015     2     2     
+Q015     3     3     
+Q015     4     4     
+Q015     5     5     
+Q015     6     6     
+Q015     7     7     
+Q015     8     8     
+Q015     9     9     
+Q015     10     10     
+
+Query plan:
+iscan
+    class: tbl_a node[?]
+    index: i?_colb_colc_cola (covers)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ MATERIALIZE */ tbl_a.cola, tbl_a.colb from tbl_a tbl_a where tbl_a.colb is not null  order by ?
+/* ---> skip ORDER BY */
+Query plan:
+sscan
+    simple CTE:q node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+with q(cola, colb) as (select /*+ MATERIALIZE */ tbl_a.cola, tbl_a.colb from tbl_a tbl_a where tbl_a.colb is not null  order by ?)select 'Q?', q.cola, q.colb from q q where (inst_num()<= ?:? )
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tbl_a.i?_colb_colc_cola) (key filter: [dba.tbl_a].colb is not null , covered: true)
+  skip order by: true
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].cola, [dba.tbl_a].colb from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].colb is not null  order by ?
+
+  TABLE SCAN (dba.q)
+
+  rewritten query: with q(cola, colb) as (select /*+ MATERIALIZE */ [dba.tbl_a].cola, [dba.tbl_a].colb from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].colb is not null  order by ?)select 'Q?', [dba.q].cola, [dba.q].colb from [dba.q] [dba.q] where (inst_num()<= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: dba.tbl_a.i?_colb_colc_cola), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+0
+===================================================
+0

@@ -1,0 +1,2001 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+100000
+===================================================
+1
+===================================================
+0
+===================================================
+    
+Q101. When a covering index scan cannot be used, it is less cost-effective; therefore, skip ORDER BY cannot be applied.     
+
+===================================================
+'Q101'    cola    colb    colc    cold    cole    colf    
+Q101     1     1     1     1     1     1     
+Q101     2     2     2     2     2     2     
+Q101     3     3     3     3     3     3     
+Q101     4     4     4     4     4     4     
+Q101     5     5     5     5     5     5     
+Q101     6     6     6     6     6     6     
+Q101     7     7     7     7     7     7     
+Q101     8     8     8     8     8     8     
+Q101     9     9     9     9     9     9     
+Q101     10     10     10     10     10     10     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: b node[?]
+                            index: pk_tbl_b_cold term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold order by ? for orderby_num()<= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
+
+  rewritten query: select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold order by ? for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+      SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: false)
+    ORDERBY (time: ?, topnsort: true)
+     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
+===================================================
+    
+Q102. When a covering index scan can be used, it is more cost-effective; therefore, skip ORDER BY can be applied.     
+
+===================================================
+0
+===================================================
+0
+===================================================
+'Q102'    cola    colb    colc    cold    cole    colf    
+Q102     11     11     11     11     11     11     
+Q102     12     12     12     12     12     12     
+Q102     13     13     13     13     13     13     
+Q102     14     14     14     14     14     14     
+Q102     15     15     15     15     15     15     
+Q102     16     16     16     16     16     16     
+Q102     17     17     17     17     17     17     
+Q102     18     18     18     18     18     18     
+Q102     19     19     19     19     19     19     
+Q102     20     20     20     20     20     20     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: a node[?]
+               index: idx_cola_colb_colc (covers)
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: pk_tbl_b_cold term[?]
+               cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    INDEX SCAN (a.idx_cola_colb_colc) (covered: true)
+    INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
+  skip order by: true
+
+  rewritten query: select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
+===================================================
+    
+Q103. When a covering index scan can be used, it is more cost-effective; therefore, skip ORDER BY can be applied. (Descending order)     
+
+===================================================
+'Q103'    cola    colb    colc    cold    cole    colf    
+Q103     99980     99980     99980     99980     99980     99980     
+Q103     99979     99979     99979     99979     99979     99979     
+Q103     99978     99978     99978     99978     99978     99978     
+Q103     99977     99977     99977     99977     99977     99977     
+Q103     99976     99976     99976     99976     99976     99976     
+Q103     99975     99975     99975     99975     99975     99975     
+Q103     99974     99974     99974     99974     99974     99974     
+Q103     99973     99973     99973     99973     99973     99973     
+Q103     99972     99972     99972     99972     99972     99972     
+Q103     99971     99971     99971     99971     99971     99971     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: a node[?]
+               index: idx_cola_colb_colc (covers) (desc_index)
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: pk_tbl_b_cold term[?]
+               cost:  ? card ?
+    sort:  ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    INDEX SCAN (a.idx_cola_colb_colc) (covered: true, desc_index: true)
+    INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
+  skip order by: true
+
+  rewritten query: select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
+===================================================
+    
+Q104. When a covering index scan can be used, it is more cost-effective; therefore, even in SORT-MERGE joins, an index scan can be used for ORDER BY.     
+
+===================================================
+'Q104'    cola    colb    colc    cold    cole    colf    
+Q104     31     31     31     31     31     31     
+Q104     32     32     32     32     32     32     
+Q104     33     33     33     33     33     33     
+Q104     34     34     34     34     34     34     
+Q104     35     35     35     35     35     35     
+Q104     36     36     36     36     36     36     
+Q104     37     37     37     37     37     37     
+Q104     38     38     38     38     38     38     
+Q104     39     39     39     39     39     39     
+Q104     40     40     40     40     40     40     
+
+Query plan:
+temp
+    order: cola[?]
+    subplan: m-join (inner join)
+                 edge:  term[?]
+                 outer: temp
+                            order: cola[?]
+                            subplan: iscan
+                                         class: a node[?]
+                                         index: idx_cola_colb_colc (covers)
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 inner: temp
+                            order: cold[?]
+                            subplan: sscan
+                                         class: b node[?]
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_MERGE */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  SORT (temp)
+    MERGE JOIN (inner join)
+      SORT (temp)
+        INDEX SCAN (a.idx_cola_colb_colc) (covered: true)
+      SORT (temp)
+        TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED USE_MERGE */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
+      MERGELIST (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                  (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                  (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
+===================================================
+    
+Q105. When a covering index scan can be used, it is more cost-effective; therefore, even in SORT-MERGE joins, an index scan can be used for ORDER BY. (Descending order)     
+
+===================================================
+'Q105'    cola    colb    colc    cold    cole    colf    
+Q105     99960     99960     99960     99960     99960     99960     
+Q105     99959     99959     99959     99959     99959     99959     
+Q105     99958     99958     99958     99958     99958     99958     
+Q105     99957     99957     99957     99957     99957     99957     
+Q105     99956     99956     99956     99956     99956     99956     
+Q105     99955     99955     99955     99955     99955     99955     
+Q105     99954     99954     99954     99954     99954     99954     
+Q105     99953     99953     99953     99953     99953     99953     
+Q105     99952     99952     99952     99952     99952     99952     
+Q105     99951     99951     99951     99951     99951     99951     
+
+Query plan:
+temp
+    order: cola[?]
+    subplan: m-join (inner join)
+                 edge:  term[?]
+                 outer: temp
+                            order: cola[?]
+                            subplan: iscan
+                                         class: a node[?]
+                                         index: idx_cola_colb_colc (covers) (desc_index)
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 inner: temp
+                            order: cold[?]
+                            subplan: sscan
+                                         class: b node[?]
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_MERGE */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  SORT (temp)
+    MERGE JOIN (inner join)
+      SORT (temp)
+        INDEX SCAN (a.idx_cola_colb_colc) (covered: true, desc_index: true)
+      SORT (temp)
+        TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED USE_MERGE */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
+      MERGELIST (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                  (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                  (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
+===================================================
+    
+Q106. When a covering index scan can be used, it is more cost-effective; therefore, even in hash joins, an index scan can be used for ORDER BY.     
+
+===================================================
+'Q106'    cola    cold    cole    colf    
+Q106     51     51     51     51     
+Q106     52     52     52     52     
+Q106     53     53     53     53     
+Q106     54     54     54     54     
+Q106     55     55     55     55     
+Q106     56     56     56     56     
+Q106     57     57     57     57     
+Q106     58     58     58     58     
+Q106     59     59     59     59     
+Q106     60     60     60     60     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: iscan
+               class: a node[?]
+               index: idx_cola_colb_colc (covers)
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ 'Q?', a.cola, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    INDEX SCAN (a.idx_cola_colb_colc) (covered: true)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED USE_HASH */ 'Q?', a.cola, b.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
+===================================================
+    
+Q107. When a covering index scan can be used, it is more cost-effective; therefore, even in hash joins, an index scan can be used for ORDER BY. (Descending order)     
+
+===================================================
+'Q107'    cola    cold    cole    colf    
+Q107     99940     99940     99940     99940     
+Q107     99939     99939     99939     99939     
+Q107     99938     99938     99938     99938     
+Q107     99937     99937     99937     99937     
+Q107     99936     99936     99936     99936     
+Q107     99935     99935     99935     99935     
+Q107     99934     99934     99934     99934     
+Q107     99933     99933     99933     99933     
+Q107     99932     99932     99932     99932     
+Q107     99931     99931     99931     99931     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: iscan
+               class: a node[?]
+               index: idx_cola_colb_colc (covers) (desc_index)
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ 'Q?', a.cola, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    INDEX SCAN (a.idx_cola_colb_colc) (covered: true, desc_index: true)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED USE_HASH */ 'Q?', a.cola, b.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
+===================================================
+    
+Q108. When performing a CROSS JOIN, skip ORDER BY can be applied.     
+
+===================================================
+'Q108'    cola    cold    cole    colf    
+Q108     99930     -1     -1     -1     
+Q108     99929     -1     -1     -1     
+Q108     99928     -1     -1     -1     
+Q108     99927     -1     -1     -1     
+Q108     99926     -1     -1     -1     
+Q108     99925     -1     -1     -1     
+Q108     99924     -1     -1     -1     
+Q108     99923     -1     -1     -1     
+Q108     99922     -1     -1     -1     
+Q108     99921     -1     -1     -1     
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: a node[?]
+               index: idx_cola_colb_colc (covers) (desc_index)
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: pk_tbl_b_cold term[?]
+               cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ 'Q?', a.cola, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where b.cold= ?:?  order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (cross join)
+    INDEX SCAN (a.idx_cola_colb_colc) (covered: true, desc_index: true)
+    INDEX SCAN (b.pk_tbl_b_cold) (key range: b.cold= ?:? )
+  skip order by: true
+
+  rewritten query: select /*+ ORDERED */ 'Q?', a.cola, b.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where b.cold= ?:?  order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Q109. When SORT LIMIT optimization is applied, skip ORDER BY optimization can also be applied together. (LEFT JOIN)     
+
+===================================================
+'Q109'    cola    colb    colc    cold    cole    colf    
+Q109     81     81     81     81     81     81     
+Q109     82     82     82     82     82     82     
+Q109     83     83     83     83     83     83     
+Q109     84     84     84     84     84     84     
+Q109     85     85     85     85     85     85     
+Q109     86     86     86     86     86     86     
+Q109     87     87     87     87     87     87     
+Q109     88     88     88     88     88     88     
+Q109     89     89     89     89     89     89     
+Q109     90     90     90     90     90     90     
+
+Query plan:
+idx-join (left outer join)
+    outer: temp(sort limit)
+               subplan: iscan
+                            class: a node[?]
+                            index: idx_cola_colb 
+                            cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: pk_tbl_b_cold term[?]
+               cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a left outer join tbl_b b on a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    SORT (limit)
+      INDEX SCAN (a.idx_cola_colb) ()
+    INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
+
+  rewritten query: select 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a left outer join [dba.tbl_b] b on a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        ORDERBY (time: ?, skipsort: true)
+     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
+===================================================
+    
+Q110. When some columns have different sort orders, skip ORDER BY cannot be applied.     
+
+===================================================
+'Q110'    cola    colb    colc    cold    cole    colf    
+Q110     99910     99910     99910     99910     99910     99910     
+Q110     99909     99909     99909     99909     99909     99909     
+Q110     99908     99908     99908     99908     99908     99908     
+Q110     99907     99907     99907     99907     99907     99907     
+Q110     99906     99906     99906     99906     99906     99906     
+Q110     99905     99905     99905     99905     99905     99905     
+Q110     99904     99904     99904     99904     99904     99904     
+Q110     99903     99903     99903     99903     99903     99903     
+Q110     99902     99902     99902     99902     99902     99902     
+Q110     99901     99901     99901     99901     99901     99901     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (left outer join)
+                 outer: temp(sort limit)
+                            subplan: sscan
+                                         class: a node[?]
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 inner: iscan
+                            class: b node[?]
+                            index: pk_tbl_b_cold term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a left outer join tbl_b b on a.cola=b.cold order by ? desc , ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      SORT (limit)
+        TABLE SCAN (a)
+      INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
+
+  rewritten query: select 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a left outer join [dba.tbl_b] b on a.cola=b.cold order by ? desc , ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    ORDERBY (time: ?, topnsort: true)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+        ORDERBY (time: ?, topnsort: true)
+     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
+===================================================
+    
+Q111. When all columns have the reversed sort order, skip ORDER BY can be applied.     
+
+===================================================
+'Q111'    cola    colb    colc    cold    cole    colf    
+Q111     99900     99900     99900     99900     99900     99900     
+Q111     99899     99899     99899     99899     99899     99899     
+Q111     99898     99898     99898     99898     99898     99898     
+Q111     99897     99897     99897     99897     99897     99897     
+Q111     99896     99896     99896     99896     99896     99896     
+Q111     99895     99895     99895     99895     99895     99895     
+Q111     99894     99894     99894     99894     99894     99894     
+Q111     99893     99893     99893     99893     99893     99893     
+Q111     99892     99892     99892     99892     99892     99892     
+Q111     99891     99891     99891     99891     99891     99891     
+
+Query plan:
+idx-join (left outer join)
+    outer: temp(sort limit)
+               subplan: iscan
+                            class: a node[?]
+                            index: idx_cola_colb  (desc_index)
+                            cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: pk_tbl_b_cold term[?]
+               cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a left outer join tbl_b b on a.cola=b.cold order by ? desc , ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    SORT (limit)
+      INDEX SCAN (a.idx_cola_colb) (desc_index: true)
+    INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
+
+  rewritten query: select 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a left outer join [dba.tbl_b] b on a.cola=b.cold order by ? desc , ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        ORDERBY (time: ?, skipsort: true)
+     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
+===================================================
+    
+Q112. Even when SORT LIMIT optimization is applied, a SORT-MERGE join can still be used.     
+
+===================================================
+'Q112'    cola    colb    colc    cold    cole    colf    
+Q112     111     111     111     111     111     111     
+Q112     112     112     112     112     112     112     
+Q112     113     113     113     113     113     113     
+Q112     114     114     114     114     114     114     
+Q112     115     115     115     115     115     115     
+Q112     116     116     116     116     116     116     
+Q112     117     117     117     117     117     117     
+Q112     118     118     118     118     118     118     
+Q112     119     119     119     119     119     119     
+Q112     120     120     120     120     120     120     
+
+Query plan:
+temp
+    order: cola[?]
+    subplan: m-join (left outer join)
+                 edge:  term[?]
+                 outer: temp
+                            order: cola[?]
+                            subplan: temp(sort limit)
+                                         subplan: iscan
+                                                      class: a node[?]
+                                                      index: idx_cola_colb 
+                                                      cost:  ? card ?
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 inner: temp
+                            order: cold[?]
+                            subplan: sscan
+                                         class: b node[?]
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_MERGE */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a left outer join tbl_b b on a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  SORT (temp)
+    MERGE JOIN (left outer join)
+      SORT (temp)
+        SORT (limit)
+          INDEX SCAN (a.idx_cola_colb) ()
+      SORT (temp)
+        TABLE SCAN (b)
+
+  rewritten query: select /*+ USE_MERGE */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a left outer join [dba.tbl_b] b on a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
+      MERGELIST
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+              ORDERBY (time: ?, skipsort: true)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                  (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
+===================================================
+    
+Q113. Even when SORT LIMIT optimization is applied, a SORT-MERGE join can still be used. (Descending order)     
+
+===================================================
+'Q113'    cola    colb    colc    cold    cole    colf    
+Q113     99880     99880     99880     99880     99880     99880     
+Q113     99879     99879     99879     99879     99879     99879     
+Q113     99878     99878     99878     99878     99878     99878     
+Q113     99877     99877     99877     99877     99877     99877     
+Q113     99876     99876     99876     99876     99876     99876     
+Q113     99875     99875     99875     99875     99875     99875     
+Q113     99874     99874     99874     99874     99874     99874     
+Q113     99873     99873     99873     99873     99873     99873     
+Q113     99872     99872     99872     99872     99872     99872     
+Q113     99871     99871     99871     99871     99871     99871     
+
+Query plan:
+temp
+    order: cola[?]
+    subplan: m-join (left outer join)
+                 edge:  term[?]
+                 outer: temp
+                            order: cola[?]
+                            subplan: temp(sort limit)
+                                         subplan: iscan
+                                                      class: a node[?]
+                                                      index: idx_cola_colb  (desc_index)
+                                                      cost:  ? card ?
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 inner: temp
+                            order: cold[?]
+                            subplan: sscan
+                                         class: b node[?]
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_MERGE */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a left outer join tbl_b b on a.cola=b.cold order by ? desc , ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  SORT (temp)
+    MERGE JOIN (left outer join)
+      SORT (temp)
+        SORT (limit)
+          INDEX SCAN (a.idx_cola_colb) (desc_index: true)
+      SORT (temp)
+        TABLE SCAN (b)
+
+  rewritten query: select /*+ USE_MERGE */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a left outer join [dba.tbl_b] b on a.cola=b.cold order by ? desc , ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
+      MERGELIST
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+              ORDERBY (time: ?, skipsort: true)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                  (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
+===================================================
+    
+Q114. Even when SORT LIMIT optimization is applied, a hash join can still be used.     
+
+===================================================
+'Q114'    cola    colb    colc    cold    cole    colf    
+Q114     131     131     131     131     131     131     
+Q114     132     132     132     132     132     132     
+Q114     133     133     133     133     133     133     
+Q114     134     134     134     134     134     134     
+Q114     135     135     135     135     135     135     
+Q114     136     136     136     136     136     136     
+Q114     137     137     137     137     137     137     
+Q114     138     138     138     138     138     138     
+Q114     139     139     139     139     139     139     
+Q114     140     140     140     140     140     140     
+
+Query plan:
+hash-join (left outer join)
+    edge:  term[?]
+    outer: temp(sort limit)
+               subplan: iscan
+                            class: a node[?]
+                            index: idx_cola_colb 
+                            cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a left outer join tbl_b b on a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (left outer join)
+    SORT (limit)
+      INDEX SCAN (a.idx_cola_colb) ()
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a left outer join [dba.tbl_b] b on a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SUBQUERY (uncorrelated)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+                ORDERBY (time: ?, skipsort: true)
+     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
+===================================================
+    
+Q115. Even when SORT LIMIT optimization is applied, a hash join can still be used. (Descending order)     
+
+===================================================
+'Q115'    cola    colb    colc    cold    cole    colf    
+Q115     99860     99860     99860     99860     99860     99860     
+Q115     99859     99859     99859     99859     99859     99859     
+Q115     99858     99858     99858     99858     99858     99858     
+Q115     99857     99857     99857     99857     99857     99857     
+Q115     99856     99856     99856     99856     99856     99856     
+Q115     99855     99855     99855     99855     99855     99855     
+Q115     99854     99854     99854     99854     99854     99854     
+Q115     99853     99853     99853     99853     99853     99853     
+Q115     99852     99852     99852     99852     99852     99852     
+Q115     99851     99851     99851     99851     99851     99851     
+
+Query plan:
+hash-join (left outer join)
+    edge:  term[?]
+    outer: temp(sort limit)
+               subplan: iscan
+                            class: a node[?]
+                            index: idx_cola_colb  (desc_index)
+                            cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a left outer join tbl_b b on a.cola=b.cold order by ? desc , ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (left outer join)
+    SORT (limit)
+      INDEX SCAN (a.idx_cola_colb) (desc_index: true)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a left outer join [dba.tbl_b] b on a.cola=b.cold order by ? desc , ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SUBQUERY (uncorrelated)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+                ORDERBY (time: ?, skipsort: true)
+     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
+===================================================
+    
+Q116. Even when SORT LIMIT optimization is applied, a partitioned hash join can still be used.     
+
+===================================================
+0
+===================================================
+'Q116'    cola    colb    colc    cold    cole    colf    
+Q116     951     951     951     951     951     951     
+Q116     952     952     952     952     952     952     
+Q116     953     953     953     953     953     953     
+Q116     954     954     954     954     954     954     
+Q116     955     955     955     955     955     955     
+Q116     956     956     956     956     956     956     
+Q116     957     957     957     957     957     957     
+Q116     958     958     958     958     958     958     
+Q116     959     959     959     959     959     959     
+Q116     960     960     960     960     960     960     
+
+Query plan:
+hash-join (left outer join)
+    edge:  term[?]
+    outer: temp(sort limit)
+               subplan: iscan
+                            class: a node[?]
+                            index: idx_cola_colb 
+                            cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a left outer join tbl_b b on a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (left outer join)
+    SORT (limit)
+      INDEX SCAN (a.idx_cola_colb) ()
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a left outer join [dba.tbl_b] b on a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: file+skip)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SUBQUERY (uncorrelated)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+                ORDERBY (time: ?, skipsort: true)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
+===================================================
+    
+Q117. Even when SORT LIMIT optimization is applied, a partitioned hash join can still be used. (Descending order)     
+
+===================================================
+'Q117'    cola    colb    colc    cold    cole    colf    
+Q117     99040     99040     99040     99040     99040     99040     
+Q117     99039     99039     99039     99039     99039     99039     
+Q117     99038     99038     99038     99038     99038     99038     
+Q117     99037     99037     99037     99037     99037     99037     
+Q117     99036     99036     99036     99036     99036     99036     
+Q117     99035     99035     99035     99035     99035     99035     
+Q117     99034     99034     99034     99034     99034     99034     
+Q117     99033     99033     99033     99033     99033     99033     
+Q117     99032     99032     99032     99032     99032     99032     
+Q117     99031     99031     99031     99031     99031     99031     
+
+Query plan:
+hash-join (left outer join)
+    edge:  term[?]
+    outer: temp(sort limit)
+               subplan: iscan
+                            class: a node[?]
+                            index: idx_cola_colb  (desc_index)
+                            cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a left outer join tbl_b b on a.cola=b.cold order by ? desc , ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (left outer join)
+    SORT (limit)
+      INDEX SCAN (a.idx_cola_colb) (desc_index: true)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a left outer join [dba.tbl_b] b on a.cola=b.cold order by ? desc , ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: file+skip)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SUBQUERY (uncorrelated)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+                ORDERBY (time: ?, skipsort: true)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
+===================================================
+    
+Q118. Even when SORT LIMIT optimization is applied, a parallel hash join can still be used.     
+
+===================================================
+'Q118'    cola    colb    colc    cold    cole    colf    
+Q118     971     971     971     971     971     971     
+Q118     972     972     972     972     972     972     
+Q118     973     973     973     973     973     973     
+Q118     974     974     974     974     974     974     
+Q118     975     975     975     975     975     975     
+Q118     976     976     976     976     976     976     
+Q118     977     977     977     977     977     977     
+Q118     978     978     978     978     978     978     
+Q118     979     979     979     979     979     979     
+Q118     980     980     980     980     980     980     
+
+Query plan:
+hash-join (left outer join)
+    edge:  term[?]
+    outer: temp(sort limit)
+               subplan: iscan
+                            class: a node[?]
+                            index: idx_cola_colb 
+                            cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a left outer join tbl_b b on a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (left outer join)
+    SORT (limit)
+      INDEX SCAN (a.idx_cola_colb) ()
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ USE_HASH */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a left outer join [dba.tbl_b] b on a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        PARALLEL (time: ?, fetch: ?, ioread: ?)
+          BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: file+skip)
+          PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SUBQUERY (uncorrelated)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+                ORDERBY (time: ?, skipsort: true)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
+===================================================
+    
+Q119. Even when SORT LIMIT optimization is applied, a parallel hash join can still be used. (Descending order)     
+
+===================================================
+'Q119'    cola    colb    colc    cold    cole    colf    
+Q119     99020     99020     99020     99020     99020     99020     
+Q119     99019     99019     99019     99019     99019     99019     
+Q119     99018     99018     99018     99018     99018     99018     
+Q119     99017     99017     99017     99017     99017     99017     
+Q119     99016     99016     99016     99016     99016     99016     
+Q119     99015     99015     99015     99015     99015     99015     
+Q119     99014     99014     99014     99014     99014     99014     
+Q119     99013     99013     99013     99013     99013     99013     
+Q119     99012     99012     99012     99012     99012     99012     
+Q119     99011     99011     99011     99011     99011     99011     
+
+Query plan:
+hash-join (left outer join)
+    edge:  term[?]
+    outer: temp(sort limit)
+               subplan: iscan
+                            class: a node[?]
+                            index: idx_cola_colb  (desc_index)
+                            cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a left outer join tbl_b b on a.cola=b.cold order by ? desc , ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (left outer join)
+    SORT (limit)
+      INDEX SCAN (a.idx_cola_colb) (desc_index: true)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ USE_HASH */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a left outer join [dba.tbl_b] b on a.cola=b.cold order by ? desc , ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        PARALLEL (time: ?, fetch: ?, ioread: ?)
+          BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: file+skip)
+          PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SUBQUERY (uncorrelated)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+                ORDERBY (time: ?, skipsort: true)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
+===================================================
+0
+===================================================
+    
+Q120. When SORT LIMIT optimization is applied, skip ORDER BY optimization can also be applied together. (FK-PK join)     
+
+===================================================
+0
+===================================================
+'Q120'    cola    colb    colc    cold    cole    colf    
+Q120     191     191     191     191     191     191     
+Q120     192     192     192     192     192     192     
+Q120     193     193     193     193     193     193     
+Q120     194     194     194     194     194     194     
+Q120     195     195     195     195     195     195     
+Q120     196     196     196     196     196     196     
+Q120     197     197     197     197     197     197     
+Q120     198     198     198     198     198     198     
+Q120     199     199     199     199     199     199     
+Q120     200     200     200     200     200     200     
+
+Query plan:
+idx-join (inner join)
+    outer: temp(sort limit)
+               subplan: iscan
+                            class: a node[?]
+                            index: idx_cola_colb 
+                            cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: pk_tbl_b_cold term[?]
+               cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    SORT (limit)
+      INDEX SCAN (a.idx_cola_colb) ()
+    INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
+
+  rewritten query: select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        ORDERBY (time: ?, skipsort: true)
+     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
+===================================================
+    
+Q121. When an additional condition is included on FK-PK columns apart from the join condition, SORT LIMIT optimization cannot be applied.     
+
+===================================================
+'Q121'    cola    colb    colc    cold    cole    colf    
+Q121     201     201     201     201     201     201     
+Q121     202     202     202     202     202     202     
+Q121     203     203     203     203     203     203     
+Q121     204     204     204     204     204     204     
+Q121     205     205     205     205     205     205     
+Q121     206     206     206     206     206     206     
+Q121     207     207     207     207     207     207     
+Q121     208     208     208     208     208     208     
+Q121     209     209     209     209     209     209     
+Q121     210     210     210     210     210     210     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: b node[?]
+                            index: pk_tbl_b_cold term[?]
+                            filtr: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold and b.cold<>-? order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold, key filter: b.cold<>-?)
+
+  rewritten query: select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold and b.cold<>-? order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+      SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: false)
+    ORDERBY (time: ?, topnsort: true)
+     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
+===================================================
+    
+Q122. When a bind variable is used in LIMIT, the initial plan does not apply skip ORDER BY, but once the plan is recompiled for SORT LIMIT execution, skip ORDER BY is applied.     
+
+===================================================
+0
+===================================================
+'Q122'    cola    colb    colc    cold    cole    colf    
+Q122     211     211     211     211     211     211     
+Q122     212     212     212     212     212     212     
+Q122     213     213     213     213     213     213     
+Q122     214     214     214     214     214     214     
+Q122     215     215     215     215     215     215     
+Q122     216     216     216     216     216     216     
+Q122     217     217     217     217     217     217     
+Q122     218     218     218     218     218     218     
+Q122     219     219     219     219     219     219     
+Q122     220     220     220     220     220     220     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    SORT (limit)
+      INDEX SCAN (a.idx_cola_colb) ()
+    INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
+
+  rewritten query: select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? + ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        ORDERBY (time: ?, skipsort: true)
+     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
+===================================================
+    
+Q123. When the LIMIT value exceeds the sort_limit_max_count parameter, SORT LIMIT optimization is not applied; therefore, skip ORDER BY cannot be applied.     
+
+===================================================
+0
+===================================================
+'Q123'    cola    colb    colc    cold    cole    colf    
+Q123     1001     1001     1001     1001     1001     1001     
+Q123     1002     1002     1002     1002     1002     1002     
+Q123     1003     1003     1003     1003     1003     1003     
+Q123     1004     1004     1004     1004     1004     1004     
+Q123     1005     1005     1005     1005     1005     1005     
+Q123     1006     1006     1006     1006     1006     1006     
+Q123     1007     1007     1007     1007     1007     1007     
+Q123     1008     1008     1008     1008     1008     1008     
+Q123     1009     1009     1009     1009     1009     1009     
+Q123     1010     1010     1010     1010     1010     1010     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: b node[?]
+                            index: pk_tbl_b_cold term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
+
+  rewritten query: select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+      SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: false)
+    ORDERBY (time: ?, topnsort: true)
+     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
+===================================================
+    
+Q124. When LIMIT N is smaller than sort_limit_max_count, SORT-LIMIT optimization is applied normally.     
+
+===================================================
+0
+===================================================
+'Q124'    cola    colb    colc    cold    cole    colf    
+Q124     1001     1001     1001     1001     1001     1001     
+Q124     1002     1002     1002     1002     1002     1002     
+Q124     1003     1003     1003     1003     1003     1003     
+Q124     1004     1004     1004     1004     1004     1004     
+Q124     1005     1005     1005     1005     1005     1005     
+Q124     1006     1006     1006     1006     1006     1006     
+Q124     1007     1007     1007     1007     1007     1007     
+Q124     1008     1008     1008     1008     1008     1008     
+Q124     1009     1009     1009     1009     1009     1009     
+Q124     1010     1010     1010     1010     1010     1010     
+
+Query plan:
+idx-join (inner join)
+    outer: temp(sort limit)
+               subplan: iscan
+                            class: a node[?]
+                            index: idx_cola_colb 
+                            cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: pk_tbl_b_cold term[?]
+               cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    SORT (limit)
+      INDEX SCAN (a.idx_cola_colb) ()
+    INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
+
+  rewritten query: select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: false)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        ORDERBY (time: ?, skipsort: true)
+     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Q125. When the FK-PK relationship exists, skip ORDER BY can be applied even with NO_COVERING_IDX.     
+
+===================================================
+'Q125'    cola    colb    colc    cold    cole    colf    
+Q125     11     11     11     11     11     11     
+Q125     12     12     12     12     12     12     
+Q125     13     13     13     13     13     13     
+Q125     14     14     14     14     14     14     
+Q125     15     15     15     15     15     15     
+Q125     16     16     16     16     16     16     
+Q125     17     17     17     17     17     17     
+Q125     18     18     18     18     18     18     
+Q125     19     19     19     19     19     19     
+Q125     20     20     20     20     20     20     
+
+Query plan:
+idx-join (inner join)
+    outer: temp(sort limit)
+               subplan: iscan
+                            class: a node[?]
+                            index: idx_cola_colb_colc 
+                            cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: pk_tbl_b_cold term[?]
+               cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_COVERING_IDX */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    SORT (limit)
+      INDEX SCAN (a.idx_cola_colb_colc) ()
+    INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
+
+  rewritten query: select /*+ ORDERED NO_COVERING_IDX */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        ORDERBY (time: ?, skipsort: true)
+     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
+===================================================
+0
+===================================================
+    
+Q125-2. After dropping the FK-PK relationship, this test enforces an index scan with USING INDEX and verifies that skip ORDER BY can still be applied even with NO_COVERING_IDX.     
+
+===================================================
+'Q125-2'    cola    colb    colc    cold    cole    colf    
+Q125-2     11     11     11     11     11     11     
+Q125-2     12     12     12     12     12     12     
+Q125-2     13     13     13     13     13     13     
+Q125-2     14     14     14     14     14     14     
+Q125-2     15     15     15     15     15     15     
+Q125-2     16     16     16     16     16     16     
+Q125-2     17     17     17     17     17     17     
+Q125-2     18     18     18     18     18     18     
+Q125-2     19     19     19     19     19     19     
+Q125-2     20     20     20     20     20     20     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: a node[?]
+               index: idx_cola_colb_colc 
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: pk_tbl_b_cold term[?]
+               cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_COVERING_IDX */ 'Q?-?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold using index a.idx_cola_colb_colc(+) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    INDEX SCAN (a.idx_cola_colb_colc) ()
+    INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
+  skip order by: true
+
+  rewritten query: select /*+ ORDERED NO_COVERING_IDX */ 'Q?-?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold using index a.idx_cola_colb_colc(+) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
+===================================================
+    
+Q126. Even when the driving table uses an index scan, skip ORDER BY cannot be applied if ORDER BY includes columns from multiple tables.     
+
+===================================================
+'Q126'    cola    cole    
+Q126     1     1     
+Q126     2     2     
+Q126     3     3     
+Q126     4     4     
+Q126     5     5     
+Q126     6     6     
+Q126     7     7     
+Q126     8     8     
+Q126     9     9     
+Q126     10     10     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: a node[?]
+                            index: idx_cola_colb_colc term[?] (covers)
+                            cost:  ? card ?
+                 inner: iscan
+                            class: b node[?]
+                            index: pk_tbl_b_cold term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ 'Q?', a.cola, b.cole from tbl_a a, tbl_b b where a.cola=b.cold and (a.cola> ?:? ) using index a.idx_cola_colb_colc(+) order by ?, ? for orderby_num()<= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      INDEX SCAN (a.idx_cola_colb_colc) (key range: (a.cola> ?:? ), covered: true)
+      INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
+
+  rewritten query: select /*+ ORDERED */ 'Q?', a.cola, b.cole from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold and (a.cola> ?:? ) using index a.idx_cola_colb_colc(+) order by ?, ? for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: false)
+    ORDERBY (time: ?, topnsort: true)
+     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
+===================================================
+    
+Q127. When DISTINCT is used with ORDER BY and LIMIT, SORT-LIMIT optimization and skip ORDER BY should not be applied.     
+
+===================================================
+'Q127'    cola    cold    cole    colf    
+Q127     99930     -1     -1     -1     
+Q127     99929     -1     -1     -1     
+Q127     99928     -1     -1     -1     
+Q127     99927     -1     -1     -1     
+Q127     99926     -1     -1     -1     
+Q127     99925     -1     -1     -1     
+Q127     99924     -1     -1     -1     
+Q127     99923     -1     -1     -1     
+Q127     99922     -1     -1     -1     
+Q127     99921     -1     -1     -1     
+
+Query plan:
+temp(distinct)
+    subplan: nl-join (cross join)
+                 outer: iscan
+                            class: a node[?]
+                            index: idx_cola_colb_colc (covers)
+                            cost:  ? card ?
+                 inner: iscan
+                            class: b node[?]
+                            index: pk_tbl_b_cold term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select distinct 'Q?', a.cola, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where b.cold= ?:?  order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    NESTED LOOPS (cross join)
+      INDEX SCAN (a.idx_cola_colb_colc) (covered: true)
+      INDEX SCAN (b.pk_tbl_b_cold) (key range: b.cold= ?:? )
+
+  rewritten query: select distinct 'Q?', a.cola, b.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where b.cold= ?:?  order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
+===================================================
+    
+Q128. RIGHT JOIN: preserved table (tbl_b) order, skip ORDER BY can be applied.     
+
+===================================================
+'Q128'    cola    colb    colc    cold    cole    colf    
+Q128     50     50     50     50     50     50     
+Q128     51     51     51     51     51     51     
+Q128     52     52     52     52     52     52     
+Q128     53     53     53     53     53     53     
+Q128     54     54     54     54     54     54     
+Q128     55     55     55     55     55     55     
+Q128     56     56     56     56     56     56     
+Q128     57     57     57     57     57     57     
+Q128     58     58     58     58     58     58     
+Q128     59     59     59     59     59     59     
+
+Query plan:
+idx-join (left outer join)
+    outer: temp(sort limit)
+               subplan: iscan
+                            class: b node[?]
+                            index: pk_tbl_b_cold 
+                            cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: a node[?]
+               index: idx_cola_colb_colc term[?] (covers)
+               cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt: [Warning: HINT ignored]
+select 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a right outer join tbl_b b on a.cola=b.cold order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    SORT (limit)
+      INDEX SCAN (b.pk_tbl_b_cold) ()
+    INDEX SCAN (a.idx_cola_colb_colc) (key range: a.cola=b.cold, covered: true)
+
+  rewritten query: select 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a right outer join [dba.tbl_b] b on a.cola=b.cold order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        ORDERBY (time: ?, skipsort: true)
+     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
+===================================================
+    
+Q129. LEFT JOIN + IS NULL anti-join, skip ORDER BY can be applied.     
+
+===================================================
+'Q129'    cola    colb    colc    cold    cole    colf    
+
+Query plan:
+idx-join (left outer join)
+    outer: iscan
+               class: a node[?]
+               index: idx_cola_colb_colc (covers)
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: pk_tbl_b_cold term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    after: term[?]
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a left outer join tbl_b b on a.cola=b.cold where b.cold is null  order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    INDEX SCAN (a.idx_cola_colb_colc) (covered: true)
+    INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
+  skip order by: true
+
+  rewritten query: select 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a left outer join [dba.tbl_b] b on a.cola=b.cold where b.cold is null  order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: false)
+     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
+===================================================
+    
+Q130. ORDER BY uses expression on indexed column; skip ORDER BY should not be applied.     
+
+===================================================
+'Q130'    cola    colb    colc    cold    cole    colf    
+Q130     31     31     31     31     31     31     
+Q130     32     32     32     32     32     32     
+Q130     33     33     33     33     33     33     
+Q130     34     34     34     34     34     34     
+Q130     35     35     35     35     35     35     
+Q130     36     36     36     36     36     36     
+Q130     37     37     37     37     37     37     
+Q130     38     38     38     38     38     38     
+Q130     39     39     39     39     39     39     
+Q130     40     40     40     40     40     40     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: a node[?]
+                            index: idx_cola_colb_colc term[?] (covers)
+                            cost:  ? card ?
+                 inner: iscan
+                            class: b node[?]
+                            index: pk_tbl_b_cold term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf, (a.cola+?) from tbl_a a, tbl_b b where a.cola=b.cold and (a.cola>= ?:?  and a.cola<= ?:? ) using index a.idx_cola_colb_colc(+) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      INDEX SCAN (a.idx_cola_colb_colc) (key range: (a.cola>= ?:?  and a.cola<= ?:? ), covered: true)
+      INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
+
+  rewritten query: select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf, (a.cola+?) from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold and (a.cola>= ?:?  and a.cola<= ?:? ) using index a.idx_cola_colb_colc(+) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    ORDERBY (time: ?, topnsort: true)
+     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+select  trace_stats() from dual dual
+===================================================
+0
+===================================================
+0
