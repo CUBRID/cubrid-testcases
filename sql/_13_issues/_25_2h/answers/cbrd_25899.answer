@@ -116,7 +116,37 @@ Error:-995
 Error:-995
 ===================================================
     
-18. Valid (prepare/execute): SYS_CONNECT_BY_PATH without GROUP BY     
+18. Invalid: CONNECT_BY_ROOT + GROUP BY multiple positional refs (includes root col)     
+
+===================================================
+Error:-494
+===================================================
+    
+19. Invalid: GROUP BY 2 points to CONNECT_BY_ROOT column     
+
+===================================================
+Error:-494
+===================================================
+    
+20. Invalid: GROUP BY expression rewrite (col1 + 0) while selecting CONNECT_BY_ROOT     
+
+===================================================
+Error:-494
+===================================================
+    
+21. Invalid: ORDER SIBLINGS BY present + GROUP BY + CONNECT_BY_ROOT     
+
+===================================================
+Error:-494
+===================================================
+    
+22. Invalid: inner query block mixes CONNECT_BY_ROOT with GROUP BY (outer is plain SELECT)     
+
+===================================================
+Error:-494
+===================================================
+    
+23. Valid (prepare/execute): SYS_CONNECT_BY_PATH without GROUP BY     
 
 ===================================================
 0
@@ -134,7 +164,7 @@ col1    full_path
 0
 ===================================================
     
-19. Valid (prepare/execute + binding): bind var in START WITH + SYS_CONNECT_BY_PATH without GROUP BY     
+24. Valid (prepare/execute + binding): bind var in START WITH + SYS_CONNECT_BY_PATH without GROUP BY     
 
 ===================================================
 0
@@ -152,7 +182,7 @@ col1    full_path
 0
 ===================================================
     
-20. Valid: CONNECT_BY_ROOT without GROUP BY     
+25. Valid: CONNECT_BY_ROOT without GROUP BY     
 
 ===================================================
 col1    root_id    
@@ -166,7 +196,7 @@ col1    root_id
 
 ===================================================
     
-21. Valid: SYS_CONNECT_BY_PATH without GROUP BY     
+26. Valid: SYS_CONNECT_BY_PATH without GROUP BY     
 
 ===================================================
 col1    full_path    
@@ -180,7 +210,7 @@ col1    full_path
 
 ===================================================
     
-22. Valid: CONNECT_BY_ROOT in subquery, outer GROUP BY     
+27. Valid: CONNECT_BY_ROOT in subquery, outer GROUP BY     
 
 ===================================================
 root_id    count(*)    
