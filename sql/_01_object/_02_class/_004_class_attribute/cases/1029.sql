@@ -12,7 +12,7 @@ create class picture
 class attribute (meal_type string default 'a' unique)
 (menu picture);
  
- select * FROM db_attribute WHere class_name='meal';
+ select attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment FROM db_attribute WHere class_name='meal';
  
  SELECT picture INTO a FROM picture where image='s';
  

@@ -502,7 +502,7 @@ select class_name, owner_name, class_type, is_system_class, tde_algorithm, parti
 select * from db_direct_super_class order by owner_name, class_name;
 select * from db_partition order by owner_name, partition_class_name;
 select * from db_vclass where vclass_name in ('v1') order by owner_name, vclass_name;
-select * from db_attribute where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
+select attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment from db_attribute where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_attr_setdomain_elm where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_auth where object_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, grantor_name, grantee_name, object_name, auth_type;
 SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
@@ -525,7 +525,7 @@ select class_name, owner_name, class_type, is_system_class, tde_algorithm, parti
 select * from db_direct_super_class order by owner_name, class_name;
 select * from db_partition order by owner_name, partition_class_name;
 select * from db_vclass where vclass_name in ('v1') order by owner_name, vclass_name;
-select * from db_attribute where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
+select attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment from db_attribute where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_attr_setdomain_elm where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_auth where object_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, grantor_name, grantee_name, object_name, auth_type;
 SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
@@ -548,7 +548,7 @@ select class_name, owner_name, class_type, is_system_class, tde_algorithm, parti
 select * from db_direct_super_class order by owner_name, class_name;
 select * from db_partition order by owner_name, partition_class_name;
 select * from db_vclass where vclass_name in ('v1') order by owner_name, vclass_name;
-select * from db_attribute where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
+select attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment from db_attribute where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_attr_setdomain_elm where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_auth where object_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, grantor_name, grantee_name, object_name, auth_type;
 SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
@@ -571,7 +571,7 @@ select class_name, owner_name, class_type, is_system_class, tde_algorithm, parti
 select * from db_direct_super_class order by owner_name, class_name;
 select * from db_partition order by owner_name, partition_class_name;
 select * from db_vclass where vclass_name in ('v1') order by owner_name, vclass_name;
-select * from db_attribute where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
+select attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment from db_attribute where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_attr_setdomain_elm where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_auth where object_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, grantor_name, grantee_name, object_name, auth_type;
 SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
@@ -594,7 +594,7 @@ select class_name, owner_name, class_type, is_system_class, tde_algorithm, parti
 select * from db_direct_super_class order by owner_name, class_name;
 select * from db_partition order by owner_name, partition_class_name;
 select * from db_vclass where vclass_name in ('v1') order by owner_name, vclass_name;
-select * from db_attribute where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
+select attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment from db_attribute where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_attr_setdomain_elm where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_auth where object_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, grantor_name, grantee_name, object_name, auth_type;
 SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
@@ -617,7 +617,7 @@ select class_name, owner_name, class_type, is_system_class, tde_algorithm, parti
 select * from db_direct_super_class order by owner_name, class_name;
 select * from db_partition order by owner_name, partition_class_name;
 select * from db_vclass where vclass_name in ('v1') order by owner_name, vclass_name;
-select * from db_attribute where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
+select attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment from db_attribute where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_attr_setdomain_elm where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_auth where object_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, grantor_name, grantee_name, object_name, auth_type;
 SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
@@ -640,7 +640,7 @@ select class_name, owner_name, class_type, is_system_class, tde_algorithm, parti
 select * from db_direct_super_class order by owner_name, class_name;
 select * from db_partition order by owner_name, partition_class_name;
 select * from db_vclass where vclass_name in ('v1') order by owner_name, vclass_name;
-select * from db_attribute where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
+select attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment from db_attribute where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_attr_setdomain_elm where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_auth where object_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, grantor_name, grantee_name, object_name, auth_type;
 SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
@@ -663,7 +663,7 @@ select class_name, owner_name, class_type, is_system_class, tde_algorithm, parti
 select * from db_direct_super_class order by owner_name, class_name;
 select * from db_partition order by owner_name, partition_class_name;
 select * from db_vclass where vclass_name in ('v1') order by owner_name, vclass_name;
-select * from db_attribute where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
+select attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment from db_attribute where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_attr_setdomain_elm where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_auth where object_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, grantor_name, grantee_name, object_name, auth_type;
 SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
@@ -687,7 +687,7 @@ select class_name, owner_name, class_type, is_system_class, tde_algorithm, parti
 select * from db_direct_super_class order by owner_name, class_name;
 select * from db_partition order by owner_name, partition_class_name;
 select * from db_vclass where vclass_name in ('v1') order by owner_name, vclass_name;
-select * from db_attribute where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
+select attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment from db_attribute where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_attr_setdomain_elm where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_auth where object_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, grantor_name, grantee_name, object_name, auth_type;
 SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;
@@ -711,7 +711,7 @@ select class_name, owner_name, class_type, is_system_class, tde_algorithm, parti
 select * from db_direct_super_class order by owner_name, class_name;
 select * from db_partition order by owner_name, partition_class_name;
 select * from db_vclass where vclass_name in ('v1') order by owner_name, vclass_name;
-select * from db_attribute where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
+select attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment from db_attribute where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_attr_setdomain_elm where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, attr_name;
 select * from db_auth where object_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, grantor_name, grantee_name, object_name, auth_type;
 SELECT index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, comment, status FROM db_index where class_name in (select class_name from db_class where is_system_class = 'NO') order by owner_name, class_name, index_name;

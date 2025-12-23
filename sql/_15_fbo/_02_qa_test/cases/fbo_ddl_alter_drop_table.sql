@@ -41,7 +41,7 @@ insert into acd_t values (1, 2.0001);
 alter table acd_t add column image blob;
 alter table acd_t add column text clob;
 insert into acd_t values (2, 3.333, bit_to_blob(B'0101'), char_to_clob('alter and insert'));
-select * from db_attribute where class_name='acd_t' order by attr_name;
+select attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment from db_attribute where class_name='acd_t' order by attr_name;
 select a, b, blob_to_bit(image), clob_to_char(text) from acd_t order by a;
 
 --add blob/clob column with the same name as the existed column
@@ -53,7 +53,7 @@ alter table acd_t add column text clob;
 --change blob/clob column name
 alter table acd_t rename column image as photo;
 alter table acd_t rename column text as doc;
-select * from db_attribute where class_name='acd_t' order by attr_name;
+select attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment from db_attribute where class_name='acd_t' order by attr_name;
 select blob_to_bit(photo), clob_to_char(doc) from acd_t;
 
 --change column name to the same name as the original one
@@ -65,7 +65,7 @@ alter table acd_t rename column doc as doc;
 --drop blob/clob column
 alter table acd_t drop column photo;
 alter table acd_t drop column doc;
-select * from db_attribute where class_name='acd_t' order by attr_name;
+select attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment from db_attribute where class_name='acd_t' order by attr_name;
 --error
 select blob_to_bit(photo), clob_to_char(doc) from acd_t;
 
@@ -73,7 +73,7 @@ select blob_to_bit(photo), clob_to_char(doc) from acd_t;
 alter table acd_t add column image blob;
 alter table acd_t add column text clob;
 alter table acd_t drop column text, b;
-select * from db_attribute where class_name='acd_t' order by attr_name;
+select attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment from db_attribute where class_name='acd_t' order by attr_name;
 
 delete from acd_t;
 drop table acd_t;
@@ -104,7 +104,7 @@ alter table acd2_t add column a7 blob auto_increment;
 --error
 alter table acd2_t add column a8 blob shared bit_to_blob(X'010010') not null;
 
-select * from db_attribute where class_name='acd2_t' order by attr_name;
+select attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment from db_attribute where class_name='acd2_t' order by attr_name;
 
 
 --add clob column with shared constraint
@@ -127,19 +127,19 @@ alter table acd2_t add column a12 clob auto_increment;
 --error
 alter table acd2_tacd2_t add column a13 clob shared char_to_clob('hahaha') not null;
 
-select * from db_attribute where class_name='acd2_t' order by attr_name;
+select attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment from db_attribute where class_name='acd2_t' order by attr_name;
 
 --change the name of blob/clob with constraints 
 alter table acd2_t add column a4 blob;
 alter table acd2_t add column a5 clob;
 alter table acd2_t rename column a4 as new1;
 alter table acd2_t rename column a5 as new2;
-select * from db_attribute where class_name='acd2_t' order by attr_name;
+select attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment from db_attribute where class_name='acd2_t' order by attr_name;
 
 
 --drop blob/clob column with constraints
 alter table acd2_t drop column new1, new2;
-select * from db_attribute where class_name='acd2_t' order by attr_name;
+select attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment from db_attribute where class_name='acd2_t' order by attr_name;
 
 delete from acd2_t;
 drop table acd2_t;

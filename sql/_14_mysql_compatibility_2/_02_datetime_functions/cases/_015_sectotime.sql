@@ -55,7 +55,7 @@ drop table sec_to_time_tests;
 
 create table sec_to_time_tests as select sec_to_time('2010-01-02') as [ sec_to_time('2010-01-02')];
 
-SELECT * FROM db_attribute where class_name='sec_to_time_tests';
+SELECT attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment FROM db_attribute where class_name='sec_to_time_tests';
 
 select * from sec_to_time_tests;
 
@@ -178,7 +178,7 @@ drop table sec_to_time_tests;
 
 create table sec_to_time_tests as select sec_to_time('2010-01-02') as [ sec_to_time('2010-01-02')];
 
-SELECT * FROM db_attribute where class_name='sec_to_time_tests';
+SELECT attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment FROM db_attribute where class_name='sec_to_time_tests';
 
 select * from sec_to_time_tests;
 

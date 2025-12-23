@@ -24,7 +24,7 @@ drop if exists xoo;
 
 create class xoo ( id int not null, name string ,cte_M49Ny5GHW timestamp on update current_timestamp);
 
-select * from db_attribute where class_name = 'xoo' order by 1;
+select attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment from db_attribute where class_name = 'xoo' order by 1;
 
 drop xoo;
 
@@ -43,7 +43,7 @@ update xoo set title = 'ddd' where title = 'ccc';
 set @a=(current_timestamp);
 select if(@a-cte_FklWcrEYJ >=0 and @a-cte_FklWcrEYJ<10,'ok','nok') from xoo where title = 'ddd';
 
-select * from db_attribute where class_name = 'xoo' order by 1;
+select attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment from db_attribute where class_name = 'xoo' order by 1;
 
 drop variable @a;
 drop class xoo;

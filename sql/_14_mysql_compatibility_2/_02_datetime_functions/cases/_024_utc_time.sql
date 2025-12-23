@@ -11,7 +11,7 @@ DROP VIEW v1;
 
 CREATE TABLE t1 as select UTC_TIME() as [ utc_time() ] from db_root;
 
-SELECT * FROM db_attribute where class_name='t1';
+SELECT attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment FROM db_attribute where class_name='t1';
 
 DROP TABLE t1;
 
