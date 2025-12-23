@@ -24,7 +24,7 @@ INSERT INTO tbl VALUES
 (7 ,6   ,'Brown');
 
 ------------------------------------------------------------------------
---  1 – 12  INVALID CASES (should raise -49x semantic errors)
+--  1 – 17  INVALID CASES (should raise -49x semantic errors)
 ------------------------------------------------------------------------
 
 evaluate('1. Invalid: CONNECT_BY_ROOT + GROUP BY positional reference');
@@ -136,11 +136,55 @@ CONNECT BY PRIOR col1 = parnts_col1
 START WITH parnts_col1 IS NULL
 GROUP BY path_col;
 
+evaluate('16. Invalid (prepare/execute): SYS_CONNECT_BY_PATH + GROUP BY explicit column');
+prepare stmt from
+'SELECT /*+ recompile */ col1,
+        SYS_CONNECT_BY_PATH(id,''/'') AS path
+ FROM   tbl
+ CONNECT BY PRIOR col1 = parnts_col1
+ START WITH parnts_col1 IS NULL
+ GROUP  BY col1';
+execute stmt;
+drop prepare stmt;
+
+evaluate('17. Invalid (prepare/execute + binding): bind var in START WITH + SYS_CONNECT_BY_PATH + GROUP BY explicit column');
+prepare stmt from
+'SELECT /*+ recompile */ col1,
+        SYS_CONNECT_BY_PATH(id,''/'') AS path
+ FROM   tbl
+ CONNECT BY PRIOR col1 = parnts_col1
+ START WITH parnts_col1 IS NULL AND id <> ?
+ GROUP  BY col1';
+execute stmt using '__dummy__';
+drop prepare stmt;
+
 ------------------------------------------------------------------------
---  16 – 18  VALID CONTROLS (should succeed)
+--  18 – 22  VALID CONTROLS (should succeed)
 ------------------------------------------------------------------------
 
-evaluate('16. Valid: CONNECT_BY_ROOT without GROUP BY');
+evaluate('18. Valid (prepare/execute): SYS_CONNECT_BY_PATH without GROUP BY');
+prepare stmt from
+'SELECT /*+ recompile */ col1,
+        SYS_CONNECT_BY_PATH(id,''/'') AS full_path
+ FROM   tbl
+ START WITH parnts_col1 IS NULL
+ CONNECT BY PRIOR col1 = parnts_col1
+ ORDER  BY col1';
+execute stmt;
+drop prepare stmt;
+
+evaluate('19. Valid (prepare/execute + binding): bind var in START WITH + SYS_CONNECT_BY_PATH without GROUP BY');
+prepare stmt from
+'SELECT /*+ recompile */ col1,
+        SYS_CONNECT_BY_PATH(id,''/'') AS full_path
+ FROM   tbl
+ START WITH parnts_col1 IS NULL AND id <> ?
+ CONNECT BY PRIOR col1 = parnts_col1
+ ORDER  BY col1';
+execute stmt using '__dummy__';
+drop prepare stmt;
+
+evaluate('20. Valid: CONNECT_BY_ROOT without GROUP BY');
 SELECT /*+ recompile */ col1,
        CONNECT_BY_ROOT id AS root_id
 FROM   tbl
@@ -148,7 +192,7 @@ CONNECT BY PRIOR col1 = parnts_col1
 START WITH parnts_col1 IS NULL
 ORDER  BY col1;
 
-evaluate('17. Valid: SYS_CONNECT_BY_PATH without GROUP BY');
+evaluate('21. Valid: SYS_CONNECT_BY_PATH without GROUP BY');
 SELECT /*+ recompile */ col1,
        SYS_CONNECT_BY_PATH(id,'/') AS full_path
 FROM   tbl
@@ -156,7 +200,7 @@ START WITH parnts_col1 IS NULL
 CONNECT BY PRIOR col1 = parnts_col1
 ORDER  BY col1;
 
-evaluate('18. Valid: CONNECT_BY_ROOT in subquery, outer GROUP BY');
+evaluate('22. Valid: CONNECT_BY_ROOT in subquery, outer GROUP BY');
 SELECT /*+ recompile */ root_id, COUNT(*)
 FROM (
     SELECT /*+ recompile */ CONNECT_BY_ROOT id AS root_id
