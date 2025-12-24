@@ -351,4 +351,186 @@ nl-join (left outer join)
 Query stmt:
 select count(*) from tbl a left outer join (select b.cola from tbl b group by b.cola) b (cola) on a.cola=b.cola
 ===================================================
+    
+Case 7: LEFT OUTER JOIN where view has constant predicate on join key (cola=1)     
+
+===================================================
+0
+===================================================
+    
+7-1. inline view     
+
+===================================================
+count(*)    
+10000     
+
+Query plan:
+hash-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    during:term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from tbl a left outer join tbl b on a.cola=b.cola and b.cola= ?:?  and a.cola= ?:? 
+===================================================
+    
+7-2. view     
+
+===================================================
+count(*)    
+10000     
+
+Query plan:
+hash-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    during:term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from tbl a left outer join tbl b on a.cola=b.cola and b.cola= ?:?  and a.cola= ?:? 
+===================================================
+    
+Case 8: constant folding via CAST on join key in view     
+
+===================================================
+0
+===================================================
+    
+8-1. inline view     
+
+===================================================
+count(*)    
+19999     
+
+Query plan:
+sscan
+    class: tbl node[?]
+    cost:  ? card ?
+Query stmt:
+(select ( cast(? as integer)) from tbl tbl)
+Query plan:
+hash-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    during:term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from tbl a left outer join (select ( cast(? as integer)) from tbl tbl) b (cola) on a.cola=b.cola and a.cola=( cast(? as integer))
+===================================================
+    
+8-2. view     
+
+===================================================
+count(*)    
+19999     
+
+Query plan:
+sscan
+    class: b node[?]
+    cost:  ? card ?
+Query stmt:
+(select ( cast(? as integer)) from tbl b)
+Query plan:
+hash-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    during:term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from tbl a left outer join (select ( cast(? as integer)) from tbl b) b (cola) on a.cola=b.cola and a.cola=( cast(? as integer))
+===================================================
+    
+Case 9: two-way join; one view join key becomes constant     
+
+===================================================
+0
+===================================================
+    
+9-1. inline view     
+
+===================================================
+count(*)    
+19999     
+
+Query plan:
+sscan
+    class: tbl node[?]
+    cost:  ? card ?
+Query stmt:
+(select ? from tbl tbl)
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (left outer join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          cost:  ? card ?
+               during:term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from tbl a left outer join (select ? from tbl tbl) b (cola) on a.cola=b.cola and a.cola=?, tbl c where (a.cola=c.cola) and (a.cola=c.cola)
+===================================================
+    
+9-2. view     
+
+===================================================
+count(*)    
+19999     
+
+Query plan:
+sscan
+    class: b node[?]
+    cost:  ? card ?
+Query stmt:
+(select ? from tbl b)
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (left outer join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          cost:  ? card ?
+               during:term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from tbl a left outer join (select ? from tbl b) b (cola) on a.cola=b.cola and a.cola=?, tbl c where (a.cola=c.cola) and (a.cola=c.cola)
+===================================================
 0

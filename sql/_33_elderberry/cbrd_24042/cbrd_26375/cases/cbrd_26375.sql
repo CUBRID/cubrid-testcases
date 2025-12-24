@@ -109,4 +109,57 @@ from tbl a,
      v_tbl_group_col b
 where a.cola = b.cola(+);
 
+evaluate 'Case 7: LEFT OUTER JOIN where view has constant predicate on join key (cola=1)';
+create or replace view v_tbl_pred_const as
+select cola
+from tbl
+where cola = 1;
+
+evaluate '7-1. inline view';
+select /*+ recompile use_hash */ count(*)
+from tbl a, (select cola from tbl where cola = 1) b
+where a.cola = b.cola(+);
+
+evaluate '7-2. view';
+select /*+ recompile use_hash */ count(*)
+from tbl a, v_tbl_pred_const b
+where a.cola = b.cola(+);
+
+evaluate 'Case 8: constant folding via CAST on join key in view';
+
+create or replace view v_tbl_cast_const as
+select cast(1 as int) as cola
+from tbl;
+
+evaluate '8-1. inline view';
+select /*+ recompile use_hash */ count(*)
+from tbl a, (select cast(1 as int) as cola from tbl) b
+where a.cola = b.cola(+);
+
+evaluate '8-2. view';
+select /*+ recompile use_hash */ count(*)
+from tbl a, v_tbl_cast_const b
+where a.cola = b.cola(+);
+
+evaluate 'Case 9: two-way join; one view join key becomes constant';
+
+create or replace view v_tbl_const as
+select 1 as cola from tbl;
+
+evaluate '9-1. inline view';
+select /*+ recompile use_hash */ count(*)
+from tbl a,
+     (select cola from tbl) c,
+     (select 1 as cola from tbl) b
+where a.cola = c.cola
+  and a.cola = b.cola(+);
+
+evaluate '9-2. view';
+select /*+ recompile use_hash */ count(*)
+from tbl a,
+     (select cola from tbl) c,
+     v_tbl_const b
+where a.cola = c.cola
+  and a.cola = b.cola(+);
+
 drop table if exists tbl;
