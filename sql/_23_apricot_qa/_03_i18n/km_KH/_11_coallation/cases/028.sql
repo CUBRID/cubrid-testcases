@@ -439,7 +439,7 @@ INSERT INTO coll_test (id, s) values (6, 'X឵');
 INSERT INTO coll_test (id, s) values (4, 'X​');
 INSERT INTO coll_test (id, s) values (2, 'x឴');
 
-SELECT id, s FROM coll_test ORDER BY s;
+SELECT id, s FROM coll_test ORDER BY s, id;
 
 DROP TABLE coll_test;
 set names utf8;
