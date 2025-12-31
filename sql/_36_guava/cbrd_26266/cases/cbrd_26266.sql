@@ -24,12 +24,18 @@ insert into tbl_orderby_num values
 (1,300),
 (1,0);
 
-evaluate '[TEST 1] orderby_num -> skip order by';
+evaluate '[TEST 1] Multi-column index with range condition and function-based ORDER BY -> verify ORDER BY skip using index order';
 select col_a, col_b
 from tbl_orderby_num
 where col_a > 1 and upper(col_b) > '0'
 order by col_a desc, upper(col_b) desc
 for orderby_num() between 1 and 10;
+
+evaluate '[TEST 1.1] Function expression mismatch in ORDER BY -> should NOT skip order by';
+select /*+ recompile */ col_a, col_b
+from tbl_orderby_num
+where col_a = 1 and upper(col_b) > '0'
+order by upper(cast(col_b as varchar) || '_') desc;
 
 
 evaluate 'Test 2 Setup';
@@ -52,7 +58,7 @@ insert into tbl_join_b values (5),(3),(1),(4),(3),(5),(2),(5);
 insert into tbl_join_c values (5,1),(3,9),(1,9),(4,9),(3,9),(5,2),(2,9),(5,3);
 
 
-evaluate '[TEST 2.1] JOIN -> skip order by';
+evaluate '[TEST 2.1] JOIN query with equality join and function-based ORDER BY (ASC) -> verify ORDER BY skip across join';
 select /*+ recompile */ *
 from tbl_join_a a, tbl_join_b b
 where upper(a.col_a) > '0' and upper(a.col_a) = b.col_a
@@ -60,12 +66,19 @@ order by upper(a.col_a)
 limit 3;
 
 
-evaluate '[TEST 2.2] JOIN -> skip order by (desc)';
+evaluate '[TEST 2.2] JOIN query with equality join and function-based ORDER BY (DESC) -> verify ORDER BY skip with descending order';
 select /*+ recompile */ *
 from tbl_join_a a, tbl_join_b b, tbl_join_c c
 where upper(a.col_a) > '0' and upper(a.col_a) = b.col_a and b.col_a = c.col_a
 order by upper(a.col_a) desc
 limit 3;
+
+evaluate '[TEST 2.3] JOIN + multi-key ORDER BY(function + base) + LIMIT -> correctness regression check';
+select /*+ recompile */ a.col_a as a_a, b.col_a as b_a
+from tbl_join_a a, tbl_join_b b
+where upper(a.col_a) = b.col_a
+order by upper(a.col_a) asc, b.col_a asc
+limit 5;
 
 
 evaluate 'Test 3 Setup';
@@ -129,10 +142,43 @@ insert into tbl_brd_notice (brd_id, seq, notice_yn, titl) values ('3004', 5, 'Y'
 
 create index idx_brd_id_nvl_notice_yn on tbl_brd_notice(brd_id, nvl(notice_yn,'N') desc);
 
-evaluate '[TEST 4] Multi-column index + function-based 2nd column ORDER BY (equality on 1st) -> skip order by';
+evaluate '[TEST 4] Equality on leading index column and function-based ORDER BY on second column -> verify ORDER BY skip after skipping equality key';
 select /*+ recompile */ seq, titl
 from tbl_brd_notice
 where brd_id = '3003'
+order by nvl(notice_yn,'N') desc;
+
+create index idx_brd_notice_complex on tbl_brd_notice(seq, nvl(notice_yn,'N'), notice_yn, brd_id, titl);
+
+evaluate '[TEST 4.1] Range on leading key + equality on function-based key, ORDER BY subsequent key -> check ORDER BY skip behavior';
+select /*+ recompile */ seq, titl
+from tbl_brd_notice
+where seq > 0 and nvl(notice_yn,'N') = 'N'
+order by notice_yn;
+
+evaluate '[TEST 4.2] Range on leading key, ORDER BY function-based key -> check ORDER BY skip behavior';
+select /*+ recompile */ seq, titl
+from tbl_brd_notice
+where seq > 0
+order by nvl(notice_yn,'N');
+
+evaluate '[TEST 4.3] Extra ORDER BY column not aligned with index order -> should NOT skip order by';
+select /*+ recompile */ seq, titl
+from tbl_brd_notice
+where seq > 0 and nvl(notice_yn,'N') = 'N'
+order by brd_id;
+
+evaluate '[TEST 4.4] Extra ORDER BY column with gaps -> should NOT skip order by';
+select /*+ recompile */ seq, titl
+from tbl_brd_notice
+where seq > 0 and nvl(notice_yn,'N') = 'N' and notice_yn = 'N'
+order by titl;
+
+evaluate '[TEST 4.5] IS NULL predicate + function ORDER BY -> stability regression check';
+select /*+ recompile */ brd_id, seq, notice_yn, titl
+from tbl_brd_notice
+where brd_id = '3001'
+and notice_yn is null
 order by nvl(notice_yn,'N') desc;
 
 evaluate 'Test 5 Setup';
@@ -154,11 +200,17 @@ insert into tbl_multi_eq values ('B', 'X', 'elderberry', 5);
 
 create index idx_multi_eq_lower on tbl_multi_eq(col_a, col_b, lower(col_c) desc);
 
-evaluate '[TEST 5] Multiple equality columns before function-based ORDER BY column -> skip order by';
+evaluate '[TEST 5] Multiple leading equality conditions followed by function-based ORDER BY column -> verify skipping multiple equality keys';
 select /*+ recompile */ col_c, col_val
 from tbl_multi_eq
 where col_a = 'A' and col_b = 'X'
 order by lower(col_c) desc;
+
+evaluate '[TEST 5.1] Extra ORDER BY column not in index -> should NOT skip order by';
+select /*+ recompile */ col_c, col_val
+from tbl_multi_eq
+where col_a = 'A' and col_b = 'X'
+order by lower(col_c) desc, col_val;
 
 
 evaluate 'Test 6 Setup';
@@ -178,11 +230,23 @@ insert into tbl_func_eq values ('World', 5);
 
 create index idx_func_eq_upper on tbl_func_eq(upper(col_a), col_b desc);
 
-evaluate '[TEST 6] Equality on function-based first column, ORDER BY on second column -> skip order by';
+evaluate '[TEST 6] Equality condition on function-based leading index column and ORDER BY on subsequent column -> verify ORDER BY skip';
 select /*+ recompile */ col_a, col_b
 from tbl_func_eq
 where upper(col_a) = 'HELLO'
 order by col_b desc;
+
+evaluate '[TEST 6.1] DISTINCT + ORDER BY(function) -> correctness regression check';
+select /*+ recompile */ distinct upper(col_a) as u
+from tbl_func_eq
+where upper(col_a) > '0'
+order by u;
+
+evaluate '[TEST 6.2] GROUP BY + ORDER BY(function) -> should NOT incorrectly skip (correctness check)';
+select /*+ recompile */ upper(col_a) as u, count(*) as cnt
+from tbl_func_eq
+group by upper(col_a)
+order by u;
 
 
 evaluate 'Test 7 Setup';
@@ -202,11 +266,33 @@ insert into tbl_trim_order values (2, '  kiwi');
 
 create index idx_trim_order on tbl_trim_order(category, trim(item_name));
 
-evaluate '[TEST 7] Equality + function-based (trim) ORDER BY -> skip order by';
+evaluate '[TEST 7] Equality on leading column with TRIM-based function ORDER BY -> verify ORDER BY skip with string function index';
 select /*+ recompile */ item_name
 from tbl_trim_order
 where category = 1
 order by trim(item_name);
+
+evaluate '[TEST 7.1] ORDER BY using alias of function expression -> should skip order by';
+select /*+ recompile */ item_name, trim(item_name) as t
+from tbl_trim_order
+where category = 1
+order by t;
+
+evaluate '[TEST 7.2] LIMIT + OFFSET with function ORDER BY -> should skip order by (or at least correct ordering)';
+select /*+ recompile */ item_name
+from tbl_trim_order
+where category = 1
+order by trim(item_name)
+limit 2 offset 1;
+
+evaluate '[TEST 7.3] Derived table + ORDER BY on function alias -> stability/correctness check';
+select /*+ recompile */ item_name
+from (
+    select category, item_name, trim(item_name) as t
+    from tbl_trim_order
+    where category = 1
+) dt
+order by dt.t;
 
 
 evaluate 'Clean up';
