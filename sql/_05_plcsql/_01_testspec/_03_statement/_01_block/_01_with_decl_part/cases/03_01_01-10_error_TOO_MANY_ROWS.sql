@@ -21,5 +21,6 @@ END;
 
 call t('db_class');
  
+drop procedure t;
 
 --+ server-message off

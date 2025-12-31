@@ -24,3 +24,4 @@ rename table t1 to u1._db_class;
 drop table t1;
 call login ('dba') on class db_user;
 drop user u1;
+drop table t1;
