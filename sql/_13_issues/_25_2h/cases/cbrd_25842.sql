@@ -1,4 +1,4 @@
--- Verification for CBRD-25842, CBRD-25843: partition-key function crash
+-- Verification for CBRD-25842, CBRD-26443: partition-key function crash
 -- 
 -- Description:
 -- When the following functions are used in a partition key expression, a segmentation fault occurs when inserting into the table:
