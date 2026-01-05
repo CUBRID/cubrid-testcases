@@ -23,8 +23,23 @@ begin
     dbms_output.put_line(CAST('00:00 01/01/1999' AS DATETIME));
     dbms_output.put_line(CAST('10:00 am 01/01/1999' AS DATETIME));
     dbms_output.put_line(CAST('10:00 pm 01/01/1999' AS DATETIME));
-    dbms_output.put_line(CAST('00:00:00.998 1/1' AS DATETIME));
-    dbms_output.put_line(CAST('00:00:00.998 01/01' AS DATETIME));
+    dbms_output.put_line('-- year defaulting rule (omitted year = current system year)');
+    dbms_output.put_line(
+      CASE
+        WHEN YEAR(CAST('00:00:00.998 1/1' AS DATETIME)) = YEAR(SYS_DATETIME)
+        THEN 1 ELSE 0
+      END
+    );
+    dbms_output.put_line(
+      CASE
+        WHEN CAST('00:00:00.998 1/1' AS DATETIME) = CAST('00:00:00.998 01/01' AS DATETIME)
+        THEN 1 ELSE 0
+      END
+    );
+
+    dbms_output.put_line('-- normalized output (omit year to keep answer stable)');
+    dbms_output.put_line(TO_CHAR(CAST('00:00:00.998 1/1' AS DATETIME), 'HH:MI:SS.FF AM MM/DD'));
+    dbms_output.put_line(TO_CHAR(CAST('00:00:00.998 01/01' AS DATETIME), 'HH:MI:SS.FF AM MM/DD'));
     dbms_output.put_line(CAST('00:00:00.998 01/01/99' AS DATETIME));
     dbms_output.put_line(CAST('00:00:00.998 01/01/1999' AS DATETIME));
     dbms_output.put_line(CAST('10:00:00.998 am 01/01/1999' AS DATETIME));
@@ -35,6 +50,12 @@ begin
     dbms_output.put_line(CAST('00:00 01/01/1999' AS TIMESTAMP));
     dbms_output.put_line(CAST('10:00 am 01/01/1999' AS TIMESTAMP));
     dbms_output.put_line(CAST('10:00 pm 01/01/1999' AS TIMESTAMP));
+    dbms_output.put_line(
+      CASE
+        WHEN YEAR(CAST('00:00:00.998 1/1' AS DATETIME)) = YEAR(SYS_DATETIME)
+        THEN 1 ELSE 0
+      END
+    );
 end;
 
 select count(*) from db_stored_procedure where sp_name = 't';
