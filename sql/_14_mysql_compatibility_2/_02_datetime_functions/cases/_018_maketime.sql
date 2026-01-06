@@ -45,7 +45,7 @@ drop table maketime_tests;
 
 create table maketime_tests as select maketime(12,10,9) as [ maketime(12, 10, 9)];
 
-SELECT * FROM db_attribute where class_name='maketime_tests';
+SELECT attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment FROM db_attribute where class_name='maketime_tests';
 
 select * from maketime_tests;
 

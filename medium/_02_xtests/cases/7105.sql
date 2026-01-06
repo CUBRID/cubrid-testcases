@@ -17,7 +17,7 @@ create class supereeeoo (b int);
 alter class eeeoo add superclass supereeeoo;
 select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where  class_name = 'supereeeoo';
 alter class eeeoo drop attribute b;
-select * from db_attribute where  class_name = 'eeeoo';
+select attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment from db_attribute where  class_name = 'eeeoo';
 rollback;
 create class eeeoo (a int);
 create class subeeeoo under eeeoo (a int, b int, c int, unique(a,b));

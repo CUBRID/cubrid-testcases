@@ -56,7 +56,7 @@ drop table second_tests;
 
 create table second_tests as select second('2010-01-02 11:12:13') as [ second('2010-01-02 11:12:13')];
 
-SELECT * FROM db_attribute where class_name='second_tests';
+SELECT attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment FROM db_attribute where class_name='second_tests';
 
 select * from second_tests;
 
@@ -168,7 +168,7 @@ drop table second_tests;
 
 create table second_tests as select second('2010-01-02 11:12:13') as [ second('2010-01-02 11:12:13')];
 
-SELECT * FROM db_attribute where class_name='second_tests';
+SELECT attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment FROM db_attribute where class_name='second_tests';
 
 select * from second_tests;
 

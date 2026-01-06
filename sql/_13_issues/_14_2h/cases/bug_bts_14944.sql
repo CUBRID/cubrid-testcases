@@ -16,7 +16,7 @@ show full columns from stu;
 alter table stu modify id int comment 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 show full columns from stu;
 show create table stu;
-select * from db_attribute where class_name='stu' order by 1;
+select attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment from db_attribute where class_name='stu' order by 1;
 drop  stu;
 
 
@@ -24,9 +24,9 @@ drop table if exists g;
 create table g(i enum('red','blue') comment 'asdddf');
 show full columns from g;
 alter table g modify i int comment 'my idol is Steve Jobs';
-select * from db_attribute where class_name='g' order by 1;
+select attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment from db_attribute where class_name='g' order by 1;
 show create table g;
-select * from db_attribute where class_name='g' order by 1;
+select attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment from db_attribute where class_name='g' order by 1;
 show create table g;
 show full columns from g;
 
@@ -66,7 +66,7 @@ CREATE TABLE `hg_pay_exchange` (
 
 alter table `hg_pay_exchange` modify `type`  char(500) comment '`go with the wind`';
 show full columns from `hg_pay_exchange`;
-select * from db_attribute where class_name='hg_pay_exchange' order by 1;
+select attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment from db_attribute where class_name='hg_pay_exchange' order by 1;
 show create table `hg_pay_exchange`;
 drop table `hg_pay_exchange`;
 
@@ -84,7 +84,7 @@ create table t(i int comment 'id' ,name varchar(50) comment 'name' )  comment 't
 partition p1 values less than (100),
 partition p2 values less than maxvalue) ;
 show create table t;
- select * from db_attribute where class_name='t' order by 1;
+ select attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment from db_attribute where class_name='t' order by 1;
 show full columns from t;
 
 drop table if exists t;
@@ -114,8 +114,8 @@ alter view view1 comment 'view for table t';
 show create view view1;
 alter table t  comment 'table comparision';
 show create table t;
-select * from db_attribute where class_name='view1' order by 1;
-select * from db_attribute where class_name='t' order by 1;
+select attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment from db_attribute where class_name='view1' order by 1;
+select attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment from db_attribute where class_name='t' order by 1;
 drop t;
 drop view1;
 

@@ -2,7 +2,7 @@ autocommit off;
 call login('dba', '') on class db_user;
 create class foo02;
 create class bar02(ba int not null, bb float default 10.3, bc char(10), bd numeric(7,3), be foo02);
-select * 
+select attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment 
 from db_attribute 
 where class_name = 'bar02' 
 order by attr_name, attr_type;
@@ -28,7 +28,7 @@ from db_attr_setdomain_elm
 where class_name = 'cuu02' and attr_name = 'cb' 
 order by domain_class_name;
 alter class cuu02 rename ca as new_ca;
-select * 
+select attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment 
 from db_attribute 
 where class_name = 'cuu02' and attr_name = 'new_ca' 
 order by attr_type;
@@ -38,7 +38,7 @@ alter class cuu02 drop attribute cb;
 alter class cuu02 add attribute ce int;
 alter class cuu02 add attribute cf numeric(10,2);
 alter class cuu02 drop attribute cd, cf;
-select * 
+select attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment 
 from db_attribute 
 where class_name = 'cuu02' 
 order by attr_name, attr_type;

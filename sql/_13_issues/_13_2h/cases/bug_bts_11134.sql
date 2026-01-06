@@ -5,7 +5,7 @@ drop table if exists aa;
 
 CREATE TABLE [aa] ([promote] CHARACTER(10)) COLLATE utf8_bin;
 
-select * from db_attribute where class_name='aa';
+select attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment from db_attribute where class_name='aa';
 
 alter table aa collate iso88591_bin;
 
