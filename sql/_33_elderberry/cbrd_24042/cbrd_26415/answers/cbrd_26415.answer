@@ -1,0 +1,502 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+7
+===================================================
+    
+Case 1 : mod     
+
+===================================================
+count(*)    
+9     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a left outer join tbl b on a.cola=b.cola and  cast(a.colb as double)= mod( cast(b.colb as double),  cast(? as double))
+===================================================
+    
+Case 2 : nvl     
+
+===================================================
+count(*)    
+8     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a left outer join tbl b on a.cola=b.cola and a.colb=nvl(b.colb, ?)
+===================================================
+    
+Case 3 : PL/CSQL     
+
+===================================================
+0
+===================================================
+count(*)    
+7     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a left outer join tbl b on a.cola=b.cola and a.colb=add_aa(b.colb)
+===================================================
+    
+Case 4 : cast     
+
+===================================================
+count(*)    
+7     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a left outer join tbl b on a.cola=b.cola and a.colb= cast(b.colb as varchar)
+===================================================
+    
+Case 5 : case when     
+
+===================================================
+count(*)    
+7     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a left outer join tbl b on a.cola=b.cola and a.colb=case when b.colb> cast('?' as varchar) then 'HIGH' else 'LOW' end
+===================================================
+    
+Case 6 : concat + mod     
+
+===================================================
+count(*)    
+7     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a left outer join tbl b on a.cola=b.cola and a.colb= concat(b.colb,  cast( mod( cast(b.colb as double),  cast(? as double)) as varchar))
+===================================================
+    
+Case 7 : plus + pl/csql     
+
+===================================================
+count(*)    
+7     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a left outer join tbl b on a.cola=b.cola and a.colb=b.colb+add_aa(b.colb)
+===================================================
+    
+Case 8 : substr     
+
+===================================================
+count(*)    
+7     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a left outer join tbl b on a.cola=b.cola and a.colb= substr(b.colb, ?, ?)
+===================================================
+    
+Case 9 : upper     
+
+===================================================
+count(*)    
+7     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a left outer join tbl b on a.cola=b.cola and a.colb= upper(b.colb)
+===================================================
+    
+Case 10 : lower     
+
+===================================================
+count(*)    
+7     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a left outer join tbl b on a.cola=b.cola and a.colb= lower(b.colb)
+===================================================
+    
+Case 11 : trim     
+
+===================================================
+count(*)    
+7     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a left outer join tbl b on a.cola=b.cola and a.colb= trim(both  from b.colb)
+===================================================
+    
+Case 12 : replace     
+
+===================================================
+count(*)    
+7     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a left outer join tbl b on a.cola=b.cola and a.colb= replace(b.colb, '?', 'X')
+===================================================
+    
+Case 13 : coalesce     
+
+===================================================
+count(*)    
+8     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a left outer join tbl b on a.cola=b.cola and a.colb=coalesce(b.colb, '?')
+===================================================
+    
+Case 14 : decode     
+
+===================================================
+count(*)    
+7     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a left outer join tbl b on a.cola=b.cola and a.colb=decode(b.colb, '?', 'A', 'B')
+===================================================
+    
+Case 15 : nullif     
+
+===================================================
+count(*)    
+7     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a left outer join tbl b on a.cola=b.cola and a.colb=nullif(b.colb,  cast('?' as varchar))
+===================================================
+    
+Case 16 : length     
+
+===================================================
+count(*)    
+11     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a left outer join tbl b on a.cola=b.cola and a.colb= cast( char_length(b.colb) as varchar)
+===================================================
+    
+Case 17 : instr/position-like     
+
+===================================================
+count(*)    
+7     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a left outer join tbl b on a.cola=b.cola and a.colb= cast( instr(b.colb, '?', ?) as varchar)
+===================================================
+    
+Case 18 : regexp     
+
+===================================================
+count(*)    
+7     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a left outer join tbl b on a.cola=b.cola and a.colb=regexp_replace(b.colb, '[?-?]', 'N')
+===================================================
+    
+Case 19 : plus, auto generated cast     
+
+===================================================
+count(*)    
+7     
+
+Query plan:
+sscan
+    class: a node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a
+===================================================
+    
+Case 20 : minus     
+
+===================================================
+count(*)    
+7     
+
+Query plan:
+sscan
+    class: a node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a
+===================================================
+    
+Case 21 : concat     
+
+===================================================
+count(*)    
+7     
+
+Query plan:
+sscan
+    class: a node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a
+===================================================
+    
+Case 22 : reverse     
+
+===================================================
+count(*)    
+7     
+
+Query plan:
+sscan
+    class: a node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a
+===================================================
+    
+Case 23 : reverse + concat     
+
+===================================================
+count(*)    
+7     
+
+Query plan:
+sscan
+    class: a node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a
+===================================================
+    
+Case 24 : concat + concat (still 1-to-1 mapping)     
+
+===================================================
+count(*)    
+7     
+
+Query plan:
+sscan
+    class: a node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a
+===================================================
+    
+Case 25 : reverse + reverse (reverse(reverse(x)) is 1-to-1)     
+
+===================================================
+count(*)    
+7     
+
+Query plan:
+sscan
+    class: a node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a
+===================================================
+    
+Case 26 : plus + minus (algebraic 1-to-1 mapping)     
+
+===================================================
+count(*)    
+7     
+
+Query plan:
+sscan
+    class: a node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl a
+===================================================
+0

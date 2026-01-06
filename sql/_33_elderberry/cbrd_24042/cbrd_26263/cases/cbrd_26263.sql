@@ -147,7 +147,7 @@ from tbl a
 left outer join v_cond b
 on a.colb = b.colb;
 
-evaluate 'Case 18: join key wrapped by function (CAST) -> elimination allowed';
+evaluate 'Case 18: join key wrapped by function (CAST) -> elimination not allowed';
 select /*+ recompile */ count(*)
 from tbl a
 left outer join tbl b
