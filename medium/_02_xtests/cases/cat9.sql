@@ -24,7 +24,7 @@ order by index_name, key_attr_name;
 create class foo09_1 (a int, b int, c int, unique(a,b));
 create class foo09_2 (a int, b int, d int, unique(b,d));
 create class subfoo09 under foo09_1, foo09_2 inherit a of foo09_1, b of foo09_2;
-select * 
+select attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment 
 from db_attribute 
 where class_name = 'subfoo09' 
 order by attr_name, attr_type;

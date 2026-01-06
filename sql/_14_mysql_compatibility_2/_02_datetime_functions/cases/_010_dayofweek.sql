@@ -72,7 +72,7 @@ drop table t;
 
 create table dayofweek_tests as select dayofweek('2010-01-02') as [ dayofweek('2010-01-02')];
 
-SELECT * FROM db_attribute where class_name='dayofweek_tests';
+SELECT attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment FROM db_attribute where class_name='dayofweek_tests';
 
 select * from dayofweek_tests;
 
@@ -225,7 +225,7 @@ drop table t;
 
 create table dayofweek_tests as select dayofweek('2010-01-02') as [ dayofweek('2010-01-02')];
 
-SELECT * FROM db_attribute where class_name='dayofweek_tests';
+SELECT attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment FROM db_attribute where class_name='dayofweek_tests';
 
 select * from dayofweek_tests;
 

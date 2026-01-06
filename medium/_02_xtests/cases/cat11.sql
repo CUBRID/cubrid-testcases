@@ -104,7 +104,7 @@ create INDEX i_foo11_studyname ON foo11 (StudyName);
 create INDEX i_foo11_clinicname ON foo11 (ClinicName);
 create INDEX i_foo11_archflag ON foo11 (ArchFlag);
 create INDEX i_foo11_pname ON foo11 (PName);
-select * 
+select attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment 
 from db_attribute 
 where class_name = 'foo11' 
 order by attr_name, attr_type;

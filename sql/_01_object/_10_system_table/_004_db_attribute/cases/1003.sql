@@ -9,7 +9,7 @@ insert into test_class2(col1) values (1);
 select col1, col2.col1 from test_class2;
 
 
-select * from db_attribute 
+select attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment from db_attribute 
 where  class_name = 'test_class2' and attr_type = 'INSTANCE';
 
 

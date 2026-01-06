@@ -57,7 +57,7 @@ drop table t;
 
 create table minute_tests as select minute('10:11:12') as [ minute('10:11:12')];
 
-SELECT * FROM db_attribute where class_name='minute_tests';
+SELECT attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment FROM db_attribute where class_name='minute_tests';
 
 select * from minute_tests;
 
@@ -172,7 +172,7 @@ drop table t;
 
 create table minute_tests as select minute('10:11:12') as [ minute('10:11:12')];
 
-SELECT * FROM db_attribute where class_name='minute_tests';
+SELECT attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment FROM db_attribute where class_name='minute_tests';
 
 select * from minute_tests;
 

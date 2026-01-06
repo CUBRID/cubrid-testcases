@@ -51,7 +51,7 @@ drop table makedate_tests;
 
 create table makedate_tests as select makedate('2010',123) as [ makedate('2010', 123)];
 
-SELECT * FROM db_attribute where class_name='makedate_tests';
+SELECT attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment FROM db_attribute where class_name='makedate_tests';
 
 select * from makedate_tests;
 
@@ -180,7 +180,7 @@ drop table makedate_tests;
 
 create table makedate_tests as select makedate('2010',123) as [ makedate('2010', 123)];
 
-SELECT * FROM db_attribute where class_name='makedate_tests';
+SELECT attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment FROM db_attribute where class_name='makedate_tests';
 
 select * from makedate_tests;
 

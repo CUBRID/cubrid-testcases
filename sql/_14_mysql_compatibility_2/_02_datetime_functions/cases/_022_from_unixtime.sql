@@ -9,7 +9,7 @@ select if (month(from_unixtime(7129138.6)) = 3, 'ok','nok') from db_root;
 
 create table from_unixtime_tests as select from_unixtime('77777') as col;
 
-SELECT * FROM db_attribute where class_name='from_unixtime_tests';
+SELECT attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment FROM db_attribute where class_name='from_unixtime_tests';
 
 select if(col=NULL,'nok','ok') from from_unixtime_tests;
 
@@ -61,7 +61,7 @@ select if (from_unixtime(7129138.6, '%m') = 3, 'ok','nok') from db_root;
 
 create table from_unixtime_tests as select from_unixtime('1234567890','%M %Y %W') as col;
 
-SELECT * FROM db_attribute where class_name='from_unixtime_tests';
+SELECT attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment FROM db_attribute where class_name='from_unixtime_tests';
 
 select if (from_unixtime('1234567890','%M %Y %W') = col, 'ok', 'nok') from from_unixtime_tests;
 
@@ -100,7 +100,7 @@ select if (month(from_unixtime(7129138.6)) = 3, 'ok','nok') from db_root;
 
 create table from_unixtime_tests as select from_unixtime('77777') as col;
 
-SELECT * FROM db_attribute where class_name='from_unixtime_tests';
+SELECT attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment FROM db_attribute where class_name='from_unixtime_tests';
 
 select if(col=NULL,'nok','ok') from from_unixtime_tests;
 
@@ -152,7 +152,7 @@ select if (from_unixtime(7129138.6, '%m') = 3, 'ok','nok') from db_root;
 
 create table from_unixtime_tests as select from_unixtime('1234567890','%M %Y %W') as col;
 
-SELECT * FROM db_attribute where class_name='from_unixtime_tests';
+SELECT attr_name, class_name,owner_name, attr_type,def_order, from_class_name, from_owner_name, from_attr_name, data_type, prec, scale, charset, collation, domain_class_name, domain_owner_name, default_value, is_nullable, comment FROM db_attribute where class_name='from_unixtime_tests';
 
 select if (from_unixtime('1234567890','%M %Y %W') = col, 'ok', 'nok') from from_unixtime_tests;
 
