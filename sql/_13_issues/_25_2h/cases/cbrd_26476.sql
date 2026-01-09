@@ -319,8 +319,8 @@ update /*+ recompile */
   t1 a
 set
   a.c2 = 'y',
-  a.c3 = (select tmp_col from (select b.c7, sign(c7) tmp_col from t2 b where b.c5 = 3 order by b.c6) where rownum = 1),
-  a.c4 = (select tmp_col from (select b.c8, sign(c8) tmp_col from t2 b where b.c5 = 4 order by b.c6) where rownum = 1)
+  a.c3 = (select tmp_col from (select sign(b.c7) tmp_col from t2 b where b.c5 = 3 order by b.c6) where rownum = 1),
+  a.c4 = (select tmp_col from (select sign(b.c8) tmp_col from t2 b where b.c5 = 4 order by b.c6) where rownum = 1)
 where
   a.c1 = 1;
 select * from t1;
@@ -331,8 +331,8 @@ update /*+ recompile */
   t1 a
 set
   a.c2 = 'y',
-  a.c3 = (select tmp_col from (select c7, sign(c7) tmp_col from v2) where rownum = 1),
-  a.c4 = (select tmp_col from (select b.c8, sign(c8) tmp_col from t2 b where b.c5 = 4 order by b.c6) where rownum = 1)
+  a.c3 = (select tmp_col from (select sign(c7) tmp_col from v2) where rownum = 1),
+  a.c4 = (select tmp_col from (select sign(b.c8) tmp_col from t2 b where b.c5 = 4 order by b.c6) where rownum = 1)
 where
   a.c1 = 1;
 select * from t1;
@@ -343,8 +343,8 @@ update /*+ recompile */
   t1 a
 set
   a.c2 = 'y',
-  a.c3 = (select tmp_col from (select /*+ no_merge */ b.c7, sign(c7) tmp_col from t2 b where b.c5 = 3 order by b.c6) where rownum = 1),
-  a.c4 = (select tmp_col from (select /*+ no_merge */ b.c8, sign(c8) tmp_col from t2 b where b.c5 = 4 order by b.c6) where rownum = 1)
+  a.c3 = (select tmp_col from (select /*+ no_merge */ sign(b.c7) tmp_col from t2 b where b.c5 = 3 order by b.c6) where rownum = 1),
+  a.c4 = (select tmp_col from (select /*+ no_merge */ sign(b.c8) tmp_col from t2 b where b.c5 = 4 order by b.c6) where rownum = 1)
 where
   a.c1 = 1;
 select * from t1;
@@ -355,8 +355,8 @@ update /*+ recompile */
   t1 a
 set
   a.c2 = 'y',
-  a.c3 = (select tmp_col from (select b.c7, sign(c7) tmp_col from t2 b where b.c5 = 3 order by b.c6) t limit 1),
-  a.c4 = (select tmp_col from (select b.c8, sign(c8) tmp_col from t2 b where b.c5 = 4 order by b.c6) t limit 1)
+  a.c3 = (select tmp_col from (select sign(b.c7) tmp_col from t2 b where b.c5 = 3 order by b.c6) t limit 1),
+  a.c4 = (select tmp_col from (select sign(b.c8) tmp_col from t2 b where b.c5 = 4 order by b.c6) t limit 1)
 where
   a.c1 = 1;
 select * from t1;
@@ -367,8 +367,111 @@ update /*+ recompile */
   t1 a
 set
   a.c2 = 'y',
-  a.c3 = (select tmp_col from (select b.c7, sign(c7) tmp_col from t2 b where b.c5 = a.c1 + 2 /* 3 */ order by b.c6) t limit 1),
-  a.c4 = (select tmp_col from (select b.c8, sign(c8) tmp_col from t2 b where b.c5 = a.c1 + 3 /* 4 */ order by b.c6) t limit 1)
+  a.c3 = (select tmp_col from (select sign(b.c7) tmp_col from t2 b where b.c5 = a.c1 + 2 /* 3 */ order by b.c6) t limit 1),
+  a.c4 = (select tmp_col from (select sign(b.c8) tmp_col from t2 b where b.c5 = a.c1 + 3 /* 4 */ order by b.c6) t limit 1)
+where
+  a.c1 = 1;
+select * from t1;
+update t1 set c2 = 'n', c3 = -3, c4 = -4 where c1 = 1;
+
+-- -----------------------------------------------------------------------------
+-- Multi-argument function handling (DECODE)
+-- -----------------------------------------------------------------------------
+
+-- Note: Use expressions where the argument column is not separately projected in the select list.
+
+evaluate '27. decode() #1 (inline view + rownum)';
+update /*+ recompile */
+  t1 a
+set
+  a.c2 = 'y',
+  a.c3 = (select tmp_col from (select decode(b.c7, 7, 10, 70, 20, 30) tmp_col from t2 b where b.c5 = 3 order by b.c6) where rownum = 1),
+  a.c4 = (select tmp_col from (select decode(b.c8, 8, 12, -8, 34, 56) tmp_col from t2 b where b.c5 = 4 order by b.c6) where rownum = 1)
+where
+  a.c1 = 1;
+select * from t1;
+update t1 set c2 = 'n', c3 = -3, c4 = -4 where c1 = 1;
+
+evaluate '28. decode() #2 (view + rownum)';
+update /*+ recompile */
+  t1 a
+set
+  a.c2 = 'y',
+  a.c3 = (select tmp_col from (select decode(c7, 7, 10, 70, 20, 30) tmp_col from v2) where rownum = 1),
+  a.c4 = (select tmp_col from (select decode(b.c8, 8, 12, -8, 34, 56) tmp_col from t2 b where b.c5 = 4 order by b.c6) where rownum = 1)
+where
+  a.c1 = 1;
+select * from t1;
+update t1 set c2 = 'n', c3 = -3, c4 = -4 where c1 = 1;
+
+evaluate '29. decode() #3 (no_merge + rownum)';
+update /*+ recompile */
+  t1 a
+set
+  a.c2 = 'y',
+  a.c3 = (select tmp_col from (select /*+ no_merge */ decode(b.c7, 7, 10, 70, 20, 30) tmp_col from t2 b where b.c5 = 3 order by b.c6) where rownum = 1),
+  a.c4 = (select tmp_col from (select /*+ no_merge */ decode(b.c8, 8, 12, -8, 34, 56) tmp_col from t2 b where b.c5 = 4 order by b.c6) where rownum = 1)
+where
+  a.c1 = 1;
+select * from t1;
+update t1 set c2 = 'n', c3 = -3, c4 = -4 where c1 = 1;
+
+evaluate '30. decode() #4 (limit)';
+update /*+ recompile */
+  t1 a
+set
+  a.c2 = 'y',
+  a.c3 = (select tmp_col from (select decode(b.c7, 7, 10, 70, 20, 30) tmp_col from t2 b where b.c5 = 3 order by b.c6) t limit 1),
+  a.c4 = (select tmp_col from (select decode(b.c8, 8, 12, -8, 34, 56) tmp_col from t2 b where b.c5 = 4 order by b.c6) t limit 1)
+where
+  a.c1 = 1;
+select * from t1;
+update t1 set c2 = 'n', c3 = -3, c4 = -4 where c1 = 1;
+
+evaluate '31. decode() #5 (correlated subquery + limit)';
+update /*+ recompile */
+  t1 a
+set
+  a.c2 = 'y',
+  a.c3 = (select tmp_col from (select decode(b.c7, 7, 10, 70, 20, 30) tmp_col from t2 b where b.c5 = a.c1 + 2 /* 3 */ order by b.c6) t limit 1),
+  a.c4 = (select tmp_col from (select decode(b.c8, 8, 12, -8, 34, 56) tmp_col from t2 b where b.c5 = a.c1 + 3 /* 4 */ order by b.c6) t limit 1)
+where
+  a.c1 = 1;
+select * from t1;
+update t1 set c2 = 'n', c3 = -3, c4 = -4 where c1 = 1;
+
+-- -----------------------------------------------------------------------------
+-- GROUP BY handling
+-- -----------------------------------------------------------------------------
+
+-- Keep ORDER BY column out of select list (hidden-column risk) but make query valid via aggregate
+evaluate '32. group by + order by (aggregate select, order by grouped column)';
+update /*+ recompile */
+  t1 a
+set
+  a.c2 = 'y',
+  a.c3 = (
+    select max_c7
+    from (
+      select max(b.c7) as max_c7
+      from t2 b
+      where b.c5 = 3
+      group by b.c6
+      order by b.c6
+    )
+    where rownum = 1
+  ),
+  a.c4 = (
+    select max_c8
+    from (
+      select max(b.c8) as max_c8
+      from t2 b
+      where b.c5 = 4
+      group by b.c6
+      order by b.c6
+    )
+    where rownum = 1
+  )
 where
   a.c1 = 1;
 select * from t1;
