@@ -134,8 +134,8 @@ nl-join (inner join)
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
-Query stmt: [Warning: HINT ignored]
-select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from tbl a, tbl b, tbl c where a.cola=b.cola and b.cola=c.cola
+Query stmt:
+select /*+ LEADING(a, c) */ a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from tbl a, tbl b, tbl c where a.cola=b.cola and b.cola=c.cola
 ===================================================
 'test5'    
 
@@ -154,15 +154,15 @@ nl-join (inner join)
     outer: nl-join (inner join)
                edge:  term[?]
                outer: sscan
-                          class: b node[?]
+                          class: a node[?]
                           cost:  ? card ?
                inner: sscan
-                          class: c node[?]
+                          class: b node[?]
                           sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
     inner: sscan
-               class: a node[?]
+               class: c node[?]
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
@@ -752,13 +752,13 @@ temp
                                          outer: temp
                                                     order: cola[?]
                                                     subplan: sscan
-                                                                 class: b node[?]
+                                                                 class: a node[?]
                                                                  cost:  ? card ?
                                                     cost:  ? card ?
                                          inner: temp
                                                     order: cola[?]
                                                     subplan: sscan
-                                                                 class: c node[?]
+                                                                 class: b node[?]
                                                                  cost:  ? card ?
                                                     cost:  ? card ?
                                          cost:  ? card ?
@@ -766,7 +766,7 @@ temp
                  inner: temp
                             order: cola[?]
                             subplan: sscan
-                                         class: a node[?]
+                                         class: c node[?]
                                          cost:  ? card ?
                             cost:  ? card ?
                  cost:  ? card ?
