@@ -26,8 +26,6 @@ select /*+ USE_IDX (idx_tbl_cola) */ count(*) from tbl where cola <2;
 show trace;
 drop index idx_tbl_cola on tbl;
 
--- add set trace on
-set trace on;
 
 evaluate '4. CTE recursive part(should not work), non recursive part(should work)';
 with recursive cte as (
@@ -38,8 +36,7 @@ with recursive cte as (
 select count(*) from cte;
 show trace;
 
--- add set trace on
-set trace on;
+
 evaluate '5. contains incr/decr() function(should not work)';
 
 select /*+ PARALLEL(2) */ colb, incr(id) from tbl where id = 4000;
@@ -113,8 +110,7 @@ show trace;
 select /*+ recompile */ count(*) from tbl a left join tbl b on a.cola = b.cola where a.id = 1;
 show trace;
 
--- add set trace on
-set trace on;
+
 evaluate '12. contains uncorrelated SUBQUERY (should work) -> row by row, mergeable list';
 select count(cola) from tbl where cola in (select cola from tbl);
 show trace;
