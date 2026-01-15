@@ -19,11 +19,23 @@ FROM t1 a
 LEFT OUTER JOIN t2 b ON a.c1 = b.c1
 WHERE b.c2 IS NOT NULL;
 
+evaluate 'Case 1-Oracle: ';
+SELECT /*+ recompile */ a.*, b.*
+FROM t1 a, t2 b
+WHERE a.c1 = b.c1(+)
+  AND b.c2 IS NOT NULL;
+
 evaluate 'Case 2: RIGHT OUTER JOIN - IS NOT NULL on inner table (t1.c2)';
 SELECT /*+ recompile */ a.*, b.*
 FROM t1 a
 RIGHT OUTER JOIN t2 b ON a.c1 = b.c1
 WHERE a.c2 IS NOT NULL;
+
+evaluate 'Case 2-Oracle: ';
+SELECT /*+ recompile */ a.*, b.*
+FROM t1 a, t2 b
+WHERE a.c1(+) = b.c1
+  AND a.c2 IS NOT NULL;
 
 evaluate 'Case 3: Multiple IS NOT NULL';
 SELECT /*+ recompile */ a.*, b.*
@@ -32,11 +44,26 @@ LEFT OUTER JOIN t2 b ON a.c1 = b.c1
 WHERE a.c2 IS NOT NULL
   AND b.c2 IS NOT NULL;
 
+evaluate 'Case 3-Oracle: ';
+SELECT /*+ recompile */ a.*, b.*
+FROM t1 a, t2 b
+WHERE a.c1 = b.c1(+)
+  AND a.c2 IS NOT NULL
+  AND b.c2 IS NOT NULL;
+
 evaluate 'Case 4: IS NOT NULL with additional condition';
 SELECT /*+ recompile */ a.*, b.*
 FROM t1 a
 LEFT OUTER JOIN t2 b ON a.c1 = b.c1
 WHERE b.c2 IS NOT NULL
+  AND b.c1 > 1
+ORDER BY a.c1;
+
+evaluate 'Case 4-Oracle: ';
+SELECT /*+ recompile */ a.*, b.*
+FROM t1 a, t2 b
+WHERE a.c1 = b.c1(+)
+  AND b.c2 IS NOT NULL
   AND b.c1 > 1
 ORDER BY a.c1;
 
@@ -51,6 +78,43 @@ LEFT OUTER JOIN t2 b ON a.c1 = b.c1
 LEFT OUTER JOIN t3 c ON a.c1 = c.c1
 WHERE b.c2 IS NOT NULL
   AND c.c2 IS NOT NULL;
+
+evaluate 'Case 5-Oracle: ';
+SELECT /*+ recompile */ a.*, b.*, c.*
+FROM t1 a, t2 b, t3 c
+WHERE a.c1 = b.c1(+)
+  AND a.c1 = c.c1(+)
+  AND b.c2 IS NOT NULL
+  AND c.c2 IS NOT NULL;
+
+evaluate 'Case 6: UNION ALL with null row - IS NOT NULL filter';
+SELECT * FROM (
+  SELECT c1, c2 FROM t1
+  UNION ALL
+  SELECT c1, c2 FROM t2
+  UNION ALL
+  SELECT c1, c2 FROM t3
+  UNION ALL
+  SELECT NULL, NULL FROM db_root
+) WHERE c2 IS NOT NULL;
+
+evaluate 'Case 7: UNION ALL without null row - IS NOT NULL filter';
+SELECT * FROM (
+  SELECT c1, c2 FROM t1
+  UNION ALL
+  SELECT c1, c2 FROM t2
+  UNION ALL
+  SELECT c1, c2 FROM t3
+) WHERE c2 IS NOT NULL;
+
+evaluate 'Case 8: UNION ALL with IS NOT NULL in one branch';
+SELECT * FROM (
+  SELECT c1, c2 FROM t1
+  UNION ALL
+  SELECT c1, c2 FROM t2 WHERE c2 IS NOT NULL
+  UNION ALL
+  SELECT c1, c2 FROM t3
+);
 
 -- Test Cleanup
 DROP TABLE t1;
