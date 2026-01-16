@@ -12,10 +12,10 @@ Case 1: Single non-grouped column(c1) with ROLLUP
 
 ===================================================
 c1    c2    
+3     null     
 1     1.0     
 2     2.0     
 3     3.0     
-3     null     
 
 ===================================================
     
@@ -23,21 +23,21 @@ Case 2: Multiple non-grouped columns(c1, c3) with ROLLUP
 
 ===================================================
 c1    c2    c3    
+3     null     c     
 1     1.0     a     
 2     2.0     b     
 3     3.0     c     
-3     null     c     
 
 ===================================================
     
-Case 3: Non-grouped column with Aggregate function     
+Case 3: Non-grouped column + aggregate column mixed with ROLLUP     
 
 ===================================================
 c1    c2    cnt    
+3     null     6     
 1     1.0     1     
 2     2.0     2     
 3     3.0     3     
-3     null     6     
 
 ===================================================
     
@@ -45,13 +45,13 @@ Case 4: Non-grouped column with two GROUP BY items
 
 ===================================================
 c1    c2    c3    
+3     null     null     
 1     1.0     a     
 1     1.0     null     
 2     2.0     b     
 2     2.0     null     
 3     3.0     c     
 3     3.0     null     
-3     null     null     
 
 ===================================================
 0
@@ -65,21 +65,23 @@ Case 5: Non-grouped column contains actual NULL values
 
 ===================================================
 c1    c2    
-3     null     
+null     null     
 1     1.0     
 null     2.0     
-null     null     
+3     3.0     
+null     4.0     
 
 ===================================================
     
-Case 6: Non-grouped column with ORDER BY     
+Case 6: Non-grouped column with two ORDER BY     
 
 ===================================================
 c1    c2    
-3     null     
 null     null     
 1     1.0     
 null     2.0     
+3     3.0     
+null     4.0     
 
 ===================================================
     
@@ -87,17 +89,49 @@ Case 7: Non-grouped column with HAVING and Aggregate condition
 
 ===================================================
 c1    c2    cnt    
-3     null     2     
-1     1.0     1     
-null     2.0     1     
 null     null     4     
 
 ===================================================
     
-Case 8: only_full_group_by = YES should raise error     
+Case 8: Non-grouped expression columns with ROLLUP     
+
+===================================================
+c1p    c2    c3u    
+4     null     C     
+2     1.0     A     
+3     2.0     B     
+4     3.0     C     
 
 ===================================================
 0
+===================================================
+0
+===================================================
+5
+===================================================
+    
+Case 9: GROUP BY key contains NULL (must produce two c2=NULL rows distinguishable by c1)     
+
+===================================================
+c1    c2    
+3     null     
+999     null     
+1     1.0     
+2     2.0     
+3     3.0     
+
+===================================================
+0
+===================================================
+    
+Case 10: only_full_group_by = YES should raise error     
+
+===================================================
+Error:-494
+===================================================
+    
+Case 11: only_full_group_by=YES should error for multiple non-grouped columns too     
+
 ===================================================
 Error:-494
 ===================================================
