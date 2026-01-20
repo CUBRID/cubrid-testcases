@@ -1,4 +1,4 @@
--- Verification for CBRD-26419 : Hint: behavior when view merge occurs and subquery contains LEADING/ORDERED.
+-- Verification for CBRD-26419 : Hint behavior when view merge occurs and subquery contains LEADING/ORDERED.
 -- Background: LEADING/ORDERED in a subquery could become ambiguous after view merge.
 
 drop table if exists ta,tb,tc;
@@ -28,7 +28,7 @@ from tc a,
        where a.cola = b.cola and a.cola = c.cola) b
 where a.cola = b.cola;
 
-evaluate 'Case 5: ORDERED in inline-view is removed on view merge';
+evaluate 'Case 5: ORDERED in view is removed on view merge';
 create or replace view v as
 select /*+ ordered */ a.cola
 from ta a, tb b, tc c
@@ -38,7 +38,7 @@ select /*+ recompile */ count(*)
 from tc a, v b
 where a.cola = b.cola;
 
-evaluate 'Case 6: inline-view LEADING targets a renamed alias (subquery ta a -> b_#); ensure partial order is preserved';
+evaluate 'Case 6: inline-view LEADING(c,a) is preserved after view merge; verify c is ordered before the renamed ta alias (a -> b_1)';
 select /*+ recompile */ count(*)
 from tc a,
      (select /*+ leading(c,a) */ a.cola
@@ -46,23 +46,7 @@ from tc a,
        where a.cola = b.cola and a.cola = c.cola) b
 where a.cola = b.cola;
 
-evaluate 'Case 7: inline-view LEADING(b,a,c) (3 args) with valid join edges; verify partial order is preserved after view merge (join order b->a->c)';
-select /*+ recompile */ count(*)
-from tc a,
-     (select /*+ leading(b,a,c) */ a.cola
-        from ta a, tb b, tc c
-       where a.cola = b.cola and a.cola = c.cola) b
-where a.cola = b.cola;
-
-evaluate 'Case 8: inline-view LEADING(c,b,a) where there is no join edge between c and a; hint should be ignored';
-select /*+ recompile */ count(*)
-from tc a,
-     (select /*+ leading(c,b,a) */ a.cola
-        from ta a, tb b, tc c
-       where a.cola = b.cola and a.cola = c.cola) b
-where a.cola = b.cola;
-
-evaluate 'Case 9: view LEADING targets a renamed alias (subquery ta a -> b_#); ensure partial order is preserved';
+evaluate 'Case 7: view LEADING(c,a) is preserved after view merge; verify c is ordered before the renamed ta alias (a -> b_1)';
 create or replace view v as
 select /*+ leading(c,a) */ a.cola
 from ta a, tb b, tc c
@@ -70,6 +54,22 @@ where a.cola = b.cola and a.cola = c.cola;
 
 select /*+ recompile */ count(*)
 from tc a, v b
+where a.cola = b.cola;
+
+evaluate 'Case 8: inline-view LEADING(b,a,c) (3 args) with valid join edges; verify partial order is preserved after view merge (join order b->a->c)';
+select /*+ recompile */ count(*)
+from tc a,
+     (select /*+ leading(b,a,c) */ a.cola
+        from ta a, tb b, tc c
+       where a.cola = b.cola and a.cola = c.cola) b
+where a.cola = b.cola;
+
+evaluate 'Case 9: inline-view LEADING(c,b,a) should be ignored (no direct join edge between c and b)';
+select /*+ recompile */ count(*)
+from tc a,
+     (select /*+ leading(c,b,a) */ a.cola
+        from ta a, tb b, tc c
+       where a.cola = b.cola and a.cola = c.cola) b
 where a.cola = b.cola;
 
 evaluate 'Case 10: conflicting LEADING in outer+subquery; subquery LEADING must be dropped after view merge';

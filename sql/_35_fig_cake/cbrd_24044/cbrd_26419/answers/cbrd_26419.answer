@@ -135,7 +135,7 @@ Query stmt:
 select count(*) from tc a, ta b_?, tb b, tc c where (a.cola=b_?.cola) and (b_?.cola=b.cola) and b_?.cola=c.cola
 ===================================================
     
-Case 5: ORDERED in inline-view is removed on view merge     
+Case 5: ORDERED in view is removed on view merge     
 
 ===================================================
 0
@@ -172,7 +172,7 @@ Query stmt:
 select count(*) from tc a, ta b_?, tb b, tc c where (a.cola=b_?.cola) and (b_?.cola=b.cola) and b_?.cola=c.cola
 ===================================================
     
-Case 6: inline-view LEADING targets a renamed alias (subquery ta a -> b_#); ensure partial order is preserved     
+Case 6: inline-view LEADING(c,a) is preserved after view merge; verify c is ordered before the renamed ta alias (a -> b_1)     
 
 ===================================================
 count(*)    
@@ -207,7 +207,44 @@ Query stmt:
 select /*+ LEADING(c, a) */ count(*) from tc a, ta b_?, tb b, tc c where (a.cola=b_?.cola) and (b_?.cola=b.cola) and b_?.cola=c.cola
 ===================================================
     
-Case 7: inline-view LEADING(b,a,c) (3 args) with valid join edges; verify partial order is preserved after view merge (join order b->a->c)     
+Case 7: view LEADING(c,a) is preserved after view merge; verify c is ordered before the renamed ta alias (a -> b_1)     
+
+===================================================
+0
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: nl-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: c node[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: b_? node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: a node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(c, a) */ count(*) from tc a, ta b_?, tb b, tc c where (a.cola=b_?.cola) and (b_?.cola=b.cola) and b_?.cola=c.cola
+===================================================
+    
+Case 8: inline-view LEADING(b,a,c) (3 args) with valid join edges; verify partial order is preserved after view merge (join order b->a->c)     
 
 ===================================================
 count(*)    
@@ -242,7 +279,7 @@ Query stmt:
 select /*+ LEADING(b, a, c) */ count(*) from tc a, ta b_?, tb b, tc c where (a.cola=b_?.cola) and (b_?.cola=b.cola) and b_?.cola=c.cola
 ===================================================
     
-Case 8: inline-view LEADING(c,b,a) where there is no join edge between c and a; hint should be ignored     
+Case 9: inline-view LEADING(c,b,a) should be ignored (no direct join edge between c and b)     
 
 ===================================================
 count(*)    
@@ -275,43 +312,6 @@ nl-join (inner join)
     cost:  ? card ?
 Query stmt: [Warning: HINT ignored]
 select count(*) from tc a, ta b_?, tb b, tc c where (a.cola=b_?.cola) and (b_?.cola=b.cola) and b_?.cola=c.cola
-===================================================
-    
-Case 9: view LEADING targets a renamed alias (subquery ta a -> b_#); ensure partial order is preserved     
-
-===================================================
-0
-===================================================
-count(*)    
-10     
-
-Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: nl-join (inner join)
-               edge:  term[?]
-               outer: nl-join (inner join)
-                          edge:  term[?]
-                          outer: sscan
-                                     class: c node[?]
-                                     cost:  ? card ?
-                          inner: sscan
-                                     class: b_? node[?]
-                                     sargs: term[?]
-                                     cost:  ? card ?
-                          cost:  ? card ?
-               inner: sscan
-                          class: a node[?]
-                          sargs: term[?]
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: b node[?]
-               sargs: term[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select /*+ LEADING(c, a) */ count(*) from tc a, ta b_?, tb b, tc c where (a.cola=b_?.cola) and (b_?.cola=b.cola) and b_?.cola=c.cola
 ===================================================
     
 Case 10: conflicting LEADING in outer+subquery; subquery LEADING must be dropped after view merge     
