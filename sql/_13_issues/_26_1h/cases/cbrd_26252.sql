@@ -6,6 +6,8 @@
  * - When calling a procedure with the CALL statement, there must be no INTO clause.
  */
 
+--+ server-message on
+
 -- Setup: Create test procedures
 CREATE OR REPLACE PROCEDURE proc_no_params AS
 BEGIN
@@ -39,6 +41,7 @@ evaluate 'Case 1.2: CALL procedure with IN parameters';
 CALL proc_with_params(10);
 
 evaluate 'Case 1.3: CALL procedure with OUT parameters';
+SELECT 0 INTO :var;
 CALL proc_out_params(5, :var);
 
 -- ========================================
@@ -49,6 +52,7 @@ evaluate 'Case 2.1: CALL procedure with INTO clause - with IN parameters';
 CALL proc_with_params(10) INTO :v;
 
 evaluate 'Case 2.2: CALL procedure with INTO clause - with OUT parameter';
+SELECT 0 INTO :var;
 CALL proc_out_params(5, :var) INTO :v;
 
 -- ========================================
@@ -115,3 +119,5 @@ DROP PROCEDURE proc_no_params;
 DROP PROCEDURE proc_with_params;
 DROP PROCEDURE proc_out_params;
 DROP TABLE tbl1;
+
+--+ server-message off

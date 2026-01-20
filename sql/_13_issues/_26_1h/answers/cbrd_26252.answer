@@ -1,134 +1,223 @@
 ===================================================
 0
+
 ===================================================
 0
+
 ===================================================
 0
+
 ===================================================
 0
+
 ===================================================
 0
+
 ===================================================
 1
+
 ===================================================
     
 Case 1.1: CALL procedure without parameters     
 
+
 ===================================================
     
 null     
 
+
+proc_no_params executed
 ===================================================
     
 Case 1.2: CALL procedure with IN parameters     
 
+
 ===================================================
     
 null     
 
+
+proc_with_params executed with value: 10
 ===================================================
     
 Case 1.3: CALL procedure with OUT parameters     
 
+
+===================================================
+0    
+0     
+
+
 ===================================================
     
 null     
 
+
+proc_out_params executed
 ===================================================
     
 Case 2.1: CALL procedure with INTO clause - with IN parameters     
 
+
 ===================================================
 Error:-494
+Semantic: before '  INTO :v; '
+CALL statements invoking a Stored Procedure may not have an INTO clause. call proc_with_params(10)
+
 ===================================================
     
 Case 2.2: CALL procedure with INTO clause - with OUT parameter     
 
+
+===================================================
+0    
+0     
+
+
 ===================================================
 Error:-494
+Semantic: before '  INTO :v; '
+CALL statements invoking a Stored Procedure may not have an INTO clause. call proc_out_params(5, :var)
+
 ===================================================
     
 Case 3.1: Procedure in SELECT list with table     
 
+
 ===================================================
 Error:-494
+Semantic: before '  FROM tbl1; '
+Stored Procedures can be invoked only through CALL statements. select [dba.tbl1].col1, [dba.proc_no_params]() from [dba.tbl...
+
 ===================================================
     
 Case 3.2: Procedure in WHERE clause     
 
+
 ===================================================
 Error:-494
+Semantic: before ' ; '
+Stored Procedures can be invoked only through CALL statements. select [dba.tbl1].col1, [dba.tbl1].col2 from [dba.tbl1] [dba...
+
 ===================================================
     
 Case 3.3: Procedure in subquery     
 
+
 ===================================================
 Error:-494
+Semantic: before '  AS result); '
+Stored Procedures can be invoked only through CALL statements. select * from (select [dba.proc_no_params]() as [result]) [__t1]
+
 ===================================================
     
 Case 3.4: Procedure in CASE expression     
 
+
 ===================================================
 Error:-494
+Semantic: before '  = 1 THEN 'yes' ELSE 'no' END FROM db_root; '
+Stored Procedures can be invoked only through CALL statements. select case when [dba.proc_no_params]()=1 then 'yes' else 'n...
+
 ===================================================
     
 Case 3.5: Procedure in aggregate function     
 
+
 ===================================================
 Error:-494
+Semantic: before ' ) FROM tbl1; '
+Stored Procedures can be invoked only through CALL statements. select count([dba.proc_no_params]()) from [dba.tbl1] [dba.tbl1]
+
 ===================================================
     
 Case 3.6: Procedure in HAVING clause     
 
+
 ===================================================
 Error:-494
+Semantic: before ' ; '
+Stored Procedures can be invoked only through CALL statements. select count(*) from [dba.tbl1] [dba.tbl1] group by [dba.tbl...
+
 ===================================================
     
 Case 3.7: Procedure in UNION query     
 
+
 ===================================================
 Error:-494
+Semantic: before '  FROM db_root; '
+Stored Procedures can be invoked only through CALL statements. (select [dba.tbl1].col1 from [dba.tbl1] [dba.tbl1] union sel...
+
 ===================================================
     
 Case 4.1: Procedure in INSERT VALUES clause     
 
+
 ===================================================
 Error:-494
+Semantic: before ' ); '
+Stored Procedures can be invoked only through CALL statements. insert into [dba.tbl1] [dba.tbl1] ([dba.tbl1].col1, [dba.tbl...
+
 ===================================================
     
 Case 4.2: Procedure in INSERT with subquery     
 
+
 ===================================================
 Error:-494
+Semantic: before ' ), 'aaaa'); '
+Stored Procedures can be invoked only through CALL statements. insert into [dba.tbl1] [dba.tbl1] ([dba.tbl1].col1, [dba.tbl...
+
 ===================================================
     
 Case 5.1: Procedure in UPDATE statement     
 
+
 ===================================================
 Error:-494
+Semantic: before '  WHERE col1 = 1; '
+Stored Procedures can be invoked only through CALL statements. update [dba.tbl1] [dba.tbl1] set [dba.tbl1].col2=[dba.proc_n...
+
 ===================================================
     
 Case 5.2: Procedure in both SET and WHERE clauses     
 
+
 ===================================================
 Error:-494
+Semantic: before '  WHERE col1 = proc_no_params(); '
+Stored Procedures can be invoked only through CALL statements. update [dba.tbl1] [dba.tbl1] set [dba.tbl1].col2=[dba.proc_n...
+
 ===================================================
     
 Case 6.1: Procedure in DELETE statement     
 
+
 ===================================================
 Error:-494
+Semantic: before ' ; '
+Stored Procedures can be invoked only through CALL statements. delete [dba.tbl1] from [dba.tbl1] [dba.tbl1] where [dba.tbl1...
+
 ===================================================
     
 Case 6.2: Procedure in DELETE with subquery     
 
+
 ===================================================
 Error:-494
+Semantic: before ' ); '
+Stored Procedures can be invoked only through CALL statements. delete [dba.tbl1] from [dba.tbl1] [dba.tbl1] where [dba.tbl1...
+
 ===================================================
 0
+
 ===================================================
 0
+
 ===================================================
 0
+
 ===================================================
 0
+
