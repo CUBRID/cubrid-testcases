@@ -492,17 +492,8 @@ select /*+ LEADING(a, v) */ count(*) from tc a, ta v, tb b, tc c where (a.cola=v
 Case 15: ORDERED dominates when ORDERED and LEADING specify different first tables (LEADING becomes unused)     
 
 ===================================================
-cola    colb    cola    colb    
-1     1     1     1     
-2     2     2     2     
-3     3     3     3     
-4     4     4     4     
-5     5     5     5     
-6     6     6     6     
-7     7     7     7     
-8     8     8     8     
-9     9     9     9     
-10     10     10     10     
+count(*)    
+10     
 
 Query plan:
 nl-join (inner join)
@@ -516,46 +507,35 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED USE_NL(b, a) */ a.cola, a.colb, b.cola, b.colb from ta a, tb b where a.cola=b.cola
+select /*+ ORDERED USE_NL(b, a) */ count(*) from ta a, tb b where a.cola=b.cola
 ===================================================
     
 Case 16: subquery ORDERED is removed on view merge; main query must not inherit ORDERED     
 
 ===================================================
-cola    colb    cola    colb    
-1     1     1     1     
-2     2     2     2     
-3     3     3     3     
-4     4     4     4     
-5     5     5     5     
-6     6     6     6     
-7     7     7     7     
-8     8     8     8     
-9     9     9     9     
-10     10     10     10     
+count(*)    
+10     
 
 Query plan:
-temp(distinct)
-    subplan: nl-join (inner join)
-                 edge:  term[?]
-                 outer: nl-join (inner join)
-                            edge:  term[?]
-                            outer: sscan
-                                       class: a node[?]
-                                       cost:  ? card ?
-                            inner: sscan
-                                       class: v node[?]
-                                       sargs: term[?]
-                                       cost:  ? card ?
-                            cost:  ? card ?
-                 inner: sscan
-                            class: c node[?]
-                            sargs: term[?]
-                            cost:  ? card ?
-                 cost:  ? card ?
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: v node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?]
+               cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select distinct a.cola, a.colb, v.cola, v.colb from ta a, tb v, tc c where (a.cola=v.cola) and (v.cola=c.cola)
+select distinct count(*) from ta a, tb v, tc c where (a.cola=v.cola) and (v.cola=c.cola)
 ===================================================
     
 Case 17: ORDERED inline-view + NO_MERGE (keep ORDERED by preventing view merge)     

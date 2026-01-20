@@ -113,12 +113,12 @@ from tc a,
 where a.cola = v.cola;
 
 evaluate 'Case 15: ORDERED dominates when ORDERED and LEADING specify different first tables (LEADING becomes unused)';
-select /*+ recompile ordered leading(b,a) use_nl(b,a) */ *
+select /*+ recompile ordered leading(b,a) use_nl(b,a) */ count(*)
 from ta a, tb b
 where a.cola = b.cola;
 
 evaluate 'Case 16: subquery ORDERED is removed on view merge; main query must not inherit ORDERED';
-select /*+ recompile */ distinct *
+select /*+ recompile */ distinct count(*)
 from ta a,
      (select /*+ ordered */ b.cola, b.colb
         from tb b, tc c
