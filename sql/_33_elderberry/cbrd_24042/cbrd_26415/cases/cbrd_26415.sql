@@ -204,4 +204,5 @@ left outer join tbl b
 on a.colb = (b.colb + 10) - 10
 and a.cola = b.cola;
 
+drop function add_aa;
 drop table if exists tbl;
