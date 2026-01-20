@@ -1,4 +1,4 @@
--A<- Verification for CBRD-26419 : Hint: behavior when view merge occurs and subquery contains LEADING/ORDERED.
+-- Verification for CBRD-26419 : Hint: behavior when view merge occurs and subquery contains LEADING/ORDERED.
 -- Background: LEADING/ORDERED in a subquery could become ambiguous after view merge.
 
 drop table if exists ta,tb,tc;
