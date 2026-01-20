@@ -1,0 +1,533 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+10
+===================================================
+100
+===================================================
+1000
+===================================================
+0
+===================================================
+    
+Case 1: no hint (join order a->b->c)     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ta a, tb b, tc c where a.cola=b.cola and a.cola=c.cola
+===================================================
+    
+Case 2: leading hint (partial order) (join order a->c->b)     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: c node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(c, b) */ count(*) from ta a, tb b, tc c where a.cola=b.cola and a.cola=c.cola
+===================================================
+    
+Case 3: leading hint (partial order) (join order c->a->b)     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: c node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: a node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(c) */ count(*) from ta a, tb b, tc c where a.cola=b.cola and a.cola=c.cola
+===================================================
+    
+Case 4: ordered hint with inline-view (remove ordered hint)     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: nl-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: b_? node[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: a node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tc a, ta b_?, tb b, tc c where (a.cola=b_?.cola) and (b_?.cola=b.cola) and b_?.cola=c.cola
+===================================================
+    
+Case 5: ordered hint with view (remove ordered hint)     
+
+===================================================
+0
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: nl-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: b_? node[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: a node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tc a, ta b_?, tb b, tc c where (a.cola=b_?.cola) and (b_?.cola=b.cola) and b_?.cola=c.cola
+===================================================
+    
+Case 6: inline-view LEADING targets a renamed alias (subquery ta a -> b_#); ensure partial order is preserved     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: nl-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: c node[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: b_? node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: a node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(c, a) */ count(*) from tc a, ta b_?, tb b, tc c where (a.cola=b_?.cola) and (b_?.cola=b.cola) and b_?.cola=c.cola
+===================================================
+    
+Case 7: view LEADING targets a renamed alias (subquery ta a -> b_#); ensure partial order is preserved     
+
+===================================================
+0
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: nl-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: c node[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: b_? node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: a node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(c, a) */ count(*) from tc a, ta b_?, tb b, tc c where (a.cola=b_?.cola) and (b_?.cola=b.cola) and b_?.cola=c.cola
+===================================================
+    
+Case 8: conflicting LEADING in outer+subquery; subquery LEADING must be dropped after view merge     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: nl-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: a node[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: b_? node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(a, b) */ count(*) from tc a, ta b_?, tb b, tc c where (a.cola=b_?.cola) and (b_?.cola=b.cola) and b_?.cola=c.cola
+===================================================
+    
+Case 9: inline-view LEADING targets a non-renamed alias (tb b); ensure partial order is preserved after merge     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: nl-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: b_? node[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: a node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: c node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(c, b) */ count(*) from tc a, ta b_?, tb b, tc c where (a.cola=b_?.cola) and (b_?.cola=b.cola) and b_?.cola=c.cola
+===================================================
+    
+Case 10: ordered inline-view + NO_MERGE (keep ORDERED by preventing view merge)     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select /*+ ORDERED NO_MERGE */ a.cola from ta a, tb b, tc c where a.cola=b.cola and a.cola=c.cola)
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: v node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tc a, (select /*+ ORDERED NO_MERGE */ a.cola from ta a, tb b, tc c where a.cola=b.cola and a.cola=c.cola) v (cola) where a.cola=v.cola
+===================================================
+    
+Case 11: inline-view has ORDERED + LEADING (ORDERED removed on merge; LEADING should remain if no conflict)     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: nl-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: v node[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: a node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: c node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(c, b) */ count(*) from tc a, ta v, tb b, tc c where (a.cola=v.cola) and (v.cola=b.cola) and v.cola=c.cola
+===================================================
+    
+Case 12: inline-view has multiple LEADING (only the first LEADING should be effective after merge)     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: nl-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: v node[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: a node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: c node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(c, b) */ count(*) from tc a, ta v, tb b, tc c where (a.cola=v.cola) and (v.cola=b.cola) and v.cola=c.cola
+===================================================
+    
+Case 13: outer LEADING(A,B) partial order + subquery LEADING exists (subquery LEADING should be removed due to conflict after view merge)     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: nl-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: a node[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: v node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(a, v) */ count(*) from tc a, ta v, tb b, tc c where (a.cola=v.cola) and (v.cola=b.cola) and v.cola=c.cola
+===================================================
+    
+Case 14: ORDERED dominates when ORDERED and LEADING specify different first tables (LEADING becomes unused)     
+
+===================================================
+cola    colb    cola    colb    
+1     1     1     1     
+2     2     2     2     
+3     3     3     3     
+4     4     4     4     
+5     5     5     5     
+6     6     6     6     
+7     7     7     7     
+8     8     8     8     
+9     9     9     9     
+10     10     10     10     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL(b, a) */ a.cola, a.colb, b.cola, b.colb from ta a, tb b where a.cola=b.cola
+===================================================
+    
+Case 15: ORDERED in an inline-view is propagated to the main query after view merge (ORDERED should be removed by the fix)     
+
+===================================================
+cola    colb    cola    colb    
+1     1     1     1     
+2     2     2     2     
+3     3     3     3     
+4     4     4     4     
+5     5     5     5     
+6     6     6     6     
+7     7     7     7     
+8     8     8     8     
+9     9     9     9     
+10     10     10     10     
+
+Query plan:
+temp(distinct)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: nl-join (inner join)
+                            edge:  term[?]
+                            outer: sscan
+                                       class: a node[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: v node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: c node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select distinct a.cola, a.colb, v.cola, v.colb from ta a, tb v, tc c where (a.cola=v.cola) and (v.cola=c.cola)
+===================================================
+0
+===================================================
+0

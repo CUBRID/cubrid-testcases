@@ -30,6 +30,7 @@ where a.cola = b.cola
    and b.cola = c.cola;
 
 --4. ignore case : don't have edge
+-- [Revised: CBRD-26419] LEADING is now honored as a partial order (was ignored before)
 select ('test4') from tbl;
 select /*+ recompile leading(a,c) */ * 
 from tbl a, tbl b, tbl c
@@ -185,6 +186,7 @@ where a_partition.cola = b_partition.cola
 AND b_partition.cola = c_partition.cola;
 
 --22. With USE_MERGE hint
+-- [Revised: CBRD-26419]: LEADING no longer forces a strict prefix; it applies as a partial order.
 select ('test22') from tbl;
 select /*+ recompile leading(b,c) use_merge */ *
 from tbl a, tbl b, tbl c
