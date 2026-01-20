@@ -16,7 +16,7 @@
 0
 ===================================================
     
-Case 1: no hint (join order a->b->c)     
+Case 1: no hint (baseline : join order a->b->c)     
 
 ===================================================
 count(*)    
@@ -44,7 +44,7 @@ Query stmt:
 select count(*) from ta a, tb b, tc c where a.cola=b.cola and a.cola=c.cola
 ===================================================
     
-Case 2: leading hint (partial order) (join order a->c->b)     
+Case 2: leading hint (partial order: c before b)     
 
 ===================================================
 count(*)    
@@ -72,7 +72,7 @@ Query stmt:
 select /*+ LEADING(c, b) */ count(*) from ta a, tb b, tc c where a.cola=b.cola and a.cola=c.cola
 ===================================================
     
-Case 3: leading hint (partial order) (join order c->a->b)     
+Case 3: LEADING with a single table forces the join to start from that table (c)     
 
 ===================================================
 count(*)    
@@ -100,7 +100,7 @@ Query stmt:
 select /*+ LEADING(c) */ count(*) from ta a, tb b, tc c where a.cola=b.cola and a.cola=c.cola
 ===================================================
     
-Case 4: ordered hint with inline-view (remove ordered hint)     
+Case 4: ORDERED in inline-view is removed on view merge     
 
 ===================================================
 count(*)    
@@ -135,7 +135,7 @@ Query stmt:
 select count(*) from tc a, ta b_?, tb b, tc c where (a.cola=b_?.cola) and (b_?.cola=b.cola) and b_?.cola=c.cola
 ===================================================
     
-Case 5: ordered hint with view (remove ordered hint)     
+Case 5: ORDERED in inline-view is removed on view merge     
 
 ===================================================
 0
@@ -207,7 +207,7 @@ Query stmt:
 select /*+ LEADING(c, a) */ count(*) from tc a, ta b_?, tb b, tc c where (a.cola=b_?.cola) and (b_?.cola=b.cola) and b_?.cola=c.cola
 ===================================================
     
-Case 7: Case 7: inline-view LEADING(b,a,c) (3 args) with valid join edges; verify partial order is preserved after view merge (join order b->a->c)     
+Case 7: inline-view LEADING(b,a,c) (3 args) with valid join edges; verify partial order is preserved after view merge (join order b->a->c)     
 
 ===================================================
 count(*)    
@@ -242,7 +242,7 @@ Query stmt:
 select /*+ LEADING(b, a, c) */ count(*) from tc a, ta b_?, tb b, tc c where (a.cola=b_?.cola) and (b_?.cola=b.cola) and b_?.cola=c.cola
 ===================================================
     
-Case 8: inline-view LEADING(c,a,b) where there is no join edge between c and a; hint should be ignored     
+Case 8: inline-view LEADING(c,b,a) where there is no join edge between c and a; hint should be ignored     
 
 ===================================================
 count(*)    
@@ -256,25 +256,25 @@ nl-join (inner join)
                outer: nl-join (inner join)
                           edge:  term[?]
                           outer: sscan
-                                     class: c node[?]
+                                     class: b_? node[?]
                                      cost:  ? card ?
                           inner: sscan
-                                     class: b_? node[?]
+                                     class: a node[?]
                                      sargs: term[?]
                                      cost:  ? card ?
                           cost:  ? card ?
                inner: sscan
-                          class: a node[?]
+                          class: b node[?]
                           sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
     inner: sscan
-               class: b node[?]
+               class: c node[?]
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
-Query stmt:
-select /*+ LEADING(c, a, b) */ count(*) from tc a, ta b_?, tb b, tc c where (a.cola=b_?.cola) and (b_?.cola=b.cola) and b_?.cola=c.cola
+Query stmt: [Warning: HINT ignored]
+select count(*) from tc a, ta b_?, tb b, tc c where (a.cola=b_?.cola) and (b_?.cola=b.cola) and b_?.cola=c.cola
 ===================================================
     
 Case 9: view LEADING targets a renamed alias (subquery ta a -> b_#); ensure partial order is preserved     
@@ -454,7 +454,7 @@ Query stmt:
 select /*+ LEADING(c, b) */ count(*) from tc a, ta v, tb b, tc c where (a.cola=v.cola) and (v.cola=b.cola) and v.cola=c.cola
 ===================================================
     
-Case 14: outer LEADING(A,B) partial order + subquery LEADING exists (subquery LEADING should be removed due to conflict after view merge)     
+Case 14: outer LEADING partial order + subquery LEADING exists (subquery LEADING should be removed due to conflict after view merge)     
 
 ===================================================
 count(*)    

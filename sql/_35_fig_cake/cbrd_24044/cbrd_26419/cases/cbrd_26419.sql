@@ -11,16 +11,16 @@ insert tb select rownum,rownum from table({0,1,2,3,4,5,6,7,8,9}) a, table({0,1,2
 insert tc select rownum,rownum from table({0,1,2,3,4,5,6,7,8,9}) a, table({0,1,2,3,4,5,6,7,8,9}) b, table({0,1,2,3,4,5,6,7,8,9}) c limit 1000;
 update statistics on ta,tb,tc;
 
-evaluate 'Case 1: no hint (join order a->b->c)';
+evaluate 'Case 1: no hint (baseline : join order a->b->c)';
 select /*+ recompile */ count(*) from ta a, tb b, tc c where a.cola = b.cola and a.cola = c.cola;
 
-evaluate 'Case 2: leading hint (partial order) (join order a->c->b)';
+evaluate 'Case 2: leading hint (partial order: c before b)';
 select /*+ recompile leading(c,b) */ count(*) from ta a, tb b, tc c where a.cola = b.cola and a.cola = c.cola;
 
-evaluate 'Case 3: leading hint (partial order) (join order c->a->b)';
+evaluate 'Case 3: LEADING with a single table forces the join to start from that table (c)';
 select /*+ recompile leading(c) */ count(*) from ta a, tb b, tc c where a.cola = b.cola and a.cola = c.cola;
 
-evaluate 'Case 4: ordered hint with inline-view (remove ordered hint)';
+evaluate 'Case 4: ORDERED in inline-view is removed on view merge';
 select /*+ recompile */ count(*)
 from tc a,
      (select /*+ ordered */ a.cola
@@ -28,7 +28,7 @@ from tc a,
        where a.cola = b.cola and a.cola = c.cola) b
 where a.cola = b.cola;
 
-evaluate 'Case 5: ordered hint with view (remove ordered hint)';
+evaluate 'Case 5: ORDERED in inline-view is removed on view merge';
 create or replace view v as
 select /*+ ordered */ a.cola
 from ta a, tb b, tc c
@@ -46,7 +46,7 @@ from tc a,
        where a.cola = b.cola and a.cola = c.cola) b
 where a.cola = b.cola;
 
-evaluate 'Case 7: Case 7: inline-view LEADING(b,a,c) (3 args) with valid join edges; verify partial order is preserved after view merge (join order b->a->c)';
+evaluate 'Case 7: inline-view LEADING(b,a,c) (3 args) with valid join edges; verify partial order is preserved after view merge (join order b->a->c)';
 select /*+ recompile */ count(*)
 from tc a,
      (select /*+ leading(b,a,c) */ a.cola
@@ -54,10 +54,10 @@ from tc a,
        where a.cola = b.cola and a.cola = c.cola) b
 where a.cola = b.cola;
 
-evaluate 'Case 8: inline-view LEADING(c,a,b) where there is no join edge between c and a; hint should be ignored';
+evaluate 'Case 8: inline-view LEADING(c,b,a) where there is no join edge between c and a; hint should be ignored';
 select /*+ recompile */ count(*)
 from tc a,
-     (select /*+ leading(c,a,b) */ a.cola
+     (select /*+ leading(c,b,a) */ a.cola
         from ta a, tb b, tc c
        where a.cola = b.cola and a.cola = c.cola) b
 where a.cola = b.cola;
@@ -104,7 +104,7 @@ from tc a,
        where a.cola = b.cola and a.cola = c.cola) v
 where a.cola = v.cola;
 
-evaluate 'Case 14: outer LEADING(A,B) partial order + subquery LEADING exists (subquery LEADING should be removed due to conflict after view merge)';
+evaluate 'Case 14: outer LEADING partial order + subquery LEADING exists (subquery LEADING should be removed due to conflict after view merge)';
 select /*+ recompile leading(a,v) */ count(*)
 from tc a,
      (select /*+ leading(c,b) */ a.cola
