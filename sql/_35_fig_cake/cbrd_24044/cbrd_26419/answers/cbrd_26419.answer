@@ -15,6 +15,12 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
     
 Case 1: no hint (baseline : join order a->b->c)     
 
@@ -23,21 +29,19 @@ count(*)
 10     
 
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: nl-join (inner join)
-               edge:  term[?]
+idx-join (inner join)
+    outer: idx-join (inner join)
                outer: sscan
                           class: a node[?]
                           cost:  ? card ?
-               inner: sscan
+               inner: iscan
                           class: b node[?]
-                          sargs: term[?]
+                          index: idx term[?] (covers)
                           cost:  ? card ?
                cost:  ? card ?
-    inner: sscan
+    inner: iscan
                class: c node[?]
-               sargs: term[?]
+               index: idx term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -51,21 +55,19 @@ count(*)
 10     
 
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: nl-join (inner join)
-               edge:  term[?]
+idx-join (inner join)
+    outer: idx-join (inner join)
                outer: sscan
                           class: a node[?]
                           cost:  ? card ?
-               inner: sscan
+               inner: iscan
                           class: c node[?]
-                          sargs: term[?]
+                          index: idx term[?] (covers)
                           cost:  ? card ?
                cost:  ? card ?
-    inner: sscan
+    inner: iscan
                class: b node[?]
-               sargs: term[?]
+               index: idx term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -79,21 +81,19 @@ count(*)
 10     
 
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: nl-join (inner join)
-               edge:  term[?]
+idx-join (inner join)
+    outer: idx-join (inner join)
                outer: sscan
                           class: c node[?]
                           cost:  ? card ?
-               inner: sscan
+               inner: iscan
                           class: a node[?]
-                          sargs: term[?]
+                          index: idx term[?] (covers)
                           cost:  ? card ?
                cost:  ? card ?
-    inner: sscan
+    inner: iscan
                class: b node[?]
-               sargs: term[?]
+               index: idx term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -107,28 +107,25 @@ count(*)
 10     
 
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: nl-join (inner join)
-               edge:  term[?]
-               outer: nl-join (inner join)
-                          edge:  term[?]
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: idx-join (inner join)
                           outer: sscan
                                      class: b_? node[?]
                                      cost:  ? card ?
-                          inner: sscan
+                          inner: iscan
                                      class: a node[?]
-                                     sargs: term[?]
+                                     index: idx term[?] (covers)
                                      cost:  ? card ?
                           cost:  ? card ?
-               inner: sscan
+               inner: iscan
                           class: b node[?]
-                          sargs: term[?]
+                          index: idx term[?] (covers)
                           cost:  ? card ?
                cost:  ? card ?
-    inner: sscan
+    inner: iscan
                class: c node[?]
-               sargs: term[?]
+               index: idx term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -144,28 +141,25 @@ count(*)
 10     
 
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: nl-join (inner join)
-               edge:  term[?]
-               outer: nl-join (inner join)
-                          edge:  term[?]
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: idx-join (inner join)
                           outer: sscan
                                      class: b_? node[?]
                                      cost:  ? card ?
-                          inner: sscan
+                          inner: iscan
                                      class: a node[?]
-                                     sargs: term[?]
+                                     index: idx term[?] (covers)
                                      cost:  ? card ?
                           cost:  ? card ?
-               inner: sscan
+               inner: iscan
                           class: b node[?]
-                          sargs: term[?]
+                          index: idx term[?] (covers)
                           cost:  ? card ?
                cost:  ? card ?
-    inner: sscan
+    inner: iscan
                class: c node[?]
-               sargs: term[?]
+               index: idx term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -179,28 +173,25 @@ count(*)
 10     
 
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: nl-join (inner join)
-               edge:  term[?]
-               outer: nl-join (inner join)
-                          edge:  term[?]
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: idx-join (inner join)
                           outer: sscan
                                      class: c node[?]
                                      cost:  ? card ?
-                          inner: sscan
+                          inner: iscan
                                      class: b_? node[?]
-                                     sargs: term[?]
+                                     index: idx term[?] (covers)
                                      cost:  ? card ?
                           cost:  ? card ?
-               inner: sscan
+               inner: iscan
                           class: a node[?]
-                          sargs: term[?]
+                          index: idx term[?] (covers)
                           cost:  ? card ?
                cost:  ? card ?
-    inner: sscan
+    inner: iscan
                class: b node[?]
-               sargs: term[?]
+               index: idx term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -216,28 +207,25 @@ count(*)
 10     
 
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: nl-join (inner join)
-               edge:  term[?]
-               outer: nl-join (inner join)
-                          edge:  term[?]
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: idx-join (inner join)
                           outer: sscan
                                      class: c node[?]
                                      cost:  ? card ?
-                          inner: sscan
+                          inner: iscan
                                      class: b_? node[?]
-                                     sargs: term[?]
+                                     index: idx term[?] (covers)
                                      cost:  ? card ?
                           cost:  ? card ?
-               inner: sscan
+               inner: iscan
                           class: a node[?]
-                          sargs: term[?]
+                          index: idx term[?] (covers)
                           cost:  ? card ?
                cost:  ? card ?
-    inner: sscan
+    inner: iscan
                class: b node[?]
-               sargs: term[?]
+               index: idx term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -251,28 +239,25 @@ count(*)
 10     
 
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: nl-join (inner join)
-               edge:  term[?]
-               outer: nl-join (inner join)
-                          edge:  term[?]
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: idx-join (inner join)
                           outer: sscan
                                      class: b node[?]
                                      cost:  ? card ?
-                          inner: sscan
+                          inner: iscan
                                      class: b_? node[?]
-                                     sargs: term[?]
+                                     index: idx term[?] (covers)
                                      cost:  ? card ?
                           cost:  ? card ?
-               inner: sscan
+               inner: iscan
                           class: a node[?]
-                          sargs: term[?]
+                          index: idx term[?] (covers)
                           cost:  ? card ?
                cost:  ? card ?
-    inner: sscan
+    inner: iscan
                class: c node[?]
-               sargs: term[?]
+               index: idx term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -286,28 +271,25 @@ count(*)
 10     
 
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: nl-join (inner join)
-               edge:  term[?]
-               outer: nl-join (inner join)
-                          edge:  term[?]
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: idx-join (inner join)
                           outer: sscan
                                      class: b_? node[?]
                                      cost:  ? card ?
-                          inner: sscan
+                          inner: iscan
                                      class: a node[?]
-                                     sargs: term[?]
+                                     index: idx term[?] (covers)
                                      cost:  ? card ?
                           cost:  ? card ?
-               inner: sscan
+               inner: iscan
                           class: b node[?]
-                          sargs: term[?]
+                          index: idx term[?] (covers)
                           cost:  ? card ?
                cost:  ? card ?
-    inner: sscan
+    inner: iscan
                class: c node[?]
-               sargs: term[?]
+               index: idx term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt: [Warning: HINT ignored]
@@ -321,28 +303,25 @@ count(*)
 10     
 
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: nl-join (inner join)
-               edge:  term[?]
-               outer: nl-join (inner join)
-                          edge:  term[?]
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: idx-join (inner join)
                           outer: sscan
                                      class: a node[?]
                                      cost:  ? card ?
-                          inner: sscan
+                          inner: iscan
                                      class: b_? node[?]
-                                     sargs: term[?]
+                                     index: idx term[?] (covers)
                                      cost:  ? card ?
                           cost:  ? card ?
-               inner: sscan
+               inner: iscan
                           class: b node[?]
-                          sargs: term[?]
+                          index: idx term[?] (covers)
                           cost:  ? card ?
                cost:  ? card ?
-    inner: sscan
+    inner: iscan
                class: c node[?]
-               sargs: term[?]
+               index: idx term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -356,28 +335,25 @@ count(*)
 10     
 
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: nl-join (inner join)
-               edge:  term[?]
-               outer: nl-join (inner join)
-                          edge:  term[?]
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: idx-join (inner join)
                           outer: sscan
                                      class: b_? node[?]
                                      cost:  ? card ?
-                          inner: sscan
+                          inner: iscan
                                      class: a node[?]
-                                     sargs: term[?]
+                                     index: idx term[?] (covers)
                                      cost:  ? card ?
                           cost:  ? card ?
-               inner: sscan
+               inner: iscan
                           class: c node[?]
-                          sargs: term[?]
+                          index: idx term[?] (covers)
                           cost:  ? card ?
                cost:  ? card ?
-    inner: sscan
+    inner: iscan
                class: b node[?]
-               sargs: term[?]
+               index: idx term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -391,28 +367,25 @@ count(*)
 10     
 
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: nl-join (inner join)
-               edge:  term[?]
-               outer: nl-join (inner join)
-                          edge:  term[?]
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: idx-join (inner join)
                           outer: sscan
                                      class: v node[?]
                                      cost:  ? card ?
-                          inner: sscan
+                          inner: iscan
                                      class: a node[?]
-                                     sargs: term[?]
+                                     index: idx term[?] (covers)
                                      cost:  ? card ?
                           cost:  ? card ?
-               inner: sscan
+               inner: iscan
                           class: c node[?]
-                          sargs: term[?]
+                          index: idx term[?] (covers)
                           cost:  ? card ?
                cost:  ? card ?
-    inner: sscan
+    inner: iscan
                class: b node[?]
-               sargs: term[?]
+               index: idx term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -426,28 +399,25 @@ count(*)
 10     
 
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: nl-join (inner join)
-               edge:  term[?]
-               outer: nl-join (inner join)
-                          edge:  term[?]
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: idx-join (inner join)
                           outer: sscan
                                      class: v node[?]
                                      cost:  ? card ?
-                          inner: sscan
+                          inner: iscan
                                      class: a node[?]
-                                     sargs: term[?]
+                                     index: idx term[?] (covers)
                                      cost:  ? card ?
                           cost:  ? card ?
-               inner: sscan
+               inner: iscan
                           class: c node[?]
-                          sargs: term[?]
+                          index: idx term[?] (covers)
                           cost:  ? card ?
                cost:  ? card ?
-    inner: sscan
+    inner: iscan
                class: b node[?]
-               sargs: term[?]
+               index: idx term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -461,28 +431,25 @@ count(*)
 10     
 
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: nl-join (inner join)
-               edge:  term[?]
-               outer: nl-join (inner join)
-                          edge:  term[?]
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: idx-join (inner join)
                           outer: sscan
                                      class: a node[?]
                                      cost:  ? card ?
-                          inner: sscan
+                          inner: iscan
                                      class: v node[?]
-                                     sargs: term[?]
+                                     index: idx term[?] (covers)
                                      cost:  ? card ?
                           cost:  ? card ?
-               inner: sscan
+               inner: iscan
                           class: b node[?]
-                          sargs: term[?]
+                          index: idx term[?] (covers)
                           cost:  ? card ?
                cost:  ? card ?
-    inner: sscan
+    inner: iscan
                class: c node[?]
-               sargs: term[?]
+               index: idx term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -496,14 +463,13 @@ count(*)
 10     
 
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
+idx-join (inner join)
     outer: sscan
                class: a node[?]
                cost:  ? card ?
-    inner: sscan
+    inner: iscan
                class: b node[?]
-               sargs: term[?]
+               index: idx term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -517,21 +483,19 @@ count(*)
 10     
 
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: nl-join (inner join)
-               edge:  term[?]
+idx-join (inner join)
+    outer: idx-join (inner join)
                outer: sscan
                           class: a node[?]
                           cost:  ? card ?
-               inner: sscan
+               inner: iscan
                           class: v node[?]
-                          sargs: term[?]
+                          index: idx term[?] (covers)
                           cost:  ? card ?
                cost:  ? card ?
-    inner: sscan
+    inner: iscan
                class: c node[?]
-               sargs: term[?]
+               index: idx term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -545,34 +509,31 @@ count(*)
 10     
 
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: nl-join (inner join)
-               edge:  term[?]
+idx-join (inner join)
+    outer: idx-join (inner join)
                outer: sscan
                           class: a node[?]
                           cost:  ? card ?
-               inner: sscan
+               inner: iscan
                           class: b node[?]
-                          sargs: term[?]
+                          index: idx term[?] (covers)
                           cost:  ? card ?
                cost:  ? card ?
-    inner: sscan
+    inner: iscan
                class: c node[?]
-               sargs: term[?]
+               index: idx term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
 (select /*+ ORDERED NO_MERGE */ a.cola from ta a, tb b, tc c where a.cola=b.cola and a.cola=c.cola)
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
+idx-join (inner join)
     outer: sscan
                class: v node[?]
                cost:  ? card ?
-    inner: sscan
+    inner: iscan
                class: a node[?]
-               sargs: term[?]
+               index: idx term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -586,21 +547,19 @@ count(*)
 10     
 
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: nl-join (inner join)
-               edge:  term[?]
+idx-join (inner join)
+    outer: idx-join (inner join)
                outer: sscan
                           class: a node[?]
                           cost:  ? card ?
-               inner: sscan
+               inner: iscan
                           class: b node[?]
-                          sargs: term[?]
+                          index: idx term[?] (covers)
                           cost:  ? card ?
                cost:  ? card ?
-    inner: sscan
+    inner: iscan
                class: c node[?]
-               sargs: term[?]
+               index: idx term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -614,29 +573,29 @@ count(*)
 10     
 
 Query plan:
-sscan
+iscan
     class: c node[?]
-    sargs: term[?] AND term[?]
+    index: idx term[?] (covers)
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
 (select ? from tc c where (c.cola=v.cola) and inst_num()<= ?:? )
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: nl-join (inner join)
-               edge:  term[?]
+idx-join (inner join)
+    outer: idx-join (inner join)
                outer: sscan
                           class: b node[?]
                           cost:  ? card ?
-               inner: sscan
+               inner: iscan
                           class: v node[?]
-                          sargs: term[?] AND term[?]
+                          index: idx term[?] (covers)
+                          sargs: term[?]
                           subqs: ?
                           cost:  ? card ?
                cost:  ? card ?
-    inner: sscan
+    inner: iscan
                class: x node[?]
-               sargs: term[?]
+               index: idx term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -650,29 +609,29 @@ count(*)
 10     
 
 Query plan:
-sscan
+iscan
     class: c node[?]
-    sargs: term[?] AND term[?]
+    index: idx term[?] (covers)
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
 (select ? from tc c where (c.cola=v.cola) and inst_num()<= ?:? )
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: nl-join (inner join)
-               edge:  term[?]
+idx-join (inner join)
+    outer: idx-join (inner join)
                outer: sscan
                           class: x node[?]
                           cost:  ? card ?
-               inner: sscan
+               inner: iscan
                           class: v node[?]
-                          sargs: term[?] AND term[?]
+                          index: idx term[?] (covers)
+                          sargs: term[?]
                           subqs: ?
                           cost:  ? card ?
                cost:  ? card ?
-    inner: sscan
+    inner: iscan
                class: b node[?]
-               sargs: term[?]
+               index: idx term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:

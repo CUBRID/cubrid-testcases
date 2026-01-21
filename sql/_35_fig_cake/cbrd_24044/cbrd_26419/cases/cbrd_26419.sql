@@ -9,6 +9,10 @@ create table tc (cola int, colb int);
 insert ta select rownum,rownum from table({0,1,2,3,4,5,6,7,8,9}) a, table({0,1,2,3,4,5,6,7,8,9}) b, table({0,1,2,3,4,5,6,7,8,9}) c limit 10;
 insert tb select rownum,rownum from table({0,1,2,3,4,5,6,7,8,9}) a, table({0,1,2,3,4,5,6,7,8,9}) b, table({0,1,2,3,4,5,6,7,8,9}) c limit 100;
 insert tc select rownum,rownum from table({0,1,2,3,4,5,6,7,8,9}) a, table({0,1,2,3,4,5,6,7,8,9}) b, table({0,1,2,3,4,5,6,7,8,9}) c limit 1000;
+
+create index idx on ta (cola, colb);
+create index idx on tb (cola, colb);
+create index idx on tc (cola, colb);
 update statistics on ta,tb,tc;
 
 evaluate 'Case 1: no hint (baseline : join order a->b->c)';
