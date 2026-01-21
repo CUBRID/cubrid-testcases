@@ -43,6 +43,7 @@ CALL proc_with_params(10);
 evaluate 'Case 1.3: CALL procedure with OUT parameters';
 SELECT 0 INTO :var;
 CALL proc_out_params(5, :var);
+SELECT var;
 
 -- ========================================
 -- TEST 2: Invalid CALL with INTO clause - ERROR
@@ -54,6 +55,7 @@ CALL proc_with_params(10) INTO :v;
 evaluate 'Case 2.2: CALL procedure with INTO clause - with OUT parameter';
 SELECT 0 INTO :var;
 CALL proc_out_params(5, :var) INTO :v;
+SELECT var;
 
 -- ========================================
 -- TEST 3: Procedures in SQL statements - ERROR
