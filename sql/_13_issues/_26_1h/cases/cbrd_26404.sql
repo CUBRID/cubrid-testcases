@@ -89,32 +89,35 @@ WHERE a.c1 = b.c1(+)
 
 evaluate 'Case 6: UNION ALL with null row - IS NOT NULL filter';
 SELECT * FROM (
-  SELECT c1, c2 FROM t1
+  SELECT 't1' c0, c1, c2 FROM t1
   UNION ALL
-  SELECT c1, c2 FROM t2
+  SELECT 't2' c0, c1, c2 FROM t2
   UNION ALL
-  SELECT c1, c2 FROM t3
+  SELECT 't3' c0, c1, c2 FROM t3
   UNION ALL
-  SELECT NULL, NULL FROM db_root
-) WHERE c2 IS NOT NULL;
+  SELECT 't4' c0, NULL, NULL FROM db_root
+) WHERE c2 IS NOT NULL
+ORDER BY c0, c1;
 
 evaluate 'Case 7: UNION ALL without null row - IS NOT NULL filter';
 SELECT * FROM (
-  SELECT c1, c2 FROM t1
-  UNION ALL
-  SELECT c1, c2 FROM t2
-  UNION ALL
-  SELECT c1, c2 FROM t3
-) WHERE c2 IS NOT NULL;
+SELECT 't1' c0, c1, c2 FROM t1
+UNION ALL
+SELECT 't2' c0, c1, c2 FROM t2
+UNION ALL
+SELECT 't3' c0, c1, c2 FROM t3
+) WHERE c2 IS NOT NULL
+ORDER BY c0, c1;
 
 evaluate 'Case 8: UNION ALL with IS NOT NULL in one branch';
 SELECT * FROM (
-  SELECT c1, c2 FROM t1
+  SELECT 't1' c0, c1, c2 FROM t1
   UNION ALL
-  SELECT c1, c2 FROM t2 WHERE c2 IS NOT NULL
+  SELECT 't2' c0, c1, c2 FROM t2 WHERE c2 IS NOT NULL
   UNION ALL
-  SELECT c1, c2 FROM t3
-);
+  SELECT 't3' c0, c1, c2 FROM t3
+)
+ORDER BY c0, c1;
 
 -- Test Cleanup
 DROP TABLE t1;
