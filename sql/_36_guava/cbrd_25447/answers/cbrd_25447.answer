@@ -621,7 +621,7 @@ Trace Statistics:
 
 ===================================================
     
-15. select list contains set (should work) -> row by row     
+15. select list contains set (should work) -> mergeable list     
 
 ===================================================
 0
@@ -649,7 +649,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.set_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
@@ -985,7 +985,7 @@ Trace Statistics:
 0
 ===================================================
     
-24. contains correlated SUBQUERY (should not work)     
+24. contains correlated SUBQUERY (should work) -> count (CBRD-26465)     
 
 ===================================================
 count(id)    
@@ -1007,6 +1007,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: count)
     SUBQUERY (correlated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -1141,7 +1142,7 @@ Trace Statistics:
 
 ===================================================
     
-30. UPDATE statement with subquery in WHERE clause. subquery SELECT part (should not work)     
+30. UPDATE statement with subquery in WHERE clause. subquery SELECT part (should work) -> mergeable list     
 
 ===================================================
 0
@@ -1172,13 +1173,14 @@ Trace Statistics:
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
             ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
                     (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
 
 ===================================================
     
-31. DELETE statement with subquery in WHERE clause. subquery SELECT part (should not work)     
+31. DELETE statement with subquery in WHERE clause. subquery SELECT part (should work) -> mergeable list     
 
 ===================================================
 0
@@ -1209,6 +1211,7 @@ Trace Statistics:
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
             ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
                     (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      

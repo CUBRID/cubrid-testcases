@@ -151,7 +151,7 @@ select /*+ PARALLEL(2) */ cola from tbl order by 1 limit 2 for update;
 show trace;
 
 
-evaluate '15. select list contains set (should work) -> row by row';
+evaluate '15. select list contains set (should work) -> mergeable list';
 drop table if exists set_tbl;
 create table set_tbl (c1 set(int));
 insert into set_tbl select {rownum, rownum+1, rownum+2} from db_class a, db_class b, db_class c, db_class d, db_class e limit 8000;
@@ -218,7 +218,7 @@ show trace;
 drop table if exists tree;
 
 
-evaluate '24. contains correlated SUBQUERY (should not work)';
+evaluate '24. contains correlated SUBQUERY (should work) -> count (CBRD-26465)';
 select /*+ PARALLEL(2) */ count(id) from tbl a where a.cola like '%1' and exists (select /*+ PARALLEL(2) */ 1 from tbl b where b.id=a.id);
 show trace;
 
@@ -257,12 +257,12 @@ select count(*) from tbl where (cola like '0%' AND colb = '00000000000000000000'
 show trace;
 
 
-evaluate '30. UPDATE statement with subquery in WHERE clause. subquery SELECT part (should not work)';
+evaluate '30. UPDATE statement with subquery in WHERE clause. subquery SELECT part (should work) -> mergeable list';
 update new_tbl set cola = 'updated' where id in (select /*+ PARALLEL(2) */ id from tbl where cola like '000%');
 show trace;
 
 
-evaluate '31. DELETE statement with subquery in WHERE clause. subquery SELECT part (should not work)';
+evaluate '31. DELETE statement with subquery in WHERE clause. subquery SELECT part (should work) -> mergeable list';
 delete from new_tbl where id in (select /*+ PARALLEL(2) */ id from tbl where colb like '000%');
 show trace;
 
