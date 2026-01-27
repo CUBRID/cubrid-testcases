@@ -1,0 +1,642 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+10
+===================================================
+100
+===================================================
+1000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: no hint (baseline : join order a->b->c)     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: b node[?]
+                          index: idx term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: c node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ta a, tb b, tc c where a.cola=b.cola and a.cola=c.cola
+===================================================
+    
+Case 2: leading hint (partial order: c before b)     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: c node[?]
+                          index: idx term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(c, b) */ count(*) from ta a, tb b, tc c where a.cola=b.cola and a.cola=c.cola
+===================================================
+    
+Case 3: LEADING with a single table forces the join to start from that table (c)     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: sscan
+                          class: c node[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: a node[?]
+                          index: idx term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(c) */ count(*) from ta a, tb b, tc c where a.cola=b.cola and a.cola=c.cola
+===================================================
+    
+Case 4: ORDERED in inline-view is removed on view merge     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: idx-join (inner join)
+                          outer: sscan
+                                     class: b_? node[?]
+                                     cost:  ? card ?
+                          inner: iscan
+                                     class: a node[?]
+                                     index: idx term[?] (covers)
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: iscan
+                          class: b node[?]
+                          index: idx term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: c node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tc a, ta b_?, tb b, tc c where (a.cola=b_?.cola) and (b_?.cola=b.cola) and b_?.cola=c.cola
+===================================================
+    
+Case 5: ORDERED in view is removed on view merge     
+
+===================================================
+0
+===================================================
+count(*)    
+10     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: idx-join (inner join)
+                          outer: sscan
+                                     class: b_? node[?]
+                                     cost:  ? card ?
+                          inner: iscan
+                                     class: a node[?]
+                                     index: idx term[?] (covers)
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: iscan
+                          class: b node[?]
+                          index: idx term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: c node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tc a, ta b_?, tb b, tc c where (a.cola=b_?.cola) and (b_?.cola=b.cola) and b_?.cola=c.cola
+===================================================
+    
+Case 6: inline-view LEADING(c,a) is preserved after view merge; verify c is ordered before the renamed ta alias (a -> b_1)     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: idx-join (inner join)
+                          outer: sscan
+                                     class: c node[?]
+                                     cost:  ? card ?
+                          inner: iscan
+                                     class: b_? node[?]
+                                     index: idx term[?] (covers)
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: iscan
+                          class: a node[?]
+                          index: idx term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(c, a) */ count(*) from tc a, ta b_?, tb b, tc c where (a.cola=b_?.cola) and (b_?.cola=b.cola) and b_?.cola=c.cola
+===================================================
+    
+Case 7: view LEADING(c,a) is preserved after view merge; verify c is ordered before the renamed ta alias (a -> b_1)     
+
+===================================================
+0
+===================================================
+count(*)    
+10     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: idx-join (inner join)
+                          outer: sscan
+                                     class: c node[?]
+                                     cost:  ? card ?
+                          inner: iscan
+                                     class: b_? node[?]
+                                     index: idx term[?] (covers)
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: iscan
+                          class: a node[?]
+                          index: idx term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(c, a) */ count(*) from tc a, ta b_?, tb b, tc c where (a.cola=b_?.cola) and (b_?.cola=b.cola) and b_?.cola=c.cola
+===================================================
+    
+Case 8: inline-view LEADING(b,a,c) (3 args) with valid join edges; verify partial order is preserved after view merge (join order b->a->c)     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: idx-join (inner join)
+                          outer: sscan
+                                     class: b node[?]
+                                     cost:  ? card ?
+                          inner: iscan
+                                     class: b_? node[?]
+                                     index: idx term[?] (covers)
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: iscan
+                          class: a node[?]
+                          index: idx term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: c node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(b, a, c) */ count(*) from tc a, ta b_?, tb b, tc c where (a.cola=b_?.cola) and (b_?.cola=b.cola) and b_?.cola=c.cola
+===================================================
+    
+Case 9: inline-view LEADING(c,b,a) should be ignored (no direct join edge between c and b)     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: idx-join (inner join)
+                          outer: sscan
+                                     class: b_? node[?]
+                                     cost:  ? card ?
+                          inner: iscan
+                                     class: a node[?]
+                                     index: idx term[?] (covers)
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: iscan
+                          class: b node[?]
+                          index: idx term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: c node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt: [Warning: HINT ignored]
+select count(*) from tc a, ta b_?, tb b, tc c where (a.cola=b_?.cola) and (b_?.cola=b.cola) and b_?.cola=c.cola
+===================================================
+    
+Case 10: conflicting LEADING in outer+subquery; subquery LEADING must be dropped after view merge     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: idx-join (inner join)
+                          outer: sscan
+                                     class: a node[?]
+                                     cost:  ? card ?
+                          inner: iscan
+                                     class: b_? node[?]
+                                     index: idx term[?] (covers)
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: iscan
+                          class: b node[?]
+                          index: idx term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: c node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(a, b) */ count(*) from tc a, ta b_?, tb b, tc c where (a.cola=b_?.cola) and (b_?.cola=b.cola) and b_?.cola=c.cola
+===================================================
+    
+Case 11: inline-view LEADING targets a non-renamed alias (tb b); ensure partial order is preserved after merge     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: idx-join (inner join)
+                          outer: sscan
+                                     class: b_? node[?]
+                                     cost:  ? card ?
+                          inner: iscan
+                                     class: a node[?]
+                                     index: idx term[?] (covers)
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: iscan
+                          class: c node[?]
+                          index: idx term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(c, b) */ count(*) from tc a, ta b_?, tb b, tc c where (a.cola=b_?.cola) and (b_?.cola=b.cola) and b_?.cola=c.cola
+===================================================
+    
+Case 12: inline-view has ORDERED + LEADING (ORDERED removed on merge; LEADING should remain if no conflict)     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: idx-join (inner join)
+                          outer: sscan
+                                     class: v node[?]
+                                     cost:  ? card ?
+                          inner: iscan
+                                     class: a node[?]
+                                     index: idx term[?] (covers)
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: iscan
+                          class: c node[?]
+                          index: idx term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(c, b) */ count(*) from tc a, ta v, tb b, tc c where (a.cola=v.cola) and (v.cola=b.cola) and v.cola=c.cola
+===================================================
+    
+Case 13: inline-view has multiple LEADING (only the first LEADING should be effective after merge)     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: idx-join (inner join)
+                          outer: sscan
+                                     class: v node[?]
+                                     cost:  ? card ?
+                          inner: iscan
+                                     class: a node[?]
+                                     index: idx term[?] (covers)
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: iscan
+                          class: c node[?]
+                          index: idx term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(c, b) */ count(*) from tc a, ta v, tb b, tc c where (a.cola=v.cola) and (v.cola=b.cola) and v.cola=c.cola
+===================================================
+    
+Case 14: outer LEADING partial order + subquery LEADING exists (subquery LEADING should be removed due to conflict after view merge)     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: idx-join (inner join)
+                          outer: sscan
+                                     class: a node[?]
+                                     cost:  ? card ?
+                          inner: iscan
+                                     class: v node[?]
+                                     index: idx term[?] (covers)
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: iscan
+                          class: b node[?]
+                          index: idx term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: c node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(a, v) */ count(*) from tc a, ta v, tb b, tc c where (a.cola=v.cola) and (v.cola=b.cola) and v.cola=c.cola
+===================================================
+    
+Case 15: ORDERED dominates when ORDERED and LEADING specify different first tables (LEADING becomes unused)     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL(b, a) */ count(*) from ta a, tb b where a.cola=b.cola
+===================================================
+    
+Case 16: subquery ORDERED is removed on view merge; main query must not inherit ORDERED     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: v node[?]
+                          index: idx term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: c node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select distinct count(*) from ta a, tb v, tc c where (a.cola=v.cola) and (v.cola=c.cola)
+===================================================
+    
+Case 17: ORDERED inline-view + NO_MERGE (keep ORDERED by preventing view merge)     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: b node[?]
+                          index: idx term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: c node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select /*+ ORDERED NO_MERGE */ a.cola from ta a, tb b, tc c where a.cola=b.cola and a.cola=c.cola)
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: v node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: a node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tc a, (select /*+ ORDERED NO_MERGE */ a.cola from ta a, tb b, tc c where a.cola=b.cola and a.cola=c.cola) v (cola) where a.cola=v.cola
+===================================================
+    
+Case 18: triangle join predicates + LEADING (partial order: b before c)     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: b node[?]
+                          index: idx term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: c node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(b, c) */ count(*) from ta a, tb b, tc c where a.cola=b.cola and b.cola=c.cola and a.cola=c.cola
+===================================================
+    
+Case 19: correlated EXISTS inline-view; no outer LEADING -> subquery LEADING should be copied on view merge     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+iscan
+    class: c node[?]
+    index: idx term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select ? from tc c where (c.cola=v.cola) and inst_num()<= ?:? )
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: sscan
+                          class: b node[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: v node[?]
+                          index: idx term[?] (covers)
+                          sargs: term[?]
+                          subqs: ?
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: x node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(b, a) */ count(*) from tc x, ta v, tb b where (x.cola=v.cola) and (v.cola=b.cola) and  exists (select ? from tc c where (c.cola=v.cola) and inst_num()<= ?:? )
+===================================================
+    
+Case 20: correlated EXISTS inline-view; outer LEADING exists -> subquery LEADING should be removed due to conflict after view merge     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+iscan
+    class: c node[?]
+    index: idx term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select ? from tc c where (c.cola=v.cola) and inst_num()<= ?:? )
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: sscan
+                          class: x node[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: v node[?]
+                          index: idx term[?] (covers)
+                          sargs: term[?]
+                          subqs: ?
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(x, v) */ count(*) from tc x, ta v, tb b where (x.cola=v.cola) and (v.cola=b.cola) and  exists (select ? from tc c where (c.cola=v.cola) and inst_num()<= ?:? )
+===================================================
+0
+===================================================
+0
