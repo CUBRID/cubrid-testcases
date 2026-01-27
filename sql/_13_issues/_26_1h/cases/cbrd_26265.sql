@@ -9,7 +9,7 @@
  *      4. IS NOT NULL in LIKE predicate with variable binding
  *      5. IS NOT NULL in complex LIKE expression
  *      6. IS NOT NULL in complex LIKE expression with variable binding
- *      7. IS NOT NULL and LIKE are combined
+ *      7. IS NOT NULL + complex LIKE on NOT NULL column (regression from review)
  *      8. OR combination (should not break logic)
  *      9. not null column, is not null
  *      10. not null column, like ''%''
@@ -87,17 +87,17 @@ evaluate concat('6. IS NOT NULL in complex LIKE expression with variable binding
 select * from tbl_z where z like '?' || '' || '?';
 show trace;
 
-evaluate concat('7. IS NOT NULL and LIKE are combined');
-drop table if exists t1;
-create table t1 (
+evaluate concat('7. IS NOT NULL + complex LIKE on NOT NULL column (regression from review)');
+drop table if exists tbl_r;
+create table tbl_r (
     col1 varchar(20) not null,
     col2 int
 );
 
-insert into t1 values ('a', 1);
-insert into t1 values ('b', 2);
+insert into tbl_r values ('a', 1);
+insert into tbl_r values ('b', 2);
 
-select /*+ recompile */ * from t1 where (col1 is not null and col1 like '%' || '' || '%' );
+select /*+ recompile */ * from tbl_r where (col1 is not null and col1 like '%' || '' || '%');
 show trace;
 
 evaluate concat('8. OR combination (should not break logic)');
@@ -199,6 +199,7 @@ drop table tbl_w;
 drop table tbl_x;
 drop table tbl_y;
 drop table tbl_z;
+drop table tbl_r;
 drop table t1;
 drop table t2;
 drop table tbl_or;

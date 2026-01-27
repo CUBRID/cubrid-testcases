@@ -203,7 +203,7 @@ Trace Statistics:
 
 ===================================================
     
-7. IS NOT NULL and LIKE are combined     
+7. IS NOT NULL + complex LIKE on NOT NULL column (regression from review)     
 
 ===================================================
 0
@@ -220,22 +220,22 @@ b     2
 
 Query plan:
 sscan
-    class: t? node[?]
+    class: tbl_r node[?]
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.col?, t?.col? from t? t? where t?.col? is not null 
+select tbl_r.col?, tbl_r.col? from tbl_r tbl_r where tbl_r.col? is not null 
 ===================================================
 trace    
 
 Query Plan:
-  TABLE SCAN (dba.t?)
+  TABLE SCAN (dba.tbl_r)
 
-  rewritten query: select [dba.t?].col?, [dba.t?].col? from [dba.t?] [dba.t?] where [dba.t?].col? is not null 
+  rewritten query: select [dba.tbl_r].col?, [dba.tbl_r].col? from [dba.tbl_r] [dba.tbl_r] where [dba.tbl_r].col? is not null 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.tbl_r), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -596,6 +596,8 @@ Trace Statistics:
       MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
      
 
+===================================================
+0
 ===================================================
 0
 ===================================================
