@@ -1,4 +1,6 @@
 ===================================================
+0
+===================================================
     
 1. IS NOT NULL on NOT NULL column     
 
@@ -19,6 +21,19 @@ sscan
 Query stmt:
 select tbl_w.col?, tbl_w.col? from tbl_w tbl_w
 ===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_w)
+
+  rewritten query: select [dba.tbl_w].col?, [dba.tbl_w].col? from [dba.tbl_w] [dba.tbl_w]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_w), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
     
 2. IS NOT NULL with additional filter     
 
@@ -32,7 +47,7 @@ select tbl_w.col?, tbl_w.col? from tbl_w tbl_w
 1
 ===================================================
 a    b    
-2     HELLO     
+2     hello     
 
 Query plan:
 sscan
@@ -41,6 +56,19 @@ sscan
     cost:  ? card ?
 Query stmt:
 select tbl_x.a, tbl_x.b from tbl_x tbl_x where tbl_x.b= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_x)
+
+  rewritten query: select [dba.tbl_x].a, [dba.tbl_x].b from [dba.tbl_x] [dba.tbl_x] where [dba.tbl_x].b= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_x), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
 ===================================================
     
 3. IS NOT NULL in LIKE predicate     
@@ -57,8 +85,8 @@ select tbl_x.a, tbl_x.b from tbl_x tbl_x where tbl_x.b= ?:?
 1
 ===================================================
 c    d    e    
-1     null     ABCDEF     
-2     null     HELLO     
+1     null     abcdef     
+2     null     hello     
 3     null     test     
 
 Query plan:
@@ -68,8 +96,48 @@ sscan
 Query stmt:
 select tbl_y.c, tbl_y.d, tbl_y.e from tbl_y tbl_y
 ===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_y)
+
+  rewritten query: select [dba.tbl_y].c, [dba.tbl_y].d, [dba.tbl_y].e from [dba.tbl_y] [dba.tbl_y]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_y), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
     
-4. IS NOT NULL in complex LIKE expression     
+4. IS NOT NULL in LIKE predicate with variable binding     
+
+===================================================
+c    d    e    
+
+Query plan:
+sscan
+    class: tbl_y node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl_y.c, tbl_y.d, tbl_y.e from tbl_y tbl_y where tbl_y.e= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_y)
+
+  rewritten query: select [dba.tbl_y].c, [dba.tbl_y].d, [dba.tbl_y].e from [dba.tbl_y] [dba.tbl_y] where [dba.tbl_y].e= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_y), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+5. IS NOT NULL in complex LIKE expression     
 
 ===================================================
 0
@@ -83,9 +151,9 @@ select tbl_y.c, tbl_y.d, tbl_y.e from tbl_y tbl_y
 1
 ===================================================
 x    y    z    
-1     null     HI     
-2     null     CUBRID     
-3     null     TEST     
+1     null     hi     
+2     null     cubrid     
+3     null     test     
 
 Query plan:
 sscan
@@ -93,6 +161,449 @@ sscan
     cost:  ? card ?
 Query stmt:
 select tbl_z.x, tbl_z.y, tbl_z.z from tbl_z tbl_z
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_z)
+
+  rewritten query: select [dba.tbl_z].x, [dba.tbl_z].y, [dba.tbl_z].z from [dba.tbl_z] [dba.tbl_z]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_z), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+6. IS NOT NULL in complex LIKE expression with variable binding     
+
+===================================================
+x    y    z    
+
+Query plan:
+sscan
+    class: tbl_z node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl_z.x, tbl_z.y, tbl_z.z from tbl_z tbl_z where tbl_z.z= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_z)
+
+  rewritten query: select [dba.tbl_z].x, [dba.tbl_z].y, [dba.tbl_z].z from [dba.tbl_z] [dba.tbl_z] where [dba.tbl_z].z= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_z), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+7. IS NOT NULL and LIKE are combined     
+
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+col1    col2    
+a     1     
+b     2     
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.col?, t?.col? from t? t? where t?.col? is not null 
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t?)
+
+  rewritten query: select [dba.t?].col?, [dba.t?].col? from [dba.t?] [dba.t?] where [dba.t?].col? is not null 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+8. OR combination (should not break logic)     
+
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+col1    col2    
+1     null     
+2     10     
+
+Query plan:
+sscan
+    class: tbl_or node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl_or.col?, tbl_or.col? from tbl_or tbl_or where (tbl_or.col? is not null  or (tbl_or.col?= ?:? ))
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_or)
+
+  rewritten query: select [dba.tbl_or].col?, [dba.tbl_or].col? from [dba.tbl_or] [dba.tbl_or] where ([dba.tbl_or].col? is not null  or ([dba.tbl_or].col?= ?:? ))
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_or), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+    
+9. not null column, is not null     
+
+===================================================
+col1    
+a     
+
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Query stmt:
+select t?.col? from t? t?
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t?)
+
+  rewritten query: select [dba.t?].col? from [dba.t?] [dba.t?]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+10. not null column, like '%'     
+
+===================================================
+col1    
+a     
+
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Query stmt:
+select t?.col? from t? t?
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t?)
+
+  rewritten query: select [dba.t?].col? from [dba.t?] [dba.t?]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+11. not null column, like '%' || '' || '%'     
+
+===================================================
+col1    
+a     
+
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Query stmt:
+select t?.col? from t? t?
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t?)
+
+  rewritten query: select [dba.t?].col? from [dba.t?] [dba.t?]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+    
+12. type mismatch, not null column, is not null     
+
+===================================================
+col1    
+1     
+
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Query stmt:
+select t?.col? from t? t?
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t?)
+
+  rewritten query: select [dba.t?].col? from [dba.t?] [dba.t?]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+13. type mismatch, not null column, like '%'     
+
+===================================================
+col1    
+1     
+
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Query stmt:
+select t?.col? from t? t?
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t?)
+
+  rewritten query: select [dba.t?].col? from [dba.t?] [dba.t?]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+14. type mismatch, not null column, like '%' || '' || '%'     
+
+===================================================
+col1    
+1     
+
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Query stmt:
+select t?.col? from t? t?
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t?)
+
+  rewritten query: select [dba.t?].col? from [dba.t?] [dba.t?]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+    
+15. pk column, is not null     
+
+===================================================
+col1    
+abc     
+def     
+
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Query stmt:
+select t?.col? from t? t?
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t?)
+
+  rewritten query: select [dba.t?].col? from [dba.t?] [dba.t?]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+16. pk column, like '%'     
+
+===================================================
+col1    
+abc     
+def     
+
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Query stmt:
+select t?.col? from t? t?
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t?)
+
+  rewritten query: select [dba.t?].col? from [dba.t?] [dba.t?]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+17. pk column, like '%' || '' || '%'     
+
+===================================================
+col1    
+abc     
+def     
+
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Query stmt:
+select t?.col? from t? t?
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t?)
+
+  rewritten query: select [dba.t?].col? from [dba.t?] [dba.t?]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+18. join query, is not null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+col1    col2    col1    
+abc     1     null     
+def     2     null     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: t? node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select t?.col?, t?.col?, t?.col? from t? t? left outer join t? t? on t?.col?=t?.col?
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    TABLE SCAN (dba.t?)
+    TABLE SCAN (dba.t?)
+
+  rewritten query: select [dba.t?].col?, [dba.t?].col?, [dba.t?].col? from [dba.t?] [dba.t?] left outer join [dba.t?] [dba.t?] on [dba.t?].col?=[dba.t?].col?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
 ===================================================
 0
 ===================================================
