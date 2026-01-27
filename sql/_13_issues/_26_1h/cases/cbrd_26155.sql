@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS athlete (
 INSERT INTO athlete VALUES (1, 'John Doe');
 INSERT INTO athlete VALUES (2, 'Jane Smith');
 INSERT INTO athlete VALUES (3, 'Bob Johnson');
+INSERT INTO athlete VALUES (4, '?');
 
 evaluate 'Case 1. Single bind parameter in WHERE clause';
 CREATE OR REPLACE PROCEDURE proc_bind_where AS
@@ -97,7 +98,17 @@ END;
 
 CALL proc_bind_function();
 
-evaluate 'Case 10. Valid procedure without bind parameters';
+evaluate 'Case 10. ? inside quotes (valid case)';
+CREATE OR REPLACE PROCEDURE proc_where_value AS
+    n VARCHAR(40);
+BEGIN
+    SELECT name INTO n FROM athlete WHERE name = '?';
+    DBMS_OUTPUT.put_line('Name: ' || n);
+END;
+
+CALL proc_where_value();
+
+evaluate 'Case 11. Valid procedure without bind parameters';
 CREATE OR REPLACE PROCEDURE proc_valid AS
     n VARCHAR(40);
 BEGIN
@@ -118,6 +129,7 @@ DROP PROCEDURE proc_bind_select_list;
 DROP PROCEDURE proc_bind_having;
 DROP PROCEDURE proc_bind_subquery;
 DROP PROCEDURE proc_bind_function;
+DROP PROCEDURE proc_where_value;
 DROP PROCEDURE proc_valid;
 
 DROP TABLE IF EXISTS athlete;
