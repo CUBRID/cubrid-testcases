@@ -17,39 +17,45 @@ evaluate 'Case 1: LEFT OUTER JOIN - IS NOT NULL on inner table (t2.c2)';
 SELECT /*+ recompile */ a.*, b.*
 FROM t1 a
 LEFT OUTER JOIN t2 b ON a.c1 = b.c1
-WHERE b.c2 IS NOT NULL;
+WHERE b.c2 IS NOT NULL
+ORDER BY a.c1;
 
 evaluate 'Case 1-Oracle: ';
 SELECT /*+ recompile */ a.*, b.*
 FROM t1 a, t2 b
 WHERE a.c1 = b.c1(+)
-  AND b.c2 IS NOT NULL;
+  AND b.c2 IS NOT NULL
+ORDER BY a.c1;
 
 evaluate 'Case 2: RIGHT OUTER JOIN - IS NOT NULL on inner table (t1.c2)';
 SELECT /*+ recompile */ a.*, b.*
 FROM t1 a
 RIGHT OUTER JOIN t2 b ON a.c1 = b.c1
-WHERE a.c2 IS NOT NULL;
+WHERE a.c2 IS NOT NULL
+ORDER BY b.c1;
 
 evaluate 'Case 2-Oracle: ';
 SELECT /*+ recompile */ a.*, b.*
 FROM t1 a, t2 b
 WHERE a.c1(+) = b.c1
-  AND a.c2 IS NOT NULL;
+  AND a.c2 IS NOT NULL
+ORDER BY b.c1;
 
 evaluate 'Case 3: Multiple IS NOT NULL';
 SELECT /*+ recompile */ a.*, b.*
 FROM t1 a
 LEFT OUTER JOIN t2 b ON a.c1 = b.c1
 WHERE a.c2 IS NOT NULL
-  AND b.c2 IS NOT NULL;
+  AND b.c2 IS NOT NULL
+ORDER BY a.c1;
 
 evaluate 'Case 3-Oracle: ';
 SELECT /*+ recompile */ a.*, b.*
 FROM t1 a, t2 b
 WHERE a.c1 = b.c1(+)
   AND a.c2 IS NOT NULL
-  AND b.c2 IS NOT NULL;
+  AND b.c2 IS NOT NULL
+ORDER BY a.c1;
 
 evaluate 'Case 4: IS NOT NULL with additional condition';
 SELECT /*+ recompile */ a.*, b.*
@@ -77,7 +83,8 @@ FROM t1 a
 LEFT OUTER JOIN t2 b ON a.c1 = b.c1
 LEFT OUTER JOIN t3 c ON a.c1 = c.c1
 WHERE b.c2 IS NOT NULL
-  AND c.c2 IS NOT NULL;
+  AND c.c2 IS NOT NULL
+ORDER BY a.c1;
 
 evaluate 'Case 5-Oracle: ';
 SELECT /*+ recompile */ a.*, b.*, c.*
@@ -85,7 +92,8 @@ FROM t1 a, t2 b, t3 c
 WHERE a.c1 = b.c1(+)
   AND a.c1 = c.c1(+)
   AND b.c2 IS NOT NULL
-  AND c.c2 IS NOT NULL;
+  AND c.c2 IS NOT NULL
+ORDER BY a.c1;
 
 evaluate 'Case 6: UNION ALL with null row - IS NOT NULL filter';
 SELECT * FROM (
@@ -118,6 +126,36 @@ SELECT * FROM (
   SELECT 't3' c0, c1, c2 FROM t3
 )
 ORDER BY c0, c1;
+
+evaluate 'Case 9: LEFT OUTER JOIN - IS NOT NULL in ON clause';
+SELECT /*+ recompile */ a.*, b.*
+FROM t1 a
+LEFT OUTER JOIN t2 b ON a.c1 = b.c1 AND b.c2 IS NOT NULL
+ORDER BY a.c1;
+
+evaluate 'Case 9-Oracle: ';
+SELECT /*+ recompile */ a.*, b.*
+FROM t1 a, t2 b
+WHERE a.c1 = b.c1(+)
+  AND b.c2(+) IS NOT NULL
+ORDER BY a.c1;
+
+evaluate 'Case 10: Derived table inner - IS NOT NULL must not be removed, when using a subquery';
+SELECT /*+ recompile */ a.*, b.*
+FROM t1 a
+LEFT OUTER JOIN (SELECT * FROM t2) b ON a.c1 = b.c1
+WHERE b.c2 IS NOT NULL
+ORDER BY a.c1;
+
+evaluate 'Case 11: LEFT OUTER JOIN with index - IS NOT NULL must remain correct, when an index exists';
+CREATE INDEX idx_t2_c1 ON t2(c1);
+SELECT /*+ recompile */ a.*, b.*
+FROM t1 a
+LEFT OUTER JOIN t2 b ON a.c1 = b.c1
+WHERE b.c2 IS NOT NULL
+ORDER BY a.c1;
+
+DROP INDEX idx_t2_c1 ON t2;
 
 -- Test Cleanup
 DROP TABLE t1;
