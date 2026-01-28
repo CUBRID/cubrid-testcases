@@ -98,7 +98,25 @@ END;
 
 CALL proc_bind_function();
 
-evaluate 'Case 10. ? inside quotes (valid case)';
+evaluate 'Case 10. Bind parameter in LIMIT clause';
+CREATE OR REPLACE PROCEDURE proc_bind_limit AS
+    n VARCHAR(40);
+BEGIN
+    SELECT name INTO n FROM athlete WHERE code = 1 LIMIT 0, 1 + ?;
+END;
+
+CALL proc_bind_limit();
+
+evaluate 'Case 11. Bind parameter in calculation';
+CREATE OR REPLACE PROCEDURE proc_bind_cal AS
+    n VARCHAR(40);
+BEGIN
+    SELECT name INTO n FROM athlete WHERE code = 1 + ?;
+END;
+
+CALL proc_bind_cal();
+
+evaluate 'Case 12. ? inside quotes (valid case)';
 CREATE OR REPLACE PROCEDURE proc_where_value AS
     n VARCHAR(40);
 BEGIN
@@ -108,7 +126,7 @@ END;
 
 CALL proc_where_value();
 
-evaluate 'Case 11. Valid procedure without bind parameters';
+evaluate 'Case 13. Valid procedure without bind parameters';
 CREATE OR REPLACE PROCEDURE proc_valid AS
     n VARCHAR(40);
 BEGIN
@@ -129,6 +147,8 @@ DROP PROCEDURE proc_bind_select_list;
 DROP PROCEDURE proc_bind_having;
 DROP PROCEDURE proc_bind_subquery;
 DROP PROCEDURE proc_bind_function;
+DROP PROCEDURE proc_bind_limit;
+DROP PROCEDURE proc_bind_cal;
 DROP PROCEDURE proc_where_value;
 DROP PROCEDURE proc_valid;
 
