@@ -9,7 +9,7 @@
 
 -- Setup: Create test table
 DROP TABLE IF EXISTS athlete;
-CREATE TABLE IF NOT EXISTS athlete (
+CREATE TABLE athlete (
     code INT PRIMARY KEY,
     name VARCHAR(40)
 );
