@@ -152,6 +152,6 @@ DROP PROCEDURE proc_bind_cal;
 DROP PROCEDURE proc_where_value;
 DROP PROCEDURE proc_valid;
 
-DROP TABLE IF EXISTS athlete;
+DROP TABLE athlete;
 
 --+ server-message off
