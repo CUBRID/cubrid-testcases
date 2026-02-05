@@ -10,7 +10,7 @@ create trigger test_trigger
 after rollback
 execute print 'rollback by test_user';
 
-select name, id, password, direct_groups, groups, authorization, triggers, is_loginable, is_system_created, comment from _db_user
+select name, id, direct_groups, groups, triggers, is_loginable, is_system_created, comment from db_user
 where name = 'TEST_USER';
 drop trigger test_trigger;
 

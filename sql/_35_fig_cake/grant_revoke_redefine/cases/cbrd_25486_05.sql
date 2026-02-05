@@ -1,6 +1,6 @@
 /* Verified the CBRD-25486
-As-is: if removed the object then remove the related data on the db_authorization table
-To-be: if removed the object then set 'NULL' relate data on the db_authorization table
+As-is: if removed the object then remove the related data on the db_auth view
+To-be: if removed the object then set 'NULL' relate data on the db_auth view
 
 Scenario 05: Drop partition table from granted alter permission users
 */
@@ -33,8 +33,6 @@ grant select, alter on t1_l to u2 with grant option;
 
 select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, object_name;
 
-select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
-
 
 evaluate 'connect to u2 & u3 grant to u1.t1_r, u1.t1_h, u1.t1_l';
 call login ('u2') on class db_user;
@@ -44,8 +42,6 @@ grant select on u1.t1_h to u3 with grant option;
 grant select, alter on u1.t1_l to u3 with grant option;
 
 select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, object_name;
-
-select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
 
 
 evaluate 'connect u3, drop table u1.t1_r, u1.t1_h, u1.t1_l';
@@ -60,8 +56,6 @@ drop table u1.t1_l;
 
 evaluate 'success: drop u1.t1_l';
 select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, object_name;
-
-select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
 
 
 evaluate 'connect to u2, drop table u1.t1_r, u1.t1_h';
@@ -79,8 +73,6 @@ drop table u1.t1_h;
 
 select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, object_name;
 
-select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
-
 
 evaluate 'connect to dba, drop u1.t1_r';
 call login(class db_user,'dba','');
@@ -88,8 +80,6 @@ call login(class db_user,'dba','');
 drop table u1.t1_r;
 
 select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, object_name;
-
-select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
 
 
 evaluate 'Test done';

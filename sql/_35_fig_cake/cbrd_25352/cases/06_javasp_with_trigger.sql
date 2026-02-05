@@ -14,18 +14,17 @@ select unique_name, owner.name, name, action_definition  from _db_trigger order 
 
 evaluate 'insert data & check result';
 insert into name_list(name) values('test_user');
-select name from db_user order by name;
+select name from _db_user order by name;
 
 
-evaluate 'create test_trigger2: execute call add_user(class db_user, [user_name])';
+evaluate 'create test_trigger2: execute call add_user(class _db_user, [user_name])';
 create trigger test_trigger2
   before insert on name_list2
-  execute call add_user(class db_user, 'test_user2');
+  execute call add_user(class _db_user, 'test_user2');
 
 evaluate 'insert data & check result';
 insert into name_list2(name) values('test_user2');
-select name from db_user order by name;
-
+select name from _db_user order by name;
 evaluate 'trigger list';
 select unique_name, owner.name, name, action_definition  from _db_trigger order by unique_name;
 

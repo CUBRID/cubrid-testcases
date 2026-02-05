@@ -1,6 +1,6 @@
 /* Verified the CBRD-25486
-As-is: if removed the object then remove the related data on the db_authorization table
-To-be: if removed the object then set 'NULL' relate data on the db_authorization table
+As-is: if removed the object then remove the related data on the db_auth view
+To-be: if removed the object then set 'NULL' relate data on the db_auth view
 
 Scenario 03: Drop javasp when javasp permission granted to other users
 */
@@ -21,8 +21,6 @@ GRANT EXECUTE ON PROCEDURE u1.hello TO u3;
 
 select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name;
 
-select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
-
 
 evaluate 'connect to dba, drop u1.hello';
 call login('dba','') on class db_user;
@@ -30,7 +28,6 @@ DROP FUNCTION u1.hello;
 
 evaluate 'check to the u1.hello removed';
 select * from db_auth where grantee_name != 'PUBLIC'  order by grantor_name;
-select owner.name, grants from db_authorization where owner.name != 'PUBLIC'  order by owner.name;
 select sp_name, pkg_name, sp_type, return_type, arg_count, lang, authid, is_deterministic, target, owner, code, comment from db_stored_procedure;
 
 

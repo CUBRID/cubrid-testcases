@@ -1,6 +1,6 @@
 /* Verified the CBRD-25486
-As-is: if removed the object then remove the related data on the db_authorization table
-To-be: if removed the object then set 'NULL' relate data on the db_authorization table
+As-is: if removed the object then remove the related data on the _db_authorization table
+To-be: if removed the object then set 'NULL' relate data on the _db_authorization table
 
 Scenario 04: Drop table from granted alter permission users
 */
@@ -26,7 +26,7 @@ evaluate 'connect to dba';
 call login('dba','') on class db_user;
 select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, object_name;
 
-select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
+select owner.name, grants from _db_authorization where owner.name != 'PUBLIC' order by owner.name;
 
 
 evaluate 'connect to u3 & drop u1.tbl, ERROR: ERROR: ALTER authorization failure;';
@@ -43,7 +43,7 @@ call login('dba','') on class db_user;
 
 evaluate 'check to the u1.tbl removed';
 select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name;
-select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
+select owner.name, grants from _db_authorization where owner.name != 'PUBLIC' order by owner.name;
 select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where class_name = 'tbl';
 
 
@@ -57,7 +57,7 @@ call login('dba','') on class db_user;
 
 evaluate 'check to the u1.tbl2 removed';
 select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name;
-select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
+select owner.name, grants from _db_authorization where owner.name != 'PUBLIC' order by owner.name;
 select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where class_name = 'tbl2';
 
 

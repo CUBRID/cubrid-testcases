@@ -1,6 +1,6 @@
 /* Verified the CBRD-25574
-As-is: if dropped user then set 'NULL' related data on the db_auth, db_authorization table
-To-be: if dropped user then remove the related data on the db_auth, db_authorization table
+As-is: if dropped user then set 'NULL' related data on the db_auth, _db_authorization table
+To-be: if dropped user then remove the related data on the db_auth, _db_authorization table
 */
 
 

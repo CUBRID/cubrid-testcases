@@ -33,8 +33,6 @@ GRANT EXECUTE ON PROCEDURE dba.hello TO dba;
 
 select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name;
 
-select owner.name, grants from db_authorization where owner.name = 'U1' order by owner.name;
-
 evaluate 'connect to dba and test init';
 call login(class db_user,'dba','');
 drop FUNCTION dba.hello;
@@ -70,8 +68,6 @@ evaluate 'ERROR: Only DBA and the owner can grant the EXECUTE privilege';
 GRANT EXECUTE ON PROCEDURE dba.hello TO dba;
 
 select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name;
-
-select owner.name, grants from db_authorization where owner.name IN ('U1', 'U2') order by owner.name;
 
 
 evaluate 'connect to dba and test init';
@@ -109,8 +105,6 @@ evaluate 'ERROR: Only DBA and the owner can grant the EXECUTE privilege';
 GRANT EXECUTE ON PROCEDURE dba.hello TO dba;
 
 select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name;
-
-select owner.name, grants from db_authorization where owner.name IN ('U1', 'U2') order by owner.name;
 
 
 evaluate 'connect to u1 and revoke to dba.tbl from u2';

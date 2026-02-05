@@ -1,4 +1,4 @@
 autocommit off;
-drop joe.db_authorization;
+drop joe._db_authorization;
 rollback work;
 rollback;

@@ -7,11 +7,11 @@ select _db_user to u2 from _db_user where name = 'PR4916_U2';
 select _db_user to dba from _db_user where name = 'DBA';
 call add_member(u1) on u2;
 call add_member(u1) on dba;
-select g.u.name from db_user, table(db_user.groups) as g(u)
-  where db_user.name = 'PR4916_U1';
+select g.u.name from _db_user, table(_db_user.groups) as g(u)
+  where _db_user.name = 'PR4916_U1';
 call drop_member(u1) on dba;
-select g.u.name from db_user, table(db_user.groups) as g(u)
-  where db_user.name = 'PR4916_U1';
+select g.u.name from _db_user, table(_db_user.groups) as g(u)
+  where _db_user.name = 'PR4916_U1';
 rollback work;
 call add_user('PR4916_U1', '') on class _db_user;
 call add_user('PR4916_U2', '') on class _db_user;
@@ -19,11 +19,11 @@ select _db_user to u1 from _db_user where name = 'PR4916_U1';
 select _db_user to u2 from _db_user where name = 'PR4916_U2';
 select _db_user to dba from _db_user where name = 'DBA';
 call add_member(u1) on dba;
-select g.u.name from db_user, table(db_user.groups) as g(u)
-  where db_user.name = 'PR4916_U1';
+select g.u.name from _db_user, table(_db_user.groups) as g(u)
+  where _db_user.name = 'PR4916_U1';
 call drop_member(u1) on dba;
-select g.u.name from db_user, table(db_user.groups) as g(u)
-  where db_user.name = 'PR4916_U1';
+select g.u.name from _db_user, table(_db_user.groups) as g(u)
+  where _db_user.name = 'PR4916_U1';
 rollback work;
 call add_user('PR4916_U1', '') on class _db_user;
 call add_user('PR4916_U2', '') on class _db_user;
@@ -38,10 +38,10 @@ call add_member(u1) on u2;
 call add_member(u1) on u3;
 call add_member(u1) on u4;
 call add_member(u1) on dba;
-select g.u.name from db_user, table(db_user.groups) as g(u)
-  where db_user.name = 'PR4916_U1';
+select g.u.name from _db_user, table(_db_user.groups) as g(u)
+  where _db_user.name = 'PR4916_U1';
 call drop_member(u1) on dba;
-select g.u.name from db_user, table(db_user.groups) as g(u)
-  where db_user.name = 'PR4916_U1';
+select g.u.name from _db_user, table(_db_user.groups) as g(u)
+  where _db_user.name = 'PR4916_U1';
 call login('dba', '' ) on class db_user;
 rollback;

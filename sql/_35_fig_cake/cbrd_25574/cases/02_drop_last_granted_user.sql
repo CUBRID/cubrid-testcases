@@ -1,6 +1,6 @@
 /* Verified the CBRD-25574
-As-is: if dropped user then set 'NULL' related data on the db_auth, db_authorization table
-To-be: if dropped user then remove the related data on the db_auth, db_authorization table
+As-is: if dropped user then set 'NULL' related data on the db_auth
+To-be: if dropped user then remove the related data on the db_auth
 */
 
 create user u1;
@@ -26,16 +26,12 @@ GRANT SELECT ON u1.tbl TO u3 WITH GRANT OPTION;
 
 select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name, object_name;
 
-select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
-
 
 evaluate 'connect to dba & drop user u3';
 call login('dba','') on class db_user;
 drop user u3;
 
 select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name, object_name;
-
-select owner.name, grants from db_authorization where owner.name != 'PUBLIC';
 
 
 evaluate 'Test done';

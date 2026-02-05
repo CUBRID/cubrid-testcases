@@ -1,6 +1,6 @@
 /* Verified the CBRD-25486
-As-is: if removed the object then remove the related data on the db_authorization table
-To-be: if removed the object then set 'NULL' relate data on the db_authorization table
+As-is: if removed the object then remove the related data on the db_auth view
+To-be: if removed the object then set 'NULL' relate data on the db_auth view
 
 Scenario 01: Drop table when table permission granted to other users
 */
@@ -22,8 +22,6 @@ GRANT SELECT ON u1.tbl TO u3 WITH GRANT OPTION;
 
 select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name;
 
-select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
-
 evaluate 'connect to u2';
 call login('u2','') on class db_user;
 
@@ -34,7 +32,7 @@ evaluate 'connect to dba, drop the u1.tbl';
 call login('dba','') on class db_user;
 DROP TABLE u1.tbl;
 
-select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
+select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name;
 
 select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where class_name = 'tbl' order by class_name;
 

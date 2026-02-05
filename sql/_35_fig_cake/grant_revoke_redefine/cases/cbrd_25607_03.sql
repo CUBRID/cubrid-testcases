@@ -76,8 +76,6 @@ GRANT select ON owner.tbl TO temp_user;
 
 select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantee_name, object_name, auth_type;
 
-select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
-
 
 evaluate 'Test init';
 evaluate 'connect to grantable_member & revoke from temp_user';

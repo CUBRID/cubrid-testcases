@@ -139,7 +139,7 @@ CREATE TABLE reserved1
     [corresponding] CHAR(1), [create] CHAR(1), [cube] CHAR(1), [current_date] CHAR(1),
     [current_time] CHAR(1), [current_timestamp] CHAR(1), [current_user] CHAR(1), [cursor] CHAR(1),
     [cycle] CHAR(1), [data] CHAR(1), [database] CHAR(1), [date] CHAR(1),
-    [datetime] CHAR(1), [db_user] CHAR(1), [dec] CHAR(1), [decimal] CHAR(1),
+    [datetime] CHAR(1), [dec] CHAR(1), [decimal] CHAR(1),
     [declare] CHAR(1), [deallocate] CHAR(1), [default] CHAR(1), [deferrable] CHAR(1),
     [deferred] CHAR(1), [delete] CHAR(1), [derived] CHAR(1), [desc] CHAR(1),
     [diagnostics] CHAR(1), [distinct] CHAR(1), [domain] CHAR(1), [double] CHAR(1),
@@ -166,13 +166,13 @@ CREATE OR REPLACE PROCEDURE reserved_test1 AS
             '8' AS [corresponding], '9' AS [create], '0' AS [cube], '1' AS [current_date],
             '2' AS [current_time], '3' AS [current_timestamp], '4' AS [current_user], '5' AS [cursor],
             '6' AS [cycle], '7' AS [data], '8' AS [database], '9' AS [date],
-            '0' AS [datetime], '1' AS [db_user], '2' AS [dec], '3' AS [decimal],
-            '4' AS [declare], '5' AS [deallocate], '6' AS [default], '7' AS [deferrable],
-            '8' AS [deferred], '9' AS [delete], '0' AS [derived], '1' AS [desc],
-            '2' AS [diagnostics], '3' AS [distinct], '4' AS [domain], '5' AS [double],
-            '6' AS [drop], '7' AS [each], '8' AS [else], '9' AS [elsif],
-            '0' AS [end], '1' AS [escaped], '2' AS [every], '3' AS [except],
-            '4' AS [exception], '5' AS [execute], '6' AS [exists], '7' AS [ext]
+            '0' AS [datetime], '1' AS [dec], '2' AS [decimal],
+            '3' AS [declare], '4' AS [deallocate], '5' AS [default], '6' AS [deferrable],
+            '7' AS [deferred], '8' AS [delete], '9' AS [derived], '0' AS [desc],
+            '1' AS [diagnostics], '2' AS [distinct], '3' AS [domain], '4' AS [double],
+            '5' AS [drop], '6' AS [each], '7' AS [else], '8' AS [elsif],
+            '9' AS [end], '0' AS [escaped], '1' AS [every], '2' AS [except],
+            '3' AS [exception], '4' AS [execute], '5' AS [exists], '6' AS [ext]
         FROM dual;
 BEGIN
     FOR rec IN c LOOP
@@ -193,7 +193,7 @@ BEGIN
             [corresponding], [create], [cube], [current_date],
             [current_time], [current_timestamp], [current_user], [cursor],
             [cycle], [data], [database], [date],
-            [datetime], [db_user], [dec], [decimal],
+            [datetime], [dec], [decimal],
             [declare], [deallocate], [default], [deferrable],
             [deferred], [delete], [derived], [desc],
             [diagnostics], [distinct], [domain], [double],
@@ -218,7 +218,7 @@ BEGIN
             rec.[corresponding], rec.[create], rec.[cube], rec.[current_date],
             rec.[current_time], rec.[current_timestamp], rec.[current_user], rec.[cursor],
             rec.[cycle], rec.[data], rec.[database], rec.[date],
-            rec.[datetime], rec.[db_user], rec.[dec], rec.[decimal],
+            rec.[datetime], rec.[dec], rec.[decimal],
             rec.[declare], rec.[deallocate], rec.[default], rec.[deferrable],
             rec.[deferred], rec.[delete], rec.[derived], rec.[desc],
             rec.[diagnostics], rec.[distinct], rec.[domain], rec.[double],

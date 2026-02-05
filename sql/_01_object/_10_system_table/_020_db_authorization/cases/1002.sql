@@ -1,5 +1,5 @@
 --+ holdcas on;
---Test db_authorization's attribute 'owner';
+--Test _db_authorization's attribute 'owner';
 
 call login('dba') on class db_user;
 create class test_class(col1 integer, col2 varchar(10));
@@ -17,10 +17,10 @@ grant alter on test_class to test_user;
 grant index on test_class to test_user;
 grant execute on test_class to test_user;
 
-select * from db_authorization
+select * from _db_authorization
 where  owner.name='TEST_USER';
 
-call check_authorization(127) on class db_authorization;
+call check_authorization(127) on class _db_authorization;
 
 
 drop user test_user;

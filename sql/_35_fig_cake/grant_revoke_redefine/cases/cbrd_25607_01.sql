@@ -42,8 +42,6 @@ GRANT EXECUTE ON PROCEDURE owner.hello TO temp_user;
 
 select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name;
 
-select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
-
 
 evaluate 'Test init';
 revoke SELECT on owner.tbl from temp_user;
@@ -71,8 +69,6 @@ evaluate 'ERROR: Only DBA and the owner can grant the EXECUTE privilege';
 GRANT EXECUTE ON PROCEDURE owner.hello TO temp_user;
 
 select grantor_name, grantee_name, object_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name;
-
-select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
 
 
 evaluate 'Test init';
