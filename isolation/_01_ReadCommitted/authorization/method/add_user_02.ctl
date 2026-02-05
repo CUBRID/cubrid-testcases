@@ -37,7 +37,7 @@ C3: set transaction isolation level read committed;
 /* preparation */
 C1: DROP TABLE IF EXISTS t1;
 C1: CREATE TABLE t1(id INT primary key, phone VARCHAR(10));
-C1: CREATE USER company;
+C1: CREATE USER company GROUPS dba;
 C1: CREATE USER design GROUPS dba;
 C1: COMMIT;
 MC: wait until C1 ready;

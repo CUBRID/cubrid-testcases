@@ -1,4 +1,4 @@
---Test system table db_user's attribute:triggers
+--Test system table _db_user's attribute:triggers
 autocommit off;
 call login('dba') on class db_user;
 create user test_user ;
@@ -10,7 +10,7 @@ create trigger test_trigger
 after rollback
 execute print 'rollback by test_user';
 
-select name, id, password, direct_groups, groups, authorization, triggers, is_loginable, is_system_created, comment from db_user
+select name, id, password, direct_groups, groups, authorization, triggers, is_loginable, is_system_created, comment from _db_user
 where name = 'TEST_USER';
 drop trigger test_trigger;
 

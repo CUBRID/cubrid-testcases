@@ -36,10 +36,10 @@ C3: set transaction lock timeout INFINITE;
 C3: set transaction isolation level read committed;
 
 /* preparation */
-C1: CREATE USER Fred;
+C1: CREATE USER Fred GROUPS dba;
 C1: CREATE TABLE t1(id int primary key, name VARCHAR(10));
 MC: wait until C1 ready;
-C2: CREATE USER Fred1;
+C2: CREATE USER Fred1 GROUPS dba;
 C2: COMMIT;
 MC: wait until C2 ready;
 C1: COMMIT;

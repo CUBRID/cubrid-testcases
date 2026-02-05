@@ -32,7 +32,7 @@ C2: login as 'dba';
 C2: set transaction lock timeout INFINITE;
 C2: set transaction isolation level read committed;
 
-C3: login as 'public';
+C3: login as 'dba';
 C3: set transaction lock timeout INFINITE;
 C3: set transaction isolation level read committed;
 

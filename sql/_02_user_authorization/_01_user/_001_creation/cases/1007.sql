@@ -3,7 +3,7 @@
 call login('dba','') on class db_user;
 
 
-CALL add_user('user1') on class db_user;
+CALL add_user('user1') on class _db_user;
 
 
 drop user user1;

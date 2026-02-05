@@ -1,4 +1,4 @@
 autocommit off;
-create index idx on joe.db_user(name);
+create index idx on joe._db_user(name);
 rollback work;
 rollback;

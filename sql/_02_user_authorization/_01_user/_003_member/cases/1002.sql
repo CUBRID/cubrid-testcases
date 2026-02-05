@@ -3,7 +3,7 @@ autocommit off;
 
 call login('dba','') on class db_user;
 
-call add_user ('administration', '') on class db_user to admin;
+call add_user ('administration', '') on class _db_user to admin;
 
 call add_member('user1') ON admin;
 

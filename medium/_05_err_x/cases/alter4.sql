@@ -1,4 +1,4 @@
 autocommit off;
-alter class joe.db_user add attribute age integer;
+alter class joe._db_user add attribute age integer;
 rollback work;
 rollback;

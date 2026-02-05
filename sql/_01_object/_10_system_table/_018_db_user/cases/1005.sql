@@ -1,4 +1,4 @@
---Test system table db_user's attribute:authorization
+--Test system table _db_user's attribute:authorization
 
 
 --+ holdcas on;
@@ -19,7 +19,7 @@ grant execute on test_class to test_user;
 
 
 select name, id, password, direct_groups,groups,authorization
-from   db_user
+from   _db_user
 where  name = 'TEST_USER';
 
 drop user test_user;

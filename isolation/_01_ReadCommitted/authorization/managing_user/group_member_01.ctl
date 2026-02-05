@@ -33,7 +33,7 @@ C2: set transaction lock timeout INFINITE;
 C2: set transaction isolation level read committed;
 
 /* preparation */
-C1: CREATE USER company;
+C1: CREATE USER company GROUPS dba;
 C1: CREATE USER engineering GROUPS company;
 C1: CREATE USER jones GROUPS engineering; 
 MC: wait until C1 ready;

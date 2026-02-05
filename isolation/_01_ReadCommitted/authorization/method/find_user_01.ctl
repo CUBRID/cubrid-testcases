@@ -37,13 +37,13 @@ C3: set transaction isolation level read committed;
 /* preparation */
 C1: DROP TABLE IF EXISTS t1;
 C1: CREATE TABLE t1(id INT primary key, phone VARCHAR(10));
-C1: CREATE USER company;
+C1: CREATE USER company GROUPS dba;
 C1: CREATE USER design GROUPS dba;
 C1: COMMIT;
 MC: wait until C1 ready;
 
 C1: login as 'company';
-C1: CALL add_user ('jones', '') ON CLASS db_user to admin;
+C1: CALL add_user ('jones', '') ON CLASS _db_user to admin;
 C1: select name from db_user order by 1;
 MC: wait until C1 ready;
 C1: COMMIT;
