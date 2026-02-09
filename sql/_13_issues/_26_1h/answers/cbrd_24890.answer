@@ -1,0 +1,379 @@
+===================================================
+0
+===================================================
+0
+===================================================
+500
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1     
+
+===================================================
+min(col2)    max(col2)    
+100     4900     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t?.idx_col?_col?_desc_asc) (key range: [dba.t?].col?= ?:? , covered: true)
+
+  rewritten query: select min([dba.t?].col?), max([dba.t?].col?) from [dba.t?] [dba.t?] where [dba.t?].col?= ?:?  using index [dba.t?].idx_col?_col?_desc_asc(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t?.idx_col?_col?_desc_asc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, min_max_only: true)
+     
+
+===================================================
+    
+Case 2     
+
+===================================================
+max(col2)    min(col2)    
+4900     100     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t?.idx_col?_col?_asc_asc) (key range: [dba.t?].col?= ?:? , covered: true)
+
+  rewritten query: select max([dba.t?].col?), min([dba.t?].col?) from [dba.t?] [dba.t?] where [dba.t?].col?= ?:?  using index [dba.t?].idx_col?_col?_asc_asc(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t?.idx_col?_col?_asc_asc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, min_max_only: true)
+     
+
+===================================================
+    
+Case 3     
+
+===================================================
+min(col2)    max(col2)    
+100     4900     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t?.idx_col?_col?_desc_desc) (key range: [dba.t?].col?= ?:? , covered: true)
+
+  rewritten query: select min([dba.t?].col?), max([dba.t?].col?) from [dba.t?] [dba.t?] where [dba.t?].col?= ?:?  using index [dba.t?].idx_col?_col?_desc_desc(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t?.idx_col?_col?_desc_desc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, min_max_only: true)
+     
+
+===================================================
+    
+Case 4     
+
+===================================================
+max(col2)    min(col2)    
+4900     100     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t?.idx_col?_col?_desc_asc) (key range: [dba.t?].col?= ?:? , covered: true)
+
+  rewritten query: select max([dba.t?].col?), min([dba.t?].col?) from [dba.t?] [dba.t?] where [dba.t?].col?= ?:?  using index [dba.t?].idx_col?_col?_desc_asc(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t?.idx_col?_col?_desc_asc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, min_max_only: true)
+     
+
+===================================================
+    
+Case 5     
+
+===================================================
+min(col2)    
+300     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t?.idx_col?_col?_asc_asc) (key range: [dba.t?].col?= ?:? key range: ([dba.t?].col?> ?:? ), covered: true)
+
+  rewritten query: select min([dba.t?].col?) from [dba.t?] [dba.t?] where ([dba.t?].col?> ?:? ) and [dba.t?].col?= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t?.idx_col?_col?_asc_asc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, min_max_only: true)
+     
+
+===================================================
+    
+Case 6     
+
+===================================================
+max(col2)    
+300     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t?.idx_col?_col?_asc_asc) (key range: [dba.t?].col?= ?:? key range: ([dba.t?].col?< ?:? ), covered: true)
+
+  rewritten query: select max([dba.t?].col?) from [dba.t?] [dba.t?] where ([dba.t?].col?< ?:? ) and [dba.t?].col?= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t?.idx_col?_col?_asc_asc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, min_max_only: true)
+     
+
+===================================================
+    
+Case 7     
+
+===================================================
+min(col2)    max(col2)    
+100     4900     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t?.idx_col?_col?_desc_asc) (key range: [dba.t?].col?= ?:? , covered: true)
+
+  rewritten query: select min([dba.t?].col?), max([dba.t?].col?) from [dba.t?] [dba.t?] where [dba.t?].col?= ?:?  using index [dba.t?].idx_col?_col?_desc_asc(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t?.idx_col?_col?_desc_asc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, min_max_only: true)
+     
+
+===================================================
+    
+Case 8     
+
+===================================================
+min(col2)    
+110     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t?.idx_col?_col?_asc_asc) (key range: ([dba.t?].col?> ?:? ), covered: true)
+
+  rewritten query: select min([dba.t?].col?) from [dba.t?] [dba.t?] where ([dba.t?].col?> ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t?.idx_col?_col?_asc_asc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+    
+Case 9     
+
+===================================================
+min(col2)    max(-col2)    
+100     -100     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t?.idx_col?_col?_desc_asc) (key range: [dba.t?].col?= ?:? , covered: true)
+
+  rewritten query: select min([dba.t?].col?), max(-[dba.t?].col?) from [dba.t?] [dba.t?] where [dba.t?].col?= ?:?  using index [dba.t?].idx_col?_col?_desc_asc(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t?.idx_col?_col?_desc_asc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+    
+Case 10     
+
+===================================================
+min(col2)    
+100     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t?)
+
+  rewritten query: select min([dba.t?].col?) from [dba.t?] [dba.t?] where ([dba.t?].col?>= ?:?  and [dba.t?].col?< ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 11     
+
+===================================================
+min(col2)    
+100     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t?)
+
+  rewritten query: select min([dba.t?].col?) from [dba.t?] [dba.t?]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 12     
+
+===================================================
+(select min(col2) from t2 where col1=a.col1)    
+100     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t?.idx_col?_col?_asc_asc) (key range: [dba.t?].col?=a.col?, covered: true)
+
+  rewritten query: (select min([dba.t?].col?) from [dba.t?] [dba.t?] where [dba.t?].col?=a.col?)
+
+  TABLE SCAN (a)
+
+  rewritten query: select (select min([dba.t?].col?) from [dba.t?] [dba.t?] where [dba.t?].col?=a.col?) from [dba.t?] a where (inst_num()<= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t?.idx_col?_col?_asc_asc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, min_max_only: true)
+        SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+    
+Case 13     
+
+===================================================
+(select max(col2) from t2 where col1=a.col1)    
+4900     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t?.idx_col?_col?_asc_asc) (key range: [dba.t?].col?=a.col?, covered: true)
+
+  rewritten query: (select max([dba.t?].col?) from [dba.t?] [dba.t?] where [dba.t?].col?=a.col?)
+
+  TABLE SCAN (a)
+
+  rewritten query: select (select max([dba.t?].col?) from [dba.t?] [dba.t?] where [dba.t?].col?=a.col?) from [dba.t?] a where (inst_num()<= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t?.idx_col?_col?_asc_asc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, min_max_only: true)
+        SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+    
+Case 14     
+
+===================================================
+(select min(col2) from t2 where col1=a.col1 and col3 like 'v1%')    
+100     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t?.idx_col?_col?_asc_asc) (key range: [dba.t?].col?=a.col?)
+
+  rewritten query: (select min([dba.t?].col?) from [dba.t?] [dba.t?] where [dba.t?].col?=a.col? and ([dba.t?].col?>= ?:?  and [dba.t?].col?< ?:? ))
+
+  TABLE SCAN (a)
+
+  rewritten query: select (select min([dba.t?].col?) from [dba.t?] [dba.t?] where [dba.t?].col?=a.col? and ([dba.t?].col?>= ?:?  and [dba.t?].col?< ?:? )) from [dba.t?] a where (inst_num()<= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t?.idx_col?_col?_asc_asc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, min_max_only: true) (lookup time: ?, rows: ?)
+        SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+500
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 15     
+
+===================================================
+min(col2)    max(col2)    
+100     4900     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t?_part.idx_part_col?_col?_asc) (key range: [dba.t?_part].col?= ?:? , covered: true)
+
+  rewritten query: select min([dba.t?_part].col?), max([dba.t?_part].col?) from [dba.t?_part] [dba.t?_part] where [dba.t?_part].col?= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t?_part.idx_part_col?_col?_asc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+           PARTITION (index: dba.t?_part__p__p?.idx_part_col?_col?_asc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
