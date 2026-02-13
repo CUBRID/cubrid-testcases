@@ -1,0 +1,216 @@
+===================================================
+0
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+dba.t1     CREATE TABLE [t1] ([id] INTEGER INVISIBLE AUTO_INCREMENT (1, 1) NOT NULL, [c1] INTEGER INVISIBLE, [c2] INTEGER, [c3] CHARACTER VARYING(50) INVISIBLE, [c4] INTEGER,  CONSTRAINT [pk_t1_id] PRIMARY KEY  ([id]),  INDEX [idx_c1] ([c1]),  INDEX [idx_c2_c4] ([c2], [c4])) REUSE_OID, COLLATE utf8_bin     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     INTEGER     NO     PRI     null     auto_increment invisible     
+c1     INTEGER     YES     MUL     null     invisible     
+c2     INTEGER     YES     MUL     null          
+c3     VARCHAR(50)     YES          null     invisible     
+c4     INTEGER     YES          null          
+
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
+dba.t1     1     idx_c1     1     c1     A     0     null     null     YES     BTREE     null     null     YES     
+dba.t1     1     idx_c2_c4     1     c2     A     0     null     null     YES     BTREE     null     null     YES     
+dba.t1     1     idx_c2_c4     2     c4     A     0     null     null     YES     BTREE     null     null     YES     
+dba.t1     0     pk_t1_id     1     id     A     0     null     null     NO     BTREE     null     null     YES     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     INTEGER     NO     PRI     null     auto_increment invisible     
+c1     INTEGER     YES     MUL     null     invisible     
+c2     INTEGER     YES     MUL     null          
+c3     VARCHAR(50)     YES          null     invisible     
+c4     INTEGER     YES          null          
+
+===================================================
+attr_name    is_nullable    default_value    is_invisible    
+id     NO     null     YES     
+c1     YES     null     YES     
+c2     YES     null     NO     
+c3     YES     null     YES     
+c4     YES     null     NO     
+
+===================================================
+attr_name    data_type    prec    is_nullable    is_invisible    
+id     INTEGER     10     NO     YES     
+c1     INTEGER     10     YES     YES     
+c2     INTEGER     10     YES     NO     
+c3     STRING     50     YES     YES     
+c4     INTEGER     10     YES     NO     
+
+===================================================
+attr_name    from_class_of    from_attr_name    flags    
+c1     null     null     2     
+c2     null     null     0     
+c3     null     null     2     
+c4     null     null     0     
+id     null     null     3     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+2
+===================================================
+0
+===================================================
+Error:-494
+===================================================
+c2    c4    c5    
+12     null     15     
+22     null     25     
+32     null     35     
+2     4     5     
+
+===================================================
+VIEW    CREATE VIEW    
+dba.tbl_v     select [dba.tbl].[c2], [dba.tbl].[c4], [dba.tbl].[c5] from [dba.tbl] [dba.tbl]     
+
+===================================================
+0
+===================================================
+c1    c2    c3    c4    c5    
+1     2     3     4     5     
+2     12     3     null     15     
+3     22     3     null     25     
+4     32     3     null     35     
+
+===================================================
+0
+===================================================
+0
+===================================================
+Error:-494
+===================================================
+c1    c2    c3    c4    c5    
+1     2     3     4     5     
+2     12     3     null     15     
+3     22     3     null     25     
+4     32     3     null     35     
+
+===================================================
+0
+===================================================
+VIEW    CREATE VIEW    
+dba.tbl_v     select [dba.tbl].[c2], [dba.tbl].[c4], [dba.tbl].[c5] from [dba.tbl] [dba.tbl]     
+dba.tbl_v     select [dba.tbl].[c1], [dba.tbl].[c2], [dba.tbl].[c5] from [dba.tbl] [dba.tbl]     
+
+===================================================
+c2    c4    c5    
+2     4     5     
+12     null     15     
+22     null     25     
+32     null     35     
+1     2     5     
+2     12     15     
+3     22     25     
+4     32     35     
+
+===================================================
+0
+===================================================
+VIEW    CREATE VIEW    
+dba.tbl_v     select [dba.tbl].[c1], [dba.tbl].[c2], [dba.tbl].[c5] from [dba.tbl] [dba.tbl]     
+
+===================================================
+c1    c2    c5    
+1     2     5     
+2     12     15     
+3     22     25     
+4     32     35     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     NO     PRI     null     auto_increment     
+c2     INTEGER     NO          null          
+c3     INTEGER     YES          3     invisible     
+c4     INTEGER     YES          null     invisible     
+c5     VARCHAR(32)     YES          null          
+
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     NO     PRI     null     auto_increment     
+c2     INTEGER     NO          null          
+c3     INTEGER     YES          3     invisible     
+c4     INTEGER     YES          null          
+c5     VARCHAR(32)     YES          null          
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+trigger_name    target_attr_name    target_attr_type    
+tbl_c4_trigger     null     INSTANCE     
+
+===================================================
+Error:-517
+===================================================
+1
+===================================================
+0
+===================================================
+c2    c4    c5    
+22     24     25     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tbl.pk_tbl_c?) (key range: [dba.tbl].c?= ?:? )
+
+  rewritten query: select [dba.tbl].c?, [dba.tbl].c?, [dba.tbl].c? from [dba.tbl] [dba.tbl] where [dba.tbl].c?= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbl.pk_tbl_c?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+c1    c2    
+2     22     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tbl.pk_tbl_c?) ()
+  skip order by: true
+
+  rewritten query: select [dba.tbl].c?, [dba.tbl].c? from [dba.tbl] [dba.tbl] order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbl.pk_tbl_c?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
