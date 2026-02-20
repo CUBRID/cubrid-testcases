@@ -35,7 +35,7 @@ set
 where
   a.c1 = 1;
 
-select * from t1;
+select c1, c2, c3, c4 from t1;
 
 -- reset
 update t1 set c2 = 'n', c3 = -3, c4 = -4 where c1 = 1;
@@ -51,7 +51,7 @@ set
 where
   a.c1 = 1;
 
-select * from t1;
+select c1, c2, c3, c4 from t1;
 
 -- reset
 update t1 set c2 = 'n', c3 = -3, c4 = -4 where c1 = 1;
@@ -67,7 +67,7 @@ set
 where
   a.c1 = 1;
 
-select * from t1;
+select c1, c2, c3, c4 from t1;
 
 -- reset
 update t1 set c2 = 'n', c3 = -3, c4 = -4 where c1 = 1;
@@ -83,7 +83,7 @@ set
 where
   a.c1 = 1;
 
-select * from t1;
+select c1, c2, c3, c4 from t1;
 
 -- reset
 update t1 set c2 = 'n', c3 = -3, c4 = -4 where c1 = 1;
@@ -99,7 +99,7 @@ set
 where
   a.c1 = 1;
 
-select * from t1;
+select c1, c2, c3, c4 from t1;
 
 -- Increase hidden-column pressure by ordering on multiple columns not in select list
 -- Expected: 1 row affected; t1 updated to (c2='y', c3=7, c4=8).
@@ -133,7 +133,7 @@ set
 where
   a.c1 = 1;
 
-select * from t1;
+select c1, c2, c3, c4 from t1;
 
 -- Multi-row update (same uncorrelated scalar subquery reused per updated row)
 -- Expected: 2 rows affected; both rows updated consistently; no crash in repeated assignment loop.
@@ -149,7 +149,7 @@ set
   a.c3 = (select b.c7 from t2 b where b.c5 = 3 order by b.c6 limit 1),
   a.c4 = (select b.c8 from t2 b where b.c5 = 4 order by b.c6 limit 1);
 
-select * from t1 order by c1;
+select c1, c2, c3, c4 from t1 order by c1;
 
 -- Scalar subquery returns NULL (no matching row) - should set to NULL without error
 -- Expected: 1 row affected; t1 updated to (c2='y', c3=NULL, c4=8).
@@ -165,7 +165,7 @@ set
 where
   a.c1 = 1;
 
-select * from t1 where c1 = 1;
+select c1, c2, c3, c4 from t1 where c1 = 1;
 
 -- -----------------------
 -- Constant value handling
@@ -183,7 +183,7 @@ set
   a.c4 = (select 100 from (select b.c8 from t2 b where b.c5 = 4 order by b.c6) where rownum = 1)
 where
   a.c1 = 1;
-select * from t1;
+select c1, c2, c3, c4 from t1;
 update t1 set c2 = 'n', c3 = -3, c4 = -4 where c1 = 1;
 
 evaluate '10. constant value #2 (tmp_col in inline view + rownum)';
@@ -195,7 +195,7 @@ set
   a.c4 = (select tmp_col from (select b.c8, 300 tmp_col from t2 b where b.c5 = 4 order by b.c6) where rownum = 1)
 where
   a.c1 = 1;
-select * from t1;
+select c1, c2, c3, c4 from t1;
 update t1 set c2 = 'n', c3 = -3, c4 = -4 where c1 = 1;
 
 evaluate '11. constant value #2 (tmp_col + view + rownum)';
@@ -207,7 +207,7 @@ set
   a.c4 = (select tmp_col from (select b.c8, 300 tmp_col from t2 b where b.c5 = 4 order by b.c6) where rownum = 1)
 where
   a.c1 = 1;
-select * from t1;
+select c1, c2, c3, c4 from t1;
 update t1 set c2 = 'n', c3 = -3, c4 = -4 where c1 = 1;
 
 evaluate '12. constant value #2 (tmp_col + no_merge + rownum)';
@@ -219,7 +219,7 @@ set
   a.c4 = (select tmp_col from (select /*+ no_merge */ b.c8, 300 tmp_col from t2 b where b.c5 = 4 order by b.c6) where rownum = 1)
 where
   a.c1 = 1;
-select * from t1;
+select c1, c2, c3, c4 from t1;
 update t1 set c2 = 'n', c3 = -3, c4 = -4 where c1 = 1;
 
 evaluate '13. constant value #2 (tmp_col + limit)';
@@ -231,7 +231,7 @@ set
   a.c4 = (select tmp_col from (select b.c8, 300 tmp_col from t2 b where b.c5 = 4 order by b.c6) t limit 1)
 where
   a.c1 = 1;
-select * from t1;
+select c1, c2, c3, c4 from t1;
 update t1 set c2 = 'n', c3 = -3, c4 = -4 where c1 = 1;
 
 evaluate '14. constant value #2 (tmp_col + correlated subquery + limit)';
@@ -243,7 +243,7 @@ set
   a.c4 = (select tmp_col from (select b.c8, 300 tmp_col from t2 b where b.c5 = a.c1 + 3 /* 4 */ order by b.c6) t limit 1)
 where
   a.c1 = 1;
-select * from t1;
+select c1, c2, c3, c4 from t1;
 update t1 set c2 = 'n', c3 = -3, c4 = -4 where c1 = 1;
 
 -- ----------------------
@@ -255,7 +255,7 @@ prepare u15 from
   'update /*+ recompile */ t1 a set a.c2 = ''y'', a.c3 = (select ? from (select b.c7 from t2 b where b.c5 = 3 order by b.c6) where rownum = 1), a.c4 = (select ? from (select b.c8 from t2 b where b.c5 = 4 order by b.c6) where rownum = 1) where a.c1 = 1';
 execute u15 using 555, 66;
 deallocate prepare u15;
-select * from t1;
+select c1, c2, c3, c4 from t1;
 update t1 set c2 = 'n', c3 = -3, c4 = -4 where c1 = 1;
 
 evaluate '16. bind value #2 (tmp_col bind in inline view + rownum)';
@@ -263,7 +263,7 @@ prepare u16 from
   'update /*+ recompile */ t1 a set a.c2 = ''y'', a.c3 = (select tmp_col from (select b.c7, ? tmp_col from t2 b where b.c5 = 3 order by b.c6) where rownum = 1), a.c4 = (select tmp_col from (select b.c8, ? tmp_col from t2 b where b.c5 = 4 order by b.c6) where rownum = 1) where a.c1 = 1';
 execute u16 using 777, 88;
 deallocate prepare u16;
-select * from t1;
+select c1, c2, c3, c4 from t1;
 update t1 set c2 = 'n', c3 = -3, c4 = -4 where c1 = 1;
 
 evaluate '17. bind value #2 (tmp_col bind + view + rownum)';
@@ -271,7 +271,7 @@ prepare u17 from
   'update /*+ recompile */ t1 a set a.c2 = ''y'', a.c3 = (select tmp_col from (select c7, ? tmp_col from v2) where rownum = 1), a.c4 = (select tmp_col from (select b.c8, ? tmp_col from t2 b where b.c5 = 4 order by b.c6) where rownum = 1) where a.c1 = 1';
 execute u17 using 777, 88;
 deallocate prepare u17;
-select * from t1;
+select c1, c2, c3, c4 from t1;
 update t1 set c2 = 'n', c3 = -3, c4 = -4 where c1 = 1;
 
 evaluate '18. bind value #2 (tmp_col bind + no_merge + rownum)';
@@ -279,7 +279,7 @@ prepare u18 from
   'update /*+ recompile */ t1 a set a.c2 = ''y'', a.c3 = (select tmp_col from (select /*+ no_merge */ b.c7, ? tmp_col from t2 b where b.c5 = 3 order by b.c6) where rownum = 1), a.c4 = (select tmp_col from (select /*+ no_merge */ b.c8, ? tmp_col from t2 b where b.c5 = 4 order by b.c6) where rownum = 1) where a.c1 = 1';
 execute u18 using 777, 88;
 deallocate prepare u18;
-select * from t1;
+select c1, c2, c3, c4 from t1;
 update t1 set c2 = 'n', c3 = -3, c4 = -4 where c1 = 1;
 
 evaluate '19. bind value #2 (tmp_col bind + limit)';
@@ -287,7 +287,7 @@ prepare u19 from
   'update /*+ recompile */ t1 a set a.c2 = ''y'', a.c3 = (select tmp_col from (select b.c7, ? tmp_col from t2 b where b.c5 = 3 order by b.c6) t limit 1), a.c4 = (select tmp_col from (select b.c8, ? tmp_col from t2 b where b.c5 = 4 order by b.c6) t limit 1) where a.c1 = 1';
 execute u19 using 777, 88;
 deallocate prepare u19;
-select * from t1;
+select c1, c2, c3, c4 from t1;
 update t1 set c2 = 'n', c3 = -3, c4 = -4 where c1 = 1;
 
 evaluate '20. bind value #2 (tmp_col bind + correlated subquery + limit)';
@@ -295,7 +295,7 @@ prepare u20 from
   'update /*+ recompile */ t1 a set a.c2 = ''y'', a.c3 = (select tmp_col from (select b.c7, ? tmp_col from t2 b where b.c5 = a.c1 + 2 /* 3 */ order by b.c6) t limit 1), a.c4 = (select tmp_col from (select b.c8, ? tmp_col from t2 b where b.c5 = a.c1 + 3 /* 4 */ order by b.c6) t limit 1) where a.c1 = 1';
 execute u20 using 777, 88;
 deallocate prepare u20;
-select * from t1;
+select c1, c2, c3, c4 from t1;
 update t1 set c2 = 'n', c3 = -3, c4 = -4 where c1 = 1;
 
 -- -----------------
@@ -311,7 +311,7 @@ set
   a.c4 = (select sign(c8) from (select b.c8 from t2 b where b.c5 = 4 order by b.c6) where rownum = 1)
 where
   a.c1 = 1;
-select * from t1;
+select c1, c2, c3, c4 from t1;
 update t1 set c2 = 'n', c3 = -3, c4 = -4 where c1 = 1;
 
 evaluate '22. function #2 (tmp_col function in inline view + rownum)';
@@ -323,7 +323,7 @@ set
   a.c4 = (select tmp_col from (select sign(b.c8) tmp_col from t2 b where b.c5 = 4 order by b.c6) where rownum = 1)
 where
   a.c1 = 1;
-select * from t1;
+select c1, c2, c3, c4 from t1;
 update t1 set c2 = 'n', c3 = -3, c4 = -4 where c1 = 1;
 
 evaluate '23. function #2 (tmp_col function + view + rownum)';
@@ -335,7 +335,7 @@ set
   a.c4 = (select tmp_col from (select sign(b.c8) tmp_col from t2 b where b.c5 = 4 order by b.c6) where rownum = 1)
 where
   a.c1 = 1;
-select * from t1;
+select c1, c2, c3, c4 from t1;
 update t1 set c2 = 'n', c3 = -3, c4 = -4 where c1 = 1;
 
 evaluate '24. function #2 (tmp_col function + no_merge + rownum)';
@@ -347,7 +347,7 @@ set
   a.c4 = (select tmp_col from (select /*+ no_merge */ sign(b.c8) tmp_col from t2 b where b.c5 = 4 order by b.c6) where rownum = 1)
 where
   a.c1 = 1;
-select * from t1;
+select c1, c2, c3, c4 from t1;
 update t1 set c2 = 'n', c3 = -3, c4 = -4 where c1 = 1;
 
 evaluate '25. function #2 (tmp_col function + limit)';
@@ -359,7 +359,7 @@ set
   a.c4 = (select tmp_col from (select sign(b.c8) tmp_col from t2 b where b.c5 = 4 order by b.c6) t limit 1)
 where
   a.c1 = 1;
-select * from t1;
+select c1, c2, c3, c4 from t1;
 update t1 set c2 = 'n', c3 = -3, c4 = -4 where c1 = 1;
 
 evaluate '26. function #2 (tmp_col function + correlated subquery + limit)';
@@ -371,7 +371,7 @@ set
   a.c4 = (select tmp_col from (select sign(b.c8) tmp_col from t2 b where b.c5 = a.c1 + 3 /* 4 */ order by b.c6) t limit 1)
 where
   a.c1 = 1;
-select * from t1;
+select c1, c2, c3, c4 from t1;
 update t1 set c2 = 'n', c3 = -3, c4 = -4 where c1 = 1;
 
 -- -----------------------------------------------------------------------------
@@ -401,7 +401,7 @@ set
   a.c4 = (select tmp_col from (select decode(b.c8, 8, 12, -8, 34, 56) tmp_col from t2 b where b.c5 = 4 order by b.c6) where rownum = 1)
 where
   a.c1 = 1;
-select * from t1;
+select c1, c2, c3, c4 from t1;
 update t1 set c2 = 'n', c3 = -3, c4 = -4 where c1 = 1;
 
 evaluate '29. decode() #3 (no_merge + rownum)';
@@ -437,7 +437,7 @@ set
   a.c4 = (select tmp_col from (select decode(b.c8, 8, 12, -8, 34, 56) tmp_col from t2 b where b.c5 = a.c1 + 3 /* 4 */ order by b.c6) t limit 1)
 where
   a.c1 = 1;
-select * from t1;
+select c1, c2, c3, c4 from t1;
 update t1 set c2 = 'n', c3 = -3, c4 = -4 where c1 = 1;
 
 -- -----------------------------------------------------------------------------
@@ -474,7 +474,8 @@ set
   )
 where
   a.c1 = 1;
-select * from t1;
+
+select c1, c2, c3, c4 from t1;
 
 -- Multi-column SET from scalar subquery (tuple assignment)
 evaluate '33. multi-column set (c3,c4) = (select ...) with ORDER BY hidden cols';
@@ -498,6 +499,7 @@ select * from t1;
 evaluate '34. scalar subquery returns more than one row (must error, no crash)';
 update t1 set c2 = 'n', c3 = -3, c4 = -4 where c1 = 1;
 -- This subquery returns 2 rows because b.c5 = 3 has two rows (c6=1 and c6=2)
+-- expected: error (subquery returns more than one row)
 
 update /*+ recompile */ t1 a
 set    a.c2 = 'y'
@@ -505,7 +507,9 @@ set    a.c2 = 'y'
      , a.c4 = (select b.c8 from t2 b where b.c5 = 4 order by b.c6 limit 1)
 where  a.c1 = 1;
 
+-- expected : error (Please check if the table does not exist)
 update tet c2 = 'n', c3 = -3, c4 = -4 where c1 = 1;
+
 -- LIMIT with OFFSET in scalar subquery (mapping stability)
 evaluate '35. scalar subquery with LIMIT offset (2nd row)';
 update t1 set c2 = 'n', c3 = -3, c4 = -4 where c1 = 1;
@@ -526,8 +530,74 @@ set    a.c2 = 'y'
      , a.c3 = (select b.c7 from t2 b where b.c5 = 3 order by b.c6 limit 1)
      , a.c4 = (select cast((select b.c8 from t2 b where b.c5 = 4 order by b.c6 limit 1) as smallint))
 where  a.c1 = 1;
+select c1, c2, c3, c4 from t1;
 
-select * from t1;
+--When the ORDER BY expression is not in the select list.
+evaluate '37. ORDER BY expression';
+update t1 set c2='n', c3=-3, c4=-4 where c1=1;
+
+update /*+ recompile */ t1 a
+set    a.c2='y'
+     , a.c3 = (select c7 from (select b.c7 from t2 b where b.c5=3 order by abs(b.c7)) where rownum=1)
+     , a.c4 = (select c8 from (select b.c8 from t2 b where b.c5=4 order by abs(b.c8)) where rownum=1)
+where a.c1=1;
+
+select c1,c2,c3,c4 from t1;
+
+--DISTINCT + ORDER BY (hidden column + distinct execution path) in inline view
+evaluate '38. DISTINCT + ORDER BY (hidden cols + distinct path)';
+update t1 set c2='n', c3=-3, c4=-4 where c1=1;
+
+update /*+ recompile */ t1 a
+set    a.c2='y'
+     , a.c3 = (select c7 from (select distinct b.c7 from t2 b where b.c5=3 limit 1) where rownum=1)
+     , a.c4 = (select c8 from (select distinct b.c8 from t2 b where b.c5=4 limit 1) where rownum=1)
+where a.c1=1;
+select c1,c2,c3,c4 from t1;
+
+--A scalar subquery inside another scalar subquery (nested)
+evaluate '39. Nested scalar subquery inside scalar subquery';
+update t1 set c2='n', c3=-3, c4=-4 where c1=1;
+
+update /*+ recompile */ t1 a
+set    a.c2='y'
+     , a.c3 = (select (select b.c7 from t2 b where b.c5=3 order by b.c6 limit 1) from dual)
+     , a.c4 = (select (select b.c8 from t2 b where b.c5=4 order by b.c6 limit 1) from dual)
+where a.c1=1;
+select c1,c2,c3,c4 from t1;
+
+--In UPDATE, the set clause subquery contains UNION ALL
+evaluate '40. Scalar subquery with UNION ALL';
+update t1 set c2='n', c3=-3, c4=-4 where c1=1;
+
+update /*+ recompile */ t1 a
+set    a.c2='y'
+     , a.c3 = (select x.c7 
+               from (select b.c7, b.c6 from t2 b where b.c5=3
+                     union all
+                     select b.c7, b.c6 from t2 b where b.c5=3
+                    ) x
+               order by x.c6
+               limit 1)
+     , a.c4 = (select b.c8 from t2 b where b.c5=4 order by b.c6 limit 1)
+where a.c1=1;
+select c1,c2,c3,c4 from t1;
+
+--Prepared statement repeat execution
+evaluate '41. Prepared statement repeated execution';
+update t1 set c2='n', c3=-3, c4=-4 where c1=1;
+
+prepare u41 from
+'update /*+ recompile */ t1 a
+ set    a.c2 = ''y''
+      , a.c3 = (select c7 from (select b.c7 from t2 b where b.c5=3 order by b.c6) where rownum=1)
+      , a.c4 = (select c8 from (select b.c8 from t2 b where b.c5=4 order by b.c6) where rownum=1)
+where a.c1 = 1';
+execute u41;
+execute u41;
+execute u41;
+deallocate prepare u41;
+select c1,c2,c3,c4 from t1;
 
 -- cleanup
 drop view if exists v2;
