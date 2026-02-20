@@ -507,8 +507,7 @@ set    a.c2 = 'y'
      , a.c4 = (select b.c8 from t2 b where b.c5 = 4 order by b.c6 limit 1)
 where  a.c1 = 1;
 
--- expected : error (Please check if the table does not exist)
-update tet c2 = 'n', c3 = -3, c4 = -4 where c1 = 1;
+update t1 set c2 = 'n', c3 = -3, c4 = -4 where c1 = 1;
 
 -- LIMIT with OFFSET in scalar subquery (mapping stability)
 evaluate '35. scalar subquery with LIMIT offset (2nd row)';
