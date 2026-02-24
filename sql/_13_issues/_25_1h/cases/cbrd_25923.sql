@@ -16,7 +16,7 @@ evaluate('connect to u2 & GRANT SELECT ON u1.tbl1 TO u3 WITH GRANT OPTION');
 call login('u2','') on class db_user;
 GRANT SELECT ON u1.tbl1 TO u3 WITH GRANT OPTION;
 
-select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name, auth_type;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name, auth_type;
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name, grants;
 
 
@@ -30,7 +30,7 @@ GRANT SELECT ON u1.tbl2 TO u2;
 evaluate('ERROR: UPDATE authorization failure');
 GRANT UPDATE ON u1.tbl1 TO u2;
 
-select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name, auth_type;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name, auth_type;
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name, grants;
 
 
@@ -47,7 +47,7 @@ REVOKE SELECT ON u1.tbl1 FROM u2;
 evaluate('connect to dba');
 call login('dba','') on class db_user;
 
-select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name, auth_type;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name, auth_type;
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name, grants;
 
 
@@ -70,7 +70,7 @@ evaluate('connect to u1');
 call login('u1','') on class db_user;
 GRANT SELECT ON u1.tbl1 TO U3 WITH GRANT OPTION;
 
-select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name, auth_type;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name, auth_type;
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name, grants;
 
 
@@ -78,7 +78,7 @@ evaluate('connect to u3 & GRANT SELECT ON u1.tbl1 TO U2');
 call login('u3','') on class db_user;
 GRANT SELECT ON u1.tbl1 TO U2;
 
-select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name, auth_type;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name, auth_type;
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name, grants;
 
 
@@ -106,7 +106,7 @@ call login('u3','') on class db_user;
 evaluate('ERROR: SELECT authorization failure');
 GRANT SELECT ON u1.tbl1 TO u2;
 
-select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name, auth_type;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name, auth_type;
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name, grants;
 
 
@@ -140,7 +140,7 @@ call login('u3','') on class db_user;
 evaluate('ERROR: SELECT authorization failure');
 GRANT SELECT ON u1.tbl1 TO U2;
 
-select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name, auth_type;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name, auth_type;
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name, grants;
 
 evaluate('init');
@@ -169,7 +169,7 @@ GRANT INSERT ON u1.tbl1 TO U2;
 evaluate('ERROR: Cannot issue GRANT/REVOKE to owner of a class');
 GRANT SELECT ON u1.tbl1 TO U1;
 
-select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name, auth_type;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name, auth_type;
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name, grants;
 
 
