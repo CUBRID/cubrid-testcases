@@ -26,9 +26,10 @@ DROP TABLE IF EXISTS uk_on;
 DROP TABLE IF EXISTS uk_off;
 
 -- 1. CREATE TABLE (with different replication options and key constraints)
+-- In ha_repl tests, CREATE for no_rk_on and uk_on is expected to fail
 CREATE TABLE no_rk_default(a INT);
-CREATE TABLE no_rk_on(a INT) REPLICATION ON;
-CREATE TABLE no_rk_off(a INT) REPLICATION OFF;
+CREATE TABLE no_rk_on(a INT) REPLICATION ON; 
+CREATE TABLE no_rk_off(a INT) REPLICATION OFF; 
 
 CREATE TABLE pk_default(a INT PRIMARY KEY);
 CREATE TABLE pk_on(a INT PRIMARY KEY) REPLICATION ON;
@@ -50,6 +51,8 @@ ORDER BY class_name;
 
 -- 2. ALTER TABLE
 -- default -> OFF / ON -> OFF / OFF -> ON
+-- In HA mode, ALTER is not allowed: changing REPLICATION state (ON <-> OFF) is forbidden.
+-- REPLICATION state changes are allowed only in non-HA (single) mode.
 ALTER TABLE no_rk_default REPLICATION=OFF;
 ALTER TABLE no_rk_on REPLICATION=OFF;
 ALTER TABLE no_rk_off REPLICATION=ON;
@@ -74,10 +77,14 @@ ORDER BY class_name;
 
 -- 3. ALTER TABLE duplicate changes (ON->ON, OFF->OFF) stability verification
 -- Should not cause errors and maintain state
-ALTER TABLE no_rk_off REPLICATION=ON;  -- Already ON, set to ON again
-ALTER TABLE pk_default REPLICATION=OFF; -- Already OFF, set to OFF again
-ALTER TABLE nn_uk_default REPLICATION=OFF; -- Already OFF, set to OFF again
-ALTER TABLE uk_default REPLICATION=OFF; -- Already OFF, set to OFF again
+-- Already ON, set to ON again
+ALTER TABLE no_rk_off REPLICATION=ON;
+-- Already OFF, set to OFF again
+ALTER TABLE pk_default REPLICATION=OFF;
+-- Already OFF, set to OFF again
+ALTER TABLE nn_uk_default REPLICATION=OFF;
+-- Already OFF, set to OFF again
+ALTER TABLE uk_default REPLICATION=OFF;
 
 -- [Verification 3] Check state after duplicate changes
 SELECT class_name, is_replication_class 
@@ -131,4 +138,3 @@ DROP TABLE IF EXISTS nn_uk_off;
 DROP TABLE IF EXISTS uk_default;
 DROP TABLE IF EXISTS uk_on;
 DROP TABLE IF EXISTS uk_off;
-
