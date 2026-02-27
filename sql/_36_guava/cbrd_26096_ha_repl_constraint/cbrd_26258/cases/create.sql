@@ -43,7 +43,7 @@ drop table if exists create_a2_tbl;
 CREATE TABLE create_a2_tbl (
     id INT NOT NULL DEFAULT 0 PRIMARY KEY,
     phone VARCHAR(10)
-);
+)REPLICATION ON;
 
 CREATE TABLE create_b2_tbl (
     id INT NOT NULL PRIMARY KEY,
@@ -71,14 +71,14 @@ drop table if exists create_a3_tbl;
 CREATE TABLE create_a3_tbl (
     id INT NOT NULL DEFAULT 0 PRIMARY KEY,
     phone VARCHAR(10)
-);
+)REPLICATION ON;
 
 CREATE TABLE create_b3_tbl (
     id INT NOT NULL PRIMARY KEY,
     name VARCHAR (10) NOT NULL,
     CONSTRAINT fk_id FOREIGN KEY (id) REFERENCES create_a3_tbl (id)
     ON DELETE CASCADE ON UPDATE RESTRICT
-);
+)REPLICATION ON;
 
 
 insert into create_a3_tbl values (1, '0101111222');
@@ -107,7 +107,7 @@ CREATE TABLE create_b4_tbl (
     name VARCHAR (10) NOT NULL,
     CONSTRAINT fk_id FOREIGN KEY (id) REFERENCES create_a4_tbl (id)
     ON DELETE CASCADE ON UPDATE RESTRICT
-);
+)REPLICATION ON;
 
 insert into create_a4_tbl values (1, '0101111222');
 insert into create_a4_tbl values (2, '0103333444');

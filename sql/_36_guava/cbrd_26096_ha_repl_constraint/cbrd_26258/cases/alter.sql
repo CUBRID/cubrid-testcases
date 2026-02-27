@@ -42,7 +42,7 @@ drop table if exists alter_a2_tbl;
 CREATE TABLE alter_a2_tbl (
     id INT NOT NULL DEFAULT 0 PRIMARY KEY,
     phone VARCHAR(10)
-);
+)REPLICATION ON;
 
 CREATE TABLE alter_b2_tbl (
     id INT NOT NULL PRIMARY KEY,
@@ -69,12 +69,12 @@ drop table if exists alter_a3_tbl;
 CREATE TABLE alter_a3_tbl (
     id INT NOT NULL DEFAULT 0 PRIMARY KEY,
     phone VARCHAR(10)
-);
+)REPLICATION ON;
 
 CREATE TABLE alter_b3_tbl (
     id INT NOT NULL PRIMARY KEY,
     name VARCHAR (10) NOT NULL
-);
+)REPLICATION ON;
 
 ALTER TABLE alter_b3_tbl ADD CONSTRAINT FOREIGN KEY(id) REFERENCES alter_a3_tbl(id);
 insert into alter_a3_tbl values (1, '0101111222');
@@ -101,7 +101,7 @@ CREATE TABLE alter_a4_tbl (
 CREATE TABLE alter_b4_tbl (
     id INT NOT NULL PRIMARY KEY,
     name VARCHAR (10) NOT NULL
-);
+)REPLICATION ON;
 
 ALTER TABLE alter_b4_tbl ADD CONSTRAINT FOREIGN KEY(id) REFERENCES alter_a4_tbl(id);
 

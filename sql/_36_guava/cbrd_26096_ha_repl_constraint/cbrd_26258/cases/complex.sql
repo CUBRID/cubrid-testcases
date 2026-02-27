@@ -179,7 +179,7 @@ CREATE TABLE complex_b1_4_tbl (
     ON DELETE CASCADE ON UPDATE RESTRICT,
     CONSTRAINT fk_c FOREIGN KEY (c_id) REFERENCES complex_c1_4_tbl (id)
     ON DELETE CASCADE ON UPDATE RESTRICT
-);
+)REPLICATION ON;
 
 insert into complex_a1_4_tbl values (1, '0101111222');
 insert into complex_a1_4_tbl values (2, '0103333444');
@@ -322,7 +322,7 @@ create table complex_b2_4_tbl (
     name  varchar(10) not null,
     constraint fk_a foreign key (a_id1, a_id2) references complex_a2_4_tbl (id1, id2)
         on delete cascade on update restrict
-);
+)REPLICATION ON;
 
 insert into complex_a2_4_tbl values (1, 10, '0101111222');
 insert into complex_a2_4_tbl values (2, 20, '0103333444');

@@ -131,7 +131,7 @@ create table option_b1_4_tbl (
     constraint fk_id foreign key (id) references option_a1_4_tbl (id)
         on delete cascade
         on update no action
-);
+) REPLICATION ON;
 
 insert into option_a1_4_tbl values (1, '0101111222');
 insert into option_a1_4_tbl values (2, '0103333444');
@@ -280,7 +280,7 @@ create table option_b2_4_tbl (
     constraint fk_id foreign key (id) references option_a2_4_tbl (id)
         on delete no action
         on update set null
-);
+) REPLICATION ON;
 
 insert into option_a2_4_tbl values (1, '0101111222');
 insert into option_a2_4_tbl values (2, '0103333444');
@@ -328,8 +328,10 @@ insert into option_b3_1_tbl values (1, 'alice');
 insert into option_b3_1_tbl values (2, 'bob');
 insert into option_b3_1_tbl values (3, 'charlie');
 
-delete from option_a3_1_tbl where id = 1;
-update option_a3_1_tbl set id = 10 where id = 2;
+-- Expected error (RESTRICT)
+delete from option_a3_1_tbl where id = 1; 
+-- Expected error (RESTRICT)
+update option_a3_1_tbl set id = 10 where id = 2; 
 
 select * from option_a3_1_tbl order by 1,2;
 select * from option_b3_1_tbl order by 1,2;
@@ -364,8 +366,10 @@ insert into option_b3_2_tbl values (1, 'alice');
 insert into option_b3_2_tbl values (2, 'bob');
 insert into option_b3_2_tbl values (3, 'charlie');
 
-delete from option_a3_2_tbl where id = 1;
-update option_a3_2_tbl set id = 10 where id = 2;
+-- Expected error (RESTRICT)
+delete from option_a3_2_tbl where id = 1; 
+-- Expected error (RESTRICT)
+update option_a3_2_tbl set id = 10 where id = 2; 
 
 select * from option_a3_2_tbl order by 1,2;
 select * from option_b3_2_tbl order by 1,2;
@@ -400,8 +404,10 @@ insert into option_b3_3_tbl values (1, 'alice');
 insert into option_b3_3_tbl values (2, 'bob');
 insert into option_b3_3_tbl values (3, 'charlie');
 
-delete from option_a3_3_tbl where id = 1;
-update option_a3_3_tbl set id = 10 where id = 2;
+-- Expected error (RESTRICT)
+delete from option_a3_3_tbl where id = 1; 
+-- Expected error (RESTRICT)
+update option_a3_3_tbl set id = 10 where id = 2; 
 
 select * from option_a3_3_tbl order by 1,2;
 select * from option_b3_3_tbl order by 1,2;
@@ -425,7 +431,7 @@ create table option_b3_4_tbl (
     constraint fk_id foreign key (id) references option_a3_4_tbl (id)
         on delete restrict
         on update restrict
-);
+) REPLICATION ON;
 
 insert into option_a3_4_tbl values (1, '0101111222');
 insert into option_a3_4_tbl values (2, '0103333444');
@@ -435,8 +441,10 @@ insert into option_b3_4_tbl values (1, 'alice');
 insert into option_b3_4_tbl values (2, 'bob');
 insert into option_b3_4_tbl values (3, 'charlie');
 
-delete from option_a3_4_tbl where id = 1;
-update option_a3_4_tbl set id = 10 where id = 2;
+-- Expected error (RESTRICT)
+delete from option_a3_4_tbl where id = 1; 
+-- Expected error (RESTRICT)
+update option_a3_4_tbl set id = 10 where id = 2; 
 
 select * from option_a3_4_tbl order by 1,2;
 select * from option_b3_4_tbl order by 1,2;
@@ -475,7 +483,8 @@ insert into option_b4_1_tbl values (2, 2, 'bob');
 insert into option_b4_1_tbl values (3, 3, 'charlie');
 
 delete from option_a4_1_tbl where id = 1;
-update option_a4_1_tbl set id = 10 where id = 2;
+-- Expected error (RESTRICT)
+update option_a4_1_tbl set id = 10 where id = 2; 
 
 select * from option_a4_1_tbl order by 1,2;
 select * from option_b4_1_tbl order by 1,2;
@@ -512,7 +521,8 @@ insert into option_b4_2_tbl values (2, 2, 'bob');
 insert into option_b4_2_tbl values (3, 3, 'charlie');
 
 delete from option_a4_2_tbl where id = 1;
-update option_a4_2_tbl set id = 10 where id = 2;
+-- Expected error (RESTRICT)
+update option_a4_2_tbl set id = 10 where id = 2; 
 
 select * from option_a4_2_tbl order by 1,2;
 select * from option_b4_2_tbl order by 1,2;
@@ -549,7 +559,8 @@ insert into option_b4_3_tbl values (2, 2, 'bob');
 insert into option_b4_3_tbl values (3, 3, 'charlie');
 
 delete from option_a4_3_tbl where id = 1;
-update option_a4_3_tbl set id = 10 where id = 2;
+-- Expected error (RESTRICT)
+update option_a4_3_tbl set id = 10 where id = 2; 
 
 select * from option_a4_3_tbl order by 1,2;
 select * from option_b4_3_tbl order by 1,2;
@@ -574,7 +585,7 @@ create table option_b4_4_tbl (
     constraint fk_id foreign key (id) references option_a4_4_tbl (id)
         on delete set null
         on update restrict
-);
+) REPLICATION ON;
 
 insert into option_a4_4_tbl values (1, '0101111222');
 insert into option_a4_4_tbl values (2, '0103333444');
@@ -585,6 +596,7 @@ insert into option_b4_4_tbl values (2, 2, 'bob');
 insert into option_b4_4_tbl values (3, 3, 'charlie');
 
 delete from option_a4_4_tbl where id = 1;
+-- Expected error (RESTRICT)
 update option_a4_4_tbl set id = 10 where id = 2;
 
 select * from option_a4_4_tbl order by 1,2;
