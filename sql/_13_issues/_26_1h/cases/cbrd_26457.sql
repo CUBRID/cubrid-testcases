@@ -122,7 +122,8 @@ SELECT
     adddate('2020-01-01 10:00:00', INTERVAL i HOUR_MINUTE) as cs_from_int,
     adddate('2020-01-01 10:00:00', INTERVAL f HOUR_MINUTE) as cs_from_float,
     adddate('2020-01-01 10:00:00', INTERVAL s HOUR_MINUTE) as cs_from_varchar
-FROM type_test;
+FROM type_test
+ORDER BY id;
 
 evaluate 'Case 3.2: DATE_ADD() - Type Casting';
 SELECT 
@@ -136,7 +137,8 @@ SELECT
     date_add('2020-01-01 10:00:00', INTERVAL i HOUR_MINUTE) as cs_from_int,
     date_add('2020-01-01 10:00:00', INTERVAL f HOUR_MINUTE) as cs_from_float,
     date_add('2020-01-01 10:00:00', INTERVAL s HOUR_MINUTE) as cs_from_varchar
-FROM type_test;
+FROM type_test
+ORDER BY id;
 
 evaluate 'Case 3.3: SUBDATE() - Type Casting';
 SELECT 
@@ -150,7 +152,8 @@ SELECT
     subdate('2020-01-01 10:00:00', INTERVAL i HOUR_MINUTE) as cs_from_int,
     subdate('2020-01-01 10:00:00', INTERVAL f HOUR_MINUTE) as cs_from_float,
     subdate('2020-01-01 10:00:00', INTERVAL s HOUR_MINUTE) as cs_from_varchar
-FROM type_test;
+FROM type_test
+ORDER BY id;
 
 evaluate 'Case 3.4: DATE_SUB() - Type Casting';
 SELECT 
@@ -164,7 +167,8 @@ SELECT
     date_sub('2020-01-01 10:00:00', INTERVAL i HOUR_MINUTE) as cs_from_int,
     date_sub('2020-01-01 10:00:00', INTERVAL f HOUR_MINUTE) as cs_from_float,
     date_sub('2020-01-01 10:00:00', INTERVAL s HOUR_MINUTE) as cs_from_varchar
-FROM type_test;
+FROM type_test
+ORDER BY id;
 
 evaluate 'Case 3.5: Function Equivalence (ADDDATE = DATE_ADD)';
 SELECT 
@@ -172,7 +176,8 @@ SELECT
     date_add('2020-01-01', INTERVAL f DAY) as date_add_result,
     adddate('2020-01-01', INTERVAL f DAY) as adddate_result,
     date_add('2020-01-01', INTERVAL f DAY) = adddate('2020-01-01', INTERVAL f DAY) as results_equal
-FROM type_test;
+FROM type_test
+ORDER BY id;
 
 evaluate 'Case 3.6: Function Equivalence (SUBDATE = DATE_SUB)';
 SELECT 
@@ -180,7 +185,8 @@ SELECT
     date_sub('2020-01-01', INTERVAL d DAY) as date_sub_result,
     subdate('2020-01-01', INTERVAL d DAY) as subdate_result,
     date_sub('2020-01-01', INTERVAL d DAY) = subdate('2020-01-01', INTERVAL d DAY) as results_equal
-FROM type_test;
+FROM type_test
+ORDER BY id;
 
 evaluate 'Case 3.7: Type Casting - Boundary Values';
 SELECT 
@@ -335,7 +341,8 @@ SELECT
 
 evaluate 'Case 7.5: Invalid Input Handling';
 SELECT 
-    adddate('invalid-date', INTERVAL 1 DAY) as invalid_date,
+    adddate('invalid-date', INTERVAL 1 DAY) as invalid_date;
+SELECT
     adddate(date'2020-01-01', INTERVAL 'abc' DAY) as invalid_interval;
 
 DROP TABLE type_test;
