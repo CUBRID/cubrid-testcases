@@ -432,7 +432,7 @@ Trace Statistics:
 
 ===================================================
     
-11. JOIN first table (should work) -> row by row, second table (should not work)     
+11. JOIN first table (should work) -> mergeable list or count, second table (should not work)     
 
 ===================================================
 count(*)    
@@ -497,6 +497,7 @@ Trace Statistics:
     SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: count)
       SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: false)
      
 
 ===================================================
@@ -550,6 +551,7 @@ Trace Statistics:
     SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: false)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
