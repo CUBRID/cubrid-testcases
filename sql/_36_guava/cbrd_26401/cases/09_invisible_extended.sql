@@ -4,8 +4,8 @@
 -- ============================================
 
 -- NOTE:
--- 이 파일은 기존 01~08 테스트에서 다루지 않았던
--- 주변 기능과의 상호작용을 보완하기 위한 추가 케이스들이다.
+-- These are additional test cases intended to supplement interactions
+-- with surrounding features that were not covered in the existing tests 01–08.
 
 
 -- ============================================
