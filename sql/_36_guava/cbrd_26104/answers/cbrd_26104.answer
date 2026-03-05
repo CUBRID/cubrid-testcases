@@ -315,7 +315,7 @@ Trace Statistics:
 uncorrelated subquery that is not directly connected to the top-level XASL - should not work     
 
 ===================================================
-i    (select /*+ NO_MERGE */ b.i from (select /*+ NO_MERGE */ tbl_b.i-10 as [i] from tbl_b union all select /*+ NO_MERGE */ tbl_b.i+10 as [i] from tbl_b) b where a.i=b.i)    
+i    bi    
 1     1     
 2     2     
 3     3     
@@ -885,6 +885,169 @@ Trace Statistics:
       CTE (non_recursive_part)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+scalar subquery in SELECT list - should not work     
+
+===================================================
+a_cnt    b_cnt    
+10     10     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_b)
+
+  rewritten query: (select count(*) from [dba.tbl_b] [dba.tbl_b])
+
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: (select count(*) from [dba.tbl_a] [dba.tbl_a])
+
+  TABLE SCAN (db_root)
+
+  rewritten query: select (select count(*) from [dba.tbl_a] [dba.tbl_a]), (select count(*) from [dba.tbl_b] [dba.tbl_b]) from db_root db_root
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+predicate subquery in WHERE clause - should not work     
+
+===================================================
+count(*)    
+9     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: (select count(*) from [dba.tbl_a] [dba.tbl_a])
+
+  TABLE SCAN (dba.tbl_b)
+
+  rewritten query: (select count(*) from [dba.tbl_b] [dba.tbl_b])
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: (select count(*) from (select count(*) as [cn] from [dba.tbl_a] [dba.tbl_a]) a (cn), (select count(*) as [cn] from [dba.tbl_b] [dba.tbl_b]) b (cn) where a.cn=b.cn)
+
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select count(*) from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>(select count(*) from (select count(*) as [cn] from [dba.tbl_a] [dba.tbl_a]) a (cn), (select count(*) as [cn] from [dba.tbl_b] [dba.tbl_b]) b (cn) where a.cn=b.cn))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+group by subquery - should work     
+
+===================================================
+count(*)    
+100     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] group by [dba.tbl_a].i)
+
+  SORT (group by)
+    TABLE SCAN (dba.tbl_b)
+
+  rewritten query: (select ? from [dba.tbl_b] [dba.tbl_b] group by [dba.tbl_b].i)
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select count(*) from (select ? from [dba.tbl_a] [dba.tbl_a] group by [dba.tbl_a].i) a (?), (select ? from [dba.tbl_b] [dba.tbl_b] group by [dba.tbl_b].i) b (?)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+correlated subquery - should not work     
+
+===================================================
+count(*)    
+20     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select count(*) from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].i=aa.i
+
+  TABLE SCAN (dba.tbl_b)
+
+  rewritten query: select count(*) from [dba.tbl_b] [dba.tbl_b]
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (aa)
+    TABLE SCAN (a)
+
+  rewritten query: select count(*) from [dba.tbl_a] aa, (select count(*) from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].i=aa.i union all select count(*) from [dba.tbl_b] [dba.tbl_b]) a (cn)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (correlated)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================

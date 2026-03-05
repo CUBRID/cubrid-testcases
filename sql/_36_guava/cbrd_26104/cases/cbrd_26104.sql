@@ -58,7 +58,7 @@ select /*+ recompile */ a.i, (
 		select /*+ no_merge */ tbl_b.i + 10 as i from tbl_b
 	) b
 	where a.i = b.i
-) from tbl_a a;
+) bi from tbl_a a;
 show trace;
 
 evaluate 'cte referencing another cte - should not work';
@@ -140,6 +140,34 @@ evaluate 'when RECORD_INFO, PAGE_INFO, index related information or sampling sca
 with cte_a as (select /*+ materialize sampling_scan */ i from tbl_a),
 cte_b as (select /*+ materialize sampling_scan */ i from tbl_b)
 select /*+ recompile */ count(*) from cte_a, cte_b;
+show trace;
+
+evaluate 'scalar subquery in SELECT list - should not work';
+select /*+ recompile */
+(select count(*) from tbl_a) as a_cnt,
+(select count(*) from tbl_b) as b_cnt
+from db_root;
+show trace;
+
+evaluate 'predicate subquery in WHERE clause - should not work';
+select /*+ recompile */ count(*)
+from tbl_a
+where i > (select count(*) from (select count(*) as cn from tbl_a) a, (select count(*) as cn from tbl_b) b where a.cn = b.cn);
+show trace;
+
+evaluate 'group by subquery - should work';
+select /*+ recompile */ count(*)
+from
+(
+select count(*) from tbl_a group by i
+) a,
+(
+select count(*) from tbl_b group by i
+) b;
+show trace;
+
+evaluate 'correlated subquery - should not work';
+select /*+ recompile */ count(*) from tbl_a aa, (select count(*) as cn from tbl_a where aa.i=i union all select count(*) as cn from tbl_b) a;
 show trace;
 
 drop table if exists tbl_a,tbl_b;
