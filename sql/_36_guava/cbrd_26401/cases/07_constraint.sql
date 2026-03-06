@@ -17,16 +17,27 @@ create table t1 (
     c4 varchar(100)
 );
 
-create index idx_c1 on t1(c1);
-create index idx_c1_c2 on t1(c1, c2);
-create index idx_c2_c1 on t1(c2, c1);
-create index idx_c3_c4 on t1(c3, c4);
+create index idx_c1A on t1(c1);
+create index idx_c1A_c2B on t1(c1, c2);
+create index idx_c2B_c1A on t1(c2, c1);
+create index idx_c3C_c4D on t1(c3, c4);
+create index idx_c1A_c3C on t1(c1, c3);
 
 insert into t1(id, c1, c2, c3, c4) values (1, 10, 20, 30, 'a');
 insert into t1(id, c1, c2, c3, c4) values (2, 11, 21, 31, 'b');
 insert into t1(id, c1, c2, c3, c4) values (3, 12, 22, 32, 'c');
 
+-- verify index metadata
+show index from t1;
+
 update statistics on t1;
+
+-- verify index metadata
+show index from t1;
+
+-- select invisible column
+select /*+recompile*/ c1 from t1;
+show trace;
 
 -- index scan with invisible columns
 select /*+recompile*/ c1, c2 from t1 where c1 = 10;
@@ -36,6 +47,21 @@ select /*+recompile*/ c2 from t1 where c1 > 10 order by c1;
 show trace;
 
 select /*+recompile*/ * from t1 where c1 = 10;
+show trace;
+
+-- c2 is visible. c2 is first column of idx_c2_c1
+select /*+recompile*/ * from t1 where c2 = 20;
+show trace;
+
+-- c1, c3 both invisible. idx_c1_c3
+select /*+recompile*/ * from t1 where c1 = 10 and c3 = 30;
+show trace;
+
+-- idx_c3_c4
+select /*+recompile*/ c1,c2,c3 from t1 where c3 = 31;
+show trace;
+
+select /*+recompile*/ * from t1 where c4 = 'c';
 show trace;
 
 -- covering index test

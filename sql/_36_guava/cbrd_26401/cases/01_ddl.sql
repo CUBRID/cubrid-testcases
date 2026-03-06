@@ -46,6 +46,95 @@ desc tbl;
 
 drop table if exists tbl;
 
+create table tbl (
+c1 int,
+c2 int
+);
+
+insert into tbl values (1,2);
+
+-- add invisible column after c1
+alter table tbl add column c3 int invisible after c1;
+
+-- verify column order via metadata
+desc tbl;
+
+-- verify column order via system catalog
+select attr_name, def_order from db_attribute where class_name = 'tbl' order by def_order;
+
+-- verify SHOW CREATE TABLE
+show create table tbl;
+
+-- SELECT * should not include invisible column
+select * from tbl;
+
+-- explicit access should work
+select c1,c2,c3 from tbl;
+
+drop table if exists tbl;
+
+create table tbl (
+c1 int,
+c2 int
+);
+
+insert into tbl values (10,20);
+
+-- add invisible column at first position
+alter table tbl add column c0 int invisible first;
+
+-- verify metadata
+desc tbl;
+
+-- verify column order via system catalog
+select attr_name, def_order from db_attribute where class_name = 'tbl' order by def_order;
+
+-- verify SHOW CREATE TABLE
+show create table tbl;
+
+-- invisible column should not appear in SELECT *
+select * from tbl;
+
+-- explicit access
+select c0,c1,c2 from tbl;
+
+drop table if exists tbl;
+
+create table tbl (
+c1 int,
+c2 int invisible,
+c3 int
+);
+
+insert into tbl values (1,3);
+
+-- verify metadata before drop
+desc tbl;
+
+-- verify column order via system catalog
+select attr_name, def_order from db_attribute where class_name = 'tbl' order by def_order;
+
+-- drop invisible column
+alter table tbl drop column c2;
+
+-- verify metadata after drop
+desc tbl;
+
+-- verify column order via system catalog
+select attr_name, def_order from db_attribute where class_name = 'tbl' order by def_order;
+
+show create table tbl;
+
+-- verify data access
+select * from tbl;
+
+select c1,c3 from tbl;
+
+-- verify column whether droped or not
+select c2 from tbl;
+
+drop table if exists tbl;
+
 
 -- Change visibility: invisible <-> visible
 create table t1 (
