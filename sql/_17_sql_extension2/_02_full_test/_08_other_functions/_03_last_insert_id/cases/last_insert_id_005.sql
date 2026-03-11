@@ -1,5 +1,6 @@
 --1 table with 2 auto_increment serials
-
+-- no auto_increment more than one allowed since 11.5(guava).
+-- consider removing this testcase since 'last_insert_id_004.sql' test the case about one auto_increment
 
 create table foo(a int primary key auto_increment, b string, c short auto_increment);
 

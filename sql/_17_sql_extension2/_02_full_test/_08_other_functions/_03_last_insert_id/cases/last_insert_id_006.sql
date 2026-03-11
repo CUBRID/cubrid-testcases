@@ -1,4 +1,6 @@
 --1 table with 2 auto_increment serial - drop auto_increment throu alter change
+-- no auto_increment more than one allowed since 11.5(guava).
+-- we don't need to test about this cases. consider removing this
 
 
 create table foo(a int primary key auto_increment, b string, c short);
