@@ -44,7 +44,7 @@ MC: wait until C1 ready;
 
 /* expect (1,'abc'),(12,'abc') */
 C2: SELECT * FROM t order by 1,2;
-MC: wait until C1 ready;
+MC: wait until C2 ready;
 
 C1: commit;
 MC: wait until C1 ready;
