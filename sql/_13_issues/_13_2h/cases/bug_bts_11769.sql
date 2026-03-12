@@ -22,4 +22,5 @@ set system parameters 'sort_buffer_size=1';
 
 select i, sv, sc from u order by 1 limit 15;
 
+set system parameters 'sort_buffer_size=default';
 drop u;
