@@ -18,6 +18,7 @@ drop table if exists ip_range;
 drop table if exists ip_list;
 
 -- RANGE partition, partition key is INVISIBLE
+evaluate 'RANGE partition, partition key is INVISIBLE';
 create table ip_range (
     id int auto_increment invisible,
     pkey int invisible,
@@ -41,21 +42,26 @@ insert into ip_range (pkey, v1) values
 update statistics on ip_range;
 
 -- partition pruning check (p0)
+evaluate 'partition pruning check (p0)';
 select v1 from ip_range where pkey < 10 order by v1;
 show trace;
 
 -- partition pruning check (p1)
+evaluate 'partition pruning check (p1)';
 select v1 from ip_range where pkey >= 10 and pkey < 20 order by v1;
 show trace;
 
 -- partition pruning check (p2)
+evaluate 'partition pruning check (p2)';
 select v1 from ip_range where pkey >= 20 order by v1;
 show trace;
 
 -- err: cannot drop invisible partition key column
+evaluate 'err: cannot drop invisible partition key column';
 /* err */ alter table ip_range drop column pkey;
 
 -- remove partitioning and ensure structure is preserved
+evaluate 'remove partitioning and ensure structure is preserved';
 alter table ip_range remove partitioning;
 desc ip_range;
 
@@ -68,6 +74,7 @@ drop table if exists ip_range;
 
 
 -- LIST partition, partition key is INVISIBLE
+evaluate 'LIST partition, partition key is INVISIBLE';
 create table ip_list (
     id int auto_increment invisible,
     region varchar(10) invisible,
@@ -110,6 +117,7 @@ show trace;
 
 drop table if exists ip_list;
 
+set trace off;
 
 -- ============================================
 -- [2] COLUMN ORDER / MULTI-COLUMN ALTER
@@ -125,17 +133,21 @@ create table col_order (
 );
 
 -- initial order check
+evaluate 'initial order check';
 desc col_order;
 
 -- add visible column after invisible
+evaluate 'add visible column after invisible';
 alter table col_order add column c5 int after c2;
 desc col_order;
 
 -- move invisible column using CHANGE ... AFTER ...
+evaluate 'move invisible column using CHANGE ... AFTER ...';
 alter table col_order change column c4 c4 int invisible after c1;
 desc col_order;
 
 -- multi-column ALTER: change visibility and order together
+evaluate 'multi-column ALTER: change visibility and order together';
 alter table col_order 
     modify column c1 int invisible,
     modify column c3 int visible;
@@ -160,13 +172,16 @@ create table ip_trg (
 insert into ip_trg(val) values (10), (20), (30);
 
 -- BEFORE DELETE trigger: prevent delete when invisible counter is 0
+evaluate 'BEFORE DELETE trigger: prevent delete when invisible counter is 0';
 create trigger ip_trg_bd before delete on ip_trg
     if obj.mod_count = 0 execute reject;
 
 -- err: first row has mod_count = 0, delete must be rejected
+evaluate 'err: first row has mod_count = 0, delete must be rejected';
 /* err */ delete from ip_trg where id = 1;
 
 -- rows with mod_count > 0 can be deleted
+evaluate 'rows with mod_count > 0 can be deleted';
 delete from ip_trg where mod_count > 0;
 select id, val, mod_count from ip_trg order by id;
 

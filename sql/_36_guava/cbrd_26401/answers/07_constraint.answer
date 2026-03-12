@@ -11,6 +11,8 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 1
 ===================================================
 1
@@ -19,6 +21,69 @@
 ===================================================
 0
 ===================================================
+    
+verify index metadata     
+
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
+dba.t1     1     idx_ca     1     c1     A     0     null     null     YES     BTREE     null     null     YES     
+dba.t1     1     idx_ca_cb     1     c1     A     0     null     null     YES     BTREE     null     null     YES     
+dba.t1     1     idx_ca_cb     2     c2     A     0     null     null     YES     BTREE     null     null     YES     
+dba.t1     1     idx_ca_cc     1     c1     A     0     null     null     YES     BTREE     null     null     YES     
+dba.t1     1     idx_ca_cc     2     c3     A     0     null     null     YES     BTREE     null     null     YES     
+dba.t1     1     idx_cb_ca     1     c2     A     0     null     null     YES     BTREE     null     null     YES     
+dba.t1     1     idx_cb_ca     2     c1     A     0     null     null     YES     BTREE     null     null     YES     
+dba.t1     1     idx_cc_cd     1     c3     A     0     null     null     YES     BTREE     null     null     YES     
+dba.t1     1     idx_cc_cd     2     c4     A     0     null     null     YES     BTREE     null     null     YES     
+dba.t1     0     pk_t1_id     1     id     A     0     null     null     NO     BTREE     null     null     YES     
+
+===================================================
+0
+===================================================
+    
+verify index metadata     
+
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
+dba.t1     1     idx_ca     1     c1     A     3     null     null     YES     BTREE     null     null     YES     
+dba.t1     1     idx_ca_cb     1     c1     A     3     null     null     YES     BTREE     null     null     YES     
+dba.t1     1     idx_ca_cb     2     c2     A     3     null     null     YES     BTREE     null     null     YES     
+dba.t1     1     idx_ca_cc     1     c1     A     3     null     null     YES     BTREE     null     null     YES     
+dba.t1     1     idx_ca_cc     2     c3     A     3     null     null     YES     BTREE     null     null     YES     
+dba.t1     1     idx_cb_ca     1     c2     A     3     null     null     YES     BTREE     null     null     YES     
+dba.t1     1     idx_cb_ca     2     c1     A     3     null     null     YES     BTREE     null     null     YES     
+dba.t1     1     idx_cc_cd     1     c3     A     3     null     null     YES     BTREE     null     null     YES     
+dba.t1     1     idx_cc_cd     2     c4     A     3     null     null     YES     BTREE     null     null     YES     
+dba.t1     0     pk_t1_id     1     id     A     3     null     null     NO     BTREE     null     null     YES     
+
+===================================================
+    
+select invisible column     
+
+===================================================
+c1    
+10     
+11     
+12     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t?)
+
+  rewritten query: select [dba.t?].c? from [dba.t?] [dba.t?]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+index scan with invisible columns     
+
+===================================================
 c1    c2    
 10     20     
 
@@ -26,13 +91,13 @@ c1    c2
 trace    
 
 Query Plan:
-  INDEX SCAN (dba.t?.idx_c?_c?) (key range: [dba.t?].c?= ?:? , covered: true)
+  INDEX SCAN (dba.t?.idx_ca_cb) (key range: [dba.t?].c?= ?:? , covered: true)
 
   rewritten query: select [dba.t?].c?, [dba.t?].c? from [dba.t?] [dba.t?] where [dba.t?].c?= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.t?.idx_c?_c?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    SCAN (index: dba.t?.idx_ca_cb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
      
 
 ===================================================
@@ -44,14 +109,14 @@ c2
 trace    
 
 Query Plan:
-  INDEX SCAN (dba.t?.idx_c?_c?) (key range: ([dba.t?].c?> ?:? ), covered: true)
+  INDEX SCAN (dba.t?.idx_ca_cb) (key range: ([dba.t?].c?> ?:? ), covered: true)
   skip order by: true
 
   rewritten query: select [dba.t?].c?, [dba.t?].c? from [dba.t?] [dba.t?] where ([dba.t?].c?> ?:? ) order by ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.t?.idx_c?_c?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    SCAN (index: dba.t?.idx_ca_cb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
      
 
 ===================================================
@@ -62,14 +127,100 @@ id    c2    c4
 trace    
 
 Query Plan:
-  INDEX SCAN (dba.t?.idx_c?) (key range: [dba.t?].c?= ?:? )
+  INDEX SCAN (dba.t?.pk_t?_id) ()
+  skip order by: true
+
+  rewritten query: select [dba.t?].id, [dba.t?].c?, [dba.t?].c? from [dba.t?] [dba.t?] where [dba.t?].c?= ?:?  order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t?.pk_t?_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+c2 is visible. c2 is first column of idx_c2_c1     
+
+===================================================
+id    c2    c4    
+1     20     a     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t?.idx_cb_ca) (key range: [dba.t?].c?= ?:? )
 
   rewritten query: select [dba.t?].id, [dba.t?].c?, [dba.t?].c? from [dba.t?] [dba.t?] where [dba.t?].c?= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.t?.idx_c?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SCAN (index: dba.t?.idx_cb_ca), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
+
+===================================================
+    
+c1, c3 both invisible. idx_c1_c3     
+
+===================================================
+id    c2    c4    
+1     20     a     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t?.idx_ca_cc) (key range: [dba.t?].c?= ?:? key range: [dba.t?].c?= ?:? )
+
+  rewritten query: select [dba.t?].id, [dba.t?].c?, [dba.t?].c? from [dba.t?] [dba.t?] where [dba.t?].c?= ?:?  and [dba.t?].c?= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t?.idx_ca_cc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+idx_c3_c4     
+
+===================================================
+c1    c2    c3    
+11     21     31     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t?.idx_cc_cd) (key range: [dba.t?].c?= ?:? )
+
+  rewritten query: select [dba.t?].c?, [dba.t?].c?, [dba.t?].c? from [dba.t?] [dba.t?] where [dba.t?].c?= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t?.idx_cc_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+id    c2    c4    
+3     22     c     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t?.pk_t?_id) ()
+  skip order by: true
+
+  rewritten query: select [dba.t?].id, [dba.t?].c?, [dba.t?].c? from [dba.t?] [dba.t?] where [dba.t?].c?= ?:?  order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t?.pk_t?_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+covering index test     
 
 ===================================================
 c1    c2    
@@ -81,15 +232,19 @@ c1    c2
 trace    
 
 Query Plan:
-  INDEX SCAN (dba.t?.idx_c?_c?) (key range: ([dba.t?].c?>= ?:?  and [dba.t?].c?<= ?:? ), covered: true)
+  INDEX SCAN (dba.t?.idx_ca_cb) (key range: ([dba.t?].c?>= ?:?  and [dba.t?].c?<= ?:? ), covered: true)
   skip order by: true
 
   rewritten query: select [dba.t?].c?, [dba.t?].c? from [dba.t?] [dba.t?] where ([dba.t?].c?>= ?:?  and [dba.t?].c?<= ?:? ) order by ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.t?.idx_c?_c?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    SCAN (index: dba.t?.idx_ca_cb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
      
+
+===================================================
+    
+index with invisible column in WHERE but not in SELECT     
 
 ===================================================
 c2    c4    
@@ -99,14 +254,20 @@ c2    c4
 trace    
 
 Query Plan:
-  INDEX SCAN (dba.t?.idx_c?) (key range: [dba.t?].c?= ?:? )
+  INDEX SCAN (dba.t?.idx_ca) (key range: [dba.t?].c?= ?:? )
 
   rewritten query: select [dba.t?].c?, [dba.t?].c? from [dba.t?] [dba.t?] where [dba.t?].c?= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.t?.idx_c?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SCAN (index: dba.t?.idx_ca), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
+
+===================================================
+0
+===================================================
+    
+SHOW INDEX: should show all indexes including ones on invisible columns     
 
 ===================================================
 0
@@ -126,17 +287,25 @@ dba.t1     0     pk_t1_id     1     id     A     0     null     null     NO     
 ===================================================
 0
 ===================================================
-0
+    
+FK referencing invisible column     
+
 ===================================================
 0
 ===================================================
-1
+0
 ===================================================
 1
 ===================================================
 1
 ===================================================
 1
+===================================================
+1
+===================================================
+    
+err: FK violation     
+
 ===================================================
 Error:-922
 ===================================================
@@ -148,6 +317,10 @@ id    parent_id
 id    c3    
 1     1000     
 2     2000     
+
+===================================================
+    
+change visibility of referenced column     
 
 ===================================================
 Error:-1045
@@ -162,7 +335,15 @@ Error:-1045
 ===================================================
 1
 ===================================================
+    
+err: unique violation on invisible column     
+
+===================================================
 Error:-670
+===================================================
+    
+err: not null violation on invisible column     
+
 ===================================================
 Error:-225
 ===================================================
@@ -188,7 +369,15 @@ id    c1    c2    c3    c4    c5
 ===================================================
 1
 ===================================================
+    
+alter visibility and check index still works     
+
+===================================================
 0
+===================================================
+    
+err (at least one visible)     
+
 ===================================================
 Error:-1370
 ===================================================
@@ -203,6 +392,10 @@ c5     VARCHAR(32)     YES          null     invisible
 c4    
 null     
 4     
+
+===================================================
+    
+re-make visible     
 
 ===================================================
 0

@@ -35,11 +35,12 @@ insert into t2(id, c5, c6, c7) values (4, 35, 350, 'z');
 -- [1] SUBQUERY IN WHERE
 -- ============================================
 
-select * from t1 where c1 in (select c5 from t2);
-select * from t1 where c1 > (select avg(c5) from t2);
-select c2, c4 from t1 where c3 in (select c5 * 100 from t2);
+select * from t1 where c1 in (select c5 from t2) order by 1;
+select * from t1 where c1 > (select avg(c5) from t2) order by 1;
+select c2, c4 from t1 where c3 in (select c5 * 100 from t2) order by 1;
 
 -- IN / EXISTS with invisible columns
+evaluate 'IN / EXISTS with invisible columns';
 select * from t1 where c1 in (10, 20, 30) order by id;
 select c2, c4 from t1 where c3 not in (1000, 3000) order by c2;
 
@@ -48,6 +49,7 @@ select * from t1 where exists (
 ) order by id;
 
 -- invisible columns in both tables
+evaluate 'invisible columns in both tables';
 select * from t1 where c1 in (select c5 from t2 where c5 > 10) order by id;
 
 
@@ -58,7 +60,9 @@ select * from t1 where c1 in (select c5 from t2 where c5 > 10) order by id;
 select * from (select * from t1) as sub order by id;
 select * from (select c1, c2, c3 from t1) as sub order by c1;
 select sub.c1, sub.c2 from (select c1, c2, c4 from t1) as sub order by sub.c1;
+evaluate 'err';
 /* err */ select sub.c1, sub.c2 from (select * from t1) as sub order by sub.c1;
+evaluate 'err';
 /* err */ select * from (select * from t1) as sub where sub.c1 = 10;
 
 
@@ -74,8 +78,8 @@ select id, c2, c4, (select c5 from t2 where t2.id = t1.id) as matched_c5 from t1
 -- [4] CORRELATED SUBQUERY
 -- ============================================
 
-select * from t1 where c1 > (select avg(c5) from t2 where t2.id <= t1.id);
-select id, c2 from t1 where exists (select 1 from t2 where t2.c5 = t1.c1);
+select * from t1 where c1 > (select avg(c5) from t2 where t2.id <= t1.id) order by 1;
+select id, c2 from t1 where exists (select 1 from t2 where t2.c5 = t1.c1) order by 1;
 
 
 -- ============================================
@@ -92,11 +96,13 @@ where c1 in (
 order by id;
 
 -- scalar subquery with invisible column in outer query
+evaluate 'scalar subquery with invisible column in outer query';
 select id, c2, c4,
     (select max(c1) from t1 t2 where t2.c3 < t1.c3) as max_c1
 from t1 order by id;
 
 -- nested subquery in WHERE
+evaluate 'nested subquery in WHERE';
 select id, c2, c4
 from t1
 where c1 > (
@@ -114,6 +120,7 @@ order by id;
 -- ============================================
 
 -- basic CTE
+evaluate 'basic CTE';
 with cte1 as (
     select * from t1
 )
@@ -130,12 +137,14 @@ with cte1 as (
 select c1, c2 from cte1 order by c1;
 
 -- multiple CTEs
+evaluate 'multiple CTEs';
 with
     cte1 as (select c1, c2 from t1),
     cte2 as (select c5, c6 from t2)
 select cte1.c1, cte2.c5 from cte1, cte2 where cte1.c1 < cte2.c5 order by cte1.c1;
 
 -- CTE joining with original table
+evaluate 'CTE joining with original table';
 with cte1 as (
     select c1, c2 from t1 where c1 > 10
 )
@@ -151,7 +160,7 @@ with recursive cte(n, c1_val) as (
     union all
     select n + 1, c1_val + 10 from cte where n < 3
 )
-select * from cte;
+select * from cte order by 1;
 
 
 -- ============================================

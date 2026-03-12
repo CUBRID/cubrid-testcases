@@ -37,9 +37,10 @@ insert into t2(id, c5, c6, c7) values (4, 35, 350, 'z');
 -- ============================================
 
 -- aggregate invisible columns without GROUP BY
+evaluate 'aggregate invisible columns without GROUP BY';
 select count(*), sum(c1), avg(c1), max(c1), min(c1) from t1;
-select count(*), sum(c3), avg(c3), max(c3), min(c3) from t1;
-select sum(c1 + c3), avg(c2) from t1;
+select count(*), sum(c3), avg(c3), max(c3), min(c3) from t1 order by 1;
+select sum(c1 + c3), avg(c2) from t1 order by 1;
 
 
 -- ============================================
@@ -47,11 +48,13 @@ select sum(c1 + c3), avg(c2) from t1;
 -- ============================================
 
 -- GROUP BY invisible column
+evaluate 'GROUP BY invisible column';
 select c1, count(*) from t1 group by c1 order by c1;
 select c2, sum(c1) from t1 group by c2 order by c2;
 select c1, c3, avg(c2) from t1 group by c1, c3 order by c1;
 
 -- GROUP BY visible, aggregate invisible
+evaluate 'GROUP BY visible, aggregate invisible';
 select c2, max(c1), min(c3) from t1 group by c2 order by c2;
 select c4, sum(c1), avg(c3) from t1 group by c4 order by c4;
 
@@ -64,6 +67,7 @@ select c2, count(*) from t1 group by c2 having max(c1) > 15 order by c2;
 select c4, sum(c1) from t1 group by c4 having sum(c3) > 1500 order by c4;
 
 -- complex HAVING with invisible columns
+evaluate 'complex HAVING with invisible columns';
 select c2, count(*), max(c1), sum(c3)
 from t1
 group by c2
@@ -87,6 +91,7 @@ from t1
 order by c2, c1;
 
 -- window function in subquery with invisible column
+evaluate 'window function in subquery with invisible column';
 select t1.id, t1.c2, sub.avg_c5
 from t1
 join (
@@ -102,17 +107,21 @@ order by t1.id;
 -- ============================================
 
 -- UNION with invisible columns
-select * from t1 union select * from t1;
-select c2, c4 from t1 union select c2, c4 from t1;
+evaluate 'UNION with invisible columns';
+select * from t1 union select * from t1 order by 1;
+select c2, c4 from t1 union select c2, c4 from t1 order by 1;
 
 -- UNION ALL
+evaluate 'UNION ALL';
 select c1, c2 from t1 union all select c5, c6 from t2 order by 1;
 select c1, c3 from t1 union all select c5, c5 from t2 order by 1;
 
 -- mixed visible and invisible in UNION
+evaluate 'mixed visible and invisible in UNION';
 select c1, c2, c3 from t1 union select c5, c6, c5 from t2 order by 1;
 
 -- UNION with aggregation on invisible columns
+evaluate 'UNION with aggregation on invisible columns';
 select 'table1' as source, sum(c1) as sum_invis from t1
 union all
 select 'table2' as source, sum(c5) from t2;
@@ -123,7 +132,7 @@ select 'table2' as source, sum(c5) from t2;
 -- ============================================
 
 select c1 from t1 intersect select c5 from t2;
-select c2 from t1 intersect select c6 from t2;
+select c2 from t1 intersect select c6 from t2 order by 1;
 
 select c1 from t1 difference select c5 from t2 order by 1;
 select id from t1 difference select id from t2 order by 1;

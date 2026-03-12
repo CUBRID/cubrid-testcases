@@ -116,18 +116,18 @@ create table t1_ (id int , c1 int invisible, c2 int);
 
 insert into t1_(id, c1, c2) values (1, 10, 100), (1,9999,100), (1,10,9999), (2, 20, 200), (2, 9999, 200), (2, 20, 9999);
 
-select * from t1 natural join t1_;
-select t1.id, t1.c1, t1.c2, t1_.id, t1_.c1, t1_.c2 from t1 natural join t1_;
+select * from t1 natural join t1_ order by 1;
+select t1.id, t1.c1, t1.c2, t1_.id, t1_.c1, t1_.c2 from t1 natural join t1_ order by 1;
 
 alter table t1_ modify column c1 int visible;
 
-select * from t1 natural join t1_;
-select t1.id, t1.c1, t1.c2, t1_.id, t1_.c1, t1_.c2 from t1 natural join t1_;
+select * from t1 natural join t1_ order by 1;
+select t1.id, t1.c1, t1.c2, t1_.id, t1_.c1, t1_.c2 from t1 natural join t1_ order by 1;
 
 alter table t1 modify column c1 int visible;
 
-select * from t1 natural join t1_;
-select t1.id, t1.c1, t1.c2, t1_.id, t1_.c1, t1_.c2 from t1 natural join t1_;
+select * from t1 natural join t1_ order by 1;
+select t1.id, t1.c1, t1.c2, t1_.id, t1_.c1, t1_.c2 from t1 natural join t1_ order by 1;
 
 
 -- ============================================
