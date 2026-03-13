@@ -21,19 +21,9 @@ grant insert, delete on foo12 to USER12_1;
 select _db_user to u1 from _db_user where name = 'USER12_1';
 select _db_user to u2 from _db_user where name = 'USER12_2';
 call add_member(u2) on u1;
-<<<<<<< Updated upstream
 select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name = 'USER12_2' order by object_name, grantor_name, auth_type, is_grantable;
 call drop_user('USER12_1') on class _db_user;
 call drop_user('USER12_2') on class _db_user;
-||||||| Stash base
-select * from db_auth where grantee_name = 'USER12_2' order by object_name, grantor_name, auth_type, is_grantable;
-call drop_user('USER12_1') on class db_user;
-call drop_user('USER12_2') on class db_user;
-=======
-select * from db_auth where grantee_name = 'USER12_2' order by object_name, grantor_name, auth_type, is_grantable;
-call drop_user('USER12_1') on class _db_user;
-call drop_user('USER12_2') on class _db_user;
->>>>>>> Stashed changes
 drop class foo12;
 call login('dba', '') on class db_user;
 rollback; 
