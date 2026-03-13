@@ -5,13 +5,13 @@ create class a_tbl( a int, b int);
 create view a_view as select a +1 x from a_tbl;
 create view b_view as select to_char(a ) x from a_tbl;
 
-select * from db_vclass
+select vclass_name, owner_name, vclass_def, comment from db_vclass
 where  vclass_name like '%view' order by vclass_name;
 
 drop a_tbl;
 
 
-select * from db_vclass
+select vclass_name, owner_name, vclass_def, comment from db_vclass
 where  vclass_name like '%view' order by vclass_name;
 
 drop view a_view;

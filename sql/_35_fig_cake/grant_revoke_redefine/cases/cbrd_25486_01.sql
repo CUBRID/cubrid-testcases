@@ -20,7 +20,7 @@ call login('u2','') on class db_user;
 GRANT SELECT ON u1.tbl TO u3 WITH GRANT OPTION;
 
 
-select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name;
 
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
 

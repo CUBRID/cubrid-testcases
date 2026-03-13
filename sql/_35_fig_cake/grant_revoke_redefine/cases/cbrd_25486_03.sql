@@ -19,7 +19,7 @@ call login('u1','') on class db_user;
 GRANT EXECUTE ON PROCEDURE u1.hello TO u2;
 GRANT EXECUTE ON PROCEDURE u1.hello TO u3;
 
-select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name;
 
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
 
@@ -29,7 +29,7 @@ call login('dba','') on class db_user;
 DROP FUNCTION u1.hello;
 
 evaluate 'check to the u1.hello removed';
-select * from db_auth where grantee_name != 'PUBLIC'  order by grantor_name;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC'  order by grantor_name;
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC'  order by owner.name;
 select sp_name, pkg_name, sp_type, return_type, arg_count, lang, authid, is_deterministic, target, owner, code, comment from db_stored_procedure;
 

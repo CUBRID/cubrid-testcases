@@ -27,7 +27,7 @@ ALTER TABLE range_test REORGANIZE PARTITION p2 INTO (
 PARTITION p3 VALUES LESS THAN (25),
 PARTITION p4 VALUES LESS THAN (30));
 
-select * from db_partition where class_name = 'range_test' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'range_test' order by partition_name;
 select * from range_test__p__p0 order by 1,2;
 select * from range_test__p__p1 order by 1,2;
 select * from range_test__p__p3 order by 1,2;

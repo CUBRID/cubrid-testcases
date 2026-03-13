@@ -23,10 +23,10 @@ call login('u1','') on class db_user;
 
 evaluate 'u2 grant to u1.tbl (granted select twice, but duplicate granted does not work)';
 GRANT SELECT ON u1.tbl TO u2 WITH GRANT OPTION;
-select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name, auth_type;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name, auth_type;
 
 GRANT SELECT ON u1.tbl TO u2;
-select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name, auth_type;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name, auth_type;
 
 
 evaluate 'u2 grant to u1.tbl (insert)';
@@ -45,7 +45,7 @@ evaluate 'connect to u3 & u4 grant to u1.tbl';
 call login('u3','') on class db_user;
 GRANT SELECT ON u1.tbl TO u4 WITH GRANT OPTION;
 
-select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name, auth_type;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name, auth_type;
 
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
 
@@ -54,7 +54,7 @@ evaluate 'connect to dba & drop user u2';
 call login('dba','') on class db_user;
 DROP USER u2;
 
-select * from db_auth where grantee_name != 'PUBLIC';
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC';
 
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
 

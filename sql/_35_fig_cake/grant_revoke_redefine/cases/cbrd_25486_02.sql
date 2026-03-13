@@ -24,7 +24,7 @@ GRANT SELECT ON u1.TBL TO u3 WITH GRANT OPTION;
 
 evaluate 'connect to dba, check permission';
 call login(class db_user,'dba','');
-select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name;
 
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
 
@@ -38,7 +38,7 @@ call login('dba','') on class db_user;
 DROP VIEW u1.v1_tbl;
 
 evaluate 'check to the v1_tbl removed';
-select * from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name;
 select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
 select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where class_name ='v1_tbl' order by class_name;
 evaluate 'ERROR: Unknown class "u1.v1_tbl';

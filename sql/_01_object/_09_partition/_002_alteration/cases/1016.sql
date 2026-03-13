@@ -28,7 +28,7 @@ ALTER TABLE list_test drop partition p1;
 
 insert into list_test values (11,12,'eee','eee','2000-02-02 09:00:00');
 
-select * from db_partition where class_name = 'list_test' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'list_test' order by partition_name;
 
 select * from list_test order by 1;
 select * from list_test__p__p0 order by 1;
