@@ -22,7 +22,7 @@ GRANT SELECT ON u1.tbl TO u3 WITH GRANT OPTION;
 
 select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name;
 
-select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
+select owner, grants from db_authorization where owner != 'PUBLIC' order by owner;
 
 evaluate 'connect to u2';
 call login('u2','') on class db_user;
@@ -34,7 +34,7 @@ evaluate 'connect to dba, drop the u1.tbl';
 call login('dba','') on class db_user;
 DROP TABLE u1.tbl;
 
-select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
+select owner, grants from db_authorization where owner != 'PUBLIC' order by owner;
 
 select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where class_name = 'tbl' order by class_name;
 

@@ -8,7 +8,7 @@ create user test_user1 groups test_user;
 
 
 select name, id, password, direct_groups,groups
-from   db_user
+from   _db_user
 where  name = 'TEST_USER1';
 
 drop user test_user;

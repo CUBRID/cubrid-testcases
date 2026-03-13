@@ -5,7 +5,7 @@ create user test_user password 'passwd' groups dba;
 
 
 select name, id, password, direct_groups,groups
-from   db_user
+from   _db_user
 where  name = 'TEST_USER';
 
 drop user test_user;

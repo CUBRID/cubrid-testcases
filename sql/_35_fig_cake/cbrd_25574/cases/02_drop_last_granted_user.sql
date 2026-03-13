@@ -26,7 +26,7 @@ GRANT SELECT ON u1.tbl TO u3 WITH GRANT OPTION;
 
 select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name, object_name;
 
-select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
+select owner, grants from db_authorization where owner != 'PUBLIC' order by owner;
 
 
 evaluate 'connect to dba & drop user u3';
@@ -35,7 +35,7 @@ drop user u3;
 
 select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name, object_name;
 
-select owner.name, grants from db_authorization where owner.name != 'PUBLIC';
+select owner, grants from db_authorization where owner != 'PUBLIC';
 
 
 evaluate 'Test done';

@@ -33,7 +33,7 @@ grant select, alter on t1_l to u2 with grant option;
 
 select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, object_name;
 
-select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
+select owner, grants from db_authorization where owner != 'PUBLIC' order by owner;
 
 
 evaluate 'connect to u2 & u3 grant to u1.t1_r, u1.t1_h, u1.t1_l';
@@ -45,7 +45,7 @@ grant select, alter on u1.t1_l to u3 with grant option;
 
 select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, object_name;
 
-select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
+select owner, grants from db_authorization where owner != 'PUBLIC' order by owner;
 
 
 evaluate 'connect u3, drop table u1.t1_r, u1.t1_h, u1.t1_l';
@@ -61,7 +61,7 @@ drop table u1.t1_l;
 evaluate 'success: drop u1.t1_l';
 select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, object_name;
 
-select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
+select owner, grants from db_authorization where owner != 'PUBLIC' order by owner;
 
 
 evaluate 'connect to u2, drop table u1.t1_r, u1.t1_h';
@@ -79,7 +79,7 @@ drop table u1.t1_h;
 
 select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, object_name;
 
-select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
+select owner, grants from db_authorization where owner != 'PUBLIC' order by owner;
 
 
 evaluate 'connect to dba, drop u1.t1_r';
@@ -89,7 +89,7 @@ drop table u1.t1_r;
 
 select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, object_name;
 
-select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
+select owner, grants from db_authorization where owner != 'PUBLIC' order by owner;
 
 
 evaluate 'Test done';

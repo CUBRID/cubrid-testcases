@@ -33,7 +33,7 @@ GRANT EXECUTE ON PROCEDURE dba.hello TO dba;
 
 select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name;
 
-select owner.name, grants from db_authorization where owner.name = 'U1' order by owner.name;
+select owner, grants from db_authorization where owner = 'U1' order by owner;
 
 evaluate 'connect to dba and test init';
 call login(class db_user,'dba','');
@@ -71,7 +71,7 @@ GRANT EXECUTE ON PROCEDURE dba.hello TO dba;
 
 select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name;
 
-select owner.name, grants from db_authorization where owner.name IN ('U1', 'U2') order by owner.name;
+select owner, grants from db_authorization where owner IN ('U1', 'U2') order by owner;
 
 
 evaluate 'connect to dba and test init';
@@ -110,7 +110,7 @@ GRANT EXECUTE ON PROCEDURE dba.hello TO dba;
 
 select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name;
 
-select owner.name, grants from db_authorization where owner.name IN ('U1', 'U2') order by owner.name;
+select owner, grants from db_authorization where owner IN ('U1', 'U2') order by owner;
 
 
 evaluate 'connect to u1 and revoke to dba.tbl from u2';
