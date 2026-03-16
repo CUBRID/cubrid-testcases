@@ -336,10 +336,13 @@ drop table if exists complex_b2_4_tbl;
 drop table if exists complex_a2_4_tbl;
 
 evaluate '3. Complex FK - NULL and without PK constraints';
--- Test foreign key constraints with NULL values and without PRIMARY KEY constraints
+-- Due to current CTP limitation, when REPLICATION option is explicitly specified,
+-- PRIMARY KEY is not created unless the entire CREATE TABLE statement is written in a single line.
+-- This scenario group verifies FK behavior when NOT NULL and PRIMARY KEY constraints are removed or relaxed under this limitation.
 
 evaluate '3-1. Referenced table (NOT NULL, PK) <- FK table (NULL allowed, no PK)';
--- Test FK with referenced table having NOT NULL and PK, FK table without NOT NULL and PK
+-- Test FK with referenced table having NOT NULL and PK, FK table without NOT NULL and PK.
+-- Data are inserted successfully on both master and slave.
 drop table if exists complex_b3_1_tbl;
 drop table if exists complex_a3_1_tbl;
 
@@ -369,7 +372,8 @@ drop table if exists complex_b3_1_tbl;
 drop table if exists complex_a3_1_tbl;
 
 evaluate '3-2. Referenced table (NULL allowed, no PK) <- FK table (NOT NULL, PK)';
--- Test FK with referenced table without NOT NULL and PK, FK table with NOT NULL and PK
+-- Test FK with referenced table without NOT NULL and PK, FK table with NOT NULL and PK.
+-- In ha_repl, neither master nor slave creates complex_a3_2_tbl, so complex_b3_2_tbl is also not created.
 drop table if exists complex_b3_2_tbl;
 drop table if exists complex_a3_2_tbl;
 
@@ -387,7 +391,8 @@ drop table if exists complex_b3_2_tbl;
 drop table if exists complex_a3_2_tbl;
 
 evaluate '3-3. Referenced table (NULL allowed, no PK) <- FK table (NULL allowed, no PK)';
--- Test FK with both referenced and FK tables without NOT NULL and PK
+-- Test FK with both referenced and FK tables without NOT NULL and PK.
+-- In ha_repl, neither master nor slave creates complex_a3_3_tbl, so complex_b3_3_tbl is also not created.
 drop table if exists complex_b3_3_tbl;
 drop table if exists complex_a3_3_tbl;
 
