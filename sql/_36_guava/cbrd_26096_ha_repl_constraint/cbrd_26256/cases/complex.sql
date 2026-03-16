@@ -340,8 +340,8 @@ evaluate '3. Complex FK - NULL and without PK constraints';
 -- PRIMARY KEY is not created unless the entire CREATE TABLE statement is written in a single line.
 -- This scenario group verifies FK behavior when NOT NULL and PRIMARY KEY constraints are removed or relaxed under this limitation.
 
-evaluate '3-1. Referenced table (NOT NULL, PK) <- FK table (NULL allowed, no PK)';
--- Test FK with referenced table having NOT NULL and PK, FK table without NOT NULL and PK.
+evaluate '3-1. Referenced table (PK) <- FK table (NULL allowed, no PK)';
+-- Test FK with referenced table having PK, FK table without NOT NULL and PK.
 -- Data are inserted successfully on both master and slave.
 drop table if exists complex_b3_1_tbl;
 drop table if exists complex_a3_1_tbl;
