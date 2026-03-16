@@ -334,3 +334,72 @@ select * from complex_b2_4_tbl order by 1,2;
 
 drop table if exists complex_b2_4_tbl;
 drop table if exists complex_a2_4_tbl;
+
+evaluate '3. Complex FK - NULL and without PK constraints';
+-- Test foreign key constraints with NULL values and without PRIMARY KEY constraints
+
+evaluate '3-1. Referenced table (NOT NULL, PK) <- FK table (NULL allowed, no PK)';
+-- Test FK with referenced table having NOT NULL and PK, FK table without NOT NULL and PK
+drop table if exists complex_b3_1_tbl;
+drop table if exists complex_a3_1_tbl;
+
+CREATE TABLE complex_a3_1_tbl ( id INT PRIMARY KEY, phone VARCHAR(10) )REPLICATION ON;
+
+CREATE TABLE complex_b3_1_tbl ( id INT, a_id INT, name VARCHAR (10), CONSTRAINT fk_a FOREIGN KEY (a_id) REFERENCES complex_a3_1_tbl (id) ON DELETE CASCADE ON UPDATE RESTRICT )REPLICATION ON;
+
+insert into complex_a3_1_tbl values (1, '0101111222');
+insert into complex_a3_1_tbl values (2, '0103333444');
+insert into complex_a3_1_tbl values (3, NULL);
+insert into complex_a3_1_tbl values (NULL, '0109999999');
+insert into complex_b3_1_tbl values (1, 1, 'alice');
+insert into complex_b3_1_tbl values (2, 2, 'bob');
+insert into complex_b3_1_tbl values (3, NULL, 'charlie');
+insert into complex_b3_1_tbl values (NULL, 1, 'david');
+insert into complex_b3_1_tbl values (NULL, 3, NULL);
+
+select * from complex_a3_1_tbl order by id;
+select * from complex_b3_1_tbl order by id;
+
+select b.id, b.name, a.phone 
+from complex_b3_1_tbl b
+left join complex_a3_1_tbl a on b.a_id = a.id
+order by b.id;
+
+drop table if exists complex_b3_1_tbl;
+drop table if exists complex_a3_1_tbl;
+
+evaluate '3-2. Referenced table (NULL allowed, no PK) <- FK table (NOT NULL, PK)';
+-- Test FK with referenced table without NOT NULL and PK, FK table with NOT NULL and PK
+drop table if exists complex_b3_2_tbl;
+drop table if exists complex_a3_2_tbl;
+
+CREATE TABLE complex_a3_2_tbl ( id INT, phone VARCHAR(10) )REPLICATION ON;
+
+CREATE TABLE complex_b3_2_tbl ( id INT NOT NULL PRIMARY KEY, a_id INT NOT NULL, name VARCHAR (10), CONSTRAINT fk_a FOREIGN KEY (a_id) REFERENCES complex_a3_2_tbl (id) ON DELETE CASCADE ON UPDATE RESTRICT )REPLICATION ON;
+
+insert into complex_a3_2_tbl values (1, '0101111222');
+insert into complex_a3_2_tbl values (2, '0103333444');
+insert into complex_a3_2_tbl values (NULL, '0109999999');
+
+select * from complex_a3_2_tbl order by id;
+
+drop table if exists complex_b3_2_tbl;
+drop table if exists complex_a3_2_tbl;
+
+evaluate '3-3. Referenced table (NULL allowed, no PK) <- FK table (NULL allowed, no PK)';
+-- Test FK with both referenced and FK tables without NOT NULL and PK
+drop table if exists complex_b3_3_tbl;
+drop table if exists complex_a3_3_tbl;
+
+CREATE TABLE complex_a3_3_tbl ( id INT, phone VARCHAR(10) )REPLICATION ON;
+
+CREATE TABLE complex_b3_3_tbl ( id INT, a_id INT, name VARCHAR (10), CONSTRAINT fk_a FOREIGN KEY (a_id) REFERENCES complex_a3_3_tbl (id) ON DELETE CASCADE ON UPDATE RESTRICT )REPLICATION ON;
+
+insert into complex_a3_3_tbl values (1, '0101111222');
+insert into complex_a3_3_tbl values (2, '0103333444');
+insert into complex_a3_3_tbl values (NULL, '0109999999');
+
+select * from complex_a3_3_tbl order by id;
+
+drop table if exists complex_b3_3_tbl;
+drop table if exists complex_a3_3_tbl;
