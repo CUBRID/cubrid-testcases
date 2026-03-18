@@ -281,6 +281,13 @@ SELECT
     date_add('2020-01-01 00:00:00', INTERVAL '2:15:30' HOUR_SECOND) as with_colon,
     date_add('2020-01-01 00:00:00', INTERVAL '2xyz15abc30' HOUR_SECOND) as with_letters;
 
+evaluate 'Case 5.5: Whitespace tolerance';
+SELECT
+    adddate(datetime'2025-01-01 10:00:00', INTERVAL '1 :20' HOUR_MINUTE) AS space_result,
+    adddate(datetime'2025-01-01 10:00:00', INTERVAL '1:20' HOUR_MINUTE) AS normal_result,
+    adddate(datetime'2025-01-01 10:00:00', INTERVAL '1 :20' HOUR_MINUTE)
+        = adddate(datetime'2025-01-01 10:00:00', INTERVAL '1:20' HOUR_MINUTE) AS space_tolerant_ok;
+
 -- ============================================================================
 -- TEST 6: NEGATIVE VALUE HANDLING IN COMPOSITE UNITS
 -- ============================================================================
@@ -306,6 +313,12 @@ evaluate 'Case 6.4: Negative Zero';
 SELECT 
     date_add('2020-01-01 12:00:00', INTERVAL '-0' HOUR_MINUTE) as neg_zero,
     date_add('2020-01-01 12:00:00', INTERVAL '0' HOUR_MINUTE) as pos_zero;
+
+evaluate 'Case 6.5: Negative in the middle ignored';
+SELECT
+    adddate(datetime'2025-01-01 10:00:00', INTERVAL '3:-2' HOUR_MINUTE) AS result,
+    adddate(datetime'2025-01-01 10:00:00', INTERVAL '3:-2' HOUR_MINUTE)
+        = datetime'2025-01-01 13:02:00' AS sign_middle_ignored_ok;
 
 -- ============================================================================
 -- TEST 7: Other Cases
@@ -339,10 +352,350 @@ SELECT
     adddate(date'2020-01-01', 365) as add_365_leap,
     subdate(date'2020-01-01', 365) as sub_365;
 
-evaluate 'Case 7.5: Invalid Input Handling';
+-- ============================================================================
+-- TEST 8: MONTH INTERVAL
+-- ============================================================================
+evaluate 'Case 8.1: End of Month - January 31 -> February (Leap vs Non-Leap)';
+SELECT
+    adddate(date'2020-01-31', INTERVAL 1 MONTH) AS leap_year_result,
+    adddate(date'2021-01-31', INTERVAL 1 MONTH) AS non_leap_result,
+    adddate(date'2020-01-31', INTERVAL 1 MONTH) = date'2020-02-29' AS leap_ok,
+    adddate(date'2021-01-31', INTERVAL 1 MONTH) = date'2021-02-28' AS non_leap_ok;
+
+evaluate 'Case 8.2: End of Month - Backward Month';
+SELECT
+    subdate(date'2020-03-31', INTERVAL 1 MONTH) AS leap_year_result,
+    subdate(date'2021-03-31', INTERVAL 1 MONTH) AS non_leap_result,
+    subdate(date'2020-03-31', INTERVAL 1 MONTH) = date'2020-02-29' AS leap_ok,
+    subdate(date'2021-03-31', INTERVAL 1 MONTH) = date'2021-02-28' AS non_leap_ok;
+
+evaluate 'Case 8.3: Multiple Month Carry';
+SELECT
+    adddate(date'2020-01-31', INTERVAL 2 MONTH) AS result_date,
+    adddate(date'2020-01-31', INTERVAL 2 MONTH) = date'2020-03-31' AS carry_ok;
+
+evaluate 'Case 8.4: Month Interval Across Year Boundary';
+SELECT
+    adddate(date'2020-10-31', INTERVAL 4 MONTH) AS result_date,
+    adddate(date'2020-10-31', INTERVAL 4 MONTH) = date'2021-02-28' AS boundary_ok;
+
+-- ============================================================================
+-- TEST 9: NEGATIVE LEAP YEAR BOUNDARIES
+-- Purpose: Verify backward traversal across leap years and correct borrow logic.
+-- ============================================================================
+evaluate 'Case 9.1: Reverse Across Leap Year';
+SELECT
+    subdate(date'2021-01-01', 366) AS result_date,
+    subdate(date'2021-01-01', 366) = date'2020-01-01' AS reverse_ok;
+
+evaluate 'Case 9.2: Reverse Across Leap Year';
+SELECT
+    subdate(date'2021-01-01', 366) AS result_date,
+    subdate(date'2021-01-01', 366) = date'2020-01-01' AS reverse_ok;
+
+evaluate 'Case 9.3: Negative Interval Equivalent';
+SELECT
+    adddate(date'2021-01-01', -366) AS negative_result,
+    adddate(date'2021-01-01', -366) = date'2020-01-01' AS negative_ok;
+
+evaluate 'Case 9.4: Reverse Leap Boundary Multiple';
+SELECT
+    subdate(date'2024-03-01', 1) AS prev_day,
+    subdate(date'2024-03-01', 1) = date'2024-02-29' AS leap_ok;
+
+-- ============================================================================
+-- TEST 10: MONTH / YEAR INTERVAL ARITHMETIC
+-- Purpose: Verify calendar-field arithmetic for month and year intervals.
+-- ============================================================================
+evaluate 'Case 10.1: Add One Year from Leap Day';
+SELECT
+    adddate(date'2020-02-29', INTERVAL 1 YEAR) AS result_date,
+    adddate(date'2020-02-29', INTERVAL 1 YEAR) = date'2021-02-28' AS leap_adjust_ok;
+
+evaluate 'Case 10.2: Subtract One Year from Leap Day';
+SELECT
+    subdate(date'2021-02-28', INTERVAL 1 YEAR) AS result_date,
+    subdate(date'2021-02-28', INTERVAL 1 YEAR) = date'2020-02-28' AS year_ok;
+
+evaluate 'Case 10.3: YEAR_MONTH Composite Interval';
+SELECT
+    adddate(date'2020-01-31', INTERVAL '1-2' YEAR_MONTH) AS result_date,
+    adddate(date'2020-01-31', INTERVAL '1-2' YEAR_MONTH) = date'2021-03-31' AS composite_ok;
+ 
+evaluate 'Case 10.4: Reverse YEAR_MONTH Composite';
+SELECT
+    subdate(date'2021-03-31', INTERVAL '1-2' YEAR_MONTH) AS result_date,
+    subdate(date'2021-03-31', INTERVAL '1-2' YEAR_MONTH) = date'2020-01-31' AS reverse_ok;
+
+-- ============================================================================
+-- TEST 11: LARGE INTERVAL RANGE / OVERFLOW STABILITY
+-- Purpose: 
+-- Verify that large intervals do not produce incorrect arithmetic
+-- and that step-by-step calculation matches one-shot calculation.
+-- ============================================================================
+evaluate 'Case 11.1: Large Positive Interval';
+SELECT
+    adddate(date'2000-01-01', INTERVAL 10000 DAY) AS result_date,
+    adddate(date'2000-01-01', INTERVAL 10000 DAY)
+        = adddate(adddate(date'2000-01-01', INTERVAL 9999 DAY), INTERVAL 1 DAY) AS stable_ok;
+
+evaluate 'Case 11.2: Large Negative Interval';
+SELECT
+    subdate(date'2000-01-01', INTERVAL 10000 DAY) AS result_date,
+    subdate(date'2000-01-01', INTERVAL 10000 DAY)
+        = subdate(subdate(date'2000-01-01', INTERVAL 9999 DAY), INTERVAL 1 DAY) AS stable_ok;
+
+evaluate 'Case 11.3: Symmetric Interval Reversibility';
+SELECT
+    subdate(adddate(date'2000-01-01', INTERVAL 5000 DAY), INTERVAL 5000 DAY) AS result_date,
+    subdate(adddate(date'2000-01-01', INTERVAL 5000 DAY), INTERVAL 5000 DAY)
+        = date'2000-01-01' AS reversible_ok;
+
+evaluate 'Case 11.4: Large Positive Interval with DATETIME';
+SELECT
+    adddate(datetime'2000-01-01 00:00:00', INTERVAL 10000 DAY) AS result_dt,
+    adddate(datetime'2000-01-01 00:00:00', INTERVAL 10000 DAY)
+        = adddate(adddate(datetime'2000-01-01 00:00:00', INTERVAL 9999 DAY), INTERVAL 1 DAY) AS stable_ok;
+
+evaluate 'Case 11.5: Large Negative Interval with DATETIME';
+SELECT
+    subdate(datetime'2000-01-01 00:00:00', INTERVAL 10000 DAY) AS result_dt,
+    subdate(datetime'2000-01-01 00:00:00', INTERVAL 10000 DAY)
+        = subdate(subdate(datetime'2000-01-01 00:00:00', INTERVAL 9999 DAY), INTERVAL 1 DAY) AS stable_ok;
+
+-- ============================================================================
+-- TEST 12: NUMERIC PART NORMALIZATION
+-- Purpose: Verify that large numeric parts normalize correctly.
+-- ============================================================================
+evaluate 'Case 12.1: Large minute value normalization';
+SELECT
+    adddate(datetime'2025-01-01 10:00:00', INTERVAL '12:500' HOUR_MINUTE) AS result,
+    adddate(datetime'2025-01-01 10:00:00', INTERVAL '12:500' HOUR_MINUTE)
+        = datetime'2025-01-02 06:20:00' AS normalize_ok;
+
+evaluate 'Case 12.2: Large second normalization';
+SELECT
+    adddate(datetime'2025-01-01 10:00:00', INTERVAL '10:120' MINUTE_SECOND) AS result,
+    adddate(datetime'2025-01-01 10:00:00', INTERVAL '10:120' MINUTE_SECOND)
+        = datetime'2025-01-01 10:12:00' AS normalize_ok;
+
+-- ============================================================================
+-- TEST 13: NUMERIC TOKEN COUNT VALIDATION
+-- Purpose: Verify NULL result when numeric token count exceeds expected parts.
+-- ============================================================================
+evaluate 'Case 13.1: Too many tokens in HOUR_MINUTE';
+SELECT
+    adddate(datetime'2025-01-01 10:00:00', INTERVAL '1:2:3' HOUR_MINUTE) AS result,
+    adddate(datetime'2025-01-01 10:00:00', INTERVAL '1:2:3' HOUR_MINUTE) IS NULL AS token_overflow_ok;
+
+evaluate 'Case 13.2: Too many tokens in DAY_SECOND';
+SELECT
+    adddate(datetime'2025-01-01 10:00:00', INTERVAL '1 2:3:4:5' DAY_SECOND) AS result,
+    adddate(datetime'2025-01-01 10:00:00', INTERVAL '1 2:3:4:5' DAY_SECOND) IS NULL AS token_overflow_ok;
+
+-- ============================================================================
+-- TEST 14: TYPE CAST BEHAVIOR
+-- Purpose: Verify casting behavior for single-unit intervals.
+-- ============================================================================
+evaluate 'Case 14.1: Boolean casting';
+SELECT
+    adddate(date'2020-01-01', INTERVAL true DAY) AS result,
+    adddate(date'2020-01-01', INTERVAL true DAY) = date'2020-01-02' AS cast_ok;
+
+evaluate 'Case 14.2: Invalid numeric string';
+SELECT
+    adddate(date'2020-01-01', INTERVAL 'abc' DAY) as invalid_inter_s,
+    adddate(date'2020-01-01', INTERVAL '10abc' DAY) as invalid_inter_sn;
+-- Expected: ERROR (cannot cast to bigint)
+
+evaluate 'Case 14.3: Invalid date';
 SELECT 
     adddate('invalid-date', INTERVAL 1 DAY) as invalid_date;
-SELECT
-    adddate(date'2020-01-01', INTERVAL 'abc' DAY) as invalid_interval;
+-- Expected: ERROR
 
+-- ============================================================================
+-- TEST 15: DATE + TIME INTERVAL PROMOTION
+-- Purpose: Verify correct DATE -> DATETIME promotion when time interval is used.
+-- ============================================================================
+evaluate 'Case 15.1: DATE + SECOND';
+SELECT
+    adddate(date'2025-01-01', INTERVAL 1 SECOND) AS result,
+    adddate(date'2025-01-01', INTERVAL 1 SECOND)
+        = datetime'2025-01-01 00:00:01' AS promotion_ok;
+
+evaluate 'Case 15.2: DATE + HOUR';
+SELECT
+    adddate(date'2025-01-01', INTERVAL 2 HOUR) AS result,
+    adddate(date'2025-01-01', INTERVAL 2 HOUR)
+        = datetime'2025-01-01 02:00:00' AS promotion_ok;
+
+-- ============================================================================
+-- TEST 16: DAY_HOUR CARRY
+-- Purpose: Verify carry from hours to day in composite intervals.
+-- ============================================================================
+evaluate 'Case 16.1: Hour overflow into day';
+SELECT
+    adddate(datetime'2025-01-01 00:00:00', INTERVAL '1 24' DAY_HOUR) AS result,
+    adddate(datetime'2025-01-01 00:00:00', INTERVAL '1 24' DAY_HOUR)
+        = datetime'2025-01-03 00:00:00' AS carry_ok;
+
+-- ============================================================================
+-- TEST 17: DATE-DATETIME ROUNDTRIP DRIFT
+-- ============================================================================
+evaluate 'Case 17.1: Basic roundtrip';
+SELECT
+    cast(adddate(cast(date'2025-01-01' as datetime), INTERVAL 0 SECOND) as date) AS result,
+    cast(adddate(cast(date'2025-01-01' as datetime), INTERVAL 0 SECOND) as date)
+        = date'2025-01-01' AS drift_ok;
+
+evaluate 'Case 17.2: With second addition and rollback';
+SELECT
+    cast(subdate(adddate(cast(date'2025-01-01' as datetime), INTERVAL 1 SECOND), INTERVAL 1 SECOND) as date) AS result,
+    cast(subdate(adddate(cast(date'2025-01-01' as datetime), INTERVAL 1 SECOND), INTERVAL 1 SECOND) as date)
+        = date'2025-01-01' AS drift_ok;
+
+evaluate 'Case 17.3: Leap day roundtrip';
+SELECT
+    cast(adddate(cast(date'2020-02-29' as datetime), INTERVAL 0 SECOND) as date) AS result,
+    cast(adddate(cast(date'2020-02-29' as datetime), INTERVAL 0 SECOND) as date)
+        = date'2020-02-29' AS drift_ok;
+
+evaluate 'Case 17.4: Year boundary roundtrip';
+SELECT
+    cast(subdate(adddate(cast(date'2025-12-31' as datetime), INTERVAL 1 DAY), INTERVAL 1 DAY) as date) AS result,
+    cast(subdate(adddate(cast(date'2025-12-31' as datetime), INTERVAL 1 DAY), INTERVAL 1 DAY) as date)
+        = date'2025-12-31' AS drift_ok;
+
+evaluate 'Case 17.5: Multiple chained conversions';
+SELECT
+    cast(adddate(cast(adddate(cast(date'2025-01-01' as datetime), INTERVAL 10 SECOND) as datetime), INTERVAL -10 SECOND) as date) AS result,
+    cast(adddate(cast(adddate(cast(date'2025-01-01' as datetime), INTERVAL 10 SECOND) as datetime), INTERVAL -10 SECOND) as date)
+        = date'2025-01-01' AS drift_ok;
+
+-- ============================================================================
+-- TEST 18: CROSS-UNIT NORMALIZATION ORDER
+-- ============================================================================
+evaluate 'Case 18.1: Second + millisecond carry';
+SELECT
+    date_add(datetime'2025-01-01 10:00:59.900', INTERVAL '0:200' SECOND_MILLISECOND) AS result,
+    date_add(datetime'2025-01-01 10:00:59.900', INTERVAL '0:200' SECOND_MILLISECOND)
+        = datetime'2025-01-01 10:01:00.100' AS normalize_ok;
+
+evaluate 'Case 18.2: Millisecond overflow to next second';
+SELECT
+    date_add(datetime'2025-01-01 10:00:59.999', INTERVAL 2 MILLISECOND) AS result,
+    date_add(datetime'2025-01-01 10:00:59.999', INTERVAL 2 MILLISECOND)
+        = datetime'2025-01-01 10:01:00.001' AS normalize_ok;
+
+evaluate 'Case 18.3: Minute + second carry';
+SELECT
+    date_add(datetime'2025-01-01 10:59:59', INTERVAL '0:2' MINUTE_SECOND) AS result,
+    date_add(datetime'2025-01-01 10:59:59', INTERVAL '0:2' MINUTE_SECOND)
+        = datetime'2025-01-01 11:00:01' AS normalize_ok;
+
+evaluate 'Case 18.4: Hour + minute carry';
+SELECT
+    date_add(datetime'2025-01-01 23:59:00', INTERVAL '0:2' HOUR_MINUTE) AS result,
+    date_add(datetime'2025-01-01 23:59:00', INTERVAL '0:2' HOUR_MINUTE)
+        = datetime'2025-01-02 00:01:00' AS normalize_ok;
+
+evaluate 'Case 18.5: Multi-level carry';
+SELECT
+    date_add(datetime'2025-01-01 23:59:59.900', INTERVAL '0:200' SECOND_MILLISECOND) AS result,
+    date_add(datetime'2025-01-01 23:59:59.900', INTERVAL '0:200' SECOND_MILLISECOND)
+        = datetime'2025-01-02 00:00:00.100' AS normalize_ok;
+
+-- ============================================================================
+-- TEST 19: YEAR-MONTH + DAY INTERACTION
+-- ============================================================================
+evaluate 'Case 19.1: Month then day';
+SELECT
+    adddate(adddate(date'2020-01-31', INTERVAL 1 MONTH), INTERVAL 1 DAY) AS result,
+    adddate(adddate(date'2020-01-31', INTERVAL 1 MONTH), INTERVAL 1 DAY)
+        = date'2020-03-01' AS normalize_ok;
+
+evaluate 'Case 19.2: Day then month';
+SELECT
+    adddate(adddate(date'2020-01-31', INTERVAL 1 DAY), INTERVAL 1 MONTH) AS result,
+    adddate(adddate(date'2020-01-31', INTERVAL 1 DAY), INTERVAL 1 MONTH)
+        = date'2020-03-01' AS normalize_ok;
+
+evaluate 'Case 19.3: Non-leap year interaction';
+SELECT
+    adddate(adddate(date'2021-01-31', INTERVAL 1 MONTH), INTERVAL 1 DAY) AS result,
+    adddate(adddate(date'2021-01-31', INTERVAL 1 MONTH), INTERVAL 1 DAY)
+        = date'2021-03-01' AS normalize_ok;
+
+evaluate 'Case 19.4: Reverse interaction';
+SELECT
+    subdate(subdate(date'2020-03-01', INTERVAL 1 DAY), INTERVAL 1 MONTH) AS result,
+    subdate(subdate(date'2020-03-01', INTERVAL 1 DAY), INTERVAL 1 MONTH)
+        = date'2020-01-29' AS normalize_ok;
+
+evaluate 'Case 19.5: Multi-month interaction';
+SELECT
+    adddate(adddate(date'2020-01-31', INTERVAL 2 MONTH), INTERVAL 1 DAY) AS result,
+    adddate(adddate(date'2020-01-31', INTERVAL 2 MONTH), INTERVAL 1 DAY)
+        = date'2020-04-01' AS normalize_ok;
+
+-- ============================================================================
+-- TEST 20: SIGN + CAST INTERACTION
+-- ============================================================================
+evaluate 'Case 20.1: Negative via varchar cast';
+SELECT
+    adddate(datetime'2025-01-01 10:00:00', INTERVAL CAST(-130 as VARCHAR(10)) HOUR_MINUTE) AS result,
+    adddate(datetime'2025-01-01 10:00:00', INTERVAL CAST(-130 as VARCHAR(10)) HOUR_MINUTE)
+        = datetime'2025-01-01 07:50:00' AS cast_sign_ok;
+
+evaluate 'Case 20.2: Positive via varchar cast';
+SELECT
+    adddate(datetime'2025-01-01 10:00:00', INTERVAL CAST(130 as VARCHAR(10)) HOUR_MINUTE) AS result,
+    adddate(datetime'2025-01-01 10:00:00', INTERVAL CAST(130 as VARCHAR(10)) HOUR_MINUTE)
+        = datetime'2025-01-01 12:10:00' AS cast_sign_ok;
+
+evaluate 'Case 20.3: Negative float cast';
+SELECT
+    adddate(datetime'2025-01-01 10:00:00', INTERVAL CAST(-130.0 as VARCHAR(10)) HOUR_MINUTE) AS result,
+    adddate(datetime'2025-01-01 10:00:00', INTERVAL CAST(-130.0 as VARCHAR(10)) HOUR_MINUTE)
+        = datetime'2024-12-27 00:00:00' AS cast_sign_ok;
+
+evaluate 'Case 20.4: Negative zero';
+SELECT
+    adddate(datetime'2025-01-01 10:00:00', INTERVAL CAST(-0 as VARCHAR(10)) HOUR_MINUTE) AS result,
+    adddate(datetime'2025-01-01 10:00:00', INTERVAL CAST(-0 as VARCHAR(10)) HOUR_MINUTE)
+        = datetime'2025-01-01 10:00:00' AS cast_sign_ok;
+
+-- ============================================================================
+-- TEST 21: PARTIAL PARSE FAILURE
+-- ============================================================================
+evaluate 'Case 21.1: Mixed tokens -> numeric extraction';
+SELECT
+    adddate(datetime'2025-01-01 10:00:00', INTERVAL '1a:xx' HOUR_MINUTE) AS result,
+    adddate(datetime'2025-01-01 10:00:00', INTERVAL '1a:xx' HOUR_MINUTE)
+        = datetime'2025-01-01 10:01:00' AS parse_ok;
+
+evaluate 'Case 21.2: No numeric tokens -> zero interval';
+SELECT
+    adddate(datetime'2025-01-01 10:00:00', INTERVAL ':' HOUR_MINUTE) AS result,
+    adddate(datetime'2025-01-01 10:00:00', INTERVAL ':' HOUR_MINUTE)
+        = datetime'2025-01-01 10:00:00' AS parse_ok;
+
+evaluate 'Case 21.3: Partial numeric';
+SELECT
+    adddate(datetime'2025-01-01 10:00:00', INTERVAL 'abc:20' HOUR_MINUTE) AS result,
+    adddate(datetime'2025-01-01 10:00:00', INTERVAL 'abc:20' HOUR_MINUTE)
+        = datetime'2025-01-01 10:20:00' AS parse_ok;
+
+evaluate 'Case 21.4: Multiple delimiters';
+SELECT
+    adddate(datetime'2025-01-01 10:00:00', INTERVAL '1:::' HOUR_MINUTE) AS result,
+    adddate(datetime'2025-01-01 10:00:00', INTERVAL '1:::' HOUR_MINUTE)
+        = datetime'2025-01-01 10:01:00' AS parse_ok;
+
+evaluate 'Case 21.5: Empty string';
+SELECT
+    adddate(datetime'2025-01-01 10:00:00', INTERVAL '' HOUR_MINUTE) AS result,
+    adddate(datetime'2025-01-01 10:00:00', INTERVAL '' HOUR_MINUTE)
+        = datetime'2025-01-01 10:00:00' AS parse_ok;
+  
 DROP TABLE type_test;
