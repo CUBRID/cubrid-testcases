@@ -93,48 +93,52 @@ WHERE class_name IN ('no_rk_off', 'pk_default', 'nn_uk_default', 'uk_default')
 ORDER BY class_name;
 
 -- 4. Data replication verification (Single mode DML operations)
+-- [Verification 4] Check state after data replication
 INSERT INTO no_rk_default VALUES (1);
-INSERT INTO no_rk_on VALUES (2);
-INSERT INTO no_rk_off VALUES (3);
+SELECT 'no_rk_default' AS tb_name, a FROM no_rk_default ORDER BY a;
+DROP TABLE IF EXISTS no_rk_default;
 
-INSERT INTO pk_default VALUES (10);
+INSERT INTO no_rk_on VALUES (2);
+SELECT 'no_rk_on' AS tb_name, a FROM no_rk_on ORDER BY a;
+DROP TABLE IF EXISTS no_rk_on;
+
+INSERT INTO no_rk_off VALUES (3);
+SELECT 'no_rk_off' AS tb_name, a FROM no_rk_off ORDER BY a;
+DROP TABLE IF EXISTS no_rk_off;
+
+INSERT INTO pk_default VALUES (10); 
+SELECT 'pk_default' AS tb_name, a FROM pk_default ORDER BY a;
+DROP TABLE IF EXISTS pk_default;
+
 INSERT INTO pk_on VALUES (20);
+SELECT 'pk_on' AS tb_name, a FROM pk_on ORDER BY a;
+DROP TABLE IF EXISTS pk_on;
+
 INSERT INTO pk_off VALUES (30);
+SELECT 'pk_off' AS tb_name, a FROM pk_off ORDER BY a;
+DROP TABLE IF EXISTS pk_off;
 
 INSERT INTO nn_uk_default VALUES (100);
+SELECT 'nn_uk_default' AS tb_name, a FROM nn_uk_default ORDER BY a;
+DROP TABLE IF EXISTS nn_uk_default;
+
 INSERT INTO nn_uk_on VALUES (200);
+SELECT 'nn_uk_on' AS tb_name, a FROM nn_uk_on ORDER BY a;
+DROP TABLE IF EXISTS nn_uk_on;
+
 INSERT INTO nn_uk_off VALUES (300);
+SELECT 'nn_uk_off' AS tb_name, a FROM nn_uk_off ORDER BY a;
+DROP TABLE IF EXISTS nn_uk_off;
 
 INSERT INTO uk_default VALUES (1000);
-INSERT INTO uk_on VALUES (2000);
-INSERT INTO uk_off VALUES (3000);
-
--- [Verification 4] Check state after data replication
-SELECT 'no_rk_default' AS tb_name, a FROM no_rk_default ORDER BY a;
-SELECT 'no_rk_on' AS tb_name, a FROM no_rk_on ORDER BY a;
-SELECT 'no_rk_off' AS tb_name, a FROM no_rk_off ORDER BY a;
-
-SELECT 'pk_default' AS tb_name, a FROM pk_default ORDER BY a;
-SELECT 'pk_on' AS tb_name, a FROM pk_on ORDER BY a;
-SELECT 'pk_off' AS tb_name, a FROM pk_off ORDER BY a;
-
-SELECT 'nn_uk_default' AS tb_name, a FROM nn_uk_default ORDER BY a;
-SELECT 'nn_uk_on' AS tb_name, a FROM nn_uk_on ORDER BY a;
-SELECT 'nn_uk_off' AS tb_name, a FROM nn_uk_off ORDER BY a;
-
 SELECT 'uk_default' AS tb_name, a FROM uk_default ORDER BY a;
-SELECT 'uk_on' AS tb_name, a FROM uk_on ORDER BY a;
-SELECT 'uk_off' AS tb_name, a FROM uk_off ORDER BY a;
-
-DROP TABLE IF EXISTS no_rk_default;
-DROP TABLE IF EXISTS no_rk_on;
-DROP TABLE IF EXISTS no_rk_off;
-DROP TABLE IF EXISTS pk_default;
-DROP TABLE IF EXISTS pk_on;
-DROP TABLE IF EXISTS pk_off;
-DROP TABLE IF EXISTS nn_uk_default;
-DROP TABLE IF EXISTS nn_uk_on;
-DROP TABLE IF EXISTS nn_uk_off;
 DROP TABLE IF EXISTS uk_default;
+
+INSERT INTO uk_on VALUES (2000);
+SELECT 'uk_on' AS tb_name, a FROM uk_on ORDER BY a;
 DROP TABLE IF EXISTS uk_on;
+
+INSERT INTO uk_off VALUES (3000);
+SELECT 'uk_off' AS tb_name, a FROM uk_off ORDER BY a;
 DROP TABLE IF EXISTS uk_off;
+
