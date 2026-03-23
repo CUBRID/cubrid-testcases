@@ -63,7 +63,23 @@ CONNECT BY PRIOR c1 = c2
 ORDER BY c1;
 -- Expected: A, B, D  (C excluded by WHERE)
 
-evaluate 'Case 7. START WITH Using a Subquery';
+evaluate 'Case 7. START WITH and WHERE equality terms on same query';
+SELECT c1 FROM tbl
+WHERE c1 = c1
+START WITH c1 = 'A'
+CONNECT BY PRIOR c1 = c2
+ORDER BY c1;
+-- Expected: A, B, C, D
+
+evaluate 'Case 8. START WITH on parent column';
+SELECT c1 FROM tbl
+START WITH c2 = 'A'
+CONNECT BY PRIOR c1 = c2
+ORDER BY c1;
+-- Expected: B, C, D
+-- START WITH on c2 must not be treated or propagated like a WHERE conditions.
+
+evaluate 'Case 9. START WITH Using a Subquery';
 SELECT c1 FROM tbl
 START WITH c1 = (
     SELECT MIN(c1) FROM tbl
@@ -73,7 +89,7 @@ CONNECT BY PRIOR c1=c2
 ORDER BY c1;
 -- Expected: A, B, C, D
 
-evaluate 'Case 8. CONNECT BY with JOIN (single_table_opt disabled)';
+evaluate 'Case 10. CONNECT BY with JOIN (single_table_opt disabled)';
 DROP TABLE IF EXISTS tbl2;
 CREATE TABLE tbl2 (c1 VARCHAR(10) PRIMARY KEY);
 INSERT INTO tbl2 VALUES ('A'), ('B'), ('C'), ('D');
@@ -85,7 +101,7 @@ CONNECT BY PRIOR tbl.c1 = tbl.c2
 ORDER BY tbl.c1;
 -- Expected: A, B, C, D 
 
-evaluate 'Case 9. DELETE Full Tree from Root';
+evaluate 'Case 11. DELETE Full Tree from Root';
 DELETE FROM tbl WHERE c1 IN (
     SELECT c1 FROM tbl
     START WITH c1 = 'A'
@@ -95,7 +111,7 @@ DELETE FROM tbl WHERE c1 IN (
 SELECT COUNT(*) FROM tbl;
 -- Expected: 0  (all 4 rows deleted)
 
-evaluate 'Case 10. DELETE Subtree Only (Non-Root Start)';
+evaluate 'Case 12. DELETE Subtree Only (Non-Root Start)';
 TRUNCATE tbl;
 INSERT INTO tbl VALUES ('A', NULL), ('B', 'A'), ('C', 'A'), ('D', 'B');
 
