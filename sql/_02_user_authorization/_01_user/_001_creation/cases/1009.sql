@@ -2,7 +2,7 @@
 --create new user and retrieve information from db_user
 call login('dba','') on class db_user;
 create user user1 password 'a';
-select name, id, password, direct_groups, groups, authorization, triggers, is_loginable, is_system_created, comment from db_user
+select name, id, password, direct_groups, groups, authorization, triggers, is_loginable, is_system_created, comment from _db_user
 where name = 'USER1';
 DROP USER user1;
 

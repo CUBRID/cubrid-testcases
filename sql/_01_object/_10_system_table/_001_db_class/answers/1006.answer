@@ -2,6 +2,7 @@
 class_name    cast(c.owner.name as varchar(255))    case c.class_type when 0 then 'CLASS' when 1 then 'VCLASS' when 2 then 'PROXY' else 'UNKNOW' end    case when c.is_system_class=1 then 'YES' else 'NO' end    case when c.sub_classes is null  then 'NO' else nvl((select 'YES' from _db_partition p where p.class_of=c and p.pname is null ), 'NO') end    
 _db_attribute     DBA     CLASS     YES     NO     
 _db_auth     DBA     CLASS     YES     NO     
+_db_authorization     DBA     CLASS     YES     NO     
 _db_charset     DBA     CLASS     YES     NO     
 _db_class     DBA     CLASS     YES     NO     
 _db_collation     DBA     CLASS     YES     NO     
@@ -15,6 +16,7 @@ _db_meth_file     DBA     CLASS     YES     NO
 _db_meth_sig     DBA     CLASS     YES     NO     
 _db_method     DBA     CLASS     YES     NO     
 _db_partition     DBA     CLASS     YES     NO     
+_db_password     DBA     CLASS     YES     NO     
 _db_query_spec     DBA     CLASS     YES     NO     
 _db_serial     DBA     CLASS     YES     NO     
 _db_server     DBA     CLASS     YES     NO     
@@ -23,10 +25,11 @@ _db_stored_procedure_args     DBA     CLASS     YES     NO
 _db_stored_procedure_code     DBA     CLASS     YES     NO     
 _db_synonym     DBA     CLASS     YES     NO     
 _db_trigger     DBA     CLASS     YES     NO     
+_db_user     DBA     CLASS     YES     NO     
 db_attr_setdomain_elm     DBA     VCLASS     YES     NO     
 db_attribute     DBA     VCLASS     YES     NO     
 db_auth     DBA     VCLASS     YES     NO     
-db_authorization     DBA     CLASS     YES     NO     
+db_authorization     DBA     VCLASS     YES     NO     
 db_charset     DBA     VCLASS     YES     NO     
 db_class     DBA     VCLASS     YES     NO     
 db_collation     DBA     VCLASS     YES     NO     
@@ -39,7 +42,6 @@ db_meth_arg_setdomain_elm     DBA     VCLASS     YES     NO
 db_meth_file     DBA     VCLASS     YES     NO     
 db_method     DBA     VCLASS     YES     NO     
 db_partition     DBA     VCLASS     YES     NO     
-db_password     DBA     CLASS     YES     NO     
 db_root     DBA     CLASS     YES     NO     
 db_serial     DBA     VCLASS     YES     NO     
 db_server     DBA     VCLASS     YES     NO     
@@ -47,7 +49,7 @@ db_stored_procedure     DBA     VCLASS     YES     NO
 db_stored_procedure_args     DBA     VCLASS     YES     NO     
 db_synonym     DBA     VCLASS     YES     NO     
 db_trigger     DBA     VCLASS     YES     NO     
-db_user     DBA     CLASS     YES     NO     
+db_user     DBA     VCLASS     YES     NO     
 db_vclass     DBA     VCLASS     YES     NO     
 dual     DBA     CLASS     YES     NO     
 
@@ -55,6 +57,7 @@ dual     DBA     CLASS     YES     NO
 class_name    owner_name    class_type    is_system_class    tde_algorithm    partitioned    is_reuse_oid_class    collation    comment    
 _db_attribute     DBA     CLASS     YES     NONE     NO     NO     utf8_bin     null     
 _db_auth     DBA     CLASS     YES     NONE     NO     NO     utf8_bin     null     
+_db_authorization     DBA     CLASS     YES     NONE     NO     NO     utf8_bin     null     
 _db_charset     DBA     CLASS     YES     NONE     NO     NO     utf8_bin     null     
 _db_class     DBA     CLASS     YES     NONE     NO     NO     utf8_bin     null     
 _db_collation     DBA     CLASS     YES     NONE     NO     NO     utf8_bin     null     
@@ -68,6 +71,7 @@ _db_meth_file     DBA     CLASS     YES     NONE     NO     NO     utf8_bin     
 _db_meth_sig     DBA     CLASS     YES     NONE     NO     NO     utf8_bin     null     
 _db_method     DBA     CLASS     YES     NONE     NO     NO     utf8_bin     null     
 _db_partition     DBA     CLASS     YES     NONE     NO     NO     utf8_bin     null     
+_db_password     DBA     CLASS     YES     NONE     NO     NO     utf8_bin     null     
 _db_query_spec     DBA     CLASS     YES     NONE     NO     NO     utf8_bin     null     
 _db_serial     DBA     CLASS     YES     NONE     NO     NO     utf8_bin     null     
 _db_server     DBA     CLASS     YES     NONE     NO     NO     utf8_bin     null     
@@ -76,10 +80,11 @@ _db_stored_procedure_args     DBA     CLASS     YES     NONE     NO     NO     u
 _db_stored_procedure_code     DBA     CLASS     YES     NONE     NO     NO     utf8_bin     null     
 _db_synonym     DBA     CLASS     YES     NONE     NO     NO     utf8_bin     null     
 _db_trigger     DBA     CLASS     YES     NONE     NO     NO     utf8_bin     null     
+_db_user     DBA     CLASS     YES     NONE     NO     NO     utf8_bin     null     
 db_attr_setdomain_elm     DBA     VCLASS     YES     NONE     NO     NO     utf8_bin     null     
 db_attribute     DBA     VCLASS     YES     NONE     NO     NO     utf8_bin     null     
 db_auth     DBA     VCLASS     YES     NONE     NO     NO     utf8_bin     null     
-db_authorization     DBA     CLASS     YES     NONE     NO     NO     utf8_bin     null     
+db_authorization     DBA     VCLASS     YES     NONE     NO     NO     utf8_bin     null     
 db_charset     DBA     VCLASS     YES     NONE     NO     NO     utf8_bin     null     
 db_class     DBA     VCLASS     YES     NONE     NO     NO     utf8_bin     null     
 db_collation     DBA     VCLASS     YES     NONE     NO     NO     utf8_bin     null     
@@ -92,7 +97,6 @@ db_meth_arg_setdomain_elm     DBA     VCLASS     YES     NONE     NO     NO     
 db_meth_file     DBA     VCLASS     YES     NONE     NO     NO     utf8_bin     null     
 db_method     DBA     VCLASS     YES     NONE     NO     NO     utf8_bin     null     
 db_partition     DBA     VCLASS     YES     NONE     NO     NO     utf8_bin     null     
-db_password     DBA     CLASS     YES     NONE     NO     NO     utf8_bin     null     
 db_root     DBA     CLASS     YES     NONE     NO     NO     utf8_bin     null     
 db_serial     DBA     VCLASS     YES     NONE     NO     NO     utf8_bin     null     
 db_server     DBA     VCLASS     YES     NONE     NO     NO     utf8_bin     null     
@@ -100,7 +104,7 @@ db_stored_procedure     DBA     VCLASS     YES     NONE     NO     NO     utf8_b
 db_stored_procedure_args     DBA     VCLASS     YES     NONE     NO     NO     utf8_bin     null     
 db_synonym     DBA     VCLASS     YES     NONE     NO     NO     utf8_bin     null     
 db_trigger     DBA     VCLASS     YES     NONE     NO     NO     utf8_bin     null     
-db_user     DBA     CLASS     YES     NONE     NO     NO     utf8_bin     null     
+db_user     DBA     VCLASS     YES     NONE     NO     NO     utf8_bin     null     
 db_vclass     DBA     VCLASS     YES     NONE     NO     NO     utf8_bin     null     
 dual     DBA     CLASS     YES     NONE     NO     NO     utf8_bin     null     
 
