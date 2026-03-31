@@ -1,0 +1,709 @@
+===================================================
+0
+===================================================
+    
+err: at least one visible column required     
+
+===================================================
+Error:-1370
+===================================================
+    
+err     
+
+===================================================
+Error:-1370
+===================================================
+    
+valid: mixed visible/invisible columns     
+
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+dba.tbl     CREATE TABLE [tbl] ([c1] INTEGER INVISIBLE AUTO_INCREMENT (1, 1) NOT NULL, [c2] INTEGER NOT NULL, [c3] INTEGER INVISIBLE DEFAULT 3, [c4] INTEGER, [c5] CHARACTER VARYING(32),  CONSTRAINT [pk_tbl_c1] PRIMARY KEY  ([c1])) REUSE_OID, COLLATE utf8_bin PARTITION BY HASH ([c1]) PARTITIONS 2     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     NO     PRI     null     auto_increment invisible     
+c2     INTEGER     NO          null          
+c3     INTEGER     YES          3     invisible     
+c4     INTEGER     YES          null          
+c5     VARCHAR(32)     YES          null          
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+err: only invisible column left after modify     
+
+===================================================
+Error:-1370
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     YES          null          
+c2     INTEGER     YES          null     invisible     
+
+===================================================
+    
+err: cannot drop last visible column     
+
+===================================================
+Error:-1370
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+    
+add invisible column after c1     
+
+===================================================
+0
+===================================================
+    
+verify column order via metadata     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     YES          null          
+c3     INTEGER     YES          null     invisible     
+c2     INTEGER     YES          null          
+
+===================================================
+    
+verify column order via system catalog     
+
+===================================================
+attr_name    def_order    
+c1     0     
+c3     1     
+c2     2     
+
+===================================================
+    
+verify SHOW CREATE TABLE     
+
+===================================================
+TABLE    CREATE TABLE    
+dba.tbl     CREATE TABLE [tbl] ([c1] INTEGER, [c3] INTEGER INVISIBLE, [c2] INTEGER) REUSE_OID, COLLATE utf8_bin     
+
+===================================================
+    
+SELECT * should not include invisible column     
+
+===================================================
+c1    c2    
+1     2     
+
+===================================================
+    
+explicit access should work     
+
+===================================================
+c1    c2    c3    
+1     2     null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+    
+add invisible column at first position     
+
+===================================================
+0
+===================================================
+    
+verify metadata     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c0     INTEGER     YES          null     invisible     
+c1     INTEGER     YES          null          
+c2     INTEGER     YES          null          
+
+===================================================
+    
+verify column order via system catalog     
+
+===================================================
+attr_name    def_order    
+c0     0     
+c1     1     
+c2     2     
+
+===================================================
+    
+verify SHOW CREATE TABLE     
+
+===================================================
+TABLE    CREATE TABLE    
+dba.tbl     CREATE TABLE [tbl] ([c0] INTEGER INVISIBLE, [c1] INTEGER, [c2] INTEGER) REUSE_OID, COLLATE utf8_bin     
+
+===================================================
+    
+invisible column should not appear in SELECT *     
+
+===================================================
+c1    c2    
+10     20     
+
+===================================================
+    
+explicit access     
+
+===================================================
+c0    c1    c2    
+null     10     20     
+
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+    
+verify metadata before drop     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     YES          null          
+c2     INTEGER     YES          null     invisible     
+c3     INTEGER     YES          null          
+
+===================================================
+    
+verify column order via system catalog     
+
+===================================================
+attr_name    def_order    
+c1     0     
+c2     1     
+c3     2     
+
+===================================================
+    
+drop invisible column     
+
+===================================================
+0
+===================================================
+    
+verify metadata after drop     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     YES          null          
+c3     INTEGER     YES          null          
+
+===================================================
+    
+verify column order via system catalog     
+
+===================================================
+attr_name    def_order    
+c1     0     
+c3     1     
+
+===================================================
+TABLE    CREATE TABLE    
+dba.tbl     CREATE TABLE [tbl] ([c1] INTEGER, [c3] INTEGER) REUSE_OID, COLLATE utf8_bin     
+
+===================================================
+    
+verify data access     
+
+===================================================
+c1    c3    
+1     3     
+
+===================================================
+c1    c3    
+1     3     
+
+===================================================
+    
+verify column whether droped or not     
+
+===================================================
+Error:-494
+===================================================
+0
+===================================================
+    
+Change visibility: invisible <-> visible     
+
+===================================================
+0
+===================================================
+    
+invisible -> visible     
+
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     INTEGER     YES          null          
+c1     INTEGER     YES          null          
+c2     INTEGER     YES          null          
+c3     INTEGER     YES          null     invisible     
+c4     VARCHAR(50)     YES          null          
+
+===================================================
+id    c1    c2    c4    
+
+===================================================
+    
+visible -> invisible     
+
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     INTEGER     YES          null          
+c1     INTEGER     YES          null     invisible     
+c2     INTEGER     YES          null          
+c3     INTEGER     YES          null     invisible     
+c4     VARCHAR(50)     YES          null          
+
+===================================================
+id    c2    c4    
+
+===================================================
+    
+change column type of invisible column     
+
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     INTEGER     YES          null          
+c1     BIGINT     YES          null     invisible     
+c2     INTEGER     YES          null          
+c3     INTEGER     YES          null     invisible     
+c4     VARCHAR(50)     YES          null          
+
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     INTEGER     YES          null          
+c1     BIGINT     YES          null     invisible     
+c2     INTEGER     YES          null          
+c3     BIGINT     YES          null     invisible     
+c4     VARCHAR(50)     YES          null          
+
+===================================================
+    
+rename invisible column     
+
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     INTEGER     YES          null          
+c1_renamed     INTEGER     YES          null     invisible     
+c2     INTEGER     YES          null          
+c3     BIGINT     YES          null     invisible     
+c4     VARCHAR(50)     YES          null          
+
+===================================================
+id    c1_renamed    c2    
+
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     INTEGER     YES          null          
+c1     INTEGER     YES          null     invisible     
+c2     INTEGER     YES          null          
+c3     BIGINT     YES          null     invisible     
+c4     VARCHAR(50)     YES          null          
+
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+id    c1    c2    c3    
+1     10     20     a     
+2     11     21     b     
+3     12     22     c     
+
+===================================================
+0
+===================================================
+    
+table structure must be preserved after truncate     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     INTEGER     NO     PRI     null     auto_increment invisible     
+c1     INTEGER     YES          null          
+c2     INTEGER     YES          null     invisible     
+c3     VARCHAR(50)     YES          null          
+
+===================================================
+    
+verify auto_increment reset     
+
+===================================================
+1
+===================================================
+id    c1    c2    c3    
+1     13     23     d     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+err: cannot drop partition key column     
+
+===================================================
+Error:-494
+===================================================
+    
+partition table tests     
+
+===================================================
+c2    
+
+===================================================
+c2    
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     YES          null     invisible     
+c2     INTEGER     YES          null          
+
+===================================================
+TABLE    CREATE TABLE    
+dba.tbl__p__p0     CREATE TABLE [tbl__p__p0] UNDER [dba.tbl] REUSE_OID, COLLATE utf8_bin     
+
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     YES          null     invisible     
+c2     INTEGER     YES          null          
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+err: cannot add invisible column to subclass     
+
+===================================================
+Error:-1370
+===================================================
+0
+===================================================
+    
+err: cannot add invisible column via alter on subclass     
+
+===================================================
+Error:-1370
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     YES          null     invisible     
+c2     INTEGER     YES          null          
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     YES          null     invisible     
+c2     INTEGER     YES          null          
+
+===================================================
+    
+err: last visible column in subclass cannot become invisible     
+
+===================================================
+Error:-1370
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     YES          null     invisible     
+c2     INTEGER     YES          null          
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     YES          null     invisible     
+c2     INTEGER     YES          null          
+c3     INTEGER     YES          null          
+
+===================================================
+    
+err: cannot make column invisible in subclass if parent has visible column     
+
+===================================================
+Error:-1370
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     YES          null     invisible     
+c2     INTEGER     YES          null          
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c3     INTEGER     YES          null          
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+parent visibility changing / inheritance propagation     
+
+===================================================
+0
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     NO     PRI     null     auto_increment     
+c2     INTEGER     NO          null     invisible     
+c3     INTEGER     YES          3          
+c4     INTEGER     YES          null          
+c5     VARCHAR(32)     YES          null          
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     NO     PRI     null     auto_increment     
+c2     INTEGER     NO          null     invisible     
+c3     INTEGER     YES          3          
+c4     INTEGER     YES          null          
+c5     VARCHAR(32)     YES          null          
+
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     NO     PRI     null     auto_increment invisible     
+c2     INTEGER     NO          null     invisible     
+c3     INTEGER     YES          3          
+c4     INTEGER     YES          null          
+c5     VARCHAR(32)     YES          null          
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     NO     PRI     null     auto_increment invisible     
+c2     INTEGER     NO          null     invisible     
+c3     INTEGER     YES          3          
+c4     INTEGER     YES          null          
+c5     VARCHAR(32)     YES          null          
+
+===================================================
+0
+===================================================
+    
+same name column: parent c2 was invisible not null     
+
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     NO     PRI     null     auto_increment invisible     
+c3     INTEGER     YES          3          
+c4     INTEGER     YES          null          
+c5     VARCHAR(32)     YES          null          
+c2     INTEGER     YES          null          
+c6     INTEGER     YES          null          
+
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     NO     PRI     null     auto_increment invisible     
+c2     INTEGER     NO          null     invisible     
+c3     INTEGER     YES          3          
+c4     INTEGER     YES          null          
+c5     VARCHAR(32)     YES          null          
+c6     INTEGER     YES          null          
+
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c6     INTEGER     YES          null          
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+LIKE: invisible columns should be preserved     
+
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     INTEGER     YES          null          
+c1     INTEGER     YES          null     invisible     
+c2     INTEGER     YES          null          
+c3     INTEGER     YES          null     invisible     
+c4     VARCHAR(50)     YES          null          
+
+===================================================
+TABLE    CREATE TABLE    
+dba.t_like1     CREATE TABLE [t_like1] ([id] INTEGER, [c1] INTEGER INVISIBLE, [c2] INTEGER, [c3] INTEGER INVISIBLE, [c4] CHARACTER VARYING(50)) REUSE_OID, COLLATE utf8_bin     
+
+===================================================
+1
+===================================================
+id    c2    c4    
+10     1000     like1     
+
+===================================================
+id    c1    c2    c3    c4    
+10     100     1000     10000     like1     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+    
+CTAS with * (invisible columns NOT copied)     
+
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     INTEGER     YES          null          
+c2     INTEGER     YES          null          
+c4     VARCHAR(50)     YES          null          
+
+===================================================
+id    c2    c4    
+1     100     a     
+2     200     b     
+3     300     c     
+
+===================================================
+    
+CTAS with explicit invisible columns     
+
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     INTEGER     YES          null          
+c1     INTEGER     YES          null          
+c2     INTEGER     YES          null          
+c3     INTEGER     YES          null          
+c4     VARCHAR(50)     YES          null          
+
+===================================================
+id    c1    c2    c3    c4    
+1     10     100     1000     a     
+2     20     200     2000     b     
+3     30     300     3000     c     
+
+===================================================
+    
+CTAS with WHERE using invisible column     
+
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     INTEGER     YES          null          
+c2     INTEGER     YES          null          
+c4     VARCHAR(50)     YES          null          
+
+===================================================
+id    c2    c4    
+2     200     b     
+3     300     c     
+
+===================================================
+    
+CTAS with JOIN     
+
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     INTEGER     YES          null          
+c2     INTEGER     YES          null          
+c6     INTEGER     YES          null          
+
+===================================================
+id    c2    c6    
+1     100     150     
+2     200     250     
+
+===================================================
+    
+CTAS with aggregation     
+
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c2     INTEGER     YES          null          
+cnt     BIGINT     YES          null          
+sum_c1     INTEGER     YES          null          
+
+===================================================
+c2    cnt    sum_c1    
+100     1     10     
+200     1     20     
+300     1     30     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
