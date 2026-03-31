@@ -576,10 +576,9 @@ Query plan:
 iscan
     class: c node[?]
     index: idx term[?] (covers)
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select ? from tc c where (c.cola=v.cola) and inst_num()<= ?:? )
+(select ? from tc c where c.cola=v.cola)
 Query plan:
 idx-join (inner join)
     outer: idx-join (inner join)
@@ -599,7 +598,7 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ LEADING(b, a) */ count(*) from tc x, ta v, tb b where (x.cola=v.cola) and (v.cola=b.cola) and  exists (select ? from tc c where (c.cola=v.cola) and inst_num()<= ?:? )
+select /*+ LEADING(b, a) */ count(*) from tc x, ta v, tb b where (x.cola=v.cola) and (v.cola=b.cola) and  exists (select ? from tc c where c.cola=v.cola)
 ===================================================
     
 Case 20: correlated EXISTS inline-view; outer LEADING exists -> subquery LEADING should be removed due to conflict after view merge     
@@ -612,10 +611,9 @@ Query plan:
 iscan
     class: c node[?]
     index: idx term[?] (covers)
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select ? from tc c where (c.cola=v.cola) and inst_num()<= ?:? )
+(select ? from tc c where c.cola=v.cola)
 Query plan:
 idx-join (inner join)
     outer: idx-join (inner join)
@@ -635,7 +633,7 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ LEADING(x, v) */ count(*) from tc x, ta v, tb b where (x.cola=v.cola) and (v.cola=b.cola) and  exists (select ? from tc c where (c.cola=v.cola) and inst_num()<= ?:? )
+select /*+ LEADING(x, v) */ count(*) from tc x, ta v, tb b where (x.cola=v.cola) and (v.cola=b.cola) and  exists (select ? from tc c where c.cola=v.cola)
 ===================================================
 0
 ===================================================
