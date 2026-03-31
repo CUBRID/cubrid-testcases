@@ -1,183 +1,127 @@
--- Verification for CBRD-25842 : partition-key function crash (TZ_OFFSET, RAND)
+-- Verification for CBRD-25842, CBRD-26443: partition-key function crash
 -- 
 -- Description:
 -- When the following functions are used in a partition key expression, a segmentation fault occurs when inserting into the table:
+
+-- SYS_DATE, SYSDATE
+-- SYS_TIME, SYSTIME
+-- SYS_DATETIME, SYSDATETIME
+-- SYS_TIMESTAMP, SYSTIMESTAMP
+-- CURRENT_DATE, CURDATE
+-- CURRENT_TIME, CURTIME
+-- CURRENT_TIMESTAMP, LOCALTIME, LOCALTIMESTAMP
+-- CURRENT_DATETIME, NOW
+-- UTC_TIME, UTC_DATE
+-- UTC_TIMESTAMP
 -- TZ_OFFSET
 -- RAND
+-- RANDOM
+-- This test verifies that the above functions cannot be used in partition key expressions.
 
--- This test verifies that all such cases now execute safely without crashes.
-
-drop table if exists TZ_OFFSET_TBL, RAND_TBL, FUNC_EXPR_TBL, RAND_ABS_TBL;
-drop table if exists CURTIME_TBL;
-drop table if exists CURRENT_TIMESTAMP_TBL;
+drop table if exists SYS_DATE_TBL;
 drop table if exists SYS_TIME_TBL;
+drop table if exists SYS_DATETIME_TBL;
 drop table if exists SYS_TIMESTAMP_TBL;
-drop table if exists UTC_DATE_TBL;
-drop table if exists UTC_TIME_TBL;
-drop table if exists WEEKDAY_TBL;
-
--- Partitioned by TZ_OFFSET function
-create table TZ_OFFSET_TBL(col1 varchar)
-partition by list (TZ_OFFSET(col1)) (
-  partition p1 values in ('+09:00'),
-  partition p2 values in (NULL)
-);
-
--- Partitioned by RAND function
-create table RAND_TBL(col1 int)
-partition by hash (RAND(col1)) partitions 10;
-
---==============================
---  INSERT TESTS
---==============================
-
-evaluate 'Case 1: INSERT with TZ_OFFSET(col1)';
-insert into TZ_OFFSET_TBL values('Asia/Seoul');
-insert into TZ_OFFSET_TBL values(NULL);
-
-evaluate 'Case 2: INSERT with RAND(col1)';
-insert into RAND_TBL values(456);
-insert into RAND_TBL values(NULL);
-
---==============================
---  UPDATE TESTS
---==============================
-
-evaluate 'Case 3: UPDATE with TZ_OFFSET in partition key';
-update TZ_OFFSET_TBL set col1 = 'Asia/Tokyo' where col1 = 'Asia/Seoul';
-
-evaluate 'Case 4: UPDATE with RAND in partition key';
-update RAND_TBL set col1 = 123 where col1 is null;
-
---==============================
---  SELECT / DELETE TESTS
---==============================
-
-evaluate 'Case 5: SELECT using TZ_OFFSET partition pruning';
-select * from TZ_OFFSET_TBL order by 1;
-
-evaluate 'Case 6: DELETE using TZ_OFFSET partition pruning';
-delete from TZ_OFFSET_TBL where col1 = 'Asia/Tokyo';
-
-evaluate 'Case 7: SELECT using RAND partition pruning';
-select * from RAND_TBL order by 1;
-
-evaluate 'Case 8: DELETE using RAND partition pruning';
-delete from RAND_TBL where col1 = 123;
-
---==============================
---  FUNCTIONAL EXPRESSION TEST
---==============================
-
-evaluate 'Case 9: Nested function SUBSTR + TZ_OFFSET in partition key';
-create table FUNC_EXPR_TBL(col1 varchar)
-partition by list (SUBSTR(TZ_OFFSET(col1), 1, 3)) (
-  partition p1 values in ('+09'),
-  partition p2 values in (NULL)
-);
-insert into FUNC_EXPR_TBL values('Asia/Seoul'), (NULL);
-
-evaluate 'Case 10: Nested function RAND + ABS in partition key';
-create table RAND_ABS_TBL(col1 int)
-partition by hash (ABS(RAND(col1))) partitions 3;
-insert into RAND_ABS_TBL values (1), (NULL);
-
-evaluate 'Case 11: CURTIME, CURRENT_TIME';
-CREATE TABLE CURTIME_TBL (
-    col1 TIME
-)
-PARTITION BY HASH (
-    TIME_TO_SEC(col1)
-  + TIME_TO_SEC(CURTIME())        -- CURTIME()
-  + TIME_TO_SEC(CURRENT_TIME())   -- CURRENT_TIME()
-)
-PARTITIONS 10;
-
-INSERT INTO CURTIME_TBL VALUES (TIME '12:34:56');
-INSERT INTO CURTIME_TBL VALUES (NULL);
-
-evaluate 'Case 12: CURRENT_TIMESTAMP, LOCALTIME, LOCALTIMESTAMP';
-CREATE TABLE CURRENT_TIMESTAMP_TBL (
-    col1 TIMESTAMP
-)
-PARTITION BY HASH (
-      CAST(UNIX_TIMESTAMP(col1) AS BIGINT)
-    + CAST(UNIX_TIMESTAMP(CURRENT_TIMESTAMP) AS BIGINT)
-    + CAST(UNIX_TIMESTAMP(LOCALTIME) AS BIGINT)
-    + CAST(UNIX_TIMESTAMP(LOCALTIMESTAMP) AS BIGINT)
-)
-PARTITIONS 10;
-
-INSERT INTO CURRENT_TIMESTAMP_TBL VALUES (TIMESTAMP '2020-01-01 12:34:56');
-INSERT INTO CURRENT_TIMESTAMP_TBL VALUES (NULL);
-
-evaluate 'Case 13: SYS_TIME, SYSTIME';
-CREATE TABLE SYS_TIME_TBL (
-    col1 TIME
-)
-PARTITION BY HASH (
-    TIME_TO_SEC(col1)
-  + TIME_TO_SEC(SYS_TIME)
-  + TIME_TO_SEC(SYSTIME)
-)
-PARTITIONS 10;
-
-INSERT INTO SYS_TIME_TBL VALUES (TIME '23:00:00');
-INSERT INTO SYS_TIME_TBL VALUES (NULL);
-
-evaluate 'Case 14: SYS_TIMESTAMP, SYSTIMESTAMP';
-CREATE TABLE SYS_TIMESTAMP_TBL (
-    col1 TIMESTAMP
-)
-PARTITION BY HASH (
-      CAST(UNIX_TIMESTAMP(col1) AS BIGINT)
-    + CAST(UNIX_TIMESTAMP(SYS_TIMESTAMP) AS BIGINT)
-    + CAST(UNIX_TIMESTAMP(SYSTIMESTAMP) AS BIGINT)
-)
-PARTITIONS 10;
-
-INSERT INTO SYS_TIMESTAMP_TBL VALUES (TIMESTAMP '2016-02-05 16:34:16');
-INSERT INTO SYS_TIMESTAMP_TBL VALUES (NULL);
-
-evaluate 'Case 15: UTC_DATE()';
-CREATE TABLE UTC_DATE_TBL (
-    col1 INT
-)
-PARTITION BY HASH (
-    col1 + TO_DAYS(UTC_DATE())
-)
-PARTITIONS 10;
-
-INSERT INTO UTC_DATE_TBL VALUES (1);
-INSERT INTO UTC_DATE_TBL VALUES (NULL);
-
-evaluate 'Case 16: UTC_TIME()';
-CREATE TABLE UTC_TIME_TBL (
-    col1 INT
-)
-PARTITION BY HASH (
-    col1 + LENGTH(UTC_TIME())
-)
-PARTITIONS 10;
-
-INSERT INTO UTC_TIME_TBL VALUES (1);
-INSERT INTO UTC_TIME_TBL VALUES (NULL);
-
-evaluate 'Case 17: WEEKDAY(date)';
-CREATE TABLE WEEKDAY_TBL (
-    col1 DATE
-)
-PARTITION BY HASH (WEEKDAY(col1))
-PARTITIONS 10;
-
-INSERT INTO WEEKDAY_TBL VALUES (DATE '2010-09-09');
-INSERT INTO WEEKDAY_TBL VALUES (NULL);
-
-drop table if exists TZ_OFFSET_TBL, RAND_TBL, FUNC_EXPR_TBL, RAND_ABS_TBL;
-drop table if exists CURTIME_TBL;
+drop table if exists CURRENT_DATE_TBL;
+drop table if exists CURRENT_TIME_TBL;
 drop table if exists CURRENT_TIMESTAMP_TBL;
-drop table if exists SYS_TIME_TBL;
-drop table if exists SYS_TIMESTAMP_TBL;
-drop table if exists UTC_DATE_TBL;
+drop table if exists CURRENT_DATETIME_TBL;
 drop table if exists UTC_TIME_TBL;
-drop table if exists WEEKDAY_TBL;
+drop table if exists UTC_DATE_TBL;
+drop table if exists UTC_TIMESTAMP_TBL;
+drop table if exists TZ_OFFSET_TBL;
+drop table if exists RAND_TBL;
+drop table if exists RAND_TBL_2;
+drop table if exists RAND_TBL_3;
+
+evaluate 'Case 1: CREATE TABLE with SYS_DATE function';
+CREATE TABLE SYS_DATE_TBL (col1 int) PARTITION BY HASH (SYS_DATE + col1) PARTITIONS 10;
+
+CREATE TABLE SYS_DATE_TBL (col1 int) PARTITION BY HASH (SYSDATE + col1) PARTITIONS 10;
+
+evaluate 'Case 2: CREATE TABLE with SYS_TIME function';
+CREATE TABLE SYS_TIME_TBL (col1 int) PARTITION BY HASH (SYS_TIME + col1) PARTITIONS 10;
+
+CREATE TABLE SYS_TIME_TBL (col1 int) PARTITION BY HASH (SYSTIME + col1) PARTITIONS 10;
+
+evaluate 'Case 3: CREATE TABLE with SYS_DATETIME function';
+CREATE TABLE SYS_DATETIME_TBL (col1 int) PARTITION BY HASH (SYS_DATETIME + col1) PARTITIONS 10;
+
+CREATE TABLE SYS_DATETIME_TBL (col1 int) PARTITION BY HASH (SYSDATETIME + col1) PARTITIONS 10;
+
+evaluate 'Case 4: CREATE TABLE with SYS_TIMESTAMP function';
+CREATE TABLE SYS_TIMESTAMP_TBL (col1 int) PARTITION BY HASH (SYS_TIMESTAMP + col1) PARTITIONS 10;
+
+CREATE TABLE SYS_TIMESTAMP_TBL (col1 int) PARTITION BY HASH (SYSTIMESTAMP + col1) PARTITIONS 10;
+
+evaluate 'Case 5: CREATE TABLE with CURRENT_DATE function';
+CREATE TABLE CURRENT_DATE_TBL (col1 int) PARTITION BY HASH (CURDATE() + col1) PARTITIONS 10;
+
+CREATE TABLE CURRENT_DATE_TBL (col1 int) PARTITION BY HASH (CURRENT_DATE() + col1) PARTITIONS 10;
+
+CREATE TABLE CURRENT_DATE_TBL (col1 int) PARTITION BY HASH (CURRENT_DATE + col1) PARTITIONS 10;
+
+evaluate 'Case 6: CREATE TABLE with CURRENT_TIME function';
+CREATE TABLE CURRENT_TIME_TBL (col1 int) PARTITION BY HASH (CURTIME() + col1) PARTITIONS 10;
+
+CREATE TABLE CURRENT_TIME_TBL (col1 int) PARTITION BY HASH (CURRENT_TIME() + col1) PARTITIONS 10;
+
+CREATE TABLE CURRENT_TIME_TBL (col1 int) PARTITION BY HASH (CURRENT_TIME + col1) PARTITIONS 10;
+
+evaluate 'Case 7: CREATE TABLE with CURRENT_TIMESTAMP function';
+CREATE TABLE CURRENT_TIMESTAMP_TBL (col1 int) PARTITION BY HASH (CURRENT_TIMESTAMP + col1) PARTITIONS 10;
+
+CREATE TABLE CURRENT_TIMESTAMP_TBL (col1 int) PARTITION BY HASH (CURRENT_TIMESTAMP() + col1) PARTITIONS 10;
+
+CREATE TABLE CURRENT_TIMESTAMP_TBL (col1 int) PARTITION BY HASH (LOCALTIME + col1) PARTITIONS 10;
+
+CREATE TABLE CURRENT_TIMESTAMP_TBL (col1 int) PARTITION BY HASH (LOCALTIME() + col1) PARTITIONS 10;
+
+CREATE TABLE CURRENT_TIMESTAMP_TBL (col1 int) PARTITION BY HASH (LOCALTIMESTAMP + col1) PARTITIONS 10;
+
+CREATE TABLE CURRENT_TIMESTAMP_TBL (col1 int) PARTITION BY HASH (LOCALTIMESTAMP() + col1) PARTITIONS 10;
+
+evaluate 'Case 8: CREATE TABLE with CURRENT_DATETIME function';
+CREATE TABLE CURRENT_DATETIME_TBL(col1 int) PARTITION BY HASH(CURRENT_DATETIME + col1) PARTITIONS 10;
+
+CREATE TABLE CURRENT_DATETIME_TBL(col1 int) PARTITION BY HASH(CURRENT_DATETIME() + col1) PARTITIONS 10;
+
+CREATE TABLE CURRENT_DATETIME_TBL(col1 int) PARTITION BY HASH(NOW() + col1) PARTITIONS 10;
+
+evaluate 'Case 9: CREATE TABLE with UTC_TIME function';
+CREATE TABLE UTC_TIME_TBL(col1 int) PARTITION BY HASH(UTC_TIME() + col1) PARTITIONS 10;
+
+evaluate 'Case 10: CREATE TABLE with UTC_DATE function';
+CREATE TABLE UTC_DATE_TBL(col1 int) PARTITION BY HASH(UTC_DATE() + col1) PARTITIONS 10;
+
+evaluate 'Case 11: CREATE TABLE with UTC_TIMESTAMP function';
+CREATE TABLE UTC_TIMESTAMP_TBL(col1 int) PARTITION BY HASH(UTC_TIMESTAMP() + col1) PARTITIONS 10;
+
+evaluate 'Case 12: CREATE TABLE with TZ_OFFSET function';
+CREATE TABLE TZ_OFFSET_TBL(col1 int) PARTITION BY HASH(TZ_OFFSET(col1)) PARTITIONS 10;
+
+evaluate 'Case 13: CREATE TABLE with RAND function';
+CREATE TABLE RAND_TBL(col1 int) PARTITION BY HASH(RAND() + col1) PARTITIONS 10;
+
+CREATE TABLE RAND_TBL(col1 int) PARTITION BY HASH(RANDOM() + col1) PARTITIONS 10;
+
+evaluate 'Case 14: CREATE TABLE with RAND function';
+CREATE TABLE RAND_TBL_2(col1 int) PARTITION BY HASH(RAND(col1)) PARTITIONS 10;
+
+CREATE TABLE RAND_TBL_3(col1 int) PARTITION BY HASH(RANDOM(col1)) PARTITIONS 10;
+
+drop table if exists SYS_DATE_TBL;
+drop table if exists SYS_TIME_TBL;
+drop table if exists SYS_DATETIME_TBL;
+drop table if exists SYS_TIMESTAMP_TBL;
+drop table if exists CURRENT_DATE_TBL;
+drop table if exists CURRENT_TIME_TBL;
+drop table if exists CURRENT_TIMESTAMP_TBL;
+drop table if exists CURRENT_DATETIME_TBL;
+drop table if exists UTC_TIME_TBL;
+drop table if exists UTC_DATE_TBL;
+drop table if exists UTC_TIMESTAMP_TBL;
+drop table if exists TZ_OFFSET_TBL;
+drop table if exists RAND_TBL;
+drop table if exists RAND_TBL_2;
+drop table if exists RAND_TBL_3;

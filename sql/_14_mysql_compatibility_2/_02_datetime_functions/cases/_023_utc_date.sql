@@ -3,7 +3,7 @@ select if (abs(UTC_DATE() - SYS_DATE) <= 1, 'ok','nok');
 
 CREATE VIEW v1(utcdate) as select utc_date() from db_root;
 
-SELECT * from db_vclass where vclass_name='v1';
+SELECT vclass_name, owner_name, vclass_def, comment from db_vclass where vclass_name='v1';
 
 SELECT if(abs(utcdate-SYS_DATE) <= 1, 'ok','nok') FROM v1;
 

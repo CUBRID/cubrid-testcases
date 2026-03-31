@@ -9,9 +9,9 @@ evaluate('Comparison to table and sp grant/revoke');
 CREATE TABLE u1.tbl1 (a INT);
 
 GRANT EXECUTE ON u1.tbl1 TO u2;
-SELECT * FROM db_auth WHERE grantee_name = 'U2' ORDER BY object_name;
+SELECT grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable FROM db_auth WHERE grantee_name = 'U2' ORDER BY object_name;
 REVOKE EXECUTE ON u1.tbl1 FROM u2;
-SELECT * FROM db_auth WHERE grantee_name = 'U2' ORDER BY object_name;
+SELECT grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable FROM db_auth WHERE grantee_name = 'U2' ORDER BY object_name;
 
 CREATE OR REPLACE FUNCTION u1.test1() return varchar as
 begin
@@ -19,9 +19,9 @@ begin
 end;
 
 GRANT EXECUTE ON PROCEDURE u1.test1 TO u2;
-SELECT * FROM db_auth WHERE grantee_name = 'U2' ORDER BY object_name;
+SELECT grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable FROM db_auth WHERE grantee_name = 'U2' ORDER BY object_name;
 REVOKE EXECUTE ON PROCEDURE u1.test1 FROM u2;
-SELECT * FROM db_auth WHERE grantee_name = 'U2' ORDER BY object_name;
+SELECT grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable FROM db_auth WHERE grantee_name = 'U2' ORDER BY object_name;
 
 
 -- in public

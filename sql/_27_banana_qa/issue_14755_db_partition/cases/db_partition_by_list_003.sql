@@ -10,7 +10,7 @@ CREATE TABLE athlete2 (
 
 SELECT dt.class_of.partition, dt.class_of.class_name, dt.* FROM _db_partition dt
 WHERE class_of.class_name LIKE 'athlete2%' ORDER BY 2 ASC;
-select * from db_partition where class_name = 'athlete2' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'athlete2' order by partition_name;
 
 INSERT into athlete2 values 
 ('Boris','Swimming'),
@@ -34,7 +34,7 @@ ALTER TABLE athlete2 PARTITION BY LIST (event) (
 
 SELECT dt.class_of.partition, dt.class_of.class_name, dt.* FROM _db_partition dt
 WHERE class_of.class_name LIKE 'athlete2%' ORDER BY 2 ASC;
-select * from db_partition where class_name = 'athlete2' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'athlete2' order by partition_name;
 
 select * from athlete2__p__event1 order by 1;
 select * from athlete2__p__event2 order by 1;
@@ -49,7 +49,7 @@ REORGANIZE PARTITION event2 INTO (
 
 SELECT dt.class_of.partition, dt.class_of.class_name, dt.* FROM _db_partition dt
 WHERE class_of.class_name LIKE 'athlete2%' ORDER BY 2 ASC;
-select * from db_partition where class_name = 'athlete2' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'athlete2' order by partition_name;
 
 select * from athlete2__p__event2_1 order by 1;
 select * from athlete2__p__event2_2 order by 1;
@@ -62,7 +62,7 @@ ALTER TABLE athlete2 ADD PARTITION (
 
 SELECT dt.class_of.partition, dt.class_of.class_name, dt.* FROM _db_partition dt
 WHERE class_of.class_name LIKE 'athlete2%' ORDER BY 2 ASC;
-select * from db_partition where class_name = 'athlete2' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'athlete2' order by partition_name;
 
 INSERT into athlete2 values 
 ('Svetlana','Boxing'),
@@ -76,7 +76,7 @@ INSERT into athlete2 values
 
 SELECT dt.class_of.partition, dt.class_of.class_name, dt.* FROM _db_partition dt
 WHERE class_of.class_name LIKE 'athlete2%' ORDER BY 2 ASC;
-select * from db_partition where class_name = 'athlete2' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'athlete2' order by partition_name;
 
 --alter table  name
 rename table athlete2 as athlete;
@@ -97,7 +97,7 @@ REORGANIZE PARTITION event5, event1 INTO (
 
 SELECT dt.class_of.partition, dt.class_of.class_name, dt.* FROM _db_partition dt
 WHERE class_of.class_name LIKE 'athlete%' ORDER BY 2 ASC;
-select * from db_partition where class_name = 'athlete' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'athlete' order by partition_name;
 
 --drop partition
 select count(*) from athlete__p__event2_1;
@@ -111,7 +111,7 @@ select count(*) from athlete;
 
 SELECT dt.class_of.partition, dt.class_of.class_name, dt.* FROM _db_partition dt
 WHERE class_of.class_name LIKE 'athlete%' ORDER BY 2 ASC;
-select * from db_partition where class_name = 'athlete' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'athlete' order by partition_name;
 
 --promote 
 ALTER TABLE  athlete PROMOTE PARTITION event4;
@@ -119,7 +119,7 @@ select * from athlete order by 1;
 select * from athlete__p__event4 order by 1;
 SELECT dt.class_of.partition, dt.class_of.class_name, dt.* FROM _db_partition dt
 WHERE class_of.class_name LIKE 'athlete%' ORDER BY 2 ASC;
-select * from db_partition where class_name = 'athlete' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'athlete' order by partition_name;
 
 --remove partition
 show tables like 'athlete';
@@ -127,7 +127,7 @@ ALTER TABLE  athlete REMOVE PARTITIONING;
 show tables like 'athlete';
 SELECT dt.class_of.partition, dt.class_of.class_name, dt.* FROM _db_partition dt
 WHERE class_of.class_name LIKE 'athlete%' ORDER BY 2 ASC;
-select * from db_partition where class_name = 'athlete' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'athlete' order by partition_name;
 
 --drop table
 DROP athlete;

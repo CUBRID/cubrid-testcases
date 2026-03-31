@@ -11,7 +11,7 @@ PARTITION BY HASH (code) PARTITIONS 3;
 
 SELECT dt.class_of.partition, dt.class_of.class_name, dt.* FROM _db_partition dt
 WHERE class_of.class_name LIKE 'nation2%' ORDER BY 2 ASC;
-select * from db_partition where class_name = 'nation2' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'nation2' order by partition_name;
 --insert 30 rows
 insert into nation2 values 
 ('QA','Qatar'),
@@ -54,7 +54,7 @@ select count(*) from nation2;
 
 SELECT dt.class_of.partition, dt.class_of.class_name, dt.* FROM _db_partition dt
 WHERE class_of.class_name LIKE 'nation2%' ORDER BY 2 ASC;
-select * from db_partition where class_name = 'nation2' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'nation2' order by partition_name;
 
 --alter table to partition table
 ALTER TABLE nation2 PARTITION BY HASH (code) PARTITIONS 1; 
@@ -74,7 +74,7 @@ select count(*) from nation2 where code like 'U%';
 
 rename table nation2 as nation;
 
-select * from db_partition where class_name = 'nation' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'nation' order by partition_name;
 --adding partitions
 ALTER TABLE nation ADD PARTITION PARTITIONS 2;
 
@@ -94,7 +94,7 @@ select count(*) from nation ;
 SELECT dt.class_of.partition, dt.class_of.class_name, dt.* FROM _db_partition dt
 WHERE class_of.class_name LIKE 'nation%' ORDER BY 2 ASC;
 
-select * from db_partition where class_name = 'nation' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'nation' order by partition_name;
 --dropping partitions
 ALTER TABLE nation COALESCE PARTITION 1;
 select count(*) from nation;
@@ -103,7 +103,7 @@ ALTER TABLE nation COALESCE PARTITION 2;
 ALTER TABLE nation COALESCE PARTITION 1;
 select count(*) from nation;
 
-select * from db_partition where class_name = 'nation' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'nation' order by partition_name;
 SELECT dt.class_of.partition, dt.class_of.class_name, dt.* FROM _db_partition dt
 WHERE class_of.class_name LIKE 'nation%' ORDER BY 2 ASC;
 
