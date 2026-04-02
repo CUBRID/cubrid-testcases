@@ -24,10 +24,10 @@ updated_time     DATETIME     YES          null
 ===================================================
 Field    Type    Null    Key    Default    Extra    
 synonym_name     VARCHAR(255)     YES          null          
-synonym_owner_name     VARCHAR(255)     YES          null          
+synonym_owner_name     VARCHAR(32)     YES          null          
 is_public_synonym     VARCHAR(3)     YES          null          
 target_name     VARCHAR(255)     YES          null          
-target_owner_name     VARCHAR(255)     YES          null          
+target_owner_name     VARCHAR(32)     YES          null          
 comment     VARCHAR(2048)     YES          null          
 created_time     DATETIME     YES          null          
 updated_time     DATETIME     YES          null          
@@ -38,7 +38,7 @@ _db_synonym     CREATE TABLE [_db_synonym] ([unique_name] CHARACTER VARYING(255)
 
 ===================================================
 VIEW    CREATE VIEW    
-db_synonym     SELECT [s].[name] AS [synonym_name], CAST ([s].[owner].[name] AS VARCHAR(255)) AS [synonym_owner_name], CASE [s].[is_public] WHEN 1 THEN 'YES' ELSE 'NO' END AS [is_public_synonym], [s].[target_name] AS [target_name], CAST ([s].[target_owner].[name] AS VARCHAR(255)) AS [target_owner_name], [s].[comment] AS [comment], [s].[created_time] AS [created_time], [s].[updated_time] AS [updated_time] FROM [_db_synonym] AS [s] WHERE {'DBA'} SUBSETEQ (SELECT SET {CURRENT_USER} + COALESCE (SUM (SET {[t].[g].[name]}), SET {}) FROM [_db_user] AS [u], TABLE ([u].[groups]) AS [t] ([g]) WHERE [u].[name] = CURRENT_USER) OR [s].[is_public] = 1 OR ([s].[is_public] = 0 AND {[s].[owner].[name]} SUBSETEQ (SELECT SET {CURRENT_USER} + COALESCE (SUM (SET {[t].[g].[name]}), SET {}) FROM [_db_user] AS [u], TABLE ([u].[groups]) AS [t] ([g]) WHERE [u].[name] = CURRENT_USER))     
+db_synonym     SELECT [s].[name] AS [synonym_name], [s].[owner].[name] AS [synonym_owner_name], CASE [s].[is_public] WHEN 1 THEN 'YES' ELSE 'NO' END AS [is_public_synonym], [s].[target_name] AS [target_name], [s].[target_owner].[name] AS [target_owner_name], [s].[comment] AS [comment], [s].[created_time] AS [created_time], [s].[updated_time] AS [updated_time] FROM [_db_synonym] AS [s] WHERE {'DBA'} SUBSETEQ (SELECT SET {CURRENT_USER} + COALESCE (SUM (SET {[t].[g].[name]}), SET {}) FROM [_db_user] AS [u], TABLE ([u].[groups]) AS [t] ([g]) WHERE [u].[name] = CURRENT_USER) OR [s].[is_public] = 1 OR ([s].[is_public] = 0 AND {[s].[owner].[name]} SUBSETEQ (SELECT SET {CURRENT_USER} + COALESCE (SUM (SET {[t].[g].[name]}), SET {}) FROM [_db_user] AS [u], TABLE ([u].[groups]) AS [t] ([g]) WHERE [u].[name] = CURRENT_USER))     
 
 ===================================================
 Field    Type    Null    Key    Default    Extra    
@@ -56,10 +56,10 @@ updated_time     DATETIME     YES          null
 ===================================================
 Field    Type    Null    Key    Default    Extra    
 synonym_name     VARCHAR(255)     YES          null          
-synonym_owner_name     VARCHAR(255)     YES          null          
+synonym_owner_name     VARCHAR(32)     YES          null          
 is_public_synonym     VARCHAR(3)     YES          null          
 target_name     VARCHAR(255)     YES          null          
-target_owner_name     VARCHAR(255)     YES          null          
+target_owner_name     VARCHAR(32)     YES          null          
 comment     VARCHAR(2048)     YES          null          
 created_time     DATETIME     YES          null          
 updated_time     DATETIME     YES          null          
