@@ -13,11 +13,16 @@ alter table coo change col1 col1 bigint auto_increment not null after col3;
 insert into coo(col2, col3) values(66, 234.23423424232);
 select * from coo order by 1;
 
+
+/* auto_increment can not be unset */
 --auto_increment -> none
 alter table coo change col1 col1 bigint not null first;
 
+/* col1 still auto_increment. setting auto_increment more than one does not allow since 11.5(guava) */
 --none -> auto_increment
 alter table coo change col2 col2 smallint auto_increment;
+
+
 insert into coo(col1, col3) values(10, 232.2998988);
 insert into coo(col1, col3) values(10, 232.2998988);
 insert into coo(col1, col3) values(10, 232.2998988);
