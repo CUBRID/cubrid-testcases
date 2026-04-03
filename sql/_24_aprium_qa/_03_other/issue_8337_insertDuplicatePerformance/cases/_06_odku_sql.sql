@@ -1,5 +1,5 @@
 drop table if exists tt, t,t1,t2;
-create table t(i bigint auto_increment(1,2), j SMALLINT auto_increment(1,2), k int,l FLOAT,m TIMESTAMP ,n char(200) );
+create table t(i bigint auto_increment(1,2), j SMALLINT, k int,l FLOAT,m TIMESTAMP ,n char(200) );
 create unique index u_t_i on t(i);
 create unique index u_t_j_k on t(j, k);
 create unique index u_t_i_k on t(j, k,i);

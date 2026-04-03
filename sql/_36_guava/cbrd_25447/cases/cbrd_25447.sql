@@ -74,7 +74,7 @@ show trace;
 
 
 evaluate '8. contains GROUP BY, ORDER BY (should work)';
-evaluate '8-1. with hash aggregation -> row by row';
+evaluate '8-1. with hash aggregation -> mergeable list';
 select cola, count(*) from tbl group by cola limit 2;
 show trace;
 
