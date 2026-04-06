@@ -1,22 +1,46 @@
 ===================================================
 0
+
 ===================================================
     
 Case 1.1: Default Behavior     
 
+
 ===================================================
 Error:-494
+Semantic: before ' , 1); '
+Function called with missing or invalid arguments. select  adddate('9999-12-31', 1)
+
 ===================================================
 Error:-494
+Semantic: before ' , -1); '
+Function called with missing or invalid arguments. select  subdate('9999-12-31', -1)
+
 ===================================================
 Error:-494
+Semantic: before ' , -500); '
+Function called with missing or invalid arguments. select  adddate('0001-01-01', -500)
+
 ===================================================
 Error:-494
+Semantic: before ' , INTERVAL 2 YEAR); '
+Function called with missing or invalid arguments. select  date_sub('0001-01-01', INTERVAL 2 YEAR)
+
 ===================================================
 Error:-494
+Semantic: before ' , INTERVAL -2 YEAR); '
+Function called with missing or invalid arguments. select  date_add('0001-01-01', INTERVAL -2 YEAR)
+
 ===================================================
+date_add('0001-01-01', INTERVAL -1 YEAR)    
+00/00/0000     
+
+adddate('0001-01-01', -2)    
+00/00/0000     
+
     
 Case 1.2: Valid Boundary Dates Check     
+
 
 ===================================================
 adddate('9999-12-30', 1)    
@@ -34,192 +58,603 @@ subdate('0001-01-02', 1)
     
 Case 1.3: Null input check – should return NULL, not error     
 
+
 ===================================================
 adddate(null, 1)    
 null     
+
 
 ===================================================
 subdate(null, 1)    
 null     
 
+
 ===================================================
 adddate('9999-12-31', null)    
 null     
+
 
 ===================================================
 subdate('0001-01-01', null)    
 null     
 
+
 ===================================================
 0
+
 ===================================================
     
 Case 2.1: DATE upper boundary overflow     
+
 
 ===================================================
 adddate('9999-12-31', 1)    
 null     
 
+
 ===================================================
 adddate('9999-12-31', 999999)    
 null     
 
+
 ===================================================
 date_add('9999-12-31', INTERVAL 1 DAY)    
 null     
+
 
 ===================================================
 date_add('9999-12-31', INTERVAL 1 MONTH)    
 null     
 
+
 ===================================================
 date_add('9999-12-31', INTERVAL 1 YEAR)    
 null     
+
 
 ===================================================
 date_add('9999-06-01', INTERVAL 999999 DAY)    
 null     
 
+
 ===================================================
 subdate('9999-12-31', -1)    
 null     
+
 
 ===================================================
 date_sub('9999-12-31', INTERVAL -1 DAY)    
 null     
 
+
 ===================================================
     
 Case 2.2: DATE lower boundary underflow     
 
+
 ===================================================
+adddate('0001-01-01', -1)    
+00/00/0000     
+
+adddate('0001-01-01', -2)    
+00/00/0000     
+
+adddate('0001-01-01', -365)    
+00/00/0000     
+
+adddate('0001-01-01', -366)    
+00/00/0000     
+
+subdate('0001-01-01', 1)    
+00/00/0000     
+
+subdate('0001-01-01', 2)    
+00/00/0000     
+
+date_add('0001-01-01', INTERVAL -1 DAY)    
+00/00/0000     
+
+date_add('0001-01-01', INTERVAL -2 DAY)    
+00/00/0000     
+
+date_sub('0001-01-01', INTERVAL 1 DAY)    
+00/00/0000     
+
+date_add('0001-01-01', INTERVAL -1 YEAR)    
+00/00/0000     
+
 date_add('0001-01-01', INTERVAL -2 YEAR)    
 null     
 
-===================================================
-adddate('0001-01-01', -500)    
-null     
+date_sub('0001-01-01', INTERVAL 1 YEAR)    
+00/00/0000     
 
-===================================================
 date_sub('0001-01-01', INTERVAL 2 YEAR)    
 null     
 
-===================================================
 date_sub('0001-01-01', INTERVAL 13 MONTH)    
 null     
 
-===================================================
 date_sub('0001-01-01', INTERVAL 500 DAY)    
 null     
 
-===================================================
+adddate('0001-01-01', -500)    
+null     
+
     
-Case 2.3: DATETIME upper boundary overflow     
+Case 3.1: DATETIME upper boundary overflow     
+
 
 ===================================================
 date_add(datetime '9999-12-31 23:59:59.999', INTERVAL 1 MILLISECOND)    
 null     
 
+
 ===================================================
 date_add(datetime '9999-12-31 23:59:59.999', INTERVAL 1 SECOND)    
 null     
+
 
 ===================================================
 date_add(datetime '9999-12-31 23:59:59.999', INTERVAL 1 DAY)    
 null     
 
+
 ===================================================
 date_add(datetime '9999-12-31 23:59:59.999', INTERVAL 1 YEAR)    
 null     
+
 
 ===================================================
 date_sub(datetime '9999-12-31 23:59:59.999', INTERVAL -1 MILLISECOND)    
 null     
 
+
 ===================================================
 date_add(datetime '9999-12-31 23:59:59', INTERVAL '1:0' MINUTE_SECOND)    
 null     
 
+
 ===================================================
     
-Case 2.4: DATETIME lower boundary underflow     
+Case 3.2: DATETIME lower boundary underflow     
+
 
 ===================================================
 date_sub(datetime '0001-01-01 00:00:00.000', INTERVAL 1 MILLISECOND)    
 null     
 
+
 ===================================================
 date_sub(datetime '0001-01-01 00:00:00.000', INTERVAL 1 SECOND)    
 null     
+
 
 ===================================================
 date_sub(datetime '0001-01-01 00:00:00.000', INTERVAL 1 HOUR)    
 null     
 
+
 ===================================================
 date_sub(datetime '0001-01-01 00:00:00.000', INTERVAL 1 DAY)    
 null     
 
+
 ===================================================
     
-Case 2.5: Aliases (DATE_ADD / DATE_SUB)     
+Case 4.1: TIMESTAMP upper boundary by second returns DATETIME     
+
+
+===================================================
+result    expect_ok    
+2038-01-19 03:14:08.0     1     
+
+
+===================================================
+    
+Case 4.2: TIMESTAMP upper boundary by day returns DATETIME     
+
+
+===================================================
+result    expect_ok    
+2038-01-20 03:14:07.0     1     
+
+
+===================================================
+    
+Case 4.3: TIMESTAMP alias DATE_ADD also returns DATETIME     
+
+
+===================================================
+result    expect_ok    
+2038-01-19 03:14:08.0     1     
+
+
+===================================================
+    
+Case 4.4: TIMESTAMP lower safe boundary by second     
+
+
+===================================================
+result    expect_ok    
+1970-01-01 09:00:01.0     1     
+
+
+===================================================
+    
+Case 4.5: TIMESTAMP lower safe boundary by zero interval     
+
+
+===================================================
+result    expect_ok    
+1970-01-01 09:00:01.0     1     
+
+
+===================================================
+    
+Case 4.6: TIMESTAMP alias DATE_SUB within valid range     
+
+
+===================================================
+result    expect_ok    
+1970-01-01 09:00:01.0     1     
+
+
+===================================================
+    
+Case 5.1: Aliases (DATE_ADD / DATE_SUB)     
+
 
 ===================================================
 date_add('9999-12-31', INTERVAL 1 DAY)    
 null     
 
-===================================================
 date_sub('0001-01-01', INTERVAL 500 DAY)    
 null     
 
-===================================================
+date_add('0001-01-01', INTERVAL -1 YEAR)    
+00/00/0000     
+
+date_add('0001-01-01', INTERVAL -2 YEAR)    
+null     
+
+date_sub('0001-01-01', INTERVAL 1 YEAR)    
+00/00/0000     
+
+date_sub('0001-01-01', INTERVAL 2 YEAR)    
+null     
+
     
-Case 2.6: NULL propagation in arithmetic expression     
+Case 6.1: NULL propagation in arithmetic expression     
+
 
 ===================================================
 adddate('9999-12-31', 1)+0    
 null     
 
-===================================================
-    
-Case 2.7: COALESCE wrapping an overflow call     
-
-===================================================
-coalesce( adddate('9999-12-31', 1), date '2000-01-01')    
-2000-01-01     
 
 ===================================================
     
-Case 2.8: CASE expression containing an overflow call     
+Case 6.2: NULL propagation in WHERE clause     
 
-===================================================
-case when  adddate('9999-12-31', 1) is null  then 'overflow detected' else 'no overflow' end    
-overflow detected     
-
-===================================================
-    
-Case 2.9: Null propagation in WHERE clause     
 
 ===================================================
 1    
 
+
 ===================================================
     
-Case 2.10: Overflow inside a subquery     
+Case 6.3: NULL propagation in a subquery     
+
 
 ===================================================
 result    
 null     
 
+
 ===================================================
     
-Case 2.11: Multiple overflow calls in the same SELECT     
+Case 7.1: CASE expression containing an overflow call     
+
 
 ===================================================
-col1    col2    col3    
-null     null     null     
+case when  adddate('9999-12-31', 1) is null  then 'overflow detected' else 'no overflow' end    
+overflow detected     
+
+
+===================================================
+    
+Case 7.2: CASE using overflow result as input     
+
+
+===================================================
+result    expect_ok    
+01/01/2000     1     
+
+
+===================================================
+    
+Case 8.1: Same ADDDATE overflow called twice     
+
+
+===================================================
+col1    col2    col1_null_ok    col2_null_ok    
+null     null     1     1     
+
+
+===================================================
+    
+Case 8.2: Same SUBDATE underflow called twice     
+
+
+===================================================
+col1    col2    col1_null_ok    col2_null_ok    
+00/00/0000     00/00/0000     0     0     
+
+
+===================================================
+    
+Case 8.2: Same SUBDATE underflow called twice - REPEAT     
+
+
+===================================================
+col1    col2    col1_zero_ok    col2_zero_ok    
+00/00/0000     00/00/0000     1     1     
+
+
+===================================================
+    
+Case 8.3: Mixed repeated overflow and underflow calls     
+
+
+===================================================
+add_over    sub_under    add_over_again    sub_under_again    add_over_ok    sub_null_ok    
+null     00/00/0000     null     00/00/0000     1     0     
+
+
+===================================================
+    
+Case 8.3: Mixed repeated overflow and underflow calls - REPEAT     
+
+
+===================================================
+add_over    sub_under    add_over_again    sub_under_again    add_over_ok    sub_zero_ok    
+null     00/00/0000     null     00/00/0000     1     1     
+
+
+===================================================
+    
+Case 8.4: Repeated alias calls     
+
+
+===================================================
+col1    col2    col1_null_ok    col2_null_ok    col2_zero_ok    
+null     00/00/0000     1     0     1     
+
+
+===================================================
+    
+Case 9.1: ORDER BY overflow result     
+
+
+===================================================
+r    null_ok    
+null     1     
+
+
+===================================================
+    
+Case 9.2: ORDER BY underflow result     
+
+
+===================================================
+r    null_ok    
+00/00/0000     0     
+
+
+===================================================
+    
+Case 9.3: DISTINCT on overflow result     
+
+
+===================================================
+r    null_ok    
+null     1     
+
+
+===================================================
+    
+Case 9.4: GROUP BY overflow result     
+
+
+===================================================
+r    cnt    null_ok    
+null     1     1     
+
+
+===================================================
+    
+Case 9.5: GROUP BY mixed valid and invalid     
+
+
+===================================================
+r    cnt    bucket_ok    
+null     1     1     
+12/31/9999     1     1     
+
+
+===================================================
+    
+Case 10.1: COALESCE wrapping an overflow call     
+
+
+===================================================
+coalesce( adddate('9999-12-31', 1), date '2000-01-01')    
+2000-01-01     
+
+greatest( adddate('9999-12-31', 1), date '2000-01-01')    
+null     
+
+    
+Case 10.2: COALESCE with aggregate input     
+
+
+===================================================
+cnt    expect_ok    
+1     1     
+
+
+===================================================
+    
+Case 10.3: COUNT on overflow result     
+
+
+===================================================
+cnt    expect_ok    
+0     1     
+
+
+===================================================
+    
+Case 10.4: COUNT on underflow result     
+
+
+===================================================
+cnt    expect_ok    
+1     0     
+
+
+===================================================
+    
+Case 10.5: MIN and MAX on overflow result     
+
+
+===================================================
+min_val    max_val    min_null_ok    max_null_ok    
+null     null     1     1     
+
+
+===================================================
+    
+Case 10.6: Mixed aggregate valid and invalid     
+
+
+===================================================
+min_val    max_val    cnt_not_null    min_ok    max_ok    cnt_ok    
+12/31/9999     12/31/9999     1     1     1     1     
+
+
+===================================================
+    
+Case 11.1: CAST string to DATE - overflow     
+
+
+===================================================
+result    expect_ok    
+null     1     
+
+
+===================================================
+    
+Case 11.2: CAST string to DATE - underflow     
+
+
+===================================================
+Error:-21027
+Zero date can not be represented as java.sql.Timestamp
+
+===================================================
+    
+Case 11.3: CAST string to DATETIME - overflow     
+
+
+===================================================
+result    expect_ok    
+null     1     
+
+
+===================================================
+    
+Case 11.4: CAST string to DATETIME - underflow     
+
+
+===================================================
+result    expect_ok    
+null     1     
+
+
+===================================================
+    
+Case 11.5: CAST valid TIMESTAMP then safe arithmetic     
+
+
+===================================================
+result    expect_ok    
+2038-01-19 03:14:08.0     1     
+
+
+===================================================
+    
+Case 11.6: CAST valid TIMESTAMP then safe subtraction     
+
+
+===================================================
+Error:-181
+Cannot coerce value of domain "character" to domain "timestamp".
+
+===================================================
+    
+Case 12.1: Nested ADDDATE overflow inside ADDDATE     
+
+
+===================================================
+result    expect_ok    
+null     1     
+
+
+===================================================
+    
+Case 12.2: Nested SUBDATE underflow inside SUBDATE     
+
+
+===================================================
+result    expect_ok    
+null     1     
+
+
+===================================================
+    
+Case 12.3: Overflow result inside COALESCE with ADDDATE     
+
+
+===================================================
+result    expect_ok    
+2000-01-02     1     
+
+
+===================================================
+    
+Case 12.4: Underflow result inside COALESCE with SUBDATE     
+
+
+===================================================
+result    expect_ok    
+null     null     
+
+
+===================================================
+    
+Case 12.5: Arithmetic expression over COALESCE wrapped overflow     
+
+
+===================================================
+result    expect_ok    
+2000-01-02     1     
+
 
 ===================================================
 0
+
 ===================================================
 0
+
