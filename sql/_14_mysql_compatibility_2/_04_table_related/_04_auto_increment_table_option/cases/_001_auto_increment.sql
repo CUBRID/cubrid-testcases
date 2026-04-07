@@ -1,10 +1,11 @@
 -- test the AUTO_INCREMENT table option (MySQL compatibility)
 
+-- only one auto column
+create table t (i int auto_increment(100, 2), j int auto_increment);
+
 -- ambiguities
 
 create table t (i int) auto_increment = 23;
-
-create table t (i int auto_increment, j int auto_increment) auto_increment = 23;
 
 create table t (i int auto_increment(100, 2)) auto_increment = 3;
 
@@ -36,17 +37,12 @@ select * from t order by i,j;
 drop table t;
 
 -- ambiguities on alter
-create table t (i int auto_increment, j int auto_increment);
 create table u (i int, j string);
-
--- ambiguity: 2 columns, which one to choose?
-alter table t auto_increment = 100;
 
 -- ambig: no column to change
 alter table u auto_increment = 10;
 
 
-drop table t;
 drop table u;
 
 create table t (i int auto_increment, j int);
