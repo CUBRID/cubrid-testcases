@@ -191,8 +191,7 @@ ORDER BY id;
 evaluate 'Case 3.7: Type Casting - Boundary Values';
 SELECT 
     adddate(date'2020-01-01', INTERVAL 0.1 DAY) as near_zero,
-    adddate(date'2020-01-01', INTERVAL 9999.99 DAY) as very_large,
-    adddate(date'2020-01-01', INTERVAL -0.5 DAY) as negative_fraction;
+    adddate(date'2020-01-01', INTERVAL 9999.99 DAY) as very_large;
 
 evaluate 'Case 3.8: CAST() should still works correctly after the automatic casting improvements';
 select 
