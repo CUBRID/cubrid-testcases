@@ -6,7 +6,7 @@
  * - Correct leap year and year-end date calculations
  * - Support for all castable types (not just CHAR/VARCHAR/SHORT/INT/BIGINT/NUMERIC)
  * - MILLISECOND interpretation (single unit & composite unit)
- * - Millisecond padding rules: ≤3 digits pad right, >3 digits trim left zeros
+ * - Millisecond padding rules: <=3 digits pad right, >3 digits trim left zeros
  * - Correct delimiter parsing in composite intervals
  */
 
@@ -220,7 +220,7 @@ SELECT
     date_add('2020-01-01 00:00:00.000', INTERVAL '1000' SECOND_MILLISECOND) as sec_milli_1000,
     date_add('2020-01-01 00:00:00.000', INTERVAL '1500' SECOND_MILLISECOND) as sec_milli_1500;
 
-evaluate 'Case 4.3: Millisecond Padding Rules (≤3 digits: pad right)';
+evaluate 'Case 4.3: Millisecond Padding Rules (<=3 digits: pad right)';
 SELECT 
     '12' as input_value,
     date_add('2020-01-01 00:00:00.000', INTERVAL '12' SECOND_MILLISECOND) as pad_result,
