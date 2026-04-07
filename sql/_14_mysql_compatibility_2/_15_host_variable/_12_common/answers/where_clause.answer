@@ -29,7 +29,7 @@ iscan
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i? from t? t? where t?.i?= cast(t?.i? as numeric)+?.? order by ?
+select t?.i?, t?.i? from t? t? where t?.i?= cast(t?.i? as numeric(?,?))+?.? order by ?
 /* ---> skip ORDER BY */
 ===================================================
 0
@@ -47,7 +47,7 @@ sscan
     class: t? node[?]
     cost:  ? card ?
 Query stmt:
-(select max( cast(t?.i? as numeric)+?.?) from t? t?)
+(select max( cast(t?.i? as numeric(?,?))+?.?) from t? t?)
 Query plan:
 temp(order by)
     subplan: iscan
@@ -57,7 +57,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ t?.i?, t?.i? from t? t? where t?.i?=(select max( cast(t?.i? as numeric)+?.?) from t? t?) order by ?
+select /*+ ORDERED */ t?.i?, t?.i? from t? t? where t?.i?=(select max( cast(t?.i? as numeric(?,?))+?.?) from t? t?) order by ?
 ===================================================
 0
 i1    i2    
@@ -75,13 +75,13 @@ sscan
     class: t? node[?]
     cost:  ? card ?
 Query stmt:
-(select max( cast(t?.i? as numeric)+?.?) from t? t?)
+(select max( cast(t?.i? as numeric(?,?))+?.?) from t? t?)
 Query plan:
 sscan
     class: t? node[?]
     cost:  ? card ?
 Query stmt:
-(select min( cast(t?.i? as numeric)+?.?) from t? t?)
+(select min( cast(t?.i? as numeric(?,?))+?.?) from t? t?)
 Query plan:
 iscan
     class: t? node[?]
@@ -89,7 +89,7 @@ iscan
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i? from t? t? where ((t?.i?=(select max( cast(t?.i? as numeric)+?.?) from t? t?)) or (t?.i?=(select min( cast(t?.i? as numeric)+?.?) from t? t?))) order by ?
+select t?.i?, t?.i? from t? t? where ((t?.i?=(select max( cast(t?.i? as numeric(?,?))+?.?) from t? t?)) or (t?.i?=(select min( cast(t?.i? as numeric(?,?))+?.?) from t? t?))) order by ?
 /* ---> skip ORDER BY */
 ===================================================
 0
@@ -151,7 +151,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i? from t? t? where t?.i?= cast(t?.i? as numeric)+?.? order by ?
+select t?.i?, t?.i? from t? t? where t?.i?= cast(t?.i? as numeric(?,?))+?.? order by ?
 ===================================================
 0
 i1    i2    
@@ -168,7 +168,7 @@ sscan
     class: t? node[?]
     cost:  ? card ?
 Query stmt:
-(select max( cast(t?.i? as numeric)+?.?) from t? t?)
+(select max( cast(t?.i? as numeric(?,?))+?.?) from t? t?)
 Query plan:
 temp(order by)
     subplan: sscan
@@ -178,7 +178,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ t?.i?, t?.i? from t? t? where t?.i?=(select max( cast(t?.i? as numeric)+?.?) from t? t?) order by ?
+select /*+ ORDERED */ t?.i?, t?.i? from t? t? where t?.i?=(select max( cast(t?.i? as numeric(?,?))+?.?) from t? t?) order by ?
 ===================================================
 0
 i1    i2    
@@ -196,13 +196,13 @@ sscan
     class: t? node[?]
     cost:  ? card ?
 Query stmt:
-(select max( cast(t?.i? as numeric)+?.?) from t? t?)
+(select max( cast(t?.i? as numeric(?,?))+?.?) from t? t?)
 Query plan:
 sscan
     class: t? node[?]
     cost:  ? card ?
 Query stmt:
-(select min( cast(t?.i? as numeric)+?.?) from t? t?)
+(select min( cast(t?.i? as numeric(?,?))+?.?) from t? t?)
 Query plan:
 temp(order by)
     subplan: sscan
@@ -212,7 +212,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.i?, t?.i? from t? t? where ((t?.i?=(select max( cast(t?.i? as numeric)+?.?) from t? t?)) or (t?.i?=(select min( cast(t?.i? as numeric)+?.?) from t? t?))) order by ?
+select t?.i?, t?.i? from t? t? where ((t?.i?=(select max( cast(t?.i? as numeric(?,?))+?.?) from t? t?)) or (t?.i?=(select min( cast(t?.i? as numeric(?,?))+?.?) from t? t?))) order by ?
 ===================================================
 0
 i1    i2    
