@@ -32,3 +32,57 @@ select * from t1;
 -- [after fix] synonym check added → error "Class dba.s1 does not exist", t1 preserved
 drop s1;
 select * from t1;
+
+-- cleanup
+drop if exists t1;
+drop synonym if exists s1;
+
+-- case4: qualified name (schema-prefixed synonym) + DROP without type
+-- Verify synonym check is not bypassed when using schema.synonym_name
+create table t1 (c1 int);
+insert into t1 values (1);
+create synonym s1 for t1;
+drop public.s1;
+select * from t1;
+select * from s1;
+
+-- cleanup
+drop if exists t1;
+drop if exists v1;
+drop synonym if exists s1;
+
+-- case5: synonym pointing to a view
+-- Verify DROP restriction applies equally to view-targeting synonyms
+create table t1 (c1 int);
+insert into t1 values (1);
+create view v1 as select * from t1;
+create synonym s1 for v1;
+drop s1;
+select * from v1;
+select * from s1;
+
+-- cleanup
+drop if exists t1;
+drop synonym if exists s1;
+
+-- case6: broken synonym (target object already dropped)
+-- Verify synonym check order doesn't produce unexpected error paths
+create table t1 (c1 int);
+create synonym s1 for t1;
+drop table t1;
+drop s1;
+
+-- cleanup
+drop if exists t1;
+drop synonym if exists s1;
+drop synonym if exists s2;
+
+-- case7: chained synonyms (synonym of synonym)
+-- Verify DROP doesn't propagate through synonym chain to the real object
+create table t1 (c1 int);
+insert into t1 values (1);
+create synonym s1 for t1;
+create synonym s2 for s1;
+drop s2;
+select * from t1;
+select * from s1;
