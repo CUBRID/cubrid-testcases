@@ -6,7 +6,7 @@
 -- Fix: synonym check is now performed regardless of IF EXISTS presence.
 
 -- cleanup
-drop if exists t1;
+drop table if exists t1;
 drop synonym if exists s1;
 
 -- create table and synonym
@@ -24,6 +24,7 @@ drop table s1;
 drop if exists s1;
 -- Execute OK. (but nothing is actually dropped)
 select * from t1;
+select * from s1;
 -- There are no results.
 -- 0 row selected. (t1 still exists)
 
@@ -32,6 +33,7 @@ select * from t1;
 -- [after fix] synonym check added → error "Class dba.s1 does not exist", t1 preserved
 drop s1;
 select * from t1;
+select * from s1;
 
 -- cleanup
 drop if exists t1;
