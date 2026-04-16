@@ -62,8 +62,8 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, rows: ?)
      
 
 ===================================================
@@ -105,12 +105,12 @@ trace
           "time": "?..?",
           "readrows": "?..?",
           "rows": "?..?",
-          "gather": "row by row"
+          "gather": "mergeable list"
         }
       },
       "GROUPBY": {
         "time": ?,
-        "hash": true,
+        "hash": "partial",
         "sort": true,
         "page": ?,
         "ioread": ?,
@@ -149,12 +149,12 @@ trace
           "time": "?..?",
           "readrows": "?..?",
           "rows": "?..?",
-          "gather": "row by row"
+          "gather": "mergeable list"
         }
       },
       "GROUPBY": {
         "time": ?,
-        "hash": true,
+        "hash": "partial",
         "sort": true,
         "page": ?,
         "ioread": ?,
@@ -201,12 +201,12 @@ trace
           "time": "?..?",
           "readrows": "?..?",
           "rows": "?..?",
-          "gather": "row by row"
+          "gather": "mergeable list"
         }
       },
       "GROUPBY": {
         "time": ?,
-        "hash": true,
+        "hash": "partial",
         "sort": true,
         "page": ?,
         "ioread": ?,
@@ -253,12 +253,12 @@ trace
           "time": "?..?",
           "readrows": "?..?",
           "rows": "?..?",
-          "gather": "row by row"
+          "gather": "mergeable list"
         }
       },
       "GROUPBY": {
         "time": ?,
-        "hash": true,
+        "hash": "partial",
         "sort": true,
         "page": ?,
         "ioread": ?,
