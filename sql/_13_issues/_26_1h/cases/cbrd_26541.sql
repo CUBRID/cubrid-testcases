@@ -13,7 +13,7 @@ drop synonym if exists s2;
 
 -- create table and synonym
 create table t1 (c1 int);
-create synonym s1 for t1;  -- s1 is a synonym pointing to t1
+create synonym s1 for t1;
 
 evaluate 'case1: DROP with type specified - table keyword specifies the object type, so it looks for a table named s1, not found';
 drop table s1;
