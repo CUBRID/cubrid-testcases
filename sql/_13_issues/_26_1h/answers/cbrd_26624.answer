@@ -1,0 +1,102 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+inline derived table merged into outer SELECT     
+
+===================================================
+seq    
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(a) */ a.seq from a_test a, a_test b where (a.seq=b.seq)
+===================================================
+    
+Single view merge: CREATE VIEW with LEADING, then SELECT * FROM view     
+
+===================================================
+0
+===================================================
+seq    
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: v_leading_a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(a) */ v_leading_a.seq from a_test v_leading_a, a_test b where (v_leading_a.seq=b.seq)
+===================================================
+    
+LEADING on the inner alias (b)     
+
+===================================================
+seq    
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: b node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(b) */ b.seq from a_test t, a_test b where (t.seq=b.seq)
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Two base tables: LEADING(a_test) on distinct a_test / b_test     
+
+===================================================
+id    
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: q node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b_test node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(a_test) */ q.id from a_test q, b_test b_test where (q.id=b_test.id)
+===================================================
+0
+===================================================
+0
