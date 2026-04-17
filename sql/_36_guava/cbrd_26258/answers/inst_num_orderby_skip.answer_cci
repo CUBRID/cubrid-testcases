@@ -50,7 +50,7 @@ temp(order by)
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED NO_PARALLEL_HEAP_SCAN */ 'Q?', inst_num(), orderby_num(), a.cola, a.colb, a.colc, a.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cole and (inst_num()> ?:?  and inst_num()<= ?:? ) using index a.i?_cola_colb_colc(+) order by ?, ?
+select /*+ ORDERED NO_PARALLEL_SCAN */ 'Q?', inst_num(), orderby_num(), a.cola, a.colb, a.colc, a.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cole and (inst_num()> ?:?  and inst_num()<= ?:? ) using index a.i?_cola_colb_colc(+) order by ?, ?
 ===================================================
 trace    
 
@@ -60,7 +60,7 @@ Query Plan:
       INDEX SCAN (a.i?_cola_colb_colc) ()
       INDEX SCAN (b.i?_cole) (key range: a.cola=b.cole)
 
-  rewritten query: select /*+ ORDERED NO_PARALLEL_HEAP_SCAN */ 'Q?', inst_num(), orderby_num(), a.cola, a.colb, a.colc, a.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cole and (inst_num()> ?:?  and inst_num()<= ?:? ) using index a.i?_cola_colb_colc(+) order by ?, ?
+  rewritten query: select /*+ ORDERED NO_PARALLEL_SCAN */ 'Q?', inst_num(), orderby_num(), a.cola, a.colb, a.colc, a.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cole and (inst_num()> ?:?  and inst_num()<= ?:? ) using index a.i?_cola_colb_colc(+) order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -105,7 +105,7 @@ idx-join (inner join)
     sort:  ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED NO_PARALLEL_HEAP_SCAN */ 'Q?', inst_num(), orderby_num(), a.cola, a.colb, a.colc, a.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cole using index a.i?_cola_colb_colc(+) order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+select /*+ ORDERED NO_PARALLEL_SCAN */ 'Q?', inst_num(), orderby_num(), a.cola, a.colb, a.colc, a.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cole using index a.i?_cola_colb_colc(+) order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 /* ---> skip ORDER BY */
 ===================================================
 trace    
@@ -116,7 +116,7 @@ Query Plan:
     INDEX SCAN (b.i?_cole) (key range: a.cola=b.cole)
   skip order by: true
 
-  rewritten query: select /*+ ORDERED NO_PARALLEL_HEAP_SCAN */ 'Q?', inst_num(), orderby_num(), a.cola, a.colb, a.colc, a.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cole using index a.i?_cola_colb_colc(+) order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+  rewritten query: select /*+ ORDERED NO_PARALLEL_SCAN */ 'Q?', inst_num(), orderby_num(), a.cola, a.colb, a.colc, a.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cole using index a.i?_cola_colb_colc(+) order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -164,7 +164,7 @@ temp(order by)
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED NO_PARALLEL_HEAP_SCAN */ 'Q?', inst_num(), orderby_num(), a.cola, a.colb, a.colc, a.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cole and (inst_num()> ?:?  and inst_num()<= ?:? ) using index a.i?_cola_colb_colc(+) order by ?, ? for orderby_num()<= ?:? 
+select /*+ ORDERED NO_PARALLEL_SCAN */ 'Q?', inst_num(), orderby_num(), a.cola, a.colb, a.colc, a.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cole and (inst_num()> ?:?  and inst_num()<= ?:? ) using index a.i?_cola_colb_colc(+) order by ?, ? for orderby_num()<= ?:? 
 ===================================================
 trace    
 
@@ -174,7 +174,7 @@ Query Plan:
       INDEX SCAN (a.i?_cola_colb_colc) ()
       INDEX SCAN (b.i?_cole) (key range: a.cola=b.cole)
 
-  rewritten query: select /*+ ORDERED NO_PARALLEL_HEAP_SCAN */ 'Q?', inst_num(), orderby_num(), a.cola, a.colb, a.colc, a.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cole and (inst_num()> ?:?  and inst_num()<= ?:? ) using index a.i?_cola_colb_colc(+) order by ?, ? for orderby_num()<= ?:? 
+  rewritten query: select /*+ ORDERED NO_PARALLEL_SCAN */ 'Q?', inst_num(), orderby_num(), a.cola, a.colb, a.colc, a.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cole and (inst_num()> ?:?  and inst_num()<= ?:? ) using index a.i?_cola_colb_colc(+) order by ?, ? for orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -221,7 +221,7 @@ idx-join (inner join)
     sort:  ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED NO_PARALLEL_HEAP_SCAN */ 'Q?', inst_num(), a.cola, a.colb, a.colc, a.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cole and (inst_num()> ?:?  and inst_num()<= ?:? ) using index a.i?_cola_colb_colc(+) order by ?, ?
+select /*+ ORDERED NO_PARALLEL_SCAN */ 'Q?', inst_num(), a.cola, a.colb, a.colc, a.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cole and (inst_num()> ?:?  and inst_num()<= ?:? ) using index a.i?_cola_colb_colc(+) order by ?, ?
 /* ---> skip ORDER BY */
 ===================================================
 trace    
@@ -232,7 +232,7 @@ Query Plan:
     INDEX SCAN (b.i?_cole) (key range: a.cola=b.cole)
   skip order by: true
 
-  rewritten query: select /*+ ORDERED NO_PARALLEL_HEAP_SCAN */ 'Q?', inst_num(), a.cola, a.colb, a.colc, a.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cole and (inst_num()> ?:?  and inst_num()<= ?:? ) using index a.i?_cola_colb_colc(+) order by ?, ?
+  rewritten query: select /*+ ORDERED NO_PARALLEL_SCAN */ 'Q?', inst_num(), a.cola, a.colb, a.colc, a.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cole and (inst_num()> ?:?  and inst_num()<= ?:? ) using index a.i?_cola_colb_colc(+) order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -276,7 +276,7 @@ idx-join (inner join)
     sort:  ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED NO_PARALLEL_HEAP_SCAN */ 'Q?', inst_num(), orderby_num(), a.cola, a.colb, a.colc, a.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cole using index a.i?_cola_colb_colc(+) order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+select /*+ ORDERED NO_PARALLEL_SCAN */ 'Q?', inst_num(), orderby_num(), a.cola, a.colb, a.colc, a.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cole using index a.i?_cola_colb_colc(+) order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 /* ---> skip ORDER BY */
 ===================================================
 trace    
@@ -287,7 +287,7 @@ Query Plan:
     INDEX SCAN (b.i?_cole) (key range: a.cola=b.cole)
   skip order by: true
 
-  rewritten query: select /*+ ORDERED NO_PARALLEL_HEAP_SCAN */ 'Q?', inst_num(), orderby_num(), a.cola, a.colb, a.colc, a.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cole using index a.i?_cola_colb_colc(+) order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+  rewritten query: select /*+ ORDERED NO_PARALLEL_SCAN */ 'Q?', inst_num(), orderby_num(), a.cola, a.colb, a.colc, a.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cole using index a.i?_cola_colb_colc(+) order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -331,7 +331,7 @@ idx-join (inner join)
     sort:  ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED NO_PARALLEL_HEAP_SCAN */ 'Q?', inst_num(), a.cola, a.colb, a.colc, a.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cole using index a.i?_cola_colb_colc(+) order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+select /*+ ORDERED NO_PARALLEL_SCAN */ 'Q?', inst_num(), a.cola, a.colb, a.colc, a.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cole using index a.i?_cola_colb_colc(+) order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 /* ---> skip ORDER BY */
 ===================================================
 trace    
@@ -342,7 +342,7 @@ Query Plan:
     INDEX SCAN (b.i?_cole) (key range: a.cola=b.cole)
   skip order by: true
 
-  rewritten query: select /*+ ORDERED NO_PARALLEL_HEAP_SCAN */ 'Q?', inst_num(), a.cola, a.colb, a.colc, a.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cole using index a.i?_cola_colb_colc(+) order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+  rewritten query: select /*+ ORDERED NO_PARALLEL_SCAN */ 'Q?', inst_num(), a.cola, a.colb, a.colc, a.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cole using index a.i?_cola_colb_colc(+) order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)

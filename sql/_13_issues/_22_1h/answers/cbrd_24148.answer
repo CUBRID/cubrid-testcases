@@ -16,17 +16,17 @@ trace
 Query Plan:
   TABLE SCAN (dba.tbl_hls)
 
-  rewritten query: (select /*+ NO_PARALLEL_HEAP_SCAN */ [dba.tbl_hls].a, [dba.tbl_hls].b, [dba.tbl_hls].c from [dba.tbl_hls] [dba.tbl_hls] where (inst_num()> ?:?  and inst_num()<= ?:? ))
+  rewritten query: (select /*+ NO_PARALLEL_SCAN */ [dba.tbl_hls].a, [dba.tbl_hls].b, [dba.tbl_hls].c from [dba.tbl_hls] [dba.tbl_hls] where (inst_num()> ?:?  and inst_num()<= ?:? ))
 
   TABLE SCAN (dba.tbl_hls)
 
-  rewritten query: (select /*+ NO_PARALLEL_HEAP_SCAN */ [dba.tbl_hls].a, [dba.tbl_hls].b, [dba.tbl_hls].c from [dba.tbl_hls] [dba.tbl_hls] where (inst_num()> ?:?  and inst_num()<= ?:? ))
+  rewritten query: (select /*+ NO_PARALLEL_SCAN */ [dba.tbl_hls].a, [dba.tbl_hls].b, [dba.tbl_hls].c from [dba.tbl_hls] [dba.tbl_hls] where (inst_num()> ?:?  and inst_num()<= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ count(*) from (select /*+ NO_PARALLEL_HEAP_SCAN */ [dba.tbl_hls].a, [dba.tbl_hls].b, [dba.tbl_hls].c from [dba.tbl_hls] [dba.tbl_hls] where (inst_num()> ?:?  and inst_num()<= ?:? )) a (a, b, c), (select /*+ NO_PARALLEL_HEAP_SCAN */ [dba.tbl_hls].a, [dba.tbl_hls].b, [dba.tbl_hls].c from [dba.tbl_hls] [dba.tbl_hls] where (inst_num()> ?:?  and inst_num()<= ?:? )) b (a, b, c) where a.a=b.a and a.b=b.b and a.c=b.c
+  rewritten query: select /*+ ORDERED */ count(*) from (select /*+ NO_PARALLEL_SCAN */ [dba.tbl_hls].a, [dba.tbl_hls].b, [dba.tbl_hls].c from [dba.tbl_hls] [dba.tbl_hls] where (inst_num()> ?:?  and inst_num()<= ?:? )) a (a, b, c), (select /*+ NO_PARALLEL_SCAN */ [dba.tbl_hls].a, [dba.tbl_hls].b, [dba.tbl_hls].c from [dba.tbl_hls] [dba.tbl_hls] where (inst_num()> ?:?  and inst_num()<= ?:? )) b (a, b, c) where a.a=b.a and a.b=b.b and a.c=b.c
 
 
 Trace Statistics:
