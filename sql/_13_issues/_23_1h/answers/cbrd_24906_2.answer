@@ -755,9 +755,10 @@ Trace Statistics:
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (index: dba.tbl_a.pk_tbl_a_col_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        SCAN (index: dba.tbl_a.pk_tbl_a_col_a), (btree time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, index time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
           SCAN (index: dba.tbl_b.pk_tbl_b_col_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
-        GROUPBY (time: ?, hash: false, sort: false, rows: ?)
+        GROUPBY (time: ?, hash: partial, sort: false, rows: ?)
      
 
 ===================================================
