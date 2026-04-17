@@ -1,4 +1,6 @@
+-- ============================================================================
 -- CBRD-26273 - ALTER TABLE constraints/column drop replication behavior tests
+-- ============================================================================
 
 -- 1: REPLICATION ON. DROP PRIMARY KEY (no alternate RK)
 -- ha_repl result: HA constraint violation
@@ -10,7 +12,7 @@ ALTER TABLE repl_on_drop_pk1 DROP PRIMARY KEY;
 SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_on_drop_pk1') ORDER BY 1;
 insert into repl_on_drop_pk1 values ('test1', 100);
 insert into repl_on_drop_pk1 values ('test1', 200);
-select * from repl_on_drop_pk1;
+select * from repl_on_drop_pk1 order by 1,2;
 drop table if exists repl_on_drop_pk1;
 
 -- 2: REPLICATION ON. DROP PRIMARY KEY (remaining UNIQUE)
@@ -23,7 +25,7 @@ ALTER TABLE repl_on_drop_pk2 DROP PRIMARY KEY;
 SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_on_drop_pk2') ORDER BY 1;
 insert into repl_on_drop_pk2 values (1, 'test2');
 insert into repl_on_drop_pk2 values (1, NULL);
-select * from repl_on_drop_pk2;
+select * from repl_on_drop_pk2 order by 1,2;
 drop table if exists repl_on_drop_pk2;
 
 -- 3: REPLICATION ON. DROP PRIMARY KEY (remaining NOT NULL UNIQUE)
@@ -36,7 +38,7 @@ ALTER TABLE repl_on_drop_pk3 DROP PRIMARY KEY;
 SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_on_drop_pk3') ORDER BY 1;
 insert into repl_on_drop_pk3 values (1, 'test3');
 insert into repl_on_drop_pk3 values (1, 'dup3');
-select * from repl_on_drop_pk3;
+select * from repl_on_drop_pk3 order by 1,2;
 drop table if exists repl_on_drop_pk3;
 
 -- 4: REPLICATION OFF. DROP PRIMARY KEY (no alternate RK)
@@ -49,7 +51,7 @@ ALTER TABLE repl_off_drop_pk1 DROP PRIMARY KEY;
 SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_off_drop_pk1') ORDER BY 1;
 insert into repl_off_drop_pk1 values (DATE '2026-03-19', 'test4');
 insert into repl_off_drop_pk1 values (DATE '2026-03-19', 'dup4');
-select * from repl_off_drop_pk1;
+select * from repl_off_drop_pk1 order by 1,2;
 drop table if exists repl_off_drop_pk1;
 
 -- 5: REPLICATION OFF. DROP PRIMARY KEY (remaining UNIQUE)
@@ -62,7 +64,7 @@ ALTER TABLE repl_off_drop_pk2 DROP PRIMARY KEY;
 SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_off_drop_pk2') ORDER BY 1;
 insert into repl_off_drop_pk2 values (TIMESTAMP '2026-03-19 10:20:30', 'test5');
 insert into repl_off_drop_pk2 values (TIMESTAMP '2026-03-19 10:20:30', NULL);
-select * from repl_off_drop_pk2;
+select * from repl_off_drop_pk2 order by 1,2;
 drop table if exists repl_off_drop_pk2;
 
 -- 6: REPLICATION OFF. DROP PRIMARY KEY (remaining NOT NULL UNIQUE)
@@ -75,7 +77,7 @@ ALTER TABLE repl_off_drop_pk3 DROP PRIMARY KEY;
 SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_off_drop_pk3') ORDER BY 1;
 insert into repl_off_drop_pk3 values (1.0, 'test6');
 insert into repl_off_drop_pk3 values (1.0, 'dup6');
-select * from repl_off_drop_pk3;
+select * from repl_off_drop_pk3 order by 1,2;
 drop table if exists repl_off_drop_pk3;
 
 -- 7: REPLICATION ON. DROP PK constraint (no alternate RK)
@@ -88,7 +90,7 @@ ALTER TABLE repl_on_drop_constraint_pk1 DROP CONSTRAINT pk_repl_on_drop_constrai
 SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_on_drop_constraint_pk1') ORDER BY 1;
 insert into repl_on_drop_constraint_pk1 values ('test7', 100);
 insert into repl_on_drop_constraint_pk1 values ('test7', 200);
-select * from repl_on_drop_constraint_pk1;
+select * from repl_on_drop_constraint_pk1 order by 1,2;
 drop table if exists repl_on_drop_constraint_pk1;
 
 -- 8: REPLICATION ON. DROP PK constraint (remaining UNIQUE)
@@ -101,7 +103,7 @@ ALTER TABLE repl_on_drop_constraint_pk2 DROP CONSTRAINT pk_repl_on_drop_constrai
 SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_on_drop_constraint_pk2') ORDER BY 1;
 insert into repl_on_drop_constraint_pk2 values (1, 'test8');
 insert into repl_on_drop_constraint_pk2 values (1, NULL);
-select * from repl_on_drop_constraint_pk2;
+select * from repl_on_drop_constraint_pk2 order by 1,2;
 drop table if exists repl_on_drop_constraint_pk2;
 
 -- 9: REPLICATION ON. DROP PK constraint (remaining NOT NULL UNIQUE)
@@ -114,7 +116,7 @@ ALTER TABLE repl_on_drop_constraint_pk3 DROP CONSTRAINT pk_repl_on_drop_constrai
 SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_on_drop_constraint_pk3') ORDER BY 1;
 insert into repl_on_drop_constraint_pk3 values (1, 'test9');
 insert into repl_on_drop_constraint_pk3 values (1, 'dup9');
-select * from repl_on_drop_constraint_pk3;
+select * from repl_on_drop_constraint_pk3 order by 1,2;
 drop table if exists repl_on_drop_constraint_pk3;
 
 -- 10: REPLICATION OFF. DROP PK constraint (no alternate RK)
@@ -127,7 +129,7 @@ ALTER TABLE repl_off_drop_constraint_pk1 DROP CONSTRAINT pk_repl_off_drop_constr
 SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_off_drop_constraint_pk1') ORDER BY 1;
 insert into repl_off_drop_constraint_pk1 values (DATE '2026-03-19', 'test10');
 insert into repl_off_drop_constraint_pk1 values (DATE '2026-03-19', 'dup10');
-select * from repl_off_drop_constraint_pk1;
+select * from repl_off_drop_constraint_pk1 order by 1,2;
 drop table if exists repl_off_drop_constraint_pk1;
 
 -- 11: REPLICATION OFF. DROP PK constraint (remaining UNIQUE)
@@ -140,7 +142,7 @@ ALTER TABLE repl_off_drop_constraint_pk2 DROP CONSTRAINT pk_repl_off_drop_constr
 SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_off_drop_constraint_pk2') ORDER BY 1;
 insert into repl_off_drop_constraint_pk2 values (TIMESTAMP '2026-03-19 10:20:30', 'test11');
 insert into repl_off_drop_constraint_pk2 values (TIMESTAMP '2026-03-19 10:20:30', 'dup11');
-select * from repl_off_drop_constraint_pk2;
+select * from repl_off_drop_constraint_pk2 order by 1,2;
 drop table if exists repl_off_drop_constraint_pk2;
 
 -- 12: REPLICATION OFF. DROP PK constraint (remaining NOT NULL UNIQUE)
@@ -153,7 +155,7 @@ ALTER TABLE repl_off_drop_constraint_pk3 DROP CONSTRAINT pk_repl_off_drop_constr
 SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_off_drop_constraint_pk3') ORDER BY 1;
 insert into repl_off_drop_constraint_pk3 values (3.14, 'test12');
 insert into repl_off_drop_constraint_pk3 values (3.14, 'dup12');
-select * from repl_off_drop_constraint_pk3;
+select * from repl_off_drop_constraint_pk3 order by 1,2;
 drop table if exists repl_off_drop_constraint_pk3;
 
 -- 13: REPLICATION ON. DROP NOT NULL UNIQUE constraint (no alternate RK)
@@ -166,7 +168,7 @@ ALTER TABLE repl_on_drop_constraint_unique1 DROP CONSTRAINT u_repl_on_drop_const
 SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_on_drop_constraint_unique1') ORDER BY 1;
 insert into repl_on_drop_constraint_unique1 values ('test13', 100);
 insert into repl_on_drop_constraint_unique1 values ('test13', 200);
-select * from repl_on_drop_constraint_unique1;
+select * from repl_on_drop_constraint_unique1 order by 1,2;
 drop table if exists repl_on_drop_constraint_unique1;
 
 -- 14: REPLICATION ON. DROP NOT NULL UNIQUE constraint (remaining UNIQUE)
@@ -179,7 +181,7 @@ ALTER TABLE repl_on_drop_constraint_unique2 DROP CONSTRAINT u_repl_on_drop_const
 SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_on_drop_constraint_unique2') ORDER BY 1;
 insert into repl_on_drop_constraint_unique2 values (10.00, 'test14');
 insert into repl_on_drop_constraint_unique2 values (10.00, 'dup14');
-select * from repl_on_drop_constraint_unique2;
+select * from repl_on_drop_constraint_unique2 order by 1,2;
 drop table if exists repl_on_drop_constraint_unique2;
 
 -- 15: REPLICATION ON. DROP NOT NULL UNIQUE constraint (remaining NOT NULL UNIQUE)
@@ -192,7 +194,7 @@ ALTER TABLE repl_on_drop_constraint_unique3 DROP CONSTRAINT u_repl_on_drop_const
 SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_on_drop_constraint_unique3') ORDER BY 1;
 insert into repl_on_drop_constraint_unique3 values ('test15', 1);
 insert into repl_on_drop_constraint_unique3 values ('test15', 2);
-select * from repl_on_drop_constraint_unique3;
+select * from repl_on_drop_constraint_unique3 order by 1,2;
 drop table if exists repl_on_drop_constraint_unique3;
 
 -- 16: REPLICATION ON. DROP NOT NULL UNIQUE constraint (PRIMARY KEY as alternate RK)
@@ -205,7 +207,7 @@ ALTER TABLE repl_on_drop_constraint_unique4 DROP CONSTRAINT u_repl_on_drop_const
 SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_on_drop_constraint_unique4') ORDER BY 1;
 insert into repl_on_drop_constraint_unique4 values ('test16', 1);
 insert into repl_on_drop_constraint_unique4 values ('test16', 2);
-select * from repl_on_drop_constraint_unique4;
+select * from repl_on_drop_constraint_unique4 order by 1,2;
 drop table if exists repl_on_drop_constraint_unique4;
 
 -- 17: REPLICATION OFF. DROP NOT NULL UNIQUE constraint (no alternate RK)
@@ -218,7 +220,7 @@ ALTER TABLE repl_off_drop_constraint_unique1 DROP CONSTRAINT u_repl_off_drop_con
 SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_off_drop_constraint_unique1') ORDER BY 1;
 insert into repl_off_drop_constraint_unique1 values ('test17', 100);
 insert into repl_off_drop_constraint_unique1 values ('test17', 200);
-select * from repl_off_drop_constraint_unique1;
+select * from repl_off_drop_constraint_unique1 order by 1,2;
 drop table if exists repl_off_drop_constraint_unique1;
 
 -- 18: REPLICATION OFF. DROP NOT NULL UNIQUE constraint (remaining UNIQUE)
@@ -231,7 +233,7 @@ ALTER TABLE repl_off_drop_constraint_unique2 DROP CONSTRAINT u_repl_off_drop_con
 SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_off_drop_constraint_unique2') ORDER BY 1;
 insert into repl_off_drop_constraint_unique2 values (20.00, 'test18');
 insert into repl_off_drop_constraint_unique2 values (20.00, NULL);
-select * from repl_off_drop_constraint_unique2;
+select * from repl_off_drop_constraint_unique2 order by 1,2;
 drop table if exists repl_off_drop_constraint_unique2;
 
 -- 19: REPLICATION OFF. DROP NOT NULL UNIQUE constraint (remaining NOT NULL UNIQUE)
@@ -244,7 +246,7 @@ ALTER TABLE repl_off_drop_constraint_unique3 DROP CONSTRAINT u_repl_off_drop_con
 SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_off_drop_constraint_unique3') ORDER BY 1;
 insert into repl_off_drop_constraint_unique3 values ('def', 'test19');
 insert into repl_off_drop_constraint_unique3 values ('def', 'dup19');
-select * from repl_off_drop_constraint_unique3;
+select * from repl_off_drop_constraint_unique3 order by 1,2;
 drop table if exists repl_off_drop_constraint_unique3;
 
 -- 20: REPLICATION OFF. DROP NOT NULL UNIQUE constraint (PRIMARY KEY as alternate RK)
@@ -257,7 +259,7 @@ ALTER TABLE repl_off_drop_constraint_unique4 DROP CONSTRAINT u_repl_off_drop_con
 SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_off_drop_constraint_unique4') ORDER BY 1;
 insert into repl_off_drop_constraint_unique4 values ('test20', 2);
 insert into repl_off_drop_constraint_unique4 values ('test20', 3);
-select * from repl_off_drop_constraint_unique4;
+select * from repl_off_drop_constraint_unique4 order by 1,2;
 drop table if exists repl_off_drop_constraint_unique4;
 
 -- 21: REPLICATION ON. DROP PK COLUMN : error (cannot drop PK attribute)
@@ -271,7 +273,7 @@ SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_on_drop_p
 insert into repl_on_drop_pk_column1 values (21, 'test21');
 --error: duplicate key value violates unique constraint
 insert into repl_on_drop_pk_column1 values (21, 'dup21');
-select * from repl_on_drop_pk_column1;
+select * from repl_on_drop_pk_column1 order by 1,2;
 drop table if exists repl_on_drop_pk_column1;
 
 -- 22: REPLICATION ON. DROP PK COLUMN : error (cannot drop PK attribute)
@@ -285,7 +287,7 @@ SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_on_drop_p
 insert into repl_on_drop_pk_column2 values (22, 'test22');
 --error: duplicate key value violates unique constraint
 insert into repl_on_drop_pk_column2 values (22, 'dup22');
-select * from repl_on_drop_pk_column2;
+select * from repl_on_drop_pk_column2 order by 1,2;
 drop table if exists repl_on_drop_pk_column2;
 
 -- 23: REPLICATION ON. DROP PK COLUMN : error (cannot drop PK attribute)
@@ -299,7 +301,7 @@ SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_on_drop_p
 insert into repl_on_drop_pk_column3 values (23, 'test23');
 --error: duplicate key value violates unique constraint
 insert into repl_on_drop_pk_column3 values (23, 'dup23');
-select * from repl_on_drop_pk_column3;
+select * from repl_on_drop_pk_column3 order by 1,2;
 drop table if exists repl_on_drop_pk_column3;
 
 -- 24: REPLICATION ON. DROP PK COLUMN : error (cannot drop PK attribute)
@@ -313,7 +315,7 @@ SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_on_drop_p
 insert into repl_on_drop_pk_column4 values (24, 'test24');
 --error: duplicate key value violates unique constraint
 insert into repl_on_drop_pk_column4 values (24, 'abc24');
-select * from repl_on_drop_pk_column4;
+select * from repl_on_drop_pk_column4 order by 1,2;
 drop table if exists repl_on_drop_pk_column4;
 
 -- 25: REPLICATION ON. DROP NOT NULL UNIQUE COLUMN (no alternate RK)
@@ -325,7 +327,7 @@ SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_on_drop_c
 ALTER TABLE repl_on_drop_column_unique1 DROP COLUMN a;
 SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_on_drop_column_unique1') ORDER BY 1;
 insert into repl_on_drop_column_unique1(b) values (100);
-select * from repl_on_drop_column_unique1;
+select * from repl_on_drop_column_unique1 order by 1;
 drop table if exists repl_on_drop_column_unique1;
 
 -- 26: REPLICATION ON. DROP NOT NULL UNIQUE COLUMN (remaining UNIQUE)
@@ -337,7 +339,7 @@ SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_on_drop_c
 ALTER TABLE repl_on_drop_column_unique2 DROP COLUMN a;
 SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_on_drop_column_unique2') ORDER BY 1;
 insert into repl_on_drop_column_unique2(b) values ('test26');
-select * from repl_on_drop_column_unique2;
+select * from repl_on_drop_column_unique2 order by 1;
 drop table if exists repl_on_drop_column_unique2;
 
 -- 27: REPLICATION ON. DROP NOT NULL UNIQUE COLUMN (remaining NOT NULL UNIQUE)
@@ -349,7 +351,7 @@ SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_on_drop_c
 ALTER TABLE repl_on_drop_column_unique3 DROP COLUMN a;
 SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_on_drop_column_unique3') ORDER BY 1;
 insert into repl_on_drop_column_unique3(b) values ('test27');
-select * from repl_on_drop_column_unique3;
+select * from repl_on_drop_column_unique3 order by 1;
 drop table if exists repl_on_drop_column_unique3;
 
 -- 28: REPLICATION ON. DROP NOT NULL UNIQUE COLUMN (PRIMARY KEY as alternate RK)
@@ -361,7 +363,7 @@ SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_on_drop_c
 ALTER TABLE repl_on_drop_column_unique4 DROP COLUMN a;
 SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_on_drop_column_unique4') ORDER BY 1;
 insert into repl_on_drop_column_unique4(b) values (1000);
-select * from repl_on_drop_column_unique4;
+select * from repl_on_drop_column_unique4 order by 1;
 drop table if exists repl_on_drop_column_unique4;
 
 -- 29: REPLICATION OFF. DROP NOT NULL UNIQUE COLUMN (no alternate RK)
@@ -373,7 +375,7 @@ SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_off_drop_
 ALTER TABLE repl_off_drop_column_unique1 DROP COLUMN a;
 SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_off_drop_column_unique1') ORDER BY 1;
 insert into repl_off_drop_column_unique1(b) values ('test29');
-select * from repl_off_drop_column_unique1;
+select * from repl_off_drop_column_unique1 order by 1;
 drop table if exists repl_off_drop_column_unique1;
 
 -- 30: REPLICATION OFF. DROP NOT NULL UNIQUE COLUMN (remaining UNIQUE)
@@ -385,7 +387,7 @@ SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_off_drop_
 ALTER TABLE repl_off_drop_column_unique2 DROP COLUMN a;
 SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_off_drop_column_unique2') ORDER BY 1;
 insert into repl_off_drop_column_unique2(b) values ('test30');
-select * from repl_off_drop_column_unique2;
+select * from repl_off_drop_column_unique2 order by 1;
 drop table if exists repl_off_drop_column_unique2;
 
 -- 31: REPLICATION OFF. DROP NOT NULL UNIQUE COLUMN (remaining NOT NULL UNIQUE)
@@ -397,7 +399,7 @@ SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_off_drop_
 ALTER TABLE repl_off_drop_column_unique3 DROP COLUMN a;
 SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_off_drop_column_unique3') ORDER BY 1;
 insert into repl_off_drop_column_unique3(b) values ('test31');
-select * from repl_off_drop_column_unique3;
+select * from repl_off_drop_column_unique3 order by 1;
 drop table if exists repl_off_drop_column_unique3;
 
 -- 32: REPLICATION OFF. DROP NOT NULL UNIQUE COLUMN (PRIMARY KEY as alternate RK)
@@ -409,8 +411,12 @@ SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_off_drop_
 ALTER TABLE repl_off_drop_column_unique4 DROP COLUMN a;
 SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_off_drop_column_unique4') ORDER BY 1;
 insert into repl_off_drop_column_unique4(b) values ('test32');
-select * from repl_off_drop_column_unique4;
+select * from repl_off_drop_column_unique4 order by 1;
 drop table if exists repl_off_drop_column_unique4;
+
+-- ============================================================================
+-- CBRD-26274 - Composite ALTER TABLE PK replacement syntax tests
+-- ============================================================================
 
 -- 33: REPLICATION ON. Multi-ALTER: DROP PRIMARY KEY(a), ADD PRIMARY KEY(b)
 -- ha_repl result: success, replicated
@@ -424,7 +430,7 @@ insert into multi_alter_pk_ok values (1, 'test33', 1000);
 insert into multi_alter_pk_ok values (1, 'dup33', 2000);
 --error: duplicate key value violates unique constraint
 insert into multi_alter_pk_ok values (3, 'dup33', 3000);
-select * from multi_alter_pk_ok;
+select * from multi_alter_pk_ok order by 1,2,3;
 drop table if exists multi_alter_pk_ok;
 
 -- 34: REPLICATION ON. Multi-ALTER: DROP PRIMARY KEY, ADD PRIMARY KEY(b), DROP PRIMARY KEY
@@ -437,6 +443,35 @@ ALTER TABLE multi_alter_pk_err DROP PRIMARY KEY, ADD CONSTRAINT pk_multi_alter_p
 SELECT class_name, index_name FROM db_index WHERE class_name IN ('multi_alter_pk_err') ORDER BY 1;
 insert into multi_alter_pk_err values (1, 'test34', 1000);
 insert into multi_alter_pk_err values (1, 'test34', 2000);
-select * from multi_alter_pk_err;
+select * from multi_alter_pk_err order by 1,2,3;
 drop table if exists multi_alter_pk_err;
 
+-- 35: REPLICATION ON. Multi-ALTER: DROP PRIMARY KEY, ADD PRIMARY KEY(b), DROP PRIMARY KEY, ADD PRIMARY KEY(c)
+-- ha_repl result: success, replicated (final PK is c)
+evaluate '35. multi_alter_pk_ok_chain';
+drop table if exists multi_alter_pk_ok_chain;
+CREATE TABLE multi_alter_pk_ok_chain(a INT PRIMARY KEY, b INT, c INT) REPLICATION ON;
+SELECT class_name, index_name FROM db_index WHERE class_name IN ('multi_alter_pk_ok_chain') ORDER BY 1;
+
+ALTER TABLE multi_alter_pk_ok_chain DROP PRIMARY KEY, ADD CONSTRAINT pk_multi_alter_pk_ok_chain_b PRIMARY KEY(b), DROP PRIMARY KEY, ADD CONSTRAINT pk_multi_alter_pk_ok_chain_c PRIMARY KEY(c);
+
+SELECT class_name, index_name FROM db_index WHERE class_name IN ('multi_alter_pk_ok_chain') ORDER BY 1;
+insert into multi_alter_pk_ok_chain values (1, 10, 100);
+-- error: duplicate key value (c is PK)
+insert into multi_alter_pk_ok_chain values (1, 20, 100);
+select * from multi_alter_pk_ok_chain order by 1,2,3;
+drop table if exists multi_alter_pk_ok_chain;
+
+-- 36: REPLICATION ON. Drop multi-columns keeping Replication Key (NOT NULL UNIQUE)
+-- ha_repl result: success, replicated
+evaluate '36. repl_on_drop_multi_columns_keep_rk';
+drop table if exists repl_on_drop_multi_columns_keep_rk;
+CREATE TABLE repl_on_drop_multi_columns_keep_rk(a INT, b INT NOT NULL UNIQUE, c INT, d INT) REPLICATION ON;
+SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_on_drop_multi_columns_keep_rk') ORDER BY 1;
+ALTER TABLE repl_on_drop_multi_columns_keep_rk DROP COLUMN c, d;
+SELECT class_name, index_name FROM db_index WHERE class_name IN ('repl_on_drop_multi_columns_keep_rk') ORDER BY 1;
+insert into repl_on_drop_multi_columns_keep_rk(a, b) values (1, 100);
+-- error: duplicate key value (b is UNIQUE)
+insert into repl_on_drop_multi_columns_keep_rk(a, b) values (2, 100);
+select * from repl_on_drop_multi_columns_keep_rk order by 1,2;
+drop table if exists repl_on_drop_multi_columns_keep_rk;
