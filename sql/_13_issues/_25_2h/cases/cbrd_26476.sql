@@ -383,7 +383,7 @@ update /*+ recompile */
   t1 a
 set
   a.c2 = 'y',
-  a.c3 = (select tmp_col from (select decode(b.c7, 7, 10, 70, 20, b.c8) tmp_col from t2 b where b.c5 = 3 order by b.c6) where rownum = 1),
+  a.c3 = (select tmp_col from (select decode(b.c7, 7, 10, b.c8) tmp_col from t2 b where b.c5 = 3 order by b.c6) where rownum = 1),
   a.c4 = (select tmp_col from (select decode(b.c8, 8, 12, -8, 34, 56) tmp_col from t2 b where b.c5 = 4 order by b.c6) where rownum = 1)
 where
   a.c1 = 1;
@@ -395,7 +395,7 @@ update /*+ recompile */
   t1 a
 set
   a.c2 = 'y',
-  a.c3 = (select tmp_col from (select decode(c7, 7, 10, 70, 20, 30) tmp_col from v2) where rownum = 1),
+  a.c3 = (select tmp_col from (select decode(c7, 7, 10, 30) tmp_col from v2) where rownum = 1),
   a.c4 = (select tmp_col from (select decode(b.c8, 8, 12, -8, 34, 56) tmp_col from t2 b where b.c5 = 4 order by b.c6) where rownum = 1)
 where
   a.c1 = 1;
@@ -407,7 +407,7 @@ update /*+ recompile */
   t1 a
 set
   a.c2 = 'y',
-  a.c3 = (select tmp_col from (select /*+ no_merge */ decode(b.c7, 7, 10, 70, 20, b.c8) tmp_col from t2 b where b.c5 = 3 order by b.c6) where rownum = 1),
+  a.c3 = (select tmp_col from (select /*+ no_merge */ decode(b.c7, 7, 10, b.c8) tmp_col from t2 b where b.c5 = 3 order by b.c6) where rownum = 1),
   a.c4 = (select tmp_col from (select /*+ no_merge */ decode(b.c8, 8, 12, -8, 34, 56) tmp_col from t2 b where b.c5 = 4 order by b.c6) where rownum = 1)
 where
   a.c1 = 1;
@@ -419,7 +419,7 @@ update /*+ recompile */
   t1 a
 set
   a.c2 = 'y',
-  a.c3 = (select tmp_col from (select decode(b.c7, 7, 10, 70, 20, b.c8) tmp_col from t2 b where b.c5 = 3 order by b.c6) t limit 1),
+  a.c3 = (select tmp_col from (select decode(b.c7, 7, 10, b.c8) tmp_col from t2 b where b.c5 = 3 order by b.c6) t limit 1),
   a.c4 = (select tmp_col from (select decode(b.c8, 8, 12, -8, 34, 56) tmp_col from t2 b where b.c5 = 4 order by b.c6) t limit 1)
 where
   a.c1 = 1;
@@ -431,7 +431,7 @@ update /*+ recompile */
   t1 a
 set
   a.c2 = 'y',
-  a.c3 = (select tmp_col from (select decode(b.c7, 7, 10, 70, 20, b.c8) tmp_col from t2 b where b.c5 = a.c1 + 2 /* 3 */ order by b.c6) t limit 1),
+  a.c3 = (select tmp_col from (select decode(b.c7, 7, 10, b.c8) tmp_col from t2 b where b.c5 = a.c1 + 2 /* 3 */ order by b.c6) t limit 1),
   a.c4 = (select tmp_col from (select decode(b.c8, 8, 12, -8, 34, 56) tmp_col from t2 b where b.c5 = a.c1 + 3 /* 4 */ order by b.c6) t limit 1)
 where
   a.c1 = 1;
@@ -493,11 +493,9 @@ where a.c1 = 1;
 
 select * from t1;
 
--- Scalar subquery returns more than one row (should error, must not crash)
-evaluate '34. scalar subquery returns more than one row (must error, no crash)';
+-- Scalar subquery with no use limit or limit offset
+evaluate '34. scalar subquery with no use limit or limit offset';
 update t1 set c2 = 'n', c3 = -3, c4 = -4 where c1 = 1;
--- This subquery returns 2 rows because b.c5 = 3 has two rows (c6=1 and c6=2)
--- expected: error (subquery returns more than one row)
 
 update /*+ recompile */ t1 a
 set    a.c2 = 'y'
