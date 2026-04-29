@@ -484,7 +484,7 @@ set    a.c2 = 'y'
      , (a.c3, a.c4) = (select c7, c8
                        from (select b.c7, b.c8
                              from   t2 b
-                             where  b.c5 in (3, 4)
+                             where  b.c5 in (3)
                              order by b.c6, b.c5
                            )
                      where rownum = 1
