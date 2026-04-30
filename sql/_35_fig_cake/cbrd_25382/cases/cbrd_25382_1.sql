@@ -41,7 +41,7 @@ do @i := @i + 1;
 evaluate concat ('####', lpad (@i, 3), '. build input: small tuple count');
 
 --@queryplan
-select /*+ recompile use_hash no_parallel_hash_join no_parallel_subquery */
+select /*+ recompile use_hash no_parallel_subquery */
   count (*)
 from ta a, tb b, tc c, td d
 where a.cd = b.cd and b.cd = c.cd and c.cd = d.cd
@@ -58,7 +58,7 @@ do @i := @i + 1;
 evaluate concat ('####', lpad (@i, 3), '. build input: small tuple count + ordered');
 
 --@queryplan
-select /*+ recompile ordered use_hash no_parallel_hash_join no_parallel_subquery */
+select /*+ recompile ordered use_hash no_parallel_subquery */
   count (*)
 from ta a, tb b, tc c, td d
 where a.cd = b.cd and b.cd = c.cd and c.cd = d.cd
@@ -131,7 +131,7 @@ evaluate concat ('####', lpad (@i, 3), '. cost: in_memory, hybrid < file, build_
 set system parameters 'max_hash_list_scan_size=64k';
 
 --@queryplan
-select /*+  recompile ordered use_hash(a,b) no_parallel_hash_join use_nl(c) no_parallel_subquery */
+select /*+  recompile ordered use_hash(a,b) use_nl(c) no_parallel_subquery */
   count (*)
 from ta a, tb b, tc c
 where a.ca = b.ca and a.cb = b.cb and a.cc = b.cc and a.cd = b.cd
@@ -141,7 +141,7 @@ show trace;
 --select trace_stats ();
 
 --@queryplan
-select /*+  recompile leading(a) use_hash(a,b) no_parallel_hash_join use_nl(c) no_parallel_subquery */
+select /*+  recompile leading(a) use_hash(a,b) use_nl(c) no_parallel_subquery */
   count (*)
 from ta a, tb b, tc c
 where a.ca = b.ca and a.cb = b.cb and a.cc = b.cc and a.cd = b.cd

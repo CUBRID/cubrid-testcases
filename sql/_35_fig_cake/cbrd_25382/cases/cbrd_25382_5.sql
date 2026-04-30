@@ -39,7 +39,7 @@ do @i := @i + 1;
 evaluate concat ('####', lpad (@i, 3), '. empty outer');
 
 --@queryplan
-select /*+ recompile ordered use_hash no_parallel_hash_join no_parallel_subquery */
+select /*+ recompile ordered use_hash no_parallel_subquery */
   a.cd as a_cd, b.cd as b_cd
 from ta a, tb b
 where a.cd = b.cd and a.ca = -1
@@ -52,7 +52,7 @@ do @i := @i + 1;
 evaluate concat ('####', lpad (@i, 3), '. empty inner');
 
 --@queryplan
-select /*+ recompile ordered use_hash no_parallel_hash_join no_parallel_subquery */
+select /*+ recompile ordered use_hash no_parallel_subquery */
   a.cd as a_cd, b.cd as b_cd
 from ta a, tb b
 where a.cd = b.cd and b.ca = -1
@@ -65,7 +65,7 @@ do @i := @i + 1;
 evaluate concat ('####', lpad (@i, 3), '. empty inner + left outer join');
 
 --@queryplan
-select /*+ recompile ordered use_hash no_parallel_hash_join no_parallel_subquery */
+select /*+ recompile ordered use_hash no_parallel_subquery */
   a.cd as a_cd, b.cd as b_cd
 from ta a
   left outer join tb b on b.cd = a.cd and b.ca = -1
@@ -79,7 +79,7 @@ do @i := @i + 1;
 evaluate concat ('####', lpad (@i, 3), '. multiple tables');
 
 --@queryplan
-select /*+ recompile use_hash no_parallel_hash_join no_parallel_subquery */
+select /*+ recompile use_hash no_parallel_subquery */
   a.cd as a_cd, b.cd as b_cd, c.cd as c_cd, d.cd as d_cd
 from ta a, tb b, tc c, td d
 where a.cd = b.cd and b.cd = c.cd and c.cd = d.cd
@@ -96,7 +96,7 @@ do @i := @i + 1;
 evaluate concat ('####', lpad (@i, 3), '. inline views');
 
 --@queryplan
-select /*+ recompile use_hash no_parallel_hash_join no_parallel_subquery */
+select /*+ recompile use_hash no_parallel_subquery */
   a.cd as a_cd, b.cd as b_cd
 from
   (select /*+ no_merge */ * from ta where cc = 2) a,
@@ -111,7 +111,7 @@ do @i := @i + 1;
 evaluate concat ('####', lpad (@i, 3), '. subqueries');
 
 --@queryplan
-select /*+ recompile use_hash no_parallel_hash_join no_parallel_subquery */
+select /*+ recompile use_hash no_parallel_subquery */
   a.cd as a_cd, b.cd as b_cd,
   (select /*+ no_subquery_cache */ d.cd from td d where d.cd = b.cd and d.cd = b.cd) as d_cd
 from
@@ -134,7 +134,7 @@ with cte as (
     from ta a, tb b
     where a.cd = b.cd and a.ca = 4 and b.ca = 4
   )
-select /*+ recompile use_hash no_parallel_hash_join no_parallel_subquery*/
+select /*+ recompile use_hash no_parallel_subquery*/
   c.cd as c_cd, d.cd as d_cd
 from cte c, td d
 where c.cd = d.cd and c.cc = 4 and d.cc = 4
@@ -149,7 +149,7 @@ evaluate concat ('####', lpad (@i, 3), '. json format output');
 set trace on output json;
 
 --@queryplan
-select /*+ recompile use_hash no_parallel_hash_join no_parallel_subquery*/
+select /*+ recompile use_hash no_parallel_subquery*/
   a.cd as a_cd, b.cd as b_cd
 from ta a, tb b
 where a.cd = b.cd and a.cc = 5 and b.cc = 5
