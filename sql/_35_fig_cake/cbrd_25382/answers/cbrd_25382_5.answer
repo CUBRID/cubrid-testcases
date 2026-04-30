@@ -46,7 +46,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd from ta a, tb b where a.cd=b.cd and a.ca= ?:?  order by ?
+select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ a.cd, b.cd from ta a, tb b where a.cd=b.cd and a.ca= ?:?  order by ?
 ===================================================
 trace    
 
@@ -56,7 +56,7 @@ Query Plan:
       INDEX SCAN (a.i_a) (key range: a.ca= ?:? )
       TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd from [dba.ta] a, [dba.tb] b where a.cd=b.cd and a.ca= ?:?  order by ?
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ a.cd, b.cd from [dba.ta] a, [dba.tb] b where a.cd=b.cd and a.ca= ?:?  order by ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -93,7 +93,7 @@ hash-join (inner join)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd from ta a, tb b where a.cd=b.cd and b.ca= ?:?  order by ?
+select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ a.cd, b.cd from ta a, tb b where a.cd=b.cd and b.ca= ?:?  order by ?
 ===================================================
 trace    
 
@@ -102,7 +102,7 @@ Query Plan:
     INDEX SCAN (a.i_c) (covered: true)
     INDEX SCAN (b.i_a) (key range: b.ca= ?:? )
 
-  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd from [dba.ta] a, [dba.tb] b where a.cd=b.cd and b.ca= ?:?  order by ?
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ a.cd, b.cd from [dba.ta] a, [dba.tb] b where a.cd=b.cd and b.ca= ?:?  order by ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -141,7 +141,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd from ta a left outer join tb b on b.ca= ?:?  and b.cd=a.cd order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ a.cd, b.cd from ta a left outer join tb b on b.ca= ?:?  and b.cd=a.cd order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 ===================================================
 trace    
 
@@ -151,7 +151,7 @@ Query Plan:
       TABLE SCAN (a)
       INDEX SCAN (b.i_a) (key range: b.ca= ?:? )
 
-  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd from [dba.ta] a left outer join [dba.tb] b on b.ca= ?:?  and b.cd=a.cd order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ a.cd, b.cd from [dba.ta] a left outer join [dba.tb] b on b.ca= ?:?  and b.cd=a.cd order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -207,7 +207,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd, c.cd, d.cd from ta a, tb b, tc c, td d where a.cd=b.cd and b.cd=c.cd and c.cd=d.cd and d.cc= ?:?  and c.cc= ?:?  and b.cc= ?:?  and a.cc= ?:?  order by ?
+select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ a.cd, b.cd, c.cd, d.cd from ta a, tb b, tc c, td d where a.cd=b.cd and b.cd=c.cd and c.cd=d.cd and d.cc= ?:?  and c.cc= ?:?  and b.cc= ?:?  and a.cc= ?:?  order by ?
 ===================================================
 trace    
 
@@ -221,7 +221,7 @@ Query Plan:
         TABLE SCAN (c)
       TABLE SCAN (d)
 
-  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd, c.cd, d.cd from [dba.ta] a, [dba.tb] b, [dba.tc] c, [dba.td] d where a.cd=b.cd and b.cd=c.cd and c.cd=d.cd and d.cc= ?:?  and c.cc= ?:?  and b.cc= ?:?  and a.cc= ?:?  order by ?
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ a.cd, b.cd, c.cd, d.cd from [dba.ta] a, [dba.tb] b, [dba.tc] c, [dba.td] d where a.cd=b.cd and b.cd=c.cd and c.cd=d.cd and d.cc= ?:?  and c.cc= ?:?  and b.cc= ?:?  and a.cc= ?:?  order by ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -289,7 +289,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd from (select /*+ NO_MERGE */ ta.ca, ta.cb, ta.cc, ta.cd from ta ta where ta.cc= ?:? ) a (ca, cb, cc, cd), (select /*+ NO_MERGE */ tb.ca, tb.cb, tb.cc, tb.cd from tb tb where tb.cc= ?:? ) b (ca, cb, cc, cd) where a.cd=b.cd order by ?
+select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ a.cd, b.cd from (select /*+ NO_MERGE */ ta.ca, ta.cb, ta.cc, ta.cd from ta ta where ta.cc= ?:? ) a (ca, cb, cc, cd), (select /*+ NO_MERGE */ tb.ca, tb.cb, tb.cc, tb.cd from tb tb where tb.cc= ?:? ) b (ca, cb, cc, cd) where a.cd=b.cd order by ?
 ===================================================
 trace    
 
@@ -307,7 +307,7 @@ Query Plan:
       TABLE SCAN (a)
       TABLE SCAN (b)
 
-  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd from (select /*+ NO_MERGE */ [dba.ta].ca, [dba.ta].cb, [dba.ta].cc, [dba.ta].cd from [dba.ta] [dba.ta] where [dba.ta].cc= ?:? ) a (ca, cb, cc, cd), (select /*+ NO_MERGE */ [dba.tb].ca, [dba.tb].cb, [dba.tb].cc, [dba.tb].cd from [dba.tb] [dba.tb] where [dba.tb].cc= ?:? ) b (ca, cb, cc, cd) where a.cd=b.cd order by ?
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ a.cd, b.cd from (select /*+ NO_MERGE */ [dba.ta].ca, [dba.ta].cb, [dba.ta].cc, [dba.ta].cd from [dba.ta] [dba.ta] where [dba.ta].cc= ?:? ) a (ca, cb, cc, cd), (select /*+ NO_MERGE */ [dba.tb].ca, [dba.tb].cb, [dba.tb].cc, [dba.tb].cd from [dba.tb] [dba.tb] where [dba.tb].cc= ?:? ) b (ca, cb, cc, cd) where a.cd=b.cd order by ?
 
 
 Trace Statistics:
@@ -389,7 +389,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd, (select /*+ NO_SUBQUERY_CACHE */ d.cd from td d where d.cd=b.cd and d.cd=b.cd) from (select /*+ NO_MERGE */ ta.ca, ta.cb, ta.cc, ta.cd from ta ta where ta.cc= ?:? ) a (ca, cb, cc, cd), (select /*+ NO_MERGE */ tb.ca, tb.cb, tb.cc, tb.cd from tb tb where tb.cc= ?:? ) b (ca, cb, cc, cd), (select distinct c.ca from tc c) av? (av_?) where a.cd=b.cd and a.ca=av?.av_? order by ?
+select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ a.cd, b.cd, (select /*+ NO_SUBQUERY_CACHE */ d.cd from td d where d.cd=b.cd and d.cd=b.cd) from (select /*+ NO_MERGE */ ta.ca, ta.cb, ta.cc, ta.cd from ta ta where ta.cc= ?:? ) a (ca, cb, cc, cd), (select /*+ NO_MERGE */ tb.ca, tb.cb, tb.cc, tb.cd from tb tb where tb.cc= ?:? ) b (ca, cb, cc, cd), (select distinct c.ca from tc c) av? (av_?) where a.cd=b.cd and a.ca=av?.av_? order by ?
 ===================================================
 trace    
 
@@ -418,7 +418,7 @@ Query Plan:
         TABLE SCAN (b)
       TABLE SCAN (av?)
 
-  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd, (select /*+ NO_SUBQUERY_CACHE */ d.cd from [dba.td] d where d.cd=b.cd and d.cd=b.cd) from (select /*+ NO_MERGE */ [dba.ta].ca, [dba.ta].cb, [dba.ta].cc, [dba.ta].cd from [dba.ta] [dba.ta] where [dba.ta].cc= ?:? ) a (ca, cb, cc, cd), (select /*+ NO_MERGE */ [dba.tb].ca, [dba.tb].cb, [dba.tb].cc, [dba.tb].cd from [dba.tb] [dba.tb] where [dba.tb].cc= ?:? ) b (ca, cb, cc, cd), (select distinct c.ca from [dba.tc] c) av? (av_?) where a.cd=b.cd and a.ca=av?.av_? order by ?
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ a.cd, b.cd, (select /*+ NO_SUBQUERY_CACHE */ d.cd from [dba.td] d where d.cd=b.cd and d.cd=b.cd) from (select /*+ NO_MERGE */ [dba.ta].ca, [dba.ta].cb, [dba.ta].cc, [dba.ta].cd from [dba.ta] [dba.ta] where [dba.ta].cc= ?:? ) a (ca, cb, cc, cd), (select /*+ NO_MERGE */ [dba.tb].ca, [dba.tb].cb, [dba.tb].cc, [dba.tb].cd from [dba.tb] [dba.tb] where [dba.tb].cc= ?:? ) b (ca, cb, cc, cd), (select distinct c.ca from [dba.tc] c) av? (av_?) where a.cd=b.cd and a.ca=av?.av_? order by ?
 
 
 Trace Statistics:
@@ -477,7 +477,7 @@ hash-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH MATERIALIZE */ a.ca, a.cb, a.cc, a.cd from ta a, tb b where a.cd=b.cd and b.ca= ?:?  and a.ca= ?:? 
+select /*+ USE_HASH NO_PARALLEL_HASH_JOIN MATERIALIZE */ a.ca, a.cb, a.cc, a.cd from ta a, tb b where a.cd=b.cd and b.ca= ?:?  and a.ca= ?:? 
 Query plan:
 temp(order by)
     subplan: hash-join (inner join)
@@ -494,7 +494,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-with cte(ca, cb, cc, cd) as (select /*+ USE_HASH MATERIALIZE */ a.ca, a.cb, a.cc, a.cd from ta a, tb b where a.cd=b.cd and b.ca= ?:?  and a.ca= ?:? )select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ c.cd, d.cd from cte c, td d where c.cd=d.cd and d.cc= ?:?  and c.cc= ?:?  order by ?
+with cte(ca, cb, cc, cd) as (select /*+ USE_HASH NO_PARALLEL_HASH_JOIN MATERIALIZE */ a.ca, a.cb, a.cc, a.cd from ta a, tb b where a.cd=b.cd and b.ca= ?:?  and a.ca= ?:? )select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ c.cd, d.cd from cte c, td d where c.cd=d.cd and d.cc= ?:?  and c.cc= ?:?  order by ?
 ===================================================
 trace    
 
@@ -503,14 +503,14 @@ Query Plan:
     INDEX SCAN (a.i_a) (key range: a.ca= ?:? )
     INDEX SCAN (b.i_a) (key range: b.ca= ?:? )
 
-  rewritten query: select /*+ USE_HASH MATERIALIZE */ a.ca, a.cb, a.cc, a.cd from [dba.ta] a, [dba.tb] b where a.cd=b.cd and b.ca= ?:?  and a.ca= ?:? 
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN MATERIALIZE */ a.ca, a.cb, a.cc, a.cd from [dba.ta] a, [dba.tb] b where a.cd=b.cd and b.ca= ?:?  and a.ca= ?:? 
 
   SORT (order by)
     HASH JOIN (inner join)
       TABLE SCAN (c)
       TABLE SCAN (d)
 
-  rewritten query: with cte(ca, cb, cc, cd) as (select /*+ USE_HASH MATERIALIZE */ a.ca, a.cb, a.cc, a.cd from [dba.ta] a, [dba.tb] b where a.cd=b.cd and b.ca= ?:?  and a.ca= ?:? )select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ c.cd, d.cd from [dba.cte] c, [dba.td] d where c.cd=d.cd and d.cc= ?:?  and c.cc= ?:?  order by ?
+  rewritten query: with cte(ca, cb, cc, cd) as (select /*+ USE_HASH NO_PARALLEL_HASH_JOIN MATERIALIZE */ a.ca, a.cb, a.cc, a.cd from [dba.ta] a, [dba.tb] b where a.cd=b.cd and b.ca= ?:?  and a.ca= ?:? )select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ c.cd, d.cd from [dba.cte] c, [dba.td] d where c.cd=d.cd and d.cc= ?:?  and c.cc= ?:?  order by ?
 
 
 Trace Statistics:
@@ -566,7 +566,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd from ta a, tb b where a.cd=b.cd and b.cc= ?:?  and a.cc= ?:?  order by ?
+select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ a.cd, b.cd from ta a, tb b where a.cd=b.cd and b.cc= ?:?  and a.cc= ?:?  order by ?
 ===================================================
 trace    
 {
@@ -585,7 +585,7 @@ trace
         }
       ]
     },
-    "rewritten query": "select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd from [dba.ta] a, [dba.tb] b where a.cd=b.cd and b.cc= ?:?  and a.cc= ?:?  order by ?"
+    "rewritten query": "select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ a.cd, b.cd from [dba.ta] a, [dba.tb] b where a.cd=b.cd and b.cc= ?:?  and a.cc= ?:?  order by ?"
   },
   "Trace Statistics": {
     "SELECT": {
