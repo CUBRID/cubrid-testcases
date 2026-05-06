@@ -177,20 +177,20 @@ idx-join (inner join)
     outer: idx-join (inner join)
                outer: idx-join (inner join)
                           outer: sscan
-                                     class: c node[?]
+                                     class: b node[?]
                                      cost:  ? card ?
                           inner: iscan
-                                     class: b_? node[?]
+                                     class: c node[?]
                                      index: idx term[?] (covers)
                                      cost:  ? card ?
                           cost:  ? card ?
                inner: iscan
-                          class: a node[?]
+                          class: b_? node[?]
                           index: idx term[?] (covers)
                           cost:  ? card ?
                cost:  ? card ?
     inner: iscan
-               class: b node[?]
+               class: a node[?]
                index: idx term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
@@ -211,20 +211,20 @@ idx-join (inner join)
     outer: idx-join (inner join)
                outer: idx-join (inner join)
                           outer: sscan
-                                     class: c node[?]
+                                     class: b node[?]
                                      cost:  ? card ?
                           inner: iscan
-                                     class: b_? node[?]
+                                     class: c node[?]
                                      index: idx term[?] (covers)
                                      cost:  ? card ?
                           cost:  ? card ?
                inner: iscan
-                          class: a node[?]
+                          class: b_? node[?]
                           index: idx term[?] (covers)
                           cost:  ? card ?
                cost:  ? card ?
     inner: iscan
-               class: b node[?]
+               class: a node[?]
                index: idx term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
@@ -275,25 +275,25 @@ idx-join (inner join)
     outer: idx-join (inner join)
                outer: idx-join (inner join)
                           outer: sscan
-                                     class: b_? node[?]
+                                     class: c node[?]
                                      cost:  ? card ?
                           inner: iscan
-                                     class: a node[?]
+                                     class: b node[?]
                                      index: idx term[?] (covers)
                                      cost:  ? card ?
                           cost:  ? card ?
                inner: iscan
-                          class: b node[?]
+                          class: b_? node[?]
                           index: idx term[?] (covers)
                           cost:  ? card ?
                cost:  ? card ?
     inner: iscan
-               class: c node[?]
+               class: a node[?]
                index: idx term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
-Query stmt: [Warning: HINT ignored]
-select count(*) from tc a, ta b_?, tb b, tc c where (a.cola=b_?.cola) and (b_?.cola=b.cola) and b_?.cola=c.cola
+Query stmt:
+select /*+ LEADING(c, b, a) */ count(*) from tc a, ta b_?, tb b, tc c where (a.cola=b_?.cola) and (b_?.cola=b.cola) and b_?.cola=c.cola
 ===================================================
     
 Case 10: conflicting LEADING in outer+subquery; subquery LEADING must be dropped after view merge     
@@ -307,15 +307,15 @@ idx-join (inner join)
     outer: idx-join (inner join)
                outer: idx-join (inner join)
                           outer: sscan
-                                     class: a node[?]
+                                     class: b node[?]
                                      cost:  ? card ?
                           inner: iscan
-                                     class: b_? node[?]
+                                     class: a node[?]
                                      index: idx term[?] (covers)
                                      cost:  ? card ?
                           cost:  ? card ?
                inner: iscan
-                          class: b node[?]
+                          class: b_? node[?]
                           index: idx term[?] (covers)
                           cost:  ? card ?
                cost:  ? card ?
@@ -435,15 +435,15 @@ idx-join (inner join)
     outer: idx-join (inner join)
                outer: idx-join (inner join)
                           outer: sscan
-                                     class: a node[?]
+                                     class: b node[?]
                                      cost:  ? card ?
                           inner: iscan
-                                     class: v node[?]
+                                     class: a node[?]
                                      index: idx term[?] (covers)
                                      cost:  ? card ?
                           cost:  ? card ?
                inner: iscan
-                          class: b node[?]
+                          class: v node[?]
                           index: idx term[?] (covers)
                           cost:  ? card ?
                cost:  ? card ?
@@ -620,18 +620,18 @@ Query plan:
 idx-join (inner join)
     outer: idx-join (inner join)
                outer: sscan
-                          class: x node[?]
+                          class: b node[?]
                           cost:  ? card ?
                inner: iscan
-                          class: v node[?]
+                          class: x node[?]
                           index: idx term[?] (covers)
-                          sargs: term[?]
-                          subqs: ?
                           cost:  ? card ?
                cost:  ? card ?
     inner: iscan
-               class: b node[?]
+               class: v node[?]
                index: idx term[?] (covers)
+               sargs: term[?]
+               subqs: ?
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
