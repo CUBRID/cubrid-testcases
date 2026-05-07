@@ -10,6 +10,8 @@ PARTITION BY LIST (test_varchar) (
     PARTITION p2 VALUES IN ('iii','jjj')
 );
 
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'list_test' order by partition_name;
+
 insert into list_test values (1,1,'aaa','aaa','2000-01-01 09:00:00');
 insert into list_test values (2,2,'bbb','bbb','2000-01-02 09:00:00');
 insert into list_test values (3,3,'ccc','ccc','2000-01-03 09:00:00');
@@ -24,6 +26,7 @@ insert into list_test values (10,31,'jjj','jjj','2000-04-01 09:00:00');
 ALTER TABLE list_test drop partition p1;
 
 select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'list_test' order by partition_name;
+select attr_name, class_name, default_value, is_partition_key from db_attribute where class_name = 'list_test' order by 1;
 
 insert into list_test values (5,12,'eee','eee','2000-02-02 09:00:00');
 
