@@ -264,7 +264,7 @@ Query stmt:
 select /*+ LEADING(b, a, c) */ count(*) from tc a, ta b_?, tb b, tc c where (a.cola=b_?.cola) and (b_?.cola=b.cola) and b_?.cola=c.cola
 ===================================================
     
-Case 9: inline-view LEADING(c,b,a) should be ignored (no direct join edge between c and b)     
+Case 9: inline-view LEADING(c,b,a) (3 args) via transitive join term; verify hint is applied even without a direct join edge between c and b (join order c->b->a)
 
 ===================================================
 count(*)    
