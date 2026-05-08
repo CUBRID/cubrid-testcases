@@ -264,7 +264,39 @@ Query stmt:
 select /*+ LEADING(b, a, c) */ count(*) from tc a, ta b_?, tb b, tc c where (a.cola=b_?.cola) and (b_?.cola=b.cola) and b_?.cola=c.cola
 ===================================================
     
-Case 9: conflicting LEADING in outer+subquery; subquery LEADING must be dropped after view merge     
+Case 9: inline-view LEADING(c,b,a) should be ignored (no direct join edge between c and b)     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: idx-join (inner join)
+                          outer: sscan
+                                     class: c node[?]
+                                     cost:  ? card ?
+                          inner: iscan
+                                     class: b node[?]
+                                     index: idx term[?] (covers)
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: iscan
+                          class: b_? node[?]
+                          index: idx term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: a node[?]
+               index: idx term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(c, b, a) */ count(*) from tc a, ta b_?, tb b, tc c where (a.cola=b_?.cola) and (b_?.cola=b.cola) and b_?.cola=c.cola
+===================================================
+    
+Case 10: conflicting LEADING in outer+subquery; subquery LEADING must be dropped after view merge     
 
 ===================================================
 count(*)    
@@ -296,7 +328,7 @@ Query stmt:
 select /*+ LEADING(a, b) */ count(*) from tc a, ta b_?, tb b, tc c where (a.cola=b_?.cola) and (b_?.cola=b.cola) and b_?.cola=c.cola
 ===================================================
     
-Case 10: inline-view LEADING targets a non-renamed alias (tb b); ensure partial order is preserved after merge     
+Case 11: inline-view LEADING targets a non-renamed alias (tb b); ensure partial order is preserved after merge     
 
 ===================================================
 count(*)    
@@ -328,7 +360,7 @@ Query stmt:
 select /*+ LEADING(c, b) */ count(*) from tc a, ta b_?, tb b, tc c where (a.cola=b_?.cola) and (b_?.cola=b.cola) and b_?.cola=c.cola
 ===================================================
     
-Case 11: inline-view has ORDERED + LEADING (ORDERED removed on merge; LEADING should remain if no conflict)     
+Case 12: inline-view has ORDERED + LEADING (ORDERED removed on merge; LEADING should remain if no conflict)     
 
 ===================================================
 count(*)    
@@ -360,7 +392,7 @@ Query stmt:
 select /*+ LEADING(c, b) */ count(*) from tc a, ta v, tb b, tc c where (a.cola=v.cola) and (v.cola=b.cola) and v.cola=c.cola
 ===================================================
     
-Case 12: inline-view has multiple LEADING (only the first LEADING should be effective after merge)     
+Case 13: inline-view has multiple LEADING (only the first LEADING should be effective after merge)     
 
 ===================================================
 count(*)    
@@ -392,7 +424,7 @@ Query stmt:
 select /*+ LEADING(c, b) */ count(*) from tc a, ta v, tb b, tc c where (a.cola=v.cola) and (v.cola=b.cola) and v.cola=c.cola
 ===================================================
     
-Case 13: outer LEADING partial order + subquery LEADING exists (subquery LEADING should be removed due to conflict after view merge)     
+Case 14: outer LEADING partial order + subquery LEADING exists (subquery LEADING should be removed due to conflict after view merge)     
 
 ===================================================
 count(*)    
@@ -424,7 +456,7 @@ Query stmt:
 select /*+ LEADING(a, v) */ count(*) from tc a, ta v, tb b, tc c where (a.cola=v.cola) and (v.cola=b.cola) and v.cola=c.cola
 ===================================================
     
-Case 14: ORDERED dominates when ORDERED and LEADING specify different first tables (LEADING becomes unused)     
+Case 15: ORDERED dominates when ORDERED and LEADING specify different first tables (LEADING becomes unused)     
 
 ===================================================
 count(*)    
@@ -444,7 +476,7 @@ Query stmt:
 select /*+ ORDERED USE_NL(b, a) */ count(*) from ta a, tb b where a.cola=b.cola
 ===================================================
     
-Case 15: subquery ORDERED is removed on view merge; main query must not inherit ORDERED     
+Case 16: subquery ORDERED is removed on view merge; main query must not inherit ORDERED     
 
 ===================================================
 count(*)    
@@ -470,7 +502,7 @@ Query stmt:
 select distinct count(*) from ta a, tb v, tc c where (a.cola=v.cola) and (v.cola=c.cola)
 ===================================================
     
-Case 16: ORDERED inline-view + NO_MERGE (keep ORDERED by preventing view merge)     
+Case 17: ORDERED inline-view + NO_MERGE (keep ORDERED by preventing view merge)     
 
 ===================================================
 count(*)    
@@ -508,7 +540,7 @@ Query stmt:
 select count(*) from tc a, (select /*+ ORDERED NO_MERGE */ a.cola from ta a, tb b, tc c where a.cola=b.cola and a.cola=c.cola) v (cola) where a.cola=v.cola
 ===================================================
     
-Case 17: triangle join predicates + LEADING (partial order: b before c)     
+Case 18: triangle join predicates + LEADING (partial order: b before c)     
 
 ===================================================
 count(*)    
@@ -534,7 +566,7 @@ Query stmt:
 select /*+ LEADING(b, c) */ count(*) from ta a, tb b, tc c where a.cola=b.cola and b.cola=c.cola and a.cola=c.cola
 ===================================================
     
-Case 18: correlated EXISTS inline-view; no outer LEADING -> subquery LEADING should be copied on view merge     
+Case 19: correlated EXISTS inline-view; no outer LEADING -> subquery LEADING should be copied on view merge     
 
 ===================================================
 count(*)    
@@ -570,7 +602,7 @@ Query stmt:
 select /*+ LEADING(b, a) */ count(*) from tc x, ta v, tb b where (x.cola=v.cola) and (v.cola=b.cola) and  exists (select ? from tc c where (c.cola=v.cola) and inst_num()<= ?:? )
 ===================================================
     
-Case 19: correlated EXISTS inline-view; outer LEADING exists -> subquery LEADING should be removed due to conflict after view merge     
+Case 20: correlated EXISTS inline-view; outer LEADING exists -> subquery LEADING should be removed due to conflict after view merge     
 
 ===================================================
 count(*)    
