@@ -3,6 +3,7 @@ autocommit off;
 
 call login('dba','') on class db_user;
 create USER user2;
+commit;
 call login('user2','') on class db_user;
 create USER user1 groups dba;
 call find_user('dba')on class db_user to admin;
@@ -13,6 +14,8 @@ DROP user user1;
 DROP user user2;
 
 rollback;
+DROP user user2;
+commit;
 
 autocommit on;
 

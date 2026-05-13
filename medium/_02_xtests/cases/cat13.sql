@@ -3,6 +3,7 @@ call login('dba') on class db_user;
 call add_user('USER13_1') on class db_user;
 call add_user('USER13_2') on class db_user;
 create class foo13(da int, db int, dc int);
+commit;
 call login('USER13_1') on class db_user;
 select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment
 from db_class 
@@ -29,5 +30,9 @@ where class_name = 'foo13'
 order by class_name;
 call login('dba') on class db_user;
 drop class foo13;
+commit;
 call login('dba', '') on class db_user;
 rollback;
+drop user USER13_1;
+drop user USER13_2;
+commit;

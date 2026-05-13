@@ -2,6 +2,7 @@
 autocommit off;
 call login('dba') on class db_user;
 create user test_user ;
+commit;
 
 call login('test_user') on class db_user;
 create class test_class(col1 integer, col2 varchar(20));

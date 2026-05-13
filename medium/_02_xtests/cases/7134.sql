@@ -20,5 +20,7 @@ call login('public','') on class db_user;
 call login('dba','') on class db_user;
 commit;
 rollback;
+drop class if exists foo;
+commit;
 
 --+ holdcas off;
