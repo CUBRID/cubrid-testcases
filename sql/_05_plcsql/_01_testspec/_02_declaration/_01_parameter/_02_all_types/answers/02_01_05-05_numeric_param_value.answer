@@ -11,13 +11,13 @@
 null     
 
 
-i_min=-12346
-i_max=12346
-i_min=-12346
-i_max=12346
+i_min=-12345.6789
+i_max=12345.6789
+i_min=-12345.6789
+i_max=12345.6789
 ===================================================
 cast(12345.6789 as numeric)    
-12346     
+12345.6789     
 
 
 ===================================================
@@ -50,11 +50,11 @@ cast(0.123456789 as numeric(4,4))
 null     
 
 
-i_min=0
-i_max=0
+i_min=-0.123456789
+i_max=0.123456789
 ===================================================
 cast( cast(0.123456789 as numeric(4,4)) as numeric)    
-0     
+0.1235     
 
 
 ===================================================
@@ -66,8 +66,7 @@ This is a normal case because an error occurred in the parameter "NUMERIC(3,4)" 
 0
 
 ===================================================
-Error:-1360
-Stored procedure compile error: scale must be one of the integers zero to the precision
+0
 
 ===================================================
 Error:-493
@@ -152,15 +151,13 @@ Syntax: In line 1, column 1 before '; '
 Syntax error: unexpected 'end', expecting SELECT or VALUE or VALUES or '(' 
 
 ===================================================
-    
-null     
+Error:-889
+Stored procedure execute error: 
+  (line 2, column 25) numeric value does not fit in the target type's precision and scale
 
-
-i_min=-12346
-i_max=12346
 ===================================================
 cast(12345.6789 as numeric)    
-12346     
+12345.6789     
 
 
 ===================================================
