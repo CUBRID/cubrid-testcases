@@ -9,8 +9,8 @@
 ===================================================
 0
 ===================================================
-count(distinct col_a)    count(distinct col_b)    count(distinct col_c)    count(distinct col_d)    count(distinct col_e)    count(distinct col_f)    count(distinct col_g)    count(distinct col_h)    count(1)    
-?     ?     ?     ?     ?     ?     ?     ?     ?     
+c    
+1     
 
 ===================================================
 trace    
@@ -18,29 +18,11 @@ trace
 Query Plan:
   TABLE SCAN (dba.t)
 
-  rewritten query: select /*+ SAMPLING_SCAN */ count(distinct [dba.t].col_a), count(distinct [dba.t].col_b), count(distinct [dba.t].col_c), count(distinct [dba.t].col_d), count(distinct [dba.t].col_e), count(distinct [dba.t].col_f), count(distinct [dba.t].col_g), count(distinct [dba.t].col_h), count(*) from [dba.t] [dba.t]
+  rewritten query: select /*+ SAMPLING_SCAN */ ? as c from [dba.t] [dba.t] limit ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-     
-
-===================================================
-count(distinct col_a)    count(distinct col_b)    count(distinct col_c)    count(distinct col_d)    count(distinct col_e)    count(distinct col_f)    count(distinct col_g)    count(distinct col_h)    count(1)    
-1000000     50001     1     1001     11     101     10001     100001     1000000     
-
-===================================================
-trace    
-
-Query Plan:
-  TABLE SCAN (dba.t)
-
-  rewritten query: select count(distinct [dba.t].col_a), count(distinct [dba.t].col_b), count(distinct [dba.t].col_c), count(distinct [dba.t].col_d), count(distinct [dba.t].col_e), count(distinct [dba.t].col_f), count(distinct [dba.t].col_g), count(distinct [dba.t].col_h), count(*) from [dba.t] [dba.t]
-
-Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.t), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
      
 
 ===================================================
@@ -52,8 +34,10 @@ Trace Statistics:
 ===================================================
 0
 ===================================================
-count(distinct col_a)    count(distinct col_b)    count(distinct col_c)    count(distinct col_d)    count(distinct col_e)    count(distinct col_f)    count(distinct col_g)    count(distinct col_h)    count(1)    
-?     ?     ?     ?     ?     ?     ?     ?     ?     
+0
+===================================================
+c    
+1     
 
 ===================================================
 trace    
@@ -61,7 +45,7 @@ trace
 Query Plan:
   TABLE SCAN (dba.t)
 
-  rewritten query: select /*+ SAMPLING_SCAN */ count(distinct [dba.t].col_a), count(distinct [dba.t].col_b), count(distinct [dba.t].col_c), count(distinct [dba.t].col_d), count(distinct [dba.t].col_e), count(distinct [dba.t].col_f), count(distinct [dba.t].col_g), count(distinct [dba.t].col_h), count(*) from [dba.t] [dba.t]
+  rewritten query: select /*+ SAMPLING_SCAN */ ? as c from [dba.t] [dba.t] limit ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -70,28 +54,6 @@ Trace Statistics:
            PARTITION (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
            PARTITION (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
            PARTITION (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-     
-
-===================================================
-count(distinct col_a)    count(distinct col_b)    count(distinct col_c)    count(distinct col_d)    count(distinct col_e)    count(distinct col_f)    count(distinct col_g)    count(distinct col_h)    count(1)    
-1000000     50001     1     1001     11     101     10001     100001     1000000     
-
-===================================================
-trace    
-
-Query Plan:
-  TABLE SCAN (dba.t)
-
-  rewritten query: select count(distinct [dba.t].col_a), count(distinct [dba.t].col_b), count(distinct [dba.t].col_c), count(distinct [dba.t].col_d), count(distinct [dba.t].col_e), count(distinct [dba.t].col_f), count(distinct [dba.t].col_g), count(distinct [dba.t].col_h), count(*) from [dba.t] [dba.t]
-
-Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.t), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
-           PARTITION (table: dba.t__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-           PARTITION (table: dba.t__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-           PARTITION (table: dba.t__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-           PARTITION (table: dba.t__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
