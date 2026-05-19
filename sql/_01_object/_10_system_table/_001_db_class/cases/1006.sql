@@ -21,13 +21,13 @@ FROM _db_class c
 WHERE CURRENT_USER = 'DBA' 
       OR {c.owner.name} 
       SUBSETEQ (  SELECT SET{CURRENT_USER} + COALESCE(SUM(SET{t.g.name}), SET{})  
-                  FROM db_user u, TABLE(groups) AS t(g)  
+                  FROM _db_user u, TABLE(groups) AS t(g)  
                   WHERE u.name = CURRENT_USER) 
                         OR {c} SUBSETEQ (  SELECT SUM(SET{au.object_of})  
                                            FROM _db_auth au  
                                            WHERE {au.grantee.name} 
                                            SUBSETEQ (  SELECT SET{CURRENT_USER} + COALESCE(SUM(SET{t.g.name}), SET{})  
-                                                       FROM db_user u, TABLE(groups) AS t(g)  
+                                                       FROM _db_user u, TABLE(groups) AS t(g)  
                                                        WHERE u.name = CURRENT_USER) 
                                                        AND  au.auth_type = 'SELECT')
                                                        order by 1;

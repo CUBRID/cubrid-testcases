@@ -44,14 +44,14 @@ drop user a2345678901234567890123456789012;
 create user a234567890123456789012345678901;
 drop user a234567890123456789012345678901;
 
-call add_user ('a2345678901234567890123456789012','') on class db_user;
-call drop_user ('a2345678901234567890123456789012','') on class db_user;
+call add_user ('a2345678901234567890123456789012','') on class _db_user;
+call drop_user ('a2345678901234567890123456789012','') on class _db_user;
 
-call add_user ('a234567890123456789012345678901','') on class db_user;
-call drop_user ('a234567890123456789012345678901','') on class db_user;
+call add_user ('a234567890123456789012345678901','') on class _db_user;
+call drop_user ('a234567890123456789012345678901','') on class _db_user;
 
 
-call add_user ('aaaaaaaBBBBBBBcccccccDDDDDDDeee', '') on class db_user;
+call add_user ('aaaaaaaBBBBBBBcccccccDDDDDDDeee', '') on class _db_user;
 call login('aaaaaaaBBBBBBBcccccccDDDDDDDeee', '') on class db_user;
 
 create table foo(a int, b varchar default current_user);

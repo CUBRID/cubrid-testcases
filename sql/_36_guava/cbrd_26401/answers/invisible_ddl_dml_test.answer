@@ -1,0 +1,729 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+err     
+
+===================================================
+Error:-1371
+===================================================
+0
+===================================================
+    
+err     
+
+===================================================
+Error:-1371
+===================================================
+    
+err     
+
+===================================================
+Error:-1371
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     YES          null          
+c2     INTEGER     YES          null     invisible     
+
+===================================================
+    
+err     
+
+===================================================
+Error:-1371
+===================================================
+0
+===================================================
+    
+error     
+
+===================================================
+Error:-1371
+===================================================
+    
+err     
+
+===================================================
+Error:-1371
+===================================================
+0
+===================================================
+    
+err     
+
+===================================================
+Error:-494
+===================================================
+0
+===================================================
+0
+===================================================
+    
+err     
+
+===================================================
+Error:-1371
+===================================================
+0
+===================================================
+    
+err     
+
+===================================================
+Error:-1371
+===================================================
+0
+===================================================
+    
+err     
+
+===================================================
+Error:-1371
+===================================================
+0
+===================================================
+    
+err     
+
+===================================================
+Error:-1371
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+err ( at least one visible col )     
+
+===================================================
+Error:-1371
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+dba.tbl     CREATE TABLE [tbl] ([c1] INTEGER INVISIBLE AUTO_INCREMENT (1, 1) NOT NULL, [c2] INTEGER NOT NULL, [c3] INTEGER INVISIBLE DEFAULT 3, [c4] INTEGER, [c5] CHARACTER VARYING(32),  CONSTRAINT [pk_tbl_c1] PRIMARY KEY  ([c1])) REUSE_OID, COLLATE utf8_bin PARTITION BY HASH ([c1]) PARTITIONS 2     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     NO     PRI     null     auto_increment invisible     
+c2     INTEGER     NO          null          
+c3     INTEGER     YES          3     invisible     
+c4     INTEGER     YES          null          
+c5     VARCHAR(32)     YES          null          
+
+===================================================
+attr_name    class_name    owner_name    attr_type    def_order    from_class_name    from_owner_name    from_attr_name    data_type    prec    scale    charset    collation    domain_class_name    domain_owner_name    default_value    is_partition_key    is_nullable    is_invisible    comment    
+c1     tbl     DBA     INSTANCE     0     null     null     null     INTEGER     10     0     Not applicable     Not applicable     null     null     AUTO_INCREMENT     YES     NO     YES     null     
+c2     tbl     DBA     INSTANCE     1     null     null     null     INTEGER     10     0     Not applicable     Not applicable     null     null     null     NO     NO     NO     null     
+c3     tbl     DBA     INSTANCE     2     null     null     null     INTEGER     10     0     Not applicable     Not applicable     null     null     3     NO     YES     YES     null     
+c4     tbl     DBA     INSTANCE     3     null     null     null     INTEGER     10     0     Not applicable     Not applicable     null     null     null     NO     YES     NO     null     
+c5     tbl     DBA     INSTANCE     4     null     null     null     STRING     32     0     utf8     utf8_bin     null     null     null     NO     YES     NO     null     
+
+===================================================
+class_of    attr_name    attr_type    from_class_of    from_attr_name    def_order    data_type    default_value    domains    is_nullable    flags    comment    
+_db_class     c1     0     null     null     0     1     null     _db_domain,     0     7     null     
+_db_class     c2     0     null     null     1     1     null     _db_domain,     0     0     null     
+_db_class     c3     0     null     null     2     1     3     _db_domain,     1     2     null     
+_db_class     c4     0     null     null     3     1     null     _db_domain,     1     0     null     
+_db_class     c5     0     null     null     4     4     null     _db_domain,     1     0     null     
+
+===================================================
+0
+===================================================
+    
+err (c1,c2,c3 invisible. need c4,c5 value)     
+
+===================================================
+Error:-494
+===================================================
+1
+===================================================
+0
+===================================================
+    
+err (c2 not null constraint)     
+
+===================================================
+Error:-225
+===================================================
+1
+===================================================
+1
+===================================================
+2
+===================================================
+0
+===================================================
+0
+===================================================
+    
+only c4 c5     
+
+===================================================
+c4    c5    
+null     15     
+null     25     
+null     35     
+4     5     
+4     5     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tbl)
+
+  rewritten query: select [dba.tbl].c?, [dba.tbl].c? from [dba.tbl] [dba.tbl] order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.tbl__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.tbl__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+c1    c2    c3    c4    c5    
+1     2     3     4     5     
+2     2     3     4     5     
+3     12     3     null     15     
+4     22     3     null     25     
+5     32     3     null     35     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tbl)
+
+  rewritten query: select [dba.tbl].c?, [dba.tbl].c?, [dba.tbl].c?, [dba.tbl].c?, [dba.tbl].c? from [dba.tbl] [dba.tbl] order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.tbl__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.tbl__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+c4    c5    
+4     5     
+4     5     
+null     15     
+null     25     
+null     35     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tbl)
+
+  rewritten query: select [dba.tbl].c?, [dba.tbl].c?, [dba.tbl].c? from [dba.tbl] [dba.tbl] order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.tbl__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.tbl__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+c1    c2    
+1     2     
+2     2     
+3     12     
+4     22     
+5     32     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tbl)
+
+  rewritten query: select [dba.tbl].c?, [dba.tbl].c? from [dba.tbl] [dba.tbl] order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.tbl__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.tbl__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+c1    
+1     
+2     
+3     
+4     
+5     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tbl)
+
+  rewritten query: select [dba.tbl].c? from [dba.tbl] [dba.tbl] order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.tbl__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.tbl__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+c4    c5    
+4     5     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    INDEX SCAN (dba.tbl.pk_tbl_c?) (key range: [dba.tbl].c?= ?:? )
+
+  rewritten query: select [dba.tbl].c?, [dba.tbl].c? from [dba.tbl] [dba.tbl] where [dba.tbl].c?= ?:?  order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbl.pk_tbl_c?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+           PARTITION (index: dba.tbl__p__p?.pk_tbl_c?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+c1    c2    
+1     2     
+2     2     
+3     12     
+4     22     
+5     32     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tbl)
+
+  rewritten query: select [dba.tbl].c?, [dba.tbl].c? from [dba.tbl] [dba.tbl] order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.tbl__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.tbl__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+err (at least one visible)     
+
+===================================================
+Error:-493
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     NO     PRI     null     auto_increment invisible     
+c2     INTEGER     NO          null     invisible     
+c3     INTEGER     YES          3     invisible     
+c4     INTEGER     YES          null          
+c5     VARCHAR(32)     YES          null     invisible     
+updated_date     DATETIME     YES          null     invisible ON UPDATE CURRENT_TIMESTAMP     
+
+===================================================
+c4    
+null     
+null     
+null     
+4     
+4     
+
+===================================================
+1
+===================================================
+c1    c2    c3    c4    c5    if( CURRENT_DATETIME -updated_date>=0 and  CURRENT_DATETIME -updated_date<10000, 'ok', 'nok')    
+1     0     3     4     5     ok     
+2     2     3     4     5     nok     
+3     12     3     null     15     nok     
+4     22     3     null     25     nok     
+5     32     3     null     35     nok     
+
+===================================================
+1
+===================================================
+c1    c2    c3    c4    c5    if( CURRENT_DATETIME -updated_date>=0 and  CURRENT_DATETIME -updated_date<10000, 'ok', 'nok')    
+2     2     3     4     5     nok     
+3     12     3     null     15     nok     
+4     22     3     null     25     nok     
+5     32     3     null     35     nok     
+
+===================================================
+    
+partition     
+
+===================================================
+c4    
+null     
+null     
+
+===================================================
+c4    
+4     
+null     
+
+===================================================
+c1    c2    c3    c4    c5    updated_date    
+3     12     3     null     15     null     
+4     22     3     null     25     null     
+
+===================================================
+c1    c2    c3    c4    c5    updated_date    
+2     2     3     4     5     null     
+5     32     3     null     35     null     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     NO     PRI     null     auto_increment invisible     
+c2     INTEGER     NO          null     invisible     
+c3     INTEGER     YES          3     invisible     
+c4     INTEGER     YES          null          
+c5     VARCHAR(32)     YES          null     invisible     
+updated_date     DATETIME     YES          null     invisible ON UPDATE CURRENT_TIMESTAMP     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     NO     PRI     null     auto_increment invisible     
+c2     INTEGER     NO          null     invisible     
+c3     INTEGER     YES          3     invisible     
+c4     INTEGER     YES          null          
+c5     VARCHAR(32)     YES          null     invisible     
+updated_date     DATETIME     YES          null     invisible ON UPDATE CURRENT_TIMESTAMP     
+
+===================================================
+TABLE    CREATE TABLE    
+dba.tbl__p__p0     CREATE TABLE [tbl__p__p0] UNDER [dba.tbl] REUSE_OID, COLLATE utf8_bin     
+
+===================================================
+    
+still invisible     
+
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     NO     PRI     null     auto_increment invisible     
+c2     INTEGER     NO          null     invisible     
+c3     INTEGER     YES          3     invisible     
+c4     INTEGER     YES          null          
+c5     VARCHAR(32)     YES          null     invisible     
+updated_date     DATETIME     YES          null     invisible ON UPDATE CURRENT_TIMESTAMP     
+
+===================================================
+0
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     NO     PRI     null     auto_increment invisible     
+c2     INTEGER     NO          null     invisible     
+c3     INTEGER     YES          3     invisible     
+c4     INTEGER     YES          null          
+c5     VARCHAR(32)     YES          null          
+
+===================================================
+TABLE    CREATE TABLE    
+dba.tbl     CREATE TABLE [tbl] ([c1] INTEGER INVISIBLE AUTO_INCREMENT (1, 1) NOT NULL, [c2] INTEGER INVISIBLE NOT NULL, [c3] INTEGER INVISIBLE DEFAULT 3, [c4] INTEGER, [c5] CHARACTER VARYING(32),  CONSTRAINT [pk_tbl_c1] PRIMARY KEY  ([c1]),  INDEX [tbl_c1_c2_idx] ([c1], [c2])) REUSE_OID, COLLATE utf8_bin PARTITION BY HASH ([c1]) PARTITIONS 2     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     NO     PRI     null     auto_increment invisible     
+c2     INTEGER     NO          null     invisible     
+c3     INTEGER     YES          3     invisible     
+c4     INTEGER     YES          null          
+c5     VARCHAR(32)     YES          null          
+
+===================================================
+TABLE    CREATE TABLE    
+dba.tbl__p__p0     CREATE TABLE [tbl__p__p0] UNDER [dba.tbl] REUSE_OID, COLLATE utf8_bin     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     NO     PRI     null     auto_increment invisible     
+c2     INTEGER     NO          null     invisible     
+c3     INTEGER     YES          3     invisible     
+c4     INTEGER     YES          null          
+c5     VARCHAR(32)     YES          null          
+
+===================================================
+TABLE    CREATE TABLE    
+dba.tbl__p__p1     CREATE TABLE [tbl__p__p1] UNDER [dba.tbl] REUSE_OID, COLLATE utf8_bin     
+
+===================================================
+0
+===================================================
+    
+err (no c1)     
+
+===================================================
+Error:-494
+===================================================
+c4    c5    
+null     15     
+null     25     
+null     35     
+4     5     
+
+===================================================
+VIEW    CREATE VIEW    
+dba.tbl_v     select [dba.tbl].[c4], [dba.tbl].[c5] from [dba.tbl] [dba.tbl]     
+
+===================================================
+0
+===================================================
+c1    c2    c3    c4    c5    
+2     2     3     4     5     
+3     12     3     null     15     
+4     22     3     null     25     
+5     32     3     null     35     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+err (no c1)     
+
+===================================================
+Error:-494
+===================================================
+c1    c2    c3    c4    c5    
+2     2     3     4     5     
+3     12     3     null     15     
+4     22     3     null     25     
+5     32     3     null     35     
+
+===================================================
+0
+===================================================
+VIEW    CREATE VIEW    
+dba.tbl_v     select [dba.tbl].[c4], [dba.tbl].[c5] from [dba.tbl] [dba.tbl]     
+dba.tbl_v     select [dba.tbl].[c1], [dba.tbl].[c5] from [dba.tbl] [dba.tbl]     
+
+===================================================
+    
+tbl_v column number was 2, and new query still get 2 columns. so it work     
+
+===================================================
+c4    c5    
+null     15     
+null     25     
+null     35     
+2     5     
+3     15     
+4     5     
+4     25     
+5     35     
+
+===================================================
+0
+===================================================
+VIEW    CREATE VIEW    
+dba.tbl_v     select [dba.tbl].[c1], [dba.tbl].[c5] from [dba.tbl] [dba.tbl]     
+
+===================================================
+c1    c5    
+2     5     
+3     15     
+4     25     
+5     35     
+
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     NO     PRI     null     auto_increment     
+c2     INTEGER     NO          null     invisible     
+c3     INTEGER     YES          3     invisible     
+c4     INTEGER     YES          null     invisible     
+c5     VARCHAR(32)     YES          null          
+
+===================================================
+0
+===================================================
+trigger_name    target_attr_name    target_attr_type    
+tbl_c4_trigger     null     INSTANCE     
+
+===================================================
+Error:-517
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+c1    c5    
+2     5     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tbl.pk_tbl_c?) (key range: [dba.tbl].c?= ?:? )
+
+  rewritten query: select [dba.tbl].c?, [dba.tbl].c? from [dba.tbl] [dba.tbl] where [dba.tbl].c?= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbl.pk_tbl_c?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+c1    c2    
+2     2     
+3     12     
+4     22     
+5     32     
+7     22     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tbl.tbl_c?_c?_idx) (covered: true)
+  skip order by: true
+
+  rewritten query: select [dba.tbl].c?, [dba.tbl].c? from [dba.tbl] [dba.tbl] order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbl.tbl_c?_c?_idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+0
+===================================================
+c1    c2    c3    c4    c5    
+2     2     3     4     5     
+3     12     3     null     15     
+4     22     3     null     25     
+5     32     3     null     35     
+7     22     3     24     25     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     NO     PRI     null     auto_increment     
+c2     INTEGER     NO          null     invisible     
+c3     INTEGER     YES          3     invisible     
+c4     INTEGER     YES          null     invisible     
+c5     VARCHAR(32)     YES          null          
+
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     NO     PRI     null     auto_increment     
+c2     INTEGER     NO          null     invisible     
+c3     INTEGER     YES          3     invisible     
+c4     INTEGER     YES          null          
+c5     VARCHAR(32)     YES          null          
+
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     NO     PRI     null     auto_increment     
+c2     INTEGER     NO          null     invisible     
+c3     INTEGER     YES          3     invisible     
+c4     INTEGER     YES          null          
+c5     VARCHAR(32)     YES          null          
+
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+
+===================================================
+0
+===================================================
+    
+same name column. parent's c2 was invisible not null     
+
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     NO     PRI     null     auto_increment     
+c3     INTEGER     YES          3     invisible     
+c4     INTEGER     YES          null          
+c5     VARCHAR(32)     YES          null          
+c2     INTEGER     YES          null          
+c6     INTEGER     YES          null          
+
+===================================================
+0
+===================================================
+    
+inheritance - parent visibility changing / should we block?     
+
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     NO     PRI     null     auto_increment invisible     
+c2     INTEGER     NO          null     invisible     
+c3     INTEGER     YES          3     invisible     
+c4     INTEGER     YES          null          
+c5     VARCHAR(32)     YES          null          
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     NO     PRI     null     auto_increment invisible     
+c2     INTEGER     NO          null     invisible     
+c3     INTEGER     YES          3     invisible     
+c4     INTEGER     YES          null          
+c5     VARCHAR(32)     YES          null          
+c6     INTEGER     YES          null          
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

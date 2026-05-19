@@ -3,7 +3,7 @@
 call login('dba') on class db_user;
 create user u1 password 'pass' comment 'this is a comment for u1';
 
-select name, id, password, direct_groups, groups, comment from db_user where name = 'U1';
+select name, id, password, direct_groups, groups, comment from _db_user where name = 'U1';
 
 -- change auth
 call login('public') on class db_user;
@@ -15,15 +15,15 @@ call login('dba') on class db_user;
 -- success this time
 alter user u1 comment 'new comment for u1';
 
-select name, id, password, direct_groups, groups, comment from db_user where name = 'U1';
+select name, id, password, direct_groups, groups, comment from _db_user where name = 'U1';
 
 alter user u1 comment '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0';
 
-select name, id, password, direct_groups, groups, comment from db_user where name = 'U1';
+select name, id, password, direct_groups, groups, comment from _db_user where name = 'U1';
 
 alter user u1 comment '3456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0';
 
-select name, id, password, direct_groups, groups, comment from db_user where name = 'U1';
+select name, id, password, direct_groups, groups, comment from _db_user where name = 'U1';
 
 alter user u1;
 drop user u1;

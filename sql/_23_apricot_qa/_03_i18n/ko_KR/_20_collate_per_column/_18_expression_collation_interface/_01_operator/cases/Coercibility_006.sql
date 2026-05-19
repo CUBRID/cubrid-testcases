@@ -1,7 +1,7 @@
 --+ holdcas on;
 set names utf8;
-CALL add_user ('用户', '') ON CLASS db_user;
-CALL add_user ('각', '') ON CLASS db_user;
+CALL add_user ('用户', '') ON CLASS _db_user;
+CALL add_user ('각', '') ON CLASS _db_user;
 set names iso88591 collate iso88591_en_cs;
 alter user 각 PASSWORD 'Test';
 set names iso88591 collate iso88591_en_ci;

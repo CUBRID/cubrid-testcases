@@ -7,14 +7,14 @@ CALL find_user( CLASS db_user, 'DBA' ) to x;
 evaluate 'add member test_user1 to dba group';
 CALL add_member('TEST_USER1') ON x;
 
-SELECT u.name, x.name as groups FROM db_user AS u, TABLE(u.direct_groups) AS g(x) order by u.name;
+SELECT u.name, x.name as groups FROM _db_user AS u, TABLE(u.direct_groups) AS g(x) order by u.name;
 
 CALL find_user('DBA') ON CLASS db_user TO x;
 
 evaluate 'drop member test_user1 from dba group';
 CALL drop_member('TEST_USER1') ON x;
 
-SELECT u.name, x.name as groups FROM db_user AS u, TABLE(u.direct_groups) AS g(x) order by u.name;
+SELECT u.name, x.name as groups FROM _db_user AS u, TABLE(u.direct_groups) AS g(x) order by u.name;
 
 
 evaluate 'connect to public user';
