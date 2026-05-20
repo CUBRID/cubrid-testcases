@@ -185,17 +185,35 @@ end;
 
 drop procedure demo_default_value11;
 
--- error, default value is over 255 length
-select 'error test, data overflow' from dual;
+-- default value length over 255 allow after (CBRD-26676)
+evaluate 'Default parameter length 255';
 create or replace procedure demo_default_value12 (
         a in varchar:= 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
 ) as
 begin
-    DBMS_OUTPUT.put_line(a);
+    DBMS_OUTPUT.put_line('length : ' || length(a) || ', a = ' || a);
 end;
+
+call demo_default_value12();
 
 --error drop
 drop procedure demo_default_value12;
+
+-- default value overflow : length over 2048 (CBRD-26676)
+evaluate 'error test, data overflow';
+create or replace procedure demo_default_overflow (
+    a in varchar:= rpad('a', 2049, 'a')
+) as
+begin
+    DBMS_OUTPUT.put_line('length : ' || length(a) || ', a = ' || a);
+end;
+
+-- error call
+call demo_default_overflow();
+
+--error drop
+drop procedure demo_default_overflow;
+
 
 -- CBRD-25219
 select 'char default' from dual;

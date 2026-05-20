@@ -25,7 +25,7 @@ insert into list_test values (10,31,'jjj','jjj','2000-04-01 09:00:00');
 ALTER TABLE list_test REORGANIZE PARTITION p0,p1,p2 INTO ( 
 PARTITION p3 VALUES IN (1,2,3,11,12,13,null,21,22,23,31));
 
-select * from db_partition where class_name = 'list_test' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'list_test' order by partition_name;
 insert into list_test values (11,11,'ggg','ggg','2000-05-01 09:00:00');
 insert into list_test values (12,22,'eee','eee','2000-05-02 09:00:00');
 

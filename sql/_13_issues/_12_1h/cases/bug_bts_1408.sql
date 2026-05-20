@@ -11,7 +11,7 @@ PARTITION BY RANGE (host_year)
  PARTITION before_2000 VALUES LESS THAN (2000)
 );
 
-select * from db_partition order by 3;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition order by 3;
 select * from _db_partition order by pname;
 
 insert into participant2 values(1998,'USA',10,20,30);
@@ -19,13 +19,13 @@ insert into participant2 values(1998,'USA',10,20,30);
 ALTER TABLE participant2 REORGANIZE PARTITION before_2000,before_2008 into (
 PARTITION before_2008 VALUES LESS THAN (2008));
 
-select * from db_partition order by 3;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition order by 3;
 select * from _db_partition order by pname;
 
 select participant2 into :x from participant2;
 
 drop table participant2;
-select * from db_partition;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition;
 select * from _db_partition;
 
 --+ holdcas off;

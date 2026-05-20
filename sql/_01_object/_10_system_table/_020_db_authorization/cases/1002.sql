@@ -18,9 +18,9 @@ grant index on test_class to test_user;
 grant execute on test_class to test_user;
 
 select * from db_authorization
-where  owner.name='TEST_USER';
+where  owner='TEST_USER';
 
-call check_authorization(127) on class db_authorization;
+call check_authorization(127) on class _db_authorization;
 
 
 drop user test_user;
