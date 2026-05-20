@@ -27,7 +27,7 @@ ALTER TABLE list_test REORGANIZE PARTITION p1 INTO (
 PARTITION p3 VALUES IN ('eee','fff','iii'),
 PARTITION p4 VALUES IN ('ggg','hhh',null,'kkk'));
 
-select * from db_partition where class_name = 'list_test' order by partition_name; 
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'list_test' order by partition_name; 
 
 insert into list_test values (11,41,'hhh','hhh','2000-05-01 09:00:00');
 insert into list_test values (12,42,'eee','eee','2000-05-02 09:00:00');

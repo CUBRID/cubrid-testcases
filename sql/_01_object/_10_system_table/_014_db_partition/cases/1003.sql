@@ -18,7 +18,7 @@ insert into test_class values ('Line 4', 4004, 'Guachon');
 insert into test_class values ('Line 4', 4005, 'Kumjung');
 insert into test_class values ('Line 5', 5001, 'Kangdong');
 
-select * from db_partition
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition
 where class_name = 'test_class' order by 1,2,3;
 
 drop class test_class;

@@ -591,8 +591,8 @@ drop table t1;
 
 create table t1 (a varchar(100) default USER, b int)
 PARTITION BY HASH (a) PARTITIONS 4;
-CALL add_user('test1','test1') ON CLASS db_user;
-CALL add_user('test2','test2') ON CLASS db_user;
+CALL add_user('test1','test1') ON CLASS _db_user;
+CALL add_user('test2','test2') ON CLASS _db_user;
 GRANT INSERT ON ALL t1 TO test1, test2;
 GRANT SELECT ON ALL t1 TO test1, test2;
 CALL login('test1','test1') ON CLASS db_user;
@@ -602,14 +602,14 @@ insert into dba.t1(b) values (2);
 CALL login('dba','') ON CLASS db_user;
 select * from t1 order by 1,2;
 drop table t1;
-CALL drop_user('test1') ON CLASS db_user;
-CALL drop_user('test2') ON CLASS db_user;
+CALL drop_user('test1') ON CLASS _db_user;
+CALL drop_user('test2') ON CLASS _db_user;
 
 
 create table t1 (a varchar(100) default USER unique, b int)
 PARTITION BY HASH (a) PARTITIONS 4;
-CALL add_user('test1','test1') ON CLASS db_user;
-CALL add_user('test2','test2') ON CLASS db_user;
+CALL add_user('test1','test1') ON CLASS _db_user;
+CALL add_user('test2','test2') ON CLASS _db_user;
 GRANT INSERT ON ALL t1 TO test1, test2;
 GRANT SELECT ON ALL t1 TO test1, test2;
 CALL login('test1','test1') ON CLASS db_user;
@@ -619,8 +619,8 @@ insert into dba.t1(b) values (2);
 CALL login('dba','') ON CLASS db_user;
 select * from t1 order by 1,2;
 drop table t1;
-CALL drop_user('test1') ON CLASS db_user;
-CALL drop_user('test2') ON CLASS db_user;
+CALL drop_user('test1') ON CLASS _db_user;
+CALL drop_user('test2') ON CLASS _db_user;
 
 show tables;
 drop variable @a;

@@ -14,7 +14,7 @@ PARTITION BY LIST (test_char) (
 );
 
 
-select * from db_partition where class_name like 'list%';
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name like 'list%';
 
 
 drop table list_test;
