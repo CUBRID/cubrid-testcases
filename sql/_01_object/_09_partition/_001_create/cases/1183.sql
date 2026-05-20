@@ -10,7 +10,7 @@ partition p2 values in  ('2007-01-01 11:00:00','2007-01-01 11:10:00','2007-01-01
 
 
 
-select * from db_partition where class_name like '%za%' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name like '%za%' order by partition_name;
 
 
 drop class za;

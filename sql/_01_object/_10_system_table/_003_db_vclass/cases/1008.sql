@@ -8,7 +8,7 @@ class attribute (meal_type string default 'snack')
 as
 select serving_hours from test_class;
 
-select * from db_vclass
+select vclass_name, owner_name, vclass_def, comment from db_vclass
 where vclass_name = 'v_test_class';
 drop class test_class;
 drop vclass v_test_class;

@@ -11,7 +11,7 @@ insert into tt select rownum*100,cast(rownum*100 as varchar) from db_class limit
 insert into tt select -si+10,cast(-si+10 as varchar) from tt;
 insert into tt select * from tt; 
 
-select * from db_partition where class_name='tt' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name='tt' order by partition_name;
 select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where class_name like'tt%' order by 1;
 
 select si,count(*) from tt__p__p3 group by si;

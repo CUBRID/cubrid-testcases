@@ -17,6 +17,6 @@ partition p4 values less than ('ppp'),
 partition p5 values less than ('rrr'),
 partition p6 values less than ('uuu')
 ); 
-select * from db_partition order by 3,4;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition order by 3,4;
 
 drop class range_test;

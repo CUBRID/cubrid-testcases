@@ -29,6 +29,6 @@ ALTER TABLE range_test REORGANIZE PARTITION p1 INTO (
 PARTITION p3 VALUES LESS THAN ('eee'),
 PARTITION p4 VALUES LESS THAN ('hhh'));
 
-select * from db_partition where class_name = 'range_test' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'range_test' order by partition_name;
 
 drop table range_test;
