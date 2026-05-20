@@ -43,7 +43,7 @@ C1: COMMIT;
 MC: wait until C1 ready;
 
 C1: login as 'company';
-C1: CALL add_user ('jones', '') ON CLASS db_user;
+C1: CREATE USER jones;
 C1: select name from db_user order by 1;
 MC: wait until C1 ready;
 C1: COMMIT;
