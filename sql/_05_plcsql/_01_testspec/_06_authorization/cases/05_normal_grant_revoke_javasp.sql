@@ -13,7 +13,7 @@ CREATE FUNCTION t1.test2() RETURN int as
 language java name 'SpTest3.typetestint0() return int';
 GRANT EXECUTE ON PROCEDURE t1.test2 TO dba;
 
-SELECT * FROM db_auth WHERE grantee_name = 'T1';
+SELECT grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable FROM db_auth WHERE grantee_name = 'T1';
 SHOW GRANTS FOR T1;
 
 -- DBA needs not permission
@@ -22,7 +22,7 @@ SHOW GRANTS FOR DBA;
 call login('t1','') on class db_user;
 
 -- in t1
-SELECT * FROM db_auth WHERE grantee_name = 'T1';
+SELECT grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable FROM db_auth WHERE grantee_name = 'T1';
 SHOW GRANTS;
 
 drop function test2;

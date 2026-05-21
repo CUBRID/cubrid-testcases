@@ -13,7 +13,7 @@ select * from vdml_0001 order by 1,2;
 select * from vdml_0002 order by 1,2;
 select * from vdml_0003 order by 1,2;
 
-select * from db_vclass
+select vclass_name, owner_name, vclass_def, comment from db_vclass
 where  vclass_name like 'vdml_%' order by 1;
 
 drop class min1;
