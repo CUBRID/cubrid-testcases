@@ -31,9 +31,9 @@ grant select, alter on t1_l to u2 with grant option;
 evaluate 'ERROR: Invalid partition requests';
 grant insert on t1_l__p__p1 to u2 with grant option;
 
-select * from db_auth where grantee_name != 'PUBLIC' order by object_name, auth_type;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by object_name, auth_type;
 
-select owner.name, grants from db_authorization where owner.name != 'PUBLIC' order by owner.name;
+select owner, grants from db_authorization where owner != 'PUBLIC' order by owner;
 
 
 evaluate 'connect to dba & drop user u2';
@@ -41,9 +41,9 @@ call login ('dba') on class db_user;
 
 drop user u2;
 
-select * from db_auth where grantee_name != 'PUBLIC';
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC';
 
-select owner.name, grants from db_authorization where owner.name != 'PUBLIC';
+select owner, grants from db_authorization where owner != 'PUBLIC';
 
 
 evaluate 'Test done';
