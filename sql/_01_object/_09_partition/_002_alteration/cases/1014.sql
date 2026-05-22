@@ -26,7 +26,7 @@ insert into list_test values (10,31,'jjj','jjj','2000-04-01 09:00:00');
 
 ALTER TABLE list_test drop partition p1;
 
-select * from db_partition where class_name = 'list_test' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'list_test' order by partition_name;
 
 select * from list_test order by 1;
 select * from list_test__p__p0 order by 1;

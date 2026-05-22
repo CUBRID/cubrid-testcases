@@ -41,7 +41,7 @@ set system parameters 'dont_reuse_heap_file=no';
 create table foo(col1 int primary key auto_increment, col2 date default 'abc');
 create table t3(col1 int, col2 date);
 create table t5(col1 int);
-drop class t5, db_user;
+drop class t5, _db_user;
 drop t2,t3,t5,foo;
 drop table if exists le_inqr,le_ans,t_agntinfo;
 set system parameters 'dont_reuse_heap_file=yes';

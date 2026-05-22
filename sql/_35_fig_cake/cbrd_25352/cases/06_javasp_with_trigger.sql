@@ -5,10 +5,10 @@ evaluate 'create test table';
 create table name_list (name varchar(50));
 create table name_list2 (name varchar(50));
 
-evaluate 'create test_trigger1: execute call add_user([user_name]) on class db_user';
+evaluate 'create test_trigger1: execute call add_user([user_name]) on class _db_user';
 create trigger test_trigger1
   before insert on name_list
-  execute call add_user('test_user') on class db_user;
+  execute call add_user('test_user') on class _db_user;
 
 select unique_name, owner.name, name, action_definition  from _db_trigger order by unique_name;
 
@@ -17,10 +17,10 @@ insert into name_list(name) values('test_user');
 select name from db_user order by name;
 
 
-evaluate 'create test_trigger2: execute call add_user(class db_user, [user_name])';
+evaluate 'create test_trigger2: execute call add_user(class _db_user, [user_name])';
 create trigger test_trigger2
   before insert on name_list2
-  execute call add_user(class db_user, 'test_user2');
+  execute call add_user(class _db_user, 'test_user2');
 
 evaluate 'insert data & check result';
 insert into name_list2(name) values('test_user2');
@@ -77,5 +77,5 @@ drop trigger test_trigger6;
 drop table name_list;
 drop table name_list2;
 drop table tbl;
-call drop_user('test_user') on class db_user;
-call drop_user('test_user2') on class db_user;
+call drop_user('test_user') on class _db_user;
+call drop_user('test_user2') on class _db_user;

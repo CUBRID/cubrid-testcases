@@ -2,7 +2,7 @@
 --Create user with method 'add_user' of db_root
 call login('dba') on class db_user;
 call add_user('test_user') on class db_root;
-select  name,id,password,direct_groups,groups,authorization from db_user order by 1;
+select  name,id,password,direct_groups,groups,authorization from _db_user order by 1;
 drop user test_user;
 
 --+ holdcas off;
