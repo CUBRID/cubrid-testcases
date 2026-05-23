@@ -34,7 +34,28 @@ values(sleep("00\0"));
 values(sleep(NULL));
 values(sleep(select 1));
 values(sleep(1/0));
-values(sleep(111111111111111111111111111111111111111111111111111111111111111111111111111111));
+/*
+ * [Caution] Due to the db_sleep behavior change and NUMERIC range extension,
+ * extremely large inputs can cause effectively infinite waits.
+ *
+ * Background:
+ *   When db_sleep casts the input (double) to long (milliseconds),
+ *   if an overflow occurs:
+ *
+ *   - Before:
+ *       The value wrapped to a negative long, causing select() to return EINVAL,
+ *       so db_sleep returned 1 immediately without sleeping.
+ *
+ *   - After:
+ *       The overflow is detected and db_sleep sleeps for LONG_MAX milliseconds
+ *       (on 64-bit Linux, 9,223,372,036,854,775,807 ms ≈ 292 million years,
+ *        effectively resulting in an infinite wait).
+ *
+ * In addition, the NUMERIC range extension allows literals with precision
+ * greater than 38 to reach db_sleep. The following huge inputs are therefore
+ * commented out to prevent test execution from hanging.
+ */
+--values(sleep(111111111111111111111111111111111111111111111111111111111111111111111111111111));
 values(sleep(0/1));
 values(sleep(0x10));
 values(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(0.1)+0.1)))+0.1))+0.1)))))))))))))))))))));
