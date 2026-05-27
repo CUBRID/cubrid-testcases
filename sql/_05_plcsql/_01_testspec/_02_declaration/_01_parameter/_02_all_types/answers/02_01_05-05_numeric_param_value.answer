@@ -1,6 +1,6 @@
 ===================================================
-'"12345.6789" is assigned to the decimal variable, and "123456" is output, which is normal.'    
-"12345.6789" is assigned to the decimal variable, and "123456" is output, which is normal.     
+'"12345.6789 is assigned to the decimal variable, and 12345.6789 is output'    
+"12345.6789 is assigned to the decimal variable, and 12345.6789 is output     
 
 
 ===================================================
@@ -58,8 +58,8 @@ cast( cast(0.123456789 as numeric(4,4)) as numeric)
 
 
 ===================================================
-'This is a normal case because an error occurred in the parameter "NUMERIC(3,4)" when creating.'    
-This is a normal case because an error occurred in the parameter "NUMERIC(3,4)" when creating.     
+'The procedure is created successfully because "NUMERIC(3,4)" is now valid and scale > precision is allowed.'    
+The procedure is created successfully because "NUMERIC(3,4)" is now valid and scale > precision is allowed.     
 
 
 ===================================================
@@ -69,92 +69,28 @@ This is a normal case because an error occurred in the parameter "NUMERIC(3,4)" 
 0
 
 ===================================================
-Error:-493
-Syntax: before ' s "decimal(3,4)" during creation, but it was created normally...'
-invalid relational operator 
-
-===================================================
-Error:-493
-Syntax: invalid create procedure
-  CREATE [OR REPLACE] PROCEDURE identifier '(' {sp_param_list} ')' {IS|AS} {[LANGUAGE PLCSQL|LANGUAGE JAVA]} {procedure_source|procedure_spec} 
-
-===================================================
-Error:-493
-Syntax: In line 1, column 1 before ' DECIMAL(3,4) := 12345.6789; '
-Syntax error: unexpected 'var_max', expecting SELECT or VALUE or VALUES or '(' 
-
-===================================================
-Error:-493
-Syntax: In line 1, column 1 before '
-dbms_output.put_line('i_min=' || var_min); '
-Syntax error: unexpected 'begin', expecting SELECT or VALUE or VALUES or '(' 
-
-===================================================
-Error:-493
-Syntax: In line 1, column 1 before '.put_line('i_max=' || var_max); '
-Syntax error: unexpected 'dbms_output', expecting SELECT or VALUE or VALUES or '(' 
-
-===================================================
-Error:-493
-Syntax: In line 1, column 1 before ' := -12345.6789; '
-Syntax error: unexpected 'var_min', expecting SELECT or VALUE or VALUES or '(' 
-
-===================================================
-Error:-493
-Syntax: In line 1, column 1 before ' := 12345.6789; '
-Syntax error: unexpected 'var_max', expecting SELECT or VALUE or VALUES or '(' 
-
-===================================================
-Error:-493
-Syntax: In line 1, column 1 before '.put_line('i_min=' || var_min); '
-Syntax error: unexpected 'dbms_output', expecting SELECT or VALUE or VALUES or '(' 
-
-===================================================
-Error:-493
-Syntax: In line 1, column 1 before '.put_line('i_max=' || var_max); '
-Syntax error: unexpected 'dbms_output', expecting SELECT or VALUE or VALUES or '(' 
-
-===================================================
-Error:-493
-Syntax: In line 1, column 1 before '; '
-Syntax error: unexpected 'end', expecting SELECT or VALUE or VALUES or '(' 
-
-===================================================
-'If the parameter value is passed as "12345.6789" in the call statement, the output should be "12346". Currently "12345.6789" is being output.'    
-If the parameter value is passed as "12345.6789" in the call statement, the output should be "12346". Currently "12345.6789" is being output.     
+'"NUMERIC(3,4)" is now valid. scale > precision is allowed since the scale range was expanded to -84~127.'    
+"NUMERIC(3,4)" is now valid. scale > precision is allowed since the scale range was expanded to -84~127.     
 
 
 ===================================================
-Error:-493
-Syntax: invalid create procedure
-  CREATE [OR REPLACE] PROCEDURE identifier '(' {sp_param_list} ')' {IS|AS} {[LANGUAGE PLCSQL|LANGUAGE JAVA]} {procedure_source|procedure_spec} 
+0
 
 ===================================================
-Error:-493
-Syntax: In line 1, column 1 before ' NUMERIC := i_max; '
-Syntax error: unexpected 'var_max', expecting SELECT or VALUE or VALUES or '(' 
+'If the parameter value "12345.6789" is passed in the call statement, the same value is output because NUMERIC now supports floating precision.'    
+If the parameter value "12345.6789" is passed in the call statement, the same value is output because NUMERIC now supports floating precision.     
+
 
 ===================================================
-Error:-493
-Syntax: In line 1, column 1 before '
-dbms_output.put_line('i_min=' || var_min); '
-Syntax error: unexpected 'begin', expecting SELECT or VALUE or VALUES or '(' 
+0
 
 ===================================================
-Error:-493
-Syntax: In line 1, column 1 before '.put_line('i_max=' || var_max); '
-Syntax error: unexpected 'dbms_output', expecting SELECT or VALUE or VALUES or '(' 
+    
+null     
 
-===================================================
-Error:-493
-Syntax: In line 1, column 1 before '; '
-Syntax error: unexpected 'end', expecting SELECT or VALUE or VALUES or '(' 
 
-===================================================
-Error:-889
-Stored procedure execute error: 
-  (line 2, column 25) numeric value does not fit in the target type's precision and scale
-
+i_min=-12345.6789
+i_max=12345.6789
 ===================================================
 cast(12345.6789 as numeric)    
 12345.6789     
