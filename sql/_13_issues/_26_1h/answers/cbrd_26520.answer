@@ -3,35 +3,45 @@
 ===================================================
 0
 ===================================================
-class_name    owner_name    class_type    is_system_class    tde_algorithm    partitioned    is_reuse_oid_class    collation    comment    
+    
+Case 1: nested SP call as 1st arg of 2-arg function     
 
 ===================================================
-0
-===================================================
-class_name    owner_name    class_type    is_system_class    tde_algorithm    partitioned    is_reuse_oid_class    collation    comment    
-views     INFORMATION_SCHEMA     VCLASS     YES     NONE     NO     NO     utf8_bin     null     
+add_two(add_two(1, 2), 3)    
+6     
 
 ===================================================
-( substr( chr(65 using utf8)|| chr(97 using utf8), 2, 1)) collate utf8_en_ci    
-a     
+    
+Case 2: nested SP call as 2nd arg of 2-arg function     
 
 ===================================================
-( substr( chr(65 using utf8)|| chr(97 using utf8), 2, 1)) collate utf8_en_ci    
+add_two(1, add_two(2, 3))    
+6     
 
 ===================================================
-0
+    
+Case 3: nested SP call as 1st arg of 3-arg function     
+
 ===================================================
-0
+add_three(add_two(1, 2), 3, 4)    
+10     
+
 ===================================================
-2
+    
+Case 4: nested SP call as middle arg of 3-arg function     
+
 ===================================================
-0
+add_three(1, add_two(2, 3), 4)    
+10     
+
 ===================================================
-0
+    
+Case 5: nested SP call as last arg of 3-arg function     
+
 ===================================================
-0
-===================================================
-0
+add_three(1, 2, add_two(3, 4))    
+10     
+
 ===================================================
 0
 ===================================================
