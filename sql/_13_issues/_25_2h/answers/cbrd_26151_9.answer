@@ -8,12 +8,6 @@
 0
 
 ===================================================
-0
-
-===================================================
-0
-
-===================================================
     
 null     
 
@@ -31,25 +25,8 @@ null
 0
 
 ===================================================
-0
-
-===================================================
-0
-
-===================================================
-0
-
-===================================================
     
-null     
-
-
-===================================================
-0
-
-===================================================
-    
-4-1. login as owner_member: all authorizations on u1-owned objects visible     
+9-1. login as u1: only authorizations where u1 is grantor     
 
 
 ===================================================
@@ -59,16 +36,43 @@ null
 
 ===================================================
 grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
-U1     U2     FUNCTION     test_java_sp     U1     EXECUTE     NO     
-U1     U2     CLASS     tbl1     U1     SELECT     YES     
-U1     U3     PROCEDURE     test_pl     U1     EXECUTE     NO     
-U1     U3     CLASS     tbl1     U1     INSERT     YES     
-U2     U3     CLASS     tbl1     U1     SELECT     YES     
+U1     U2     VCLASS     v1     U1     SELECT     NO     
+U1     U3     VCLASS     v1     U1     UPDATE     NO     
 
 
 ===================================================
     
-4-2. login as dba: all authorizations visible (reference)     
+9-2. login as u2: only the SELECT authorization where u2 is grantee     
+
+
+===================================================
+    
+null     
+
+
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+U1     U2     VCLASS     v1     U1     SELECT     NO     
+
+
+===================================================
+    
+9-3. login as u3: only the UPDATE authorization where u3 is grantee     
+
+
+===================================================
+    
+null     
+
+
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+U1     U3     VCLASS     v1     U1     UPDATE     NO     
+
+
+===================================================
+    
+9-4. login as dba: all authorizations are visible     
 
 
 ===================================================
@@ -105,18 +109,9 @@ DBA     INFORMATION_SCHEMA     CLASS     _db_class     DBA     SELECT     NO
 DBA     INFORMATION_SCHEMA     CLASS     _db_authorization     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_user     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     db_root     DBA     SELECT     NO     
-U1     U2     FUNCTION     test_java_sp     U1     EXECUTE     NO     
-U1     U2     CLASS     tbl1     U1     SELECT     YES     
-U1     U3     PROCEDURE     test_pl     U1     EXECUTE     NO     
-U1     U3     CLASS     tbl1     U1     INSERT     YES     
-U2     U3     CLASS     tbl1     U1     SELECT     YES     
+U1     U2     VCLASS     v1     U1     SELECT     NO     
+U1     U3     VCLASS     v1     U1     UPDATE     NO     
 
-
-===================================================
-0
-
-===================================================
-0
 
 ===================================================
 0

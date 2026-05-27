@@ -5,15 +5,6 @@
 0
 
 ===================================================
-0
-
-===================================================
-0
-
-===================================================
-0
-
-===================================================
     
 null     
 
@@ -31,25 +22,36 @@ null
 0
 
 ===================================================
-0
+    
+10-1. GRANT on SERIAL is not supported (syntax error expected)     
+
 
 ===================================================
-0
+Error:-493
+Syntax: In line 1, column 24 before '.s1 TO u2; '
+Syntax error: unexpected 'u1', expecting TO 
+
+===================================================
+    
+10-2. GRANT on SERVER is not supported (syntax error expected)     
+
+
+===================================================
+Error:-493
+Syntax: In line 1, column 24 before '.srv1 TO u2; '
+Syntax error: unexpected 'u1', expecting TO 
+
+===================================================
+    
+10-3. GRANT on SYNONYM is redirected to the target table (recorded as CLASS)     
+
 
 ===================================================
 0
 
 ===================================================
     
-null     
-
-
-===================================================
-0
-
-===================================================
-    
-4-1. login as owner_member: all authorizations on u1-owned objects visible     
+10-4. login as u2: only the redirected CLASS grant on base_tbl is visible; no SERIAL/SERVER/SYNONYM rows     
 
 
 ===================================================
@@ -59,21 +61,26 @@ null
 
 ===================================================
 grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
-U1     U2     FUNCTION     test_java_sp     U1     EXECUTE     NO     
-U1     U2     CLASS     tbl1     U1     SELECT     YES     
-U1     U3     PROCEDURE     test_pl     U1     EXECUTE     NO     
-U1     U3     CLASS     tbl1     U1     INSERT     YES     
-U2     U3     CLASS     tbl1     U1     SELECT     YES     
+U1     U2     CLASS     base_tbl     U1     SELECT     NO     
 
 
 ===================================================
     
-4-2. login as dba: all authorizations visible (reference)     
+10-5. login as dba: db_auth contains no SERIAL/SERVER/SYNONYM object_type     
 
 
 ===================================================
     
 null     
+
+
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+
+
+===================================================
+    
+10-6. login as dba: only the synonym-redirected CLASS grant exists for u2     
 
 
 ===================================================
@@ -105,15 +112,8 @@ DBA     INFORMATION_SCHEMA     CLASS     _db_class     DBA     SELECT     NO
 DBA     INFORMATION_SCHEMA     CLASS     _db_authorization     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_user     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     db_root     DBA     SELECT     NO     
-U1     U2     FUNCTION     test_java_sp     U1     EXECUTE     NO     
-U1     U2     CLASS     tbl1     U1     SELECT     YES     
-U1     U3     PROCEDURE     test_pl     U1     EXECUTE     NO     
-U1     U3     CLASS     tbl1     U1     INSERT     YES     
-U2     U3     CLASS     tbl1     U1     SELECT     YES     
+U1     U2     CLASS     base_tbl     U1     SELECT     NO     
 
-
-===================================================
-0
 
 ===================================================
 0
