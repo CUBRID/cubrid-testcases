@@ -9,7 +9,7 @@ partition p1 values in (null, '10:00:00','10:10:00','10:20:00','10:30:00'),
 partition p2 values in  ('11:00:00','11:10:00','11:20:00','11:30:00'));
 
 
-select * from db_partition where class_name like '%za%' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name like '%za%' order by partition_name;
 
 
 drop class za;

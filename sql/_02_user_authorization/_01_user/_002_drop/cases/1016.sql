@@ -13,7 +13,7 @@ execute print 'insert a new record';
 
 call login('dba','') on class db_user;
 -- error : cannot drop a user which has trigger 
-call drop_user('user1') on class db_user;
+call drop_user('user1') on class _db_user;
 
 -- login as user1 and drop trigger
 call login('user1','a') on class db_user;
@@ -21,7 +21,7 @@ drop trigger tr1;
 
 -- re-login as dba and drop user1
 call login('dba','') on class db_user;
-call drop_user('user1') on class db_user;
+call drop_user('user1') on class _db_user;
 
 
 --+ holdcas off;
