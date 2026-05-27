@@ -23,8 +23,15 @@ create table range_test(id int not null  ,
 	insert into range_test values(7,'hhh','hhh',B'101',B'1111',N'hhh',N'eee','hhhhhhhhhh','2007-01-01 09:00:00');
 	insert into range_test values(8,'iii','iii',B'101',B'1111',N'iii',N'eee','iiiiiiiiii','2007-01-01 09:00:00');
 	insert into range_test values(9, null,null,null,null,null,null,null,'2007-01-01 09:00:00');
+	
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition order by 3,4;
+select attr_name, class_name, default_value, is_partition_key from db_attribute where class_name = 'range_test' order by 1;
+
 ALTER TABLE range_test remove partitioning;
 select * from range_test order by id;
+
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition order by 3,4;
+select attr_name, class_name, default_value, is_partition_key from db_attribute where class_name = 'range_test' order by 1;
 
 
 drop table range_test;

@@ -24,7 +24,7 @@ insert into list_test values (10,31,'jjj','jjj','2000-04-01 09:00:00');
 ALTER TABLE list_test add partition (
 partition p3 values IN (41,42,61));
 
-select * from db_partition where class_name = 'list_test' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'list_test' order by partition_name;
 
 insert into list_test values (11,41,'kkk','kkk','2000-05-01 09:00:00');
 insert into list_test values (12,42,'lll','lll','2000-05-02 09:00:00');

@@ -22,7 +22,7 @@ partition by hash(col1)
 partitions 4;
 create view xp as select * from t1__p__p1; 
 
-select * from db_vclass
+select vclass_name, owner_name, vclass_def, comment from db_vclass
 where vclass_name = 'xp';
 
 

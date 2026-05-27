@@ -27,9 +27,9 @@ SELECT  CURRENT_USER;
 --test
 CALL login ('dba', '') ON CLASS db_user;
 --test
-CALL drop_user ('u_Çç_Ğğ_İı_Öö_Şş_Üü') ON CLASS db_user;
+CALL drop_user ('u_Çç_Ğğ_İı_Öö_Şş_Üü') ON CLASS _db_user;
 --test
-CALL drop_user ('u_Çç_Ğğ_İı_Öö_Şş_Üü1') ON CLASS db_user;
+CALL drop_user ('u_Çç_Ğğ_İı_Öö_Şş_Üü1') ON CLASS _db_user;
 --test 
 SELECT  CURRENT_USER;
 
