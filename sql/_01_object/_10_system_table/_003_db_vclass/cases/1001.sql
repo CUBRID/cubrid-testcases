@@ -10,7 +10,7 @@ create vclass test_vclass(col1, col3)
 as 
 select col1, col2 from test_class;
 
-select * from db_vclass 
+select vclass_name, owner_name, vclass_def, comment from db_vclass 
 where  vclass_name = 'test_vclass';
 
 

@@ -19,7 +19,7 @@ call login('dba','') on class db_user;
 GRANT EXECUTE ON PROCEDURE sp1 TO u1;
 GRANT EXECUTE ON PROCEDURE sp2 TO u1;
 SELECT grantor.name, grantee.name, object_type, object_of, auth_type, is_grantable FROM _db_auth WHERE grantee.name = 'U1';
-SELECT owner.name, grants from db_authorization where owner.name = 'U1';
+SELECT owner, grants from db_authorization where owner = 'U1';
 call login('u1','') on class db_user;
 
 evaluate 'CUBRID does not support synonyms for procedures.';
@@ -44,7 +44,7 @@ call login('dba','') on class db_user;
 REVOKE EXECUTE ON PROCEDURE sp1 FROM u1;
 REVOKE EXECUTE ON PROCEDURE sp2 FROM u1;
 SELECT grantor.name, grantee.name, object_type, object_of, auth_type, is_grantable FROM _db_auth WHERE grantee.name = 'U1';
-SELECT owner.name, grants from db_authorization where owner.name = 'U1';
+SELECT owner, grants from db_authorization where owner = 'U1';
 
 call login('u1','') on class db_user;
 SELECT dba.sp1();
@@ -84,6 +84,6 @@ call login('dba','') on class db_user;
 drop user u1;
 
 SELECT grantor.name, grantee.name, object_type, object_of, auth_type, is_grantable FROM _db_auth WHERE grantee.name = 'U1';
-SELECT owner.name, grants from db_authorization where owner.name = 'U1';
+SELECT owner, grants from db_authorization where owner = 'U1';
 
 --+ server-message off

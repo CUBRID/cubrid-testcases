@@ -1,12 +1,12 @@
 -- This testcase verifies CBRD-24896 issue.
 
 EVALUATE 'using seteq for search condition on system table';
-SELECT /*+ recompile */ * FROM [_db_auth] AS [au] WHERE {[au].[grantee].[name]} seteq {'PUBLIC'} LIMIT 1;
-SELECT /*+ recompile */ * FROM [_db_auth] AS [au] WHERE  (is_grantable = 1) AND {[au].[grantee].[name]} seteq {};
+SELECT /*+ recompile */ grantor, grantee, object_type, object_of, auth_type, is_grantable FROM [_db_auth] AS [au] WHERE {[au].[grantee].[name]} seteq {'PUBLIC'} LIMIT 1;
+SELECT /*+ recompile */ grantor, grantee, object_type, object_of, auth_type, is_grantable FROM [_db_auth] AS [au] WHERE  (is_grantable = 1) AND {[au].[grantee].[name]} seteq {};
 
 EVALUATE 'using = for search condition on system table';
-SELECT /*+ recompile */ * FROM [_db_auth] AS [au] WHERE {[au].[grantee].[name]} = {'PUBLIC'} LIMIT 1;
-SELECT /*+ recompile */ * FROM [_db_auth] AS [au] WHERE  (is_grantable = 1) AND {[au].[grantee].[name]} = {};
+SELECT /*+ recompile */ grantor, grantee, object_type, object_of, auth_type, is_grantable FROM [_db_auth] AS [au] WHERE {[au].[grantee].[name]} = {'PUBLIC'} LIMIT 1;
+SELECT /*+ recompile */ grantor, grantee, object_type, object_of, auth_type, is_grantable FROM [_db_auth] AS [au] WHERE  (is_grantable = 1) AND {[au].[grantee].[name]} = {};
 
 -- create table
 drop table if exists tbl;

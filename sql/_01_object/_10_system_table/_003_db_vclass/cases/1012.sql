@@ -20,7 +20,7 @@ create vclass vxoo (
 ) as select id, title from xoo;
 
 select * from vxoo order by 1,2;
-select * from db_vclass where vclass_name = 'vxoo';
+select vclass_name, owner_name, vclass_def, comment from db_vclass where vclass_name = 'vxoo';
 drop vclass vxoo;
 
 drop class xoo;
