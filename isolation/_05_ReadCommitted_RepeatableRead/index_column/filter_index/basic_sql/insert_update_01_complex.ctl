@@ -8,6 +8,10 @@ Test Point:
 there are overlap between insert and update
 
 NUM_CLIENTS = 2
+
+[CUBRIDQA-1391] Since CBRD-26747, fixed scan is enabled by default, causing latch to be held.
+during query execution and distorting intended concurrent behavior in this TC.
+Disable enable_heap_fixed_scan temporarily. See CUBRIDQA-1391 for details.
 */
 
 MC: setup NUM_CLIENTS = 3;

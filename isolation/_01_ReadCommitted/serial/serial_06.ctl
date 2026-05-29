@@ -11,6 +11,10 @@ NUM_CLIENTS = 2
 C1: select s1.current_value,s1.next_value from tt1 where sleep(1);
 C2: insert into tt1 values(s1.next_value);
 C2: insert into tt1 values(s1.next_value);
+
+[CUBRIDQA-1391] Since CBRD-26747, fixed scan is enabled by default, causing latch to be held.
+during query execution and distorting intended concurrent behavior in this TC.
+Disable enable_heap_fixed_scan temporarily. See CUBRIDQA-1391 for details.
 */
 
 MC: setup NUM_CLIENTS = 2;

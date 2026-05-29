@@ -16,6 +16,10 @@ C1: select on table t1, commited
 C2: update on table t1, commited
 C3: select on table t1. there are two versions for the specific rows.
 C4: update on table t1, not commited
+
+[CUBRIDQA-1391] Since CBRD-26747, fixed scan is enabled by default, causing latch to be held.
+during query execution and distorting intended concurrent behavior in this TC.
+Disable enable_heap_fixed_scan temporarily. See CUBRIDQA-1391 for details.
 */
 
 

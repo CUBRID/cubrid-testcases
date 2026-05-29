@@ -14,6 +14,10 @@ NUM_CLIENTS = 2
 prepare(4,3a)(5,d)(6,e) --(4,3a) overlap
 C1: insert into t select rownum,rownum+70 from (select sleep(1)) x, t where id>0 limit 3; --expected blocked
 C2: update t set col=col+1 where chr(col)>'A' and 0=(select sleep (1)) using index idx;
+
+[CUBRIDQA-1391] Since CBRD-26747, fixed scan is enabled by default, causing latch to be held.
+during query execution and distorting intended concurrent behavior in this TC.
+Disable enable_heap_fixed_scan temporarily. See CUBRIDQA-1391 for details.
 */
 
 MC: setup NUM_CLIENTS = 2;

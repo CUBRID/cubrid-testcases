@@ -10,6 +10,10 @@ changes committed after the query started are never seen
 NUM_CLIENTS = 2
 C1: SELECT * FROM tb1 WHERE sleep(1)=0 ORDER BY col;
 C2: DELETE FROM tb1 WHERE id = 2;
+
+[CUBRIDQA-1391] Since CBRD-26747, fixed scan is enabled by default, causing latch to be held.
+during query execution and distorting intended concurrent behavior in this TC.
+Disable enable_heap_fixed_scan temporarily. See CUBRIDQA-1391 for details.
 */
 
 MC: setup NUM_CLIENTS = 2;

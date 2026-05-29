@@ -15,6 +15,10 @@ A commit
 NUM_CLIENTS = 2
 C1: insert into t(col) select col from t where sleep(1)=0 order by id;
 C2: delete from t where id=3; --expected ready, and insert by C1
+
+[CUBRIDQA-1391] Since CBRD-26747, fixed scan is enabled by default, causing latch to be held.
+during query execution and distorting intended concurrent behavior in this TC.
+Disable enable_heap_fixed_scan temporarily. See CUBRIDQA-1391 for details.
 */
 
 MC: setup NUM_CLIENTS = 2;
