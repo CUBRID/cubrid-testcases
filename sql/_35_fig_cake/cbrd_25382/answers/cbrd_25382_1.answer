@@ -207,7 +207,7 @@ hash-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ count(*) from ta a, t_bigint b where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd
+select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*) from ta a, t_bigint b where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd
 ===================================================
 trace    
 
@@ -216,7 +216,7 @@ Query Plan:
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ count(*) from [dba.ta] a, [dba.t_bigint] b where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*) from [dba.ta] a, [dba.t_bigint] b where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -251,7 +251,7 @@ hash-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ count(*) from ta a, t_numeric b where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd
+select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*) from ta a, t_numeric b where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd
 ===================================================
 trace    
 
@@ -260,7 +260,7 @@ Query Plan:
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ count(*) from [dba.ta] a, [dba.t_numeric] b where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*) from [dba.ta] a, [dba.t_numeric] b where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -305,7 +305,7 @@ idx-join (inner join)
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select /*+ LEADING(a) USE_NL(c) USE_HASH(a, b) NO_PARALLEL_SUBQUERY */ count(*) from ta a, tb b, tc c where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd and a.ca=c.ca and a.cb=c.cb and a.cc=c.cc and a.cd=c.cd
+select /*+ LEADING(a) USE_NL(c) USE_HASH(a, b) NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*) from ta a, tb b, tc c where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd and a.ca=c.ca and a.cb=c.cb and a.cc=c.cc and a.cd=c.cd
 ===================================================
 trace    
 
@@ -316,7 +316,7 @@ Query Plan:
       TABLE SCAN (b)
     INDEX SCAN (c.i_a) (key range: a.ca=c.cakey range: a.cb=c.cbkey range: a.cc=c.cc)
 
-  rewritten query: select /*+ LEADING(a) USE_NL(c) USE_HASH(a, b) NO_PARALLEL_SUBQUERY */ count(*) from [dba.ta] a, [dba.tb] b, [dba.tc] c where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd and a.ca=c.ca and a.cb=c.cb and a.cc=c.cc and a.cd=c.cd
+  rewritten query: select /*+ LEADING(a) USE_NL(c) USE_HASH(a, b) NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*) from [dba.ta] a, [dba.tb] b, [dba.tc] c where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd and a.ca=c.ca and a.cb=c.cb and a.cc=c.cc and a.cd=c.cd
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -362,7 +362,7 @@ idx-join (inner join)
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select /*+ LEADING(a) USE_NL(c) USE_HASH(a, b) NO_PARALLEL_SUBQUERY */ count(*) from ta a, tb b, tc c where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd and a.ca=c.ca and a.cb=c.cb and a.cc=c.cc and a.cd=c.cd
+select /*+ LEADING(a) USE_NL(c) USE_HASH(a, b) NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*) from ta a, tb b, tc c where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd and a.ca=c.ca and a.cb=c.cb and a.cc=c.cc and a.cd=c.cd
 ===================================================
 trace    
 
@@ -373,7 +373,7 @@ Query Plan:
       TABLE SCAN (b)
     INDEX SCAN (c.i_a) (key range: a.ca=c.cakey range: a.cb=c.cbkey range: a.cc=c.cc)
 
-  rewritten query: select /*+ LEADING(a) USE_NL(c) USE_HASH(a, b) NO_PARALLEL_SUBQUERY */ count(*) from [dba.ta] a, [dba.tb] b, [dba.tc] c where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd and a.ca=c.ca and a.cb=c.cb and a.cc=c.cc and a.cd=c.cd
+  rewritten query: select /*+ LEADING(a) USE_NL(c) USE_HASH(a, b) NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*) from [dba.ta] a, [dba.tb] b, [dba.tc] c where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd and a.ca=c.ca and a.cb=c.cb and a.cc=c.cc and a.cd=c.cd
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
