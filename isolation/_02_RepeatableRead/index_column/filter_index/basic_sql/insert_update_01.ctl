@@ -14,12 +14,15 @@ MC: setup NUM_CLIENTS = 3;
 
 C1: set transaction lock timeout INFINITE;
 C1: set transaction isolation level repeatable read;
+C1: set system parameters 'enable_heap_fixed_scan=false';
 
 C2: set transaction lock timeout INFINITE;
 C2: set transaction isolation level repeatable read;
+C2: set system parameters 'enable_heap_fixed_scan=false';
 
 C3: set transaction lock timeout INFINITE;
 C3: set transaction isolation level repeatable read;
+C3: set system parameters 'enable_heap_fixed_scan=false';
 
 /* preparation */
 C1: drop table if exists t;
@@ -50,6 +53,9 @@ C2: select * from t where char_length(col)=id using index idx(+) order by 1,2 ;
 C2: commit;
 MC: wait until C2 ready;
 
+C1: set system parameters 'enable_heap_fixed_scan=true';
+C2: set system parameters 'enable_heap_fixed_scan=true';
+C3: set system parameters 'enable_heap_fixed_scan=true';
 C1: quit;
 C2: quit;
 C3: quit;

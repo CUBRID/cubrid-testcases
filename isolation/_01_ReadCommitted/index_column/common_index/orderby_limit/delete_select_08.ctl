@@ -15,8 +15,10 @@ C2: DELETE FROM tb1 WHERE id =501;
 MC: setup NUM_CLIENTS = 2;
 C1: set transaction lock timeout INFINITE;
 C1: set transaction isolation level read committed;
+C1: set system parameters 'enable_heap_fixed_scan=false';
 C2: set transaction lock timeout INFINITE;
 C2: set transaction isolation level read committed;
+C2: set system parameters 'enable_heap_fixed_scan=false';
 
 /* preparation */
 C1: DROP TABLE IF EXISTS tb1;
@@ -38,5 +40,7 @@ C1: SELECT * FROM tb1 ORDER BY id DESC, name ASC,3,4;
 C1: SELECT * FROM tb1 ORDER BY id,2,3,4;
 MC: wait until C1 ready;
 
+C2: set system parameters 'enable_heap_fixed_scan=true';
+C1: set system parameters 'enable_heap_fixed_scan=true';
 C2: quit;
 C1: quit;

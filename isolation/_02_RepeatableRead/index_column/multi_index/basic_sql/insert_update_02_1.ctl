@@ -20,9 +20,11 @@ C2: update t set col=col+1 where chr(col)>'A' and 0=(select sleep (1)) using ind
 MC: setup NUM_CLIENTS = 2;
 C1: set transaction lock timeout INFINITE;
 C1: set transaction isolation level repeatable read;
+C1: set system parameters 'enable_heap_fixed_scan=false';
 
 C2: set transaction lock timeout INFINITE;
 C2: set transaction isolation level repeatable read;
+C2: set system parameters 'enable_heap_fixed_scan=false';
 
 /* preparation */
 C1: drop table if exists t;
@@ -52,6 +54,8 @@ MC: wait until C1 ready;
 C2: select * from t order by 1,2;
 C2: commit;
 
+C2: set system parameters 'enable_heap_fixed_scan=true';
+C1: set system parameters 'enable_heap_fixed_scan=true';
 C2: quit;
 C1: quit;
 

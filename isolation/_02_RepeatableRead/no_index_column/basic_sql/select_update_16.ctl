@@ -23,15 +23,19 @@ MC: setup NUM_CLIENTS = 4;
 
 C1: set transaction lock timeout INFINITE;
 C1: set transaction isolation level repeatable read;
+C1: set system parameters 'enable_heap_fixed_scan=false';
 
 C2: set transaction lock timeout INFINITE;
 C2: set transaction isolation level repeatable read;
+C2: set system parameters 'enable_heap_fixed_scan=false';
 
 C3: set transaction lock timeout INFINITE;
 C3: set transaction isolation level repeatable read;
+C3: set system parameters 'enable_heap_fixed_scan=false';
 
 C4: set transaction lock timeout INFINITE;
 C4: set transaction isolation level repeatable read;
+C4: set system parameters 'enable_heap_fixed_scan=false';
 
 /* preparation */
 C1: drop table if exists t1;
@@ -104,6 +108,10 @@ MC: wait until C3 ready;
 C4: commit;
 MC: wait until C4 ready;
 
+C1: set system parameters 'enable_heap_fixed_scan=true';
+C2: set system parameters 'enable_heap_fixed_scan=true';
+C3: set system parameters 'enable_heap_fixed_scan=true';
+C4: set system parameters 'enable_heap_fixed_scan=true';
 C1: quit;
 C2: quit;
 C3: quit;

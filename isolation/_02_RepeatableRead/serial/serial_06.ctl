@@ -16,8 +16,10 @@ C2: insert into tt1 values(s1.next_value);
 MC: setup NUM_CLIENTS = 2;
 C1: set transaction lock timeout INFINITE;
 C1: set transaction isolation level repeatable read;
+C1: set system parameters 'enable_heap_fixed_scan=false';
 C2: set transaction lock timeout INFINITE;
 C2: set transaction isolation level repeatable read;
+C2: set system parameters 'enable_heap_fixed_scan=false';
 C2: commit;
 /* preparation */
 C1: DROP TABLE IF EXISTS tt1;
@@ -54,5 +56,7 @@ MC: wait until C1 ready;
 C1: commit;
 MC: wait until C1 ready;
 
+C2: set system parameters 'enable_heap_fixed_scan=true';
+C1: set system parameters 'enable_heap_fixed_scan=true';
 C2: quit;
 C1: quit;

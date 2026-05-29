@@ -16,8 +16,10 @@ C2: insert into tt1 values(s1.next_value);
 MC: setup NUM_CLIENTS = 2;
 C1: set transaction lock timeout INFINITE;
 C1: set transaction isolation level read committed;
+C1: set system parameters 'enable_heap_fixed_scan=false';
 C2: set transaction lock timeout INFINITE;
 C2: set transaction isolation level read committed;
+C2: set system parameters 'enable_heap_fixed_scan=false';
 
 /* preparation */
 C1: DROP TABLE IF EXISTS tt1;
@@ -53,5 +55,7 @@ C1: select * from t order by 1,2;
 C1: select s1.CURRVAL,s1.NEXTVAL from t order by 1,2;
 C1: commit;
 MC: wait until C1 ready;
+C2: set system parameters 'enable_heap_fixed_scan=true';
+C1: set system parameters 'enable_heap_fixed_scan=true';
 C2: quit;
 C1: quit;

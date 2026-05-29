@@ -17,8 +17,10 @@ C1: commit;
 MC: setup NUM_CLIENTS = 2;
 C1: set transaction lock timeout INFINITE;
 C1: set transaction isolation level repeatable read;
+C1: set system parameters 'enable_heap_fixed_scan=false';
 C2: set transaction lock timeout INFINITE;
 C2: set transaction isolation level repeatable read;
+C2: set system parameters 'enable_heap_fixed_scan=false';
 C2: commit;
 /* preparation */
 C1: DROP TABLE IF EXISTS t_foreign;
@@ -47,6 +49,8 @@ C1: SELECT * FROM t_primary ORDER BY 1,2;
 C1: SELECT * FROM t_foreign ORDER BY 1,2;
 C1: commit;
 
+C2: set system parameters 'enable_heap_fixed_scan=true';
+C1: set system parameters 'enable_heap_fixed_scan=true';
 C2: quit;
 C1: quit;
 

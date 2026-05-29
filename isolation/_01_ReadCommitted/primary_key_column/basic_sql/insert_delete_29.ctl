@@ -21,9 +21,11 @@ MC: setup NUM_CLIENTS = 2;
 
 C1: set transaction lock timeout INFINITE;
 C1: set transaction isolation level read committed;
+C1: set system parameters 'enable_heap_fixed_scan=false';
 
 C2: set transaction lock timeout INFINITE;
 C2: set transaction isolation level read committed;
+C2: set system parameters 'enable_heap_fixed_scan=false';
 
 /* preparation */
 C1: drop table if exists t;
@@ -49,6 +51,8 @@ MC: wait until C1 ready;
 
 C2: commit;          
 
+C2: set system parameters 'enable_heap_fixed_scan=true';
+C1: set system parameters 'enable_heap_fixed_scan=true';
 C2: quit;
 C1: quit;
 
