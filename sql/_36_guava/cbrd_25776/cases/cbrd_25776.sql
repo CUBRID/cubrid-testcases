@@ -18,7 +18,7 @@
  * 14 - Self-referencing CTE (with only) + INLINE hint (CTE materialized in trace)
  * 15 - CTE body containing ROWNUM + INLINE hint
  * 16 - CTE with QUERY_CACHE hint combined with INLINE hint (CTE materialized in trace)
- * 17 - Set operator UNION ALL: hint of left SELECT determines CTE strategy
+ * 17 - UNION ALL in CTE: left-branch hint wins; MATERIALIZE only when left says so (see 17.5)
  * 18 - View merge effect: INLINE enables index access / predicate pushdown
  */
 
@@ -961,10 +961,12 @@ drop table tb;
 
 
 -- ===========================================================================
--- Section 17: Set operator UNION ALL inside CTE - hint of left SELECT wins
---   17.1, 17.2 : variant A - left INLINE        -> INLINE applied
---   17.3, 17.4 : variant B - right INLINE only  -> default rule (materialize)
---   17.5, 17.6 : variant C - left MATERIALIZE   -> MATERIALIZE applied
+-- Section 17: UNION ALL inside CTE - hint of the left SELECT applies to the CTE
+--   17.1, 17.2 : left INLINE     -> both arms scan ta; UNION in cte subquery [inline:Y]
+--   17.3, 17.4 : right INLINE only (left default)
+--                -> left wins: no MATERIALIZE on CTE; UNION still inlined (no dba.cte)
+--                -> only the right arm shows INLINE in rewritten query [inline:Y]
+--   17.5, 17.6 : left MATERIALIZE -> SCAN dba.cte + MATERIALIZE in plan [inline:N]
 -- ===========================================================================
 
 evaluate '17.1 UNION ALL - left INLINE, create table [inline:Y]';
