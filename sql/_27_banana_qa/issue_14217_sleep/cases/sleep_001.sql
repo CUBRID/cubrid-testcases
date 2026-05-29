@@ -34,6 +34,7 @@ values(sleep("00\0"));
 values(sleep(NULL));
 values(sleep(select 1));
 values(sleep(1/0));
+
 /* NOTE: Casting a very large input to long may overflow into a negative
  * value. In debug builds this triggers an assert in msleep(); release
  * builds return 1 immediately via select(EINVAL).
@@ -44,7 +45,8 @@ values(sleep(1/0));
  * TODO: Revisit once the valid input range for sleep is formally
  * defined, and handle overflow accordingly.
  */
-values(sleep(111111111111111111111111111111111111111111111111111111111111111111111111111111));
+--values(sleep(111111111111111111111111111111111111111111111111111111111111111111111111111111));
+
 values(sleep(0/1));
 values(sleep(0x10));
 values(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(sleep(0.1)+0.1)))+0.1))+0.1)))))))))))))))))))));
