@@ -45,6 +45,8 @@ values(sleep(1/0));
  * TODO: Revisit once the valid input range for sleep is formally
  * defined, and handle overflow accordingly.
  */
+evaluate 'Revisit once the valid input range for sleep is formally defined, and handle overflow accordingly.';
+--bug
 --values(sleep(111111111111111111111111111111111111111111111111111111111111111111111111111111));
 
 values(sleep(0/1));
