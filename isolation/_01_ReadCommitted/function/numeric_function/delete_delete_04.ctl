@@ -40,7 +40,7 @@ C3: set transaction isolation level read committed;
 /* preparation */
 C1: DROP TABLE IF EXISTS t1;
 C1: CREATE TABLE t1(id INT UNIQUE, title VARCHAR(10), price DECIMAL);
-C1: INSERT INTO t1 VALUES(1,'book1',30.16),(-1,'book2',31.23),(-2,'book3',30.99),(2,'book4',31.66),(3,'book5',29.87),(-3,'book6',31.89),(4,'book7',32.04);
+C1: INSERT INTO t1 VALUES(1,'book1',31.16),(-1,'book2',30.23),(-2,'book3',30.99),(2,'book4',31.66),(3,'book5',29.87),(-3,'book6',31.89),(4,'book7',32.04);
 C1: COMMIT WORK;
 MC: wait until C1 ready;
 
