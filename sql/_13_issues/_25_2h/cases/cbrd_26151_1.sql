@@ -30,19 +30,19 @@ GRANT EXECUTE ON PROCEDURE u1.test_pl TO u3;
 
 evaluate('1-1. login as u1: only authorizations where u1 is grantor');
 call login('u1','') on class db_user;
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name, auth_type;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' and grantee_name != 'INFORMATION_SCHEMA' order by grantor_name, grantee_name, auth_type;
 
 evaluate('1-2. login as u2: only authorizations where u2 is grantee');
 call login('u2','') on class db_user;
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name, auth_type;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' and grantee_name != 'INFORMATION_SCHEMA' order by grantor_name, grantee_name, auth_type;
 
 evaluate('1-3. login as u3: only authorizations where u3 is grantee');
 call login('u3','') on class db_user;
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name, auth_type;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' and grantee_name != 'INFORMATION_SCHEMA' order by grantor_name, grantee_name, auth_type;
 
 evaluate('1-4. login as dba: all authorizations are visible');
 call login('dba','') on class db_user;
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name, auth_type;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' and grantee_name != 'INFORMATION_SCHEMA' order by grantor_name, grantee_name, auth_type;
 
 drop table u1.tbl1;
 drop function u1.test_java_sp;

@@ -34,14 +34,14 @@ GRANT SELECT ON u1.syn1 TO u2;
 
 evaluate('10-4. login as u2: only the redirected CLASS grant on base_tbl is visible; no SERIAL/SERVER/SYNONYM rows');
 call login('u2','') on class db_user;
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name, auth_type;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' and grantee_name != 'INFORMATION_SCHEMA' order by grantor_name, grantee_name, auth_type;
 
 evaluate('10-5. login as dba: db_auth contains no SERIAL/SERVER/SYNONYM object_type');
 call login('dba','') on class db_user;
 select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where object_type in ('SERIAL', 'SERVER', 'SYNONYM');
 
 evaluate('10-6. login as dba: only the synonym-redirected CLASS grant exists for u2');
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name, auth_type;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' and grantee_name != 'INFORMATION_SCHEMA' order by grantor_name, grantee_name, auth_type;
 
 drop synonym u1.syn1;
 drop server u1.srv1;

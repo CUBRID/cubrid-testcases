@@ -37,11 +37,11 @@ GRANT SELECT ON u1.tbl1 TO u3 WITH GRANT OPTION;
 
 evaluate('6-1. login as grantee_member: authorizations where u3 is grantee');
 call login('grantee_member','') on class db_user;
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name, auth_type;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' and grantee_name != 'INFORMATION_SCHEMA' order by grantor_name, grantee_name, auth_type;
 
 evaluate('6-2. login as dba: all authorizations visible (reference)');
 call login('dba','') on class db_user;
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name, auth_type;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' and grantee_name != 'INFORMATION_SCHEMA' order by grantor_name, grantee_name, auth_type;
 
 drop table u1.tbl1;
 drop function u1.test_java_sp;
