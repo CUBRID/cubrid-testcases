@@ -1638,7 +1638,7 @@ Trace Statistics:
 0
 ===================================================
     
-9.1 Nested CTE reference - materialized CTE referencing another CTE, create table [inline:N]     
+9.1 3-level Nested CTE - materialize in middle, create table [inline:N]     
 
 ===================================================
 0
@@ -1660,7 +1660,7 @@ Trace Statistics:
 
 ===================================================
     
-9.2 Nested CTE reference - materialized CTE referencing another CTE, select [inline:N]     
+9.2 3-level Nested CTE - materialize in middle, select [inline:N]     
 
 ===================================================
 ca    cb    
@@ -1698,7 +1698,7 @@ Trace Statistics:
 
 ===================================================
     
-9.3 Nested CTE reference - materialized CTE referencing another CTE, insert [inline:N]     
+9.3 3-level Nested CTE - materialize in middle, insert [inline:N]     
 
 ===================================================
 3
@@ -1735,7 +1735,7 @@ Trace Statistics:
 
 ===================================================
     
-9.4 Nested CTE reference - materialized CTE referencing another CTE, update [inline:N]     
+9.4 3-level Nested CTE - materialize in middle, update [inline:N]     
 
 ===================================================
 6
@@ -1785,7 +1785,7 @@ Trace Statistics:
 
 ===================================================
     
-9.5 Nested CTE reference - materialized CTE referencing another CTE, replace into [inline:N]     
+9.5 3-level Nested CTE - materialize in middle, replace into [inline:N]     
 
 ===================================================
 3
@@ -1822,7 +1822,7 @@ Trace Statistics:
 
 ===================================================
     
-9.6 Nested CTE reference - materialized CTE referencing another CTE, delete [inline:N]     
+9.6 3-level Nested CTE - materialize in middle, delete [inline:N]     
 
 ===================================================
 7
@@ -3945,6 +3945,327 @@ Trace Statistics:
 0
 ===================================================
 0
+===================================================
+    
+19.1 CTE with JOIN, create table [inline:Y]     
+
+===================================================
+0
+===================================================
+trace    
+
+Trace Statistics:
+  DELETE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (index: _db_auth.i__db_auth_object_of), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: _db_class.i__db_class_unique_name), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+19.2 CTE with JOIN, select [inline:Y]     
+
+===================================================
+ca    cb    ca2    cb2    
+2     2     2     2     
+3     3     3     3     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (cte)
+    TABLE SCAN (t?)
+
+  rewritten query: select /*+ INLINE */ cte.ca, cte.cb, t?.ca, t?.cb from [dba.ta] cte, [dba.ta] t? where (cte.ca> ?:? ) and cte.ca=t?.ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+19.3 CTE with JOIN, update [inline:Y]     
+
+===================================================
+2
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (cte)
+      TABLE SCAN (t?)
+
+  rewritten query: (select /*+ INLINE */ distinct cte.ca from [dba.ta] cte, [dba.ta] t? where (cte.ca> ?:? ) and cte.ca=t?.ca)
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (dba.tb)
+    TABLE SCAN (av?)
+
+  rewritten query: select [dba.tb],class [dba.tb],[dba.tb].ca+? as [tb.ca] from [dba.tb] [dba.tb], (select /*+ INLINE */ distinct cte.ca from [dba.ta] cte, [dba.ta] t? where (cte.ca> ?:? ) and cte.ca=t?.ca) av? (av_?) where [dba.tb].ca=av?.av_?
+
+
+Trace Statistics:
+  UPDATE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+    
+20.1 CTE with GROUP BY and aggregates, create table [inline:Y]     
+
+===================================================
+0
+===================================================
+trace    
+
+Trace Statistics:
+  DELETE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (index: _db_auth.i__db_auth_object_of), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: _db_class.i__db_class_unique_name), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+20.2 CTE with GROUP BY and aggregates, select [inline:Y]     
+
+===================================================
+ca    cnt    sum_cb    
+1     1     1     
+2     1     2     
+3     1     3     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.ta)
+
+  rewritten query: (select /*+ INLINE */ [dba.ta].ca, count(*), sum([dba.ta].cb) from [dba.ta] [dba.ta] group by [dba.ta].ca having (count(*)>?))
+
+  TABLE SCAN (cte)
+
+  rewritten query: select cte.ca, cte.cnt, cte.sum_cb from (select /*+ INLINE */ [dba.ta].ca, count(*) as [cnt], sum([dba.ta].cb) as [sum_cb] from [dba.ta] [dba.ta] group by [dba.ta].ca having (count(*)>?)) cte (ca, cnt, sum_cb)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+20.3 CTE with GROUP BY and aggregates, update [inline:Y]     
+
+===================================================
+3
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.ta)
+
+  rewritten query: (select /*+ INLINE */ [dba.ta].ca from [dba.ta] [dba.ta] group by [dba.ta].ca having (count(*)>?))
+
+  SORT (distinct)
+    TABLE SCAN (cte)
+
+  rewritten query: (select distinct cte.ca from (select /*+ INLINE */ [dba.ta].ca from [dba.ta] [dba.ta] group by [dba.ta].ca having (count(*)>?)) cte (ca))
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (dba.tb)
+    TABLE SCAN (av?)
+
+  rewritten query: select [dba.tb],class [dba.tb],[dba.tb].ca+? as [tb.ca] from [dba.tb] [dba.tb], (select distinct cte.ca from (select /*+ INLINE */ [dba.ta].ca from [dba.ta] [dba.ta] group by [dba.ta].ca having (count(*)>?)) cte (ca)) av? (av_?) where [dba.tb].ca=av?.av_?
+
+
+Trace Statistics:
+  UPDATE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+            SUBQUERY (uncorrelated)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+    
+21.1 CTE with DISTINCT, create table [inline:Y]     
+
+===================================================
+0
+===================================================
+trace    
+
+Trace Statistics:
+  DELETE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (index: _db_auth.i__db_auth_object_of), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: _db_class.i__db_class_unique_name), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+21.2 CTE with DISTINCT, select [inline:Y]     
+
+===================================================
+ca    cb    
+1     1     
+2     2     
+3     3     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    TABLE SCAN (dba.ta)
+
+  rewritten query: (select /*+ INLINE */ distinct [dba.ta].ca, [dba.ta].cb from [dba.ta] [dba.ta])
+
+  TABLE SCAN (cte)
+
+  rewritten query: select cte.ca, cte.cb from (select /*+ INLINE */ distinct [dba.ta].ca, [dba.ta].cb from [dba.ta] [dba.ta]) cte (ca, cb)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+21.3 CTE with DISTINCT, update [inline:Y]     
+
+===================================================
+3
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    TABLE SCAN (dba.ta)
+
+  rewritten query: (select /*+ INLINE */ distinct [dba.ta].ca, [dba.ta].cb from [dba.ta] [dba.ta])
+
+  SORT (distinct)
+    TABLE SCAN (cte)
+
+  rewritten query: (select distinct cte.ca from (select /*+ INLINE */ distinct [dba.ta].ca, [dba.ta].cb from [dba.ta] [dba.ta]) cte (ca, cb))
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (dba.tb)
+    TABLE SCAN (av?)
+
+  rewritten query: select [dba.tb],class [dba.tb],[dba.tb].ca+? as [tb.ca] from [dba.tb] [dba.tb], (select distinct cte.ca from (select /*+ INLINE */ distinct [dba.ta].ca, [dba.ta].cb from [dba.ta] [dba.ta]) cte (ca, cb)) av? (av_?) where [dba.tb].ca=av?.av_?
+
+
+Trace Statistics:
+  UPDATE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+            SUBQUERY (uncorrelated)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+    
+22.1 CTE with LIMIT/OFFSET, select [inline:Y]     
+
+===================================================
+ca    cb    
+2     2     
+3     3     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.ta)
+
+  rewritten query: (select /*+ INLINE */ [dba.ta].ca, [dba.ta].cb from [dba.ta] [dba.ta] order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? )
+
+  TABLE SCAN (cte)
+
+  rewritten query: select cte.ca, cte.cb from (select /*+ INLINE */ [dba.ta].ca, [dba.ta].cb from [dba.ta] [dba.ta] order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? ) cte (ca, cb)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+     
+
 ===================================================
 0
 ===================================================

@@ -20,6 +20,10 @@
  * 16 - CTE with QUERY_CACHE hint combined with INLINE hint (CTE materialized in trace)
  * 17 - UNION ALL in CTE: left-branch hint wins; MATERIALIZE only when left says so (see 17.5)
  * 18 - View merge effect: INLINE enables index access / predicate pushdown
+ * 19 - CTE with JOIN (inline CTE joined to base table)
+ * 20 - CTE with GROUP BY and aggregates
+ * 21 - CTE with DISTINCT in CTE body
+ * 22 - CTE with LIMIT/OFFSET (row limiting in CTE body)
  */
 
 drop table if exists ta, tb;
@@ -502,7 +506,7 @@ drop table tb;
 -- Section 9: 3-level Nested CTE with materialize in middle
 -- ===========================================================================
 
-evaluate '9.1 Nested CTE reference - materialized CTE referencing another CTE, create table [inline:N]';
+evaluate '9.1 3-level Nested CTE - materialize in middle, create table [inline:N]';
 create table tb as
     with
         cte as (select * from ta),
@@ -512,7 +516,7 @@ create table tb as
 
 show trace;
 
-evaluate '9.2 Nested CTE reference - materialized CTE referencing another CTE, select [inline:N]';
+evaluate '9.2 3-level Nested CTE - materialize in middle, select [inline:N]';
 with
     cte as (select * from ta),
     cte_b as (select /*+ materialize */ * from cte),
@@ -521,7 +525,7 @@ select /*+ recompile */ * from cte_c;
 
 show trace;
 
-evaluate '9.3 Nested CTE reference - materialized CTE referencing another CTE, insert [inline:N]';
+evaluate '9.3 3-level Nested CTE - materialize in middle, insert [inline:N]';
 insert into tb with
     cte as (select * from ta),
     cte_b as (select /*+ materialize */ * from cte),
@@ -530,7 +534,7 @@ select /*+ recompile */ * from cte_c;
 
 show trace;
 
-evaluate '9.4 Nested CTE reference - materialized CTE referencing another CTE, update [inline:N]';
+evaluate '9.4 3-level Nested CTE - materialize in middle, update [inline:N]';
 with
     cte as (select * from ta),
     cte_b as (select /*+ materialize */ * from cte),
@@ -539,7 +543,7 @@ update tb set ca = ca + 1 where ca in (select ca from cte_c);
 
 show trace;
 
-evaluate '9.5 Nested CTE reference - materialized CTE referencing another CTE, replace into [inline:N]';
+evaluate '9.5 3-level Nested CTE - materialize in middle, replace into [inline:N]';
 replace into tb with
     cte as (select * from ta),
     cte_b as (select /*+ materialize */ * from cte),
@@ -548,7 +552,7 @@ select /*+ recompile */ * from cte_c;
 
 show trace;
 
-evaluate '9.6 Nested CTE reference - materialized CTE referencing another CTE, delete [inline:N]';
+evaluate '9.6 3-level Nested CTE - materialize in middle, delete [inline:N]';
 with
     cte as (select * from ta),
     cte_b as (select /*+ materialize */ * from cte),
@@ -1093,9 +1097,129 @@ drop table tx;
 
 
 -- ===========================================================================
+-- Section 19: CTE with JOIN operations
+-- ===========================================================================
+
+evaluate '19.1 CTE with JOIN, create table [inline:Y]';
+create table tb as
+    with cte as (
+        select /*+ inline */ * from ta where ca > 1
+    )
+    select /*+ recompile */ t1.ca, t1.cb, t2.ca as ca2, t2.cb as cb2
+    from cte t1 inner join ta t2 on t1.ca = t2.ca;
+
+show trace;
+
+evaluate '19.2 CTE with JOIN, select [inline:Y]';
+with cte as (
+        select /*+ inline */ * from ta where ca > 1
+)
+select /*+ recompile */ t1.ca, t1.cb, t2.ca as ca2, t2.cb as cb2
+from cte t1 inner join ta t2 on t1.ca = t2.ca;
+
+show trace;
+
+evaluate '19.3 CTE with JOIN, update [inline:Y]';
+with cte as (
+        select /*+ inline */ * from ta where ca > 1
+)
+update tb set ca = ca + 1
+where ca in (select t1.ca from cte t1 inner join ta t2 on t1.ca = t2.ca);
+
+show trace;
+
+drop table tb;
+
+
+-- ===========================================================================
+-- Section 20: CTE with GROUP BY and aggregates
+-- ===========================================================================
+
+evaluate '20.1 CTE with GROUP BY and aggregates, create table [inline:Y]';
+create table tb as
+    with cte as (
+        select /*+ inline */ ca, count(*) as cnt, sum(cb) as sum_cb
+        from ta
+        group by ca
+    )
+    select /*+ recompile */ * from cte where cnt > 0;
+
+show trace;
+
+evaluate '20.2 CTE with GROUP BY and aggregates, select [inline:Y]';
+with cte as (
+        select /*+ inline */ ca, count(*) as cnt, sum(cb) as sum_cb
+        from ta
+        group by ca
+)
+select /*+ recompile */ * from cte where cnt > 0;
+
+show trace;
+
+evaluate '20.3 CTE with GROUP BY and aggregates, update [inline:Y]';
+with cte as (
+        select /*+ inline */ ca, count(*) as cnt, sum(cb) as sum_cb
+        from ta
+        group by ca
+)
+update tb set ca = ca + 1
+where ca in (select ca from cte where cnt > 0);
+
+show trace;
+
+drop table tb;
+
+
+-- ===========================================================================
+-- Section 21: CTE with DISTINCT in CTE body
+-- ===========================================================================
+
+evaluate '21.1 CTE with DISTINCT, create table [inline:Y]';
+create table tb as
+    with cte as (
+        select /*+ inline */ distinct ca, cb from ta
+    )
+    select /*+ recompile */ * from cte;
+
+show trace;
+
+evaluate '21.2 CTE with DISTINCT, select [inline:Y]';
+with cte as (
+        select /*+ inline */ distinct ca, cb from ta
+)
+select /*+ recompile */ * from cte;
+
+show trace;
+
+evaluate '21.3 CTE with DISTINCT, update [inline:Y]';
+with cte as (
+        select /*+ inline */ distinct ca, cb from ta
+)
+update tb set ca = ca + 1
+where ca in (select ca from cte);
+
+show trace;
+
+drop table tb;
+
+
+-- ===========================================================================
+-- Section 22: CTE with LIMIT/OFFSET
+-- ===========================================================================
+
+evaluate '22.1 CTE with LIMIT/OFFSET, select [inline:Y]';
+with cte as (
+        select /*+ inline */ * from ta order by ca limit 2 offset 1
+)
+select /*+ recompile */ * from cte;
+
+show trace;
+
+
+-- ===========================================================================
 -- Cleanup
 -- ===========================================================================
 
-drop table if exists ta, tb, tx;
+drop table if exists ta;
 
 set trace off;
