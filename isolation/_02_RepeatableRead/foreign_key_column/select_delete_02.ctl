@@ -13,12 +13,18 @@ C2: delete from reference table where id=1;
 C2: insert into reference table values(1,'new');
 C2: commit;
 C1: commit;
+
+[CUBRIDQA-1391] Since CBRD-26747, fixed scan is enabled by default, causing latch to be held.
+during query execution and distorting intended concurrent behavior in this TC.
+Disable enable_heap_fixed_scan temporarily. See CUBRIDQA-1391 for details.
 */
 MC: setup NUM_CLIENTS = 2;
 C1: set transaction lock timeout INFINITE;
 C1: set transaction isolation level repeatable read;
+C1: set system parameters 'enable_heap_fixed_scan=false';
 C2: set transaction lock timeout INFINITE;
 C2: set transaction isolation level repeatable read;
+C2: set system parameters 'enable_heap_fixed_scan=false';
 C2: commit;
 /* preparation */
 C1: DROP TABLE IF EXISTS t_foreign;
@@ -56,6 +62,8 @@ C1: SELECT * FROM t_primary ORDER BY id,2;
 C1: commit;
 MC: wait until C1 ready;
 
+C2: set system parameters 'enable_heap_fixed_scan=true';
+C1: set system parameters 'enable_heap_fixed_scan=true';
 C2: quit;
 C1: quit;
 
