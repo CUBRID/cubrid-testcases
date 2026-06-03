@@ -8,7 +8,7 @@ NAME 'SpTest.Hello(java.lang.String) return java.lang.String';
 
 
 evaluate 'ERROR: Syntax error: unexpected call';
-create view v_method1 as call add_user('test_user') on class db_user;
+create view v_method1 as call add_user('test_user') on class _db_user;
 
 
 evaluate 'ERROR: Missing an expected attribute name';

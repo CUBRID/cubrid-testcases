@@ -15,8 +15,8 @@ select count(*) from tbl where colb <2;
 show trace;
 
 
-evaluate '2. NO_PARALLEL_HEAP_SCAN hint (should not work)';
-select /*+ NO_PARALLEL_HEAP_SCAN */ count(*) from tbl where colb <2;
+evaluate '2. NO_PARALLEL_SCAN hint (should not work)';
+select /*+ NO_PARALLEL_SCAN */ count(*) from tbl where colb <2;
 show trace;
 
 

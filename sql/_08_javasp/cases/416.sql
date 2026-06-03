@@ -2,8 +2,8 @@ autocommit off;
 
 call login('dba','') on class db_user;
 
-call add_user('user1','') on class db_user;
-call add_user('user2','') on class db_user;
+call add_user('user1','') on class _db_user;
+call add_user('user2','') on class _db_user;
 
 call login('user1','') on class db_user;
 CREATE  FUNCTION test1(i int) RETURN int as language java name 'SpTest.testInt(int) return int';
