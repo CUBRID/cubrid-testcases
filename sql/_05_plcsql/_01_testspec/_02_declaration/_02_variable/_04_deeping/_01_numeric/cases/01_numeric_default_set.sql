@@ -8,22 +8,22 @@ begin
 end;
 
 
-select 'fail, 38 digit' from dual;
+select 'success, 38 digit (float numeric)' from dual;
 call numeric_test(12345678901234567890123456789012345678);
-select 'fail, 38 digit over' from dual;
+select 'success, 38 digit over (float numeric)' from dual;
 call numeric_test(123456789012345678901234567890123456789);
 
 select 'success, 0.38 digit' from dual;
 call numeric_test(0.01234567890123456789012345678901234567);
-select 'fail, 0.38 digit over' from dual;
+select 'success, 0.38 digit over (float numeric)' from dual;
 call numeric_test(0.012345678901234567890123456789012345678);
 
 
-select 'fail, 19.19 digit' from dual;
+select 'success, 19.19 digit (float numeric)' from dual;
 call numeric_test(1234567890123456789.1234567890123456789);
-select 'fail 19.20 digit' from dual;
+select 'success, 19.20 digit (float numeric)' from dual;
 call numeric_test(1234567890123456789.12345678901234567891);
-select 'fail 20.19 digit' from dual;
+select 'success, 20.19 digit (float numeric)' from dual;
 call numeric_test(12345678901234567891.1234567890123456789);
 
 drop procedure numeric_test;
