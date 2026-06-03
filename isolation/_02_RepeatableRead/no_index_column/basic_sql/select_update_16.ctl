@@ -16,6 +16,10 @@ C1: select on table t1, commited
 C2: update on table t1, commited
 C3: select on table t1. there are two versions for the specific rows.
 C4: update on table t1, not commited
+
+[CUBRIDQA-1391] Since CBRD-26747, fixed scan is enabled by default, causing latch to be held.
+during query execution and distorting intended concurrent behavior in this TC.
+Disable enable_heap_fixed_scan temporarily. See CUBRIDQA-1391 for details.
 */
 
 
@@ -23,15 +27,19 @@ MC: setup NUM_CLIENTS = 4;
 
 C1: set transaction lock timeout INFINITE;
 C1: set transaction isolation level repeatable read;
+C1: set system parameters 'enable_heap_fixed_scan=false';
 
 C2: set transaction lock timeout INFINITE;
 C2: set transaction isolation level repeatable read;
+C2: set system parameters 'enable_heap_fixed_scan=false';
 
 C3: set transaction lock timeout INFINITE;
 C3: set transaction isolation level repeatable read;
+C3: set system parameters 'enable_heap_fixed_scan=false';
 
 C4: set transaction lock timeout INFINITE;
 C4: set transaction isolation level repeatable read;
+C4: set system parameters 'enable_heap_fixed_scan=false';
 
 /* preparation */
 C1: drop table if exists t1;
@@ -104,6 +112,10 @@ MC: wait until C3 ready;
 C4: commit;
 MC: wait until C4 ready;
 
+C1: set system parameters 'enable_heap_fixed_scan=true';
+C2: set system parameters 'enable_heap_fixed_scan=true';
+C3: set system parameters 'enable_heap_fixed_scan=true';
+C4: set system parameters 'enable_heap_fixed_scan=true';
 C1: quit;
 C2: quit;
 C3: quit;

@@ -15,14 +15,20 @@ prepare(4,3a)(5,d)(6,e) --(4,3a) overlap
 C1: set @newincr=0;
 C1: insert into t select rownum,rownum+70 from (select sleep(5)) x, t where id>0 limit 3; --expected blocked
 C2: update t set col=col+1 where chr(col)>'A' and 0=(select sleep (1)) using index idx;
+
+[CUBRIDQA-1391] Since CBRD-26747, fixed scan is enabled by default, causing latch to be held.
+during query execution and distorting intended concurrent behavior in this TC.
+Disable enable_heap_fixed_scan temporarily. See CUBRIDQA-1391 for details.
 */
 
 MC: setup NUM_CLIENTS = 2;
 C1: set transaction lock timeout INFINITE;
 C1: set transaction isolation level repeatable read;
+C1: set system parameters 'enable_heap_fixed_scan=false';
 
 C2: set transaction lock timeout INFINITE;
 C2: set transaction isolation level repeatable read;
+C2: set system parameters 'enable_heap_fixed_scan=false';
 
 /* preparation */
 C1: drop table if exists t;
@@ -52,6 +58,8 @@ MC: wait until C1 ready;
 C2: select * from t order by 1,2;
 C2: commit;
 
+C2: set system parameters 'enable_heap_fixed_scan=true';
+C1: set system parameters 'enable_heap_fixed_scan=true';
 C2: quit;
 C1: quit;
 

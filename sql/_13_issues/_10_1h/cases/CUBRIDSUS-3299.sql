@@ -58,8 +58,8 @@ select if(data_type = 'BIGINT', 'OK', 'NOK') from db_attribute where class_name=
 
 create or replace view vx as select a from tbl1 union all select cast(2 as numeric(10,2)) from db_root;
 select if(data_type = 'NUMERIC', 'OK', 'NOK') from db_attribute where class_name='vx' and attr_name = 'a';
-select if(prec = 12, 'OK', 'NOK') from db_attribute where class_name='vx' and attr_name = 'a';
-select if(scale = 2, 'OK', 'NOK') from db_attribute where class_name='vx' and attr_name = 'a';
+select if(prec = 40, 'OK', 'NOK') from db_attribute where class_name='vx' and attr_name = 'a';
+select if(scale = 0, 'OK', 'NOK') from db_attribute where class_name='vx' and attr_name = 'a';
 
 create or replace view vx as select cast(2 as numeric(10,2)) as a from db_root;
 select if(data_type = 'NUMERIC', 'OK', 'NOK') from db_attribute where class_name='vx' and attr_name = 'a';
