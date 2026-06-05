@@ -10,19 +10,13 @@ there are IN keyword in select statement.
 NUM_CLIENTS = 2
 C1: SELECT * FROM tb1 ;
 C2: DELETE FROM tb1 WHERE id <= 3;
-
-[CUBRIDQA-1391] Since CBRD-26747, fixed scan is enabled by default, causing latch to be held.
-during query execution and distorting intended concurrent behavior in this TC.
-Disable enable_heap_fixed_scan temporarily. See CUBRIDQA-1391 for details.
 */
 
 MC: setup NUM_CLIENTS = 2;
 C1: set transaction lock timeout INFINITE;
 C1: set transaction isolation level read committed;
-C1: set system parameters 'enable_heap_fixed_scan=false';
 C2: set transaction lock timeout INFINITE;
 C2: set transaction isolation level read committed;
-C2: set system parameters 'enable_heap_fixed_scan=false';
 
 /* preparation */
 C1: DROP TABLE IF EXISTS tb1;
@@ -44,7 +38,5 @@ C1: SELECT * FROM tb1 WHERE job IN {'dev','sal'} ORDER BY id,2,3,4;
 C1: commit work;
 MC: wait until C1 ready;
 
-C2: set system parameters 'enable_heap_fixed_scan=true';
-C1: set system parameters 'enable_heap_fixed_scan=true';
 C2: quit;
 C1: quit;

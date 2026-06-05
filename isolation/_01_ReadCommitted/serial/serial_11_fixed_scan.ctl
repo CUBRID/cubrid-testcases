@@ -28,7 +28,21 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
+/*
+ * [NOTE] Adjusted after CBRD-26747 (enable_heap_fixed_scan).
+ *   Original intent: while C1's SELECT runs slowly (sleep in WHERE), C2 consumes
+ *   the serial NEXT_VALUE concurrently, exercising serial-value allocation order.
+ *   Why changed: the (select sleep) predicate scans 'dual' and is an uncorrelated
+ *   constant term, evaluated only once and independent of the heap page latch
+ *   (confirmed via query plan). C1 and C2 do not contend on a latch; which side
+ *   consumes the serial value first is a completion-time race that became
+ *   non-deterministic under fixed scan.
+ *   Fix: removed the sleep and use 'MC: wait until C1 ready' so C1 consumes the
+ *   serial value first, making the order deterministic (sequential execution).
+ *   Data results are unchanged.
+ */
 C1: SELECT SERIAL_CURRENT_VALUE(s1),SERIAL_NEXT_VALUE(s1) FROM tt1 where (select sleep(1)=0)<>0; 
+MC: wait until C1 ready;
 C2: INSERT INTO tt1 VALUES(s1.NEXT_VALUE,'Park');
 C2: INSERT INTO tt1 VALUES(s1.NEXT_VALUE,'Museum');
 MC: wait until C1 ready;
