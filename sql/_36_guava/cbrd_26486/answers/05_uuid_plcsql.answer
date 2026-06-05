@@ -1,0 +1,121 @@
+===================================================
+    
+[TEST 1] SYS_GUID defaults for parameters, locals, constants; UUID_FORMAT(UUID(7)) in cursor and SELECT INTO     
+
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+(n=2) a_len=32 b_len=32 c_len=32 e_hex=1 d_fmt=1 cur_v=7 a_eq_b=0
+ - (m=2) sa_hex=1 sc_hex=1 sd_v=7 scur_v=7
+ - (m=1) sa_hex=1 sc_hex=1 sd_v=7 scur_v=7
+ - (m=0) sa_hex=1 sc_hex=1 sd_v=7 scur_v=7
+(n=1) a_len=32 b_len=32 c_len=32 e_hex=1 d_fmt=1 cur_v=7 a_eq_b=0
+ - (m=1) sa_hex=1 sc_hex=1 sd_v=7 scur_v=7
+ - (m=0) sa_hex=1 sc_hex=1 sd_v=7 scur_v=7
+(n=0) a_len=32 b_len=32 c_len=32 e_hex=1 d_fmt=1 cur_v=7 a_eq_b=0
+===================================================
+    
+null     
+
+
+(n=1) a_len=32 b_len=32 c_len=32 e_hex=1 d_fmt=1 cur_v=7 a_eq_b=0
+ - (m=1) sa_hex=1 sc_hex=1 sd_v=7 scur_v=7
+ - (m=0) sa_hex=1 sc_hex=1 sd_v=7 scur_v=7
+(n=0) a_len=32 b_len=32 c_len=32 e_hex=1 d_fmt=1 cur_v=7 a_eq_b=0
+===================================================
+    
+null     
+
+
+(n=0) a_len=32 b_len=32 c_len=32 e_hex=1 d_fmt=1 cur_v=7 a_eq_b=1
+===================================================
+    
+[TEST 2] catalog exposes SYS_GUID() default expression of parameters     
+
+
+===================================================
+sp_of.sp_name    arg_name    mode    default_value    
+uuid_sp     n     1     null     
+uuid_sp     a     1     SYS_GUID()     
+uuid_sp     b     1     SYS_GUID()     
+
+
+===================================================
+0
+
+===================================================
+    
+[TEST 3] stored function returning a formatted UUID     
+
+
+===================================================
+0
+
+===================================================
+sf_fmt    
+1     
+
+
+===================================================
+sf_same    
+0     
+
+
+===================================================
+0
+
+===================================================
+    
+[TEST 4] DML with UUID defaults inside a procedure     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+===================================================
+total    id_uniq    g_uniq    id_is_v7    g_is_hex    
+3     3     3     3     3     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+    
+[TEST 5] unsupported usages -> error     
+
+
+===================================================
+Error:-494
+Semantic: before ' ) as begin return; end; '
+Cannot coerce  uuid(7)  to type varchar. create or replace procedure [dba.uuid_sp_err](a  varchar def...
+
+===================================================
+Error:-494
+Semantic: before ' )) as begin return; end; '
+Invalid DEFAULT clause. 'uuid ' cannot be used in a nested expression. create or replace procedure [dba.uuid_sp_err](a  varchar def...
+
+===================================================
+Error:-1360
+Stored procedure compile error: unsupported return type (code 23) of the built-in function UUID
+
