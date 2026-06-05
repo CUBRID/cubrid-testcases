@@ -182,7 +182,7 @@ Query Plan:
     NESTED LOOPS (cross join)
       INDEX SCAN (c.fk_t_child_a_p_a) (key range: c.p_a= ?:? )
       INDEX SCAN (pa.pk_t_parent_a_a) (key range: pa.a= ?:? , covered: true)
-    INDEX SCAN (pb.pk_t_parent_a_a) (key range: pa.a=pb.a, key filter: ((pb.a= ?:? ) or (pb.a= ?:? ) or (pb.a= ?:? )), covered: true)
+    INDEX SCAN (pb.pk_t_parent_a_a) (key range: c.p_a=pb.a, key filter: ((pb.a= ?:? ) or (pb.a= ?:? ) or (pb.a= ?:? )), covered: true)
 
   rewritten query: select /*+ ORDERED NO_ELIMINATE_JOIN */ c.a, c.b, c.p_a from [dba.t_child_a] c inner join [dba.t_parent_a] pa on c.p_a=pa.a and c.p_a= ?:?  inner join [dba.t_parent_a] pb on c.p_a=pb.a where ((pb.a= ?:? ) or (pb.a= ?:? ) or (pb.a= ?:? )) and pa.a= ?:? 
 
