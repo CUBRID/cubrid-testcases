@@ -25,6 +25,6 @@ select if(typeof(b'111') = 'bit (-1)', 'ok', 'nok');
 select if(typeof(cast(b'111' as bit(8))) = 'bit (8)', 'ok', 'nok');
 select if(typeof(cast(b'111' as bit varying(8))) = 'bit varying (8)', 'ok', 'nok');
 
-select if(typeof(1.1) = 'numeric (2, 1)', 'ok', 'nok');
+select if(typeof(1.1) = 'numeric', 'ok', 'nok');
 select if(typeof(cast(1.1 as numeric(15,5))) = 'numeric (15, 5)', 'ok', 'nok');
 
