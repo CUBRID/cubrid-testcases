@@ -47,12 +47,67 @@ select count(case when substr(uuid_format(id4), 15, 1) = '4' then 1 end) id4_is_
        count(case when substr(uuid_format(id7), 15, 1) = '7' then 1 end) id7_is_v7
 from uuid_def_t;
 show create table uuid_def_t;
-
-evaluate '[TEST 4] ALTER TABLE MODIFY changes the UUID default, SET DEFAULT NULL drops it';
-alter table uuid_def_t modify column id4 bit(128) default uuid(7);
-alter table uuid_def_t alter column id7 set default null;
-show create table uuid_def_t;
 drop table uuid_def_t;
+
+evaluate '[TEST 4] ALTER MODIFY / CHANGE / ALTER SET DEFAULT vary the UUID default; verify each change';
+drop table if exists uuid_alt_t;
+create table uuid_alt_t (k int auto_increment primary key, b bit(128) default uuid(4), g char(32) default sys_guid());
+show create table uuid_alt_t;
+
+evaluate '[TEST 4.1] MODIFY changes default UUID(4) -> UUID(7): existing rows keep old default, new rows use the new one';
+insert into uuid_alt_t(k) values (null), (null), (null);
+alter table uuid_alt_t modify column b bit(128) default uuid(7);
+select default_value from db_attribute where class_name = 'uuid_alt_t' and attr_name = 'b';
+insert into uuid_alt_t(k) values (null);
+select count(case when substr(uuid_format(b), 15, 1) = '4' then 1 end) old_v4_preserved,
+       count(case when substr(uuid_format(b), 15, 1) = '7' then 1 end) new_v7
+from uuid_alt_t;
+delete from uuid_alt_t;
+
+evaluate '[TEST 4.2] MODIFY changes the default to UUID() (version 4)';
+alter table uuid_alt_t modify column b bit(128) default uuid();
+select default_value from db_attribute where class_name = 'uuid_alt_t' and attr_name = 'b';
+insert into uuid_alt_t(k) values (null);
+select substr(uuid_format(b), 15, 1) b_ver from uuid_alt_t order by k desc limit 1;
+delete from uuid_alt_t;
+
+evaluate '[TEST 4.3] CHANGE renames the column b -> bid and sets a UUID(7) default';
+alter table uuid_alt_t change column b bid bit(128) default uuid(7);
+show create table uuid_alt_t;
+insert into uuid_alt_t(k) values (null);
+select substr(uuid_format(bid), 15, 1) bid_ver from uuid_alt_t order by k desc limit 1;
+delete from uuid_alt_t;
+
+evaluate '[TEST 4.4] CHANGE keeps the name and switches the default back to UUID(4)';
+alter table uuid_alt_t change column bid bid bit(128) default uuid(4);
+select default_value from db_attribute where class_name = 'uuid_alt_t' and attr_name = 'bid';
+insert into uuid_alt_t(k) values (null);
+select substr(uuid_format(bid), 15, 1) bid_ver from uuid_alt_t order by k desc limit 1;
+delete from uuid_alt_t;
+
+evaluate '[TEST 4.5] ALTER SET DEFAULT NULL drops the SYS_GUID default on column g';
+alter table uuid_alt_t alter column g set default null;
+select default_value from db_attribute where class_name = 'uuid_alt_t' and attr_name = 'g';
+insert into uuid_alt_t(k) values (null);
+select count(*) total, count(g) g_non_null from uuid_alt_t;
+delete from uuid_alt_t;
+
+evaluate '[TEST 4.6] ALTER SET DEFAULT restores the SYS_GUID() default on column g';
+alter table uuid_alt_t alter column g set default sys_guid();
+select default_value from db_attribute where class_name = 'uuid_alt_t' and attr_name = 'g';
+insert into uuid_alt_t(k) values (null);
+select count(case when regexp_like(g, '^[0-9A-F]{32}$', 'c') = 1 then 1 end) g_hex from uuid_alt_t;
+delete from uuid_alt_t;
+
+evaluate '[TEST 4.7] ALTER SET DEFAULT also sets a UUID default on the bit column (UUID(4) -> UUID(7))';
+alter table uuid_alt_t alter column bid set default uuid(7);
+select default_value from db_attribute where class_name = 'uuid_alt_t' and attr_name = 'bid';
+insert into uuid_alt_t(k) values (null);
+select substr(uuid_format(bid), 15, 1) bid_ver from uuid_alt_t order by k desc limit 1;
+
+show create table uuid_alt_t;
+drop table uuid_alt_t;
+
 
 evaluate '[TEST 5] UUID default on PRIMARY KEY column';
 create table uuid_def_t (id bit(128) default uuid(7) primary key, v int);

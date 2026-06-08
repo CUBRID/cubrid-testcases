@@ -119,3 +119,111 @@ Invalid DEFAULT clause. 'uuid ' cannot be used in a nested expression. create or
 Error:-1360
 Stored procedure compile error: unsupported return type (code 23) of the built-in function UUID
 
+===================================================
+    
+[TEST 6] pass UUID as a stringified / UUID_FORMAT-wrapped procedure argument     
+
+
+===================================================
+0
+
+===================================================
+    
+[TEST 6.1] UUID_FORMAT-wrapped arguments (36-char canonical)     
+
+
+===================================================
+    
+null     
+
+
+in_len=36 reformat_ver=7 fmt_ok=1 ver_match=1
+===================================================
+    
+null     
+
+
+in_len=36 reformat_ver=4 fmt_ok=1 ver_match=1
+===================================================
+    
+null     
+
+
+in_len=36 reformat_ver=4 fmt_ok=1 ver_match=1
+===================================================
+    
+null     
+
+
+in_len=36 reformat_ver=4 fmt_ok=1 ver_match=1
+===================================================
+    
+[TEST 6.2] stringified arguments (CAST AS STRING -> 32 hex)     
+
+
+===================================================
+    
+null     
+
+
+in_len=32 reformat_ver=7 fmt_ok=1 ver_match=1
+===================================================
+    
+null     
+
+
+in_len=32 reformat_ver=4 fmt_ok=1 ver_match=1
+===================================================
+    
+null     
+
+
+in_len=32 reformat_ver=4 fmt_ok=1 ver_match=1
+===================================================
+    
+null     
+
+
+in_len=32 reformat_ver=4 fmt_ok=1 ver_match=1
+===================================================
+    
+[TEST 6.3] raw BIT UUID argument -> error (PL/CSQL does not accept BIT arguments)     
+
+
+===================================================
+Error:-889
+Stored procedure execute error: Unsupported argument type of stored procedure: bit
+
+===================================================
+Error:-889
+Stored procedure execute error: Unsupported argument type of stored procedure: bit
+
+===================================================
+0
+
+===================================================
+    
+[TEST 7] stored function takes a stringified/formatted UUID argument and re-formats it     
+
+
+===================================================
+0
+
+===================================================
+v7_from_stringified    v4_from_formatted    v4_from_sysguid    
+1     1     1     
+
+
+===================================================
+    
+[TEST 7.1] UUID_FORMAT is idempotent through the function round-trip     
+
+
+===================================================
+from_hex    from_formatted    
+01234567-89AB-CDEF-0123-456789ABCDEF     01234567-89AB-CDEF-0123-456789ABCDEF     
+
+
+===================================================
+0
+

@@ -1,5 +1,5 @@
 /**
- *  This test case verifies CBRD-26486: bulk generation of 1,000,000 UUIDs per path.
+ *  This test case verifies CBRD-26572: bulk generation of 1,000,000 UUIDs per path.
  *  - INSERT ... SELECT with direct UUID()/SYS_GUID() function calls
  *  - INSERT applying column DEFAULT UUID()/SYS_GUID() (default column omitted)
  *  - ALTER TABLE ADD COLUMN with UUID default filling 1,000,000 existing rows

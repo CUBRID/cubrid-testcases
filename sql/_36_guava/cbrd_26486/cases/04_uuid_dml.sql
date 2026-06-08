@@ -1,5 +1,5 @@
 /**
- *  This test case verifies CBRD-26486: UUID()/SYS_GUID() values in DML.
+ *  This test case verifies CBRD-26572: UUID()/SYS_GUID() values in DML.
  *  - INSERT into BIT / BIT VARYING / CHAR / VARCHAR columns with type coercion
  *  - INSERT ... SELECT, UPDATE SET, WHERE clause usage
  *  - storage overflow errors for columns narrower than 128 bits / 32 chars

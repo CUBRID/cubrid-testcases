@@ -1,5 +1,5 @@
 /**
- *  This test case verifies CBRD-26486: UUID()/SYS_GUID() in MERGE statements and
+ *  This test case verifies CBRD-26572: UUID()/SYS_GUID() in MERGE statements and
  *  under BEFORE triggers that force client-side (CAS) execution.
  *  - MERGE WHEN NOT MATCHED INSERT applying column DEFAULT UUID(7)/SYS_GUID()
  *  - MERGE WHEN MATCHED UPDATE / WHEN NOT MATCHED INSERT with direct UUID functions

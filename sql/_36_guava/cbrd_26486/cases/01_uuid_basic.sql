@@ -1,5 +1,5 @@
 /**
- *  This test case verifies CBRD-26486: Support UUID()/SYS_GUID() built-in functions.
+ *  This test case verifies CBRD-26572: Support UUID()/SYS_GUID() built-in functions.
  *  UUID(), UUID(0), UUID(4) generate a random-based UUIDv4 as BIT(128).
  *  UUID(7) generates a time-ordered UUIDv7 (RFC 9562) as BIT(128).
  *  SYS_GUID() generates a UUIDv4 as a 32-character uppercase hexadecimal string.

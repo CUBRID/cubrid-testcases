@@ -71,8 +71,10 @@ TABLE    CREATE TABLE
 dba.uuid_def_t     CREATE TABLE [uuid_def_t] ([n] INTEGER, [id4] BIT(128) DEFAULT UUID(4), [id7] BIT(128) DEFAULT UUID(7), [g1] CHARACTER(32) DEFAULT SYS_GUID(), [g2] CHARACTER VARYING(1073741823) DEFAULT SYS_GUID()) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
+0
+===================================================
     
-[TEST 4] ALTER TABLE MODIFY changes the UUID default, SET DEFAULT NULL drops it     
+[TEST 4] ALTER MODIFY / CHANGE / ALTER SET DEFAULT vary the UUID default; verify each change     
 
 ===================================================
 0
@@ -80,7 +82,137 @@ dba.uuid_def_t     CREATE TABLE [uuid_def_t] ([n] INTEGER, [id4] BIT(128) DEFAUL
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.uuid_def_t     CREATE TABLE [uuid_def_t] ([n] INTEGER, [id4] BIT(128) DEFAULT UUID(7), [id7] BIT(128), [g1] CHARACTER(32) DEFAULT SYS_GUID(), [g2] CHARACTER VARYING(1073741823) DEFAULT SYS_GUID()) REUSE_OID, COLLATE utf8_bin     
+dba.uuid_alt_t     CREATE TABLE [uuid_alt_t] ([k] INTEGER AUTO_INCREMENT (1, 1) NOT NULL, [b] BIT(128) DEFAULT UUID(4), [g] CHARACTER(32) DEFAULT SYS_GUID(),  CONSTRAINT [pk_uuid_alt_t_k] PRIMARY KEY  ([k])) REUSE_OID, COLLATE utf8_bin     
+
+===================================================
+    
+[TEST 4.1] MODIFY changes default UUID(4) -> UUID(7): existing rows keep old default, new rows use the new one     
+
+===================================================
+3
+===================================================
+0
+===================================================
+default_value    
+UUID(7)     
+
+===================================================
+1
+===================================================
+old_v4_preserved    new_v7    
+3     1     
+
+===================================================
+4
+===================================================
+    
+[TEST 4.2] MODIFY changes the default to UUID() (version 4)     
+
+===================================================
+0
+===================================================
+default_value    
+UUID(4)     
+
+===================================================
+1
+===================================================
+b_ver    
+4     
+
+===================================================
+1
+===================================================
+    
+[TEST 4.3] CHANGE renames the column b -> bid and sets a UUID(7) default     
+
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+dba.uuid_alt_t     CREATE TABLE [uuid_alt_t] ([k] INTEGER AUTO_INCREMENT (1, 1) NOT NULL, [bid] BIT(128) DEFAULT UUID(7), [g] CHARACTER(32) DEFAULT SYS_GUID(),  CONSTRAINT [pk_uuid_alt_t_k] PRIMARY KEY  ([k])) REUSE_OID, COLLATE utf8_bin     
+
+===================================================
+1
+===================================================
+bid_ver    
+7     
+
+===================================================
+1
+===================================================
+    
+[TEST 4.4] CHANGE keeps the name and switches the default back to UUID(4)     
+
+===================================================
+0
+===================================================
+default_value    
+UUID(4)     
+
+===================================================
+1
+===================================================
+bid_ver    
+4     
+
+===================================================
+1
+===================================================
+    
+[TEST 4.5] ALTER SET DEFAULT NULL drops the SYS_GUID default on column g     
+
+===================================================
+0
+===================================================
+default_value    
+null     
+
+===================================================
+1
+===================================================
+total    g_non_null    
+1     0     
+
+===================================================
+1
+===================================================
+    
+[TEST 4.6] ALTER SET DEFAULT restores the SYS_GUID() default on column g     
+
+===================================================
+0
+===================================================
+default_value    
+SYS_GUID()     
+
+===================================================
+1
+===================================================
+g_hex    
+1     
+
+===================================================
+1
+===================================================
+    
+[TEST 4.7] ALTER SET DEFAULT also sets a UUID default on the bit column (UUID(4) -> UUID(7))     
+
+===================================================
+0
+===================================================
+default_value    
+UUID(7)     
+
+===================================================
+1
+===================================================
+bid_ver    
+7     
+
+===================================================
+TABLE    CREATE TABLE    
+dba.uuid_alt_t     CREATE TABLE [uuid_alt_t] ([k] INTEGER AUTO_INCREMENT (1, 1) NOT NULL, [bid] BIT(128) DEFAULT UUID(7), [g] CHARACTER(32) DEFAULT SYS_GUID(),  CONSTRAINT [pk_uuid_alt_t_k] PRIMARY KEY  ([k])) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 0

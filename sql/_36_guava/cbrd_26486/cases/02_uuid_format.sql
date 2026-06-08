@@ -1,5 +1,5 @@
 /**
- *  This test case verifies CBRD-26486: UUID_FORMAT() built-in function.
+ *  This test case verifies CBRD-26572: UUID_FORMAT() built-in function.
  *  UUID_FORMAT() accepts a 32-hex-character string, a 36-character hyphenated
  *  UUID string, or a 128-bit value, and returns the uppercase canonical
  *  8-4-4-4-12 hyphenated representation.

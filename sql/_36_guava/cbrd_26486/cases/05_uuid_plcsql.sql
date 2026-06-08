@@ -8,6 +8,8 @@
  *
  *  NOTE: Generated UUID values differ on every execution, so dbms_output prints
  *  only derived checks (length / version nibble / pattern booleans).
+ *  Since PL/CSQL does not support the BIT data type, the UUID function 
+ *  cannot be used as a DEFAULT value within it.
  */
 
 --+ server-message on
@@ -107,5 +109,51 @@ evaluate '[TEST 5] unsupported usages -> error';
 create or replace procedure uuid_sp_err (a string default uuid(7)) as begin return; end;
 create or replace procedure uuid_sp_err (a string default to_char(uuid())) as begin return; end;
 create or replace procedure uuid_sp_err as c string default uuid_format(uuid(7)); begin return; end;
+
+evaluate '[TEST 6] pass UUID as a stringified / UUID_FORMAT-wrapped procedure argument';
+-- A BIT(128) UUID cannot be passed to a PL/CSQL string parameter directly, so it must
+-- be stringified (CAST ... AS STRING -> 32 lowercase hex) or wrapped with UUID_FORMAT
+-- (-> 36-char canonical). The procedure re-normalizes the argument with UUID_FORMAT
+-- to read the version nibble regardless of which form was passed.
+create or replace procedure uuid_arg_sp (a string, expected_ver char)
+as
+begin
+    dbms_output.put_line('in_len=' || length(a)
+        || ' reformat_ver=' || substr(uuid_format(a), 15, 1)
+        || ' fmt_ok=' || regexp_like(uuid_format(a), '^[0-9A-F]{8}-[0-9A-F]{4}-[47][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$', 'c')
+        || ' ver_match=' || decode(substr(uuid_format(a), 15, 1), expected_ver, 1, 0));
+end;
+
+evaluate '[TEST 6.1] UUID_FORMAT-wrapped arguments (36-char canonical)';
+call uuid_arg_sp(uuid_format(uuid(7)), '7');
+call uuid_arg_sp(uuid_format(uuid(4)), '4');
+call uuid_arg_sp(uuid_format(uuid()), '4');
+call uuid_arg_sp(uuid_format(sys_guid()), '4');
+
+evaluate '[TEST 6.2] stringified arguments (CAST AS STRING -> 32 hex)';
+call uuid_arg_sp(cast(uuid(7) as string), '7');
+call uuid_arg_sp(cast(uuid(4) as string), '4');
+call uuid_arg_sp(cast(uuid() as varchar), '4');
+call uuid_arg_sp(sys_guid(), '4');
+
+evaluate '[TEST 6.3] raw BIT UUID argument -> error (PL/CSQL does not accept BIT arguments)';
+call uuid_arg_sp(uuid(7), '7');
+call uuid_arg_sp(uuid(4), '4');
+drop procedure uuid_arg_sp;
+
+evaluate '[TEST 7] stored function takes a stringified/formatted UUID argument and re-formats it';
+create or replace function uuid_norm_fn (a string) return string
+as
+begin
+    return uuid_format(a);
+end;
+
+select regexp_like(uuid_norm_fn(cast(uuid(7) as string)), '^[0-9A-F]{8}-[0-9A-F]{4}-7[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$', 'c') v7_from_stringified,
+       regexp_like(uuid_norm_fn(uuid_format(uuid(4))), '^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$', 'c') v4_from_formatted,
+       regexp_like(uuid_norm_fn(sys_guid()), '^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$', 'c') v4_from_sysguid;
+evaluate '[TEST 7.1] UUID_FORMAT is idempotent through the function round-trip';
+select uuid_norm_fn('0123456789ABCDEF0123456789ABCDEF') from_hex,
+       uuid_norm_fn('01234567-89ab-cdef-0123-456789abcdef') from_formatted;
+drop function uuid_norm_fn;
 
 --+ server-message off
