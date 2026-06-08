@@ -24,6 +24,11 @@
  * 20 - CTE with GROUP BY and aggregates
  * 21 - CTE with DISTINCT in CTE body
  * 22 - CTE with LIMIT/OFFSET (row limiting in CTE body)
+ *
+ * Sections 1-12 *.1 (create table): show trace is unavailable; inline/materialize is
+ * checked via serial (s_orderN.next_value in CTE, unused in outer select).
+ * current_value=1 -> inlined ('false'); !=1 -> materialized ('true').
+ * Other cases use show trace. evaluate tags: [inline:Y|N] at end.
  */
 
 drop table if exists ta, tb;
@@ -31,6 +36,9 @@ create table ta (ca int, cb int);
 insert into ta values (1, 1);
 insert into ta values (2, 2);
 insert into ta values (3, 3);
+create serial s_order1 start with 1;
+create serial s_order2 start with 1;
+create serial s_order3 start with 1;
 
 set trace on;
 
@@ -42,10 +50,12 @@ set trace on;
 evaluate '1.1 CTE without hint, create table [inline:Y]';
 create table tb as
     with cte as (
-        select * from ta
-)select /*+ recompile */ * from cte;
-
-show trace;
+        select ca, cb, s_order1.next_value as cc from ta
+)select /*+ recompile */ ca, cb from cte;
+select
+        case when s_order1.current_value=1 then 'false'
+        else 'true'
+        end as is_cte_materialized;
 
 evaluate '1.2 CTE without hint, select [inline:Y]';
 with cte as (
@@ -94,12 +104,16 @@ drop table tb;
 -- ===========================================================================
 
 evaluate '2.1 CTE with inline hint, create table [inline:Y]';
+alter serial s_order1 start with 1;
+
 create table tb as
     with cte as (
-        select /*+ inline */ * from ta
-)select /*+ recompile */ * from cte;
-
-show trace;
+        select /*+ inline */ ca, cb, s_order1.next_value as cc from ta
+)select /*+ recompile */ ca, cb from cte;
+select
+        case when s_order1.current_value=1 then 'false'
+        else 'true'
+        end as is_cte_materialized;
 
 
 evaluate '2.2 CTE with inline hint, select [inline:Y]';
@@ -150,12 +164,16 @@ drop table tb;
 -- ===========================================================================
 
 evaluate '3.1 CTE with materialize hint, create table [inline:N]';
+alter serial s_order1 start with 1;
+
 create table tb as
     with cte as (
-        select /*+ materialize */ * from ta
-)select /*+ recompile */ * from cte;
-
-show trace;
+        select /*+ materialize */ ca, cb, s_order1.next_value as cc from ta
+)select /*+ recompile */ ca, cb from cte;
+select
+        case when s_order1.current_value=1 then 'false'
+        else 'true'
+        end as is_cte_materialized;
 
 evaluate '3.2 CTE with materialize hint, select [inline:N]';
 with cte as (
@@ -205,14 +223,18 @@ drop table tb;
 -- ===========================================================================
 
 evaluate '4.1 Recursive CTE - self-referencing, create table [inline:N]';
+alter serial s_order1 start with 1;
+
 create table tb as
     with self_ref_cte as (
-        select 1 as ca
+        select 1 as ca, s_order1.next_value as cb
         union all
-        select ca + 1 as ca from self_ref_cte where ca < 10
-)select /*+ recompile */ * from self_ref_cte;
-
-show trace;
+        select ca + 1 as ca, s_order1.next_value as cb from self_ref_cte where ca < 10
+)select /*+ recompile */ ca from self_ref_cte;
+select
+        case when s_order1.current_value=1 then 'false'
+        else 'true'
+        end as is_cte_materialized;
 
 evaluate '4.2 Recursive CTE - self-referencing, select [inline:N]';
 with self_ref_cte as (
@@ -271,14 +293,18 @@ drop table tb;
 -- ===========================================================================
 
 evaluate '5.1 Recursive CTE - with recursive keyword, create table [inline:N]';
+alter serial s_order1 start with 1;
+
 create table tb as
     with recursive recursive_cte as (
-        select 1 as ca
+        select 1 as ca, s_order1.next_value as cb
         union all
-        select ca + 1 as ca from recursive_cte where ca < 10
-)select /*+ recompile */ * from recursive_cte;
-
-show trace;
+        select ca + 1 as ca, s_order1.next_value as cb from recursive_cte where ca < 10
+)select /*+ recompile */ ca from recursive_cte;
+select
+        case when s_order1.current_value=1 then 'false'
+        else 'true'
+        end as is_cte_materialized;
 
 
 evaluate '5.2 Recursive CTE - with recursive keyword, select [inline:N]';
@@ -337,13 +363,22 @@ drop table tb;
 -- ===========================================================================
 
 evaluate '6.1 Nested CTE reference - main query using CTE that references another CTE, create table [inline:Y]';
+alter serial s_order1 start with 1;
+alter serial s_order2 start with 1;
+
 create table tb as
     with
-        cte as (select * from ta),
-        cte_b as (select * from cte)
-    select /*+ recompile */ * from cte_b;
+        cte as (select ca, cb, s_order1.next_value as cc from ta),
+        cte_b as (select ca, cb, s_order2.next_value as cc from cte)
+    select /*+ recompile */ ca, cb from cte_b;
+select
+        case when s_order1.current_value=1 then 'false'
+        else 'true'
+        end as is_cte_materialized,
 
-show trace;
+        case when s_order2.current_value=1 then 'false'
+        else 'true'
+        end as is_cte_b_materialized;
 
 evaluate '6.2 Nested CTE reference - main query using CTE that references another CTE, select [inline:Y]';
 with
@@ -394,13 +429,24 @@ drop table tb;
 -- ===========================================================================
 
 evaluate '7.1 Nested CTE reference - CTE referencing materialized CTE, create table [inline:N]';
+alter serial s_order1 start with 1;
+alter serial s_order2 start with 1;
+
 create table tb as
     with
-        cte as (select /*+ materialize */ * from ta),
-        cte_b as (select * from cte)
-    select /*+ recompile */ * from cte_b;
+        cte as (select /*+ materialize */ ca, cb, s_order1.next_value as cc from ta),
+        cte_b as (select /*+ inline */ ca, cb, s_order2.next_value as cc from cte)
+    select /*+ recompile */ ca, cb from cte_b
+     union all
+    select ca, cb from cte_b;
+select
+        case when s_order1.current_value=1 then 'false'
+        else 'true'
+        end as is_cte_materialized,
 
-show trace;
+        case when s_order2.current_value!=3 then 'false'
+        else 'true'
+        end as is_cte_b_materialized;
 
 evaluate '7.2 Nested CTE reference - CTE referencing materialized CTE, select [inline:N]';
 with
@@ -450,13 +496,22 @@ drop table tb;
 -- ===========================================================================
 
 evaluate '8.1 Nested CTE reference - materialized CTE referencing another CTE, create table [inline:N]';
+alter serial s_order1 start with 1;
+alter serial s_order2 start with 1;
+
 create table tb as
     with
-        cte as (select * from ta),
-        cte_b as (select /*+ materialize */ * from cte)
-    select /*+ recompile */ * from cte_b;
+        cte as (select ca, cb, s_order1.next_value as cc from ta),
+        cte_b as (select /*+ materialize */ ca, cb, s_order2.next_value as cc from cte)
+    select /*+ recompile */ ca, cb from cte_b;
+select
+        case when s_order1.current_value=1 then 'false'
+        else 'true'
+        end as is_cte_materialized,
 
-show trace;
+        case when s_order2.current_value=1 then 'false'
+        else 'true'
+        end as is_cte_b_materialized;
 
 evaluate '8.2 Nested CTE reference - materialized CTE referencing another CTE, select [inline:N]';
 with
@@ -507,14 +562,30 @@ drop table tb;
 -- ===========================================================================
 
 evaluate '9.1 3-level Nested CTE - materialize in middle, create table [inline:N]';
+alter serial s_order1 start with 1;
+alter serial s_order2 start with 1;
+alter serial s_order3 start with 1;
+
 create table tb as
     with
-        cte as (select * from ta),
-        cte_b as (select /*+ materialize */ * from cte),
-        cte_c as (select * from cte_b)
-    select /*+ recompile */ * from cte_c;
+        cte as (select /*+ inline */ ca, cb, s_order1.next_value as cc from ta),
+        cte_b as (select /*+ materialize */ ca, cb, s_order2.next_value as cc from cte),
+        cte_c as (select /*+ inline */ ca, cb, s_order3.next_value as cc from cte_b)
+    select /*+ recompile */ ca, cb from cte_c
+        union all
+    select ca, cb from cte_c;
+select
+        case when s_order1.current_value=1 then 'false'
+        else 'true'
+        end as is_cte_materialized,
 
-show trace;
+        case when s_order2.current_value=1 then 'false'
+        else 'true'
+        end as is_cte_b_materialized,
+
+        case when s_order3.current_value!=3 then 'false'
+        else 'true'
+        end as is_cte_c_materialized;
 
 evaluate '9.2 3-level Nested CTE - materialize in middle, select [inline:N]';
 with
@@ -569,12 +640,16 @@ drop table tb;
 -- ===========================================================================
 
 evaluate '10.1 Multiple CTE references - materialize processing in main query, create table [inline:N]';
+alter serial s_order1 start with 1;
+
 create table tb as
     with
-        cte as (select * from ta)
-    select /*+ recompile */ * from cte union all select * from cte;
-
-show trace;
+        cte as (select ca, cb, s_order1.next_value as cc from ta)
+    select /*+ recompile */ ca, cb from cte union all select ca, cb from cte;
+select
+        case when s_order1.current_value=1 then 'false'
+        else 'true'
+        end as is_cte_materialized;
 
 
 evaluate '10.2 Multiple CTE references - materialize processing in main query, select [inline:N]';
@@ -621,12 +696,16 @@ drop table tb;
 -- ===========================================================================
 
 evaluate '11.1 Multiple CTE references - forced inlining with inline hint, create table [inline:Y]';
+alter serial s_order1 start with 1;
+
 create table tb as
     with
-        cte as (select /*+ inline */ * from ta)
-    select /*+ recompile */ * from cte union all select * from cte;
-
-show trace;
+        cte as (select /*+ inline */ ca, cb, s_order1.next_value as cc from ta)
+    select /*+ recompile */ ca, cb from cte union all select ca, cb from cte;
+select
+        case when s_order1.current_value=1 then 'false'
+        else 'true'
+        end as is_cte_materialized;
 
 evaluate '11.2 Multiple CTE references - forced inlining with inline hint, select [inline:Y]';
 with
@@ -671,13 +750,22 @@ drop table tb;
 -- ===========================================================================
 
 evaluate '12.1 Multiple CTE references - multiple references to another CTE in WITH clause, create table [inline:N]';
+alter serial s_order1 start with 1;
+alter serial s_order2 start with 1;
+
 create table tb as
     with
-        cte as (select * from ta),
-        cte_b as (select * from cte union all select * from cte)
-    select /*+ recompile */ * from cte_b;
+        cte as (select ca, cb, s_order1.next_value as cc from ta),
+        cte_b as (select ca, cb, s_order2.next_value as cc from cte union all select ca, cb, s_order2.next_value as cc from cte)
+    select /*+ recompile */ ca, cb from cte_b;
+select
+        case when s_order1.current_value=1 then 'false'
+        else 'true'
+        end as is_cte_materialized,
 
-show trace;
+        case when s_order2.current_value=1 then 'false'
+        else 'true'
+        end as is_cte_b_materialized;
 
 evaluate '12.2 Multiple CTE references - multiple references to another CTE in WITH clause, select [inline:N]';
 with
@@ -1221,5 +1309,8 @@ show trace;
 -- ===========================================================================
 
 drop table if exists ta;
+drop serial s_order1;
+drop serial s_order2;
+drop serial s_order3;
 
 set trace off;
