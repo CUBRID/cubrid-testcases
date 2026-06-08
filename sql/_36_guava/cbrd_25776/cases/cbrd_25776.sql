@@ -25,8 +25,8 @@
  * 21 - CTE with DISTINCT in CTE body
  * 22 - CTE with LIMIT/OFFSET (row limiting in CTE body)
  *
- * Sections 1-12 *.1 (create table): show trace is unavailable; inline/materialize is
- * checked via serial (s_orderN.next_value in CTE, unused in outer select).
+ * *.1 (create table): show trace is unavailable; inline/materialize is checked via
+ * serial (s_orderN.next_value in CTE, unused in outer select).
  * current_value=1 -> inlined ('false'); !=1 -> materialized ('true').
  * Other cases use show trace. evaluate tags: [inline:Y|N] at end.
  */
@@ -816,14 +816,18 @@ drop table tb;
 -- ===========================================================================
 
 evaluate '13.1 Recursive CTE with recursive keyword + inline hint forced, create table [inline:N]';
+alter serial s_order1 start with 1;
+
 create table tb as
     with recursive recursive_cte as (
-        select /*+ inline */ 1 as ca
+        select /*+ inline */ 1 as ca, s_order1.next_value as cb
         union all
-        select ca + 1 as ca from recursive_cte where ca < 10
-)select /*+ recompile */ * from recursive_cte;
-
-show trace;
+        select ca + 1 as ca, s_order1.next_value as cb from recursive_cte where ca < 10
+)select /*+ recompile */ ca from recursive_cte;
+select
+        case when s_order1.current_value=1 then 'false'
+        else 'true'
+        end as is_cte_materialized;
 
 evaluate '13.2 Recursive CTE with recursive keyword + inline hint forced, select [inline:N]';
 with recursive recursive_cte as (
@@ -882,14 +886,18 @@ drop table tb;
 -- ===========================================================================
 
 evaluate '14.1 Self-referencing CTE without recursive keyword + inline hint forced, create table [inline:N]';
+alter serial s_order1 start with 1;
+
 create table tb as
     with self_ref_cte as (
-        select /*+ inline */ 1 as ca
+        select /*+ inline */ 1 as ca, s_order1.next_value as cb
         union all
-        select ca + 1 as ca from self_ref_cte where ca < 10
-)select /*+ recompile */ * from self_ref_cte;
-
-show trace;
+        select ca + 1 as ca, s_order1.next_value as cb from self_ref_cte where ca < 10
+)select /*+ recompile */ ca from self_ref_cte;
+select
+        case when s_order1.current_value=1 then 'false'
+        else 'true'
+        end as is_cte_materialized;
 
 evaluate '14.2 Self-referencing CTE without recursive keyword + inline hint forced, select [inline:N]';
 with self_ref_cte as (
@@ -950,12 +958,16 @@ drop table tb;
 -- ===========================================================================
 
 evaluate '15.1 CTE with ROWNUM + inline hint, create table [inline:Y]';
+alter serial s_order1 start with 1;
+
 create table tb as
     with cte as (
-        select /*+ inline */ rownum as r, ca, cb from ta
-)select /*+ recompile */ * from cte;
-
-show trace;
+        select /*+ inline */ rownum as r, ca, cb, s_order1.next_value as cc from ta
+)select /*+ recompile */ r, ca, cb from cte;
+select
+        case when s_order1.current_value=1 then 'false'
+        else 'true'
+        end as is_cte_materialized;
 
 evaluate '15.2 CTE with ROWNUM + inline hint, select [inline:Y]';
 with cte as (
@@ -1004,12 +1016,16 @@ drop table tb;
 -- ===========================================================================
 
 evaluate '16.1 CTE with query_cache + inline hint, create table [inline:N]';
+alter serial s_order1 start with 1;
+
 create table tb as
     with cte as (
-        select /*+ inline query_cache */ * from ta
-)select /*+ recompile */ * from cte;
-
-show trace;
+        select /*+ inline query_cache */ ca, cb, s_order1.next_value as cc from ta
+)select /*+ recompile */ ca, cb from cte;
+select
+        case when s_order1.current_value=1 then 'false'
+        else 'true'
+        end as is_cte_materialized;
 
 evaluate '16.2 CTE with query_cache + inline hint, select [inline:N]';
 with cte as (
@@ -1061,15 +1077,22 @@ drop table tb;
 --   17.5, 17.6 : left MATERIALIZE -> SCAN dba.cte + MATERIALIZE in plan [inline:N]
 -- ===========================================================================
 
-evaluate '17.1 UNION ALL - left INLINE, create table [inline:Y]';
+-- 17.1 note: evaluate tag [inline:Y] matches 17.2 trace (CTE inlined).  Serial check
+-- returns is_cte_materialized='true' because next_value sits in both UNION ALL branches
+-- inside the CTE body and runs once per row there.
+evaluate '17.1 UNION ALL - left INLINE, create table [inline:Y, is_cte_materialized:true]';
+alter serial s_order1 start with 1;
+
 create table tb as
     with cte as (
-        select /*+ inline */ * from ta
+        select /*+ inline */ ca, cb, s_order1.next_value as cc from ta
         union all
-        select * from ta
-)select /*+ recompile */ * from cte;
-
-show trace;
+        select ca, cb, s_order1.next_value as cc from ta
+)select /*+ recompile */ ca, cb from cte;
+select
+        case when s_order1.current_value=1 then 'false'
+        else 'true'
+        end as is_cte_materialized;
 
 evaluate '17.2 UNION ALL - left INLINE, select [inline:Y]';
 with cte as (
@@ -1141,11 +1164,15 @@ insert into tx
 set trace on;
 
 evaluate '18.1 View merge - INLINE pushes predicate to indexed table, create table [inline:Y]';
-create table tb as
-    with cte as (select /*+ inline */ * from tx)
-    select /*+ recompile */ ca from cte where ca <= 100;
+alter serial s_order1 start with 1;
 
-show trace;
+create table tb as
+    with cte as (select /*+ inline */ ca, cb, cc, cd, s_order1.next_value as ce from tx)
+    select /*+ recompile */ ca from cte where ca <= 100;
+select
+        case when s_order1.current_value=1 then 'false'
+        else 'true'
+        end as is_cte_materialized;
 
 evaluate '18.2 View merge - INLINE pushes predicate to indexed table, select [inline:Y]';
 with cte as (select /*+ inline */ * from tx)
@@ -1189,14 +1216,18 @@ drop table tx;
 -- ===========================================================================
 
 evaluate '19.1 CTE with JOIN, create table [inline:Y]';
+alter serial s_order1 start with 1;
+
 create table tb as
     with cte as (
-        select /*+ inline */ * from ta where ca > 1
+        select /*+ inline */ ca, cb, s_order1.next_value as cc from ta where ca > 1
     )
     select /*+ recompile */ t1.ca, t1.cb, t2.ca as ca2, t2.cb as cb2
     from cte t1 inner join ta t2 on t1.ca = t2.ca;
-
-show trace;
+select
+        case when s_order1.current_value=1 then 'false'
+        else 'true'
+        end as is_cte_materialized;
 
 evaluate '19.2 CTE with JOIN, select [inline:Y]';
 with cte as (
@@ -1224,15 +1255,19 @@ drop table tb;
 -- ===========================================================================
 
 evaluate '20.1 CTE with GROUP BY and aggregates, create table [inline:Y]';
+alter serial s_order1 start with 1;
+
 create table tb as
     with cte as (
-        select /*+ inline */ ca, count(*) as cnt, sum(cb) as sum_cb
+        select /*+ inline */ ca, count(*) as cnt, sum(cb) as sum_cb, s_order1.next_value as cc
         from ta
         group by ca
     )
-    select /*+ recompile */ * from cte where cnt > 0;
-
-show trace;
+    select /*+ recompile */ ca, cnt, sum_cb from cte where cnt > 0;
+select
+        case when s_order1.current_value=1 then 'false'
+        else 'true'
+        end as is_cte_materialized;
 
 evaluate '20.2 CTE with GROUP BY and aggregates, select [inline:Y]';
 with cte as (
@@ -1262,14 +1297,21 @@ drop table tb;
 -- Section 21: CTE with DISTINCT in CTE body
 -- ===========================================================================
 
-evaluate '21.1 CTE with DISTINCT, create table [inline:Y]';
+-- 21.1 note: evaluate tag [inline:Y] matches 21.2 trace (CTE inlined).  Serial check
+-- returns is_cte_materialized='true' because next_value is in the DISTINCT select list
+-- and is still evaluated per row even when the CTE is inlined.
+evaluate '21.1 CTE with DISTINCT, create table [inline:Y, is_cte_materialized:true]';
+alter serial s_order1 start with 1;
+
 create table tb as
     with cte as (
-        select /*+ inline */ distinct ca, cb from ta
+        select /*+ inline */ distinct ca, cb, s_order1.next_value as cc from ta
     )
-    select /*+ recompile */ * from cte;
-
-show trace;
+    select /*+ recompile */ ca, cb from cte;
+select
+        case when s_order1.current_value=1 then 'false'
+        else 'true'
+        end as is_cte_materialized;
 
 evaluate '21.2 CTE with DISTINCT, select [inline:Y]';
 with cte as (
