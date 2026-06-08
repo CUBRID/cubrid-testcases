@@ -15,19 +15,13 @@ A commit
 NUM_CLIENTS = 2
 C1: insert into t(col) select col from t where sleep(1,col)=1 order by id;
 C2: delete from t where id=3; --expected ready, and C1 can see 3
-
-[CUBRIDQA-1391] Since CBRD-26747, fixed scan is enabled by default, causing latch to be held.
-during query execution and distorting intended concurrent behavior in this TC.
-Disable enable_heap_fixed_scan temporarily. See CUBRIDQA-1391 for details.
 */
 
 MC: setup NUM_CLIENTS = 2;
 C1: set transaction lock timeout INFINITE;
 C1: set transaction isolation level repeatable read;
-C1: set system parameters 'enable_heap_fixed_scan=false';
 C2: set transaction lock timeout INFINITE;
 C2: set transaction isolation level repeatable read;
-C2: set system parameters 'enable_heap_fixed_scan=false';
 
 /* preparation */
 C1: drop table if exists t;
@@ -39,7 +33,10 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
+/* CBRD-24747: Remove sleep(1) in WHERE clause and change to sequential execution to fix TC instability
 C1: insert into t(col) select col from t where (select sleep(1)=0)<>0 order by id;
+*/
+C1: insert into t(col) select col from t order by id;
 C2: delete from t where id=3;
 MC: wait until C2 ready;
 C2: commit;
@@ -55,9 +52,6 @@ C2: commit;
 MC: wait until C2 ready;
 
 C1: commit;
-
-C2: set system parameters 'enable_heap_fixed_scan=true';
-C1: set system parameters 'enable_heap_fixed_scan=true';
 C2: quit;
 C1: quit;
 
