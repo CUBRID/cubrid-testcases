@@ -51,6 +51,7 @@ MC: wait until C1 ready;
 C2: DELETE FROM t1 WHERE tag in ('A','D') and 0 = (select sleep(4)); 
 /* expect: no transactions need to wait */
 /* expect: C1 select - id = 2,3,5 are updated */
+MC: sleep 1;
 C1: SELECT * FROM t1 order by 1,2;
 C1: commit;
 /* expect: C2 finished execution after C1 commit, 2 rows (id=1,4)deleted message, C2 select - id = 1,4 are deleted */
