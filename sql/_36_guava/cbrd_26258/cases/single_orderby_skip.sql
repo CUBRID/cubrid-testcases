@@ -32,7 +32,7 @@ with q as (
 select /*+ recompile */ 'Q001', q.* from q limit 10;
 show trace;
 
-evaluate 'Q002. When a covering index scan cannot be used, skip ORDER BY cannot be applied because the cost is high in the cost comparison.';
+evaluate 'Q002. When a covering index scan cannot be used, skip ORDER BY is applied via a non-covering index scan since the lowered ISCAN_OID_ACCESS_OVERHEAD makes its cost competitive (CBRD-26889).';
 alter table tbl_a modify cola int not null;
 with q as (
   select /*+ materialize */ * from tbl_a order by cola

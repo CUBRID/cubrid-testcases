@@ -18,7 +18,7 @@
 0
 ===================================================
     
-Q101. When a covering index scan cannot be used, it is less cost-effective; therefore, skip ORDER BY cannot be applied.     
+Q101. When a covering index scan cannot be used, skip ORDER BY is applied via a non-covering index scan since the lowered ISCAN_OID_ACCESS_OVERHEAD makes its cost competitive (CBRD-26889).     
 
 ===================================================
 'Q101'    cola    colb    colc    cold    cole    colf    
@@ -1234,7 +1234,7 @@ Trace Statistics:
 
 ===================================================
     
-Q121. When an additional condition is included on FK-PK columns apart from the join condition, SORT LIMIT optimization cannot be applied.     
+Q121. When an additional condition is included on FK-PK columns apart from the join condition, SORT LIMIT optimization is not applied, but skip ORDER BY is applied via an order-providing index scan under the lowered ISCAN_OID_ACCESS_OVERHEAD cost model (CBRD-26889).     
 
 ===================================================
 'Q121'    cola    colb    colc    cold    cole    colf    
@@ -1324,7 +1324,7 @@ Trace Statistics:
 
 ===================================================
     
-Q123. When the LIMIT value exceeds the sort_limit_max_count parameter, SORT LIMIT optimization is not applied; therefore, skip ORDER BY cannot be applied.     
+Q123. When the LIMIT value exceeds the sort_limit_max_count parameter, SORT LIMIT optimization is not applied, but skip ORDER BY is applied via an order-providing index scan under the lowered ISCAN_OID_ACCESS_OVERHEAD cost model (CBRD-26889).     
 
 ===================================================
 0
