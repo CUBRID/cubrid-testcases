@@ -15,12 +15,12 @@ select set(select a from foo) into v from db_root;
 commit;
 --set optimization: level 257;
 select a from foo where a in v order by 1 desc;
-drop class foo;
+drop class if exists foo;
 call login('public','') on class db_user;
 call login('dba','') on class db_user;
 commit;
 rollback;
-drop class foo;
+drop class if exists foo;
 commit;
 
 --+ holdcas off;
