@@ -8,13 +8,13 @@ create test table
 0
 ===================================================
     
-create test_trigger1: execute call add_user([user_name]) on class db_user     
+create test_trigger1: execute call add_user([user_name]) on class _db_user     
 
 ===================================================
 0
 ===================================================
 unique_name    owner.name    name    action_definition    
-dba.test_trigger1     DBA     test_trigger1     call [add_user]('test_user') on class [db_user]     
+dba.test_trigger1     DBA     test_trigger1     call [add_user]('test_user') on class [_db_user]     
 
 ===================================================
     
@@ -25,12 +25,13 @@ insert data & check result
 ===================================================
 name    
 DBA     
+INFORMATION_SCHEMA     
 PUBLIC     
 TEST_USER     
 
 ===================================================
     
-create test_trigger2: execute call add_user(class db_user, [user_name])     
+create test_trigger2: execute call add_user(class _db_user, [user_name])     
 
 ===================================================
 0
@@ -43,6 +44,7 @@ insert data & check result
 ===================================================
 name    
 DBA     
+INFORMATION_SCHEMA     
 PUBLIC     
 TEST_USER     
 TEST_USER2     
@@ -53,8 +55,8 @@ trigger list
 
 ===================================================
 unique_name    owner.name    name    action_definition    
-dba.test_trigger1     DBA     test_trigger1     call [add_user]('test_user') on class [db_user]     
-dba.test_trigger2     DBA     test_trigger2     call [add_user]('test_user2') on class [db_user]     
+dba.test_trigger1     DBA     test_trigger1     call [add_user]('test_user') on class [_db_user]     
+dba.test_trigger2     DBA     test_trigger2     call [add_user]('test_user2') on class [_db_user]     
 
 ===================================================
     
@@ -64,8 +66,8 @@ create test_trigger3: execute call dba.hello()
 0
 ===================================================
 unique_name    owner.name    name    action_definition    
-dba.test_trigger1     DBA     test_trigger1     call [add_user]('test_user') on class [db_user]     
-dba.test_trigger2     DBA     test_trigger2     call [add_user]('test_user2') on class [db_user]     
+dba.test_trigger1     DBA     test_trigger1     call [add_user]('test_user') on class [_db_user]     
+dba.test_trigger2     DBA     test_trigger2     call [add_user]('test_user2') on class [_db_user]     
 dba.test_trigger3     DBA     test_trigger3     call [dba].[hello]()     
 
 ===================================================
@@ -76,8 +78,8 @@ create test_trigger4: execute call public.hello()
 0
 ===================================================
 unique_name    owner.name    name    action_definition    
-dba.test_trigger1     DBA     test_trigger1     call [add_user]('test_user') on class [db_user]     
-dba.test_trigger2     DBA     test_trigger2     call [add_user]('test_user2') on class [db_user]     
+dba.test_trigger1     DBA     test_trigger1     call [add_user]('test_user') on class [_db_user]     
+dba.test_trigger2     DBA     test_trigger2     call [add_user]('test_user2') on class [_db_user]     
 dba.test_trigger3     DBA     test_trigger3     call [dba].[hello]()     
 dba.test_trigger4     DBA     test_trigger4     call [public].[HeLlo]()     
 
@@ -95,8 +97,8 @@ create test_trigger5: execute call m1(class tbl)
 0
 ===================================================
 unique_name    owner.name    name    action_definition    
-dba.test_trigger1     DBA     test_trigger1     call [add_user]('test_user') on class [db_user]     
-dba.test_trigger2     DBA     test_trigger2     call [add_user]('test_user2') on class [db_user]     
+dba.test_trigger1     DBA     test_trigger1     call [add_user]('test_user') on class [_db_user]     
+dba.test_trigger2     DBA     test_trigger2     call [add_user]('test_user2') on class [_db_user]     
 dba.test_trigger3     DBA     test_trigger3     call [dba].[hello]()     
 dba.test_trigger4     DBA     test_trigger4     call [public].[HeLlo]()     
 dba.test_trigger5     DBA     test_trigger5     call [m1]() on class [dba.Tbl]     
@@ -109,8 +111,8 @@ create test_trigger6: execute call m1()
 0
 ===================================================
 unique_name    owner.name    name    action_definition    
-dba.test_trigger1     DBA     test_trigger1     call [add_user]('test_user') on class [db_user]     
-dba.test_trigger2     DBA     test_trigger2     call [add_user]('test_user2') on class [db_user]     
+dba.test_trigger1     DBA     test_trigger1     call [add_user]('test_user') on class [_db_user]     
+dba.test_trigger2     DBA     test_trigger2     call [add_user]('test_user2') on class [_db_user]     
 dba.test_trigger3     DBA     test_trigger3     call [dba].[hello]()     
 dba.test_trigger4     DBA     test_trigger4     call [public].[HeLlo]()     
 dba.test_trigger5     DBA     test_trigger5     call [m1]() on class [dba.Tbl]     
