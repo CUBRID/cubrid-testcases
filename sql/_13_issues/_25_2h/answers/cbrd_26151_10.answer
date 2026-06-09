@@ -1,0 +1,108 @@
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+    
+10-1. GRANT on SERIAL is not supported (syntax error expected)     
+
+
+===================================================
+Error:-493
+Syntax: In line 1, column 24 before '.s1 TO u2; '
+Syntax error: unexpected 'u1', expecting TO 
+
+===================================================
+    
+10-2. GRANT on SERVER is not supported (syntax error expected)     
+
+
+===================================================
+Error:-493
+Syntax: In line 1, column 24 before '.srv1 TO u2; '
+Syntax error: unexpected 'u1', expecting TO 
+
+===================================================
+    
+10-3. GRANT on SYNONYM is redirected to the target table (recorded as CLASS)     
+
+
+===================================================
+0
+
+===================================================
+    
+10-4. login as u2: only the redirected CLASS grant on base_tbl is visible; no SERIAL/SERVER/SYNONYM rows     
+
+
+===================================================
+    
+null     
+
+
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+U1     U2     CLASS     base_tbl     U1     SELECT     NO     
+
+
+===================================================
+    
+10-5. login as dba: db_auth contains no SERIAL/SERVER/SYNONYM object_type     
+
+
+===================================================
+    
+null     
+
+
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+
+
+===================================================
+    
+10-6. login as dba: only the synonym-redirected CLASS grant exists for u2     
+
+
+===================================================
+grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+U1     U2     CLASS     base_tbl     U1     SELECT     NO     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
