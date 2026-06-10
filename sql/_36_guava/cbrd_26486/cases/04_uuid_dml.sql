@@ -20,8 +20,8 @@ insert into uuid_dml_t values (uuid('4'), uuid('4'), uuid('4'), uuid('4'), uuid(
 insert into uuid_dml_t values (uuid(7), uuid(7), uuid(7), uuid(7), uuid(7));
 insert into uuid_dml_t values (uuid('7'), uuid('7'), uuid('7'), uuid('7'), uuid('7'));
 insert into uuid_dml_t values (sys_guid(), sys_guid(), sys_guid(), sys_guid(), sys_guid());
--- NOTE: in INSERT context UUID(NULL) is not constant-folded; a NULL version argument falls back to v4
-insert into uuid_dml_t values (uuid(null), uuid(null), uuid(null), uuid(null), uuid(null));
+-- NOTE: UUID(NULL) raises an error in every context (see TEST 8), so it is not mixed
+-- into the valid rows here.
 select bit_length(a) len_a, bit_length(b) len_b, char_length(c) len_c, char_length(d) len_d, char_length(e) len_e
 from uuid_dml_t
 order by 1, 2, 3, 4, 5;
@@ -32,7 +32,7 @@ where a is not null
 group by substr(uuid_format(a), 15, 1)
 order by version;
 -- NOTE: a BIT(128) UUID coerced into a character column is stored as lowercase hex,
--- while SYS_GUID() returns uppercase hex: 7 coerced rows + 1 SYS_GUID row below.
+-- while SYS_GUID() returns uppercase hex: 6 coerced rows + 1 SYS_GUID row below.
 select count(case when bit_length(b) = 128 then 1 end) b_len_ok,
        count(case when regexp_like(c, '^[0-9a-fA-F]{32}$', 'c') = 1 then 1 end) c_hex,
        count(case when regexp_like(c, '^[0-9a-f]{32}$', 'c') = 1 then 1 end) c_lower_hex,
@@ -89,4 +89,12 @@ create table uuid_dml_t (a bit(128));
 insert into uuid_dml_t values (sys_guid());
 insert into uuid_dml_t values (cast(sys_guid() as bit(128)));
 select bit_length(a) len_a, substr(uuid_format(a), 15, 1) version_a from uuid_dml_t;
+drop table uuid_dml_t;
+
+evaluate '[TEST 8] UUID(NULL) is rejected in every DML context (no row is inserted)';
+create table uuid_dml_t (a bit(128));
+insert into uuid_dml_t values (uuid(null));
+insert into uuid_dml_t select uuid(null) from db_root;
+insert into uuid_dml_t(a) values (uuid(cast(null as int)));
+select count(*) stays_empty from uuid_dml_t;
 drop table uuid_dml_t;

@@ -40,12 +40,12 @@ guid_upper_hex    guid_lower_hex
 
 ===================================================
     
-[TEST 5] NULL and string argument handling: UUID(NULL) -> NULL, string version argument is coerced     
+[TEST 5] NULL version argument -> error; string version argument is coerced     
 
 ===================================================
-uuid(null)    
-null     
-
+Error:-494
+===================================================
+Error:-494
 ===================================================
 u_str4    v_str4    
 128     4     
@@ -136,7 +136,7 @@ time_ordered
 
 ===================================================
     
-[TEST 12] UUID(7) embeds the statement timestamp: first 48 bits = unix epoch milliseconds of sys_datetime     
+[TEST 12] UUID(7) embeds a monotonic timestamp+sequence; verify self-consistency and lower time bound     
 
 ===================================================
 0
@@ -145,11 +145,15 @@ time_ordered
 ===================================================
 100
 ===================================================
-total    null_cnt    ts_match    
-100     0     100     
+total    null_cnt    
+100     0     
 
 ===================================================
-ts_match    
+violations    
+0     
+
+===================================================
+ts_at_or_after_stmt    
 1     
 
 ===================================================

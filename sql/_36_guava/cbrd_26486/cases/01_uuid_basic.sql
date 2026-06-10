@@ -31,8 +31,10 @@ select regexp_like(uuid_format(uuid(4)), '^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-
 select regexp_like(sys_guid(), '^[0-9A-F]{32}$', 'c') guid_upper_hex,
        regexp_like(sys_guid(), '^[0-9a-f]{32}$', 'c') guid_lower_hex;
 
-evaluate '[TEST 5] NULL and string argument handling: UUID(NULL) -> NULL, string version argument is coerced';
+evaluate '[TEST 5] NULL version argument -> error; string version argument is coerced';
+-- The version argument cannot be NULL: UUID(NULL) and UUID(CAST(NULL AS INT)) both error.
 select uuid(null);
+select uuid(cast(null as int));
 select bit_length(uuid('4')) u_str4, substr(uuid_format(uuid('4')), 15, 1) v_str4;
 select bit_length(uuid('7')) u_str7, substr(uuid_format(uuid('7')), 15, 1) v_str7;
 
@@ -77,22 +79,28 @@ select sleep(1);
 set @u7_second = uuid(7);
 select @u7_first < @u7_second time_ordered;
 
-evaluate '[TEST 12] UUID(7) embeds the statement timestamp: first 48 bits = unix epoch milliseconds of sys_datetime';
--- Within one statement every UUID(7) shares the statement timestamp (vd->sys_datetime),
--- so its leading 12 hex digits converted to decimal must equal
--- concat(unix_timestamp(sys_datetime), millisecond of sys_datetime).
--- Row count is kept under 256 on purpose: the v7 sequence counter is 8-bit and an
--- overflow within the same millisecond advances the embedded timestamp by 1ms.
+evaluate '[TEST 12] UUID(7) embeds a monotonic timestamp+sequence; verify self-consistency and lower time bound';
+-- Each UUID(7) carries a 48-bit millisecond timestamp and an 8-bit sequence counter.
+-- In one generation order the combined value (ts * 256 + seq) increases by exactly 1
+-- per row; this holds regardless of the starting sequence, so no fresh-sequence-window
+-- assumption is needed. The embedded timestamp is also bounded below by the statement
+-- time captured into the same row (so the UUID and its baseline share one evaluation).
 drop table if exists uuid_ts_t;
 create table uuid_ts_t (u bit(128), ts_ms varchar(20));
 insert into uuid_ts_t
 select uuid(7), concat(to_char(unix_timestamp(sys_datetime)), lpad(extract(millisecond from sys_datetime), 3, '0'))
 from db_class a, db_class b limit 100;
-select count(*) total,
-       count(case when u is null or ts_ms is null then 1 end) null_cnt,
-       count(case when cast(conv(concat(substr(uuid_format(u), 1, 8), substr(uuid_format(u), 10, 4)), 16, 10) as bigint) = cast(ts_ms as bigint) then 1 end) ts_match
-from uuid_ts_t;
-select cast(conv(concat(substr(f, 1, 8), substr(f, 10, 4)), 16, 10) as bigint)
-       = cast(concat(to_char(unix_timestamp(sys_datetime)), lpad(extract(millisecond from sys_datetime), 3, '0')) as bigint) ts_match
-from (select uuid_format(uuid(7)) f from db_root) t;
+select count(*) total, count(case when u is null or ts_ms is null then 1 end) null_cnt from uuid_ts_t;
+select count(*) violations
+from (select row_number() over (order by f) rn,
+             cast(conv(concat(substr(f, 1, 8), substr(f, 10, 4)), 16, 10) as bigint) * 256
+             + cast(conv(substr(f, 16, 2), 16, 10) as int) combined,
+             min(cast(conv(concat(substr(f, 1, 8), substr(f, 10, 4)), 16, 10) as bigint) * 256
+             + cast(conv(substr(f, 16, 2), 16, 10) as int)) over () first_combined
+      from (select uuid_format(u) f from uuid_ts_t) x) y
+where combined <> first_combined + (rn - 1);
+select min(ts_emb) >= min(base) ts_at_or_after_stmt
+from (select cast(conv(concat(substr(uuid_format(u), 1, 8), substr(uuid_format(u), 10, 4)), 16, 10) as bigint) ts_emb,
+             cast(ts_ms as bigint) base
+      from uuid_ts_t) t;
 drop table uuid_ts_t;

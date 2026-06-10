@@ -13,10 +13,6 @@
 ===================================================
 250
 ===================================================
-sleep(4)    
-0     
-
-===================================================
 500
 ===================================================
 total    u_non_null    u_uniq    v7_cnt    g_non_null    g_uniq    g_hex_cnt    
@@ -28,11 +24,15 @@ matched_updated
 
 ===================================================
     
-[TEST 1.1] UUID(7) defaults of the MERGE: embedded timestamp = statement time, sequence = mod(generation order, 256)     
+[TEST 1.1] MERGE UUID(7) defaults: ts+seq combined increases by 1 per row, timestamp >= statement time     
 
 ===================================================
 violations    
 0     
+
+===================================================
+ts_at_or_after_stmt    
+1     
 
 ===================================================
     
@@ -68,11 +68,15 @@ total    u4_uniq    v4_cnt    u7_uniq    v7_cnt    g_uniq    g_hex_cnt
 
 ===================================================
     
-[TEST 3.1] direct UUID(7) values of the MERGE: sequence-consistent     
+[TEST 3.1] direct UUID(7) values: ts+seq combined increases by 1 per row, timestamp >= statement time     
 
 ===================================================
 violations    
 0     
+
+===================================================
+ts_at_or_after_stmt    
+1     
 
 ===================================================
 0
@@ -89,10 +93,6 @@ violations
 ===================================================
 0
 ===================================================
-sleep(1)    
-0     
-
-===================================================
 500
 ===================================================
 trigger_fired    
@@ -104,7 +104,7 @@ total    u_non_null    u_uniq    v7_cnt    variant_ok    g_uniq    g_hex_cnt
 
 ===================================================
     
-[TEST 4.1] client-side UUID(7): timestamp progresses by 1ms per 256 values, sequence = mod(generation order, 256)     
+[TEST 4.1] client-side UUID(7): ts+seq combined increases by 1 per row (self-consistent)     
 
 ===================================================
 violations    
@@ -112,7 +112,7 @@ violations
 
 ===================================================
     
-[TEST 4.2] client-side UUID(7): generation time lies between the previous statement and now     
+[TEST 4.2] client-side UUID(7): all embedded timestamps lie between the previous statement and now     
 
 ===================================================
 lower_ok    upper_ok    
@@ -159,10 +159,6 @@ total    u_uniq    v4_cnt    v7_cnt
 ===================================================
 0
 ===================================================
-sleep(1)    
-0     
-
-===================================================
 100
 ===================================================
 x    cnt    
@@ -179,7 +175,7 @@ matched_updated
 
 ===================================================
     
-[TEST 5.1] client-side MERGE UUID(7) defaults: sequence-consistent and time-bounded     
+[TEST 5.1] client-side MERGE UUID(7) defaults: ts+seq combined increases by 1 per row, all timestamps bounded     
 
 ===================================================
 violations    

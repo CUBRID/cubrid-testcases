@@ -32,6 +32,16 @@ select count(case when substr(uuid_format(id4), 15, 1) = '4' then 1 end) id4_is_
 from uuid_def_t;
 drop table uuid_def_t;
 
+evaluate '[TEST 2.1] DEFAULT UUID() with no argument behaves as UUID(4)';
+drop table if exists uuid_def_noarg;
+create table uuid_def_noarg (a bit(128) default uuid(), v int);
+show create table uuid_def_noarg;
+insert into uuid_def_noarg(v) values (1), (2), (3);
+select count(*) total, count(distinct a) uniq,
+       count(case when substr(uuid_format(a), 15, 1) = '4' then 1 end) is_v4
+from uuid_def_noarg;
+drop table uuid_def_noarg;
+
 evaluate '[TEST 3] ALTER TABLE ADD COLUMN with UUID default fills existing rows with distinct values';
 create table uuid_def_t (n int);
 insert into uuid_def_t select rownum from db_class limit 5;
@@ -117,10 +127,13 @@ select count(*) total, count(distinct id) uniq from uuid_def_t;
 drop table uuid_def_t;
 
 evaluate '[TEST 6] nested UUID expression in DEFAULT -> error (UUID cannot be nested, SYS_GUID can)';
-drop table if exists uuid_def_err;
-create table uuid_def_err (a bit(128) default to_char(uuid()));
-create table uuid_def_err (a bit(128) default uuid(1+3));
-select count(*) not_created from db_class where class_name = 'uuid_def_err';
+-- Each negative case uses a distinct table name so a case that wrongly succeeds
+-- cannot leave a table that makes a later case fail for the wrong reason; the final
+-- count must be 0, and would expose any case that created its table.
+drop table if exists uuid_def_e1, uuid_def_e2;
+create table uuid_def_e1 (a bit(128) default to_char(uuid()));
+create table uuid_def_e2 (a bit(128) default uuid(1+3));
+select count(*) wrongly_created from db_class where class_name in ('uuid_def_e1', 'uuid_def_e2');
 drop table if exists uuid_def_nest;
 create table uuid_def_nest (a string default to_char(sys_guid()));
 show create table uuid_def_nest;
@@ -128,23 +141,31 @@ insert into uuid_def_nest values (default);
 select count(*) total, count(case when regexp_like(a, '^[0-9A-F]{32}$', 'c') = 1 then 1 end) a_is_hex from uuid_def_nest;
 drop table uuid_def_nest;
 
-evaluate '[TEST 7] unsupported UUID version in DEFAULT -> error';
-create table uuid_def_err (a bit(128) default uuid(1));
-create table uuid_def_err (a bit(128) default uuid(5));
-create table uuid_def_err (a bit(128) default uuid(8));
-select count(*) not_created from db_class where class_name = 'uuid_def_err';
+evaluate '[TEST 7] unsupported or NULL UUID version in DEFAULT -> error';
+drop table if exists uuid_def_e3, uuid_def_e4, uuid_def_e5, uuid_def_e5b;
+create table uuid_def_e3 (a bit(128) default uuid(1));
+create table uuid_def_e4 (a bit(128) default uuid(5));
+create table uuid_def_e5 (a bit(128) default uuid(8));
+create table uuid_def_e5b (a bit(128) default uuid(null));
+select count(*) wrongly_created from db_class where class_name in ('uuid_def_e3', 'uuid_def_e4', 'uuid_def_e5', 'uuid_def_e5b');
 
 evaluate '[TEST 8] DEFAULT type coercion failures -> error';
-create table uuid_def_err (a string default uuid(7));
-create table uuid_def_err (a varchar(40) default uuid(4));
-create table uuid_def_err (a bit(128) default sys_guid());
-create table uuid_def_err (a char(31) default sys_guid());
-select count(*) not_created from db_class where class_name = 'uuid_def_err';
+drop table if exists uuid_def_e6, uuid_def_e7, uuid_def_e8, uuid_def_e9;
+create table uuid_def_e6 (a string default uuid(7));
+create table uuid_def_e7 (a varchar(40) default uuid(4));
+create table uuid_def_e8 (a bit(128) default sys_guid());
+create table uuid_def_e9 (a char(31) default sys_guid());
+select count(*) wrongly_created from db_class where class_name in ('uuid_def_e6', 'uuid_def_e7', 'uuid_def_e8', 'uuid_def_e9');
 
 evaluate '[TEST 9] ALTER TABLE ADD COLUMN error cases';
+-- Distinct column names so a case that wrongly succeeds does not turn a later case
+-- into an already-exists failure; the final count of added columns must be 0.
+drop table if exists uuid_def_t;
 create table uuid_def_t (n int);
-alter table uuid_def_t add column a bit(128) default to_char(uuid());
-alter table uuid_def_t add column a bit(128) default uuid(3+4);
-alter table uuid_def_t add column a bit(128) default uuid(5);
-alter table uuid_def_t add column a string default uuid(7);
+alter table uuid_def_t add column c1 bit(128) default to_char(uuid());
+alter table uuid_def_t add column c2 bit(128) default uuid(3+4);
+alter table uuid_def_t add column c3 bit(128) default uuid(5);
+alter table uuid_def_t add column c4 string default uuid(7);
+alter table uuid_def_t add column c5 bit(128) default uuid(null);
+select count(*) wrongly_added from db_attribute where class_name = 'uuid_def_t' and attr_name in ('c1', 'c2', 'c3', 'c4', 'c5');
 drop table uuid_def_t;

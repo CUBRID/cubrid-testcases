@@ -106,9 +106,13 @@ drop procedure uuid_sp_dml;
 drop table uuid_sp_t;
 
 evaluate '[TEST 5] unsupported usages -> error';
-create or replace procedure uuid_sp_err (a string default uuid(7)) as begin return; end;
-create or replace procedure uuid_sp_err (a string default to_char(uuid())) as begin return; end;
-create or replace procedure uuid_sp_err as c string default uuid_format(uuid(7)); begin return; end;
+-- Each negative case uses a distinct name and a catalog check confirms none was
+-- created (DROP PROCEDURE IF EXISTS is not supported, so isolation relies on distinct
+-- names; wrongly_created must be 0, exposing any case that compiled by mistake).
+create or replace procedure uuid_sp_e1 (a string default uuid(7)) as begin return; end;
+create or replace procedure uuid_sp_e2 (a string default to_char(uuid())) as begin return; end;
+create or replace procedure uuid_sp_e3 as c string default uuid_format(uuid(7)); begin return; end;
+select count(*) wrongly_created from _db_stored_procedure where sp_name in ('uuid_sp_e1', 'uuid_sp_e2', 'uuid_sp_e3');
 
 evaluate '[TEST 6] pass UUID as a stringified / UUID_FORMAT-wrapped procedure argument';
 -- A BIT(128) UUID cannot be passed to a PL/CSQL string parameter directly, so it must

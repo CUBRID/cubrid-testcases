@@ -7,13 +7,13 @@
  *    UUID(7) state comes from the parser context instead of the server thread.
  *    Verify generation is still unique, versioned, and sequence-consistent.
  *
- *  UUID(7) timestamp/sequence verification (sort order == generation order):
- *  - server-side statements embed the statement timestamp (sys_datetime in ms),
- *    so embedded_ts = statement_ms + (k-1) div 256 and embedded_seq = mod(k-1, 256)
- *  - client-side (trigger) statements use the parser clock, which can differ from
- *    sys_datetime of the same statement by a few ms, so the progression is checked
- *    against the first generated value and the time is bounded by the clocks of
- *    the previous and next statements instead.
+ *  UUID(7) timestamp/sequence verification uses a combined value (ts * 256 + seq):
+ *  across the generation order (sort order == generation order) it increases by exactly
+ *  1 per row. This is self-consistent regardless of the starting sequence, so no
+ *  fresh-sequence-window guard is needed and a sequence overflow that advances the
+ *  timestamp by 1ms is absorbed. The embedded timestamp is bounded below by a baseline
+ *  captured just before generation; for client-side paths the upper bound uses
+ *  max(ts_emb) so a stray future timestamp on any row (not just the first) is caught.
  *
  *  NOTE: a MERGE touching a table with triggers crashes the server when the flush
  *  spans multiple copy-area batches (locator_force_for_multi_update assertion --
@@ -30,9 +30,6 @@ create table uuid_mrg_t (k int primary key, u bit(128) default uuid(7), g char(3
 create table uuid_mrg_src (k int, v int);
 insert into uuid_mrg_src select rownum, rownum * 10 from db_attribute limit 500;
 insert into uuid_mrg_t(k, v) select rownum, rownum from db_attribute limit 250;
--- SLEEP(4) guards a fresh sequence window: a preceding case file may have generated
--- 1M UUID(7) values, advancing the thread-local timestamp by up to ceil(1M/256) = 3907ms.
-select sleep(4);
 merge into uuid_mrg_t t using uuid_mrg_src s on (t.k = s.k)
 when matched then update set t.v = s.v
 when not matched then insert (k, v, ts_ms)
@@ -44,15 +41,19 @@ select count(*) total, count(u) u_non_null, count(distinct u) u_uniq,
 from uuid_mrg_t;
 select count(*) matched_updated from uuid_mrg_t where k <= 250 and v = k * 10;
 
-evaluate '[TEST 1.1] UUID(7) defaults of the MERGE: embedded timestamp = statement time, sequence = mod(generation order, 256)';
+evaluate '[TEST 1.1] MERGE UUID(7) defaults: ts+seq combined increases by 1 per row, timestamp >= statement time';
 select count(*) violations
 from (select row_number() over (order by f) rn,
-             cast(conv(concat(substr(f, 1, 8), substr(f, 10, 4)), 16, 10) as bigint) ts_emb,
-             cast(conv(substr(f, 16, 2), 16, 10) as int) seq_emb,
-             cast(ts_ms as bigint) base_ms
-      from (select uuid_format(u) f, ts_ms from uuid_mrg_t where k > 250) x) y
-where ts_emb <> base_ms + ((rn - 1) div 256)
-   or seq_emb <> mod(rn - 1, 256);
+             cast(conv(concat(substr(f, 1, 8), substr(f, 10, 4)), 16, 10) as bigint) * 256
+             + cast(conv(substr(f, 16, 2), 16, 10) as int) combined,
+             min(cast(conv(concat(substr(f, 1, 8), substr(f, 10, 4)), 16, 10) as bigint) * 256
+             + cast(conv(substr(f, 16, 2), 16, 10) as int)) over () first_combined
+      from (select uuid_format(u) f from uuid_mrg_t where k > 250) x) y
+where combined <> first_combined + (rn - 1);
+select min(ts_emb) >= min(base) ts_at_or_after_stmt
+from (select cast(conv(concat(substr(uuid_format(u), 1, 8), substr(uuid_format(u), 10, 4)), 16, 10) as bigint) ts_emb,
+             cast(ts_ms as bigint) base
+      from uuid_mrg_t where k > 250) t;
 
 evaluate '[TEST 2] MERGE WHEN MATCHED UPDATE with direct UUID functions';
 merge into uuid_mrg_t t using uuid_mrg_src s on (t.k = s.k)
@@ -63,26 +64,32 @@ select count(*) total, count(distinct u) u_uniq, count(distinct g) g_uniq from u
 drop table uuid_mrg_t, uuid_mrg_src;
 
 evaluate '[TEST 3] MERGE WHEN NOT MATCHED INSERT with direct UUID functions';
-create table uuid_mrg_t (k int primary key, u4 bit(128), u7 bit(128), g char(32), v int);
+create table uuid_mrg_t (k int primary key, u4 bit(128), u7 bit(128), g char(32), v int, ts_ms varchar(20));
 create table uuid_mrg_src (k int, v int);
 insert into uuid_mrg_src select rownum, rownum * 10 from db_attribute limit 300;
 merge into uuid_mrg_t t using uuid_mrg_src s on (t.k = s.k)
-when not matched then insert (k, u4, u7, g, v) values (s.k, uuid(4), uuid(7), sys_guid(), s.v);
+when not matched then insert (k, u4, u7, g, v, ts_ms)
+     values (s.k, uuid(4), uuid(7), sys_guid(), s.v,
+             concat(to_char(unix_timestamp(sys_datetime)), lpad(extract(millisecond from sys_datetime), 3, '0')));
 select count(*) total,
        count(distinct u4) u4_uniq, count(case when substr(uuid_format(u4), 15, 1) = '4' then 1 end) v4_cnt,
        count(distinct u7) u7_uniq, count(case when substr(uuid_format(u7), 15, 1) = '7' then 1 end) v7_cnt,
        count(distinct g) g_uniq, count(case when regexp_like(g, '^[0-9A-F]{32}$', 'c') = 1 then 1 end) g_hex_cnt
 from uuid_mrg_t;
 
-evaluate '[TEST 3.1] direct UUID(7) values of the MERGE: sequence-consistent';
+evaluate '[TEST 3.1] direct UUID(7) values: ts+seq combined increases by 1 per row, timestamp >= statement time';
 select count(*) violations
 from (select row_number() over (order by f) rn,
-             cast(conv(concat(substr(f, 1, 8), substr(f, 10, 4)), 16, 10) as bigint) ts_emb,
-             cast(conv(substr(f, 16, 2), 16, 10) as int) seq_emb,
-             min(cast(conv(concat(substr(f, 1, 8), substr(f, 10, 4)), 16, 10) as bigint)) over () first_ts
+             cast(conv(concat(substr(f, 1, 8), substr(f, 10, 4)), 16, 10) as bigint) * 256
+             + cast(conv(substr(f, 16, 2), 16, 10) as int) combined,
+             min(cast(conv(concat(substr(f, 1, 8), substr(f, 10, 4)), 16, 10) as bigint) * 256
+             + cast(conv(substr(f, 16, 2), 16, 10) as int)) over () first_combined
       from (select uuid_format(u7) f from uuid_mrg_t) x) y
-where ts_emb <> first_ts + ((rn - 1) div 256)
-   or seq_emb <> mod(rn - 1, 256);
+where combined <> first_combined + (rn - 1);
+select min(ts_emb) >= min(base) ts_at_or_after_stmt
+from (select cast(conv(concat(substr(uuid_format(u7), 1, 8), substr(uuid_format(u7), 10, 4)), 16, 10) as bigint) ts_emb,
+             cast(ts_ms as bigint) base
+      from uuid_mrg_t) t;
 drop table uuid_mrg_t, uuid_mrg_src;
 
 evaluate '[TEST 4] BEFORE INSERT trigger forces client-side execution: UUID defaults stay unique and well-formed';
@@ -90,7 +97,6 @@ create table uuid_trg_t (n int, u bit(128) default uuid(7), g char(32) default s
 create table uuid_trg_log (x int);
 create trigger uuid_trg_bi before insert on uuid_trg_t execute insert into uuid_trg_log values (1);
 set @t_before = cast(concat(to_char(unix_timestamp(sys_datetime)), lpad(extract(millisecond from sys_datetime), 3, '0')) as bigint);
-select sleep(1);
 insert into uuid_trg_t(n) select rownum from db_attribute limit 500;
 select count(*) trigger_fired from uuid_trg_log;
 select count(*) total, count(u) u_non_null, count(distinct u) u_uniq,
@@ -100,19 +106,19 @@ select count(*) total, count(u) u_non_null, count(distinct u) u_uniq,
        count(case when regexp_like(g, '^[0-9A-F]{32}$', 'c') = 1 then 1 end) g_hex_cnt
 from uuid_trg_t;
 
-evaluate '[TEST 4.1] client-side UUID(7): timestamp progresses by 1ms per 256 values, sequence = mod(generation order, 256)';
+evaluate '[TEST 4.1] client-side UUID(7): ts+seq combined increases by 1 per row (self-consistent)';
 select count(*) violations
 from (select row_number() over (order by f) rn,
-             cast(conv(concat(substr(f, 1, 8), substr(f, 10, 4)), 16, 10) as bigint) ts_emb,
-             cast(conv(substr(f, 16, 2), 16, 10) as int) seq_emb,
-             min(cast(conv(concat(substr(f, 1, 8), substr(f, 10, 4)), 16, 10) as bigint)) over () first_ts
+             cast(conv(concat(substr(f, 1, 8), substr(f, 10, 4)), 16, 10) as bigint) * 256
+             + cast(conv(substr(f, 16, 2), 16, 10) as int) combined,
+             min(cast(conv(concat(substr(f, 1, 8), substr(f, 10, 4)), 16, 10) as bigint) * 256
+             + cast(conv(substr(f, 16, 2), 16, 10) as int)) over () first_combined
       from (select uuid_format(u) f from uuid_trg_t) x) y
-where ts_emb <> first_ts + ((rn - 1) div 256)
-   or seq_emb <> mod(rn - 1, 256);
+where combined <> first_combined + (rn - 1);
 
-evaluate '[TEST 4.2] client-side UUID(7): generation time lies between the previous statement and now';
+evaluate '[TEST 4.2] client-side UUID(7): all embedded timestamps lie between the previous statement and now';
 select (min(ts_emb) >= @t_before) lower_ok,
-       (min(ts_emb) <= cast(concat(to_char(unix_timestamp(sys_datetime)), lpad(extract(millisecond from sys_datetime), 3, '0')) as bigint)) upper_ok
+       (max(ts_emb) <= cast(concat(to_char(unix_timestamp(sys_datetime)), lpad(extract(millisecond from sys_datetime), 3, '0')) as bigint)) upper_ok
 from (select cast(conv(concat(substr(uuid_format(u), 1, 8), substr(uuid_format(u), 10, 4)), 16, 10) as bigint) ts_emb
       from uuid_trg_t) t;
 
@@ -136,7 +142,6 @@ insert into uuid_mrg_t(k, v) select rownum, rownum from db_attribute limit 50;
 create trigger uuid_mrg_bi before insert on uuid_mrg_t execute insert into uuid_mrg_log values (1);
 create trigger uuid_mrg_bu before update on uuid_mrg_t execute insert into uuid_mrg_log values (2);
 set @t_before = cast(concat(to_char(unix_timestamp(sys_datetime)), lpad(extract(millisecond from sys_datetime), 3, '0')) as bigint);
-select sleep(1);
 merge into uuid_mrg_t t using uuid_mrg_src s on (t.k = s.k)
 when matched then update set t.v = s.v
 when not matched then insert (k, v) values (s.k, s.v);
@@ -148,15 +153,15 @@ select count(*) total, count(u) u_non_null, count(distinct u) u_uniq,
 from uuid_mrg_t;
 select count(*) matched_updated from uuid_mrg_t where k <= 50 and v = k * 10;
 
-evaluate '[TEST 5.1] client-side MERGE UUID(7) defaults: sequence-consistent and time-bounded';
+evaluate '[TEST 5.1] client-side MERGE UUID(7) defaults: ts+seq combined increases by 1 per row, all timestamps bounded';
 select count(*) violations
 from (select row_number() over (order by f) rn,
-             cast(conv(concat(substr(f, 1, 8), substr(f, 10, 4)), 16, 10) as bigint) ts_emb,
-             cast(conv(substr(f, 16, 2), 16, 10) as int) seq_emb,
-             min(cast(conv(concat(substr(f, 1, 8), substr(f, 10, 4)), 16, 10) as bigint)) over () first_ts
+             cast(conv(concat(substr(f, 1, 8), substr(f, 10, 4)), 16, 10) as bigint) * 256
+             + cast(conv(substr(f, 16, 2), 16, 10) as int) combined,
+             min(cast(conv(concat(substr(f, 1, 8), substr(f, 10, 4)), 16, 10) as bigint) * 256
+             + cast(conv(substr(f, 16, 2), 16, 10) as int)) over () first_combined
       from (select uuid_format(u) f from uuid_mrg_t where k > 50) x) y
-where ts_emb <> first_ts + ((rn - 1) div 256)
-   or seq_emb <> mod(rn - 1, 256);
+where combined <> first_combined + (rn - 1);
 select (min(ts_emb) >= @t_before) lower_ok,
        (max(ts_emb) <= cast(concat(to_char(unix_timestamp(sys_datetime)), lpad(extract(millisecond from sys_datetime), 3, '0')) as bigint)) upper_ok
 from (select cast(conv(concat(substr(uuid_format(u), 1, 8), substr(uuid_format(u), 10, 4)), 16, 10) as bigint) ts_emb
