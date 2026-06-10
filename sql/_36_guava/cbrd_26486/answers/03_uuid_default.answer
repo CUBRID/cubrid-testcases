@@ -44,7 +44,7 @@ id4_is_v4    id7_is_v7    g_is_hex
 0
 ===================================================
     
-[TEST 2.1] DEFAULT UUID() with no argument behaves as UUID(4)     
+[TEST 2.1] DEFAULT UUID() and DEFAULT UUID(0) behave as DEFAULT UUID(4)     
 
 ===================================================
 0
@@ -52,13 +52,13 @@ id4_is_v4    id7_is_v7    g_is_hex
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.uuid_def_noarg     CREATE TABLE [uuid_def_noarg] ([a] BIT(128) DEFAULT UUID(4), [v] INTEGER) REUSE_OID, COLLATE utf8_bin     
+dba.uuid_def_noarg     CREATE TABLE [uuid_def_noarg] ([a] BIT(128) DEFAULT UUID(4), [b] BIT(128) DEFAULT UUID(4), [c] BIT(128) DEFAULT UUID(4), [v] INTEGER) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 3
 ===================================================
-total    uniq    is_v4    
-3     3     3     
+total    a_uniq    b_uniq    c_uniq    a_is_v4    b_is_v4    c_is_v4    
+3     3     3     3     3     3     3     
 
 ===================================================
 0

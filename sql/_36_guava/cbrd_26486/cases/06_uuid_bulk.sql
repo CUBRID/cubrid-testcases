@@ -105,10 +105,11 @@ from (select row_number() over (order by f) rn,
       from (select uuid_format(u) f from uuid_bulk_t) x) y
 where combined <> first_combined + (rn - 1);
 
-evaluate '[TEST 3.2] ALTER-filled UUID(7): fill time is at or after the row INSERT time';
--- The fill runs after the rows were inserted, so the minimum embedded timestamp must be
--- at or after the latest INSERT timestamp recorded in the table.
-select min(ts_emb) >= max(base) filled_after_insert
+evaluate '[TEST 3.2] ALTER-filled UUID(7): fill time lies between the row INSERT time and now';
+-- The fill runs after the rows were inserted, and generated timestamps must not move
+-- beyond the wall clock observed after the ALTER statement.
+select min(ts_emb) >= max(base) filled_after_insert,
+       max(ts_emb) <= cast(concat(to_char(unix_timestamp(sys_datetime)), lpad(extract(millisecond from sys_datetime), 3, '0')) as bigint) filled_before_now
 from (select cast(conv(concat(substr(uuid_format(u), 1, 8), substr(uuid_format(u), 10, 4)), 16, 10) as bigint) ts_emb,
              cast(ts_ms as bigint) base
       from uuid_bulk_t) t;

@@ -32,13 +32,18 @@ select count(case when substr(uuid_format(id4), 15, 1) = '4' then 1 end) id4_is_
 from uuid_def_t;
 drop table uuid_def_t;
 
-evaluate '[TEST 2.1] DEFAULT UUID() with no argument behaves as UUID(4)';
+evaluate '[TEST 2.1] DEFAULT UUID() and DEFAULT UUID(0) behave as DEFAULT UUID(4)';
+-- UUID() (no argument) and UUID(0) are equivalent to UUID(4); the catalog normalizes
+-- all three to UUID(4) and every generated value is a version-4 UUID.
 drop table if exists uuid_def_noarg;
-create table uuid_def_noarg (a bit(128) default uuid(), v int);
+create table uuid_def_noarg (a bit(128) default uuid(), b bit(128) default uuid(0), c bit(128) default uuid(4), v int);
 show create table uuid_def_noarg;
 insert into uuid_def_noarg(v) values (1), (2), (3);
-select count(*) total, count(distinct a) uniq,
-       count(case when substr(uuid_format(a), 15, 1) = '4' then 1 end) is_v4
+select count(*) total,
+       count(distinct a) a_uniq, count(distinct b) b_uniq, count(distinct c) c_uniq,
+       count(case when substr(uuid_format(a), 15, 1) = '4' then 1 end) a_is_v4,
+       count(case when substr(uuid_format(b), 15, 1) = '4' then 1 end) b_is_v4,
+       count(case when substr(uuid_format(c), 15, 1) = '4' then 1 end) c_is_v4
 from uuid_def_noarg;
 drop table uuid_def_noarg;
 
