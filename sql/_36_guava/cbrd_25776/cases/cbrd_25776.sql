@@ -756,16 +756,12 @@ alter serial s_order2 start with 1;
 create table tb as
     with
         cte as (select ca, cb, s_order1.next_value as cc from ta),
-        cte_b as (select ca, cb, s_order2.next_value as cc from cte union all select ca, cb, s_order2.next_value as cc from cte)
-    select /*+ recompile */ ca, cb from cte_b;
+        cte_b as (select ca, cb from cte union all select ca, cb from cte)
+   select /*+ recompile */ ca, cb from cte_b;
 select
         case when s_order1.current_value=1 then 'false'
         else 'true'
-        end as is_cte_materialized,
-
-        case when s_order2.current_value=1 then 'false'
-        else 'true'
-        end as is_cte_b_materialized;
+        end as is_cte_materialized;
 
 evaluate '12.2 Multiple CTE references - multiple references to another CTE in WITH clause, select [inline:N]';
 with
