@@ -78,7 +78,7 @@ Trace Statistics:
 
 ===================================================
     
-Q002. When a covering index scan cannot be used, skip ORDER BY is applied via a non-covering index scan since the lowered ISCAN_OID_ACCESS_OVERHEAD makes its cost competitive (CBRD-26889).     
+Q002. When a covering index scan cannot be used, skip ORDER BY cannot be applied because the cost is high in the cost comparison.     
 
 ===================================================
 0
@@ -96,14 +96,14 @@ Q002     9     9     9
 Q002     10     10     0     
 
 Query plan:
-iscan
-    class: tbl_a node[?]
-    index: i?_cola 
+temp(order by)
+    subplan: sscan
+                 class: tbl_a node[?]
+                 cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 select /*+ MATERIALIZE */ tbl_a.cola, tbl_a.colb, tbl_a.colc from tbl_a tbl_a order by ?
-/* ---> skip ORDER BY */
 Query plan:
 sscan
     simple CTE:q node[?]
@@ -115,8 +115,8 @@ with q(cola, colb, colc) as (select /*+ MATERIALIZE */ tbl_a.cola, tbl_a.colb, t
 trace    
 
 Query Plan:
-  INDEX SCAN (dba.tbl_a.i?_cola) ()
-  skip order by: true
+  SORT (order by)
+    TABLE SCAN (dba.tbl_a)
 
   rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].cola, [dba.tbl_a].colb, [dba.tbl_a].colc from [dba.tbl_a] [dba.tbl_a] order by ?
 
@@ -131,7 +131,9 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       CTE (non_recursive_part)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (index: dba.tbl_a.i?_cola), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                  (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
 
 ===================================================
