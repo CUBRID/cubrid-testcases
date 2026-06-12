@@ -350,7 +350,7 @@ Query Plan:
         TABLE SCAN (__t?)
         INDEX SCAN (b.pk_ta_hash_ca_cd) (key range: ([__t?].ca=b.ca)key range: [__t?].cd=b.cd, covered: true)
       INDEX SCAN (c.pk_tb_ca_cd) (key range: b.ca=c.cakey range: b.cd=c.cd, covered: true)
-    INDEX SCAN (d.pk_ta_list_ca_cd) (key range: c.ca=d.cakey range: c.cd=d.cd, covered: true)
+    INDEX SCAN (d.pk_ta_list_ca_cd) (key range: c.ca=d.cakey range: b.cd=d.cd, covered: true)
 
   rewritten query: select /*+ ORDERED USE_NL */ count(*) from [dba.ta_range] [__t?], [dba.ta_hash] b, [dba.tb] c, [dba.ta_list] d where ([__t?].ca=b.ca) and [__t?].cd=b.cd and b.ca=c.ca and b.cd=c.cd and c.ca=d.ca and c.cd=d.cd and (inst_num()> ?:?  and inst_num()<= ?:? )
 
@@ -496,6 +496,7 @@ Trace Statistics:
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
         SUBQUERY (uncorrelated)
                  (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -503,6 +504,7 @@ Trace Statistics:
               HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
                 BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
                 PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+                      (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
                 SUBQUERY (uncorrelated)
                          (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
                   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -510,6 +512,7 @@ Trace Statistics:
                       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
                         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
                         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+                              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
                         SUBQUERY (uncorrelated)
                                  (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
                           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
