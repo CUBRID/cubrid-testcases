@@ -26,7 +26,7 @@ insert into tbl_b values (-1, -1, -1);
 
 update statistics on tbl_a, tbl_b with fullscan;
 
-evaluate 'Q101. When a covering index scan cannot be used, it is less cost-effective; therefore, skip ORDER BY cannot be applied.';
+evaluate 'Q101. When a covering index scan cannot be used, skip ORDER BY is applied via a non-covering index scan since the lowered ISCAN_OID_ACCESS_OVERHEAD makes its cost competitive (CBRD-26889).';
 select /*+ recompile ordered */ 'Q101', a.*, b.* from tbl_a a, tbl_b b where a.cola = b.cold order by a.cola limit 10;
 show trace;
 
@@ -114,7 +114,7 @@ alter table tbl_a add foreign key fk_cola (cola) REFERENCES tbl_b (cold);
 select /*+ recompile ordered */ 'Q120', a.*, b.* from tbl_a a, tbl_b b where a.cola = b.cold order by a.cola, a.colb limit 190, 10;
 show trace;
 
-evaluate 'Q121. When an additional condition is included on FK-PK columns apart from the join condition, SORT LIMIT optimization cannot be applied.';
+evaluate 'Q121. When an additional condition is included on FK-PK columns apart from the join condition, SORT LIMIT optimization is not applied, but skip ORDER BY is applied via an order-providing index scan under the lowered ISCAN_OID_ACCESS_OVERHEAD cost model (CBRD-26889).';
 select /*+ recompile ordered */ 'Q121', a.*, b.* from tbl_a a, tbl_b b where a.cola = b.cold and b.cold != -1 order by a.cola, a.colb limit 200, 10;
 show trace;
 
@@ -124,7 +124,7 @@ prepare q from 'select /*+ ordered */ ''Q122'', a.*, b.* from tbl_a a, tbl_b b w
 execute q using 210, 10;
 show trace;
 
-evaluate 'Q123. When the LIMIT value exceeds the sort_limit_max_count parameter, SORT LIMIT optimization is not applied; therefore, skip ORDER BY cannot be applied.';
+evaluate 'Q123. When the LIMIT value exceeds the sort_limit_max_count parameter, SORT LIMIT optimization is not applied, but skip ORDER BY is applied via an order-providing index scan under the lowered ISCAN_OID_ACCESS_OVERHEAD cost model (CBRD-26889).';
 set system parameters 'sort_limit_max_count=1000';
 select /*+ recompile ordered */ 'Q123', a.*, b.* from tbl_a a, tbl_b b where a.cola = b.cold order by a.cola, a.colb limit 1000, 10;
 show trace;

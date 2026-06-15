@@ -216,7 +216,7 @@ select /*+ recompile no_parallel_scan ordered */ ta.*
 from tbla ta, tbla tb
 where (ta.b <= -abs (tb.b) or ta.c > abs (tb.b))
 and ta.a = tb.a
-using index tb.idx_tbla_a_abs_b
+using index ta.idx_tbla_a_b, tb.idx_tbla_a_abs_b
 order by ta.a
 limit 1;
 show trace;
@@ -244,7 +244,7 @@ select /*+ recompile no_parallel_scan ordered */ ta.*
 from tbla ta, tbla tb
 where (ta.b <= -tb.b or ta.c > tb.b)
 and ta.a = tb.a
-using index tb.idx_tbla_a_b
+using index ta.idx_tbla_a_b, tb.idx_tbla_a_b
 order by ta.a
 limit 1;
 show trace;
