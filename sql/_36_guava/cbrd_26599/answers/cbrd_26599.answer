@@ -1,0 +1,800 @@
+===================================================
+    
+[SETUP] Create and populate large/small test tables     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1000000
+===================================================
+1000000
+===================================================
+100
+===================================================
+100
+===================================================
+0
+===================================================
+0
+===================================================
+    
+[S1-1] Basic 3-table hash join - implicit JOIN syntax: ttc (100 rows) joined first via transitive term     
+
+===================================================
+count(*)    
+100     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: tta node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: ttc node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: ttb node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from tta tta, ttb ttb, ttc ttc where tta.ca=ttb.ca and ttb.ca=ttc.ca
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    HASH JOIN (inner join)
+      TABLE SCAN (dba.tta)
+      TABLE SCAN (dba.ttc)
+    TABLE SCAN (dba.ttb)
+
+  rewritten query: select /*+ USE_HASH */ count(*) from [dba.tta] [dba.tta], [dba.ttb] [dba.ttb], [dba.ttc] [dba.ttc] where [dba.tta].ca=[dba.ttb].ca and [dba.ttb].ca=[dba.ttc].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+                PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+                      (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+                SUBQUERY (uncorrelated)
+                         (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (table: dba.tta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (table: dba.ttc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ttb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+[S1-2] Basic 3-table hash join - explicit JOIN syntax: same transitive optimization applies     
+
+===================================================
+count(*)    
+100     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: tta node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: ttc node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: ttb node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from tta tta, ttb ttb, ttc ttc where tta.ca=ttb.ca and ttb.ca=ttc.ca
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    HASH JOIN (inner join)
+      TABLE SCAN (dba.tta)
+      TABLE SCAN (dba.ttc)
+    TABLE SCAN (dba.ttb)
+
+  rewritten query: select /*+ USE_HASH */ count(*) from [dba.tta] [dba.tta], [dba.ttb] [dba.ttb], [dba.ttc] [dba.ttc] where [dba.tta].ca=[dba.ttb].ca and [dba.ttb].ca=[dba.ttc].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+                PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+                      (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+                SUBQUERY (uncorrelated)
+                         (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (table: dba.tta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (table: dba.ttc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ttb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+[S2] Explicit transitive term already in WHERE: no duplicate generated, plan remains correct     
+
+===================================================
+count(*)    
+100     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: tta node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: ttc node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: ttb node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from tta tta, ttb ttb, ttc ttc where tta.ca=ttb.ca and ttb.ca=ttc.ca and tta.ca=ttc.ca
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    HASH JOIN (inner join)
+      TABLE SCAN (dba.tta)
+      TABLE SCAN (dba.ttc)
+    TABLE SCAN (dba.ttb)
+
+  rewritten query: select /*+ USE_HASH */ count(*) from [dba.tta] [dba.tta], [dba.ttb] [dba.ttb], [dba.ttc] [dba.ttc] where [dba.tta].ca=[dba.ttb].ca and [dba.ttb].ca=[dba.ttc].ca and [dba.tta].ca=[dba.ttc].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+                PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+                      (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+                SUBQUERY (uncorrelated)
+                         (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (table: dba.tta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (table: dba.ttc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ttb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+[S3] 4-table chain: all transitive terms generated     
+
+===================================================
+count(*)    
+100     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: hash-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: tta node[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: ttc node[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: ttb node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: ttd node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from tta tta, ttb ttb, ttc ttc, ttd ttd where tta.ca=ttb.ca and ttb.ca=ttc.ca and ttc.ca=ttd.ca
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    HASH JOIN (inner join)
+      HASH JOIN (inner join)
+        TABLE SCAN (dba.tta)
+        TABLE SCAN (dba.ttc)
+      TABLE SCAN (dba.ttb)
+    TABLE SCAN (dba.ttd)
+
+  rewritten query: select /*+ USE_HASH */ count(*) from [dba.tta] [dba.tta], [dba.ttb] [dba.ttb], [dba.ttc] [dba.ttc], [dba.ttd] [dba.ttd] where [dba.tta].ca=[dba.ttb].ca and [dba.ttb].ca=[dba.ttc].ca and [dba.ttc].ca=[dba.ttd].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+                PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+                      (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+                SUBQUERY (uncorrelated)
+                         (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+                        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+                              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+                        SUBQUERY (uncorrelated)
+                                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                            SCAN (table: dba.tta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                            SCAN (table: dba.ttc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (table: dba.ttb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ttd), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+[S4] Outer join boundary: transitive term must NOT cross LEFT OUTER JOIN (unsound derivation)     
+
+===================================================
+count(*)    
+100     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (left outer join)
+               edge:  term[?]
+               outer: sscan
+                          class: tta node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: ttb node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: ttc node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from tta tta left outer join ttb ttb on tta.ca=ttb.ca inner join ttc ttc on ttb.ca=ttc.ca
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    HASH JOIN (left outer join)
+      TABLE SCAN (dba.tta)
+      TABLE SCAN (dba.ttb)
+    TABLE SCAN (dba.ttc)
+
+  rewritten query: select /*+ USE_HASH */ count(*) from [dba.tta] [dba.tta] left outer join [dba.ttb] [dba.ttb] on [dba.tta].ca=[dba.ttb].ca inner join [dba.ttc] [dba.ttc] on [dba.ttb].ca=[dba.ttc].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+              HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
+                SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+                PARALLEL (time: ?, fetch: ?, ioread: ?)
+                  BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: memory+skip)
+                  PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+                SUBQUERY (uncorrelated)
+                         (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (table: dba.tta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (table: dba.ttb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ttc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+[S5] ORDERED hint via transitive term: previously ignored (no edge tta-ttc), now applied correctly     
+
+===================================================
+count(*)    
+100     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: tta node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: ttc node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: ttb node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ count(*) from tta tta, ttc ttc, ttb ttb where tta.ca=ttb.ca and ttb.ca=ttc.ca
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    HASH JOIN (inner join)
+      TABLE SCAN (dba.tta)
+      TABLE SCAN (dba.ttc)
+    TABLE SCAN (dba.ttb)
+
+  rewritten query: select /*+ ORDERED USE_HASH */ count(*) from [dba.tta] [dba.tta], [dba.ttc] [dba.ttc], [dba.ttb] [dba.ttb] where [dba.tta].ca=[dba.ttb].ca and [dba.ttb].ca=[dba.ttc].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+                PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+                      (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+                SUBQUERY (uncorrelated)
+                         (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (table: dba.tta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (table: dba.ttc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ttb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+[S6-1] Constant subst 2-table: join becomes DUMMY_JOIN, cross join of single-row results (baseline)     
+
+===================================================
+count(*)    
+1     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: ttc node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: ttd node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ttc ttc, ttd ttd where ttd.ca= ?:?  and ttc.ca= ?:?  and ttc.ca=ttd.ca
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (cross join)
+    TABLE SCAN (dba.ttc)
+    TABLE SCAN (dba.ttd)
+
+  rewritten query: select count(*) from [dba.ttc] [dba.ttc], [dba.ttd] [dba.ttd] where [dba.ttd].ca= ?:?  and [dba.ttc].ca= ?:?  and [dba.ttc].ca=[dba.ttd].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ttc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.ttd), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+[S6-2] Constant subst 3-table: group_all_dummy detected, no transitive term generated for ttc.ca=tta.ca     
+
+===================================================
+count(*)    
+1     
+
+Query plan:
+nl-join (cross join)
+    outer: nl-join (cross join)
+               outer: sscan
+                          class: tta node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: ttd node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: ttc node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ttc ttc, ttd ttd, tta tta where tta.ca= ?:?  and ttd.ca= ?:?  and ttc.ca= ?:?  and ttc.ca=ttd.ca and ttd.ca=tta.ca
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (cross join)
+    NESTED LOOPS (cross join)
+      TABLE SCAN (dba.tta)
+      TABLE SCAN (dba.ttd)
+    TABLE SCAN (dba.ttc)
+
+  rewritten query: select count(*) from [dba.ttc] [dba.ttc], [dba.ttd] [dba.ttd], [dba.tta] [dba.tta] where [dba.tta].ca= ?:?  and [dba.ttd].ca= ?:?  and [dba.ttc].ca= ?:?  and [dba.ttc].ca=[dba.ttd].ca and [dba.ttd].ca=[dba.tta].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SCAN (table: dba.ttd), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.ttc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+[S7] Self-join aliases: transitive term generated across two aliases of the same physical table     
+
+===================================================
+count(*)    
+100     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: ttc node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from tta a, tta b, ttc ttc where a.ca=b.ca and b.ca=ttc.ca
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    HASH JOIN (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (dba.ttc)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ USE_HASH */ count(*) from [dba.tta] a, [dba.tta] b, [dba.ttc] [dba.ttc] where a.ca=b.ca and b.ca=[dba.ttc].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+                PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+                      (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+                SUBQUERY (uncorrelated)
+                         (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (table: dba.tta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (table: dba.ttc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+[S8] Multiple equivalence classes: ca-chain and cb-chain each produce their own transitive term independently     
+
+===================================================
+count(*)    
+100     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?] AND term[?]
+               outer: hash-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: tta node[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: ttc node[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: ttb node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: ttd node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from tta tta, ttb ttb, ttc ttc, ttd ttd where tta.ca=ttb.ca and ttb.ca=ttc.ca and tta.cb=ttb.cb and ttb.cb=ttd.ca
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    HASH JOIN (inner join)
+      HASH JOIN (inner join)
+        TABLE SCAN (dba.tta)
+        TABLE SCAN (dba.ttc)
+      TABLE SCAN (dba.ttb)
+    TABLE SCAN (dba.ttd)
+
+  rewritten query: select /*+ USE_HASH */ count(*) from [dba.tta] [dba.tta], [dba.ttb] [dba.ttb], [dba.ttc] [dba.ttc], [dba.ttd] [dba.ttd] where [dba.tta].ca=[dba.ttb].ca and [dba.ttb].ca=[dba.ttc].ca and [dba.tta].cb=[dba.ttb].cb and [dba.ttb].cb=[dba.ttd].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+                PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+                      (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+                SUBQUERY (uncorrelated)
+                         (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+                        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+                              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+                        SUBQUERY (uncorrelated)
+                                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                            SCAN (table: dba.tta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                            SCAN (table: dba.ttc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (table: dba.ttb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ttd), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+[S9] Non-equi join: < predicate excluded from equivalence class, no spurious transitive term generated     
+
+===================================================
+count(*)    
+4950     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: ttc node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: ttb node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: tta node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tta tta, ttb ttb, ttc ttc where (tta.ca<ttb.ca) and ttb.ca=ttc.ca
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (dba.ttc)
+      TABLE SCAN (dba.ttb)
+    TABLE SCAN (dba.tta)
+
+  rewritten query: select count(*) from [dba.tta] [dba.tta], [dba.ttb] [dba.ttb], [dba.ttc] [dba.ttc] where ([dba.tta].ca<[dba.ttb].ca) and [dba.ttb].ca=[dba.ttc].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ttc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.ttb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+    
+[S10 SETUP] Create indexed tables for sort-limit transitive term scenario     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+100
+===================================================
+0
+===================================================
+0
+===================================================
+100
+===================================================
+0
+===================================================
+0
+===================================================
+100
+===================================================
+0
+===================================================
+    
+[S10] 3-table sort-limit: transitive term sla.ca=slc.ca enables idx-join to skip ORDER BY sort     
+
+===================================================
+ca    ca    ca    
+100     100     100     
+99     99     99     
+98     98     98     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: iscan
+                          class: sla node[?]
+                          index: i_sla_ca term[?] (covers) (desc_index)
+                          cost:  ? card ?
+               inner: iscan
+                          class: slb node[?]
+                          index: i_slb_ca term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: slc node[?]
+               index: i_slc term[?] (covers)
+               cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select sla.ca, slb.ca, slc.ca from sla sla, slb slb, slc slc where (sla.ca> ?:? ) and sla.ca=slb.ca and slb.ca=slc.ca order by ? desc  for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+    
+[CLEANUP] Drop all test tables     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
