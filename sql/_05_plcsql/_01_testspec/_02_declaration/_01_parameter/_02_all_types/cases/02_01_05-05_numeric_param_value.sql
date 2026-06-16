@@ -2,7 +2,7 @@
 
 --A test case that delivers values exceeding the minimum and maximum values supported by numeric type parameters.
 
-select '"12345.6789" is assigned to the decimal variable, and "123456" is output, which is normal.';
+select '"12345.6789 is assigned to the decimal variable, and 12345.6789 is output';
 
 create or replace procedure t( ) as
     var_min DECIMAL := -12345.6789;
@@ -53,7 +53,7 @@ select cast( cast( 0.123456789 as numeric(4,4)) as NUMERIC);
 
 
 
-select 'This is a normal case because an error occurred in the parameter "NUMERIC(3,4)" when creating.';
+select 'The procedure is created successfully because "NUMERIC(3,4)" is now valid and scale > precision is allowed.';
 
 create or replace procedure t(i_min NUMERIC, i_max NUMERIC) as
     var_min NUMERIC := i_min;
@@ -73,8 +73,7 @@ end;
 
 
 
---bug case
-select 'An error should have occurred due to the variable's "decimal(3,4)" during creation, but it was created normally. This is a bug.';
+select '"NUMERIC(3,4)" is now valid. scale > precision is allowed since the scale range was expanded to -84~127.';
 
 create or replace procedure t( ) as
     var_min DECIMAL(3,4) := -12345.6789;
@@ -91,8 +90,7 @@ end;
 
 
 
---bug case
-select 'If the parameter value is passed as "12345.6789" in the call statement, the output should be "12346". Currently "12345.6789" is being output.';
+select 'If the parameter value "12345.6789" is passed in the call statement, the same value is output because NUMERIC now supports floating precision.';
 
 create or replace procedure t(i_min NUMERIC, i_max NUMERIC ) as
     var_min NUMERIC := i_min;
@@ -102,7 +100,6 @@ begin
     dbms_output.put_line('i_max=' || var_max);
 end;
 
---bug
 call t(-12345.6789, 12345.6789);
 select cast( 12345.6789 as NUMERIC );
 

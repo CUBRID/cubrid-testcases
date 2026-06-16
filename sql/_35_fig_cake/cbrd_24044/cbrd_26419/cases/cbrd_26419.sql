@@ -68,7 +68,7 @@ from tc a,
        where a.cola = b.cola and a.cola = c.cola) b
 where a.cola = b.cola;
 
-evaluate 'Case 9: inline-view LEADING(c,b,a) should be ignored (no direct join edge between c and b)';
+evaluate 'Case 9: inline-view LEADING(c,b,a) (3 args) via transitive join term; verify hint is applied even without a direct join edge between c and b (join order c->b->a)';
 select /*+ recompile */ count(*)
 from tc a,
      (select /*+ leading(c,b,a) */ a.cola

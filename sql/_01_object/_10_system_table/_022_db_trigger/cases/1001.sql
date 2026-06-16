@@ -2,7 +2,7 @@
 --Create trigger and retrieve the owner from virtual class _db_trigger
 
 call login('dba') on class db_user;
-call add_user('test_user') on class db_user;
+call add_user('test_user') on class _db_user;
 call login('test_user') on class db_user;
 
 create class test_class(col1 integer, col2 varchar(20));
@@ -19,5 +19,5 @@ drop trigger test_user.test_trigger;
 drop class test_user.test_class;
 
 
-call drop_user('test_user') on class db_user;
+call drop_user('test_user') on class _db_user;
 --+ holdcas off;

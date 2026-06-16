@@ -124,7 +124,6 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
       SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
      
 
 Query plan:
@@ -180,7 +179,6 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
       SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
      
 
 Query plan:
@@ -387,6 +385,7 @@ Trace Statistics:
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
         SUBQUERY (uncorrelated)
                  (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -450,6 +449,7 @@ Trace Statistics:
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
         SUBQUERY (uncorrelated)
                  (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -572,7 +572,6 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
@@ -635,7 +634,6 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
     ORDERBY (time: ?, topnsort: true)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -698,7 +696,6 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
@@ -1345,7 +1342,6 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
@@ -1450,7 +1446,6 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
@@ -1638,7 +1633,6 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
@@ -1700,7 +1694,6 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
       SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
      
 
 Query plan:
@@ -1871,7 +1864,6 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
-      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
@@ -1979,7 +1971,6 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
       SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
     ORDERBY (time: ?, topnsort: true)
      
 

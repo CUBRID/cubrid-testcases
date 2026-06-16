@@ -11,13 +11,19 @@ NUM_CLIENTS = 2
 C1: select s1.current_value,s1.next_value from tt1 where sleep(1);
 C2: insert into tt1 values(s1.next_value);
 C2: insert into tt1 values(s1.next_value);
+
+[CUBRIDQA-1391] Since CBRD-26747, fixed scan is enabled by default, causing latch to be held.
+during query execution and distorting intended concurrent behavior in this TC.
+Disable enable_heap_fixed_scan temporarily. See CUBRIDQA-1391 for details.
 */
 
 MC: setup NUM_CLIENTS = 2;
 C1: set transaction lock timeout INFINITE;
 C1: set transaction isolation level read committed;
+C1: set system parameters 'enable_heap_fixed_scan=false';
 C2: set transaction lock timeout INFINITE;
 C2: set transaction isolation level read committed;
+C2: set system parameters 'enable_heap_fixed_scan=false';
 
 /* preparation */
 C1: DROP TABLE IF EXISTS tt1;
@@ -43,5 +49,7 @@ MC: wait until C1 ready;
 C2: SELECT s1.CURRENT_VALUE,s1.NEXT_VALUE;
 C2: DROP SERIAL s1;
 C2: commit;
+C2: set system parameters 'enable_heap_fixed_scan=true';
+C1: set system parameters 'enable_heap_fixed_scan=true';
 C2: quit;
 C1: quit;

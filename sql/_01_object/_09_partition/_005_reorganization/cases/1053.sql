@@ -33,7 +33,7 @@ insert into range_test values (13,110,'ppp','ppp','2000-05-02 09:00:00');
 insert into range_test values (14,111,'qqq','qqq','2000-05-02 09:00:00');
 insert into range_test values (15,201,'rrr','rrr','2000-05-02 09:00:00');
 insert into range_test values (16,202,'ttt','ttt','2000-05-02 09:00:00');
-select * from db_partition order by 3,4;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition order by 3,4;
 
 select * from range_test order by 1,2;
 

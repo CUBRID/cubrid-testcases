@@ -75,7 +75,7 @@ do @i := @i + 1;
 evaluate concat ('####', lpad (@i, 3), '. build input: int vs bigint -> int or bigint (page: int == bigint)');
 
 --@queryplan
-select /*+ recompile use_hash no_parallel_subquery */
+select /*+ recompile use_hash no_parallel_hash_join no_parallel_subquery */
   count (*)
 from ta a, t_bigint b
 where a.ca = b.ca and a.cb = b.cb and a.cc = b.cc and a.cd = b.cd;
@@ -87,7 +87,7 @@ do @i := @i + 1;
 evaluate concat ('####', lpad (@i, 3), '. build input: int vs numeric -> int (page: int < numeric)');
 
 --@queryplan
-select /*+ recompile use_hash no_parallel_subquery */
+select /*+ recompile use_hash no_parallel_hash_join no_parallel_subquery */
   count (*)
 from ta a, t_numeric b
 where a.ca = b.ca and a.cb = b.cb and a.cc = b.cc and a.cd = b.cd;
@@ -101,7 +101,7 @@ evaluate concat ('####', lpad (@i, 3), '. cost: in_memory, hybrid < file, build_
 set system parameters 'max_hash_list_scan_size=512k';
 
 --@queryplan
-select /*+  recompile leading(a) use_hash(a,b) use_nl(c) no_parallel_subquery */
+select /*+  recompile leading(a) use_hash(a,b) no_parallel_hash_join use_nl(c) no_parallel_subquery */
   count (*)
 from ta a, tb b, tc c
 where a.ca = b.ca and a.cb = b.cb and a.cc = b.cc and a.cd = b.cd
@@ -116,7 +116,7 @@ evaluate concat ('####', lpad (@i, 3), '. cost: in_memory, hybrid < file, build_
 set system parameters 'max_hash_list_scan_size=128k';
 
 --@queryplan
-select /*+  recompile leading(a) use_hash(a,b) use_nl(c) no_parallel_subquery */
+select /*+  recompile leading(a) use_hash(a,b) no_parallel_hash_join use_nl(c) no_parallel_subquery */
   count (*)
 from ta a, tb b, tc c
 where a.ca = b.ca and a.cb = b.cb and a.cc = b.cc and a.cd = b.cd

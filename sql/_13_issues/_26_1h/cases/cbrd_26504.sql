@@ -53,9 +53,9 @@ SELECT c1 FROM tbl
 START WITH c1 = 'Z'
 CONNECT BY PRIOR c1 = c2
 ORDER BY c1;
--- Expected: (empty — 0 rows)
+-- Expected: (empty, 0 rows)
 
-evaluate 'Case 6. CONNECT BY with WHERE Clause — WHERE Must Not Affect START WITH';
+evaluate 'Case 6. CONNECT BY with WHERE Clause, WHERE Must Not Affect START WITH';
 SELECT c1 FROM tbl
 WHERE c1 <> 'C'
 START WITH c1 = 'A'
