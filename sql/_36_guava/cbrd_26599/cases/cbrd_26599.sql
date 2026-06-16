@@ -44,8 +44,6 @@ insert into ttd select rownum, rownum from db_class a, db_class b limit 100;
 
 update statistics on tta, ttb, ttc, ttd;
 
-set trace on;
-
 /* ============================================================
  * Scenario 1: Basic 3-table hash join
  *
@@ -61,14 +59,12 @@ select /*+ recompile use_hash */ count(*)
 from tta, ttb, ttc
 where tta.ca = ttb.ca
   and ttb.ca = ttc.ca;
-show trace;
 
 evaluate '[S1-2] Basic 3-table hash join - explicit JOIN syntax: same transitive optimization applies';
 select /*+ recompile use_hash */ count(*)
 from tta
   join ttb on tta.ca = ttb.ca
   join ttc on ttb.ca = ttc.ca;
-show trace;
 
 /* ============================================================
  * Scenario 2: Explicit transitive term already in WHERE clause
@@ -82,7 +78,6 @@ from tta, ttb, ttc
 where tta.ca = ttb.ca
   and ttb.ca = ttc.ca
   and tta.ca = ttc.ca;
-show trace;
 
 /* ============================================================
  * Scenario 3: Multi-hop transitive join (4-table chain)
@@ -100,7 +95,6 @@ from tta, ttb, ttc, ttd
 where tta.ca = ttb.ca
   and ttb.ca = ttc.ca
   and ttc.ca = ttd.ca;
-show trace;
 
 /* ============================================================
  * Scenario 4: Outer join boundary
@@ -116,7 +110,6 @@ select /*+ recompile use_hash */ count(*)
 from tta
   left outer join ttb on tta.ca = ttb.ca
   inner join ttc on ttb.ca = ttc.ca;
-show trace;
 
 /* ============================================================
  * Scenario 5: ORDERED hint via transitive term
@@ -132,7 +125,6 @@ select /*+ recompile use_hash ordered */ count(*)
 from tta, ttc, ttb
 where tta.ca = ttb.ca
   and ttb.ca = ttc.ca;
-show trace;
 
 /* ============================================================
  * Scenario 6: Constant substitution makes joins DUMMY_JOIN
@@ -152,7 +144,6 @@ select /*+ recompile */ count(*)
 from ttc, ttd
 where ttc.ca = ttd.ca
   and ttc.ca = 1;
-show trace;
 
 /* 3-table chain with constant: all joins become DUMMY_JOIN
  * transitive term ttc.ca=tta.ca must NOT be generated              */
@@ -162,7 +153,6 @@ from ttc, ttd, tta
 where ttc.ca = ttd.ca
   and ttd.ca = tta.ca
   and ttc.ca = 1;
-show trace;
 
 -- ===================================================================
 -- Scenario 7: Self-join with table aliases
@@ -180,7 +170,6 @@ select /*+ recompile use_hash */ count(*)
 from tta a, tta b, ttc
 where a.ca = b.ca
   and b.ca = ttc.ca;
-show trace;
 
 -- ===================================================================
 -- Scenario 8: Multiple independent equivalence classes
@@ -204,7 +193,6 @@ where tta.ca = ttb.ca
   and ttb.ca = ttc.ca
   and tta.cb = ttb.cb
   and ttb.cb = ttd.ca;
-show trace;
 
 -- ===================================================================
 -- Scenario 9: Non-equi join predicate mixed with equi join
@@ -224,9 +212,6 @@ select /*+ recompile */ count(*)
 from tta, ttb, ttc
 where tta.ca < ttb.ca
   and ttb.ca = ttc.ca;
-show trace;
-
-set trace off;
 
 /* ============================================================
  * Scenario 10: Sort-limit with transitive join term
@@ -274,4 +259,3 @@ drop table if exists tta;
 drop table if exists ttb;
 drop table if exists ttc;
 drop table if exists ttd;
-
