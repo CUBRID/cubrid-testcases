@@ -1,6 +1,6 @@
 ===================================================
     
-[SETUP] Create and populate large/small test tables     
+[SETUP] Create and populate test tables     
 
 ===================================================
 0
@@ -19,100 +19,28 @@
 ===================================================
 0
 ===================================================
-1000000
+0
 ===================================================
-1000000
+0
 ===================================================
-100
+25
 ===================================================
-100
+1000
+===================================================
+10000
+===================================================
+20000
+===================================================
+500
 ===================================================
 0
 ===================================================
     
-[S1-1] Basic 3-table hash join - implicit JOIN syntax: ttc (100 rows) joined first via transitive term     
+[1-1] implied term generated + used: cust JOIN nations early (implicit syntax)     
 
 ===================================================
 count(*)    
-100     
-
-Query plan:
-hash-join (inner join)
-    edge:  term[?]
-    outer: hash-join (inner join)
-               edge:  term[?]
-               outer: sscan
-                          class: tta node[?]
-                          cost:  ? card ?
-               inner: sscan
-                          class: ttc node[?]
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: ttb node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_HASH */ count(*) from tta tta, ttb ttb, ttc ttc where tta.ca=ttb.ca and ttb.ca=ttc.ca
-===================================================
-    
-[S1-2] Basic 3-table hash join - explicit JOIN syntax: same transitive optimization applies     
-
-===================================================
-count(*)    
-100     
-
-Query plan:
-hash-join (inner join)
-    edge:  term[?]
-    outer: hash-join (inner join)
-               edge:  term[?]
-               outer: sscan
-                          class: tta node[?]
-                          cost:  ? card ?
-               inner: sscan
-                          class: ttc node[?]
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: ttb node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_HASH */ count(*) from tta tta, ttb ttb, ttc ttc where tta.ca=ttb.ca and ttb.ca=ttc.ca
-===================================================
-    
-[S2] Explicit transitive term already in WHERE: no duplicate generated, plan remains correct     
-
-===================================================
-count(*)    
-100     
-
-Query plan:
-hash-join (inner join)
-    edge:  term[?]
-    outer: hash-join (inner join)
-               edge:  term[?]
-               outer: sscan
-                          class: tta node[?]
-                          cost:  ? card ?
-               inner: sscan
-                          class: ttc node[?]
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: ttb node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_HASH */ count(*) from tta tta, ttb ttb, ttc ttc where tta.ca=ttb.ca and ttb.ca=ttc.ca and tta.ca=ttc.ca
-===================================================
-    
-[S3] 4-table chain: all transitive terms generated     
-
-===================================================
-count(*)    
-100     
+160000     
 
 Query plan:
 hash-join (inner join)
@@ -122,55 +50,63 @@ hash-join (inner join)
                outer: hash-join (inner join)
                           edge:  term[?]
                           outer: sscan
-                                     class: tta node[?]
+                                     class: cust node[?]
                                      cost:  ? card ?
                           inner: sscan
-                                     class: ttc node[?]
+                                     class: nations node[?]
+                                     sargs: term[?]
                                      cost:  ? card ?
                           cost:  ? card ?
                inner: sscan
-                          class: ttb node[?]
+                          class: orders node[?]
                           cost:  ? card ?
                cost:  ? card ?
     inner: sscan
-               class: ttd node[?]
+               class: supp node[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH */ count(*) from tta tta, ttb ttb, ttc ttc, ttd ttd where tta.ca=ttb.ca and ttb.ca=ttc.ca and ttc.ca=ttd.ca
+select /*+ USE_HASH */ count(*) from cust cust, supp supp, nations nations, orders orders where cust.nk=supp.nk and supp.nk=nations.nk and cust.ck=orders.ck and nations.region= ?:? 
 ===================================================
     
-[S4] Outer join boundary: transitive term must NOT cross LEFT OUTER JOIN (unsound derivation)     
+[1-2] implied term generated + used: explicit join syntax     
 
 ===================================================
 count(*)    
-100     
+160000     
 
 Query plan:
 hash-join (inner join)
     edge:  term[?]
-    outer: hash-join (left outer join)
+    outer: hash-join (inner join)
                edge:  term[?]
-               outer: sscan
-                          class: tta node[?]
+               outer: hash-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: cust node[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: nations node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
                           cost:  ? card ?
                inner: sscan
-                          class: ttb node[?]
+                          class: orders node[?]
                           cost:  ? card ?
                cost:  ? card ?
     inner: sscan
-               class: ttc node[?]
+               class: supp node[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH */ count(*) from tta tta left outer join ttb ttb on tta.ca=ttb.ca inner join ttc ttc on ttb.ca=ttc.ca
+select /*+ USE_HASH */ count(*) from cust cust, supp supp, nations nations, orders orders where cust.nk=supp.nk and supp.nk=nations.nk and cust.ck=orders.ck and nations.region= ?:? 
 ===================================================
     
-[S5] ORDERED hint via transitive term: previously ignored (no edge tta-ttc), now applied correctly     
+[2] implied term already explicit - no duplicate term added     
 
 ===================================================
 count(*)    
-100     
+80000     
 
 Query plan:
 hash-join (inner join)
@@ -178,73 +114,139 @@ hash-join (inner join)
     outer: hash-join (inner join)
                edge:  term[?]
                outer: sscan
-                          class: tta node[?]
+                          class: supp node[?]
                           cost:  ? card ?
                inner: sscan
-                          class: ttc node[?]
+                          class: nations node[?]
+                          sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
     inner: sscan
-               class: ttb node[?]
+               class: cust node[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED USE_HASH */ count(*) from tta tta, ttc ttc, ttb ttb where tta.ca=ttb.ca and ttb.ca=ttc.ca
+select /*+ USE_HASH */ count(*) from cust cust, supp supp, nations nations where cust.nk=supp.nk and supp.nk=nations.nk and cust.nk=nations.nk and nations.region= ?:? 
 ===================================================
     
-[S6-1] Constant subst 2-table: join becomes DUMMY_JOIN, cross join of single-row results (baseline)     
+[3] 4-member eqclass - all missing-pair implied terms generated     
 
 ===================================================
 count(*)    
-1     
+1600000     
 
 Query plan:
-nl-join (cross join)
-    outer: sscan
-               class: ttc node[?]
-               sargs: term[?]
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: hash-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: nations node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: part node[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: supp node[?]
+                          cost:  ? card ?
                cost:  ? card ?
     inner: sscan
-               class: ttd node[?]
-               sargs: term[?]
+               class: cust node[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from ttc ttc, ttd ttd where ttd.ca= ?:?  and ttc.ca= ?:?  and ttc.ca=ttd.ca
+select /*+ USE_HASH */ count(*) from cust cust, supp supp, nations nations, part part where cust.nk=supp.nk and supp.nk=nations.nk and nations.nk=part.nk and nations.region= ?:? 
 ===================================================
     
-[S6-2] Constant subst 3-table: group_all_dummy detected, no transitive term generated for ttc.ca=tta.ca     
+[4] outer-join boundary - implied term must NOT be generated across outer join     
 
 ===================================================
 count(*)    
-1     
+400000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (left outer join)
+               edge:  term[?]
+               outer: sscan
+                          class: cust node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: supp node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: nations node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from cust cust left outer join supp supp on cust.nk=supp.nk inner join nations nations on supp.nk=nations.nk
+===================================================
+    
+[5] ORDERED hint honored via implied term (cust -> nations -> supp)     
+
+===================================================
+count(*)    
+80000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: cust node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: nations node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: supp node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ count(*) from cust cust, nations nations, supp supp where cust.nk=supp.nk and supp.nk=nations.nk and nations.region= ?:? 
+===================================================
+    
+[6] constant subst 3-table - PT_EXPR_INFO_TRANSITIVE excluded, no implied term     
+
+===================================================
+count(*)    
+16000     
 
 Query plan:
 nl-join (cross join)
     outer: nl-join (cross join)
                outer: sscan
-                          class: tta node[?]
+                          class: supp node[?]
                           sargs: term[?]
                           cost:  ? card ?
                inner: sscan
-                          class: ttd node[?]
+                          class: nations node[?]
                           sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
     inner: sscan
-               class: ttc node[?]
+               class: cust node[?]
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from ttc ttc, ttd ttd, tta tta where tta.ca= ?:?  and ttd.ca= ?:?  and ttc.ca= ?:?  and ttc.ca=ttd.ca and ttd.ca=tta.ca
+select count(*) from cust cust, supp supp, nations nations where nations.nk= ?:?  and supp.nk= ?:?  and cust.nk= ?:?  and cust.nk=supp.nk and supp.nk=nations.nk
 ===================================================
     
-[S7] Self-join aliases: transitive term generated across two aliases of the same physical table     
+[7] self-join aliases: implied term generated across two aliases of the same physical table     
 
 ===================================================
 count(*)    
-100     
+8000     
 
 Query plan:
 hash-join (inner join)
@@ -255,7 +257,8 @@ hash-join (inner join)
                           class: a node[?]
                           cost:  ? card ?
                inner: sscan
-                          class: ttc node[?]
+                          class: nations node[?]
+                          sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
     inner: sscan
@@ -263,46 +266,47 @@ hash-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH */ count(*) from tta a, tta b, ttc ttc where a.ca=b.ca and b.ca=ttc.ca
+select /*+ USE_HASH */ count(*) from supp a, supp b, nations nations where a.nk=b.nk and b.nk=nations.nk and nations.region= ?:? 
 ===================================================
     
-[S8] Multiple equivalence classes: ca-chain and cb-chain each produce their own transitive term independently     
+[8] star topology + ck chain: two independent eqclasses, implied cust.nk=supp.nk generated     
 
 ===================================================
 count(*)    
-100     
+160000     
 
 Query plan:
 hash-join (inner join)
     edge:  term[?]
     outer: hash-join (inner join)
-               edge:  term[?] AND term[?]
+               edge:  term[?]
                outer: hash-join (inner join)
                           edge:  term[?]
                           outer: sscan
-                                     class: tta node[?]
+                                     class: cust node[?]
                                      cost:  ? card ?
                           inner: sscan
-                                     class: ttc node[?]
+                                     class: nations node[?]
+                                     sargs: term[?]
                                      cost:  ? card ?
                           cost:  ? card ?
                inner: sscan
-                          class: ttb node[?]
+                          class: orders node[?]
                           cost:  ? card ?
                cost:  ? card ?
     inner: sscan
-               class: ttd node[?]
+               class: supp node[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH */ count(*) from tta tta, ttb ttb, ttc ttc, ttd ttd where tta.ca=ttb.ca and ttb.ca=ttc.ca and tta.cb=ttb.cb and ttb.cb=ttd.ca
+select /*+ USE_HASH */ count(*) from cust cust, supp supp, nations nations, orders orders where cust.nk=nations.nk and supp.nk=nations.nk and cust.ck=orders.ck and nations.region= ?:? 
 ===================================================
     
-[S9] Non-equi join: < predicate excluded from equivalence class, no spurious transitive term generated     
+[9] non-equi join: < predicate excluded from eq-class, no spurious implied term     
 
 ===================================================
 count(*)    
-4950     
+8000     
 
 Query plan:
 nl-join (inner join)
@@ -310,24 +314,21 @@ nl-join (inner join)
     outer: nl-join (inner join)
                edge:  term[?]
                outer: sscan
-                          class: ttc node[?]
+                          class: nations node[?]
+                          sargs: term[?]
                           cost:  ? card ?
                inner: sscan
-                          class: ttb node[?]
+                          class: part node[?]
                           sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
     inner: sscan
-               class: tta node[?]
+               class: supp node[?]
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from tta tta, ttb ttb, ttc ttc where (tta.ca<ttb.ca) and ttb.ca=ttc.ca
-===================================================
-    
-[S10 SETUP] Create indexed tables for sort-limit transitive term scenario     
-
+select count(*) from supp supp, nations nations, part part where (supp.nk<nations.nk) and nations.nk=part.nk and nations.region= ?:? 
 ===================================================
 0
 ===================================================
@@ -339,60 +340,65 @@ select count(*) from tta tta, ttb ttb, ttc ttc where (tta.ca<ttb.ca) and ttb.ca=
 ===================================================
 0
 ===================================================
-100
-===================================================
 0
 ===================================================
-0
+1500
 ===================================================
-100
+2000
 ===================================================
-0
-===================================================
-0
-===================================================
-100
+2000
 ===================================================
 0
 ===================================================
     
-[S10] 3-table sort-limit: transitive term sla.ca=slc.ca enables idx-join to skip ORDER BY sort     
+[10] SORT-LIMIT preserved: implied t.i=v.j must not break PK-FK full-join     
 
 ===================================================
-ca    ca    ca    
-100     100     100     
-99     99     99     
-98     98     98     
+k    
+1     
+1     
+2     
+2     
+3     
+3     
+4     
+4     
+5     
+5     
 
 Query plan:
-idx-join (inner join)
-    outer: idx-join (inner join)
-               outer: iscan
-                          class: sla node[?]
-                          index: i_sla_ca term[?] (covers) (desc_index)
-                          cost:  ? card ?
-               inner: iscan
-                          class: slb node[?]
-                          index: i_slb_ca term[?] (covers)
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: iscan
-               class: slc node[?]
-               index: i_slc term[?] (covers)
-               cost:  ? card ?
-    sort:  ? desc
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: temp(sort limit)
+                            subplan: idx-join (inner join)
+                                         outer: sscan
+                                                    class: v node[?]
+                                                    cost:  ? card ?
+                                         inner: iscan
+                                                    class: u node[?]
+                                                    index: fk_u_t term[?]
+                                                    cost:  ? card ?
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t node[?]
+                            index: pk_t_i term[?] (covers)
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select sla.ca, slb.ca, slc.ca from sla sla, slb slb, slc slc where (sla.ca> ?:? ) and sla.ca=slb.ca and slb.ca=slc.ca order by ? desc  for orderby_num()<= ?:? 
-/* ---> skip ORDER BY */
+select /*+ NO_ELIMINATE_JOIN */ u.k from u u, t t, v v where u.j=t.i and u.j=v.j order by ? for orderby_num()<= ?:? 
+===================================================
+0
+===================================================
+0
+===================================================
+0
 ===================================================
     
 [CLEANUP] Drop all test tables     
 
-===================================================
-0
-===================================================
-0
 ===================================================
 0
 ===================================================
