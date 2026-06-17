@@ -18,7 +18,7 @@ from (
 
 /* ----------------------------------------
  *
- * test case 2,3 - Test that even if the name of the auto-increment serial exceeds 254 bytes, it is not truncated to 254 bytes when changing the owner of the table.
+ * test case 2,3 - Test auto-increment serial name reconstruction using MD5 when exceeding 222 bytes. 
  *   => No error should occur in the last query.
  *   Note: the unique name column of _db_serial adds 5 extra characters to divide users, tables and columns. 
  * ---------------------------------------- */
