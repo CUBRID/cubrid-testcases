@@ -135,6 +135,32 @@ select /*+ USE_HASH */ count(*) from cust cust, supp supp, nations nations where
 count(*)    
 1600000     
 
+Join graph segments (f indicates final):
+seg[0]: [0]
+seg[1]: nk[0]
+seg[2]: [1]
+seg[3]: nk[1]
+seg[4]: [2]
+seg[5]: nk[2]
+seg[6]: region[2]
+seg[7]: [3]
+seg[8]: nk[3]
+Join graph nodes:
+node[0]: dba.cust dba.cust(10000/22) (loc 0)
+node[1]: dba.supp dba.supp(1000/3) (loc 1)
+node[2]: dba.nations dba.nations(25/1) (sargs 6) (loc 2)
+node[3]: dba.part dba.part(500/2) (loc 3)
+Join graph equivalence classes:
+eqclass[0]: nk[0] nk[1] nk[2] nk[3]
+Join graph edges:
+term[0]: [dba.cust].nk=[dba.supp].nk (sel ?) (join term) (mergeable) (inner-join) (loc 0)
+term[1]: [dba.supp].nk=[dba.nations].nk (sel ?) (join term) (mergeable) (inner-join) (loc 0)
+term[2]: [dba.nations].nk=[dba.part].nk (sel ?) (join term) (mergeable) (inner-join) (loc 0)
+term[3]: [dba.supp].nk=[dba.part].nk (sel ?) (join term) (mergeable) (inner-join) (loc 0)
+term[4]: [dba.cust].nk=[dba.nations].nk (sel ?) (join term) (mergeable) (inner-join) (loc 0)
+term[5]: [dba.cust].nk=[dba.part].nk (sel ?) (join term) (mergeable) (inner-join) (loc 0)
+Join graph terms:
+term[6]: [dba.nations].region=1 (sel ?) (sarg term) (not-join eligible) (loc 0)
 Query plan:
 hash-join (inner join)
     edge:  term[?]
@@ -221,6 +247,26 @@ select /*+ ORDERED USE_HASH */ count(*) from cust cust, nations nations, supp su
 count(*)    
 16000     
 
+Join graph segments (f indicates final):
+seg[0]: [0]
+seg[1]: nk[0]
+seg[2]: [1]
+seg[3]: nk[1]
+seg[4]: [2]
+seg[5]: nk[2]
+Join graph nodes:
+node[0]: dba.cust dba.cust(10000/22) (sargs 2) (loc 0)
+node[1]: dba.supp dba.supp(1000/3) (sargs 3) (loc 1)
+node[2]: dba.nations dba.nations(25/1) (sargs 4) (loc 2)
+Join graph equivalence classes:
+eqclass[0]: nk[0] nk[1] nk[2]
+Join graph edges:
+term[0]: [dba.supp].nk=[dba.nations].nk (sel ?) (dummy join term) (inner-join) (loc 0)
+term[1]: [dba.cust].nk=[dba.supp].nk (sel ?) (dummy join term) (inner-join) (loc 0)
+Join graph terms:
+term[2]: [dba.cust].nk=5 (sel ?) (sarg term) (not-join eligible) (loc 0)
+term[3]: [dba.supp].nk=5 (sel ?) (sarg term) (not-join eligible) (loc 0)
+term[4]: [dba.nations].nk=5 (sel ?) (sarg term) (not-join eligible) (loc 0)
 Query plan:
 nl-join (cross join)
     outer: nl-join (cross join)
@@ -275,6 +321,32 @@ select /*+ USE_HASH */ count(*) from supp a, supp b, nations nations where a.nk=
 count(*)    
 160000     
 
+Join graph segments (f indicates final):
+seg[0]: [0]
+seg[1]: nk[0]
+seg[2]: ck[0]
+seg[3]: [1]
+seg[4]: nk[1]
+seg[5]: [2]
+seg[6]: nk[2]
+seg[7]: region[2]
+seg[8]: [3]
+seg[9]: ck[3]
+Join graph nodes:
+node[0]: dba.cust dba.cust(10000/22) (loc 0)
+node[1]: dba.supp dba.supp(1000/3) (loc 1)
+node[2]: dba.nations dba.nations(25/1) (sargs 4) (loc 2)
+node[3]: dba.orders dba.orders(20000/44) (loc 3)
+Join graph equivalence classes:
+eqclass[0]: nk[0] nk[1] nk[2]
+eqclass[1]: ck[0] ck[3]
+Join graph edges:
+term[0]: [dba.cust].nk=[dba.nations].nk (sel ?) (join term) (mergeable) (inner-join) (loc 0)
+term[1]: [dba.supp].nk=[dba.nations].nk (sel ?) (join term) (mergeable) (inner-join) (loc 0)
+term[2]: [dba.cust].nk=[dba.supp].nk (sel ?) (join term) (mergeable) (inner-join) (loc 0)
+term[3]: [dba.cust].ck=[dba.orders].ck (sel ?) (join term) (mergeable) (inner-join) (loc 0)
+Join graph terms:
+term[4]: [dba.nations].region=1 (sel ?) (sarg term) (not-join eligible) (loc 0)
 Query plan:
 hash-join (inner join)
     edge:  term[?]
