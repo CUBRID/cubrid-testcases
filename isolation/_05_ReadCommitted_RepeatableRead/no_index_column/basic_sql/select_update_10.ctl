@@ -11,21 +11,15 @@ Test Point:
 NUM_CLIENTS = 2
 C1: select three times - before C2 begin, after C2 commit, after C1 commit. 
 C2: update, commit after C1's transaction start
-
-[CUBRIDQA-1391] Since CBRD-26747, fixed scan is enabled by default, causing latch to be held.
-during query execution and distorting intended concurrent behavior in this TC.
-Disable enable_heap_fixed_scan temporarily. See CUBRIDQA-1391 for details.
 */
 
 MC: setup NUM_CLIENTS = 2;
 
 C1: set transaction lock timeout INFINITE;
 C1: set transaction isolation level read committed;
-C1: set system parameters 'enable_heap_fixed_scan=false';
 
 C2: set transaction lock timeout INFINITE;
 C2: set transaction isolation level repeatable read;
-C2: set system parameters 'enable_heap_fixed_scan=false';
 
 /* preparation */
 C1: drop table if exists t1;
@@ -57,7 +51,5 @@ MC: wait until C2 ready;
 
 C2: commit;
 C1: commit;
-C1: set system parameters 'enable_heap_fixed_scan=true';
-C2: set system parameters 'enable_heap_fixed_scan=true';
 C1: quit;
 C2: quit;
