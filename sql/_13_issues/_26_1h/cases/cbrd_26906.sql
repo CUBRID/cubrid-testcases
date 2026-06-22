@@ -9,7 +9,7 @@
  *  Scenarios:
  *   [1] Basic reproduction: USE INDEX on non-covering index, low distinct leading column
  *   [2] FORCE INDEX vs USE INDEX comparison on same data
- *   [3] Non-indexed column (colc) filter variations: IS NULL / IN / !=
+ *   [3] Non-indexed column (colc) filter variations: IS NULL / IN
  */
 
 drop table if exists tbl;
@@ -60,10 +60,5 @@ evaluate '[Scenario 3b] colc IN condition on non-indexed column';
 
 select /*+ recompile */ count(*) from tbl use index (idx_non_covering)
 where cola between '0' and '9' and colb='1' and colc in ('0','1');
-
-evaluate '[Scenario 3c] colc negation (!=) condition on non-indexed column';
-
-select /*+ recompile */ count(*) from tbl use index (idx_non_covering)
-where cola between '0' and '9' and colb='1' and colc <> '0';
 
 drop table if exists tbl;

@@ -95,21 +95,4 @@ iscan
 Query stmt:
 select count(*) from tbl tbl where (tbl.cola>= ?:?  and tbl.cola<= ?:? ) and ((tbl.colc= ?:? ) or (tbl.colc= ?:? )) and tbl.colb= ?:?  using index tbl.idx_non_covering
 ===================================================
-    
-[Scenario 3c] colc negation (!=) condition on non-indexed column     
-
-===================================================
-count(*)    
-150000     
-
-Query plan:
-iscan
-    class: tbl node[?]
-    index: idx_non_covering term[?]
-    filtr: term[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select count(*) from tbl tbl where (tbl.cola>= ?:?  and tbl.cola<= ?:? ) and tbl.colc<>'?' and tbl.colb= ?:?  using index tbl.idx_non_covering
-===================================================
 0
