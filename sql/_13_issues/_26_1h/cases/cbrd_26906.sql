@@ -10,6 +10,14 @@
  *   [1] Basic reproduction: USE INDEX on non-covering index, low distinct leading column
  *   [2] FORCE INDEX vs USE INDEX comparison on same data
  *   [3] Non-indexed column (colc) filter variations: IS NULL / IN
+ *   [4] No-hint baseline: optimizer selects sequential scan on its own
+ *   [5] USE INDEX with multiple index names: optimizer chooses among them
+ *   [6] USING INDEX NONE forces sequential scan
+ *   [7] GROUP BY uses the hinted index
+ *   [8] JOIN: hinted index used on the big table node
+ *   [9] UPDATE with USE INDEX uses the hinted index
+ *   [10] DELETE with USE INDEX uses the hinted index
+ *   [11] Stale statistics: hinted index still used after inserting rows without re-gathering stats
  */
 
 drop table if exists tbl;
@@ -33,16 +41,11 @@ select /*+ recompile */ count(*) from tbl use index (idx_non_covering)
 where cola between '0' and '9' and colb='1' and colc='1';
 
 -- ============================================================
--- [Scenario 2] FORCE INDEX vs USE INDEX comparison
---   FORCE INDEX: cost forced to 0 -> always iscan (reference baseline).
---   USE INDEX(idx_covering): covering index, no heap cost inflation -> should be iscan.
+-- [Scenario 2] USE INDEX on covering index (no heap cost inflation)
+--   Covering index has no heap access -> no cost inflation -> should always be iscan.
+--   Contrasts with Scenario 1 to isolate the problem to heap cost calculation.
 -- ============================================================
-evaluate '[Scenario 2a] FORCE INDEX on non-covering index (cost-zero baseline)';
-
-select /*+ recompile */ count(*) from tbl force index (idx_non_covering)
-where cola between '0' and '9' and colb='1' and colc='1';
-
-evaluate '[Scenario 2b] USE INDEX on covering index (no heap cost inflation)';
+evaluate '[Scenario 2] USE INDEX on covering index (no heap cost inflation)';
 
 select /*+ recompile */ count(*) from tbl use index (idx_covering)
 where cola between '0' and '9' and colb='1' and colc='1';
@@ -60,5 +63,93 @@ evaluate '[Scenario 3b] colc IN condition on non-indexed column';
 
 select /*+ recompile */ count(*) from tbl use index (idx_non_covering)
 where cola between '0' and '9' and colb='1' and colc in ('0','1');
+
+-- ============================================================
+-- [Scenario 4] No-hint baseline
+--   Confirm optimizer picks sequential scan without any index hint.
+--   Establishes that the bug condition (sscan winning) is reproducible.
+-- ============================================================
+evaluate '[Scenario 4] no-hint baseline: optimizer selects sequential scan on its own';
+
+select /*+ recompile */ count(*) from tbl
+where cola between '0' and '9' and colb='1' and colc='1';
+
+-- ============================================================
+-- [Scenario 5] USE INDEX with multiple index names
+--   Optimizer chooses between non-covering and covering when both are hinted.
+--   Verifies hint is not ignored when multiple candidates are provided.
+-- ============================================================
+evaluate '[Scenario 5] USE INDEX with multiple index names: optimizer chooses among them';
+
+select /*+ recompile */ count(*) from tbl use index (idx_non_covering, idx_covering)
+where cola between '0' and '9' and colb='1' and colc='1';
+
+-- ============================================================
+-- [Scenario 6] USING INDEX NONE
+--   Explicitly forbids index usage, forcing sequential scan.
+-- ============================================================
+evaluate '[Scenario 6] USING INDEX NONE forces sequential scan';
+
+select /*+ recompile */ count(*) from tbl
+where cola between '0' and '9' and colb='1' and colc='1'
+using index none;
+
+-- ============================================================
+-- [Scenario 7] GROUP BY with USE INDEX
+--   Verifies hint is honored when GROUP BY is present.
+-- ============================================================
+evaluate '[Scenario 7] GROUP BY uses the hinted index (index scan)';
+
+select /*+ recompile */ cola, count(*) from tbl use index (idx_non_covering)
+where cola between '0' and '9' and colb='1'
+group by cola
+order by cola;
+
+-- ============================================================
+-- [Scenario 8] JOIN with USE INDEX
+--   Verifies hint is honored on the big table inside a join.
+-- ============================================================
+evaluate '[Scenario 8] JOIN: hinted index used on the big table node, not seq scan';
+
+create table dim (k varchar(20), v int);
+insert into dim values ('0', 0), ('1', 1), ('2', 2);
+update statistics on dim;
+
+select /*+ recompile */ count(*)
+from tbl use index (idx_non_covering) inner join dim on tbl.cola = dim.k
+where tbl.cola between '0' and '9' and tbl.colb='1' and tbl.colc='1';
+
+drop table if exists dim;
+
+-- ============================================================
+-- [Scenario 9] UPDATE with USE INDEX
+--   Verifies hint is honored in an UPDATE statement.
+-- ============================================================
+evaluate '[Scenario 9] UPDATE with USE INDEX uses the hinted index (index scan)';
+
+update /*+ recompile */ tbl use index (idx_non_covering) set cold = cold
+where cola between '0' and '9' and colb='1' and colc='1';
+
+-- ============================================================
+-- [Scenario 10] DELETE with USE INDEX
+--   Verifies hint is honored in a DELETE statement.
+-- ============================================================
+evaluate '[Scenario 10] DELETE with USE INDEX uses the hinted index (index scan)';
+
+delete /*+ recompile */ from tbl use index (idx_non_covering)
+where cola between '0' and '9' and colb='1' and colc='1';
+
+-- ============================================================
+-- [Scenario 11] Stale statistics
+--   Rows added without re-gathering stats. Verifies hint is still honored
+--   under stale statistics, which is an additional reproduction condition from the bug report.
+-- ============================================================
+evaluate '[Scenario 11] stale statistics: add rows without re-gathering stats, hinted index still used (index scan)';
+
+insert into tbl select mod(rownum,3), mod(rownum,2), mod(rownum,2), rownum + 300000
+  from db_class a, db_class b, db_class c, db_class d, db_class e limit 100000;
+select /*+ recompile */ count(*) from tbl use index (idx_non_covering)
+where cola between '0' and '9' and colb='1' and colc='1';
+update statistics on tbl;
 
 drop table if exists tbl;
