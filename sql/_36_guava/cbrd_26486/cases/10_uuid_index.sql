@@ -17,7 +17,7 @@ select count(*) as u_found from uuid_idx_t where u = (select min(u) from uuid_id
 
 evaluate '[TEST 1.1] UNIQUE index rejects duplicate UUID';
 -- insert a row whose UUID value already exists -> UNIQUE constraint violation
-insert into uuid_idx_t(u, v) select u, 999 from uuid_idx_t where k = 1; --err
+/* error */ insert into uuid_idx_t(u, v) select u, 999 from uuid_idx_t where k = 1;
 select count(*) still_100 from uuid_idx_t;
 
 evaluate '[TEST 1.2] non-unique index on UUID column';
