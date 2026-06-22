@@ -64,10 +64,6 @@ evaluate '[TEST 9] consecutive calls return different values';
 select uuid() = uuid() same_v4, uuid(7) = uuid(7) same_v7, sys_guid() = sys_guid() same_guid;
 
 evaluate '[TEST 10] UUID(7) monotonicity: values generated later compare greater (within a statement)';
-with t as (select rownum rn, uuid(7) u from db_class limit 2)
-select t1.u < t2.u increasing
-from t t1, t t2
-where t1.rn = 1 and t2.rn = 2;
 with t as (select rownum rn, uuid(7) u from db_class a, db_class b limit 200)
 select count(*) violations
 from (select u, lead(u) over (order by rn) nxt from t) x

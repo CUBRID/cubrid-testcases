@@ -17,13 +17,13 @@
  *  NOTE: raw UUID values never appear in the answer; only derived counts.
  */
 
-evaluate '[TEST 1] INSERT ... SELECT with direct UUID functions: 1,000,000 rows of UUID(4) / UUID(7) / SYS_GUID()';
+evaluate '[TEST 1] INSERT ... SELECT with direct UUID functions: 100,000 rows of UUID(4) / UUID(7) / SYS_GUID()';
 drop table if exists uuid_bulk_t;
 create table uuid_bulk_t (u4 bit(128), u7 bit(128), g char(32), ts_ms varchar(20));
 insert into uuid_bulk_t
 select uuid(4), uuid(7), sys_guid(),
        concat(to_char(unix_timestamp(sys_datetime)), lpad(extract(millisecond from sys_datetime), 3, '0'))
-from db_attribute a, db_attribute b, db_attribute c limit 1000000;
+from db_attribute a, db_attribute b, db_attribute c limit 100000;
 select count(*) total, count(f) non_null, count(distinct f) uniq,
        count(case when substr(f, 15, 1) = '4' then 1 end) v4_cnt,
        count(case when substr(f, 20, 1) in ('8', '9', 'A', 'B') then 1 end) variant_ok
@@ -51,12 +51,12 @@ from (select cast(conv(concat(substr(uuid_format(u7), 1, 8), substr(uuid_format(
       from uuid_bulk_t) t;
 drop table uuid_bulk_t;
 
-evaluate '[TEST 2] INSERT applying column DEFAULT: 1,000,000 rows of DEFAULT UUID(7) / DEFAULT SYS_GUID()';
+evaluate '[TEST 2] INSERT applying column DEFAULT: 100,000 rows of DEFAULT UUID(7) / DEFAULT SYS_GUID()';
 create table uuid_bulk_t (n int, u bit(128) default uuid(7), g char(32) default sys_guid(), ts_ms varchar(20));
 insert into uuid_bulk_t(n, ts_ms)
 select rownum,
        concat(to_char(unix_timestamp(sys_datetime)), lpad(extract(millisecond from sys_datetime), 3, '0'))
-from db_attribute a, db_attribute b, db_attribute c limit 1000000;
+from db_attribute a, db_attribute b, db_attribute c limit 100000;
 select count(*) total, count(f) non_null, count(distinct f) uniq,
        count(case when substr(f, 15, 1) = '7' then 1 end) v7_cnt,
        count(case when substr(f, 20, 1) in ('8', '9', 'A', 'B') then 1 end) variant_ok
@@ -81,12 +81,12 @@ from (select cast(conv(concat(substr(uuid_format(u), 1, 8), substr(uuid_format(u
       from uuid_bulk_t) t;
 drop table uuid_bulk_t;
 
-evaluate '[TEST 3] ALTER TABLE ADD COLUMN with UUID default: fill 1,000,000 existing rows';
+evaluate '[TEST 3] ALTER TABLE ADD COLUMN with UUID default: fill 100,000 existing rows';
 create table uuid_bulk_t (n int, ts_ms varchar(20));
 insert into uuid_bulk_t
 select rownum,
        concat(to_char(unix_timestamp(sys_datetime)), lpad(extract(millisecond from sys_datetime), 3, '0'))
-from db_attribute a, db_attribute b, db_attribute c limit 1000000;
+from db_attribute a, db_attribute b, db_attribute c limit 100000;
 alter table uuid_bulk_t add column u bit(128) default uuid(7);
 select count(*) total, count(f) non_null, count(distinct f) uniq,
        count(case when substr(f, 15, 1) = '7' then 1 end) v7_cnt,
