@@ -10,7 +10,7 @@
  *   [1] Basic reproduction: USE INDEX on non-covering index, low distinct leading column
  *   [2] FORCE INDEX vs USE INDEX comparison on same data
  *   [3] Non-indexed column (colc) filter variations: IS NULL / IN
- *   [4] No-hint baseline: optimizer selects sequential scan on its own
+ *   [4] No-hint baseline: optimizer selects its own plan
  *   [5] USE INDEX with multiple index names: optimizer chooses among them
  *   [6] USING INDEX NONE forces sequential scan
  *   [7] GROUP BY uses the hinted index
@@ -41,11 +41,16 @@ select /*+ recompile */ count(*) from tbl use index (idx_non_covering)
 where cola between '0' and '9' and colb='1' and colc='1';
 
 -- ============================================================
--- [Scenario 2] USE INDEX on covering index (no heap cost inflation)
---   Covering index has no heap access -> no cost inflation -> should always be iscan.
---   Contrasts with Scenario 1 to isolate the problem to heap cost calculation.
+-- [Scenario 2] FORCE INDEX vs USE INDEX comparison
+--   FORCE INDEX: cost forced to 0 -> always iscan (reference baseline).
+--   USE INDEX(idx_covering): covering index, no heap cost inflation -> should be iscan.
 -- ============================================================
-evaluate '[Scenario 2] USE INDEX on covering index (no heap cost inflation)';
+evaluate '[Scenario 2a] FORCE INDEX on non-covering index';
+
+select /*+ recompile */ count(*) from tbl force index (idx_non_covering)
+where cola between '0' and '9' and colb='1' and colc='1';
+
+evaluate '[Scenario 2b] USE INDEX on covering index';
 
 select /*+ recompile */ count(*) from tbl use index (idx_covering)
 where cola between '0' and '9' and colb='1' and colc='1';
@@ -66,10 +71,8 @@ where cola between '0' and '9' and colb='1' and colc in ('0','1');
 
 -- ============================================================
 -- [Scenario 4] No-hint baseline
---   Confirm optimizer picks sequential scan without any index hint.
---   Establishes that the bug condition (sscan winning) is reproducible.
 -- ============================================================
-evaluate '[Scenario 4] no-hint baseline: optimizer selects sequential scan on its own';
+evaluate '[Scenario 4] no-hint baseline: optimizer selects its own plan without index hint';
 
 select /*+ recompile */ count(*) from tbl
 where cola between '0' and '9' and colb='1' and colc='1';
@@ -97,6 +100,7 @@ using index none;
 -- ============================================================
 -- [Scenario 7] GROUP BY with USE INDEX
 --   Verifies hint is honored when GROUP BY is present.
+--   GROUP BY is skipped due to index scan providing pre-ordered results.
 -- ============================================================
 evaluate '[Scenario 7] GROUP BY uses the hinted index (index scan)';
 
@@ -107,9 +111,10 @@ order by cola;
 
 -- ============================================================
 -- [Scenario 8] JOIN with USE INDEX
---   Verifies hint is honored on the big table inside a join.
+--   Verifies USE INDEX hint on tbl is honored inside a join.
+--   dim is a 3-row table with no index, so sscan on dim is expected and correct.
 -- ============================================================
-evaluate '[Scenario 8] JOIN: hinted index used on the big table node, not seq scan';
+evaluate '[Scenario 8] JOIN: USE INDEX hint on tbl results in index scan on tbl';
 
 create table dim (k varchar(20), v int);
 insert into dim values ('0', 0), ('1', 1), ('2', 2);
@@ -126,7 +131,7 @@ drop table if exists dim;
 --   Verifies hint is honored in an UPDATE statement.
 -- ============================================================
 evaluate '[Scenario 9] UPDATE with USE INDEX uses the hinted index (index scan)';
-
+--@queryplan
 update /*+ recompile */ tbl use index (idx_non_covering) set cold = cold
 where cola between '0' and '9' and colb='1' and colc='1';
 
@@ -135,7 +140,7 @@ where cola between '0' and '9' and colb='1' and colc='1';
 --   Verifies hint is honored in a DELETE statement.
 -- ============================================================
 evaluate '[Scenario 10] DELETE with USE INDEX uses the hinted index (index scan)';
-
+--@queryplan
 delete /*+ recompile */ from tbl use index (idx_non_covering)
 where cola between '0' and '9' and colb='1' and colc='1';
 

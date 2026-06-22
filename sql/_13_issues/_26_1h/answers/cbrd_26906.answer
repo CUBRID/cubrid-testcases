@@ -29,7 +29,24 @@ Query stmt:
 select count(*) from tbl tbl where (tbl.cola>= ?:?  and tbl.cola<= ?:? ) and tbl.colc= ?:?  and tbl.colb= ?:?  using index tbl.idx_non_covering
 ===================================================
     
-[Scenario 2] USE INDEX on covering index (no heap cost inflation)     
+[Scenario 2a] FORCE INDEX on non-covering index     
+
+===================================================
+count(*)    
+150000     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_non_covering term[?]
+    filtr: term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl tbl where (tbl.cola>= ?:?  and tbl.cola<= ?:? ) and tbl.colc= ?:?  and tbl.colb= ?:?  using index tbl.idx_non_covering(+)
+===================================================
+    
+[Scenario 2b] USE INDEX on covering index     
 
 ===================================================
 count(*)    
@@ -79,7 +96,7 @@ Query stmt:
 select count(*) from tbl tbl where (tbl.cola>= ?:?  and tbl.cola<= ?:? ) and ((tbl.colc= ?:? ) or (tbl.colc= ?:? )) and tbl.colb= ?:?  using index tbl.idx_non_covering
 ===================================================
     
-[Scenario 4] no-hint baseline: optimizer selects sequential scan on its own     
+[Scenario 4] no-hint baseline: optimizer selects its own plan without index hint     
 
 ===================================================
 count(*)    
@@ -146,7 +163,7 @@ select tbl.cola, count(*) from tbl tbl where (tbl.cola>= ?:?  and tbl.cola<= ?:?
 /* ---> skip GROUP BY */
 ===================================================
     
-[Scenario 8] JOIN: hinted index used on the big table node, not seq scan     
+[Scenario 8] JOIN: USE INDEX hint on tbl results in index scan on tbl     
 
 ===================================================
 0
@@ -180,12 +197,30 @@ select count(*) from tbl tbl, dim dim where (tbl.cola>= ?:?  and tbl.cola<= ?:? 
 
 ===================================================
 150000
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_non_covering term[?]
+    filtr: term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl,class tbl,tbl.cold as [tbl.cold] from tbl tbl where (tbl.cola>= ?:?  and tbl.cola<= ?:? ) and tbl.colb= ?:?  and tbl.colc= ?:?  using index tbl.idx_non_covering
 ===================================================
     
 [Scenario 10] DELETE with USE INDEX uses the hinted index (index scan)     
 
 ===================================================
 150000
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_non_covering term[?]
+    filtr: term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl,class tbl from tbl tbl where (tbl.cola>= ?:?  and tbl.cola<= ?:? ) and tbl.colb= ?:?  and tbl.colc= ?:?  using index tbl.idx_non_covering
 ===================================================
     
 [Scenario 11] stale statistics: add rows without re-gathering stats, hinted index still used (index scan)     
