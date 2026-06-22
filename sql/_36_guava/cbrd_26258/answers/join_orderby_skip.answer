@@ -18,7 +18,7 @@
 0
 ===================================================
     
-Q101. When a covering index scan cannot be used, it is less cost-effective; therefore, skip ORDER BY cannot be applied.     
+Q101. When a covering index scan cannot be used, skip ORDER BY is applied via a non-covering index scan since the lowered ISCAN_OID_ACCESS_OVERHEAD makes its cost competitive (CBRD-26889).     
 
 ===================================================
 'Q101'    cola    colb    colc    cold    cole    colf    
@@ -34,37 +34,35 @@ Q101     9     9     9     9     9     9
 Q101     10     10     10     10     10     10     
 
 Query plan:
-temp(order by)
-    subplan: idx-join (inner join)
-                 outer: sscan
-                            class: a node[?]
-                            cost:  ? card ?
-                 inner: iscan
-                            class: b node[?]
-                            index: pk_tbl_b_cold term[?]
-                            cost:  ? card ?
-                 cost:  ? card ?
+idx-join (inner join)
+    outer: iscan
+               class: a node[?]
+               index: idx_cola 
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: pk_tbl_b_cold term[?]
+               cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold order by ? for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
 ===================================================
 trace    
 
 Query Plan:
-  SORT (order by)
-    NESTED LOOPS (inner join)
-      TABLE SCAN (a)
-      INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
+  NESTED LOOPS (inner join)
+    INDEX SCAN (a.idx_cola) ()
+    INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
+  skip order by: true
 
   rewritten query: select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold order by ? for orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
+    SCAN (index: dba.tbl_a.idx_cola), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
       SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
@@ -1240,7 +1238,7 @@ Trace Statistics:
 
 ===================================================
     
-Q121. When an additional condition is included on FK-PK columns apart from the join condition, SORT LIMIT optimization cannot be applied.     
+Q121. When an additional condition is included on FK-PK columns apart from the join condition, SORT LIMIT optimization is not applied, but skip ORDER BY is applied via an order-providing index scan under the lowered ISCAN_OID_ACCESS_OVERHEAD cost model (CBRD-26889).     
 
 ===================================================
 'Q121'    cola    colb    colc    cold    cole    colf    
@@ -1256,38 +1254,36 @@ Q121     209     209     209     209     209     209
 Q121     210     210     210     210     210     210     
 
 Query plan:
-temp(order by)
-    subplan: idx-join (inner join)
-                 outer: sscan
-                            class: a node[?]
-                            cost:  ? card ?
-                 inner: iscan
-                            class: b node[?]
-                            index: pk_tbl_b_cold term[?]
-                            filtr: term[?]
-                            cost:  ? card ?
-                 cost:  ? card ?
+idx-join (inner join)
+    outer: iscan
+               class: a node[?]
+               index: idx_cola_colb 
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: pk_tbl_b_cold term[?]
+               filtr: term[?]
+               cost:  ? card ?
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold and b.cold<>-? order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
 ===================================================
 trace    
 
 Query Plan:
-  SORT (order by)
-    NESTED LOOPS (inner join)
-      TABLE SCAN (a)
-      INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold, key filter: b.cold<>-?)
+  NESTED LOOPS (inner join)
+    INDEX SCAN (a.idx_cola_colb) ()
+    INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold, key filter: b.cold<>-?)
+  skip order by: true
 
   rewritten query: select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold and b.cold<>-? order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
+    SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
       SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
@@ -1332,7 +1328,7 @@ Trace Statistics:
 
 ===================================================
     
-Q123. When the LIMIT value exceeds the sort_limit_max_count parameter, SORT LIMIT optimization is not applied; therefore, skip ORDER BY cannot be applied.     
+Q123. When the LIMIT value exceeds the sort_limit_max_count parameter, SORT LIMIT optimization is not applied, but skip ORDER BY is applied via an order-providing index scan under the lowered ISCAN_OID_ACCESS_OVERHEAD cost model (CBRD-26889).     
 
 ===================================================
 0
@@ -1350,37 +1346,35 @@ Q123     1009     1009     1009     1009     1009     1009
 Q123     1010     1010     1010     1010     1010     1010     
 
 Query plan:
-temp(order by)
-    subplan: idx-join (inner join)
-                 outer: sscan
-                            class: a node[?]
-                            cost:  ? card ?
-                 inner: iscan
-                            class: b node[?]
-                            index: pk_tbl_b_cold term[?]
-                            cost:  ? card ?
-                 cost:  ? card ?
+idx-join (inner join)
+    outer: iscan
+               class: a node[?]
+               index: idx_cola_colb 
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: pk_tbl_b_cold term[?]
+               cost:  ? card ?
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
 ===================================================
 trace    
 
 Query Plan:
-  SORT (order by)
-    NESTED LOOPS (inner join)
-      TABLE SCAN (a)
-      INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
+  NESTED LOOPS (inner join)
+    INDEX SCAN (a.idx_cola_colb) ()
+    INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
+  skip order by: true
 
   rewritten query: select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
+    SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
       SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================

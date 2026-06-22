@@ -37,7 +37,7 @@ C1: DROP TABLE IF EXISTS t1;
 C1: CREATE TABLE t1(id INT, col VARCHAR(10), price DECIMAL);
 C1: CREATE INDEX idx_id on t1(ABS(id));
 C1: CREATE INDEX idx_price on t1(TRUNC(price,2));
-C1: INSERT INTO t1 VALUES(-1,'book1',34.599),(1,'book2',34.60),(2,'book3',35.88),(-2,'book4',34.593),(3,'book5',37.10),(4,'book6',38.12),(-4,'book7',34.99);
+C1: INSERT INTO t1 VALUES(-1,'book1',34.999),(1,'book2',34.996),(2,'book3',35.88),(-2,'book4',34.993),(3,'book5',37.10),(4,'book6',38.12),(-4,'book7',34.99);
 C1: COMMIT WORK;
 MC: wait until C1 ready;
 
@@ -45,7 +45,7 @@ MC: wait until C1 ready;
 C1: SELECT * FROM t1 WHERE ABS(id) = 4; 
 MC: wait until C1 ready;
 
-C2: SELECT * FROM t1 WHERE TRUNC(price,2) = 35; 
+C2: SELECT * FROM t1 WHERE TRUNC(price,2) = 34.99; 
 /* expect: no transactions need to wait, assume C1 finished before C2 */
 MC: wait until C2 ready;
 /* expect: C1 select - id = 4,-4, are selected */
