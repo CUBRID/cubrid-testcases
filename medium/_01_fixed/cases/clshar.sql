@@ -8,7 +8,7 @@ select ca, cb from class cc;
 update class cc set ca = 70, cb = 77 where ca = 10 and cb = 20;
 select ca, cb from class cc;
 select * from cc;
-select class cc.ca, u from db_user u;
+select class cc.ca, u from _db_user u;
 rollback work;
 create class X (class a int default 25);
 create class Y as subclass of X (b int);

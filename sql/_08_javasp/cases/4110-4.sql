@@ -15,8 +15,8 @@ CREATE  function   testResultSet10()  return cursor as language java name 'jdbc_
 
 call testresult('select * from kor order by id, name');
 select testresult('select * from kor order by id, name') from db_root;
-call testresult('select name,id,password from db_user order by 1');
---select testresult('select name,id,password from db_user') from db_root;
+call testresult('select name,id,password from _db_user order by 1');
+--select testresult('select name,id,password from _db_user') from db_root;
 call testresult('select * from kor union all select * from kor order by id, name');
 call testresult('select id first_row, name second_row  from kor order by 1,2');
 call testresult('select func(id, id) func_result  from kor order by 1');

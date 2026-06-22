@@ -1,0 +1,1174 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+10
+===================================================
+10
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+union all - should work     
+
+===================================================
+count(*)    
+10     
+10     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select count(*) from [dba.tbl_a] [dba.tbl_a]
+
+  TABLE SCAN (dba.tbl_b)
+
+  rewritten query: select count(*) from [dba.tbl_b] [dba.tbl_b]
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+union all in subquery - should work     
+
+===================================================
+count(*)    
+10     
+10     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select count(*) from [dba.tbl_a] [dba.tbl_a]
+
+  TABLE SCAN (dba.tbl_b)
+
+  rewritten query: select count(*) from [dba.tbl_b] [dba.tbl_b]
+
+  TABLE SCAN (__t?)
+
+  rewritten query: select [__t?].[count(*)] from (select count(*) from [dba.tbl_a] [dba.tbl_a] union all select count(*) from [dba.tbl_b] [dba.tbl_b]) [__t?] ([count(*)])
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+union all in subquery - NO_PARALLEL_SUBQUERY hint used - should not work     
+
+===================================================
+count(*)    
+10     
+10     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select count(*) from [dba.tbl_a] [dba.tbl_a]
+
+  TABLE SCAN (dba.tbl_b)
+
+  rewritten query: select count(*) from [dba.tbl_b] [dba.tbl_b]
+
+  TABLE SCAN (__t?)
+
+  rewritten query: select /*+ NO_PARALLEL_SUBQUERY */ [__t?].[count(*)] from (select count(*) from [dba.tbl_a] [dba.tbl_a] union all select count(*) from [dba.tbl_b] [dba.tbl_b]) [__t?] ([count(*)])
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+parallel(0) hint used - should not work     
+
+===================================================
+count(*)    
+10     
+10     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select count(*) from [dba.tbl_a] [dba.tbl_a]
+
+  TABLE SCAN (dba.tbl_b)
+
+  rewritten query: select count(*) from [dba.tbl_b] [dba.tbl_b]
+
+  TABLE SCAN (__t?)
+
+  rewritten query: select /*+ PARALLEL(?) */ [__t?].[count(*)] from (select count(*) from [dba.tbl_a] [dba.tbl_a] union all select count(*) from [dba.tbl_b] [dba.tbl_b]) [__t?] ([count(*)])
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+inline view used - should work     
+
+===================================================
+count(*)    count(*)    
+10     10     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: (select count(*) from [dba.tbl_a] [dba.tbl_a])
+
+  TABLE SCAN (dba.tbl_b)
+
+  rewritten query: (select count(*) from [dba.tbl_b] [dba.tbl_b])
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select a.[count(*)], b.[count(*)] from (select count(*) from [dba.tbl_a] [dba.tbl_a]) a ([count(*)]), (select count(*) from [dba.tbl_b] [dba.tbl_b]) b ([count(*)])
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+inline view used - NO_PARALLEL_SUBQUERY hint used - should not work     
+
+===================================================
+count(*)    count(*)    
+10     10     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: (select count(*) from [dba.tbl_a] [dba.tbl_a])
+
+  TABLE SCAN (dba.tbl_b)
+
+  rewritten query: (select count(*) from [dba.tbl_b] [dba.tbl_b])
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ NO_PARALLEL_SUBQUERY */ a.[count(*)], b.[count(*)] from (select count(*) from [dba.tbl_a] [dba.tbl_a]) a ([count(*)]), (select count(*) from [dba.tbl_b] [dba.tbl_b]) b ([count(*)])
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+view used - should work     
+
+===================================================
+cn    cn    
+10     10     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (a)
+
+  rewritten query: (select count(*) from [dba.tbl_a] a)
+
+  TABLE SCAN (b)
+
+  rewritten query: (select count(*) from [dba.tbl_b] b)
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select a.cn, b.cn from (select count(*) from [dba.tbl_a] a) a (cn), (select count(*) from [dba.tbl_b] b) b (cn)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+view used - NO_PARALLEL_SUBQUERY hint used - should not work     
+
+===================================================
+cn    cn    
+10     10     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (a)
+
+  rewritten query: (select count(*) from [dba.tbl_a] a)
+
+  TABLE SCAN (b)
+
+  rewritten query: (select count(*) from [dba.tbl_b] b)
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ NO_PARALLEL_SUBQUERY */ a.cn, b.cn from (select count(*) from [dba.tbl_a] a) a (cn), (select count(*) from [dba.tbl_b] b) b (cn)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+uncorrelated subquery that is not directly connected to the top-level XASL - should not work     
+
+===================================================
+i    bi    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_b)
+
+  rewritten query: select /*+ NO_MERGE */ ([dba.tbl_b].i-?) from [dba.tbl_b] [dba.tbl_b] where a.i=([dba.tbl_b].i-?)
+
+  TABLE SCAN (dba.tbl_b)
+
+  rewritten query: select /*+ NO_MERGE */ ([dba.tbl_b].i+?) from [dba.tbl_b] [dba.tbl_b] where a.i=([dba.tbl_b].i+?)
+
+  TABLE SCAN (b)
+
+  rewritten query: (select /*+ NO_MERGE */ b.i from (select /*+ NO_MERGE */ ([dba.tbl_b].i-?) as [i] from [dba.tbl_b] [dba.tbl_b] where a.i=([dba.tbl_b].i-?) union all select /*+ NO_MERGE */ ([dba.tbl_b].i+?) as [i] from [dba.tbl_b] [dba.tbl_b] where a.i=([dba.tbl_b].i+?)) b (i))
+
+  TABLE SCAN (a)
+
+  rewritten query: select a.i, (select /*+ NO_MERGE */ b.i from (select /*+ NO_MERGE */ ([dba.tbl_b].i-?) as [i] from [dba.tbl_b] [dba.tbl_b] where a.i=([dba.tbl_b].i-?) union all select /*+ NO_MERGE */ ([dba.tbl_b].i+?) as [i] from [dba.tbl_b] [dba.tbl_b] where a.i=([dba.tbl_b].i+?)) b (i)) from [dba.tbl_a] a
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+cte referencing another cte - should not work     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select /*+ MATERIALIZE */ count(*) from [dba.tbl_a] [dba.tbl_a]
+
+  TABLE SCAN (dba.cte_a)
+
+  rewritten query: select /*+ MATERIALIZE */ count(*) from [dba.cte_a] [dba.cte_a]
+
+  TABLE SCAN (dba.cte_b)
+
+  rewritten query: with cte_a([count(*)]) as (select /*+ MATERIALIZE */ count(*) from [dba.tbl_a] [dba.tbl_a]), cte_b([count(*)]) as (select /*+ MATERIALIZE */ count(*) from [dba.cte_a] [dba.cte_a])select [dba.cte_b].[count(*)] from [dba.cte_b] [dba.cte_b]
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+recursive cte used - should not work     
+
+===================================================
+count(*)    
+55     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].i from [dba.tbl_a] [dba.tbl_a]
+
+  TABLE SCAN (dba.cte_a)
+
+  rewritten query: select [dba.cte_a].i+? from [dba.cte_a] [dba.cte_a] where ([dba.cte_a].i< ?:? )
+
+  TABLE SCAN (dba.cte_a)
+
+  rewritten query: with recursive cte_a(i) as (select /*+ MATERIALIZE */ [dba.tbl_a].i from [dba.tbl_a] [dba.tbl_a] union all select [dba.cte_a].i+? from [dba.cte_a] [dba.cte_a] where ([dba.cte_a].i< ?:? ))select count(*) from [dba.cte_a] [dba.cte_a]
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      CTE (recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+when there are references between uncorrelated subqueries due to a derived table - should not work     
+
+===================================================
+count(*)    
+10     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_b)
+
+  rewritten query: (select [dba.tbl_b].i from [dba.tbl_b] [dba.tbl_b])
+
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: (select [dba.tbl_a].i from [dba.tbl_a] [dba.tbl_a])
+
+  NESTED LOOPS (left outer join)
+    TABLE SCAN (cte_a)
+    SORT (temp)
+      NESTED LOOPS (left outer join)
+        TABLE SCAN (a)
+        TABLE SCAN (cte_b)
+
+  rewritten query: select count(*) from [dba.tbl_a] a left outer join (select [dba.tbl_b].i from [dba.tbl_b] [dba.tbl_b]) cte_b (i) on a.i=cte_b.i right outer join (select [dba.tbl_a].i from [dba.tbl_a] [dba.tbl_a]) cte_a (i) on cte_b.i=cte_a.i
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (uncorrelated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+when the scan spec is a set, not a table or index - should not work     
+
+===================================================
+__t1_1    __t1_1    
+1     4     
+1     5     
+1     6     
+2     4     
+2     5     
+2     6     
+3     4     
+3     5     
+3     6     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (__t?)
+
+  rewritten query: select /*+ MATERIALIZE */ [__t?].[__t?_?] from table({?, ?, ?}) [__t?] ([__t?_?])
+
+  TABLE SCAN (__t?)
+
+  rewritten query: select /*+ MATERIALIZE */ [__t?].[__t?_?] from table({?, ?, ?}) [__t?] ([__t?_?])
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (dba.cte_a)
+    TABLE SCAN (dba.cte_b)
+
+  rewritten query: with cte_a([__t?_?]) as (select /*+ MATERIALIZE */ [__t?].[__t?_?] from table({?, ?, ?}) [__t?] ([__t?_?])), cte_b([__t?_?]) as (select /*+ MATERIALIZE */ [__t?].[__t?_?] from table({?, ?, ?}) [__t?] ([__t?_?]))select [dba.cte_a].[__t?_?], [dba.cte_b].[__t?_?] from [dba.cte_a] [dba.cte_a], [dba.cte_b] [dba.cte_b]
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (set time: ?, fetch: ?, ioread: ?)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (set time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+    
+case including a stored procedure - should not work     
+
+===================================================
+count(*)    
+100     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.sp]([dba.tbl_a].i) from [dba.tbl_a] [dba.tbl_a]
+
+  TABLE SCAN (dba.tbl_b)
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.sp]([dba.tbl_b].i) from [dba.tbl_b] [dba.tbl_b]
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (dba.cte_a)
+    TABLE SCAN (dba.cte_b)
+
+  rewritten query: with cte_a(cte_a_?) as (select /*+ MATERIALIZE */ [dba.sp]([dba.tbl_a].i) from [dba.tbl_a] [dba.tbl_a]), cte_b(cte_b_?) as (select /*+ MATERIALIZE */ [dba.sp]([dba.tbl_b].i) from [dba.tbl_b] [dba.tbl_b])select count(*) from [dba.cte_a] [dba.cte_a], [dba.cte_b] [dba.cte_b]
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+          SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+stored procedure excluded case - should work     
+
+===================================================
+count(*)    
+100     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].i from [dba.tbl_a] [dba.tbl_a]
+
+  TABLE SCAN (dba.tbl_b)
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_b].i from [dba.tbl_b] [dba.tbl_b]
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (dba.cte_a)
+    TABLE SCAN (dba.cte_b)
+
+  rewritten query: with cte_a(i) as (select /*+ MATERIALIZE */ [dba.tbl_a].i from [dba.tbl_a] [dba.tbl_a]), cte_b(i) as (select /*+ MATERIALIZE */ [dba.tbl_b].i from [dba.tbl_b] [dba.tbl_b])select count(*) from [dba.cte_a] [dba.cte_a], [dba.cte_b] [dba.cte_b]
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+stored procedure excluded case - NO_PARALLEL_SUBQUERY hint used - should not work     
+
+===================================================
+count(*)    
+100     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].i from [dba.tbl_a] [dba.tbl_a]
+
+  TABLE SCAN (dba.tbl_b)
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.tbl_b].i from [dba.tbl_b] [dba.tbl_b]
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (dba.cte_a)
+    TABLE SCAN (dba.cte_b)
+
+  rewritten query: with cte_a(i) as (select /*+ MATERIALIZE */ [dba.tbl_a].i from [dba.tbl_a] [dba.tbl_a]), cte_b(i) as (select /*+ MATERIALIZE */ [dba.tbl_b].i from [dba.tbl_b] [dba.tbl_b])select /*+ NO_PARALLEL_SUBQUERY */ count(*) from [dba.cte_a] [dba.cte_a], [dba.cte_b] [dba.cte_b]
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+path expression used - should not work     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  FOLLOW (edge: [_db_class].[owner]=[_db_user])
+    INDEX SCAN (_db_class.i__db_class_class_name_owner) (key range: [_db_class].class_name= ?:? , covered: true)
+
+  rewritten query: select /*+ MATERIALIZE */ [_db_class].[owner].[name] from [_db_class] [_db_class] where [_db_class].class_name= ?:? 
+
+  FOLLOW (edge: [_db_class].[owner]=[_db_user])
+    INDEX SCAN (_db_class.i__db_class_class_name_owner) (key range: [_db_class].class_name= ?:? , covered: true)
+
+  rewritten query: select /*+ MATERIALIZE */ [_db_class].[owner].[name] from [_db_class] [_db_class] where [_db_class].class_name= ?:? 
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (dba.cte_a)
+    TABLE SCAN (dba.cte_b)
+
+  rewritten query: with cte_a(cte_a_?) as (select /*+ MATERIALIZE */ [_db_class].[owner].[name] from [_db_class] [_db_class] where [_db_class].class_name= ?:? ), cte_b(cte_b_?) as (select /*+ MATERIALIZE */ [_db_class].[owner].[name] from [_db_class] [_db_class] where [_db_class].class_name= ?:? )select count(*) from [dba.cte_a] [dba.cte_a], [dba.cte_b] [dba.cte_b]
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: _db_class.i__db_class_class_name_owner), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: _db_class.i__db_class_class_name_owner), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+    
+path expression not used - should work     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (_db_class.i__db_class_class_name_owner) (key range: [_db_class].class_name= ?:? , covered: true)
+
+  rewritten query: select /*+ MATERIALIZE */ [_db_class].[owner] from [_db_class] [_db_class] where [_db_class].class_name= ?:? 
+
+  INDEX SCAN (_db_class.i__db_class_class_name_owner) (key range: [_db_class].class_name= ?:? , covered: true)
+
+  rewritten query: select /*+ MATERIALIZE */ [_db_class].[owner] from [_db_class] [_db_class] where [_db_class].class_name= ?:? 
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (dba.cte_a)
+    TABLE SCAN (dba.cte_b)
+
+  rewritten query: with cte_a([owner]) as (select /*+ MATERIALIZE */ [_db_class].[owner] from [_db_class] [_db_class] where [_db_class].class_name= ?:? ), cte_b([owner]) as (select /*+ MATERIALIZE */ [_db_class].[owner] from [_db_class] [_db_class] where [_db_class].class_name= ?:? )select count(*) from [dba.cte_a] [dba.cte_a], [dba.cte_b] [dba.cte_b]
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: _db_class.i__db_class_class_name_owner), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: _db_class.i__db_class_class_name_owner), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+    
+when running the show statement - should not work     
+
+===================================================
+Tables_in_basic    
+tbl_a     
+tbl_b     
+
+===================================================
+trace    
+
+Query Plan:
+  FOLLOW (edge: t.g=[_db_user])
+    NESTED LOOPS (inner join)
+      INDEX SCAN (u.u__db_user_name) (key range: u.[name]= CURRENT_USER )
+      TABLE SCAN (t)
+
+  rewritten query: (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from [_db_user] u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER )
+
+  FOLLOW (edge: t.g=[_db_user])
+    NESTED LOOPS (inner join)
+      INDEX SCAN (u.u__db_user_name) (key range: u.[name]= CURRENT_USER )
+      TABLE SCAN (t)
+
+  rewritten query: (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from [_db_user] u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER )
+
+  FOLLOW (edge: t.g=[_db_user])
+    NESTED LOOPS (inner join)
+      INDEX SCAN (u.u__db_user_name) (key range: u.[name]= CURRENT_USER )
+      TABLE SCAN (t)
+
+  rewritten query: (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from [_db_user] u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER )
+
+  FOLLOW (edge: au.grantee=[_db_user])
+    TABLE SCAN (au)
+
+  rewritten query: (select sum(set{au.object_of}) from [_db_auth] au where {au.grantee.[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from [_db_user] u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) and au.auth_type= ?:? )
+
+  FOLLOW (edge: show_tables.[owner]=[_db_user])
+    NESTED LOOPS (inner join)
+      INDEX SCAN (show_tables.i__db_class_class_name_owner) (key range: (show_tables.class_name>= ?:?  and show_tables.class_name< ?:? ), key filter: (show_tables.class_name like  ?:? ))
+      INDEX SCAN (coll.pk__db_collation_coll_id) (key range: (show_tables.collation_id=coll.coll_id), covered: true)
+  skip order by: true
+
+  rewritten query: select show_tables.class_name from [_db_class] show_tables, [_db_collation] coll where (show_tables.class_name like  ?:? ) and (show_tables.class_name>= ?:?  and show_tables.class_name< ?:? ) and (( cast(case when show_tables.is_system_class=? then 'YES' else 'NO' end as varchar(?)))='NO') and (show_tables.collation_id=coll.coll_id) and ({'DBA'} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from [_db_user] u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) or {show_tables.[owner].[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from [_db_user] u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) or {show_tables.class_of} subseteq (select sum(set{au.object_of}) from [_db_auth] au where {au.grantee.[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from [_db_user] u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) and au.auth_type= ?:? )) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: _db_class.i__db_class_class_name_owner), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: _db_collation.pk__db_collation_coll_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: _db_user.u__db_user_name), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+          SCAN (set time: ?, fetch: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: _db_user.u__db_user_name), (noscan time: ?, fetch: ?, ioread: ?)
+          SCAN (noscan time: ?, fetch: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: _db_auth), (noscan time: ?, fetch: ?, ioread: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: _db_user.u__db_user_name), (noscan time: ?, fetch: ?, ioread: ?)
+              SCAN (noscan time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+    
+when a JSON_TABLE is used - should not work     
+
+===================================================
+count(*)    
+4     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (jt)
+
+  rewritten query: select /*+ MATERIALIZE */ jt.col from (json_table ('{"a":[?,[?,?]]}', '$."a"[*]' columns (col integer PATH '$' NULL ON EMPTY NULL ON ERROR )) as jt)
+
+  TABLE SCAN (jt)
+
+  rewritten query: select /*+ MATERIALIZE */ jt.col from (json_table ('{"a":[?,[?,?]]}', '$."a"[*]' columns (col integer PATH '$' NULL ON EMPTY NULL ON ERROR )) as jt)
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (dba.cte_a)
+    TABLE SCAN (dba.cte_b)
+
+  rewritten query: with cte_a(col) as (select /*+ MATERIALIZE */ jt.col from (json_table ('{"a":[?,[?,?]]}', '$."a"[*]' columns (col integer PATH '$' NULL ON EMPTY NULL ON ERROR )) as jt)), cte_b(col) as (select /*+ MATERIALIZE */ jt.col from (json_table ('{"a":[?,[?,?]]}', '$."a"[*]' columns (col integer PATH '$' NULL ON EMPTY NULL ON ERROR )) as jt))select count(*) from [dba.cte_a] [dba.cte_a], [dba.cte_b] [dba.cte_b]
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (noscan time: ?, fetch: ?, ioread: ?)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (noscan time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+    
+when RECORD_INFO, PAGE_INFO, index related information or sampling scan is involved - should not work     
+
+===================================================
+count(*)    
+100     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select /*+ SAMPLING_SCAN MATERIALIZE */ [dba.tbl_a].i from [dba.tbl_a] [dba.tbl_a]
+
+  TABLE SCAN (dba.tbl_b)
+
+  rewritten query: select /*+ SAMPLING_SCAN MATERIALIZE */ [dba.tbl_b].i from [dba.tbl_b] [dba.tbl_b]
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (dba.cte_a)
+    TABLE SCAN (dba.cte_b)
+
+  rewritten query: with cte_a(i) as (select /*+ SAMPLING_SCAN MATERIALIZE */ [dba.tbl_a].i from [dba.tbl_a] [dba.tbl_a]), cte_b(i) as (select /*+ SAMPLING_SCAN MATERIALIZE */ [dba.tbl_b].i from [dba.tbl_b] [dba.tbl_b])select count(*) from [dba.cte_a] [dba.cte_a], [dba.cte_b] [dba.cte_b]
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+scalar subquery in SELECT list - should not work     
+
+===================================================
+a_cnt    b_cnt    
+10     10     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_b)
+
+  rewritten query: (select count(*) from [dba.tbl_b] [dba.tbl_b])
+
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: (select count(*) from [dba.tbl_a] [dba.tbl_a])
+
+  TABLE SCAN (db_root)
+
+  rewritten query: select (select count(*) from [dba.tbl_a] [dba.tbl_a]), (select count(*) from [dba.tbl_b] [dba.tbl_b]) from db_root db_root
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+predicate subquery in WHERE clause - should not work     
+
+===================================================
+count(*)    
+9     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: (select count(*) from [dba.tbl_a] [dba.tbl_a])
+
+  TABLE SCAN (dba.tbl_b)
+
+  rewritten query: (select count(*) from [dba.tbl_b] [dba.tbl_b])
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: (select count(*) from (select count(*) as [cn] from [dba.tbl_a] [dba.tbl_a]) a (cn), (select count(*) as [cn] from [dba.tbl_b] [dba.tbl_b]) b (cn) where a.cn=b.cn)
+
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select count(*) from [dba.tbl_a] [dba.tbl_a] where ([dba.tbl_a].i>(select count(*) from (select count(*) as [cn] from [dba.tbl_a] [dba.tbl_a]) a (cn), (select count(*) as [cn] from [dba.tbl_b] [dba.tbl_b]) b (cn) where a.cn=b.cn))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+group by subquery - should work     
+
+===================================================
+count(*)    
+100     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.tbl_a)
+
+  rewritten query: (select ? from [dba.tbl_a] [dba.tbl_a] group by [dba.tbl_a].i)
+
+  SORT (group by)
+    TABLE SCAN (dba.tbl_b)
+
+  rewritten query: (select ? from [dba.tbl_b] [dba.tbl_b] group by [dba.tbl_b].i)
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select count(*) from (select ? from [dba.tbl_a] [dba.tbl_a] group by [dba.tbl_a].i) a (?), (select ? from [dba.tbl_b] [dba.tbl_b] group by [dba.tbl_b].i) b (?)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+correlated subquery - should not work     
+
+===================================================
+count(*)    
+20     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select count(*) from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].i=aa.i
+
+  TABLE SCAN (dba.tbl_b)
+
+  rewritten query: select count(*) from [dba.tbl_b] [dba.tbl_b]
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (aa)
+    TABLE SCAN (a)
+
+  rewritten query: select count(*) from [dba.tbl_a] aa, (select count(*) from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].i=aa.i union all select count(*) from [dba.tbl_b] [dba.tbl_b]) a (cn)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (correlated)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Before the fix, a hang occurred when sp was included in the WHERE clause. for CBRD-26206     
+
+===================================================
+0
+===================================================
+0
+===================================================
+200000
+===================================================
+1    
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tmp)
+
+  rewritten query: select /*+ PARALLEL(?) MATERIALIZE */ [dba.tmp].colf from [dba.tmp] [dba.tmp] where  cast([dba.tmp].colb as integer)=[dba.sp]( cast([dba.tmp].colb as integer))
+
+  TABLE SCAN (dba.tmp)
+
+  rewritten query: select /*+ PARALLEL(?) MATERIALIZE */ [dba.tmp].colf from [dba.tmp] [dba.tmp]
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (dba.cte_a)
+    TABLE SCAN (dba.cte_b)
+
+  rewritten query: with cte_a(colf) as (select /*+ PARALLEL(?) MATERIALIZE */ [dba.tmp].colf from [dba.tmp] [dba.tmp] where  cast([dba.tmp].colb as integer)=[dba.sp]( cast([dba.tmp].colb as integer))), cte_b(colf) as (select /*+ PARALLEL(?) MATERIALIZE */ [dba.tmp].colf from [dba.tmp] [dba.tmp])select /*+ PARALLEL(?) */ ? from [dba.cte_a] [dba.cte_a], [dba.cte_b] [dba.cte_b] where (inst_num()<=?)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+          SCAN (table: dba.tmp), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tmp), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Segmentation fault occurred before the fix. for CBRD-26178     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+ca    ca    ca    
+1     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.ttd)
+
+  rewritten query: (select [dba.ttd].ca from [dba.ttd] [dba.ttd])
+
+  HASH JOIN (inner join)
+    HASH JOIN (inner join)
+      TABLE SCAN (dba.tta)
+      TABLE SCAN (dba.ttb)
+    TABLE SCAN (dba.ttc)
+
+  rewritten query: select /*+ USE_HASH */ [dba.tta].ca, [dba.ttb].ca, [dba.ttc].ca from [dba.tta] [dba.tta], [dba.ttb] [dba.ttb], [dba.ttc] [dba.ttc] where (select [dba.ttd].ca from [dba.ttd] [dba.ttd])>? and [dba.tta].ca=[dba.ttb].ca and [dba.ttb].ca=[dba.ttc].ca
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.ttd), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+                PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+                SUBQUERY (uncorrelated)
+                         (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (table: dba.tta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (table: dba.ttb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ttc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0

@@ -15,8 +15,8 @@ select count(*) from tbl where colb <2;
 show trace;
 
 
-evaluate '2. NO_PARALLEL_HEAP_SCAN hint (should not work)';
-select /*+ NO_PARALLEL_HEAP_SCAN */ count(*) from tbl where colb <2;
+evaluate '2. NO_PARALLEL_SCAN hint (should not work)';
+select /*+ NO_PARALLEL_SCAN */ count(*) from tbl where colb <2;
 show trace;
 
 
@@ -74,7 +74,7 @@ show trace;
 
 
 evaluate '8. contains GROUP BY, ORDER BY (should work)';
-evaluate '8-1. with hash aggregation -> row by row';
+evaluate '8-1. with hash aggregation -> mergeable list';
 select cola, count(*) from tbl group by cola limit 2;
 show trace;
 
@@ -97,7 +97,7 @@ select colb from tbl where id = 1 limit 1;
 show trace;
 
 
-evaluate '11. JOIN first table (should work) -> row by row, second table (should not work)';
+evaluate '11. JOIN first table (should work) -> mergeable list or count, second table (should not work)';
 select count(*) from tbl a join tbl b on a.cola = b.cola where a.id = 1;
 show trace;
 

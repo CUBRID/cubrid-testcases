@@ -9,7 +9,7 @@ create class drop_list(col2 varchar(100));
 
 create trigger test_trigger
   before insert on drop_list
-  execute call drop_user('test_user') on class db_user;
+  execute call drop_user('test_user') on class _db_user;
   
 select trigger_name, 
        target_class_name,

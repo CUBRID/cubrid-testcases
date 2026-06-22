@@ -11,6 +11,7 @@ PARTITION BY RANGE (test_int) (
     PARTITION p2 VALUES LESS THAN (30),
     PARTITION p7 VALUES LESS THAN MAXVALUE
 );
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'range_test' order by partition_name;
 
 insert into range_test values (1,1,'aaa','aaa','2000-01-01 09:00:00');
 insert into range_test values (2,2,'bbb','bbb','2000-01-02 09:00:00');
@@ -27,7 +28,8 @@ ALTER TABLE range_test REORGANIZE PARTITION p2 INTO (
 PARTITION p3 VALUES LESS THAN (25),
 PARTITION p4 VALUES LESS THAN (30));
 
-select * from db_partition where class_name = 'range_test' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'range_test' order by partition_name;
+select attr_name, class_name, default_value, is_partition_key from db_attribute where class_name = 'range_test' order by 1;
 select * from range_test__p__p0 order by 1,2;
 select * from range_test__p__p1 order by 1,2;
 select * from range_test__p__p3 order by 1,2;

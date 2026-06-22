@@ -4,7 +4,7 @@
 call login('dba') on class db_user;
 
 create user test_user;
-grant execute on db_user to test_user;
+grant execute on _db_user to test_user;
 
 call login ('test_user') on class db_user;
 
