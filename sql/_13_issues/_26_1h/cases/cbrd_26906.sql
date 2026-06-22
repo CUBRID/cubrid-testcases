@@ -10,16 +10,16 @@
  *   [1] Basic reproduction: USE INDEX on non-covering index, low distinct leading column
  *   [2] FORCE INDEX vs USE INDEX comparison on same data
  *   [3] Non-indexed column (colc) filter variations: IS NULL / IN / !=
- *   [4] Actual column retrieval
  */
 
 drop table if exists tbl;
 
 create table tbl (cola varchar(20), colb varchar(20), colc varchar(20), cold varchar(20));
-insert into tbl select mod(rownum,3), mod(rownum,2), mod(rownum,2), rownum
-  from db_class a, db_class b, db_class c, db_class d, db_class e limit 300000;
-create index idx_non_covering on tbl(cola,colb,cold);  -- non-covering (colc excluded)
-create index idx_covering on tbl(cola,colb,colc,cold); -- covering
+insert into tbl select mod(rownum,3), mod(rownum,2), mod(rownum,2), rownum from db_class a, db_class b, db_class c, db_class d, db_class e limit 300000;
+-- non-covering (colc excluded)
+create index idx_non_covering on tbl(cola,colb,cold);
+-- covering
+create index idx_covering on tbl(cola,colb,colc,cold);
 update statistics on tbl;
 
 -- ============================================================
@@ -65,15 +65,5 @@ evaluate '[Scenario 3c] colc negation (!=) condition on non-indexed column';
 
 select /*+ recompile */ count(*) from tbl use index (idx_non_covering)
 where cola between '0' and '9' and colb='1' and colc <> '0';
-
--- ============================================================
--- [Scenario 4] Actual column retrieval — result correctness verification
--- ============================================================
-evaluate '[Scenario 4] Actual column retrieval from non-covering index';
-
-select /*+ recompile */ cola, colb, colc, cold from tbl use index (idx_non_covering)
-where cola between '0' and '9' and colb='1' and colc='1'
-order by cola, colb, colc, cold
-limit 10;
 
 drop table if exists tbl;

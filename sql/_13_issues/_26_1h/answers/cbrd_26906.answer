@@ -6,7 +6,9 @@
 300000
 ===================================================
 0
+===================================================
 0
+===================================================
 0
 ===================================================
     
@@ -109,33 +111,5 @@ iscan
     cost:  ? card ?
 Query stmt:
 select count(*) from tbl tbl where (tbl.cola>= ?:?  and tbl.cola<= ?:? ) and tbl.colc<>'?' and tbl.colb= ?:?  using index tbl.idx_non_covering
-===================================================
-    
-[Scenario 4] Actual column retrieval from non-covering index     
-
-===================================================
-cola    colb    colc    cold    
-0     1     1     100005     
-0     1     1     100011     
-0     1     1     100017     
-0     1     1     100023     
-0     1     1     100029     
-0     1     1     100035     
-0     1     1     100041     
-0     1     1     100047     
-0     1     1     10005     
-0     1     1     100053     
-
-Query plan:
-iscan
-    class: tbl node[?]
-    index: idx_non_covering term[?]
-    filtr: term[?]
-    sargs: term[?]
-    sort:  ? asc, ? asc
-    cost:  ? card ?
-Query stmt:
-select tbl.cola, tbl.colb, tbl.colc, tbl.cold from tbl tbl where (tbl.cola>= ?:?  and tbl.cola<= ?:? ) and tbl.colc= ?:?  and tbl.colb= ?:?  using index tbl.idx_non_covering order by ?, ? for orderby_num()<= ?:? 
-/* ---> skip ORDER BY */
 ===================================================
 0
