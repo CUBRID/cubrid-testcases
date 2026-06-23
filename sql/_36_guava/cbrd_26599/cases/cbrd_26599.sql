@@ -230,7 +230,6 @@ where cust.nk = supp.nk
  * Verify: count(*)=640000, nations scanned first with region>1 sarg.
  * ============================================================ */
 evaluate '[12] selective filter: nations.region > 1, implied term enables early filtering';
---@queryplan
 select /*+ recompile use_hash */ count (*)
 from cust, supp, nations, orders
 where cust.nk = supp.nk
@@ -275,7 +274,6 @@ insert into tc values (1), (2), (3);
 update statistics on ta, tb, tc with fullscan;
 
 evaluate '[14] cross-type eq-class (INT/VARCHAR): implied term must not change the matching set';
---@queryplan
 select /*+ recompile */ count (*)
 from ta, tb, tc
 where ta.i = tb.v
@@ -339,7 +337,6 @@ insert into sk_dim values (1), (2);
 update statistics on sk_a, sk_b, sk_dim with fullscan;
 
 evaluate '[16] data skew: implied term connects two skewed tables - watch for exploding intermediate cardinality';
---@queryplan
 select /*+ recompile use_hash */ count (*)
 from sk_a, sk_dim, sk_b
 where sk_a.nk = sk_dim.nk
@@ -370,7 +367,6 @@ insert into nl_b select rownum from db_class a, db_class b limit 300;
 update statistics on nl_a, nl_m, nl_b with fullscan;
 
 evaluate '[17] USE_NL: implied edge between nl_a and nl_b - watch nested-loop join order';
---@queryplan
 select /*+ recompile use_nl */ count (*)
 from nl_a, nl_m, nl_b
 where nl_a.nk = nl_m.nk
@@ -403,7 +399,6 @@ insert into idim values (7);
 update statistics on iss, imid, idim with fullscan;
 
 evaluate '[18] index skip scan: implied equality on leading index column nk changes the access path';
---@queryplan
 select /*+ recompile */ count (*)
 from iss, imid, idim
 where iss.nk = imid.nk
