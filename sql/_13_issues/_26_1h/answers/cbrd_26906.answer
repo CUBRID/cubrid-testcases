@@ -193,43 +193,13 @@ select count(*) from tbl tbl, dim dim where (tbl.cola>= ?:?  and tbl.cola<= ?:? 
 0
 ===================================================
     
-[Scenario 9] UPDATE with USE INDEX uses the hinted index (index scan)     
-
-===================================================
-150000
-Query plan:
-iscan
-    class: tbl node[?]
-    index: idx_non_covering term[?]
-    filtr: term[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select tbl,class tbl,tbl.cold as [tbl.cold] from tbl tbl where (tbl.cola>= ?:?  and tbl.cola<= ?:? ) and tbl.colb= ?:?  and tbl.colc= ?:?  using index tbl.idx_non_covering
-===================================================
-    
-[Scenario 10] DELETE with USE INDEX uses the hinted index (index scan)     
-
-===================================================
-150000
-Query plan:
-iscan
-    class: tbl node[?]
-    index: idx_non_covering term[?]
-    filtr: term[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select tbl,class tbl from tbl tbl where (tbl.cola>= ?:?  and tbl.cola<= ?:? ) and tbl.colb= ?:?  and tbl.colc= ?:?  using index tbl.idx_non_covering
-===================================================
-    
-[Scenario 11] stale statistics: add rows without re-gathering stats, hinted index still used (index scan)     
+[Scenario 9] stale statistics: add rows without re-gathering stats, hinted index still used (index scan)     
 
 ===================================================
 100000
 ===================================================
 count(*)    
-50000     
+200000     
 
 Query plan:
 iscan
@@ -242,5 +212,35 @@ Query stmt:
 select count(*) from tbl tbl where (tbl.cola>= ?:?  and tbl.cola<= ?:? ) and tbl.colc= ?:?  and tbl.colb= ?:?  using index tbl.idx_non_covering
 ===================================================
 0
+===================================================
+    
+[Scenario 10] UPDATE with USE INDEX uses the hinted index (index scan)     
+
+===================================================
+200000
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_non_covering term[?]
+    filtr: term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl,class tbl,tbl.cold as [tbl.cold] from tbl tbl where (tbl.cola>= ?:?  and tbl.cola<= ?:? ) and tbl.colb= ?:?  and tbl.colc= ?:?  using index tbl.idx_non_covering
+===================================================
+    
+[Scenario 11] DELETE with USE INDEX uses the hinted index (index scan)     
+
+===================================================
+200000
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_non_covering term[?]
+    filtr: term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl,class tbl from tbl tbl where (tbl.cola>= ?:?  and tbl.cola<= ?:? ) and tbl.colb= ?:?  and tbl.colc= ?:?  using index tbl.idx_non_covering
 ===================================================
 0

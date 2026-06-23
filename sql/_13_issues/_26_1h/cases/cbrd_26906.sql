@@ -15,9 +15,9 @@
  *   [6] USING INDEX NONE forces sequential scan
  *   [7] GROUP BY uses the hinted index
  *   [8] JOIN: hinted index used on the big table node
- *   [9] UPDATE with USE INDEX uses the hinted index
- *   [10] DELETE with USE INDEX uses the hinted index
- *   [11] Stale statistics: hinted index still used after inserting rows without re-gathering stats
+ *   [9] Stale statistics: hinted index still used after inserting rows without re-gathering stats
+ *   [10] UPDATE with USE INDEX uses the hinted index
+ *   [11] DELETE with USE INDEX uses the hinted index
  */
 
 drop table if exists tbl;
@@ -100,7 +100,7 @@ using index none;
 -- ============================================================
 -- [Scenario 7] GROUP BY with USE INDEX
 --   Verifies hint is honored when GROUP BY is present.
---   GROUP BY is skipped due to index scan providing pre-ordered results.
+--   GROUP BY sort is skipped because index scan already returns rows in cola order.
 -- ============================================================
 evaluate '[Scenario 7] GROUP BY uses the hinted index (index scan)';
 
@@ -127,34 +127,35 @@ where tbl.cola between '0' and '9' and tbl.colb='1' and tbl.colc='1';
 drop table if exists dim;
 
 -- ============================================================
--- [Scenario 9] UPDATE with USE INDEX
---   Verifies hint is honored in an UPDATE statement.
--- ============================================================
-evaluate '[Scenario 9] UPDATE with USE INDEX uses the hinted index (index scan)';
---@queryplan
-update /*+ recompile */ tbl use index (idx_non_covering) set cold = cold
-where cola between '0' and '9' and colb='1' and colc='1';
-
--- ============================================================
--- [Scenario 10] DELETE with USE INDEX
---   Verifies hint is honored in a DELETE statement.
--- ============================================================
-evaluate '[Scenario 10] DELETE with USE INDEX uses the hinted index (index scan)';
---@queryplan
-delete /*+ recompile */ from tbl use index (idx_non_covering)
-where cola between '0' and '9' and colb='1' and colc='1';
-
--- ============================================================
--- [Scenario 11] Stale statistics
+-- [Scenario 9] Stale statistics
 --   Rows added without re-gathering stats. Verifies hint is still honored
 --   under stale statistics, which is an additional reproduction condition from the bug report.
+--   Placed before UPDATE/DELETE so the row count is unaffected by them.
 -- ============================================================
-evaluate '[Scenario 11] stale statistics: add rows without re-gathering stats, hinted index still used (index scan)';
+evaluate '[Scenario 9] stale statistics: add rows without re-gathering stats, hinted index still used (index scan)';
 
 insert into tbl select mod(rownum,3), mod(rownum,2), mod(rownum,2), rownum + 300000
   from db_class a, db_class b, db_class c, db_class d, db_class e limit 100000;
 select /*+ recompile */ count(*) from tbl use index (idx_non_covering)
 where cola between '0' and '9' and colb='1' and colc='1';
 update statistics on tbl;
+
+-- ============================================================
+-- [Scenario 10] UPDATE with USE INDEX
+--   Verifies hint is honored in an UPDATE statement.
+-- ============================================================
+evaluate '[Scenario 10] UPDATE with USE INDEX uses the hinted index (index scan)';
+--@queryplan
+update /*+ recompile */ tbl use index (idx_non_covering) set cold = cold
+where cola between '0' and '9' and colb='1' and colc='1';
+
+-- ============================================================
+-- [Scenario 11] DELETE with USE INDEX
+--   Verifies hint is honored in a DELETE statement.
+-- ============================================================
+evaluate '[Scenario 11] DELETE with USE INDEX uses the hinted index (index scan)';
+--@queryplan
+delete /*+ recompile */ from tbl use index (idx_non_covering)
+where cola between '0' and '9' and colb='1' and colc='1';
 
 drop table if exists tbl;
