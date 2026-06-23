@@ -17,6 +17,30 @@
 -- ===================================================================
 evaluate '[SETUP] Create and populate test tables';
 
+-- Pre-drop every auxiliary object this test may create, so a re-run after a
+-- mid-scenario failure starts clean. View goes first (it depends on supp),
+-- and child table u goes before parent t (FK dependency).
+drop view if exists v_supp;
+drop table if exists u;
+drop table if exists v;
+drop table if exists t;
+drop table if exists ta;
+drop table if exists tb;
+drop table if exists tc;
+drop table if exists fa;
+drop table if exists fb;
+drop table if exists fc;
+drop table if exists sk_a;
+drop table if exists sk_b;
+drop table if exists sk_dim;
+drop table if exists nl_a;
+drop table if exists nl_m;
+drop table if exists nl_b;
+drop table if exists keytab;
+drop table if exists bridge;
+drop table if exists anchor;
+drop table if exists part_ck;
+
 drop table if exists orders;
 drop table if exists part;
 drop table if exists cust;
@@ -185,10 +209,6 @@ where supp.nk < nations.nk
  * Verify: u.k=1,1,2,2,3,3,4,4,5,5, plan shows temp(sort limit) over (v join u),
  *         t joined afterwards (deferred).
  * ============================================================ */
-drop table if exists u;
-drop table if exists v;
-drop table if exists t;
-
 create table t (i int primary key, j int);
 create table u (i int primary key, j int not null, k int, foreign key fk_u_t (j) references t (i));
 -- no PK, non-unique j -> fanout
@@ -259,10 +279,6 @@ deallocate prepare q13;
  *      The implied term must keep the result consistent with the chain.
  * Verify: count(*)=3.
  * ============================================================ */
-drop table if exists ta;
-drop table if exists tb;
-drop table if exists tc;
-
 create table ta (i int);
 create table tb (v varchar(10));
 create table tc (i int);
@@ -289,10 +305,6 @@ drop table if exists tc;
  *      which violates the filter, so the filtered index must not be used.
  * Verify: count(*)=50 (no missing rows).
  * ============================================================ */
-drop table if exists fa;
-drop table if exists fb;
-drop table if exists fc;
-
 create table fa (nk int);
 create table fb (nk int);
 create table fc (nk int);
@@ -320,10 +332,6 @@ drop table if exists fc;
  *      which may mislead the NDV-based cost model into a bad join order.
  * Verify: count(*)=820000, watch the join order in the plan.
  * ============================================================ */
-drop table if exists sk_a;
-drop table if exists sk_b;
-drop table if exists sk_dim;
-
 create table sk_a (nk int);
 create table sk_b (nk int);
 create table sk_dim (nk int);
@@ -352,10 +360,6 @@ drop table if exists sk_dim;
  *      start on nl_a x nl_b before applying the bridge nl_m.
  * Verify: count(*)=300, check the nested-loop join order.
  * ============================================================ */
-drop table if exists nl_a;
-drop table if exists nl_m;
-drop table if exists nl_b;
-
 create table nl_a (nk int);
 create table nl_m (nk int);
 create table nl_b (nk int);
@@ -384,10 +388,6 @@ drop table if exists nl_b;
  *      column, so the composite index is used with both keys (nk=7, x=10).
  * Verify: count(*)=1, plan reads keytab through its (nk, x) index.
  * ============================================================ */
-drop table if exists keytab;
-drop table if exists bridge;
-drop table if exists anchor;
-
 create table keytab (nk int, x int);
 create index ix_keytab on keytab (nk, x);
 insert into keytab select (rownum-1)/50 + 1, mod(rownum-1,50)+1 from db_class a, db_class b limit 1000;
@@ -435,7 +435,6 @@ where cust.nk = dv.nk
  * Verify: count(*)=80000, join graph shows implied v_supp.nk=nations.nk
  *         and the plan joins v_supp with nations early.
  * ============================================================ */
-drop view if exists v_supp;
 create view v_supp as select nk from supp;
 
 evaluate '[20] view boundary: implied v_supp.nk=nations.nk yields smallest intermediate';
@@ -454,7 +453,6 @@ drop view if exists v_supp;
  *      Cross-contamination (e.g. cust.nk=orders.ck) must NOT occur.
  * Verify: count(*)=8000, join graph shows two separate eqclasses each with its own implied term.
  * ============================================================ */
-drop table if exists part_ck;
 create table part_ck (pk int, ck int);
 insert into part_ck select rownum, mod(rownum-1, 10000)+1 from db_class a, db_class b limit 500;
 update statistics on part_ck with fullscan;
