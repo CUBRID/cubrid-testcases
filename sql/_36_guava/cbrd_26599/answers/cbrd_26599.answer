@@ -108,6 +108,26 @@ select /*+ USE_HASH */ count(*) from cust cust, supp supp, nations nations, orde
 count(*)    
 80000     
 
+Join graph segments (f indicates final):
+seg[0]: [0]
+seg[1]: nk[0]
+seg[2]: [1]
+seg[3]: nk[1]
+seg[4]: [2]
+seg[5]: nk[2]
+seg[6]: region[2]
+Join graph nodes:
+node[0]: dba.cust dba.cust(10000/22) (loc 0)
+node[1]: dba.supp dba.supp(1000/3) (loc 1)
+node[2]: dba.nations dba.nations(25/1) (sargs 3) (loc 2)
+Join graph equivalence classes:
+eqclass[0]: nk[0] nk[1] nk[2]
+Join graph edges:
+term[0]: [dba.cust].nk=[dba.supp].nk (sel ?) (join term) (mergeable) (inner-join) (loc 0)
+term[1]: [dba.supp].nk=[dba.nations].nk (sel ?) (join term) (mergeable) (inner-join) (loc 0)
+term[2]: [dba.cust].nk=[dba.nations].nk (sel ?) (join term) (mergeable) (inner-join) (loc 0)
+Join graph terms:
+term[3]: [dba.nations].region=1 (sel ?) (sarg term) (not-join eligible) (loc 0)
 Query plan:
 hash-join (inner join)
     edge:  term[?]
@@ -467,6 +487,646 @@ select /*+ NO_ELIMINATE_JOIN */ u.k from u u, t t, v v where u.j=t.i and u.j=v.j
 0
 ===================================================
 0
+===================================================
+    
+[11] full data join: no filter predicate, implied term still generated     
+
+===================================================
+count(*)    
+800000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: hash-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: cust node[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: nations node[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: orders node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: supp node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from cust cust, supp supp, nations nations, orders orders where cust.nk=supp.nk and supp.nk=nations.nk and cust.ck=orders.ck
+===================================================
+    
+[12] selective filter: nations.region > 1, implied term enables early filtering     
+
+===================================================
+count(*)    
+640000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: hash-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: cust node[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: nations node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: orders node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: supp node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from cust cust, supp supp, nations nations, orders orders where cust.nk=supp.nk and supp.nk=nations.nk and cust.ck=orders.ck and (nations.region> ?:? )
+===================================================
+0
+===================================================
+    
+[13-1] bind variables executes correctly     
+
+===================================================
+count(*)    
+160000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: hash-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: cust node[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: nations node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: orders node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: supp node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from cust cust, supp supp, nations nations, orders orders where cust.nk=supp.nk and supp.nk=nations.nk and cust.ck=orders.ck and ((nations.region= ?:? ) or (nations.region= ?:? ) or (nations.region= ?:? ))
+===================================================
+    
+[13-2] bind variables executes correctly     
+
+===================================================
+count(*)    
+480000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: hash-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: cust node[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: nations node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: orders node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: supp node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from cust cust, supp supp, nations nations, orders orders where cust.nk=supp.nk and supp.nk=nations.nk and cust.ck=orders.ck and ((nations.region= ?:? ) or (nations.region= ?:? ) or (nations.region= ?:? ))
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+3
+===================================================
+3
+===================================================
+0
+===================================================
+    
+[14] cross-type eq-class (INT/VARCHAR): implied term must not change the matching set     
+
+===================================================
+count(*)    
+3     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: ta node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: tb node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: tc node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ta ta, tb tb, tc tc where ta.i= cast(tb.v as double) and tc.i= cast(tb.v as double)
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+50
+===================================================
+200
+===================================================
+200
+===================================================
+0
+===================================================
+    
+[15] filtered index (nk>100): range propagated via implied term must not wrongly enable the filtered index     
+
+===================================================
+count(*)    
+50     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: fa node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: fb node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: fc node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from fa fa, fb fb, fc fc where fa.nk=fb.nk and fb.nk=fc.nk and (fa.nk>= ?:?  and fa.nk<= ?:? )
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+900
+===================================================
+100
+===================================================
+900
+===================================================
+100
+===================================================
+2
+===================================================
+0
+===================================================
+    
+[16] data skew: implied term connects two skewed tables - watch for exploding intermediate cardinality     
+
+===================================================
+count(*)    
+820000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: sk_a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: sk_dim node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: sk_b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from sk_a sk_a, sk_dim sk_dim, sk_b sk_b where sk_a.nk=sk_dim.nk and sk_dim.nk=sk_b.nk
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+300
+===================================================
+300
+===================================================
+300
+===================================================
+0
+===================================================
+    
+[17] USE_NL: implied edge between nl_a and nl_b - watch nested-loop join order     
+
+===================================================
+count(*)    
+300     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: nl_a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: nl_m node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: nl_b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_NL */ count(*) from nl_a nl_a, nl_m nl_m, nl_b nl_b where nl_a.nk=nl_m.nk and nl_m.nk=nl_b.nk
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1000
+===================================================
+0
+===================================================
+20
+===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+    
+[18] index skip scan: implied equality on leading index column nk changes the access path     
+
+===================================================
+count(*)    
+1     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: idx-join (inner join)
+               outer: sscan
+                          class: idim node[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: iss node[?]
+                          index: ix_iss term[?] AND term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: imid node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from iss iss, imid imid, idim idim where iss.nk=imid.nk and imid.nk=idim.nk and iss.x= ?:? 
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+[19] derived-table boundary: implied cust.nk=nations.nk generated after merging     
+
+===================================================
+count(*)    
+80000     
+
+Join graph segments (f indicates final):
+seg[0]: [0]
+seg[1]: nk[0]
+seg[2]: [1]
+seg[3]: nk[1]
+seg[4]: [2]
+seg[5]: nk[2]
+seg[6]: region[2]
+Join graph nodes:
+node[0]: dba.cust dba.cust(10000/22) (loc 0)
+node[1]: dba.supp dv(dv)(1000/3) (loc 1)
+node[2]: dba.nations dba.nations(25/1) (sargs 3) (loc 2)
+Join graph equivalence classes:
+eqclass[0]: nk[0] nk[1] nk[2]
+Join graph edges:
+term[0]: ([dba.cust].nk=dv.nk) (sel ?) (join term) (mergeable) (inner-join) (loc 0)
+term[1]: dv.nk=[dba.nations].nk (sel ?) (join term) (mergeable) (inner-join) (loc 0)
+term[2]: [dba.cust].nk=[dba.nations].nk (sel ?) (join term) (mergeable) (inner-join) (loc 0)
+Join graph terms:
+term[3]: [dba.nations].region=1 (sel ?) (sarg term) (not-join eligible) (loc 0)
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: dv node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: nations node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: cust node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from cust cust, supp dv, nations nations where (cust.nk=dv.nk) and dv.nk=nations.nk and nations.region= ?:? 
+===================================================
+0
+===================================================
+0
+===================================================
+    
+[20] view boundary: implied v_supp.nk=nations.nk yields smallest intermediate     
+
+===================================================
+count(*)    
+80000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: v_supp node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: nations node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: cust node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from supp v_supp, cust cust, nations nations where (v_supp.nk=cust.nk) and cust.nk=nations.nk and nations.region= ?:? 
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+500
+===================================================
+0
+===================================================
+    
+[21] two 3-member eqclasses - cross-contamination check     
+
+===================================================
+count(*)    
+8000     
+
+Join graph segments (f indicates final):
+seg[0]: [0]
+seg[1]: nk[0]
+seg[2]: ck[0]
+seg[3]: [1]
+seg[4]: nk[1]
+seg[5]: [2]
+seg[6]: nk[2]
+seg[7]: region[2]
+seg[8]: [3]
+seg[9]: ck[3]
+seg[10]: [4]
+seg[11]: ck[4]
+Join graph nodes:
+node[0]: dba.cust dba.cust(10000/22) (loc 0)
+node[1]: dba.supp dba.supp(1000/3) (loc 1)
+node[2]: dba.nations dba.nations(25/1) (sargs 6) (loc 2)
+node[3]: dba.orders dba.orders(20000/44) (loc 3)
+node[4]: dba.part_ck dba.part_ck(500/2) (loc 4)
+Join graph equivalence classes:
+eqclass[0]: nk[0] nk[1] nk[2]
+eqclass[1]: ck[0] ck[3] ck[4]
+Join graph edges:
+term[0]: [dba.cust].nk=[dba.supp].nk (sel ?) (join term) (mergeable) (inner-join) (loc 0)
+term[1]: [dba.supp].nk=[dba.nations].nk (sel ?) (join term) (mergeable) (inner-join) (loc 0)
+term[2]: [dba.cust].nk=[dba.nations].nk (sel ?) (join term) (mergeable) (inner-join) (loc 0)
+term[3]: [dba.orders].ck=[dba.part_ck].ck (sel ?) (join term) (mergeable) (inner-join) (loc 0)
+term[4]: [dba.cust].ck=[dba.part_ck].ck (sel ?) (join term) (mergeable) (inner-join) (loc 0)
+term[5]: [dba.cust].ck=[dba.orders].ck (sel ?) (join term) (mergeable) (inner-join) (loc 0)
+Join graph terms:
+term[6]: [dba.nations].region=1 (sel ?) (sarg term) (not-join eligible) (loc 0)
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: hash-join (inner join)
+                          edge:  term[?]
+                          outer: hash-join (inner join)
+                                     edge:  term[?]
+                                     outer: sscan
+                                                class: cust node[?]
+                                                cost:  ? card ?
+                                     inner: sscan
+                                                class: part_ck node[?]
+                                                cost:  ? card ?
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: nations node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: orders node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: supp node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from cust cust, supp supp, nations nations, orders orders, part_ck part_ck where cust.nk=supp.nk and supp.nk=nations.nk and cust.ck=orders.ck and orders.ck=part_ck.ck and nations.region= ?:? 
+===================================================
+0
+===================================================
+    
+[22] 5-table full chain - large eqclass with mixed join paths     
+
+===================================================
+count(*)    
+3200000     
+
+Join graph segments (f indicates final):
+seg[0]: [0]
+seg[1]: nk[0]
+seg[2]: ck[0]
+seg[3]: [1]
+seg[4]: nk[1]
+seg[5]: [2]
+seg[6]: nk[2]
+seg[7]: region[2]
+seg[8]: [3]
+seg[9]: nk[3]
+seg[10]: [4]
+seg[11]: ck[4]
+Join graph nodes:
+node[0]: dba.cust dba.cust(10000/22) (loc 0)
+node[1]: dba.supp dba.supp(1000/3) (loc 1)
+node[2]: dba.nations dba.nations(25/1) (sargs 7) (loc 2)
+node[3]: dba.part dba.part(500/2) (loc 3)
+node[4]: dba.orders dba.orders(20000/44) (loc 4)
+Join graph equivalence classes:
+eqclass[0]: nk[0] nk[1] nk[2] nk[3]
+eqclass[1]: ck[0] ck[4]
+Join graph edges:
+term[0]: [dba.cust].nk=[dba.supp].nk (sel ?) (join term) (mergeable) (inner-join) (loc 0)
+term[1]: [dba.supp].nk=[dba.nations].nk (sel ?) (join term) (mergeable) (inner-join) (loc 0)
+term[2]: [dba.nations].nk=[dba.part].nk (sel ?) (join term) (mergeable) (inner-join) (loc 0)
+term[3]: [dba.supp].nk=[dba.part].nk (sel ?) (join term) (mergeable) (inner-join) (loc 0)
+term[4]: [dba.cust].nk=[dba.nations].nk (sel ?) (join term) (mergeable) (inner-join) (loc 0)
+term[5]: [dba.cust].nk=[dba.part].nk (sel ?) (join term) (mergeable) (inner-join) (loc 0)
+term[6]: [dba.cust].ck=[dba.orders].ck (sel ?) (join term) (mergeable) (inner-join) (loc 0)
+Join graph terms:
+term[7]: [dba.nations].region=1 (sel ?) (sarg term) (not-join eligible) (loc 0)
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: hash-join (inner join)
+                          edge:  term[?]
+                          outer: hash-join (inner join)
+                                     edge:  term[?]
+                                     outer: sscan
+                                                class: cust node[?]
+                                                cost:  ? card ?
+                                     inner: sscan
+                                                class: nations node[?]
+                                                sargs: term[?]
+                                                cost:  ? card ?
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: orders node[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: part node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: supp node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from cust cust, supp supp, nations nations, part part, orders orders where cust.nk=supp.nk and supp.nk=nations.nk and nations.nk=part.nk and cust.ck=orders.ck and nations.region= ?:? 
 ===================================================
     
 [CLEANUP] Drop all test tables     

@@ -41,7 +41,7 @@ insert into cust    select rownum, mod(rownum-1,25)+1    from db_class a, db_cla
 insert into orders  select rownum, mod(rownum-1,10000)+1 from db_class a, db_class b, db_class c limit 20000;
 insert into part    select rownum, mod(rownum-1,25)+1    from db_class a, db_class b limit 500;
 
-update statistics on nations, supp, cust, orders, part;
+update statistics on nations, supp, cust, orders, part with fullscan;
 
 /* ============================================================
  * [1-1] Basic implied term: cust.nk=supp.nk, supp.nk=nations.nk
@@ -74,6 +74,7 @@ where nations.region = 1;
  * Verify: count(*)=80000, plan generated correctly.
  * ============================================================ */
 evaluate '[2] implied term already explicit - no duplicate term added';
+--@fullplan
 select /*+ recompile use_hash */ count (*)
 from cust, supp, nations
 where cust.nk = supp.nk
@@ -193,11 +194,11 @@ create table u (i int primary key, j int not null, k int, foreign key fk_u_t (j)
 -- no PK, non-unique j -> fanout
 create table v (i int, j int, k int);
 
-insert into t select rownum, rownum                    from _db_class a, _db_class b limit 1500;
-insert into u select rownum, rownum % 1500 + 1, rownum from _db_class a, _db_class b, _db_class c limit 2000;
-insert into v select rownum, rownum % 1500 + 1, rownum from _db_class a, _db_class b, _db_class c limit 2000;
+insert into t select rownum, rownum                    from db_class a, db_class b limit 1500;
+insert into u select rownum, rownum % 1500 + 1, rownum from db_class a, db_class b, db_class c limit 2000;
+insert into v select rownum, rownum % 1500 + 1, rownum from db_class a, db_class b, db_class c limit 2000;
 
-update statistics on u, t, v;
+update statistics on u, t, v with fullscan;
 
 evaluate '[10] SORT-LIMIT preserved: implied t.i=v.j must not break PK-FK full-join';
 select /*+ recompile NO_ELIMINATE_JOIN */ u.k
@@ -205,9 +206,289 @@ from u, t, v
 where u.j = t.i and u.j = v.j
 order by u.k limit 10;
 
-drop table u;
-drop table v;
-drop table t;
+drop table if exists u;
+drop table if exists v;
+drop table if exists t;
+
+/* ============================================================
+ * [11] Full 4-table join with no filtering predicate.
+ *      cust.nk=supp.nk, supp.nk=nations.nk -> cust.nk=nations.nk auto-generated.
+ *      With no region filter, all nations rows participate.
+ * Verify: count(*)=800000.
+ * ============================================================ */
+evaluate '[11] full data join: no filter predicate, implied term still generated';
+select /*+ recompile use_hash */ count (*)
+from cust, supp, nations, orders
+where cust.nk = supp.nk
+  and supp.nk = nations.nk
+  and cust.ck = orders.ck;
+
+/* ============================================================
+ * [12] Higher-selectivity filter on nations (region > 1).
+ *      region in 2..5 -> 20 of 25 nations rows pass the filter.
+ *      Implied cust.nk=nations.nk lets nations filter early.
+ * Verify: count(*)=640000, nations scanned first with region>1 sarg.
+ * ============================================================ */
+evaluate '[12] selective filter: nations.region > 1, implied term enables early filtering';
+--@queryplan
+select /*+ recompile use_hash */ count (*)
+from cust, supp, nations, orders
+where cust.nk = supp.nk
+  and supp.nk = nations.nk
+  and cust.ck = orders.ck
+  and nations.region > 1;
+
+/* ============================================================
+ * [13] Host-variable binding: nations.region IN (?, ?, ?).
+ *      Confirms implied-term generation and plan are correct when the
+ *      filter values are supplied as bind variables.
+ *      Run with (1,1,1) -> region=1 only, and (1,2,3) -> region in {1,2,3}.
+ * Verify: (1,1,1) count(*)=160000, (1,2,3) count(*)=480000.
+ * ============================================================ */
+prepare q13 from 'select /*+ recompile use_hash */ count (*) from cust, supp, nations, orders where cust.nk = supp.nk and supp.nk = nations.nk and cust.ck = orders.ck and nations.region in ( ?, ?, ? )';
+
+evaluate '[13-1] bind variables executes correctly';
+--@queryplan
+execute q13 using 1, 1, 1;
+evaluate '[13-2] bind variables executes correctly';
+--@queryplan
+execute q13 using 1, 2, 3;
+deallocate prepare q13;
+
+/* ============================================================
+ * [14] Eq-class spans INT (ta.i, tc.i) and VARCHAR (tb.v).
+ *      The implied term must keep the result consistent with the chain.
+ * Verify: count(*)=3.
+ * ============================================================ */
+drop table if exists ta;
+drop table if exists tb;
+drop table if exists tc;
+
+create table ta (i int);
+create table tb (v varchar(10));
+create table tc (i int);
+
+insert into ta values (1), (2), (3);
+insert into tb values ('1'), ('2'), ('3');
+insert into tc values (1), (2), (3);
+
+update statistics on ta, tb, tc with fullscan;
+
+evaluate '[14] cross-type eq-class (INT/VARCHAR): implied term must not change the matching set';
+--@queryplan
+select /*+ recompile */ count (*)
+from ta, tb, tc
+where ta.i = tb.v
+  and tb.v = tc.i;
+
+drop table if exists ta;
+drop table if exists tb;
+drop table if exists tc;
+
+/* ============================================================
+ * [15] fc has a filtered index ON (nk) WHERE nk > 100.
+ *      Range fa.nk in [1,50] propagates via the implied term to fc.nk,
+ *      which violates the filter, so the filtered index must not be used.
+ * Verify: count(*)=50 (no missing rows).
+ * ============================================================ */
+drop table if exists fa;
+drop table if exists fb;
+drop table if exists fc;
+
+create table fa (nk int);
+create table fb (nk int);
+create table fc (nk int);
+
+insert into fa select rownum from db_class a, db_class b limit 50;
+insert into fb select rownum from db_class a, db_class b limit 200;
+insert into fc select rownum from db_class a, db_class b limit 200;
+
+create index fidx_fc on fc (nk) where nk > 100;
+
+evaluate '[15] filtered index (nk>100): range propagated via implied term must not wrongly enable the filtered index';
+select /*+ recompile */ count (*)
+from fa, fb, fc
+where fa.nk = fb.nk
+  and fb.nk = fc.nk
+  and fa.nk between 1 and 50;
+
+drop table if exists fa;
+drop table if exists fb;
+drop table if exists fc;
+
+/* ============================================================
+ * [16] sk_a and sk_b have a skewed key (nk=1 is 90% of rows).
+ *      Implied sk_a.nk=sk_b.nk connects the two skewed tables directly,
+ *      which may mislead the NDV-based cost model into a bad join order.
+ * Verify: count(*)=820000, watch the join order in the plan.
+ * ============================================================ */
+drop table if exists sk_a;
+drop table if exists sk_b;
+drop table if exists sk_dim;
+
+create table sk_a (nk int);
+create table sk_b (nk int);
+create table sk_dim (nk int);
+
+insert into sk_a select 1 from db_class a, db_class b limit 900;
+insert into sk_a select 2 from db_class a, db_class b limit 100;
+insert into sk_b select 1 from db_class a, db_class b limit 900;
+insert into sk_b select 2 from db_class a, db_class b limit 100;
+insert into sk_dim values (1), (2);
+
+update statistics on sk_a, sk_b, sk_dim with fullscan;
+
+evaluate '[16] data skew: implied term connects two skewed tables - watch for exploding intermediate cardinality';
+--@queryplan
+select /*+ recompile use_hash */ count (*)
+from sk_a, sk_dim, sk_b
+where sk_a.nk = sk_dim.nk
+  and sk_dim.nk = sk_b.nk;
+
+drop table if exists sk_a;
+drop table if exists sk_b;
+drop table if exists sk_dim;
+
+/* ============================================================
+ * [17] Under USE_NL, implied nl_a.nk=nl_b.nk adds a direct edge
+ *      between the two tables. Watch that the nested loop does not
+ *      start on nl_a x nl_b before applying the bridge nl_m.
+ * Verify: count(*)=300, check the nested-loop join order.
+ * ============================================================ */
+drop table if exists nl_a;
+drop table if exists nl_m;
+drop table if exists nl_b;
+
+create table nl_a (nk int);
+create table nl_m (nk int);
+create table nl_b (nk int);
+
+insert into nl_a select rownum from db_class a, db_class b limit 300;
+insert into nl_m select rownum from db_class a, db_class b limit 300;
+insert into nl_b select rownum from db_class a, db_class b limit 300;
+
+update statistics on nl_a, nl_m, nl_b with fullscan;
+
+evaluate '[17] USE_NL: implied edge between nl_a and nl_b - watch nested-loop join order';
+--@queryplan
+select /*+ recompile use_nl */ count (*)
+from nl_a, nl_m, nl_b
+where nl_a.nk = nl_m.nk
+  and nl_m.nk = nl_b.nk;
+
+drop table if exists nl_a;
+drop table if exists nl_m;
+drop table if exists nl_b;
+
+/* ============================================================
+ * [18] Composite index ix_iss(nk, x), predicate only on x.
+ *      Implied iss.nk=idim.nk(=7) supplies an equality on the leading
+ *      column nk, changing the index access path.
+ * Verify: count(*)=1, check the resulting scan method.
+ * ============================================================ */
+drop table if exists iss;
+drop table if exists imid;
+drop table if exists idim;
+
+create table iss (nk int, x int);
+create index ix_iss on iss (nk, x);
+insert into iss select (rownum-1)/50 + 1, mod(rownum-1,50)+1 from db_class a, db_class b limit 1000;
+
+create table imid (nk int);
+insert into imid select rownum from db_class a limit 20;
+
+create table idim (nk int);
+insert into idim values (7);
+
+update statistics on iss, imid, idim with fullscan;
+
+evaluate '[18] index skip scan: implied equality on leading index column nk changes the access path';
+--@queryplan
+select /*+ recompile */ count (*)
+from iss, imid, idim
+where iss.nk = imid.nk
+  and imid.nk = idim.nk
+  and iss.x = 10;
+
+drop table if exists iss;
+drop table if exists imid;
+drop table if exists idim;
+
+/* ============================================================
+ * [19] Chain crosses a derived table dv = (select nk from supp).
+ *      After merging, cust.nk=nations.nk must be generated correctly.
+ * Verify: count(*)=80000.
+ * ============================================================ */
+evaluate '[19] derived-table boundary: implied cust.nk=nations.nk generated after merging';
+--@fullplan
+select /*+ recompile use_hash */ count (*)
+from cust, (select nk from supp) dv, nations
+where cust.nk = dv.nk
+  and dv.nk = nations.nk
+  and nations.region = 1;
+
+/* ============================================================
+ * [20] View boundary - implied term yields the smallest intermediate.
+ *      v_supp (view over supp) and nations have NO written edge: they
+ *      connect only through cust (the large middle table) via
+ *      v_supp.nk=cust.nk and cust.nk=nations.nk.
+ *      After view merging the implied v_supp.nk=nations.nk is generated,
+ *      letting the small v_supp and the filtered nations (region=1) join
+ *      first instead of routing through cust -> smallest intermediate.
+ * Verify: count(*)=80000, join graph shows implied v_supp.nk=nations.nk
+ *         and the plan joins v_supp with nations early.
+ * ============================================================ */
+drop view if exists v_supp;
+create view v_supp as select nk from supp;
+
+evaluate '[20] view boundary: implied v_supp.nk=nations.nk yields smallest intermediate';
+select /*+ recompile use_hash */ count (*)
+from v_supp, cust, nations
+where v_supp.nk = cust.nk
+  and cust.nk = nations.nk
+  and nations.region = 1;
+
+drop view if exists v_supp;
+
+/* ============================================================
+ * [21] Two independent 3-member eqclasses, both generate implied terms.
+ *      Group A (nk): cust.nk=supp.nk, supp.nk=nations.nk -> cust.nk=nations.nk
+ *      Group B (ck): cust.ck=orders.ck, orders.ck=part_ck.ck -> cust.ck=part_ck.ck
+ *      Cross-contamination (e.g. cust.nk=orders.ck) must NOT occur.
+ * Verify: count(*)=8000, join graph shows two separate eqclasses each with its own implied term.
+ * ============================================================ */
+drop table if exists part_ck;
+create table part_ck (pk int, ck int);
+insert into part_ck select rownum, mod(rownum-1, 10000)+1 from db_class a, db_class b limit 500;
+update statistics on part_ck with fullscan;
+
+evaluate '[21] two 3-member eqclasses - cross-contamination check';
+--@fullplan
+select /*+ recompile use_hash */ count (*)
+from cust, supp, nations, orders, part_ck
+where cust.nk = supp.nk
+  and supp.nk = nations.nk
+  and cust.ck = orders.ck
+  and orders.ck = part_ck.ck
+  and nations.region = 1;
+
+drop table if exists part_ck;
+
+/* ============================================================
+ * [22] 5-table query: nk chain (cust-supp-nations-part, same as [3])
+ *      plus a separate ck path (cust-orders).
+ *      All nk implied terms must still be generated with both paths present.
+ * Verify: count(*)=3200000, plan optimal with implied terms in the nk eqclass.
+ * ============================================================ */
+evaluate '[22] 5-table full chain - large eqclass with mixed join paths';
+--@fullplan
+select /*+ recompile use_hash */ count (*)
+from cust, supp, nations, part, orders
+where cust.nk = supp.nk
+  and supp.nk = nations.nk
+  and nations.nk = part.nk
+  and cust.ck = orders.ck
+  and nations.region = 1;
 
 -- ===================================================================
 -- Cleanup
