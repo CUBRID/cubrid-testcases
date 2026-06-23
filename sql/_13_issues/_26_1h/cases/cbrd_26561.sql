@@ -13,7 +13,7 @@
  * 6 - NUMERIC column values cast to INT and BIGINT
  */
 
-drop table if exists tbl;
+drop table if exists cbrd_26561_tbl;
 
 evaluate 'Case 1: Negative NUMERIC value';
 select
@@ -44,14 +44,14 @@ select
     cast(cast(0.4 as numeric(5,3)) as bigint) as pos_bigint;
 
 evaluate 'Case 6: NUMERIC column values cast to INT and BIGINT';
-create table tbl (val numeric(10,3));
-insert into tbl values (-0.5), (-0.4), (0.4), (0.5), (-1.5), (1.5);
+create table cbrd_26561_tbl (val numeric(10,3));
+insert into cbrd_26561_tbl values (-0.5), (-0.4), (0.4), (0.5), (-1.5), (1.5);
 
 select
     val,
     cast(val as int) as cast_int,
     cast(val as bigint) as cast_bigint
-from tbl
+from cbrd_26561_tbl
 order by val;
 
-drop table tbl;
+drop table cbrd_26561_tbl;
