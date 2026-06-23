@@ -15,19 +15,13 @@ Metrics: data size = small, join query = inner join, where clause = simple (mult
 NUM_CLIENTS = 2
 C1: select from table tb1 inner join table tb2;  
 C2: delete from table tb1 inner join table tb2;  
-
-[CUBRIDQA-1391] Since CBRD-26747, fixed scan is enabled by default, causing latch to be held.
-during query execution and distorting intended concurrent behavior in this TC.
-Disable enable_heap_fixed_scan temporarily. See CUBRIDQA-1391 for details.
 */
 
 MC: setup NUM_CLIENTS = 2;
 C1: set transaction lock timeout INFINITE;
 C1: set transaction isolation level repeatable read;
-C1: set system parameters 'enable_heap_fixed_scan=false';
 C2: set transaction lock timeout INFINITE;
 C2: set transaction isolation level repeatable read;
-C2: set system parameters 'enable_heap_fixed_scan=false';
 
 /* preparation */
 C1: DROP TABLE IF EXISTS tb1;
@@ -71,7 +65,5 @@ C1: commit;
 MC: wait until C1 ready;
 C1: SELECT * FROM tb1 a INNER JOIN tb2 b ON a.id = b.id WHERE a.id = 2 or b.col = 'yzab' order by 1;
 C1: commit;
-C1: set system parameters 'enable_heap_fixed_scan=true';
-C2: set system parameters 'enable_heap_fixed_scan=true';
 C1: quit;
 C2: quit;
