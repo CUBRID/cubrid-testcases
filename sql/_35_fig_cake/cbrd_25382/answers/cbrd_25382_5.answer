@@ -182,31 +182,34 @@ a_cd    b_cd    c_cd    d_cd
 1001     1001     1001     1001     
 
 Query plan:
-hash-join (inner join)
-    edge:  term[?]
-    outer: hash-join (inner join)
-               edge:  term[?]
-               outer: hash-join (inner join)
-                          edge:  term[?]
-                          outer: iscan
-                                     class: a node[?]
-                                     index: i_c 
-                                     sargs: term[?]
-                                     cost:  ? card ?
-                          inner: sscan
-                                     class: b node[?]
-                                     sargs: term[?]
-                                     cost:  ? card ?
-                          cost:  ? card ?
-               inner: sscan
-                          class: c node[?]
-                          sargs: term[?]
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: d node[?]
-               sargs: term[?]
-               cost:  ? card ?
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: hash-join (inner join)
+                            edge:  term[?]
+                            outer: hash-join (inner join)
+                                       edge:  term[?]
+                                       outer: iscan
+                                                  class: a node[?]
+                                                  index: i_c 
+                                                  sargs: term[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: b node[?]
+                                                  sargs: term[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: c node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: d node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
@@ -215,13 +218,14 @@ select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd, c.cd, d.cd from ta a, tb
 trace    
 
 Query Plan:
-  HASH JOIN (inner join)
+  SORT (order by)
     HASH JOIN (inner join)
       HASH JOIN (inner join)
-        INDEX SCAN (a.i_c) ()
-        TABLE SCAN (b)
-      TABLE SCAN (c)
-    TABLE SCAN (d)
+        HASH JOIN (inner join)
+          INDEX SCAN (a.i_c) ()
+          TABLE SCAN (b)
+        TABLE SCAN (c)
+      TABLE SCAN (d)
 
   rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd, c.cd, d.cd from [dba.ta] a, [dba.tb] b, [dba.tc] c, [dba.td] d where a.cd=b.cd and b.cd=c.cd and c.cd=d.cd and d.cc= ?:?  and c.cc= ?:?  and b.cc= ?:?  and a.cc= ?:?  order by ?
 
@@ -553,17 +557,20 @@ a_cd    b_cd
 1005     1005     
 
 Query plan:
-hash-join (inner join)
-    edge:  term[?]
-    outer: iscan
-               class: a node[?]
-               index: i_c 
-               sargs: term[?]
-               cost:  ? card ?
-    inner: sscan
-               class: b node[?]
-               sargs: term[?]
-               cost:  ? card ?
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: iscan
+                            class: a node[?]
+                            index: i_c 
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
@@ -572,20 +579,22 @@ select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd from ta a, tb b where a.c
 trace    
 {
   "Query Plan": {
-    "HASH JOIN (inner join)": [
-      {
-        "INDEX SCAN": {
-          "table": "a",
-          "index": "i_c",
-          "key range": []
+    "SORT (order by)": {
+      "HASH JOIN (inner join)": [
+        {
+          "INDEX SCAN": {
+            "table": "a",
+            "index": "i_c",
+            "key range": []
+          }
+        },
+        {
+          "TABLE SCAN": {
+            "table": "b"
+          }
         }
-      },
-      {
-        "TABLE SCAN": {
-          "table": "b"
-        }
-      }
-    ],
+      ]
+    },
     "rewritten query": "select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd from [dba.ta] a, [dba.tb] b where a.cd=b.cd and b.cc= ?:?  and a.cc= ?:?  order by ?"
   },
   "Trace Statistics": {
