@@ -865,7 +865,7 @@ select /*+ USE_NL */ count(*) from nl_a nl_a, nl_m nl_m, nl_b nl_b where nl_a.nk
 0
 ===================================================
     
-[18] index skip scan: implied equality on leading index column nk changes the access path     
+[18] implied term used as an index key on a composite (nk, x) index     
 
 ===================================================
 count(*)    
@@ -876,20 +876,20 @@ nl-join (inner join)
     edge:  term[?]
     outer: idx-join (inner join)
                outer: sscan
-                          class: idim node[?]
+                          class: anchor node[?]
                           cost:  ? card ?
                inner: iscan
-                          class: iss node[?]
-                          index: ix_iss term[?] AND term[?] (covers)
+                          class: keytab node[?]
+                          index: ix_keytab term[?] AND term[?] (covers)
                           cost:  ? card ?
                cost:  ? card ?
     inner: sscan
-               class: imid node[?]
+               class: bridge node[?]
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from iss iss, imid imid, idim idim where iss.nk=imid.nk and imid.nk=idim.nk and iss.x= ?:? 
+select count(*) from keytab keytab, bridge bridge, anchor anchor where keytab.nk=bridge.nk and bridge.nk=anchor.nk and keytab.x= ?:? 
 ===================================================
 0
 ===================================================

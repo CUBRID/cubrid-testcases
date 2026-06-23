@@ -377,37 +377,39 @@ drop table if exists nl_m;
 drop table if exists nl_b;
 
 /* ============================================================
- * [18] Composite index ix_iss(nk, x), predicate only on x.
- *      Implied iss.nk=idim.nk(=7) supplies an equality on the leading
- *      column nk, changing the index access path.
- * Verify: count(*)=1, check the resulting scan method.
+ * [18] Implied term used as an index key.
+ *      keytab has a composite index on (nk, x). The query filters only on x,
+ *      and joins keytab -> bridge -> anchor on nk (anchor has nk=7).
+ *      The implied keytab.nk = anchor.nk (=7) fills in the leading index
+ *      column, so the composite index is used with both keys (nk=7, x=10).
+ * Verify: count(*)=1, plan reads keytab through its (nk, x) index.
  * ============================================================ */
-drop table if exists iss;
-drop table if exists imid;
-drop table if exists idim;
+drop table if exists keytab;
+drop table if exists bridge;
+drop table if exists anchor;
 
-create table iss (nk int, x int);
-create index ix_iss on iss (nk, x);
-insert into iss select (rownum-1)/50 + 1, mod(rownum-1,50)+1 from db_class a, db_class b limit 1000;
+create table keytab (nk int, x int);
+create index ix_keytab on keytab (nk, x);
+insert into keytab select (rownum-1)/50 + 1, mod(rownum-1,50)+1 from db_class a, db_class b limit 1000;
 
-create table imid (nk int);
-insert into imid select rownum from db_class a limit 20;
+create table bridge (nk int);
+insert into bridge select rownum from db_class a limit 20;
 
-create table idim (nk int);
-insert into idim values (7);
+create table anchor (nk int);
+insert into anchor values (7);
 
-update statistics on iss, imid, idim with fullscan;
+update statistics on keytab, bridge, anchor with fullscan;
 
-evaluate '[18] index skip scan: implied equality on leading index column nk changes the access path';
+evaluate '[18] implied term used as an index key on a composite (nk, x) index';
 select /*+ recompile */ count (*)
-from iss, imid, idim
-where iss.nk = imid.nk
-  and imid.nk = idim.nk
-  and iss.x = 10;
+from keytab, bridge, anchor
+where keytab.nk = bridge.nk
+  and bridge.nk = anchor.nk
+  and keytab.x = 10;
 
-drop table if exists iss;
-drop table if exists imid;
-drop table if exists idim;
+drop table if exists keytab;
+drop table if exists bridge;
+drop table if exists anchor;
 
 /* ============================================================
  * [19] Chain crosses a derived table dv = (select nk from supp).
