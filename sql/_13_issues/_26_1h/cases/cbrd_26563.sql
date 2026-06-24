@@ -11,21 +11,26 @@
  */
 
 evaluate 'Case 1: ROUND negative decimal';
-select round(-0.5);
-select round(-0.61);
+select
+    round(-0.5) as a,
+    round(-0.61) as b;
 
 evaluate 'Case 2: ROUND positive decimal';
-select round(0.5);
-select round(0.61);
+select
+    round(0.5) as a,
+    round(0.61) as b;
 
 evaluate 'Case 3: ROUND values below the half boundary';
-select round(-0.4);
-select round(0.4);
+select
+    round(-0.4) as a,
+    round(0.4) as b;
 
 evaluate 'Case 4: ROUND negative decimal with zero scale';
-select round(-0.5, 0);
-select round(-0.61, 0);
+select
+    round(-0.5, 0) as a,
+    round(-0.61, 0) as b;
 
 evaluate 'Case 5: ROUND negative NUMERIC values';
-select round(cast(-0.5 as numeric(5,3)));
-select round(cast(-0.61 as numeric(5,3)));
+select
+    round(cast(-0.5 as numeric(5,3))) as a,
+    round(cast(-0.61 as numeric(5,3))) as b;
