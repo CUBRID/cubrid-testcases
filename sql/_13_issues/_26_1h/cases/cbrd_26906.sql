@@ -9,26 +9,30 @@
  *  Scenarios:
  *   [1] Basic reproduction: USE INDEX on non-covering index, low distinct leading column
  *   [2] FORCE INDEX vs USE INDEX comparison on same data
- *   [3] Non-indexed column (colc) filter variations: IS NULL / IN
+ *   [3] Non-indexed column (colc) filter variations: IS NULL / IN / <>
  *   [4] No-hint baseline: optimizer selects its own plan
  *   [5] USE INDEX with multiple index names: optimizer chooses among them
  *   [6] USING INDEX NONE forces sequential scan
  *   [7] GROUP BY uses the hinted index
  *   [8] JOIN: hinted index used on the big table node
  *   [9] Stale statistics: hinted index still used after inserting rows without re-gathering stats
- *   [10] UPDATE with USE INDEX uses the hinted index
- *   [11] DELETE with USE INDEX uses the hinted index
+ *   [10] ORDER BY + LIMIT with USE INDEX: index order used to skip sort
+ *   [11] Subquery with USE INDEX: hint respected inside derived table
+ *   [12] USE INDEX on an unrelated index: hint behavior when index cannot cover WHERE
+ *   [13] UPDATE with USE INDEX uses the hinted index
+ *   [14] DELETE with USE INDEX uses the hinted index
  */
 
 drop table if exists tbl;
 
 create table tbl (cola varchar(20), colb varchar(20), colc varchar(20), cold varchar(20));
-insert into tbl select mod(rownum,3), mod(rownum,2), mod(rownum,2), rownum from db_class a, db_class b, db_class c, db_class d, db_class e limit 300000;
+-- colc = mod(rownum,5) is independent of colb so colc filtering after heap fetch is meaningful
+insert into tbl select mod(rownum,3), mod(rownum,2), mod(rownum,5), rownum from db_class a, db_class b, db_class c, db_class d, db_class e limit 300000;
 -- non-covering (colc excluded)
 create index idx_non_covering on tbl(cola,colb,cold);
 -- covering
 create index idx_covering on tbl(cola,colb,colc,cold);
-update statistics on tbl;
+update statistics on tbl with fullscan;
 
 -- ============================================================
 -- [Scenario 1] Basic reproduction
@@ -68,6 +72,11 @@ evaluate '[Scenario 3b] colc IN condition on non-indexed column';
 
 select /*+ recompile */ count(*) from tbl use index (idx_non_covering)
 where cola between '0' and '9' and colb='1' and colc in ('0','1');
+
+evaluate '[Scenario 3c] colc <> condition (negation) on non-indexed column';
+
+select /*+ recompile */ count(*) from tbl use index (idx_non_covering)
+where cola between '0' and '9' and colb='1' and colc <> '0';
 
 -- ============================================================
 -- [Scenario 4] No-hint baseline
@@ -118,7 +127,7 @@ evaluate '[Scenario 8] JOIN: USE INDEX hint on tbl results in index scan on tbl'
 
 create table dim (k varchar(20), v int);
 insert into dim values ('0', 0), ('1', 1), ('2', 2);
-update statistics on dim;
+update statistics on dim with fullscan;
 
 select /*+ recompile */ count(*)
 from tbl use index (idx_non_covering) inner join dim on tbl.cola = dim.k
@@ -134,26 +143,63 @@ drop table if exists dim;
 -- ============================================================
 evaluate '[Scenario 9] stale statistics: add rows without re-gathering stats, hinted index still used (index scan)';
 
-insert into tbl select mod(rownum,3), mod(rownum,2), mod(rownum,2), rownum + 300000
+insert into tbl select mod(rownum,3), mod(rownum,2), mod(rownum,5), rownum + 300000
   from db_class a, db_class b, db_class c, db_class d, db_class e limit 100000;
 select /*+ recompile */ count(*) from tbl use index (idx_non_covering)
 where cola between '0' and '9' and colb='1' and colc='1';
-update statistics on tbl;
+update statistics on tbl with fullscan;
 
 -- ============================================================
--- [Scenario 10] UPDATE with USE INDEX
+-- [Scenario 10] ORDER BY + LIMIT with USE INDEX
+--   When index order matches ORDER BY order, rows can be read in index
+--   order without a sort, applying LIMIT directly.
+-- ============================================================
+evaluate '[Scenario 10] ORDER BY + LIMIT with USE INDEX: index order used to skip sort';
+
+select /*+ recompile */ cold from tbl use index (idx_non_covering)
+where cola between '0' and '9' and colb='1'
+order by cola, colb, cold limit 5;
+
+-- ============================================================
+-- [Scenario 11] Subquery with USE INDEX
+--   Verify the hint is respected when given inside an inner derived table,
+--   not the outer query.
+-- ============================================================
+evaluate '[Scenario 11] Subquery with USE INDEX: hint respected inside derived table';
+
+select /*+ recompile */ count(*)
+from (select cold from tbl use index (idx_non_covering)
+      where cola between '0' and '9' and colb='1' and colc='1') sub;
+
+-- ============================================================
+-- [Scenario 12] USE INDEX on an unrelated index
+--   idx_cold leads with cold, which is absent from the WHERE clause, 
+--   so the index cannot satisfy the predicates efficiently. 
+-- ============================================================
+create index idx_cold on tbl(cold);
+update statistics on tbl with fullscan;
+
+evaluate '[Scenario 12] USE INDEX on unrelated index: hint behavior when index cannot cover WHERE';
+
+select /*+ recompile */ count(*) from tbl use index (idx_cold)
+where cola between '0' and '9' and colb='1' and colc='1';
+
+drop index idx_cold on tbl;
+
+-- ============================================================
+-- [Scenario 13] UPDATE with USE INDEX
 --   Verifies hint is honored in an UPDATE statement.
 -- ============================================================
-evaluate '[Scenario 10] UPDATE with USE INDEX uses the hinted index (index scan)';
+evaluate '[Scenario 13] UPDATE with USE INDEX uses the hinted index (index scan)';
 --@queryplan
 update /*+ recompile */ tbl use index (idx_non_covering) set cold = cold
 where cola between '0' and '9' and colb='1' and colc='1';
 
 -- ============================================================
--- [Scenario 11] DELETE with USE INDEX
+-- [Scenario 14] DELETE with USE INDEX
 --   Verifies hint is honored in a DELETE statement.
 -- ============================================================
-evaluate '[Scenario 11] DELETE with USE INDEX uses the hinted index (index scan)';
+evaluate '[Scenario 14] DELETE with USE INDEX uses the hinted index (index scan)';
 --@queryplan
 delete /*+ recompile */ from tbl use index (idx_non_covering)
 where cola between '0' and '9' and colb='1' and colc='1';
