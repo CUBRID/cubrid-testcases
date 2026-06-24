@@ -14,7 +14,7 @@ execute print 'rollback by test_user';
 select name, id, password, direct_groups, groups, authorization, triggers, is_loginable, is_system_created, comment from db_user
 where name = 'TEST_USER';
 drop trigger test_trigger;
-
+commit;
 
 call login('dba') on class db_user;
 drop class test_user.test_class;
