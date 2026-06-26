@@ -28,13 +28,13 @@ count(*)
 10000     
 
 Query plan:
-idx-join (inner join)
+hash-join (inner join)
+    edge:  term[?] AND term[?]
     outer: sscan
                class: a node[?]
                cost:  ? card ?
-    inner: iscan
+    inner: sscan
                class: b node[?]
-               index: idx_a_e term[?] AND term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -55,13 +55,13 @@ count(*)
 10000     
 
 Query plan:
-idx-join (inner join)
+hash-join (inner join)
+    edge:  term[?]
     outer: sscan
                class: a node[?]
                cost:  ? card ?
-    inner: iscan
+    inner: sscan
                class: b node[?]
-               index: pk_tbl_col_a term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -83,16 +83,14 @@ count(*)
 10000     
 
 Query plan:
-idx-join (inner join)
+hash-join (inner join)
+    edge:  term[?] AND term[?] AND term[?]
     outer: sscan
                class: a node[?]
                cost:  ? card ?
-    inner: iscan
+    inner: sscan
                class: b node[?]
-               index: idx_a_e term[?] AND term[?]
-               sargs: term[?]
                cost:  ? card ?
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
 select /*+ ORDERED */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_e=b.col_e and a.col_b=b.col_b
@@ -118,13 +116,13 @@ count(*)
 10000     
 
 Query plan:
-idx-join (inner join)
+hash-join (inner join)
+    edge:  term[?] AND term[?]
     outer: sscan
                class: a node[?]
                cost:  ? card ?
-    inner: iscan
+    inner: sscan
                class: b node[?]
-               index: idx_a_e term[?] AND term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -145,13 +143,13 @@ count(*)
 10000     
 
 Query plan:
-idx-join (inner join)
+hash-join (inner join)
+    edge:  term[?]
     outer: sscan
                class: a node[?]
                cost:  ? card ?
-    inner: iscan
+    inner: sscan
                class: b node[?]
-               index: idx_a term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -173,16 +171,14 @@ count(*)
 10000     
 
 Query plan:
-idx-join (inner join)
+hash-join (inner join)
+    edge:  term[?] AND term[?] AND term[?]
     outer: sscan
                class: a node[?]
                cost:  ? card ?
-    inner: iscan
+    inner: sscan
                class: b node[?]
-               index: idx_a_e term[?] AND term[?]
-               sargs: term[?]
                cost:  ? card ?
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
 select /*+ ORDERED */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_e=b.col_e and a.col_b=b.col_b
