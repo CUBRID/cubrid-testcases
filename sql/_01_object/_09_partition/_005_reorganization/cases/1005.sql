@@ -1035,6 +1035,6 @@ PARTITION P1023 VALUES IN (10240));
 ALTER TABLE list_test add partition (
 partition P1024 values IN (20000));
 
-select * from db_partition order by 3,4;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition order by 3,4;
 
 drop table list_test;

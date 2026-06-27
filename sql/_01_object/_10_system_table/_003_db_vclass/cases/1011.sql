@@ -17,7 +17,7 @@ create vclass vStudent(
 as select * from Student;
 
 select * from vStudent order by 1,2;
-select * from db_vclass
+select vclass_name, owner_name, vclass_def, comment from db_vclass
 where vclass_name = 'vstudent';
 
 drop vclass vStudent;

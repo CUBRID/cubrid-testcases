@@ -45,7 +45,7 @@ select i1,ifnull(i2,'test') from t group by i1 order by 1,2;
 --test: aggreage function in subquery of update statement
 update t set i1=(select i2 from t where i2>'a' and i1>'b' order by 1 limit 1) where i1='c';
 
-select * from t where disk_size(i1) > 20;
+select * from t where disk_size(i1) > 10;
 
 drop t;
 

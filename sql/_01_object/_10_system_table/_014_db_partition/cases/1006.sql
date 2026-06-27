@@ -14,7 +14,7 @@ PARTITION BY LIST (test_char) (
 );
 
 select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where class_name like 'list%'  order by 1,2,3;
-select * from db_partition
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition
 where class_name='list_test'  order by 1,2,3;
 
 drop table list_test;

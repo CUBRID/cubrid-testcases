@@ -3,7 +3,7 @@ select if (abs(UTC_TIME() - SYS_TIME) <= 86400, 'ok','nok');
 
 CREATE VIEW v1(utctime) as select utc_time() from db_root;
 
-SELECT * from db_vclass where vclass_name='v1';
+SELECT vclass_name, owner_name, vclass_def, comment from db_vclass where vclass_name='v1';
 
 SELECT if(abs(utctime-SYS_TIME) <= 86400, 'ok','nok') FROM v1;
 
