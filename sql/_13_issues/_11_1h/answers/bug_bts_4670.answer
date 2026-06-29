@@ -166,25 +166,25 @@ select di.i, dk.i, dk.x from di di, dk dk where (di.i> ?:? ) and di.i=dk.i and (
 ===================================================
 i    i    i    x    
 5     5     5     1     
-5     5     5     2     
-5     5     5     3     
+5     5     5     1     
+5     5     5     1     
 
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: idx-join (inner join)
+idx-join (inner join)
+    outer: nl-join (inner join)
+               edge:  term[?]
                outer: iscan
                           class: di node[?]
                           index: i_di_i term[?] (covers) (desc_index)
                           cost:  ? card ?
-               inner: iscan
-                          class: dj node[?]
-                          index: i_dj_i term[?] (covers)
+               inner: sscan
+                          class: dk node[?]
+                          sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
-    inner: sscan
-               class: dk node[?]
-               sargs: term[?]
+    inner: iscan
+               class: dj node[?]
+               index: i_dj_i term[?] (covers)
                cost:  ? card ?
     sort:  ? desc
     cost:  ? card ?
@@ -206,21 +206,21 @@ i    i    i
 5     5     5     
 
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: idx-join (inner join)
+idx-join (inner join)
+    outer: nl-join (inner join)
+               edge:  term[?]
                outer: iscan
                           class: di node[?]
                           index: i_di_i term[?] (covers) (desc_index)
                           cost:  ? card ?
-               inner: iscan
-                          class: dj node[?]
-                          index: i_dj_i term[?] (covers)
+               inner: sscan
+                          class: dk node[?]
+                          sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
-    inner: sscan
-               class: dk node[?]
-               sargs: term[?]
+    inner: iscan
+               class: dj node[?]
+               index: i_dj_i term[?] (covers)
                cost:  ? card ?
     sort:  ? desc
     cost:  ? card ?
