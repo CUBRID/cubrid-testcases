@@ -75,7 +75,7 @@ update statistics on tbla, tblb with fullscan;
 set trace on;
 
 evaluate 'test case 1';
-select /*+ recompile no_parallel_heap_scan */ ta.*
+select /*+ recompile no_parallel_scan */ ta.*
 from tbla ta
 where 1 = abs (ta.b)
 using index ta.idx_tbla_abs_b_a
@@ -83,7 +83,7 @@ limit 1;
 show trace;
 
 evaluate 'test case 2';
-select /*+ recompile no_parallel_heap_scan */ ta.*
+select /*+ recompile no_parallel_scan */ ta.*
 from tbla ta
 where 1 = -abs (ta.b)
 using index ta.idx_tbla_abs_b_a
@@ -91,7 +91,7 @@ limit 1;
 show trace;
 
 evaluate 'test case 3';
-select /*+ recompile no_parallel_heap_scan */ ta.*
+select /*+ recompile no_parallel_scan */ ta.*
 from tbla ta
 where 1 = -(-abs (ta.b))
 using index ta.idx_tbla_abs_b_a
@@ -99,7 +99,7 @@ limit 1;
 show trace;
 
 evaluate 'test case 4';
-select /*+ recompile no_parallel_heap_scan */ ta.*
+select /*+ recompile no_parallel_scan */ ta.*
 from tbla ta
 where -1 = -abs (ta.b)
 using index ta.idx_tbla_abs_b_a
@@ -107,7 +107,7 @@ limit 1;
 show trace;
 
 evaluate 'test case 5';
-select /*+ recompile no_parallel_heap_scan */ ta.*
+select /*+ recompile no_parallel_scan */ ta.*
 from tbla ta
 where -1 = -(-abs (ta.b))
 using index ta.idx_tbla_abs_b_a
@@ -115,7 +115,7 @@ limit 1;
 show trace;
 
 evaluate 'test case 6';
-select /*+ recompile no_parallel_heap_scan */ ta.*
+select /*+ recompile no_parallel_scan */ ta.*
 from tbla ta
 where 1 > abs (ta.b)
 using index ta.idx_tbla_abs_b_a
@@ -123,7 +123,7 @@ limit 1;
 show trace;
 
 evaluate 'test case 7';
-select /*+ recompile no_parallel_heap_scan */ ta.*
+select /*+ recompile no_parallel_scan */ ta.*
 from tbla ta
 where 1 > -abs (ta.b)
 using index ta.idx_tbla_abs_b_a
@@ -131,7 +131,7 @@ limit 1;
 show trace;
 
 evaluate 'test case 8';
-select /*+ recompile no_parallel_heap_scan ordered */ ta.*
+select /*+ recompile no_parallel_scan ordered */ ta.*
 from tbla ta, tbla tb
 where ta.b = abs (tb.b) and ta.c = abs (tb.b)
 and ta.a = tb.a
@@ -140,7 +140,7 @@ limit 1;
 show trace;
 
 evaluate 'test case 9';
-select /*+ recompile no_parallel_heap_scan ordered */ ta.*
+select /*+ recompile no_parallel_scan ordered */ ta.*
 from tbla ta, tbla tb
 where ta.b <= abs (tb.b) and ta.c > abs (tb.b)
 and ta.a = tb.a
@@ -149,7 +149,7 @@ limit 1;
 show trace;
 
 evaluate 'test case 10';
-select /*+ recompile no_parallel_heap_scan ordered */ ta.*
+select /*+ recompile no_parallel_scan ordered */ ta.*
 from tbla ta, tbla tb
 where abs (tb.b) >= ta.b and ta.c > abs (tb.b)
 and ta.a = tb.a
@@ -158,7 +158,7 @@ limit 1;
 show trace;
 
 evaluate 'test case 11';
-select /*+ recompile no_parallel_heap_scan ordered */ ta.*
+select /*+ recompile no_parallel_scan ordered */ ta.*
 from tbla ta, tbla tb
 where abs (tb.b) >= ta.b and abs (tb.b) < ta.c
 and ta.a = tb.a
@@ -167,7 +167,7 @@ limit 1;
 show trace;
 
 evaluate 'test case 12';
-select /*+ recompile no_parallel_heap_scan ordered */ ta.*
+select /*+ recompile no_parallel_scan ordered */ ta.*
 from tbla ta, tbla tb
 where ta.b <= tb.b and ta.c > tb.b
 and ta.a = tb.a
@@ -176,7 +176,7 @@ limit 1;
 show trace;
 
 evaluate 'test case 13';
-select /*+ recompile no_parallel_heap_scan ordered */ ta.*
+select /*+ recompile no_parallel_scan ordered */ ta.*
 from tbla ta, tbla tb
 where tb.b >= ta.b and tb.b < ta.c
 and ta.a = tb.a
@@ -185,7 +185,7 @@ limit 1;
 show trace;
 
 evaluate 'test case 14 (Changed after CBRD-25116)';
-select /*+ recompile no_parallel_heap_scan ordered */ ta.*
+select /*+ recompile no_parallel_scan ordered */ ta.*
 from tbla ta, tbla tb
 where (ta.b = abs (tb.b) or ta.c = abs (tb.b))
 and ta.a = tb.a
@@ -194,7 +194,7 @@ limit 1;
 show trace;
 
 evaluate 'test case 15 (Changed after CBRD-25116)';
-select /*+ recompile no_parallel_heap_scan ordered */ ta.*
+select /*+ recompile no_parallel_scan ordered */ ta.*
 from tbla ta, tbla tb
 where (ta.b <= abs (tb.b) or ta.c > abs (tb.b))
 and ta.a = tb.a
@@ -203,7 +203,7 @@ limit 1;
 show trace;
 
 evaluate 'test case 16';
-select /*+ recompile no_parallel_heap_scan ordered */ ta.*
+select /*+ recompile no_parallel_scan ordered */ ta.*
 from tbla ta, tbla tb
 where (ta.b <= -abs (tb.b) or ta.c > -abs (tb.b))
 and ta.a = tb.a
@@ -212,17 +212,17 @@ limit 1;
 show trace;
 
 evaluate 'test case 17';
-select /*+ recompile no_parallel_heap_scan ordered */ ta.*
+select /*+ recompile no_parallel_scan ordered */ ta.*
 from tbla ta, tbla tb
 where (ta.b <= -abs (tb.b) or ta.c > abs (tb.b))
 and ta.a = tb.a
-using index tb.idx_tbla_a_abs_b
+using index ta.idx_tbla_a_b, tb.idx_tbla_a_abs_b
 order by ta.a
 limit 1;
 show trace;
 
 evaluate 'test case 18 (Changed after CBRD-25116)';
-select /*+ recompile no_parallel_heap_scan ordered */ ta.*
+select /*+ recompile no_parallel_scan ordered */ ta.*
 from tbla ta, tbla tb
 where (-ta.b <= -abs (tb.b) or ta.c > abs (tb.b))
 and ta.a = tb.a
@@ -231,7 +231,7 @@ limit 1;
 show trace;
 
 evaluate 'test case 19';
-select /*+ recompile no_parallel_heap_scan ordered */ ta.*
+select /*+ recompile no_parallel_scan ordered */ ta.*
 from tbla ta, tbla tb
 where (ta.b <= -tb.b or ta.c > -tb.b)
 and ta.a = tb.a
@@ -240,17 +240,17 @@ limit 1;
 show trace;
 
 evaluate 'test case 20 (Changed after CBRD-25116)';
-select /*+ recompile no_parallel_heap_scan ordered */ ta.*
+select /*+ recompile no_parallel_scan ordered */ ta.*
 from tbla ta, tbla tb
 where (ta.b <= -tb.b or ta.c > tb.b)
 and ta.a = tb.a
-using index tb.idx_tbla_a_b
+using index ta.idx_tbla_a_b, tb.idx_tbla_a_b
 order by ta.a
 limit 1;
 show trace;
 
 evaluate 'test case 21 (Changed after CBRD-25116)';
-select /*+ recompile no_parallel_heap_scan ordered */ ta.*
+select /*+ recompile no_parallel_scan ordered */ ta.*
 from tbla ta, tbla tb
 where (ta.b = abs (tb.b) or abs (tb.b) = ta.c or ta.d = abs (tb.b))
 and ta.a = tb.a
@@ -259,7 +259,7 @@ limit 1;
 show trace;
 
 evaluate 'test case 22';
-select /*+ recompile no_parallel_heap_scan ordered */ ta.*
+select /*+ recompile no_parallel_scan ordered */ ta.*
 from tbla ta, tbla tb
 where 1 <= abs (ta.b) and 10 > abs (ta.b) and abs (tb.b) >= 9 and abs (tb.b) < 19
 and ta.a = tb.a
@@ -267,42 +267,42 @@ using index ta.idx_tbla_abs_b_a, tb.idx_tbla_a_abs_b;
 show trace;
 
 evaluate 'test case 23';
-select /*+ recompile no_parallel_heap_scan */ ta.*
+select /*+ recompile no_parallel_scan */ ta.*
 from tbla ta
 where abs (ta.b) between 1 and 1000 and 999 <= abs (ta.b)
 using index ta.idx_tbla_abs_b_a;
 show trace;
 
 evaluate 'test case 24 (Changed after CBRD-25116)';
-select /*+ recompile no_parallel_heap_scan */ ta.*
+select /*+ recompile no_parallel_scan */ ta.*
 from tbla ta
 where -abs (ta.b) between -1000 and -1 and 999 <= abs (ta.b)
 using index ta.idx_tbla_abs_b_a;
 show trace;
 
 evaluate 'test case 25';
-select /*+ recompile no_parallel_heap_scan */ ta.*
+select /*+ recompile no_parallel_scan */ ta.*
 from tbla ta
 where -ta.b between -1000 and -1 and 999 <= ta.b
 using index ta.idx_tbla_b_a;
 show trace;
 
 evaluate 'test case 26';
-select /*+ recompile no_parallel_heap_scan */ ta.*
+select /*+ recompile no_parallel_scan */ ta.*
 from tbla ta
 where length (ta.b) > 5 and length (ta.b) <= 6
 using index ta.idx_tbla_length_b(+);
 show trace;
 
 evaluate 'test case 27';
-select /*+ recompile no_parallel_heap_scan */ ta.*
+select /*+ recompile no_parallel_scan */ ta.*
 from tbla ta
 where length (cast (ta.b as varchar)) > 5 and length (cast (ta.b as varchar)) <= 6
 using index ta.idx_tbla_length_b(+);
 show trace;
 
 evaluate 'test case 28';
-select /*+ recompile no_parallel_heap_scan */ count(ca)
+select /*+ recompile no_parallel_scan */ count(ca)
 from tblb
 where 1=1
 and ca = 'Y'
@@ -311,7 +311,7 @@ and to_char (cb, 'YYYY-MM-DD HH24:MI:SS') <= '2023-04-27 23:59:59';
 show trace;
 
 evaluate 'test case 29';
-select /*+ recompile no_parallel_heap_scan */ count(ca)
+select /*+ recompile no_parallel_scan */ count(ca)
 from tblb
 where 1=1
 and to_char (cb, 'YYYY-MM-DD HH24:MI:SS') >= '2023-04-26 00:00:00'
@@ -336,7 +336,7 @@ update statistics on item with fullscan;
 
 set trace on;
 
-select /*+ recompile no_parallel_heap_scan */ j.i_id 
+select /*+ recompile no_parallel_scan */ j.i_id 
 from item i, item j 
 where (i.i_related_a = j.i_id 
 or i.i_related_b = j.i_id 

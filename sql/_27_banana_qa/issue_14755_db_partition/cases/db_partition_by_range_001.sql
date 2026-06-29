@@ -16,7 +16,7 @@ PARTITION BY RANGE (host_year) (
 
 SELECT dt.class_of.partition, dt.class_of.class_name, dt.*  FROM _db_partition dt 
 WHERE class_of.class_name LIKE 'participant2%' ORDER BY 2 ASC;
-select * from db_partition where class_name = 'participant2' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'participant2' order by partition_name;
 
 ALTER TABLE participant2
 REORGANIZE PARTITION before_2000 INTO (
@@ -26,7 +26,7 @@ REORGANIZE PARTITION before_2000 INTO (
 
 SELECT dt.class_of.partition, dt.class_of.class_name, dt.* FROM _db_partition dt  
 WHERE class_of.class_name LIKE 'participant2%' ORDER BY 2 ASC;
-select * from db_partition where class_name = 'participant2' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'participant2' order by partition_name;
 
 ALTER TABLE participant2
 REORGANIZE PARTITION before_1996, before_2000 INTO (
@@ -35,7 +35,7 @@ REORGANIZE PARTITION before_1996, before_2000 INTO (
 
 SELECT dt.class_of.partition, dt.class_of.class_name, dt.* FROM _db_partition dt
 WHERE class_of.class_name LIKE 'participant2%' ORDER BY 2 ASC;
-select * from db_partition where class_name = 'participant2' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'participant2' order by partition_name;
 
 ALTER TABLE participant2 ADD PARTITION (
   PARTITION before_2012 VALUES LESS THAN (2012),
@@ -44,37 +44,37 @@ ALTER TABLE participant2 ADD PARTITION (
 
 SELECT dt.class_of.partition, dt.class_of.class_name, dt.* FROM _db_partition dt
 WHERE class_of.class_name LIKE 'participant2%' ORDER BY 2 ASC;
-select * from db_partition where class_name = 'participant2' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'participant2' order by partition_name;
 
 ALTER TABLE participant2 DROP PARTITION before_2000;
 
 SELECT dt.class_of.partition, dt.class_of.class_name, dt.* FROM _db_partition dt
 WHERE class_of.class_name LIKE 'participant2%' ORDER BY 2 ASC;
-select * from db_partition where class_name = 'participant2' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'participant2' order by partition_name;
 
 ALTER TABLE participant2 PROMOTE PARTITION before_2008, before_2012;
 
 SELECT dt.class_of.partition, dt.class_of.class_name, dt.* FROM _db_partition dt
 WHERE class_of.class_name LIKE 'participant2%' ORDER BY 2 ASC;
-select * from db_partition where class_name = 'participant2' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'participant2' order by partition_name;
 
 DROP participant2__p__before_2008;
 
 SELECT dt.class_of.partition, dt.class_of.class_name, dt.* FROM _db_partition dt
 WHERE class_of.class_name LIKE 'participant2%' ORDER BY 2 ASC;
-select * from db_partition where class_name = 'participant2' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'participant2' order by partition_name;
 
 DROP participant2__p__before_2012;
 
 SELECT dt.class_of.partition, dt.class_of.class_name, dt.* FROM _db_partition dt
 WHERE class_of.class_name LIKE 'participant2%' ORDER BY 2 ASC;
-select * from db_partition where class_name = 'participant2' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'participant2' order by partition_name;
 
 ALTER TABLE participant2 REMOVE PARTITIONING;
 
 SELECT dt.class_of.partition, dt.class_of.class_name, dt.* FROM _db_partition dt
 WHERE class_of.class_name LIKE 'participant2%' ORDER BY 2 ASC;
-select * from db_partition where class_name = 'participant2' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'participant2' order by partition_name;
 
 DROP participant2 ;
 

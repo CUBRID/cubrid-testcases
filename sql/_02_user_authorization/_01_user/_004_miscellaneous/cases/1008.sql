@@ -7,5 +7,5 @@ call change_owner('t1', 'test_user') on class db_root;
 
 
 drop class t1;
-call drop_user('test_user') on class db_user;
+call drop_user('test_user') on class _db_user;
 --+ holdcas off;

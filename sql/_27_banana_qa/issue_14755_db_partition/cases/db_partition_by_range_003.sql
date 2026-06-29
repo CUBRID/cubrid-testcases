@@ -23,7 +23,7 @@ INSERT INTO participant2 VALUES
 (1984, 'China', 11, 14, 15);
 
 SELECT dt.class_of.partition, dt.class_of.class_name, dt.* FROM _db_partition dt WHERE class_of.class_name LIKE 'participant2%' ORDER BY 2 ASC;
-select * from db_partition where class_name = 'participant2' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'participant2' order by partition_name;
 
 select count(*) from participant2;
 select count(*) from participant2__p__before_1992;
@@ -37,7 +37,7 @@ REORGANIZE PARTITION before_1992 INTO (
 );
 
 SELECT dt.class_of.partition, dt.class_of.class_name, dt.* FROM _db_partition dt WHERE class_of.class_name LIKE 'participant2%' ORDER BY 2 ASC;
-select * from db_partition where class_name = 'participant2' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'participant2' order by partition_name;
 INSERT INTO participant2 VALUES
 (1992, 'Cuba', 9, 9, 12),
 (1992, 'Germany', 7, 4, 7),
@@ -56,14 +56,14 @@ REORGANIZE PARTITION before_1992, before_2000 INTO (
   PARTITION before_2000 VALUES LESS THAN (2000)
 );
 SELECT dt.class_of.partition, dt.class_of.class_name, dt.* FROM _db_partition dt WHERE class_of.class_name LIKE 'participant2%' ORDER BY 2 ASC;
-select * from db_partition where class_name = 'participant2' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'participant2' order by partition_name;
 select count(*) from participant2; 
 
 -- drop partition
 ALTER TABLE participant2 DROP PARTITION before_2000;
 select * from participant2 where host_year < 2000 order by 1,2;
 SELECT dt.class_of.partition, dt.class_of.class_name, dt.* FROM _db_partition dt WHERE class_of.class_name LIKE 'participant2%' ORDER BY 2 ASC;
-select * from db_partition where class_name = 'participant2' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'participant2' order by partition_name;
 --return error
 INSERT INTO participant2 VALUES
 (1996, 'Australia', 17, 19, 23),
@@ -76,7 +76,7 @@ ALTER TABLE participant2 ADD PARTITION (
   PARTITION last_one VALUES LESS THAN MAXVALUE
 );
 SELECT dt.class_of.partition, dt.class_of.class_name, dt.* FROM _db_partition dt WHERE class_of.class_name LIKE 'participant2%' ORDER BY 2 ASC;
-select * from db_partition where class_name = 'participant2' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'participant2' order by partition_name;
 
 INSERT INTO participant2 VALUES
 (2000, 'Cuba', 10, 11, 11),
@@ -101,12 +101,12 @@ select count(*) from participant2__p__last_one;
 
 rename table participant2 as participant;
 SELECT dt.class_of.partition, dt.class_of.class_name, dt.* FROM _db_partition dt WHERE class_of.class_name LIKE 'participant%' ORDER BY 2 ASC;
-select * from db_partition where class_name = 'participant' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'participant' order by partition_name;
 
 -- promote
 ALTER TABLE participant PROMOTE PARTITION before_1988, last_one;
 SELECT dt.class_of.partition, dt.class_of.class_name, dt.* FROM _db_partition dt WHERE class_of.class_name LIKE 'participant%' ORDER BY 2 ASC;
-select * from db_partition where class_name = 'participant' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'participant' order by partition_name;
 select count(*) from participant;
 select count(*) from participant__p__before_1988;
 select count(*) from participant__p__last_one;
@@ -121,7 +121,7 @@ DROP participant__p__last_one;
 -- remove partition
 ALTER TABLE participant REMOVE PARTITIONING;
 SELECT dt.class_of.partition, dt.class_of.class_name, dt.* FROM _db_partition dt WHERE class_of.class_name LIKE 'participant%' ORDER BY 2 ASC;
-select * from db_partition where class_name = 'participant' order by partition_name;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name = 'participant' order by partition_name;
 select count(*) from participant;
 
 -- alter to partition table 
