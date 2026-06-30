@@ -38,15 +38,14 @@ col_a    col_b
 trace    
 
 Query Plan:
-  SORT (order by)
-    TABLE SCAN (c)
+  INDEX SCAN (c.pk_t_child_col_a) ()
+  skip order by: true
 
   rewritten query: select c.col_a, c.col_b from [dba.t_child] c where c.col_b= ?:?  and c.parent_col_b is not null  order by ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.t_child), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SCAN (index: dba.t_child.pk_t_child_col_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
 ===================================================
@@ -58,15 +57,14 @@ col_a    col_b
 trace    
 
 Query Plan:
-  SORT (order by)
-    TABLE SCAN (c)
+  INDEX SCAN (c.pk_t_child_col_a) ()
+  skip order by: true
 
   rewritten query: select c.col_a, c.col_b from [dba.t_child] c where c.col_b= ?:?  and c.parent_col_b is not null  order by ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.t_child), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SCAN (index: dba.t_child.pk_t_child_col_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
 ===================================================
