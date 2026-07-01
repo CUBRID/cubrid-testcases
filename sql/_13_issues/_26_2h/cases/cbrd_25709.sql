@@ -122,7 +122,7 @@ DROP TABLE t3;
  
 evaluate 'Case 8. ROLLBACK before commit means DEFERRED action never fires';
 -- autocommit must be OFF here: otherwise the INSERT below would commit itself immediately
-;autocommit off
+autocommit off;
  
 CREATE TRIGGER tr1
 DEFERRED INSERT ON t1
@@ -135,7 +135,7 @@ SELECT COUNT(*) FROM t1;
 -- DEFERRED actions only execute at commit time, so rolling back the
 -- original insert must prevent the recursive trigger from ever firing.
  
-;autocommit on
+autocommit on;
  
 evaluate 'Case 9. DEFERRED UPDATE trigger recurses into itself';
 -- Same as Case 1, but using UPDATE event instead of INSERT.
