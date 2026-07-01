@@ -16,7 +16,7 @@ t_child     ix_val_pid_id_de14     id     2     0     null     [dba.t_child].val
 
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  INDEX [ix_val_pid_id_de14] ([val], [pid] DESC, [id]) WHERE [dba.t_child].val=_utf8'N' collate utf8_bin) REUSE_OID, COLLATE utf8_bin     
+dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  INDEX [ix_val_pid_id_de14] ([val], [pid] DESC, [id]) WHERE [dba.t_child].val=_utf8'N' collate utf8_bin) REUSE_OID, COLLATE utf8_bin, REPLICATION=ON     
 
 ===================================================
 0
@@ -57,7 +57,7 @@ t_child     ix_val_pid_de08p     _dedup_08     2     0     2     INVISIBLE
 
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  INDEX [ix_val_pid_de00p] ([val] DESC, [pid] DESC),  INDEX [ix_val_pid_de04p] ([val] DESC, [pid] DESC) WITH DEDUPLICATE=4,  INDEX [ix_val_pid_de08p] ([val], [pid]) WITH DEDUPLICATE=8 INVISIBLE COMMENT 'invisibled') REUSE_OID, COLLATE utf8_bin     
+dba.t_child     CREATE TABLE [t_child] ([id] INTEGER NOT NULL, [pid] INTEGER NOT NULL, [val] CHARACTER VARYING(1) DEFAULT 'N',  CONSTRAINT [pk_t_child_id] PRIMARY KEY  ([id]),  INDEX [ix_val_pid_de00p] ([val] DESC, [pid] DESC),  INDEX [ix_val_pid_de04p] ([val] DESC, [pid] DESC) WITH DEDUPLICATE=4,  INDEX [ix_val_pid_de08p] ([val], [pid]) WITH DEDUPLICATE=8 INVISIBLE COMMENT 'invisibled') REUSE_OID, COLLATE utf8_bin, REPLICATION=ON     
 
 ===================================================
 0
