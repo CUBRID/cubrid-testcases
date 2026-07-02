@@ -1,0 +1,323 @@
+===================================================
+0
+===================================================
+0
+===================================================
+300000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+[Scenario 1] Basic reproduction: USE INDEX on non-covering index, low distinct leading column     
+
+===================================================
+count(*)    
+30000     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_non_covering term[?]
+    filtr: term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl tbl where (tbl.cola>= ?:?  and tbl.cola<= ?:? ) and tbl.colc= ?:?  and tbl.colb= ?:?  using index tbl.idx_non_covering
+===================================================
+    
+[Scenario 2a] FORCE INDEX on non-covering index     
+
+===================================================
+count(*)    
+30000     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_non_covering term[?]
+    filtr: term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl tbl where (tbl.cola>= ?:?  and tbl.cola<= ?:? ) and tbl.colc= ?:?  and tbl.colb= ?:?  using index tbl.idx_non_covering(+)
+===================================================
+    
+[Scenario 2b] USE INDEX on covering index     
+
+===================================================
+count(*)    
+30000     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_covering term[?] (covers)
+    filtr: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl tbl where (tbl.cola>= ?:?  and tbl.cola<= ?:? ) and tbl.colc= ?:?  and tbl.colb= ?:?  using index tbl.idx_covering
+===================================================
+    
+[Scenario 3a] colc IS NULL filter on non-indexed column     
+
+===================================================
+count(*)    
+0     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_non_covering term[?]
+    filtr: term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl tbl where (tbl.cola>= ?:?  and tbl.cola<= ?:? ) and tbl.colc is null  and tbl.colb= ?:?  using index tbl.idx_non_covering
+===================================================
+    
+[Scenario 3b] colc IN condition on non-indexed column     
+
+===================================================
+count(*)    
+60000     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_non_covering term[?]
+    filtr: term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl tbl where (tbl.cola>= ?:?  and tbl.cola<= ?:? ) and ((tbl.colc= ?:? ) or (tbl.colc= ?:? )) and tbl.colb= ?:?  using index tbl.idx_non_covering
+===================================================
+    
+[Scenario 3c] colc <> condition (negation) on non-indexed column     
+
+===================================================
+count(*)    
+120000     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_non_covering term[?]
+    filtr: term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl tbl where (tbl.cola>= ?:?  and tbl.cola<= ?:? ) and tbl.colc<>'?' and tbl.colb= ?:?  using index tbl.idx_non_covering
+===================================================
+    
+[Scenario 4] no-hint baseline: optimizer selects its own plan without index hint     
+
+===================================================
+count(*)    
+30000     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_covering term[?] (covers)
+    filtr: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl tbl where (tbl.cola>= ?:?  and tbl.cola<= ?:? ) and tbl.colc= ?:?  and tbl.colb= ?:? 
+===================================================
+    
+[Scenario 5] USE INDEX with multiple index names: optimizer chooses among them     
+
+===================================================
+count(*)    
+30000     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_covering term[?] (covers)
+    filtr: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl tbl where (tbl.cola>= ?:?  and tbl.cola<= ?:? ) and tbl.colc= ?:?  and tbl.colb= ?:?  using index tbl.idx_covering, tbl.idx_non_covering
+===================================================
+    
+[Scenario 6] USING INDEX NONE forces sequential scan     
+
+===================================================
+count(*)    
+30000     
+
+Query plan:
+sscan
+    class: tbl node[?]
+    sargs: term[?] AND term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl tbl where (tbl.cola>= ?:?  and tbl.cola<= ?:? ) and tbl.colc= ?:?  and tbl.colb= ?:?  using index none
+===================================================
+    
+[Scenario 7] GROUP BY uses the hinted index (index scan)     
+
+===================================================
+cola    count(*)    
+0     50000     
+1     50000     
+2     50000     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_non_covering term[?] (covers)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tbl.cola, count(*) from tbl tbl where (tbl.cola>= ?:?  and tbl.cola<= ?:? ) and tbl.colb= ?:?  group by tbl.cola using index tbl.idx_non_covering
+/* ---> skip GROUP BY */
+===================================================
+    
+[Scenario 8] JOIN: USE INDEX hint on tbl results in index scan on tbl     
+
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+count(*)    
+30000     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: dim node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: tbl node[?]
+               index: idx_non_covering term[?] AND term[?]
+               filtr: term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl tbl, dim dim where (tbl.cola>= ?:?  and tbl.cola<= ?:? ) and tbl.cola=dim.k and tbl.colc= ?:?  and tbl.colb= ?:?  using index tbl.idx_non_covering
+===================================================
+0
+===================================================
+    
+[Scenario 9] stale statistics: add rows without re-gathering stats, hinted index still used (index scan)     
+
+===================================================
+100000
+===================================================
+count(*)    
+40000     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_non_covering term[?]
+    filtr: term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl tbl where (tbl.cola>= ?:?  and tbl.cola<= ?:? ) and tbl.colc= ?:?  and tbl.colb= ?:?  using index tbl.idx_non_covering
+===================================================
+0
+===================================================
+    
+[Scenario 10] ORDER BY + LIMIT with USE INDEX: index order used to skip sort     
+
+===================================================
+cold    
+100005     
+100011     
+100017     
+100023     
+100029     
+
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_non_covering term[?] (covers)
+    filtr: term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select tbl.cold, tbl.cola, tbl.colb from tbl tbl where (tbl.cola>= ?:?  and tbl.cola<= ?:? ) and tbl.colb= ?:?  using index tbl.idx_non_covering order by ?, ? for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+    
+[Scenario 11] Subquery with USE INDEX: hint respected inside derived table     
+
+===================================================
+count(*)    
+40000     
+
+Query plan:
+iscan
+    class: sub node[?]
+    index: idx_non_covering term[?]
+    filtr: term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl sub where (sub.cola>= ?:?  and sub.cola<= ?:? ) and sub.colc= ?:?  and sub.colb= ?:?  using index sub.idx_non_covering
+===================================================
+0
+===================================================
+0
+===================================================
+    
+[Scenario 12] USE INDEX on unrelated index: hint behavior when index cannot cover WHERE     
+
+===================================================
+count(*)    
+40000     
+
+Query plan:
+sscan
+    class: tbl node[?]
+    sargs: term[?] AND term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl tbl where (tbl.cola>= ?:?  and tbl.cola<= ?:? ) and tbl.colc= ?:?  and tbl.colb= ?:?  using index tbl.idx_cold
+===================================================
+0
+===================================================
+    
+[Scenario 13] UPDATE with USE INDEX uses the hinted index (index scan)     
+
+===================================================
+40000
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_non_covering term[?]
+    filtr: term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl,class tbl,tbl.cold as [tbl.cold] from tbl tbl where (tbl.cola>= ?:?  and tbl.cola<= ?:? ) and tbl.colb= ?:?  and tbl.colc= ?:?  using index tbl.idx_non_covering
+===================================================
+    
+[Scenario 14] DELETE with USE INDEX uses the hinted index (index scan)     
+
+===================================================
+40000
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_non_covering term[?]
+    filtr: term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl,class tbl from tbl tbl where (tbl.cola>= ?:?  and tbl.cola<= ?:? ) and tbl.colb= ?:?  and tbl.colc= ?:?  using index tbl.idx_non_covering
+===================================================
+0
