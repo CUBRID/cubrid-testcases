@@ -113,11 +113,11 @@ SELECT /*+ recompile use_hash(, ) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_
 
 evaluate '17-3 - Trailing comma after table: [SELECT /*+ recompile use_hash(tbl_b,) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]';
 -- Expected: Hint ignored
-SELECT /*+ recompile use_hash(tbl_b,) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;
+SELECT /*+ recompile use_hash(tbl_b,) leading(tbl_c) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;
 
 evaluate '17-4 - Leading comma before table: [SELECT /*+ recompile use_hash(,tbl_b) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]';
 -- Expected: Hint ignored
-SELECT /*+ recompile use_hash(,tbl_b) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;
+SELECT /*+ recompile use_hash(,tbl_b) leading(tbl_c) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;
 
 evaluate '18 - Missing closing parenthesis: [SELECT /*+ recompile use_hash( */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]';
 -- Expected: Hint ignored
@@ -129,7 +129,7 @@ SELECT /*+ recompile use_hash(tbl_b */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tb
 
 evaluate '18-2 - Too many parentheses: [SELECT /*+ recompile use_hash(tbl_b)) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]';
 -- Expected: Hint ignored
-SELECT /*+ recompile use_hash(tbl_b)) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;
+SELECT /*+ recompile use_hash(tbl_b)) leading(tbl_c) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;
 
 evaluate '18-3 - Wrong closing bracket: [SELECT /*+ recompile use_hash(tbl_b, tbl_b] */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]';
 -- Expected: Hint ignored
@@ -153,11 +153,11 @@ SELECT /*+ recompile use_hash(x) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c
 
 evaluate '20-1 - Schema-qualified: [SELECT /*+ recompile use_hash(dba.tbl_b) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]';
 -- Expected: Hint ignored
-SELECT /*+ recompile use_hash(dba.tbl_b) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;
+SELECT /*+ recompile use_hash(dba.tbl_b) leading(tbl_c) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;
 
 evaluate '20-2 - Alias handling: [SELECT /*+ recompile use_hash(b) */ * FROM tbl_b b JOIN tbl_c c ON b.col_b=c.col_b;]';
 -- Expected: Hint ignored
-SELECT /*+ recompile use_hash(b) */ * FROM tbl_b b JOIN tbl_c c ON b.col_b=c.col_b;
+SELECT /*+ recompile use_hash(b) leading(c) */ * FROM tbl_b b JOIN tbl_c c ON b.col_b=c.col_b;
 
 evaluate '21 - Multiple hints without args: [SELECT /*+ recompile use_hash use_nl */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]';
 -- Expected: Hint ignored 
@@ -169,7 +169,7 @@ SELECT /*+ recompile use_hash(tbl_b) no_use_hash(tbl_b) */ * FROM tbl_b JOIN tbl
 
 evaluate '22-2 - Duplicate identical hints: [SELECT /*+ recompile use_hash(tbl_b) use_hash(tbl_b) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]';
 -- Expected: Hint ignored
-SELECT /*+ recompile use_hash(tbl_b) use_hash(tbl_b) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;
+SELECT /*+ recompile use_hash(tbl_b) use_hash(tbl_b) leading(tbl_c) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;
 
 evaluate '23 - Oracle-style hint: [SELECT --+ recompile use_hash(tbl_b) * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]';
 -- Expected: Syntax error

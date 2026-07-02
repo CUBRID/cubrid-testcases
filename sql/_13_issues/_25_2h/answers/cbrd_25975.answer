@@ -409,18 +409,17 @@ col_b    col_c    col_b    col_c
 1     1     1     1     
 
 Query plan:
-nl-join (inner join)
+hash-join (inner join)
     edge:  term[?]
     outer: sscan
-               class: tbl_b node[?]
+               class: tbl_c node[?]
                cost:  ? card ?
     inner: sscan
-               class: tbl_c node[?]
-               sargs: term[?]
+               class: tbl_b node[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH(tbl_b) */ tbl_b.col_b, tbl_b.col_c, tbl_c.col_b, tbl_c.col_c from tbl_b tbl_b, tbl_c tbl_c where tbl_b.col_b=tbl_c.col_b
+select /*+ LEADING(tbl_c) USE_HASH(tbl_b) */ tbl_b.col_b, tbl_b.col_c, tbl_c.col_b, tbl_c.col_c from tbl_b tbl_b, tbl_c tbl_c where tbl_b.col_b=tbl_c.col_b
 ===================================================
     
 17-4 - Leading comma before table: [SELECT /*+ recompile use_hash(,tbl_b) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]     
@@ -430,18 +429,17 @@ col_b    col_c    col_b    col_c
 1     1     1     1     
 
 Query plan:
-nl-join (inner join)
+hash-join (inner join)
     edge:  term[?]
     outer: sscan
-               class: tbl_b node[?]
+               class: tbl_c node[?]
                cost:  ? card ?
     inner: sscan
-               class: tbl_c node[?]
-               sargs: term[?]
+               class: tbl_b node[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH(tbl_b) */ tbl_b.col_b, tbl_b.col_c, tbl_c.col_b, tbl_c.col_c from tbl_b tbl_b, tbl_c tbl_c where tbl_b.col_b=tbl_c.col_b
+select /*+ LEADING(tbl_c) USE_HASH(tbl_b) */ tbl_b.col_b, tbl_b.col_c, tbl_c.col_b, tbl_c.col_c from tbl_b tbl_b, tbl_c tbl_c where tbl_b.col_b=tbl_c.col_b
 ===================================================
     
 18 - Missing closing parenthesis: [SELECT /*+ recompile use_hash( */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]     
@@ -493,18 +491,17 @@ col_b    col_c    col_b    col_c
 1     1     1     1     
 
 Query plan:
-nl-join (inner join)
+hash-join (inner join)
     edge:  term[?]
     outer: sscan
-               class: tbl_b node[?]
+               class: tbl_c node[?]
                cost:  ? card ?
     inner: sscan
-               class: tbl_c node[?]
-               sargs: term[?]
+               class: tbl_b node[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH(tbl_b) */ tbl_b.col_b, tbl_b.col_c, tbl_c.col_b, tbl_c.col_c from tbl_b tbl_b, tbl_c tbl_c where tbl_b.col_b=tbl_c.col_b
+select /*+ LEADING(tbl_c) USE_HASH(tbl_b) */ tbl_b.col_b, tbl_b.col_c, tbl_c.col_b, tbl_c.col_c from tbl_b tbl_b, tbl_c tbl_c where tbl_b.col_b=tbl_c.col_b
 ===================================================
     
 18-3 - Wrong closing bracket: [SELECT /*+ recompile use_hash(tbl_b, tbl_b] */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]     
@@ -604,18 +601,17 @@ col_b    col_c    col_b    col_c
 1     1     1     1     
 
 Query plan:
-nl-join (inner join)
+hash-join (inner join)
     edge:  term[?]
     outer: sscan
-               class: tbl_b node[?]
+               class: tbl_c node[?]
                cost:  ? card ?
     inner: sscan
-               class: tbl_c node[?]
-               sargs: term[?]
+               class: tbl_b node[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH(tbl_b) */ tbl_b.col_b, tbl_b.col_c, tbl_c.col_b, tbl_c.col_c from tbl_b tbl_b, tbl_c tbl_c where tbl_b.col_b=tbl_c.col_b
+select /*+ LEADING(tbl_c) USE_HASH(tbl_b) */ tbl_b.col_b, tbl_b.col_c, tbl_c.col_b, tbl_c.col_c from tbl_b tbl_b, tbl_c tbl_c where tbl_b.col_b=tbl_c.col_b
 ===================================================
     
 20-2 - Alias handling: [SELECT /*+ recompile use_hash(b) */ * FROM tbl_b b JOIN tbl_c c ON b.col_b=c.col_b;]     
@@ -625,18 +621,17 @@ col_b    col_c    col_b    col_c
 1     1     1     1     
 
 Query plan:
-nl-join (inner join)
+hash-join (inner join)
     edge:  term[?]
     outer: sscan
-               class: b node[?]
+               class: c node[?]
                cost:  ? card ?
     inner: sscan
-               class: c node[?]
-               sargs: term[?]
+               class: b node[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH(b) */ b.col_b, b.col_c, c.col_b, c.col_c from tbl_b b, tbl_c c where b.col_b=c.col_b
+select /*+ LEADING(c) USE_HASH(b) */ b.col_b, b.col_c, c.col_b, c.col_c from tbl_b b, tbl_c c where b.col_b=c.col_b
 ===================================================
     
 21 - Multiple hints without args: [SELECT /*+ recompile use_hash use_nl */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]     
@@ -646,14 +641,13 @@ col_b    col_c    col_b    col_c
 1     1     1     1     
 
 Query plan:
-nl-join (inner join)
+hash-join (inner join)
     edge:  term[?]
     outer: sscan
                class: tbl_b node[?]
                cost:  ? card ?
     inner: sscan
                class: tbl_c node[?]
-               sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -688,18 +682,17 @@ col_b    col_c    col_b    col_c
 1     1     1     1     
 
 Query plan:
-nl-join (inner join)
+hash-join (inner join)
     edge:  term[?]
     outer: sscan
-               class: tbl_b node[?]
+               class: tbl_c node[?]
                cost:  ? card ?
     inner: sscan
-               class: tbl_c node[?]
-               sargs: term[?]
+               class: tbl_b node[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH(tbl_b) */ tbl_b.col_b, tbl_b.col_c, tbl_c.col_b, tbl_c.col_c from tbl_b tbl_b, tbl_c tbl_c where tbl_b.col_b=tbl_c.col_b
+select /*+ LEADING(tbl_c) USE_HASH(tbl_b) */ tbl_b.col_b, tbl_b.col_c, tbl_c.col_b, tbl_c.col_c from tbl_b tbl_b, tbl_c tbl_c where tbl_b.col_b=tbl_c.col_b
 ===================================================
     
 23 - Oracle-style hint: [SELECT --+ recompile use_hash(tbl_b) * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]     
