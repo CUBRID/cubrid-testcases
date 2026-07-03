@@ -13,6 +13,9 @@
  * 8. ROLLBACK before COMMIT means DEFERRED action never fires.
  * 9. DEFERRED UPDATE trigger recurses into itself.
  * 10. Mixed-event DEFERRED cycle.
+ * 11. DEFERRED DELETE trigger recurses into itself.
+ * 12. Bounded DEFERRED recursion stops at exactly max depth.
+ * 13. Two DEFERRED INSERT triggers on the same table and event recurse.
  */
 
 --+ server-message on
@@ -116,18 +119,19 @@ EXECUTE INSERT INTO t3 VALUES (1);
  
 INSERT INTO t3 VALUES (1);
 -- Expected: ERROR - Maximum trigger depth 32 exceeded
+SELECT COUNT(*) FROM t3;
+-- Expected: COUNT(*) = 0
  
 DROP TRIGGER tr_bounded_exceed;
 DROP TABLE t3;
  
 evaluate 'Case 8. ROLLBACK before commit means DEFERRED action never fires';
--- autocommit must be OFF here: otherwise the INSERT below would commit itself immediately
-autocommit off;
- 
 CREATE TRIGGER tr1
 DEFERRED INSERT ON t1
 EXECUTE INSERT INTO t1 VALUES (1, 2);
- 
+
+-- autocommit must be OFF here: otherwise the INSERT below would commit itself immediately
+autocommit off;
 INSERT INTO t1 VALUES (1, 1);
 ROLLBACK;
 SELECT COUNT(*) FROM t1;
@@ -136,6 +140,7 @@ SELECT COUNT(*) FROM t1;
 -- original insert must prevent the recursive trigger from ever firing.
  
 autocommit on;
+DROP TRIGGER tr1;
  
 evaluate 'Case 9. DEFERRED UPDATE trigger recurses into itself';
 -- Same as Case 1, but using UPDATE event instead of INSERT.
@@ -164,6 +169,59 @@ EXECUTE DELETE FROM t1 WHERE col1 = 2;
  
 INSERT INTO t1 VALUES (2, 2);
 -- Expected: ERROR - Maximum trigger depth 32 exceeded
+
+DROP TRIGGER tr_del;
+DROP TRIGGER tr_ins2;
+DELETE FROM t1;
+
+evaluate 'Case 11. DEFERRED DELETE trigger recurses into itself via a dynamic (subquery-based) target';
+INSERT INTO t1 VALUES
+(1,0),(2,0),(3,0),(4,0),(5,0),(6,0),(7,0),(8,0),(9,0),(10,0),
+(11,0),(12,0),(13,0),(14,0),(15,0),(16,0),(17,0),(18,0),(19,0),(20,0),
+(21,0),(22,0),(23,0),(24,0),(25,0),(26,0),(27,0),(28,0),(29,0),(30,0),
+(31,0),(32,0);
+
+CREATE TRIGGER tr_del_chain
+DEFERRED DELETE ON t1
+EXECUTE DELETE FROM t1 WHERE col1 = (SELECT MAX(col1) FROM t1);
+ 
+DELETE FROM t1 WHERE col1 = (SELECT MAX(col1) FROM t1);
+-- Expected: ERROR - Maximum trigger depth 32 exceeded
+
+DROP TRIGGER tr_del_chain;
+DELETE FROM t1;
+
+evaluate 'Case 12. Bounded DEFERRED recursion stopping at exactly max depth boundary';
+CREATE TABLE t3(col1 int);
+
+CREATE TRIGGER tr_boundary
+DEFERRED INSERT ON t3
+IF ((SELECT COUNT(*) FROM t3) < 32)
+EXECUTE INSERT INTO t3 VALUES (1);
+
+INSERT INTO t3 VALUES (1);
+SELECT COUNT(*) FROM t3;
+-- Expected: COUNT(*) = 32 when the error is raised only after exceeding max depth.
+-- If the error is raised at max depth, Error -528 occurs.
+
+DROP TRIGGER tr_boundary;
+DROP TABLE t3;
+
+evaluate 'Case 13. Two DEFERRED INSERT triggers on same table both causing recursion';
+CREATE TRIGGER tr_a
+DEFERRED INSERT ON t1
+EXECUTE INSERT INTO t1 VALUES (1, 1);
+
+CREATE TRIGGER tr_b
+DEFERRED INSERT ON t1
+EXECUTE INSERT INTO t1 VALUES (2, 2);
+
+INSERT INTO t1 VALUES (0, 0);
+-- Expected: ERROR - Maximum trigger depth 32 exceeded
+
+DROP TRIGGER tr_a;
+DROP TRIGGER tr_b;
+DELETE FROM t1;
 
 DROP TABLE t1;
 DROP TABLE t2;
