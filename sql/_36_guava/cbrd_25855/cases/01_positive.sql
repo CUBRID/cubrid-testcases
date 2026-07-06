@@ -121,12 +121,83 @@ end;
 evaluate 'P10: NULL bind -> no rows, no error';
 call p_nullbind();
 
+-- cursor attributes on a dynamic ref cursor (%isopen / %found / %rowcount /
+-- %notfound). Note: these attributes parse only in statement contexts (IF
+-- condition, assignment RHS), not inside a '||' expression, so results are
+-- captured into local variables first.
+create or replace procedure p_attr(p_dept int) as
+    c sys_refcursor;
+    v_id int;
+    v_io varchar(1);
+    v_fd varchar(1);
+    v_nf varchar(1);
+    v_rc int;
+begin
+    if c%isopen then v_io := 'Y'; else v_io := 'N'; end if;
+    dbms_output.put_line('isopen_before:' || v_io);
+    open c for 'select id from emp where dept = ? order by id' using p_dept;
+    if c%isopen then v_io := 'Y'; else v_io := 'N'; end if;
+    dbms_output.put_line('isopen_after:' || v_io);
+    loop
+        fetch c into v_id;
+        exit when c%notfound;
+        if c%found then v_fd := 'Y'; else v_fd := 'N'; end if;
+        v_rc := c%rowcount;
+        dbms_output.put_line('row:' || v_id || ' found:' || v_fd || ' rowcount:' || v_rc);
+    end loop;
+    if c%notfound then v_nf := 'Y'; else v_nf := 'N'; end if;
+    v_rc := c%rowcount;
+    dbms_output.put_line('after_loop notfound:' || v_nf || ' rowcount:' || v_rc);
+    close c;
+end;
+
+evaluate 'P11: cursor attributes on dynamic ref cursor (isopen/found/rowcount/notfound)';
+call p_attr(10);
+
+-- re-open the same cursor variable with a different dynamic query
+create or replace procedure p_reopen as
+    c sys_refcursor;
+    v_id int;
+begin
+    open c for 'select id from emp where dept = 10 order by id';
+    fetch c into v_id;
+    dbms_output.put_line('first_open:' || v_id);
+    close c;
+    open c for 'select id from emp where dept = 20 order by id';
+    fetch c into v_id;
+    dbms_output.put_line('second_open:' || v_id);
+    close c;
+end;
+
+evaluate 'P12: re-open same cursor with a different dynamic query -> 1, 3';
+call p_reopen();
+
+-- FETCH a dynamic cursor INTO a %ROWTYPE record (select list matches emp columns)
+create or replace procedure p_rowtype(p_dept int) as
+    c sys_refcursor;
+    r emp%rowtype;
+begin
+    open c for 'select id, name, dept from emp where dept = ? order by id' using p_dept;
+    loop
+        fetch c into r;
+        exit when c%notfound;
+        dbms_output.put_line('rt:' || r.id || ':' || r.name || ':' || r.dept);
+    end loop;
+    close c;
+end;
+
+evaluate 'P13: FETCH dynamic cursor INTO %ROWTYPE -> rt:1:a:10, rt:2:b:10';
+call p_rowtype(10);
+
 drop procedure p_dyn;
 drop procedure p_run;
 drop procedure p_dml;
 drop procedure p_dml_bind;
 drop procedure p_two;
 drop procedure p_nullbind;
+drop procedure p_attr;
+drop procedure p_reopen;
+drop procedure p_rowtype;
 drop table if exists emp;
 drop table if exists t_dml;
 

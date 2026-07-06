@@ -105,6 +105,14 @@ end;
 evaluate 'N9: more USING values than placeholders (run time)';
 call p_more(1, 2);
 
+-- N10: an empty dynamic SQL string given to OPEN FOR is rejected at run time
+evaluate 'N10: empty dynamic SQL string in OPEN FOR (run time)';
+call p_run('');
+
+-- N11: a NULL dynamic SQL string given to OPEN FOR is rejected at run time
+evaluate 'N11: NULL dynamic SQL string in OPEN FOR (run time)';
+call p_run(null);
+
 drop procedure p_run;
 drop procedure p_badsql;
 drop procedure p_mis;
