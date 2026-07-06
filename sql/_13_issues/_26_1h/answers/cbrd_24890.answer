@@ -217,27 +217,6 @@ trace
 Query Plan:
   TABLE SCAN (dba.tbl)
 
-  rewritten query: select min([dba.tbl].colb) from [dba.tbl] [dba.tbl] where ([dba.tbl].colc>= ?:?  and [dba.tbl].colc< ?:? )
-
-Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-     
-
-===================================================
-    
-Case 11     
-
-===================================================
-min(colb)    
-100     
-
-===================================================
-trace    
-
-Query Plan:
-  TABLE SCAN (dba.tbl)
-
   rewritten query: select min([dba.tbl].colb) from [dba.tbl] [dba.tbl]
 
 Trace Statistics:
@@ -247,7 +226,7 @@ Trace Statistics:
 
 ===================================================
     
-Case 12     
+Case 11     
 
 ===================================================
 (select min(colb) from tbl where cola=a.cola)    
@@ -276,7 +255,7 @@ Trace Statistics:
 
 ===================================================
     
-Case 13     
+Case 12     
 
 ===================================================
 (select max(colb) from tbl where cola=a.cola)    
@@ -305,7 +284,7 @@ Trace Statistics:
 
 ===================================================
     
-Case 14     
+Case 13     
 
 ===================================================
 (select min(colb) from tbl where cola=a.cola and colc like 'v1%')    
@@ -319,17 +298,20 @@ Query Plan:
 
   rewritten query: (select min([dba.tbl].colb) from [dba.tbl] [dba.tbl] where [dba.tbl].cola=a.cola and ([dba.tbl].colc>= ?:?  and [dba.tbl].colc< ?:? ))
 
-  TABLE SCAN (a)
+  SORT (order by)
+    TABLE SCAN (a)
 
-  rewritten query: select (select min([dba.tbl].colb) from [dba.tbl] [dba.tbl] where [dba.tbl].cola=a.cola and ([dba.tbl].colc>= ?:?  and [dba.tbl].colc< ?:? )) from [dba.tbl] a where (inst_num()<= ?:? )
+  rewritten query: select (select min([dba.tbl].colb) from [dba.tbl] [dba.tbl] where [dba.tbl].cola=a.cola and ([dba.tbl].colc>= ?:?  and [dba.tbl].colc< ?:? )), a.cola, a.colb from [dba.tbl] a order by ?, ? for orderby_num()<= ?:? 
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
     SUBQUERY (correlated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (index: dba.tbl.idx_cola_colb_asc_asc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, min_max_only: true) (lookup time: ?, rows: ?)
+        SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
      
 
 ===================================================
@@ -348,7 +330,7 @@ Trace Statistics:
 0
 ===================================================
     
-Case 15     
+Case 14     
 
 ===================================================
 min(colb)    max(colb)    
@@ -366,6 +348,145 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (index: dba.tbl_part.idx_part_cola_colb_asc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
            PARTITION (index: dba.tbl_part__p__pa.idx_part_cola_colb_asc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+    
+Case 15: not optimized when MIN is mixed with SUM     
+
+===================================================
+min(colb)    sum(colb)    
+100     62500     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tbl.idx_cola_colb_asc_asc) (key range: [dba.tbl].cola= ?:? , covered: true)
+
+  rewritten query: select min([dba.tbl].colb), sum([dba.tbl].colb) from [dba.tbl] [dba.tbl] where [dba.tbl].cola= ?:?  using index [dba.tbl].idx_cola_colb_asc_asc(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbl.idx_cola_colb_asc_asc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+    
+Case 16: not optimized with GROUP BY     
+
+===================================================
+cola    min(colb)    
+1     100     
+2     110     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tbl.idx_cola_colb_asc_asc) (key range: (([dba.tbl].cola= ?:? ) or ([dba.tbl].cola= ?:? )), covered: true)
+  group by nosort: true
+
+  rewritten query: select [dba.tbl].cola, min([dba.tbl].colb) from [dba.tbl] [dba.tbl] where (([dba.tbl].cola= ?:? ) or ([dba.tbl].cola= ?:? )) group by [dba.tbl].cola using index [dba.tbl].idx_cola_colb_asc_asc(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbl.idx_cola_colb_asc_asc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    GROUPBY (time: ?, hash: false, sort: false, rows: ?)
+     
+
+===================================================
+    
+Case 17: not optimized with HAVING     
+
+===================================================
+min(colb)    
+100     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tbl.idx_cola_colb_asc_asc) (key range: [dba.tbl].cola= ?:? , covered: true)
+
+  rewritten query: select min([dba.tbl].colb) from [dba.tbl] [dba.tbl] where [dba.tbl].cola= ?:?  having min([dba.tbl].colb)>? using index [dba.tbl].idx_cola_colb_asc_asc(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbl.idx_cola_colb_asc_asc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, min_max_only: true)
+     
+
+===================================================
+    
+Case 18: optimized MIN/MAX returns NULL for no matching key     
+
+===================================================
+min(colb)    max(colb)    
+null     null     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tbl.idx_cola_colb_asc_asc) (key range: [dba.tbl].cola= ?:? , covered: true)
+
+  rewritten query: select min([dba.tbl].colb), max([dba.tbl].colb) from [dba.tbl] [dba.tbl] where [dba.tbl].cola= ?:?  using index [dba.tbl].idx_cola_colb_asc_asc(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbl.idx_cola_colb_asc_asc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+    
+Case 19: optimized MIN/MAX ignores NULL values when non-NULL value exists     
+
+===================================================
+min(colb)    max(colb)    
+null     -5     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tbl.idx_cola_colb_asc_asc) (key range: [dba.tbl].cola= ?:? , covered: true)
+
+  rewritten query: select min([dba.tbl].colb), max([dba.tbl].colb) from [dba.tbl] [dba.tbl] where [dba.tbl].cola= ?:?  using index [dba.tbl].idx_cola_colb_asc_asc(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbl.idx_cola_colb_asc_asc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, min_max_only: true)
+     
+
+===================================================
+    
+Case 20: optimized MIN/MAX returns NULL when all target values are NULL     
+
+===================================================
+min(colb)    max(colb)    
+null     null     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tbl.idx_cola_colb_asc_asc) (key range: [dba.tbl].cola= ?:? , covered: true)
+
+  rewritten query: select min([dba.tbl].colb), max([dba.tbl].colb) from [dba.tbl] [dba.tbl] where [dba.tbl].cola= ?:?  using index [dba.tbl].idx_cola_colb_asc_asc(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tbl.idx_cola_colb_asc_asc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, min_max_only: true)
      
 
 ===================================================

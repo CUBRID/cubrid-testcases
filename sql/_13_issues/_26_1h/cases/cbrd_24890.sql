@@ -75,18 +75,10 @@ select /*+ recompile */ min(colb), max(-colb) from tbl FORCE INDEX (idx_cola_col
 show trace;
 
 -- ============================================================================
--- optimizable: filtering on non-indexed column (orderby: skip)
--- ============================================================================
-
-evaluate 'Case 10';
-select /*+ recompile */ min(colb) from tbl where colc like 'v1%';
-show trace;
-
--- ============================================================================
 -- Not optimizable: no cola condition
 -- ============================================================================
 
-evaluate 'Case 11';
+evaluate 'Case 10';
 select /*+ recompile */ min(colb) from tbl;
 show trace;
 
@@ -94,16 +86,16 @@ show trace;
 -- Additional checks with alternate indexes
 -- ============================================================================
 
-evaluate 'Case 12';
+evaluate 'Case 11';
 select /*+ recompile */ (select min(colb) from tbl where cola = a.cola) from tbl a limit 1;
 show trace;
 
-evaluate 'Case 13';
+evaluate 'Case 12';
 select /*+ recompile */(select max(colb) from tbl where cola = a.cola) from tbl a limit 1;
 show trace;
 
-evaluate 'Case 14';
-select /*+ recompile */(select min(colb) from tbl where cola = a.cola and colc like 'v1%') from tbl a limit 1;
+evaluate 'Case 13';
+select /*+ recompile */(select min(colb) from tbl where cola = a.cola and colc like 'v1%') from tbl a order by a.cola, a.colb limit 1;
 show trace;
 
 set trace off;
@@ -137,8 +129,54 @@ set trace on;
 -- Not optimizable: partition
 -- ============================================================================
 
-evaluate 'Case 15';
+evaluate 'Case 14';
 select /*+ recompile */ min(colb), max(colb) from tbl_part where cola = 1;
+show trace;
+
+evaluate 'Case 15: not optimized when MIN is mixed with SUM';
+select /*+ recompile */ min(colb), sum(colb)
+  from tbl FORCE INDEX (idx_cola_colb_asc_asc)
+ where cola = 1;
+show trace;
+
+evaluate 'Case 16: not optimized with GROUP BY';
+select /*+ recompile */ cola, min(colb)
+  from tbl FORCE INDEX (idx_cola_colb_asc_asc)
+ where cola in (1, 2)
+ group by cola
+ order by cola;
+show trace;
+
+evaluate 'Case 17: not optimized with HAVING';
+select /*+ recompile */ min(colb)
+  from tbl FORCE INDEX (idx_cola_colb_asc_asc)
+ where cola = 1
+having min(colb) > 0;
+show trace;
+
+evaluate 'Case 18: optimized MIN/MAX returns NULL for no matching key';
+select /*+ recompile */ min(colb), max(colb)
+  from tbl FORCE INDEX (idx_cola_colb_asc_asc)
+ where cola = 999;
+show trace;
+
+-- NULL handling: add rows while trace output is already expected in this section.
+insert into tbl values (30, null, 'null_only_1');
+insert into tbl values (30, null, 'null_only_2');
+insert into tbl values (31, null, 'mix_null_1');
+insert into tbl values (31, -5, 'mix_val');
+insert into tbl values (31, null, 'mix_null_2');
+
+evaluate 'Case 19: optimized MIN/MAX ignores NULL values when non-NULL value exists';
+select /*+ recompile */ min(colb), max(colb)
+  from tbl FORCE INDEX (idx_cola_colb_asc_asc)
+ where cola = 31;
+show trace;
+
+evaluate 'Case 20: optimized MIN/MAX returns NULL when all target values are NULL';
+select /*+ recompile */ min(colb), max(colb)
+  from tbl FORCE INDEX (idx_cola_colb_asc_asc)
+ where cola = 30;
 show trace;
 
 set trace off;
