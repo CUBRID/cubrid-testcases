@@ -16,7 +16,7 @@
 0
 ===================================================
     
-Case 1     
+Case 1: MIN/MAX optimized using cola DESC, colb ASC index     
 
 ===================================================
 min(colb)    max(colb)    
@@ -37,7 +37,7 @@ Trace Statistics:
 
 ===================================================
     
-Case 2     
+Case 2: MAX/MIN optimized using cola ASC, colb ASC index     
 
 ===================================================
 max(colb)    min(colb)    
@@ -58,7 +58,7 @@ Trace Statistics:
 
 ===================================================
     
-Case 3     
+Case 3: MIN/MAX optimized using cola DESC, colb DESC index     
 
 ===================================================
 min(colb)    max(colb)    
@@ -79,7 +79,7 @@ Trace Statistics:
 
 ===================================================
     
-Case 4     
+Case 4: MAX/MIN optimized using cola DESC, colb ASC index     
 
 ===================================================
 max(colb)    min(colb)    
@@ -100,7 +100,7 @@ Trace Statistics:
 
 ===================================================
     
-Case 5     
+Case 5: optimized MIN with equality and lower range on colb     
 
 ===================================================
 min(colb)    
@@ -121,7 +121,7 @@ Trace Statistics:
 
 ===================================================
     
-Case 6     
+Case 6: optimized MAX with equality and upper range on colb     
 
 ===================================================
 max(colb)    
@@ -142,7 +142,7 @@ Trace Statistics:
 
 ===================================================
     
-Case 7     
+Case 7: MIN/MAX optimized using cola ASC, colb DESC index     
 
 ===================================================
 min(colb)    max(colb)    
@@ -163,7 +163,7 @@ Trace Statistics:
 
 ===================================================
     
-Case 8     
+Case 8: not optimized when leading key cola uses range condition     
 
 ===================================================
 min(colb)    
@@ -184,7 +184,7 @@ Trace Statistics:
 
 ===================================================
     
-Case 9     
+Case 9: not optimized when MAX uses expression     
 
 ===================================================
 min(colb)    max(-colb)    
@@ -205,7 +205,7 @@ Trace Statistics:
 
 ===================================================
     
-Case 10     
+Case 10: not optimized without cola condition     
 
 ===================================================
 min(colb)    
@@ -226,7 +226,7 @@ Trace Statistics:
 
 ===================================================
     
-Case 11     
+Case 11: correlated subquery optimized MIN     
 
 ===================================================
 (select min(colb) from tbl where cola=a.cola)    
@@ -255,7 +255,7 @@ Trace Statistics:
 
 ===================================================
     
-Case 12     
+Case 12: correlated subquery optimized MAX     
 
 ===================================================
 (select max(colb) from tbl where cola=a.cola)    
@@ -284,7 +284,7 @@ Trace Statistics:
 
 ===================================================
     
-Case 13     
+Case 13: correlated MIN with non-indexed filter and stable outer order     
 
 ===================================================
 (select min(colb) from tbl where cola=a.cola and colc like 'v1%')    
@@ -330,7 +330,7 @@ Trace Statistics:
 0
 ===================================================
     
-Case 14     
+Case 14: not optimized for partitioned table     
 
 ===================================================
 min(colb)    max(colb)    
