@@ -113,6 +113,14 @@ call p_run('');
 evaluate 'N11: NULL dynamic SQL string in OPEN FOR (run time)';
 call p_run(null);
 
+-- defensively drop the N1-N5 procedures: they normally fail to compile (so these
+-- report "does not exist"), but if a spec change/bug ever lets one compile, this
+-- still removes it so the shared DB is not polluted for the tests that follow.
+drop procedure p_neg1;
+drop procedure p_neg2;
+drop procedure p_neg3;
+drop procedure p_neg4;
+drop procedure p_neg5;
 drop procedure p_run;
 drop procedure p_badsql;
 drop procedure p_mis;
