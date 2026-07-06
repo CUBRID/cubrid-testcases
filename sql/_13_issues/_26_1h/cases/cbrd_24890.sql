@@ -31,19 +31,27 @@ set trace on;
 -- ============================================================================
 
 evaluate 'Case 1: MIN/MAX optimized using cola DESC, colb ASC index';
-select /*+ recompile */ min(colb), max(colb) from tbl FORCE INDEX (idx_cola_colb_desc_asc) where cola = 1;
+select /*+ recompile */ min(colb), max(colb)
+  from tbl FORCE INDEX (idx_cola_colb_desc_asc)
+ where cola = 1;
 show trace;
 
 evaluate 'Case 2: MAX/MIN optimized using cola ASC, colb ASC index';
-select /*+ recompile */ max(colb), min(colb) from tbl FORCE INDEX (idx_cola_colb_asc_asc) where cola = 1;
+select /*+ recompile */ max(colb), min(colb)
+  from tbl FORCE INDEX (idx_cola_colb_asc_asc)
+ where cola = 1;
 show trace;
 
 evaluate 'Case 3: MIN/MAX optimized using cola DESC, colb DESC index';
-select /*+ recompile */ min(colb), max(colb) from tbl FORCE INDEX (idx_cola_colb_desc_desc) where cola = 1;
+select /*+ recompile */ min(colb), max(colb)
+  from tbl FORCE INDEX (idx_cola_colb_desc_desc)
+ where cola = 1;
 show trace;
 
 evaluate 'Case 4: MAX/MIN optimized using cola DESC, colb ASC index';
-select /*+ recompile */ max(colb), min(colb) from tbl FORCE INDEX (idx_cola_colb_desc_asc) where cola = 1;
+select /*+ recompile */ max(colb), min(colb)
+  from tbl FORCE INDEX (idx_cola_colb_desc_asc)
+ where cola = 1;
 show trace;
 
 -- ============================================================================
@@ -51,15 +59,23 @@ show trace;
 -- ============================================================================
 
 evaluate 'Case 5: MIN optimized with range condition on colb';
-select /*+ recompile */ min(colb) from tbl where cola = 1 and colb > 200;
+select /*+ recompile */ min(colb)
+  from tbl
+ where cola = 1
+   and colb > 200;
 show trace;
 
 evaluate 'Case 6: MAX optimized with range condition on colb';
-select /*+ recompile */ max(colb) from tbl where cola = 1 and colb < 500;
+select /*+ recompile */ max(colb)
+  from tbl
+ where cola = 1
+   and colb < 500;
 show trace;
 
 evaluate 'Case 7: MIN/MAX optimized using cola ASC, colb DESC index';
-select /*+ recompile */ min(colb), max(colb) from tbl FORCE INDEX (idx_cola_colb_asc_desc) where cola = 1;
+select /*+ recompile */ min(colb), max(colb)
+  from tbl FORCE INDEX (idx_cola_colb_asc_desc)
+ where cola = 1;
 show trace;
 
 -- ============================================================================
@@ -67,11 +83,15 @@ show trace;
 -- ============================================================================
 
 evaluate 'Case 8: not optimized with range condition on cola';
-select /*+ recompile index(tbl idx_cola_colb_asc_asc) */ min(colb) from tbl where cola > 1;
+select /*+ recompile index(tbl idx_cola_colb_asc_asc) */ min(colb)
+  from tbl
+ where cola > 1;
 show trace;
 
 evaluate 'Case 9: not optimized with expression on colb';
-select /*+ recompile */ min(colb), max(-colb) from tbl FORCE INDEX (idx_cola_colb_desc_asc) where cola = 1;
+select /*+ recompile */ min(colb), max(-colb)
+  from tbl FORCE INDEX (idx_cola_colb_desc_asc)
+ where cola = 1;
 show trace;
 
 -- ============================================================================
@@ -79,7 +99,8 @@ show trace;
 -- ============================================================================
 
 evaluate 'Case 10: not optimized without cola condition';
-select /*+ recompile */ min(colb) from tbl;
+select /*+ recompile */ min(colb)
+  from tbl;
 show trace;
 
 -- ============================================================================
@@ -87,15 +108,34 @@ show trace;
 -- ============================================================================
 
 evaluate 'Case 11: MIN optimized in correlated subquery';
-select /*+ recompile */ (select min(colb) from tbl where cola = a.cola) from tbl a limit 1;
+select /*+ recompile */
+       (select min(colb)
+          from tbl
+         where cola = a.cola)
+  from tbl a
+ order by a.cola, a.colb
+ limit 1;
 show trace;
 
 evaluate 'Case 12: MAX optimized in correlated subquery';
-select /*+ recompile */(select max(colb) from tbl where cola = a.cola) from tbl a limit 1;
+select /*+ recompile */
+       (select max(colb)
+          from tbl
+         where cola = a.cola)
+  from tbl a
+ order by a.cola, a.colb
+ limit 1;
 show trace;
 
 evaluate 'Case 13: MIN optimized in correlated subquery with filter';
-select /*+ recompile */(select min(colb) from tbl where cola = a.cola and colc like 'v1%') from tbl a order by a.cola, a.colb limit 1;
+select /*+ recompile */
+       (select min(colb)
+          from tbl
+         where cola = a.cola
+           and colc like 'v1%')
+  from tbl a
+ order by a.cola, a.colb
+ limit 1;
 show trace;
 
 set trace off;
@@ -130,7 +170,9 @@ set trace on;
 -- ============================================================================
 
 evaluate 'Case 14: not optimized with partitioned table';
-select /*+ recompile */ min(colb), max(colb) from tbl_part where cola = 1;
+select /*+ recompile */ min(colb), max(colb)
+  from tbl_part
+ where cola = 1;
 show trace;
 
 -- ============================================================================

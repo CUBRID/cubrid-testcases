@@ -100,7 +100,7 @@ Trace Statistics:
 
 ===================================================
     
-Case 5: optimized MIN with equality and lower range on colb     
+Case 5: MIN optimized with range condition on colb     
 
 ===================================================
 min(colb)    
@@ -121,7 +121,7 @@ Trace Statistics:
 
 ===================================================
     
-Case 6: optimized MAX with equality and upper range on colb     
+Case 6: MAX optimized with range condition on colb     
 
 ===================================================
 max(colb)    
@@ -163,7 +163,7 @@ Trace Statistics:
 
 ===================================================
     
-Case 8: not optimized when leading key cola uses range condition     
+Case 8: not optimized with range condition on cola     
 
 ===================================================
 min(colb)    
@@ -184,7 +184,7 @@ Trace Statistics:
 
 ===================================================
     
-Case 9: not optimized when MAX uses expression     
+Case 9: not optimized with expression on colb     
 
 ===================================================
 min(colb)    max(-colb)    
@@ -226,7 +226,7 @@ Trace Statistics:
 
 ===================================================
     
-Case 11: correlated subquery optimized MIN     
+Case 11: MIN optimized in correlated subquery     
 
 ===================================================
 (select min(colb) from tbl where cola=a.cola)    
@@ -240,22 +240,25 @@ Query Plan:
 
   rewritten query: (select min([dba.tbl].colb) from [dba.tbl] [dba.tbl] where [dba.tbl].cola=a.cola)
 
-  TABLE SCAN (a)
+  SORT (order by)
+    TABLE SCAN (a)
 
-  rewritten query: select (select min([dba.tbl].colb) from [dba.tbl] [dba.tbl] where [dba.tbl].cola=a.cola) from [dba.tbl] a where (inst_num()<= ?:? )
+  rewritten query: select (select min([dba.tbl].colb) from [dba.tbl] [dba.tbl] where [dba.tbl].cola=a.cola), a.cola, a.colb from [dba.tbl] a order by ?, ? for orderby_num()<= ?:? 
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
     SUBQUERY (correlated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (index: dba.tbl.idx_cola_colb_asc_asc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, min_max_only: true)
+        SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
      
 
 ===================================================
     
-Case 12: correlated subquery optimized MAX     
+Case 12: MAX optimized in correlated subquery     
 
 ===================================================
 (select max(colb) from tbl where cola=a.cola)    
@@ -269,22 +272,25 @@ Query Plan:
 
   rewritten query: (select max([dba.tbl].colb) from [dba.tbl] [dba.tbl] where [dba.tbl].cola=a.cola)
 
-  TABLE SCAN (a)
+  SORT (order by)
+    TABLE SCAN (a)
 
-  rewritten query: select (select max([dba.tbl].colb) from [dba.tbl] [dba.tbl] where [dba.tbl].cola=a.cola) from [dba.tbl] a where (inst_num()<= ?:? )
+  rewritten query: select (select max([dba.tbl].colb) from [dba.tbl] [dba.tbl] where [dba.tbl].cola=a.cola), a.cola, a.colb from [dba.tbl] a order by ?, ? for orderby_num()<= ?:? 
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
     SUBQUERY (correlated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (index: dba.tbl.idx_cola_colb_asc_asc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, min_max_only: true)
+        SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
      
 
 ===================================================
     
-Case 13: correlated MIN with non-indexed filter and stable outer order     
+Case 13: MIN optimized in correlated subquery with filter     
 
 ===================================================
 (select min(colb) from tbl where cola=a.cola and colc like 'v1%')    
@@ -330,7 +336,7 @@ Trace Statistics:
 0
 ===================================================
     
-Case 14: not optimized for partitioned table     
+Case 14: not optimized with partitioned table     
 
 ===================================================
 min(colb)    max(colb)    
