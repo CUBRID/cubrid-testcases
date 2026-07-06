@@ -17,29 +17,29 @@ insert into emp values (1,'a',10),(2,'b',10),(3,'c',20);
 create table t_dml (id int primary key, dept int);
 insert into t_dml values (1,10),(2,20);
 
--- dynamic table name built into the SQL + a single USING bind
-create or replace procedure p_dyn(p_tbl varchar, p_dept int) as
+-- dynamic table AND column names built into the SQL + a single USING bind
+create or replace procedure p_dyn(p_tbl varchar, p_col varchar, p_dept int) as
     c sys_refcursor;
     v_id int;
-    v_name varchar(20);
+    v_val varchar(20);
 begin
-    open c for 'select id, name from ' || p_tbl || ' where dept = ? order by id' using p_dept;
+    open c for 'select id, ' || p_col || ' from ' || p_tbl || ' where dept = ? order by id' using p_dept;
     loop
-        fetch c into v_id, v_name;
+        fetch c into v_id, v_val;
         exit when c%notfound;
-        dbms_output.put_line(v_id || ':' || v_name);
+        dbms_output.put_line(v_id || ':' || v_val);
     end loop;
     close c;
 end;
 
-evaluate 'P1: dynamic table name + USING dept=10 -> 1:a, 2:b';
-call p_dyn('emp', 10);
+evaluate 'P1: dynamic table + column names + USING dept=10 -> 1:a, 2:b';
+call p_dyn('emp', 'name', 10);
 
 evaluate 'P2: USING dept=20 -> only 3:c (bind re-selects)';
-call p_dyn('emp', 20);
+call p_dyn('emp', 'name', 20);
 
 evaluate 'P3: USING dept=99 -> empty result, no error';
-call p_dyn('emp', 99);
+call p_dyn('emp', 'name', 99);
 
 -- whole SELECT query passed as a parameter (no USING)
 create or replace procedure p_run(p_sql varchar) as

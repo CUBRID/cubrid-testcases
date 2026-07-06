@@ -94,9 +94,21 @@ end;
 evaluate 'N8: fewer USING values than placeholders (run time)';
 call p_mis(1);
 
+-- N9: more USING values than '?' placeholders is rejected at run time
+--     (a different error than N8's "not all the parameters are binded")
+create or replace procedure p_more(p_a int, p_b int) as
+    c sys_refcursor;
+begin
+    open c for 'select id from emp where id = ?' using p_a, p_b;
+    close c;
+end;
+evaluate 'N9: more USING values than placeholders (run time)';
+call p_more(1, 2);
+
 drop procedure p_run;
 drop procedure p_badsql;
 drop procedure p_mis;
+drop procedure p_more;
 drop table if exists emp;
 
 --+ server-message off
