@@ -1,0 +1,359 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+10
+===================================================
+0
+===================================================
+    
+memoize enabled (memoize_memory_limit=64M)     
+
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+10     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (dba.m?)
+    TABLE SCAN (dba.m?)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.m?] [dba.m?], [dba.m?] [dba.m?] where [dba.m?].col?=[dba.m?].col?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.m?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.m?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+90000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (dba.m?)
+    TABLE SCAN (dba.m?)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.m?] [dba.m?], [dba.m?] [dba.m?] where [dba.m?].col?=[dba.m?].col?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.m?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.m?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+count(*)    
+10000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (dba.m?)
+    TABLE SCAN (dba.m?)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.m?] [dba.m?], [dba.m?] [dba.m?] where [dba.m?].col?=[dba.m?].col?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.m?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.m?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+count(*)    
+1000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (dba.m?)
+    TABLE SCAN (dba.m?)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.m?] [dba.m?], [dba.m?] [dba.m?] where [dba.m?].col?= cast([dba.m?].col? as double)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.m?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.m?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+count(*)    
+100     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (dba.m?)
+    TABLE SCAN (dba.m?)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.m?] [dba.m?], [dba.m?] [dba.m?] where [dba.m?].col?=[dba.m?].col?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.m?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.m?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+10     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (dba.m?)
+    TABLE SCAN (dba.m?)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.m?] [dba.m?], [dba.m?] [dba.m?] where [dba.m?].col?= cast([dba.m?].col? as double)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.m?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.m?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+22     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (dba.m?)
+    TABLE SCAN (dba.m?)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.m?] [dba.m?], [dba.m?] [dba.m?] where [dba.m?].col?= cast([dba.m?].col? as double)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.m?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.m?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+31     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (dba.m?)
+    TABLE SCAN (dba.m?)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.m?] [dba.m?], [dba.m?] [dba.m?] where [dba.m?].col?= cast([dba.m?].col? as double)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.m?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.m?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+memoize disabled (memoize_memory_limit=0)     
+
+===================================================
+0
+===================================================
+count(*)    
+10     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (dba.m?)
+    TABLE SCAN (dba.m?)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.m?] [dba.m?], [dba.m?] [dba.m?] where [dba.m?].col?=[dba.m?].col?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.m?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.m?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+90000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (dba.m?)
+    TABLE SCAN (dba.m?)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.m?] [dba.m?], [dba.m?] [dba.m?] where [dba.m?].col?=[dba.m?].col?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.m?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.m?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+10000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (dba.m?)
+    TABLE SCAN (dba.m?)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.m?] [dba.m?], [dba.m?] [dba.m?] where [dba.m?].col?=[dba.m?].col?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.m?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.m?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+1000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (dba.m?)
+    TABLE SCAN (dba.m?)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.m?] [dba.m?], [dba.m?] [dba.m?] where [dba.m?].col?= cast([dba.m?].col? as double)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.m?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.m?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+100     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (dba.m?)
+    TABLE SCAN (dba.m?)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.m?] [dba.m?], [dba.m?] [dba.m?] where [dba.m?].col?=[dba.m?].col?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.m?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.m?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+10     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (dba.m?)
+    TABLE SCAN (dba.m?)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.m?] [dba.m?], [dba.m?] [dba.m?] where [dba.m?].col?= cast([dba.m?].col? as double)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.m?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.m?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+22     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (dba.m?)
+    TABLE SCAN (dba.m?)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.m?] [dba.m?], [dba.m?] [dba.m?] where [dba.m?].col?= cast([dba.m?].col? as double)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.m?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.m?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+31     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (dba.m?)
+    TABLE SCAN (dba.m?)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.m?] [dba.m?], [dba.m?] [dba.m?] where [dba.m?].col?= cast([dba.m?].col? as double)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.m?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.m?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
