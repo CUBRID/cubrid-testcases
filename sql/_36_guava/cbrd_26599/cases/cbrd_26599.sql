@@ -60,10 +60,10 @@ create table orders  (ok int, ck int);
 create table part    (pk int, nk int);
 
 insert into nations select rownum, (rownum-1)/5 + 1      from db_class a limit 25;
-insert into supp    select rownum, mod(rownum-1,25)+1    from db_class a, db_class b limit 1000;
-insert into cust    select rownum, mod(rownum-1,25)+1    from db_class a, db_class b, db_class c limit 10000;
-insert into orders  select rownum, mod(rownum-1,10000)+1 from db_class a, db_class b, db_class c limit 20000;
-insert into part    select rownum, mod(rownum-1,25)+1    from db_class a, db_class b limit 500;
+insert into supp    select rownum, mod(rownum-1,25)+1    from db_class a, db_class b limit 500;
+insert into cust    select rownum, mod(rownum-1,25)+1    from db_class a, db_class b, db_class c limit 2000;
+insert into orders  select rownum, mod(rownum-1,2000)+1  from db_class a, db_class b, db_class c limit 4000;
+insert into part    select rownum, mod(rownum-1,25)+1    from db_class a, db_class b limit 100;
 
 update statistics on nations, supp, cust, orders, part with fullscan;
 
@@ -454,7 +454,7 @@ drop view if exists v_supp;
  * Verify: count(*)=8000, join graph shows two separate eqclasses each with its own implied term.
  * ============================================================ */
 create table part_ck (pk int, ck int);
-insert into part_ck select rownum, mod(rownum-1, 10000)+1 from db_class a, db_class b limit 500;
+insert into part_ck select rownum, mod(rownum-1, 2000)+1 from db_class a, db_class b limit 500;
 update statistics on part_ck with fullscan;
 
 evaluate '[21] two 3-member eqclasses - cross-contamination check';
@@ -480,8 +480,23 @@ evaluate '[22] 5-table full chain - large eqclass with mixed join paths';
 select /*+ recompile use_hash */ count (*)
 from cust, supp, nations, part, orders
 where cust.nk = supp.nk
-  and supp.nk = nations.nk
-  and nations.nk = part.nk
+  and supp.nk  = nations.nk
+  and nations.nk  = part.nk
+  and cust.ck = orders.ck
+  and nations.region = 1;
+
+/* ============================================================
+ * [23] OR predicate: (supp.nk = nations.nk OR supp.nk = 100).
+ *      The equality supp.nk = nations.nk is inside an OR so it is
+ *      not unconditional -- the optimizer must NOT generate cust.nk = nations.nk as an implied term
+ * Verify: count(*)=160000, no implied cust.nk=nations.nk generated across OR.
+ * ============================================================ */
+evaluate '[23] OR condition: implied term must NOT be generated across OR predicate';
+--@fullplan
+select /*+ recompile */ count(*)
+from cust, supp, nations, orders
+where cust.nk = supp.nk
+  and (supp.nk = nations.nk or supp.nk = 100)
   and cust.ck = orders.ck
   and nations.region = 1;
 

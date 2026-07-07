@@ -65,13 +65,13 @@
 ===================================================
 25
 ===================================================
-1000
-===================================================
-10000
-===================================================
-20000
-===================================================
 500
+===================================================
+2000
+===================================================
+4000
+===================================================
+100
 ===================================================
 0
 ===================================================
@@ -80,7 +80,7 @@
 
 ===================================================
 count(*)    
-160000     
+16000     
 
 Query plan:
 hash-join (inner join)
@@ -113,7 +113,7 @@ select /*+ USE_HASH */ count(*) from cust cust, supp supp, nations nations, orde
 
 ===================================================
 count(*)    
-160000     
+16000     
 
 Query plan:
 hash-join (inner join)
@@ -146,7 +146,7 @@ select /*+ USE_HASH */ count(*) from cust cust, supp supp, nations nations, orde
 
 ===================================================
 count(*)    
-80000     
+8000     
 
 Join graph segments (f indicates final):
 seg[0]: [0]
@@ -157,8 +157,8 @@ seg[4]: [2]
 seg[5]: nk[2]
 seg[6]: region[2]
 Join graph nodes:
-node[0]: dba.cust dba.cust(10000/22) (loc 0)
-node[1]: dba.supp dba.supp(1000/3) (loc 1)
+node[0]: dba.cust dba.cust(2000/5) (loc 0)
+node[1]: dba.supp dba.supp(500/2) (loc 1)
 node[2]: dba.nations dba.nations(25/1) (sargs 3) (loc 2)
 Join graph equivalence classes:
 eqclass[0]: nk[0] nk[1] nk[2]
@@ -193,7 +193,7 @@ select /*+ USE_HASH */ count(*) from cust cust, supp supp, nations nations where
 
 ===================================================
 count(*)    
-1600000     
+32000     
 
 Join graph segments (f indicates final):
 seg[0]: [0]
@@ -206,10 +206,10 @@ seg[6]: region[2]
 seg[7]: [3]
 seg[8]: nk[3]
 Join graph nodes:
-node[0]: dba.cust dba.cust(10000/22) (loc 0)
-node[1]: dba.supp dba.supp(1000/3) (loc 1)
+node[0]: dba.cust dba.cust(2000/5) (loc 0)
+node[1]: dba.supp dba.supp(500/2) (loc 1)
 node[2]: dba.nations dba.nations(25/1) (sargs 6) (loc 2)
-node[3]: dba.part dba.part(500/2) (loc 3)
+node[3]: dba.part dba.part(100/1) (loc 3)
 Join graph equivalence classes:
 eqclass[0]: nk[0] nk[1] nk[2] nk[3]
 Join graph edges:
@@ -252,7 +252,7 @@ select /*+ USE_HASH */ count(*) from cust cust, supp supp, nations nations, part
 
 ===================================================
 count(*)    
-400000     
+40000     
 
 Query plan:
 hash-join (inner join)
@@ -278,7 +278,7 @@ select /*+ USE_HASH */ count(*) from cust cust left outer join supp supp on cust
 
 ===================================================
 count(*)    
-80000     
+8000     
 
 Query plan:
 hash-join (inner join)
@@ -305,7 +305,7 @@ select /*+ ORDERED USE_HASH */ count(*) from cust cust, nations nations, supp su
 
 ===================================================
 count(*)    
-16000     
+1600     
 
 Join graph segments (f indicates final):
 seg[0]: [0]
@@ -315,8 +315,8 @@ seg[3]: nk[1]
 seg[4]: [2]
 seg[5]: nk[2]
 Join graph nodes:
-node[0]: dba.cust dba.cust(10000/22) (sargs 2) (loc 0)
-node[1]: dba.supp dba.supp(1000/3) (sargs 3) (loc 1)
+node[0]: dba.cust dba.cust(2000/5) (sargs 2) (loc 0)
+node[1]: dba.supp dba.supp(500/2) (sargs 3) (loc 1)
 node[2]: dba.nations dba.nations(25/1) (sargs 4) (loc 2)
 Join graph equivalence classes:
 eqclass[0]: nk[0] nk[1] nk[2]
@@ -352,7 +352,7 @@ select count(*) from cust cust, supp supp, nations nations where nations.nk= ?:?
 
 ===================================================
 count(*)    
-8000     
+2000     
 
 Query plan:
 hash-join (inner join)
@@ -379,7 +379,7 @@ select /*+ USE_HASH */ count(*) from supp a, supp b, nations nations where a.nk=
 
 ===================================================
 count(*)    
-160000     
+16000     
 
 Join graph segments (f indicates final):
 seg[0]: [0]
@@ -393,10 +393,10 @@ seg[7]: region[2]
 seg[8]: [3]
 seg[9]: ck[3]
 Join graph nodes:
-node[0]: dba.cust dba.cust(10000/22) (loc 0)
-node[1]: dba.supp dba.supp(1000/3) (loc 1)
+node[0]: dba.cust dba.cust(2000/5) (loc 0)
+node[1]: dba.supp dba.supp(500/2) (loc 1)
 node[2]: dba.nations dba.nations(25/1) (sargs 4) (loc 2)
-node[3]: dba.orders dba.orders(20000/44) (loc 3)
+node[3]: dba.orders dba.orders(4000/9) (loc 3)
 Join graph equivalence classes:
 eqclass[0]: nk[0] nk[1] nk[2]
 eqclass[1]: ck[0] ck[3]
@@ -438,7 +438,7 @@ select /*+ USE_HASH */ count(*) from cust cust, supp supp, nations nations, orde
 
 ===================================================
 count(*)    
-8000     
+800     
 
 Query plan:
 nl-join (inner join)
@@ -527,7 +527,7 @@ select /*+ NO_ELIMINATE_JOIN */ u.k from u u, t t, v v where u.j=t.i and u.j=v.j
 
 ===================================================
 count(*)    
-800000     
+80000     
 
 Query plan:
 hash-join (inner join)
@@ -559,7 +559,7 @@ select /*+ USE_HASH */ count(*) from cust cust, supp supp, nations nations, orde
 
 ===================================================
 count(*)    
-640000     
+64000     
 
 Query plan:
 hash-join (inner join)
@@ -594,7 +594,7 @@ select /*+ USE_HASH */ count(*) from cust cust, supp supp, nations nations, orde
 
 ===================================================
 count(*)    
-160000     
+16000     
 
 Query plan:
 hash-join (inner join)
@@ -627,7 +627,7 @@ select /*+ USE_HASH */ count(*) from cust cust, supp supp, nations nations, orde
 
 ===================================================
 count(*)    
-480000     
+48000     
 
 Query plan:
 hash-join (inner join)
@@ -906,7 +906,7 @@ select count(*) from keytab keytab, bridge bridge, anchor anchor where keytab.nk
 
 ===================================================
 count(*)    
-80000     
+8000     
 
 Join graph segments (f indicates final):
 seg[0]: [0]
@@ -917,8 +917,8 @@ seg[4]: [2]
 seg[5]: nk[2]
 seg[6]: region[2]
 Join graph nodes:
-node[0]: dba.cust dba.cust(10000/22) (loc 0)
-node[1]: dba.supp dv(dv)(1000/3) (loc 1)
+node[0]: dba.cust dba.cust(2000/5) (loc 0)
+node[1]: dba.supp dv(dv)(500/2) (loc 1)
 node[2]: dba.nations dba.nations(25/1) (sargs 3) (loc 2)
 Join graph equivalence classes:
 eqclass[0]: nk[0] nk[1] nk[2]
@@ -955,7 +955,7 @@ select /*+ USE_HASH */ count(*) from cust cust, supp dv, nations nations where (
 
 ===================================================
 count(*)    
-80000     
+8000     
 
 Query plan:
 hash-join (inner join)
@@ -990,7 +990,7 @@ select /*+ USE_HASH */ count(*) from supp v_supp, cust cust, nations nations whe
 
 ===================================================
 count(*)    
-8000     
+4000     
 
 Join graph segments (f indicates final):
 seg[0]: [0]
@@ -1006,10 +1006,10 @@ seg[9]: ck[3]
 seg[10]: [4]
 seg[11]: ck[4]
 Join graph nodes:
-node[0]: dba.cust dba.cust(10000/22) (loc 0)
-node[1]: dba.supp dba.supp(1000/3) (loc 1)
+node[0]: dba.cust dba.cust(2000/5) (loc 0)
+node[1]: dba.supp dba.supp(500/2) (loc 1)
 node[2]: dba.nations dba.nations(25/1) (sargs 6) (loc 2)
-node[3]: dba.orders dba.orders(20000/44) (loc 3)
+node[3]: dba.orders dba.orders(4000/9) (loc 3)
 node[4]: dba.part_ck dba.part_ck(500/2) (loc 4)
 Join graph equivalence classes:
 eqclass[0]: nk[0] nk[1] nk[2]
@@ -1036,12 +1036,12 @@ hash-join (inner join)
                                                 class: cust node[?]
                                                 cost:  ? card ?
                                      inner: sscan
-                                                class: part_ck node[?]
+                                                class: nations node[?]
+                                                sargs: term[?]
                                                 cost:  ? card ?
                                      cost:  ? card ?
                           inner: sscan
-                                     class: nations node[?]
-                                     sargs: term[?]
+                                     class: part_ck node[?]
                                      cost:  ? card ?
                           cost:  ? card ?
                inner: sscan
@@ -1062,7 +1062,7 @@ select /*+ USE_HASH */ count(*) from cust cust, supp supp, nations nations, orde
 
 ===================================================
 count(*)    
-3200000     
+64000     
 
 Join graph segments (f indicates final):
 seg[0]: [0]
@@ -1078,11 +1078,11 @@ seg[9]: nk[3]
 seg[10]: [4]
 seg[11]: ck[4]
 Join graph nodes:
-node[0]: dba.cust dba.cust(10000/22) (loc 0)
-node[1]: dba.supp dba.supp(1000/3) (loc 1)
+node[0]: dba.cust dba.cust(2000/5) (loc 0)
+node[1]: dba.supp dba.supp(500/2) (loc 1)
 node[2]: dba.nations dba.nations(25/1) (sargs 7) (loc 2)
-node[3]: dba.part dba.part(500/2) (loc 3)
-node[4]: dba.orders dba.orders(20000/44) (loc 4)
+node[3]: dba.part dba.part(100/1) (loc 3)
+node[4]: dba.orders dba.orders(4000/9) (loc 4)
 Join graph equivalence classes:
 eqclass[0]: nk[0] nk[1] nk[2] nk[3]
 eqclass[1]: ck[0] ck[4]
@@ -1127,6 +1127,66 @@ hash-join (inner join)
     cost:  ? card ?
 Query stmt:
 select /*+ USE_HASH */ count(*) from cust cust, supp supp, nations nations, part part, orders orders where cust.nk=supp.nk and supp.nk=nations.nk and nations.nk=part.nk and cust.ck=orders.ck and nations.region= ?:? 
+===================================================
+    
+[23] OR condition: implied term must NOT be generated across OR predicate     
+
+===================================================
+count(*)    
+16000     
+
+Join graph segments (f indicates final):
+seg[0]: [0]
+seg[1]: nk[0]
+seg[2]: ck[0]
+seg[3]: [1]
+seg[4]: nk[1]
+seg[5]: [2]
+seg[6]: nk[2]
+seg[7]: region[2]
+seg[8]: [3]
+seg[9]: ck[3]
+Join graph nodes:
+node[0]: dba.cust dba.cust(2000/5) (loc 0)
+node[1]: dba.supp dba.supp(500/2) (loc 1)
+node[2]: dba.nations dba.nations(25/1) (sargs 3) (loc 2)
+node[3]: dba.orders dba.orders(4000/9) (loc 3)
+Join graph equivalence classes:
+eqclass[0]: nk[0] nk[1]
+eqclass[1]: ck[0] ck[3]
+Join graph edges:
+term[0]: [dba.supp].nk range ([dba.nations].nk =  or 100 = ) (sel ?) (rank 2) (join term) (inner-join) (loc 0)
+term[1]: [dba.cust].nk=[dba.supp].nk (sel ?) (join term) (mergeable) (inner-join) (loc 0)
+term[2]: [dba.cust].ck=[dba.orders].ck (sel ?) (join term) (mergeable) (inner-join) (loc 0)
+Join graph terms:
+term[3]: [dba.nations].region=1 (sel ?) (sarg term) (not-join eligible) (loc 0)
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: nl-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: cust node[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: orders node[?]
+                                     sargs: term[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: supp node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: nations node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from cust cust, supp supp, nations nations, orders orders where cust.nk=supp.nk and ((supp.nk=nations.nk) or (supp.nk= ?:? )) and cust.ck=orders.ck and nations.region= ?:? 
 ===================================================
     
 [CLEANUP] Drop all test tables     
