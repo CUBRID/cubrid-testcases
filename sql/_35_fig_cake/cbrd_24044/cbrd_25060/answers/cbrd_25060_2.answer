@@ -79,17 +79,19 @@ count(*)
 10000     
 
 Query plan:
-hash-join (inner join)
-    edge:  term[?] AND term[?] AND term[?] AND term[?]
+idx-join (inner join)
     outer: sscan
                class: a node[?]
                cost:  ? card ?
-    inner: sscan
+    inner: iscan
                class: b node[?]
+               index: idx_a_b_c term[?] AND term[?] AND term[?]
+               sargs: term[?]
                cost:  ? card ?
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_b=b.col_b and a.col_c=b.col_c and a.col_d=b.col_d
+select /*+ ORDERED NO_USE_HASH */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_b=b.col_b and a.col_c=b.col_c and a.col_d=b.col_d
 ===================================================
 0
 ===================================================
@@ -99,17 +101,19 @@ count(*)
 10000     
 
 Query plan:
-hash-join (inner join)
-    edge:  term[?] AND term[?] AND term[?] AND term[?]
+idx-join (inner join)
     outer: sscan
                class: a node[?]
                cost:  ? card ?
-    inner: sscan
+    inner: iscan
                class: b node[?]
+               index: uidx_a_b term[?] AND term[?]
+               sargs: term[?] AND term[?]
                cost:  ? card ?
+    sargs: term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_b=b.col_b and a.col_c=b.col_c and a.col_d=b.col_d
+select /*+ ORDERED NO_USE_HASH */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_b=b.col_b and a.col_c=b.col_c and a.col_d=b.col_d
 ===================================================
 0
 ===================================================
@@ -119,17 +123,19 @@ count(*)
 10000     
 
 Query plan:
-hash-join (inner join)
-    edge:  term[?] AND term[?] AND term[?] AND term[?]
+idx-join (inner join)
     outer: sscan
                class: a node[?]
                cost:  ? card ?
-    inner: sscan
+    inner: iscan
                class: b node[?]
+               index: uidx_a_b term[?] AND term[?]
+               sargs: term[?] AND term[?]
                cost:  ? card ?
+    sargs: term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_b=b.col_b and a.col_c=b.col_c and a.col_d=b.col_d
+select /*+ ORDERED NO_USE_HASH */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_b=b.col_b and a.col_c=b.col_c and a.col_d=b.col_d
 ===================================================
 0
 ===================================================

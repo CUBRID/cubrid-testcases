@@ -19,14 +19,14 @@ update statistics on tab_a, tab_b;
 --Delete RBO
 --RBO is used only when cost is within 1.x difference.
 --join order should be b->a refer to selectivity has been calculated correctly in index's second column.
-select /*+ recompile */ * from tab_b b, tab_a a
+select /*+ recompile no_use_hash */ * from tab_b b, tab_a a
 where a.col_a = b.col_a
 and a.col_b = '1'
 and b.col_b = '1';
 
 -- Only 7 pages are collected when sampling statistics.
 -- b.col_c NDV has been calculated correctly, so join order should be a->b.
-select /*+ recompile */ count(*) from tab_a a, tab_b b
+select /*+ recompile no_use_hash */ count(*) from tab_a a, tab_b b
 where a.col_a = b.col_a
 and b.col_c = '1';
 

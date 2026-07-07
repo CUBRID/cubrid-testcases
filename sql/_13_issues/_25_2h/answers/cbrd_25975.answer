@@ -402,7 +402,7 @@ Query stmt:
 select /*+ USE_HASH */ tbl_b.col_b, tbl_b.col_c, tbl_c.col_b, tbl_c.col_c from tbl_b tbl_b, tbl_c tbl_c where tbl_b.col_b=tbl_c.col_b
 ===================================================
     
-17-3 - Trailing comma after table: [SELECT /*+ recompile use_hash(tbl_b,) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]     
+17-3 - Trailing comma after table: [SELECT /*+ recompile use_hash(tbl_b,) leading(tbl_c) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]     
 
 ===================================================
 col_b    col_c    col_b    col_c    
@@ -422,7 +422,7 @@ Query stmt:
 select /*+ LEADING(tbl_c) USE_HASH(tbl_b) */ tbl_b.col_b, tbl_b.col_c, tbl_c.col_b, tbl_c.col_c from tbl_b tbl_b, tbl_c tbl_c where tbl_b.col_b=tbl_c.col_b
 ===================================================
     
-17-4 - Leading comma before table: [SELECT /*+ recompile use_hash(,tbl_b) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]     
+17-4 - Leading comma before table: [SELECT /*+ recompile use_hash(,tbl_b) leading(tbl_c) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]     
 
 ===================================================
 col_b    col_c    col_b    col_c    
@@ -484,7 +484,7 @@ Query stmt:
 select tbl_b.col_b, tbl_b.col_c, tbl_c.col_b, tbl_c.col_c from tbl_b tbl_b, tbl_c tbl_c where tbl_b.col_b=tbl_c.col_b
 ===================================================
     
-18-2 - Too many parentheses: [SELECT /*+ recompile use_hash(tbl_b)) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]     
+18-2 - Too many parentheses: [SELECT /*+ recompile use_hash(tbl_b)) leading(tbl_c) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]     
 
 ===================================================
 col_b    col_c    col_b    col_c    
@@ -594,7 +594,7 @@ Query stmt:
 select tbl_b.col_b, tbl_b.col_c, tbl_c.col_b, tbl_c.col_c from tbl_b tbl_b, tbl_c tbl_c where tbl_b.col_b=tbl_c.col_b
 ===================================================
     
-20-1 - Schema-qualified: [SELECT /*+ recompile use_hash(dba.tbl_b) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]     
+20-1 - Schema-qualified: [SELECT /*+ recompile use_hash(dba.tbl_b) leading(tbl_c) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]     
 
 ===================================================
 col_b    col_c    col_b    col_c    
@@ -614,7 +614,7 @@ Query stmt:
 select /*+ LEADING(tbl_c) USE_HASH(tbl_b) */ tbl_b.col_b, tbl_b.col_c, tbl_c.col_b, tbl_c.col_c from tbl_b tbl_b, tbl_c tbl_c where tbl_b.col_b=tbl_c.col_b
 ===================================================
     
-20-2 - Alias handling: [SELECT /*+ recompile use_hash(b) */ * FROM tbl_b b JOIN tbl_c c ON b.col_b=c.col_b;]     
+20-2 - Alias handling: [SELECT /*+ recompile use_hash(b) leading(c) */ * FROM tbl_b b JOIN tbl_c c ON b.col_b=c.col_b;]     
 
 ===================================================
 col_b    col_c    col_b    col_c    
@@ -676,7 +676,7 @@ Query stmt:
 select /*+ NO_USE_HASH(tbl_b) USE_HASH(tbl_b) */ tbl_b.col_b, tbl_b.col_c, tbl_c.col_b, tbl_c.col_c from tbl_b tbl_b, tbl_c tbl_c where tbl_b.col_b=tbl_c.col_b
 ===================================================
     
-22-2 - Duplicate identical hints: [SELECT /*+ recompile use_hash(tbl_b) use_hash(tbl_b) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]     
+22-2 - Duplicate identical hints: [SELECT /*+ recompile use_hash(tbl_b) use_hash(tbl_b) leading(tbl_c) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]     
 
 ===================================================
 col_b    col_c    col_b    col_c    

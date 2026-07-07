@@ -15,15 +15,15 @@ update statistics on tbl;
 select /*+ recompile */ count(*) from tbl where col_a = 1 and col_e = 1;
 
 --join with pk
-select /*+ recompile ordered */ count(*) from tbl a, tbl b where a.col_a = b.col_a and a.col_e = b.col_e; 
+select /*+ recompile ordered no_use_hash */ count(*) from tbl a, tbl b where a.col_a = b.col_a and a.col_e = b.col_e; 
 
 select /*+ recompile */ count(*) from tbl where col_a = 1;
 
-select /*+ recompile ordered */ count(*) from tbl a, tbl b where a.col_a = b.col_a;
+select /*+ recompile ordered no_use_hash */ count(*) from tbl a, tbl b where a.col_a = b.col_a;
 
 select /*+ recompile */ count(*) from tbl where col_a = 1 and col_e = 1 and col_b = 1;
 
-select /*+ recompile ordered */ count(*) from tbl a, tbl b where a.col_a = b.col_a and a.col_e = b.col_e and a.col_b = b.col_b;
+select /*+ recompile ordered no_use_hash */ count(*) from tbl a, tbl b where a.col_a = b.col_a and a.col_e = b.col_e and a.col_b = b.col_b;
 
 
 --drop pk
@@ -35,14 +35,14 @@ update statistics on tbl;
 select /*+ recompile */ count(*) from tbl where col_a = 1 and col_e = 1;
 
 --join
-select /*+ recompile ordered */ count(*) from tbl a, tbl b where a.col_a = b.col_a and a.col_e = b.col_e;
+select /*+ recompile ordered no_use_hash */ count(*) from tbl a, tbl b where a.col_a = b.col_a and a.col_e = b.col_e;
 
 select /*+ recompile */ count(*) from tbl where col_a = 1;
 
-select /*+ recompile ordered */ count(*) from tbl a, tbl b where a.col_a = b.col_a;
+select /*+ recompile ordered no_use_hash */ count(*) from tbl a, tbl b where a.col_a = b.col_a;
 
 select /*+ recompile */ count(*) from tbl where col_a = 1 and col_e = 1 and col_b = 1;
 
-select /*+ recompile ordered */ count(*) from tbl a, tbl b where a.col_a = b.col_a and a.col_e = b.col_e and a.col_b = b.col_b;
+select /*+ recompile ordered no_use_hash */ count(*) from tbl a, tbl b where a.col_a = b.col_a and a.col_e = b.col_e and a.col_b = b.col_b;
 
 drop table tbl;

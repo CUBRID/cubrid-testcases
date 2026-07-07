@@ -55,7 +55,7 @@ select /*+ recompile */ count(*) from tbl where col_a = 1 and col_b = 1 and col_
 -- 5. JOIN: Non-unique index prioritization in a multi-column unique index scenario: non-unique index includes all unique index columns
     -- uidx_a_b: contains 2 unique index columns (col_a, col_b)
     -- idx_a_b_c: contains 2 unique index columns (col_a, col_b), and covers more columns (a,b,c vs a,b) <- should be selected
-select /*+ recompile ordered */ count(*) from tbl a, tbl b where a.col_a = b.col_a and a.col_b = b.col_b and a.col_c = b.col_c and a.col_d = b.col_d;
+select /*+ recompile ordered no_use_hash */ count(*) from tbl a, tbl b where a.col_a = b.col_a and a.col_b = b.col_b and a.col_c = b.col_c and a.col_d = b.col_d;
 
 
 -- 6. JOIN: Unique index prioritization in a multi-column unique index scenario: non-unique index includes unique index columns
@@ -64,7 +64,7 @@ select /*+ recompile ordered */ count(*) from tbl a, tbl b where a.col_a = b.col
 drop index idx_a_b_c on tbl;
 update statistics on tbl;
 
-select /*+ recompile ordered */ count(*) from tbl a, tbl b where a.col_a = b.col_a and a.col_b = b.col_b and a.col_c = b.col_c and a.col_d = b.col_d;
+select /*+ recompile ordered no_use_hash */ count(*) from tbl a, tbl b where a.col_a = b.col_a and a.col_b = b.col_b and a.col_c = b.col_c and a.col_d = b.col_d;
 
 
 -- 7. JOIN: Unique index prioritization in a multi-column unique index scenario: non-unique index includes unique index columns
@@ -73,7 +73,7 @@ select /*+ recompile ordered */ count(*) from tbl a, tbl b where a.col_a = b.col
 drop index idx_b_c_d on tbl;
 update statistics on tbl;
 
-select /*+ recompile ordered */ count(*) from tbl a, tbl b where a.col_a = b.col_a and a.col_b = b.col_b and a.col_c = b.col_c and a.col_d = b.col_d;
+select /*+ recompile ordered no_use_hash */ count(*) from tbl a, tbl b where a.col_a = b.col_a and a.col_b = b.col_b and a.col_c = b.col_c and a.col_d = b.col_d;
 
 
 drop index idx_c_d_e on tbl;

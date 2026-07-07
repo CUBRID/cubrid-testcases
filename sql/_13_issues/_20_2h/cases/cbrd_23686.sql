@@ -8,7 +8,7 @@ UPDATE STATISTICS ON tmp5 WITH fullscan;
 
 set optimization level 513;
 
-SELECT /*+ recompile */ COUNT(1) FROM (select /*+ NO_PARALLEL_SCAN */ * from tmp5 limit 1000) a, tmp5 b
+SELECT /*+ recompile no_use_hash */ COUNT(1) FROM (select /*+ NO_PARALLEL_SCAN */ * from tmp5 limit 1000) a, tmp5 b
 WHERE a.col1 = b.col1 
 AND a.col2 = b.col2;
 
@@ -26,7 +26,7 @@ CREATE INDEX indexg ON tmp5(col2);
 UPDATE STATISTICS ON tmp5;
 
 set optimization level 514;
-SELECT /*+ recompile */ COUNT(1) FROM (select /*+ NO_PARALLEL_SCAN */ * from tmp5 limit 1000) a, tmp5 b
+SELECT /*+ recompile no_use_hash */ COUNT(1) FROM (select /*+ NO_PARALLEL_SCAN */ * from tmp5 limit 1000) a, tmp5 b
 WHERE a.col1 = b.col1
 AND a.col2 = b.col2;
 
@@ -34,7 +34,7 @@ set optimization level 513;
 DROP INDEX indexa ON tmp5;
 
 set optimization level 514;
-SELECT /*+ recompile */ COUNT(1) FROM (select /*+ NO_PARALLEL_SCAN */ * from tmp5 limit 1000) a, tmp5 b
+SELECT /*+ recompile no_use_hash */ COUNT(1) FROM (select /*+ NO_PARALLEL_SCAN */ * from tmp5 limit 1000) a, tmp5 b
 WHERE a.col1 = b.col1
 AND a.col2 = b.col2;
 
@@ -42,7 +42,7 @@ set optimization level 513;
 DROP INDEX indexb ON tmp5;
 
 set optimization level 514;
-SELECT /*+ recompile */ COUNT(1) FROM (select /*+ NO_PARALLEL_SCAN */ * from tmp5 limit 1000) a, tmp5 b
+SELECT /*+ recompile no_use_hash */ COUNT(1) FROM (select /*+ NO_PARALLEL_SCAN */ * from tmp5 limit 1000) a, tmp5 b
 WHERE a.col1 = b.col1
 AND a.col2 = b.col2;
 
@@ -50,7 +50,7 @@ set optimization level 513;
 DROP INDEX indexc ON tmp5;
 
 set optimization level 514;
-SELECT /*+ recompile */ COUNT(1) FROM (select /*+ NO_PARALLEL_SCAN */ * from tmp5 limit 1000) a, tmp5 b
+SELECT /*+ recompile no_use_hash */ COUNT(1) FROM (select /*+ NO_PARALLEL_SCAN */ * from tmp5 limit 1000) a, tmp5 b
 WHERE a.col1 = b.col1
 AND a.col2 = b.col2;
 
@@ -58,7 +58,7 @@ set optimization level 513;
 DROP INDEX indexd ON tmp5;
 
 set optimization level 514;
-SELECT /*+ recompile */ COUNT(1) FROM (select /*+ NO_PARALLEL_SCAN */ * from tmp5 limit 1000) a, tmp5 b
+SELECT /*+ recompile no_use_hash */ COUNT(1) FROM (select /*+ NO_PARALLEL_SCAN */ * from tmp5 limit 1000) a, tmp5 b
 WHERE a.col1 = b.col1
 AND a.col2 = b.col2;
 
@@ -66,7 +66,7 @@ set optimization level 513;
 DROP INDEX indexe ON tmp5;
 
 set optimization level 514;
-SELECT /*+ recompile */ COUNT(1) FROM (select /*+ NO_PARALLEL_SCAN */ * from tmp5 limit 1000) a, tmp5 b
+SELECT /*+ recompile no_use_hash */ COUNT(1) FROM (select /*+ NO_PARALLEL_SCAN */ * from tmp5 limit 1000) a, tmp5 b
 WHERE a.col1 = b.col1
 AND a.col2 = b.col2;
 
@@ -74,7 +74,7 @@ set optimization level 513;
 DROP INDEX indexf ON tmp5;
 
 set optimization level 514;
-SELECT /*+ recompile */ COUNT(1) FROM (select /*+ NO_PARALLEL_SCAN */ * from tmp5 limit 1000) a, tmp5 b
+SELECT /*+ recompile no_use_hash */ COUNT(1) FROM (select /*+ NO_PARALLEL_SCAN */ * from tmp5 limit 1000) a, tmp5 b
 WHERE a.col1 = b.col1
 AND a.col2 = b.col2;
 
