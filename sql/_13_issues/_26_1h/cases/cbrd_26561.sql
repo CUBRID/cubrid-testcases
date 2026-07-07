@@ -11,6 +11,9 @@
  * 4 - Negative fractional values with different scales
  * 5 - Fractional values below rounding boundary
  * 6 - NUMERIC column values cast to INT and BIGINT
+ * 7 - implicit conversion - store zero-integer-part NUMERIC into SHORT/INT/BIGINT columns
+ * 8 - implicit conversion via UPDATE ... SET bigint_col = zero-integer-part NUMERIC
+ * 9 - implicit conversion in predicate - fractional string compared to BIGINT column
  */
 
 drop table if exists cbrd_26561_tbl;
