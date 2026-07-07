@@ -6,10 +6,10 @@
  *
  * Schema:
  *   nations(nk,region) : 25 rows, nk 1..25, region 1..5  (small filtering table)
- *   supp(sk,nk)        : 1k rows,  nk NDV 25
- *   cust(ck,nk)        : 10k rows, nk NDV 25  (large fact table)
- *   orders(ok,ck)      : 20k rows, joins on cust.ck
- *   part(pk,nk)        : 500 rows, nk NDV 25  (4th table for multi-hop test)
+ *   supp(sk,nk)        : 500 rows,  nk NDV 25
+ *   cust(ck,nk)        : 2k rows,  nk NDV 25  (large fact table)
+ *   orders(ok,ck)      : 4k rows,  joins on cust.ck
+ *   part(pk,nk)        : 100 rows, nk NDV 25  (4th table for multi-hop test)
  */
 
 -- ===================================================================
@@ -70,7 +70,7 @@ update statistics on nations, supp, cust, orders, part with fullscan;
 /* ============================================================
  * [1-1] Basic implied term: cust.nk=supp.nk, supp.nk=nations.nk
  *       -> cust.nk=nations.nk auto-generated, nations joined early with region filter.
- * Verify: count(*)=160000, nations is the first inner scan with sargs.
+ * Verify: count(*)=16000, nations is the first inner scan with sargs.
  * ============================================================ */
 evaluate '[1-1] implied term generated + used: cust JOIN nations early (implicit syntax)';
 select /*+ recompile use_hash */ count (*)
@@ -82,7 +82,7 @@ where cust.nk = supp.nk
 
 /* ============================================================
  * [1-2] Same query as [1-1] with explicit JOIN syntax.
- * Verify: count(*)=160000, same plan as [1-1].
+ * Verify: count(*)=16000, same plan as [1-1].
  * ============================================================ */
 evaluate '[1-2] implied term generated + used: explicit join syntax';
 select /*+ recompile use_hash */ count (*)
@@ -95,7 +95,7 @@ where nations.region = 1;
 /* ============================================================
  * [2] cust.nk=nations.nk already written by user.
  *     -> no duplicate auto-generated condition added.
- * Verify: count(*)=80000, plan generated correctly.
+ * Verify: count(*)=8000, plan generated correctly.
  * ============================================================ */
 evaluate '[2] implied term already explicit - no duplicate term added';
 --@fullplan
@@ -110,7 +110,7 @@ where cust.nk = supp.nk
  * [3] 4-table chain: cust-supp-nations-part.
  *     -> all 3 missing pairs auto-generated:
  *        cust.nk=nations.nk, cust.nk=part.nk, supp.nk=part.nk.
- * Verify: count(*)=1600000, join graph shows all 3 implied terms.
+ * Verify: count(*)=32000, join graph shows all 3 implied terms.
  * ============================================================ */
 evaluate '[3] 4-member eqclass - all missing-pair implied terms generated';
 --@fullplan
@@ -124,7 +124,7 @@ where cust.nk = supp.nk
 /* ============================================================
  * [4] LEFT OUTER JOIN: supp may be NULL, so cust.nk=nations.nk
  *     must NOT be auto-generated across the outer join boundary.
- * Verify: count(*)=400000, nations joined last (outer join structure preserved).
+ * Verify: count(*)=40000, nations joined last (outer join structure preserved).
  * ============================================================ */
 evaluate '[4] outer-join boundary - implied term must NOT be generated across outer join';
 select /*+ recompile use_hash */ count (*)
@@ -135,7 +135,7 @@ from cust
 /* ============================================================
  * [5] FROM order: cust, nations, supp. No direct cust-nations condition.
  *     -> cust.nk=nations.nk auto-generated, ORDERED hint now honored.
- * Verify: count(*)=80000, plan follows cust->nations->supp, no HINT warning.
+ * Verify: count(*)=8000, plan follows cust->nations->supp, no HINT warning.
  * ============================================================ */
 evaluate '[5] ORDERED hint honored via implied term (cust -> nations -> supp)';
 select /*+ recompile use_hash ordered */ count (*)
@@ -148,7 +148,7 @@ where cust.nk = supp.nk
  * [6] Constant cust.nk=5 propagates to all join conditions (supp.nk=5,
  *     nations.nk=5), collapsing joins to single-value lookups (DUMMY_JOIN).
  *     -> no auto-generated condition created.
- * Verify: count(*)=16000, join graph shows dummy join terms only, nl-join (cross join).
+ * Verify: count(*)=1600, join graph shows dummy join terms only, nl-join (cross join).
  * ============================================================ */
 evaluate '[6] constant subst 3-table - PT_EXPR_INFO_TRANSITIVE excluded, no implied term';
 --@fullplan
@@ -161,7 +161,7 @@ where cust.nk = supp.nk
 /* ============================================================
  * [7] Same physical table (supp) under two aliases a, b.
  *     -> a.nk=nations.nk auto-generated, nations joined first as filtering anchor.
- * Verify: count(*)=8000, plan shows a->nations->b order.
+ * Verify: count(*)=2000, plan shows a->nations->b order.
  * ============================================================ */
 evaluate '[7] self-join aliases: implied term generated across two aliases of the same physical table';
 select /*+ recompile use_hash */ count (*)
@@ -176,7 +176,7 @@ where a.nk = b.nk
  *       -> missing pair: cust.nk=supp.nk auto-generated.
  *     Group 2 (ck): cust.ck=orders.ck (2-node, no auto-generation).
  *     -> two groups must stay independent (no cross-contamination).
- * Verify: count(*)=160000, join graph shows eqclass[0](nk) and eqclass[1](ck) separate.
+ * Verify: count(*)=16000, join graph shows eqclass[0](nk) and eqclass[1](ck) separate.
  * ============================================================ */
 evaluate '[8] star topology + ck chain: two independent eqclasses, implied cust.nk=supp.nk generated';
 --@fullplan
@@ -191,7 +191,7 @@ where cust.nk = nations.nk
  * [9] supp.nk < nations.nk is an inequality, so supp.nk is excluded
  *     from the equality group -> no auto-generated condition involving supp.nk.
  *     (If < were =, supp.nk=part.nk would be spuriously generated.)
- * Verify: count(*)=8000, nl-join (no equi-join), supp scanned with inequality sarg.
+ * Verify: count(*)=800, nl-join (no equi-join), supp scanned with inequality sarg.
  * ============================================================ */
 evaluate '[9] non-equi join: < predicate excluded from eq-class, no spurious implied term';
 select /*+ recompile */ count (*)
@@ -234,7 +234,7 @@ drop table if exists t;
  * [11] Full 4-table join with no filtering predicate.
  *      cust.nk=supp.nk, supp.nk=nations.nk -> cust.nk=nations.nk auto-generated.
  *      With no region filter, all nations rows participate.
- * Verify: count(*)=800000.
+ * Verify: count(*)=80000.
  * ============================================================ */
 evaluate '[11] full data join: no filter predicate, implied term still generated';
 select /*+ recompile use_hash */ count (*)
@@ -247,7 +247,7 @@ where cust.nk = supp.nk
  * [12] Higher-selectivity filter on nations (region > 1).
  *      region in 2..5 -> 20 of 25 nations rows pass the filter.
  *      Implied cust.nk=nations.nk lets nations filter early.
- * Verify: count(*)=640000, nations scanned first with region>1 sarg.
+ * Verify: count(*)=64000, nations scanned first with region>1 sarg.
  * ============================================================ */
 evaluate '[12] selective filter: nations.region > 1, implied term enables early filtering';
 select /*+ recompile use_hash */ count (*)
@@ -262,7 +262,7 @@ where cust.nk = supp.nk
  *      Confirms implied-term generation and plan are correct when the
  *      filter values are supplied as bind variables.
  *      Run with (1,1,1) -> region=1 only, and (1,2,3) -> region in {1,2,3}.
- * Verify: (1,1,1) count(*)=160000, (1,2,3) count(*)=480000.
+ * Verify: (1,1,1) count(*)=16000, (1,2,3) count(*)=48000.
  * ============================================================ */
 prepare q13 from 'select /*+ recompile use_hash */ count (*) from cust, supp, nations, orders where cust.nk = supp.nk and supp.nk = nations.nk and cust.ck = orders.ck and nations.region in ( ?, ?, ? )';
 
@@ -414,7 +414,7 @@ drop table if exists anchor;
 /* ============================================================
  * [19] Chain crosses a derived table dv = (select nk from supp).
  *      After merging, cust.nk=nations.nk must be generated correctly.
- * Verify: count(*)=80000.
+ * Verify: count(*)=8000.
  * ============================================================ */
 evaluate '[19] derived-table boundary: implied cust.nk=nations.nk generated after merging';
 --@fullplan
@@ -432,7 +432,7 @@ where cust.nk = dv.nk
  *      After view merging the implied v_supp.nk=nations.nk is generated,
  *      letting the small v_supp and the filtered nations (region=1) join
  *      first instead of routing through cust -> smallest intermediate.
- * Verify: count(*)=80000, join graph shows implied v_supp.nk=nations.nk
+ * Verify: count(*)=8000, join graph shows implied v_supp.nk=nations.nk
  *         and the plan joins v_supp with nations early.
  * ============================================================ */
 create view v_supp as select nk from supp;
@@ -451,7 +451,7 @@ drop view if exists v_supp;
  *      Group A (nk): cust.nk=supp.nk, supp.nk=nations.nk -> cust.nk=nations.nk
  *      Group B (ck): cust.ck=orders.ck, orders.ck=part_ck.ck -> cust.ck=part_ck.ck
  *      Cross-contamination (e.g. cust.nk=orders.ck) must NOT occur.
- * Verify: count(*)=8000, join graph shows two separate eqclasses each with its own implied term.
+ * Verify: count(*)=4000, join graph shows two separate eqclasses each with its own implied term.
  * ============================================================ */
 create table part_ck (pk int, ck int);
 insert into part_ck select rownum, mod(rownum-1, 2000)+1 from db_class a, db_class b limit 500;
@@ -473,7 +473,7 @@ drop table if exists part_ck;
  * [22] 5-table query: nk chain (cust-supp-nations-part, same as [3])
  *      plus a separate ck path (cust-orders).
  *      All nk implied terms must still be generated with both paths present.
- * Verify: count(*)=3200000, plan optimal with implied terms in the nk eqclass.
+ * Verify: count(*)=64000, plan optimal with implied terms in the nk eqclass.
  * ============================================================ */
 evaluate '[22] 5-table full chain - large eqclass with mixed join paths';
 --@fullplan
@@ -489,7 +489,7 @@ where cust.nk = supp.nk
  * [23] OR predicate: (supp.nk = nations.nk OR supp.nk = 100).
  *      The equality supp.nk = nations.nk is inside an OR so it is
  *      not unconditional -- the optimizer must NOT generate cust.nk = nations.nk as an implied term
- * Verify: count(*)=160000, no implied cust.nk=nations.nk generated across OR.
+ * Verify: count(*)=16000, no implied cust.nk=nations.nk generated across OR.
  * ============================================================ */
 evaluate '[23] OR condition: implied term must NOT be generated across OR predicate';
 --@fullplan
