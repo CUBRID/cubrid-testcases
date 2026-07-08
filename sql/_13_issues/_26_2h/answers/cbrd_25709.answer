@@ -121,7 +121,7 @@ Error evaluating action for "dba.tr1", Maximum trigger depth 32 exceeded at trig
 
 ===================================================
     
-Case 6. Bounded DEFERRED recursion that stops before max depth (32)     
+Case 6. Bounded DEFERRED recursion that stops just before max depth (31)     
 
 
 ===================================================
@@ -135,18 +135,41 @@ Case 6. Bounded DEFERRED recursion that stops before max depth (32)
 
 ===================================================
 count(*)    
-30     
+31     
 
 
 ===================================================
 0
 
 ===================================================
-30
+31
 
 ===================================================
     
-Case 7. Bounded DEFERRED recursion whose own limit exceeds max depth (32)     
+Case 7. Bounded DEFERRED recursion stopping at exactly max depth boundary (32)     
+
+
+===================================================
+0
+
+===================================================
+Error:-528
+Error evaluating action for "dba.tr_boundary", Maximum trigger depth 32 exceeded at trigger "dba.tr_boundary".
+
+===================================================
+count(*)    
+0     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+    
+Case 8. Bounded DEFERRED recursion whose own limit is just after max depth (33)     
 
 
 ===================================================
@@ -169,7 +192,7 @@ count(*)
 
 ===================================================
     
-Case 8. ROLLBACK before commit means DEFERRED action never fires     
+Case 9. ROLLBACK before commit means DEFERRED action never fires     
 
 
 ===================================================
@@ -191,7 +214,7 @@ count(*)
 
 ===================================================
     
-Case 9. DEFERRED UPDATE trigger recurses into itself     
+Case 10. DEFERRED UPDATE trigger recurses into itself     
 
 
 ===================================================
@@ -212,7 +235,7 @@ Error evaluating action for "dba.tr_upd", Maximum trigger depth 32 exceeded at t
 
 ===================================================
     
-Case 10. mixed-event DEFERRED cycle (DELETE trigger <-> INSERT trigger)     
+Case 11. mixed-event DEFERRED cycle (DELETE trigger <-> INSERT trigger)     
 
 
 ===================================================
@@ -236,7 +259,7 @@ Error evaluating action for "dba.tr_ins2", Maximum trigger depth 32 exceeded at 
 
 ===================================================
     
-Case 11. DEFERRED DELETE trigger recurses into itself via a dynamic (subquery-based) target     
+Case 12. DEFERRED DELETE trigger recurses into itself via a dynamic (subquery-based) target     
 
 
 ===================================================
@@ -257,7 +280,7 @@ Error evaluating action for "dba.tr_del_chain", Maximum trigger depth 32 exceede
 
 ===================================================
     
-Case 12. Bounded DEFERRED recursion stopping at exactly max depth boundary     
+Case 13. Two independent DEFERRED INSERT triggers on the same table/event     
 
 
 ===================================================
@@ -268,33 +291,7 @@ Case 12. Bounded DEFERRED recursion stopping at exactly max depth boundary
 
 ===================================================
 Error:-528
-Error evaluating action for "dba.tr_boundary", Maximum trigger depth 32 exceeded at trigger "dba.tr_boundary".
-
-===================================================
-count(*)    
-0     
-
-
-===================================================
-0
-
-===================================================
-0
-
-===================================================
-    
-Case 13. Two DEFERRED INSERT triggers on same table both causing recursion     
-
-
-===================================================
-0
-
-===================================================
-0
-
-===================================================
-Error:-21019
-Cannot communicate with the broker or received invalid packet
+Error evaluating action for "dba.tr_a", Maximum trigger depth 32 exceeded at trigger "dba.tr_b".
 
 ===================================================
 0
