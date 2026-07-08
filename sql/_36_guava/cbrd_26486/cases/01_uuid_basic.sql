@@ -100,3 +100,41 @@ from (select cast(conv(concat(substr(uuid_format(u), 1, 8), substr(uuid_format(u
              cast(ts_ms as bigint) base
       from uuid_ts_t) t;
 drop table uuid_ts_t;
+
+evaluate '[TEST 13] decimal version arguments are rounded before UUID version dispatch';
+select bit_length(uuid(4.111)) u_4111,
+       substr(uuid_format(uuid(4.111)), 15, 1) v_4111,
+       bit_length(uuid(7.321)) u_7321,
+       substr(uuid_format(uuid(7.321)), 15, 1) v_7321;
+
+evaluate '[TEST 14] string version arguments follow the same decimal coercion as numeric arguments';
+select bit_length(uuid('4.111')) u_str_4111,
+       substr(uuid_format(uuid('4.111')), 15, 1) v_str_4111,
+       bit_length(uuid('7.321')) u_str_7321,
+       substr(uuid_format(uuid('7.321')), 15, 1) v_str_7321,
+       substr(uuid_format(uuid('0')), 15, 1) v_str_0,
+       substr(uuid_format(uuid('0.0')), 15, 1) v_str_0_0;
+
+evaluate '[TEST 15] decimal arguments that round to unsupported versions still error';
+select uuid(-0.51);
+select uuid(0.5);
+select uuid(3.49);
+select uuid(4.5);
+select uuid(4.9);
+select uuid(6.49);
+select uuid(7.5);
+select uuid('5.49');
+
+evaluate '[TEST 16] rounding boundary values that resolve to supported UUID versions';
+-- Values below 0.5 round to 0, which is accepted as UUIDv4.
+select substr(uuid_format(uuid(0.00)), 15, 1) v_0_00,
+       substr(uuid_format(uuid(0.49)), 15, 1) v_0_49;
+-- 3.5 and higher values below 4.5 round to 4, which is accepted as UUIDv4.
+select substr(uuid_format(uuid(3.5)), 15, 1) v_3_5,
+       substr(uuid_format(uuid(3.9)), 15, 1) v_3_9,
+       substr(uuid_format(uuid(4.49)), 15, 1) v_4_49;
+-- 6.5 and higher values below 7.5 round to 7, which is accepted as UUIDv7.
+select substr(uuid_format(uuid(6.5)), 15, 1) v_6_5,
+       substr(uuid_format(uuid(7.49)), 15, 1) v_7_49;
+-- negative decimal near zero rounds to 0 (valid, UUIDv4), not treated as -1.
+select substr(uuid_format(uuid(-0.49)), 15, 1) v_neg_0_49;
