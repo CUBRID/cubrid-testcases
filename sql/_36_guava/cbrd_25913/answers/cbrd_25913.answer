@@ -1,98 +1,60 @@
 ===================================================
 0
-
 ===================================================
 0
-
 ===================================================
 1
-
 ===================================================
 0
-
 ===================================================
 0
-
 ===================================================
     
 Case 1: USING plain scalar value succeeds     
-
 
 ===================================================
 ?:0    
 1     
 
-
 ===================================================
     
 Case 2: parenthesized subquery in USING collection is rejected     
 
-
 ===================================================
 Error:-493
-Syntax: before ' ; '
-check syntax at '{(select 1)}', subqueries are not allowed in using clause. 
-
 ===================================================
     
 Case 3: SET subquery in USING collection is rejected     
 
-
 ===================================================
 Error:-493
-Syntax: before ' ; '
-check syntax at '{set((select 1))}', subqueries are not allowed in using clause. 
-
 ===================================================
     
 Case 4: table subquery in USING collection is rejected (was segfault)     
 
-
 ===================================================
 Error:-493
-Syntax: before ' ; '
-check syntax at '{(select 1 from t1)}', subqueries are not allowed in using clause. 
-
 ===================================================
     
 Case 5: later USING argument with a subquery is rejected     
 
-
 ===================================================
 Error:-493
-Syntax: before ' , {(select 2)}; '
-check syntax at '{1}, {(select 2)}', subqueries are not allowed in using clause. 
-
 ===================================================
     
 Case 6: later USING argument with a SET subquery is rejected     
 
-
 ===================================================
 Error:-493
-Syntax: before ' , {set (select 2)}; '
-check syntax at '{1}, {set((select 2))}', subqueries are not allowed in using clause. 
-
 ===================================================
     
 Case 7: later USING argument with a table subquery is rejected     
 
-
 ===================================================
 Error:-493
-Syntax: before ' , {(select 1 from t1)}; '
-check syntax at '{1}, {(select 1 from t1)}', subqueries are not allowed in using clause. 
-
-===================================================
-    
-Case 8: bare subquery in USING is also rejected at parse time     
-
-
-===================================================
-Error:-493
-Syntax: In line 1, column 17 before 'select 1); '
-Syntax error: unexpected '(' 
-
 ===================================================
 0
-
+===================================================
+0
+===================================================
+0

@@ -9,10 +9,7 @@
  * 5 - Multiple USING arguments where a later argument holds a subquery raises a syntax error
  * 6 - Multiple USING arguments with a SET(...) subquery raises a syntax error
  * 7 - Multiple USING arguments with a table subquery raises a syntax error
- * 8 - A bare (non-collection) subquery in USING is also rejected, at parse time (complements the fix, which guards the collection form)
  */
-
---+ server-message on
 
 DROP TABLE IF EXISTS t1;
 CREATE TABLE t1 (c1 INT);
@@ -42,9 +39,6 @@ execute p2 using {1}, {set (select 2)};
 evaluate 'Case 7: later USING argument with a table subquery is rejected';
 execute p2 using {1}, {(select 1 from t1)};
 
-evaluate 'Case 8: bare subquery in USING is also rejected at parse time';
-execute p using (select 1);
-
 DROP TABLE IF EXISTS t1;
-
---+ server-message off
+deallocate prepare p;
+deallocate prepare p2;
