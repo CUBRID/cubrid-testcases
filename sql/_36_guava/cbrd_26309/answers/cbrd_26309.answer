@@ -1,0 +1,827 @@
+===================================================
+0
+===================================================
+0
+===================================================
+10000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1. single table, single GROUP BY column, no filter : Ngroups must equal actual NDV (AC1)     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+(select ? from t? t? group by t?.col?)
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select ? from t? t? group by t?.col?) [__t?] (?)
+===================================================
+count(*)    
+1000     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+(select ? from t? t? group by t?.col?)
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select ? from t? t? group by t?.col?) [__t?] (?)
+===================================================
+count(*)    
+10000     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+(select ? from t? t? group by t?.col?)
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select ? from t? t? group by t?.col?) [__t?] (?)
+===================================================
+    
+Case 2. single table, multiple GROUP BY columns, no filter : Ngroups = product of NDVs, capped at cardinality (AC2)     
+
+===================================================
+count(*)    
+100     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+(select ? from t? t? group by t?.col?, t?.col?)
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select ? from t? t? group by t?.col?, t?.col?) [__t?] (?)
+===================================================
+count(*)    
+1000     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+(select ? from t? t? group by t?.col?, t?.col?, t?.col?)
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select ? from t? t? group by t?.col?, t?.col?, t?.col?) [__t?] (?)
+===================================================
+count(*)    
+10     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+(select ? from t? t? group by t?.col?, t?.col?)
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select ? from t? t? group by t?.col?, t?.col?) [__t?] (?)
+===================================================
+    
+Case 3. single table with filter : filtered Ngroups must be lower than unfiltered Ngroups (AC3)     
+
+===================================================
+count(*)    
+100     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: idx term[?] (covers)
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+(select ? from t? t? where t?.col?= ?:?  group by t?.col?)
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select ? from t? t? where t?.col?= ?:?  group by t?.col?) [__t?] (?)
+===================================================
+count(*)    
+10     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx term[?] AND term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+(select ? from t? t? where t?.col?= ?:?  and t?.col?= ?:?  group by t?.col?)
+/* ---> skip GROUP BY */
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select ? from t? t? where t?.col?= ?:?  and t?.col?= ?:?  group by t?.col?) [__t?] (?)
+===================================================
+count(*)    
+10     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: idx term[?] AND term[?] (covers)
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+(select ? from t? t? where t?.col?= ?:?  and t?.col?= ?:?  group by t?.col?, t?.col?)
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select ? from t? t? where t?.col?= ?:?  and t?.col?= ?:?  group by t?.col?, t?.col?) [__t?] (?)
+===================================================
+count(*)    
+100     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: idx term[?] (covers)
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+(select ? from t? t? where t?.col?= ?:?  group by t?.col?, t?.col?)
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select ? from t? t? where t?.col?= ?:?  group by t?.col?, t?.col?) [__t?] (?)
+===================================================
+    
+Case 4. functions in GROUP BY : NDV is taken from the underlying column, not the function result     
+
+===================================================
+count(*)    
+100     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: idx term[?] (covers)
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+(select ? from t? t? where t?.col?= ?:?  group by nvl(t?.col?, ''), decode(t?.col?,  cast(? as varchar),  cast(? as double),  cast(? as varchar),  cast(? as double),  cast(t?.col? as double)))
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select ? from t? t? where t?.col?= ?:?  group by nvl(t?.col?, ''), decode(t?.col?,  cast(? as varchar),  cast(? as double),  cast(? as varchar),  cast(? as double),  cast(t?.col? as double))) [__t?] (?)
+===================================================
+    
+Case 5. constants in GROUP BY : constant-only grouping and mixed column/constant grouping     
+
+===================================================
+count(*)    
+1     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select ? from t? t? group by ?)
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select ? from t? t? group by ?) [__t?] (?)
+===================================================
+count(*)    
+1000     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+(select ? from t? t? group by nvl(t?.col?, ?), ?)
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select ? from t? t? group by nvl(t?.col?, ?), ?) [__t?] (?)
+===================================================
+    
+Case 6. HAVING clause : filters after grouping, does not affect the estimated Ngroups itself     
+
+===================================================
+count(*)    
+1000     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select ? from t? t? group by t?.col? having count(*)>?)
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select ? from t? t? group by t?.col? having count(*)>?) [__t?] (?)
+===================================================
+    
+Case 7. LIMIT combined with GROUP BY : LIMIT caps the estimated Ngroups (AC5, cannot exceed row estimate)     
+
+===================================================
+count(*)    
+3     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+(select ? from t? t? group by t?.col? having groupby_num()<=?)
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select ? from t? t? group by t?.col? having groupby_num()<=?) [__t?] (?)
+===================================================
+    
+Case 8. DISTINCT interactions : DISTINCT alone follows the same NDV rule as GROUP BY     
+
+===================================================
+col1    
+0     
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: t? node[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct t?.col? from t? t?)
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select [__t?].col? from (select distinct t?.col? from t? t?) [__t?] (col?)
+===================================================
+count(*)    
+100     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: t? node[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct t?.col?, t?.col? from t? t?)
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select distinct t?.col?, t?.col? from t? t?) [__t?] (col?, col?)
+===================================================
+count(*)    
+10     
+
+Query plan:
+temp(distinct)
+    subplan: temp(group by)
+                 subplan: sscan
+                              class: t? node[?]
+                              cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct t?.col?, t?.col? from t? t? group by t?.col?)
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select distinct t?.col?, t?.col? from t? t? group by t?.col?) [__t?] (col?, col?)
+===================================================
+    
+Case 9. CTE / view : GROUP BY estimate propagates through the derived table / CTE boundary     
+
+===================================================
+col1    col2    
+1     1     
+1     11     
+1     21     
+1     31     
+1     41     
+1     51     
+1     61     
+1     71     
+1     81     
+1     91     
+
+===================================================
+    
+Case 10. Nested subquery : GROUP BY estimate of an inner derived table is not recomputed by the outer query     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+(select t?.col? from t? t? group by t?.col?, t?.col?)
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: x node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select ? from (select t?.col? from t? t? group by t?.col?, t?.col?) x (col?) group by x.col?)
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select ? from (select t?.col? from t? t? group by t?.col?, t?.col?) x (col?) group by x.col?) [__t?] (?)
+===================================================
+    
+Case 11. JOIN, single GROUP BY column : same NDV formula applied to joined result (N/p from join+filter estimates) (AC4)     
+
+===================================================
+count(*)    
+10     
+
+===================================================
+    
+Case 12. JOIN with filter, multiple GROUP BY columns : Ngroups reduced by filter formula relative to unfiltered join case (AC4)     
+
+===================================================
+count(*)    
+10     
+
+===================================================
+    
+Case 13. Multi-way JOIN with filter : formula still applies, group count capped below full NDV product (AC2, AC4)     
+
+===================================================
+count(*)    
+10     
+
+===================================================
+    
+Case 14. View join : each side's GROUP BY estimate feeds correctly into the outer join cardinality (AC2, AC4 cap still holds)     
+
+===================================================
+count(*)    
+1     
+
+Query plan:
+temp(group by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: a node[?]
+                            index: idx term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: b node[?]
+                            index: idx? term[?] (covers)
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select a.col? from t? a, t? b where a.col?=b.col? and a.col?= ?:?  group by a.col?)
+Query plan:
+temp(group by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: b node[?]
+                            index: idx? term[?] (covers)
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select a.col? from t? a, t? b where a.col?=b.col? group by a.col?)
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: bb node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: aa node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select a.col? from t? a, t? b where a.col?=b.col? and a.col?= ?:?  group by a.col?) aa (col?), (select a.col? from t? a, t? b where a.col?=b.col? group by a.col?) bb (col?) where aa.col?=bb.col?
+===================================================
+    
+Case 15. UNION : each branch's GROUP BY estimate is computed independently     
+
+===================================================
+cnt    
+10     
+10000     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+(select ? from t? t? group by t?.col?)
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select ? from t? t? group by t?.col?) [__t?] (?)
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+(select ? from t? t? group by t?.col?)
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select ? from t? t? group by t?.col?) [__t?] (?)
+===================================================
+    
+Case 16. Function-based index statistics are used for expression GROUP BY     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+2000
+===================================================
+0
+===================================================
+count(*)    
+2000     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+(select ? from t? t? group by t?.c?)
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select ? from t? t? group by t?.c?) [__t?] (?)
+===================================================
+count(*)    
+2     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+(select ? from t? t? group by  mod(t?.c?, ?))
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select ? from t? t? group by  mod(t?.c?, ?)) [__t?] (?)
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+2     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+(select ? from t? t? group by  mod(t?.c?, ?))
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select ? from t? t? group by  mod(t?.c?, ?)) [__t?] (?)
+===================================================
+0
+===================================================
+    
+Case 17. filter matches zero rows (p = 0) : Ngroups must degrade to 0, not error or fall back to full NDV     
+
+===================================================
+count(*)    
+0     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select count(*) from t? t? where t?.col?= ?:? 
+===================================================
+count(*)    
+0     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: idx term[?] (covers)
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+(select ? from t? t? where t?.col?= ?:?  group by t?.col?)
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select ? from t? t? where t?.col?= ?:?  group by t?.col?) [__t?] (?)
+===================================================
+    
+Case 18. filter matches all rows (p = N) : Ngroups must equal the unfiltered NDV case (formula boundary)     
+
+===================================================
+count(*)    
+1000     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: idx term[?] (covers)
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+(select ? from t? t? where ((t?.col?= ?:? ) or (t?.col?= ?:? ) or (t?.col?= ?:? ) or (t?.col?= ?:? ) or (t?.col?= ?:? ) or (t?.col?= ?:? ) or (t?.col?= ?:? ) or (t?.col?= ?:? ) or (t?.col?= ?:? ) or (t?.col?= ?:? )) group by t?.col?)
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select ? from t? t? where ((t?.col?= ?:? ) or (t?.col?= ?:? ) or (t?.col?= ?:? ) or (t?.col?= ?:? ) or (t?.col?= ?:? ) or (t?.col?= ?:? ) or (t?.col?= ?:? ) or (t?.col?= ?:? ) or (t?.col?= ?:? ) or (t?.col?= ?:? )) group by t?.col?) [__t?] (?)
+===================================================
+    
+Case 19. empty table (N = 0) : Ngroups estimate must not divide by zero or error out     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+0     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t_empty node[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+(select ? from t_empty t_empty group by t_empty.c?)
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select ? from t_empty t_empty group by t_empty.c?) [__t?] (?)
+===================================================
+0
+===================================================
+    
+Case 20. single-row table (N = 1) : Ngroups estimate degenerates cleanly to 1     
+
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+count(*)    
+1     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t_single node[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+(select ? from t_single t_single group by t_single.c?)
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select ? from t_single t_single group by t_single.c?) [__t?] (?)
+===================================================
+0
+===================================================
+    
+Case 21. GROUP BY column containing NULLs : NULL must be counted as exactly one additional group, not excluded or duplicated     
+
+===================================================
+0
+===================================================
+0
+===================================================
+1000
+===================================================
+0
+===================================================
+count(*)    
+10     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t_null node[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+(select ? from t_null t_null group by t_null.c?)
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select ? from t_null t_null group by t_null.c?) [__t?] (?)
+===================================================
+0
+===================================================
+    
+Case 22. range/inequality filter (non-equality predicate) : formula must still apply using the range's estimated selectivity as p     
+
+===================================================
+count(*)    
+500     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx? term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+(select ? from t? t? where (t?.col?< ?:? ) group by t?.col?)
+/* ---> skip GROUP BY */
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select ? from t? t? where (t?.col?< ?:? ) group by t?.col?) [__t?] (?)
+===================================================
+0
