@@ -1,13 +1,13 @@
 -- CBRD-26799 parallel CREATE INDEX row loss.
--- Before: index randomly missed ~1 heap page (heap OK, INDEX_SS short).
+-- Before: index dropped ~1 heap page (heap OK, INDEX_SS short).
 -- After: INDEX_SS count == heap.
--- Check: 2.1M rows, rebuild x10 -> 600000/450000.
+-- Check: 2.1M rows, rebuild x10, count via INDEX_SS.
 --
--- Note: 2100000 rows (> 2048 heap pages) make plain CREATE INDEX use the parallel
+-- Note: 2.1M rows (> 2048 heap pages) make plain CREATE INDEX use the parallel
 -- build path (700K would run serial). t is dropped at end for CI file independence.
 
 
--- setup: load 2100000 rows
+-- setup: load 2.1M rows
 create table mille as select 0 as i from table({1,2,3,4,5,6,7,8,9,0}) t1, table({1,2,3,4,5,6,7,8,9,0}) t2, table({1,2,3,4,5,6,7,8,9,0}) t3, table({1,2,3,4,5,6,7,8,9,0}) t4, table({0,1,2,3,4,5,6,7,8,9}) t5;
 create table t (i int not null, j int, k int, l int);
 insert into t(i,j,k,l) select i+2, 2*((rownum-1)%50+1)-1+100,rownum, rownum from mille;
@@ -33,99 +33,80 @@ insert into t(i,j,k,l) select i+3, 2*((rownum-1)%50+1)  ,rownum, rownum from mil
 insert into t(i,j,k,l) select i+4, 2*((rownum-1)%50+1)  ,rownum, rownum from mille;
 drop table mille;
 
--- heap scan must be complete
-select case when count(*) = 2100000 then 'OK' else 'BAD HEAP COUNT' end as heap_check from t;
+-- heap scan (reference count)
+select count(*) from t;
 
 
--- iteration 1/10: rebuild index (parallel) and evaluate the index-scan check
+-- iteration 1/10: rebuild index (parallel), count via INDEX_SS
 create index idx on t(i,j,k);
 update statistics on t;
 --@queryplan
-select case
-    when (select count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 151 and 199) tt) = 600000
-     and (select count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 2 and 50) tt) = 450000
-    then 'OK' else 'INDEX ROW LOSS' end as index_scan_check;
+select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 151 and 199) tt;
+--@queryplan
+select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 2 and 50) tt;
 drop index idx on t;
 
--- iteration 2/10: rebuild index (parallel) and evaluate the index-scan check
+-- iteration 2/10: rebuild index (parallel), count via INDEX_SS
 create index idx on t(i,j,k);
 update statistics on t;
-select case
-    when (select count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 151 and 199) tt) = 600000
-     and (select count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 2 and 50) tt) = 450000
-    then 'OK' else 'INDEX ROW LOSS' end as index_scan_check;
+select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 151 and 199) tt;
+select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 2 and 50) tt;
 drop index idx on t;
 
--- iteration 3/10: rebuild index (parallel) and evaluate the index-scan check
+-- iteration 3/10: rebuild index (parallel), count via INDEX_SS
 create index idx on t(i,j,k);
 update statistics on t;
-select case
-    when (select count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 151 and 199) tt) = 600000
-     and (select count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 2 and 50) tt) = 450000
-    then 'OK' else 'INDEX ROW LOSS' end as index_scan_check;
+select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 151 and 199) tt;
+select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 2 and 50) tt;
 drop index idx on t;
 
--- iteration 4/10: rebuild index (parallel) and evaluate the index-scan check
+-- iteration 4/10: rebuild index (parallel), count via INDEX_SS
 create index idx on t(i,j,k);
 update statistics on t;
-select case
-    when (select count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 151 and 199) tt) = 600000
-     and (select count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 2 and 50) tt) = 450000
-    then 'OK' else 'INDEX ROW LOSS' end as index_scan_check;
+select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 151 and 199) tt;
+select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 2 and 50) tt;
 drop index idx on t;
 
--- iteration 5/10: rebuild index (parallel) and evaluate the index-scan check
+-- iteration 5/10: rebuild index (parallel), count via INDEX_SS
 create index idx on t(i,j,k);
 update statistics on t;
-select case
-    when (select count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 151 and 199) tt) = 600000
-     and (select count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 2 and 50) tt) = 450000
-    then 'OK' else 'INDEX ROW LOSS' end as index_scan_check;
+select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 151 and 199) tt;
+select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 2 and 50) tt;
 drop index idx on t;
 
--- iteration 6/10: rebuild index (parallel) and evaluate the index-scan check
+-- iteration 6/10: rebuild index (parallel), count via INDEX_SS
 create index idx on t(i,j,k);
 update statistics on t;
-select case
-    when (select count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 151 and 199) tt) = 600000
-     and (select count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 2 and 50) tt) = 450000
-    then 'OK' else 'INDEX ROW LOSS' end as index_scan_check;
+select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 151 and 199) tt;
+select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 2 and 50) tt;
 drop index idx on t;
 
--- iteration 7/10: rebuild index (parallel) and evaluate the index-scan check
+-- iteration 7/10: rebuild index (parallel), count via INDEX_SS
 create index idx on t(i,j,k);
 update statistics on t;
-select case
-    when (select count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 151 and 199) tt) = 600000
-     and (select count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 2 and 50) tt) = 450000
-    then 'OK' else 'INDEX ROW LOSS' end as index_scan_check;
+select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 151 and 199) tt;
+select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 2 and 50) tt;
 drop index idx on t;
 
--- iteration 8/10: rebuild index (parallel) and evaluate the index-scan check
+-- iteration 8/10: rebuild index (parallel), count via INDEX_SS
 create index idx on t(i,j,k);
 update statistics on t;
-select case
-    when (select count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 151 and 199) tt) = 600000
-     and (select count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 2 and 50) tt) = 450000
-    then 'OK' else 'INDEX ROW LOSS' end as index_scan_check;
+select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 151 and 199) tt;
+select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 2 and 50) tt;
 drop index idx on t;
 
--- iteration 9/10: rebuild index (parallel) and evaluate the index-scan check
+-- iteration 9/10: rebuild index (parallel), count via INDEX_SS
 create index idx on t(i,j,k);
 update statistics on t;
-select case
-    when (select count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 151 and 199) tt) = 600000
-     and (select count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 2 and 50) tt) = 450000
-    then 'OK' else 'INDEX ROW LOSS' end as index_scan_check;
+select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 151 and 199) tt;
+select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 2 and 50) tt;
 drop index idx on t;
 
--- iteration 10/10: rebuild index (parallel) and evaluate the index-scan check
+-- iteration 10/10: rebuild index (parallel), count via INDEX_SS
 create index idx on t(i,j,k);
 update statistics on t;
-select case
-    when (select count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 151 and 199) tt) = 600000
-     and (select count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 2 and 50) tt) = 450000
-    then 'OK' else 'INDEX ROW LOSS' end as index_scan_check;
+select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 151 and 199) tt;
+select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 2 and 50) tt;
 drop index idx on t;
 
 -- cleanup (file independence)
