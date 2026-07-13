@@ -33,78 +33,78 @@ insert into t(i,j,k,l) select i+3, 2*((rownum-1)%50+1)  ,rownum, rownum from mil
 insert into t(i,j,k,l) select i+4, 2*((rownum-1)%50+1)  ,rownum, rownum from mille;
 drop table mille;
 
--- heap scan (reference count)
+evaluate 'Case 1: heap reference count';
 select count(*) from t;
 
 
--- iteration 1/10: rebuild index (parallel), count via INDEX_SS
 create index idx on t(i,j,k);
 update statistics on t;
+evaluate 'Case 2: INDEX_SS count after parallel index build';
 --@queryplan
 select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 151 and 199) tt;
 --@queryplan
 select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 2 and 50) tt;
 drop index idx on t;
 
--- iteration 2/10: rebuild index (parallel), count via INDEX_SS
 create index idx on t(i,j,k);
 update statistics on t;
+evaluate 'Case 3: INDEX_SS count after parallel index build';
 select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 151 and 199) tt;
 select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 2 and 50) tt;
 drop index idx on t;
 
--- iteration 3/10: rebuild index (parallel), count via INDEX_SS
 create index idx on t(i,j,k);
 update statistics on t;
+evaluate 'Case 4: INDEX_SS count after parallel index build';
 select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 151 and 199) tt;
 select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 2 and 50) tt;
 drop index idx on t;
 
--- iteration 4/10: rebuild index (parallel), count via INDEX_SS
 create index idx on t(i,j,k);
 update statistics on t;
+evaluate 'Case 5: INDEX_SS count after parallel index build';
 select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 151 and 199) tt;
 select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 2 and 50) tt;
 drop index idx on t;
 
--- iteration 5/10: rebuild index (parallel), count via INDEX_SS
 create index idx on t(i,j,k);
 update statistics on t;
+evaluate 'Case 6: INDEX_SS count after parallel index build';
 select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 151 and 199) tt;
 select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 2 and 50) tt;
 drop index idx on t;
 
--- iteration 6/10: rebuild index (parallel), count via INDEX_SS
 create index idx on t(i,j,k);
 update statistics on t;
+evaluate 'Case 7: INDEX_SS count after parallel index build';
 select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 151 and 199) tt;
 select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 2 and 50) tt;
 drop index idx on t;
 
--- iteration 7/10: rebuild index (parallel), count via INDEX_SS
 create index idx on t(i,j,k);
 update statistics on t;
+evaluate 'Case 8: INDEX_SS count after parallel index build';
 select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 151 and 199) tt;
 select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 2 and 50) tt;
 drop index idx on t;
 
--- iteration 8/10: rebuild index (parallel), count via INDEX_SS
 create index idx on t(i,j,k);
 update statistics on t;
+evaluate 'Case 9: INDEX_SS count after parallel index build';
 select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 151 and 199) tt;
 select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 2 and 50) tt;
 drop index idx on t;
 
--- iteration 9/10: rebuild index (parallel), count via INDEX_SS
 create index idx on t(i,j,k);
 update statistics on t;
+evaluate 'Case 10: INDEX_SS count after parallel index build';
 select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 151 and 199) tt;
 select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 2 and 50) tt;
 drop index idx on t;
 
--- iteration 10/10: rebuild index (parallel), count via INDEX_SS
 create index idx on t(i,j,k);
 update statistics on t;
+evaluate 'Case 11: INDEX_SS count after parallel index build';
 select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 151 and 199) tt;
 select /*+ recompile */ count(*) from (select /*+ recompile INDEX_SS NO_MERGE */ * from t where j between 2 and 50) tt;
 drop index idx on t;
