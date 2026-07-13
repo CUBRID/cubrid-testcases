@@ -1,0 +1,15 @@
+autocommit off;
+call login('joe') on class db_user;
+create class xxx (a int);
+insert into xxx values(6);
+create vclass xxx_v (a1 int) as select a from xxx;
+select * from xxx_v;
+grant all on xxx_v to public;
+commit;
+call login('public') on class db_user;
+select * from joe.xxx_v;
+call login('dba', '') on class db_user;
+rollback;
+drop vclass joe.xxx_v;
+drop class joe.xxx;
+commit;
