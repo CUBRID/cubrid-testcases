@@ -41,6 +41,22 @@ Query stmt:
 select /*+ ORDERED NO_USE_HASH */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_e=b.col_e
 ===================================================
 count(*)    
+10000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?] AND term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_e=b.col_e
+===================================================
+count(*)    
 1     
 
 Query plan:
@@ -66,6 +82,22 @@ idx-join (inner join)
     cost:  ? card ?
 Query stmt:
 select /*+ ORDERED NO_USE_HASH */ count(*) from tbl a, tbl b where a.col_a=b.col_a
+===================================================
+count(*)    
+10000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ count(*) from tbl a, tbl b where a.col_a=b.col_a
 ===================================================
 count(*)    
 1     
@@ -96,6 +128,22 @@ idx-join (inner join)
     cost:  ? card ?
 Query stmt:
 select /*+ ORDERED NO_USE_HASH */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_e=b.col_e and a.col_b=b.col_b
+===================================================
+count(*)    
+10000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?] AND term[?] AND term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_e=b.col_e and a.col_b=b.col_b
 ===================================================
 0
 ===================================================

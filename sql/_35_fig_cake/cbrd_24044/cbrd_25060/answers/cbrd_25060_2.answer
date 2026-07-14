@@ -93,6 +93,22 @@ idx-join (inner join)
 Query stmt:
 select /*+ ORDERED NO_USE_HASH */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_b=b.col_b and a.col_c=b.col_c and a.col_d=b.col_d
 ===================================================
+count(*)    
+10000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?] AND term[?] AND term[?] AND term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_b=b.col_b and a.col_c=b.col_c and a.col_d=b.col_d
+===================================================
 0
 ===================================================
 0

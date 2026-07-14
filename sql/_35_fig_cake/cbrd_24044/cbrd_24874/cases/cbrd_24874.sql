@@ -24,9 +24,20 @@ where a.col_a = b.col_a
 and a.col_b = '1'
 and b.col_b = '1';
 
+-- CBRD-26475: no_use_hash 없이 옵티마이저의 hash-join 선택 검증 (기존 쿼리 유지 + 힌트 제거 버전 추가)
+select /*+ recompile */ * from tab_b b, tab_a a
+where a.col_a = b.col_a
+and a.col_b = '1'
+and b.col_b = '1';
+
 -- Only 7 pages are collected when sampling statistics.
 -- b.col_c NDV has been calculated correctly, so join order should be a->b.
 select /*+ recompile no_use_hash */ count(*) from tab_a a, tab_b b
+where a.col_a = b.col_a
+and b.col_c = '1';
+
+-- CBRD-26475: no_use_hash 없이 옵티마이저의 hash-join 선택 검증 (기존 쿼리 유지 + 힌트 제거 버전 추가)
+select /*+ recompile */ count(*) from tab_a a, tab_b b
 where a.col_a = b.col_a
 and b.col_c = '1';
 
