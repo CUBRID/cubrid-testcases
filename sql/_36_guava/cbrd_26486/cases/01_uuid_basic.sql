@@ -116,7 +116,7 @@ select bit_length(uuid('4.111')) u_str_4111,
        substr(uuid_format(uuid('0.0')), 15, 1) v_str_0_0;
 
 evaluate '[TEST 15] decimal arguments that round to unsupported versions still error';
-select uuid(-0.51);
+select uuid(-0.5);
 select uuid(0.5);
 select uuid(3.49);
 select uuid(4.5);
