@@ -1161,28 +1161,27 @@ term[2]: [dba.cust].ck=[dba.orders].ck (sel ?) (join term) (mergeable) (inner-jo
 Join graph terms:
 term[3]: [dba.nations].region=1 (sel ?) (sarg term) (not-join eligible) (loc 0)
 Query plan:
-nl-join (inner join)
+hash-join (inner join)
     edge:  term[?]
-    outer: nl-join (inner join)
+    outer: hash-join (inner join)
                edge:  term[?]
                outer: nl-join (inner join)
                           edge:  term[?]
                           outer: sscan
-                                     class: cust node[?]
+                                     class: nations node[?]
+                                     sargs: term[?]
                                      cost:  ? card ?
                           inner: sscan
-                                     class: orders node[?]
+                                     class: supp node[?]
                                      sargs: term[?]
                                      cost:  ? card ?
                           cost:  ? card ?
                inner: sscan
-                          class: supp node[?]
-                          sargs: term[?]
+                          class: cust node[?]
                           cost:  ? card ?
                cost:  ? card ?
     inner: sscan
-               class: nations node[?]
-               sargs: term[?] AND term[?]
+               class: orders node[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
