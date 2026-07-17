@@ -34,9 +34,10 @@ CREATE USER user1;
 CALL login('user1') ON CLASS db_user;
 -- Expected: ERROR - user1 no longer exists (forced rollback ran first)
 
-ROLLBACK;
 SHOW TABLES;
--- Expected: succeeds normally; no core dump
+-- Expected: succeeds immediately after failed login(); no core dump
+
+ROLLBACK;
 
 SELECT name FROM db_user WHERE name = 'USER1';
 -- Expected: 0 rows selected
@@ -62,6 +63,7 @@ COMMIT;
 CALL login('user2') ON CLASS db_user;
 SELECT COUNT(*) FROM dba.tbl1;
 -- Expected: Succeeds
+-- Cases 4-14 reuse user2 created and granted in Case 3.
 
 
 evaluate 'Case 4. Pending DDL (CREATE TABLE) is force-rolled-back by login()';
@@ -201,9 +203,11 @@ COMMIT;
 evaluate 'Case 14. State Preservation: login() does not alter the session commit mode';
 CALL login('user2') ON CLASS db_user;
 INSERT INTO dba.tbl1 VALUES (300);
+SELECT COUNT(*) FROM dba.tbl1;
+-- Expected: COUNT(*) = 0 before the rollback check
 ROLLBACK;
 SELECT COUNT(*) FROM dba.tbl1;
--- Expected: COUNT(*) = 0
+-- Expected: COUNT(*) = 0 same before rollback
 
 CALL login('dba') ON CLASS db_user;
 
