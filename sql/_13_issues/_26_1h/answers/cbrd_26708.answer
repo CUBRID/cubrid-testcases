@@ -1,0 +1,438 @@
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+3
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+    
+Case 1: NO SQL - procedure with only DBMS_OUTPUT, function with arithmetic     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+    
+Case 2: NO SQL - empty body (no statement at all)     
+
+
+===================================================
+0
+
+===================================================
+    
+Case 3: CONTAINS SQL - SELECT of an expression without table reference     
+
+
+===================================================
+0
+
+===================================================
+    
+Case 4: CONTAINS SQL - SELECT of a function without FROM (no table data)     
+
+
+===================================================
+0
+
+===================================================
+    
+Case 5: CONTAINS SQL - control statement COMMIT     
+
+
+===================================================
+0
+
+===================================================
+    
+Case 6: CONTAINS SQL - control statement ROLLBACK     
+
+
+===================================================
+0
+
+===================================================
+    
+Case 7: CONTAINS SQL - set-derived table TABLE({...}) is not real table data     
+
+
+===================================================
+0
+
+===================================================
+    
+Case 8: CONTAINS SQL - view built on a set-derived (virtual) table     
+
+
+===================================================
+0
+
+===================================================
+    
+Case 9: READS SQL DATA - SELECT INTO from a table     
+
+
+===================================================
+0
+
+===================================================
+    
+Case 10: READS SQL DATA - constant select-list but FROM a real table     
+
+
+===================================================
+0
+
+===================================================
+    
+Case 11: READS SQL DATA - SELECT from dual     
+
+
+===================================================
+0
+
+===================================================
+    
+Case 12: READS SQL DATA - explicit cursor over a table SELECT     
+
+
+===================================================
+0
+
+===================================================
+    
+Case 13: READS SQL DATA - OPEN FOR (ref cursor) over a table SELECT     
+
+
+===================================================
+0
+
+===================================================
+    
+Case 14: READS SQL DATA - FOR ... IN (SELECT) LOOP over a table     
+
+
+===================================================
+0
+
+===================================================
+    
+Case 15: READS SQL DATA - SELECT from a derived table (subquery) over a real table     
+
+
+===================================================
+0
+
+===================================================
+    
+Case 16: READS SQL DATA - SELECT from a view over a base table     
+
+
+===================================================
+0
+
+===================================================
+    
+Case 17: READS SQL DATA - strongest wins, CONTAINS + READS in one body -> READS     
+
+
+===================================================
+0
+
+===================================================
+    
+Case 18: MODIFIES SQL DATA - INSERT     
+
+
+===================================================
+0
+
+===================================================
+    
+Case 19: MODIFIES SQL DATA - UPDATE     
+
+
+===================================================
+0
+
+===================================================
+    
+Case 20: MODIFIES SQL DATA - DELETE     
+
+
+===================================================
+0
+
+===================================================
+    
+Case 21: MODIFIES SQL DATA - MERGE     
+
+
+===================================================
+0
+
+===================================================
+    
+Case 22: MODIFIES SQL DATA - REPLACE     
+
+
+===================================================
+0
+
+===================================================
+    
+Case 23: MODIFIES SQL DATA - TRUNCATE     
+
+
+===================================================
+0
+
+===================================================
+    
+Case 24: MODIFIES SQL DATA - INSERT ... SELECT (read + write)     
+
+
+===================================================
+0
+
+===================================================
+    
+Case 25: MODIFIES SQL DATA - strongest wins, READS + MODIFIES in one body -> MODIFIES     
+
+
+===================================================
+0
+
+===================================================
+    
+Case 26: NO SQL - dynamic SQL string is not statically analyzed     
+
+
+===================================================
+0
+
+===================================================
+    
+Case 27: NO SQL - DDL is only possible via dynamic SQL, so it is not analyzed     
+
+
+===================================================
+0
+
+===================================================
+    
+Case 28: NO SQL - calling another SP is not counted as SQL access     
+
+
+===================================================
+0
+
+===================================================
+    
+Case 29: DBMS_OUTPUT execution path is exercised for the NO SQL procedure     
+
+
+===================================================
+    
+null     
+
+
+no sql here
+===================================================
+    
+Case 30: sql_data_access from db_stored_procedure for all cases above     
+
+
+===================================================
+sp_name    sp_type    sql_data_access    
+f_calc     FUNCTION     NO SQL     
+f_const_realtbl     FUNCTION     READS SQL DATA     
+f_contains     FUNCTION     CONTAINS SQL     
+f_contains_reads     FUNCTION     READS SQL DATA     
+f_cursor     FUNCTION     READS SQL DATA     
+f_dual     FUNCTION     READS SQL DATA     
+f_forloop     FUNCTION     READS SQL DATA     
+f_func_nofrom     FUNCTION     CONTAINS SQL     
+f_openfor     FUNCTION     READS SQL DATA     
+f_reads     FUNCTION     READS SQL DATA     
+f_setderived     FUNCTION     CONTAINS SQL     
+f_subquery     FUNCTION     READS SQL DATA     
+f_view     FUNCTION     READS SQL DATA     
+f_view_set     FUNCTION     CONTAINS SQL     
+p_callmod     PROCEDURE     NO SQL     
+p_commit     PROCEDURE     CONTAINS SQL     
+p_ddl     PROCEDURE     NO SQL     
+p_delete     PROCEDURE     MODIFIES SQL DATA     
+p_dynamic     PROCEDURE     NO SQL     
+p_empty     PROCEDURE     NO SQL     
+p_insert     PROCEDURE     MODIFIES SQL DATA     
+p_insert_select     PROCEDURE     MODIFIES SQL DATA     
+p_merge     PROCEDURE     MODIFIES SQL DATA     
+p_mixed     PROCEDURE     MODIFIES SQL DATA     
+p_nosql     PROCEDURE     NO SQL     
+p_replace     PROCEDURE     MODIFIES SQL DATA     
+p_rollback     PROCEDURE     CONTAINS SQL     
+p_truncate     PROCEDURE     MODIFIES SQL DATA     
+p_update     PROCEDURE     MODIFIES SQL DATA     
+
+
+===================================================
+    
+Case 31: same value is exposed through information_schema.routines for every routine     
+
+
+===================================================
+routine_name    routine_type    sql_data_access    
+f_calc     FUNCTION     NO SQL     
+f_const_realtbl     FUNCTION     READS SQL DATA     
+f_contains     FUNCTION     CONTAINS SQL     
+f_contains_reads     FUNCTION     READS SQL DATA     
+f_cursor     FUNCTION     READS SQL DATA     
+f_dual     FUNCTION     READS SQL DATA     
+f_forloop     FUNCTION     READS SQL DATA     
+f_func_nofrom     FUNCTION     CONTAINS SQL     
+f_openfor     FUNCTION     READS SQL DATA     
+f_reads     FUNCTION     READS SQL DATA     
+f_setderived     FUNCTION     CONTAINS SQL     
+f_subquery     FUNCTION     READS SQL DATA     
+f_view     FUNCTION     READS SQL DATA     
+f_view_set     FUNCTION     CONTAINS SQL     
+p_callmod     PROCEDURE     NO SQL     
+p_commit     PROCEDURE     CONTAINS SQL     
+p_ddl     PROCEDURE     NO SQL     
+p_delete     PROCEDURE     MODIFIES SQL DATA     
+p_dynamic     PROCEDURE     NO SQL     
+p_empty     PROCEDURE     NO SQL     
+p_insert     PROCEDURE     MODIFIES SQL DATA     
+p_insert_select     PROCEDURE     MODIFIES SQL DATA     
+p_merge     PROCEDURE     MODIFIES SQL DATA     
+p_mixed     PROCEDURE     MODIFIES SQL DATA     
+p_nosql     PROCEDURE     NO SQL     
+p_replace     PROCEDURE     MODIFIES SQL DATA     
+p_rollback     PROCEDURE     CONTAINS SQL     
+p_truncate     PROCEDURE     MODIFIES SQL DATA     
+p_update     PROCEDURE     MODIFIES SQL DATA     
+
+
+===================================================
+    
+Case 32: CREATE OR REPLACE re-determines sql_data_access (READS -> MODIFIES)     
+
+
+===================================================
+0
+
+===================================================
+sp_name    sql_data_access    
+f_reads     MODIFIES SQL DATA     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
