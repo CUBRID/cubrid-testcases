@@ -192,14 +192,14 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     TABLE SCAN (ta)
-    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: ta.b= abs(tb.b)key range: ta.a=tb.a)
+    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: ta.b= abs(tb.b)key range: ta.a=tb.a, key filter: ta.c= abs(tb.b), covered: true)
 
   rewritten query: select /*+ ORDERED NO_PARALLEL_HEAP_SCAN */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta, [dba.tbla] tb where ta.b= abs(tb.b) and ta.c= abs(tb.b) and ta.a=tb.a and (inst_num()<= ?:? ) using index tb.idx_tbla_a_abs_b
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbla), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
      
 
 ===================================================
@@ -215,14 +215,14 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     TABLE SCAN (ta)
-    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: ta.a=tb.a)
+    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: ta.a=tb.a, key filter: (ta.b<= abs(tb.b)), key filter: (ta.c> abs(tb.b)), covered: true)
 
   rewritten query: select /*+ ORDERED NO_PARALLEL_HEAP_SCAN */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta, [dba.tbla] tb where (ta.b<= abs(tb.b)) and (ta.c> abs(tb.b)) and ta.a=tb.a and (inst_num()<= ?:? ) using index tb.idx_tbla_a_abs_b
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbla), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
      
 
 ===================================================
@@ -238,14 +238,14 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     TABLE SCAN (ta)
-    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: ( abs(tb.b)>=ta.b)key range: ta.a=tb.a)
+    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: ( abs(tb.b)>=ta.b)key range: ta.a=tb.a, key filter: (ta.c> abs(tb.b)), covered: true)
 
   rewritten query: select /*+ ORDERED NO_PARALLEL_HEAP_SCAN */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta, [dba.tbla] tb where ( abs(tb.b)>=ta.b) and (ta.c> abs(tb.b)) and ta.a=tb.a and (inst_num()<= ?:? ) using index tb.idx_tbla_a_abs_b
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbla), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
      
 
 ===================================================
@@ -261,14 +261,14 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     TABLE SCAN (ta)
-    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: ( abs(tb.b)>=ta.b and  abs(tb.b)<ta.c)key range: ta.a=tb.a)
+    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: ( abs(tb.b)>=ta.b and  abs(tb.b)<ta.c)key range: ta.a=tb.a, covered: true)
 
   rewritten query: select /*+ ORDERED NO_PARALLEL_HEAP_SCAN */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta, [dba.tbla] tb where ( abs(tb.b)>=ta.b and  abs(tb.b)<ta.c) and ta.a=tb.a and (inst_num()<= ?:? ) using index tb.idx_tbla_a_abs_b
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbla), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
      
 
 ===================================================
@@ -331,14 +331,14 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     TABLE SCAN (ta)
-    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: (( abs(tb.b)=ta.b) or ( abs(tb.b)=ta.c))key range: ta.a=tb.a)
+    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: (( abs(tb.b)=ta.b) or ( abs(tb.b)=ta.c))key range: ta.a=tb.a, covered: true)
 
   rewritten query: select /*+ ORDERED NO_PARALLEL_HEAP_SCAN */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta, [dba.tbla] tb where (( abs(tb.b)=ta.b) or ( abs(tb.b)=ta.c)) and ta.a=tb.a and (inst_num()<= ?:? ) using index tb.idx_tbla_a_abs_b
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbla), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
      
 
 ===================================================
@@ -355,14 +355,14 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     TABLE SCAN (ta)
-    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: (( abs(tb.b)>=ta.b) or ( abs(tb.b)<ta.c))key range: ta.a=tb.a)
+    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: (( abs(tb.b)>=ta.b) or ( abs(tb.b)<ta.c))key range: ta.a=tb.a, covered: true)
 
   rewritten query: select /*+ ORDERED NO_PARALLEL_HEAP_SCAN */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta, [dba.tbla] tb where (( abs(tb.b)>=ta.b) or ( abs(tb.b)<ta.c)) and ta.a=tb.a and (inst_num()<= ?:? ) using index tb.idx_tbla_a_abs_b
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbla), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
      
 
 ===================================================
@@ -429,14 +429,14 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     TABLE SCAN (ta)
-    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: (( abs(tb.b)<=ta.b) or ( abs(tb.b)<ta.c))key range: ta.a=tb.a)
+    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: (( abs(tb.b)<=ta.b) or ( abs(tb.b)<ta.c))key range: ta.a=tb.a, covered: true)
 
   rewritten query: select /*+ ORDERED NO_PARALLEL_HEAP_SCAN */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta, [dba.tbla] tb where (( abs(tb.b)<=ta.b) or ( abs(tb.b)<ta.c)) and ta.a=tb.a and (inst_num()<= ?:? ) using index tb.idx_tbla_a_abs_b
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbla), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
      
 
 ===================================================
@@ -503,14 +503,14 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     TABLE SCAN (ta)
-    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: (( abs(tb.b)=ta.b) or ( abs(tb.b)=ta.c) or ( abs(tb.b)=ta.d))key range: ta.a=tb.a)
+    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: (( abs(tb.b)=ta.b) or ( abs(tb.b)=ta.c) or ( abs(tb.b)=ta.d))key range: ta.a=tb.a, covered: true)
 
   rewritten query: select /*+ ORDERED NO_PARALLEL_HEAP_SCAN */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta, [dba.tbla] tb where (( abs(tb.b)=ta.b) or ( abs(tb.b)=ta.c) or ( abs(tb.b)=ta.d)) and ta.a=tb.a and (inst_num()<= ?:? ) using index tb.idx_tbla_a_abs_b
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbla), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
      
 
 ===================================================
@@ -528,14 +528,14 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     INDEX SCAN (ta.idx_tbla_abs_b_a) (key range: ( abs(ta.b)>= ?:?  and  abs(ta.b)< ?:? ))
-    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: ta.a=tb.akey range: ( abs(tb.b)>= ?:?  and  abs(tb.b)< ?:? ))
+    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: ta.a=tb.akey range: ( abs(tb.b)>= ?:?  and  abs(tb.b)< ?:? ), covered: true)
 
   rewritten query: select /*+ ORDERED NO_PARALLEL_HEAP_SCAN */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta, [dba.tbla] tb where ( abs(ta.b)>= ?:?  and  abs(ta.b)< ?:? ) and ( abs(tb.b)>= ?:?  and  abs(tb.b)< ?:? ) and ta.a=tb.a using index ta.idx_tbla_abs_b_a, tb.idx_tbla_a_abs_b
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (index: dba.tbla.idx_tbla_abs_b_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
      
 
 ===================================================
