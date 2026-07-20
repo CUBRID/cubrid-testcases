@@ -8,7 +8,7 @@ create table tbl_a (cd varchar(20), p_cd varchar(20));
 
 insert into tbl_a values ('10000001', '10000000'),('10000002', '10000001');
 
-evaluate 'case #1 : connect by - table error 1 : order by siblings by expr integer value when the SELECT column is an expression rather than a column name.';
+evaluate 'case #1 : connect by - table error 1 : order siblings by expr integer value when the SELECT column is an expression rather than a column name.';
 select cd || 'yy' as cd, p_cd
 from   tbl_a a
 start with a.p_cd = '10000000'
@@ -42,7 +42,7 @@ start with a.p_cd is null
 connect by prior a.cd = a.p_cd
 order siblings by 1;
 
-evaluate 'case #5 : connect by - view : order by siblings by expr integer value when the SELECT column is an expression rather than a column name.';
+evaluate 'case #5 : connect by - view : order siblings by expr integer value when the SELECT column is an expression rather than a column name.';
 select cd || 'yy' as cd, p_cd
 from   [v_tbl_a] a
 start with a.p_cd is null
@@ -76,7 +76,7 @@ start with a.p_cd is null
 connect by prior a.cd = a.p_cd
 order siblings by 1;
 
-evaluate 'case #9 : connect by - view : order by siblings by expr integer value when the SELECT column is an expression rather than a column name.';
+evaluate 'case #9 : connect by - view : order siblings by expr integer value when the SELECT column is an expression rather than a column name.';
 select cd || 'yy' as cd, p_cd
 from   [v_tbl_a] a
 start with a.p_cd is null
