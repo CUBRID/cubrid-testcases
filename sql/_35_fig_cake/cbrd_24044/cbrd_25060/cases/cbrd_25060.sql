@@ -15,14 +15,23 @@ update statistics on tbl;
 select /*+ recompile */ count(*) from tbl where col_a = 1 and col_e = 1;
 
 --join with pk
+select /*+ recompile ordered no_use_hash */ count(*) from tbl a, tbl b where a.col_a = b.col_a and a.col_e = b.col_e;
+
+-- CBRD-26475: no_use_hash 없이 옵티마이저의 hash-join 선택 검증 (기존 쿼리 유지 + 힌트 제거 버전 추가)
 select /*+ recompile ordered */ count(*) from tbl a, tbl b where a.col_a = b.col_a and a.col_e = b.col_e; 
 
 select /*+ recompile */ count(*) from tbl where col_a = 1;
 
+select /*+ recompile ordered no_use_hash */ count(*) from tbl a, tbl b where a.col_a = b.col_a;
+
+-- CBRD-26475: no_use_hash 없이 옵티마이저의 hash-join 선택 검증 (기존 쿼리 유지 + 힌트 제거 버전 추가)
 select /*+ recompile ordered */ count(*) from tbl a, tbl b where a.col_a = b.col_a;
 
 select /*+ recompile */ count(*) from tbl where col_a = 1 and col_e = 1 and col_b = 1;
 
+select /*+ recompile ordered no_use_hash */ count(*) from tbl a, tbl b where a.col_a = b.col_a and a.col_e = b.col_e and a.col_b = b.col_b;
+
+-- CBRD-26475: no_use_hash 없이 옵티마이저의 hash-join 선택 검증 (기존 쿼리 유지 + 힌트 제거 버전 추가)
 select /*+ recompile ordered */ count(*) from tbl a, tbl b where a.col_a = b.col_a and a.col_e = b.col_e and a.col_b = b.col_b;
 
 
@@ -35,14 +44,14 @@ update statistics on tbl;
 select /*+ recompile */ count(*) from tbl where col_a = 1 and col_e = 1;
 
 --join
-select /*+ recompile ordered */ count(*) from tbl a, tbl b where a.col_a = b.col_a and a.col_e = b.col_e;
+select /*+ recompile ordered no_use_hash */ count(*) from tbl a, tbl b where a.col_a = b.col_a and a.col_e = b.col_e;
 
 select /*+ recompile */ count(*) from tbl where col_a = 1;
 
-select /*+ recompile ordered */ count(*) from tbl a, tbl b where a.col_a = b.col_a;
+select /*+ recompile ordered no_use_hash */ count(*) from tbl a, tbl b where a.col_a = b.col_a;
 
 select /*+ recompile */ count(*) from tbl where col_a = 1 and col_e = 1 and col_b = 1;
 
-select /*+ recompile ordered */ count(*) from tbl a, tbl b where a.col_a = b.col_a and a.col_e = b.col_e and a.col_b = b.col_b;
+select /*+ recompile ordered no_use_hash */ count(*) from tbl a, tbl b where a.col_a = b.col_a and a.col_e = b.col_e and a.col_b = b.col_b;
 
 drop table tbl;
