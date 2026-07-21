@@ -15,14 +15,14 @@ start with a.p_cd = '10000000'
 connect by prior a.cd = a.p_cd
 order siblings by 1;
 
-evaluate 'case #2 : connect by - table error 2 : When expr is an expression in order by siblings by expr(use substring function).';
+evaluate 'case #2 : connect by - table error 2 : When expr is an expression in order siblings by expr(use substring function).';
 select cd || 'yy' as cd, p_cd
 from   tbl_a a
 start with a.p_cd = '10000000'
 connect by prior a.cd = a.p_cd
 order siblings by substring(cd, 3, 2);
 
-evaluate 'case #3 : connect by - table error 3 : When expr is an expression in order by siblings by expr(use substr function)';
+evaluate 'case #3 : connect by - table error 3 : When expr is an expression in order siblings by expr(use substr function)';
 select cd || 'yy' as cd, p_cd
 from   tbl_a a
 start with a.p_cd = '10000000'
@@ -49,14 +49,14 @@ start with a.p_cd is null
 connect by prior a.cd = a.p_cd
 order siblings by 1;
 
-evaluate 'case #6 : connect by - view : When expr is an expression in order by siblings by expr(use substring function).';
+evaluate 'case #6 : connect by - view : When expr is an expression in order siblings by expr(use substring function).';
 select cd || 'yy' as cd, p_cd
 from   [v_tbl_a] a
 start with a.p_cd is null
 connect by prior a.cd = a.p_cd
 order siblings by substring(cd, 3, 2);
 
-evaluate 'case #7 : connect by - view : When expr is an expression in order by siblings by expr(use substr function)';
+evaluate 'case #7 : connect by - view : When expr is an expression in order siblings by expr(use substr function)';
 select cd || 'yy' as cd, p_cd
 from   [v_tbl_a] a
 start with a.p_cd is null
@@ -83,14 +83,14 @@ start with a.p_cd is null
 connect by prior a.cd = a.p_cd
 order siblings by 1;
 
-evaluate 'case #10 : connect by - view : When expr is an expression in order by siblings by expr(use substring function).';
+evaluate 'case #10 : connect by - view : When expr is an expression in order siblings by expr(use substring function).';
 select cd || 'yy' as cd, p_cd
 from   [v_tbl_a] a
 start with a.p_cd is null
 connect by prior a.cd = a.p_cd
 order siblings by substring(cd, 3, 2);
 
-evaluate 'case #11 : connect by - view : When expr is an expression in order by siblings by expr(use substr function)';
+evaluate 'case #11 : connect by - view : When expr is an expression in order siblings by expr(use substr function)';
 select cd || 'yy' as cd, p_cd
 from   [v_tbl_a] a
 start with a.p_cd is null
@@ -99,3 +99,52 @@ order siblings by substr(cd, 3, 2);
 
 drop table if exists tbl_a;
 drop view if exists v_tbl_a;
+
+create table tbl_b (cd varchar(20), p_cd varchar(20));
+
+insert into tbl_b values ('10000001', '10000000'),
+('10300001', '10000001'),
+('10100001', '10000001'),
+('10200001', '10000001');
+
+evaluate 'case #12 : connect by - table : order siblings by expression actually sorts siblings(use substring function)';
+select cd || 'yy' as cd, p_cd
+from tbl_b a
+start with a.p_cd = '10000000'
+connect by prior a.cd = a.p_cd
+order siblings by substring(cd, 3, 2);
+
+evaluate 'case #13 : connect by - table : order siblings by expr integer value with desc';
+select cd || 'yy' as cd, p_cd
+from tbl_b a
+start with a.p_cd = '10000000'
+connect by prior a.cd = a.p_cd
+order siblings by 1 desc;
+
+evaluate 'case #14 : connect by - table : order siblings by explicit cast expression';
+select cd || 'yy' as cd, p_cd
+from tbl_b a
+start with a.p_cd = '10000000'
+connect by prior a.cd = a.p_cd
+order siblings by cast(cd as varchar(20));
+
+evaluate 'case #15 : union - create view [v_tbl_b] as select with real siblings for sorts';
+create view [v_tbl_b] as
+select cd, p_cd
+from ( select '10000000' as cd, null as p_cd
+union
+select cd, p_cd from [tbl_b]
+) a
+start with a.p_cd is null
+connect by prior a.cd = a.p_cd
+order siblings by 1;
+
+evaluate 'case #16 : connect by - view : order siblings by expression sorts real siblings on view expansion';
+select cd || 'yy' as cd, p_cd
+from [v_tbl_b] a
+start with a.p_cd is null
+connect by prior a.cd = a.p_cd
+order siblings by substring(cd, 3, 2);
+
+drop table if exists tbl_b;
+drop view if exists v_tbl_b;
