@@ -204,10 +204,10 @@ evaluate 'Case 14. State Preservation: login() does not alter the session commit
 CALL login('user2') ON CLASS db_user;
 INSERT INTO dba.tbl1 VALUES (300);
 SELECT COUNT(*) FROM dba.tbl1;
--- Expected: COUNT(*) = 0 before the rollback check
+-- Expected: COUNT(*) = 1 (INSERT is visible within the same uncommitted transaction)
 ROLLBACK;
 SELECT COUNT(*) FROM dba.tbl1;
--- Expected: COUNT(*) = 0 same before rollback
+-- Expected: COUNT(*) = 0 (INSERT was rolled back, proving autocommit is still OFF)
 
 CALL login('dba') ON CLASS db_user;
 
