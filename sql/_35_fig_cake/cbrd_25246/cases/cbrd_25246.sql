@@ -10,6 +10,11 @@ WITH tbl_data AS (
     SELECT /*+ select_page_info */ *
     FROM tbl
 )
-SELECT IF(COUNT(*) > 0 AND MIN(p_cur_volumeid) >= 0 AND MIN(p_cur_pageid) >= 0, 'TRUE', 'FALSE') FROM tbl_data;
+SELECT IF(COUNT(*) > 0
+          AND COUNT(p_cur_volumeid) = COUNT(*)
+          AND COUNT(p_cur_pageid) = COUNT(*)
+          AND MIN(p_cur_volumeid) >= 0
+          AND MIN(p_cur_pageid) >= 0,
+          'TRUE', 'FALSE') FROM tbl_data;
 
 drop table tbl;
