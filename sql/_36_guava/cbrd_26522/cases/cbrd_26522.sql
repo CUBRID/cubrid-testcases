@@ -4,11 +4,15 @@
  *
  *  Parallel heap scan is enabled automatically here: CTP runs SQL tests with
  *  test_mode=yes, which lowers parallel_scan_page_threshold from its default
- *  (2048) to 32. t1 below is ~4000 rows (> 32 heap pages), so its heap scan is
+ *  (2048) to 32. ta below is ~4000 rows (> 32 heap pages), so its heap scan is
  *  executed in parallel and the NL join is evaluated inside each parallel worker.
  *  The (parallel workers: ...) line and the "gather:" mode in "show trace" show
  *  whether the driving heap scan ran in parallel and how results were gathered
  *  (mergeable list / buildvalue / row by row).
+ *
+ *  Note: table/column names use letters (ta/tb/tc, cola..colf), not digits,
+ *  because CTP masks digits in the trace output to '?' -- digit-named objects
+ *  (t1, col1, ...) would all collapse to "t?"/"col?" and become indistinguishable.
  *
  *  Correctness: every parallel case (mergeable list and the buildvalue/count
  *  case) runs the parallel query AND the same query with the NO_PARALLEL_SCAN
@@ -37,109 +41,109 @@
  *    Case 11: first(driving) table = set collection -> not parallel-heap-scannable (cannot parallelize #1)
  */
 
-drop table if exists t1, t2, t3;
-create table t1 (id int primary key, col1 varchar(20), col2 varchar(20), col3 varchar(20), col4 varchar(20), col5 varchar(20), col6 varchar(20));
-create table t2 (id int primary key);
-create table t3 (id int primary key);
+drop table if exists ta, tb, tc;
+create table ta (id int primary key, cola varchar(20), colb varchar(20), colc varchar(20), cold varchar(20), cole varchar(20), colf varchar(20));
+create table tb (id int primary key);
+create table tc (id int primary key);
 
-insert into t1
+insert into ta
 select rownum, lpad(rownum,20,'0'), lpad(rownum % 5,20,'0'), lpad(rownum,20,'0'), lpad(rownum,20,'0'), lpad(rownum,20,'0'), lpad(rownum,20,'0')
 from db_class a, db_class b, db_class c, db_class d, db_class e limit 4000;
-insert into t2 select rownum from db_class limit 5;
-insert into t3 select rownum from db_class limit 3;
+insert into tb select rownum from db_class limit 5;
+insert into tc select rownum from db_class limit 3;
 
 set trace on;
 
 
 evaluate 'Case 1: simple NL join (driving heap scan) -> mergeable list';
-select /*+ recompile ordered */ t2.id from t1, t2 where t1.id = t2.id order by 1;
+select /*+ recompile ordered */ tb.id from ta, tb where ta.id = tb.id order by 1;
 show trace;
 -- serial reference: result must match the parallel block above
-select /*+ recompile ordered no_parallel_scan */ t2.id from t1, t2 where t1.id = t2.id order by 1;
+select /*+ recompile ordered no_parallel_scan */ tb.id from ta, tb where ta.id = tb.id order by 1;
 show trace;
 
 
 evaluate 'Case 2: outer(left) NL join, count only -> buildvalue';
-select /*+ recompile */ count(t2.id) from t1 left join t2 on t1.id = t2.id where t1.col1 < 6;
+select /*+ recompile */ count(tb.id) from ta left join tb on ta.id = tb.id where ta.cola < 6;
 show trace;
 -- serial reference: result must match the parallel block above
-select /*+ recompile no_parallel_scan */ count(t2.id) from t1 left join t2 on t1.id = t2.id where t1.col1 < 6;
+select /*+ recompile no_parallel_scan */ count(tb.id) from ta left join tb on ta.id = tb.id where ta.cola < 6;
 show trace;
 
 
 evaluate 'Case 3: cross join -> mergeable list';
-select /*+ recompile ordered */ t1.id, t2.id from t1, t2 where cast(t1.col1 as int) < 2 order by 1, 2;
+select /*+ recompile ordered */ ta.id, tb.id from ta, tb where cast(ta.cola as int) < 2 order by 1, 2;
 show trace;
 -- serial reference: result must match the parallel block above
-select /*+ recompile ordered no_parallel_scan */ t1.id, t2.id from t1, t2 where cast(t1.col1 as int) < 2 order by 1, 2;
+select /*+ recompile ordered no_parallel_scan */ ta.id, tb.id from ta, tb where cast(ta.cola as int) < 2 order by 1, 2;
 show trace;
 
 
 evaluate 'Case 4: SP on the 2nd table (cannot parallelize #2) -> row by row';
-create or replace function sp1(n integer) return integer deterministic
+create or replace function sp_inc(n integer) return integer deterministic
 is
 begin
     return n + 1;
 end;
 
-select /*+ recompile ordered */ sp1(t2.id) from t1 join t2 on t1.id = t2.id order by 1;
+select /*+ recompile ordered */ sp_inc(tb.id) from ta join tb on ta.id = tb.id order by 1;
 show trace;
 
-drop function sp1;
+drop function sp_inc;
 
 
 evaluate 'Case 5: 2nd table scan spec is set (cannot parallelize #3) -> row by row';
-select /*+ recompile ordered */ t1.id, tset.v from t1, table({1,2,3}) as tset(v) where cast(t1.col1 as int) < 2 order by 1, 2;
+select /*+ recompile ordered */ ta.id, tset.v from ta, table({1,2,3}) as tset(v) where cast(ta.cola as int) < 2 order by 1, 2;
 show trace;
 
 
 evaluate 'Case 6: 2nd table JSON_TABLE scan (cannot parallelize #4) -> row by row';
-select /*+ recompile ordered */ t1.id, jt.col
-from t1, json_table('{"a":[1,[2,3]]}', '$.a[*]' columns (col int path '$')) as jt
-where cast(t1.col1 as int) < 2 and t1.id = jt.col
+select /*+ recompile ordered */ ta.id, jt.col
+from ta, json_table('{"a":[1,[2,3]]}', '$.a[*]' columns (col int path '$')) as jt
+where cast(ta.cola as int) < 2 and ta.id = jt.col
 order by 1, 2;
 show trace;
 
 
 evaluate 'Case 7: natural left join, outer heap scan + inner index scan (CBRD-26596 shape) -> mergeable list';
-select /*+ recompile */ t1.id, t1.col1, t2.id from t1 natural left join t2 where cast(t1.col1 as int) <= 10 order by 1, 2, 3;
+select /*+ recompile */ ta.id, ta.cola, tb.id from ta natural left join tb where cast(ta.cola as int) <= 10 order by 1, 2, 3;
 show trace;
 -- serial reference: result must match the parallel block above
-select /*+ recompile no_parallel_scan */ t1.id, t1.col1, t2.id from t1 natural left join t2 where cast(t1.col1 as int) <= 10 order by 1, 2, 3;
+select /*+ recompile no_parallel_scan */ ta.id, ta.cola, tb.id from ta natural left join tb where cast(ta.cola as int) <= 10 order by 1, 2, 3;
 show trace;
 
 
 evaluate 'Case 8: 3-way NL join, driving heap scan parallel + two inner index probes -> mergeable list';
--- order by a non-indexed t1 column so the driving t1 stays a heap scan (parallel)
-select /*+ recompile ordered */ t1.col2, t2.id, t3.id from t1, t2, t3 where t1.id = t2.id and t2.id = t3.id order by 1, 2;
+-- order by a non-indexed ta column so the driving ta stays a heap scan (parallel)
+select /*+ recompile ordered */ ta.colb, tb.id, tc.id from ta, tb, tc where ta.id = tb.id and tb.id = tc.id order by 1, 2;
 show trace;
 -- serial reference: result must match the parallel block above
-select /*+ recompile ordered no_parallel_scan */ t1.col2, t2.id, t3.id from t1, t2, t3 where t1.id = t2.id and t2.id = t3.id order by 1, 2;
+select /*+ recompile ordered no_parallel_scan */ ta.colb, tb.id, tc.id from ta, tb, tc where ta.id = tb.id and tb.id = tc.id order by 1, 2;
 show trace;
 
 
 evaluate 'Case 9: GROUP BY over NL join -> mergeable list';
-select /*+ recompile ordered */ t1.col2, count(*) from t1, t2 where t1.id = t2.id group by t1.col2 order by 1;
+select /*+ recompile ordered */ ta.colb, count(*) from ta, tb where ta.id = tb.id group by ta.colb order by 1;
 show trace;
 -- serial reference: result must match the parallel block above
-select /*+ recompile ordered no_parallel_scan */ t1.col2, count(*) from t1, t2 where t1.id = t2.id group by t1.col2 order by 1;
+select /*+ recompile ordered no_parallel_scan */ ta.colb, count(*) from ta, tb where ta.id = tb.id group by ta.colb order by 1;
 show trace;
 
 
 evaluate 'Case 10: explicit PARALLEL(2) hint on NL join -> mergeable list';
--- order by the inner-table key so the driving t1 stays a heap scan (parallel)
-select /*+ recompile ordered parallel(2) */ t2.id, t1.col2 from t1, t2 where t1.id = t2.id order by 1;
+-- order by the inner-table key so the driving ta stays a heap scan (parallel)
+select /*+ recompile ordered parallel(2) */ tb.id, ta.colb from ta, tb where ta.id = tb.id order by 1;
 show trace;
 -- serial reference: result must match the parallel block above
-select /*+ recompile ordered no_parallel_scan */ t2.id, t1.col2 from t1, t2 where t1.id = t2.id order by 1;
+select /*+ recompile ordered no_parallel_scan */ tb.id, ta.colb from ta, tb where ta.id = tb.id order by 1;
 show trace;
 
 
 evaluate 'Case 11: first(driving) table is a set collection, not parallel-heap-scannable (cannot parallelize #1) -> not parallelized';
 -- the driving spec is a set (not a class heap scan), so the NL join is not parallelized
 -- (no "parallel workers" line under the driving scan)
-select /*+ recompile ordered */ x.v, t1.id from table({1,2,3}) as x(v), t1 where t1.id = x.v order by 1, 2;
+select /*+ recompile ordered */ x.v, ta.id from table({1,2,3}) as x(v), ta where ta.id = x.v order by 1, 2;
 show trace;
 
 
-drop table if exists t1, t2, t3;
+drop table if exists ta, tb, tc;
