@@ -1137,7 +1137,7 @@ Trace Statistics:
 ===================================================
 0
 ===================================================
-1
+6
 ===================================================
     
 CBRD-26670: session var wrapping an analytic function (original repro) - should not crash     
@@ -1145,6 +1145,8 @@ CBRD-26670: session var wrapping an analytic function (original repro) - should 
 ===================================================
 @v := count(b) over (partition by a+a order by b+b)    
 1     
+2     
+3     
 
 ===================================================
 trace    
@@ -1176,6 +1178,8 @@ CBRD-26670: session var inside the analytic argument - should not crash
 ===================================================
 count(@v := b) over (partition by a order by b)    
 1     
+2     
+3     
 
 ===================================================
 trace    
@@ -1207,6 +1211,8 @@ CBRD-26670: session var in the analytic PARTITION BY - should not crash
 ===================================================
 count(b) over (partition by @v := a order by b)    
 1     
+2     
+3     
 
 ===================================================
 trace    
@@ -1238,6 +1244,8 @@ CBRD-26670: session var in the analytic window ORDER BY - should not crash
 ===================================================
 count(b) over (partition by a order by @v := b)    
 1     
+2     
+3     
 
 ===================================================
 trace    
@@ -1269,6 +1277,8 @@ CBRD-26670: NO_PARALLEL_SUBQUERY (serial) control - should not crash
 ===================================================
 @v := count(b) over (partition by a+a order by b+b)    
 1     
+2     
+3     
 
 ===================================================
 trace    

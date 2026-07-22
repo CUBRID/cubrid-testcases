@@ -214,7 +214,9 @@ drop table if exists tta, ttb, ttc, ttd;
 -- NO_PARALLEL_SUBQUERY (serial) control. All must run without crashing.
 drop table if exists zt;
 create table zt (a int, b int);
-insert into zt values (1, 1);
+-- multiple partitions (a=1,2,3) with several rows each so the analytic actually
+-- forms partition boundaries and slides frames (greptile P2: single-row data)
+insert into zt values (1, 1), (1, 2), (1, 3), (2, 4), (2, 5), (3, 6);
 
 evaluate 'CBRD-26670: session var wrapping an analytic function (original repro) - should not crash';
 (select @v:=count(b) over (partition by a+a order by b+b) from zt)
