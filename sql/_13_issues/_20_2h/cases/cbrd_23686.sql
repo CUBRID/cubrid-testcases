@@ -8,12 +8,12 @@ UPDATE STATISTICS ON tmp5 WITH fullscan;
 
 set optimization level 513;
 
-SELECT /*+ recompile no_use_hash */ COUNT(1) FROM (select /*+ NO_PARALLEL_SCAN */ * from tmp5 limit 1000) a, tmp5 b
+SELECT /*+ recompile no_use_hash */ COUNT(1) FROM (select /*+ NO_PARALLEL_SCAN */ * from tmp5 order by col1, col2 limit 1000) a, tmp5 b
 WHERE a.col1 = b.col1 
 AND a.col2 = b.col2;
 
 -- CBRD-26475: no_use_hash 없이 옵티마이저의 hash-join 선택 검증 (기존 쿼리 유지 + 힌트 제거 버전 추가)
-SELECT /*+ recompile */ COUNT(1) FROM (select /*+ NO_PARALLEL_SCAN */ * from tmp5 limit 1000) a, tmp5 b
+SELECT /*+ recompile */ COUNT(1) FROM (select /*+ NO_PARALLEL_SCAN */ * from tmp5 order by col1, col2 limit 1000) a, tmp5 b
 WHERE a.col1 = b.col1 
 AND a.col2 = b.col2;
 
