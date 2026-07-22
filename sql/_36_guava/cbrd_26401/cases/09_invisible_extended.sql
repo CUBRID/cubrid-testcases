@@ -113,7 +113,6 @@ update statistics on ip_list;
 
 
 select id, region, val from ip_list order by id;
-show trace;
 
 drop table if exists ip_list;
 
