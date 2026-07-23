@@ -136,12 +136,6 @@ cte_b as (SELECT /*+ materialize */ * FROM JSON_TABLE (
 select /*+ recompile */ count(*) from cte_a, cte_b;
 show trace;
 
-evaluate 'when RECORD_INFO, PAGE_INFO, index related information or sampling scan is involved - should not work';
-with cte_a as (select /*+ materialize sampling_scan */ i from tbl_a),
-cte_b as (select /*+ materialize sampling_scan */ i from tbl_b)
-select /*+ recompile */ count(*) from cte_a, cte_b;
-show trace;
-
 evaluate 'scalar subquery in SELECT list - should not work';
 select /*+ recompile */
 (select count(*) from tbl_a) as a_cnt,

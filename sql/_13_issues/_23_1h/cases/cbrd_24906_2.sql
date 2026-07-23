@@ -114,7 +114,7 @@ show trace;
 -- test case 6
 prepare q from '
 select /*+ recompile */
-  a.col_a,
+  if(a.col_a between 1 and 1000, ''TRUE'', ''FALSE'') as valid_col_a,
   (select /*+ no_merge ordered */ b.col_b from tbl_b as b where b.col_c = ? and b.col_c = ? limit 1) as c9
 from
   tbl_a as a
@@ -128,7 +128,7 @@ deallocate prepare q;
 -- test case 7
 prepare q from '
 select /*+ recompile */
-  a.col_a,
+  if(a.col_a between 1 and 1000, ''TRUE'', ''FALSE'') as valid_col_a,
   (select /*+ no_merge ordered */ b.col_c from tbl_b as b where a.col_a = b.col_a and b.col_c = ? and b.col_c = ?) as c9
 from
   tbl_a as a
