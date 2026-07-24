@@ -33,21 +33,6 @@ Q101     8     8     8     8     8     8
 Q101     9     9     9     9     9     9     
 Q101     10     10     10     10     10     10     
 
-Query plan:
-idx-join (inner join)
-    outer: iscan
-               class: a node[?]
-               index: idx_cola 
-               cost:  ? card ?
-    inner: iscan
-               class: b node[?]
-               index: pk_tbl_b_cold term[?]
-               cost:  ? card ?
-    sort:  ? asc
-    cost:  ? card ?
-Query stmt:
-select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold order by ? for orderby_num()<= ?:? 
-/* ---> skip ORDER BY */
 ===================================================
 trace    
 
@@ -86,21 +71,6 @@ Q102     18     18     18     18     18     18
 Q102     19     19     19     19     19     19     
 Q102     20     20     20     20     20     20     
 
-Query plan:
-idx-join (inner join)
-    outer: iscan
-               class: a node[?]
-               index: idx_cola_colb_colc (covers)
-               cost:  ? card ?
-    inner: iscan
-               class: b node[?]
-               index: pk_tbl_b_cold term[?]
-               cost:  ? card ?
-    sort:  ? asc, ? asc, ? asc
-    cost:  ? card ?
-Query stmt:
-select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
-/* ---> skip ORDER BY */
 ===================================================
 trace    
 
@@ -135,21 +105,6 @@ Q103     99973     99973     99973     99973     99973     99973
 Q103     99972     99972     99972     99972     99972     99972     
 Q103     99971     99971     99971     99971     99971     99971     
 
-Query plan:
-idx-join (inner join)
-    outer: iscan
-               class: a node[?]
-               index: idx_cola_colb_colc (covers) (desc_index)
-               cost:  ? card ?
-    inner: iscan
-               class: b node[?]
-               index: pk_tbl_b_cold term[?]
-               cost:  ? card ?
-    sort:  ? desc, ? desc, ? desc
-    cost:  ? card ?
-Query stmt:
-select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
-/* ---> skip ORDER BY */
 ===================================================
 trace    
 
@@ -184,6 +139,7 @@ Q104     38     38     38     38     38     38
 Q104     39     39     39     39     39     39     
 Q104     40     40     40     40     40     40     
 
+<<<<<<< HEAD
 Query plan:
 temp(order by)
     subplan: temp
@@ -210,6 +166,8 @@ temp(order by)
     cost:  ? card ?
 Query stmt:
 select /*+ ORDERED USE_MERGE */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+=======
+>>>>>>> 8570e7cda ([CBRD-26959] Re-bless plan-dump answers changed by default histogram collection)
 ===================================================
 trace    
 
@@ -258,6 +216,7 @@ Q105     99953     99953     99953     99953     99953     99953
 Q105     99952     99952     99952     99952     99952     99952     
 Q105     99951     99951     99951     99951     99951     99951     
 
+<<<<<<< HEAD
 Query plan:
 temp(order by)
     subplan: temp
@@ -284,6 +243,8 @@ temp(order by)
     cost:  ? card ?
 Query stmt:
 select /*+ ORDERED USE_MERGE */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+=======
+>>>>>>> 8570e7cda ([CBRD-26959] Re-bless plan-dump answers changed by default histogram collection)
 ===================================================
 trace    
 
@@ -332,6 +293,7 @@ Q106     58     58     58     58
 Q106     59     59     59     59     
 Q106     60     60     60     60     
 
+<<<<<<< HEAD
 Query plan:
 temp(order by)
     subplan: hash-join (inner join)
@@ -349,6 +311,8 @@ temp(order by)
     cost:  ? card ?
 Query stmt:
 select /*+ ORDERED USE_HASH */ 'Q?', a.cola, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+=======
+>>>>>>> 8570e7cda ([CBRD-26959] Re-bless plan-dump answers changed by default histogram collection)
 ===================================================
 trace    
 
@@ -395,6 +359,7 @@ Q107     99933     99933     99933     99933
 Q107     99932     99932     99932     99932     
 Q107     99931     99931     99931     99931     
 
+<<<<<<< HEAD
 Query plan:
 temp(order by)
     subplan: hash-join (inner join)
@@ -412,6 +377,8 @@ temp(order by)
     cost:  ? card ?
 Query stmt:
 select /*+ ORDERED USE_HASH */ 'Q?', a.cola, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+=======
+>>>>>>> 8570e7cda ([CBRD-26959] Re-bless plan-dump answers changed by default histogram collection)
 ===================================================
 trace    
 
@@ -458,21 +425,6 @@ Q108     99923     -1     -1     -1
 Q108     99922     -1     -1     -1     
 Q108     99921     -1     -1     -1     
 
-Query plan:
-nl-join (cross join)
-    outer: iscan
-               class: a node[?]
-               index: idx_cola_colb_colc (covers) (desc_index)
-               cost:  ? card ?
-    inner: iscan
-               class: b node[?]
-               index: pk_tbl_b_cold term[?]
-               cost:  ? card ?
-    sort:  ? desc
-    cost:  ? card ?
-Query stmt:
-select /*+ ORDERED */ 'Q?', a.cola, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where b.cold= ?:?  order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
-/* ---> skip ORDER BY */
 ===================================================
 trace    
 
@@ -511,22 +463,6 @@ Q109     88     88     88     88     88     88
 Q109     89     89     89     89     89     89     
 Q109     90     90     90     90     90     90     
 
-Query plan:
-idx-join (left outer join)
-    outer: temp(sort limit)
-               subplan: iscan
-                            class: a node[?]
-                            index: idx_cola_colb 
-                            cost:  ? card ?
-               cost:  ? card ?
-    inner: iscan
-               class: b node[?]
-               index: pk_tbl_b_cold term[?]
-               cost:  ? card ?
-    sort:  ? asc, ? asc
-    cost:  ? card ?
-Query stmt:
-select 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a left outer join tbl_b b on a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 ===================================================
 trace    
 
@@ -565,23 +501,6 @@ Q110     99903     99903     99903     99903     99903     99903
 Q110     99902     99902     99902     99902     99902     99902     
 Q110     99901     99901     99901     99901     99901     99901     
 
-Query plan:
-temp(order by)
-    subplan: idx-join (left outer join)
-                 outer: temp(sort limit)
-                            subplan: sscan
-                                         class: a node[?]
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 inner: iscan
-                            class: b node[?]
-                            index: pk_tbl_b_cold term[?]
-                            cost:  ? card ?
-                 cost:  ? card ?
-    sort:  ? desc, ? asc
-    cost:  ? card ?
-Query stmt:
-select 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a left outer join tbl_b b on a.cola=b.cold order by ? desc , ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 ===================================================
 trace    
 
@@ -623,22 +542,6 @@ Q111     99893     99893     99893     99893     99893     99893
 Q111     99892     99892     99892     99892     99892     99892     
 Q111     99891     99891     99891     99891     99891     99891     
 
-Query plan:
-idx-join (left outer join)
-    outer: temp(sort limit)
-               subplan: iscan
-                            class: a node[?]
-                            index: idx_cola_colb  (desc_index)
-                            cost:  ? card ?
-               cost:  ? card ?
-    inner: iscan
-               class: b node[?]
-               index: pk_tbl_b_cold term[?]
-               cost:  ? card ?
-    sort:  ? desc, ? desc
-    cost:  ? card ?
-Query stmt:
-select 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a left outer join tbl_b b on a.cola=b.cold order by ? desc , ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
 ===================================================
 trace    
 
@@ -677,6 +580,7 @@ Q112     118     118     118     118     118     118
 Q112     119     119     119     119     119     119     
 Q112     120     120     120     120     120     120     
 
+<<<<<<< HEAD
 Query plan:
 temp(order by)
     subplan: temp
@@ -705,6 +609,8 @@ temp(order by)
     cost:  ? card ?
 Query stmt:
 select /*+ USE_MERGE */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a left outer join tbl_b b on a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+=======
+>>>>>>> 8570e7cda ([CBRD-26959] Re-bless plan-dump answers changed by default histogram collection)
 ===================================================
 trace    
 
@@ -756,6 +662,7 @@ Q113     99873     99873     99873     99873     99873     99873
 Q113     99872     99872     99872     99872     99872     99872     
 Q113     99871     99871     99871     99871     99871     99871     
 
+<<<<<<< HEAD
 Query plan:
 temp(order by)
     subplan: temp
@@ -784,6 +691,8 @@ temp(order by)
     cost:  ? card ?
 Query stmt:
 select /*+ USE_MERGE */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a left outer join tbl_b b on a.cola=b.cold order by ? desc , ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+=======
+>>>>>>> 8570e7cda ([CBRD-26959] Re-bless plan-dump answers changed by default histogram collection)
 ===================================================
 trace    
 
@@ -835,6 +744,7 @@ Q114     138     138     138     138     138     138
 Q114     139     139     139     139     139     139     
 Q114     140     140     140     140     140     140     
 
+<<<<<<< HEAD
 Query plan:
 temp(order by)
     subplan: hash-join (left outer join)
@@ -854,6 +764,8 @@ temp(order by)
     cost:  ? card ?
 Query stmt:
 select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a left outer join tbl_b b on a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+=======
+>>>>>>> 8570e7cda ([CBRD-26959] Re-bless plan-dump answers changed by default histogram collection)
 ===================================================
 trace    
 
@@ -901,6 +813,7 @@ Q115     99853     99853     99853     99853     99853     99853
 Q115     99852     99852     99852     99852     99852     99852     
 Q115     99851     99851     99851     99851     99851     99851     
 
+<<<<<<< HEAD
 Query plan:
 temp(order by)
     subplan: hash-join (left outer join)
@@ -920,6 +833,8 @@ temp(order by)
     cost:  ? card ?
 Query stmt:
 select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a left outer join tbl_b b on a.cola=b.cold order by ? desc , ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+=======
+>>>>>>> 8570e7cda ([CBRD-26959] Re-bless plan-dump answers changed by default histogram collection)
 ===================================================
 trace    
 
@@ -969,6 +884,7 @@ Q116     958     958     958     958     958     958
 Q116     959     959     959     959     959     959     
 Q116     960     960     960     960     960     960     
 
+<<<<<<< HEAD
 Query plan:
 temp(order by)
     subplan: hash-join (left outer join)
@@ -988,6 +904,8 @@ temp(order by)
     cost:  ? card ?
 Query stmt:
 select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a left outer join tbl_b b on a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+=======
+>>>>>>> 8570e7cda ([CBRD-26959] Re-bless plan-dump answers changed by default histogram collection)
 ===================================================
 trace    
 
@@ -1037,6 +955,7 @@ Q117     99033     99033     99033     99033     99033     99033
 Q117     99032     99032     99032     99032     99032     99032     
 Q117     99031     99031     99031     99031     99031     99031     
 
+<<<<<<< HEAD
 Query plan:
 temp(order by)
     subplan: hash-join (left outer join)
@@ -1056,6 +975,8 @@ temp(order by)
     cost:  ? card ?
 Query stmt:
 select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a left outer join tbl_b b on a.cola=b.cold order by ? desc , ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+=======
+>>>>>>> 8570e7cda ([CBRD-26959] Re-bless plan-dump answers changed by default histogram collection)
 ===================================================
 trace    
 
@@ -1105,6 +1026,7 @@ Q118     978     978     978     978     978     978
 Q118     979     979     979     979     979     979     
 Q118     980     980     980     980     980     980     
 
+<<<<<<< HEAD
 Query plan:
 temp(order by)
     subplan: hash-join (left outer join)
@@ -1124,6 +1046,8 @@ temp(order by)
     cost:  ? card ?
 Query stmt:
 select /*+ USE_HASH */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a left outer join tbl_b b on a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+=======
+>>>>>>> 8570e7cda ([CBRD-26959] Re-bless plan-dump answers changed by default histogram collection)
 ===================================================
 trace    
 
@@ -1174,6 +1098,7 @@ Q119     99013     99013     99013     99013     99013     99013
 Q119     99012     99012     99012     99012     99012     99012     
 Q119     99011     99011     99011     99011     99011     99011     
 
+<<<<<<< HEAD
 Query plan:
 temp(order by)
     subplan: hash-join (left outer join)
@@ -1193,6 +1118,8 @@ temp(order by)
     cost:  ? card ?
 Query stmt:
 select /*+ USE_HASH */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a left outer join tbl_b b on a.cola=b.cold order by ? desc , ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+=======
+>>>>>>> 8570e7cda ([CBRD-26959] Re-bless plan-dump answers changed by default histogram collection)
 ===================================================
 trace    
 
@@ -1247,22 +1174,6 @@ Q120     198     198     198     198     198     198
 Q120     199     199     199     199     199     199     
 Q120     200     200     200     200     200     200     
 
-Query plan:
-idx-join (inner join)
-    outer: temp(sort limit)
-               subplan: iscan
-                            class: a node[?]
-                            index: idx_cola_colb 
-                            cost:  ? card ?
-               cost:  ? card ?
-    inner: iscan
-               class: b node[?]
-               index: pk_tbl_b_cold term[?]
-               cost:  ? card ?
-    sort:  ? asc, ? asc
-    cost:  ? card ?
-Query stmt:
-select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 ===================================================
 trace    
 
@@ -1301,22 +1212,6 @@ Q121     208     208     208     208     208     208
 Q121     209     209     209     209     209     209     
 Q121     210     210     210     210     210     210     
 
-Query plan:
-idx-join (inner join)
-    outer: iscan
-               class: a node[?]
-               index: idx_cola_colb 
-               cost:  ? card ?
-    inner: iscan
-               class: b node[?]
-               index: pk_tbl_b_cold term[?]
-               filtr: term[?]
-               cost:  ? card ?
-    sort:  ? asc, ? asc
-    cost:  ? card ?
-Query stmt:
-select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold and b.cold<>-? order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
-/* ---> skip ORDER BY */
 ===================================================
 trace    
 
@@ -1353,25 +1248,28 @@ Q122     218     218     218     218     218     218
 Q122     219     219     219     219     219     219     
 Q122     220     220     220     220     220     220     
 
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: a node[?]
+               index: idx_cola_colb 
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: pk_tbl_b_cold term[?]
+               cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? + ?:? 
+/* ---> skip ORDER BY */
 ===================================================
 trace    
 
-Query Plan:
-  NESTED LOOPS (inner join)
-    SORT (limit)
-      INDEX SCAN (a.idx_cola_colb) ()
-    INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
-
-  rewritten query: select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? + ?:? 
-
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
       SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-    SUBQUERY (uncorrelated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-        ORDERBY (time: ?, skipsort: true)
      
 
 ===================================================
@@ -1393,21 +1291,6 @@ Q123     1008     1008     1008     1008     1008     1008
 Q123     1009     1009     1009     1009     1009     1009     
 Q123     1010     1010     1010     1010     1010     1010     
 
-Query plan:
-idx-join (inner join)
-    outer: iscan
-               class: a node[?]
-               index: idx_cola_colb 
-               cost:  ? card ?
-    inner: iscan
-               class: b node[?]
-               index: pk_tbl_b_cold term[?]
-               cost:  ? card ?
-    sort:  ? asc, ? asc
-    cost:  ? card ?
-Query stmt:
-select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
-/* ---> skip ORDER BY */
 ===================================================
 trace    
 
@@ -1444,22 +1327,6 @@ Q124     1008     1008     1008     1008     1008     1008
 Q124     1009     1009     1009     1009     1009     1009     
 Q124     1010     1010     1010     1010     1010     1010     
 
-Query plan:
-idx-join (inner join)
-    outer: temp(sort limit)
-               subplan: iscan
-                            class: a node[?]
-                            index: idx_cola_colb 
-                            cost:  ? card ?
-               cost:  ? card ?
-    inner: iscan
-               class: b node[?]
-               index: pk_tbl_b_cold term[?]
-               cost:  ? card ?
-    sort:  ? asc, ? asc
-    cost:  ? card ?
-Query stmt:
-select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 ===================================================
 trace    
 
@@ -1504,22 +1371,6 @@ Q125     18     18     18     18     18     18
 Q125     19     19     19     19     19     19     
 Q125     20     20     20     20     20     20     
 
-Query plan:
-idx-join (inner join)
-    outer: temp(sort limit)
-               subplan: iscan
-                            class: a node[?]
-                            index: idx_cola_colb_colc 
-                            cost:  ? card ?
-               cost:  ? card ?
-    inner: iscan
-               class: b node[?]
-               index: pk_tbl_b_cold term[?]
-               cost:  ? card ?
-    sort:  ? asc, ? asc, ? asc
-    cost:  ? card ?
-Query stmt:
-select /*+ ORDERED NO_COVERING_IDX */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 ===================================================
 trace    
 
@@ -1560,21 +1411,6 @@ Q125-2     18     18     18     18     18     18
 Q125-2     19     19     19     19     19     19     
 Q125-2     20     20     20     20     20     20     
 
-Query plan:
-idx-join (inner join)
-    outer: iscan
-               class: a node[?]
-               index: idx_cola_colb_colc 
-               cost:  ? card ?
-    inner: iscan
-               class: b node[?]
-               index: pk_tbl_b_cold term[?]
-               cost:  ? card ?
-    sort:  ? asc, ? asc, ? asc
-    cost:  ? card ?
-Query stmt:
-select /*+ ORDERED NO_COVERING_IDX */ 'Q?-?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold using index a.idx_cola_colb_colc(+) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
-/* ---> skip ORDER BY */
 ===================================================
 trace    
 
@@ -1609,38 +1445,33 @@ Q126     8     8
 Q126     9     9     
 Q126     10     10     
 
-Query plan:
-temp(order by)
-    subplan: idx-join (inner join)
-                 outer: iscan
-                            class: a node[?]
-                            index: idx_cola_colb_colc term[?] (covers)
-                            cost:  ? card ?
-                 inner: iscan
-                            class: b node[?]
-                            index: pk_tbl_b_cold term[?]
-                            cost:  ? card ?
-                 cost:  ? card ?
-    sort:  ? asc, ? asc
-    cost:  ? card ?
-Query stmt:
-select /*+ ORDERED */ 'Q?', a.cola, b.cole from tbl_a a, tbl_b b where a.cola=b.cold and (a.cola> ?:? ) using index a.idx_cola_colb_colc(+) order by ?, ? for orderby_num()<= ?:? 
 ===================================================
 trace    
 
 Query Plan:
   SORT (order by)
-    NESTED LOOPS (inner join)
+    HASH JOIN (inner join)
       INDEX SCAN (a.idx_cola_colb_colc) (key range: (a.cola> ?:? ), covered: true)
-      INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
+      TABLE SCAN (b)
 
   rewritten query: select /*+ ORDERED */ 'Q?', a.cola, b.cole from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold and (a.cola> ?:? ) using index a.idx_cola_colb_colc(+) order by ?, ? for orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
-      SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-    ORDERBY (time: ?, topnsort: true)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
      
 
 ===================================================
@@ -1660,22 +1491,6 @@ Q127     99923     -1     -1     -1
 Q127     99922     -1     -1     -1     
 Q127     99921     -1     -1     -1     
 
-Query plan:
-temp(distinct)
-    subplan: nl-join (cross join)
-                 outer: iscan
-                            class: a node[?]
-                            index: idx_cola_colb_colc (covers)
-                            cost:  ? card ?
-                 inner: iscan
-                            class: b node[?]
-                            index: pk_tbl_b_cold term[?]
-                            cost:  ? card ?
-                 cost:  ? card ?
-    sort:  ? desc
-    cost:  ? card ?
-Query stmt:
-select distinct 'Q?', a.cola, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where b.cold= ?:?  order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
 ===================================================
 trace    
 
@@ -1712,22 +1527,6 @@ Q128     57     57     57     57     57     57
 Q128     58     58     58     58     58     58     
 Q128     59     59     59     59     59     59     
 
-Query plan:
-idx-join (left outer join)
-    outer: temp(sort limit)
-               subplan: iscan
-                            class: b node[?]
-                            index: pk_tbl_b_cold 
-                            cost:  ? card ?
-               cost:  ? card ?
-    inner: iscan
-               class: a node[?]
-               index: idx_cola_colb_colc term[?] (covers)
-               cost:  ? card ?
-    sort:  ? asc
-    cost:  ? card ?
-Query stmt: [Warning: HINT ignored]
-select 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a right outer join tbl_b b on a.cola=b.cold order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 ===================================================
 trace    
 
@@ -1756,23 +1555,6 @@ Q129. LEFT JOIN + IS NULL anti-join, skip ORDER BY can be applied.
 ===================================================
 'Q129'    cola    colb    colc    cold    cole    colf    
 
-Query plan:
-idx-join (left outer join)
-    outer: iscan
-               class: a node[?]
-               index: idx_cola_colb_colc (covers)
-               cost:  ? card ?
-    inner: iscan
-               class: b node[?]
-               index: pk_tbl_b_cold term[?]
-               sargs: term[?]
-               cost:  ? card ?
-    after: term[?]
-    sort:  ? asc, ? asc, ? asc
-    cost:  ? card ?
-Query stmt:
-select 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a left outer join tbl_b b on a.cola=b.cold where b.cold is null  order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
-/* ---> skip ORDER BY */
 ===================================================
 trace    
 
@@ -1807,22 +1589,6 @@ Q130     38     38     38     38     38     38
 Q130     39     39     39     39     39     39     
 Q130     40     40     40     40     40     40     
 
-Query plan:
-temp(order by)
-    subplan: idx-join (inner join)
-                 outer: iscan
-                            class: a node[?]
-                            index: idx_cola_colb_colc term[?] (covers)
-                            cost:  ? card ?
-                 inner: iscan
-                            class: b node[?]
-                            index: pk_tbl_b_cold term[?]
-                            cost:  ? card ?
-                 cost:  ? card ?
-    sort:  ? asc
-    cost:  ? card ?
-Query stmt:
-select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf, (a.cola+?) from tbl_a a, tbl_b b where a.cola=b.cold and (a.cola>= ?:?  and a.cola<= ?:? ) using index a.idx_cola_colb_colc(+) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 ===================================================
 trace    
 

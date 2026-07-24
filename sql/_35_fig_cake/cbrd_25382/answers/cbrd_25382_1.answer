@@ -461,6 +461,7 @@ hash-join (inner join)
                           cost:  ? card ?
                inner: iscan
                           class: c node[?]
+<<<<<<< HEAD
                           index: i_c term[?]
                           sargs: term[?] AND term[?] AND term[?]
                           cost:  ? card ?
@@ -469,6 +470,16 @@ hash-join (inner join)
     inner: sscan
                class: b node[?]
                cost:  ? card ?
+=======
+                          index: i_a term[?] AND term[?] AND term[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+>>>>>>> 8570e7cda ([CBRD-26959] Re-bless plan-dump answers changed by default histogram collection)
     cost:  ? card ?
 Query stmt:
 select /*+ LEADING(a) USE_NL(c) USE_HASH(a, b) NO_PARALLEL_SUBQUERY */ count(*) from ta a, tb b, tc c where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd and a.ca=c.ca and a.cb=c.cb and a.cc=c.cc and a.cd=c.cd
@@ -479,7 +490,11 @@ Query Plan:
   HASH JOIN (inner join)
     NESTED LOOPS (inner join)
       TABLE SCAN (a)
+<<<<<<< HEAD
       INDEX SCAN (c.i_c) (key range: a.cd=c.cd)
+=======
+      INDEX SCAN (c.i_a) (key range: a.ca=c.cakey range: a.cb=c.cbkey range: a.cc=c.cc)
+>>>>>>> 8570e7cda ([CBRD-26959] Re-bless plan-dump answers changed by default histogram collection)
     TABLE SCAN (b)
 
   rewritten query: select /*+ LEADING(a) USE_NL(c) USE_HASH(a, b) NO_PARALLEL_SUBQUERY */ count(*) from [dba.ta] a, [dba.tb] b, [dba.tc] c where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd and a.ca=c.ca and a.cb=c.cb and a.cc=c.cc and a.cd=c.cd
@@ -495,7 +510,11 @@ Trace Statistics:
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+<<<<<<< HEAD
               SCAN (index: dba.tc.i_c), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+=======
+              SCAN (index: dba.tc.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+>>>>>>> 8570e7cda ([CBRD-26959] Re-bless plan-dump answers changed by default histogram collection)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      

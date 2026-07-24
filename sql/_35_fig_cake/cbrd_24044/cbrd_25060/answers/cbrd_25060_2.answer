@@ -16,14 +16,6 @@
 count(*)    
 1     
 
-Query plan:
-iscan
-    class: tbl node[?]
-    index: uidx_a term[?]
-    sargs: term[?] AND term[?]
-    cost:  ? card ?
-Query stmt:
-select count(*) from tbl tbl where tbl.col_c= ?:?  and tbl.col_b= ?:?  and tbl.col_a= ?:? 
 ===================================================
 0
 ===================================================
@@ -37,14 +29,6 @@ select count(*) from tbl tbl where tbl.col_c= ?:?  and tbl.col_b= ?:?  and tbl.c
 count(*)    
 0     
 
-Query plan:
-iscan
-    class: tbl node[?]
-    index: uidx_a_b term[?] AND term[?]
-    sargs: term[?] AND term[?] AND term[?]
-    cost:  ? card ?
-Query stmt:
-select count(*) from tbl tbl where tbl.col_e= ?:?  and tbl.col_d= ?:?  and tbl.col_c= ?:?  and tbl.col_b= ?:?  and tbl.col_a= ?:? 
 ===================================================
 0
 0
@@ -52,14 +36,6 @@ select count(*) from tbl tbl where tbl.col_e= ?:?  and tbl.col_d= ?:?  and tbl.c
 count(*)    
 0     
 
-Query plan:
-iscan
-    class: tbl node[?]
-    index: uidx_a_b term[?] AND term[?]
-    sargs: term[?] AND term[?]
-    cost:  ? card ?
-Query stmt:
-select count(*) from tbl tbl where tbl.col_d= ?:?  and tbl.col_c= ?:?  and tbl.col_b= ?:?  and tbl.col_a= ?:? 
 ===================================================
 0
 0
@@ -67,17 +43,11 @@ select count(*) from tbl tbl where tbl.col_d= ?:?  and tbl.col_c= ?:?  and tbl.c
 count(*)    
 1     
 
-Query plan:
-iscan
-    class: tbl node[?]
-    index: idx_a_b_c term[?] AND term[?] AND term[?] (covers)
-    cost:  ? card ?
-Query stmt:
-select count(*) from tbl tbl where tbl.col_c= ?:?  and tbl.col_b= ?:?  and tbl.col_a= ?:? 
 ===================================================
 count(*)    
 10000     
 
+<<<<<<< HEAD
 Query plan:
 idx-join (inner join)
     outer: sscan
@@ -92,10 +62,17 @@ idx-join (inner join)
     cost:  ? card ?
 Query stmt:
 select /*+ ORDERED NO_USE_HASH */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_b=b.col_b and a.col_c=b.col_c and a.col_d=b.col_d
+=======
+===================================================
+0
+===================================================
+0
+>>>>>>> 8570e7cda ([CBRD-26959] Re-bless plan-dump answers changed by default histogram collection)
 ===================================================
 count(*)    
 10000     
 
+<<<<<<< HEAD
 Query plan:
 hash-join (inner join)
     edge:  term[?] AND term[?] AND term[?] AND term[?]
@@ -108,6 +85,8 @@ hash-join (inner join)
     cost:  ? card ?
 Query stmt:
 select /*+ ORDERED */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_b=b.col_b and a.col_c=b.col_c and a.col_d=b.col_d
+=======
+>>>>>>> 8570e7cda ([CBRD-26959] Re-bless plan-dump answers changed by default histogram collection)
 ===================================================
 0
 ===================================================
@@ -116,6 +95,7 @@ select /*+ ORDERED */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col
 count(*)    
 10000     
 
+<<<<<<< HEAD
 Query plan:
 idx-join (inner join)
     outer: sscan
@@ -152,6 +132,8 @@ idx-join (inner join)
     cost:  ? card ?
 Query stmt:
 select /*+ ORDERED NO_USE_HASH */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_b=b.col_b and a.col_c=b.col_c and a.col_d=b.col_d
+=======
+>>>>>>> 8570e7cda ([CBRD-26959] Re-bless plan-dump answers changed by default histogram collection)
 ===================================================
 0
 ===================================================

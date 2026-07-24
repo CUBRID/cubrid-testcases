@@ -82,31 +82,6 @@
 count(*)    
 16000     
 
-Query plan:
-hash-join (inner join)
-    edge:  term[?]
-    outer: hash-join (inner join)
-               edge:  term[?]
-               outer: hash-join (inner join)
-                          edge:  term[?]
-                          outer: sscan
-                                     class: cust node[?]
-                                     cost:  ? card ?
-                          inner: sscan
-                                     class: nations node[?]
-                                     sargs: term[?]
-                                     cost:  ? card ?
-                          cost:  ? card ?
-               inner: sscan
-                          class: orders node[?]
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: supp node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_HASH */ count(*) from cust cust, supp supp, nations nations, orders orders where cust.nk=supp.nk and supp.nk=nations.nk and cust.ck=orders.ck and nations.region= ?:? 
 ===================================================
     
 [1-2] implied term generated + used: explicit join syntax     
@@ -115,31 +90,6 @@ select /*+ USE_HASH */ count(*) from cust cust, supp supp, nations nations, orde
 count(*)    
 16000     
 
-Query plan:
-hash-join (inner join)
-    edge:  term[?]
-    outer: hash-join (inner join)
-               edge:  term[?]
-               outer: hash-join (inner join)
-                          edge:  term[?]
-                          outer: sscan
-                                     class: cust node[?]
-                                     cost:  ? card ?
-                          inner: sscan
-                                     class: nations node[?]
-                                     sargs: term[?]
-                                     cost:  ? card ?
-                          cost:  ? card ?
-               inner: sscan
-                          class: orders node[?]
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: supp node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_HASH */ count(*) from cust cust, supp supp, nations nations, orders orders where cust.nk=supp.nk and supp.nk=nations.nk and cust.ck=orders.ck and nations.region= ?:? 
 ===================================================
     
 [2] implied term already explicit - no duplicate term added     
@@ -254,24 +204,6 @@ select /*+ USE_HASH */ count(*) from cust cust, supp supp, nations nations, part
 count(*)    
 40000     
 
-Query plan:
-hash-join (inner join)
-    edge:  term[?]
-    outer: hash-join (left outer join)
-               edge:  term[?]
-               outer: sscan
-                          class: cust node[?]
-                          cost:  ? card ?
-               inner: sscan
-                          class: supp node[?]
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: nations node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_HASH */ count(*) from cust cust left outer join supp supp on cust.nk=supp.nk inner join nations nations on supp.nk=nations.nk
 ===================================================
     
 [5] ORDERED hint honored via implied term (cust -> nations -> supp)     
@@ -280,25 +212,6 @@ select /*+ USE_HASH */ count(*) from cust cust left outer join supp supp on cust
 count(*)    
 8000     
 
-Query plan:
-hash-join (inner join)
-    edge:  term[?]
-    outer: hash-join (inner join)
-               edge:  term[?]
-               outer: sscan
-                          class: cust node[?]
-                          cost:  ? card ?
-               inner: sscan
-                          class: nations node[?]
-                          sargs: term[?]
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: supp node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select /*+ ORDERED USE_HASH */ count(*) from cust cust, nations nations, supp supp where cust.nk=supp.nk and supp.nk=nations.nk and nations.region= ?:? 
 ===================================================
     
 [6] constant subst 3-table - PT_EXPR_INFO_TRANSITIVE excluded, no implied term     
@@ -354,25 +267,6 @@ select count(*) from cust cust, supp supp, nations nations where nations.nk= ?:?
 count(*)    
 2000     
 
-Query plan:
-hash-join (inner join)
-    edge:  term[?]
-    outer: hash-join (inner join)
-               edge:  term[?]
-               outer: sscan
-                          class: a node[?]
-                          cost:  ? card ?
-               inner: sscan
-                          class: nations node[?]
-                          sargs: term[?]
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: b node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_HASH */ count(*) from supp a, supp b, nations nations where a.nk=b.nk and b.nk=nations.nk and nations.region= ?:? 
 ===================================================
     
 [8] star topology + ck chain: two independent eqclasses, implied cust.nk=supp.nk generated     
@@ -440,27 +334,6 @@ select /*+ USE_HASH */ count(*) from cust cust, supp supp, nations nations, orde
 count(*)    
 800     
 
-Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: nl-join (inner join)
-               edge:  term[?]
-               outer: sscan
-                          class: nations node[?]
-                          sargs: term[?]
-                          cost:  ? card ?
-               inner: sscan
-                          class: part node[?]
-                          sargs: term[?]
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: supp node[?]
-               sargs: term[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select count(*) from supp supp, nations nations, part part where (supp.nk<nations.nk) and nations.nk=part.nk and nations.region= ?:? 
 ===================================================
 0
 ===================================================
@@ -492,29 +365,6 @@ k
 5     
 5     
 
-Query plan:
-temp(order by)
-    subplan: idx-join (inner join)
-                 outer: temp(sort limit)
-                            subplan: idx-join (inner join)
-                                         outer: sscan
-                                                    class: v node[?]
-                                                    cost:  ? card ?
-                                         inner: iscan
-                                                    class: u node[?]
-                                                    index: fk_u_t term[?]
-                                                    cost:  ? card ?
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 inner: iscan
-                            class: t node[?]
-                            index: pk_t_i term[?] (covers)
-                            cost:  ? card ?
-                 cost:  ? card ?
-    sort:  ? asc
-    cost:  ? card ?
-Query stmt:
-select /*+ NO_ELIMINATE_JOIN */ u.k from u u, t t, v v where u.j=t.i and u.j=v.j order by ? for orderby_num()<= ?:? 
 ===================================================
 0
 ===================================================
@@ -529,30 +379,6 @@ select /*+ NO_ELIMINATE_JOIN */ u.k from u u, t t, v v where u.j=t.i and u.j=v.j
 count(*)    
 80000     
 
-Query plan:
-hash-join (inner join)
-    edge:  term[?]
-    outer: hash-join (inner join)
-               edge:  term[?]
-               outer: hash-join (inner join)
-                          edge:  term[?]
-                          outer: sscan
-                                     class: cust node[?]
-                                     cost:  ? card ?
-                          inner: sscan
-                                     class: nations node[?]
-                                     cost:  ? card ?
-                          cost:  ? card ?
-               inner: sscan
-                          class: orders node[?]
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: supp node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_HASH */ count(*) from cust cust, supp supp, nations nations, orders orders where cust.nk=supp.nk and supp.nk=nations.nk and cust.ck=orders.ck
 ===================================================
     
 [12] selective filter: nations.region > 1, implied term enables early filtering     
@@ -561,31 +387,6 @@ select /*+ USE_HASH */ count(*) from cust cust, supp supp, nations nations, orde
 count(*)    
 64000     
 
-Query plan:
-hash-join (inner join)
-    edge:  term[?]
-    outer: hash-join (inner join)
-               edge:  term[?]
-               outer: hash-join (inner join)
-                          edge:  term[?]
-                          outer: sscan
-                                     class: cust node[?]
-                                     cost:  ? card ?
-                          inner: sscan
-                                     class: nations node[?]
-                                     sargs: term[?]
-                                     cost:  ? card ?
-                          cost:  ? card ?
-               inner: sscan
-                          class: orders node[?]
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: supp node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_HASH */ count(*) from cust cust, supp supp, nations nations, orders orders where cust.nk=supp.nk and supp.nk=nations.nk and cust.ck=orders.ck and (nations.region> ?:? )
 ===================================================
 0
 ===================================================
@@ -678,26 +479,6 @@ select /*+ USE_HASH */ count(*) from cust cust, supp supp, nations nations, orde
 count(*)    
 3     
 
-Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: nl-join (inner join)
-               edge:  term[?]
-               outer: sscan
-                          class: ta node[?]
-                          cost:  ? card ?
-               inner: sscan
-                          class: tb node[?]
-                          sargs: term[?]
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: tc node[?]
-               sargs: term[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select count(*) from ta ta, tb tb, tc tc where ta.i= cast(tb.v as double) and tc.i= cast(tb.v as double)
 ===================================================
 0
 ===================================================
@@ -726,27 +507,6 @@ select count(*) from ta ta, tb tb, tc tc where ta.i= cast(tb.v as double) and tc
 count(*)    
 50     
 
-Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: nl-join (inner join)
-               edge:  term[?]
-               outer: sscan
-                          class: fa node[?]
-                          sargs: term[?]
-                          cost:  ? card ?
-               inner: sscan
-                          class: fb node[?]
-                          sargs: term[?]
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: fc node[?]
-               sargs: term[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select count(*) from fa fa, fb fb, fc fc where fa.nk=fb.nk and fb.nk=fc.nk and (fa.nk>= ?:?  and fa.nk<= ?:? )
 ===================================================
 0
 ===================================================
@@ -779,24 +539,6 @@ select count(*) from fa fa, fb fb, fc fc where fa.nk=fb.nk and fb.nk=fc.nk and (
 count(*)    
 820000     
 
-Query plan:
-hash-join (inner join)
-    edge:  term[?]
-    outer: hash-join (inner join)
-               edge:  term[?]
-               outer: sscan
-                          class: sk_a node[?]
-                          cost:  ? card ?
-               inner: sscan
-                          class: sk_dim node[?]
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: sk_b node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_HASH */ count(*) from sk_a sk_a, sk_dim sk_dim, sk_b sk_b where sk_a.nk=sk_dim.nk and sk_dim.nk=sk_b.nk
 ===================================================
 0
 ===================================================
@@ -825,26 +567,6 @@ select /*+ USE_HASH */ count(*) from sk_a sk_a, sk_dim sk_dim, sk_b sk_b where s
 count(*)    
 300     
 
-Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: nl-join (inner join)
-               edge:  term[?]
-               outer: sscan
-                          class: nl_a node[?]
-                          cost:  ? card ?
-               inner: sscan
-                          class: nl_m node[?]
-                          sargs: term[?]
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: nl_b node[?]
-               sargs: term[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_NL */ count(*) from nl_a nl_a, nl_m nl_m, nl_b nl_b where nl_a.nk=nl_m.nk and nl_m.nk=nl_b.nk
 ===================================================
 0
 ===================================================
@@ -875,25 +597,6 @@ select /*+ USE_NL */ count(*) from nl_a nl_a, nl_m nl_m, nl_b nl_b where nl_a.nk
 count(*)    
 1     
 
-Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: idx-join (inner join)
-               outer: sscan
-                          class: anchor node[?]
-                          cost:  ? card ?
-               inner: iscan
-                          class: keytab node[?]
-                          index: ix_keytab term[?] AND term[?] (covers)
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: bridge node[?]
-               sargs: term[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select count(*) from keytab keytab, bridge bridge, anchor anchor where keytab.nk=bridge.nk and bridge.nk=anchor.nk and keytab.x= ?:? 
 ===================================================
 0
 ===================================================
@@ -957,25 +660,6 @@ select /*+ USE_HASH */ count(*) from cust cust, supp dv, nations nations where (
 count(*)    
 8000     
 
-Query plan:
-hash-join (inner join)
-    edge:  term[?]
-    outer: hash-join (inner join)
-               edge:  term[?]
-               outer: sscan
-                          class: v_supp node[?]
-                          cost:  ? card ?
-               inner: sscan
-                          class: nations node[?]
-                          sargs: term[?]
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: cust node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_HASH */ count(*) from supp v_supp, cust cust, nations nations where (v_supp.nk=cust.nk) and cust.nk=nations.nk and nations.region= ?:? 
 ===================================================
 0
 ===================================================
@@ -1178,6 +862,10 @@ hash-join (inner join)
                           cost:  ? card ?
                inner: sscan
                           class: cust node[?]
+<<<<<<< HEAD
+=======
+                          sargs: term[?]
+>>>>>>> 8570e7cda ([CBRD-26959] Re-bless plan-dump answers changed by default histogram collection)
                           cost:  ? card ?
                cost:  ? card ?
     inner: sscan
