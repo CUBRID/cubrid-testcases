@@ -28,6 +28,22 @@ count(*)
 10000     
 
 Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx_a_e term[?] AND term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_USE_HASH */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_e=b.col_e
+===================================================
+count(*)    
+10000     
+
+Query plan:
 hash-join (inner join)
     edge:  term[?] AND term[?]
     outer: sscan
@@ -50,6 +66,22 @@ iscan
     cost:  ? card ?
 Query stmt:
 select count(*) from tbl tbl where tbl.col_a= ?:? 
+===================================================
+count(*)    
+10000     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: pk_tbl_col_a term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_USE_HASH */ count(*) from tbl a, tbl b where a.col_a=b.col_a
 ===================================================
 count(*)    
 10000     
@@ -78,6 +110,24 @@ iscan
     cost:  ? card ?
 Query stmt:
 select count(*) from tbl tbl where tbl.col_b= ?:?  and tbl.col_e= ?:?  and tbl.col_a= ?:? 
+===================================================
+count(*)    
+10000     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx_a_e term[?] AND term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_USE_HASH */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_e=b.col_e and a.col_b=b.col_b
 ===================================================
 count(*)    
 10000     
@@ -116,17 +166,17 @@ count(*)
 10000     
 
 Query plan:
-hash-join (inner join)
-    edge:  term[?] AND term[?]
+idx-join (inner join)
     outer: sscan
                class: a node[?]
                cost:  ? card ?
-    inner: sscan
+    inner: iscan
                class: b node[?]
+               index: idx_a_e term[?] AND term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_e=b.col_e
+select /*+ ORDERED NO_USE_HASH */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_e=b.col_e
 ===================================================
 count(*)    
 1     
@@ -143,17 +193,17 @@ count(*)
 10000     
 
 Query plan:
-hash-join (inner join)
-    edge:  term[?]
+idx-join (inner join)
     outer: sscan
                class: a node[?]
                cost:  ? card ?
-    inner: sscan
+    inner: iscan
                class: b node[?]
+               index: idx_a term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ count(*) from tbl a, tbl b where a.col_a=b.col_a
+select /*+ ORDERED NO_USE_HASH */ count(*) from tbl a, tbl b where a.col_a=b.col_a
 ===================================================
 count(*)    
 1     
@@ -171,16 +221,18 @@ count(*)
 10000     
 
 Query plan:
-hash-join (inner join)
-    edge:  term[?] AND term[?] AND term[?]
+idx-join (inner join)
     outer: sscan
                class: a node[?]
                cost:  ? card ?
-    inner: sscan
+    inner: iscan
                class: b node[?]
+               index: idx_a_e term[?] AND term[?]
+               sargs: term[?]
                cost:  ? card ?
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_e=b.col_e and a.col_b=b.col_b
+select /*+ ORDERED NO_USE_HASH */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_e=b.col_e and a.col_b=b.col_b
 ===================================================
 0

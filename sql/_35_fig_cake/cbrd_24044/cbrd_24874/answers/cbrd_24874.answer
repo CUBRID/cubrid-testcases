@@ -37,6 +37,23 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
+select /*+ NO_USE_HASH */ b.col_a, b.col_b, b.col_c, b.col_d, a.col_a, a.col_b, a.col_c, a.col_d from tab_b b, tab_a a where a.col_a=b.col_a and b.col_b= ?:?  and a.col_b= ?:? 
+===================================================
+col_a    col_b    col_c    col_d    col_a    col_b    col_c    col_d    
+1     1     1     1     1     1     1     1     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: a node[?]
+               index: idx_tab_a_ab term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
 select b.col_a, b.col_b, b.col_c, b.col_d, a.col_a, a.col_b, a.col_c, a.col_d from tab_b b, tab_a a where a.col_a=b.col_a and b.col_b= ?:?  and a.col_b= ?:? 
 =======
 >>>>>>> 8570e7cda ([CBRD-26959] Re-bless plan-dump answers changed by default histogram collection)
@@ -45,6 +62,23 @@ count(*)
 100000     
 
 <<<<<<< HEAD
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx_tab_b_ab term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH */ count(*) from tab_a a, tab_b b where a.col_a=b.col_a and b.col_c= ?:? 
+===================================================
+count(*)    
+100000     
+
 Query plan:
 hash-join (inner join)
     edge:  term[?]

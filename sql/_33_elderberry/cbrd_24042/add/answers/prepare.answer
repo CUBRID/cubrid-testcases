@@ -49,6 +49,19 @@ nl-join (inner join)
     cost:  ? card ?
 Query stmt:
 select v.[Name], e.Salary, e.JobTitle from tbl v, tbl_emp e where (e.Salary> ?:?  and e.Salary< ?:? ) and v.ID=e.EmpID and (e.JobTitle= ?:? )
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: v node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: e node[?]
+               sargs: term[?] AND term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select v.[Name], e.Salary, e.JobTitle from tbl v, tbl_emp e where (e.Salary> ?:?  and e.Salary< ?:? ) and v.ID=e.EmpID and (e.JobTitle= ?:? )
 ===================================================
 0
 ===================================================

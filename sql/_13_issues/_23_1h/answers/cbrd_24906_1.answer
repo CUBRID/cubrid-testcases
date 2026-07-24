@@ -810,6 +810,16 @@ Query Plan:
 
   rewritten query: select count(*) from (select /*+ ORDERED NO_MERGE */ a.col_a, a.col_b, a.col_c from [dba.tbl_a] a, [dba.tbl_b] b where a.col_a=b.col_a and  ?:? = ?:?  and a.col_c= ?:? ) [__t?] (col_a, col_b, col_c)
 
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    INDEX SCAN (b.pk_tbl_b_col_a) (key range: a.col_a=b.col_a)
+
+  rewritten query: (select /*+ ORDERED NO_MERGE */ a.col_a, a.col_b, a.col_c from [dba.tbl_a] a, [dba.tbl_b] b where a.col_a=b.col_a and  ?:? = ?:?  and a.col_c= ?:? )
+
+  TABLE SCAN (__t?)
+
+  rewritten query: select count(*) from (select /*+ ORDERED NO_MERGE */ a.col_a, a.col_b, a.col_c from [dba.tbl_a] a, [dba.tbl_b] b where a.col_a=b.col_a and  ?:? = ?:?  and a.col_c= ?:? ) [__t?] (col_a, col_b, col_c)
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
