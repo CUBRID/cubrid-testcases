@@ -26,28 +26,13 @@ cola    colb
 ===================================================
 trace    
 
-Query Plan:
-  SORT (order by)
-    NESTED LOOPS (left outer join)
-      NESTED LOOPS (left outer join)
-        SORT (limit)
-          TABLE SCAN (a)
-        INDEX SCAN (b.idx) (key range: a.cola=b.cola, covered: true)
-      INDEX SCAN (c.idx) (key range: a.cola=c.cola, covered: true)
-
-  rewritten query: select a.cola, a.colb from [dba.tbl] a left outer join [dba.tbl] b on a.cola=b.cola left outer join [dba.tbl] c on a.cola=c.cola order by ?, ? for orderby_num()> ?:? *? and orderby_num()<= ?:? *?+ ?:? 
-
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
       SCAN (index: dba.tbl.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
         SCAN (index: dba.tbl.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
-    ORDERBY (time: ?, topnsort: true)
-    SUBQUERY (uncorrelated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
-        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
@@ -68,28 +53,13 @@ cola    colb
 ===================================================
 trace    
 
-Query Plan:
-  SORT (order by)
-    NESTED LOOPS (left outer join)
-      NESTED LOOPS (left outer join)
-        SORT (limit)
-          TABLE SCAN (a)
-        INDEX SCAN (b.idx) (key range: a.cola=b.cola, covered: true)
-      INDEX SCAN (c.idx) (key range: a.cola=c.cola, covered: true)
-
-  rewritten query: select a.cola, a.colb from [dba.tbl] a left outer join [dba.tbl] b on a.cola=b.cola left outer join [dba.tbl] c on a.cola=c.cola order by ?, ? for orderby_num()> ?:? * ?:?  and orderby_num()<= ?:? * ?:? + ?:? 
-
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
       SCAN (index: dba.tbl.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
         SCAN (index: dba.tbl.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
-    ORDERBY (time: ?, topnsort: true)
-    SUBQUERY (uncorrelated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
-        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
@@ -110,28 +80,13 @@ cola    colb
 ===================================================
 trace    
 
-Query Plan:
-  SORT (order by)
-    NESTED LOOPS (left outer join)
-      NESTED LOOPS (left outer join)
-        SORT (limit)
-          TABLE SCAN (a)
-        INDEX SCAN (b.idx) (key range: a.cola=b.cola, covered: true)
-      INDEX SCAN (c.idx) (key range: a.cola=c.cola, covered: true)
-
-  rewritten query: select a.cola, a.colb from [dba.tbl] a left outer join [dba.tbl] b on a.cola=b.cola left outer join [dba.tbl] c on a.cola=c.cola order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? + ?:? 
-
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
       SCAN (index: dba.tbl.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
         SCAN (index: dba.tbl.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
-    ORDERBY (time: ?, topnsort: true)
-    SUBQUERY (uncorrelated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
-        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
@@ -152,28 +107,13 @@ cola    colb
 ===================================================
 trace    
 
-Query Plan:
-  SORT (order by)
-    NESTED LOOPS (left outer join)
-      NESTED LOOPS (left outer join)
-        SORT (limit)
-          TABLE SCAN (a)
-        INDEX SCAN (b.idx) (key range: a.cola=b.cola, covered: true)
-      INDEX SCAN (c.idx) (key range: a.cola=c.cola, covered: true)
-
-  rewritten query: select a.cola, a.colb from [dba.tbl] a left outer join [dba.tbl] b on a.cola=b.cola left outer join [dba.tbl] c on a.cola=c.cola order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? +?* ?:? 
-
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
       SCAN (index: dba.tbl.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
         SCAN (index: dba.tbl.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
-    ORDERBY (time: ?, topnsort: true)
-    SUBQUERY (uncorrelated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
-        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
@@ -208,20 +148,16 @@ trace
 
 Query Plan:
   NESTED LOOPS (inner join)
-    SORT (limit)
-      INDEX SCAN (dba.u.i_u_j) (key range: ([dba.u].j> ?:? ))
+    INDEX SCAN (dba.u.i_u_j) (key range: ([dba.u].j> ?:? ))
     INDEX SCAN (dba.t.pk_t_i) (key range: [dba.u].i=[dba.t].i)
+  skip order by: true
 
   rewritten query: select [dba.u].i, [dba.u].j, [dba.u].k, [dba.t].i, [dba.t].j, [dba.t].k from [dba.u] [dba.u], [dba.t] [dba.t] where [dba.u].i=[dba.t].i and ([dba.u].j> ?:? ) order by ? for orderby_num()> ?:? *? and orderby_num()<= ?:? *?+ ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (index: dba.u.i_u_j), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
       SCAN (index: dba.t.pk_t_i), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-    SUBQUERY (uncorrelated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (index: dba.u.i_u_j), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-        ORDERBY (time: ?, skipsort: true)
      
 
 ===================================================
@@ -236,20 +172,16 @@ trace
 
 Query Plan:
   NESTED LOOPS (inner join)
-    SORT (limit)
-      INDEX SCAN (dba.u.i_u_j) (key range: ([dba.u].j> ?:? ))
+    INDEX SCAN (dba.u.i_u_j) (key range: ([dba.u].j> ?:? ))
     INDEX SCAN (dba.t.pk_t_i) (key range: [dba.u].i=[dba.t].i)
+  skip order by: true
 
   rewritten query: select [dba.u].i, [dba.u].j, [dba.u].k, [dba.t].i, [dba.t].j, [dba.t].k from [dba.u] [dba.u], [dba.t] [dba.t] where [dba.u].i=[dba.t].i and ([dba.u].j> ?:? ) order by ? for orderby_num()> ?:? * ?:?  and orderby_num()<= ?:? * ?:? + ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (index: dba.u.i_u_j), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
       SCAN (index: dba.t.pk_t_i), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-    SUBQUERY (uncorrelated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (index: dba.u.i_u_j), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-        ORDERBY (time: ?, skipsort: true)
      
 
 ===================================================
@@ -264,20 +196,16 @@ trace
 
 Query Plan:
   NESTED LOOPS (inner join)
-    SORT (limit)
-      INDEX SCAN (dba.u.i_u_j) (key range: ([dba.u].j> ?:? ))
+    INDEX SCAN (dba.u.i_u_j) (key range: ([dba.u].j> ?:? ))
     INDEX SCAN (dba.t.pk_t_i) (key range: [dba.u].i=[dba.t].i)
+  skip order by: true
 
   rewritten query: select [dba.u].i, [dba.u].j, [dba.u].k, [dba.t].i, [dba.t].j, [dba.t].k from [dba.u] [dba.u], [dba.t] [dba.t] where [dba.u].i=[dba.t].i and ([dba.u].j> ?:? ) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? + ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (index: dba.u.i_u_j), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
       SCAN (index: dba.t.pk_t_i), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-    SUBQUERY (uncorrelated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (index: dba.u.i_u_j), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-        ORDERBY (time: ?, skipsort: true)
      
 
 ===================================================
@@ -290,20 +218,16 @@ trace
 
 Query Plan:
   NESTED LOOPS (inner join)
-    SORT (limit)
-      INDEX SCAN (dba.u.i_u_j) (key range: ([dba.u].j> ?:? ))
+    INDEX SCAN (dba.u.i_u_j) (key range: ([dba.u].j> ?:? ))
     INDEX SCAN (dba.t.pk_t_i) (key range: [dba.u].i=[dba.t].i)
+  skip order by: true
 
   rewritten query: select [dba.u].i, [dba.u].j, [dba.u].k, [dba.t].i, [dba.t].j, [dba.t].k from [dba.u] [dba.u], [dba.t] [dba.t] where [dba.u].i=[dba.t].i and ([dba.u].j> ?:? ) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? + cast(? as bigint)*( ?:?  div  ?:? )
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (noscan time: ?, fetch: ?, ioread: ?)
+    SCAN (index: dba.u.i_u_j), (noscan time: ?, fetch: ?, ioread: ?)
       SCAN (index: dba.t.pk_t_i), (noscan time: ?, fetch: ?, ioread: ?)
-    SUBQUERY (uncorrelated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (index: dba.u.i_u_j), (noscan time: ?, fetch: ?, ioread: ?)
-        ORDERBY (time: ?, skipsort: true)
      
 
 ===================================================

@@ -126,6 +126,13 @@ Query Plan:
 
   rewritten query: select  cast('q?: ' as varchar)|| cast(a.col_b as varchar) from [dba.tbl] a, [dba.tbl] b where a.col_a=b.col_a and b.col_b= ?:? 
 
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast(a.col_b as varchar) from [dba.tbl] a, [dba.tbl] b where a.col_a=b.col_a and b.col_b= ?:? 
+
+
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -153,6 +160,13 @@ Query Plan:
     TABLE SCAN (b)
 
   rewritten query: select  cast('q?: ' as varchar)|| cast(a.col_b as varchar) from [dba.tbl] a, [dba.tbl] b where a.col_a=b.col_a and b.col_b= ?:? 
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast(a.col_b as varchar) from [dba.tbl] a, [dba.tbl] b where a.col_a=b.col_a and b.col_b= ?:? 
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -282,6 +296,13 @@ Query Plan:
 
   rewritten query: select  cast('q?: ' as varchar)|| cast([dba.test_fc](a.col_b) as varchar) from [dba.tbl] a, [dba.tbl] b where a.col_a=b.col_a and b.col_b= ?:? 
 
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast([dba.test_fc](a.col_b) as varchar) from [dba.tbl] a, [dba.tbl] b where a.col_a=b.col_a and b.col_b= ?:? 
+
+
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
@@ -310,6 +331,13 @@ Query Plan:
     TABLE SCAN (b)
 
   rewritten query: select  cast('q?: ' as varchar)|| cast([dba.test_fc](a.col_b) as varchar) from [dba.tbl] a, [dba.tbl] b where a.col_a=b.col_a and b.col_b= ?:? 
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast([dba.test_fc](a.col_b) as varchar) from [dba.tbl] a, [dba.tbl] b where a.col_a=b.col_a and b.col_b= ?:? 
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -400,6 +428,15 @@ Query Plan:
 
   rewritten query: select  cast('q?: ' as varchar)|| cast([dba.test_fc](a.col_b) as varchar) from [dba.tbl] a, [dba.tbl] b, [dba.tbl] c where a.col_a=c.col_a and a.col_a=b.col_a and b.col_b= ?:? 
 
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+    TABLE SCAN (c)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast([dba.test_fc](a.col_b) as varchar) from [dba.tbl] a, [dba.tbl] b, [dba.tbl] c where a.col_a=c.col_a and a.col_a=b.col_a and b.col_b= ?:? 
+
+
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
@@ -431,6 +468,15 @@ Query Plan:
     TABLE SCAN (c)
 
   rewritten query: select  cast('q?: ' as varchar)|| cast([dba.test_fc](a.col_b) as varchar) from [dba.tbl] a, [dba.tbl] b, [dba.tbl] c where a.col_a=b.col_a and b.col_a=c.col_a and a.col_b= ?:? 
+
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+    TABLE SCAN (c)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast([dba.test_fc](a.col_b) as varchar) from [dba.tbl] a, [dba.tbl] b, [dba.tbl] c where a.col_a=b.col_a and b.col_a=c.col_a and a.col_b= ?:? 
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -465,6 +511,15 @@ Query Plan:
     TABLE SCAN (c)
 
   rewritten query: select  cast('q?: ' as varchar)|| cast([dba.test_fc](a.col_b) as varchar) from [dba.tbl] a, [dba.tbl] b, [dba.tbl] c where a.col_a=b.col_a and b.col_b= ?:? 
+
+  NESTED LOOPS (cross join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+    TABLE SCAN (c)
+
+  rewritten query: select  cast('q?: ' as varchar)|| cast([dba.test_fc](a.col_b) as varchar) from [dba.tbl] a, [dba.tbl] b, [dba.tbl] c where a.col_a=b.col_a and b.col_b= ?:? 
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)

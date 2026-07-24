@@ -16,23 +16,13 @@
 count(*)    
 1     
 
-===================================================
-count(*)    
-10000     
-
-<<<<<<< HEAD
 Query plan:
-idx-join (inner join)
-    outer: sscan
-               class: a node[?]
-               cost:  ? card ?
-    inner: iscan
-               class: b node[?]
-               index: idx_a_e term[?] AND term[?] (covers)
-               cost:  ? card ?
+iscan
+    class: tbl node[?]
+    index: idx_a_e term[?] AND term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED NO_USE_HASH */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_e=b.col_e
+select count(*) from tbl tbl where tbl.col_e= ?:?  and tbl.col_a= ?:? 
 ===================================================
 count(*)    
 10000     
@@ -49,29 +39,17 @@ hash-join (inner join)
     cost:  ? card ?
 Query stmt:
 select /*+ ORDERED */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_e=b.col_e
-=======
->>>>>>> 8570e7cda ([CBRD-26959] Re-bless plan-dump answers changed by default histogram collection)
 ===================================================
 count(*)    
 1     
 
-===================================================
-count(*)    
-10000     
-
-<<<<<<< HEAD
 Query plan:
-idx-join (inner join)
-    outer: sscan
-               class: a node[?]
-               cost:  ? card ?
-    inner: iscan
-               class: b node[?]
-               index: pk_tbl_col_a term[?] (covers)
-               cost:  ? card ?
+iscan
+    class: tbl node[?]
+    index: pk_tbl_col_a term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED NO_USE_HASH */ count(*) from tbl a, tbl b where a.col_a=b.col_a
+select count(*) from tbl tbl where tbl.col_a= ?:? 
 ===================================================
 count(*)    
 10000     
@@ -88,31 +66,18 @@ hash-join (inner join)
     cost:  ? card ?
 Query stmt:
 select /*+ ORDERED */ count(*) from tbl a, tbl b where a.col_a=b.col_a
-=======
->>>>>>> 8570e7cda ([CBRD-26959] Re-bless plan-dump answers changed by default histogram collection)
 ===================================================
 count(*)    
 1     
 
-===================================================
-count(*)    
-10000     
-
-<<<<<<< HEAD
 Query plan:
-idx-join (inner join)
-    outer: sscan
-               class: a node[?]
-               cost:  ? card ?
-    inner: iscan
-               class: b node[?]
-               index: idx_a_e term[?] AND term[?]
-               sargs: term[?]
-               cost:  ? card ?
+iscan
+    class: tbl node[?]
+    index: idx_a_e term[?] AND term[?]
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED NO_USE_HASH */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_e=b.col_e and a.col_b=b.col_b
+select count(*) from tbl tbl where tbl.col_b= ?:?  and tbl.col_e= ?:?  and tbl.col_a= ?:? 
 ===================================================
 count(*)    
 10000     
@@ -129,8 +94,6 @@ hash-join (inner join)
     cost:  ? card ?
 Query stmt:
 select /*+ ORDERED */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_e=b.col_e and a.col_b=b.col_b
-=======
->>>>>>> 8570e7cda ([CBRD-26959] Re-bless plan-dump answers changed by default histogram collection)
 ===================================================
 0
 ===================================================
@@ -141,72 +104,83 @@ select /*+ ORDERED */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col
 count(*)    
 1     
 
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_a_e term[?] AND term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl tbl where tbl.col_e= ?:?  and tbl.col_a= ?:? 
 ===================================================
 count(*)    
 10000     
 
-<<<<<<< HEAD
 Query plan:
-idx-join (inner join)
+hash-join (inner join)
+    edge:  term[?] AND term[?]
     outer: sscan
                class: a node[?]
                cost:  ? card ?
-    inner: iscan
+    inner: sscan
                class: b node[?]
-               index: idx_a_e term[?] AND term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED NO_USE_HASH */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_e=b.col_e
-=======
->>>>>>> 8570e7cda ([CBRD-26959] Re-bless plan-dump answers changed by default histogram collection)
+select /*+ ORDERED */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_e=b.col_e
 ===================================================
 count(*)    
 1     
 
+Query plan:
+iscan
+    class: tbl node[?]
+    index: idx_a term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select count(*) from tbl tbl where tbl.col_a= ?:? 
 ===================================================
 count(*)    
 10000     
 
-<<<<<<< HEAD
 Query plan:
-idx-join (inner join)
+hash-join (inner join)
+    edge:  term[?]
     outer: sscan
                class: a node[?]
                cost:  ? card ?
-    inner: iscan
+    inner: sscan
                class: b node[?]
-               index: idx_a term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED NO_USE_HASH */ count(*) from tbl a, tbl b where a.col_a=b.col_a
-=======
->>>>>>> 8570e7cda ([CBRD-26959] Re-bless plan-dump answers changed by default histogram collection)
+select /*+ ORDERED */ count(*) from tbl a, tbl b where a.col_a=b.col_a
 ===================================================
 count(*)    
 1     
 
-===================================================
-count(*)    
-10000     
-
-<<<<<<< HEAD
 Query plan:
-idx-join (inner join)
-    outer: sscan
-               class: a node[?]
-               cost:  ? card ?
-    inner: iscan
-               class: b node[?]
-               index: idx_a_e term[?] AND term[?]
-               sargs: term[?]
-               cost:  ? card ?
+iscan
+    class: tbl node[?]
+    index: idx_a_e term[?] AND term[?]
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED NO_USE_HASH */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_e=b.col_e and a.col_b=b.col_b
-=======
->>>>>>> 8570e7cda ([CBRD-26959] Re-bless plan-dump answers changed by default histogram collection)
+select count(*) from tbl tbl where tbl.col_b= ?:?  and tbl.col_e= ?:?  and tbl.col_a= ?:? 
+===================================================
+count(*)    
+10000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?] AND term[?] AND term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_e=b.col_e and a.col_b=b.col_b
 ===================================================
 0

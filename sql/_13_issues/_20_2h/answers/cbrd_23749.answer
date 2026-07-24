@@ -145,20 +145,19 @@ Trace Statistics:
 ===================================================
 id    name    job    level    
 1     Kim     Partner     1     
-2     Moy     Partner     1     
-5     Verma     Sales Exec.     2     
 6     Foster     Sales Exec.     2     
+5     Verma     Sales Exec.     2     
+2     Moy     Partner     1     
 
 ===================================================
 trace    
 
 Query Plan:
-  SORT (order by)
-    NESTED LOOPS (inner join)
-      TABLE SCAN (t)
-      TABLE SCAN (t?)
+  NESTED LOOPS (inner join)
+    TABLE SCAN (t)
+    TABLE SCAN (t?)
 
-  rewritten query: select t.id, t.[name], t?.[job], level from [dba.tree] t inner join [dba.tree?] t? on t.id=t?.treeid start with t.mgrid is null  connect by t.mgrid= prior (t.id+t.id) order by ?, ?, ?, ?
+  rewritten query: select t.id, t.[name], t?.[job], level from [dba.tree] t inner join [dba.tree?] t? on t.id=t?.treeid start with t.mgrid is null  connect by t.mgrid= prior (t.id+t.id)
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -167,7 +166,6 @@ Trace Statistics:
     CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
@@ -179,12 +177,11 @@ id    name    job    level
 trace    
 
 Query Plan:
-  SORT (order by)
-    NESTED LOOPS (inner join)
-      TABLE SCAN (t)
-      TABLE SCAN (t?)
+  NESTED LOOPS (inner join)
+    TABLE SCAN (t)
+    TABLE SCAN (t?)
 
-  rewritten query: select t.id, t.[name], t?.[job], level from [dba.tree] t inner join [dba.tree?] t? on t.id=t?.treeid start with t.mgrid is null  connect by t.mgrid= prior t.id+t.id order by ?, ?, ?, ?
+  rewritten query: select t.id, t.[name], t?.[job], level from [dba.tree] t inner join [dba.tree?] t? on t.id=t?.treeid start with t.mgrid is null  connect by t.mgrid= prior t.id+t.id
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -193,28 +190,26 @@ Trace Statistics:
     CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
 id    name    job    level    
 1     Kim     Partner     1     
-2     Moy     Partner     1     
-3     Jonas     Developer     2     
 4     Smith     Developer     2     
-5     Verma     Sales Exec.     2     
+3     Jonas     Developer     2     
+2     Moy     Partner     1     
 6     Foster     Sales Exec.     2     
+5     Verma     Sales Exec.     2     
 
 ===================================================
 trace    
 
 Query Plan:
-  SORT (order by)
-    NESTED LOOPS (inner join)
-      TABLE SCAN (t)
-      TABLE SCAN (t?)
+  NESTED LOOPS (inner join)
+    TABLE SCAN (t)
+    TABLE SCAN (t?)
 
-  rewritten query: select t.id, t.[name], t?.[job], level from [dba.tree] t inner join [dba.tree?] t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id=t.mgrid and  prior t?.[job]= ?:?  order by ?, ?, ?, ?
+  rewritten query: select t.id, t.[name], t?.[job], level from [dba.tree] t inner join [dba.tree?] t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id=t.mgrid and  prior t?.[job]= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -223,29 +218,27 @@ Trace Statistics:
     CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
 id    name    job    level    
 1     Kim     Partner     1     
-2     Moy     Partner     1     
-3     Jonas     Developer     2     
 4     Smith     Developer     2     
-5     Verma     Sales Exec.     2     
+3     Jonas     Developer     2     
+2     Moy     Partner     1     
 6     Foster     Sales Exec.     2     
 7     Brown     Assistant     3     
+5     Verma     Sales Exec.     2     
 
 ===================================================
 trace    
 
 Query Plan:
-  SORT (order by)
-    NESTED LOOPS (inner join)
-      TABLE SCAN (t)
-      TABLE SCAN (t?)
+  NESTED LOOPS (inner join)
+    TABLE SCAN (t)
+    TABLE SCAN (t?)
 
-  rewritten query: select t.id, t.[name], t?.[job], level from [dba.tree] t inner join [dba.tree?] t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id=t.mgrid order by ?, ?, ?, ?
+  rewritten query: select t.id, t.[name], t?.[job], level from [dba.tree] t inner join [dba.tree?] t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id=t.mgrid
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -254,29 +247,27 @@ Trace Statistics:
     CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
 id    name    job    level    
 1     Kim     Partner     1     
-2     Moy     Partner     1     
-3     Jonas     Developer     2     
 4     Smith     Developer     2     
-5     Verma     Sales Exec.     2     
+3     Jonas     Developer     2     
+2     Moy     Partner     1     
 6     Foster     Sales Exec.     2     
 7     Brown     Assistant     3     
+5     Verma     Sales Exec.     2     
 
 ===================================================
 trace    
 
 Query Plan:
-  SORT (order by)
-    NESTED LOOPS (inner join)
-      TABLE SCAN (t)
-      TABLE SCAN (t?)
+  NESTED LOOPS (inner join)
+    TABLE SCAN (t)
+    TABLE SCAN (t?)
 
-  rewritten query: select t.id, t.[name], t?.[job], level from [dba.tree] t inner join [dba.tree?] t? on t.id=t?.treeid start with t.mgrid is null  connect by t.mgrid= prior nvl(t.id, t.id+t.id) order by ?, ?, ?, ?
+  rewritten query: select t.id, t.[name], t?.[job], level from [dba.tree] t inner join [dba.tree?] t? on t.id=t?.treeid start with t.mgrid is null  connect by t.mgrid= prior nvl(t.id, t.id+t.id)
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -285,33 +276,31 @@ Trace Statistics:
     CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
 id    name    job    level    
 1     Kim     Partner     1     
-2     Moy     Partner     1     
+4     Smith     Developer     2     
+3     Jonas     Developer     2     
 2     Moy     Partner     2     
-3     Jonas     Developer     2     
-4     Smith     Developer     2     
-5     Verma     Sales Exec.     2     
-5     Verma     Sales Exec.     3     
-6     Foster     Sales Exec.     2     
 6     Foster     Sales Exec.     3     
-7     Brown     Assistant     3     
 7     Brown     Assistant     4     
+5     Verma     Sales Exec.     3     
+2     Moy     Partner     1     
+6     Foster     Sales Exec.     2     
+7     Brown     Assistant     3     
+5     Verma     Sales Exec.     2     
 
 ===================================================
 trace    
 
 Query Plan:
-  SORT (order by)
-    NESTED LOOPS (inner join)
-      TABLE SCAN (t)
-      TABLE SCAN (t?)
+  NESTED LOOPS (inner join)
+    TABLE SCAN (t)
+    TABLE SCAN (t?)
 
-  rewritten query: select t.id, t.[name], t?.[job], level from [dba.tree] t inner join [dba.tree?] t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior nvl(t.id, t.id+t.id)=decode(t.mgrid, null, t?.id-?, t.mgrid) order by ?, ?, ?, ?
+  rewritten query: select t.id, t.[name], t?.[job], level from [dba.tree] t inner join [dba.tree?] t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior nvl(t.id, t.id+t.id)=decode(t.mgrid, null, t?.id-?, t.mgrid)
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -320,7 +309,6 @@ Trace Statistics:
     CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
@@ -328,24 +316,23 @@ Trace Statistics:
 ===================================================
 id    name    job    level    
 1     Kim     Partner     1     
-2     Moy     Partner     1     
-3     Jonas     Developer     2     
 4     Smith     Developer     2     
-5     Verma     Sales Exec.     2     
+3     Jonas     Developer     2     
+2     Moy     Partner     1     
 6     Foster     Sales Exec.     2     
-7     Brown     Assistant     3     
 8     park     null     3     
+7     Brown     Assistant     3     
+5     Verma     Sales Exec.     2     
 
 ===================================================
 trace    
 
 Query Plan:
-  SORT (order by)
-    NESTED LOOPS (left outer join)
-      TABLE SCAN (t)
-      TABLE SCAN (t?)
+  NESTED LOOPS (left outer join)
+    TABLE SCAN (t)
+    TABLE SCAN (t?)
 
-  rewritten query: select t.id, t.[name], t?.[job], level from [dba.tree] t left outer join [dba.tree?] t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id=t.mgrid order by ?, ?, ?, ?
+  rewritten query: select t.id, t.[name], t?.[job], level from [dba.tree] t left outer join [dba.tree?] t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id=t.mgrid
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -354,30 +341,28 @@ Trace Statistics:
     CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
 id    name    job    level    
 1     Kim     Partner     1     
-2     Moy     Partner     1     
-3     Jonas     Developer     2     
 4     Smith     Developer     2     
-5     Verma     Sales Exec.     2     
+3     Jonas     Developer     2     
+2     Moy     Partner     1     
 6     Foster     Sales Exec.     2     
-7     Brown     Assistant     3     
 8     park     null     3     
+7     Brown     Assistant     3     
+5     Verma     Sales Exec.     2     
 
 ===================================================
 trace    
 
 Query Plan:
-  SORT (order by)
-    NESTED LOOPS (left outer join)
-      TABLE SCAN (t)
-      TABLE SCAN (t?)
+  NESTED LOOPS (left outer join)
+    TABLE SCAN (t)
+    TABLE SCAN (t?)
 
-  rewritten query: select t.id, t.[name], t?.[job], level from [dba.tree] t left outer join [dba.tree?] t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id=t.mgrid order by ?, ?, ?, ?
+  rewritten query: select t.id, t.[name], t?.[job], level from [dba.tree] t left outer join [dba.tree?] t? on t.id=t?.treeid start with t.mgrid is null  connect by  prior t.id=t.mgrid
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -386,7 +371,6 @@ Trace Statistics:
     CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================

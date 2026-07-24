@@ -12,6 +12,12 @@
 col_a    
 1     
 
+Query plan:
+sscan
+    class: tbl_a node[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH(tbl_a, tbl_a) */ tbl_a.col_a from tbl_a tbl_a
 ===================================================
     
 2 - Invalid but safe hint: [SELECT /*+ recompile unknown_hint */ * FROM tbl_a;]     
@@ -20,6 +26,12 @@ col_a
 col_a    
 1     
 
+Query plan:
+sscan
+    class: tbl_a node[?]
+    cost:  ? card ?
+Query stmt:
+select tbl_a.col_a from tbl_a tbl_a
 ===================================================
     
 3 - Malformed hint: [SELECT /*+ recompile use_hash( ) */ * FROM tbl_a;]     
@@ -28,6 +40,12 @@ col_a
 col_a    
 1     
 
+Query plan:
+sscan
+    class: tbl_a node[?]
+    cost:  ? card ?
+Query stmt:
+select tbl_a.col_a from tbl_a tbl_a
 ===================================================
     
 3-1 - Malformed hint: [SELECT /*+ recompile use_hash( ` ) */ * FROM tbl_a;]     
@@ -36,6 +54,12 @@ col_a
 col_a    
 1     
 
+Query plan:
+sscan
+    class: tbl_a node[?]
+    cost:  ? card ?
+Query stmt:
+select tbl_a.col_a from tbl_a tbl_a
 ===================================================
     
 3-2 - Malformed hint: [SELECT /*+ recompile use_hash( [ ) */ * FROM tbl_a;]     
@@ -44,6 +68,12 @@ col_a
 col_a    
 1     
 
+Query plan:
+sscan
+    class: tbl_a node[?]
+    cost:  ? card ?
+Query stmt:
+select tbl_a.col_a from tbl_a tbl_a
 ===================================================
     
 3-4 - Malformed hint: [SELECT /*+ recompile use_hash( " ) */ * FROM tbl_a;]     
@@ -52,6 +82,12 @@ col_a
 col_a    
 1     
 
+Query plan:
+sscan
+    class: tbl_a node[?]
+    cost:  ? card ?
+Query stmt:
+select tbl_a.col_a from tbl_a tbl_a
 ===================================================
     
 4 - Escaped backtick: [SELECT /*+ recompile use_hash(\`) */ * FROM tbl_a;]     
@@ -60,6 +96,12 @@ col_a
 col_a    
 1     
 
+Query plan:
+sscan
+    class: tbl_a node[?]
+    cost:  ? card ?
+Query stmt:
+select tbl_a.col_a from tbl_a tbl_a
 ===================================================
     
 5 - Empty hint: [SELECT /*+ recompile */ * FROM tbl_a;]     
@@ -68,6 +110,12 @@ col_a
 col_a    
 1     
 
+Query plan:
+sscan
+    class: tbl_a node[?]
+    cost:  ? card ?
+Query stmt:
+select tbl_a.col_a from tbl_a tbl_a
 ===================================================
     
 6 - Random content: [SELECT /*+ recompile 123abc */ * FROM tbl_a;]     
@@ -76,6 +124,12 @@ col_a
 col_a    
 1     
 
+Query plan:
+sscan
+    class: tbl_a node[?]
+    cost:  ? card ?
+Query stmt:
+select tbl_a.col_a from tbl_a tbl_a
 ===================================================
     
 7 - Special characters: [SELECT /*+ recompile use_hash(@!$%) */ * FROM tbl_a;]     
@@ -84,6 +138,12 @@ col_a
 col_a    
 1     
 
+Query plan:
+sscan
+    class: tbl_a node[?]
+    cost:  ? card ?
+Query stmt:
+select tbl_a.col_a from tbl_a tbl_a
 ===================================================
     
 8 - Foreign language: [SELECT /*+ recompile use_hash (~~~~~) */ * FROM tbl_a;]     
@@ -92,6 +152,12 @@ col_a
 col_a    
 1     
 
+Query plan:
+sscan
+    class: tbl_a node[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ tbl_a.col_a from tbl_a tbl_a
 ===================================================
     
 9 - Using other hints rather than use_hash: [SELECT /*+ recompile use_nl( ` ) */ * FROM tbl_a;]     
@@ -100,6 +166,12 @@ col_a
 col_a    
 1     
 
+Query plan:
+sscan
+    class: tbl_a node[?]
+    cost:  ? card ?
+Query stmt:
+select tbl_a.col_a from tbl_a tbl_a
 ===================================================
     
 9-1 - Using other hints rather than use_hash: [SELECT /*+ recompile use_merge( ` ) */ * FROM tbl_a;     
@@ -108,6 +180,12 @@ col_a
 col_a    
 1     
 
+Query plan:
+sscan
+    class: tbl_a node[?]
+    cost:  ? card ?
+Query stmt:
+select tbl_a.col_a from tbl_a tbl_a
 ===================================================
     
 9-2 - Using other hints rather than use_hash: [SELECT /*+ recompile no_use_hash( ` ) */ * FROM tbl_a;]     
@@ -116,6 +194,12 @@ col_a
 col_a    
 1     
 
+Query plan:
+sscan
+    class: tbl_a node[?]
+    cost:  ? card ?
+Query stmt:
+select tbl_a.col_a from tbl_a tbl_a
 ===================================================
     
 9-3 - Using other hints rather than use_hash: [SELECT /*+ recompile no_merge( ` ) */ * FROM tbl_a;]     
@@ -124,6 +208,12 @@ col_a
 col_a    
 1     
 
+Query plan:
+sscan
+    class: tbl_a node[?]
+    cost:  ? card ?
+Query stmt:
+select tbl_a.col_a from tbl_a tbl_a
 ===================================================
     
 10 - two same hints with one backtick: [SELECT /*+ recompile use_hash( ` ) use_hash(tbl_a) */ * FROM tbl_a;]     
@@ -132,6 +222,12 @@ col_a
 col_a    
 1     
 
+Query plan:
+sscan
+    class: tbl_a node[?]
+    cost:  ? card ?
+Query stmt:
+select tbl_a.col_a from tbl_a tbl_a
 ===================================================
     
 11 - two same hints with two backtick: [SELECT /*+ recompile use_hash( ` ) use_hash( ` ) */ * FROM tbl_a;]     
@@ -140,6 +236,12 @@ col_a
 col_a    
 1     
 
+Query plan:
+sscan
+    class: tbl_a node[?]
+    cost:  ? card ?
+Query stmt:
+select tbl_a.col_a from tbl_a tbl_a
 ===================================================
     
 12 - different hints with backtick: [SELECT /*+ recompile use_hash( ` ) no_merge( ` ) */ * FROM tbl_a;]     
@@ -148,6 +250,12 @@ col_a
 col_a    
 1     
 
+Query plan:
+sscan
+    class: tbl_a node[?]
+    cost:  ? card ?
+Query stmt:
+select tbl_a.col_a from tbl_a tbl_a
 ===================================================
     
 13 - three same hints with a backtick: [SELECT /*+ recompile use_hash( ` ) use_nl(tbl_a) no_merge(tbl_a) */ * FROM tbl_a;]     
@@ -156,6 +264,12 @@ col_a
 col_a    
 1     
 
+Query plan:
+sscan
+    class: tbl_a node[?]
+    cost:  ? card ?
+Query stmt:
+select tbl_a.col_a from tbl_a tbl_a
 ===================================================
 0
 ===================================================
@@ -176,6 +290,19 @@ col_a
 col_b    col_c    col_b    col_c    
 1     1     1     1     
 
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl_b node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select tbl_b.col_b, tbl_b.col_c, tbl_c.col_b, tbl_c.col_c from tbl_b tbl_b, tbl_c tbl_c where tbl_b.col_b=tbl_c.col_b
 ===================================================
     
 15 - Unclosed hint: [SELECT /*+ recompile use_hash(tbl_b, tbl_c */ * FROM tbl_b, tbl_c WHERE tbl_b.col_b = tbl_c.col_b;]     
@@ -184,6 +311,19 @@ col_b    col_c    col_b    col_c
 col_b    col_c    col_b    col_c    
 1     1     1     1     
 
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl_b node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select tbl_b.col_b, tbl_b.col_c, tbl_c.col_b, tbl_c.col_c from tbl_b tbl_b, tbl_c tbl_c where tbl_b.col_b=tbl_c.col_b
 ===================================================
     
 16 - Valid hint: SELECT /*+ recompile use_hash(tbl_a) */ * FROM tbl_a;     
@@ -192,6 +332,12 @@ col_b    col_c    col_b    col_c
 col_a    
 1     
 
+Query plan:
+sscan
+    class: tbl_a node[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH(tbl_a) */ tbl_a.col_a from tbl_a tbl_a
 ===================================================
     
 17 - Empty parentheses: [SELECT /*+ recompile use_hash() */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]     
@@ -200,6 +346,19 @@ col_a
 col_b    col_c    col_b    col_c    
 1     1     1     1     
 
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl_b node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select tbl_b.col_b, tbl_b.col_c, tbl_c.col_b, tbl_c.col_c from tbl_b tbl_b, tbl_c tbl_c where tbl_b.col_b=tbl_c.col_b
 ===================================================
     
 17-1 - Spaces only: [SELECT /*+ recompile use_hash(   ) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]     
@@ -208,6 +367,19 @@ col_b    col_c    col_b    col_c
 col_b    col_c    col_b    col_c    
 1     1     1     1     
 
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl_b node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select tbl_b.col_b, tbl_b.col_c, tbl_c.col_b, tbl_c.col_c from tbl_b tbl_b, tbl_c tbl_c where tbl_b.col_b=tbl_c.col_b
 ===================================================
     
 17-2 - Leading/trailing commas: [SELECT /*+ recompile use_hash(, ) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]     
@@ -216,6 +388,18 @@ col_b    col_c    col_b    col_c
 col_b    col_c    col_b    col_c    
 1     1     1     1     
 
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl_b node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_c node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ tbl_b.col_b, tbl_b.col_c, tbl_c.col_b, tbl_c.col_c from tbl_b tbl_b, tbl_c tbl_c where tbl_b.col_b=tbl_c.col_b
 ===================================================
     
 17-3 - Trailing comma after table: [SELECT /*+ recompile use_hash(tbl_b,) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]     
@@ -224,6 +408,19 @@ col_b    col_c    col_b    col_c
 col_b    col_c    col_b    col_c    
 1     1     1     1     
 
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl_b node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH(tbl_b) */ tbl_b.col_b, tbl_b.col_c, tbl_c.col_b, tbl_c.col_c from tbl_b tbl_b, tbl_c tbl_c where tbl_b.col_b=tbl_c.col_b
 ===================================================
     
 17-4 - Leading comma before table: [SELECT /*+ recompile use_hash(,tbl_b) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]     
@@ -232,6 +429,19 @@ col_b    col_c    col_b    col_c
 col_b    col_c    col_b    col_c    
 1     1     1     1     
 
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl_b node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH(tbl_b) */ tbl_b.col_b, tbl_b.col_c, tbl_c.col_b, tbl_c.col_c from tbl_b tbl_b, tbl_c tbl_c where tbl_b.col_b=tbl_c.col_b
 ===================================================
     
 18 - Missing closing parenthesis: [SELECT /*+ recompile use_hash( */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]     
@@ -240,6 +450,19 @@ col_b    col_c    col_b    col_c
 col_b    col_c    col_b    col_c    
 1     1     1     1     
 
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl_b node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select tbl_b.col_b, tbl_b.col_c, tbl_c.col_b, tbl_c.col_c from tbl_b tbl_b, tbl_c tbl_c where tbl_b.col_b=tbl_c.col_b
 ===================================================
     
 18-1 - Missing closing parenthesis with arg: [SELECT /*+ recompile use_hash(tbl_b */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]     
@@ -248,6 +471,19 @@ col_b    col_c    col_b    col_c
 col_b    col_c    col_b    col_c    
 1     1     1     1     
 
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl_b node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select tbl_b.col_b, tbl_b.col_c, tbl_c.col_b, tbl_c.col_c from tbl_b tbl_b, tbl_c tbl_c where tbl_b.col_b=tbl_c.col_b
 ===================================================
     
 18-2 - Too many parentheses: [SELECT /*+ recompile use_hash(tbl_b)) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]     
@@ -256,6 +492,19 @@ col_b    col_c    col_b    col_c
 col_b    col_c    col_b    col_c    
 1     1     1     1     
 
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl_b node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH(tbl_b) */ tbl_b.col_b, tbl_b.col_c, tbl_c.col_b, tbl_c.col_c from tbl_b tbl_b, tbl_c tbl_c where tbl_b.col_b=tbl_c.col_b
 ===================================================
     
 18-3 - Wrong closing bracket: [SELECT /*+ recompile use_hash(tbl_b, tbl_b] */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]     
@@ -264,6 +513,19 @@ col_b    col_c    col_b    col_c
 col_b    col_c    col_b    col_c    
 1     1     1     1     
 
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl_b node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select tbl_b.col_b, tbl_b.col_c, tbl_c.col_b, tbl_c.col_c from tbl_b tbl_b, tbl_c tbl_c where tbl_b.col_b=tbl_c.col_b
 ===================================================
     
 19 - Single quote: [SELECT /*+ recompile use_hash(single quote) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]     
@@ -272,6 +534,19 @@ col_b    col_c    col_b    col_c
 col_b    col_c    col_b    col_c    
 1     1     1     1     
 
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl_b node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select tbl_b.col_b, tbl_b.col_c, tbl_c.col_b, tbl_c.col_c from tbl_b tbl_b, tbl_c tbl_c where tbl_b.col_b=tbl_c.col_b
 ===================================================
     
 19-1 - Escaped double quote: [SELECT /*+ recompile use_hash(\") */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]     
@@ -280,6 +555,19 @@ col_b    col_c    col_b    col_c
 col_b    col_c    col_b    col_c    
 1     1     1     1     
 
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl_b node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select tbl_b.col_b, tbl_b.col_c, tbl_c.col_b, tbl_c.col_c from tbl_b tbl_b, tbl_c tbl_c where tbl_b.col_b=tbl_c.col_b
 ===================================================
     
 19-2 - Comment terminator inside: [SELECT /*+ recompile use_hash(*/) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]     
@@ -294,6 +582,19 @@ Error:-493
 col_b    col_c    col_b    col_c    
 1     1     1     1     
 
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl_b node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select tbl_b.col_b, tbl_b.col_c, tbl_c.col_b, tbl_c.col_c from tbl_b tbl_b, tbl_c tbl_c where tbl_b.col_b=tbl_c.col_b
 ===================================================
     
 20-1 - Schema-qualified: [SELECT /*+ recompile use_hash(dba.tbl_b) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]     
@@ -302,6 +603,19 @@ col_b    col_c    col_b    col_c
 col_b    col_c    col_b    col_c    
 1     1     1     1     
 
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl_b node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH(tbl_b) */ tbl_b.col_b, tbl_b.col_c, tbl_c.col_b, tbl_c.col_c from tbl_b tbl_b, tbl_c tbl_c where tbl_b.col_b=tbl_c.col_b
 ===================================================
     
 20-2 - Alias handling: [SELECT /*+ recompile use_hash(b) */ * FROM tbl_b b JOIN tbl_c c ON b.col_b=c.col_b;]     
@@ -310,6 +624,19 @@ col_b    col_c    col_b    col_c
 col_b    col_c    col_b    col_c    
 1     1     1     1     
 
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: b node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH(b) */ b.col_b, b.col_c, c.col_b, c.col_c from tbl_b b, tbl_c c where b.col_b=c.col_b
 ===================================================
     
 21 - Multiple hints without args: [SELECT /*+ recompile use_hash use_nl */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]     
@@ -318,6 +645,19 @@ col_b    col_c    col_b    col_c
 col_b    col_c    col_b    col_c    
 1     1     1     1     
 
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl_b node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_NL USE_HASH */ tbl_b.col_b, tbl_b.col_c, tbl_c.col_b, tbl_c.col_c from tbl_b tbl_b, tbl_c tbl_c where tbl_b.col_b=tbl_c.col_b
 ===================================================
     
 21-1 - Conflicting hints: [SELECT /*+ recompile use_hash(tbl_b) no_use_hash(tbl_b) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]     
@@ -326,6 +666,19 @@ col_b    col_c    col_b    col_c
 col_b    col_c    col_b    col_c    
 1     1     1     1     
 
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl_b node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH(tbl_b) USE_HASH(tbl_b) */ tbl_b.col_b, tbl_b.col_c, tbl_c.col_b, tbl_c.col_c from tbl_b tbl_b, tbl_c tbl_c where tbl_b.col_b=tbl_c.col_b
 ===================================================
     
 22-2 - Duplicate identical hints: [SELECT /*+ recompile use_hash(tbl_b) use_hash(tbl_b) */ * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]     
@@ -334,6 +687,19 @@ col_b    col_c    col_b    col_c
 col_b    col_c    col_b    col_c    
 1     1     1     1     
 
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl_b node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_c node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH(tbl_b) */ tbl_b.col_b, tbl_b.col_c, tbl_c.col_b, tbl_c.col_c from tbl_b tbl_b, tbl_c tbl_c where tbl_b.col_b=tbl_c.col_b
 ===================================================
     
 23 - Oracle-style hint: [SELECT --+ recompile use_hash(tbl_b) * FROM tbl_b JOIN tbl_c ON tbl_b.col_b=tbl_c.col_b;]     
@@ -378,6 +744,12 @@ Error:-493
 col_d    
 1     
 
+Query plan:
+sscan
+    class: t_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa node[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH(t_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa) */ t_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.col_d from t_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa t_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 ===================================================
 0
 ===================================================
@@ -392,6 +764,12 @@ col_d
 col_d    
 1     
 
+Query plan:
+sscan
+    class: t_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb node[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH(t_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb) */ t_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.col_d from t_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb t_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
 ===================================================
     
 25-2 - Long alias name: [SELECT /*+ recompile use_hash("t_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa") */ a.col_d FROM "t_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" AS "alias_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" a;]     
